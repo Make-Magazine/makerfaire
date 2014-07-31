@@ -1558,6 +1558,16 @@ class MAKER_FAIRE_FORM {
 		if ( count( $r ) < 3 )
 			return false;
 
+		//Check if Post Tags submitted - redo tag list.
+		if(isset($_POST['tax_input']) && isset($_POST['tax_input']['post_tag'])&&($_POST['tax_input']['post_tag']!='')){
+			$tags_clean = array();
+			$tags = explode( ',', $_POST['tax_input']['post_tag']);
+			foreach ($tags as $tag ) {
+				$tags_clean[] = sanitize_title( $tag );
+			}
+
+			$r['tags'] = $tags_clean;
+		}
 		$this->update_mf_form( $r['form_type'], $id, $r, 0 );
 
 		//MAKE SURE ALL GIGA IDS ARE ASSOCIATED WITH THIS FORM
@@ -2316,7 +2326,9 @@ class MAKER_FAIRE_FORM {
 		update_post_meta( $id, '_mf_maker_name', $r['name'] );
 		
 		// Break out tags first
-        	if(isset($_POST['exhibit']) && isset($_POST['exhibit']['tags']) ) {
+		/// Only used for wp-admin update entry tags. Disable 07.30.14
+		/*        	
+		if(isset($_POST['exhibit']) && isset($_POST['exhibit']['tags']) ) {
              
         		$tag_string = $_POST['exhibit']['tags'];
             		$tags_clean = array();
@@ -2327,7 +2339,7 @@ class MAKER_FAIRE_FORM {
             
             		wp_set_object_terms( $id, $tags_clean, 'post_tag');
 
-        	}
+        	} */
         	
         	// need to break them out for categories...
 		if(isset($_POST['exhibit']) && isset($_POST['exhibit']['cats']) ) {
