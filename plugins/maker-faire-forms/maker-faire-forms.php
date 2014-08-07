@@ -2358,18 +2358,19 @@ class MAKER_FAIRE_FORM {
         	
 		//Only used for wp-admin disabled 8.6.2014		
         // need to break them out for categories...
-		if(isset($_POST['exhibit']) && isset($_POST['exhibit']['cats']) ) {
-		$cat_string = $_POST['exhibit']['cats'];
-		$cats = explode( ',', $cat_string );
-		foreach ($cats as $cat ) {
-			wp_set_object_terms( $id, sanitize_title( $cat ), 'category', true );
+		/*
+		if( (isset($_POST['exhibit'])) && isset($_POST['exhibit']['cats']) ) {
+			$cat_string = $_POST['exhibit']['cats'];
+			$cats = explode( ',', $cat_string );
+			foreach ($cats as $cat ) {
+				#wp_set_object_terms( $id, sanitize_title( $cat ), 'category', true );
 			}
-		}
+		}*/
 
 		// Handle front-end cats properly
 		if((isset($r['cats'])) && (is_array($r['cats'])) ) {
             $cats_clean = array();
-            $cats = (is_array($r['cats'])) ? $r['cats'] : explode( ',',$r['cats']);
+			$cats = $r['cats'];
 			foreach ($cats as $category ) {
         		$cats_clean[] = sanitize_title( $category );
             }
