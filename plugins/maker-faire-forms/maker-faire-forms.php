@@ -2282,6 +2282,21 @@ class MAKER_FAIRE_FORM {
 
 		$n = $t == 'exhibit' ? $r['project_name'] : ( $t == 'performer' ? $r['performer_name'] : $r['presentation_name'] );
 
+		//Reset cats if back-end update
+		if((isset($_POST['post_category'])) && (is_array($_POST['post_category'])) ) {
+			$cats_clean = array();
+			foreach ($_POST['post_category'] as $cat_id ) {
+				$cat = wpcom_vip_get_term_by('id', $cat_id, 'category');
+				if($cat !== false) {
+					$cats_clean[] = $cat->slug;
+				}
+			}
+			if(isset($r['cats']) ) {
+				$r['cats'] = join(', ',$cats_clean);
+			}
+		}
+
+
 		$d = array(
 			'ID'           => $id,
 			'post_content' => json_encode( $r ),
@@ -2341,7 +2356,8 @@ class MAKER_FAIRE_FORM {
 
         	} */
         	
-        	// need to break them out for categories...
+		//Only used for wp-admin disabled 8.6.2014		
+        // need to break them out for categories...
 		if(isset($_POST['exhibit']) && isset($_POST['exhibit']['cats']) ) {
 		$cat_string = $_POST['exhibit']['cats'];
 		$cats = explode( ',', $cat_string );
@@ -2351,7 +2367,7 @@ class MAKER_FAIRE_FORM {
 		}
 
 		// Handle front-end cats properly
-		if(isset($r['cats']) ) {
+		if((isset($r['cats'])) && (is_array($r['cats'])) ) {
             $cats_clean = array();
             $cats = (is_array($r['cats'])) ? $r['cats'] : explode( ',',$r['cats']);
 			foreach ($cats as $category ) {
@@ -2362,11 +2378,16 @@ class MAKER_FAIRE_FORM {
 		}
 
         // Handle front-end tags properly
-        if(isset($r['tags']) ) {
+        if((isset($r['tags'])) && (is_array($r['tags'])) ) {
             $tags_clean = array();
-			$tags = (is_array($r['tags'])) ? $r['tags'] : explode( ',',$r['tags']);
+			$tags = $r['tags'];
 			foreach ($tags as $tag ) {
-        		$tags_clean[] = sanitize_title( $tag );
+				$tag_cleaned = sanitize_title( $tag );
+				$term = wpcom_vip_get_term_by('slug', $tag_cleaned, 'post_tag');
+				if($term !== false) {
+        				$tags_clean[] = $tag_cleaned;
+				}
+				
             }
 			wp_set_object_terms( $id, $tags_clean, 'post_tag' );
 
