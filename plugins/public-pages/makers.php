@@ -468,7 +468,9 @@ function mf_merged_terms( $atts ) {
 	$output = '<ul class="columns">';
 	foreach ($cats as $cat) {
 		// $atts['faire'] has been deprecated and will be removed once the production server has been updated.
-		if ( isset( $atts['faire'] ) && $atts['faire'] == 'world-maker-faire-new-york-2013' ) {
+		if ( isset( $atts['faire'] ) && $atts['faire'] == 'world-maker-faire-new-york-2014' ) {
+			$output .= '<li><a href="' . esc_url( home_url( '/new-york-2014/topics/?' . mf_switch_category_name( $cat->taxonomy ) .'=' . $cat->slug ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
+		} elseif ( isset( $atts['faire'] ) && $atts['faire'] == 'world-maker-faire-new-york-2013' ) {
 			$output .= '<li><a href="' . esc_url( home_url( '/new-york-2013/topics/?' . mf_switch_category_name( $cat->taxonomy ) .'=' . $cat->slug ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
 		} elseif ( isset( $atts['faire_url'] ) ) { // $atts['faire_url'] replaces $atts['faire']
 			$output .= '<li><a href="' . esc_url( home_url( esc_attr( $atts['faire_url'] ) . '?' . mf_switch_category_name( $cat->taxonomy ) . '=' . $cat->slug ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
