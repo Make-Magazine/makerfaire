@@ -23,7 +23,7 @@ $args = array(
 	'paged'			=> $paged,
   'category_name'	=> $cat,
   'tax_query' => array('relation' => 'AND',
-      array('taxonomy' => 'post_tag', 'field' => 'slug', 'terms' => array($tag)),
+      (!empty($tag)) ? array('taxonomy' => 'post_tag', 'field' => 'slug', 'terms' => array($tag)) : '',
       array('taxonomy' => 'faire', 'field' => 'slug', 'terms' => array(( ! empty( $faire ) ? $faire->slug : '' )))
     )
 );
