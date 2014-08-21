@@ -21,9 +21,11 @@ $args = array(
 	'order'			=> 'asc',
 	'posts_per_page'=> 20,
 	'paged'			=> $paged,
-	'faire'			=> ( ! empty( $faire ) ? $faire->slug : '' ),
-	'category_name'	=> $cat,
-	'tag'			=> $tag,
+  'category_name'	=> $cat,
+  'tax_query' => array('relation' => 'AND',
+      array('taxonomy' => 'post_tag', 'field' => 'slug', 'terms' => array($tag)),
+      array('taxonomy' => 'faire', 'field' => 'slug', 'terms' => array(( ! empty( $faire ) ? $faire->slug : '' )))
+    )
 );
 $query = new WP_Query( $args );
 get_header(); ?>
