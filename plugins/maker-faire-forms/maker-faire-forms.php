@@ -4074,6 +4074,7 @@ class MAKER_FAIRE_FORM {
             }
           }
           $args['tax_query'][] = $tmp_tax_query;
+      }
       if((count($args['tax_query']) > 1) && !(array_key_exists('relation',$args['tax_query'])) ) {
         $args['tax_query']['relation'] = 'AND';
       }
