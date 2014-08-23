@@ -3562,13 +3562,33 @@ class MAKER_FAIRE_FORM {
 		if ( ! current_user_can( 'edit_others_posts' ) )
 			return false;
 
+  /**
 		$options = array(
 			'filters' => array(
 				'type' => 'exhibit',
 				'post_status' => 'accepted',
 			),
 		);
-
+**/
+    
+    $options = array(
+			'filters' => array(
+      'post_status' => 'accepted',
+        'tax_query' => array(
+          array( 
+            'taxonomy' => 'type',
+            'field' => 'slug',
+            'terms' => 'exhibit',
+          ),
+          array(
+            'taxonomy' => 'faire',
+            'field' => 'slug',
+            'terms' => MF_CURRENT_FAIRE
+          )
+        ),
+        'meta_query' => array(),
+      ),
+    );
 
 		// Setup the headers we want.
 		$headers = array(
@@ -3619,7 +3639,7 @@ class MAKER_FAIRE_FORM {
 			}
 
 			// Process our name field. We'll want to handle exhibit maker types differently.
-			if ( $form['form_type'] == 'exhibit' ) {
+			if ((array_key_exists('form_type', $form)) && ($form['form_type'] == 'exhibit' )) {
 				switch ( $form['maker'] ) {
 					case 'One maker':
 						$maker_name = ( ! empty( $form['maker_name'] ) ? $form['maker_name'] : '' ) ."\t";
@@ -3959,9 +3979,43 @@ class MAKER_FAIRE_FORM {
 			'tag'			 => ( isset( $filters['tag'] ) && $filters['tag'] != 'all' ) ? sanitize_text_field( $filters['tag'] ) : '',
 		);
 
+   //sanity check to avoid breaking old code
+    if(array_key_exists('tax_query', $filters)) {
+      if( isset( $filters['tag'] ) && $filters['tag'] != '' && $filters['tag'] != 'all' ) {
+        $filters['tax_query'][] =  array('taxonomy' => 'post_tag', 'field' => 'slug', 
+            'terms' => sanitize_text_field( $filters['tag']) );
+            unset($filters['tag']);
+            unset($args['tag']);
+ 
+      } else {
+            unset($filters['tag']);
+            unset($args['tag']);
+      }
+
+      if( isset( $filters['type'] ) && $filters['type'] != '' && $filters['type'] != 'all' ) {
+        $filters['tax_query'][] =  array('taxonomy' => 'type', 'field' => 'slug', 
+            'terms' => sanitize_text_field( $filters['type']) );
+            unset($filters['type']); 
+            unset($args['type']);
+      } else {
+            unset($filters['type']);
+            unset($args['type']);
+      }
+
+      if( isset( $filters['faire'] ) && $filters['faire'] != '' && $filters['faire'] != 'all' ) {
+        $filters['tax_query'][] =  array('taxonomy' => 'faire', 'field' => 'slug', 
+            'terms' => sanitize_text_field( $filters['faire']) );
+            unset($filters['faire']); 
+      } else {
+            unset($filters['faire']);
+            unset($args['faire']);
+      }
+
+      
+    }
 		// Modify our query if we are looking for applications by location
 		if ( isset( $filters['location'] ) && $filters['location'] != 'all' ) {
-			$args['meta_query'] = array(
+			$args['meta_query'][] = array(
 				array(
 					'key' => 'faire_location',
 					'value' => serialize( array( absint( $filters['location'] ) ) ), // Sadly we are saving locations as a serialized array.... soooooo
@@ -3978,19 +4032,54 @@ class MAKER_FAIRE_FORM {
 			$last = end( $filters['meta_query'] );
 
 			// Let's sanitize our options in the meta_query field
-			foreach ( $filters['meta_query'] as $key => $value ) {
+      $tmp_meta_query = array();
+      if(!array_key_exists('meta_query', $args)) $args['meta_query'] = array();
+        foreach ( $filters['meta_query'] as $meta_query ) {
+			    foreach ( $meta_query as $key => $value ) {
 
-				// Ensure we are passing acceptable paramenters to WP_Query
-				if ( $key == ( 'key' || 'value' || 'compare' || 'type' ) ) {
-					$args['meta_query'][ intval( $count ) ][ sanitize_key( $key ) ] = sanitize_text_field( $value );
+				    // Ensure we are passing acceptable paramenters to WP_Query
+             if ( in_array($key, array('key','value','compare','type' )) ) {
+              $tmp_meta_query[sanitize_key( $key )] =  sanitize_text_field( $value );
+             }
+
 				}
-
-				// Only increment when we have reached the end of the array
-				if ( $value === $last )
-					$count++;
-			}
+        $args['meta_query'][] = $tmp_meta_query;
+      }
 		}
 
+    if ( isset( $filters['tax_query'] ) && ! empty( $filters['tax_query'] ) && ! isset( $args['tax_query'] ) ) {
+			$count = 0;
+			$last = end( $filters['tax_query'] );
+    	// Let's sanitize our options in the tax_query field
+			foreach ( $filters['tax_query'] as $tax_query ) {
+        $tmp_tax_query = array();
+         foreach($tax_query as $key => $value) {
+            if ( in_array($key, array('key','taxonomy', 'field','value','compare','type','operator' )) ) {
+                $tmp_tax_query[sanitize_key( $key )] = sanitize_text_field( $value );
+            }
+            if(($key == 'terms') && (is_array($value))) {
+              $tmp_terms = array();
+              foreach($value as $term_key => $term_value) {
+                $tmp_terms[] = sanitize_text_field( $term_value );
+              }
+              $tmp_tax_query['terms'] = ($tmp_terms[0] != '') ? $tmp_terms : array();
+      
+            } elseif(($key == 'terms')) {
+              $terms_front_string = explode(',', $value);
+              $tmp_terms = array();
+              foreach($terms_front_string as $term_key => $term_value) {
+                $tmp_terms[] = sanitize_text_field( $term_value );
+              }
+              $tmp_tax_query['terms'] = ($tmp_terms[0] != '') ? $tmp_terms : array();
+            }
+          }
+          $args['tax_query'][] = $tmp_tax_query;
+      if((count($args['tax_query']) > 1) && !(array_key_exists('relation',$args['tax_query'])) ) {
+        $args['tax_query']['relation'] = 'AND';
+      }
+
+
+    }
 		$ps    = new WP_Query( $args );
 		$posts = $ps->get_posts();
 
