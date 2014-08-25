@@ -460,7 +460,7 @@ function mf_switch_category_name( $str ) {
 
 function mf_merged_terms( $atts ) {
 	$args = array(
-		'hide_empty'	=> false,
+		'hide_empty'	=> true,
 		'exclude'		=> array( '1' ),
 		);
 	$args = wp_parse_args( $atts, $args );
