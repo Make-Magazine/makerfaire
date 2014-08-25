@@ -3712,17 +3712,17 @@ class MAKER_FAIRE_FORM {
 			return false;
 
 		$options = array(
-			'filters' => array(
-				'type' => 'exhibit',
-				'post_status' => 'all',
-				'meta_query' => array(
+      'filters' => array(
+        'type' => 'exhibit',
+        'post_status' => 'all',
+        'meta_query' => array(
           array(
-          'key' => '_ef_editorial_meta_checkbox_reprint-sign',
-          'value' => '1'
-         ),
-				),
-			),
-		);
+              'key' => '_ef_editorial_meta_checkbox_reprint-sign',
+              'value' => '1'
+            ),
+          ),
+        ),
+      );
 		$apps = $this->get_all_forms( null, 'all', $options['filters'], MF_CURRENT_FAIRE );
 
 		if ( empty( $apps ) || ! is_array( $apps ) )
