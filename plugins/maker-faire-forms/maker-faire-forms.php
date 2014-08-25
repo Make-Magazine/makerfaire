@@ -4046,9 +4046,24 @@ class MAKER_FAIRE_FORM {
 			    foreach ( $meta_query as $key => $value ) {
 
 				    // Ensure we are passing acceptable paramenters to WP_Query
-             if ( in_array($key, array('key','value','compare','type' )) ) {
+             if ( in_array($key, array('key','compare','type' )) ) {
               $tmp_meta_query[sanitize_key( $key )] =  sanitize_text_field( $value );
-             }
+              } elseif(($key == 'value') && (is_array($value))) {
+              $tmp_values = array();
+              foreach($value as $tmp_value) {
+                $tmp_values[] = sanitize_text_field( $tmp_value );
+              }
+              
+              $tmp_meta_query['value'] = ($tmp_values[0] != '') ? $tmp_values : array();
+      
+            } elseif(($key == 'value')) {
+              $values_from_string = explode(',', $value);
+              $tmp_values = array();
+              foreach($values_from_string as $tmp_value) {
+                $tmp_values[] = sanitize_text_field( $tmp_value);
+              }
+              $tmp_meta_query['value'] = ($tmp_values[0] != '') ? $tmp_values : array();
+            }
 
 				}
         $args['meta_query'][] = $tmp_meta_query;
