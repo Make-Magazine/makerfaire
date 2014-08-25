@@ -3611,7 +3611,7 @@ class MAKER_FAIRE_FORM {
 
 		// As we get closer to the faire we need to reprint signs for some applications. Let's customize the application retrival to do just that.
 		if ( isset( $_GET['reprint'] ) ) {
-			$options['filters']['meta_query'] = array(
+			$options['filters']['meta_query'][] = array(
 				'key' => '_ef_editorial_meta_checkbox_reprint-sign',
 				'value' => '1'
 			);
@@ -3716,8 +3716,10 @@ class MAKER_FAIRE_FORM {
 				'type' => 'exhibit',
 				'post_status' => 'all',
 				'meta_query' => array(
-					'key' => '_ef_editorial_meta_checkbox_reprint-sign',
-					'value' => '1'
+          array(
+          'key' => '_ef_editorial_meta_checkbox_reprint-sign',
+          'value' => '1'
+         ),
 				),
 			),
 		);
