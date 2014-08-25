@@ -3711,19 +3711,25 @@ class MAKER_FAIRE_FORM {
 		if ( ! current_user_can( 'edit_others_posts' ) )
 			return false;
 
-		$options = array(
+    $options = array(
       'filters' => array(
-        'type' => 'exhibit',
         'post_status' => 'all',
         'meta_query' => array(
           array(
               'key' => '_ef_editorial_meta_checkbox_reprint-sign',
               'value' => '1'
             ),
-          ),
         ),
-      );
-		$apps = $this->get_all_forms( null, 'all', $options['filters'], MF_CURRENT_FAIRE );
+         'tax_query' => array(
+          array( 
+            'taxonomy' => 'type',
+            'field' => 'slug',
+            'terms' => 'exhibit',
+          ),
+        ),       
+      ),
+    );
+    $apps = $this->get_all_forms( null, 'all', $options['filters'], MF_CURRENT_FAIRE );
 
 		if ( empty( $apps ) || ! is_array( $apps ) )
 			return false;
