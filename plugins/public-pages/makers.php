@@ -460,13 +460,16 @@ function mf_switch_category_name( $str ) {
 
 function mf_merged_terms( $atts ) {
 	$args = array(
-		'hide_empty'	=> false,
+    'hide_empty'	=> false,
 		'exclude'		=> array( '1' ),
 		);
-	$args = wp_parse_args( $atts, $args );
-	$cats = get_terms( array( 'category', 'post_tag' ), $args );
+  //$args = wp_parse_args( $atts, $args );
+	$cats = get_terms( 'category', $args );
+  $tags = get_terms( 'post_tag' , $args );
+  $cats_tags = array_merge($cats, $tags);
+    usort($cats_tags, function($a, $b) { return strcmp($a->slug, $b->slug); } );
 	$output = '<ul class="columns">';
-	foreach ($cats as $cat) {
+	foreach ($cats_tags as $cat) {
 		// $atts['faire'] has been deprecated and will be removed once the production server has been updated.
 		if ( isset( $atts['faire'] ) && $atts['faire'] == 'world-maker-faire-new-york-2014' ) {
 			$output .= '<li><a href="' . esc_url( home_url( '/new-york-2014/topics/?' . mf_switch_category_name( $cat->taxonomy ) .'=' . $cat->slug ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
