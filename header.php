@@ -128,6 +128,9 @@ Topbar
 			</div>
 			<!-- End AdSlot 1 -->
 		</div>
+		
+			<p class="tagline"><a href="http://disney.com"><img src="<?php echo get_stylesheet_directory_uri(); ?>/images/disney.png" alt="Disney"></a></p>
+
 
 			<div class="row">
 
