@@ -23,8 +23,8 @@ if ( $type == 'sponsor' ) {
 	// Set the query args.
 	$args = array(
 		'no_found_rows'	 => true,
-		'post_type'		 => 'sponsor',
-		'post_status' 	 => 'any',
+		'post_type'		 => 'mf_form',
+		'post_status'	 => 'accepted',
 		'posts_per_page' => absint( MF_POSTS_PER_PAGE ),
 		'faire'			 => sanitize_title( $faire ),
 	);
