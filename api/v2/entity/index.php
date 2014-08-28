@@ -75,13 +75,14 @@ if ( $type == 'entity' ) {
 		$app['venue_id_ref'] = $location_output[0];
 
 		// Application Makers
+		$app_id = get_post_meta( absint( $post->ID ), 'mfei_record', true );
 		$maker_args = array(
-			'post_type' => 'maker',
-			'posts_per_page' => 20,
-			'faire' => sanitize_title( $faire ),
-			'meta_key' => 'mfei_record',
-			'meta_value' => absint( $post->ID ),
+			'post_type' 		=> 'maker',
+			'posts_per_page' 	=> 20,
+			'faire'				=> $faire,
+			'mfei_record' 		=> absint( $app_id ),
 		);
+
 		$makers = new WP_Query( $maker_args );
 
 		$maker_ids = array();
