@@ -36,6 +36,7 @@ $allowed_types = array(
 	'maker',
 	'schedule',
 	'venue',
+	'sponsor'
 );
 
 // Check that all required fields are passed before running anything and assign them to variables
