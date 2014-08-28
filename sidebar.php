@@ -35,34 +35,7 @@
 
 	<div class="sidebar-bordered-nl">
 
-                <h3 class="counter-title">Sign up for news and updates on all faires and calls for makers.</h3>
-
-                <form class="form-inline" action="http://makermedia.createsend.com/t/r/s/jjuruj/" method="post" id="subForm">
-                        <input type="text" placeholder="Enter your email" class="news-signup" name="cm-jjuruj-jjuruj" id="jjuruj-jjuruj">
-                        <input type="image" src="<?php echo esc_url( get_stylesheet_directory_uri() ); ?>/images/go.png" value="Go!" class="btn">
-                        <div class="control-group hide hidden">
-                                <h5>Call For Makers</h5>
-                                <label for="fielddduult-0"><input id="fielddduult-0" name="cm-fo-dduult" value="621683" type="checkbox" checked/> Inform me About the Call for Makers</label><br>
-                                <h5>Preferred Faire?</h5>
-                                <label for="fieldjdlthk-0"><input id="fieldjdlthk-0" name="cm-fo-jdlthk" value="188882" type="checkbox" checked/> Bay Area</label><br>
-                                <label for="fieldjdlthk-2"><input id="fieldjdlthk-2" name="cm-fo-jdlthk" value="188884" type="checkbox" checked/> New York</label><br>
-                                <h5>Join Another Newsletter</h5>
-                                <label for="listjrsydu"><input id="listjrsydu" name="cm-ol-jrsydu" type="checkbox" /> Maker Pro Newsletter</label><br />
-                                <label for="listttihir"><input id="listttihir" name="cm-ol-ttihir" type="checkbox" /> Maker Shed</label>
-                                </p>
-                        </div>
-                </form>
-
-                <script type="text/javascript">
-                jQuery(document).ready(function(){
-                        jQuery('.news-signup').focus(function() {
-                                jQuery('.hidden').slideDown();
-                        });
-                });
-
-                </script>
-                <hr>
-                <div class="soc_icons">
+                <div class="soc_icons" style="padding-top:15px;">
                         <a class="footer-sprite ico-facebook" href="http://facebook.com/makerfaire" title="Facebook" target="_blank"></a>
                         <a class="footer-sprite ico-twitter"  href="http://twitter.com/makerfaire" title="Twitter" target="_blank"></a>
                         <a class="footer-sprite ico-google-plus" href="https://google.com/+MAKE/" title="Google+" target="_blank"></a>
@@ -73,13 +46,6 @@
                 <!-- END socialArea -->
                 </div>
 
-        </div>
-
-        <div class="center twitter">
-          <a href="https://twitter.com/makerfaire" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @makerfaire</a>
-          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-          <a class="twitter-timeline" href="https://twitter.com/search?q=%23makerfaire" data-widget-id="322225978648698880">Tweets about "#makerfaire"</a>
-          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
         </div>
 
         <div class="sidebar-bordered sponsored">
@@ -118,6 +84,43 @@
                </div>
 
        </div>
+       
+         <div class="center twitter">
+          <a href="https://twitter.com/makerfaire" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @makerfaire</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+          <a class="twitter-timeline" href="https://twitter.com/search?q=%23makerfaire" data-widget-id="322225978648698880">Tweets about "#makerfaire"</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+       
+        <div class="sidebar-bordered-nl">
+
+                <h3 class="counter-title">Sign up for news and updates on all faires and calls for makers.</h3>
+
+                <form class="form-inline" action="http://makermedia.createsend.com/t/r/s/jjuruj/" method="post" id="subForm">
+                        <input type="text" placeholder="Enter your email" class="news-signup" name="cm-jjuruj-jjuruj" id="jjuruj-jjuruj">
+                        <input type="image" src="<?php echo esc_url( get_stylesheet_directory_uri() ); ?>/images/go.png" value="Go!" class="btn">
+                        <div class="control-group hide hidden">
+                                <h5>Call For Makers</h5>
+                                <label for="fielddduult-0"><input id="fielddduult-0" name="cm-fo-dduult" value="621683" type="checkbox" checked/> Inform me About the Call for Makers</label><br>
+                                <h5>Preferred Faire?</h5>
+                                <label for="fieldjdlthk-0"><input id="fieldjdlthk-0" name="cm-fo-jdlthk" value="188882" type="checkbox" checked/> Bay Area</label><br>
+                                <label for="fieldjdlthk-2"><input id="fieldjdlthk-2" name="cm-fo-jdlthk" value="188884" type="checkbox" checked/> New York</label><br>
+                                <h5>Join Another Newsletter</h5>
+                                <label for="listjrsydu"><input id="listjrsydu" name="cm-ol-jrsydu" type="checkbox" /> Maker Pro Newsletter</label><br />
+                                <label for="listttihir"><input id="listttihir" name="cm-ol-ttihir" type="checkbox" /> Maker Shed</label>
+                                </p>
+                        </div>
+                </form>
+
+                <script type="text/javascript">
+                jQuery(document).ready(function(){
+                        jQuery('.news-signup').focus(function() {
+                                jQuery('.hidden').slideDown();
+                        });
+                });
+
+                </script>
+     </div>
 
 	<!-- Beginning Sync AdSlot 2 for Ad unit header ### size: [[300,250]]  -->
 	<div id='div-gpt-ad-664089004995786621-2' class="adblock">
