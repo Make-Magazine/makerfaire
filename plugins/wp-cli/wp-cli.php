@@ -51,6 +51,9 @@ class MAKE_CLI extends WP_CLI_Command {
 			if ( !empty( $cats[0] ) ) {
 				WP_CLI::line('Categories:');
 				foreach ($cats as $cat) {
+				  $term = wpcom_vip_get_term_by('slug', $cat, 'category');
+
+          if($term !== false) {
 					$result = wp_set_object_terms( get_the_ID(), $cat, 'category', true );
 					if ( !empty( $result ) ) {
 						WP_CLI::success( $cat );
@@ -73,15 +76,86 @@ class MAKE_CLI extends WP_CLI_Command {
 			if ( !empty( $tags[0] ) ) {
 				WP_CLI::line('Tags:');
 				foreach ($tags as $tag) {
-					$result = wp_set_object_terms( get_the_ID(), $tag, 'post_tag', true );
-					if ( !empty( $result ) ) {
-						WP_CLI::success( $tag );
-					} else {
-						WP_CLI::warning( $tag );
-					}
-				}
-			}
+          $term = wpcom_vip_get_term_by('slug', trim($tag), 'post_tag');
+          if($term !== false) {
+            $result = wp_set_object_terms( get_the_ID(), $tag, 'post_tag', true );
+  					if ( !empty( $result ) ) {
+  						WP_CLI::success( $tag );
+  					} else {
+                WP_CLI::warning( $tag." not set" );
+  					}
+          } else {
+              $tag_split = explode('-',trim($tag));
+              $tag_split_count = count($tag_split);
+              if($tag_split_count > 2) {
+                WP_CLI::line( $tag." un-separated in [".get_the_ID()."]!" );
+                  $ix = 0;
+                  do {
 
+                    $term_split = wpcom_vip_get_term_by('slug', $tag_split[$ix], 'post_tag');
+                    if($term_split !== false) { 
+                      wp_set_object_terms(get_the_ID(), $tag_split[$ix], 'post_tag', true);
+                      WP_CLI::success( $tag."({$tag_split[$ix]}) separated!" );
+                    } elseif(($ix+2) < $tag_split_count) {
+                        $tag_1 = $tag_split[$ix];
+                        $term_split = wpcom_vip_get_term_by('slug', $tag_1, 'post_tag');
+                        //WP_CLI::line( $tag."({$tag_split[$ix]}) maybe squished 1!" );
+                        if($term_split !== false) { 
+                          WP_CLI::success( $tag."({$tag_split[$ix]}) separated!" );
+                          wp_set_object_terms(get_the_ID(), $tag_split[$ix], 'post_tag', true);
+                          //no need to increment $ix twice if tag found
+                        } else {
+                          $tag_2 = $tag_split[$ix].'-'.$tag_split[$ix+1];
+                          //WP_CLI::line( $tag."({$tag_2}) maybe squished 2!" );
+                          $term_split = wpcom_vip_get_term_by('slug', $tag_2, 'post_tag');
+                          if($term_split !== false) { 
+                            WP_CLI::success( $tag."({$tag_2}) separated!" );
+                            wp_set_object_terms(get_the_ID(), $tag_2, 'post_tag', true);
+                            $ix++; //increment twice if tag found
+                          } else {
+                            $tag_3 = $tag_split[$ix].'-'.$tag_split[$ix+1].'-'.$tag_split[$ix+2];
+                            $term_split = wpcom_vip_get_term_by('slug', $tag_3, 'post_tag');
+                            if($term_split !== false) {
+                              WP_CLI::success( $tag."({$tag_3}) separated!" );
+                              wp_set_object_terms(get_the_ID(), $tag_3, 'post_tag', true);
+                              $ix = $ix + 2; //increment 3 times if tags found.
+                            } else { 
+                              WP_CLI::warning( $tag."({$tag_3}) not found!" );
+                            }
+                          }
+                        }
+                    } elseif(($ix+1) < $tag_split_count) {
+                      $tag_1 = $tag_split[$ix];
+                      $term_split = wpcom_vip_get_term_by('slug', $tag_1, 'post_tag');
+                      if($term_split !== false) { 
+                        WP_CLI::success( $tag."({$tag_split[$ix]}) separated!" );
+                        wp_set_object_terms(get_the_ID(), $tag_split[$ix], 'post_tag', true);
+                        //no need to increment $ix twice if tag found
+                      } else {
+                        $tag_2 = $tag_split[$ix].'-'.$tag_split[$ix+1];
+                        $term_split = wpcom_vip_get_term_by('slug', $tag_2, 'post_tag');
+                        if($term_split !== false) { 
+                          WP_CLI::success( $tag."({$tag_2}) separated!" );
+                          wp_set_object_terms(get_the_ID(), $tag_2, 'post_tag', true);
+                          $ix++; //increment twice if tag found
+                        } else {
+                          WP_CLI::warning( $tag."({$tag_2}) not found!" );
+                        }
+                      }
+                    } else {
+                      WP_CLI::warning( $tag."({$tag_split[$ix]}) not found!" );
+                    }
+                    $ix++;
+                  } while ($ix < $tag_split_count);
+                  $term_split = wpcom_vip_get_term_by('slug', $tag_split[0], 'post_tag');
+                  
+                  
+              } else {
+                  WP_CLI::warning( $tag." not found" );
+              }
+          }
+        }
+      }
 
 		WP_CLI::line( '' );
 		endwhile;
