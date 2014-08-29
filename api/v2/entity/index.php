@@ -23,12 +23,16 @@ if ( $type == 'entity' ) {
 	// Set the query args.
 	$args = array(
 		'no_found_rows'	 => true,
-		'post_type'		 => 'mf_form',
-		'post_status'	 => 'accepted',
+		'post_type' 	 => 'event-items',
+		'post_status' 	 => 'publish',
 		'posts_per_page' => absint( MF_POSTS_PER_PAGE ),
-		'faire'			 => sanitize_title( $faire ),
+    'tax_query' => array(
+        array ('taxonomy' => 'faire',
+              'field' => 'slug',
+              'terms' => array(sanitize_title( $faire )), ),
+      ),
 	);
-	$query = new WP_Query( $args );
+	$event_posts = get_posts( $args );
 
 
 	// Define the API header (specific for Eventbase)
@@ -44,15 +48,17 @@ if ( $type == 'entity' ) {
 	$apps = array();
 
 	// Loop through the posts
-	foreach ( $query->posts as $post ) {
+	foreach ( $event_posts as $event ) {
 		// Store the app information
-		$app_data = json_decode( mf_clean_content( $post->post_content ) );
+		$app_data = json_decode( mf_clean_content( $event->post_content ) );
 
-		// REQUIRED: Application ID
-		$app['id'] = absint( $post->ID );
+		// REQUIRED: Application(mf_form type=presenter) ID
+		$app['id'] = absint( $event->ID );
+
+    $app_mfei = get_post_meta($event->ID, 'mfei_record', true );
 
 		// REQUIRED: Application name
-		$app['name'] = html_entity_decode( get_the_title(), ENT_COMPAT, 'utf-8' );
+		$app['name'] = html_entity_decode( $event->post_title, ENT_COMPAT, 'utf-8' );
 
 		// Application Thumbnail and Large Images
 		$app_image = mf_get_the_maker_image( $app_data );
@@ -62,7 +68,7 @@ if ( $type == 'entity' ) {
 		$app['large_img_url'] = esc_url( $app_image );
 
 		// Application Locations
-		$locations = mf_get_locations( $post->ID, true );
+		$locations = mf_get_locations( $event->ID, true );
 
 		$location_output = array();
 		foreach ( $locations as $location ) {
@@ -74,8 +80,28 @@ if ( $type == 'entity' ) {
 
 		$app['venue_id_ref'] = $location_output[0];
 
+    //Application Presenter(type=mf_form);
+    /**
+    $mf_presenter_args = array(
+      'post_type' => 'mf_form',
+      'posts_per_page' => 1,
+      'post_status' => 'accepted',
+      'tax_query' => array(
+          array ( 'taxonomy' => 'type',
+                'field' => 'slug',
+                'terms' => array('presenter'), ),
+          array ('taxonomy' => 'faire',
+                'field' => 'slug',
+                'terms' => array(sanitize_title( $faire )), ),
+          'relation' => 'AND',
+        ),
+      ); **/
+
+
+    $mf_presenter_post = get_post((int)$app_mfei); //using mfei_record from metadata
 		// Application Makers
 		$app_id = get_post_meta( absint( $post->ID ), 'mfei_record', true );
+    
 		$maker_args = array(
 			'post_type' 		=> 'maker',
 			'posts_per_page' 	=> 20,
