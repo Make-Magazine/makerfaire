@@ -13,7 +13,7 @@ class MAKE_CLI extends WP_CLI_Command {
 	public function copy_category_to_tag( $args, $assoc_args ) {
 
 		$args = array(
-			'posts_per_page'			=> 8000,
+			'posts_per_page'			=> 2000,
 			'post_type'					=> 'mf_form',
 			'post_status'				=> 'any',
 			'faire'						=> MF_CURRENT_FAIRE,
