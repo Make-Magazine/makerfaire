@@ -459,22 +459,19 @@ function mf_switch_category_name( $str ) {
 }
 
 function mf_merged_terms( $atts ) {
-	// $atts['faire'] has been deprecated and will be removed once the production server has been updated.
-  // Why? Include both if $atts['faire_url'] needed JE 8.27.14 //FIXME
 	$args = array(
-    'hide_empty'	=> true,
+    'hide_empty'	=> false,
 		'exclude'		=> array( '1' ),
 		);
-    $faire = ((isset($atts['faire'])) && ($atts['faire'] != '')) ? $atts['faire'] : MF_CURRENT_FAIRE;
-    //array_merge for atts here to avoid breaking code term display code
-    $cats_tags = mf_get_terms(array('category', 'post_tag'), array_merge($atts, array('faire' => $faire) ) );
+  //$args = wp_parse_args( $atts, $args );
+	$cats = get_terms( 'category', $args );
+  $tags = get_terms( 'post_tag' , $args );
+  $cats_tags = array_merge($cats, $tags);
+    usort($cats_tags, function($a, $b) { return strcmp($a->slug, $b->slug); } );
 	$output = '<ul class="columns">';
 	foreach ($cats_tags as $cat) {
 		// $atts['faire'] has been deprecated and will be removed once the production server has been updated.
-    // Why? Include both if $atts['faire_url'] needed JE 8.27.14
-    if ( isset( $atts['faire_url'] ) && isset($atts['faire']) && ($atts['faire'] != '')) {
-      $output .= '<li><a href="' . esc_url( home_url( esc_attr( $atts['faire_url'] ) . '?' . mf_switch_category_name( $cat->taxonomy ) . '=' . $cat->slug ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
-    } elseif ( isset( $atts['faire'] ) && $atts['faire'] == 'world-maker-faire-new-york-2014' ) {
+		if ( isset( $atts['faire'] ) && $atts['faire'] == 'world-maker-faire-new-york-2014' ) {
 			$output .= '<li><a href="' . esc_url( home_url( '/new-york-2014/topics/?' . mf_switch_category_name( $cat->taxonomy ) .'=' . $cat->slug ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
 		} elseif ( isset( $atts['faire'] ) && $atts['faire'] == 'world-maker-faire-new-york-2013' ) {
 			$output .= '<li><a href="' . esc_url( home_url( '/new-york-2013/topics/?' . mf_switch_category_name( $cat->taxonomy ) .'=' . $cat->slug ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
@@ -491,92 +488,6 @@ function mf_merged_terms( $atts ) {
 
 add_shortcode('mf_cat_list', 'mf_merged_terms');
 
-function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
-
-    $args = array(
-      'hide_empty' => true,
-      'exclude'		=> array( '1' ),
-      'faire' => MF_CURRENT_FAIRE,
-      );
-    	
-    $args = wp_parse_args( $atts, $args );
-      
-    $cats = get_terms( 'category', $args );
-
-      if(in_array('post_tag', $term_types)) {
-        $tag_args = $args; //Lets not override 
-        $tag_args['hide_empty'] = false;
-        unset($tag_args['faire']);
-        unset($tag_args['faire_url']);
-        $tags = get_terms( 'post_tag' , $tag_args );
-       foreach($tags as $tag_index => $tag) {
-
-        $tag_posts = get_posts(array(
-                      'posts_per_page' => -1,
-                      'post_type' => 'mf_form',
-                      'post_status' => 'accepted',
-                      'sort' => '',
-                      'cat' => '',
-                      'tax_query' => array(
-                        array ( 'taxonomy' => 'type',
-                                'field' => 'slug',
-                                'terms' => 'exhibit'),
-                       array ('taxonomy' => 'faire',
-                                'field' => 'slug',
-                                'terms' => array($args['faire']) ),
-                        array ('taxonomy' => 'post_tag',
-                                'field' => 'term_id',
-                                'terms' => array($tag->term_id) ), 
-                       'relation' => 'AND')
-                      ));
-  
-                                          
-            if(($args['hide_empty']) && count($tag_posts) == 0) unset($tags[$tag_index]);
-
-        } 
-    } else {
-      $tags = array();
-    }
-    if(in_array('category', $term_types)) {
-        $cat_args = $args; //Lets not override 
-        $cat_args['hide_empty'] = false;
-        unset($cat_args['faire']);
-        unset($cat_args['faire_url']);
-        $cats = get_terms( 'category' , $cat_args );
-        foreach($cats as $cat_index => $cat) {
-        
-          $cat_posts = get_posts(array(
-                        'posts_per_page' => -1,
-                        'post_type' => 'mf_form',
-                        'post_status' => 'accepted',
-                        'sort' => '',
-                        'cat' => '',
-                        'tax_query' => array(
-                          array ( 'taxonomy' => 'type',
-                                  'field' => 'slug',
-                                  'terms' => 'exhibit'),
-                         array ('taxonomy' => 'faire',
-                                  'field' => 'slug',
-                                  'terms' => array($args['faire']) ),
-                         array ('taxonomy' => 'category',
-                                  'field' => 'term_id',
-                                  'terms' => array($cat->term_id) ), 
-                         'relation' => 'AND')
-                        ));
-                if(($args['hide_empty']) && count($cat_posts) == 0) unset($cats[$cat_index]);
-
-
-            }  
-           
-    } else {
-        $cats = array();
-    }
-    $cats_tags = array_merge($cats, $tags);
-
-    usort($cats_tags, function($a, $b) { return strcmp($a->slug, $b->slug); } );
-    
-    return $cats_tags;
- } 
 add_filter('the_title', function($title) {
 	return str_replace('u03a9', '&#8486;', $title);
 	}
