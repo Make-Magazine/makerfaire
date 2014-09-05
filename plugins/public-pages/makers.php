@@ -45,6 +45,8 @@ function mf_better_name( $str ) {
 		return 'World Maker Faire New York 2013';
 	} elseif ( $str == '2014_bayarea' ) {
 		return 'Maker Faire Bay Area 2014';
+	} elseif ( $str == '2014_newyork' ) {
+		return 'World Maker Faire New York 2014';
 	}
 }
 
@@ -311,7 +313,7 @@ function mf_featured_makers( $atts ) {
 		'meta_value'	=> true,
 		'post_type'		=> 'mf_form',
 		'post_status'	=> 'accepted',
-		'faire'			=> 'maker-faire-bay-area-2013'
+		'faire'			=> 'world-maker-faire-new-york-2014'
 		);
 	$args = wp_parse_args( $atts, $args );
 	$query = new WP_Query( $args );
@@ -608,17 +610,17 @@ function mf_featured_makers_home() {
 		);
 	$query = new WP_Query( $args );
 	$output = '<div id="featuredMakers" class="carousel slide">';
-	$output .= '<div class="meetthemakers"><h3><a href="http://makerfaire.com/bayarea-2013/maker-info/">Meet the Makers</a></h3></div>';
+	$output .= '<div class="meetthemakers"><h3><a href="http://makerfaire.com/new-york-2014/maker-info/">Meet the Makers</a></h3></div>';
 	$output .= '<div class="banner">';
-	$output .= '<h3 class="red">May 18<sup>th</sup> - 19<sup>th</sup> 2013</h3>';
+	$output .= '<h3 class="red">Septermber 20<sup>th</sup> - 21<sup>st</sup> 2014</h3>';
 	$output .= '<div class="bordered">';
-	$output .= '<h3>San Mateo County Events Center, CA</h3>';
-	$output .= '<h4>Saturday 10am - 8pm</h4>';
+	$output .= '<h3>New York Hall of Science, NY</h3>';
+	$output .= '<h4>Saturday 10am - 7pm</h4>';
 	$output .= '<h4>Sunday 10am - 6pm</h4>';
 	$output .= '</div>';
-	$output .= '<h4 class="blue"><a href="http://makerfaire2013.eventbrite.com/">Get Tickets</a></h4>';
-	$output .= '<h4 class="blue"><a href="http://makerfaire.com/alt">How to Get There</a></h4>';
-	$output .= '<h4 class="blue"><a href="http://makerfaire.com/bayarea-2013/schedule/">Program &amp; Schedule</a></h4>';
+	$output .= '<h4 class="blue"><a href="https://makerfaireny2014.eventbrite.com/">Get Tickets</a></h4>';
+	$output .= '<h4 class="blue"><a href="http://makerfaire.com/new-york-2014/getting-to-maker-faire/">How to Get There</a></h4>';
+	$output .= '<h4 class="blue"><a href="http://makerfaire.com/new-york-2014/schedule/">Program &amp; Schedule</a></h4>';
 	$output .= '<h4 class="blue"><a href="http://app.net/makerfaire">Download the App</a></h4>';
 	$output .= '</div>';
 	$output .= '<div class="carousel-inner">';
@@ -732,8 +734,8 @@ function mf_schedule( $atts ) {
 
 	if ( $query->found_posts >= 1 ) :
 	$output .= '<table class="table table-striped table-bordered table-schedule">';
-	if ( $faire == 'world-maker-faire-new-york-2013' ) {
-		$output .= '<thead><tr><th colspan="2">September 21st, 2013</th></tr></thead>';
+	if ( $faire == 'world-maker-faire-new-york-2014' ) {
+		$output .= '<thead><tr><th colspan="2">September 20th, 2014</th></tr></thead>';
 	}
 	while ( $query->have_posts() ) : $query->the_post();
 		$meta = get_post_meta( get_the_ID() );
@@ -826,8 +828,8 @@ function mf_schedule( $atts ) {
 		wp_cache_set( $location . '_sunday_schedule', $query, '', 300 );
 	}
 	$output .= '<table class="table table-striped table-bordered table-schedule">';
-	if ( $faire == 'world-maker-faire-new-york-2013' ) {
-		$output .= '<thead><tr><th colspan="2">September 22nd, 2013</th></tr></thead>';
+	if ( $faire == 'world-maker-faire-new-york-2014' ) {
+		$output .= '<thead><tr><th colspan="2">September 21st, 2014</th></tr></thead>';
 	}
 	while ( $query->have_posts() ) : $query->the_post();
 		$meta = get_post_meta( get_the_ID());
