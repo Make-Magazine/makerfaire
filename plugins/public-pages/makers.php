@@ -463,17 +463,14 @@ function mf_merged_terms( $atts ) {
     'hide_empty'	=> false,
 		'exclude'		=> array( '1' ),
 		);
-<<<<<<< HEAD
   //$args = wp_parse_args( $atts, $args );
 	$cats = get_terms( 'category', $args );
   $tags = get_terms( 'post_tag' , $args );
   $cats_tags = array_merge($cats, $tags);
     usort($cats_tags, function($a, $b) { return strcmp($a->slug, $b->slug); } );
-=======
     $faire = ((isset($atts['faire'])) && ($atts['faire'] != '')) ? $atts['faire'] : MF_CURRENT_FAIRE;
     //array_merge for atts here to avoid breaking code term display code
     $cats_tags = mf_get_terms(array('category', 'post_tag'), array_merge($atts, array('faire' => $faire) ) );
->>>>>>> develop
 	$output = '<ul class="columns">';
 	foreach ($cats_tags as $cat) {
 		// $atts['faire'] has been deprecated and will be removed once the production server has been updated.
@@ -494,8 +491,6 @@ function mf_merged_terms( $atts ) {
 
 add_shortcode('mf_cat_list', 'mf_merged_terms');
 
-<<<<<<< HEAD
-=======
 function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
 
     $args = array(
@@ -588,7 +583,7 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
     
     return $cats_tags;
  } 
->>>>>>> develop
+ 
 add_filter('the_title', function($title) {
 	return str_replace('u03a9', '&#8486;', $title);
 	}
