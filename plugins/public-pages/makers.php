@@ -465,11 +465,6 @@ function mf_merged_terms( $atts ) {
 		'hide_empty'	=> true, //unreliable: See mf_get_terms.
 		'exclude'		=> array( '1' ),
 		);
-  //$args = wp_parse_args( $atts, $args );
-	///$cats = get_terms( 'category', $args );
-  //$tags = get_terms( 'post_tag' , $args );
-  //$cats_tags = array_merge($cats, $tags);
-  //usort($cats_tags, function($a, $b) { return strcmp($a->slug, $b->slug); } );
     $faire = ((isset($atts['faire'])) && ($atts['faire'] != '')) ? $atts['faire'] : MF_CURRENT_FAIRE;
     //array_merge for atts here to avoid breaking code term display code
     $cats_tags = mf_get_terms(array('category', 'post_tag'), array_merge($atts, array('faire' => $faire) ) );
@@ -519,19 +514,7 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
         unset($tag_args['faire']);
         unset($tag_args['faire_url']);
        
-        //print("Args: <pre>".print_r($tag_args, true)."</pre>");      
         $tags = get_terms( 'post_tag' , $tag_args );
-
-          //print("Terms: <pre>".print_r($cats, true)."</pre>");
-       print("Tags: <pre>".print_r($tags, true)."</pre>");
-
-      //$cats_tags = array_merge($cats, $tags);
-
-       //print("Terms: <pre>".print_r($cats_tags, true)."</pre>");
-
-        //usort($cats_tags, function($a, $b) { return strcmp($a->slug, $b->slug); } );
-
-       //print("Terms: <pre>".print_r($cats_tags, true)."</pre>");
 
        foreach($tags as $tag_index => $tag) {
 
@@ -553,16 +536,8 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
                                 'terms' => array($tag->term_id) ), 
                        'relation' => 'AND')
                       ));
-
-            //$tag_count = count($tag_posts);            
-                                          
-            print("Tag Posts[{$tag->term_id}](".count($tag_posts)."): {$tag->slug} <br>\n");
             if(($args['hide_empty']) && count($tag_posts) == 0) unset($tags[$tag_index]);
-
-            //print("Term Posts($tag_count): <br>");
         } 
-
-        //print("Term Tags(): <pre>".print_r($tags, true)."</pre>"); 
        
     } else {
       $tags = array();
@@ -576,10 +551,7 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
         $cat_args['hide_empty'] = false;
         unset($cat_args['faire']);
         unset($cat_args['faire_url']);
-       
-        //print("Args: <pre>".print_r($cat_args, true)."</pre>");      
         $cats = get_terms( 'category' , $cat_args );
-        //print("Term Cats(): <pre>".print_r($cats, true)."</pre>");
         foreach($cats as $cat_index => $cat) {
         
           $cat_posts = get_posts(array(
@@ -600,20 +572,11 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
                                   'terms' => array($cat->term_id) ), 
                          'relation' => 'AND')
                         ));
-
               if(($args['hide_empty']) && count($cat_posts) == 0) unset($cats[$cat_index]);
-              
-
-                
-              
-            
             }  
-           
     } else {
         $cats = array();
     }
-
-
    $cats_tags = array_merge($cats, $tags);
 
     usort($cats_tags, function($a, $b) { return strcmp($a->slug, $b->slug); } );
