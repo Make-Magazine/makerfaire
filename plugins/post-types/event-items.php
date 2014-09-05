@@ -377,7 +377,7 @@ function mf_email_presenter_schedule() {
 		$body = force_balance_tags( str_replace( array_keys( $find_and_replace ), array_values( $find_and_replace ), $email_body ) );
 
 		// Email it baby!
-		$results[ $maker['name'] ] = wp_mail( esc_html( $maker['name'] ) . ' <' . sanitize_email( $maker['email'] ) . '>', 'Confirmation and logistics for your presentation @Maker Faire Bay Area 2014', $body, array( 'Content-Type: text/html', "From: Sabrina Merlo <sabrina@makerfaire.com", "Bcc: sabrina@makerfaire.com" ) );
+		$results[ $maker['name'] ] = wp_mail( esc_html( $maker['name'] ) . ' <' . sanitize_email( $maker['email'] ) . '>', 'Confirmation and logistics for your presentation at World Maker Faire New York 2014', $body, array( 'Content-Type: text/html', "From: Sabrina Merlo <sabrina@makerfaire.com", "Bcc: sabrina@makerfaire.com" ) );
 	}
 
 	// Check each result of the email and see if any failed.
