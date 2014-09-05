@@ -557,7 +557,7 @@ function mapper_admin_javascript() { ?>
 			margin-bottom: 5px;
 		}
 	</style>
-	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
 	<script type="text/javascript">
 		var geocoder = new google.maps.Geocoder();
 
