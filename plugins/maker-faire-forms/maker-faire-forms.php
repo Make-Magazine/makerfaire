@@ -2726,10 +2726,7 @@ class MAKER_FAIRE_FORM {
 			//NONCE CHECK
 			if ( isset( $_POST['mf_syncjdb'] ) && wp_verify_nonce( $_POST['mf_syncjdb'], 'mf_syncjdb' ) )
 				$this->sync_jdb();
-      elseif(( $_POST['mf_synctags'] ) && wp_verify_nonce( $_POST['mf_synctags'], 'mf_synctags' ) ) {
-        $offset = (isset($_POST['offset'])) ? intval($_POST['offset']) : 0;
-				$this->sync_tags(0, $offset);
-			} elseif ( isset( $_POST['mf_syncstatusjdb'] ) && wp_verify_nonce( $_POST['mf_syncstatusjdb'], 'mf_syncstatusjdb' ) ) {
+			elseif ( isset( $_POST['mf_syncstatusjdb'] ) && wp_verify_nonce( $_POST['mf_syncstatusjdb'], 'mf_syncstatusjdb' ) ) {
 				echo $this->sync_all_status_jdb( $_POST['offset'] );
 			}
 		}
@@ -2883,45 +2880,6 @@ class MAKER_FAIRE_FORM {
 				<h3><a href="<?php echo wp_nonce_url( 'edit.php?post_type=mf_form&page=mf_reports&presentation_csv=manager', 'mf_export_check' ); ?>">Stage Manager Report</a></h3>
 				<h3><a href="<?php echo wp_nonce_url( 'edit.php?post_type=mf_form&page=mf_reports&presentation_csv=signage', 'mf_export_check' ); ?>">Stage Signage Report</a></h3>
 				<h3><a href="<?php echo wp_nonce_url( 'edit.php?post_type=mf_form&page=mf_reports&presentation_csv=checkin', 'mf_export_check' ); ?>">Presenter CheckIn Report</a></h3>
-      <?php 
-          $wp_app_query_args = array(
-            'posts_per_page'      => 200,
-            'post_type'          => 'mf_form',
-            'post_status'        => 'any',
-            'faire'            => MF_CURRENT_FAIRE,
-
-            // Prevent new posts from affecting the order
-            'orderby'           => 'ID',
-            'order'           => 'ASC',
-            'no_found_rows' => false,
-            // Speed this up
-            'update_post_meta_cache'  => false,
-            'update_post_term_cache'  => false,
-          );
-
-    // Get the first set of posts
-          $wp_app_query = new WP_Query( $wp_app_query_args );
-          $wp_app_query_count = $wp_app_query->found_posts;
-      ?>
-			<form action="" method="post" style="border-top: 1px solid #dfdfdf;">
-        <h2 style="margin-top:20px;">Sync Maker Tags/Cats</h2>
-			Syncronizes tags/cats on 200 applications at a time.<br />To do a full sync start at 0 and increase by 200 until you're done.
-				<p>
-					<div style="float:left; width:50px">
-						<strong>Start</strong><br />
-						<select name="offset">
-							<option value="0">0</option>
-							<?php foreach( range( 200, intval( $wp_app_query_count ), 200 ) as $v ) : ?>
-							<option value="<?php echo intval( $v ); ?>"><?php echo intval( $v ); ?></option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-				</p>
-				<div class="clear"></div>
-				<p class="submit"><input type="submit" value="Sync Tags" class="button button-primary button-large" /></p>
-				<?php wp_nonce_field( 'mf_synctags', 'mf_synctags' ); ?>
-        <?php echo("<p>Last run(".get_option('mf_sync_tags_offset')."): ".date("d M Y h:i a",get_option('mf_sync_tags_runtime'))."</p>"); ?>
-			</form>
 			</div>
 		</div>
 	<?php }
@@ -4347,140 +4305,6 @@ class MAKER_FAIRE_FORM {
 
 		return $success;
 	}
-
-	/*
-	* Sync all MakerFiare Application Objects with External JDB
-	*
-	* @access private
-	* @param int $id Post id to SYNC
-	* =====================================================================*/
-	private function sync_tags( $id = 0, $offset = 0 ) {
-        error_log('Sync Tags::'.$id);
-          $wp_app_query_args = array(
-            'posts_per_page'    => 200, //2000
-            'post_type'         => 'mf_form',
-            'post_status'       => 'any',
-            'faire'             => MF_CURRENT_FAIRE,
-            'offset'            => $offset,
-
-            // Prevent new posts from affecting the order
-            'orderby'           => 'ID',
-            'order'           => 'ASC',
-            'no_found_rows' => false,
-            // Speed this up
-            'update_post_meta_cache'  => false,
-            'update_post_term_cache'  => false,
-          );
-
-    // Get the first set of posts
-    $query = new WP_Query( $wp_app_query_args );
-    $wp_app_query_count = $query->found_posts;
-
-    while ( $query->have_posts() ) : $query->the_post();
-      global $post;
-      setup_postdata($post);
-      $json_post = json_decode( str_replace( "\'", "'", get_the_content() ) );
-
-      if ( isset( $json_post->cats ) ) {
-        $catsobj = $json_post->cats;
-      } else {
-        $catsobj = null;
-      }
-      $cats = null;
-      if ( is_array( $catsobj ) ) {
-        $cats = $catsobj;
-      } else {
-        $cats = explode(',', trim($catsobj));
-      }
-      if ( !empty( $cats[0] ) ) {
-
-        foreach ($cats as $cat) {
-
-          $term = wpcom_vip_get_term_by('slug', $cat, 'category');
-
-          if($term !== false) {
-           
-              $result = wp_set_object_terms( get_the_ID(), $cat, 'category', true );
-              
-          }
-
-        }
-      }
-      if ( isset( $json_post->tags ) ) {
-        $tagsobj = $json_post->tags;
-      } else {
-        $tagsobj = null;
-      }
-      $tags = null;
-      if ( is_array( $tagsobj ) ) {
-        $tags = $tagsobj;
-      } else {
-        $tags = explode(',', $tagsobj);
-      }
-
-      if ( !empty( $tags[0] ) ) {
-        foreach ($tags as $tag) {
-          $term = wpcom_vip_get_term_by('slug', trim($tag), 'post_tag');
-          if($term !== false) {
-            $result = wp_set_object_terms( get_the_ID(), $tag, 'post_tag', true );
-          } else {
-              $tag_split = explode('-',trim($tag));
-              $tag_split_count = count($tag_split);
-              if($tag_split_count > 1) {
-                $ix = 0;
-                do {
-                    $term_split = wpcom_vip_get_term_by('slug', $tag_split[$ix], 'post_tag');
-                    if($term_split !== false) { 
-                      wp_set_object_terms(get_the_ID(), $tag_split[$ix], 'post_tag', true);
-                    } elseif(($ix+2) < $tag_split_count) {
-                        $tag_1 = $tag_split[$ix];
-                        $term_split = wpcom_vip_get_term_by('slug', $tag_1, 'post_tag');
-                        if($term_split !== false) { 
-                          wp_set_object_terms(get_the_ID(), $tag_split[$ix], 'post_tag', true);
-                          //no need to increment $ix twice if tag found
-                        } else {
-                          $tag_2 = $tag_split[$ix].'-'.$tag_split[$ix+1];
-                           $term_split = wpcom_vip_get_term_by('slug', $tag_2, 'post_tag');
-                          if($term_split !== false) { 
-                            wp_set_object_terms(get_the_ID(), $tag_2, 'post_tag', true);
-                            $ix++; //increment twice if tag found
-                          } else {
-                            $tag_3 = $tag_split[$ix].'-'.$tag_split[$ix+1].'-'.$tag_split[$ix+2];
-                            $term_split = wpcom_vip_get_term_by('slug', $tag_3, 'post_tag');
-                            if($term_split !== false) {
-                              wp_set_object_terms(get_the_ID(), $tag_3, 'post_tag', true);
-                              $ix = $ix + 2; //increment 3 times if tags found.
-                            }
-                          }
-                        }
-                    } elseif(($ix+1) < $tag_split_count) {
-                      $tag_1 = $tag_split[$ix];
-                      $term_split = wpcom_vip_get_term_by('slug', $tag_1, 'post_tag');
-                      if($term_split !== false) { 
-                        wp_set_object_terms(get_the_ID(), $tag_split[$ix], 'post_tag', true);
-                        //no need to increment $ix twice if tag found
-                      } else {
-                        $tag_2 = $tag_split[$ix].'-'.$tag_split[$ix+1];
-                        $term_split = wpcom_vip_get_term_by('slug', $tag_2, 'post_tag');
-                        if($term_split !== false) { 
-                          wp_set_object_terms(get_the_ID(), $tag_2, 'post_tag', true);
-                          $ix++; //increment twice if tag found
-                        }
-                      }
-                    }
-                    $ix++;
-                  } while ($ix < $tag_split_count);
-                  $term_split = wpcom_vip_get_term_by('slug', $tag_split[0], 'post_tag');
-              }
-          }
-        }
-      } //End Tags
-
-    endwhile;
-    error_log("Sync Tags:: completed");
-    update_option( 'mf_sync_tags_runtime', time() );
-    update_option('mf_sync_tags_offset', $offset );
-  }
 
 	/*
 	* Updgrade plugin apporpriatly.
