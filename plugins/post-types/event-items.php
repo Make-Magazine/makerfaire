@@ -692,8 +692,8 @@ function mf_get_faire_date( $faire ) {
  		);
 	} elseif ( $faire == 'world-maker-faire-new-york-2014' ) {
 		$output = array(
-			'Saturday'	=> '9/21/2014',
-			'Sunday'	=> '9/22/2014',
+			'Saturday'	=> '9/20/2014',
+			'Sunday'	=> '9/21/2014',
 			'time_zone'	=> ' EST',
 		);
 	} elseif ( $faire == 'world-maker-faire-new-york-2013' ) { // @todo let's update this to match 2014's object but honestly, we'll need to update a bunch of legacy code. Another time me thinks.
