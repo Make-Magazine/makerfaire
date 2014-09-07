@@ -328,8 +328,8 @@ function mf_email_presenter_schedule() {
 	// Send all emails in testing environments to one account.
 	if ( isset( $_SERVER['HTTP_HOST'] ) && in_array( $_SERVER['HTTP_HOST'], array( 'localhost', 'make.com', 'vip.dev', 'staging.makerfaire.com' ) ) ) {
 		$makers = array(
-			'names' => array( 'Jake Spurlock' ),
-			'emails' => array( 'jspurlock@makermedia.com' ),
+			'names' => array( 'Web Master' ),
+			'emails' => array( 'webmaster@makerfaire.com' ),
 		);
 	}
 
@@ -365,7 +365,7 @@ function mf_email_presenter_schedule() {
 		// Pair our custom variables found in the email to actual data. We will run a find and replace on it for a dynamic email
 		$find_and_replace = array(
 			'$presenter_name' => esc_html( $maker['name'] ),
-			'$faire_name' => 'Maker Faire Bay Area 2014',
+			'$faire_name' => 'World Maker Faire New York 2014',
 			'$app_name' => esc_html( $application->post_title ),
 			'$scheduled_date' => date( 'l, F j, Y', strtotime( $faire_date[ $schedule_meta['mfei_day'][0] ] ) ),
 			'$scheduled_start_time' => esc_html( $schedule_meta['mfei_start'][0] ),
