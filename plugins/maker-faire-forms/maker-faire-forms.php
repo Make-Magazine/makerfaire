@@ -4354,7 +4354,6 @@ class MAKER_FAIRE_FORM {
 	* @param int $id Post id to SYNC
 	* =====================================================================*/
 	private function sync_tags( $id = 0, $offset = 0 ) {
-				error_log('Sync Tags::'.$id);
 					$wp_app_query_args = array(
 						'posts_per_page'	=> 200, //2000
 						'post_type'         => 'mf_form',
