@@ -3814,6 +3814,7 @@ class MAKER_FAIRE_FORM {
 		$args = array(
 			'posts_per_page' => 1999,
 			'post_type' 	 => 'mf_form',
+			'post_status' => array('accepted'),
 			'faire' 		 => MF_CURRENT_FAIRE,
 			'type'			 => 'presenter'
 		);
