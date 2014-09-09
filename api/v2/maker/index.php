@@ -20,7 +20,7 @@ if ( $type == 'maker' ) {
 	$args = array(
 		'no_found_rows'  => true,
 		'post_type' 	 => 'mf_form',
-		'post_status' 	 => 'any',
+		'post_status' 	 => array('accepted'),
 		'posts_per_page' => absint( MF_POSTS_PER_PAGE ),
 		'faire'			 => sanitize_title( $faire ),
 	);
@@ -58,8 +58,8 @@ if ( $type == 'maker' ) {
 			$maker['thumb_img_url'] = esc_url( wpcom_vip_get_resized_remote_image_url( $maker_image, '80', '80' ) );
 			$maker['large_image_url'] = esc_url( wpcom_vip_get_resized_remote_image_url( $maker_image, '600', '600' ) );
 		} else {
-			$maker['thumb_img_url'] = null;
-			$maker['large_image_url'] = null;
+			$maker['thumb_img_url'] = '';
+			$maker['large_image_url'] = '';
 		}
 
 		// Application ID this maker is assigned to
@@ -71,12 +71,12 @@ if ( $type == 'maker' ) {
 		// Maker Video link
 		//$maker_video = get_post_meta( absint( $post->ID ), 'video', true );
 		//$maker['youtube_url'] = ( ! empty( $maker_video ) ) ? esc_url( $maker_video ) : null;
-		$maker['youtube_url'] = null;
+		$maker['youtube_url'] = '';
 
 		// Maker Website link
 		//$maker_website = get_post_meta( absint( $post->ID ), 'website', true );
 		//$maker['website_url'] = ( ! empty( $maker_website ) ) ? esc_url( $maker_website ) : null;
-		$maker['youtube_url'] = null;
+		$maker['website_url'] = '';
 
 		// Put the maker into our list of makers
 		array_push( $makers, $maker );
