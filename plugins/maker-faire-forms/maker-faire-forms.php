@@ -4510,21 +4510,21 @@ class MAKER_FAIRE_FORM {
 	private function sync_makers( $id = 0, $offset = 0 ) {
         global $wpdb;
       
-          $wp_app_query_args = array(
-            'posts_per_page'    => 25, //2000
-            'post_type'         => 'mf_form',
-            'post_status'       => 'any',
-            'faire'             => MF_CURRENT_FAIRE,
-            'offset'            => $offset,
+				  $wp_app_query_args = array(
+				    'posts_per_page'    => 100, //2000
+				    'post_type'		=> 'mf_form',
+				    'post_status'		 => 'any',
+				    'faire' 			=> MF_CURRENT_FAIRE,
+				    'offset'				    => $offset,
 
-            // Prevent new posts from affecting the order
-            'orderby'           => 'ID',
-            'order'           => 'ASC',
-            'no_found_rows' => false,
-            // Speed this up
-            'update_post_meta_cache'  => false,
-            'update_post_term_cache'  => false,
-          );
+				    // Prevent new posts from affecting the order
+				    'orderby'				   => 'ID',
+				    'order'				   => 'ASC',
+				    'no_found_rows' => false,
+				    // Speed this up
+				    'update_post_meta_cache'  => false,
+				    'update_post_term_cache'  => false,
+				  );
 
     // Get the first set of posts
     $query = new WP_Query( $wp_app_query_args );
@@ -4535,117 +4535,118 @@ class MAKER_FAIRE_FORM {
       setup_postdata($post);
       $json_post = json_decode( str_replace( "\'", "'", get_the_content() ) );
       if(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'A list of makers')) {
-        if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 1)) {
-            foreach($json_post->m_maker_name as $ix => $maker_name) {
-              $maker_name_slug = sanitize_title_with_dashes($maker_name, 'save');
-              $maker_id = $wpdb->get_var("SELECT ID FROM wp_posts WHERE post_type = 'maker' AND post_name LIKE '".$maker_name_slug."%' ORDER BY ID ASC LIMIT 1;");
-                 if(empty($maker_id)) {
-                    $maker_bio = (isset($json_post->m_maker_bio[$ix])) ? sanitize_text_field($json_post->m_maker_bio[$ix]) : '';
-                    $maker_email = (isset($json_post->m_maker_email[$ix])) ? sanitize_email($json_post->m_maker_email[$ix]) : '';
-                    // Create our post array
-                    $new_maker = array (
-                      'post_title' => esc_attr($maker_name),
-                      'post_content' => $maker_bio,
-                      'post_type' => 'maker',
-                      'post_status' => 'publish',
-                       );
-                      // Create our post and save it's info to a variable for use in adding post meta and error checking
-                      $maker_id = wp_insert_post( $new_maker );
-                      if( !is_wp_error( $maker_id ) ) {
-                        update_post_meta( absint( $maker_id), 'email', $maker_email);
-                        wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
-                        update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
-                      }
-                    } else {
-                        //Update meta
-                        wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
-                        $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
-                        if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
-                    }
-           }
-        } elseif(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) == 1)) {
-            $maker_name = $json_post->m_maker_name[0];
-            $maker_name_slug = sanitize_title_with_dashes($maker_name);
-          
-            $maker_id = $wpdb->get_var("SELECT ID FROM wp_posts WHERE post_type = 'maker' AND post_name LIKE '".$maker_name_slug."%' ORDER BY ID ASC LIMIT 1;");
-             if(empty($maker_id)) {
-                $maker_bio = (isset($json_post->m_maker_bio[0])) ? sanitize_text_field($json_post->m_maker_bio[0]) : '';
-                $maker_email = (isset($json_post->m_maker_email[0])) ? sanitize_email($json_post->m_maker_email[0]) : '';
-                // Create our post array
-                $new_maker = array (
-                  'post_title' => esc_attr($maker_name),
-                  'post_content' => $maker_bio,
-                  'post_type' => 'maker',
-                  'post_status' => 'publish',
-                   );
+				if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 1)) {
+				    foreach($json_post->m_maker_name as $ix => $maker_name) {
+							$maker_name_slug = sanitize_title_with_dashes($maker_name, 'save');
+							$maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name LIKE '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug.'%' ));
+								 if(empty($maker_id)) {
+								    $maker_bio = (isset($json_post->m_maker_bio[$ix])) ? sanitize_text_field($json_post->m_maker_bio[$ix]) : '';
+								    $maker_email = (isset($json_post->m_maker_email[$ix])) ? sanitize_email($json_post->m_maker_email[$ix]) : '';
+								    // Create our post array
+								    $new_maker = array (
+								      'post_title' => esc_attr($maker_name),
+								      'post_content' => $maker_bio,
+								      'post_type' => 'maker',
+								      'post_status' => 'publish',
+								       );
+								      // Create our post and save it's info to a variable for use in adding post meta and error checking
+								      $maker_id = wp_insert_post( $new_maker );
+								      if( !is_wp_error( $maker_id ) ) {
+												update_post_meta( absint( $maker_id), 'email', $maker_email);
+												wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
+												update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
+								      }
+								    } else {
+												//Update meta
+												wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
+												$maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
+												if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
+								    }
+				   }
+				} elseif(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) == 1)) {
+				    $maker_name = $json_post->m_maker_name[0];
+				    $maker_name_slug = sanitize_title_with_dashes($maker_name);
+				  
+						$maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name LIKE '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug.'%' ));
+							if(empty($maker_id)) {
+								$maker_bio = (isset($json_post->m_maker_bio[0])) ? sanitize_text_field($json_post->m_maker_bio[0]) : '';
+								$maker_email = (isset($json_post->m_maker_email[0])) ? sanitize_email($json_post->m_maker_email[0]) : '';
+								// Create our post array
+								$new_maker = array (
+								  'post_title' => esc_attr($maker_name),
+								  'post_content' => $maker_bio,
+								  'post_type' => 'maker',
+								  'post_status' => 'publish',
+								   );
 
 
-                  // Create our post and save it's info to a variable for use in adding post meta and error checking
-                  $maker_id = wp_insert_post( $new_maker );
-                  if( !is_wp_error( $maker_id ) ) {
-                    update_post_meta( absint( $maker_id), 'email', $maker_email);
-                    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
-                    update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
-                      
-                  }
-                } else {
-                    //Update meta
-                    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
-                    $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
-                    if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
-                }
-        }
+								  // Create our post and save it's info to a variable for use in adding post meta and error checking
+								  $maker_id = wp_insert_post( $new_maker );
+								  if( !is_wp_error( $maker_id ) ) {
+								    update_post_meta( absint( $maker_id), 'email', $maker_email);
+								    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
+								    update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
+								      
+								  }
+								} else {
+								    //Update meta
+								    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
+								    $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
+								    if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
+								}
+				}
       } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'A group or association')) {
        if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) == 1)) {
-            $maker_name = $json_post->m_maker_name[0];
-            $maker_name_slug = sanitize_title_with_dashes($maker_name);
-            $maker_id = $wpdb->get_var("SELECT ID FROM wp_posts WHERE post_type = 'maker' AND post_name LIKE '".$maker_name_slug."%' ORDER BY ID ASC LIMIT 1;");
-            if(empty($maker_id)) {
-                $maker_bio = (isset($json_post->m_maker_bio[0])) ? sanitize_text_field($json_post->m_maker_bio[0]) : '';
-                $maker_email = (isset($json_post->m_maker_email[0])) ? sanitize_email($json_post->m_maker_email[0]) : '';
-                // Create our post array
-                $new_maker = array (
-                  'post_title' => esc_attr($maker_name),
-                  'post_content' => $maker_bio,
-                  'post_type' => 'maker',
-                  'post_status' => 'publish',
-                   );
+						$maker_name = $json_post->m_maker_name[0];
+						$maker_name_slug = sanitize_title_with_dashes($maker_name);
+						$maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name LIKE '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug.'%' ));
+				    if(empty($maker_id)) {
+								$maker_bio = (isset($json_post->m_maker_bio[0])) ? sanitize_text_field($json_post->m_maker_bio[0]) : '';
+								$maker_email = (isset($json_post->m_maker_email[0])) ? sanitize_email($json_post->m_maker_email[0]) : '';
+								// Create our post array
+								$new_maker = array (
+								  'post_title' => esc_attr($maker_name),
+								  'post_content' => $maker_bio,
+								  'post_type' => 'maker',
+								  'post_status' => 'publish',
+								   );
 
 
-                  // Create our post and save it's info to a variable for use in adding post meta and error checking
-                  $maker_id = wp_insert_post( $new_maker );
-                  if( !is_wp_error( $maker_id ) ) {
-                    update_post_meta( absint( $maker_id), 'email', $maker_email);
-                    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
-                    update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
-                      
-                  }
-                } else {
-                    //Update meta
-                    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
-                    $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
-                    if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
-                }
-        }
+								  // Create our post and save it's info to a variable for use in adding post meta and error checking
+								  $maker_id = wp_insert_post( $new_maker );
+								  if( !is_wp_error( $maker_id ) ) {
+								    update_post_meta( absint( $maker_id), 'email', $maker_email);
+								    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
+								    update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
+								      
+								  }
+								} else {
+								    //Update meta
+								    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
+								    $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
+								    if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
+								}
+				}
       } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'One maker')) {
 
        if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) == 1)) {
-            $maker_name = $json_post->m_maker_name[0];
-            $maker_name_slug = sanitize_title_with_dashes($maker_name);
-          
-            $maker_id = $wpdb->get_var("SELECT ID FROM wp_posts WHERE post_type = 'maker' AND post_name LIKE '".$maker_name_slug."%' ORDER BY ID ASC LIMIT 1;");
+					$maker_name = $json_post->m_maker_name[0];
+					$maker_name_slug = sanitize_title_with_dashes($maker_name);
+					$maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name LIKE '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug.'%' ));
 
-            if(!empty($maker_id)) {
-                   //Update meta
-                    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
-                    $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
-                    if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
-                }
-            }
-        } 
+				    if(!empty($maker_id)) {
+								   //Update meta
+								    wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
+								    $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
+								    if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', get_the_ID());
+								}
+				    }
+				} 
 
-    endwhile;
+		endwhile;
 
+		update_option( 'mf_sync_makers_runtime', time() );
+		update_option('mf_sync_makers_offset', $offset );
 
 
   }
