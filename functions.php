@@ -45,6 +45,8 @@ include_once dirname( __FILE__ ) . '/plugins/white-house/white-house.php';
 // Load the settings field for the Applications API
 include_once dirname( __FILE__ ) . '/api/admin-settings.php';
 
+// Load the functions for the Applications API
+include_once dirname( __FILE__ ) . '/api/v2/functions.php';
 
 require_once( 'taxonomies/type.php' );
 require_once( 'taxonomies/sponsor-category.php' );

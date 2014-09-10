@@ -75,19 +75,11 @@ if ( $type == 'schedule' ) {
 		$schedule['entity_id_refs'] = array( absint( $app_id ) );
 
 		// Application Makers
-		$maker_args = array(
-			'post_type' 		=> 'maker',
-			'posts_per_page' 	=> 20,
-			'faire'				=> $faire,
-			'mfei_record' 		=> absint( $app_id ),
-		);
-		$makers = new WP_Query( $maker_args );
+		$maker_ids = get_makers_from_app(absint($app_id));
 
-		$maker_ids = array();
-
-		foreach ( $makers->posts as $maker ) {
-			$maker_ids[] = absint( $maker->ID );
-		}
+		//foreach ( $makers->posts as $maker ) {
+		//	$maker_ids[] = absint( $maker->ID );
+		//}
 
 		$schedule['maker_id_refs'] = ( ! empty( $maker_ids ) ) ? $maker_ids : null;
 
