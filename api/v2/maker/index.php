@@ -19,8 +19,8 @@ if ( $type == 'maker' ) {
 	// Set the query args.
 	$args = array(
 		'no_found_rows'  => true,
-		'post_type' 	 => 'mf_form',
-		'post_status' 	 => array('accepted'),
+		'post_type' 	 => 'maker',
+		'post_status' 	 => 'any',
 		'posts_per_page' => absint( MF_POSTS_PER_PAGE ),
 		'faire'			 => sanitize_title( $faire ),
 	);
@@ -44,39 +44,27 @@ if ( $type == 'maker' ) {
 		// REQUIRED: The maker ID
 		$maker['id'] = absint( $post->ID );
 
-    $maker_meta_content = json_decode( $post->post_content);
 		// REQUIRED: The maker name
-		if (isset($maker_meta_content->maker_name)) {
-			$maker['name'] = html_entity_decode($maker_meta_content->maker_name, ENT_COMPAT, 'utf-8' );
-		} else {
-			$maker['name'] = html_entity_decode(get_the_title(), ENT_COMPAT, 'utf-8' );
-    }
-    
+		$maker['name'] = html_entity_decode( get_the_title(), ENT_COMPAT, 'utf-8' );
+
 		// Maker Thumbnail and Large Images
-		if (isset($maker_meta_content->maker_photo)) {
-			$maker_image = $maker_meta_content->maker_photo;
-			$maker['thumb_img_url'] = esc_url( wpcom_vip_get_resized_remote_image_url( $maker_image, '80', '80' ) );
-			$maker['large_image_url'] = esc_url( wpcom_vip_get_resized_remote_image_url( $maker_image, '600', '600' ) );
-		} else {
-			$maker['thumb_img_url'] = '';
-			$maker['large_image_url'] = '';
-		}
+		$maker_image = get_post_meta( absint( $post->ID ), 'photo_url', true );
+		$maker['thumb_img_url'] = esc_url( wpcom_vip_get_resized_remote_image_url( $maker_image, '80', '80' ) );
+		$maker['large_image_url'] = esc_url( wpcom_vip_get_resized_remote_image_url( $maker_image, '600', '600' ) );;
 
 		// Application ID this maker is assigned to
 		$maker['child_id_refs'] = array_unique( get_post_meta( absint( $post->ID ), 'mfei_record' ) );
 
 		// Maker bio information
-		$maker['description'] = ((isset($maker_meta_content->maker_bio)) && ($maker_meta_content->maker_bio != '')) ? html_entity_decode($maker_meta_content->maker_bio) : null;
+		$maker['description'] = ( ! empty( $post->post_content ) ) ? mf_clean_content( $post->post_content ) : null;
 
 		// Maker Video link
-		//$maker_video = get_post_meta( absint( $post->ID ), 'video', true );
-		//$maker['youtube_url'] = ( ! empty( $maker_video ) ) ? esc_url( $maker_video ) : null;
-		$maker['youtube_url'] = '';
+		$maker_video = get_post_meta( absint( $post->ID ), 'video', true );
+		$maker['youtube_url'] = ( ! empty( $maker_video ) ) ? esc_url( $maker_video ) : null;
 
 		// Maker Website link
-		//$maker_website = get_post_meta( absint( $post->ID ), 'website', true );
-		//$maker['website_url'] = ( ! empty( $maker_website ) ) ? esc_url( $maker_website ) : null;
-		$maker['website_url'] = '';
+		$maker_website = get_post_meta( absint( $post->ID ), 'website', true );
+		$maker['website_url'] = ( ! empty( $maker_website ) ) ? esc_url( $maker_website ) : null;
 
 		// Put the maker into our list of makers
 		array_push( $makers, $maker );
