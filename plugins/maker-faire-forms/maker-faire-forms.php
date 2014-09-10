@@ -4543,8 +4543,6 @@ class MAKER_FAIRE_FORM {
 						$this->add_maker_from_app($json_post, $json_post->m_maker_name, get_the_ID(), true );
 				}
 		  } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'A group or association')) {
-				 //error_log("Data: <pre>".print_r($json_post, true)."</pre>");
-
 		   if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) == 1)) {
 
 						$this->add_maker_from_app($json_post, $json_post->m_maker_name, get_the_ID(), true );
