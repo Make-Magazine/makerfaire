@@ -4620,8 +4620,25 @@ class MAKER_FAIRE_FORM {
 						  //Update meta
 						  wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
 						  $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
-						  if(empty($maker_mfei)) update_post_meta( absint( $maker_id), 'mfei_record', absint($app_id));
-				  }
+							$maker_mfei_list = get_post_meta( absint($maker_id), 'mfei_list', true );
+							if(empty($maker_mfei)) {
+								update_post_meta( absint( $maker_id), 'mfei_record', absint($app_id));
+							} 
+							if(!empty($maker_mfei_list)) {
+									$mfei_ids = explode(',',$maker_mfei_list);
+									if(!in_array((string)$maker_id, $mfei_ids)) {
+											$mfei_ids[] = $maker_id;
+											$mfei_new = array();
+											foreach($mfei_ids as $mfei_id) {
+												$mfei_new[] = absint($mfei_id);
+											}
+											update_post_meta( absint( $maker_id), 'mfei_list', join(',',$mfei_new));
+									}
+							
+								} else {
+									update_post_meta( absint( $maker_id), 'mfei_list', (string)$maker_mfei);
+								}
+					}
 				}
 
 
