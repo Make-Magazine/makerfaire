@@ -4543,13 +4543,22 @@ class MAKER_FAIRE_FORM {
 						$this->add_maker_from_app($json_post, $json_post->m_maker_name, get_the_ID(), true );
 				}
 		  } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'A group or association')) {
-		   if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) == 1)) {
+			if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 0)) {
 
 						$this->add_maker_from_app($json_post, $json_post->m_maker_name, get_the_ID(), true );
 				}
 		  } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'One maker')) {
-		   if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) == 1)) {
+			if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 0)) {
 					$this->add_maker_from_app($json_post, $json_post->m_maker_name, get_the_ID(), true );
+				} else {
+				}
+			} elseif(isset($json_post->presenter_name) && property_exists($json_post, 'presenter_name')) {
+					if ((count($json_post->presenter_name) > 0) && (!empty($json_post->presenter_name[0]))) {
+						$this->add_maker_from_app($json_post, $json_post->presenter_name, get_the_ID(), true, 'presenter' );
+					}
+			} elseif(isset($json_post->performer_name) && property_exists($json_post, 'performer_name')) {
+					if(!empty($json_post->performer_name)) {
+						$this->add_maker_from_app($json_post, array($json_post->performer_name), get_the_ID(), true, 'performer' );
 				}
 			}
 
@@ -4568,7 +4577,7 @@ class MAKER_FAIRE_FORM {
 	 * @access private
 	 *
 	 */
-	private function add_maker_from_app($json_data, $maker_names, $app_id = 0, $is_single = false ) {
+	private function add_maker_from_app($json_data, $maker_names, $app_id = 0, $is_single = false, $type = 'exhibit' ) {
 			global $wpdb;
 
 		  foreach($maker_names as $ix => $maker_name) {
@@ -4582,8 +4591,16 @@ class MAKER_FAIRE_FORM {
 
 				//IF still no maker - create one
 				if(empty($maker_id)) {
-				  $maker_bio = (isset($json_post->m_maker_bio[$ix])) ? sanitize_text_field($json_post->m_maker_bio[$ix]) : '';
-				  $maker_email = (isset($json_post->m_maker_email[$ix])) ? sanitize_email($json_post->m_maker_email[$ix]) : '';
+					if($type == 'presenter') {
+						$maker_bio = (isset($json_post->presenter_bio[$ix])) ? sanitize_text_field($json_post->presenter_bio[$ix]) : '';
+						$maker_email = (isset($json_post->presenter_email[$ix])) ? sanitize_email($json_post->presenter_email[$ix]) : '';
+					} elseif($type == 'performer') {
+						$maker_bio = (isset($json_post->public_description)) ? sanitize_text_field($json_post->public_description) : '';
+						$maker_email = (isset($json_post->performer_email)) ? sanitize_email($json_post->performer_email) : '';
+          } else {
+						$maker_bio = (isset($json_post->m_maker_bio[$ix])) ? sanitize_text_field($json_post->m_maker_bio[$ix]) : '';
+						$maker_email = (isset($json_post->m_maker_email[$ix])) ? sanitize_email($json_post->m_maker_email[$ix]) : '';
+					}
 				  // Create our post array
 				  $new_maker = array (
 						'post_title' => esc_attr($maker_name),
