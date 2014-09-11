@@ -75,7 +75,7 @@ if ( $type == 'entity' ) {
 		$app['venue_id_ref'] = $location_output[0];
 
 		// Application Makers
-		$app_id = get_post_meta( absint( $post->ID ), 'mfei_record', true );
+		$app_id = $app['id'];// get the entity id
 
 		$maker_ids = get_makers_from_app(absint($app_id));
 
