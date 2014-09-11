@@ -19,7 +19,12 @@ function get_makers_from_app($app_id = 0) {
 				array('key' => 'mfei_record',
 					'compare' => '=',
 					'value' => absint( $app_id)
-				)
+          ),
+        array('key' => 'mfei_list',
+          'compare' => 'IN',
+          'value' => absint( $app_id)
+          ),
+        'relation' => 'OR'
 			)
 		);
 
