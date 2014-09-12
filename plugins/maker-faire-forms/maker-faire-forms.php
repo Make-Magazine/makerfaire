@@ -4585,7 +4585,7 @@ class MAKER_FAIRE_FORM {
 		  } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'A group or association')) {
 			if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 0)) {
 
-						$this->add_maker_from_app($json_post, $json_post->m_maker_name, get_the_ID(), true );
+						$this->add_maker_from_app($json_post, $json_post->m_maker_name, get_the_ID(), true,'exhibit',true );
 				}
 		  } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'One maker')) {
 			if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 0)) {
@@ -4678,10 +4678,11 @@ class MAKER_FAIRE_FORM {
 	 * @access private
 	 *
 	 */
-	private function add_maker_from_app($json_data, $maker_names, $app_id = 0, $is_single = false, $type = 'exhibit' ) {
+	private function add_maker_from_app($json_data, $maker_names, $app_id = 0, $is_single = false, $type = 'exhibit', $is_group = false ) {
 			global $wpdb;
 
-		  foreach($maker_names as $ix => $maker_name) {
+		if(!$is_group) {
+			foreach($maker_names as $ix => $maker_name) {
 
 				$maker_name_slug = sanitize_title_with_dashes($maker_name, 'save');
 				$maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name = '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug));
@@ -4693,14 +4694,14 @@ class MAKER_FAIRE_FORM {
 				//IF still no maker - create one
 				if(empty($maker_id)) {
 					if($type == 'presenter') {
-						$maker_bio = (isset($json_post->presenter_bio[$ix])) ? sanitize_text_field($json_post->presenter_bio[$ix]) : '';
-						$maker_email = (isset($json_post->presenter_email[$ix])) ? sanitize_email($json_post->presenter_email[$ix]) : '';
+            	$maker_bio = (isset($json_data->presenter_bio[$ix])) ? sanitize_text_field($json_data->presenter_bio[$ix]) : '';
+            	$maker_email = (isset($json_data->presenter_email[$ix])) ? sanitize_email($json_data->presenter_email[$ix]) : '';
 					} elseif($type == 'performer') {
-						$maker_bio = (isset($json_post->public_description)) ? sanitize_text_field($json_post->public_description) : '';
-						$maker_email = (isset($json_post->performer_email)) ? sanitize_email($json_post->performer_email) : '';
-				  } else {
-						$maker_bio = (isset($json_post->m_maker_bio[$ix])) ? sanitize_text_field($json_post->m_maker_bio[$ix]) : '';
-						$maker_email = (isset($json_post->m_maker_email[$ix])) ? sanitize_email($json_post->m_maker_email[$ix]) : '';
+						$maker_bio = (isset($json_data->public_description)) ? sanitize_text_field($json_data->public_description) : '';
+						$maker_email = (isset($json_data->performer_email)) ? sanitize_email($json_data->performer_email) : '';
+					} else {
+						$maker_bio = (isset($json_data->m_maker_bio[$ix])) ? sanitize_text_field($json_data->m_maker_bio[$ix]) : '';
+						$maker_email = (isset($json_data->m_maker_email[$ix])) ? sanitize_email($json_data->m_maker_email[$ix]) : '';
 					}
 				  // Create our post array
 				  $new_maker = array (
@@ -4727,6 +4728,46 @@ class MAKER_FAIRE_FORM {
 							} 
 							}
 						}
+				  } else {
+				  $maker_name = $json_data->group_name;
+				  $maker_name_slug = sanitize_title_with_dashes($json_data->group_name, 'save');
+				  $maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name = '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug));
+
+				  if(empty($maker_id)) {
+					   $maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name LIKE '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug.'%' ));
+				  } 
+
+				  //IF still no maker - create one
+				  if(empty($maker_id)) {
+				    if($type == 'presenter') {
+				    	$maker_bio = (isset($json_data->group_bio)) ? sanitize_text_field($json_data->presenter_bio) : '';
+				    	$maker_email = (isset($json_data->email)) ? sanitize_email($json_data->email) : '';
+					  } elseif($type == 'performer') {
+						  $maker_bio = (isset($json_data->public_description)) ? sanitize_text_field($json_data->public_description) : '';
+				    	$maker_email = (isset($json_data->performer_email)) ? sanitize_email($json_data->performer_email) : '';
+
+				    } else {
+				      $maker_bio = (isset($json_data->group_bio)) ? sanitize_text_field($json_data->group_bio) : '';
+				      $maker_email = (isset($json_data->email)) ? sanitize_email($json_data->email) : '';
+				    }
+				    // Create our post array
+				    $new_maker = array (
+				      'post_title' => esc_attr($maker_name),
+				      'post_content' => $maker_bio,
+				      'post_type' => 'maker',
+				      'post_status' => 'publish',
+				       );
+
+				       // Create our post and save it's info to a variable for use in adding post meta and error checking
+				      $maker_id = wp_insert_post( $new_maker );
+				      if( !is_wp_error( $maker_id ) ) {
+								update_post_meta( absint( $maker_id), 'email', $maker_email);
+								wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
+								update_post_meta( absint( $maker_id), 'mfei_record', absint($app_id));
+								  
+				      }
+				  }
+			}
 	}
 	/*
 	 * Add Makers to event
