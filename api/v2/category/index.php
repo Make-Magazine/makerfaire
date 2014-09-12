@@ -13,24 +13,8 @@
 // Stop any direct calls to this file
 defined( 'ABSPATH' ) or die( 'This file cannot be called directly!' );
 
-//Make a silly call that gets around the need to hit the database with a tremdously complicated join and just puts most of the operation on cpu
-try {
-	//this function is making a call to the api to try to call, it will fail at the moment and default to the !$allowed_categories works
-	#$all_events = wpcom_vip_file_get_contents("http://makerfaire.com/query/?key=d184iC3I5cw4eeC&type=entity&faire=".sanitize_title($faire));
-	#$all_events = json_decode($all_events,1);
-	$allowed_categories = array();
-	foreach ($all_events['entity'] as $event) {
-	  foreach ($event['category_id_refs'] as $category_id) {
-	    if(!in_array($category_id, $allowed_categories)){
-	     array_push($allowed_categories, $category_id);
-	    }
-	  }
-	}
-} catch (Exception $e) {}
-
-if (!$allowed_categories){
+//set allowed categories
 	$allowed_categories = array(134289,7334,21774,139916,18082,2806,1098,183852052,1234386,74592,129975,10585,14877,181078,1169,1342,4843,292,1445,173,1334084,6877,3866349,79279,1211,91749252,313691,14340,133183,31827,49695267,13426,19557,213030,1256,524354,1438891,367966,25393,1274,144196889,1981,94030,3233,1212,3221,32656,70890761,197443,54,21464,139654,159558,50036,174,137903,78436,44926,400,24600,337,18,5382,1559,30314,41611515,586,238263556,349,5936,4936,5598517,26202,1336,15939,65518,1302369,767441,70627,45212,248375,120,8540250,3169,67778846,62455,6120,209229,2389,98163290);
-}
 
 $taxonomies = array(
 	'category',
