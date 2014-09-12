@@ -4719,6 +4719,42 @@ class MAKER_FAIRE_FORM {
 						  update_post_meta( absint( $maker_id), 'mfei_record', absint($app_id));
 						}
 				  } else {
+						//Check Group Maker
+							$maker_post = get_post($maker_id);
+
+							if($type == 'presenter') {
+								if(empty($maker_post->post_content)) {
+									$maker_bio = (isset($json_data->presenter_bio[$ix])) ? sanitize_text_field($json_data->presenter_bio[$ix]) : '';
+									wp_update_post(array('ID' => absint($maker_id), 'post_content' => $maker_bio)); 
+								}
+								$maker_email = get_post_meta( absint($maker_id), 'email', true );
+								if(empty($maker_email)) {
+									$maker_email = (isset($json_data->presenter_email[$ix])) ? sanitize_email($json_data->presenter_email[$ix]) : '';
+									update_post_meta( absint( $maker_id), 'email', $maker_email);
+								}
+									
+									
+							} elseif($type == 'performer') {
+								if(empty($maker_post->post_content)) {
+									$maker_bio = (isset($json_data->public_description)) ? sanitize_text_field($json_data->public_description) : '';
+									wp_update_post(array('ID' => absint($maker_id), 'post_content' => $maker_bio)); 
+								}
+								$maker_email = get_post_meta( absint($maker_id), 'email', true );
+								if(empty($maker_email)) {
+									$maker_email = (isset($json_data->performer_email)) ? sanitize_email($json_data->performer_email) : '';
+									update_post_meta( absint( $maker_id), 'email', $maker_email);
+								}
+							} else {
+								if(empty($maker_post->post_content)) {
+									$maker_bio = (isset($json_data->m_maker_bio[$ix])) ? sanitize_text_field($json_data->m_maker_bio[$ix]) : '';
+									wp_update_post(array('ID' => absint($maker_id), 'post_content' => $maker_bio)); 
+								}
+								$maker_email = get_post_meta( absint($maker_id), 'email', true );
+								if(empty($maker_email)) {
+									$maker_email = (isset($json_data->m_maker_email[$ix])) ? sanitize_email($json_data->m_maker_email[$ix]) : '';
+									update_post_meta( absint( $maker_id), 'email', $maker_email);
+								}
+							}
 						  //Update meta
 						  wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
 						  $maker_mfei = get_post_meta( absint($maker_id), 'mfei_record', true );
@@ -4764,9 +4800,50 @@ class MAKER_FAIRE_FORM {
 								update_post_meta( absint( $maker_id), 'email', $maker_email);
 								wp_set_object_terms( absint( $maker_id), MF_CURRENT_FAIRE, 'faire', true );
 								update_post_meta( absint( $maker_id), 'mfei_record', absint($app_id));
-								  
-				      }
-				  }
+							}
+						} else {
+							//Check maker content for Groups.
+								$maker_post = get_post($maker_id);
+
+								if($type == 'presenter') {
+									if(empty($maker_post->post_content)) {
+										$maker_bio = (isset($json_data->group_bio)) ? sanitize_text_field($json_data->group_bio) : '';
+										wp_update_post(array('ID' => absint($maker_id), 'post_content' => $maker_bio)); 
+									}
+
+									$maker_email = get_post_meta( absint($maker_id), 'email', true );
+									if(empty($maker_email)) {
+										$maker_email = (isset($json_data->email)) ? sanitize_email($json_data->email) : '';
+										update_post_meta( absint( $maker_id), 'email', $maker_email);
+									}
+									
+									
+								} elseif($type == 'performer') {
+
+									if(empty($maker_post->post_content)) {
+										$maker_bio = (isset($json_data->group_bio)) ? sanitize_text_field($json_data->group_bio) : '';
+										wp_update_post(array('ID' => absint($maker_id), 'post_content' => $maker_bio)); 
+									}
+
+									$maker_email = get_post_meta( absint($maker_id), 'email', true );
+									if(empty($maker_email)) {
+										$maker_email = (isset($json_data->email)) ? sanitize_email($json_data->email) : '';
+										update_post_meta( absint( $maker_id), 'email', $maker_email);
+									}
+
+								} else {
+									if(empty($maker_post->post_content)) {
+										$maker_bio = (isset($json_data->group_bio)) ? sanitize_text_field($json_data->group_bio) : '';
+										wp_update_post(array('ID' => absint($maker_id), 'post_content' => $maker_bio)); 
+									}
+
+									$maker_email = get_post_meta( absint($maker_id), 'email', true );
+									if(empty($maker_email)) {
+										$maker_email = (isset($json_data->email)) ? sanitize_email($json_data->email) : '';
+										update_post_meta( absint( $maker_id), 'email', $maker_email);
+									}
+							}
+					}
 			}
 	}
 	/*
