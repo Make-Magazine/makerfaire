@@ -2944,8 +2944,46 @@ class MAKER_FAIRE_FORM {
 				<?php wp_nonce_field( 'mf_syncmakers', 'mf_syncmakers' ); ?>
 				<?php echo("<p>Last run(".esc_html(get_option('mf_sync_makers_offset'))."): ".esc_html(date("d M Y h:i a",get_option('mf_sync_makers_runtime')))."</p>"); ?>
 			</form>
+			<form action="" method="post" style="border-top: 1px solid #dfdfdf;">
+        <h2 style="margin-top:20px;">Sync Events to Makers</h2>
+			Syncronizes event_id to maker_id on 50 applications at a time.<br />To do a full sync start at 0 and increase by 100 until you're done.
+        <?php 
+        $wp_event_query_args = array(
+          'posts_per_page'      => 2000,
+          'post_type'          => 'event-items',
+          'post_status'        => 'publish',
+          'faire'            => MF_CURRENT_FAIRE,
 
+          // Prevent new posts from affecting the order
+          'orderby'           => 'ID',
+          'order'           => 'ASC',
+          'no_found_rows' => false,
+          // Speed this up
+          'update_post_meta_cache'  => false,
+          'update_post_term_cache'  => false,
+        );
 
+        // Get the first set of posts
+        $wp_event_query = new WP_Query( $wp_event_query_args );
+        $wp_event_query_count = $wp_event_query->found_posts;
+
+        ?>
+				  <p>
+					  <div style="float:left; width:50px">
+						  <strong>Start</strong><br />
+						  <select name="offset">
+							  <option value="0">0</option>
+							  <?php foreach( range( 50, intval( $wp_event_query_count ), 50 ) as $v ) : ?>
+							  <option value="<?php echo intval( $v ); ?>"><?php echo intval( $v ); ?></option>
+							  <?php endforeach; ?>
+						  </select>
+					  </div>
+				  </p>
+          <div class="clear"></div>
+				<p class="submit"><input type="submit" value="Sync Events" class="button button-primary button-large" /></p>
+				<?php wp_nonce_field( 'mf_syncevents', 'mf_syncevents' ); ?>
+        <?php echo("<p>Last run(".esc_html(get_option('mf_sync_events_offset'))."): ".esc_html(date("d M Y h:i a",get_option('mf_sync_events_runtime')))."</p>"); ?>
+			</form>
 			</div>
 		</div>
 	<?php }
@@ -4321,7 +4359,7 @@ class MAKER_FAIRE_FORM {
 			update_option( 'mf_full_jdb_sync', date( 'M jS, Y g:s A', ( time() - ( 3600 * 7 ) ) ) );
 	}
 	/*
-	* Sync MakerFiare Application Statuses
+	* Sync MakerFaire Application Statuses
 	*
 	* @access private
 	* @param int $id Post id to SYNC
@@ -4570,6 +4608,68 @@ class MAKER_FAIRE_FORM {
 
   }
 
+	/* Sync all MakerFaire Events Objects with Makers
+	*
+	* @access private
+	* @param int $id Post id to SYNC
+	* =====================================================================*/
+	private function sync_events( $id = 0, $offset = 0 ) {
+      global $wpdb;
+
+      $wp_event_query_args = array(
+          'posts_per_page'    => 50, //2000
+          'post_type'         => 'event-items',
+          'post_status'       => 'any',
+          'faire'             => MF_CURRENT_FAIRE,
+          'offset'            => $offset,
+          // Prevent new posts from affecting the order
+          'orderby'           => 'ID',
+          'order'           => 'ASC',
+          'no_found_rows' => false,
+          // Speed this up
+          'update_post_meta_cache'  => false,
+          'update_post_term_cache'  => false,
+      );
+
+      // Get the first set of posts
+      $query = new WP_Query( $wp_event_query_args );
+      $wp_event_query_count = $query->found_posts;
+
+      while ( $query->have_posts() ) : $query->the_post();
+        global $post;
+        setup_postdata($post);
+        $event_id = get_the_ID();
+        $event_mfei = get_post_meta( absint($event_id), 'mfei_record', true );
+        $app_post = get_post($event_mfei);
+        $json_post = json_decode( str_replace( "\'", "'", $app_post->post_content ) );
+
+
+        if(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'A list of makers')) {
+         	if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 0)) {
+						      $this->add_makers_to_event($json_post, $json_post->m_maker_name, $event_id );
+                }
+          
+          } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'A group or association')) {
+             if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 0)) {
+						    $this->add_makers_to_event($json_post, $json_post->m_maker_name, $event_id, true );
+  			      }
+           } elseif(isset($json_post->maker) && property_exists($json_post, 'maker') && ($json_post->maker == 'One maker')) {
+           if(isset($json_post->m_maker_name) && property_exists($json_post, 'm_maker_name') && (count($json_post->m_maker_name) > 0)) {
+				      $this->add_makers_to_event($json_post, $json_post->m_maker_name, $event_id, true );
+			      }
+				} elseif (isset($json_post->presenter_name) && property_exists($json_post, 'presenter_name')) { 
+          if(!empty($json_post->presenter_name)) {
+              $this->add_makers_to_event($json_post, $json_post->presenter_name, $event_id, true, 'presenter');
+            }
+         } elseif(isset($json_post->performer_name) && property_exists($json_post, 'performer_name')) {
+            if(!empty($json_post->performer_name)) {
+              $this->add_makers_to_event($json_post, array($json_post->performer_name), $event_id, true, 'performer' );
+            }
+        }
+      endwhile;
+  }
+
+
   /*
    * Add Maker from Application
 	 *
@@ -4624,25 +4724,40 @@ class MAKER_FAIRE_FORM {
 							if(empty($maker_mfei)) {
 								update_post_meta( absint( $maker_id), 'mfei_record', absint($app_id));
 							} 
-							if(!empty($maker_mfei_list)) {
-									$mfei_ids = explode(',',$maker_mfei_list);
-									if(!in_array((string)$maker_id, $mfei_ids)) {
-											$mfei_ids[] = $maker_id;
-											$mfei_new = array();
-											foreach($mfei_ids as $mfei_id) {
-												$mfei_new[] = absint($mfei_id);
-											}
-											update_post_meta( absint( $maker_id), 'mfei_list', join(',',$mfei_new));
-									}
-							
-								} else {
-									update_post_meta( absint( $maker_id), 'mfei_list', (string)$maker_mfei);
-								}
-					}
-				}
-
-
+							}
+						}
 	}
+	/*
+	 * Add Makers to event
+	 *
+	 *
+	 * @access private
+	 *
+	 */
+	private function add_makers_to_event($json_data, $maker_names, $event_id = 0, $is_single = false, $type = 'exhibit' ) {
+			global $wpdb;
+
+      $maker_ids = array();
+
+				foreach($maker_names as $ix => $maker_name) {
+
+	        $maker_name_slug = sanitize_title_with_dashes($maker_name, 'save');
+	        $maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name = '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug));
+
+	        if(empty($maker_id)) {
+	           $maker_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'maker' AND post_name LIKE '%s' ORDER BY ID ASC LIMIT 1;", $maker_name_slug.'%' ));
+	        }
+
+        
+	        if(!empty($maker_id)) {
+	          $maker_ids[] = $maker_id;
+	        }
+	      }
+	      if(($event_id !== 0)) {
+	        update_post_meta( absint( $event_id), 'mfei_event', join(',',$maker_ids)); 
+	      } 
+			}
+
 	/*
 	* Upgrade plugin appropriately.
 	*

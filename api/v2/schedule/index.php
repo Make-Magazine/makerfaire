@@ -74,12 +74,18 @@ if ( $type == 'schedule' ) {
 		// A list of applications assigned to this event (should only be one really...)
 		$schedule['entity_id_refs'] = array( absint( $app_id ) );
 
+		$event_maker_ids = explode(',',get_post_meta( absint( $post->ID ), 'mfei_event', true ));
+		
 		// Application Makers
-		$maker_ids = get_makers_from_app(absint($app_id));
 
-		//foreach ( $makers->posts as $maker ) {
-		//	$maker_ids[] = absint( $maker->ID );
-		//}
+		if((count($event_maker_ids) > 0) && ($event_maker_ids[0] !== '')) {
+			foreach ( $event_maker_ids as $maker_id ) {
+				$maker_ids[] = absint( $maker_id );
+			}
+		} else {
+			$maker_ids = get_makers_from_app(absint($app_id));
+		}
+
 
 		$schedule['maker_id_refs'] = ( ! empty( $maker_ids ) ) ? $maker_ids : null;
 
