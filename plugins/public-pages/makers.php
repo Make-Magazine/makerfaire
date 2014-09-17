@@ -279,6 +279,12 @@ function mf_public_blurb( $json ) {
 						'field' => 'id',
 						'terms' => $term->term_id
 					),
+					array(
+						'taxonomy' => 'faire',
+						'field' => 'slug',
+						'terms' => MF_CURRENT_FAIRE
+					),
+          'relation' => 'AND',
 				),
 				'post_type'		=> 'mf_form',
 				'post_status'	=> 'accepted',
