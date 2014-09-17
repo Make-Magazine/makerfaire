@@ -235,7 +235,7 @@ class MAKE_CLI extends WP_CLI_Command {
 			// Sanitize and save the locations
 			if ( $child ) {
 				WP_CLI::line( 'Found child: ' . esc_html( $child->post_title ) . ' [' . intval( $child->ID ) . ']' );
-				$locations = array( intval( $child->ID ) );
+				$locations = array( intval( $parent->ID), intval( $child->ID ) );
 				$loc = update_post_meta( intval( $place['ID'] ), 'faire_location', $locations );
 			} elseif ( $parent ) {
 				WP_CLI::line( 'Using parent: ' . esc_html( $parent->post_title ) . ' [' . intval( $parent->ID ) . ']' );
