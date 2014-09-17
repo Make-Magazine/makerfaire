@@ -1135,7 +1135,7 @@ function mf_display_schedule_by_location( $atts ) {
 		wp_cache_set( sanitize_title( $location->post_title ) . '_sunday_schedule_' . sanitize_title( $data['faire'] ), $sunday, 'locations', 300 );
 	}
 
-	$output = '<h2><a href="' . esc_url( get_permalink( absint( $data['location_id'] ) ) . '?faire=' . $data['faire'] ) . '">' . esc_html( $location->post_title ) . '</a></h2>';
+	$output = '<div class="row"><div class="span4"><h2><a href="' . esc_url( get_permalink( absint( $data['location_id'] ) ) . '?faire=' . $data['faire'] ) . '">' . esc_html( $location->post_title ) . '</a></h2></div> <div class="span1 pull-right" style="position:relative; top:7px;"><a href="#" onclick="window.print();return false;"><img src="' . get_stylesheet_directory_uri() . '/images/print-ico.png" alt="Print this schedule" /></a></div></div>';
 
 	if ( ! empty( $location->post_excerpt ) )
 		$output .= '<div class="alert alert-info">' . wp_kses_post( Markdown( $location->post_excerpt ) ) . '</div>';
