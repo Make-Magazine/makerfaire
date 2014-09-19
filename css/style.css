@@ -57,32 +57,6 @@ h4 {
   max-width: 130px;
   max-height: 130px;
 }
-.news h3 {
-  margin: -20px 10px 0;
-  color: #333;
-  font-weight: 300;
-  font-size: 20px;
-  font-family: "bebas-neue", sans-serif;
-}
-.news h3 a {
-  margin: 25px 0 0;
-  color: #FC040C;
-  font-weight: 300;
-  font-size: 28px;
-  font-family: "bebas-neue", sans-serif;
-}
-.news h4 {
-  margin: 22px 0 5px 0;
-  font-size: 14px;
-  line-height: 16px;
-}
-.newsies {
-  margin-bottom: 20px;
-  margin-top: 25px;
-}
-.newsies h3 {
-  margin-bottom: -5px;
-}
 .smaller {
   font-size: 16px;
   line-height: 24px;
@@ -316,6 +290,15 @@ footer .pills a {
 .insta-caption a {
   color: #fff;
 }
+.news .row {
+  margin-bottom: 20px;
+}
+.news ul.unstyled {
+  display: none;
+}
+.read_more {
+  display: none;
+}
 .sidebar-bordered {
   border: 1px solid #d7d7d7;
   border-radius: 3px;
@@ -403,9 +386,12 @@ footer .pills a {
   padding: 0 15px;
 }
 .sidebar-bordered-nl .hidden h5 {
-  margin: 7px 0;
-  font-size: 16px;
+  margin: 2px 0;
+  font-size: 14px;
   text-align: left;
+}
+.sidebar-bordered-nl .hidden label {
+  margin-bottom: 2px;
 }
 .sidebar-bordered-nl .makey {
   margin-top: -25px;

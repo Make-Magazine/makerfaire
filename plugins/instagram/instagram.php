@@ -30,9 +30,9 @@ class Make_Instagram {
 	 */
 	public function load_data() {
 
-		$base_url = 'https://api.instagram.com/v1/users/227901753/media/recent';
+		$base_url = 'https://api.instagram.com/v1/tags/makerfaire/media/recent';
 		$params = array(
-			'access_token' => '227901753.1fb234f.3be9baa7c6d34efa821b9bf79641374e',
+			'access_token' => '227901753.1fb234f.b4dd629a578c47cda3f6fd579935190e',
 		);
 
 		// Build the URL
@@ -50,24 +50,8 @@ class Make_Instagram {
 
 	public function show_images() {
 		$ps = $this->load_data();
-		$output = '<h2 class="red" style="color:red">Live from <a href="http://instagram.com/makerfaire/">@makerfaire</a> Bay Area 2014 on Instagram</h2>';
 		$output .= '<div class="row-fluid instagram-rows">';
 		for ( $i = 0; $i <= 2; $i++ ) {
-			$output .= '<div class="span4">';
-			$output .= '<a href="' . esc_url( $ps[ $i ]->link ) . '" class="instagram-link">';
-			$output .= '<div class="thumbnail">';
-			$output .= '<img style="max-width:180px; height: auto;" src="' . esc_url( $ps[ $i ]->images->standard_resolution->url ) . '">';
-			$output .= '<div class="caption insta-caption">';
-			$output .= wp_kses_post( Markdown( wp_trim_words( $ps[ $i ]->caption->text, 10, '...' ) ) );
-			$output .= '</div>';
-			$output .= '</div>';
-			$output .= '</a>';
-			$output .= '</div>';
-		}
-		$output .= '</div>';
-		$output .= '<div class="spacer" style="height: 20px;"></div>';
-		$output .= '<div class="row-fluid instagram-rows">';
-		for ( $i = 3; $i <= 5; $i++ ) {
 			$output .= '<div class="span4">';
 			$output .= '<a href="' . esc_url( $ps[ $i ]->link ) . '" class="instagram-link">';
 			$output .= '<div class="thumbnail">';
