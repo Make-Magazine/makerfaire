@@ -3,11 +3,6 @@
 <div class="clear"></div>
 
 <div class="container">
-<div class="row">
-	<div class="content span12">	
-		<h1 style="color:#0088cc;font-size:48px;">Live from World <span style="color:#ed1c24">Maker Faire</span> New York</h1>
-	</div>
-</div>
 
 	<div class="row">
 

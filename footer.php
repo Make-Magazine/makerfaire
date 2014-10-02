@@ -22,9 +22,10 @@
 
 
 				<div class="span3">
+					<div class="sidebar-bordered-nl">
 
 <a href="http://makerfaire.com/map/"><img style="max-width:100% ;height:auto;" src="https://makerfaire.files.wordpress.com/2014/09/minimf_findfaire_v1.gif" /></a>
-
+</div>
 				</div>
 					<div class="span4 offset1" style="background-color:#e8f1f4;">
 
@@ -39,12 +40,11 @@
 				                                <h5>Call For Makers</h5>
 				                                <label for="fielddduult-0"><input id="fielddduult-0" name="cm-fo-dduult" value="621683" type="checkbox" checked/> Inform me About the Call for Makers</label><br>
 				                                <h5>Preferred Faire?</h5>
-				                                <label for="fieldjdlthk-0"><input id="fieldjdlthk-0" name="cm-fo-jdlthk" value="188882" type="checkbox" checked/> Bay Area</label><br>
-				                                <label for="fieldjdlthk-2"><input id="fieldjdlthk-2" name="cm-fo-jdlthk" value="188884" type="checkbox" checked/> New York</label><br>
+				                                <label for="fieldjdlthk-0"><input id="fieldjdlthk-0" name="cm-fo-jdlthk" value="188882" type="checkbox" checked/> Bay Area</label><span style="margin-left:15px;"></span>
+				                                <label for="fieldjdlthk-2"><input id="fieldjdlthk-2" name="cm-fo-jdlthk" value="188884" type="checkbox" checked/> New York</label>
 				                                <h5>Join Another Newsletter</h5>
-				                                <label for="listjrsydu"><input id="listjrsydu" name="cm-ol-jrsydu" type="checkbox" /> Maker Pro Newsletter</label><br />
+				                                <label for="listjrsydu"><input id="listjrsydu" name="cm-ol-jrsydu" type="checkbox" /> Maker Pro Newsletter</label><span style="margin-left:15px;"></span>
 				                                <label for="listttihir"><input id="listttihir" name="cm-ol-ttihir" type="checkbox" /> Maker Shed</label>
-				                                </p>
 				                        </div>
 				                </form>
 				                
@@ -71,10 +71,12 @@
 
 				</div>
 
-				<div class="span3 offset1">
+				<div class="span3 offset1" >
+					<div class="sidebar-bordered-nl">
                     <a href="https://www.pubservice.com/MK/subscribe.aspx?PC=MK&PK=M3AMFB">
                     	<img style="max-width:100% ;height:auto;" src="<?php echo get_stylesheet_directory_uri(); ?>/images/mf_subscribe_ad.jpg" alt="Subscribe to MAKE magazine!" />
                     </a>
+               </div>
                 </div><!--subad-->
 
 			</div>
@@ -82,19 +84,22 @@
 			<div class="row">
 
 				<div class="span12">
+					<div class=" footer-links">
+						<ul id="horizontal-list">
 
-					<ul class="nav nav-pills">
+							<li><a href="http://makerfaire.com/makerfairehistory/">About</a></li>
+							<li><a href="http://blog.makezine.com/tag/maker-faire/">Blog</a></li>
+							<li><a href="http://makerfaire.com/contact/">Contact Us</a></li>
+							<li><a href="http://makerfaire.com/newsletter/">Newsletter</a></li>
+							<li><a href="http://makermedia.com/privacy/">Privacy Policy</a></li>
+							<li><a href="http://makerfaire.com/sponsors/">Sponsors</a></li>
+							<li><a href="http://makerfaire.com/be-a-maker/">Be a Maker</a></li>
+						</ul>
 
-						<li><a href="http://makerfaire.com/makerfairehistory/">About</a></li>
-						<li><a href="http://blog.makezine.com/tag/maker-faire/">Blog</a></li>
-						<li><a href="http://makerfaire.com/contact/">Contact Us</a></li>
-						<li><a href="http://makerfaire.com/newsletter/">Newsletter</a></li>
-						<li><a href="http://makermedia.com/privacy/">Privacy Policy</a></li>
-						<li><a href="http://makerfaire.com/sponsors/">Sponsors</a></li>
-						<li><a href="http://makerfaire.com/be-a-maker/">Be a Maker</a></li>
-					</ul>
-
+					</div>
 				</div>
+			</div>
+			<div class="row">
 
 				<div class="span12 center">
 					<?php echo make_copyright_footer(); ?>
@@ -122,9 +127,7 @@
 		jQuery('.carousel').carousel({
 			interval: 4000
 		});
-		jQuery('.sponsorCarousel').carousel({
-			interval: 3000
-		});
+		
 	});
 
 </script>
