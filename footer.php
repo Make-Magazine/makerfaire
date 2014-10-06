@@ -36,7 +36,7 @@
 				                <form class="form-inline" action="http://makermedia.createsend.com/t/r/s/jjuruj/" method="post" id="subForm">
 				                        <input type="text" placeholder="Enter your email" class="news-signup" name="cm-jjuruj-jjuruj" id="jjuruj-jjuruj">
 				                        <input type="image" src="<?php echo esc_url( get_stylesheet_directory_uri() ); ?>/images/go.png" value="Go!" class="btn">
-				                        <div class="control-group hidden">
+				                        <div class="control-group">
 				                                <h5>Call For Makers</h5>
 				                                <label for="fielddduult-0"><input id="fielddduult-0" name="cm-fo-dduult" value="621683" type="checkbox" checked/> Inform me About the Call for Makers</label><br>
 				                                <h5>Preferred Faire?</h5>
