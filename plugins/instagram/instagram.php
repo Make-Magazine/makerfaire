@@ -33,6 +33,7 @@ class Make_Instagram {
 		$base_url = 'https://api.instagram.com/v1/tags/makerfaire/media/recent';
 		$params = array(
 			'access_token' => '227901753.1fb234f.b4dd629a578c47cda3f6fd579935190e',
+			'count' => 20
 		);
 
 		// Build the URL
@@ -49,22 +50,57 @@ class Make_Instagram {
 	}
 
 	public function show_images() {
+		// TODO:	This whole function is a bit of a mess of entangled php and html.
+		//			Would do a lot cleaner with some sort of templating engine.
+
 		$ps = $this->load_data();
-		$output .= '<div class="row-fluid instagram-rows">';
-		for ( $i = 0; $i <= 2; $i++ ) {
-			$output .= '<div class="span4">';
-			$output .= '<a href="' . esc_url( $ps[ $i ]->link ) . '" class="instagram-link">';
-			$output .= '<div class="thumbnail">';
-			$output .= '<img style="max-width:180px; height: auto;" src="' . esc_url( $ps[ $i ]->images->standard_resolution->url ) . '">';
-			$output .= '<div class="caption insta-caption">';
-			$output .= wp_kses_post( Markdown( wp_trim_words( $ps[ $i ]->caption->text, 10, '...' ) ) );
-			$output .= '</div>';
-			$output .= '</div>';
-			$output .= '</a>';
-			$output .= '</div>';
+
+		// make sure $output exists, otherwise we may get an error in local environment
+		if(!isset($output) || !is_string($output)) {
+			$output = "";
 		}
-		$output .= '</div>';
-		$output .= '<div class="spacer"></div>';
+
+
+		$images_per_page = 3;
+		$num_images = count($ps);
+        $pages = array_chunk($ps, $images_per_page);
+        $num_pages = count($pages);
+
+		$output ="<div id=\"instagram-carousel\" class=\"carousel slide\" data-interval=\"3000\" data-ride=\"carousel\">"
+        		.	"<div class=\"carousel-inner\">";
+        // start outputting carousel pages
+        foreach( $pages as $page ) {
+
+			$output .=	"<div class=\"item\" >"
+					.		"<div class=\"carousel row-fluid instagram-rows\">";
+			// in each page, output $images_per_page images
+			foreach( $page as $img ) {
+
+					$output .=	"<div class=\"span4\">"
+							.		"<a href=\"" . esc_url( $img->link ) . "\" class=\"instagram-link\">"
+							.			"<div class=\"thumbnail\">"
+							.				"<img style=\"max-width:180px; height: auto;\" src=\"" . esc_url( $img->images->standard_resolution->url ) . "\">"
+							.				"<div class=\"caption insta-caption\">"
+							.			 		wp_kses_post( Markdown( wp_trim_words( $img->caption->text, 10, '...' ) ) )
+							.				"</div>"
+							.			"</div>"
+							.		"</a>"
+							.	"</div>";
+				}
+			$output .=		"</div>"		// instagram-rows
+					.	"</div>";	// item
+		}
+
+		// output carousel buttons
+		$output .=   "</div>" // carousel-inner
+					."<a class=\"carousel-control left\" href=\"#instagram-carousel\" data-slide=\"prev\">"
+        			."    <span >‹</span>"
+        			."</a>"
+        			."<a class=\"carousel-control right\" href=\"#instagram-carousel\" data-slide=\"next\">"
+        			."    <span >›</span>"
+        			."</a>"
+        		."</div>"
+        		."<div class=\"spacer\"></div>";
 		return $output;
 	}
 
