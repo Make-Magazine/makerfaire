@@ -85,6 +85,18 @@ if ( function_exists( 'wpcom_vip_sharing_twitter_via' ) ) {
 	wpcom_vip_sharing_twitter_via( 'make' );
 }
 
+
+// Defer jQuery Parsing using the HTML5 defer property
+if (!(is_admin() )) {
+    function defer_parsing_of_js ( $url ) {
+        if ( FALSE === strpos( $url, '.js' ) ) return $url;
+        if ( strpos( $url, 'jquery.js' ) ) return $url;
+        // return "$url' defer ";
+        return "$url' defer onload='";
+    }
+    add_filter( 'clean_url', 'defer_parsing_of_js', 11, 1 );
+}
+
 function make_enqueue_jquery() {
 	// Styles
 	wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.css' );
@@ -93,7 +105,7 @@ function make_enqueue_jquery() {
 
 	// Scripts
 	wp_enqueue_script( 'jquery' );
-	wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/bootstrap.js', array( 'jquery' ) );
+	wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/bootstrap.min.js', array( 'jquery' ) );
 	wp_enqueue_script( 'make-countdown', get_stylesheet_directory_uri() . '/js/jquery.countdown.js', array( 'jquery' ) );
 	wp_enqueue_script( 'jquery_cookie',  get_stylesheet_directory_uri() . '/js/jquery.cookie.js', array( 'jquery' ), null );
 	wp_enqueue_script( 'ytv', get_stylesheet_directory_uri() . '/js/ytv.js', array( 'jquery' ) );
@@ -671,3 +683,7 @@ function maker_faire_trashed_application_redirect() {
     }
 }
 add_action( 'load-edit.php','maker_faire_trashed_application_redirect' );
+
+function scriptLoaded(){
+   document.write( myValue );
+}
