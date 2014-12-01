@@ -88,12 +88,14 @@
 						<ul id="horizontal-list">
 
 							<li><a href="http://makerfaire.com/makerfairehistory/">About</a></li>
-							<li><a href="http://blog.makezine.com/tag/maker-faire/">Blog</a></li>
+							<li><a href="http://blog.makezine.com/tag/maker-faire/" target="_blank">Blog</a></li>
 							<li><a href="http://makerfaire.com/contact/">Contact Us</a></li>
 							<li><a href="http://makerfaire.com/newsletter/">Newsletter</a></li>
-							<li><a href="http://makermedia.com/privacy/">Privacy Policy</a></li>
+							<li><a href="http://makermedia.com/privacy/" target="_blank">Privacy Policy</a></li>
 							<li><a href="http://makerfaire.com/sponsors/">Sponsors</a></li>
 							<li><a href="http://makerfaire.com/be-a-maker/">Be a Maker</a></li>
+							<li><a href="http://makermedia.com/work-with-us/job-openings/" target="_blank">Jobs</a></li>
+
 						</ul>
 
 					</div>
