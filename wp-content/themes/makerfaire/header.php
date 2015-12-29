@@ -107,10 +107,6 @@
 </div>
 
 <header id="header" class="quora">
-  <?php
-    $menu = wp_get_nav_menu_object('Main Navigation Version 2');
-    $menuitems = wp_get_nav_menu_items( $menu->term_id, array( 'order' => 'DESC', 'walker' => new Description_Walker ) );
-  ?>
   <!-- Mobile Nav -->
   <nav class="navbar navbar-default navbar-fixed-top visible-xs-block">
     <div class="container">
@@ -126,9 +122,8 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <?php
-          $mobileNavName = 'mobile-nav';
           wp_nav_menu( array(
-            'theme_location' => '$mobileNavName',
+            'theme_location' => '_no_default_fallback',
             'menu'            => 'Main Navigation Version 2 Mobile',
             'container' => false
           ) );
@@ -166,7 +161,7 @@
     </div>
   </nav>
   <!-- Desktop Nav -->
-  <nav class="navbar hidden-xs">
+  <nav class="navbar hidden-xs desktop-nav">
     <div class="container">
       <div class="navbar-header">
         <a class="navbar-brand" href="<?php bloginfo('url'); ?>"><img src="http://cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" height="43" width="183" alt="maker faire"></a>
@@ -174,6 +169,8 @@
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
           <?php
+            $menu = wp_get_nav_menu_object('Main Navigation Version 2');
+            $menuitems = wp_get_nav_menu_items( $menu->term_id, array( 'order' => 'DESC', 'walker' => new Description_Walker ) );
             $count = 0;
             $submenu = false;
             foreach( $menuitems as $item ):
@@ -230,6 +227,18 @@
           <?php $count++; endforeach; ?>
         </ul>
       </div>
+    </div>
+  </nav>
+  <nav class="navbar desktop-nav hidden-xs subnav">
+    <div class="container">
+      <?php
+        wp_nav_menu( array(
+          'theme_location' => '_no_default_fallback',
+          'menu'            => 'Main Navigation Version 2 Subnav',
+          'container' => false,
+          'menu_class' => 'nav navbar-nav'
+        ) );
+      ?>
     </div>
   </nav>
 </header>

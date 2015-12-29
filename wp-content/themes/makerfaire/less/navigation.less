@@ -1,115 +1,129 @@
 // Dimensions for dfp ads
-
 // Main header ad
 #div-gpt-ad-664089004995786621-1 {
-	width:728px; 
-	height:90px;
+  width: 728px;
+  height: 90px;
 }
 
 // First sidebar ad (top)
 #div-gpt-ad-664089004995786621-2 {
-	width:300px; 
-	height:auto;
+  width: 300px;
+  height: auto;
 }
 
 // Second sidebar 
 #div-gpt-ad-664089004995786621-3 {
-	width:300px;
-	height:auto;
+  width: 300px;
+  height: auto;
 }
 
 // footer ad
 #div-gpt-ad-664089004995786621-4 {
-	width:728px; 
-	height:90px;
+  width: 728px;
+  height: 90px;
 }
 
 // Grey out nav links
 li.disabled a,
 li.hidelink a:link,
 li.hidelink a:visited {
-	color:#999 !important;
-	cursor:default !important;
+  color: #999 !important;
+  cursor: default !important;
+}
+
+.navbar.desktop-nav {
+  &.subnav {
+    border: none;
+    background: rgba(0,173,239,0.9);
+    border-radius: 0;
+    min-height: 30px;
+    ul {
+      list-style: none;
+    }
+    a {
+      padding: 5px;
+      color: white;
+    }
+  }
+  .container {
+    display: flex;
+    .navbar-collapse {
+      flex: 1;
+    }
+  }
 }
 
 .navbar-fixed-top {
-	.dropdown-menu {
-		border-radius: 0;
-	}
-	.in {
-		-webkit-box-shadow: 0 2px 6px 0px #555;
-		-moz-box-shadow: 0 2px 6px 0px #555;
-		box-shadow: 0 2px 6px 0px #555;
-		margin-bottom: -3px;
-		background: rgba(247, 247, 247, 0.94) url(../images/bg-border.png) repeat-x 0 100%;
-	}
-	.mobile-nav-social {
-		height: 85px;
-	}
-	.nav-follow-us {
-		height: 33px;
-		float: left;
-		padding-top: 4px;
-	}
-	.social-profile-icons {
-		display: inline-block;
-		width: 100%;
-		padding-left: 80px;
-		position: relative;
-		top: -33px;
-	}
-	.mobile-nav-tickets {
-		background-color: red;
-		color: #fff !important;
-	}
-	.mobile-nav-tickets:active,
-	.mobile-nav-tickets:focus {
-		background-color: #0084B5;
-		color: #fff;
-	}
-	.mobile-li-buttons {
-		background-color: #fff;
-		height: 61px;
-		padding: 10px 0;
-		.btn-cyan {
-			display: block;
-			text-align: center;
-			font-size: 20px;
-		}
-		.btn-cyan:hover {
-			color: #fff;
-		}
-	}
+  .dropdown-menu {
+    border-radius: 0;
+  }
+  .in {
+    -webkit-box-shadow: 0 2px 6px 0px #555;
+    -moz-box-shadow: 0 2px 6px 0px #555;
+    box-shadow: 0 2px 6px 0px #555;
+    margin-bottom: -3px;
+    background: rgba(247, 247, 247, 0.94) url(../images/bg-border.png) repeat-x 0 100%;
+  }
+  .mobile-nav-social {
+    height: 85px;
+  }
+  .nav-follow-us {
+    height: 33px;
+    float: left;
+    padding-top: 4px;
+  }
+  .social-profile-icons {
+    display: inline-block;
+    width: 100%;
+    padding-left: 80px;
+    position: relative;
+    top: -33px;
+  }
+  .mobile-nav-tickets {
+    background-color: red;
+    color: #fff !important;
+  }
+  .mobile-nav-tickets:active,
+  .mobile-nav-tickets:focus {
+    background-color: #0084B5;
+    color: #fff;
+  }
+  .mobile-li-buttons {
+    background-color: #fff;
+    height: 61px;
+    padding: 10px 0;
+    .btn-cyan {
+      display: block;
+      text-align: center;
+      font-size: 20px;
+    }
+    .btn-cyan:hover {
+      color: #fff;
+    }
+  }
 }
 
 // Custom layout for MFBA Navigation
-
 .quora .drop-holder.area .drop-logo .nav-thanks {
-	padding-right: 40px;
-	text-align: left;
-	color: #666;
-	font-size: 14px;
-	font-family: 'latoregular', Helvetica, Arial, sans-serif;
-
-	img {
-		margin-bottom: 10px;
-	}
-
-	span {
-		color: #333;
-		font-size: 14px;
-		font-family: 'latobold', Helvetica, Arial, sans-serif;
-
-		strong {
-			color: red;
-		}
-	}
-
+  padding-right: 40px;
+  text-align: left;
+  color: #666;
+  font-size: 14px;
+  font-family: 'latoregular', Helvetica, Arial, sans-serif;
+  img {
+    margin-bottom: 10px;
+  }
+  span {
+    color: #333;
+    font-size: 14px;
+    font-family: 'latobold', Helvetica, Arial, sans-serif;
+    strong {
+      color: red;
+    }
+  }
 }
 
 // Custom layout for MFNY Navigation
-
-.nav li:nth-child(3) .drop-logo .nav-thanks span{
-	color: red;
+.nav li:nth-child(3) .drop-logo .nav-thanks span {
+  color: red;
 }
-
