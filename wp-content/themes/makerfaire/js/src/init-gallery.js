@@ -1,3 +1,8 @@
+jQuery(function() {
+  initCustomGallery();
+  initThumbnailsGallery();
+});
+
 // custom gallery init
 function initCustomGallery() {
   jQuery('.carousel-inner').scrollAbsoluteGallery({

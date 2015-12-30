@@ -1,3 +1,4 @@
+// Countdown
 jQuery(function() {
   mfba = new Date(2015, 5 - 1, 16, 9, 0);
   jQuery('.countdown').countdown({

@@ -17,6 +17,7 @@ module.exports = function(grunt) {
     // Concat js files
     concat: {
       options: {
+        banner: '// Compiled file - any changes will be overwritten by grunt task\n\n',
         separator: ';',
         process: function(src, filepath) {
           return '/* ' + filepath + ' */\n' + src;
