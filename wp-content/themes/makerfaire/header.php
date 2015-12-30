@@ -180,45 +180,51 @@
               $title          = $item->title;
               $classes        = $item->classes;
               $description    = $item->description;
-            // item does not have a parent so menu_item_parent equals 0 (false)
-            if ( !$item->menu_item_parent ):
-              // save this id for later comparison with sub-menu items
-              $parent_id = $item->ID;
+              // item does not have a parent so menu_item_parent equals 0 (false)
+              if ( !$item->menu_item_parent ):
+                // save this id for later comparison with sub-menu items
+                $parent_id = $item->ID;
           ?>
-            <li class="<?php echo ($new_window!=''?'':'dropdown');?> <?php foreach ($classes as $class) {echo $class.' ';}; ?>">
+            <li class="<?php foreach ($classes as $class) {echo $class.' ';}; ?>">
               <a href="<?php echo $link; ?>"
+                <?php if (in_array("dropdown", $classes)) { echo 'class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"'; } ?>
                 <?php echo ($new_window!=''?'target="'.$new_window.'"':'');?>
-                <?php echo ($new_window!=''?'':'class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"');?>
               >
-                <?php echo $title; ?> 
-                <span class="caret"></span>
+                <?php echo $title; ?>
+                <?php if (in_array("dropdown", $classes)): ?>
+                  <span class="caret"></span>
+                <?php endif; ?>
               </a>
               <?php endif; ?>
               <?php if ( $parent_id == $item->menu_item_parent ): ?>
-                <?php if ( !$submenu ): $submenu = true; ?>
+                <?php if ( !$submenu ): $submenu = true;?>
                   <div class="drop-holder">
-                      <div class="drop">
-                        <div class="container">
-                          <div class="row padtop padbottom">
-                            <div class="col-sm-3 drop-logo about text-center padtop"></div>
-                            <div class="col-sm-9 column padtop">
-                              <div class="top-holder"></div>
-                                <div class="col-sm-9 col no-border">
-                                  <ul class="sub-menu">
+                    <div class="drop">
+                      <div class="container">
+                        <div class="row padtop padbottom">
+                          <div class="col-sm-3 drop-logo about text-center padtop"></div>
+                          <div class="col-sm-9 column padtop">
+                            <div class="top-holder"></div>
+                              <div class="col-sm-9 col no-border">
+                                <ul class="sub-menu">
                 <?php endif; ?>
-                                    <li class="item <?php foreach ($classes as $class) {echo $class.' ';}; ?>">
-                                      <a href="<?php echo $link; ?>" <?php echo ($new_window!=''?'target="'.$new_window.'"':'');?> class="title"><?php echo $title; ?></a>
-                                      <div class="description"><?php echo $description; ?></div>
-                                    </li>
-                <?php if ( $menuitems[ $count + 1 ]->menu_item_parent != $parent_id && $submenu ): ?>
-                                  </ul>
-                                </div>
-                              <div class="col-sm-3 col dinamic-content"></div>
-                            </div>    
-                          </div>
+                                  <li class="item <?php foreach ($classes as $class) {echo $class.' ';}; ?>">
+                                    <a href="<?php echo $link; ?>"
+                                      <?php echo ($new_window!=''?'target="'.$new_window.'"':'');?>
+                                      class="title">
+                                      <?php echo $title; ?>
+                                    </a>
+                                    <div class="description"><?php echo $description; ?></div>
+                                  </li>
+                <?php if ( $menuitems[ $count + 1 ]->menu_item_parent != $parent_id &&$submenu ): ?>
+                                </ul>
+                              </div>
+                            <div class="col-sm-3 col dinamic-content"></div>
+                          </div>    
                         </div>
                       </div>
                     </div>
+                  </div>
                 <?php $submenu = false; endif; ?>
               <?php endif; ?>
             <?php if ( (isset($menuitems[ $count + 1 ]->menu_item_parent))&&$menuitems[ $count + 1 ]->menu_item_parent != $parent_id ): ?>

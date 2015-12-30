@@ -1271,9 +1271,13 @@
   }
   /* end of header(including navigation) section*/
   .caret {
-    display: block;
-    margin: 0 auto;
     color: #bee4fb;
+    position: absolute;
+    left: 50%;
+    margin-left: -5px;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
   }
   .bg-stretch {
     position: absolute;
@@ -2408,9 +2412,6 @@
     width: 308px;
     height: 202px;
     border: 1px solid #000;
-  }
-  .nav li:nth-child(5) a .caret {
-    display: none;
   }
   /* 2015-04-04 */
   .left {
