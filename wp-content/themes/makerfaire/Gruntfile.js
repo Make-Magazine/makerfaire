@@ -30,13 +30,9 @@ module.exports = function(grunt) {
     },
     // Watch for changes on save and livereload
     watch: {
-      css: {
-        files: ['less/**/*.less'],
-        tasks: ['less']
-      },
-      js: {
-        files: ['js/**/*.js'],
-        tasks: ['concat']
+      noreload: {
+        files: ['less/**/*.less', 'js/src/*.js'],
+        tasks: ['less', 'concat']
       },
       reload: {
         files: ['less/**/*.less', 'js/**/*.js'],
@@ -53,7 +49,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   // Register the tasks with Grunt
   // To only watch for less changes and process without browser reload type in "grunt"
-  grunt.registerTask('default', ['less', 'concat', 'watch:css', 'watch:js']);
+  grunt.registerTask('default', ['less', 'concat', 'watch:noreload']);
   // To watch for less changes and process them with livereload type in "grunt reload"
   grunt.registerTask('reload', ['less', 'watch:reload']);
 };

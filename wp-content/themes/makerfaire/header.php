@@ -201,26 +201,20 @@
                   <div class="drop-holder">
                     <div class="drop">
                       <div class="container">
-                        <div class="row padtop padbottom">
-                          <div class="col-sm-3 drop-logo about text-center padtop"></div>
-                          <div class="col-sm-9 column padtop">
-                            <div class="top-holder"></div>
-                              <div class="col-sm-9 col no-border">
-                                <ul class="sub-menu">
+                        <div class="col-sm-3 dynamic-hackbox"></div>
+                        <div class="col-sm-9 col no-border">
+                          <ul class="sub-menu">
                 <?php endif; ?>
-                                  <li class="item <?php foreach ($classes as $class) {echo $class.' ';}; ?>">
-                                    <a href="<?php echo $link; ?>"
-                                      <?php echo ($new_window!=''?'target="'.$new_window.'"':'');?>
-                                      class="title">
-                                      <?php echo $title; ?>
-                                    </a>
-                                    <div class="description"><?php echo $description; ?></div>
-                                  </li>
+                            <li class="item <?php foreach ($classes as $class) {echo $class.' ';}; ?>">
+                              <a href="<?php echo $link; ?>"
+                                <?php echo ($new_window!=''?'target="'.$new_window.'"':'');?>
+                                class="title">
+                                <?php echo $title; ?>
+                              </a>
+                              <div class="description"><?php echo $description; ?></div>
+                            </li>
                 <?php if ( $menuitems[ $count + 1 ]->menu_item_parent != $parent_id &&$submenu ): ?>
-                                </ul>
-                              </div>
-                            <div class="col-sm-3 col dinamic-content"></div>
-                          </div>    
+                          </ul>
                         </div>
                       </div>
                     </div>

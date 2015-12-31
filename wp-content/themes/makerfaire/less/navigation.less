@@ -51,7 +51,10 @@ li.hidelink a:visited {
       flex: 1;
     }
   }
-  .navbar-nav li:hover .drop-holder {
+  .drop {
+    padding: 30px;
+  }
+  li:hover .drop-holder {
     opacity: 1;
     visibility: visible;
     pointer-events: inherit;
@@ -65,6 +68,30 @@ li.hidelink a:visited {
     -webkit-transition: opacity 150ms linear, visibility 0s linear;
     -webkit-transition-delay: 0s, 150ms;
     transition: opacity 150ms linear, visibility 0s linear 50ms;
+  }
+  // "around-the-world-item" custom styling:
+  .around-the-world-item {
+    .nav-thanks { 
+      color: #333;
+      font-size: 14px;
+      .p {
+        margin: 10px 0 0 0;
+      }
+    }
+    .drop-holder .drop .col.no-border {
+      width: 489px;
+    }
+  }
+  // about menu item custom styling
+  .whats-it-about {
+    .sub-menu {
+      display: flex;
+      flex-wrap: wrap;
+      .item {
+        width: 47%;
+        margin-right: 1%;
+      }
+    }
   }
 }
 

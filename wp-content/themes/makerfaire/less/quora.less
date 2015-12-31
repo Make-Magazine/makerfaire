@@ -799,7 +799,7 @@
     display: block;
     clear: both;
   }
-  .drop-holder .column ul,
+  .drop-holder ul,
   .pagination ul,
   .social-list,
   .filter-list,
@@ -943,7 +943,6 @@
   .drop-holder .drop {
     margin: 0;
     border-top: 3px solid rgba(0, 173, 239, .9);
-    padding: 0 0 20px;
     background: rgba(247, 247, 247, .94) url(../images/bg-border.png) repeat-x 0 100%;
   }
   .drop-holder .drop-logo img {
@@ -956,7 +955,7 @@
   .drop-holder.new-york .column {
     padding: 29px 0 0;
   }
-  .drop-holder .column .col {
+  .drop-holder .col {
     float: left;
     border-left: 0px dashed #ccc;
     /* border-left: 1px dashed #ccc; */
@@ -964,7 +963,7 @@
     text-align: left;
     line-height: 18px;
   }
-  li:nth-child(1) .drop-holder .column .col {
+  li:nth-child(1) .drop-holder .col {
     /* Cristi */
     float: left;
     border-left: 0px;
@@ -972,53 +971,53 @@
     text-align: left;
     line-height: 18px;
   }
-  .drop-holder .column .col:first-child {
+  .drop-holder .col:first-child {
     border: 0;
     padding: 0;
   }
-  .drop-holder .column .col:first-child ul {
+  .drop-holder .col:first-child ul {
     -moz-column-count: 2;
     -webkit-column-count: 2;
     column-count: 2;
     line-height: 18px;
   }
-  .drop-holder .column .col:first-child ul li {
+  .drop-holder .col:first-child ul li {
     padding: 0 16px 15px;
     vertical-align: top;
     display: inline-block;
   }
-  .drop-holder .column .col:first-child ul li a {
+  .drop-holder .col:first-child ul li a {
     padding: 0;
     color: #333;
   }
-  .drop-holder .column .col:first-child ul li a:hover {
+  .drop-holder .col:first-child ul li a:hover {
     text-decoration: none;
     color: #67bde1;
   }
-  .drop-holder .column .col ul li {
+  .drop-holder .col ul li {
     padding: 0 0 8px;
     vertical-align: top;
   }
-  .drop-holder .column .col ul li a {
+  .drop-holder .col ul li a {
     padding: 0;
     color: #333;
   }
-  .drop-holder .column .col ul li a:hover {
+  .drop-holder .col ul li a:hover {
     text-decoration: none;
     color: #67bde1;
   }
-  .drop-holder .column .holder .col .box {
+  .drop-holder .holder .col .box {
     width: 100%;
     padding: 0 20px 0 8px;
   }
-  .drop-holder .column .holder .col:first-child {
+  .drop-holder .holder .col:first-child {
     width: 600px;
   }
-  .drop-holder .column .holder .col:first-child .box {
+  .drop-holder .holder .col:first-child .box {
     width: 33.3%;
     padding: 0 20px 0 16px;
   }
-  .drop-holder .column .holder .col:first-child ul {
+  .drop-holder .holder .col:first-child ul {
     -moz-column-count: 1;
     -webkit-column-count: 1;
     column-count: 1;
@@ -1026,17 +1025,17 @@
     padding: 0 0 14px;
     width: 100%;
   }
-  .drop-holder .column .holder .col:first-child ul li {
+  .drop-holder .holder .col:first-child ul li {
     padding: 0 0 3px;
     display: inline-block;
     vertical-align: top;
     width: 100%;
   }
-  .drop-holder .column .holder .col ul {
+  .drop-holder .holder .col ul {
     margin: 0;
     width: 100%;
   }
-  .drop-holder .column .holder .col ul li {
+  .drop-holder .holder .col ul li {
     padding: 0 0 4px 16px;
     position: relative;
     vertical-align: top;
@@ -2412,8 +2411,8 @@
   .no-border {
     border: 0 !important;
   }
-  .navbar-nav > li:first-child .drop-holder .column .col ul li,
-  .navbar-nav > li:first-child .drop-holder .column .col ul li {
+  .navbar-nav > li:first-child .drop-holder .col ul li,
+  .navbar-nav > li:first-child .drop-holder .col ul li {
     vertical-align: top;
   }
   .navbar-nav > li:first-child .drop-holder .drop .col.no-border,
@@ -2468,50 +2467,6 @@
     font-size: 12px !important;
     line-height: 14px !important;
   }
-  /* Original New York Menu
-    .navbar-nav > li:nth-child(3) .drop-holder .column {
-        padding: 28px 0 0;
-    }
-
-    .navbar-nav > li:nth-child(3) .drop-holder .drop .col {
-        border: 0 none;
-        padding: 0;
-    }
-    .navbar-nav > li:nth-child(3) .drop-holder .drop .col .item {
-        float: left;
-        padding: 0 20px 0 16px;
-        width: 33.3%;
-    }
-    .navbar-nav > li:nth-child(3) .drop-holder .drop .col .item > a{
-        color: #333;
-        font: 16px/18px "latobold";
-        pointer-events: none;
-        margin: 0;
-        cursor: default;
-    }
-    .navbar-nav > li:nth-child(3) .drop-holder .drop .col .item .box{
-        float: left;
-        padding: 0;
-        width: 101%;
-        clear: both;
-    }
-    .navbar-nav > li:nth-child(3) .drop-holder .drop .col .item .box .date{
-        padding: 5px 0 13px 0;
-    }
-    .navbar-nav > li:nth-child(3) .drop-holder .drop .col .item .box time{
-        padding: 0 0 25px;
-    }
-    .navbar-nav > li:nth-child(3) .drop-holder .drop .col .item .box strong{
-        clear: both;
-    }
-    .navbar-nav > li:nth-child(3) .drop-holder .drop .col .item .box strong a{
-        font-size: inherit;
-        line-height: inherit;
-        font-weight: 400;
-        color: #666;
-    }
-    
-    */
   /*Updated New York Menu*/
   .navbar-nav > li:nth-child(3) .drop-holder .drop .col .sub-menu .meet-the-makers,
   .navbar-nav > li:nth-child(3) .drop-holder .drop .col .sub-menu .attend,
@@ -2520,8 +2475,7 @@
     width: 33.33%;
     padding: 0 10px 8px;
   }
-  .navbar-nav > li:nth-child(3) .drop-holder .drop .col .sub-menu h2,
-  .navbar-nav > li:nth-child(3) .drop-holder .dinamic-content.box h2 {
+  .navbar-nav > li:nth-child(3) .drop-holder .drop .col .sub-menu h2 {
     color: #999;
     font-size: 12px;
     line-height: 14px;
@@ -2534,19 +2488,6 @@
     padding: 0;
     line-height: 21px;
   }
-  .navbar-nav > li:nth-child(3) .drop-holder .dinamic-content.box ul {
-    width: 100%;
-  }
-  .navbar-nav > li:nth-child(3) .drop-holder .drop .dinamic-content.box .sponsor {
-    font-size: 10px;
-    margin-top: 26px;
-  }
-  .navbar-nav > li:nth-child(3) .drop-holder .drop .dinamic-content.box .sponsor span {
-    float: left;
-    font: 10px/12px "latobold";
-    color: #999;
-    padding: 6px 14px 0 0;
-  }
   .navbar-nav > li:nth-child(2) .drop-holder .drop .col .sub-menu .meet-the-makers,
   .navbar-nav > li:nth-child(2) .drop-holder .drop .col .sub-menu .attend,
   .navbar-nav > li:nth-child(2) .drop-holder .drop .col .sub-menu .get-involved {
@@ -2554,8 +2495,7 @@
     width: 33.33%;
     padding: 0 10px 8px;
   }
-  .navbar-nav > li:nth-child(2) .drop-holder .drop .col .sub-menu h2,
-  .navbar-nav > li:nth-child(2) .drop-holder .dinamic-content.box h2 {
+  .navbar-nav > li:nth-child(2) .drop-holder .drop .col .sub-menu h2 {
     color: #999;
     font-size: 12px;
     line-height: 14px;
@@ -2574,19 +2514,6 @@
     margin-bottom: 10px;
     width: 100%;
     text-indent: -9999px;
-  }
-  .navbar-nav > li:nth-child(2) .drop-holder .dinamic-content.box ul {
-    width: 100%;
-  }
-  .navbar-nav > li:nth-child(2) .drop-holder .drop .dinamic-content.box .sponsor {
-    font-size: 10px;
-    margin-top: 26px;
-  }
-  .navbar-nav > li:nth-child(2) .drop-holder .drop .dinamic-content.box .sponsor span {
-    float: left;
-    font: 10px/12px "latobold";
-    color: #999;
-    padding: 6px 14px 0 0;
   }
   ul li.navhack {
     width: 33%;
@@ -2670,7 +2597,7 @@
   .newsies .news .col-md-6 h3 a:visited {
     color: #FFFFFF;
   }
-  .navbar-nav > li:nth-child(2) .drop-holder .drop .column ul.sub-menu li.meet-the-makers ul.show li:nth-child(3) {
+  .navbar-nav > li:nth-child(2) .drop-holder .drop ul.sub-menu li.meet-the-makers ul.show li:nth-child(3) {
     margin-top: 25px;
   }
   .drop-holder .sponsor-holder .btn {
