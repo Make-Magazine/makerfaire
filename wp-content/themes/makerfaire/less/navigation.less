@@ -51,6 +51,21 @@ li.hidelink a:visited {
       flex: 1;
     }
   }
+  .navbar-nav li:hover .drop-holder {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: inherit;
+  }
+  .navbar-nav .drop-holder {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    -moz-transition: opacity 150ms linear, visibility 0s linear 50ms;
+    -o-transition: opacity 150ms linear, visibility 0s linear 50ms;
+    -webkit-transition: opacity 150ms linear, visibility 0s linear;
+    -webkit-transition-delay: 0s, 150ms;
+    transition: opacity 150ms linear, visibility 0s linear 50ms;
+  }
 }
 
 .navbar-fixed-top {

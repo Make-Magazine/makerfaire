@@ -1,16 +1,3 @@
-// Menu styling
-jQuery(function() {
-  /**
-   * menu fade
-   */
-  jQuery('.navbar-nav > li').hover(function() {
-      jQuery(this).find('.drop').fadeIn(50);
-    },
-    function() {
-      jQuery(this).find('.drop').fadeOut();
-    });
-});
-
 /*
  *  
  *  Custom jQuery for the mobile navigation

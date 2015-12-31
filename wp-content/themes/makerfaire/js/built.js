@@ -5044,12 +5044,12 @@ jQuery(function() {
   /**
    * menu fade
    */
-  jQuery('.navbar-nav > li').hover(function() {
-      jQuery(this).find('.drop').fadeIn(50);
-    },
-    function() {
-      jQuery(this).find('.drop').fadeOut();
-    });
+  // jQuery('.navbar-nav > li').hover(function() {
+  //     jQuery(this).find('.drop').fadeIn(50);
+  //   },
+  //   function() {
+  //     jQuery(this).find('.drop').fadeOut();
+  //   });
 });
 
 /*
