@@ -10,7 +10,7 @@ module.exports = function(grunt) {
           compress: true
         },
         files: {
-          'css/style.css': 'less/style.less',
+          'css/style.css': ['less/global.less', 'less/**/*.less'],
         }
       }
     },
