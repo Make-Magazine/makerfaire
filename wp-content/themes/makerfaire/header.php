@@ -123,7 +123,7 @@
       <div class="collapse navbar-collapse" id="navbar-mobile-collapse">
         <ul class="nav navbar-nav">
           <?php
-            $menu = wp_get_nav_menu_object('Main Navigation Version 2 Mobile');
+            $menu = wp_get_nav_menu_object('Main Navigation Version 3 Mobile');
             $menuitems = wp_get_nav_menu_items( $menu->term_id, array('order' => 'DESC') );
             foreach( $menuitems as $item ):
               $url     = $item->url;
@@ -146,7 +146,7 @@
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
           <?php
-            $menu = wp_get_nav_menu_object('Main Navigation Version 2');
+            $menu = wp_get_nav_menu_object('Main Navigation Version 3');
             $menuitems = wp_get_nav_menu_items( $menu->term_id, array( 'order' => 'DESC', 'walker' => new Description_Walker ) );
             $count = 0;
             $submenu = false;
@@ -211,7 +211,7 @@
       <?php
         wp_nav_menu( array(
           'theme_location' => '_no_default_fallback',
-          'menu'            => 'Main Navigation Version 2 Subnav',
+          'menu'            => 'Main Navigation Version 3 Subnav',
           'container' => false,
           'menu_class' => 'nav navbar-nav'
         ) );
