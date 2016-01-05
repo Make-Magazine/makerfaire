@@ -1,5 +1,5 @@
 jQuery(function() {
-  var aroundTheWorldCustomHtml = '<a class="nav-thanks"><img class="nav-image img-responsive" src="http://makerfaire.com/wp-content/themes/makerfaire/images/mf-feature-mfba16-200px.png" alt="Maker Faire World logo" width="95" height="95" scale="0"><p>Maker Faire Bay Area 2016</p><p style="color:red;">CALL FOR MAKERS COMING&nbsp;SOON!</p></a>';
+  var aroundTheWorldCustomHtml = '<a class="nav-thanks"><img class="nav-image img-responsive" src="http://makerfaire.com/wp-content/themes/makerfaire/images/mf-feature-mfba16-200px.png" alt="Maker Faire World logo" width="95" height="95" scale="0"><p style="margin: 5px 0;font-weight: 700;">Maker Faire Bay Area 2016</p><p style="color:red;">CALL FOR MAKERS COMING&nbsp;SOON!</p></a>';
   var aboutItemCustomHtml = '<img class="img-responsive" src="http://makerfaire.com/wp-content/themes/makerfaire/images/about-logo.png" alt="Maker Faire Badge logo" scale="0">';
   jQuery('.around-the-world-item .dynamic-hackbox').html(aroundTheWorldCustomHtml);
   jQuery('.whats-it-about .dynamic-hackbox').html(aboutItemCustomHtml);
