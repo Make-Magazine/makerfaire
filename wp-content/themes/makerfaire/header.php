@@ -229,6 +229,7 @@
       </div>
     </div>
   </nav>
+  <!-- Desktop Subnav bar -->
   <nav class="navbar desktop-nav hidden-xs subnav">
     <div class="container">
       <?php
