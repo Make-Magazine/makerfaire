@@ -78,7 +78,7 @@
   </script>
 </head>
 
-<body id="bootstrap-js" <?php body_class('no-js'); ?>>
+<body id="makerfaire" <?php body_class('no-js'); ?>>
   <!-- Google Tag Manager MakerFaire -->
   <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -112,7 +112,7 @@
     <div class="container">
       <div class="navbar-header">
         <a class="navbar-brand" href="<?php bloginfo('url'); ?>"><img src="http://cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" height="43" width="183" alt="maker faire"></a>
-        <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse" data-target="#navbar-mobile-collapse">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -120,43 +120,20 @@
         </button>
       </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <?php
-          wp_nav_menu( array(
-            'theme_location' => '_no_default_fallback',
-            'menu'            => 'Main Navigation Version 2 Mobile',
-            'container' => false
-          ) );
-        ?>
-        <div class="mobile-nav-social padtop padbottom">
-          <span class="nav-follow-us text-muted padright">Follow us:</span>
-          <div class="social-profile-icons">
-            <a class="sprite-facebook-32" href="//www.facebook.com/makerfaire"
-            title="Facebook" target="_blank">
-              <div class="social-profile-cont">
-                <span class="sprite"></span>
-              </div>
-            </a>
-            <a class="sprite-twitter-32" href="//twitter.com/makerfaire"
-            title="Twitter" target="_blank">
-              <div class="social-profile-cont">
-                <span class="sprite"></span>
-              </div>
-            </a>
-            <a class="sprite-pinterest-32" href="//www.pinterest.com/makemagazine/maker-faire/"
-            title="Pinterest" target="_blank">
-              <div class="social-profile-cont">
-                <span class="sprite"></span>
-              </div>
-            </a>
-            <a class="sprite-googleplus-32" href="//plus.google.com/104410464300110463062/posts"
-            rel="publisher" title="Google+" target="_blank">
-              <div class="social-profile-cont">
-                <span class="sprite"></span>
-              </div>
-            </a>
-          </div>
-        </div>
+      <div class="collapse navbar-collapse" id="navbar-mobile-collapse">
+        <ul class="nav navbar-nav">
+          <?php
+            $menu = wp_get_nav_menu_object('Main Navigation Version 2 Mobile');
+            $menuitems = wp_get_nav_menu_items( $menu->term_id, array('order' => 'DESC') );
+            foreach( $menuitems as $item ):
+              $url     = $item->url;
+              $classes = $item->classes;
+          ?>
+            <li class="<?php foreach ($classes as $class) {echo $class.' ';}; ?>">
+              <a href="<?php echo $url; ?>"></a>
+            </li>                           
+          <?php endforeach; ?>
+        </ul>
       </div>
     </div>
   </nav>
@@ -174,7 +151,6 @@
             $count = 0;
             $submenu = false;
             foreach( $menuitems as $item ):
-              //4/23/15
               $new_window     = (isset($item->target)?$item->target:'');
               $link           = $item->url;
               $title          = $item->title;
@@ -222,7 +198,7 @@
                 <?php $submenu = false; endif; ?>
               <?php endif; ?>
             <?php if ( (isset($menuitems[ $count + 1 ]->menu_item_parent))&&$menuitems[ $count + 1 ]->menu_item_parent != $parent_id ): ?>
-            </li>                           
+            </li>
             <?php $submenu = false; endif; ?>
           <?php $count++; endforeach; ?>
         </ul>
