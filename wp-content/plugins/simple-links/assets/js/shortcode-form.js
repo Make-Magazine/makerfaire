@@ -117,7 +117,11 @@ jQuery( document ).ready( function( $ ){
 		$( document ).trigger( 'simple-links-js-form-output', [output] );
 
 		output += ']';
+
 		//Finish out the shortcode
+		if( Simple_Links_Config.is_visual_shortcodes_enabled ){
+			output = "[embed]" + output + "[/embed]"
+		}
 
 		//Send the shortcode back to the editor
 		myObj.insert();

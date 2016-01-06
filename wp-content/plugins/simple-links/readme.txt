@@ -3,36 +3,36 @@ Contributors: Mat Lipe
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal%40lipeimagination%2einfo&lc=US&item_name=Simple%20Links%20&no_note=0&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: Link Manager, Links List, Link Organization
 Requires at least: 4.2.1
-Tested up to: 4.3.0
-Stable tag: 4.0.9
+Tested up to: 4.4.0
+Stable tag: 4.1.1
 License: GPLv2
 
-Replacement for WordPress Link Manager with Many Additional Features. Make Managing Links Simple and Robust
+Replacement for the old WordPress Links Manager with many additional features. Makes managing links simple and robust
 
 == Description ==
 
-The built in WordPress Links Manager had become deprecated due to many shortcomings. This plugin attempts to recreate the same concept while removing those shortcomings.
+The built in WordPress Links Manager has become deprecated due to many shortcomings. This plugin attempts to recreate the same concept while removing those shortcomings.
 
-<h3>Want more Options?</h3>
+<h3>Want more options and better support?</h3>
 <big><strong><a href="http://matlipe.com/product-category/simple-links-addons/">Premium Add-ons!</a></big></strong>
 
 
 Some of the features this plugin offers:
 
-* Drag and Drop link ordering
-* Featured Image Style Image Attaching
+* Drag and drop link ordering
+* Featured image style, image attaching
 * Short-code capabilities with a short-code generating form
 * Additional usable Fields
-* Many Widget Options
-* Import links from the WordPress Links manager
-* Options to remove the WordPress Links Manager from the admin
-* Flexible Permissions
+* Many widget options
+* Import links from the old WordPress Links manager
+* Options to remove the old WordPress Links Manager from the admin
+* Flexible permissions
 
 <div>
   The outputs, admin screens, and permissions are extendable for developers familiar with using filters.
 </div>
 
-For Developers Docs See <a href="http://matlipe.com/simple-links-docs/simple-links-developer-docs/">http://matlipe.com/simple-links-docs/simple-links-developer-docs/</a> 
+For developers docs see <a href="https://matlipe.com/simple-links-docs/simple-links-developer-docs/">https://matlipe.com/simple-links-docs/simple-links-developer-docs/</a>
 
 To contribute send pull requests:
 <a href="https://github.com/lipemat/simple-links/">GitHub Repo</a>
@@ -65,17 +65,20 @@ To contribute send pull requests:
 Start a support thread and myself or someone from the community can probably help you out. Support thread will be answered faster than contact submissions from my website.
 
 = If you are looking for custom functionality =
-There are some premium add-ons available here <a href="http://matlipe.com/product-category/simple-links-addons/">http://matlipe.com/product-category/simple-links-addons/</a>
+There are some premium add-ons available here <a href="https://matlipe.com/product-category/simple-links-addons/">https://matlipe.com/product-category/simple-links-addons/</a>
 I also offer plugin customization services.
 
 
 
 == Screenshots ==
-1. The Widget Options
+1. The widget options
 
-2. The Shortcode Generating Form
+2. The short-code generating form
 
 == Changelog ==
+= 4.1.0 =
+* Added visual shortcodes feature (BETA)
+
 = 4.0.3 =
 * Fix bug with importing categories from WP Links
 
@@ -97,7 +100,7 @@ I also offer plugin customization services.
 * Improved translation strings
 
 = 2.9.3 =
-* No longer include children categories
+* No longer include children categories automatically. Instead have the ability to select with child categories to include.
 
 = 2.9.2 =
 * Fix bug with link nofollow

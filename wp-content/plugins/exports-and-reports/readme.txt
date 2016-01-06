@@ -3,8 +3,8 @@ Contributors: sc0ttkclark
 Donate link: http://scottkclark.com/
 Tags: exports, reports, reporting, exporting, csv, tab, xml, json
 Requires at least: 3.8
-Tested up to: 4.3
-Stable tag: 0.7.1
+Tested up to: 4.4
+Stable tag: 0.7.2
 
 Define custom exports / reports for users, based off of any custom MySQL SELECT query you define.
 
@@ -73,6 +73,10 @@ Scott Kingsley Clark from SKC Development -- Scott specializes in WordPress and 
 * Get paginated / full data from a report in JSON format
 
 == Changelog ==
+
+= 0.7.2 =
+* Fix for files not downloading completely (on some environments)
+* Additional escaping fixes for WP_Admin_UI (reported by Sathish Kumar from cybersecurity works)
 
 = 0.7.1 =
 * Escaping fixes for WP_Admin_UI (reported by Sathish Kumar from cybersecurity works)

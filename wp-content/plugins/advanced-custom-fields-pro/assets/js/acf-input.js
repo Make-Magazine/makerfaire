@@ -1825,7 +1825,7 @@ var acf;
 		
 		duplicate: function( $el, attr ){
 			
-			console.time('duplicate');
+			//console.time('duplicate');
 			
 			
 			// defaults
@@ -1900,7 +1900,7 @@ var acf;
 			}, 1);
 			
 			
-			console.timeEnd('duplicate');
+			//console.timeEnd('duplicate');
 			
 			
 			// return
@@ -2827,18 +2827,18 @@ var acf;
 	
 	
 	/*
-console.time("acf_test_ready");
-	console.time("acf_test_load");
+	//console.time("acf_test_ready");
+	//console.time("acf_test_load");
 	
 	acf.add_action('ready', function(){
 		
-		console.timeEnd("acf_test_ready");
+		//console.timeEnd("acf_test_ready");
 		
 	}, 999);
 	
 	acf.add_action('load', function(){
 		
-		console.timeEnd("acf_test_load");
+		//console.timeEnd("acf_test_load");
 		
 	}, 999);
 */
@@ -5373,7 +5373,7 @@ console.time("acf_test_ready");
 /*
 			frame.on('all', function( e ) {
 				
-				console.log( 'frame all: %o', e );
+				// console.log( 'frame all: %o', e );
 			
 			});
 */
@@ -5713,7 +5713,7 @@ console.time("acf_test_ready");
 				
 				initialize: function( models, options ){
 					
-					console.log('My Attachments initialize: %o %o %o', this, models, options);
+					// console.log('My Attachments initialize: %o %o %o', this, models, options);
 					
 					// return
 					return Attachments.prototype.initialize.apply( this, arguments );
@@ -5722,7 +5722,7 @@ console.time("acf_test_ready");
 				
 				sync: function( method, model, options ) {
 					
-					console.log('My Attachments sync: %o %o %o %o', this, method, model, options);
+					// console.log('My Attachments sync: %o %o %o %o', this, method, model, options);
 					
 					
 					// return
@@ -5736,7 +5736,7 @@ console.time("acf_test_ready");
 		
 		customize_Query: function(){
 			
-			console.log('customize Query!');
+			// console.log('customize Query!');
 			
 			// vars
 			var Query = wp.media.model.Query;
@@ -9177,7 +9177,7 @@ console.time("acf_test_ready");
 					
 					/*
 ed.on('ResizeEditor', function(e) {
-					    console.log(e);
+					    // console.log(e);
 					});
 */
 					

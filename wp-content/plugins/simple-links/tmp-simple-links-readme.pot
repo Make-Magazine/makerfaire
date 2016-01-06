@@ -1,0 +1,266 @@
+msgid ""
+msgstr "MIME-Version: 1.0\n"
+
+#. Name.
+msgid "Simple Links"
+msgstr ""
+
+#. Short description.
+msgid "Replacement for the old WordPress Links Manager with many additional features. Makes managing links simple and robust"
+msgstr ""
+
+#. Screenshot description.
+msgid "<p>The widget options</p>"
+msgstr ""
+
+#. Screenshot description.
+msgid "<p>The short-code generating form</p>"
+msgstr ""
+
+#. Found in description header.
+msgid "Want more options and better support?"
+msgstr ""
+
+#. Found in description list item.
+msgid "Drag and drop link ordering"
+msgstr ""
+
+#. Found in description list item.
+msgid "Featured image style, image attaching"
+msgstr ""
+
+#. Found in description list item.
+msgid "Short-code capabilities with a short-code generating form"
+msgstr ""
+
+#. Found in description list item.
+msgid "Additional usable Fields"
+msgstr ""
+
+#. Found in description list item.
+msgid "Many widget options"
+msgstr ""
+
+#. Found in description list item.
+msgid "Import links from the old WordPress Links manager"
+msgstr ""
+
+#. Found in description list item.
+msgid "Options to remove the old WordPress Links Manager from the admin"
+msgstr ""
+
+#. Found in description list item.
+msgid "Flexible permissions"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "The built in WordPress Links Manager has become deprecated due to many shortcomings. This plugin attempts to recreate the same concept while removing those shortcomings."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "<strong><a href=\"http://matlipe.com/product-category/simple-links-addons/\">Premium Add-ons!</a></strong>"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "Some of the features this plugin offers:"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "For developers docs see <a href=\"https://matlipe.com/simple-links-docs/simple-links-developer-docs/\">https://matlipe.com/simple-links-docs/simple-links-developer-docs/</a>"
+msgstr ""
+
+#. Found in description paragraph.
+msgid ""
+"To contribute send pull requests:\n"
+"<a href=\"https://github.com/lipemat/simple-links/\">GitHub Repo</a>"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Added visual shortcodes feature (BETA)"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix bug with importing categories from WP Links"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix bug with count of links when some links not sorted by category"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Ability to order each category individually"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Create setting for default link target"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Improved translation ability"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Improved Links Manager Import"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fixed bug with initial setting of hide the Links Manager"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "New widget and shortcode option to include the child categories links. See help tabs of your widget and page/post screens for details"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Cleaned up help sections a bit"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Improved translation strings"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "No longer include children categories automatically. Instead have the ability to select with child categories to include."
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fix bug with link nofollow"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Allow for duplicate category names"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Added Persian Translation ( Thanks to Ameer MP and Sheyda Darouei )"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Added sort by date ability"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Some code structure improvements"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Improved settings section"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Added ability to include paragraphs in the link descriptions"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Updated .pot file for translation"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Improved WP integrations "
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Removed deprecated Replica Widget"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Improved help section and flags"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fixed issue with double quotes in descriptions"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Fixed issue with pre WP 3.5 installs"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Added mce to link description"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Prep for premium add-ons"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "New filters"
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Bug fixes"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid "New Factory Style class structure for more manageable development"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid ""
+"Added ability to display the link image without the links title\n"
+"Added ability to use any type of link including relative links"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid "Added new filters to allow for filtering each links output directly"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid "Prevent the links from showing up in search results"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid ""
+"Added Ability to have a rel=nofollow added to links\n"
+"Added Ability to remove the line break between Images"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid "Fixed the random ordering of links"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid "Added internationalization support"
+msgstr ""
+
+#. Found in faq header.
+msgid "Most questions can be answered by looking at the help section in the top right corner of the different pages in the WordPress Admin."
+msgstr ""
+
+#. Found in faq header.
+msgid "The full documentation can be found here"
+msgstr ""
+
+#. Found in faq header.
+msgid "For Developers Docs See"
+msgstr ""
+
+#. Found in faq header.
+msgid "For all other questions"
+msgstr ""
+
+#. Found in faq header.
+msgid "If you are looking for custom functionality"
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "*Once this plugin is activated, you will find documentation on the \"widgets\", \"pages\", \"posts\", and \"simple links settings\" screens."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "<a href=\"http://lipeimagination.info/simple-links-docs/\">http://lipeimagination.info/simple-links-docs/</a> which is the same as the plugin link."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "<a href=\"http://matlipe.com/simple-links-docs/simple-links-developer-docs/\">http://matlipe.com/simple-links-docs/simple-links-developer-docs/</a>"
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "Start a support thread and myself or someone from the community can probably help you out. Support thread will be answered faster than contact submissions from my website."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid ""
+"There are some premium add-ons available here <a href=\"https://matlipe.com/product-category/simple-links-addons/\">https://matlipe.com/product-category/simple-links-addons/</a>\n"
+"I also offer plugin customization services."
+msgstr ""

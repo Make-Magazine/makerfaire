@@ -59,7 +59,7 @@ module.exports = function(grunt) {
 			transifex: 'tx pull -a',
 
 			// Create a ZIP file
-			zip: 'python /usr/bin/git-archive-all ../gravityview-advanced-filter.zip'
+			zip: 'git-archive-all ../gravityview-advanced-filter.zip'
 		}
 
 	});

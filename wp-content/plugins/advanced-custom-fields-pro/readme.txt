@@ -106,6 +106,11 @@ http://support.advancedcustomfields.com/
 
 == Changelog ==
 
+= 5.3.2.2 =
+* Core: Fixed PHP error when registering a local field missing one of more settings
+* Core: Fixed incorrect json load_path setting when WPML is active
+* Language: Updated Polish translation - thanks to Michal Lepiarz
+
 = 5.3.2.1 =
 * Core: Fixed bug causing issues when loading values from an options page, widget or taxonomy term
 

@@ -12,7 +12,7 @@ class GWPerksPage {
 
         add_action( 'admin_print_footer_scripts', array(__class__, 'output_tb_resize_script'), 11 );
 
-        $is_install = gwget('view') == 'install';
+        $is_install = gwget('view') == 'install' && current_user_can( 'install_plugins' );
         $installed_perks = GWPerks::get_installed_perks();
 
         wp_enqueue_style( 'gf_tooltip', GFCommon::get_base_url() . '/css/tooltip.css', null, GFCommon::$version );
@@ -239,7 +239,9 @@ class GWPerksPage {
             <div class="icon32" id="icon-themes"><br></div>
             <h2 class="nav-tab-wrapper">
                 <a class="nav-tab <?php echo !$is_install ? 'nav-tab-active' : ''; ?>" href="#manage">Manage Perks</a>
-                <a class="nav-tab <?php echo $is_install ? 'nav-tab-active' : ''; ?>" href="#install">Install Perks</a>
+                <?php if( current_user_can( 'install_plugins' ) ): ?>
+                    <a class="nav-tab <?php echo $is_install ? 'nav-tab-active' : ''; ?>" href="#install">Install Perks</a>
+                <?php endif; ?>
             </h2>
 
             <?php self::display_header_links(); ?>
@@ -302,82 +304,94 @@ class GWPerksPage {
 
             </div>
 
-            <div id="install" class="perks plugins tab-container <?php echo self::show_splash() ? 'splash' : ''; ?>" <?php echo $is_install ? '' : 'style="display:none;"'; ?> >
-
-                <?php if( self::show_splash() ):
-                    $generic_perk = new GWPerk();
-                    ?>
-                    <div id="need-license-splash" style="display:none;">
-                        <div class="perk-listing">
-                            <div class="wrap">
-                                <h3><?php _e('Want Access to All Perks? Buy a License!', 'gravityperks'); ?></h3>
-                                <p><?php printf( __('Purchase a Gravity Perks license and install as many perks as you\'d like! If you\'ve already purchased a license you can register it via the "Register License" button below.', 'gravityperks'),
-                                    '<a href="' . GW_REGISTER_LICENSE_URL . '">', '</a>' ); ?></p>
-                                <!--<p><?php _e('Keep your Gravity Perks license active for unlimited access to <strong>all current and future</strong> perks . You\'ll also get free automatic upgrades and premium support.', 'gravityperks' ); ?></p>-->
-                                <div class="gp-license-splash-actions">
-                                    <a href="<?php echo GW_BUY_GPERKS_URL; ?>" class="button-primary" target="_blank"><?php _e('Buy License', 'gravityperks'); ?></a>
-                                    <a href="<?php echo GW_REGISTER_LICENSE_URL; ?>&register=1" class="button-secondary"><?php _e('Register License', 'gravityperks'); ?></a>
-                                    <a href="javascript:void(0);" onclick="dismissLicenseSplash();" class="dismiss-link"><?php _e('dismiss', 'gravityperks'); ?></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <div class="perk-listings">
-
-                <?php
-                $available_perks = GWPerks::get_available_perks();
-                $i = 0;
-                foreach($available_perks as $perk):
-
-                    if( !isset($perk->plugin_file) || empty($perk->plugin_file) || GWPerk::is_installed( $perk->plugin_file ) )
-                         continue;
-
-                    $generic_perk = new GWPerk($perk->plugin_file);
-
-                    ?>
-
-                    <div class="perk-listing install">
-                        <div class="wrap">
-
-                            <h3><?php echo $perk->name; ?> <span class="version">v.<?php echo $perk->version; ?></span></h3>
-
-                            <div class="actions">
-                                <?php if( GWPerks::has_valid_license() ): ?>
-                                    <a href="<?php echo $generic_perk->get_link_for('install'); ?>" class="button"><?php _e('Install Perk', 'gravityperks'); ?></a>
-                                <?php else: ?>
-                                    <a href="<?php echo GW_BUY_GPERKS_URL; ?>" class="button" target="_blank"><?php _e('Buy License', 'gravityperks'); ?></a>
-                                <?php endif; ?>
-                            </div>
-
-                            <div class="perk-description"><?php echo $perk->sections['description']; ?></div>
-
-                        </div>
-                    </div>
-
-                <?php endforeach;
-
-                if(!isset($generic_perk)): ?>
-
-                    <div class="all-perks-installed">
-                        <?php _e('Holy cow. You must really love perks.<br /><strong>You\'ve installed them all</strong>!', 'gravityperks'); ?>
-                    </div>
-
-                <?php endif;
-
-                unset($perk);
-                $i++;
-                ?>
-
-                </div> <!-- / perk-listings -->
-
-            </div>
+            <?php
+            if( current_user_can( 'install_plugins' ) ) {
+                self::install_page( $is_install );
+            }
+            ?>
 
         </div>
 
         <?php
 
+    }
+
+    public static function install_page( $is_active ) {
+        ?>
+
+        <div id="install" class="perks plugins tab-container <?php echo self::show_splash() ? 'splash' : ''; ?>" <?php echo $is_active ? '' : 'style="display:none;"'; ?> >
+
+            <?php if( self::show_splash() ):
+                $generic_perk = new GWPerk();
+                ?>
+                <div id="need-license-splash" style="display:none;">
+                    <div class="perk-listing">
+                        <div class="wrap">
+                            <h3><?php _e('Want Access to All Perks? Buy a License!', 'gravityperks'); ?></h3>
+                            <p><?php printf( __('Purchase a Gravity Perks license and install as many perks as you\'d like! If you\'ve already purchased a license you can register it via the "Register License" button below.', 'gravityperks'),
+                                '<a href="' . GW_REGISTER_LICENSE_URL . '">', '</a>' ); ?></p>
+                            <!--<p><?php _e('Keep your Gravity Perks license active for unlimited access to <strong>all current and future</strong> perks . You\'ll also get free automatic upgrades and premium support.', 'gravityperks' ); ?></p>-->
+                            <div class="gp-license-splash-actions">
+                                <a href="<?php echo GW_BUY_GPERKS_URL; ?>" class="button-primary" target="_blank"><?php _e('Buy License', 'gravityperks'); ?></a>
+                                <a href="<?php echo GW_REGISTER_LICENSE_URL; ?>&register=1" class="button-secondary"><?php _e('Register License', 'gravityperks'); ?></a>
+                                <a href="javascript:void(0);" onclick="dismissLicenseSplash();" class="dismiss-link"><?php _e('dismiss', 'gravityperks'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <div class="perk-listings">
+
+            <?php
+            $available_perks = GWPerks::get_available_perks();
+            $i = 0;
+            foreach($available_perks as $perk):
+
+                if( !isset($perk->plugin_file) || empty($perk->plugin_file) || GWPerk::is_installed( $perk->plugin_file ) )
+                     continue;
+
+                $generic_perk = new GWPerk($perk->plugin_file);
+
+                ?>
+
+                <div class="perk-listing install">
+                    <div class="wrap">
+
+                        <h3><?php echo $perk->name; ?> <span class="version">v.<?php echo $perk->version; ?></span></h3>
+
+                        <div class="actions">
+                            <?php if( GWPerks::has_valid_license() ): ?>
+                                <a href="<?php echo $generic_perk->get_link_for('install'); ?>" class="button"><?php _e('Install Perk', 'gravityperks'); ?></a>
+                            <?php else: ?>
+                                <a href="<?php echo GW_BUY_GPERKS_URL; ?>" class="button" target="_blank"><?php _e('Buy License', 'gravityperks'); ?></a>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="perk-description"><?php echo $perk->sections['description']; ?></div>
+
+                    </div>
+                </div>
+
+            <?php endforeach;
+
+            if(!isset($generic_perk)): ?>
+
+                <div class="all-perks-installed">
+                    <?php _e('Holy cow. You must really love perks.<br /><strong>You\'ve installed them all</strong>!', 'gravityperks'); ?>
+                </div>
+
+            <?php endif;
+
+            unset($perk);
+            $i++;
+            ?>
+
+            </div> <!-- / perk-listings -->
+
+        </div>
+
+        <?php
     }
 
     public static function output_tb_resize_script() {

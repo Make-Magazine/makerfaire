@@ -1,7 +1,7 @@
 # GravityView - Advanced Filter Extension #
 **Tags:** gravityview  
 **Requires at least:** 3.3  
-**Tested up to:** 4.1  
+**Tested up to:** 4.3.1  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices  
 **License:** GPL 3 or higher  
@@ -15,6 +15,11 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 ## Changelog ##
+
+### 1.0.11 on November 13 ###
+* New: Add "is not" option to GravityView Approval fields. Now you can show only unapproved entries.
+* Tweak: Make it clearer in the logs when the extension is preventing displaying results for security
+* Updated: Extension updater script
 
 ### 1.0.10 on September 13 ###
 * Fixed: Not able to enter relative dates (like `now` or `two weeks ago`) in date field filters

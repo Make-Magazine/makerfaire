@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.9.1
+
+    - Updated Manage Perks page to automatically hiding Install Perks tab when user does not have ability to install plugins
+
 ## 1.2.9
 
     - Public release of 1.8.x changes to encourage updates.

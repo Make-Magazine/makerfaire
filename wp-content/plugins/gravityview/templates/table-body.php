@@ -32,7 +32,7 @@
 				$this->setCurrentEntry( $entry );
 
 				// Add `alt` class to alternate rows
-				$alt = empty( $alt ) ? 'alt' : false;
+				$alt = empty( $alt ) ? 'alt' : '';
 
 				/**
 				 * @filter `gravityview_entry_class` Modify the class applied to the entry row

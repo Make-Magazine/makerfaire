@@ -3,14 +3,14 @@ msgstr ""
 "Project-Id-Version: Advanced Custom Fields Pro v5.2.9\n"
 "Report-Msgid-Bugs-To: http://support.advancedcustomfields.com\n"
 "POT-Creation-Date: 2015-08-11 23:35+0200\n"
-"PO-Revision-Date: 2015-08-11 23:35+0200\n"
+"PO-Revision-Date: 2015-11-05 16:52+0100\n"
 "Last-Translator: Ralf Koller <r.koller@gmail.com>\n"
 "Language-Team: Digital Factory <info@digitalfactory.pl>\n"
 "Language: pl_PL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.3\n"
+"X-Generator: Poedit 1.8.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
@@ -25,16 +25,15 @@ msgstr ""
 
 #: acf.php:63
 msgid "Advanced Custom Fields"
-msgstr "Zaawansowane własne pola"
+msgstr "Advanced Custom Fields"
 
 #: acf.php:205 admin/admin.php:61
 msgid "Field Groups"
-msgstr "Grupy Pól"
+msgstr "Grupy pól"
 
 #: acf.php:206
-#, fuzzy
 msgid "Field Group"
-msgstr "Nowa grupa pól"
+msgstr "Grupa pól"
 
 #: acf.php:207 acf.php:239 admin/admin.php:62
 #: pro/fields/flexible-content.php:517
@@ -59,7 +58,7 @@ msgstr "Zobacz grupę pól"
 
 #: acf.php:212
 msgid "Search Field Groups"
-msgstr "Szukaj grupy pól"
+msgstr "Szukaj grup pól"
 
 #: acf.php:213
 msgid "No Field Groups found"
@@ -75,19 +74,16 @@ msgid "Fields"
 msgstr "Pola"
 
 #: acf.php:238
-#, fuzzy
 msgid "Field"
-msgstr "Pola"
+msgstr "Pole"
 
 #: acf.php:240
-#, fuzzy
 msgid "Add New Field"
-msgstr "Nowe pole"
+msgstr "Dodaj nowe pole"
 
 #: acf.php:241
-#, fuzzy
 msgid "Edit Field"
-msgstr "Edytuj plik"
+msgstr "Edytuj pole"
 
 #: acf.php:242 admin/views/field-group-fields.php:18
 #: admin/views/settings-info.php:111
@@ -95,37 +91,33 @@ msgid "New Field"
 msgstr "Nowe pole"
 
 #: acf.php:243
-#, fuzzy
 msgid "View Field"
-msgstr "Nowe pole"
+msgstr "Zobacz pole"
 
 #: acf.php:244
-#, fuzzy
 msgid "Search Fields"
-msgstr "Szukaj grupy pól"
+msgstr "Szukaj pól"
 
 #: acf.php:245
-#, fuzzy
 msgid "No Fields found"
-msgstr "Nie znaleziono grupy pól"
+msgstr "Nie znaleziono pól"
 
 #: acf.php:246
-#, fuzzy
 msgid "No Fields found in Trash"
-msgstr "Brak grup pól w koszu"
+msgstr "Nie znaleziono pól w koszu"
 
 #: acf.php:268 admin/field-group.php:283 admin/field-groups.php:583
 #: admin/views/field-group-options.php:18
 msgid "Disabled"
-msgstr ""
+msgstr "Wyłączone"
 
 #: acf.php:273
 #, php-format
 msgid "Disabled <span class=\"count\">(%s)</span>"
 msgid_plural "Disabled <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Wyłączony: <span class=\"count\">(%s)</span>"
+msgstr[1] "Wyłączonych: <span class=\"count\">(%s)</span>"
+msgstr[2] "Wyłączonych: <span class=\"count\">(%s)</span>"
 
 #: admin/admin.php:57 admin/views/field-group-options.php:120
 msgid "Custom Fields"
@@ -136,9 +128,8 @@ msgid "Field group updated."
 msgstr "Grupa pól została zaktualizowana."
 
 #: admin/field-group.php:70
-#, fuzzy
 msgid "Field group deleted."
-msgstr "Grupa pól została zaktualizowana."
+msgstr "Grupa pól została usunięta."
 
 #: admin/field-group.php:73
 msgid "Field group published."
@@ -166,20 +157,19 @@ msgstr "Przenieś do kosza. Jesteś pewny?"
 
 #: admin/field-group.php:177
 msgid "checked"
-msgstr ""
+msgstr "zaznaczone"
 
 #: admin/field-group.php:178
 msgid "No toggle fields available"
-msgstr ""
+msgstr "Pola przełączania niedostępne"
 
 #: admin/field-group.php:179
-#, fuzzy
 msgid "Field group title is required"
-msgstr "Grupa pól została opublikowana."
+msgstr "Grupa pola tytułu jest wymagana"
 
 #: admin/field-group.php:180 api/api-field-group.php:607
 msgid "copy"
-msgstr ""
+msgstr "kopiuj"
 
 #: admin/field-group.php:181
 #: admin/views/field-group-field-conditional-logic.php:67
@@ -190,34 +180,33 @@ msgid "or"
 msgstr "lub"
 
 #: admin/field-group.php:183
-#, fuzzy
 msgid "Parent fields"
-msgstr "Strona nadrzędna"
+msgstr "Pola nadrzędne (rodzic)"
 
 #: admin/field-group.php:184
 msgid "Sibling fields"
-msgstr ""
+msgstr "Pola podrzędne (dzieci)"
 
 #: admin/field-group.php:185
-#, fuzzy
 msgid "Move Custom Field"
-msgstr "Własne pola"
+msgstr "Przenieś pole niestandardowe"
 
 #: admin/field-group.php:186
 msgid "This field cannot be moved until its changes have been saved"
-msgstr ""
+msgstr "To pole nie może zostać przeniesione do czasu zachowania zmian"
 
 #: admin/field-group.php:187
 msgid "Null"
-msgstr ""
+msgstr "Zero"
 
 #: admin/field-group.php:188 core/input.php:128
 msgid "The changes you made will be lost if you navigate away from this page"
 msgstr ""
+"Wprowadzone przez Ciebie zmiany przepadną jeśli przejdziesz do innej strony"
 
 #: admin/field-group.php:189
 msgid "The string \"field_\" may not be used at the start of a field name"
-msgstr ""
+msgstr "Zmienna \"field_\" nie może zostać użyta na początku nazwy pola"
 
 #: admin/field-group.php:214
 msgid "Location"
@@ -225,60 +214,55 @@ msgstr "Pozycja"
 
 #: admin/field-group.php:215
 msgid "Settings"
-msgstr ""
+msgstr "Ustawienia"
 
 #: admin/field-group.php:253
 msgid "Field Keys"
-msgstr ""
+msgstr "Klucze pola"
 
 #: admin/field-group.php:283 admin/views/field-group-options.php:17
 msgid "Active"
 msgstr "Aktywne"
 
 #: admin/field-group.php:744
-#, fuzzy
 msgid "Front Page"
-msgstr "Strona nadrzędna"
+msgstr "Strona główna"
 
 #: admin/field-group.php:745
-#, fuzzy
 msgid "Posts Page"
-msgstr "Strona nadrzędna"
+msgstr "Strony postów"
 
 #: admin/field-group.php:746
-#, fuzzy
 msgid "Top Level Page (no parent)"
-msgstr "Strona podrzędna"
+msgstr "Strona najwyższego poziomu (brak rodziców)"
 
 #: admin/field-group.php:747
 msgid "Parent Page (has children)"
-msgstr ""
+msgstr "Strona rodzic (ma dzieci)"
 
 #: admin/field-group.php:748
-#, fuzzy
 msgid "Child Page (has parent)"
-msgstr "Strona podrzędna"
+msgstr "Strona dziecko (ma rodziców)"
 
 #: admin/field-group.php:764
 msgid "Default Template"
-msgstr "Domyślny szablon"
+msgstr "Domyślny motyw"
 
 #: admin/field-group.php:786
-#, fuzzy
 msgid "Logged in"
-msgstr "Rola zalogowanego użytkownika"
+msgstr "Zalogowany"
 
 #: admin/field-group.php:787
 msgid "Viewing front end"
-msgstr ""
+msgstr "Podgląd strony"
 
 #: admin/field-group.php:788
 msgid "Viewing back end"
-msgstr ""
+msgstr "Podgląd zaplecza"
 
 #: admin/field-group.php:807
 msgid "Super Admin"
-msgstr ""
+msgstr "Super Administrator"
 
 #: admin/field-group.php:818 admin/field-group.php:826
 #: admin/field-group.php:840 admin/field-group.php:847
@@ -288,76 +272,71 @@ msgid "All"
 msgstr "Wszystkie"
 
 #: admin/field-group.php:827
-#, fuzzy
 msgid "Add / Edit"
-msgstr "Użytkownik (Dodaj / Edytuj)"
+msgstr "Dodaj / Edytuj"
 
 #: admin/field-group.php:828
 msgid "Register"
-msgstr ""
+msgstr "Rejestracja"
 
 #: admin/field-group.php:1059
 msgid "Move Complete."
-msgstr ""
+msgstr "Przenoszenie zakończone."
 
 #: admin/field-group.php:1060
 #, php-format
 msgid "The %s field can now be found in the %s field group"
-msgstr ""
+msgstr "Pole %s może teraz być znalezione w grupie pól %s."
 
 #: admin/field-group.php:1062
-#, fuzzy
 msgid "Close Window"
-msgstr "Zamknij to pole"
+msgstr "Zamknij okno"
 
 #: admin/field-group.php:1097
-#, fuzzy
 msgid "Please select the destination for this field"
-msgstr "Przeczytaj dokumentację tego pola"
+msgstr "Proszę wybrać miejsce przeznaczenia dla tego pola."
 
 #: admin/field-group.php:1104
-#, fuzzy
 msgid "Move Field"
-msgstr "Zapisz pole"
+msgstr "Przenieś pole"
 
 #: admin/field-groups.php:74
 #, php-format
 msgid "Active <span class=\"count\">(%s)</span>"
 msgid_plural "Active <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Aktywny <span class=\"count\">(%s)</span>"
+msgstr[1] "Aktywnych <span class=\"count\">(%s)</span>"
+msgstr[2] "Aktywnych <span class=\"count\">(%s)</span>"
 
 #: admin/field-groups.php:142
-#, fuzzy, php-format
+#, php-format
 msgid "Field group duplicated. %s"
-msgstr "Grupa pól została zaktualizowana."
+msgstr "Grupa pól została zduplikowana. %s"
 
 #: admin/field-groups.php:146
-#, fuzzy, php-format
+#, php-format
 msgid "%s field group duplicated."
 msgid_plural "%s field groups duplicated."
-msgstr[0] "Grupa pól została zaktualizowana."
-msgstr[1] "Grupa pól została zaktualizowana."
-msgstr[2] "Grupa pól została zaktualizowana."
+msgstr[0] "Grupa pola %s została zduplikowane."
+msgstr[1] "Grupy pól %s zostały zduplikowane."
+msgstr[2] "Grupy pól %s zostały zduplikowane."
 
 #: admin/field-groups.php:228
-#, fuzzy, php-format
+#, php-format
 msgid "Field group synchronised. %s"
-msgstr "Grupa pól zostałą zapisana."
+msgstr "Grupa pól została zsynchronizowana. %s"
 
 #: admin/field-groups.php:232
-#, fuzzy, php-format
+#, php-format
 msgid "%s field group synchronised."
 msgid_plural "%s field groups synchronised."
-msgstr[0] "Nie zaznaczono grup pól"
-msgstr[1] "Nie zaznaczono grup pól"
-msgstr[2] "Nie zaznaczono grup pól"
+msgstr[0] "%s grupa pól zsynchronizowana."
+msgstr[1] "%s grup pól zsynchronizowanych."
+msgstr[2] "%s grup pól zsynchronizowanych."
 
 #: admin/field-groups.php:403 admin/field-groups.php:573
-#, fuzzy
 msgid "Sync available"
-msgstr "Aktualizuj plik"
+msgstr "Synchronizacja dostępna"
 
 #: admin/field-groups.php:516
 msgid "Title"
@@ -370,7 +349,7 @@ msgstr "Opis"
 
 #: admin/field-groups.php:518 admin/views/field-group-options.php:10
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: admin/field-groups.php:616 admin/settings-info.php:76
 #: pro/admin/views/settings-updates.php:111
@@ -383,56 +362,50 @@ msgstr "Zobacz co słychać nowego w"
 
 #: admin/field-groups.php:617
 msgid "version"
-msgstr ""
+msgstr "wersja"
 
 #: admin/field-groups.php:619
 msgid "Resources"
 msgstr "Zasoby"
 
 #: admin/field-groups.php:621
-#, fuzzy
 msgid "Getting Started"
-msgstr "Ustawienia zostały zapisane"
+msgstr "Rozpoczęcie pracy"
 
 #: admin/field-groups.php:622 pro/admin/settings-updates.php:73
 #: pro/admin/views/settings-updates.php:17
-#, fuzzy
 msgid "Updates"
-msgstr "Aktualizuj plik"
+msgstr "Aktualizacje"
 
 #: admin/field-groups.php:623
-#, fuzzy
 msgid "Field Types"
 msgstr "Rodzaj pola"
 
 #: admin/field-groups.php:624
-#, fuzzy
 msgid "Functions"
-msgstr "Opcje"
+msgstr "Funkcje"
 
 #: admin/field-groups.php:625
-#, fuzzy
 msgid "Actions"
-msgstr "Opcje"
+msgstr "Akcje"
 
 #: admin/field-groups.php:626 fields/relationship.php:718
 msgid "Filters"
-msgstr ""
+msgstr "Filtry"
 
 #: admin/field-groups.php:627
 msgid "'How to' guides"
-msgstr ""
+msgstr "Wskazówki 'how-to'"
 
 #: admin/field-groups.php:628
 msgid "Tutorials"
-msgstr ""
+msgstr "Poradniki"
 
 #: admin/field-groups.php:633
 msgid "Created by"
 msgstr "Stworzone przez"
 
 #: admin/field-groups.php:673
-#, fuzzy
 msgid "Duplicate this item"
 msgstr "Duplikuj to pole"
 
@@ -442,68 +415,63 @@ msgid "Duplicate"
 msgstr "Duplikuj"
 
 #: admin/field-groups.php:724
-#, fuzzy, php-format
+#, php-format
 msgid "Select %s"
-msgstr "Przycisk wyboru (dropdown)"
+msgstr "Wybierz %s"
 
 #: admin/field-groups.php:730
-#, fuzzy
 msgid "Synchronise field group"
-msgstr "Szukaj grupy pól"
+msgstr "Synchronizuj grupę pól"
 
 #: admin/field-groups.php:730 admin/field-groups.php:750
 msgid "Sync"
-msgstr ""
+msgstr "Synchronizacja"
 
 #: admin/settings-addons.php:51 admin/views/settings-addons.php:9
-#, fuzzy
 msgid "Add-ons"
-msgstr "Znajdźj dodatki."
+msgstr "Dodatki"
 
 #: admin/settings-addons.php:87
 msgid "<b>Error</b>. Could not load add-ons list"
-msgstr ""
+msgstr "<b>Błąd</b>. Nie można załadować listy dodatków"
 
 #: admin/settings-info.php:50
 msgid "Info"
-msgstr ""
+msgstr "Informacja"
 
 #: admin/settings-info.php:75
 msgid "What's New"
-msgstr ""
+msgstr "Co nowego"
 
 #: admin/settings-tools.php:54 admin/views/settings-tools-export.php:9
 #: admin/views/settings-tools.php:31
 msgid "Tools"
-msgstr ""
+msgstr "Narzędzia"
 
 #: admin/settings-tools.php:151 admin/settings-tools.php:365
-#, fuzzy
 msgid "No field groups selected"
 msgstr "Nie zaznaczono grup pól"
 
 #: admin/settings-tools.php:188
-#, fuzzy
 msgid "No file selected"
 msgstr "Nie zaznaczono plików"
 
 #: admin/settings-tools.php:201
 msgid "Error uploading file. Please try again"
-msgstr ""
+msgstr "Błąd wgrywania pliku. Proszę spróbować ponownie"
 
 #: admin/settings-tools.php:210
 msgid "Incorrect file type"
-msgstr ""
+msgstr "Błędny typ pliku"
 
 #: admin/settings-tools.php:227
-#, fuzzy
 msgid "Import file empty"
-msgstr "Import / Eksport"
+msgstr "Importowany plik pusty"
 
 #: admin/settings-tools.php:323
 #, php-format
 msgid "<b>Success</b>. Import tool added %s field groups: %s"
-msgstr ""
+msgstr "<b>Sukces</b>. Narzędzie importu dodało %s grup pól: %s"
 
 #: admin/settings-tools.php:332
 #, php-format
@@ -511,14 +479,16 @@ msgid ""
 "<b>Warning</b>. Import tool detected %s field groups already exist and have "
 "been ignored: %s"
 msgstr ""
+"<b>Ostrzeżenie</b>. Narzędzie importu usunęło %s grup pól już istniejących i "
+"pominęło: %s"
 
 #: admin/update.php:113
 msgid "Upgrade ACF"
-msgstr ""
+msgstr "Wyższa wersja ACF"
 
 #: admin/update.php:143
 msgid "Review sites & upgrade"
-msgstr ""
+msgstr "Strona opinii i aktualizacji"
 
 #: admin/update.php:298
 msgid "Upgrade"
@@ -526,11 +496,11 @@ msgstr "Aktualizacja"
 
 #: admin/update.php:328
 msgid "Upgrade Database"
-msgstr ""
+msgstr "Aktualizuj bazę danych"
 
 #: admin/views/field-group-field-conditional-logic.php:29
 msgid "Conditional Logic"
-msgstr ""
+msgstr "Logika warunkowa"
 
 #: admin/views/field-group-field-conditional-logic.php:40
 #: admin/views/field-group-field.php:137 fields/checkbox.php:246
@@ -557,9 +527,8 @@ msgid "No"
 msgstr "Nie"
 
 #: admin/views/field-group-field-conditional-logic.php:65
-#, fuzzy
 msgid "Show this field if"
-msgstr "Edytuj to pole"
+msgstr "Pokaż to pole jeśli"
 
 #: admin/views/field-group-field-conditional-logic.php:111
 #: admin/views/field-group-locations.php:88
@@ -573,42 +542,37 @@ msgstr "jest inne niż"
 
 #: admin/views/field-group-field-conditional-logic.php:149
 #: admin/views/field-group-locations.php:118
-#, fuzzy
 msgid "and"
-msgstr "którykolwiek"
+msgstr "i"
 
 #: admin/views/field-group-field-conditional-logic.php:164
 #: admin/views/field-group-locations.php:133
-#, fuzzy
 msgid "Add rule group"
-msgstr "Dodaj nową grupę pól"
+msgstr "Dodaj warunek grupy"
 
 #: admin/views/field-group-field.php:54 admin/views/field-group-field.php:57
-#, fuzzy
 msgid "Edit field"
-msgstr "Edytuj plik"
+msgstr "Edytuj pole"
 
 #: admin/views/field-group-field.php:57 pro/fields/gallery.php:355
 msgid "Edit"
 msgstr "Edytuj"
 
 #: admin/views/field-group-field.php:58
-#, fuzzy
 msgid "Duplicate field"
 msgstr "Duplikuj to pole"
 
 #: admin/views/field-group-field.php:59
 msgid "Move field to another group"
-msgstr ""
+msgstr "Przenieś pole do innej grupy"
 
 #: admin/views/field-group-field.php:59
 msgid "Move"
-msgstr ""
+msgstr "Przenieś"
 
 #: admin/views/field-group-field.php:60
-#, fuzzy
 msgid "Delete field"
-msgstr "Usuń to pole"
+msgstr "Usuń pole"
 
 #: admin/views/field-group-field.php:60 pro/fields/flexible-content.php:515
 msgid "Delete"
@@ -617,12 +581,11 @@ msgstr "Usuń"
 #: admin/views/field-group-field.php:68 fields/oembed.php:212
 #: fields/taxonomy.php:886
 msgid "Error"
-msgstr ""
+msgstr "Błąd"
 
 #: admin/views/field-group-field.php:68
-#, fuzzy
 msgid "Field type does not exist"
-msgstr "Błąd: Takie pole nie istnieje!"
+msgstr "Rodzaj pola nie istnieje"
 
 #: admin/views/field-group-field.php:81
 msgid "Field Label"
@@ -630,7 +593,7 @@ msgstr "Etykieta pola"
 
 #: admin/views/field-group-field.php:82
 msgid "This is the name which will appear on the EDIT page"
-msgstr "To jest nawa, która pojawi się na stronie edycji"
+msgstr "Ta nazwa będzie widoczna na stronie edycji"
 
 #: admin/views/field-group-field.php:93
 msgid "Field Name"
@@ -645,9 +608,8 @@ msgid "Field Type"
 msgstr "Rodzaj pola"
 
 #: admin/views/field-group-field.php:118 fields/tab.php:143
-#, fuzzy
 msgid "Instructions"
-msgstr "Instrukcje pola"
+msgstr "Instrukcje"
 
 #: admin/views/field-group-field.php:119
 msgid "Instructions for authors. Shown when submitting data"
@@ -659,29 +621,27 @@ msgstr "Wymagane?"
 
 #: admin/views/field-group-field.php:158
 msgid "Wrapper Attributes"
-msgstr ""
+msgstr "Atrybuty zawijania"
 
 #: admin/views/field-group-field.php:164
 msgid "width"
-msgstr ""
+msgstr "szerokość"
 
 #: admin/views/field-group-field.php:178
 msgid "class"
-msgstr ""
+msgstr "class"
 
 #: admin/views/field-group-field.php:191
-#, fuzzy
 msgid "id"
-msgstr "Boczna"
+msgstr "id"
 
 #: admin/views/field-group-field.php:203
 msgid "Close Field"
 msgstr "Zamknij to pole"
 
 #: admin/views/field-group-fields.php:29
-#, fuzzy
 msgid "Order"
-msgstr "Nr w kolejności"
+msgstr "Porządek"
 
 #: admin/views/field-group-fields.php:30 pro/fields/flexible-content.php:541
 msgid "Label"
@@ -692,9 +652,8 @@ msgid "Name"
 msgstr "Nazwa"
 
 #: admin/views/field-group-fields.php:32
-#, fuzzy
 msgid "Type"
-msgstr "Typ wpisu"
+msgstr "Typ"
 
 #: admin/views/field-group-fields.php:44
 msgid ""
@@ -726,7 +685,7 @@ msgstr ""
 
 #: admin/views/field-group-locations.php:21
 msgid "Show this field group if"
-msgstr ""
+msgstr "Pokaż tą grupę pola jeśli"
 
 #: admin/views/field-group-locations.php:41
 #: admin/views/field-group-locations.php:47
@@ -738,9 +697,8 @@ msgid "Post Type"
 msgstr "Typ wpisu"
 
 #: admin/views/field-group-locations.php:43
-#, fuzzy
 msgid "Post Status"
-msgstr "Status"
+msgstr "Status wpisu"
 
 #: admin/views/field-group-locations.php:44
 msgid "Post Format"
@@ -761,7 +719,7 @@ msgstr "Strona"
 
 #: admin/views/field-group-locations.php:50
 msgid "Page Template"
-msgstr "Szablon strony"
+msgstr "Motyw strony"
 
 #: admin/views/field-group-locations.php:51
 msgid "Page Type"
@@ -773,61 +731,55 @@ msgstr "Rodzic strony"
 
 #: admin/views/field-group-locations.php:55 fields/user.php:36
 msgid "User"
-msgstr ""
+msgstr "Użytkownik"
 
 #: admin/views/field-group-locations.php:56
 msgid "Current User"
-msgstr ""
+msgstr "Aktualny użytkownik"
 
 #: admin/views/field-group-locations.php:57
 msgid "Current User Role"
-msgstr ""
+msgstr "Rola aktualnego użytkownika"
 
 #: admin/views/field-group-locations.php:58
-#, fuzzy
 msgid "User Form"
-msgstr "Format wpisu"
+msgstr "Formularz użytkownika"
 
 #: admin/views/field-group-locations.php:59
 msgid "User Role"
-msgstr ""
+msgstr "Rola użytkownika"
 
 #: admin/views/field-group-locations.php:61 pro/admin/options-page.php:48
-#, fuzzy
 msgid "Forms"
-msgstr "Format"
+msgstr "Formularze"
 
 #: admin/views/field-group-locations.php:62
-#, fuzzy
 msgid "Attachment"
-msgstr "ID załącznika"
+msgstr "Załącznik"
 
 #: admin/views/field-group-locations.php:63
-#, fuzzy
 msgid "Taxonomy Term"
-msgstr "Taksonomia wpisu"
+msgstr "Taksonomia Term"
 
 #: admin/views/field-group-locations.php:64
-#, fuzzy
 msgid "Comment"
-msgstr "Komentarze"
+msgstr "Komentarz"
 
 #: admin/views/field-group-locations.php:65
 msgid "Widget"
-msgstr ""
+msgstr "Widżet"
 
 #: admin/views/field-group-options.php:25
 msgid "Style"
 msgstr "Styl"
 
 #: admin/views/field-group-options.php:32
-#, fuzzy
 msgid "Standard (WP metabox)"
-msgstr "Standardowy metabox"
+msgstr "Standardowy (metaboksy WP)"
 
 #: admin/views/field-group-options.php:33
 msgid "Seamless (no metabox)"
-msgstr ""
+msgstr "Bezpodziałowy (brak metaboxów)"
 
 #: admin/views/field-group-options.php:40
 msgid "Position"
@@ -835,11 +787,11 @@ msgstr "Pozycja"
 
 #: admin/views/field-group-options.php:47
 msgid "High (after title)"
-msgstr ""
+msgstr "Wysoka (za tytułem)"
 
 #: admin/views/field-group-options.php:48
 msgid "Normal (after content)"
-msgstr ""
+msgstr "Normalna (po treści)"
 
 #: admin/views/field-group-options.php:49
 msgid "Side"
@@ -847,29 +799,27 @@ msgstr "Boczna"
 
 #: admin/views/field-group-options.php:57
 msgid "Label placement"
-msgstr ""
+msgstr "Umieszczenie etykiety"
 
 #: admin/views/field-group-options.php:64 fields/tab.php:159
 msgid "Top aligned"
-msgstr ""
+msgstr "Wyrównanie do góry"
 
 #: admin/views/field-group-options.php:65 fields/tab.php:160
 msgid "Left Aligned"
-msgstr ""
+msgstr "Wyrównanie do lewej"
 
 #: admin/views/field-group-options.php:72
 msgid "Instruction placement"
-msgstr ""
+msgstr "Umieszczenie instrukcji"
 
 #: admin/views/field-group-options.php:79
-#, fuzzy
 msgid "Below labels"
-msgstr "Etykieta pola"
+msgstr "Pod etykietami"
 
 #: admin/views/field-group-options.php:80
-#, fuzzy
 msgid "Below fields"
-msgstr "Nowe pole"
+msgstr "Pod polami"
 
 #: admin/views/field-group-options.php:87
 msgid "Order No."
@@ -877,23 +827,21 @@ msgstr "Nr w kolejności"
 
 #: admin/views/field-group-options.php:88
 msgid "Field groups with a lower order will appear first"
-msgstr ""
+msgstr "Grupy pól z niższym numerem pojawią się pierwsze"
 
 #: admin/views/field-group-options.php:99
 msgid "Shown in field group list"
-msgstr ""
+msgstr "Pokaż na liście grupy pól"
 
 #: admin/views/field-group-options.php:109
 msgid "Hide on screen"
-msgstr "Ukryj na ekranie edycji"
+msgstr "Ukryj na ekranie"
 
 #: admin/views/field-group-options.php:110
-#, fuzzy
 msgid "<b>Select</b> items to <b>hide</b> them from the edit screen."
 msgstr "<b>Wybierz</b> elementy, które chcesz <b>ukryć</b> na stronie edycji."
 
 #: admin/views/field-group-options.php:110
-#, fuzzy
 msgid ""
 "If multiple field groups appear on an edit screen, the first field group's "
 "options will be used (the one with the lowest order number)"
@@ -904,7 +852,7 @@ msgstr ""
 
 #: admin/views/field-group-options.php:117
 msgid "Permalink"
-msgstr ""
+msgstr "Odnośnik bezpośredni"
 
 #: admin/views/field-group-options.php:118
 msgid "Content Editor"
@@ -924,11 +872,11 @@ msgstr "Komentarze"
 
 #: admin/views/field-group-options.php:123
 msgid "Revisions"
-msgstr ""
+msgstr "Korekty"
 
 #: admin/views/field-group-options.php:124
 msgid "Slug"
-msgstr "Bezpośredni odnośnik"
+msgstr "Slug"
 
 #: admin/views/field-group-options.php:125
 msgid "Author"
@@ -940,37 +888,35 @@ msgstr "Format"
 
 #: admin/views/field-group-options.php:127
 msgid "Page Attributes"
-msgstr ""
+msgstr "Atrybuty strony"
 
 #: admin/views/field-group-options.php:128 fields/relationship.php:737
 msgid "Featured Image"
-msgstr "Ikona wpisu"
+msgstr "Obrazek wyróżniający"
 
 #: admin/views/field-group-options.php:129
-#, fuzzy
 msgid "Categories"
-msgstr "Kategoria wpisu"
+msgstr "Kategorie"
 
 #: admin/views/field-group-options.php:130
 msgid "Tags"
-msgstr ""
+msgstr "Tagi"
 
 #: admin/views/field-group-options.php:131
 msgid "Send Trackbacks"
-msgstr ""
+msgstr "Wyślij trackbacki"
 
 #: admin/views/settings-addons.php:23
 msgid "Download & Install"
-msgstr ""
+msgstr "Pobierz i instaluj"
 
 #: admin/views/settings-addons.php:42
 msgid "Installed"
-msgstr ""
+msgstr "Zainstalowne"
 
 #: admin/views/settings-info.php:9
-#, fuzzy
 msgid "Welcome to Advanced Custom Fields"
-msgstr "Zaawansowane własne pola"
+msgstr "Witamy w Advanced Custom Fields"
 
 #: admin/views/settings-info.php:10
 #, php-format
@@ -978,14 +924,16 @@ msgid ""
 "Thank you for updating! ACF %s is bigger and better than ever before. We "
 "hope you like it."
 msgstr ""
+"Dziękujemy za aktualizację! ACF %s jest większy i lepszy niż kiedykolwiek "
+"wcześniej. Mamy nadzieję, że go polubisz."
 
 #: admin/views/settings-info.php:23
 msgid "A smoother custom field experience"
-msgstr ""
+msgstr "Lepsze doznania z korzystania z własnych pól"
 
 #: admin/views/settings-info.php:28
 msgid "Improved Usability"
-msgstr ""
+msgstr "Ulepszona użyteczność"
 
 #: admin/views/settings-info.php:29
 msgid ""
@@ -993,10 +941,13 @@ msgid ""
 "across a number of field types including post object, page link, taxonomy "
 "and select."
 msgstr ""
+"Załączona popularna biblioteka Select2 poprawiła zarówno użyteczność i "
+"szybkość wielu typów pól wliczając obiekty wpisów, odnośniki stron, "
+"taksonomie i wybory. "
 
 #: admin/views/settings-info.php:33
 msgid "Improved Design"
-msgstr ""
+msgstr "Ulepszony wygląd"
 
 #: admin/views/settings-info.php:34
 msgid ""
@@ -1004,10 +955,13 @@ msgid ""
 "ever! Noticeable changes are seen on the gallery, relationship and oEmbed "
 "(new) fields!"
 msgstr ""
+"Wiele pól przeszło graficzne odświeżenie aby ACF wyglądał lepiej niż "
+"kiedykolwiek! Zmiany warte uwagi są widoczne w galerii, powiązaniach i "
+"polach oEmbed (nowość)!"
 
 #: admin/views/settings-info.php:38
 msgid "Improved Data"
-msgstr ""
+msgstr "Ulepszone dane"
 
 #: admin/views/settings-info.php:39
 msgid ""
@@ -1015,19 +969,24 @@ msgid ""
 "independently from their parents. This allows you to drag and drop fields in "
 "and out of parent fields!"
 msgstr ""
+"Przeprojektowanie architektury danych pozwoliła polą podrzędnym być "
+"niezależnymi od swoich rodziców. Pozwala to na chwytanie i przenoszenie pól "
+"pomiędzy rodzicami!"
 
 #: admin/views/settings-info.php:45
 msgid "Goodbye Add-ons. Hello PRO"
-msgstr ""
+msgstr "Do widzenia Dodatki. Dzień dobry PRO."
 
 #: admin/views/settings-info.php:50
 msgid "Introducing ACF PRO"
-msgstr ""
+msgstr "Wprowadzenie do ACF PRO"
 
 #: admin/views/settings-info.php:51
 msgid ""
 "We're changing the way premium functionality is delivered in an exciting way!"
 msgstr ""
+"Zmieniliśmy sposób funkcjonowania wersji premium - teraz jest dostarczana w "
+"ekscytujący sposób!"
 
 #: admin/views/settings-info.php:52
 #, php-format
@@ -1036,10 +995,13 @@ msgid ""
 "version of ACF</a>. With both personal and developer licenses available, "
 "premium functionality is more affordable and accessible than ever before!"
 msgstr ""
+"Wszystkie 4 dodatki premium są połączone w nowym <a href=\"%s\">ACF PRO</a>. "
+"Z oboma licencjami, personalną i deweloperską, funkcjonalność jest bardziej "
+"przystępna i dostępna niż kiedykolwiek wcześniej!"
 
 #: admin/views/settings-info.php:56
 msgid "Powerful Features"
-msgstr ""
+msgstr "Potężne funkcje"
 
 #: admin/views/settings-info.php:57
 msgid ""
@@ -1047,15 +1009,18 @@ msgid ""
 "layouts, a beautiful gallery field and the ability to create extra admin "
 "options pages!"
 msgstr ""
+"ACF PRO zawiera zaawansowane funkcje, takie jak powtarzalne dane, elastyczne "
+"układy treści, piękne galerie i możliwość tworzenia dodatkowych opcji "
+"administracyjnych strony!"
 
 #: admin/views/settings-info.php:58
 #, php-format
 msgid "Read more about <a href=\"%s\">ACF PRO features</a>."
-msgstr ""
+msgstr "Przeczytaj więcej o <a href=\"%s\">możliwościach ACF PRO</a>."
 
 #: admin/views/settings-info.php:62
 msgid "Easy Upgrading"
-msgstr ""
+msgstr "Łatwa aktualizacja"
 
 #: admin/views/settings-info.php:63
 #, php-format
@@ -1063,6 +1028,8 @@ msgid ""
 "To help make upgrading easy, <a href=\"%s\">login to your store account</a> "
 "and claim a free copy of ACF PRO!"
 msgstr ""
+"Aby aktualizacja była łatwa, <a href=\"%s\">zaloguj się do swojego konta</a> "
+"i pobierz darmową kopie ACF PRO! "
 
 #: admin/views/settings-info.php:64
 #, php-format
@@ -1071,121 +1038,128 @@ msgid ""
 "but if you do have one, please contact our support team via the <a href=\"%s"
 "\">help desk</a>"
 msgstr ""
+"Napisaliśmy również <a href=\"%s\">przewodnik aktualizacji</a> odpowiadający "
+"na większość pytań, ale jeśli masz jakieś inne proszę skontaktuj się z nami  "
+"na stronie <a href=\"%s\">wsparcia technicznego</a>"
 
 #: admin/views/settings-info.php:72
 msgid "Under the Hood"
-msgstr ""
+msgstr "Pod maską"
 
 #: admin/views/settings-info.php:77
 msgid "Smarter field settings"
-msgstr ""
+msgstr "Sprytniejsze ustawienia pól"
 
 #: admin/views/settings-info.php:78
 msgid "ACF now saves its field settings as individual post objects"
-msgstr ""
+msgstr "ACF teraz zapisuje ustawienia pól jako indywidualny element"
 
 #: admin/views/settings-info.php:82
 msgid "More AJAX"
-msgstr ""
+msgstr "Więcej technologii AJAX"
 
 #: admin/views/settings-info.php:83
 msgid "More fields use AJAX powered search to speed up page loading"
-msgstr ""
+msgstr "Więcej pól korzysta z AJAX aby przyspieszyć ładowanie stron"
 
 #: admin/views/settings-info.php:87
 msgid "Local JSON"
-msgstr ""
+msgstr "Lokalny JSON"
 
 #: admin/views/settings-info.php:88
 msgid "New auto export to JSON feature improves speed"
-msgstr ""
+msgstr "Nowy zautomatyzowany eksport do JSON poprawia szybkość"
 
 #: admin/views/settings-info.php:94
 msgid "Better version control"
-msgstr ""
+msgstr "Lepsza kontrola wersji"
 
 #: admin/views/settings-info.php:95
 msgid ""
 "New auto export to JSON feature allows field settings to be version "
 "controlled"
 msgstr ""
+"Nowy zautomatyzowany eksport do JSON pozwala na kontrolę wersji ustawień pól"
 
 #: admin/views/settings-info.php:99
 msgid "Swapped XML for JSON"
-msgstr ""
+msgstr "Zamieniony XML na JSON"
 
 #: admin/views/settings-info.php:100
 msgid "Import / Export now uses JSON in favour of XML"
-msgstr ""
+msgstr "Import / Eksport teraz korzysta z JSON zamiast XML"
 
 #: admin/views/settings-info.php:104
 msgid "New Forms"
-msgstr ""
+msgstr "Nowe formularze"
 
 #: admin/views/settings-info.php:105
 msgid "Fields can now be mapped to comments, widgets and all user forms!"
 msgstr ""
+"Pola mogą być teraz oznaczone do komentowania, widżety i wszystkie "
+"formularze użytkownika!"
 
 #: admin/views/settings-info.php:112
 msgid "A new field for embedding content has been added"
-msgstr ""
+msgstr "Dodano nowe pole do osadzania zawartości"
 
 #: admin/views/settings-info.php:116
-#, fuzzy
 msgid "New Gallery"
-msgstr "Galeria"
+msgstr "Nowa galeria"
 
 #: admin/views/settings-info.php:117
 msgid "The gallery field has undergone a much needed facelift"
-msgstr ""
+msgstr "Pola galerii przeszły niezbędny facelifting"
 
 #: admin/views/settings-info.php:121
-#, fuzzy
 msgid "New Settings"
-msgstr "Ustawienia"
+msgstr "Nowe ustawienia"
 
 #: admin/views/settings-info.php:122
 msgid ""
 "Field group settings have been added for label placement and instruction "
 "placement"
 msgstr ""
+"Ustawienia grupy pól zostały dodane dla pozycji etykiet oraz pozycji "
+"instrukcji"
 
 #: admin/views/settings-info.php:128
 msgid "Better Front End Forms"
-msgstr ""
+msgstr "Lepszy wygląd formularzy"
 
 #: admin/views/settings-info.php:129
 msgid "acf_form() can now create a new post on submission"
-msgstr ""
+msgstr "acf_form() może teraz tworzyć nowy wpis zależny"
 
 #: admin/views/settings-info.php:133
 msgid "Better Validation"
-msgstr ""
+msgstr "Lepsza walidacja"
 
 #: admin/views/settings-info.php:134
 msgid "Form validation is now done via PHP + AJAX in favour of only JS"
-msgstr ""
+msgstr "Walidacja pól jest wykonana w PHP + AJAX a nie tylko w JS"
 
 #: admin/views/settings-info.php:138
-#, fuzzy
 msgid "Relationship Field"
-msgstr "Relacja"
+msgstr "Pola zależne"
 
 #: admin/views/settings-info.php:139
 msgid ""
 "New Relationship field setting for 'Filters' (Search, Post Type, Taxonomy)"
 msgstr ""
+"Nowe ustawienia pól zależnych dla 'Filtrów' (Wyszukiwarka, Rodzaj Wpisu, "
+"Taksonomia)"
 
 #: admin/views/settings-info.php:145
-#, fuzzy
 msgid "Moving Fields"
-msgstr "Pola"
+msgstr "Przenoszenie pól"
 
 #: admin/views/settings-info.php:146
 msgid ""
 "New field group functionality allows you to move a field between groups & "
 "parents"
 msgstr ""
+"Nowa funkcjonalność pozwala na przenoszenie pól pomiędzy grupami i rodzicami"
 
 #: admin/views/settings-info.php:150 fields/page_link.php:36
 msgid "Page Link"
@@ -1193,27 +1167,27 @@ msgstr "Link do strony"
 
 #: admin/views/settings-info.php:151
 msgid "New archives group in page_link field selection"
-msgstr ""
+msgstr "Nowa grupa archiwa w polu wyboru page_link"
 
 #: admin/views/settings-info.php:155
-#, fuzzy
 msgid "Better Options Pages"
-msgstr "Strona opcji"
+msgstr "Lepsza strona opcji"
 
 #: admin/views/settings-info.php:156
 msgid ""
 "New functions for options page allow creation of both parent and child menu "
 "pages"
 msgstr ""
+"Nowe funkcje dla strony opcji pozwalające tworzyć oba menu rodzica i dziecka"
 
 #: admin/views/settings-info.php:165
 #, php-format
 msgid "We think you'll love the changes in %s."
-msgstr ""
+msgstr "Uważamy, że pokochasz zmiany w wersji %s."
 
 #: admin/views/settings-tools-export.php:13
 msgid "Export Field Groups to PHP"
-msgstr "Eksportuj Grupy pól do PHP"
+msgstr "Eksportuj Grupy do PHP"
 
 #: admin/views/settings-tools-export.php:17
 msgid ""
@@ -1223,16 +1197,19 @@ msgid ""
 "the following code to your theme's functions.php file or include it within "
 "an external file."
 msgstr ""
+"Poniższy kod może być użyty do rejestracji lokalnej wersji wybranej grupy "
+"lub grup pól. Lokalna grupa pole może dostarczyć wiele korzyści takich jak "
+"szybszy czas ładowania, kontroli wersji i dynamicznych pól / ustawień. "
+"Wystarczy skopiować i wkleić poniższy kod do pliku functions.php Twojego "
+"motywu lub dołączyć go do zewnętrznego pliku."
 
 #: admin/views/settings-tools.php:5
-#, fuzzy
 msgid "Select Field Groups"
-msgstr "Szukaj grupy pól"
+msgstr "Wybierz Grupy pól"
 
 #: admin/views/settings-tools.php:35
-#, fuzzy
 msgid "Export Field Groups"
-msgstr "Importuj Grupy pól"
+msgstr "Eksportuj Grupy pól"
 
 #: admin/views/settings-tools.php:38
 msgid ""
@@ -1241,14 +1218,18 @@ msgid ""
 "import to another ACF installation. Use the generate button to export to PHP "
 "code which you can place in your theme."
 msgstr ""
+"Wybierz grupy pól, które chcesz wyeksportować, a następnie wybierz metodę "
+"eksportu. Użyj przycisku pobierania aby wyeksportować do pliku .json, który "
+"można następnie zaimportować do innej instalacji ACF. Użyj przycisku "
+"generowania eksportować do kodu PHP, który można umieścić w motywie."
 
 #: admin/views/settings-tools.php:50
 msgid "Download export file"
-msgstr ""
+msgstr "Pobierz plik eksportu"
 
 #: admin/views/settings-tools.php:51
 msgid "Generate export code"
-msgstr ""
+msgstr "Generuj plik eksportu"
 
 #: admin/views/settings-tools.php:64
 msgid "Import Field Groups"
@@ -1259,6 +1240,8 @@ msgid ""
 "Select the Advanced Custom Fields JSON file you would like to import. When "
 "you click the import button below, ACF will import the field groups."
 msgstr ""
+"Wybierz Advanced Custom Fields JSON, który chcesz zaimportować. Gdy "
+"klikniesz przycisk importu poniżej, ACF zaimportuje grupy pól."
 
 #: admin/views/settings-tools.php:77 fields/file.php:46
 msgid "Select File"
@@ -1270,81 +1253,86 @@ msgstr "Import"
 
 #: admin/views/update-network.php:8 admin/views/update.php:8
 msgid "Advanced Custom Fields Database Upgrade"
-msgstr ""
+msgstr "Aktualizacja bazy danych Advanced Custom Fields"
 
 #: admin/views/update-network.php:10
 msgid ""
 "The following sites require a DB upgrade. Check the ones you want to update "
 "and then click “Upgrade Database”."
 msgstr ""
+"Następujące strony wymagają aktualizacji bazy danych. Zaznacz te które "
+"chcesz aktualizować i kliknij 'Aktualizuj bazę danych\"."
 
 #: admin/views/update-network.php:19 admin/views/update-network.php:27
 msgid "Site"
-msgstr ""
+msgstr "Strona"
 
 #: admin/views/update-network.php:47
 #, php-format
 msgid "Site requires database upgrade from %s to %s"
-msgstr ""
+msgstr "Strona wymaga aktualizacji bazy danych z %s na %s"
 
 #: admin/views/update-network.php:49
 msgid "Site is up to date"
-msgstr ""
+msgstr "Ta strona jest nieaktualna"
 
 #: admin/views/update-network.php:62 admin/views/update.php:16
 msgid "Database Upgrade complete"
-msgstr ""
+msgstr "Aktualizacja bazy danych zakończona"
 
 #: admin/views/update-network.php:62
 msgid "Return to network dashboard"
-msgstr ""
+msgstr "Wróć do kokpitu sieci"
 
 #: admin/views/update-network.php:101 admin/views/update-notice.php:35
 msgid ""
 "It is strongly recommended that you backup your database before proceeding. "
 "Are you sure you wish to run the updater now?"
 msgstr ""
+"Zdecydowanie zaleca się wykonanie kopii zapasowej bazy danych przed "
+"kontynuowaniem. Czy na pewno chcesz uruchomić aktualizacje teraz?"
 
 #: admin/views/update-network.php:157
 msgid "Upgrade complete"
-msgstr ""
+msgstr "Aktualizacja zakończona"
 
 #: admin/views/update-network.php:161
 msgid "Upgrading data to"
-msgstr ""
+msgstr "Aktualizacja danych do"
 
 #: admin/views/update-notice.php:23
 msgid "Database Upgrade Required"
-msgstr ""
+msgstr "Wymagana jest aktualizacja bazy danych"
 
 #: admin/views/update-notice.php:25
 #, php-format
 msgid "Thank you for updating to %s v%s!"
-msgstr ""
+msgstr "Dziękujemy za aktualizacje do %s v%s! "
 
 #: admin/views/update-notice.php:25
 msgid ""
 "Before you start using the new awesome features, please update your database "
 "to the newest version."
 msgstr ""
+"Zanim zaczniesz korzystać z niesamowitych możliwości prosimy o "
+"zaktualizowanie bazy danych do najnowszej wersji."
 
 #: admin/views/update.php:12
 msgid "Reading upgrade tasks..."
-msgstr ""
+msgstr "Czytam zadania aktualizacji..."
 
 #: admin/views/update.php:14
 #, php-format
 msgid "Upgrading data to version %s"
-msgstr ""
+msgstr "Aktualizowanie danych do wersji %s"
 
 #: admin/views/update.php:16
-#, fuzzy
 msgid "See what's new"
-msgstr "Zobacz co słychać nowego w"
+msgstr "Zobacz co nowego"
 
 #: admin/views/update.php:110
 msgid "No updates available"
-msgstr ""
+msgstr "Brak dostępnych aktualizacji"
 
 #: api/api-helpers.php:821
 msgid "Thumbnail"
@@ -1359,81 +1347,75 @@ msgid "Large"
 msgstr "Duży"
 
 #: api/api-helpers.php:871
-#, fuzzy
 msgid "Full Size"
-msgstr "Pełny"
+msgstr "Pełny rozmiar"
 
 #: api/api-helpers.php:1581
 msgid "(no title)"
-msgstr ""
+msgstr "(brak tytułu)"
 
 #: api/api-helpers.php:3183
 #, php-format
 msgid "Image width must be at least %dpx."
-msgstr ""
+msgstr "Szerokość obrazu musi mieć co najmniej %d px."
 
 #: api/api-helpers.php:3188
 #, php-format
 msgid "Image width must not exceed %dpx."
-msgstr ""
+msgstr "Szerokość obrazu nie może przekraczać %d px."
 
 #: api/api-helpers.php:3204
 #, php-format
 msgid "Image height must be at least %dpx."
-msgstr ""
+msgstr "Wysokość obrazu musi mieć co najmniej %d px."
 
 #: api/api-helpers.php:3209
 #, php-format
 msgid "Image height must not exceed %dpx."
-msgstr ""
+msgstr "Wysokość obrazu nie może przekraczać %d px."
 
 #: api/api-helpers.php:3227
 #, php-format
 msgid "File size must be at least %s."
-msgstr ""
+msgstr "Rozmiar pliku musi mieć co najmniej %s."
 
 #: api/api-helpers.php:3232
 #, php-format
 msgid "File size must must not exceed %s."
-msgstr ""
+msgstr "Rozmiar pliku nie może przekraczać %s."
 
 #: api/api-helpers.php:3266
-#, fuzzy, php-format
+#, php-format
 msgid "File type must be %s."
-msgstr "Błąd: Takie pole nie istnieje!"
+msgstr "Plik musi być %s."
 
 #: api/api-template.php:1289 pro/fields/gallery.php:564
-#, fuzzy
 msgid "Update"
-msgstr "Aktualizuj plik"
+msgstr "Aktualizuj"
 
 #: api/api-template.php:1290
-#, fuzzy
 msgid "Post updated"
-msgstr "Ustawienia zostały zaktualizowane"
+msgstr "Wpis zaktualizowany"
 
 #: core/field.php:131
 msgid "Basic"
 msgstr "Podstawowe"
 
 #: core/field.php:132
-#, fuzzy
 msgid "Content"
 msgstr "Edytor treści"
 
 #: core/field.php:133
-#, fuzzy
 msgid "Choice"
-msgstr "Opcje"
+msgstr "Wybór"
 
 #: core/field.php:134
-#, fuzzy
 msgid "Relational"
 msgstr "Relacja"
 
 #: core/field.php:135
 msgid "jQuery"
-msgstr ""
+msgstr "jQuery"
 
 #: core/field.php:136 fields/checkbox.php:226 fields/radio.php:231
 #: pro/fields/flexible-content.php:512 pro/fields/repeater.php:392
@@ -1442,58 +1424,58 @@ msgstr "Szablon"
 
 #: core/input.php:129
 msgid "Expand Details"
-msgstr ""
+msgstr "Rozwiń szczegóły"
 
 #: core/input.php:130
 msgid "Collapse Details"
-msgstr ""
+msgstr "Zwiń szczegóły"
 
 #: core/input.php:131
 msgid "Validation successful"
-msgstr ""
+msgstr "Walidacja zakończona sukcesem"
 
 #: core/input.php:132
 msgid "Validation failed"
-msgstr ""
+msgstr "Walidacja nie powiodła się"
 
 #: core/input.php:133
 msgid "1 field requires attention"
-msgstr ""
+msgstr "1 pole wymaga uwagi"
 
 #: core/input.php:134
 #, php-format
 msgid "%d fields require attention"
-msgstr ""
+msgstr "%d pól wymaga uwagi"
 
 #: core/input.php:135
 msgid "Restricted"
-msgstr ""
+msgstr "Ograniczone"
 
 #: core/input.php:533
 #, php-format
 msgid "%s value is required"
-msgstr ""
+msgstr "%s wartość jest wymagana"
 
 #: fields/checkbox.php:36 fields/taxonomy.php:752
 msgid "Checkbox"
-msgstr "Akceptowanie (checkbox)"
+msgstr "Zaznaczanie (checkbox)"
 
 #: fields/checkbox.php:144
 msgid "Toggle All"
-msgstr ""
+msgstr "Przełącz wszystko"
 
 #: fields/checkbox.php:208 fields/radio.php:193 fields/select.php:388
 msgid "Choices"
-msgstr "Opcje"
+msgstr "Wybory"
 
 #: fields/checkbox.php:209 fields/radio.php:194 fields/select.php:389
-#, fuzzy
 msgid "Enter each choice on a new line."
-msgstr "Wpisz swoje preferencje w oddzielnych liniach"
+msgstr "Wpisz każdy z wyborów w osobnej linii."
 
 #: fields/checkbox.php:209 fields/radio.php:194 fields/select.php:389
 msgid "For more control, you may specify both a value and label like this:"
 msgstr ""
+"Aby uzyskać większą kontrolę, można określić zarówno wartość i etykietę tak:"
 
 #: fields/checkbox.php:209 fields/radio.php:194 fields/select.php:389
 msgid "red : Red"
@@ -1508,23 +1490,23 @@ msgstr "Domyślna wartość"
 
 #: fields/checkbox.php:218 fields/select.php:398
 msgid "Enter each default value on a new line"
-msgstr ""
+msgstr "Wpisz każdą domyślną wartość w nowej linii"
 
 #: fields/checkbox.php:232 fields/radio.php:237
 msgid "Vertical"
-msgstr "Pionowe"
+msgstr "Pionowy"
 
 #: fields/checkbox.php:233 fields/radio.php:238
 msgid "Horizontal"
-msgstr "Poziome"
+msgstr "Poziomy"
 
 #: fields/checkbox.php:240
 msgid "Toggle"
-msgstr ""
+msgstr "Przełącz"
 
 #: fields/checkbox.php:241
 msgid "Prepend an extra checkbox to toggle all choices"
-msgstr ""
+msgstr "Dołącz dodatkowe pole wyboru, aby przełączyć wszystkie wybory"
 
 #: fields/color_picker.php:36
 msgid "Color Picker"
@@ -1532,17 +1514,15 @@ msgstr "Wybór koloru"
 
 #: fields/color_picker.php:94
 msgid "Clear"
-msgstr ""
+msgstr "Wyczyść"
 
 #: fields/color_picker.php:95
-#, fuzzy
 msgid "Default"
 msgstr "Domyślna wartość"
 
 #: fields/color_picker.php:96
-#, fuzzy
 msgid "Select Color"
-msgstr "Wybierz plik"
+msgstr "Wybór koloru"
 
 #: fields/date_picker.php:36
 msgid "Date Picker"
@@ -1550,77 +1530,75 @@ msgstr "Wybór daty"
 
 #: fields/date_picker.php:72
 msgid "Done"
-msgstr ""
+msgstr "Gotowe"
 
 #: fields/date_picker.php:73
 msgid "Today"
-msgstr ""
+msgstr "Dzisiaj"
 
 #: fields/date_picker.php:76
 msgid "Show a different month"
-msgstr ""
+msgstr "Pokaż inne miesiące"
 
 #: fields/date_picker.php:149
-#, fuzzy
 msgid "Display format"
-msgstr "Format daty"
+msgstr "Format wyświetlania"
 
 #: fields/date_picker.php:150
 msgid "The format displayed when editing a post"
-msgstr ""
+msgstr "Wyświetlany format przy edycji wpisu"
 
 #: fields/date_picker.php:164
-#, fuzzy
 msgid "Return format"
-msgstr "Format daty"
+msgstr "Zwracany format"
 
 #: fields/date_picker.php:165
 msgid "The format returned via template functions"
-msgstr ""
+msgstr "Zwracany format przed funkcje szablonu"
 
 #: fields/date_picker.php:180
 msgid "Week Starts On"
-msgstr ""
+msgstr "Tydzień zaczyna się od"
 
 #: fields/email.php:36
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: fields/email.php:125 fields/number.php:151 fields/radio.php:223
 #: fields/text.php:149 fields/textarea.php:146 fields/url.php:118
 #: fields/wysiwyg.php:346
 msgid "Appears when creating a new post"
-msgstr ""
+msgstr "Wyświetlane podczas tworzenia nowego wpisu"
 
 #: fields/email.php:133 fields/number.php:159 fields/password.php:137
 #: fields/text.php:157 fields/textarea.php:154 fields/url.php:126
 msgid "Placeholder Text"
-msgstr ""
+msgstr "Placeholder (tekst zastępczy)"
 
 #: fields/email.php:134 fields/number.php:160 fields/password.php:138
 #: fields/text.php:158 fields/textarea.php:155 fields/url.php:127
 msgid "Appears within the input"
-msgstr ""
+msgstr "Pojawia się w inpucie"
 
 #: fields/email.php:142 fields/number.php:168 fields/password.php:146
 #: fields/text.php:166
 msgid "Prepend"
-msgstr ""
+msgstr "Dołączenie"
 
 #: fields/email.php:143 fields/number.php:169 fields/password.php:147
 #: fields/text.php:167
 msgid "Appears before the input"
-msgstr ""
+msgstr "Pojawia się przed inputem"
 
 #: fields/email.php:151 fields/number.php:177 fields/password.php:155
 #: fields/text.php:175
 msgid "Append"
-msgstr ""
+msgstr "Dołącz"
 
 #: fields/email.php:152 fields/number.php:178 fields/password.php:156
 #: fields/text.php:176
 msgid "Appears after the input"
-msgstr ""
+msgstr "Pojawia się za inputem"
 
 #: fields/file.php:36
 msgid "File"
@@ -1636,22 +1614,19 @@ msgstr "Aktualizuj plik"
 
 #: fields/file.php:49 pro/fields/gallery.php:55
 msgid "uploaded to this post"
-msgstr ""
+msgstr "przesłane do tego wpisu"
 
 #: fields/file.php:142
-#, fuzzy
 msgid "File Name"
-msgstr "Nazwa pola"
+msgstr "Nazwa pliku"
 
 #: fields/file.php:146
-#, fuzzy
 msgid "File Size"
-msgstr "Wielkość obrazka"
+msgstr "Rozmiar pliku"
 
 #: fields/file.php:169
-#, fuzzy
 msgid "No File selected"
-msgstr "Nie zaznaczono pliku"
+msgstr "Nie wybrano pliku"
 
 #: fields/file.php:169
 msgid "Add File"
@@ -1663,114 +1638,105 @@ msgstr "Wartość zwrotna"
 
 #: fields/file.php:215 fields/image.php:196
 msgid "Specify the returned value on front end"
-msgstr ""
+msgstr "Określ wartość zwracaną na stronie (front-end)"
 
 #: fields/file.php:220
 msgid "File Array"
-msgstr ""
+msgstr "Tablica pliku"
 
 #: fields/file.php:221
-#, fuzzy
 msgid "File URL"
-msgstr "Plik"
+msgstr "Adres pliku"
 
 #: fields/file.php:222
-#, fuzzy
 msgid "File ID"
-msgstr "Plik"
+msgstr "ID pliku"
 
 #: fields/file.php:229 fields/image.php:220 pro/fields/gallery.php:647
 msgid "Library"
-msgstr ""
+msgstr "Biblioteka"
 
 #: fields/file.php:230 fields/image.php:221 pro/fields/gallery.php:648
 msgid "Limit the media library choice"
-msgstr ""
+msgstr "Ograniczenie wyborów z bibliteki"
 
 #: fields/file.php:236 fields/image.php:227 pro/fields/gallery.php:654
 msgid "Uploaded to post"
-msgstr ""
+msgstr "Wgrane do wpisu"
 
 #: fields/file.php:243 fields/image.php:234 pro/fields/gallery.php:661
-#, fuzzy
 msgid "Minimum"
-msgstr "Minimalna liczba rzędów"
+msgstr "Minimum"
 
 #: fields/file.php:244 fields/file.php:255
 msgid "Restrict which files can be uploaded"
-msgstr ""
+msgstr "Określ które pliki mogą być przesyłane"
 
 #: fields/file.php:247 fields/file.php:258 fields/image.php:257
 #: fields/image.php:290 pro/fields/gallery.php:684 pro/fields/gallery.php:717
-#, fuzzy
 msgid "File size"
-msgstr "Wielkość obrazka"
+msgstr "Wielkość pliku"
 
 #: fields/file.php:254 fields/image.php:267 pro/fields/gallery.php:694
-#, fuzzy
 msgid "Maximum"
-msgstr "Maksymalna liczba rzędów"
+msgstr "Maksimum"
 
 #: fields/file.php:265 fields/image.php:300 pro/fields/gallery.php:727
-#, fuzzy
 msgid "Allowed file types"
-msgstr "Typ wpisu"
+msgstr "Dozwolone rodzaje plików"
 
 #: fields/file.php:266 fields/image.php:301 pro/fields/gallery.php:728
 msgid "Comma separated list. Leave blank for all types"
-msgstr ""
+msgstr "Lista rozdzielana przecinkiem. Pozostaw puste dla wszystkich typów"
 
 #: fields/google-map.php:36
 msgid "Google Map"
-msgstr ""
+msgstr "Mapa Google"
 
 #: fields/google-map.php:51
-#, fuzzy
 msgid "Locating"
-msgstr "Pozycja"
+msgstr "Lokalizowanie"
 
 #: fields/google-map.php:52
 msgid "Sorry, this browser does not support geolocation"
-msgstr ""
+msgstr "Przepraszamy, ten przeglądarka nie obsługuje geolokalizacji"
 
 #: fields/google-map.php:135
-#, fuzzy
 msgid "Clear location"
-msgstr "Pozycja"
+msgstr "Wyczyść lokalizacje"
 
 #: fields/google-map.php:140
 msgid "Find current location"
-msgstr ""
+msgstr "Znajdź aktualną lokalizacje"
 
 #: fields/google-map.php:141
 msgid "Search for address..."
-msgstr ""
+msgstr "Szukaj adresu..."
 
 #: fields/google-map.php:173 fields/google-map.php:184
 msgid "Center"
-msgstr ""
+msgstr "Wyśrodkuj"
 
 #: fields/google-map.php:174 fields/google-map.php:185
 msgid "Center the initial map"
-msgstr ""
+msgstr "Wyśrodkuj początkową mapę"
 
 #: fields/google-map.php:198
 msgid "Zoom"
-msgstr ""
+msgstr "Zbliżenie"
 
 #: fields/google-map.php:199
 msgid "Set the initial zoom level"
-msgstr ""
+msgstr "Ustaw początkowe zbliżenie"
 
 #: fields/google-map.php:208 fields/image.php:246 fields/image.php:279
 #: fields/oembed.php:262 pro/fields/gallery.php:673 pro/fields/gallery.php:706
 msgid "Height"
-msgstr ""
+msgstr "Wysokość"
 
 #: fields/google-map.php:209
-#, fuzzy
 msgid "Customise the map height"
-msgstr "Modyfikuj stronę edycji"
+msgstr "Dostosuj wysokość mapy"
 
 #: fields/image.php:36
 msgid "Image"
@@ -1778,46 +1744,43 @@ msgstr "Obrazek"
 
 #: fields/image.php:51
 msgid "Select Image"
-msgstr "Wybierz obrazek"
+msgstr "Wybierz obraz"
 
 #: fields/image.php:52 pro/fields/gallery.php:53
 msgid "Edit Image"
-msgstr "Edytuj zdjęcie"
+msgstr "Edytuj obraz"
 
 #: fields/image.php:53 pro/fields/gallery.php:54
 msgid "Update Image"
-msgstr "Aktualizuj obrazek"
+msgstr "Aktualizuj obraz"
 
 #: fields/image.php:54
 msgid "Uploaded to this post"
-msgstr ""
+msgstr "Wgrane do tego wpisu"
 
 #: fields/image.php:55
-#, fuzzy
 msgid "All images"
-msgstr "Dodaj obrazek"
+msgstr "Wszystkie obrazy"
 
 #: fields/image.php:147
 msgid "No image selected"
-msgstr "Nie wybrano obrazka"
+msgstr "Nie wybrano obrazu"
 
 #: fields/image.php:147
 msgid "Add Image"
-msgstr "Dodaj obrazek"
+msgstr "Dodaj obraz"
 
 #: fields/image.php:201
-#, fuzzy
 msgid "Image Array"
-msgstr "Zdjęcie zostało dodane."
+msgstr "Tablica obrazu"
 
 #: fields/image.php:202
 msgid "Image URL"
 msgstr "Adres URL"
 
 #: fields/image.php:203
-#, fuzzy
 msgid "Image ID"
-msgstr "Obrazek"
+msgstr "ID obrazu"
 
 #: fields/image.php:210 pro/fields/gallery.php:637
 msgid "Preview Size"
@@ -1825,110 +1788,107 @@ msgstr "Wielkość obrazka"
 
 #: fields/image.php:211 pro/fields/gallery.php:638
 msgid "Shown when entering data"
-msgstr ""
+msgstr "Pokaż podczas wprowadzania danych"
 
 #: fields/image.php:235 fields/image.php:268 pro/fields/gallery.php:662
 #: pro/fields/gallery.php:695
 msgid "Restrict which images can be uploaded"
-msgstr ""
+msgstr "Określ które obrazy mogą być przesyłane"
 
 #: fields/image.php:238 fields/image.php:271 fields/oembed.php:251
 #: pro/fields/gallery.php:665 pro/fields/gallery.php:698
 msgid "Width"
-msgstr ""
+msgstr "Szerokość"
 
 #: fields/message.php:36 fields/message.php:103 fields/true_false.php:106
 msgid "Message"
-msgstr "Komunikat"
+msgstr "Wiadomość"
 
 #: fields/message.php:104
 msgid "Please note that all text will first be passed through the wp function "
 msgstr ""
+"Proszę pamiętać, że wszystkie teksty najpierw przepuszczane są przez funkcje "
+"WP"
 
 #: fields/message.php:112
 msgid "Escape HTML"
-msgstr ""
+msgstr "Wyjście z HTML"
 
 #: fields/message.php:113
 msgid "Allow HTML markup to display as visible text instead of rendering"
 msgstr ""
+"Zezwól na znaczniki HTMLa aby wyświetlić jako widoczny tekst zamiast "
+"renderowania"
 
 #: fields/number.php:36
 msgid "Number"
-msgstr ""
+msgstr "Liczba"
 
 #: fields/number.php:186
-#, fuzzy
 msgid "Minimum Value"
-msgstr "Minimalna liczba rzędów"
+msgstr "Minimalna wartość"
 
 #: fields/number.php:195
-#, fuzzy
 msgid "Maximum Value"
-msgstr "Maksymalna liczba rzędów"
+msgstr "Maksymalna wartość"
 
 #: fields/number.php:204
 msgid "Step Size"
-msgstr ""
+msgstr "Wartość kroku"
 
 #: fields/number.php:242
 msgid "Value must be a number"
-msgstr ""
+msgstr "Wartość musi być liczbą"
 
 #: fields/number.php:260
 #, php-format
 msgid "Value must be equal to or higher than %d"
-msgstr ""
+msgstr "Wartość musi być równa lub wyższa od %d"
 
 #: fields/number.php:268
 #, php-format
 msgid "Value must be equal to or lower than %d"
-msgstr ""
+msgstr "Wartość musi być równa lub niższa od %d"
 
 #: fields/oembed.php:36
 msgid "oEmbed"
-msgstr ""
+msgstr "oEmbed"
 
 #: fields/oembed.php:199
 msgid "Enter URL"
-msgstr ""
+msgstr "Wpisz URL"
 
 #: fields/oembed.php:212
-#, fuzzy
 msgid "No embed found for the given URL"
-msgstr "Brak grup własnych pól dla strony opcji"
+msgstr "Nie znaleziono osadzenia dla podanego URLa"
 
 #: fields/oembed.php:248 fields/oembed.php:259
 msgid "Embed Size"
-msgstr ""
+msgstr "Rozmiar osadzenia"
 
 #: fields/page_link.php:206
 msgid "Archives"
-msgstr ""
+msgstr "Archiwa"
 
 #: fields/page_link.php:535 fields/post_object.php:401
 #: fields/relationship.php:690
-#, fuzzy
 msgid "Filter by Post Type"
-msgstr "Typ wpisu"
+msgstr "Filtruj wg rodzaju wpisu"
 
 #: fields/page_link.php:543 fields/post_object.php:409
 #: fields/relationship.php:698
-#, fuzzy
 msgid "All post types"
-msgstr "Typ wpisu"
+msgstr "Wszystkie rodzaje wpisów"
 
 #: fields/page_link.php:549 fields/post_object.php:415
 #: fields/relationship.php:704
-#, fuzzy
 msgid "Filter by Taxonomy"
 msgstr "Filtruj wg taksonomii"
 
 #: fields/page_link.php:557 fields/post_object.php:423
 #: fields/relationship.php:712
-#, fuzzy
 msgid "All taxonomies"
-msgstr "Taksonomia wpisu"
+msgstr "Wszystkie taksonomie"
 
 #: fields/page_link.php:563 fields/post_object.php:429 fields/select.php:406
 #: fields/taxonomy.php:765 fields/user.php:452
@@ -1942,22 +1902,20 @@ msgstr "Możliwość wyboru wielu wartości?"
 
 #: fields/password.php:36
 msgid "Password"
-msgstr ""
+msgstr "Hasło"
 
 #: fields/post_object.php:36 fields/post_object.php:462
 #: fields/relationship.php:769
 msgid "Post Object"
-msgstr "Wpisy"
+msgstr "Obiekt wpis"
 
 #: fields/post_object.php:457 fields/relationship.php:764
-#, fuzzy
 msgid "Return Format"
-msgstr "Format wpisu"
+msgstr "Format zwrotu"
 
 #: fields/post_object.php:463 fields/relationship.php:770
-#, fuzzy
 msgid "Post ID"
-msgstr "Wpis"
+msgstr "ID wpisu"
 
 #: fields/radio.php:36
 msgid "Radio Button"
@@ -1969,16 +1927,15 @@ msgstr "Pozostałe"
 
 #: fields/radio.php:206
 msgid "Add 'other' choice to allow for custom values"
-msgstr ""
+msgstr "Dodaj wybór \"inne\" aby pozwolić na własne wartości"
 
 #: fields/radio.php:212
-#, fuzzy
 msgid "Save Other"
-msgstr "Pozostałe"
+msgstr "Zapisz Inne"
 
 #: fields/radio.php:216
 msgid "Save 'other' values to the field's choices"
-msgstr ""
+msgstr "Zapisz \"inne\" wartości dla możliwości pola"
 
 #: fields/relationship.php:36
 msgid "Relationship"
@@ -1986,7 +1943,7 @@ msgstr "Relacja"
 
 #: fields/relationship.php:48
 msgid "Minimum values reached ( {min} values )"
-msgstr ""
+msgstr "Minimalna wartość została osiągnięta ( {min} )"
 
 #: fields/relationship.php:49
 msgid "Maximum values reached ( {max} values )"
@@ -1994,85 +1951,81 @@ msgstr "Maksymalna liczba została osiągnięta ( {max} )"
 
 #: fields/relationship.php:50
 msgid "Loading"
-msgstr ""
+msgstr "Wczytuje"
 
 #: fields/relationship.php:51
 msgid "No matches found"
-msgstr ""
+msgstr "Nie znaleziono wyników"
 
 #: fields/relationship.php:571
-#, fuzzy
 msgid "Search..."
-msgstr "Szukaj"
+msgstr "Szukaj..."
 
 #: fields/relationship.php:580
 msgid "Select post type"
-msgstr ""
+msgstr "Wybierz rodzaj wpisu"
 
 #: fields/relationship.php:593
-#, fuzzy
 msgid "Select taxonomy"
-msgstr "Taksonomia wpisu"
+msgstr "Wybierz taksonomie"
 
 #: fields/relationship.php:723
 msgid "Search"
 msgstr "Szukaj"
 
 #: fields/relationship.php:725 fields/taxonomy.php:36 fields/taxonomy.php:735
-#, fuzzy
 msgid "Taxonomy"
-msgstr "Taksonomia wpisu"
+msgstr "Taksonomia"
 
 #: fields/relationship.php:732
-#, fuzzy
 msgid "Elements"
-msgstr "Komentarze"
+msgstr "Elementy"
 
 #: fields/relationship.php:733
 msgid "Selected elements will be displayed in each result"
-msgstr ""
+msgstr "Wybrane elementy będą wyświetlona w każdym wyniku"
 
 #: fields/relationship.php:744
 msgid "Minimum posts"
-msgstr ""
+msgstr "Minimum wpisów"
 
 #: fields/relationship.php:753
 msgid "Maximum posts"
-msgstr "Maksymalna liczba wpisów"
+msgstr "Maksimum wpisów"
 
 #: fields/select.php:36 fields/select.php:174 fields/taxonomy.php:757
 msgid "Select"
-msgstr "Przycisk wyboru (dropdown)"
+msgstr "Wybór"
 
 #: fields/select.php:434
-#, fuzzy
 msgid "Stylised UI"
-msgstr "Styl"
+msgstr "Stylizowany UI"
 
 #: fields/select.php:448
 msgid "Use AJAX to lazy load choices?"
-msgstr ""
+msgstr "Korzystać z AJAX dla zwolnionego wczytywania wyników?"
 
 #: fields/tab.php:36
-#, fuzzy
 msgid "Tab"
-msgstr "Tabela"
+msgstr "Zakładka"
 
 #: fields/tab.php:128
 msgid "Warning"
-msgstr ""
+msgstr "Ostrzeżenie"
 
 #: fields/tab.php:133
 msgid ""
 "The tab field will display incorrectly when added to a Table style repeater "
 "field or flexible content field layout"
 msgstr ""
+"Pole zakładki będzie wyświetlane nieprawidłowo jeśli dodano do Tabeli pole "
+"powtarzalna lub pole elastycznego układu"
 
 #: fields/tab.php:146
 msgid ""
 "Use \"Tab Fields\" to better organize your edit screen by grouping fields "
 "together."
-msgstr ""
+msgstr "Użyj \"Pola zakładki\" dla lepszej organizacji ekranu "
 
 #: fields/tab.php:148
 msgid ""
@@ -2080,24 +2033,26 @@ msgid ""
 "defined) will be grouped together using this field's label as the tab "
 "heading."
 msgstr ""
+"Wszystkie pola po tym \"polu zakładki\" (lub przed następnym \"polem zakładki"
+"\") zostanie zgrupowane razem używając etykiety tego pola jako zakładki "
+"nagłówka."
 
 #: fields/tab.php:155
-#, fuzzy
 msgid "Placement"
-msgstr "Komentarze"
+msgstr "Umieszczenie"
 
 #: fields/tab.php:167
 msgid "End-point"
-msgstr ""
+msgstr "Punkt końcowy"
 
 #: fields/tab.php:168
 msgid "Use this field as an end-point and start a new group of tabs"
-msgstr ""
+msgstr "Użyj tego pola jako punkt końcowy i zacznij nową grupę zakładek"
 
 #: fields/taxonomy.php:565
 #, php-format
 msgid "Add new %s "
-msgstr ""
+msgstr "Dodaj nowe %s"
 
 #: fields/taxonomy.php:704
 msgid "None"
@@ -2105,86 +2060,82 @@ msgstr "Brak"
 
 #: fields/taxonomy.php:736
 msgid "Select the taxonomy to be displayed"
-msgstr ""
+msgstr "Wybierz taksonomie do wyświetlenia"
 
 #: fields/taxonomy.php:745
 msgid "Appearance"
-msgstr ""
+msgstr "Wygląd"
 
 #: fields/taxonomy.php:746
 msgid "Select the appearance of this field"
-msgstr ""
+msgstr "Wybierz wygląd tego pola"
 
 #: fields/taxonomy.php:751
-#, fuzzy
 msgid "Multiple Values"
-msgstr "Możliwość wyboru wielu wartości?"
+msgstr "Wiele wartości"
 
 #: fields/taxonomy.php:753
-#, fuzzy
 msgid "Multi Select"
-msgstr "Przycisk wyboru (dropdown)"
+msgstr "Wiele zaznaczeń"
 
 #: fields/taxonomy.php:755
 msgid "Single Value"
-msgstr ""
+msgstr "Pojedyncza wartość"
 
 #: fields/taxonomy.php:756
-#, fuzzy
 msgid "Radio Buttons"
 msgstr "Przycisk wyboru (radio)"
 
 #: fields/taxonomy.php:779
 msgid "Create Terms"
-msgstr ""
+msgstr "Tworzenie warunków"
 
 #: fields/taxonomy.php:780
 msgid "Allow new terms to be created whilst editing"
-msgstr ""
+msgstr "Pozwól nowym warunkom być tworzonymi podczas edycji"
 
 #: fields/taxonomy.php:793
 msgid "Save Terms"
-msgstr ""
+msgstr "Zapisz warunki"
 
 #: fields/taxonomy.php:794
 msgid "Connect selected terms to the post"
-msgstr ""
+msgstr "Połącz wybrane warunki z wpisem"
 
 #: fields/taxonomy.php:807
 msgid "Load Terms"
-msgstr ""
+msgstr "Wczytaj warunki"
 
 #: fields/taxonomy.php:808
 msgid "Load value from posts terms"
-msgstr ""
+msgstr "Wczytaj wartości z warunków wpisu"
 
 #: fields/taxonomy.php:826
-#, fuzzy
 msgid "Term Object"
-msgstr "Wpisy"
+msgstr "Warunek obiektu"
 
 #: fields/taxonomy.php:827
 msgid "Term ID"
-msgstr ""
+msgstr "ID warunku"
 
 #: fields/taxonomy.php:886
 #, php-format
 msgid "User unable to add new %s"
-msgstr ""
+msgstr "Użytkownik nie może dodać nowych %s"
 
 #: fields/taxonomy.php:899
 #, php-format
 msgid "%s already exists"
-msgstr ""
+msgstr "%s już istnieje"
 
 #: fields/taxonomy.php:940
 #, php-format
 msgid "%s added"
-msgstr ""
+msgstr "%s dodany"
 
 #: fields/taxonomy.php:985
 msgid "Add"
-msgstr ""
+msgstr "Dodaj"
 
 #: fields/text.php:36
 msgid "Text"
@@ -2192,11 +2143,11 @@ msgstr "Tekst"
 
 #: fields/text.php:184 fields/textarea.php:163
 msgid "Character Limit"
-msgstr ""
+msgstr "Limit znaków"
 
 #: fields/text.php:185 fields/textarea.php:164
 msgid "Leave blank for no limit"
-msgstr ""
+msgstr "Pozostaw puste dla braku limitu"
 
 #: fields/textarea.php:36
 msgid "Text Area"
@@ -2204,34 +2155,31 @@ msgstr "Obszar tekstowy"
 
 #: fields/textarea.php:172
 msgid "Rows"
-msgstr ""
+msgstr "Wiersz"
 
 #: fields/textarea.php:173
 msgid "Sets the textarea height"
-msgstr ""
+msgstr "Określ wysokość obszaru tekstowego"
 
 #: fields/textarea.php:182
-#, fuzzy
 msgid "New Lines"
-msgstr "Nowe pole"
+msgstr "Nowe linie"
 
 #: fields/textarea.php:183
 msgid "Controls how new lines are rendered"
-msgstr ""
+msgstr "Kontroluj ile nowych linii jest renderowanych"
 
 #: fields/textarea.php:187
 msgid "Automatically add paragraphs"
-msgstr ""
+msgstr "Automatycznie dodaj paragrafy"
 
 #: fields/textarea.php:188
-#, fuzzy
 msgid "Automatically add &lt;br&gt;"
-msgstr "auto &lt;br /&gt;"
+msgstr "Automatycznie dodaj &lt;br&gt;"
 
 #: fields/textarea.php:189
-#, fuzzy
 msgid "No Formatting"
-msgstr "Formatowanie"
+msgstr "Brak formatowania"
 
 #: fields/true_false.php:36
 msgid "True / False"
@@ -2243,19 +2191,19 @@ msgstr "np. Wyświetl dodatkową treść"
 
 #: fields/url.php:36
 msgid "Url"
-msgstr ""
+msgstr "Url"
 
 #: fields/url.php:160
 msgid "Value must be a valid URL"
-msgstr ""
+msgstr "Wartość musi być poprawnym adresem URL"
 
 #: fields/user.php:437
 msgid "Filter by role"
-msgstr ""
+msgstr "Filtruj wg roli"
 
 #: fields/user.php:445
 msgid "All user roles"
-msgstr ""
+msgstr "Wszystkie role użytkownika"
 
 #: fields/wysiwyg.php:37
 msgid "Wysiwyg Editor"
@@ -2263,29 +2211,28 @@ msgstr "Edytor WYSIWYG"
 
 #: fields/wysiwyg.php:297
 msgid "Visual"
-msgstr ""
+msgstr "Wizualny"
 
 #: fields/wysiwyg.php:298
 msgctxt "Name for the Text editor tab (formerly HTML)"
 msgid "Text"
-msgstr ""
+msgstr "Edytor tekstowy"
 
 #: fields/wysiwyg.php:354
 msgid "Tabs"
-msgstr ""
+msgstr "Zakładki"
 
 #: fields/wysiwyg.php:359
 msgid "Visual & Text"
-msgstr ""
+msgstr "Wizualny i Tekst"
 
 #: fields/wysiwyg.php:360
 msgid "Visual Only"
-msgstr ""
+msgstr "Tylko wizualny"
 
 #: fields/wysiwyg.php:361
-#, fuzzy
 msgid "Text Only"
-msgstr "Tekst"
+msgstr "Tylko tekst"
 
 #: fields/wysiwyg.php:368
 msgid "Toolbar"
@@ -2293,124 +2240,115 @@ msgstr "Pasek narzędzi"
 
 #: fields/wysiwyg.php:378
 msgid "Show Media Upload Buttons?"
-msgstr "Wyświetlić przyciski Wyślij / Wstaw?"
+msgstr "Wyświetlić przyciski Wyślij / Wstaw media?"
 
 #: forms/post.php:297 pro/admin/options-page.php:373
-#, fuzzy
 msgid "Edit field group"
 msgstr "Edytuj grupę pól"
 
 #: pro/acf-pro.php:24
-#, fuzzy
 msgid "Advanced Custom Fields PRO"
-msgstr "Zaawansowane własne pola v"
+msgstr "Advanced Custom Fields PRO"
 
 #: pro/acf-pro.php:175
-#, fuzzy
 msgid "Flexible Content requires at least 1 layout"
-msgstr "Pole z elastyczną zawartością zostało deaktywowane"
+msgstr "Pole z elastyczną zawartością wymaga przynajmniej 1 szablonu"
 
 #: pro/admin/options-page.php:48
 msgid "Options Page"
 msgstr "Strona opcji"
 
 #: pro/admin/options-page.php:83
-#, fuzzy
 msgid "No options pages exist"
-msgstr "Strona opcji została deaktywowana"
+msgstr "Strona opcji nie istnieje"
 
 #: pro/admin/options-page.php:298
 msgid "Options Updated"
 msgstr "Ustawienia zostały zaktualizowane"
 
 #: pro/admin/options-page.php:304
-#, fuzzy
 msgid "No Custom Field Groups found for this options page"
-msgstr "Brak grup własnych pól dla strony opcji"
+msgstr "Brak grup własnych pól dla tej strony opcji"
 
 #: pro/admin/options-page.php:304
 msgid "Create a Custom Field Group"
-msgstr "Utwórz grupę własnych pól"
+msgstr "Utwórz grupę niestandardowych pól"
 
 #: pro/admin/settings-updates.php:137
 msgid "<b>Error</b>. Could not connect to update server"
-msgstr ""
+msgstr "<b>Błąd</b>. Nie można połączyć z serwerem aktualizacji"
 
 #: pro/admin/settings-updates.php:267 pro/admin/settings-updates.php:338
 msgid "<b>Connection Error</b>. Sorry, please try again"
-msgstr ""
+msgstr "<b>Błąd połączenia</b>. Przepraszamy, spróbuj ponownie"
 
 #: pro/admin/views/options-page.php:48
 msgid "Publish"
 msgstr "Opublikuj"
 
 #: pro/admin/views/options-page.php:54
-#, fuzzy
 msgid "Save Options"
-msgstr "Opcje"
+msgstr "Zapisz opcje"
 
 #: pro/admin/views/settings-updates.php:11
 msgid "Deactivate License"
-msgstr ""
+msgstr "Deaktywuj licencje"
 
 #: pro/admin/views/settings-updates.php:11
-#, fuzzy
 msgid "Activate License"
-msgstr "Aktywuj dodatki."
+msgstr "Aktywuj licencje"
 
 #: pro/admin/views/settings-updates.php:21
 msgid "License"
-msgstr ""
+msgstr "Licencja"
 
 #: pro/admin/views/settings-updates.php:24
 msgid ""
 "To unlock updates, please enter your license key below. If you don't have a "
 "licence key, please see"
 msgstr ""
+"W celu odblokowania aktualizacji proszę wpisać swój numer licencji poniżej. "
+"Jeśli nie masz klucza proszę zobacz"
 
 #: pro/admin/views/settings-updates.php:24
 msgid "details & pricing"
-msgstr ""
+msgstr "szczegóły i ceny"
 
 #: pro/admin/views/settings-updates.php:33
 msgid "License Key"
-msgstr ""
+msgstr "Klucz licencji"
 
 #: pro/admin/views/settings-updates.php:65
-#, fuzzy
 msgid "Update Information"
-msgstr "Format daty"
+msgstr "Informacje o aktualizacji"
 
 #: pro/admin/views/settings-updates.php:72
 msgid "Current Version"
-msgstr ""
+msgstr "Zainstalowana wersja"
 
 #: pro/admin/views/settings-updates.php:80
 msgid "Latest Version"
-msgstr ""
+msgstr "Ostatnia wersja"
 
 #: pro/admin/views/settings-updates.php:88
-#, fuzzy
 msgid "Update Available"
-msgstr "Aktualizuj plik"
+msgstr "Aktualizacja dostępna"
 
 #: pro/admin/views/settings-updates.php:96
-#, fuzzy
 msgid "Update Plugin"
-msgstr "Aktualizuj plik"
+msgstr "Aktualizuj dodatek"
 
 #: pro/admin/views/settings-updates.php:98
 msgid "Please enter your license key above to unlock updates"
-msgstr ""
+msgstr "Proszę wpisać swój numer licencji powyżej aby odblokować aktualizacje"
 
 #: pro/admin/views/settings-updates.php:104
 msgid "Check Again"
-msgstr ""
+msgstr "Sprawdź ponownie"
 
 #: pro/admin/views/settings-updates.php:121
-#, fuzzy
 msgid "Upgrade Notice"
-msgstr "Aktualizuj bazę danych"
+msgstr "Informacje o aktualizacji"
 
 #: pro/api/api-options-page.php:22 pro/api/api-options-page.php:23
 msgid "Options"
@@ -2423,6 +2361,9 @@ msgid ""
 "\">Updates</a> page. If you don't have a licence key, please see <a href=\"%s"
 "\">details & pricing</a>"
 msgstr ""
+"Aby włączyć aktualizację proszę wpisać swój klucz licencji na stronie <a "
+"href=\"%s\">Aktualizacje</a>. Jeśli nie posiadasz klucza proszę zobaczyć <a "
+"href=\"%s\">szczegóły i ceny</a>"
 
 #: pro/fields/flexible-content.php:36
 msgid "Flexible Content"
@@ -2430,66 +2371,62 @@ msgstr "Elastyczna treść"
 
 #: pro/fields/flexible-content.php:42 pro/fields/repeater.php:43
 msgid "Add Row"
-msgstr "Dodaj rząd"
+msgstr "Dodaj wiersz"
 
 #: pro/fields/flexible-content.php:45
-#, fuzzy
 msgid "layout"
-msgstr "Szablon"
+msgstr "szablon"
 
 #: pro/fields/flexible-content.php:46
-#, fuzzy
 msgid "layouts"
-msgstr "Szablon"
+msgstr "szablony"
 
 #: pro/fields/flexible-content.php:47
-#, fuzzy
 msgid "remove {layout}?"
-msgstr "Zmiana kolejności w szablonie"
+msgstr "usunąć {layout}?"
 
 #: pro/fields/flexible-content.php:48
 msgid "This field requires at least {min} {identifier}"
-msgstr ""
+msgstr "To pole wymaga przynamniej {min} {identifier}"
 
 #: pro/fields/flexible-content.php:49
 msgid "This field has a limit of {max} {identifier}"
-msgstr ""
+msgstr "To pole ma ograniczenie {max} {identifier}"
 
 #: pro/fields/flexible-content.php:50
 msgid "This field requires at least {min} {label} {identifier}"
-msgstr ""
+msgstr "To pole wymaga przynajmniej {min} {label} {identifier}"
 
 #: pro/fields/flexible-content.php:51
-#, fuzzy
 msgid "Maximum {label} limit reached ({max} {identifier})"
-msgstr "Maksymalna liczba została osiągnięta ( {max} )"
+msgstr "Maksimum {label} limit osiągnięty ({max} {identifier})"
 
 #: pro/fields/flexible-content.php:52
 msgid "{available} {label} {identifier} available (max {max})"
 msgstr ""
+"{available} {label} {identifier} dostępne\n"
+" (max {max})"
 
 #: pro/fields/flexible-content.php:53
 msgid "{required} {label} {identifier} required (min {min})"
-msgstr ""
+msgstr "{required} {label} {identifier} wymagane (min {min})"
 
 #: pro/fields/flexible-content.php:211
-#, fuzzy, php-format
+#, php-format
 msgid "Click the \"%s\" button below to start creating your layout"
-msgstr "Kliknij przycisk \"dodaj rząd\" poniżej, aby zacząć tworzyć szablon"
+msgstr "Kliknij przycisk \"%s\" poniżej aby zacząć tworzyć nowy szablon"
 
 #: pro/fields/flexible-content.php:369
-#, fuzzy
 msgid "Add layout"
-msgstr "Dodaj nowy szablon"
+msgstr "Dodaj szablon"
 
 #: pro/fields/flexible-content.php:372
-#, fuzzy
 msgid "Remove layout"
-msgstr "Zmiana kolejności w szablonie"
+msgstr "Usuń szablon"
 
 #: pro/fields/flexible-content.php:514
 msgid "Reorder Layout"
-msgstr "Zmiana kolejności w szablonie"
+msgstr "Zmiana kolejności szablonu"
 
 #: pro/fields/flexible-content.php:514
 msgid "Reorder"
@@ -2500,9 +2437,8 @@ msgid "Delete Layout"
 msgstr "Usuń szablon"
 
 #: pro/fields/flexible-content.php:516
-#, fuzzy
 msgid "Duplicate Layout"
-msgstr "Usuń szablon"
+msgstr "Duplikuj szablon"
 
 #: pro/fields/flexible-content.php:517
 msgid "Add New Layout"
@@ -2518,33 +2454,31 @@ msgstr "Tabela"
 
 #: pro/fields/flexible-content.php:573 pro/fields/repeater.php:400
 msgid "Block"
-msgstr ""
+msgstr "Blok"
 
 #: pro/fields/flexible-content.php:574 pro/fields/repeater.php:401
 msgid "Row"
-msgstr "Rząd"
+msgstr "Wiersz"
 
 #: pro/fields/flexible-content.php:589
 msgid "Min"
-msgstr ""
+msgstr "Min"
 
 #: pro/fields/flexible-content.php:602
 msgid "Max"
-msgstr ""
+msgstr "Max"
 
 #: pro/fields/flexible-content.php:630 pro/fields/repeater.php:408
 msgid "Button Label"
 msgstr "Tekst przycisku"
 
 #: pro/fields/flexible-content.php:639
-#, fuzzy
 msgid "Minimum Layouts"
-msgstr "Minimalna liczba rzędów"
+msgstr "Minimum szablonów"
 
 #: pro/fields/flexible-content.php:648
-#, fuzzy
 msgid "Maximum Layouts"
-msgstr "Maksymalna liczba wpisów"
+msgstr "Maksimum szablonów"
 
 #: pro/fields/gallery.php:36
 msgid "Gallery"
@@ -2556,127 +2490,117 @@ msgstr "Dodaj zdjęcie do galerii"
 
 #: pro/fields/gallery.php:56
 msgid "Maximum selection reached"
-msgstr ""
+msgstr "Maksymalny wybór osiągnięty"
 
 #: pro/fields/gallery.php:335
 msgid "Length"
-msgstr ""
+msgstr "Długość"
 
 #: pro/fields/gallery.php:355
-#, fuzzy
 msgid "Remove"
 msgstr "Usuń"
 
 #: pro/fields/gallery.php:535
-#, fuzzy
 msgid "Add to gallery"
-msgstr "Dodaj zdjęcie do galerii"
+msgstr "Dodaj do galerii"
 
 #: pro/fields/gallery.php:539
 msgid "Bulk actions"
-msgstr ""
+msgstr "Działania masowe"
 
 #: pro/fields/gallery.php:540
 msgid "Sort by date uploaded"
-msgstr ""
+msgstr "Sortuj po dacie wgrania"
 
 #: pro/fields/gallery.php:541
 msgid "Sort by date modified"
-msgstr ""
+msgstr "Sortuj po dacie modyfikacji"
 
 #: pro/fields/gallery.php:542
 msgid "Sort by title"
-msgstr ""
+msgstr "Sortuj po tytule"
 
 #: pro/fields/gallery.php:543
 msgid "Reverse current order"
-msgstr ""
+msgstr "Odwróć aktualny porządek"
 
 #: pro/fields/gallery.php:561
-#, fuzzy
 msgid "Close"
-msgstr "Zamknij to pole"
+msgstr "Zamknij"
 
 #: pro/fields/gallery.php:619
-#, fuzzy
 msgid "Minimum Selection"
-msgstr "Minimalna liczba rzędów"
+msgstr "Minimum wyboru"
 
 #: pro/fields/gallery.php:628
-#, fuzzy
 msgid "Maximum Selection"
-msgstr "Maksymalna liczba rzędów"
+msgstr "Maksimum wyboru"
 
 #: pro/fields/gallery.php:809
 #, php-format
 msgid "%s requires at least %s selection"
 msgid_plural "%s requires at least %s selections"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%s wymagany przynajmniej %s wybór"
+msgstr[1] "%s wymagane są przynajmniej %s wybory"
+msgstr[2] "%s wymagane są przynajmniej %s wybory"
 
 #: pro/fields/repeater.php:36
 msgid "Repeater"
 msgstr "Pole powtarzalne"
 
 #: pro/fields/repeater.php:46
-#, fuzzy
 msgid "Minimum rows reached ({min} rows)"
-msgstr "Maksymalna liczba została osiągnięta ( {max} )"
+msgstr "Minimum wierszy osiągnięte ( {min} wierszy )"
 
 #: pro/fields/repeater.php:47
-#, fuzzy
 msgid "Maximum rows reached ({max} rows)"
-msgstr "Maksymalna liczba została osiągnięta ( {max} )"
+msgstr "Maksimum wierszy osiągnięte ( {max} wierszy)"
 
 #: pro/fields/repeater.php:259
-#, fuzzy
 msgid "Drag to reorder"
 msgstr "Przeciągnij i zmień kolejność"
 
 #: pro/fields/repeater.php:301
-#, fuzzy
 msgid "Add row"
-msgstr "Dodaj rząd"
+msgstr "Dodaj wiersz"
 
 #: pro/fields/repeater.php:302
-#, fuzzy
 msgid "Remove row"
-msgstr "Usuń"
+msgstr "Usuń wiersz"
 
 #: pro/fields/repeater.php:350
-#, fuzzy
 msgid "Sub Fields"
-msgstr "Pola"
+msgstr "Pola podrzędne"
 
 #: pro/fields/repeater.php:372
 msgid "Minimum Rows"
 msgstr "Minimalna liczba rzędów"
 
 #: pro/fields/repeater.php:382
-#, fuzzy
 msgid "Maximum Rows"
 msgstr "Minimalna liczba rzędów"
 
 #. Plugin Name of the plugin/theme
 msgid "Advanced Custom Fields Pro"
-msgstr ""
+msgstr "Advanced Custom Fields Pro"
 
 #. Plugin URI of the plugin/theme
 msgid "http://www.advancedcustomfields.com/"
-msgstr ""
+msgstr "http://www.advancedcustomfields.com/"
 
 #. Description of the plugin/theme
 msgid "Customise WordPress with powerful, professional and intuitive fields"
 msgstr ""
+"Dostosuj WordPressa korzystając z potężnych, profesjonalnych i intuicyjnych "
+"pól"
 
 #. Author of the plugin/theme
 msgid "elliot condon"
-msgstr ""
+msgstr "elliot condon"
 
 #. Author URI of the plugin/theme
 msgid "http://www.elliotcondon.com/"
-msgstr ""
+msgstr "http://www.elliotcondon.com/"
 
 #~ msgid "Import / Export"
 #~ msgstr "Import / Eksport"

@@ -379,6 +379,7 @@ if( typeof acf !== 'undefined' ) {
 			'nonce'		=> '',
 			'post_id'	=> 0,
 			'ajax'		=> 1,
+			'exists'	=> array()
 		));
 		
 		

@@ -12,7 +12,7 @@
  *
  * @since 1.1
  *
- * @version 1.1
+ * @version 1.1.2 Fixed `/lib/` include path for EDDSL
  */
 abstract class GravityView_Extension {
 
@@ -20,12 +20,6 @@ abstract class GravityView_Extension {
 	 * @var string Name of the plugin in gravityview.co
 	 */
 	protected $_title = NULL;
-
-	/**
-	 * @since 1.1
-	 * @var string Path to the base plugin file, normally `__FILE__`
-	 */
-	protected $_path = NULL;
 
 	/**
 	 * @var string Version number of the plugin
@@ -127,14 +121,14 @@ abstract class GravityView_Extension {
 		}
 
 		$tab_defaults = array(
-			'id' => '',
-			'title' => '',
-			'callback' => '',
-			'icon-class' => '',
-			'file' => '',
-			'callback_args' => '',
-			'context' => 'side',
-			'priority' => 'default',
+				'id' => '',
+				'title' => '',
+				'callback' => '',
+				'icon-class' => '',
+				'file' => '',
+				'callback_args' => '',
+				'context' => 'side',
+				'priority' => 'default',
 		);
 
 		$tab = wp_parse_args( $tab_settings, $tab_defaults );
@@ -230,7 +224,15 @@ abstract class GravityView_Extension {
 		}
 
 		if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
-			include_once plugin_dir_path( __FILE__ ) . 'lib/EDD_SL_Plugin_Updater.php';
+
+			$file_path = plugin_dir_path( __FILE__ ) . 'lib/EDD_SL_Plugin_Updater.php';
+
+			// This file may be in the lib/ directory already
+			if( ! file_exists( $file_path ) ) {
+				$file_path = plugin_dir_path( __FILE__ ) . '/EDD_SL_Plugin_Updater.php';
+			}
+
+			include_once $file_path;
 		}
 
 		$license = $this->get_license();
@@ -239,15 +241,15 @@ abstract class GravityView_Extension {
 		if( false === $license || empty( $license['status'] ) || strtolower( $license['status'] ) !== 'valid' ) { return; }
 
 		new EDD_SL_Plugin_Updater(
-			$this->_remote_update_url,
-			$this->_path,
-			array(
-				'version'	=> $this->_version, // current version number
-				'license'	=> $license['license'],
-				'item_id'   => $this->_item_id, // The ID of the download on _remote_update_url
-				'item_name' => $this->_title,  // name of this plugin
-				'author' 	=> strip_tags( $this->_author )  // author of this plugin
-			)
+				$this->_remote_update_url,
+				$this->_path,
+				array(
+						'version'	=> $this->_version, // current version number
+						'license'	=> $license['license'],
+						'item_id'   => $this->_item_id, // The ID of the download on _remote_update_url
+						'item_name' => $this->_title,  // name of this plugin
+						'author' 	=> strip_tags( $this->_author )  // author of this plugin
+				)
 		);
 	}
 

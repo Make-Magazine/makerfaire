@@ -1,9 +1,10 @@
 <?php
 /*
 Plugin Name: Latest Post Shortcode
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
 Description: This plugin allows you to create a dynamic content selection from your posts, pages and custom post types that can be embedded with a shortcode.
 Author: Iulia Cazan
-Version: 5.3
+Version: 6.1
 Author URI: https://profiles.wordpress.org/iulia-cazan
 License: GPL2
 
@@ -23,7 +24,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define( 'LPS_PLUGIN_VERSION', '5.3' );
+define( 'LPS_PLUGIN_VERSION', '6.1' );
 
 class Latest_Post_Shortcode
 {
@@ -97,6 +98,7 @@ class Latest_Post_Shortcode
 					array_push( $this->tile_pattern_nolinks, $k );
 				}
 			}
+			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
 		} else {
 			add_action( 'wp_head', array( $this, 'load_assets' ) );
 		}
@@ -373,6 +375,13 @@ class Latest_Post_Shortcode
 						<hr />
 					</td>
 				</tr>
+				';
+				echo $body;
+				
+				/** Introduce the slider extension options */
+				do_action( 'latest_selected_content_slider_configuration' );
+
+				$body = '
 				<tr>
 					<td colspan="3">
 						<h3>' . __( 'Shortcode Preview', 'lps' ) . '</h3>
@@ -395,11 +404,13 @@ class Latest_Post_Shortcode
 	/**
 	 * Latest_Post_Shortcode::get_short_text() Get short text of maximum x chars
 	 */
-	function get_short_text( $text, $limit ) {
+	function get_short_text( $text, $limit, $is_excerpt = false ) {
+		$filter = ( $is_excerpt ) ? 'the_excerpt' : 'the_content';
+		
 		$text = strip_tags( $text );
 		$text = preg_replace( '~\[[^\]]+\]~', '', $text );
 		$text = strip_shortcodes( $text );
-		$text = apply_filters( 'the_content', strip_shortcodes( $text ) );
+		$text = apply_filters( $filter, strip_shortcodes( $text ) );
 		$text = preg_replace( '~\[[^\]]+\]~', '', $text );
 		$text = strip_tags( $text );
 		$text = preg_replace( '~\[[^\]]+\]~', '', $text );
@@ -424,7 +435,7 @@ class Latest_Post_Shortcode
 			}
 			$text = trim( $text );
 			$text = preg_replace( '/\[.+\]/', '', $text );
-			$text = apply_filters( 'the_content', $text );
+			$text = apply_filters( $filter, $text );
 			$text = str_replace( ']]>', ']]&gt;', $text );
 		}
 		return $text;
@@ -546,7 +557,6 @@ class Latest_Post_Shortcode
 
 		$qargs = array(
 			'post_status' => 'publish',
-			'offset'      => 0,
 			'numberposts' => 1,
 		);
 
@@ -670,8 +680,22 @@ class Latest_Post_Shortcode
 				)
 			);
 		}
-
+		$qargs['suppress_filters'] = false;
 		$posts = get_posts( $qargs );
+		
+		/** If the slider extension is enabled and the shortcode is configured to output the slider, let's do that and return */
+		if ( 
+			! empty( $posts ) 
+			&& class_exists( 'Latest_Post_Shortcode_Slider' ) 
+			&& ! empty( $args['output'] ) 
+			&& 'slider' == $args['output'] 
+		) {
+			ob_start();
+			do_action( 'latest_selected_content_slider', $posts, $args );
+			wp_reset_postdata();
+			return ob_get_clean();
+		}
+
 
 		$is_lps_ajax = get_query_var( 'lps_ajax' ) ? intval( get_query_var( 'lps_ajax' ) ) : 0;
 		$shortcode_id = 'lps-' . md5( serialize( $args ) . microtime() );
@@ -705,6 +729,13 @@ class Latest_Post_Shortcode
 				$class .= ' ajax_pagination';
 			}
 			echo '<section class="latest-post-selection' . esc_attr( $class ) . '" id="' . esc_attr( $shortcode_id ) . '">';
+			
+			$iw = get_option( esc_attr( $args['image'] ) . '_size_w', true );
+			$iw = ( 1 == $iw ) ? '100%' : $iw . 'px';
+			$ih = get_option( esc_attr( $args['image'] ) . '_size_h', true );
+			$ih = ( 1 == $ih ) ? '100%' : $ih . 'px';
+			echo '<style>#' . esc_attr( $shortcode_id ) . ' .custom-' . esc_attr( $args['image'] ) .' { width:' . $iw . '; min-height:' . $ih . '; height:auto;}</style>';
+			
 			foreach ( $posts as $post ) {
 				$tile = $tile_pattern;
 				$a_start = $a_end = '';
@@ -716,9 +747,15 @@ class Latest_Post_Shortcode
 				$tile = str_replace( '[a]', $a_start, $tile );
 				$tile = str_replace( '[/a]', $a_end, $tile );
 				if ( ! empty( $args['image'] ) ) {
-					$image = wp_get_attachment_image_src( get_post_thumbnail_id( intval( $post->ID ) ), $args['image'] );
+					$img_html = apply_filters( 'post_thumbnail_html', '', $post->ID, 0, $args['image'], array( 'class' => 'custom-' . $args['image'] ) );
+					$th_id = get_post_thumbnail_id( intval( $post->ID ) );
+					$image = wp_get_attachment_image_src( $th_id, $args['image'] );
 					if ( ! empty( $image[0] ) ) {
-						$tile = str_replace( '[image]', '<img src="' . esc_url( $image[0] ) . '" />', $tile );
+						$img_html = '<img src="' . esc_url( $image[0] ) . '" />';
+						$img_html = apply_filters( 'post_thumbnail_html', $img_html, $post->ID, $th_id, $args['image'], array() );
+					}
+					if ( ! empty( $img_html ) ) {
+						$tile = str_replace( '[image]', $img_html, $tile );
 					} else {
 						$tile = str_replace( '[image]', '', $tile );
 					}
@@ -756,13 +793,13 @@ class Latest_Post_Shortcode
 				$text = '';
 				if ( in_array( 'excerpt', $extra_display ) || in_array( 'content', $extra_display ) || in_array( 'content-small', $extra_display ) || in_array( 'excerpt-small', $extra_display ) ) {
 					if ( in_array( 'excerpt', $extra_display ) ) {
-						$text = apply_filters( 'the_content', strip_shortcodes( $post->post_excerpt ) );
+						$text = apply_filters( 'the_excerpt', strip_shortcodes( $post->post_excerpt ) );
 					} elseif ( in_array( 'excerpt-small', $extra_display ) ) {
-						$text = $this->get_short_text( $post->post_excerpt, $chrlimit );
+						$text = $this->get_short_text( $post->post_excerpt, $chrlimit, true );
 					} else if ( in_array( 'content', $extra_display ) ) {
 						$text = apply_filters( 'the_content', $post->post_content );
 					} elseif ( in_array( 'content-small', $extra_display ) ) {
-						$text = $this->get_short_text( $post->post_content, $chrlimit );
+						$text = $this->get_short_text( $post->post_content, $chrlimit, false );
 					}
 				}
 				$tile = str_replace( '[text]', $text, $tile );
@@ -786,6 +823,13 @@ class Latest_Post_Shortcode
 		}
 		wp_reset_postdata();
 		return ob_get_clean();
+	}
+
+	function plugin_action_links( $links ) {
+		$all = array();
+		$all[] = '<a href="http://iuliacazan.ro/latest-post-shortcode">Plugin URL</a>';
+		$all = array_merge( $all, $links );
+		return $all;
 	}
 
 }

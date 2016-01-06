@@ -337,9 +337,10 @@ class SL_links_main extends WP_Widget {
 		$args = apply_filters( 'simple_links_widget_args', $args );
 		$args = apply_filters( 'simple_links_widget_args_' . $widget_id, $args );
 
+        $instance[ 'id' ] = $args[ 'id' ];
 
 		//Call this filter to change the Widgets Settings Pre Compile
-		$instance = apply_filters( 'simple_links_widget_settings', $instance );
+		$instance = apply_filters( 'simple_links_widget_settings', $instance, $args );
 		$instance = apply_filters( 'simple_links_widget_settings_' . $widget_id, $instance );
 
 
@@ -351,6 +352,8 @@ class SL_links_main extends WP_Widget {
 			$instance[ 'title' ] = apply_filters( 'widget_title', $instance[ 'title' ], $instance, $args );
 			$output .= $before_title . $instance[ 'title' ] . $after_title;
 		}
+
+        ;
 
 		$links = new SimpleLinksFactory( $instance, 'widget' );
 

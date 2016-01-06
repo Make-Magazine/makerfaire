@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: GravityView - Advanced Filter Extension
-Plugin URI: https://gravityview.co
+Plugin URI: https://gravityview.co/extensions/advanced-filter/
 Description: Filter which entries are shown in a View based on their values.
-Version: 1.0.10
+Version: 1.0.11
 Author: Katz Web Services, Inc.
-Author URI: https://katz.co
+Author URI: https://gravityview.co
 Text Domain: gravity-view-advanced-filter
 Domain Path: /languages/
 */
@@ -32,9 +32,15 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '1.0.10';
+		protected $_version = '1.0.11';
 
 		protected $_min_gravityview_version = '1.7.1';
+
+		/**
+		 * @since 1.0.11
+		 * @type int
+		 */
+		protected $_item_id = 30;
 
 		protected $_path = __FILE__;
 
@@ -184,7 +190,7 @@ function gv_extension_advanced_filtering_load() {
 			return array(
 				'key' => 'created_by',
 				'operator' => 'is',
-				'value' => 0
+				'value' => 'Advanced Filter Force Zero Results Filter'
 			);
 		}
 
@@ -347,9 +353,18 @@ function gv_extension_advanced_filtering_load() {
 
 			$field_filters = GFCommon::get_field_filter_settings($form);
 
+			if( $approved_column = GravityView_Admin_ApproveEntries::get_approved_column( $form ) ) {
+				$approved_column = intval( floor( $approved_column ) );
+			}
 
 			// Add currently logged in user option
 			foreach ( $field_filters as &$filter ) {
+
+				// Add negative match to approval column
+				if( $approved_column && $filter['key'] === $approved_column ) {
+					$filter['operators'][] = 'isnot';
+					continue;
+				}
 
 				// Gravity Forms already creates a "User" option.
 				// We don't care about specific user, just the logged in status.

@@ -23,9 +23,14 @@ window.gwCopyObj = function(formId, fields, overwrite ) {
 
         } );
 
-        jQuery( '#gform_wrapper_' + this._formId + ' .gwcopy' ).find( 'input, textarea, select' ).not( 'input[type="checkbox"]' ).bind( 'change.gpcopycat', function() {
-            copyObj.copyValues( this, true );
-        } ).each( function() {
+        jQuery( '#gform_wrapper_' + this._formId + ' .gwcopy' ).find( 'input, textarea, select' ).each( function() {
+            var isCheckbox = jQuery( this ).is( 'input[type="checkbox"]' );
+            if( ! isCheckbox ) {
+                copyObj.copyValues( this, true );
+            } else if( jQuery( this ).is( ':checked' ) ) {
+                copyObj.copyValues( this, true );
+            }
+        } ).not( 'input[type="checkbox"]' ).bind( 'change.gpcopycat', function() {
             copyObj.copyValues( this, true );
         } );
 
@@ -102,7 +107,7 @@ window.gwCopyObj = function(formId, fields, overwrite ) {
                 }
                 // if there is only one input, join the source values
                 else {
-                    targetElem.val( sourceValues.join( ' ' ) );
+                    targetElem.val( copyObj.cleanValueByInputType( sourceValues.join( ' ' ), targetElem.attr( 'type' ) ) );
                 }
 
             } ).change();
@@ -168,6 +173,15 @@ window.gwCopyObj = function(formId, fields, overwrite ) {
 
     };
 
+    this.cleanValueByInputType = function( value, inputType ) {
+
+        if( inputType == 'number' ) {
+            value = gformToNumber( value );
+        }
+
+        return value;
+    };
+
     this.init();
 
-}
+};

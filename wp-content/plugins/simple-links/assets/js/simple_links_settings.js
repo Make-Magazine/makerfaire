@@ -123,6 +123,15 @@ var SLsettingsQtips = {
 				tip : 'topLeft'
 			}
 		} );
+
+		//Visual Shortcodes
+		$s( '#simple-links-visual-shortcodes' ).qtip( {
+			content : SL_locale.visual_shortcode, style : {
+				border : {
+					width : 1, radius : 8, color : '#21759B'
+				}, tip : 'topLeft'
+			}
+		} );
 	}
 };
 

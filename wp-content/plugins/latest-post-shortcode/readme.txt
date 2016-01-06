@@ -3,14 +3,16 @@ Contributors: Iulia Cazan
 Author URI: https://profiles.wordpress.org/iulia-cazan
 Tags: post, latest post, taxonomy, category, tag, parent, shortcode, latest, custom, selection, post by category, post by taxonomy, post by tag, post by id, post by parent, last post, tiles from posts, tile template, short content, short excerpt, limit content, limit excerpt, pagination, posts pagination
 Requires at least: not tested
-Tested up to: wp 4.3
-Stable tag:  5.3
+Tested up to: wp 4.4
+Stable tag:  6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate Link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
 
 == Description ==
-The plugin registers a configurable shortcode that allows you to create a dynamic content selection from your posts, pages and custom post types by combining and filtering what you need. The shortcode can be generated very easy, the plugin will add a shortcode button for this in the editor area. 
+The plugin registers a configurable shortcode that allows you to create a dynamic content selection from your posts, pages and custom post types by combining and filtering what you need. The shortcode can be generated very easy, the plugin will add a shortcode button for this in the editor area.
+= Latest Post Shortcode Slider =
+* https://wordpress.org/plugins/latest-post-shortcode-slider-extension/ 
 
 == Installation ==
 * Upload `Latest Post Shortcode` to the `/wp-content/plugins/` directory of your application
@@ -28,6 +30,18 @@ admin_enqueue_scripts, init, plugins_loaded, media_buttons_context, admin_footer
 None
 
 == Changelog ==
+= 6.1 = 
+* Add suppress filters false
+* Apply filters before displaying the post image
+
+= 6.0 = 
+* Add support for the Latest Post Shortcode Slider extension
+
+= 5.4 =
+* Add the plugin link
+* Separate the content and excerpt filters
+* Tested up to 4.3.1
+
 = 5.3 =
 * Add the 'open in a new window' option for the links
 
@@ -79,6 +93,10 @@ Donation and reviews are welcomed and will help me to continue future developmen
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 
 == Version history ==
+6.1 - Apply more filters
+6.0 - Add support for the Latest Post Shortcode Slider extension
+5.4 - Separate the content and excerpt filters
+5.3 - Open links in a new window
 5.2 - Render full post content
 5.1 - Posts order and ajax pagination
 5.0 - Extra tags display and text widget filter

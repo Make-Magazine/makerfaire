@@ -61,6 +61,11 @@ class GF_Field_FileUpload extends GF_Field {
 				return;
 			}
 
+			/**
+			 * A filter to allow or disallow whitelisting when uploading a file
+			 *
+			 * @param bool To set upload whitelisting to true or false (default is false, which means it is enabled)
+			 */
 			$whitelisting_disabled = apply_filters( 'gform_file_upload_whitelisting_disabled', false );
 
 			if ( ! empty( $_FILES[ $input_name ]['name'] ) && empty( $allowed_extensions ) && ! $whitelisting_disabled ) {
@@ -186,7 +191,7 @@ class GF_Field_FileUpload extends GF_Field {
 				}
 			}
 
-			$plupload_init = gf_apply_filters( 'gform_plupload_settings', $form_id, $plupload_init, $form_id, $this );
+			$plupload_init = gf_apply_filters( array( 'gform_plupload_settings', $form_id ), $plupload_init, $form_id, $this );
 
 			$drop_files_here_text = esc_html__( 'Drop files here or', 'gravityforms' );
 			$select_files_text    = esc_attr__( 'Select files', 'gravityforms' );
@@ -195,7 +200,7 @@ class GF_Field_FileUpload extends GF_Field {
 			$upload             = "<div id='{$container_id}' data-settings='{$plupload_init_json}' class='gform_fileupload_multifile'>
 										<div id='{$drag_drop_id}' class='gform_drop_area'>
 											<span class='gform_drop_instructions'>{$drop_files_here_text} </span>
-											<input id='{$browse_button_id}' type='button' value='{$select_files_text}' class='button gform_button_select_files' aria-describedby='extensions_message' />
+											<input id='{$browse_button_id}' type='button' value='{$select_files_text}' class='button gform_button_select_files' aria-describedby='extensions_message' {$tabindex} />
 										</div>
 									</div>";
 			if ( ! $is_admin ) {
@@ -215,14 +220,17 @@ class GF_Field_FileUpload extends GF_Field {
 				//  MAX_FILE_SIZE > 2048MB fails. The file size is checked anyway once uploaded, so it's not necessary.
 				$upload = sprintf( "<input type='hidden' name='MAX_FILE_SIZE' value='%d' />", $max_upload_size );
 			}
-			$upload .= sprintf( "<input name='input_%d' id='%s' type='file' class='%s' aria-describedby='extensions_message' {$tabindex} %s/>", $id, $field_id, esc_attr( $class ), $disabled_text );
-
+                        
+                        $upload .= sprintf( "<input name='input_%d' id='%s' type='file' class='%s' aria-describedby='extensions_message' {$tabindex} %s/>", $id, $field_id, esc_attr( $class ), $disabled_text );                       
+  
 			if ( ! $is_admin ) {
 				$upload .= "<span id='extensions_message' class='screen-reader-text'>{$extensions_message}</span>";
 			}
 		}
 
-		if ( $is_entry_detail && ! empty( $value ) ) { // edit entry
+		//if ( $is_entry_detail && ! empty( $value ) ) { // edit entry
+                if (  ! empty( $value ) ) { // edit entry //mf custom code
+
 			$file_urls      = $multiple_files ? json_decode( $value ) : array( $value );
 			$upload_display = $multiple_files ? '' : "style='display:none'";
 			$preview        = "<div id='upload_$id' {$upload_display}>$upload</div>";
@@ -267,12 +275,12 @@ class GF_Field_FileUpload extends GF_Field {
 					$upload = str_replace( " class='", " class='gform_hidden ", $upload );
 				}
 
-				return "<div class='ginput_container'>" . $upload . " {$preview}</div>";
+				return "<div class='ginput_container ginput_container_fileupload'>" . $upload . " {$preview}</div>";
 			} else {
 
 				$preview = $multiple_files ? sprintf( "<div id='%s'></div>", $file_list_id ) : '';
 
-				return "<div class='ginput_container'>$upload</div>" . $preview;
+				return "<div class='ginput_container ginput_container_fileupload'>$upload</div>" . $preview;
 			}
 		}
 	}
@@ -334,6 +342,7 @@ class GF_Field_FileUpload extends GF_Field {
 
 	public function get_single_file_value( $form_id, $input_name ) {
 		global $_gf_uploaded_files;
+                $return_file = ""; //MF custom code
 
 		GFCommon::log_debug( __METHOD__ . '(): Starting.' );
 
@@ -354,9 +363,13 @@ class GF_Field_FileUpload extends GF_Field {
 			} else {
 				GFCommon::log_debug( __METHOD__ . '(): No file uploaded. Exiting.' );
 			}
+                        $return_file = rgget( $input_name, $_gf_uploaded_files );
+		}else {
+                    $return_file = $_POST [ $input_name.'_original'];
 		}
 
-		return rgget( $input_name, $_gf_uploaded_files );
+		//return rgget( $input_name, $_gf_uploaded_files );
+                return $return_file; //my custom code
 	}
 
 	public function upload_file( $form_id, $file ) {
@@ -399,12 +412,10 @@ class GF_Field_FileUpload extends GF_Field {
 		if ( ! empty( $file_path ) ) {
 			//displaying thumbnail (if file is an image) or an icon based on the extension
 			$thumb     = GFEntryList::get_icon_url( $file_path );
-                        /*
 			$file_path = esc_attr( $file_path );
-			$value     = "<a href='$file_path' target='_blank' title='" . esc_attr__( 'Click to view', 'gravityforms' ) . "'><img src='$thumb'/></a>";*/
-                        //makerfaire custom code
+			//custom MF code
                         $file_path = legacy_get_resized_remote_image_url($file_path, 125, 125);
-$value     = "<a class='thickbox' href='$file_path' target='_blank' title='" . __( 'Click to view', 'gravityforms' ) . "'><img class='thickbox' style='width: 125px;' src='$file_path'/></a>";
+                        $value     = "<a class='thickbox' href='$file_path' target='_blank' title='" . __( 'Click to view', 'gravityforms' ) . "'><img class='thickbox' style='width: 125px;' src='$file_path'/></a>";
 		}
 		return $value;
 	}

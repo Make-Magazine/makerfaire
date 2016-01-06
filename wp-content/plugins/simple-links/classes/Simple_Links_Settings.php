@@ -55,6 +55,7 @@ class Simple_Links_Settings {
 		register_setting( self::SLUG, 'link_additional_fields', 'array_filter' );
 		register_setting( self::SLUG, 'sl-remove-links' );
 		register_setting( self::SLUG, 'simple-links-default-target' );
+        register_setting( self::SLUG, Simple_Links_Visual_Shortcodes::SETTING );
 
 
 	}
@@ -124,6 +125,15 @@ class Simple_Links_Settings {
 			'core'
 		);
 
+        add_meta_box(
+                'sl-visual-shortcodes',
+                __( 'Visual Shortcodes BETA', 'simple-links' ),
+                array( $this, 'visual_shortcodes' ),
+                'sl-settings-boxes',
+                'advanced',
+                'core'
+        );
+
 	}
 
 	/**
@@ -140,6 +150,34 @@ class Simple_Links_Settings {
 		require( SIMPLE_LINKS_DIR . 'admin-views/settings-wordpress-links.php' );
 
 	}
+
+
+    /**
+     * Visual Shortcodes meta box output
+     *
+     * @return void
+     */
+    public function visual_shortcodes(){
+        $enabled = get_option( Simple_Links_Visual_Shortcodes::SETTING );
+        ?>
+        <h4>
+            <?php _e( 'These settings will effect the visual shortcodes', 'simple-links' ); ?>
+        </h4>
+        <ul>
+            <li style="color: red; font-weight: bold">
+                <?php _e( 'This feature is still in beta. Please use with caution and report any issues using the ', 'simple-links' ); ?>
+                <a href="https://matlipe.com/contact/">
+                    <?php _e( 'contact form', 'simple-links' ); ?>
+                </a>
+            </li>
+            <li>
+                <?php _e( 'Enable Visual Shortcodes', 'simple-links' ); ?>:
+                <input type="checkbox" name="<?php echo Simple_Links_Visual_Shortcodes::SETTING; ?>" value="1" <?php checked( $enabled ); ?>>
+                <?php simple_links_questions( 'simple-links-visual-shortcodes' ); ?>
+            </li>
+        </ul>
+        <?php
+    }
 
 
 	/**
