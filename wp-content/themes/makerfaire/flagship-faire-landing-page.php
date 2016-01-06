@@ -6,7 +6,7 @@
   <div class="container">
     <div class="col-md-12">
       <img src="<?php echo get_post_meta($post->ID, 'flagship-faire-badge-img-url', true); ?>"
-        width="255" height="255" class="flagship-badge"
+        width="255" height="255" class="flagship-badge hidden-xs hidden-sm"
         alt="Featured Faire badge image">
     </div>
     <div class="row">

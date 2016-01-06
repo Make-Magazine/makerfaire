@@ -1,7 +1,6 @@
 .flagship-faire-wrp {
   background-image: url('<?php echo $feat_image; ?>');
   background-size: cover;
-  margin-top: -20px;
   .flagship-badge {
     float: right;
     margin: 20px;
@@ -9,10 +8,13 @@
     border-radius: 200%;
   }
   .flagship-faire-box {
-    background: rgba(255,255,255,0.91);
+    background: rgba(255, 255, 255, 0.91);
     margin-bottom: 50px;
     border-radius: 11px;
     padding: 15px 15px 25px 15px;
+  }
+  .flagship-title {
+    display: inline-block;
   }
   .head-divider-line-img {
     background-size: 15px;
@@ -40,5 +42,25 @@
     margin: 2px;
     padding: 0;
     color: #4A4A4A;
+  }
+  .btn-contrast-border {
+    border: solid 2px #12AFE9;
+    margin: 3px;
+  }
+  @media all and (max-width: 991px) {
+    .flagship-faire-box {
+      margin: 20px 10px;
+    }
+    h3.line-item {
+      font-size: 15px;
+      margin-top: 25px;
+    }
+    .flagship-title {
+      display: block;
+    }
+    .btn-contrast-border {
+      width: 48%;
+      margin: 18px 1%;
+    }
   }
 }
