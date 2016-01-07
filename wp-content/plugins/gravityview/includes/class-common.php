@@ -720,8 +720,29 @@ class GVCommon {
 			do_action( 'gravityview_log_debug', '[apply_filters_to_entry] Entry is empty! Entry:', $entry );
 			return false;
 		}
+                
+                //MF custom code to allow display of entries not created by current user but with current user as the contact email
+                global $current_user;
+                get_currentuserinfo();
+                global $user_ID;global $user_email;
+                $defSearch_criteria['search_criteria'] = array(
+                    'status'        => 'active',
+                    'field_filters' => array(
+                        'mode' => 'any',
+                        array(
+                            'key'   => '98',
+                            'value' => $user_email,
+                            'operator' => 'is'
+                        ),
+                        array(
+                            'key' => 'created_by',
+                            'value' => $user_ID,
+                            'operator' => 'is'
+                        )
+                    )
+                );
 
-		$criteria = self::calculate_get_entries_criteria();
+		$criteria = self::calculate_get_entries_criteria($defSearch_criteria);
 
 		if ( empty( $criteria['search_criteria'] ) || ! is_array( $criteria['search_criteria'] ) ) {
 			do_action( 'gravityview_log_debug', '[apply_filters_to_entry] Entry approved! No search criteria found:', $criteria );
@@ -729,6 +750,7 @@ class GVCommon {
 		}
 
 		$search_criteria = $criteria['search_criteria'];
+           
 		unset( $criteria );
 
 		// check entry status
@@ -749,7 +771,9 @@ class GVCommon {
 		$filters = $search_criteria['field_filters'];
 		unset( $search_criteria );
 
-		$mode = array_key_exists( 'mode', $filters ) ? strtolower( $filters['mode'] ) : 'all';
+                //$mode = array_key_exists( 'mode', $filters ) ? strtolower( $filters['mode'] ) : 'all';
+                //MF custom code
+                $mode ='any';
 		unset( $filters['mode'] );
 
 		$form = self::get_form( $entry['form_id'] );
@@ -767,7 +791,7 @@ class GVCommon {
 				$field = null;
 			} else {
 				$field = self::get_field( $form, $k );
-				$field_value  = GFFormsModel::get_lead_field_value( $entry, $field );
+				$field_value  = GFFormsModel::get_lead_field_value( $entry, $field );                                
 			}
 
 			$operator = isset( $filter['operator'] ) ? strtolower( $filter['operator'] ) : 'is';

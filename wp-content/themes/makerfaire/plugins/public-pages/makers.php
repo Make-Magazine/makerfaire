@@ -484,10 +484,12 @@ function mf_merged_terms( $atts ) {
 
 		//See mf_get_terms
 		$faire = ((isset($atts['faire'])) && ($atts['faire'] != '')) ? $atts['faire'] : MF_CURRENT_FAIRE;
-		//array_merge for atts here to avoid breaking code term display code
+                //array_merge for atts here to avoid breaking code term display code
 		$cats_tags = mf_get_terms(array('category', 'post_tag'), array_merge($atts, array('faire' => $faire) ) );
 	$output = '<ul class="columns">';
-	foreach ($cats_tags as $cat) {
+	foreach ($cats_tags as $cat) {            
+            $cat->name = $cat->name.'('.$cat->count.')';
+            if($cat->count >= 1){
 		// $atts['faire'] has been deprecated and will be removed once the production server has been updated.
 		// Why? Include both if $atts['faire_url'] needed JE 8.27.14
 		if ( isset( $atts['faire_url'] ) && isset($atts['faire']) && ($atts['faire'] != '')) {
@@ -501,6 +503,7 @@ function mf_merged_terms( $atts ) {
 		} else {
 			$output .= '<li><a href="' . esc_url( get_term_link( $cat ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
 		}
+            }
 
 	}
 	$output .= '</ul>';
@@ -510,13 +513,13 @@ function mf_merged_terms( $atts ) {
 add_shortcode('mf_cat_list', 'mf_merged_terms');
 
 function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
-
-		$args = array(
+    $faire = ((isset($atts['faire'])) && ($atts['faire'] != '')) ? $atts['faire'] : MF_CURRENT_FAIRE;
+    $args = array(
 			'hide_empty' => true, //unreliable
 			'exclude'		=> array( '1' ),
 			'show_tags' => '',
 			'show_cats' => '',
-			'faire' => MF_CURRENT_FAIRE,
+			'faire' => $faire,                   
 			);
 			
 		$args = wp_parse_args( $atts, $args );
@@ -529,6 +532,7 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
 				unset($tag_args['faire']);
 				unset($tag_args['faire_url']);
 				$tags = get_terms( 'post_tag' , $tag_args );
+                                var_dump($tags);
 				if ((isset($topic_list['tags'])) && ($topic_list['tags'][0] !== '') && (count($topic_list['tags']) >= 1)) { 
 					foreach($tags as $tag_index => $tag) {
 						if(!(in_array($tag->slug, $topic_list['tags']))) {
@@ -588,6 +592,7 @@ function mf_featured_makers_home() {
 		'meta_value'	=> true,
 		'post_type'		=> 'mf_form',
 		'post_status'	=> 'accepted',
+            
 		);
 	$query = new WP_Query( $args );
 	$output = '<div id="featuredMakers" class="carousel slide">';

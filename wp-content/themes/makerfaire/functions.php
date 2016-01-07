@@ -1866,6 +1866,49 @@ function subscribe_return_path_overlay() { ?>
   </script>
 <?php }
 
+//angularJS!!!!
+function angular_scripts() {
+
+	wp_enqueue_script(
+		'angularjs',
+		get_stylesheet_directory_uri() . '/js/angular/angular.js'
+	);
+	wp_enqueue_script(
+		'angularjs-route',
+		get_stylesheet_directory_uri() . '/js/angular/angular-route.js'
+	);
+        wp_enqueue_script(
+		'dirPagination',
+		get_stylesheet_directory_uri() . '/js/angular/dirPagination.js',
+		array( 'angularjs', 'angularjs-route' )
+	);
+	wp_enqueue_script(
+		'angular-scripts',
+		get_stylesheet_directory_uri() . '/js/angular/scripts.js',
+		array( 'angularjs', 'angularjs-route' )
+	);
+        wp_localize_script('angular-scripts',  'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+
+        wp_localize_script(
+		'angular-scripts',
+		'angularLocalized',
+		array(
+			'partials' => trailingslashit( get_template_directory_uri() ) . 'partials/'
+			)
+	);         
+}
+add_action( 'wp_enqueue_scripts', 'angular_scripts' );
+
+add_action( 'wp_ajax_nopriv_getRibbonData', 'retrieveRibbonData' );
+add_action( 'wp_ajax_getRibbonData', 'retrieveRibbonData' );
+
+//ajax for retrieving blue ribbon data
+function retrieveRibbonData() {
+   global $wpdb;
+   require_once( TEMPLATEPATH. '/partials/ribbonJSON.php' );
+    // IMPORTANT: don't forget to "exit"
+    exit;
+}
 /* Changes to gravity view for maker admin tool */
 //use all forms
 add_filter('gravityview_before_get_entries','define_entry_search_criteria',10,4);
@@ -2180,4 +2223,25 @@ function GVupdate_notification($form,$entry_id,$orig_entry){
         global $wpdb;
         $wpdb->get_results($sql);
     }
+}
+
+
+function checkForRibbons($postID=0,$entryID=0){
+    global $wpdb;
+    if($postID != 0){
+        $sql = "select * from wp_mf_ribbons where post_id = ".$postID." order by ribbonType";
+    }else{
+        $sql = "select * from wp_mf_ribbons where entry_id = ".$entryID." order by ribbonType";
+    }
+    $ribbons = $wpdb->get_results($sql);
+    $return = "";
+    //check for 0??
+    $blueCount = $redCount = 0;
+    foreach($ribbons as $ribbon){
+        if($ribbon->ribbonType==0)
+          $return .= '<div class="blueMakey"></div>';
+        if($ribbon->ribbonType==1)
+          $return .= '<div class="redMakey"></div>';
+    }
+    return $return;
 }

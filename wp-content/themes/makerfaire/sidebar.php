@@ -29,26 +29,39 @@ global $slug;
         </a>
         </div>
         -->
-    <div class="sidebar-bordered sponsored">
+      <?php 
+            $goldSmith = mf_sponsor_carousel( 'Goldsmith Sponsor',$slug ); 
+            $silverSmith = mf_sponsor_carousel( 'Silversmith Sponsor',$slug ); 
+            $copperSmith = mf_sponsor_carousel( 'Coppersmith Sponsor',$slug ); 
+        if($goldSmith!=FALSE || $silverSmith!=FALSE || $copperSmith!=FALSE){
+        ?>      
+    <div class="sidebar-bordered sponsored">    
+        <?php if($goldSmith!=FALSE){?>
         <h3><a href="<?php echo esc_url( home_url( '/sponsors' ) ); ?>">Goldsmith Sponsors</a></h3>
         <div id="myCarousel" class="carousel slide">
             <div class="carousel-inner">
-                <?php echo mf_sponsor_carousel( 'Goldsmith Sponsor',$slug ); ?>
+                <?php echo $goldSmith; ?>
             </div>
         </div>
+        <?php }?>
+        <?php if($silverSmith!=FALSE){?>
         <h3><a href="<?php echo esc_url( home_url( '/sponsors' ) ); ?>">Silversmith Sponsors</a></h3>
         <div id="myCarousel" class="carousel slide">
             <div class="carousel-inner">
-                <?php echo mf_sponsor_carousel( 'Silversmith Sponsor', $slug ); ?>
+                <?php echo $silverSmith; ?>
             </div>
         </div>
+        <?php }?>
+        <?php if($copperSmith!=FALSE){?>
         <h3><a href="<?php echo esc_url( home_url( '/sponsors' ) ); ?>">Coppersmith Sponsors</a></h3>
         <div id="myCarousel" class="carousel slide">
             <div class="carousel-inner">
-                <?php echo mf_sponsor_carousel( 'Coppersmith Sponsor', $slug ); ?>
+                <?php echo $copperSmith; ?>
             </div>
         </div>
+        <?php }?>
     </div>
+        <?php }?>
     <div class="center twitter">
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         <a class="twitter-timeline" href="https://twitter.com/search?q=%23makerfaire" data-widget-id="322225978648698880">Tweets about "#makerfaire"</a>

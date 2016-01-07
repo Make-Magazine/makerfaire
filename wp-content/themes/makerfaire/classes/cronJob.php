@@ -12,7 +12,7 @@ $wpdb = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 build_wp_mf_maker(); //for testing*/
 
 add_action('cron_wp_mf_maker', 'build_wp_mf_maker');
-add_action('crin_wp_mf_api_entity', 'build_wp_mf_api_entity');
+add_action('cron_wp_mf_api_entity', 'build_wp_mf_api_entity');
 
 function build_wp_mf_api_entity(){
     global $wpdb;
@@ -257,117 +257,39 @@ function createGUID($id){
 function buildCrossRef(){
     //fields for wp_mf_maker
     $crossRef['wp_mf_maker_array'] = 
-    array(  'contact'       =>  array(
-                                    'First Name'    =>  96.3,
-                                    'Last Name'     =>  96.6,
-                                    'Email'         =>  98,
-                                    'phone'         =>  99,
-                                    'identifier'    =>   1,
-                                    'TWITTER'       => 201
-                                ),
-            'presenter'     =>  array(
-                                    'First Name'    => 160.3,
-                                    'Last Name'     => 160.6,
-                                    'Bio'           => 234,
-                                    'Email'         => 161,
-                                    'phone'         => 185,
-                                    'TWITTER'       => 201,
-                                    'Photo'         => 217,
-                                    'website'       => 209,
-                                    'identifier'    =>   2
-                                ),
-            'presenter2'    =>  array(
-                                    'First Name'    => 158.3,
-                                    'Last Name'     => 158.6,
-                                    'Bio'           => 258,
-                                    'Email'         => 162,
-                                    'phone'         => 192,
-                                    'TWITTER'       => 208,
-                                    'Photo'         => 224,
-                                    'website'       => 216,
-                                    'identifier'    =>   3
-                                ),
-            'presenter3'    =>  array(
-                                    'First Name'    => 155.3,
-                                    'Last Name'     => 155.6,
-                                    'Bio'           => 259,
-                                    'Email'         => 167,
-                                    'phone'         => 190,
-                                    'TWITTER'       => 207,
-                                    'Photo'         => 223,
-                                    'website'       => 215,
-                                    'identifier'    =>   4
-                                ),
-            'presenter4'    =>  array(
-                                    'First Name'    => 156.3,
-                                    'Last Name'     => 156.6,
-                                    'Bio'           => 260,
-                                    'Email'         => 166,
-                                    'phone'         => 191,
-                                    'TWITTER'       => 206,
-                                    'Photo'         => 222,
-                                    'website'       => 214,
-                                    'identifier'    =>   5
-                                ),
-            'presenter5'    =>  array(
-                                    'First Name'    => 157.3,
-                                    'Last Name'     => 157.6,
-                                    'Bio'           => 261,
-                                    'Email'         => 165,
-                                    'phone'         => 189,
-                                    'TWITTER'       => 205,
-                                    'Photo'         => 220,
-                                    'website'       => 213,
-                                    'identifier'    =>   6
-                                ),
-            'presenter6'    =>  array(
-                                    'First Name'    => 159.3,
-                                    'Last Name'     => 159.6,
-                                    'Bio'           => 262,
-                                    'Email'         => 164,
-                                    'phone'         => 188,
-                                    'TWITTER'       => 204,
-                                    'Photo'         => 221,
-                                    'website'       => 211,
-                                    'identifier'    =>   7
-                                ),
-            'presenter7'    =>  array(
-                                    'First Name'    => 154.3,
-                                    'Last Name'     => 154.6,
-                                    'Bio'           => 263,
-                                    'Email'         => 163,
-                                    'phone'         => 187,
-                                    'TWITTER'       => 203,
-                                    'Photo'         => 219,
-                                    'website'       => 212,
-                                    'identifier'    =>   8
-                                ),
-            'group'         =>  array(
-                                    'First Name'    => 109.3,
-                                    'Last Name'     => 109.6,
-                                    'Bio'           => 110,                                
-                                    'Photo'         => 111,
-                                    'website'       => 112,
-                                    'TWITTER'       => 322,
-                                    'identifier'    =>   9
-                                )
+    array('contact'    => array('First Name' =>  96.3, 'Last Name' =>  96.6,               'Email' =>  98, 'phone' =>  99, 'TWITTER' => 201, 'identifier' => 1),
+          'presenter'  => array('First Name' => 160.3, 'Last Name' => 160.6, 'Bio' => 234, 'Email' => 161, 'phone' => 185, 'TWITTER' => 201, 'Photo' => 217, 'website' => 209, 'identifier' => 2),
+          'presenter2' => array('First Name' => 158.3, 'Last Name' => 158.6, 'Bio' => 258, 'Email' => 162, 'phone' => 192, 'TWITTER' => 208, 'Photo' => 224, 'website' => 216, 'identifier' => 3),
+          'presenter3' => array('First Name' => 155.3, 'Last Name' => 155.6, 'Bio' => 259, 'Email' => 167, 'phone' => 190, 'TWITTER' => 207, 'Photo' => 223, 'website' => 215, 'identifier' => 4),
+          'presenter4' => array('First Name' => 156.3, 'Last Name' => 156.6, 'Bio' => 260, 'Email' => 166, 'phone' => 191, 'TWITTER' => 206, 'Photo' => 222, 'website' => 214, 'identifier' => 5),
+          'presenter5' => array('First Name' => 157.3, 'Last Name' => 157.6, 'Bio' => 261, 'Email' => 165, 'phone' => 189, 'TWITTER' => 205, 'Photo' => 220, 'website' => 213, 'identifier' => 6),
+          'presenter6' => array('First Name' => 159.3, 'Last Name' => 159.6, 'Bio' => 262, 'Email' => 164, 'phone' => 188, 'TWITTER' => 204, 'Photo' => 221, 'website' => 211, 'identifier' => 7),
+          'presenter7' => array('First Name' => 154.3, 'Last Name' => 154.6, 'Bio' => 263, 'Email' => 163, 'phone' => 187, 'TWITTER' => 203, 'Photo' => 219, 'website' => 212, 'identifier' => 8),
+          'group'      => array('First Name' => 109.3, 'Last Name' => 109.6, 'Bio' => 110,                                 'TWITTER' => 322, 'Photo' => 111, 'website' => 112, 'identifier' => 9)
     );       
     
     //fields for wp_mf_entity
-    $crossRef['wp_mf_entity_array']  = 
-        array(  'presentation_title'     =>	151,
-                'presentation_type'	=>	  1,
-                'special_request'	=>	 64,
-                'OnsitePhone'           =>	265,
-                'desc_short'            =>	 16,
-                'desc_long'		=>       11,
-                'project_photo'         =>	 22,
-                'project_website'	=>	 27,
-                'project_video'         =>	 32,
-                'status'                =>      303
-            ); 
-    
+    $crossRef['wp_mf_entity_array']  = array('presentation_title' => 151, 'presentation_type' => 1, 'special_request' => 64, 'OnsitePhone' => 265, 'desc_short' => 16, 'desc_long' => 11, 'project_photo' => 22, 'project_website' => 27, 'project_video' => 32, 'status' => 303);    
     return $crossRef;
 }
 
 
+//this cron action will create the JSON files used by the blue ribbon page
+add_action('cron_ribbonJSON', 'build_ribbonJSON');
+
+function build_ribbonJSON(){
+    global $wpdb;
+    require_once( TEMPLATEPATH. '/partials/ribbonJSON.php' );  
+  
+    $yearSql  = $wpdb->get_results("SELECT distinct(year) FROM wp_mf_ribbons  where entry_id > 0 order by year desc");
+
+    foreach($yearSql as $year){
+        $json = createJSON($year->year);
+        //write json file
+        unlink(TEMPLATEPATH.'/partials/data/'.$year->year.'ribbonData.json'); //delete json file if exists
+        $fp = fopen(TEMPLATEPATH.'/partials/data/'.$year->year.'ribbonData.json', 'w');//create json file
+        
+        fwrite($fp, $json);
+        fclose($fp);
+    }      
+}

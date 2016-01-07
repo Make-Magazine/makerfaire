@@ -7,9 +7,10 @@
 include 'db_connect.php';
 
 //pull all archive data
- $sql = "SELECT post_content,ID  FROM wp_posts right join wp_postmeta on id = post_id "
+ $sql = "SELECT post_content,post_title,post_name,ID  FROM wp_posts "
+         . " right join wp_postmeta on id = post_id "
          . " and `meta_key` = 'project_name' and meta_value = '' "
-         . " WHERE post_type = 'maker-entry-archive' and post_content!='' limit 200";
+         . " WHERE post_type = 'maker-entry-archive' and post_content!=''";
 
 //$sql = "SELECT * FROM wp_posts WHERE post_type = 'maker-entry-archive' and post_content!=''";
 
@@ -26,7 +27,7 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
 
 // Loop through the posts
 $errorCount = 0;
-$total = 0;
+$count= 0;
 foreach($postData as $ID=>$post){   
     echo 'Updating '.$ID.'<br/>';
     $count++;
@@ -276,12 +277,14 @@ function fetch_media($file_url, $post_id) {
 
 		//insert the database record
 		$attach_id = wp_insert_attachment( $artdata, $save_path, $post_id );
-
+/*
 		//generate metadata and thumbnails
-		if ($attach_data = wp_generate_attachment_metadata( $attach_id, $save_path)) {                    
+		if ($attach_data = wp_generate_attachment_metadata( $attach_id, $save_path)) {         
+                    echo ' i am here';
 			wp_update_attachment_metadata($attach_id, $attach_data);
 		}
-    
+*/
+
 		//optional make it the featured image of the post it's attached to
 		$rows_affected = $wpdb->insert($wpdb->prefix.'postmeta', array('post_id' => $post_id, 'meta_key' => '_thumbnail_id', 'meta_value' => $attach_id));
         }else {            

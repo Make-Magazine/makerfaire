@@ -170,7 +170,7 @@ if( ! $total or !( is_user_logged_in() )) {
                                                     $links .=  gravityview_field_output( $title_args );                                                                                                        
                                                     break;
                                                 case 'entry_link':
-                                                    $title_args['markup'] = '<i class="fa fa-eye"></i><span class="edit">{{value}}</span>';
+                                                    $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>{{value}}</span>';
                                                     $links .=  gravityview_field_output( $title_args );                                                                                                        
                                                     break;
                                                 default:                                                    

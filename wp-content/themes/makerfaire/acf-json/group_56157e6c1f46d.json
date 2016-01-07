@@ -90,8 +90,8 @@
         },
         {
             "key": "field_56156d8804354",
-            "label": "Tags",
-            "name": "tags",
+            "label": "Type",
+            "name": "project_type",
             "type": "text",
             "instructions": "",
             "required": 0,
@@ -105,7 +105,6 @@
             "placeholder": "",
             "prepend": "",
             "append": "",
-            "formatting": "html",
             "maxlength": "",
             "readonly": 0,
             "disabled": 0
@@ -389,6 +388,22 @@
             "maxlength": "",
             "readonly": 0,
             "disabled": 0
+        },
+        {
+            "key": "field_563a77e339fbe",
+            "label": "Project Photo URL",
+            "name": "project_photo_url",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
         }
     ],
     "location": [
@@ -408,5 +423,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1445910873
+    "modified": 1446673463
 }

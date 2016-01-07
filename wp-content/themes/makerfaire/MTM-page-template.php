@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Template Name: Meet the Makers page

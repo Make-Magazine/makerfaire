@@ -7,7 +7,7 @@
  */
 
 global $wp_query;
-
+$postID = 0;
 //pull by the slug name 
 $the_slug = $wp_query->query_vars['entryslug']; //entry-id
 
@@ -38,7 +38,8 @@ if(empty($my_posts)){
 }
 
 if(!empty($my_posts)){  
-    $custom_fields      = get_post_custom($my_posts[0]->ID); 
+    $postID = $my_posts[0]->ID;
+    $custom_fields      = get_post_custom($my_posts[0]->ID);     
     if(is_array($custom_fields)){
         
     }
@@ -61,7 +62,8 @@ if(!empty($my_posts)){
         $mtitle = 'maker_information_'.$x.'_maker_title';
         $mphoto = 'maker_information_'.$x.'_maker_photo';
         $mattachment_id = (isset($custom_fields[$mphoto][0]) ? $custom_fields[$mphoto][0] : '');
-        $photo = wp_get_attachment_url( $mattachment_id);       
+        $photo = wp_get_attachment_url( $mattachment_id);     
+        
         if(isset($custom_fields[$mname][0]) && $custom_fields[$mname][0]!=''){
         $makers[] = array('name'    => (isset($custom_fields[$mname][0])  ? $custom_fields[$mname][0]  : ''),
                             'bio'     => (isset($custom_fields[$mdesc][0])  ? $custom_fields[$mdesc][0]  : ''),
@@ -179,7 +181,13 @@ if(!empty($my_posts)){
 
       <div class="page-header">
 
-        <h1><?php echo $project_title; ?></h1>
+        <h1><?php echo $project_title; ?>
+        <?php if($postID!=0){
+          //check if this entry has one any awards
+          $ribbons = checkForRibbons($postID);          
+          echo $ribbons;
+      } ?>
+            </h1>
         <?php echo ( !empty( $project_faire ) ) ? '<h5><small>' . archives_better_name( $project_faire ) . '</small></h5>' : ''; ?>
         
 
@@ -225,15 +233,14 @@ if(!empty($my_posts)){
 
         </div>
       </div>
-
-
+      
 <!-- Commenting out for now via Clair
       <h2>Schedule</h2>
       <hr />
       <?php
-        if (!empty(display_entry_schedule($entryId))) {
-          display_entry_schedule($entryId);
-        }
+        //if (!empty(display_entry_schedule($entryId))) {
+          //display_entry_schedule($entryId);
+       // }
       ?>
       <br />
 -->

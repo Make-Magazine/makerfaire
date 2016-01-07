@@ -11,16 +11,16 @@ function mf_sponsor_carousel( $category_name, $slug='' ) {
     }else{ 
         $slugCat = array();
     }    
-    
+   
     //get the list of links based on sponsor category name
     $slugData    = get_term_by( 'slug', $category_name, 'link_category', OBJECT );
     $sponsorName = get_objects_in_term($slugData->term_id,'link_category');        
-    
+    $category = array(); 
     //find the links that are in both the sponsor category and specified faire
     if(!empty($slugCat)){
         $category = array_intersect($slugCat,$sponsorName);
     }else{
-        $category = $sponsorName;
+        return false; //no sponsors found
     }
     
     $include = implode(',',$category); 

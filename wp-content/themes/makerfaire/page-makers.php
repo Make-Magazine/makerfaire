@@ -40,6 +40,7 @@ get_header(); ?>
 				'paged'			=> intval( $paged ),
 				'faire'			=> sanitize_title( $faire->slug ),
 			);
+                        
 			$query = new WP_Query( $args );
 
 			if( $query->have_posts() ):
