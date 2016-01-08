@@ -188,7 +188,7 @@ function buildFaireDrop($wp_admin_bar){
         //parent menu            
         $args = array(
         'id'    => 'mf_admin_parent_'.$row->faire,
-        'title' => $row->faire_location.' ('.$row->count.')',
+        'title' => $row->faire_name.' ('.$row->count.')',
         'meta'  => array( 'class' => 'my-toolbar-page' ),
         'href'  => admin_url( 'admin.php' ) . '?page=mf_entries&faire='.$row->faire,    
         'parent' => 'mf_admin_parent'
