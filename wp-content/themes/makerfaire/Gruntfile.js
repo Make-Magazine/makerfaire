@@ -39,6 +39,17 @@ module.exports = function(grunt) {
         dest: 'js/built.js',
       },
     },
+    // uglify js
+    uglify: {
+      options: {
+        mangle: false
+      },
+      my_target: {
+        files: {
+          'js/built.js': 'js/built.js'
+        }
+      }
+    },
     // Watch for changes on save and livereload
     watch: {
       dev: {
@@ -62,11 +73,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   // Register the tasks with Grunt
   // To only watch for less changes and process without browser reload type in "grunt"
-  grunt.registerTask('default', ['less:prod', 'concat', 'watch:prod']);
+  grunt.registerTask('default', ['less:prod', 'concat', 'uglify', 'watch:prod']);
   // To only watch for less changes and process without browser reload type in "grunt"
-  grunt.registerTask('dev', ['less:dev', 'concat', 'watch:dev']);
+  grunt.registerTask('dev', ['less:dev', 'concat:dev', 'watch:dev']);
   // To watch for less changes and process them with livereload type in "grunt reload"
   grunt.registerTask('reload', ['less', 'watch:reload']);
 };
