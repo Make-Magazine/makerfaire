@@ -50,7 +50,15 @@ li.hidelink a:visited {
     padding: 0;
     height: auto !important;
   }
+  .menu-item {
+    position: static;
+    display: inline-block;
+    height: 50px;
+  }
   &.subnav {
+    .menu-item {
+      height: auto;
+    }
     padding-top: 0;
     border: none;
     background: rgba(0,173,239,0.9);
@@ -70,7 +78,7 @@ li.hidelink a:visited {
       padding: 6px 20px;;
       color: white;
       cursor: pointer;
-      &:hover {
+      &:hover, &:focus {
         background: inherit;
         border-bottom: 3px solid rgba(255,255,255,.9);
         padding-bottom: 3px;
@@ -91,10 +99,10 @@ li.hidelink a:visited {
     &:after {
       content: "";
       color: #bee4fb;
-      position: absolute;
+      position: relative;
       left: 50%;
-      margin-left: -5px;
-      bottom: 5px;
+      margin-left: -4px;
+      bottom: 8px;
       border-top: 4px solid;
       border-right: 4px solid transparent;
       border-left: 4px solid transparent;
@@ -106,7 +114,7 @@ li.hidelink a:visited {
       pointer-events: none;
       background: white;
       padding: 10px 0 30px 0;
-      position: fixed;
+      position: absolute;
       left: 0;
       right: 0;
       opacity: 1;
@@ -115,7 +123,7 @@ li.hidelink a:visited {
       border-top: 3px solid rgba(0,173,239,0.9);
       background: rgba(247,247,247,0.94) url(../images/bg-border.png) repeat-x 0 100%;
       .container {
-        padding-left: 190px;
+        padding-left: 210px;
         position: relative;
       }
       .menu-item {
@@ -124,7 +132,7 @@ li.hidelink a:visited {
         flex: inherit;
         max-width: 40%;
         a {
-          padding: 10px 20px;
+          padding: 10px 15px;
           display: block;
           min-height: 40px;
           &:hover {
@@ -147,7 +155,7 @@ li.hidelink a:visited {
     }
   }
 }
-
+// responsive mobile
 .navbar-fixed-top {
   .dropdown-menu {
     border-radius: 0;
