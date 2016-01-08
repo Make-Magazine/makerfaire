@@ -11,7 +11,8 @@ module.exports = function(grunt) {
           dumpLineNumbers: 'comments'
         },
         files: {
-          'css/style.css': ['less/global.less', 'less/**/*.less'],
+          'css/bootstrap.min.css': './node_modules/bootstrap/less/bootstrap.less',
+          'css/style.css': ['less/global.less', 'less/**/*.less']
         }
       },
       prod: {
@@ -19,7 +20,8 @@ module.exports = function(grunt) {
           compress: true
         },
         files: {
-          'css/style.css': ['less/global.less', 'less/**/*.less'],
+          'css/bootstrap.min.css': './node_modules/bootstrap/less/bootstrap.less',
+          'css/style.css': ['less/global.less', 'less/**/*.less']
         }
       }
     },

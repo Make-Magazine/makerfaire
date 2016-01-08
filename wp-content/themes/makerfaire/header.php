@@ -103,7 +103,7 @@
         <p class="header-sub-link pull-right"><a id="trigger-overlay" href="#">SUBSCRIBE </a></p>
       </div>
     </div>
-  </div>   
+  </div>
 </div>
 
 <header id="header" class="quora">
@@ -123,16 +123,12 @@
       <div class="collapse navbar-collapse" id="navbar-mobile-collapse">
         <ul class="nav navbar-nav">
           <?php
-            $menu = wp_get_nav_menu_object('Main Navigation Version 3 Mobile');
-            $menuitems = wp_get_nav_menu_items( $menu->term_id, array('order' => 'DESC') );
-            foreach( $menuitems as $item ):
-              $url     = $item->url;
-              $classes = $item->classes;
+            wp_nav_menu( array(
+              'theme_location' => '_no_default_fallback',
+              'menu'            => 'Main Navigation Version 3 Mobile',
+              'menu_class' => 'menu-main-navigation-version-3-mobile nav navbar-nav'
+            ) );
           ?>
-            <li class="<?php foreach ($classes as $class) {echo $class.' ';}; ?>">
-              <a href="<?php echo $url; ?>"></a>
-            </li>                           
-          <?php endforeach; ?>
         </ul>
       </div>
     </div>
@@ -144,64 +140,14 @@
         <a class="navbar-brand" href="<?php bloginfo('url'); ?>"><img src="http://cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" height="43" width="183" alt="maker faire"></a>
       </div>
       <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-          <?php
-            $menu = wp_get_nav_menu_object('Main Navigation Version 3');
-            $menuitems = wp_get_nav_menu_items( $menu->term_id, array( 'order' => 'DESC', 'walker' => new Description_Walker ) );
-            $count = 0;
-            $submenu = false;
-            foreach( $menuitems as $item ):
-              $new_window     = (isset($item->target)?$item->target:'');
-              $link           = $item->url;
-              $title          = $item->title;
-              $classes        = $item->classes;
-              $description    = $item->description;
-              // item does not have a parent so menu_item_parent equals 0 (false)
-              if ( !$item->menu_item_parent ):
-                // save this id for later comparison with sub-menu items
-                $parent_id = $item->ID;
-          ?>
-            <li class="<?php foreach ($classes as $class) {echo $class.' ';}; ?>">
-              <a href="<?php echo $link; ?>"
-                <?php if (in_array("dropdown", $classes)) { echo 'class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"'; } ?>
-                <?php echo ($new_window!=''?'target="'.$new_window.'"':'');?>
-              >
-                <?php echo $title; ?>
-                <?php if (in_array("dropdown", $classes)): ?>
-                  <span class="caret"></span>
-                <?php endif; ?>
-              </a>
-              <?php endif; ?>
-              <?php if ( $parent_id == $item->menu_item_parent ): ?>
-                <?php if ( !$submenu ): $submenu = true;?>
-                  <div class="drop-holder">
-                    <div class="drop">
-                      <div class="container">
-                        <div class="col-sm-3 dynamic-hackbox"></div>
-                        <div class="col-sm-9 col no-border">
-                          <ul class="sub-menu">
-                <?php endif; ?>
-                            <li class="item <?php foreach ($classes as $class) {echo $class.' ';}; ?>">
-                              <a href="<?php echo $link; ?>"
-                                <?php echo ($new_window!=''?'target="'.$new_window.'"':'');?>
-                                class="title">
-                                <?php echo $title; ?>
-                              </a>
-                              <div class="description"><?php echo $description; ?></div>
-                            </li>
-                <?php if ( $menuitems[ $count + 1 ]->menu_item_parent != $parent_id &&$submenu ): ?>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <?php $submenu = false; endif; ?>
-              <?php endif; ?>
-            <?php if ( (isset($menuitems[ $count + 1 ]->menu_item_parent))&&$menuitems[ $count + 1 ]->menu_item_parent != $parent_id ): ?>
-            </li>
-            <?php $submenu = false; endif; ?>
-          <?php $count++; endforeach; ?>
-        </ul>
+        <?php
+          wp_nav_menu( array(
+            'theme_location' => '_no_default_fallback',
+            'menu'            => 'Main Navigation Version 3',
+            'container' => false,
+            'menu_class' => 'nav navbar-nav'
+          ) );
+        ?>
       </div>
     </div>
   </nav>
