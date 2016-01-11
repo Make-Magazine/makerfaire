@@ -130,7 +130,7 @@
                 </div>
                 <ul>
                   <li ng-repeat="rRibbonData in redRibbons.winners  | filter:query">
-                    <a href="{{bribbonData.link}}" target="_blank">{{ rRibbonData.project_name }}</a>
+                    <a href="{{rRibbonData.link}}" target="_blank">{{ rRibbonData.project_name }}</a>
                   </li>
                 </ul>
               </div>
