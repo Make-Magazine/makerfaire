@@ -337,7 +337,9 @@ function add_sidebar_text_before($form, $lead){
 				
 				</div>
 			<?php _e( 'Filled out: ', 'gravityforms' ); ?>:<?php echo esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) ?><br />
-			</div>
+                        <br/>
+                        <?php do_action( 'gform_entry_info', $form['id'], $lead );?>
+        </div>
 			<div id="delete-action" style="float:none;padding: 10px;">
 				<?php
 							switch ( $lead['status'] ) {

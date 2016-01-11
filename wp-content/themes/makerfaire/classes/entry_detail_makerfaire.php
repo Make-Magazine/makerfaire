@@ -482,10 +482,7 @@ class GFEntryDetail {
 					<div id="minor-publishing" style="padding:10px;">
 						<?php _e( 'Submitted on', 'gravityforms' ); ?>: <?php echo esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) ?>
 						
-						<?php 
-						do_action( 'gform_entry_info', $form['id'], $lead );
-
-						?>
+						
 					</div>
 					<div id="major-publishing-actions">
 						<div id="delete-action">
