@@ -1888,34 +1888,33 @@ function subscribe_return_path_overlay() { ?>
 
 //angularJS!!!!
 function angular_scripts() {
+  wp_enqueue_script(
+    'angularjs',
+    get_stylesheet_directory_uri() . '/js/angular/angular.js'
+  );
+  wp_enqueue_script(
+    'angularjs-route',
+    get_stylesheet_directory_uri() . '/js/angular/angular-route.js'
+  );
+  wp_enqueue_script(
+    'dirPagination',
+    get_stylesheet_directory_uri() . '/js/angular/dirPagination.js',
+    array( 'angularjs', 'angularjs-route' )
+  );
+  wp_enqueue_script(
+    'angular-scripts',
+    get_stylesheet_directory_uri() . '/js/angular/scripts.js',
+    array( 'angularjs', 'angularjs-route' )
+  );
+  wp_localize_script('angular-scripts',  'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 
-	wp_enqueue_script(
-		'angularjs',
-		get_stylesheet_directory_uri() . '/js/angular/angular.js'
-	);
-	wp_enqueue_script(
-		'angularjs-route',
-		get_stylesheet_directory_uri() . '/js/angular/angular-route.js'
-	);
-        wp_enqueue_script(
-		'dirPagination',
-		get_stylesheet_directory_uri() . '/js/angular/dirPagination.js',
-		array( 'angularjs', 'angularjs-route' )
-	);
-	wp_enqueue_script(
-		'angular-scripts',
-		get_stylesheet_directory_uri() . '/js/angular/scripts.js',
-		array( 'angularjs', 'angularjs-route' )
-	);
-        wp_localize_script('angular-scripts',  'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
-
-        wp_localize_script(
-		'angular-scripts',
-		'angularLocalized',
-		array(
-			'partials' => trailingslashit( get_template_directory_uri() ) . 'partials/'
-			)
-	);         
+  wp_localize_script(
+    'angular-scripts',
+    'angularLocalized',
+    array(
+      'partials' => trailingslashit( get_template_directory_uri() ) . 'partials/'
+    )
+  );
 }
 add_action( 'wp_enqueue_scripts', 'angular_scripts' );
 
