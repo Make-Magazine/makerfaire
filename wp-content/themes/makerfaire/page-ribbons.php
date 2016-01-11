@@ -6,7 +6,6 @@
 
   foreach($yearSql as $year) {
     $selected='';
-    //$selected = ($year->year==$firstYear ? 'ng-selected="faire_year==\''.$year->year.'\'"':''); //select the first year
     $yearOption .= '<option '.$selected.' value="'.$year->year.'">'.$year->year.'</option>';
     if($year->year == $firstYear){
       $yearJSON = '{"id" : "'.$year->year.'", "name": "'.$year->year.'"}';
@@ -30,7 +29,7 @@
   </div>
 <?php endif;?>
 
-<div class="container">
+<div class="container" ng-app="ribbonApp">
   <div class="row">
     <div class="content col-xs-12">
       <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
@@ -47,23 +46,23 @@
       <?php endif; ?>
       <!-- start blue ribbon data -->
       <div id="ribbonPage">
-        <div ng-controller="ribbonController" class="my-controller">
+        <div ng-controller="ribbonController">
           <div class="ribbonFilter">
             <div class="ribbonToggle" style="float:left">
-              <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="box gallery">
+              <a ng-class="{'active': vm.layout == 'grid'}" ng-click="vm.layout = 'grid'" class="box gallery">
                 <i class="fa fa-picture-o"></i>Gallery
               </a>
-              <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="box list">
+              <a ng-class="{'active': vm.layout == 'list'}" ng-click="vm.layout = 'list'" class="box list">
                 <i class="fa fa-list"></i>List
               </a>
             </div>
             <div class="ribbonHeader" style="float:right">
-              <select ng-model="faire_year" ng-init="faire_year = '<?php echo $firstYear;?>'" ng-change="loadData(faire_year)">
-                <option ng-repeat="year in years" value="{{year.id}}">{{year.name}}</option>
+              <select ng-model="faireYear" ng-init="faireYear = '<?php echo $firstYear;?>'" ng-change="vm.loadData(faireYear)">
+                <option ng-repeat="year in vm.years" value="{{year.id}}">{{year.name}}</option>
               </select>
               <select ng-model="query.faireData.faire">
                 <option value=" " selected>All Faires</option>
-                <option ng-repeat="faire in faires" value="{{faire}}">{{faire}}</option>
+                <option ng-repeat="faire in vm.faires" value="{{faire}}">{{faire}}</option>
               </select>
               <select ng-model="query.faireData.ribbonType">
                 <option value="" selected>All Ribbons</option>
@@ -77,10 +76,10 @@
           </div>
           <br/>
           <br/>
-          <p ng-show="(ribbons | filter:query).length == 0" class="noData">I'm sorry. There are no winners found.</p>
+          <p ng-show="(vm.ribbons | filter:query).length == 0" class="noData">I'm sorry. There are no winners found.</p>
           <!--| filter:year -->
-          <div ng-show="layout == 'grid'" class="ribbonGrid row">
-            <div class="ribbData col-xs-12 col-sm-4 col-md-3" dir-paginate="ribbon in ribbons| filter:query |itemsPerPage: 40" current-page="currentPage">
+          <div ng-show="vm.layout == 'grid'" class="ribbonGrid row">
+            <div class="ribbData col-xs-12 col-sm-4 col-md-3" dir-paginate="ribbon in vm.ribbons| filter:query |itemsPerPage: 40" current-page="vm.currentPage">
               <a href="{{ribbon.link}}" target="_blank">
                 <div class="projImg">
                   <img class="img-responsive" fallback-src="/wp-content/themes/makerfaire/images/grey-makey.png" ng-src="{{ribbon.project_photo != '' && ribbon.project_photo || '/wp-content/uploads/2015/10/grey-makey.png'}}" />
@@ -94,7 +93,7 @@
                   </div>
                 </div>
               </a>
-              <div class="makerData" ng-class="{'':'show'}[ribbon.project_photo]">
+              <div class="makerData">
                 <div class="projName">
                   {{ribbon.project_name}}
                 </div>{{ribbon.maker_name}}
@@ -104,11 +103,11 @@
               </div>
             </div>
             <div class="text-center">
-              <dir-pagination-controls boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" template-url="<?php echo get_stylesheet_directory_uri();?>/partials/dirPagination.tpl.html"></dir-pagination-controls>
+              <dir-pagination-controls boundary-links="true" on-page-change="vm.pageChangeHandler(newPageNumber)" template-url="<?php echo get_stylesheet_directory_uri();?>/partials/dirPagination.tpl.html"></dir-pagination-controls>
             </div>
           </div>
-          <div ng-show="layout == 'list'" class="ribbonList">
-            <div ng-repeat="blueRibbons in blueList">
+          <div ng-show="vm.layout == 'list'" class="ribbonList">
+            <div ng-repeat="blueRibbons in vm.blueList">
               <div ng-show="(blueRibbons.winners | filter:query).length">
                 <div class="ribbonTitle">
                   <div class="blueMakey"></div>
@@ -123,7 +122,7 @@
               <div class="clear"></div>
             </div>
             <div class="clear"></div>
-            <div ng-repeat="redRibbons in redList">
+            <div ng-repeat="redRibbons in vm.redList">
               <div ng-show="(redRibbons.winners | filter:query).length">
                 <div class="ribbonTitle">
                   <div class="redMakey"></div>
