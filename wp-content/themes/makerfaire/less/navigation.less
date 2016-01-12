@@ -101,16 +101,12 @@ li.hidelink a:visited {
     padding: 30px;
   }
   .menu-item-has-children {
-    &:after {
-      content: "";
-      color: #bee4fb;
-      position: relative;
-      left: 50%;
-      margin-left: -4px;
-      bottom: 10px;
-      border-top: 4px solid;
-      border-right: 4px solid transparent;
-      border-left: 4px solid transparent;
+    &> a:after {
+      font-family: FontAwesome;
+      font-size: 14px;
+      line-height: normal;
+      content: "\f107";
+      margin-left: 2px;
     }
     // navbar dropdown menu:
     .sub-menu {
@@ -125,7 +121,7 @@ li.hidelink a:visited {
       opacity: 1;
       overflow: hidden;
       z-index: 1002;
-      background: rgba(247,247,247,0.94) url(../images/bg-border.png) repeat-x 0 100%;
+      background: #e6e6e6 url(../images/bg-border.png) repeat-x 0 100%;
       .container {
         padding-left: 210px;
         position: relative;
