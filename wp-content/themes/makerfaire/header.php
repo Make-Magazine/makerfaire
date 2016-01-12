@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:fb="http://ogp.me/ns/fb#" lang="en"  ng-app="ribbonApp">
+<html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
 	<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# object: http://ogp.me/ns/object#">
-            
+
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -84,7 +84,7 @@
        </head>
 
 <body id="bootstrap-js" <?php body_class('no-js'); ?>>
-	
+
 	<!-- Google Tag Manager MakerFaire -->
 	<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
 	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -114,7 +114,7 @@ Topbar
         <p class="header-sub-link pull-right"><a id="trigger-overlay" href="#">SUBSCRIBE </a></p>
       </div>
     </div>
-  </div>   
+  </div>
 </div>
 
 <header id="header" class="quora">
@@ -175,22 +175,22 @@ Topbar
 
 				<div class="social-profile-icons">
 					<a class="sprite-facebook-32" href="//www.facebook.com/makerfaire" title="Facebook" target="_blank">
-						<div class="social-profile-cont">	
+						<div class="social-profile-cont">
 							<span class="sprite"></span>
 						</div>
 					</a>
 					<a class="sprite-twitter-32" href="//twitter.com/makerfaire" title="Twitter" target="_blank">
-						<div class="social-profile-cont">	
+						<div class="social-profile-cont">
 							<span class="sprite"></span>
 						</div>
 					</a>
 					<a class="sprite-pinterest-32" href="//www.pinterest.com/makemagazine/maker-faire/" title="Pinterest" target="_blank">
-						<div class="social-profile-cont">	
+						<div class="social-profile-cont">
 							<span class="sprite"></span>
 						</div>
 					</a>
 					<a class="sprite-googleplus-32" href="//plus.google.com/104410464300110463062/posts" rel="publisher" title="Google+" target="_blank">
-						<div class="social-profile-cont">	
+						<div class="social-profile-cont">
 							<span class="sprite"></span>
 						</div>
 					</a>
@@ -228,24 +228,24 @@ Topbar
 				        // save this id for later comparison with sub-menu items
 				        $parent_id = $item->ID;
 				    ?>
-				 
+
                                        <li class="<?php echo ($new_window!=''?'':'dropdown');?>">
 				        <a href="<?php echo $link; ?>" <?php echo ($new_window!=''?'target="'.$new_window.'"':'');?> <?php echo ($new_window!=''?'':'class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"');?>>
-				            <?php echo $title; ?> 
+				            <?php echo $title; ?>
 				            <span class="caret"></span>
 				        </a>
 				    <?php endif; ?>
-				 
+
 				    <?php if ( $parent_id == $item->menu_item_parent ): ?>
-				 
+
 				            <?php if ( !$submenu ): $submenu = true; ?>
-				            
+
 				            <div class="drop-holder">
 				                <div class="drop">
 				                    <div class="container">
 				                        <div class="row padtop padbottom">
 			                                <div class="col-sm-3 drop-logo about text-center padtop">
-			                                	
+
 			                                </div>
 			                                <div class="col-sm-9 column padtop">
 			                                	<div class="top-holder">
@@ -261,21 +261,21 @@ Topbar
 			                                        </ul>
 			                                    </div>
 			                                    <div class="col-sm-3 col dinamic-content"></div>
-			                                </div>    
+			                                </div>
 				            			</div>
 				            		</div>
 				            	</div>
 				            </div>
 				            <?php $submenu = false; endif; ?>
-				 
+
 				        <?php endif; ?>
-				 	
+
 				    <?php if ( (isset($menuitems[ $count + 1 ]->menu_item_parent))&&$menuitems[ $count + 1 ]->menu_item_parent != $parent_id ): ?>
-				    </li>                           
+				    </li>
 				    <?php $submenu = false; endif; ?>
-				 	
+
 				<?php $count++; endforeach; ?>
-				 
+
 				</ul>
 			</div>
 		</div>
