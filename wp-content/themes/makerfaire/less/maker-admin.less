@@ -1,0 +1,157 @@
+/* maker admin */
+.gv-list-container .maker-admin {
+
+  /* parent container */
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  margin: 2em 0;
+
+  .entryImg {
+    float: left;
+    padding-right: 5px;
+    width: 25%;
+    height: auto;
+
+    p {
+      margin: 0
+    }
+    img {
+      width: 100%;
+      height: auto;
+      min-height: 10em
+    }
+  }
+  .entryData {
+    font-weight: bold;
+    font-size: 1.3rem;
+    padding-left: 5px;
+    width: 70%;
+    height: 100%;
+    width: 70%;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    .statusBox {
+      height: 1.924em;
+      display: block;
+      padding: .2em 1em;
+      border-radius: 4px;
+
+      .statusText {
+        color: white
+      }
+    }
+    .greenStatus {
+      background-color: #7ED321
+    }
+    .greyStatus {
+      background-color: #B6B6B6
+    }
+    .clear {
+      clear: both
+    }
+    .links {
+      position: absolute;
+      bottom: 0;
+      width: 98%;
+      border-top: thin solid grey;
+      border-bottom: thin solid grey;
+
+      p {
+        margin: 0
+      }
+      i {
+        margin: .2em;
+      }
+    }
+  }
+  span.edit {
+    float: left;
+    margin-right: .2em;
+  }
+}
+.gv-list-container, .gv-grid {
+  .submitEntry a {
+    background-color: #00B4F3;
+    line-height: 4em;
+    font-size: .75em;
+    padding: .3em 2em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+
+  .fleft, .fLeft {
+    float: left;
+
+    div, span, p, i {
+      float: left;
+    }
+  }
+  .fright, .fRight {
+    float: right;
+
+    div, span, p, i {
+      float: left;
+    }
+  }
+  .maName {
+    font-size: 1.25em;
+    font-weight: bold;
+    line-height: 1.24em;
+  }
+  .maTitle {
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    font-weight: 100;
+    line-height: 1.54em;
+    margin: 0
+  }
+  .maHeadLinks {
+    font-size: 1.3rem;
+  }
+  h3.title {
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    font-weight: 100;
+    clear: both;
+    float: left;
+    margin-bottom: 10px;
+    font-size: 1.93em;
+  }
+  .latReg {
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    font-weight: 500;
+  }
+  .entryID {
+    font-size: 1.385em
+  }
+}
+@media screen and (max-width: 565px) { 
+  .gv-list-container .maker-admin .entryImg {
+    float: none;
+    padding-right: 0;
+    width: 100%;
+  }
+  .gv-list-container .maker-admin .entryData {
+    padding-left: 0;
+    height: 100%;
+    width: 100%;
+    position: static;
+    right: inherit;
+    top: inherit;
+    margin-top: 10px;
+  }
+  .gv-list-container .maker-admin .entryData .links {
+    position: static;
+    bottom: inherit;
+    width: 100%;
+    border-top: none;
+    border-bottom: none;
+  }
+  .gv-list-container h3.title {
+    clear: none;
+    float: none;
+    margin-top: 10px;
+  }
+}
