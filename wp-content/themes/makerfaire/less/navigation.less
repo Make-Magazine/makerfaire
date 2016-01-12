@@ -34,7 +34,6 @@ li.hidelink a:visited {
 #makerfaire .navbar.desktop-nav {
   padding-top: 22px;
   margin-bottom: 0;
-  color: black;
   font-family: Roboto;
   font-size: 12px;
   font-weight: 500;
@@ -43,7 +42,7 @@ li.hidelink a:visited {
     pointer-events: none;
   }
   a {
-    color: #666;
+    color: #4A4A4A;
   }
   .navbar-brand {
     margin: 0 12px 0 0;
@@ -54,6 +53,12 @@ li.hidelink a:visited {
     position: static;
     display: inline-block;
     height: 50px;
+    &:hover > a,
+    &:focus > a {
+      border-bottom: solid 3px #D94336;
+      background-color: inherit;
+      height: inherit;
+    }
   }
   &.subnav {
     .menu-item {
@@ -102,7 +107,7 @@ li.hidelink a:visited {
       position: relative;
       left: 50%;
       margin-left: -4px;
-      bottom: 8px;
+      bottom: 10px;
       border-top: 4px solid;
       border-right: 4px solid transparent;
       border-left: 4px solid transparent;
@@ -120,7 +125,6 @@ li.hidelink a:visited {
       opacity: 1;
       overflow: hidden;
       z-index: 1002;
-      border-top: 3px solid rgba(0,173,239,0.9);
       background: rgba(247,247,247,0.94) url(../images/bg-border.png) repeat-x 0 100%;
       .container {
         padding-left: 210px;
@@ -131,12 +135,16 @@ li.hidelink a:visited {
         list-style: none;
         flex: inherit;
         max-width: 40%;
-        a {
+        &:hover a {
+          border: none;
+        }
+        &> a {
           padding: 10px 15px;
           display: block;
           min-height: 40px;
           &:hover {
-            border-bottom: 3px solid rgba(0,173,239,0.9);
+            border: none;
+            color: #8F8E8E;
           }
         }
       }
