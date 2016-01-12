@@ -127,7 +127,37 @@
     font-size: 1.385em
   }
 }
-@media screen and (max-width: 565px) { 
+// Make the images square and center them
+#gv-field-25-22 {
+  height: 280px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+  p {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+  #gv-field-25-22 {
+    height: 230px;
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 991px) {
+  #gv-field-25-22 {
+    height: 175px;
+  }
+}
+@media screen and (max-width: 767px) { 
+  #gv-field-25-22 {
+    height: 150px;
+  }
+}
+@media screen and (max-width: 565px) {
+  #gv-field-25-22 {
+    height: 500px;
+  }
   .gv-list-container .maker-admin .entryImg {
     float: none;
     padding-right: 0;
@@ -153,5 +183,15 @@
     clear: none;
     float: none;
     margin-top: 10px;
+  }
+}
+@media screen and (max-width: 450px) {
+  #gv-field-25-22 {
+    height: 400px;
+  }
+}
+@media screen and (max-width: 375px) {
+  #gv-field-25-22 {
+    height: 350px;
   }
 }
