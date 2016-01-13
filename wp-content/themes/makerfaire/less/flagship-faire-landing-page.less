@@ -42,10 +42,21 @@
     margin: 2px;
     padding: 0;
     color: #4A4A4A;
+    &:hover,
+    &.disabled {
+      color:  #9B9B9B;
+    }
+    &.disabled {
+      pointer-events: none;
+    }
   }
   .btn-contrast-border {
     border: solid 2px #12AFE9;
     margin: 3px;
+    &:hover {
+      color: white;
+      background: #12AFE9;
+    }
   }
   .flagship-icon-link {
     display: block;
