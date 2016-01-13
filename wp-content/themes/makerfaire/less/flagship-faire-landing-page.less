@@ -21,12 +21,20 @@
     margin: 15px -15px;
     height: 15px;
   }
-  .flagship-header h1 {
-    color: #00AEEF;
-    margin: 5px 0;
-  }
-  .flagship-header h1 .flagship-name-mf {
-    color: #F23A12;
+  .flagship-header {
+    background: rgba(0,0,0,0) url(../images/bg-border.png) repeat-x 0 100%;
+    margin: 0 -15px;
+    padding: 0 15px;
+    @media all and (max-width: 992px) {
+      padding-bottom: 20px;
+    }
+    h1 {
+      color: #00AEEF;
+      margin: 5px 0;
+      .flagship-name-mf {
+        color: #F23A12;
+      }
+    }
   }
   .flagship-content {
     font-size: 14px;
