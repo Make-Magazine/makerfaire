@@ -68,7 +68,7 @@ li.hidelink a:visited {
     border: none;
     background: rgba(0,173,239,0.9);
     border-radius: 0;
-    min-height: 30px;
+    min-height: 0;
     margin-bottom: auto;
     .subnav-header {
       width: 190px;
@@ -80,13 +80,13 @@ li.hidelink a:visited {
       list-style: none;
     }
     a {
-      padding: 6px 20px;;
       color: white;
       cursor: pointer;
+      padding: 9px 20px;
       &:hover, &:focus {
+        padding-bottom: 6px;
         background: inherit;
         border-bottom: 3px solid rgba(255,255,255,.9);
-        padding-bottom: 3px;
       }
     }
   }
