@@ -1591,6 +1591,28 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
+	"\/images\/Make-stire-background-pattern.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 837727,
+		"inputAbbreviatedPath": "\/images\/Make-stire-background-pattern.png",
+		"outputAbbreviatedPath": "\/images\/Make-stire-background-pattern.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/images\/Make-store-hero-desktop.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 428987,
+		"inputAbbreviatedPath": "\/images\/Make-store-hero-desktop.png",
+		"outputAbbreviatedPath": "\/images\/Make-store-hero-desktop.png",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
 	"\/images\/Make-store-kids.jpg": {
 		"fileType": 16384,
 		"ignore": 0,
@@ -1675,6 +1697,28 @@
 		"initialSize": 60513,
 		"inputAbbreviatedPath": "\/images\/mf-sub-promo-43.jpg",
 		"outputAbbreviatedPath": "\/images\/mf-sub-promo-43.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/images\/MF16BA_CallForMakers.jpg": {
+		"fileType": 16384,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 445144,
+		"inputAbbreviatedPath": "\/images\/MF16BA_CallForMakers.jpg",
+		"outputAbbreviatedPath": "\/images\/MF16BA_CallForMakers.jpg",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"processed": 0
+		},
+	"\/images\/MF16BA_CallForMakers.png": {
+		"fileType": 32768,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"initialSize": 99791,
+		"inputAbbreviatedPath": "\/images\/MF16BA_CallForMakers.png",
+		"outputAbbreviatedPath": "\/images\/MF16BA_CallForMakers.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -2669,15 +2713,6 @@
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
 		},
-	"\/page-blue-ribbon.php": {
-		"fileType": 8192,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/page-blue-ribbon.php",
-		"outputAbbreviatedPath": "No Output Path",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0
-		},
 	"\/page-blue-ribbonSave.php": {
 		"fileType": 8192,
 		"ignore": 0,
@@ -2845,6 +2880,15 @@
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/page-query.php",
+		"outputAbbreviatedPath": "No Output Path",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0
+		},
+	"\/page-ribbons.php": {
+		"fileType": 8192,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/page-ribbons.php",
 		"outputAbbreviatedPath": "No Output Path",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
