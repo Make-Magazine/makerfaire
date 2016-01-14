@@ -53,6 +53,7 @@ li.hidelink a:visited {
     position: static;
     display: inline-block;
     height: 50px;
+    margin-bottom: -1px;
     &:hover > a,
     &:focus > a {
       border-bottom: solid 3px #D94336;
@@ -130,12 +131,13 @@ li.hidelink a:visited {
         display: inline-block;
         list-style: none;
         flex: inherit;
-        max-width: 40%;
+        max-width: 41%;
+        white-space: nowrap;
         &:hover a {
           border: none;
         }
         &> a {
-          padding: 10px 15px;
+          padding: 10px 12px;
           display: block;
           min-height: 40px;
           &:hover {
