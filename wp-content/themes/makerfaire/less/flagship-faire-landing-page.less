@@ -16,7 +16,6 @@
   .flagship-title {
     display: inline-block;
     color: #00AEEF;
-    margin: 5px 0;
     font-weight: 200;
     .flagship-name-mf {
       font-weight: 500;
@@ -42,10 +41,20 @@
   }
   .head-divider-line-img {
     background-size: 15px;
-    margin: 15px -15px;
+    margin: 8px -15px;
     height: 15px;
+    @media all and (max-width: 992px) {
+      margin-top: 20px;
+    }
   }
   .flagship-header {
+    .flagship-info {
+      font-size: 20px;
+      font-weight: 300;
+    }
+    h1 {
+      margin: 5px 0;
+    }
     background: rgba(0,0,0,0) url(../images/bg-border.png) repeat-x 0 100%;
     margin: 0 -15px;
     padding: 0 15px;
