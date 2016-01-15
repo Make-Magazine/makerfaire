@@ -4,7 +4,7 @@
  */
 get_header();
 ?>
-<main id="main" class="quora" role="main">
+<main id="main" class="quora front-page" role="main">
 	<!-- Homepage carousel-->	
     <div class="carousel-holder">
         <div class="social-popup popup-active hidden-xs">
