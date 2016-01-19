@@ -2210,19 +2210,19 @@ function GVupdate_notification($form,$entry_id,$orig_entry){
                 $input_id = $input['id'];
                 $origField    = (isset($orig_entry[$input_id])   ?  $orig_entry[$input_id ] : '');
                 $updatedField = (isset($updatedEntry[$input_id]) ?  $updatedEntry[$input_id ] : '');
-
+                $fieldLabel   = ($field['adminLabel']!=''?$field['adminLabel']:$field['label']);
                 if($origField!=$updatedField){
                     //update field id
-                    $updates[] = array('lead_id'=>$entry_id,'field_id'=>$input_id,'field_before'=>$origField,'field_after'=>$updatedField);
+                    $updates[] = array('lead_id'=>$entry_id,'field_id'=>$input_id,'field_before'=>$origField,'field_after'=>$updatedField,'fieldLabel'=>$fieldLabel);
                 }
             }
         } else {
             $origField    = (isset($orig_entry[$input_id])   ?  $orig_entry[$input_id ] : '');
             $updatedField = (isset($updatedEntry[$input_id]) ?  $updatedEntry[$input_id ] : '');
-
+            $fieldLabel   = ($field['adminLabel']!=''?$field['adminLabel']:$field['label']);
             if($origField!=$updatedField){
                 //update field id
-                $updates[] = array('lead_id'=>$entry_id,'field_id'=>$input_id,'field_before'=>$origField,'field_after'=>$updatedField);
+                $updates[] = array('lead_id'=>$entry_id,'field_id'=>$input_id,'field_before'=>$origField,'field_after'=>$updatedField,'fieldLabel'=>$fieldLabel);
             }
         }
 
@@ -2233,14 +2233,16 @@ function GVupdate_notification($form,$entry_id,$orig_entry){
         $current_user = wp_get_current_user();
         $user_id = $current_user->ID;//current user id
         $inserts = '';
+        //field name
 
         //update database with this information
         foreach($updates as $update){
             if($inserts !='') $inserts.= ',';
-            $inserts .= '('.$user_id.','.$update['lead_id'].','.$form['id'].','.$update['field_id'].',"'.$update['field_before'].'","'.$update['field_after'].'")';
+            $inserts .= '('.$user_id.','.$update['lead_id'].','.$form['id'].','.$update['field_id'].',"'.$update['field_before'].'","'.$update['field_after'].'","'.$update['fieldLabel'].'")';
         }
 
-        $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after) values " .$inserts;
+        $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel) values " .$inserts;
+ 
         global $wpdb;
         $wpdb->get_results($sql);
     }
