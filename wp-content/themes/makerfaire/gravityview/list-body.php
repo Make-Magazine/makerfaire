@@ -1,3 +1,4 @@
+<?php include_once TEMPLATEPATH. '/gravityview/manage-faire-entries/faire-entry-js.php'; ?>
 <?php
 /**
  * @file templates/list-body.php
