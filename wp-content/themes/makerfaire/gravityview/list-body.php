@@ -81,7 +81,6 @@ if(!$total or !( is_user_logged_in() )):
 // There are entries. Loop through them.
 else:
   foreach ($entries as $entry):
-
     $this->setCurrentEntry($entry);
     $form = GFAPI::get_form( $entry['form_id'] );
     $form_type = (isset($form['form_type'])?'<p>'.$form['form_type'].':&nbsp;</p>':'');
@@ -100,7 +99,6 @@ else:
         
         // "If directory_list-title or directory_list-subtitle"
         if ( $this->getField('directory_list-title') || $this->getField('directory_list-subtitle') ):
-
           /**
            * @action `gravityview_entry_title_before` Tap in before the the entry title is displayed
            * @param array $entry Gravity Forms Entry array
@@ -135,30 +133,21 @@ else:
                     break;
                   case 'delete_entry':
                     if ($entry['303'] == 'Proposed' || $entry['303'] == 'In Progress') {
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-trash-o"></i>{{value}}</span>';
-                      $links.=gravityview_field_output($title_args, false, false);
-                    }
-                    break;
-                  case 'edit_link':
-                    //do not display if entry is cancelled
-                    if ($entry['303'] != 'Cancelled') {
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-pencil-square-o"></i>{{value}}</span>';
+                      $title_args['markup'] = '{{value}}';
                       $links.=gravityview_field_output($title_args);
                     }
                     break;
+                  case 'edit_link':
                   case 'cancel_link':
-                    //do not display if entry is already cancelled
+                    //do not display if entry is cancelled
                     if ($entry['303'] != 'Cancelled') {
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>{{value}}</span>';
+                      $title_args['markup'] = '{{value}}';
                       $links.=gravityview_field_output($title_args);
                     }
                     break;
                   case 'copy_entry':
-                    $title_args['markup'] = '<span class="edit"><i class="fa fa-files-o"></i>{{value}}</span>';
-                    $links.=gravityview_field_output($title_args);
-                    break;
                   case 'entry_link':
-                    $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>{{value}}</span>';
+                    $title_args['markup'] = '{{value}}';
                     $links.=gravityview_field_output($title_args);
                     break;
                   default:
@@ -201,7 +190,6 @@ else:
            * @param GravityView_View $this The GravityView_View instance
            */
           do_action( 'gravityview_entry_title_after', $entry, $this );
-
         endif; // End "If directory_list-title or directory_list-subtitle"
 
         // Is the footer configured?
