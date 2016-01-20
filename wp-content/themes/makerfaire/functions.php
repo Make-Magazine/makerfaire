@@ -1952,24 +1952,24 @@ function gv_add_faire($additional_fields){
     GravityView_Entry_List  $this The current class instance */
 add_filter('gform_entry_field_value','gv_faire_name',10,4);
 function gv_faire_name($display_value, $field, $entry, $form){
-    if($field["type"]=='faire_name'){
-        global $wpdb;
+  if($field["type"]=='faire_name') {
+    global $wpdb;
 
-        $form_id = $entry['form_id'];
-        $sql = "select faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
-        $faire = $wpdb->get_results($sql);
+    $form_id = $entry['form_id'];
+    $sql = "select faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
+    $faire = $wpdb->get_results($sql);
 
-        $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:$sql);
-        $display_value = $faire_name;
-    }elseif($field["type"]=='cancel_link'){
-        $display_value = '<a href="#cancelEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Cancel</a>';
-    }elseif($field["type"]=='copy_entry'){
-        $display_value = '<a href="#copy_entry" data-toggle="modal" data-entry-id="'.$entry['id'].'">Copy</a>';
-    }elseif($field["type"]=='delete_entry'){
-        $display_value = '<a href="#deleteEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Delete</a>';
-    }
+    $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:$sql);
+    $display_value = $faire_name;
+  } elseif($field["type"]=='cancel_link') {
+    $display_value = '<a href="#cancelEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Cancel</a>';
+  } elseif($field["type"]=='copy_entry') {
+    $display_value = '<a href="#copy_entry" data-toggle="modal" data-entry-id="'.$entry['id'].'">Copy</a>';
+  } elseif($field["type"]=='delete_entry') {
+    $display_value = '<a href="#deleteEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Delete</a>';
+  }
 
-    return $display_value;
+  return $display_value;
 }
 
 /**

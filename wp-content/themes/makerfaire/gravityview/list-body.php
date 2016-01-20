@@ -131,12 +131,12 @@ else:
                 $title_args['field'] = $field;
                 switch ($field['id']) {
                   case '22':
-                    $title_args['wpautop'] = true;
+                    $title_args['wpautop'] = false;
                     break;
                   case 'delete_entry':
                     if ($entry['303'] == 'Proposed' || $entry['303'] == 'In Progress') {
                       $title_args['markup'] = '<span class="edit"><i class="fa fa-trash-o"></i>{{value}}</span>';
-                      $links.=gravityview_field_output($title_args);
+                      $links.=gravityview_field_output($title_args, false, false);
                     }
                     break;
                   case 'edit_link':
@@ -175,14 +175,14 @@ else:
               </div>
               <div class="entryData">
                 <div class="statusBox <?php echo $statusBlock;?>">
-                  <div class="fleft"> <?php echo $entryData['faire_name'];?></div>
-                  <div class="fright statusText"><?php echo $entryData['303'];?></div>
+                  <div class="pull-left"><?php echo $entryData['faire_name'];?></div>
+                  <div class="pull-right statusText"><?php echo $entryData['303'];?></div>
                 </div>
                 <h3 class="title"><?php echo $entryData['151'];?></h3>
-                <div class="clear fleft entryID latReg"><?php echo $form_type.' '.$entryData['id'];?></div>
+                <div class="clear pull-left entryID latReg"><?php echo $form_type.' '.$entryData['id'];?></div>
                 <div class="clear links latReg">
-                  <div class="fleft"><?php echo $entryData['date_created'];?></div>
-                  <div class="fright"><?php echo $links;?></div>
+                  <div class="pull-left"><?php echo $entryData['date_created'];?></div>
+                  <div class="pull-right"><?php echo $links;?></div>
                 </div>
               </div>
             <?php
@@ -240,7 +240,7 @@ else:
       </div>
     <?php
     endif; // End if "form_type"
-    
+
   endforeach;
   ?>
 
