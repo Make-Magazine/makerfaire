@@ -1,0 +1,126 @@
+.flagship-faire-wrp {
+  background-size: cover;
+  .flagship-badge {
+    float: right;
+    margin: 20px;
+    max-width: 100%;
+    border-radius: 200%;
+  }
+  .flagship-faire-box {
+    background: rgba(255, 255, 255, 0.91);
+    margin-bottom: 50px;
+    border-radius: 11px;
+    padding: 15px 15px 25px 15px;
+  }
+  .flagship-title {
+    display: inline-block;
+    color: #00AEEF;
+    font-weight: 200;
+    .flagship-name-mf {
+      font-weight: 500;
+      color: #F23A12;
+    }
+  }
+  .flagship-head-btns {
+    float: right;
+    .btn-contrast-border {
+      float: right;
+    }
+    @media all and (max-width: 992px) {
+      float: none;
+      display: flex;
+      flex-wrap: wrap;
+      margin: 10px 0 -10px 0;
+      .btn-contrast-border {
+        float: none;
+        flex: 1;
+        min-width: 48%;
+      }
+    }
+  }
+  .head-divider-line-img {
+    background-size: 15px;
+    margin: 8px -15px;
+    height: 15px;
+    @media all and (max-width: 992px) {
+      margin-top: 20px;
+    }
+  }
+  .flagship-header {
+    .flagship-info {
+      font-size: 20px;
+      font-weight: 300;
+    }
+    h1 {
+      margin: 5px 0;
+    }
+    background: rgba(0,0,0,0) url(../images/bg-border.png) repeat-x 0 100%;
+    margin: 0 -15px;
+    padding: 0 15px;
+    @media all and (min-width: 992px) {
+      margin-bottom: 10px;
+    }
+  }
+  .flagship-content {
+    font-size: 14px;
+  }
+  h3.line-item {
+    color: #9B9B9B;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+  .line-item {
+    display: block;
+    border-bottom: solid 1px #00B8EF;
+    line-height: 27px;
+    margin: 2px;
+    padding: 0;
+    color: #4A4A4A;
+    &:hover,
+    &.disabled {
+      color:  #9B9B9B;
+    }
+    &.disabled {
+      pointer-events: none;
+    }
+  }
+  .btn-contrast-border {
+    border: solid 2px #12AFE9;
+    margin: 3px;
+    &:hover {
+      color: white;
+      background: #12AFE9;
+    }
+  }
+  .btn-buy-tickets {
+    display: block;
+    margin-top: 5px;
+  }
+  .flagship-icon-link {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #00AEEF;
+    @media all and (max-width: 768px) {
+      margin-top: 18px;
+    }
+    &:hover {
+      color: darken(#00AEEF, 10%)
+    }
+    img {
+      margin-right: 5px;
+    }
+  }
+  @media all and (max-width: 991px) {
+    .flagship-faire-box {
+      margin: 20px 10px;
+    }
+    h3.line-item {
+      font-size: 15px;
+      margin-top: 25px;
+    }
+    .flagship-title {
+      display: block;
+    }
+  }
+}

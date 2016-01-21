@@ -1,38 +1,63 @@
 /* TOP BRAND BAR */
-.top-header-bar-brand {
-  background-color: #F0F0F0;
-  .container {
-    background: url('/wp-content/themes/makerfaire/img/magazine-icon.png') top right no-repeat;
-    background-size: 43px 50px;
-    background-position: right 11px bottom -18px;
-  }
-  p {
-    margin-bottom: 0;
-    line-height: 1.3em;
+#makerfaire {
+  .top-header-bar-brand {
+    background-color: #F0F0F0;
+    .container {
+      background: url('/wp-content/themes/makerfaire/img/magazine-icon.png') top right no-repeat;
+      background-size: 43px 50px;
+      background-position: right 11px bottom -18px;
+    }
+    p {
+      margin-bottom: 0;
+      line-height: 1.3em;
+      a {
+        font-size: 12px;
+        padding: 7px 5px;
+        display: inline-block;
+      }
+    }
     a {
-      font-size: 12px;
-      padding: 7px 5px;
-      display: inline-block;
+      color: #242424;
+    }
+    .header-sub-link a {
+      padding-right: 41px;
+      font-size: 11px;
+    }
+    .header-make-img img {
+      height: 12px;
+      padding-left: 2px;
+      vertical-align: baseline;
+    }
+    .header-sub-link img {
+      height: 12px;
+      padding-left: 2px;
     }
   }
-  a {
-    color: #242424;
-  }
-  .header-sub-link a {
-    padding-right: 41px;
-    font-size: 11px;
-  }
-  .header-make-img img {
-    height: 12px;
-    padding-left: 2px;
-    vertical-align: baseline;
-  }
-  .header-sub-link img {
-    height: 12px;
-    padding-left: 2px;
-  }
-}
 
-.home .quora#header {
-	margin-bottom: 0;
+  .home .quora#header {
+    margin-bottom: 0;
+  }
+  .quora {
+    @media (min-width: 768px) {
+      .caret {
+        color: #bee4fb;
+        position: absolute;
+        left: 50%;
+        margin-left: -5px;
+        border-top: 4px solid;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+      }
+    }
+    @media (max-width: 767px) {
+      .caret {
+        color: #fff;
+        margin: 5px 15px 0 5px;
+        float: right;
+        border-top: 6px dashed;
+        border-right: 6px solid transparent;
+        border-left: 6px solid transparent;
+      }
+    }
+  }
 }
