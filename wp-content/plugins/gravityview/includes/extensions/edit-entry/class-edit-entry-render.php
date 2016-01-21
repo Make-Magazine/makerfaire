@@ -260,7 +260,7 @@ class GravityView_Edit_Entry_Render {
             /**
              * @hack to avoid the capability validation of the method save_lead for GF 1.9+
              */
-            unset( $_GET['page'] );             
+            unset( $_GET['page'] );
             $orig_entry = $this->entry;
 
             GFFormsModel::save_lead( $form, $this->entry );
@@ -331,7 +331,7 @@ class GravityView_Edit_Entry_Render {
 
         foreach( $form['fields'] as &$field ) {
 
-            $field->adminOnly = false;
+            //$field->adminOnly = false;
 
             if( isset( $field->inputs ) && is_array( $field->inputs ) ) {
                 foreach( $field->inputs as $key => $input ) {
@@ -485,7 +485,7 @@ class GravityView_Edit_Entry_Render {
         //custom MF code
         /* update has occurred, reset the validation form as this has admin only fields set to false */
         unset($this->form_after_validation);
-        
+
         do_action( 'gform_after_update_entry', $this->form, $this->entry['id'] );
         do_action( "gform_after_update_entry_{$this->form['id']}", $this->form, $this->entry['id'] );
 
@@ -637,7 +637,7 @@ class GravityView_Edit_Entry_Render {
         $html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
         $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
 
-	remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
+	    remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
         remove_filter( 'gform_submit_button', array( $this, 'render_form_buttons' ) );
         remove_filter( 'gform_disable_view_counter', '__return_true' );
         remove_filter( 'gform_field_input', array( $this, 'modify_edit_field_input' ), 10 );
