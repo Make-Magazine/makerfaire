@@ -386,7 +386,6 @@
 		</div>
 		';
 	} ?>
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
 <!-- End pop up modal for school page -->
 <?php wp_footer(); ?>
 <script type="text/javascript">
@@ -402,3 +401,4 @@
 </script>
 </body>
 </html>
+
