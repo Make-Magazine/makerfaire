@@ -68,6 +68,40 @@
     float: left;
     margin-right: .2em;
   }
+  .submit-date {
+    line-height: 25px;
+  }
+  .notifications-button {
+    .fa-stack {
+      width: auto;
+      height: auto;
+      line-height: normal;
+    }
+    i.fa-circle {
+      font-size: 20px;
+      color: red;
+      margin: 0;
+    }
+    .notification-counter {
+      color: white;
+      font-size: 13px;
+      line-height: 1.5em;
+      position: absolute;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-style: normal;
+    }
+  }
+  .manage-entry a {
+    display: block;
+    color: inherit;
+    padding: 6px 20px;
+    margin: auto -14px;
+    &:hover {
+      background-color: darken(white, 2%);
+    }
+  }
 }
 
 .gv-list-container, .gv-grid {
@@ -103,12 +137,13 @@
     font-weight: 500;
   }
   .entryID {
-    font-size: 1.385em
+    font-size: 1.385em;
+    margin-bottom: 15px;
   }
 }
 
 // Make the images square and center them
-#gv-field-25-22 {
+.gv-field-25-22 {
   height: 280px;
   display: flex;
   flex-direction: row;
@@ -120,44 +155,61 @@
 }
 
 @media screen and (min-width: 992px) and (max-width: 1199px) {
-  #gv-field-25-22 {
+  .gv-field-25-22 {
     height: 230px;
   }
 }
 @media screen and (min-width: 768px) and (max-width: 991px) {
-  #gv-field-25-22 {
+  .gv-field-25-22 {
     height: 175px;
   }
 }
 @media screen and (max-width: 767px) {
-  #gv-field-25-22 {
+  .gv-field-25-22 {
     height: 150px;
   }
 }
+@media screen and (min-width: 566px) {
+  .gv-list-container .maker-admin {
+    .submit-date {
+      float: left;
+    }
+    .entry-action-buttons {
+      float: right;
+    }
+  }
+}
 @media screen and (max-width: 565px) {
-  #gv-field-25-22 {
-    height: 500px;
+  .gv-field-25-22 {
+    height: auto;
   }
-  .gv-list-container .maker-admin .entryImg {
-    float: none;
-    padding-right: 0;
-    width: 100%;
-  }
-  .gv-list-container .maker-admin .entryData {
-    padding-left: 0;
-    height: 100%;
-    width: 100%;
-    position: static;
-    right: inherit;
-    top: inherit;
-    margin-top: 10px;
-  }
-  .gv-list-container .maker-admin .entryData .links {
-    position: static;
-    bottom: inherit;
-    width: 100%;
-    border-top: none;
-    border-bottom: none;
+  .gv-list-container .maker-admin {
+    .entryImg {
+      float: none;
+      padding-right: 0;
+      width: 100%;
+    }
+    .entryData {
+      padding-left: 0;
+      height: 100%;
+      width: 100%;
+      position: static;
+      right: inherit;
+      top: inherit;
+      margin-top: 10px;
+    }
+    .entryData .links {
+      position: static;
+      bottom: inherit;
+      width: 100%;
+      border-top: none;
+      border-bottom: none;
+    }
+    .submit-date,
+    .entry-action-buttons {
+      border-top: solid 1px grey;
+      text-align: right;
+    }
   }
   .gv-list-container h3.title {
     clear: none;
@@ -166,12 +218,12 @@
   }
 }
 @media screen and (max-width: 450px) {
-  #gv-field-25-22 {
+  .gv-field-25-22 {
     height: 400px;
   }
 }
 @media screen and (max-width: 375px) {
-  #gv-field-25-22 {
+  .gv-field-25-22 {
     height: 350px;
   }
 }
