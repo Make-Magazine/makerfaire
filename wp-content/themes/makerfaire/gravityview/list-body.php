@@ -71,7 +71,7 @@ foreach($faires as $faire) {
 }
 
 // There are no entries.
-if(!$total or !( is_user_logged_in() )):
+if(!$total or !( is_user_logged_in() )) {
 ?>
   <div class="gv-list-view gv-no-results">
     <div class="gv-list-view-title">
@@ -81,6 +81,7 @@ if(!$total or !( is_user_logged_in() )):
 <?php
 // There are entries. Loop through them.
 } else {
+  include_once TEMPLATEPATH. '/gravityview/manage-faire-entries/header.php';
   foreach ($entries as $entry) {
     $this->setCurrentEntry($entry);
     $form = GFAPI::get_form( $entry['form_id'] );
