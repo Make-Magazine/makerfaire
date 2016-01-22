@@ -1,17 +1,16 @@
-/* maker admin */
-.gv-list-container .maker-admin {
+/* maker admin e.g. makerfaire.com/manage-entries */
 
-  /* parent container */
-  position: relative;
-  width: 100%;
-  margin: 2em 0;
-
+.gv-list-container {
+  .maker-admin-list-wrp {
+    position: relative;
+    width: 100%;
+    margin: 2em 0;
+  }
   .entryImg {
     float: left;
     padding-right: 5px;
     width: 25%;
     height: auto;
-
     p {
       margin: 0
     }
@@ -36,7 +35,6 @@
       display: block;
       padding: .2em 1em;
       border-radius: 4px;
-
       .statusText {
         color: white
       }
@@ -93,18 +91,31 @@
       font-style: normal;
     }
   }
-  .manage-entry a {
-    display: block;
-    color: inherit;
-    padding: 6px 20px;
-    margin: auto -14px;
-    &:hover {
-      background-color: darken(white, 2%);
+  .settings-pop-btn {
+    margin-top: 10px;
+  }
+  .manage-entry-popover {
+    h6,
+    a {
+      display: block;
+      padding: 6px 20px;
+      margin: auto -14px;
+    }
+    h6 {
+      color: #00adef;
+      font-size: 17px;
+      font-weight: 300;
+      padding-top: 10px;
+      margin-bottom: -5px;
+      border-top: solid 1px grey;
+    }
+    a {
+      color: inherit;
+      &:hover {
+        background-color: darken(white, 2%);
+      }
     }
   }
-}
-
-.gv-list-container, .gv-grid {
   .submitEntry a {
     background-color: #00B4F3;
     line-height: 4em;
@@ -121,7 +132,7 @@
   .maTitle {
     font-weight: 100;
     line-height: 1.54em;
-    margin: 0
+    margin: 0;
   }
   .maHeadLinks {
     font-size: 1.3rem;
@@ -140,37 +151,33 @@
     font-size: 1.385em;
     margin-bottom: 15px;
   }
-}
-
-// Make the images square and center them
-.gv-field-25-22 {
-  height: 280px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  overflow: hidden;
-  p {
-    width: 100%;
-  }
-}
-
-@media screen and (min-width: 992px) and (max-width: 1199px) {
+  // Make the images square and center them
   .gv-field-25-22 {
-    height: 230px;
+    height: 280px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    p {
+      width: 100%;
+    }
   }
-}
-@media screen and (min-width: 768px) and (max-width: 991px) {
-  .gv-field-25-22 {
-    height: 175px;
+  @media screen and (min-width: 992px) and (max-width: 1199px) {
+    .gv-field-25-22 {
+      height: 230px;
+    }
   }
-}
-@media screen and (max-width: 767px) {
-  .gv-field-25-22 {
-    height: 150px;
+  @media screen and (min-width: 768px) and (max-width: 991px) {
+    .gv-field-25-22 {
+      height: 175px;
+    }
   }
-}
-@media screen and (min-width: 566px) {
-  .gv-list-container .maker-admin {
+  @media screen and (max-width: 767px) {
+    .gv-field-25-22 {
+      height: 150px;
+    }
+  }
+  @media screen and (min-width: 566px) {
     .submit-date {
       float: left;
     }
@@ -178,12 +185,10 @@
       float: right;
     }
   }
-}
-@media screen and (max-width: 565px) {
-  .gv-field-25-22 {
-    height: auto;
-  }
-  .gv-list-container .maker-admin {
+  @media screen and (max-width: 565px) {
+    .gv-field-25-22 {
+      height: auto;
+    }
     .entryImg {
       float: none;
       padding-right: 0;
@@ -197,33 +202,33 @@
       right: inherit;
       top: inherit;
       margin-top: 10px;
-    }
-    .entryData .links {
-      position: static;
-      bottom: inherit;
-      width: 100%;
-      border-top: none;
-      border-bottom: none;
+      .links {
+        position: static;
+        bottom: inherit;
+        width: 100%;
+        border-top: none;
+        border-bottom: none;
+      }
     }
     .submit-date,
     .entry-action-buttons {
       border-top: solid 1px grey;
       text-align: right;
     }
+    h3.title {
+      clear: none;
+      float: none;
+      margin-top: 10px;
+    }
   }
-  .gv-list-container h3.title {
-    clear: none;
-    float: none;
-    margin-top: 10px;
+  @media screen and (max-width: 450px) {
+    .gv-field-25-22 {
+      height: 400px;
+    }
   }
-}
-@media screen and (max-width: 450px) {
-  .gv-field-25-22 {
-    height: 400px;
-  }
-}
-@media screen and (max-width: 375px) {
-  .gv-field-25-22 {
-    height: 350px;
+  @media screen and (max-width: 375px) {
+    .gv-field-25-22 {
+      height: 350px;
+    }
   }
 }
