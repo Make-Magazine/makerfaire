@@ -77,8 +77,8 @@ module.exports = function(grunt) {
   // Register the tasks with Grunt
   // To only watch for less changes and process without browser reload type in "grunt"
   grunt.registerTask('default', ['less:prod', 'concat', 'uglify', 'watch:prod']);
-  // To only watch for less changes and process without browser reload type in "grunt"
+  // To only watch for less changes and process without browser reload type in "grunt dev"
   grunt.registerTask('dev', ['less:dev', 'concat', 'watch:dev']);
   // To watch for less changes and process them with livereload type in "grunt reload"
-  grunt.registerTask('reload', ['less', 'watch:reload']);
+  grunt.registerTask('reload', ['less:dev', 'concat', 'watch:dev', 'watch:reload']);
 };
