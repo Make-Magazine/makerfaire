@@ -7,7 +7,7 @@
   <div class="settings-pop-btn pull-right">
     <button type="button" class="btn btn-default btn-no-border notifications-button"
       data-toggle="popover" data-html="true"
-      data-placement="bottom" 
+      data-placement="bottom" data-trigger="focus"
       data-content='<div class="manage-entry-popover">
         <a href="/login/?mode=reset">Change Password</a>
         <a href="/login/?action=logout">Log Out</a>
