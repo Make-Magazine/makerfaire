@@ -1,4 +1,5 @@
 *~
+.htaccess
 .svn
 .cvs
 .git
@@ -21,6 +22,9 @@ ics-importer-cache
 /.gitattributes
 
 # root directory wordpress files:
+/db-config.php
+/wp-content/advanced-cache.php
+/wp-content/object-cache.php
 /.htaccess
 /index.php
 /license.txt
