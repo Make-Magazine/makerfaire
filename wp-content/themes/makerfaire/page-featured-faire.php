@@ -49,18 +49,22 @@ get_header(); ?>
 
   </div>
 
-
-  <div class="row padtop padbottom">
-    <div class="col-xs-12 padtop">
-      <h2 class="featured-faire-past-event">Past Events</h2>
-      <hr />
-    </div>
     
     <?php if( have_rows('featured_faires') ):
      
+        $loop=0;
+
         while( have_rows('featured_faires') ): the_row();
 
           if( get_sub_field('past_event') ):
+
+            if($loop == 0) {
+              print "<div class='row padtop padbottom'>
+                      <div class='col-xs-12 padtop'>
+                        <h2 class='featured-faire-past-event'>Past Events</h2>
+                        <hr />
+                      </div>";
+            }
               
             $sub_field_1 = get_sub_field('faire_title'); //Title
             $sub_field_2 = get_sub_field('faire_url'); //URL
@@ -83,14 +87,15 @@ get_header(); ?>
             echo '</div>';
             echo '</div>';
 
+            $loop++;
+
           endif;
             
-        endwhile; ?>
+        endwhile;
+
+        print "</div>";
       
-    <?php endif; ?>
-
-  </div>
-
+    endif; ?>
 
 </div>
 
