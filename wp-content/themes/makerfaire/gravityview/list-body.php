@@ -89,7 +89,6 @@ if(!$total or !( is_user_logged_in() )) {
     // If "form_type"
     if($form_type != 'Other' && $form_type != '') {
     ?>
-      <hr/>
       <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin-list-wrp">
         <?php
         /**
@@ -169,23 +168,25 @@ if(!$total or !( is_user_logged_in() )) {
                   <div class="pull-left"><?php echo $entryData['faire_name'];?></div>
                   <div class="pull-right statusText"><?php echo $entryData['303'];?></div>
                 </div>
-                <h3 class="title"><?php echo $entryData['151'];?></h3>
+                <h3 class="entry-title"><?php echo $entryData['151'];?></h3>
                 <div class="clear pull-left entryID latReg">
                   <?php echo $form_type.' '.$entryData['id'];?>
                 </div>
                 <div class="clear links latReg">
                   <div class="submit-date"><?php echo $entryData['date_created'];?></div>
                   <div class="entry-action-buttons">
-                    <button type="button" class="btn btn-default btn-no-border notifications-button"
-                      data-toggle="popover" data-html="true"
-                      data-placement="bottom" data-trigger="focus"
-                      data-content='<div class="manage-entry-popover"><?php echo '<a>Pay Commercial Maker Fee etc</a>';?></div>'>
-                      NOTIFICATIONS
-                      <span class="fa-stack fa-lg">
-                        <i class="fa fa-circle"></i>
-                        <span class="notification-counter"><?php echo '3';?></span>
-                      </span>
-                    </button>
+                    <?php if (true) { ?>
+                      <button type="button" class="btn btn-default btn-no-border notifications-button"
+                        data-toggle="popover" data-html="true"
+                        data-placement="bottom" data-trigger="focus"
+                        data-content='<div class="manage-entry-popover"><?php echo '<a>Pay Commercial Maker Fee etc</a>';?></div>'>
+                        NOTIFICATIONS
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle"></i>
+                          <span class="notification-counter"><?php echo '3';?></span>
+                        </span>
+                      </button>
+                    <?php } ?>
                     <button type="button" class="btn btn-default btn-no-border manage-button"
                       data-toggle="popover" data-html="true"
                       data-placement="bottom" data-trigger="focus"
@@ -248,6 +249,7 @@ if(!$total or !( is_user_logged_in() )) {
         do_action( 'gravityview_entry_after', $entry, $this );
         ?>
       </div>
+      <hr/>
     <?php
     }; // End if "form_type"
   };

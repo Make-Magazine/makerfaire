@@ -62,10 +62,6 @@
       }
     }
   }
-  span.edit {
-    float: left;
-    margin-right: .2em;
-  }
   .submit-date {
     line-height: 25px;
   }
@@ -116,28 +112,31 @@
       }
     }
   }
-  .submitEntry a {
-    background-color: #00B4F3;
-    line-height: 4em;
-    font-size: .75em;
-    padding: .3em 2em;
-    color: #fff;
-    text-transform: uppercase;
+  .submit-entry {
+    .btn {
+      background-color: #00B4F3;
+      font-size: 13px;
+      color: #fff;
+      text-transform: uppercase;
+    }
   }
-  .maName {
+  .welcome-head {
     font-size: 1.25em;
     font-weight: bold;
     line-height: 1.24em;
   }
-  .maTitle {
+  .title-head {
     font-weight: 100;
     line-height: 1.54em;
     margin: 0;
   }
-  .maHeadLinks {
+  .header-break {
+    margin-top: 5px;
+  }
+  .popover-head {
     font-size: 1.3rem;
   }
-  h3.title {
+  .entry-title {
     font-weight: 100;
     clear: both;
     float: left;
@@ -208,6 +207,12 @@
         width: 100%;
         border-top: none;
         border-bottom: none;
+      }
+    }
+    .submit-entry {
+      width: 100%;
+      .btn {
+        display: block;
       }
     }
     .submit-date,
