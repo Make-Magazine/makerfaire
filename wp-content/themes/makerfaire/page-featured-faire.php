@@ -49,21 +49,19 @@ get_header(); ?>
 
   </div>
 
-    
-    <?php if( have_rows('featured_faires') ):
-     
-        while( have_rows('featured_faires') ): the_row();
-
-          if( get_sub_field('past_event') ): ?>
 
   <div class="row padtop padbottom">
     <div class="col-xs-12 padtop">
       <h2 class="featured-faire-past-event">Past Events</h2>
       <hr />
     </div>
+    
+    <?php if( have_rows('featured_faires') ):
+     
+        while( have_rows('featured_faires') ): the_row();
 
-    <?php
-
+          if( get_sub_field('past_event') ):
+              
             $sub_field_1 = get_sub_field('faire_title'); //Title
             $sub_field_2 = get_sub_field('faire_url'); //URL
             $sub_field_3 = get_sub_field('faire_photo'); //Photo
@@ -88,10 +86,11 @@ get_header(); ?>
           endif;
             
         endwhile; ?>
-
-  </div>
       
     <?php endif; ?>
+
+  </div>
+
 
 </div>
 
