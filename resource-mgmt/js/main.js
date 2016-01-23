@@ -1,40 +1,68 @@
 var resourceApp = angular.module('resourceApp', []);
 
 resourceApp.controller('resourceController', function ($scope, $http) {
-	var url = '/resource-mgmt/ajax.php';
+  var url = '/resource-mgmt/ajax.php';
+
+  $scope.delData = function(pkey,data){
+    var r = confirm("Are you sure want to delete this row (this cannot be undone)!");
+    $http({
+      method: 'post',
+      url: url,
+		  data: jQuery.param({ 'id' : pkey , 'type' : 'deleteData','table' : $scope.dispTablename,'pKeyField':$scope.resource.pInfo }),
+		  headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+		})
+    .then(function(response){
+      console.log(response);
+      if(response.data.success){
+          //TBD remove row from table
+          var index = $scope.resource.tableData.indexOf(data);
+          $scope.resource.tableData.splice(index, 1);
+        }
+        $scope.resource.retMsg = response.data.message;
+
+    },
+		function(response) { // optional
+      // failed
+      alert ('error in deleting data from the database')
+    });
+  }
 
   $scope.insertData = function(){
+    //jQuery('.btn-save').button('loading');
 
-  jQuery('#dataInsert > input').each(function () { /* ... */
-    //get id of each input to get field name
-    console.log($(this));
-  //    alert(this.value);
-  })
+    //update the DB
+    $http({
+      method: 'post',
+      url: url,
+		  data: jQuery.param({ 'table' : $scope.dispTablename , 'type' : 'insertData', 'data':$scope.resource.newEntry}),
+		  headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+		})
+    .then(function(response){
+      if(response.data.success){
+        //alert('Insert Successfull');
+      }
+      $scope.resource.retMsg = response.data.message;
+    },
+		function(response) { // optional
+      // failed
+      alert ('error in inserting data into the database')
+    });
 
-//jQuery('.btn-save').button('loading');
-		//$scope.saveData();
-		//$scope.editMode = false;
-		//$scope.index = '';
-	}
-
-  $scope.insertRow = function(tableName){
-    var numCol = $scope.fieldNames.length;
-
-    var insRow = "<tr>";
-    insRow = "<td><span data-ng-click='insertData(\""+$scope.dispTablename+"\")'>Add</span></td>";
-    for(i=0; i<numCol; i++){
-      insRow = insRow + "<td><input id='"+$scope.fieldNames[i] +"' type='text' /></td>";
+    console.log($scope.resource.tableData);
+    //add the new data to the displayed table
+    if($scope.resource.tableData){
+      $scope.resource.tableData.push($scope.resource.newEntry);
+    }else{
+      $scope.resource.tableData = $scope.resource.newEntry;
     }
-    insRow = insRow + '</tr>';
-
-    jQuery('#tableData tbody').prepend(insRow);
+    $scope.resource.newEntry = '';
   }
 
 	$scope.getTableData = function(){
-    $scope.tableData     = '';
-    $scope.fieldNames    = '';
     jQuery("#tableData > tbody").empty();
-
+    $scope.resource.tableData  = '';
+    $scope.resource.fieldNames = '';
+    $scope.resource.pInfo      = ''; //primary key of db table
 		$http({
       method: 'post',
       url: url,
@@ -42,8 +70,13 @@ resourceApp.controller('resourceController', function ($scope, $http) {
 		  headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 		})
     .then(function(response){
-      $scope.resource.tableData = response.data.tableData;
-      $scope.resource.fieldNames    = response.data.fieldNames;
+      $scope.resource.tableData  = response.data.tableData;
+      $scope.resource.fieldNames = response.data.fieldNames;
+      if(!response.data.pInfo){
+        alert('no primary key found for '+$scope.dispTablename+'! Please alert dev team');
+      }else{
+        $scope.resource.pInfo      = response.data.pInfo; //primary key of db table
+      }
     },
 		function(response) { // optional
       // failed
@@ -52,6 +85,7 @@ resourceApp.controller('resourceController', function ($scope, $http) {
 	}
 
 	$scope.init = function(){
+    $scope.resource=[];
 
     $http({
         url: '/resource-mgmt/ajax.php',
@@ -61,51 +95,11 @@ resourceApp.controller('resourceController', function ($scope, $http) {
     })
     .then(function(response) {
       // success
-      $scope.resource = response.data;
+      $scope.resource.tables = response.data.tables;
     },
     function(response) { // optional
       // failed
       alert ('error in retrieving table list')
     });
 	}
-/*
-	$scope.messageFailure = function (msg){
-		jQuery('.alert-failure-div > p').html(msg);
-		jQuery('.alert-failure-div').show();
-		jQuery('.alert-failure-div').delay(5000).slideUp(function(){
-			jQuery('.alert-failure-div > p').html('');
-		});
-	}
-
-	$scope.messageSuccess = function (msg){
-		jQuery('.alert-success-div > p').html(msg);
-		jQuery('.alert-success-div').show();
-		jQuery('.alert-success-div').delay(5000).slideUp(function(){
-			jQuery('.alert-success-div > p').html('');
-		});
-	}
-
-
-	$scope.getError = function(error, name){
-		if(angular.isDefined(error)){
-			if(error.required && name == 'name'){
-				return "Please enter name";
-			}else if(error.email && name == 'email'){
-				return "Please enter valid email";
-			}else if(error.required && name == 'company_name'){
-				return "Please enter company name";
-			}else if(error.required && name == 'designation'){
-				return "Please enter designation";
-			}else if(error.required && name == 'email'){
-				return "Please enter email";
-			}else if(error.minlength && name == 'name'){
-				return "Name must be 3 characters long";
-			}else if(error.minlength && name == 'company_name'){
-				return "Company name must be 3 characters long";
-			}else if(error.minlength && name == 'designation'){
-				return "Designation must be 3 characters long";
-			}
-		}
-	}*/
-
 });
