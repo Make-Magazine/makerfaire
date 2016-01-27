@@ -92,7 +92,9 @@ Topbar
 
 				<div class="col-md-5">
 
-					<h1><a href="http://makerfaire.com" title="Maker Faire"><img src="http://cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" width="380" alt="Maker Faire" title="Maker Faire"></a></h1>
+					<h1><a href="http://makerfaire.com" title="Maker Faire">
+						<img src="/wp-content/uploads/2016/01/mf_logo.jpg" width="380" alt="Maker Faire" title="Maker Faire">
+					</a></h1>
 
 				</div>
 

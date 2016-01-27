@@ -111,7 +111,9 @@
   <nav class="navbar navbar-default navbar-fixed-top visible-xs-block">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="<?php bloginfo('url'); ?>"><img src="http://cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" height="43" width="183" alt="maker faire"></a>
+        <a class="navbar-brand" href="<?php bloginfo('url'); ?>">
+          <img src="/wp-content/uploads/2016/01/mf_logo.jpg" height="43" width="183" alt="maker faire">
+        </a>
         <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse" data-target="#navbar-mobile-collapse">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
@@ -137,7 +139,9 @@
   <nav class="navbar hidden-xs desktop-nav">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="<?php bloginfo('url'); ?>"><img src="http://cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" height="43" width="183" alt="maker faire"></a>
+        <a class="navbar-brand" href="<?php bloginfo('url'); ?>">
+          <img src="/wp-content/uploads/2016/01/mf_logo.jpg" height="43" width="183" alt="maker faire">
+        </a>
       </div>
       <div class="collapse navbar-collapse">
         <?php

@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="row social-foot-desktop hidden-xs">
 			<div class="col-sm-12 col-sm-6 col-md-3 social-foot-col" >
-				<a href="/"><img class="footer_logo" src="//cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" alt="Maker Faire Logo"></a>
+				<a href="/"><img class="footer_logo" src="/wp-content/uploads/2016/01/mf_logo.jpg" alt="Maker Faire Logo"></a>
 				<ul class="list-unstyled">
 					<li><a href="/makerfairehistory">About Maker Faire</a></li>
 					<li><a href="/map">Find a Faire Near You</a></li>

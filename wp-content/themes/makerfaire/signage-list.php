@@ -77,7 +77,7 @@ function get_schedule_list( $location, $short_description = false, $day_set = ''
                     $dayOfWeek=$row['Day']; 
                     
                     $output .='<h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">'.$dayOfWeek.'</h1>
-                                <h2 style="float:right;margin-top:31px;"><img src="http://cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" style="width:200px;" alt="" ></h2>
+                                <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
                                 <p></p>
                                 <p></p>
                                 <p></p>';                    
@@ -90,7 +90,7 @@ function get_schedule_list( $location, $short_description = false, $day_set = ''
                     $dayOfWeek=$row['Day']; 
                     
                     $output .='<h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">'.$stage.' <small>('.$row['area'].')</small> </h1>
-                                <h2 style="float:right;margin-top:31px;"><img src="http://cdn.makezine.com/make/makerfaire/bayarea/2012/images/logo.jpg" style="width:200px;" alt="" ></h2>
+                                <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
                                 <p></p>
                                 <p></p>
                                 <p></p>';
