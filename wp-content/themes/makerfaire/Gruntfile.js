@@ -25,6 +25,22 @@ module.exports = function(grunt) {
         }
       }
     },
+    replace: {
+      cachebust: {
+        src: 'style.css',
+        dest: 'style.css',
+        replacements: [{
+          from: /Version(.)+(\n)/,
+          to: function (matchedWord) {
+            // increment 0.0 version number by 0.01
+            var foo = parseFloat(matchedWord.match(/(\d)\.(\d)/)[0]) + 0.01;
+            return 'Version: ' + foo + '\n';
+            // unix epoch time:
+            // return 'Version: ' + (new Date).getTime() + '\n';
+          }
+        }]
+      }
+    },
     // Concat js files
     concat: {
       options: {
@@ -74,9 +90,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-text-replace');
   // Register the tasks with Grunt
   // To only watch for less changes and process without browser reload type in "grunt"
-  grunt.registerTask('default', ['less:prod', 'concat', 'uglify', 'watch:prod']);
+  grunt.registerTask('default', ['less:prod', 'replace:cachebust', 'concat', 'uglify', 'watch:prod']);
   // To only watch for less changes and process without browser reload type in "grunt dev"
   grunt.registerTask('dev', ['less:dev', 'concat', 'watch:dev']);
   // To watch for less changes and process them with livereload type in "grunt reload"
