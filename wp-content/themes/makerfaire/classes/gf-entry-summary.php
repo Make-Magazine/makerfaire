@@ -200,40 +200,36 @@ if ( isset( $long_description ) ) {
                             <label >Email Note To:</label><br />
 				<?php 
 				$emailto1 = array("Alasdair Allan"          => "alasdair@makezine.com",
-                                                  "Brian Jepson"            => "bjepson@makermedia.com",
-                                                  "Bridgette Vanderlaan"    => "bvanderlaan@mac.com",
-                                                  "Dale Dougherty"          => "dale@makermedia.com",
-                                                  "DC Denison"              => "dcdenison@makermedia.com",
-                                                  "Jason Babler"            => "jbabler@makermedia.com",
-                                                  "Jay Kravitz"             => "jay@thecrucible.org",
-                                                  "Jess Hobbs"              => "jess@makermedia.com",
-                                                  "Jonathan Maginn"         => "jonathan.maginn@sbcglobal.net",
-                                                  "Kate Rowe"               => "krowe@makermedia.com",
-                                                  "Kerry Moore"             => "kerry@contextfurniture.com");
-$emailto2 = array(
-		"Kim Dow" => "dow@dowhouse.com",
-		"Louise Glasgow" => "lglasgow@makermedia.com",
-		"Michelle Hlubinka" => "mhlubinka@makermedia.com",
-		"Miranda Mota" => "miranda@makermedia.com",
-		"Nick Normal" => "nicknormal@gmail.com",
-		"Rob Bullington" => "rbullington@makermedia.com",
-		"Sabrina Merlo" => "smerlo@makermedia.com",
-		"Sherry Huss" => "sherry@makermedia.com",
-		"Tami Jo Benson" => "tj@tamijo.com",
-		"Travis Good" => "travisgood@gmail.com");
-
-$emailtoaliases = array(
-		"3D Printing" => "3dprinting@makermedia.com",
-		"Editors" => "editor@makezine.com",
-		"Maker Relations" => "makers@makerfaire.com",
-		"Marketing" => "marketing@makermedia.com",
-		"PR" => "pr@makerfaire.com",
-		"Shed" => "shedmakers@makermedia.com",
-		"Education" => "education@makermedia.com",
-		"Sales" => "sales@makerfaire.com",
-		"MakerCon" => "makercon@makermedia.com",
-                "Sustainability" => "sustainability@makerfaire.com",
-                "Speakers" => "speakers@makerfaire.com");
+                          "Brian Jepson"            => "bjepson@makermedia.com",
+                          "Bridgette Vanderlaan"    => "bvanderlaan@mac.com",
+                          "Caleb Kraft"             => "caleb@makermedia.com",
+                          "Dale Dougherty"          => "dale@makermedia.com",
+                          "DC Denison"              => "dcdenison@makermedia.com",
+                          "Deanna Brown"            => "deanna@makermedia.com",
+                          "Jay Kravitz"             => "jay@thecrucible.org",
+                          "Jess Hobbs"              => "jess@makermedia.com",
+                          "Jonathan Maginn"         => "jonathan.maginn@sbcglobal.net",
+                          "Kate Rowe"               => "krowe@makermedia.com",
+                          "Kerry Moore"             => "kerry@contextfurniture.com");
+        $emailto2 = array("Kim Dow"                 => "dow@dowhouse.com",
+                          "Louise Glasgow"          => "lglasgow@makermedia.com",
+                          "Miranda Mota"            => "miranda@makermedia.com",
+                          "Nick Normal"             => "nicknormal@gmail.com",
+                          "Rob Bullington"          => "rbullington@makermedia.com",
+                          "Sabrina Merlo"           => "smerlo@makermedia.com",
+                          "Sherry Huss"             => "sherry@makermedia.com",
+                          "Tami Jo Benson"          => "tj@tamijo.com",
+                          "Travis Good"             => "travisgood@gmail.com");
+        $emailtoaliases = array("3D Printing"       => "3dprinting@makermedia.com",
+                                "Editors"           => "editor@makezine.com",
+                                "Maker Relations"   => "makers@makerfaire.com",
+                                "Marketing"         => "marketing@makermedia.com",
+                                "PR"                => "pr@makerfaire.com",
+                                "Shed"              => "shedmakers@makermedia.com",
+                                "Education"         => "education@makermedia.com",
+                                "Sales"             => "sales@makerfaire.com",
+                                "Sustainability"    => "sustainability@makerfaire.com",
+                                "Speakers"          => "speakers@makerfaire.com");
 				?>
 				<div style="float:left">
 				<?php foreach ( $emailtoaliases as $name => $email ) { 
