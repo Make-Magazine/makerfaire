@@ -209,9 +209,9 @@ if ( isset( $long_description ) ) {
                           "Jay Kravitz"             => "jay@thecrucible.org",
                           "Jess Hobbs"              => "jess@makermedia.com",
                           "Jonathan Maginn"         => "jonathan.maginn@sbcglobal.net",
-                          "Kate Rowe"               => "krowe@makermedia.com",
-                          "Kerry Moore"             => "kerry@contextfurniture.com");
-        $emailto2 = array("Kim Dow"                 => "dow@dowhouse.com",
+                          "Kate Rowe"               => "krowe@makermedia.com");
+        $emailto2 = array("Kerry Moore"             => "kerry@contextfurniture.com",
+                          "Kim Dow"                 => "dow@dowhouse.com",
                           "Louise Glasgow"          => "lglasgow@makermedia.com",
                           "Miranda Mota"            => "miranda@makermedia.com",
                           "Nick Normal"             => "nicknormal@gmail.com",
