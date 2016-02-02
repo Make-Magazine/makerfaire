@@ -55,7 +55,7 @@ include_once TEMPLATEPATH. '/classes/gf-helper.php';
 include_once TEMPLATEPATH. '/classes/makerfaire-helper.php';
 include_once TEMPLATEPATH. '/classes/gf-jdb-helper.php';
 include_once TEMPLATEPATH. '/classes/mf-sharing-cards.php';
-if (!LOCAL_DEV_ENVIRONMENT) {
+if (!defined('LOCAL_DEV_ENVIRONMENT') || !LOCAL_DEV_ENVIRONMENT) {
   include_once TEMPLATEPATH. '/classes/mf-login.php';
 }
 
