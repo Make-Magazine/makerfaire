@@ -297,9 +297,7 @@
 	a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
 	</script>-->
 <!-- Start pop up modal for school page -->
-<?php
-	if ( is_page( '459885' ) ) {
-		echo '
+<?php if ( is_page( '459885' ) ) { ?>
 		<script>
 		function getCookie(name) {
 		    var dc = document.cookie; 
@@ -374,7 +372,7 @@
 		});
 		</script>
 		<div class="fancybox" style="display:none;">
-		    <h3>Yes, I\'m interested in staying in touch with the School Maker Faire Program</h3>
+		    <h3>Yes, I'm interested in staying in touch with the School Maker Faire Program</h3>
 			<form name="MailingList" action="http://whatcounts.com/bin/listctrl" method="POST">
 				<input type=hidden name="slid" value="6B5869DC547D3D4637EA6E33C6C8170D" />
 				<input type="hidden" name="cmd" value="subscribe" />
@@ -389,8 +387,7 @@
 				<input type="hidden" id="format_mime" name="format" value="mime" />
 			</form>
 		</div>
-		';
-	} ?>
+<?php	} ?>
 <!-- End pop up modal for school page -->
 <?php wp_footer(); ?>
 <script type="text/javascript">
