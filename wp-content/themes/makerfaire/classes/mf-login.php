@@ -104,7 +104,7 @@ function custom_login_form_to_login_page( $content )
     }
     
     return $content;
-    
+}
  /* Adjust admin bar and wp-admin handling by login */
 add_action('admin_init', 'remove_dashboard');
 function remove_dashboard() {
