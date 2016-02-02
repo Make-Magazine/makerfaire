@@ -21,6 +21,24 @@
       color: #F23A12;
     }
   }
+  .flagship-sponsor {
+    display: inline-block;
+    margin-left: 25px;
+    span {
+      font-size: 18px;
+      vertical-align: middle;
+      color: #333;
+      font-weight: 300;
+    }
+    img {
+      width: 65px;
+    }
+    @media all and (max-width: 991px) {
+      text-align: center;
+      display: block;
+      margin-left: 0;
+    }
+  }
   .flagship-head-btns {
     float: right;
     .btn-contrast-border {
@@ -38,14 +56,6 @@
       }
     }
   }
-  .head-divider-line-img {
-    background-size: 15px;
-    margin: 8px -15px;
-    height: 15px;
-    @media all and (max-width: 992px) {
-      margin-top: 20px;
-    }
-  }
   .flagship-header {
     .flagship-info {
       font-size: 20px;
@@ -56,9 +66,12 @@
     }
     background: rgba(0,0,0,0) url(../images/bg-border.png) repeat-x 0 100%;
     margin: 0 -15px;
-    padding: 0 15px;
+    padding: 0 15px 25px 15px;
     @media all and (min-width: 992px) {
       margin-bottom: 10px;
+    }
+    @media all and (max-width: 991px) {
+      padding-bottom: 40px;
     }
   }
   .flagship-content {

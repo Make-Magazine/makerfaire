@@ -55,7 +55,9 @@ include_once TEMPLATEPATH. '/classes/gf-helper.php';
 include_once TEMPLATEPATH. '/classes/makerfaire-helper.php';
 include_once TEMPLATEPATH. '/classes/gf-jdb-helper.php';
 include_once TEMPLATEPATH. '/classes/mf-sharing-cards.php';
-include_once TEMPLATEPATH. '/classes/mf-login.php';
+if (!LOCAL_DEV_ENVIRONMENT) {
+  include_once TEMPLATEPATH. '/classes/mf-login.php';
+}
 
 // Legacy Helper Functions replacing VIP Wordpress.com calls
 include_once TEMPLATEPATH. '/classes/legacy-helper.php';
@@ -134,8 +136,8 @@ function enqueue_custom_script( $form, $is_ajax ) {
 }
 
 function load_admin_scripts() {
-  wp_enqueue_script('make-gravityforms-admin',  get_stylesheet_directory_uri() . '/js/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'));
-  wp_enqueue_script( 'jquery-datetimepicker',  get_stylesheet_directory_uri() . '/js/jquery.datetimepicker.js', array( 'jquery' ), null );
+  wp_enqueue_script('make-gravityforms-admin',  get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'));
+  wp_enqueue_script( 'jquery-datetimepicker',  get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array( 'jquery' ), null );
   wp_enqueue_style('jquery-datetimepicker-css',  get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
   wp_enqueue_style('made-admin-style',  get_stylesheet_directory_uri() . '/css/make.admin.css');
 }

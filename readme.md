@@ -8,15 +8,14 @@ Built with:
 
 Relevant: https://docs.google.com/document/d/1thSVdCn4Li_l7pVD6hFJvTrQuv-f29HDQMhX_D0vLO8
 
-##### Compile Bootstrap, LESS, JS for prod:
-- cd into local `/wp-content/themes/makerfaire/`
-- run `npm install`
-- run `grunt`
+##### How to compile LESS, Bootstrap, JS for production:
+- download Node if you don't have it installed https://nodejs.org/en/download/
+- cd into your local makerfaire theme directory e.g. `/wp-content/themes/makerfaire/`
+- run the command `npm install` if you haven't done so in a while
+- run the command `grunt` to compile and watch files
 
-##### Compile Bootstrap, LESS, JS with developer source line comments:
-- cd into local `/wp-content/themes/makerfaire/`
-- run `npm install`
-- run `grunt dev`
+###### Compile Bootstrap, LESS, JS during development unminified with source line comments:
+- `grunt dev`
 
 
 ---
