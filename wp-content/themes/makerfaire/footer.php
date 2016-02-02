@@ -53,18 +53,20 @@
           ?>
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
-          <form class="sub-form" action="http://whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A"/>
-            <input type="hidden" name="cmd" value="subscribe"/>
-            <input type="hidden" name="custom_source" value="footer"/>
-            <input type="hidden" name="custom_incentive" value="none"/>
-            <input type="hidden" name="custom_url" value="<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>"/>
-            <input type="hidden" id="format_mime" name="format" value="mime"/>
-            <input type="hidden" name="goto" value="//makerfaire.com/thanks-for-signing-up"/>
+          <form class="sub-form whatcounts-signup1" action="http://whatcounts.com/bin/listctrl" method="POST">
+            <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire Newsletter -->
+            <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
+            <input type="hidden" name="multiadd" value="1" />
+            <input type="hidden" name="cmd" value="subscribe" />
+            <input type="hidden" name="custom_source" value="footer" />
+            <input type="hidden" name="custom_incentive" value="none" />
+            <input type="hidden" name="custom_url" value="<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" />
+            <input type="hidden" id="format_mime" name="format" value="mime" />
+            <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $_SERVER["HTTP_HOST"]; ?>" />
-            <input type="hidden" name="errors_to" value=""/>
+            <input type="hidden" name="errors_to" value="" />
             <div class="mz-form-horizontal">
-              <input name="email" placeholder="Enter your Email" required type="email"><br>
+              <input id="wc-email" name="email" placeholder="Enter your Email" required type="text"><br>
               <input value="GO" class="btn-cyan" type="submit">
             </div>
           </form>
@@ -94,18 +96,20 @@
           ?>
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
-          <form class="sub-form" action="http://whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A"/>
-            <input type="hidden" name="cmd" value="subscribe"/>
-            <input type="hidden" name="custom_source" value="footer"/>
-            <input type="hidden" name="custom_incentive" value="none"/>
-            <input type="hidden" name="custom_url" value="<?php echo $_SERVER[" HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>"/>
-            <input type="hidden" id="format_mime" name="format" value="mime"/>
-            <input type="hidden" name="goto" value="//makerfaire.com/thanks-for-signing-up"/>
+          <form class="sub-form whatcounts-signup1m" action="http://whatcounts.com/bin/listctrl" method="POST">
+            <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire Newsletter -->
+            <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
+            <input type="hidden" name="multiadd" value="1" />
+            <input type="hidden" name="cmd" value="subscribe" />
+            <input type="hidden" name="custom_source" value="footer" />
+            <input type="hidden" name="custom_incentive" value="none" />
+            <input type="hidden" name="custom_url" value="<?php echo $_SERVER[" HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" />
+            <input type="hidden" id="format_mime" name="format" value="mime" />
+            <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $_SERVER[" HTTP_HOST"]; ?>" />
-            <input type="hidden" name="errors_to" value=""/>
+            <input type="hidden" name="errors_to" value="" />
             <div class="mz-form-horizontal">
-              <input name="email" placeholder="Enter your Email" required type="email"><br>
+              <input id="wc-email-m" name="email" placeholder="Enter your Email" required type="email"><br>
               <input value="GO" class="btn-cyan" type="submit">
             </div>
           </form>
@@ -177,6 +181,9 @@
 
 <!-- Subscribe return path overlay -->
 <?php echo subscribe_return_path_overlay(); ?>
+
+<!-- Email newsletter subscribe modal -->
+<?php echo display_thank_you_modal_if_signed_up(); ?>
 
 <!-- Clear the WP admin bar when in mobile fixed header -->
 <script>
@@ -293,8 +300,6 @@
 <?php
 	if ( is_page( '459885' ) ) {
 		echo '
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.pack.js"></script>
 		<script>
 		function getCookie(name) {
 		    var dc = document.cookie; 

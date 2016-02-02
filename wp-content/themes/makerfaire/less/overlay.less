@@ -102,6 +102,107 @@
   transition: transform 0.4s ease-in-out, opacity .4s ease-in-out;
 }
 
+.nl-modal-cont {
+  padding: 15px 0;
+}
+
+/* Thank you pop up */
+.nl-modal-extra-cont {
+  h4 {
+    font-size: 22px;
+  }
+  h5 {
+    font-size: 18px;
+    font-weight: 400;
+  }
+  .nl-modal-div1 {
+    padding: 15px 10px;
+    background-color: #4A90E2;
+    .col-sm-8 {
+      color: #fff;
+    }
+    .col-sm-4 {
+      color: #fff;
+      padding-top: 20px;
+    }
+  }
+  .nl-modal-div2 {
+    padding: 15px 10px 0 10px;
+    h4 {
+      line-height: 1.3em;
+      font-weight: 500;
+    }
+    form {
+      margin: 0;
+      padding: 5px 0 20px;
+      h4 {
+        color: #4A90E2;
+        margin-bottom: 0;
+      }
+      hr {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+  }
+  input[type="checkbox"] {
+    display: none;
+  }
+  input[type="checkbox"] + span.newcheckbox {
+    background-color: #fff;
+    border: 1px solid #cacece;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+    padding: 10px;
+    border-radius: 2px;
+    display: inline-block;
+    position: relative;
+    margin-top: 20px;
+  }
+  input[type="checkbox"]:checked + span.newcheckbox {
+    background-color: #fafafa;
+    border: 1px solid #adb8c0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+    color: #99a1a7;
+  }
+  input[type="checkbox"]:checked + span:after {
+    font-size: 28px;
+    left: 6px;
+  }
+  input[type="checkbox"]:checked + span:after {
+    content: '\2714';
+    font-size: 14px;
+    position: absolute;
+    top: 0px;
+    left: 5px;
+    color: #5286cc;
+  }
+  .ghost-button-black {
+    display: inline-block;
+    padding: 5px 25px;
+    margin-top: 15px;
+    color: #fff;
+    border: 2px solid #111;
+    text-align: center;
+    outline: none;
+    background-color: #111;
+    text-decoration: none;
+    font-weight: 300;
+  }
+  .ghost-button-black:hover,
+  .ghost-button-black:active {
+    background-color: #fff;
+    color: #111;
+    border: 2px solid #111;
+    transition: all 0.2s ease;
+  }
+}
+.fancybox-inner .nl-modal-cont h3 {
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  margin-top: 0;
+  color: #444;
+}
+
 @media screen and (min-width: 992px) and (max-width: 1199px) {
   .overlay-div .overlay-1 img {
     width: 300px;
