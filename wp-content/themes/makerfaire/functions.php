@@ -2159,24 +2159,6 @@ function gView_trash_entry(){
     return 'trash';
 }
 
-
-//redirect makers to the edit entry page  **need to replace site url with actual view path **
-function mf_login_redirect( $redirect_to, $request, $user  ) {
-  return ( is_array( $user->roles ) && in_array( 'maker', $user->roles ) ? site_url():admin_url());
-}
-add_filter( 'login_redirect', 'mf_login_redirect', 10, 3 );
-
-add_action('after_setup_theme', 'remove_admin_bar');
-function remove_admin_bar() {
-    global $current_user;
-
-    $user = wp_get_current_user();
-
-    if(is_array( $user->roles ) && in_array( 'maker', $user->roles )){
-      show_admin_bar(false);
-    }
-}
-
 add_action('gravityview/edit_entry/after_update','GVupdate_notification',10,3);
 function GVupdate_notification($form,$entry_id,$orig_entry){
     //get updated entry
