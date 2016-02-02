@@ -6,7 +6,6 @@
         <ul class="list-unstyled">
           <li><a href="/makerfairehistory">About Maker Faire</a></li>
           <li><a href="/map">Find a Faire Near You</a></li>
-          <li><a href="/maker-movement">Maker Movement</a></li>
           <li><a href="/be-a-maker">Be a Maker</a></li>
           <li><a href="//help.makermedia.com/hc/en-us/categories/200333245-Maker-Faire" target="_blank">Maker Faire FAQs</a></li>
           <li><a href="//help.makermedia.com/hc/en-us/sections/201008995-Maker-Faire-Support" target="_blank">Contact Us</a></li>
@@ -19,6 +18,7 @@
           <li><a href="//www.makershed.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=Maker+Shed" target="_blank">Maker Shed</a></li>
           <li><a href="//makercamp.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=makercamp" target="_blank">Maker Camp</a></li>
           <li><a href="https://readerservices.makezine.com/mk/default.aspx?utm_source=makerfaire.com&utm_medium=footer&utm_term=subscribe+to+make" target="_blank">Subscribe to Make:</a></li>
+          <li><a href="/maker-movement">Maker Movement</a></li>
         </ul>
       </div>
       <div class="visible-sm-block clearfix"></div>
@@ -125,11 +125,10 @@
           <div id="collapse1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading1">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked">
-                <li><a href="//www.pubservice.com/MK/subscribe.aspx?PC=MK&PK=M3AMZB" target="_blank">Subscribe to Make:</a></li>
-                <li><a href="/projects">Make: Projects</a></li>
-                <li><a href="/weekendprojects">Weekend Projects</a></li>
-                <li><a href="/video">Make: Videos</a></li>
-                <li><a href="/category/maker-pro">Maker Pro News</a></li>
+                <li><a href="/makerfairehistory">About Maker Faire</a></li>
+                <li><a href="/map">Find a Faire Near You</a></li>
+                <li><a href="/be-a-maker">Be a Maker</a></li>
+                <li><a href="//help.makermedia.com/hc/en-us/categories/200333245-Maker-Faire" target="_blank">Maker Faire FAQs</a></li>
                 <li><a href="//help.makermedia.com/hc/en-us/sections/201008995-Maker-Faire-Support" target="_blank">Contact Us</a></li>
               </ul>
             </div>
@@ -148,6 +147,7 @@
                 <li><a href="//www.makershed.com" target="_blank">Maker Shed</a></li>
                 <li><a href="//makercamp.com" target="_blank">Maker Camp</a></li>
                 <li><a href="//readerservices.makezine.com/mk/default.aspx?" target="_blank">Subscribe to Make:</a></li>
+                <li><a href="/maker-movement">Maker Movement</a></li>
               </ul>
             </div>
           </div>

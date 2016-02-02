@@ -1840,8 +1840,10 @@ function subscribe_return_path_overlay() { ?>
           <div class="col-sm-4 overlay-3">
             <h2>Sign Up for the Maker Faire Newsletter</h2>
             <p>Keep informed, stay inspired.</p>
-            <form class="sub-form" action="http://whatcounts.com/bin/listctrl" method="POST">
-              <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A"/>
+            <form class="sub-form whatcounts-signup1o" action="http://whatcounts.com/bin/listctrl" method="POST">
+              <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A"/>
+              <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
+              <input type="hidden" name="multiadd" value="1" />
               <input type="hidden" name="cmd" value="subscribe"/>
               <input type="hidden" name="custom_source" value="Subscribe return path overlay"/>
               <input type="hidden" name="custom_incentive" value="none"/>
@@ -1850,7 +1852,7 @@ function subscribe_return_path_overlay() { ?>
               <input type="hidden" name="goto" value="//makerfaire.com/thanks-for-signing-up"/>
               <input type="hidden" name="custom_host" value="makerfaire.com" />
               <input type="hidden" name="errors_to" value=""/>
-              <input name="email" class="overlay-input" placeholder="Enter your email" required type="email"><br>
+              <input name="email" id="wc-email-o" class="overlay-input" placeholder="Enter your email" required type="email"><br>
               <input value="GO" class="black-overlay-btn" type="submit">
             </form>
           </div>
@@ -1976,6 +1978,16 @@ function display_thank_you_modal_if_signed_up() { ?>
       e.preventDefault();
       var bla = jQuery('#wc-email-m').val();
       jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1m').serialize());
+      jQuery('.fancybox-thx').trigger('click');
+      jQuery('.nl-modal-email-address').text(bla);
+      jQuery('.whatcounts-signup2 #email').val(bla);
+    });
+    // Header Overlay
+    jQuery(document).on('submit', '.whatcounts-signup1o', function (e) {
+      e.preventDefault();
+      var bla = jQuery('#wc-email-o').val();
+      jQuery.cookie('Newsletter-signup', '', { path: '/', expires: 365 });
+      jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1o').serialize());
       jQuery('.fancybox-thx').trigger('click');
       jQuery('.nl-modal-email-address').text(bla);
       jQuery('.whatcounts-signup2 #email').val(bla);
