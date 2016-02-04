@@ -1,0 +1,3422 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<kml xmlns='http://www.opengis.net/kml/2.2'>
+	<Document>
+		<name>Copy of Copy of Maker Faire Around the World</name>
+		<description><![CDATA[Independently-produced, community-based Maker Faires are sprouting up everywhere!  2 Flagship Faires, 120+ Mini Maker Faires and 22 larger-scale "Featured" Faires will have occured by the end of 2015 for a total of over 150 Maker Faire events.<br><br>KEY:  BLUE is existing faires. GREEN are current/recent applications.  YELLOW are flagship events. PURPLE are past events (on hiatus or no longer recurring).<br><br> For more information on How to Make a Maker Faire, check here:  http://makerfaire.com/mini/make-a-maker-faire.htm]]></description>
+		<Folder>
+			<name>Featured Faires</name>
+			<Placemark>
+				<name>WORLD MAKER FAIRE NEW YORK - Since 2010</name>
+				<description><![CDATA[New York Hall of Science, Queens, NY http://makerfaire.com/]]></description>
+				<styleUrl>#icon-157</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.852452,40.747826,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>MAKER FAIRE BAY AREA - Since 2006</name>
+				<description><![CDATA[San Mateo, CA  http://makerfaire.com/]]></description>
+				<styleUrl>#icon-157</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.30140600000001,37.546558,0.0</coordinates>
+				</Point>
+			</Placemark>
+		</Folder>
+		<Folder>
+			<name>All Maker Faires</name>
+			<Placemark>
+				<name>National Maker Faire (2015-2016)</name>
+				<description><![CDATA[National Maker Faire (2015)<br>http://nationalmakerfaire.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-77.03716280000002,38.911606,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Atlanta (2014-2015; Mini 2011-13)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=33.748995,-84.387982&thumb=0" height="200" width="auto" /><br><br>Maker Faire Atlanta<br>http://makerfaireatl.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=33.748995,-84.387982&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-84.2945988,33.7729745,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Austin (2016; Mini 2012-2015) </name>
+				<description><![CDATA[Maker Faire Austin<br>http://austinmakerfaire.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-97.743061,30.267153,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Berlin (2015-2016)</name>
+				<description><![CDATA[Maker Faire Berlin<br>http://makerfaire.berlin/en/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>13.397827,52.505355,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Ruhr (2016)</name>
+				<description><![CDATA[Maker Faire Ruhr<br>http://www.makerfaire-ruhr.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>7.465298100000041,51.5135872,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Bilbao (2015-2016; Mini 2013-14)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=43.256963,-2.923441&thumb=0" height="200" width="auto" /><br><br>Maker Faire Bilbao<br>http://bilbaomakerfaire.com/en/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=43.256963,-2.923441&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-2.923441,43.256963,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Bodensee (2016)</name>
+				<description><![CDATA[Maker Faire Bodensee<br>http://www.makerfairebodensee.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>10.131774299999961,51.6056768,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Cairo 2016 (Cairo Mini Maker Faire 2015, Maker Faire Africa 2011)</name>
+				<description><![CDATA[Maker Faire Cairo 2016<br>http://makefairecairo.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>31.235712,30.04442,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Detroit (2010-2016)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=42.331427,-83.045754&thumb=0" height="200" width="auto" /><br><br>Maker Faire Detroit<br>http://makerfairedetroit.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=42.331427,-83.045754&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-83.045754,42.331427,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Hannover (2013-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=52.375892,9.732010&thumb=0" height="200" width="auto" /><br><br>Maker Faire Hannover<br>http://makerfairehannover.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=52.375892,9.732010&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>9.73201,52.375892,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Hong Kong (2015-2016; Mini 2012-2014)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=22.281944,114.158056&thumb=0" height="200" width="auto" /><br><br>Maker Faire Hong Kong<br>http://www.makerfairehongkong.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=22.281944,114.158056&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>114.158056,22.281944,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Istanbul (2016; Mini 2014-2015)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.005270,28.976960&thumb=0" height="200" width="auto" /><br><br>Maker Faire Istanbul<br>http://www.makerfaireistanbul.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.005270,28.976960&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>28.97696,41.00527,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Kansas City (2010-2016)
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=39.099726,-94.578567&thumb=0" height="200" width="auto" /><br><br>Maker Faire Kansas City<br>http://makerfairekc.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=39.099726,-94.578567&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-94.578567,39.099726,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Lisbon, Portugal  http://www.makerfaire.com</name>
+				<description><![CDATA[Maker Faire Lisbon (2015; Mini 2014)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-9.137192,38.719001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Milwaukee (2014-2016)
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=43.038902,-87.906474&thumb=0" height="200" width="auto" /><br><br>Maker Faire Milwaukee<br>http://makerfairemilwaukee.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=43.038902,-87.906474&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-87.906474,43.03890200000001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Nantes (2016)</name>
+				<description><![CDATA[Maker Faire Nantes<br>http://mankerfairenantes.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.553621000000021,47.218371,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Orlando, FL  http://www.makerfaireorlando.com/
+</name>
+				<description><![CDATA[Maker Faire Orlando (2014-2015; Mini 2012-13)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-81.38397200000001,28.538687,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Oslo, Norway  http://www.oslomakerfaire.com/
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=59.913869,10.752245&thumb=0" height="200" width="auto" /><br><br>Maker Faire Oslo (2014-2015; Mini 2013)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=59.913869,10.752245&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>10.752245,59.91386899999999,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Ottawa, ON Canada
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=45.421530,-75.697193&thumb=0" height="200" width="auto" /><br><br>Maker Faire Ottawa (2015 - but a Mini Maker Faire since 2010)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=45.421530,-75.697193&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-75.69719300000001,45.42153,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Paris (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=48.856614,2.352222&thumb=0" height="200" width="auto" /><br><br>Maker Faire Paris<br>http://www.makerfaireparis.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=48.856614,2.352222&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>2.3522220000000003,48.856614,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Pittsburgh, PA</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=40.440625,-79.995886&thumb=0" height="200" width="auto" /><br><br>Maker Faire Pittsburgh (2015; Mini 2011-2013)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=40.440625,-79.995886&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-79.995886,40.440625,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Rome (2013-2016)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.890520,12.494249&thumb=0" height="200" width="auto" /><br><br>Maker Faire Rome<br>http://www.makerfairerome.eu/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.890520,12.494249&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>12.494249,41.89052,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Ruhr (2016)</name>
+				<description><![CDATA[Maker Faire Ruhr]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>7.628279199999952,51.3659097,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>San Diego, CA</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=32.715329,-117.157255&thumb=0" height="200" width="auto" /><br><br>Maker Faire San Diego (2015; Mini 2013)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=32.715329,-117.157255&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-117.157255,32.715329,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Seoul, South Korea
+</name>
+				<description><![CDATA[Maker Faire Seoul (2013-2015)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>126.977969,37.566535,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Shenzhen (2014-2016; Mini 2012-13)</name>
+				<description><![CDATA[Maker Faire Shenzhen<br>http://www.shenzhenmakerfaire.com/ ]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>114.057868,22.543099,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Silver Spring, MD  http://makerfairesilverspring.com/</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=38.990666,-77.026088&thumb=0" height="200" width="auto" /><br><br>Maker Faire Silver Spring (2014-2015; Mini 2013)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=38.990666,-77.026088&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-77.026088,38.990666,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Singapore (2015-2016; Mini 2012-2014)</name>
+				<description><![CDATA[Maker Faire Singapore<br>http://makerfairesingapore.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>103.73584,1.332853,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Taipei (2013-2016)
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=25.091075,121.559834&thumb=0" height="200" width="auto" /><br><br>Maker Faire Taipei<br>http://austinmakerfaire.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=25.091075,121.559834&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>121.559834,25.091075,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Japan  http://makezine.jp/event/mft2014/
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=35.689488,139.691706&thumb=0" height="200" width="auto" /><br><br>Maker Faire Tokyo (2013-2015)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=35.689488,139.691706&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>139.691706,35.689488,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Trondheim, Norway  http://trondheimmakerfaire.no/
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=63.430515,10.395053&thumb=0" height="200" width="auto" /><br><br>Maker Faire Trondheim (2014-2016)]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=63.430515,10.395053&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>10.395053,63.430515,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire UK (2010-11, 2013-2016)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=54.977840,-1.612916&thumb=0" height="200" width="auto" /><br><br>Maker Faire UK<br>http://www.makerfaireuk.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=54.977840,-1.612916&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.612916,54.97784,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maker Faire Vienna (2016)</name>
+				<description><![CDATA[Maker Faire Vienna<br>http://makerfairevienna.com/]]></description>
+				<styleUrl>#icon-123</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>16.37381890000006,48.2081743,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Aarhus Mini Maker Faire (2014-2015)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=56.162939,10.203921&thumb=0" height="200" width="auto" /><br><br>Aarhus Mini Maker Faire]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=56.162939,10.203921&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>10.203921,56.162939,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Adelaide Mini Maker Faire (2013, 2015-2016)</name>
+				<description><![CDATA[Adelaide Mini Maker Faire<br>http://www.makerfaireadelaide.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>138.599945,-34.928726,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Aggieville Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[Aggieville Mini Maker Faire]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-96.566734,39.183304,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Akron, OH</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.081445,-81.519005&thumb=0" height="200" width="auto" /><br><br>Akron Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.081445,-81.519005&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-81.519005,41.081445,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Albuquerque Mini Maker Faire (2012-16)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=35.084491,-106.651137&thumb=0" height="200" width="auto" /><br><br>Albuquerque Mini Maker Faire<br>http://www.albuquerque-minimakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=35.084491,-106.651137&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-106.651137,35.084491,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Anchorage, AK</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=61.218056,-149.900278&thumb=0" height="200" width="auto" /><br><br>Anchorage Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=61.218056,-149.900278&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-149.900278,61.21805599999999,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Ann Arbor Mini Maker Faire (2009-2016)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=42.280826,-83.743038&thumb=0" height="200" width="auto" /><br><br>Ann Arbor Mini Maker Faire<br>https://a2makerfaire.wordpress.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=42.280826,-83.743038&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-83.743038,42.280826,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Bakersfield Mini Maker Faire (2016)</name>
+				<description><![CDATA[Bakersfield Mini Maker Faire<br>http://bakersfieldminimakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-119.01871249999999,35.3732921,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Bangkok Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>100.5022429,13.7580599,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Barcelona Mini Maker Faire (2013-2014, 2016)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.387917,2.169919&thumb=0" height="200" width="auto" /><br><br>Barcelona Mini Maker Faire<br>http://makerfairebcn.org/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.387917,2.169919&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>2.169919,41.387917,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Baton Rouge, LA</name>
+				<description><![CDATA[Baton Rouge Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-91.14002500000001,30.457922000000003,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Beijing Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>116.4111324,39.9055208,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Bengaluru Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>77.595062,12.9764592,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Benicia Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Benicia Mini Maker Faire<br>http://beniciamakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.15801200000001,38.047821,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Bloomsburg Mini Maker Faire (2016)</name>
+				<description><![CDATA[Bloomsburg Mini Maker Faire<br>http://makerfairebloomsburg.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-76.4549457,41.003698000000014,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Bogotá Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[Bogotá Mini Maker Faire<br>http://makerfairebogota.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-74.076691,4.596274,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Boulder, CO</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=40.014986,-105.270546&thumb=0" height="200" width="auto" /><br><br>Boulder Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=40.014986,-105.270546&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-105.270546,40.014986,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Brighton, UK
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=50.819522,-0.136420&thumb=0" height="200" width="auto" /><br><br>Brighton Mini Maker Faire (2011-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=50.819522,-0.136420&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-0.13642,50.819522,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Bristol Mini Maker Faire (2013, 2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-2.586594,51.453579,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Buenos Aires Mini Maker Faire (2016)
+</name>
+				<description><![CDATA[Buenos Aires Mini Maker Faire <br>http://makerfairebuenosaires.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-58.380661,-34.607215,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Buffalo Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=42.886447,-78.878369&thumb=0" height="200" width="auto" /><br><br>Buffalo Mini Maker Faire<br>http://makerfairebuffalo.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=42.886447,-78.878369&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-78.878369,42.886447000000004,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Burlington Mini Maker Faire (2012-2016)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=36.095692,-79.437799&thumb=0" height="200" width="auto" /><br><br>Burlington Mini Maker Faire<br>http://burlingtonminimakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=36.095692,-79.437799&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-79.437799,36.095692,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Caguas, Puerto Rico (2015-2016)</name>
+				<description><![CDATA[Caguas Mini Maker Faire<br>http://makerfairecaguas.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-66.035385,18.237993,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Calgary, AB Canada
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=51.045000,-114.057222&thumb=0" height="200" width="auto" /><br><br>Calgary Mini Maker Faire (2012-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=51.045000,-114.057222&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-114.057222,51.04500000000001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Cape Cod Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.700321,-70.300202&thumb=0" height="200" width="auto" /><br><br>Cape Cod Mini Maker Faire<br>http://capecodmakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.700321,-70.300202&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-70.300202,41.700321,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Cape Town Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Cape Town Mini Maker Faire<br>http://makerfairecapetown.co.za/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>18.4251023,-33.921996,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Cedar Rapids, IA
+ (http://maps.google.com/maps/place?ftid=0x87e45f7aa02f4251:0x55ee60432ce6ddc0&amp;q=Cedar+Rapids,+IA&amp;hl=en&amp;authuser=0&amp;cad=src:ppiwlink&amp;ei=NAe3TqHTOYmapASu79XICg&amp;dtab=5)</name>
+				<description><![CDATA[Cedar Rapids Mini Maker Faire (2012-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-91.665623,41.97788,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Shelburne, VT</name>
+				<description><![CDATA[Champlain MIni Maker Faire (2012-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.22472200000001,44.389722,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Charlotte Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Charlotte Mini Maker Faire<br>http://cltmakerfaire.org/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-80.8415237,35.2287929,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Charlottesville Mini Maker Faire (2013-2014, 2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=38.029306,-78.476678&thumb=0" height="200" width="auto" /><br><br>Charlottesville Mini Maker Faire<br>http://makerfairecville.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=38.029306,-78.476678&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-78.476678,38.029306,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Chattanooga Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-85.3091812,35.0496731,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Chicago Northside Mini Maker Faire (2012-2016) </name>
+				<description><![CDATA[Chicago Northside Mini Maker Faire<br>http://makerfairechicagonorthside.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-87.629798,41.878114,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Mokena, IL</name>
+				<description><![CDATA[Chicago Southland Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-87.88908,41.525544,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Chicago, IL
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.805464,-87.608764&thumb=0" height="200" width="auto" /><br><br>Chicago Southside Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.805464,-87.608764&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-87.608764,41.805464,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Cincinnati, OH</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=39.103118,-84.512020&thumb=0" height="200" width="auto" /><br><br>Cincinnati Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=39.103118,-84.512020&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-84.51202,39.103118,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Cleveland, Ohio</name>
+				<description><![CDATA[Cleveland Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-81.695409,41.499495,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Colorado Springs, CO</name>
+				<description><![CDATA[Colorado Springs Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-104.820557,38.83008,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Columbia Mini Maker Faire (2013-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=34.000710,-81.034814&thumb=0" height="200" width="auto" /><br><br>Columbia Mini Maker Faire<br>http://makerfairecolumbiasc.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=34.000710,-81.034814&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-81.034814,34.00071,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Compostela Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Compostela Mini Maker Faire<br>http://makerfairecompostela.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-8.5448742,42.8792977,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Denton Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-97.1318436,33.220595,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Denver Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=39.737567,-104.984718&thumb=0" height="200" width="auto" /><br><br>Denver Mini Maker Faire<br>http://denvermakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=39.737567,-104.984718&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-104.984718,39.737567,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Nottingham, UK
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=52.954770,-1.158086&thumb=0" height="200" width="auto" /><br><br>Derby Mini Maker Faire (2012-2016)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=52.954770,-1.158086&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.158086,52.95477,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Decatur Mini Maker Faire (2016)</name>
+				<description><![CDATA[Decatur Mini Maker Faire]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-88.9548001,39.84031469999999,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Delhi Mini Maker Faire (2016)</name>
+				<description><![CDATA[Delhi Mini Maker Faire]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>77.20902120000005,28.6139391,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Des Moines, IA</name>
+				<description><![CDATA[Des Moines Mini Maker Faire (2014-2016)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-93.608322,41.599013,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Dover, NH</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=43.197862,-70.873670&thumb=0" height="200" width="auto" /><br><br>Dover Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=43.197862,-70.873670&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-70.87367,43.197862,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Oakland, CA</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=37.804364,-122.271114&thumb=0" height="200" width="auto" /><br><br>East Bay Mini Maker Faire (2010-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=37.804364,-122.271114&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.27111400000001,37.804364,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Eastern Long Island Mini Maker Faire (2016)</name>
+				<description><![CDATA[Eastern Long Island Mini Maker Faire<br>http://easternlongislandmakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.0692732,40.9464875,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Edinburgh Mini Maker Faire (2013-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=55.953252,-3.188267&thumb=0" height="200" width="auto" /><br><br>Edinburgh Mini Maker Faire<br>http://makerfaireedinburgh.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=55.953252,-3.188267&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-3.188267,55.953252,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Eindhoven, The Netherlands</name>
+				<description><![CDATA[Eindhoven Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>5.469475,51.440741,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Fredonia Mini Maker Faire (2016)</name>
+				<description><![CDATA[Fredonia Mini Maker Faire]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-79.33171049999999,42.4400576,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>London, UK
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=51.511214,-0.119824&thumb=0" height="200" width="auto" /><br><br>Elephant & Castle Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=51.511214,-0.119824&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-0.119824,51.511214,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Espoo Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>24.655900100000053,60.2054911,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Eugene, OR</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=44.052069,-123.086754&thumb=0" height="200" width="auto" /><br><br>Eugene Mini Maker Faire (2012-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=44.052069,-123.086754&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-123.08675399999998,44.052069,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Fort Wayne, IN</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.079273,-85.139351&thumb=0" height="200" width="auto" /><br><br>Fort Wayne Regional Maker Faire (2012-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.079273,-85.139351&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-85.139351,41.079273,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Fresno, CA</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=36.746842,-119.772587&thumb=0" height="200" width="auto" /><br><br>Fresno Mini Maker Faires (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=36.746842,-119.772587&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-119.772587,36.746842,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Göteborg Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Göteborg Mini Maker Faire<br>http://goteborgmakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>11.974559999999997,57.70887,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Grand Rapids, MI</name>
+				<description><![CDATA[Grand Rapids Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-85.667267,42.961196,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Greater Hartford Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-72.795027,41.7360305,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Greater Newark Mini Maker Faire (2014-2016)
+</name>
+				<description><![CDATA[Greater Newark Mini Maker Faire<br>http://makerfairenewark.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-74.172821,40.73347,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Gorham, ME</name>
+				<description><![CDATA[Greater Portland Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-70.442963,43.681777,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Greenbelt Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=39.004554,-76.875528&thumb=0" height="200" width="auto" /><br><br>Greenbelt Mini Maker Faire<br>http://faire.make125.org/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=39.004554,-76.875528&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-76.875528,39.004554,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Grenoble Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>5.724523999999974,45.188529,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Halifax Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.8575399999999718,53.72702,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Hamilton Mini Maker Faire (2015)</name>
+				<description><![CDATA[Hamilton Mini Maker Faire<br>http://makerfairehamilton.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-79.8692322,43.2702062,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>HandiLab Mini Maker Faire (2016)</name>
+				<description><![CDATA[HandiLab Mini Maker Faire (2016)<br>http://makerfairebordeaux.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-0.5795289,44.838830300000005,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Honolulu, HI</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=21.306944,-157.858333&thumb=0" height="200" width="auto" /><br><br>Honolulu Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=21.306944,-157.858333&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-157.858333,21.306944,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Houston, TX (http://maps.google.com/maps/place?ftid=0x8640b8b4488d8501:0xca0d02def365053b&amp;q=houston,+tx&amp;hl=en&amp;authuser=0&amp;cd=1&amp;cad=src:ppiwlink&amp;ei=VPImT5aTLJWKpASM_rW3DA&amp;sig2=YSDLW7y-1akRlUVvsiSSPw&amp;dtab=5)</name>
+				<description><![CDATA[Houston Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-95.36939,29.760193,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Hsinchu Mini Maker Faire (2016)</name>
+				<description><![CDATA[Hsinchu Mini Maker Faire<br>http://www.makerfairehsinchu.org/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>120.96771240000001,24.8147841,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Institute of Imagination Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-0.1284027,51.5142979,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Jackson Hole Maker Faire (2015-2016)</name>
+				<description><![CDATA[Jackson Hole Maker Faire<br>https://jhmakerfaire.wordpress.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-110.7621,43.479705,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Jalisco Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Jalisco Mini Maker Faire<br>http://mkrsfest.com/JaliscoMakerFaire/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-103.34943759999999,20.6595382,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Israel</name>
+				<description><![CDATA[Jerusalem Mini Maker Faire (2013- 2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>35.200369,31.777624000000003,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Jinqiao Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[Jinqiao Mini Maker Faire<br>http://www.jinqiaomakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>121.61123900000001,31.266089,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Kalispell Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=48.200531,-114.315102&thumb=0" height="200" width="auto" /><br><br>Kalispell Mini Maker Faire<br>http://kalispellminimakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=48.200531,-114.315102&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-114.315102,48.200531,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Kent State Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.153667,-81.357886&thumb=0" height="200" width="auto" /><br><br>Kent State Mini Maker Faire<br>http://makerfairekent.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.153667,-81.357886&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-81.357886,41.153667,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Kingsport Mini Maker Faire (2012-2016)</name>
+				<description><![CDATA[Kingsport Mini Maker Faire<br>https://makerfairekingsport.wordpress.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-82.561819,36.548434,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Kyiv Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Kyiv Mini Maker Faire<br>http://makerfairekyiv.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>30.5241394,50.4679945,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Las Vegas Mini Maker Faire (2013- 2014, 2016)</name>
+				<description><![CDATA[Las Vegas Mini Maker Faire<br>http://www.makerfairevegas.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-115.172816,36.114646,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>León, Spain</name>
+				<description><![CDATA[León Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-5.56715,42.598145,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Lille Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Lille Mini Maker Faire<br>http://www.makerfairelille.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>3.057256000000052,50.62925,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Louisville Mini Maker Faire (2013-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=38.252665,-85.758456&thumb=0" height="200" width="auto" /><br><br>Louisville Mini Maker Faire<br>http://makerfairelou.org/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=38.252665,-85.758456&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-85.758456,38.252665,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Lyon Mini Maker Faire (2016)</name>
+				<description><![CDATA[Lyon Mini Maker Faire (2016)<br><br>http://www.makerfairelyon.com]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>4.835658999999964,45.764043,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Madison Mini Maker Faire (2016)</name>
+				<description><![CDATA[Madison Mini Maker Faire<br>http://makerfairemadison.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-89.39917020000001,43.0695403,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Madrid Mini Maker Faire (2015-2016)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-3.7037901999999576,40.4167754,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Martha's Vineyard Mini Maker Faire (2016)</name>
+				<description><![CDATA[Martha's Vineyard Mini Maker Faire<br>http://makerfairemv.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-70.64547299999998,41.38049809999999,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Martinsville, VA</name>
+				<description><![CDATA[Martinsville Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-79.872665,36.690446,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>McAllen, TX</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=26.203407,-98.230012&thumb=0" height="200" width="auto" /><br><br>McAllen Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=26.203407,-98.230012&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-98.230012,26.203407000000002,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Melbourne Mini Maker Faire (2012, 2016)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=-37.813187,144.962980&thumb=0" height="200" width="auto" /><br><br>Melbourne Mini Maker Faire<br>http://melbournemakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=-37.813187,144.962980&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>144.96298,-37.813187,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Meridian Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Meridian Mini Maker Faire<br>http://makerfairemeridian.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-88.70365600000002,32.3643098,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Miami Mini Maker Faire (2013-2014, 2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=25.788969,-80.226439&thumb=0" height="200" width="auto" /><br><br>Miami Mini Maker Faire<br>http://makerfairemiami.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=25.788969,-80.226439&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-80.226439,25.788969,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Mohawk Valley Mini Maker Faire (2016)</name>
+				<description><![CDATA[Mohawk Valley Mini Maker Faire ]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-75.232664,43.100903,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Camden, ME</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=44.209793,-69.064784&thumb=0" height="200" width="auto" /><br><br>Midcoast Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=44.209793,-69.064784&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-69.064784,44.209793,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Minneapolis St. Paul Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-93.166337,44.99208900000001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Nashville, TN</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=36.165890,-86.784443&thumb=0" height="200" width="auto" /><br><br>Nashville Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=36.165890,-86.784443&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-86.784443,36.16589,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>New Orleans Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=29.951066,-90.071532&thumb=0" height="200" width="auto" /><br><br>New Orleans Mini Maker Faire<br>http://nolamakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=29.951066,-90.071532&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-90.071532,29.951065999999997,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>NoCo Mini Maker Faire (2013-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=40.397761,-105.074980&thumb=0" height="200" width="auto" /><br><br>NoCo Mini Maker Faire<br>http://makerfairenoco.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=40.397761,-105.074980&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-105.07498,40.397761,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>North Little Rock Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[North Little Rock Mini Maker Faire<br>http://makerfairenlr.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-92.2673035,34.7743318,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>NoVa Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=38.958631,-77.357003&thumb=0" height="200" width="auto" /><br><br>NoVa Mini Maker Faire<br>http://makerfairenova.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=38.958631,-77.357003&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-77.357003,38.958631000000004,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Omaha Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.252363,-95.997988&thumb=0" height="200" width="auto" /><br><br>Omaha Mini Maker Faire<br>http://www.omahamakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.252363,-95.997988&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-95.997988,41.252363,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>The Ozarks Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[The Ozarks Mini Maker Faire<br>http://theozarksmakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-93.29229889999999,37.2089572,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Irvine, CA (http://maps.google.com/maps/place?ftid=0x80dcdd0e689140e3:0xa77ab575604a9a39&amp;q=Irvine,+CA&amp;hl=en&amp;authuser=0&amp;t=h&amp;cd=1&amp;cad=src:ppiwlink&amp;ei=-E1zT_G7BIjIpAT97913&amp;sig2=uUSLQ0-8NnKAbxJlqLMrSQ&amp;dtab=5)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=33.683947,-117.794694&thumb=0" height="200" width="auto" /><br><br>Orange County Mini Maker Faire (2012, 2013, 2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=33.683947,-117.794694&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-117.794694,33.683947,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Palm Beach Mini Maker Faire (2016)</name>
+				<description><![CDATA[Palm Beach Mini Maker Faire<br>http://makerfairepalmbeach.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-80.03642969999999,26.705620600000003,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Penang, Malaysia</name>
+				<description><![CDATA[Penang Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>100.329208,5.408895,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Perpignan Mini Maker Faire (2016)</name>
+				<description><![CDATA[Perpignan Mini Maker Faire<br>http://makerfaireperpignan.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>2.8948331999999937,42.6886591,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Piedmont, CA</name>
+				<description><![CDATA[Piedmont Unified School District Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.231741,37.824091,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Portland, OR</name>
+				<description><![CDATA[Portland Mini Maker Faire (2012-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.67620700000002,45.523452,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Poughkeepsie, NY</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.700371,-73.920970&thumb=0" height="200" width="auto" /><br><br>Poughkeepsie Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.700371,-73.920970&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.92097,41.700371,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Prince George, BC, Canada</name>
+				<description><![CDATA[Prince George Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.74887099999998,53.91323700000001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Reno, NV</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=39.529633,-119.813803&thumb=0" height="200" width="auto" /><br><br>Reno Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=39.529633,-119.813803&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-119.81380300000001,39.529633,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Phnom Penh Maker Faire (2016)</name>
+				<description><![CDATA[Phnom Penh Maker Faire]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>104.89216680000004,11.5448729,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Providence, RI</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.823989,-71.412834&thumb=0" height="200" width="auto" /><br><br>Rhode Island Mini Maker Faire (2009-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.823989,-71.412834&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-71.412834,41.823989,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Rhode Island Mini Maker Faire - East Bay Edition (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-71.31282850000002,41.4901024,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Rimini Beach Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>12.575702800000045,43.967605,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Rio de Janeiro Mini Maker Faire (2016)</name>
+				<description><![CDATA[Rio de Janeiro Mini Maker Faire<br>http://makerfaireriodejaneiro.org/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-43.198242,-22.917923,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Rochester, NY</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=43.161030,-77.610922&thumb=0" height="200" width="auto" /><br><br>Rochester Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=43.161030,-77.610922&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-77.610922,43.16103,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Rockford Auburn Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-89.0939952,42.2711311,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Rocklin Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Rocklin Mini Maker Faire<br>http://makerfairerocklin.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-121.2356758,38.7908876,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Rouen Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Rouen Mini Maker Faire<br>http://makerfairerouen.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>1.0999709999999823,49.44323199999999,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Rutland Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-72.9725647,43.6108496,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Saint-Malo Mini Maker Faire (2013, 2015-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=48.649337,-2.025674&thumb=0" height="200" width="auto" /><br><br>Saint-Malo Mini Maker Faire<br>http://makerfairesaintmalo.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=48.649337,-2.025674&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-2.025674,48.649337,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Salem Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=44.942898,-123.035096&thumb=0" height="200" width="auto" /><br><br>Salem Mini Maker Faire (2014-2016)<br>http://makerfairesalem.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=44.942898,-123.035096&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-123.03509600000001,44.942898,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Utah</name>
+				<description><![CDATA[Salt Lake City Mini Maker Faire (2012, 2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-111.891047,40.760779,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>San Antonio Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[San Antonio Mini Maker Faire<br>http://makerfairesanantonio.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-98.496552,29.421657000000003,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>San Jose Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[San Jose Mini Maker Faire<br>http://makerfairesanjose.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-121.88632860000003,37.3382082,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Santa Cruz Mini Maker Faire (2016)</name>
+				<description><![CDATA[Santa Cruz Mini Maker Faire<br>http://www.makerfairesantacruz.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.03079630000003,36.9741171,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Santo Domingo Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Santo Domingo Mini Maker Faire (2015-2016)<br>http://makerfairesdq.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-69.9312117,18.48605749999999,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Santo Domingo Mini Maker Faire (2015-2016)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-69.9087524,18.6085059,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Scranton, PA</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.408969,-75.662412&thumb=0" height="200" width="auto" /><br><br>Scranton Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.408969,-75.662412&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-75.662412,41.408969,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Seattle Mini Maker Faire (2012-2016)</name>
+				<description><![CDATA[Seattle Mini Maker Faire<br>http://makerfaireseattle.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.332071,47.60621,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Shreveport Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-93.75017889999998,32.5251516,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Southwest Michigan Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Southwest Michigan Mini Maker Faire<br>http://swmimakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-86.48416700000001,42.098056,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Stark Mini Maker Faire (2016)</name>
+				<description><![CDATA[Stark Mini Maker Faire]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-81.378447,40.7989473,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Stockholm, Sweden
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=59.328930,18.064910&thumb=0" height="200" width="auto" /><br><br>Stockholm Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=59.328930,18.064910&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>18.06491,59.32893000000001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Sunshine Coast Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-123.50361099999998,49.402778,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Australia</name>
+				<description><![CDATA[Sydney Mini Maker Faire (2013-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>151.20689000000002,-33.873651,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Tartu, Estonia</name>
+				<description><![CDATA[Tartu Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>26.729565,58.376968000000005,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[The Ozarks Mini Maker Faire (2015, 2016)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-93.29229889999999,37.2089572,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Torino, Italy</name>
+				<description><![CDATA[Torino Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>7.686653000000001,45.068186,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Trieste Mini Maker Faire (2014-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=45.649535,13.777972&thumb=0" height="200" width="auto" /><br><br>Trieste Mini Maker Faire<br>http://makerfairetrieste.it/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=45.649535,13.777972&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>13.777972000000002,45.649535,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Tulsa Mini Maker Faire (2013-2016)</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=36.153982,-95.992775&thumb=0" height="200" width="auto" /><br><br>Tulsa Mini Maker Faire<br>http://makerfairetulsa.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=36.153982,-95.992775&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-95.99277500000001,36.153982,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Tyler Mini Maker Faire (2013-2016)</name>
+				<description><![CDATA[Tyler Mini Maker Faire<br>http://tylermakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-95.301062,32.35126,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Vancouver Mini Maker Faire (2011-2016)
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=49.261226,-123.113927&thumb=0" height="200" width="auto" /><br><br>Vancouver Mini Maker Faire<br>http://makerfaire.ca/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=49.261226,-123.113927&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-123.113927,49.261226,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name></name>
+				<description><![CDATA[Wenatchee Mini Maker Faire (2015)]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-120.31024930000001,47.4251839,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Westport Mini Maker Faire (2012-2016)</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.141472,-73.357905&thumb=0" height="200" width="auto" /><br><br>Westport Mini Maker Faire<br>http://www.westportmakerfaire.org/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.141472,-73.357905&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.357905,41.141472,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Wichita Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Wichita Mini Maker Faire<br>http://makerfairewichita.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-97.33611100000002,37.688889,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Wilson County Mini Maker Faire (2015-2016)</name>
+				<description><![CDATA[Wilson County Mini Maker Faire<br>http://wilsoncountymakerfaire.com/]]></description>
+				<styleUrl>#icon-22</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-98.155804,29.13312,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Columbus, OH</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=39.961176,-82.998794&thumb=0" height="200" width="auto" /><br><br>Columbus Mini Maker Faire (2012-14)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=39.961176,-82.998794&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-82.998794,39.961176,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Dortmund Mini Maker Faire (2014)</name>
+				<description><![CDATA[Dortmund Mini Maker Faire]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>7.465897,51.510025,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Frisco, TX</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=33.150674,-96.823612&thumb=0" height="200" width="auto" /><br><br>Frisco Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=33.150674,-96.823612&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-96.823612,33.150674,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Riverside, CA</name>
+				<description><![CDATA[Inland Empire Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-117.39578199999998,33.951334,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Brooklyn, NY</name>
+				<description><![CDATA[Maimonides Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.944855,40.671785,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Manchester, UK
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=53.479251,-2.247926&thumb=0" height="200" width="auto" /><br><br>Manchester Mini Maker Faire (2012-14)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=53.479251,-2.247926&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-2.247926,53.479251,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Willits, CA</name>
+				<description><![CDATA[Mendocino County Mini Maker Faire (2013-14)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-123.355179,39.408478,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Quebec, Canada
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=45.508670,-73.553992&thumb=0" height="200" width="auto" /><br><br>Montreal Mini Maker Faire (2012, 2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=45.508670,-73.553992&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.55399200000001,45.50867,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Ogaki, Japan</name>
+				<description><![CDATA[Ogaki Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>136.612244,35.357696,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Rogers, AR</name>
+				<description><![CDATA[Rogers Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-94.118156,36.328403,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>San Luis Obispo, CA</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=35.282752,-120.659616&thumb=0" height="200" width="auto" /><br><br>San Luis Obispo MIni Maker Faire (2013, 2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=35.282752,-120.659616&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-120.65961600000001,35.282752,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Tinmouth, VT</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=43.448682,-73.049550&thumb=0" height="200" width="auto" /><br><br>SolarFest Mini Maker Faire (2013-14)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=43.448682,-73.049550&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.04955,43.448682,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Florida
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=28.274347,-82.388578&thumb=0" height="200" width="auto" /><br><br>Tampa Bay Mini Maker Faire, FL (2012, 2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=28.274347,-82.388578&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-82.38857800000001,28.274347000000002,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Miami, FL</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=25.788969,-80.226439&thumb=0" height="200" width="auto" /><br><br>Hamboree Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=25.788969,-80.226439&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-80.226439,25.788969,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Washington, DC</name>
+				<description><![CDATA[DC Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-77.036476,38.903591,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>New Braunfels, TX</name>
+				<description><![CDATA[New Braunfels Mini Maker Faire (2014-2015)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-98.125076,29.700579000000005,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Raleigh, NC</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=35.772096,-78.638614&thumb=0" height="200" width="auto" /><br><br>Maker Faire North Carolina (2010-2015)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=35.772096,-78.638614&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-78.638614,35.772096,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Bethlehem, PA</name>
+				<description><![CDATA[LeHigh Valley Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-75.370674,40.624507,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Tieton, WA</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=46.702068,-120.755350&thumb=0" height="200" width="auto" /><br><br>Tieton Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=46.702068,-120.755350&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-120.75535,46.702068,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Oaxaca, Mexico
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=17.054230,-96.713230&thumb=0" height="200" width="auto" /><br><br>Oaxaca Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=17.054230,-96.713230&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-96.71323,17.05423,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Cambridge, MA</name>
+				<description><![CDATA[MIT Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-71.094214,42.359995,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Canada
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=43.653226,-79.383184&thumb=0" height="200" width="auto" /><br><br>Toronto Mini Maker Faire (2010-14)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=43.653226,-79.383184&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-79.383184,43.653226,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Troy, NY</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=42.728412,-73.691785&thumb=0" height="200" width="auto" /><br><br>Emma Willard Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=42.728412,-73.691785&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.691785,42.728412,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Lewiston, ME (http://maps.google.com/maps/place?ftid=0x4cb26bc49d23a62d:0x40457b708400daf5&amp;q=35+Canal+Street,+Lewiston+ME&amp;hl=en&amp;authuser=0&amp;t=h&amp;cd=1&amp;cad=src:ppiwlink&amp;ei=OE1zT43XO6fCpgTRsKiPDQ&amp;sig2=8FtHpVuNsm9f2DWBPDxebg&amp;dtab=5)
+
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=44.097062,-70.218222&thumb=0" height="200" width="auto" /><br><br>Lewiston-Auburn Mini Maker Faire (2012-14)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=44.097062,-70.218222&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-70.218222,44.097062,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Kentfield, CA 94904
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=37.948535,-122.524698&thumb=0" height="200" width="auto" /><br><br>Greenbrae Mini Maker Faire (2013, 2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=37.948535,-122.524698&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.52469800000001,37.948535,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Danbury, CT</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=41.394817,-73.454011&thumb=0" height="200" width="auto" /><br><br>Danbury Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=41.394817,-73.454011&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.454011,41.394817,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Pasadena, CA
+
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=34.147785,-118.144516&thumb=0" height="200" width="auto" /><br><br>LA County Science Fair (2012, 2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=34.147785,-118.144516&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-118.144516,34.147785,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Willits, CA</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=39.409608,-123.355566&thumb=0" height="200" width="auto" /><br><br>Mendocino Mini Maker Faire (2013-14)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=39.409608,-123.355566&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-123.35556600000001,39.409608,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Chile
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=-33.469120,-70.641997&thumb=0" height="200" width="auto" /><br><br>Santiago Mini Maker Faire (2012, 2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=-33.469120,-70.641997&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-70.641997,-33.46912,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Austin, TX</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=30.508255,-97.678896&thumb=0" height="200" width="auto" /><br><br>Round Rock Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=30.508255,-97.678896&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-97.678896,30.508255,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Santa Rosa, CA</name>
+				<description><![CDATA[Sonoma County Maker Kids Mini Maker Faire (2010-2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.71443100000002,38.440467,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Dublin, Ireland
+</name>
+				<description><![CDATA[Dublin Mini Maker Faire (2012, 2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-6.257347,53.34156,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Norfolk, VA</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=36.850769,-76.285873&thumb=0" height="200" width="auto" /><br><br>Hampton Roads Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=36.850769,-76.285873&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-76.285873,36.850769,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Massachusetts (https://maps.google.com/maps/place?ftid=0x89e377297bf5e165:0x7a907799d8f97b03&amp;q=Somerville,+MA&amp;hl=en&amp;authuser=0&amp;t=h&amp;cd=1&amp;cad=src:ppiwlink&amp;ei=1tyOUPbfE8jhiAKjuoCIAg&amp;sig2=PAdkb3ZUeEoOgXxxLOh7Hw&amp;dtab=5)
+
+</name>
+				<description><![CDATA[Somerville Mini Maker Faire (2012, 2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-71.099497,42.387597,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Trondheim, Norway
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=63.430515,10.395053&thumb=0" height="200" width="auto" /><br><br>Pstereo Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=63.430515,10.395053&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>10.395053,63.430515,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Santa Rosa, CA</name>
+				<description><![CDATA[Santa Rosa Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.71443100000002,38.440467,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Powys, UK
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=52.143087,-3.373682&thumb=0" height="200" width="auto" /><br><br>Machynlleth Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=52.143087,-3.373682&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-3.373682,52.143087,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Urbana, IL</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=40.110588,-88.207270&thumb=0" height="200" width="auto" /><br><br>UC Mini Maker Faire (2011-2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=40.110588,-88.207270&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-88.20727,40.110588,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>The Netherlands
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=53.219384,6.566502&thumb=0" height="200" width="auto" /><br><br>Groningen Mini Maker Faire (2012, 2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=53.219384,6.566502&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>6.566502,53.219384,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Hengelo, The Netherlands
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=52.257412,6.792772&thumb=0" height="200" width="auto" /><br><br>Twente Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=52.257412,6.792772&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>6.792772,52.257412,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Yamaguchi Prefecture, Japan
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=34.185956,131.470649&thumb=0" height="200" width="auto" /><br><br>Yamaguchi Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=34.185956,131.470649&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>131.470649,34.185956,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Ghana
+</name>
+				<description><![CDATA[Accra (Maker Faire Africa 2009)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-0.196306,5.555717,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Boise, ID
+</name>
+				<description><![CDATA[Boise Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-116.211076,43.612631,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Cambridge, MA</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=42.372640,-71.109653&thumb=0" height="200" width="auto" /><br><br>Cambridge Mini Maker Faire (2010-2012)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=42.372640,-71.109653&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-71.109653,42.37264,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Dundee, Dundee City, UK
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=56.462018,-2.970721&thumb=0" height="200" width="auto" /><br><br>Dundee Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=56.462018,-2.970721&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-2.9707210000000006,56.462018,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Evanston, IL (http://maps.google.com/maps/place?ftid=0x880fc926ec437e0b:0xf1caff493a3c26f1&amp;q=Evanston,+IL&amp;hl=en&amp;authuser=0&amp;cad=src:ppiwlink&amp;ei=QgW3Tu7qMZDApQTm4JDPBA&amp;dtab=5)</name>
+				<description><![CDATA[Evanston Mini Maker Faire (2012)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-87.690059,42.041141,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Fishers, IN</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=39.955593,-86.013873&thumb=0" height="200" width="auto" /><br><br>Indy Mini Maker Faire (2011)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=39.955593,-86.013873&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-86.013873,39.955593,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Poulsbo, WA</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=47.735928,-122.646537&thumb=0" height="200" width="auto" /><br><br>Kitsap Mini Maker Faire (2010, 2011)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=47.735928,-122.646537&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-122.646537,47.735928,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Ghana
+</name>
+				<description><![CDATA[Kumasi Mini Maker Faire (2011)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-1.621969,6.687119,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Nigeria
+</name>
+				<description><![CDATA[Lagos (Maker Faire Africa 2012)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>3.395833,6.453056,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Lubbock, TX</name>
+				<description><![CDATA[Lubbock Mini Maker Faire (2012)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-101.855166,33.577863,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Linthicum, MD
+
+
+</name>
+				<description><![CDATA[Mid-Atlantic Mini Maker Faire (2009, 2010)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-76.652746,39.205108,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Minneapolis, MN</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=44.979965,-93.263836&thumb=0" height="200" width="auto" /><br><br>Minne Mini Maker Faire (2011, 2012)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=44.979965,-93.263836&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-93.263836,44.979965,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Kenya
+</name>
+				<description><![CDATA[Nairobi (Maker Faire Africa 2010)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>36.821946,-1.292066,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Norfolk, VA (http://maps.google.com/maps/place?ftid=0x89ba973a5322ca45:0xab99107fce7a1e0a&amp;q=Norfolk,+VA&amp;hl=en&amp;authuser=0&amp;cad=src:ppiwlink&amp;ei=-ga3Tsi0Mp-2oQTFjuDIBA&amp;dtab=5)</name>
+				<description><![CDATA[Norfolk Mini Maker Faire (2012)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-76.285873,36.850769,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Arizona (https://maps.google.com/maps/place?ftid=0x872b12ed50a179cb:0x8c69c7f8354a1bac&amp;q=Phoenix,+az&amp;hl=en&amp;authuser=0&amp;t=h&amp;cd=1&amp;cad=src:ppiwlink&amp;ei=XdyOUPLiEpL9iQKNpIGACA&amp;sig2=gqFXnsPH0oCtQjpZe00Wbw&amp;dtab=5)</name>
+				<description><![CDATA[Phoenix Mini Maker Faire (2011)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-112.074037,33.448377,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Kansas City, MO
+</name>
+				<description><![CDATA[Riverfest Mini Maker Faire (2011)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-94.591599,39.101825,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Victoria, BC  Canada
+</name>
+				<description><![CDATA[<img src="http://cbk0.google.com/cbk?output=thumbnail&w=90&h=68&ll=48.428611,-123.365556&thumb=0" height="200" width="auto" /><br><br>Vancouver Island Mini Maker Faire (2012)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>http://cbk0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=48.428611,-123.365556&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-123.365556,48.428611000000004,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Waterloo, ON Canada
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=43.464258,-80.520410&thumb=0" height="200" width="auto" /><br><br>Waterloo Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=43.464258,-80.520410&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>-80.52041,43.46425800000001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Johannesburg, Gauteng, South Africa</name>
+				<description><![CDATA[Maker Faire Africa 2014]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>28.041229,-26.209663,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Kerkrade, The Netherlands
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=50.865946,6.070549&thumb=0" height="200" width="auto" /><br><br>Kerkrade Mini Maker Faire (2013, 2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=50.865946,6.070549&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>6.070549,50.865946,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Mechelen, Belgium
+</name>
+				<description><![CDATA[<img src="https://cbks0.google.com/cbk?output=thumbnail&w=90&h=68&ll=51.025876,4.477536&thumb=0" height="200" width="auto" /><br><br>Mechelen Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+					<Data name='gx_media_links'>
+						<value>https://cbks0.google.com/cbk?output=thumbnail&amp;w=90&amp;h=68&amp;ll=51.025876,4.477536&amp;thumb=0</value>
+					</Data>
+				</ExtendedData>
+				<Point>
+					<coordinates>4.477536,51.025876,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Vitry-sur-Seine, France</name>
+				<description><![CDATA[Vitry Mini Maker Faire (2014)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>2.398453,48.791542,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Atlanta, GA</name>
+				<description><![CDATA[Turner Mini Maker Faire (2013)]]></description>
+				<styleUrl>#icon-111</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-84.7063467,34.1820376,0.0</coordinates>
+				</Point>
+			</Placemark>
+		</Folder>
+		<Folder>
+			<name>2013/14 Mini Maker Faire applications</name>
+			<Placemark>
+				<name>Radazu, Tenerife, SPAIN</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-16.322443,28.403405,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Sacramento, CA</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-121.493683,38.577695,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Arica and Parinacota Region, Chile</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-70.301514,-18.495238,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Madison, WI</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-89.399872,43.069389,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Mayagüez, Puerto Rico</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-67.145176,18.199348,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Christchurch, Canterbury, New Zealand</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>172.6371,-43.537598,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Minneapolis, MN</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-93.26637300000002,44.981557,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Rockledge, FL</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-80.732174,28.325236,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Maple, Ontario, Canada</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-79.516597,43.855171,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>ST FLORENT SUR CHER, FRANCE</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>2.244644,46.993368,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Centennial, Colorado</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-104.876862,39.582936,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Doha, Qatar ‎</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>51.533775,25.286611,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>La Jolla, California</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-117.27081300000002,32.832,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>La Selva Beach, CA</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-121.864686,36.936618,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Simi Valley, CA</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-118.781433,34.265729,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Waurn ponds, Victoria, Australia</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>144.298382,-38.20379,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>South Bend, IN</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-86.251945,41.676502,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Huntington Beach, CA</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-118.000031,33.658067,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Saint Petersburg, FL</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-82.639847,27.771659,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Rhinebeck, NY</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-73.906746,41.93114500000001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Al Omraneyah, Giza, Egypt ‎</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>31.208382,30.015746999999998,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Tempe, AZ</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-111.940727,33.425711,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Spokane, WA</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-117.42565200000001,47.657988,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Biddeford, ME</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-70.452576,43.492036,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Burlington, Ontario, Canada</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-79.801941,43.328175,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>College Station, TX</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-96.333961,30.626982,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Grove City, Ohio</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-83.092346,39.882869,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Helsingborg, Sweden ‎</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>12.695732,56.046541,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Dehradun	, Uttrakhand, India</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>78.032799,30.317173,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Pawtucket, RI</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-71.383152,41.878892,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Sharon, MA</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-71.180077,42.123692,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>San Diego, California</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-117.163696,32.711044,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Uthaug, Ørland, Norway</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>9.599712,63.72560800000001,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Sao Paulo, Brazil</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-46.63147,-23.548881,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Herndon, VA</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>-77.386065,38.968885,0.0</coordinates>
+				</Point>
+			</Placemark>
+			<Placemark>
+				<name>Athens, Greece</name>
+				<styleUrl>#icon-61-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<Point>
+					<coordinates>23.72961,37.982363,0.0</coordinates>
+				</Point>
+			</Placemark>
+		</Folder>
+		<Folder>
+			<name>2013 Maker Faires</name>
+		</Folder>
+		<Folder>
+			<name>Mini Maker Faires - No Longer Recurring</name>
+		</Folder>
+		<Folder>
+			<name>Mini Maker Faires - Ongoing</name>
+		</Folder>
+		<Folder>
+			<name>School Maker Faires - 2015</name>
+			<Placemark>
+				<name>"Students of Long Island Maker Expo",slimemakerexpo.weebly.com/,NY,11743,USA</name>
+				<styleUrl>#icon-503-DB4436-nodesc</styleUrl>
+				<ExtendedData>
+				</ExtendedData>
+				<address>"Students of Long Island Maker Expo",slimemakerexpo.weebly.com/,NY,11743,USA</address>
+			</Placemark>
+		</Folder>
+		<Style id='icon-111-normal'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/111-purple-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>0.0</scale>
+			</LabelStyle>
+		</Style>
+		<Style id='icon-111-highlight'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/111-purple-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>1.1</scale>
+			</LabelStyle>
+		</Style>
+		<StyleMap id='icon-111'>
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#icon-111-normal</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#icon-111-highlight</styleUrl>
+			</Pair>
+		</StyleMap>
+		<Style id='icon-123-normal'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/123-red-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>0.0</scale>
+			</LabelStyle>
+		</Style>
+		<Style id='icon-123-highlight'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/123-red-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>1.1</scale>
+			</LabelStyle>
+		</Style>
+		<StyleMap id='icon-123'>
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#icon-123-normal</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#icon-123-highlight</styleUrl>
+			</Pair>
+		</StyleMap>
+		<Style id='icon-157-normal'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/157-yellow-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>0.0</scale>
+			</LabelStyle>
+		</Style>
+		<Style id='icon-157-highlight'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/157-yellow-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>1.1</scale>
+			</LabelStyle>
+		</Style>
+		<StyleMap id='icon-157'>
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#icon-157-normal</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#icon-157-highlight</styleUrl>
+			</Pair>
+		</StyleMap>
+		<Style id='icon-22-normal'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/22-blue-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>0.0</scale>
+			</LabelStyle>
+		</Style>
+		<Style id='icon-22-highlight'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/22-blue-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>1.1</scale>
+			</LabelStyle>
+		</Style>
+		<StyleMap id='icon-22'>
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#icon-22-normal</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#icon-22-highlight</styleUrl>
+			</Pair>
+		</StyleMap>
+		<Style id='icon-503-DB4436-nodesc-normal'>
+			<IconStyle>
+				<color>ff3644DB</color>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>0.0</scale>
+			</LabelStyle>
+			<BalloonStyle>
+				<text><![CDATA[<h3>$[name]</h3>]]></text>
+			</BalloonStyle>
+		</Style>
+		<Style id='icon-503-DB4436-nodesc-highlight'>
+			<IconStyle>
+				<color>ff3644DB</color>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>1.1</scale>
+			</LabelStyle>
+			<BalloonStyle>
+				<text><![CDATA[<h3>$[name]</h3>]]></text>
+			</BalloonStyle>
+		</Style>
+		<StyleMap id='icon-503-DB4436-nodesc'>
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#icon-503-DB4436-nodesc-normal</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#icon-503-DB4436-nodesc-highlight</styleUrl>
+			</Pair>
+		</StyleMap>
+		<Style id='icon-61-nodesc-normal'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/61-green-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>0.0</scale>
+			</LabelStyle>
+			<BalloonStyle>
+				<text><![CDATA[<h3>$[name]</h3>]]></text>
+			</BalloonStyle>
+		</Style>
+		<Style id='icon-61-nodesc-highlight'>
+			<IconStyle>
+				<scale>1.1</scale>
+				<Icon>
+					<href>http://www.gstatic.com/mapspro/images/stock/61-green-dot.png</href>
+				</Icon>
+				<hotSpot x='16' y='31' xunits='pixels' yunits='insetPixels'>
+				</hotSpot>
+			</IconStyle>
+			<LabelStyle>
+				<scale>1.1</scale>
+			</LabelStyle>
+			<BalloonStyle>
+				<text><![CDATA[<h3>$[name]</h3>]]></text>
+			</BalloonStyle>
+		</Style>
+		<StyleMap id='icon-61-nodesc'>
+			<Pair>
+				<key>normal</key>
+				<styleUrl>#icon-61-nodesc-normal</styleUrl>
+			</Pair>
+			<Pair>
+				<key>highlight</key>
+				<styleUrl>#icon-61-nodesc-highlight</styleUrl>
+			</Pair>
+		</StyleMap>
+	</Document>
+</kml>
