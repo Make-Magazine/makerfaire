@@ -37,10 +37,10 @@ var FairesGlobalMap = (function() {
     var customMapTypeId = 'custom_style';
     map = new google.maps.Map(document.getElementById('faire-global-map'), {
       center: {
-        lat: -34.397,
-        lng: 150.644
+        lat: 32,
+        lng: -70
       },
-      zoom: 2
+      zoom: 3
     });
     map.mapTypes.set(customMapTypeId, customMapType);
     map.setMapTypeId(customMapTypeId);
@@ -55,22 +55,43 @@ var FairesGlobalMap = (function() {
       //   coords: [1, 1, 1, 20, 18, 20, 18, 1],
       //   type: 'poly'
       // };
-      var marker;
+      var gMarker;
+      var gMarkerIcon;
+      var gMarkerZIndex;
       for (var i = 0; i < data.length; i++) {
-        marker = data[i];
-        marker = new google.maps.Marker({
+        gMarker = data[i];
+        gMarkerIcon = {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 8,
+          fillOpacity: 0.5,
+          strokeOpacity: 0
+        };
+        gMarkerZIndex = 1;
+        switch(gMarker.category) {
+          case 'Featured Faires':
+            gMarkerIcon.fillColor = '#1DAFEC';
+            gMarkerIcon.scale = 9;
+            gMarkerZIndex = 2;
+            break;
+          case 'All Maker Faires':
+            gMarkerIcon.fillColor = '#F2BF70';
+            break;
+          default:
+            gMarkerIcon.fillColor = '#666666';
+        }
+        gMarker = new google.maps.Marker({
           position: {
-            lat: marker.coordinates[0],
-            lng: marker.coordinates[1]
+            lat: gMarker.coordinates[1],
+            lng: gMarker.coordinates[0]
           },
+          icon: gMarkerIcon,
           map: map,
-          // icon: image,
-          // shape: shape,
-          title: marker.description,
-          category: marker.category
-          // zIndex: marker[3]
+          animation: google.maps.Animation.DROP,
+          title: gMarker.description,
+          category: gMarker.category,
+          zIndex: gMarkerZIndex
         });
-        gmarkers1.push(marker);
+        gmarkers1.push(gMarker);
       }
     }
     jQuery(document).ready(function() {
