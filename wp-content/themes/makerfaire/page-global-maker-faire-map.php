@@ -11,6 +11,7 @@
   <div class="col-md-12">
     <h1>Faires around the world</h1>
     <div id="faire-global-map"></div>
+    <div onclick="FairesGlobalMap.filterMarkers('Featured Faires')">button</div>
   </div>
 </div>
 <?php get_footer(); ?>
