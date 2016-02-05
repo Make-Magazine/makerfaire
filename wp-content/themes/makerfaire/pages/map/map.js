@@ -40,21 +40,12 @@ var FairesGlobalMap = (function() {
         lat: 32,
         lng: -70
       },
+      disableDefaultUI: true,
       zoom: 3
     });
     map.mapTypes.set(customMapTypeId, customMapType);
     map.setMapTypeId(customMapTypeId);
     function setMarkers(data, map) {
-      // var image = {
-      //   url: 'images/beachflag.png',
-      //   size: new google.maps.Size(20, 32),
-      //   origin: new google.maps.Point(0, 0),
-      //   anchor: new google.maps.Point(0, 32)
-      // };
-      // var shape = {
-      //   coords: [1, 1, 1, 20, 18, 20, 18, 1],
-      //   type: 'poly'
-      // };
       var gMarker;
       var gMarkerIcon;
       var gMarkerZIndex;
@@ -94,11 +85,9 @@ var FairesGlobalMap = (function() {
         gmarkers1.push(gMarker);
       }
     }
-    jQuery(document).ready(function() {
-      jQuery.get('/wp-admin/admin-ajax.php?action=get_faires_map_data', function(data) {
-        faireMarkers = JSON.parse(data);
-        setMarkers(faireMarkers, map);
-      });
+    jQuery.get('/wp-admin/admin-ajax.php?action=get_faires_map_data', function(data) {
+      faireMarkers = JSON.parse(data);
+      setMarkers(faireMarkers, map);
     });
   }
   function filterMarkers(category) {
