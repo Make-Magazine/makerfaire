@@ -11,7 +11,9 @@
   <div class="col-md-12">
     <h1>Faires around the world</h1>
     <div id="faire-global-map"></div>
-    <div onclick="FairesGlobalMap.filterMarkers('Featured Faires')">button</div>
+    <div class="btn btn-primary" onclick="FairesGlobalMap.filterMarkers('Featured Faires')">Featured Faires</div>
+    <div class="btn btn-primary" onclick="FairesGlobalMap.filterMarkers('All Maker Faires')">All Maker Faires</div>
+    <div class="btn btn-primary" onclick="FairesGlobalMap.filterMarkers('2013/14 Mini Maker Faire applications')">2013/14 Mini Maker Faire applications</div>
   </div>
 </div>
 <?php get_footer(); ?>
