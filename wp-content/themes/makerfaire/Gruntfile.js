@@ -35,8 +35,18 @@ module.exports = function(grunt) {
         }
       },
       dist: {
-        src: ['js/src/misc-libs.js', 'js/src/*.js'],
-        dest: 'js/built.js',
+        files: {
+          'js/built.js': ['js/src/misc-libs.js', 'js/src/*.js'],
+          'js/built-libs.js': [
+            'node_modules/jquery/**/jquery.min.js',
+            'node_modules/bootstrap/**/bootstrap.min.js',
+            'node_modules/bootstrap-dialog/**/bootstrap-dialog.min.js',
+            'node_modules/jquery.cookie/**/jquery-cookie.js',
+            'node_modules/fancybox/**/jquery.fancybox.pack.js',
+            'node_modules/hammerjs/hammer.min.js',
+            'js/libs-src/*.js'
+          ],
+        }
       },
     },
     // uglify js

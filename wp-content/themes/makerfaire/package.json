@@ -10,7 +10,12 @@
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-less": "^1.1.0",
     "grunt-contrib-uglify": "^0.11.0",
-    "grunt-contrib-watch": "^0.6.1"
+    "grunt-contrib-watch": "^0.6.1",
+    "hammerjs": "^2.0.6",
+    "jquery": "^2.2.0",
+    "jquery.cookie": "^1.4.1",
+    "bootstrap-dialog": "^1.34.6",
+    "fancybox": "^3.0.0"
   },
   "author": "Maker Media",
   "license": "UNLICENSED"
