@@ -32,11 +32,12 @@ module.exports = function(grunt) {
         replacements: [{
           from: /Version(.)+(\n)/,
           to: function (matchedWord) {
-            // increment 0.0 version number by 0.01
-            var foo = parseFloat(matchedWord.match(/(\d)\.(\d)/)[0]) + 0.01;
-            return 'Version: ' + foo + '\n';
-            // unix epoch time:
-            // return 'Version: ' + (new Date).getTime() + '\n';
+            // version with increment adding .01 increments:
+            var v = parseFloat(matchedWord.match(/(\d)\.(\d)+/)[0]) + 0.01;
+            v = 'Version: ' + v + '\n';
+            // or version with unix epoch time:
+            // v = 'Version: ' + (new Date).getTime() + '\n';
+            return v;
           }
         }]
       }
