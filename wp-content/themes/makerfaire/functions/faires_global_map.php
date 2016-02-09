@@ -27,14 +27,23 @@ function get_faires_map_data() {
 add_action('wp_ajax_get_faires_map_data', 'get_faires_map_data');
 add_action('wp_ajax_nopriv_get_faires_map_data', 'get_faires_map_data');
 
-// // Enqueue maps JS (only if on maps page)
-// function map_scripts() {
-//   if (is_page('Global Maker Faire Map')) {
-//     wp_enqueue_script(
-//       'angularjs',
-//       TEMPLATEPATH . '/pages/map/map.js'
-//     );
-//   }
-// }
-// add_action( 'wp_enqueue_scripts', 'map_scripts' );
+function faire_maps_scripts() {
+  if (is_page('maps')) {
+    wp_enqueue_script(
+      'faires-global-map-scripts',
+      get_stylesheet_directory_uri() . '/pages/map/map.js',
+      array('angularjs', 'dirPagination')
+    );
+    wp_enqueue_script(
+      'dirPagination',
+      get_stylesheet_directory_uri() . '/js/angular/dirPagination.js',
+      array('angularjs')
+    );
+    wp_enqueue_script(
+      'angularjs',
+      get_stylesheet_directory_uri() . '/js/angular/angular.min.js'
+    );
+  }
+}
+add_action( 'wp_enqueue_scripts', 'faire_maps_scripts' );
 ?>
