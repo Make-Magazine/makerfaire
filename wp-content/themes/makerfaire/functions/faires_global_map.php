@@ -32,11 +32,11 @@ function faire_maps_scripts() {
     wp_enqueue_script(
       'faires-global-map-scripts',
       get_stylesheet_directory_uri() . '/pages/map/map.js',
-      array('angularjs', 'dirPagination')
+      array('angularjs', 'ngTasty')
     );
     wp_enqueue_script(
-      'dirPagination',
-      get_stylesheet_directory_uri() . '/js/angular/dirPagination.js',
+      'ngTasty',
+      get_stylesheet_directory_uri() . '/js/angular/ng-tasty-tpls.min.js',
       array('angularjs')
     );
     wp_enqueue_script(
