@@ -4,7 +4,6 @@ jQuery(function() {
   initBackgroundResize();
   initTouchNav();
   initSameHeight();
-  initInputs();
   initTabs();
   initOpenClose();
   initDropDownClasses();
@@ -42,21 +41,6 @@ function initSameHeight() {
     elements: '.social-holder',
     flexible: true,
     multiLine: true
-  });
-}
-// clear inputs on focus
-function initInputs() {
-  PlaceholderInput.replaceByOptions({
-    // filter options
-    clearInputs: true,
-    clearTextareas: true,
-    clearPasswords: true,
-    skipClass: 'default',
-    // input options
-    wrapWithElement: true,
-    showUntilTyping: true,
-    getParentByClass: 'email-holder',
-    placeholderAttr: 'placeholder'
   });
 }
 // content tabs init

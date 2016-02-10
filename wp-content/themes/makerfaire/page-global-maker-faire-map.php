@@ -11,12 +11,12 @@
       <div class="container">
         <div class="col-md-12">
           <h2>Explore Maker Faires</h2>
-          <!-- <label> -->
-            <input type="text"
-              class="form-control input-sm"
-              placeholder="Location, name or type"
-              ng-model="filters" />
-          <!-- </label> -->
+          <input type="text"
+            class="form-control input-sm"
+            placeholder="Location, name or type"
+            ng-model="filters"
+            ng-model-options="{debounce: 450}"
+            ng-change="map.toggleMapSearch(filters)" />
           <div class="filters">
             <faires-map-filter default-state="true" filter="Featured Faires">Flagship Faires</faires-map-filter>
             <faires-map-filter default-state="true" filter="All Maker Faires">Featured Faires</faires-map-filter>

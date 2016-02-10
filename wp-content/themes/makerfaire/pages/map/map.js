@@ -1,23 +1,28 @@
 var faireMapsApp = angular.module('faireMapsApp', ['ngTasty']);
 
-faireMapsApp.controller('MapCtrl', ['$scope', '$http',
-  function($scope, $http) {
+faireMapsApp.controller('MapCtrl', ['$http', '$rootScope',
+  function($http, $rootScope) {
     'use strict';
     var vm = this;
     $http.get('/wp-admin/admin-ajax.php?action=get_faires_map_data')
       .then(function successCallback(response) {
         vm.faireMarkers = {};
-        vm.faireMarkers.header = [
-          { 'name': 'Name' },
-          { 'category': 'Category' },
-          { 'description': 'Description' }
-        ];
+        vm.faireMarkers.header = [{
+          'name': 'Name'
+        }, {
+          'category': 'Category'
+        }, {
+          'description': 'Description'
+        }];
         vm.faireMarkers.sortBy = 'name';
         vm.faireMarkers.sortOrder = 'asc';
         vm.faireMarkers.rows = response && response.data;
       }, function errorCallback() {
         // error
       });
+    vm.toggleMapSearch = function(text){
+      $rootScope.$emit('toggleMapSearch', text);
+    }
   }
 ]);
 
@@ -42,8 +47,8 @@ faireMapsApp.factory('GMapsInitializer', ['$window', '$q',
   }
 ]);
 
-faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer',
-  function($rootScope, GMapsInitializer) {
+faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer', '$filter',
+  function($rootScope, GMapsInitializer, $filter) {
     'use strict';
     return {
       scope: {
@@ -52,6 +57,7 @@ faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer',
       },
       controller: function($scope) {
         var gmarkers1 = [];
+
         function initMap(mapId) {
           var gMap;
           var customMapType = new google.maps.StyledMapType([{
@@ -93,6 +99,7 @@ faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer',
           });
           gMap.mapTypes.set(customMapTypeId, customMapType);
           gMap.setMapTypeId(customMapTypeId);
+
           function setMarkers(data) {
             var gMarker;
             var gMarkerIcon;
@@ -135,6 +142,7 @@ faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer',
           }
           setMarkers($scope.mapData.rows);
         }
+
         function filterMarkers(category, display) {
           var marker;
           for (var i = 0; i < gmarkers1.length; i++) {
@@ -150,6 +158,20 @@ faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer',
         }
         $rootScope.$on('toggleMapFilter', function(event, args) {
           filterMarkers(args.filter, args.state);
+        });
+        function searchMarkers(text) {
+          var marker;
+          for (var i = 0; i < gmarkers1.length; i++) {
+            marker = gmarkers1[i];
+            if (marker.title && (marker.title).match(text) || marker.category && (marker.category).match(text)) {
+              marker.setVisible(true);
+            } else {
+              marker.setVisible(false);
+            }
+          }
+        }
+        $rootScope.$on('toggleMapSearch', function(event, args) {
+          searchMarkers(args);
         });
         GMapsInitializer.then(function() {
           initMap($scope.mapId);
