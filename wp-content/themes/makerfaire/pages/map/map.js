@@ -167,7 +167,12 @@ faireMapsApp.directive('fairesMapFilter', ['$rootScope',
         filter: '@',
         defaultState: '='
       },
-      template: '<label><input type="checkbox" ng-model="defaultState" ng-click="toggleFilter()" class="btn btn-primary">{{filter}}</label>',
+      transclude: true,
+      template: '<div class="checkbox">' +
+          '<label><input type="checkbox" ng-model="defaultState" ng-click="toggleFilter()">' +
+            '<ng-transclude></ng-transclude>' +
+          '</label>' +
+        '</div>',
       replace: true,
       controller: function($scope) {
         $scope.toggleFilter = function() {
