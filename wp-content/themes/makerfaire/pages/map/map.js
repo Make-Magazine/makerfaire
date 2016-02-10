@@ -20,9 +20,9 @@ faireMapsApp.controller('MapCtrl', ['$http', '$rootScope',
       }, function errorCallback() {
         // error
       });
-    vm.toggleMapSearch = function(text){
+    vm.toggleMapSearch = function(text) {
       $rootScope.$emit('toggleMapSearch', text);
-    }
+    };
   }
 ]);
 
@@ -47,8 +47,8 @@ faireMapsApp.factory('GMapsInitializer', ['$window', '$q',
   }
 ]);
 
-faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer', '$filter',
-  function($rootScope, GMapsInitializer, $filter) {
+faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer',
+  function($rootScope, GMapsInitializer) {
     'use strict';
     return {
       scope: {
@@ -104,6 +104,9 @@ faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer', '$f
             var gMarker;
             var gMarkerIcon;
             var gMarkerZIndex;
+            var infowindow = new google.maps.InfoWindow({
+              content: undefined
+            });
             for (var i = 0; i < data.length; i++) {
               gMarker = data[i];
               gMarkerIcon = {
@@ -133,9 +136,21 @@ faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer', '$f
                 icon: gMarkerIcon,
                 map: gMap,
                 animation: google.maps.Animation.DROP,
-                title: gMarker.description,
+                title: gMarker.name,
+                description: gMarker.description,
                 category: gMarker.category,
                 zIndex: gMarkerZIndex
+              });
+              google.maps.event.addListener(gMarker, 'click', function() {
+                var marker_map = this.getMap();
+                infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
+                  this.title + '</h3>' +
+                  '<div id="bodyContent"><p>' +
+                  (this.description || '') +
+                  '</p></div>' +
+                  '</div>'
+                );
+                infowindow.open(marker_map, this);
               });
               gmarkers1.push(gMarker);
             }
@@ -159,6 +174,7 @@ faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer', '$f
         $rootScope.$on('toggleMapFilter', function(event, args) {
           filterMarkers(args.filter, args.state);
         });
+
         function searchMarkers(text) {
           var marker;
           for (var i = 0; i < gmarkers1.length; i++) {
@@ -191,9 +207,9 @@ faireMapsApp.directive('fairesMapFilter', ['$rootScope',
       },
       transclude: true,
       template: '<div class="checkbox">' +
-          '<label><input type="checkbox" ng-model="defaultState" ng-click="toggleFilter()">' +
-            '<ng-transclude></ng-transclude>' +
-          '</label>' +
+        '<label><input type="checkbox" ng-model="defaultState" ng-click="toggleFilter()">' +
+        '<ng-transclude></ng-transclude>' +
+        '</label>' +
         '</div>',
       replace: true,
       controller: function($scope) {
