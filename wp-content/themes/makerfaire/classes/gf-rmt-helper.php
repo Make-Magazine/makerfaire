@@ -470,8 +470,8 @@ class GFJDBHELPER {
       //  Field ID 344 - Requested space size length and
       //  Field ID 345 - Requested space size width
       $attribute[] = array($attributeID['SPACESIZE'],$entryData['345'].' X '.$entryData['344'],$entryData['booth_size_details']);
-      if($entryData['booth_size_details']!='')
-        $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size'],$entryData['booth_size_details']);
+    }else{
+      $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size'],$entryData['booth_size_details']);
     }
 
     /*  Field ID 69 (Exposure) = loctype */
