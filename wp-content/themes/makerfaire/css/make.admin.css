@@ -3,18 +3,21 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 */
-/* 
+/*
     Created on : Jun 22, 2015, 2:24:08 PM
     Author     : aliciawilliams
 */
-
+/*bootstrap css is overlaying the html defined background for wp-admin.  this will overlay the bootstrap background*/
+body.wp-admin {
+    background-color: #f1f1f1;
+}
 /*form 25 field 321 styling*/
 ul#input_321 li{width:50%;float:left;}
 
 .standoutParent{background-color: #FF8080;
   }
 .entryStandout, .entryStandout ul li {
- 
+
 }
 .entry-view-collapse{background-color:#ccc}
 .entry-view-collapse span {display:block; width:100%}
@@ -75,7 +78,7 @@ ul#input_321 li{width:50%;float:left;}
 
 
 /* Navigation */
-#faire_nav{ 
+#faire_nav{
   background-color: white;
   width: 100%;
   display: inline-block;
@@ -91,11 +94,11 @@ ul li.gf_form_switcher{top:-47px}
 		-webkit-transition: .5s;
 		transition: .5s;*/
 	}
-	
+
 	#faire_nav ul li {
                 padding: 10px 6px;
         }
-        
+
         #faire_nav li{
 		float: left;
 		position: relative;
@@ -103,18 +106,18 @@ ul li.gf_form_switcher{top:-47px}
 		list-style: none;
 		/*-webkit-transition: .5s;
 		transition: .5s;*/
-                margin: 0;                
+                margin: 0;
 	}
 	#faire_nav ul li ul li {width:260px}
         #faire_nav ul li ul li ul li{width:150px}
 	#faire_nav > ul > li > a, h1 {
-		
+
 	}
-	
+
 	#faire_nav a {
 		display: block;
 		text-decoration: none;
-		
+
 		color: #000;
 	}
 
@@ -125,55 +128,55 @@ ul li.gf_form_switcher{top:-47px}
 		visibility: hidden;
 		opacity: 0;
 	}
-	
+
 	#faire_nav ul ul ul {
 		left: 100%;
 		top: 0;
 	}
-	
+
 	#faire_nav li:hover, #faire_nav li:hover li {
 		background: #ddd;
 	}
-	
+
 	#faire_nav li li:hover, #faire_nav li li:hover li {
 		background: #bbb;
 	}
-	
+
 	#faire_nav li li li:hover {
 		background: #999;
 	}
-	
+
 	#faire_nav li:hover > ul {
 		visibility: visible;
 		opacity: 1;
 	}
-        
+
         #faire_nav li a:after {
-            width: 0; 
-            height: 0; 
+            width: 0;
+            height: 0;
             content: "";
             position: absolute;
             top: 18px;
             right: 8px;
-            border-top: 4px solid rgba(0, 0, 0, 1);     
+            border-top: 4px solid rgba(0, 0, 0, 1);
             border-left: 4px solid transparent;
             border-right: 4px solid transparent;
         }
 
         #faire_nav li li a:after{
-            width: 0; 
-            height: 0; 
+            width: 0;
+            height: 0;
             border-top: 4px solid transparent;
             border-bottom: 4px solid transparent;
 
             border-left: 4px solid rgba(0, 0, 0, 1);
-            
+
         }
         #faire_nav li > a:only-child:after
         {
             content: '';
             border:0;
-        }   
+        }
     /* Entry List filters */
     #entry_filters{float:right}
         .title{margin-top: 10px;font-weight: bold;}
@@ -187,18 +190,18 @@ ul li.gf_form_switcher{top:-47px}
             outline: 0;
             -webkit-transition: .05s border-color ease-in-out;
             transition: .05s border-color ease-in-out;
-        }     
-        .appliedFilters tr{        
+        }
+        .appliedFilters tr{
             border: 1px solid #ddd;
         }
-        
+
         ul#gf_form_toolbar_links .gf_form_toolbar_preview,
         ul#gf_form_toolbar_links .gf_form_toolbar_entries{display:none}
         div ul#gf_form_toolbar_links{border:0}
-        
+
     /*hide the form switcher for the new makerfaire custom detail view page*/
     div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher{display:none}
-    
+
 .button.redbutton,.button.redbutton:hover{
   width: auto;
   background-color: #D54E21;
@@ -216,3 +219,15 @@ ul li.gf_form_switcher{top:-47px}
 .expand:after{content:'+';float:right;}
 .gf_left_half{float: left;width: 45.5%;clear:left}
 .gf_right_half{float: right;width: 45.5%;}
+
+.entry-resource {
+  border-radius:5px;width:90%;display:block;border:thin solid grey;overflow:scroll;
+}
+.entry-resource .panel-heading.active-state {background-color: lightblue;}
+.entry-resource .panel-heading h4 {font-size: 30px;}
+.entry-resource .panel-group{margin-bottom:0px;}
+.entry-resource .panel-body {padding:0;border-top:none}
+
+.entry-resource table{width:101%}/* If I don't make this 101% the table is 1 px smaller than the available area'*/
+.entry-resource th {background-color: lightgrey;}
+.entry-resource th,.entry-resource td {padding:16px 5px;}

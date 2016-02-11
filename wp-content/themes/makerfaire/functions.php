@@ -53,7 +53,7 @@ include_once TEMPLATEPATH. '/classes/gf-entry-notifications.php';
 //include_once TEMPLATEPATH. '/classes/gf-entry-datatables.php';
 include_once TEMPLATEPATH. '/classes/gf-helper.php';
 include_once TEMPLATEPATH. '/classes/makerfaire-helper.php';
-include_once TEMPLATEPATH. '/classes/gf-jdb-helper.php';
+include_once TEMPLATEPATH. '/classes/gf-rmt-helper.php';
 include_once TEMPLATEPATH. '/classes/mf-sharing-cards.php';
 if (!defined('LOCAL_DEV_ENVIRONMENT') || !LOCAL_DEV_ENVIRONMENT) {
   include_once TEMPLATEPATH. '/classes/mf-login.php';
@@ -136,8 +136,12 @@ function enqueue_custom_script( $form, $is_ajax ) {
 }
 
 function load_admin_scripts() {
+  //scripts
   wp_enqueue_script('make-gravityforms-admin',  get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'));
   wp_enqueue_script( 'jquery-datetimepicker',  get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array( 'jquery' ), null );
+  wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/libs/bootstrap.min.js', array( 'jquery' ) );
+  //styles
+  wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css' );
   wp_enqueue_style('jquery-datetimepicker-css',  get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
   wp_enqueue_style('made-admin-style',  get_stylesheet_directory_uri() . '/css/make.admin.css');
 }
@@ -2208,7 +2212,7 @@ function GVupdate_notification($form,$entry_id,$orig_entry){
         }
 
         $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel) values " .$inserts;
- 
+
         global $wpdb;
         $wpdb->get_results($sql);
     }
@@ -2234,3 +2238,52 @@ function checkForRibbons($postID=0,$entryID=0){
     }
     return $return;
 }
+
+//entry resource and entry attribute update AJAX
+function update_entry_resatt() {
+  global $wpdb;
+  $ID        = $_POST['ID'];
+  $table     = $_POST['table'];
+
+  if($ID==0){ //add new record
+    $insertArr = $_POST['insertArr'];
+    foreach($insertArr as $key=>$value){
+      $fields[] =$key;
+      $values[] =$value;
+    }
+      $sql = "insert into ".$table.' ('.implode(',',$fields).') VALUES ("'.implode('","',$values).'")';
+  }else{ //update existing record
+    $newValue  = $_POST['newValue'];
+    $fieldName = $_POST['fieldName'];
+
+    $sql = "update ".$table.' set '.$fieldName .'="'.$newValue.'" where ID='.$ID;
+  }
+
+  $wpdb->get_results($sql);
+  //return the ID
+  if($ID==0)  $ID = $wpdb->insert_id;
+  $response = array('message'=>'Saved','ID'=>$ID);
+  wp_send_json( $response );
+
+  // IMPORTANT: don't forget to "exit"
+  exit;
+}
+
+add_action( 'wp_ajax_update-entry-resAtt', 'update_entry_resatt' );
+
+//entry resource and entry attribute delete AJAX
+function delete_entry_resatt() {
+  global $wpdb;
+  $table = (isset($_POST['table']) ? $_POST['table']:'');
+  $ID    = (isset($_POST['ID'])    ? $_POST['ID']:0);
+  $response = array('table'=>$table,'ID'=>$ID);
+  if($ID != 0 && $table != ''){
+    $sql = "DELETE from ".$table ." where ID =".$ID;
+    $wpdb->get_results($sql);
+    $response = array('message'=>'Deleted','ID'=>$ID);
+  }
+  wp_send_json( $response );
+  // IMPORTANT: don't forget to "exit"
+  exit;
+}
+add_action( 'wp_ajax_delete-entry-resAtt', 'delete_entry_resatt' );

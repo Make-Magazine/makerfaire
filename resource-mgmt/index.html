@@ -13,23 +13,23 @@
   <link href="node_modules/angular-ui-grid/ui-grid.css" rel="stylesheet">
   <!-- Script -->
   <script src="../wp-includes/js/jquery/jquery.js"></script>
-  <script src="../wp-content/themes/makerfaire/js/libs/bootstrap.min.js"></script>
+  <!--<script src="../wp-content/themes/makerfaire/js/libs/bootstrap.min.js"></script>-->
   <script src="../wp-content/themes/makerfaire/js/angular/angular.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
   <script src="node_modules/angular-route/angular-route.min.js"></script>
   <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
   <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
   <script src="node_modules/ng-csv/build/ng-csv.js"></script>
-
+  <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
   <style>
   .nav-list>li>a, .nav-list .nav-header {
-    margin-left: -15px;
-    margin-right: -15px;
+    margin-left: -10px;
+    margin-right: -10px;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .nav-header {
     display: block;
-    padding: 3px 15px;
+    padding: 3px 10px;
     font-size: 11px;
     font-weight: bold;
     line-height: 20px;
@@ -38,8 +38,8 @@
     text-transform: uppercase;
 }
 .nav-list {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
     margin-bottom: 0;
 }
 .nav {
@@ -51,8 +51,8 @@
     padding: 3px 0;
 }
 .nav-list>li>a, .nav-list .nav-header {
-    margin-left: -15px;
-    margin-right: -15px;
+    margin-left: -10px;
+    margin-right: -10px;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .nav>li>a {
@@ -108,6 +108,7 @@ a {
   display: table-cell;
   vertical-align: middle;
 }
+.well{padding:19px 5px;}
   </style>
 </head>
 <body>
@@ -122,11 +123,9 @@ a {
         <div>
           <ul class="nav nav-list">
             <li><label class="tree-toggle nav-header">Resources</label>
-
               <ul class="nav nav-list tree">
                 <li><a href="#resources/list">List</a></li>
-                <li><a href="#resources/categories">Categories</a></li>
-                <li><a href="#resources/attributes">Attributes</a></li>
+                <li><a href="#resources/items">Items</a></li>
               </ul>
             </li>
             <li><label class="tree-toggle nav-header">Vendors</label>
@@ -138,16 +137,22 @@ a {
             <li><label class="tree-toggle nav-header">Faires</label>
               <ul class="nav nav-list tree">
                 <li><a href="#faire/data">Faire Data</a></li>
-                <li><a href="#faire/orders">Orders</a></li>
                 <li><a href="#faire/areas">Areas</a></li>
                 <li><a href="#faire/subareas">Sub-Areas</a></li>
+              </ul>
+            </li>
+            <li><label class="tree-toggle nav-header">Entry</label>
+              <ul class="nav nav-list tree">
+                <li><a href="#entry/atttibuteCategories">Attributes</a></li>
+                <li><a href="#entry/workflow">Workflow</a></li>
+                <li><a href="#entry">Entry Resources</a></li>
               </ul>
             </li>
           </ul>
         </div>
       </div>
     </div>
-    <div data-ng-app="resourceApp" class="col-xs-10 col-sm-10 col-md-10 col-lg-10 ng-scope" >
+    <div ng-app="resourceApp" class="col-xs-10 col-sm-10 col-md-10 col-lg-10 ng-scope" >
       <div ng-view></div>
     </div>
   </div>

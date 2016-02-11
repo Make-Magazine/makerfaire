@@ -3,14 +3,64 @@
 ajax to populate resource management table and apply insert, edit and delete logic
 */
 require_once 'config.php';
+$tableOptions = array();
+//single foreign key
+$tableOptions['wp_rmt_resources'] = array(
+        array('fkey'             => 'resource_category_id',
+              'referenceTable'   => 'wp_rmt_resource_categories',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'category')
+        );
+//multiple foreign keys
+$tableOptions['wp_rmt_vendor_resources'] = array(
+        array('fkey'             => 'vendor_id',
+              'referenceTable'   => 'wp_rmt_vendors',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'company_name'),
+        array('fkey'             => 'resource_id',
+              'referenceTable'   => 'wp_rmt_resources',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'item')
+        );
+$tableOptions['wp_rmt_vendor_orders'] = array(
+        array('fkey'             => 'vendor_resource_id',
+              'referenceTable'   => 'wp_rmt_vendor_resources',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'ID'),
+        array('fkey'             => 'faire_id',
+              'referenceTable'   => 'wp_mf_faire',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'faire')
+        );
+$tableOptions['wp_mf_faire_area']   = array(
+        array('fkey'             => 'faire_id',
+              'referenceTable'   => 'wp_mf_faire',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'faire')
+        );
+$tableOptions['wp_mf_faire_subarea']   = array(
+        array('fkey'             => 'area_id',
+              'referenceTable'   => 'wp_mf_faire_area',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'area')
+        );
+$tableOptions['wp_rmt_entry_attributes']   = array(
+        array('fkey'             => 'attribute_id',
+              'referenceTable'   => 'wp_rmt_entry_att_categories',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'category')
+        );
+$tableOptions['wp_rmt_entry_resources']   = array(
+        array('fkey'             => 'resource_id',
+              'referenceTable'   => 'wp_rmt_resources',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'type')
+        );
 
 if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
 	$type = $_POST['type'];
 
 	switch ($type) {
-		case "save_data":
-			save_user($mysqli, $_POST['table']);
-			break;
 		case "deleteData":
 			deleteData($mysqli,$_POST['table'],$_POST['pKeyField'], $_POST['id']);
 			break;
@@ -23,6 +73,10 @@ if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
     case "insertData":
     case "updateData":
       save_data($mysqli, $_POST['table'], $_POST['data'],$_POST['pKeyField']);
+      break;
+    case "entryData":
+//      getTableData($mysqli, 'wp_rmt_entry_resources');
+      entryData();
       break;
 		default:
 			invalidRequest();
@@ -148,6 +202,87 @@ function getTables($mysqli){
 	}
 }
 
+//retrieve entry tables - resources, resource cat, entry attributes, entry workflow
+/*
+ * Need to return column defs with entry2Resource ID, Item(Category), Type, Comments, add/delete scope buttons, based on entry ID passed
+ */
+function entryData(){
+  global $mysqli; global $tableOptions;
+  $entryID = (isset($_POST['entryID'])?$_POST['entryID']:0);
+  $data = array();
+
+  //gather resource data
+  $sql = "SELECT er.*, res.resource_category_id from `wp_rmt_entry_resources` er, wp_rmt_resources res where er.resource_id = res.ID ";
+  if($entryID!=0) $sql .=" and er.entry_id = ".$entryID;
+  $result = $mysqli->query( $sql );
+
+  //create array of table data
+  while ($row = $result->fetch_assoc()) {
+    $data['resource']['gridData'][] = $row;
+  }
+
+  //now let's build the column defs item, type, amount(value), comments, add/delete buttons
+  $tables = array('wp_rmt_resources',  //build type drop down
+                  'wp_rmt_entry_resources'); //build item/category drop down
+  $fkeyData = array();
+  foreach($tables as $table){
+    if(isset($tableOptions[$table])){
+      if(is_array($tableOptions[$table])){
+        foreach($tableOptions[$table] as $forKeyData){
+          $fkeyData[$table] = getFkeyData($forKeyData);
+        }
+      }
+    }
+  }
+  $addTemplate    = '<span ng-click="grid.appScope.entry.addNew()"><i class="fa fa-plus-circle"></i></span>';
+  $removeTemplate = '<span ng-click="grid.appScope.entry.remove(row)"><i class="fa fa-minus-circle"></i></span>';
+
+  $data['resource']['columnDefs'] = array(
+      array('field'=> 'entry_id','displayName'=>'Entry ID','enableCellEdit'=>false),
+      array('field'=> 'resource_category_id','displayName'=>'Item','enableCellEdit'=>true,
+            'editableCellTemplate'=>'ui-grid/dropdownEditor',
+            'editDropdownValueLabel'=> 'fkey', 'editDropdownIdLabel'=>'id','cellFilter'=> 'griddropdown:this',
+            'editDropdownOptionsArray'=>$fkeyData['wp_rmt_resources'][0]),
+      array('field'=> 'resource_id', 'displayName' => 'Type', 'enableCellEdit' => true,
+            'editableCellTemplate' => 'ui-grid/dropdownEditor',
+            'editDropdownValueLabel'=> 'fkey', 'editDropdownIdLabel'=>'id','cellFilter'=> 'griddropdown:this',
+            'editDropdownOptionsArray'=>$fkeyData['wp_rmt_entry_resources'][0]
+          ),
+      array('field'=> 'qty','width'=>"100",'displayName'=>'Value','enableCellEdit'=>true),
+      array('field'=> 'comment','displayName'=>'Comments','width'=>'30%'),
+      array('field'=> 'controls','width'=>"5%",'headerCellTemplate'=>$addTemplate,'cellTemplate'=>$removeTemplate,'enableCellEdit'=>false)
+      );
+
+  //build type dropdown array
+  //structure type
+  $sql = "SELECT rc.ID as category_id, rc.category, res.ID as resource_ID, res.type FROM wp_rmt_resource_categories rc, `wp_rmt_resources` res where res.resource_category_id=rc.ID order by rc.category";
+  $result = $mysqli->query( $sql );
+
+  //create array of table data
+  while ($row = $result->fetch_assoc()) {
+    $data['resource']['typeSelect'][$row['category_id']][] = array('id'=>$row['resource_ID'],'fkey'=>$row['type']);
+  }
+
+  //build attribute data
+  //get table setup
+  $columnDefs = defTableInfo($table);
+  $data['attribute']['columnDefs'] = $columnDefs[0];
+  $pkey = $columnDefs[1];
+
+  //get table data
+  $query = "select * from ".$table;
+
+  $result = $mysqli->query( $query );
+  //create array of table data
+  while ($row = $result->fetch_assoc()) {
+    $data['attribute']['gridData'][]= $row;
+  }
+
+
+  //return data
+  echo json_encode($data);exit;
+}
+
 //return field names and table data of requested db table
 function getTableData($mysqli,$table){
   if($table!=''){
@@ -190,47 +325,7 @@ function invalidRequest()
 
 function defTableInfo($table){
   global $mysqli;
-  $tableOptions = array();
-  //single foreign key
-  $tableOptions['wp_rmt_resources'] = array(
-          array('fkey'             => 'resource_category_id',
-                'referenceTable'   => 'wp_rmt_resource_categories',
-                'referenceField'   => 'ID',
-                'referenceDisplay' => 'category')
-          );
-  //multiple foreign keys
-  $tableOptions['wp_rmt_vendor_resources'] = array(
-          array('fkey'             => 'vendor_id',
-                'referenceTable'   => 'wp_rmt_vendors',
-                'referenceField'   => 'ID',
-                'referenceDisplay' => 'company_name'),
-          array('fkey'             => 'resource_id',
-                'referenceTable'   => 'wp_rmt_resources',
-                'referenceField'   => 'ID',
-                'referenceDisplay' => 'item')
-          );
-  $tableOptions['wp_rmt_vendor_orders'] = array(
-          array('fkey'             => 'vendor_resource_id',
-                'referenceTable'   => 'wp_rmt_vendor_resources',
-                'referenceField'   => 'ID',
-                'referenceDisplay' => 'ID'),
-          array('fkey'             => 'faire_id',
-                'referenceTable'   => 'wp_mf_faire',
-                'referenceField'   => 'ID',
-                'referenceDisplay' => 'faire')
-          );
-  $tableOptions['wp_mf_faire_area']   = array(
-          array('fkey'             => 'faire_id',
-                'referenceTable'   => 'wp_mf_faire',
-                'referenceField'   => 'ID',
-                'referenceDisplay' => 'faire')
-          );
-  $tableOptions['wp_mf_faire_subarea']   = array(
-          array('fkey'             => 'area_id',
-                'referenceTable'   => 'wp_mf_faire_area',
-                'referenceField'   => 'ID',
-                'referenceDisplay' => 'area')
-          );
+  global $tableOptions;
   $fkey='';
   //does this table have foreign key drop downs that need to be set?
   if(isset($tableOptions[$table])){
@@ -264,7 +359,6 @@ function defTableInfo($table){
     }
     //foreign key's have a different setup
     if(isset($fkeyData[$row['Field']])){ //is this the foreign key?
-    //if($fkey == $row['Field']){ //is this the foreign key?
       $selectOptions = $fkeyData[$row['Field']][1];
       $options       = $fkeyData[$row['Field']][0];
       $columnDefs[] = array('name'            => $row['Field'],
@@ -278,11 +372,15 @@ function defTableInfo($table){
                             'cellFilter'=> 'griddropdown:this',
                             'editDropdownOptionsArray'=>$options);
     }else{
+      //tbd need to find a formatting that will work with a datetime field
+      //date type does not save correctly in the database
       if($row['Type']=='datetime'){
-        $cellFilter = 'date:"yyyy-MM-dd\"';
+        $type = "date";
+      }else{
+        $type = 'string';
       }
       $columnDefs[] = array('name'            => $row['Field'],
-                             'displayName'     => (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']),
+                            'displayName'     => (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']),
                             'enableCellEdit'  => $enableCellEdit,
                             'enableFiltering' => $enableFiltering,
                             'width'           => $width,

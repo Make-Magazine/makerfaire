@@ -19,15 +19,15 @@ class GFJDBHELPER {
 		$remote_post_url = 'http://db.makerfaire.com/addExhibitNote';
 		if ( isset( $_SERVER['HTTP_HOST'] ) && in_array( $_SERVER['HTTP_HOST'], $local_server ) )
 			$remote_post_url= 'http://makerfaire.local/wp-content/allpostdata.php';
-		$encoded_array = http_build_query(  
-				array( 'CS_ID' => intval( $id ), 
-						'note_id' => intval( $noteid ), 
-						'note' => esc_attr( $note ), 
-						'author' => esc_attr($note_username), 
+		$encoded_array = http_build_query(
+				array( 'CS_ID' => intval( $id ),
+						'note_id' => intval( $noteid ),
+						'note' => esc_attr( $note ),
+						'author' => esc_attr($note_username),
 						'date_posted' => esc_attr(date("Y-m-d H:i:s", strtotime($note_datecreated)))
 				)
 		);
-	
+
 		$post_body = array(
 				'method' => 'POST',
 				'timeout' => 45,
@@ -35,18 +35,18 @@ class GFJDBHELPER {
 				'body' => $encoded_array);
 		$res  = wp_remote_post( $remote_post_url, $post_body  );
 		$er  = 0;
-	
+
 		if ( 200 == $res['response']['code'] ) {
 			$body = json_decode( $res['body'] );
 			if ( 'ERROR' != $body->status ) {
 				$er = time();
 			}
 			gform_update_meta( $id, 'mf_jdb_note_sync', $body );
-	
+
 		}
 		return $er;
 	}
-	
+
 	public static function gravityforms_send_entry_to_jdb ($id)
 	{
 		$mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
@@ -73,7 +73,7 @@ class GFJDBHELPER {
 		};
 
 	}
-	
+
 	public static function gravityforms_send_record_to_jdb($entry_id, $jdb_encoded_record) {
 		$local_server = array (
 				'localhost',
@@ -84,14 +84,14 @@ class GFJDBHELPER {
 		$remote_post_url = 'http://db.makerfaire.com/updateExhibitInfo';
 		if (isset ( $_SERVER ['HTTP_HOST'] ) && in_array ( $_SERVER ['HTTP_HOST'], $local_server ))
 			$remote_post_url = 'http://makerfaire.local/wp-content/allpostdata.php';
-	
+
 		$post_body = array (
 				'method' => 'POST',
 				'timeout' => 45,
 				'headers' => array (),
 				'body' => $jdb_encoded_record
 		);
-	
+
 		$res = wp_remote_post ( $remote_post_url, $post_body );
 		if (200 == wp_remote_retrieve_response_code ( $res )) {
 			$body = json_decode ( $res ['body'] );
@@ -102,7 +102,7 @@ class GFJDBHELPER {
 			}
 		}
 		else 	gform_update_meta ( $entry_id, 'mf_jdb_sync', 'fail' );
-			
+
 		return ($res ['body']);
 	}
 	/*
@@ -244,6 +244,11 @@ class GFJDBHELPER {
 				'waste' => (isset($lead['317']) && $lead['317'] == "Yes") ?  'YES' : 'NO',
 				'waste_detail' => isset($lead['318']) ? $lead['318']  : '',
 				'learn_to' => isset($lead['319']) ? $lead['319']  : '',
+        'numTables'  => isset($lead['347']) ? $lead['347']  : 0,
+        'numChairs'  => isset($lead['348']) ? $lead['348']  : 0,
+        '344'        => isset($lead['344']) ? $lead['344']  : 0,
+        '345'        => isset($lead['345']) ? $lead['345']  : 0,
+        '81'         => isset($lead['81'])  ? $lead['81']   : '',
 				//'m_maker_name' => isset($lead['96']) ? $lead['96']  : '',
 				//'maker_email' => isset($lead['161']) ? $lead['161']  : '',
 				//'presentation' => isset($lead['No']) ? $lead['999']  : '', //(No match)
@@ -255,7 +260,8 @@ class GFJDBHELPER {
 				//'large_non_profit' => isset($lead['I am a large non-profit.']) ? $lead['999']  : '',// (No Match)
 				//'m_maker_bio' => $lead[' (Depends on Contact vs. Maker issue?)'],
 		);
-
+    //build rmt tables
+    self::buildRmtData($jdb_entry_data);
 		return $jdb_entry_data;
 
 
@@ -294,15 +300,15 @@ class GFJDBHELPER {
 		if ($mysqli->connect_errno) {
 			echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 		}
-	
+
 		$result = $mysqli->query ( 'SELECT value,id,user_name,date_created FROM wp_rg_lead_notes where lead_id=' . $entry_id . '' );
-	
+
 		while ( $row = $result->fetch_row () ) {
 			$results_on_send = self::gravityforms_send_note_to_jdb ( $entry_id, $row[1], $row [0], $row [2], $row[3] );
 		}
 	}
-	
-	
+
+
 	/*
 	 * Sync MakerFaire Application Statuses
 	*
@@ -316,7 +322,7 @@ class GFJDBHELPER {
 		if ( isset( $_SERVER['HTTP_HOST'] ) && in_array( $_SERVER['HTTP_HOST'], $local_server ) )
 			$remote_post_url= 'http://makerfaire.local/wp-content/allpostdata.php';
 		$encoded_array = http_build_query(  array( 'CS_ID' => intval( $id ), 'status' => esc_attr( $status )));
-	
+
 		$post_body = array(
 				'method' => 'POST',
 				'timeout' => 45,
@@ -325,7 +331,7 @@ class GFJDBHELPER {
 		print_r($encoded_array);
 		$res  = wp_remote_post( $remote_post_url, $post_body  );
 		$er  = 0;
-	
+
 		if ( 200 == $res['response']['code'] ) {
 			$body = json_decode( $res['body'] );
 			if ( 'ERROR' != $body->status ) {
@@ -334,14 +340,14 @@ class GFJDBHELPER {
 		}
 		self::gravityforms_sync_all_entry_notes($id);
 		gform_update_meta( $id, 'mf_jdb_status_sync', $er );
-	
+
 		return $er;
 	}
-	
+
 	public static function gravityforms_form_type_jdb($formid = 0)
 	{
 		$return_formtype = 'Other';
-		
+
 		switch ($formid) {
 			case 20:
 			case 22:
@@ -367,8 +373,156 @@ class GFJDBHELPER {
 				$return_formtype = 'Other';
 				break;
 		}
-		
+
 		return $return_formtype;
 	}
-	
+
+  public static function buildRmtData($entryData){
+    global $wpdb;
+    $resourceID  = array();
+    $attributeID = array();
+
+    /*
+     *  E N T R Y   R E S O U R C E S   M A P P I N G
+     *
+     *   build list of resource ID's and tokens
+     */
+    $sql = "select ID,token from wp_rmt_resources";
+    foreach($wpdb->get_results($sql) as $row){
+      $resourceID[$row->token] = $row->ID;
+    }
+    /* build list of attribute ID's and tokens */
+    $sql = "select ID,token from wp_rmt_entry_att_categories";
+    foreach($wpdb->get_results($sql) as $row){
+      $attributeID[$row->token] = $row->ID;
+    }
+    //resource ID's are set based on token
+    /* Resource Mapping */
+    $resource = array();
+    /*  Field ID 62 = tables_chairs */
+    if($entryData['tables_chairs'] == '1 table and 2 chairs'){
+      $resource[] = array($resourceID['TBL_8x30'],1,'');
+      $resource[] = array($resourceID['CH_FLD'],2,'');
+    }elseif($entryData['tables_chairs'] == 'More than 1 table and 2 chairs. List specific number of tables and chairs below.'){
+      // [ > go to Field ID 347 & 348]
+      /*  Field ID 347 not mapped (Number of Tables)
+       *  Field ID 348 not mapped (Number of Chairs) */
+      $resource[] = array($resourceID['TBL_8x30'],$entryData['numTables'],'');
+      $resource[] = array($resourceID['CH_FLD'],$entryData['numChairs'],'');
+    }
+    /*  Field ID 73 = power */
+    if($entryData['power'] == 'Yes'){
+      /*  Field ID 75 = amps  */
+      /*  Field ID 74 - what_are_you_powering */
+      if($entryData['amps'] == '5 amps (0-500 watts, 120V)'){
+        $resource[] = array($resourceID['120V-05A'],1,'');
+      }elseif($entryData['amps'] == '10 amps (501-1000 watts, 120V)'){
+        $resource[] = array($resourceID['120V-10A'],1,'');
+      }elseif($entryData['amps'] == '15 amps (1001-1500 watts, 120V)'){
+        $resource[] = array($resourceID['120V-15A'],1,'');
+      }elseif($entryData['amps'] == '20 amps (1501-2000 watts, 120V)'){
+        $resource[] = array($resourceID['120V-20A'],1,);
+      }elseif($entryData['amps'] == '30 amps (2000-3000 watts, 120V)'){
+        $resource[] = array($resourceID['120V-30A'],1,'');
+      }elseif($entryData['amps'] == '50 amps (3001-5000 watts, 120V)'){
+        $resource[] = array($resourceID['120V-50A'],1,'');
+      }else{
+        //Other. Power request specified in the Special Power Requirements box
+        //[go to Field ID 76]
+        /* Field ID 76 = amps_details (textarea) */
+        //what resource should i use??
+      }
+    }
+
+    /*
+     * E N T R Y   A T T R I B U T E   M A P P I N G
+     *
+     *    build list of resource ID's and tokens
+     */
+    $attribute = array();
+
+    if($entryData['what_are_you_powering']!=''){
+      $attribute[] = array($attributeID['ELECPOW'], $entryData['what_are_you_powering']);
+    }
+    if($entryData['amps_details']!=''){
+      $attribute[] = array($attributeID['ELEC_SPECL'], $entryData['amps_details']);
+    }
+    /*  Field ID 64 = special_request (textarea)*/
+    if($entryData['special_request']!=''){
+      $attribute[] = array($attributeID['SPECL'],$entryData['special_request']);
+    }
+    /*  Field ID 83 = fire
+     *  Field ID 85 = safety_details
+     */
+    if($entryData['fire'] == 'Yes'){
+      $attribute[] = array($attributeID['FIRE'],$entryData['safety_details']);
+    }
+    /*  Field ID 60 = booth_size
+     *  Field ID 61 = booth_size_details
+     */
+    if($entryData['booth_size'] == "Other"){ //concatenate field ID 345 x field ID 344
+      //  Field ID 344 - Requested space size length and
+      //  Field ID 345 - Requested space size width
+      $attribute[] = array($attributeID['SPACESIZE'],$entryData['345'].' X '.$entryData['344']);
+      if($entryData['booth_size_details']!='')
+        $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size_details']);
+    }elseif( $entryData['booth_size'] != ''){
+      $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size']);
+      if($entryData['booth_size_details']!='')
+        $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size_details']);
+    }
+
+    /*  Field ID 69 (Exposure) = loctype */
+    if($entryData['loctype'] != ""){
+      $attribute[] = array($attributeID['EX_IN'],$entryData['loctype']);
+    }
+
+    /*  Field ID 70 For outdoor exhibits, please mark all options that could work for you */
+    /*  Field ID 68 placement    */
+    if($entryData['loctype'] == 'Inside'){
+      $attribute[] = array($attributeID['EX_IN'],$entryData['placement']);
+    }elseif($entryData['loctype'] == 'Outside' ||
+            $entryData['loctype'] == 'Either'){
+      $attribute[] = array($attributeID['EX_IN'],$entryData['placement']); // field 68
+      //loop thru field 70 selections
+      if(is_array($entryData['loctype_outdoors'])){
+        foreach($entryData['loctype_outdoors'] as $value){
+          $attribute[] = array($attributeID['EX_IN'],$value); // field 70
+        }
+      }
+    }
+
+    /*  Field ID 71 = lighting*/
+    if($entryData['lighting']!=''){
+      $attribute[] = array($attributeID['LIGHT'],$entryData['lighting']);
+    }
+
+    /*  Field ID 72 = noise */
+    if($entryData['noise']!=''){
+      $attribute[] = array($attributeID['NOISE'],$entryData['noise']);
+    }
+
+    /*  Field ID 77 = internet */
+    if($entryData['internet']!=''){
+      $attribute[] = array($attributeID['INTRNT'],$entryData['internet']);
+    }
+
+    //add resources to the table
+    foreach($resource as $value){
+      $resource_id = $value[0];
+      $qty         = $value[1];
+      $comment     = $value[2];
+      $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`(`entry_id`, `resource_id`, `qty`, `comment`) "
+                  . " VALUES (".$entryData['CS_ID'].",".$resource_id .",".$qty . ',"' . $comment.'")');
+    }
+
+    //add attributes to the table
+    foreach($attribute as $value){
+      $attribute_id = $value[0];
+      $value        = $value[1];
+
+      $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`) "
+                  . " VALUES (".$entryData['CS_ID'].",".$attribute_id .',"'.$value . '")');
+    }
+  }
 }
