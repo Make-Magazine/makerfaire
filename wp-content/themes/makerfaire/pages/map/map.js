@@ -1,4 +1,4 @@
-(function(){
+(function() {
   'use strict';
   var faireMapsApp = angular.module('faireMapsApp', ['ngTasty']);
 
@@ -47,8 +47,8 @@
     }
   ]);
 
-  faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer',
-    function($rootScope, GMapsInitializer) {
+  faireMapsApp.directive('fairesGoogleMap', ['$rootScope', 'GMapsInitializer', '$filter',
+    function($rootScope, GMapsInitializer, $filter) {
       return {
         scope: {
           mapId: '@id',
@@ -56,6 +56,7 @@
         },
         controller: function($scope) {
           var gmarkers1 = [];
+          var infowindow;
 
           function initMap(mapId) {
             var gMap;
@@ -98,14 +99,14 @@
             });
             gMap.mapTypes.set(customMapTypeId, customMapType);
             gMap.setMapTypeId(customMapTypeId);
+            infowindow = new google.maps.InfoWindow({
+              content: undefined
+            });
 
             function setMarkers(data) {
               var gMarker;
               var gMarkerIcon;
               var gMarkerZIndex;
-              var infowindow = new google.maps.InfoWindow({
-                content: undefined
-              });
               for (var i = 0; i < data.length; i++) {
                 gMarker = data[i];
                 gMarkerIcon = {
@@ -158,32 +159,29 @@
           }
 
           function filterMarkers(category, display) {
-            var marker;
-            for (var i = 0; i < gmarkers1.length; i++) {
-              marker = gmarkers1[i];
-              // Visible only if category matches
-              if (marker.category == category || category.length === 0) {
-                marker.setVisible(display);
+            infowindow.close();
+            gmarkers1.map(function(obj) {
+              // Visible if category matches
+              if (obj.category == category || category.length === 0) {
+                obj.setVisible(display);
               }
-              // else {
-              //   marker.setVisible(false);
-              // }
-            }
+            });
           }
           $rootScope.$on('toggleMapFilter', function(event, args) {
             filterMarkers(args.filter, args.state);
           });
 
           function searchMarkers(text) {
-            var marker;
-            for (var i = 0; i < gmarkers1.length; i++) {
-              marker = gmarkers1[i];
-              if (marker.title && (marker.title).match(text) || marker.category && (marker.category).match(text)) {
-                marker.setVisible(true);
+            infowindow.close();
+            gmarkers1.map(function(obj) {
+              if (obj.title && obj.title.match(text) ||
+                obj.category && obj.category.match(text) ||
+                obj.description && obj.description.match(text)) {
+                obj.setVisible(true);
               } else {
-                marker.setVisible(false);
+                obj.setVisible(false);
               }
-            }
+            });
           }
           $rootScope.$on('toggleMapSearch', function(event, args) {
             searchMarkers(args);
