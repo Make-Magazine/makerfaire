@@ -78,7 +78,7 @@ require_once( 'post-types/location.php' );
 if ( defined( 'WP_CLI' ) && WP_CLI )
   require_once( 'plugins/wp-cli/wp-cli.php' );
 
-// Include all function files in the makeblog/functions directory:
+// Include all function files in the makerfaire/functions directory:
 foreach ( glob(TEMPLATEPATH . '/functions/*.php' ) as $file) {
   include_once $file;
 }

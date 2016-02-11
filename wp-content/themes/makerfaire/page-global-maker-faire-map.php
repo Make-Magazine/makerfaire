@@ -58,13 +58,18 @@
             <thead tasty-thead></thead>
             <tbody>
               <tr ng-repeat="row in rows">
-                <td width="33%">{{row.name}}</td>
-                <td width="33%">{{row.category}}</td>
-                <td width="33%">{{row.description}}</td>
+                <td width="20%">{{row.name}}</td>
+                <td width="20%">{{row.category}}</td>
+                <td width="20%">{{row.description}}</td>
+                <td width="20%"><button class="btn-sm btn-default pull-right">Call for Makers</button></td>
+                <td width="20%"><button class="btn-sm btn-danger pull-right">Buy Tickets</button></td>
               </tr>
             </tbody>
           </table>
-        <div tasty-pagination></div>
+        <div tasty-pagination
+          bind-items-per-page="10"
+          bind-list-items-per-page="[10,25,50,100]">
+        </div>
       </div>
     </div>
   </div>

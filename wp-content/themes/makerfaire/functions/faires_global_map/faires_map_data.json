@@ -215,11 +215,6 @@
     "coordinates": [-119.01871249999999,35.3732921,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Bangkok Mini Maker Faire (2015)",
-    "coordinates": [100.5022429,13.7580599,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Barcelona Mini Maker Faire (2013-2014, 2016)",
     "description": "Barcelona Mini Maker Fairehttp://makerfairebcn.org/",
     "coordinates": [2.169919,41.387917,0.0],
@@ -228,16 +223,6 @@
     "name": "Baton Rouge, LA",
     "description": "Baton Rouge Mini Maker Faire (2014-2015)",
     "coordinates": [-91.14002500000001,30.457922000000003,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Beijing Mini Maker Faire (2015)",
-    "coordinates": [116.4111324,39.9055208,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Bengaluru Mini Maker Faire (2015)",
-    "coordinates": [77.595062,12.9764592,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Benicia Mini Maker Faire (2015-2016)",
@@ -263,11 +248,6 @@
     "name": "Brigh",
     "description": "Brighton Mini Maker Faire (2011-2015)",
     "coordinates": [-0.13642,50.819522,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Bristol Mini Maker Faire (2013, 2015)",
-    "coordinates": [-2.586594,51.453579,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Buenos Aires Mini Maker Faire",
@@ -325,11 +305,6 @@
     "coordinates": [-78.476678,38.029306,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Chattanooga Mini Maker Faire (2014-2015)",
-    "coordinates": [-85.3091812,35.0496731,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Chicago Northside Mini Maker Faire (2012-2016) ",
     "description": "Chicago Northside Mini Maker Fairehttp://makerfairechicagonorthside.com/",
     "coordinates": [-87.629798,41.878114,0.0],
@@ -368,11 +343,6 @@
     "name": "Compostela Mini Maker Faire (2015-2016)",
     "description": "Compostela Mini Maker Fairehttp://makerfairecompostela.com/",
     "coordinates": [-8.5448742,42.8792977,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Denton Mini Maker Faire (2015)",
-    "coordinates": [-97.1318436,33.220595,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Denver Mini Maker Faire (2014-2016)",
@@ -435,11 +405,6 @@
     "coordinates": [-0.119824,51.511214,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Espoo Mini Maker Faire (2015)",
-    "coordinates": [24.655900100000053,60.2054911,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Eugene, OR",
     "description": "Eugene Mini Maker Faire (2012-2015)",
     "coordinates": [-123.08675399999998,44.052069,0.0],
@@ -465,11 +430,6 @@
     "coordinates": [-85.667267,42.961196,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Greater Hartford Mini Maker Faire (2015)",
-    "coordinates": [-72.795027,41.7360305,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Greater Newark Mini Maker Faire (201",
     "description": "Greater Newark Mini Maker Fairehttp://makerfairenewark.com/",
     "coordinates": [-74.172821,40.73347,0.0],
@@ -483,16 +443,6 @@
     "name": "Greenbelt Mini Maker Faire (2014-2016)",
     "description": "Greenbelt Mini Maker Fairehttp://faire.make125.org/",
     "coordinates": [-76.875528,39.004554,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Grenoble Mini Maker Faire (2015)",
-    "coordinates": [5.724523999999974,45.188529,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Halifax Mini Maker Faire (2014-2015)",
-    "coordinates": [-1.8575399999999718,53.72702,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Hamilton Mini Maker Faire (2015)",
@@ -517,11 +467,6 @@
     "name": "Hsinchu Mini Maker Faire (2016)",
     "description": "Hsinchu Mini Maker Fairehttp://www.makerfairehsinchu.org/",
     "coordinates": [120.96771240000001,24.8147841,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Institute of Imagination Mini Maker Faire (2015)",
-    "coordinates": [-0.1284027,51.5142979,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Jackson Hole Maker Faire (2015-2016)",
@@ -594,11 +539,6 @@
     "coordinates": [-89.39917020000001,43.0695403,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Madrid Mini Maker Faire (2015-2016)",
-    "coordinates": [-3.7037901999999576,40.4167754,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Marthas Vineyard Mini Maker Faire (2016)",
     "description": "Marthas Vineyard Mini Maker Fairehttp://makerfairemv.com/",
     "coordinates": [-70.64547299999998,41.38049809999999,0.0],
@@ -637,11 +577,6 @@
     "name": "Camden, ME",
     "description": "Midcoast Mini Maker Faire (2013-2015)",
     "coordinates": [-69.064784,44.209793,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Minneapolis St. Paul Mini Maker Faire (2015)",
-    "coordinates": [-93.166337,44.99208900000001,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Nashville, TN",
@@ -733,16 +668,6 @@
     "coordinates": [-71.412834,41.823989,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Rhode Island Mini Maker Faire - East Bay Edition (2015)",
-    "coordinates": [-71.31282850000002,41.4901024,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Rimini Beach Mini Maker Faire (2015)",
-    "coordinates": [12.575702800000045,43.967605,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Rio de Janeiro Mini Maker Faire (2016)",
     "description": "Rio de Janeiro Mini Maker Fairehttp://makerfaireriodejaneiro.org/",
     "coordinates": [-43.198242,-22.917923,0.0],
@@ -753,11 +678,6 @@
     "coordinates": [-77.610922,43.16103,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Rockford Auburn Mini Maker Faire (2015)",
-    "coordinates": [-89.0939952,42.2711311,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Rocklin Mini Maker Faire (2015-2016)",
     "description": "Rocklin Mini Maker Fairehttp://makerfairerocklin.com/",
     "coordinates": [-121.2356758,38.7908876,0.0],
@@ -766,11 +686,6 @@
     "name": "Rouen Mini Maker Faire (2015-2016)",
     "description": "Rouen Mini Maker Fairehttp://makerfairerouen.com/",
     "coordinates": [1.0999709999999823,49.44323199999999,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Rutland Mini Maker Faire (2015)",
-    "coordinates": [-72.9725647,43.6108496,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Saint-Malo Mini Maker Faire (2013, 2015-2016)",
@@ -808,11 +723,6 @@
     "coordinates": [-69.9312117,18.48605749999999,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Santo Domingo Mini Maker Faire (2015-2016)",
-    "coordinates": [-69.9087524,18.6085059,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Scranton, PA",
     "description": "Scranton Mini Maker Faire (2014-2015)",
     "coordinates": [-75.662412,41.408969,0.0],
@@ -821,11 +731,6 @@
     "name": "Seattle Mini Maker Faire (2012-2016)",
     "description": "Seattle Mini Maker Fairehttp://makerfaireseattle.com/",
     "coordinates": [-122.332071,47.60621,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Shreveport Mini Maker Faire (2015)",
-    "coordinates": [-93.75017889999998,32.5251516,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Southwest Michigan Mini Maker Faire (2015-2016)",
@@ -843,11 +748,6 @@
     "coordinates": [18.06491,59.32893000000001,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Sunshine Coast Mini Maker Faire (2015)",
-    "coordinates": [-123.50361099999998,49.402778,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Australia",
     "description": "Sydney Mini Maker Faire (2013-2015)",
     "coordinates": [151.20689000000002,-33.873651,0.0],
@@ -856,11 +756,6 @@
     "name": "Tartu, Estonia",
     "description": "Tartu Mini Maker Faire (2014-2015)",
     "coordinates": [26.729565,58.376968000000005,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "The Ozarks Mini Maker Faire (2015, 2016)",
-    "coordinates": [-93.29229889999999,37.2089572,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Torino, Italy",
@@ -886,11 +781,6 @@
     "name": "Vancouver Mini Maker Faire (201",
     "description": "Vancouver Mini Maker Fairehttp://makerfaire.ca/",
     "coordinates": [-123.113927,49.261226,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Wenatchee Mini Maker Faire (2015)",
-    "coordinates": [-120.31024930000001,47.4251839,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Westport Mini Maker Faire (2012-2016)",
@@ -968,11 +858,6 @@
     "coordinates": [-73.04955,43.448682,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Tampa Bay Mini Maker Faire, FL (2012, 2013)",
-    "coordinates": [-82.38857800000001,28.274347000000002,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Miami, FL",
     "description": "Hamboree Mini Maker Faire (2014-2015)",
     "coordinates": [-80.226439,25.788969,0.0],
@@ -1013,11 +898,6 @@
     "coordinates": [-71.094214,42.359995,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Toronto Mini Maker Faire (2010-14)",
-    "coordinates": [-79.383184,43.653226,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Troy, NY",
     "description": "Emma Willard Mini Maker Faire (2013)",
     "coordinates": [-73.691785,42.728412,0.0],
@@ -1046,11 +926,6 @@
     "name": "Willits, CA",
     "description": "Mendocino Mini Maker Faire (2013-14)",
     "coordinates": [-123.35556600000001,39.409608,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Santiago Mini Maker Faire (2012, 2013)",
-    "coordinates": [-70.641997,-33.46912,0.0],
     "category": "All Maker Faires"
   }, {
     "name": "Austin, TX",
@@ -1113,11 +988,6 @@
     "coordinates": [131.470649,34.185956,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Accra (Maker Faire Africa 2009)",
-    "coordinates": [-0.196306,5.555717,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Bo",
     "description": "Boise Mini Maker Faire (2013)",
     "coordinates": [-116.211076,43.612631,0.0],
@@ -1147,16 +1017,6 @@
     "coordinates": [-122.646537,47.735928,0.0],
     "category": "All Maker Faires"
   }, {
-    "name": "",
-    "description": "Kumasi Mini Maker Faire (2011)",
-    "coordinates": [-1.621969,6.687119,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Lagos (Maker Faire Africa 2012)",
-    "coordinates": [3.395833,6.453056,0.0],
-    "category": "All Maker Faires"
-  }, {
     "name": "Lubbock, TX",
     "description": "Lubbock Mini Maker Faire (2012)",
     "coordinates": [-101.855166,33.577863,0.0],
@@ -1170,11 +1030,6 @@
     "name": "Minneapolis, MN",
     "description": "Minne Mini Maker Faire (2011, 2012)",
     "coordinates": [-93.263836,44.979965,0.0],
-    "category": "All Maker Faires"
-  }, {
-    "name": "",
-    "description": "Nairobi (Maker Faire Africa 2010)",
-    "coordinates": [36.821946,-1.292066,0.0],
     "category": "All Maker Faires"
   }, {
     "description": "Norfolk Mini Maker Faire (2012)",
