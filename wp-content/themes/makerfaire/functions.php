@@ -2345,7 +2345,7 @@ function GVupdate_notification($form,$entry_id,$orig_entry){
         }
 
         $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel) values " .$inserts;
- 
+
         global $wpdb;
         $wpdb->get_results($sql);
     }
@@ -2364,10 +2364,17 @@ function checkForRibbons($postID=0,$entryID=0){
     //check for 0??
     $blueCount = $redCount = 0;
     foreach($ribbons as $ribbon){
-        if($ribbon->ribbonType==0)
+      if($ribbon->ribbonType==0){
+        for($i=0; $i< $ribbon->numRibbons;$i++){
           $return .= '<div class="blueMakey"></div>';
-        if($ribbon->ribbonType==1)
+        }
+      }
+
+      if($ribbon->ribbonType==1){
+        for($i=0; $i< $ribbon->numRibbons;$i++){
           $return .= '<div class="redMakey"></div>';
+        }
+      }
     }
     return $return;
 }
