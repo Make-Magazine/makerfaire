@@ -445,82 +445,80 @@ function displayContent($content,$lead,$fieldData,$display = 'table'){
 }
 
 function getmetaData($entry_id){
-    $return = '';
+  $return = '';
 
-    $metaData = mf_get_form_meta( 'entry_id',$entry_id );
-    foreach($metaData as $data){
-        $entry = GFAPI::get_entry( $data->lead_id );
-        //check if entry-id is valid
-        if(is_array($entry)){         //display entry data
-            $formPull = GFAPI::get_form( $data->form_id );
-            $return .=  '<h2>'.$formPull['title'].'</h2>';
-            $return .= '<table>';
-            foreach($formPull['fields'] as $formFields){
-                $gwreadonly_enable = (isset($formFields['gwreadonly_enable'])?$formFields['gwreadonly_enable']:0);
-                //exclude page breaks and the entry fields used to verify the entry
-                // and the display only fields from the additional forms
-                if($formFields['type']!='page' &&
-                    $formFields['inputName']!='entry-id' &&
-                    $formFields['inputName']!='contact-email' &&
-                    $gwreadonly_enable !=1){
+  $metaData = mf_get_form_meta( 'entry_id',$entry_id );
+  foreach($metaData as $data){
+    $entry = GFAPI::get_entry( $data->lead_id );
+    //check if entry-id is valid
+    if(is_array($entry)){         //display entry data
+      $formPull = GFAPI::get_form( $data->form_id );
+      $return .=  '<h2>'.$formPull['title'].'</h2>';
+      $return .= '<table>';
+      foreach($formPull['fields'] as $formFields){
+        $gwreadonly_enable = (isset($formFields['gwreadonly_enable'])?$formFields['gwreadonly_enable']:0);
+        //exclude page breaks and the entry fields used to verify the entry
+        // and the display only fields from the additional forms
+        if($formFields['type']!='page' &&
+          $formFields['inputName']!='entry-id' &&
+          $formFields['inputName']!='contact-email' &&
+          $gwreadonly_enable !=1){
 
-                    $display_empty_fields = false;
-                    switch ( RGFormsModel::get_input_type( $formFields ) ) {
-                        case 'section' :
-                                if ( ! GFCommon::is_section_empty( $formFields, $formPull, $entry ) || $display_empty_fields ) {
-                                        $count ++;
-                                        $is_last = $count >= $field_count ? true : false;
-                                        ?>
-                                        <tr>
-                                                <td colspan="2" class="entry-view-section-break<?php echo $is_last ? ' lastrow' : '' ?>"><?php echo esc_html( GFCommon::get_label( $formFields ) ) ?></td>
-                                        </tr>
-                                <?php
-                                }
-                                break;
+          $display_empty_fields = false;
+          switch ( RGFormsModel::get_input_type( $formFields ) ) {
+            case 'section' :
+              if ( ! GFCommon::is_section_empty( $formFields, $formPull, $entry ) || $display_empty_fields ) {
+                $count ++;
+                $is_last = $count >= $field_count ? true : false;
+                ?>
+                <tr>
+                  <td colspan="2" class="entry-view-section-break<?php echo $is_last ? ' lastrow' : '' ?>"><?php echo esc_html( GFCommon::get_label( $formFields ) ) ?></td>
+                </tr>
+                <?php
+              }
+              break;
 
-                        case 'captcha':
-                        case 'html':
-                        case 'password':
-                        case 'page':
-                                //ignore captcha, html, password, page field
-                                break;
+            case 'captcha':
+            case 'html':
+            case 'password':
+            case 'page':
+              //ignore captcha, html, password, page field
+              break;
 
-                        default :
-                                //ignore product fields as they will be grouped together at the end of the grid
-                                if ( GFCommon::is_product_field( $formFields->type ) ) {
-                                        $has_product_fields = true;
-                                        continue;
-                                }
+            default :
+              //ignore product fields as they will be grouped together at the end of the grid
+              if ( GFCommon::is_product_field( $formFields->type ) ) {
+                $has_product_fields = true;
+                continue;
+              }
 
-                                $value         = RGFormsModel::get_lead_field_value( $entry, $formFields );
-                                $display_value = GFCommon::get_lead_field_display( $formFields, $value, $entry['currency'] );
-                                $display_value = apply_filters( 'gform_entry_field_value', $display_value, $formFields, $entry, $formPull );
+              $value         = RGFormsModel::get_lead_field_value( $entry, $formFields );
+              $display_value = GFCommon::get_lead_field_display( $formFields, $value, $entry['currency'] );
+              $display_value = apply_filters( 'gform_entry_field_value', $display_value, $formFields, $entry, $formPull );
 
-                                if ( $display_empty_fields || ! empty( $display_value ) || $display_value === '0' ) {
-                                        $display_value = empty( $display_value ) && $display_value !== '0' ? '&nbsp;' : $display_value;
+              if ( $display_empty_fields || ! empty( $display_value ) || $display_value === '0' ) {
+                $display_value = empty( $display_value ) && $display_value !== '0' ? '&nbsp;' : $display_value;
 
-                                        $content = '
-                                            <tr>
-                                                <td colspan="2" class="entry-view-field-name">' . esc_html( GFCommon::get_label( $formFields ) ) . '</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2" class="entry-view-field-value">' . $display_value . '</td>
-                                            </tr>';
+                $content = '
+                  <tr>
+                      <td colspan="2" class="entry-view-field-name">' . esc_html( GFCommon::get_label( $formFields ) ) . '</td>
+                  </tr>
+                  <tr>
+                      <td colspan="2" class="entry-view-field-value">' . $display_value . '</td>
+                  </tr>';
 
-                                        $content = apply_filters( 'gform_field_content', $content, $formFields, $value, $entry['id'], $formPull['id'] );
-
-                                        $return .= $content;
-
-                                }
-                                break;
-				}
-                }
+                $content = apply_filters( 'gform_field_content', $content, $formFields, $value, $entry['id'], $formPull['id'] );
+                $return .= $content;
+              }
+              break;
             }
-            $return .= '</table>';
         }
+      }
+      $return .= '</table>';
     }
+  }
 
-   return $return;
+  return $return;
 }
 
 // this function returns all entries with a
@@ -551,7 +549,6 @@ function entryResources($lead){
   foreach($results as $result){
     $itemDD .= 'itemDrop['.$result->ID.']="'.addslashes($result->category).'";';
   }
-  //$itemDD = "var itemDrop = {".implode(",",$itemArr)."};";
 
   //build Item to type drop down array
   $sql = "SELECT wp_rmt_resource_categories.ID as item_id, wp_rmt_resource_categories.category as item, wp_rmt_resources.ID as type_id, wp_rmt_resources.type FROM `wp_rmt_resource_categories` right outer join wp_rmt_resources on wp_rmt_resource_categories.ID= wp_rmt_resources.resource_category_id ORDER BY `wp_rmt_resource_categories`.`category` ASC, type ASC";
@@ -563,39 +560,79 @@ function entryResources($lead){
   }
 
   //gather resource data
-  $sql = "SELECT er.ID, er.qty,er.comment, type, wp_rmt_resource_categories.category as item "
+  $sql = "SELECT er.*, type, wp_rmt_resource_categories.category as item, wp_rmt_resource_categories.ID as item_id "
           . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
           . "where er.resource_id = wp_rmt_resources.ID "
           . "and resource_category_id = wp_rmt_resource_categories.ID  "
           . "and er.entry_id = ".$entry_id = $lead['id']." order by item ASC, type ASC";
 
   $results = $wpdb->get_results($sql);
-  $resourceDisp = '<table id="resTable"><thead><tr><th>Item</th><th>Type</th><th>Value</th><th>Comments</th><th><p onclick="addResRow()"><i class="fa fa-plus-circle"></i></p></th></tr></thead>';
+  $resourceDisp = '<table id="resTable"><thead>'
+                  . ' <tr><th>Item</th>'
+                  . ' <th>Qty</th>'
+                  . ' <th>Value</th>'
+                  . ' <th>Comments</th>'
+                  . ' <th>User</th>'
+                  . ' <th>Last Updated</th>'
+                  . ' <th><p onclick="addRow(\'resource\')"><i class="fa fa-plus-circle"></i></p></th></tr></thead>';
   $return = '';
   foreach($results as $result){
-    $resourceDisp .= '<tr id="resRow'.$result->ID.'"><td width="20%">'.$result->item.'</td>'
-                      . ' <td width="20%">'.$result->type.'</td>'
-                      . ' <td width="20%" id="resqty_'.$result->ID.'" class="editable">'.$result->qty.'</td>'
-                      . ' <td width="30%" id="rescomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
+    if($result->user==NULL){
+      $dispUser = 'Initial';
+    }else{
+      $userInfo = get_userdata( $result->user );
+      $dispUser = $userInfo->display_name;
+    }
+    $resourceDisp .= '<tr id="resRow'.$result->ID.'">'
+                      . ' <td id="resitem_'.$result->ID.'" data-itemID="'.$result->item_id.'">'.$result->item.'</td>'
+                      . ' <td id="restype_'.$result->ID.'" data-typeID="'.$result->resource_id.'" class="editable dropdown">'.$result->type.'</td>'
+                      . ' <td id="resqty_'.$result->ID.'"  class="editable numeric">'.$result->qty.'</td>'
+                      . ' <td id="rescomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
+                      . ' <td id="resuser_'.$result->ID.'">'.$dispUser.'</td>'
+                      . ' <td id="resdateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
                       . ' <td width="10%"><p onclick="resAttDelete(\'#resRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
   }
   $resourceDisp .= '</table>';
 
   //gather attribute data
-  $sql = "SELECT wp_rmt_entry_attributes.ID, attribute_id,value,wp_rmt_entry_att_categories.category
+  $sql = "SELECT wp_rmt_entry_attributes.*, attribute_id,value,wp_rmt_entry_att_categories.category
           FROM `wp_rmt_entry_attributes`, wp_rmt_entry_att_categories
           where attribute_id = wp_rmt_entry_att_categories.ID
-          and entry_id = ".$entry_id = $lead['id'];;
+          and entry_id = ".$entry_id = $lead['id'] ." order by category";
 
   $results = $wpdb->get_results($sql);
-  $attDisp = '<table width="100%"><thead><tr><th>Attribute</th><th>Value</th><th><i class="fa fa-plus-circle"></i></th></tr></thead>';
+  $attDisp = '<table id="attTable"><thead><tr>'
+                . ' <th>Attribute</th>'
+                . ' <th>Value</th>'
+                . ' <th>Comment</th>'
+                . ' <th>User</th>'
+                . ' <th>Last Updated</th>'
+                . ' <th><p onclick="addRow(\'attribute\')"><i class="fa fa-plus-circle"></i></p></th></tr></thead>';
   foreach($results as $result){
-    $attDisp .= '<tr id="attRow'.$result->ID.'"><td>'.$result->category.'</td>'
-                  . '<td id="attvalue_'.$result->ID.'" class="editable textAreaEdit">'.$result->value.'</td>'
-                  . '<td><p onclick="resAttDelete(\'#attRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
+    if($result->user==NULL){
+      $dispUser = 'Initial';
+    }else{
+      $userInfo = get_userdata( $result->user );
+      $dispUser = $userInfo->display_name;
+    }
+    $attDisp .= '<tr id="attRow'.$result->ID.'">'
+                    . ' <td id="attcategory_'.$result->ID.'">'.$result->category.'</td>'
+                    . ' <td id="attvalue_'.$result->ID.'" class="editable textAreaEdit">'.$result->value.'</td>'
+                    . ' <td id="attcomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
+                    . ' <td id="attuser_'.$result->ID.'">'.$dispUser.'</td>'
+                    . ' <td id="attdateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
+                    . ' <td><p onclick="resAttDelete(\'#attRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
   }
   $attDisp .= '</table>';
 
+  //build attribute drop down values
+   //build Item to type drop down array
+  $sql = "SELECT ID, category FROM wp_rmt_entry_att_categories";
+  $results = $wpdb->get_results($sql);
+  $attArr = array();
+  foreach($results as $result){
+    $attArr[] = array('key'=>$result->ID,'value'=>$result->category);
+  }
   ?>
     <script>
       //store items as JS object
@@ -603,7 +640,8 @@ function entryResources($lead){
       <?php foreach($itemArr as $itemKey=>$item){?>
         items.push({'key':<?php echo $itemKey;?>,'value': "<?php echo $item;?>"});
       <?php } ?>
-      var types = <?php echo json_encode($typeArr);?>;
+      var types      = <?php echo json_encode($typeArr);?>;
+      var attributes = <?php echo json_encode($attArr);?>;
     </script>
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
       <div class="panel panel-default">

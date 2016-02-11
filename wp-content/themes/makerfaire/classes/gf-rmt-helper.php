@@ -391,25 +391,28 @@ class GFJDBHELPER {
     foreach($wpdb->get_results($sql) as $row){
       $resourceID[$row->token] = $row->ID;
     }
+
     /* build list of attribute ID's and tokens */
     $sql = "select ID,token from wp_rmt_entry_att_categories";
     foreach($wpdb->get_results($sql) as $row){
       $attributeID[$row->token] = $row->ID;
     }
+
     //resource ID's are set based on token
     /* Resource Mapping */
     $resource = array();
+
     /*  Field ID 62 = tables_chairs */
     if($entryData['tables_chairs'] == '1 table and 2 chairs'){
       $resource[] = array($resourceID['TBL_8x30'],1,'');
       $resource[] = array($resourceID['CH_FLD'],2,'');
     }elseif($entryData['tables_chairs'] == 'More than 1 table and 2 chairs. List specific number of tables and chairs below.'){
-      // [ > go to Field ID 347 & 348]
-      /*  Field ID 347 not mapped (Number of Tables)
-       *  Field ID 348 not mapped (Number of Chairs) */
+      /*  Field ID 347 (Number of Tables)
+       *  Field ID 348 (Number of Chairs) */
       $resource[] = array($resourceID['TBL_8x30'],$entryData['numTables'],'');
       $resource[] = array($resourceID['CH_FLD'],$entryData['numChairs'],'');
     }
+
     /*  Field ID 73 = power */
     if($entryData['power'] == 'Yes'){
       /*  Field ID 75 = amps  */
@@ -442,69 +445,53 @@ class GFJDBHELPER {
     $attribute = array();
 
     if($entryData['what_are_you_powering']!=''){
-      $attribute[] = array($attributeID['ELECPOW'], $entryData['what_are_you_powering']);
+      $attribute[] = array($attributeID['ELEC'], 'What are you Powering?',$entryData['what_are_you_powering']);
     }
     if($entryData['amps_details']!=''){
-      $attribute[] = array($attributeID['ELEC_SPECL'], $entryData['amps_details']);
+      $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['amps_details']);
     }
+
     /*  Field ID 64 = special_request (textarea)*/
     if($entryData['special_request']!=''){
-      $attribute[] = array($attributeID['SPECL'],$entryData['special_request']);
+      $attribute[] = array($attributeID['SPECL'],'Special',$entryData['special_request']);
     }
+
     /*  Field ID 83 = fire
      *  Field ID 85 = safety_details
      */
     if($entryData['fire'] == 'Yes'){
-      $attribute[] = array($attributeID['FIRE'],$entryData['safety_details']);
+      $attribute[] = array($attributeID['FIRE'],'',$entryData['safety_details']);
     }
+
     /*  Field ID 60 = booth_size
      *  Field ID 61 = booth_size_details
      */
     if($entryData['booth_size'] == "Other"){ //concatenate field ID 345 x field ID 344
       //  Field ID 344 - Requested space size length and
       //  Field ID 345 - Requested space size width
-      $attribute[] = array($attributeID['SPACESIZE'],$entryData['345'].' X '.$entryData['344']);
+      $attribute[] = array($attributeID['SPACESIZE'],$entryData['345'].' X '.$entryData['344'],$entryData['booth_size_details']);
       if($entryData['booth_size_details']!='')
-        $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size_details']);
-    }elseif( $entryData['booth_size'] != ''){
-      $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size']);
-      if($entryData['booth_size_details']!='')
-        $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size_details']);
+        $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size'],$entryData['booth_size_details']);
     }
 
     /*  Field ID 69 (Exposure) = loctype */
     if($entryData['loctype'] != ""){
-      $attribute[] = array($attributeID['EX_IN'],$entryData['loctype']);
-    }
-
-    /*  Field ID 70 For outdoor exhibits, please mark all options that could work for you */
-    /*  Field ID 68 placement    */
-    if($entryData['loctype'] == 'Inside'){
-      $attribute[] = array($attributeID['EX_IN'],$entryData['placement']);
-    }elseif($entryData['loctype'] == 'Outside' ||
-            $entryData['loctype'] == 'Either'){
-      $attribute[] = array($attributeID['EX_IN'],$entryData['placement']); // field 68
-      //loop thru field 70 selections
-      if(is_array($entryData['loctype_outdoors'])){
-        foreach($entryData['loctype_outdoors'] as $value){
-          $attribute[] = array($attributeID['EX_IN'],$value); // field 70
-        }
-      }
+      $attribute[] = array($attributeID['EX_IN'],$entryData['loctype'],$entryData['placement'].','.implode(',',$entryData['loctype_outdoors']));
     }
 
     /*  Field ID 71 = lighting*/
     if($entryData['lighting']!=''){
-      $attribute[] = array($attributeID['LIGHT'],$entryData['lighting']);
+      $attribute[] = array($attributeID['LIGHT'],$entryData['lighting'],'');
     }
 
     /*  Field ID 72 = noise */
     if($entryData['noise']!=''){
-      $attribute[] = array($attributeID['NOISE'],$entryData['noise']);
+      $attribute[] = array($attributeID['NOISE'],$entryData['noise'],'');
     }
 
     /*  Field ID 77 = internet */
     if($entryData['internet']!=''){
-      $attribute[] = array($attributeID['INTRNT'],$entryData['internet']);
+      $attribute[] = array($attributeID['INTRNT'],$entryData['internet'],'');
     }
 
     //add resources to the table
@@ -520,9 +507,9 @@ class GFJDBHELPER {
     foreach($attribute as $value){
       $attribute_id = $value[0];
       $value        = $value[1];
-
-      $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`) "
-                  . " VALUES (".$entryData['CS_ID'].",".$attribute_id .',"'.$value . '")');
+      $comment     = $value[2];
+      $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,'comment') "
+                  . " VALUES (".$entryData['CS_ID'].",".$attribute_id .',"'.$value . ',"' . $comment.'")');
     }
   }
 }

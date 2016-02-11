@@ -62,9 +62,7 @@ jQuery( document ).ready(function() {
   /* gf entry summary resource section - allow 'real time' edit of values */
   jQuery('.editable').click(function(e){
     var that = jQuery(this);
-    if (that.find('input').length > 0) {
-        return;
-    }else if (that.find('textarea').length > 0) {
+    if (that.find('input').length > 0 || that.find('textarea').length > 0 || that.find('select').length > 0) {
         return;
     }
     var i=0;
@@ -80,63 +78,153 @@ jQuery( document ).ready(function() {
     if(jQuery(currentEle).hasClass('textAreaEdit')){
       var cols = Math.round(jQuery(currentEle).width()/10); //determine how many columns wide the textarea should be
       jQuery(currentEle).html('<textarea class="thVal" cols="'+cols+'" rows="4">'+value+'</textarea>');
+    }else if(jQuery(currentEle).hasClass('dropdown')){
+      //build dropdown
+      var fieldData = breakDownEle(currentEle.replace("#", ""));
+
+      if(fieldData['fieldName']=='type'){
+        var type_id = jQuery('#restype_'+fieldData['ID']).attr('data-typeID');
+        var item_id = jQuery('#resitem_'+fieldData['ID']).attr('data-itemID');
+        setType(item_id,type_id,fieldData['ID']);
+      }
+    }else if(jQuery(currentEle).hasClass('numeric')) {
+      jQuery(currentEle).html('<input class="thVal" type="number" value="'+value+'" />');
     }else{
       jQuery(currentEle).html('<input class="thVal" maxlength="4" type="text" size="4" value="'+value+'" />');
     }
+    console.log(jQuery(currentEle).html());
     jQuery(".thVal").focus();
-    /* //if they press the enter key it is backing out of edit
-    jQuery(".thVal").keyup(function (event) {
-      if (event.keyCode == 13) { //enter key
-        //update value in db
-        updateDB(jQuery(".thVal").val().trim(),currentEle);
-        jQuery(currentEle).html(jQuery(".thVal").val().trim());
-      }
-    });*/
-
     jQuery(".thVal").focusout(function () {
       //update value in db
       updateDB(jQuery(".thVal").val().trim(),currentEle);
-      jQuery(currentEle).html(jQuery(".thVal").val().trim());
+      if(jQuery(currentEle).hasClass('dropdown')){
+        jQuery(currentEle).html(jQuery(".thVal").find("option:selected").text());
+      }else{
+        jQuery(currentEle).html(jQuery(".thVal").val().trim());
+      }
     });
   }
 });
 
-function addResRow(){
-  var itemSel = '<select onchange="setType(this.value)" class="thVal"><option>Select Item</option>';
-  jQuery.each(items, function(objKey,objValue) {
-     itemSel += '<option value="'+objValue.key+'">'+objValue.value+'</option>';
-  });
-  itemSel += '</select>';
-  jQuery('#resTable > tbody > tr:first').before('<tr id="resRowNew"><td  class="noSend" id="item">'+itemSel+'</td><td id="resource_id"></td><td id="qty"><input  size="4"  class="thVal" type="text" /></td><td id="comment"><textarea  class="thVal" cols="20" rows="4"></textarea></td><td id="actions" class="noSend"><p onclick="insertRowDB(\'res\')"><i class="fa fa-check"></i></p><p onclick="jQuery(\'#resRowNew\').remove();"><i class="fa fa-ban"></i></p></td></tr>');
+/* input - fieldID
+ *      format - typeFieldName_dataID
+ * outuput - fieldData
+ *      format - array(db table name, section type (res or att),field name, data id )
+ */
+function breakDownEle(currentEle){
+  var fieldData = [];
+  if(currentEle.indexOf("res")!=-1){ //resource table
+    fieldData['table'] = 'wp_rmt_entry_resources';
+    var type    = 'res';
+  }else if(currentEle.indexOf("att")!=-1){ //attribute table
+    fieldData['table'] = 'wp_rmt_entry_attributes';
+    var type   = 'att';
+  }
+  fieldData['type'] = type;
+  //remove the type from the field
+  currentEle = currentEle.replace(type, "");
+  //get field name (data prior to the _)
+  fieldData['fieldName'] = currentEle.substr(0, currentEle.indexOf('_'));
+  //get data ID  (data after the _)
+  fieldData['ID'] = currentEle.substr(currentEle.indexOf("_") + 1);
+  return fieldData;
 }
-function setType(item){
-  if (types[item]) {
-    var options = '<option value = "">Select Type</option>';
-    for (i in types[item]) {
-      var type = types[item][i];
-      options += '<option value = "' + i + '">' + type + '</option>';
+function addRow(addTo){
+  var tableRow = '';
+  if(addTo=='resource'){
+    //add resource
+    type = 'res';
+    dataArray = resourceArray;
+  }else if(addTo=='attribute'){
+    //add attribute
+    type = 'att';
+    dataArray = attributeArray;
+  }
+
+    var tableRow = '<tr id="'+type+'RowNew">';
+    //build table columns
+    for (i = 0; i < dataArray.length; i++) {
+      tableRow += '<td  class="'+dataArray[i]['class']+'" id="'+dataArray[i]['id']+'">';
+      if(dataArray[i]['display']=='dropdown'){
+        tableRow += buildDropDown(dataArray[i]['id']);
+      }else if(dataArray[i]['display']=='numeric'){
+        tableRow += '<input  size="4"  class="thVal" type="number" />';
+      }else if(dataArray[i]['display']=='text'){
+        tableRow += '<input  size="4"  class="thVal" type="text" />';
+      }else if(dataArray[i]['display']=='textarea'){
+        tableRow += '<textarea  class="thVal" cols="20" rows="4"></textarea>';
+      }else{
+        tableRow += dataArray[i]['display'];
+      }
+      tableRow += '</td>';
     }
-    var typeSel = '<select onchange="setType(this.value)" class="thVal">'+options+'</select>';
-    jQuery('#resRowNew #resource_id').html(typeSel);
+    //add action row
+    tableRow += '<td id="actions" class="noSend"><p onclick="insertRowDB(\''+type+'\')"><i class="fa fa-check"></i></p><p onclick="jQuery(\'#'+type+'RowNew\').remove();"><i class="fa fa-ban"></i></p></td>';
+    tableRow += '</tr>';
+    jQuery('#'+type+'Table > tbody > tr:first').before(tableRow);
+}
+
+//item drop down for entry resources
+function buildDropDown(type){
+  var itemSel = '';
+  if(type=='resitem'){
+    var itemSel = '<select onchange="setType(this.value)" class="thVal"><option>Select Item</option>';
+    jQuery.each(items, function(objKey,objValue) {
+       itemSel += '<option value="'+objValue.key+'">'+objValue.value+'</option>';
+    });
+    itemSel += '</select>';
+  }else if(type=='attcategory'){
+    var itemSel = '<select class="thVal"><option>Select Item</option>';
+    jQuery.each(attributes, function(objKey,objValue) {
+       itemSel += '<option value="'+objValue.key+'">'+objValue.value+'</option>';
+    });
+    itemSel += '</select>';
+  }
+  return itemSel;
+}
+var resourceArray=[{'id':'resitem','class':'noSend','display':"dropdown"},
+                   {'id':'restype','class':'editable dropdown','display':'dropdown'},
+                   {'id':'resqty','class':'editable numeric','display':'numeric'},
+                   {'id':'rescomment','class':'editable textareaEdit','display':'textarea'},
+                   {'id':'resuser',class:'','display':''},
+                   {'id':'resdateupdate',class:'','display':''}
+                 ];
+var attributeArray=[{'id':'attcategory','class':'','display':"dropdown"},
+                   {'id':'attvalue','class':'editable textareaEdit', 'display':'textarea'},
+                   {'id':'attcomment','class':'editable textareaEdit','display':'textarea'},
+                   {'id':'attuser',class:'','display':''},
+                   {'id':'attdateupdate',class:'','display':''}
+                 ];
+function setType(itemID,typeID,id){ //build type drop down based on item drop down
+  if (types[itemID]) {
+    var options = '<option value = "">Select Type</option>';
+    for (i in types[itemID]) {
+      var type = types[itemID][i];
+      selected = '';
+      if(i==typeID) selected = 'selected';
+      options += '<option value = "' + i + '" '+selected+'>' + type + '</option>';
+    }
+
+    var typeSel = '<select class="thVal">'+options+'</select>';
+    if(id==''){
+      jQuery('#resRowNew #restype').html(typeSel);
+    }else{
+      jQuery('#resRow'+id+' #restype_'+id).html(typeSel);
+    }
   }
 }
 function resAttDelete(currentEle){
   var r = confirm("Are you sure want to delete this row (this cannot be undone)!");
   if (r == true) {
-    jQuery(currentEle).remove();
-    if(currentEle.indexOf("res")!=-1){ //resource table
-      var table = 'wp_rmt_entry_resources';
-      currentEle = currentEle.replace("#res", "");
-    }else if(currentEle.indexOf("att")!=-1){ //attribute table
-      var table = 'wp_rmt_entry_attributes';
-      currentEle = currentEle.replace("#att", "");
-    }
-    var ID = currentEle.replace("Row", "");
+    jQuery(currentEle).remove(); //delete the row
+    currentEle = currentEle.replace("#", ""); //remove hashtag
+    var fieldData = breakDownEle(currentEle);
+    var rowID = currentEle.replace("Row", "");
     //send delete
     var data = {
         'action': 'delete-entry-resAtt',
-        'ID': ID,
-        'table': table
+        'ID': rowID,
+        'table': fieldData['table']
       };
     jQuery.post(ajaxurl, data, function(response) {
       //
@@ -152,7 +240,13 @@ function insertRowDB(type){
     //set fieldNames and fieldValues to a comma separated string of data
     value = jQuery(this).find(".thVal").val();
     if(!jQuery(this).hasClass('noSend')){
+      //get field name from column id
       fName = jQuery(this).attr('id');
+      //remove the type from the field name (i.e.res or att)
+      fName = fName.replace(type, "");
+      if(fName =='type')     fName ='resource_id';
+      if(fName =='category') fName ='attribute_id';
+
       insertArr[fName]=value;
     }
     that = jQuery(this).find(".thVal");
@@ -167,9 +261,11 @@ function insertRowDB(type){
   });
 
   if(type=='res'){
-    var table = 'wp_rmt_entry_resources';
+    var table     = 'wp_rmt_entry_resources';
+    var dataArray = resourceArray;
   }else if(type=='att'){
-    var table = 'wp_rmt_entry_attributes';
+    var table     = 'wp_rmt_entry_attributes';
+    var dataArray = attributeArray;
   }
   var data = {
         'action': 'update-entry-resAtt',
@@ -180,43 +276,41 @@ function insertRowDB(type){
   jQuery.post(ajaxurl, data, function(response) {
     //set actions column
     jQuery('#resRowNew #actions').html('<p onclick="jQuery(\'#resRow'+response.ID+'\').remove();"><i class="fa fa-minus-circle"></i></p>');
+
+    //update fields with returned row id
+    for (i = 0; i < dataArray.length; i++) {
+      jQuery('#'+type+'RowNew #'+dataArray[i]['id']).attr('id',dataArray[i]['id']+'_'+response.ID);
+    }
+
     //after adding row set row id to the correct value
     jQuery('#resRowNew').attr('id','resRow'+response.ID);
+
+    //update the date/time and user info
+    jQuery('#'+type+'user_'+response.ID).html(response.user);
+    jQuery('#'+type+'dateupdate_'+response.ID).html(response.dateupdate);
   });
 }
 function updateDB(newVal,currentEle){
-  var fieldName = '';  var ID = ''; var table="";
+  var fieldName = '';  var ID = ''; var table=""; var type="";
   //remove #
   currentEle = currentEle.replace("#", "");
-  //are we updating entry resources or entry attributes
-  if(currentEle.indexOf("res")!=-1){ //resource table
-    table = 'wp_rmt_entry_resources';
-    //get field name
-    currentEle = currentEle.replace("res", "");
-    fieldName = currentEle.substr(0, currentEle.indexOf('_'));
-    //get ID
-    ID = currentEle.substr(currentEle.indexOf("_") + 1);
-  }else if(currentEle.indexOf("att")!=-1){ //attribute table
-    table = 'wp_rmt_entry_attributes';
-    //get field name
-    currentEle = currentEle.replace("att", "");
-    fieldName = currentEle.substr(0, currentEle.indexOf('_'));
-    //get ID
-    ID = currentEle.substr(currentEle.indexOf("_") + 1);
-  }
-  if (fieldName=='' || ID==''){
+  var fieldData = breakDownEle(currentEle);
+  if(fieldData['fieldName'] =='type')     fieldData['fieldName'] ='resource_id';
+  if(fieldData['fieldName'] =='category') fieldData['fieldName'] ='attribute_id';
+  if (fieldData['fieldName']=='' || fieldData['ID']==''){
     //error
   }
   //update DB table in AJAX
   var data = {
         'action': 'update-entry-resAtt',
-        'fieldName': fieldName,
-        'ID': ID,
-        'table': table,
+        'fieldName': fieldData['fieldName'],
+        'ID': fieldData['ID'],
+        'table': fieldData['table'],
         'newValue':newVal
       };
   jQuery.post(ajaxurl, data, function(response) {
-    //jQuery('#updateMSG').text(response);
-    //alert(response.message + " ID:" + response.ID);
+    //update the date/time and user info
+    jQuery('#'+fieldData['type']+'user_'+fieldData['ID']).html(response.user);
+    jQuery('#'+fieldData['type']+'dateupdate_'+fieldData['ID']).html(response.dateupdate);
   });
 }

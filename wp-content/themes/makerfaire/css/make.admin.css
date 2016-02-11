@@ -221,13 +221,16 @@ ul li.gf_form_switcher{top:-47px}
 .gf_right_half{float: right;width: 45.5%;}
 
 .entry-resource {
-  border-radius:5px;width:90%;display:block;border:thin solid grey;overflow:scroll;
+  border-radius:5px;display:block;border:thin solid grey;overflow:/*scroll;*/
 }
 .entry-resource .panel-heading.active-state {background-color: lightblue;}
 .entry-resource .panel-heading h4 {font-size: 30px;}
 .entry-resource .panel-group{margin-bottom:0px;}
 .entry-resource .panel-body {padding:0;border-top:none}
 
-.entry-resource table{width:101%}/* If I don't make this 101% the table is 1 px smaller than the available area'*/
+.entry-resource table{width:100%}
 .entry-resource th {background-color: lightgrey;}
 .entry-resource th,.entry-resource td {padding:16px 5px;}
+.entry-resource input[type="number"].thVal {
+   width:45px;
+}

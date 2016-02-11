@@ -2244,6 +2244,8 @@ function update_entry_resatt() {
   global $wpdb;
   $ID        = $_POST['ID'];
   $table     = $_POST['table'];
+  //set who is updating the record
+  $current_user = wp_get_current_user();
 
   if($ID==0){ //add new record
     $insertArr = $_POST['insertArr'];
@@ -2251,18 +2253,17 @@ function update_entry_resatt() {
       $fields[] =$key;
       $values[] =$value;
     }
-      $sql = "insert into ".$table.' ('.implode(',',$fields).') VALUES ("'.implode('","',$values).'")';
+      $sql = "insert into ".$table.' ('.implode(',',$fields).',user) VALUES ("'.implode('","',$values).'",'.$current_user->ID.')';
   }else{ //update existing record
     $newValue  = $_POST['newValue'];
     $fieldName = $_POST['fieldName'];
-
-    $sql = "update ".$table.' set '.$fieldName .'="'.$newValue.'" where ID='.$ID;
+    $sql = "update ".$table.' set '.$fieldName .'="'.$newValue.'",user= '.$current_user->ID.' where ID='.$ID;
   }
 
   $wpdb->get_results($sql);
   //return the ID
   if($ID==0)  $ID = $wpdb->insert_id;
-  $response = array('message'=>'Saved','ID'=>$ID);
+  $response = array('message'=>'Saved','ID'=>$ID,'user'=>$current_user->display_name,'dateupdate'=>current_time('m/d/y h:i a'));
   wp_send_json( $response );
 
   // IMPORTANT: don't forget to "exit"
