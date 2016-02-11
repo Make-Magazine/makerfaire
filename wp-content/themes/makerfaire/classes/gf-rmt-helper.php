@@ -508,7 +508,7 @@ class GFJDBHELPER {
       $attribute_id = $value[0];
       $value        = $value[1];
       $comment     = $value[2];
-      $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,'comment') "
+      $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`) "
                   . " VALUES (".$entryData['CS_ID'].",".$attribute_id .',"'.$value . '","' . $comment.'")');
     }
   }
