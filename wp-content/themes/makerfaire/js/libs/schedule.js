@@ -28,5 +28,3 @@ jQuery(document).ready(function () {
         jQuery ('button .pickText').text(dispText);
     });
 });
-
-
