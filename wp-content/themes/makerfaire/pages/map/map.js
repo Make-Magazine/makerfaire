@@ -111,7 +111,7 @@
                 gMarker = data[i];
                 gMarkerIcon = {
                   path: google.maps.SymbolPath.CIRCLE,
-                  scale: 8,
+                  scale: 5,
                   fillOpacity: 0.5,
                   strokeOpacity: 0
                 };
@@ -173,10 +173,11 @@
 
           function searchMarkers(text) {
             infowindow.close();
+            var text = text.toUpperCase();
             gmarkers1.map(function(obj) {
-              if (obj.title && obj.title.match(text) ||
-                obj.category && obj.category.match(text) ||
-                obj.description && obj.description.match(text)) {
+              if (obj.title && obj.title.toUpperCase().match(text) ||
+                obj.category && obj.category.toUpperCase().match(text) ||
+                obj.description && obj.description.toUpperCase().match(text)) {
                 obj.setVisible(true);
               } else {
                 obj.setVisible(false);
