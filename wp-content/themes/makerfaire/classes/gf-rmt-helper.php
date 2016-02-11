@@ -498,7 +498,7 @@ class GFJDBHELPER {
     foreach($resource as $value){
       $resource_id = $value[0];
       $qty         = $value[1];
-      $comment     = $value[2];
+      $comment     = htmlspecialchars($value[2]);
       $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`(`entry_id`, `resource_id`, `qty`, `comment`) "
                   . " VALUES (".$entryData['CS_ID'].",".$resource_id .",".$qty . ',"' . $comment.'")');
     }
@@ -506,8 +506,8 @@ class GFJDBHELPER {
     //add attributes to the table
     foreach($attribute as $value){
       $attribute_id = $value[0];
-      $attvalue     = $value[1];
-      $comment      = $value[2];
+      $attvalue     = htmlspecialchars($value[1]);
+      $comment      = htmlspecialchars($value[2]);
       $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`) "
                   . " VALUES (".$entryData['CS_ID'].",".$attribute_id .',"'.$attvalue . '","' . $comment.'")');
     }
