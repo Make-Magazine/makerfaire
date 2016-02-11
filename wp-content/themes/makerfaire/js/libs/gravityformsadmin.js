@@ -220,6 +220,8 @@ function resAttDelete(currentEle){
     currentEle = currentEle.replace("#", ""); //remove hashtag
     var fieldData = breakDownEle(currentEle);
     var rowID = currentEle.replace("Row", "");
+    var rowID = rowID.replace("att", "");
+    var rowID = rowID.replace("res", "");
     //send delete
     var data = {
         'action': 'delete-entry-resAtt',
