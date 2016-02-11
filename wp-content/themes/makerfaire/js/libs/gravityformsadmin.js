@@ -168,7 +168,7 @@ function addRow(addTo){
 function buildDropDown(type){
   var itemSel = '';
   if(type=='resitem'){
-    var itemSel = '<select onchange="setType(this.value)" class="thVal"><option>Select Item</option>';
+    var itemSel = '<select onchange="setType(this.value,\'\',\'\')" class="thVal"><option>Select Item</option>';
     jQuery.each(items, function(objKey,objValue) {
        itemSel += '<option value="'+objValue.key+'">'+objValue.value+'</option>';
     });
