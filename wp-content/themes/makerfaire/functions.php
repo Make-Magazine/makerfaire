@@ -112,8 +112,11 @@ function load_scripts() {
   wp_enqueue_style( 'jquery-datetimepicker-css',  get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css' );
   wp_enqueue_style( 'mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css' );
   wp_enqueue_style( 'fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true );
-  // Libs
+  // jquery from Wordpress core (with no-conflict mode flag enabled):
+  wp_enqueue_script( 'jquery' );
+  // Libraries concatenated by the grunt concat task (in Gruntfile.js):
   wp_enqueue_script( 'built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js');
+  // Other libraries:
   wp_enqueue_script( 'jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
   wp_enqueue_script( 'bootgrid', get_stylesheet_directory_uri() . '/plugins/grid/jquery.bootgrid.min.js');
   wp_enqueue_script( 'thickbox', null);
