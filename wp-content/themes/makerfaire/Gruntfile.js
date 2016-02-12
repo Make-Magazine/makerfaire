@@ -45,25 +45,45 @@ module.exports = function(grunt) {
     // Concat js files
     concat: {
       options: {
-        banner: '// Compiled file - any changes will be overwritten by grunt task\n\n',
+        banner: '// Compiled file - any changes will be overwritten by grunt task\n',
         separator: ';',
         process: function(src, filepath) {
-          return '/* ' + filepath + ' */\n' + src;
+          return '//!!\n//!! ' + filepath + '\n' + src;
         }
       },
       dist: {
-        src: ['js/src/misc-libs.js', 'js/src/*.js'],
-        dest: 'js/built.js',
+        files: {
+          'js/built.js': ['js/src/misc-libs.js', 'js/src/*.js'],
+          'js/built-libs.js': [
+            'node_modules/bootstrap/**/bootstrap.min.js',
+            'node_modules/bootstrap-dialog/**/bootstrap-dialog.min.js',
+            'node_modules/jquery.cookie/**/jquery-cookie.js',
+            'node_modules/fancybox/**/jquery.fancybox.pack.js',
+            'node_modules/hammerjs/hammer.min.js',
+            'js/libs-src/*.js'
+          ],
+        }
       },
     },
     // uglify js
     uglify: {
-      options: {
-        mangle: false
-      },
-      my_target: {
+      js: {
+        options: {
+          mangle: false,
+          banner: '// Compiled file - any changes will be overwritten by grunt task\n',
+        },
         files: {
           'js/built.js': 'js/built.js'
+        }
+      },
+      libs: {
+        options: {
+          mangle: false,
+          banner: '// Compiled file - any changes will be overwritten by grunt task\n',
+          preserveComments: /(?:(^!!)|@(?:license|preserve|cc_on))/
+        },
+        files: {
+          'js/built-libs.js': 'js/built-libs.js'
         }
       }
     },
