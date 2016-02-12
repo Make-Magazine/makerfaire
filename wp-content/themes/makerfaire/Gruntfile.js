@@ -45,10 +45,10 @@ module.exports = function(grunt) {
     // Concat js files
     concat: {
       options: {
-        banner: '// Compiled file - any changes will be overwritten by grunt task\n\n',
+        banner: '// Compiled file - any changes will be overwritten by grunt task\n',
         separator: ';',
         process: function(src, filepath) {
-          return '/* ' + filepath + ' */\n' + src;
+          return '//!!\n//!! ' + filepath + '\n' + src;
         }
       },
       dist: {
@@ -67,12 +67,23 @@ module.exports = function(grunt) {
     },
     // uglify js
     uglify: {
-      options: {
-        mangle: false
-      },
-      my_target: {
+      js: {
+        options: {
+          mangle: false,
+          banner: '// Compiled file - any changes will be overwritten by grunt task\n',
+        },
         files: {
           'js/built.js': 'js/built.js'
+        }
+      },
+      libs: {
+        options: {
+          mangle: false,
+          banner: '// Compiled file - any changes will be overwritten by grunt task\n',
+          preserveComments: /(?:(^!!)|@(?:license|preserve|cc_on))/
+        },
+        files: {
+          'js/built-libs.js': 'js/built-libs.js'
         }
       }
     },
