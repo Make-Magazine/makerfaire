@@ -17,7 +17,7 @@ function faire_maps_scripts() {
     );
     wp_enqueue_script(
       'ngTasty',
-      get_stylesheet_directory_uri() . '/bower_components/angular/ng-tasty-tpls.min.js',
+      get_stylesheet_directory_uri() . '/bower_components/ng-tasty/ng-tasty-tpls.min.js',
       array('angularjs')
     );
     wp_enqueue_script(
