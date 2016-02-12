@@ -1,7 +1,7 @@
 <?php
 /**
  * Instead of passing DataTables AJAX requests through admin-ajax.php, directly access the data
- * 
+ *
  * @since 1.3
  *
  * @param boolean $use_direct_access Default false
@@ -58,7 +58,7 @@ function gform_previous_button_markup( $previous_button ) {
 /* Styles to adjust admin screen go here */
 add_action( 'admin_head', 'remove_gf_form_toolbar' );
 
-function remove_gf_form_toolbar(){ 
+function remove_gf_form_toolbar(){
 	?>
      <style>
       		#gf_form_toolbar li.gf_form_toolbar_editor {
@@ -69,11 +69,11 @@ function remove_gf_form_toolbar(){
 		    		}
 	 #notifications_container {
 	 	display:none;
-	 	}	    
-	 	
+	 	}
+
 	 	#entry_form div#submitdiv {
 	 	display:none;
-	 	}			
+	 	}
 	 	.detail-view-print {
 	 	margin-bottom: 20px;
 	 	}
@@ -114,7 +114,7 @@ if (isset($menu_locations[ $location_id ])) {
 				'meta'  => array( 'class' => 'my-toolbar-page' ),
 				'parent' => 'mf_admin_parent_BA15'
 			);
-		
+
 			$wp_admin_bar->add_node( $args );
 			}
 		}
@@ -132,7 +132,7 @@ if (isset($menu_locations[ $location_id ])) {
                     // This is the correct menu
                     $menu_items = wp_get_nav_menu_items($menu);
 
-                    
+
 
                     $wp_admin_bar->add_node( $args );
 
@@ -159,7 +159,7 @@ if (isset($menu_locations[ $location_id ])) {
 		// If the ID of this menu is the ID associated with the location we're searching for
 		if ($menu->term_id == $menu_locations[ $location_id ]) {
 			// This is the correct menu
-			$menu_items = wp_get_nav_menu_items($menu);			
+			$menu_items = wp_get_nav_menu_items($menu);
 			foreach ( (array) $menu_items as $key => $menu_item ) {
 				$args = array(
 						'id'    => $menu_item->object_id,
@@ -179,56 +179,56 @@ if (isset($menu_locations[ $location_id ])) {
 function buildFaireDrop($wp_admin_bar){
     //build faire drop downs
     global $wpdb;
-    $sql = "select *, count(*) as count from wp_mf_faire, wp_rg_lead 
+    $sql = "select *, count(*) as count from wp_mf_faire, wp_rg_lead
                 where FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0 and
                         wp_rg_lead.status = 'active'
                 group by wp_mf_faire.faire
-                ORDER BY `wp_mf_faire`.`start_dt` DESC";                            
-    foreach($wpdb->get_results($sql) as $row){                                 
-        //parent menu            
+                ORDER BY `wp_mf_faire`.`start_dt` DESC";
+    foreach($wpdb->get_results($sql) as $row){
+        //parent menu
         $args = array(
         'id'    => 'mf_admin_parent_'.$row->faire,
         'title' => $row->faire_name.' ('.$row->count.')',
         'meta'  => array( 'class' => 'my-toolbar-page' ),
-        'href'  => admin_url( 'admin.php' ) . '?page=mf_entries&faire='.$row->faire,    
+        'href'  => admin_url( 'admin.php' ) . '?page=mf_entries&faire='.$row->faire,
         'parent' => 'mf_admin_parent'
         );
-        $wp_admin_bar->add_node( $args );  
-        
+        $wp_admin_bar->add_node( $args );
+
         //build submenu, with form names
         $formSQL = "
             SELECT form_id,form.title,count(*) as count
                     FROM `wp_rg_lead` join wp_rg_form form
                     WHERE form.id = form_id and `form_id` IN (".$row->form_ids.") and status = 'active'
-                    group by form_id 
+                    group by form_id
                     ORDER BY FIELD(form_id, ".$row->form_ids.")";
 
-            foreach($wpdb->get_results($formSQL) as $formRow){  
+            foreach($wpdb->get_results($formSQL) as $formRow){
                 $adminURL = admin_url( 'admin.php' ) . "?page=mf_entries&view=entries&id=".$formRow->form_id;
-                
+
                 $args = array(
                         'id'    => 'mf_admin_child_'.$formRow->form_id,
                         'title' => $formRow->title.' ('.$formRow->count.')',
                         'href'  => $adminURL,
                         'meta'  => array( 'class' => 'my-toolbar-page' ),
                         'parent' => 'mf_admin_parent_'.$row->faire);
-                $wp_admin_bar->add_node( $args ); 
-                
+                $wp_admin_bar->add_node( $args );
+
                 //build submenu of entry status
                 $statusSql = "SELECT wp_rg_lead_detail.id,value,count(*)as count FROM `wp_rg_lead_detail` join wp_rg_lead on wp_rg_lead.id = lead_id WHERE wp_rg_lead.form_id = ".$formRow->form_id."    AND wp_rg_lead_detail.field_number = 303 and status = 'active' group by value";
-                                        
-                foreach($wpdb->get_results($statusSql) as $statusRow){                    
+
+                foreach($wpdb->get_results($statusSql) as $statusRow){
                     $args = array(
                         'id'    => 'mf_admin_subchild_'.$statusRow->id,
                         'title' => $statusRow->value.' ('.$statusRow->count.')',
                         'href'  => $adminURL.'&sort=0&dir=DESC&'.urlencode('filterField[]').'=303|is|'.str_replace(' ','+',$statusRow->value),
                         'meta'  => array( 'class' => 'my-toolbar-page' ),
                         'parent' => 'mf_admin_child_'.$formRow->form_id);
-                    $wp_admin_bar->add_node( $args ); 
+                    $wp_admin_bar->add_node( $args );
                 }
             }
     }
-      
+
     $args = array(
             'id'    => 'mf_admin_parent_fairesetup',
             'title' => 'Faire Setup',
@@ -246,12 +246,12 @@ function buildFaireDrop($wp_admin_bar){
 add_action( 'gform_after_submission', 'post_to_jdb', 10, 2 );
 function post_to_jdb( $entry, $form ) {
 	// Allowed forms array
-	$jdb_sync_forms = array(25, 26, 27, 28, 29);
-	if (in_array($form['id'], $jdb_sync_forms)) {
+	/*$jdb_sync_forms = array(25, 26, 27, 28, 29);
+	if (in_array($form['id'], $jdb_sync_forms)) {*/
 		error_log('$gravityforms_send_entry_to_jdb:'.$entry['id']);
 		$result = GFJDBHELPER::gravityforms_send_entry_to_jdb($entry['id']);
 		error_log('GFJDBHELPER:result:'.$result);
-	}
+//  	}
 }
 
 /*
@@ -262,7 +262,7 @@ function note_to_jdb( $noteid,$entryid,$userid,$username,$note,$notetype ) {
 	error_log('$GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$noteid);
 	$result=GFJDBHELPER::gravityforms_send_note_to_jdb($entryid,$noteid,$note);
 	error_log('GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$result);
-	
+
 }
 
 //action to modify field 320 to display the text instead of the taxonomy code
@@ -277,15 +277,15 @@ function setTaxName($value, $field, $lead, $form){
 	else{
 		return $value;
 	}
-    
+
 }
 
 add_filter( 'gform_export_field_value', 'set_export_values', 10, 4 );
 function set_export_values( $value, $form_id, $field_id, $lead ) {
-    
+
     if($field_id==320){
         $form = GFAPI::get_form( $form_id );
-    
+
         foreach( $form['fields'] as $field ) {
             if ( $field->id == $field_id) {
                 if( in_array( $field->type, array('checkbox', 'select', 'radio') ) ){
