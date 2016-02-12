@@ -12,7 +12,7 @@ function faire_maps_scripts() {
   if (is_page('maps')) {
     wp_enqueue_script(
       'faires-global-map-scripts',
-      get_stylesheet_directory_uri() . '/pages/map/map.js',
+      get_stylesheet_directory_uri() . '/js/angular/global-faires-map-app.js',
       array('angularjs', 'ngTasty')
     );
     wp_enqueue_script(
