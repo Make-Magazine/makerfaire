@@ -17,12 +17,12 @@ function faire_maps_scripts() {
     );
     wp_enqueue_script(
       'ngTasty',
-      get_stylesheet_directory_uri() . '/js/angular/ng-tasty-tpls.min.js',
+      get_stylesheet_directory_uri() . '/bower_components/angular/ng-tasty-tpls.min.js',
       array('angularjs')
     );
     wp_enqueue_script(
       'angularjs',
-      get_stylesheet_directory_uri() . '/js/angular/angular.min.js'
+      get_stylesheet_directory_uri() . '/bower_components/angular/angular.min.js'
     );
   }
 }

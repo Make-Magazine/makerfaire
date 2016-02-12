@@ -1,0 +1,25 @@
+{
+  "name": "ng-tasty",
+  "version": "0.6.1",
+  "homepage": "https://github.com/Zizzamia/ng-tasty",
+  "authors": [
+    {
+      "name": "Leonardo Zizzamia",
+      "homepage": "https://twitter.com/Zizzamia"
+    }
+  ],
+  "main": "./ng-tasty-tpls.min.js",
+  "dependencies": {
+    "angular": "^1.4.0"
+  },
+  "_release": "0.6.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.6.1",
+    "commit": "dd4ac213919adf4b091b6162dfe441eb5aab60a0"
+  },
+  "_source": "git://github.com/Zizzamia/bower-ng-tasty.git",
+  "_target": "^0.6.1",
+  "_originalSource": "ng-tasty",
+  "_direct": true
+}
