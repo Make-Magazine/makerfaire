@@ -647,7 +647,7 @@ function entryResources($lead){
       <div class="panel panel-default">
           <div class="panel-heading edu1 active-state" role="tab" id="headingOne">
               <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Resources</a></h4>
+                  <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Resources</a></h4>
           </div>
           <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <div class="panel-body"><?php echo $resourceDisp;?></div>
@@ -656,7 +656,7 @@ function entryResources($lead){
       <div class="panel panel-default">
           <div class="panel-heading edu1" role="tab" id="headingTwo">
               <h4 class="panel-title">
-                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Attributes</a></h4>
+                  <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Attributes</a></h4>
           </div>
           <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
               <div class="panel-body"><?php echo $attDisp;?></div>
