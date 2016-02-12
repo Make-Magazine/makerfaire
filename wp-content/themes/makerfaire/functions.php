@@ -2008,15 +2008,15 @@ function angular_scripts() {
   if (is_page('ribbons')) {
     wp_enqueue_script(
       'angularjs',
-      get_stylesheet_directory_uri() . '/js/angular/angular.min.js'
+      get_stylesheet_directory_uri() . '/bower_components/angular/angular.min.js'
     );
     wp_enqueue_script(
       'angularjs-route',
-      get_stylesheet_directory_uri() . '/js/angular/angular-route.min.js'
+      get_stylesheet_directory_uri() . '/bower_components/angular/angular-route.min.js'
     );
     wp_enqueue_script(
       'dirPagination',
-      get_stylesheet_directory_uri() . '/js/angular/dirPagination.js',
+      get_stylesheet_directory_uri() . '/bower_components/angularUtils-pagination/dirPagination.js',
       array( 'angularjs', 'angularjs-route' )
     );
     wp_enqueue_script(
