@@ -569,8 +569,8 @@ function entryResources($lead){
   $results = $wpdb->get_results($sql);
   $resourceDisp = '<table id="resTable"><thead>'
                   . ' <tr><th>Item</th>'
+                  . ' <th>Type</th>'
                   . ' <th>Qty</th>'
-                  . ' <th>Value</th>'
                   . ' <th>Comments</th>'
                   . ' <th>User</th>'
                   . ' <th>Last Updated</th>'
