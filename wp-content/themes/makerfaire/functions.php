@@ -104,7 +104,7 @@ function my_custom_fav_ico() {
 add_filter( 'jetpack_enable_opengraph', '__return_false', 99 );
 
 /* Load up jQuery */
-function make_enqueue_jquery() {
+function load_scripts() {
   // Styles
   wp_enqueue_style( 'make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css' );
   wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css' );
@@ -117,25 +117,21 @@ function make_enqueue_jquery() {
   wp_enqueue_style( 'jquery-datetimepicker-css',  get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css' );
   wp_enqueue_style( 'mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css' );
   wp_enqueue_style( 'fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true );
-  // Libs
+  // jquery from Wordpress core (with no-conflict mode flag enabled):
   wp_enqueue_script( 'jquery' );
-  wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/libs/bootstrap.min.js', array( 'jquery' ) );
-  wp_enqueue_script( 'make-countdown', get_stylesheet_directory_uri() . '/js/libs/jquery.countdown.js', array( 'jquery' ) );
-  wp_enqueue_script( 'jquery_cookie',  get_stylesheet_directory_uri() . '/js/libs/jquery.cookie.js', array( 'jquery' ), null );
-  wp_enqueue_script( 'jquery-datetimepicker',  get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array( 'jquery' ), null );
-  wp_enqueue_script( 'ytv', get_stylesheet_directory_uri() . '/js/libs/ytv.js', array( 'jquery' ) );
-  wp_enqueue_script( 'make-bootstrapdialog',  get_stylesheet_directory_uri() . '/js/libs/bootstrap-dialog.min.js', array( 'jquery' ), null );
-  wp_enqueue_script( 'bootgrid',  get_stylesheet_directory_uri() . '/plugins/grid/jquery.bootgrid.min.js', array( 'jquery' ), null );
-  wp_enqueue_script( 'thickbox',null, array( 'jquery' ), null );
-  wp_enqueue_script( 'faireSchedule',  get_stylesheet_directory_uri() . '/js/libs/schedule.js', array( 'jquery' ), null );
-  wp_enqueue_script( 'fancybox',  get_stylesheet_directory_uri() . '/js/libs/jquery.fancybox.pack.js', array( 'jquery' ), null );
+  // Libraries concatenated by the grunt concat task (in Gruntfile.js):
+  wp_enqueue_script( 'built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js');
+  // Other libraries:
+  wp_enqueue_script( 'jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
+  wp_enqueue_script( 'bootgrid', get_stylesheet_directory_uri() . '/plugins/grid/jquery.bootgrid.min.js');
+  wp_enqueue_script( 'thickbox', null);
   // Localize
   $translation_array = array('templateUrl' => get_stylesheet_directory_uri(),'ajaxurl' => admin_url( 'admin-ajax.php' ));
   wp_localize_script('built', 'object_name', $translation_array);
   // Scripts
   wp_enqueue_script( 'built', get_stylesheet_directory_uri() . '/js/built.js', array( 'jquery' ) );
 }
-add_action( 'wp_enqueue_scripts', 'make_enqueue_jquery' );
+add_action( 'wp_enqueue_scripts', 'load_scripts' );
 add_action( 'gform_enqueue_scripts', 'enqueue_custom_script', 10, 2 );
 
 function enqueue_custom_script( $form, $is_ajax ) {
@@ -2017,15 +2013,15 @@ function angular_scripts() {
   if (is_page('ribbons')) {
     wp_enqueue_script(
       'angularjs',
-      get_stylesheet_directory_uri() . '/js/angular/angular.min.js'
+      get_stylesheet_directory_uri() . '/bower_components/angular/angular.min.js'
     );
     wp_enqueue_script(
       'angularjs-route',
-      get_stylesheet_directory_uri() . '/js/angular/angular-route.min.js'
+      get_stylesheet_directory_uri() . '/bower_components/angular/angular-route.min.js'
     );
     wp_enqueue_script(
       'dirPagination',
-      get_stylesheet_directory_uri() . '/js/angular/dirPagination.js',
+      get_stylesheet_directory_uri() . '/bower_components/angularUtils-pagination/dirPagination.js',
       array( 'angularjs', 'angularjs-route' )
     );
     wp_enqueue_script(
@@ -2350,7 +2346,7 @@ function GVupdate_notification($form,$entry_id,$orig_entry){
         }
 
         $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel) values " .$inserts;
- 
+
         global $wpdb;
         $wpdb->get_results($sql);
     }
@@ -2369,10 +2365,17 @@ function checkForRibbons($postID=0,$entryID=0){
     //check for 0??
     $blueCount = $redCount = 0;
     foreach($ribbons as $ribbon){
-        if($ribbon->ribbonType==0)
+      if($ribbon->ribbonType==0){
+        for($i=0; $i< $ribbon->numRibbons;$i++){
           $return .= '<div class="blueMakey"></div>';
-        if($ribbon->ribbonType==1)
+        }
+      }
+
+      if($ribbon->ribbonType==1){
+        for($i=0; $i< $ribbon->numRibbons;$i++){
           $return .= '<div class="redMakey"></div>';
+        }
+      }
     }
     return $return;
 }
