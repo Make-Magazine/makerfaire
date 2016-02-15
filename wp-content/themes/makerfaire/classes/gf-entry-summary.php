@@ -9,8 +9,6 @@ function add_main_text_before($form, $lead){
         echo gf_collapsible_sections($form, $lead);
 }
 
-
-
 // Summary Metabox
 function gf_summary_metabox($form, $lead)
 {
@@ -90,7 +88,6 @@ if ( isset( $long_description ) ) {
 						</td>
 					</tr>
 					<tr>
-
 						<td style="width: 80px;" valign="top"><strong>Type:</strong></td>
 						<td valign="top"><?php echo esc_attr( ucfirst( $entry_form_type ) ); ?></td>
 					</tr>
@@ -98,8 +95,6 @@ if ( isset( $long_description ) ) {
 						<td style="width: 80px;" valign="top"><strong>Status:</strong></td>
 						<td valign="top"><?php echo esc_attr( $entry_form_status ); ?></td>
 					</tr>
-					<?php
-							?>
 					<tr>
 						<td style="width: 80px;" valign="top"><strong>Website:</strong></td>
 						<td valign="top"><a
@@ -108,71 +103,68 @@ if ( isset( $long_description ) ) {
 					<tr>
 						<td valign="top"><strong>Video:</strong></td>
 						<td><?php
-								  echo ( isset( $vkey ) ) ? '<a href="' . esc_url( $vkey ) . '" target="_blank">' . esc_url( $vkey ) . '</a><br/>' : '' ;
+              echo ( isset( $vkey ) ) ? '<a href="' . esc_url( $vkey ) . '" target="_blank">' . esc_url( $vkey ) . '</a><br/>' : '' ;
 								?>
 						</td>
 					</tr>
 					<tr>
 						<td style="width: 80px;" valign="top"><strong>Maker Names:</strong></td>
 						<td valign="top"><?php echo !empty($makergroupname) ? $makergroupname.'(Group)</br>' : ''; ?>
-                                                <?php if(!empty($makerPhoto1)){?>
-                                                    <a href="<?php echo $makerPhoto1;?>" class='thickbox'>
-                                                    <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto1, 30,30);?>" alt="" />
-                                                    </a>
-                                                <?php  }?>
-						<?php echo !empty($makerfirstname1) ?  $makerfirstname1.' '.$makerlastname1.'</br>' : '' ; ?>
-						<?php if(!empty($makerPhoto2)){?>
-                                                    <a href="<?php echo $makerPhoto2;?>" class='thickbox'>
-                                                    <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto2, 30,30);?>" alt="" />
-                                                    </a>
-                                                <?php  }?>
-                                                <?php echo !empty($makerfirstname2) ?  $makerfirstname2.' '.$makerlastname2.'</br>' : '' ; ?>
-                                                <?php if(!empty($makerPhoto3)){?>
-                                                    <a href="<?php echo $makerPhoto3;?>" class='thickbox'>
-                                                    <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto3, 30,30);?>" alt="" />
-                                                    </a>
-                                                <?php  }?>
-						<?php echo !empty($makerfirstname3) ?  $makerfirstname3.' '.$makerlastname3.'</br>' : '' ; ?>
-                                                <?php if(!empty($makerPhoto4)){?>
-                                                    <a href="<?php echo $makerPhoto4;?>" class='thickbox'>
-                                                    <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto4, 30,30);?>" alt="" />
-                                                    </a>
-                                                <?php  }?>
-						<?php echo !empty($makerfirstname4) ?  $makerfirstname4.' '.$makerlastname4.'</br>' : '' ; ?>
-                                                <?php if(!empty($makerPhoto5)){?>
-                                                    <a href="<?php echo $makerPhoto5;?>" class='thickbox'>
-                                                    <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto5, 30,30);?>" alt="" />
-                                                    </a>
-                                                <?php  }?>
-						<?php echo !empty($makerfirstname5) ?  $makerfirstname5.' '.$makerlastname5.'</br>' : '' ; ?>
-                                                <?php if(!empty($makerPhoto6)){?>
-                                                    <a href="<?php echo $makerPhoto6;?>" class='thickbox'>
-                                                    <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto6, 30,30);?>" alt="" />
-                                                    </a>
-                                                <?php  }?>
-						<?php echo !empty($makerfirstname6) ?  $makerfirstname6.' '.$makerlastname6.'</br>' : '' ; ?>
-                                                <?php if(!empty($makerPhoto7)){?>
-                                                    <a href="<?php echo $makerPhoto7;?>" class='thickbox'>
-                                                    <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto7, 30,30);?>" alt="" />
-                                                    </a>
-                                                <?php  }?>
-						<?php echo !empty($makerfirstname7) ?  $makerfirstname7.' '.$makerlastname7.'</br>' : '' ; ?>
-
-</td>
+              <?php
+              if(!empty($makerPhoto1)){?>
+                <a href="<?php echo $makerPhoto1;?>" class='thickbox'>
+                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto1, 30,30);?>" alt="" />
+                </a>
+              <?php  }?>
+              <?php echo !empty($makerfirstname1) ?  $makerfirstname1.' '.$makerlastname1.'</br>' : '' ;
+              if(!empty($makerPhoto2)){?>
+                <a href="<?php echo $makerPhoto2;?>" class='thickbox'>
+                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto2, 30,30);?>" alt="" />
+                </a>
+              <?php  }
+              echo !empty($makerfirstname2) ?  $makerfirstname2.' '.$makerlastname2.'</br>' : '' ;
+              if(!empty($makerPhoto3)){?>
+                <a href="<?php echo $makerPhoto3;?>" class='thickbox'>
+                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto3, 30,30);?>" alt="" />
+                </a>
+              <?php  }
+              echo !empty($makerfirstname3) ?  $makerfirstname3.' '.$makerlastname3.'</br>' : '' ; ?>
+              <?php if(!empty($makerPhoto4)){?>
+                  <a href="<?php echo $makerPhoto4;?>" class='thickbox'>
+                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto4, 30,30);?>" alt="" />
+                  </a>
+              <?php  }?>
+              <?php echo !empty($makerfirstname4) ?  $makerfirstname4.' '.$makerlastname4.'</br>' : '' ; ?>
+              <?php if(!empty($makerPhoto5)){?>
+                  <a href="<?php echo $makerPhoto5;?>" class='thickbox'>
+                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto5, 30,30);?>" alt="" />
+                  </a>
+              <?php  }?>
+              <?php echo !empty($makerfirstname5) ?  $makerfirstname5.' '.$makerlastname5.'</br>' : '' ; ?>
+              <?php if(!empty($makerPhoto6)){?>
+                  <a href="<?php echo $makerPhoto6;?>" class='thickbox'>
+                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto6, 30,30);?>" alt="" />
+                  </a>
+              <?php  }?>
+              <?php echo !empty($makerfirstname6) ?  $makerfirstname6.' '.$makerlastname6.'</br>' : '' ; ?>
+              <?php if(!empty($makerPhoto7)){?>
+                  <a href="<?php echo $makerPhoto7;?>" class='thickbox'>
+                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto7, 30,30);?>" alt="" />
+                  </a>
+              <?php  }?>
+              <?php echo !empty($makerfirstname7) ?  $makerfirstname7.' '.$makerlastname7.'</br>' : '' ; ?>
+            </td>
 					</tr>
 					<tr>
 						<td style="width: 80px;" valign="top"><strong>What are your plans:</strong></td>
-
-
 						<td valign="top">
 						<?php
 						for ($i=0; $i < count($whatareyourplansvalues); $i++)
 						{
 							echo (!empty($lead['55.'.$i])) ? $lead['55.'.$i].'<br />' : '';
 						}
-?>
-
-</td>
+            ?>
+            </td>
 					</tr>
 					<tr>
 						<td valign="top"><strong>Size Request:</strong></td>
@@ -181,23 +173,23 @@ if ( isset( $long_description ) ) {
 						<?php echo ( isset( $size_request_other ) ) ? 'Other: '.$size_request_other : '' ; ?>
 						</td>
 					</tr>
-                                        <tr>
-                                            <td colspan="2">
-                                                <a target="_blank" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
-                                            </td>
-                                        </tr>
+          <tr>
+            <td colspan="2">
+              <a target="_blank" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
+            </td>
+          </tr>
 
-                                        <tr>
-                                            <td colspan="2">
-                                                <a href="<?php echo admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id );?>"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>
-                                            </td>
+          <tr>
+            <td colspan="2">
+              <a href="<?php echo admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id );?>"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>
+            </td>
 					</tr>
 				</table>
 			</td>
 		</tr>
 		<tr>
 			<td>
-                            <label >Email Note To:</label><br />
+        <label >Email Note To:</label><br />
 				<?php
 				$emailto1 = array("Alasdair Allan"          => "alasdair@makezine.com",
                           "Brian Jepson"            => "bjepson@makermedia.com",
