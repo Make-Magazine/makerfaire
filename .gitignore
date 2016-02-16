@@ -61,8 +61,6 @@ ics-importer-cache
 /wp-content/album/*
 gallery/*
 
-node_modules/
-
 pclzip-*
 sitemap.*
 wp-config.php
