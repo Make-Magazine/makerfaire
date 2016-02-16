@@ -2053,8 +2053,8 @@ function retrieveRibbonData() {
 }
 /* Changes to gravity view for maker admin tool */
 //use all forms
-add_filter('gravityview_before_get_entries','define_entry_search_criteria',10,4);
-add_filter('gravityview_pre_get_entries','define_entry_search_criteria',10,4);
+//add_filter('gravityview_before_get_entries','define_entry_search_criteria',10,4);
+//add_filter('gravityview_pre_get_entries','define_entry_search_criteria',10,4);
 
 function define_entry_search_criteria($return,$criteria,$passed_criteria,$total){
  $entries = GFAPI::get_entries( 0, $criteria['search_criteria'], $criteria['sorting'], $criteria['paging'], $total );
