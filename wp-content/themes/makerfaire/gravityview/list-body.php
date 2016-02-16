@@ -16,39 +16,9 @@
  */
 do_action( 'gravityview_list_body_before', $this );
 
-//set form id to search all forms for maker entries, not just the form defined in the view
-$form_id = 0;
-
-//get current logged in user information
-global $current_user;
-get_currentuserinfo();
-global $user_ID;global $user_email;
-
-/*
- * Retrieve all entries for this user - created with user email as the contact email and created by this user id
- */
-$criteria['search_criteria'] = array(
-  'status'        => 'active',
-  'field_filters' => array(
-    'mode' => 'any',
-    array(
-        'key'   => '98',
-        'value' => $user_email,
-        'operator' => 'like'
-    ),
-    array(
-        'key' => 'created_by',
-        'value' => $user_ID,
-        'operator' => 'is'
-    )
-  )
-);
-
-$entries = GFAPI::get_entries( $form_id, $criteria['search_criteria'] );
-$total = count($entries);
-
 // There are no entries.
-if( ! $total or !( is_user_logged_in() )) {
+if( ! $this->getTotalEntries() ) {
+
 	?>
 	<div class="gv-list-view gv-no-results">
 		<div class="gv-list-view-title">
@@ -58,25 +28,15 @@ if( ! $total or !( is_user_logged_in() )) {
 	<?php
 
 } else {
+
 	// There are entries. Loop through them.
-	foreach ( $entries as $entry ) {
-    ?>
-    <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
-    <?php
-    $form = GFAPI::get_form( $entry['form_id'] );
-    $form_type = (isset($form['form_type'])?'<p>'.$form['form_type'].':&nbsp;</p>':'');
-    if($form_type != 'Other' && $form_type != ''){
-      //skip this entry
-    }
+	foreach ( $this->getEntries() as $entry ) {
+
 		$this->setCurrentEntry( $entry );
-    //set status color
-    if($entry['303']=='Accepted'){
-        $statusBlock = 'greenStatus';
-    }else{
-        $statusBlock = 'greyStatus';
-    }
-    ?>
-		<div id="gv_list_<?php echo $entry['id']; ?>" class="<?php echo esc_attr( apply_filters( 'gravityview_entry_class', 'gv-list-view', $entry, $this ) ); ?>">
+
+	?>
+
+		<div id="gv_list_<?php echo $entry['id']; ?>" class="gv-grid-col-1-3 <?php echo esc_attr( apply_filters( 'gravityview_entry_class', 'gv-list-view', $entry, $this ) ); ?>">
 
 		<?php
 
@@ -86,10 +46,13 @@ if( ! $total or !( is_user_logged_in() )) {
 		 * @param GravityView_View $this The GravityView_View instance
 		 */
 		do_action( 'gravityview_entry_before', $entry, $this );
+
 		?>
 
 		<?php if ( $this->getField('directory_list-title') || $this->getField('directory_list-subtitle') ) { ?>
+
 			<?php
+
 			/**
 			 * @action `gravityview_entry_title_before` Tap in before the the entry title is displayed
 			 * @param array $entry Gravity Forms Entry array
@@ -99,7 +62,6 @@ if( ! $total or !( is_user_logged_in() )) {
 
 			?>
 			<div class="gv-list-view-title">
-        <div class="statusBox <?php echo $statusBlock;?>">
 
 				<?php if ( $this->getField('directory_list-title') ) {
 					$i          = 0;
@@ -125,9 +87,7 @@ if( ! $total or !( is_user_logged_in() )) {
 						$i ++;
 					}
 				}
-        ?>
-        </div> <!--end status box-->
-        <?php
+
 				$this->renderZone('subtitle', array(
 					'markup' => '<h4 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h4>',
 					'wrapper_class' => 'gv-list-view-subtitle',
@@ -159,10 +119,10 @@ if( ! $total or !( is_user_logged_in() )) {
 				 */
 				do_action( 'gravityview_entry_content_before', $entry, $this );
 
-				$this->renderZone('image', 'wrapper_class="gv-grid-col-1-3 gv-list-view-content-image"');
+				$this->renderZone('image', 'wrapper_class="gv-grid-col-3-3 gv-list-view-content-image"');
 
 				$this->renderZone('description', array(
-					'wrapper_class' => 'gv-grid-col-2-3 gv-list-view-content-description',
+					'wrapper_class' => 'gv-grid-col-3-3 gv-list-view-content-description',
 					'label_markup' => '<h4>{{label}}</h4>',
 					'wpautop'      => true
 				));
@@ -229,7 +189,7 @@ if( ! $total or !( is_user_logged_in() )) {
 		?>
 
 		</div>
-    </div>
+
 	<?php }
 
 } // End if has entries
