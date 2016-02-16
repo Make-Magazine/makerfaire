@@ -1276,6 +1276,7 @@ add_filter( 'gform_pre_render_36', 'populate_html' );
 add_filter( 'gform_pre_render_37', 'populate_html' );
 add_filter( 'gform_pre_render_38', 'populate_html' );
 add_filter( 'gform_pre_render_39', 'populate_html' );
+add_filter( 'gform_pre_render_52', 'populate_html' );
 
 function populate_html( $form ) {
     //this is a 2-page form with the data from page one being displayed in an html field on page 2
@@ -1293,6 +1294,10 @@ function populate_html( $form ) {
        $fieldIDarr['exhibit-contain-fire']  = 83;
        $fieldIDarr['interactive-exhibit']   = 84;
        $fieldIDarr['fire-safety-issues']    = 85;
+       $fieldIDarr['serving-food']    = 44;
+       $fieldIDarr['you-are-entity']    = 45;
+       $fieldIDarr['plans-type']    = 55;
+       
        //find the project name for submitted entry-id
        $entry = GFAPI::get_entry( $entry_id );
        foreach ( $form['fields'] as &$field ) {
