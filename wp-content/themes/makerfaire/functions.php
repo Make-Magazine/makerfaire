@@ -141,9 +141,11 @@ function load_admin_scripts() {
   //styles
   wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css' );
   wp_enqueue_style('jquery-datetimepicker-css',  get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
+  wp_enqueue_style('wp-admin-style',  'http://makerfaire.staging.wpengine.com/wp-admin/load-styles.php?c=0&dir=ltr&load=dashicons,admin-bar,wp-admin,buttons,wp-auth-check&ver=1.35');
   wp_enqueue_style('made-admin-style',  get_stylesheet_directory_uri() . '/css/make.admin.css');
 }
 add_action( 'admin_enqueue_scripts', 'load_admin_scripts' );
+
 
 // Add page visible to editors
 function register_my_page(){
