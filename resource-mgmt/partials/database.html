@@ -1,0 +1,47 @@
+		<div class="clearfix"></div>
+
+    <div class="animated fadeInDown">
+      <select ng-options="table.name as table.name for table in resource.tables"
+        ng-model="dispTablename"
+        ng-change="getTableData()">
+        <option value="" selected>--Please select a table--</option>
+      </select>
+		</div>
+    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 animated fadeInUp"  ng-if="resource.fieldNames.length > 0">
+      <br/><br/>
+      <div id="dataInsert">
+        <div class="form-group" ng-repeat="fName in resource.fieldNames" ng-if="fName.name != resource.pInfo">
+          <label for="{{fName.name}}">{{fName.dispName}}</label>
+          <input ng-model="resource.newEntry[fName.name]" class="form-control" type="text" style="cursor: auto;">
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button ng-click="insertData()" class="btn btn-save" ng-if="!resource.itemEntry.id">Save Data</button>
+        <button ng-click="updateData()" class="btn btn-save" ng-if="resource.itemEntry.id">Update Data</button>
+      </div>
+    </div>
+    {{resource.retMsg}}
+    <h2 style="float:right">{{ dispTablename }}</h2>
+      <button class="btn btn-default ng-isolate-scope" ng-csv="getArray(resource.tableData)" filename="{{ dispTablename }}.csv" field-separator="," decimal-separator=".">Export to CSV</button>
+    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 animated fadeInUp"  ng-if="resource.fieldNames.length > 0">
+      <div class="table-responsive">
+        <table id="tableData" class="table table-bordered table-hover table-striped">
+          <thead>
+            <tr>
+              <th>Actions</th>
+              <th ng-repeat="fNames in resource.fieldNames" ng-if="fNames.name != resource.pInfo">{{ fNames.dispName }}</th>
+            </tr>
+          </thead>
+
+          <tr ng-repeat="(pkey, tData) in resource.tableData">
+            <td><span ng-click="editData(pkey)">Edit</span> | <span ng-click="delData(pkey)">Delete</span></td>
+
+            <td ng-repeat="(key, value) in tData" ng-if="key != resource.pInfo">
+              {{ value }}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
