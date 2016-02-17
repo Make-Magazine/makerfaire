@@ -102,7 +102,6 @@ ul li.gf_form_switcher{top:-47px}
         #faire_nav li{
 		float: left;
 		position: relative;
-		width: 140px;
 		list-style: none;
 		/*-webkit-transition: .5s;
 		transition: .5s;*/
@@ -115,6 +114,7 @@ ul li.gf_form_switcher{top:-47px}
 	}
 
 	#faire_nav a {
+		margin-right: 15px;
 		display: block;
 		text-decoration: none;
 
