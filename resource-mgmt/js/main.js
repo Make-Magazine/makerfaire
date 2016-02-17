@@ -1,5 +1,5 @@
 var resourceApp = angular.module('resourceApp', ['ngRoute', 'rmgControllers', 'ngSanitize', 'ngCsv', 'ui.bootstrap',
-                                                 'ngTouch', 'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit','ui.grid.cellNav']);
+                                                 'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit','ui.grid.cellNav']);
 
 resourceApp.config(['$routeProvider',
   function($routeProvider) {
