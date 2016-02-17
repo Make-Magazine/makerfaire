@@ -1281,6 +1281,10 @@ add_filter( 'gform_pre_render_39', 'populate_html' );
 add_filter( 'gform_pre_render_52', 'populate_html' );
 add_filter( 'gform_pre_render_46', 'populate_html' );
 
+/*
+ * this logic is for page 2 of 'linked forms'
+ * It will take the entry id submitted on page one and use that to pull in various data from the original form submission
+ */
 function populate_html( $form ) {
     //this is a 2-page form with the data from page one being displayed in an html field on page 2
     $current_page = GFFormDisplay::get_current_page( $form['id'] );
@@ -1344,7 +1348,8 @@ function BN_storeSelect( $form ) {
     return($form);
 }
 
-//when form is submitted, find the initial formid based on entry id and add the fields to that entry
+//when a linked form is submitted, find the initial formid based on entry id
+// and add the fields from the linked form to that original entry
 add_action( 'gform_after_submission', 'GSP_after_submission', 10, 2 );
 function GSP_after_submission($entry, $form ){
     // update meta
@@ -1789,20 +1794,20 @@ function add_event( $notification_events ) {
     return $notification_events;
 }
 
-    /* This function searches the database to see if any of the image overrides are set
-     * If it is, it retrieves the value set for that override
-     * Field ID         Description
-     * 324              Image Override 1
-     * 334              Image Override 1 place
-     * 326              Image Override 2
-     * 338              Image Override 2 place
-     * 333              Image Override 2
-     * 337              Image Override 3 place
-     * 332              Image Override 4
-     * 336              Image Override 4 place
-     * 331              Image Override 5
-     * 335              Image Override 5 place
-     */
+/* This function searches the database to see if any of the image overrides are set in the gravity form
+ * If it is, it retrieves the value set for that override
+ * Field ID         Description
+ * 324              Image Override 1
+ * 334              Image Override 1 place
+ * 326              Image Override 2
+ * 338              Image Override 2 place
+ * 333              Image Override 2
+ * 337              Image Override 3 place
+ * 332              Image Override 4
+ * 336              Image Override 4 place
+ * 331              Image Override 5
+ * 335              Image Override 5 place
+ */
 function findOverride($entry_id, $type){
     global $wpdb;
     if($entry_id!=''){
@@ -1825,6 +1830,7 @@ function findOverride($entry_id, $type){
     return '';
 }
 
+/* Specific logic for the Barnes and Noble forms */
 add_filter( 'gform_pre_validation_43', 'update_bn_fields', 10, 2 );
 
 function update_bn_fields($form ) {
@@ -2028,7 +2034,7 @@ function display_thank_you_modal_if_signed_up() { ?>
 
 
 
-//angularJS!!!!
+//This function is used to enqueue the angularJS!!!!
 function angular_scripts() {
   if (is_page('ribbons')) {
     wp_enqueue_script(
@@ -2062,32 +2068,19 @@ function angular_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'angular_scripts' );
 
-add_action( 'wp_ajax_nopriv_getRibbonData', 'retrieveRibbonData' );
-add_action( 'wp_ajax_getRibbonData', 'retrieveRibbonData' );
-
-//ajax for retrieving blue ribbon data
+// This function is called via ajax to retriev the blue ribbon data
 function retrieveRibbonData() {
    global $wpdb;
    require_once( TEMPLATEPATH. '/partials/ribbonJSON.php' );
     // IMPORTANT: don't forget to "exit"
     exit;
 }
+add_action( 'wp_ajax_nopriv_getRibbonData', 'retrieveRibbonData' );
+add_action( 'wp_ajax_getRibbonData', 'retrieveRibbonData' );
+
 /* Changes to gravity view for maker admin tool */
-//use all forms
-//add_filter('gravityview_before_get_entries','define_entry_search_criteria',10,4);
-//add_filter('gravityview_pre_get_entries','define_entry_search_criteria',10,4);
 
-function define_entry_search_criteria($return,$criteria,$passed_criteria,$total){
- $entries = GFAPI::get_entries( 0, $criteria['search_criteria'], $criteria['sorting'], $criteria['paging'], $total );
- return $entries;
-}
-
-//add faire field to available field list
-/* Filter Parameters
- * array -  $additional_fields
- *          Associative array of field arrays, with label_text, desc, field_id,
- *          label_type, input_type, field_options, and settings_html keys
-*/
+//Maker Admin - add new fields in gravity view
 add_filter('gravityview_additional_fields','gv_add_faire',10,2);
 function gv_add_faire($additional_fields){
   $additional_fields[] = array("label_text" => "Faire",        "desc"          => "Display Faire Name",
@@ -2105,11 +2098,7 @@ function gv_add_faire($additional_fields){
   return $additional_fields;
 }
 
-//set faire name and year
-/* Filter Parameters
-    string  $item_output  The HTML output for the item
-    array $entry  Gravity Forms entry array
-    GravityView_Entry_List  $this The current class instance */
+//Maker Admin - populate new fields in gravity view
 add_filter('gform_entry_field_value','gv_faire_name',10,4);
 function gv_faire_name($display_value, $field, $entry, $form){
     if($field["type"]=='faire_name'){
@@ -2132,8 +2121,8 @@ function gv_faire_name($display_value, $field, $entry, $form){
     return $display_value;
 }
 
-/**
- * Change the update entry success message, including the link
+/* Maker Admin - After the user has updated their entry
+ * Change the returned success message, including the link
  */
 function gv_my_update_message( $message, $view_id, $entry, $back_link ) {
     $link = str_replace( 'entry/'.$entry['id'].'/', '', $back_link );
@@ -2141,7 +2130,7 @@ function gv_my_update_message( $message, $view_id, $entry, $back_link ) {
 }
 add_filter( 'gravityview/edit_entry/success', 'gv_my_update_message', 10, 4 );
 
-/**
+/* Maker Admin -
  * Customise the cancel(back) button link
  */
 function gv_my_edit_cancel_link( $back_link, $form, $entry, $view_id ) {
@@ -2149,7 +2138,8 @@ function gv_my_edit_cancel_link( $back_link, $form, $entry, $view_id ) {
 }
 add_filter( 'gravityview/edit_entry/cancel_link', 'gv_my_edit_cancel_link', 10, 4 );
 
-//ajax to cancel the entry
+/* Used in maker admin, this function is called by ajax to allow a user to cancel
+ * an entry and to send a notification */
 function makerCancelEntry(){
   $entryID = (isset($_POST['cancel_entry_id']) ? $_POST['cancel_entry_id']:0);
   $reason  = (isset($_POST['cancel_reason'])   ? $_POST['cancel_reason']  :'');
@@ -2186,7 +2176,8 @@ function makerCancelEntry(){
 }
 add_action( 'wp_ajax_maker-cancel-entry', 'makerCancelEntry' );
 
-//ajax to delete entry from maker admin and to send notification
+/* Used in maker admin, this function is called by ajax to allow a user to delete
+ * an entry and to send a notification */
 function makerDeleteEntry(){
   $entryID = (isset($_POST['delete_entry_id']) ? $_POST['delete_entry_id']:0);
   if($entryID!=0){
@@ -2222,7 +2213,7 @@ add_action( 'wp_ajax_maker-delete-entry', 'makerDeleteEntry' );
 //disable gravity view cache
 add_filter('gravityview_use_cache', '__return_false');
 
-/*
+/* Used in maker admin this function is called via
  * ajax to copy an entry into a new form
  */
 function makeAdminCopyEntry(){
@@ -2285,6 +2276,7 @@ function makeAdminCopyEntry(){
 }
 add_action( 'wp_ajax_make-admin-copy-entry', 'makeAdminCopyEntry' );
 
+/* This adds new form types for the users to select when creating new gravity forms */
 add_filter( 'gform_form_settings', 'my_custom_form_setting', 10, 2 );
 function my_custom_form_setting( $settings, $form ) {
     //var_dump($settings['Form Basics']);
@@ -2305,18 +2297,20 @@ function my_custom_form_setting( $settings, $form ) {
     return $settings;
 }
 
-// save your custom form setting
+/* This will save the form type selected by admin users */
 add_filter( 'gform_pre_form_settings_save', 'save_form_type_form_setting' );
 function save_form_type_form_setting($form) {
     $form['form_type'] = rgpost( 'form_type' );
     return $form;
 }
 
+/* Allows a user to delete entries in gravity view. used in maker admin */
 add_filter('gravityview/delete-entry/mode','gView_trash_entry');
 function gView_trash_entry(){
     return 'trash';
 }
 
+/* This function will write all user changes to entries to a database table to create a change report */
 add_action('gravityview/edit_entry/after_update','GVupdate_notification',10,3);
 function GVupdate_notification($form,$entry_id,$orig_entry){
     //get updated entry
@@ -2372,7 +2366,7 @@ function GVupdate_notification($form,$entry_id,$orig_entry){
     }
 }
 
-
+/* This function is used by the individual entry pages to display if this entry one any ribbons */
 function checkForRibbons($postID=0,$entryID=0){
     global $wpdb;
     if($postID != 0){
@@ -2400,7 +2394,7 @@ function checkForRibbons($postID=0,$entryID=0){
     return $return;
 }
 
-//entry resource and entry attribute update AJAX
+/* This function is used to update entry resources and entry attributes via AJAX */
 function update_entry_resatt() {
   global $wpdb;
   $ID        = $_POST['ID'];
@@ -2430,10 +2424,9 @@ function update_entry_resatt() {
   // IMPORTANT: don't forget to "exit"
   exit;
 }
-
 add_action( 'wp_ajax_update-entry-resAtt', 'update_entry_resatt' );
 
-//entry resource and entry attribute delete AJAX
+/* This function is used to delete entry resources and entry attributes via AJAX */
 function delete_entry_resatt() {
   global $wpdb;
   $table = (isset($_POST['table']) ? $_POST['table']:'');
