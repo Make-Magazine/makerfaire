@@ -262,7 +262,7 @@ function mf_sidebar_entry_status($form_id, $lead) {
 
 		echo('<option '.$selected.' value="'.$choice['text'].'">'.$choice['text'].'</option>');
 	}
-	echo('</select><input type="submit" name="update_management" value="Save" class="button redbutton" 
+	echo('</select><input type="submit" name="update_management" value="Save" class="btn btn-danger" 
 	onclick="jQuery(\'#action\').val(\'update_entry_status\');"/><br />');
         }else{
             echo ('<label class="detail-label" for="entry_info_status_change">Status:</label>');           

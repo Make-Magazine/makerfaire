@@ -211,13 +211,6 @@ ul li.gf_form_switcher{top:-47px}
     /*hide the form switcher for the new makerfaire custom detail view page*/
     div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher{display:none}
 
-.button.redbutton,.button.redbutton:hover{
-  width: auto;
-  background-color: #D54E21;
-  border: none;
-  color: white;
-}
-
 .tab{padding:0 15px;}
 .topBorder{border-top: thin solid lightgray;padding-top: 10px;}
 
