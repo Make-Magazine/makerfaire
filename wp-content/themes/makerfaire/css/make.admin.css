@@ -11,6 +11,15 @@ and open the template in the editor.
 body.wp-admin {
     background-color: #f1f1f1;
 }
+.wp-admin #lead_search_button {
+  height: 27px;
+  margin-top: 1px;
+}
+.wp-admin .gform-filter-value {
+  height: 28px;
+  border-radius: 4px;
+  vertical-align: bottom;
+}
 /*form 25 field 321 styling*/
 ul#input_321 li{width:50%;float:left;}
 
