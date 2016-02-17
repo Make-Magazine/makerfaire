@@ -84,96 +84,101 @@ function remove_gf_form_toolbar(){
 add_action( 'admin_bar_menu', 'toolbar_link_to_mypage', 999 );
 
 function toolbar_link_to_mypage( $wp_admin_bar ) {
-$locations = get_registered_nav_menus();
-$menus = wp_get_nav_menus();
-$menu_locations = get_nav_menu_locations();
+  $locations = get_registered_nav_menus();
+  $menus = wp_get_nav_menus();
+  $menu_locations = get_nav_menu_locations();
 
-$location_id = 'mf-admin-bayarea-register-menu';
+  $location_id = 'mf-admin-bayarea-register-menu';
+  if (isset($menu_locations[ $location_id ])) {
+    foreach ($menus as $menu) {
+      // If the ID of this menu is the ID associated with the location we're searching for
+      if ($menu->term_id == $menu_locations[ $location_id ]) {
+        // This is the correct menu
+        $menu_items = wp_get_nav_menu_items($menu);
 
-if (isset($menu_locations[ $location_id ])) {
-	foreach ($menus as $menu) {
-		// If the ID of this menu is the ID associated with the location we're searching for
-		if ($menu->term_id == $menu_locations[ $location_id ]) {
-			// This is the correct menu
-			$menu_items = wp_get_nav_menu_items($menu);
+        $args = array(
+            'id'    => 'mf_admin_parent',
+            'title' => 'MF Admin',
+            'meta'  => array( 'class' => 'my-toolbar-page' ),
+        );
 
-		$args = array(
-				'id'    => 'mf_admin_parent',
-				'title' => 'MF Admin',
-				'meta'  => array( 'class' => 'my-toolbar-page' ),
-		);
+        $wp_admin_bar->add_node( $args );
+        buildFaireDrop($wp_admin_bar);
 
-		$wp_admin_bar->add_node( $args );
-                buildFaireDrop($wp_admin_bar);
+        //build faire specific admin
+        foreach ( (array) $menu_items as $key => $menu_item ) {
+          if($menu_item->menu_item_parent==0){
+            // each MF Admin menu has a parent item set that will tell us which faire to add these menu item's too
+            $faire = $menu_item->attr_title;
+          }else{
+            $args = array(
+             'id'    => $menu_item->object_id,
+             'title' => $menu_item->title,
+             'href'  => $menu_item->url,
+             'meta'  => array( 'class' => 'my-toolbar-page' ),
+             'parent' => 'mf_admin_parent_'.$faire
+            );
 
-		foreach ( (array) $menu_items as $key => $menu_item ) {
-			$args = array(
-				'id'    => $menu_item->object_id,
-				'title' => $menu_item->title,
-				'href'  => $menu_item->url,
-				'meta'  => array( 'class' => 'my-toolbar-page' ),
-				'parent' => 'mf_admin_parent_BA15'
-			);
+           $wp_admin_bar->add_node( $args );
+          }
+        }
+      }
+    }
+  }
 
-			$wp_admin_bar->add_node( $args );
-			}
-		}
-	}
-}
+  //new york
+  $location_id = 'mf-admin-newyork-register-menu';
+  if (isset($menu_locations[ $location_id ])) {
+    foreach ($menus as $menu) {
+      // If the ID of this menu is the ID associated with the location we're searching for
+      if ($menu->term_id == $menu_locations[ $location_id ]) {
+        // This is the correct menu
+        $menu_items = wp_get_nav_menu_items($menu);
+        $wp_admin_bar->add_node( $args );
 
+        foreach ( (array) $menu_items as $key => $menu_item ) {
+          if($menu_item->menu_item_parent==0){
+            //build faire specific admin
+            $faire = $menu_item->attr_title;
+          }
+          $args = array(
+                  'id'    => $menu_item->object_id,
+                  'title' => $menu_item->title,
+                  'href'  => $menu_item->url,
+                  'meta'  => array( 'class' => 'my-toolbar-page' ),
+                  'parent' => 'mf_admin_parent_'.$faire
+          );
 
-//new york
-$location_id = 'mf-admin-newyork-register-menu';
+          $wp_admin_bar->add_node( $args );
+        }
+      }
+    }
+  }
 
-if (isset($menu_locations[ $location_id ])) {
-	foreach ($menus as $menu) {
-		// If the ID of this menu is the ID associated with the location we're searching for
-		if ($menu->term_id == $menu_locations[ $location_id ]) {
-                    // This is the correct menu
-                    $menu_items = wp_get_nav_menu_items($menu);
+  //faire setup
+  $location_id = 'mf-admin-fairesetup-register-menu';
 
+  if (isset($menu_locations[ $location_id ])) {
+    foreach ($menus as $menu) {
+      // If the ID of this menu is the ID associated with the location we're searching for
+      if ($menu->term_id == $menu_locations[ $location_id ]) {
+        // This is the correct menu
+        $menu_items = wp_get_nav_menu_items($menu);
+        foreach ( (array) $menu_items as $key => $menu_item ) {
 
+          $args = array(
+              'id'    => $menu_item->object_id,
+              'title' => $menu_item->title,
+              'href'  => $menu_item->url,
+              'meta'  => array( 'class' => 'my-toolbar-page' ),
+              'parent' => 'mf_admin_parent_fairesetup'
+          );
 
-                    $wp_admin_bar->add_node( $args );
-
-                    foreach ( (array) $menu_items as $key => $menu_item ) {
-                            $args = array(
-                                    'id'    => $menu_item->object_id,
-                                    'title' => $menu_item->title,
-                                    'href'  => $menu_item->url,
-                                    'meta'  => array( 'class' => 'my-toolbar-page' ),
-                                    'parent' => 'mf_admin_parent_NY15'
-                            );
-
-                            $wp_admin_bar->add_node( $args );
-                    }
-		}
-	}
-}
-
-//faire setup
-$location_id = 'mf-admin-fairesetup-register-menu';
-
-if (isset($menu_locations[ $location_id ])) {
-	foreach ($menus as $menu) {
-		// If the ID of this menu is the ID associated with the location we're searching for
-		if ($menu->term_id == $menu_locations[ $location_id ]) {
-			// This is the correct menu
-			$menu_items = wp_get_nav_menu_items($menu);
-			foreach ( (array) $menu_items as $key => $menu_item ) {
-				$args = array(
-						'id'    => $menu_item->object_id,
-						'title' => $menu_item->title,
-						'href'  => $menu_item->url,
-						'meta'  => array( 'class' => 'my-toolbar-page' ),
-						'parent' => 'mf_admin_parent_fairesetup'
-				);
-
-				$wp_admin_bar->add_node( $args );
-			}
-		}
-	}
-}
+          $wp_admin_bar->add_node( $args );
+        }
+      }
+    }
+  }
 }
 
 function buildFaireDrop($wp_admin_bar){
