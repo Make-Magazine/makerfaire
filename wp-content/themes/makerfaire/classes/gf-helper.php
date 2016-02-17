@@ -140,15 +140,15 @@ function toolbar_link_to_mypage( $wp_admin_bar ) {
           if($menu_item->menu_item_parent==0){
             //build faire specific admin
             $faire = $menu_item->attr_title;
+          }else{
+            $args = array(
+                    'id'    => $menu_item->object_id,
+                    'title' => $menu_item->title,
+                    'href'  => $menu_item->url,
+                    'meta'  => array( 'class' => 'my-toolbar-page' ),
+                    'parent' => 'mf_admin_parent_'.$faire
+            );
           }
-          $args = array(
-                  'id'    => $menu_item->object_id,
-                  'title' => $menu_item->title,
-                  'href'  => $menu_item->url,
-                  'meta'  => array( 'class' => 'my-toolbar-page' ),
-                  'parent' => 'mf_admin_parent_'.$faire
-          );
-
           $wp_admin_bar->add_node( $args );
         }
       }
