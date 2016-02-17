@@ -1,0 +1,28 @@
+<style>
+  .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+  .entryView{width:90%}
+  .entry-resource {
+    border-radius:5px;min-height:300px;width:90%;display:block;border:thin solid grey;overflow:hidden; background-color: whitesmoke;
+  }
+  .panel-open .panel-heading{background-color: lightblue;}
+  .entry-resource .panel h4{font-size:30px}
+  .entry-resource .ui-grid-header-cell {background-color: lightgrey;}
+  .entry-resource .ui-grid-row:nth-child(odd) .ui-grid-cell {
+    background-color: whitesmoke;
+  }
+  .entry-resource .ui-grid-cell{border:none}
+  .entry-resource i.fa{padding:18%}
+  .entry-resource textarea { height: 130%; line-height: 1em}
+
+</style>
+
+<div class="entry-resource">
+  <uib-accordion close-others="oneAtATime">
+    <uib-accordion-group heading="Resources">
+      <div id="resources" ui-grid="resources"  ui-grid-edit ui-grid-cellNav ui-grid-row-edit  class=""></div>
+    </uib-accordion-group>
+    <uib-accordion-group heading="Attributes">
+      <div id="attributes" ui-grid="attributes"  ui-grid-edit ui-grid-cellNav ui-grid-row-edit  class="" ></div>
+    </uib-accordion-group>
+  </uib-accordion>
+</div>
