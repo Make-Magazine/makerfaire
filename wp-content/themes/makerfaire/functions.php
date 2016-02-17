@@ -138,6 +138,7 @@ function load_admin_scripts() {
   wp_enqueue_script('make-gravityforms-admin',  get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'));
   wp_enqueue_script( 'jquery-datetimepicker',  get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array( 'jquery' ), null );
   wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/libs/bootstrap.min.js', array( 'jquery' ) );
+  wp_enqueue_script( 'sack' );
   //styles
   wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css' );
   wp_enqueue_style('jquery-datetimepicker-css',  get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
