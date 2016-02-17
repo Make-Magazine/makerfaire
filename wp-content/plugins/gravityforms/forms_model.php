@@ -2559,9 +2559,9 @@ class GFFormsModel {
 		$allowed_html	= wp_kses_allowed_html( 'post' );
 		$sanitized_value  	= wp_kses( $value, $allowed_html );
 
-
-		if ( $choice_value == $value || $choice_value == $sanitized_value ) {
-			return true;
+        
+   	if ( $choice_value == $value || $choice_value == $sanitized_value ) {
+     	return true;
 		} else if ( $field->enablePrice ) {
 			$ary   = explode( '|', $value );
 
@@ -2574,11 +2574,10 @@ class GFFormsModel {
 				return true;
 			}
 		} // add support for prepopulating multiselects @alex
-		else if ( RGFormsModel::get_input_type( $field ) == 'multiselect' ) {
+		else if ( RGFormsModel::get_input_type( $field ) == 'multiselect' || RGFormsModel::get_input_type( $field ) == 'checkbox') {
 			$values = explode( ',', $value );
 			$sanitized_values = explode( ',', $sanitized_value );
-
-			if ( in_array( $choice_value, $values ) || in_array( $choice_value, $sanitized_values ) ) {
+      if ( in_array( $choice_value, $values ) || in_array( $choice_value, $sanitized_values ) ) {
 				return true;
 			}
 		}
