@@ -30,7 +30,7 @@ $short_description = $lead['16'];
 $long_description = (isset($lead['21'])?$lead['21']:'');
 $project_name = (isset($lead['151'])?$lead['151']:'');
 $size_request = (isset($lead['60'])?$lead['60']:'');
-$size_request_heightwidth = (isset($lead['344'])?$lead['344']:'').'X'.(isset($lead['345'])?$lead['345']:'');
+$size_request_heightwidth = (isset($lead['344'])?$lead['344'].' X ':'').(isset($lead['345'])?$lead['345']:'');
 $size_request_other = (isset($lead['61'])?$lead['61']:'');
 $entry_form_type = $form['title'];
 $entry_form_status = (isset($lead['303'])?$lead['303']:'');
@@ -171,8 +171,8 @@ if ( isset( $long_description ) && $long_description!='') {
 						<td>
 						<?php echo ( isset( $size_request ) ) ? $size_request : 'Not Filled out' ; ?>
            	<?php echo ( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '' ; ?>
-              
-						<?php echo ( isset( $size_request_other ) ) ? 'Comment: '.$size_request_other : '' ; ?>
+             
+						<?php echo ( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '' ; ?>
 						</td>
 					</tr>
           <tr>
