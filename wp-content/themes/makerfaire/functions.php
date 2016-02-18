@@ -1280,7 +1280,6 @@ add_filter( 'gform_pre_render_37', 'populate_html' );
 add_filter( 'gform_pre_render_38', 'populate_html' );
 add_filter( 'gform_pre_render_39', 'populate_html' );
 add_filter( 'gform_pre_render_52', 'populate_html' );
-add_filter( 'gform_pre_render_46', 'populate_html' );
 
 /*
  * this logic is for page 2 of 'linked forms'
