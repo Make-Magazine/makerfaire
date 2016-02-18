@@ -21,9 +21,12 @@
         }, function errorCallback() {
           // error
         });
-      ctrl.toggleMapSearch = function(text) {
-        $rootScope.$emit('toggleMapSearch', text);
+      ctrl.toggleMapSearch = function() {
+        $rootScope.$emit('toggleMapSearch', ctrl.filterText);
       };
+      $rootScope.$on('toggleMapFilter', function(event, args) {
+        ctrl.filterText = undefined;
+      });
     }
   ]);
 

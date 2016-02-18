@@ -14,9 +14,9 @@
           <input type="text"
             class="form-control input-sm"
             placeholder="Location, name or type"
-            ng-model="filters"
+            ng-model="$ctrl.filterText"
             ng-model-options="{debounce: 500}"
-            ng-change="$ctrl.toggleMapSearch(filters)" />
+            ng-change="$ctrl.toggleMapSearch()" />
           <div class="filters">
             <faires-map-filter default-state="true" filter="Featured Faires">Flagship Faires</faires-map-filter>
             <faires-map-filter default-state="true" filter="All Maker Faires">Featured Faires</faires-map-filter>
