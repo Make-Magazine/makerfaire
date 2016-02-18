@@ -1,7 +1,7 @@
 <?php /* Template Name: Global Maker Faire Map */  ?>
 <?php get_header(); ?>
 <div class="faire-global-map-wrp" ng-app="faireMapsApp">
-  <div ng-controller="MapCtrl as map">
+  <div ng-controller="MapCtrl as $ctrl">
     <div class="container">
       <div class="col-md-12">
         <h1>Faires around the world</h1>
@@ -16,7 +16,7 @@
             placeholder="Location, name or type"
             ng-model="filters"
             ng-model-options="{debounce: 500}"
-            ng-change="map.toggleMapSearch(filters)" />
+            ng-change="$ctrl.toggleMapSearch(filters)" />
           <div class="filters">
             <faires-map-filter default-state="true" filter="Featured Faires">Flagship Faires</faires-map-filter>
             <faires-map-filter default-state="true" filter="All Maker Faires">Featured Faires</faires-map-filter>
@@ -27,14 +27,14 @@
     </div>
     <div class="container">
       <div class="col-md-12">
-        <div class="loading-spinner" ng-if="!map.faireMarkers">
+        <div class="loading-spinner" ng-if="!$ctrl.faireMarkers">
           <i class="fa fa-circle-o-notch fa-spin"></i>
         </div>
-        <div faires-google-map
+        <faires-google-map
           id="faire-global-map"
-          map-data="map.faireMarkers"
-          ng-if="map.faireMarkers">
-        </div>
+          map-data="$ctrl.faireMarkers"
+          ng-if="$ctrl.faireMarkers">
+        </faires-google-map>
         <div class="faire-key-boxes">
           <div class="flagship-key">
             <i class="fa fa-map-marker"></i>
@@ -50,8 +50,8 @@
           </div>
         </div>
         <div tasty-table
-          bind-resource="map.faireMarkers"
-          ng-if="map.faireMarkers"
+          bind-resource="$ctrl.faireMarkers"
+          ng-if="$ctrl.faireMarkers"
           bind-filters="filters"
           class="faire-list-table">
           <table class="table table-striped table-condensed">
