@@ -49,26 +49,29 @@
             Mini Maker Faires
           </div>
         </div>
-        <div tasty-table
-          bind-resource="$ctrl.faireMarkers"
-          ng-if="$ctrl.faireMarkers"
-          bind-filters="filters"
-          class="faire-list-table">
+        <div class="faire-list-table">
           <table class="table table-striped table-condensed">
-            <thead tasty-thead></thead>
-            <tbody>
-              <tr ng-repeat="row in rows">
-                <td width="20%">{{row.name}}</td>
-                <td width="20%">{{row.category}}</td>
-                <td width="20%">{{row.description}}</td>
-                <td width="20%"><button class="btn-sm btn-default pull-right">Call for Makers</button></td>
-                <td width="20%"><button class="btn-sm btn-danger pull-right">Buy Tickets</button></td>
-              </tr>
-            </tbody>
+            <tr>
+              <th ng-click="sort='name'">Name</th>
+              <th ng-click="sort='category'">Category</th>
+              <th ng-click="sort='description'">Description</th>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr dir-paginate="row in $ctrl.faireMarkers.rows | filter:q | orderBy:sort | itemsPerPage: 10">
+              <td width="20%">{{row.name}}</td>
+              <td width="20%">{{row.category}}</td>
+              <td width="20%">{{row.description}}</td>
+              <td width="20%"><button class="btn-sm btn-default pull-right">Call for Makers</button></td>
+              <td width="20%"><button class="btn-sm btn-danger pull-right">Buy Tickets</button></td>
+            </tr>
           </table>
-        <div tasty-pagination
-          bind-items-per-page="10"
-          bind-list-items-per-page="[10,25,50,100]">
+          <div class="text-center">
+            <dir-pagination-controls
+              boundary-links="true"
+              template-url="/wp-content/themes/makerfaire/bower_components/angularUtils-pagination/dirPagination.tpl.html">
+            </dir-pagination-controls>
+          </div>
         </div>
       </div>
     </div>

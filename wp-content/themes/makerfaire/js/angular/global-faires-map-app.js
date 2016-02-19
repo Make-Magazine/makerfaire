@@ -1,6 +1,6 @@
 (function(angular) {
   'use strict';
-  var faireMapsApp = angular.module('faireMapsApp', ['ngTasty']);
+  var faireMapsApp = angular.module('faireMapsApp', ['angularUtils.directives.dirPagination']);
 
   faireMapsApp.controller('MapCtrl', ['$http', '$rootScope',
     function($http, $rootScope) {
