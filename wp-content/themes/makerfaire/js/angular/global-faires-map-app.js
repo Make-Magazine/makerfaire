@@ -5,19 +5,24 @@
   faireMapsApp.controller('MapCtrl', ['$http', '$rootScope',
     function($http, $rootScope) {
       var ctrl = this;
+      var markersData;
+      function setMarkers(markers) {
+        ctrl.faireMarkers = {};
+        ctrl.faireMarkers.header = [{
+          'name': 'Name'
+        }, {
+          'category': 'Category'
+        }, {
+          'description': 'Description'
+        }];
+        ctrl.faireMarkers.sortBy = 'name';
+        ctrl.faireMarkers.sortOrder = 'asc';
+        ctrl.faireMarkers.rows = markers;
+      }
       $http.get('/wp-admin/admin-ajax.php?action=get_faires_map_data')
         .then(function successCallback(response) {
-          ctrl.faireMarkers = {};
-          ctrl.faireMarkers.header = [{
-            'name': 'Name'
-          }, {
-            'category': 'Category'
-          }, {
-            'description': 'Description'
-          }];
-          ctrl.faireMarkers.sortBy = 'name';
-          ctrl.faireMarkers.sortOrder = 'asc';
-          ctrl.faireMarkers.rows = response && response.data;
+          setMarkers(response && response.data);
+          markersData = response && response.data;
         }, function errorCallback() {
           // error
         });
@@ -27,6 +32,28 @@
       $rootScope.$on('toggleMapFilter', function(event, args) {
         ctrl.filterText = undefined;
       });
+      
+      // var faireTypesFilter = [];
+      // $rootScope.$on('faireMapsPubSub::toggleMapFilter', function(event, args) {
+      //   vm.searchText = undefined;
+      //   var index = faireTypesFilter.indexOf(args.filter);
+      //   var markers;
+      //   if(args.state && index < 0) {
+      //     faireTypesFilter.push(args.filter);
+      //   } else if (!args.state) {
+      //     if (index < 0) {
+      //       return;
+      //     } else {
+      //       faireTypesFilter.splice(index, 1);
+      //     }
+      //   }
+      //   if (vm.faireMarkers && vm.faireMarkers.rows) {
+      //     markers = fullMarkerSet.filter(function(node) {
+      //       return faireTypesFilter.indexOf(node.category) > -1;
+      //     });
+      //   }
+      //   // initMarkers(markers);
+      // });
     }
   ]);
 
