@@ -170,19 +170,20 @@
               category: gMarker.category,
               zIndex: gMarkerZIndex
             });
-            google.maps.event.addListener(gMarker, 'click', function() {
-              var marker_map = this.getMap();
-              infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
-                this.title + '</h3>' +
-                '<div id="bodyContent"><p>' +
-                (this.description || '') +
-                '</p></div>' +
-                '</div>'
-              );
-              infowindow.open(marker_map, this);
-            });
+            google.maps.event.addListener(gMarker, 'click', displayMarkerInfo);
             gmarkers1.push(gMarker);
           }
+        }
+        function displayMarkerInfo() {
+          var marker_map = this.getMap();
+          infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
+            this.title + '</h3>' +
+            '<div id="bodyContent"><p>' +
+            (this.description || '') +
+            '</p></div>' +
+            '</div>'
+          );
+          infowindow.open(marker_map, this);
         }
         setMarkers(ctrl.mapData.rows);
       }
