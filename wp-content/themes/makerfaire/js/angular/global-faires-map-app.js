@@ -2,8 +2,8 @@
   'use strict';
   var faireMapsApp = angular.module('faireMapsApp', ['angularUtils.directives.dirPagination']);
 
-  faireMapsApp.controller('MapCtrl', ['$http', '$rootScope',
-    function($http, $rootScope) {
+  faireMapsApp.controller('MapCtrl', ['$http', '$rootScope', '$filter',
+    function($http, $rootScope, $filter) {
       var ctrl = this;
       var markersData;
       function setMarkers(markers) {
@@ -27,33 +27,33 @@
           // error
         });
       ctrl.toggleMapSearch = function() {
+        setMarkers($filter('filter')(markersData, ctrl.filterText));
         $rootScope.$emit('toggleMapSearch', ctrl.filterText);
       };
-      $rootScope.$on('toggleMapFilter', function(event, args) {
+      $rootScope.$on('toggleMapFilter', function() {
         ctrl.filterText = undefined;
       });
       
-      var faireTypesFilter = [];
       $rootScope.$on('toggleMapFilter', function(event, args) {
+        applyMapFilters(event, args);
+      });
+      var faireTypesFilter = [];
+      function applyMapFilters (event, args) {
         ctrl.searchText = undefined;
         var index = faireTypesFilter.indexOf(args.filter);
-        var markers;
-        console.log(args.state, args.filter);
         if(args.state && index < 0) {
           faireTypesFilter.push(args.filter);
-        } else if (!args.state) {
-          if (index < 0) {
-            return;
-          } else {
-            faireTypesFilter.splice(index, 1);
-          }
+        } else if (!args.state && index > -1) {
+          faireTypesFilter.splice(index, 1);
         }
-        if (ctrl.faireMarkers && ctrl.faireMarkers.rows) {
-          markers = markersData.filter(function(node) {
-            return faireTypesFilter.indexOf(node.category) > -1;
-          });
+        if (!markersData) {
+          return;
         }
-      });
+        function isEnabled(marker) {
+          return (faireTypesFilter.indexOf(marker.category) > -1);
+        }
+        setMarkers(markersData.filter(isEnabled));
+      }
     }
   ]);
 
@@ -237,6 +237,9 @@
     replace: true,
     controller: function($rootScope) {
       var ctrl = this;
+      $rootScope.$on('toggleMapSearch', function() {
+        ctrl.defaultState = true;
+      });
       ctrl.toggleFilter = function() {
         var toggleState = {
           filter: ctrl.filter,
