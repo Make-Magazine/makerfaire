@@ -33,27 +33,27 @@
         ctrl.filterText = undefined;
       });
       
-      // var faireTypesFilter = [];
-      // $rootScope.$on('faireMapsPubSub::toggleMapFilter', function(event, args) {
-      //   vm.searchText = undefined;
-      //   var index = faireTypesFilter.indexOf(args.filter);
-      //   var markers;
-      //   if(args.state && index < 0) {
-      //     faireTypesFilter.push(args.filter);
-      //   } else if (!args.state) {
-      //     if (index < 0) {
-      //       return;
-      //     } else {
-      //       faireTypesFilter.splice(index, 1);
-      //     }
-      //   }
-      //   if (vm.faireMarkers && vm.faireMarkers.rows) {
-      //     markers = fullMarkerSet.filter(function(node) {
-      //       return faireTypesFilter.indexOf(node.category) > -1;
-      //     });
-      //   }
-      //   // initMarkers(markers);
-      // });
+      var faireTypesFilter = [];
+      $rootScope.$on('toggleMapFilter', function(event, args) {
+        ctrl.searchText = undefined;
+        var index = faireTypesFilter.indexOf(args.filter);
+        var markers;
+        console.log(args.state, args.filter);
+        if(args.state && index < 0) {
+          faireTypesFilter.push(args.filter);
+        } else if (!args.state) {
+          if (index < 0) {
+            return;
+          } else {
+            faireTypesFilter.splice(index, 1);
+          }
+        }
+        if (ctrl.faireMarkers && ctrl.faireMarkers.rows) {
+          markers = markersData.filter(function(node) {
+            return faireTypesFilter.indexOf(node.category) > -1;
+          });
+        }
+      });
     }
   ]);
 
@@ -224,7 +224,7 @@
   
   faireMapsApp.component('fairesMapFilter', {
     template: '<div class="checkbox">' +
-      '<label><input type="checkbox" ng-model="defaultState" ng-click="$ctrl.toggleFilter()">' +
+      '<label><input type="checkbox" ng-model="$ctrl.defaultState" ng-click="$ctrl.toggleFilter()">' +
       '<ng-transclude></ng-transclude>' +
       '</label>' +
       '</div>',
@@ -244,6 +244,7 @@
         };
         $rootScope.$emit('toggleMapFilter', toggleState);
       };
+      ctrl.toggleFilter();
     }
   });
 
