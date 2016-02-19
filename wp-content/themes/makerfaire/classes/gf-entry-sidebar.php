@@ -19,11 +19,11 @@ function mf_sidebar_entry_locations($form_id, $lead) {
                                         `wp_mf_location`.`longitude`,
                                         `wp_mf_location`.`location_element_id`
                                             FROM `wp_mf_location`, wp_mf_faire_subarea, wp_mf_faire_area, wp_mf_faire
-			 where entry_id=$entry_id 
+			 where entry_id=$entry_id
                          and   wp_mf_location.subarea_id = wp_mf_faire_subarea.ID
-                         and   wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID 
+                         and   wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID
                          and   wp_mf_faire_area.faire_id   = wp_mf_faire.ID") or trigger_error($mysqli->error);
-	
+
 	if ($result)
 	{
 		while($row = $result->fetch_row())
@@ -57,7 +57,7 @@ function mf_sidebar_entry_locations($form_id, $lead) {
 		echo '<option value="'.$subarea_option.'">'.$subarea_option.$area_option.'</option>';
 	}
 		echo("		</select><br />");
-	
+
 	// Create Update button for sidebar entry management
 	$entry_sidebar_button = '
 			Location Code: (optional) <input type="text" name="update_entry_location_code" id="update_entry_location_code" />
@@ -76,12 +76,12 @@ function mf_sidebar_entry_ticket($form_id, $lead) {
     $field308=RGFormsModel::get_field($form,'308');
     echo ('<h4><label class="detail-label">Ticket Code:</label></h4>');
     echo ('<input name="entry_ticket_code" id="entry_ticket_code type="text" style="margin-bottom: 4px;" value="'.$lead['308'].'" />');
-    
+
     // Create Update button for ticket code
     $entry_sidebar_button = '<input type="submit" name="update_ticket_code" value="Update Ticket Code" class="button"
-		 style="width:auto;padding-bottom:2px;" 
+		 style="width:auto;padding-bottom:2px;"
 		onclick="jQuery(\'#action\').val(\'update_ticket_code\');"/>';
-	echo $entry_sidebar_button;    
+	echo $entry_sidebar_button;
 }
 function mf_sidebar_entry_schedule($form_id, $lead) {
     global $wpdb;
@@ -89,7 +89,7 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
 			<h4><label class="detail-label">Schedule:</label></h4>');
     //first, let's display any schedules already entered for this entry
 	$entry_id=$lead['id'];
-        
+
 	$sql="SELECT `wp_mf_schedule`.`ID`, `wp_mf_schedule`.`entry_id`, "
                . "     (select location.location "
                 . "         from wp_mf_location location, wp_mf_faire_subarea subarea, wp_mf_faire_area area "
@@ -111,29 +111,29 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
                 . " FROM `wp_mf_schedule` "
                 . " join wp_mf_faire on wp_mf_schedule.faire = wp_mf_faire.faire "
                 . " where wp_mf_schedule.entry_id=".$entry_id." order by subarea ASC, start_dt ASC";
-       
-	
+
+
         $scheduleArr = array();
-        foreach($wpdb->get_results($sql,ARRAY_A) as $row){    
+        foreach($wpdb->get_results($sql,ARRAY_A) as $row){
             //order entries by subarea(stage), then date
-            $stage = ($row['subarea'] != NULL ? $row['area'].' - '.$row['subarea']: '');                        
+            $stage = ($row['subarea'] != NULL ? $row['area'].' - '.$row['subarea']: '');
             if($row['location']!='')    $stage .= ' ('.$row['location'].')';
             $start_dt = strtotime( $row['start_dt']);
             $end_dt = strtotime($row['end_dt']);
             $schedule_entry_id = $row['ID'];
-            $date = date("n/j/y",$start_dt);            
+            $date = date("n/j/y",$start_dt);
             $timeZone = $row['time_zone'];
-            
-             //build array 
-            $schedules[$stage][$date][$schedule_entry_id] = array($start_dt,$end_dt,$timeZone);   
+
+             //build array
+            $schedules[$stage][$date][$schedule_entry_id] = array($start_dt,$end_dt,$timeZone);
         }
 
         //make sure there is data to display
         if($wpdb->num_rows !=0){
             //let's loop thru the schedule array now
             foreach($schedules as $stage=>$scheduleArr){
-                echo ($stage!=''&&$stage!=NULL?'<u>'.$stage.'</u><br/>':'');                
-                foreach($scheduleArr as $date=>$schedule){                
+                echo ($stage!=''&&$stage!=NULL?'<u>'.$stage.'</u><br/>':'');
+                foreach($scheduleArr as $date=>$schedule){
                     echo '<div>'.date('l n/j/y',strtotime($date)).'<br/>';
                     echo '<div class="tab">';
                     foreach($schedule as $schedule_entry_id=>$schedData){
@@ -142,43 +142,43 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
                         $db_tz      = $schedData[2];
 
                         //set time zone for faire
-                       $dateTime = new DateTime(); 
-                       $dateTime->setTimeZone(new DateTimeZone($db_tz)); 
-                       $timeZone = $dateTime->format('T'); 
+                       $dateTime = new DateTime();
+                       $dateTime->setTimeZone(new DateTimeZone($db_tz));
+                       $timeZone = $dateTime->format('T');
                        echo ('<input type="checkbox" value="'.$schedule_entry_id.'" style="margin: 3px;float:left;" name="delete_entry_id[]"></input>'
-                               . '<span style="line-height: 1.3em;padding: 3px;float: left;">'.date("g:i A",$start_dt).' - '.date("g:i A",$end_dt).' ('.$timeZone.')</span><div class="clear"></div>');		                                              
+                               . '<span style="line-height: 1.3em;padding: 3px;float: left;">'.date("g:i A",$start_dt).' - '.date("g:i A",$end_dt).' ('.$timeZone.')</span><div class="clear"></div>');
                     }
                     echo '</div></div>';
                     echo '<br/>';
                 }
             }
             echo '<br/>';
-            
+
             $entry_delete_button = '<input type="submit" name="delete_entry_schedule[]" value="Delete Selected" class="button"
                              style="width:auto;padding-bottom:2px;"
                             onclick="jQuery(\'#action\').val(\'delete_entry_schedule\');"/><br />';
             echo $entry_delete_button;
         }
-        
+
 	// Set up the Add to Schedule Section
         echo ('<h4 class="topBorder">Add to Schedule:</h4>');
-        
+
         $locSql = "SELECT area.area, subarea.subarea, subarea.nicename
-                    FROM wp_mf_faire faire, wp_mf_faire_area area, wp_mf_faire_subarea subarea 
+                    FROM wp_mf_faire faire, wp_mf_faire_area area, wp_mf_faire_subarea subarea
                     where FIND_IN_SET($form_id,faire.form_ids) and faire.ID = area.faire_id and subarea.area_id = area.ID
                     order by area,subarea";
 
 	echo ('Subarea <select style="max-width:100%" name="entry_location_subarea_change">');
         echo '<option value="none">None</option>';
-	foreach($wpdb->get_results($locSql,ARRAY_A) as $row){ 
+	foreach($wpdb->get_results($locSql,ARRAY_A) as $row){
 		$area_option = (strlen($row['area']) > 0) ? ' ('.$row['area'].')' : '' ;
 		$subarea_option = ($row['nicename']!=''?$row['nicename']:$row['subarea']);
 		echo '<option value="'.$subarea_option.'">'.$row['area'].' - '.$subarea_option.'</option>';
 	}
         echo("</select><br />");
-        
+
 	echo 'Location Code: (optional) <input type="text" name="update_entry_location_code" id="update_entry_location_code" /><br/>';
-        
+
         // Load Fields to show on entry info
         echo '<div style="padding:15px 0;width:40px;float:left">Start: </div><div style="float:left"><input type="text" value="" name="datetimepickerstart" id="datetimepickerstart"></div>';
         echo '<div class="clear" style="padding:15px 0;width:40px;float:left">End:</div>
@@ -189,27 +189,27 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
 	echo '<div style="padding:15px 0;width:40px;float:left">&nbsp;</div>
                 <input type="submit" name="update_entry_schedule" value="Update Schedule" class="button"
 			 style="width:auto;padding-bottom:2px;    margin: 10px 0;"
-			onclick="jQuery(\'#action\').val(\'update_entry_schedule\');"/><br />';	
+			onclick="jQuery(\'#action\').val(\'update_entry_schedule\');"/><br />';
         echo '  <div class="clear"></div>';
         //button to trigger send confirmation letter event
         echo '<div style="padding:15px 0;width:40px;float:left">&nbsp;</div>
                 <input type="submit" name="send_conf_letter" value="Send Confirmation Letter" class="button"
 			 style="width:auto;padding-bottom:2px;"
 			onclick="jQuery(\'#action\').val(\'send_conf_letter\');"/>';
-	echo '  <div class="clear"></div>';         			
+	echo '  <div class="clear"></div>';
 }
 /* This is where we run code on the entry info screen.  Logic for action handling goes here */
 function mf_sidebar_entry_info($form_id, $lead) {
 	// Load Fields to show on entry info
 	$form = GFAPI::get_form($form_id);
-	
+
 	$field302=RGFormsModel::get_field($form,'302');
 	$field303=RGFormsModel::get_field($form,'303');
 	$field304=RGFormsModel::get_field($form,'304');
 	$field307=RGFormsModel::get_field($form,'307');
-	
-	
-	
+
+
+
 	echo ('<h4><label class="detail-label">Flags:</label></h4>');
 	foreach(   $field304['inputs'] as $choice)
 	{
@@ -217,17 +217,17 @@ function mf_sidebar_entry_info($form_id, $lead) {
 		if (stripslashes($lead[$choice['id']]) == stripslashes($choice['label'])) $selected=' checked ';
 		echo('<input type="checkbox" '.$selected.' name="entry_info_flags_change[]" style="margin: 3px;" value="'.$choice['id'].'_'.$choice['label'].'" />'.$choice['label'].' <br />');
 	}
-	
-	
+
+
 	echo ('<h4><label class="detail-label">Location:</label></h4>');
         $locArray=array();
-        
+
         foreach($lead as $key=>$field){
             if(strpos($key,'302')!== false){
                 $locArray[]=stripslashes($field);
             }
         }
-        
+
 	foreach(   $field302['inputs'] as $choice)
 	{
 		$selected = '';
@@ -235,23 +235,23 @@ function mf_sidebar_entry_info($form_id, $lead) {
 		//if (stripslashes($lead[$choice['id']]) == stripslashes($choice['label'])) $selected=' checked ';
 		echo('<input type="checkbox" '.$selected.' name="entry_info_location_change[]" style="margin: 3px;" value="'.$choice['id'].'_'.$choice['label'].'" />'.$choice['label'].' <br />');
 	}
-	
-	
+
+
 	echo ('<textarea name="entry_location_comment" id="entry_location_comment"
 					style="width: 100%; height: 50px; margin-bottom: 4px;" cols=""
 					rows="">'.$lead['307'].'</textarea>');
-	
+
 
 }
 
 function mf_sidebar_entry_status($form_id, $lead) {
     echo ('<input type="hidden" name="entry_info_entry_id" value="'.$lead['id'].'">');
-    if ( current_user_can( 'update_entry_status') ) {                                             
+    if ( current_user_can( 'update_entry_status') ) {
 	// Load Fields to show on entry info
 	$form = GFAPI::get_form($form_id);
 
 	$field303=RGFormsModel::get_field($form,'303');
-		
+
 	echo ('<label class="detail-label" for="entry_info_status_change">Status:</label>');
 	echo ('<select name="entry_info_status_change">');
 	foreach( $field303['choices'] as $choice )
@@ -262,10 +262,10 @@ function mf_sidebar_entry_status($form_id, $lead) {
 
 		echo('<option '.$selected.' value="'.$choice['text'].'">'.$choice['text'].'</option>');
 	}
-	echo('</select><input type="submit" name="update_management" value="Save Status" class="btn btn-danger" 
+	echo('</select><input type="submit" name="update_management" value="Save Status" class="btn btn-danger"
 	onclick="jQuery(\'#action\').val(\'update_entry_status\');"/><br />');
         }else{
-            echo ('<label class="detail-label" for="entry_info_status_change">Status:</label>');           
+            echo ('<label class="detail-label" for="entry_info_status_change">Status:</label>');
             echo '&nbsp;&nbsp; '.$lead[303].'<br/>';
         }
 
@@ -292,7 +292,7 @@ function mf_sidebar_forms($form_id, $lead) {
 function mf_sidebar_dup($form_id, $lead) {
 	// Load Fields to show on entry info
 	$forms = GFAPI::get_forms(true,false);
-        
+
 	echo ('<h4><label class="detail-label" for="entry_form_copy">Duplicate/Copy Entry ID '.$lead['id'].'</label></h4>');
 	echo 'Into Form:<br/>';
         echo ('<select style="width:250px" name="entry_form_copy">');
@@ -323,7 +323,7 @@ function add_sidebar_text_before($form, $lead){
 	$phone = $lead["99"];
 	$phonetype = $lead["148"];
 	?>
-	
+
 <div id="infoboxdiv" class="postbox">
 	<div id="minor-publishing" style="padding: 10px;">
 			<?php mf_sidebar_entry_status( $form['id'], $lead ); ?><br/>
@@ -334,7 +334,7 @@ function add_sidebar_text_before($form, $lead){
 				<?php echo $country; ?><br />
 				<a href="mailto:<?php echo $email; ?>"><?php echo $email; ?></a><br />
 				<?php echo $phonetype; ?>:  <?php echo $phone; ?><br />
-				
+
 				</div>
 			<?php _e( 'Filled out: ', 'gravityforms' ); ?>:<?php echo esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) ?><br />
                         <br/>
@@ -409,7 +409,7 @@ function add_sidebar_text_before($form, $lead){
 							?>
 	</div>
 </div>
-		
+
 <?php /* Ratings Sidebar Area */
     global $wpdb;
     // Retrieve any ratings
@@ -420,10 +420,10 @@ function add_sidebar_text_before($form, $lead){
     $ratingResults = '';
     $user_ID = get_current_user_id();
     $currRating = '';
-    foreach($wpdb->get_results($sql) as $row){  
+    foreach($wpdb->get_results($sql) as $row){
         $user = get_userdata( $row->user_id );
 
-        //don't display current user in the list of rankings    
+        //don't display current user in the list of rankings
         if($user_ID!=$row->user_id){
             $ratingResults .= '<tr><td style="text-align: center;">'.$row->rating.'</td><td>'.$user->display_name.'</td><td class="alignright">'.date("m-d-Y", strtotime($row->ratingDate)).'</td></tr>';
         }else{
@@ -437,9 +437,9 @@ function add_sidebar_text_before($form, $lead){
     ?>
     <div class="postbox" style="float:none;padding: 10px">
         <h3> <label for="name"><?php _e( 'Entry Rating: <a href="#" onclick="return false;" class="gf_tooltip" title="1 = No way<br/>2 = Low priority<br/>3 = Yes, If there’s room<br/>4 = Yes definitely<br/>5 = Hell yes">(?)</a> ' .$ratingAvg .' stars', 'gravityforms'); ?></label></h3>
-        
+
         <div class="entryRating inside">
-            
+
             <span class="star-rating">
                 <input type="radio" name="rating" value="1" <?php echo ($currRating==1?'checked':'');?>><i></i>
                 <input type="radio" name="rating" value="2" <?php echo ($currRating==2?'checked':'');?>><i></i>
@@ -487,22 +487,25 @@ function add_sidebar_text_before($form, $lead){
 		</div>
 </div>
 
-<?php 
+<?php
 /* Entry Management Sidebar Area */
 if ($mode == 'view') {
 	?>
 	<div class='postbox' style="float:none;padding: 10px;">
 	<?php
+  // Create Update button for sidebar entry management
+	$entry_sidebar_button = '<input type="submit" name="update_management" value="Update Management" class="button"
+		style="width:auto;padding-bottom:2px;"
+		onclick="jQuery(\'#action\').val(\'update_entry_management\');"/>';
+	echo $entry_sidebar_button;
 	// Load Entry Sidebar details
 	mf_sidebar_entry_info( $form['id'], $lead );
 	?>
-	<?php // Create Update button for sidebar entry management
-	$entry_sidebar_button = '<input type="submit" name="update_management" value="Update Management" class="button"
-		 style="width:auto;padding-bottom:2px;" 
-		onclick="jQuery(\'#action\').val(\'update_entry_management\');"/>';
+	<?php
+  // Create Update button for sidebar entry management
 	echo $entry_sidebar_button;	?>
 	</div>
-	<?php 
+	<?php
 	}
 	/* Shceduling Management Sidebar Area */
 	if ($mode == 'view') :
@@ -515,32 +518,32 @@ if ($mode == 'view') {
 		</div>
 		<div class='postbox' style="float:none;padding: 10px;">
 		<?php
-		// Load Entry Sidebar details: Ticket Code (Field 308)		
+		// Load Entry Sidebar details: Ticket Code (Field 308)
                 mf_sidebar_entry_ticket( $form['id'], $lead );
 		?>
-		</div>	
+		</div>
 		<div class='postbox' style="float:none;padding: 10px;">
                     <?php
                     // Load Entry Sidebar details: Faire locations
                     //mf_sidebar_entry_locations( $form['id'], $lead );
                     ?>
 		</div>
-			
-		<div class='postbox' style="float:none;padding: 10px;">				
+
+		<div class='postbox' style="float:none;padding: 10px;">
                 <?php
                     //load 'Change Form' form
                     mf_sidebar_forms($form['id'], $lead );
                 ?>
                 </div>
 
-		<div class='postbox' style="float:none;padding: 10px;">				
+		<div class='postbox' style="float:none;padding: 10px;">
                 <?php
                     //load Duplicate/Copy Entry form
                     mf_sidebar_dup($form['id'], $lead );
                 ?>
                 </div>
 	<?php endif;?>
-		
+
 	<div class="detail-view-print">
 				<?php $entry_sidebar_button = '<input type="submit" name="sync_jdb" value="Send to JDB" class="button"
 				 style="width:auto;padding-bottom:2px;"
@@ -553,12 +556,12 @@ if ($mode == 'view') {
 				onclick="jQuery(\'#action\').val(\'sync_status_jdb\');"/>';
 					echo $entry_sidebar_button;	?>
 					</div>
-				<?php 
+				<?php
 }
 
 
 /* Notes Sidebar Grid Function */
-function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = '' ) { 		
+function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = '' ) {
     ?>
 <table class="widefat fixed entry-detail-notes">
 	<tbody id="the-comment-list" class="list:comment">
@@ -574,7 +577,7 @@ function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = ''
                         if ( $is_editable && GFCommon::current_user_can_any( 'gravityforms_edit_entry_notes' ) ) {
                         ?>
                         <th class="check-column" scope="row" style="padding:9px 3px 0 0">
-                                <input type="checkbox" value="<?php echo $note->id ?>" name="note[]" />                                
+                                <input type="checkbox" value="<?php echo $note->id ?>" name="note[]" />
                         </th>
                         <?php } ?>
 			<td class="entry-detail-note<?php echo $is_last ? ' lastrow' : '' ?>">
@@ -608,7 +611,7 @@ function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = ''
             ?>
             <input type="submit" name="delete_note_sidebar" value="Delete Selected Note(s)" class="button" style="width:100%;padding-bottom:2px;" onclick="jQuery('#action').val('delete_note_sidebar');">
 	<?php
-            } 
+            }
 }
 
 
@@ -626,7 +629,7 @@ if (!empty($mfAction))
 	$form_id    =  isset($lead['form_id']) ? $lead['form_id'] : 0;
 	$form = RGFormsModel::get_form_meta($form_id);
 	$entry_status =  isset($lead['303']) ? $lead['303'] : '';
-	
+
 	switch ($mfAction ) {
 		// Entry Management Update
 		case 'update_entry_management' :
@@ -639,7 +642,7 @@ if (!empty($mfAction))
 			$ticket_code = $_POST['entry_ticket_code'];
                         $entry_info_entry_id=$_POST['entry_info_entry_id'];
                         mf_update_entry_field($entry_info_entry_id,'308',$ticket_code);
-			break;    
+			break;
 		case 'update_entry_schedule' :
 			set_entry_schedule($lead,$form);
 			break;
@@ -664,17 +667,17 @@ if (!empty($mfAction))
 		case 'sync_status_jdb' :
 			GFJDBHELPER::gravityforms_sync_status_jdb($entry_info_entry_id,$entry_status);
 			break;
-                case 'send_conf_letter' :    
+                case 'send_conf_letter' :
                     //first update the schedule if one is set
                         set_entry_schedule($lead,$form);
                     //then send confirmation letter
                         $notifications_to_send = GFCommon::get_notifications_to_send( 'confirmation_letter', $form, $lead );
-                        foreach ( $notifications_to_send as $notification ) {                                                        
-                            if($notification['isActive']){                                            
+                        foreach ( $notifications_to_send as $notification ) {
+                            if($notification['isActive']){
                                 GFCommon::send_notification( $notification, $form, $lead );
                             }
                         }
-                        mf_add_note( $entry_info_entry_id, 'Confirmation Letter sent'); 
+                        mf_add_note( $entry_info_entry_id, 'Confirmation Letter sent');
                         break;
 		//Sidebar Note Add
 		case 'add_note_sidebar' :
@@ -687,10 +690,10 @@ if (!empty($mfAction))
                     }
                     break;
 	}
-	
+
         // Return the original form which is required for the filter we're including for our custom processing.
         return $form;
-        
+
     }
 
 
@@ -706,9 +709,9 @@ function set_entry_status_content($lead,$form){
 	$acceptance_current_status = $lead['303'];
 	$field302=RGFormsModel::get_field($form,'302');
 	$field304=RGFormsModel::get_field($form,'304');
-	
+
 	$is_acceptance_status_changed = (strcmp($acceptance_current_status, $acceptance_status_change) != 0);
-	
+
 	if (!empty($entry_info_entry_id))
 	{
 		/* Clear out old choices */
@@ -720,7 +723,7 @@ function set_entry_status_content($lead,$form){
 		{
 			mf_update_entry_field($entry_info_entry_id,$choice['id'],'');
 		}
-		/* Save entries */	
+		/* Save entries */
 		if (!empty($location_change))
 		{
 			foreach($location_change as $location_entry)
@@ -742,11 +745,11 @@ function set_entry_status_content($lead,$form){
 		/*if (!empty($location_comment_change))
 		{*/
 			$entry_info_entry['307'] = $location_comment_change;
-				
+
 			mf_update_entry_field($entry_info_entry_id,'307',$location_comment_change);
 
 		//}
-			
+
 	}
 }
 
@@ -770,7 +773,7 @@ function set_entry_status($lead,$form){
 			mf_update_entry_field($entry_info_entry_id,'303',$acceptance_status_change);
 			//Reload entry to get any changes in status
 			$lead['303'] = $acceptance_status_change;
-				
+
 			//Handle acceptance status changes
 			if ($is_acceptance_status_changed )
 			{
@@ -779,10 +782,10 @@ function set_entry_status($lead,$form){
 				//Handle notifications for acceptance
 				$notifications_to_send = GFCommon::get_notifications_to_send( 'mf_acceptance_status_changed', $form, $lead );
                                 foreach ( $notifications_to_send as $notification ) {
-                                        if($notification['isActive']){                                            
+                                        if($notification['isActive']){
                                             GFCommon::send_notification( $notification, $form, $lead );
                                         }
-                                        
+
 				}
 				GFJDBHELPER::gravityforms_sync_status_jdb($entry_info_entry_id,$acceptance_status_change);
 
@@ -796,10 +799,10 @@ function set_entry_status($lead,$form){
 /* Copy entry record into specific form*/
 function duplicate_entry_id($lead,$form){
     $form_change         = $_POST['entry_form_copy']; //selected form field
-    $entry_info_entry_id = $_POST['entry_info_entry_id']; //id to copy    
-	
-    error_log('$duplicating entry id ='.$entry_info_entry_id.' into form '.$form_change);    
-    
+    $entry_info_entry_id = $_POST['entry_info_entry_id']; //id to copy
+
+    error_log('$duplicating entry id ='.$entry_info_entry_id.' into form '.$form_change);
+
     $result     = duplicate_entry_data($form_change,$entry_info_entry_id);
     error_log('UPDATE RESULTS = '.print_r($result,true));
 }
@@ -818,10 +821,10 @@ function duplicate_entry_id($lead,$form){
         $lead_table        = GFFormsModel::get_lead_table_name();
 	$lead_detail_table = GFFormsModel::get_lead_details_table_name();
 	$lead_meta_table   = GFFormsModel::get_lead_meta_table_name();
-        
+
         //pull existing entries information
         $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table          WHERE      id=%d", $current_entry_id));
-        $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_rg_lead_detail.field_number, wp_rg_lead_detail.value, wp_rg_lead_detail_long.value as long_detail FROM $lead_detail_table left outer join wp_rg_lead_detail_long on  wp_rg_lead_detail_long.lead_detail_id = wp_rg_lead_detail.id WHERE lead_id=%d", $current_entry_id));                
+        $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_rg_lead_detail.field_number, wp_rg_lead_detail.value, wp_rg_lead_detail_long.value as long_detail FROM $lead_detail_table left outer join wp_rg_lead_detail_long on  wp_rg_lead_detail_long.lead_detail_id = wp_rg_lead_detail.id WHERE lead_id=%d", $current_entry_id));
 
         // new lead
         $user_id = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
@@ -831,49 +834,49 @@ function duplicate_entry_id($lead,$form){
         $wpdb->query($wpdb->prepare("INSERT INTO $lead_table(form_id, ip, source_url, date_created, user_agent, currency, created_by) VALUES(%d, %s, %s, utc_timestamp(), %s, %s, {$user_id})", $form_change, RGFormsModel::get_ip(), $source_url, $user_agent, $currency));
         $lead_id = $wpdb->insert_id;
         echo 'Entry '.$lead_id.' created in Form '.$form_change;
-        
+
         //add a note to the new entry
         $results=mf_add_note( $lead_id, 'Copied Entry ID:'.$current_entry_id.' into form '.$form_change.'. New Entry ID ='.$lead_id);
-        
+
         foreach($current_fields as $row){
-            $fieldValue = ($row->field_number != 303? $row->value: 'Proposed');          
-            
-            $wpdb->query($wpdb->prepare("INSERT INTO $lead_detail_table(lead_id, form_id, field_number, value) VALUES(%d, %s, %s, %s)", 
-                    $lead_id, $form_change, $row->field_number, $fieldValue));                            
-            
+            $fieldValue = ($row->field_number != 303? $row->value: 'Proposed');
+
+            $wpdb->query($wpdb->prepare("INSERT INTO $lead_detail_table(lead_id, form_id, field_number, value) VALUES(%d, %s, %s, %s)",
+                    $lead_id, $form_change, $row->field_number, $fieldValue));
+
             //if detail long is set, add row for new record
-            
-            if($row->long_detail != 'NULL'){                
+
+            if($row->long_detail != 'NULL'){
                 $lead_detail_id = $wpdb->insert_id;
-                
-                $wpdb->query($wpdb->prepare("INSERT INTO wp_rg_lead_detail_long(lead_detail_id, value) VALUES(%d, %s)", 
+
+                $wpdb->query($wpdb->prepare("INSERT INTO wp_rg_lead_detail_long(lead_detail_id, value) VALUES(%d, %s)",
                     $lead_detail_id, $row->long_detail));
             }
-        }        
+        }
     }
 
 /* Modify Form Id Status */
 function set_form_id($lead,$form){
 	$form_change=$_POST['entry_form_change'];
 	$entry_info_entry_id=$_POST['entry_info_entry_id'];
-	
+
 	error_log('$form_change='.$form_change);
 	error_log('$$entry_info_entry_id='.$entry_info_entry_id);
 	$entry=GFAPI:: get_entry($entry_info_entry_id);
-	
-	$is_form_id_changed = (strcmp($entry['form_id'], $form_change) != 0);                
-                        
+
+	$is_form_id_changed = (strcmp($entry['form_id'], $form_change) != 0);
+
 	if (!empty($entry_info_entry_id))
 	{
 		if (!empty($is_form_id_changed))
 		{
 			//Update Field for Acceptance Status
 			$result = update_entry_form_id($entry,$form_change);
-			error_log('UPDATE RESULTS = '.print_r($result,true));  
-                        
+			error_log('UPDATE RESULTS = '.print_r($result,true));
+
                         //add note about form change
-                        $newForm = RGFormsModel::get_form_meta($form_change);                                                        
-                        mf_add_note( $entry_info_entry_id, 'Entry changed from '.$form['title'].' to '.$newForm['title']);                        
+                        $newForm = RGFormsModel::get_form_meta($form_change);
+                        mf_add_note( $entry_info_entry_id, 'Entry changed from '.$form['title'].' to '.$newForm['title']);
 		}
 	}
 }
@@ -889,7 +892,7 @@ function set_form_id($lead,$form){
  */
  function update_entry_form_id( $entry_id, $form_id ) {
 	global $wpdb;
-	
+
 	$lead_table = GFFormsModel::get_lead_table_name();
 	$lead_detail_table = GFFormsModel::get_lead_details_table_name();
 	$lead_meta_table = GFFormsModel::get_lead_meta_table_name();
@@ -903,7 +906,7 @@ function set_form_id($lead,$form){
 			$wpdb->prepare( "UPDATE $lead_meta_table SET form_id={$form_id} WHERE lead_id=%d ", $entry_id)
 	);
 
-	
+
 	return $result;
 }
 
@@ -915,18 +918,18 @@ function set_entry_schedule($lead,$form){
 	$entry_schedule_start  = (isset($_POST['datetimepickerstart'])   ? $_POST['datetimepickerstart']   : '');
 	$entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
 	$entry_info_entry_id   = (isset($_POST['entry_info_entry_id'])   ? $_POST['entry_info_entry_id']   : '');
-        
+
         //location fields
         $entry_location_subarea_change = (isset($_POST['entry_location_subarea_change']) ? $_POST['entry_location_subarea_change'] : '');
-                
+
 	$form_id=$lead['form_id'];
-        
+
         //set the location
         $location_id = 'NULL';
         if($entry_location_subarea_change!='none'){
-           set_entry_location($lead,$form,$location_id);     
+           set_entry_location($lead,$form,$location_id);
         }
-       
+
 	if($entry_schedule_start!='' && $entry_schedule_end!=''){
             $mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
             if ($mysqli->connect_errno) {
@@ -941,7 +944,7 @@ function set_entry_schedule($lead,$form){
             SELECT $entry_info_entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end'
                     from wp_mf_faire where find_in_set($form_id,form_ids) > 0
                     ");
-            
+
             //MySqli Insert Query
             $insert_row = $mysqli->query($insert_query);
             if($insert_row){
@@ -949,7 +952,7 @@ function set_entry_schedule($lead,$form){
             }else{
                     echo ('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
             };
-        }    
+        }
 }
 
 /* Modify Set Entry Status */
@@ -972,8 +975,8 @@ function delete_entry_schedule($lead,$form){
 	}else{
 		echo ('Error :'.$delete_query.':('. $mysqli->errno .') '. $mysqli->error);
 	};}
-	
- 
+
+
 }
 
 /* Modify Set Entry Status */
@@ -981,9 +984,9 @@ function set_entry_location($lead,$form,&$location_id=''){
 	$entry_schedule_change=$_POST['entry_location_subarea_change'];
 	$entry_info_entry_id=$_POST['entry_info_entry_id'];
 	$update_entry_location_code=$_POST['update_entry_location_code'];
-	
+
 	$form_id=$lead['form_id'];
-	
+
 	$mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
 	if ($mysqli->connect_errno) {
 		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -996,18 +999,18 @@ function set_entry_location($lead,$form,&$location_id=''){
 	if(!$delete_row){
 		echo ('Error :'.$delete_query.':('. $mysqli->errno .') '. $mysqli->error);
 	};*/
-	
+
 	$insert_query = sprintf("
 				INSERT INTO `wp_mf_location`
-				(`entry_id`,				
+				(`entry_id`,
 				`subarea_id`,
 				`location`,
 				`location_element_id`)
 				Select $entry_info_entry_id
-				,wp_mf_faire_subarea.ID 
+				,wp_mf_faire_subarea.ID
 				,'$update_entry_location_code'
 				,3
-				from wp_mf_faire_subarea 
+				from wp_mf_faire_subarea
                                 join wp_mf_faire_area on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID
 				join wp_mf_faire on find_in_set($form_id,form_ids) > 0 and wp_mf_faire_area.faire_id=wp_mf_faire.ID
 				where subarea='$entry_schedule_change';");
@@ -1049,16 +1052,16 @@ function delete_entry_location($lead,$form){
 function add_note_sidebar($lead, $form)
 {
 	global $current_user;
-	
+
 	$user_data = get_userdata( $current_user->ID );
 	$project_name = $lead['151'];
 	$email_to      = $_POST['gentry_email_notes_to_sidebar'];
-	
+
 	$email_note_info = '';
-	
+
 	//emailing notes if configured
 	if ( !empty($email_to) ) {
-		
+
 		GFCommon::log_debug( 'GFEntryDetail::lead_detail_page(): Preparing to email entry notes.' );
 		$email_to      = $_POST['gentry_email_notes_to_sidebar'];
 		$email_from    = $current_user->user_email;
@@ -1073,24 +1076,24 @@ function add_note_sidebar($lead, $form)
 		remove_filter( 'wp_mail_content_type','wpse27856_set_content_type' );
 		$email_note_info = '<br /><br />:SENT TO:['.implode(",", $email_to).']';
 	}
-	
+
 	mf_add_note( $lead['id'],  nl2br(stripslashes($_POST['new_note_sidebar'].$email_note_info)));
-	
+
 }
 
-function delete_note_sidebar($notes){       
+function delete_note_sidebar($notes){
     RGFormsModel::delete_notes( $notes);
 }
 function wpse27856_set_content_type(){
 	return "text/html";
 }
 
-/* 
- * Add a single note 
+/*
+ * Add a single note
  */
 function mf_add_note($leadid,$notetext)
 {
-	global $current_user;	
+	global $current_user;
 	$user_data = get_userdata( $current_user->ID );
 	RGFormsModel::add_note( $leadid, $current_user->ID, $user_data->display_name, $notetext );
 }
