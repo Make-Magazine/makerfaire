@@ -13,12 +13,13 @@ get_header(); ?>
   </div>
 
   <!-- PRESENTING SPONSORS -->
+  <?php if( have_rows('presenting_sponsors') ): ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">PRESENTING SPONSOR</h3>
         <div class="sponsors-box">
-    
-        <?php if( have_rows('presenting_sponsors') ):
+
+        <?php
           while( have_rows('presenting_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('image'); //Photo
             $sub_field_2 = get_sub_field('url'); //URL
@@ -33,18 +34,19 @@ get_header(); ?>
             endif;
             echo '</div>';
           endwhile; ?>
-        <?php endif; ?>
       </div>
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- GOLDSMITH SPONSORS -->
+  <?php if( have_rows('goldsmith_sponsors') ): ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">GOLDSMITH SPONSORS</h3>
         <div class="sponsors-box">
-    
-        <?php if( have_rows('goldsmith_sponsors') ):
+
+        <?php
           while( have_rows('goldsmith_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('image'); //Photo
             $sub_field_2 = get_sub_field('url'); //URL
@@ -59,18 +61,19 @@ get_header(); ?>
             endif;
             echo '</div>';
           endwhile; ?>
-        <?php endif; ?>
       </div>
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- SILVERSMITH SPONSORS -->
+  <?php if( have_rows('silversmith_sponsors') ): ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">SILVERSMITH SPONSORS</h3>
         <div class="sponsors-box">
-    
-        <?php if( have_rows('silversmith_sponsors') ):
+
+        <?php
           while( have_rows('silversmith_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('image'); //Photo
             $sub_field_2 = get_sub_field('url'); //URL
@@ -85,18 +88,19 @@ get_header(); ?>
             endif;
             echo '</div>';
           endwhile; ?>
-        <?php endif; ?>
       </div>
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- COPPERSMITH SPONSORS -->
+  <?php if( have_rows('coppersmith_sponsors') ): ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">COPPERSMITH SPONSORS</h3>
         <div class="sponsors-box">
-    
-        <?php if( have_rows('coppersmith_sponsors') ):
+
+        <?php
           while( have_rows('coppersmith_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('image'); //Photo
             $sub_field_2 = get_sub_field('url'); //URL
@@ -111,18 +115,19 @@ get_header(); ?>
             endif;
             echo '</div>';
           endwhile; ?>
-        <?php endif; ?>
       </div>
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- MEDIA SPONSORS -->
+  <?php if( have_rows('media_sponsors') ): ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">MEDIA SPONSORS</h3>
         <div class="sponsors-box">
     
-        <?php if( have_rows('media_sponsors') ):
+        <?php
           while( have_rows('media_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('image'); //Photo
             $sub_field_2 = get_sub_field('url'); //URL
@@ -137,18 +142,19 @@ get_header(); ?>
             endif;
             echo '</div>';
           endwhile; ?>
-        <?php endif; ?>
       </div>
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- BLACKSMITH SPONSORS -->
+  <?php if( have_rows('blacksmith_sponsors') ): ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">BLACKSMITH SPONSORS</h3>
         <div class="sponsors-text-box">
     
-        <?php if( have_rows('blacksmith_sponsors') ):
+        <?php
           while( have_rows('blacksmith_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('name'); //Name
             $sub_field_2 = get_sub_field('url'); //URL
@@ -163,18 +169,19 @@ get_header(); ?>
             endif;
             echo '</div>';
           endwhile; ?>
-        <?php endif; ?>
       </div>
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- STARTUP SPONSORS -->
+  <?php if( have_rows('startup_sponsors') ): ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">STARTUP SPONSORS</h3>
         <div class="sponsors-text-box">
     
-        <?php if( have_rows('startup_sponsors') ):
+        <?php
           while( have_rows('startup_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('name'); //Name
             $sub_field_2 = get_sub_field('url'); //URL
@@ -189,10 +196,10 @@ get_header(); ?>
             endif;
             echo '</div>';
           endwhile; ?>
-        <?php endif; ?>
       </div>
     </div>
   </div>
+  <?php endif; ?>
 
   <div class="row">
     <div class="col-xs-12 text-center">
