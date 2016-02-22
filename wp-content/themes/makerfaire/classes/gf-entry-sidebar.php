@@ -9,16 +9,16 @@ function mf_sidebar_entry_locations($form_id, $lead) {
 		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 	}
 	$entry_id=$lead['id'];
-	$result = $mysqli->query("SELECT `wp_mf_location`.`ID`,
-                                        `wp_mf_location`.`entry_id`,
-                                        `wp_mf_faire`.`faire`,
-                                        `wp_mf_faire_area`.`area`,
-                                        `wp_mf_faire_subarea`.`subarea`,
-                                        `wp_mf_location`.`location`,
-                                        `wp_mf_location`.`latitude`,
-                                        `wp_mf_location`.`longitude`,
-                                        `wp_mf_location`.`location_element_id`
-                                            FROM `wp_mf_location`, wp_mf_faire_subarea, wp_mf_faire_area, wp_mf_faire
+	$result = $mysqli->query("SELECT  `wp_mf_location`.`ID`,
+                                    `wp_mf_location`.`entry_id`,
+                                    `wp_mf_faire`.`faire`,
+                                    `wp_mf_faire_area`.`area`,
+                                    `wp_mf_faire_subarea`.`subarea`,
+                                    `wp_mf_location`.`location`,
+                                    `wp_mf_location`.`latitude`,
+                                    `wp_mf_location`.`longitude`,
+                                    `wp_mf_location`.`location_element_id`
+                                        FROM `wp_mf_location`, wp_mf_faire_subarea, wp_mf_faire_area, wp_mf_faire
 			 where entry_id=$entry_id
                          and   wp_mf_location.subarea_id = wp_mf_faire_subarea.ID
                          and   wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID
@@ -244,31 +244,55 @@ function mf_sidebar_entry_info($form_id, $lead) {
 
 }
 
+function mf_sidebar_disp_meta_field($form_id, $lead,$meta_key='') {
+  //get current value if set
+  $metaValue = '';
+  if($meta_key!=''){
+    $metaValue = gform_get_meta( $lead['id'], $meta_key );
+    if(!$metaValue) $metaValue = '';
+  }
+  $output = '';
+  //build input
+  $meta = GFFormsModel::get_entry_meta(array( $form_id));
+  if(isset($meta[$meta_key])){
+    $output = '<label>'.$meta[$meta_key]['label'].': </label>';
+    if(isset($meta[$meta_key]['filter']['choices'])){
+      $choices = $meta[$meta_key]['filter']['choices'];
+      $output .= '<select class="metafield" name="'.$meta_key.'" id="'.$meta_key.'">';
+      if($metaValue=='')  $output .= '<option value=""></option>';
+      foreach($choices as $option){
+        $output .= '<option value="'.$option['value'].'"'.($metaValue==$option['value']?' selected ':'').'>'.$option['text'].'</option>';
+      }
+      $output .='</select>';
+    }else{ //build as regular input text
+      $output .= '<input class="metafield"  name="'.$meta_key.'" id="'.$meta_key.'" value="'.$metaValue.'" />';
+    }
+  }
+  $output .= '<span id="'.$meta_key.'Status"></span>'; //updating progress field
+  echo $output;
+}
+
 function mf_sidebar_entry_status($form_id, $lead) {
-    echo ('<input type="hidden" name="entry_info_entry_id" value="'.$lead['id'].'">');
-    if ( current_user_can( 'update_entry_status') ) {
-	// Load Fields to show on entry info
-	$form = GFAPI::get_form($form_id);
+  echo ('<input type="hidden" name="entry_info_entry_id" value="'.$lead['id'].'">');
+  if ( current_user_can( 'update_entry_status') ) {
+    // Load Fields to show on entry info
+    $form = GFAPI::get_form($form_id);
 
-	$field303=RGFormsModel::get_field($form,'303');
+    $field303=RGFormsModel::get_field($form,'303');
 
-	echo ('<label class="detail-label" for="entry_info_status_change">Status:</label>');
-	echo ('<select name="entry_info_status_change">');
-	foreach( $field303['choices'] as $choice )
-	{
-		$selected = '';
-
-		if ($lead[$field303['id']] == $choice['text']) $selected=' selected ';
-
-		echo('<option '.$selected.' value="'.$choice['text'].'">'.$choice['text'].'</option>');
-	}
-	echo('</select><input type="submit" name="update_management" value="Save Status" class="btn btn-danger"
-	onclick="jQuery(\'#action\').val(\'update_entry_status\');"/><br />');
-        }else{
-            echo ('<label class="detail-label" for="entry_info_status_change">Status:</label>');
-            echo '&nbsp;&nbsp; '.$lead[303].'<br/>';
-        }
-
+    echo ('<label class="detail-label" for="entry_info_status_change">Status: </label>');
+    echo ('<select name="entry_info_status_change">');
+    foreach( $field303['choices'] as $choice ){
+      $selected = '';
+      if ($lead[$field303['id']] == $choice['text']) $selected=' selected ';
+      echo('<option '.$selected.' value="'.$choice['text'].'">'.$choice['text'].'</option>');
+    }
+    echo('</select><input type="submit" name="update_management" value="Save Status" class="btn btn-danger"
+    onclick="jQuery(\'#action\').val(\'update_entry_status\');"/><br />');
+  }else{
+    echo ('<label class="detail-label" for="entry_info_status_change">Status: </label>');
+    echo '&nbsp;&nbsp; '.$lead[303].'<br/>';
+  }
 }
 
 function mf_sidebar_forms($form_id, $lead) {
@@ -326,87 +350,79 @@ function add_sidebar_text_before($form, $lead){
 
 <div id="infoboxdiv" class="postbox">
 	<div id="minor-publishing" style="padding: 10px;">
-			<?php mf_sidebar_entry_status( $form['id'], $lead ); ?><br/>
-			Contact:<div style="padding:5px"><?php echo $lead['96.3'];  ?> <?php echo $lead['96.6'];  ?><br />
-				<?php echo $street; ?><br />
-				<?php echo $street2; ?>
-				<?php echo $city; ?>, <?php echo $state; ?>  <?php echo $zip; ?><br />
-				<?php echo $country; ?><br />
-				<a href="mailto:<?php echo $email; ?>"><?php echo $email; ?></a><br />
-				<?php echo $phonetype; ?>:  <?php echo $phone; ?><br />
+    <?php mf_sidebar_entry_status( $form['id'], $lead ); ?><br/>
+    <?php mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ); ?><br/>
+    <?php mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ); ?><br/>
+    Contact:<div style="padding:5px"><?php echo $lead['96.3'];  ?> <?php echo $lead['96.6'];  ?><br />
+      <?php echo $street; ?><br />
+      <?php echo $street2; ?>
+      <?php echo $city; ?>, <?php echo $state; ?>  <?php echo $zip; ?><br />
+      <?php echo $country; ?><br />
+      <a href="mailto:<?php echo $email; ?>"><?php echo $email; ?></a><br />
+      <?php echo $phonetype; ?>:  <?php echo $phone; ?><br />
 
-				</div>
-			<?php _e( 'Filled out: ', 'gravityforms' ); ?>:<?php echo esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) ?><br />
-                        <br/>
-                        <?php do_action( 'gform_entry_info', $form['id'], $lead );?>
-        </div>
-			<div id="delete-action" style="float:none;padding: 10px;">
-				<?php
-							switch ( $lead['status'] ) {
-								case 'spam' :
-									if ( GFCommon::spam_enabled( $form['id'] ) ) {
-										?>
-				<a
-					onclick="jQuery('#action').val('unspam'); jQuery('#entry_form').submit()"
-					href="#"><?php _e( 'Not Spam', 'gravityforms' ) ?></a>
-				<?php
-										echo GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ? '|' : '';
-									}
-									if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
-										?>
-				<a class="submitdelete deletion"
-					onclick="if ( confirm('<?php _e( ';You are about to delete this entry. \'Cancel\' to stop, \'OK\' to delete.', 'gravityforms' ) ?>') ) {jQuery('#action').val('delete'); jQuery('#entry_form').submit(); return true;} return false;"
-					href="#"><?php _e( 'Delete Permanently', 'gravityforms' ) ?></a>
-				<?php
-									}
+    </div>
+    <?php _e( 'Filled out: ', 'gravityforms' ); ?><?php echo esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) ?><br />
+    <br/>
+    <?php do_action( 'gform_entry_info', $form['id'], $lead );?>
+  </div>
+	<div id="delete-action" style="float:none;padding: 10px;">
+    <?php
+      switch ( $lead['status'] ) {
+        case 'spam' :
+          if ( GFCommon::spam_enabled( $form['id'] ) ) {
+            ?>
+            <a onclick="jQuery('#action').val('unspam'); jQuery('#entry_form').submit()" href="#"><?php _e( 'Not Spam', 'gravityforms' ) ?></a>
+            <?php
+						echo GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ? '|' : '';
+					}
+					if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
+						?>
+            <a class="submitdelete deletion" onclick="if ( confirm('<?php _e( ';You are about to delete this entry. \'Cancel\' to stop, \'OK\' to delete.', 'gravityforms' ) ?>') ) {jQuery('#action').val('delete'); jQuery('#entry_form').submit(); return true;} return false;" href="#"><?php _e( 'Delete Permanently', 'gravityforms' ) ?></a>
+            <?php
+					}
+          break;
+        case 'trash' :
+          ?>
+          <a onclick="jQuery('#action').val('restore'); jQuery('#entry_form').submit()" href="#"><?php _e( 'Restore', 'gravityforms' ) ?></a>
+          <?php
+					if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) { ?>
+            | <a class="submitdelete deletion"
+              onclick="if ( confirm('<?php _e('You are about to delete this entry. \'Cancel\' to stop, \'OK\' to delete.', 'gravityforms' ) ?>') ) {jQuery('#action').val('delete'); jQuery('#entry_form').submit(); return true;} return false;"
+              href="#"><?php _e( 'Delete Permanently', 'gravityforms' ) ?></a>
+          <?php
+					}
+          break;
 
-									break;
-
-								case 'trash' :
-									?>
-				<a
-					onclick="jQuery('#action').val('restore'); jQuery('#entry_form').submit()"
-					href="#"><?php _e( 'Restore', 'gravityforms' ) ?></a>
-				<?php
-									if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
-										?>
-				| <a class="submitdelete deletion"
-					onclick="if ( confirm('<?php _e('You are about to delete this entry. \'Cancel\' to stop, \'OK\' to delete.', 'gravityforms' ) ?>') ) {jQuery('#action').val('delete'); jQuery('#entry_form').submit(); return true;} return false;"
-					href="#"><?php _e( 'Delete Permanently', 'gravityforms' ) ?></a>
-				<?php
-									}
-
-									break;
-
-								default :
-									if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
-										?>
-				<a class="submitdelete deletion"
-					onclick="jQuery('#action').val('trash'); jQuery('#entry_form').submit()"
-					href="#"><?php _e( 'Move to Trash', 'gravityforms' ) ?></a>
-				<?php
-										echo GFCommon::spam_enabled( $form['id'] ) ? '|' : '';
-									}
-									if ( GFCommon::spam_enabled( $form['id'] ) ) {
-										?>
-				<a class="submitdelete deletion"
-					onclick="jQuery('#action').val('spam'); jQuery('#entry_form').submit()"
-					href="#"><?php _e( 'Mark as Spam', 'gravityforms' ) ?></a>
-				<?php
-									}
-							}
-							if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) && $lead['status'] != 'trash' ) {
-								$button_text      = $mode == 'view' ? __( 'Edit', 'gravityforms' ) : __( 'Update', 'gravityforms' );
-								$disabled         = $mode == 'view' ? '' : ' disabled="disabled" ';
-								$update_button_id = $mode == 'view' ? 'gform_edit_button' : 'gform_update_button';
-								$button_click     = $mode == 'view' ? "jQuery('#screen_mode').val('edit');" : "jQuery('#action').val('update'); jQuery('#screen_mode').val('view');";
-								$update_button    = '<input id="' . $update_button_id . '" ' . $disabled . ' class="button button-large button-primary" type="submit" tabindex="4" value="' . $button_text . '" name="save" onclick="' . $button_click . '"/>';
-								echo apply_filters( 'gform_entrydetail_update_button', $update_button );
-								if ( $mode == 'edit' ) {
-									echo '&nbsp;&nbsp;<input class="button button-large" type="submit" tabindex="5" value="' . __( 'Cancel', 'gravityforms' ) . '" name="cancel" onclick="jQuery(\'#screen_mode\').val(\'view\');"/>';
-								}
-							}
-							?>
+				default :
+          if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
+					?>
+            <a class="submitdelete deletion"
+            onclick="jQuery('#action').val('trash'); jQuery('#entry_form').submit()"
+            href="#"><?php _e( 'Move to Trash', 'gravityforms' ) ?></a>
+            <?php
+						echo GFCommon::spam_enabled( $form['id'] ) ? '|' : '';
+					}
+					if ( GFCommon::spam_enabled( $form['id'] ) ) {
+            ?>
+            <a class="submitdelete deletion"
+              onclick="jQuery('#action').val('spam'); jQuery('#entry_form').submit()"
+              href="#"><?php _e( 'Mark as Spam', 'gravityforms' ) ?></a>
+            <?php
+					}
+			} //end switch
+      if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) && $lead['status'] != 'trash' ) {
+        $button_text      = $mode == 'view' ? __( 'Edit', 'gravityforms' ) : __( 'Update', 'gravityforms' );
+        $disabled         = $mode == 'view' ? '' : ' disabled="disabled" ';
+        $update_button_id = $mode == 'view' ? 'gform_edit_button' : 'gform_update_button';
+        $button_click     = $mode == 'view' ? "jQuery('#screen_mode').val('edit');" : "jQuery('#action').val('update'); jQuery('#screen_mode').val('view');";
+        $update_button    = '<input id="' . $update_button_id . '" ' . $disabled . ' class="button button-large button-primary" type="submit" tabindex="4" value="' . $button_text . '" name="save" onclick="' . $button_click . '"/>';
+        echo apply_filters( 'gform_entrydetail_update_button', $update_button );
+        if ( $mode == 'edit' ) {
+          echo '&nbsp;&nbsp;<input class="button button-large" type="submit" tabindex="5" value="' . __( 'Cancel', 'gravityforms' ) . '" name="cancel" onclick="jQuery(\'#screen_mode\').val(\'view\');"/>';
+        }
+      }
+			?>
 	</div>
 </div>
 
@@ -819,8 +835,8 @@ function duplicate_entry_id($lead,$form){
         global $wpdb;
 
         $lead_table        = GFFormsModel::get_lead_table_name();
-	$lead_detail_table = GFFormsModel::get_lead_details_table_name();
-	$lead_meta_table   = GFFormsModel::get_lead_meta_table_name();
+        $lead_detail_table = GFFormsModel::get_lead_details_table_name();
+        $lead_meta_table   = GFFormsModel::get_lead_meta_table_name();
 
         //pull existing entries information
         $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table          WHERE      id=%d", $current_entry_id));
@@ -874,9 +890,9 @@ function set_form_id($lead,$form){
 			$result = update_entry_form_id($entry,$form_change);
 			error_log('UPDATE RESULTS = '.print_r($result,true));
 
-                        //add note about form change
-                        $newForm = RGFormsModel::get_form_meta($form_change);
-                        mf_add_note( $entry_info_entry_id, 'Entry changed from '.$form['title'].' to '.$newForm['title']);
+      //add note about form change
+      $newForm = RGFormsModel::get_form_meta($form_change);
+      mf_add_note( $entry_info_entry_id, 'Entry changed from '.$form['title'].' to '.$newForm['title']);
 		}
 	}
 }
