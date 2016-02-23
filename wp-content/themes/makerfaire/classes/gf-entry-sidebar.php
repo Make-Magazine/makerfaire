@@ -249,7 +249,6 @@ function mf_sidebar_disp_meta_field($form_id, $lead,$meta_key='') {
   $metaValue = '';
   if($meta_key!=''){
     $metaValue = gform_get_meta( $lead['id'], $meta_key );
-    if(!$metaValue) $metaValue = '';
   }
   $output = '';
   //build input

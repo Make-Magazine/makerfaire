@@ -236,3 +236,5 @@ ul li.gf_form_switcher{top:-47px}
 .entry-resource input[type="number"].thVal {
    width:45px;
 }
+
+#entry_form .inner-sidebar{    width: 300px;}
