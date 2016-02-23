@@ -1477,32 +1477,31 @@ function custom_entry_meta($entry_meta, $form_id){
     //create new meta field to hold resource status and resource assign to
     $entry_meta['res_status'] = array(
       'label' => 'Resource Status',
-      'is_numeric' => true,
+      'is_numeric' => false,
       'is_default_column' => false,
-      'update_entry_meta_callback' => 'def_entry_res_status',
       'filter'    => array(
-        'operators' => array( 'is', 'isnot'),
+        'operators' => array( 'is', 'isnot','<','>' ),
         'choices'   => array(
-          array( 'value' => '0', 'text' => 'Ready' ),
-          array( 'value' => '1', 'text' => 'Review' )
+          array( 'value' => 'ready', 'text' => 'Ready' ),
+          array( 'value' => 'review', 'text' => 'Review' ),
         )
       )
     );
     $entry_meta['res_assign'] = array(
       'label'                      => 'Resource Assign To',
-      'is_numeric'                 => true,
+      'is_numeric'                 => false,
       'is_default_column'          => false,
       'update_entry_meta_callback' => 'def_entry_res_status',
       'filter'    => array(
-        'operators' => array( 'is', 'isnot'),
+        'operators' => array( 'is', 'isnot','<','>' ),
         'choices'   => array(
-          array( 'value' => '0', 'text' => 'Not Assigned' ),
-          array( 'value' => '1', 'text' => 'Jay' ),
-          array( 'value' => '2', 'text' => 'Jonathan'),
-          array( 'value' => '3', 'text' => 'Kerry'),
-          array( 'value' => '4', 'text' => 'Louise'),
-          array( 'value' => '5', 'text' => 'Siana'),
-          array( 'value' => '6', 'text' => 'Other'),
+          array( 'value' => 'na', 'text' => 'Not Assigned' ),
+          array( 'value' => 'jay', 'text' => 'Jay' ),
+          array( 'value' => 'jonathan', 'text' => 'Jonathan'),
+          array( 'value' => 'kerry', 'text' => 'Kerry'),
+          array( 'value' => 'louise', 'text' => 'Louise'),
+          array( 'value' => 'siana', 'text' => 'Siana'),
+          array( 'value' => 'other', 'text' => 'Other'),
         )
       )
 
@@ -2390,9 +2389,9 @@ function GVupdate_notification($form,$entry_id,$orig_entry){
     $updates = array();
 
     foreach($form['fields'] as $field){
-        //send notification after entry is updated in maker admin
-        $input_id = $field->id;
-
+      //send notification after entry is updated in maker admin
+      $input_id = $field->id;
+      //if field is admin only - do not allow updates thru gravity view
         //if field type is checkbox we need to compare each of the inputs for changes
         $inputs = $field->get_entry_inputs();
         if ( is_array( $inputs ) ) {

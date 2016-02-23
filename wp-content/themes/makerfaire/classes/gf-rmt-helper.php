@@ -514,27 +514,27 @@ class GFJDBHELPER {
 
     //set resource status and assign to
     //assign values can be found in functions.php in custom_entry_meta function
-    $assignTo    = 0;//not assigned to anyone
-    $status      = 0;//ready
+    $assignTo    = 'na';//not assigned to anyone
+    $status      = 'ready';//ready
     //field ID 83
     if( $entryData['fire'] == 'Yes' ||
         $entryData['activity']=='Yes' ||
         $entryData['activity_wrist'] == 'Yes'  ||
         $entryData['booth_size'] == "Other"
             ){
-      $status   = 1;
-      $assignTo = 1; //Jay
+      $status   = 'review';
+      $assignTo = 'jay'; //Jay
     }elseif($entryData['power'] == 'Yes' &&
             $entryData['amps']=='Other. Power request specified in the Special Power Requirements box'){
-      $status   = 1;
-      $assignTo = 3; //Kerry
+      $status   = 'review';
+      $assignTo = 'kerry'; //Kerry
     }elseif($entryData['special_request']!=''){
-      $status   = 1;
-      $assignTo = 3; //Kerry
+      $status   = 'review';
+      $assignTo = 'kerry'; //Kerry
     }
 
     // update custom meta field
-    gform_update_meta( $entryData['CS_ID'], $status, 'res_status' );
-    gform_update_meta( $entryData['CS_ID'], $assignTo, 'res_assign' );
+    gform_update_meta( $entryData['CS_ID'], 'res_status',$status );
+    gform_update_meta( $entryData['CS_ID'], 'res_assign',$assignTo );
   }
 }

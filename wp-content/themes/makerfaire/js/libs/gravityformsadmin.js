@@ -125,10 +125,10 @@ jQuery( document ).ready(function() {
     jQuery.post(ajaxurl, data, function(response) {
       if(response=='updated'){
         //after update - set meta field status to success
-        jQuery("#"+meta_field+'Status').html('<i style="color:green" class="fa fa-check fa-2x"></i>');
+        jQuery("#"+meta_field+'Status').html('<i style="color:green" class="fa fa-check"></i>');
       }else{
         //after update - set meta field status to failed
-        jQuery("#"+meta_field+'Status').html('<i style="color:red" class="fa fa-times fa-2x"></i>');
+        jQuery("#"+meta_field+'Status').html('<i style="color:red" class="fa fa-times"></i>');
       }
     });
   });
