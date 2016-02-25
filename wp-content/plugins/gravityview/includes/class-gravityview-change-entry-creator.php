@@ -204,7 +204,9 @@ class GravityView_Change_Entry_Creator {
             return;
         }
 
-        $users = GVCommon::get_users( 'change_entry_creator' );
+        //MF custom code to add email to the drop down list
+        //$users = GVCommon::get_users( 'change_entry_creator' );
+        $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email') ));
 
         $output = '<label for="change_created_by">';
         $output .= esc_html__('Change Entry Creator:', 'gravityview');
