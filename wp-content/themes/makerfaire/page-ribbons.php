@@ -25,7 +25,7 @@ foreach($yearSql as $year) {
     </div>
   <?php endif; ?>
 
-  <div class="container" ng-app="ribbonApp">
+  <div class="container ng-cloak" ng-app="ribbonApp">
     <div class="row">
       <div class="content col-xs-12">
         <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>

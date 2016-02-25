@@ -19,10 +19,6 @@
     $scope.pageSize    = 40;
     $scope.faires      = [];
 
-    $scope.random = function() {
-      return 0.5 - Math.random();
-    };
-
     $scope.loadData = function(data) {
       var faireYear = data[0].name;
       $scope.years = data;
