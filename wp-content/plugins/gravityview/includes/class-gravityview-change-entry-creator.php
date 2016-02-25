@@ -214,7 +214,8 @@ class GravityView_Change_Entry_Creator {
         <select name="created_by" id="change_created_by" class="widefat">';
         $output .= '<option value=""> &mdash; '.esc_attr_x( 'No User', 'No user assigned to the entry', 'gravityview').' &mdash; </option>';
         foreach($users as $user) {
-            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
+          //MF custom code to display users email
+          $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_email.')' ).'</option>';
         }
         $output .= '</select>';
         $output .= '<input name="originally_created_by" value="'.esc_attr( $entry['created_by'] ).'" type="hidden" />';
