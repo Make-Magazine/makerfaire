@@ -511,5 +511,30 @@ class GFJDBHELPER {
       $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`) "
                   . " VALUES (".$entryData['CS_ID'].",".$attribute_id .',"'.$attvalue . '","' . $comment.'")');
     }
+
+    //set resource status and assign to
+    //assign values can be found in functions.php in custom_entry_meta function
+    $assignTo    = 'na';//not assigned to anyone
+    $status      = 'ready';//ready
+    //field ID 83
+    if( $entryData['fire'] == 'Yes' ||
+        $entryData['activity']=='Yes' ||
+        $entryData['activity_wrist'] == 'Yes'  ||
+        $entryData['booth_size'] == "Other"
+            ){
+      $status   = 'review';
+      $assignTo = 'jay'; //Jay
+    }elseif($entryData['power'] == 'Yes' &&
+            $entryData['amps']=='Other. Power request specified in the Special Power Requirements box'){
+      $status   = 'review';
+      $assignTo = 'kerry'; //Kerry
+    }elseif($entryData['special_request']!=''){
+      $status   = 'review';
+      $assignTo = 'kerry'; //Kerry
+    }
+
+    // update custom meta field
+    gform_update_meta( $entryData['CS_ID'], 'res_status',$status );
+    gform_update_meta( $entryData['CS_ID'], 'res_assign',$assignTo );
   }
 }

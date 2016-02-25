@@ -30,6 +30,7 @@ $short_description = $lead['16'];
 $long_description = (isset($lead['21'])?$lead['21']:'');
 $project_name = (isset($lead['151'])?$lead['151']:'');
 $size_request = (isset($lead['60'])?$lead['60']:'');
+$size_request_heightwidth = ((strlen($lead['344']) > 0 ) ?$lead['344'].' X ':'').(isset($lead['345'])?$lead['345']:'');
 $size_request_other = (isset($lead['61'])?$lead['61']:'');
 $entry_form_type = $form['title'];
 $entry_form_status = (isset($lead['303'])?$lead['303']:'');
@@ -169,7 +170,9 @@ if ( isset( $long_description ) && $long_description!='') {
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
 						<?php echo ( isset( $size_request ) ) ? $size_request : 'Not Filled out' ; ?>
-						<?php echo ( isset( $size_request_other ) ) ? 'Other: '.$size_request_other : '' ; ?>
+           	<?php echo ( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '' ; ?>
+             
+						<?php echo ( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '' ; ?>
 						</td>
 					</tr>
           <tr>
@@ -290,7 +293,7 @@ Include field IDs:
     }
 
     $data = array('content'=> array(11,16,320,321,66,67,293),
-                  'logistics'=>array(60,61,62,288,64,65,68,69,70,71,72,73,74,75,76),
+                  'logistics'=>array(60,344,345,61,62,347,348,64,65,68,69,70,71,72,73,74,75,76),
                   'additional'=>array(123,130,287,134),
                   'images'=>array(22,217,224,223,222,220,221,219,111),
                   'imagesOver'=>array(324,334,326,338,333,337,332,336,331,335)

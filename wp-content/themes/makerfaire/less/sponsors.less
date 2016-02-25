@@ -1,0 +1,121 @@
+.sponsors-landing {
+  margin-top: 30px;
+  h2 {
+    font-weight: 300;
+  }
+  .spnosors-row {
+    border-top: 1px solid rgba(0,173,239,0.9);
+    padding-bottom: 50px;
+  }
+  h3.sponsors-type {
+    font-weight: 300;
+    font-size: 35px;
+  }
+  .sponsors-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-bottom: 10px;
+  }
+  .sponsors-box-xl {
+    width: 250px;
+    margin-top: 20px;
+    padding-left: 25px;
+    padding-right: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .sponsors-box-lg {
+    width: 250px;
+    margin-top: 20px;
+    padding-left: 25px;
+    padding-right: 25px;
+    border-right: 1px solid #D3D3D3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:last-child {
+      border-right: none;
+    }
+  }
+  .sponsors-box-md {
+    width: 160px;
+    height: 100px;
+    margin-top: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-left: 1px solid #D3D3D3;
+    border-right: 1px solid #D3D3D3;
+    margin-left: -1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:last-child {
+      border-right: 1px solid #D3D3D3;
+    }
+  }
+  .sponsors-text-box {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 40px 0 15px;
+  }
+  .sponsors-text-box-inner {
+    width: 25%;
+    padding: 7px 15px;
+    p {
+      color: #222;
+      font-weight: 300;
+      font-size: 20px;
+      margin-bottom: 0;
+    }
+  }
+  .sponsors-btn-top {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 7px 25px;
+    background-color: #C03830;
+    color: #fff;
+    border-radius: 3px;
+    float: right;
+    font-size: 14px;
+    &:hover {
+      background: #c51a28;
+    }
+  }
+  .sponsors-btn-bottom {
+    margin-bottom: 50px;
+    display: inline-block;
+    padding: 7px 25px;
+    background-color: #C03830;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 14px;
+    &:hover {
+      background: #c51a28;
+    }
+  }
+}
+
+@media screen and (max-width: 767px) { 
+  .sponsors-landing .sponsors-text-box-inner {
+    width: 50%;
+  }
+  .sponsors-landing h3.sponsors-type {
+    font-size: 24px;
+  }
+  .sponsors-landing .sponsors-box-xl {
+    width: 180px;
+  }
+  .sponsors-landing .sponsors-box-lg {
+    width: 148px;
+  }
+  .sponsors-landing .sponsors-box-md {
+    width: 140px;
+    height: 90px;
+  }
+  .sponsors-landing .sponsors-btn-top {
+    margin-top: 10px;
+  }
+}

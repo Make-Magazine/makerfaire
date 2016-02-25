@@ -1,3 +1,8 @@
+<?php
+include '../wp-load.php';
+if (!is_user_logged_in())
+    auth_redirect();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,9 +18,8 @@
   <link href="node_modules/angular-ui-grid/ui-grid.css" rel="stylesheet">
   <!-- Script -->
   <script src="../wp-includes/js/jquery/jquery.js"></script>
-  <!--<script src="../wp-content/themes/makerfaire/js/libs/bootstrap.min.js"></script>-->
-  <script src="../wp-content/themes/makerfaire/js/angular/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
+
+  <script src="node_modules/angular/angular.min.js"></script>
   <script src="node_modules/angular-route/angular-route.min.js"></script>
   <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
   <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
@@ -112,7 +116,6 @@ a {
   </style>
 </head>
 <body>
-
   <div class="container">
     <div class="row"><h1>Resource Management Tool</h1></div>
   </div>
