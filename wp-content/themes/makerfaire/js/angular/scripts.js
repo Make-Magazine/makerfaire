@@ -6,7 +6,7 @@
     var fallbackSrc = {
       link: function postLink(scope, iElement, iAttrs) {
         iElement.bind('error', function() {
-          angular.element(this).attr("src", iAttrs.fallbackSrc);
+          angular.element(this).attr('src', iAttrs.fallbackSrc);
         });
       }
     };
@@ -29,6 +29,8 @@
 
       $http.get('/wp-content/themes/makerfaire/partials/data/' + faireYear + 'ribbonData.json')
         .then(function successCallback(data) {
+        .then(function successCallback(response) {
+          var data = response.data;
           $scope.ribbons = data.json;
           //for random order
           shuffle($scope.ribbons);
@@ -44,7 +46,7 @@
             });
             $scope.faires.sort();
           });
-        }, function errorCallback(response) {
+        }, function errorCallback() {
           // log error
           alert('error');
         });
