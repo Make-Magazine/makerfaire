@@ -1,0 +1,40 @@
+{
+    "key": "group_56ce502e98520",
+    "title": "Sponsors Page URL",
+    "fields": [
+        {
+            "key": "field_56ce504f64937",
+            "label": "Sponsors Page URL",
+            "name": "sponsors_page_url",
+            "type": "url",
+            "instructions": "This is used for setting the url for sponsors page in this template.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page",
+                "operator": "==",
+                "value": "478622"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1456362936
+}
