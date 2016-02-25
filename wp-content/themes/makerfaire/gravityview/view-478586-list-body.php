@@ -87,120 +87,114 @@ if( ! $total or !( is_user_logged_in() )) {
 	foreach ( $entries as $entry ) {
 		$this->setCurrentEntry( $entry );
 
-                $form = GFAPI::get_form( $entry['form_id'] );
-                $form_type = (isset($form['form_type'])?'<p>'.$form['form_type'].':&nbsp;</p>':'');
-                if($form_type != 'Other' && $form_type != ''){
+    $form = GFAPI::get_form( $entry['form_id'] );
+    $form_type = (isset($form['form_type'])?'<p>'.$form['form_type'].':&nbsp;</p>':'');
+    if($form['form_type'] != 'Other' && $form['form_type'] != ''){ ?>
+        <hr/>
+        <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
 
-                ?>
-                    <hr/>
-                    <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
+        <?php
+        /**
+         * @action `gravityview_entry_before` Tap in before the the entry is displayed, inside the entry container
+         * @param array $entry Gravity Forms Entry array
+         * @param GravityView_View $this The GravityView_View instance
+         */
+        do_action( 'gravityview_entry_before', $entry, $this );
 
-                    <?php
+        if ( $this->getField('directory_list-title') || $this->getField('directory_list-subtitle') ): ?>
+          <?php
 
-                    /**
-                     * @action `gravityview_entry_before` Tap in before the the entry is displayed, inside the entry container
-                     * @param array $entry Gravity Forms Entry array
-                     * @param GravityView_View $this The GravityView_View instance
-                     */
-                    do_action( 'gravityview_entry_before', $entry, $this );
+          /**
+           * @action `gravityview_entry_title_before` Tap in before the the entry title is displayed
+           * @param array $entry Gravity Forms Entry array
+           * @param GravityView_View $this The GravityView_View instance
+           */
+          do_action( 'gravityview_entry_title_before', $entry, $this );
 
-                    ?>
-
-		<?php if ( $this->getField('directory_list-title') || $this->getField('directory_list-subtitle') ): ?>
-
-			<?php
-
-			/**
-			 * @action `gravityview_entry_title_before` Tap in before the the entry title is displayed
-			 * @param array $entry Gravity Forms Entry array
-			 * @param GravityView_View $this The GravityView_View instance
-			 */
-			do_action( 'gravityview_entry_title_before', $entry, $this );
-
-			?>
-			<div class="gv-list-view-title-maker-entry">
-				<?php
-                                $entryData = array();
-                                $links = '';
-                                if ( $this->getField('directory_list-title') ) {
-                                    $i          = 0;
-                                    $title_args = array(
-                                            'entry'      => $entry,
-                                            'form'       => $this->getForm(),
-                                            'hide_empty' => $this->getAtts( 'hide_empty' ),
-                                    );
+          ?>
+          <div class="gv-list-view-title-maker-entry">
+          <?php
+            $entryData = array();
+            $links = '';
+            if ( $this->getField('directory_list-title') ) {
+              $i          = 0;
+              $title_args = array(
+                      'entry'      => $entry,
+                      'form'       => $this->getForm(),
+                      'hide_empty' => $this->getAtts( 'hide_empty' ),
+              );
 
 
-                                    //set status color
-                                    if($entry['303']=='Accepted'){
-                                        $statusBlock = 'greenStatus';
-                                    }else{
-                                        $statusBlock = 'greyStatus';
-                                    }
+              //set status color
+              if($entry['303']=='Accepted'){
+                  $statusBlock = 'greenStatus';
+              }else{
+                  $statusBlock = 'greyStatus';
+              }
 
-                                    foreach ( $this->getField( 'directory_list-title' ) as $field ) {
-                                            $title_args['field'] = $field;
+              foreach ( $this->getField( 'directory_list-title' ) as $field ) {
+                $title_args['field'] = $field;
 
-                                            switch ($field['id']){
-                                                case '22':
-                                                    $title_args['wpautop'] = true;
-                                                    break;
-                                                case 'delete_entry':
-                                                    if($entry['303']=='Proposed' || $entry['303']=='In Progress'){
-                                                        $title_args['markup'] = '<span class="edit"><i class="fa fa-trash-o"></i>{{value}}</span>';
-                                                        $links .=  gravityview_field_output( $title_args );
-                                                    }
-                                                    break;
-                                                case 'edit_link':
-                                                    //do not display if entry is cancelled
-                                                    if($entry['303']!='Cancelled'){
-                                                        $title_args['markup'] = '<span class="edit"><i class="fa fa-pencil-square-o"></i>{{value}}</span>';
-                                                        $links .=  gravityview_field_output( $title_args );
-                                                    }
-                                                    break;
-                                                case 'cancel_link':
-                                                    //do not display if entry is already cancelled
-                                                    if($entry['303']!='Cancelled'){
-                                                        $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>{{value}}</span>';
-                                                        $links .=  gravityview_field_output( $title_args );
-                                                    }
-                                                    break;
-                                                case 'copy_entry':
-                                                    $title_args['markup'] = '<span class="edit"><i class="fa fa-files-o"></i>{{value}}</span>';
-                                                    $links .=  gravityview_field_output( $title_args );
-                                                    break;
-                                                case 'entry_link':
-                                                    $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>{{value}}</span>';
-                                                    $links .=  gravityview_field_output( $title_args );
-                                                    break;
-                                                default:
-                                                    $title_args['markup'] = '{{label}} {{value}}';
-                                            }
-                                            $entryData[$field['id']] = gravityview_field_output( $title_args );
-                                            unset( $title_args['markup'] );
-                                    }
-				}
+                switch ($field['id']){
+                    case '22':
+                        $title_args['wpautop'] = true;
+                        break;
+                    case 'delete_entry':
+                        if($entry['303']=='Proposed' || $entry['303']=='In Progress'){
+                            $title_args['markup'] = '<span class="edit"><i class="fa fa-trash-o"></i>{{value}}</span>';
+                            $links .=  gravityview_field_output( $title_args );
+                        }
+                        break;
+                    case 'edit_link':
+                        //do not display if entry is cancelled
+                        if($entry['303']!='Cancelled'){
+                            $title_args['markup'] = '<span class="edit"><i class="fa fa-pencil-square-o"></i>{{value}}</span>';
+                            $links .=  gravityview_field_output( $title_args );
+                        }
+                        break;
+                    case 'cancel_link':
+                        //do not display if entry is already cancelled
+                        if($entry['303']!='Cancelled'){
+                            $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>{{value}}</span>';
+                            $links .=  gravityview_field_output( $title_args );
+                        }
+                        break;
+                    case 'copy_entry':
+                        $title_args['markup'] = '<span class="edit"><i class="fa fa-files-o"></i>{{value}}</span>';
+                        $links .=  gravityview_field_output( $title_args );
+                        break;
+                    case 'entry_link':
+                        $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>{{value}}</span>';
+                        $links .=  gravityview_field_output( $title_args );
+                        break;
+                    default:
+                        $title_args['markup'] = '{{label}} {{value}}';
+                }
+                $entryData[$field['id']] = gravityview_field_output( $title_args );
+                unset( $title_args['markup'] );
+              }
+            }
 
-                            if(!empty($entryData)){
-                                ?>
+        if(!empty($entryData)){
+            ?>
 
-                            <div class="entryImg"><?php echo (isset($entry['22'])&& $entry['22']!=''?$entryData['22']:'<img src="/wp-content/uploads/2015/12/no-image.png" />');?></div>
+        <div class="entryImg"><?php echo (isset($entry['22'])&& $entry['22']!=''?$entryData['22']:'<img src="/wp-content/uploads/2015/12/no-image.png" />');?></div>
 
-                            <div class="entryData">
-                                <div class="statusBox <?php echo $statusBlock;?>">
-                                    <div class="fleft"> <?php echo $entryData['faire_name'];?></div>
-                                    <div class="fright statusText"><?php echo $entryData['303'];?></div>
-                                </div>
-                                <h3 class="title"><?php echo $entryData['151'];?></h3>
-                                <div class="clear fleft entryID latReg"><?php echo $form_type.' '.$entryData['id'];?></div>
-                                <div class="clear links latReg">
-                                    <div class="fleft"><?php echo $entryData['date_created'];?></div>
-                                    <div class="fright"><?php echo $links;?></div>
-                                </div>
-                            </div>
+        <div class="entryData">
+            <div class="statusBox <?php echo $statusBlock;?>">
+                <div class="fleft"> <?php echo $entryData['faire_name'];?></div>
+                <div class="fright statusText"><?php echo $entryData['303'];?></div>
+            </div>
+            <h3 class="title"><?php echo $entryData['151'];?></h3>
+            <div class="clear fleft entryID latReg"><?php echo $form_type.' '.$entryData['id'];?></div>
+            <div class="clear links latReg">
+                <div class="fleft"><?php echo $entryData['date_created'];?></div>
+                <div class="fright"><?php echo $links;?></div>
+            </div>
+        </div>
 
-                            <?php
-                            }
+        <?php
+        }
 				$this->renderZone('subtitle', array(
 					'markup' => '<h4 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h4>',
 					'wrapper_class' => 'gv-list-view-subtitle',
@@ -208,7 +202,7 @@ if( ! $total or !( is_user_logged_in() )) {
 			?>
 
 			</div>
-                        <div class="clear"></div>
+      <div class="clear"></div>
 
 			<?php
 
