@@ -2179,7 +2179,7 @@ function gv_faire_name($display_value, $field, $entry, $form){
         $sql = "select faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
         $faire = $wpdb->get_results($sql);
 
-        $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:$sql);
+        $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:'');
         $display_value = $faire_name;
     }elseif($field["type"]=='cancel_link'){
         $display_value = '<a href="#cancelEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Cancel</a>';
