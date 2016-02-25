@@ -24,28 +24,30 @@
     };
 
     $scope.loadData = function(data) {
+      var faireYear = data[0].name;
       $scope.years = data;
 
-      $http.get('/wp-content/themes/makerfaire/partials/data/' + faireYear + 'ribbonData.json').success(function(data) {
-        $scope.ribbons = data.json;
-        //for random order
-        shuffle($scope.ribbons);
-        $scope.blueList = data.blueList;
-        $scope.redList = data.redList;
+      $http.get('/wp-content/themes/makerfaire/partials/data/' + faireYear + 'ribbonData.json')
+        .then(function successCallback(data) {
+          $scope.ribbons = data.json;
+          //for random order
+          shuffle($scope.ribbons);
+          $scope.blueList = data.blueList;
+          $scope.redList = data.redList;
 
-        angular.forEach($scope.ribbons, function(row) {
-          /* create faires data */
-          angular.forEach(row.faireData, function(value) {
-            if ($scope.faires.indexOf(value.faire) == -1) {
-              $scope.faires.push(value.faire);
-            }
+          angular.forEach($scope.ribbons, function(row) {
+            /* create faires data */
+            angular.forEach(row.faireData, function(value) {
+              if ($scope.faires.indexOf(value.faire) == -1) {
+                $scope.faires.push(value.faire);
+              }
+            });
+            $scope.faires.sort();
           });
-          $scope.faires.sort();
+        }, function errorCallback(response) {
+          // log error
+          alert('error');
         });
-      }).error(function() {
-        // log error
-        alert('error');
-      });
     };
 
   });
