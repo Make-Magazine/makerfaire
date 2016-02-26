@@ -24,7 +24,6 @@
       $scope.years = data;
 
       $http.get('/wp-content/themes/makerfaire/partials/data/' + faireYear + 'ribbonData.json')
-        .then(function successCallback(data) {
         .then(function successCallback(response) {
           var data = response.data;
           $scope.ribbons = data.json;
