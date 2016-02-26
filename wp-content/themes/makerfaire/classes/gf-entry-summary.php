@@ -52,6 +52,7 @@ $makerPhoto6    =(isset($lead['221'])?$lead['221']:'');
 $makerfirstname7=$lead['154.3'];$makerlastname7=$lead['154.6'];
 $makerPhoto7    =(isset($lead['219'])?$lead['219']:'');
 $makergroupname=$lead['109'];
+$makerGroupPhoto = (isset($lead['111'])?$lead['111']:'');
 $field55=RGFormsModel::get_field($form,'55');
 $whatareyourplansvalues=$field55['choices'];
 
@@ -152,6 +153,13 @@ if ( isset( $long_description ) && $long_description!='') {
                   <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto7, 30,30);?>" alt="" />
                   </a>
               <?php  }?>
+              <?php if(!empty($makerGroupPhoto)){?>
+                  Group Photo<br/>
+                  <a href="<?php echo $makerGroupPhoto;?>" class='thickbox'>
+                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerGroupPhoto, 30,30);?>" alt="" />
+                  </a>
+              <?php  }?>
+
               <?php echo !empty($makerfirstname7) ?  $makerfirstname7.' '.$makerlastname7.'</br>' : '' ; ?>
             </td>
 					</tr>
@@ -171,7 +179,7 @@ if ( isset( $long_description ) && $long_description!='') {
 						<td>
 						<?php echo ( isset( $size_request ) ) ? $size_request : 'Not Filled out' ; ?>
            	<?php echo ( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '' ; ?>
-             
+
 						<?php echo ( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '' ; ?>
 						</td>
 					</tr>
