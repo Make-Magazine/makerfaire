@@ -1589,41 +1589,17 @@ function add_menu_item( $menu_items ) {
     $menu_items[] = array( "name" => "mf_entries", "label" => "Entries", "callback" => "entries_list", "permission" => "edit_posts" );
     $menu_items[] = array( "name" => "mf_fsp", "label" => "Download FSP", "callback" => "build_pdf_fsp","permission" => "edit_posts" );
     $menu_items[] = array( "name" => "mf_gsp", "label" => "Download GSP", "callback" => "build_pdf_gsp","permission" => "edit_posts" );
-    $menu_items[] = array( "name" => "mf_export", "label" => "MF Export", "callback" => "build_mf_export","permission" => "edit_posts" );
+
     $menu_items[] = array( "name" => "mf_fairesign", "label" => "Faire Signs", "callback" => "build_faire_signs","permission" => "edit_posts" );
 
     return $menu_items;
 }
 add_action( 'wp_ajax_createCSVfile', 'createCSVfile' );
-add_action( 'admin_post_export_MFform', 'createCSVfile' );
 add_action( 'admin_post_createCSVfile', 'createCSVfile' );
 function build_faire_signs(){
     require_once( TEMPLATEPATH.'/classes/faire_signs.php' );
 }
 
-
-function build_mf_export(){
-    ?>
-<h2>Export MakerFaire Forms</h2>
-    <h3>Please select the form you want to export:</h3>
-     <form method="post" action="admin-post.php">
-        <input type="hidden" name="action" value="export_MFform">
-
-        <select id="exportForm" name="exportForm">
-                <option value=""><?php _e( 'Select a form', 'gravityforms' ); ?></option>
-                <?php
-                $forms = RGFormsModel::get_forms( null, 'title' );
-                foreach ( $forms as $form ) {
-                        ?>
-                        <option value="<?php echo absint( $form->id ) ?>"><?php echo esc_html( $form->title ); ?></option>
-                <?php
-                }
-                ?>
-        </select>
-        <input type="submit" value="Download Export File" class="button button-large button-primary" />
-    </form>
-    <?php
-}
 
 function createCSVfile() {
     //create CSV for individual entries come as a GET request, the mass entry list is a POST request
@@ -2539,10 +2515,10 @@ function mf_custom_export_entries() {
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu" aria-labelledby="mfexportdata">
-<?php
-  //create a crypt key to pass to entriesExport.php to avoid outside from accessing
-  $date  = date('mdY');
-  $crypt = crypt($date, AUTH_SALT);
+  <?php
+    //create a crypt key to pass to entriesExport.php to avoid outside from accessing
+    $date  = date('mdY');
+    $crypt = crypt($date, AUTH_SALT);
     $forms = RGFormsModel::get_forms( null, 'title' );
     foreach ( $forms as $form ) {
       ?>
