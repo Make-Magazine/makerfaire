@@ -172,9 +172,14 @@
     }
   }
   div#brHeaderImg {
-    float: left;
-    position: relative;
     width: 100%;
+    background-size: cover;
+    position: relative;
+    &:after {
+      padding-top: 15.75%;
+      content: '';
+      display: block;
+    }
   }
   div#brHeaderImg img {
     position: relative;

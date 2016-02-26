@@ -19,8 +19,8 @@ foreach($yearSql as $year) {
   // Output the featured image.
   if ( has_post_thumbnail() ) :
   ?>
-    <div id="brHeaderImg">
-      <?php the_post_thumbnail(); ?>
+    <div id="brHeaderImg"
+      style="background-image: url('<?php echo wp_get_attachment_url(get_post_thumbnail_id($post->ID), 'full'); ?>');">
       <div>Maker Faire Ribbon Winners</div>
     </div>
   <?php endif; ?>
