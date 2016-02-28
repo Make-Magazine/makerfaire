@@ -75,7 +75,7 @@ function mf_sidebar_entry_ticket($form_id, $lead) {
     $form = GFAPI::get_form($form_id);
     $field308=RGFormsModel::get_field($form,'308');
     echo ('<h4><label class="detail-label">Ticket Code:</label></h4>');
-    echo ('<input name="entry_ticket_code" id="entry_ticket_code type="text" style="margin-bottom: 4px;" value="'.$lead['308'].'" />');
+    echo ('<input name="entry_ticket_code" id="entry_ticket_code type="text" style="margin-bottom: 4px;" value="'.(isset($lead['308'])?$lead['308']:'').'" />');
 
     // Create Update button for ticket code
     $entry_sidebar_button = '<input type="submit" name="update_ticket_code" value="Update Ticket Code" class="button"
@@ -211,35 +211,35 @@ function mf_sidebar_entry_info($form_id, $lead) {
 
 
 	echo ('<h4><label class="detail-label">Flags:</label></h4>');
-	foreach(   $field304['inputs'] as $choice)
-	{
-		$selected = '';
-		if (stripslashes($lead[$choice['id']]) == stripslashes($choice['label'])) $selected=' checked ';
-		echo('<input type="checkbox" '.$selected.' name="entry_info_flags_change[]" style="margin: 3px;" value="'.$choice['id'].'_'.$choice['label'].'" />'.$choice['label'].' <br />');
-	}
-
+  if(is_array($field304['inputs'])){
+    foreach($field304['inputs'] as $choice){
+      $selected = '';
+      if (stripslashes($lead[$choice['id']]) == stripslashes($choice['label'])) $selected=' checked ';
+      echo('<input type="checkbox" '.$selected.' name="entry_info_flags_change[]" style="margin: 3px;" value="'.$choice['id'].'_'.$choice['label'].'" />'.$choice['label'].' <br />');
+    }
+  }
 
 	echo ('<h4><label class="detail-label">Location:</label></h4>');
-        $locArray=array();
+  $locArray=array();
 
-        foreach($lead as $key=>$field){
-            if(strpos($key,'302')!== false){
-                $locArray[]=stripslashes($field);
-            }
-        }
+  foreach($lead as $key=>$field){
+      if(strpos($key,'302')!== false){
+          $locArray[]=stripslashes($field);
+      }
+  }
 
-	foreach(   $field302['inputs'] as $choice)
-	{
-		$selected = '';
-                if(in_array(stripslashes($choice['label']),$locArray)) $selected=' checked ';
-		//if (stripslashes($lead[$choice['id']]) == stripslashes($choice['label'])) $selected=' checked ';
-		echo('<input type="checkbox" '.$selected.' name="entry_info_location_change[]" style="margin: 3px;" value="'.$choice['id'].'_'.$choice['label'].'" />'.$choice['label'].' <br />');
-	}
-
+  if(is_array($field302['inputs'])){
+    foreach($field302['inputs'] as $choice){
+      $selected = '';
+                  if(in_array(stripslashes($choice['label']),$locArray)) $selected=' checked ';
+      //if (stripslashes($lead[$choice['id']]) == stripslashes($choice['label'])) $selected=' checked ';
+      echo('<input type="checkbox" '.$selected.' name="entry_info_location_change[]" style="margin: 3px;" value="'.$choice['id'].'_'.$choice['label'].'" />'.$choice['label'].' <br />');
+    }
+  }
 
 	echo ('<textarea name="entry_location_comment" id="entry_location_comment"
 					style="width: 100%; height: 50px; margin-bottom: 4px;" cols=""
-					rows="">'.$lead['307'].'</textarea>');
+					rows="">'.(isset($lead['307'])?$lead['307']:'').'</textarea>');
 
 
 }
@@ -299,12 +299,9 @@ function mf_sidebar_forms($form_id, $lead) {
 	$forms = GFAPI::get_forms(true,false);
 	echo ('<h4><label class="detail-label" for="entry_form_change">Form:</label></h4>');
 	echo ('<select style="width:250px" name="entry_form_change">');
-	foreach( $forms as $choice )
-	{
+	foreach( $forms as $choice ){
 		$selected = '';
-
 		if ($choice['id'] == $lead['form_id']) $selected=' selected ';
-
 		echo('<option '.$selected.' value="'.$choice['id'].'">'.$choice['title'].'</option>');
 	}
 	echo('</select><input type="submit" name="change_form_id" value="Change Form" class="button"
@@ -336,15 +333,16 @@ function mf_sidebar_dup($form_id, $lead) {
 add_action("gform_entry_detail_sidebar_before", "add_sidebar_text_before", 10,2);
 function add_sidebar_text_before($form, $lead){
 	$mode = empty( $_POST['screen_mode'] ) ? 'view' : $_POST['screen_mode'];
-	$street = $lead['101.1'];
+	$street  = (isset($lead['101.1'])?$lead['101.1']:'');
 	$street2 = (!empty($lead["101.2"])) ? $lead["101.2"].'<br />' : '' ;
-	$city = $lead["101.3"];
-	$state = $lead["101.4"];
-	$zip = $lead["101.5"];
-	$country = $lead["101.6"];
-	$email = $lead["98"];
-	$phone = $lead["99"];
-	$phonetype = $lead["148"];
+	$city    = (isset($lead["101.3"])?$lead["101.3"]:'');
+	$state   = (isset($lead["101.4"])?$lead["101.4"]:'');
+	$zip     = (isset($lead["101.5"])?$lead["101.5"]:'');
+	$country = (isset($lead["101.6"])?$lead["101.6"]:'');
+	$email   = (isset($lead["98"])?$lead["98"]:'');
+	$phone   = (isset($lead["99"])?$lead["99"]:'');
+	$phonetype = (isset($lead["148"])?$lead["148"]:'');
+
 	?>
 
 <div id="infoboxdiv" class="postbox">
@@ -352,7 +350,7 @@ function add_sidebar_text_before($form, $lead){
     <?php mf_sidebar_entry_status( $form['id'], $lead ); ?><br/>
     <?php mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ); ?><br/>
     <?php mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ); ?><br/>
-    Contact:<div style="padding:5px"><?php echo $lead['96.3'];  ?> <?php echo $lead['96.6'];  ?><br />
+    Contact:<div style="padding:5px"><?php echo (isset($lead['96.3'])?$lead['96.3']:'');  ?> <?php echo (isset($lead['96.6'])?$lead['96.6']:'');  ?><br />
       <?php echo $street; ?><br />
       <?php echo $street2; ?>
       <?php echo $city; ?>, <?php echo $state; ?>  <?php echo $zip; ?><br />

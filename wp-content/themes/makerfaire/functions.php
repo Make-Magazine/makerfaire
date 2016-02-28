@@ -2326,22 +2326,25 @@ add_action( 'wp_ajax_make-admin-copy-entry', 'makeAdminCopyEntry' );
 /* This adds new form types for the users to select when creating new gravity forms */
 add_filter( 'gform_form_settings', 'my_custom_form_setting', 10, 2 );
 function my_custom_form_setting( $settings, $form ) {
-    //var_dump($settings['Form Basics']);
-    $form_type = rgar($form, 'form_type');
-    $settings['Form Basics']['form_type'] = '
-        <tr>
-            <th><label for="my_custom_setting">Form Type</label></th>
-            <td><select name="form_type">
-                <option value="Exhibit" '.($form_type=='Exhibit'?'selected':'').'>Exhibit</option>
-                <option value="Presentation" '.($form_type=='Presentation'?'selected':'').'>Presentation</option>
-                <option value="Performance" '.($form_type=='Performance'?'selected':'').'>Performance</option>
-                <option value="Startup Sponsor" '.($form_type=='Startup Sponsor'?'selected':'').'>Startup Sponsor</option>
-                <option value="Sponsor" '.($form_type=='Sponsor'?'selected':'').'>Sponsor</option>
-                <option value="Other" '.($form_type=='Other' || $form_type==''?'selected':'').'>Other</option>
-            </select></td>
-        </tr>';
+  //var_dump($settings['Form Basics']);
+  $form_type = rgar($form, 'form_type');
+  $settings['Form Basics']['form_type'] = '
+      <tr>
+        <th><label for="my_custom_setting">Form Type</label></th>
+        <td>
+          <select name="form_type">
+            <option value="Exhibit" '         .($form_type=='Exhibit'         ?'selected':'').'>Exhibit</option>
+            <option value="Presentation" '    .($form_type=='Presentation'    ?'selected':'').'>Presentation</option>
+            <option value="Performance" '     .($form_type=='Performance'     ?'selected':'').'>Performance</option>
+            <option value="Startup Sponsor" ' .($form_type=='Startup Sponsor' ?'selected':'').'>Startup Sponsor</option>
+            <option value="Sponsor" '         .($form_type=='Sponsor'         ?'selected':'').'>Sponsor</option>
+            <option value="Payment" '         .($form_type=='Payment'         ?'selected':'').'>Payment</option>
+            <option value="Other" '           .($form_type=='Other' || $form_type==''?'selected':'').'>Other</option>
+          </select>
+        </td>
+      </tr>';
 
-    return $settings;
+  return $settings;
 }
 
 /* This will save the form type selected by admin users */
