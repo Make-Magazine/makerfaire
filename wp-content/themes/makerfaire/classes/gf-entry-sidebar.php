@@ -475,29 +475,29 @@ function add_sidebar_text_before($form, $lead){
     </div>
 <?php /* Notes Sidebar Area */?>
 <div class="postbox" style="float:none;padding: 10px;">
-        <h3>
+  <h3>
 		<label for="name"><?php _e( 'Notes', 'gravityforms' ); ?></label>
 	</h3>
 
-		<?php wp_nonce_field( 'gforms_update_note', 'gforms_update_note' ) ?>
-		<div class="inside">
-			<?php
-                        $notes = RGFormsModel::get_lead_notes( $lead['id'] );
+  <?php wp_nonce_field( 'gforms_update_note', 'gforms_update_note' ) ?>
+  <div class="inside">
+    <?php
+      $notes = RGFormsModel::get_lead_notes( $lead['id'] );
 
-                        //getting email values
-                        $email_fields = GFCommon::get_email_fields( $form );
-                        $emails = array();
+      //getting email values
+      $email_fields = GFCommon::get_email_fields( $form );
+      $emails = array();
 
-                        foreach ( $email_fields as $email_field ) {
-                                if ( ! empty( $lead[ $email_field->id ] ) ) {
-                                        $emails[] = $lead[ $email_field->id ];
-                                }
-                        }
-                        //displaying notes grid
-                        $subject = '';
-                        notes_sidebar_grid( $notes, true, $emails, $subject );
-                        ?>
-		</div>
+      foreach ( $email_fields as $email_field ) {
+        if ( ! empty( $lead[ $email_field->id ] ) ) {
+          $emails[] = $lead[ $email_field->id ];
+        }
+      }
+      //displaying notes grid
+      $subject = '';
+      notes_sidebar_grid( $notes, true, $emails, $subject );
+      ?>
+  </div>
 </div>
 
 <?php

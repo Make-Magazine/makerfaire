@@ -473,7 +473,8 @@ function getmetaData($entry_id,$type=''){
   foreach($metaData as $data){
     $entry = GFAPI::get_entry( $data->lead_id );
     //check if entry-id is valid
-    if(is_array($entry)){         //display entry data
+    if(is_array($entry)){  //display entry data
+      $return .= '<div class="entry-resource notes">';
       $formPull = GFAPI::get_form( $data->form_id );
       /*
        * determine if we should display form data
@@ -482,8 +483,9 @@ function getmetaData($entry_id,$type=''){
        */
       if( ($type == ''         && $formPull['form_type'] != 'Payment') ||
           ($type == 'payments' && $formPull['form_type'] == 'Payment')){
-        $return .=  '<h2>'.$formPull['title'].'</h2>';
         $return .= '<table>';
+        $return .=  '<tr bgcolor="#EAF2FA">
+                        <td colspan="2"><h2>'.$formPull['title'].'</h2></td></tr>';
         $count = 0;
         $field_count = sizeof( $formPull['fields'] );
         $has_product_fields = false;
@@ -550,8 +552,21 @@ function getmetaData($entry_id,$type=''){
           $format = 'html';
           $return .= GFCommon::get_submitted_pricing_fields( $formPull, $entry, $format);
         }
+
+        //display any payment notes
+        $notes = RGFormsModel::get_lead_notes( $data->lead_id );
+        foreach($notes as $note){
+          if($note->user_name=='PayPal'){
+            $return .= '<tr><td colspan="2" class="entry-view-field-name">PayPal</td></tr>';
+            $return .= '<tr><td colspan="2" class="entry-view-field-value">'.
+                          esc_html(GFCommon::format_date($note->date_created, false)).'<br/>'.
+                          $note->value.'</td>'.
+                        '</tr>';
+          }
+        }
         $return .= '</table>';
       }
+      $return .= '</div>';
     }
   }
 

@@ -223,7 +223,7 @@ ul li.gf_form_switcher{top:-47px}
 .gf_right_half{float: right;width: 45.5%;}
 
 .entry-resource {
-  border-radius:5px;display:block;border:thin solid grey;overflow:/*scroll;*/
+  border-radius:5px;display:block;border:thin solid grey;
 }
 .entry-resource .panel-heading.active-state {background-color: lightblue;}
 .entry-resource .panel-heading h4 {font-size: 30px;}
@@ -236,5 +236,8 @@ ul li.gf_form_switcher{top:-47px}
 .entry-resource input[type="number"].thVal {
    width:45px;
 }
-
+div .entry-resource.notes{
+  padding: 5px 0;
+  MARGIN: 5px 0px;
+}
 #entry_form .inner-sidebar{    width: 300px;}
