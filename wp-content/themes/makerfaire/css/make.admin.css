@@ -9,7 +9,7 @@ and open the template in the editor.
 */
 /*bootstrap css is overlaying the html defined background for wp-admin.  this will overlay the bootstrap background*/
 body.wp-admin {
-    background-color: #f1f1f1;
+  background-color: #f1f1f1;
 }
 .wp-admin #lead_search_button {
   height: 27px;
@@ -20,18 +20,27 @@ body.wp-admin {
   border-radius: 4px;
   vertical-align: bottom;
 }
+
 /*form 25 field 321 styling*/
-ul#input_321 li{width:50%;float:left;}
-
-.standoutParent{background-color: #FF8080;
-  }
-.entryStandout, .entryStandout ul li {
-
+ul#input_321 li {
+  width: 50%;
+  float: left;
 }
-.entry-view-collapse{background-color:#ccc}
-.entry-view-collapse span {display:block; width:100%}
-
-#input_151 { width:100%}
+.standoutParent {
+  background-color: #FF8080;
+}
+.entryStandout,
+.entryStandout ul li {}
+.entry-view-collapse {
+  background-color: #ccc
+}
+.entry-view-collapse span {
+  display: block;
+  width: 100%
+}
+#input_151 {
+  width: 100%
+}
 
 /*entry rating*/
 .star-rating {
@@ -85,156 +94,188 @@ ul#input_321 li{width:50%;float:left;}
   width: 100%;
 }
 
-
 /* Navigation */
-#faire_nav{
+#faire_nav {
   background-color: white;
   width: 100%;
   display: inline-block;
   margin: 10px 0 0 0;
-  font-size:13px;
+  font-size: 13px;
 }
-div#gf_form_toolbar {margin: 0;}
-ul li.gf_form_switcher{top:-47px}
-	#faire_nav ul {
-                /*border: thin solid lightgrey;
-		background: #ddd;
-		float: left;
-		-webkit-transition: .5s;
-		transition: .5s;*/
-	}
+div#gf_form_toolbar {
+  margin: 0;
+}
+ul li.gf_form_switcher {
+  top: -47px
+}
+#faire_nav ul li {
+  padding: 10px 6px;
+}
+#faire_nav li {
+  float: left;
+  position: relative;
+  list-style: none;
+  margin: 0;
+}
+#faire_nav ul li ul li {
+  width: 260px
+}
+#faire_nav ul li ul li ul li {
+  width: 150px
+}
+#faire_nav a {
+  margin-right: 15px;
+  display: block;
+  text-decoration: none;
+  color: #000;
+}
+#faire_nav ul ul {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  visibility: hidden;
+  opacity: 0;
+}
+#faire_nav ul ul ul {
+  left: 100%;
+  top: 0;
+}
+#faire_nav li:hover,
+#faire_nav li:hover li {
+  background: #ddd;
+}
+#faire_nav li li:hover,
+#faire_nav li li:hover li {
+  background: #bbb;
+}
+#faire_nav li li li:hover {
+  background: #999;
+}
+#faire_nav li:hover > ul {
+  visibility: visible;
+  opacity: 1;
+}
+#faire_nav li a:after {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  top: 18px;
+  right: 8px;
+  border-top: 4px solid rgba(0, 0, 0, 1);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+#faire_nav li li a:after {
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid rgba(0, 0, 0, 1);
+}
+#faire_nav li > a:only-child:after {
+  content: '';
+  border: 0;
+}
 
-	#faire_nav ul li {
-                padding: 10px 6px;
-        }
+/* Entry List filters */
+#entry_filters {
+  float: right
+}
+.title {
+  margin-top: 10px;
+  font-weight: bold;
+}
+.appliedFilters {
+  padding: 10px;
+  border: 1px solid #ddd;
+  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .07);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .07);
+  background-color: #fff;
+  color: #32373c;
+  outline: 0;
+  -webkit-transition: .05s border-color ease-in-out;
+  transition: .05s border-color ease-in-out;
+}
+.appliedFilters tr {
+  border: 1px solid #ddd;
+}
+ul#gf_form_toolbar_links .gf_form_toolbar_preview,
+ul#gf_form_toolbar_links .gf_form_toolbar_entries {
+  display: none
+}
+div ul#gf_form_toolbar_links {
+  border: 0
+}
 
-        #faire_nav li{
-		float: left;
-		position: relative;
-		list-style: none;
-		/*-webkit-transition: .5s;
-		transition: .5s;*/
-                margin: 0;
-	}
-	#faire_nav ul li ul li {width:260px}
-        #faire_nav ul li ul li ul li{width:150px}
-	#faire_nav > ul > li > a, h1 {
-
-	}
-
-	#faire_nav a {
-		margin-right: 15px;
-		display: block;
-		text-decoration: none;
-
-		color: #000;
-	}
-
-	#faire_nav ul ul {
-		position: absolute;
-		left: 0;
-		top: 100%;
-		visibility: hidden;
-		opacity: 0;
-	}
-
-	#faire_nav ul ul ul {
-		left: 100%;
-		top: 0;
-	}
-
-	#faire_nav li:hover, #faire_nav li:hover li {
-		background: #ddd;
-	}
-
-	#faire_nav li li:hover, #faire_nav li li:hover li {
-		background: #bbb;
-	}
-
-	#faire_nav li li li:hover {
-		background: #999;
-	}
-
-	#faire_nav li:hover > ul {
-		visibility: visible;
-		opacity: 1;
-	}
-
-        #faire_nav li a:after {
-            width: 0;
-            height: 0;
-            content: "";
-            position: absolute;
-            top: 18px;
-            right: 8px;
-            border-top: 4px solid rgba(0, 0, 0, 1);
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-        }
-
-        #faire_nav li li a:after{
-            width: 0;
-            height: 0;
-            border-top: 4px solid transparent;
-            border-bottom: 4px solid transparent;
-
-            border-left: 4px solid rgba(0, 0, 0, 1);
-
-        }
-        #faire_nav li > a:only-child:after
-        {
-            content: '';
-            border:0;
-        }
-    /* Entry List filters */
-    #entry_filters{float:right}
-        .title{margin-top: 10px;font-weight: bold;}
-        .appliedFilters{
-            padding:10px;
-            border: 1px solid #ddd;
-            -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
-            box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
-            background-color: #fff;
-            color: #32373c;
-            outline: 0;
-            -webkit-transition: .05s border-color ease-in-out;
-            transition: .05s border-color ease-in-out;
-        }
-        .appliedFilters tr{
-            border: 1px solid #ddd;
-        }
-
-        ul#gf_form_toolbar_links .gf_form_toolbar_preview,
-        ul#gf_form_toolbar_links .gf_form_toolbar_entries{display:none}
-        div ul#gf_form_toolbar_links{border:0}
-
-    /*hide the form switcher for the new makerfaire custom detail view page*/
-    div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher{display:none}
-
-.tab{padding:0 15px;}
-.topBorder{border-top: thin solid lightgray;padding-top: 10px;}
-
-.inner-sidebar input,.inner-sidebar select{margin:5px 0;}
-.inner-sidebar .postbox, .inner-sidebar .stuffbox{line-height:1.5em}
-
-.toggle:after{content:'-';float:right;}
-.expand:after{content:'+';float:right;}
-.gf_left_half{float: left;width: 45.5%;clear:left}
-.gf_right_half{float: right;width: 45.5%;}
-
+/*hide the form switcher for the new makerfaire custom detail view page*/
+div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher {
+  display: none
+}
+.tab {
+  padding: 0 15px;
+}
+.topBorder {
+  border-top: thin solid lightgray;
+  padding-top: 10px;
+}
+.inner-sidebar input,
+.inner-sidebar select {
+  margin: 5px 0;
+}
+.inner-sidebar .postbox,
+.inner-sidebar .stuffbox {
+  line-height: 1.5em
+}
+.toggle:after {
+  content: '-';
+  float: right;
+}
+.expand:after {
+  content: '+';
+  float: right;
+}
+.gf_left_half {
+  float: left;
+  width: 45.5%;
+  clear: left
+}
+.gf_right_half {
+  float: right;
+  width: 45.5%;
+}
 .entry-resource {
-  border-radius:5px;display:block;border:thin solid grey;overflow:/*scroll;*/
+  border-radius: 5px;
+  display: block;
+  border: thin solid grey;
+  overflow: /*scroll;*/
 }
-.entry-resource .panel-heading.active-state {background-color: lightblue;}
-.entry-resource .panel-heading h4 {font-size: 30px;}
-.entry-resource .panel-group{margin-bottom:0px;}
-.entry-resource .panel-body {padding:0;border-top:none}
-
-.entry-resource table{width:100%}
-.entry-resource th {background-color: lightgrey;}
-.entry-resource th,.entry-resource td {padding:16px 5px;}
+.entry-resource .panel-heading.active-state {
+  background-color: lightblue;
+}
+.entry-resource .panel-heading h4 {
+  font-size: 30px;
+}
+.entry-resource .panel-group {
+  margin-bottom: 0px;
+}
+.entry-resource .panel-body {
+  padding: 0;
+  border-top: none
+}
+.entry-resource table {
+  width: 100%
+}
+.entry-resource th {
+  background-color: lightgrey;
+}
+.entry-resource th,
+.entry-resource td {
+  padding: 16px 5px;
+}
 .entry-resource input[type="number"].thVal {
-   width:45px;
+  width: 45px;
 }
-
-#entry_form .inner-sidebar{    width: 300px;}
+#entry_form .inner-sidebar {
+  width: 300px;
+}
