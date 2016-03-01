@@ -2339,6 +2339,7 @@ function my_custom_form_setting( $settings, $form ) {
             <option value="Startup Sponsor" ' .($form_type=='Startup Sponsor' ?'selected':'').'>Startup Sponsor</option>
             <option value="Sponsor" '         .($form_type=='Sponsor'         ?'selected':'').'>Sponsor</option>
             <option value="Payment" '         .($form_type=='Payment'         ?'selected':'').'>Payment</option>
+            <option value="Show Management" ' .($form_type=='Show Management' ?'selected':'').'>Show Management</option>
             <option value="Other" '           .($form_type=='Other' || $form_type==''?'selected':'').'>Other</option>
           </select>
         </td>

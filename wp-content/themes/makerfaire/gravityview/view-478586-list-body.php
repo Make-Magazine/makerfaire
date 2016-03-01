@@ -89,7 +89,8 @@ if( ! $total or !( is_user_logged_in() )) {
 
     $form = GFAPI::get_form( $entry['form_id'] );
     $form_type = (isset($form['form_type'])?'<p>'.$form['form_type'].':&nbsp;</p>':'');
-    if($form['form_type'] != 'Other'  && $form['form_type'] != 'Payment' && $form['form_type'] != ''){ ?>
+    if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
+       $form['form_type'] != 'Show Management' && $form['form_type'] != ''){ ?>
         <hr/>
         <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
 
