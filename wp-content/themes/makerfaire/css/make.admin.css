@@ -223,6 +223,10 @@ div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher {
 .inner-sidebar select {
   margin: 5px 0;
 }
+.postbox {
+  float: none;
+  padding: 10px;
+}
 .inner-sidebar .postbox,
 .inner-sidebar .stuffbox {
   line-height: 1.5em
