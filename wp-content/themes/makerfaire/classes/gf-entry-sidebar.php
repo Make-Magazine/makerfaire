@@ -348,7 +348,7 @@ function add_sidebar_text_before($form, $lead){
 	?>
 
 <div id="infoboxdiv" class="postbox">
-	<div id="minor-publishing" style="padding: 10px;">
+	<div id="minor-publishing">
     <?php mf_sidebar_entry_status( $form['id'], $lead ); ?><br/>
     <?php mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ); ?><br/>
     <?php mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ); ?><br/>
@@ -365,7 +365,7 @@ function add_sidebar_text_before($form, $lead){
     <br/>
     <?php do_action( 'gform_entry_info', $form['id'], $lead );?>
   </div>
-	<div id="delete-action" style="float:none;padding: 10px;">
+	<div id="delete-action" style="float:none;">
     <?php
       switch ( $lead['status'] ) {
         case 'spam' :
@@ -450,9 +450,16 @@ function add_sidebar_text_before($form, $lead){
 
     $ratingAvg = ($ratingNum!=0?round($ratingTotal/$ratingNum):0);
     ?>
-    <div class="postbox" style="float:none;padding: 10px">
-        <h3> <label for="name"><?php _e( 'Entry Rating: <a href="#" onclick="return false;" class="gf_tooltip" title="1 = No way<br/>2 = Low priority<br/>3 = Yes, If there’s room<br/>4 = Yes definitely<br/>5 = Hell yes">(?)</a> ' .$ratingAvg .' stars', 'gravityforms'); ?></label></h3>
-
+    <div class="postbox">
+        <h3>Entry Rating:
+          <a href="#" onclick="return false;"
+            data-toggle="popover" data-trigger="hover"
+            data-placement="top" data-html="true"
+            data-content="1 = No way<br/>2 = Low priority<br/>3 = Yes, If there’s room<br/>4 = Yes definitely<br/>5 = Hell yes">
+            (?)
+          </a>
+          <?php echo $ratingAvg ?> stars
+        </h3>
         <div class="entryRating inside">
 
             <span class="star-rating">
@@ -476,7 +483,7 @@ function add_sidebar_text_before($form, $lead){
         </div>
     </div>
 <?php /* Notes Sidebar Area */?>
-<div class="postbox" style="float:none;padding: 10px;">
+<div class="postbox">
         <h3>
 		<label for="name"><?php _e( 'Notes', 'gravityforms' ); ?></label>
 	</h3>
@@ -506,7 +513,7 @@ function add_sidebar_text_before($form, $lead){
 /* Entry Management Sidebar Area */
 if ($mode == 'view') {
 	?>
-	<div class='postbox' style="float:none;padding: 10px;">
+	<div class='postbox'>
 	<?php
   // Create Update button for sidebar entry management
 	$entry_sidebar_button = '<input type="submit" name="update_management" value="Update Management" class="button"
@@ -525,33 +532,33 @@ if ($mode == 'view') {
 	/* Shceduling Management Sidebar Area */
 	if ($mode == 'view') :
 		?>
-		<div class='postbox' style="float:none;padding: 10px;">
+		<div class='postbox'>
 		<?php
 		// Load Entry Sidebar details: schedule
 		mf_sidebar_entry_schedule( $form['id'], $lead );
 		?>
 		</div>
-		<div class='postbox' style="float:none;padding: 10px;">
+		<div class='postbox'>
 		<?php
 		// Load Entry Sidebar details: Ticket Code (Field 308)
                 mf_sidebar_entry_ticket( $form['id'], $lead );
 		?>
 		</div>
-		<div class='postbox' style="float:none;padding: 10px;">
+		<div class='postbox'>
                     <?php
                     // Load Entry Sidebar details: Faire locations
                     //mf_sidebar_entry_locations( $form['id'], $lead );
                     ?>
 		</div>
 
-		<div class='postbox' style="float:none;padding: 10px;">
+		<div class='postbox'>
                 <?php
                     //load 'Change Form' form
                     mf_sidebar_forms($form['id'], $lead );
                 ?>
                 </div>
 
-		<div class='postbox' style="float:none;padding: 10px;">
+		<div class='postbox'>
                 <?php
                     //load Duplicate/Copy Entry form
                     mf_sidebar_dup($form['id'], $lead );
