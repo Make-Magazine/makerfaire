@@ -350,19 +350,25 @@ function defTableInfo($table){
     //var_dump($row);
     $enableFiltering = true;
     $enableCellEdit  = true;
-    $width           = '*';
+    $width           = '150';
     if($row['Key']=='PRI'){
       $pkey = $row['Field'];
       $enableFiltering = false;
       $enableCellEdit  = false;
-      $width           = '5%';
+      $width           = '50';
     }
     //foreign key's have a different setup
     if(isset($fkeyData[$row['Field']])){ //is this the foreign key?
       $selectOptions = $fkeyData[$row['Field']][1];
       $options       = $fkeyData[$row['Field']][0];
+      $displayName   = (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']);
+      //replace underscores and dashes with a space and then make capitalize the first letter of each word
+      $displayName = str_replace('_', ' ', $displayName);
+      $displayName = str_replace('-', ' ', $displayName);
+      $displayName = ucwords($displayName);
+
       $columnDefs[] = array('name'            => $row['Field'],
-                            'displayName'     => (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']),
+                            'displayName'     => $displayName,
                             'editableCellTemplate'=>'ui-grid/dropdownEditor',
                             'headerCellClass' => '$scope.highlightFilteredHeader',
                             'editDropdownValueLabel'=> 'fkey',
@@ -379,8 +385,14 @@ function defTableInfo($table){
       }else{
         $type = 'string';
       }
+      $displayName   = (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']);
+      //replace underscores and dashes with a space and then make capitalize the first letter of each word
+      $displayName = str_replace('_', ' ', $displayName);
+      $displayName = str_replace('-', ' ', $displayName);
+      $displayName = ucwords($displayName);
+
       $columnDefs[] = array('name'            => $row['Field'],
-                            'displayName'     => (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']),
+                            'displayName'     => $displayName,
                             'enableCellEdit'  => $enableCellEdit,
                             'enableFiltering' => $enableFiltering,
                             'width'           => $width,

@@ -139,6 +139,7 @@ a {
             </li>
             <li><label class="tree-toggle nav-header">Faires</label>
               <ul class="nav nav-list tree">
+                <li><a href="#faire/global-faire">Global Faire Data</a></li>
                 <li><a href="#faire/data">Faire Data</a></li>
                 <li><a href="#faire/areas">Areas</a></li>
                 <li><a href="#faire/subareas">Sub-Areas</a></li>
