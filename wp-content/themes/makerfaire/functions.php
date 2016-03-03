@@ -2061,7 +2061,6 @@ function display_thank_you_modal_if_signed_up() { ?>
     jQuery(document).on('submit', '.whatcounts-signup1o', function (e) {
       e.preventDefault();
       var bla = jQuery('#wc-email-o').val();
-      jQuery.cookie('Newsletter-signup', '', { path: '/', expires: 365 });
       jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1o').serialize());
       jQuery('.fancybox-thx').trigger('click');
       jQuery('.nl-modal-email-address').text(bla);
