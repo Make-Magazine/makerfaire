@@ -54,19 +54,20 @@
         <!-- List of Faires -->
         <div class="faire-list-table">
           <table class="table table-striped table-condensed">
+            <tr></tr>
             <tr>
-              <th ng-click="sort='name'">Name</th>
-              <th ng-click="sort='category'">Category</th>
-              <th ng-click="sort='description'">Description</th>
-              <th></th>
-              <th></th>
+              <th ng-click="sort='annual'">ANNUAL</th>
+              <th ng-click="sort='category'">FAIRE TYPE</th>
+              <th ng-click="sort='date'">DATE</th>
+              <th ng-click="sort='name'">EVENT NAME</th>
+              <th ng-click="sort='description'">LOCATION</th>
             </tr>
-            <tr dir-paginate="row in $ctrl.faireMarkers.rows | filter:q | orderBy:sort | itemsPerPage: 10">
-              <td width="20%">{{row.name}}</td>
-              <td width="20%">{{row.category}}</td>
-              <td width="20%">{{row.description}}</td>
-              <td width="20%"><button class="btn-sm btn-default pull-right">Call for Makers</button></td>
-              <td width="20%"><button class="btn-sm btn-danger pull-right">Buy Tickets</button></td>
+            <tr dir-paginate="(index, row) in $ctrl.faireMarkers.rows | filter:q | orderBy:sort | itemsPerPage: 10">
+              <td>{{index | ordinal}}</td>
+              <td>{{row.category}}</td>
+              <td>date</td>
+              <td>{{row.name}}</td>
+              <td>{{row.description}}</td>
             </tr>
           </table>
           <div class="text-center">

@@ -1,6 +1,6 @@
 (function(angular) {
   'use strict';
-  var faireMapsApp = angular.module('faireMapsApp', ['angularUtils.directives.dirPagination']);
+  var faireMapsApp = angular.module('faireMapsApp', ['angularUtils.directives.dirPagination', 'ordinal']);
 
   faireMapsApp.controller('MapCtrl', ['$http', '$rootScope', '$filter',
     function($http, $rootScope, $filter) {
