@@ -2,7 +2,20 @@
 <?php get_header(); ?>
 <?php  $feat_image = wp_get_attachment_url( get_post_thumbnail_id($post->ID), 'full' ); ?>
 </style>
-<?php the_content(); ?>
+<div class="flagship-faire-wrp" id="flagship-faire-wrp">
+  <div class="container">
+    <div class="col-md-12">
+      <img src="<?php echo get_post_meta($post->ID, 'flagship-faire-badge-img-url', true); ?>"
+        width="255" height="255" class="flagship-badge hidden-xs hidden-sm"
+        alt="Featured Faire badge image">
+    </div>
+    <div class="row">
+      <div class="col-md-12 flagship-faire-box">
+        <?php the_content(); ?>
+      </div>
+    </div>
+  </div>
+</div>
 
 <?php
 if(get_field('sponsors_page_url'))
