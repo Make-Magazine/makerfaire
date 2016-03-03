@@ -30,11 +30,13 @@
         <div class="loading-spinner" ng-if="!$ctrl.faireMarkers">
           <i class="fa fa-circle-o-notch fa-spin"></i>
         </div>
+        <!-- Map Angular Component -->
         <faires-google-map
           id="faire-global-map"
           map-data="$ctrl.faireMarkers"
           ng-if="$ctrl.faireMarkers">
         </faires-google-map>
+        <!-- Color Key -->
         <div class="faire-key-boxes">
           <div class="flagship-key">
             <i class="fa fa-map-marker"></i>
@@ -49,6 +51,7 @@
             Mini Maker Faires
           </div>
         </div>
+        <!-- List of Faires -->
         <div class="faire-list-table">
           <table class="table table-striped table-condensed">
             <tr>
