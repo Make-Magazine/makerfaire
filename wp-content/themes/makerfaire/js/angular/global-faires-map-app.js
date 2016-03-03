@@ -30,11 +30,8 @@
         setMarkers($filter('filter')(markersData, ctrl.filterText));
         $rootScope.$emit('toggleMapSearch', ctrl.filterText);
       };
-      $rootScope.$on('toggleMapFilter', function() {
-        ctrl.filterText = undefined;
-      });
-      
       $rootScope.$on('toggleMapFilter', function(event, args) {
+        ctrl.filterText = undefined;
         applyMapFilters(event, args);
       });
       var faireTypesFilter = [];
