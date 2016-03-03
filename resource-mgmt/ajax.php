@@ -3,6 +3,7 @@
 ajax to populate resource management table and apply insert, edit and delete logic
 */
 require_once 'config.php';
+
 $tableOptions = array();
 //single foreign key
 $tableOptions['wp_rmt_resources'] = array(
@@ -178,13 +179,13 @@ function deleteData($mysqli,$table, $pKeyField='',$id = ''){
  */
 function getTables($mysqli){
   $tables=array('wp_rmt_entry_resources',
-'wp_rmt_resources',
-'wp_rmt_resource_att',
-'wp_rmt_resource_att_values',
-'wp_rmt_resource_categories',
-'wp_rmt_vendors',
-'wp_rmt_vendor_orders',
-'wp_rmt_vendor_resources');
+                'wp_rmt_resources',
+                'wp_rmt_resource_att',
+                'wp_rmt_resource_att_values',
+                'wp_rmt_resource_categories',
+                'wp_rmt_vendors',
+                'wp_rmt_vendor_orders',
+                'wp_rmt_vendor_resources');
 	try{
     $data = array();
 
@@ -278,7 +279,6 @@ function entryData(){
     $data['attribute']['gridData'][]= $row;
   }
 
-
   //return data
   echo json_encode($data);exit;
 }
@@ -287,23 +287,24 @@ function entryData(){
 function getTableData($mysqli,$table){
   if($table!=''){
     try{
-    $data = array();
-    //get table setup
-    $columnDefs = defTableInfo($table);
-    $data['columnDefs'] = $columnDefs[0];
-    $pkey = $columnDefs[1];
+      $data = array();
+      //get table setup
+      $columnDefs = defTableInfo($table);
+      $data['columnDefs'] = $columnDefs[0];
+      $pkey = $columnDefs[1];
 
-    //get table data
-    $query = "select * from ".$table;
+      //get table data
+      $query = "select * from ".$table;
 
-		$result = $mysqli->query( $query );
-    //create array of table data
-		while ($row = $result->fetch_assoc()) {
-      $data['data'][]= $row;
-		}
-    $data['pInfo'] = $pkey;
-		$data['success'] = true;
-		echo json_encode($data);exit;
+      $result = $mysqli->query( $query );
+      //create array of table data
+      while ($row = $result->fetch_assoc()) {
+        $data['data'][]= $row;
+      }
+      $data['pInfo'] = $pkey;
+      $data['success'] = true;
+      echo json_encode($data);
+      exit;
 
     }catch (Exception $e){
       $data = array();
@@ -350,19 +351,25 @@ function defTableInfo($table){
     //var_dump($row);
     $enableFiltering = true;
     $enableCellEdit  = true;
-    $width           = '*';
+    $width           = '150';
     if($row['Key']=='PRI'){
       $pkey = $row['Field'];
       $enableFiltering = false;
       $enableCellEdit  = false;
-      $width           = '5%';
+      $width           = '50';
     }
     //foreign key's have a different setup
     if(isset($fkeyData[$row['Field']])){ //is this the foreign key?
       $selectOptions = $fkeyData[$row['Field']][1];
       $options       = $fkeyData[$row['Field']][0];
+      $displayName   = (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']);
+      //replace underscores and dashes with a space and then make capitalize the first letter of each word
+      $displayName = str_replace('_', ' ', $displayName);
+      $displayName = str_replace('-', ' ', $displayName);
+      $displayName = ucwords($displayName);
+
       $columnDefs[] = array('name'            => $row['Field'],
-                            'displayName'     => (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']),
+                            'displayName'     => $displayName,
                             'editableCellTemplate'=>'ui-grid/dropdownEditor',
                             'headerCellClass' => '$scope.highlightFilteredHeader',
                             'editDropdownValueLabel'=> 'fkey',
@@ -379,8 +386,14 @@ function defTableInfo($table){
       }else{
         $type = 'string';
       }
+      $displayName   = (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']);
+      //replace underscores and dashes with a space and then make capitalize the first letter of each word
+      $displayName = str_replace('_', ' ', $displayName);
+      $displayName = str_replace('-', ' ', $displayName);
+      $displayName = ucwords($displayName);
+
       $columnDefs[] = array('name'            => $row['Field'],
-                            'displayName'     => (isset($row['Comment']) && $row['Comment']!='' ? $row['Comment']:$row['Field']),
+                            'displayName'     => $displayName,
                             'enableCellEdit'  => $enableCellEdit,
                             'enableFiltering' => $enableFiltering,
                             'width'           => $width,
