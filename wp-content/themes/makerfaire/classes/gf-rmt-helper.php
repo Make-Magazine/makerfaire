@@ -108,54 +108,67 @@ class GFJDBHELPER {
 	/*
 	 * Function for formatting gravity forms lead into usable jdb data
 	*/
-	public static function gravityforms_to_jdb_record($lead,$lead_id,$form)
-	{
+	public static function gravityforms_to_jdb_record($lead,$lead_id,$form) {
 		//load form
 		$form_id = $form['id'];
+
 		// Load Names
 		$allmakername='';
-		$makerfirstname1=$lead['160.3'];$makerlastname1=$lead['160.6'];
-		$makerfirstname2=$lead['158.3'];$makerlastname2=$lead['158.6'];
-		$makerfirstname3=$lead['155.3'];$makerlastname3=$lead['155.6'];
-		$makerfirstname4=$lead['156.3'];$makerlastname4=$lead['156.6'];
-		$makerfirstname5=$lead['157.3'];$makerlastname5=$lead['157.6'];
-		$makerfirstname6=$lead['159.3'];$makerlastname6=$lead['159.6'];
-		$makerfirstname7=$lead['154.3'];$makerlastname7=$lead['154.6'];
-		$allmakername = $allmakername + !empty($makerfirstname1) ?  $makerfirstname1.' '.$makerlastname1 : '' ;
+		$makerfirstname1 = (isset($lead['160.3']) ? $lead['160.3']:'');
+    $makerlastname1  = (isset($lead['160.6']) ? $lead['160.6']:'');
+		$makerfirstname2 = (isset($lead['158.3']) ? $lead['158.3']:'');
+    $makerlastname2  = (isset($lead['158.6']) ? $lead['158.6']:'');
+		$makerfirstname3 = (isset($lead['155.3']) ? $lead['155.3']:'');
+    $makerlastname3  = (isset($lead['155.6']) ? $lead['155.6']:'');
+		$makerfirstname4 = (isset($lead['156.3']) ? $lead['156.3']:'');
+    $makerlastname4  = (isset($lead['156.6']) ? $lead['156.6']:'');
+		$makerfirstname5 = (isset($lead['157.3']) ? $lead['157.3']:'');
+    $makerlastname5  = (isset($lead['157.6']) ? $lead['157.6']:'');
+		$makerfirstname6 = (isset($lead['159.3']) ? $lead['159.3']:'');
+    $makerlastname6  = (isset($lead['159.6']) ? $lead['159.6']:'');
+		$makerfirstname7 = (isset($lead['154.3']) ? $lead['154.3']:'');
+    $makerlastname7  = (isset($lead['154.6']) ? $lead['154.6']:'');
+		$allmakername = $allmakername + !empty($makerfirstname1) ?       $makerfirstname1.' '.$makerlastname1 : '' ;
 		$allmakername = $allmakername + !empty($makerfirstname2) ?  ', '.$makerfirstname2.' '.$makerlastname2 : '' ;
 		$allmakername = $allmakername + !empty($makerfirstname3) ?  ', '.$makerfirstname3.' '.$makerlastname3 : '' ;
 		$allmakername = $allmakername + !empty($makerfirstname4) ?  ', '.$makerfirstname4.' '.$makerlastname4 : '' ;
 		$allmakername = $allmakername + !empty($makerfirstname5) ?  ', '.$makerfirstname5.' '.$makerlastname5 : '' ;
 		$allmakername = $allmakername + !empty($makerfirstname6) ?  ', '.$makerfirstname6.' '.$makerlastname6 : '' ;
 		$allmakername = $allmakername + !empty($makerfirstname7) ?  ', '.$makerfirstname7.' '.$makerlastname7 : '' ;
-		// Load Categories
+
+    // Load Categories
 		$fieldtopics=RGFormsModel::get_field($form,'147');
+    if(!is_array($fieldtopics['inputs'] ))  $fieldtopics['inputs'] =array();
 		$topicsarray = array();
-		foreach($fieldtopics['inputs'] as $topic)
-		{
+
+		foreach($fieldtopics['inputs'] as $topic) {
 			if (strlen($lead[$topic['id']]) > 0)  $topicsarray[] = $lead[$topic['id']];
 		}
+
 		// Load Plans
 		$fieldplans=RGFormsModel::get_field($form,'55');
-		$plansarray = array();
-		foreach($fieldplans['inputs'] as $plan)
-		{
+		if(!is_array($fieldplans['inputs'] ))  $fieldplans['inputs'] =array();
+
+    $plansarray = array();
+    foreach($fieldplans['inputs'] as $plan) {
 			if (strlen($lead[$plan['id']]) > 0)  $plansarray[] = $lead[$plan['id']];
 		}
-		// Load Loctations
 
+		// Load Locations
 		$fieldlocations=RGFormsModel::get_field($form,'70');
+    if(!is_array($fieldlocations['inputs'] ))  $fieldlocations['inputs'] =array();
+
 		$locationsarray = array();
-		foreach($fieldlocations['inputs'] as $location)
-		{
+		foreach($fieldlocations['inputs'] as $location) {
 			if (strlen($lead[$location['id']]) > 0)  $locationsarray[] = $lead[$location['id']];
 		}
-		// Load RF
 
+		// Load RF
 		$rfinputs=RGFormsModel::get_field($form,'79');
+    if(!is_array($rfinputs['inputs'] ))  $rfinputs['inputs'] =array();
+
 		$rfarray = array();
-		foreach($rfinputs['inputs'] as $rfinput)
-		{
+		foreach($rfinputs['inputs'] as $rfinput) {
 			if (strlen($lead[$rfinput['id']]) > 0)  $rfarray[] = $lead[$rfinput['id']];
 		}
 		// Load statuses
@@ -165,7 +178,6 @@ class GFJDBHELPER {
 		//{
 			//	if (strlen($lead[$entrystatus['id']]) > 0)  $currentstatus = $lead[$entrystatus['id']];
 			//}
-
 		$jdb_entry_data = array(
 				'form_type' => $form_id, //(Form ID)
 				'return_form_type' => self::gravityforms_form_type_jdb($form_id), //(Form ID)
@@ -249,6 +261,11 @@ class GFJDBHELPER {
         '344'        => isset($lead['344']) ? $lead['344']  : 0,
         '345'        => isset($lead['345']) ? $lead['345']  : 0,
         '81'         => isset($lead['81'])  ? $lead['81']   : '',
+        'fType'            => isset($form['form_type']) ? $form['form_type'] : '',
+        'paymentElectr'     => isset($lead['8'])  ? $lead['8']   : '',
+        'paymentDescElect'  => isset($lead['12']) ? $lead['12']  : '',
+        'paymentTable'      => isset($lead['14']) ? $lead['14']  : '',
+        'origEntryID'       => isset($lead['20']) ? $lead['20']  : '',
 				//'m_maker_name' => isset($lead['96']) ? $lead['96']  : '',
 				//'maker_email' => isset($lead['161']) ? $lead['161']  : '',
 				//'presentation' => isset($lead['No']) ? $lead['999']  : '', //(No match)
@@ -381,10 +398,12 @@ class GFJDBHELPER {
     global $wpdb;
     $resourceID  = array();
     $attributeID = array();
+    $attribute   = array();
+    $resource    = array();
+    $entryID     = $entryData['CS_ID'];
 
     /*
      *  E N T R Y   R E S O U R C E S   M A P P I N G
-     *
      *   build list of resource ID's and tokens
      */
     $sql = "select ID,token from wp_rmt_resources";
@@ -400,7 +419,6 @@ class GFJDBHELPER {
 
     //resource ID's are set based on token
     /* Resource Mapping */
-    $resource = array();
 
     /*  Field ID 62 = tables_chairs */
     if($entryData['tables_chairs'] == '1 table and 2 chairs'){
@@ -437,12 +455,53 @@ class GFJDBHELPER {
       }
     }
 
+    //if form type=payment we need to map resource fields back to the original entry
+    if($entryData['fType'] == 'Payment' ){
+      $pos = strpos($entryData['paymentElectr'], '5 Amp (120v)');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-05A'],1,'');
+      $pos = strpos($entryData['paymentElectr'], '10 Amp (120v)');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-10A'],1,'');
+      $pos = strpos($entryData['paymentElectr'], '15 Amp (120v)');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-15A'],1,'');
+      $pos = strpos($entryData['paymentElectr'], '20 Amp (120v)');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-20A'],1,'');
+      $pos = strpos($entryData['paymentElectr'], '30 Amp (120v)');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-30A'],1,'');
+      $pos = strpos($entryData['paymentElectr'], '50 Amp (120v)');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-50A'],1,'');
+      $pos = strpos($entryData['paymentElectr'], 'Other/Not Listed');
+      if ($pos !== false)     $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['paymentDescElect']);
+
+      //field 14 - tables
+      $pos = strpos($entryData['paymentTable'], 'One table');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'');
+      $pos = strpos($entryData['paymentTable'], 'Two tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'');
+      $pos = strpos($entryData['paymentTable'], 'Three Tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'');
+      $pos = strpos($entryData['paymentTable'], 'Four Tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'');
+      $pos = strpos($entryData['paymentTable'], 'Five Tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'');
+      $pos = strpos($entryData['paymentTable'], 'Six Tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'');
+      $pos = strpos($entryData['paymentTable'], 'Seven Tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'');
+      $pos = strpos($entryData['paymentTable'], 'Eight Tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'');
+      $pos = strpos($entryData['paymentTable'], 'Nine Tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'');
+      $pos = strpos($entryData['paymentTable'], 'Ten Tables');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
+      $pos = strpos($entryData['paymentTable'], "I don't need a table");
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
+      //get original entry id
+      $entryID = ($entryData['origEntryID'] !='' ?$entryData['origEntryID']:$entryID);
+    }
     /*
      * E N T R Y   A T T R I B U T E   M A P P I N G
-     *
      *    build list of resource ID's and tokens
      */
-    $attribute = array();
 
     if($entryData['what_are_you_powering']!=''){
       $attribute[] = array($attributeID['ELEC'], 'What are you Powering?',$entryData['what_are_you_powering']);
@@ -499,8 +558,16 @@ class GFJDBHELPER {
       $resource_id = $value[0];
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
-      $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`(`entry_id`, `resource_id`, `qty`, `comment`) "
-                  . " VALUES (".$entryData['CS_ID'].",".$resource_id .",".$qty . ',"' . $comment.'")');
+
+      //if the resource has already been added, update the qty
+      $resourceCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_resources` where entry_id = $entryID and resource_id = $resource_id");
+      if($resourceCount >0){ //if result, update.
+        $wpdb->get_results("update `wp_rmt_entry_resources set qty = $qty where  entry_id = $entryID and resource_id = $resource_id");
+      }else{
+        //else insert
+        $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`(`entry_id`, `resource_id`, `qty`, `comment`) "
+                        . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'")');
+      }
     }
 
     //add attributes to the table
@@ -509,7 +576,7 @@ class GFJDBHELPER {
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
       $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`) "
-                  . " VALUES (".$entryData['CS_ID'].",".$attribute_id .',"'.$attvalue . '","' . $comment.'")');
+                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'")');
     }
 
     //set resource status and assign to

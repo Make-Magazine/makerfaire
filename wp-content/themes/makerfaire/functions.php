@@ -138,6 +138,7 @@ function load_admin_scripts() {
   wp_enqueue_script('make-gravityforms-admin',  get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'));
   wp_enqueue_script( 'jquery-datetimepicker',  get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array( 'jquery' ), null );
   wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/libs/bootstrap.min.js', array( 'jquery' ) );
+  wp_enqueue_script( 'admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.js', array( 'jquery' ) );
   wp_enqueue_script( 'sack' );
   //styles
   wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css' );
@@ -2060,7 +2061,6 @@ function display_thank_you_modal_if_signed_up() { ?>
     jQuery(document).on('submit', '.whatcounts-signup1o', function (e) {
       e.preventDefault();
       var bla = jQuery('#wc-email-o').val();
-      jQuery.cookie('Newsletter-signup', '', { path: '/', expires: 365 });
       jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1o').serialize());
       jQuery('.fancybox-thx').trigger('click');
       jQuery('.nl-modal-email-address').text(bla);
@@ -2326,22 +2326,26 @@ add_action( 'wp_ajax_make-admin-copy-entry', 'makeAdminCopyEntry' );
 /* This adds new form types for the users to select when creating new gravity forms */
 add_filter( 'gform_form_settings', 'my_custom_form_setting', 10, 2 );
 function my_custom_form_setting( $settings, $form ) {
-    //var_dump($settings['Form Basics']);
-    $form_type = rgar($form, 'form_type');
-    $settings['Form Basics']['form_type'] = '
-        <tr>
-            <th><label for="my_custom_setting">Form Type</label></th>
-            <td><select name="form_type">
-                <option value="Exhibit" '.($form_type=='Exhibit'?'selected':'').'>Exhibit</option>
-                <option value="Presentation" '.($form_type=='Presentation'?'selected':'').'>Presentation</option>
-                <option value="Performance" '.($form_type=='Performance'?'selected':'').'>Performance</option>
-                <option value="Startup Sponsor" '.($form_type=='Startup Sponsor'?'selected':'').'>Startup Sponsor</option>
-                <option value="Sponsor" '.($form_type=='Sponsor'?'selected':'').'>Sponsor</option>
-                <option value="Other" '.($form_type=='Other' || $form_type==''?'selected':'').'>Other</option>
-            </select></td>
-        </tr>';
+  //var_dump($settings['Form Basics']);
+  $form_type = rgar($form, 'form_type');
+  $settings['Form Basics']['form_type'] = '
+      <tr>
+        <th><label for="my_custom_setting">Form Type</label></th>
+        <td>
+          <select name="form_type">
+            <option value="Exhibit" '         .($form_type=='Exhibit'         ?'selected':'').'>Exhibit</option>
+            <option value="Presentation" '    .($form_type=='Presentation'    ?'selected':'').'>Presentation</option>
+            <option value="Performance" '     .($form_type=='Performance'     ?'selected':'').'>Performance</option>
+            <option value="Startup Sponsor" ' .($form_type=='Startup Sponsor' ?'selected':'').'>Startup Sponsor</option>
+            <option value="Sponsor" '         .($form_type=='Sponsor'         ?'selected':'').'>Sponsor</option>
+            <option value="Payment" '         .($form_type=='Payment'         ?'selected':'').'>Payment</option>
+            <option value="Show Management" ' .($form_type=='Show Management' ?'selected':'').'>Show Management</option>
+            <option value="Other" '           .($form_type=='Other' || $form_type==''?'selected':'').'>Other</option>
+          </select>
+        </td>
+      </tr>';
 
-    return $settings;
+  return $settings;
 }
 
 /* This will save the form type selected by admin users */

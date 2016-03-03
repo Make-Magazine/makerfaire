@@ -62,6 +62,9 @@ module.exports = function(grunt) {
             'node_modules/hammerjs/hammer.min.js',
             'js/libs-src/*.js'
           ],
+          'js/built-admin-scripts.js': [
+            'js/src-admin-scripts/*.js'
+          ],
         }
       },
     },
@@ -73,7 +76,8 @@ module.exports = function(grunt) {
           banner: '// Compiled file - any changes will be overwritten by grunt task\n',
         },
         files: {
-          'js/built.js': 'js/built.js'
+          'js/built.js': 'js/built.js',
+          'js/built-admin-scripts.js': 'js/built-admin-scripts.js'
         }
       },
       libs: {
