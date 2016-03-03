@@ -124,6 +124,9 @@
             lng: -70
           },
           disableDefaultUI: true,
+          scrollwheel: false,
+          zoomControl: true,
+          minZoom: 2,
           zoom: 3
         });
         gMap.mapTypes.set(customMapTypeId, customMapType);
