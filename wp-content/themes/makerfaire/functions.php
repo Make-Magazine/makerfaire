@@ -2099,7 +2099,7 @@ function angular_scripts() {
     );
     wp_enqueue_script(
       'angular-scripts',
-      get_stylesheet_directory_uri() . '/js/angular/scripts.js',
+      get_stylesheet_directory_uri() . '/js/angular/ribbonApp.js',
       array( 'angularjs', 'angularjs-route' )
     );
     wp_localize_script('angular-scripts',  'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
