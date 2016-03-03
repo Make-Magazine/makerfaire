@@ -19,9 +19,9 @@
     $scope.pageSize    = 40;
     $scope.faires      = [];
 
-    $scope.loadData = function(data) {
-      var faireYear = data[0].name;
-      $scope.years = data;
+    $scope.loadData = function(year, years) {
+      var faireYear = year;
+      $scope.years = years || $scope.years;
 
       $http.get('/wp-content/themes/makerfaire/partials/data/' + faireYear + 'ribbonData.json')
         .then(function successCallback(response) {

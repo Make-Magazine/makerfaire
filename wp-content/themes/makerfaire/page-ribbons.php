@@ -43,7 +43,7 @@ foreach($yearSql as $year) {
         <!-- start blue ribbon data -->
         <div>
           <div ng-controller="ribbonController" class="my-controller"
-            ng-init='loadData([<?php echo $yearJSON;?>])'>
+            ng-init='loadData(<?php echo $firstYear;?>, [<?php echo $yearJSON;?>])'>
             <div class="ribbonFilter">
               <div class="pull-left">
                 <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="box gallery"><i class="fa fa-picture-o"></i>Gallery</a>
