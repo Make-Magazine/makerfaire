@@ -232,12 +232,23 @@ function buildFaireDrop($wp_admin_bar){
                     $wp_admin_bar->add_node( $args );
                 }
             }
+            //add scheduling link
+
+            $args = array(
+                     'id'    => 'mf_admin_subchild_'.$statusRow->id,
+                     'title' => 'Scheduling',
+                     'href'  => 'http://makerfaire.com/wp-content/applications/scheduler/makerfaire-scheduling.php?faire_id='.$row->faire,
+                     'meta'  => array( 'class' => 'my-toolbar-page' ),
+                     'parent' => 'mf_admin_parent_'.$row->faire);
+                 $wp_admin_bar->add_node( $args );
     }
 
     $args = array(
-            'id'    => 'mf_admin_parent_fairesetup',
-            'title' => 'Faire Setup',
+            'id'    => 'mf_admin_parent_rmt',
+            'title' => 'RMT',
+            'href'  => 'http://makerfaire.com/resource-mgmt/',
             'meta'  => array( 'class' => 'my-toolbar-page' ),
+            'target' => '_blank',
             'parent' => 'mf_admin_parent'
             );
 
