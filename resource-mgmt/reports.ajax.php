@@ -153,6 +153,7 @@ function retrieveRptData($table){
         break;
       case 'entrylink':
         $columnDefs[] = array('field'=> $fields['fieldName'],'cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=mf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
+        break;
       case 'number':
       case 'text':
       default:
