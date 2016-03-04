@@ -1,6 +1,9 @@
 (function(angular) {
   'use strict';
   var faireMapsApp = angular.module('faireMapsApp', ['angularUtils.directives.dirPagination', 'ordinal']);
+  // todo: these state vars would be better as injectable factory dependency:
+  var gmarkers1 = [];
+  var infowindow;
 
   faireMapsApp.controller('MapCtrl', ['$http', '$rootScope', '$filter',
     function($http, $rootScope, $filter) {
@@ -49,7 +52,12 @@
         function isEnabled(marker) {
           return (faireTypesFilter.indexOf(marker.category) > -1);
         }
+        // filter angular table model (Array.prototype.filter)
         setMarkers(markersData.filter(isEnabled));
+        // set pin visibility through Google Maps JS API (Array.prototype.map)
+        gmarkers1.map(function(marker) {
+          marker.setVisible(isEnabled(marker));
+        });
       }
     }
   ]);
@@ -81,9 +89,6 @@
     },
     controller: function($rootScope, GMapsInitializer) {
       var ctrl = this;
-      var gmarkers1 = [];
-      var infowindow;
-
       function initMap(mapId) {
         var gMap;
         var customMapType = new google.maps.StyledMapType([{
@@ -187,19 +192,6 @@
         }
         setMarkers(ctrl.mapData.rows);
       }
-
-      function filterMarkers(category, display) {
-        infowindow.close();
-        gmarkers1.map(function(obj) {
-          // Visible if category matches
-          if (obj.category == category || category.length === 0) {
-            obj.setVisible(display);
-          }
-        });
-      }
-      $rootScope.$on('toggleMapFilter', function(event, args) {
-        filterMarkers(args.filter, args.state);
-      });
 
       function searchMarkers(text) {
         text = text.toUpperCase();
