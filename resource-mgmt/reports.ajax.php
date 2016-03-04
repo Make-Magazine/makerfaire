@@ -71,7 +71,7 @@ $tableOptions['wp_rmt_entry_resources']   = array(
                     'referenceDisplay' => 'category')                     //fkey field to display
         ),
  */
-$tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'entry_id',             'filterType'   => 'text',     'fieldLabel' => 'Type');
+$tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'entry_id',             'filterType'   => 'entrylink',     'fieldLabel' => 'Type');
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'item', 'filterType'   => 'dropdown', 'fieldLabel' => 'Item',
     'dataSql' => '(select wp_rmt_resources.resource_category_id from wp_rmt_resources where wp_rmt_entry_resources.resource_id = wp_rmt_resources.ID) as item',
                                                  'fkey'      => array('referenceTable'   => 'wp_rmt_resource_categories',
@@ -151,6 +151,8 @@ function retrieveRptData($table){
             'editDropdownIdLabel'      => 'id',
             'editDropdownOptionsArray' => $options);
         break;
+      case 'entrylink':
+        $columnDefs[] = array('field'=> $fields['fieldName'],'cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=mf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
       case 'number':
       case 'text':
       default:
