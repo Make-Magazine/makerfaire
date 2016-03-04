@@ -1,12 +1,12 @@
-var resourceApp = angular.module('resourceApp', ['ngRoute', 'rmgControllers', 'ngSanitize', 'ngCsv', 'ui.bootstrap',
-                                                 'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit','ui.grid.cellNav']);
+var resourceApp = angular.module('resourceApp', ['ngRoute', 'rmgControllers', 'ngSanitize', 'ui.bootstrap',
+                                                 'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit','ui.grid.cellNav','ui.grid.exporter']);
 
 resourceApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
-      when('/entry', {
-        templateUrl: 'partials/entry.html',
-        controller: 'entryCtrl'
+      when('/reports', {
+        templateUrl: 'partials/reports.html',
+        controller: 'reportsCtrl'
       }).
       when('/:main/:sub', {
         templateUrl: 'partials/vendors.html',

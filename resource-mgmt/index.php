@@ -22,9 +22,10 @@ if (!is_user_logged_in())
   <script src="node_modules/angular/angular.min.js"></script>
   <script src="node_modules/angular-route/angular-route.min.js"></script>
   <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+  <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
   <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
-  <script src="node_modules/ng-csv/build/ng-csv.js"></script>
   <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+
   <style>
   .nav-list>li>a, .nav-list .nav-header {
     margin-left: -10px;
@@ -125,6 +126,11 @@ a {
       <div class="well">
         <div>
           <ul class="nav nav-list">
+            <li><label class="tree-toggle nav-header">Reports</label>
+              <ul class="nav nav-list tree">
+                <li><a href="#reports">Build Reports</a></li>
+              </ul>
+            </li>
             <li><label class="tree-toggle nav-header">Resources</label>
               <ul class="nav nav-list tree">
                 <li><a href="#resources/list">Type</a></li>
@@ -162,5 +168,6 @@ a {
   </div>
   <script src="js/main.js"></script>
   <script src="js/controllers.js"></script>
+  <script src="js/report.controllers.js"></script>
 </body>
 </html>
