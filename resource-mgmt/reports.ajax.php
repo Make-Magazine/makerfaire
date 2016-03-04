@@ -86,9 +86,10 @@ $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'resource_id',  
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'qty',     'filterType' => 'number', 'fieldLabel'  => 'Qty');
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'comment', 'filterType' => 'text', 'fieldLabel'  => 'Comment');
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'user',    'filterType' => 'dropdown',   'fieldLabel'  => 'User Updated',
-                                                'fkey'       => array('referenceTable'   => 'wp_users',
-                                                                      'referenceField'   => 'ID',
-                                                                      'referenceDisplay' => 'user_email')
+                                                  'fkey'       => array('referenceTable'   => 'wp_users',
+                                                                        'referenceField'   => 'ID',
+                                                                        'referenceDisplay' => 'user_email'),
+                                                  'options' =>array(null=>'Initial','0'=>'Payment')
                                                 );
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'update_stamp', 'filterType'   => 'text',     'fieldLabel'  => 'Update Stamp');
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'res_status',   'filterType'   => 'dropdown', 'fieldLabel' => 'Resource Status',
@@ -126,6 +127,13 @@ function retrieveRptData($table){
           $fkeyData      = getFkeyData($fields['fkey'],$fields['fieldName']);
           $options       = $fkeyData[0];
           $selectOptions = $fkeyData[1];
+          //additional select options outside of fkey
+          if(isset($fields['options'])){
+            foreach($fields['options'] as $optKey=>$option){
+              $options[]       = array('id'    => $optKey, 'fkey'   => $option);
+              $selectOptions[] = array('value' => $optKey, 'label' => $option);
+            }
+          }
         }else{
           //use defined options
           foreach($fields['options'] as $optKey=>$option){

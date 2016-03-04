@@ -631,6 +631,8 @@ function entryResources($lead){
   foreach($results as $result){
     if($result->user==NULL){
       $dispUser = 'Initial';
+    }elseif($result->user==0){
+      $dispUser = 'Payment';
     }else{
       $userInfo = get_userdata( $result->user );
       $dispUser = $userInfo->display_name;
