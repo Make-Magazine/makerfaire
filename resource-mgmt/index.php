@@ -128,7 +128,8 @@ a {
           <ul class="nav nav-list">
             <li><label class="tree-toggle nav-header">Reports</label>
               <ul class="nav nav-list tree">
-                <li><a href="#reports">Build Reports</a></li>
+                <li><a href="#reports">Entry Resources</a></li>
+                <li><a href="#reports/change">Entry Change Report</a></li>
               </ul>
             </li>
             <li><label class="tree-toggle nav-header">Resources</label>

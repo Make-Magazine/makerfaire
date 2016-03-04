@@ -32,8 +32,13 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
     }
   };
 
+  //default
+  var tablename = 'wp_rmt_entry_resources';
+
   if($routeParams){
     var subRoute  = $routeParams.sub;
+    if(subRoute=='change')  tablename = 'wp_rg_lead_detail_changes';
+    $scope.reports.tableName = tablename;
   }
   $scope.filterExport = function( grid, row, col, input ) {
       return 'unknown';
@@ -49,35 +54,35 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   };
 
 
-  $scope.reports.loadData = function(tableName) {
-    //get grid data
-    $http({
-      method: 'post',
-      url: url,
-      data: jQuery.param({ 'table' : tableName , 'type' : 'tableData','viewOnly':true }),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    })
-    .then(function(response){
-      angular.forEach(response.data.columnDefs, function(value, key) {
-        /*if(value.field=='qty'){
-          value.filters = [
-            { condition: uiGridConstants.filter.GREATER_THAN,
-              placeholder: '>'
-            },
-            { condition: uiGridConstants.filter.LESS_THAN,
-              placeholder: '<'
-            }
-          ]
-        }*/
-        if(("filter" in value)){
-          value.filter.type = uiGridConstants.filter.SELECT;
-        }
-      });
-      $scope.gridOptions.columnDefs = response.data.columnDefs;
-      $scope.gridOptions.data       = response.data.data;
-    })
-    .finally(function () { $scope.reports.loading = false; $scope.reports.showGrid = true;});
-  }
+
+  //get grid data
+  $http({
+    method: 'post',
+    url: url,
+    data: jQuery.param({ 'table' : $scope.reports.tableName , 'type' : 'tableData','viewOnly':true }),
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+  })
+  .then(function(response){
+    angular.forEach(response.data.columnDefs, function(value, key) {
+      /*if(value.field=='qty'){
+        value.filters = [
+          { condition: uiGridConstants.filter.GREATER_THAN,
+            placeholder: '>'
+          },
+          { condition: uiGridConstants.filter.LESS_THAN,
+            placeholder: '<'
+          }
+        ]
+      }*/
+      if(("filter" in value)){
+        value.filter.type = uiGridConstants.filter.SELECT;
+      }
+    });
+    $scope.gridOptions.columnDefs = response.data.columnDefs;
+    $scope.gridOptions.data       = response.data.data;
+  })
+  .finally(function () { $scope.reports.loading = false; $scope.reports.showGrid = true;});
+
 
 }])
   .filter('griddropdown', function () {

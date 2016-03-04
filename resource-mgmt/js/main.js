@@ -8,6 +8,10 @@ resourceApp.config(['$routeProvider',
         templateUrl: 'partials/reports.html',
         controller: 'reportsCtrl'
       }).
+      when('/reports/:sub', {
+        templateUrl: 'partials/reports.html',
+        controller: 'reportsCtrl'
+      }).
       when('/:main/:sub', {
         templateUrl: 'partials/vendors.html',
         controller: 'VendorsCtrl'

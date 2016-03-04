@@ -562,6 +562,7 @@ class GFJDBHELPER {
       //if the resource has already been added, update the qty
       $resourceCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_resources` where entry_id = $entryID and resource_id = $resource_id");
       if($resourceCount >0){ //if result, update.
+        //user = null - initial entry, user = 0 - payment form
         $wpdb->get_results("update `wp_rmt_entry_resources set qty = $qty, user=0 where  entry_id = $entryID and resource_id = $resource_id");
       }else{
         //else insert
