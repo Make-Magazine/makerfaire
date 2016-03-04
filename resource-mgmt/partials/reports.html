@@ -3,7 +3,7 @@
   <button ng-click="reports.loadData('wp_rmt_entry_resources')">Entry Resources</button>-->
 
   <div ng-if="reports.showGrid" class="reportsView col-xs-12 col-sm-12 col-md-12 col-lg-12 animated fadeInUp">
-    <div ui-grid="gridOptions" ui-grid-exporter class="grid">
+    <div ui-grid="gridOptions" ui-grid-exporter ui-grid-resize-columns class="grid">
       <div class="grid-msg-overlay" ng-hide="!reports.loading">
         <div class="msg">
           <span>
