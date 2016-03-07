@@ -38,14 +38,22 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
     if($field['type']!='section' && $field['type']!='page'){
       $label = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
       if($label=='' && $field['type']=='checkbox') $label = $field['choices'][0]->text;
+      //build category crossreference
+      if($field['id']==320){
+        $catCross = array();
+        foreach($field['choices'] as $choice){
+          $catCross[$choice->value]=$choice->text;
+        }
+      }
       if($field['type']=='checkbox'){
         if(isset($field['inputs']) && !empty($field['inputs'])){
-            foreach($field['inputs'] as $choice){
-              $fieldData[$choice->id] = $label.' '.$choice->label.'('.$choice->id.')';
-            }
+          foreach($field['inputs'] as $choice){
+            $fieldData[$choice->id] = $label.' '.$choice->label.'('.$choice->id.')';
+          }
         }else{
           $fieldData[$field['id']] = $label.'('.$field['id'].')';
         }
+
       }else{
         $fieldData[$field['id']] = $label.'('.$field['id'].')';
       }
@@ -67,7 +75,13 @@ $sql = "SELECT wp_rg_lead_detail.*,wp_rg_lead_detail_long.value as 'long value'
 $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 $entryData = array();
 foreach($entries as $entry){
-  $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
+  //field 320 is stored as category number, use cross reference to find text value
+  if($entry['field_number']==320){
+    $value = (isset($catCross[$entry['value']])?$catCross[$entry['value']]:$entry['value']);
+  }else{
+    $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
+  }
+  $value = htmlspecialchars_decode ($value);
   $entryData[$entry['lead_id']][$entry['field_number']]=$value;
 }
 

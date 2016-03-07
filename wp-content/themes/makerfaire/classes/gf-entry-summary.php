@@ -87,8 +87,8 @@ if ( isset( $long_description ) && $long_description!='') {
 				<a href="<?php echo $photo;?>" class='thickbox'>
 				<img width="400px" src="<?php echo legacy_get_resized_remote_image_url($photo, 400,400);?>" alt="" /></a>
 			</td>
-			<td style="width:340px;" valign="top">
-				<table>
+			<td style="width:340px; word-break: break-all;" valign="top">
+				<table style="word-break: break-all;">
 					<tr>
 						<td colspan="2">
 							<p>
@@ -97,15 +97,15 @@ if ( isset( $long_description ) && $long_description!='') {
 						</td>
 					</tr>
 					<tr>
-						<td style="width: 80px;" valign="top"><strong>Type:</strong></td>
+						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Type:</strong></td>
 						<td valign="top"><?php echo esc_attr( ucfirst( $entry_form_type ) ); ?></td>
 					</tr>
 					<tr>
-						<td style="width: 80px;" valign="top"><strong>Status:</strong></td>
+						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Status:</strong></td>
 						<td valign="top"><?php echo esc_attr( $entry_form_status ); ?></td>
 					</tr>
 					<tr>
-						<td style="width: 80px;" valign="top"><strong>Website:</strong></td>
+						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Website:</strong></td>
 						<td valign="top"><a
 							href="<?php echo esc_url(  $wkey ); ?>" target="_blank"><?php echo esc_url( $wkey ); ?></a></td>
 					</tr>
@@ -117,7 +117,7 @@ if ( isset( $long_description ) && $long_description!='') {
 						</td>
 					</tr>
 					<tr>
-						<td style="width: 80px;" valign="top"><strong>Maker Names:</strong></td>
+						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Maker Names:</strong></td>
 						<td valign="top"><?php echo !empty($makergroupname) ? $makergroupname.'(Group)</br>' : ''; ?>
               <?php
               if(!empty($makerPhoto1)){?>
@@ -631,6 +631,8 @@ function entryResources($lead){
   foreach($results as $result){
     if($result->user==NULL){
       $dispUser = 'Initial';
+    }elseif($result->user==0){
+      $dispUser = 'Payment';
     }else{
       $userInfo = get_userdata( $result->user );
       $dispUser = $userInfo->display_name;

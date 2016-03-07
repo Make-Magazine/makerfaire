@@ -57,7 +57,7 @@ $tableOptions['wp_rmt_entry_resources']   = array(
               'referenceField'   => 'ID',
               'referenceDisplay' => 'type')
         );
-$view_only = (isset($_POST['viewOnly'])?$_POST['viewOnly']:FALSE);
+
 if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
 	$type = $_POST['type'];
 
@@ -326,7 +326,7 @@ function invalidRequest()
 
 function defTableInfo($table){
   global $mysqli;
-  global $tableOptions; global $view_only;
+  global $tableOptions;
   $fkey='';
   //does this table have foreign key drop downs that need to be set?
   if(isset($tableOptions[$table])){
@@ -342,18 +342,15 @@ function defTableInfo($table){
   $pquery = "show full columns in " . $table;
   $presult  = $mysqli->query( $pquery );
 
-  $columnDefs = array(
-                  array('name' => 'delete', 'displayName' =>'','sortable'=>false,'enableColumnMenu' => false,'enableFiltering'=> false,
-                        'enableCellEdit' => false,
-                        'cellTemplate' => '<span class="ui-grid-cell-contents ng-binding ng-scope" ng-click="grid.appScope.deleteRow(row)"><i class="fa fa-trash"></i></span>',
-                        'width' => '25'
-                  )
-              );
+  $columnDefs = array(array('name' => 'delete', 'displayName' =>'','sortable'=>false,'enableColumnMenu' => false,'enableFiltering'=> false,
+                            'enableCellEdit' => false,
+                            'cellTemplate' => '<span class="ui-grid-cell-contents ng-binding ng-scope" ng-click="grid.appScope.deleteRow(row)"><i class="fa fa-trash"></i></span>',
+                            'width' => '25'));
   //create array of field names
   while ($row = $presult->fetch_assoc()) {
     //var_dump($row);
     $enableFiltering = true;
-    $enableCellEdit = ($view_only?false:true);
+    $enableCellEdit  = true;
     $width           = '150';
     if($row['Key']=='PRI'){
       $pkey = $row['Field'];
@@ -371,18 +368,16 @@ function defTableInfo($table){
       $displayName = str_replace('-', ' ', $displayName);
       $displayName = ucwords($displayName);
 
-      $columnDefs[] = array('field'            => $row['Field'],
+      $columnDefs[] = array('name'            => $row['Field'],
                             'displayName'     => $displayName,
-                            'filter' => array('type' => 'uiGridConstants.filter.SELECT',
-                                              'selectOptions' => $selectOptions),
-                            'cellFilter'=> 'griddropdown:this',
+                            'editableCellTemplate'=>'ui-grid/dropdownEditor',
                             'headerCellClass' => '$scope.highlightFilteredHeader',
                             'editDropdownValueLabel'=> 'fkey',
                             'editDropdownIdLabel'=>'id',
-                            'editDropdownOptionsArray'=>$options,
-                            'enableCellEdit'  => $enableCellEdit,
-                            'editableCellTemplate'=>($enableCellEdit==true?'ui-grid/dropdownEditor':'')
-                           );
+                            'filter' => array('type' => 'uiGridConstants.filter.SELECT',
+                                              'selectOptions' => $selectOptions),
+                            'cellFilter'=> 'griddropdown:this',
+                            'editDropdownOptionsArray'=>$options);
     }else{
       //tbd need to find a formatting that will work with a datetime field
       //date type does not save correctly in the database

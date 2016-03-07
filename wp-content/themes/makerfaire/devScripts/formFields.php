@@ -1,19 +1,21 @@
 <?php
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 include 'db_connect.php';
-$sql = 'select display_meta from wp_rg_form_meta where form_id!=1 and form_id!=24';
 
+$sql = 'select display_meta from wp_rg_form_meta where form_id!=1 and form_id!=24';
+if(isset($_GET['formID'])) $sql.= ' and form_id='.$_GET['formID'];
+echo $sql;
 $mysqli->query("SET NAMES 'utf8'");
 $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 ?>
 <style>
     table {border-collapse: collapse;}
-    
+
     th {
     font-size: 1.4em;
     text-align: left;
@@ -32,7 +34,7 @@ $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 <?php
 // Loop through the posts
 while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
-    $json = json_decode($row['display_meta']);    
+    $json = json_decode($row['display_meta']);
     echo '<h2>Form '.$json->id.' - '.$json->title.'</h2>';
     echo '<table>';
     echo '<tr><th>ID</th><th>Label</th><th>Field Type</th><th>Options</th></tr>';
@@ -41,10 +43,10 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
         $array->id = (float) $array->id;
         $array = (array) $array;
     }
-    
+
     usort($jsonArray, "cmp");
     //   var_dump($jsonArray);
-    foreach($jsonArray as $field){             
+    foreach($jsonArray as $field){
         if($field['type'] != 'html' && $field['type'] != 'section' && $field['type'] != 'page'){
             //var_dump($field);
             $label = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
@@ -61,14 +63,15 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
                     }
                 }else{
                     foreach($field['choices'] as $choice){
-                        echo '<li>'.$choice->value.'</li>';
+                        echo '<li>'.$choice->value.'-'.$choice->text.'</li>';
                     }
                 }
                 echo '</ul>';
             }
+
             echo '</td>';
             echo '</tr>';
-        }       
+        }
     }
     echo '</table>';
     echo '<br/><br/>';
