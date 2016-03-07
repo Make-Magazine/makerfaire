@@ -16,7 +16,7 @@ if(isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
       foreach ( $forms as $form ) {
         //exclude master form
         if($form->id!=9){
-          $formReturn[] = array('id'=>absint( $form->id ), 'name' => esc_html( $form->title));
+          $formReturn[] = array('id'=>absint( $form->id ), 'name' => htmlspecialchars_decode( $form->title));
         }
       }
 
