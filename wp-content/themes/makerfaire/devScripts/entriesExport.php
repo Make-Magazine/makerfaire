@@ -45,7 +45,7 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
           $catCross[$choice->value]=$choice->text;
         }
       }
-      if($field['type']=='checkbox'){
+      if($field['type']=='checkbox'||$field['type']=='address'){
         if(isset($field['inputs']) && !empty($field['inputs'])){
           foreach($field['inputs'] as $choice){
             $fieldData[$choice->id] = $label.' '.$choice->label.'('.$choice->id.')';

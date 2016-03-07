@@ -55,7 +55,7 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
             echo '<td>'.$field['id'].'</td><td>' . $label.'</td>';
             echo '<td>'.$field['type'].'</td>';
             echo '<td>';
-            if($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select'){
+            if($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'){
                 echo '<ul>';
                 if(isset($field['inputs']) && !empty($field['inputs'])){
                     foreach($field['inputs'] as $choice){
