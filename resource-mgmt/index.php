@@ -24,6 +24,7 @@ if (!is_user_logged_in())
   <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
   <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
   <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
+  <script src="js/bootstrap/bootstrap.min.js"></script>
   <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 
   <style>
@@ -130,6 +131,8 @@ a {
               <ul class="nav nav-list tree">
                 <li><a href="#reports">Entry Resources</a></li>
                 <li><a href="#reports/change">Entry Change Report</a></li>
+                <li><a href="#reports/location">Faire Location Report</a></li>
+                <li><a href="#reports/build">Build your own Report</a></li>
               </ul>
             </li>
             <li><label class="tree-toggle nav-header">Resources</label>
