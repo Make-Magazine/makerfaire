@@ -107,8 +107,8 @@ function buildRpt($formSelect=array(),$selectedFields=array()){
     }
     //create array of selected field id's
     $fieldIDArr[] = $selFields['id'];
-    //build grid columns
-    $data['columnDefs'][] =   array('field'=> 'field_'.str_replace('.','_',$selFields['id']),'displayName'=>$selFields['label']);
+    //build grid columns. using the id as an index to avoid dups
+    $data['columnDefs'][$selFields['id']] =   array('field'=> 'field_'.str_replace('.','_',$selFields['id']),'displayName'=>$selFields['label']);
   }
   $fieldIDArr = array_unique($fieldIDArr);
   $fields = implode(",",$fieldIDArr);
@@ -157,7 +157,9 @@ foreach($fieldIDArr as $fieldID){
   foreach($entryData as $row){
     $data['data'][]= $row;
   }
-  //$data['data'] = $entryData;
+  //reindex columnDefs as the grid will blow up if the indexes aren't in order
+  $data['columnDefs'] = array_values($data['columnDefs']);
+
   echo json_encode($data);
   exit;
 }
