@@ -1,8 +1,38 @@
-<div>
-  <!--What would you like to build a report on today?
-  <button ng-click="reports.loadData('wp_rmt_entry_resources')">Entry Resources</button>-->
 
-  <div ng-if="reports.showGrid" class="reportsView col-xs-12 col-sm-12 col-md-12 col-lg-12 animated fadeInUp">
+  <div class="container" ng-if="reports.showbuild">
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Which Forms would you like to report on?</h3>
+        <select name="formSelect" ng-model="reports.formSelect" multiple>
+          <option value="" selected>All Forms</option>
+          <option ng-repeat="form in reports.forms" value="{{form.id}}">{{form.id}} - {{form.name}}</option>
+        </select>
+      </div>
+    </div>
+    <br/><br/>
+    <h3>Which Fields would you like to report on?</h3>
+    <small><i>Note: Field information is from Master Form 9<br/>
+    All Reports will include Entry ID and Form ID</i></small>
+    <br/><br/>
+
+    <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button>
+    <div ui-grid="fieldSelect" ui-grid-selection ui-grid-resize-columns  class="grid"></div>
+    <br/><br/>
+    <div class="row">
+      <div class="col-md-3">
+        <h4>Reporting on Forms:</h4>
+        <div style="text-indent:10px" ng-repeat="selected in reports.formSelect">{{reports.formName(selected)}}</div>
+      </div>
+      <div class="col-md-8">
+        <h4>Reporting on Fields</h4>
+        <div style="text-indent:10px" ng-repeat="fields in reports.selectedFields">{{fields.id}} - {{fields.label}} - {{fields.choices}}</div>
+
+      </div>
+    </div>
+    <button type="button" class="btn btn-success" ng-click="generateReport()">Generate Report</button>
+  </div>
+
+  <div ng-if="reports.showGrid && !reports.showbuild" class="reportsView col-xs-12 col-sm-12 col-md-12 col-lg-12 animated fadeInUp">
     <div ui-grid="gridOptions" ui-grid-exporter ui-grid-resize-columns class="grid">
       <div class="grid-msg-overlay" ng-hide="!reports.loading">
         <div class="msg">
@@ -14,4 +44,4 @@
       </div>
     </div>
   </div>
-</div>
+

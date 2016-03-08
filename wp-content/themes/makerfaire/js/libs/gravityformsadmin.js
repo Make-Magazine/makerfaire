@@ -169,27 +169,34 @@ function addRow(addTo){
     dataArray = attributeArray;
   }
 
-    var tableRow = '<tr id="'+type+'RowNew">';
-    //build table columns
-    for (i = 0; i < dataArray.length; i++) {
-      tableRow += '<td  class="'+dataArray[i]['class']+'" id="'+dataArray[i]['id']+'">';
-      if(dataArray[i]['display']=='dropdown'){
-        tableRow += buildDropDown(dataArray[i]['id']);
-      }else if(dataArray[i]['display']=='numeric'){
-        tableRow += '<input  size="4"  class="thVal" type="number" />';
-      }else if(dataArray[i]['display']=='text'){
-        tableRow += '<input  size="4"  class="thVal" type="text" />';
-      }else if(dataArray[i]['display']=='textarea'){
-        tableRow += '<textarea  class="thVal" cols="20" rows="4"></textarea>';
-      }else{
-        tableRow += dataArray[i]['display'];
-      }
-      tableRow += '</td>';
+  var tableRow = '<tr id="'+type+'RowNew">';
+  //build table columns
+  for (i = 0; i < dataArray.length; i++) {
+    tableRow += '<td  class="'+dataArray[i]['class']+'" id="'+dataArray[i]['id']+'">';
+    if(dataArray[i]['display']=='dropdown'){
+      tableRow += buildDropDown(dataArray[i]['id']);
+    }else if(dataArray[i]['display']=='numeric'){
+      tableRow += '<input  size="4"  class="thVal" type="number" />';
+    }else if(dataArray[i]['display']=='text'){
+      tableRow += '<input  size="4"  class="thVal" type="text" />';
+    }else if(dataArray[i]['display']=='textarea'){
+      tableRow += '<textarea  class="thVal" cols="20" rows="4"></textarea>';
+    }else{
+      tableRow += dataArray[i]['display'];
     }
-    //add action row
-    tableRow += '<td id="actions" class="noSend"><p onclick="insertRowDB(\''+type+'\')"><i class="fa fa-check"></i></p><p onclick="jQuery(\'#'+type+'RowNew\').remove();"><i class="fa fa-ban"></i></p></td>';
-    tableRow += '</tr>';
+    tableRow += '</td>';
+  }
+  //add action row
+  tableRow += '<td id="actions" class="noSend"><p onclick="insertRowDB(\''+type+'\')"><i class="fa fa-check"></i></p><p onclick="jQuery(\'#'+type+'RowNew\').remove();"><i class="fa fa-ban"></i></p></td>';
+  tableRow += '</tr>';
+  var tbody = jQuery('#'+type+'Table tbody');
+
+  if (tbody.children().length == 0) {
+    tbody.html(tableRow);
+  }else{
+    alert('but not here');
     jQuery('#'+type+'Table > tbody > tr:first').before(tableRow);
+  }
 }
 
 //item drop down for entry resources

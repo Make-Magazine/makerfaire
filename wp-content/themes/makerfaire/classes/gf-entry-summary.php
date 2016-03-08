@@ -628,6 +628,7 @@ function entryResources($lead){
                   . ' <th>Last Updated</th>'
                   . ' <th><p onclick="addRow(\'resource\')"><i class="fa fa-plus-circle"></i></p></th></tr></thead>';
   $return = '';
+  $resourceDisp .= '<tbody>';
   foreach($results as $result){
     if($result->user==NULL){
       $dispUser = 'Initial';
@@ -646,6 +647,7 @@ function entryResources($lead){
                       . ' <td id="resdateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
                       . ' <td width="10%"><p onclick="resAttDelete(\'#resRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
   }
+  $resourceDisp .= '</tbody>';
   $resourceDisp .= '</table>';
 
   //gather attribute data
@@ -662,6 +664,7 @@ function entryResources($lead){
                 . ' <th>User</th>'
                 . ' <th>Last Updated</th>'
                 . ' <th><p onclick="addRow(\'attribute\')"><i class="fa fa-plus-circle"></i></p></th></tr></thead>';
+  $attDisp .= '<tbody>';
   foreach($results as $result){
     if($result->user==NULL){
       $dispUser = 'Initial';
@@ -677,6 +680,7 @@ function entryResources($lead){
                     . ' <td id="attdateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
                     . ' <td><p onclick="resAttDelete(\'#attRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
   }
+  $attDisp .= '</tbody>';
   $attDisp .= '</table>';
 
   //build attribute drop down values

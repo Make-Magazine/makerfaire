@@ -55,18 +55,18 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
             echo '<td>'.$field['id'].'</td><td>' . $label.'</td>';
             echo '<td>'.$field['type'].'</td>';
             echo '<td>';
-            if($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select'){
-                echo '<ul>';
-                if(isset($field['inputs']) && !empty($field['inputs'])){
-                    foreach($field['inputs'] as $choice){
-                        echo '<li>'.$choice->id.' '.$choice->label.'</li>';
-                    }
-                }else{
-                    foreach($field['choices'] as $choice){
-                        echo '<li>'.$choice->value.'-'.$choice->text.'</li>';
-                    }
+            if($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'){
+              echo '<ul>';
+              if(isset($field['inputs']) && !empty($field['inputs'])){
+                foreach($field['inputs'] as $choice){
+                  echo '<li>'.$choice->id.' : '.$choice->label.'</li>';
                 }
-                echo '</ul>';
+              }else{
+                foreach($field['choices'] as $choice){
+                  echo '<li>'.($choice->value!=$choice->text?$choice->value.'-'.$choice->text:$choice->text).'</li>';
+                }
+              }
+              echo '</ul>';
             }
 
             echo '</td>';
