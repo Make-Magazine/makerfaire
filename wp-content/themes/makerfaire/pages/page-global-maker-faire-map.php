@@ -18,9 +18,9 @@
             ng-model-options="{debounce: 500}"
             ng-change="$ctrl.toggleMapSearch()" />
           <div class="filters">
-            <faires-map-filter default-state="true" filter="Featured Faires">Flagship Faires</faires-map-filter>
-            <faires-map-filter default-state="true" filter="All Maker Faires">Featured Faires</faires-map-filter>
-            <faires-map-filter default-state="true" filter="2013/14 Mini Maker Faire applications">Mini Maker Faires</faires-map-filter>
+            <faires-map-filter default-state="true" filter="Flagship">Flagship Faires</faires-map-filter>
+            <faires-map-filter default-state="true" filter="Featured">Featured Faires</faires-map-filter>
+            <faires-map-filter default-state="true" filter="Mini">Mini Maker Faires</faires-map-filter>
           </div>
         </div>
       </div>
@@ -56,18 +56,22 @@
           <table class="table table-striped table-condensed">
             <tr></tr>
             <tr>
-              <th ng-click="sort='annual'">ANNUAL</th>
-              <th ng-click="sort='category'">FAIRE TYPE</th>
-              <th ng-click="sort='date'">DATE</th>
-              <th ng-click="sort='name'">EVENT NAME</th>
-              <th ng-click="sort='description'">LOCATION</th>
+              <th class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">ANNUAL</th>
+              <th class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE</th>
+              <th class="cursor-pointer" ng-click="sort='date';reverse=!reverse">DATE</th>
+              <th class="cursor-pointer" ng-click="sort='name';reverse=!reverse">EVENT NAME</th>
+              <th>LOCATION</th>
             </tr>
-            <tr dir-paginate="(index, row) in $ctrl.faireMarkers.rows | filter:q | orderBy:sort | itemsPerPage: 10">
-              <td>{{index | ordinal}}</td>
+            <tr dir-paginate="(index, row) in $ctrl.faireMarkers.rows | filter:q | orderBy:sort:reverse | itemsPerPage: 10">
+              <td>{{row.faire_year | ordinal}}</td>
               <td>{{row.category}}</td>
-              <td>date</td>
+              <td>{{row.event_start_dt | date}}</td>
               <td>{{row.name}}</td>
-              <td>{{row.description}}</td>
+              <td>
+                {{row.venue_address_city}}{{
+                  row.venue_address_state && ', '+row.venue_address_state || ''
+                }}{{row.venue_address_country && ', '+row.venue_address_country || ''}}
+              </td>
             </tr>
           </table>
           <div class="text-center">

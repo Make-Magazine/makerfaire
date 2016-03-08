@@ -22,10 +22,10 @@
         ctrl.faireMarkers.sortOrder = 'asc';
         ctrl.faireMarkers.rows = markers;
       }
-      $http.get('/wp-admin/admin-ajax.php?action=get_faires_map_data')
+      $http.get('/query/?type=map')
         .then(function successCallback(response) {
-          setMarkers(response && response.data);
-          markersData = response && response.data;
+          setMarkers(response && response.data && response.data.Locations);
+          markersData = response && response.data && response.data.Locations;
         }, function errorCallback() {
           // error
         });
@@ -151,12 +151,12 @@
             };
             gMarkerZIndex = 1;
             switch (gMarker.category) {
-              case 'Featured Faires':
+              case 'Flagship':
                 gMarkerIcon.fillColor = '#1DAFEC';
                 gMarkerIcon.scale = 9;
                 gMarkerZIndex = 2;
                 break;
-              case 'All Maker Faires':
+              case 'Featured':
                 gMarkerIcon.fillColor = '#F2BF70';
                 break;
               default:
@@ -164,8 +164,8 @@
             }
             gMarker = new google.maps.Marker({
               position: {
-                lat: gMarker.coordinates[1],
-                lng: gMarker.coordinates[0]
+                lat: parseFloat(gMarker.lat),
+                lng: parseFloat(gMarker.lng)
               },
               icon: gMarkerIcon,
               map: gMap,

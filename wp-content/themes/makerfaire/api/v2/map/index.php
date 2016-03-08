@@ -84,14 +84,14 @@ if ( $type == 'map' ) {
     $point = array();
     
     // REQUIRED: The venue name
-    $point['ID']                        = html_entity_decode(trim( $row['ID'] ));
+    $point['ID']                        = $row['ID'];
     $point['name']                      = html_entity_decode(trim( $row['faire_name'] ));
     $point['description']               = html_entity_decode(trim( $row['faire_location'] ));
     $point['category']                  = html_entity_decode(trim( $row['event_type'] ));
     $point['faire_shortcode']           = html_entity_decode(trim( $row['faire_shortcode'] ));
     $point['faire_name']                = html_entity_decode(trim( $row['faire_name'] ));
     $point['faire_location']            = html_entity_decode(trim( $row['faire_location'] ));
-    $point['faire_year']                = html_entity_decode(trim( $row['faire_year'] ));
+    $point['faire_year']                = $row['faire_year'];
     $point['event_type']                = html_entity_decode(trim( $row['event_type'] ));
     $point['event_start_dt']            = html_entity_decode(trim( $row['event_start_dt'] ));
     $point['event_end_dt']              = html_entity_decode(trim( $row['event_end_dt'] ));
@@ -108,8 +108,8 @@ if ( $type == 'map' ) {
     $point['venue_address_postal_code'] = html_entity_decode(trim( $row['venue_address_postal_code'] ));
     $point['venue_address_region']      = html_entity_decode(trim( $row['venue_address_region'] ));
     // Get the child locations
-    $point['lat']                       = html_entity_decode(trim( $row['lat'] ));
-    $point['lng']                       = html_entity_decode(trim( $row['lng'] ));
+    $point['lat']                       = $row['lat'];
+    $point['lng']                       = $row['lng'];
 
     // Put the maker into our list of makers
     array_push($points, $point); 
