@@ -104,7 +104,7 @@ if ( $type == 'map' ) {
     $point['faire_url'] = html_entity_decode( trim( Markdown( $row['faire_url'] ) ), ENT_COMPAT, 'utf-8' );
     $point['ticket_site_url'] = html_entity_decode( trim( Markdown( $row['ticket_site_url'] ) ), ENT_COMPAT, 'utf-8' );
     $point['free_event'] = html_entity_decode( trim( Markdown( $row['free_event'] ) ), ENT_COMPAT, 'utf-8' );
-    $point['venue_address_street'] = html_entity_decode( trim( Markdown( ['venue_address_street'] ) ), ENT_COMPAT, 'utf-8' );
+    $point['venue_address_street'] = html_entity_decode( trim( Markdown( $row['venue_address_street'] ) ), ENT_COMPAT, 'utf-8' );
     $point['venue_address_city'] = html_entity_decode( trim( Markdown( $row['venue_address_city'] ) ), ENT_COMPAT, 'utf-8' );
     $point['venue_address_state'] = html_entity_decode( trim( Markdown( $row['venue_address_state'] ) ), ENT_COMPAT, 'utf-8' );
     $point['venue_address_country'] = html_entity_decode( trim( Markdown( $row['venue_address_country'] ) ), ENT_COMPAT, 'utf-8' );
