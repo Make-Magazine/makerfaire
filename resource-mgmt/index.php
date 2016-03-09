@@ -130,6 +130,7 @@ a {
             <li><label class="tree-toggle nav-header">Reports</label>
               <ul class="nav nav-list tree">
                 <li><a href="#reports">Entry Resources</a></li>
+                <li><a href="#reports/ent2resource">Entry to Resources</a></li>
                 <li><a href="#reports/change">Entry Change Report</a></li>
                 <li><a href="#reports/location">Faire Location Report</a></li>
                 <li><a href="#reports/build">Build your own Report</a></li>
@@ -173,5 +174,6 @@ a {
   <script src="js/main.js"></script>
   <script src="js/controllers.js"></script>
   <script src="js/report.controllers.js"></script>
+  <script src='/wp-content/plugins/gravityforms/js/gf_field_filter.js'></script>
 </body>
 </html>

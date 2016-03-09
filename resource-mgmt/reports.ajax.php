@@ -19,7 +19,22 @@ if(isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
           $formReturn[] = array('id'=>absint( $form->id ), 'name' => htmlspecialchars_decode( $form->title));
         }
       }
+      $form       = RGFormsModel::get_form_meta( 9 );
 
+      $field_filters = GFCommon::get_field_filter_settings( $form );
+      $data['field_filters'] = $field_filters;
+      $init_field_id       = empty( $search_field_id ) ? 0 : $search_field_id;
+      $init_field_operator = empty( $search_operator ) ? 'contains' : $search_operator;
+      $data['init_field_filters'] = array(
+        'mode'    => 'off',
+        'filters' => array(
+          array(
+            'field'    => $init_field_id,
+            'operator' => $init_field_operator,
+            'value'    => $search,
+          ),
+        )
+      );
       //field list (from form 9)
       $fieldReturn = array();
       $sql = 'select display_meta from wp_rg_form_meta where form_id=9';
@@ -165,11 +180,20 @@ foreach($fieldIDArr as $fieldID){
 }
 function retrieveRptData($table){
   global $mysqli;global $tableFields;
-  $sql = '';
+  $sql   = '';
+  $where = '';
 
   //build columnDefs
   foreach($tableFields[$table] as $fields){
-    if(isset($fields['dataSql'])) $sql.= ','.$fields['dataSql'];
+    if(isset($fields['dataSql'])) $sql   .= ','.$fields['dataSql'];
+    if(isset($fields['limit'])){
+      if($where==''){
+        $where .= ' where ';
+      }else{
+        $where .= ' and ';
+      }
+      $where .= $fields['fieldName'] .' '. $fields['limit']['opt'].' '.$fields['limit']['value'];
+    }
     switch($fields['filterType']){
       case 'dropdown':
         $options = array();  $selectOptions=array();
@@ -192,23 +216,43 @@ function retrieveRptData($table){
             $selectOptions[] = array('value' => $optKey, 'label' => $option);
           }
         }
+        $vars = array('field'=> $fields['fieldName'],'name'=> $fields['fieldName'],
+                      'displayName'=> (isset($fields['fieldLabel'])?$fields['fieldLabel']:$fields['fieldName']),
+                      'filter'=> array('selectOptions'=>$selectOptions),
+                      'cellFilter'               => 'griddropdown:this',
+                      'headerCellClass'          => '$scope.highlightFilteredHeader',
+                      'editDropdownValueLabel'   => 'fkey',
+                      'editDropdownIdLabel'      => 'id',
+                      'editDropdownOptionsArray' => $options);
+        if(isset($fields['grouping'])) $vars['grouping'] = $fields['grouping'];
+        if(isset($fields['sort']))     $vars['sort']     = $fields['sort'];
 
-        $columnDefs[] =   array('field'=> $fields['fieldName'],
-                                'displayName'=> (isset($fields['fieldLabel'])?$fields['fieldLabel']:$fields['fieldName']),
-                                'filter'=> array('selectOptions'=>$selectOptions),
-            'cellFilter'               => 'griddropdown:this',
-            'headerCellClass'          => '$scope.highlightFilteredHeader',
-            'editDropdownValueLabel'   => 'fkey',
-            'editDropdownIdLabel'      => 'id',
-            'editDropdownOptionsArray' => $options);
+        $columnDefs[] = $vars;
         break;
       case 'entrylink':
-        $columnDefs[] = array('field'=> $fields['fieldName'],'cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=mf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
+        $vars = array('field'=> $fields['fieldName'],'cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=mf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
+        if(isset($fields['grouping']))      $vars['grouping'] = $fields['grouping'];
+        if(isset($fields['sort']))          $vars['sort']     = $fields['sort'];
+        $columnDefs[] = $vars;
+        break;
+      case 'custom':
+        $vars = array('field'=> $fields['fieldName']);
+        if(isset($fields['grouping'])) $vars['grouping'] = $fields['grouping'];
+        if(isset($fields['sort']))     $vars['sort']     = $fields['sort'];
+
+        $columnDefs[] = $vars;
+        break;
+      case 'hidden':
+        $columnDefs[] = array('field'=> $fields['fieldName'],'visible'=>false);
         break;
       case 'number':
       case 'text':
       default:
-        $columnDefs[] = array('field'=> $fields['fieldName']);
+        $vars = array('field'=> $fields['fieldName']);
+        if(isset($fields['grouping'])) $vars['grouping'] = $fields['grouping'];
+        if(isset($fields['sort']))     $vars['sort']     = $fields['sort'];
+
+        $columnDefs[] = $vars;
 			break;
     }
   }
@@ -216,7 +260,7 @@ function retrieveRptData($table){
   //build data
   $data['columnDefs'] = $columnDefs;
   //get table data
-  $query = "select * ".$sql." from ".$table;
+  $query = "select * ".$sql." from ".$table.$where;
 
   $result = $mysqli->query( $query );
   //create array of table data
