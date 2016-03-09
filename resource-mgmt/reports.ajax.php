@@ -194,6 +194,7 @@ function retrieveRptData($table){
       }
       $where .= $fields['fieldName'] .' '. $fields['limit']['opt'].' '.$fields['limit']['value'];
     }
+    $vars = array();
     switch($fields['filterType']){
       case 'dropdown':
         $options = array();  $selectOptions=array();
@@ -216,45 +217,30 @@ function retrieveRptData($table){
             $selectOptions[] = array('value' => $optKey, 'label' => $option);
           }
         }
-        $vars = array('field'=> $fields['fieldName'],'name'=> $fields['fieldName'],
-                      'displayName'=> (isset($fields['fieldLabel'])?$fields['fieldLabel']:$fields['fieldName']),
+        $vars = array('displayName'=> (isset($fields['fieldLabel'])?$fields['fieldLabel']:$fields['fieldName']),
                       'filter'=> array('selectOptions'=>$selectOptions),
                       'cellFilter'               => 'griddropdown:this',
                       'headerCellClass'          => '$scope.highlightFilteredHeader',
                       'editDropdownValueLabel'   => 'fkey',
                       'editDropdownIdLabel'      => 'id',
                       'editDropdownOptionsArray' => $options);
-        if(isset($fields['grouping'])) $vars['grouping'] = $fields['grouping'];
-        if(isset($fields['sort']))     $vars['sort']     = $fields['sort'];
-
-        $columnDefs[] = $vars;
         break;
       case 'entrylink':
-        $vars = array('field'=> $fields['fieldName'],'cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=mf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
-        if(isset($fields['grouping']))      $vars['grouping'] = $fields['grouping'];
-        if(isset($fields['sort']))          $vars['sort']     = $fields['sort'];
-        $columnDefs[] = $vars;
-        break;
-      case 'custom':
-        $vars = array('field'=> $fields['fieldName']);
-        if(isset($fields['grouping'])) $vars['grouping'] = $fields['grouping'];
-        if(isset($fields['sort']))     $vars['sort']     = $fields['sort'];
-
-        $columnDefs[] = $vars;
+        $vars = array('cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=mf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
         break;
       case 'hidden':
-        $columnDefs[] = array('field'=> $fields['fieldName'],'visible'=>false);
+        $vars = array('visible'=>false);
         break;
+      case 'custom':
       case 'number':
       case 'text':
       default:
-        $vars = array('field'=> $fields['fieldName']);
-        if(isset($fields['grouping'])) $vars['grouping'] = $fields['grouping'];
-        if(isset($fields['sort']))     $vars['sort']     = $fields['sort'];
-
-        $columnDefs[] = $vars;
-			break;
+        break;
     }
+    $vars['field']    = $fields['fieldName'];
+    $vars['name']     = $fields['fieldName'];
+    $vars['minWidth'] = 100;
+    $columnDefs[] = $vars;
   }
 
   //build data
