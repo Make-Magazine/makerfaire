@@ -170,5 +170,6 @@ a {
   <script src="js/main.js"></script>
   <script src="js/controllers.js"></script>
   <script src="js/report.controllers.js"></script>
+  <script src='/wp-content/plugins/gravityforms/js/gf_field_filter.js'></script>
 </body>
 </html>

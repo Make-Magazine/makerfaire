@@ -1,6 +1,6 @@
 var resourceApp = angular.module('resourceApp', ['ngRoute', 'rmgControllers', 'ngSanitize', 'ui.bootstrap','ui.grid.resizeColumns',
                                                  'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit','ui.grid.cellNav','ui.grid.exporter',
-                                                 'ui.grid.selection']);
+                                                 'ui.grid.selection', 'ui.grid.grouping']);
 
 resourceApp.config(['$routeProvider',
   function($routeProvider) {

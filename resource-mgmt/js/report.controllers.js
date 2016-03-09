@@ -24,7 +24,6 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
     rowHeight: 35,
     showGridFooter:true,
     enableFiltering: true,
-
     onRegisterApi: function(gridApi){
       $scope.gridApi = gridApi;
 
@@ -76,6 +75,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
         $scope.gridOptions.data       = response.data.data;
         $scope.reports.showGrid = true;
         $scope.reports.showbuild = false;
+
       }
     })
     .finally(function () {
@@ -84,10 +84,11 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   }
 
   //set up gridOptions for predefined reports
-  $scope.gridOptions = {enableFiltering: true,minRowsToShow:20,enableCellEdit:false,
-    enableGridMenu: true,
-    exporterCsvFilename: 'myFile.csv',
-    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+  $scope.gridOptions = {enableFiltering: true,
+    //minRowsToShow:20,enableCellEdit:false,enableGridMenu: true,
+    treeRowHeaderAlwaysVisible: false,
+    //exporterCsvFilename: 'myFile.csv',
+    //exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
 
       if(("editDropdownOptionsArray" in col.colDef)){
@@ -117,8 +118,9 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
 
   if($routeParams){
     var subRoute  = $routeParams.sub;
-    if(subRoute=='change')    tablename = 'wp_rg_lead_detail_changes';
-    if(subRoute=='location')  tablename = 'wp_mf_faire_subarea';
+    if(subRoute=='change')        tablename = 'wp_rg_lead_detail_changes';
+    if(subRoute=='location')      tablename = 'wp_mf_faire_subarea';
+    if(subRoute=='ent2resource')  tablename = 'wp_rg_lead';
     if(subRoute=='build'){
       tablename = 'formData';
       $scope.reports.showbuild = true;
@@ -174,6 +176,9 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
       if(("fields" in response.data)){
         $scope.fieldSelect.data = response.data.fields;
       }
+      if(("field_filters" in response.data)){
+        jQuery('#entry_filters').gfFilterUI(response.data.field_filters, response.data.init_field_filters, false);
+      }
     })
     .finally(function () {
       $scope.reports.loading = false;
@@ -183,6 +188,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
 }])
   .filter('griddropdown', function () {
     return function (input, map) {
+      var result;
+      var match;
       //convert gridArray to usable hash
       var optionsHash =  {};
       if(map.col){
@@ -191,10 +198,15 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
           optionsHash[gridArray[i].id] = gridArray[i].fkey;
         }
       }
+      
       if (!input){
         return '';
+      } else if (result = optionsHash[input]) {
+        return result;
+      } else if ( ( match = input.match(/(.+)( \(\d+\))/) ) && ( result = optionsHash[match[1]] ) ) {
+        return result + match[2];
       } else {
-        return optionsHash[input];
+        return input;
       }
     };
   });
