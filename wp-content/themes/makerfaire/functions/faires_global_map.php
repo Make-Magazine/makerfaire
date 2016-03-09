@@ -1,13 +1,4 @@
 <?php
-// Faires data API
-function get_faires_map_data() {
-  $data = TEMPLATEPATH . '/functions/faires_global_map/faires_map_data.json';
-  include_once $data;
-  exit;
-}
-add_action('wp_ajax_get_faires_map_data', 'get_faires_map_data');
-add_action('wp_ajax_nopriv_get_faires_map_data', 'get_faires_map_data');
-
 function faire_maps_scripts() {
   if (is_page('maps')) {
     wp_enqueue_script(
