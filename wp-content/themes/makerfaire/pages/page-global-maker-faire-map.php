@@ -16,11 +16,11 @@
             placeholder="Location, name or type"
             ng-model="$ctrl.filterText"
             ng-model-options="{debounce: 500}"
-            ng-change="$ctrl.toggleMapSearch()" />
+            ng-change="$ctrl.applyMapFilters()" />
           <div class="filters">
-            <faires-map-filter default-state="true" filter="Flagship">Flagship Faires</faires-map-filter>
-            <faires-map-filter default-state="true" filter="Featured">Featured Faires</faires-map-filter>
-            <faires-map-filter default-state="true" filter="Mini">Mini Maker Faires</faires-map-filter>
+            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Flagship">Flagship Faires</faires-map-filter>
+            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Featured">Featured Faires</faires-map-filter>
+            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Mini">Mini Maker Faires</faires-map-filter>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
         <!-- Map Angular Component -->
         <faires-google-map
           id="faire-global-map"
-          map-data="$ctrl.faireMarkers"
+          map-data="::$ctrl.faireMarkers"
           ng-if="$ctrl.faireMarkers">
         </faires-google-map>
         <!-- Color Key -->
@@ -52,6 +52,16 @@
           </div>
         </div>
         <!-- List of Faires -->
+        <div class="faire-date-toggle"
+          ng-class="{'active': !$ctrl.pastEvents}"
+          ng-click="$ctrl.pastEvents = false;$ctrl.applyMapFilters();">
+          Upcoming
+        </div>
+        <div class="faire-date-toggle"
+          ng-class="{'active': $ctrl.pastEvents}"
+          ng-click="$ctrl.pastEvents = true;$ctrl.applyMapFilters();">
+          Past
+        </div>
         <div class="faire-list-table">
           <table class="table table-striped table-condensed">
             <tr></tr>
@@ -62,10 +72,10 @@
               <th class="cursor-pointer" ng-click="sort='name';reverse=!reverse">EVENT NAME</th>
               <th>LOCATION</th>
             </tr>
-            <tr dir-paginate="(index, row) in $ctrl.faireMarkers.rows | filter:q | orderBy:sort:reverse | itemsPerPage: 10">
+            <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 10">
               <td>{{row.faire_year | ordinal}}</td>
               <td>{{row.category}}</td>
-              <td>{{row.event_start_dt | date}}</td>
+              <td>{{row.event_end_dt | date:'medium'}}</td>
               <td>{{row.name}}</td>
               <td>
                 {{row.venue_address_city}}{{

@@ -1,9 +1,28 @@
-.faire-global-map-wrp {
+#makerfaire .faire-global-map-wrp {
   #faire-global-map {
     height: 400px;
     display: block;
   }
+  .faire-date-toggle {
+    color: #3D7B98;
+    cursor: pointer;
+    background-color: #EEF2F5;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 3px 3px 0 0;
+    &:hover {
+      background-color: darken(#EEF2F5, 10%);
+    }
+    &.active {
+      color: white;
+      background-color: #3D7B98;
+      &:hover {
+        background-color: #3D7B98;
+      }
+    }
+  }
   .faire-list-table {
+    border-top: solid 1px #3D7B98;
     td,
     th {
       padding-top: 10px;

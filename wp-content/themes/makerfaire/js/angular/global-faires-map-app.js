@@ -8,57 +8,86 @@
   faireMapsApp.controller('MapCtrl', ['$http', '$rootScope', '$filter',
     function($http, $rootScope, $filter) {
       var ctrl = this;
-      var markersData;
-      function setMarkers(markers) {
-        ctrl.faireMarkers = {};
-        ctrl.faireMarkers.header = [{
-          'name': 'Name'
-        }, {
-          'category': 'Category'
-        }, {
-          'description': 'Description'
-        }];
-        ctrl.faireMarkers.sortBy = 'name';
-        ctrl.faireMarkers.sortOrder = 'asc';
-        ctrl.faireMarkers.rows = markers;
+      var faireFilters = {
+        filters: ['Flagship', 'Featured', 'Mini'],
+        search: '',
+        pastEvents: false
       }
+      ctrl.pastEvents = false;
+      $rootScope.$on('toggleMapFilter', function(event, args) {
+        var index = faireFilters.filters.indexOf(args.filter);
+        if (args.state && index < 0) {
+          faireFilters.filters.push(args.filter);
+        } else if (!args.state && index > -1) {
+          faireFilters.filters.splice(index, 1);
+        }
+        ctrl.applyMapFilters();
+      });
+      ctrl.applyMapFilters = function() {
+        infowindow.close();
+        ctrl.pastPresent = {
+          past: 0,
+          present: 0
+        }
+        faireFilters.search = ctrl.filterText;
+        faireFilters.pastEvents = ctrl.pastEvents;
+        var newModel = [];
+        var todaysDate = new Date();
+        // check if "sorting.search" string exists in marker object:
+        function containsString(marker) {
+          if(!faireFilters.search) {
+            return true;
+          }
+          function checkForValue(json, value) {
+            for (var key in json) {
+              if (typeof(json[key]) === 'object') {
+                return checkForValue(json[key], value);
+              } else if (typeof(json[key]) === 'string' && json[key].toLowerCase().match(value)) {
+                return true;
+              }
+            }
+            return false;
+          }
+          return checkForValue(marker, faireFilters.search.toLowerCase());
+        }
+        // check if type matches ok:
+        function isTypeToggled(marker) {
+          return (faireFilters.filters.indexOf(marker.category) > -1);
+        }
+        // check if date is ok:
+        function isDateOk(marker) {
+          if(!marker.event_end_dt || marker.event_end_dt == '0000-00-00 00:00:00') {
+            ctrl.pastPresent.present++;
+            return true;
+          }
+          var isInPast = new Date(marker.event_end_dt).getTime() < todaysDate.getTime();
+          if(isInPast) {
+            ctrl.pastPresent.past++;
+          } else {
+            ctrl.pastPresent.present++;
+          }
+          return (faireFilters.pastEvents == isInPast);
+        }
+        gmarkers1.map(function(marker) {
+          var rowData = marker.dataRowSrc;
+          if (containsString(rowData) && isTypeToggled(rowData) && isDateOk(rowData)) {
+            newModel.push(rowData);
+            
+            marker.setVisible(true);
+          } else {
+            ctrl.pastPresent.past++;
+            marker.setVisible(false);
+          }
+        });
+        ctrl.faireMarkers = newModel;
+      }
+
       $http.get('/query/?type=map')
         .then(function successCallback(response) {
-          setMarkers(response && response.data && response.data.Locations);
-          markersData = response && response.data && response.data.Locations;
+          ctrl.faireMarkers = response && response.data && response.data.Locations;
         }, function errorCallback() {
           // error
         });
-      ctrl.toggleMapSearch = function() {
-        setMarkers($filter('filter')(markersData, ctrl.filterText));
-        $rootScope.$emit('toggleMapSearch', ctrl.filterText);
-      };
-      $rootScope.$on('toggleMapFilter', function(event, args) {
-        ctrl.filterText = undefined;
-        applyMapFilters(event, args);
-      });
-      var faireTypesFilter = [];
-      function applyMapFilters (event, args) {
-        ctrl.searchText = undefined;
-        var index = faireTypesFilter.indexOf(args.filter);
-        if(args.state && index < 0) {
-          faireTypesFilter.push(args.filter);
-        } else if (!args.state && index > -1) {
-          faireTypesFilter.splice(index, 1);
-        }
-        if (!markersData) {
-          return;
-        }
-        function isEnabled(marker) {
-          return (faireTypesFilter.indexOf(marker.category) > -1);
-        }
-        // filter angular table model (Array.prototype.filter)
-        setMarkers(markersData.filter(isEnabled));
-        // set pin visibility through Google Maps JS API (Array.prototype.map)
-        gmarkers1.map(function(marker) {
-          marker.setVisible(isEnabled(marker));
-        });
-      }
     }
   ]);
 
@@ -89,6 +118,7 @@
     },
     controller: function($rootScope, GMapsInitializer) {
       var ctrl = this;
+
       function initMap(mapId) {
         var gMap;
         var customMapType = new google.maps.StyledMapType([{
@@ -138,11 +168,12 @@
         });
 
         function setMarkers(data) {
+          var row;
           var gMarker;
           var gMarkerIcon;
           var gMarkerZIndex;
           for (var i = 0; i < data.length; i++) {
-            gMarker = data[i];
+            row = data[i];
             gMarkerIcon = {
               path: google.maps.SymbolPath.CIRCLE,
               scale: 5,
@@ -150,7 +181,7 @@
               strokeOpacity: 0
             };
             gMarkerZIndex = 1;
-            switch (gMarker.category) {
+            switch (row.category) {
               case 'Flagship':
                 gMarkerIcon.fillColor = '#1DAFEC';
                 gMarkerIcon.scale = 9;
@@ -164,21 +195,25 @@
             }
             gMarker = new google.maps.Marker({
               position: {
-                lat: parseFloat(gMarker.lat),
-                lng: parseFloat(gMarker.lng)
+                lat: parseFloat(row.lat),
+                lng: parseFloat(row.lng)
               },
               icon: gMarkerIcon,
               map: gMap,
               animation: google.maps.Animation.DROP,
-              title: gMarker.name,
-              description: gMarker.description,
-              category: gMarker.category,
-              zIndex: gMarkerZIndex
+              title: row.name,
+              description: row.description,
+              category: row.category,
+              zIndex: gMarkerZIndex,
+              dataRowSrc: row
             });
             google.maps.event.addListener(gMarker, 'click', displayMarkerInfo);
+            gMarker.dataRowSrc.event_end_dt = new Date(gMarker.dataRowSrc.event_end_dt);
+            gMarker.dataRowSrc.event_start_dt = new Date(gMarker.dataRowSrc.event_start_dt);
             gmarkers1.push(gMarker);
           }
         }
+
         function displayMarkerInfo() {
           var marker_map = this.getMap();
           infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
@@ -190,31 +225,14 @@
           );
           infowindow.open(marker_map, this);
         }
-        setMarkers(ctrl.mapData.rows);
+        setMarkers(ctrl.mapData);
       }
-
-      function searchMarkers(text) {
-        text = text.toUpperCase();
-        infowindow.close();
-        gmarkers1.map(function(obj) {
-          if (obj.title && obj.title.toUpperCase().match(text) ||
-            obj.category && obj.category.toUpperCase().match(text) ||
-            obj.description && obj.description.toUpperCase().match(text)) {
-            obj.setVisible(true);
-          } else {
-            obj.setVisible(false);
-          }
-        });
-      }
-      $rootScope.$on('toggleMapSearch', function(event, args) {
-        searchMarkers(args);
-      });
       GMapsInitializer.then(function() {
         initMap(ctrl.mapId);
       });
     }
   });
-  
+
   faireMapsApp.component('fairesMapFilter', {
     template: '<div class="checkbox">' +
       '<label><input type="checkbox" ng-model="$ctrl.defaultState" ng-click="$ctrl.toggleFilter()">' +
@@ -222,7 +240,6 @@
       '</label>' +
       '</div>',
     transclude: true,
-    // bindings: { toggleMapFilter: '<' },
     bindings: {
       filter: '@',
       defaultState: '='
@@ -240,7 +257,6 @@
         };
         $rootScope.$emit('toggleMapFilter', toggleState);
       };
-      ctrl.toggleFilter();
     }
   });
 
