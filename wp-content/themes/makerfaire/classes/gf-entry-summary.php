@@ -691,6 +691,46 @@ function entryResources($lead){
   foreach($results as $result){
     $attArr[] = array('key'=>$result->ID,'value'=>$result->category);
   }
+
+  //build attention section
+  $attnDisp = '';
+  $sql = "SELECT wp_rmt_entry_attn.*, wp_rmt_attn.value
+          FROM `wp_rmt_entry_attn`, wp_rmt_attn
+          where wp_rmt_entry_attn.attn_id = wp_rmt_attn.ID
+          and entry_id = ".$entry_id = $lead['id'] ." order by wp_rmt_attn.value";
+
+  $results = $wpdb->get_results($sql);
+  $attnDisp = '<table id="attnTable"><thead><tr>'
+                . ' <th>Attention</th>'
+                . ' <th>Comment</th>'
+                . ' <th>User</th>'
+                . ' <th>Last Updated</th>'
+                . ' <th><p onclick="addRow(\'attention\')"><i class="fa fa-plus-circle"></i></p></th></tr></thead>';
+  $attnDisp .= '<tbody>';
+  foreach($results as $result){
+    if($result->user==NULL){
+      $dispUser = 'Initial';
+    }else{
+      $userInfo = get_userdata( $result->user );
+      $dispUser = $userInfo->display_name;
+    }
+    $attnDisp .= '<tr id="attnRow'.$result->ID.'">'
+                    . ' <td id="attnvalue_'.$result->ID.'">'.$result->value.'</td>'
+                    . ' <td id="attncomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
+                    . ' <td id="attnuser_'.$result->ID.'">'.$dispUser.'</td>'
+                    . ' <td id="attndateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
+                    . ' <td><p onclick="resAttDelete(\'#attnRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
+  }
+  $attnDisp .= '</tbody>';
+  $attnDisp .= '</table>';
+
+  //build attention drop down values
+  $sql = "SELECT ID, value FROM wp_rmt_attn";
+  $results = $wpdb->get_results($sql);
+  $attnArr = array();
+  foreach($results as $result){
+    $attnArr[] = array('key'=>$result->ID,'value'=>$result->value);
+  }
   ?>
   <script>
     //store items as JS object
@@ -700,22 +740,37 @@ function entryResources($lead){
     <?php } ?>
     var types      = <?php echo json_encode($typeArr);?>;
     var attributes = <?php echo json_encode($attArr);?>;
+    var attention  = <?php echo json_encode($attnArr);?>;
   </script>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
-      <div class="panel-heading edu1 active-state" role="tab" id="headingOne">
-        <h4 class="panel-title"><a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Resources</a></h4>
+      <div class="panel-heading" id="headingOne">
+        <h4 class="panel-title">
+          <a class="accordion-toggle" data-toggle="collapse" href="#collapseOne">Resources</a>
+        </h4>
       </div>
-        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-          <div class="panel-body"><?php echo $resourceDisp;?></div>
-        </div>
+      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel">
+        <div class="panel-body"><?php echo $resourceDisp;?></div>
+      </div>
     </div>
     <div class="panel panel-default">
-      <div class="panel-heading edu1" role="tab" id="headingTwo">
-        <h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Attributes</a></h4>
+      <div class="panel-heading" id="headingTwo">
+        <h4 class="panel-title">
+          <a class="accordion-toggle" data-toggle="collapse" href="#collapseTwo">Attributes</a>
+        </h4>
       </div>
-      <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel">
         <div class="panel-body"><?php echo $attDisp;?></div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading" id="headingTwo">
+        <h4 class="panel-title">
+          <a class="accordion-toggle" data-toggle="collapse" href="#collapseThree">Attention</a>
+        </h4>
+      </div>
+      <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel">
+        <div class="panel-body"><?php echo $attnDisp;?></div>
       </div>
     </div>
   </div> <?php
