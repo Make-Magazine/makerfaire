@@ -26,12 +26,21 @@ $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'faire', 'filter
     );
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'area', 'filterType'=>'text',
     'grouping'=>array('groupPriority'=> 1), 'sort'=>array('priority'=> 1, 'direction'=> 'asc'),
-        'dataSql' =>'(SELECT area from wp_mf_faire_area,wp_mf_faire_subarea,wp_mf_location where wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID and wp_mf_location.subarea_id=wp_mf_faire_subarea.ID and wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as area'
+        'dataSql' =>'(SELECT area '
+    . '               from   wp_mf_faire_area,wp_mf_faire_subarea,wp_mf_location '
+    . '               where  wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
+    . '               and    wp_mf_location.subarea_id=wp_mf_faire_subarea.ID '
+    . '               and    wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as area'
     );
+
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'subarea', 'filterType'=>'text',
     'grouping'=>array('groupPriority'=> 2), 'sort'=>array('priority'=> 2, 'direction'=> 'asc'),
-        'dataSql' =>'(SELECT subarea from wp_mf_faire_subarea,wp_mf_location where wp_mf_location.subarea_id=wp_mf_faire_subarea.ID and wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id) as subarea'
+        'dataSql' =>'(SELECT subarea '
+    . '               from   wp_mf_faire_subarea,wp_mf_location '
+    . '               where  wp_mf_location.subarea_id=wp_mf_faire_subarea.ID '
+    . '               and    wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as subarea'
     );
+
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'location', 'filterType'=>'text',
     'grouping'=>array('groupPriority'=> 3), 'sort'=>array('priority'=> 3, 'direction'=> 'asc'),
         'dataSql' =>'(SELECT location from wp_mf_location where wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as location'
@@ -39,7 +48,9 @@ $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'location', 'fil
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'entry_id', 'filterType'   => 'entrylink', 'fieldLabel' => 'Type');
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'item', 'filterType'   => 'dropdown', 'fieldLabel' => 'Item',
   'grouping'=>array('groupPriority'=> 4), 'sort'=>array('priority'=> 4, 'direction'=> 'asc'),
-  'dataSql' => '(select wp_rmt_resources.resource_category_id from wp_rmt_resources where wp_rmt_entry_resources.resource_id = wp_rmt_resources.ID) as item',
+  'dataSql' => '(select wp_rmt_resources.resource_category_id '
+    . '           from  wp_rmt_resources '
+    . '           where wp_rmt_entry_resources.resource_id = wp_rmt_resources.ID  limit 1) as item',
   'fkey'      => array('referenceTable'   => 'wp_rmt_resource_categories',
                        'referenceField'   => 'ID',
                        'referenceDisplay' => 'category')
