@@ -7,7 +7,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   $scope.reports.selectedFields = {};
 
   $scope.msg = {};
-  //create your own report - show selected forms
+
+  //begin create your own report - show selected forms
   $scope.reports.formName = function(rptID){
     var reportName = rptID;
     angular.forEach($scope.reports.forms, function(value, key) {
@@ -54,7 +55,10 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
     var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'type' : 'customRpt'}
     $scope.reports.callAJAX(vars);
   }
- $scope.reports.changeGrouping = function(groupBy) {
+  /*end build your own report */
+
+  //set report column grouping
+  $scope.reports.changeGrouping = function(groupBy) {
     $scope.gridApi.grouping.clearGrouping();
     if(groupBy=='item'){
       $scope.gridApi.grouping.groupColumn('item');
@@ -67,6 +71,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
     }
     $scope.gridApi.grouping.aggregateColumn('qty', uiGridGroupingConstants.aggregation.SUM);
   };
+
+  //get report data
   $scope.reports.callAJAX = function(vars){
     $scope.reports.loading = true;
     //get grid data
@@ -97,9 +103,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
 
   //set up gridOptions for predefined reports
   $scope.gridOptions = {enableFiltering: true,
-    //minRowsToShow:20,enableCellEdit:false,
     enableGridMenu: true,
-    exporterCsvFilename: 'myFile.csv',
+    exporterCsvFilename: 'export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
 

@@ -136,6 +136,10 @@ a {
                 <li><a href="#reports/change">Entry Change Report</a></li>
                 <li><a href="#reports/location">Faire Location Report</a></li>
                 <!--<li><a href="#reports/build">Build your own Report</a></li>-->
+              </ul>
+            </li>
+            <li><label class="tree-toggle nav-header">Entry Specific Data</label>
+              <ul class="nav nav-list tree">
                 <li><a href="#entry/resources">Assigned Resources</a></li>
                 <li><a href="#entry/attributes">Assigned Attributes</a></li>
                 <li><a href="#entry/attention">Assigned Attention</a></li>
