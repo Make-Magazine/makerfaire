@@ -5,17 +5,20 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     'vendors'  : {'list':'wp_rmt_vendors', 'resources': 'wp_rmt_vendor_resources'},
     'resources': {'list':'wp_rmt_resources', 'items': 'wp_rmt_resource_categories'},
     'faire'    : {'data':'wp_mf_faire', 'orders':'wp_rmt_vendor_orders','areas':'wp_mf_faire_area','subareas':'wp_mf_faire_subarea','global-faire':'wp_mf_global_faire'},
-    'entry'    : {'attributes': 'wp_rmt_entry_att', 'atttibuteCategories': 'wp_rmt_entry_att_categories', 'workflow':'wp_rmt_entry_workflow'}
+    'entry'    : {'resources': 'wp_rmt_entry_resources','attention':'wp_rmt_entry_attn','attributes': 'wp_rmt_entry_attributes', 'atttibuteCategories': 'wp_rmt_entry_att_categories', 'workflow':'wp_rmt_entry_workflow'}
   };
 
   $scope.resource    = {};
   $scope.resource.loading = true;
+  var mainRoute = ''; var subRoute = '';
   if($routeParams){
-    var mainRoute = $routeParams.main;
-    var subRoute  = $routeParams.sub;
+    mainRoute = $routeParams.main;
+    subRoute  = $routeParams.sub;
     $scope.dispTablename=routeArray[mainRoute][subRoute];
   }
-
+  $scope.filterExport = function( grid, row, col, input ) {
+    return 'unknown';
+  };
   var url = '/resource-mgmt/ajax.php';
   $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
     if( col.filters[0].term ){
@@ -26,7 +29,29 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
   };
 
   $scope.msg = {};
-  $scope.gridOptions = {enableCellEditOnFocus: true,enableFiltering: true,minRowsToShow:20,rowEditWaitInterval: 1};
+  $scope.gridOptions = {enableCellEditOnFocus: true,enableFiltering: true,minRowsToShow:20,rowEditWaitInterval: 1,
+    enableGridMenu: true,
+    exporterCsvFilename: mainRoute+'_'+subRoute+'_export.csv',
+    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+    exporterFieldCallback: function( grid, row, col, input ) {
+
+      if(("editDropdownOptionsArray" in col.colDef)){
+        
+        //convert gridArray to usable hash
+        var optionsHash =  {};
+        var gridArray = col.colDef.editDropdownOptionsArray;
+        for (var i = 0; i < gridArray.length; i++) {
+          optionsHash[gridArray[i].id] = gridArray[i].fkey;
+        }
+        if (!input){
+          return '';
+        } else {
+          return optionsHash[input];
+        }
+      }else{
+        return input;
+      }
+    }};
 
   $scope.addNew = function() {
     if($scope.gridOptions.data){

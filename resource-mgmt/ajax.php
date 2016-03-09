@@ -49,13 +49,31 @@ $tableOptions['wp_rmt_entry_attributes']   = array(
         array('fkey'             => 'attribute_id',
               'referenceTable'   => 'wp_rmt_entry_att_categories',
               'referenceField'   => 'ID',
-              'referenceDisplay' => 'category')
+              'referenceDisplay' => 'category'),
+        array('fkey'             => 'user',
+              'referenceTable'   => 'wp_users',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'user_email')
+        );
+$tableOptions['wp_rmt_entry_attn']   = array(
+        array('fkey'             => 'attn_id',
+              'referenceTable'   => 'wp_rmt_attn',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'value'),
+        array('fkey'             => 'user',
+              'referenceTable'   => 'wp_users',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'user_email')
         );
 $tableOptions['wp_rmt_entry_resources']   = array(
         array('fkey'             => 'resource_id',
               'referenceTable'   => 'wp_rmt_resources',
               'referenceField'   => 'ID',
-              'referenceDisplay' => 'type')
+              'referenceDisplay' => 'type'),
+        array('fkey'             => 'user',
+              'referenceTable'   => 'wp_users',
+              'referenceField'   => 'ID',
+              'referenceDisplay' => 'user_email')
         );
 $view_only = (isset($_POST['viewOnly'])?$_POST['viewOnly']:FALSE);
 if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
@@ -373,8 +391,7 @@ function defTableInfo($table){
 
       $columnDefs[] = array('field'            => $row['Field'],
                             'displayName'     => $displayName,
-                            'filter' => array('type' => 'uiGridConstants.filter.SELECT',
-                                              'selectOptions' => $selectOptions),
+                            'filter' => array('selectOptions' => $selectOptions),
                             'cellFilter'=> 'griddropdown:this',
                             'headerCellClass' => '$scope.highlightFilteredHeader',
                             'editDropdownValueLabel'=> 'fkey',
