@@ -1,0 +1,256 @@
+// meet the makers
+// makerfaire.com/bay-area-2015/meet-the-makers/
+// makerfaire.com/wp-admin/post.php?post=459800&action=edit
+// makerfaire.com/wp-admin/post.php?post=461345&action=edit
+// makerfaire.com/wp-admin/post.php?post=461352&action=edit 
+.quora {
+  .text-holder,
+  .maker-slider-btn {
+    display: none;
+  }
+  .browse-box .columns {
+    -moz-column-count: 2;
+    -webkit-column-count: 2;
+    column-count: 2;
+  }
+  .browse-box .columns {
+    -moz-column-count: 4;
+    -webkit-column-count: 4;
+    column-count: 4;
+    padding: 20px 0;
+    font-size: 20px;
+    line-height: 22px;
+    font-weight: 300;
+  }
+  .browse-box .columns li {
+    padding: 0 10px 7px 0;
+  }
+  .browse-box .columns li a {
+    color: #397b98;
+    text-decoration: none;
+  }
+  .browse-box .columns li a:hover {
+    text-decoration: none;
+    color: #00bef3;
+  }
+  .browse-box {
+    background: url(../images/bg-border.png) repeat-x 0 100%;
+    padding: 30px 0;
+  }
+  .browse-box .list {
+    -moz-column-count: 4;
+    -webkit-column-count: 4;
+    column-count: 4;
+    padding: 20px 0;
+    font-size: 20px;
+    line-height: 22px;
+    font-weight: 300;
+  }
+  .browse-box .list li {
+    padding: 0 10px 7px 0;
+  }
+  .browse-box .list li a {
+    color: #397b98;
+    text-decoration: none;
+  }
+  .browse-box .list li a:hover {
+    text-decoration: none;
+    color: #00bef3;
+  }
+  .cycle-gallery {
+    position: relative;
+    border: 3px solid #67bde1;
+  }
+  .cycle-gallery .mask {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  .cycle-gallery .mask .slideset {
+    width: 99999px;
+    float: left;
+  }
+  .cycle-gallery .mask .slide {
+    float: left;
+    position: relative;
+  }
+  .cycle-gallery .mask .slide .text-holder {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 30px;
+    background: rgba(8, 90, 126, .66);
+    color: #fff;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;
+  }
+  .cycle-gallery .mask .slide .text-holder mark {
+    background: none;
+    color: #fff;
+    font-weight: 500;
+    padding: 0;
+  }
+  .cycle-gallery .mask .slide .text-holder p {
+    margin: 0;
+  }
+  .cycle-gallery .mask .slide .text-holder .title {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 14px;
+    display: block;
+    padding: 0 0 4px;
+  }
+  .cycle-gallery .mask .slide:hover .text-holder {
+    background: rgba(8, 90, 126, .73);
+  }
+  .cycle-gallery .mask .slide.active {
+    z-index: 1;
+  }
+  .cycle-gallery .btn-next,
+  .cycle-gallery .btn-prev {
+    position: absolute;
+    background: rgba(8, 90, 126, .23);
+    z-index: 10;
+    top: 50%;
+    margin: -56px 0 0;
+    left: 0;
+    height: 48px;
+    color: #fff;
+    width: 48px;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+  }
+  .cycle-gallery .btn-next:hover,
+  .cycle-gallery .btn-prev:hover {
+    background: rgba(8, 90, 126, .63);
+  }
+  .cycle-gallery .btn-next i,
+  .cycle-gallery .btn-prev i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 30px;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+  }
+  .cycle-gallery .btn-next {
+    left: auto;
+    right: 0;
+  }
+    .gallery-holder {
+    padding: 0 0 60px;
+  }
+  .gallery-holder .carousel {
+    position: relative;
+    padding: 0 48px;
+    min-height: 124px;
+  }
+  .gallery-holder .carousel .mask {
+    position: relative;
+    overflow: hidden;
+    padding: 27px 0 0;
+    height: 122px;
+  }
+  .gallery-holder .carousel .mask .slideset {
+    width: 99999px;
+    float: left;
+    border-top: 2px solid #67bde1;
+  }
+  .gallery-holder .carousel .mask .slide {
+    float: left;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+    position: relative;
+  }
+  .gallery-holder .carousel .mask .slide:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, .8);
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+  }
+  .gallery-holder .carousel .mask .slide:hover:before {
+    background: rgba(255, 255, 255, 0);
+  }
+  .gallery-holder .carousel .mask .slide.active:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 9px 14px 9px;
+    border-color: transparent transparent #67bce1 transparent;
+    top: -14px;
+    left: 50%;
+    margin: 0 0 0 -9px;
+    position: absolute;
+  }
+  .gallery-holder .carousel .mask .slide.active:before {
+    background: rgba(255, 255, 255, 0);
+  }
+  .gallery-holder .carousel .mask .slide img {
+    vertical-align: top;
+  }
+  .gallery-holder .carousel .btn-next,
+  .gallery-holder .carousel .btn-prev {
+    position: absolute;
+    border-top: 2px solid #4b87a1;
+    top: 27px;
+    left: 0;
+    background: #4b87a1;
+    height: 95px;
+    color: #fff;
+    width: 48px;
+    font-size: 30px;
+    -webkit-transition: all .3s ease;
+    transition: all .3s ease;
+  }
+  .gallery-holder .carousel .btn-next:hover,
+  .gallery-holder .carousel .btn-prev:hover {
+    background: #88afc1;
+  }
+  .gallery-holder .carousel .btn-next i,
+  .gallery-holder .carousel .btn-prev i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+  }
+  .gallery-holder .carousel .btn-next {
+    left: auto;
+    right: 0;
+  }
+  .maker-slider-btn {
+    position: absolute;
+    z-index: 999;
+    top: 30px;
+    right: 30px;
+    color: #FFF;
+    background: #085a7e;
+    opacity: 0.3;
+    padding: 10px 25px 10px 25px;
+    border-radius: 5px;
+  }
+  @media(min-width:768px) and (max-width:991px) {
+    .browse-box .columns {
+      -moz-column-count: 3;
+      -webkit-column-count: 3;
+      column-count: 3;
+    }
+  }
+  @media(max-width:991px) {
+    .cycle-gallery .mask .slide .text-holder p {
+      line-height: 1.2;
+    }
+  }
+}

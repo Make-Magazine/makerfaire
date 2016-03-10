@@ -65,3 +65,19 @@ $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_id',  
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_before',   'filterType'   => 'text');
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_after',   'filterType'   => 'text');
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'fieldLabel',   'filterType'   => 'text');
+
+//faire report
+$tableFields['wp_mf_faire_subarea'][] = array('fieldName' => 'faire',   'filterType'   => 'text',
+                                              'dataSql' => "(SELECT faire "
+                                                          . " FROM `wp_mf_faire`,wp_mf_faire_area "
+                                                          . " where wp_mf_faire.ID = wp_mf_faire_area.faire_id and wp_mf_faire_area.ID= area_id) "
+                                                          . " as faire"
+                                              );
+$tableFields['wp_mf_faire_subarea'][] = array('fieldName' => 'area_id',   'filterType' => 'dropdown',   'fieldLabel'  => 'Area',
+                                          'fkey'       => array('referenceTable'   => 'wp_mf_faire_area',
+                                                                'referenceField'   => 'ID',
+                                                                'referenceDisplay' => 'area'));
+$tableFields['wp_mf_faire_subarea'][] = array('fieldName' => 'subarea',   'filterType'   => 'text');
+
+
+

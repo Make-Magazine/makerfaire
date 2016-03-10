@@ -102,9 +102,9 @@ class Make_Instagram {
                         . "         <div class=\"col-xs-12 col-sm-4\">"
                         . "             <div class=\"social-holder twitter\">"
                         . "                 <div class=\"title\">"
-                        . "                     <h1><a href=\"http://twitter.com/makerfaire\" target=\"_blank\">#MakerFaire, #wmf15</a></h1>"
+                        . "                     <h1>Twitter, <a href=\"http://twitter.com/makerfaire\" target=\"_blank\">#MakerFaire</a></h1>"
                         . "                 </div>"
-                        . "                 <div id=\"recent-twitter\"></div>"
+                        . "                 <a class='twitter-timeline' href='https://twitter.com/hashtag/makerfaire' data-widget-id='705845593231351809' height='400' data-chrome='noheader nofooter'>#makerfaire Tweets</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\"://platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");</script>"
                         . "                 <a href=\"http://twitter.com/makerfaire\" target=\"_blank\" class=\"follow\">Follow us on Twitter</a>"
                         . "             </div>"
                         . "         </div>";
@@ -112,7 +112,7 @@ class Make_Instagram {
 		$output .="         <div class=\"col-xs-12 col-sm-8\">
                                         <div class=\"social-holder instagram\">
                                                 <div class=\"title\">
-                                                        <h1>Instagram, <a href=\"http://instagram.com/makerfaire\" target=\"_blank\">#makerfaire, #wm15</a></h1>
+                                                        <h1>Instagram, <a href=\"http://instagram.com/makerfaire\" target=\"_blank\">#makerfaire</a></h1>
                                                 </div>";
 					foreach( $pages as $page ) {			
 							$output .= "<ul class=\"img-list\">";
