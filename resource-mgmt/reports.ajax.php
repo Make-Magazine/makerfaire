@@ -105,6 +105,7 @@ if(isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
 }else{
 	invalidRequest('Request Type Not Sent');
 }
+
 function buildRpt($formSelect=array(),$selectedFields=array()){
   global $mysqli;
   $forms = implode(",",$formSelect);

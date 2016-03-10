@@ -34,8 +34,11 @@
   </div>
 
   <div ng-if="reports.showGrid && !reports.showbuild" class="reportsView col-xs-12 col-sm-12 col-md-12 col-lg-12 animated fadeInUp">
-    <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('item')">Group by Item->Type</button>
-    <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('faire')">Group by Faire->Area->Subarea</button>
+    
+    <div ng-if="reports.subRoute=='drill'">
+      <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('item')">Group by Item->Type</button>
+      <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('faire')">Group by Faire->Area->Subarea</button>
+    </div>
     <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-resize-columns ui-grid-grouping  class="grid">
       <div class="grid-msg-overlay" ng-hide="!reports.loading">
         <div class="msg">

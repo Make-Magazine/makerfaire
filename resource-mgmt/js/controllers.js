@@ -5,7 +5,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     'vendors'  : {'list':'wp_rmt_vendors', 'resources': 'wp_rmt_vendor_resources'},
     'resources': {'list':'wp_rmt_resources', 'items': 'wp_rmt_resource_categories'},
     'faire'    : {'data':'wp_mf_faire', 'orders':'wp_rmt_vendor_orders','areas':'wp_mf_faire_area','subareas':'wp_mf_faire_subarea','global-faire':'wp_mf_global_faire'},
-    'entry'    : {'resources': 'wp_rmt_entry_resources','attention':'wp_rmt_entry_attn','attributes': 'wp_rmt_entry_attributes', 'atttibuteCategories': 'wp_rmt_entry_att_categories', 'workflow':'wp_rmt_entry_workflow'}
+    'entry'    : {'resources': 'wp_rmt_entry_resources','attention':'wp_rmt_entry_attn','attributes': 'wp_rmt_entry_attributes', 'atttibuteCategories': 'wp_rmt_entry_att_categories', 'workflow':'wp_rmt_attn'}
   };
 
   $scope.resource    = {};
