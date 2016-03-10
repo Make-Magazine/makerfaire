@@ -65,6 +65,10 @@ module.exports = function(grunt) {
           'js/built-admin-scripts.js': [
             'js/src-admin-scripts/*.js'
           ],
+          'js/angular/global-faires-map-app.js': [
+            'js/angular/global-faires-map-app/faireMapsApp.js',
+            'js/angular/global-faires-map-app/*.js'
+          ],
         }
       },
     },
@@ -77,6 +81,7 @@ module.exports = function(grunt) {
         },
         files: {
           'js/built.js': 'js/built.js',
+          'js/angular/global-faires-map-app.js': 'js/angular/global-faires-map-app.js',
           'js/built-admin-scripts.js': 'js/built-admin-scripts.js'
         }
       },

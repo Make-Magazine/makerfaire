@@ -1,6 +1,6 @@
 <?php /* Template Name: Global Maker Faire Map */  ?>
 <?php get_header(); ?>
-<div class="faire-global-map-wrp" ng-app="faireMapsApp">
+<div class="faire-global-map-wrp" ng-app="faireMapsApp" ng-strict-di>
   <div ng-controller="MapCtrl as $ctrl">
     <div class="container">
       <div class="col-md-12">
