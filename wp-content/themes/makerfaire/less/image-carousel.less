@@ -1,0 +1,159 @@
+.quora {
+  .carousel-caption {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0px 15px 0px;
+    background: #333;
+    background: rgba(0, 0, 0, 0.75);
+  }
+  .carousel-gallery .top-buttons .btn-next,
+  .carousel-gallery .top-buttons .btn-prev {
+    width: 54px;
+    height: 54px;
+    background: rgba(255, 255, 255, .17);
+    color: #9fa0a0;
+  }
+  .carousel-gallery .top-buttons .btn-next {
+    right: 50px;
+  }
+  .carousel-gallery .top-buttons .btn-prev {
+    left: 50px;
+  }
+  .carousel-holder .btn-next:hover,
+  .carousel-holder .btn-prev:hover,
+  .carousel-gallery .top-buttons .btn-next:hover,
+  .carousel-gallery .top-buttons .btn-prev:hover {
+    background: rgba(195, 195, 209, .17);
+  }
+  .carousel-holder {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    margin: 0 0 10px;
+  }
+  .carousel-holder .carousel-inner {
+    position: relative;
+    height: 389px;
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 300;
+    color: #fff;
+    background-color: #000;
+  }
+  .carousel-holder .carousel-inner h1 {
+    margin: 0 0 10px;
+  }
+  .carousel-holder .carousel-inner .mask {
+    position: relative;
+    overflow: hidden;
+  }
+  .carousel-holder .carousel-inner .mask .slideset {
+    width: 99999px;
+    float: left;
+  }
+  .carousel-holder .carousel-inner .mask .slideset .text-box span.icon-arrow-right {
+    font-size: .8em;
+    margin-top: .2em;
+    padding-left: .5em;
+  }
+  .carousel-holder .carousel-inner .mask .slide {
+    float: left;
+    height: 369px;
+  }
+  .carousel-holder .carousel-inner .mask .slide.active {
+    z-index: 1;
+  }
+  .carousel-holder .btn-box {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    margin: -27px 0 0;
+    pointer-events: none;
+  }
+  .carousel-holder .btn-next,
+  .carousel-holder .btn-prev {
+    width: 54px;
+    height: 54px;
+    display: block;
+    float: left;
+    background: rgba(255, 255, 255, .17);
+    margin: 0 0 0 -60px;
+    position: relative;
+    color: #9fa0a0;
+    pointer-events: auto;
+  }
+  .carousel-holder .btn-next span,
+  .carousel-holder .btn-prev span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+  }
+  .carousel-holder .btn-next {
+    float: right;
+    margin: 0 -60px 0 0;
+  }
+  .carousel-holder .text-box {
+    width: 100%;
+    margin-top: 75px;
+    pointer-events: none;
+  }
+  .carousel-holder .mask .container .col-xs-12 a:hover {
+    text-decoration: none;
+  }
+  .carousel-holder .mask .slideset .bg-stretch img {
+    opacity: 1;
+  }
+  .carousel-holder .mask .slideset .bg-stretch img:hover {
+    opacity: 0.8;
+  }
+  @media(max-width: 767px) {
+    .carousel-holder .carousel-inner {
+      height: auto;
+    }
+    .carousel-holder .carousel-inner h1 {
+      font-size: 26px;
+    }
+    .carousel-holder .carousel-inner .mask .slide {
+      height: auto;
+    }
+    .bg-stretch {
+      position: static;
+    }
+    .carousel-holder .mask .slideset {
+      background: #085a7e;
+    }
+    .carousel-holder .mask .slideset .bg-stretch img {
+      width: 100% !important;
+      height: auto !important;
+    }
+    .carousel-holder .text-box {
+      padding: 15px 0 0;
+      height: 100%;
+      background: #085a7e;
+      margin-top: -10px;
+      min-height: 125px;
+      max-height: 125px;
+    }
+    .carousel-holder .carousel-inner p {
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.2em;
+    }
+    .carousel-holder .btn-next,
+    .carousel-holder .btn-prev {
+      width: 40px;
+      height: 40px;
+    }
+    .carousel-holder .btn-box {
+      margin: 0 50px 0;
+      top: 25%;
+    }
+  }
+}
