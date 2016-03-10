@@ -32,6 +32,9 @@ switch ($sign) {
     case "3":
         $loginmessage = "Sign in to manage your entries";
         break;
+    case "5":
+        $loginmessage = "Sign in to submit your information.";
+        break;
     default:
         $loginmessage = 'Sign In';
         break;
