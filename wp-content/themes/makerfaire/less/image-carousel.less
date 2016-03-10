@@ -1,0 +1,221 @@
+.quora {
+  .carousel-caption {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0px 15px 0px;
+    background: #333;
+    background: rgba(0, 0, 0, 0.75);
+  }
+  .carousel-gallery {
+    .top-buttons .btn-next,
+    .top-buttons .btn-prev {
+      width: 54px;
+      height: 54px;
+      background: rgba(255, 255, 255, .17);
+      color: #9fa0a0;
+    }
+    .top-buttons .btn-next {
+      right: 50px;
+    }
+    .top-buttons .btn-prev {
+      left: 50px;
+    }
+  }
+  .carousel-holder .btn-next:hover,
+  .carousel-holder .btn-prev:hover,
+  .carousel-gallery .top-buttons .btn-next:hover,
+  .carousel-gallery .top-buttons .btn-prev:hover {
+    background: rgba(195, 195, 209, .17);
+  }
+  .carousel-holder {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    margin: 0 0 10px;
+    // slideshow pagination
+    .pagination {
+      position: absolute;
+      z-index: 1;
+      bottom: 0;
+      background: #085a7e;
+      margin: 0;
+      width: 100%;
+      height: 20px;
+      text-align: center;
+      border-radius: 0;
+      li {
+        display: inline-block;
+        vertical-align: top;
+        border-radius: 50%;
+        a {
+          display: block;
+          width: 16px;
+          height: 20px;
+          -webkit-transition: all .3s ease;
+          transition: all .3s ease;
+          text-indent: -9999px;
+          overflow: hidden;
+          &:before {
+            content: '';
+            background: rgba(237, 235, 226, 0.2);
+            height: 8px;
+            width: 8px;
+            margin: 5px auto;
+            border-radius: 50%;
+            display: block;
+          }
+          &:hover:before {
+            background: rgba(103, 189, 225, .2);
+          }
+        }
+        &.active a:before {
+          background: #67bde1;
+        }
+      }
+    }
+    .carousel-inner {
+      position: relative;
+      height: 389px;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: 300;
+      color: #fff;
+      background-color: #000;
+      h1 {
+        margin: 0 0 10px;
+      }
+      .mask {
+        position: relative;
+        overflow: hidden;
+        .slideset {
+          width: 99999px;
+          float: left;
+        }
+        .slideset .text-box span.icon-arrow-right {
+          font-size: .8em;
+          margin-top: .2em;
+          padding-left: .5em;
+        }
+        .slide {
+          float: left;
+          height: 369px;
+        }
+        .slide.active {
+          z-index: 1;
+        }
+      }
+    }
+    .bg-stretch {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: -1;
+    }
+    .mask .container .col-xs-12 a:hover {
+      text-decoration: none;
+    }
+    .mask .slideset .bg-stretch img {
+      opacity: 1;
+    }
+    .mask .slideset .bg-stretch img:hover {
+      opacity: 0.8;
+    }
+    .btn-box {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      margin: -27px 0 0;
+      pointer-events: none;
+    }
+    .btn-next,
+    .btn-prev {
+      width: 54px;
+      height: 54px;
+      display: block;
+      float: left;
+      background: rgba(255, 255, 255, .17);
+      margin: 0 0 0 -60px;
+      position: relative;
+      color: #9fa0a0;
+      pointer-events: auto;
+    }
+    .btn-next span,
+    .btn-prev span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translateX(-50%) translateY(-50%);
+      -ms-transform: translateX(-50%) translateY(-50%);
+      transform: translateX(-50%) translateY(-50%);
+    }
+    .btn-next {
+      float: right;
+      margin: 0 -60px 0 0;
+    }
+    .text-box {
+      width: 100%;
+      margin-top: 75px;
+      pointer-events: none;
+    }
+    @media(min-width: 1200px) {
+      .text-box {
+        margin-top: 105px;
+      }
+      .carousel-inner {
+        height: auto;
+        .mask .slide {
+          height: 450px;
+        }
+      }
+    }
+    @media(max-width: 767px) {
+      .carousel-inner {
+        height: auto;
+        h1 {
+          font-size: 26px;
+        }
+        .mask .slide {
+          height: auto;
+        }
+        .bg-stretch {
+          position: static;
+        }
+        p {
+          font-weight: 300;
+          font-size: 18px;
+          line-height: 1.2em;
+        }
+      }
+      .mask .slideset {
+        background: #085a7e;
+      }
+      .mask .slideset .bg-stretch img {
+        width: 100% !important;
+        height: auto !important;
+      }
+      .text-box {
+        padding: 15px 0 0;
+        height: 100%;
+        background: #085a7e;
+        margin-top: -10px;
+        min-height: 125px;
+        max-height: 125px;
+      }
+      .btn-next,
+      .btn-prev {
+        width: 40px;
+        height: 40px;
+      }
+      .btn-box {
+        margin: 0 50px 0;
+        top: 25%;
+      }
+    }
+  }
+}
