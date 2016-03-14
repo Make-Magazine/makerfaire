@@ -350,10 +350,15 @@ function gf_collapsible_sections($form, $lead){
         <?php echo displayContent($data['additional'],$lead,$fieldData);?>
       </div>
       <div role="tabpanel" class="tab-pane" id="addForms">
+
         <?php echo getmetaData($entry_id);?>
       </div>
       <div role="tabpanel" class="tab-pane" id="payments">
-        <?php echo getmetaData($entry_id,'payments');?>
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <?php echo getmetaData($entry_id,'payments');?>
+          </div>
+        </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="tabs-3">
         <!-- Additional Entries -->
@@ -476,6 +481,7 @@ function getmetaData($entry_id,$type=''){
     //check if entry-id is valid
     if(is_array($entry)){  //display entry data
       $formPull = GFAPI::get_form( $data->form_id );
+      if(!isset($formPull['form_type'])) $formPull['form_type']='';
       /*
        * determine if we should display form data
        * If type = blank, display all forms but Payment type
@@ -484,10 +490,8 @@ function getmetaData($entry_id,$type=''){
       if( ($type == ''         && $formPull['form_type'] != 'Payment') ||
           ($type == 'payments' && $formPull['form_type'] == 'Payment')){
         $formCount ++;
-        $return .= '<div class="entry-resource notes">';
-        $return .= '<table>';
-        $return .=  '<tr bgcolor="#EAF2FA">
-                        <td colspan="2"><h2>'.$formPull['title'].'</h2></td></tr>';
+        $formTable = '<table>';
+
         $count = 0;
         $field_count = sizeof( $formPull['fields'] );
         $has_product_fields = false;
@@ -507,7 +511,7 @@ function getmetaData($entry_id,$type=''){
                 if ( ! GFCommon::is_section_empty( $formFields, $formPull, $entry ) || $display_empty_fields ) {
                   $count ++;
                   $is_last = $count >= $field_count ? true : false;
-                  $return .= '
+                  $formTable .= '
                   <tr>
                     <td colspan="2" class="entry-view-section-break'. ($is_last ? ' lastrow' : '') .'">'. esc_html( GFCommon::get_label( $formFields ) ) .'</td>
                   </tr>';
@@ -544,7 +548,7 @@ function getmetaData($entry_id,$type=''){
                     </tr>';
 
                   $content = apply_filters( 'gform_field_content', $content, $formFields, $value, $entry['id'], $formPull['id'] );
-                  $return .= $content;
+                  $formTable .= $content;
                 }
                 break;
             }
@@ -552,22 +556,44 @@ function getmetaData($entry_id,$type=''){
         }
         if($has_product_fields){
           $format = 'html';
-          $return .= GFCommon::get_submitted_pricing_fields( $formPull, $entry, $format);
+          $formTable .= GFCommon::get_submitted_pricing_fields( $formPull, $entry, $format);
         }
 
         //display any payment notes
         $notes = RGFormsModel::get_lead_notes( $data->lead_id );
         foreach($notes as $note){
           if($note->user_name=='PayPal'){
-            $return .= '<tr><td colspan="2" class="entry-view-field-name">PayPal</td></tr>';
-            $return .= '<tr><td colspan="2" class="entry-view-field-value">'.
+            $formTable .= '<tr><td colspan="2" class="entry-view-field-name">PayPal</td></tr>';
+            $formTable .= '<tr><td colspan="2" class="entry-view-field-value">'.
                           esc_html(GFCommon::format_date($note->date_created, false)).'<br/>'.
                           $note->value.'</td>'.
                         '</tr>';
           }
         }
-        $return .= '</table>';
-        $return .= '</div>';
+        $formTable .= '</table>';
+
+        //let's set up each form as it's own collapsible section
+        $return .=
+            '<div class="panel-heading" id="headingOne">'.
+              '<div class="row">'.
+                '<div class="col-md-9">'
+                . '<h3 class="panel-title">'.$formPull['title'].'</h3>';
+                if(isset($entry['payment_status']) && $entry['payment_status']!=NULL){
+                  $return .=  '<br/>Status: '.$entry['payment_status'].
+                              ($entry['payment_amount']!=NULL?' ('.GFCommon::to_money( $entry['payment_amount'], $entry['currency']).')':'').
+                              ($entry['payment_date']!=NULL?' - '.$entry['payment_date']:'');
+                }
+           $return .=
+                '</div>'.
+                '<div class="col-md-3">'.
+                  '<button type="button"   class="btn btn-info" data-toggle="collapse" data-target="#entr_'.$entry['id'].'">Show/Hide Form Data</button>'.
+                '</div>'.
+              '</div>'. //close .row
+              '<hr/>'.
+            '</div>'. //close .panel-heading
+            '<div id="entr_'.$entry['id'].'" class="panel-collapse collapse" role="tabpanel">'.
+              '<div class="panel-body">'.$formTable.'</div>'.
+            '</div>'; //close panel-collapse
       }
     }
   }
