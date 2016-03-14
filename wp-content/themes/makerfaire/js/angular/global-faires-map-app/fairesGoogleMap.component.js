@@ -8,9 +8,9 @@
     controller: ['$rootScope', 'GMapsInitializer', 'FaireMapsSharedData',
       function($rootScope, GMapsInitializer, FaireMapsSharedData) {
         var ctrl = this;
+        var gMap;
 
         function initMap(mapId) {
-          var gMap;
           var customMapType = new google.maps.StyledMapType([{
             stylers: [{
               hue: '#FFFFFF'
@@ -119,6 +119,12 @@
         }
         GMapsInitializer.then(function() {
           initMap(ctrl.mapId);
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              gMap.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+              console.log(position.coords.latitude, position.coords.longitude);
+            });
+          }
         });
       }
     ]
