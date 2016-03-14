@@ -1,5 +1,5 @@
 // reports controller
-rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiGridConstants','uiGridGroupingConstants', function ($scope, $routeParams, $http,uiGridConstants,uiGridGroupingConstants) {
+rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiGridConstants', function ($scope, $routeParams, $http,uiGridConstants) {
   $scope.reports    = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
@@ -7,8 +7,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   $scope.reports.selectedFields = {};
 
   $scope.msg = {};
-
-  //begin create your own report - show selected forms
+  //create your own report - show selected forms
   $scope.reports.formName = function(rptID){
     var reportName = rptID;
     angular.forEach($scope.reports.forms, function(value, key) {
@@ -26,7 +25,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
     showGridFooter:true,
     enableFiltering: true,
     onRegisterApi: function(gridApi){
-      $scope.fieldSelect.gridApi = gridApi;
+      $scope.gridApi = gridApi;
 
       gridApi.selection.on.rowSelectionChanged($scope,function(rows){
         $scope.reports.selectedFields = gridApi.selection.getSelectedRows();
@@ -42,11 +41,11 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
 
   $scope.fieldSelect.multiSelect = true;
   $scope.selectAll = function() {
-    $scope.fieldSelect.gridApi.selection.selectAllRows();
+    $scope.gridApi.selection.selectAllRows();
   };
 
   $scope.clearAll = function() {
-    $scope.fieldSelect.gridApi.selection.clearSelectedRows();
+    $scope.gridApi.selection.clearSelectedRows();
   };
 
   $scope.generateReport = function() {
@@ -55,24 +54,11 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
     var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'type' : 'customRpt'}
     $scope.reports.callAJAX(vars);
   }
-  /*end build your own report */
-
-  //set report column grouping
-  $scope.reports.changeGrouping = function(groupBy) {
+ $scope.reports.setGrouping = function() {
     $scope.gridApi.grouping.clearGrouping();
-    if(groupBy=='item'){
-      $scope.gridApi.grouping.groupColumn('item');
-      $scope.gridApi.grouping.groupColumn('resource_id');
-    }else if(groupBy=='faire'){
-      $scope.gridApi.grouping.groupColumn('faire');
-      $scope.gridApi.grouping.groupColumn('area');
-      $scope.gridApi.grouping.groupColumn('subarea');
-      $scope.gridApi.grouping.groupColumn('location');
-    }
-    $scope.gridApi.grouping.aggregateColumn('qty', uiGridGroupingConstants.aggregation.SUM);
+    $scope.gridApi.grouping.groupColumn('age');
+    $scope.gridApi.grouping.aggregateColumn('state', uiGridGroupingConstants.aggregation.COUNT);
   };
-
-  //get report data
   $scope.reports.callAJAX = function(vars){
     $scope.reports.loading = true;
     //get grid data
@@ -103,8 +89,9 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
 
   //set up gridOptions for predefined reports
   $scope.gridOptions = {enableFiltering: true,
+    //minRowsToShow:20,enableCellEdit:false,
     enableGridMenu: true,
-    exporterCsvFilename: 'export.csv',
+    exporterCsvFilename: 'myFile.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
 
@@ -134,7 +121,6 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   var tablename = 'wp_rmt_entry_resources';
 
   if($routeParams){
-    $scope.reports.subRoute = $routeParams.sub;
     var subRoute  = $routeParams.sub;
     if(subRoute=='change')        tablename = 'wp_rg_lead_detail_changes';
     if(subRoute=='location')      tablename = 'wp_mf_faire_subarea';

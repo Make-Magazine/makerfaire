@@ -144,6 +144,9 @@ function breakDownEle(currentEle){
   if(currentEle.indexOf("res")!=-1){ //resource table
     fieldData['table'] = 'wp_rmt_entry_resources';
     var type    = 'res';
+  }else if(currentEle.indexOf("attn")!=-1){ //resource table
+    fieldData['table'] = 'wp_rmt_entry_attn';
+    var type    = 'attn';
   }else if(currentEle.indexOf("att")!=-1){ //attribute table
     fieldData['table'] = 'wp_rmt_entry_attributes';
     var type   = 'att';
@@ -167,6 +170,10 @@ function addRow(addTo){
     //add attribute
     type = 'att';
     dataArray = attributeArray;
+  }else if(addTo=='attention'){
+    //add attribute
+    type = 'attn';
+    dataArray = attentionArray;
   }
 
   var tableRow = '<tr id="'+type+'RowNew">';
@@ -194,7 +201,6 @@ function addRow(addTo){
   if (tbody.children().length == 0) {
     tbody.html(tableRow);
   }else{
-    alert('but not here');
     jQuery('#'+type+'Table > tbody > tr:first').before(tableRow);
   }
 }
@@ -214,7 +220,14 @@ function buildDropDown(type){
        itemSel += '<option value="'+objValue.key+'">'+objValue.value+'</option>';
     });
     itemSel += '</select>';
+  }else if(type=='attnvalue'){
+    var itemSel = '<select class="thVal"><option>Select Item</option>';
+    jQuery.each(attention, function(objKey,objValue) {
+       itemSel += '<option value="'+objValue.key+'">'+objValue.value+'</option>';
+    });
+    itemSel += '</select>';
   }
+
   return itemSel;
 }
 var resourceArray=[{'id':'resitem','class':'noSend','display':"dropdown"},
@@ -229,6 +242,11 @@ var attributeArray=[{'id':'attcategory','class':'','display':"dropdown"},
                    {'id':'attcomment','class':'editable textareaEdit','display':'textarea'},
                    {'id':'attuser',class:'','display':''},
                    {'id':'attdateupdate',class:'','display':''}
+                 ];
+var attentionArray=[{'id':'attnvalue','class':'','display':"dropdown"},
+                   {'id':'attncomment','class':'editable textareaEdit','display':'textarea'},
+                   {'id':'attnuser',class:'','display':''},
+                   {'id':'attndateupdate',class:'','display':''}
                  ];
 function setType(itemID,typeID,id){ //build type drop down based on item drop down
   if (types[itemID]) {
@@ -255,6 +273,7 @@ function resAttDelete(currentEle){
     currentEle = currentEle.replace("#", ""); //remove hashtag
     var fieldData = breakDownEle(currentEle);
     var rowID = currentEle.replace("Row", "");
+    var rowID = rowID.replace("attn", "");
     var rowID = rowID.replace("att", "");
     var rowID = rowID.replace("res", "");
     //send delete
@@ -279,11 +298,11 @@ function insertRowDB(type){
     if(!jQuery(this).hasClass('noSend')){
       //get field name from column id
       fName = jQuery(this).attr('id');
-      //remove the type from the field name (i.e.res or att)
+      ////remove the type from the field name (i.e.res or att)
       fName = fName.replace(type, "");
-      if(fName =='type')     fName ='resource_id';
-      if(fName =='category') fName ='attribute_id';
-
+      if(fName =='type'      && type=='res')  fName ='resource_id';
+      if(fName =='category'  && type=='att')  fName ='attribute_id';
+      if(fName =='value'     && type=='attn') fName ='attn_id';
       insertArr[fName]=value;
     }
     that = jQuery(this).find(".thVal");
@@ -303,6 +322,9 @@ function insertRowDB(type){
   }else if(type=='att'){
     var table     = 'wp_rmt_entry_attributes';
     var dataArray = attributeArray;
+  }else if(type=='attn'){
+    var table     = 'wp_rmt_entry_attn';
+    var dataArray = attentionArray;
   }
   var data = {
         'action': 'update-entry-resAtt',
@@ -312,7 +334,7 @@ function insertRowDB(type){
       };
   jQuery.post(ajaxurl, data, function(response) {
     //set actions column
-    jQuery('#resRowNew #actions').html('<p onclick="jQuery(\'#resRow'+response.ID+'\').remove();"><i class="fa fa-minus-circle"></i></p>');
+    jQuery('#'+type+'RowNew #actions').html('<p onclick="resAttDelete(\'#'+type+'Row'+response.ID+'\')"><i class="fa fa-minus-circle"></i></p></td>');
 
     //update fields with returned row id
     for (i = 0; i < dataArray.length; i++) {
@@ -320,7 +342,7 @@ function insertRowDB(type){
     }
 
     //after adding row set row id to the correct value
-    jQuery('#resRowNew').attr('id','resRow'+response.ID);
+    jQuery('#'+type+'RowNew').attr('id',type+'Row'+response.ID);
 
     //update the date/time and user info
     jQuery('#'+type+'user_'+response.ID).html(response.user);

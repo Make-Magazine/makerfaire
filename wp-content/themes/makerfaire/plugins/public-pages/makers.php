@@ -487,7 +487,7 @@ function mf_merged_terms( $atts ) {
                 //array_merge for atts here to avoid breaking code term display code
 		$cats_tags = mf_get_terms(array('category', 'post_tag'), array_merge($atts, array('faire' => $faire) ) );
 	$output = '<ul class="columns">';
-	foreach ($cats_tags as $cat) {            
+	foreach ($cats_tags as $cat) {
             $cat->name = $cat->name.'('.$cat->count.')';
             if($cat->count >= 1){
 		// $atts['faire'] has been deprecated and will be removed once the production server has been updated.
@@ -519,48 +519,51 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
 			'exclude'		=> array( '1' ),
 			'show_tags' => '',
 			'show_cats' => '',
-			'faire' => $faire,                   
+			'faire' => $faire,
 			);
-			
+
 		$args = wp_parse_args( $atts, $args );
 		$topic_list = array('tags' => explode(',', $args['show_tags']), 'cats' => explode(',', $args['show_cats']) );
 		$cats = get_terms( 'category', $args );
 
-			if(in_array('post_tag', $term_types)) {
-				$tag_args = $args; //Lets not override 
-				$tag_args['hide_empty'] = false;
-				unset($tag_args['faire']);
-				unset($tag_args['faire_url']);
-				$tags = get_terms( 'post_tag' , $tag_args );
-                                var_dump($tags);
-				if ((isset($topic_list['tags'])) && ($topic_list['tags'][0] !== '') && (count($topic_list['tags']) >= 1)) { 
-					foreach($tags as $tag_index => $tag) {
-						if(!(in_array($tag->slug, $topic_list['tags']))) {
-							unset($tags[$tag_index]);
-						}			 
-					}
-				}
+    if(in_array('post_tag', $term_types)) {
+      $tag_args = $args; //Lets not override
+      $tag_args['hide_empty'] = false;
+      unset($tag_args['faire']);
+      unset($tag_args['faire_url']);
+      $tags = get_terms( 'post_tag' , $tag_args );
+
+      if ((isset($topic_list['tags'])) && ($topic_list['tags'][0] !== '') && (count($topic_list['tags']) >= 1)) {
+        foreach($tags as $tag_index => $tag) {
+          if(!(in_array($tag->slug, $topic_list['tags']))) {
+            unset($tags[$tag_index]);
+          }
+        }
+      }
 		} else {
 			$tags = array();
 		}
 		if(in_array('category', $term_types)) {
-				$cat_args = $args; //Lets not override 
+				$cat_args = $args; //Lets not override
 				$cat_args['hide_empty'] = false;
 				unset($cat_args['faire']);
 				unset($cat_args['faire_url']);
 				$cats = get_terms( 'category' , $cat_args );
-							if(($args['hide_empty']) && count($cat_posts) == 0) {
-								unset($cats[$cat_index]);
-							} else {
-								$topic_list['cats'][] = $cat->slug;
-							}
-					if ((isset($topic_list['cats'])) && ($topic_list['cats'][0] !== '') && (count($topic_list['cats']) >= 1)) { 
-						foreach($cats as $cat_index => $cat) {
-							if(!( (in_array($cat->slug, $topic_list['cats'])) )) {
-								unset($cats[$cat_index]);
-							}			 
-						}
-					}
+        /*
+        //??$cat_posts not set??
+        if(($args['hide_empty']) && count($cat_posts) == 0) {
+          unset($cats[$cat_index]);
+        } else {
+          //$cat->slug; not set???
+          $topic_list['cats'][] = $cat->slug;
+        }*/
+        if ((isset($topic_list['cats'])) && ($topic_list['cats'][0] !== '') && (count($topic_list['cats']) >= 1)) {
+          foreach($cats as $cat_index => $cat) {
+            if(!( (in_array($cat->slug, $topic_list['cats'])) )) {
+              unset($cats[$cat_index]);
+            }
+          }
+        }
 
 		} else {
 				$cats = array();
@@ -570,7 +573,7 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
 
 		usort($cats_tags, function($a, $b) { return strcmp($a->slug, $b->slug); } );
 		return $cats_tags;
-} 
+}
 add_filter('the_title', function($title) {
 	return str_replace('u03a9', '&#8486;', $title);
 	}
@@ -592,7 +595,7 @@ function mf_featured_makers_home() {
 		'meta_value'	=> true,
 		'post_type'		=> 'mf_form',
 		'post_status'	=> 'accepted',
-            
+
 		);
 	$query = new WP_Query( $args );
 	$output = '<div id="featuredMakers" class="carousel slide">';

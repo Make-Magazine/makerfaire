@@ -22,7 +22,10 @@ if (!is_user_logged_in())
   <script src="node_modules/angular/angular.min.js"></script>
   <script src="node_modules/angular-route/angular-route.min.js"></script>
   <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+  <!-- to export grid data -->
   <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
+  <script src="http://ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
+  <script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
   <script src="node_modules/angular-ui-grid/ui-grid.min.js"></script>
   <script src="js/bootstrap/bootstrap.min.js"></script>
   <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
@@ -129,37 +132,35 @@ a {
           <ul class="nav nav-list">
             <li><label class="tree-toggle nav-header">Reports</label>
               <ul class="nav nav-list tree">
-                <li><a href="#reports">Entry Resources</a></li>
+                <!--<li><a href="#reports/drill">Resource Drill Down</a></li>-->
                 <li><a href="#reports/change">Entry Change Report</a></li>
                 <li><a href="#reports/location">Faire Location Report</a></li>
-                <li><a href="#reports/build">Build your own Report</a></li>
+                <!--<li><a href="#reports/build">Build your own Report</a></li>-->
               </ul>
             </li>
-            <li><label class="tree-toggle nav-header">Resources</label>
+            <li><label class="tree-toggle nav-header">Entry Specific Data</label>
               <ul class="nav nav-list tree">
-                <li><a href="#resources/list">Type</a></li>
-                <li><a href="#resources/items">Items</a></li>
+                <li><a href="#entry/resources">Assigned Resources</a></li>
+                <li><a href="#entry/attributes">Assigned Attributes</a></li>
+                <li><a href="#entry/attention">Assigned Attention</a></li>
               </ul>
             </li>
-            <li><label class="tree-toggle nav-header">Vendors</label>
+            <li><label class="tree-toggle nav-header">Manage Data</label>
               <ul class="nav nav-list tree">
-                <li><a href="#vendors/list">List</a></li>
-                <li><a href="#vendors/resources">Resources</a></li>
+                <li><a href="#resources/list">Resource Type</a></li>
+                <li><a href="#resources/items">Resource Items</a></li>
+                <li><a href="#entry/atttibuteCategories">Attributes</a></li>
+                <li><a href="#entry/workflow">Workflow/Attention</a></li>
+                <li><a href="#vendors/list">Vendor List</a></li>
+                <li><a href="#vendors/resources">Vendor Resources</a></li>
               </ul>
             </li>
-            <li><label class="tree-toggle nav-header">Faires</label>
+            <li><label class="tree-toggle nav-header">Faire Data</label>
               <ul class="nav nav-list tree">
                 <li><a href="#faire/global-faire">Global Faire Data</a></li>
                 <li><a href="#faire/data">Faire Data</a></li>
                 <li><a href="#faire/areas">Areas</a></li>
                 <li><a href="#faire/subareas">Sub-Areas</a></li>
-              </ul>
-            </li>
-            <li><label class="tree-toggle nav-header">Entry</label>
-              <ul class="nav nav-list tree">
-                <li><a href="#entry/atttibuteCategories">Attributes</a></li>
-                <li><a href="#entry/workflow">Workflow</a></li>
-                <!--<li><a href="#entry">Entry Resources</a></li>-->
               </ul>
             </li>
           </ul>
@@ -173,5 +174,6 @@ a {
   <script src="js/main.js"></script>
   <script src="js/controllers.js"></script>
   <script src="js/report.controllers.js"></script>
+  <script src='/wp-content/plugins/gravityforms/js/gf_field_filter.js'></script>
 </body>
 </html>
