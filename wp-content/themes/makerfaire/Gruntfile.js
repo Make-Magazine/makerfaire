@@ -99,15 +99,15 @@ module.exports = function(grunt) {
     // Watch for changes on save and livereload
     watch: {
       dev: {
-        files: ['less/**/*.less', 'js/src/*.js'],
+        files: ['less/**/*.less', 'js/src/*.js', 'js/angular/**/*.js'],
         tasks: ['less:dev', 'concat']
       },
       prod: {
-        files: ['less/**/*.less', 'js/src/*.js'],
+        files: ['less/**/*.less', 'js/src/*.js', 'js/angular/**/*.js'],
         tasks: ['less:prod', 'concat', 'uglify']
       },
       reload: {
-        files: ['less/**/*.less', 'js/**/*.js'],
+        files: ['less/**/*.less', 'js/**/*.js', 'js/angular/**/*.js'],
         tasks: ['js'],
         options: {
           livereload: true
