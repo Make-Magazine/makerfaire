@@ -470,11 +470,11 @@ function getmetaData($entry_id,$type=''){
   $return = '';
   $metaData = mf_get_form_meta( 'entry_id',$entry_id );
 
+  $formCount=0;
   foreach($metaData as $data){
     $entry = GFAPI::get_entry( $data->lead_id );
     //check if entry-id is valid
     if(is_array($entry)){  //display entry data
-      $return .= '<div class="entry-resource notes">';
       $formPull = GFAPI::get_form( $data->form_id );
       /*
        * determine if we should display form data
@@ -483,6 +483,8 @@ function getmetaData($entry_id,$type=''){
        */
       if( ($type == ''         && $formPull['form_type'] != 'Payment') ||
           ($type == 'payments' && $formPull['form_type'] == 'Payment')){
+        $formCount ++;
+        $return .= '<div class="entry-resource notes">';
         $return .= '<table>';
         $return .=  '<tr bgcolor="#EAF2FA">
                         <td colspan="2"><h2>'.$formPull['title'].'</h2></td></tr>';
@@ -565,12 +567,12 @@ function getmetaData($entry_id,$type=''){
           }
         }
         $return .= '</table>';
+        $return .= '</div>';
       }
-      $return .= '</div>';
     }
   }
 
-  return $return;
+  return '<span><h3>'.($type == 'payments'?'Payment Forms':'Additional Forms').' ('.$formCount.')</h3></span>'.$return;
 }
 
 // this function returns all entries with a
@@ -581,12 +583,9 @@ function mf_get_form_meta( $meta_key,$meta_value ) {
   $entry = GFAPI::get_entry( $meta_value );
 
   //retrieve the most current records for each additional form/entry id/form_id combination
-  $results  = $wpdb->get_results( $sql = $wpdb->prepare("select * from "
-          . "(SELECT * FROM {$table_name}
+  $results  = $wpdb->get_results( $sql = $wpdb->prepare("SELECT * FROM {$table_name}
               WHERE meta_value=%d AND meta_key=%s
-              order by id desc) custom
-          group by meta_value, form_id, lead_id", $meta_value, $meta_key));
-
+              order by id desc", $meta_value, $meta_key));
 	return $results;
 }
 
