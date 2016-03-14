@@ -10,17 +10,25 @@
     <div class="map-filters-wrp">
       <div class="container">
         <div class="col-md-12">
-          <h2>Explore Maker Faires</h2>
-          <input type="text"
-            class="form-control input-sm"
-            placeholder="Location, name or type"
-            ng-model="$ctrl.filterText"
-            ng-model-options="{debounce: 500}"
-            ng-change="$ctrl.applyMapFilters()" />
+          <div class="searchbox">
+            <h2>Explore Maker Faires</h2>
+            <input type="text"
+              class="form-control input-sm"
+              placeholder="Location, name or type"
+              ng-model="$ctrl.filterText"
+              ng-model-options="{debounce: 500}"
+              ng-change="$ctrl.applyMapFilters()" />
+          </div>
           <div class="filters ng-cloak">
-            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Flagship">Flagship Faires</faires-map-filter>
-            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Featured">Featured Faires</faires-map-filter>
-            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Mini">Mini Maker Faires</faires-map-filter>
+            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Flagship">
+              Flagship <span class="hidden-sm hidden-xs">Faires</span>
+            </faires-map-filter>
+            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Featured">
+              Featured <span class="hidden-sm hidden-xs">Faires</span>
+            </faires-map-filter>
+            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Mini">
+              Mini <span class="hidden-sm hidden-xs">Maker Faires</span>
+            </faires-map-filter>
           </div>
         </div>
       </div>

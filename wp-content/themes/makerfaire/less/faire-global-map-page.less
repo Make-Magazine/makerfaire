@@ -63,6 +63,20 @@
       line-height: 20px;
       vertical-align: bottom;
     }
+    @media all and (max-width: 620px) {
+      .searchbox {
+        display: flex;
+        input[type="text"] {
+          flex: 1;
+          max-width: initial;
+        }
+      }
+      .filters {
+        clear: both;
+        min-width: 200px;
+        float: left;
+      }
+    }
   }
   .loading-spinner {
     color: white;
