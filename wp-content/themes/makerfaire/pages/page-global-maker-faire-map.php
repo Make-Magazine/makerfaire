@@ -17,7 +17,7 @@
             ng-model="$ctrl.filterText"
             ng-model-options="{debounce: 500}"
             ng-change="$ctrl.applyMapFilters()" />
-          <div class="filters">
+          <div class="filters ng-cloak">
             <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Flagship">Flagship Faires</faires-map-filter>
             <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Featured">Featured Faires</faires-map-filter>
             <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Mini">Mini Maker Faires</faires-map-filter>
