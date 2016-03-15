@@ -330,15 +330,17 @@ function gf_collapsible_sections($form, $lead){
   //additional Entries
   $addEntries =
         '<table width="100%">
-          <tr>
-            <th>Maker Name  </th>
-            <th>Maker Type  </th>
-            <th>Record ID   </th>
-            <th>Project Name</th>
-            <th>Form Name   </th>
-            <th>Status      </th>
-          </tr>';
-
+          <thead>
+            <tr>
+              <th>Maker Name  </th>
+              <th>Maker Type  </th>
+              <th>Record ID   </th>
+              <th>Project Name</th>
+              <th>Form Name   </th>
+              <th>Status      </th>
+            </tr>
+          </thead>';
+  $addEntriesCnt=0;
   foreach($emailArray as $key=>$email){
     $results = $wpdb->get_results( 'SELECT *, '
                           . ' (select value from wp_rg_lead_detail detail2 '
@@ -353,10 +355,11 @@ function gf_collapsible_sections($form, $lead){
                   . ' join wp_rg_form on wp_rg_form.id = wp_rg_lead_detail.form_id '
                   . ' WHERE value = "'.$key.'"'
                   . '   and lead_id != '.$entry_id.' group by lead_id order by lead_id');
-
+    
     $return = array();
     foreach($results as $addData){
       $outputURL = admin_url( 'admin.php' ) . "?page=mf_entries&view=mfentry&id=".$addData->form_id . '&lid='.$addData->lead_id;
+      $addEntriesCnt++;
       $addEntries .=  '<tr>';
 
       //only display the first instance of the email
@@ -375,7 +378,6 @@ function gf_collapsible_sections($form, $lead){
     }
   }
   $addEntries .= '</table>';
-  $addEntriesCnt = $wpdb->num_rows;
 
   //form data
   $addFormsData = getmetaData($entry_id);
