@@ -1739,10 +1739,10 @@ function redirect_gf_admin_pages(){
 
 add_action('admin_menu', 'redirect_gf_admin_pages');
 
-//add new merge tag: user-schedule
-add_filter('gform_custom_merge_tags', 'entry_schedule_custom_merge_tags', 10, 4);
-add_filter('gform_replace_merge_tags', 'entry_schedule_replace_merge_tags', 10, 7);
-add_filter('gform_field_content', 'entry_schedule_field_content', 10, 5);
+//MF custom merge tags
+add_filter('gform_custom_merge_tags', 'mf_custom_merge_tags', 10, 4);
+add_filter('gform_replace_merge_tags', 'mf_replace_merge_tags', 10, 7);
+add_filter('gform_field_content', 'mf_field_content', 10, 5);
 
 /**
 * add custom merge tags
@@ -1752,9 +1752,10 @@ add_filter('gform_field_content', 'entry_schedule_field_content', 10, 5);
 * @param int $element_id
 * @return array
 */
-function entry_schedule_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
+function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Schedule', 'tag' => '{entry_schedule}');
-
+    $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
+    $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
     return $merge_tags;
 }
 
@@ -1769,11 +1770,31 @@ function entry_schedule_custom_merge_tags($merge_tags, $form_id, $fields, $eleme
 * @param string $format
 * @return string
 */
-function entry_schedule_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
-    $schedule = get_schedule($lead);
-    $text = str_replace('{entry_schedule}', $schedule, $text);
+function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
+  //Entry Schedule
+  $schedule = get_schedule($lead);
+  $text = str_replace('{entry_schedule}', $schedule, $text);
 
-    return $text;
+  //Entry Resources
+  $resTable = '<table><tr><th>Resource</th><th>Quantity</th></tr>';
+  $resources = get_resources($lead);
+
+  foreach($resources as $entRes){
+    $resTable .= '<tr><td>'.$entRes[0].'</td><td>'.$entRes[1].'</td></tr>';
+  }
+  $resTable .= '</table>';
+  $text = str_replace('{entry_resources}', $resTable, $text);
+
+  //Entry Attributes
+  $attTable = '<table><tr><th>Attribute</th><th>Value</th></tr>';
+  $attributes = get_attributes($lead);
+
+  foreach($attributes as $entAtt){
+    $attTable .= '<tr><td>'.$entAtt[0].'</td><td>'.$entAtt[1].'</td></tr>';
+  }
+  $attTable .= '</table>';
+  $text = str_replace('{entry_attributes}', $attTable, $text);
+  return $text;
 }
 
 /**
@@ -1785,7 +1806,7 @@ function entry_schedule_replace_merge_tags($text, $form, $lead, $url_encode, $es
 * @param int $form_id
 * @return string
 */
-function entry_schedule_field_content($field_content, $field, $value, $lead_id, $form_id) {
+function mf_field_content($field_content, $field, $value, $lead_id, $form_id) {
     if (strpos($field_content, '{entry_schedule}') !== false) {
         $lead = GFAPI::get_entry( $lead_id );
         $schedule = get_schedule($lead);
@@ -1794,6 +1815,49 @@ function entry_schedule_field_content($field_content, $field, $value, $lead_id, 
     }
 
     return $field_content;
+}
+/** End MF custom merge tags **/
+
+/* Return array of resource information for lead*/
+function get_attributes($lead){
+  global $wpdb;
+  $return = array();
+  $entry_id = (isset($lead['id'])?$lead['id']:'');
+
+  if($entry_id!=''){
+    //gather resource data
+    $sql = "SELECT entry_id, "
+            . " (select category from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.ID = attribute_id)as attribute, "
+            . " value"
+            . " FROM `wp_rmt_entry_attributes`  "
+            . " and entry_id = ".$entry_id." order by attribute ASC, value ASC";
+    $results = $wpdb->get_results($sql);
+    foreach($results as $result){
+      $return[]= array('attribute'=>$result->attribute, 'value'=> $result->value);
+    }
+  }
+  return $return;
+}
+
+/* Return array of resource information for lead*/
+function get_resources($lead){
+  global $wpdb;
+  $return = array();
+  $entry_id = (isset($lead['id'])?$lead['id']:'');
+
+  if($entry_id!=''){
+    //gather resource data
+    $sql = "SELECT er.*, type, wp_rmt_resource_categories.category as item, wp_rmt_resource_categories.ID as item_id "
+            . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
+            . "where er.resource_id = wp_rmt_resources.ID "
+            . "and resource_category_id = wp_rmt_resource_categories.ID  "
+            . "and er.entry_id = ".$entry_id." order by item ASC, type ASC";
+    $results = $wpdb->get_results($sql);
+    foreach($results as $result){
+      $return[]= array('resource'=>$result->type, 'qty'=> $result->qty);
+    }
+  }
+  return $return;
 }
 
 /* Return schedule for lead */
@@ -1839,6 +1903,7 @@ function add_event( $notification_events ) {
     $notification_events['maker_cancel_exhibit']  = __( 'Maker Cancelled Exhibit', 'gravityforms' );
     $notification_events['maker_delete_exhibit']  = __( 'Maker Deleted Exhibit', 'gravityforms' );
     $notification_events['maker_updated_exhibit'] = __( 'Maker Updated Entry', 'gravityforms' );
+    $notification_events['manual']                = __( 'Send Manually', 'gravityforms' );
     return $notification_events;
 }
 
