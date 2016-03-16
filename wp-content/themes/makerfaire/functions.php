@@ -1780,7 +1780,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   $resources = get_resources($lead);
 
   foreach($resources as $entRes){
-    $resTable .= '<tr><td>'.$entRes[0].'</td><td>'.$entRes[1].'</td></tr>';
+    $resTable .= '<tr><td>'.$entRes['resource'].'</td><td>'.$entRes['qty'].'</td></tr>';
   }
   $resTable .= '</table>';
   $text = str_replace('{entry_resources}', $resTable, $text);
@@ -1790,7 +1790,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   $attributes = get_attributes($lead);
 
   foreach($attributes as $entAtt){
-    $attTable .= '<tr><td>'.$entAtt[0].'</td><td>'.$entAtt[1].'</td></tr>';
+    $attTable .= '<tr><td>'.$entAtt['attribute'].'</td><td>'.$entAtt['value'].'</td></tr>';
   }
   $attTable .= '</table>';
   $text = str_replace('{entry_attributes}', $attTable, $text);
