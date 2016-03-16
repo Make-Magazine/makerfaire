@@ -30,11 +30,9 @@ class Make_Instagram {
    */
   public function load_data($url='') {
 
-    $base_url = ($url!=''?$url:'https://api.instagram.com/v1/tags/makerfaire/media/recent');
-                
+    $base_url = ($url==''?'https://api.instagram.com/v1/users/self/media/recent':$url);
     $params = array(
-      //'access_token' => '227901753.5b9e1e6.7b46b974b69e434e9d3322f1e4463894',
-                        'access_token' => '227901753.5dedbe8.0e470ae228d144d3b43c4de8b4eb63cf',
+      'access_token' => '227901753.4c6a352.0917914fa6f3424ba313c6ee7f9103bc',
       'count' => 3
     );
 
@@ -73,27 +71,22 @@ class Make_Instagram {
     // TODO:  This whole function is a bit of a mess of entangled php and html.
     //      Would do a lot cleaner with some sort of templating engine.
 
-    $ps  = $this->load_data('https://api.instagram.com/v1/tags/makerfaire/media/recent');
-                $ps2 = $this->load_data('https://api.instagram.com/v1/tags/wmf15/media/recent');
-                                                                             
-                $ps = array_merge($ps,$ps2);
-                
-                //sort by created
-                usort($ps, array($this, "cmp"));                                                 
+    $ps  = $this->load_data('https://api.instagram.com/v1/users/self/media/recent');
+    
+    //sort by created
+    usort($ps, array($this, "cmp"));
                 
     // make sure $output exists, otherwise we may get an error in local environment
     if(!isset($output) || !is_string($output)) {
       $output = "";
     }
 
-
     $images_per_page = 3;
                 array_splice($ps, $images_per_page);
     $num_images = count($ps);
                 $pages = array_chunk($ps, $images_per_page);
                 $num_pages = count($pages);
-    ?>
-    <?php
+
     $output ="<div class=\"item-holder\">"
                         . " <div class=\"container\">"
                         . "     <div class=\"row\">"
