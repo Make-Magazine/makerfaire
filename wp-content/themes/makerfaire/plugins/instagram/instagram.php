@@ -51,26 +51,24 @@ class Make_Instagram {
     return $data->data;
   }
 
-        public function getFirstImage() {
-          $ps = $this->load_data(); 
+  public function getFirstImage() {
+    $ps = $this->load_data(); 
 
-          // make sure $output exists, otherwise we may get an error in local environment
+    // make sure $output exists, otherwise we may get an error in local environment
     if(!isset($output) || !is_string($output)) {
              $output = "";
     }
+    $img = $ps[0];
+    $output .= "<li><a href=\"" . esc_url( $img->link ) . "\" target=\"_blank\" class=\"instagram-link\">"
+            .  "  <img src=\"" . esc_url( $img->images->standard_resolution->url ) . "\" height=\"182\" width=\"180\" alt=\"image description\">"
+            .  "</a></li>";
+    return $output;
+  }
 
-          $img = $ps[0];
-          
-          $output .= "<li><a href=\"" . esc_url( $img->link ) . "\" target=\"_blank\" class=\"instagram-link\">"
-                  .  "  <img src=\"" . esc_url( $img->images->standard_resolution->url ) . "\" height=\"182\" width=\"180\" alt=\"image description\">"    
-                  .  "</a></li>";
-       
-          return $output;
-        }
-        public function cmp($a, $b)
-        {
-            return strcmp($b->created_time, $a->created_time);
-        }
+  public function cmp($a, $b) {
+    return strcmp($b->created_time, $a->created_time);
+  }
+
   public function show_images() {
     // TODO:  This whole function is a bit of a mess of entangled php and html.
     //      Would do a lot cleaner with some sort of templating engine.
