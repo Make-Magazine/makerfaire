@@ -1755,7 +1755,14 @@ add_filter('gform_field_content', 'mf_field_content', 10, 5);
 function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Schedule', 'tag' => '{entry_schedule}');
     $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
-    $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
+
+    //create a separate merge tag for each attribute
+    global $wpdb;
+    $sql = 'select ID,category from wp_rmt_entry_att_categories';
+    $results = $wpdb->get_results($sql);
+    foreach($results as $result){
+      $merge_tags[] = array('label' => 'EA - '.$result->category, 'tag' => '{EA_'.$result->ID.'}');
+    }
     return $merge_tags;
 }
 
@@ -1772,28 +1779,39 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
 */
 function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
   //Entry Schedule
-  $schedule = get_schedule($lead);
-  $text = str_replace('{entry_schedule}', $schedule, $text);
+  if (strpos($text, '{entry_schedule}') !== false) {
+    $schedule = get_schedule($lead);
+    $text = str_replace('{entry_schedule}', $schedule, $text);
+  }
 
   //Entry Resources
-  $resTable = '<table><tr><th>Resource</th><th>Quantity</th></tr>';
-  $resources = get_resources($lead);
+  if (strpos($text, '{entry_resources}') !== false) {
+    $resTable = '<table><tr><th>Resource</th><th>Quantity</th></tr>';
+    $resources = get_resources($lead);
 
-  foreach($resources as $entRes){
-    $resTable .= '<tr><td>'.$entRes['resource'].'</td><td>'.$entRes['qty'].'</td></tr>';
+    foreach($resources as $entRes){
+      $resTable .= '<tr><td>'.$entRes['resource'].'</td><td>'.$entRes['qty'].'</td></tr>';
+    }
+    $resTable .= '</table>';
+    $text = str_replace('{entry_resources}', $resTable, $text);
   }
-  $resTable .= '</table>';
-  $text = str_replace('{entry_resources}', $resTable, $text);
 
-  //Entry Attributes
-  $attTable = '<table><tr><th>Attribute</th><th>Value</th></tr>';
-  $attributes = get_attributes($lead);
+  //individual attributes
+  if (strpos($text, '{EA_') !== false) {
+    $lastPos = 0;
+    $positions = array();
 
-  foreach($attributes as $entAtt){
-    $attTable .= '<tr><td>'.$entAtt['attribute'].'</td><td>'.$entAtt['value'].'</td></tr>';
+    //look thru $text and find all instances of the merge tag {EA_'attributeID'}
+    while (($lastPos = strpos($text, '{EA_', $lastPos))!== false) {
+      $lastPos = $lastPos + strlen('{EA_');
+      //find the closing bracket of the merge tag
+      $closeBracketPos = strpos($text, '}', $lastPos);
+      //retrieve the ID of the attribute
+      $attID = substr($text, $lastPos,$closeBracketPos-$lastPos);
+      $AttText = get_attribute($lead,$attID);
+      $text = str_replace('{EA_'.$attID.'}', $AttText['attribute'].' = '.$AttText['value'], $text);
+    }
   }
-  $attTable .= '</table>';
-  $text = str_replace('{entry_attributes}', $attTable, $text);
   return $text;
 }
 
@@ -1818,19 +1836,18 @@ function mf_field_content($field_content, $field, $value, $lead_id, $form_id) {
 }
 /** End MF custom merge tags **/
 
-/* Return array of resource information for lead*/
-function get_attributes($lead){
+/* Return value and attribute of selected attribute per entry if set */
+function get_attribute($lead,$attID){
   global $wpdb;
   $return = array();
   $entry_id = (isset($lead['id'])?$lead['id']:'');
 
   if($entry_id!=''){
     //gather resource data
-    $sql = "SELECT entry_id, "
-            . " (select category from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.ID = attribute_id)as attribute, "
-            . " value"
+    $sql = "SELECT value,"
+            . " (select category from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.ID = attribute_id)as attribute "
             . " FROM `wp_rmt_entry_attributes`  "
-            . " where entry_id = ".$entry_id." order by attribute ASC, value ASC";
+            . " where entry_id = ".$entry_id." and attribute_id = ".$attID." order by attribute ASC, value ASC";
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
       $return[]= array('attribute'=>$result->attribute, 'value'=> $result->value);
@@ -1847,14 +1864,14 @@ function get_resources($lead){
 
   if($entry_id!=''){
     //gather resource data
-    $sql = "SELECT er.*, type, wp_rmt_resource_categories.category as item, wp_rmt_resource_categories.ID as item_id "
+    $sql = "SELECT er.qty, type, wp_rmt_resource_categories.category as item "
             . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
             . "where er.resource_id = wp_rmt_resources.ID "
             . "and resource_category_id = wp_rmt_resource_categories.ID  "
             . "and er.entry_id = ".$entry_id." order by item ASC, type ASC";
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
-      $return[]= array('resource'=>$result->type, 'qty'=> $result->qty);
+      $return[]= array('resource'=>$result->item.' - '.$result->type, 'qty'=> $result->qty);
     }
   }
   return $return;
