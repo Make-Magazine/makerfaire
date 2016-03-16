@@ -1830,7 +1830,7 @@ function get_attributes($lead){
             . " (select category from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.ID = attribute_id)as attribute, "
             . " value"
             . " FROM `wp_rmt_entry_attributes`  "
-            . " and entry_id = ".$entry_id." order by attribute ASC, value ASC";
+            . " where entry_id = ".$entry_id." order by attribute ASC, value ASC";
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
       $return[]= array('attribute'=>$result->attribute, 'value'=> $result->value);
