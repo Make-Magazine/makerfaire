@@ -1485,6 +1485,7 @@ function custom_entry_meta($entry_meta, $form_id){
         'choices'   => array(
           array( 'value' => 'ready', 'text' => 'Ready' ),
           array( 'value' => 'review', 'text' => 'Review' ),
+            array( 'value' => 'sent', 'text' => 'Sent' ),
         )
       )
     );
@@ -1761,8 +1762,12 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $sql = 'select ID,category from wp_rmt_entry_att_categories';
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
-      $merge_tags[] = array('label' => 'EA - '.$result->category, 'tag' => '{EA_'.$result->ID.'}');
+      $merge_tags[] = array('label' => 'Attribute - '.$result->category, 'tag' => '{EA_'.$result->ID.'}');
     }
+
+    //add merge tag for Attention field - Location Comment
+    $merge_tags[] = array('label' => 'Location Comment', 'tag' => '{LOC_COMMENT}');
+
     return $merge_tags;
 }
 
@@ -1778,6 +1783,8 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
 * @return string
 */
 function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
+  $entry_id = (isset($lead['id'])?$lead['id']:'');
+
   //Entry Schedule
   if (strpos($text, '{entry_schedule}') !== false) {
     $schedule = get_schedule($lead);
@@ -1786,6 +1793,8 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
 
   //Entry Resources
   if (strpos($text, '{entry_resources}') !== false) {
+    //set lead meta field res_status to sent
+    gform_update_meta( $entry_id, 'res_status','sent' );
     $resTable = '<table><tr><th>Resource</th><th>Quantity</th></tr>';
     $resources = get_resources($lead);
 
@@ -1809,8 +1818,25 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       //retrieve the ID of the attribute
       $attID = substr($text, $lastPos,$closeBracketPos-$lastPos);
       $AttText = get_attribute($lead,$attID);
-      $text = str_replace('{EA_'.$attID.'}', $AttText['attribute'].' = '.$AttText['value'], $text);
+      $attMerge = '';
+      foreach($AttText as $attDetail){
+        if($attMerge!='') $attMerge.='<br/>';
+        $attMerge .= $attDetail['value'];
+      }
+      $text = str_replace('{EA_'.$attID.'}', $attMerge, $text);
     }
+  }
+
+  //attention field
+  if (strpos($text, '{LOC_COMMENT}') !== false) {
+    global $wpdb;
+    $sql = "SELECT comment "
+        . " from wp_rmt_entry_attn,wp_rmt_attn"
+        . " where entry_id = ".$entry_id
+        . " and wp_rmt_attn.ID = attn_id"
+        . " and token = 'LOC_COMMENT'";
+    $attnText = $wpdb->get_var($sql);
+    $text = str_replace('{LOC_COMMENT}', $attnText, $text);
   }
   return $text;
 }
@@ -1850,7 +1876,7 @@ function get_attribute($lead,$attID){
             . " where entry_id = ".$entry_id." and attribute_id = ".$attID." order by attribute ASC, value ASC";
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
-      $return[]= array('attribute'=>$result->attribute, 'value'=> $result->value);
+      $return[] = array('attribute'=>$result->attribute, 'value'=> $result->value);
     }
   }
   return $return;

@@ -52,7 +52,17 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   $scope.generateReport = function() {
     var formSelect     = $scope.reports.formSelect;
     var selectedFields = $scope.reports.selectedFields;
-    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'type' : 'customRpt'}
+    var rmtData            = {};
+    angular.forEach($scope.reports.rmt, function(type, key) {
+      build = [];
+      angular.forEach(type,function(field){
+        if(field.checked){
+          build.push(field);
+        }
+      })
+      rmtData[key] = build;
+    });
+    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'rmtData' : rmtData, 'type' : 'customRpt'}
     $scope.reports.callAJAX(vars);
   }
   /*end build your own report */
@@ -73,14 +83,16 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   };
 
   //get report data
-  $scope.reports.callAJAX = function(vars){
+  $scope.reports.callAJAX = function(pvars){
     $scope.reports.loading = true;
+    console.log(pvars);
+
     //get grid data
     $http({
       method: 'post',
       url: url,
-      data: jQuery.param(vars),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+      data: JSON.stringify(pvars),
+      headers: {'Content-Type': 'application/json'}
     })
     .then(function(response){
       if(("success" in response.data)){
@@ -164,8 +176,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   $http({
     method: 'post',
     url: url,
-    data: jQuery.param({ 'table' : $scope.reports.tableName , 'type' : 'tableData','viewOnly':true }),
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : 'tableData','viewOnly':true }),
+    headers: {'Content-Type': 'application/json'}
   })
   .then(function(response){
       angular.forEach(response.data.columnDefs, function(value, key) {
@@ -194,8 +206,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
       if(("fields" in response.data)){
         $scope.fieldSelect.data = response.data.fields;
       }
-      if(("field_filters" in response.data)){
-        jQuery('#entry_filters').gfFilterUI(response.data.field_filters, response.data.init_field_filters, false);
+      if(("rmt" in response.data)){
+        $scope.reports.rmt  = response.data.rmt;
       }
     })
     .finally(function () {
