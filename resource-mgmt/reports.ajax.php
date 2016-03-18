@@ -40,69 +40,72 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array())
 
   global $mysqli;
   $forms = implode(",",$formSelect);
-
+  $data['columnDefs'] = array();
   $data['columnDefs'][] = array('field'=>'entry_id');
   $data['columnDefs'][] = array('field'=>'form_id');
+  $data['columnDefs'][] = array('field'=>'form_type');
 
   //TBD - remove duplicate field ID's
-  $fieldArr=array();
+  $fieldArr   = array();
   $fieldIDArr = array();
 
+  //build an array of selected fields
   foreach($selectedFields as $selFields){
     //build field array
     if(isset($selFields->choices) && $selFields->choices!=''){
       $fieldArr[$selFields->id][] = $selFields->choices;
     }
     //create array of selected field id's
-    $fieldIDArr[] = $selFields->id;
+    $fieldIDArr[$selFields->id] = $selFields->id;
+    if($selFields->type=='name'){
+      foreach($selFields->inputs as $choice){
+        $fieldIDArr[$choice->id] = array('fieldID'=>$selFields->id );
+      }
+    }
+
     //build grid columns. using the id as an index to avoid dups
     $data['columnDefs'][$selFields->id] =   array('field'=> 'field_'.str_replace('.','_',$selFields->id),'displayName'=>$selFields->label);
   }
-  $fieldIDArr = array_unique($fieldIDArr);
-  $fields = implode(",",$fieldIDArr);
 
-  //BUILD field number query
-  $fieldNumQry = '';
-  foreach($fieldIDArr as $fieldID){
-    if($fieldNumQry==''){
-      $fieldNumQry = " wp_rg_lead_detail.field_number like '$fieldID' ";
-    }else{
-     $fieldNumQry  .= " or wp_rg_lead_detail.field_number like '$fieldID' ";
-    }
-  }
-
-  //pull entry data
+  //entry data
   $sql = "SELECT wp_rg_lead_detail.*,wp_rg_lead_detail_long.value as 'long value'
-          FROM wp_rg_lead
-            left outer join wp_rg_lead_detail
-              on wp_rg_lead_detail.lead_id = wp_rg_lead.id
-            left OUTER join wp_rg_lead_detail_long
-              ON wp_rg_lead_detail.id = wp_rg_lead_detail_long.lead_detail_id
-          where wp_rg_lead.form_id in($forms)
-          and ($fieldNumQry)
-          and wp_rg_lead.status='active'
-          ORDER BY lead_id asc, field_number asc";
+        FROM wp_rg_lead
+          left outer join wp_rg_lead_detail
+            on wp_rg_lead_detail.lead_id = wp_rg_lead.id
+          left OUTER join wp_rg_lead_detail_long
+            ON wp_rg_lead_detail.id = wp_rg_lead_detail_long.lead_detail_id
+        where wp_rg_lead.form_id in($forms)
+        and wp_rg_lead.status='active'
+        ORDER BY lead_id asc, field_number asc";
 
-  //loop thru entry data
+  //loop thru entry data and build array
   $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
   $entryData = array();
-
   foreach($entries as $entry){
-    $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
-    $pass = true;
-    //if this field has choices, only return those entries where the field value was selected when building the report
-    if(isset($fieldArr[$entry['field_number']])){
-
-      if(!in_array($value,$fieldArr[$entry['field_number']])){
-        //reject
-        $pass=false;
+    //if name field
+    if(isset($fieldIDArr[$entry['field_number']])){
+      //field 320 is stored as category number, use cross reference to find text value
+      if($entry['field_number']==320){
+        $value = (isset($catCross[$entry['value']])?$catCross[$entry['value']]:$entry['value']);
+      }else{
+        $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
       }
-    }
-    if($pass){
+      $value = htmlspecialchars_decode ($value);
       $entryData[$entry['lead_id']]['entry_id'] = $entry['lead_id'];
       $entryData[$entry['lead_id']]['form_id']  = $entry['form_id'];
-      $entryData[$entry['lead_id']]['field_'.str_replace('.','_',$entry['field_number'])]  = $value;
+      $formPull = GFAPI::get_form( $entry['form_id'] );
+      $entryData[$entry['lead_id']]['form_type']  = (isset($formPull['form_type'])?$formPull['form_type']:'');
+      if(is_array($fieldIDArr[$entry['field_number']])){
+        $fieldID = $fieldIDArr[$entry['field_number']]['fieldID'];
+        $setValue = (isset($entryData[$entry['lead_id']]['field_'.$fieldID])?$entryData[$entry['lead_id']]['field_'.$fieldID].' '.$value: $value);
+        $entryData[$entry['lead_id']]['field_'.$fieldID]  = $setValue;
+      }else{
+        $entryData[$entry['lead_id']]['field_'.str_replace('.','_',$entry['field_number'])]  = $value;
+      }
     }
+  }
+//var_dump($entryData);
+  foreach($entryData as $entryID=>$dataRow){
     //pull RMT data
     foreach($rmtData as $type=>$rmt){
       //$key holds the type - resource,attribute, attention, meta
@@ -112,22 +115,36 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array())
           //echo 'looking for '.$type.' of '.$selRMT->id.'<br/>';
         }
         if($type=='resource'){
-          $sql = 'SELECT qty,type FROM `wp_rmt_entry_resources`, wp_rmt_resources '
+          if($selRMT->id!='all'){
+            $sql = 'SELECT qty,type FROM `wp_rmt_entry_resources`, wp_rmt_resources '
+                    . ' where resource_id = wp_rmt_resources.ID and'
+                    . ' resource_category_id = '.$selRMT->id .' and'
+                    . ' entry_id ='.$entryID;
+          }else{
+            $sql = 'SELECT qty, concat(type, " ", wp_rmt_resource_categories.category) as type '
+                  . 'FROM `wp_rmt_entry_resources`, wp_rmt_resources, wp_rmt_resource_categories '
                   . ' where resource_id = wp_rmt_resources.ID and'
-                  . ' resource_category_id = '.$selRMT->id .' and'
-                  . ' entry_id ='.$entry['lead_id'];
+                  . ' resource_category_id = wp_rmt_resource_categories.ID and'
+                  . ' entry_id ='.$entryID;
+          }
           //loop thru data
           $resources = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
           $entryRes = array();
 
           foreach($resources as $resource){
-            $entryRes[] = $resource['qty'] .'-'.$resource['type'];
+            $entryRes[] = $resource['qty'] .' : '.$resource['type'];
           }
           $data['columnDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
-          $entryData[$entry['lead_id']]['res_'.$selRMT->id] = implode(',',$entryRes);
+          $entryData[$entryID]['res_'.$selRMT->id] = implode(', ',$entryRes);
         }
         if($type=='attribute'){
-          $sql = 'select value from wp_rmt_entry_attributes where entry_id ='.$entry['lead_id'].' and attribute_id='.$selRMT->id;
+          if($selRMT->id!='all'){
+            $sql = 'select value from wp_rmt_entry_attributes where entry_id ='.$entry['lead_id'].' and attribute_id='.$selRMT->id;
+          }else{
+            $sql = 'select concat(category," ",value) as value from wp_rmt_entry_attributes,wp_rmt_entry_att_categories where '
+                    . ' entry_id ='.$entryID
+                    . ' and attribute_id= wp_rmt_entry_att_categories.ID';
+          }
           //loop thru data
           $attributes = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
           $entryAtt = array();
@@ -136,12 +153,18 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array())
             $entryAtt[] = $attribute['value'];
           }
           $data['columnDefs']['att_'.$selRMT->id]=   array('field'=> 'att_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
-          $entryData[$entry['lead_id']]['att_'.$selRMT->id] = implode(',',$entryAtt);
+          $entryData[$entryID]['att_'.$selRMT->id] = implode(', ',$entryAtt);
         }
 
         //attention fields
         if($type=='attention'){
-          $sql = 'select value from wp_rmt_entry_attn where entry_id ='.$entry['lead_id'].' and attn_id='.$selRMT->id;
+          if($selRMT->id!='all'){
+            $sql = 'select comment from wp_rmt_entry_attn where entry_id ='.$entryID.' and attn_id='.$selRMT->id;
+          }else{
+            $sql = 'select concat(wp_rmt_attn.value," ",comment) as comment from wp_rmt_entry_attn,wp_rmt_attn where '
+                    . ' entry_id ='.$entryID
+                    . ' and attn_id= wp_rmt_attn.ID';
+          }
           //loop thru data
           $attentions = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
           $entryAttn = array();
@@ -150,12 +173,12 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array())
             $entryAttn[] = $attention['comment'];
           }
           $data['columnDefs']['attn_'.$selRMT->id]=   array('field'=> 'attn_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
-          $entryData[$entry['lead_id']]['attn_'.$selRMT->id] = implode(',',$entryAttn);
+          $entryData[$entryID]['attn_'.$selRMT->id] = implode(', ',$entryAttn);
         }
 
         //meta fields
         if($type=='meta'){
-          $sql = "SELECT meta_value FROM `wp_rg_lead_meta` where meta_key = '$selRMT->id' and lead_id =".$entry['lead_id'];
+          $sql = "SELECT meta_value FROM `wp_rg_lead_meta` where meta_key = '$selRMT->id' and lead_id =".$entryID;
           //loop thru data
           $metas = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
           $entryMeta = array();
@@ -164,21 +187,23 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array())
             $entryMeta[] = $meta['meta_value'];
           }
           $data['columnDefs']['meta_'.$selRMT->id]=   array('field'=> 'meta_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
-          $entryData[$entry['lead_id']]['meta_'.$selRMT->id] = implode(',',$entryMeta);
+          $entryData[$entryID]['meta_'.$selRMT->id] = implode(', ',$entryMeta);
         }
       }
     }
-    //exit();
   }
+
   foreach($entryData as $row){
-    $data['data'][]= $row;
+    $data['data'][] = $row;
   }
+
   //reindex columnDefs as the grid will blow up if the indexes aren't in order
   $data['columnDefs'] = array_values($data['columnDefs']);
 
   echo json_encode($data);
   exit;
 }
+
 function retrieveRptData($table){
   global $mysqli;global $tableFields;
   $sql   = '';
@@ -330,16 +355,17 @@ function getBuildRptData(){
             if(isset($field['inputs']) && !empty($field['inputs'])){
               foreach($field['inputs'] as $choice){
                 $label = ($label!=''?$label:$choice->label);
-                $fieldReturn[] = array('id' => $choice->id, 'label' => $label, 'choices'=>$choice->label);
+                $fieldReturn[] = array('id' => $choice->id, 'label' => $label, 'choices'=>$choice->label,'type'=>$field['type']);
               }
             }else{
               foreach($field['choices'] as $choice){
                 $label = ($label!=''?$label:$choice->value);
-                $fieldReturn[] = array('id' => $field['id'], 'label' => $label, 'choices'=>$choice->value);
+                $fieldReturn[] = array('id' => $field['id'], 'label' => $label, 'choices'=>$choice->value,'type'=>$field['type']);
               }
             }
           }else{
-            $fieldReturn[] = array('id'     => $field['id'], 'label' => $label, 'choices'=>'');
+            $inputs = ($field['type']=='name'?$field['inputs']:'');
+            $fieldReturn[] = array('id'     => $field['id'], 'label' => $label, 'choices'=>'','type'=>$field['type'],'inputs'=>$inputs );
           }
 
       }
@@ -350,11 +376,13 @@ function getBuildRptData(){
   //resources
   $sql = 'SELECT * FROM `wp_rmt_resource_categories`'; //ID, category
   $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
+  $data['rmt']['resource'][]=array('id'=>'all','value'=>'All Resources');
   while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
     $data['rmt']['resource'][]=array('id'=>$row['ID'],'value'=>$row['category']);
   }
 
   //attributes
+  $data['rmt']['attribute'][]=array('id'=>'all','value'=>'All Attributes');
   $sql = 'SELECT * FROM `wp_rmt_entry_att_categories`'; //returns ID, category, token
   $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
   while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
@@ -362,6 +390,7 @@ function getBuildRptData(){
   }
 
   //attention
+  $data['rmt']['attention'][]=array('id'=>'all','value'=>'All Attention');
   $sql = 'SELECT * FROM `wp_rmt_attn`'; //returns ID, value, token
   $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
   while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
