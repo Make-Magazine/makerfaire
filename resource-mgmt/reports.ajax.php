@@ -6,13 +6,13 @@ require_once 'config.php';
 require_once 'table.fields.defs.php';
 $json = file_get_contents('php://input');
 $obj = json_decode($json);
-//var_dump($obj);
+
 $type           = (isset($obj->type)?$obj->type:'');
 $table          = (isset($obj->table)?$obj->table:'');
 $formSelect     = (isset($obj->formSelect)?$obj->formSelect:'');
 $selectedFields = (isset($obj->selectedFields)?$obj->selectedFields:'');
 $rmtData        = (isset($obj->rmtData)?$obj->rmtData:'');
-
+$location       = (isset($obj->location)?$obj->location:false);
 if($type != ''){
   if($type =="tableData"){
     if($table=='formData'){
@@ -24,7 +24,7 @@ if($type != ''){
   }elseif($type =="customRpt"){
     if($formSelect != '' && $selectedFields!=''){
         //build report
-        buildRpt($formSelect,$selectedFields,$rmtData);
+        buildRpt($formSelect,$selectedFields,$rmtData,$location);
     }else{
       invalidRequest('Error: Form or Fields not selected');
     }
@@ -36,8 +36,7 @@ if($type != ''){
 }
 
 /* Build your own report function */
-function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array()){
-
+function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),$location=false){
   global $mysqli;
   $forms = implode(",",$formSelect);
   $data['columnDefs'] = array();
@@ -104,7 +103,7 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array())
       }
     }
   }
-//var_dump($entryData);
+
   foreach($entryData as $entryID=>$dataRow){
     //pull RMT data
     foreach($rmtData as $type=>$rmt){
@@ -188,6 +187,46 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array())
           }
           $data['columnDefs']['meta_'.$selRMT->id]=   array('field'=> 'meta_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
           $entryData[$entryID]['meta_'.$selRMT->id] = implode(', ',$entryMeta);
+        }
+      }
+    }
+
+    //schedule information
+    if($location){
+      global $wpdb;
+      if($entryID!=''){
+        //get scheduling information for this lead
+        $sql = "SELECT  area.area,subarea.subarea,subarea.nicename, location.location,
+                        schedule.start_dt, schedule.end_dt
+                FROM    wp_mf_schedule schedule,
+                        wp_mf_location location,
+                        wp_mf_faire_subarea subarea,
+                        wp_mf_faire_area area
+
+                where       schedule.entry_id   = $entryID
+                        and schedule.location_id=location.ID
+                        and location.entry_id   = schedule.entry_id
+                        and subarea.id          = location.subarea_id
+                        and area.id             = subarea.area_id";
+
+        $results = $wpdb->get_results($sql);
+        if($wpdb->num_rows > 0){
+          foreach($results as $row){
+            $subarea = ($row->nicename!=''&&$row->nicename!=''?$row->nicename:$row->subarea);
+            $start_dt = strtotime($row->start_dt);
+            $end_dt   = strtotime($row->end_dt);
+
+            $data['columnDefs']['area']=   array('field'=> 'area','displayName'=>'Area');
+            $entryData[$entryID]['area'] = $row->area;
+            $data['columnDefs']['subarea']=   array('field'=> 'subarea','displayName'=>'Subarea');
+            $entryData[$entryID]['subarea'] = $row->subarea;
+            $data['columnDefs']['location']=   array('field'=> 'location','displayName'=>'Location');
+            $entryData[$entryID]['location'] = $row->location;
+            $data['columnDefs']['start']=   array('field'=> 'start','displayName'=>'Start');
+            $entryData[$entryID]['start'] = date("l, n/j/y, g:i A",$start_dt);
+            $data['columnDefs']['end']=   array('field'=> 'end','displayName'=>'End');
+            $entryData[$entryID]['end'] = date("l, n/j/y, g:i A",$end_dt);
+          }
         }
       }
     }

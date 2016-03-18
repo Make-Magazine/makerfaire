@@ -2,11 +2,17 @@
   <div class="container" ng-if="reports.showbuild">
      <div id="entry_filters"></div>
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-6">
         <h3>Forms</h3>
         <select name="formSelect" ng-model="reports.formSelect" multiple>
           <option ng-repeat="form in reports.forms" value="{{form.id}}">{{form.id}} - {{form.name}}</option>
         </select>
+      </div>
+      <div class="col-md-6 checkbox">
+         <h3>Schedule</h3>
+        <label>
+          <input type="checkbox" ng-model="reports.location">Include Location Information
+        </label>
       </div>
     </div>
     <br/><br/>

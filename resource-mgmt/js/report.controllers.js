@@ -62,7 +62,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
       })
       rmtData[key] = build;
     });
-    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'rmtData' : rmtData, 'type' : 'customRpt'}
+    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'rmtData' : rmtData, 'type' : 'customRpt', 'location' : $scope.reports.location}
     $scope.reports.callAJAX(vars);
   }
   /*end build your own report */
