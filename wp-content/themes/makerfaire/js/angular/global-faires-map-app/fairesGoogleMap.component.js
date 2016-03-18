@@ -78,10 +78,10 @@
                   gMarkerZIndex = 2;
                   break;
                 case 'Featured':
-                  gMarkerIcon.fillColor = '#F2BF70';
+                  gMarkerIcon.fillColor = '#E75662';
                   break;
                 default:
-                  gMarkerIcon.fillColor = '#666666';
+                  gMarkerIcon.fillColor = '#F3BF70';
               }
               gMarker = new google.maps.Marker({
                 position: {
