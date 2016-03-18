@@ -1,0 +1,110 @@
+#makerfaire .faire-global-map-wrp {
+  #faire-global-map {
+    height: 400px;
+    display: block;
+  }
+  .faire-date-toggle {
+    color: #3D7B98;
+    cursor: pointer;
+    background-color: #EEF2F5;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 3px 3px 0 0;
+    &:hover {
+      background-color: darken(#EEF2F5, 10%);
+    }
+    &.active {
+      color: white;
+      background-color: #3D7B98;
+      &:hover {
+        background-color: #3D7B98;
+      }
+    }
+  }
+  .faire-list-table {
+    border-top: solid 1px #3D7B98;
+    td,
+    th {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    th {
+      font-size: 13px;
+      font-weight: 500;
+      color: gray;
+    }
+    td {
+      word-break: break-word;
+      font-size: 13px;
+    }
+  }
+  h1 {
+    font-weight: 300;
+    font-size: 30px;
+  }
+  .map-filters-wrp {
+    background-color: #EBF0F3;
+    margin: 0 0 20px 0;
+    padding: 8px 0;
+    h2 {
+      float: left;
+      font-size: 14px;
+      font-weight: 300;
+      margin: 6px 20px 0 0;
+    }
+    input[type="text"] {
+      float: left;
+      max-width: 200px;
+    }
+    .checkbox {
+      float: right;
+      margin: 5px;
+      font-size: 12px;
+      line-height: 20px;
+      vertical-align: bottom;
+    }
+    @media all and (max-width: 620px) {
+      .searchbox {
+        display: flex;
+        input[type="text"] {
+          flex: 1;
+          max-width: initial;
+        }
+      }
+      .filters {
+        clear: both;
+        min-width: 200px;
+        float: left;
+      }
+    }
+  }
+  .loading-spinner {
+    color: white;
+    padding: 190px;
+    font-size: 25px;
+    width: 100%;
+    text-align: center;
+    height: 400px;
+    background-color: #EBF0F3;
+  }
+  .faire-key-boxes {
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    div {
+      width: 32.5%;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0 15px 0;
+    }
+    .flagship-key {
+      background-color: #1DAFEC;
+    }
+    .featured-key {
+      background-color: #E75662;
+    }
+    .mini-key {
+      background-color: #F3BF70;
+    }
+  }
+}
