@@ -103,7 +103,7 @@ class Make_Instagram {
     $output .="         <div class=\"col-xs-12 col-sm-8\">
                                         <div class=\"social-holder instagram\">
                                                 <div class=\"title\">
-                                                        <h1>Instagram, <a href=\"http://instagram.com/makerfaire\" target=\"_blank\">#makerfaire</a></h1>
+                                                        <h1>Instagram, <a href=\"http://instagram.com/makerfaire\" target=\"_blank\">@makerfaire</a></h1>
                                                 </div>";
           foreach( $pages as $page ) {      
               $output .= "<ul class=\"img-list\">";
