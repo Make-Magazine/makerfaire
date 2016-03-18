@@ -457,46 +457,61 @@ class GFJDBHELPER {
 
     //if form type=payment we need to map resource fields back to the original entry
     if($entryData['fType'] == 'Payment' ){
+      //get original entry id
+      $entryID = ($entryData['origEntryID'] !='' ?$entryData['origEntryID']:$entryID);
+      //check if any electrical resources have been set
+      $sql = "SELECT wp_rmt_entry_resources.ID "
+              . " from wp_rmt_entry_resources, wp_rmt_resources, wp_rmt_resource_categories "
+              . " where resource_id=wp_rmt_resources.ID and "
+              . "       resource_category_id=wp_rmt_resource_categories.ID and "
+              . "       entry_id = $entryID and "
+              . "       wp_rmt_resource_categories.category like '%electrical%'";
+      //if an electrical resource has been set, delete it
+      $resourceElec = $wpdb->get_var($sql);
+
+      if($resourceElec != NULL){ //if result, update.
+        //delete any electrical resources MF-901
+        $wpdb->delete( 'wp_rmt_entry_resources', array( 'ID' => $resourceElec ) );
+      }
+
       $pos = strpos($entryData['paymentElectr'], '5 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-05A'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-05A'],1,'',0);
       $pos = strpos($entryData['paymentElectr'], '10 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-10A'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-10A'],1,'',0);
       $pos = strpos($entryData['paymentElectr'], '15 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-15A'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-15A'],1,'',0);
       $pos = strpos($entryData['paymentElectr'], '20 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-20A'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-20A'],1,'',0);
       $pos = strpos($entryData['paymentElectr'], '30 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-30A'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-30A'],1,'',0);
       $pos = strpos($entryData['paymentElectr'], '50 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-50A'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['120V-50A'],1,'',0);
       $pos = strpos($entryData['paymentElectr'], 'Other/Not Listed');
-      if ($pos !== false)     $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['paymentDescElect']);
+      if ($pos !== false)     $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['paymentDescElect'],0);
 
       //field 14 - tables
       $pos = strpos($entryData['paymentTable'], 'One table');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'',0);
       $pos = strpos($entryData['paymentTable'], 'Two tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'',0);
       $pos = strpos($entryData['paymentTable'], 'Three Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'',0);
       $pos = strpos($entryData['paymentTable'], 'Four Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'',0);
       $pos = strpos($entryData['paymentTable'], 'Five Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'',0);
       $pos = strpos($entryData['paymentTable'], 'Six Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'',0);
       $pos = strpos($entryData['paymentTable'], 'Seven Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'',0);
       $pos = strpos($entryData['paymentTable'], 'Eight Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'',0);
       $pos = strpos($entryData['paymentTable'], 'Nine Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'',0);
       $pos = strpos($entryData['paymentTable'], 'Ten Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'',0);
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
-      //get original entry id
-      $entryID = ($entryData['origEntryID'] !='' ?$entryData['origEntryID']:$entryID);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'',0);
     }
     /*
      * E N T R Y   A T T R I B U T E   M A P P I N G
@@ -530,7 +545,9 @@ class GFJDBHELPER {
       //  Field ID 345 - Requested space size width
       $attribute[] = array($attributeID['SPACESIZE'],$entryData['345'].' X '.$entryData['344'],$entryData['booth_size_details']);
     }else{
-      $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size'],$entryData['booth_size_details']);
+      if($entryData['booth_size']!=''){
+        $attribute[] = array($attributeID['SPACESIZE'],$entryData['booth_size'],$entryData['booth_size_details']);
+      }
     }
 
     /*  Field ID 69 (Exposure) = loctype */
@@ -558,16 +575,16 @@ class GFJDBHELPER {
       $resource_id = $value[0];
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
-
+      $user        = (isset($value[3])?$value[3]:NULL);
       //if the resource has already been added, update the qty
       $resourceCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_resources` where entry_id = $entryID and resource_id = $resource_id");
       if($resourceCount >0){ //if result, update.
         //user = null - initial entry, user = 0 - payment form
-        $wpdb->get_results("update `wp_rmt_entry_resources set qty = $qty, user=0 where  entry_id = $entryID and resource_id = $resource_id");
+        $wpdb->get_results("update wp_rmt_entry_resources set qty = $qty, user=0 where  entry_id = $entryID and resource_id = $resource_id");
       }else{
         //else insert
-        $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`(`entry_id`, `resource_id`, `qty`, `comment`) "
-                        . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'")');
+        $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`(`entry_id`, `resource_id`, `qty`, `comment`,user) "
+                        . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
       }
     }
 
@@ -576,8 +593,21 @@ class GFJDBHELPER {
       $attribute_id = $value[0];
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
-      $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`) "
-                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'")');
+      $user         = (isset($value[3])?$value[3]:NULL);
+      //if the attribute has already been added, update the qty
+      $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` where entry_id = $entryID and attribute_id = $attribute_id");
+      if($attCount >0){ //if result, update.
+        //user = null - initial entry, user = 0 - payment form
+        $wpdb->get_results('update wp_rmt_entry_attributes set value = "'.$attvalue.'", user=0,'
+                . ' comment=CONCAT( comment, " '.$entryData['fType'].' Form Comment - '.$comment.'") '
+                . ' where  entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
+
+      }else{
+        //else insert
+        $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
+                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.'),');
+      }
+
     }
 
     //set resource status and assign to

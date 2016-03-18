@@ -245,38 +245,38 @@ div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher {
   float: right;
   width: 45.5%;
 }
-.entry-resource {
+.adminEntrySummary .tab-content .panel-group {
   border-radius: 5px;
   display: block;
   border: thin solid grey;
 }
-.entry-resource .panel-heading.active-state {
+.adminEntrySummary .tab-content .panel-group .panel-heading.active-state {
   background-color: lightblue;
 }
-.entry-resource .panel-heading h4 {
+.adminEntrySummary .tab-content .panel-group .panel-heading h4 {
   font-size: 30px;
 }
-.entry-resource .panel-group {
+.adminEntrySummary .tab-content .panel-group {
   margin-bottom: 0px;
 }
-.entry-resource .panel-body {
+.adminEntrySummary .tab-content .panel-group .panel-body {
   padding: 0;
   border-top: none
 }
-.entry-resource table {
+.adminEntrySummary .tab-content .panel-group table {
   width: 100%
 }
-.entry-resource th {
+.adminEntrySummary .tab-content .panel-group th {
   background-color: lightgrey;
 }
-.entry-resource th,
-.entry-resource td {
+.adminEntrySummary .tab-content .panel-group th,
+.adminEntrySummary .tab-content .panel-group td {
   padding: 16px 5px;
 }
-.entry-resource input[type="number"].thVal {
+.adminEntrySummary .tab-content .panel-group input[type="number"].thVal {
   width: 45px;
 }
-div .entry-resource.notes {
+.adminEntrySummary .tab-content .panel-group .notes {
   padding: 5px 0;
   MARGIN: 5px 0px;
 }

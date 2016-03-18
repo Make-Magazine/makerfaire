@@ -7,7 +7,26 @@
   });
   </script>
   <div class="clearfix">
-    <h4 class="welcome-head pull-left">Hi</h4>
+    <?php
+    $current_user = wp_get_current_user();
+    /**
+     * @example Safe usage: $current_user = wp_get_current_user();
+     * if ( !($current_user instanceof WP_User) )
+     *     return;
+     */
+    echo 'Username: ' . $current_user->user_login . '<br />';
+    echo 'User email: ' . $current_user->user_email . '<br />';
+    echo 'User first name: ' . $current_user->user_firstname . '<br />';
+    echo 'User last name: ' . $current_user->user_lastname . '<br />';
+    echo 'User display name: ' . $current_user->display_name . '<br />';
+    echo 'User ID: ' . $current_user->ID . '<br />';
+    
+    //require_once our model
+    require_once( 'models/maker.php' );
+    //instantiate the model
+    $fooModel = new maker($current_user->user_email);
+?>
+    <h4 class="welcome-head pull-left">Hi, <?= $fooModel->get_email() ?></h4>
     <div class="settings-pop-btn pull-right">
       <button type="button" class="btn btn-default btn-no-border notifications-button"
         data-toggle="popover" data-html="true" data-placement="bottom"
