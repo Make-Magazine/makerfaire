@@ -5,8 +5,8 @@
       mapId: '@id',
       mapData: '='
     },
-    controller: ['$rootScope', 'GMapsInitializer', 'FaireMapsSharedData',
-      function($rootScope, GMapsInitializer, FaireMapsSharedData) {
+    controller: ['$rootScope', 'GMapsInitializer', 'FaireMapsSharedData', '$filter',
+      function($rootScope, GMapsInitializer, FaireMapsSharedData, $filter) {
         var ctrl = this;
         var gMap;
 
@@ -106,10 +106,17 @@
 
           function displayMarkerInfo() {
             var marker_map = this.getMap();
+            console.log('t: ', this);
             FaireMapsSharedData.infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
               this.title + '</h3>' +
               '<div id="bodyContent"><p>' +
-              (this.description || '') +
+              (this.dataRowSrc.venue_address_city || '') +
+              (this.dataRowSrc.venue_address_state && ', ' + this.dataRowSrc.venue_address_state || '') +
+              (this.dataRowSrc.venue_address_country && ', ' + this.dataRowSrc.venue_address_country + ' ' || '') +
+              (this.dataRowSrc.event_start_dt && $filter('date')(this.dataRowSrc.event_start_dt, 'mediumDate') || '') +
+              '</p><p>' +
+              (this.dataRowSrc.faire_url &&
+                '<a href="' + this.dataRowSrc.faire_url + '" target="blank">' + this.dataRowSrc.faire_url + '</a>' || '') +
               '</p></div>' +
               '</div>'
             );
