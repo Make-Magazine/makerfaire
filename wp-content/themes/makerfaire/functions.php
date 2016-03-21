@@ -378,11 +378,11 @@ $output = '<div class="row filter-container mmakers">'
           . ' </div><div class="col-xs-12 col-sm-4">'
           . '   <a href="/maker/entry/' . $values[1]['id'] . '" class="post">'
           . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[1]['22'],622,402) . '" alt="Featured Maker 2">'
-          . '     <div class="text-box"><span class="section">' . substr($values[1]['151'],0,40)  . '. . </span></div>'
+          . '     <div class="text-box"><span class="section">' . substr($values[1]['151'],0,40)  . strlen($values[1]['151']>40?'. . .':'').'</span></div>'
           . '   </a>'
           . '   <a href="/maker/entry/' . $values[2]['id'] . '" class="post">'
           . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[2]['22'],622,402) . '" alt="Featured Maker 3">'
-          . '     <div class="text-box"><span class="section">' . substr($values[2]['151'],0,40)  . '. . </span></div>'
+          . '     <div class="text-box"><span class="section">' . substr($values[2]['151'],0,40)  . strlen($values[2]['151']>40?'. . .':'').'</span></div>'
           . '   </a>'
           . '</div></div>';
 
