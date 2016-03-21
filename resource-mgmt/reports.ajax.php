@@ -275,20 +275,24 @@ function retrieveRptData($table){
               $selectOptions[] = array('value' => $optKey, 'label' => $option);
             }
           }
+
         }else{
-          //use defined options
+          //use defined options`
           foreach($fields['options'] as $optKey=>$option){
             $options[]       = array('id'    => $optKey, 'fkey'   => $option);
             $selectOptions[] = array('value' => $optKey, 'label' => $option);
           }
         }
+
+        //sort options by fkey and selected options by label
+        //usort($options, "cmpfkey");
+        //usort($selectOptions, "cmpval");
+
         $vars = array('displayName'=> (isset($fields['fieldLabel'])?$fields['fieldLabel']:$fields['fieldName']),
                       'filter'=> array('selectOptions'=>$selectOptions),
                       'cellFilter'               => 'griddropdown:this',
-                      'headerCellClass'          => '$scope.highlightFilteredHeader',
-                      'editDropdownValueLabel'   => 'fkey',
-                      'editDropdownIdLabel'      => 'id',
-                      'editDropdownOptionsArray' => $options);
+                      'editDropdownOptionsArray' => $options
+                      );
         break;
       case 'entrylink':
         $vars = array('cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=mf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
@@ -339,17 +343,23 @@ function getFkeyData($tabFkeyData,$fkey){
   //build options drop down
   $options = array();
   $selectOptions = array();
-  $optionquery = "select " . $referenceField . ", " . $referenceDisplay . " from "   . $referenceTable;
+  $optionquery = "select " . $referenceField . ", " . $referenceDisplay . " from "   . $referenceTable." order by ".$referenceDisplay."  asc";
   $result = $mysqli->query( $optionquery );
   while ($row = $result->fetch_assoc()) {
-    $options[]       = array('id'    => $row[$referenceField], 'fkey'   => $row[$referenceDisplay]);
-    $selectOptions[] = array('value' => $row[$referenceField], 'label' => $row[$referenceDisplay]);
+    $options[]       = array('id'    => intval($row[$referenceField]), 'fkey'  => $row[$referenceDisplay]);
+    $selectOptions[] = array('value' => intval($row[$referenceField]), 'label' => $row[$referenceDisplay]);
   }
   return(array($options,$selectOptions));
 }
 
 function cmp($a, $b) {
-    return $a["id"] - $b["id"];
+    return $a['id'] - $b['id'];
+}
+function cmpfkey($a, $b) {
+    return $b['fkey'] - $a['fkey'];
+}
+function cmpval($a, $b) {
+    return $b['label'] - $a['label'];
 }
 
 function getBuildRptData(){

@@ -203,6 +203,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
         }
       });
       $scope.gridOptions.columnDefs = response.data.columnDefs;
+      console.log(uiGridConstants.filter);
       $scope.gridOptions.data       = response.data.data;
 
       //set up build your own data
