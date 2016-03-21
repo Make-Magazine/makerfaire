@@ -347,42 +347,42 @@ add_shortcode( 'newsletter', 'makerfaire_newsletter_shortcode' );
  * meet the makers
  */
 function makerfaire_meet_the_makers_shortcode($atts, $content = null) {
-  extract( shortcode_atts( array(
-      'form_id'   => '',
-      'entry1_id' => '',
-      'entry1_description'  => '',
-      'entry2_id' => '',
-      'entry2_description'  => '',
-      'entry3_id' => '',
-      'entry3_description'  => ''
-  ), $atts ) );
-
-  $values = array();
-    if (null != (esc_attr($entry1_id))) {
-      $values[0] = $entries = GFAPI::get_entry(esc_attr($entry1_id));
-      $entry1_description = isset($entry1_description) ? $entry1_description : $values[0]['151'];
+  global $wpdb;
+  extract( shortcode_atts( array('faire'   => ''), $atts ) );
+  $faireArr = explode(",", $faire);
+  $formIDarr=array();
+  foreach($faireArr as $fairelp){
+    //pull form id's for selected faire(s)
+    $sql = "select form_ids from wp_mf_faire where faire like '%".$fairelp."%'";
+    $results = $wpdb->get_results($sql);
+    foreach($results as $result){
+     $formIDarr =  array_merge($formIDarr,explode(",", $result->form_ids));
     }
-    if (null != (esc_attr($entry2_id))) {
-      $values[1] = $entries = GFAPI::get_entry(esc_attr($entry2_id));
-       $entry2_description = isset($entry2_description) ? $entry2_description : $values[1]['151'];
-   }
-    if (null != (esc_attr($entry3_id))) {
-      $values[2] = $entries = GFAPI::get_entry(esc_attr($entry3_id));
-       $entry3_description = isset($entry3_description) ? $entry3_description : $values[2]['151'];
-   }
+  }
+  //MF-918 change to have this auto pull instead of having to set the entry id and description
+  $search_criteria['field_filters'][] = array( 'key' => '304', 'value' => 'Featured Maker' );
+  $search_criteria['field_filters'][] = array( 'key' => '303', 'value' => 'Accepted' );
+  $search_criteria['field_filters']['mode'] = 'all';
+
+  $entries   = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => 0, 'page_size' => 40));
+  $rand_keys = array_rand($entries,3);
+  $values = array();
+  foreach($rand_keys as $key){
+    $values[] = $entries[$key];
+  }
 
 $output = '<div class="row filter-container mmakers">'
           . ' <div class="col-xs-12 col-sm-8"><a href="/maker/entry/' . $values[0]['id'] . '" class="post">'
           . '   <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[0]['22'],622,402) . '" alt="Featured Maker 1">'
-          . '   <div class="text-box"><span class="section">' . $entry1_description . '</span></div></a>'
+          . '   <div class="text-box"><span class="section">' . $values[0]['16'] . '</span></div></a>'
           . ' </div><div class="col-xs-12 col-sm-4">'
           . '   <a href="/maker/entry/' . $values[1]['id'] . '" class="post">'
           . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[1]['22'],622,402) . '" alt="Featured Maker 2">'
-          . '     <div class="text-box"><span class="section">' . $entry2_description . '</span></div>'
+          . '     <div class="text-box"><span class="section">' . substr($values[1]['151'],0,40)  . '. . </span></div>'
           . '   </a>'
           . '   <a href="/maker/entry/' . $values[2]['id'] . '" class="post">'
           . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[2]['22'],622,402) . '" alt="Featured Maker 3">'
-          . '     <div class="text-box"><span class="section">' . $entry3_description . '</span></div>'
+          . '     <div class="text-box"><span class="section">' . substr($values[2]['151'],0,40)  . '. . </span></div>'
           . '   </a>'
           . '</div></div>';
 
