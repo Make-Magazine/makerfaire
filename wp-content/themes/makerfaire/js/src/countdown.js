@@ -2,7 +2,7 @@
 // Faire Countdown Clock
 (function(){
   'use strict';
-  var mfbaDate = new Date('2016-05-20T09:00:00-07:00');
+  var mfbaDate = new Date('2016-05-20T13:00:00-07:00');
   var now = new Date();
 
   function pad(n, width) {
@@ -24,15 +24,15 @@
   minutes = pad(minutes, 2);
 
   function setCountdownHTML() {
-    var markup = '<div class="countdown">\
+    var markup = '<div class="countdown font-narrower">\
       <div class="unit"> '+days+'\
-        <div class="marker">days</div>\
+        <div class="marker">Days</div>\
       </div>\
       <div class="unit">'+hours+'\
-        <div class="marker">hours</div>\
+        <div class="marker">Hours</div>\
       </div>\
       <div class="unit">'+minutes+'\
-        <div class="marker">minutes</div>\
+        <div class="marker">Minutes</div>\
       </div>\
     </div>';
     document.getElementById('mfbaCountdown').innerHTML = markup;
