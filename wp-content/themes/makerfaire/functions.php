@@ -364,25 +364,23 @@ function makerfaire_meet_the_makers_shortcode($atts, $content = null) {
   $search_criteria['field_filters'][] = array( 'key' => '303', 'value' => 'Accepted' );
   $search_criteria['field_filters']['mode'] = 'all';
 
-  $entries   = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => 0, 'page_size' => 40));
-  $rand_keys = array_rand($entries,3);
-  $values = array();
-  foreach($rand_keys as $key){
-    $values[] = $entries[$key];
-  }
+  $result    = GFAPI::count_entries( $formIDarr, $search_criteria );
+  
+  $offset= rand(0,$result); //randomly choose where to pick 3 entries from
+  $entries   = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => $offset, 'page_size' => 3));
 
 $output = '<div class="row filter-container mmakers">'
-          . ' <div class="col-xs-12 col-sm-8"><a href="/maker/entry/' . $values[0]['id'] . '" class="post">'
-          . '   <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[0]['22'],622,402) . '" alt="Featured Maker 1">'
-          . '   <div class="text-box"><span class="section">' . $values[0]['16'] . '</span></div></a>'
+          . ' <div class="col-xs-12 col-sm-8"><a href="/maker/entry/' . $entries[0]['id'] . '" class="post">'
+          . '   <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[0]['22'],622,402) . '" alt="Featured Maker 1">'
+          . '   <div class="text-box"><span class="section">' . $entries[0]['16'] . '</span></div></a>'
           . ' </div><div class="col-xs-12 col-sm-4">'
-          . '   <a href="/maker/entry/' . $values[1]['id'] . '" class="post">'
-          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[1]['22'],622,402) . '" alt="Featured Maker 2">'
-          . '     <div class="text-box"><span class="section">' . substr($values[1]['151'],0,40)  . strlen($values[1]['151']>40?'. . .':'').'</span></div>'
+          . '   <a href="/maker/entry/' . $entries[1]['id'] . '" class="post">'
+          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[1]['22'],622,402) . '" alt="Featured Maker 2">'
+          . '     <div class="text-box"><span class="section">' . substr($entries[1]['151'],0,48) . '</span></div>'
           . '   </a>'
-          . '   <a href="/maker/entry/' . $values[2]['id'] . '" class="post">'
-          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[2]['22'],622,402) . '" alt="Featured Maker 3">'
-          . '     <div class="text-box"><span class="section">' . substr($values[2]['151'],0,40)  . strlen($values[2]['151']>40?'. . .':'').'</span></div>'
+          . '   <a href="/maker/entry/' . $entries[2]['id'] . '" class="post">'
+          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[2]['22'],622,402) . '" alt="Featured Maker 3">'
+          . '     <div class="text-box"><span class="section">' . substr($entries[2]['151'],0,48) . '</span></div>'
           . '   </a>'
           . '</div></div>';
 
