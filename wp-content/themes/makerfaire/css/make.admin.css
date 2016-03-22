@@ -8,9 +8,15 @@ and open the template in the editor.
     Author     : aliciawilliams
 */
 /*bootstrap css is overlaying the html defined background for wp-admin.  this will overlay the bootstrap background*/
+/* begin bootstrap overwrite */
 body.wp-admin {
   background-color: #f1f1f1;
 }
+.modal {
+  bottom: inherit;
+  left: 50%;
+}
+/* end bootstrap overwrite */
 .wp-admin #lead_search_button {
   height: 27px;
   margin-top: 1px;
