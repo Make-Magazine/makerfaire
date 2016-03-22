@@ -2,7 +2,7 @@
 // Faire Countdown Clock
 (function(){
   'use strict';
-  var mfbaDate = new Date('2016-03-23T14:00:00-07:00');
+  var mfbaDate = new Date('2016-05-20T09:00:00-07:00');
   var now = new Date();
 
   function pad(n, width) {
