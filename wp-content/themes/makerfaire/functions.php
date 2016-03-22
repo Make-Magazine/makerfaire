@@ -142,11 +142,11 @@ function load_admin_scripts() {
   //scripts
   wp_enqueue_script('make-gravityforms-admin',  get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'));
   wp_enqueue_script( 'jquery-datetimepicker',  get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array( 'jquery' ), null );
-  wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/libs/bootstrap.min.js', array( 'jquery' ) );
+  wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.js', array( 'jquery' ) );
   wp_enqueue_script( 'admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.js', array( 'jquery' ) );
   wp_enqueue_script( 'sack' );
   //styles
-  wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/admin.bootstrap.min.css' );
+  wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css' );
   wp_enqueue_style('jquery-datetimepicker-css',  get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
   wp_enqueue_style('wp-admin-style',  'http://makerfaire.staging.wpengine.com/wp-admin/load-styles.php?c=0&dir=ltr&load=dashicons,admin-bar,wp-admin,buttons,wp-auth-check&ver=1.35');
   wp_enqueue_style('made-admin-style',  get_stylesheet_directory_uri() . '/css/make.admin.css');
