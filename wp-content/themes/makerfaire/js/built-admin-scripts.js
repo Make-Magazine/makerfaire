@@ -1,2 +1,2 @@
 // Compiled file - any changes will be overwritten by grunt task
-jQuery(function($){$('[data-toggle="popover"]').popover()});
+jQuery(function($){$('[data-toggle="popover"]').popover()}),function($){$(function(){$.each(["show"],function(i,ev){var el=$.fn[ev];$.fn[ev]=function(){return this.trigger(ev),el.apply(this,arguments)}}),$(".hidden").on("show",function(){$(this).removeClass("hidden")})})}(jQuery);
