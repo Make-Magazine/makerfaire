@@ -324,7 +324,7 @@ function create_makerfaire_scheduler($faire_id) {
 		timezone: "Europe/London", // Use the London timezone*/
 	
 		->currentTimeMarker(false)
-		->date(new DateTime ( '2016/5/20 00:00', new DateTimeZone ( 'UTC' ) ) )->height ( 900 )->pdf ( $pdf )->addToolbarItem ( new \Kendo\UI\SchedulerToolbarItem ( 'pdf' ) )->addResource ( $subareasResource, $entriesResource )->group ( array (
+		->date(new DateTime ( '2016/5/27 00:00', new DateTimeZone ( 'UTC' ) ) )->height ( 900 )->pdf ( $pdf )->addToolbarItem ( new \Kendo\UI\SchedulerToolbarItem ( 'pdf' ) )->addResource ( $subareasResource, $entriesResource )->group ( array (
 			'resources' => array (
 					'Stages' 
 			) 
