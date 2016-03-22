@@ -29,10 +29,10 @@
         <div class="marker">days</div>\
       </div>\
       <div class="unit">'+hours+'\
-        <div class="marker">days</div>\
+        <div class="marker">hours</div>\
       </div>\
       <div class="unit">'+minutes+'\
-        <div class="marker">days</div>\
+        <div class="marker">minutes</div>\
       </div>\
     </div>';
     document.getElementById('mfbaCountdown').innerHTML = markup;
