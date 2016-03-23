@@ -68,7 +68,7 @@ function remove_gf_form_toolbar(){
 		    display:none;
 		    		}
 	 #notifications_container {
-	 	display:none;
+	 	/*display:none;*/
 	 	}
 
 	 	#entry_form div#submitdiv {
