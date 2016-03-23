@@ -36,7 +36,7 @@
       </div>\
     </div>';
     var element = document.getElementById('mfbaCountdown');
-    if (element != null && element.value == '') {
+    if (element != null) {
       element.innerHTML = markup;
     }
   }
