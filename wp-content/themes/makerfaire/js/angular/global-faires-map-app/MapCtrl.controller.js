@@ -4,7 +4,7 @@
     function($http, $rootScope, $filter, FaireMapsSharedData) {
       var ctrl = this;
       var faireFilters = {
-        filters: ['Flagship', 'Featured', 'Mini'],
+        filters: ['Flagship', 'Featured', 'Mini', 'School'],
         search: '',
         pastEvents: false
       };

@@ -80,6 +80,9 @@
                 case 'Featured':
                   gMarkerIcon.fillColor = '#E75662';
                   break;
+                case 'School':
+                  gMarkerIcon.fillColor = '#00BA4B';
+                  break;
                 default:
                   gMarkerIcon.fillColor = '#F3BF70';
               }
