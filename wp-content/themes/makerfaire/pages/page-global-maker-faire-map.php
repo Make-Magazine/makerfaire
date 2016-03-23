@@ -92,7 +92,10 @@
               <td>{{row.faire_year | ordinal}}</td>
               <td>{{row.category}}</td>
               <td>{{row.event_start_dt | date:'medium'}}</td>
-              <td>{{row.name}}</td>
+              <td>
+                <a ng-if="row.faire_url" href="{{row.faire_url}}">{{row.name}}</a>
+                <span ng-if="!row.faire_url">{{row.name}}</span>
+              </td>
               <td>
                 {{row.venue_address_city}}{{row.venue_address_state && ', '+row.venue_address_state || ''}}
               </td>
