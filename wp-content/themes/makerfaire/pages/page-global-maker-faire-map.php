@@ -20,7 +20,7 @@
               ng-change="$ctrl.applyMapFilters()" />
           </div>
           <div class="filters ng-cloak">
-            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="School">
+            <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="false" filter="School">
               School <span class="hidden-sm hidden-xs">Maker Faires</span>
             </faires-map-filter>
             <faires-map-filter ng-if="$ctrl.faireMarkers" default-state="true" filter="Mini">
