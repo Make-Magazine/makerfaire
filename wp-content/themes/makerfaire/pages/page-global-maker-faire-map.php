@@ -83,20 +83,20 @@
             <tr>
               <th class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">ANNUAL</th>
               <th class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE</th>
-              <th class="cursor-pointer" ng-click="sort='date';reverse=!reverse">DATE</th>
+              <th class="cursor-pointer" ng-click="sort='event_start_dt';reverse=!reverse">DATE</th>
               <th class="cursor-pointer" ng-click="sort='name';reverse=!reverse">EVENT NAME</th>
               <th>LOCATION</th>
+              <th class="cursor-pointer" ng-click="sort='venue_address_country';reverse=!reverse">COUNTRY</th>
             </tr>
             <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 10">
               <td>{{row.faire_year | ordinal}}</td>
               <td>{{row.category}}</td>
-              <td>{{row.event_end_dt | date:'medium'}}</td>
+              <td>{{row.event_start_dt | date:'medium'}}</td>
               <td>{{row.name}}</td>
               <td>
-                {{row.venue_address_city}}{{
-                  row.venue_address_state && ', '+row.venue_address_state || ''
-                }}{{row.venue_address_country && ', '+row.venue_address_country || ''}}
+                {{row.venue_address_city}}{{row.venue_address_state && ', '+row.venue_address_state || ''}}
               </td>
+              <td>{{row.venue_address_country}}</td>
             </tr>
           </table>
           <div class="text-center">
