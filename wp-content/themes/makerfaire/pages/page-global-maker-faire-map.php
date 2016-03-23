@@ -58,6 +58,10 @@
             <i class="fa fa-map-marker"></i>
             Mini Maker Faires
           </div>
+          <div class="school-key">
+            <i class="fa fa-map-marker"></i>
+            School Maker Faires
+          </div>
         </div>
         <!-- List of Faires -->
         <div class="faire-date-toggle"
