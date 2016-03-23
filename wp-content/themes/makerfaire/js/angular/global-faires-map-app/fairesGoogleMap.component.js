@@ -110,7 +110,6 @@
 
           function displayMarkerInfo() {
             var marker_map = this.getMap();
-            console.log('t: ', this);
             FaireMapsSharedData.infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
               this.title + '</h3>' +
               '<div id="bodyContent"><p>' +
