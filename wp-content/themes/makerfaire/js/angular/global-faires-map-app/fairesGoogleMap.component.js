@@ -102,6 +102,7 @@
               gMarker.dataRowSrc.event_start_dt = new Date(gMarker.dataRowSrc.event_start_dt);
               FaireMapsSharedData.gmarkers1.push(gMarker);
             }
+            FaireMapsSharedData.setMapDone();
           }
 
           function displayMarkerInfo() {
