@@ -52,7 +52,8 @@
         }
         // check if date is ok:
         function isDateOk(marker) {
-          if (!marker.event_end_dt || marker.event_end_dt == '0000-00-00 00:00:00') {
+          if (Object.prototype.toString.call(marker.event_end_dt) !== "[object Date]" ||
+              marker.event_end_dt == '0000-00-00 00:00:00') {
             ctrl.pastPresent.present++;
             return true;
           }
