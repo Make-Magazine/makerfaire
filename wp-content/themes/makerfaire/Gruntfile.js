@@ -1,4 +1,9 @@
 module.exports = function(grunt) {
+  var watchList = ['less/**/*.less', 'js/**/*.js', '!js/*.js', 'js/angular/**/*.js', 'js/angular/global-faires-map-app.js'];
+  var cssFiles = {
+    'css/bootstrap.min.css': 'less/bootstrap/bootstrap.less',
+    'css/style.css': ['less/global.less', 'less/**/*.less', '!less/bootstrap/*']
+  };
   // All configurations go here
   grunt.initConfig({
     // Reads the package.json file
@@ -10,19 +15,13 @@ module.exports = function(grunt) {
           compress: false,
           dumpLineNumbers: 'comments'
         },
-        files: {
-          'css/bootstrap.min.css': 'less/bootstrap/bootstrap.less',
-          'css/style.css': ['less/global.less', 'less/**/*.less', '!less/bootstrap/*']
-        }
+        files: cssFiles
       },
       prod: {
         options: {
           compress: true
         },
-        files: {
-          'css/bootstrap.min.css': 'less/bootstrap/bootstrap.less',
-          'css/style.css': ['less/global.less', 'less/**/*.less', '!less/bootstrap/*']
-        }
+        files: cssFiles
       }
     },
     replace: {
@@ -31,7 +30,7 @@ module.exports = function(grunt) {
         dest: 'style.css',
         replacements: [{
           from: /Version(.)+(\n)/,
-          to: function (matchedWord) {
+          to: function(matchedWord) {
             // version with increment adding .01 increments:
             var v = parseFloat(matchedWord.match(/(\d)\.(\d)+/)[0]) + 0.01;
             v = 'Version: ' + v + '\n';
@@ -99,16 +98,16 @@ module.exports = function(grunt) {
     // Watch for changes on save and livereload
     watch: {
       dev: {
-        files: ['less/**/*.less', 'js/src/*.js', 'js/angular/**/*.js'],
+        files: watchList,
         tasks: ['less:dev', 'concat']
       },
       prod: {
-        files: ['less/**/*.less', 'js/src/*.js', 'js/angular/**/*.js'],
+        files: watchList,
         tasks: ['less:prod', 'concat', 'uglify']
       },
       reload: {
-        files: ['less/**/*.less', 'js/**/*.js', 'js/angular/**/*.js'],
-        tasks: ['js'],
+        files: watchList,
+        tasks: ['less:prod', 'concat', 'uglify'],
         options: {
           livereload: true
         }
@@ -127,5 +126,5 @@ module.exports = function(grunt) {
   // To only watch for less changes and process without browser reload type in "grunt dev"
   grunt.registerTask('dev', ['less:dev', 'concat', 'watch:dev']);
   // To watch for less changes and process them with livereload type in "grunt reload"
-  grunt.registerTask('reload', ['less:dev', 'concat', 'watch:dev', 'watch:reload']);
+  grunt.registerTask('reload', ['less:dev', 'concat', 'watch:reload']);
 };
