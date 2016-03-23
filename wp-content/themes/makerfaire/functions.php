@@ -109,7 +109,7 @@ function load_scripts() {
   wp_enqueue_style( 'make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css' );
   wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css' );
   wp_enqueue_style( 'make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css' );
-  wp_enqueue_style( 'wpb-google-fonts', 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900', false );
+  wp_enqueue_style( 'wpb-google-fonts', 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Condensed:400', false );
   wp_enqueue_style( 'font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', false );
   wp_enqueue_style( 'make-styles', get_stylesheet_directory_uri() . '/css/style.css' );
   wp_enqueue_style( 'ytv', get_stylesheet_directory_uri() . '/css/ytv.css' );
@@ -142,7 +142,7 @@ function load_admin_scripts() {
   //scripts
   wp_enqueue_script('make-gravityforms-admin',  get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'));
   wp_enqueue_script( 'jquery-datetimepicker',  get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array( 'jquery' ), null );
-  wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/libs/bootstrap.min.js', array( 'jquery' ) );
+  wp_enqueue_script( 'make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.js', array( 'jquery' ) );
   wp_enqueue_script( 'admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.js', array( 'jquery' ) );
   wp_enqueue_script( 'sack' );
   //styles
@@ -364,25 +364,23 @@ function makerfaire_meet_the_makers_shortcode($atts, $content = null) {
   $search_criteria['field_filters'][] = array( 'key' => '303', 'value' => 'Accepted' );
   $search_criteria['field_filters']['mode'] = 'all';
 
-  $entries   = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => 0, 'page_size' => 40));
-  $rand_keys = array_rand($entries,3);
-  $values = array();
-  foreach($rand_keys as $key){
-    $values[] = $entries[$key];
-  }
+  $result    = GFAPI::count_entries( $formIDarr, $search_criteria );
+
+  $offset= rand(0,$result); //randomly choose where to pick 3 entries from
+  $entries   = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => $offset, 'page_size' => 3));
 
 $output = '<div class="row filter-container mmakers">'
-          . ' <div class="col-xs-12 col-sm-8"><a href="/maker/entry/' . $values[0]['id'] . '" class="post">'
-          . '   <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[0]['22'],622,402) . '" alt="Featured Maker 1">'
-          . '   <div class="text-box"><span class="section">' . $values[0]['16'] . '</span></div></a>'
+          . ' <div class="col-xs-12 col-sm-8"><a href="/maker/entry/' . $entries[0]['id'] . '" class="post">'
+          . '   <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[0]['22'],622,402) . '" alt="Featured Maker 1">'
+          . '   <div class="text-box"><span class="section">' . $entries[0]['16'] . '</span></div></a>'
           . ' </div><div class="col-xs-12 col-sm-4">'
-          . '   <a href="/maker/entry/' . $values[1]['id'] . '" class="post">'
-          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[1]['22'],622,402) . '" alt="Featured Maker 2">'
-          . '     <div class="text-box"><span class="section">' . substr($values[1]['151'],0,40)  . strlen($values[1]['151']>40?'. . .':'').'</span></div>'
+          . '   <a href="/maker/entry/' . $entries[1]['id'] . '" class="post">'
+          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[1]['22'],622,402) . '" alt="Featured Maker 2">'
+          . '     <div class="text-box"><span class="section">' . substr($entries[1]['151'],0,48) . '</span></div>'
           . '   </a>'
-          . '   <a href="/maker/entry/' . $values[2]['id'] . '" class="post">'
-          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($values[2]['22'],622,402) . '" alt="Featured Maker 3">'
-          . '     <div class="text-box"><span class="section">' . substr($values[2]['151'],0,40)  . strlen($values[2]['151']>40?'. . .':'').'</span></div>'
+          . '   <a href="/maker/entry/' . $entries[2]['id'] . '" class="post">'
+          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[2]['22'],622,402) . '" alt="Featured Maker 3">'
+          . '     <div class="text-box"><span class="section">' . substr($entries[2]['151'],0,48) . '</span></div>'
           . '   </a>'
           . '</div></div>';
 
@@ -1490,6 +1488,7 @@ function custom_entry_meta($entry_meta, $form_id){
         'choices'   => array(
           array( 'value' => 'ready', 'text' => 'Ready' ),
           array( 'value' => 'review', 'text' => 'Review' ),
+            array( 'value' => 'sent', 'text' => 'Sent' ),
         )
       )
     );
@@ -1744,10 +1743,10 @@ function redirect_gf_admin_pages(){
 
 add_action('admin_menu', 'redirect_gf_admin_pages');
 
-//add new merge tag: user-schedule
-add_filter('gform_custom_merge_tags', 'entry_schedule_custom_merge_tags', 10, 4);
-add_filter('gform_replace_merge_tags', 'entry_schedule_replace_merge_tags', 10, 7);
-add_filter('gform_field_content', 'entry_schedule_field_content', 10, 5);
+//MF custom merge tags
+add_filter('gform_custom_merge_tags', 'mf_custom_merge_tags', 10, 4);
+add_filter('gform_replace_merge_tags', 'mf_replace_merge_tags', 10, 7);
+add_filter('gform_field_content', 'mf_field_content', 10, 5);
 
 /**
 * add custom merge tags
@@ -1757,8 +1756,20 @@ add_filter('gform_field_content', 'entry_schedule_field_content', 10, 5);
 * @param int $element_id
 * @return array
 */
-function entry_schedule_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
+function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Schedule', 'tag' => '{entry_schedule}');
+    $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
+
+    //create a separate merge tag for each attribute
+    global $wpdb;
+    $sql = 'select ID,category from wp_rmt_entry_att_categories';
+    $results = $wpdb->get_results($sql);
+    foreach($results as $result){
+      $merge_tags[] = array('label' => 'Attribute - '.$result->category, 'tag' => '{EA_'.$result->ID.'}');
+    }
+
+    //add merge tag for Attention field - Confirmation Comment
+    $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
 
     return $merge_tags;
 }
@@ -1774,11 +1785,63 @@ function entry_schedule_custom_merge_tags($merge_tags, $form_id, $fields, $eleme
 * @param string $format
 * @return string
 */
-function entry_schedule_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
+function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
+  $entry_id = (isset($lead['id'])?$lead['id']:'');
+
+  //Entry Schedule
+  if (strpos($text, '{entry_schedule}') !== false) {
     $schedule = get_schedule($lead);
     $text = str_replace('{entry_schedule}', $schedule, $text);
+  }
 
-    return $text;
+  //Entry Resources
+  if (strpos($text, '{entry_resources}') !== false) {
+    //set lead meta field res_status to sent
+    gform_update_meta( $entry_id, 'res_status','sent' );
+    $resTable = '<table><tr><th>Resource</th><th>Quantity</th></tr>';
+    $resources = get_resources($lead);
+
+    foreach($resources as $entRes){
+      $resTable .= '<tr><td>'.$entRes['resource'].'</td><td>'.$entRes['qty'].'</td></tr>';
+    }
+    $resTable .= '</table>';
+    $text = str_replace('{entry_resources}', $resTable, $text);
+  }
+
+  //individual attributes
+  if (strpos($text, '{EA_') !== false) {
+    $lastPos = 0;
+    $positions = array();
+
+    //look thru $text and find all instances of the merge tag {EA_'attributeID'}
+    while (($lastPos = strpos($text, '{EA_', $lastPos))!== false) {
+      $lastPos = $lastPos + strlen('{EA_');
+      //find the closing bracket of the merge tag
+      $closeBracketPos = strpos($text, '}', $lastPos);
+      //retrieve the ID of the attribute
+      $attID = substr($text, $lastPos,$closeBracketPos-$lastPos);
+      $AttText = get_attribute($lead,$attID);
+      $attMerge = '';
+      foreach($AttText as $attDetail){
+        if($attMerge!='') $attMerge.='<br/>';
+        $attMerge .= $attDetail['value'];
+      }
+      $text = str_replace('{EA_'.$attID.'}', $attMerge, $text);
+    }
+  }
+
+  //attention field
+  if (strpos($text, '{CONF_COMMENT}') !== false) {
+    global $wpdb;
+    $sql = "SELECT comment "
+        . " from wp_rmt_entry_attn,wp_rmt_attn"
+        . " where entry_id = ".$entry_id
+        . " and wp_rmt_attn.ID = attn_id"
+        . " and token = 'CONF_COMMENT'";
+    $attnText = $wpdb->get_var($sql);
+    $text = str_replace('{CONF_COMMENT}', $attnText, $text);
+  }
+  return $text;
 }
 
 /**
@@ -1790,7 +1853,7 @@ function entry_schedule_replace_merge_tags($text, $form, $lead, $url_encode, $es
 * @param int $form_id
 * @return string
 */
-function entry_schedule_field_content($field_content, $field, $value, $lead_id, $form_id) {
+function mf_field_content($field_content, $field, $value, $lead_id, $form_id) {
     if (strpos($field_content, '{entry_schedule}') !== false) {
         $lead = GFAPI::get_entry( $lead_id );
         $schedule = get_schedule($lead);
@@ -1799,6 +1862,48 @@ function entry_schedule_field_content($field_content, $field, $value, $lead_id, 
     }
 
     return $field_content;
+}
+/** End MF custom merge tags **/
+
+/* Return value and attribute of selected attribute per entry if set */
+function get_attribute($lead,$attID){
+  global $wpdb;
+  $return = array();
+  $entry_id = (isset($lead['id'])?$lead['id']:'');
+
+  if($entry_id!=''){
+    //gather resource data
+    $sql = "SELECT value,"
+            . " (select category from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.ID = attribute_id)as attribute "
+            . " FROM `wp_rmt_entry_attributes`  "
+            . " where entry_id = ".$entry_id." and attribute_id = ".$attID." order by attribute ASC, value ASC";
+    $results = $wpdb->get_results($sql);
+    foreach($results as $result){
+      $return[] = array('attribute'=>$result->attribute, 'value'=> $result->value);
+    }
+  }
+  return $return;
+}
+
+/* Return array of resource information for lead*/
+function get_resources($lead){
+  global $wpdb;
+  $return = array();
+  $entry_id = (isset($lead['id'])?$lead['id']:'');
+
+  if($entry_id!=''){
+    //gather resource data
+    $sql = "SELECT er.qty, type, wp_rmt_resource_categories.category as item "
+            . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
+            . "where er.resource_id = wp_rmt_resources.ID "
+            . "and resource_category_id = wp_rmt_resource_categories.ID  "
+            . "and er.entry_id = ".$entry_id." order by item ASC, type ASC";
+    $results = $wpdb->get_results($sql);
+    foreach($results as $result){
+      $return[]= array('resource'=>$result->item.' - '.$result->type, 'qty'=> $result->qty);
+    }
+  }
+  return $return;
 }
 
 /* Return schedule for lead */
@@ -1844,6 +1949,7 @@ function add_event( $notification_events ) {
     $notification_events['maker_cancel_exhibit']  = __( 'Maker Cancelled Exhibit', 'gravityforms' );
     $notification_events['maker_delete_exhibit']  = __( 'Maker Deleted Exhibit', 'gravityforms' );
     $notification_events['maker_updated_exhibit'] = __( 'Maker Updated Entry', 'gravityforms' );
+    $notification_events['manual']                = __( 'Send Manually', 'gravityforms' );
     return $notification_events;
 }
 

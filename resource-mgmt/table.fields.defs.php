@@ -95,8 +95,16 @@ $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'status',   'fil
 //change report
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'lead_id',   'filterType'   => 'text');
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'form_id',   'filterType'   => 'text');
+/*
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'user_id',   'filterType' => 'dropdown',   'fieldLabel'  => 'User Updated',
                                                   'fkey'       => array('referenceTable'   => 'wp_users',
+                                                                        'referenceField'   => 'ID',
+                                                                        'referenceDisplay' => 'user_email'),
+                                                  'options' =>array(null=>'Initial','0'=>'Payment'));*/
+$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'user_email',
+                                                    'filterType' => 'text',   'fieldLabel'  => 'User Updated',
+    'dataSql' => "(SELECT user_email FROM `wp_users` where wp_users.ID =user_id ) as user_email",
+                                                    'fkey'       => array('referenceTable'   => 'wp_users',
                                                                         'referenceField'   => 'ID',
                                                                         'referenceDisplay' => 'user_email'),
                                                   'options' =>array(null=>'Initial','0'=>'Payment'));
@@ -105,7 +113,11 @@ $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_id',  
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_before',   'filterType'   => 'text');
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_after',   'filterType'   => 'text');
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'fieldLabel',   'filterType'   => 'text');
-
+$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'status',   'filterType'   => 'dropdown', 'fieldLabel' => 'Status',
+                                                 'dataSql' => "(SELECT value FROM `wp_rg_lead_detail` where field_number=303 and wp_rg_lead_detail.lead_id =wp_rg_lead_detail_changes.lead_id ) as status",
+                                                 'options' => array('Proposed'=>'Proposed','Accepted'=>'Accepted','Rejected'=>'Rejected',
+                                                                    'Wait List'=>'Wait List','Cancelled'=>'Cancelled'),
+                                                );
 //faire report
 $tableFields['wp_mf_faire_subarea'][] = array('fieldName' => 'faire',   'filterType'   => 'text',
                                               'dataSql' => "(SELECT faire "

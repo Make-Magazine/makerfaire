@@ -167,3 +167,8 @@ span.summary.ng-invalid { color: red; font-weight: bold; }
 span.summary.ng-valid { color: green; }
 div.error {color: red !important; font-weight: bold;}
 .help-block.error{color: red !important;}
+
+.list-group-item-primary {
+    color: rgb(255, 255, 255);
+    background-color: rgb(66, 139, 202);
+}

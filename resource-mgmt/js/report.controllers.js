@@ -1,10 +1,17 @@
 // reports controller
-rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiGridConstants','uiGridGroupingConstants', function ($scope, $routeParams, $http,uiGridConstants,uiGridGroupingConstants) {
+rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$interval','uiGridConstants','uiGridGroupingConstants', function ($scope, $routeParams, $http,$interval,uiGridConstants,uiGridGroupingConstants) {
   $scope.reports    = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
   $scope.reports.showbuild = false;
   $scope.reports.selectedFields = {};
+
+  //set location based on url parameters
+  if("location" in $routeParams){
+    if($routeParams.location==='true'){
+      $scope.reports.location = true;
+    }
+  }
 
   $scope.msg = {};
 
@@ -52,7 +59,17 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   $scope.generateReport = function() {
     var formSelect     = $scope.reports.formSelect;
     var selectedFields = $scope.reports.selectedFields;
-    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'type' : 'customRpt'}
+    var rmtData            = {};
+    angular.forEach($scope.reports.rmt, function(type, key) {
+      build = [];
+      angular.forEach(type,function(field){
+        if(field.checked){
+          build.push(field);
+        }
+      })
+      rmtData[key] = build;
+    });
+    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'rmtData' : rmtData, 'type' : 'customRpt', 'location' : $scope.reports.location}
     $scope.reports.callAJAX(vars);
   }
   /*end build your own report */
@@ -73,14 +90,16 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   };
 
   //get report data
-  $scope.reports.callAJAX = function(vars){
+  $scope.reports.callAJAX = function(pvars){
     $scope.reports.loading = true;
+    //console.log(pvars);
+
     //get grid data
     $http({
       method: 'post',
       url: url,
-      data: jQuery.param(vars),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+      data: JSON.stringify(pvars),
+      headers: {'Content-Type': 'application/json'}
     })
     .then(function(response){
       if(("success" in response.data)){
@@ -109,7 +128,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
     exporterFieldCallback: function( grid, row, col, input ) {
 
       if(("editDropdownOptionsArray" in col.colDef)){
-        console.log(col);
+        //console.log(col);
         //convert gridArray to usable hash
         var optionsHash =  {};
         var gridArray = col.colDef.editDropdownOptionsArray;
@@ -164,8 +183,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
   $http({
     method: 'post',
     url: url,
-    data: jQuery.param({ 'table' : $scope.reports.tableName , 'type' : 'tableData','viewOnly':true }),
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : 'tableData','viewOnly':true }),
+    headers: {'Content-Type': 'application/json'}
   })
   .then(function(response){
       angular.forEach(response.data.columnDefs, function(value, key) {
@@ -184,18 +203,73 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','uiG
         }
       });
       $scope.gridOptions.columnDefs = response.data.columnDefs;
+      console.log(uiGridConstants.filter);
       $scope.gridOptions.data       = response.data.data;
 
       //set up build your own data
       if(("forms" in response.data)){
-        $scope.reports.formSelect = [];
+        if(("formSelect" in $routeParams)){
+          $scope.reports.formSelect = $routeParams.formSelect.split(',');
+        }else{
+          $scope.reports.formSelect = [];
+        }
         $scope.reports.forms = response.data.forms;
       }
       if(("fields" in response.data)){
         $scope.fieldSelect.data = response.data.fields;
+        //loop thru passed parameter fields
+        if("fields" in $routeParams){
+          if($scope.fieldSelect.gridApi.selection.selectRow){
+            var selfields = $routeParams.fields.split(',');
+            angular.forEach($scope.fieldSelect.data, function(value, key) {
+              if(selfields.indexOf(String(value.id)) != -1){
+                // $interval whilst we wait for the grid to digest the data we just gave it
+                $interval( function() {$scope.fieldSelect.gridApi.selection.selectRow($scope.fieldSelect.data[key]);}, 0, 1);
+              }
+            });
+
+          }
+        }
       }
-      if(("field_filters" in response.data)){
-        jQuery('#entry_filters').gfFilterUI(response.data.field_filters, response.data.init_field_filters, false);
+      if(("rmt" in response.data)){
+        $scope.reports.rmt  = response.data.rmt;
+        //set resources based on url parameters
+        if("resource" in $routeParams){
+          var selResources = $routeParams.resource.split(',');
+          angular.forEach($scope.reports.rmt.resource, function(value, key) {
+            if(selResources.indexOf(String(value.value)) != -1){
+              $scope.reports.rmt.resource[key].checked=true;
+
+            }
+          });
+        }
+        //set attributes based on url parameters
+        if("attribute" in $routeParams){
+          var selAttributes = $routeParams.attribute.split(',');
+          angular.forEach($scope.reports.rmt.attribute, function(value, key) {
+            if(selAttributes.indexOf(String(value.value)) != -1){
+              $scope.reports.rmt.attribute[key].checked=true;
+            }
+          });
+        }
+        //set attention based on url parameters
+        if("attention" in $routeParams){
+          var selAttentions = $routeParams.attention.split(',');
+          angular.forEach($scope.reports.rmt.attention, function(value, key) {
+            if(selAttentions.indexOf(String(value.value)) != -1){
+              $scope.reports.rmt.attention[key].checked=true;
+            }
+          });
+        }
+        //set attention based on url parameters
+        if("other" in $routeParams){
+          var selMeta = $routeParams.other.split(',');
+          angular.forEach($scope.reports.rmt.meta, function(value, key) {
+            if(selMeta.indexOf(String(value.value)) != -1){
+              $scope.reports.rmt.meta[key].checked=true;
+            }
+          });
+        }
       }
     })
     .finally(function () {
