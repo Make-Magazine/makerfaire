@@ -1831,15 +1831,15 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   }
 
   //attention field
-  if (strpos($text, '{LOC_COMMENT}') !== false) {
+  if (strpos($text, '{CONF_COMMENT}') !== false) {
     global $wpdb;
     $sql = "SELECT comment "
         . " from wp_rmt_entry_attn,wp_rmt_attn"
         . " where entry_id = ".$entry_id
         . " and wp_rmt_attn.ID = attn_id"
-        . " and token = 'LOC_COMMENT'";
+        . " and token = 'CONF_COMMENT'";
     $attnText = $wpdb->get_var($sql);
-    $text = str_replace('{LOC_COMMENT}', $attnText, $text);
+    $text = str_replace('{CONF_COMMENT}', $attnText, $text);
   }
   return $text;
 }
