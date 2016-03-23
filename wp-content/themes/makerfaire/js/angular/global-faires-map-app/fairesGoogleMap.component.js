@@ -100,7 +100,7 @@
                 zIndex: gMarkerZIndex,
                 dataRowSrc: row
               });
-              google.maps.event.addListener(gMarker, 'click', displayMarkerInfo);
+              google.maps.event.addListener(gMarker, 'mouseover', displayMarkerInfo);
               gMarker.dataRowSrc.event_end_dt = new Date(gMarker.dataRowSrc.event_end_dt);
               gMarker.dataRowSrc.event_start_dt = new Date(gMarker.dataRowSrc.event_start_dt);
               FaireMapsSharedData.gmarkers1.push(gMarker);
