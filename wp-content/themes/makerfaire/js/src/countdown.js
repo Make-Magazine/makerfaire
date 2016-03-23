@@ -35,7 +35,10 @@
         <div class="marker">Minutes</div>\
       </div>\
     </div>';
-    document.getElementById('mfbaCountdown').innerHTML = markup;
+    var element = document.getElementById('mfbaCountdown');
+    if (element != null && element.value == '') {
+      element.innerHTML = markup;
+    }
   }
 
   jQuery().ready(function() {
