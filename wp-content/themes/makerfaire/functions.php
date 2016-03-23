@@ -2653,7 +2653,7 @@ function mf_custom_export_entries() {
 
 /**
  * This function will connect wp_mail to your authenticated
- * SMTP server. This improves reliability of wp_mail, and 
+ * SMTP server. This improves reliability of wp_mail, and
  * avoids many potential problems.
  */
 add_action( 'phpmailer_init', 'send_smtp_email' );
@@ -2681,3 +2681,26 @@ function send_smtp_email( $phpmailer ) {
   $phpmailer->SMTPSecure = "";
 
 }
+
+/*
+ * add new shortcode to generate a export entries look
+ */
+
+function  createExportLink($atts){
+  extract( shortcode_atts( array(
+    'formid'  => '',
+    'title'   => ''
+  ), $atts ) );
+  $link = '';
+  if($formid != ''){
+    //create a crypt key to pass to entriesExport.php to avoid outside from accessing
+    $date  = date('mdY');
+    $crypt = crypt($date, AUTH_SALT);
+    $forms = RGFormsModel::get_forms( null, 'title' );
+    $form = GFAPI::get_form($formid);
+    $link = '<a href="/wp-content/themes/makerfaire/devScripts/entriesExport.php?formID='. absint( $formid ).'&auth='.$crypt.'">Export Entries</a>';
+  }
+  return $link;
+}
+
+add_shortcode( 'mfExportLink', 'createExportLink' );
