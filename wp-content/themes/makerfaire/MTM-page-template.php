@@ -310,14 +310,6 @@ if(get_field('sponsors_page_url')) {
 <?php } ?>
 
 <script>
-(function() { // Random background image from 'flagship-background' custom fields:
-  var img = [];
-  <?php foreach (get_post_meta($post->ID, 'flagship-background', false) as $i) {
-    echo 'img.push(\'' . $i . '\');'; // push all meta images src to js array
-  } ?>
-  document.getElementById('flagship-faire-wrp').style.backgroundImage = 'url(' + img[Math.floor(Math.random() * img.length)] + ')';
-})();
-
 // Update the sponsor slide title each time the slide changes
 jQuery('.carousel-inner .item:first-child').addClass('active');
 jQuery(function() {
