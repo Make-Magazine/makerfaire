@@ -259,15 +259,9 @@ function buildFaireDrop($wp_admin_bar){
 /*
  * After Submission Gravity Forms Action Handling
  */
-add_action( 'gform_after_submission', 'post_to_jdb', 10, 2 );
-function post_to_jdb( $entry, $form ) {
-	// Allowed forms array
-	/*$jdb_sync_forms = array(25, 26, 27, 28, 29);
-	if (in_array($form['id'], $jdb_sync_forms)) {*/
-		error_log('$gravityforms_send_entry_to_jdb:'.$entry['id']);
-		$result = GFJDBHELPER::gravityforms_send_entry_to_jdb($entry['id']);
-		error_log('GFJDBHELPER:result:'.$result);
-//  	}
+add_action( 'gform_after_submission', 'updateRMT', 10, 2 );
+function updateRMT( $entry, $form ) {
+  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form,'new');
 }
 
 /*
