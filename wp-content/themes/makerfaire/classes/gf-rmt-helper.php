@@ -281,6 +281,7 @@ class GFRMTHELPER {
     $attribute   = array();
     $resource    = array();
     $entryID     = $entryData['entry_id'];
+    $user        = NULL;
 
     /*
      *  E N T R Y   R E S O U R C E S   M A P P I N G
@@ -322,7 +323,7 @@ class GFRMTHELPER {
       }elseif($entryData['amps'] == '15 amps (1001-1500 watts, 120V)'){
         $resource[] = array($resourceID['120V-15A'],1,'');
       }elseif($entryData['amps'] == '20 amps (1501-2000 watts, 120V)'){
-        $resource[] = array($resourceID['120V-20A'],1,);
+        $resource[] = array($resourceID['120V-20A'],1,'');
       }elseif($entryData['amps'] == '30 amps (2000-3000 watts, 120V)'){
         $resource[] = array($resourceID['120V-30A'],1,'');
       }elseif($entryData['amps'] == '50 amps (3001-5000 watts, 120V)'){
@@ -355,43 +356,43 @@ class GFRMTHELPER {
       }
 
       $pos = strpos($entryData['paymentElectr'], '5 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-05A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-05A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '10 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-10A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-10A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '15 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-15A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-15A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '20 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-20A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-20A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '30 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-30A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-30A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '50 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-50A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-50A'],1,'');
       $pos = strpos($entryData['paymentElectr'], 'Other/Not Listed');
-      if ($pos !== false)     $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['paymentDescElect'],0);
+      if ($pos !== false)     $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['paymentDescElect']);
 
       //field 14 - tables
       $pos = strpos($entryData['paymentTable'], 'One table');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'');
       $pos = strpos($entryData['paymentTable'], 'Two tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'');
       $pos = strpos($entryData['paymentTable'], 'Three Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'');
       $pos = strpos($entryData['paymentTable'], 'Four Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'');
       $pos = strpos($entryData['paymentTable'], 'Five Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'');
       $pos = strpos($entryData['paymentTable'], 'Six Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'');
       $pos = strpos($entryData['paymentTable'], 'Seven Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'');
       $pos = strpos($entryData['paymentTable'], 'Eight Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'');
       $pos = strpos($entryData['paymentTable'], 'Nine Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'');
       $pos = strpos($entryData['paymentTable'], 'Ten Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
     }
     /*
      * E N T R Y   A T T R I B U T E   M A P P I N G
@@ -450,16 +451,18 @@ class GFRMTHELPER {
       $attribute[] = array($attributeID['INTRNT'],$entryData['internet'],'');
     }
 
+    global $current_user;
+    $user = ($entryData['fType'] == 'Payment' ?  0 : $current_user->ID);  //user = 0 - payment form
+
     //add resources to the table
     foreach($resource as $value){
       $resource_id = $value[0];
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
-      $user        = (isset($value[3])?$value[3]:NULL);
+
       //if the resource has already been added, update the qty
       $resourceCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_resources` where entry_id = $entryID and resource_id = $resource_id");
-      if($resourceCount >0){ //if result, update.
-        if($entryData['fType'] == 'Payment')  $user = 0;  //user = 0 - payment form
+      if($resourceCount > 0){ //if result, update.
         $wpdb->get_results("update wp_rmt_entry_resources set qty = $qty, user=$user where  entry_id = $entryID and resource_id = $resource_id");
       }else{
         //else insert
@@ -473,21 +476,20 @@ class GFRMTHELPER {
       $attribute_id = $value[0];
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
-      $user         = (isset($value[3])?$value[3]:NULL);
 
       //if this a payment form and the attribute has already been added, update the qty
       $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` where entry_id = $entryID and attribute_id = $attribute_id");
       if($attCount > 0){ //if result, update.
         if($entryData['fType'] == 'Payment'){ //only update attribute table for payments
           //user = null - initial entry, user = 0 - payment form
-          $wpdb->get_results('update wp_rmt_entry_attributes set value = "'.$attvalue.'", user=0,'
-                . ' comment=CONCAT( comment, " '.$entryData['fType'].' Form Comment - '.$comment.'") '
-                . ' where  entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
+          $wpdb->get_results('update wp_rmt_entry_attributes set value = "' . $attvalue . '", user=' . $user . ','
+                . ' comment=CONCAT( comment, " ' . $entryData['fType'] . ' Form Comment - ' . $comment . '") '
+                . ' where  entry_id = ' . $entryID . ' and attribute_id = ' . $attribute_id);
         }
       }else{
         //else insert
         $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
-                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.'),');
+                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')');
       }
 
     }
@@ -526,8 +528,10 @@ class GFRMTHELPER {
    */
   public static function updateMakerTable($entryData){
     global $wpdb;
+    $form_id = $entryData['form_id'];
+
     //determine faire
-    $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET (detail.form_id, wp_mf_faire.form_ids)> 0');
+    $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
 
     //if we already have data for this entry - clean it out first
     $count = $wpdb->get_var('select count(*) from wp_mf_entity where lead_id = '.$entryData['entry_id']);
@@ -548,10 +552,11 @@ class GFRMTHELPER {
                             . ' "'.$entryData['private_description']  . '", '
                             . ' "'.$entryData['project_photo']        . '", '
                             . ' "'.$entryData['status']               . '", '
-                            . ' "'.$entryData['categories']           . '", '
+                            . ' "'.implode(',',$entryData['categories']) . '", '
                             . ' "'.$faire                             . '", '
                             . '  '.$entryData['mobileAppDiscover']    . ')';
-
+    $wpdb->get_results($wp_mf_entitysql);
+    
     /*  wp_mf_maker table
      *
      *  maker array structure -
@@ -586,13 +591,13 @@ class GFRMTHELPER {
         $twitter  = (isset($typeArray['twitter']) ? esc_sql($typeArray['twitter'])  : '');
         $photo    = (isset($typeArray['photo'])   ? esc_sql($typeArray['photo'])    : '');
         $website  = (isset($typeArray['website']) ? esc_sql($typeArray['website'])  : '');
-        $guid     = createGUID($key .'-'.$type);
+        $guid     = createGUID($entryData['entry_id'] .'-'.$type);
 
         //if we already have data for this entry - clean it out first
         $count = $wpdb->get_var('select count(*) from wp_mf_maker where lead_id = '.$entryData['entry_id']);
         if($count > 0){
           $wpdb->get_results('delete from wp_mf_maker where lead_id = '.$entryData['entry_id']);
-          $wpdb->get_results('delete from wp_mf_maker where entity_id ='.$entryData['entry_id']);
+          $wpdb->get_results('delete from wp_mf_maker_to_entity where entity_id ='.$entryData['entry_id']);
         }
         $wp_mf_makersql = "INSERT INTO wp_mf_maker "
                         . " (lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`,  `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
@@ -602,7 +607,6 @@ class GFRMTHELPER {
         if($wpdb->insert_id==false){
             echo 'error inserting record wp_mf_maker:'.$wp_mf_makersql.'<br/><br/>';
         }
-        $m++;
 
         //build maker to entity table
         $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`"
