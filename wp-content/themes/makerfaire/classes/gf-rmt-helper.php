@@ -13,7 +13,7 @@ class GFRMTHELPER {
    * This function is called when there is an entry update or new entry submission
    * $type - this tells us if this is a new submission or an update to the entry
 	*/
-	public static function gravityforms_makerInfo($entry,$form,$type='new') {
+	public static function gravityforms_makerInfo($entry,$form) {
 		//format Entry information
     $entryData = self::gravityforms_format_record($entry,$form);
 
@@ -556,7 +556,7 @@ class GFRMTHELPER {
                             . ' "'.$faire                             . '", '
                             . '  '.$entryData['mobileAppDiscover']    . ')';
     $wpdb->get_results($wp_mf_entitysql);
-    
+
     /*  wp_mf_maker table
      *
      *  maker array structure -

@@ -260,8 +260,9 @@ function buildFaireDrop($wp_admin_bar){
  * After Submission Gravity Forms Action Handling
  */
 add_action( 'gform_after_submission', 'updateRMT', 10, 2 );
+add_action( 'gform_after_update_entry', 'updateRMT', 10, 3 );
 function updateRMT( $entry, $form ) {
-  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form,'new');
+  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form);
 }
 
 /*

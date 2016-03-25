@@ -2478,6 +2478,7 @@ function gView_trash_entry(){
 
 /* This function will write all user changes to entries to a database table to create a change report */
 add_action('gravityview/edit_entry/after_update','GVupdate_notification',10,3);
+add_action( 'gform_after_update_entry', 'GVupdate_notification', 10, 3 );
 function GVupdate_notification($form,$entry_id,$orig_entry){
     //get updated entry
     $updatedEntry = GFAPI::get_entry(esc_attr($entry_id));
