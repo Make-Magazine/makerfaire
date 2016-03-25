@@ -5,8 +5,8 @@
       mapId: '@id',
       mapData: '='
     },
-    controller: ['$rootScope', 'GMapsInitializer', 'FaireMapsSharedData',
-      function($rootScope, GMapsInitializer, FaireMapsSharedData) {
+    controller: ['$rootScope', 'GMapsInitializer', 'FaireMapsSharedData', '$filter',
+      function($rootScope, GMapsInitializer, FaireMapsSharedData, $filter) {
         var ctrl = this;
         var gMap;
 
@@ -78,10 +78,13 @@
                   gMarkerZIndex = 2;
                   break;
                 case 'Featured':
-                  gMarkerIcon.fillColor = '#F2BF70';
+                  gMarkerIcon.fillColor = '#E75662';
+                  break;
+                case 'School':
+                  gMarkerIcon.fillColor = '#00BA4B';
                   break;
                 default:
-                  gMarkerIcon.fillColor = '#666666';
+                  gMarkerIcon.fillColor = '#F3BF70';
               }
               gMarker = new google.maps.Marker({
                 position: {
@@ -97,11 +100,12 @@
                 zIndex: gMarkerZIndex,
                 dataRowSrc: row
               });
-              google.maps.event.addListener(gMarker, 'click', displayMarkerInfo);
+              google.maps.event.addListener(gMarker, 'mouseover', displayMarkerInfo);
               gMarker.dataRowSrc.event_end_dt = new Date(gMarker.dataRowSrc.event_end_dt);
               gMarker.dataRowSrc.event_start_dt = new Date(gMarker.dataRowSrc.event_start_dt);
               FaireMapsSharedData.gmarkers1.push(gMarker);
             }
+            FaireMapsSharedData.setMapDone();
           }
 
           function displayMarkerInfo() {
@@ -109,7 +113,13 @@
             FaireMapsSharedData.infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
               this.title + '</h3>' +
               '<div id="bodyContent"><p>' +
-              (this.description || '') +
+              (this.dataRowSrc.venue_address_city || '') +
+              (this.dataRowSrc.venue_address_state && ', ' + this.dataRowSrc.venue_address_state || '') +
+              (this.dataRowSrc.venue_address_country && ', ' + this.dataRowSrc.venue_address_country + ' ' || '') +
+              (this.dataRowSrc.event_start_dt && $filter('date')(this.dataRowSrc.event_start_dt, 'mediumDate') || '') +
+              '</p><p>' +
+              (this.dataRowSrc.faire_url &&
+                '<a href="' + this.dataRowSrc.faire_url + '" target="blank">' + this.dataRowSrc.faire_url + '</a>' || '') +
               '</p></div>' +
               '</div>'
             );
@@ -122,7 +132,6 @@
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
               gMap.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-              console.log(position.coords.latitude, position.coords.longitude);
             });
           }
         });

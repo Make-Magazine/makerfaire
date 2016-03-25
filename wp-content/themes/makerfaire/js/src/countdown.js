@@ -25,17 +25,23 @@
 
   function setCountdownHTML() {
     var markup = '<div class="countdown font-narrower">\
-      <div class="unit"> '+days+'\
-        <div class="marker">Days</div>\
+      <div class="unit">\
+        <div class="number">'+days+'</div>\
+        <div class="key">Days</div>\
       </div>\
-      <div class="unit">'+hours+'\
-        <div class="marker">Hours</div>\
+      <div class="unit">\
+        <div class="number">'+hours+'</div>\
+        <div class="key">Hours</div>\
       </div>\
-      <div class="unit">'+minutes+'\
-        <div class="marker">Minutes</div>\
+      <div class="unit">\
+        <div class="number">'+minutes+'</div>\
+        <div class="key">Minutes</div>\
       </div>\
     </div>';
-    document.getElementById('mfbaCountdown').innerHTML = markup;
+    var element = document.getElementById('mfbaCountdown');
+    if (element != null) {
+      element.innerHTML = markup;
+    }
   }
 
   jQuery().ready(function() {

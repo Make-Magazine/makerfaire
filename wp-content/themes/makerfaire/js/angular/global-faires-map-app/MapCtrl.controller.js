@@ -52,7 +52,8 @@
         }
         // check if date is ok:
         function isDateOk(marker) {
-          if (!marker.event_end_dt || marker.event_end_dt == '0000-00-00 00:00:00') {
+          if (Object.prototype.toString.call(marker.event_end_dt) !== "[object Date]" ||
+            marker.event_end_dt == '0000-00-00 00:00:00') {
             ctrl.pastPresent.present++;
             return true;
           }
@@ -68,7 +69,6 @@
           var rowData = marker.dataRowSrc;
           if (containsString(rowData) && isTypeToggled(rowData) && isDateOk(rowData)) {
             newModel.push(rowData);
-
             marker.setVisible(true);
           } else {
             ctrl.pastPresent.past++;
@@ -81,6 +81,9 @@
       $http.get('/query/?type=map')
         .then(function successCallback(response) {
           ctrl.faireMarkers = response && response.data && response.data.Locations;
+          FaireMapsSharedData.mapDone().then(null, null, function() {
+            ctrl.applyMapFilters();
+          })
         }, function errorCallback() {
           // error
         });
