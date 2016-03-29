@@ -2,7 +2,8 @@
   'use strict';
   angular.module('faireMapsApp').component('fairesMapFilter', {
     template: '<div class="checkbox">\
-        <label><input type="checkbox" class="checkbox-fa-icon" ng-model="$ctrl.defaultState" ng-click="$ctrl.toggleFilter()">\
+        <label>\
+          <input type="checkbox" class="checkbox-fa-icon" ng-model="$ctrl.defaultState" ng-click="$ctrl.toggleFilter()">\
           <i class="fa fa-square-o"></i>\
           <i class="fa fa-check-square-o"></i>\
           <ng-transclude></ng-transclude>\
