@@ -191,8 +191,14 @@ function build_wp_mf_maker(){
             $twitter    = (isset($typeArray['TWITTER'])    && isset($lead[$typeArray['TWITTER']])   ? esc_sql($lead[$typeArray['TWITTER']])    : '');
             $photo      = (isset($typeArray['Photo'])      && isset($lead[$typeArray['Photo']])     ? esc_sql($lead[$typeArray['Photo']])      : '');
             $website    = (isset($typeArray['website'])    && isset($lead[$typeArray['website']])   ? esc_sql($lead[$typeArray['website']])    : '');
+            
+            $results = $wpdb->get_results($wpdb->prepare("SELECT maker_id FROM wp_mf_maker WHERE email=%s", $email) );
+            if ($wpdb->num_rows != 0){
+              $guid = $results[0]->maker_id;
+            }else{
+              $guid     = createGUID($key .'-'.$type);
+            }
 
-            $guid = crypt($email, AUTH_SALT);
             $wp_mf_makersql = "INSERT INTO wp_mf_maker(lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, "
                                                     . " `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
                                 . " VALUES (".$key.", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."',"
