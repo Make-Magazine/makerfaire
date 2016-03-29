@@ -87,7 +87,7 @@
         <div class="faire-list-table">
           <table class="table table-striped table-condensed">
             <tr></tr>
-            <tr>
+            <tr ng-init="sort='event_start_dt';reverse=true">
               <th class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">ANNUAL</th>
               <th class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE</th>
               <th class="cursor-pointer" ng-click="sort='event_start_dt';reverse=!reverse">DATE</th>
@@ -98,7 +98,7 @@
             <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 10">
               <td>{{row.annual | ordinal}}</td>
               <td>{{row.category}}</td>
-              <td>{{row.event_start_dt | date:'medium'}}</td>
+              <td>{{row.event_dt}}</td>
               <td>
                 <a ng-if="row.faire_url" href="{{row.faire_url}}">{{row.name}}</a>
                 <span ng-if="!row.faire_url">{{row.name}}</span>
