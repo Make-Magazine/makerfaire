@@ -175,7 +175,8 @@ function build_wp_mf_maker(){
                     $lNameLoc = (string) $typeArray['Last Name'];
                     //if first name is set for this type and the field numer is set in the returned table data, then use this data else use a blank
                     $lastName   = (isset($typeArray['Last Name'])  && isset($lead[$lNameLoc])               ? esc_sql($lead[$lNameLoc])                : '');
-
+                    $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])     ? ($lead[$typeArray['Email']])      : '');
+                    
                     //we need to have at least 1 presenter.  if these fields are empty, pull from the contact info
                     if(trim($firstName)=='' && trim($lastName)==''){
                         if($type=='presenter'){
@@ -197,7 +198,7 @@ function build_wp_mf_maker(){
                         }
                     }
 
-                    if(trim($firstName)=='' && trim($lastName)==''){
+                    if(trim($email)==''||(trim($firstName)=='' && trim($lastName)=='')){
                         //don't write the record, no maker here
                     }else{
                         $bio        = (isset($typeArray['Bio'])        && isset($lead[$typeArray['Bio']])       ? esc_sql($lead[$typeArray['Bio']])        : '');
@@ -212,6 +213,18 @@ function build_wp_mf_maker(){
                                                                 . " `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
                                             . " VALUES (".$key.", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."',"
                                                       . " '".$twitter."', ".$form_id.",'".$guid."','".$photo."','".$website."')";
+                        $wp_mf_makersql .= " ON DUPLICATE KEY UPDATE form_id  = ".$form_id;
+
+                        //only update non blank fields
+                        $wp_mf_makersql .= ($key!=''? ", lead_id = '".$key."'":'');
+                        $wp_mf_makersql .= ($firstName!=''? ", `First Name` = '".$firstName."'":'');
+                        $wp_mf_makersql .= ($lastName!='' ? ", `Last Name`  = '".$lastName."'":'');
+                        $wp_mf_makersql .= ($bio!=''      ? ",  Bio  = '".$bio."'":'');
+                        $wp_mf_makersql .= ($phone!=''    ? ", phone  = '".$phone."'":'');
+                        $wp_mf_makersql .= ($twitter!=''  ? ", TWITTER  = '".$twitter."'":'');
+                        $wp_mf_makersql .= ($photo!=''    ? ", Photo  = '".$photo."'":'');
+                        $wp_mf_makersql .= ($website!=''  ? ", website  = '".$website."'":'');
+
                         $wpdb->get_results($wp_mf_makersql);
                         if($wpdb->insert_id==false){
                             echo 'error inserting record wp_mf_maker:'.$wp_mf_makersql.'<br/><br/>';
@@ -231,23 +244,22 @@ function build_wp_mf_maker(){
             } //end check field 303 status
         }
     }
-    echo 'added '.$x. ' entity records<br/>';
-    echo 'added '.$m. ' maker records<br/>';
+    //echo 'added '.$x. ' entity records<br/>';
+    //echo 'added '.$m. ' maker records<br/>';
 }
 
 function createGUID($id){
-
-        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
-        $charid = strtoupper(md5(uniqid($id, true)));
-        $hyphen = chr(45);// "-"
-        $uuid = chr(123)// "{"
-            .substr($charid, 0, 8).$hyphen
-            .substr($charid, 8, 4).$hyphen
-            .substr($charid,12, 4).$hyphen
-            .substr($charid,16, 4).$hyphen
-            .substr($charid,20,12)
-            .chr(125);// "}"
-        return $uuid;
+  mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+  $charid = strtoupper(md5(uniqid($id, true)));
+  $hyphen = chr(45);// "-"
+  $uuid = chr(123)// "{"
+      .substr($charid, 0, 8).$hyphen
+      .substr($charid, 8, 4).$hyphen
+      .substr($charid,12, 4).$hyphen
+      .substr($charid,16, 4).$hyphen
+      .substr($charid,20,12)
+      .chr(125);// "}"
+  return $uuid;
 }
 
     /*

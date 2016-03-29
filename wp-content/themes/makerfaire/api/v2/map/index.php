@@ -42,9 +42,9 @@ if ( $type == 'map' ) {
   
 	$select_query = sprintf("
     SELECT `ID`
+      , `annual`
       , `faire_shortcode`
       , `faire_name`
-      , `faire_location`
       , `lat`
       , `lng`
       , `faire_year`
@@ -89,8 +89,8 @@ if ( $type == 'map' ) {
     $point['description']               = html_entity_decode(trim( $row['faire_location'] ));
     $point['category']                  = html_entity_decode(trim( $row['event_type'] ));
     $point['faire_shortcode']           = html_entity_decode(trim( $row['faire_shortcode'] ));
+    $point['annual']                    = $row['annual'];
     $point['faire_name']                = html_entity_decode(trim( $row['faire_name'] ));
-    $point['faire_location']            = html_entity_decode(trim( $row['faire_location'] ));
     $point['faire_year']                = $row['faire_year'];
     $point['event_type']                = html_entity_decode(trim( $row['event_type'] ));
     $point['event_start_dt']            = html_entity_decode(trim( $row['event_start_dt'] ));

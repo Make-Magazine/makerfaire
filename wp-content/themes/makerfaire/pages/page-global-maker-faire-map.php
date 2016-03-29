@@ -89,7 +89,7 @@
               <th class="cursor-pointer" ng-click="sort='venue_address_country';reverse=!reverse">COUNTRY</th>
             </tr>
             <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 10">
-              <td>{{row.faire_year | ordinal}}</td>
+              <td>{{row.annual | ordinal}}</td>
               <td>{{row.category}}</td>
               <td>{{row.event_start_dt | date:'medium'}}</td>
               <td>

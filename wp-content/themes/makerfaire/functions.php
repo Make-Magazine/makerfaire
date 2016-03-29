@@ -125,11 +125,14 @@ function load_scripts() {
   wp_enqueue_script( 'jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
   wp_enqueue_script( 'bootgrid', get_stylesheet_directory_uri() . '/plugins/grid/jquery.bootgrid.min.js');
   wp_enqueue_script( 'thickbox', null);
+
+  // Scripts
+  wp_enqueue_script( 'built', get_stylesheet_directory_uri() . '/js/built.js', array( 'jquery' ) );
+
   // Localize
   $translation_array = array('templateUrl' => get_stylesheet_directory_uri(),'ajaxurl' => admin_url( 'admin-ajax.php' ));
   wp_localize_script('built', 'object_name', $translation_array);
-  // Scripts
-  wp_enqueue_script( 'built', get_stylesheet_directory_uri() . '/js/built.js', array( 'jquery' ) );
+
 }
 add_action( 'wp_enqueue_scripts', 'load_scripts' );
 add_action( 'gform_enqueue_scripts', 'enqueue_custom_script', 10, 2 );
@@ -2247,6 +2250,9 @@ function gv_add_faire($additional_fields){
   $additional_fields[] = array("label_text" => "Maker Cancel Entry", "desc"          => "Maker Cancel Entry Link",
                                "field_id"   => "cancel_link",  "label_type"    => "field",
                                "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
+  $additional_fields[] = array("label_text" => "View Faire Sign", "desc"       => "View Faire Sign",
+                               "field_id"   => "maker_sign_link",  "label_type"    => "field",
+                               "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
   $additional_fields[] = array("label_text" => "Maker Copy Entry",   "desc"          => "Maker Copy Entry Link",
                                "field_id"   => "copy_entry",   "label_type"    => "field",
                                "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
@@ -2259,14 +2265,14 @@ function gv_add_faire($additional_fields){
 //Maker Admin - populate new fields in gravity view
 add_filter('gform_entry_field_value','gv_faire_name',10,4);
 function gv_faire_name($display_value, $field, $entry, $form){
+    global $wpdb;
+
+    $form_id = $entry['form_id'];
+    $sql = "select faire,faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
+    $faire = $wpdb->get_results($sql);
+    $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:'');
+    $faire_id   = (isset($faire[0]->faire)      ? $faire[0]->faire:'');
     if($field["type"]=='faire_name'){
-        global $wpdb;
-
-        $form_id = $entry['form_id'];
-        $sql = "select faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
-        $faire = $wpdb->get_results($sql);
-
-        $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:'');
         $display_value = $faire_name;
     }elseif($field["type"]=='cancel_link'){
         $display_value = '<a href="#cancelEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Cancel</a>';
@@ -2274,6 +2280,10 @@ function gv_faire_name($display_value, $field, $entry, $form){
         $display_value = '<a href="#copy_entry" data-toggle="modal" data-entry-id="'.$entry['id'].'">Copy</a>';
     }elseif($field["type"]=='delete_entry'){
         $display_value = '<a href="#deleteEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Delete</a>';
+    }elseif($field["type"]=='maker_sign_link'){
+      ///wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$entry['id']&faire=BA16
+      $faireVar = ($faire_id!=''? '&faire='.$faire_id:'');
+      $display_value = '<a href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid='.$entry['id'].$faireVar.'" target="_blank">Faire Sign</a>';
     }
 
     return $display_value;
@@ -2653,7 +2663,7 @@ function mf_custom_export_entries() {
 
 /**
  * This function will connect wp_mail to your authenticated
- * SMTP server. This improves reliability of wp_mail, and 
+ * SMTP server. This improves reliability of wp_mail, and
  * avoids many potential problems.
  */
 add_action( 'phpmailer_init', 'send_smtp_email' );
@@ -2681,3 +2691,26 @@ function send_smtp_email( $phpmailer ) {
   $phpmailer->SMTPSecure = "";
 
 }
+
+/*
+ * add new shortcode to generate a export entries look
+ */
+
+function  createExportLink($atts){
+  extract( shortcode_atts( array(
+    'formid'  => '',
+    'title'   => ''
+  ), $atts ) );
+  $link = '';
+  if($formid != ''){
+    //create a crypt key to pass to entriesExport.php to avoid outside from accessing
+    $date  = date('mdY');
+    $crypt = crypt($date, AUTH_SALT);
+    $forms = RGFormsModel::get_forms( null, 'title' );
+    $form = GFAPI::get_form($formid);
+    $link = '<a href="/wp-content/themes/makerfaire/devScripts/entriesExport.php?formID='. absint( $formid ).'&auth='.$crypt.'">Export Entries</a>';
+  }
+  return $link;
+}
+
+add_shortcode( 'mfExportLink', 'createExportLink' );
