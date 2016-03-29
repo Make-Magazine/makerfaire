@@ -1,13 +1,7 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of maker
+ * Maker Model represents the Maker Entity including all methods and properties 
+ * relevant to handling data management and profile.
  *
  * @author rich.haynie
  */
@@ -52,7 +46,43 @@ class maker
    /**
    * @return string
    */
-  public function get_email() {
+  public function get_email($firstName,$lastName,$bio,$email,$phone,$twitter,$form_id,$guid,$photo,$website) {
       return $this->maker_email;
     }
+    
+  public function save_maker_profile( $entry_id,$firstName,$lastName,$bio,$email,$phone,$twitter,$form_id,$maker_id,$photo,$website,$type)
+  {
+    global $wpdb;
+
+    $results = $wpdb->get_results($wpdb->prepare( 
+      "
+        SELECT maker_id FROM wp_mf_maker WHERE email=%s
+      ", 
+      $email 
+    ) );
+    if ($wpdb->num_rows != 0)
+    {
+      $maker_id = $results[0]->maker_id;
+    }
+    else
+    {
+      $maker_id     = createGUID($entry_id .'-'.$type);
+    }
+    $wp_mf_makersql = $wpdb->prepare( "INSERT INTO wp_mf_maker(lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, "
+      . " `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
+      . " VALUES (".$entry_id.", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."',"
+      . " '".$twitter."', ".$form_id.",'".$maker_id."','".$photo."','".$website."')"
+      . " ON DUPLICATE KEY UPDATE `First Name` = '".$firstName."', "
+      . "`Last Name`= '".$firstName."', "
+      . "`Bio`= '".$bio."', "
+      . "`lead_id`= '".$entry_id."', "
+      . "`Email`= '".$email."', "
+      . "`phone`= '".$phone."', "
+      . "`TWITTER`= '".$twitter."', "
+      . "`form_id`= '".$form_id."', "
+      . "`Photo`= '".$photo."', "
+      . "`website`= '".$website."' "
+      );
+    $wpdb->get_results($wp_mf_makersql);
+  }
 }
