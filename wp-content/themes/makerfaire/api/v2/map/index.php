@@ -49,6 +49,7 @@ if ( $type == 'map' ) {
       , `lng`
       , `faire_year`
       , `event_type`
+      , `event_dt`
       , `event_start_dt`
       , `event_end_dt`
       , `cfm_start_dt`
@@ -93,6 +94,7 @@ if ( $type == 'map' ) {
     $point['faire_name']                = html_entity_decode(trim( $row['faire_name'] ));
     $point['faire_year']                = $row['faire_year'];
     $point['event_type']                = html_entity_decode(trim( $row['event_type'] ));
+    $point['event_dt']                  = html_entity_decode(trim( $row['event_dt'] ));
     $point['event_start_dt']            = html_entity_decode(trim( $row['event_start_dt'] ));
     $point['event_end_dt']              = html_entity_decode(trim( $row['event_end_dt'] ));
     $point['cfm_start_dt']              = html_entity_decode(trim( $row['cfm_start_dt'] ));
