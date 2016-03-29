@@ -72,168 +72,162 @@ function build_wp_mf_api_entity(){
      $wpdb->get_results($sql);
 }
 function build_wp_mf_maker(){
-    global $wpdb;
-    error_log('starting build_wp_mf_maker');
+  global $wpdb;
 
-    //first empty existing tables
-    $sql = "Truncate Table wp_mf_entity;";
-    $wpdb->get_results($sql);
+  //first empty existing tables
+  $sql = "Truncate Table wp_mf_entity;";
+  $wpdb->get_results($sql);
 
-    $sql = "Truncate Table wp_mf_maker;";
-    $wpdb->get_results($sql);
+  $sql = "Truncate Table wp_mf_maker;";
+  $wpdb->get_results($sql);
 
-    $sql = "Truncate Table wp_mf_maker_to_entity;";
-    $wpdb->get_results($sql);
+  $sql = "Truncate Table wp_mf_maker_to_entity;";
+  $wpdb->get_results($sql);
 
-    $crossRef = buildCrossRef();
-    //retrieve data
-    $sql = "SELECT detail.lead_id, lead.form_id, detail.field_number, detail.value, lead.status, wp_mf_faire.faire, detail_long.value as descLong
-            FROM wp_rg_lead lead join wp_rg_lead_detail detail on lead.id = detail.lead_id and lead.status != 'trash' left outer JOIN wp_rg_lead_detail_long detail_long ON (detail.id = detail_long.lead_detail_id) join wp_mf_faire on FIND_IN_SET (detail.form_id, wp_mf_faire.form_ids)> 0";
+  $crossRef = buildCrossRef();
+  //retrieve data
+  $sql = "SELECT detail.lead_id, lead.form_id, detail.field_number, detail.value, lead.status, wp_mf_faire.faire, detail_long.value as descLong
+          FROM wp_rg_lead lead join wp_rg_lead_detail detail on lead.id = detail.lead_id and lead.status != 'trash' left outer JOIN wp_rg_lead_detail_long detail_long ON (detail.id = detail_long.lead_detail_id) join wp_mf_faire on FIND_IN_SET (detail.form_id, wp_mf_faire.form_ids)> 0";
 
-    $dataArray = array();
-    $leadArray = array();
-    foreach($wpdb->get_results($sql) as $row){
-        //build array of leads
-        $dataArray[$row->form_id][$row->lead_id][$row->field_number] = $row->value;
-        if(isset($row->descLong)&&$row->descLong!=NULL){
-            $dataArray[$row->form_id][$row->lead_id][$row->field_number] = $row->descLong;
+  $dataArray = array();
+  $leadArray = array();
+  foreach($wpdb->get_results($sql) as $row){
+    //build array of leads
+    $dataArray[$row->form_id][$row->lead_id][$row->field_number] = $row->value;
+    if(isset($row->descLong)&&$row->descLong!=NULL){
+        $dataArray[$row->form_id][$row->lead_id][$row->field_number] = $row->descLong;
+    }
+    $dataArray[$row->form_id][$row->lead_id]['data'] = array('status'=>$row->status, 'faire'=>$row->faire);
+  }
+  $x = 0; $m = 0;
+
+  foreach($dataArray as $form_id=>$formEntries){
+    foreach($formEntries as $key=>$lead){
+      $faire = $lead['data']['faire'];
+      $status=(isset($lead[$crossRef['wp_mf_entity_array']['status']])?$lead[$crossRef['wp_mf_entity_array']['status']]:'');
+
+      //ensure field 303 is set
+      if($status !=''){
+        //build array of categories
+        $leadCategory = array();
+        $MAD = 0;
+        foreach($lead as $leadKey=>$leadValue){
+          //4 additional categories
+          $pos = strpos($leadKey, '321');
+          if ($pos !== false) {
+            $leadCategory[]=$leadValue;
+          }
+          //main catgory
+          $pos = strpos($leadKey, '320');
+          if ($pos !== false) {
+            $leadCategory[]=$leadValue;
+          }
+          //check the flag field 304
+          $pos = strpos($leadKey, '304');
+          if ($pos !== false) {
+            if($leadValue=='Mobile App Discover')  $MAD = 1;
+          }
         }
-        $dataArray[$row->form_id][$row->lead_id]['data'] = array('status'=>$row->status, 'faire'=>$row->faire);
 
+        //verify we only have unique categories
+        $leadCategory = array_unique($leadCategory);
+        $catList = implode(',', $leadCategory);
+
+        //build wp_mf_entity table
+        $presentationType   = (isset($lead[$crossRef['wp_mf_entity_array']['presentation_type']])   ? esc_sql($lead[$crossRef['wp_mf_entity_array']['presentation_type']])  : '');
+        $presentationTitle  = (isset($lead[$crossRef['wp_mf_entity_array']['presentation_title']])  ? esc_sql($lead[$crossRef['wp_mf_entity_array']['presentation_title']]) : '');
+        $specialRequest     = (isset($lead[$crossRef['wp_mf_entity_array']['special_request']])     ? esc_sql($lead[$crossRef['wp_mf_entity_array']['special_request']])    : '');
+        $onSitePhone        = (isset($lead[$crossRef['wp_mf_entity_array']['OnsitePhone']])         ? esc_sql($lead[$crossRef['wp_mf_entity_array']['OnsitePhone']])        : '');
+        $descShort          = (isset($lead[$crossRef['wp_mf_entity_array']['desc_short']])          ? esc_sql($lead[$crossRef['wp_mf_entity_array']['desc_short']])         : '');
+        $descLong           = (isset($lead[$crossRef['wp_mf_entity_array']['desc_long']])           ? esc_sql($lead[$crossRef['wp_mf_entity_array']['desc_long']])          : '');
+        $projectPhoto       = (isset($lead[$crossRef['wp_mf_entity_array']['project_photo']])       ? esc_sql($lead[$crossRef['wp_mf_entity_array']['project_photo']])      : '');
+
+        $wp_mf_entitysql = "insert into wp_mf_entity "
+                 . "    (lead_id, presentation_title, presentation_type, special_request, "
+                 . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover) "
+                 . " VALUES ('".$key."',"
+                    . ' "'.$presentationTitle .'", '
+                    . ' "'.$presentationType  .'", '
+                    . ' "'.$specialRequest    .'", '
+                    . ' "'.$onSitePhone       .'", '
+                    . ' "'.$descShort         .'", '
+                    . ' "'.$descLong          .'", '
+                    . ' "'.$projectPhoto      .'", '
+                    . ' "'.$status            .'", '
+                    . ' "'.$catList           .'", '
+                    . ' "'.$faire             .'", '
+                    . '  '.$MAD               .') ';
+        $x++;
+
+        $wpdb->get_results($wp_mf_entitysql);
+        if($wpdb->insert_id==false){
+          echo 'error inserting record wp_mf_entity:'.$wp_mf_entitysql.'<br/><br/>';
+          $entityID = 0;
+        }
+
+        //build wp_mf_maker table (up to 10 rows)
+        foreach($crossRef['wp_mf_maker_array'] as $type =>$typeArray){
+          $firstName  = (isset($typeArray['First Name']) && isset($lead[$typeArray['First Name']]) ? esc_sql($lead[$typeArray['First Name']]) : '');
+          $lastName   = (isset($typeArray['Last Name'])  && isset($lead[$typeArray['Last Name']])  ? esc_sql($lead[$typeArray['Last Name']])  : '');
+          $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])      ? esc_sql($lead[$typeArray['Email']])      : '');
+
+          //we need to have at least 1 presenter.  if these fields are empty, pull from the contact info
+          if(trim($firstName)=='' && trim($lastName)==''){
+            if($type=='presenter'){
+              $typeArray = $crossRef['wp_mf_maker_array']['contact'];
+              //reset first name, last name and email
+              $firstName  = (isset($typeArray['First Name']) && isset($lead[$typeArray['First Name']]) ? esc_sql($lead[$typeArray['First Name']]) : '');
+              $lastName   = (isset($typeArray['Last Name'])  && isset($lead[$typeArray['Last Name']])  ? esc_sql($lead[$typeArray['Last Name']])  : '');
+              $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])      ? esc_sql($lead[$typeArray['Email']])      : '');
+            }
+          }
+          //make sure email is all lower case and no spaces
+          $email= trim(strtolower($email));
+          if(trim($email)=='' || (trim($firstName)=='' && trim($lastName)=='')){
+              //don't write the record, no maker here
+          }else{
+            $bio        = (isset($typeArray['Bio'])        && isset($lead[$typeArray['Bio']])       ? esc_sql($lead[$typeArray['Bio']])        : '');
+            $phone      = (isset($typeArray['phone'])      && isset($lead[$typeArray['phone']])     ? esc_sql($lead[$typeArray['phone']])      : '');
+            $twitter    = (isset($typeArray['TWITTER'])    && isset($lead[$typeArray['TWITTER']])   ? esc_sql($lead[$typeArray['TWITTER']])    : '');
+            $photo      = (isset($typeArray['Photo'])      && isset($lead[$typeArray['Photo']])     ? esc_sql($lead[$typeArray['Photo']])      : '');
+            $website    = (isset($typeArray['website'])    && isset($lead[$typeArray['website']])   ? esc_sql($lead[$typeArray['website']])    : '');
+
+            $guid = crypt($email, AUTH_SALT);
+            $wp_mf_makersql = "INSERT INTO wp_mf_maker(lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, "
+                                                    . " `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
+                                . " VALUES (".$key.", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."',"
+                                          . " '".$twitter."', ".$form_id.",'".$guid."','".$photo."','".$website."')";
+            $wp_mf_makersql .= " ON DUPLICATE KEY UPDATE form_id  = ".$form_id;
+
+            //only update non blank fields
+            $wp_mf_makersql .= ($key!=''? ", lead_id = '".$key."'":'');
+            $wp_mf_makersql .= ($firstName!=''? ", `First Name` = '".$firstName."'":'');
+            $wp_mf_makersql .= ($lastName!='' ? ", `Last Name`  = '".$lastName."'":'');
+            $wp_mf_makersql .= ($bio!=''      ? ",  Bio  = '".$bio."'":'');
+            $wp_mf_makersql .= ($phone!=''    ? ", phone  = '".$phone."'":'');
+            $wp_mf_makersql .= ($twitter!=''  ? ", TWITTER  = '".$twitter."'":'');
+            $wp_mf_makersql .= ($photo!=''    ? ", Photo  = '".$photo."'":'');
+            $wp_mf_makersql .= ($website!=''  ? ", website  = '".$website."'":'');
+
+            $wpdb->get_results($wp_mf_makersql);
+            if($wpdb->insert_id==false){
+                echo 'error inserting record wp_mf_maker:'.$wp_mf_makersql.'<br/><br/>';
+            }
+            $m++;
+
+            //build maker to entity table
+            $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`" . " (`maker_id`, `entity_id`, `maker_type`) "
+                                  . ' VALUES ("'.$guid.'",'.$key.',"'.$type.'")';
+
+            $wpdb->get_results($wp_mf_maker_to_entity);
+            if($wpdb->insert_id==false){
+                echo 'error inserting record wp_mf_maker_to_entity:'.$wp_mf_maker_to_entity.'<br/><br/>';
+            }
+          }
+        }
+      } //end check field 303 status
     }
-    $x = 0; $m = 0;
-
-    foreach($dataArray as $form_id=>$formEntries){
-      foreach($formEntries as $key=>$lead){
-        $faire = $lead['data']['faire'];
-        $status=(isset($lead[$crossRef['wp_mf_entity_array']['status']])?$lead[$crossRef['wp_mf_entity_array']['status']]:'');
-
-        //ensure field 303 is set
-        if($status !=''){
-          //build array of categories
-          $leadCategory = array();
-          $MAD = 0;
-          foreach($lead as $leadKey=>$leadValue){
-            //4 additional categories
-            $pos = strpos($leadKey, '321');
-            if ($pos !== false) {
-              $leadCategory[]=$leadValue;
-            }
-            //main catgory
-            $pos = strpos($leadKey, '320');
-            if ($pos !== false) {
-              $leadCategory[]=$leadValue;
-            }
-            //check the flag field 304
-            $pos = strpos($leadKey, '304');
-            if ($pos !== false) {
-              if($leadValue=='Mobile App Discover')  $MAD = 1;
-            }
-          }
-
-          //verify we only have unique categories
-          $leadCategory = array_unique($leadCategory);
-          $catList = implode(',', $leadCategory);
-
-          //build wp_mf_entity table
-          $presentationType   = (isset($lead[$crossRef['wp_mf_entity_array']['presentation_type']])   ? esc_sql($lead[$crossRef['wp_mf_entity_array']['presentation_type']])  : '');
-          $presentationTitle  = (isset($lead[$crossRef['wp_mf_entity_array']['presentation_title']])  ? esc_sql($lead[$crossRef['wp_mf_entity_array']['presentation_title']]) : '');
-          $specialRequest     = (isset($lead[$crossRef['wp_mf_entity_array']['special_request']])     ? esc_sql($lead[$crossRef['wp_mf_entity_array']['special_request']])    : '');
-          $onSitePhone        = (isset($lead[$crossRef['wp_mf_entity_array']['OnsitePhone']])         ? esc_sql($lead[$crossRef['wp_mf_entity_array']['OnsitePhone']])        : '');
-          $descShort          = (isset($lead[$crossRef['wp_mf_entity_array']['desc_short']])          ? esc_sql($lead[$crossRef['wp_mf_entity_array']['desc_short']])         : '');
-          $descLong           = (isset($lead[$crossRef['wp_mf_entity_array']['desc_long']])           ? esc_sql($lead[$crossRef['wp_mf_entity_array']['desc_long']])          : '');
-          $projectPhoto       = (isset($lead[$crossRef['wp_mf_entity_array']['project_photo']])       ? esc_sql($lead[$crossRef['wp_mf_entity_array']['project_photo']])      : '');
-
-          $wp_mf_entitysql = "insert into wp_mf_entity "
-                   . "    (lead_id, presentation_title, presentation_type, special_request, "
-                   . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover) "
-                   . " VALUES ('".$key."',"
-                      . ' "'.$presentationTitle .'", '
-                      . ' "'.$presentationType  .'", '
-                      . ' "'.$specialRequest    .'", '
-                      . ' "'.$onSitePhone       .'", '
-                      . ' "'.$descShort         .'", '
-                      . ' "'.$descLong          .'", '
-                      . ' "'.$projectPhoto      .'", '
-                      . ' "'.$status            .'", '
-                      . ' "'.$catList           .'", '
-                      . ' "'.$faire             .'", '
-                      . '  '.$MAD               .') ';
-          $x++;
-
-          $wpdb->get_results($wp_mf_entitysql);
-          if($wpdb->insert_id==false){
-            echo 'error inserting record wp_mf_entity:'.$wp_mf_entitysql.'<br/><br/>';
-            $entityID = 0;
-          }
-
-          //build wp_mf_maker table (up to 10 rows)
-          foreach($crossRef['wp_mf_maker_array'] as $type =>$typeArray){
-            $firstName  = (isset($typeArray['First Name']) && isset($lead[$typeArray['First Name']]) ? esc_sql($lead[$typeArray['First Name']]) : '');
-            $lastName   = (isset($typeArray['Last Name'])  && isset($lead[$typeArray['Last Name']])  ? esc_sql($lead[$typeArray['Last Name']])  : '');
-            $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])      ? esc_sql($lead[$typeArray['Email']])      : '');
-
-            //we need to have at least 1 presenter.  if these fields are empty, pull from the contact info
-            if(trim($firstName)=='' && trim($lastName)==''){
-              if($type=='presenter'){
-                $typeArray = $crossRef['wp_mf_maker_array']['contact'];
-                //reset first name, last name and email
-                $firstName  = (isset($typeArray['First Name']) && isset($lead[$typeArray['First Name']]) ? esc_sql($lead[$typeArray['First Name']]) : '');
-                $lastName   = (isset($typeArray['Last Name'])  && isset($lead[$typeArray['Last Name']])  ? esc_sql($lead[$typeArray['Last Name']])  : '');
-                $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])      ? esc_sql($lead[$typeArray['Email']])      : '');
-              }
-            }
-            //make sure email is all lower case and no spaces
-            $email= trim(strtolower($email));
-            if(trim($email)=='' || (trim($firstName)=='' && trim($lastName)=='')){
-                //don't write the record, no maker here
-            }else{
-              $bio        = (isset($typeArray['Bio'])        && isset($lead[$typeArray['Bio']])       ? esc_sql($lead[$typeArray['Bio']])        : '');
-              $phone      = (isset($typeArray['phone'])      && isset($lead[$typeArray['phone']])     ? esc_sql($lead[$typeArray['phone']])      : '');
-              $twitter    = (isset($typeArray['TWITTER'])    && isset($lead[$typeArray['TWITTER']])   ? esc_sql($lead[$typeArray['TWITTER']])    : '');
-              $photo      = (isset($typeArray['Photo'])      && isset($lead[$typeArray['Photo']])     ? esc_sql($lead[$typeArray['Photo']])      : '');
-              $website    = (isset($typeArray['website'])    && isset($lead[$typeArray['website']])   ? esc_sql($lead[$typeArray['website']])    : '');
-              //$guid       = createGUID($email);
-              $guid = crypt($email, AUTH_SALT);
-              $wp_mf_makersql = "INSERT INTO wp_mf_maker(lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, "
-                                                      . " `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
-                                  . " VALUES (".$key.", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."',"
-                                            . " '".$twitter."', ".$form_id.",'".$guid."','".$photo."','".$website."')";
-              $wp_mf_makersql .= " ON DUPLICATE KEY UPDATE form_id  = ".$form_id;
-
-              //only update non blank fields
-              $wp_mf_makersql .= ($key!=''? ", lead_id = '".$key."'":'');
-              $wp_mf_makersql .= ($firstName!=''? ", `First Name` = '".$firstName."'":'');
-              $wp_mf_makersql .= ($lastName!='' ? ", `Last Name`  = '".$lastName."'":'');
-              $wp_mf_makersql .= ($bio!=''      ? ",  Bio  = '".$bio."'":'');
-              $wp_mf_makersql .= ($phone!=''    ? ", phone  = '".$phone."'":'');
-              $wp_mf_makersql .= ($twitter!=''  ? ", TWITTER  = '".$twitter."'":'');
-              $wp_mf_makersql .= ($photo!=''    ? ", Photo  = '".$photo."'":'');
-              $wp_mf_makersql .= ($website!=''  ? ", website  = '".$website."'":'');
-              error_log( '$guid='.$guid.' email='.$email .' salt='.AUTH_SALT);
-
-              $wpdb->get_results($wp_mf_makersql);
-              if($wpdb->insert_id==false){
-                  echo 'error inserting record wp_mf_maker:'.$wp_mf_makersql.'<br/><br/>';
-              }
-              $m++;
-
-              //build maker to entity table
-              $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`" . " (`maker_id`, `entity_id`, `maker_type`) "
-                                    . ' VALUES ("'.$guid.'",'.$key.',"'.$type.'")';
-
-              $wpdb->get_results($wp_mf_maker_to_entity);
-              if($wpdb->insert_id==false){
-                  echo 'error inserting record wp_mf_maker_to_entity:'.$wp_mf_maker_to_entity.'<br/><br/>';
-              }
-            }
-          }
-        } //end check field 303 status
-      }
-    }
-    error_log('end build_wp_mf_maker');
-    //echo 'added '.$x. ' entity records<br/>';
-    //echo 'added '.$m. ' maker records<br/>';
+  }
 }
 
 function createGUID($id){
