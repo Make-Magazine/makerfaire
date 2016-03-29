@@ -175,7 +175,8 @@ function build_wp_mf_maker(){
                     $lNameLoc = (string) $typeArray['Last Name'];
                     //if first name is set for this type and the field numer is set in the returned table data, then use this data else use a blank
                     $lastName   = (isset($typeArray['Last Name'])  && isset($lead[$lNameLoc])               ? esc_sql($lead[$lNameLoc])                : '');
-
+                    $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])     ? ($lead[$typeArray['Email']])      : '');
+                    
                     //we need to have at least 1 presenter.  if these fields are empty, pull from the contact info
                     if(trim($firstName)=='' && trim($lastName)==''){
                         if($type=='presenter'){
@@ -197,7 +198,6 @@ function build_wp_mf_maker(){
                         }
                     }
 
-                    $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])     ? ($lead[$typeArray['Email']])      : '');
                     if(trim($email)==''||(trim($firstName)=='' && trim($lastName)=='')){
                         //don't write the record, no maker here
                     }else{
