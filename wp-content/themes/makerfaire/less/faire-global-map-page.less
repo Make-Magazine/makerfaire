@@ -8,8 +8,7 @@
     cursor: pointer;
     background-color: #EEF2F5;
     display: inline-block;
-    padding: 10px;
-    border-radius: 3px 3px 0 0;
+    padding: 10px 20px;
     &:hover {
       background-color: darken(#EEF2F5, 10%);
     }
@@ -29,9 +28,9 @@
       padding-bottom: 10px;
     }
     th {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
-      color: gray;
+      color: #9B9B9B;
     }
     td {
       word-break: break-word;
@@ -67,8 +66,17 @@
         font-size: 1.5em;
         vertical-align: middle;
       }
+      label {
+        padding-left: 0;
+        @media all and (min-width: 1200px) {
+          padding-left: 20px;
+        }
+        @media all and (max-width: 991px) {
+          padding-left: 7px;
+        }
+      }
     }
-    @media all and (max-width: 620px) {
+    @media all and (max-width: 767px) {
       .searchbox {
         display: flex;
         input[type="text"] {
@@ -80,6 +88,7 @@
         clear: both;
         min-width: 200px;
         float: left;
+        margin: 5px 0 -5px 0;
       }
     }
   }
