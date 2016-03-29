@@ -169,8 +169,10 @@ if( ! $total or !( is_user_logged_in() )) {
                         $links .=  gravityview_field_output( $title_args );
                         break;
                     case 'maker_sign_link':
+                      if($entry['303']=='Accepted' && $form['form_type']=='Exhibit'){
                         $title_args['markup'] = '<span class="edit"><i class="fa fa-file-pdf-o"></i>{{value}}</span>';
                         $links .=  gravityview_field_output( $title_args );
+                      }
                         break;
                     default:
                         $title_args['markup'] = '{{label}} {{value}}';
