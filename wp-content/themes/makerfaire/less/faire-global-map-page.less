@@ -51,9 +51,23 @@
       font-weight: 300;
       margin: 6px 20px 0 0;
     }
-    input[type="text"] {
-      float: left;
-      max-width: 200px;
+    .searchbox {
+      input[type="text"] {
+        float: left;
+        max-width: 200px;
+        padding-right: 23px;
+      }
+      .fa.fa-times-circle {
+        font-size: 20px;
+        color: rgba(0,0,0,0.5);
+        padding: 4px;
+        margin-left: -25px;
+        float: left;
+        &:hover {
+          color: rgba(0,0,0,0.75);
+          background: rgba(0,0,0,0.1);
+        }
+      }
     }
     .checkbox {
       float: right;
@@ -123,5 +137,8 @@
     .school-key {
       background-color: #00BA4B;
     }
+  }
+  .firstheading {
+    font-size: 16px;
   }
 }

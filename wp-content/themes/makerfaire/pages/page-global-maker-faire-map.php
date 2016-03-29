@@ -18,6 +18,9 @@
               ng-model="$ctrl.filterText"
               ng-model-options="{debounce: 500}"
               ng-change="$ctrl.applyMapFilters()" />
+            <div class="fa fa-times-circle cursor-pointer"
+              ng-click="$ctrl.filterText = ''; $ctrl.applyMapFilters();">
+            </div>
           </div>
           <div class="filters ng-cloak" ng-if="$ctrl.faireMarkers">
             <faires-map-filter default-state="false" filter="School">
