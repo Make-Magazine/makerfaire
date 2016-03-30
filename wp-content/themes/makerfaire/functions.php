@@ -1829,7 +1829,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       $attMerge = '';
       if(!empty($AttText)){
         foreach($AttText as $attDetail){
-          $attMerge .= '<div>'.$attDetail['attribute'].':<br/>'.$attDetail['value'].'</div><br/>';
+          $attMerge .= $attDetail['value'];
         }
       }
       $text = str_replace('{EA_'.$attID.'}', $attMerge, $text);
