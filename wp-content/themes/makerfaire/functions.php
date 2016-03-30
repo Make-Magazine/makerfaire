@@ -1828,11 +1828,11 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       $AttText = get_attribute($lead,$attID);
       $attMerge = '';
       if(!empty($AttText)){
-        $attMerge = '<table cellspacing="10">';
+        $attMerge = '<div width="50%">';
         foreach($AttText as $attDetail){
-          $attMerge .= '<tr><td>'.$attDetail['attribute'].'</td><td>'.$attDetail['value'].'</td></tr>';
+          $attMerge .= '<div width="50%">'.$attDetail['attribute'].'</div><div width="50%">'.$attDetail['value'].'</div>';
         }
-        $attMerge .='</table>';
+        $attMerge .='</div>';
       }
       $text = str_replace('{EA_'.$attID.'}', $attMerge, $text);
     }
