@@ -156,6 +156,8 @@ function load_admin_scripts() {
 }
 add_action( 'admin_enqueue_scripts', 'load_admin_scripts' );
 
+// Remove richedit
+add_filter('user_can_richedit' , create_function('' , 'return false;') , 50);
 
 // Add page visible to editors
 function register_my_page(){
