@@ -14,7 +14,7 @@
             <h2>Explore Maker Faires</h2>
             <input type="text"
               class="form-control input-sm"
-              placeholder="Location, name or type"
+              placeholder="Location, Name, Type, Date"
               ng-model="$ctrl.filterText"
               ng-model-options="{debounce: 500}"
               ng-change="$ctrl.applyMapFilters()" />
