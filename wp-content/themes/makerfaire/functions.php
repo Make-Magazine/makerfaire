@@ -1803,7 +1803,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   if (strpos($text, '{entry_resources}') !== false) {
     //set lead meta field res_status to sent
     gform_update_meta( $entry_id, 'res_status','sent' );
-    $resTable = '<table><tr><th>Resource</th><th>Quantity</th></tr>';
+    $resTable = '<table width="100%"><tr><th>Resource</th><th>Quantity</th></tr>';
     $resources = get_resources($lead);
 
     foreach($resources as $entRes){
@@ -1826,11 +1826,11 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       //retrieve the ID of the attribute
       $attID = substr($text, $lastPos,$closeBracketPos-$lastPos);
       $AttText = get_attribute($lead,$attID);
-      $attMerge = '';
+      $attMerge = '<table width="100%">';
       foreach($AttText as $attDetail){
-        if($attMerge!='') $attMerge.='<br/>';
-        $attMerge .= $attDetail['value'];
+        $attMerge .= '<tr><td>'.$attDetail['attribute'].'</td><td>'.$attDetail['value'].'</td></tr>';
       }
+      $attMerge .='</table>';
       $text = str_replace('{EA_'.$attID.'}', $attMerge, $text);
     }
   }
