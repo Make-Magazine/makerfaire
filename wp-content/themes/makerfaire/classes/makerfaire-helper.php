@@ -267,14 +267,14 @@ function get_mf_schedule_by_faire($faire, $day = '', $area = '', $subarea = '') 
                                     where   schedule.entry_id           = maker_to_entity.entity_id  AND
                                             maker_to_entity.maker_id    = maker.maker_id AND
                                             maker_to_entity.maker_type != 'Contact' 
-                                    group by maker.lead_id
+                                    group by maker_to_entity.entity_id
                                 )  as makers_list    ,
                                 (select  Photo from    wp_mf_maker maker, 
                                             wp_mf_maker_to_entity maker_to_entity
                                     where   schedule.entry_id           = maker_to_entity.entity_id  AND
                                             maker_to_entity.maker_id    = maker.maker_id AND
                                             maker_to_entity.maker_type = 'presenter' 
-                                    group by maker.lead_id
+                                   group by maker_to_entity.entity_id
                                 )  as maker_photo     
                         
                         FROM    wp_mf_schedule schedule, 
