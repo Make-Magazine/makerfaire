@@ -71,6 +71,10 @@
     }
     .checkbox {
       float: right;
+      @media all and (max-width: 480px) {
+        float: left;
+        margin: 10px 5px;
+      }
       margin: 5px;
       font-size: 14px;
       line-height: 20px;
@@ -117,10 +121,18 @@
   }
   .faire-key-boxes {
     display: flex;
+    @media all and (max-width: 767px) {
+      flex-flow: column;
+      margin: 10px 0;
+    }
     justify-content: space-between;
     color: white;
     div {
       width: 24.5%;
+      @media all and (max-width: 767px) {
+        width: 100%;
+        margin: 3px 0;
+      }
       border-radius: 5px;
       padding: 10px;
       margin: 10px 0 15px 0;

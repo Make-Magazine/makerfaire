@@ -84,7 +84,7 @@
           ng-click="$ctrl.pastEvents = true;$ctrl.applyMapFilters();">
           Past
         </div>
-        <div class="faire-list-table">
+        <div class="faire-list-table table-responsive">
           <table class="table table-striped table-condensed">
             <tr></tr>
             <tr ng-init="sort='event_start_dt';reverse=true">
