@@ -8,8 +8,7 @@
     cursor: pointer;
     background-color: #EEF2F5;
     display: inline-block;
-    padding: 10px;
-    border-radius: 3px 3px 0 0;
+    padding: 10px 20px;
     &:hover {
       background-color: darken(#EEF2F5, 10%);
     }
@@ -29,13 +28,13 @@
       padding-bottom: 10px;
     }
     th {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
-      color: gray;
+      color: #9B9B9B;
     }
     td {
       word-break: break-word;
-      font-size: 13px;
+      font-size: 14px;
     }
   }
   h1 {
@@ -52,18 +51,50 @@
       font-weight: 300;
       margin: 6px 20px 0 0;
     }
-    input[type="text"] {
-      float: left;
-      max-width: 200px;
+    .searchbox {
+      input[type="text"] {
+        float: left;
+        max-width: 200px;
+        padding-right: 23px;
+      }
+      .fa.fa-times-circle {
+        font-size: 20px;
+        color: rgba(0,0,0,0.5);
+        padding: 4px;
+        margin-left: -25px;
+        float: left;
+        &:hover {
+          color: rgba(0,0,0,0.75);
+          background: rgba(0,0,0,0.1);
+        }
+      }
     }
     .checkbox {
       float: right;
+      @media all and (max-width: 480px) {
+        float: left;
+        margin: 10px 5px;
+      }
       margin: 5px;
-      font-size: 12px;
+      font-size: 14px;
       line-height: 20px;
       vertical-align: bottom;
+      .fa.fa-square-o,
+      .fa.fa-check-square-o {
+        font-size: 1.5em;
+        vertical-align: middle;
+      }
+      label {
+        padding-left: 0;
+        @media all and (min-width: 1200px) {
+          padding-left: 20px;
+        }
+        @media all and (max-width: 991px) {
+          padding-left: 7px;
+        }
+      }
     }
-    @media all and (max-width: 620px) {
+    @media all and (max-width: 767px) {
       .searchbox {
         display: flex;
         input[type="text"] {
@@ -75,6 +106,7 @@
         clear: both;
         min-width: 200px;
         float: left;
+        margin: 5px 0 -5px 0;
       }
     }
   }
@@ -89,10 +121,18 @@
   }
   .faire-key-boxes {
     display: flex;
+    @media all and (max-width: 767px) {
+      flex-flow: column;
+      margin: 10px 0;
+    }
     justify-content: space-between;
     color: white;
     div {
       width: 24.5%;
+      @media all and (max-width: 767px) {
+        width: 100%;
+        margin: 3px 0;
+      }
       border-radius: 5px;
       padding: 10px;
       margin: 10px 0 15px 0;
@@ -109,5 +149,8 @@
     .school-key {
       background-color: #00BA4B;
     }
+  }
+  .firstheading {
+    font-size: 16px;
   }
 }
