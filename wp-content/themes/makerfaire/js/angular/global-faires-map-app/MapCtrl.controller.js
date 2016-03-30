@@ -33,7 +33,6 @@
           if (!faireFilters.search) {
             return true;
           }
-
           function checkForValue(json, value) {
             for (var key in json) {
               if (typeof(json[key]) === 'object') {
