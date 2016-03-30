@@ -53,22 +53,18 @@
         <!-- Color Key -->
         <div class="faire-key-boxes">
           <div class="flagship-key">
-            <i class="fa fa-map-marker"></i>
             Flagship Maker Faires
             <p>Faires curated and produced by the Maker Media team</p>
           </div>
           <div class="featured-key">
-            <i class="fa fa-map-marker"></i>
             Featured Maker Faires
             <p>Larger-scale regional events</p>
           </div>
           <div class="mini-key">
-            <i class="fa fa-map-marker"></i>
             Mini Maker Faires
             <p>Community events</p>
           </div>
           <div class="school-key">
-            <i class="fa fa-map-marker"></i>
             School Maker Faires
             <p>K-12 Faires (closed to general public)</p>
           </div>
