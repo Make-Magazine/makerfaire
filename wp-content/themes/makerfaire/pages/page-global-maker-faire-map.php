@@ -95,7 +95,7 @@
               <th>LOCATION</th>
               <th class="cursor-pointer" ng-click="sort='venue_address_country';reverse=!reverse">COUNTRY</th>
             </tr>
-            <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 10">
+            <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 20">
               <td>{{row.annual | ordinal}}</td>
               <td>{{row.category}}</td>
               <td>{{row.event_dt}}</td>
