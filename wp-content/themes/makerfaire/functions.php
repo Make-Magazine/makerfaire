@@ -1764,15 +1764,8 @@ add_filter('gform_field_content', 'mf_field_content', 10, 5);
 function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Schedule', 'tag' => '{entry_schedule}');
     $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
-
-    //create a separate merge tag for each attribute
-    global $wpdb;
-    $sql = 'select ID,category from wp_rmt_entry_att_categories';
-    $results = $wpdb->get_results($sql);
-    foreach($results as $result){
-      $merge_tags[] = array('label' => 'Attribute - '.$result->category, 'tag' => '{EA_'.$result->ID.'}');
-    }
-
+    $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
+    
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
 
@@ -1813,20 +1806,19 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $text = str_replace('{entry_resources}', $resTable, $text);
   }
 
-  //individual attributes
-  if (strpos($text, '{EA_') !== false) {
-    $lastPos = 0;
-    $positions = array();
-    $attTable  = '<table cellpadding="10"><tr><th>Resource</th><th>Quantity</th></tr>';
-    //look thru $text and find all instances of the merge tag {EA_'attributeID'}
-    while (($lastPos = strpos($text, '{EA_', $lastPos))!== false) {
-      $lastPos = $lastPos + strlen('{EA_');
-      //find the closing bracket of the merge tag
-      $closeBracketPos = strpos($text, '}', $lastPos);
-      //retrieve the ID of the attribute
-      $attID = substr($text, $lastPos,$closeBracketPos-$lastPos);
-      $AttText = get_attribute($lead,$attID);
-      $attMerge = '';
+  //individual attributes {entry_attributes:2,4,6,9}
+  if (strpos($text, '{entry_attributes') !== false) {
+    $startPos    = strpos($text, '{entry_attributes'); //pos of start of merge tag
+    $attStartPos = strpos($text, ':',$startPos);       //pos of start of attribute id's
+    $closeBracketPos = strpos($text, '}', $startPos); //find the closing bracket of the merge tag
+
+    //attribute ID's will be a comma separated list between $attStartPos and $closeBracketPos
+    $attIDs = substr($text, $attStartPos+1,$closeBracketPos-$attStartPos-1);
+
+    $attArr = explode(",",$attIDs);
+    $attTable  = '<table cellpadding="10"><tr><th>Attribute</th><th>Value</th></tr>';
+    foreach($attArr as $att){
+      $AttText = get_attribute($lead,trim($att));
       if(!empty($AttText)){
         $attTable .= '<tr>';
         foreach($AttText as $attDetail){
@@ -1835,10 +1827,11 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
         }
         $attTable .= '</tr>';
       }
-      $text = str_replace('{EA_'.$attID.'}', '', $text);
     }
-    $attTable .= '</table>';
-    $text = str_replace('{ATT_TABLE}', $attTable, $text);
+    $attTable  .= '</table>';
+    //full merge tag for replace
+    $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
+    $text = str_replace($mergeTag, $attTable, $text);
   }
 
   //attention field
