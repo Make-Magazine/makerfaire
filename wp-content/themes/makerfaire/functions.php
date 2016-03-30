@@ -2252,6 +2252,9 @@ function gv_add_faire($additional_fields){
   $additional_fields[] = array("label_text" => "Maker Cancel Entry", "desc"          => "Maker Cancel Entry Link",
                                "field_id"   => "cancel_link",  "label_type"    => "field",
                                "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
+  $additional_fields[] = array("label_text" => "View Faire Sign", "desc"       => "View Faire Sign",
+                               "field_id"   => "maker_sign_link",  "label_type"    => "field",
+                               "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
   $additional_fields[] = array("label_text" => "Maker Copy Entry",   "desc"          => "Maker Copy Entry Link",
                                "field_id"   => "copy_entry",   "label_type"    => "field",
                                "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
@@ -2264,14 +2267,14 @@ function gv_add_faire($additional_fields){
 //Maker Admin - populate new fields in gravity view
 add_filter('gform_entry_field_value','gv_faire_name',10,4);
 function gv_faire_name($display_value, $field, $entry, $form){
+    global $wpdb;
+
+    $form_id = $entry['form_id'];
+    $sql = "select faire,faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
+    $faire = $wpdb->get_results($sql);
+    $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:'');
+    $faire_id   = (isset($faire[0]->faire)      ? $faire[0]->faire:'');
     if($field["type"]=='faire_name'){
-        global $wpdb;
-
-        $form_id = $entry['form_id'];
-        $sql = "select faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
-        $faire = $wpdb->get_results($sql);
-
-        $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:'');
         $display_value = $faire_name;
     }elseif($field["type"]=='cancel_link'){
         $display_value = '<a href="#cancelEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Cancel</a>';
@@ -2279,6 +2282,10 @@ function gv_faire_name($display_value, $field, $entry, $form){
         $display_value = '<a href="#copy_entry" data-toggle="modal" data-entry-id="'.$entry['id'].'">Copy</a>';
     }elseif($field["type"]=='delete_entry'){
         $display_value = '<a href="#deleteEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Delete</a>';
+    }elseif($field["type"]=='maker_sign_link'){
+      ///wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$entry['id']&faire=BA16
+      $faireVar = ($faire_id!=''? '&faire='.$faire_id:'');
+      $display_value = '<a href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid='.$entry['id'].$faireVar.'" target="_blank">Faire Sign</a>';
     }
 
     return $display_value;

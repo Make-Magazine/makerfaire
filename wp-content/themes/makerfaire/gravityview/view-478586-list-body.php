@@ -34,20 +34,20 @@ $criteria['paging'] = array(
 
 //pull by user id or user email
 $criteria['search_criteria'] = array(
-    'status'        => 'active',
-    'field_filters' => array(
-        'mode' => 'any',
-        array(
-            'key'   => '98',
-            'value' => $user_email,
-            'operator' => 'like'
-        ),
-        array(
-            'key' => 'created_by',
-            'value' => $user_ID,
-            'operator' => 'is'
-        )
+  'status'        => 'active',
+  'field_filters' => array(
+    'mode' => 'any',
+    array(
+      'key'   => '98',
+      'value' => $user_email,
+      'operator' => 'like'
+    ),
+    array(
+      'key' => 'created_by',
+      'value' => $user_ID,
+      'operator' => 'is'
     )
+  )
 );
 
 $entries = GFAPI::get_entries( $form_id, $criteria['search_criteria'] );
@@ -156,8 +156,8 @@ if( ! $total or !( is_user_logged_in() )) {
                     case 'cancel_link':
                         //do not display if entry is already cancelled
                         if($entry['303']!='Cancelled'){
-                            $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>{{value}}</span>';
-                            $links .=  gravityview_field_output( $title_args );
+                          $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>{{value}}</span>';
+                          $links .=  gravityview_field_output( $title_args );
                         }
                         break;
                     case 'copy_entry':
@@ -168,6 +168,12 @@ if( ! $total or !( is_user_logged_in() )) {
                         $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>{{value}}</span>';
                         $links .=  gravityview_field_output( $title_args );
                         break;
+                    case 'maker_sign_link':
+                      if($entry['303']=='Accepted' && $form['form_type']=='Exhibit'){
+                        $title_args['markup'] = '<span class="edit"><i class="fa fa-file-pdf-o"></i>{{value}}</span>';
+                        $links .=  gravityview_field_output( $title_args );
+                      }
+                        break;
                     default:
                         $title_args['markup'] = '{{label}} {{value}}';
                 }
@@ -177,11 +183,10 @@ if( ! $total or !( is_user_logged_in() )) {
             }
 
         if(!empty($entryData)){
-            ?>
+        ?>
+          <div class="entryImg"><?php echo (isset($entry['22'])&& $entry['22']!=''?$entryData['22']:'<img src="/wp-content/uploads/2015/12/no-image.png" />');?></div>
 
-        <div class="entryImg"><?php echo (isset($entry['22'])&& $entry['22']!=''?$entryData['22']:'<img src="/wp-content/uploads/2015/12/no-image.png" />');?></div>
-
-        <div class="entryData">
+          <div class="entryData">
             <div class="statusBox <?php echo $statusBlock;?>">
                 <div class="fleft"> <?php echo $entryData['faire_name'];?></div>
                 <div class="fright statusText"><?php echo $entryData['303'];?></div>
@@ -192,8 +197,7 @@ if( ! $total or !( is_user_logged_in() )) {
                 <div class="fleft"><?php echo $entryData['date_created'];?></div>
                 <div class="fright"><?php echo $links;?></div>
             </div>
-        </div>
-
+          </div>
         <?php
         }
 				$this->renderZone('subtitle', array(

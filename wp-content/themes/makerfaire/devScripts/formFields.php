@@ -9,7 +9,7 @@ include 'db_connect.php';
 
 $sql = 'select display_meta from wp_rg_form_meta where form_id!=1 and form_id!=24';
 if(isset($_GET['formID'])) $sql.= ' and form_id='.$_GET['formID'];
-echo $sql;
+//echo $sql;
 $mysqli->query("SET NAMES 'utf8'");
 $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 ?>

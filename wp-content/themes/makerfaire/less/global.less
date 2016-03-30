@@ -242,4 +242,25 @@ a:focus {
   .font-narrower {
     font-family: 'Roboto Condensed', 'Roboto', sans-serif;
   }
+  // input checkbox with fontawesome:
+  .checkbox-fa-icon {
+    display: none;
+    &~.fa.fa-check-square-o {
+      display: none;
+      color: #0090C7;
+    }
+    &~.fa.fa-square-o {
+      display: inline;
+      padding-right: 2px;
+      color: #0090C7;
+    }
+    &:checked {
+      &~.fa.fa-check-square-o {
+        display: inline;
+      }
+      &~.fa.fa-square-o {
+        display: none;
+      }
+    }
+  }
 }
