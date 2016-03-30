@@ -1828,7 +1828,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       $AttText = get_attribute($lead,$attID);
       $attMerge = '';
       if(!empty($AttText)){
-        $attMerge = '<table cellpadding="10">';
+        $attMerge = '<table cellspacing="10">';
         foreach($AttText as $attDetail){
           $attMerge .= '<tr><td>'.$attDetail['attribute'].'</td><td>'.$attDetail['value'].'</td></tr>';
         }
