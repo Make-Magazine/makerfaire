@@ -1817,7 +1817,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   if (strpos($text, '{EA_') !== false) {
     $lastPos = 0;
     $positions = array();
-
+    $attTable  = '<table cellpadding="10"><tr><th>Resource</th><th>Quantity</th></tr>';
     //look thru $text and find all instances of the merge tag {EA_'attributeID'}
     while (($lastPos = strpos($text, '{EA_', $lastPos))!== false) {
       $lastPos = $lastPos + strlen('{EA_');
@@ -1828,12 +1828,17 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       $AttText = get_attribute($lead,$attID);
       $attMerge = '';
       if(!empty($AttText)){
+        $attTable .= '<tr>';
         foreach($AttText as $attDetail){
-          $attMerge .= $attDetail['value'];
+          $attMerge .= '<td>'.$attDetail['attribute'].'</td>'.
+                       '<td>'.$attDetail['value'].'</td>';
         }
+        $attTable .= '</tr>';
       }
-      $text = str_replace('{EA_'.$attID.'}', $attMerge, $text);
+      $text = str_replace('{EA_'.$attID.'}', '', $text);
     }
+    $attTable .= '</table>';
+    $text = str_replace('{ATT_TABLE}', $attTable, $text);
   }
 
   //attention field
