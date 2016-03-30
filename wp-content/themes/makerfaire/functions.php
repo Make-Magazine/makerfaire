@@ -1803,7 +1803,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   if (strpos($text, '{entry_resources}') !== false) {
     //set lead meta field res_status to sent
     gform_update_meta( $entry_id, 'res_status','sent' );
-    $resTable = '<table width="100%" cellpadding="10"><tr><th>Resource</th><th>Quantity</th></tr>';
+    $resTable = '<table cellpadding="10"><tr><th>Resource</th><th>Quantity</th></tr>';
     $resources = get_resources($lead);
 
     foreach($resources as $entRes){
