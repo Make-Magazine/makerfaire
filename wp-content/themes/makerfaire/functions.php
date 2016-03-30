@@ -1830,7 +1830,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       if(!empty($AttText)){
         $attTable .= '<tr>';
         foreach($AttText as $attDetail){
-          $attMerge .= '<td>'.$attDetail['attribute'].'</td>'.
+          $attTable .= '<td>'.$attDetail['attribute'].'</td>'.
                        '<td>'.$attDetail['value'].'</td>';
         }
         $attTable .= '</tr>';
