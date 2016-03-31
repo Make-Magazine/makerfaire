@@ -2072,7 +2072,7 @@ function display_thank_you_modal_if_signed_up() { ?>
     <div class="nl-modal-extra-cont nl-thx-p1">
       <div class="nl-modal-div1">
         <div class="col-sm-8 col-xs-12">
-          <h4>Welcome to the Make Faire Community!</h4>
+          <h4>Welcome to the Make: Community!</h4>
           <p><span class="nl-modal-email-address"></span> you are now signed up to the Maker Faire newsletter.</p>
         </div>
         <div class="col-sm-4 hidden-xs text-center">
@@ -2088,7 +2088,7 @@ function display_thank_you_modal_if_signed_up() { ?>
                 $isSecure = "https://";
             }
             ?>
-          <h4>You might also like these Newsletters:</h4>
+          <h4>You might also like these newsletters:</h4>
           <form class="whatcounts-signup2" action="http://whatcounts.com/bin/listctrl" method="POST">
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="multiadd" value="1" />
@@ -2106,7 +2106,7 @@ function display_thank_you_modal_if_signed_up() { ?>
               <span for="list_6B5869DC547D3D46B52F3516A785F101_yes" class="newcheckbox"></span>
             </label>
             <h4>Make: Weekly Digest</h4>
-            <p>The best stuff every week.</p>
+            <p>The best stuff each week from Make: magazine.</p>
             <hr />
             <label class="list-radio pull-right">
               <input type="checkbox" id="list_6B5869DC547D3D46510F6AB3E701BA0A_yes" name="slid_2" value="6B5869DC547D3D46510F6AB3E701BA0A" />
