@@ -45,7 +45,7 @@ class GFRMTHELPER {
           'photo'       => '',
           'website'     => ''
       ),
-      'maker1' => array(
+      'presenter' => array(
           'first_name'  => (isset($lead['160.3']) ? $lead['160.3']:''),
           'last_name'   => (isset($lead['160.6']) ? $lead['160.6']:''),
           'bio'         => (isset($lead['234'])   ? $lead['234']:''),
@@ -55,7 +55,7 @@ class GFRMTHELPER {
           'photo'       => (isset($lead['217'])   ? $lead['217']:''),
           'website'     => (isset($lead['209'])   ? $lead['209']:''),
       ),
-      'maker2' => array(
+      'presenter2' => array(
           'first_name'  => (isset($lead['158.3']) ? $lead['158.3']:''),
           'last_name'   => (isset($lead['158.6']) ? $lead['158.6']:''),
           'bio'         => (isset($lead['258'])   ? $lead['258']:''),
@@ -65,7 +65,7 @@ class GFRMTHELPER {
           'photo'       => (isset($lead['224'])   ? $lead['224']:''),
           'website'     => (isset($lead['216'])   ? $lead['216']:''),
       ),
-      'maker3' => array(
+      'presenter3' => array(
           'first_name'  => (isset($lead['155.3']) ? $lead['155.3']:''),
           'last_name'   => (isset($lead['155.6']) ? $lead['155.6']:''),
           'bio'         => (isset($lead['259'])   ? $lead['259']:''),
@@ -75,7 +75,7 @@ class GFRMTHELPER {
           'photo'       => (isset($lead['223'])   ? $lead['223']:''),
           'website'     => (isset($lead['215'])   ? $lead['215']:''),
       ),
-      'maker4' => array(
+      'presenter4' => array(
           'first_name'  => (isset($lead['156.3']) ? $lead['156.3']:''),
           'last_name'   => (isset($lead['156.6']) ? $lead['156.6']:''),
           'bio'         => (isset($lead['260'])   ? $lead['260']:''),
@@ -85,7 +85,7 @@ class GFRMTHELPER {
           'photo'       => (isset($lead['222'])   ? $lead['222']:''),
           'website'     => (isset($lead['214'])   ? $lead['214']:''),
       ),
-      'maker5' => array(
+      'presenter5' => array(
           'first_name'  => (isset($lead['157.3']) ? $lead['157.3']:''),
           'last_name'   => (isset($lead['157.6']) ? $lead['157.6']:''),
           'bio'         => (isset($lead['261'])   ? $lead['261']:''),
@@ -95,7 +95,7 @@ class GFRMTHELPER {
           'photo'       => (isset($lead['220'])   ? $lead['220']:''),
           'website'     => (isset($lead['213'])   ? $lead['213']:''),
       ),
-      'maker6' => array(
+      'presenter6' => array(
           'first_name'  => (isset($lead['159.3']) ? $lead['159.3']:''),
           'last_name'   => (isset($lead['159.6']) ? $lead['159.6']:''),
           'bio'         => (isset($lead['262'])   ? $lead['262']:''),
@@ -105,7 +105,7 @@ class GFRMTHELPER {
           'photo'       => (isset($lead['221'])   ? $lead['221']:''),
           'website'     => (isset($lead['211'])   ? $lead['211']:''),
       ),
-      'maker7' => array(
+      'presenter7' => array(
           'first_name'  => (isset($lead['154.3']) ? $lead['154.3']:''),
           'last_name'   => (isset($lead['154.6']) ? $lead['154.6']:''),
           'bio'         => (isset($lead['263'])   ? $lead['263']:''),
@@ -403,7 +403,7 @@ class GFRMTHELPER {
       $attribute[] = array($attributeID['ELEC'], 'What are you Powering?',$entryData['what_are_you_powering']);
     }
     if($entryData['amps_details']!=''){
-      $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['amps_details']);
+      $attribute[] = array($attributeID['ELEC'],'Amps Detail', $entryData['amps_details']);
     }
 
     /*  Field ID 64 = special_request (textarea)*/
@@ -452,8 +452,7 @@ class GFRMTHELPER {
     }
 
     global $current_user;
-    $user = ($entryData['fType'] == 'Payment' ?  0 : $current_user->ID);  //user = 0 - payment form
-    $user =  (isset($current_user->ID) ? $current_user->ID:NULL);
+    $user = (isset($current_user->ID) ? $current_user->ID:NULL);
 
     //if this is a payment form overwrite the user
     if($entryData['fType'] == 'Payment'){
@@ -465,16 +464,10 @@ class GFRMTHELPER {
       $resource_id = $value[0];
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
-
-      //if the resource has already been added, update the qty
-      $resourceCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_resources` where entry_id = $entryID and resource_id = $resource_id");
-      if($resourceCount > 0){ //if result, update.
-        $wpdb->get_results("update wp_rmt_entry_resources set qty = $qty, user=$user where  entry_id = $entryID and resource_id = $resource_id");
-      }else{
-        //else insert
-        $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`(`entry_id`, `resource_id`, `qty`, `comment`,user) "
-                        . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
-      }
+      $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
+              . " (`entry_id`, `resource_id`, `qty`, `comment`) "
+              . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'")'
+              . " ON DUPLICATE KEY UPDATE qty  = ".$qty.', user='.$user);
     }
 
     //add attributes to the table
@@ -483,29 +476,21 @@ class GFRMTHELPER {
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
 
-      //if the attribute has already been added, update the qty
-      $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` where entry_id = $entryID and attribute_id = $attribute_id");
-      if($attCount >0){ //if result, update.
-        //user = null - initial entry, user = 0 - payment form
-        $wpdb->get_results('update wp_rmt_entry_attributes set value = "'.$attvalue.'", user=0,'
-                . ' comment=CONCAT( comment, " '.$entryData['fType'].' Form Comment - '.$comment.'") '
-                . ' where  entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
-
-      //if this a payment form and the attribute has already been added, update the qty
-      $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` where entry_id = $entryID and attribute_id = $attribute_id");
+      $attCount = 0;
+      if($entryData['fType'] == 'Payment'){ //only update attribute table for payments
+        //if this a payment form and the attribute has already been added, update the qty
+        $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` "
+                . " where entry_id = $entryID and attribute_id = $attribute_id and value=".$attvalue);
+      }
       if($attCount > 0){ //if result, update.
-        if($entryData['fType'] == 'Payment'){ //only update attribute table for payments
-          //user = null - initial entry, user = 0 - payment form
-          $wpdb->get_results('update wp_rmt_entry_attributes set value = "' . $attvalue . '", user=' . $user . ','
-                . ' comment=CONCAT( comment, " ' . $entryData['fType'] . ' Form Comment - ' . $comment . '") '
-                . ' where  entry_id = ' . $entryID . ' and attribute_id = ' . $attribute_id);
-        }
+        $wpdb->get_results('update wp_rmt_entry_attributes set value = "' . $attvalue . '", user=' . $user . ','
+              . ' comment=CONCAT( comment, " ' . $entryData['fType'] . ' Form Comment - ' . $comment . '") '
+              . ' where  entry_id = ' . $entryID . ' and attribute_id = ' . $attribute_id);
       }else{
         //else insert
         $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
                       . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')');
       }
-
     }
 
     //set resource status and assign to
@@ -547,12 +532,6 @@ class GFRMTHELPER {
     //determine faire
     $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
 
-    //if we already have data for this entry - clean it out first
-    $count = $wpdb->get_var('select count(*) from wp_mf_entity where lead_id = '.$entryData['entry_id']);
-    if($count > 0){
-       $wpdb->get_results('delete from wp_mf_entity where lead_id = '.$entryData['entry_id']);
-    }
-
     //wp_mf_entity
     $wp_mf_entitysql = "insert into wp_mf_entity "
                     . "    (lead_id, presentation_title, presentation_type, special_request, "
@@ -568,13 +547,24 @@ class GFRMTHELPER {
                             . ' "'.$entryData['status']               . '", '
                             . ' "'.implode(',',$entryData['categories']) . '", '
                             . ' "'.$faire                             . '", '
-                            . '  '.$entryData['mobileAppDiscover']    . ')';
+                            . '  '.$entryData['mobileAppDiscover']
+                    . ' ON DUPLICATE KEY UPDATE presentation_title  = "'.$entryData['project_name']           . '", '
+                    . '                         presentation_type   = "'.$entryData['presentation_type']      . '", '
+                    . '                         special_request     = "'.$entryData['special_request']        . '", '
+                    . '                         OnsitePhone         = "'.$entryData['onsitePhone']            . '", '
+                    . '                         desc_short          = "'.$entryData['public_description']     . '", '
+                    . '                         desc_long           = "'.$entryData['public_description']     . '", '
+                    . '                         project_photo       = "'.$entryData['project_photo']          . '", '
+                    . '                         status              = "'.$entryData['status']                 . '", '
+                    . '                         category            = "'.implode(',',$entryData['categories']). '", '
+                    . '                         faire               = "'.$faire                               . '", '
+                    . '                         mobile_app_discover = "'.$entryData['mobileAppDiscover']      . '"';
     $wpdb->get_results($wp_mf_entitysql);
 
     /*  wp_mf_maker table
      *
      *  maker array structure -
-     *    9 types - contact, maker1, maker2, maker3, maker4, maker5, maker6, maker7, group
+     *    9 types - contact, presenter, presenter2, presenter3, presenter4, presenter5, presenter6, presenter7, group
      *    for each type the following fields are set -
               'first_name'
               'last_name'
@@ -591,7 +581,7 @@ class GFRMTHELPER {
 
       //we need to have at least 1 presenter/maker.  if these fields are empty, pull from the contact info
       if(trim($firstName)=='' && trim($lastName)==''){
-        if($type=='maker1'){
+        if($type=='presenter'){
           $typeArray = $entryData['maker_array']['contact'];
         }
       }
@@ -605,27 +595,40 @@ class GFRMTHELPER {
         $twitter  = (isset($typeArray['twitter']) ? esc_sql($typeArray['twitter'])  : '');
         $photo    = (isset($typeArray['photo'])   ? esc_sql($typeArray['photo'])    : '');
         $website  = (isset($typeArray['website']) ? esc_sql($typeArray['website'])  : '');
-        $guid     = createGUID($entryData['entry_id'] .'-'.$type);
 
-        //if we already have data for this entry - clean it out first
-        $count = $wpdb->get_var('select count(*) from wp_mf_maker where lead_id = '.$entryData['entry_id']);
-        if($count > 0){
-          $wpdb->get_results('delete from wp_mf_maker where lead_id = '.$entryData['entry_id']);
-          $wpdb->get_results('delete from wp_mf_maker_to_entity where entity_id ='.$entryData['entry_id']);
+        $results = $wpdb->get_results($wpdb->prepare("SELECT maker_id FROM wp_mf_maker WHERE email=%s", $email) );
+        if ($wpdb->num_rows != 0){
+              $guid = $results[0]->maker_id;
+        }else{
+          $guid = createGUID($key .'-'.$type);
         }
+
         $wp_mf_makersql = "INSERT INTO wp_mf_maker "
-                        . " (lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`,  `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
-                        . " VALUES (".$entryData['entry_id'].", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."',"
-                                     . " '".$twitter."', ".$form_id.",'".$guid."','".$photo."','".$website."')";
+                        . " (lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
+                        . " VALUES (".$entryData['entry_id'].", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."', "
+                                     . "'".$twitter."', ".$form_id.",'".$guid."','".$photo."','".$website."')";
+        $wp_mf_makersql .= " ON DUPLICATE KEY UPDATE form_id  = ".$form_id;
+
+        //only update non blank fields
+        $wp_mf_makersql .= ($firstName!=''? ", `First Name` = '".$firstName ."'":'');
+        $wp_mf_makersql .= ($lastName!='' ? ", `Last Name`  = '".$lastName  ."'":'');
+        $wp_mf_makersql .= ($bio!=''      ? ",  Bio         = '".$bio       ."'":'');
+        $wp_mf_makersql .= ($phone!=''    ? ",  phone       = '".$phone     ."'":'');
+        $wp_mf_makersql .= ($twitter!=''  ? ",  TWITTER     = '".$twitter   ."'":'');
+        $wp_mf_makersql .= ($photo!=''    ? ",  Photo       = '".$photo     ."'":'');
+        $wp_mf_makersql .= ($website!=''  ? ",  website     = '".$website   ."'":'');
+
         $wpdb->get_results($wp_mf_makersql);
+
+
         if($wpdb->insert_id==false){
             echo 'error inserting record wp_mf_maker:'.$wp_mf_makersql.'<br/><br/>';
         }
 
         //build maker to entity table
-        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`"
-                              . " (`maker_id`, `entity_id`, `maker_type`) "
-                              . ' VALUES ("'.$guid.'",'.$entryData['entry_id'].',"'.$type.'")';
+        //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
+        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`" . " (`maker_id`, `entity_id`, `maker_type`) "
+                              . ' VALUES ("'.$guid.'",'.$key.',"'.$type.'") ON DUPLICATE KEY UPDATE maker_id=maker_id;';
 
         $wpdb->get_results($wp_mf_maker_to_entity);
         if($wpdb->insert_id==false){

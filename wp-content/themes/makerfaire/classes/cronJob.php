@@ -191,12 +191,12 @@ function build_wp_mf_maker(){
             $twitter    = (isset($typeArray['TWITTER'])    && isset($lead[$typeArray['TWITTER']])   ? esc_sql($lead[$typeArray['TWITTER']])    : '');
             $photo      = (isset($typeArray['Photo'])      && isset($lead[$typeArray['Photo']])     ? esc_sql($lead[$typeArray['Photo']])      : '');
             $website    = (isset($typeArray['website'])    && isset($lead[$typeArray['website']])   ? esc_sql($lead[$typeArray['website']])    : '');
-            
+
             $results = $wpdb->get_results($wpdb->prepare("SELECT maker_id FROM wp_mf_maker WHERE email=%s", $email) );
             if ($wpdb->num_rows != 0){
               $guid = $results[0]->maker_id;
             }else{
-              $guid     = createGUID($key .'-'.$type);
+              $guid = createGUID($key .'-'.$type);
             }
 
             $wp_mf_makersql = "INSERT INTO wp_mf_maker(lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, "
@@ -222,8 +222,9 @@ function build_wp_mf_maker(){
             $m++;
 
             //build maker to entity table
+            //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
             $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`" . " (`maker_id`, `entity_id`, `maker_type`) "
-                                  . ' VALUES ("'.$guid.'",'.$key.',"'.$type.'")';
+                                  . ' VALUES ("'.$guid.'",'.$key.',"'.$type.'") ON DUPLICATE KEY UPDATE maker_id=maker_id;';
 
             $wpdb->get_results($wp_mf_maker_to_entity);
             if($wpdb->insert_id==false){
@@ -236,42 +237,28 @@ function build_wp_mf_maker(){
   }
 }
 
-function createGUID($id){
-  mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
-  $charid = strtoupper(md5(uniqid($id, true)));
-  $hyphen = chr(45);// "-"
-  $uuid = chr(123)// "{"
-      .substr($charid, 0, 8).$hyphen
-      .substr($charid, 8, 4).$hyphen
-      .substr($charid,12, 4).$hyphen
-      .substr($charid,16, 4).$hyphen
-      .substr($charid,20,12)
-      .chr(125);// "}"
-  return $uuid;
-}
-
-    /*
-     * We can get up to 10 records from one form entry
-     * Contact, Presenter 1-7, and group
-     */
+/*
+ * We can get up to 10 records from one form entry
+ * Contact, Presenter 1-7, and group
+ */
 function buildCrossRef(){
-    //fields for wp_mf_maker
-    $crossRef['wp_mf_maker_array'] =
-    array('contact'    => array('First Name' =>  '96.3', 'Last Name' =>  '96.6',               'Email' =>  '98', 'phone' =>  '99', 'TWITTER' => '201', 'identifier' => 1),
-          'presenter'  => array('First Name' => '160.3', 'Last Name' => '160.6', 'Bio' => '234', 'Email' => '161', 'phone' => '185', 'TWITTER' => '201', 'Photo' => '217', 'website' => '209', 'identifier' => 2),
-          'presenter2' => array('First Name' => '158.3', 'Last Name' => '158.6', 'Bio' => '258', 'Email' => '162', 'phone' => '192', 'TWITTER' => '208', 'Photo' => '224', 'website' => '216', 'identifier' => 3),
-          'presenter3' => array('First Name' => '155.3', 'Last Name' => '155.6', 'Bio' => '259', 'Email' => '167', 'phone' => '190', 'TWITTER' => '207', 'Photo' => '223', 'website' => '215', 'identifier' => 4),
-          'presenter4' => array('First Name' => '156.3', 'Last Name' => '156.6', 'Bio' => '260', 'Email' => '166', 'phone' => '191', 'TWITTER' => '206', 'Photo' => '222', 'website' => '214', 'identifier' => 5),
-          'presenter5' => array('First Name' => '157.3', 'Last Name' => '157.6', 'Bio' => '261', 'Email' => '165', 'phone' => '189', 'TWITTER' => '205', 'Photo' => '220', 'website' => '213', 'identifier' => 6),
-          'presenter6' => array('First Name' => '159.3', 'Last Name' => '159.6', 'Bio' => '262', 'Email' => '164', 'phone' => '188', 'TWITTER' => '204', 'Photo' => '221', 'website' => '211', 'identifier' => 7),
-          'presenter7' => array('First Name' => '154.3', 'Last Name' => '154.6', 'Bio' => '263', 'Email' => '163', 'phone' => '187', 'TWITTER' => '203', 'Photo' => '219', 'website' => '212', 'identifier' => 8),
-          'group'      => array('First Name' => '109.3', 'Last Name' => '109.6', 'Bio' => '110',                                 'TWITTER' => '322', 'Photo' => '111', 'website' => '112', 'identifier' => 9)
-    );
+  //fields for wp_mf_maker
+  $crossRef['wp_mf_maker_array'] =
+  array('contact'    => array('First Name' =>  '96.3', 'Last Name' =>  '96.6',               'Email' =>  '98', 'phone' =>  '99', 'TWITTER' => '201', 'identifier' => 1),
+        'presenter'  => array('First Name' => '160.3', 'Last Name' => '160.6', 'Bio' => '234', 'Email' => '161', 'phone' => '185', 'TWITTER' => '201', 'Photo' => '217', 'website' => '209', 'identifier' => 2),
+        'presenter2' => array('First Name' => '158.3', 'Last Name' => '158.6', 'Bio' => '258', 'Email' => '162', 'phone' => '192', 'TWITTER' => '208', 'Photo' => '224', 'website' => '216', 'identifier' => 3),
+        'presenter3' => array('First Name' => '155.3', 'Last Name' => '155.6', 'Bio' => '259', 'Email' => '167', 'phone' => '190', 'TWITTER' => '207', 'Photo' => '223', 'website' => '215', 'identifier' => 4),
+        'presenter4' => array('First Name' => '156.3', 'Last Name' => '156.6', 'Bio' => '260', 'Email' => '166', 'phone' => '191', 'TWITTER' => '206', 'Photo' => '222', 'website' => '214', 'identifier' => 5),
+        'presenter5' => array('First Name' => '157.3', 'Last Name' => '157.6', 'Bio' => '261', 'Email' => '165', 'phone' => '189', 'TWITTER' => '205', 'Photo' => '220', 'website' => '213', 'identifier' => 6),
+        'presenter6' => array('First Name' => '159.3', 'Last Name' => '159.6', 'Bio' => '262', 'Email' => '164', 'phone' => '188', 'TWITTER' => '204', 'Photo' => '221', 'website' => '211', 'identifier' => 7),
+        'presenter7' => array('First Name' => '154.3', 'Last Name' => '154.6', 'Bio' => '263', 'Email' => '163', 'phone' => '187', 'TWITTER' => '203', 'Photo' => '219', 'website' => '212', 'identifier' => 8),
+        'group'      => array('First Name' => '109.3', 'Last Name' => '109.6', 'Bio' => '110',                                 'TWITTER' => '322', 'Photo' => '111', 'website' => '112', 'identifier' => 9)
+  );
 
-    //fields for wp_mf_entity
-    $crossRef['wp_mf_entity_array']  = array('presentation_title' => 151, 'presentation_type' => 1, 'special_request' => 64, 'OnsitePhone' => 265, 'desc_short' => 16, 'desc_long' => 11, 'project_photo' => 22, 'project_website' => 27, 'project_video' => 32, 'status' => 303);
+  //fields for wp_mf_entity
+  $crossRef['wp_mf_entity_array']  = array('presentation_title' => 151, 'presentation_type' => 1, 'special_request' => 64, 'OnsitePhone' => 265, 'desc_short' => 16, 'desc_long' => 11, 'project_photo' => 22, 'project_website' => 27, 'project_video' => 32, 'status' => 303);
 
-    return $crossRef;
+  return $crossRef;
 }
 
 
@@ -279,20 +266,20 @@ function buildCrossRef(){
 add_action('cron_ribbonJSON', 'build_ribbonJSON');
 
 function build_ribbonJSON(){
-    global $wpdb;
-    require_once( TEMPLATEPATH. '/partials/ribbonJSON.php' );
+  global $wpdb;
+  require_once( TEMPLATEPATH. '/partials/ribbonJSON.php' );
 
-    $yearSql  = $wpdb->get_results("SELECT distinct(year) FROM wp_mf_ribbons  where entry_id > 0 order by year desc");
+  $yearSql  = $wpdb->get_results("SELECT distinct(year) FROM wp_mf_ribbons  where entry_id > 0 order by year desc");
 
-    foreach($yearSql as $year){
-        $json = createJSON($year->year);
-        //write json file
-        unlink(TEMPLATEPATH.'/partials/data/'.$year->year.'ribbonData.json'); //delete json file if exists
-        $fp = fopen(TEMPLATEPATH.'/partials/data/'.$year->year.'ribbonData.json', 'w');//create json file
+  foreach($yearSql as $year){
+    $json = createJSON($year->year);
+    //write json file
+    unlink(TEMPLATEPATH.'/partials/data/'.$year->year.'ribbonData.json'); //delete json file if exists
+    $fp = fopen(TEMPLATEPATH.'/partials/data/'.$year->year.'ribbonData.json', 'w');//create json file
 
-        fwrite($fp, $json);
-        fclose($fp);
-    }
+    fwrite($fp, $json);
+    fclose($fp);
+  }
 }
 
 add_action('cron_rmt_update', 'rmt_update');
@@ -308,5 +295,4 @@ function rmt_update(){
   foreach($results as $row){
     GFJDBHELPER::gravityforms_send_entry_to_jdb($row->id);
   }
-
 }
