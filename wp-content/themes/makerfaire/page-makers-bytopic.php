@@ -26,8 +26,8 @@ $sorting_criteria = array('key' => '151', 'direction' => 'ASC' );
 $paging_criteria = array('offset' => $offset, 'page_size' => $page_size );
 
 //search by primary category
-    //$search_criteria['field_filters'][] = array( '320' => '1', 'value' => $search_category);
-    $search_criteria['field_filters'][] = array( '321' => '1', 'value' => $search_category);
+//$search_criteria['field_filters'][] = array( '320' => '1', 'value' => $search_category);
+$search_criteria['field_filters'][] = array( '321' => '1', 'value' => $search_category);
 
 $search_criteria['field_filters'][] = array( '303' => '1', 'value' => 'Accepted');
 
@@ -47,7 +47,7 @@ get_header(); ?>
 
 			<div class="row padbottom">
 				<div class="col-md-8">
-                                    <a href="/<?php echo str_replace(' ','-',  strtolower($faire_name));?>/meet-the-makers/">&#65513; Look for More Makers</a>
+          <a href="/<?php echo str_replace(' ','-',  strtolower($faire_name));?>/meet-the-makers/">&#65513; Look for More Makers</a>
 				</div>
 			</div>
 			<div class="row">
@@ -57,7 +57,7 @@ get_header(); ?>
 			</div>
 			<div class="row">
 				<div class="col-md-8">
-					<h3 class="nomargins">Topic: <?php echo $category->name;?>, <span class="text-muted"><?php echo $total_count; echo ($total_count == 1) ? ' result' : ' results'; ?></span></h3>
+					<h3 class="nomargins">Topic: <?php echo $category->name;?></h3>
 				</div>
 			</div>
 			<div class="clear"></div>
@@ -101,8 +101,8 @@ get_header(); ?>
 
 /* Support Functions */
 function search_entries_bytopic( $form_id, $search_criteria = array(), $sorting = null, $paging = null, &$total_count ) {
-    global $wpdb;
-    $sort_field = isset( $sorting['key'] ) ? $sorting['key'] : 'date_created'; // column, field or entry meta
+  global $wpdb;
+  $sort_field = isset( $sorting['key'] ) ? $sorting['key'] : 'date_created'; // column, field or entry meta
 
 	//initializing rownum
 	$sql = sort_by_field_query( $form_id, $search_criteria, $sorting, $paging);        
@@ -113,7 +113,7 @@ function search_entries_bytopic( $form_id, $search_criteria = array(), $sorting 
 	//getting results
 	
 	$results = $wpdb->get_results( $sql );
-        $leads = GFFormsModel::build_lead_array( $results );
+  $leads = GFFormsModel::build_lead_array( $results );
 		
 	$results_count  = $wpdb->get_row( $sqlcounting );
 	$total_count    = $results_count->total_count;
