@@ -33,7 +33,6 @@
           if (!faireFilters.search) {
             return true;
           }
-
           function checkForValue(json, value) {
             for (var key in json) {
               if (typeof(json[key]) === 'object') {
@@ -52,12 +51,18 @@
         }
         // check if date is ok:
         function isDateOk(marker) {
-          if (Object.prototype.toString.call(marker.event_end_dt) !== "[object Date]" ||
-            marker.event_end_dt == '0000-00-00 00:00:00') {
+          var eventDate;
+          if (Object.prototype.toString.call(marker.event_end_dt) === "[object Date]" &&
+            marker.event_end_dt == '0000-00-00 00:00:00') { // if valid "End" date
+            eventDate = marker.event_end_dt; // use end date
+          } else if (Object.prototype.toString.call(marker.event_start_dt) === "[object Date]" &&
+            marker.event_start_dt != '0000-00-00 00:00:00') { // if NO valid "End" date
+            eventDate = marker.event_start_dt; // use start date
+          } else {
             ctrl.pastPresent.present++;
             return true;
           }
-          var isInPast = new Date(marker.event_end_dt).getTime() < todaysDate.getTime();
+          var isInPast = new Date(eventDate).getTime() < todaysDate.getTime();
           if (isInPast) {
             ctrl.pastPresent.past++;
           } else {
@@ -83,7 +88,7 @@
           ctrl.faireMarkers = response && response.data && response.data.Locations;
           FaireMapsSharedData.mapDone().then(null, null, function() {
             ctrl.applyMapFilters();
-          })
+          });
         }, function errorCallback() {
           // error
         });

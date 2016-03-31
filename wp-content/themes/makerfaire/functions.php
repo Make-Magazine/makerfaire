@@ -157,6 +157,8 @@ function load_admin_scripts() {
 }
 add_action( 'admin_enqueue_scripts', 'load_admin_scripts' );
 
+// Remove richedit
+add_filter('user_can_richedit' , create_function('' , 'return false;') , 50);
 
 // Add page visible to editors
 function register_my_page(){
@@ -1763,15 +1765,8 @@ add_filter('gform_field_content', 'mf_field_content', 10, 5);
 function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Schedule', 'tag' => '{entry_schedule}');
     $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
-
-    //create a separate merge tag for each attribute
-    global $wpdb;
-    $sql = 'select ID,category from wp_rmt_entry_att_categories';
-    $results = $wpdb->get_results($sql);
-    foreach($results as $result){
-      $merge_tags[] = array('label' => 'Attribute - '.$result->category, 'tag' => '{EA_'.$result->ID.'}');
-    }
-
+    $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
+    
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
 
@@ -1802,7 +1797,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   if (strpos($text, '{entry_resources}') !== false) {
     //set lead meta field res_status to sent
     gform_update_meta( $entry_id, 'res_status','sent' );
-    $resTable = '<table><tr><th>Resource</th><th>Quantity</th></tr>';
+    $resTable = '<table cellpadding="10"><tr><th>Resource</th><th>Quantity</th></tr>';
     $resources = get_resources($lead);
 
     foreach($resources as $entRes){
@@ -1812,26 +1807,32 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $text = str_replace('{entry_resources}', $resTable, $text);
   }
 
-  //individual attributes
-  if (strpos($text, '{EA_') !== false) {
-    $lastPos = 0;
-    $positions = array();
+  //individual attributes {entry_attributes:2,4,6,9}
+  if (strpos($text, '{entry_attributes') !== false) {
+    $startPos    = strpos($text, '{entry_attributes'); //pos of start of merge tag
+    $attStartPos = strpos($text, ':',$startPos);       //pos of start of attribute id's
+    $closeBracketPos = strpos($text, '}', $startPos); //find the closing bracket of the merge tag
 
-    //look thru $text and find all instances of the merge tag {EA_'attributeID'}
-    while (($lastPos = strpos($text, '{EA_', $lastPos))!== false) {
-      $lastPos = $lastPos + strlen('{EA_');
-      //find the closing bracket of the merge tag
-      $closeBracketPos = strpos($text, '}', $lastPos);
-      //retrieve the ID of the attribute
-      $attID = substr($text, $lastPos,$closeBracketPos-$lastPos);
-      $AttText = get_attribute($lead,$attID);
-      $attMerge = '';
-      foreach($AttText as $attDetail){
-        if($attMerge!='') $attMerge.='<br/>';
-        $attMerge .= $attDetail['value'];
+    //attribute ID's will be a comma separated list between $attStartPos and $closeBracketPos
+    $attIDs = substr($text, $attStartPos+1,$closeBracketPos-$attStartPos-1);
+
+    $attArr = explode(",",$attIDs);
+    $attTable  = '<table cellpadding="10"><tr><th>Attribute</th><th>Value</th></tr>';
+    foreach($attArr as $att){
+      $AttText = get_attribute($lead,trim($att));
+      if(!empty($AttText)){
+        $attTable .= '<tr>';
+        foreach($AttText as $attDetail){
+          $attTable .= '<td>'.$attDetail['attribute'].'</td>'.
+                       '<td>'.$attDetail['value'].'</td>';
+        }
+        $attTable .= '</tr>';
       }
-      $text = str_replace('{EA_'.$attID.'}', $attMerge, $text);
     }
+    $attTable  .= '</table>';
+    //full merge tag for replace
+    $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
+    $text = str_replace($mergeTag, $attTable, $text);
   }
 
   //attention field
@@ -2251,6 +2252,9 @@ function gv_add_faire($additional_fields){
   $additional_fields[] = array("label_text" => "Maker Cancel Entry", "desc"          => "Maker Cancel Entry Link",
                                "field_id"   => "cancel_link",  "label_type"    => "field",
                                "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
+  $additional_fields[] = array("label_text" => "View Faire Sign", "desc"       => "View Faire Sign",
+                               "field_id"   => "maker_sign_link",  "label_type"    => "field",
+                               "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
   $additional_fields[] = array("label_text" => "Maker Copy Entry",   "desc"          => "Maker Copy Entry Link",
                                "field_id"   => "copy_entry",   "label_type"    => "field",
                                "input_type" => "text",         "field_options" => NULL, "settings_html"=> NULL);
@@ -2263,14 +2267,14 @@ function gv_add_faire($additional_fields){
 //Maker Admin - populate new fields in gravity view
 add_filter('gform_entry_field_value','gv_faire_name',10,4);
 function gv_faire_name($display_value, $field, $entry, $form){
+    global $wpdb;
+
+    $form_id = $entry['form_id'];
+    $sql = "select faire,faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
+    $faire = $wpdb->get_results($sql);
+    $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:'');
+    $faire_id   = (isset($faire[0]->faire)      ? $faire[0]->faire:'');
     if($field["type"]=='faire_name'){
-        global $wpdb;
-
-        $form_id = $entry['form_id'];
-        $sql = "select faire_name from wp_mf_faire where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0";
-        $faire = $wpdb->get_results($sql);
-
-        $faire_name = (isset($faire[0]->faire_name) ? $faire[0]->faire_name:'');
         $display_value = $faire_name;
     }elseif($field["type"]=='cancel_link'){
         $display_value = '<a href="#cancelEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Cancel</a>';
@@ -2278,6 +2282,10 @@ function gv_faire_name($display_value, $field, $entry, $form){
         $display_value = '<a href="#copy_entry" data-toggle="modal" data-entry-id="'.$entry['id'].'">Copy</a>';
     }elseif($field["type"]=='delete_entry'){
         $display_value = '<a href="#deleteEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Delete</a>';
+    }elseif($field["type"]=='maker_sign_link'){
+      ///wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$entry['id']&faire=BA16
+      $faireVar = ($faire_id!=''? '&faire='.$faire_id:'');
+      $display_value = '<a href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid='.$entry['id'].$faireVar.'" target="_blank">Faire Sign</a>';
     }
 
     return $display_value;

@@ -116,7 +116,7 @@
               (this.dataRowSrc.venue_address_city || '') +
               (this.dataRowSrc.venue_address_state && ', ' + this.dataRowSrc.venue_address_state || '') +
               (this.dataRowSrc.venue_address_country && ', ' + this.dataRowSrc.venue_address_country + ' ' || '') +
-              (this.dataRowSrc.event_start_dt && $filter('date')(this.dataRowSrc.event_start_dt, 'mediumDate') || '') +
+              (this.dataRowSrc.event_dt || '') +
               '</p><p>' +
               (this.dataRowSrc.faire_url &&
                 '<a href="' + this.dataRowSrc.faire_url + '" target="blank">' + this.dataRowSrc.faire_url + '</a>' || '') +

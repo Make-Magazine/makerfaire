@@ -453,6 +453,12 @@ class GFRMTHELPER {
 
     global $current_user;
     $user = ($entryData['fType'] == 'Payment' ?  0 : $current_user->ID);  //user = 0 - payment form
+    $user =  (isset($current_user->ID) ? $current_user->ID:NULL);
+
+    //if this is a payment form overwrite the user
+    if($entryData['fType'] == 'Payment'){
+      $user = 0;  //user = 0 - payment form
+    }
 
     //add resources to the table
     foreach($resource as $value){
@@ -476,6 +482,14 @@ class GFRMTHELPER {
       $attribute_id = $value[0];
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
+
+      //if the attribute has already been added, update the qty
+      $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` where entry_id = $entryID and attribute_id = $attribute_id");
+      if($attCount >0){ //if result, update.
+        //user = null - initial entry, user = 0 - payment form
+        $wpdb->get_results('update wp_rmt_entry_attributes set value = "'.$attvalue.'", user=0,'
+                . ' comment=CONCAT( comment, " '.$entryData['fType'].' Form Comment - '.$comment.'") '
+                . ' where  entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
 
       //if this a payment form and the attribute has already been added, update the qty
       $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` where entry_id = $entryID and attribute_id = $attribute_id");

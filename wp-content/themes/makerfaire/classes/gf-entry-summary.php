@@ -6,12 +6,11 @@ function add_main_text_before($form, $lead){
 	$mode = empty( $_POST['screen_mode'] ) ? 'view' : $_POST['screen_mode'];
 	if ($mode != "view") return;
 	echo gf_summary_metabox($form, $lead);
-        echo gf_collapsible_sections($form, $lead);
+  echo gf_collapsible_sections($form, $lead);
 }
 
 // Summary Metabox
-function gf_summary_metabox($form, $lead)
-{
+function gf_summary_metabox($form, $lead) {
 
 $jdb_success = gform_get_meta( $lead['id'], 'mf_jdb_sync');
 
@@ -72,6 +71,9 @@ if ( isset( $long_description ) && $long_description!='') {
 	$main_description = $short_description;
 }
 
+//pull faireID
+global $wpdb;
+$faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.form_ids,'. $form['id'].')> 0');
 ?>
 <table class="fixed entry-detail-view">
 	<thead>
@@ -175,8 +177,7 @@ if ( isset( $long_description ) && $long_description!='') {
 						<td style="width: 80px;" valign="top"><strong>What are your plans:</strong></td>
 						<td valign="top">
 						<?php
-						for ($i=0; $i < count($whatareyourplansvalues); $i++)
-						{
+						for ($i=0; $i < count($whatareyourplansvalues); $i++) {
 							echo (!empty($lead['55.'.$i])) ? $lead['55.'.$i].'<br />' : '';
 						}
             ?>
@@ -185,15 +186,14 @@ if ( isset( $long_description ) && $long_description!='') {
 					<tr>
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
-						<?php echo ( isset( $size_request ) ) ? $size_request : 'Not Filled out' ; ?>
-           	<?php echo ( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '' ; ?>
-
-						<?php echo ( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '' ; ?>
+              <?php echo ( isset( $size_request ) ) ? $size_request : 'Not Filled out' ; ?>
+              <?php echo ( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '' ; ?>
+              <?php echo ( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '' ; ?>
 						</td>
 					</tr>
           <tr>
             <td>
-              <a target="_blank" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
+              <a target="_blank" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire?>"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
             </td>
             <td>
               <a href="<?php echo admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id );?>"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>
@@ -355,7 +355,7 @@ function gf_collapsible_sections($form, $lead){
                   . ' join wp_rg_form on wp_rg_form.id = wp_rg_lead_detail.form_id '
                   . ' WHERE value = "'.$key.'"'
                   . '   and lead_id != '.$entry_id.' group by lead_id order by lead_id');
-    
+
     $return = array();
     foreach($results as $addData){
       $outputURL = admin_url( 'admin.php' ) . "?page=mf_entries&view=mfentry&id=".$addData->form_id . '&lid='.$addData->lead_id;
