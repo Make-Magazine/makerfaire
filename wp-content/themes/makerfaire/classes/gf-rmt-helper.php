@@ -570,12 +570,20 @@ class GFJDBHELPER {
       $attribute[] = array($attributeID['INTRNT'],$entryData['internet'],'');
     }
 
+    global $current_user;
+
+    $user =  (isset($current_user->ID) ? $current_user->ID:NULL);
+
+    //if this is a payment form overwrite the user
+    if($entryData['fType'] == 'Payment'){
+      $user = 0;  //user = 0 - payment form
+    }
+
     //add resources to the table
     foreach($resource as $value){
       $resource_id = $value[0];
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
-      $user        = (isset($value[3])?$value[3]:NULL);
       //if the resource has already been added, update the qty
       $resourceCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_resources` where entry_id = $entryID and resource_id = $resource_id");
       if($resourceCount >0){ //if result, update.
@@ -593,7 +601,7 @@ class GFJDBHELPER {
       $attribute_id = $value[0];
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
-      $user         = (isset($value[3])?$value[3]:NULL);
+
       //if the attribute has already been added, update the qty
       $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` where entry_id = $entryID and attribute_id = $attribute_id");
       if($attCount >0){ //if result, update.
@@ -605,7 +613,7 @@ class GFJDBHELPER {
       }else{
         //else insert
         $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
-                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.'),');
+                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')');
       }
 
     }
