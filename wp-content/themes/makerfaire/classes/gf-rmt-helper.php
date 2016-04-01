@@ -516,9 +516,16 @@ class GFRMTHELPER {
       $assignTo = 'kerry'; //Kerry
     }
 
-    // update custom meta field
-    gform_update_meta( $entryData['entry_id'], 'res_status',$status );
-    gform_update_meta( $entryData['entry_id'], 'res_assign',$assignTo );
+    // update custom meta field (do not update if meta already exists)
+    $metaValue = gform_get_meta( $entryData['entry_id'], 'res_status' );
+    if(empty($metaValue)){
+      gform_update_meta( $entryData['entry_id'], 'res_status',$status );
+    }
+    
+    $metaValue = gform_get_meta( $entryData['entry_id'], 'res_assign' );
+    if(empty($metaValue)){
+      gform_update_meta( $entryData['entry_id'], 'res_assign',$assignTo );
+    }
   }
 
   /*

@@ -652,14 +652,15 @@ function entryResources($lead){
 
   $results = $wpdb->get_results($sql);
   $resourceDisp = '<table id="resTable"><thead>'
-                  . ' <tr><th>Lock</th>'
+                  . ' <tr>'
+                    . ' <th>Lock</th>'
                     . ' <th>Item</th>'
                     . ' <th>Type</th>'
                     . ' <th>Qty</th>'
                     . ' <th>Comments</th>'
                     . ' <th>User</th>'
                     . ' <th>Last Updated</th>'
-                    . ' <th><p class="addIcon" onclick="addRow(\'resource\')"><i class="fa fa-plus-circle"></i></p></th>'
+                    . ' <th><p class="addIcon" onclick="addRow(\'resource\')"><i class="fa fa-plus-circle fa-lg"></i></p></th>'
                   . ' </tr></thead>';
   $return = '';
   $resourceDisp .= '<tbody>';
@@ -673,14 +674,15 @@ function entryResources($lead){
       $dispUser = $userInfo->display_name;
     }
     $resourceDisp .= '<tr id="resRow'.$result->ID.'">'
-                      . ' <td width="10%"><span class="lockIcon">'.($result->lockBit==1?'<i class="icon-lock fa-lg"></i>':'<i class="fa fa-unlock-alt fa-lg"></i>').'</span></td>'
+                      . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow'.$result->ID.'\','.$result->lockBit.')">'.($result->lockBit==1?'<i class="fa fa-lock fa-lg"></i>':'<i class="fa fa-unlock-alt fa-lg"></i>').'</span></td>'
                       . ' <td id="resitem_'.$result->ID.'" data-itemID="'.$result->item_id.'">'.$result->item.'</td>'
                       . ' <td id="restype_'.$result->ID.'" data-typeID="'.$result->resource_id.'" class="editable dropdown">'.$result->type.'</td>'
                       . ' <td id="resqty_'.$result->ID.'"  class="editable numeric">'.$result->qty.'</td>'
                       . ' <td id="rescomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
                       . ' <td id="resuser_'.$result->ID.'">'.$dispUser.'</td>'
                       . ' <td id="resdateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
-                      . ' <td width="10%"><p class="delIcon" onclick="resAttDelete(\'#resRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
+                      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow'.$result->ID.'\')"><i class="fa fa-minus-circle fa-lg"></i></span></td>'
+                  . ' </tr>';
   }
   $resourceDisp .= '</tbody>';
   $resourceDisp .= '</table>';
@@ -693,12 +695,13 @@ function entryResources($lead){
 
   $results = $wpdb->get_results($sql);
   $attDisp = '<table id="attTable"><thead><tr>'
+                . ' <th>Lock</th>'
                 . ' <th>Attribute</th>'
                 . ' <th>Value</th>'
                 . ' <th>Comment</th>'
                 . ' <th>User</th>'
                 . ' <th>Last Updated</th>'
-                . ' <th><p class="addIcon" onclick="addRow(\'attribute\')"><i class="fa fa-plus-circle"></i></p></th></tr></thead>';
+                . ' <th><span class="addIcon" onclick="addRow(\'attribute\')"><i class="fa fa-plus-circle fa-lg"></i></span></th></tr></thead>';
   $attDisp .= '<tbody>';
   foreach($results as $result){
     if($result->user==NULL){
@@ -710,12 +713,17 @@ function entryResources($lead){
       $dispUser = $userInfo->display_name;
     }
     $attDisp .= '<tr id="attRow'.$result->ID.'">'
+                    . ' <td class="lock">'
+                    . '   <span class="lockIcon" onclick="resAttLock(\'#attRow'.$result->ID.'\','.$result->lockBit.')">'
+                    . ($result->lockBit==1?'<i class="fa fa-lock fa-lg"></i>':'<i class="fa fa-unlock-alt fa-lg"></i>')
+                    . '   </span>'
+                    . ' </td>'
                     . ' <td id="attcategory_'.$result->ID.'">'.$result->category.'</td>'
                     . ' <td id="attvalue_'.$result->ID.'" class="editable textAreaEdit">'.$result->value.'</td>'
                     . ' <td id="attcomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
                     . ' <td id="attuser_'.$result->ID.'">'.$dispUser.'</td>'
                     . ' <td id="attdateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
-                    . ' <td><p  class="delIcon" onclick="resAttDelete(\'#attRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
+                    . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#attRow'.$result->ID.'\')"><i class="fa fa-minus-circle fa-lg"></i></span></td></tr>';
   }
   $attDisp .= '</tbody>';
   $attDisp .= '</table>';
@@ -742,7 +750,7 @@ function entryResources($lead){
                 . ' <th>Comment</th>'
                 . ' <th>User</th>'
                 . ' <th>Last Updated</th>'
-                . ' <th><p onclick="addRow(\'attention\')"><i class="fa fa-plus-circle"></i></p></th></tr></thead>';
+                . ' <th><span onclick="addRow(\'attention\')"><i class="fa fa-plus-circle"></i></span></th></tr></thead>';
   $attnDisp .= '<tbody>';
   foreach($results as $result){
     if($result->user==NULL){
@@ -756,7 +764,7 @@ function entryResources($lead){
                     . ' <td id="attncomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
                     . ' <td id="attnuser_'.$result->ID.'">'.$dispUser.'</td>'
                     . ' <td id="attndateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
-                    . ' <td><p onclick="resAttDelete(\'#attnRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></p></td></tr>';
+                    . ' <td><span onclick="resAttDelete(\'#attnRow'.$result->ID.'\')"><i class="fa fa-minus-circle"></i></span></td></tr>';
   }
   $attnDisp .= '</tbody>';
   $attnDisp .= '</table>';
