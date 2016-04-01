@@ -44,21 +44,20 @@ get_header('version-2'); ?>
                   <h2 class="date-day-number"><?php echo get_sub_field('date_day_number'); ?></h2>
                 </div>
               </div>
-              <div class="col-md-8">
-                <div class="row">
-                  <?php // check for rows (sub repeater)
-                  if(have_rows('day_event_block')): ?>
-                      <?php // loop through rows (sub repeater)
-                      while(have_rows('day_event_block')): the_row();
-                        ?>
-                        <div class="col-md-6 day-event-block">
-                          <h4 class="day-event-title"><?php the_sub_field('day_event_title'); ?></h4>
-                          <h4 class="day-event-title-description"><?php the_sub_field('day_event_title_description'); ?></h4>
-                          <div><?php the_sub_field('day_event_body'); ?></div>
-                        </div>
-                      <?php endwhile; ?>
-                  <?php endif; ?>
-                </div>
+              <div class="col-md-8 event-day-columns">
+                <?php // check for rows (sub repeater)
+                if(have_rows('day_event_block')): ?>
+                    <?php // loop through rows (sub repeater)
+                    while(have_rows('day_event_block')): the_row();
+                      ?>
+                      <div class="day-event-block">
+                        <h4 class="day-event-title"><?php the_sub_field('day_event_title'); ?></h4>
+                        <h4 class="day-event-title-description"><?php the_sub_field('day_event_title_description'); ?></h4>
+                        <div><?php the_sub_field('day_event_body'); ?></div>
+                      </div>
+                    <?php endwhile; ?>
+                <?php endif; ?>
+                <div class="column-end-no-dots"></div>
               </div>
             </div>
           <?php endwhile; ?>

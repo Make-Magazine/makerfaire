@@ -4,7 +4,9 @@
     margin-bottom: 35px;
     .hero-banner-images {
       max-height: 248px;
-      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      display: block;
     }
     .hero-badge {
       margin: 10px auto;
@@ -37,6 +39,9 @@
         hr {
           margin: 10px 0;
           border-color: #1FB8ED;
+        }
+        p {
+          font-size: 13px;
         }
       }
       .btn.btn-primary {
@@ -93,22 +98,39 @@
       margin-bottom: -10px;
     }
   }
-  .day-event-block {
-    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' height='10' width='10'><circle cx='50%' cy='50%' r='1' fill='#00AEEF' /></svg>");
-    background-repeat: repeat-x;
-    background-position-y: 100%;
-    font-size: 13px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-    .day-event-title,
-    .day-event-title-description {
-      margin: 4px 0;
+  .event-day-columns {
+    @media all and (min-width: 992px) {
+      -webkit-column-count: 2;
+      -moz-column-count: 2;
+      column-count: 2;
+      .column-end-no-dots {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: white;
+        height: 10px;
+      }
     }
-    .day-event-title {
-      font-weight: 600;
-    }
-    .day-event-title-description {
-      font-weight: 400;
+    .day-event-block {
+      -webkit-column-break-inside: avoid;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' height='10' width='10'><circle cx='50%' cy='50%' r='1' fill='#00AEEF' /></svg>");
+      background-repeat: repeat-x;
+      background-position-y: 100%;
+      font-size: 13px;
+      padding-bottom: 10px;
+      padding-top: 10px;
+      .day-event-title,
+      .day-event-title-description {
+        margin: 4px 0;
+      }
+      .day-event-title {
+        font-weight: 600;
+      }
+      .day-event-title-description {
+        font-weight: 400;
+      }
     }
   }
 }
