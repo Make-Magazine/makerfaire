@@ -20,11 +20,33 @@
       padding: 50px 0 30px 0;
       .description-text {
         color: white;
+        p {
+          font-size: 22px;
+          font-weight: 300;
+        }
       }
       .action-callout-box {
         background: #CDF0FB;
         border-radius: 11px;
-        padding: 21px 33px 39px 33px;
+        padding: 21px 33px 22px 33px;
+        img {
+          width: 45px;
+          display: block;
+          margin: 0 auto;
+        }
+        hr {
+          margin: 10px 0;
+          border-color: #1FB8ED;
+        }
+      }
+      .btn.btn-primary {
+        background: #1FB8ED;
+        border: none;
+        width: 100%;
+        padding: 7px;
+        &:hover {
+          background: darken(#1FB8ED, 10%);
+        }
       }
     }
   }
@@ -52,18 +74,32 @@
         line-height: 23px;
       }
     }
+    @media all and (max-width: 991px) {
+      .date-day-name,
+      .calendar-date {
+        margin: 10px auto 0 auto;
+      }
+    }
   }
   .meet-the-makers-row {
-    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' height='10' width='10'><circle cx='50%' cy='50%' r='1' fill='#00AEEF' /></svg>");
-    background-repeat: repeat-x;
-    background-position-y: 100%;
     margin-bottom: 20px;
     padding-bottom: 20px;
+    @media all and (min-width: 992px) {
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' height='10' width='10'><circle cx='50%' cy='50%' r='1' fill='#00AEEF' /></svg>");
+      background-repeat: repeat-x;
+      background-position-y: 100%;
+    }
+    @media all and (max-width: 991px) {
+      margin-bottom: -10px;
+    }
   }
   .day-event-block {
     background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' height='10' width='10'><circle cx='50%' cy='50%' r='1' fill='#00AEEF' /></svg>");
     background-repeat: repeat-x;
     background-position-y: 100%;
+    font-size: 13px;
+    padding-bottom: 10px;
+    padding-top: 10px;
     .day-event-title,
     .day-event-title-description {
       margin: 4px 0;

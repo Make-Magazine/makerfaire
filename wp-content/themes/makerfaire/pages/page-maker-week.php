@@ -15,13 +15,13 @@ get_header('version-2'); ?>
     <div class="container">
       <div class="mw-info-header row">
         <div class="description-text col-md-8">
-          Calling all Makers! 
-          Join us for Maker Week—the week leading up to Maker Faire Bay Area 2015. Here you’ll find a full run-down of all the activities in which Makers can participate during Maker Week. 
-          Check back often to see what other exciting events and activities have been added to the schedule.
+          <?php the_field('meet_the_makers_header'); ?>
         </div>
         <div class="col-md-4">
           <div class="action-callout-box">
-            Have an event, meetup, activity, party, launch, or other exciting offering for Maker Week? Let us know, we’d love to add it here!
+            <img src="<?php echo get_template_directory_uri(); ?>/images/robot.png" alt="makey robot">
+            <hr>
+            <?php the_field('meet_the_makers_call_to_action'); ?>
           </div>
         </div>
       </div>
