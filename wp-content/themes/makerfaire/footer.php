@@ -25,7 +25,7 @@
       <div class="col-sm-12 col-sm-6 col-md-3 social-foot-col">
         <h4>Our Company</h4>
         <ul class="list-unstyled">
-          <li><a href="//makermedia.com" target="_blank">About Us</a></li>
+          <li><a class="magical" href="#">is Magical?</a></li>
           <li><a href="//makermedia.com/work-with-us/advertising" target="_blank">Advertise with Us</a></li>
           <li><a href="//makermedia.com/work-with-us/job-openings" target="_blank">Careers</a></li>
           <li><a href="//help.makermedia.com/hc/en-us" target="_blank">Help</a></li>
@@ -161,7 +161,7 @@
           <div id="collapse3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading3">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked">
-                <li><a href="//makermedia.com" target="_blank">About Us</a></li>
+                <li><a class="magical" href="#">is Magical?</a></li>
                 <li><a href="//makermedia.com/work-with-us/advertising" target="_blank">Advertise with Us</a></li>
                 <li><a href="//makermedia.com/work-with-us/job-openings" target="_blank">Careers</a></li>
                 <li><a href="//help.makermedia.com/hc/en-us" target="_blank">Help</a></li>
@@ -178,6 +178,15 @@
   <?php echo make_copyright_footer(); ?>
 </footer>
 <!-- END new-footer -->
+
+<script>
+  jQuery(".magical").click(function(event){
+    event.preventDefault();
+    jQuery.getScript("<?php echo get_template_directory_uri() . '/magical/js/jquery.magical.js' ?>", function() {
+      jQuery(".magical").unicornblast();
+    });
+  });
+</script>
 
 <!-- Subscribe return path overlay -->
 <?php echo subscribe_return_path_overlay(); ?>
