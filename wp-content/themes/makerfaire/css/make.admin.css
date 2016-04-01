@@ -289,3 +289,6 @@ div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher {
 #entry_form .inner-sidebar {
   width: 300px;
 }
+.lockIcon i {color: #0085ba}
+.delIcon i  {color: #FF0000}
+.addIcon i  {color: #00FF00}

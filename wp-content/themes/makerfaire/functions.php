@@ -152,7 +152,6 @@ function load_admin_scripts() {
   //styles
   wp_enqueue_style( 'make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css' );
   wp_enqueue_style('jquery-datetimepicker-css',  get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
-  wp_enqueue_style('wp-admin-style',  'http://makerfaire.staging.wpengine.com/wp-admin/load-styles.php?c=0&dir=ltr&load=dashicons,admin-bar,wp-admin,buttons,wp-auth-check&ver=1.35');
   wp_enqueue_style('made-admin-style',  get_stylesheet_directory_uri() . '/css/make.admin.css');
 }
 add_action( 'admin_enqueue_scripts', 'load_admin_scripts' );
@@ -1766,7 +1765,7 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Schedule', 'tag' => '{entry_schedule}');
     $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
     $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
-    
+
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
 
@@ -2482,63 +2481,6 @@ function save_form_type_form_setting($form) {
 add_filter('gravityview/delete-entry/mode','gView_trash_entry');
 function gView_trash_entry(){
     return 'trash';
-}
-
-/* This function will write all user changes to entries to a database table to create a change report */
-add_action('gravityview/edit_entry/after_update','GVupdate_notification',10,3);
-add_action( 'gform_after_update_entry', 'GVupdate_notification', 10, 3 );
-function GVupdate_notification($form,$entry_id,$orig_entry){
-    //get updated entry
-    $updatedEntry = GFAPI::get_entry(esc_attr($entry_id));
-    $updates = array();
-
-    foreach($form['fields'] as $field){
-      //send notification after entry is updated in maker admin
-      $input_id = $field->id;
-      //if field is admin only - do not allow updates thru gravity view
-        //if field type is checkbox we need to compare each of the inputs for changes
-        $inputs = $field->get_entry_inputs();
-        if ( is_array( $inputs ) ) {
-            foreach ( $inputs as $input ) {
-                $input_id = $input['id'];
-                $origField    = (isset($orig_entry[$input_id])   ?  $orig_entry[$input_id ] : '');
-                $updatedField = (isset($updatedEntry[$input_id]) ?  $updatedEntry[$input_id ] : '');
-                $fieldLabel   = ($field['adminLabel']!=''?$field['adminLabel']:$field['label']);
-                if($origField!=$updatedField){
-                    //update field id
-                    $updates[] = array('lead_id'=>$entry_id,'field_id'=>$input_id,'field_before'=>$origField,'field_after'=>$updatedField,'fieldLabel'=>$fieldLabel);
-                }
-            }
-        } else {
-            $origField    = (isset($orig_entry[$input_id])   ?  $orig_entry[$input_id ] : '');
-            $updatedField = (isset($updatedEntry[$input_id]) ?  $updatedEntry[$input_id ] : '');
-            $fieldLabel   = ($field['adminLabel']!=''?$field['adminLabel']:$field['label']);
-            if($origField!=$updatedField){
-                //update field id
-                $updates[] = array('lead_id'=>$entry_id,'field_id'=>$input_id,'field_before'=>$origField,'field_after'=>$updatedField,'fieldLabel'=>$fieldLabel);
-            }
-        }
-
-    }
-
-    //check if there are any updates to process
-    if(!empty($updates)){
-        $current_user = wp_get_current_user();
-        $user_id = $current_user->ID;//current user id
-        $inserts = '';
-        //field name
-
-        //update database with this information
-        foreach($updates as $update){
-            if($inserts !='') $inserts.= ',';
-            $inserts .= '('.$user_id.','.$update['lead_id'].','.$form['id'].','.$update['field_id'].',"'.$update['field_before'].'","'.$update['field_after'].'","'.$update['fieldLabel'].'")';
-        }
-
-        $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel) values " .$inserts;
-
-        global $wpdb;
-        $wpdb->get_results($sql);
-    }
 }
 
 /* This function is used by the individual entry pages to display if this entry one any ribbons */

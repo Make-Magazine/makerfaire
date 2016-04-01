@@ -315,7 +315,6 @@ class GFRMTHELPER {
     /*  Field ID 73 = power */
     if($entryData['power'] == 'Yes'){
       /*  Field ID 75 = amps  */
-      /*  Field ID 74 - what_are_you_powering */
       if($entryData['amps'] == '5 amps (0-500 watts, 120V)'){
         $resource[] = array($resourceID['120V-05A'],1,'');
       }elseif($entryData['amps'] == '10 amps (501-1000 watts, 120V)'){
@@ -394,11 +393,13 @@ class GFRMTHELPER {
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
       if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
     }
+
     /*
      * E N T R Y   A T T R I B U T E   M A P P I N G
      *    build list of resource ID's and tokens
      */
-
+    /* Field ID 74 - what_are_you_powering   */
+    /* Field ID 76 = amps_details (textarea) */
     if($entryData['what_are_you_powering']!=''){
       $attribute[] = array($attributeID['ELEC'], 'What are you Powering?',$entryData['what_are_you_powering']);
     }
@@ -464,10 +465,15 @@ class GFRMTHELPER {
       $resource_id = $value[0];
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
-      $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
-              . " (`entry_id`, `resource_id`, `qty`, `comment`) "
-              . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'")'
-              . " ON DUPLICATE KEY UPDATE qty  = ".$qty.', user='.$user);
+      //check if resource is locked
+      $locked = $wpdb->get_var("SELECT count(*) FROM wp_rmt_entry_resources "
+                              . " WHERE entry_id". $entryID ." and resource_id=".$resource_id. " and lockBit=1");
+      if($locked==0){
+        $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
+                . " (`entry_id`, `resource_id`, `qty`, `comment`) "
+                . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'")'
+                . " ON DUPLICATE KEY UPDATE qty  = ".$qty.', user='.$user);
+      }
     }
 
     //add attributes to the table
@@ -476,20 +482,16 @@ class GFRMTHELPER {
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
 
-      $attCount = 0;
-      if($entryData['fType'] == 'Payment'){ //only update attribute table for payments
-        //if this a payment form and the attribute has already been added, update the qty
-        $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` "
+      //check if attribute is locked
+      $attCount = $wpdb->get_var("select count(*),lockBit from `wp_rmt_entry_attributes` "
                 . " where entry_id = $entryID and attribute_id = $attribute_id and value=".$attvalue);
-      }
-      if($attCount > 0){ //if result, update.
-        $wpdb->get_results('update wp_rmt_entry_attributes set value = "' . $attvalue . '", user=' . $user . ','
-              . ' comment=CONCAT( comment, " ' . $entryData['fType'] . ' Form Comment - ' . $comment . '") '
-              . ' where  entry_id = ' . $entryID . ' and attribute_id = ' . $attribute_id);
-      }else{
-        //else insert
+      if($locked==0){
+        if($entryData['fType'] == 'Payment'){
+          $comment = $entryData['fType'] . ' Form Comment - ' . $comment;
+        }
         $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
-                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')');
+                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')'
+                      . ' ON DUPLICATE KEY UPDATE user=' . $user . ', comment=CONCAT( comment, "<br/>' . $comment . '") ');
       }
     }
 
