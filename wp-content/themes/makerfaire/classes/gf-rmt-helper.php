@@ -496,6 +496,7 @@ class GFRMTHELPER {
       //check if attribute is locked
        $res = $wpdb->get_row("select * from `wp_rmt_entry_attributes` "
                 . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
+       
        //matching record found
       if ( null !== $res ) {
         if($res->lockBit==0){  //If this attribute is not locked, update this record
