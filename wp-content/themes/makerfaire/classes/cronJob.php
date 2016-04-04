@@ -289,10 +289,11 @@ function rmt_update(){
           from wp_rg_lead
           where status <> 'trash' and
           form_id in (45,46,47,48,49) and
-          id not in (select lead_id from wp_rg_lead_meta where meta_key='mf_jdb_sync') and
           id in (select lead_id from wp_rg_lead_detail where field_number = 303) ORDER BY `wp_rg_lead`.`id` ASC";
   $results = $wpdb->get_results($sql);
   foreach($results as $row){
-    GFJDBHELPER::gravityforms_send_entry_to_jdb($row->id);
+    $form = GFAPI::get_form( $row->form_id);
+    $entry = GFAPI::get_entry(esc_attr($row->id));
+    GFRMTHELPER::gravityforms_makerInfo($entry,$form);
   }
 }

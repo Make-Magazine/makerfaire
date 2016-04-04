@@ -400,11 +400,10 @@ class GFRMTHELPER {
      */
     /* Field ID 74 - what_are_you_powering   */
     /* Field ID 76 = amps_details (textarea) */
-    if($entryData['what_are_you_powering']!=''){
-      $attribute[] = array($attributeID['ELEC'], 'What are you Powering?',$entryData['what_are_you_powering']);
-    }
-    if($entryData['amps_details']!=''){
-      $attribute[] = array($attributeID['ELEC'],'Amps Detail', $entryData['amps_details']);
+    if($entryData['what_are_you_powering']!='' || $entryData['amps_details']!=''){
+      $details = 'What are you Powering? - ' . $entryData['what_are_you_powering'] .'<br/>'.
+                 'Amps Detail - '.$entryData['amps_details'];
+      $attribute[] = array($attributeID['ELEC'], 'What are you Powering? / Amps Detail',$details);
     }
 
     /*  Field ID 64 = special_request (textarea)*/
@@ -494,7 +493,7 @@ class GFRMTHELPER {
 
       //check if attribute is locked
        $res = $wpdb->get_row("select * from `wp_rmt_entry_attributes` "
-                . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id.' and value="'.$attvalue.'"');
+                . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id.'"');
        //matching record found
       if ( null !== $res ) {
         if($res->lockBit==0){  //If this attribute is not locked, update this record
@@ -502,8 +501,8 @@ class GFRMTHELPER {
           if($entryData['fType'] == 'Payment'){
             $comment = $res->comment.'<br/>'.$entryData['fType'] . ' Form Comment - ' . $comment;
           }
-          $wpdb->get_results('update `wp_rmt_entry_resources` '
-                . ' set comment="'.$comment.'", user='.$user
+          $wpdb->get_results('update `wp_rmt_entry_attributes` '
+                . ' set comment="'.$comment.'", user='.$user.', value='.$attvalue
                 . ' where id='.$res->ID);
         }
       }else{
