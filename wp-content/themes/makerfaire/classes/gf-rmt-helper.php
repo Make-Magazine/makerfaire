@@ -506,7 +506,7 @@ class GFRMTHELPER {
           //if there are changes, update the record
           if($res->comment!=$comment || $res->value!=$attvalue){
             $wpdb->get_results('update `wp_rmt_entry_attributes` '
-                  . ' set comment="'.$comment.'", user='.$user.', value='.$attvalue .',	update_stamp=now()'
+                  . ' set comment="'.$comment.'", user='.$user.', value="'.$attvalue .'",	update_stamp=now()'
                   . ' where id='.$res->ID);
           }
         }
@@ -635,8 +635,8 @@ class GFRMTHELPER {
 
         $wp_mf_makersql = "INSERT INTO wp_mf_maker "
                         . " (lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
-                        . " VALUES (".$entryData['entry_id'].", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."', "
-                                     . "'".$twitter."', ".$form_id.",'".$guid."','".$photo."','".$website."')"
+                        . ' VALUES ('.$entryData['entry_id'].', "'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'", "'.$phone.'", '
+                                     . '"'.$twitter.'", '.$form_id.',"'.$guid.'","'.$photo.'","'.$website.'")'
                         . ' ON DUPLICATE KEY UPDATE lead_id='.$entryData['entry_id'].',form_id  = '.$form_id;
 
         //only update non blank fields
