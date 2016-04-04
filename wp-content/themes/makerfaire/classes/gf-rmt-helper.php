@@ -473,9 +473,11 @@ class GFRMTHELPER {
       if ( null !== $res ) {
         //check lockbit
         if($res->lockBit==0){
-          //update this record
-          $wpdb->get_results('update `wp_rmt_entry_resources` '
-                . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.' where id='.$res->ID);
+          //If there are changes, update this record
+          if($res->resource_id!=$resource_id || $res->qty!=$qty){
+            $wpdb->get_results('update `wp_rmt_entry_resources` '
+                  . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',update_stamp=now() where id='.$res->ID);
+          }
         }
       }else{
         //insert this record
@@ -493,7 +495,7 @@ class GFRMTHELPER {
 
       //check if attribute is locked
        $res = $wpdb->get_row("select * from `wp_rmt_entry_attributes` "
-                . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id.'"');
+                . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
        //matching record found
       if ( null !== $res ) {
         if($res->lockBit==0){  //If this attribute is not locked, update this record
@@ -501,9 +503,12 @@ class GFRMTHELPER {
           if($entryData['fType'] == 'Payment'){
             $comment = $res->comment.'<br/>'.$entryData['fType'] . ' Form Comment - ' . $comment;
           }
-          $wpdb->get_results('update `wp_rmt_entry_attributes` '
-                . ' set comment="'.$comment.'", user='.$user.', value='.$attvalue
-                . ' where id='.$res->ID);
+          //if there are changes, update the record
+          if($res->comment!=$comment || $res->value!=$attvalue){
+            $wpdb->get_results('update `wp_rmt_entry_attributes` '
+                  . ' set comment="'.$comment.'", user='.$user.', value='.$attvalue .',	update_stamp=now()'
+                  . ' where id='.$res->ID);
+          }
         }
       }else{
         $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
@@ -573,12 +578,12 @@ class GFRMTHELPER {
                             . ' "'.implode(',',$entryData['categories']) . '", '
                             . ' "'.$faire                             . '", '
                             . '  '.$entryData['mobileAppDiscover']    . ') '
-                    . ' ON DUPLICATE KEY UPDATE presentation_title  = "'.$entryData['project_name']           . '", '
-                    . '                         presentation_type   = "'.$entryData['presentation_type']      . '", '
-                    . '                         special_request     = "'.$entryData['special_request']        . '", '
-                    . '                         OnsitePhone         = "'.$entryData['onsitePhone']            . '", '
-                    . '                         desc_short          = "'.$entryData['public_description']     . '", '
-                    . '                         desc_long           = "'.$entryData['public_description']     . '", '
+                    . ' ON DUPLICATE KEY UPDATE presentation_title  = "'.htmlentities($entryData['project_name'])           . '", '
+                    . '                         presentation_type   = "'.htmlentities($entryData['presentation_type'])      . '", '
+                    . '                         special_request     = "'.htmlentities($entryData['special_request'])        . '", '
+                    . '                         OnsitePhone         = "'.htmlentities($entryData['onsitePhone'])            . '", '
+                    . '                         desc_short          = "'.htmlentities($entryData['public_description'])     . '", '
+                    . '                         desc_long           = "'.htmlentities($entryData['public_description'])     . '", '
                     . '                         project_photo       = "'.$entryData['project_photo']          . '", '
                     . '                         status              = "'.$entryData['status']                 . '", '
                     . '                         category            = "'.implode(',',$entryData['categories']). '", '
@@ -614,7 +619,7 @@ class GFRMTHELPER {
       if(trim($firstName)=='' && trim($lastName)==''){
         //don't write the record, no maker here
       }else{
-        $bio      = (isset($typeArray['bio'])     ? esc_sql($typeArray['bio'])      : '');
+        $bio      = (isset($typeArray['bio'])     ? htmlentities($typeArray['bio'])      : '');
         $email    = (isset($typeArray['email'])   ? esc_sql($typeArray['email'])    : '');
         $phone    = (isset($typeArray['phone'])   ? esc_sql($typeArray['phone'])    : '');
         $twitter  = (isset($typeArray['twitter']) ? esc_sql($typeArray['twitter'])  : '');
