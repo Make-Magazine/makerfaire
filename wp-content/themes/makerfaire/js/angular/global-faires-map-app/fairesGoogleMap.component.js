@@ -73,18 +73,19 @@
               gMarkerZIndex = 1;
               switch (row.category) {
                 case 'Flagship':
-                  gMarkerIcon.fillColor = '#1DAFEC';
-                  gMarkerIcon.scale = 9;
+                  gMarkerIcon.fillColor = '#D42410';
+                  gMarkerIcon.scale = 11;
                   gMarkerZIndex = 2;
                   break;
                 case 'Featured':
-                  gMarkerIcon.fillColor = '#E75662';
+                  gMarkerIcon.fillColor = '#01A3E0';
+                  gMarkerIcon.scale = 8;
                   break;
                 case 'School':
-                  gMarkerIcon.fillColor = '#00BA4B';
+                  gMarkerIcon.fillColor = '#7ED321';
                   break;
                 default:
-                  gMarkerIcon.fillColor = '#F3BF70';
+                  gMarkerIcon.fillColor = '#67D0F7';
               }
               gMarker = new google.maps.Marker({
                 position: {

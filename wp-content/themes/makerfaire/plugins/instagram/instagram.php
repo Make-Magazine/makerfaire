@@ -32,7 +32,7 @@ class Make_Instagram {
 
     $base_url = ($url==''?'https://api.instagram.com/v1/users/self/media/recent':$url);
     $params = array(
-      'access_token' => '227901753.4c6a352.0917914fa6f3424ba313c6ee7f9103bc',
+      'access_token' => '227901753.4c6a352.8b205bb2140246cbacf7f8fcd5791412',
       'count' => 3
     );
 
