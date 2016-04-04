@@ -567,13 +567,13 @@ class GFRMTHELPER {
                     . "    (lead_id, presentation_title, presentation_type, special_request, "
                     . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover) "
                     . " VALUES ('".$entryData['entry_id']             . "',"
-                            . ' "'.$entryData['project_name']         . '", '
-                            . ' "'.$entryData['presentation_type']    . '", '
-                            . ' "'.$entryData['special_request']      . '", '
+                            . ' "'.htmlentities($entryData['project_name'])         . '", '
+                            . ' "'.htmlentities($entryData['presentation_type'])    . '", '
+                            . ' "'.htmlentities($entryData['special_request'])      . '", '
                             . ' "'.$entryData['onsitePhone']          . '", '
-                            . ' "'.$entryData['public_description']   . '", '
-                            . ' "'.$entryData['private_description']  . '", '
-                            . ' "'.$entryData['project_photo']        . '", '
+                            . ' "'.htmlentities($entryData['public_description'])   . '", '
+                            . ' "'.htmlentities($entryData['private_description'])  . '", '
+                            . ' "'.htmlentities($entryData['project_photo'])        . '", '
                             . ' "'.$entryData['status']               . '", '
                             . ' "'.implode(',',$entryData['categories']) . '", '
                             . ' "'.$faire                             . '", '
