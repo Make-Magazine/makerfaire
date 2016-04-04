@@ -260,17 +260,16 @@ function buildFaireDrop($wp_admin_bar){
  * After Submission Gravity Forms Action Handling
  */
 add_action( 'gform_after_submission', 'updateRMT', 10, 2 );
-add_action( 'gform_after_update_entry', 'updateRMT', 10, 3 );
 function updateRMT( $entry, $form ) {
   $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form);
 }
 
 /* This function will write all user changes to entries to a database table to create a change report */
-add_action('gravityview/edit_entry/after_update','GVupdate_changeRpt',10,3);
 add_action('gform_after_update_entry', 'GVupdate_changeRpt', 10, 3 );
 function GVupdate_changeRpt($form,$entry_id,$orig_entry){
   //get updated entry
   $updatedEntry = GFAPI::get_entry(esc_attr($entry_id));
+  GFRMTHELPER::gravityforms_makerInfo($updatedEntry,$form);
   $updates = array();
 
   foreach($form['fields'] as $field){
@@ -279,6 +278,7 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry){
 
     //if field type is checkbox we need to compare each of the inputs for changes
     $inputs = $field->get_entry_inputs();
+    $status_at_update = $orig_entry['303'];
     if ( is_array( $inputs ) ) {
       foreach ( $inputs as $input ) {
         $input_id = $input['id'];
@@ -287,7 +287,12 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry){
         $fieldLabel   = ($field['adminLabel']!=''?$field['adminLabel']:$field['label']);
         if($origField!=$updatedField){
           //update field id
-          $updates[] = array('lead_id'=>$entry_id,'field_id'=>$input_id,'field_before'=>$origField,'field_after'=>$updatedField,'fieldLabel'=>$fieldLabel);
+          $updates[] = array('lead_id'=>$entry_id,
+                            'field_id'=>$input_id,
+                            'field_before'=>$origField,
+                            'field_after'=>$updatedField,
+                            'fieldLabel'=>$fieldLabel,
+                            'status_at_update'=>$status_at_update);
         }
       }
     } else {
@@ -295,8 +300,13 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry){
       $updatedField = (isset($updatedEntry[$input_id]) ?  $updatedEntry[$input_id ] : '');
       $fieldLabel   = ($field['adminLabel']!=''?$field['adminLabel']:$field['label']);
       if($origField!=$updatedField){
-          //update field id
-          $updates[] = array('lead_id'=>$entry_id,'field_id'=>$input_id,'field_before'=>$origField,'field_after'=>$updatedField,'fieldLabel'=>$fieldLabel);
+        //update field id
+        $updates[] = array('lead_id'=>$entry_id,
+                          'field_id'=>$input_id,
+                          'field_before'=>$origField,
+                          'field_after'=>$updatedField,
+                          'fieldLabel'=>$fieldLabel,
+                          'status_at_update'=>$status_at_update);
       }
     }
   }
@@ -310,11 +320,20 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry){
 
     //update database with this information
     foreach($updates as $update){
-      if($inserts !='') $inserts.= ',';
-      $inserts .= '('.$user_id.','.$update['lead_id'].','.$form['id'].','.$update['field_id'].',"'.$update['field_before'].'","'.$update['field_after'].'","'.$update['fieldLabel'].'")';
+     if($inserts !='') $inserts.= ',';
+      $inserts .= '('.$user_id.','.
+              $update['lead_id'].','.
+              $form['id'].','.
+              $update['field_id'].',"'.
+              $update['field_before'].'","'.
+              $update['field_after'].'","'.
+              $update['fieldLabel'].'","'.
+              $update['status_at_update'] . '"'.
+              ')';
     }
 
-    $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel) values " .$inserts;
+    $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel,status_at_update) values " .$inserts;
+
 
     global $wpdb;
     $wpdb->get_results($sql);
