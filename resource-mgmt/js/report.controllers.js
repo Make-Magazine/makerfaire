@@ -123,6 +123,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   //set up gridOptions for predefined reports
   $scope.gridOptions = {enableFiltering: true,
     enableGridMenu: true,
+    rowHeight: 100,
+
     exporterCsvFilename: 'export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
@@ -203,7 +205,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
         }
       });
       $scope.gridOptions.columnDefs = response.data.columnDefs;
-      console.log(uiGridConstants.filter);
+      //console.log(uiGridConstants.filter);
       $scope.gridOptions.data       = response.data.data;
 
       //set up build your own data

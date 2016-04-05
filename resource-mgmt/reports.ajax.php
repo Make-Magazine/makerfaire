@@ -247,9 +247,11 @@ function retrieveRptData($table){
   global $mysqli;global $tableFields;
   $sql   = '';
   $where = '';
-
+  $orderBy = '';
   //build columnDefs
   foreach($tableFields[$table] as $fields){
+    if(isset($fields['orderBy']))
+      $orderBy = ' order by '.$fields['fieldName'].' '.$fields['orderBy'];
     if(isset($fields['dataSql'])) $sql   .= ','.$fields['dataSql'];
     if(isset($fields['limit'])){
       if($where==''){
@@ -306,16 +308,23 @@ function retrieveRptData($table){
       default:
         break;
     }
-    $vars['field']    = $fields['fieldName'];
+    if(isset($fields['cellTooltip']))   $vars['cellTooltip']  = $fields['cellTooltip'];
+    if(isset($fields['cellTemplate']))  $vars['cellTemplate'] = $fields['cellTemplate'];
+    if(isset($fields['cellFilter']))    $vars['cellFilter'] = $fields['cellFilter'];
+    if(isset($fields['visible']))       $vars['visible']      = $fields['visible'];
+    if(isset($fields['type']))       $vars['type']      = $fields['type'];
+
     $vars['name']     = $fields['fieldName'];
     $vars['minWidth'] = 100;
+    $vars['width']    = (isset($fields['width'])?$fields['width']:'*');
     $columnDefs[] = $vars;
   }
 
   //build data
   $data['columnDefs'] = $columnDefs;
+
   //get table data
-  $query = "select * ".$sql." from ".$table.$where;
+  $query = "select * ".$sql." from ".$table.$where.$orderBy;
 
   $result = $mysqli->query( $query );
   //create array of table data
