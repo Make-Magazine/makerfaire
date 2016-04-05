@@ -289,7 +289,7 @@ function rmt_update(){
   $sql = "Select id,form_id
           from wp_rg_lead
           where status <> 'trash' and
-          id in (select lead_id from wp_rg_lead_detail where field_number = 303) ORDER BY `wp_rg_lead`.`id` ASC";
+          form_id in (46,45,49,47,71) ORDER BY `wp_rg_lead`.`id` ASC";
   $results = $wpdb->get_results($sql);
   foreach($results as $row){
     $form  = GFAPI::get_form( $row->form_id);
