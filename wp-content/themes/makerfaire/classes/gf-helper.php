@@ -278,7 +278,7 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry){
 
     //if field type is checkbox we need to compare each of the inputs for changes
     $inputs = $field->get_entry_inputs();
-    $status_at_update = $orig_entry['303'];
+    $status_at_update = (isset($orig_entry['303'])?$orig_entry['303']:'');
     if ( is_array( $inputs ) ) {
       foreach ( $inputs as $input ) {
         $input_id = $input['id'];
