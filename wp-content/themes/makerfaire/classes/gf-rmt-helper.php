@@ -634,7 +634,7 @@ if($entryID == 55932){
         if ($wpdb->num_rows != 0){
               $guid = $results[0]->maker_id;
         }else{
-          $guid = createGUID($key .'-'.$type);
+          $guid = createGUID($entryData['entry_id'] .'-'.$type);
         }
 
         $wp_mf_makersql = "INSERT INTO wp_mf_maker "
