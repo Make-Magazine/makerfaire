@@ -1,142 +1,133 @@
 <?php
-if ( ! class_exists( 'GFJDBHELPER' ) ) {
+/* Class to update all stuff maker related */
+if ( ! class_exists( 'GFRMTHELPER' ) ) {
 	die();
 }
 
-class GFJDBHELPER {
+class GFRMTHELPER {
+  function __construct(){
+    global $wpdb;
+  }
+
 	/*
-	 	Function to send notes directly to JDB.
-	  	note             	(the text)
-		app_id          	(not sure what this is.  ignore it)
-		CS_ID          		(obviously)
-		note_id         	(a unique identifier so we only add a note once)
-		date_posted  		(original date of creation on the WP side format: yyyy-mm-dd hh:mm:ss )
-		author           	(name of the poster)
-		email           	(email of the poster)
+   * This function is called when there is an entry update or new entry submission
+   * $type - this tells us if this is a new submission or an update to the entry
 	*/
-	public static function gravityforms_send_note_to_jdb( $id = 0, $noteid=0, $note = '' , $note_username='', $note_datecreated='') {
-		$local_server = array( 'localhost', 'make.com', 'makerfaire.local', 'staging.makerfaire.com' );
-		$remote_post_url = 'http://db.makerfaire.com/addExhibitNote';
-		if ( isset( $_SERVER['HTTP_HOST'] ) && in_array( $_SERVER['HTTP_HOST'], $local_server ) )
-			$remote_post_url= 'http://makerfaire.local/wp-content/allpostdata.php';
-		$encoded_array = http_build_query(
-				array( 'CS_ID' => intval( $id ),
-						'note_id' => intval( $noteid ),
-						'note' => esc_attr( $note ),
-						'author' => esc_attr($note_username),
-						'date_posted' => esc_attr(date("Y-m-d H:i:s", strtotime($note_datecreated)))
-				)
-		);
+	public static function gravityforms_makerInfo($entry,$form) {
+		//format Entry information
+    $entryData = self::gravityforms_format_record($entry,$form);
 
-		$post_body = array(
-				'method' => 'POST',
-				'timeout' => 45,
-				'headers' => array(),
-				'body' => $encoded_array);
-		$res  = wp_remote_post( $remote_post_url, $post_body  );
-		$er  = 0;
+    //build/update RMT data
+    self::buildRmtData($entryData);
 
-		if ( 200 == $res['response']['code'] ) {
-			$body = json_decode( $res['body'] );
-			if ( 'ERROR' != $body->status ) {
-				$er = time();
-			}
-			gform_update_meta( $id, 'mf_jdb_note_sync', $body );
-
-		}
-		return $er;
+    //update/insert into maker tables
+    self::updateMakerTable($entryData);
 	}
 
-	public static function gravityforms_send_entry_to_jdb ($id)
-	{
-		$mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
-		if ($mysqli->connect_errno) {
-			echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-		}
-
-		error_log('gravityforms_send_entry_to_jdb');
-		$entry_id=$id;
-		$entry = GFAPI::get_entry($entry_id);
-		$form = GFAPI::get_form($entry['form_id']);
-		//$jdb_encoded_entry = gravityforms_to_jdb_record($entry,$row[0],$row[1]);
-		$jdb_encoded_entry = http_build_query(self::gravityforms_to_jdb_record($entry,$entry_id,$form));
-		$synccontents = '"'.$mysqli->real_escape_string($jdb_encoded_entry).'"';
-		$results_on_send = self::gravityforms_send_record_to_jdb($entry_id,$jdb_encoded_entry);
-		$results_on_send_prepared = '"'.$mysqli->real_escape_string($results_on_send).'"';
-
-		// MySqli Insert Query
-		$insert_row = $mysqli->query("INSERT INTO `wp_rg_lead_jdb_sync`(`lead_id`, `synccontents`, `jdb_response`) VALUES ($entry_id,$synccontents, $results_on_send_prepared)");
-		if($insert_row){
-			error_log( 'Success! Response from JDB  was: ' .$results_on_send .'<br />');
-		}else{
-			die('Error : ('. $mysqli->errno .') '. $mysqli->error);
-		};
-
-	}
-
-	public static function gravityforms_send_record_to_jdb($entry_id, $jdb_encoded_record) {
-		$local_server = array (
-				'localhost',
-				'make.com',
-				'makerfaire.local',
-				'staging.makerfaire.com'
-		);
-		$remote_post_url = 'http://db.makerfaire.com/updateExhibitInfo';
-		if (isset ( $_SERVER ['HTTP_HOST'] ) && in_array ( $_SERVER ['HTTP_HOST'], $local_server ))
-			$remote_post_url = 'http://makerfaire.local/wp-content/allpostdata.php';
-
-		$post_body = array (
-				'method' => 'POST',
-				'timeout' => 45,
-				'headers' => array (),
-				'body' => $jdb_encoded_record
-		);
-
-		$res = wp_remote_post ( $remote_post_url, $post_body );
-		if (200 == wp_remote_retrieve_response_code ( $res )) {
-			$body = json_decode ( $res ['body'] );
-			if ($body->exhibit_id == '' || $body->exhibit_id == 0) {
-				gform_update_meta ( $entry_id, 'mf_jdb_sync', 'fail' );
-			} else {
-				gform_update_meta ( $entry_id, 'mf_jdb_sync', time () );
-			}
-		}
-		else 	gform_update_meta ( $entry_id, 'mf_jdb_sync', 'fail' );
-
-		return ($res ['body']);
-	}
 	/*
 	 * Function for formatting gravity forms lead into usable jdb data
 	*/
-	public static function gravityforms_to_jdb_record($lead,$lead_id,$form) {
+	public static function gravityforms_format_record($lead,$form) {
+    $entry_id = $lead['id'];
 		//load form
-		$form_id = $form['id'];
+		$form_id  = $form['id'];
 
 		// Load Names
-		$allmakername='';
-		$makerfirstname1 = (isset($lead['160.3']) ? $lead['160.3']:'');
-    $makerlastname1  = (isset($lead['160.6']) ? $lead['160.6']:'');
-		$makerfirstname2 = (isset($lead['158.3']) ? $lead['158.3']:'');
-    $makerlastname2  = (isset($lead['158.6']) ? $lead['158.6']:'');
-		$makerfirstname3 = (isset($lead['155.3']) ? $lead['155.3']:'');
-    $makerlastname3  = (isset($lead['155.6']) ? $lead['155.6']:'');
-		$makerfirstname4 = (isset($lead['156.3']) ? $lead['156.3']:'');
-    $makerlastname4  = (isset($lead['156.6']) ? $lead['156.6']:'');
-		$makerfirstname5 = (isset($lead['157.3']) ? $lead['157.3']:'');
-    $makerlastname5  = (isset($lead['157.6']) ? $lead['157.6']:'');
-		$makerfirstname6 = (isset($lead['159.3']) ? $lead['159.3']:'');
-    $makerlastname6  = (isset($lead['159.6']) ? $lead['159.6']:'');
-		$makerfirstname7 = (isset($lead['154.3']) ? $lead['154.3']:'');
-    $makerlastname7  = (isset($lead['154.6']) ? $lead['154.6']:'');
-		$allmakername = $allmakername + !empty($makerfirstname1) ?       $makerfirstname1.' '.$makerlastname1 : '' ;
-		$allmakername = $allmakername + !empty($makerfirstname2) ?  ', '.$makerfirstname2.' '.$makerlastname2 : '' ;
-		$allmakername = $allmakername + !empty($makerfirstname3) ?  ', '.$makerfirstname3.' '.$makerlastname3 : '' ;
-		$allmakername = $allmakername + !empty($makerfirstname4) ?  ', '.$makerfirstname4.' '.$makerlastname4 : '' ;
-		$allmakername = $allmakername + !empty($makerfirstname5) ?  ', '.$makerfirstname5.' '.$makerlastname5 : '' ;
-		$allmakername = $allmakername + !empty($makerfirstname6) ?  ', '.$makerfirstname6.' '.$makerlastname6 : '' ;
-		$allmakername = $allmakername + !empty($makerfirstname7) ?  ', '.$makerfirstname7.' '.$makerlastname7 : '' ;
+    //build Maker Array
+    $makerArray = array(
+      'contact' => array(
+          'first_name'  => (isset($lead['96.3'])  ? $lead['96.3']:''),
+          'last_name'   => (isset($lead['96.6'])  ? $lead['96.6']:''),
+          'bio'         => '',
+          'email'       => (isset($lead['98'])    ? $lead['98']:''),
+          'phone'       => (isset($lead['99'])    ? $lead['99']:''),
+          'twitter'     => (isset($lead['201'])   ? $lead['201']:''),
+          'photo'       => '',
+          'website'     => ''
+      ),
+      'presenter' => array(
+          'first_name'  => (isset($lead['160.3']) ? $lead['160.3']:''),
+          'last_name'   => (isset($lead['160.6']) ? $lead['160.6']:''),
+          'bio'         => (isset($lead['234'])   ? $lead['234']:''),
+          'email'       => (isset($lead['161'])   ? $lead['161']:''),
+          'phone'       => (isset($lead['185'])   ? $lead['185']:''),
+          'twitter'     => (isset($lead['201'])   ? $lead['201']:''),
+          'photo'       => (isset($lead['217'])   ? $lead['217']:''),
+          'website'     => (isset($lead['209'])   ? $lead['209']:''),
+      ),
+      'presenter2' => array(
+          'first_name'  => (isset($lead['158.3']) ? $lead['158.3']:''),
+          'last_name'   => (isset($lead['158.6']) ? $lead['158.6']:''),
+          'bio'         => (isset($lead['258'])   ? $lead['258']:''),
+          'email'       => (isset($lead['162'])   ? $lead['162']:''),
+          'phone'       => (isset($lead['192'])   ? $lead['192']:''),
+          'twitter'     => (isset($lead['208'])   ? $lead['208']:''),
+          'photo'       => (isset($lead['224'])   ? $lead['224']:''),
+          'website'     => (isset($lead['216'])   ? $lead['216']:''),
+      ),
+      'presenter3' => array(
+          'first_name'  => (isset($lead['155.3']) ? $lead['155.3']:''),
+          'last_name'   => (isset($lead['155.6']) ? $lead['155.6']:''),
+          'bio'         => (isset($lead['259'])   ? $lead['259']:''),
+          'email'       => (isset($lead['167'])   ? $lead['167']:''),
+          'phone'       => (isset($lead['190'])   ? $lead['190']:''),
+          'twitter'     => (isset($lead['207'])   ? $lead['207']:''),
+          'photo'       => (isset($lead['223'])   ? $lead['223']:''),
+          'website'     => (isset($lead['215'])   ? $lead['215']:''),
+      ),
+      'presenter4' => array(
+          'first_name'  => (isset($lead['156.3']) ? $lead['156.3']:''),
+          'last_name'   => (isset($lead['156.6']) ? $lead['156.6']:''),
+          'bio'         => (isset($lead['260'])   ? $lead['260']:''),
+          'email'       => (isset($lead['166'])   ? $lead['166']:''),
+          'phone'       => (isset($lead['191'])   ? $lead['191']:''),
+          'twitter'     => (isset($lead['206'])   ? $lead['206']:''),
+          'photo'       => (isset($lead['222'])   ? $lead['222']:''),
+          'website'     => (isset($lead['214'])   ? $lead['214']:''),
+      ),
+      'presenter5' => array(
+          'first_name'  => (isset($lead['157.3']) ? $lead['157.3']:''),
+          'last_name'   => (isset($lead['157.6']) ? $lead['157.6']:''),
+          'bio'         => (isset($lead['261'])   ? $lead['261']:''),
+          'email'       => (isset($lead['165'])   ? $lead['165']:''),
+          'phone'       => (isset($lead['189'])   ? $lead['189']:''),
+          'twitter'     => (isset($lead['205'])   ? $lead['205']:''),
+          'photo'       => (isset($lead['220'])   ? $lead['220']:''),
+          'website'     => (isset($lead['213'])   ? $lead['213']:''),
+      ),
+      'presenter6' => array(
+          'first_name'  => (isset($lead['159.3']) ? $lead['159.3']:''),
+          'last_name'   => (isset($lead['159.6']) ? $lead['159.6']:''),
+          'bio'         => (isset($lead['262'])   ? $lead['262']:''),
+          'email'       => (isset($lead['164'])   ? $lead['164']:''),
+          'phone'       => (isset($lead['188'])   ? $lead['188']:''),
+          'twitter'     => (isset($lead['204'])   ? $lead['204']:''),
+          'photo'       => (isset($lead['221'])   ? $lead['221']:''),
+          'website'     => (isset($lead['211'])   ? $lead['211']:''),
+      ),
+      'presenter7' => array(
+          'first_name'  => (isset($lead['154.3']) ? $lead['154.3']:''),
+          'last_name'   => (isset($lead['154.6']) ? $lead['154.6']:''),
+          'bio'         => (isset($lead['263'])   ? $lead['263']:''),
+          'email'       => (isset($lead['163'])   ? $lead['163']:''),
+          'phone'       => (isset($lead['187'])   ? $lead['187']:''),
+          'twitter'     => (isset($lead['203'])   ? $lead['203']:''),
+          'photo'       => (isset($lead['219'])   ? $lead['219']:''),
+          'website'     => (isset($lead['212'])   ? $lead['212']:''),
+      ),
+      'group' => array(
+          'first_name'  => (isset($lead['109.3']) ? $lead['109.3']:''),
+          'last_name'   => (isset($lead['109.6']) ? $lead['109.6']:''),
+          'bio'         => (isset($lead['110'])   ? $lead['110']:''),
+          'email'       => '',
+          'phone'       => '',
+          'twitter'     => (isset($lead['322'])   ? $lead['322']:''),
+          'photo'       => (isset($lead['111'])   ? $lead['111']:''),
+          'website'     => (isset($lead['112'])   ? $lead['112']:''),
+      )
+    );
 
-    // Load Categories
+    // Load Categories (old topics field - no longer used in current forms)
 		$fieldtopics=RGFormsModel::get_field($form,'147');
     if(!is_array($fieldtopics['inputs'] ))  $fieldtopics['inputs'] =array();
 		$topicsarray = array();
@@ -144,6 +135,31 @@ class GFJDBHELPER {
 		foreach($fieldtopics['inputs'] as $topic) {
 			if (strlen($lead[$topic['id']]) > 0)  $topicsarray[] = $lead[$topic['id']];
 		}
+
+    $leadCategory = array();
+    $MAD          = 0;
+    //Categories (current fields in use)
+    foreach($lead as $leadKey=>$leadValue){
+      //4 additional categories
+      $pos = strpos($leadKey, '321');
+      if ($pos !== false) {
+        $leadCategory[]=$leadValue;
+      }
+      //main catgory
+      $pos = strpos($leadKey, '320');
+      if ($pos !== false) {
+        $leadCategory[]=$leadValue;
+      }
+      //check the flag field 304
+      $pos = strpos($leadKey, '304');
+      if ($pos !== false) {
+        if($leadValue=='Mobile App Discover')  $MAD = 1;
+      }
+    }
+
+    //verify we only have unique categories
+    $leadCategory = array_unique($leadCategory);
+    $catList = implode(',', $leadCategory);
 
 		// Load Plans
 		$fieldplans=RGFormsModel::get_field($form,'55');
@@ -171,227 +187,91 @@ class GFJDBHELPER {
 		foreach($rfinputs['inputs'] as $rfinput) {
 			if (strlen($lead[$rfinput['id']]) > 0)  $rfarray[] = $lead[$rfinput['id']];
 		}
-		// Load statuses
-		//$entrystatuses=RGFormsModel::get_field($form,'303');
-		//$currentstatus = "";
-		//foreach($entrystatuses['inputs'] as $entrystatus)
-		//{
-			//	if (strlen($lead[$entrystatus['id']]) > 0)  $currentstatus = $lead[$entrystatus['id']];
-			//}
-		$jdb_entry_data = array(
-				'form_type' => $form_id, //(Form ID)
-				'return_form_type' => self::gravityforms_form_type_jdb($form_id), //(Form ID)
-				'noise' => isset($lead['72']) ? $lead['72'] : '',
-				'radio' => isset($lead['78']) ? $lead['78'] : '',
-				'hands_on' => isset($lead['66']) ? $lead['66'] : '',
-				'referrals' => isset($lead['127']) ? $lead['127']  : '',
-				'food_details' => isset($lead['144']) ? $lead['144']  : '',
-				'fire' =>  isset($lead['83']) ? $lead['83']  : '',
-				'booth_size_details' => isset($lead['61']) ? $lead['61']  : '',
-				'layout' => isset($lead['65']) ? $lead['65']  : '',
-				'amps_details' =>  isset($lead['76']) ? $lead['76']  : '',
-				'booth_size' => isset($lead['60']) ? $lead['60']  : '',
-				'group_bio' => isset($lead['110']) ? $lead['110']  : '',
-				'group_website' => isset($lead['112']) ? $lead['112']  : '',
-				'hear_about' => isset($lead['128']) ? $lead['128']  : '',
-				'maker_faire' => isset($lead['131']) ? $lead['131']  : '',
-				'project_website' => isset($lead['27']) ? $lead['27']  : '',
-				'supporting_documents' => isset($lead['122']) ? $lead['122']  : '',
-				'tables_chairs' => isset($lead['62']) ? $lead['62']  : '',
-				'project_video' => isset($lead['32']) ? $lead['32']  : '',
-				'cats' => isset($topicsarray) ? $topicsarray  : '',
-				'loctype' => isset($lead['69']) ? $lead['69']  : '',
-				'tables_chairs_details' => isset($lead['288']) ? $lead['288']  : '',
-				'internet' => isset($lead['77']) ? $lead['77']  : '',
-				'maker_photo' => isset($lead['217']) ? $lead['217']  : '',
-				'email' => isset($lead['98']) ? $lead['98']  : '',
-				'project_photo' => isset($lead['22']) ? $lead['22']  : '',
-				'project_name' => isset($lead['151']) ? $lead['151']  : '',
-				'first_time' => isset($lead['130']) ? $lead['130']  : '',
-				'power' => isset($lead['73']) ? $lead['73']  : '',
-				'food' => isset($lead['44']) ? $lead['44']  : '',
-				'safety_details' => isset($lead['85']) ? $lead['85']  : '',
-				'anything_else' => isset($lead['134']) ? $lead['134']  : '',
-				'phone1_type' => isset($lead['148']) ? $lead['148']  : '',
-				'maker_bio' => isset($lead['234']) ? $lead['234']  : '',
-				'group_photo' => isset($lead['111']) ? $lead['111']  : '',
-				'lighting' => isset($lead['71']) ? $lead['71']  : '',
-				'phone1' => isset($lead['99']) ? $lead['99']  : '',
-				'project_photo_thumb' => '',
-				'group_name' => isset($lead['109']) ? $lead['109']  : '',
-				'private_address' => isset($lead['101.1']) ? $lead['101.1']  : '',
-				'private_state' => isset($lead['101.4']) ? $lead['101.4']  : '',
-				'private_city' => isset($lead['101.3']) ? $lead['101.3']  : '',
-				'private_address2' => isset($lead['101.2']) ? $lead['101.2']  : '',
-				'private_country' => isset($lead['101.6']) ? $lead['101.6']  : '',
-				'private_zip' => isset($lead['101.5']) ? $lead['101.5']  : '',
-				'placement' => isset($lead['68']) ? $lead['68']  : '',
-				'firstname' => isset($lead['96.3']) ? $lead['96.3']  : '',
-				'lastname' => isset($lead['96.6']) ? $lead['96.6']  : '',
-				'phone2_type' => isset($lead['149']) ? $lead['149']  : '',
-				'maker_name' => isset($allmakername) ? $allmakername  : '',
-				'radio_frequency' => $rfarray,
-				'what_are_you_powering' => isset($lead['74']) ? $lead['74']  : '',
-				'private_description' => isset($lead['11']) ? $lead['11']  : '',
-				'org_type' => isset($lead['45']) ? $lead['45']  : '',
-				'public_description' => isset($lead['16']) ? $lead['16']  : '',
-				'activity' => isset($lead['84']) ? $lead['84']  : '',
-				'amps' => isset($lead['75']) ? $lead['75']  : '',
-				'sales_details' => isset($lead['52']) ? $lead['52']  : '',
-				'phone2' => isset($lead['100']) ? $lead['100']  : '',
-				'maker' => isset($lead['105']) ? $lead['105']  : '',
-				'non_profit_desc' => isset($lead['47']) ? $lead['47']  : '',
-				'plans' => isset($plansarray) ? $plansarray  : '',
-				'launch_details' => isset($lead['54']) ? $lead['54']  : '',
-				'crowdfunding' => isset($lead['56']) ? $lead['56']  : '',
-				'crowdfunding_details' => isset($lead['59']) ? $lead['59']  : '',
-				'special_request' => isset($lead['64']) ? $lead['64']  : '',
-				'hands_on_desc' => isset($lead['67']) ? $lead['67']  : '',
-				'activity_wrist' => isset($lead['293']) ? $lead['293']  : '',
-				'loctype_outdoors' => $locationsarray,
-				'makerfaire_other' => isset($lead['132']) ? $lead['132']  : '',
-				'under_18' => (isset($lead['295']) && $lead['295'] == "Yes") ? 'NO'  : 'YES',
-				'CS_ID' => $lead_id,
-				'status' => isset($lead['303']) ? $lead['303']  : '',
-				'waste' => (isset($lead['317']) && $lead['317'] == "Yes") ?  'YES' : 'NO',
-				'waste_detail' => isset($lead['318']) ? $lead['318']  : '',
-				'learn_to' => isset($lead['319']) ? $lead['319']  : '',
-        'numTables'  => isset($lead['347']) ? $lead['347']  : 0,
-        'numChairs'  => isset($lead['348']) ? $lead['348']  : 0,
-        '344'        => isset($lead['344']) ? $lead['344']  : 0,
-        '345'        => isset($lead['345']) ? $lead['345']  : 0,
-        '81'         => isset($lead['81'])  ? $lead['81']   : '',
-        'fType'            => isset($form['form_type']) ? $form['form_type'] : '',
-        'paymentElectr'     => isset($lead['8'])  ? $lead['8']   : '',
-        'paymentDescElect'  => isset($lead['12']) ? $lead['12']  : '',
-        'paymentTable'      => isset($lead['14']) ? $lead['14']  : '',
-        'origEntryID'       => isset($lead['20']) ? $lead['20']  : '',
-				//'m_maker_name' => isset($lead['96']) ? $lead['96']  : '',
-				//'maker_email' => isset($lead['161']) ? $lead['161']  : '',
-				//'presentation' => isset($lead['No']) ? $lead['999']  : '', //(No match)
-				//'performance' => isset($lead['No']) ? $lead['999']  : '', // (No match)
-				//'maker_photo_thumb' => '', //$lead['http://mf.insourcecode.com/wp-content/uploads/2013/02/IMG_1823_crop1-362x500.jpg (No Match)']
-				//'ignore' => isset($lead['']) ? $lead['999']  : '',
-				//'tags' => isset($lead['3d-imaging, alternative-energy, art, art-cars, bicycles, biology, chemistry, circuit-bending, computers']) ? $lead['999']  : '',// (No Match)
-				//'group_photo_thumb' => isset($lead['']) ? $lead['999']  : '',// (No Match)
-				//'large_non_profit' => isset($lead['I am a large non-profit.']) ? $lead['999']  : '',// (No Match)
-				//'m_maker_bio' => $lead[' (Depends on Contact vs. Maker issue?)'],
+
+		$entry_data = array(
+				'form_id'               => $form_id, //(Form ID)
+				'noise'                 => isset($lead['72'])   ? $lead['72']  : '',
+				'radio'                 => isset($lead['78'])   ? $lead['78']  : '',
+				'hands_on'              => isset($lead['66'])   ? $lead['66']  : '',
+				'referrals'             => isset($lead['127'])  ? $lead['127'] : '',
+				'food_details'          => isset($lead['144'])  ? $lead['144'] : '',
+				'fire'                  => isset($lead['83'])   ? $lead['83']  : '',
+				'booth_size_details'    => isset($lead['61'])   ? $lead['61']  : '',
+				'layout'                => isset($lead['65'])   ? $lead['65']  : '',
+				'amps_details'          => isset($lead['76'])   ? $lead['76']  : '',
+				'booth_size'            => isset($lead['60'])   ? $lead['60']  : '',
+				'hear_about'            => isset($lead['128'])  ? $lead['128'] : '',
+        'maker_array'           => $makerArray,
+				'maker_faire'           => isset($lead['131'])  ? $lead['131'] : '',
+				'project_website'       => isset($lead['27'])   ? $lead['27']  : '',
+				'supporting_documents'  => isset($lead['122'])  ? $lead['122'] : '',
+				'tables_chairs'         => isset($lead['62'])   ? $lead['62']  : '',
+				'project_video'         => isset($lead['32'])   ? $lead['32']  : '',
+				'cats'                  => isset($topicsarray)  ? $topicsarray : '',
+				'loctype'               => isset($lead['69'])   ? $lead['69']  : '',
+				'tables_chairs_details' => isset($lead['288'])  ? $lead['288'] : '',
+				'internet'              => isset($lead['77'])   ? $lead['77']  : '',
+				'project_photo'         => isset($lead['22'])   ? $lead['22']  : '',
+				'project_name'          => isset($lead['151'])  ? $lead['151'] : '',
+				'first_time'            => isset($lead['130'])  ? $lead['130'] : '',
+				'power'                 => isset($lead['73'])   ? $lead['73']  : '',
+				'food'                  => isset($lead['44'])   ? $lead['44']  : '',
+				'safety_details'        => isset($lead['85'])   ? $lead['85']  : '',
+				'anything_else'         => isset($lead['134'])  ? $lead['134'] : '',
+				'phone1_type'           => isset($lead['148'])  ? $lead['148'] : '',
+				'lighting'              => isset($lead['71'])   ? $lead['71']  : '',
+				'project_photo_thumb'   => '',
+				'private_address'       => isset($lead['101.1'])  ? $lead['101.1'] : '',
+				'private_state'         => isset($lead['101.4'])  ? $lead['101.4'] : '',
+				'private_city'          => isset($lead['101.3'])  ? $lead['101.3'] : '',
+				'private_address2'      => isset($lead['101.2'])  ? $lead['101.2'] : '',
+				'private_country'       => isset($lead['101.6'])  ? $lead['101.6'] : '',
+				'private_zip'           => isset($lead['101.5'])  ? $lead['101.5'] : '',
+				'placement'             => isset($lead['68'])     ? $lead['68']    : '',
+				'phone2_type'           => isset($lead['149'])    ? $lead['149']   : '',
+				'radio_frequency'       => $rfarray,
+				'what_are_you_powering' => isset($lead['74'])     ? $lead['74']   : '',
+				'private_description'   => isset($lead['11'])     ? $lead['11']   : '',
+				'org_type'              => isset($lead['45'])     ? $lead['45']   : '',
+				'public_description'    => isset($lead['16'])     ? $lead['16']   : '',
+				'activity'              => isset($lead['84'])     ? $lead['84']   : '',
+				'amps'                  => isset($lead['75'])     ? $lead['75']   : '',
+				'sales_details'         => isset($lead['52'])     ? $lead['52']   : '',
+				'phone2'                => isset($lead['100'])    ? $lead['100']  : '',
+				'maker'                 => isset($lead['105'])    ? $lead['105']  : '',
+				'non_profit_desc'       => isset($lead['47'])     ? $lead['47']   : '',
+				'plans'                 => isset($plansarray)     ? $plansarray   : '',
+				'launch_details'        => isset($lead['54'])     ? $lead['54']   : '',
+				'crowdfunding'          => isset($lead['56'])     ? $lead['56']   : '',
+				'crowdfunding_details'  => isset($lead['59'])     ? $lead['59']   : '',
+				'special_request'       => isset($lead['64'])     ? $lead['64']   : '',
+				'hands_on_desc'         => isset($lead['67'])     ? $lead['67']   : '',
+				'activity_wrist'        => isset($lead['293'])    ? $lead['293']  : '',
+				'loctype_outdoors'      => $locationsarray,
+				'makerfaire_other'      => isset($lead['132'])    ? $lead['132']  : '',
+				'under_18'              => (isset($lead['295']) && $lead['295'] == "Yes") ? 'NO'  : 'YES',
+				'entry_id'              => $entry_id,
+				'status'                => isset($lead['303'])    ? $lead['303']  : '',
+				'waste'                 => (isset($lead['317']) && $lead['317'] == "Yes") ?  'YES' : 'NO',
+				'waste_detail'          => isset($lead['318'])    ? $lead['318']  : '',
+				'learn_to'              => isset($lead['319'])    ? $lead['319']  : '',
+        'numTables'             => isset($lead['347'])    ? $lead['347']  : 0,
+        'numChairs'             => isset($lead['348'])    ? $lead['348']  : 0,
+        '344'                   => isset($lead['344'])    ? $lead['344']  : 0,
+        '345'                   => isset($lead['345'])    ? $lead['345']  : 0,
+        '81'                    => isset($lead['81'])     ? $lead['81']   : '',
+        'fType'                 => isset($form['form_type'])  ? $form['form_type'] : '',
+        'paymentElectr'         => isset($lead['8'])      ? $lead['8']    : '',
+        'paymentDescElect'      => isset($lead['12'])     ? $lead['12']   : '',
+        'paymentTable'          => isset($lead['14'])     ? $lead['14']   : '',
+        'origEntryID'           => isset($lead['20'])     ? $lead['20']   : '',
+        'presentation_type'     => isset($lead['1'])      ? $lead['1']    : '',
+        'onsitePhone'           => isset($lead['265'])    ? $lead['265']  : '',
+        'categories'            => $leadCategory,
+        'mobileAppDiscover'     => $MAD
 		);
-    //build rmt tables
-    self::buildRmtData($jdb_entry_data);
-		return $jdb_entry_data;
 
-
-	}
-
-	/*
-	 * Function to do the actual sending to jdb
-	*/
-	public static function gravityforms_post_submission_entry_to_jdb( $entry_id,$jdb_encoded_record ) {
-		// Don't sync from any of our testing locations.
-		$local_server = array( 'localhost', 'make.com', 'makerfaire.local', 'staging.makerfaire.com' );
-		//$remote_post_url = 'http://db.makerfaire.com/updateExhibitInfo';
-		$remote_post_url='';
-		if ( isset( $_SERVER['HTTP_HOST'] ) && in_array( $_SERVER['HTTP_HOST'], $local_server ) )
-			$remote_post_url= 'http://makerfaire.local/wp-content/allpostdata.php';
-
-		$post_body = array(
-				'method' => 'POST',
-				'timeout' => 45,
-				'headers' => array(),
-				'body' => $jdb_encoded_record);
-
-		$res  = wp_remote_post( $remote_post_url, $post_body  );
-		if ( 200 == wp_remote_retrieve_response_code( $res ) ) {
-			$body = json_decode( $res['body'] );
-			if ( $body->exhibit_id == '' && $body->exhibit_id == 0 ) {
-				gform_update_meta( $entry_id, 'mf_jdb_sync', 'fail' );
-			} else {
-				gform_update_meta( $entry_id, 'mf_jdb_sync', time() );
-			}
-		}
-		return ($res['body']);
-	}
-	public static function gravityforms_sync_all_entry_notes($entry_id) {
-		$mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
-		if ($mysqli->connect_errno) {
-			echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-		}
-
-		$result = $mysqli->query ( 'SELECT value,id,user_name,date_created FROM wp_rg_lead_notes where lead_id=' . $entry_id . '' );
-
-		while ( $row = $result->fetch_row () ) {
-			$results_on_send = self::gravityforms_send_note_to_jdb ( $entry_id, $row[1], $row [0], $row [2], $row[3] );
-		}
-	}
-
-
-	/*
-	 * Sync MakerFaire Application Statuses
-	*
-	* @access private
-	* @param int $id Post id to SYNC
-	* @param string $app_status Post status
-	* =====================================================================*/
-	public static function gravityforms_sync_status_jdb( $id = 0, $status = '' ) {
-		$local_server = array( 'localhost', 'make.com', 'makerfaire.local', 'staging.makerfaire.com' );
-		$remote_post_url = 'http://db.makerfaire.com/updateExhibitStatus';
-		if ( isset( $_SERVER['HTTP_HOST'] ) && in_array( $_SERVER['HTTP_HOST'], $local_server ) )
-			$remote_post_url= 'http://makerfaire.local/wp-content/allpostdata.php';
-		$encoded_array = http_build_query(  array( 'CS_ID' => intval( $id ), 'status' => esc_attr( $status )));
-
-		$post_body = array(
-				'method' => 'POST',
-				'timeout' => 45,
-				'headers' => array(),
-				'body' => $encoded_array);
-		print_r($encoded_array);
-		$res  = wp_remote_post( $remote_post_url, $post_body  );
-		$er  = 0;
-
-		if ( 200 == $res['response']['code'] ) {
-			$body = json_decode( $res['body'] );
-			if ( 'ERROR' != $body->status ) {
-				$er = time();
-			}
-		}
-		self::gravityforms_sync_all_entry_notes($id);
-		gform_update_meta( $id, 'mf_jdb_status_sync', $er );
-
-		return $er;
-	}
-
-	public static function gravityforms_form_type_jdb($formid = 0)
-	{
-		$return_formtype = 'Other';
-
-		switch ($formid) {
-			case 20:
-			case 22:
-			case 25:
-				$return_formtype = 'Exhibit';
-				break;
-			case 12:
-			case 15:
-			case 31:
-			case 26:
-				$return_formtype = 'Presentation';
-				break;
-			case 13:
-			case 27:
-				$return_formtype = 'Performance';
-				break;
-			case 16:
-			case 28:
-			case 29:
-				$return_formtype = 'Sponsor';
-				break;
-			default:
-				$return_formtype = 'Other';
-				break;
-		}
-
-		return $return_formtype;
+		return $entry_data;
 	}
 
   public static function buildRmtData($entryData){
@@ -400,15 +280,16 @@ class GFJDBHELPER {
     $attributeID = array();
     $attribute   = array();
     $resource    = array();
-    $entryID     = $entryData['CS_ID'];
+    $entryID     = $entryData['entry_id'];
+    $user        = NULL;
 
     /*
      *  E N T R Y   R E S O U R C E S   M A P P I N G
      *   build list of resource ID's and tokens
      */
-    $sql = "select ID,token from wp_rmt_resources";
+    $sql = "select resource_category_id, ID,token from wp_rmt_resources";
     foreach($wpdb->get_results($sql) as $row){
-      $resourceID[$row->token] = $row->ID;
+      $resourceID[$row->token] = array('id'=>$row->ID,'cat_id'=>$row->resource_category_id);
     }
 
     /* build list of attribute ID's and tokens */
@@ -434,7 +315,6 @@ class GFJDBHELPER {
     /*  Field ID 73 = power */
     if($entryData['power'] == 'Yes'){
       /*  Field ID 75 = amps  */
-      /*  Field ID 74 - what_are_you_powering */
       if($entryData['amps'] == '5 amps (0-500 watts, 120V)'){
         $resource[] = array($resourceID['120V-05A'],1,'');
       }elseif($entryData['amps'] == '10 amps (501-1000 watts, 120V)'){
@@ -442,7 +322,7 @@ class GFJDBHELPER {
       }elseif($entryData['amps'] == '15 amps (1001-1500 watts, 120V)'){
         $resource[] = array($resourceID['120V-15A'],1,'');
       }elseif($entryData['amps'] == '20 amps (1501-2000 watts, 120V)'){
-        $resource[] = array($resourceID['120V-20A'],1,);
+        $resource[] = array($resourceID['120V-20A'],1,'');
       }elseif($entryData['amps'] == '30 amps (2000-3000 watts, 120V)'){
         $resource[] = array($resourceID['120V-30A'],1,'');
       }elseif($entryData['amps'] == '50 amps (3001-5000 watts, 120V)'){
@@ -475,54 +355,55 @@ class GFJDBHELPER {
       }
 
       $pos = strpos($entryData['paymentElectr'], '5 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-05A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-05A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '10 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-10A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-10A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '15 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-15A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-15A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '20 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-20A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-20A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '30 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-30A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-30A'],1,'');
       $pos = strpos($entryData['paymentElectr'], '50 Amp (120v)');
-      if ($pos !== false)     $resource[] = array($resourceID['120V-50A'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['120V-50A'],1,'');
       $pos = strpos($entryData['paymentElectr'], 'Other/Not Listed');
-      if ($pos !== false)     $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['paymentDescElect'],0);
+      if ($pos !== false)     $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['paymentDescElect']);
 
       //field 14 - tables
       $pos = strpos($entryData['paymentTable'], 'One table');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'');
       $pos = strpos($entryData['paymentTable'], 'Two tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'');
       $pos = strpos($entryData['paymentTable'], 'Three Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'');
       $pos = strpos($entryData['paymentTable'], 'Four Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'');
       $pos = strpos($entryData['paymentTable'], 'Five Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'');
       $pos = strpos($entryData['paymentTable'], 'Six Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'');
       $pos = strpos($entryData['paymentTable'], 'Seven Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'');
       $pos = strpos($entryData['paymentTable'], 'Eight Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'');
       $pos = strpos($entryData['paymentTable'], 'Nine Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'');
       $pos = strpos($entryData['paymentTable'], 'Ten Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'',0);
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
     }
+
     /*
      * E N T R Y   A T T R I B U T E   M A P P I N G
      *    build list of resource ID's and tokens
      */
-
-    if($entryData['what_are_you_powering']!=''){
-      $attribute[] = array($attributeID['ELEC'], 'What are you Powering?',$entryData['what_are_you_powering']);
-    }
-    if($entryData['amps_details']!=''){
-      $attribute[] = array($attributeID['ELEC'],'Special Request', $entryData['amps_details']);
+    /* Field ID 74 - what_are_you_powering   */
+    /* Field ID 76 = amps_details (textarea) */
+    if($entryData['what_are_you_powering']!='' || $entryData['amps_details']!=''){
+      $details = 'What are you Powering? - ' . $entryData['what_are_you_powering'] .'<br/>'.
+                 'Amps Detail - '.$entryData['amps_details'];
+      $attribute[] = array($attributeID['ELEC'], 'What are you Powering? / Amps Detail',$details);
     }
 
     /*  Field ID 64 = special_request (textarea)*/
@@ -571,28 +452,41 @@ class GFJDBHELPER {
     }
 
     global $current_user;
-
-    $user =  (isset($current_user->ID) ? $current_user->ID:NULL);
+    $user = (isset($current_user->ID) ? $current_user->ID:NULL);
 
     //if this is a payment form overwrite the user
     if($entryData['fType'] == 'Payment'){
       $user = 0;  //user = 0 - payment form
     }
-
+if($entryID == 55932){
+  error_log(print_r($resource,true));
+  error_log(print_r($attribute,true));
+}
     //add resources to the table
     foreach($resource as $value){
-      $resource_id = $value[0];
+      $resource_id = $value[0]['id'];
+      $cat_id      = $value[0]['cat_id'];
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
-      //if the resource has already been added, update the qty
-      $resourceCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_resources` where entry_id = $entryID and resource_id = $resource_id");
-      if($resourceCount >0){ //if result, update.
-        //user = null - initial entry, user = 0 - payment form
-        $wpdb->get_results("update wp_rmt_entry_resources set qty = $qty, user=0 where  entry_id = $entryID and resource_id = $resource_id");
+      //find if they already have a resource set with the same Item (ie. chairs, tables, electricity, etc)
+      $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id '
+              . ' FROM `wp_rmt_entry_resources` entry_res,wp_rmt_resources res '
+              . ' where entry_id='.$entryID.' and entry_res.resource_id = res.ID and resource_category_id='.$cat_id);
+      //matching record found
+      if ( null !== $res ) {
+        //check lockbit
+        if($res->lockBit==0){
+          //If there are changes, update this record
+          if($res->resource_id!=$resource_id || $res->qty!=$qty){
+            $wpdb->get_results('update `wp_rmt_entry_resources` '
+                  . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',update_stamp=now() where id='.$res->ID);
+          }
+        }
       }else{
-        //else insert
-        $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`(`entry_id`, `resource_id`, `qty`, `comment`,user) "
-                        . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
+        //insert this record
+        $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
+                . " (`entry_id`, `resource_id`, `qty`, `comment`) "
+                . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'")');
       }
     }
 
@@ -602,20 +496,28 @@ class GFJDBHELPER {
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
 
-      //if the attribute has already been added, update the qty
-      $attCount = $wpdb->get_var("select count(*) from `wp_rmt_entry_attributes` where entry_id = $entryID and attribute_id = $attribute_id");
-      if($attCount >0){ //if result, update.
-        //user = null - initial entry, user = 0 - payment form
-        $wpdb->get_results('update wp_rmt_entry_attributes set value = "'.$attvalue.'", user=0,'
-                . ' comment=CONCAT( comment, " '.$entryData['fType'].' Form Comment - '.$comment.'") '
-                . ' where  entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
+      //check if attribute is locked
+       $res = $wpdb->get_row("select * from `wp_rmt_entry_attributes` "
+                . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
 
+       //matching record found
+      if ( null !== $res ) {
+        if($res->lockBit==0){  //If this attribute is not locked, update this record
+          //if this is a payment record, append the payment comment to the end of the existing comment
+          if($entryData['fType'] == 'Payment'){
+            $comment = $res->comment.'<br/>'.$entryData['fType'] . ' Form Comment - ' . $comment;
+          }
+          //if there are changes, update the record
+          if($res->comment!=$comment || $res->value!=$attvalue){
+            $wpdb->get_results('update `wp_rmt_entry_attributes` '
+                  . ' set comment="'.$comment.'", user='.$user.', value="'.$attvalue .'",	update_stamp=now()'
+                  . ' where id='.$res->ID);
+          }
+        }
       }else{
-        //else insert
         $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
                       . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')');
       }
-
     }
 
     //set resource status and assign to
@@ -639,8 +541,126 @@ class GFJDBHELPER {
       $assignTo = 'kerry'; //Kerry
     }
 
-    // update custom meta field
-    gform_update_meta( $entryData['CS_ID'], 'res_status',$status );
-    gform_update_meta( $entryData['CS_ID'], 'res_assign',$assignTo );
+    // update custom meta field (do not update if meta already exists)
+    $metaValue = gform_get_meta( $entryData['entry_id'], 'res_status' );
+    if(empty($metaValue)){
+      gform_update_meta( $entryData['entry_id'], 'res_status',$status );
+    }
+
+    $metaValue = gform_get_meta( $entryData['entry_id'], 'res_assign' );
+    if(empty($metaValue)){
+      gform_update_meta( $entryData['entry_id'], 'res_assign',$assignTo );
+    }
+  }
+
+  /*
+   * This table will add/update records to the following tables:
+   *    wp_mf_entity
+   *    wp_mf_maker
+   *    wp_mf_maker_to_entity
+   */
+  public static function updateMakerTable($entryData){
+    global $wpdb;
+    $form_id = $entryData['form_id'];
+
+    //determine faire
+    $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
+
+    //wp_mf_entity
+    $wp_mf_entitysql = "insert into wp_mf_entity "
+                    . "    (lead_id, presentation_title, presentation_type, special_request, "
+                    . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover) "
+                    . " VALUES ('".$entryData['entry_id']             . "',"
+                            . ' "'.htmlentities($entryData['project_name'])         . '", '
+                            . ' "'.htmlentities($entryData['presentation_type'])    . '", '
+                            . ' "'.htmlentities($entryData['special_request'])      . '", '
+                            . ' "'.$entryData['onsitePhone']          . '", '
+                            . ' "'.htmlentities($entryData['public_description'])   . '", '
+                            . ' "'.htmlentities($entryData['private_description'])  . '", '
+                            . ' "'.htmlentities($entryData['project_photo'])        . '", '
+                            . ' "'.$entryData['status']               . '", '
+                            . ' "'.implode(',',$entryData['categories']) . '", '
+                            . ' "'.$faire                             . '", '
+                            . '  '.$entryData['mobileAppDiscover']    . ') '
+                    . ' ON DUPLICATE KEY UPDATE presentation_title  = "'.htmlentities($entryData['project_name'])           . '", '
+                    . '                         presentation_type   = "'.htmlentities($entryData['presentation_type'])      . '", '
+                    . '                         special_request     = "'.htmlentities($entryData['special_request'])        . '", '
+                    . '                         OnsitePhone         = "'.htmlentities($entryData['onsitePhone'])            . '", '
+                    . '                         desc_short          = "'.htmlentities($entryData['public_description'])     . '", '
+                    . '                         desc_long           = "'.htmlentities($entryData['public_description'])     . '", '
+                    . '                         project_photo       = "'.$entryData['project_photo']          . '", '
+                    . '                         status              = "'.$entryData['status']                 . '", '
+                    . '                         category            = "'.implode(',',$entryData['categories']). '", '
+                    . '                         faire               = "'.$faire                               . '", '
+                    . '                         mobile_app_discover = "'.$entryData['mobileAppDiscover']      . '"';
+    $wpdb->get_results($wp_mf_entitysql);
+
+    /*  wp_mf_maker table
+     *
+     *  maker array structure -
+     *    9 types - contact, presenter, presenter2, presenter3, presenter4, presenter5, presenter6, presenter7, group
+     *    for each type the following fields are set -
+              'first_name'
+              'last_name'
+              'bio'
+              'email'
+              'phone'
+              'twitter'
+              'photo'
+              'website'
+     */
+    foreach($entryData['maker_array'] as $type =>$typeArray){
+      $firstName  =  (isset($typeArray['first_name']) ? esc_sql($typeArray['first_name']) : '');
+      $lastName   =  (isset($typeArray['last_name'])  ? esc_sql($typeArray['last_name'])  : '');
+
+      //we need to have at least 1 presenter/maker.  if these fields are empty, pull from the contact info
+      if(trim($firstName)=='' && trim($lastName)==''){
+        if($type=='presenter'){
+          $typeArray = $entryData['maker_array']['contact'];
+        }
+      }
+
+      if(trim($firstName)=='' && trim($lastName)==''){
+        //don't write the record, no maker here
+      }else{
+        $bio      = (isset($typeArray['bio'])     ? htmlentities($typeArray['bio'])      : '');
+        $email    = (isset($typeArray['email'])   ? esc_sql($typeArray['email'])    : '');
+        $phone    = (isset($typeArray['phone'])   ? esc_sql($typeArray['phone'])    : '');
+        $twitter  = (isset($typeArray['twitter']) ? esc_sql($typeArray['twitter'])  : '');
+        $photo    = (isset($typeArray['photo'])   ? esc_sql($typeArray['photo'])    : '');
+        $website  = (isset($typeArray['website']) ? esc_sql($typeArray['website'])  : '');
+
+        $results = $wpdb->get_results($wpdb->prepare("SELECT maker_id FROM wp_mf_maker WHERE email=%s", $email) );
+        if ($wpdb->num_rows != 0){
+              $guid = $results[0]->maker_id;
+        }else{
+          $guid = createGUID($entryData['entry_id'] .'-'.$type);
+        }
+
+        $wp_mf_makersql = "INSERT INTO wp_mf_maker "
+                        . " (lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
+                        . ' VALUES ('.$entryData['entry_id'].', "'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'", "'.$phone.'", '
+                                     . '"'.$twitter.'", '.$form_id.',"'.$guid.'","'.$photo.'","'.$website.'")'
+                        . ' ON DUPLICATE KEY UPDATE lead_id='.$entryData['entry_id'].',form_id  = '.$form_id;
+
+        //only update non blank fields
+        $wp_mf_makersql .= ($firstName!=''? ',  `First Name` = "'.$firstName .'"':'');
+        $wp_mf_makersql .= ($lastName!='' ? ',  `Last Name`  = "'.$lastName  .'"':'');
+        $wp_mf_makersql .= ($bio!=''      ? ',  `Bio`         = "'.$bio       .'"':'');
+        $wp_mf_makersql .= ($phone!=''    ? ',  `phone`       = "'.$phone     .'"':'');
+        $wp_mf_makersql .= ($twitter!=''  ? ',  `TWITTER`     = "'.$twitter   .'"':'');
+        $wp_mf_makersql .= ($photo!=''    ? ',  `Photo`       = "'.$photo     .'"':'');
+        $wp_mf_makersql .= ($website!=''  ? ',  `website`     = "'.$website   .'"':'');
+
+        $wpdb->get_results($wp_mf_makersql);
+
+        //build maker to entity table
+        //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
+        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`" . " (`maker_id`, `entity_id`, `maker_type`) "
+                              . ' VALUES ("'.$guid.'",'.$entryData['entry_id'].',"'.$type.'") ON DUPLICATE KEY UPDATE maker_id=maker_id;';
+
+        $wpdb->get_results($wp_mf_maker_to_entity);
+      }
+    }
   }
 }

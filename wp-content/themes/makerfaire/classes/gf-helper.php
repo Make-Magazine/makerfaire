@@ -259,15 +259,85 @@ function buildFaireDrop($wp_admin_bar){
 /*
  * After Submission Gravity Forms Action Handling
  */
-add_action( 'gform_after_submission', 'post_to_jdb', 10, 2 );
-function post_to_jdb( $entry, $form ) {
-	// Allowed forms array
-	/*$jdb_sync_forms = array(25, 26, 27, 28, 29);
-	if (in_array($form['id'], $jdb_sync_forms)) {*/
-		error_log('$gravityforms_send_entry_to_jdb:'.$entry['id']);
-		$result = GFJDBHELPER::gravityforms_send_entry_to_jdb($entry['id']);
-		error_log('GFJDBHELPER:result:'.$result);
-//  	}
+add_action( 'gform_after_submission', 'updateRMT', 10, 2 );
+function updateRMT( $entry, $form ) {
+  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form);
+}
+
+/* This function will write all user changes to entries to a database table to create a change report */
+add_action('gform_after_update_entry', 'GVupdate_changeRpt', 10, 3 );
+function GVupdate_changeRpt($form,$entry_id,$orig_entry){
+  //get updated entry
+  $updatedEntry = GFAPI::get_entry(esc_attr($entry_id));
+  GFRMTHELPER::gravityforms_makerInfo($updatedEntry,$form);
+  $updates = array();
+
+  foreach($form['fields'] as $field){
+    //send notification after entry is updated in maker admin
+    $input_id = $field->id;
+
+    //if field type is checkbox we need to compare each of the inputs for changes
+    $inputs = $field->get_entry_inputs();
+    $status_at_update = (isset($orig_entry['303'])?$orig_entry['303']:'');
+    if ( is_array( $inputs ) ) {
+      foreach ( $inputs as $input ) {
+        $input_id = $input['id'];
+        $origField    = (isset($orig_entry[$input_id])   ?  $orig_entry[$input_id ] : '');
+        $updatedField = (isset($updatedEntry[$input_id]) ?  $updatedEntry[$input_id ] : '');
+        $fieldLabel   = ($field['adminLabel']!=''?$field['adminLabel']:$field['label']);
+        if($origField!=$updatedField){
+          //update field id
+          $updates[] = array('lead_id'=>$entry_id,
+                            'field_id'=>$input_id,
+                            'field_before'=>$origField,
+                            'field_after'=>$updatedField,
+                            'fieldLabel'=>$fieldLabel,
+                            'status_at_update'=>$status_at_update);
+        }
+      }
+    } else {
+      $origField    = (isset($orig_entry[$input_id])   ?  $orig_entry[$input_id ] : '');
+      $updatedField = (isset($updatedEntry[$input_id]) ?  $updatedEntry[$input_id ] : '');
+      $fieldLabel   = ($field['adminLabel']!=''?$field['adminLabel']:$field['label']);
+      if($origField!=$updatedField){
+        //update field id
+        $updates[] = array('lead_id'=>$entry_id,
+                          'field_id'=>$input_id,
+                          'field_before'=>$origField,
+                          'field_after'=>$updatedField,
+                          'fieldLabel'=>$fieldLabel,
+                          'status_at_update'=>$status_at_update);
+      }
+    }
+  }
+
+  //check if there are any updates to process
+  if(!empty($updates)){
+    $current_user = wp_get_current_user();
+    $user_id = $current_user->ID;//current user id
+    $inserts = '';
+    //field name
+
+    //update database with this information
+    foreach($updates as $update){
+     if($inserts !='') $inserts.= ',';
+      $inserts .= '('.$user_id.','.
+              $update['lead_id'].','.
+              $form['id'].','.
+              $update['field_id'].',"'.
+              $update['field_before'].'","'.
+              $update['field_after'].'","'.
+              $update['fieldLabel'].'","'.
+              $update['status_at_update'] . '"'.
+              ')';
+    }
+
+    $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel,status_at_update) values " .$inserts;
+
+
+    global $wpdb;
+    $wpdb->get_results($sql);
+  }
 }
 
 /*
@@ -275,9 +345,9 @@ function post_to_jdb( $entry, $form ) {
 */
 add_action( 'gform_post_note_added', 'note_to_jdb', 10, 2 );
 function note_to_jdb( $noteid,$entryid,$userid,$username,$note,$notetype ) {
-	error_log('$GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$noteid);
-	$result=GFJDBHELPER::gravityforms_send_note_to_jdb($entryid,$noteid,$note);
-	error_log('GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$result);
+	//error_log('$GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$noteid);
+	//$result=GFJDBHELPER::gravityforms_send_note_to_jdb($entryid,$noteid,$note);
+	//error_log('GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$result);
 
 }
 
@@ -316,4 +386,19 @@ function set_export_values( $value, $form_id, $field_id, $lead ) {
         }
     }
     return $value;
+}
+
+function createGUID($id){
+
+        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+        $charid = strtoupper(md5(uniqid($id, true)));
+        $hyphen = chr(45);// "-"
+        $uuid = chr(123)// "{"
+            .substr($charid, 0, 8).$hyphen
+            .substr($charid, 8, 4).$hyphen
+            .substr($charid,12, 4).$hyphen
+            .substr($charid,16, 4).$hyphen
+            .substr($charid,20,12)
+            .chr(125);// "}"
+        return $uuid;
 }

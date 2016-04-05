@@ -205,15 +205,15 @@ ul li.gf_form_switcher {
 }
 ul#gf_form_toolbar_links .gf_form_toolbar_preview,
 ul#gf_form_toolbar_links .gf_form_toolbar_entries {
-  display: none
+  display: none;
 }
 div ul#gf_form_toolbar_links {
-  border: 0
+  border: 0;
 }
 
 /*hide the form switcher for the new makerfaire custom detail view page*/
 div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher {
-  display: none
+  display: none;
 }
 .tab {
   padding: 0 15px;
@@ -245,7 +245,7 @@ div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher {
 .gf_left_half {
   float: left;
   width: 45.5%;
-  clear: left
+  clear: left;
 }
 .gf_right_half {
   float: right;
@@ -255,37 +255,59 @@ div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher {
   border-radius: 5px;
   display: block;
   border: thin solid grey;
-}
-.adminEntrySummary .tab-content .panel-group .panel-heading.active-state {
-  background-color: lightblue;
-}
-.adminEntrySummary .tab-content .panel-group .panel-heading h4 {
-  font-size: 30px;
-}
-.adminEntrySummary .tab-content .panel-group {
   margin-bottom: 0px;
+  .panel-heading.active-state {
+    background-color: lightblue;
+  }
+  .panel-heading h4 {
+    font-size: 30px;
+  }
+  .panel-body {
+    padding: 0;
+    border-top: none;
+  }
+  table {
+    width: 100%;
+  }
+  th {
+    background-color: lightgrey;
+    padding: 10px;
+  }
+  td {
+    padding: 0 10px;
+    line-height: 2em;
+    border-bottom: thin solid lightgray;
+  }
+  input[type="number"].thVal {
+    width: 45px;
+  }
+  .notes {
+    padding: 5px 0;
+    MARGIN: 5px 0px;
+  }
 }
-.adminEntrySummary .tab-content .panel-group .panel-body {
-  padding: 0;
-  border-top: none
-}
-.adminEntrySummary .tab-content .panel-group table {
-  width: 100%
-}
-.adminEntrySummary .tab-content .panel-group th {
-  background-color: lightgrey;
-}
-.adminEntrySummary .tab-content .panel-group th,
-.adminEntrySummary .tab-content .panel-group td {
-  padding: 16px 5px;
-}
-.adminEntrySummary .tab-content .panel-group input[type="number"].thVal {
-  width: 45px;
-}
-.adminEntrySummary .tab-content .panel-group .notes {
-  padding: 5px 0;
-  MARGIN: 5px 0px;
-}
+
 #entry_form .inner-sidebar {
   width: 300px;
+}
+
+.entry-resource {
+  i.fa {
+    text-align: center;
+  }
+  i.fa-unlock-alt {
+    color: #0085ba;
+  }
+  i.fa-minus-circle, i.fa-ban {
+    color: #FF0000;
+  }
+  i.fa-plus-circle, i.fa-check {
+    color: #4CAF50;
+  }
+
+  td.lock, td.delete {
+    text-align: center;
+    width: 30px;
+  }
+
 }
