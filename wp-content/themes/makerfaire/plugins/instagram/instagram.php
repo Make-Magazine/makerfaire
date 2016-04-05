@@ -33,7 +33,7 @@ class Make_Instagram {
     $base_url = ($url==''?'https://api.instagram.com/v1/users/self/media/recent':$url);
     $params = array(
       'access_token' => '227901753.4c6a352.8b205bb2140246cbacf7f8fcd5791412',
-      'count' => 3
+      'count' => 6
     );
 
     // Build the URL
@@ -81,7 +81,7 @@ class Make_Instagram {
       $output = "";
     }
 
-    $images_per_page = 3;
+    $images_per_page = 6;
                 array_splice($ps, $images_per_page);
     $num_images = count($ps);
                 $pages = array_chunk($ps, $images_per_page);
@@ -108,7 +108,7 @@ class Make_Instagram {
           foreach( $pages as $page ) {      
               $output .= "<ul class=\"img-list\">";
               foreach( $page as $img ) {
-            $output .= "<li class='col-xs-12 col-sm-4'><a href=\"" . esc_url( $img->link ) . "\" target=\"_blank\" class=\"instagram-link\"><img src=\"" . esc_url( $img->images->standard_resolution->url ) . "\" class=\"img-responsive\" alt=\"image description\"></a></li>";
+            $output .= "<li class='col-xs-6 col-sm-4'><a href=\"" . esc_url( $img->link ) . "\" target=\"_blank\" class=\"instagram-link\"><img src=\"" . esc_url( $img->images->standard_resolution->url ) . "\" class=\"img-responsive\" alt=\"image description\"></a></li>";
               }
             $output .= "</ul>";
           }
