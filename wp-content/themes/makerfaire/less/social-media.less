@@ -1,0 +1,193 @@
+.quora {
+  .instagram-link {
+    color: #fff;
+  }
+  .instagram-link:hover {
+    color: #fff;
+    text-decoration: none;
+  }
+  .insta-caption {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: relative;
+    padding: 3px !important;
+    margin: 4px;
+    height: 55px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #fff important!;
+    margin-top: -60px;
+    a {
+      color: #fff;
+    }
+  }
+  .follow-wrap .social-holder {
+    border-left: 1px dashed #ccc;
+    padding: 0 0 0 20px;
+    &.instagram {
+      border-right: 1px dashed #ccc;
+      .follow {
+        margin: 32px 0 0 42px;
+      }
+      .title {
+        padding: 10px 0 18px 60px;
+      }
+    }
+    .img-list {
+      margin: 0 0 10px;
+      text-align: center;
+      li {
+        float: none;
+        padding: 0;
+      }
+    }
+    &.twitter p {
+      margin: 0 0 42px;
+    }
+    &.timer-box {
+      padding: 0 0 0 40px;
+      h1 {
+        font-size: 35px;
+        line-height: 37px;
+        font-weight: 300;
+        margin: 0 0 10px;
+        strong {
+          font-size: 35px;
+          line-height: 37px;
+          font-weight: 700;
+          display: block;
+        }
+      }
+      .title {
+        padding: 20px 0 65px 100px;
+        h2 {
+          font-size: 15px;
+          line-height: 20px;
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+      }
+      .title:after {
+        background: url(../images/img25.png) no-repeat;
+        width: 91px;
+        height: 92px;
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+  }
+
+
+  .social-holder {
+    overflow: hidden;
+    margin: 30px 0 60px;
+    .title {
+      padding: 18px 0 44px 60px;
+      position: relative;
+      h1 {
+        font-size: 25px;
+        line-height: 30px;
+        font-weight: 300;
+        margin: 0;
+      }
+    }
+    &.twitter {
+      font-size: 18px;
+      line-height: 20px;
+      padding: 0;
+      margin: 30px auto !important;
+      .title {
+        padding: 18px 0 44px 60px;
+      }
+      a {
+        color: #333;
+      }
+      a:hover {
+        text-decoration: none;
+        color: #67bde1;
+      }
+      p {
+        margin: 0 0 34px;
+      }
+      .title:after {
+        content: "";
+        position: absolute;
+        top: 10px;
+        left: 0;
+        background: url(../images/twitter-icon.png) no-repeat;
+        width: 49px;
+        height: 50px;
+      }
+    }
+
+    h2 {
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 300;
+      margin: 0 0 12px;
+    }
+    h2 strong {
+      font-weight: 700;
+      display: block;
+      font-size: 14px;
+    }
+    &.instagram {
+      border-left: 1px dashed #ccc;
+      padding: 0 0 0 35px;
+    }
+    &.instagram a {
+      color: #333;
+    }
+    &.instagram a:hover {
+      text-decoration: none;
+      color: #67bde1;
+    }
+    &.instagram .title:after {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 0;
+      background: url(../images/instagram-icon.png) no-repeat;
+      width: 45px;
+      height: 46px;
+    }
+    .img-list {
+      overflow: hidden;
+      margin: 0;
+      li {
+        padding: 0 10px 10px 0;
+        img {
+          vertical-align: top;
+        }
+      }
+    }
+    .follow {
+      display: inline-block;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 700;
+      color: #333;
+    }
+    .follow:hover {
+      text-decoration: none;
+      color: #67bde1;
+    }
+  }
+}
+
+
+@media(max-width:767px) {
+  .quora {
+    .social-holder.instagram {
+      border-left: none;
+      padding: 0 5%;
+    }
+    .social-holder.twitter {
+      padding: 0 5%;
+    }
+    .social-holder .img-list li {
+      padding: 0 10px 15px 0;
+    }
+  }
+}
