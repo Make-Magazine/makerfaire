@@ -323,7 +323,7 @@ class GravityView_Edit_Entry_Render {
              * @param array $form Gravity Forms form array
              * @param string $entry_id Numeric ID of the entry that was updated
              */
-            do_action( 'gravityview/edit_entry/after_update', $this->form, $this->entry['id'], $orig_entry );
+            do_action( 'gravityview/edit_entry/after_update', $this->form, $this->entry['id']);
         }
 
     } // process_save
@@ -662,7 +662,7 @@ class GravityView_Edit_Entry_Render {
      */
     function after_update() {
 
-        do_action( 'gform_after_update_entry', $this->form, $this->entry['id'] );
+        do_action( 'gform_after_update_entry', $this->form, $this->entry['id'],$this->entry );
         do_action( "gform_after_update_entry_{$this->form['id']}", $this->form, $this->entry['id'] );
 
         // Re-define the entry now that we've updated it.
@@ -1010,7 +1010,7 @@ class GravityView_Edit_Entry_Render {
             foreach ( (array)$field->inputs as $input ) {
 
                 $input_id = strval( $input['id'] );
-                
+
                 if ( isset( $this->entry[ $input_id ] ) && ! gv_empty( $this->entry[ $input_id ], false, false ) ) {
                     $field_value[ $input_id ] =  'post_category' === $field->type ? GFCommon::format_post_category( $this->entry[ $input_id ], true ) : $this->entry[ $input_id ];
                     $allow_pre_populated = false;

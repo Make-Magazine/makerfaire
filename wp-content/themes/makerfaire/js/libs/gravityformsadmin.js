@@ -194,7 +194,14 @@ function addRow(addTo){
     tableRow += '</td>';
   }
   //add action row
-  tableRow += '<td id="actions" class="noSend"><p onclick="insertRowDB(\''+type+'\')"><i class="fa fa-check"></i></p><p onclick="jQuery(\'#'+type+'RowNew\').remove();"><i class="fa fa-ban"></i></p></td>';
+  tableRow += '<td id="actions" class="noSend delete">'+
+                '<span onclick="insertRowDB(\''+type+'\')">'+
+                  '<i class="fa fa-check"></i>'+
+                '</span>'+
+                '<span onclick="jQuery(\'#'+type+'RowNew\').remove();">'+
+                  '<i class="fa fa-ban"></i>'+
+                '</span>'+
+              '</td>';
   tableRow += '</tr>';
   var tbody = jQuery('#'+type+'Table tbody');
 
@@ -230,14 +237,16 @@ function buildDropDown(type){
 
   return itemSel;
 }
-var resourceArray=[{'id':'resitem','class':'noSend','display':"dropdown"},
+var resourceArray=[{'id':'reslock','class':'lock','display':''},
+                   {'id':'resitem','class':'noSend','display':"dropdown"},
                    {'id':'restype','class':'editable dropdown','display':'dropdown'},
                    {'id':'resqty','class':'editable numeric','display':'numeric'},
                    {'id':'rescomment','class':'editable textareaEdit','display':'textarea'},
                    {'id':'resuser',class:'','display':''},
                    {'id':'resdateupdate',class:'','display':''}
                  ];
-var attributeArray=[{'id':'attcategory','class':'','display':"dropdown"},
+var attributeArray=[{'id':'attlock','class':'lock','display':''},
+                   {'id':'attcategory','class':'','display':"dropdown"},
                    {'id':'attvalue','class':'editable textareaEdit', 'display':'textarea'},
                    {'id':'attcomment','class':'editable textareaEdit','display':'textarea'},
                    {'id':'attuser',class:'','display':''},
@@ -266,6 +275,7 @@ function setType(itemID,typeID,id){ //build type drop down based on item drop do
     }
   }
 }
+
 function resAttDelete(currentEle){
   var r = confirm("Are you sure want to delete this row (this cannot be undone)!");
   if (r == true) {
@@ -287,6 +297,38 @@ function resAttDelete(currentEle){
     });
   }
 }
+
+function resAttLock(currentEle,lock){
+  var lockBit = 0;
+  if(lock==0){
+    lockBit = 1;
+  }
+
+  var newLock = '<i class="fa fa-unlock-alt fa-lg"></i>';
+  if(lock==0){
+    newLock  = '<i class="fa fa-lock fa-lg"></i>';
+  }
+  var lockHtml = '<span class="lockIcon" onclick="resAttLock(\''+currentEle+'\','+ lockBit+')">'+newLock+'</span>';
+  jQuery(currentEle+' .lock').html(lockHtml);
+  currentEle = currentEle.replace("#", ""); //remove hashtag
+
+  var fieldData = breakDownEle(currentEle);
+  var rowID = currentEle.replace("Row", "");
+  var rowID = rowID.replace("attn", "");
+  var rowID = rowID.replace("att", "");
+  var rowID = rowID.replace("res", "");
+  //send delete
+  var data = {
+      'action': 'update-lock-resAtt',
+      'ID': rowID,
+      'lock':lock,
+      'table': fieldData['table']
+    };
+  jQuery.post(ajaxurl, data, function(response) {
+    //
+  });
+}
+
 function insertRowDB(type){
   var fieldNames = '';var fieldValues = '';
   var insertArr = {};
@@ -334,8 +376,10 @@ function insertRowDB(type){
       };
   jQuery.post(ajaxurl, data, function(response) {
     //set actions column
-    jQuery('#'+type+'RowNew #actions').html('<p onclick="resAttDelete(\'#'+type+'Row'+response.ID+'\')"><i class="fa fa-minus-circle"></i></p></td>');
+    jQuery('#'+type+'RowNew #actions').html('<span onclick="resAttDelete(\'#'+type+'Row'+response.ID+'\')"><i class="fa fa-minus-circle fa-lg"></i></span></td>');
 
+    //set item to locked
+    jQuery('#'+type+'RowNew .lock').html( '<span class="lockIcon" onclick="resAttLock(\'#'+type+'Row'+response.ID+'\,0)">'+'<i class="fa fa-lock fa-lg"></i>'+'</span>');
     //update fields with returned row id
     for (i = 0; i < dataArray.length; i++) {
       jQuery('#'+type+'RowNew #'+dataArray[i]['id']).attr('id',dataArray[i]['id']+'_'+response.ID);
