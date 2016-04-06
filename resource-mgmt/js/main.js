@@ -18,7 +18,7 @@ resourceApp.config(['$routeProvider',
         controller: 'VendorsCtrl'
       }).
       otherwise({
-        redirectTo: '/'
+        templateUrl: "partials/empty.html"
       });
   }]);
 
@@ -26,4 +26,14 @@ jQuery('.tree-toggle').click(function () {
 	jQuery(this).parent().children('ul.tree').toggle(200);
 });
 
-jQuery("#menu-toggle").click(function(e){e.preventDefault();jQuery("#wrapper").toggleClass("toggled");});
+jQuery("#menu-toggle").click(
+  function(e){
+    e.preventDefault();
+    jQuery("#wrapper").toggleClass("toggled");
+    if(jQuery("#wrapper").hasClass("toggled")){
+      jQuery('#menu-toggle span').html('Show Sidebar');
+    }else{
+      jQuery('#menu-toggle span').html('Collapse Sidebar');
+    }
+  }
+);

@@ -3,7 +3,7 @@ html {
     position: relative;
     min-height: 100%;
 }
-h1 {text-align:center}
+h1,h2 {text-align:center}
 body {
     background-color: transparent;
     color: #58666e;

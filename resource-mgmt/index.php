@@ -23,7 +23,7 @@ wp_footer();
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="navbar-header">
       <button href="#menu-toggle" class="slidebar-toggle" id="menu-toggle">
-        <span>Toggle sidebar</span>
+        <span>Collapse sidebar</span>
       </button>
     </div>
     <div class="navbar-title">
