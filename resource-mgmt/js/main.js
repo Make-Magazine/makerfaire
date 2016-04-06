@@ -26,5 +26,4 @@ jQuery('.tree-toggle').click(function () {
 	jQuery(this).parent().children('ul.tree').toggle(200);
 });
 
-
 jQuery("#menu-toggle").click(function(e){e.preventDefault();jQuery("#wrapper").toggleClass("toggled");});

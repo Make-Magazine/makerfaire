@@ -10,8 +10,6 @@ body {
     font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 16px;
     line-height: 1.42857;
-    padding-top: 50px;
-     margin-bottom: 60px;
 }
 .footer {
   position: absolute;
@@ -330,7 +328,7 @@ a {
   width: 100%;
   position: absolute;
   padding: 0px;
-	top: 20px;
+	top: 75px;
 }
 #wrapper.toggled #page-wrapper6 {
     position: absolute;
@@ -358,13 +356,13 @@ a {
     }
 }
 
-.slidebar-toggle {
+.slidebar-toggle,.navbar .navbar-title {
   position: relative;
   float: left;
   padding: 9px 10px;
-  margin-top: 8px;
-  margin-left: 15px;
-  margin-bottom: 8px;
+  margin-top: 30px;
+  margin-left: 0px;
+  margin-bottom: 0px;
   background-color: transparent;
   background-image: none;
   border: 1px solid transparent;
@@ -381,3 +379,5 @@ a {
 .navbar-default .slidebar-toggle:focus {
   background-color: #ddd;
 }
+
+.navbar .navbar-title{float:right}

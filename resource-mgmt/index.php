@@ -1,9 +1,23 @@
 <?php
+if ( ! defined( 'WP_ADMIN' ) ) {
+	define( 'WP_ADMIN', false );
+}
+
 require_once '../wp-load.php';
 
 if (!is_user_logged_in())
     auth_redirect();
 include 'header.html';
+
+/* required to display wp-admin bar */
+/** WordPress Administration Screen API */
+require_once(ABSPATH . 'wp-admin/includes/class-wp-screen.php');
+require_once(ABSPATH . 'wp-admin/includes/screen.php');
+
+require_once(ABSPATH . 'wp-admin/includes/template.php');
+do_action( 'admin_init' );
+wp_footer();
+/* end section for wp-admin bar */
 ?>
 
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -12,8 +26,12 @@ include 'header.html';
         <span>Toggle sidebar</span>
       </button>
     </div>
-
-    <h1>Resource Management Tool</h1>
+    <div class="navbar-title">
+      <i>
+        <span id="pageTitle"></span> :
+        <span id="subTitle"></span>
+      </i>
+    </div>
   </nav>
 
   <div id="wrapper">
