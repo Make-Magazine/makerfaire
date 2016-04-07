@@ -347,6 +347,7 @@ class GVCommon {
 				'desc'  => __( 'Displays the percentage of correct Quiz answers the user submitted.', 'gravityview' ),
 			);
 			$fields['gquiz_grade']   = array(
+				/* translators: This is a field type used by the Gravity Forms Quiz Addon. "A" is 100-90, "B" is 89-80, "C" is 79-70, etc.  */
 				'label' => __( 'Quiz Letter Grade', 'gravityview' ),
 				'type'  => 'quiz_grade',
 				'desc'  => __( 'Displays the Grade the user achieved based on Letter Grading configured in the Quiz Settings.', 'gravityview' ),
@@ -768,7 +769,8 @@ class GVCommon {
         )
     );
 		$criteria = self::calculate_get_entries_criteria($defSearch_criteria);
-/* MF custom Code - Removing the below as our view is for many forms
+    
+    /* MF custom Code - Removing the below as our view is for many forms
 		// Make sure the current View is connected to the same form as the Entry
 		if( ! empty( $criteria['context_view_id'] ) ) {
 			$context_view_id = intval( $criteria['context_view_id'] );
@@ -777,8 +779,8 @@ class GVCommon {
 				do_action( 'gravityview_log_debug', sprintf( '[apply_filters_to_entry] Entry form ID does not match current View connected form ID:', $entry['form_id'] ), $criteria['context_view_id'] );
 				return false;
 			}
-		}
-*/
+		}*/
+
 		if ( empty( $criteria['search_criteria'] ) || ! is_array( $criteria['search_criteria'] ) ) {
 			do_action( 'gravityview_log_debug', '[apply_filters_to_entry] Entry approved! No search criteria found:', $criteria );
 			return $entry;
@@ -804,7 +806,7 @@ class GVCommon {
 
 		$filters = $search_criteria['field_filters'];
 		unset( $search_criteria );
-    //$mode = array_key_exists( 'mode', $filters ) ? strtolower( $filters['mode'] ) : 'all';
+
     //MF custom code - code to allow entries from contact email or user
     $mode ='any';
 
@@ -899,6 +901,7 @@ class GVCommon {
 
 		// If we're using time diff, we want to have a different default format
 		if( empty( $format ) ) {
+			/* translators: %s: relative time from now, used for generic date comparisons. "1 day ago", or "20 seconds ago" */
 			$format = $is_diff ? esc_html__( '%s ago', 'gravityview' ) : get_option( 'date_format' );
 		}
 
@@ -948,7 +951,7 @@ class GVCommon {
 	 * @access public
 	 * @param array $form
 	 * @param string|int $field_id
-	 * @return array|null Array: Gravity Forms field array; NULL: Gravity Forms GFFormsModel does not exist
+	 * @return GF_Field|null Gravity Forms field object, or NULL: Gravity Forms GFFormsModel does not exist or field at $field_id doesn't exist.
 	 */
 	public static function get_field( $form, $field_id ) {
 		if ( class_exists( 'GFFormsModel' ) ){
@@ -1008,8 +1011,10 @@ class GVCommon {
 					// Changed this to $shortcode instead of true so we get the parsed atts.
 					$shortcodes[] = $shortcode;
 
-				} else if ( isset( $shortcode[5] ) && $result = self::has_shortcode_r( $shortcode[5], $tag ) ) {
-					$shortcodes = $result;
+				} else if ( isset( $shortcode[5] ) && $results = self::has_shortcode_r( $shortcode[5], $tag ) ) {
+					foreach( $results as $result ) {
+						$shortcodes[] = $result;
+					}
 				}
 			}
 
@@ -1147,7 +1152,17 @@ class GVCommon {
 	 * @return array          Multi-array of fields with first level being the field zones. See code comment.
 	 */
 	public static function get_directory_fields( $post_id ) {
-		return get_post_meta( $post_id, '_gravityview_directory_fields', true );
+		$fields = get_post_meta( $post_id, '_gravityview_directory_fields', true );
+
+		/**
+		 * @filter `gravityview/configuration/fields` Filter the View fields' configuration array
+		 * @since 1.6.5
+		 * @param $fields array Multi-array of fields with first level being the field zones
+		 * @param $post_id int Post ID
+		 */
+		$fields = apply_filters( 'gravityview/configuration/fields', $fields, $post_id );
+
+		return $fields;
 	}
 
 
@@ -1188,7 +1203,7 @@ class GVCommon {
 	 * @param int $formid Gravity Forms form ID
 	 * @param array $blacklist Field types to exclude
 	 *
-	 * @since TODO
+	 * @since 1.8
 	 *
 	 * @todo Get all fields, check if sortable dynamically
 	 *
@@ -1433,13 +1448,18 @@ class GVCommon {
 
 		$final_atts['href'] = esc_url_raw( $href );
 
+		// Sort the attributes alphabetically, to help testing
+		ksort( $final_atts );
+
 		// For each attribute, generate the code
 		$output = '';
 		foreach ( $final_atts as $attr => $value ) {
 			$output .= sprintf( ' %s="%s"', $attr, esc_attr( $value ) );
 		}
 
-		$output = '<a'. $output .'>'. $anchor_text .'</a>';
+		if( '' !== $output ) {
+			$output = '<a' . $output . '>' . $anchor_text . '</a>';
+		}
 
 		return $output;
 	}
@@ -1513,6 +1533,20 @@ class GVCommon {
     public static function generate_notice( $notice, $class = '' ) {
         return '<div class="gv-notice '.gravityview_sanitize_html_class( $class ) .'">'. $notice .'</div>';
     }
+
+	/**
+	 * Inspired on \GFCommon::encode_shortcodes, reverse the encoding by replacing the ascii characters by the shortcode brackets
+	 * @since 1.16.5
+	 * @param string $string Input string to decode
+	 * @return string $string Output string
+	 */
+	public static function decode_shortcodes( $string ) {
+		$replace = array( '[', ']', '"' );
+		$find = array( '&#91;', '&#93;', '&quot;' );
+		$string = str_replace( $find, $replace, $string );
+
+		return $string;
+	}
 
 
 

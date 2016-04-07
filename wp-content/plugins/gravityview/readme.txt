@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 3.3
-Tested up to: 4.4.2
+Tested up to: 4.5
 Stable tag: trunk
 Contributors: katzwebservices, luistinygod
 License: GPL 3 or higher
@@ -19,6 +19,63 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 1.16.5.1 on April 7 =
+* Fixed: Edit Entry links didn't work
+
+= 1.16.5 on April 6 =
+
+* Fixed: Search Bar inputs not displaying for Number fields
+* Fixed: Compatibility issue with [ACF](https://wordpress.org/plugins/advanced-custom-fields/) plugin when saving a View
+* Fixed (for real this time): Survey field values weren't displaying in Edit Entry
+* Tweak: Made it clearer when editing a View that GravityView is processing in the background
+* Added: Chinese translation (thanks, Edi Weigh!)
+* Updated: German translation (thanks, [@akwdigital](https://www.transifex.com/user/profile/akwdigital/)!)
+
+__Developer Notes__
+
+* Added: `gravityview/fields/custom/decode_shortcodes` filter to determine whether to process shortcodes inside Merge Tags in Custom Content fields. Off by default, for security reasons.
+* Fixed: Potential fatal errors when activating GravityView if Gravity Forms isn't active
+* Updated: Gamajo Template Loader to Version 1.2
+* Verified compatibility with WordPress 4.5
+
+= 1.16.4.1 on March 23 =
+* Fixed: Major display issue caused by output buffering introduced in 1.16.4. Sorry!
+
+= 1.16.4 on March 21 =
+* Fixed: `[gravityview]` shortcodes sometimes not rendering inside page builder shortcodes
+* Fixed: Individual date inputs (Day, Month, Year) always would show full date.
+* Fixed: Quiz and Poll fields weren't displaying properly
+* Fixed: Survey field CSS styles weren't enqueued properly when viewing survey results
+* Fixed: Survey field values weren't displaying in Edit Entry. We hope you "likert" this update a lot ;-)
+* Added: Option to set the search mode ("any" or "all") on the GravityView Search WordPress widget.
+* Added: Option to show/hide "Show Answer Explanation" for Gravity Forms Quiz Addon fields
+* Tweak: Don't show GravityView Approve Entry column in Gravity Forms Entries table if there are no entries
+* Updated: Turkish translation. Thanks, [@suhakaralar](https://www.transifex.com/accounts/profile/suhakaralar/)!
+* Tested and works with [Gravity Forms 2.0 Beta 1](https://www.gravityhelp.com/gravity-forms-v2-0-beta-1-released/)
+
+__Developer Notes:__
+
+* Tweak: Updated `templates/fields/date.php` template to use new `GravityView_Field_Date::date_display()` method.
+* Added `gv-widgets-no-results` and `gv-container-no-results` classes to the widget and View container `<div>`s. This will make it easier to hide empty View content and/or Widgets.
+* Added: New action hooks when entry is deleted (`gravityview/delete-entry/deleted`) or trashed (`gravityview/delete-entry/trashed`).
+* Added: Use the hook `gravityview/search/method` to change the default search method from `GET` to `POST` (hiding the search filters from the View url)
+* Added: `gravityview/extension/search/select_default` filter to modify default value for Drop Down and Multiselect Search Bar fields.
+* Added: `gravityview_get_input_id_from_id()` helper function to get the Input ID from a Field ID.
+
+= 1.16.3 on February 28 =
+
+* Fixed: Date range search not working
+* Fixed: Display fields with calculation enabled on the Edit Entry view
+* Fixed: Large images in a gallery not resizing (when using [.gv-gallery](http://docs.gravityview.co/article/247-create-a-gallery))
+* Tweak: Start and end date in search are included in the results
+
+__Developer Notes:__
+
+* Added: `gravityview/approve_entries/bulk_actions` filter to modify items displayed in the Gravity Forms Entries "Bulk action" dropdown, in the "GravityView" `<optgroup>`
+* Added: `gravityview/edit_entry/button_labels` filter to modify the Edit Entry view buttons labels (defaults: `Cancel` and `Update`)
+* Added: `gravityview/approve_entries/add-note` filter to modify whether to add a note when the entry has been approved or disapproved (default: `true`)
+* Fixed: Removed deprecated `get_currentuserinfo()` function usage
 
 = 1.16.2.2 on February 17 =
 
