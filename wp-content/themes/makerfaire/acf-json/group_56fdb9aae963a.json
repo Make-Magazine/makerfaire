@@ -60,7 +60,7 @@
             "collapsed": "",
             "min": "",
             "max": "",
-            "layout": "table",
+            "layout": "row",
             "button_label": "Add Row",
             "sub_fields": [
                 {
@@ -68,7 +68,7 @@
                     "label": "day of the week",
                     "name": "date_day_name",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "i.e. \"MONDAY\" or \"TUESDAY\"",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -89,7 +89,7 @@
                     "label": "month (1-12)",
                     "name": "date_month",
                     "type": "number",
-                    "instructions": "",
+                    "instructions": "i.e. \"5\" would show May.",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -160,7 +160,7 @@
                     "collapsed": "",
                     "min": "",
                     "max": "",
-                    "layout": "table",
+                    "layout": "block",
                     "button_label": "Add Row",
                     "sub_fields": [
                         {
@@ -209,7 +209,7 @@
                             "key": "field_56fdbfaae5711",
                             "label": "day event body",
                             "name": "day_event_body",
-                            "type": "text",
+                            "type": "wysiwyg",
                             "instructions": "",
                             "required": 0,
                             "conditional_logic": 0,
@@ -219,12 +219,9 @@
                                 "id": ""
                             },
                             "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": "",
-                            "readonly": 0,
-                            "disabled": 0
+                            "tabs": "all",
+                            "toolbar": "full",
+                            "media_upload": 1
                         }
                     ]
                 }
@@ -245,8 +242,15 @@
     "style": "seamless",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": "",
+    "hide_on_screen": [
+        "the_content",
+        "custom_fields",
+        "discussion",
+        "comments",
+        "categories",
+        "send-trackbacks"
+    ],
     "active": 1,
     "description": "",
-    "modified": 1459546950
+    "modified": 1459986593
 }
