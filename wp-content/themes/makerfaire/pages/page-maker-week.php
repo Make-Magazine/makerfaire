@@ -53,7 +53,11 @@ get_header('version-2'); ?>
                       <div class="day-event-block">
                         <h4 class="day-event-title"><?php the_sub_field('day_event_title'); ?></h4>
                         <h4 class="day-event-title-description"><?php the_sub_field('day_event_title_description'); ?></h4>
-                        <div><?php the_sub_field('day_event_body'); ?></div>
+                        <div class="day-event-content"><?php the_sub_field('day_event_body'); ?>
+                          <?php if( get_sub_field('invite_only') ) {
+                              echo "<p><span class='label label-warning'>INVITE ONLY</span></p>";
+                            } ?>
+                        </div>
                       </div>
                     <?php endwhile; ?>
                 <?php endif; ?>
