@@ -1,0 +1,256 @@
+{
+    "key": "group_56fdb9aae963a",
+    "title": "Maker Week Page",
+    "fields": [
+        {
+            "key": "field_56fee7ecaffc4",
+            "label": "Meet The Makers Header",
+            "name": "meet_the_makers_header",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "<h3>Calling all Makers!<\/h3>\r\n<p>Join us for Maker Week\u2014the week leading up to Maker Faire Bay Area 2015. Here you\u2019ll find a full run-down of all the activities in which Makers can participate during Maker Week.<\/p> \r\n<p>Check back often to see what other exciting events and activities have been added to the schedule.<\/p>",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": "wpautop",
+            "readonly": 0,
+            "disabled": 0
+        },
+        {
+            "key": "field_56feeac96e51e",
+            "label": "Meet The Makers Call To Action",
+            "name": "meet_the_makers_call_to_action",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "<p>Have an event, meetup, activity, party, launch, or other exciting offering for Maker Week?<\/p>\r\n<p>Let us know, we\u2019d love to add it here!<\/p>\r\n<a class=\"btn btn-primary\" href=\"#\">SEND US YOUR EVENT!<\/a>",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": "wpautop",
+            "readonly": 0,
+            "disabled": 0
+        },
+        {
+            "key": "field_56fdbe84e570b",
+            "label": "Meet The Makers Events",
+            "name": "meet_the_makers_row_group",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": "",
+            "max": "",
+            "layout": "row",
+            "button_label": "Add Row",
+            "sub_fields": [
+                {
+                    "key": "field_56fdc47efe926",
+                    "label": "day of the week",
+                    "name": "date_day_name",
+                    "type": "text",
+                    "instructions": "i.e. \"MONDAY\" or \"TUESDAY\"",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "readonly": 0,
+                    "disabled": 0
+                },
+                {
+                    "key": "field_56fdbe9be570c",
+                    "label": "month (1-12)",
+                    "name": "date_month",
+                    "type": "number",
+                    "instructions": "i.e. \"5\" would show May.",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 12,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "readonly": 0,
+                    "disabled": 0
+                },
+                {
+                    "key": "field_56fdbebee570d",
+                    "label": "day of the month",
+                    "name": "date_day_number",
+                    "type": "text",
+                    "instructions": "i.e. \"21\" or \"22-23\"",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "readonly": 0,
+                    "disabled": 0
+                },
+                {
+                    "key": "field_56fec06c07fd8",
+                    "label": "multi-day?",
+                    "name": "multi_day",
+                    "type": "true_false",
+                    "instructions": "check if day of the month is e.g. \"22 - 23\"",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0
+                },
+                {
+                    "key": "field_56fdbefce570e",
+                    "label": "day event info block",
+                    "name": "day_event_block",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "collapsed": "",
+                    "min": "",
+                    "max": "",
+                    "layout": "block",
+                    "button_label": "Add Row",
+                    "sub_fields": [
+                        {
+                            "key": "field_56fdbf7ae570f",
+                            "label": "day event title",
+                            "name": "day_event_title",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "readonly": 0,
+                            "disabled": 0
+                        },
+                        {
+                            "key": "field_56fdbf9ae5710",
+                            "label": "day event title description",
+                            "name": "day_event_title_description",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "readonly": 0,
+                            "disabled": 0
+                        },
+                        {
+                            "key": "field_56fdbfaae5711",
+                            "label": "day event body",
+                            "name": "day_event_body",
+                            "type": "wysiwyg",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "tabs": "all",
+                            "toolbar": "full",
+                            "media_upload": 1
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "pages\/page-maker-week.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "seamless",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [
+        "the_content",
+        "custom_fields",
+        "discussion",
+        "comments",
+        "categories",
+        "send-trackbacks"
+    ],
+    "active": 1,
+    "description": "",
+    "modified": 1459986593
+}
