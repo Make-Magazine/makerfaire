@@ -220,17 +220,17 @@ class GF_Field_FileUpload extends GF_Field {
 				//  MAX_FILE_SIZE > 2048MB fails. The file size is checked anyway once uploaded, so it's not necessary.
 				$upload = sprintf( "<input type='hidden' name='MAX_FILE_SIZE' value='%d' />", $max_upload_size );
 			}
-                        
-                        $upload .= sprintf( "<input name='input_%d' id='%s' type='file' class='%s' aria-describedby='extensions_message' {$tabindex} %s/>", $id, $field_id, esc_attr( $class ), $disabled_text );                       
-  
+			$upload .= sprintf( "<input name='input_%d' id='%s' type='file' class='%s' aria-describedby='extensions_message' {$tabindex} %s/>", $id, $field_id, esc_attr( $class ), $disabled_text );
+
 			if ( ! $is_admin ) {
 				$upload .= "<span id='extensions_message' class='screen-reader-text'>{$extensions_message}</span>";
 			}
 		}
 
-		//if ( $is_entry_detail && ! empty( $value ) ) { // edit entry
-                if (  ! empty( $value ) ) { // edit entry //mf custom code
+    /* This MF custom code was added but I am not sure why.  Leaving this hear in case we need it again*/
+    //if (  ! empty( $value ) ) { // edit entry
 
+		if ( $is_entry_detail && ! empty( $value ) ) { // edit entry
 			$file_urls      = $multiple_files ? json_decode( $value ) : array( $value );
 			$upload_display = $multiple_files ? '' : "style='display:none'";
 			$preview        = "<div id='upload_$id' {$upload_display}>$upload</div>";
@@ -342,7 +342,6 @@ class GF_Field_FileUpload extends GF_Field {
 
 	public function get_single_file_value( $form_id, $input_name ) {
 		global $_gf_uploaded_files;
-                $return_file = ""; //MF custom code
 
 		GFCommon::log_debug( __METHOD__ . '(): Starting.' );
 
@@ -363,13 +362,9 @@ class GF_Field_FileUpload extends GF_Field {
 			} else {
 				GFCommon::log_debug( __METHOD__ . '(): No file uploaded. Exiting.' );
 			}
-                        $return_file = rgget( $input_name, $_gf_uploaded_files );
-		}else {
-                    $return_file = $_POST [ $input_name.'_original'];
 		}
 
-		//return rgget( $input_name, $_gf_uploaded_files );
-                return $return_file; //my custom code
+		return rgget( $input_name, $_gf_uploaded_files );
 	}
 
 	public function upload_file( $form_id, $file ) {
@@ -402,7 +397,7 @@ class GF_Field_FileUpload extends GF_Field {
 				$value = empty( $uploaded_files_arr ) ? '' : sprintf( esc_html__( '%d files', 'gravityforms' ), count( $uploaded_files_arr ) );
 				return $value;
 			} elseif ( $file_count == 1 ) {
-				$value = $uploaded_files_arr[0];
+				$value = current( $uploaded_files_arr );
 			} elseif ( $file_count == 0 ) {
 				return;
 			}
@@ -412,10 +407,11 @@ class GF_Field_FileUpload extends GF_Field {
 		if ( ! empty( $file_path ) ) {
 			//displaying thumbnail (if file is an image) or an icon based on the extension
 			$thumb     = GFEntryList::get_icon_url( $file_path );
-			$file_path = esc_attr( $file_path );
-			//custom MF code
-                        $file_path = legacy_get_resized_remote_image_url($file_path, 125, 125);
-                        $value     = "<a class='thickbox' href='$file_path' target='_blank' title='" . __( 'Click to view', 'gravityforms' ) . "'><img class='thickbox' style='width: 125px;' src='$file_path'/></a>";
+      $file_path = esc_attr( $file_path );
+
+      //custom MF code
+      $file_path = legacy_get_resized_remote_image_url($file_path, 125, 125);
+      $value     = "<a class='thickbox' href='$file_path' target='_blank' title='" . __( 'Click to view', 'gravityforms' ) . "'><img class='thickbox' style='width: 125px;' src='$file_path'/></a>";
 		}
 		return $value;
 	}
@@ -425,17 +421,20 @@ class GF_Field_FileUpload extends GF_Field {
 		if ( ! empty( $value ) ) {
 			$output_arr = array();
 			$file_paths = $this->multipleFiles ? json_decode( $value ) : array( $value );
-			foreach ( $file_paths as $file_path ) {
-				$info = pathinfo( $file_path );
-				if ( GFCommon::is_ssl() && strpos( $file_path, 'http:' ) !== false ) {
-					$file_path = str_replace( 'http:', 'https:', $file_path );
+
+			if ( is_array( $file_paths ) ) {
+				foreach ( $file_paths as $file_path ) {
+					$info = pathinfo( $file_path );
+					if ( GFCommon::is_ssl() && strpos( $file_path, 'http:' ) !== false ) {
+						$file_path = str_replace( 'http:', 'https:', $file_path );
+					}
+					$file_path          = esc_attr( str_replace( ' ', '%20', $file_path ) );
+					$base_name          = $info['basename'];
+					$click_to_view_text = esc_attr__( 'Click to view', 'gravityforms' );
+					$output_arr[]       = $format == 'text' ? $file_path . PHP_EOL : "<li><a href='{$file_path}' target='_blank' title='{$click_to_view_text}'>{$base_name}</a></li>";
 				}
-				$file_path    = esc_attr( str_replace( ' ', '%20', $file_path ) );
-				$base_name = $info['basename'];
-				$click_to_view_text = esc_attr__( 'Click to view', 'gravityforms' );
-				$output_arr[] = $format == 'text' ? $file_path . PHP_EOL : "<li><a href='{$file_path}' target='_blank' title='{$click_to_view_text}'>{$base_name}</a></li>";
+				$output = join( PHP_EOL, $output_arr );
 			}
-			$output = join( PHP_EOL, $output_arr );
 		}
 		$output = empty( $output ) || $format == 'text' ? $output : sprintf( '<ul>%s</ul>', $output );
 

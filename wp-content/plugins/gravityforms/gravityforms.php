@@ -1,16 +1,16 @@
 <?php
-/* 
+/*
 Plugin Name: Gravity Forms
 Plugin URI: http://www.gravityforms.com
 Description: Easily create web forms and manage form entries within the WordPress admin.
-Version: 1.9.15
+Version: 1.9.18
 Author: rocketgenius
 Author URI: http://www.rocketgenius.com
 Text Domain: gravityforms
 Domain Path: /languages
 
 ------------------------------------------------------------------------
-Copyright 2009-2015 Rocketgenius, Inc.
+Copyright 2009-2016 Rocketgenius, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -66,12 +66,13 @@ if ( ! defined( 'IS_ADMIN' ) ) {
 	define( 'IS_ADMIN', is_admin() );
 }
 
-//define( 'RG_CURRENT_VIEW', RGForms::get( 'view' ) );
 //MF custom code
 define( 'RG_CURRENT_VIEW', (RGForms::get( 'view' )=='mfentry'?'entry':RGForms::get( 'view' )) );
 
 define( 'GF_MIN_WP_VERSION', '3.7' );
 define( 'GF_SUPPORTED_WP_VERSION', version_compare( get_bloginfo( 'version' ), GF_MIN_WP_VERSION, '>=' ) );
+define( 'GF_MIN_WP_VERSION_SUPPORT_TERMS', '4.3' );
+
 
 if ( ! defined( 'GRAVITY_MANAGER_URL' ) ) {
 	define( 'GRAVITY_MANAGER_URL', 'https://www.gravityhelp.com/wp-content/plugins/gravitymanager' );
@@ -117,7 +118,7 @@ register_deactivation_hook( __FILE__, array( 'GFForms', 'deactivation_hook' ) );
 
 class GFForms {
 
-	public static $version = '1.9.15';
+	public static $version = '1.9.18';
 
 	public static function loaded() {
 
@@ -491,6 +492,7 @@ class GFForms {
               ip char(15),
               count mediumint(8) unsigned not null default 1,
               PRIMARY KEY  (id),
+              KEY date_created (date_created),
               KEY form_id (form_id)
             ) $charset_collate;";
 		dbDelta( $sql );
@@ -858,7 +860,7 @@ class GFForms {
 			'gf_edit_forms'              => array( 'thickbox', 'editor-buttons', 'wp-jquery-ui-dialog', 'media-views', 'buttons', 'wp-pointer' ),
 			'gf_edit_forms_notification' => array( 'thickbox', 'editor-buttons', 'wp-jquery-ui-dialog', 'media-views', 'buttons' ),
 			'gf_new_form'                => array( 'thickbox' ),
-			'gf_entries'                 => array( 'thickbox' ),
+			'mf_entries'                 => array( 'thickbox' ),
 			'gf_settings'                => array(),
 			'gf_export'                  => array(),
 			'gf_help'                    => array()
@@ -881,7 +883,7 @@ class GFForms {
 			'gf_edit_forms'              => array( 'backbone', 'editor', 'gform_floatmenu', 'gform_forms', 'gform_form_admin', 'gform_form_editor', 'gform_gravityforms', 'gform_json', 'gform_menu', 'gform_placeholder', 'jquery-ui-autocomplete', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-tabs', 'json2', 'media-editor', 'media-models', 'media-upload', 'media-views', 'plupload', 'plupload-flash', 'plupload-html4', 'plupload-html5', 'quicktags', 'rg_currency', 'thickbox', 'word-count', 'wp-plupload', 'wpdialogs-popup', 'wplink', 'wp-pointer' ),
 			'gf_edit_forms_notification' => array( 'editor', 'word-count', 'quicktags', 'wpdialogs-popup', 'media-upload', 'wplink', 'backbone', 'jquery-ui-sortable', 'json2', 'media-editor', 'media-models', 'media-views', 'plupload', 'plupload-flash', 'plupload-html4', 'plupload-html5', 'plupload-silverlight', 'wp-plupload', 'gform_placeholder', 'gform_json', 'jquery-ui-autocomplete' ),
 			'gf_new_form'                => array( 'thickbox', 'jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-tabs', 'rg_currency', 'gform_gravityforms', 'gform_json', 'gform_form_admin' ),
-			'gf_entries'                 => array( 'thickbox', 'gform_gravityforms', 'wp-lists', 'gform_json', 'gform_field_filter', 'plupload-all' ),
+			'mf_entries'                 => array( 'thickbox', 'gform_gravityforms', 'wp-lists', 'gform_json', 'gform_field_filter', 'plupload-all' ),
 			'gf_settings'                => array(),
 			'gf_export'                  => array( 'gform_form_admin', 'jquery-ui-datepicker', 'gform_field_filter' ),
 			'gf_help'                    => array(),
@@ -1013,7 +1015,7 @@ class GFForms {
 				$wpdb->query( "DROP INDEX {$index} ON {$table}" );
 			}
 		}
-		
+
 
 	}
 
@@ -1033,7 +1035,7 @@ class GFForms {
 
 		$has_permission = true;
 
-		$sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}rg_test ( col1 int )";
+		$sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}rg_test ( col1 int PRIMARY KEY )";
 		$wpdb->query( $sql );
 		$error = 'Current database user does not have necessary permissions to create tables. Gravity Forms requires that the database user has CREATE and ALTER permissions. If you need assistance in changing database user permissions, contact your hosting provider.';
 		if ( ! empty( $wpdb->last_error ) ) {
@@ -1144,7 +1146,7 @@ class GFForms {
 
 		//Gravity Forms pages
 		$current_page = trim( strtolower( self::get( 'page' ) ) );
-		$gf_pages     = array( 'gf_edit_forms', 'gf_new_form', 'gf_entries', 'gf_settings', 'gf_export', 'gf_help' );
+		$gf_pages     = array( 'gf_edit_forms', 'gf_new_form', 'mf_entries', 'gf_settings', 'gf_export', 'gf_help' );
 
 		return in_array( $current_page, $gf_pages );
 	}
@@ -1219,7 +1221,7 @@ class GFForms {
 		} else if ( GFCommon::current_user_can_any( 'gravityforms_create_form' ) ) {
 			$parent = array( 'name' => 'gf_new_form', 'callback' => array( 'RGForms', 'new_form' ) );
 		} else if ( GFCommon::current_user_can_any( 'gravityforms_view_entries' ) ) {
-			$parent = array( 'name' => 'gf_entries', 'callback' => array( 'RGForms', 'all_leads_page' ) );
+			$parent = array( 'name' => 'mf_entries', 'callback' => array( 'RGForms', 'all_leads_page' ) );
 		} else if ( is_array( $addon_menus ) && sizeof( $addon_menus ) > 0 ) {
 			foreach ( $addon_menus as $addon_menu ) {
 				if ( GFCommon::current_user_can_any( $addon_menu['permission'] ) ) {
@@ -1352,11 +1354,13 @@ class GFForms {
 			$tabindex = isset( $tabindex ) ? absint( $tabindex ) : 1;
 			require_once( GFCommon::get_base_path() . '/form_display.php' );
 
-			$form_id = absint( $form_id );
-			$display_title = (bool) $title;
+			$form_id             = absint( $form_id );
+			$display_title       = (bool) $title;
 			$display_description = (bool) $description;
 
-			$result = GFFormDisplay::get_form( $form_id, $display_title, $display_description, false, $_POST['gform_field_values'], true, $tabindex );
+			parse_str( $_POST['gform_field_values'], $field_values );
+
+			$result = GFFormDisplay::get_form( $form_id, $display_title, $display_description, false, $field_values, true, $tabindex );
 			die( $result );
 		}
 	}
@@ -1556,13 +1560,13 @@ class GFForms {
 						?>
 						<tr class='author-self status-inherit' valign="top">
 							<td class="gf_dashboard_form_title column-title" style="padding:8px 18px;">
-								<a <?php echo $form['unread_count'] > 0 ? "class='form_title_unread' style='font-weight:bold;'" : '' ?> href="admin.php?page=gf_entries&view=entries&id=<?php echo absint( $form['id'] ) ?>" title="<?php echo esc_attr( $form['title'] ) ?> : <?php esc_attr_e( 'View All Entries', 'gravityforms' ) ?>"><?php echo esc_html( $form['title'] ) ?></a>
+								<a <?php echo $form['unread_count'] > 0 ? "class='form_title_unread' style='font-weight:bold;'" : '' ?> href="admin.php?page=mf_entries&view=entries&id=<?php echo absint( $form['id'] ) ?>" title="<?php echo esc_attr( $form['title'] ) ?> : <?php esc_attr_e( 'View All Entries', 'gravityforms' ) ?>"><?php echo esc_html( $form['title'] ) ?></a>
 							</td>
 							<td class="gf_dashboard_entries_unread column-date" style="padding:8px 18px; text-align:center;">
-								<a <?php echo $form['unread_count'] > 0 ? "class='form_entries_unread' style='font-weight:bold;'" : '' ?> href="admin.php?page=gf_entries&view=entries&filter=unread&id=<?php echo absint( $form['id'] ) ?>" title="<?php printf( esc_attr__( 'Last Entry: %s', 'gravityforms' ), $date_display ); ?>"><?php echo absint( $form['unread_count'] ) ?></a>
+								<a <?php echo $form['unread_count'] > 0 ? "class='form_entries_unread' style='font-weight:bold;'" : '' ?> href="admin.php?page=mf_entries&view=entries&filter=unread&id=<?php echo absint( $form['id'] ) ?>" title="<?php printf( esc_attr__( 'Last Entry: %s', 'gravityforms' ), $date_display ); ?>"><?php echo absint( $form['unread_count'] ) ?></a>
 							</td>
 							<td class="gf_dashboard_entries_total column-date" style="padding:8px 18px; text-align:center;">
-								<a href="admin.php?page=gf_entries&view=entries&id=<?php echo absint( $form['id'] ) ?>" title="<?php esc_attr_e( 'View All Entries', 'gravityforms' ) ?>"><?php echo absint( $form['total_leads'] ) ?></a>
+								<a href="admin.php?page=mf_entries&view=entries&id=<?php echo absint( $form['id'] ) ?>" title="<?php esc_attr_e( 'View All Entries', 'gravityforms' ) ?>"><?php echo absint( $form['total_leads'] ) ?></a>
 							</td>
 						</tr>
 					<?php
@@ -1914,7 +1918,7 @@ class GFForms {
 		if ( rgget( 'page' ) == 'gf_edit_forms' && rgget( 'view' ) == 'settings' && rgget( 'subview' ) == 'notification' ) {
 			return 'notification_list';
 		}
-                //start of mf custom code
+    //start of mf custom code
 		if ( rgget( 'page' ) == 'mf_entries' && ( ! rgget( 'view' ) || rgget( 'view' ) == 'entries' ) ) {
 			return 'entry_list';
 		}
@@ -1923,10 +1927,11 @@ class GFForms {
 			return 'entry_detail_edit';
 		}
 
+
 		if ( rgget( 'page' ) == 'mf_entries' && rgget( 'view' ) == 'entry' ){
 			return 'entry_detail';
 		}
-                //end of mf custom code
+
 		if ( rgget( 'page' ) == 'gf_settings' ) {
 			return 'settings';
 		}

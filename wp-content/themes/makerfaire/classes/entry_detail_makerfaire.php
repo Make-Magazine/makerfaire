@@ -16,20 +16,20 @@ class GFEntryDetail {
 				group by value",
 				$form_id
 		);
-	
+
 		$results = $wpdb->get_results( $sql, ARRAY_A );
 		return $results;
-	
+
 	}
-	
+
 	public static function lead_detail_page() {
 		global $current_user;
 		do_action( 'gform_admin_pre_render_action');
-		
+
 		if ( ! GFCommon::ensure_wp_version() ) {
 			return;
 		}
-		
+
 		/* Change Lead_ID Logic */
 		if(isset($_GET['lid'])){
                     $lead_id = rgget( 'lid' );
@@ -46,16 +46,16 @@ class GFEntryDetail {
                     }
                 }
 		echo GFCommon::get_remote_message();
-		
+
                 if(isset($_GET['lid'])){
                     //Change form from different ID
                     $form_id    =  isset($lead['form_id']) ? $lead['form_id'] : 0;
-                    $form = RGFormsModel::get_form_meta($form_id);		
+                    $form = RGFormsModel::get_form_meta($form_id);
                     $form    = apply_filters( 'gform_admin_pre_render_' . $form['id'], apply_filters( 'gform_admin_pre_render', $form ) );
                 }else{
                     $form    = RGFormsModel::get_form_meta( absint( $_GET['id'] ) );
                     $form_id = absint( $form['id'] );
-                    $form    = apply_filters( 'gform_admin_pre_render_' . $form_id, apply_filters( 'gform_admin_pre_render', $form ) );                    
+                    $form    = apply_filters( 'gform_admin_pre_render_' . $form_id, apply_filters( 'gform_admin_pre_render', $form ) );
                 }
                 $lead_id = rgget( 'lid' );
 
@@ -69,7 +69,7 @@ class GFEntryDetail {
 		$sort_field_meta = RGFormsModel::get_field( $form, $sort_field );
 		$is_numeric      = $sort_field_meta['type'] == 'number';
 		$all_forms      = empty( $_GET['allforms'] ) ? 0 : $_GET['allforms'];
-		
+
 		$star = $filter == 'star' ? 1 : null;
 		$read = $filter == 'unread' ? 0 : null;
 
@@ -89,7 +89,7 @@ class GFEntryDetail {
                         $filterValues = explode("|",$value);
                         $key             = $filterValues[0];
                         $search_operator = $filterValues[1];
-                        $val             = $filterValues[2];     
+                        $val             = $filterValues[2];
                         if ( 'entry_id' == $key ) {
 				//$key = 'id';
 			}
@@ -109,7 +109,7 @@ class GFEntryDetail {
 				'value'    => $val,
 			);
                     }
-                } 
+                }
                 /*
 		if ( isset( $_GET['field_id'] ) && $_GET['field_id'] !== '' ) {
 			$key            = $search_field_id;
@@ -144,21 +144,21 @@ class GFEntryDetail {
 		}
 		$total_count = 0;
                 global $wpdb;
-                $form_ids = $form_id; 
+                $form_ids = $form_id;
                 $faire = (isset($_GET['faire'])?$_GET['faire']:'');
                 if($faire != ''){
                     $form_id = 9;
                     //let's get the form id's for this faire
-                    $sql = "select * from wp_mf_faire where faire='".$faire."'";                                    
-                    $Fresults = $wpdb->get_results($sql); 
+                    $sql = "select * from wp_mf_faire where faire='".$faire."'";
+                    $Fresults = $wpdb->get_results($sql);
                     if(!empty($Fresults)){
-                        $form_ids = explode(',', $Fresults[0]->form_ids);                        
-                    }else{                        
+                        $form_ids = explode(',', $Fresults[0]->form_ids);
+                    }else{
                         $form_ids = 99999999;
-                    }                    
+                    }
                 }
 		$leads = GFAPI::get_entries( $form_ids, $search_criteria, $sorting, $paging, $total_count );
-			
+
 		$prev_pos = ! rgblank( $position ) && $position > 0 ? $position - 1 : false;
 		$next_pos = ! rgblank( $position ) && $position < $total_count - 1 ? $position + 1 : false;
 
@@ -432,7 +432,7 @@ class GFEntryDetail {
 				$gf_entry_locking->lock_info( $lead_id ); ?>
 				</span>
 				<?php $statuscount=get_makerfaire_status_counts( $form['id'] );
-				 foreach($statuscount as $statuscount){                                        
+				 foreach($statuscount as $statuscount){
                                      ?><span class="gf_admin_page_formname"><?php echo  $statuscount['label'];?>
 					(<?php echo  $statuscount['entries'];?>)</span><?php }?>
 				</span></h2>
@@ -445,7 +445,7 @@ class GFEntryDetail {
 					<li class="gf_entry_prev gf_entry_pagination"><?php echo GFEntryDetail::entry_detail_pagination_link( $prev_pos, 'Previous Entry', 'gf_entry_prev_link', 'fa fa-arrow-circle-o-left' ); ?></li>
 					<li class="gf_entry_next gf_entry_pagination"><?php echo GFEntryDetail::entry_detail_pagination_link( $next_pos, 'Next Entry', 'gf_entry_next_link', 'fa fa-arrow-circle-o-right' ); ?></li>
 				</ul>
-                            <?php                            
+                            <?php
                             $outputVar = '';
                             if(isset($_GET['filterField'])){
                                 foreach($_GET['filterField'] as $newValue){
@@ -464,7 +464,7 @@ class GFEntryDetail {
 			<a href="<?php echo $outputURL;?>">Return to entries list</a>
                         </div>
 		<?php } ?>
-                    
+
 		<?php RGForms::top_toolbar() ?>
 
 		<div id="poststuff" class="metabox-holder has-right-sidebar">
@@ -481,8 +481,8 @@ class GFEntryDetail {
 				<div id="submitcomment" class="submitbox">
 					<div id="minor-publishing" style="padding:10px;">
 						<?php _e( 'Submitted on', 'gravityforms' ); ?>: <?php echo esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) ?>
-						
-						
+
+
 					</div>
 					<div id="major-publishing-actions">
 						<div id="delete-action">
@@ -640,7 +640,7 @@ class GFEntryDetail {
 
 				do_action( 'gform_entry_detail', $form, $lead );
 
-				
+
 				do_action( 'gform_entry_detail_content_after', $form, $lead );
 				?>
 			</div>
@@ -828,12 +828,7 @@ class GFEntryDetail {
 	public static function lead_detail_grid( $form, $lead, $allow_display_empty_fields = false ) {
 		$form_id              = $form['id'];
 
-		$display_empty_fields = false;
-		if ( $allow_display_empty_fields ) {
-			$display_empty_fields = rgget( 'gf_display_empty_fields', $_COOKIE );
-		}
-
-		$display_empty_fields = apply_filters( 'gform_entry_detail_grid_display_empty_fields', $display_empty_fields, $form, $lead );
+		$display_empty_fields = self::maybe_display_empty_fields( $allow_display_empty_fields, $form, $lead );
 
 		?>
 		<table cellspacing="0" class="widefat fixed entry-detail-view">
@@ -1090,4 +1085,30 @@ class GFEntryDetail {
 		</div>
 	<?php
 	}
+
+	/**
+	 * Helper to determine if empty fields should be displayed when the lead detail grid is processed.
+	 *
+	 * @param bool $allow_display_empty_fields Determines if the value of the 'show empty fields' checkbox should be used. True when viewing the entry and false when in edit mode.
+	 * @param array $form The Form object for the current Entry.
+	 * @param array $lead The current Entry object.
+	 *
+	 * @return bool
+	 */
+	public static function maybe_display_empty_fields( $allow_display_empty_fields, $form, $lead ) {
+		$display_empty_fields = false;
+		if ( $allow_display_empty_fields ) {
+			$display_empty_fields = rgget( 'gf_display_empty_fields', $_COOKIE );
+		}
+
+		/**
+		 * A filter to determine if empty fields should be displayed in the entry details.
+		 *
+		 * @param bool $display_empty_fields True or false to show the fields
+		 * @param array $form The Form object to filter
+		 * @param array $lead The Entry object to filter
+		 */
+		return apply_filters( 'gform_entry_detail_grid_display_empty_fields', $display_empty_fields, $form, $lead );
+	}
+
 }

@@ -31,8 +31,8 @@ if ( class_exists( 'GFForms' ) ) {
 		protected $_path = 'gravityformswebapi/webapi.php';
 		protected $_full_path = __FILE__;
 		protected $_url = 'http://www.gravityforms.com';
-		protected $_title = 'Gravity Forms API';
-		protected $_short_title = 'API';
+		protected $_title = 'Gravity Forms Web API';
+		protected $_short_title = 'Web API';
 
 		private $_enabled;
 		private $_private_key;
@@ -460,7 +460,7 @@ if ( class_exists( 'GFForms' ) ) {
 				$HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
 			}
 
-			GFCommon::log_debug( 'GFWebAPI::handle_page_request(): HTTP_RAW_POST_DATA = ' . $HTTP_RAW_POST_DATA );
+			$this->log_debug( 'GFWebAPI::handle_page_request(): HTTP_RAW_POST_DATA = ' . $HTTP_RAW_POST_DATA );
 
 			$data = json_decode( $HTTP_RAW_POST_DATA, true );
 
