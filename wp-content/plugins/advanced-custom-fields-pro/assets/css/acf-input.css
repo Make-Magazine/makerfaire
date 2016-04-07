@@ -47,6 +47,8 @@
   color: #fff;
   margin: 0 0 10px;
   display: inline-block;
+  border-radius: 3px;
+  border-left: none;
 }
 .acf-field .acf-error-message:after {
   content: "";
@@ -275,16 +277,6 @@ html[dir="rtl"] .acf-fields.-left > .acf-field > .acf-input {
   border: 0 none;
   padding: 8px 0;
 }
-/* widget */
-.widget .widget-inside .acf-error-message p {
-  margin: 10px 0;
-}
-.widget .widget-inside div.acf-field.error {
-  border: 0 none;
-  background: transparent;
-  margin: 0 0 20px;
-  padding: 0;
-}
 /* width */
 .acf-field[data-width] {
   float: left;
@@ -460,53 +452,64 @@ html[dir="rtl"] input.acf-is-prepended.acf-is-appended {
 }
 /*---------------------------------------------------------------------------------------------
 *
-*  Select2
+*  Select2 (v3)
 *
 *---------------------------------------------------------------------------------------------*/
-.acf-select2-container .select2-choices {
+.select2-container.-acf .select2-choices {
   background: #fff;
-  border: 1px solid #ddd;
+  border-color: #ddd;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07) inset;
   min-height: 31px;
 }
-.acf-select2-container .select2-choices .select2-search-choice {
+.select2-container.-acf .select2-choices .select2-search-choice {
   margin: 5px 0 5px 5px;
   padding: 3px 5px 3px 18px;
   border-color: #bbb;
   background: #f9f9f9;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset;
 }
-.acf-select2-container .select2-choices .select2-search-choice-focus {
+.select2-container.-acf .select2-choices .select2-search-choice-focus {
   border-color: #999;
 }
-.acf-select2-container .select2-choices .select2-search-field input {
+.select2-container.-acf .select2-choices .select2-search-field input {
   height: 31px;
   line-height: 22px;
   margin: 0;
   padding: 5px 5px 5px 7px;
 }
-.acf-select2-container .select2-search-choice-close {
-  top: 3px;
+.select2-container.-acf .select2-search-choice-close {
+  margin-top: -1px;
 }
 /* open */
-.acf-select2-container.select2-container-active .select2-choices,
-.acf-select2-container.select2-dropdown-open .select2-choices {
+.select2-container.-acf.select2-container-active .select2-choices,
+.select2-container.-acf.select2-dropdown-open .select2-choices {
   border-color: #5B9DD9;
   border-radius: 3px 3px 0 0;
 }
 /* single */
-.acf-select2-container .select2-choice {
+.select2-container.-acf .select2-choice {
   border-color: #BBBBBB;
 }
-.acf-select2-container .select2-choice .select2-arrow {
+.select2-container.-acf .select2-choice .select2-arrow {
   background: transparent;
   border-left-color: #DFDFDF;
   padding-left: 1px;
 }
 /* single open */
-.acf-select2-container.select2-dropdown-open .select2-choice {
+.select2-container.-acf.select2-dropdown-open .select2-choice {
   background: #fff;
   border-color: #5B9DD9;
+}
+/*---------------------------------------------------------------------------------------------
+*
+*  Select2 (v4)
+*
+*---------------------------------------------------------------------------------------------*/
+.select2-selection.-acf li {
+  margin-bottom: 0;
+}
+.select2-selection.-acf input {
+  box-shadow: none;
 }
 /*---------------------------------------------------------------------------------------------
 *
@@ -1336,6 +1339,7 @@ html[dir="rtl"] .acf-image-uploader .view {
   display: block;
   padding: 0;
   margin: 0;
+  max-width: 48px;
 }
 .acf-file-uploader .file-info {
   padding: 10px;
@@ -1350,20 +1354,18 @@ html[dir="rtl"] .acf-image-uploader .view {
 .acf-file-uploader .file-info a {
   text-decoration: none;
 }
-/*
-*  Hover
-*/
-.acf-file-uploader .acf-soh-target {
+.acf-file-uploader .file-info ul {
   position: absolute;
   top: 5px;
   right: 5px;
+  /* rtl */
 }
-html[dir="rtl"] .acf-file-uploader .acf-soh-target {
+.acf-file-uploader .file-info ul li {
+  margin: 0 0 0 4px;
+}
+html[dir="rtl"] .acf-file-uploader .file-info ul {
   right: auto;
   left: 5px;
-}
-.acf-file-uploader .acf-soh-target li {
-  margin: 0 0 0 4px;
 }
 /*---------------------------------------------------------------------------------------------
 *
@@ -1632,11 +1634,6 @@ html[dir="rtl"] .acf-taxonomy-field[data-type="select"] .acf-icon {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
-/* image select button fix */
-.media-frame a.acf-button {
-  border: 1px solid #bbbbbb;
-  color: #333;
-}
 /*---------------------------------------------------------------------------------------------
 *
 *  Media Model (Edit Mode)
@@ -1818,6 +1815,17 @@ p.submit .acf-spinner {
 }
 .widget .acf-field .acf-label label {
   font-weight: normal;
+}
+.widget .widget-inside > form > .acf-error-message {
+  margin-top: 15px;
+}
+/*--------------------------------------------------------------------------------------------
+*
+*	Customizer
+*
+*--------------------------------------------------------------------------------------------*/
+.customize-control .acf-field {
+  margin: 1em 0;
 }
 /*--------------------------------------------------------------------------
 *

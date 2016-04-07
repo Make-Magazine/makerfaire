@@ -218,15 +218,7 @@ class acf_field_repeater extends acf_field {
 		
 		
 		// collapsed
-		$collapsed = array();
-		
 		if( $field['collapsed'] ) {
-			
-			// get user setting
-			$collapsed = acf_get_user_setting('collapsed_' . $field['key'], '');
-			$collapsed = explode(',', $collapsed);
-			$collapsed = array_filter($collapsed, 'is_numeric');
-			
 			
 			// add target class
 			foreach( array_keys($field['sub_fields']) as $i ) {
@@ -273,7 +265,7 @@ class acf_field_repeater extends acf_field {
 						
 					?>
 					<th <?php acf_esc_attr_e( $atts ); ?>>
-						<?php acf_the_field_label( $sub_field ); ?>
+						<?php echo acf_get_field_label( $sub_field ); ?>
 						<?php if( $sub_field['instructions'] ): ?>
 							<p class="description"><?php echo $sub_field['instructions']; ?></p>
 						<?php endif; ?>
@@ -297,7 +289,7 @@ class acf_field_repeater extends acf_field {
 				
 				$row_class .= ' acf-clone';
 				
-			} elseif( in_array($i, $collapsed) ) {
+			} elseif( acf_is_row_collapsed($field['key'], $i) ) {
 				
 				$row_class .= ' -collapsed';
 				
@@ -365,9 +357,9 @@ class acf_field_repeater extends acf_field {
 </table>
 <?php if( $show_add ): ?>
 	
-	<ul class="acf-hl">
-		<li class="acf-fr">
-			<a href="#" class="acf-button blue" data-event="add-row"><?php echo $field['button_label']; ?></a>
+	<ul class="acf-actions acf-hl">
+		<li>
+			<a class="acf-button button button-primary" data-event="add-row"><?php echo $field['button_label']; ?></a>
 		</li>
 	</ul>
 			
