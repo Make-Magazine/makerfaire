@@ -343,7 +343,7 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry){
 /*
  * After Note Added handle jdb sync
 */
-add_action( 'gform_post_note_added', 'note_to_jdb', 10, 2 );
+//add_action( 'gform_post_note_added', 'note_to_jdb', 10, 2 );
 function note_to_jdb( $noteid,$entryid,$userid,$username,$note,$notetype ) {
 	//error_log('$GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$noteid);
 	//$result=GFJDBHELPER::gravityforms_send_note_to_jdb($entryid,$noteid,$note);
