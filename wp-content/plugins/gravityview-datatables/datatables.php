@@ -8,13 +8,13 @@
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
  * @link      http://gravityview.co
- * @copyright Copyright 2014, Katz Web Services, Inc.
+ * @copyright Copyright 2016, Katz Web Services, Inc.
  *
  * @wordpress-plugin
  * Plugin Name:       	GravityView - DataTables Extension
- * Plugin URI:        	http://gravityview.co/extensions/datatables/
+ * Plugin URI:        	https://gravityview.co/extensions/datatables/
  * Description:       	Display entries in a dynamic table powered by DataTables & GravityView.
- * Version:          	1.3
+ * Version:          	2.0
  * Author:            	Katz Web Services, Inc.
  * Author URI:        	http://www.katzwebservices.com
  * Text Domain:       	gv-datatables
@@ -27,21 +27,21 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-/** Constants */
-if( !defined('GV_DT_FILE') )
-	define( 'GV_DT_FILE', __FILE__ );
-if ( !defined('GV_DT_URL') )
-	define( 'GV_DT_URL', plugin_dir_url( __FILE__ ) );
-if ( !defined('GV_DT_DIR') )
-	define( 'GV_DT_DIR', plugin_dir_path( __FILE__ ) );
+/** @define "GV_DT_FILE" "./" */
+define( 'GV_DT_FILE', __FILE__ );
 
-add_action( 'plugins_loaded', 'gv_extension_featured_entry_load' );
+define( 'GV_DT_URL', plugin_dir_url( __FILE__ ) );
+
+/** @define "GV_DT_DIR" "./" */
+define( 'GV_DT_DIR', plugin_dir_path( __FILE__ ) );
+
+add_action( 'plugins_loaded', 'gv_extension_datatables_load' );
 
 /**
  * Wrapper function to make sure GravityView_Extension has loaded
  * @return void
  */
-function gv_extension_featured_entry_load() {
+function gv_extension_datatables_load() {
 
 	if( !class_exists( 'GravityView_Extension' ) ) {
 
@@ -58,9 +58,15 @@ function gv_extension_featured_entry_load() {
 
 		protected $_title = 'DataTables';
 
-		protected $_version = '1.3';
+		protected $_version = '2.0';
 
-		const version = '1.3';
+		const version = '2.0';
+
+		/**
+		 * @var int The download ID on gravityview.co
+		 * @since 1.3.2
+		 */
+		protected $_item_id = 268;
 
 		protected $_text_domain = 'gv-datatables';
 
@@ -83,13 +89,14 @@ function gv_extension_featured_entry_load() {
 
 		function backend_actions() {
 			include_once( GV_DT_DIR . 'includes/class-admin-datatables.php' );
+			include_once( GV_DT_DIR . 'includes/class-datatables-migrate.php' );
 		}
 
 		function core_actions() {
 			include_once ( GV_DT_DIR . 'includes/class-datatables-data.php' );
 
 			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-extension.php' );
-			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-tabletools.php' );
+			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-buttons.php' );
 			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-scroller.php' );
 			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-fixedheader.php' );
 			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-responsive.php' );

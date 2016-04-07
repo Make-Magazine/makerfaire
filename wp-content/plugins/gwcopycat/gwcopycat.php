@@ -3,7 +3,7 @@
 * Plugin Name: GP Copy Cat
 * Description: Allow users to copy the value of one field to another automatically or by clicking a checkbox. Is your shipping address the same as your billing? Copy cat!
 * Plugin URI: http://gravitywiz/category/perks/
-* Version: 1.3.3
+* Version: 1.3.5
 * Author: David Smith
 * Author URI: http://gravitywiz.com/
 * License: GPL2
@@ -18,8 +18,8 @@ if(!require_once(dirname($gw_perk_file) . '/safetynet.php'))
     return;
 
 class GWCopyCat extends GWPerk {
-	
-	public $version = '1.3.4';
+
+	public $version = '1.3.5';
 	protected $min_perks_version = '1.0.6';
 	protected $min_gravity_forms_version = '1.9.3';
 
@@ -85,14 +85,31 @@ class GWCopyCat extends GWPerk {
 
         foreach( $form['fields'] as &$field ) {
 
-            preg_match_all( '/copy-([0-9]+(?:.[0-9]+)?)-to-([0-9]+(?:.[0-9]+)?)/', $field['cssClass'], $matches, PREG_SET_ORDER );
+            preg_match_all( '/copy-([0-9]+(?:.[0-9]+)*)-to-([0-9]+(?:.[0-9]+)*)/', $field['cssClass'], $matches, PREG_SET_ORDER );
             if( empty( $matches ) ) {
                 continue;
             }
 
             foreach( $matches as $match ) {
-                list( $class, $source_field, $target_field ) = $match;
-                $copy_fields[ $field['id'] ][] = array( 'source' => $source_field, 'target' => $target_field );
+
+	            list( $class, $source_field, $target_field ) = $match;
+
+	            $source_form_id = $target_form_id = $form['id'];
+
+	            $source_bits = explode( '.', $source_field );
+	            if( count( $source_bits ) == 3 ) {
+					$source_form_id = array_shift( $source_bits );
+	                $source_field   = $source_bits[1] == 0 ? $source_bits[0] : implode( '.', $source_bits );
+                }
+
+	            $target_bits = explode( '.', $target_field );
+	            if( count( $target_bits ) == 3 ) {
+		            $target_form_id = array_shift( $target_bits );
+		            $target_field   = $target_bits[1] == 0 ? $target_bits[0] : implode( '.', $target_bits );
+	            }
+
+                $copy_fields[ $field['id'] ][] = array( 'source' => $source_field, 'target' => $target_field, 'sourceFormId' => $source_form_id, 'targetFormId' => $target_form_id );
+
             }
 
         }

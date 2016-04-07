@@ -2,7 +2,7 @@
 host = https://www.transifex.com
 
 [gravityview-advanced-filter.gravityview-advanced-filter]
-file_filter = languages/gravity-view-advanced-filter-<lang>.po
+file_filter = languages/gravityview-advanced-filter-<lang>.po
 source_lang = en_US
 type = PO
 lang_map = pt: pt_PT, it: it_IT, bn: bn_BD, sv: sv_SE, tr: tr_TR

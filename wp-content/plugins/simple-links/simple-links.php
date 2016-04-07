@@ -2,8 +2,8 @@
 /*
 Plugin Name: Simple Links
 Plugin URI: https://matlipe.com/simple-links-docs/
-Description: Replacement for WordPress Links Manager with many added features.
-Version: 4.1.1
+Description: Replacement for the old WordPress Links Manager with many added features.
+Version: 4.1.4
 Author: Mat Lipe
 Author URI: https://matlipe.com/
 Contributors: Mat Lipe
@@ -11,7 +11,7 @@ Text Domain: simple-links
 */
 
 
-define( 'SIMPLE_LINKS_VERSION', '4.1.1' );
+define( 'SIMPLE_LINKS_VERSION', '4.1.4' );
 
 define( 'SIMPLE_LINKS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SIMPLE_LINKS_URL', plugin_dir_url( __FILE__ ) );
@@ -34,21 +34,18 @@ spl_autoload_register( 'simple_links_autoload' );
 
 /** @var simple_links $simple_links */
 $simple_links = simple_links();
-if( is_admin() ){
-	/** @var simple_links_admin $simple_links_admin_func */
-	$simple_links_admin_func = simple_links_admin();
-}
 
 function simple_links_load(){
 	Simple_Links_Categories::get_instance();
 	Simple_Links_WP_Links::init();
 
-	add_action( 'init', array( 'Simple_Link', 'register_sl_post_type' ) );
+	add_action( 'init', array( 'Simple_Link', 'register_post_type' ) );
 
 	if( is_admin() ){
 		Simple_Links_Settings::init();
 		Simple_Links_Sort::init();
 		Simple_Links_Visual_Shortcodes::init();
+		simple_links_admin::init();
 	}
 }
 add_action( 'plugins_loaded', 'simple_links_load' );

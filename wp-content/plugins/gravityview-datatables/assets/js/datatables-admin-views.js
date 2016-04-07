@@ -25,7 +25,7 @@
 				.on( 'change', gvDataTablesExt.toggleMetabox )
 				.change();
 
-			$('#datatables_settingstabletools, #datatables_settingsscroller')
+			$('#datatables_settingsbuttons, #datatables_settingsscroller')
 				.on( 'change', gvDataTablesExt.showGroupOptions )
 				.change();
 

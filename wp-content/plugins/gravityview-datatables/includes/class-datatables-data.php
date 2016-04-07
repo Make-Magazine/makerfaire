@@ -88,11 +88,12 @@ class GV_Extension_DataTables_Data {
 		$plugins = array(
 			'gf' => '/gravityforms/gravityforms.php',
 			'gv' => '/gravityview/gravityview.php',
+			'gv_extension_datatables_load' => '/gravityview-datatables/datatables.php',
 			'gv_extension_advanced_filtering_load' => '/gravityview-advanced-filter/advanced-filter.php',
 			'gv_extension_az_entry_filtering_load' => '/gravityview-az-filters/gravityview-az-filters.php',
 			'gv_extension_featured_entries_load' => '/gravityview-featured-entries/featured-entries.php',
 			'gv_ratings_reviews_loader' => '/gravityview-ratings-reviews/ratings-reviews.php',
-			'gv_extension_sharing_load' => '/gravityview-sharing-seo/sharing-seo.php',
+			'gv_extension_sharing_load' => '/gravityview-sharing-seo/sharing-seo.php'
 		);
 
 		// Load Field files automatically
@@ -108,6 +109,7 @@ class GV_Extension_DataTables_Data {
 						GravityView_Plugin::getInstance();
 						GravityView_Post_Types::init_post_types();
 						GravityView_Post_Types::init_rewrite();
+						gravityview_register_gravityview_widgets(); // todo: after refactoring the GV widgets register remove this
 						break;
 					default:
 						if( function_exists( $function_name ) ) {
@@ -152,27 +154,54 @@ class GV_Extension_DataTables_Data {
 		require( $bootstrap_dir . '/wp-load.php' );
 
 		// Only load what we need.
-		if(!function_exists('get_locale')) {
-			require_once( ABSPATH . WPINC . '/locale.php' ); // is_rtl()
-			require_once( ABSPATH . WPINC . '/class-wp-walker.php' ); // Needed for GF
-			require_once( ABSPATH . WPINC . '/plugin.php' );
-			require_once( ABSPATH . WPINC . '/load.php' );
-			require_once( ABSPATH . WPINC . '/l10n.php' );
-			require_once( ABSPATH . WPINC . '/general-template.php' );
-			require_once( ABSPATH . WPINC . '/link-template.php' );
-			require_once( ABSPATH . WPINC . '/formatting.php' );
-			require_once( ABSPATH . WPINC . '/kses.php' );
-			require_once( ABSPATH . WPINC . '/pluggable.php' );
-			require_once( ABSPATH . WPINC . '/capabilities.php' );
-			require_once( ABSPATH . WPINC . '/user.php');
-			require_once( ABSPATH . WPINC . '/meta.php' );
-			require_once( ABSPATH . WPINC . '/session.php' );
-			require_once( ABSPATH . WPINC . '/shortcodes.php' );
-			require_once( ABSPATH . WPINC . '/theme.php' );
-			require_once( ABSPATH . WPINC . '/template.php' );
-			require_once( ABSPATH . WPINC . '/widgets.php' );
-			require_once( ABSPATH . WPINC . '/rewrite.php' );
-			require_once( ABSPATH . WPINC . '/query.php' );
+		$function_files = array(
+			'get_locale' => 'l10n.php',
+			'get_bloginfo' => 'general-template.php',
+			'site_url' => 'link-template.php',
+			'add_filter' => 'plugin.php',
+			'wp_set_lang_dir' => 'load.php',
+			'wptexturize' => 'formatting.php',
+			'wp_kses' => 'kses.php',
+			'wp_get_current_user' => 'pluggable.php',
+			'current_user_can' => 'capabilities.php',
+			'get_current_user_id' => 'user.php',
+			'add_metadata' => 'meta.php',
+			'add_shortcode' => 'shortcodes.php',
+			'get_theme_support' => 'theme.php',
+			'get_query_template' => 'template.php',
+			'add_rewrite_rule' => 'rewrite.php',
+			'get_query_var' => 'query.php',
+			'register_widget' => 'widgets.php',
+			'rest_cookie_collect_status' => 'rest-api.php', // Since 4.4
+			'media' => 'media.php' //since dt 2.0
+		);
+
+		foreach ( $function_files as $function_name => $function_file ) {
+			if ( ! function_exists( $function_name ) && file_exists( ABSPATH . WPINC . '/' . $function_file ) ) {
+				require_once( ABSPATH . WPINC . '/' .$function_file );
+			}
+		}
+
+		$class_files = array(
+			'Walker' => 'class-wp-walker.php',
+			'WP_Locale' => 'locale.php',  // is_rtl()
+			'WP_Post' => 'class-wp-post.php',
+			'WP_Widget' => 'class-wp-widget.php',
+			'WP_Rewrite' => 'class-wp-rewrite.php',
+			'WP_User' => 'class-wp-user.php',
+			'WP_Roles' => 'class-wp-roles.php',
+			'WP_Role' => 'class-wp-role.php',
+			'WP_Session_Tokens' => 'session.php',
+		);
+
+		/**
+		 * WP 4.4 refactored the classes to be in their own files
+		 * If the classes didn't load class, it's because we're running 4.4
+		 */
+		foreach ( $class_files as $class_name => $class_file ) {
+			if( ! class_exists( $class_name ) && file_exists( ABSPATH . WPINC . '/' . $class_file ) ) {
+				require_once( ABSPATH . WPINC . '/' .$class_file );
+			}
 		}
 
 		// Setup WP_PLUGIN_URL, WP_PLUGIN_DIR, etc.
@@ -300,6 +329,12 @@ class GV_Extension_DataTables_Data {
 			exit( false );
 		}
 
+		/**
+		 * @filter `gravityview/datatables/json/header/content_length` Enable or disable the Content-Length header on the AJAX JSON response
+		 * @param boolean $has_content_length true by default
+		 */
+		$has_content_length = apply_filters( 'gravityview/datatables/json/header/content_length', true );
+
 		// Prevent emails from being encrypted
 		add_filter('gravityview_email_prevent_encrypt', '__return_true' );
 
@@ -315,9 +350,10 @@ class GV_Extension_DataTables_Data {
 		$_GET = json_decode( stripslashes( $_POST['getData'] ), true );
 
 		$view_id = intval( $_POST['view_id'] );
+		$post_id = intval( $_POST['post_id'] );
 
 		// create the view object based on the post_id
-		$GravityView_View_Data = GravityView_View_Data::getInstance( (int)$_POST['post_id'] );
+		$GravityView_View_Data = GravityView_View_Data::getInstance( $post_id );
 
 		// get the view data
 		$view_data = $GravityView_View_Data->get_view( $view_id );
@@ -337,7 +373,8 @@ class GV_Extension_DataTables_Data {
 
 		// check for search
 		if( !empty( $_POST['search']['value'] ) ) {
-			$atts['search_value'] = esc_attr( stripslashes_deep( $_POST['search']['value'] ) );
+			// inject DT search
+			add_filter( 'gravityview_fe_search_criteria', array( $this, 'add_global_search' ), 5, 1 );
 		}
 
 		// Paging/offset
@@ -360,6 +397,14 @@ class GV_Extension_DataTables_Data {
 
 		$gravityview_view = new GravityView_View( $view_data );
 
+		// TODO: Placeholder to get Ratings & Reviews links working. May not all be necessary.
+		global $post;
+		$post = get_post( $post_id );
+		$fe = GravityView_frontend::getInstance();
+		$fe->parse_content();
+		$fe->set_context_view_id( $view_id );
+		$fe->setPostId( $post_id );
+		$fe->setGvOutputData( $GravityView_View_Data );
 
 		if( class_exists( 'GravityView_Cache' ) ) {
 
@@ -386,7 +431,12 @@ class GV_Extension_DataTables_Data {
 				// update DRAW (mr DataTables is very sensitive!)
 				$temp = json_decode( $output, true );
 				$temp['draw'] = intval( $_POST['draw'] );
-				$output = json_encode($temp);
+				$output = function_exists( 'wp_json_encode') ? wp_json_encode( $temp ) : json_encode( $temp );
+
+				if( $has_content_length ){
+					// Fix strange characters before JSON response because of "Transfer-Encoding: chunked" header
+					@header( 'Content-Length: ' . strlen( $output ) );
+				}
 
 				exit( $output );
 			}
@@ -406,11 +456,11 @@ class GV_Extension_DataTables_Data {
 
 		do_action( 'gravityview_log_debug', '[DataTables] Ajax request answer', $output );
 
-		$json = json_encode( $output );
+		$json = function_exists( 'wp_json_encode') ? wp_json_encode( $output ) : json_encode( $output );
 
 		if( class_exists( 'GravityView_Cache' ) ) {
 
-			do_action( 'gravityview_log_debug', '[DataTables] Setting cache' );
+			do_action( 'gravityview_log_debug', '[DataTables] Setting cache', $json );
 
 			// Cache results
 			$Cache->set( $json, 'datatables_output' );
@@ -418,9 +468,48 @@ class GV_Extension_DataTables_Data {
 		}
 
 		// End prevent error output
-		ob_end_clean();
+		$errors = ob_get_clean();
+
+		if( ! empty( $errors ) ) {
+			do_action( 'gravityview_log_error', __METHOD__ . ' Errors generated during DataTables response', $errors );
+		}
+
+		if( $has_content_length ) {
+			// Fix strange characters before JSON response because of "Transfer-Encoding: chunked" header
+			@header( 'Content-Length: ' . strlen( $json ) );
+		}
 
 		exit( $json );
+	}
+
+	/**
+	 * Add the generic search to the global get_entries query
+	 *
+	 * @since 1.3.3
+	 *
+	 * @param array $search_criteria Search Criteria
+	 *
+	 * @return mixed
+	 */
+	function add_global_search( $search_criteria ) {
+
+		if( empty( $_POST['search']['value'] ) ) {
+			return $search_criteria;
+		}
+
+		$words = explode( ' ', stripslashes_deep( $_POST['search']['value'] ) );
+
+		$words = array_filter( $words );
+
+		foreach ( $words as $word ) {
+			$search_criteria['field_filters'][] = array(
+				'key' => null, // The field ID to search
+				'value' => $word, // The value to search
+				'operator' => 'contains', // What to search in. Options: `is` or `contains`
+			);
+		}
+
+		return $search_criteria;
 	}
 
 	/**
@@ -435,6 +524,8 @@ class GV_Extension_DataTables_Data {
 	 */
 	function get_output_data( $view_entries, $view_data ) {
 
+		GravityView_View::getInstance()->setEntries( $view_entries );
+
 		// build output data
 		$data = array();
 		if( $view_entries['count'] !== 0 ) {
@@ -443,9 +534,13 @@ class GV_Extension_DataTables_Data {
 			foreach( $view_entries['entries'] as $entry ) {
 				$temp = array();
 
+				/** @since 1.4 */
+				GravityView_View::getInstance()->setCurrentEntry( $entry );
+
 				// Loop through each column and set the value of the column to the field value
 				if( !empty(  $view_data['fields']['directory_table-columns'] ) ) {
 					foreach( $view_data['fields']['directory_table-columns'] as $field_settings ) {
+						GravityView_View::getInstance()->setCurrentField( $field_settings );
 						$temp[] = GravityView_API::field_value( $entry, $field_settings );
 					}
 				}
@@ -599,6 +694,10 @@ class GV_Extension_DataTables_Data {
 
 			// Otherwise, load default English text with filters.
 			$language = array(
+				/**
+				 * @filter `gravityview_datatables_loading_text` Modify the text shown when DataTables is loaded
+				 * @param string $loading_text Default: Loading data...
+				 */
 				'processing' => apply_filters( 'gravityview_datatables_loading_text', __( 'Loading data&hellip;', 'gv-datatables' ) ),
 				'emptyTable' => __( 'No entries match your request.', 'gv-datatables' )
 			);
@@ -606,6 +705,11 @@ class GV_Extension_DataTables_Data {
 		}
 
 		/**
+		 * @filter `gravityview/datatables/config/language` Override language settings
+		 * @param array $language The language settings array.\n
+		 * [See a sample file with all available translations and their matching keys](https://github.com/DataTables/Plugins/blob/master/i18n/English.lang)
+		 * @param array $translations The translations mapping array from `GV_Extension_DataTables_Data::get_translations()`
+		 * @param string $locale The blog's locale, fetched from `get_locale()`
 		 * Override language settings
 		 *
 		 * @since 1.2.2
@@ -715,34 +819,25 @@ class GV_Extension_DataTables_Data {
 	}
 
 	/**
-	 * Enqueue Scripts and Styles for DataTable View Type
+	 * Generate the script configuration array
 	 *
-	 * @filter gravityview_datatables_loading_text Modify the text shown while the DataTable is loading
+	 * @since 1.3.3
+	 *
+	 * @param WP_Post $post Current View or post/page where View is embedded
+	 * @param array $views Array of views fetched by gravityview_get_current_views()
+	 *
+	 * @return array Array of settings formatted as DataTables options array. {@see https://datatables.net/reference/option/}
 	 */
-	function add_scripts_and_styles() {
-		//global $gravityview_view;
+	private function get_datatables_script_configuration( $post, $views ) {
 
-		$post = get_post();
-
-		if( !is_a( $post, 'WP_Post' ) ) {
-			do_action( 'gravityview_log_debug', 'GV_Extension_DataTables_Data[add_scripts_and_styles] not a post...leaving', $post );
-			return;
-		}
-
-		// Get all the views on the current post/page/view
-		$views = gravityview_get_current_views();
-		do_action( 'gravityview_log_debug', 'GV_Extension_DataTables_Data[add_scripts_and_styles] Get current views. Found:', $views );
-
-		// Check whether there's a view with a datatables template
-		$is_datatables = false;
 		$dt_configs = array();
 
 		foreach ( $views as $key => $view_data ) {
+
+			// Not a DataTables View; don't generate configuration
 			if( empty( $view_data['template_id'] ) || 'datatables_table' !== $view_data['template_id'] ) {
 				continue;
 			}
-
-			$is_datatables = true;
 
 			$ajax_settings = array(
 				'action' => 'gv_datatables_data',
@@ -774,7 +869,6 @@ class GV_Extension_DataTables_Data {
 				$dt_config['pageLength'] = intval( $view_data['atts']['page_size'] );
 			}
 
-
 			/**
 			 * Set the columns to be displayed
 			 *
@@ -783,12 +877,33 @@ class GV_Extension_DataTables_Data {
 			$columns = array();
 			if( !empty( $view_data['fields']['directory_table-columns'] ) ) {
 
+				$form_id = gravityview_get_form_id( $view_data['id'] );
+
+				$form = GFAPI::get_form( $form_id );
+
 				foreach( $view_data['fields']['directory_table-columns'] as $field ) {
-					$columns[] = array(
+
+					$field_column = array(
 						'name' => 'gv_' . $field['id'],
 						'width' => $this->get_column_width( $field ),
-						// TODO: Add searchable limits here to only make Search Bar fields searchable, if widget exists. https://datatables.net/reference/option/columns.searchable
 					);
+
+					/**
+					 * Check if fields are sortable. If not, set `orderable` to false.
+					 * @since 1.3.3
+					 */
+					if( $form && class_exists('GravityView_Fields') && class_exists('GFFormsModel') ) {
+						$gf_field = GFFormsModel::get_field( $form, $field['id'] );
+						$type = $gf_field ? $gf_field->type : $field['id'];
+						$gv_field = GravityView_Fields::get( $type );
+
+						// If the field does exist, use the field's sortability setting
+						if( $gv_field && ! $gv_field->is_sortable ) {
+							$field_column['orderable'] = false;
+						}
+					}
+
+					$columns[] = $field_column;
 				}
 
 				$dt_config['columns'] = $columns;
@@ -796,16 +911,24 @@ class GV_Extension_DataTables_Data {
 
 			// set default order
 			if( !empty( $view_data['atts']['sort_field'] ) ) {
-				foreach ( $columns as $key => $column ) {
+				foreach ( $columns as $k => $column ) {
 					if( $column['name'] === 'gv_'. $view_data['atts']['sort_field'] ) {
 						$dir = !empty( $view_data['atts']['sort_direction'] ) ? $view_data['atts']['sort_direction'] : 'asc';
-						$dt_config['order'] = array( array( $key, strtolower( $dir ) ) );
+						$dt_config['order'] = array( array( $k, strtolower( $dir ) ) );
 					}
 				}
 			}
 
-			// filter init DataTables options
+			/**
+			 * @filter `gravityview_datatables_js_options` Modify the settings used to render DataTables
+			 * @see https://datatables.net/reference/option/
+			 * @param array $dt_config The configuration for the current View
+			 * @param int $view_id The ID of the View being configured
+			 * @param WP_Post $post Current View or post/page where View is embedded
+			 */
 			$dt_config = apply_filters( 'gravityview_datatables_js_options', $dt_config, $view_data['id'], $post );
+
+			unset( $form, $form_id, $dir, $field, $columns, $column );
 
 			$dt_configs[] = $dt_config;
 
@@ -813,23 +936,52 @@ class GV_Extension_DataTables_Data {
 
 
 		// is the View requested a Datatables view ?
-		if( empty( $is_datatables ) ) {
+		if( empty( $dt_configs ) ) {
 			do_action( 'gravityview_log_debug', 'GV_Extension_DataTables_Data[add_scripts_and_styles] DataTables view not requested.');
+		}
+
+		return $dt_configs;
+	}
+
+	/**
+	 * Enqueue Scripts and Styles for DataTable View Type
+	 *
+	 * @filter gravityview_datatables_loading_text Modify the text shown while the DataTable is loading
+	 */
+	function add_scripts_and_styles() {
+		//global $gravityview_view;
+
+		$post = get_post();
+
+		if( !is_a( $post, 'WP_Post' ) ) {
+			do_action( 'gravityview_log_debug', 'GV_Extension_DataTables_Data[add_scripts_and_styles] not a post...leaving', $post );
 			return;
 		}
 
+		// Get all the views on the current post/page/view
+		$views = gravityview_get_current_views();
+
+		do_action( 'gravityview_log_debug', 'GV_Extension_DataTables_Data[add_scripts_and_styles] Get current views. Found:', $views );
+
+		$dt_configs = $this->get_datatables_script_configuration( $post, $views );
+
+		if( empty( $dt_configs ) ) {
+			return;
+		}
 
 		do_action('gravityview_log_debug', 'GV_Extension_DataTables_Data[add_scripts_and_styles] DataTables configuration: ', $dt_configs );
 
 		$script_debug = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
-		$path = plugins_url( 'assets/datatables/media/', GV_DT_FILE );
+		$path = plugins_url( 'assets/datatables/media/js/jquery.dataTables'.$script_debug.'.js', GV_DT_FILE );
 
 		/**
-		 * Include DataTables core script
-		 * Use your own DataTables core script by using the `gravityview_datatables_script_src` filter
+		 * @filter `gravityview_datatables_script_src` Modify the DataTables core script used
+		 * @param string $path Full URL to the jQuery DataTables file
 		 */
-		wp_enqueue_script( 'gv-datatables', apply_filters( 'gravityview_datatables_script_src', $path.'js/jquery.dataTables'.$script_debug.'.js' ), array( 'jquery' ), GV_Extension_DataTables::version, true );
+		$path = apply_filters( 'gravityview_datatables_script_src', $path );
+
+		wp_enqueue_script( 'gv-datatables', $path, array( 'jquery' ), GV_Extension_DataTables::version, true );
 
 		/**
 		 * Use your own DataTables stylesheet by using the `gravityview_datatables_style_src` filter

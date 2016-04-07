@@ -10,9 +10,6 @@
  *
  * @since   2.5.3
  *
- *
- * @todo    Remove SL_post_type_tax dependencies
- *
  */
 class Simple_Link {
 	const POST_TYPE = 'simple_link';
@@ -35,17 +32,15 @@ class Simple_Link {
 	 *
 	 * Registers the simple_link post type
 	 *
-	 * @todo change to register_post_type once dependcies are fixed
-	 *
 	 * @return void
 	 */
-	public static function register_sl_post_type(){
+	public static function register_post_type(){
 
 		$single = __( 'Link', 'simple-links' );
 		$plural = __( 'Links', 'simple-links' );
 
 		$args = array(
-			'menu_icon'            => SIMPLE_LINKS_IMG_DIR . 'menu-icon.png',
+			'menu_icon'            => 'dashicons-admin-links',
 			'labels'               => array(
 				'name'                       => __( 'Simple Links', 'simple-links' ),
 				'singular_name'              => $single,
@@ -69,8 +64,8 @@ class Simple_Link {
 				'not_found' => sprintf( __('No %s found.', 'simple-links' ), $plural ),
 				'not_found_in_trash' => sprintf( __('No %s found in Trash.', 'simple-links' ), $plural ),
 			),
-			'hierachical'          => false,
-			'supports'             => array(
+			'hierarchical'          => false,
+			'supports'              => array(
 				'thumbnail',
 				'title',
 				'page-attributes',

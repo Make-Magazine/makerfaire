@@ -3,7 +3,7 @@
  * Plugin Name: Gravity Perks
  * Plugin URI: http://gravitywiz.com/2012/03/03/what-is-a-perk/?from=perks
  * Description: Effortlessly install and manage small functionality enhancements (aka "perks") for Gravity Forms.
- * Version: 1.2.9.1
+ * Version: 1.2.9.3
  * Author: David Smith
  * Author URI: http://gravitywiz.com/
  * License: GPL2
@@ -26,7 +26,7 @@ add_action( 'plugins_loaded', array( 'GravityPerks', 'init_perk_as_plugin_functi
 
 class GravityPerks {
 
-    public static $version = '1.2.9.1';
+    public static $version = '1.2.9.3';
     public static $tooltip_template = '<h6>%s</h6> %s';
 
     private static $basename;
@@ -932,11 +932,11 @@ class GravityPerks {
     public static function add_menu_item($addon_menus) {
 
         $menu = array(
-            'label' => __('Perks', 'gravityperks'),
-            'permission' => 'administrator',
-            'name' => 'gwp_perks',
-            'callback' => array('GWPerks', 'load_page')
-            );
+            'label'      => __('Perks', 'gravityperks'),
+            'permission' => 'update_plugins',
+            'name'       => 'gwp_perks',
+            'callback'   => array('GWPerks', 'load_page')
+        );
 
         $addon_menus[] = $menu;
 

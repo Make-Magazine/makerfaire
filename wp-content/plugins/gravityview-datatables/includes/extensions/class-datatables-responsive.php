@@ -15,8 +15,10 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 	 */
 	function add_html_class( $classes = '' ) {
 
+		// we don't pass the 'responsive' class here to prevent enabling the Responsive extension too soon.
+		
 		if( $this->is_enabled() ) {
-			$classes .= ' responsive nowrap';
+			$classes .= '  nowrap';
 		}
 
 		return $classes;
@@ -76,41 +78,46 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 	function add_scripts( $dt_configs, $views, $post ) {
 
 		$script = false;
+		$responsive_configs = array();
 
 		foreach ( $views as $key => $view_data ) {
-			if( !$this->is_datatables( $view_data ) || !$this->is_enabled( $view_data['id'] ) ) { continue; }
-			$script = true;
+
+			if( !$this->is_datatables( $view_data ) ) { continue; }
+
+			// we need to process all the DT views to be consistent with other DT configurations
+			if( $this->is_enabled( $view_data['id'] ) ) {
+				$responsive_configs[] = array( 'responsive' => 1, 'hide_empty' => $view_data['atts']['hide_empty'] );
+				$script = true;
+			} else {
+				$responsive_configs[] = array( 'responsive' => 0 );
+			}
+
 		}
 
 		if( !$script ) { return; }
 
 		$path = plugins_url( 'assets/datatables-responsive/', GV_DT_FILE );
+		$script_debug = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
 		/**
 		 * Include Responsive core script (DT plugin)
 		 * Use your own DataTables core script by using the `gravityview_dt_responsive_script_src` filter
 		 */
-		wp_enqueue_script( 'gv-dt-responsive', apply_filters( 'gravityview_dt_responsive_script_src', $path.'js/dataTables.responsive.js' ), array( 'jquery', 'gv-datatables' ), GV_Extension_DataTables::version, true );
+		wp_enqueue_script( 'gv-dt-responsive', apply_filters( 'gravityview_dt_responsive_script_src', $path .'js/dataTables.responsive'. $script_debug .'.js' ), array( 'jquery', 'gv-datatables' ), GV_Extension_DataTables::version, true );
 
 		/**
 		 * Use your own Responsive stylesheet by using the `gravityview_dt_responsive_style_src` filter
 		 */
-		wp_enqueue_style( 'gv-dt_responsive_style', apply_filters( 'gravityview_dt_responsive_style_src', $path.'css/dataTables.responsive.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version );
+		wp_enqueue_style( 'gv-dt_responsive_style', apply_filters( 'gravityview_dt_responsive_style_src', $path.'css/responsive.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version );
+
+		/**
+		 * We need to init the DT responsive extension after DataTables so we could tweak the child render row
+		 * @since 1.3.2
+		 */
+		wp_localize_script( 'gv-dt-responsive', 'gvDTResponsive', $responsive_configs );
 
 	}
 
-
-	/**
-	 * Responsive add specific config data based on admin settings
-	 */
-	function add_config( $dt_config, $view_id, $post  ) {
-
-		if( $this->is_enabled( $view_id ) ) {
-			$dt_config['responsive'] = true;
-		}
-
-		return $dt_config;
-	}
 
 }
 

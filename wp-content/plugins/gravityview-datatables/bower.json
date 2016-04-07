@@ -14,17 +14,26 @@
     "bower_components",
     "assets/",
     "assets/jquery",
-    "test",
-    "tests"
+    "test/",
+    "tests/",
+    "**/test/.*",
+    "**/tests/.*",
+    "**/examples/.*",
+    "**/docs/.*",
+    "docs/.*",
+    "docs/"
   ],
   "dependencies": {
     "datatables": ">=1.10.4",
     "datatables-tabletools": ">=2.2.3",
-    "datatables-fixedheader": "~2.1.2",
-    "datatables-fixedcolumns": "~3.0.2",
-    "datatables-responsive": "~1.0.2",
-    "datatables-scroller": "~1.2.2",
-    "datatables-src": "git://github.com/DataTables/DataTablesSrc.git#master"
+    "datatables-buttons": ">=1.0.3",
+    "datatables-fixedheader": ">=2.1.2",
+    "datatables-fixedcolumns": ">=3.0.2",
+    "datatables-responsive": ">=1.0.2",
+    "datatables-scroller": ">=1.2.2",
+    "datatables-src": "git://github.com/DataTables/DataTablesSrc.git#master",
+    "pdfmake": "~0.1.20",
+    "jszip": "Stuk/jszip#~2.5.0"
   },
   "devDependencies": {}
 }

@@ -331,26 +331,24 @@ class SL_links_main extends WP_Widget {
 
 		do_action( 'simple_links_widget_pre_render', $args, $instance );
 
-		extract( $args );
-
 		//Filter for Changing the widget args
 		$args = apply_filters( 'simple_links_widget_args', $args );
-		$args = apply_filters( 'simple_links_widget_args_' . $widget_id, $args );
+		$args = apply_filters( 'simple_links_widget_args_' . $args[ 'widget_id' ], $args );
 
-        $instance[ 'id' ] = $args[ 'id' ];
+        $instance[ 'id' ] = $args[ 'widget_id' ] . '-list';
 
 		//Call this filter to change the Widgets Settings Pre Compile
 		$instance = apply_filters( 'simple_links_widget_settings', $instance, $args );
-		$instance = apply_filters( 'simple_links_widget_settings_' . $widget_id, $instance );
+		$instance = apply_filters( 'simple_links_widget_settings_' . $args[ 'widget_id' ] , $instance );
 
 
 		//--------------- Starts the Output --------------------------------------
 
-		$output = $before_widget;
+		$output = $args[ 'before_widget' ];
 		//Add the title
 		if( ! empty( $instance[ 'title' ] ) ){
 			$instance[ 'title' ] = apply_filters( 'widget_title', $instance[ 'title' ], $instance, $args );
-			$output .= $before_title . $instance[ 'title' ] . $after_title;
+			$output .= $args[ 'before_title'] . $instance[ 'title' ] . $args[ 'after_title'];
 		}
 
         ;
@@ -360,10 +358,10 @@ class SL_links_main extends WP_Widget {
 		$output .= $links->output();
 
 		//Close the Widget
-		$output .= $after_widget;
+		$output .= $args[ 'after_widget' ];
 
 		//The output can be filtered here
-		$output = apply_filters( 'simple_links_widget_output_' . $widget_id, $output, $links->links, $instance, $args );
+		$output = apply_filters( 'simple_links_widget_output_' . $args[ 'widget_id' ], $output, $links->links, $instance, $args );
 		echo apply_filters( 'simple_links_widget_output', $output, $links->links, $instance, $args );
 	}
 

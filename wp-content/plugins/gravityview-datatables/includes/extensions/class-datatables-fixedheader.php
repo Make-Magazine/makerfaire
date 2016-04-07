@@ -100,8 +100,8 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 
 			$path = plugins_url( 'assets/datatables-fixedheader/', GV_DT_FILE );
 
-			wp_enqueue_script( 'gv-dt-fixedheader', apply_filters( 'gravityview_dt_fixedheader_script_src', $path.'js/dataTables.fixedHeader.js' ), array( 'jquery', 'gv-datatables' ), GV_Extension_DataTables::version, true );
-			wp_enqueue_style( 'gv-dt_fixedheader_style', apply_filters( 'gravityview_dt_fixedheader_style_src', $path.'css/dataTables.fixedHeader.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
+			wp_enqueue_script( 'gv-dt-fixedheader', apply_filters( 'gravityview_dt_fixedheader_script_src', $path.'js/dataTables.fixedHeader'.$script_debug.'.js' ), array( 'jquery', 'gv-datatables' ), GV_Extension_DataTables::version, true );
+			wp_enqueue_style( 'gv-dt_fixedheader_style', apply_filters( 'gravityview_dt_fixedheader_style_src', $path.'css/fixedHeader.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
 
 		}
 
@@ -110,7 +110,7 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 			$path = plugins_url( 'assets/datatables-fixedcolumns/', GV_DT_FILE );
 
 			wp_enqueue_script( 'gv-dt-fixedcolumns', apply_filters( 'gravityview_dt_fixedcolumns_script_src', $path.'js/dataTables.fixedColumns'.$script_debug.'.js' ), array( 'jquery', 'gv-datatables' ), GV_Extension_DataTables::version, true );
-			wp_enqueue_style( 'gv-dt_fixedcolumns_style', apply_filters( 'gravityview_dt_fixedcolumns_style_src', $path.'css/dataTables.fixedColumns.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
+			wp_enqueue_style( 'gv-dt_fixedcolumns_style', apply_filters( 'gravityview_dt_fixedcolumns_style_src', $path.'css/fixedColumns.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
 
 		}
 
@@ -124,12 +124,6 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 	 * FixedColumns add specific config data based on admin settings
 	 */
 	function add_config( $dt_config, $view_id, $post  ) {
-
-		$settings = get_post_meta( $view_id, '_gravityview_datatables_settings', true );
-
-		if( empty( $settings['fixedcolumns'] ) ) {
-			return $dt_config;
-		}
 
 		// FixedColumns need scrollX to be set
 		$dt_config['scrollX'] = true;

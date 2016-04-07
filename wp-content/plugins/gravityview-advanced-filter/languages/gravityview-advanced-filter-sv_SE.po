@@ -1,0 +1,107 @@
+# Copyright (C) 2016 Katz Web Services, Inc.
+# This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView Advanced Filter\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
+"PO-Revision-Date: 2016-01-21 18:11+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>\n"
+"Language-Team: Swedish (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/sv/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: grunt-wp-i18n 0.5.3\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Textdomain-Support: yes\n"
+
+#: advanced-filter.php:353 partials/metabox.php:2
+msgid "Advanced Filter"
+msgstr ""
+
+#: advanced-filter.php:355
+msgid ""
+"Limit what entries are visible based on entry values. The entries are "
+"filtered before the View is displayed. When users perform a search, results "
+"will first be filtered by these settings."
+msgstr ""
+
+#: advanced-filter.php:356
+msgid "Limit to Logged-in User Entries"
+msgstr ""
+
+#: advanced-filter.php:357
+msgid ""
+"To limit entries to those created by the current user, select \"Created "
+"By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
+msgstr ""
+
+#: advanced-filter.php:358
+msgid ""
+"If you want to limit entries to those created by the current user, but allow"
+" the administrators to view all the entries, select \"Logged-in User "
+"(disabled for admins)\" from the drop-down menu."
+msgstr ""
+
+#: advanced-filter.php:578
+msgid "Created By"
+msgstr ""
+
+#: advanced-filter.php:582
+msgid "Logged-in User (disabled for Admins)"
+msgstr ""
+
+#: advanced-filter.php:586
+msgid "Logged-in User"
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:181
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" "
+"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:188
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" "
+"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
+"href=\"%4$s\">update now</a>."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:332
+msgid "You do not have permission to install plugin updates"
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:332
+msgid "Error"
+msgstr "Fel"
+
+#: lib/class-gravityview-extension.php:351
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr "Kunde inte aktivera tillägget %s; GravityView är inte aktivt."
+
+#: lib/class-gravityview-extension.php:355
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr "Tillägget %s kräver GravityView version %s eller senare."
+
+#: lib/class-gravityview-extension.php:359
+msgid ""
+"The %s Extension requires PHP Version %s or newer. Please ask your host to "
+"upgrade your server's PHP."
+msgstr ""
+
+#: partials/metabox.php:4
+msgid "You must save the View before you can configure Advanced Filters."
+msgstr ""
+
+#: partials/metabox.php:5
+msgid "Advanced Filtering requires Javascript to be enabled."
+msgstr ""

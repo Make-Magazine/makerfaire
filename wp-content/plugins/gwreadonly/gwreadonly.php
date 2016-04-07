@@ -3,7 +3,7 @@
 * Plugin Name: GP Read Only
 * Description: Mark your form fields as read-only to allow users to see field data but not modify it.
 * Plugin URI: http://gravitywiz.com/
-* Version: 1.2.8
+* Version: 1.2.9
 * Author: David Smith
 * Author URI: http://gravitywiz.com/
 * License: GPL2
@@ -19,7 +19,7 @@ if(!require_once(dirname($gw_perk_file) . '/safetynet.php'))
 
 class GWReadOnly extends GWPerk {
 
-    public $version = '1.2.8';
+    public $version = '1.2.9';
     protected $min_gravity_perks_version = '1.0.beta3';
     protected $min_gravity_forms_version = '1.6.11';
     protected $min_wp_version = '3.0';
@@ -35,14 +35,14 @@ class GWReadOnly extends GWPerk {
 		// Filters
 		add_filter( 'gform_field_input', array( $this, 'read_only_input' ), 11, 5 );
 
-        add_action( 'gform_pre_process', array( $this, 'process_hidden_captures' ) );
+        add_filter( 'gform_pre_process', array( $this, 'process_hidden_captures' ) );
 
 	}
 
 	public function field_settings_ui() {
 		?>
 
-		<li class="<?php echo $this->key('field_setting'); ?> field_setting">
+		<li class="<?php echo $this->key('field_setting'); ?> field_setting" style="display:none;">
 			<input type="checkbox" id="<?php echo $this->key('field_checkbox'); ?>" value="1" onclick="SetFieldProperty('<?php echo $this->key('enable'); ?>', this.checked)">
 
 			<label class="inline" for="<?php echo $this->key('field_checkbox'); ?>">
@@ -95,6 +95,10 @@ class GWReadOnly extends GWPerk {
 	}
 
 	public function read_only_input( $input_html, $field, $value, $entry_id, $form_id ) {
+
+		if( $field->is_entry_detail() ) {
+			return $input_html;
+		}
 
         $input_type = RGFormsModel::get_input_type($field);
         if( in_array( $input_type, $this->unsupported_field_types ) || ! rgar( $field, $this->key( 'enable' ) ) ) {
@@ -176,6 +180,7 @@ class GWReadOnly extends GWPerk {
 
         }
 
+        return $form;
     }
 
     public function get_field_value( $field ) {

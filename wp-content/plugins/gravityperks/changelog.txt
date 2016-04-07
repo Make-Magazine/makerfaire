@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.2.9.3
+
+    - Added support for getting perk file name based on perk name; required for older perks moving to GP_Bootstrap
+
+## 1.2.9.2
+
+    - Updated "Perks" menu permission from "administrator" to "update_plugins"
+
 ## 1.2.9.1
 
     - Updated Manage Perks page to automatically hiding Install Perks tab when user does not have ability to install plugins

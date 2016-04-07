@@ -1,22 +1,22 @@
 {
   "name": "datatables-fixedheader",
-  "version": "2.1.2",
   "main": [
     "js/dataTables.fixedHeader.js",
-    "css/dataTables.fixedHeader.css"
+    "css/fixedHeader.dataTables.scss"
   ],
   "dependencies": {
     "jquery": ">=1.7.0",
-    "datatables": ">=1.9.0"
+    "datatables": ">=1.10.7"
   },
   "homepage": "https://github.com/DataTables/FixedHeader",
-  "_release": "2.1.2",
+  "version": "3.1.1",
+  "_release": "3.1.1",
   "_resolution": {
     "type": "version",
-    "tag": "2.1.2",
-    "commit": "1b7ce4cfe953baebf36f8f9389caa393ca14b436"
+    "tag": "3.1.1",
+    "commit": "20376190bc40d55a1dbdf44959c82ac8b473a3f8"
   },
   "_source": "git://github.com/DataTables/FixedHeader.git",
-  "_target": "~2.1.2",
+  "_target": ">=2.1.2",
   "_originalSource": "datatables-fixedheader"
 }

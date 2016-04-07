@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.1.7
+
+    - Fixed issue where Survey fields were not displayed correctly in preview
+
+## 1.1.6
+
+    - Fixed issue where fields with inputs were reset when merge tags were updated for HTML fields in form editor
+
 ## 1.1.5
 
     - Added support for preview submission when continuing from a saved form (via GF's Save & Continue feature)

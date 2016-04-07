@@ -14,19 +14,23 @@ if( class_exists( 'simple_links_admin' ) ){
 	return;
 }
 
-
-class simple_links_admin extends simple_links {
+class simple_links_admin {
 
 	/**
 	 * Constructor
 	 *
 	 */
-	function __construct(){
+	private function __construct(){
+		$this->hooks();
+	}
+
+
+	private function hooks(){
 		//Change the post updating messages
 		add_filter( 'post_updated_messages', array( $this, 'linksUpdatedMessages' ) );
 
 		//Add the jquery
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ), 1 );
 
 		//Add Contextual help to the necessary screens
 		add_action( "load-simple_link_page_simple-link-settings", array( $this, 'help' ) );
@@ -43,7 +47,6 @@ class simple_links_admin extends simple_links {
 		//Post List Columns Mod
 		add_filter( 'manage_simple_link_posts_columns', array( $this, 'post_list_columns' ) );
 		add_filter( 'manage_simple_link_posts_custom_column', array( $this, 'post_list_columns_output' ), 0, 2 );
-
 	}
 
 
@@ -344,7 +347,7 @@ class simple_links_admin extends simple_links {
 	 * @uses    There are a couple methods that had to be called from outside the
 	 */
 	function mce_button(){
-		add_filter( "mce_external_plugins", array( $this, 'button_js' ) );
+		add_filter( "mce_external_plugins", array( $this, 'button_js' ), 99 );
 		add_filter( 'mce_buttons_2', array( $this, 'button' ) );
 	}
 
@@ -482,9 +485,6 @@ class simple_links_admin extends simple_links {
 			SIMPLE_LINKS_CSS_DIR . 'simple.links.admin.css'
 		);
 
-		$url = array(
-			'importLinksURL' => esc_url( wp_nonce_url( admin_url( 'admin-ajax.php?action=simple_links_import_links' ), "simple_links_import_links" ) )
-		);
 
 		//Add the sortable script
 		wp_enqueue_script( 'jquery-ui-sortable' );
@@ -501,33 +501,67 @@ class simple_links_admin extends simple_links {
 			SIMPLE_LINKS_VERSION
 		);
 
-        $locale = array(
-                'hide_ordering'  => __( 'This will prevent editors from using the drag and drop ordering.', 'simple-links' ),
-                'show_settings'  => __( 'This will allow editors access to this Settings Page.', 'simple-links' ),
-                'remove_links'   => __( 'This will remove all traces of the Default WordPress Links.', 'simple-links' ),
-                'import_links'   => __( 'This will import all existing WordPress Links into the Simple Links', 'simple-links' ),
-                'default_target' => __( "This will the the link's target when a new link is created.", 'simple-links' ),
-                'visual_shortcode' => sprintf( _x( "This will convert [simple-link] shortcodes to the generated lists within the Post/Page content editor. Allows you to see how the list of links will look within the content.", '[simple-links]', 'simple-links'), '[simple-links]' ),
+        $config = $this->js_config();
 
-                'add_links' => __( 'Add Simple Links', 'simple-links' ),
-                'shortcode' => __( 'Simple Links Shortcode', 'simple-links' ),
-                'shortcode_generator' => __( 'Simple Links Shortcode Generator', 'simple-links' ),
-
-        );
-
-        wp_localize_script( 'simple_links_admin_script', 'Simple_Links_Config', $this->js_config() );
-		wp_localize_script( 'simple_links_admin_script', 'SL_locale', $locale );
-		wp_localize_script( 'simple_links_admin_script', 'SLajaxURL', $url );
+        wp_localize_script( 'simple_links_admin_script', 'Simple_Links_Config', $config );
+		wp_localize_script( 'simple_links_admin_script', 'SL_locale', $config[ 'i18n' ]);
 
 	}
 
 
     public function js_config(){
-        $js_config = array(
-                'is_visual_shortcodes_enabled' => Simple_Links_Visual_Shortcodes::get_instance()->is_visual_shortcodes_enabled()
-        );
+	    $js_config = array(
+		    'is_visual_shortcodes_enabled' => Simple_Links_Visual_Shortcodes::get_instance()->is_visual_shortcodes_enabled(),
+		    'importLinksURL'               => esc_url( wp_nonce_url( admin_url( 'admin-ajax.php?action=simple_links_import_links' ), "simple_links_import_links" ) ),
+		    'i18n' => array(
+			    'hide_ordering'       => __( 'This will prevent editors from using the drag and drop ordering.', 'simple-links' ),
+			    'show_settings'       => __( 'This will allow editors access to this Settings Page.', 'simple-links' ),
+			    'remove_links'        => __( 'This will remove all traces of the Default WordPress Links.', 'simple-links' ),
+			    'import_links'        => __( 'This will import all existing WordPress Links into the Simple Links', 'simple-links' ),
+			    'default_target'      => __( "This will the the link's target when a new link is created.", 'simple-links' ),
+			    'visual_shortcode'    => __( "This will convert [simple-link] shortcodes to the generated lists within the Post/Page content editor. Allows you to see how the list of links will look within the content.", 'simple-links' ),
+			    'add_links'           => __( 'Add Simple Links', 'simple-links' ),
+			    'shortcode'           => __( 'Simple Links Shortcode', 'simple-links' ),
+			    'shortcode_generator' => __( 'Simple Links Shortcode Generator', 'simple-links' ),
+		    ),
+	    );
         return $js_config;
     }
+
+
+	//********** SINGLETON FUNCTIONS **********/
+
+	/**
+	 * Instance of this class for use as singleton
+	 */
+	private static $instance;
+
+
+	/**
+	 * Create the instance of the class
+	 *
+	 * @static
+	 * @return void
+	 */
+	public static function init(){
+		self::$instance = self::get_instance();
+	}
+
+
+	/**
+	 * Get (and instantiate, if necessary) the instance of the
+	 * class
+	 *
+	 * @static
+	 * @return self
+	 */
+	public static function get_instance(){
+		if( !is_a( self::$instance, __CLASS__ ) ){
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
 
 
 }

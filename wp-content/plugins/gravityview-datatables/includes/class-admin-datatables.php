@@ -38,12 +38,12 @@ class GV_Extension_DataTables_Admin {
 
 		$m = array(
 			'id' => 'datatables_settings',
-			'title' => __( 'DataTables Settings', 'gv-datatables' ),
+			'title' => __( 'DataTables', 'gv-datatables' ),
 			'callback' => array( $this, 'render_metabox' ),
 			'callback_args' => array(),
 			'screen' => 'gravityview',
 			'file' => '',
-			'icon-class' => 'gv-icon-datatables',
+			'icon-class' => 'gv-icon-datatables-icon',
 			'context' => 'side',
 			'priority' => 'default',
 		);

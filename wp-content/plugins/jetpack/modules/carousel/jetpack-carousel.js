@@ -86,7 +86,7 @@ jQuery(document).ready(function($) {
 
 			buttons  = $('<div class="jp-carousel-buttons">' + buttons + '</div>');
 
-			caption    = $('<h2></h2>');
+			caption    = $('<h2 itemprop="caption description"></h2>');
 			photo_info = $('<div class="jp-carousel-photo-info"></div>').append(caption);
 
 			imageMeta = $('<div></div>')
@@ -226,10 +226,13 @@ jQuery(document).ready(function($) {
 			container = $('<div></div>')
 				.addClass('jp-carousel-wrap')
 				.addClass( 'jp-carousel-transitions' );
-
 			if ( 'white' === jetpackCarouselStrings.background_color ) {
 				 container.addClass('jp-carousel-light');
 			}
+
+			container.attr('itemscope', '');
+
+			container.attr('itemtype', 'http://schema.org/ImageGallery');
 
 			container.css({
 					'position'   : 'fixed',
@@ -902,7 +905,7 @@ jQuery(document).ready(function($) {
 						.css( 'width', '100%' )
 						.css( 'height', '100%' );
 
-					var slide = $('<div class="jp-carousel-slide"></div>')
+					var slide = $('<div class="jp-carousel-slide" itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject"></div>')
 							.hide()
 							.css({
 								//'position' : 'fixed',
@@ -964,7 +967,7 @@ jQuery(document).ready(function($) {
 			var imageLinkParser = document.createElement( 'a' );
 			imageLinkParser.href = args.large_file;
 
-			var isPhotonUrl = ( imageLinkParser.hostname.match(/^i[\d]{1}.wp.com$/i) != null );
+			var isPhotonUrl = ( imageLinkParser.hostname.match( /^i[\d]{1}.wp.com$/i ) != null );
 
 			var medium_size_parts	= gallery.jp_carousel( 'getImageSizeParts', args.medium_file, args.orig_width, isPhotonUrl );
 			var large_size_parts	= gallery.jp_carousel( 'getImageSizeParts', args.large_file, args.orig_width, isPhotonUrl );
@@ -988,6 +991,17 @@ jQuery(document).ready(function($) {
 				return args.medium_file;
 			}
 
+			if ( isPhotonUrl ) {
+				// args.orig_file doesn't point to a Photon url, so in this case we use args.large_file
+				// to return the photon url of the original image.
+				var largeFileIndex = args.large_file.lastIndexOf( '?' );
+				var origPhotonUrl = args.large_file;
+				if ( -1 !== largeFileIndex ) {
+					origPhotonUrl = args.large_file.substring( 0, largeFileIndex );
+				}
+				return origPhotonUrl;
+			}
+
 			return args.orig_file;
 		},
 
@@ -1002,11 +1016,11 @@ jQuery(document).ready(function($) {
 
 			// If one of the dimensions is set to 9999, then the actual value of that dimension can't be retrieved from the url.
 			// In that case, we set the value to 0.
-			if ( size_parts[0] === '9999' ) {
+			if ( '9999' === size_parts[0] ) {
 				size_parts[0] = '0';
 			}
 
-			if ( size_parts[1] === '9999' ) {
+			if ( '9999' === size_parts[1] ) {
 				size_parts[1] = '0';
 			}
 
@@ -1219,12 +1233,23 @@ jQuery(document).ready(function($) {
 			if(!current || !current.data) {
 				return false;
 			}
-			var original  = current.data('orig-file').replace(/\?.+$/, ''),
-				origSize  = current.data('orig-size').split(','),
-				permalink = $( '<a>'+gallery.jp_carousel('format', {'text': jetpackCarouselStrings.download_original, 'replacements': origSize})+'</a>' )
-					.addClass( 'jp-carousel-image-download' )
-					.attr( 'href', original )
-					.attr( 'target', '_blank' );
+			var original,
+				origSize = current.data('orig-size').split(',' ),
+				imageLinkParser = document.createElement( 'a' );
+
+			imageLinkParser.href = current.data( 'src' ).replace( /\?.+$/, '' );
+
+			// Is this a Photon URL?
+			if ( imageLinkParser.hostname.match( /^i[\d]{1}.wp.com$/i ) !== null ) {
+				original = imageLinkParser.href;
+			} else {
+				original = current.data('orig-file').replace(/\?.+$/, '');
+			}
+
+			var permalink = $( '<a>'+gallery.jp_carousel('format', {'text': jetpackCarouselStrings.download_original, 'replacements': origSize})+'</a>' )
+				.addClass( 'jp-carousel-image-download' )
+				.attr( 'href', original )
+				.attr( 'target', '_blank' );
 
 			// Update (replace) the content of the anchor
 			$( 'div.jp-carousel-image-meta a.jp-carousel-image-download' ).replaceWith( permalink );
@@ -1425,9 +1450,9 @@ jQuery(document).ready(function($) {
 				} );
 
 				if ( ! slide.data( 'preview-image' ) || ( slide.data( 'thumb-size' ) && slide.width() > slide.data( 'thumb-size' ).width ) ) {
-					image.attr( 'src', image.closest( '.jp-carousel-slide' ).data( 'src' ) );
+					image.attr( 'src', image.closest( '.jp-carousel-slide' ).data( 'src' ) ).attr('itemprop', 'image');
 				} else {
-					image.attr( 'src', slide.data( 'preview-image' ) );
+					image.attr( 'src', slide.data( 'preview-image' ) ).attr('itemprop', 'image');
 				}
 
 				image.data( 'loaded', 1 );
@@ -1466,9 +1491,6 @@ jQuery(document).ready(function($) {
 
 	// Makes carousel work on page load and when back button leads to same URL with carousel hash (ie: no actual document.ready trigger)
 	$( window ).on( 'hashchange', function () {
-		if ( 'undefined' === typeof gallery ) {
-			return;
-		}
 
 		var hashRegExp = /jp-carousel-(\d+)/,
 			matches, attachmentId, galleries, selectedThumbnail;

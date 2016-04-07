@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: gravityview
 Requires at least: 3.3
-Tested up to: 4.3.1
+Tested up to: 4.4.2
 Stable tag: trunk
 Contributors: katzwebservices
 License: GPL 3 or higher
@@ -15,6 +15,19 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 1.0.14 on February 27, 2016 =
+* Fixed: When saving a filter condition using a product field the operator "is" disappears
+* Fixed: When searching by an option field there were no results
+
+= 1.0.12 & 1.0.13 on January 21, 2016 =
+* Fixed: Post Category filters
+    - Dropdown not populated with categories
+    - Added "Is Not" option
+* Fixed: Date Created filter not working properly
+* Tweak: Increase the number of users displayed in the Advanced Filter "Created By" dropdown
+* Updated: Translation textdomain from `gravity-view-advanced-filter` to `gravityview-advanced-filter`
+    - Included updater library in translation strings
 
 = 1.0.11 on November 13 =
 * New: Add "is not" option to GravityView Approval fields. Now you can show only unapproved entries.

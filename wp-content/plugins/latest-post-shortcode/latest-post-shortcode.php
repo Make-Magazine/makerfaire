@@ -4,7 +4,7 @@ Plugin Name: Latest Post Shortcode
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JJA37EHZXWUTJ
 Description: This plugin allows you to create a dynamic content selection from your posts, pages and custom post types that can be embedded with a shortcode.
 Author: Iulia Cazan
-Version: 6.1
+Version: 6.3
 Author URI: https://profiles.wordpress.org/iulia-cazan
 License: GPL2
 
@@ -24,7 +24,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define( 'LPS_PLUGIN_VERSION', '6.1' );
+define( 'LPS_PLUGIN_VERSION', '6.3' );
 
 class Latest_Post_Shortcode
 {
@@ -155,6 +155,26 @@ class Latest_Post_Shortcode
 		href="#TB_inline?width=100%25&inlineId=' . $container_id . '" id="lps_shortcode_button_open"><span class="dashicons dashicons-format-aside"></span> ' . __( 'Content Selection', 'lps' ) . '</a>';
 		echo $context;
 	}
+	
+	/**
+	 * Latest_Post_Shortcode::get_statuses() Return all private and all public statuses defined
+	 */
+	function get_statuses() {
+		global $wp_post_statuses;
+		$arr = array( 'public' => array(), 'private' => array(), );
+		if ( ! empty( $wp_post_statuses ) ) {
+			foreach ( $wp_post_statuses as $t => $v ) {
+				if ( $v->public ) {
+					$arr['public'][] = $t;
+				} else {
+					if ( ! in_array( $t, array( 'auto-draft', '' ) ) ) {
+						$arr['private'][] = $t;
+					}
+				}
+			}
+		}
+		return $arr;
+	}
 
 	/**
 	 * Latest_Post_Shortcode::add_shortcode_popup_container() Add some content to the bottom of the page. This will be shown in the inline modal
@@ -282,6 +302,22 @@ class Latest_Post_Shortcode
 							<option value="titleA">Title ASC</option>
 							<option value="titleD">Title DESC</option>
 						</select>
+					</td>
+				</tr>
+				<tr>					
+					<td colspan="4"><hr /></td>
+				</tr>
+				<tr>
+					<td>' . __( 'Status', 'lps' ) . '</td>
+					<td colspan="3">';
+						$st = $this->get_statuses();
+						foreach( $st['public'] as $pu ) {
+							$body .= '<label><input type="checkbox" name="lps_status[]" id="lps_status_' . $pu . '" value="' . $pu . '" onclick="lps_preview_configures_shortcode()" class="lps_status" />' . $pu . '</label> ';
+						}
+						foreach( $st['private'] as $pr ) {
+							$body .= '<label><input type="checkbox" name="lps_status[]" id="lps_status_' . $pr . '" value="' . $pr . '" onclick="lps_preview_configures_shortcode()" class="lps_status" /><em>' . $pr . '</em></label> ';
+						}
+					$body .= '
 					</td>
 				</tr>
 				<tr>					
@@ -540,7 +576,7 @@ class Latest_Post_Shortcode
 
 		/** Get the post arguments from shortcode arguments */
 		$ids = ( ! empty( $args['id'] ) ) ? explode( ',', $args['id'] ) : array();
-		$parent = ( ! empty( $args['parent'] ) ) ? intval( $args['parent'] ) : 0;
+		$parent = ( ! empty( $args['parent'] ) ) ? explode( ',', $args['parent'] ) : array();
 		$type = ( ! empty( $args['type'] ) ) ? $args['type'] : 'post';
 		$chrlimit = ( ! empty( $args['chrlimit'] ) ) ? intval( $args['chrlimit'] ) : 120;
 
@@ -554,12 +590,23 @@ class Latest_Post_Shortcode
 		$tile_pattern = $this->tile_pattern[$tile_type];
 		$read_more_class = ( ! in_array( $tile_type, array( 3, 11, 14, 19 ) ) ) ? ' class="read-more"' : ' class="read-more-wrap"';
 		$show_extra = ( ! empty( $args['show_extra'] ) ) ? explode( ',', $args['show_extra'] ) : array();
-
-		$qargs = array(
-			'post_status' => 'publish',
-			'numberposts' => 1,
-		);
-
+		
+		$qargs = array();
+		$qargs['numberposts'] = 1;
+		$qargs['post_status'] = 'publish';
+		if ( ! empty( $args['status'] ) ) {
+			$qargs['post_status'] = explode( ',', trim( $args['status'] ) );
+			if ( in_array( 'private', $qargs['post_status'] ) ) {
+				if ( ! is_user_logged_in() ) {
+					if ( ( $pkey = array_search( 'private', $qargs['post_status'] ) ) !== false ) {
+						unset( $qargs['post_status'][ $pkey ] );
+					}
+				}
+			}
+		}
+		if ( empty( $qargs['post_status'] ) ) {
+			return;
+		}
 		$orderby = ( ! empty( $args['orderby'] ) ) ? $args['orderby'] : 'dateD';
 		$qargs['order'] = 'DESC';
 		$qargs['orderby'] = 'date_publish';
@@ -627,7 +674,7 @@ class Latest_Post_Shortcode
 			}
 		}
 		if ( ! empty( $parent ) ) {
-			$qargs['post_parent'] = $parent;
+			$qargs['post_parent__in'] = $parent;
 		}
 		$qargs['tax_query'] = array();
 		if ( ! empty( $args['tag'] ) ) {
@@ -680,9 +727,29 @@ class Latest_Post_Shortcode
 				)
 			);
 		}
+		if ( ! empty( $args['exclude_tags'] ) ) {
+			if ( ! empty( $qargs['tax_query'] ) ) {
+				array_push(
+					$qargs['tax_query'],
+					array(
+						'relation' => 'AND',
+					)
+				);
+			}
+			array_push(
+				$qargs['tax_query'],
+				array(
+					'taxonomy' => 'post_tag',
+					'field'    => 'slug',
+					'terms'    => explode( ',', $args['exclude_tags'] ),
+					'operator' => 'NOT IN',
+				)
+			);
+		}
+
 		$qargs['suppress_filters'] = false;
 		$posts = get_posts( $qargs );
-		
+
 		/** If the slider extension is enabled and the shortcode is configured to output the slider, let's do that and return */
 		if ( 
 			! empty( $posts ) 

@@ -54,6 +54,67 @@ module.exports = function(grunt) {
 			}
 		},
 
+		// Build translations without POEdit
+		makepot: {
+			target: {
+				options: {
+					mainFile: 'advanced-filter.php',
+					type: 'wp-plugin',
+					domainPath: '/languages',
+					updateTimestamp: false,
+					exclude: ['node_modules/.*', 'assets/.*', 'tmp/.*', 'vendor/.*', 'includes/lib/xml-parsers/.*', 'includes/lib/jquery-cookie/.*', 'includes/lib/standalone-phpenkoder/.*' ],
+					potHeaders: {
+						poedit: true,
+						'x-poedit-keywordslist': true
+					},
+					processPot: function( pot, options ) {
+						pot.headers['language'] = 'en_US';
+						pot.headers['language-team'] = 'Katz Web Services, Inc. <support@katz.co>';
+						pot.headers['last-translator'] = 'Katz Web Services, Inc. <support@katz.co>';
+						pot.headers['report-msgid-bugs-to'] = 'https://gravityview.co/support/';
+
+						var translation,
+							excluded_meta = [
+								'GravityView - Advanced Filter Extension',
+								'Filter which entries are shown in a View based on their values.',
+								'https://gravityview.co/extensions/advanced-filter/',
+								'Katz Web Services, Inc.',
+								'http://www.katzwebservices.com',
+							    'https://gravityview.co'
+							];
+
+						for ( translation in pot.translations[''] ) {
+							if ( 'undefined' !== typeof pot.translations[''][ translation ].comments.extracted ) {
+								if ( excluded_meta.indexOf( pot.translations[''][ translation ].msgid ) >= 0 ) {
+									console.log( 'Excluded meta: ' + pot.translations[''][ translation ].msgid );
+									delete pot.translations[''][ translation ];
+								}
+							}
+						}
+
+						return pot;
+					}
+				}
+			}
+		},
+
+		// Add textdomain to all strings, and modify existing textdomains in included packages.
+		addtextdomain: {
+			options: {
+				textdomain: 'gravityview-advanced-filter',    // Project text domain.
+				updateDomains: [ 'gravity-view-advanced-filter', 'gravityview', 'gravity-view', 'gravityforms', 'edd_sl', 'edd' ]  // List of text domains to replace.
+			},
+			target: {
+				files: {
+					src: [
+						'*.php',
+						'**/*.php',
+						'!node_modules/**'
+					]
+				}
+			}
+		},
+
 		// Pull in the latest translations
 		exec: {
 			transifex: 'tx pull -a',
@@ -64,7 +125,7 @@ module.exports = function(grunt) {
 
 	});
 
-
+	grunt.loadNpmTasks('grunt-wp-i18n');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-wp-readme-to-markdown');
@@ -73,6 +134,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-exec');
 
 
-	grunt.registerTask( 'default', ['uglify','exec:transifex','potomo','watch'] );
+	grunt.registerTask( 'default', ['uglify','exec:transifex','potomo', 'addtextdomain', 'makepot', 'watch'] );
 
 };

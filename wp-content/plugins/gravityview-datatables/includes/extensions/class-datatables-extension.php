@@ -7,7 +7,7 @@ abstract class GV_DataTables_Extension {
 	function __construct() {
 
 		add_action( 'gravityview_datatables_scripts_styles', array( $this, 'add_scripts' ), 10, 3 );
-		add_filter( 'gravityview_datatables_js_options', array( $this, 'add_config' ), 10, 3 );
+		add_filter( 'gravityview_datatables_js_options', array( $this, 'maybe_add_config' ), 10, 3 );
 
 		add_filter( 'gravityview_datatables_table_class', array( $this, 'add_html_class') );
 
@@ -70,7 +70,7 @@ abstract class GV_DataTables_Extension {
 	 * Get a specific DataTables setting
 	 * @param  int|null $view_id View ID. If empty, uses `$gravityview_view->ID`
 	 * @param string $key Setting key to fetch
-	 * @param mxied $default Default value to return if setting doesn't exist
+	 * @param mixed $default Default value to return if setting doesn't exist
 	 * @return mixed|false          Setting, if exists; returns `$default` parameter if not exists
 	 */
 	function get_setting( $view_id = NULL, $key = '', $default = false ) {
@@ -135,10 +135,40 @@ abstract class GV_DataTables_Extension {
 	}
 
 	/**
-	 * Add Javascript specific config data based on admin settings
+	 * If the DT extension is enabled for the requested view, return value from add_config(). Otherwise, return original.
+	 *
+	 * @see add_config
+	 * @see https://datatables.net/reference/option/
+	 *
+	 * @since 2.0
+	 *
+	 * @param array $dt_config The configuration for the current View
+	 * @param int $view_id The ID of the View being configured
+	 * @param WP_Post $post Current View or post/page where View is embedded
+	 *
+	 * @return array Possibly-modified DataTables configuration array
 	 */
-	function add_config( $dt_config, $view_id, $post  ) {
+	public function maybe_add_config( $dt_config, $view_id, $post ) {
 
+		if( $this->is_enabled( $view_id ) ) {
+			$dt_config = $this->add_config( $dt_config, $view_id, $post );
+		}
+
+		return $dt_config;
+	}
+
+	/**
+	 * Add Javascript specific config data based on admin settings
+	 *
+	 * @see https://datatables.net/reference/option/
+	 *
+	 * @param array $dt_config The configuration for the current View
+	 * @param int $view_id The ID of the View being configured
+	 * @param WP_Post $post Current View or post/page where View is embedded
+	 *
+	 * @return array Modified DataTables configuration array
+	 */
+	protected function add_config( $dt_config, $view_id, $post  ) {
 		return $dt_config;
 	}
 

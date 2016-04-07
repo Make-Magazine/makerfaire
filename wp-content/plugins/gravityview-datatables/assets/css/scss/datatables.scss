@@ -3,22 +3,37 @@
 
 .gv-datatables-container {
 
+
+	// nowrap used on the table when Responsive extension is enabled
+	table.nowrap {
+		table-layout: auto; // forces the cell content to set the column width (enables good responsive calculation)
+		width: 100% !important; // overrides the fixed width calculated by the responsive algorithm
+	}
+
 	.dataTables_filter,
 	.dataTables_length {
 		white-space: nowrap;
 		width: auto;
 	}
 
-	.dataTables_processing {
-		height: auto;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		line-height: 1em;
-		width: 50%;
-		left: 50%;
-		margin-left: -25%;
-		min-width: 300px;
+	.dataTables_wrapper .dataTables_processing {
+		z-index: 100000 !important;
+		height: auto !important;
+		padding-top: 20px !important;
+		padding-bottom: 20px !important;
+		line-height: 1.5em !important;
+		min-width: 300px !important;
 		border: 1px solid #ccc;
+
+		// Backups for browsers that don't support CSS `calc()`
+		width: 100%;
+		margin-left: -50%;
+
+		// In Mac, it's 15px, but otherwise seems to be 17. No harm in 1px more room on each side.
+		$scroll_bar_width: 17px;
+
+		width: calc( 100% - $scroll_bar_width ); // Fix the window overlapping the scroll bar
+		margin-left: calc( -50% + ( $scroll_bar_width / 2 ) ); // Add the calculation in, if it's supported
 	}
 
 	// When Scroller is active, hide the page length selector

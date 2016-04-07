@@ -140,9 +140,16 @@ class GWPreviewConfirmation {
     */
     public static function preview_special_merge_tags( $value, $input_id, $options, $field ) {
 
-        $input_type            = GFFormsModel::get_input_type($field);
-        $is_upload_field       = in_array( $input_type, array( 'post_image', 'fileupload' ) );
-        $is_multi_upload_field = $is_upload_field && rgar( $field, 'multipleFiles' );
+        $input_type             = GFFormsModel::get_input_type($field);
+        $is_upload_field        = in_array( $input_type, array( 'post_image', 'fileupload' ) );
+        $is_multi_upload_field  = $is_upload_field && rgar( $field, 'multipleFiles' );
+
+        $excluded_field_types   = array( 'survey' );
+        $is_excluded_field_type = in_array( $field->type, $excluded_field_types ) || in_array( $input_type, $excluded_field_types );
+
+        if( $is_excluded_field_type ) {
+	        return $value;
+        }
 
         // added to prevent overriding :noadmin filter (and other filters that remove fields)
         // added exception for multi upload file fields which have an empty $value at this stage
@@ -168,40 +175,44 @@ class GWPreviewConfirmation {
 
         if( is_array( rgar( $field, 'inputs' ) ) ) {
             $value = GFFormsModel::get_lead_field_value( $entry, $field );
-            return GFCommon::get_lead_field_display( $field, $value, $currency, true );
-        }
+            $value = GFCommon::get_lead_field_display( $field, $value, $currency, true );
+        } else {
 
-        switch( $input_type ) {
-            case 'fileupload':
+            switch( $input_type ) {
+                case 'fileupload':
 
-                $value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
+                    $value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
 
-                if( $is_multi_upload_field ) {
+                    if( $is_multi_upload_field ) {
 
-                    if( is_a( $field, 'GF_Field' ) ) {
-                        $value = $field->get_value_entry_detail( json_encode( array_filter( (array) $value ) ) );
-                    } else {
-                        $value = GFCommon::get_lead_field_display( $field, json_encode( $value ) );
-                    }
-
-                    $input_name = "input_" . str_replace('.', '_', $field['id']);
-                    $file_info  = self::get_uploaded_file_info( $form['id'], $input_name, $field );
-
-                    if( $file_info ) {
-                        foreach ( $file_info as $file ) {
-                            $value = str_replace( '>' . $file['temp_filename'], '>' . $file['uploaded_filename'], $value );
+                        if( is_a( $field, 'GF_Field' ) ) {
+                            $value = $field->get_value_entry_detail( json_encode( array_filter( (array) $value ) ) );
+                        } else {
+                            $value = GFCommon::get_lead_field_display( $field, json_encode( $value ) );
                         }
-                    }
 
-                } else {
-                    $value = $input_id == 'all_fields' || $options == 'link' ? self::preview_image_display( $field, $form, $value ) : $value;
-                }
-                break;
-            default:
-                $value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
-                $value = GFCommon::get_lead_field_display( $field, $value, $currency );
-                break;
+                        $input_name = "input_" . str_replace('.', '_', $field['id']);
+                        $file_info  = self::get_uploaded_file_info( $form['id'], $input_name, $field );
+
+                        if( $file_info ) {
+                            foreach ( $file_info as $file ) {
+                                $value = str_replace( '>' . $file['temp_filename'], '>' . $file['uploaded_filename'], $value );
+                            }
+                        }
+
+                    } else {
+                        $value = $input_id == 'all_fields' || $options == 'link' ? self::preview_image_display( $field, $form, $value ) : $value;
+                    }
+                    break;
+                default:
+                    $value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
+                    $value = GFCommon::get_lead_field_display( $field, $value, $currency );
+                    break;
+            }
+
         }
+
+
 
         $value = apply_filters( 'gpps_special_merge_tags_value',                                             $value, $field, $input_id, $options, $form, $entry );
         $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $form['id'] ),                  $value, $field, $input_id, $options, $form, $entry );

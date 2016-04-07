@@ -1,12 +1,13 @@
 {
 	"name": "datatables-scroller",
-	"version": "1.2.2",
 	"main": [
 		"js/dataTables.scroller.js",
-		"css/dataTables.scroller.css"
+		"css/scroller.dataTables.scss"
 	],
 	"dependencies": {
 		"jquery": ">=1.7.0",
-		"datatables": ">=1.9.0"
-	}
+		"datatables": ">=1.10.0"
+	},
+	"homepage": "https://datatables.net",
+	"license": "MIT"
 }

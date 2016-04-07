@@ -90,8 +90,40 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 		/**
 		 * Use your own Scroller stylesheet by using the `gravityview_dt_scroller_style_src` filter
 		 */
-		wp_enqueue_style( 'gv-dt_scroller_style', apply_filters( 'gravityview_dt_scroller_style_src', $path.'css/dataTables.scroller.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
+		wp_enqueue_style( 'gv-dt_scroller_style', apply_filters( 'gravityview_dt_scroller_style_src', $path.'css/scroller.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
 
+		$this->maybe_add_row_height_style( $dt_configs );
+	}
+
+	/**
+	 * If rowHeight is set in DT Configs, output CSS <style> tag
+	 *
+	 * @since 2.0
+	 *
+	 * @param array $dt_configs DataTables configuration
+	 *
+	 * @return void
+	 */
+	function maybe_add_row_height_style( $dt_configs ) {
+
+		$heights = array();
+
+		// Get array of row heights with keys of the View ID
+		foreach ( $dt_configs as $key => $config ) {
+			if( $height = rgars( $config, 'scroller/rowHeight') ) {
+				$view_id = rgars( $config, 'ajax/data/view_id' );
+				$heights[ $view_id ] = $height;
+			}
+		}
+
+		// If there are heights, add very targeted CSS to set the row heights
+		if ( ! empty( $heights ) ) {
+			echo '<style>';
+			foreach ( $heights as $view_id => $height ) {
+				printf( '.gv-container-%d table.gv-datatables.dataTable tbody tr { height: %spx!important; }', $view_id, str_replace( array( 'px', 'px;' ), '', $height ) );
+			}
+			echo '</style>';
+		}
 	}
 
 	/**
@@ -100,10 +132,11 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 	 */
 	function add_config( $dt_config, $view_id, $post  ) {
 
-		if( !$this->is_enabled( $view_id ) ) { return $dt_config; }
-
-		// init Scroller
-		$dt_config['dom'] = empty( $dt_config['dom'] ) ? 'frtiS' : $dt_config['dom'].'S';
+		// Enable scroller
+		$dt_config['scroller'] = array(
+			'displayBuffer' => 20, //@see https://datatables.net/reference/option/scroller.displayBuffer
+			'boundaryScale' => 0.3, //@see https://datatables.net/reference/option/scroller.boundaryScale
+		);
 
 		// set table height
 		$scrolly = $this->get_setting( $view_id, 'scrolly', 500 );
@@ -116,9 +149,6 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 
 		// Finally set the scrollY parameter
 		$dt_config['scrollY'] = $scrolly.'px';
-
-		// Only render the DOM items you need to for speed
-		//$dt_config['deferRender'] = true;
 
 		do_action( 'gravityview_log_debug', '[scroller_add_config] Inserting Scroller config. Data:', $dt_config );
 

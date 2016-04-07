@@ -6,24 +6,26 @@
  *
  * @author Mat Lipe <mat@matlipe.com>
  */
-var output = '[simple-links';
+var SimpleLinksShortcodeObj = {
+	/**
+	 * Append this using $( document ).on( "simple-links-js-form-output")
+	 * to adjust the final output of the shortcode
+	 */
+	output : '[simple-links',
 
-var myObj = {
-	local_ed : 'ed', //A Var for setting a global object to use
+	init : function(){
+		//nothing to see here
+	},
 
 	//The function with sends the new output back to the editor and closes the popup
-	insert : function(){
-
-		tinyMCEPopup.execCommand( 'mceReplaceContent', false, output );
-
-		// Return
+	insert : function( $output ){
+		tinyMCEPopup.execCommand( 'mceReplaceContent', false, $output );
 		tinyMCEPopup.close();
-
 	}
 };
 
 //Initiate the object This is required
-tinyMCEPopup.onInit.add( myObj.init, myObj );
+tinyMCEPopup.onInit.add( SimpleLinksShortcodeObj.init, SimpleLinksShortcodeObj );
 
 //The Jquery which grabs the form data
 jQuery( document ).ready( function( $ ){
@@ -37,7 +39,7 @@ jQuery( document ).ready( function( $ ){
 		for( var i = 0; i < fields.length; i++ ){
 			//Add the standard fields to the output if they have a value
 			if( $( '#' + fields[i] ).val() != '' ){
-				output += ' ' + fields[i] + '="' + $( '#' + fields[i] ).val() + '"';
+				SimpleLinksShortcodeObj.output += ' ' + fields[i] + '="' + $( '#' + fields[i] ).val() + '"';
 			}
 		}
 
@@ -55,7 +57,7 @@ jQuery( document ).ready( function( $ ){
 		//Close the attribute and add it ot the shortcode
 		if( cats != '' ){
 			cats += '"';
-			output += cats;
+			SimpleLinksShortcodeObj.output += cats;
 		}
 
 		//Add the additional fields
@@ -71,60 +73,59 @@ jQuery( document ).ready( function( $ ){
 		//Close the fields
 		if( addFields != '' ){
 			addFields += '"';
-			output += addFields;
+			SimpleLinksShortcodeObj.output += addFields;
 		}
 
 		//Add the separator
 		if( $( '#separator' ).val() != '-' ){
-			output += ' separator="' + $( '#separator' ).val() + '"';
+			SimpleLinksShortcodeObj.output += ' separator="' + $( '#separator' ).val() + '"';
 		}
 
 		//Add the image to the shortcode
 		if( $( '#show_image' ).is( ':checked' ) ){
-			output += ' show_image="true"';
+			SimpleLinksShortcodeObj.output += ' show_image="true"';
 			if( $( '#image-size' ).val() != '' ){
-				output += ' image_size="' + $( '#image-size' ).val() + '"';
+				SimpleLinksShortcodeObj.output += ' image_size="' + $( '#image-size' ).val() + '"';
 			}
 
 			//Add the show Image only
 			if( $( '#show_image_only' ).is( ':checked' ) ){
-				output += ' show_image_only="true"';
+				SimpleLinksShortcodeObj.output += ' show_image_only="true"';
 			}
 
 		}
 
 		//Add the description to the shortcode
 		if( $( '#description' ).is( ':checked' ) ){
-			output += ' description="true"';
+			SimpleLinksShortcodeObj.output += ' description="true"';
 		}
 
 		//Add the description to the shortcode
 		if( $( '#description-formatting' ).is( ':checked' ) ){
-			output += ' show_description_formatting="true"';
+			SimpleLinksShortcodeObj.output += ' show_description_formatting="true"';
 		}
 
 		//Add the line break to the code
 		if( $( '#line_break' ).is( ':checked' ) ){
-			output += ' remove_line_break="true"';
+			SimpleLinksShortcodeObj.output += ' remove_line_break="true"';
 		}
 
 		//Add the child categories to the shortcode
 		if( $( '#child-categories' ).is( ':checked' ) ){
-			output += ' include_child_categories="true"';
+			SimpleLinksShortcodeObj.output += ' include_child_categories="true"';
 		}
 
 		//add custom values here by using a $(document).on('simple-links-js-form-output', function(o){});
-		$( document ).trigger( 'simple-links-js-form-output', [output] );
-
-		output += ']';
+		$( document ).trigger( 'simple-links-js-form-output', [SimpleLinksShortcodeObj.output] );
+		SimpleLinksShortcodeObj.output += ']';
 
 		//Finish out the shortcode
 		if( Simple_Links_Config.is_visual_shortcodes_enabled ){
-			output = "[embed]" + output + "[/embed]"
+			SimpleLinksShortcodeObj.output = "[embed]" + SimpleLinksShortcodeObj.output + "[/embed]"
 		}
 
 		//Send the shortcode back to the editor
-		myObj.insert();
+		SimpleLinksShortcodeObj.insert( SimpleLinksShortcodeObj.output );
 	} );
 
 } );

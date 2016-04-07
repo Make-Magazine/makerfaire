@@ -16,7 +16,7 @@
 function simple_links_admin(){
 	global $simple_links_admin_func;
 	if( empty( $simple_links_admin_func ) ){
-		$simple_links_admin_func = new simple_links_admin();
+		$simple_links_admin_func = simple_links_admin::get_instance();
 	}
 	return $simple_links_admin_func;
 }

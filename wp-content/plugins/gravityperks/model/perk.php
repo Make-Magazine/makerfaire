@@ -59,15 +59,26 @@ class GWPerk {
             if( ! class_exists( $perk_class ) ) {
 
 	            $perk_bits     = explode( '/', $perk_file );
-	            $alt_perk_file = sprintf( '%s/class-%s', $perk_bits[0], $perk_bits[1] );
-	            $alt_perk_path = WP_PLUGIN_DIR . '/' . $alt_perk_file;
-	            if( file_exists( $alt_perk_path ) ) {
-		            include_once( $alt_perk_path );
-	            }
+	            $alt_perk_file = sprintf( '%s/%s/class-%s', WP_PLUGIN_DIR, $perk_bits[0], $perk_bits[1] );
 
-	            if( ! class_exists( $perk_class ) ) {
-		            return new WP_Error( 'perk_class_error', __( 'There is no class for this perk.', 'gravityperks' ) );
-	            }
+                if( file_exists( $alt_perk_file ) ) {
+                    include_once( $alt_perk_file );
+                }
+
+                if( ! class_exists( $perk_class ) ) {
+                    $perk_data = self::get_perk_data( $perk_file );
+                    if( ! empty( $perk_data ) ) {
+                        $filename = strtolower( str_replace( ' ', '-', $perk_data['Name'] ) );
+                        $alt_perk_file = sprintf( '%s/%s/class-%s.php', WP_PLUGIN_DIR, $perk_bits[0], $filename );
+                        if( file_exists( $alt_perk_file ) ) {
+                            include_once( $alt_perk_file );
+                        }
+                    }
+                }
+
+                if( ! class_exists( $perk_class ) ) {
+                    return new WP_Error( 'perk_class_error', __( 'There is no class for this perk.', 'gravityperks' ) );
+                }
 
             }
 

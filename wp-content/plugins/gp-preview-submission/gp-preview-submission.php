@@ -3,7 +3,7 @@
  * Plugin Name: GP Preview Submission
  * Plugin URI: http://gravitywiz.com/
  * Description: Add a simple submission preview to allow users to confirm their submission is correct before submitting the form.
- * Version: 1.1.5
+ * Version: 1.1.7
  * Author: David Smith
  * Author URI: http://gravitywiz.com
  * License: GPL2
@@ -19,7 +19,7 @@ if( ! require_once( dirname( $gw_perk_file ) . '/includes/safetynet.php' ) )
 
 class GP_Preview_Submission extends GWPerk {
 
-    public $version = '1.1.5';
+    public $version = '1.1.7';
     public $min_gravity_perks_version = '1.2';
     public $min_gravity_forms_version = '1.8';
     public $min_wp_version = '3.7';
@@ -70,20 +70,22 @@ class GP_Preview_Submission extends GWPerk {
 
         <script type="text/javascript">
 
-            var gppsDoingMergeTags = false;
+            window.gppsDoingMergeTags = false;
 
             gform.addFilter( 'gform_merge_tags', 'gppsMergeTags' );
 
             function gppsMergeTags( mergeTags, elementId, hideAllFields, excludeFieldTypes, isPrepop, option ) {
 
-                if( gppsDoingMergeTags )
+                if( gppsDoingMergeTags ) {
                     return mergeTags;
+                }
 
-                if( elementId == 'field_content' )
+                if( elementId == 'field_content' ) {
                     hideAllFields = false;
+                }
 
                 gppsDoingMergeTags = true;
-                var allTags = gfMergeTags.getMergeTags( form.fields, elementId, hideAllFields, excludeFieldTypes, false, option );
+                var allTags = gfMergeTags.getMergeTags( Copy( form.fields ), elementId, hideAllFields, excludeFieldTypes, false, option );
                 gppsDoingMergeTags = false;
 
                 for( var key in allTags ) {

@@ -1,40 +1,39 @@
-# Translators:
-# Translators:
+# Copyright (C) 2016 Katz Web Services, Inc.
+# This file is distributed under the GPLv2 or later.
 # Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
-"POT-Creation-Date: 2015-01-18 12:05-0700\n"
-"PO-Revision-Date: 2015-01-18 19:08+0000\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
+"PO-Revision-Date: 2016-04-04 21:08+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
-"Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/gravityview-datatables/language/pt_BR/)\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: pt_BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.7.1\n"
-"X-Poedit-Basepath: ..\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Textdomain-Support: yes\n"
 
-#: includes/class-admin-datatables.php:32
-msgid "DataTables Settings"
+#: includes/class-admin-datatables.php:41
+msgid "DataTables"
 msgstr ""
 
-#: includes/class-datatables-data.php:325
-msgctxt "Menu label to show all results in DataTables template."
-msgid "All"
-msgstr ""
-
-#: includes/class-datatables-data.php:388
+#: includes/class-datatables-data.php:701
 msgid "Loading data&hellip;"
 msgstr ""
 
-#: includes/class-datatables-data.php:389
+#: includes/class-datatables-data.php:702
 msgid "No entries match your request."
-msgstr ""
+msgstr "Nenhuma entrada corresponder ao seu pedido."
 
 #: includes/class-datatables-template.php:31
 msgid "DataTables Table"
@@ -44,12 +43,34 @@ msgstr ""
 msgid "Display items in a dynamic table powered by DataTables."
 msgstr ""
 
-#: includes/class-datatables-template.php:49
+#: includes/class-datatables-template.php:50
 msgid "Link to single entry"
 msgstr ""
 
-#: includes/class-datatables-template.php:60
+#: includes/class-datatables-template.php:61
 msgid "Visible Table Columns"
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:29
+#: includes/extensions/class-datatables-buttons.php:57
+msgid "Export Buttons"
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:30
+msgid ""
+"Display buttons that allow users to print or export the current results."
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:47
+msgid "Enable Buttons"
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:87
+msgid "Copy"
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:91
+msgid "Print"
 msgstr ""
 
 #: includes/extensions/class-datatables-fixedheader.php:21
@@ -84,17 +105,17 @@ msgid ""
 "at all times."
 msgstr ""
 
-#: includes/extensions/class-datatables-responsive.php:33
+#: includes/extensions/class-datatables-responsive.php:35
 msgid "Responsive Tables"
 msgstr ""
 
-#: includes/extensions/class-datatables-responsive.php:34
+#: includes/extensions/class-datatables-responsive.php:36
 msgid ""
 "Optimize table layout for different screen sizes through the dynamic "
 "insertion and removal of columns from the table."
 msgstr ""
 
-#: includes/extensions/class-datatables-responsive.php:60
+#: includes/extensions/class-datatables-responsive.php:62
 msgid "Enable Responsive Tables"
 msgstr ""
 
@@ -117,69 +138,46 @@ msgstr ""
 msgid "Table Height"
 msgstr ""
 
-#: includes/extensions/class-datatables-tabletools.php:29
-msgid "TableTools"
-msgstr ""
-
-#: includes/extensions/class-datatables-tabletools.php:30
-msgid ""
-"TableTools adds buttons that allow users to print or export the current "
-"results."
-msgstr ""
-
-#: includes/extensions/class-datatables-tabletools.php:47
-msgid "Enable TableTools"
-msgstr ""
-
-#: includes/extensions/class-datatables-tabletools.php:58
-msgid "Display Buttons"
-msgstr ""
-
-#: includes/extensions/class-datatables-tabletools.php:89
-msgid "Select All"
-msgstr ""
-
-#: includes/extensions/class-datatables-tabletools.php:90
-msgid "Deselect All"
-msgstr ""
-
-#: includes/extensions/class-datatables-tabletools.php:91
-msgid "Copy"
-msgstr ""
-
-#: includes/extensions/class-datatables-tabletools.php:95
-msgid "Print"
-msgstr ""
-
-#: lib/EDD_SL_Plugin_Updater.php:154
-#, php-format
+#: lib/EDD_SL_Plugin_Updater.php:179
 msgid ""
 "There is a new version of %1$s available. <a target=\"_blank\" "
 "class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:161
-#, php-format
+#: lib/EDD_SL_Plugin_Updater.php:186
 msgid ""
 "There is a new version of %1$s available. <a target=\"_blank\" "
 "class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
 "href=\"%4$s\">update now</a>."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:301
+#: lib/EDD_SL_Plugin_Updater.php:334
 msgid "You do not have permission to install plugin updates"
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:301
+#: lib/EDD_SL_Plugin_Updater.php:334
 msgid "Error"
 msgstr ""
 
-#: lib/class-gravityview-extension.php:175
-#, php-format
+#: lib/class-gravityview-extension.php:349
 msgid "Could not activate the %s Extension; GravityView is not active."
 msgstr ""
 
-#: lib/class-gravityview-extension.php:185
-#, php-format
+#: lib/class-gravityview-extension.php:353
 msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:357
+msgid ""
+"The %s Extension requires PHP Version %s or newer. Please ask your host to "
+"upgrade your server's PHP."
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://gravityview.co/extensions/datatables/"
+msgstr ""
+
+#: includes/class-datatables-data.php:635
+msgctxt "Menu label to show all results in DataTables template."
+msgid "All"
 msgstr ""

@@ -56,7 +56,7 @@ var SLsettingsAjax = {
 
 		var data = '';
 		$s( '#sl-import-loading' ).show();
-		$s.post( SLajaxURL.importLinksURL, data, function( respon ){
+		$s.post( Simple_Links_Config.importLinksURL, data, function(){
 			$s( '#sl-import-loading' ).hide();
 			$s( '#import-links-success' ).slideDown( 'slow' );
 		} );

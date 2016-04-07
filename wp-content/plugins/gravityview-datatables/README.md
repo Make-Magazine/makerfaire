@@ -1,7 +1,7 @@
 # GravityView - DataTables Extension #
 **Tags:** gravityview  
 **Requires at least:** 3.3  
-**Tested up to:** 4.2.2  
+**Tested up to:** 4.5  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices, luistinygod  
 **License:** GPL 3 or higher  
@@ -15,6 +15,32 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 ## Changelog ##
+
+### 2.0 on April 4, 2016 ###
+
+* Added: New Buttons extension to replace the deprecated TableTools export buttons (includes better PDF and Excel generated files)
+* Fixed: Overflow table when using the responsive extension
+* Fixed: "FixedColumns" properly scrolls the table header along with table content
+* Fixed: "Hide View data until search is performed" setting now works with DataTables
+* Fixed: When using Direct AJAX method on Views with file upload fields
+* Tweak: Scroller improvements by buffering more rows to allow a better scrolling experience
+* Fixed: Scroller now supports `rowHeight` setting
+* Fixed: Scroller "Loading" text box displayed on top of the scroll bar
+* Tweak: AJAX errors are shown in the browser console instead of sending alert
+* Tweak: Print button export format style
+* Updated: DataTables scripts and stylesheets
+* Added: Chinese translation (thanks Edi Weigh!)
+
+### 1.3.3 on January 25, 2016 ###
+* Fixed: Fields that aren't sortable won't show the sorting icon
+* Fixed: Search conflict between DataTables built-in search and the GravityView shortcode search parameters
+
+### 1.3.2 on January 20, 2016 ###
+* Added: Support for hiding empty fields when using the Responsive extension (only hides fields on the details rows)
+* Fixed: Direct AJAX for WordPress 4.4
+
+### 1.3.1 on August 7 ###
+* Fixed: Invalid JSON response alert
 
 ### 1.3 on June 23, 2015 ###
 * Added: Support for column widths (requires GravityView 1.9)

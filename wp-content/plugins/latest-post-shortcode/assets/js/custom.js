@@ -95,6 +95,14 @@ function lps_init_embed_shortcode(ed) {
                         }
                     }
                     break;
+                case 'status' :
+                    var p = v.split(',');
+                    for (jj = 0; jj <= p.length; jj++) {
+                        if (typeof jQuery('#lps_status_' + p[jj]) != 'undefined') {
+                            jQuery('#lps_status_' + p[jj]).prop('checked', true);
+                        }
+                    }
+                    break;
                 case 'orderby' :
                     jQuery('#lps_orderby').val(v);
                     break;
@@ -218,6 +226,17 @@ function lps_preview_configures_shortcode() {
         });
         if (show_extra != '') {
             sc += ' show_extra="' + show_extra + '"';
+        }
+    }
+    var status = jQuery('.lps_status:checkbox').map(function () {
+        return jQuery(this).is(":checked") ? jQuery(this).val() : '';
+    }).get();
+    if (status != '') {
+        status = status.filter(function (e) {
+            return e
+        });
+        if (status != '') {
+            sc += ' status="' + status + '"';
         }
     }
     var orderby = jQuery('#lps_orderby').val();

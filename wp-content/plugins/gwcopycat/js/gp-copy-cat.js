@@ -1,187 +1,171 @@
 /**
  * GP Copy Cat JS
  */
-window.gwCopyObj = function(formId, fields, overwrite ) {
+( function( $ ) {
 
-    this._formId = formId;
-    this._fields = fields;
+    window.gwCopyObj = function(formId, fields, overwrite ) {
 
-    // do not overwrite existing values when a checkbox field is the copy trigger
-    this._overwrite = overwrite;
+        this._formId = formId;
+        this._fields = fields;
 
-    this.init = function() {
+        // do not overwrite existing values when a checkbox field is the copy trigger
+        this._overwrite = overwrite;
 
-        var copyObj = this;
+        this.init = function() {
 
-        jQuery( '#gform_wrapper_' + this._formId + ' .gwcopy input[type="checkbox"]').bind( 'click.gpcopycat', function(){
+            var copyObj = this;
 
-            if(jQuery(this).is(':checked')) {
-                copyObj.copyValues(this);
-            } else {
-                copyObj.clearValues(this);
+            $( '#gform_wrapper_' + this._formId + ' .gwcopy input[type="checkbox"]').bind( 'click.gpcopycat', function(){
+
+                if($(this).is(':checked')) {
+                    copyObj.copyValues(this);
+                } else {
+                    copyObj.clearValues(this);
+                }
+
+            } );
+
+            $( '#gform_wrapper_' + this._formId + ' .gwcopy' ).find( 'input, textarea, select' ).each( function() {
+                var isCheckbox = $( this ).is( 'input[type="checkbox"]' );
+                if( ! isCheckbox ) {
+                    copyObj.copyValues( this );
+                } else if( $( this ).is( ':checked' ) ) {
+                    copyObj.copyValues( this );
+                }
+            } ).not( 'input[type="checkbox"]' ).bind( 'change.gpcopycat', function() {
+                copyObj.copyValues( this );
+            } );
+
+            $( '#gform_wrapper_' + this._formId ).data( 'GPCopyCat', this );
+
+        };
+
+        this.copyValues = function( elem, isOverride ) {
+
+            var copyObj    = this,
+                fieldId    = $(elem).parents('li.gwcopy').attr('id').replace('field_' + this._formId + '_', '' ),
+                fields     = this._fields[fieldId],
+                isOverride = copyObj._overwrite || isOverride;
+
+            for( var i = 0; i < fields.length; i++ ) {
+
+                var field        = fields[i],
+                    sourceValues = [],
+                    sourceGroup  = this.getFieldGroup( field, 'source' ),
+                    targetGroup  = this.getFieldGroup( field, 'target' );
+
+                sourceGroup.each( function( i ) {
+                    sourceValues[i] = $( this ).val();
+                } );
+
+                targetGroup.each(function(i){
+
+                    var targetElem     = $( this ),
+                        isCheckbox     = targetElem.is( ':checkbox' ),
+                        hasValue       = isCheckbox ? targetElem.is( ':checked' ) : targetElem.val(),
+                        hasSourceValue = isCheckbox || sourceValues[i] || sourceValues.join( ' ' );
+
+                    // if overwrite is false and a value exists, skip
+                    if( ! isOverride && hasValue ) {
+                        return true;
+                    }
+
+                    // if there is no source value for this element, skip
+                    if( ! hasSourceValue ) {
+                        return true;
+                    }
+
+                    if( isCheckbox ) {
+                        if( $.inArray( targetElem.val(), sourceValues ) != -1 ) {
+                            targetElem.prop( 'checked', true );
+                        }
+                    } else if( targetGroup.length > 1 ) {
+                        targetElem.val( sourceValues[i] );
+                    }
+                    // if there is only one input, join the source values
+                    else {
+                        targetElem.val( copyObj.cleanValueByInputType( sourceValues.join( ' ' ), targetElem.attr( 'type' ) ) );
+                    }
+
+                } ).change();
+
             }
 
-        } );
+        };
 
-        jQuery( '#gform_wrapper_' + this._formId + ' .gwcopy' ).find( 'input, textarea, select' ).each( function() {
-            var isCheckbox = jQuery( this ).is( 'input[type="checkbox"]' );
-            if( ! isCheckbox ) {
-                copyObj.copyValues( this, true );
-            } else if( jQuery( this ).is( ':checked' ) ) {
-                copyObj.copyValues( this, true );
-            }
-        } ).not( 'input[type="checkbox"]' ).bind( 'change.gpcopycat', function() {
-            copyObj.copyValues( this, true );
-        } );
+        this.clearValues = function(elem) {
 
-        jQuery( '#gform_wrapper_' + this._formId ).data( 'GPCopyCat', this );
+            var fieldId = $(elem).parents('li.gwcopy').attr('id').replace('field_' + this._formId + '_', '');
+            var fields = this._fields[fieldId];
 
-    };
+            for( var i = 0; i < fields.length; i++ ) {
 
-    this.copyValues = function( elem, isOverride ) {
+                var field        = fields[i],
+                    sourceValues = [],
+                    targetGroup  = this.getFieldGroup( field, 'target' ),
+                    sourceGroup  = this.getFieldGroup( field, 'source' );
 
-        var copyObj    = this,
-            fieldId    = jQuery(elem).parents('li.gwcopy').attr('id').replace('field_' + this._formId + '_', '' ),
-            fields     = this._fields[fieldId],
-            isOverride = copyObj._overwrite || isOverride;
+                sourceGroup.each( function( i ) {
+                    sourceValues[i] = $(this).val();
+                } );
 
-        for( var i = 0; i < fields.length; i++ ) {
+                targetGroup.each( function( i ) {
 
-            var field        = fields[i],
-                source       = parseInt( field.source ),
-                target       = parseInt( field.target ),
-                sourceValues = [],
-                sourceGroup  = jQuery( '#field_' + this._formId + '_' + source ).find( 'input, select, textarea' ),
-                targetGroup  = jQuery( '#field_' + this._formId + '_' + target ).find( 'input, select, textarea' );
+                    var $targetElem = $( this ),
+                        fieldValue  = $targetElem.val(),
+                        isCheckbox  = $targetElem.is( ':checkbox' );
 
-            if( target != field.target ) {
-                var targetInputId = field.target.split( '.' )[1];
-                // search for field by ID - or - by name attribute
-                targetGroup = targetGroup.filter( '#input_' + this._formId + '_' + target + '_' + targetInputId + ', input[name="input_' + field.target + '"]' );
+                    if( isCheckbox ) {
+                        $targetElem.prop( 'checked', false );
+                    } else if( fieldValue == sourceValues[i] ) {
+                        $targetElem.val( '' );
+                    }
+
+                } ).change();
+
             }
 
-            if( source != field.source ) {
+        };
 
-                var sourceInputId       = field.source.split( '.' )[1],
-                    filteredSourceGroup = sourceGroup.filter( '#input_' + this._formId + '_' + source + '_' + sourceInputId + ', input[name="input_' + field.source + '"]' );
+        this.cleanValueByInputType = function( value, inputType ) {
+
+            if( inputType == 'number' ) {
+                value = gformToNumber( value );
+            }
+
+            return value;
+        };
+
+        this.getFieldGroup = function( field, groupType ) {
+
+            var rawFieldId = field[ groupType ],
+                fieldId    = parseInt( rawFieldId ),
+                formId     = field[ groupType + 'FormId' ], // i.e. 'sourceFormId' or 'targetFormId',
+                group      = $( '#field_' + formId + '_' + fieldId ).find( 'input, select, textarea' );
+
+            // if input-specific
+            if( fieldId != rawFieldId ) {
+
+                var inputId       = rawFieldId.split( '.' )[1],
+                    filteredGroup = group.filter( '#input_' + formId + '_' + fieldId + '_' + inputId + ', input[name="input_' + rawFieldId + '"]' );
 
                 // some fields (like email with confirmation enabled) have multiple inputs but the first input has no HTML ID (input_1_1 vs input_1_1_1)
-                if( filteredSourceGroup.length <= 0 ) {
-                    sourceGroup = sourceGroup.filter( '#input_' + this._formId + '_' + source );
+                if( filteredGroup.length <= 0 ) {
+                    group = group.filter( '#input_' + formId + '_' + rawFieldId );
                 } else {
-                    sourceGroup = filteredSourceGroup;
+                    group = filteredGroup;
                 }
             }
 
-            if( sourceGroup.is( 'input:radio, input:checkbox' ) ) {
-                sourceGroup = sourceGroup.filter( ':checked' );
+            if( group.is( 'input:radio, input:checkbox' ) ) {
+                group = group.filter( ':checked' );
             }
 
-            sourceGroup.each( function( i ) {
-                sourceValues[i] = jQuery(this).val();
-            } );
+            return group;
+        };
 
-            targetGroup.each(function(i){
-
-                var targetElem     = jQuery( this ),
-                    isCheckbox     = targetElem.is( ':checkbox' ),
-                    hasValue       = isCheckbox ? targetElem.is( ':checked' ) : targetElem.val(),
-                    hasSourceValue = isCheckbox || sourceValues[i] || sourceValues.join( ' ' );
-
-                // if overwrite is false and a value exists, skip
-                if( ! isOverride && hasValue ) {
-                    return true;
-                }
-
-                // if there is no source value for this element, skip
-                if( ! hasSourceValue ) {
-                    return true;
-                }
-
-                if( isCheckbox ) {
-                    if( jQuery.inArray( targetElem.val(), sourceValues ) != -1 ) {
-                        targetElem.prop( 'checked', true );
-                    }
-                } else if( targetGroup.length > 1 ) {
-                    targetElem.val( sourceValues[i] );
-                }
-                // if there is only one input, join the source values
-                else {
-                    targetElem.val( copyObj.cleanValueByInputType( sourceValues.join( ' ' ), targetElem.attr( 'type' ) ) );
-                }
-
-            } ).change();
-
-        }
+        this.init();
 
     };
 
-    this.clearValues = function(elem) {
-
-        var fieldId = jQuery(elem).parents('li.gwcopy').attr('id').replace('field_' + this._formId + '_', '');
-        var fields = this._fields[fieldId];
-
-        for( var i = 0; i < fields.length; i++ ) {
-
-            var field        = fields[i],
-                source       = parseInt( field.source ),
-                target       = parseInt( field.target ),
-                sourceValues = [],
-                targetGroup  = jQuery( '#field_' + this._formId + '_' + target ).find( 'input, select, textarea' ),
-                sourceGroup  = jQuery( '#field_' + this._formId + '_' + source ).find( 'input, select, textarea' );
-
-            if( target != field.target ) {
-                var targetInputId = field.target.split( '.' )[1];
-                targetGroup = targetGroup.filter( '#input_' + this._formId + '_' + target + '_' + targetInputId + ', input[name="input_' + field.target + '"]' );
-            }
-
-            if( source != field.source ) {
-
-                var sourceInputId       = field.source.split( '.' )[1],
-                    filteredSourceGroup = sourceGroup.filter( '#input_' + this._formId + '_' + source + '_' + sourceInputId + ', input[name="input_' + field.source + '"]' );
-
-                if( filteredSourceGroup.length <= 0 ) {
-                    sourceGroup = sourceGroup.filter( '#input_' + this._formId + '_' + source );
-                } else {
-                    sourceGroup = filteredSourceGroup;
-                }
-            }
-
-            if( sourceGroup.is( 'input:radio, input:checkbox' ) ) {
-                sourceGroup = sourceGroup.filter( ':checked' );
-            }
-
-            sourceGroup.each( function( i ) {
-                sourceValues[i] = jQuery(this).val();
-            } );
-
-            targetGroup.each( function( i ) {
-
-                var $targetElem = jQuery( this ),
-                    fieldValue  = $targetElem.val(),
-                    isCheckbox  = $targetElem.is( ':checkbox' );
-
-                if( isCheckbox ) {
-                    $targetElem.prop( 'checked', false );
-                } else if( fieldValue == sourceValues[i] ) {
-                    $targetElem.val( '' );
-                }
-
-            } ).change();
-
-        }
-
-    };
-
-    this.cleanValueByInputType = function( value, inputType ) {
-
-        if( inputType == 'number' ) {
-            value = gformToNumber( value );
-        }
-
-        return value;
-    };
-
-    this.init();
-
-};
+} )( jQuery );
