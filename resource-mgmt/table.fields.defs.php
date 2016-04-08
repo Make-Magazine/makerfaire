@@ -91,33 +91,86 @@ $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'status',   'fil
                                                  'options' => array('Proposed'=>'Proposed','Accepted'=>'Accepted','Rejected'=>'Rejected',
                                                                     'Wait List'=>'Wait List','Cancelled'=>'Cancelled'),
                                                 );
-
+$cellToolTipTemplate = '<div class="ui-grid-cell-contents wrap" title="{{COL_FIELD}}" data-toggle="tooltip" >{{ COL_FIELD }}</div>';
+$dateCellTemplate    =
+'<div class="ui-grid-cell-contents">{{ COL_FIELD | date:\'M/d/yy h:mm a\'}}</div>';
 //change report
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'lead_id',   'filterType'   => 'text');
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'form_id',   'filterType'   => 'text');
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'lead_id',
+    'filterType'  => 'text',
+    'width'       => 75,
+  );
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'user_email',
+    'filterType'  => 'text',   'fieldLabel'  => 'User Email',
+    'dataSql'     => "(SELECT user_email FROM `wp_users` where wp_users.ID =user_id ) as user_email",
+    'cellTemplate'=> $cellToolTipTemplate,
+    'fkey'        => array('referenceTable'   => 'wp_users',
+                          'referenceField'   => 'ID',
+                          'referenceDisplay' => 'user_email'),
+    'options' =>array(null=>'Initial','0'=>'Payment'));
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'dateUpdated',
+    'dataSql'     => '(select DATE_FORMAT(date_updated,"%Y-%m-%dT%TZ") from wp_rg_lead_detail_changes date where date.ID= wp_rg_lead_detail_changes.ID) as dateUpdated',
+    'filterType'  => 'text',
+    'fieldLabel'  => 'Date Updated',
+    'orderBy'     => 'DESC',
+    'width'       => 150,
+    //'type'        => 'date',
+    //'cellFilter'  => 'dd/MM/yyyy',
+    'cellTemplate'=> '<div class="ui-grid-cell-contents">{{COL_FIELD | date:"M-d-yy h:mm a"}}</div>',
+        );
+
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'fieldLabel',
+    'filterType'  => 'text',
+    'fieldLabel'  => 'Field Label',
+    'cellTemplate'=> $cellToolTipTemplate
+  );
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'field_before',
+    'filterType'  => 'text',
+    'fieldLabel'  => 'Value Before',
+    'width'       => 250,
+    'cellTemplate'=> $cellToolTipTemplate
+  );
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'field_after',
+    'filterType'  => 'text',
+    'fieldLabel'  => 'Value After',
+    'width'       => 250,
+    'cellTemplate'=> $cellToolTipTemplate
+  );
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'status_at_update',
+    'filterType'  => 'text',
+    'visible'     => false
+  );
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'status','visible'=>false,
+    'filterType'  => 'dropdown',
+    'fieldLabel'  => 'Status',
+    'dataSql'     => "(SELECT value FROM `wp_rg_lead_detail` where field_number=303 and wp_rg_lead_detail.lead_id =wp_rg_lead_detail_changes.lead_id ) as status",
+    'options'     => array('Proposed'=>'Proposed','Accepted'=>'Accepted','Rejected'=>'Rejected',
+                           'Wait List'=>'Wait List','Cancelled'=>'Cancelled'),
+  );
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'form_id',
+    'filterType'  => 'text',
+    'visible'     => false
+  );
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'field_id',
+    'filterType'  => 'text',
+    'visible'     => false
+  );
+
 /*
 $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'user_id',   'filterType' => 'dropdown',   'fieldLabel'  => 'User Updated',
                                                   'fkey'       => array('referenceTable'   => 'wp_users',
                                                                         'referenceField'   => 'ID',
                                                                         'referenceDisplay' => 'user_email'),
                                                   'options' =>array(null=>'Initial','0'=>'Payment'));*/
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'user_email',
-                                                    'filterType' => 'text',   'fieldLabel'  => 'User Updated',
-    'dataSql' => "(SELECT user_email FROM `wp_users` where wp_users.ID =user_id ) as user_email",
-                                                    'fkey'       => array('referenceTable'   => 'wp_users',
-                                                                        'referenceField'   => 'ID',
-                                                                        'referenceDisplay' => 'user_email'),
-                                                  'options' =>array(null=>'Initial','0'=>'Payment'));
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'date_updated',   'filterType'   => 'text');
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_id',   'filterType'   => 'text');
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_before',   'filterType'   => 'text');
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'field_after',   'filterType'   => 'text');
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'fieldLabel',   'filterType'   => 'text');
-$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'status',   'filterType'   => 'dropdown', 'fieldLabel' => 'Status',
-                                                 'dataSql' => "(SELECT value FROM `wp_rg_lead_detail` where field_number=303 and wp_rg_lead_detail.lead_id =wp_rg_lead_detail_changes.lead_id ) as status",
-                                                 'options' => array('Proposed'=>'Proposed','Accepted'=>'Accepted','Rejected'=>'Rejected',
-                                                                    'Wait List'=>'Wait List','Cancelled'=>'Cancelled'),
-                                                );
 //faire report
 $tableFields['wp_mf_faire_subarea'][] = array('fieldName' => 'faire',   'filterType'   => 'text',
                                               'dataSql' => "(SELECT faire "

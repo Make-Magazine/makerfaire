@@ -2,10 +2,28 @@ var rmgControllers = angular.module('rmgControllers', []);
 
 rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q', '$interval','uiGridConstants', function ($scope, $routeParams, $http, $q, $interval,uiGridConstants) {
   var routeArray = {
-    'vendors'  : {'list':'wp_rmt_vendors', 'resources': 'wp_rmt_vendor_resources'},
-    'resources': {'list':'wp_rmt_resources', 'items': 'wp_rmt_resource_categories'},
-    'faire'    : {'data':'wp_mf_faire', 'orders':'wp_rmt_vendor_orders','areas':'wp_mf_faire_area','subareas':'wp_mf_faire_subarea','global-faire':'wp_mf_global_faire'},
-    'entry'    : {'resources': 'wp_rmt_entry_resources','attention':'wp_rmt_entry_attn','attributes': 'wp_rmt_entry_attributes', 'atttibuteCategories': 'wp_rmt_entry_att_categories', 'workflow':'wp_rmt_attn'}
+    'vendors': {
+      'list':      { table: 'wp_rmt_vendors', pageTitle : 'Vendors', subTitle  : 'Vendor List'},
+      'resources': { table: 'wp_rmt_vendor_resources', pageTitle : 'Vendors', subTitle  : 'Vendor Resources'},
+      },
+    'resources': {
+      'list':     { table: 'wp_rmt_resources',pageTitle:'Manage RMT Data',subTitle:'Resource Type'},
+      'items':    { table: 'wp_rmt_resource_categories',pageTitle:'Manage RMT Data',subTitle : 'Resource Items'},
+    },
+    'faire': {
+      'data'                : {table : 'wp_mf_faire',pageTitle:'Faire Data',subTitle:'Faire Data'},
+      'orders'              : {table : 'wp_rmt_vendor_orders',pageTitle:'',subTitle:''},
+      'areas'               : {table : 'wp_mf_faire_area',pageTitle:'Faire Data',subTitle:'Faire Areas'},
+      'subareas'            : {table : 'wp_mf_faire_subarea',pageTitle:'Faire Data',subTitle:'Faire Sub=areas'},
+      'global-faire'        : {table : 'wp_mf_global_faire',pageTitle:'Faire Data',subTitle:'Global Faire DAta'}
+    },
+    'entry' : {
+      'resources'           : {table : 'wp_rmt_entry_resources', pageTitle:'Entry Specific Data',subTitle:'Assigned Resources'},
+      'attention'           : {table : 'wp_rmt_entry_attn', pageTitle:'Entry Specific Data',subTitle:'Assigned Attention'},
+      'attributes'          : {table : 'wp_rmt_entry_attributes',pageTitle:'Entry Specific Data',subTitle:'Assigned Attributes'},
+      'atttibuteCategories' : {table : 'wp_rmt_entry_att_categories',pageTitle:'Manage RMT Data',subTitle:'Attributes'},
+      'workflow'            : {table :'wp_rmt_attn',pageTitle:'Manage RMT Data',subTitle:'Workflow/Attention'},
+    }
   };
 
   $scope.resource    = {};
@@ -14,7 +32,12 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
   if($routeParams){
     mainRoute = $routeParams.main;
     subRoute  = $routeParams.sub;
-    $scope.dispTablename=routeArray[mainRoute][subRoute];
+    pageTitle = routeArray[mainRoute][subRoute]['pageTitle'];
+    subTitle  = routeArray[mainRoute][subRoute]['subTitle'];
+    jQuery('#pageTitle').html(pageTitle);
+    jQuery('#subTitle').html(subTitle);
+    jQuery('#pageTitle').html(pageTitle);
+    $scope.dispTablename=routeArray[mainRoute][subRoute]['table'];
   }
   $scope.filterExport = function( grid, row, col, input ) {
     return 'unknown';

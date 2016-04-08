@@ -123,6 +123,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   //set up gridOptions for predefined reports
   $scope.gridOptions = {enableFiltering: true,
     enableGridMenu: true,
+    rowHeight: 100,
+
     exporterCsvFilename: 'export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
@@ -155,13 +157,27 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   if($routeParams){
     $scope.reports.subRoute = $routeParams.sub;
     var subRoute  = $routeParams.sub;
-    if(subRoute=='change')        tablename = 'wp_rg_lead_detail_changes';
-    if(subRoute=='location')      tablename = 'wp_mf_faire_subarea';
+    var pageTitle = 'Reports';
+    var subTitle  = '';
+    if(subRoute=='change')        {
+      tablename = 'wp_rg_lead_detail_changes';
+      subTitle = 'Entry Change Report';
+    }
+    if(subRoute=='drill')        {
+      subTitle = 'Resource Drill Down';
+    }
+    if(subRoute=='location')      {
+      tablename = 'wp_mf_faire_subarea';
+      subTitle = 'Faire Location Report';
+    }
     if(subRoute=='ent2resource')  tablename = 'wp_rg_lead';
     if(subRoute=='build'){
       tablename = 'formData';
       $scope.reports.showbuild = true;
+      subTitle = 'Build Your Own Report';
     }
+    jQuery('#pageTitle').html(pageTitle);
+    jQuery('#subTitle').html(subTitle);
     $scope.reports.tableName = tablename;
   }
   $scope.filterExport = function( grid, row, col, input ) {
@@ -203,7 +219,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
         }
       });
       $scope.gridOptions.columnDefs = response.data.columnDefs;
-      console.log(uiGridConstants.filter);
+      //console.log(uiGridConstants.filter);
       $scope.gridOptions.data       = response.data.data;
 
       //set up build your own data
