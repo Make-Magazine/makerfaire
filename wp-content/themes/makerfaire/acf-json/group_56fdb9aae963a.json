@@ -206,6 +206,22 @@
                             "disabled": 0
                         },
                         {
+                            "key": "field_5706b0f65ce84",
+                            "label": "invite only?",
+                            "name": "invite_only",
+                            "type": "true_false",
+                            "instructions": "Checkbox to chow the INVITE ONLY button.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "message": "",
+                            "default_value": 0
+                        },
+                        {
                             "key": "field_56fdbfaae5711",
                             "label": "day event body",
                             "name": "day_event_body",
@@ -252,5 +268,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1459986593
+    "modified": 1460056352
 }

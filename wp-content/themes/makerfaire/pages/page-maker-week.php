@@ -41,7 +41,7 @@ get_header('version-2'); ?>
                 <h4 class="date-day-name"><?php echo get_sub_field('date_day_name'); ?></h4>
                 <div class="calendar-date">
                   <h3 class="date-month"><?php echo $months_array[get_sub_field('date_month') - 1] ?></h3>
-                  <h2 class="date-day-number"><?php echo get_sub_field('date_day_number'); ?></h2>
+                  <h2 class="date-day-number <?php if( get_sub_field('multi_day')){echo "date-day-number-small";} ?>"><?php echo get_sub_field('date_day_number'); ?></h2>
                 </div>
               </div>
               <div class="col-md-8 event-day-columns">
@@ -53,7 +53,11 @@ get_header('version-2'); ?>
                       <div class="day-event-block">
                         <h4 class="day-event-title"><?php the_sub_field('day_event_title'); ?></h4>
                         <h4 class="day-event-title-description"><?php the_sub_field('day_event_title_description'); ?></h4>
-                        <div><?php the_sub_field('day_event_body'); ?></div>
+                        <div class="day-event-content"><?php the_sub_field('day_event_body'); ?>
+                          <?php if( get_sub_field('invite_only')) {
+                              echo "<p><span class='label label-warning'>INVITE ONLY</span></p>";
+                            } ?>
+                        </div>
                       </div>
                     <?php endwhile; ?>
                 <?php endif; ?>
