@@ -258,7 +258,9 @@ class GravityView_API {
 				$display_value = self::replace_variables( $display_value, $form, $entry );
 			}
 		} else {
-			$value = $display_value = rgar( $entry, $field_id );
+      $field['type'] = $field_type;
+			$display_value = rgar( $entry, $field_id );
+      $value = $display_value = apply_filters( "gform_entry_field_value", $display_value, $field, $entry, $form );
 			$display_value = $value;
 		}
 
@@ -277,7 +279,7 @@ class GravityView_API {
 			'format' => $format,
 			'entry' => $entry,
 			'field_type' => $field_type, /** {@since 1.6} */
-		    'field_path' => $field_path, /** {@since 1.16} */
+		  'field_path' => $field_path, /** {@since 1.16} */
 		));
 
 		if( ! empty( $field_path ) ) {
