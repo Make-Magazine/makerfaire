@@ -458,10 +458,6 @@ class GFRMTHELPER {
     if($entryData['fType'] == 'Payment'){
       $user = 0;  //user = 0 - payment form
     }
-if($entryID == 55932){
-  error_log(print_r($resource,true));
-  error_log(print_r($attribute,true));
-}
     //add resources to the table
     foreach($resource as $value){
       $resource_id = $value[0]['id'];

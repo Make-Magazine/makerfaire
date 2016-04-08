@@ -357,7 +357,6 @@ function mf_remove_dashboard() {
   global $current_user;
   $user = wp_get_current_user();
   if (is_array($user->roles) && in_array('maker', $user->roles)) {
-    
     $requestURI = (isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:'');
     if (!current_user_can('manage_options') && $requestURI != '/wp-admin/admin-ajax.php') {
       wp_redirect(home_url());

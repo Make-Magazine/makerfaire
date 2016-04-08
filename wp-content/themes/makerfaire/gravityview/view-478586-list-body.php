@@ -149,28 +149,28 @@ if( ! $total or !( is_user_logged_in() )) {
                   case 'edit_link':
                     //do not display if entry is cancelled
                     if($entry['303']!='Cancelled'){
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-pencil-square-o"></i>Edit</span>';
+                      $title_args['markup'] = '<span class="edit"><i class="fa fa-pencil-square-o"></i>{{label}} {{value}}</span>';
                       $links .=  gravityview_field_output( $title_args );
                     }
                     break;
                   case 'cancel_link':
                     //do not display if entry is already cancelled
                     if($entry['303']!='Cancelled'){
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>Cancel</span>';
+                      $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>{{label}} {{value}}</span>';
                       $links .=  gravityview_field_output( $title_args );
                     }
                     break;
                   case 'copy_entry':
-                    $title_args['markup'] = '<span class="edit"><i class="fa fa-files-o"></i>Copy</span>';
+                    $title_args['markup'] = '<span class="edit"><i class="fa fa-files-o"></i>{{label}} {{value}}</span>';
                     $links .=  gravityview_field_output( $title_args );
                     break;
                   case 'entry_link':
-                    $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>View</span>';
+                    $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>{{label}} {{value}}</span>';
                     $links .=  gravityview_field_output( $title_args );
                     break;
                   case 'maker_sign_link':
                     if($entry['303']=='Accepted' && $form['form_type']=='Exhibit'){
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-file-pdf-o"></i>Faire Sign</span>';
+                      $title_args['markup'] = '<span class="edit"><i class="fa fa-file-pdf-o"></i>{{label}} {{value}}</span>';
                       $links .=  gravityview_field_output( $title_args );
                     }
                     break;
