@@ -228,9 +228,9 @@ class GF_Field_FileUpload extends GF_Field {
 		}
 
     /* This MF custom code was added but I am not sure why.  Leaving this hear in case we need it again*/
-    //if (  ! empty( $value ) ) { // edit entry
+    if (  ! empty( $value ) ) { // edit entry
 
-		if ( $is_entry_detail && ! empty( $value ) ) { // edit entry
+		//if ( $is_entry_detail && ! empty( $value ) ) { // edit entry
 			$file_urls      = $multiple_files ? json_decode( $value ) : array( $value );
 			$upload_display = $multiple_files ? '' : "style='display:none'";
 			$preview        = "<div id='upload_$id' {$upload_display}>$upload</div>";

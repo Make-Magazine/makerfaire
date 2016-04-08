@@ -11,21 +11,26 @@ and open the template in the editor.
 /* begin bootstrap overwrite */
 body.wp-admin {
   background-color: #f1f1f1;
-}
-.wp-admin .modal {
-  bottom: inherit;
-  left: 50%;
+  .modal {
+    bottom: inherit;
+    left: 50%;
+  }
+
+  #lead_search_button {
+    height: 27px;
+    margin-top: 1px;
+  }
+  .gform-filter-value {
+    height: 28px;
+    border-radius: 4px;
+    vertical-align: bottom;
+  }
+  .members-cap-tabs .label {
+    color: #000;
+  }
 }
 /* end bootstrap overwrite */
-.wp-admin #lead_search_button {
-  height: 27px;
-  margin-top: 1px;
-}
-.wp-admin .gform-filter-value {
-  height: 28px;
-  border-radius: 4px;
-  vertical-align: bottom;
-}
+
 /*form 25 field 321 styling*/
 ul#input_321 li {
   width: 50%;

@@ -206,7 +206,6 @@ class GravityView_Edit_Entry_Render {
         $this->original_form = $this->form;
 
         $this->view_id = $gravityview_view->getViewId();
-
         self::$nonce_key = GravityView_Edit_Entry::get_nonce_key( $this->view_id, $this->form_id, $this->entry['id'] );
     }
 
@@ -302,6 +301,7 @@ class GravityView_Edit_Entry_Render {
              * @hack to avoid the capability validation of the method save_lead for GF 1.9+
              */
             unset( $_GET['page'] );
+            $orig_entry = $this->entry;
 
             GFFormsModel::save_lead( $form, $this->entry );
 
@@ -314,7 +314,7 @@ class GravityView_Edit_Entry_Render {
             $this->update_calculation_fields();
 
             // Perform actions normally performed after updating a lead
-            $this->after_update();
+            $this->after_update($orig_entry);
 
             /**
              * @action `gravityview/edit_entry/after_update` Perform an action after the entry has been updated using Edit Entry
@@ -664,12 +664,12 @@ class GravityView_Edit_Entry_Render {
      *
      * @return void
      */
-    function after_update() {
+    function after_update($orig_entry='') {
         //custom MF code
         /* update has occurred, reset the validation form as this has admin only fields set to false */
         unset($this->form_after_validation);
 
-        do_action( 'gform_after_update_entry', $this->form, $this->entry['id'] );
+        do_action( 'gform_after_update_entry', $this->form, $this->entry['id'],$orig_entry );
         do_action( "gform_after_update_entry_{$this->form['id']}", $this->form, $this->entry['id'] );
 
         // Re-define the entry now that we've updated it.
@@ -1618,7 +1618,7 @@ class GravityView_Edit_Entry_Render {
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
 
-	    if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
+	    if( $use_gf_adminonly_setting  ) {
             foreach( $fields as $k => $field ) {
                 if( $field->adminOnly ) {
                     unset( $fields[ $k ] );

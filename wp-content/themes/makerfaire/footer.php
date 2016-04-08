@@ -40,16 +40,17 @@
               <li><a href="//twitter.com/makerfaire" class="icoTwitter" title="Twitter" target="_blank"><i class="fa fa-twitter" target="_blank"></i></a></li>
               <li><a href="//www.pinterest.com/makemagazine/maker-faire/" class="icoPinterest" title="Pinterest" target="_blank"><i class="fa fa-pinterest-p" target="_blank"></i></a></li>
               <li><a href="//plus.google.com/104410464300110463062/posts" class="icoGoogle-plus" title="Google+" target="_blank"><i class="fa fa-google-plus" target="_blank"></i></a></li>
-          </ul>    
+          </ul>
         </div>
         <div class="clearfix"></div>
 
-        <div class="mz-footer-subscribe"> 
+        <div class="mz-footer-subscribe">
           <?php
             $isSecure = "http://";
             if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
               $isSecure = "https://";
             }
+            $server = $_SERVER['HTTP_HOST'];
           ?>
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
@@ -60,10 +61,10 @@
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
-            <input type="hidden" name="custom_url" value="<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" />
+            <input type="hidden" name="custom_url" value="<?php echo $server. $_SERVER['REQUEST_URI']; ?>" />
             <input type="hidden" id="format_mime" name="format" value="mime" />
             <input type="hidden" name="goto" value="" />
-            <input type="hidden" name="custom_host" value="<?php echo $_SERVER["HTTP_HOST"]; ?>" />
+            <input type="hidden" name="custom_host" value="<?php echo $server; ?>" />
             <input type="hidden" name="errors_to" value="" />
             <div class="mz-form-horizontal">
               <input id="wc-email" name="email" placeholder="Enter your Email" required type="text"><br>
@@ -84,10 +85,10 @@
               <li><a href="//twitter.com/makerfaire" class="icoTwitter" title="Twitter" target="_blank"><i class="fa fa-twitter" target="_blank"></i></a></li>
               <li><a href="//www.pinterest.com/makemagazine/maker-faire/" class="icoPinterest" title="Pinterest" target="_blank"><i class="fa fa-pinterest-p" target="_blank"></i></a></li>
               <li><a href="//plus.google.com/104410464300110463062/posts" class="icoGoogle-plus" title="Google+" target="_blank"><i class="fa fa-google-plus" target="_blank"></i></a></li>
-          </ul>    
+          </ul>
         </div>
         <div class="clearfix"></div>
-        <div class="mz-footer-subscribe"> 
+        <div class="mz-footer-subscribe">
           <?php
             $isSecure = "http://";
             if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
@@ -103,10 +104,10 @@
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
-            <input type="hidden" name="custom_url" value="<?php echo $_SERVER[" HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" />
+            <input type="hidden" name="custom_url" value="<?php echo $server . $_SERVER["REQUEST_URI"]; ?>" />
             <input type="hidden" id="format_mime" name="format" value="mime" />
             <input type="hidden" name="goto" value="" />
-            <input type="hidden" name="custom_host" value="<?php echo $_SERVER[" HTTP_HOST"]; ?>" />
+            <input type="hidden" name="custom_host" value="<?php echo $server; ?>" />
             <input type="hidden" name="errors_to" value="" />
             <div class="mz-form-horizontal">
               <input id="wc-email-m" name="email" placeholder="Enter your Email" required type="email"><br>
@@ -212,12 +213,12 @@
     });
          jQuery('#mf-featured-slider').carousel({
              interval: 8000
-         });             
+         });
     jQuery( ".carousel" ).each( function() {
           jQuery(this).carousel({
         interval: 4000
       });
-      }); 
+      });
   });
 </script>
 <div id="fb-root"></div>

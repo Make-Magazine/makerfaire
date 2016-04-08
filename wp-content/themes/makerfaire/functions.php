@@ -1715,12 +1715,14 @@ function entries_list(){
 
 //remove old entries navigation
 function remove_menu_links() {
-    global $submenu;
+  global $submenu;
+  if(isset($submenu['gf_edit_forms'])){
     foreach($submenu['gf_edit_forms'] as $key=>$item){
-        if(in_array('gf_entries',$item)){
-            unset($submenu['gf_edit_forms'][$key]);
-        }
+      if(in_array('gf_entries',$item)){
+        unset($submenu['gf_edit_forms'][$key]);
+      }
     }
+  }
 }
 add_action( 'admin_menu', 'remove_menu_links', 9999 );
 
@@ -2539,7 +2541,7 @@ function update_entry_resatt() {
   //set lockBit to locked
   $sql = "update ".$table.' set lockBit=1 where ID='.$ID;
   $wpdb->get_results($sql);
-  
+
   //return the ID
   $response = array('message'=>'Saved','ID'=>$ID,'user'=>$current_user->display_name,'dateupdate'=>current_time('m/d/y h:i a'));
   wp_send_json( $response );

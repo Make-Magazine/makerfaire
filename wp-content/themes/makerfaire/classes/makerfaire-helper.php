@@ -68,13 +68,13 @@ function mf_display_schedule_by_area($atts) {
   $count = 0;
   $activetab = '';
   foreach ($schedule as $subarea => $scheduleArea) {
-    //add to the li drop down        
+    //add to the li drop down
     $href = strtolower(preg_replace("/[^A-Za-z0-9]/", "", $subarea));
     $active = ($count == 0 ? 'active' : '');
     $activetab = ($count == 0) ? $subarea : $activetab;
     $count++;
     $dropdownLi .= '<li class="' . $active . '"><a href="#' . $href . '" data-toggle="tab">' . $subarea . '</a></li>';
-    //begin building the schedule Data for this area 
+    //begin building the schedule Data for this area
     $scheduleData .= '<div class="tab-pane ' . $active . '" id="' . $href . '">';
 
     //each area contains a row with tabs for each date, print icon and a tabable div for each day
@@ -259,38 +259,38 @@ function get_mf_schedule_by_faire($faire, $day = '', $area = '', $subarea = '') 
 
   $select_query = "SELECT  area.area,subarea.subarea,subarea.nicename,
                                 entity.lead_id as entry_id, DAYNAME(schedule.start_dt) as day,
-                                entity.project_photo as photo, schedule.start_dt, schedule.end_dt, 
-                                entity.presentation_title, entity.desc_short as description,  
+                                entity.project_photo as photo, schedule.start_dt, schedule.end_dt,
+                                entity.presentation_title, entity.desc_short as description,
                                 (select  group_concat( distinct concat(maker.`FIRST NAME`,' ',maker.`LAST NAME`) separator ', ') as Makers
-                                    from    wp_mf_maker maker, 
+                                    from    wp_mf_maker maker,
                                             wp_mf_maker_to_entity maker_to_entity
                                     where   schedule.entry_id           = maker_to_entity.entity_id  AND
                                             maker_to_entity.maker_id    = maker.maker_id AND
-                                            maker_to_entity.maker_type != 'Contact' 
+                                            maker_to_entity.maker_type != 'Contact'
                                     group by maker_to_entity.entity_id
                                 )  as makers_list    ,
-                                (select  Photo from    wp_mf_maker maker, 
+                                (select  Photo from    wp_mf_maker maker,
                                             wp_mf_maker_to_entity maker_to_entity
                                     where   schedule.entry_id           = maker_to_entity.entity_id  AND
                                             maker_to_entity.maker_id    = maker.maker_id AND
-                                            maker_to_entity.maker_type = 'presenter' 
+                                            maker_to_entity.maker_type = 'presenter'
                                    group by maker_to_entity.entity_id
-                                )  as maker_photo     
-                        
-                        FROM    wp_mf_schedule schedule, 
-                                wp_mf_entity entity, 
-                                wp_mf_location location, 
-                                wp_mf_faire_subarea subarea, 
+                                )  as maker_photo
+
+                        FROM    wp_mf_schedule schedule,
+                                wp_mf_entity entity,
+                                wp_mf_location location,
+                                wp_mf_faire_subarea subarea,
                                 wp_mf_faire_area area
-                                                            
-                        where   schedule.entry_id   = entity.lead_id 
-                                AND entity.status       = 'Accepted' 
+
+                        where   schedule.entry_id   = entity.lead_id
+                                AND entity.status       = 'Accepted'
                                 and location.entry_id   = schedule.entry_id
                                 and location.ID         = schedule.location_id
                                 and subarea.id          = location.subarea_id
                                 and area.id             = subarea.area_id
                                 and schedule.faire      = '" . $faire . "' " .
-          " ORDER BY   subarea.sort_order, 
+          " ORDER BY   subarea.sort_order,
                                     schedule.start_dt ASC";
 
   $mysqli->query("SET NAMES 'utf8'");
@@ -357,7 +357,9 @@ function mf_remove_dashboard() {
   global $current_user;
   $user = wp_get_current_user();
   if (is_array($user->roles) && in_array('maker', $user->roles)) {
-    if (!current_user_can('manage_options') && $_SERVER['DOING_AJAX'] != '/wp-admin/admin-ajax.php') {
+    
+    $requestURI = (isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI']:'');
+    if (!current_user_can('manage_options') && $requestURI != '/wp-admin/admin-ajax.php') {
       wp_redirect(home_url());
       exit;
     }
@@ -374,10 +376,8 @@ add_action('init', 'remove_admin_bar');
 
 function remove_admin_bar() {
   global $current_user;
-
   $user = wp_get_current_user();
   if (is_array($user->roles) && in_array('maker', $user->roles)) {
-
     show_admin_bar(false);
     add_filter('show_admin_bar', '__return_false');
   }
