@@ -142,35 +142,35 @@ if( ! $total or !( is_user_logged_in() )) {
                         break;
                     case 'delete_entry':
                         if($entry['303']=='Proposed' || $entry['303']=='In Progress'){
-                            $title_args['markup'] = '<span class="edit"><i class="fa fa-trash-o"></i>{{value}}</span>';
+                            $title_args['markup'] = '<span class="edit"><i class="fa fa-trash-o"></i>Delete</span>';
                             $links .=  gravityview_field_output( $title_args );
                         }
                         break;
                     case 'edit_link':
                         //do not display if entry is cancelled
                         if($entry['303']!='Cancelled'){
-                            $title_args['markup'] = '<span class="edit"><i class="fa fa-pencil-square-o"></i>{{value}}</span>';
+                            $title_args['markup'] = '<span class="edit"><i class="fa fa-pencil-square-o"></i>Edit</span>';
                             $links .=  gravityview_field_output( $title_args );
                         }
                         break;
                     case 'cancel_link':
                         //do not display if entry is already cancelled
                         if($entry['303']!='Cancelled'){
-                          $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>{{value}}</span>';
+                          $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>Cancel</span>';
                           $links .=  gravityview_field_output( $title_args );
                         }
                         break;
                     case 'copy_entry':
-                        $title_args['markup'] = '<span class="edit"><i class="fa fa-files-o"></i>{{value}}</span>';
+                        $title_args['markup'] = '<span class="edit"><i class="fa fa-files-o"></i>Copy</span>';
                         $links .=  gravityview_field_output( $title_args );
                         break;
                     case 'entry_link':
-                        $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>{{value}}</span>';
+                        $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>View</span>';
                         $links .=  gravityview_field_output( $title_args );
                         break;
                     case 'maker_sign_link':
                       if($entry['303']=='Accepted' && $form['form_type']=='Exhibit'){
-                        $title_args['markup'] = '<span class="edit"><i class="fa fa-file-pdf-o"></i>{{value}}</span>';
+                        $title_args['markup'] = '<span class="edit"><i class="fa fa-file-pdf-o"></i>Faire Sign</span>';
                         $links .=  gravityview_field_output( $title_args );
                       }
                         break;
