@@ -27,7 +27,7 @@ if ( $type == 'maker' ) {
                                         `wp_mf_maker`.`First Name` as first_name,
                                         `wp_mf_maker`.`Last Name` as last_name,
                                         `wp_mf_maker`.`Bio`,
-                                        Bio_image = '',
+                                        `wp_mf_maker`.`Photo`,
                                         `wp_mf_maker`.`Email`,
                                         `wp_mf_maker`.`TWITTER`,    
                                         `wp_mf_maker`.`form_id`,
@@ -68,7 +68,7 @@ if ( $type == 'maker' ) {
 		$maker['last_name']=$row['last_name'];
 		$maker['description']=$row['Bio'];
 		$maker['email']=$row['Email'];
-		$maker['image']=$row['Bio_image'];
+		$maker['image']=$row['Photo'];
 		$maker['twitter']=$row['TWITTER'];
 		
 		$maker['name'] = $row['first_name'].' '.$row['last_name'];
