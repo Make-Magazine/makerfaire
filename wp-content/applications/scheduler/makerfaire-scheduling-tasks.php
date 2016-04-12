@@ -12,7 +12,7 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {
 	header ( 'Content-Type: application/json' );
 	
 	$request = json_decode ( file_get_contents ( 'php://input' ) );
-	$result = readWithAssociation ( 'NY15', '' );
+	$result = readWithAssociation ( 'BA16', '' );
 	echo json_encode ( $result ['data'], JSON_NUMERIC_CHECK );
 	
 	exit ();
@@ -30,7 +30,7 @@ elseif ($_SERVER ['REQUEST_METHOD'] == 'POST') {
 			$start = date ( 'Y-m-d H:i:s', strtotime ( $model->Start ) );
 			$end = date ( 'Y-m-d H:i:s', strtotime ( $model->End ) );
 			$entries = $model->Entries [0];
-			$model -> locationID = add_entry_schedule ( 'NY15', $subareaid, $start, $end, $entries );
+			$model -> locationID = add_entry_schedule ( 'BA16', $subareaid, $start, $end, $entries );
 			$result= $model;// $result=1 ; // $result = $result->createWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
 			break;
 		case 'update' :
@@ -39,7 +39,7 @@ elseif ($_SERVER ['REQUEST_METHOD'] == 'POST') {
 			$start = date ( 'Y-m-d H:i:s', strtotime ( $model->Start ) );
 			$end = date ( 'Y-m-d H:i:s', strtotime ( $model->End ) );
 			$entries = $model->Entries [0];
-			$result = update_entry_schedule ($locationID, 'NY15', $subareaid, $start, $end, $entries );
+			$result = update_entry_schedule ($locationID, 'BA16', $subareaid, $start, $end, $entries );
 			break;
 		case 'destroy' :
 			$locationID = $model->locationID;
