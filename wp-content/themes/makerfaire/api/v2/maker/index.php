@@ -76,17 +76,13 @@ if ( $type == 'maker' ) {
 		$maker['category_id_refs'] = explode(',', $row['category']); //array_unique( get_post_meta( absint( $post->ID ), 'mfei_record' ) );
 		//add the sponsor category 333 if using a sponsor form
                 
-                //look for the word sponsor in the form name
-                $form = GFAPI::get_form( $row['form_id'] );		
-		$formTitle = $form['title'];                  
-                               
-                if (strpos($formTitle, 'Sponsor') !== false) {
-                    $maker['category_id_refs'][] = '333';
-                }
-		
+    //look for the word sponsor in the form name
+    $form = GFAPI::get_form( $row['form_id'] );		
+    $formTitle = $form['title'];                  
+    //If the form is a sponsor set to 333 otherwise use 222.  See Manual categories in /category/index.php
+    $maker['category_id_refs'][] =  (strpos($formTitle, 'Sponsor') !== false) ? '333' : '222';
+                
 		// No longer have these
-		
-		
 		// Maker Thumbnail and Large Images
 		//$maker_image = isset($entry['217']) ? $entry['217']  : null;
 		//$maker['thumb_img_url'] = esc_url( legacy_get_resized_remote_image_url( $maker_image, '80', '80' ) );
