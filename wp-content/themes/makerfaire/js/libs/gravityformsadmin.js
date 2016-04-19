@@ -42,7 +42,7 @@ jQuery( document ).ready(function() {
   //on update of rating submit ajax to update value in database
   jQuery('.star-rating :radio').change(
     function(){
-      var entry_id = jQuery("input[name=entry_info_entry_id]").val();;
+      var entry_id = jQuery("input[name=entry_info_entry_id]").val();
       var data = {
         'action': 'update-entry-rating',
         'rating_entry_id': entry_id,
@@ -415,5 +415,45 @@ function updateDB(newVal,currentEle){
     //update the date/time and user info
     jQuery('#'+fieldData['type']+'user_'+fieldData['ID']).html(response.user);
     jQuery('#'+fieldData['type']+'dateupdate_'+fieldData['ID']).html(response.dateupdate);
+  });
+}
+
+/* EventBrite */
+function ebAccessTokens(){
+  jQuery('#noTickets').hide();
+  jQuery('#createTickets').show();
+  var entry_id = jQuery("input[name=entry_info_entry_id]").val();;
+  var data = {
+        'action': 'ebAccessTokens',
+        'entryID': entry_id
+      };
+  jQuery.post(ajaxurl, data, function(response) {
+    jQuery('#noTickets').html(response.msg);
+    jQuery('#noTickets').show();
+    jQuery('#createTickets').hide();
+  });
+}
+
+function hiddenTicket(accessCode) {
+  var checkObj = jQuery('#HT'+accessCode);
+
+  if(checkObj.hasClass('checked')){
+    checkObj.html('<i class="fa fa-square-o" aria-hidden="true"></i>');
+    checkObj.removeClass('checked');
+    var checked  = 1;
+  }else{
+    checkObj.html('<i class="fa fa-check-square-o" aria-hidden="true"></i>');
+    checkObj.addClass('checked');
+    var checked  = 0;
+  }
+  var data = {
+      'action': 'ebUpdateAC',
+      'accessCode': accessCode,
+      'checked': checked
+    };
+  jQuery.post(ajaxurl, data, function(response) {
+    if(response.msg!=''){
+      alert(response.msg);
+    }
   });
 }

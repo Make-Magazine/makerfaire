@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
     var entryId = jQuery(e.relatedTarget).data('entry-id');
     jQuery(e.currentTarget).find('span[name="entryID"]').html(entryId);
 
-    //populate the project Name        
+    //populate the project Name
     var projName = jQuery(e.relatedTarget).data('projname');
     jQuery("#projName").html(projName);
 
@@ -22,7 +22,7 @@ jQuery(document).ready(function() {
   jQuery('#submitCancel').click(function() {
     //disable the submit button
     jQuery('#submitCancel').hide();
-    //submit the cancellation via ajax                            
+    //submit the cancellation via ajax
     var entry_id = jQuery("#cancelEntryID").html();
     var cancel_reason = jQuery('textarea[name="cancelReason"]').val();
     var data = {
@@ -37,7 +37,7 @@ jQuery(document).ready(function() {
     });
   });
 
-  //modal close - refresh page  
+  //modal close - refresh page
   jQuery('#cancelEntry').on('hidden.bs.modal', function(e) {
     location.reload();
   });
@@ -62,7 +62,7 @@ jQuery(document).ready(function() {
     //disable the submit button
     jQuery('#submitCopy').prop('disabled', true);
 
-    //submit the request via ajax                            
+    //submit the request via ajax
     var entry_id = jQuery("#copyEntryID").html();
     var copy2Form = jQuery('#copy2Form').val();
     var gvViewId = jQuery('.gravityview-view-id').val();
@@ -89,7 +89,7 @@ jQuery(document).ready(function() {
     jQuery('#deleteText').show();
     //show the submit button
     jQuery('#submitDelete').show();
-    //hide the close button        
+    //hide the close button
     jQuery("#closeDelete").hide();
     //show the cancel button
     jQuery("#cancelDelete").show();
@@ -99,7 +99,7 @@ jQuery(document).ready(function() {
     //jQuery(e.currentTarget).find('span[name="deleteEntryID"]').html(entryId);
     jQuery("#deleteEntryID").html(entryId)
 
-    //populate the project Name        
+    //populate the project Name
     var projName = jQuery(e.relatedTarget).data('projname');
     jQuery("#delProjName").html(projName);
 
@@ -108,12 +108,12 @@ jQuery(document).ready(function() {
   jQuery('#submitDelete').click(function() {
     //hide the submit button
     jQuery('#submitDelete').hide();
-    //show the close button        
+    //show the close button
     jQuery("#closeDelete").show();
     //hide the cancel button
     jQuery("#cancelDelete").hide();
 
-    //submit the cancellation via ajax                            
+    //submit the cancellation via ajax
     var entry_id = jQuery("#deleteEntryID").html();
     var data = {
       'action': 'maker-delete-entry',
@@ -126,8 +126,25 @@ jQuery(document).ready(function() {
     });
   });
 
-  //modal close - refresh page  
+  //modal close - refresh page
   jQuery('#closeDelete').click(function() {
     location.reload();
   });
+
+  //modal for ticketing
+  /* Set up the modal for the maker admin cancel entry function */
+  jQuery('#ticketingEntry').on('show.bs.modal', function(e) {
+    //make sure the cancel response is empty
+    jQuery(e.currentTarget).find('#cancelResponse').html('');
+    jQuery('#cancelText').show();
+    //populate the entry id
+    var entryId = jQuery(e.relatedTarget).data('entry-id');
+    jQuery(e.currentTarget).find('span[name="entryID"]').html(entryId);
+
+    //populate the project Name
+    var projName = jQuery(e.relatedTarget).data('projname');
+    jQuery("#projName").html(projName);
+
+  });
+
 });

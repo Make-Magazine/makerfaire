@@ -393,6 +393,7 @@ function gf_collapsible_sections($form, $lead){
       <li role="presentation"><a href="#tabs-3" aria-controls="tabs-3" role="tab" data-toggle="tabs-3">Other<br/>Entries (<?php echo $addEntriesCnt;?>)</a></li>
       <li role="presentation"><a href="#images" aria-controls="images" role="tab" data-toggle="images"><br/>Images</a></li>
       <li role="presentation" aria-selected="true"><a href="#resources" aria-controls="resources" role="tab" data-toggle="resources"><br/>Resources</a></li>
+      <li role="presentation" aria-selected="true"><a href="#ticketing" aria-controls="ticketing" role="tab" data-toggle="ticketing"><br/>Ticketing</a></li>
     </ul>
     <div class="tab-content">
       <div role="tabpanel" class="tab-pane" id="tabs-1">
@@ -428,55 +429,81 @@ function gf_collapsible_sections($form, $lead){
           <?php entryResources($lead);?>
         </div>
       </div>
+
+      <div role="tabpanel" class="tab-pane"  id="ticketing">
+        <div class="panel-group">
+          <?php
+          $return = entryTicketing($lead);
+
+          if($return){
+            echo $return;
+          }else{
+             ?>
+            <div id="noTickets">
+              No Access Codes found for this entry. Click the ticket icon to generate<br/>
+              <br/>
+              <p onclick="ebAccessTokens()"><i class="fa fa-ticket fa-3x" aria-hidden="true"></i></i></p>
+            </div>
+
+            <div style="display:none" id="createTickets">
+              <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom"></i>
+              <span class="sr-only">Loading...</span>
+            </div>
+            <i>Please be patient.  This may take a while to complete</i>
+            <?php
+          }
+          ?>
+        </div>
+      </div>
     </div> <!-- .tab-content -->
   </div>
   <?php
 }
 
 function displayContent($content,$lead,$fieldData,$display = 'table'){
-   global $display_empty_fields;
-   $return = '';
-    if($display=='table')   $return .= '<table>';
-   $form = GFAPI::get_form( $lead['form_id'] );
+  global $display_empty_fields;
+  $return = '';
+  if($display=='table')   $return .= '<table>';
+  $form = GFAPI::get_form( $lead['form_id'] );
 
-    foreach($content as $fieldID){
-        if(isset($fieldData[$fieldID])){
-            $field = $fieldData[$fieldID];
-            $value         = RGFormsModel::get_lead_field_value( $lead, $field );
-            if(RGFormsModel::get_input_type($field)!='fileupload'){
-                $display_value = GFCommon::get_lead_field_display( $field, $value, $lead['currency'] );
-                $display_value = apply_filters( 'gform_entry_field_value', $display_value, $field, $lead, $form );
-            }else{
-                //display images in a grid
-                if($value!=''){
-                    $display_value = '<img width="100px" src="'. legacy_get_resized_remote_image_url($value, 100,100).'" alt="" />';
-                }else{
-                    $display_value = '';
-                }
-            }
-
-
-            if ( $display_empty_fields || ! empty( $display_value ) || $display_value === '0' ) {
-                    $display_value = empty( $display_value ) && $display_value !== '0' ? '&nbsp;' : $display_value;
-                    if($display=='table'){
-                    $content = '
-                            <tr>
-                            <td colspan="2" class="entry-view-field-name">' . esc_html( GFCommon::get_label( $field ) ) . '</td>
-                            </tr>
-                            <tr>
-                            <td colspan="2" class="entry-view-field-value">' . $display_value . '</td>
-                            </tr>';
-                    }else{
-                        $content = '<div style="'.($field['cssClass']==''?'float:left;':'').'padding:5px;margin:10px" class="'.$field['cssClass'].'">'.esc_html( GFCommon::get_label( $field ) ).'<br/>'.$display_value.'</div>';
-                    }
-                    $content = apply_filters( 'gform_field_content', $content, $field, $value, $lead['id'], $form['id'] );
-                    $return .=  $content;
-            }
+  foreach($content as $fieldID){
+    if(isset($fieldData[$fieldID])){
+      $field = $fieldData[$fieldID];
+      $value         = RGFormsModel::get_lead_field_value( $lead, $field );
+      if(RGFormsModel::get_input_type($field)!='fileupload'){
+        $display_value = GFCommon::get_lead_field_display( $field, $value, $lead['currency'] );
+        $display_value = apply_filters( 'gform_entry_field_value', $display_value, $field, $lead, $form );
+      }else{
+        //display images in a grid
+        if($value!=''){
+          $display_value = '<img width="100px" src="'. legacy_get_resized_remote_image_url($value, 100,100).'" alt="" />';
+        }else{
+          $display_value = '';
         }
+      }
+
+
+      if ( $display_empty_fields || ! empty( $display_value ) || $display_value === '0' ) {
+        $display_value = empty( $display_value ) && $display_value !== '0' ? '&nbsp;' : $display_value;
+        if($display=='table'){
+        $content = '
+                <tr>
+                <td colspan="2" class="entry-view-field-name">' . esc_html( GFCommon::get_label( $field ) ) . '</td>
+                </tr>
+                <tr>
+                <td colspan="2" class="entry-view-field-value">' . $display_value . '</td>
+                </tr>';
+        }else{
+          $content = '<div style="'.($field['cssClass']==''?'float:left;':'').'padding:5px;margin:10px" class="'.$field['cssClass'].'">'.esc_html( GFCommon::get_label( $field ) ).'<br/>'.$display_value.'</div>';
+        }
+        $content = apply_filters( 'gform_field_content', $content, $field, $value, $lead['id'], $form['id'] );
+        $return .=  $content;
+      }
     }
-   if($display=='table')   $return .= '</table>';
-   if($display=='grid')   $return .= '<div class="clear"></div>';
-   return $return;
+  }
+  if($display=='table')   $return .= '</table>';
+  if($display=='grid')   $return .= '<div class="clear"></div>';
+  return $return;
 }
 
 function getmetaData($entry_id,$type=''){
@@ -819,4 +846,55 @@ function entryResources($lead){
       </div>
     </div>
   </div> <?php
+}
+
+function entryTicketing($lead,$format='admin'){
+  global $wpdb;
+  $return = 0;
+  $entry_id = $lead['id'];
+  $sql = 'select eb_entry_access_code.*, eb_eventToTicket.title, eb_eventToTicket.subtitle,'
+          . ' (SELECT EB_event_id FROM `eb_event` where eb_event.ID = eb_eventToTicket.eventID) as event_id'
+          . ' from eb_entry_access_code,eb_eventToTicket'
+          . ' where eb_eventToTicket.ticketID=eb_entry_access_code.EBticket_id'
+          . ' and entry_id = '.$entry_id .' order by eb_eventToTicket.disp_order';
+
+  $results = $wpdb->get_results($sql);
+  if($wpdb->num_rows > 0){
+    $attnArr = array();
+    //determine output format
+    if($format=='MAT'){
+      $return  = '<table class="mat-ticketing">';
+      foreach($results as $result){
+        if($result->hidden==0){
+          $return .=  '<tr>';
+          $return .=  '<td><div class="title">' . $result->title . '</div><div class="subtitle">' .$result->subtitle.'</div></td>';
+          $return .=  '<td><a target="_blank" href="https://mfba16makers.eventbrite.com/?discount='.$result->access_code.'"><i class="fa fa-chevron-circle-right fa-3x" aria-hidden="true"></i></a></td>';
+          $return .=  '</tr>';
+        }
+      }
+      $return .= '</table>';
+    }else{
+      //admin format
+      $return =  '<table>'
+       . '  <thead>'
+       . '    <th>Access Code</th>'
+       . '    <th></th>'
+       . '    <th>Show to Maker</th>'
+       . '  </thead>';
+
+      foreach($results as $result){
+        $return .=  '<tr>';
+        $return .=  '<td><a target="_blank" href="https://mfba16makers.eventbrite.com/?discount='.$result->access_code.'">'.$result->access_code.'</a></td>';
+        $return .=  '<td><h4>' . $result->title . '</h4>' .$result->subtitle.'</td>';
+        $return .=  '<td><p class="'.($result->hidden==0?'checked':'').'" id="HT'.$result->access_code.'" onclick="hiddenTicket(\''.$result->access_code.'\')">';
+        $return .=  '<i class="fa fa-'.($result->hidden==0?'check-':'').'square-o" aria-hidden="true"></i>';
+
+        $return .='</p></td>';
+        $return .=  '</tr>';
+      }
+      $return .= '</table>';
+    }
+  }
+
+  return $return;
 }

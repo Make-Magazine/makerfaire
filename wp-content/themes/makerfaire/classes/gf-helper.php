@@ -42,9 +42,7 @@ function gform_next_button_markup( $next_button ) {
 
 add_filter( 'gform_previous_button', 'gform_previous_button_markup' );
 function gform_previous_button_markup( $previous_button ) {
-
 	$previous_button = '<span class="container-gpb">'. $previous_button . '</span>';
-
 	return $previous_button;
 }
 
@@ -402,3 +400,4 @@ function createGUID($id){
             .chr(125);// "}"
         return $uuid;
 }
+

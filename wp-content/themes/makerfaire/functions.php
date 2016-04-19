@@ -66,6 +66,10 @@ include_once TEMPLATEPATH. '/classes/legacy-helper.php';
 //cron job
 include_once TEMPLATEPATH. '/classes/cronJob.php';
 
+//eventbrite API
+if (is_admin()){
+  include_once TEMPLATEPATH. '/classes/eventbrite.class.inc';
+}
 require_once( 'taxonomies/type.php' );
 require_once( 'taxonomies/sponsor-category.php' );
 require_once( 'taxonomies/location.php' );
@@ -262,11 +266,11 @@ function makerfaire_index_feed($n = 4) {
 
 function isc_register_menus() {
   register_nav_menus(
-  array( 'header-menu' => __( 'Header Menu' ),
-            'footer' => __( 'footer' ),
-      'mf-admin-bayarea-register-menu' => __( 'MF BayArea Admin Bar' ),
-                        'mf-admin-newyork-register-menu' => __( 'MF NewYork Admin Bar' ),
-      'mobile-nav' => __( 'Mobile Navigation' ) )
+  array('header-menu' => __( 'Header Menu' ),
+        'footer' => __( 'footer' ),
+        'mf-admin-bayarea-register-menu' => __( 'MF BayArea Admin Bar' ),
+        'mf-admin-newyork-register-menu' => __( 'MF NewYork Admin Bar' ),
+        'mobile-nav' => __( 'Mobile Navigation' ) )
   );
 }
 add_action( 'init', 'isc_register_menus' );
@@ -275,7 +279,7 @@ add_action( 'init', 'isc_register_menus' );
 function makerfaire_carousel_shortcode( $atts ) {
   extract( shortcode_atts( array( 'id' => 'biggins'), $atts ) );
   return  '<a class="carousel-control left" href="#' . esc_attr( $id ) . '" data-slide="prev">
-  <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
       <span class="sr-only">Previous</span></a>
       <a class="carousel-control right" href="#' . esc_attr( $id ) . '" data-slide="next">
       <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
@@ -1210,22 +1214,22 @@ add_shortcode( 'new_gallery', 'make_new_gallery_shortcode' );
 //add jquery for gravity forms
 add_filter('gform_register_init_scripts', 'gform_addScript');
 function gform_addScript($form) {
-    $script = '(function(){' .
-        'jQuery("input[type=radio][name=input_1]").change(function(){
-            if (jQuery(this).val().indexOf("Standard Presentation") > -1) {
-                //disable "45 minutes" option
-                jQuery("input[name=\'input_2.3\']").attr("disabled",true);
-                //if option is already checked, uncheck it
-                jQuery("input[name=\'input_2.3\']").attr("checked",false);
-            }else{
-                jQuery("input[name=\'input_2.3\']").attr("disabled",false);
-            }
-        });' .
-    '})(jQuery);';
+  $script = '(function(){' .
+      'jQuery("input[type=radio][name=input_1]").change(function(){
+          if (jQuery(this).val().indexOf("Standard Presentation") > -1) {
+              //disable "45 minutes" option
+              jQuery("input[name=\'input_2.3\']").attr("disabled",true);
+              //if option is already checked, uncheck it
+              jQuery("input[name=\'input_2.3\']").attr("checked",false);
+          }else{
+              jQuery("input[name=\'input_2.3\']").attr("disabled",false);
+          }
+      });' .
+  '})(jQuery);';
 
-    GFFormDisplay::add_init_script($form['id'], 'formScript', GFFormDisplay::ON_PAGE_RENDER, $script);
+  GFFormDisplay::add_init_script($form['id'], 'formScript', GFFormDisplay::ON_PAGE_RENDER, $script);
 
-    return $form;
+  return $form;
 }
 
 /* This function checks if the entry-id set on the form is valid
@@ -1235,54 +1239,54 @@ function gform_addScript($form) {
  */
 add_filter( 'gform_validation', 'custom_validation' );
 function custom_validation( $validation_result ) {
-    $form = $validation_result['form'];
+  $form = $validation_result['form'];
 
-    // determine if entry-id and contact-email id's are in the submitted form
-    // and what their field id's are
-    $entryID = get_value_by_label('entry-id', $form);
-    $contact_email   = get_value_by_label('contact-email', $form);
+  // determine if entry-id and contact-email id's are in the submitted form
+  // and what their field id's are
+  $entryID = get_value_by_label('entry-id', $form);
+  $contact_email   = get_value_by_label('contact-email', $form);
 
-    //make sure we are in the right form
-    if(!empty($entryID) && !empty($contact_email)){
-        $entryid        = rgpost( 'input_'. $entryID['id']) ;
-        $sub_email      = rgpost( 'input_'. $contact_email['id'] ) ;
+  //make sure we are in the right form
+  if(!empty($entryID) && !empty($contact_email)){
+    $entryid        = rgpost( 'input_'. $entryID['id']) ;
+    $sub_email      = rgpost( 'input_'. $contact_email['id'] ) ;
 
-        //check if entry-id is valid
-        $entry = GFAPI::get_entry( $entryid );
-        if(is_array($entry)){
-            //finding Field with ID of 1 and marking it as failed validation
-            foreach( $form['fields'] as &$field ) {
-               if ( $field->id == $contact_email['id']) {     //contact_email
-                    $entryForm = GFAPI::get_form( $entry['form_id']);
-                    $ef_email = get_value_by_label('contact-email', $entryForm,$entry);
-                    $contactEmail = $ef_email['value'];
+    //check if entry-id is valid
+    $entry = GFAPI::get_entry( $entryid );
+    if(is_array($entry)){
+      //finding Field with ID of 1 and marking it as failed validation
+      foreach( $form['fields'] as &$field ) {
+        if ( $field->id == $contact_email['id']) {     //contact_email
+          $entryForm = GFAPI::get_form( $entry['form_id']);
+          $ef_email = get_value_by_label('contact-email', $entryForm,$entry);
+          $contactEmail = $ef_email['value'];
 
-                    if(strtolower($sub_email) != strtolower($contactEmail)){
-                        // set the form validation to false
-                        $validation_result['is_valid'] = false;
-                        $field->failed_validation = true;
-                        $field->validation_message = 'Email does not match contact email on the project';
-                    }
-                }
-            }
-        }else{
+          if(strtolower($sub_email) != strtolower($contactEmail)){
             // set the form validation to false
             $validation_result['is_valid'] = false;
-            //finding Field with ID of 1 and marking it as failed validation
-            foreach( $form['fields'] as &$field ) {
-                if ( $field->id == $entryID['id']) {
-                    // set the form validation to false
-                    $validation_result['is_valid'] = false;
-                    $field->failed_validation = true;
-                    $field->validation_message = 'Invalid Project ID';
-                    break;
-                }
-            }
+            $field->failed_validation = true;
+            $field->validation_message = 'Email does not match contact email on the project';
+          }
         }
+      }
+    }else{
+      // set the form validation to false
+      $validation_result['is_valid'] = false;
+      //finding Field with ID of 1 and marking it as failed validation
+      foreach( $form['fields'] as &$field ) {
+        if ( $field->id == $entryID['id']) {
+          // set the form validation to false
+          $validation_result['is_valid'] = false;
+          $field->failed_validation = true;
+          $field->validation_message = 'Invalid Project ID';
+          break;
+        }
+      }
     }
-     //Assign modified $form object back to the validation result
-    $validation_result['form'] = $form;
-    return $validation_result;
+  }
+  //Assign modified $form object back to the validation result
+  $validation_result['form'] = $form;
+  return $validation_result;
 };
 add_filter( 'gform_pre_render_35', 'populate_html' );
 add_filter( 'gform_pre_render_36', 'populate_html' );
@@ -1301,75 +1305,72 @@ add_filter( 'gform_pre_render_59', 'populate_html' );
  * It will take the entry id submitted on page one and use that to pull in various data from the original form submission
  */
 function populate_html( $form ) {
-    //this is a 2-page form with the data from page one being displayed in an html field on page 2
-    $current_page = GFFormDisplay::get_current_page( $form['id'] );
-    $html_content = "The information you have submitted is as follows:<br/><ul>";
-    if ( $current_page == 2 ) {
-       foreach ( $form['fields'] as &$field ) {
-           if($field->inputName=='entry-id'){
-               $entry_id = rgpost( 'input_' . $field->id );
-           }
-       }
-
-       $fieldIDarr['project-name']          = 151;
-       $fieldIDarr['short-project-desc']    = 16;
-       $fieldIDarr['exhibit-contain-fire']  = 83;
-       $fieldIDarr['interactive-exhibit']   = 84;
-       $fieldIDarr['fire-safety-issues']    = 85;
-       $fieldIDarr['serving-food']    = 44;
-       $fieldIDarr['you-are-entity']    = 45;
-       $fieldIDarr['plans-type']    = "55";
-
-       //find the project name for submitted entry-id
-       $entry = GFAPI::get_entry( $entry_id );
-       foreach ( $form['fields'] as &$field ) {
-           if(isset($fieldIDarr[$field->inputName])){
-             if ($field->inputName == 'plans-type')
-              {
-                $planstypevalues = array();
-                for ($i = 1; $i <= 6; $i++)
-                {
-                  if (isset( $entry['55.'.$i])  && !empty($entry['55.'.$i]))
-                  {
-                    $planstypevalues[] = $entry['55.'.$i];
-                  }
-                }
-                $field->defaultValue = implode(',',$planstypevalues);
-              }
-              else
-               $field->defaultValue = $entry[$fieldIDarr[$field->inputName]];
-           }
-       }
+  //this is a 2-page form with the data from page one being displayed in an html field on page 2
+  $current_page = GFFormDisplay::get_current_page( $form['id'] );
+  $html_content = "The information you have submitted is as follows:<br/><ul>";
+  if ( $current_page == 2 ) {
+    foreach ( $form['fields'] as &$field ) {
+      if($field->inputName=='entry-id'){
+        $entry_id = rgpost( 'input_' . $field->id );
+      }
     }
 
-    return($form);
+    $fieldIDarr['project-name']          = 151;
+    $fieldIDarr['short-project-desc']    = 16;
+    $fieldIDarr['exhibit-contain-fire']  = 83;
+    $fieldIDarr['interactive-exhibit']   = 84;
+    $fieldIDarr['fire-safety-issues']    = 85;
+    $fieldIDarr['serving-food']    = 44;
+    $fieldIDarr['you-are-entity']    = 45;
+    $fieldIDarr['plans-type']    = "55";
+
+    //find the project name for submitted entry-id
+    $entry = GFAPI::get_entry( $entry_id );
+    foreach ( $form['fields'] as &$field ) {
+      if(isset($fieldIDarr[$field->inputName])){
+        if ($field->inputName == 'plans-type'){
+          $planstypevalues = array();
+          for ($i = 1; $i <= 6; $i++){
+            if (isset( $entry['55.'.$i])  && !empty($entry['55.'.$i])){
+              $planstypevalues[] = $entry['55.'.$i];
+            }
+          }
+          $field->defaultValue = implode(',',$planstypevalues);
+        }else{
+          $field->defaultValue = $entry[$fieldIDarr[$field->inputName]];
+        }
+      }
+    }
+  }
+
+  return($form);
 }
 
 //for the Barnes and Noble forms the store preference is set by JS.
 //If the back button is selected we need to populate these fields
 add_filter( 'gform_pre_render_43', 'BN_storeSelect' );
 function BN_storeSelect( $form ) {
-    if(isset($_POST["input_341"]) || isset($_POST["input_342"]) || isset($_POST["input_343"])){
-        //add selected values to form
-        foreach ( $form['fields'] as &$field ) {
-            if($field->id==341 || $field->id==342 || $field->id==343){
-                $choices = array();
-                $storeSel = rgpost("input_".$field->id);
-                $choices[] = array( 'text' => $storeSel, 'value' => $storeSel);
-                $field->choices = $choices;
-            }
-        }
+  if(isset($_POST["input_341"]) || isset($_POST["input_342"]) || isset($_POST["input_343"])){
+    //add selected values to form
+    foreach ( $form['fields'] as &$field ) {
+      if($field->id==341 || $field->id==342 || $field->id==343){
+        $choices = array();
+        $storeSel = rgpost("input_".$field->id);
+        $choices[] = array( 'text' => $storeSel, 'value' => $storeSel);
+        $field->choices = $choices;
+      }
     }
-    return($form);
+  }
+  return($form);
 }
 
 //when a linked form is submitted, find the initial formid based on entry id
 // and add the fields from the linked form to that original entry
 add_action( 'gform_after_submission', 'GSP_after_submission', 10, 2 );
 function GSP_after_submission($entry, $form ){
-    // update meta
-    $updateEntryID = get_value_by_label('entry-id', $form, $entry);
-    gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
+  // update meta
+  $updateEntryID = get_value_by_label('entry-id', $form, $entry);
+  gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
 }
 
 //=============================================
@@ -1377,20 +1378,20 @@ function GSP_after_submission($entry, $form ){
 // the Parameter Name for a specific form
 //=============================================
 function get_value_by_label($key, $form, $entry=array()) {
-    $return = array();
-    foreach ($form['fields'] as &$field) {
-        $lead_key = $field['inputName'];
-        if ($lead_key == $key) {
-            $return['id']    = $field['id'];
-            if(!empty($entry)){
-                $return['value'] = $entry[$field['id']];
-            }else{
-                $return['value']='';
-            }
-            return $return;
-        }
+  $return = array();
+  foreach ($form['fields'] as &$field) {
+    $lead_key = $field['inputName'];
+    if ($lead_key == $key) {
+      $return['id']    = $field['id'];
+      if(!empty($entry)){
+        $return['value'] = $entry[$field['id']];
+      }else{
+        $return['value']='';
+      }
+      return $return;
     }
-    return false;
+  }
+  return false;
 }
 
 /*
@@ -1401,9 +1402,9 @@ function get_value_by_label($key, $form, $entry=array()) {
  */
 add_filter("gform_pre_render", "gform_skip_page");
 function gform_skip_page($form) {
-    if(!rgpost("is_submit_{$form['id']}") && rgget('form_page') && is_user_logged_in())
-        GFFormDisplay::$submission[$form['id']]["page_number"] = rgget('form_page');
-    return $form;
+  if(!rgpost("is_submit_{$form['id']}") && rgget('form_page') && is_user_logged_in())
+    GFFormDisplay::$submission[$form['id']]["page_number"] = rgget('form_page');
+  return $form;
 }
 
 /* This filter is triggered before the entry detail page is displayed in admin
@@ -1411,133 +1412,132 @@ function gform_skip_page($form) {
  */
 add_filter( 'gform_entry_field_value', 'entry_field_standout', 10, 4 );
 function entry_field_standout( $value, $field, $lead, $form ) {
-    //topics/category fields
-    if (isset($field['id']) && $field['id'] != 64)
-        return $value;
-
-    $value = '<span class="entryStandout">'.$value.'</span>';
+  //topics/category fields
+  if (isset($field['id']) && $field['id'] != 64)
     return $value;
 
+  $value = '<span class="entryStandout">'.$value.'</span>';
+  return $value;
 }
 
 //ajax functionality to update the entry rating
 function myajax_update_entry_rating() {
-    global $wpdb;
-    $entry_id = $_POST['rating_entry_id'];
-    $rating   = $_POST['rating'];
-    $user     = $_POST['rating_user'];
+  global $wpdb;
+  $entry_id = $_POST['rating_entry_id'];
+  $rating   = $_POST['rating'];
+  $user     = $_POST['rating_user'];
 
-    //update user rating
+  //update user rating
 
-    //if there is already a record for this user, update it.
-    //else add it.
-    $sql = "Insert into wp_rg_lead_rating (entry_id, user_id, rating) "
-         . " values (".$entry_id.','.$user.','.$rating.")"
-         . " on duplicate key update rating=".$rating.", ratingDate=now()";
+  //if there is already a record for this user, update it.
+  //else add it.
+  $sql = "Insert into wp_rg_lead_rating (entry_id, user_id, rating) "
+       . " values (".$entry_id.','.$user.','.$rating.")"
+       . " on duplicate key update rating=".$rating.", ratingDate=now()";
 
-    $wpdb->get_results($sql);
+  $wpdb->get_results($sql);
 
-    //update the meta with the average rating
-    $sql = "SELECT avg(rating) as rating FROM `wp_rg_lead_rating` where entry_id = ".$entry_id;
-    $results = $wpdb->get_results($sql);
-    $rating = round($results[0]->rating);
+  //update the meta with the average rating
+  $sql = "SELECT avg(rating) as rating FROM `wp_rg_lead_rating` where entry_id = ".$entry_id;
+  $results = $wpdb->get_results($sql);
+  $rating = round($results[0]->rating);
 
-    gform_update_meta( $entry_id, 'entryRating', $rating );
-    echo 'Your Rating Has Been Saved';
-    // IMPORTANT: don't forget to "exit"
-    exit;
+  gform_update_meta( $entry_id, 'entryRating', $rating );
+  echo 'Your Rating Has Been Saved';
+  // IMPORTANT: don't forget to "exit"
+  exit;
 }
 add_action( 'wp_ajax_update-entry-rating', 'myajax_update_entry_rating' );
 
 //adding custom meta fields
 add_filter( 'gform_entry_meta', 'custom_entry_meta', 10, 2);
 function custom_entry_meta($entry_meta, $form_id){
-    //data will be stored with the meta key named score
-    //  label - entry list will use Score as the column header
-    //  is_numeric - used when sorting the entry list, indicates whether the data should be treated as numeric when sorting
-    //  is_default_column - when set to true automatically adds the column to the entry list, without having to edit and add the column for display
-    //  update_entry_meta_callback - indicates what function to call to update the entry meta upon form submission or editing an entry
+  //data will be stored with the meta key named score
+  //  label - entry list will use Score as the column header
+  //  is_numeric - used when sorting the entry list, indicates whether the data should be treated as numeric when sorting
+  //  is_default_column - when set to true automatically adds the column to the entry list, without having to edit and add the column for display
+  //  update_entry_meta_callback - indicates what function to call to update the entry meta upon form submission or editing an entry
 
-    //entry rating
-    $entry_meta['entryRating'] = array(
-      'label' => 'Rating',
-      'is_numeric' => true,
-      'update_entry_meta_callback' => 'def_entry_rating',
-      'is_default_column' => true,
-      'filter'    => array(
-        'operators' => array( 'is', 'isnot','<','>' ),
-        'choices'   => array(
-          array( 'value' => '0', 'text' => 'Unrated' ),
-          array( 'value' => '1', 'text' => '1 Stars' ),
-          array( 'value' => '2', 'text' => '2 Stars' ),
-          array( 'value' => '3', 'text' => '3 Stars' ),
-          array( 'value' => '4', 'text' => '4 Stars' ),
-          array( 'value' => '5', 'text' => '5 Stars' ),
-        )
+  //entry rating
+  $entry_meta['entryRating'] = array(
+    'label' => 'Rating',
+    'is_numeric' => true,
+    'update_entry_meta_callback' => 'def_entry_rating',
+    'is_default_column' => true,
+    'filter'    => array(
+      'operators' => array( 'is', 'isnot','<','>' ),
+      'choices'   => array(
+        array( 'value' => '0', 'text' => 'Unrated' ),
+        array( 'value' => '1', 'text' => '1 Stars' ),
+        array( 'value' => '2', 'text' => '2 Stars' ),
+        array( 'value' => '3', 'text' => '3 Stars' ),
+        array( 'value' => '4', 'text' => '4 Stars' ),
+        array( 'value' => '5', 'text' => '5 Stars' ),
       )
-    );
+    )
+  );
 
-    //create new meta field to hold original entry id
-    $entry_meta['entry_id'] = array(
-      'label' => 'Original Entry ID',
-      'is_numeric' => true,
-      'is_default_column' => false
-    );
+  //create new meta field to hold original entry id
+  $entry_meta['entry_id'] = array(
+    'label' => 'Original Entry ID',
+    'is_numeric' => true,
+    'is_default_column' => false
+  );
 
-    //create new meta field to hold resource status and resource assign to
-    $entry_meta['res_status'] = array(
-      'label' => 'Resource Status',
-      'is_numeric' => false,
-      'is_default_column' => false,
-      'filter'    => array(
-        'operators' => array( 'is', 'isnot','<','>' ),
-        'choices'   => array(
-          array( 'value' => 'ready', 'text' => 'Ready' ),
-          array( 'value' => 'review', 'text' => 'Review' ),
-            array( 'value' => 'sent', 'text' => 'Sent' ),
-        )
+  //create new meta field to hold resource status and resource assign to
+  $entry_meta['res_status'] = array(
+    'label' => 'Resource Status',
+    'is_numeric' => false,
+    'is_default_column' => false,
+    'filter'    => array(
+      'operators' => array( 'is', 'isnot','<','>' ),
+      'choices'   => array(
+        array( 'value' => 'ready', 'text' => 'Ready' ),
+        array( 'value' => 'review', 'text' => 'Review' ),
+          array( 'value' => 'sent', 'text' => 'Sent' ),
       )
-    );
-    $entry_meta['res_assign'] = array(
-      'label'                      => 'Resource Assign To',
-      'is_numeric'                 => false,
-      'is_default_column'          => false,
-      'update_entry_meta_callback' => 'def_entry_res_status',
-      'filter'    => array(
-        'operators' => array( 'is', 'isnot','<','>' ),
-        'choices'   => array(
-          array( 'value' => 'na', 'text' => 'Not Assigned' ),
-          array( 'value' => 'jay', 'text' => 'Jay' ),
-          array( 'value' => 'jonathan', 'text' => 'Jonathan'),
-          array( 'value' => 'kerry', 'text' => 'Kerry'),
-          array( 'value' => 'louise', 'text' => 'Louise'),
-          array( 'value' => 'siana', 'text' => 'Siana'),
-          array( 'value' => 'other', 'text' => 'Other'),
-        )
+    )
+  );
+  $entry_meta['res_assign'] = array(
+    'label'                      => 'Resource Assign To',
+    'is_numeric'                 => false,
+    'is_default_column'          => false,
+    'update_entry_meta_callback' => 'def_entry_res_status',
+    'filter'    => array(
+      'operators' => array( 'is', 'isnot','<','>' ),
+      'choices'   => array(
+        array( 'value' => 'na', 'text' => 'Not Assigned' ),
+        array( 'value' => 'jay', 'text' => 'Jay' ),
+        array( 'value' => 'jonathan', 'text' => 'Jonathan'),
+        array( 'value' => 'kerry', 'text' => 'Kerry'),
+        array( 'value' => 'louise', 'text' => 'Louise'),
+        array( 'value' => 'siana', 'text' => 'Siana'),
+        array( 'value' => 'other', 'text' => 'Other'),
       )
+    )
 
-    );
-    return $entry_meta;
+  );
+  return $entry_meta;
 }
 
 //set the default value for entry rating
 function update_entry_ID_meta( $key, $lead, $form ){
-    //default entry_-_id
-    //$value = '';
-    return $value;
+  //default entry_-_id
+  //$value = '';
+  return $value;
 }
 
 //set the default value for entry rating
 function def_entry_rating( $key, $lead, $form ){
-    //default rating
-    $value = '0';
-    return $value;
+  //default rating
+  $value = '0';
+  return $value;
 }
 
 //set the default value for entry rating
 function def_entry_res_status( $key, $lead, $form ){
-    $value = '0';
-    return $value;
+  $value = '0';
+  return $value;
 }
 
 //AJAX
@@ -1557,160 +1557,159 @@ function update_entry_metaField(){
 //formats the ratings field that are displayed in the entries list
 add_filter( 'gform_entries_field_value', 'format_ratings', 10, 4 );
 function format_ratings( $value, $form_id, $field_id,$entry ) {
-    if($field_id=='entryRating'){
-      if($value==0){
-          return 'No Rating';
-      }else{
-          return $value .' stars';
-      }
+  if($field_id=='entryRating'){
+    if($value==0){
+        return 'No Rating';
     }else{
-      //check if this field is a custom meta field
-      $meta_key = $field_id;
-      //check if meta field - return display value
-      $meta = GFFormsModel::get_entry_meta(array( $form_id));
-      if(isset($meta[$meta_key])){
-        $metaField = $meta[$meta_key];
-        if(is_array($metaField['filter']['choices'])){
-          foreach($metaField['filter']['choices'] as $choice){
-            if($choice['value']==$value)
-              $value = $choice['text'];
-          }
+        return $value .' stars';
+    }
+  }else{
+    //check if this field is a custom meta field
+    $meta_key = $field_id;
+    //check if meta field - return display value
+    $meta = GFFormsModel::get_entry_meta(array( $form_id));
+    if(isset($meta[$meta_key])){
+      $metaField = $meta[$meta_key];
+      if(is_array($metaField['filter']['choices'])){
+        foreach($metaField['filter']['choices'] as $choice){
+          if($choice['value']==$value)
+            $value = $choice['text'];
         }
       }
     }
-    return $value;
+  }
+  return $value;
 }
 
 add_filter( 'gform_entries_column_filter', 'change_column_data', 10, 5 );
 function change_column_data( $value, $form_id, $field_id, $entry, $query_string ) {
-    //only change the data when form id is 1 and field id is 2
-    if ( $form_id != 9) {
-        return $value;
-    }
-    if($field_id == 'source_url'){
-        $form = GFAPI::get_form( $entry['form_id'] );
-        return $form['title'];
-    }
+  //only change the data when form id is 1 and field id is 2
+  if ( $form_id != 9) {
     return $value;
+  }
+  if($field_id == 'source_url'){
+    $form = GFAPI::get_form( $entry['form_id'] );
+    return $form['title'];
+  }
+  return $value;
 }
 
 //add new submenu for our custom built list page
 add_filter( 'gform_addon_navigation', 'add_menu_item' );
 function add_menu_item( $menu_items ) {
-    $menu_items[] = array( "name" => "mf_entries", "label" => "Entries", "callback" => "entries_list", "permission" => "edit_posts" );
-    $menu_items[] = array( "name" => "mf_fsp", "label" => "Download FSP", "callback" => "build_pdf_fsp","permission" => "edit_posts" );
-    $menu_items[] = array( "name" => "mf_gsp", "label" => "Download GSP", "callback" => "build_pdf_gsp","permission" => "edit_posts" );
+  $menu_items[] = array( "name" => "mf_entries", "label" => "Entries", "callback" => "entries_list", "permission" => "edit_posts" );
+  $menu_items[] = array( "name" => "mf_fsp", "label" => "Download FSP", "callback" => "build_pdf_fsp","permission" => "edit_posts" );
+  $menu_items[] = array( "name" => "mf_gsp", "label" => "Download GSP", "callback" => "build_pdf_gsp","permission" => "edit_posts" );
 
-    $menu_items[] = array( "name" => "mf_fairesign", "label" => "Faire Signs", "callback" => "build_faire_signs","permission" => "edit_posts" );
+  $menu_items[] = array( "name" => "mf_fairesign", "label" => "Faire Signs", "callback" => "build_faire_signs","permission" => "edit_posts" );
 
-    return $menu_items;
+  return $menu_items;
 }
 add_action( 'wp_ajax_createCSVfile', 'createCSVfile' );
 add_action( 'admin_post_createCSVfile', 'createCSVfile' );
 function build_faire_signs(){
-    require_once( TEMPLATEPATH.'/classes/faire_signs.php' );
+  require_once( TEMPLATEPATH.'/classes/faire_signs.php' );
 }
 
-
 function createCSVfile() {
-    //create CSV for individual entries come as a GET request, the mass entry list is a POST request
-    $form_id = (isset($_POST['exportForm']) && $_POST['exportForm']!=''?$_POST['exportForm']:'');
+  //create CSV for individual entries come as a GET request, the mass entry list is a POST request
+  $form_id = (isset($_POST['exportForm']) && $_POST['exportForm']!=''?$_POST['exportForm']:'');
 
-    //if the form_id is not set in the post fields, let check the get fields
-    if($form_id==''){
-        $form_id = (isset($_GET['exForm']) && $_GET['exForm']!=''?$_GET['exForm']:'');
-    }
-    if($form_id==''){
-        die('please select a form');
-    }
+  //if the form_id is not set in the post fields, let check the get fields
+  if($form_id==''){
+    $form_id = (isset($_GET['exForm']) && $_GET['exForm']!=''?$_GET['exForm']:'');
+  }
+  if($form_id==''){
+    die('please select a form');
+  }
 
-    $entry_id = (isset($_GET['exEntry']) && $_GET['exEntry']!='' ? $_GET['exEntry']:'');
+  $entry_id = (isset($_GET['exEntry']) && $_GET['exEntry']!='' ? $_GET['exEntry']:'');
 
-    //create CSV file
-    $form = GFAPI::get_form( $form_id );
-    $fieldData = array();
+  //create CSV file
+  $form = GFAPI::get_form( $form_id );
+  $fieldData = array();
 
-    //put fieldData in a usable array
-    foreach($form['fields'] as $field){
-        if($field->type!='section' && $field->type!='html' && $field->type!='page')
-            $fieldData[$field['id']] = $field;
-    }
-    $search_criteria['status'] = 'active';
-    $entries = array();
-    if($entry_id==''){
-        $entries = GFAPI::get_entries( $form_id, $search_criteria, null, array('offset' => 0, 'page_size' => 9999) );
-    }else{
-        //use the submitted entry
-        $entries[] = GFAPI::get_entry( $entry_id );
-    }
+  //put fieldData in a usable array
+  foreach($form['fields'] as $field){
+    if($field->type!='section' && $field->type!='html' && $field->type!='page')
+      $fieldData[$field['id']] = $field;
+  }
+  $search_criteria['status'] = 'active';
+  $entries = array();
+  if($entry_id==''){
+    $entries = GFAPI::get_entries( $form_id, $search_criteria, null, array('offset' => 0, 'page_size' => 9999) );
+  }else{
+    //use the submitted entry
+    $entries[] = GFAPI::get_entry( $entry_id );
+  }
 
-    $output = array('Entry ID','FormID');
-    $list = array();
+  $output = array('Entry ID','FormID');
+  $list = array();
+  foreach($fieldData as $field){
+    $output[] = $field['label'];
+  }
+  $list[] = $output;
+
+  foreach($entries as $entry){
+    $fieldArray = array($entry['id'],$form_id);
     foreach($fieldData as $field){
-        $output[] = $field['label'];
-    }
-    $list[] = $output;
-
-    foreach($entries as $entry){
-        $fieldArray = array($entry['id'],$form_id);
-        foreach($fieldData as $field){
-            if($field->id==320 || $field->id==321){
-                if( in_array( $field->type, array('checkbox', 'select', 'radio') ) ){
-                    $currency = GFCommon::get_currency();
-                    $value = RGFormsModel::get_lead_field_value( $entry, $field );
-                    array_push($fieldArray, GFCommon::get_lead_field_display( $field, $value, $currency, true ));
-                }
-            }else{
-                array_push($fieldArray, (isset($entry[$field->id])?$entry[$field->id]:""));
-            }
+      if($field->id==320 || $field->id==321){
+        if( in_array( $field->type, array('checkbox', 'select', 'radio') ) ){
+          $currency = GFCommon::get_currency();
+          $value = RGFormsModel::get_lead_field_value( $entry, $field );
+          array_push($fieldArray, GFCommon::get_lead_field_display( $field, $value, $currency, true ));
         }
-        $list[] = $fieldArray;
+      }else{
+        array_push($fieldArray, (isset($entry[$field->id])?$entry[$field->id]:""));
+      }
     }
+    $list[] = $fieldArray;
+  }
 
-    //write CSV file
-    // output headers so that the file is downloaded rather than displayed
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=form-'.$form_id.($entry_id!=''?'-'.$entry_id:'').'.csv');
+  //write CSV file
+  // output headers so that the file is downloaded rather than displayed
+  header('Content-Type: text/csv; charset=utf-8');
+  header('Content-Disposition: attachment; filename=form-'.$form_id.($entry_id!=''?'-'.$entry_id:'').'.csv');
 
-    $file = fopen('php://output','w');
+  $file = fopen('php://output','w');
 
-    foreach ($list as $line){
-      fputcsv($file,$line);
-    }
+  foreach ($list as $line){
+    fputcsv($file,$line);
+  }
 
-    fclose($file);
-    //wp_redirect(  admin_url( 'admin.php?page=mf_export'));
-    die();
+  fclose($file);
+  //wp_redirect(  admin_url( 'admin.php?page=mf_export'));
+  die();
 
-    exit();
+  exit();
 }
 
 function build_pdf_fsp(){
-     require_once( TEMPLATEPATH.'/fpdi/FSP.php' );
+  require_once( TEMPLATEPATH.'/fpdi/FSP.php' );
 }
 
 function build_pdf_gsp(){
-    require_once( TEMPLATEPATH.'/fpdi/GSP.php' );
+  require_once( TEMPLATEPATH.'/fpdi/GSP.php' );
  }
 
 
 
 function entries_list(){
-    $view    = rgget( 'view' );
-    $lead_id = rgget( 'lid' );
+  $view    = rgget( 'view' );
+  $lead_id = rgget( 'lid' );
 
-    if ( $view == 'mfentry' && ( rgget( 'lid' ) || ! rgblank( rgget( 'pos' ) ) ) ) {
-            //require_once( GFCommon::get_base_path() . '/entry_detail.php' );
-            include_once TEMPLATEPATH. '/classes/entry_detail_makerfaire.php';
-            GFEntryDetail::lead_detail_page();
-    } else if ( $view == 'entries' || empty( $view ) ) {
-            include_once TEMPLATEPATH. '/classes/entry_list_makerfaire.php';
-            if( !class_exists('GFEntryList')) { require_once(GFCommon::get_base_path() . "/entry_list.php"); }
-            GFEntryList::all_leads_page();
-    } else {
-            $form_id = rgget( 'id' );
-            do_action( 'gform_entries_view', $view, $form_id, $lead_id );
-    }
+  if ( $view == 'mfentry' && ( rgget( 'lid' ) || ! rgblank( rgget( 'pos' ) ) ) ) {
+    //require_once( GFCommon::get_base_path() . '/entry_detail.php' );
+    include_once TEMPLATEPATH. '/classes/entry_detail_makerfaire.php';
+    GFEntryDetail::lead_detail_page();
+  } else if ( $view == 'entries' || empty( $view ) ) {
+    include_once TEMPLATEPATH. '/classes/entry_list_makerfaire.php';
+    if( !class_exists('GFEntryList')) { require_once(GFCommon::get_base_path() . "/entry_list.php"); }
+    GFEntryList::all_leads_page();
+  } else {
+    $form_id = rgget( 'id' );
+    do_action( 'gform_entries_view', $view, $form_id, $lead_id );
+  }
 }
 
 //remove old entries navigation
@@ -2330,10 +2329,9 @@ function makerCancelEntry(){
     //Handle notifications for acceptance
     $notifications_to_send = GFCommon::get_notifications_to_send( 'maker_cancel_exhibit', $form, $lead );
     foreach ( $notifications_to_send as $notification ) {
-            if($notification['isActive']){
-                GFCommon::send_notification( $notification, $form, $lead );
-            }
-
+      if($notification['isActive']){
+          GFCommon::send_notification( $notification, $form, $lead );
+      }
     }
 
     //GFJDBHELPER::gravityforms_sync_status_jdb($entry_info_entry_id,$acceptance_status_change);
@@ -2451,24 +2449,22 @@ add_action( 'wp_ajax_make-admin-copy-entry', 'makeAdminCopyEntry' );
 /* This adds new form types for the users to select when creating new gravity forms */
 add_filter( 'gform_form_settings', 'my_custom_form_setting', 10, 2 );
 function my_custom_form_setting( $settings, $form ) {
-  //var_dump($settings['Form Basics']);
+  global $wpdb;
+
   $form_type = rgar($form, 'form_type');
+  if($form_type=='') $form_type='Other'; //default
+
+  //build select with all form type options
+  $sql = $wpdb->get_results("SELECT * FROM `wp_mf_form_types`");
+  $select = '<select name="form_type">';
+  foreach($sql as $result){
+    $select .= '<option value="'.$result->form_type.'" '.($form_type==$result->form_type ?'selected':'').'>'.$result->form_type.'</option>';
+  }
+  $select .= '</select>';
+
   $settings['Form Basics']['form_type'] = '
-      <tr>
-        <th><label for="my_custom_setting">Form Type</label></th>
-        <td>
-          <select name="form_type">
-            <option value="Exhibit" '         .($form_type=='Exhibit'         ?'selected':'').'>Exhibit</option>
-            <option value="Presentation" '    .($form_type=='Presentation'    ?'selected':'').'>Presentation</option>
-            <option value="Performance" '     .($form_type=='Performance'     ?'selected':'').'>Performance</option>
-            <option value="Startup Sponsor" ' .($form_type=='Startup Sponsor' ?'selected':'').'>Startup Sponsor</option>
-            <option value="Sponsor" '         .($form_type=='Sponsor'         ?'selected':'').'>Sponsor</option>
-            <option value="Payment" '         .($form_type=='Payment'         ?'selected':'').'>Payment</option>
-            <option value="Show Management" ' .($form_type=='Show Management' ?'selected':'').'>Show Management</option>
-            <option value="Other" '           .($form_type=='Other' || $form_type==''?'selected':'').'>Other</option>
-          </select>
-        </td>
-      </tr>';
+    <tr><th><label for="my_custom_setting">Form Type</label></th>
+      <td>'.$select .'</td></tr>';
 
   return $settings;
 }
@@ -2684,3 +2680,104 @@ function  createExportLink($atts){
 }
 
 add_shortcode( 'mfExportLink', 'createExportLink' );
+
+//generate Eventbrite Access Codes for entry
+function ebAccessTokens(){
+  $entryID  = $_POST['entryID'];
+  $response = genEBtickets($entryID);
+  wp_send_json($response);
+  exit;
+}
+add_action('wp_ajax_ebAccessTokens', 'ebAccessTokens');
+
+// This function is called with ajax to update the hidden indicator for
+// the eventbrite access codes
+function ebUpdateAC(){
+  global $wpdb;
+  $response = array();
+  $accessCode = (isset($_POST['accessCode'])?$_POST['accessCode']:'');
+  $checked = (isset($_POST['checked'])?$_POST['checked']:0);
+  if($accessCode!=''){
+    $sql = 'update eb_entry_access_code set hidden= '.$checked.' where access_code = "'.$accessCode.'"';
+    $wpdb->get_results($sql);
+    $response['msg'] = '';
+  }else{
+    $response['msg'] = 'Error Updating the hidden property of this ticket code.  Please alert dev of the entry and ticket code you were updating';
+  }
+  wp_send_json($response);
+  exit;
+}
+add_action('wp_ajax_ebUpdateAC', 'ebUpdateAC');
+
+function genEBtickets($entryID){
+  if (!class_exists('eventbrite')) {
+    require_once('classes/eventbrite.class.inc');
+  }
+  error_log('triggered');
+  global $wpdb;
+  $entry    = GFAPI::get_entry( $entryID );
+  $form_id  = $entry['form_id'];
+  if(is_array($entry))
+    $form = GFAPI::get_form($form_id);
+  $form_type = $form['form_type'];
+
+  //get faire ID for this form
+  $sql = "select wp_mf_faire.ID,eb_event.ID as event_id, EB_event_id "
+          . " from wp_mf_faire,eb_event "
+          . " where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0"
+          . " and wp_mf_faire.ID = eb_event.wp_mf_faire_id";
+  $faire = $wpdb->get_results($sql);
+  $faire_id      = (isset($faire[0]->ID) ? $faire[0]->ID:'');
+  //MF table event ID
+  $event_id      = (isset($faire[0]->event_id) ? $faire[0]->event_id:'');
+  //event brite event ID
+  $EB_event_id   = (isset($faire[0]->EB_event_id) ? $faire[0]->EB_event_id:'');
+
+  //select ticketID FROM `eb_eventToTicket` where eventID = eb_event.ID and ticket_type = eb_ticket_type
+  //determine what ticket types to request
+  $sql = 'select ticket_type, qty, hidden,
+          (select ticketID FROM `eb_eventToTicket`
+            where eventID = '.$event_id.' and
+                  eb_eventToTicket.ticket_type = eb_ticket_type.ticket_type) as ticket_id
+           from eb_ticket_type, wp_mf_form_types
+          where wp_mf_form_types.form_type="'.$form_type.'" and
+                eb_ticket_type.form_type = wp_mf_form_types.ID';
+
+  $results = $wpdb->get_results($sql);
+  if($wpdb->num_rows > 0){
+    $eventbrite = new eventbrite();
+    $response = array();
+    $digits = 3;
+    $rand = rand(pow(10, $digits-1), pow(10, $digits)-1);
+    foreach($results as $row){
+      //generate access code for each ticket type
+      $hidden = $row->hidden;
+      $accessCode = $row->ticket_type.$entryID.$rand;
+      $args = array(
+        'id'   => $EB_event_id,
+        'data' => 'access_codes',
+        'create' => array(
+          'access_code.code' => $accessCode,
+          'access_code.ticket_ids'=>$row->ticket_id,
+          'access_code.quantity_available'=>$row->qty
+        )
+      );
+      //call eventbrite to create access code
+      $access_codes = $eventbrite->events($args);
+      if(isset($access_codes->status_code)&&$access_codes->status_code==400){
+        $response['msg'] =  $access_codes->error_description;
+        exit;
+      }else{
+        $response[$accessCode] = $access_codes->resource_uri;
+      }
+      //save access codes to db
+      $dbSQL = 'INSERT INTO `eb_entry_access_code`(`entry_id`, `access_code`, `hidden`,EBticket_id) '
+              . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$row->ticket_id.')';
+
+      $wpdb->get_results($dbSQL);
+    }
+    $response['msg'] = 'Access Codes generated.  Please refresh to see<br/>';
+  }
+  return $response;
+}
+add_action( 'sidebar_entry_update', 'genEBtickets', 10, 1 );

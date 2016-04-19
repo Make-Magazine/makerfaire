@@ -188,14 +188,36 @@ if( ! $total or !( is_user_logged_in() )) {
 
           <div class="entryData">
             <div class="statusBox <?php echo $statusBlock;?>">
-                <div class="fleft"> <?php echo $entryData['faire_name'];?></div>
-                <div class="fright statusText"><?php echo $entryData['303'];?></div>
+              <div class="fleft"> <?php echo $entryData['faire_name'];?></div>
+              <div class="fright statusText"><?php echo $entryData['303'];?></div>
             </div>
             <h3 class="title"><?php echo $entryData['151'];?></h3>
             <div class="clear fleft entryID latReg"><?php echo $form_type.' '.$entryData['id'];?></div>
+            <div class="clear">
+              <?php
+              $return = entryTicketing($entry,'MAT');
+              if($return){
+              ?>
+                <div class="modal ticketing" id="getTickets<?php echo $entry['id'];?>">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <?php echo $return;?>
+                      </div>
+                      <div class="modal-footer">
+                        To share a ticket with a friend, just send them the Eventbrite URL
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <span class="btn-cyan" data-target="#getTickets<?php echo $entry['id'];?>" data-toggle="modal">Get Your Tickets</span>
+                <?php
+              }
+              ?>
+            </div>
             <div class="clear links latReg">
-                <div class="fleft"><?php echo $entryData['date_created'];?></div>
-                <div class="fright"><?php echo $links;?></div>
+              <div class="fleft"><?php echo $entryData['date_created'];?></div>
+              <div class="fright"><?php echo $links;?></div>
             </div>
           </div>
         <?php
@@ -205,7 +227,6 @@ if( ! $total or !( is_user_logged_in() )) {
 					'wrapper_class' => 'gv-list-view-subtitle',
 				));
 			?>
-
 			</div>
       <div class="clear"></div>
 
@@ -271,83 +292,82 @@ if( ! $total or !( is_user_logged_in() )) {
 		</div>
         <?php } ?>
 	<?php } ?>
-                <div class="modal" id="cancelEntry">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title">Cancel <span id="projName"></span>, Exhibit ID: <span id="cancelEntryID" name="entryID"></span></h4>
-                        </div>
-                        <div class="modal-body">
-                            <div id="cancelText">
-                                <p>Sorry you can't make it. Why are you canceling?</p><br/>
-                                <textarea rows="4" cols="50" name="cancelReason"></textarea>
-                            </div>
-                        <span id="cancelResponse"></span><br/>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" id="submitCancel">Submit</button>
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                      </div>
-                    </div>
-                </div>
+  <div class="modal" id="cancelEntry">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Cancel <span id="projName"></span>, Exhibit ID: <span id="cancelEntryID" name="entryID"></span></h4>
+        </div>
+        <div class="modal-body">
+            <div id="cancelText">
+                <p>Sorry you can't make it. Why are you canceling?</p><br/>
+                <textarea rows="4" cols="50" name="cancelReason"></textarea>
+            </div>
+        <span id="cancelResponse"></span><br/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="submitCancel">Submit</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                <!-- Modal to copy entry to a new form -->
-                <div class="modal" id="copy_entry">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title">Copy Exhibit ID: <span id="copyEntryID" name="entryID"></span></h4>
-                        </div>
-                        <div class="modal-body">
-                  <?php if(!empty($formArr)){ ?>
-                            <p>Please choose from the options below:</p><br/>
-                  <select id="copy2Form">
-                      <?php
-
-                      foreach($formArr as $availForm){
-                          echo '<option value='.$availForm[0].'>'.$availForm[1].'</option>';
-                      }
-                      ?>
-                  </select>
-                  <?php }else{
-                      echo 'No Open faires at the moment';
-                  }
-?>
-                    <br/><span id="copyResponse"></span><br/>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" id="submitCopy">Submit</button>
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <!--Modal to delete entry-->
-                <div class="modal" id="deleteEntry">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title">Delete <span id="delProjName"></span>, Exhibit ID: <span id="deleteEntryID" name="entryID"></span></h4>
-                        </div>
-                        <div class="modal-body">
-                            <div id="deleteText">
-                            <p>Are you sure you want to trash this entry? You can not reverse this action.</p>
-                            </div>
-                        <span id="deleteResponse"></span><br/>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" id="submitDelete">Yes, delete it</button>
-                          <button type="button" class="btn btn-default" id="cancelDelete" data-dismiss="modal">No, I'll keep it</button>
-                          <button type="button" class="btn btn-default" id="closeDelete" data-dismiss="modal">Close</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <?php
+  <!-- Modal to copy entry to a new form -->
+  <div class="modal" id="copy_entry">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Copy Exhibit ID: <span id="copyEntryID" name="entryID"></span></h4>
+        </div>
+        <div class="modal-body">
+    <?php if(!empty($formArr)){ ?>
+            <p>Please choose from the options below:</p><br/>
+            <select id="copy2Form">
+              <?php
+              foreach($formArr as $availForm){
+                echo '<option value='.$availForm[0].'>'.$availForm[1].'</option>';
+              }
+              ?>
+            </select>
+    <?php }else{
+            echo 'No Open faires at the moment';
+          }
+    ?>
+        <br/><span id="copyResponse"></span><br/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="submitCopy">Submit</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--Modal to delete entry-->
+<div class="modal" id="deleteEntry">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Delete <span id="delProjName"></span>, Exhibit ID: <span id="deleteEntryID" name="entryID"></span></h4>
+        </div>
+        <div class="modal-body">
+            <div id="deleteText">
+            <p>Are you sure you want to trash this entry? You can not reverse this action.</p>
+            </div>
+        <span id="deleteResponse"></span><br/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="submitDelete">Yes, delete it</button>
+          <button type="button" class="btn btn-default" id="cancelDelete" data-dismiss="modal">No, I'll keep it</button>
+          <button type="button" class="btn btn-default" id="closeDelete" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <?php
 } // End if has entries
 
 /**
