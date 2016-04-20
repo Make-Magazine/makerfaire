@@ -475,14 +475,18 @@ class GFRMTHELPER {
           //If there are changes, update this record
           if($res->resource_id!=$resource_id || $res->qty!=$qty){
             $wpdb->get_results('update `wp_rmt_entry_resources` '
-                  . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',update_stamp=now() where id='.$res->ID);
+                  . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.',update_stamp=now() where id='.$res->ID);
           }
         }
       }else{
+        //on new records the user is always null unless this is a payment form
+        if($entryData['fType'] != 'Payment'){
+          $user = 'NULL';
+        }
         //insert this record
         $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
-                . " (`entry_id`, `resource_id`, `qty`, `comment`) "
-                . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'")');
+                . " (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+                . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
       }
     }
 

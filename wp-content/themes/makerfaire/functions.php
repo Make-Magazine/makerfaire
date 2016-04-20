@@ -2713,7 +2713,7 @@ function genEBtickets($entryID){
   if (!class_exists('eventbrite')) {
     require_once('classes/eventbrite.class.inc');
   }
-  error_log('triggered');
+
   global $wpdb;
   $entry    = GFAPI::get_entry( $entryID );
   $form_id  = $entry['form_id'];
@@ -2748,7 +2748,9 @@ function genEBtickets($entryID){
     $eventbrite = new eventbrite();
     $response = array();
     $digits = 3;
-    $rand = rand(pow(10, $digits-1), pow(10, $digits)-1);
+
+    $charIP = (string) $entry['ip'];
+    $rand =  substr(base_convert($charIP, 10, 36),0,$digits);
     foreach($results as $row){
       //generate access code for each ticket type
       $hidden = $row->hidden;
@@ -2772,7 +2774,8 @@ function genEBtickets($entryID){
       }
       //save access codes to db
       $dbSQL = 'INSERT INTO `eb_entry_access_code`(`entry_id`, `access_code`, `hidden`,EBticket_id) '
-              . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$row->ticket_id.')';
+              . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$row->ticket_id.')'
+              . ' on duplicate key update access_code = "'.$accessCode.'"';
 
       $wpdb->get_results($dbSQL);
     }
