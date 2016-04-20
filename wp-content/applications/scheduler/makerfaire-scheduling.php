@@ -14,7 +14,7 @@ header('Content-Type: text/html; charset=utf-8'); ?>
         <link href="../content/css/dataviz/kendo.dataviz.min.css" rel="stylesheet" />
         <link href="../content/css/dataviz/kendo.dataviz.default.min.css" rel="stylesheet" />
         <link href="styles/examples.css" rel="stylesheet">
- 		<link href="../woahbar/woahbar.css" rel="stylesheet">
+ 		    <link href="../woahbar/woahbar.css" rel="stylesheet">
         
         <script src="../content/js/jquery.min.js"></script>
         <script src="../woahbar/woahbar.js"></script>
@@ -32,7 +32,7 @@ use Kendo\Template;
 require_once ("../../../wp-load.php");
  $current_user = wp_get_current_user(); 
 require_once '../lib/Kendo/Autoload.php';
-$faire_id = isset($_GET['faire_id']) ? $_GET['faire_id']  : 'NY15';
+$faire_id = isset($_GET['faire_id']) ? $_GET['faire_id']  : 'BA16';
 
 ?>
 
@@ -247,19 +247,19 @@ function create_makerfaire_scheduler($faire_id) {
 	
 	$create = new \Kendo\Data\DataSourceTransportCreate ();
 	
-	$create->url ( 'makerfaire-scheduling-tasks.php?type=create' )->contentType ( 'application/json' )->type ( 'POST' )->dataType('json');
+	$create->url ( 'makerfaire-scheduling-tasks.php?faire_id='.$faire_id.'&type=create' )->contentType ( 'application/json' )->type ( 'POST' )->dataType('json');
 	
 	$read = new \Kendo\Data\DataSourceTransportRead ();
 	
-	$read->url ( 'makerfaire-scheduling-tasks.php?type=read' )->contentType ( 'application/json' )->type ( 'GET' )->dataType('json');
+	$read->url ( 'makerfaire-scheduling-tasks.php?faire_id='.$faire_id.'&type=read' )->contentType ( 'application/json' )->type ( 'GET' )->dataType('json');
 	
 	$update = new \Kendo\Data\DataSourceTransportUpdate ();
 	
-	$update->url ( 'makerfaire-scheduling-tasks.php?type=update' )->contentType ( 'application/json' )->type ( 'POST' )->dataType('json');
+	$update->url ( 'makerfaire-scheduling-tasks.php?faire_id='.$faire_id.'&type=update' )->contentType ( 'application/json' )->type ( 'POST' )->dataType('json');
 	
 	$destroy = new \Kendo\Data\DataSourceTransportDestroy ();
 	
-	$destroy->url ( 'makerfaire-scheduling-tasks.php?type=destroy' )->contentType ( 'application/json' )->type ( 'POST' )->dataType('json');
+	$destroy->url ( 'makerfaire-scheduling-tasks.php?faire_id='.$faire_id.'&type=destroy' )->contentType ( 'application/json' )->type ( 'POST' )->dataType('json');
 	
 	$transport->create ( $create )->read ( $read )->update ( $update )->destroy ( $destroy )->parameterMap ( 'function(data) {
               return kendo.stringify(data);
@@ -333,8 +333,8 @@ function create_makerfaire_scheduler($faire_id) {
 			'majorTick' => 30,
 			'showWorkHours' => true,
 			'workWeekEnd' => 7,
-			'workDayStart' => new DateTime ( '2015/1/1 15:00', new DateTimeZone ( 'UTC' ) ),
-			'workDayEnd' => new DateTime ( '2015/1/1 24:00', new DateTimeZone ( 'UTC' ) )
+			'workDayStart' => new DateTime ( '2015/1/1 18:00', new DateTimeZone ( 'UTC' ) ),
+			'workDayEnd' => new DateTime ( '2015/1/2 03:00', new DateTimeZone ( 'UTC' ) )
 	), array (
 			'type' => 'workWeek',
 			'majorTick' => 30,
@@ -342,8 +342,8 @@ function create_makerfaire_scheduler($faire_id) {
 			'workWeekStart' => 5,
 			'workWeekEnd' => 7,
 			'showWorkHours' => true,
-			'workDayStart' => new DateTime ( '2015/1/1 15:00', new DateTimeZone ( 'UTC' ) ),
-			'workDayEnd' => new DateTime ( '2015/1/1 24:00', new DateTimeZone ( 'UTC' ) )
+			'workDayStart' => new DateTime ( '2015/1/1 18:00', new DateTimeZone ( 'UTC' ) ),
+			'workDayEnd' => new DateTime ( '2015/1/2 03:00', new DateTimeZone ( 'UTC' ) )
 	), 'agenda' )->dataSource ( $dataSource );
 	
 	return $scheduler;
