@@ -23,8 +23,8 @@ if($type != ''){
     }
   }elseif($type =="customRpt"){
     if($formSelect != '' && $selectedFields!=''){
-        //build report
-        buildRpt($formSelect,$selectedFields,$rmtData,$location);
+      //build report
+      buildRpt($formSelect,$selectedFields,$rmtData,$location);
     }else{
       invalidRequest('Error: Form or Fields not selected');
     }
@@ -105,8 +105,10 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
   }
 
   foreach($entryData as $entryID=>$dataRow){
+    //echo 'new entry '.$entryID.'<br/>';
     //pull RMT data
     foreach($rmtData as $type=>$rmt){
+      // 'new rmt '.$type.'<br/>';
       //$key holds the type - resource,attribute, attention, meta
       foreach($rmt as $selRMT){
         //all data should be checked at this point, but double check here to be safe
@@ -138,12 +140,13 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
         }
         if($type=='attribute'){
           if($selRMT->id!='all'){
-            $sql = 'select value from wp_rmt_entry_attributes where entry_id ='.$entry['lead_id'].' and attribute_id='.$selRMT->id;
+            $sql = 'select value from wp_rmt_entry_attributes where entry_id ='.$entryID.' and attribute_id='.$selRMT->id;
           }else{
             $sql = 'select concat(category," ",value) as value from wp_rmt_entry_attributes,wp_rmt_entry_att_categories where '
                     . ' entry_id ='.$entryID
                     . ' and attribute_id= wp_rmt_entry_att_categories.ID';
           }
+          //echo $sql.'<br/>';
           //loop thru data
           $attributes = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
           $entryAtt = array();
