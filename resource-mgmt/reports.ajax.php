@@ -51,8 +51,10 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
   //build an array of selected fields
   foreach($selectedFields as $selFields){
     //build field array
-    if(isset($selFields->choices) && $selFields->choices!=''){
-      $fieldArr[$selFields->id][] = $selFields->choices;
+    if($selFields->type=='checkbox'){
+      //remove everything after the period
+      $baseField = strpos($selFields->id, ".") ? substr($selFields->id, 0, strpos($selFields->id, ".")) : $selFields->id;
+      $fieldArr[$baseField][] = 'field_'.str_replace('.','_',$selFields->id);
     }
     //create array of selected field id's
     $fieldIDArr[$selFields->id] = $selFields->id;
@@ -89,13 +91,14 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
       }else{
         $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
       }
+
       $value = htmlspecialchars_decode ($value);
       $entryData[$entry['lead_id']]['entry_id'] = $entry['lead_id'];
       $entryData[$entry['lead_id']]['form_id']  = $entry['form_id'];
       $formPull = GFAPI::get_form( $entry['form_id'] );
       $entryData[$entry['lead_id']]['form_type']  = (isset($formPull['form_type'])?$formPull['form_type']:'');
       if(is_array($fieldIDArr[$entry['field_number']])){
-        $fieldID = $fieldIDArr[$entry['field_number']]['fieldID'];
+        $fieldID  = $fieldIDArr[$entry['field_number']]['fieldID'];
         $setValue = (isset($entryData[$entry['lead_id']]['field_'.$fieldID])?$entryData[$entry['lead_id']]['field_'.$fieldID].' '.$value: $value);
         $entryData[$entry['lead_id']]['field_'.$fieldID]  = $setValue;
       }else{
@@ -105,7 +108,18 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
   }
 
   foreach($entryData as $entryID=>$dataRow){
-    //echo 'new entry '.$entryID.'<br/>';
+    //check selected checkbox fields.  If at least one of the selections are not there, we need to skip this entry
+    $remove = true;
+    foreach($fieldArr as $field){
+      foreach($field as $fieldRow){
+        if(isset($dataRow[$fieldRow])) $remove=false;
+      }
+    }
+    if($remove){
+      unset ($entryData[$entryID]);
+    }else{ //keep processing
+      continue;
+    }
     //pull RMT data
     foreach($rmtData as $type=>$rmt){
       // 'new rmt '.$type.'<br/>';
@@ -192,7 +206,7 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
           $entryData[$entryID]['meta_'.$selRMT->id] = implode(', ',$entryMeta);
         }
       }
-    }
+    }//end RMT
 
     //schedule information
     if($location){
@@ -232,8 +246,8 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
           }
         }
       }
-    }
-  }
+    } //end location
+  } //end entry data loop
 
   foreach($entryData as $row){
     $data['data'][] = $row;
