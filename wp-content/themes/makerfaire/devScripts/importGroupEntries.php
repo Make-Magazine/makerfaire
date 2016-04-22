@@ -263,7 +263,7 @@ function prcNewEntry($entryID){
   $digits = 3;
   $charIP = $entry['ip'];
   $rand =  substr(base_convert($charIP, 10, 36),0,$digits);
-  echo '$rand='.$rand.'<br/>';
+  
   $EB_event_id = '21038172741';
   foreach($tickets as $ticket){
     $hidden = $ticket['hidden'];
@@ -286,7 +286,7 @@ function prcNewEntry($entryID){
     }else{
       $response[$accessCode] = $access_codes->resource_uri;
     }
-     
+
     //save access codes to db
     $dbSQL = 'INSERT INTO `eb_entry_access_code`(`entry_id`, `access_code`, `hidden`,EBticket_id) '
             . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$ticket['ticket_id'].')'
