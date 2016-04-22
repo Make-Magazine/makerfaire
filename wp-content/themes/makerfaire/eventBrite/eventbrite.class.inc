@@ -29,7 +29,7 @@
 
     function curl_call($service_url,$curl_post_data){
       $service_url .= '/';
-echo $service_url.'<br/>';
+
       $curl = curl_init($service_url);
       curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $this->token ) );
       curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1);
