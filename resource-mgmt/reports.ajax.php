@@ -51,10 +51,13 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
   //build an array of selected fields
   foreach($selectedFields as $selFields){
     //build field array
-    if($selFields->type=='checkbox'){
+    if($selFields->type=='checkbox' || $selFields->type=='radio' || $selFields->type=='select'){
       //remove everything after the period
       $baseField = strpos($selFields->id, ".") ? substr($selFields->id, 0, strpos($selFields->id, ".")) : $selFields->id;
-      $fieldArr[$baseField][] = 'field_'.str_replace('.','_',$selFields->id);
+      $fieldArr[$baseField][] = array('field'=>'field_'.str_replace('.','_',$selFields->id),
+                                      'choice'=>$selFields->choices,
+                                      'type'=>$selFields->type
+          );
     }
     //create array of selected field id's
     $fieldIDArr[$selFields->id] = $selFields->id;
@@ -108,17 +111,27 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
   }
 
   foreach($entryData as $entryID=>$dataRow){
-    //check selected checkbox fields.  If at least one of the selections are not there, we need to skip this entry
-    $remove = true;
-    foreach($fieldArr as $field){
-      foreach($field as $fieldRow){
-        if(isset($dataRow[$fieldRow])) $remove=false;
+    if(!empty($fieldArr)){
+      //check selected checkbox and radio fields.  If at least one of the selections are not there, we need to skip this entry
+      $remove = true;
+      foreach($fieldArr as $field){
+        foreach($field as $fieldRow){
+          if(isset($dataRow[$fieldRow['field']])){
+            if($fieldRow['type']=='radio'||$fieldRow['type']=='select'){ //check value
+              if($dataRow[$fieldRow['field']] == $fieldRow['choice']){
+                $remove = false;
+              }
+            }else{
+              $remove=false;
+            }
+          }
+        }
       }
-    }
-    if($remove){
-      unset ($entryData[$entryID]);
-    }else{ //keep processing
-      continue;
+      if($remove){
+        unset ($entryData[$entryID]);
+      }else{ //keep processing
+        continue;
+      }
     }
     //pull RMT data
     foreach($rmtData as $type=>$rmt){
