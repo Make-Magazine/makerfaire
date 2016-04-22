@@ -196,7 +196,7 @@ if( ! $total or !( is_user_logged_in() )) {
             <div class="clear">
               <?php
               $return = entryTicketing($entry,'MAT');
-              if($return){
+              if($return && $entry['303']=='Accepted'){
               ?>
                 <div class="modal ticketing" id="getTickets<?php echo $entry['id'];?>">
                   <div class="modal-dialog">
