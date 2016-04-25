@@ -170,7 +170,7 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
         echo '<option value="none">None</option>';
 	foreach($wpdb->get_results($locSql,ARRAY_A) as $row){
 		$area_option = (strlen($row['area']) > 0) ? ' ('.$row['area'].')' : '' ;
-		$subarea_option = ($row['nicename']!=''?$row['nicename']:$row['subarea']);
+		$subarea_option = ($row['subarea']!=''?$row['subarea']:$row['subarea']);
 		echo '<option value="'.$subarea_option.'">'.$row['area'].' - '.$subarea_option.'</option>';
 	}
         echo("</select><br />");
