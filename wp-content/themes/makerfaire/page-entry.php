@@ -240,8 +240,9 @@ function display_entry_schedule($entry_id) {
 /* This function is used to display grouped entries and links*/
 function display_groupEntries($entryID){
   global $wpdb;global $faireID; global $faire;
-  $sql = "select * from wp_rg_lead_rel where parentID=".$entryID." or childID=".$entryID;
+  $return = '';
 
+  $sql = "select * from wp_rg_lead_rel where parentID=".$entryID." or childID=".$entryID;
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     if($results[0]->parentID==$entryID){
@@ -251,20 +252,19 @@ function display_groupEntries($entryID){
         $title = 'Part of a group:';
         $type = 'child';
       }
-    echo $title.'<br/>';
-
-    echo '<table>';
+    $return .= $title.'<br/>';
+    $return .= '<div class="row">';
     foreach($results as $row){
       $link_entryID = ($type=='parent'?$row->childID:$row->parentID);
       $entry = GFAPI::get_entry($link_entryID);
       //Title
       $project_title = (string)$entry['151'];
       $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
-
-      echo '<tr><td><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></td></tr>';
+      $return .= '<div class="col-md-4 col-sm-6">';
+      $return .= '<a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></div>';
     }
-
-    echo '</table>';
+    $return .= '</div>';
   }
+  echo $return;
 }
 ?>
