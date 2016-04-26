@@ -117,7 +117,7 @@ if ( isset($_POST["submit"]) ) {
   foreach($tableData as $key => $value){
     if($endkey == $key) $contchar = '';
     echo 'parent: '. $value['parentID'].' child: '.$value['childID'].'<br/>';
-    $insertRel .= " (NULL, ".$value['parentID'].", ".$value['childID'].", '".$value['faire']."', '".$value['form_id']."')".$contchar;
+    $insertRel .= " (".$value['parentID'].", ".$value['childID'].", '".$value['faire']."', '".$value['form_id']."')".$contchar;
 
     //process new entry
     prcNewEntry($value['childID']);
@@ -125,7 +125,7 @@ if ( isset($_POST["submit"]) ) {
 
   // add to the wp_rg_lead_rel table
   $sql = "INSERT INTO wp_rg_lead_rel "
-          . "(`id`, `parentID`, `childID`, `faire`, `form`) values " .$insertRel.";";
+          . "(`parentID`, `childID`, `faire`, `form`) values " .$insertRel.";";
   $result=mysqli_query($mysqli,$sql) or die("error in SQL ".mysqli_error($mysqli).' '.$sql);
 }else{
   ?>
@@ -263,7 +263,7 @@ function prcNewEntry($entryID){
   $digits = 3;
   $charIP = $entry['ip'];
   $rand =  substr(base_convert($charIP, 10, 36),0,$digits);
-  
+
   $EB_event_id = '21038172741';
   foreach($tickets as $ticket){
     $hidden = $ticket['hidden'];

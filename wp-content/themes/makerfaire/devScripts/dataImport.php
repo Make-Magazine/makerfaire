@@ -9,17 +9,17 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-    <meta charset="UTF-8">
-</head>
-<body>
+  <head>
+  <meta charset="UTF-8">
+  </head>
+  <body>
 
     <h2>Update Form entries</h2>
-<form method="post" enctype="multipart/form-data">
-    Select File to upload:
-    <input type="file" name="fileToUpload" id="fileToUpload">
-    <input type="submit" value="Upload" name="submit">
-</form>
+    <form method="post" enctype="multipart/form-data">
+      Select File to upload:
+      <input type="file" name="fileToUpload" id="fileToUpload">
+      <input type="submit" value="Upload" name="submit">
+    </form>
     <br/>Do not upload more than 15 records at a time.<br/>
     It will time out!<br /><br/>
     <ul>
@@ -29,8 +29,7 @@
         <li>Row 3: Start of Data</li>
         <li>Column A: Form ID</li>
     </ul>
-
-</body>
+  </body>
 </html>
 <?php
 include 'db_connect.php';
@@ -43,13 +42,13 @@ function calculate_signature($string, $private_key) {
 }
 function call_api($data){
 
-    $api_key = '84ed801ad4';
-    $private_key = 'cacff8d71d9cc6e';
+    $api_key      = '84ed801ad4';
+    $private_key  = 'cacff8d71d9cc6e';
     $method  = 'POST';
     $domain = $_SERVER['HTTP_HOST'];
     if($domain=='localhost')    $domain .= '/makerfaire';
 
-//    $endpoint = 'http://makerfaire.staging.wpengine.com/gravityformsapi/';
+    //endpoint = 'http://makerfaire.staging.wpengine.com/gravityformsapi/';
     //$endpoint = 'http://makerfaire.com/gravityformsapi/';
     $endpoint = $domain.'/gravityformsapi/';
     echo 'sending to '.$endpoint.'<br/>';
@@ -153,32 +152,32 @@ if (isset($_POST["submit"]) ) {
     echo "No file selected <br />";
   }
 
-    //row 0 contains field id's
-    //row 1 contains field names
-    $fieldIDs = $csv[0];
-    //$catKey = array_search('147.44', $fieldIDs);
+  //row 0 contains field id's
+  //row 1 contains field names
+  $fieldIDs = $csv[0];
+  //$catKey = array_search('147.44', $fieldIDs);
 
-    unset($csv[0]);
-    unset($csv[1]);
-    $tableData = [];
-    $APIdata   = [];
-    $catArray  = [];
+  unset($csv[0]);
+  unset($csv[1]);
+  $tableData = [];
+  $APIdata   = [];
+  $catArray  = [];
 
-    foreach ($csv as $rowData){
-       $faire = $rowData[0];
-       $form  = $rowData[1];
-       if(trim($faire)!='' && trim($form)!=''){
-            //echo 'For ' .$faire .' setting form '.$form.'<br/>';
-            $data  = array('form_id'=>$form,'status'=>'active',"id" => "","date_created" => "");
-            foreach($rowData as $key => $value){
-                if($fieldIDs[$key] != ''  && $value !=''){
-                    $data[$fieldIDs[$key]] = htmlentities($value);
-                    //echo 'Setting field '.$fieldIDs[$key]. ' to '.htmlspecialchars($value).'<br/>';
-                }
-            }
-            $APIdata[] = $data;
-       }
+  foreach ($csv as $rowData){
+    $faire = $rowData[0];
+    $form  = $rowData[1];
+    if(trim($faire)!='' && trim($form)!=''){
+      //echo 'For ' .$faire .' setting form '.$form.'<br/>';
+      $data  = array('form_id'=>$form,'status'=>'active',"id" => "","date_created" => "");
+      foreach($rowData as $key => $value){
+        if($fieldIDs[$key] != ''  && $value !=''){
+          $data[$fieldIDs[$key]] = htmlentities($value);
+          //echo 'Setting field '.$fieldIDs[$key]. ' to '.htmlspecialchars($value).'<br/>';
+        }
+      }
+      $APIdata[] = $data;
     }
+  }
 
     $childID = call_api ($APIdata);
 }
