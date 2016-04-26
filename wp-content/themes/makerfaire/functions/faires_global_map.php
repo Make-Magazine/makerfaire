@@ -1,6 +1,6 @@
 <?php
 function faire_maps_scripts() {
-  if (is_page_template('/pages/page-global-maker-faire-map.php')) {
+  if (is_page_template('pages/page-global-maker-faire-map.php')) {
     wp_enqueue_script(
       'faires-global-map-scripts',
       get_stylesheet_directory_uri() . '/js/angular/global-faires-map-app.js',
