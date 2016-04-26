@@ -36,10 +36,11 @@
   // A list of makers (7 max)
   // A group or association
   $displayType = (isset($entry['105']) ? $entry['105']:'');
+
   $isGroup = $isList = $isSingle = false;
   $isGroup =(strpos($displayType, 'group') !== false);
   $isList =(strpos($displayType, 'list') !== false);
-  $isSingle =(strpos($displayType, 'one') !== false);
+  $isSingle =(strpos($displayType, 'One') !== false);
 
   $sharing_cards = new mf_sharing_cards();
 
@@ -48,6 +49,7 @@
 
   // Url
   $project_photo = legacy_get_resized_remote_image_url($entry['22'],750,500);
+  $project_photo = $entry['22'];
   $sharing_cards->project_photo = $project_photo;
 
   // Description
@@ -164,13 +166,15 @@
               </div>';
       } else {
     		foreach($makers as $maker) {
-      		echo '<div class="row padbottom">
-                  ',(!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_resized_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
-          echo    '<div class="col-md-5">
-                    <h3 style="margin-top: 0px;">' . $maker['firstname'] . ' ' . $maker['lastname'] . '</h3>
-                    <p>' . make_clickable($maker['bio']) . '</p>
-                  </div>
-                </div>';
+          if($maker['firstname'] !='' && $maker['lastname'] !=''){
+            echo '<div class="row padbottom">
+                    ',(!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_resized_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
+            echo    '<div class="col-md-5">
+                      <h3 style="margin-top: 0px;">' . $maker['firstname'] . ' ' . $maker['lastname'] . '</h3>
+                      <p>' . make_clickable($maker['bio']) . '</p>
+                    </div>
+                  </div>';
+          }
     		}
       }
     }
