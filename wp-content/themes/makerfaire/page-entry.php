@@ -49,7 +49,6 @@
 
   // Url
   $project_photo = legacy_get_resized_remote_image_url($entry['22'],750,500);
-  $project_photo = $entry['22'];
   $sharing_cards->project_photo = $project_photo;
 
   // Description
