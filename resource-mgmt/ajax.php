@@ -33,6 +33,19 @@ $tableOptions['wp_rmt_entry_resources']['fkey']    = array(
         array('fkey' => 'resource_id',  'referenceTable' => 'wp_rmt_resources', 'referenceField' => 'ID', 'referenceDisplay' => 'type'),
         array('fkey' => 'user',         'referenceTable' => 'wp_users',         'referenceField' => 'ID', 'referenceDisplay' => 'user_email'));
 
+//Global Faire table
+$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
+        'fieldName' => 'venue_address_region', 'filterType'=>'dropdown','fieldLabel'=>'Region', 'enableCellEdit' => true, 'width' => 150,
+            'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
+                      'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
+                      'South America' =>  'South America',  'Middle East'   =>  'Middle East',
+                      'Canada'        =>  'Canada',         'PACIFIC'       =>  'Pacific',
+                      'Africa'        =>  'Africa')
+    );
+$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
+    'fieldName' => 'event_type', 'filterType'=>'dropdown','fieldLabel'=>'Event Type', 'enableCellEdit' => true,
+    'options' => array('Mini' => 'Mini', 'Featured' => 'Featured', 'Flagship' => 'Flagship', 'School' => 'School')
+  );
 $view_only = (isset($_POST['viewOnly'])?$_POST['viewOnly']:FALSE);
 if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
 	$type = $_POST['type'];
@@ -171,6 +184,14 @@ function getTableData($mysqli,$table){
             $options       = $fkeyData[0];
             $selectOptions = $fkeyData[1];
           }
+                    //additional select options outside of fkey
+          if(isset($addlFields['options'])){
+            foreach($addlFields['options'] as $optKey=>$option){
+              $options[]       = array('id'    => $optKey, 'fkey'   => $option);
+              $selectOptions[] = array('value' => $optKey, 'label' => $option);
+            }
+          }
+          $enableCellEdit = (isset($addlFields['enableCellEdit'])?$addlFields['enableCellEdit']:false);
           $vars = array('displayName'=> (isset($addlFields['fieldLabel'])?$addlFields['fieldLabel']:$addlFields['fieldName']),
                       'filter'=> array('selectOptions'=>$selectOptions),
                       'cellFilter'               => 'griddropdown:this',
@@ -178,9 +199,13 @@ function getTableData($mysqli,$table){
                       'editDropdownValueLabel'   => 'fkey',
                       'editDropdownIdLabel'      => 'id',
                       'editDropdownOptionsArray' => $options,
-                      'enableCellEdit'           => false,
+                      'enableCellEdit'           => $enableCellEdit,
+                      'editableCellTemplate'     =>($enableCellEdit==true?'ui-grid/dropdownEditor':''),
                       'field'                    => $addlFields['fieldName'],
-                      'name'                     => $addlFields['fieldName']);
+                      'name'                     => $addlFields['fieldName'],
+                      'minWidth'                 => 100,
+                      'width'                    => (isset($addlFields['width'])?$addlFields['width']:'*')
+              );
         }
         //add the field to the column definitions
         $data['columnDefs'][] = $vars;
