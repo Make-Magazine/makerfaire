@@ -355,7 +355,7 @@ function retrieveRptData($table){
 
   //get table data
   $query = "select * ".$sql." from ".$table.$where.$orderBy;
-
+//echo '$query='.$query;
   $result = $mysqli->query( $query );
   //create array of table data
   while ($row = $result->fetch_assoc()) {

@@ -183,3 +183,55 @@ $tableFields['wp_mf_faire_subarea'][] = array('fieldName' => 'area_id',   'filte
                                                                 'referenceField'   => 'ID',
                                                                 'referenceDisplay' => 'area'));
 $tableFields['wp_mf_faire_subarea'][] = array('fieldName' => 'subarea',   'filterType'   => 'text');
+
+
+//assigned location report
+$tableFields['wp_mf_location'][] = array('fieldName' => 'faire',   'filterType'   => 'dropdown',
+    'fkey'       => array('referenceTable'   => 'wp_mf_faire',
+                          'referenceField'   => 'ID',
+                          'referenceDisplay' => 'faire'),
+     'dataSql' =>'(SELECT wp_mf_faire_area.faire_id '
+    . '               from   wp_mf_faire_area,wp_mf_faire_subarea '
+    . '               where  wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
+    . '               and    wp_mf_location.subarea_id=wp_mf_faire_subarea.ID) as faire'
+                                        );
+
+$tableFields['wp_mf_location'][] = array('fieldName' => 'area', 'filterType'=>'dropdown',
+    'fkey'       => array('referenceTable'   => 'wp_mf_faire_area',
+                          'referenceField'   => 'ID',
+                          'referenceDisplay' => 'area'),
+        'dataSql' =>'(SELECT wp_mf_faire_area.id '
+    . '               from   wp_mf_faire_area,wp_mf_faire_subarea '
+    . '               where  wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
+    . '               and    wp_mf_location.subarea_id=wp_mf_faire_subarea.ID) as area'
+    );
+$tableFields['wp_mf_location'][] = array('fieldName' => 'subarea_id', 'filterType'=>'dropdown',
+    'fkey'       => array('referenceTable'   => 'wp_mf_faire_subarea',
+                          'referenceField'   => 'ID',
+                          'referenceDisplay' => 'subarea'),
+
+    );
+
+$tableFields['wp_mf_location'][] = array('fieldName' => 'entry_id', 'filterType'   => 'entrylink');
+$tableFields['wp_mf_location'][] = array('fieldName' => 'exName',   'filterType'   => 'text', 'fieldLabel' => 'Exhibit Name',
+                                                 'dataSql' => "(SELECT value FROM `wp_rg_lead_detail` where field_number = '151' and lead_id =entry_id  limit 1) as exName"
+                                                );
+$tableFields['wp_mf_location'][] = array('fieldName' => 'location', 'filterType'   => 'text');
+$tableFields['wp_mf_location'][] = array('fieldName' => 'start_dt', 'filterType'   => 'text',
+      'dataSql' => '(select start_dt from wp_mf_schedule where wp_mf_location.id = location_id limit 1) as start_dt'
+    );
+$tableFields['wp_mf_location'][] = array('fieldName' => 'end_dt', 'filterType'   => 'text',
+      'dataSql' => '(select end_dt from wp_mf_schedule where wp_mf_location.id = location_id limit 1) as end_dt'
+    );
+
+/*
+$tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'subarea', 'filterType'=>'text',
+        'dataSql' =>'(SELECT subarea '
+    . '               from   wp_mf_faire_subarea,wp_mf_location '
+    . '               where  wp_mf_location.subarea_id=wp_mf_faire_subarea.ID '
+    . '               and    wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as subarea'
+    );
+
+$tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'location', 'filterType'=>'text',
+        'dataSql' =>'(SELECT location from wp_mf_location where wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as location'
+    );*/
