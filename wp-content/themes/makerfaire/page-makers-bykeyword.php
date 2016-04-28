@@ -9,6 +9,14 @@ $results = $wpdb->get_results('SELECT * FROM wp_mf_faire where faire= "'.strtoup
 $faire_name = $results[0]->faire_name;
 $current_form_ids   = explode(',',$results[0]->form_ids);
 
+//exclude these forms
+$exclude_form = explode(',',$results[0]->non_public_forms);
+foreach ($exclude_form as $exFormID){
+  if(($key = array_search($exFormID, $current_form_ids)) !== false) {
+    unset($current_form_ids[$key]);
+  }
+}
+
 //$search_term = urldecode($wp_query->query_vars['s_keyword']);
 $search_term=$_GET["s_term"];
 $currentpage = $wp_query->query_vars['offset'];
@@ -56,7 +64,7 @@ get_header(); ?>
 			</div>
 			<div class="clear"></div>
 			<div class="clear"></div>
-			
+
 			<?php foreach ($entries as $entry) :
 			$project_name = isset($entry['151']) ? $entry['151']  : '';
 			$entry_id = isset($entry['id']) ? $entry['id']  : '';
@@ -103,18 +111,18 @@ function search_entries_bytopic( $form_id, $search_criteria = array(), $sorting 
 	//initializing rownum
 	$sql = sort_by_field_query( $form_id, $search_criteria, $sorting, $paging);
 	$sqlcounting = sort_by_field_count( $form_id, $search_criteria);
-	
+
 	GFCommon::log_debug( $sql );
 	GFCommon::log_debug( $sqlcounting );
 	//getting results
-	
+
 	$results = $wpdb->get_results( $sql );
 	$leads = GFFormsModel::build_lead_array( $results );
-	
-	
+
+
 	$results_count = $wpdb->get_row( $sqlcounting );
 	$total_count=$results_count->total_count;
-	
+
 	return $leads;
 }
 
@@ -127,7 +135,7 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	$page_size       = isset( $paging['page_size'] ) ? $paging['page_size'] : 20;
 	$search_key          = isset( $searching['key'] ) ? $searching['key'] : '';
 	$search_value       = isset( $searching['value'] ) ? $searching['value'] : '';
-	
+
 	if ( ! is_numeric( $sort_field_number ) || ! is_numeric( $offset ) || ! is_numeric( $page_size ) ) {
 		return '';
 	}
@@ -136,7 +144,7 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 
 	$field_number_min = $sort_field_number - 0.0001;
 	$field_number_max = $sort_field_number + 0.0001;
-	
+
 	$searchfield_number_min = $search_key - 0.0001;
 	$searchfield_number_max = $search_key + 0.9999;
 	$search_160 = "(field_number BETWEEN '159.9999' AND '160.9999' AND value like ( '%$search_value%' ))";
@@ -150,10 +158,10 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	$search_151 = "(field_number BETWEEN '150.9999' AND '151.9999' AND value like ( '%$search_value%' ))";
 	$search_16 = "(field_number BETWEEN '15.9999' AND '16.9999' AND value like ( '%$search_value%' ))";
 	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
-	
+
 
 	$sql = "
-		
+
 	SELECT sorted.sort,sorted.value, l.*, d.field_number, d.value
             FROM $lead_table_name l
             INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
@@ -167,13 +175,13 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 						WHERE ( $search_160 OR $search_158 OR $search_155 OR $search_166 OR $search_157 OR $search_159 OR $search_154 OR $search_109 OR $search_151 OR $search_16)
 						AND form_id in ($form_id)
 					) filtered on l.lead_id=filtered.id
-					INNER JOIN 
+					INNER JOIN
 				    (
 				    SELECT
 						lead_id as id
 						from $lead_detail_table_name
 						WHERE $accepted_criteria
-						AND form_id in ($form_id) 
+						AND form_id in ($form_id)
 						) accepted on l.lead_id=accepted.id
 				WHERE field_number  between $field_number_min AND $field_number_max AND l.form_id in ($form_id)
 		ORDER BY l.value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
@@ -181,8 +189,8 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	";
 
 	return $sql;
-	
-	
+
+
 }
 
 function sort_by_field_count( $form_id, $searching ) {
@@ -203,21 +211,21 @@ function sort_by_field_count( $form_id, $searching ) {
 	$search_151 = "(field_number BETWEEN '150.9999' AND '151.9999' AND value like ( '%$search_value%' ))";
 	$search_16 = "(field_number BETWEEN '15.9999' AND '16.9999' AND value like ( '%$search_value%' ))";
 	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
-	
+
 
 	$sql = "SELECT
 	count(distinct l.lead_id) as total_count
 	from $lead_detail_table_name as l
-	INNER JOIN 
+	INNER JOIN
 				    (
 				    SELECT
 						lead_id as id
 						from $lead_detail_table_name
 						WHERE $accepted_criteria
-						AND form_id in ($form_id) 
+						AND form_id in ($form_id)
 						) accepted on l.lead_id=accepted.id
 	WHERE ( $search_160 OR $search_158 OR $search_155 OR $search_166 OR $search_157 OR $search_159 OR $search_154 OR $search_109 OR $search_151 OR $search_16)
-	AND form_id in ($form_id)  
+	AND form_id in ($form_id)
 	";
 
 	return $sql;
@@ -274,6 +282,6 @@ $pages = ceil($total_count / $pagesize);
 	</nav>
 </div>
 
-<?php 
+<?php
 }
 ?>

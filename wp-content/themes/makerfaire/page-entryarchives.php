@@ -1,14 +1,14 @@
 <?php
 /**
  * Template Name: EntryArchives
- * 
+ *
  *
  * @version 2.0
  */
 
 global $wp_query;
 $postID = 0;
-//pull by the slug name 
+//pull by the slug name
 $the_slug = $wp_query->query_vars['entryslug']; //entry-id
 
 if($the_slug==''){
@@ -20,39 +20,39 @@ $makers = array();
 $my_posts = get_posts(array(
            'numberposts'	=> 1,
            'post_type'		=> 'maker-entry-archive',
-           'meta_key'		=> 'entry_id',
+           'meta_key'		  => 'entry_id',
            'post_status'        => 'accepted',
            'meta_value'	        => $the_slug
    ));
 
-if(empty($my_posts)){     
+if(empty($my_posts)){
     //if that fails, try pulling by post name or slug wp v1 format
     $args = array(
-                  'name'          => $the_slug,              
+                  'name'          => $the_slug,
                   'post_type'	  => 'maker-entry-archive',
                   'post_status'   => 'accepted',
                   'numberposts'   => 1
-    );    
+    );
 
-    $my_posts = get_posts($args);   
+    $my_posts = get_posts($args);
 }
 
-if(!empty($my_posts)){  
+if(!empty($my_posts)){
     $postID = $my_posts[0]->ID;
-    $custom_fields      = get_post_custom($my_posts[0]->ID);     
+    $custom_fields      = get_post_custom($my_posts[0]->ID);
     if(is_array($custom_fields)){
-        
+
     }
     $project_faire      = (isset($custom_fields['faire'][0])        ? $custom_fields['faire'][0]        : '');
     $project_name       = (isset($custom_fields['project_name'][0]) ? $custom_fields['project_name'][0] : '');
     $attachment_id      = (isset($custom_fields['project_photo'][0])  ? $custom_fields['project_photo'][0]        : '');
     $project_photo = wp_get_attachment_url( $attachment_id);
-    
+
     $project_short      = (isset($custom_fields['project_description'][0]) ? $custom_fields['project_description'][0] : '');
     $project_website    = (isset($custom_fields['website'][0])             ? $custom_fields['website'][0]             : '');
     $project_video      = (isset($custom_fields['video'][0])               ? $custom_fields['video'][0]               : '');
     $project_title      = (isset($custom_fields['project_name'][0])        ? $custom_fields['project_name'][0]        : '');
-    
+
     //get maker info
     for($x=0;$x<=6;$x++){
         $mname  = 'maker_information_'.$x.'_maker_name';
@@ -62,18 +62,18 @@ if(!empty($my_posts)){
         $mtitle = 'maker_information_'.$x.'_maker_title';
         $mphoto = 'maker_information_'.$x.'_maker_photo';
         $mattachment_id = (isset($custom_fields[$mphoto][0]) ? $custom_fields[$mphoto][0] : '');
-        $photo = wp_get_attachment_url( $mattachment_id);     
-        
+        $photo = wp_get_attachment_url( $mattachment_id);
+
         if(isset($custom_fields[$mname][0]) && $custom_fields[$mname][0]!=''){
         $makers[] = array('name'    => (isset($custom_fields[$mname][0])  ? $custom_fields[$mname][0]  : ''),
                             'bio'     => (isset($custom_fields[$mdesc][0])  ? $custom_fields[$mdesc][0]  : ''),
                             'photo'   => $photo
                             );
         }
-        
-        
+
+
     }
-    
+
 //    $makers
     $entrySlug =$the_slug;
     if($my_posts[0]->post_content!=''){
@@ -107,8 +107,8 @@ if(!empty($my_posts)){
 
                       break;
               default:
-                      $project_faire = $json->maker_faire; 
-                        $project_name = $json->presentation_name; 
+                      $project_faire = $json->maker_faire;
+                        $project_name = $json->presentation_name;
                         $project_photo = $json->presentation_photo;
                         $project_short = $json->short_description;
                         $project_website = $json->presentation_website;
@@ -133,26 +133,26 @@ if(!empty($my_posts)){
 	'meta_value'	=> urldecode($the_slug)
     ));
     //echo urldecode($the_slug);
-    if(!empty($posts)){  
+    if(!empty($posts)){
         ?>
-        <ul>		
-	<?php foreach( $posts as $post ): 		
-		setup_postdata( $post )		
+        <ul>
+	<?php foreach( $posts as $post ):
+		setup_postdata( $post )
 		?>
 		<li>
 			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-		</li>	
-	<?php endforeach; ?>	
-	</ul>	
+		</li>
+	<?php endforeach; ?>
+	</ul>
 	<?php wp_reset_postdata();
     }else{
-        $project_title = 'I\'m sorry, we can\'t find this maker.'; 
+        $project_title = 'I\'m sorry, we can\'t find this maker.';
         $project_video = $project_website = $project_photo = '';
         $project_short = $project_name    = $project_faire = '';
         $makers = array();
     }
 }
-    
+
     //Setup Sharing Cards
     $sharing_cards = new mf_sharing_cards();
     // Url
@@ -163,12 +163,12 @@ if(!empty($my_posts)){
     $sharing_cards->project_title = $project_title;
     //Url
     global $wp;
-    $canonical_url = home_url( $wp->request ) . '/' ;    
+    $canonical_url = home_url( $wp->request ) . '/' ;
     $sharing_cards->canonical_url = $canonical_url;
     $sharing_cards->set_values();
-    
+
   get_header();
-  
+
 ?>
 
 <div class="clear"></div>
@@ -184,24 +184,24 @@ if(!empty($my_posts)){
         <h1><?php echo $project_title; ?>
         <?php if($postID!=0){
           //check if this entry has one any awards
-          $ribbons = checkForRibbons($postID);          
+          $ribbons = checkForRibbons($postID);
           echo $ribbons;
       } ?>
             </h1>
         <?php echo ( !empty( $project_faire ) ) ? '<h5><small>' . archives_better_name( $project_faire ) . '</small></h5>' : ''; ?>
-        
+
 
       </div>
       <?php ?>
 
       <img class="img-responsive padbottom" src="<?php echo $project_photo; ?>" />
 
-      <p class="lead"><?php echo nl2br(make_clickable($project_short)); ?></p> 
+      <p class="lead"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
       <?php if (!empty($project_website)) {
           echo '<a href="' . $project_website . '" class="btn btn-info pull-left" target="_blank" style="margin-right:15px;">Project Website</a>';
       } ?>
-      
+
       <!-- Button to trigger video modal -->
       <?php if (!empty($project_video)) {
             //echo '<a href="#entryModal" role="button" class="btn btn-info" data-toggle="modal">Project Video</a>';
@@ -210,7 +210,7 @@ if(!empty($my_posts)){
       } ?>
       <br />
 
-      <!-- Video Modal -->      
+      <!-- Video Modal -->
       <div id="entryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 
         <div class="modal-header">
@@ -218,8 +218,8 @@ if(!empty($my_posts)){
           <h3 id="myModalLabel"><?php echo $project_title; ?></h3>
         </div>
         <div class="modal-body">
-          
-           <?php  
+
+           <?php
            $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
            //youtube has two type of url formats we need to look for and change
            $videoID = parse_yturl($dispVideo);
@@ -227,13 +227,13 @@ if(!empty($my_posts)){
                $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
            }
            ?>
-            
+
             <input id="entryVideo" type="hidden" value="<?php echo $dispVideo; ?>" />
             <iframe width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
         </div>
       </div>
-      
+
 <!-- Commenting out for now via Clair
       <h2>Schedule</h2>
       <hr />
@@ -249,7 +249,7 @@ if(!empty($my_posts)){
       <?php
       if (!empty($groupbio)) {
 		echo '<h2>Group</h2><hr />';
-		
+
         echo '<div class="row padbottom">
                 ',(!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . $groupphoto . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
         echo    '<div class="col-md-5">
@@ -257,7 +257,7 @@ if(!empty($my_posts)){
                   <p>' . make_clickable($groupbio) . '</p>
                 </div>
               </div>';
-      } 
+      }
       else {
 		  if (!empty($makers)) echo '<h2>Group</h2><hr />';
 
@@ -287,16 +287,16 @@ Duplicate to $project_website;
 <p>Homepage: <i><?php echo $entry['27']; ?></i></p>
 
 Duplicate $entry['22']
-<li>Project Photo: <?php echo $project_photo; ?></li> 
+<li>Project Photo: <?php echo $project_photo; ?></li>
 
 Duplicate to $entry['151']
 <li>Short Desription<?php echo $entry['16']; ?></li>
 -->
 
  <?php
- 
+
   get_footer();
-  
+
   function archives_better_name( $str ) {
   	if ( $str == '2013_bayarea' ) {
   		return 'Maker Faire Bay Area 2013';
@@ -332,7 +332,7 @@ function display_entry_schedule($entry_id) {
   if ($result)
   {
     if ($result->num_rows === 0) echo 'No schedule found';
-    else 
+    else
     {
     echo '<ul>';
     while($row = $result->fetch_row())
