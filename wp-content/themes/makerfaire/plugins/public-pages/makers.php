@@ -531,6 +531,7 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
       $tag_args['hide_empty'] = false;
       unset($tag_args['faire']);
       unset($tag_args['faire_url']);
+      /*
       $tags = get_terms( 'post_tag' , $tag_args );
 
       if ((isset($topic_list['tags'])) && ($topic_list['tags'][0] !== '') && (count($topic_list['tags']) >= 1)) {
@@ -540,6 +541,8 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
           }
         }
       }
+      */
+			$tags = array();
 		} else {
 			$tags = array();
 		}
