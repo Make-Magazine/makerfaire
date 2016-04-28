@@ -25,7 +25,7 @@ $offset=($currentpage-1)*$page_size;
 $total_count = 0;
 $f = $wp_query->query_vars['f'];
 //$search_criteria = array( 'key' => '147', 'value' =>  $search_term);
-
+$search_criteria['status'] = 'active';
 $search_criteria['field_filters'][] = array( '151' => '1', 'operator' => 'contains','value' => $search_term);
 $search_criteria['field_filters'][] = array( '15' => '1', 'operator' => 'contains','value' => $search_term);
 $search_criteria['field_filters'][] = array( '303' => '1', 'value' => 'Accepted');

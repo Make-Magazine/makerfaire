@@ -33,8 +33,8 @@ $paging_criteria = array('offset' => $offset, 'page_size' => $page_size );
 
 //search by primary category
 //$search_criteria['field_filters'][] = array( '320' => '1', 'value' => $search_category);
+$search_criteria['status'] = 'active';
 $search_criteria['field_filters'][] = array( '321' => '1', 'value' => $search_category);
-
 $search_criteria['field_filters'][] = array( '303' => '1', 'value' => 'Accepted');
 
 $entries =  GFAPI::get_entries( $current_form_ids, $search_criteria, $sorting_criteria, $paging_criteria, $total_count);
