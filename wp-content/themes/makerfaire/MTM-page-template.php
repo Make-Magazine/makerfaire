@@ -30,7 +30,7 @@
 
 <!-- The header section with a fullwidth image-->
 <?php
-
+  $search_criteria['status'] = 'active';
   $search_criteria['field_filters'][] = array( 'key' => '304', 'value' => 'Featured Maker');
   $search_criteria['field_filters'][] = array( 'key' => '303', 'value' => 'Accepted');
 
