@@ -92,7 +92,8 @@
       }
 ?>
       <a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a>
-<?php if($entry['status']=='Active' && $entry[303]=='Accepted'){ ?>
+      
+<?php if($entry['status']=='active' && $entry[303]=='Accepted'){ ?>
       <div class="page-header">
         <h1><?php echo $project_title; ?>
           <?php
