@@ -64,7 +64,6 @@
   $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
   $sharing_cards->project_title = $project_title;
 
-
   //Url
   global $wp;
   $canonical_url = home_url( $wp->request ) . '/' ;
