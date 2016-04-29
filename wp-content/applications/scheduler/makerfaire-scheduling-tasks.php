@@ -179,9 +179,9 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 	    wp_mf_faire ON wp_mf_schedule.faire = wp_mf_faire.faire
 			JOIN 
 		wp_mf_entity ON wp_mf_entity.lead_id = wp_mf_schedule.entry_id
-			JOIN 
+			LEFT JOIN 
     wp_mf_maker_to_entity ON wp_mf_entity.lead_id = wp_mf_maker_to_entity.entity_id and wp_mf_maker_to_entity.`maker_type`='presenter'
-			JOIN 
+			LEFT JOIN 
 		wp_mf_maker ON wp_mf_maker.maker_id = wp_mf_maker_to_entity.maker_id
 	WHERE
 	     wp_mf_faire.faire = '$faire_id'
@@ -201,7 +201,8 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 			$entry_ids = array (
 					$row ['entry_id'] 
 			);
-			$title= preg_replace( "/[^a-z0-9 ]/i", "", $row['presentation_title']). ' (Presenter: '. $row['maker_name'].') ';
+      $presentername = (isset($row['maker_name'])) ? $row['maker_name'] : 'TBD';
+			$title= preg_replace( "/[^a-z0-9 ]/i", "", $row['presentation_title']). ' (Presenter: '.$presentername .') ';
 			$type= $row['presentation_type'];
 			$desc_short= $row['desc_short'];
 			$maker_name= $row['maker_name'];
