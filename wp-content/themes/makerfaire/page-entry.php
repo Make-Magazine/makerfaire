@@ -48,7 +48,7 @@
   $project_name = $entry['151'];
 
   // Url
-  $project_photo = legacy_get_resized_remote_image_url($entry['22'],750,500);
+  $project_photo = legacy_get_fit_remote_image_url($entry['22'],750,500);
   $sharing_cards->project_photo = $project_photo;
 
   // Description
@@ -157,7 +157,7 @@
       <?php
       if ($isGroup) {
         echo '<div class="row padbottom">
-                ',(!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_resized_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
+                ',(!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
         echo    '<div class="col-md-5">
                   <h3 style="margin-top: 0px;">' . $groupname . '</h3>
                   <p>' . make_clickable($groupbio) . '</p>
@@ -167,7 +167,7 @@
     		foreach($makers as $maker) {
           if($maker['firstname'] !='' && $maker['lastname'] !=''){
             echo '<div class="row padbottom">
-                    ',(!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_resized_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
+                    ',(!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
             echo    '<div class="col-md-5">
                       <h3 style="margin-top: 0px;">' . $maker['firstname'] . ' ' . $maker['lastname'] . '</h3>
                       <p>' . make_clickable($maker['bio']) . '</p>
