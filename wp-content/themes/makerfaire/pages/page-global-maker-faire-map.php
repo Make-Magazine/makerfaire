@@ -85,12 +85,12 @@
           <table class="table table-striped table-condensed">
             <tr></tr>
             <tr ng-init="sort='event_start_dt';reverse=false">
-              <th style="width:7%" class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">ANNUAL</th>
-              <th style="width:10%" class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE</th>
-              <th style="width:16%" class="cursor-pointer" ng-click="sort='event_start_dt';reverse=!reverse">DATE</th>
-              <th style="width:33%" class="cursor-pointer" ng-click="sort='name';reverse=!reverse">EVENT NAME</th>
-              <th style="width:26%" >LOCATION</th>
-              <th style="width:8%" class="cursor-pointer" ng-click="sort='venue_address_country';reverse=!reverse">COUNTRY</th>
+              <th class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">ANNUAL</th>
+              <th class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE</th>
+              <th class="cursor-pointer" ng-click="sort='event_start_dt';reverse=!reverse">DATE</th>
+              <th class="cursor-pointer" ng-click="sort='name';reverse=!reverse">EVENT NAME</th>
+              <th>LOCATION</th>
+              <th class="cursor-pointer" ng-click="sort='venue_address_country';reverse=!reverse">COUNTRY</th>
             </tr>
             <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 20">
               <td>{{row.annual | ordinal}}</td>
