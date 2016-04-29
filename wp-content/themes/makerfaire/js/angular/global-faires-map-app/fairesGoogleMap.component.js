@@ -67,7 +67,7 @@
               gMarkerIcon = {
                 path: google.maps.SymbolPath.CIRCLE,
                 scale: 5,
-                fillOpacity: 0.5,
+                fillOpacity: 1,
                 strokeOpacity: 0
               };
               gMarkerZIndex = 1;
