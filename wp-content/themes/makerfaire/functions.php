@@ -2632,7 +2632,7 @@ function mf_custom_export_entries() {
  * SMTP server. This improves reliability of wp_mail, and
  * avoids many potential problems.
  */
-/*
+
 add_action( 'phpmailer_init', 'send_smtp_email' );
 function send_smtp_email( $phpmailer ) {
 
@@ -2657,7 +2657,7 @@ function send_smtp_email( $phpmailer ) {
 	// Encryption system to use - ssl or tls
   $phpmailer->SMTPSecure = "";
 
-}*/
+}
 
 /*
  * add new shortcode to generate a export entries look
