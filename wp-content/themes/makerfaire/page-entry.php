@@ -104,7 +104,7 @@
         </h1>
       </div>
 
-      <img class="img-responsive padbottom" src="<?php echo $project_photo; ?>" />
+      <img class="img-responsive center-block" src="<?php echo $project_photo; ?>" />
       <p class="lead"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
       <?php
@@ -156,7 +156,7 @@
       <hr />
       <?php
       if ($isGroup) {
-        echo '<div class="row padbottom">
+        echo '<div class="row center-block">
                 ',(!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
         echo    '<div class="col-md-5">
                   <h3 style="margin-top: 0px;">' . $groupname . '</h3>
@@ -166,7 +166,7 @@
       } else {
     		foreach($makers as $maker) {
           if($maker['firstname'] !='' && $maker['lastname'] !=''){
-            echo '<div class="row padbottom">
+            echo '<div class="row center-block">
                     ',(!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
             echo    '<div class="col-md-5">
                       <h3 style="margin-top: 0px;">' . $maker['firstname'] . ' ' . $maker['lastname'] . '</h3>
