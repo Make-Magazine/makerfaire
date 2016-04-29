@@ -9,6 +9,7 @@
         pastEvents: false
       };
       ctrl.pastEvents = false;
+
       $rootScope.$on('toggleMapFilter', function(event, args) {
         var index = faireFilters.filters.indexOf(args.filter);
         if (args.state && index < 0) {
@@ -18,6 +19,28 @@
         }
         ctrl.applyMapFilters();
       });
+      ctrl.toggleBox = function(type) {
+        jQuery('.filters faires-map-filter').each(function(index,obj){
+          var filter = jQuery(obj).attr( "filter");
+          var index = faireFilters.filters.indexOf(filter);
+          //if the filter is not the same as the selected type
+          if(filter!==type){
+            //uncheck and remove from the faireFilters Object
+            jQuery(obj).find('input').prop( "checked", false );
+            if (index > -1) {
+              faireFilters.filters.splice(index, 1);
+            }
+          }else{
+            //make sure it is checked and add to the faireFilters Object if it's not there
+            jQuery(obj).find('input').prop( "checked", true );
+            if (index < 0) {
+              faireFilters.filters.push(filter);
+            }
+          }
+        });
+
+        ctrl.applyMapFilters();
+      }
       ctrl.applyMapFilters = function() {
         FaireMapsSharedData.infowindow.close();
         ctrl.pastPresent = {

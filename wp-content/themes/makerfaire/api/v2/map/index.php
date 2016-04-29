@@ -63,8 +63,7 @@ if ( $type == 'map' ) {
       , `venue_address_state`
       , `venue_address_country`
       , `venue_address_postal_code`
-      , `venue_address_region`
-      FROM `wp_mf_global_faire` WHERE 1");
+      , `venue_address_region`, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state");
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query ( $select_query );
 
@@ -106,7 +105,7 @@ if ( $type == 'map' ) {
     $point['free_event']                = html_entity_decode(trim( $row['free_event'] ));
     $point['venue_address_street']      = html_entity_decode(trim( $row['venue_address_street'] ));
     $point['venue_address_city']        = html_entity_decode(trim( $row['venue_address_city'] ));
-    $point['venue_address_state']       = html_entity_decode(trim( $row['venue_address_state'] ));
+    $point['venue_address_state']       = ($row['state']!=NULL ? html_entity_decode(trim( $row['state'] )): html_entity_decode(trim( $row['venue_address_state'] )));
     $point['venue_address_country']     = html_entity_decode(trim( $row['venue_address_country'] ));
     $point['venue_address_postal_code'] = html_entity_decode(trim( $row['venue_address_postal_code'] ));
     $point['venue_address_region']      = html_entity_decode(trim( $row['venue_address_region'] ));

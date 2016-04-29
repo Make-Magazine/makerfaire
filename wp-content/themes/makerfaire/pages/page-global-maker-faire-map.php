@@ -7,6 +7,7 @@
         <h1>Faires around the world</h1>
       </div>
     </div>
+
     <div class="map-filters-wrp">
       <div class="container">
         <div class="col-md-12">
@@ -23,7 +24,7 @@
             </div>
           </div>
           <div class="filters ng-cloak" ng-if="$ctrl.faireMarkers">
-            <faires-map-filter default-state="false" filter="School">
+            <faires-map-filter default-state="true" filter="School">
               School <span class="hidden-sm hidden-xs">Maker Faires</span>
             </faires-map-filter>
             <faires-map-filter default-state="true" filter="Mini">
@@ -52,19 +53,19 @@
         </faires-google-map>
         <!-- Color Key -->
         <div class="faire-key-boxes">
-          <div class="flagship-key">
+          <div class="flagship-key" ng-click="$ctrl.toggleBox('Flagship')">
             Flagship Maker Faires
             <p>Faires curated and produced by the Maker Media team</p>
           </div>
-          <div class="featured-key">
+          <div class="featured-key" ng-click="$ctrl.toggleBox('Featured')">
             Featured Maker Faires
             <p>Larger-scale regional events</p>
           </div>
-          <div class="mini-key">
+          <div class="mini-key" ng-click="$ctrl.toggleBox('Mini')">
             Mini Maker Faires
             <p>Community events</p>
           </div>
-          <div class="school-key">
+          <div class="school-key" ng-click="$ctrl.toggleBox('School')">
             School Maker Faires
             <p>K-12 Faires (closed to general public)</p>
           </div>
@@ -83,13 +84,39 @@
         <div class="faire-list-table table-responsive">
           <table class="table table-striped table-condensed">
             <tr></tr>
-            <tr ng-init="sort='event_start_dt';reverse=true">
-              <th class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">ANNUAL</th>
-              <th class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE</th>
-              <th class="cursor-pointer" ng-click="sort='event_start_dt';reverse=!reverse">DATE</th>
-              <th class="cursor-pointer" ng-click="sort='name';reverse=!reverse">EVENT NAME</th>
+            <tr ng-init="sort='event_start_dt';reverse=false">
+              <th class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">
+                ANNUAL
+               <span ng-show="sort == 'annual'">
+                 <span ng-show="!reverse">^</span>
+                 <span ng-show="reverse">v</span>
+               </span>
+              </th>
+              <th class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE
+              <span ng-show="sort == 'category'">
+                 <span ng-show="!reverse">^</span>
+                 <span ng-show="reverse">v</span>
+               </span>
+              </th>
+              <th class="cursor-pointer" ng-click="sort='event_start_dt';reverse=!reverse">DATE
+              <span ng-show="sort == 'event_start_dt'">
+                 <span ng-show="!reverse">^</span>
+                 <span ng-show="reverse">v</span>
+               </span>
+              </th>
+              <th class="cursor-pointer" ng-click="sort='name';reverse=!reverse">EVENT NAME
+              <span ng-show="sort == 'name'">
+                 <span ng-show="!reverse">^</span>
+                 <span ng-show="reverse">v</span>
+               </span>
+              </th>
               <th>LOCATION</th>
-              <th class="cursor-pointer" ng-click="sort='venue_address_country';reverse=!reverse">COUNTRY</th>
+              <th class="cursor-pointer" ng-click="sort='venue_address_country';reverse=!reverse">COUNTRY
+              <span ng-show="sort == 'venue_address_country'">
+                 <span ng-show="!reverse">^</span>
+                 <span ng-show="reverse">v</span>
+               </span>
+              </th>
             </tr>
             <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 20">
               <td>{{row.annual | ordinal}}</td>
