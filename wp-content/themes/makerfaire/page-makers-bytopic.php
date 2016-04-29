@@ -9,7 +9,13 @@ $faire = (isset($_GET['faire'])?sanitize_text_field($_GET['faire']):'BA15');
 $results            = $wpdb->get_results('SELECT * FROM wp_mf_faire where faire= "'.strtoupper($faire).'"');
 $faire_name         = $results[0]->faire_name;
 $current_form_ids   = explode(',',$results[0]->form_ids);
-
+//exclude these forms
+$exclude_form = explode(',',$results[0]->non_public_forms);
+foreach ($exclude_form as $exFormID){
+  if(($key = array_search($exFormID, $current_form_ids)) !== false) {
+    unset($current_form_ids[$key]);
+  }
+}
 $topic_slug = $wp_query->query_vars['t_slug'];
 
 $category = get_term_by('slug',$topic_slug,'makerfaire_category');
@@ -27,8 +33,8 @@ $paging_criteria = array('offset' => $offset, 'page_size' => $page_size );
 
 //search by primary category
 //$search_criteria['field_filters'][] = array( '320' => '1', 'value' => $search_category);
+$search_criteria['status'] = 'active';
 $search_criteria['field_filters'][] = array( '321' => '1', 'value' => $search_category);
-
 $search_criteria['field_filters'][] = array( '303' => '1', 'value' => 'Accepted');
 
 $entries =  GFAPI::get_entries( $current_form_ids, $search_criteria, $sorting_criteria, $paging_criteria, $total_count);
@@ -65,7 +71,7 @@ get_header(); ?>
 
 			<?php foreach ($entries as $entry) :
 			$project_name = isset($entry['151']) ? $entry['151']  : '';
-			$entry_id = isset($entry['id']) ? $entry['id']  : '';	
+			$entry_id = isset($entry['id']) ? $entry['id']  : '';
 			?>
 			<hr>
 			<div class="row">
@@ -105,16 +111,16 @@ function search_entries_bytopic( $form_id, $search_criteria = array(), $sorting 
   $sort_field = isset( $sorting['key'] ) ? $sorting['key'] : 'date_created'; // column, field or entry meta
 
 	//initializing rownum
-	$sql = sort_by_field_query( $form_id, $search_criteria, $sorting, $paging);        
+	$sql = sort_by_field_query( $form_id, $search_criteria, $sorting, $paging);
 	$sqlcounting = sort_by_field_count( $form_id, $search_criteria);
-	
+
 	GFCommon::log_debug( $sql );
 	GFCommon::log_debug( $sqlcounting );
 	//getting results
-	
+
 	$results = $wpdb->get_results( $sql );
   $leads = GFFormsModel::build_lead_array( $results );
-		
+
 	$results_count  = $wpdb->get_row( $sqlcounting );
 	$total_count    = $results_count->total_count;
 
@@ -130,7 +136,7 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	$page_size       = isset( $paging['page_size'] ) ? $paging['page_size'] : 20;
 	$search_key          = isset( $searching['key'] ) ? $searching['key'] : '';
 	$search_value       = isset( $searching['value'] ) ? $searching['value'] : '';
-	
+
 	if ( ! is_numeric( $sort_field_number ) || ! is_numeric( $offset ) || ! is_numeric( $page_size ) ) {
 		return '';
 	}
@@ -139,14 +145,14 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 
 	$field_number_min = $sort_field_number - 0.0001;
 	$field_number_max = $sort_field_number + 0.0001;
-	
+
 	$searchfield_number_min = $search_key - 0.0001;
 	$searchfield_number_max = $search_key + 0.9999;
 	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
-	
-	
+
+
 	$sql = "
-		
+
 	SELECT sorted.sort,sorted.value, l.*, d.field_number, d.value
             FROM $lead_table_name l
             INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
@@ -160,15 +166,15 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 						WHERE (field_number BETWEEN '$searchfield_number_min' AND '$searchfield_number_max' AND value IN ( '$search_value' ))
 						AND form_id in ($form_id)
 					) filtered on l.lead_id=filtered.id
-				INNER JOIN 
+				INNER JOIN
 				    (
 				    SELECT
 						lead_id as id
 						from $lead_detail_table_name
 						WHERE $accepted_criteria
-						AND form_id in ($form_id) 
+						AND form_id in ($form_id)
 						) accepted on l.lead_id=accepted.id
-				WHERE field_number  between $field_number_min AND $field_number_max AND l.form_id in ($form_id) 
+				WHERE field_number  between $field_number_min AND $field_number_max AND l.form_id in ($form_id)
 		ORDER BY l.value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
         order by sorted.sort
 	";
@@ -182,7 +188,7 @@ function sort_by_field_count( $form_id, $searching ) {
 	$search_key          = isset( $searching['key'] ) ? $searching['key'] : '';
 	$searchfield_number_min = $search_key - 0.0001;
 	$searchfield_number_max = $search_key + 0.9999;
-	
+
 	$lead_detail_table_name = GFFormsModel::get_lead_details_table_name();
 	$lead_table_name        = GFFormsModel::get_lead_table_name();
 
@@ -191,13 +197,13 @@ function sort_by_field_count( $form_id, $searching ) {
 
 	$sql = "SELECT count( distinct accepted.id ) as total_count
 						from $lead_detail_table_name
-						INNER JOIN 
+						INNER JOIN
 				    (
 				    SELECT
 						lead_id as id
 						from $lead_detail_table_name
 						WHERE $accepted_criteria
-						AND form_id in ($form_id) 
+						AND form_id in ($form_id)
 						) accepted on $lead_detail_table_name.lead_id=accepted.id
 						WHERE (field_number BETWEEN '$searchfield_number_min' AND '$searchfield_number_max' AND value IN ( '$search_value' ))
 						AND form_id in ($form_id)
@@ -252,11 +258,11 @@ $pages = ceil($total_count / $pagesize);
 			<?php if ($current_page < $pages) : ?>
 			<li <?php if ($current_page == $pages) echo 'class = "disabled"'; ?>><a <?php if ($current_page == $pages) echo 'class = "disabled"'; ?> href="<?php echo $current_url?>/<?php echo ($current_page == $pages) ? $current_page.'#': $current_page+1;?>">&raquo;</a></li>
 			<?php endif; ?>
-			
+
 		</ul>
 	</nav>
 </div>
 
-<?php 
+<?php
 }
 ?>

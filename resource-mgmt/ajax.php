@@ -23,6 +23,10 @@ $tableOptions['wp_mf_faire_subarea']['addlFields'][] = array('fieldName' => 'fai
     'fkey' => array('fkey' => 'faire', 'referenceTable' => 'wp_mf_faire', 'referenceField'   => 'ID', 'referenceDisplay' => 'faire'),
     'dataSql' =>'(SELECT faire_id from wp_mf_faire_area where wp_mf_faire_area.ID = area_id) as faire'
     );
+$tableOptions['wp_mf_faire_subarea']['addlFields'][] = array('fieldName' => 'assCount', 'fieldLabel' => 'Assigned',
+    'dataSql' =>'(SELECT count(*) from wp_mf_location where wp_mf_faire_subarea.ID = subarea_id) as assCount'
+    );
+
 $tableOptions['wp_rmt_entry_attributes']['fkey']    = array(
         array('fkey' => 'attribute_id', 'referenceTable' => 'wp_rmt_entry_att_categories', 'referenceField'   => 'ID', 'referenceDisplay' => 'category'),
         array('fkey' => 'user',         'referenceTable' => 'wp_users',                    'referenceField'   => 'ID', 'referenceDisplay' => 'user_email'));
@@ -206,9 +210,26 @@ function getTableData($mysqli,$table){
                       'minWidth'                 => 100,
                       'width'                    => (isset($addlFields['width'])?$addlFields['width']:'*')
               );
+
+          if(isset($addlFields['filterType'])&&$addlFields['filterType']=='dropdown'){
+            $vars = array(
+                        'filter'=> array('selectOptions'=>$selectOptions),
+                        'cellFilter'               => 'griddropdown:this',
+                        'headerCellClass'          => '$scope.highlightFilteredHeader',
+                        'editDropdownValueLabel'   => 'fkey',
+                        'editDropdownIdLabel'      => 'id',
+                        'editDropdownOptionsArray' => $options,
+                        'enableCellEdit'           => false);
+          }else{
+            $vars = array();
+          }
+          $vars['displayName']  = (isset($addlFields['fieldLabel'])?$addlFields['fieldLabel']:$addlFields['fieldName']);
+          $vars['field']        = $addlFields['fieldName'];
+          $vars['name']         = $addlFields['fieldName'];
+          //add the field to the column definitions
+          $data['columnDefs'][] = $vars;
+
         }
-        //add the field to the column definitions
-        $data['columnDefs'][] = $vars;
       }
       //get table data
       $query = "select * ".$sql." from ".$table;

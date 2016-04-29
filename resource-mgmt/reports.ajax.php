@@ -13,6 +13,7 @@ $formSelect     = (isset($obj->formSelect)?$obj->formSelect:'');
 $selectedFields = (isset($obj->selectedFields)?$obj->selectedFields:'');
 $rmtData        = (isset($obj->rmtData)?$obj->rmtData:'');
 $location       = (isset($obj->location)?$obj->location:false);
+
 if($type != ''){
   if($type =="tableData"){
     if($table=='formData'){
@@ -129,8 +130,7 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
       }
       if($remove){
         unset ($entryData[$entryID]);
-      }else{ //keep processing
-        continue;
+        continue; //skip this record
       }
     }
     //pull RMT data
@@ -226,16 +226,12 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
       global $wpdb;
       if($entryID!=''){
         //get scheduling information for this lead
-        $sql = "SELECT  area.area,subarea.subarea,subarea.nicename, location.location,
-                        schedule.start_dt, schedule.end_dt
-                FROM    wp_mf_schedule schedule,
-                        wp_mf_location location,
+        $sql = "SELECT  area.area,subarea.subarea,subarea.nicename, location.location
+                FROM wp_mf_location location,
                         wp_mf_faire_subarea subarea,
                         wp_mf_faire_area area
 
-                where       schedule.entry_id   = $entryID
-                        and schedule.location_id=location.ID
-                        and location.entry_id   = schedule.entry_id
+                where       location.entry_id   = $entryID
                         and subarea.id          = location.subarea_id
                         and area.id             = subarea.area_id";
 
@@ -243,8 +239,6 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
         if($wpdb->num_rows > 0){
           foreach($results as $row){
             $subarea = ($row->nicename!=''&&$row->nicename!=''?$row->nicename:$row->subarea);
-            $start_dt = strtotime($row->start_dt);
-            $end_dt   = strtotime($row->end_dt);
 
             $data['columnDefs']['area']=   array('field'=> 'area','displayName'=>'Area');
             $entryData[$entryID]['area'] = $row->area;
@@ -252,10 +246,6 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
             $entryData[$entryID]['subarea'] = $row->subarea;
             $data['columnDefs']['location']=   array('field'=> 'location','displayName'=>'Location');
             $entryData[$entryID]['location'] = $row->location;
-            $data['columnDefs']['start']=   array('field'=> 'start','displayName'=>'Start');
-            $entryData[$entryID]['start'] = date("l, n/j/y, g:i A",$start_dt);
-            $data['columnDefs']['end']=   array('field'=> 'end','displayName'=>'End');
-            $entryData[$entryID]['end'] = date("l, n/j/y, g:i A",$end_dt);
           }
         }
       }
@@ -355,7 +345,7 @@ function retrieveRptData($table){
 
   //get table data
   $query = "select * ".$sql." from ".$table.$where.$orderBy;
-
+//echo '$query='.$query;
   $result = $mysqli->query( $query );
   //create array of table data
   while ($row = $result->fetch_assoc()) {

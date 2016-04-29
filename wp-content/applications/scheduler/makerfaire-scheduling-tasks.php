@@ -160,7 +160,7 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 	if ($mysqli->connect_errno) {
 		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 	}
-	$select_query = sprintf ( "SELECT 
+	$select_query = sprintf ( "SELECT  CONCAT(wp_mf_maker.`First Name`, ' ', wp_mf_maker.`Last Name`) as maker_name, 
 	    `wp_mf_schedule`.`ID`,
 	    `wp_mf_schedule`.`entry_id`,
 	    location.subarea_id,
@@ -179,8 +179,12 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 	    wp_mf_faire ON wp_mf_schedule.faire = wp_mf_faire.faire
 			JOIN 
 		wp_mf_entity ON wp_mf_entity.lead_id = wp_mf_schedule.entry_id
+			JOIN 
+    wp_mf_maker_to_entity ON wp_mf_entity.lead_id = wp_mf_maker_to_entity.entity_id and wp_mf_maker_to_entity.`maker_type`='presenter'
+			JOIN 
+		wp_mf_maker ON wp_mf_maker.maker_id = wp_mf_maker_to_entity.maker_id
 	WHERE
-	    wp_mf_faire.faire = '$faire_id'
+	     wp_mf_faire.faire = '$faire_id'
 	ORDER BY  start_dt ASC" );
 	$total = 0;
 	$result = $mysqli->query ( $select_query );
@@ -197,9 +201,10 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 			$entry_ids = array (
 					$row ['entry_id'] 
 			);
-			$title= preg_replace( "/[^a-z0-9 ]/i", "", $row['presentation_title']);
+			$title= preg_replace( "/[^a-z0-9 ]/i", "", $row['presentation_title']). ' (Presenter: '. $row['maker_name'].') ';
 			$type= $row['presentation_type'];
 			$desc_short= $row['desc_short'];
+			$maker_name= $row['maker_name'];
 			// build array
 			/*$schedule_entries [] = array (
 					'locationID' => $schedule_entry_id,
@@ -223,12 +228,13 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 		'IsAllDay' => false,
 		'SubareaID' => $stage,
 		'Entries' => $entry_ids,
+    'Event' => $maker_name,
 		'Title' => $title);
 		}
 	} else {
 		echo ('Error :' . $select_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
 	}
-	;
+	
 	
 	return $schedule_entries;
 }

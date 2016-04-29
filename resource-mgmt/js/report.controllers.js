@@ -167,7 +167,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       subTitle = 'Resource Drill Down';
     }
     if(subRoute=='location')      {
-      tablename = 'wp_mf_faire_subarea';
+      tablename = 'wp_mf_location';
       subTitle = 'Faire Location Report';
     }
     if(subRoute=='ent2resource')  tablename = 'wp_rg_lead';

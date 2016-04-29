@@ -64,7 +64,6 @@
   $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
   $sharing_cards->project_title = $project_title;
 
-
   //Url
   global $wp;
   $canonical_url = home_url( $wp->request ) . '/' ;
@@ -93,7 +92,8 @@
       }
 ?>
       <a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a>
-
+      
+<?php if($entry['status']=='active' && $entry[303]=='Accepted'){ ?>
       <div class="page-header">
         <h1><?php echo $project_title; ?>
           <?php
@@ -185,6 +185,9 @@
     <br />
     <?php
     echo display_groupEntries($entryId);
+    } else { //entry is not active
+      echo '<h2>Invalid entry</h2>';
+    }
     ?>
 
     </div><!--col-md-8-->

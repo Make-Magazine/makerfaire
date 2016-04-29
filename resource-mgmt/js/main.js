@@ -5,6 +5,14 @@ var resourceApp = angular.module('resourceApp', ['ngRoute', 'rmgControllers', 'n
 resourceApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
+      when('/canned', {
+        templateUrl: 'partials/canned.html',
+        controller: 'cannedCtrl'
+      }).
+      when('/canned/:sub', {
+        templateUrl: 'partials/canned.html',
+        controller: 'cannedCtrl'
+      }).
       when('/reports', {
         templateUrl: 'partials/reports.html',
         controller: 'reportsCtrl'
