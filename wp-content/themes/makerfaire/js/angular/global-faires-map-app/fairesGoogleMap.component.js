@@ -130,11 +130,12 @@
         }
         GMapsInitializer.then(function() {
           initMap(ctrl.mapId);
+          /*
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
               gMap.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
             });
-          }
+          }*/
         });
       }
     ]
