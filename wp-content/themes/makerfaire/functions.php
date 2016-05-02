@@ -1767,6 +1767,7 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Schedule', 'tag' => '{entry_schedule}');
     $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
     $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
+    $merge_tags[] = array('label' => 'Scheduled Locations', 'tag' => '{sched_loc}');
 
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
@@ -1794,6 +1795,12 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $text = str_replace('{entry_schedule}', $schedule, $text);
   }
 
+  //scheduled locations {sched_loc}
+  if (strpos($text, '{sched_loc}') !== false) {
+    $schedule = get_schedule($lead,true);
+    $text = str_replace('{sched_loc}', $schedule, $text);
+    //die($text);
+  }
   //Entry Resources
   if (strpos($text, '{entry_resources}') !== false) {
     //set lead meta field res_status to sent
@@ -1913,7 +1920,7 @@ function get_resources($lead){
 }
 
 /* Return schedule for lead */
-function get_schedule($lead){
+function get_schedule($lead,$locsOnly = false){
     global $wpdb;
     $schedule = '';
     $entry_id = (isset($lead['id'])?$lead['id']:'');
@@ -1936,12 +1943,16 @@ function get_schedule($lead){
         $results = $wpdb->get_results($sql);
         if($wpdb->num_rows > 0){
             foreach($results as $row){
-                $subarea = ($row->nicename!=''&&$row->nicename!=''?$row->nicename:$row->subarea);
-                $start_dt = strtotime($row->start_dt);
-                $end_dt = strtotime($row->end_dt);
+              $subarea = ($row->nicename!=''&&$row->nicename!=''?$row->nicename:$row->subarea);
+              $start_dt = strtotime($row->start_dt);
+              $end_dt = strtotime($row->end_dt);
+              if($locsOnly){
+                $schedule .= ($schedule!=''?',':'').$subarea;
+              }else{
                 $schedule .= $row->area.' '.$subarea;
                 $schedule .= '<br/>';
                 $schedule .= '<span>'.date("l, n/j/y, g:i A",$start_dt).' to '.date("l, n/j/y, g:i A",$end_dt).'</span><br/>';
+              }
             }
         }
     }
@@ -2761,8 +2772,8 @@ function genEBtickets($entryID){
         'data' => 'access_codes',
         'create' => array(
           'access_code.code' => $accessCode,
-          'access_code.ticket_ids'=>$row->ticket_id,
-          'access_code.quantity_available'=>$row->qty
+          'access_code.ticket_ids' => $row->ticket_id,
+          'access_code.quantity_available' => $row->qty
         )
       );
       //call eventbrite to create access code
