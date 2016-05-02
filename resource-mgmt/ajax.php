@@ -40,11 +40,11 @@ $tableOptions['wp_rmt_entry_resources']['fkey']    = array(
 //Global Faire table
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
         'fieldName' => 'venue_address_region', 'filterType'=>'dropdown','fieldLabel'=>'Region', 'enableCellEdit' => true, 'width' => 150,
-            'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
-                      'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
-                      'South America' =>  'South America',  'Middle East'   =>  'Middle East',
-                      'Canada'        =>  'Canada',         'PACIFIC'       =>  'Pacific',
-                      'Africa'        =>  'Africa')
+        'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
+                  'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
+                  'South America' =>  'South America',  'Middle East'   =>  'Middle East',
+                  'Canada'        =>  'Canada',         'PACIFIC'       =>  'Pacific',
+                  'Africa'        =>  'Africa')
     );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
     'fieldName' => 'event_type', 'filterType'=>'dropdown','fieldLabel'=>'Event Type', 'enableCellEdit' => true,
@@ -215,18 +215,6 @@ function getTableData($mysqli,$table){
                       'width'                    => (isset($addlFields['width'])?$addlFields['width']:'*')
               );
 
-          if(isset($addlFields['filterType'])&&$addlFields['filterType']=='dropdown'){
-            $vars = array(
-                        'filter'=> array('selectOptions'=>$selectOptions),
-                        'cellFilter'               => 'griddropdown:this',
-                        'headerCellClass'          => '$scope.highlightFilteredHeader',
-                        'editDropdownValueLabel'   => 'fkey',
-                        'editDropdownIdLabel'      => 'id',
-                        'editDropdownOptionsArray' => $options,
-                        'enableCellEdit'           => false);
-          }else{
-            $vars = array();
-          }
           $vars['displayName']  = (isset($addlFields['fieldLabel'])?$addlFields['fieldLabel']:$addlFields['fieldName']);
           $vars['field']        = $addlFields['fieldName'];
           $vars['name']         = $addlFields['fieldName'];

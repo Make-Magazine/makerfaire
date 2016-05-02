@@ -1884,7 +1884,7 @@ function get_attribute($lead,$attID){
   $return = array();
   $entry_id = (isset($lead['id'])?$lead['id']:'');
 
-  if($entry_id!=''){
+  if($entry_id!='' && $attID!=''){
     //gather resource data
     $sql = "SELECT value,"
             . " (select category from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.ID = attribute_id)as attribute "
