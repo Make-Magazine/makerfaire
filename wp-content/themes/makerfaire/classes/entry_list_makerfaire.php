@@ -218,6 +218,10 @@ class GFEntryList {
 						RGFormsModel::update_leads_property( $leads, 'is_starred', 0 );
 						$update_message = sprintf( __( '%s unstarred.', 'gravityforms' ), $entry_count );
 						break;
+          case 'send_confirmation':
+            MF_send_confirmation($leads);
+            $update_message = __( 'Confirmation Letter(s) sent.', 'gravityforms' );
+            break;
 				}
 				break;
 
@@ -1048,6 +1052,7 @@ class GFEntryList {
 
 						default:
 							?>
+                <option value='send_confirmation'><?php _e( 'Send Confirmations', 'gravityforms' ) ?></option>
 								<option value='mark_read'><?php _e( 'Mark as Read', 'gravityforms' ) ?></option>
 								<option value='mark_unread'><?php _e( 'Mark as Unread', 'gravityforms' ) ?></option>
 								<option value='add_star'><?php _e( 'Add Star', 'gravityforms' ) ?></option>
@@ -1504,6 +1509,7 @@ class GFEntryList {
 								<option value='remove_star'><?php _e( 'Remove Star', 'gravityforms' ) ?></option>
 								<option value='resend_notifications'><?php _e( 'Resend Notifications', 'gravityforms' ) ?></option>
 								<option value='print'><?php _e( 'Print Entries', 'gravityforms' ) ?></option>
+                <option value='send_confirmation'><?php _e( 'Send Confirmations', 'gravityforms' ) ?></option>
 							<?php
 							if ( GFCommon::spam_enabled( $form_id ) ) {
 								?>

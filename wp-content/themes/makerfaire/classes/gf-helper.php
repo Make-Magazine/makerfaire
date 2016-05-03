@@ -401,3 +401,26 @@ function createGUID($id){
         return $uuid;
 }
 
+
+/* function to send confirmation letters to a group of entries */
+function MF_send_confirmation($leads){
+  $message = '';
+
+  //loop thru leads and look for a confirmation notification
+  foreach ( $leads as $lead_id ) {
+    $lead = RGFormsModel::get_lead( $lead_id );
+    $form_id = $lead['form_id'];
+    $form = RGFormsModel::get_form_meta( $form_id );
+    //find if there are any confirmation_letter for this form
+    $event = 'confirmation_letter';
+    $notifications = GFCommon::get_notifications_to_send( $event, $form, $lead );
+    $notifications_to_send = array();
+    //running through filters that disable form submission notifications
+    foreach ( $notifications as $notification ) {
+      $notifications_to_send[] = $notification['id'];
+    }
+    GFCommon::send_notifications( $notifications_to_send, $form, $lead, true, $event );
+  }
+
+  return $message;
+}
