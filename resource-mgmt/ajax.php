@@ -43,8 +43,7 @@ $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
         'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
                   'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
                   'South America' =>  'South America',  'Middle East'   =>  'Middle East',
-                  'Canada'        =>  'Canada',         'PACIFIC'       =>  'Pacific',
-                  'Africa'        =>  'Africa')
+                  'PACIFIC'       =>  'Pacific',        'Africa'        =>  'Africa')
     );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
     'fieldName' => 'event_type', 'filterType'=>'dropdown','fieldLabel'=>'Event Type', 'enableCellEdit' => true,
