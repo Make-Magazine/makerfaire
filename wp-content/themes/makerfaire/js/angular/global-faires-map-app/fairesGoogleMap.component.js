@@ -34,7 +34,7 @@
           }, {
             featureType: 'water',
             stylers: [{
-              color: '#EDF2F5'
+              color: '#e3ebf0'
             }]
           }], {
             name: 'Custom Style'
@@ -48,8 +48,8 @@
             disableDefaultUI: true,
             scrollwheel: false,
             zoomControl: true,
-            minZoom: 2,
-            zoom: 3
+            minZoom: 1,
+            zoom: 1
           });
           gMap.mapTypes.set(customMapTypeId, customMapType);
           gMap.setMapTypeId(customMapTypeId);
