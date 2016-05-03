@@ -34,7 +34,7 @@
           }, {
             featureType: 'water',
             stylers: [{
-              color: '#e3ebf0'
+              color: '#edf2f5'
             }]
           }], {
             name: 'Custom Style'
@@ -42,14 +42,13 @@
           var customMapTypeId = 'custom_style';
           gMap = new google.maps.Map(document.getElementById(mapId), {
             center: {
-              lat: 32,
-              lng: -70
+              lat: 23.9758543, lng: 1.4487502
             },
             disableDefaultUI: true,
             scrollwheel: false,
             zoomControl: true,
             minZoom: 1,
-            zoom: 1
+            zoom: 2
           });
           gMap.mapTypes.set(customMapTypeId, customMapType);
           gMap.setMapTypeId(customMapTypeId);
