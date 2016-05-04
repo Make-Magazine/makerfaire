@@ -15,7 +15,8 @@ if (is_user_logged_in() && $action == 'logout')
     wp_redirect(home_url());
 }
 
-
+	wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('cdn_url'), 'jquery' );	
+		
 //Enqueue Login Style
 wp_enqueue_style('login-styles', get_stylesheet_directory_uri() . '/css/login-styles.css');
 

@@ -1,26 +1,26 @@
-=== Auth0 ===
-Tags: login, oauth, authentication, single sign on, ldap, active directory, saml, windows azure ad, google apps, two factor, two-factor, facebook, google, twitter, baidu, renren, linkedin, github, paypal, yahoo, amazon, vkontakte, salesforce, box, dwolla, yammer
-Tested up to: 3.9
+=== Login by Auth0 ===
+Tags: login, oauth, authentication, single sign on, ldap, active directory, saml, windows azure ad, google apps, two factor, two-factor, facebook, google, twitter, baidu, renren, linkedin, github, paypal, yahoo, amazon, vkontakte, salesforce, box, dwolla, yammer, passwordless, sms, magiclink, totp, social
+Tested up to: 4.5
 Requires at least: 3.8
 License: MIT
 License URI: https://github.com/auth0/wp-auth0/blob/master/LICENSE.md
 Stable tag: trunk
-Contributors: hrajchert, rrauch, glena
+Contributors: auth0, glena, rrauch
 
-Single Sign On for Enterprises + Social Login + User/Passwords. For all your WordPress instances. Powered by Auth0.
+Login by Auth0 provides improved Username/password login, Passwordless login, Social login and Single Sign On for all your sites.
 
 == Description ==
 
 This plugin gives WordPress a new Login Widget (powered by [Auth0](https://auth0.com)) that enables:
 
 - Easy setup
-    + 5 minutes installatio
+    + 5 minutes installation
     + Extensible custom rules
 - Universal authentication
     + +30 Social Providers
     + Enterprise conections (ADFS, Active directory / LDAP, SAML, Office 365, Google Apps and more)
     + Connect your own database
-    + Passwordless connections (using SMS or Touch ID)
+    + Passwordless connections (using SMS, Magic links and Email codes)
 - Ultra secure
     + Multifactor authentication
     + Password policies
@@ -45,10 +45,11 @@ Before you start, **make sure the admin user has a valid email that you own**, r
 
 1. The new login page on Wordpress
 2. The admin to configure the plugin
-3. Auth0 dashboard to create a new Application
-4. Enable or disable social plugins from the Auth0 dashboard
-5. This is what happens if you are in the admin and your session expires
-6. Configure enterprise Connections
+3. The new plugin quick setup
+4. Manage your social connections from the plugin
+5. Get info about the supported enterprise connections
+6. Set up the Auth0 widgets
+7. Your home page with the login widget enabled
 
 == Technical Notes ==
 
@@ -66,7 +67,7 @@ For both scenarios you may configure in the WP admin whether is mandatory that t
 
 = Accesing Profile Information =
 
-Wordpress defines a function called `get_currentuserinfo` to populate the global variable `current_user` with the logged in WP_User. Similary we define `get_currentauth0userinfo` that populates `current_user` and `currentauth0_user` with the information of the [Normalized profile](https://docs.auth0.com/user-profile)
+Wordpress defines a function called `wp_get_current_user` to populate the global variable `current_user` with the logged in WP_User. Similary we define `get_currentauth0userinfo` that populates `current_user` and `currentauth0_user` with the information of the [Normalized profile](https://docs.auth0.com/user-profile)
 
 = Enabling dual (Auth0 and Wordpress) login =
 
@@ -131,9 +132,9 @@ Yes. Read more about the requirements for that to happen in the Technical Notes.
 
 For a complete list look at https://docs.auth0.com/identityproviders
 
-= "This account does not have an email associated..." = 
+= "This account does not have an email associated..." =
 
-If you get this error, make sure you are requesting the Email attribute from each provider in the Auth0 Dashboard under Connections -> Social (expand each provider). Take into account that not all providers return Email addresses for users (e.g. Twitter). If this happens, you can always add an Email address to any logged in user through the Auth0 Dashbaord (pr API). See Users -> Edit. 
+If you get this error, make sure you are requesting the Email attribute from each provider in the Auth0 Dashboard under Connections -> Social (expand each provider). Take into account that not all providers return Email addresses for users (e.g. Twitter). If this happens, you can always add an Email address to any logged in user through the Auth0 Dashbaord (pr API). See Users -> Edit.
 
 = The form_title setting is ignored when I set up the dict setting =
 

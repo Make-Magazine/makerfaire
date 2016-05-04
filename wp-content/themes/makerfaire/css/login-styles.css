@@ -15,7 +15,7 @@ body.login {
 }
 
 .login h1 a {
-    background-image: url('login-logo.png');
+    background-image: url('http://makerfaire.com/wp-content/uploads/2016/01/mf_logo.jpg');
 }
 
 #auth0-login-form{
@@ -27,6 +27,12 @@ p#backtoblog {
 }
 .a0-header h1 {
     display: none;
+}
+/*img.a0-avatar-guest {
+    display: none !important;
+}*/
+div#attributionBadge {
+    display: none !important;
 }
 
 div.a0-avatar {
@@ -41,7 +47,22 @@ div.a0-avatar {
 {
     height:10px;
 }
+#a0-lock.a0-theme-default .a0-panel .a0-icon-container
+{
+  min-height: 84px;
+}
+#a0-lock.a0-theme-default .a0-panel .a0-top-header
+{
+  min-height: 84px;
+}
 .mftagline {
     color: #3FAFED;
     font-size: 18px
+}
+div#extra-options {
+  display:none;
+}
+#a0-lock.a0-theme-default .a0-panel button
+{
+ background: rgba(0, 173, 239, 0.9) !important; 
 }
