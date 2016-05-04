@@ -34,7 +34,7 @@
           }, {
             featureType: 'water',
             stylers: [{
-              color: '#edf2f5'
+              color: '#d0eafc'
             }]
           }], {
             name: 'Custom Style'
