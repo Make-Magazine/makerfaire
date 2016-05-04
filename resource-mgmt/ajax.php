@@ -19,11 +19,11 @@ $tableOptions['wp_mf_faire_area']['fkey']    = array(
 $tableOptions['wp_mf_faire_subarea']['fkey']    = array(
         array('fkey' => 'area_id',      'referenceTable' => 'wp_mf_faire_area', 'referenceField'   => 'ID', 'referenceDisplay' => 'area'));
 
-$tableOptions['wp_mf_faire_subarea']['addlFields'][] = array('fieldName' => 'faire', 'filterType'=>'dropdown', 'fieldLabel' => 'Faire',
+$tableOptions['wp_mf_faire_subarea']['addlFields']['faire'] = array('fieldName' => 'faire', 'filterType'=>'dropdown', 'fieldLabel' => 'Faire',
     'fkey' => array('fkey' => 'faire', 'referenceTable' => 'wp_mf_faire', 'referenceField'   => 'ID', 'referenceDisplay' => 'faire'),
     'dataSql' =>'(SELECT faire_id from wp_mf_faire_area where wp_mf_faire_area.ID = area_id) as faire'
     );
-$tableOptions['wp_mf_faire_subarea']['addlFields'][] = array('fieldName' => 'assCount', 'fieldLabel' => 'Assigned',
+$tableOptions['wp_mf_faire_subarea']['addlFields']['assCount'] = array('fieldName' => 'assCount', 'fieldLabel' => 'Assigned',
     'dataSql' =>'(SELECT count(*) from wp_mf_location where wp_mf_faire_subarea.ID = subarea_id) as assCount'
     );
 
@@ -40,11 +40,10 @@ $tableOptions['wp_rmt_entry_resources']['fkey']    = array(
 //Global Faire table
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
         'fieldName' => 'venue_address_region', 'filterType'=>'dropdown','fieldLabel'=>'Region', 'enableCellEdit' => true, 'width' => 150,
-            'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
-                      'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
-                      'South America' =>  'South America',  'Middle East'   =>  'Middle East',
-                      'Canada'        =>  'Canada',         'PACIFIC'       =>  'Pacific',
-                      'Africa'        =>  'Africa')
+        'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
+                  'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
+                  'South America' =>  'South America',  'Middle East'   =>  'Middle East',
+                  'PACIFIC'       =>  'Pacific',        'Africa'        =>  'Africa')
     );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
     'fieldName' => 'event_type', 'filterType'=>'dropdown','fieldLabel'=>'Event Type', 'enableCellEdit' => true,
@@ -77,6 +76,7 @@ if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
  * @throws Exception
  */
 function save_data($mysqli,$table='',$data='',$pkeyField=''){
+  global $tableOptions;
 	try{
     $id = (isset($data['ID'])?$data['ID']:'');
     //get field names
@@ -86,14 +86,17 @@ function save_data($mysqli,$table='',$data='',$pkeyField=''){
 		if(is_array($data)){
       //loop thru the passed information
       foreach($data as $key=>$value){
-        if($key!= $pkeyField && $key != '$$hashKey' && $key != 'sending'){ //not valid table fields
-          //if $id is empty this is an insert not an update
-          if(empty($id)){
-            $field_names[]  = $key;
-            //tbd clean input data
-            $field_values[] = (string) $value;
-          }else{
-            $updateField[] = $key .'="'.$value.'"';
+        //skip if the field is an additional field and not part of this table
+        if(!isset($tableOptions[$table]['addlFields'][$key])){
+          if($key!= $pkeyField && $key != '$$hashKey' && $key != 'sending'){ //not valid table fields
+            //if $id is empty this is an insert not an update
+            if(empty($id)){
+              $field_names[]  = $key;
+              //tbd clean input data
+              $field_values[] = (string) $value;
+            }else{
+              $updateField[] = $key .'="'.$value.'"';
+            }
           }
         }
       }
@@ -211,18 +214,6 @@ function getTableData($mysqli,$table){
                       'width'                    => (isset($addlFields['width'])?$addlFields['width']:'*')
               );
 
-          if(isset($addlFields['filterType'])&&$addlFields['filterType']=='dropdown'){
-            $vars = array(
-                        'filter'=> array('selectOptions'=>$selectOptions),
-                        'cellFilter'               => 'griddropdown:this',
-                        'headerCellClass'          => '$scope.highlightFilteredHeader',
-                        'editDropdownValueLabel'   => 'fkey',
-                        'editDropdownIdLabel'      => 'id',
-                        'editDropdownOptionsArray' => $options,
-                        'enableCellEdit'           => false);
-          }else{
-            $vars = array();
-          }
           $vars['displayName']  = (isset($addlFields['fieldLabel'])?$addlFields['fieldLabel']:$addlFields['fieldName']);
           $vars['field']        = $addlFields['fieldName'];
           $vars['name']         = $addlFields['fieldName'];

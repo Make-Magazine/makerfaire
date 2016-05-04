@@ -436,7 +436,8 @@ function gf_collapsible_sections($form, $lead){
           if($return){
             echo $return;
           }else{
-             ?>
+            echo 'No tickets found';
+            /* ?>
             <div id="noTickets">
               No Access Codes found for this entry. Click the ticket icon to generate<br/>
               <br/>
@@ -448,7 +449,7 @@ function gf_collapsible_sections($form, $lead){
               <span class="sr-only">Loading...</span>
             </div>
             <i>Please be patient.  This may take a while to complete</i>
-            <?php
+            <?php*/
           }
           ?>
         </div>
@@ -861,16 +862,19 @@ function entryTicketing($lead,$format='admin'){
     $attnArr = array();
     //determine output format
     if($format=='MAT'){
-      $return  = '<table class="mat-ticketing">';
+      $table = '';
       foreach($results as $result){
         if($result->hidden==0){
-          $return .=  '<tr>';
-          $return .=  '<td><div class="title">' . $result->title . '</div><div class="subtitle">' .$result->subtitle.'</div></td>';
-          $return .=  '<td><a target="_blank" href="https://mfba16makers.eventbrite.com/?discount='.$result->access_code.'"><i class="fa fa-chevron-circle-right fa-3x" aria-hidden="true"></i></a></td>';
-          $return .=  '</tr>';
+          $table .=  '<tr>';
+          $table .=  '<td><div class="title">' . $result->title . '</div><div class="subtitle">' .$result->subtitle.'</div></td>';
+          $table .=  '<td><a target="_blank" href="https://mfba16makers.eventbrite.com/?discount='.$result->access_code.'"><i class="fa fa-chevron-circle-right fa-3x" aria-hidden="true"></i></a></td>';
+          $table .=  '</tr>';
         }
       }
-      $return .= '</table>';
+      //do not return anything if there are no tickets to show
+      if ($table!=''){
+        $return  = '<table class="mat-ticketing">' . $table . '</table>';
+      }
     }else{
       //admin format
       $return =  '<table>'

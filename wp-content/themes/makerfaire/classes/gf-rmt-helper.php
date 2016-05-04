@@ -116,11 +116,11 @@ class GFRMTHELPER {
           'website'     => (isset($lead['212'])   ? $lead['212']:''),
       ),
       'group' => array(
-          'first_name'  => (isset($lead['109.3']) ? $lead['109.3']:''),
-          'last_name'   => (isset($lead['109.6']) ? $lead['109.6']:''),
+          'first_name'  => (isset($lead['109']) ? $lead['109']:''),
+          'last_name'   => '',
           'bio'         => (isset($lead['110'])   ? $lead['110']:''),
-          'email'       => '',
-          'phone'       => '',
+          'email'       => (isset($lead['98'])    ? $lead['98']:''),
+          'phone'       => (isset($lead['99'])    ? $lead['99']:''),
           'twitter'     => (isset($lead['322'])   ? $lead['322']:''),
           'photo'       => (isset($lead['111'])   ? $lead['111']:''),
           'website'     => (isset($lead['112'])   ? $lead['112']:''),
@@ -562,7 +562,9 @@ class GFRMTHELPER {
   public static function updateMakerTable($entryData){
     global $wpdb;
     $form_id = $entryData['form_id'];
-
+    if($entryData['fType']=='Presentation'){
+      $entryData['project_photo'] = $entryData['maker_array']['presenter']['photo'];
+    }
     //determine faire
     $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
 
@@ -609,17 +611,25 @@ class GFRMTHELPER {
               'photo'
               'website'
      */
+    $isGroup =(strpos($entryData['maker'], 'group') !== false);
+
     foreach($entryData['maker_array'] as $type =>$typeArray){
       $firstName  =  (isset($typeArray['first_name']) ? esc_sql($typeArray['first_name']) : '');
       $lastName   =  (isset($typeArray['last_name'])  ? esc_sql($typeArray['last_name'])  : '');
 
       //we need to have at least 1 presenter/maker.  if these fields are empty, pull from the contact info
-      if(trim($firstName)=='' && trim($lastName)==''){
-        if($type=='presenter'){
-          $typeArray = $entryData['maker_array']['contact'];
+      if(!$isGroup){
+        if(trim($firstName)=='' && trim($lastName)==''){
+          if($type=='presenter'){
+            $typeArray = $entryData['maker_array']['contact'];
+          }
         }
       }
-
+      if($entryData['fType']=='Sponsor' and $type!='contact'){
+        //set name to company name
+        $firstName = htmlentities($entryData['project_name']);
+        $lastName  = ' ';
+      }
       if(trim($firstName)=='' && trim($lastName)==''){
         //don't write the record, no maker here
       }else{

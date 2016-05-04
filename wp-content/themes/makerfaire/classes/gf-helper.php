@@ -264,7 +264,7 @@ function updateRMT( $entry, $form ) {
 
 /* This function will write all user changes to entries to a database table to create a change report */
 add_action('gform_after_update_entry', 'GVupdate_changeRpt', 10, 3 );
-function GVupdate_changeRpt($form,$entry_id,$orig_entry){
+function GVupdate_changeRpt($form,$entry_id,$orig_entry=array()){
   //get updated entry
   $updatedEntry = GFAPI::get_entry(esc_attr($entry_id));
   GFRMTHELPER::gravityforms_makerInfo($updatedEntry,$form);
@@ -322,11 +322,11 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry){
       $inserts .= '('.$user_id.','.
               $update['lead_id'].','.
               $form['id'].','.
-              $update['field_id'].',"'.
-              $update['field_before'].'","'.
-              $update['field_after'].'","'.
-              $update['fieldLabel'].'","'.
-              $update['status_at_update'] . '"'.
+              addslashes($update['field_id']).',"'.
+              addslashes($update['field_before']).'","'.
+              addslashes($update['field_after']).'","'.
+              addslashes($update['fieldLabel']).'","'.
+              addslashes($update['status_at_update']) . '"'.
               ')';
     }
 
@@ -401,3 +401,26 @@ function createGUID($id){
         return $uuid;
 }
 
+
+/* function to send confirmation letters to a group of entries */
+function MF_send_confirmation($leads){
+  $message = '';
+
+  //loop thru leads and look for a confirmation notification
+  foreach ( $leads as $lead_id ) {
+    $lead = RGFormsModel::get_lead( $lead_id );
+    $form_id = $lead['form_id'];
+    $form = RGFormsModel::get_form_meta( $form_id );
+    //find if there are any confirmation_letter for this form
+    $event = 'confirmation_letter';
+    $notifications = GFCommon::get_notifications_to_send( $event, $form, $lead );
+    $notifications_to_send = array();
+    //running through filters that disable form submission notifications
+    foreach ( $notifications as $notification ) {
+      $notifications_to_send[] = $notification['id'];
+    }
+    GFCommon::send_notifications( $notifications_to_send, $form, $lead, true, $event );
+  }
+
+  return $message;
+}

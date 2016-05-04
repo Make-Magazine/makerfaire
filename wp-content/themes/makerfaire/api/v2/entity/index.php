@@ -47,41 +47,45 @@ if ( $type == 'entity' ) {
 	}
 
 	$select_query = sprintf("
-                SELECT  entity.lead_id,
-                        `entity`.`presentation_title`,
-                        `entity`.`desc_short` as Description,
-                        `entity`.`category` as `Categories`,
-                        `entity`.`project_photo`,
-                        entity.mobile_app_discover,
-                        (select group_concat( distinct maker_id separator ',') as Makers 
-                         from wp_mf_maker_to_entity maker_to_entity 
-                         where entity.lead_id               = maker_to_entity.entity_id AND 
-                               maker_to_entity.maker_type  != 'Contact' 
-                         group by maker_to_entity.entity_id
-                        ) as exhibit_makers,
-                        (select form_id from wp_rg_lead where wp_rg_lead.id = entity.lead_id) as form_id,
-
-                        (select wp_mf_location.subarea_id
-                         from   wp_mf_location
-                         where  wp_mf_location.entry_id = entity.lead_id limit 1                 
-                        ) as venue_id
-                FROM    `wp_mf_entity` entity                  
-                WHERE   entity.status = 'Accepted' AND 
-                        LOWER(entity.faire)='".strtolower($faire)."'"
+    SELECT  entity.lead_id,
+            `entity`.`presentation_title`,
+            `entity`.`desc_short` as Description,
+            `entity`.`category` as `Categories`,
+            `entity`.`project_photo`,
+            entity.mobile_app_discover,
+            (select group_concat( distinct maker_id separator ',') as Makers
+             from wp_mf_maker_to_entity maker_to_entity
+             where entity.lead_id               = maker_to_entity.entity_id AND
+                   maker_to_entity.maker_type  != 'Contact'
+             group by maker_to_entity.entity_id
+            ) as exhibit_makers,
+            wp_rg_lead.form_id,
+            wp_rg_lead.status,
+            (select wp_mf_location.subarea_id
+             from   wp_mf_location
+             where  wp_mf_location.entry_id = entity.lead_id limit 1
+            ) as venue_id,
+            (select title from wp_rg_form where wp_rg_form.id=wp_rg_lead.form_id)as form_title
+    FROM    `wp_mf_entity` entity, wp_rg_lead, wp_mf_faire
+    WHERE   entity.status = 'Accepted'
+    AND 	LOWER(entity.faire)='".strtolower($faire)."'
+    AND   wp_mf_faire.faire  ='".strtolower($faire)."'
+    AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
+    and 	wp_rg_lead.status = 'active'
+    and   wp_rg_lead.id = entity.lead_id"
                 );
-        //echo $select_query;
+       //echo $select_query;
  	$mysqli->query("SET NAMES 'utf8'");
-        
+
 	$result = $mysqli->query($select_query) or trigger_error($mysqli->error."[$select_query]");
-	
+
 	// Initalize the app container
 	$apps = array();
 
 	// Loop through the posts
-	while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {            
-		// Store the app information
+	while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
+    // Store the app information
 		//$app_data = json_decode( mf_clean_content( $post->post_content ) );
-
 		// REQUIRED: Application ID
 		$app['id'] = absint( $row['lead_id']);
 
@@ -90,11 +94,11 @@ if ( $type == 'entity' ) {
 
 		// Application Thumbnail and Large Images
 		$app_image =$row['project_photo'];
-                
-                //find out if there is an override image for this page
-                $overrideImg = findOverride($row['lead_id'],'app');  
-                if($overrideImg!='') $app_image = $overrideImg;
-                
+
+    //find out if there is an override image for this page
+    $overrideImg = findOverride($row['lead_id'],'app');
+    if($overrideImg!='') $app_image = $overrideImg;
+
 		$app['thumb_img_url'] = esc_url( legacy_get_resized_remote_image_url( $app_image, '80', '80' ) );
 		$app['large_image_url'] = esc_url( $app_image );
 		// Should actually be this... Adding it in for the future.
@@ -102,8 +106,8 @@ if ( $type == 'entity' ) {
 
 		// Application Locations
 		$app['venue_id_ref'] =  $row['venue_id'];
-                
-                // Mobile App Discover
+
+    // Mobile App Discover
 		$app['mobile_app_discover'] =  $row['mobile_app_discover'];
 
 		// Application Makers
@@ -116,15 +120,14 @@ if ( $type == 'entity' ) {
 		// Application Categories
 		$category_ids = $row['Categories'];
 		$app['category_id_refs'] = explode(',',$category_ids);
-                
-                //add the sponsor category 333 if using a sponsor form                
-                //look for the word sponsor in the form name
-                $form = GFAPI::get_form( $row['form_id'] );		
-		$formTitle = $form['title'];                  
-                               
-                if (strpos($formTitle, 'Sponsor') !== false) {
-                    $app['category_id_refs'][] = '333';
-                }
+
+    //add the sponsor category 333 if using a sponsor form
+    //look for the word sponsor in the form name
+		$formTitle = $row['title'];
+
+    if (strpos($formTitle, 'Sponsor') !== false) {
+        $app['category_id_refs'][] = '333';
+    }
 
 		// Application Description
 		$app['description'] = $row['Description'];
