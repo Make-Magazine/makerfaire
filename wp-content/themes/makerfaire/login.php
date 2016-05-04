@@ -14,11 +14,12 @@ if (is_user_logged_in() && $action == 'logout')
     wp_logout();
     wp_redirect(home_url());
 }
-
-	wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('cdn_url'), 'jquery' );	
+//Enqueue Auth0 Required scripts
+wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('cdn_url'), 'jquery' );	
 		
 //Enqueue Login Style
-wp_enqueue_style('login-styles', get_stylesheet_directory_uri() . '/css/login-styles.css');
+$current_theme = wp_get_theme();
+wp_enqueue_style('login-styles', get_stylesheet_directory_uri() . '/css/login-styles.css', array(), $current_theme->get( 'Version' ));
 
 //Setup dynamic message area depeding on modes or referrer
 $loginmessage = '';
