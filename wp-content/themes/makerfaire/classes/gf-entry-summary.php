@@ -436,8 +436,8 @@ function gf_collapsible_sections($form, $lead){
           if($return){
             echo $return;
           }else{
-            echo 'No tickets found';
-            /* ?>
+            //echo 'No tickets found';
+            ?>
             <div id="noTickets">
               No Access Codes found for this entry. Click the ticket icon to generate<br/>
               <br/>
@@ -449,7 +449,7 @@ function gf_collapsible_sections($form, $lead){
               <span class="sr-only">Loading...</span>
             </div>
             <i>Please be patient.  This may take a while to complete</i>
-            <?php*/
+            <?php
           }
           ?>
         </div>
