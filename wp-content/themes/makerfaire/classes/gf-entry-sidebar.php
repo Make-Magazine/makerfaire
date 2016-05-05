@@ -798,6 +798,12 @@ function set_entry_status($lead,$form){
             GFCommon::send_notification( $notification, $form, $lead );
           }
 				}
+        //format Entry information
+        $entryData = GFRMTHELPER::gravityforms_format_record($lead,$form);
+
+        //update maker table information
+        GFRMTHELPER::updateMakerTable($entryData);
+        
 				//GFJDBHELPER::gravityforms_sync_status_jdb($entry_info_entry_id,$acceptance_status_change);
 			}
 		}

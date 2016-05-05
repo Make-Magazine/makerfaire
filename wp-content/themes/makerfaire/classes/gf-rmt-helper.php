@@ -630,11 +630,11 @@ class GFRMTHELPER {
         $firstName = htmlentities($entryData['project_name']);
         $lastName  = ' ';
       }
-      if(trim($firstName)=='' && trim($lastName)==''){
+      $email    = (isset($typeArray['email'])   ? esc_sql($typeArray['email'])    : '');
+      if((trim($firstName)=='' && trim($lastName)=='')|| trim($email)==''){
         //don't write the record, no maker here
       }else{
         $bio      = (isset($typeArray['bio'])     ? htmlentities($typeArray['bio'])      : '');
-        $email    = (isset($typeArray['email'])   ? esc_sql($typeArray['email'])    : '');
         $phone    = (isset($typeArray['phone'])   ? esc_sql($typeArray['phone'])    : '');
         $twitter  = (isset($typeArray['twitter']) ? esc_sql($typeArray['twitter'])  : '');
         $photo    = (isset($typeArray['photo'])   ? esc_sql($typeArray['photo'])    : '');
@@ -667,7 +667,7 @@ class GFRMTHELPER {
         //build maker to entity table
         //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
         $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`" . " (`maker_id`, `entity_id`, `maker_type`) "
-                              . ' VALUES ("'.$guid.'",'.$entryData['entry_id'].',"'.$type.'") ON DUPLICATE KEY UPDATE maker_id=maker_id;';
+                              . ' VALUES ("'.$guid.'",'.$entryData['entry_id'].',"'.$type.'") ON DUPLICATE KEY UPDATE maker_id="'.$guid.'";';
 
         $wpdb->get_results($wp_mf_maker_to_entity);
       }

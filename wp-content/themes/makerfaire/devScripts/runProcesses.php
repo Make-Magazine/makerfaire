@@ -1,8 +1,40 @@
 <?php
 include 'db_connect.php';
+global $wpdb;
 echo('beginning process<br/>');
 $form_id = (isset($_GET['formID'])?$_GET['formID']:46);
-  global $wpdb;
+
+if(isset($_GET['init'])){
+  $init = $_GET['init'];
+  switch ($init){
+    case 'entity';
+      $sql = "truncate wp_mf_entity";
+      $wpdb->get_results($sql);
+      echo 'entity table truncated<br/>';
+      break;
+    case 'maker':
+      $sql = "truncate wp_mf_maker";
+      $wpdb->get_results($sql);
+      echo 'maker table truncated<br/>';
+      break;
+    case 'maker2entity':
+      echo 'maker 2 entity table truncated<br/>';
+      $sql = "truncate wp_mf_maker_to_entity";
+      $wpdb->get_results($sql);
+      break;
+    default:
+      echo 'all maker tables truncated<br/>';
+      $sql = "truncate wp_mf_entity;";
+      $wpdb->get_results($sql);
+      $sql = "truncate wp_mf_maker;";
+      $wpdb->get_results($sql);
+      $sql = "truncate wp_mf_maker_to_entity;";
+      $wpdb->get_results($sql);
+      break;
+  }
+  //run sql to truncate selected tables
+ // $wpdb->get_results($sql);
+}
   $sql = "Select wp_rg_lead.id, wp_rg_lead.form_id"
           . " from wp_rg_lead"
           . " where wp_rg_lead.status = 'active'"
