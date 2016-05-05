@@ -225,7 +225,7 @@ function filterText($text)
 			"\xC2\xA6" => '&brvbar;',
 			"\xC2\xA7" => '&sect;',
 			"\xC2\xA8" => '&uml;',
-			"\xC2\xA9" => '&copy;',
+			"\xC2\xA9" => '',
 			"\xC2\xAA" => '&ordf;',
 			"\xC2\xAB" => '&laquo;',
 			"\xC2\xAC" => '&not;',
@@ -334,8 +334,8 @@ function filterText($text)
 	"\xE2\x80\x98" => '&lsquo;',
 	"\xE2\x80\x99" => "'",
 	"\xE2\x80\x9A" => '&sbquo;',
-	"\xE2\x80\x9C" => '&ldquo;',
-	"\xE2\x80\x9D" => '&rdquo;',
+	"\xE2\x80\x9C" => "'",
+	"\xE2\x80\x9D" => "'",
 	"\xE2\x80\x9E" => '&bdquo;',
 	"\xE2\x80\xA0" => '&dagger;',
 	"\xE2\x80\xA1" => '&Dagger;',
@@ -497,8 +497,8 @@ function filterText($text)
 			chr(140) => "&OElig;",
 			chr(145) => "&lsquo;",
 			chr(146) => "'",
-			chr(147) => "\"",
-			chr(148) => "\"",
+			chr(147) => "'",
+			chr(148) => "'",
 			chr(149) => "&bull;",
 			chr(150) => "&ndash;",
 			chr(151) => "&mdash;",
@@ -517,7 +517,7 @@ function filterText($text)
 			chr(166) => "&brvbar;",
 			chr(167) => "&sect;",
 			chr(168) => "&uml;",
-			chr(169) => "&copy;",
+			chr(169) => '',
 			chr(170) => "&ordf;",
 			chr(171) => "&laquo;",
 			chr(172) => "&not;",
@@ -603,8 +603,9 @@ function filterText($text)
 			chr(252) => "&uuml;",
 			chr(253) => "&yacute;",
 			chr(254) => "&thorn;",
-			chr(255) => "&yuml;");
-
+			chr(255) => "&yuml;",
+      "&amp;" => '&');
+      
 
 	return strtr($string, $conv);
 
