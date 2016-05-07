@@ -38,13 +38,14 @@ $pdf->SetFillColor(255,255,255);
 
 //get the entry-id, if one isn't set return an error
 if(isset($_GET['eid']) && $_GET['eid']!=''){
+  $faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire']:'');
   $entryid = sanitize_text_field($_GET['eid']);
   createOutput($entryid, $pdf);
   if(isset($_GET['type']) && $_GET['type']=='download'){
     if (ob_get_contents()) ob_clean();
     $pdf->Output($entryid.'.pdf', 'D');
   }elseif(isset($_GET['type']) && $_GET['type'] == 'save'){
-    $filename = TEMPLATEPATH.'/signs/NY15/'.$entryid.'.pdf';
+    $filename = TEMPLATEPATH.'/signs/'.$faire.'/'.$entryid.'.pdf';
     $dirname = dirname($filename);
     if (!is_dir($dirname)){
       mkdir($dirname, 0755, true);
@@ -65,27 +66,23 @@ if(isset($_GET['eid']) && $_GET['eid']!=''){
 function createOutput($entry_id,$pdf){
     $entry = GFAPI::get_entry( $entry_id );
     $makers = array();
-    if (strlen($entry['160.3']) > 0) $makers[] = $entry['160.3'] . ' ' .$entry['160.6'];
-    if (strlen($entry['158.3']) > 0) $makers[] = $entry['158.3'] . ' ' .$entry['158.6'];
-    if (strlen($entry['155.3']) > 0) $makers[] = $entry['155.3'] . ' ' .$entry['155.6'];
-    if (strlen($entry['156.3']) > 0) $makers[] = $entry['156.3'] . ' ' .$entry['156.6'];
-    if (strlen($entry['157.3']) > 0) $makers[] = $entry['157.3'] . ' ' .$entry['157.6'];
-    if (strlen($entry['159.3']) > 0) $makers[] = $entry['159.3'] . ' ' .$entry['159.6'];
-    if (strlen($entry['154.3']) > 0) $makers[] = $entry['154.3'] . ' ' .$entry['154.6'];
+    if (isset($entry['160.3']) && strlen($entry['160.3']) > 0) $makers[] = $entry['160.3'] . ' ' .$entry['160.6'];
+    if (isset($entry['158.3']) && strlen($entry['158.3']) > 0) $makers[] = $entry['158.3'] . ' ' .$entry['158.6'];
+    if (isset($entry['155.3']) && strlen($entry['155.3']) > 0) $makers[] = $entry['155.3'] . ' ' .$entry['155.6'];
+    if (isset($entry['156.3']) && strlen($entry['156.3']) > 0) $makers[] = $entry['156.3'] . ' ' .$entry['156.6'];
+    if (isset($entry['157.3']) && strlen($entry['157.3']) > 0) $makers[] = $entry['157.3'] . ' ' .$entry['157.6'];
+    if (isset($entry['159.3']) && strlen($entry['159.3']) > 0) $makers[] = $entry['159.3'] . ' ' .$entry['159.6'];
+    if (isset($entry['154.3']) && strlen($entry['154.3']) > 0) $makers[] = $entry['154.3'] . ' ' .$entry['154.6'];
 
     //maker 1 bio
-    $bio =filterText($entry['234']);
+    $bio = (isset($entry['234']) ? filterText($entry['234']) : '');
 
-    $groupname=$entry['109'];
-    $groupphoto=$entry['111'];
-    $groupbio=filterText($entry['110']);
+    $groupname = (isset($entry['109']) ? $entry['109'] : '');
+    $groupbio = (isset($entry['110']) ? filterText($entry['110']) : '');
 
-    $project_name = filterText($entry['151']);
-    $project_photo = $entry['22'];
-    $project_short = filterText($entry['16']);
-    $project_website = $entry['27'];
-    $project_video = $entry['32'];
-    $project_title = filterText((string)$entry['151']);
+    $project_photo = (isset($entry['22']) ? $entry['22'] : '');
+    $project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
+    $project_title = (isset($entry['151']) ? filterText((string)$entry['151']) : '');
 
     $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 
@@ -134,11 +131,13 @@ function createOutput($entry_id,$pdf){
     $pdf->MultiCell(125, $lineHeight, $project_short,0,'L');
 
     //field 22 - project photo
-    $photo_extension  = exif_imagetype($project_photo);
-    if ($photo_extension) {
-    	//DEBUG:
-    	$project_photo = legacy_get_fit_remote_image_url($project_photo,450,450,0);
-    	$pdf->Image($project_photo,12,135,null,null,image_type_to_extension($photo_extension,false));
+    if($project_photo!=''){
+      $photo_extension  = exif_imagetype($project_photo);
+      if ($photo_extension) {
+        //DEBUG:
+        $project_photo = legacy_get_fit_remote_image_url($project_photo,450,450,0);
+        $pdf->Image($project_photo,12,135,null,null,image_type_to_extension($photo_extension,false));
+      }
     }
     //print white box to overlay long descriptions or photos
     /*$pdf->SetXY(10, 255);
@@ -605,7 +604,7 @@ function filterText($text)
 			chr(254) => "&thorn;",
 			chr(255) => "&yuml;",
       "&amp;" => '&');
-      
+
 
 	return strtr($string, $conv);
 
