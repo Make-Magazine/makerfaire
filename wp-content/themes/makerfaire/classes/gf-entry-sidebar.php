@@ -87,51 +87,47 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
 			<h4><label class="detail-label">Schedule:</label></h4>');
     //first, let's display any schedules already entered for this entry
 	$entry_id=$lead['id'];
+  $sql = "select `wp_mf_schedule`.`ID` as schedule_id, `wp_mf_schedule`.`entry_id`, location.ID as location_id, location.location,area.area, subarea.subarea,
+`wp_mf_faire`.`faire`, `wp_mf_schedule`.`start_dt`, `wp_mf_schedule`.`end_dt`, `wp_mf_schedule`.`day`, wp_mf_faire.time_zone
 
-	$sql="SELECT `wp_mf_schedule`.`ID`, `wp_mf_schedule`.`entry_id`, "
-               . "     (select location.location "
-                . "         from wp_mf_location location, wp_mf_faire_subarea subarea, wp_mf_faire_area area "
-                . "         where location.entry_id = `wp_mf_schedule`.`entry_id` "
-                . "         and wp_mf_schedule.location_id = location.ID "
-                . "         and location.subarea_id = subarea.ID"
-                . "         and subarea.area_id = area.ID) as location, "
-                . "     (select area.area "
-                . "         from wp_mf_location location, wp_mf_faire_subarea subarea, wp_mf_faire_area area "
-                . "         where location.entry_id = `wp_mf_schedule`.`entry_id` "
-                . "         and wp_mf_schedule.location_id = location.ID "
-                . "         and location.subarea_id = subarea.ID"
-                . "         and subarea.area_id = area.ID) as area, "
-                . "     (select subarea.subarea "
-                . "         from wp_mf_location location, wp_mf_faire_subarea subarea "
-                . "         where location.entry_id = `wp_mf_schedule`.`entry_id` "
-                . "         and wp_mf_schedule.location_id = location.ID and location.subarea_id = subarea.ID) as subarea, "
-                . "   `wp_mf_schedule`.`faire`, `wp_mf_schedule`.`start_dt`, `wp_mf_schedule`.`end_dt`, `wp_mf_schedule`.`day`, wp_mf_faire.time_zone "
-                . " FROM `wp_mf_schedule` "
-                . " join wp_mf_faire on wp_mf_schedule.faire = wp_mf_faire.faire "
-                . " where wp_mf_schedule.entry_id=".$entry_id." order by subarea ASC, start_dt ASC";
+   from wp_mf_location location
+	 left outer join wp_mf_schedule on `wp_mf_schedule`.`entry_id` = ".$entry_id." and wp_mf_schedule.location_id = location.ID,
+     wp_mf_faire_subarea subarea, wp_mf_faire_area area,wp_mf_faire
 
+where location.entry_id=".$entry_id."
+   and FIND_IN_SET(".$form_id.",wp_mf_faire.form_ids)
+	 and location.subarea_id = subarea.ID
+	 and subarea.area_id = area.ID
+ order by area ASC, subarea ASC, start_dt ASC";
 
         $scheduleArr = array();
         foreach($wpdb->get_results($sql,ARRAY_A) as $row){
             //order entries by subarea(stage), then date
             $stage = ($row['subarea'] != NULL ? $row['area'].' - '.$row['subarea']: '');
             if($row['location']!='')    $stage .= ' ('.$row['location'].')';
-            $start_dt = strtotime( $row['start_dt']);
-            $end_dt = strtotime($row['end_dt']);
-            $schedule_entry_id = $row['ID'];
-            $date = date("n/j/y",$start_dt);
+            $start_dt = ($row['start_dt'] != NULL ? strtotime($row['start_dt'])  : '');
+            $end_dt   = ($row['end_dt']   != NULL ? strtotime($row['end_dt'])    : '');
+            $schedule_entry_id = ($row['schedule_id'] != NULL ? (int) $row['schedule_id'] : '');
+            $date     = ($start_dt != '' ? date("n/j/y",$start_dt) : '');
             $timeZone = $row['time_zone'];
 
              //build array
-            $schedules[$stage][$date][$schedule_entry_id] = array($start_dt,$end_dt,$timeZone);
+            $schedules[$row['location_id']]['location'] = $stage;
+            if($date!=''){
+              $schedules[$row['location_id']]['schedule'][$date][$schedule_entry_id] = array($start_dt,$end_dt,$timeZone);
+            }
         }
 
         //make sure there is data to display
         if($wpdb->num_rows !=0){
             //let's loop thru the schedule array now
-            foreach($schedules as $stage=>$scheduleArr){
+            foreach($schedules as $location_id=>$data){
+              $stage = $data['location'];
+              $scheduleArr = (isset($data['schedule'])?$data['schedule']:'');
+              if(is_array($scheduleArr)){
                 echo ($stage!=''&&$stage!=NULL?'<u>'.$stage.'</u><br/>':'');
                 foreach($scheduleArr as $date=>$schedule){
+                  if($date!=''){
                     echo '<div>'.date('l n/j/y',strtotime($date)).'<br/>';
                     echo '<div class="tab">';
                     foreach($schedule as $schedule_entry_id=>$schedData){
@@ -148,7 +144,14 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
                     }
                     echo '</div></div>';
                     echo '<br/>';
+                  }
                 }
+              }else{
+                //location only display checkbox to delete
+                echo ('<input type="checkbox" value="'.$location_id.'" style="margin: 3px;float:left;" name="delete_entry_id[]"></input>');
+                echo ($stage!=''&&$stage!=NULL?'<u>'.$stage.'</u><br/>':'');
+                echo '<div class="clear"></div>';
+              }
             }
             echo '<br/>';
 
