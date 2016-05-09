@@ -122,6 +122,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
 
   //set up gridOptions for predefined reports
   $scope.gridOptions = {enableFiltering: true,
+    enableSorting: true,
     enableGridMenu: true,
     rowHeight: 100,
 
@@ -153,7 +154,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
 
   //default
   var tablename = 'wp_rmt_entry_resources';
-
+  var type      = 'tableData';
   if($routeParams){
     $scope.reports.subRoute = $routeParams.sub;
     var subRoute  = $routeParams.sub;
@@ -170,7 +171,17 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       tablename = 'wp_mf_location';
       subTitle = 'Faire Location Report';
     }
-    if(subRoute=='ent2resource')  tablename = 'wp_rg_lead';
+    if(subRoute=='ent2resource') {
+      subTitle = 'Entry to Resource';
+      faire = '';
+      if('subsub' in $routeParams){
+        faire = $routeParams.subsub;
+      }
+
+      //TBD: fix this so we pass a faire parameter instead of passing it as tablename
+      tablename = faire;
+      type     = 'ent2resource';
+    }
     if(subRoute=='build'){
       tablename = 'formData';
       $scope.reports.showbuild = true;
@@ -181,8 +192,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     $scope.reports.tableName = tablename;
   }
   $scope.filterExport = function( grid, row, col, input ) {
-      return 'unknown';
-    };
+    return 'unknown';
+  };
 
   var url = '/resource-mgmt/reports.ajax.php';
   $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
@@ -199,7 +210,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   $http({
     method: 'post',
     url: url,
-    data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : 'tableData','viewOnly':true }),
+    data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : type,'viewOnly':true }),
     headers: {'Content-Type': 'application/json'}
   })
   .then(function(response){
@@ -216,6 +227,9 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
         }*/
         if(("filter" in value)){
           value.filter.type = uiGridConstants.filter.SELECT;
+        }
+        if(("sort" in value)){
+          value.sort.direction = uiGridConstants.ASC;
         }
       });
       $scope.gridOptions.columnDefs = response.data.columnDefs;
