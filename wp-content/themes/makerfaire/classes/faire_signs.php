@@ -16,8 +16,6 @@ global $wpdb;
     }
     ?>
   </select>
-  <br/><br/>
-
   <input type="submit" value="Get Entries for Form" class="button button-large button-primary" />
 </form>
 <?php
@@ -44,7 +42,7 @@ if(isset($_POST['printForm'])){
     $entry_id = $entry->lead_id;
 
     ?>
-    <div class="col-md-1">
+    <div class="col-md-2">
       <a class="fairsign" target="_blank" id="<?php echo $entry_id;?>" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire;?>"><?php echo $entry_id;?></a>
     </div>
     <?php

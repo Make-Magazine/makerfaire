@@ -132,6 +132,29 @@ jQuery( document ).ready(function() {
       }
     });
   });
+
+  jQuery('#entry_location_subarea_change').change(function(){
+    var subarea_id = jQuery(this).val();
+
+    var el = jQuery("#locationSel");
+    var defOption = jQuery('<option></option>').attr("value", "new").text("Add New");
+    jQuery(el).empty().append(defOption);
+
+    //get list of options for location drop down.
+    if(subarea_id in locationObj){
+      jQuery.each(locationObj[subarea_id], function(value,key) {
+        jQuery(el).append(jQuery("<option></option>").attr("value", value).text(key));
+      });
+    }
+  });
+
+  jQuery('#locationSel').change(function(){
+    var locText = '';
+    if(jQuery(this).val()!='new'){
+      locText = ( jQuery(this).find(":selected").text() );
+    }
+    jQuery('#update_entry_location_code').val(locText);
+  });
 });
 
 /* input - fieldID
