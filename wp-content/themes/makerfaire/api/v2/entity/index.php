@@ -64,8 +64,7 @@ if ( $type == 'entity' ) {
             (select wp_mf_location.subarea_id
              from   wp_mf_location
              where  wp_mf_location.entry_id = entity.lead_id limit 1
-            ) as venue_id,
-            (select title from wp_rg_form where wp_rg_form.id=wp_rg_lead.form_id)as form_title
+            ) as venue_id
     FROM    `wp_mf_entity` entity, wp_rg_lead, wp_mf_faire
     WHERE   entity.status = 'Accepted'
     AND 	LOWER(entity.faire)='".strtolower($faire)."'
@@ -113,20 +112,29 @@ if ( $type == 'entity' ) {
 		// Application Makers
 		$app_id = $app['id'];// get the entity id
 
-		$maker_ids = $row['exhibit_makers'];
-
-		$app['exhibit_makers'] = ( ! empty( $maker_ids ) ) ? explode(',',$maker_ids) : null;
-
+	
 		// Application Categories
 		$category_ids = $row['Categories'];
 		$app['category_id_refs'] = explode(',',$category_ids);
 
     //add the sponsor category 333 if using a sponsor form
     //look for the word sponsor in the form name
-		$formTitle = $row['title'];
+    $form = GFAPI::get_form( $row['form_id'] );
+    $formTitle = $form['title'];
+    $formType = $form['form_type'];
+    
+    
+    //If the form is a sponsor set to 333 otherwise use 222.  See Manual categories in /category/index.php
+    if (strpos($formType, 'Sponsor') === false)
+    { 
+      $app['category_id_refs'][] = '222';
+      $maker_ids = $row['exhibit_makers'];
+      $app['exhibit_makers'] = ( ! empty( $maker_ids ) ) ? explode(',',$maker_ids) : null;
 
-    if (strpos($formTitle, 'Sponsor') !== false) {
-        $app['category_id_refs'][] = '333';
+    }
+  else {
+      $app['category_id_refs'][] = '333';
+      $app['exhibit_makers']  = null;
     }
 
 		// Application Description
