@@ -36,7 +36,6 @@ if ( $type == 'location_category' ) {
 	$header = array(
 		'header' => array(
 			'version' => esc_html( MF_EVENTBASE_API_VERSION ),
-			'results' => count($terms),
 		),
 	);
 

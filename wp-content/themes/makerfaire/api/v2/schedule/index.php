@@ -30,8 +30,10 @@ if ( $type == 'schedule' ) {
                                         `wp_mf_schedule`.`end_dt`,
                                         `wp_mf_schedule`.`day`,
                                          wp_mf_entity.project_photo,
-                                         wp_mf_entity.presentation_title,                                      
-                                        `wp_mf_location`.ID,
+                                         wp_mf_entity.presentation_title,  
+                                          `wp_mf_entity`.`desc_short` as Description,
+           
+                                        wp_mf_faire_subarea.ID as venue_id,
                                        (select group_concat( distinct maker_id separator ',') as Makers 
                          from wp_mf_maker_to_entity maker_to_entity 
                          where wp_mf_entity.lead_id               = maker_to_entity.entity_id AND 
@@ -75,7 +77,8 @@ if ( $type == 'schedule' ) {
                 
 		// REQUIED: Application title paired to scheduled item
 		$schedule['name']       = html_entity_decode( $schedule_name , ENT_COMPAT, 'utf-8' );
-		$schedule['time_start'] = date( DATE_ATOM, strtotime( '+4 hour',  $start ) );
+		$schedule['description'] = $row['Description'];                //??
+    $schedule['time_start'] = date( DATE_ATOM, strtotime( '+4 hour',  $start ) );
 		$schedule['time_end']   = date( DATE_ATOM, strtotime( '+4 hour', $stop ) );
 		
 		//ORIGINAL CALL
@@ -94,7 +97,7 @@ if ( $type == 'schedule' ) {
 		$schedule['large_img_url'] = esc_url( legacy_get_resized_remote_image_url( $app_image, '600', '600' ) );
 
 		// REQUIRED: Venue ID reference
-		//$schedule['venue_id_ref'] = $row[11];                //??
+		$schedule['venue_id_ref'] = $row['venue_id'];                //??
 		$maker_ids = $row['exhibit_makers'];
 
 		$app['exhibit_makers'] = ( ! empty( $maker_ids ) ) ? explode(',',$maker_ids) : null;
