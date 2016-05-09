@@ -65,27 +65,28 @@ if(isset($_GET['eid']) && $_GET['eid']!=''){
 function createOutput($entry_id,$pdf){
     $entry = GFAPI::get_entry( $entry_id );
     $makers = array();
-    if (strlen($entry['160.3']) > 0) $makers[] = $entry['160.3'] . ' ' .$entry['160.6'];
-    if (strlen($entry['158.3']) > 0) $makers[] = $entry['158.3'] . ' ' .$entry['158.6'];
-    if (strlen($entry['155.3']) > 0) $makers[] = $entry['155.3'] . ' ' .$entry['155.6'];
-    if (strlen($entry['156.3']) > 0) $makers[] = $entry['156.3'] . ' ' .$entry['156.6'];
-    if (strlen($entry['157.3']) > 0) $makers[] = $entry['157.3'] . ' ' .$entry['157.6'];
-    if (strlen($entry['159.3']) > 0) $makers[] = $entry['159.3'] . ' ' .$entry['159.6'];
-    if (strlen($entry['154.3']) > 0) $makers[] = $entry['154.3'] . ' ' .$entry['154.6'];
+    if (strlen($entry['160.3']) > 0) $makers[] = iconv('UTF-8', 'windows-1252',$entry['160.3'] . ' ' .$entry['160.6']);
+    if (strlen($entry['158.3']) > 0) $makers[] = iconv('UTF-8', 'windows-1252',$entry['158.3'] . ' ' .$entry['158.6']);
+    if (strlen($entry['155.3']) > 0) $makers[] = iconv('UTF-8', 'windows-1252',$entry['155.3'] . ' ' .$entry['155.6']);
+    if (strlen($entry['156.3']) > 0) $makers[] = iconv('UTF-8', 'windows-1252',$entry['156.3'] . ' ' .$entry['156.6']);
+    if (strlen($entry['157.3']) > 0) $makers[] = iconv('UTF-8', 'windows-1252',$entry['157.3'] . ' ' .$entry['157.6']);
+    if (strlen($entry['159.3']) > 0) $makers[] = iconv('UTF-8', 'windows-1252',$entry['159.3'] . ' ' .$entry['159.6']);
+    if (strlen($entry['154.3']) > 0) $makers[] = iconv('UTF-8', 'windows-1252',$entry['154.3'] . ' ' .$entry['154.6']);
 
     //maker 1 bio
-    $bio =filterText($entry['234']);
+    $bio =iconv('UTF-8', 'windows-1252',$entry['234']);
 
-    $groupname=$entry['109'];
+    $groupname=iconv('UTF-8', 'windows-1252',$entry['109']);
     $groupphoto=$entry['111'];
-    $groupbio=filterText($entry['110']);
+    $groupbio=iconv('UTF-8', 'windows-1252',$entry['110']);
 
-    $project_name = filterText($entry['151']);
+    $project_name = iconv('UTF-8', 'windows-1252',$entry['151']);
     $project_photo = $entry['22'];
-    $project_short = filterText($entry['16']);
+    
+    $project_short = iconv('UTF-8', 'windows-1252', $entry['16']);
     $project_website = $entry['27'];
     $project_video = $entry['32'];
-    $project_title = filterText((string)$entry['151']);
+    $project_title = iconv('UTF-8', 'windows-1252',(string)$entry['151']);
 
     $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 
@@ -120,7 +121,7 @@ function createOutput($entry_id,$pdf){
 
 
     //auto adjust the font so the text will fit
-    $sx = 30;    // set the starting font size
+    $sx = 28;    // set the starting font size
     $pdf->SetFont( 'Benton Sans','',$sx);
 
     // Cycle thru decreasing the font size until it's width is lower than the max width
@@ -329,8 +330,8 @@ function filterText($text)
 	"\xE2\x80\x8D" => '&zwj;',
 	"\xE2\x80\x8E" => '&lrm;',
 	"\xE2\x80\x8F" => '&rlm;',
-	"\xE2\x80\x93" => '&ndash;',
-	"\xE2\x80\x94" => '&mdash;',
+	"\xE2\x80\x93" => "–",
+	"\xE2\x80\x94" => "—",
 	"\xE2\x80\x98" => '&lsquo;',
 	"\xE2\x80\x99" => "'",
 	"\xE2\x80\x9A" => '&sbquo;',
@@ -400,7 +401,7 @@ function filterText($text)
 	"\xCF\x96" => '&piv;',
 	// General Punctuation
 	"\xE2\x80\xA2" => '&bull;',
-	"\xE2\x80\xA6" => '&hellip;',
+	"\xE2\x80\xA6" => '...',
 	"\xE2\x80\xB2" => '&prime;',
 	"\xE2\x80\xB3" => '&Prime;',
 	"\xE2\x80\xBE" => '&oline;',
@@ -487,7 +488,7 @@ function filterText($text)
 			chr(130) => "&sbquo;",
 			chr(131) => "&fnof;",
 			chr(132) => "&bdquo;",
-			chr(133) => "&hellip;",
+			chr(133) => "...",
 			chr(134) => "&dagger;",
 			chr(135) => "&Dagger;",
 			chr(136) => "&circ;",
@@ -500,8 +501,8 @@ function filterText($text)
 			chr(147) => "'",
 			chr(148) => "'",
 			chr(149) => "&bull;",
-			chr(150) => "&ndash;",
-			chr(151) => "&mdash;",
+			chr(150) => "–",
+			chr(151) => "—",
 			chr(152) => "&tilde;",
 			chr(153) => "&trade;",
 			chr(154) => "&scaron;",
@@ -557,7 +558,7 @@ function filterText($text)
 			chr(206) => "&Icirc;",
 			chr(207) => "&Iuml;",
 			chr(208) => "&ETH;",
-			chr(209) => "&Ntilde;",
+			chr(209) => "ñ",
 			chr(210) => "&Ograve;",
 			chr(211) => "&Oacute;",
 			chr(212) => "&Ocirc;",
