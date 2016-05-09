@@ -35,11 +35,22 @@ if(isset($_GET['init'])){
   //run sql to truncate selected tables
  // $wpdb->get_results($sql);
 }
+
   $sql = "Select wp_rg_lead.id, wp_rg_lead.form_id"
           . " from wp_rg_lead"
           . " where wp_rg_lead.status = 'active'"
           ."  and wp_rg_lead.form_id = $form_id"
           . " ORDER BY `wp_rg_lead`.`ID` ASC";
+if(isset($_GET['page'])){
+  $page = $_GET['page'];
+  $limit =500;
+  if($page==1){
+    $start = 0;
+  }else{
+    $start=($page-1)*$limit;
+  }
+  $sql.=" limit ".$start.', '.$limit;
+}
 
   $form  = GFAPI::get_form($form_id);
 
