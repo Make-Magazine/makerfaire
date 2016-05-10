@@ -88,7 +88,7 @@ if ( isset($_POST["submit"]) ) {
   foreach ($csv as $rowData){
     $faire = $rowData[0];
     $form  = $rowData[1];
-    $parentID = $rowData[2];
+    $parentID = (int) $rowData[2];
     if(trim($faire)!='' && trim($form)!=''){
       //echo 'For ' .$faire .' setting form '.$form.'<br/>';
       $randIP = "".mt_rand(0,255).".".mt_rand(0,255).".".mt_rand(0,255).".".mt_rand(0,255);
@@ -118,11 +118,10 @@ if ( isset($_POST["submit"]) ) {
     if($endkey == $key) $contchar = '';
     echo 'parent: '. $value['parentID'].' child: '.$value['childID'].'<br/>';
     $insertRel .= " (".$value['parentID'].", ".$value['childID'].", '".$value['faire']."', '".$value['form_id']."')".$contchar;
-
+    gform_update_meta( $value['childID'], 'res_status','ready' );
     //process new entry
-    prcNewEntry($value['childID']);
+    //prcNewEntry($value['childID']);
   }
-
   // add to the wp_rg_lead_rel table
   $sql = "INSERT INTO wp_rg_lead_rel "
           . "(`parentID`, `childID`, `faire`, `form`) values " .$insertRel.";";
@@ -172,8 +171,6 @@ function call_api($data){
     $domain = $_SERVER['HTTP_HOST'];
     if($domain=='localhost')    $domain .= '/makerfaire';
 
-    //$endpoint = 'http://makerfaire.staging.wpengine.com/gravityformsapi/';
-    //$endpoint = 'http://makerfaire.com/gravityformsapi/';
     $endpoint = $domain.'/gravityformsapi/';
     echo 'sending to '.$endpoint.'<br/>';
     //$route = 'entries';
@@ -194,7 +191,6 @@ function call_api($data){
     $returnedData = json_decode($result);//201 status indicates it inserted the entry. Should return id of the entry.
 
     if($returnedData->status==201 || $returnedData->status==200){
-
       return $returnedData->response;
     }else{
       echo 'There was an error in the call to '.$api_call.'<br/><br/>';

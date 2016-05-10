@@ -29,6 +29,8 @@ if($type != ''){
     }else{
       invalidRequest('Error: Form or Fields not selected');
     }
+  }elseif($type =="ent2resource"){
+    ent2resource($table);
   }else{
     invalidRequest('Invalid Request type');
   }
@@ -390,7 +392,9 @@ function cmpfkey($a, $b) {
 function cmpval($a, $b) {
     return $b['label'] - $a['label'];
 }
-
+function cmpEntryID($a, $b) {
+    return $b['entry_id'] - $a['entry_id'];
+}
 function getBuildRptData(){
   global $mysqli;
   $data = array();
@@ -484,5 +488,128 @@ function getBuildRptData(){
   $data['forms']  = $formReturn;
   $data['fields'] = $fieldReturn;
   echo json_encode($data);
+  exit;
+}
+
+//this function cross references faire entries to their assigned resources and attributes
+function ent2resource($faire){
+  global $mysqli;
+//  $faire = (isset($obj->table) ? $obj->table : '');
+  $faire = 'BA16';
+  $faireSQL = "select GROUP_CONCAT(form_ids SEPARATOR ', ') from wp_mf_faire ";
+  if($faire !=''){
+    $faireSQL .= "where faire='".strtoupper($faire)."'";
+  }
+
+  $sql = "select wp_rg_lead.id as 'entry_id', wp_rg_lead.form_id,
+    ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,
+    ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name,
+          (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
+          (select subarea from wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id) as subarea,
+          wp_rmt_entry_resources.resource_id, wp_rmt_entry_resources.qty as 'resource_qty', wp_rmt_entry_resources.comment as 'resource_comment',
+          wp_rmt_entry_attributes.attribute_id, wp_rmt_entry_attributes.value as 'attribute_value', wp_rmt_entry_attributes.comment as 'attribute_comment',
+          (select token from wp_rmt_resources where wp_rmt_resources.id = resource_id)          as res_label,
+          (select token from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.id = attribute_id)          as att_label,
+          wp_rmt_entry_attn.attn_id as 'attn_id', wp_rmt_entry_attn.comment as 'attn_comment',
+          wp_mf_location.id as 'location_id', wp_mf_location.subarea_id, wp_mf_location.location,
+          (select value from wp_rmt_attn where wp_rmt_attn.id = attn_id)          as attn_type
+
+          from wp_rg_lead
+          left outer join wp_rmt_entry_resources 	 on wp_rmt_entry_resources.entry_id = wp_rg_lead.id
+          left outer join wp_rmt_entry_attributes  on wp_rmt_entry_attributes .entry_id = wp_rg_lead.id
+          left outer join wp_rmt_entry_attn    on wp_rmt_entry_attn .entry_id = wp_rg_lead.id
+          left outer join wp_mf_location on wp_mf_location.entry_id = wp_rg_lead.id
+          where status = 'active' and wp_rg_lead.form_id in(46,47,71,60)";
+  $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
+
+  $entryData = array();
+  $resArray = array();
+  $attArray = array();
+  $attnArray = array();
+  foreach($entries as $entry){
+    //set resource data
+    $data[$entry['entry_id']]['entry_id'] = $entry['entry_id'];
+    $data[$entry['entry_id']]['form_id']  = $entry['form_id'];
+    $data[$entry['entry_id']]['status']   = $entry['status'];
+    $data[$entry['entry_id']]['proj_name']   = $entry['proj_name'];
+
+    if($entry['resource_id'] != NULL){
+      $data[$entry['entry_id']]['resource'][$entry['resource_id']] = array('qty'=> $entry['resource_qty'], 'comment'=>$entry['resource_comment']);
+      //add resource to resource array
+      $resArray[$entry['resource_id']] = $entry['res_label'];
+    }
+    //set attribute data
+    if($entry['attribute_id'] != NULL){
+      //set resource data
+      $data[$entry['entry_id']]['attribute'][$entry['attribute_id']] = array('value'=> $entry['attribute_value'], 'comment'=>$entry['attribute_comment']);
+      //add attribute to attribute array
+      $attArray[$entry['attribute_id']] = $entry['att_label'];
+    }
+    //set attention data
+    if($entry['attn_id'] != NULL){
+      //set resource data
+      $data[$entry['entry_id']]['attention'][$entry['attn_id']] = array('comment'=>$entry['attn_comment']);
+      //add attribute to attribute array
+      $attnArray[$entry['attn_id']] = $entry['attn_type'];
+    }
+    //set location data
+    if($entry['location_id'] != NULL){
+      //set resource data
+      $data[$entry['entry_id']]['location'] = array('subarea'=> $entry['subarea'], 'location'=>$entry['location'], 'area'=>$entry['area']);
+    }
+  }
+
+  //default columns
+  $columnDefs[] = array('field' => 'entry_id', 'name'=>'Entry ID');
+  $columnDefs[] = array('field' => 'proj_name', 'name'=>'Entry Name');
+  $columnDefs[] = array('field' => 'form_id', 'name'=> 'Form');
+  $columnDefs[] = array('field' => 'status', 'name'=>'Status',
+      'sort'=> array(
+          'direction'=> 'uiGridConstants.ASC',
+          'priority'=> 0
+        ), 'enableSorting'=> true);
+  $columnDefs[] = array('field' => 'location.area', 'name'=>'Area',
+      'sort'=> array(
+          'direction'=> 'uiGridConstants.ASC',
+          'priority'=> 1
+        ), 'enableSorting'=> true);
+  $columnDefs[] = array('field' => 'location.subarea', 'name'=>'Subarea',
+      'sort'=> array(
+          'direction'=> 'uiGridConstants.ASC',
+          'priority'=> 3
+        ), 'enableSorting'=> true);
+  $columnDefs[] = array('field' => 'location.location', 'name'=>'Location',
+      'sort'=> array(
+          'direction'=> 'uiGridConstants.ASC',
+          'priority'=> 2
+        ), 'enableSorting'=> true);
+
+  $resArray  = array_unique($resArray);
+  $attArray  = array_unique($attArray);
+  $attnArray = array_unique($attnArray);
+  foreach($resArray as $key=>$resource){
+   $columnDefs[] = array('displayName'            => $resource,
+                         'field'=> 'resource.'.$key.'.qty');
+   $columnDefs[] = array('displayName'            => $resource .' - comment',
+                         'field'=> 'resource.'.$key.'.comment');
+  }
+  foreach($attArray as $key=>$attribute){
+   $columnDefs[] = array('displayName'            => $attribute,
+                         'field'=> 'attribute.'.$key.'.value');
+   $columnDefs[] = array('displayName'            => $attribute .' - comment',
+                         'field'=> 'attribute.'.$key.'.comment');
+  }
+  foreach($attnArray as $key=>$attention){
+   $columnDefs[] = array('displayName'            => $attention,
+                         'field'=> 'attention.'.$key.'.comment');
+  }
+  //var_dump($columnDefs);
+  $retData = array();
+  usort($data, "cmpEntryID");
+  //sort data by status, area, subarea, location
+
+  $retData['data'] = $data;
+  $retData['columnDefs'] = $columnDefs;
+  echo json_encode($retData);
   exit;
 }
