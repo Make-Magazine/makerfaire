@@ -38,14 +38,21 @@ class GFRMTHELPER {
     if(isset($lead['105'])){
       $isGroup =(strpos($lead['105'], 'group') !== false);
     }
+    $isOneMaker =false;
+    if(isset($entryData['maker'])&&$entryData['maker']!=''){
+      $isOneMaker =(strpos($entryData['maker'], 'One maker') !== false);
+    }
+
+    $makerArray=array();
     if(!$isGroup){
       //if this isn't a group we need to have a valid email for the presenter(maker 1) record.  if not set, use contact email
       //need a valid first name
+      $email = (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:$entry_id.'-presenter@makermedia.com');
       $presenterArr=array(
           'first_name'  => (isset($lead['160.3']) ? $lead['160.3']:''),
           'last_name'   => (isset($lead['160.6']) ? $lead['160.6']:''),
           'bio'         => (isset($lead['234'])   ? $lead['234']:''),
-          'email'       => (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:(isset($lead['98'])?$lead['98']:'')),
+          'email'       => $email,
           'phone'       => (isset($lead['185'])   ? $lead['185']:''),
           'twitter'     => (isset($lead['201'])   ? $lead['201']:''),
           'photo'       => (isset($lead['217'])   ? $lead['217']:''),
@@ -56,7 +63,7 @@ class GFRMTHELPER {
           'first_name'  => $project_name,
           'last_name'   => '',
           'bio'         => (isset($lead['110'])   ? $lead['110']:''),
-          'email'       => (isset($lead['98'])    ? $lead['98']:''),
+          'email'       => $entry_id.'-group@makermedia.com',
           'phone'       => (isset($lead['99'])    ? $lead['99']:''),
           'twitter'     => (isset($lead['322'])   ? $lead['322']:''),
           'photo'       => (isset($lead['111'])   ? $lead['111']:''),
@@ -64,8 +71,8 @@ class GFRMTHELPER {
       );
     }
     //build Maker Array
-    $makerArray = array(
-      'contact' => array(
+    $makerArray['contact'] =
+        array(
           'first_name'  => (isset($lead['96.3'])  ? $lead['96.3']:''),
           'last_name'   => (isset($lead['96.6'])  ? $lead['96.6']:''),
           'bio'         => '',
@@ -74,9 +81,12 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['201'])   ? $lead['201']:''),
           'photo'       => '',
           'website'     => ''
-      ),
-      'presenter' => $presenterArr,
-      'presenter2' => array(
+      );
+    $makerArray['presenter'] = $presenterArr;
+
+    //only set the below data if the entry is not marked as one maker
+    if(!$isOneMaker){
+      $makerArray['presenter2']= array(
           'first_name'  => (isset($lead['158.3']) ? $lead['158.3']:''),
           'last_name'   => (isset($lead['158.6']) ? $lead['158.6']:''),
           'bio'         => (isset($lead['258'])   ? $lead['258']:''),
@@ -85,8 +95,8 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['208'])   ? $lead['208']:''),
           'photo'       => (isset($lead['224'])   ? $lead['224']:''),
           'website'     => (isset($lead['216'])   ? $lead['216']:''),
-      ),
-      'presenter3' => array(
+      );
+      $makerArray['presenter3'] = array(
           'first_name'  => (isset($lead['155.3']) ? $lead['155.3']:''),
           'last_name'   => (isset($lead['155.6']) ? $lead['155.6']:''),
           'bio'         => (isset($lead['259'])   ? $lead['259']:''),
@@ -95,8 +105,8 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['207'])   ? $lead['207']:''),
           'photo'       => (isset($lead['223'])   ? $lead['223']:''),
           'website'     => (isset($lead['215'])   ? $lead['215']:''),
-      ),
-      'presenter4' => array(
+      );
+      $makerArray['presenter4'] = array(
           'first_name'  => (isset($lead['156.3']) ? $lead['156.3']:''),
           'last_name'   => (isset($lead['156.6']) ? $lead['156.6']:''),
           'bio'         => (isset($lead['260'])   ? $lead['260']:''),
@@ -105,8 +115,8 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['206'])   ? $lead['206']:''),
           'photo'       => (isset($lead['222'])   ? $lead['222']:''),
           'website'     => (isset($lead['214'])   ? $lead['214']:''),
-      ),
-      'presenter5' => array(
+      );
+      $makerArray['presenter5'] = array(
           'first_name'  => (isset($lead['157.3']) ? $lead['157.3']:''),
           'last_name'   => (isset($lead['157.6']) ? $lead['157.6']:''),
           'bio'         => (isset($lead['261'])   ? $lead['261']:''),
@@ -115,8 +125,8 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['205'])   ? $lead['205']:''),
           'photo'       => (isset($lead['220'])   ? $lead['220']:''),
           'website'     => (isset($lead['213'])   ? $lead['213']:''),
-      ),
-      'presenter6' => array(
+      );
+      $makerArray['presenter6'] = array(
           'first_name'  => (isset($lead['159.3']) ? $lead['159.3']:''),
           'last_name'   => (isset($lead['159.6']) ? $lead['159.6']:''),
           'bio'         => (isset($lead['262'])   ? $lead['262']:''),
@@ -125,8 +135,8 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['204'])   ? $lead['204']:''),
           'photo'       => (isset($lead['221'])   ? $lead['221']:''),
           'website'     => (isset($lead['211'])   ? $lead['211']:''),
-      ),
-      'presenter7' => array(
+      );
+      $makerArray['presenter7'] = array(
           'first_name'  => (isset($lead['154.3']) ? $lead['154.3']:''),
           'last_name'   => (isset($lead['154.6']) ? $lead['154.6']:''),
           'bio'         => (isset($lead['263'])   ? $lead['263']:''),
@@ -135,8 +145,8 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['203'])   ? $lead['203']:''),
           'photo'       => (isset($lead['219'])   ? $lead['219']:''),
           'website'     => (isset($lead['212'])   ? $lead['212']:''),
-      )
-    );
+      );
+    }
 
     // Load Categories (old topics field - no longer used in current forms)
 		$fieldtopics=RGFormsModel::get_field($form,'147');
@@ -622,9 +632,7 @@ class GFRMTHELPER {
               'photo'
               'website'
      */
-
     foreach($entryData['maker_array'] as $type =>$typeArray){
-
       $firstName  =  (isset($typeArray['first_name']) ? esc_sql($typeArray['first_name']) : '');
       $lastName   =  (isset($typeArray['last_name'])  ? esc_sql($typeArray['last_name'])  : '');
 
@@ -644,7 +652,13 @@ class GFRMTHELPER {
         $firstName = htmlentities($entryData['project_name']);
         $lastName  = ' ';
       }
+
       $email    = (isset($typeArray['email'])   ? esc_sql($typeArray['email'])    : '');
+
+      //if email is blank we need to create a dummy email for them
+      if($email ==''){
+        $email = $entryData['entry_id'] .'-'.$type.'@makermedia.com';
+      }
       if((trim($firstName)=='' && trim($lastName)=='')|| trim($email)==''){
         //don't write the record, no maker here
       }else{
