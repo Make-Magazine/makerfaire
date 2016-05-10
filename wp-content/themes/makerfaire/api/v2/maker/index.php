@@ -77,8 +77,10 @@ if ( $type == 'maker' ) {
     //look for the word sponsor in the form name
     $form = GFAPI::get_form( $row['form_id'] );
     $formTitle = $form['title'];
-    //If the form is a sponsor set to 333 otherwise use 222.  See Manual categories in /category/index.php
-    $maker['category_id_refs'][] =  (strpos($formTitle, 'Sponsor') === false) ? '222' : '333';
+    $formType = $form['form_type'];
+
+    //If the form is a sponsor set to null otherwise use 222.  See Manual categories in /category/index.php
+    $maker['category_id_refs'][] =  (strpos($formType, 'Sponsor') === false) ? '222' : null ;
 
 		// No longer have these
 		// Maker Thumbnail and Large Images

@@ -111,6 +111,7 @@ if ( $type == 'entity' ) {
 
 		// Application Makers
 		$app_id = $app['id'];// get the entity id
+    $app_id['entity_id_refs'] = array_merge(array( $app_id));
 
 
 		// Application Categories
@@ -132,7 +133,7 @@ if ( $type == 'entity' ) {
       $app['exhibit_makers'] = ( ! empty( $maker_ids ) ) ? explode(',',$maker_ids) : null;
 
     } else {
-     // $app['category_id_refs'][] = '333';
+      $app['category_id_refs'][] = '333';
       $app['exhibit_makers']  = null;
     }
 
