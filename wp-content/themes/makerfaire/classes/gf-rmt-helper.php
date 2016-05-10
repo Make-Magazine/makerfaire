@@ -39,8 +39,8 @@ class GFRMTHELPER {
       $isGroup =(strpos($lead['105'], 'group') !== false);
     }
     $isOneMaker =false;
-    if(isset($entryData['maker'])&&$entryData['maker']!=''){
-      $isOneMaker =(strpos($entryData['maker'], 'One maker') !== false);
+    if(isset($lead['105'])&&$lead['105']!=''){
+      $isOneMaker =(strpos($lead['105'], 'One') !== false);
     }
 
     $makerArray=array();
