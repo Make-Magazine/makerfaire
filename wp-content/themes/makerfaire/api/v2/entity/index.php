@@ -112,7 +112,7 @@ if ( $type == 'entity' ) {
 		// Application Makers
 		$app_id = $app['id'];// get the entity id
 
-	
+
 		// Application Categories
 		$category_ids = $row['Categories'];
 		$app['category_id_refs'] = explode(',',$category_ids);
@@ -122,18 +122,17 @@ if ( $type == 'entity' ) {
     $form = GFAPI::get_form( $row['form_id'] );
     $formTitle = $form['title'];
     $formType = $form['form_type'];
-    
-    
+
+
     //If the form is a sponsor set to 333 otherwise use 222.  See Manual categories in /category/index.php
-    if (strpos($formType, 'Sponsor') === false)
-    { 
-      $app['category_id_refs'][] = '222';
+
+    if (strpos($formType, 'Sponsor') === false) {
+      //$app['category_id_refs'][] = '222';
       $maker_ids = $row['exhibit_makers'];
       $app['exhibit_makers'] = ( ! empty( $maker_ids ) ) ? explode(',',$maker_ids) : null;
 
-    }
-  else {
-      $app['category_id_refs'][] = '333';
+    } else {
+     // $app['category_id_refs'][] = '333';
       $app['exhibit_makers']  = null;
     }
 
