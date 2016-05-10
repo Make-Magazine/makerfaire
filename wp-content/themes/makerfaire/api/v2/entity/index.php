@@ -111,7 +111,7 @@ if ( $type == 'entity' ) {
 
 		// Application Makers
 		$app_id = $app['id'];// get the entity id
-    $app_id['entity_id_refs'] = array_merge(array( $app_id));
+    $app['entity_id_refs'] = array_merge(array( $app_id));
 
 
 		// Application Categories
