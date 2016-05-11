@@ -137,8 +137,13 @@ jQuery( document ).ready(function() {
     var subarea_id = jQuery(this).val();
 
     var el = jQuery("#locationSel");
-    var defOption = jQuery('<option></option>').attr("value", "new").text("Add New");
+    //add 'none' option
+    var defOption = jQuery('<option></option>').attr("value", "none").text("None");
     jQuery(el).empty().append(defOption);
+
+    //add 'add new' option
+    var option = jQuery('<option></option>').attr("value", "new").text("Add New");
+    jQuery(el).append(option);
 
     //get list of options for location drop down.
     if(subarea_id in locationObj){
@@ -146,12 +151,22 @@ jQuery( document ).ready(function() {
         jQuery(el).append(jQuery("<option></option>").attr("value", value).text(key));
       });
     }
+
+
+    //hide entry location box
+    jQuery('#update_entry_location_code').val('').hide();
+    //jQuery('#update_entry_location_code').hide();
+
   });
 
   jQuery('#locationSel').change(function(){
     var locText = '';
     if(jQuery(this).val()!='new'){
       locText = ( jQuery(this).find(":selected").text() );
+      //hide entry location box
+      jQuery('#update_entry_location_code').hide();
+    } else{
+      jQuery('#update_entry_location_code').show();
     }
     jQuery('#update_entry_location_code').val(locText);
   });

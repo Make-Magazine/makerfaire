@@ -1,0 +1,132 @@
+{
+    "key": "group_573231dd80a1b",
+    "title": "Stage Sponsors",
+    "fields": [
+        {
+            "key": "field_5732654df7547",
+            "label": "Stage Sponsor",
+            "name": "stage_sponsor_rep",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": "",
+            "max": "",
+            "layout": "table",
+            "button_label": "Add Row",
+            "sub_fields": [
+                {
+                    "key": "field_573237c77a8c7",
+                    "label": "Faire",
+                    "name": "faire",
+                    "type": "text",
+                    "instructions": "ie(BA16, NY16)",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "readonly": 0,
+                    "disabled": 0
+                },
+                {
+                    "key": "field_573232717d292",
+                    "label": "Subarea ID",
+                    "name": "subarea_id",
+                    "type": "text",
+                    "instructions": "Please enter the associated ID of the subarea\/stage (can be found in RMT)",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "readonly": 0,
+                    "disabled": 0
+                },
+                {
+                    "key": "field_57326584f7548",
+                    "label": "Sponsor Name",
+                    "name": "sponsor_name",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "readonly": 0,
+                    "disabled": 0
+                },
+                {
+                    "key": "field_5732658df7549",
+                    "label": "Sponsor Image",
+                    "name": "sponsor_image",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "default"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1462981954
+}

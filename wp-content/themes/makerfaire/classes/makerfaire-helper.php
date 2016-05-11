@@ -52,6 +52,21 @@ function my_query_vars($query_vars) {
  */
 function mf_display_schedule_by_area($atts) {
   global $wpdb;
+  $sponsorArr = array();
+
+  //loop thru ACF data to see if this stage is sponsored
+  if(have_rows('stage_sponsor_rep')){
+    while(have_rows('stage_sponsor_rep')){
+      the_row();
+      //get sponsor and subarea information
+      $subarea_id   = get_sub_field('subarea_id');
+      $sponsor_name  = get_sub_field('sponsor_name');
+      $sponsor_image = get_sub_field('sponsor_image');
+
+      //build array
+      $sponsorArr[$subarea_id] = array('name'=>$sponsor_name,'image'=>$sponsor_image['url']);
+    }
+  }
 
   // Build list of locations. Only display those locations that have exhibits scheduled
   $faire = $atts['faire'];
@@ -61,6 +76,7 @@ function mf_display_schedule_by_area($atts) {
   foreach ($scheduleArray as $data) {
     $subarea = ($data['nicename'] != '' || $data['nicename'] != NULL ? $data['nicename'] : $data['subarea']);
     $schedule[$subarea]['days'][$data['day']]['entries'][] = $data;
+    $schedule[$subarea]['subarea_id'] = $data['subarea_id'];
   }
 
   $dropdownLi = '';
@@ -68,6 +84,7 @@ function mf_display_schedule_by_area($atts) {
   $count = 0;
   $activetab = '';
   foreach ($schedule as $subarea => $scheduleArea) {
+    $subarea_id = $scheduleArea['subarea_id'];
     //add to the li drop down
     $href = strtolower(preg_replace("/[^A-Za-z0-9]/", "", $subarea));
     $active = ($count == 0 ? 'active' : '');
@@ -78,11 +95,19 @@ function mf_display_schedule_by_area($atts) {
     $scheduleData .= '<div class="tab-pane ' . $active . '" id="' . $href . '">';
 
     //each area contains a row with tabs for each date, print icon and a tabable div for each day
-    $scheduleData .= '<div class="row padtop" style="height:58px;overflow:hidden;margin:0;">'
-            . '<ul id="tabs" class="nav nav-tabs">||navtabs||</ul>'
-            . '<div class="pull-right" style="position:relative; top:-31px;">'
-            . '    <a href="#" onclick="window.print();return false;"><img src="' . get_stylesheet_directory_uri() . '/images/print-ico.png" alt="Print this schedule" /></a>'
-            . '</div></div>';
+    $scheduleData .= '<div class="row padtop schedInfo">'
+              . '<ul id="tabs" class="nav nav-tabs">||navtabs||</ul>'
+              . '<div class="pull-right printIcon"">'
+              . '    <a href="#" onclick="window.print();return false;"><img src="' . get_stylesheet_directory_uri() . '/images/print-ico.png" alt="Print this schedule" /></a>'
+              . '</div>';
+
+    //check if this stage is sponsored
+    if(isset($sponsorArr[$subarea_id])){
+      $scheduleData .=    '<div class="pull-right schedIcon sponsorSec"><span class="sponsorText">Presented By</span><img class="sponsorImg" src="'.$sponsorArr[$subarea_id]['image'].'" alt="'.$sponsorArr[$subarea_id]['name'].'" /></div>';
+    }
+
+    $scheduleData .= '</div>';
+
     $scheduleData .= ' <div class="tab-content">';
     $navTabs = '';
     foreach ($scheduleArea['days'] as $dayKey => $dayData) {
@@ -257,7 +282,7 @@ function get_mf_schedule_by_faire($faire, $day = '', $area = '', $subarea = '') 
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
   }
 
-  $select_query = "SELECT  area.area,subarea.subarea,subarea.nicename,
+  $select_query = "SELECT  area.area,subarea.subarea,subarea.nicename,location.subarea_id,
                                 entity.lead_id as entry_id, DAYNAME(schedule.start_dt) as day,
                                 entity.project_photo as photo, schedule.start_dt, schedule.end_dt,
                                 entity.presentation_title, entity.desc_short as description,
@@ -309,6 +334,7 @@ function get_mf_schedule_by_faire($faire, $day = '', $area = '', $subarea = '') 
     $stop = strtotime($row['end_dt']);
     $schedule['nicename'] = $row['nicename'];
     $schedule['subarea'] = $row['subarea'];
+    $schedule['subarea_id'] = $row['subarea_id'];
     // REQUIRED: Schedule ID
     $schedule['id'] = $entry_id;
     $schedule_name = isset($row['presentation_title']) ? $row['presentation_title'] : '';
