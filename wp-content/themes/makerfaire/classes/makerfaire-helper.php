@@ -67,7 +67,6 @@ function mf_display_schedule_by_area($atts) {
       $sponsorArr[$subarea_id] = array('name'=>$sponsor_name,'image'=>$sponsor_image['url']);
     }
   }
-  var_dump($sponsorArr);
 
   // Build list of locations. Only display those locations that have exhibits scheduled
   $faire = $atts['faire'];
