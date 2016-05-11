@@ -97,7 +97,7 @@ function mf_display_schedule_by_area($atts) {
     //each area contains a row with tabs for each date, print icon and a tabable div for each day
     $scheduleData .= '<div class="row padtop schedInfo">'
               . '<ul id="tabs" class="nav nav-tabs">||navtabs||</ul>'
-              . '<div class="pull-right schedIcon"">'
+              . '<div class="pull-right printIcon"">'
               . '    <a href="#" onclick="window.print();return false;"><img src="' . get_stylesheet_directory_uri() . '/images/print-ico.png" alt="Print this schedule" /></a>'
               . '</div>';
 
