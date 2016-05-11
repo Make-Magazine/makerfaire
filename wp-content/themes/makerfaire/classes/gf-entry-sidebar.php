@@ -85,6 +85,70 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
     global $wpdb;
     echo ('<link rel="stylesheet" type="text/css" href="'.get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css"/>
            <h4><label class="detail-label">Schedule/Location:</label></h4>');
+    echo display_schedule($form_id,$lead);
+    // Set up the Add to Schedule Section
+    echo ('<h4 class="topBorder">Add New:</h4>');
+
+    $locSql = "SELECT area.area, subarea.subarea, subarea.nicename, subarea.id as subarea_id
+                FROM wp_mf_faire faire, wp_mf_faire_area area, wp_mf_faire_subarea subarea
+                where FIND_IN_SET($form_id,faire.form_ids) and faire.ID = area.faire_id and subarea.area_id = area.ID
+                order by area,subarea";
+
+    echo ('Area - Subarea <select style="max-width:100%" name="entry_location_subarea_change" id="entry_location_subarea_change">');
+    echo '<option value="none">None</option>';
+    $subAreaArr = array();
+    foreach($wpdb->get_results($locSql,ARRAY_A) as $row){
+      $area_option = (strlen($row['area']) > 0) ? ' ('.$row['area'].')' : '' ;
+      $subarea_option = ($row['subarea']!=''?$row['subarea']:$row['subarea']);
+      echo '<option value="'.$row['subarea_id'].'">'.$row['area'].' - '.$subarea_option.'</option>';
+      $subAreaArr[] = $row['subarea_id'];
+    }
+    echo("</select><br />");
+
+    //create unique array of subareas
+    array_unique($subAreaArr);
+    $subAreaList = implode(",",$subAreaArr);
+
+    $sql = "select distinct(location) as location, subarea_id from wp_mf_location";
+    if($subAreaList!=''){
+      $sql .= " where subarea_id in(".$subAreaList.") and location!=''";
+    }
+
+    $locArr = array();
+    foreach($wpdb->get_results($sql,ARRAY_A) as $row){
+      $locArr[$row['subarea_id']][]=$row['location'];
+    }
+
+    ?>
+    <script>
+      var locationObj = <?php echo json_encode($locArr);?>
+    </script>
+    <?php
+
+    //create dropdown of current locations for selected subarea
+    echo 'Location Code: (optional)<br/>';
+    echo '<select id="locationSel"><option>Select Area - Subarea above</option></select><br/>';
+    echo '<input type="text" name="update_entry_location_code" style="display:none" id="update_entry_location_code" /><br/>';
+
+    // Load Fields to show on entry info
+    echo '<br/>';
+    echo 'Optional Schedule Start/End
+          <div class="clear"></div>';
+    echo '<div style="padding:10px 0;width:40px;float:left">Start: </div><div style="float:left"><input type="text" value="" name="datetimepickerstart" id="datetimepickerstart"></div>';
+    echo '<div class="clear" style="padding:10px 0;width:40px;float:left">End:</div>
+          <div style="float:left"><input type="text" value="" name="datetimepickerend" id="datetimepickerend"></div>
+          <div class="clear"></div>';
+
+    // Create Update button for sidebar entry management
+    echo '
+          <input type="submit" name="update_entry_schedule" value="Add Location" class="button"
+              style="width:auto;padding-bottom:2px;    margin: 10px 0;"
+              onclick="jQuery(\'#action\').val(\'update_entry_schedule\');"/><br />';
+    echo '  <div class="clear"></div><hr>';
+}
+
+function display_schedule($form_id,$lead,$section='sidebar'){
+  global $wpdb;
     //first, let's display any schedules already entered for this entry
     $entry_id=$lead['id'];
     $sql = "select `wp_mf_schedule`.`ID` as schedule_id, `wp_mf_schedule`.`entry_id`, location.ID as location_id, location.location,area.area, subarea.subarea,
@@ -145,95 +209,33 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
                 $dateTime = new DateTime();
                 $dateTime->setTimeZone(new DateTimeZone($db_tz));
                 $timeZone = $dateTime->format('T');
-                echo ('<input type="checkbox" value="'.$schedule_id.'" name="delete_entry_id[]"></input>'
-                       . '<span class="schedDate">'.date("g:i A",$start_dt).' - '.date("g:i A",$end_dt).' ('.$timeZone.')</span><div class="clear"></div>');
+                if($section!='summary'){
+                  echo '<input type="checkbox" value="'.$schedule_id.'" name="delete_entry_id[]"></input>';
+                }
+                echo '<span class="schedDate">'.date("g:i A",$start_dt).' - '.date("g:i A",$end_dt).' ('.$timeZone.')</span><div class="clear"></div>';
               }
               echo '</div></div>';
             }
           }
         }else{ //if there is no schedule data
           //location only display checkbox to delete
-          echo ('<input type="checkbox" value="'.$location_id.'" name="delete_location_id[]" /> <span class="schedDate">Remove Location</span>');
-
+          if($section!='summary'){
+            echo ('<input type="checkbox" value="'.$location_id.'" name="delete_location_id[]" /> <span class="schedDate">Remove Location</span>');
+          }
           //echo ($stage!=''&&$stage!=NULL?'<u>'.$stage.'</u><br/>':'');
           echo '<div class="clear"></div>';
         }
         echo '<br/>';
       }
 
-
-      $entry_delete_button = '<input type="submit" name="delete_entry_schedule[]" value="Delete Selected" class="button"
-                       style="width:auto;padding-bottom:2px;"
-                      onclick="jQuery(\'#action\').val(\'delete_entry_schedule\');"/><br />';
-      echo $entry_delete_button.'<br/>';
+      if($section!='summary'){
+        $entry_delete_button = '<input type="submit" name="delete_entry_schedule[]" value="Delete Selected" class="button"
+                         style="width:auto;padding-bottom:2px;"
+                        onclick="jQuery(\'#action\').val(\'delete_entry_schedule\');"/><br />';
+        echo $entry_delete_button;
+      }
+      echo '<br/>';
     }
-
-    // Set up the Add to Schedule Section
-    echo ('<h4 class="topBorder">Add New:</h4>');
-
-    $locSql = "SELECT area.area, subarea.subarea, subarea.nicename, subarea.id as subarea_id
-                FROM wp_mf_faire faire, wp_mf_faire_area area, wp_mf_faire_subarea subarea
-                where FIND_IN_SET($form_id,faire.form_ids) and faire.ID = area.faire_id and subarea.area_id = area.ID
-                order by area,subarea";
-
-    echo ('Subarea <select style="max-width:100%" name="entry_location_subarea_change" id="entry_location_subarea_change">');
-    echo '<option value="none">None</option>';
-    $subAreaArr = array();
-    foreach($wpdb->get_results($locSql,ARRAY_A) as $row){
-      $area_option = (strlen($row['area']) > 0) ? ' ('.$row['area'].')' : '' ;
-      $subarea_option = ($row['subarea']!=''?$row['subarea']:$row['subarea']);
-      echo '<option value="'.$row['subarea_id'].'">'.$row['area'].' - '.$subarea_option.'</option>';
-      $subAreaArr[] = $row['subarea_id'];
-    }
-    echo("</select><br />");
-
-    //create unique array of subareas
-    array_unique($subAreaArr);
-    $subAreaList = implode(",",$subAreaArr);
-
-    $sql = "select distinct(location) as location, subarea_id from wp_mf_location";
-    if($subAreaList!=''){
-      $sql .= " where subarea_id in(".$subAreaList.") and location!=''";
-    }
-
-    $locArr = array();
-    foreach($wpdb->get_results($sql,ARRAY_A) as $row){
-      $locArr[$row['subarea_id']][]=$row['location'];
-    }
-
-    ?>
-    <script>
-      var locationObj = <?php echo json_encode($locArr);?>
-    </script>
-    <?php
-
-    //create dropdown of current locations for selected subarea
-    echo 'Location Code: (optional)<br/>';
-    echo '<select id="locationSel"><option>Please Select a Subarea</option></select><br/>';
-    echo '<input type="text" name="update_entry_location_code" id="update_entry_location_code" /><br/>';
-
-    // Load Fields to show on entry info
-    echo '<br/>';
-    echo 'Optional Schedule Start/End
-          <div class="clear"></div>';
-    echo '<div style="padding:10px 0;width:40px;float:left">Start: </div><div style="float:left"><input type="text" value="" name="datetimepickerstart" id="datetimepickerstart"></div>';
-    echo '<div class="clear" style="padding:10px 0;width:40px;float:left">End:</div>
-          <div style="float:left"><input type="text" value="" name="datetimepickerend" id="datetimepickerend"></div>
-          <div class="clear"></div>';
-
-    // Create Update button for sidebar entry management
-    echo '
-          <input type="submit" name="update_entry_schedule" value="Add" class="button"
-              style="width:auto;padding-bottom:2px;    margin: 10px 0;"
-              onclick="jQuery(\'#action\').val(\'update_entry_schedule\');"/><br />';
-    echo '  <div class="clear"></div><hr>';
-
-    //button to trigger send confirmation letter event
-    echo '<div style="padding:15px 0;width:40px;float:left">&nbsp;</div>
-            <input type="submit" name="send_conf_letter" value="Send Confirmation Letter" class="button"
-			 style="width:auto;padding-bottom:2px;"
-			onclick="jQuery(\'#action\').val(\'send_conf_letter\');"/>';
-    echo '  <div class="clear"></div>';
 }
 
 /* This is where we run code on the entry info screen.  Logic for action handling goes here */
@@ -605,18 +607,25 @@ if ($mode == 'view') {
       ?>
     </div>
   <?php } ?>
-
+  <div class="detail-view-print">
+    <?php
+    //button to trigger send confirmation letter event
+    echo '<input type="submit" name="send_conf_letter" value="Send Confirmation Letter" class="button"
+			 style="width:auto;padding-bottom:2px;"
+			onclick="jQuery(\'#action\').val(\'send_conf_letter\');"/>';
+    echo '  <div class="clear"></div>';?>
+  </div>
 	<div class="detail-view-print">
 		<?php $entry_sidebar_button = '<input type="submit" name="sync_jdb" value="Send to JDB" class="button"
 				 style="width:auto;padding-bottom:2px;"
 				onclick="jQuery(\'#action\').val(\'sync_jdb\');"/>';
-					echo $entry_sidebar_button;	?>
+					//echo $entry_sidebar_button;	?>
 	</div>
 	<div class="detail-view-print">
 		<?php $entry_sidebar_button = '<input type="submit" name="sync_status_jdb" value="Sync Status JDB" class="button"
           style="width:auto;padding-bottom:2px;"
           onclick="jQuery(\'#action\').val(\'sync_status_jdb\');"/>';
-		echo $entry_sidebar_button;	?>
+		//echo $entry_sidebar_button;	?>
 	</div>
 	<?php
 }

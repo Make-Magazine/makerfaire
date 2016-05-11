@@ -89,7 +89,7 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
 				<a href="<?php echo $photo;?>" class='thickbox'>
 				<img width="400px" src="<?php echo legacy_get_resized_remote_image_url($photo, 400,400);?>" alt="" /></a>
 			</td>
-			<td style="width:340px; word-break: break-all;" valign="top">
+			<td style="word-break: break-all;" valign="top">
 				<table style="word-break: break-all;">
 					<tr>
 						<td colspan="2">
@@ -191,6 +191,12 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
               <?php echo ( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '' ; ?>
 						</td>
 					</tr>
+          <tr>
+            <td valign="top"><strong>Schedule/Location:</strong></td>
+            <td>
+              <?php echo display_schedule($form['id'],$lead,'summary');?>
+            </td>
+          </tr>
           <tr>
             <td>
               <a target="_blank" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire?>"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
