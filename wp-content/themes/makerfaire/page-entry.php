@@ -262,13 +262,15 @@ function display_entry_schedule($entry_id) {
       <?php
       if($faire_logo!=''){
         $faire_logo = legacy_get_fit_remote_image_url($faire_logo,51,51);
-        echo '<img src="'.$faire_logo.'" alt="'.$faire.' - badge" />';
+        echo '<a href="/bay-area"><img src="'.$faire_logo.'" alt="'.$faire.' - badge" /></a>';
       }
       ?>
       </span>
       <span class="faireTitle pull-left">
+        <a href="/bay-area">
         <span class="faireLabel">Live at</span><br/>
         <div class="faireName"><?php echo (strpos($faireID,'NY')!== false?'World':'');?> Maker Faire <?php echo ucwords(str_replace('-',' ', $faire));?></div>
+        </a>
       </span>
       <?php // TBD - dynamically set these links and images ?>
       <div class="faireActions">
