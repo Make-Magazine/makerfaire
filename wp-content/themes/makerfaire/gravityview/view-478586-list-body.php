@@ -92,7 +92,7 @@ if( ! $total or !( is_user_logged_in() )) {
     if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
        $form['form_type'] != 'Show Management' && $form['form_type'] != ''){ ?>
         <hr/>
-        <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
+
 
         <?php
         /**
@@ -111,10 +111,16 @@ if( ! $total or !( is_user_logged_in() )) {
            * @param GravityView_View $this The GravityView_View instance
            */
           do_action( 'gravityview_entry_title_before', $entry, $this );
-
+          //display subtitle here
+          $this->renderZone('subtitle', array(
+              'markup' => '<h4 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h4>',
+              'wrapper_class' => 'gv-list-view-subtitle',
+           ));
           ?>
+        <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
           <div class="gv-list-view-title-maker-entry">
           <?php
+
             $entryData = array();
             $links = '';
             if ( $this->getField('directory_list-title') ) {
@@ -222,10 +228,6 @@ if( ! $total or !( is_user_logged_in() )) {
           </div>
         <?php
         }
-				$this->renderZone('subtitle', array(
-					'markup' => '<h4 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h4>',
-					'wrapper_class' => 'gv-list-view-subtitle',
-				));
 			?>
 			</div>
       <div class="clear"></div>
