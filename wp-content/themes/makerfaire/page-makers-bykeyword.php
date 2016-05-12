@@ -270,13 +270,13 @@ $pages = ceil($total_count / $pagesize);
 	<nav>
 		<ul class="pagination pull-left">
 			<?php if ($current_page > 1) : ?>
-			<li <?php if ($current_page == 1) echo 'class = "disabled"'; ?>><a <?php if ($current_page == 1) echo 'class = "disabled"'; ?> href="<?php echo $current_url?>/<?php echo ($current_page == 1) ? $current_page.'#': $current_page-1; ?>/?s_term=<?php echo $search_term;?>">&laquo;</a></li>
+			<li <?php if ($current_page == 1) echo 'class = "disabled"'; ?>><a <?php if ($current_page == 1) echo 'class = "disabled"'; ?> href="<?php echo $current_url?><?php echo ($current_page == 1) ? $current_page.'#': $current_page-1; ?>/?s_term=<?php echo $search_term;?><?php echo '&faire='.$faire;?>">&laquo;</a></li>
 			<?php endif; ?>
 			<?php for($i = 1;$i <= $pages;$i++): ?>
-			<li  <?php if ($current_page == $i) echo 'class = "active"'; ?> ><a href="<?php echo $current_url?>/<?php echo $i?>/?s_term=<?php echo $search_term.'&faire='.$faire;?>"><?php echo $i?></a></li>
+			<li  <?php if ($current_page == $i) echo 'class = "active"'; ?> ><a href="<?php echo $current_url?><?php echo $i?>/?s_term=<?php echo $search_term.'&faire='.$faire;?>"><?php echo $i?></a></li>
 			<?php endfor;?>
 			<?php if ($current_page < $pages) : ?>
-			<li <?php if ($current_page == $pages) echo 'class = "disabled"'; ?>><a <?php if ($current_page == $pages) echo 'class = "disabled"'; ?> href="<?php echo $current_url?>/<?php echo ($current_page == $pages) ? $current_page.'#': $current_page+1;?>/?s_term=<?php echo $search_term;?>">&raquo;</a></li>
+			<li <?php if ($current_page == $pages) echo 'class = "disabled"'; ?>><a <?php if ($current_page == $pages) echo 'class = "disabled"'; ?> href="<?php echo $current_url?><?php echo ($current_page == $pages) ? $current_page.'#': $current_page+1;?>/?s_term=<?php echo $search_term;?><?php echo '&faire='.$faire;?>">&raquo;</a></li>
 			<?php endif;?>
 		</ul>
 	</nav>
