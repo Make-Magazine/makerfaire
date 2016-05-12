@@ -198,7 +198,11 @@ if( ! $total or !( is_user_logged_in() )) {
               <div class="fright statusText"><?php echo $entryData['303'];?></div>
             </div>
             <?php if ($entry['form_id']=='46') : ?>
-            <div style="background-color:#F4D03F; margin: 10px; padding:10px">The deadline has past to change resources and request space size changes. Additional requests can be directed to your Area Manager when you check-in at Maker Faire. You may still make updates to your details for the website and mobile app information. Any other changes will not be considered until you're onsite.</div>
+            <div style="background-color:#F4D03F; padding:10px">
+              The deadline has passed to change resources and request space size changes. 
+              Additional requests can be directed to your Area Manager when you check-in at Maker Faire. 
+              You may still make updates to your details for the website and mobile app information. 
+              Any other changes will not be considered until you're onsite.</div>
             <?php endif; ?>
             
             <h3 class="title"><?php echo $entryData['151'];?></h3>
