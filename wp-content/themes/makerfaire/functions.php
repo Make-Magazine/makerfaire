@@ -1768,6 +1768,7 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
     $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
     $merge_tags[] = array('label' => 'Scheduled Locations', 'tag' => '{sched_loc}');
+    $merge_tags[] = array('label' => 'Faire ID', 'tag' => '{faire_id}');
 
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
@@ -1788,7 +1789,13 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
 */
 function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
   $entry_id = (isset($lead['id'])?$lead['id']:'');
-
+  //faire id
+  if (strpos($text, '{faire_id}')       !== false) {
+    global $wpdb;
+    $sql = "select faire from wp_mf_faire where FIND_IN_SET (".$lead['form_id'].",wp_mf_faire.form_ids)> 0";
+    $faireId = $wpdb->get_var($sql);
+    $text = str_replace('{faire_id}', $faireId, $text);
+  }
   //Entry Schedule
   if (strpos($text, '{entry_schedule}') !== false) {
     $schedule = get_schedule($lead);
