@@ -146,7 +146,7 @@
         </h1>
       </div>
 
-      <img class="img-responsive center-block" src="<?php echo $project_photo; ?>" />
+      <img class="img-responsive" src="<?php echo $project_photo; ?>" />
       <p class="lead"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
       <?php
