@@ -14,19 +14,53 @@
   $form = GFAPI::get_form($form_id);
   $formType = $form['form_type'];
 
-  $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
+  $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt "
+          . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
   $results =  $wpdb->get_row( $formSQL );
-  $faire   =  $slug = $results->faire_name;
-  $faireID = $results->faire;
+
+  $faire        =  $slug = $results->faire_name;
+  $faireID      = $results->id;
+  $show_sched   = $results->show_sched;
+  $faire_logo   = $results->faire_logo;
+  $faire_start  = $results->start_dt;
+  $faire_end    = $results->end_dt;
 
   $makers = array();
-  if (isset($entry['160.3'])) $makers[] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'], 'bio'=>$entry['234'], 'photo'=>$entry['217']);
-  if (isset($entry['158.3'])) $makers[] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'], 'bio'=>$entry['258'], 'photo'=>$entry['224']);
-  if (isset($entry['155.3'])) $makers[] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'], 'bio'=>$entry['259'], 'photo'=>$entry['223']);
-  if (isset($entry['156.3'])) $makers[] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'], 'bio'=>$entry['260'], 'photo'=>$entry['222']);
-  if (isset($entry['157.3'])) $makers[] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'], 'bio'=>$entry['261'], 'photo'=>$entry['220']);
-  if (isset($entry['159.3'])) $makers[] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'], 'bio'=>$entry['262'], 'photo'=>$entry['221']);
-  if (isset($entry['154.3'])) $makers[] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'], 'bio'=>$entry['263'], 'photo'=>$entry['219']);
+  if (isset($entry['160.3']))
+    $makers[] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
+                      'bio'       => (isset($entry['234']) ? $entry['234']: ''),
+                      'photo'     => (isset($entry['217']) ? $entry['217'] : '')
+                );
+  if (isset($entry['158.3']))
+    $makers[] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
+                      'bio'       => (isset($entry['258']) ? $entry['258'] : ''),
+                      'photo'     => (isset($entry['224']) ? $entry['224'] : '')
+                );
+  if (isset($entry['155.3']))
+      $makers[] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
+                      'bio'         => (isset($entry['259']) ? $entry['259'] : ''),
+                      'photo'       => (isset($entry['223']) ? $entry['223'] : '')
+                );
+  if (isset($entry['156.3']))
+      $makers[] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
+                      'bio'         => (isset($entry['260']) ? $entry['260'] : ''),
+                      'photo'       => (isset($entry['222']) ? $entry['222'] : '')
+                  );
+  if (isset($entry['157.3']))
+      $makers[] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
+                      'bio'         => (isset($entry['261']) ? $entry['261'] : ''),
+                      'photo'       => (isset($entry['220']) ? $entry['220'] : '')
+                  );
+  if (isset($entry['159.3']))
+      $makers[] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
+                      'bio'         => (isset($entry['262']) ? $entry['262'] : ''),
+                      'photo'       => (isset($entry['221']) ? $entry['221'] : '')
+                  );
+  if (isset($entry['154.3']))
+      $makers[] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
+                      'bio'         => (isset($entry['263']) ? $entry['263'] : ''),
+                      'photo'       => (isset($entry['219']) ? $entry['219'] : '')
+                  );
 
   $groupname  = (isset($entry['109']) ? $entry['109']:'');
   $groupphoto = (isset($entry['111']) ? $entry['111']:'');
@@ -77,8 +111,9 @@
 
 <div class="container modal-fix">
   <div class="row">
-    <div class="content col-md-8">
-<?php $url = parse_url(wp_get_referer()); //getting the referring URL
+    <div class="content col-md-12">
+<?php //set the 'backlink' text and link
+      $url = parse_url(wp_get_referer()); //getting the referring URL
       $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
       $path = explode("/", $url['path']); // splitting the path
       $slug = end($path); // get the value of the last element
@@ -90,9 +125,16 @@
         $backlink = "/".$faire."/meet-the-makers/";
         $backMsg = '&#65513; Look for More Makers';
       }
+
 ?>
-      <a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a>
-      
+      <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
+
+<?php
+      //display schedule/location information if there is any
+      if (!empty(display_entry_schedule($entryId))) {
+        display_entry_schedule($entryId);
+      }
+?>
 <?php if($entry['status']=='active' && $entry[303]=='Accepted'){ ?>
       <div class="page-header">
         <h1><?php echo $project_title; ?>
@@ -104,7 +146,7 @@
         </h1>
       </div>
 
-      <img class="img-responsive center-block" src="<?php echo $project_photo; ?>" />
+      <img class="img-responsive" src="<?php echo $project_photo; ?>" />
       <p class="lead"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
       <?php
@@ -178,9 +220,6 @@
       }
     }
 
-    if (!empty(display_entry_schedule($entryId))) {
-      display_entry_schedule($entryId);
-    }
     ?>
     <br />
     <?php
@@ -191,55 +230,94 @@
     ?>
 
     </div><!--col-md-8-->
-    <?php get_sidebar(); ?>
+
   </div><!--row-->
 </div><!--container-->
 
 
-<!-- What do i do with these?
-Duplicate to $project_website;
-<p>Homepage: <i><?php echo $entry['27']; ?></i></p>
-
-Duplicate $entry['22']
-<li>Project Photo: <?php echo $project_photo; ?></li>
-
-Duplicate to $entry['151']
-<li>Short Desription<?php echo $entry['16']; ?></li>
--->
 
  <?php get_footer();
 
 function display_entry_schedule($entry_id) {
-  global $wpdb;global $faireID; global $faire;
-
-  $sql = "select location.entry_id, area.area, subarea.subarea,location.location, schedule.start_dt, schedule.end_dt
+  global $wpdb;global $faireID; global $faire; global $show_sched; global $faire_logo;
+  if(!$show_sched){
+    return;
+  }
+  $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
             from  wp_mf_location location
             join  wp_mf_faire_subarea subarea
                             ON  location.subarea_id = subarea.ID
             join wp_mf_faire_area area
-                            ON subarea.area_id = area.ID and area.faire_id = 2
+                            ON subarea.area_id = area.ID and area.faire_id = $faireID
             left join wp_mf_schedule schedule
                     on location.ID = schedule.location_id
              where location.entry_id=$entry_id"
           . " group by area, subarea, location";
   $results = $wpdb->get_results($sql);
-  echo '<table>';
+
   if($wpdb->num_rows > 0){
     ?>
-    <h2>Location at <?php echo (strpos($faireID,'NY')!== false?'World':'');?> Maker Faire <?php echo ucwords(str_replace('-',' ', $faire));?></h2>
-    <hr />
-    <?php
-    foreach($results as $row){
-      echo '<tr><td style="padding:0 10px">'.$row->area.'</td><td style="padding:0 10px">'.$row->subarea.'</td>';
-      if(!is_null($row->start_dt)){
-        $start_dt   = strtotime( $row->start_dt);
-        $end_dt     = strtotime($row->end_dt);
-        echo '<td style="padding:0 10px">'.date("m/j/y",$start_dt).'</td><td style="padding:0 10px">'. date("g:i a",$start_dt).' to '.date("g:i a",$end_dt).'</td>';
+    <div id="entry-schedule">
+      <span class="faireBadge pull-left">
+      <?php
+      if($faire_logo!=''){
+        $faire_logo = legacy_get_fit_remote_image_url($faire_logo,51,51);
+        echo '<a href="/bay-area"><img src="'.$faire_logo.'" alt="'.$faire.' - badge" /></a>';
       }
-      echo '</tr>';
-    }
+      ?>
+      </span>
+      <span class="faireTitle pull-left">
+        <a href="/bay-area">
+        <span class="faireLabel">Live at</span><br/>
+        <div class="faireName"><?php echo (strpos($faireID,'NY')!== false?'World':'');?> Maker Faire <?php echo ucwords(str_replace('-',' ', $faire));?></div>
+        </a>
+      </span>
+      <?php // TBD - dynamically set these links and images ?>
+      <div class="faireActions">
+        <span class="pull-right">
+          <a class="flagship-icon-link" href="/wp-content/uploads/2016/04/Maker-Faire-Bay-Area-2016-Map_8x11.pdf">
+            <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-map.png" width="40px" scale="0">
+            Event Map
+          </a>
+        </span>
+        <span class="pull-right">
+          <a class="flagship-icon-link" href="/wp-content/uploads/2016/05/MF16_BA_ProgramGuide_LoRes.pdf">
+            <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-schedule.png" width="40px" scale="0">
+          </a>
+          <span class="pull-right"><a href="http://makerfaire.com/bay-area-2016/schedule/">View full schedule</a><br/>
+            <a class="flagship-icon-link" href="/wp-content/uploads/2016/05/MF16_BA_ProgramGuide_LoRes.pdf">Download the program guide</a>
+          </span>
+        </span>
+      </div>
+      <div class="clear"></div>
+
+      <table>
+      <?php
+      foreach($results as $row){
+        echo '<tr>';
+        if(!is_null($row->start_dt)){
+          $start_dt   = strtotime( $row->start_dt);
+          $end_dt     = strtotime($row->end_dt);
+          echo '<td><b>'.date("l, F j",$start_dt).'<b></td>'
+                  . ' <td>'. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</td>';
+        }else{
+          global $faire_start; global $faire_end;
+
+          $faire_start = strtotime($faire_start);
+          $faire_end   = strtotime($faire_end);
+
+          //tbd change this to be dynamically populated
+          echo '<td>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</td>';
+        }
+        echo '<td>'.$row->area.'</td><td>'.($row->nicename!=''?$row->nicename:$row->subarea).'</td>';
+        echo '</tr>';
+
+      }
+      ?>
+      </table>
+    </div>
+    <?php
   }
-  echo '</table>';
 }
 
 /* This function is used to display grouped entries and links*/
