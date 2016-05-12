@@ -92,7 +92,7 @@ if( ! $total or !( is_user_logged_in() )) {
     if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
        $form['form_type'] != 'Show Management' && $form['form_type'] != ''){ ?>
         <hr/>
-        <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
+
 
         <?php
         /**
@@ -111,21 +111,16 @@ if( ! $total or !( is_user_logged_in() )) {
            * @param GravityView_View $this The GravityView_View instance
            */
           do_action( 'gravityview_entry_title_before', $entry, $this );
-          
-          if ($entry['form_id'] == '46') 
-          {
-            echo '<div style="background-color:#F4D03F; '
-            . 'padding:10px">The deadline has past to change resources and '
-                  . 'request space size changes. Additional requests can '
-                  . 'be directed to your Area Manager when you check-in at Maker Faire. '
-                  . 'You may still make updates to your details for the website and mobile app '
-                  . 'information. Any other changes will not be considered until you\'re onsite.</div>';
-          }
-          
+          //display subtitle here
+          $this->renderZone('subtitle', array(
+              'markup' => '<h4 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h4>',
+              'wrapper_class' => 'gv-list-view-subtitle',
+           ));
           ?>
-          
+        <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
           <div class="gv-list-view-title-maker-entry">
           <?php
+
             $entryData = array();
             $links = '';
             if ( $this->getField('directory_list-title') ) {
@@ -203,6 +198,9 @@ if( ! $total or !( is_user_logged_in() )) {
               <div class="fright statusText"><?php echo $entryData['303'];?></div>
             </div>
             <h3 class="title"><?php echo $entryData['151'];?></h3>
+            <?php if ($entry['form_id']=='46') : ?>
+            <div style="background-color:#F4D03F; padding:10px">The deadline has past to change resources and request space size changes. Additional requests can be directed to your Area Manager when you check-in at Maker Faire. You may still make updates to your details for the website and mobile app information. Any other changes will not be considered until you're onsite.</div>
+            <?php endif; ?>
             <div class="clear fleft entryID latReg"><?php echo $form_type.' '.$entryData['id'];?></div>
             <div class="clear">
               <?php
@@ -233,10 +231,6 @@ if( ! $total or !( is_user_logged_in() )) {
           </div>
         <?php
         }
-				$this->renderZone('subtitle', array(
-					'markup' => '<h4 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h4>',
-					'wrapper_class' => 'gv-list-view-subtitle',
-				));
 			?>
 			</div>
       <div class="clear"></div>

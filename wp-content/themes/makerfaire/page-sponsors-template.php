@@ -16,7 +16,7 @@ get_header(); ?>
   <?php if( have_rows('presenting_sponsors') ): ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
-      <h3 class="sponsors-type text-center">PRESENTING SPONSOR</h3>
+      <h3 class="sponsors-type text-center">PRESENTING SPONSORS</h3>
         <div class="sponsors-box">
 
         <?php

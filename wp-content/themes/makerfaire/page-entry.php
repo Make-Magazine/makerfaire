@@ -9,21 +9,33 @@
   $entryId = $wp_query->query_vars['e_id'];
   $entry = GFAPI::get_entry($entryId);
 
-  //find outwhich faire this entry is for to set the 'look for more makers link'
-  $form_id = $entry['form_id'];
-  $form = GFAPI::get_form($form_id);
-  $formType = $form['form_type'];
-
-  $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt "
-          . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
-  $results =  $wpdb->get_row( $formSQL );
-
-  $faire        =  $slug = $results->faire_name;
-  $faireID      = $results->id;
-  $show_sched   = $results->show_sched;
-  $faire_logo   = $results->faire_logo;
-  $faire_start  = $results->start_dt;
-  $faire_end    = $results->end_dt;
+  //entry not found
+  if(isset($entry->errors)){
+    $form_id = '';
+    $formType = '';
+    $entry=array();
+    $faire = '';
+  }else{
+    //find outwhich faire this entry is for to set the 'look for more makers link'
+    $form_id = $entry['form_id'];
+    $form = GFAPI::get_form($form_id);
+    $formType = $form['form_type'];
+    $faire =$slug=$faireID=$show_sched=$faire_end='';
+  }
+  
+  if($form_id!=''){
+    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt "
+            . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
+    $results =  $wpdb->get_row( $formSQL );
+    if($wpdb->num_rows > 0){
+      $faire        =  $slug = $results->faire_name;
+      $faireID      = $results->id;
+      $show_sched   = $results->show_sched;
+      $faire_logo   = $results->faire_logo;
+      $faire_start  = $results->start_dt;
+      $faire_end    = $results->end_dt;
+    }
+  }
 
   $makers = array();
   if (isset($entry['160.3']))
@@ -79,22 +91,22 @@
   $sharing_cards = new mf_sharing_cards();
 
   //Change Project Name
-  $project_name = $entry['151'];
+  $project_name = (isset($entry['151']) ? $entry['151'] : '');
 
   // Url
-  $project_photo = legacy_get_fit_remote_image_url($entry['22'],750,500);
+  $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
   $sharing_cards->project_photo = $project_photo;
 
   // Description
-  $project_short = $entry['16'];
+  $project_short = (isset($entry['16']) ? $entry['16']: '');
   $sharing_cards->project_short = $project_short;
 
   //Website
-  $project_website = $entry['27'];
+  $project_website = (isset($entry['27']) ? $entry['27']: '');
   //Video
-  $project_video = $entry['32'];
+  $project_video = (isset($entry['32'])?$entry['32']:'');
   //Title
-  $project_title = (string)$entry['151'];
+  $project_title = (isset($entry['151'])?(string)$entry['151']:'');
   $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
   $sharing_cards->project_title = $project_title;
 
@@ -112,122 +124,123 @@
 <div class="container modal-fix">
   <div class="row">
     <div class="content col-md-12">
-<?php //set the 'backlink' text and link
-      $url = parse_url(wp_get_referer()); //getting the referring URL
-      $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
-      $path = explode("/", $url['path']); // splitting the path
-      $slug = end($path); // get the value of the last element
+<?php //set the 'backlink' text and link (only set on valid entries)
+      if($faire!=''){
+        $url = parse_url(wp_get_referer()); //getting the referring URL
+        $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
+        $path = explode("/", $url['path']); // splitting the path
+        $slug = end($path); // get the value of the last element
 
-      if($slug=='schedule'){
-        $backlink = wp_get_referer();
-        $backMsg = '&#65513; Back to the Schedule';
-      }else{
-        $backlink = "/".$faire."/meet-the-makers/";
-        $backMsg = '&#65513; Look for More Makers';
+        if($slug=='schedule'){
+          $backlink = wp_get_referer();
+          $backMsg = '&#65513; Back to the Schedule';
+        }else{
+          $backlink = "/".$faire."/meet-the-makers/";
+          $backMsg = '&#65513; Look for More Makers';
+        }
+        ?>
+        <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
+        <?php
       }
 
+      if(is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted'){
+        //display schedule/location information if there is any
+        if (!empty(display_entry_schedule($entryId))) {
+          display_entry_schedule($entryId);
+        }
 ?>
-      <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
+        <div class="page-header">
+          <h1><?php echo $project_title; ?>
+            <?php
+             //check if this entry has one any awards
+            $ribbons = checkForRibbons(0,$entryId);
+            echo $ribbons;
+            ?>
+          </h1>
+        </div>
 
-<?php
-      //display schedule/location information if there is any
-      if (!empty(display_entry_schedule($entryId))) {
-        display_entry_schedule($entryId);
+        <img class="img-responsive" src="<?php echo $project_photo; ?>" />
+        <p class="lead"><?php echo nl2br(make_clickable($project_short)); ?></p>
+
+        <?php
+        if (!empty($project_website)) {
+          echo '<a href="' . $project_website . '" class="btn btn-info pull-left" target="_blank" style="margin-right:15px;">Project Website</a>';
+        }
+        ?>
+
+        <!-- Button to trigger video modal -->
+        <?php
+        if (!empty($project_video)) {
+          echo '<a href="#entryModal" role="button" id="modalButton" class="btn btn-info" data-toggle="modal">Project Video</a>';
+        }
+        ?>
+        <br />
+
+        <!-- Video Modal -->
+        <div id="entryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel"><?php echo $entry['151']; ?></h3>
+          </div>
+          <div class="modal-body">
+            <?php
+            $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
+            //youtube has two type of url formats we need to look for and change
+            $videoID = parse_yturl($dispVideo);
+            if($videoID!=''){
+              $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
+            }
+            ?>
+            <input id="entryVideo" type="hidden" value="<?php echo $dispVideo; ?>" />
+            <iframe width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+          </div>
+        </div>
+      <div class="clearfix">&nbsp;</div>
+      <div class="clearfix">&nbsp;</div>
+      <?php if($formType!='Sponsor' && $formType != 'Startup Sponsor'){ ?>
+        <h2>
+        <?php
+          if ($isGroup)
+            echo 'Group';
+          elseif($isList)
+            echo 'Makers';
+          else
+            echo 'Maker';
+        ?>
+        </h2>
+        <hr />
+        <?php
+        if ($isGroup) {
+          echo '<div class="row center-block">
+                  ',(!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
+          echo    '<div class="col-md-5">
+                    <h3 style="margin-top: 0px;">' . $groupname . '</h3>
+                    <p>' . make_clickable($groupbio) . '</p>
+                  </div>
+                </div>';
+        } else {
+          foreach($makers as $maker) {
+            if($maker['firstname'] !='' && $maker['lastname'] !=''){
+              echo '<div class="row center-block">
+                      ',(!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
+              echo    '<div class="col-md-5">
+                        <h3 style="margin-top: 0px;">' . $maker['firstname'] . ' ' . $maker['lastname'] . '</h3>
+                        <p>' . make_clickable($maker['bio']) . '</p>
+                      </div>
+                    </div>';
+            }
+          }
+        }
       }
-?>
-<?php if($entry['status']=='active' && $entry[303]=='Accepted'){ ?>
-      <div class="page-header">
-        <h1><?php echo $project_title; ?>
-          <?php
-           //check if this entry has one any awards
-          $ribbons = checkForRibbons(0,$entryId);
-          echo $ribbons;
-          ?>
-        </h1>
-      </div>
 
-      <img class="img-responsive" src="<?php echo $project_photo; ?>" />
-      <p class="lead"><?php echo nl2br(make_clickable($project_short)); ?></p>
-
-      <?php
-      if (!empty($project_website)) {
-        echo '<a href="' . $project_website . '" class="btn btn-info pull-left" target="_blank" style="margin-right:15px;">Project Website</a>';
-      }
-      ?>
-
-      <!-- Button to trigger video modal -->
-      <?php
-      if (!empty($project_video)) {
-        echo '<a href="#entryModal" role="button" id="modalButton" class="btn btn-info" data-toggle="modal">Project Video</a>';
-      }
       ?>
       <br />
-
-      <!-- Video Modal -->
-      <div id="entryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h3 id="myModalLabel"><?php echo $entry['151']; ?></h3>
-        </div>
-        <div class="modal-body">
-          <?php
-          $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
-          //youtube has two type of url formats we need to look for and change
-          $videoID = parse_yturl($dispVideo);
-          if($videoID!=''){
-            $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
-          }
-          ?>
-          <input id="entryVideo" type="hidden" value="<?php echo $dispVideo; ?>" />
-          <iframe width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-        </div>
-      </div>
-	  <div class="clearfix">&nbsp;</div>
-    <div class="clearfix">&nbsp;</div>
-    <?php if($formType!='Sponsor' && $formType != 'Startup Sponsor'){ ?>
-      <h2>
       <?php
-        if ($isGroup)
-          echo 'Group';
-        elseif($isList)
-          echo 'Makers';
-        else
-          echo 'Maker';
-      ?>
-      </h2>
-      <hr />
-      <?php
-      if ($isGroup) {
-        echo '<div class="row center-block">
-                ',(!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
-        echo    '<div class="col-md-5">
-                  <h3 style="margin-top: 0px;">' . $groupname . '</h3>
-                  <p>' . make_clickable($groupbio) . '</p>
-                </div>
-              </div>';
-      } else {
-    		foreach($makers as $maker) {
-          if($maker['firstname'] !='' && $maker['lastname'] !=''){
-            echo '<div class="row center-block">
-                    ',(!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
-            echo    '<div class="col-md-5">
-                      <h3 style="margin-top: 0px;">' . $maker['firstname'] . ' ' . $maker['lastname'] . '</h3>
-                      <p>' . make_clickable($maker['bio']) . '</p>
-                    </div>
-                  </div>';
-          }
-    		}
+      echo display_groupEntries($entryId);
+      } else { //entry is not active
+        echo '<h2>Invalid entry</h2>';
       }
-    }
-
-    ?>
-    <br />
-    <?php
-    echo display_groupEntries($entryId);
-    } else { //entry is not active
-      echo '<h2>Invalid entry</h2>';
-    }
-    ?>
+      ?>
 
     </div><!--col-md-8-->
 
