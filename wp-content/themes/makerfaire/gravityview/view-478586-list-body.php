@@ -111,8 +111,19 @@ if( ! $total or !( is_user_logged_in() )) {
            * @param GravityView_View $this The GravityView_View instance
            */
           do_action( 'gravityview_entry_title_before', $entry, $this );
-
+          
+          if ($entry['form_id'] == '46') 
+          {
+            echo '<div style="background-color:#F4D03F; '
+            . 'padding:10px">The deadline has past to change resources and '
+                  . 'request space size changes. Additional requests can '
+                  . 'be directed to your Area Manager when you check-in at Maker Faire. '
+                  . 'You may still make updates to your details for the website and mobile app '
+                  . 'information. Any other changes will not be considered until you\'re onsite.</div>';
+          }
+          
           ?>
+          
           <div class="gv-list-view-title-maker-entry">
           <?php
             $entryData = array();
