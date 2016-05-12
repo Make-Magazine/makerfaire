@@ -29,7 +29,7 @@ $total_count = 0;
 $f = $wp_query->query_vars['f'];
 
 $sorting_criteria = array('key' => '151', 'direction' => 'ASC' );
-$paging_criteria = array('offset' => $offset, 'page_size' => $page_size );
+$paging_criteria  = array('offset' => $offset, 'page_size' => $page_size );
 
 //search by primary category
 //$search_criteria['field_filters'][] = array( '320' => '1', 'value' => $search_category);
@@ -250,13 +250,13 @@ $pages = ceil($total_count / $pagesize);
 	<nav>
 		<ul class="pagination pull-left">
 			<?php if ($current_page > 1) : ?>
-			<li <?php if ($current_page == 1) echo 'class = "disabled"'; ?>><a <?php if ($current_page == 1) echo 'class = "disabled"'; ?> href="<?php echo $current_url?>/<?php echo ($current_page == 1) ? $current_page.'#': $current_page-1; ?>">&laquo;</a></li>
+			<li <?php if ($current_page == 1) echo 'class = "disabled"'; ?>><a <?php if ($current_page == 1) echo 'class = "disabled"'; ?> href="<?php echo $current_url?>/<?php echo ($current_page == 1) ? $current_page.'#': $current_page-1; ?><?php echo '?faire='.$faire;?>">&laquo;</a></li>
 			<?php endif; ?>
 			<?php for($i = 1;$i <= $pages;$i++): ?>
 			<li  <?php if ($current_page == $i) echo 'class = "active"'; ?> ><a href="<?php echo $current_url?>/<?php echo $i.'?faire='.$faire;?>"><?php echo $i?></a></li>
 			<?php endfor;?>
 			<?php if ($current_page < $pages) : ?>
-			<li <?php if ($current_page == $pages) echo 'class = "disabled"'; ?>><a <?php if ($current_page == $pages) echo 'class = "disabled"'; ?> href="<?php echo $current_url?>/<?php echo ($current_page == $pages) ? $current_page.'#': $current_page+1;?>">&raquo;</a></li>
+			<li <?php if ($current_page == $pages) echo 'class = "disabled"'; ?>><a <?php if ($current_page == $pages) echo 'class = "disabled"'; ?> href="<?php echo $current_url?>/<?php echo ($current_page == $pages) ? $current_page.'#': $current_page+1;?><?php echo '?faire='.$faire;?>">&raquo;</a></li>
 			<?php endif; ?>
 
 		</ul>
