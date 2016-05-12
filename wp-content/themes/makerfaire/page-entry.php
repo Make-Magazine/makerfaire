@@ -305,7 +305,7 @@ function display_entry_schedule($entry_id) {
           $faire_end   = strtotime($faire_end);
 
           //tbd change this to be dynamically populated
-          echo '<td>Friday, Saturday and Sunday, '.date("F j",$faire_start).'-' . date("j",$faire_end).'</td>';
+          echo '<td>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</td>';
         }
         echo '<td>'.$row->area.'</td><td>'.($row->nicename!=''?$row->nicename:$row->subarea).'</td>';
         echo '</tr>';
