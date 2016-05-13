@@ -59,12 +59,14 @@
           function checkForValue(json, value) {
             for (var key in json) {
               if (typeof(json[key]) === 'object') {
-                return checkForValue(json[key], value);
+                checkForValue(json[key], value);
               } else if (typeof(json[key]) === 'string' && json[key].toLowerCase().match(value)) {
                 return true;
               }
+              
             }
             return false;
+            
           }
           return checkForValue(marker, faireFilters.search.toLowerCase());
         }

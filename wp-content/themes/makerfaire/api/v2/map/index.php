@@ -40,8 +40,8 @@ if ( $type == 'map' ) {
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
   }
 
-  $select_query = sprintf("
-    SELECT `ID`
+  $select_query = '
+    SELECT  `ID`
       , `annual`
       , `faire_shortcode`
       , `faire_name`
@@ -63,7 +63,7 @@ if ( $type == 'map' ) {
       , `venue_address_state`
       , `venue_address_country`
       , `venue_address_postal_code`
-      , `venue_address_region`, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state");
+      , `venue_address_region`, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state LIMIT 10';
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query ( $select_query );
 
@@ -87,7 +87,7 @@ if ( $type == 'map' ) {
     // REQUIRED: The venue name
     $point['ID']                        = $row['ID'];
     $point['name']                      = html_entity_decode(trim( $row['faire_name'] ));
-    $point['description']               = html_entity_decode(trim( $row['faire_location'] ));
+    $point['description']               = html_entity_decode(trim( $row['faire_name'] ));
     $point['category']                  = html_entity_decode(trim( $row['event_type'] ));
     $point['faire_shortcode']           = html_entity_decode(trim( $row['faire_shortcode'] ));
     $point['annual']                    = $row['annual'];
@@ -95,8 +95,9 @@ if ( $type == 'map' ) {
     $point['faire_year']                = $row['faire_year'];
     $point['event_type']                = html_entity_decode(trim( $row['event_type'] ));
     $point['event_dt']                  = html_entity_decode(trim( $row['event_dt'] ));
-    $point['event_start_dt']            = html_entity_decode(trim( $row['event_start_dt'] ));
-    $point['event_end_dt']              = html_entity_decode(trim( $row['event_end_dt'] ));
+    
+    $point['event_start_dt']            = date('m/d/Y h:i:s a', strtotime($row['event_start_dt']));
+    $point['event_end_dt']              = date('m/d/Y h:i:s a', strtotime($row['event_end_dt']));
     $point['cfm_start_dt']              = html_entity_decode(trim( $row['cfm_start_dt'] ));
     $point['cfm_end_dt']                = html_entity_decode(trim( $row['cfm_end_dt'] ));
     $point['cfm_url']                   = html_entity_decode(trim( $row['cfm_url'] ));
@@ -112,7 +113,6 @@ if ( $type == 'map' ) {
     // Get the child locations
     $point['lat']                       = $row['lat'];
     $point['lng']                       = $row['lng'];
-
     // Put the maker into our list of makers
     array_push($points, $point);
   }
@@ -123,4 +123,28 @@ if ( $type == 'map' ) {
   echo json_encode( $merged );
 
   exit;
+}
+
+
+function JSdate($in,$type){
+    if($type=='date'){
+        //Dates are patterned 'yyyy-MM-dd'
+        preg_match('/(\d{4})-(\d{2})-(\d{2})/', $in, $match);
+    } elseif($type=='datetime'){
+        //Datetimes are patterned 'yyyy-MM-dd hh:mm:ss'
+        preg_match('/(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2}):(\d{2})/', $in, $match);
+    }
+     
+    $year = (int) $match[1];
+    $month = (int) $match[2] - 1; // Month conversion between indexes
+    $day = (int) $match[3];
+     
+    if ($type=='date'){
+        return "Date($year, $month, $day)";
+    } elseif ($type=='datetime'){
+        $hours = (int) $match[4];
+        $minutes = (int) $match[5];
+        $seconds = (int) $match[6];
+        return "Date($year, $month, $day, $hours, $minutes, $seconds)";    
+    }
 }

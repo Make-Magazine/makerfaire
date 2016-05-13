@@ -123,7 +123,7 @@
               <td>{{row.category}}</td>
               <td>{{row.event_dt}}</td>
               <td>
-                <a ng-if="row.faire_url" href="{{row.faire_url}}">{{row.name}}</a>
+                <a target="_blank" ng-if="row.faire_url" href="{{row.faire_url}}">{{row.name}}</a>
                 <span ng-if="!row.faire_url">{{row.name}}</span>
               </td>
               <td>

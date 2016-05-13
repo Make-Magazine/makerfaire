@@ -119,7 +119,7 @@
               (this.dataRowSrc.event_dt || '') +
               '</p><p>' +
               (this.dataRowSrc.faire_url &&
-                '<a href="' + this.dataRowSrc.faire_url + '" target="blank">' + this.dataRowSrc.faire_url + '</a>' || '') +
+                '<a href="' + this.dataRowSrc.faire_url + '" target="_blank">' + this.dataRowSrc.faire_url + '</a>' || '') +
               '</p></div>' +
               '</div>'
             );
