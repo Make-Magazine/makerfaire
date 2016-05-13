@@ -63,7 +63,7 @@ if ( $type == 'map' ) {
       , `venue_address_state`
       , `venue_address_country`
       , `venue_address_postal_code`
-      , `venue_address_region`, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state LIMIT 10';
+      , `venue_address_region`, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state';
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query ( $select_query );
 
