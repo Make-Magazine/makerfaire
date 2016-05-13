@@ -7,8 +7,7 @@
         <h1>Faires around the world</h1>
       </div>
     </div>
-
-    <div class="map-filters-wrp">
+ <nav class="map-filters-wrp affix-bottom" data-spy="affix" data-offset-top="210">
       <div class="container">
         <div class="col-md-12">
           <div class="searchbox">
@@ -39,7 +38,7 @@
           </div>
         </div>
       </div>
-    </div>
+ </nav>
     <div class="container">
       <div class="col-md-12">
         <div class="loading-spinner" ng-if="!$ctrl.faireMarkers">
