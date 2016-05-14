@@ -94,7 +94,9 @@ function createOutput($entry_id,$pdf){
 
 
     //field 22 - QRCode
-    $project_photo = 'https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl='.urlencode('http://www.makerfaire.com/maker/entry/'.$entry_id.'/');
+    $token=base64_encode($entry_id.wp_salt());
+    $onsitecheckinurl='http://makerfaire.com/onsitecheckin/'.$token.'/';
+    $project_photo = 'https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl='.urlencode($onsitecheckinurl);
     $pdf->Image($project_photo,7,80,null,null,image_type_to_extension(IMAGETYPE_PNG,false));
 
     //qr text

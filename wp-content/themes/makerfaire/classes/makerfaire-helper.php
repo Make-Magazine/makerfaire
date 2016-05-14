@@ -407,3 +407,29 @@ function remove_admin_bar() {
     add_filter('show_admin_bar', '__return_false');
   }
 }
+
+/* Rewrite Rules */
+add_action('init', 'onsitecheckin_rewrite_rules');
+function onsitecheckin_rewrite_rules() {
+    add_rewrite_rule( 'onsitecheckin/?([^/]*)', 'index.php?onsitecheckin=true&token=$matches[1]', 'top' );
+}
+/* Query Vars */
+add_filter( 'query_vars', 'onsitecheckin_register_query_var' );
+function onsitecheckin_register_query_var( $vars ) {
+    $vars[] = 'onsitecheckin';
+    $vars[] = 'token';
+    return $vars;
+}
+/* Template Include */
+add_filter('template_include', 'onsitecheckin_include', 1, 1); 
+function onsitecheckin_include($template)
+{
+    global $wp_query; //Load $wp_query object
+    $page_value = $wp_query->query_vars['onsitecheckin']; //Check for query var "blah"
+
+    if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-maker-checkin.php'; //Load your template or file
+    }
+
+    return $template; //Load normal template when $page_value != "true" as a fallback
+}

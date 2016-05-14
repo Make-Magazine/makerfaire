@@ -1,12 +1,15 @@
+<?php /** Template Name: Maker Checkin */?>
 <?php get_header(); 
+
 
 //determine the parent page slug
  $par_post = get_post($post->post_parent);
  $slug = $par_post->post_name;
- 
- $entryID = (isset($_GET['entryID'])?$_GET['entryID']:'');
- 
- 
+ $entryID = (isset($wp_query->query_vars['token'])?$wp_query->query_vars['token']:'');
+ $token=$entryID.wp_salt();
+ $encodedtoken=base64_encode($token);
+ $decodedtoken=str_replace(wp_salt(),"",base64_decode($encodedtoken));
+ $entryID = $decodedtoken;
 ?>
 
 <div class="clear"></div>
@@ -17,13 +20,8 @@
 
 		<div class="content col-md-8">
 
-			<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
-				<article <?php post_class(); ?>>
-
-					<!--<p class="categories"><?php the_category(', '); ?></p>-->
-
-					<?php /*<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1> */ ?>
+      <h1>The entryid IS:<?php echo str_replace(wp_salt(),"",$token); ?></h1>
 
 					<?php /*<p class="meta top">By <?php the_author_posts_link(); ?>, <?php the_time('Y/m/d \@ g:i a') ?></p> */ ?>
                                         <?php
@@ -42,8 +40,7 @@
                                           echo '<h2>Thank you for your submission</h2>';
                                         }else{
                                             ?>
-                                            <?php the_content(); ?>
-
+                                            
                                             <div class="clear"></div>
                                             <p>Hello <?php echo $entryID; ?>,<br/><br/>
                                             Please wait while we get your location.    
@@ -100,30 +97,9 @@
 					<?php 
                                         }
                                        ?>
-
-				</article>
-
-			<?php endwhile; ?>
-
-				<ul class="pager">
-
-					<li class="previous"><?php previous_posts_link('&larr; Previous Page'); ?></li>
-					<li class="next"><?php next_posts_link('Next Page &rarr;'); ?></li>
-
-				</ul>
-
-			<?php else: ?>
-
-				<p><?php _e('Sorry, no posts matched your criteria.'); ?></p>
-
-			<?php endif; ?>
-
-		</div><!--Content-->
-
-		<?php //get_sidebar(); ?>
-
-	</div>
-
-</div><!--Container-->
+                                            
+</div><!--content-->
+</div><!--row-->
+</div><!--container-->
 
 <?php get_footer(); ?>
