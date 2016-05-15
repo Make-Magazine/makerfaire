@@ -2699,3 +2699,45 @@ function  createExportLink($atts){
 }
 
 add_shortcode( 'mfExportLink', 'createExportLink' );
+
+//function to create table tags by faire
+function genTableTags($faire) {
+  global $wpdb;
+  //error_log('faire is '.$faire);
+  //find the exhibit and sponsor forms by faire
+  $sql = "select form_ids from wp_mf_faire where faire='".$faire."'";
+  $formIds = $wpdb->get_var($sql);
+  //remove any spaces
+  $formIds = str_replace(' ', '', $formIds);
+  $forms = explode(",", $formIds);
+  foreach($forms as $formId){
+
+    $form = GFAPI::get_form($formId);
+    if($form['form_type']=='Exhibit' || $form['form_type']=='Sponsor' || $form['form_type']=='Startup Sponsor'){
+      $sql = "SELECT wp_rg_lead.id as lead_id, wp_rg_lead_detail.value as lead_status "
+          . " FROM `wp_rg_lead`, wp_rg_lead_detail"
+          . " where status='active' and field_number=303 and lead_id = wp_rg_lead.id"
+          . "   and wp_rg_lead_detail.value!='Rejected' and wp_rg_lead_detail.value!='Cancelled'"
+          . "   and wp_rg_lead.form_id=".$formId;
+      $results = $wpdb->get_results($sql);
+
+      echo 'Form - '.$formId;
+      echo  '('.$wpdb->num_rows . ' entries)';
+      echo '<div class="container"><div class="row">';
+      foreach($results as $entry){
+        $entry_id = $entry->lead_id;
+
+        ?>
+        <div class="col-md-2">
+          <a class="fairsign" target="_blank" id="<?php echo $entry_id;?>" href="/wp-content/themes/makerfaire/fpdi/tabletag.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire;?>"><?php echo $entry_id;?></a>
+        </div>
+        <?php
+
+      }
+      echo '</div></div>';
+
+    }
+  }
+}
+
+add_action( 'gen_table_tags', 'genTableTags', 10, 1 );

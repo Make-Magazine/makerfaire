@@ -38,12 +38,14 @@ $pdf->SetAutoPageBreak(false);
 if(isset($_GET['eid']) && $_GET['eid']!=''){
   $faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire']:'');
   $entryid = sanitize_text_field($_GET['eid']);
-  createOutput($entryid, $pdf);
+  $fileName = createOutput($entryid, $pdf);
   if(isset($_GET['type']) && $_GET['type']=='download'){
     if (ob_get_contents()) ob_clean();
     $pdf->Output($entryid.'-tabletag.pdf', 'D');
   }elseif(isset($_GET['type']) && $_GET['type'] == 'save'){
-    $filename = TEMPLATEPATH.'/tabletags/'.$faire.'/'.$entryid.'-tabletag.pdf';
+    global $locName; global $area;
+    //file name is zone-location-entryid
+    $filename = TEMPLATEPATH.'/tabletags/'.$faire.'/'.$fileName;
     $dirname = dirname($filename);
     if (!is_dir($dirname)){
       mkdir($dirname, 0755, true);
@@ -92,7 +94,6 @@ function createOutput($entry_id,$pdf){
     $pdf->MultiCell(0, $lineHeight, $project_title,0,'C');
 
 
-
     //field 22 - QRCode
     $token=base64_encode($entry_id.wp_salt());
     $onsitecheckinurl='http://makerfaire.com/onsitecheckin/'.$token.'/';
@@ -114,7 +115,10 @@ function createOutput($entry_id,$pdf){
     $locTable = retSubAreaByEntry($entry_id);
     $disp = '';
     foreach($locTable as $location){
-      $disp .= $location['area'].': '.($location['nicename']!=''?$location['nicename']:$location['subarea']).': '.$location['location'];
+      $area    = $location['area'];
+      $locName = ($location['location']!=''?$location['location']:($location['nicename']!=''?$location['nicename']:$location['subarea']));
+      $fileName = $area . '-' . $locName. '-'.$entry_id.'.pdf';
+      $disp   .= $location['area'].': '.($location['nicename']!=''?$location['nicename']:$location['subarea']).': '.$location['location'];
     }
 
     $pdf->SetXY(100, 85);
@@ -139,6 +143,7 @@ function createOutput($entry_id,$pdf){
       $disp .= $resource['item'] . ' - ' .$resource['type'].': '. $resource['qty']."\n";
     }
     $pdf->MultiCell(0, $lineHeight, $disp,0,'R');
+    return $fileName;
 }
 
 function filterText($text){
