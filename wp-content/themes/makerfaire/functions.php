@@ -2714,16 +2714,16 @@ function genTableTags($faire) {
 
     $form = GFAPI::get_form($formId);
     if($form['form_type']=='Exhibit' || $form['form_type']=='Sponsor' || $form['form_type']=='Startup Sponsor'){
-      echo 'Form - '.$formId;
-      echo '<div class="container"><div class="row">';
-
       $sql = "SELECT wp_rg_lead.id as lead_id, wp_rg_lead_detail.value as lead_status "
           . " FROM `wp_rg_lead`, wp_rg_lead_detail"
           . " where status='active' and field_number=303 and lead_id = wp_rg_lead.id"
           . "   and wp_rg_lead_detail.value!='Rejected' and wp_rg_lead_detail.value!='Cancelled'"
           . "   and wp_rg_lead.form_id=".$formId;
       $results = $wpdb->get_results($sql);
+
+      echo 'Form - '.$formId;
       echo  '('.$wpdb->num_rows . ' entries)';
+      echo '<div class="container"><div class="row">';
       foreach($results as $entry){
         $entry_id = $entry->lead_id;
 
