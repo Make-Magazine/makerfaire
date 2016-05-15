@@ -14,8 +14,8 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {
 	
 	$request = json_decode ( file_get_contents ( 'php://input' ) );
 	$result = readWithAssociation ( $faire_id, '' );
-	echo json_encode ( $result ['data'], JSON_NUMERIC_CHECK );
-	
+  $jsonencodedresults= safe_json_encode ( $result ['data']);
+  echo $jsonencodedresults;
 	exit ();
 }
 elseif ($_SERVER ['REQUEST_METHOD'] == 'POST') {
@@ -51,8 +51,7 @@ elseif ($_SERVER ['REQUEST_METHOD'] == 'POST') {
 		default :
 			break;
 	}
-
-	echo json_encode ( $result, JSON_NUMERIC_CHECK );
+  echo safe_json_encode ( $result, JSON_NUMERIC_CHECK );
 
 	exit ();
 }
@@ -189,9 +188,10 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 	$total = 0;
 	$result = $mysqli->query ( $select_query );
 	$schedule_entries = array ();
-	if ($result) {
+  
+  if ($result) {
 		while ( $row = $result->fetch_assoc () ) {
-			$total ++;
+      $total ++;
 			// order entries by subarea(stage), then date
 			$stage = $row ['subarea_id'];
 			$start_dt =  new DateTime(@$row ['start_dt']);
@@ -236,7 +236,6 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 		echo ('Error :' . $select_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
 	}
 	
-	
 	return $schedule_entries;
 }
 /* Modify Set Entry Status */
@@ -272,10 +271,46 @@ function readWithAssociation($faire_id, $subarea_id) {
 	$result = array ();
 	$total = 0;
 	$schedule_entries = read_schedule ( $faire_id, $subarea_id, $total );
-	$result ['total'] = $total;
+  $result ['total'] = $total;
 	$result ['data'] = $schedule_entries;
-	
 	return $result;
 }
 
+
+function safe_json_encode($value){
+    if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+        $encoded = json_encode($value, JSON_PRETTY_PRINT);
+    } else {
+        $encoded = json_encode($value);
+    }
+    switch (json_last_error()) {
+        case JSON_ERROR_NONE:
+            return $encoded;
+        case JSON_ERROR_DEPTH:
+            return 'Maximum stack depth exceeded'; // or trigger_error() or throw new Exception()
+        case JSON_ERROR_STATE_MISMATCH:
+            return 'Underflow or the modes mismatch'; // or trigger_error() or throw new Exception()
+        case JSON_ERROR_CTRL_CHAR:
+            return 'Unexpected control character found';
+        case JSON_ERROR_SYNTAX:
+            return 'Syntax error, malformed JSON'; // or trigger_error() or throw new Exception()
+        case JSON_ERROR_UTF8:
+            $clean = utf8ize($value);
+            return safe_json_encode($clean);
+        default:
+            return 'Unknown error'; // or trigger_error() or throw new Exception()
+
+    }
+}
+
+function utf8ize($mixed) {
+    if (is_array($mixed)) {
+        foreach ($mixed as $key => $value) {
+            $mixed[$key] = utf8ize($value);
+        }
+    } else if (is_string ($mixed)) {
+        return utf8_encode($mixed);
+    }
+    return $mixed;
+}
 ?>
