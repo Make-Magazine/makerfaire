@@ -2723,10 +2723,9 @@ function genTableTags($faire) {
           . "   and wp_rg_lead_detail.value!='Rejected' and wp_rg_lead_detail.value!='Cancelled'"
           . "   and wp_rg_lead.form_id=".$formId;
       $results = $wpdb->get_results($sql);
-
+      echo  '('.$wpdb->num_rows . ' entries)';
       foreach($results as $entry){
         $entry_id = $entry->lead_id;
-        //$entry_id = $entry['id'];
 
         ?>
         <div class="col-md-2">
