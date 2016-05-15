@@ -134,29 +134,3 @@ function retResByEntry($entry_id) {
 }
 
 
-//function to create table tags by faire
-function genTableTags($faire) {
-  global $wpdb;
-  //error_log('faire is '.$faire);
-  //find the exhibit and sponsor forms by faire
-  $sql = "select form_ids from wp_mf_faire where faire='".$faire."'";
-  $formIds = $wpdb->get_var($sql);
-  //remove any spaces
-  $formIds = str_replace(' ', '', $formIds);
-  $forms = explode(",", $formIds);
-  foreach($forms as $formId){
-    //error_log($formId .' is a type of '.$form['form_type'] );
-    $form = GFAPI::get_form($formId);
-    if($form['form_type']=='Exhibit' || $form['form_type']=='Sponsor' || $form['form_type']=='Startup Sponsor'){
-      $search_criteria['status'] = 'active';
-      $entries         = GFAPI::get_entries( $formId, $search_criteria );
-      foreach($entries as $entry){
-        $url = TEMPLATEPATH.'/fpdi/tabletag.php?eid='.$entry['id'].'&faire='.$faire.'&type=save';
-        error_log($url);
-        file_get_contents($url);
-      }
-    }
-  }
-}
-
-add_action( 'gen_table_tags', 'genTableTags', 10, 1 );
