@@ -6,7 +6,7 @@
  $par_post = get_post($post->post_parent);
  $slug = $par_post->post_name;
  $token = (isset($wp_query->query_vars['token'])?$wp_query->query_vars['token']:'');
- $decodedtoken=str_replace(wp_salt(),"",base64_decode($token));
+ $decodedtoken=base64_decode($token);
  $entryID = $decodedtoken;
 ?>
 
