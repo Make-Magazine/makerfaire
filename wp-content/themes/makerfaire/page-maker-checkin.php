@@ -5,10 +5,8 @@
 //determine the parent page slug
  $par_post = get_post($post->post_parent);
  $slug = $par_post->post_name;
- $entryID = (isset($wp_query->query_vars['token'])?$wp_query->query_vars['token']:'');
- $token=$entryID.wp_salt();
- $encodedtoken=base64_encode($token);
- $decodedtoken=str_replace(wp_salt(),"",base64_decode($encodedtoken));
+ $token = (isset($wp_query->query_vars['token'])?$wp_query->query_vars['token']:'');
+ $decodedtoken=str_replace(wp_salt(),"",base64_decode($token));
  $entryID = $decodedtoken;
 ?>
 
@@ -21,7 +19,7 @@
 		<div class="content col-md-8">
 
 
-      <h1>The entryid IS:<?php echo str_replace(wp_salt(),"",$token); ?></h1>
+      <h1>The entryid IS:<?php echo $entryID; ?></h1>
 
 					<?php /*<p class="meta top">By <?php the_author_posts_link(); ?>, <?php the_time('Y/m/d \@ g:i a') ?></p> */ ?>
                                         <?php
