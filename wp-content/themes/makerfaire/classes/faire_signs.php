@@ -99,7 +99,7 @@ if(isset($_POST['printForm'])){
                    data: { eid: jQuery(this).attr('id'), type: 'save', faire: formFaire },
                 }).done(function(data) {
                   jQuery('#'+data).html(data+ ' Created');
-                  jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/signs/"+formFaire+"/"+data+'.pdf')
+                  jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/<?php echo ($type == 'tabletags'?'tabletags':'signs');?>/"+formFaire+"/"+data+'.pdf')
                 });
 
             });
