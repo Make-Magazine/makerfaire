@@ -46,6 +46,7 @@ if(isset($_GET['eid']) && $_GET['eid']!=''){
     global $locName; global $area;
     //file name is zone-location-entryid
     $filename = TEMPLATEPATH.'/tabletags/'.$faire.'/'.$fileName;
+
     $dirname = dirname($filename);
     if (!is_dir($dirname)){
       mkdir($dirname, 0755, true);
@@ -114,16 +115,16 @@ function createOutput($entry_id,$pdf){
      */
     $locTable = retSubAreaByEntry($entry_id);
     $disp = '';
+    $fileName = $area = $locName = '';
     foreach($locTable as $location){
       $area    = $location['area'];
       $locName = ($location['location']!=''?$location['location']:($location['nicename']!=''?$location['nicename']:$location['subarea']));
-      
-      $fileName = '';
-      if($area!='')     $fileName .= $area .'-';
-      if($locName!='')  $fileName .= $locName .'-';
-      $fileName .= $entry_id.'.pdf';
       $disp   .= $location['area'].': '.($location['nicename']!=''?$location['nicename']:$location['subarea']).': '.$location['location'];
     }
+
+    if($area!='')     $fileName .= $area .'-';
+    if($locName!='')  $fileName .= $locName .'-';
+    $fileName .= $entry_id.'.pdf';
 
     $pdf->SetXY(100, 85);
     $pdf->SetFont( 'Benton Sans','B',14);
