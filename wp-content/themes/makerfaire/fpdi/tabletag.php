@@ -119,7 +119,7 @@ function createOutput($entry_id,$pdf){
     foreach($locTable as $location){
       $area    = $location['area'];
       $locName = ($location['location']!=''?$location['location']:($location['nicename']!=''?$location['nicename']:$location['subarea']));
-      $disp   .= $location['area'].': '.($location['nicename']!=''?$location['nicename']:$location['subarea']).': '.$location['location'];
+      $disp   = $location['area'].': '.($location['nicename']!=''?$location['nicename']:$location['subarea']).': '.$location['location'];
     }
 
     if($area!='')     $fileName .= $area .'-';
