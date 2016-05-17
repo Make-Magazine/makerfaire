@@ -428,7 +428,7 @@ function onsitecheckin_include($template)
     $page_value = $wp_query->query_vars['onsitecheckin']; //Check for query var "blah"
 
     if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
-        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-maker-checkin.php'; //Load your template or file
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-onsite-checkin.php'; //Load your template or file
     }
 
     return $template; //Load normal template when $page_value != "true" as a fallback
