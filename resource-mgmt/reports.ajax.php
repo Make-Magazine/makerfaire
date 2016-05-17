@@ -146,12 +146,12 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
         }
         if($type=='resource'){
           if($selRMT->id!='all'){
-            $sql = 'SELECT qty,type FROM `wp_rmt_entry_resources`, wp_rmt_resources '
+            $sql = 'SELECT qty,type,comment FROM `wp_rmt_entry_resources`, wp_rmt_resources '
                     . ' where resource_id = wp_rmt_resources.ID and'
                     . ' resource_category_id = '.$selRMT->id .' and'
                     . ' entry_id ='.$entryID;
           }else{
-            $sql = 'SELECT qty, concat(type, " ", wp_rmt_resource_categories.category) as type '
+            $sql = 'SELECT qty, concat(type, " ", wp_rmt_resource_categories.category) as type, comment '
                   . 'FROM `wp_rmt_entry_resources`, wp_rmt_resources, wp_rmt_resource_categories '
                   . ' where resource_id = wp_rmt_resources.ID and'
                   . ' resource_category_id = wp_rmt_resource_categories.ID and'
@@ -162,7 +162,7 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
           $entryRes = array();
 
           foreach($resources as $resource){
-            $entryRes[] = $resource['qty'] .' : '.$resource['type'];
+            $entryRes[] = $resource['qty'] .' : '.$resource['type'].($resource['comment']!=''?" (".$resource['comment'].")":'');
           }
           $data['columnDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
           $entryData[$entryID]['res_'.$selRMT->id] = implode(', ',$entryRes);
