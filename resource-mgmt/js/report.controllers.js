@@ -60,6 +60,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     var formSelect     = $scope.reports.formSelect;
     var selectedFields = $scope.reports.selectedFields;
     var rmtData            = {};
+    rmtData['comments'] = $scope.reports.rmt.comment;
     angular.forEach($scope.reports.rmt, function(type, key) {
       build = [];
       angular.forEach(type,function(field){

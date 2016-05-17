@@ -126,13 +126,13 @@ function createOutput($entry_id,$pdf){
     if($locName!='')  $fileName .= $locName .'-';
     $fileName .= $entry_id.'.pdf';
 
-    $pdf->SetXY(100, 85);
+    $pdf->SetXY(100, 80);
     $pdf->SetFont( 'Benton Sans','B',14);
     $lineHeight = 14*0.2645833333333*1.3;
     $pdf->Cell( 0, 10, $disp, 0, 0, 'R' );
 
     //Resource information
-    $pdf->SetXY(100, 93);
+    $pdf->SetXY(100, 87);
     $pdf->SetFont('Benton Sans','',14);
     $lineHeight = 15*0.2645833333333*1.3;
     /* Return array of resource information for lead*/
