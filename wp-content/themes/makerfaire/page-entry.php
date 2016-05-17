@@ -289,7 +289,7 @@ function display_entry_schedule($entry_id) {
       <div class="faireActions">
         <span class="pull-right">
           <a class="flagship-icon-link" href="/wp-content/uploads/2016/05/MF16_Map_8x11.pdf">
-            <img class="actionIcon" src="/wp-content/uploads/2016/05/MF16_Map_8x11.jpg" width="40px" scale="0">
+            <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-map.png" width="40px" scale="0">
             Event Map
           </a>
         </span>
