@@ -44,11 +44,13 @@ get_header('version-2'); ?>
                   <h2 class="date-day-number <?php if( get_sub_field('multi_day')){echo "date-day-number-small";} ?>"><?php echo get_sub_field('date_day_number'); ?></h2>
                 </div>
               </div>
-              <div class="col-md-8 event-day-columns">
+              <?php $columns = (int) get_sub_field('column_count');?>
+              <div class="col-md-8 event-day-columns" style=" -webkit-column-count: <?php echo $columns;?>;-moz-column-count: <?php echo $columns;?>;column-count: <?php echo $columns;?>;">
                 <?php // check for rows (sub repeater)
                 if(have_rows('day_event_block')): ?>
                     <?php // loop through rows (sub repeater)
                     while(have_rows('day_event_block')): the_row();
+
                       ?>
                       <div class="day-event-block">
                         <h4 class="day-event-title"><?php the_sub_field('day_event_title'); ?></h4>

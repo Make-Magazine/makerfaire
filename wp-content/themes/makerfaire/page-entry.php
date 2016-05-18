@@ -288,7 +288,7 @@ function display_entry_schedule($entry_id) {
       <?php // TBD - dynamically set these links and images ?>
       <div class="faireActions">
         <span class="pull-right">
-          <a class="flagship-icon-link" href="/wp-content/uploads/2016/04/Maker-Faire-Bay-Area-2016-Map_8x11.pdf">
+          <a class="flagship-icon-link" href="/wp-content/uploads/2016/05/MF16_Map_8x11.pdf">
             <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-map.png" width="40px" scale="0">
             Event Map
           </a>

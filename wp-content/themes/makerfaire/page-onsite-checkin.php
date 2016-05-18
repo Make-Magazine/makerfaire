@@ -117,6 +117,12 @@ $project_title = (isset($entry['151']) ? (string) $entry['151'] : '');
               <input  id="longitude" name="longitude"  type="text" class="form-control" placeholder="latitude" aria-describedby="longitude-addon1">
             </div>
             <br />
+            <div class="pull-left flagship-icon-link">
+            <a class="flagship-icon-link" href="/app/">
+              <img src="/wp-content/uploads/2016/01/icon-mobile.png" width="40px" scale="0">
+              Download the Maker Faire App
+            </a>
+            </div>  
             <input type="submit" class="btn btn-primary btn-lg" role="button" Submit Location />
       
       </div>
