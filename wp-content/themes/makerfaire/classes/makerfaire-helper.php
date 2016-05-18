@@ -412,10 +412,12 @@ function remove_admin_bar() {
 add_action('init', 'onsitecheckin_rewrite_rules');
 function onsitecheckin_rewrite_rules() {
     add_rewrite_rule( 'onsitecheckin/?([^/]*)', 'index.php?onsitecheckin=true&token=$matches[1]', 'top' );
+    add_rewrite_rule( 'processonsitecheckin/?([^/]*)', 'index.php?processonsitecheckin=true&token=$matches[1]', 'top' );
 }
 /* Query Vars */
 add_filter( 'query_vars', 'onsitecheckin_register_query_var' );
 function onsitecheckin_register_query_var( $vars ) {
+    $vars[] = 'processonsitecheckin';
     $vars[] = 'onsitecheckin';
     $vars[] = 'token';
     return $vars;
@@ -429,6 +431,18 @@ function onsitecheckin_include($template)
 
     if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-onsite-checkin.php'; //Load your template or file
+    }
+
+    return $template; //Load normal template when $page_value != "true" as a fallback
+}
+add_filter('template_include', 'processonsitecheckin_include', 1, 1); 
+function processonsitecheckin_include($template)
+{
+    global $wp_query; //Load $wp_query object
+    $page_value = $wp_query->query_vars['processonsitecheckin']; //Check for query var "blah"
+
+    if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/php/process-onsite-checkin.php'; //Load your template or file
     }
 
     return $template; //Load normal template when $page_value != "true" as a fallback

@@ -5,20 +5,36 @@ wp_head();
 $token = (isset($wp_query->query_vars['token']) ? $wp_query->query_vars['token'] : '');
 $decodedtoken = base64_decode($token);
 $entryID = $decodedtoken;
+$entry = GFAPI::get_entry($entryID);
+$project_title = (isset($entry['151']) ? (string) $entry['151'] : '');
 ?>
 
 <script type="text/javascript">
   function getLocation() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
+      navigator.geolocation.getCurrentPosition(processPosition);
+      
     } else {
       x.innerHTML = "Geolocation is not supported by this browser.";
     }
   }
 
-  function showPosition(position) {
+  function processPosition(position) {
     jQuery('#latitude').val(position.coords.latitude);
     jQuery('#longitude').val(position.coords.longitude);
+    
+    
+    jQuery.ajax({
+        type: "POST",
+        url: "/processonsitecheckin/",
+        data: "entryID=" + jQuery('#entryID').val() + "&latitude=" + position.coords.latitude + "&longitude=" + position.coords.longitude,
+        success : function(text){
+            /*if (text == "success"){
+                formSuccess();
+            }*/
+            console.log(text);
+        }
+    });
 
     jQuery('#geotext').val();
     var output = '';
@@ -33,32 +49,35 @@ $entryID = $decodedtoken;
             'Timestamp: ' + position.timestamp;
     jQuery('#geotext').val(output);
     //var newtext = document.myform.geotext.value;
-    document.myform.geotext.value += output;
-
+    //document.myform.geotext.value += output;
+    
+    
+ 
+    
   }
 
   jQuery(window).load(function () {
     BootstrapDialog.confirm({
-      title: 'WARNING',
-      message: 'Are you Entry ID xx, Project Name xx?',
-      type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
-      closable: true, // <-- Default value is false
-      draggable: true, // <-- Default value is false
+      title: 'Welcome to MakerFaire! First Question...',
+      message: 'Are you <?= $entryID ?>, <?= $project_title ?>?',
+      type: BootstrapDialog.TYPE_INFO, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+      closable: false, // <-- Default value is false
+      draggable: false, // <-- Default value is false
       btnCancelLabel: 'No', // <-- Default value is 'Cancel',
       btnOKLabel: 'Yes', // <-- Default value is 'OK',
-      btnOKClass: 'btn-warning', // <-- If you didn't specify it, dialog type will be used,
+      btnOKClass: 'btn-info', // <-- If you didn't specify it, dialog type will be used,
       callback: function (result) {
         // result will be true if button was click, while it will be false if users close the dialog directly.
         if (result) {
           BootstrapDialog.confirm({
-            title: 'WARNING',
+            title: 'Next Question...',
             message: 'Are you standing in your location at Maker Faire Bay Area 2016?',
-            type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
-            closable: true, // <-- Default value is false
-            draggable: true, // <-- Default value is false
+            type: BootstrapDialog.TYPE_INFO, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+            closable: false, // <-- Default value is false
+            draggable: false, // <-- Default value is false
             btnCancelLabel: 'No', // <-- Default value is 'Cancel',
             btnOKLabel: 'Yes', // <-- Default value is 'OK',
-            btnOKClass: 'btn-warning', // <-- If you didn't specify it, dialog type will be used,
+            btnOKClass: 'btn-info', // <-- If you didn't specify it, dialog type will be used,
             callback: function (result) {
               // result will be true if button was click, while it will be false if users close the dialog directly.
               if (result) {
@@ -84,55 +103,23 @@ $entryID = $decodedtoken;
   <div class="row">
 
     <div id="entrygeolocate" class="content col-md-8">
+      <div class="jumbotron">
+        <h1>Welcome, <?= $entryID ?>!</h1>
 
-
-      <h1>The entryid IS:<?php echo $entryID; ?></h1>
-
-      <?php /* <p class="meta top">By <?php the_author_posts_link(); ?>, <?php the_time('Y/m/d \@ g:i a') ?></p> */ ?>
-      <?php
-      //form submitted? update database
-      if (isset($_POST['submit'])) {
-        $entryID = (isset($_POST['entryID']) && $_POST['entryID'] != '' ? $_POST['entryID'] : 0);
-        $latitude = (isset($_POST['latitude']) && $_POST['latitude'] != '' ? $_POST['latitude'] : 0);
-        $longitude = (isset($_POST['longitude']) && $_POST['longitude'] != '' ? $_POST['longitude'] : 0);
-        $geotext = (isset($_POST['geotext']) ? $_POST['geotext'] : '');
-        $comments = (isset($_POST['comments']) ? $_POST['comments'] : '');
-        //update the database with submitted info
-        $sql = "INSERT INTO `maker_checkin`(`entry_id`, `latitude`, `longitude`, `geotext`, `comments`) VALUES "
-                . "($entryID,$latitude,$longitude,'$geotext','$comments')";
-
-        $wpdb->get_results($sql);
-        echo '<h2>Thank you for your submission</h2>';
-      } else {
-        ?>
-
-        <div class="clear"></div>
-        <p>Hello <?php echo $entryID; ?>,<br/><br/>
-          Please wait while we get your location.    
-          <br/><br/>
-
-        <form id="geolocation" method="POST" action="">
           <input id="entryID"   name="entryID"   type="hidden" value ="<?php echo $entryID; ?>" />
-          Latitude: 
-          <input id="latitude"  name="latitude"  type="text" />
-          Longitude: 
-          <input id="longitude" name="longitude" type="text"  /><br/>
-          Text from GeoLocation: <br/>
-          <input style="width:500px;height:200px" type="textarea" rows="4" cols="50" id="geotext" name="geotext" /><br/>
-          Comments: <br/>
-          <input style="width:500px;height:200px"  type="textarea" rows="4" cols="50"id="comments" name="comments" /><br/>
-          <input type="submit" name="submit" value="Submit your location." />
-        </form>
-
-        <script>
-
-
-
-        </script>
-        <?php
-      }
-      ?>
-
+            <div class="input-group">
+              <span class="input-group-addon" id="latitude-addon1">latitude</span>
+              <input id="latitude" type="text" class="form-control" placeholder="latitude" aria-describedby="latitude-addon1">
+            </div>
+            <br />
+            <div class="input-group">
+              <span class="input-group-addon" id="longitude-addon1">longitude</span>
+              <input  id="longitude" name="longitude"  type="text" class="form-control" placeholder="latitude" aria-describedby="longitude-addon1">
+            </div>
+            <br />
+            <input type="submit" class="btn btn-primary btn-lg" role="button" Submit Location />
+      
+      </div>
     </div><!--content-->
   </div><!--row-->
 </div><!--container-->
