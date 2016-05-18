@@ -44,7 +44,7 @@ if (!empty($errors)) {
   $latitude = $_POST['latitude'];
   $longitude = $_POST['longitude'];
   
-  $sql = sprintf("INSERT INTO `wp_mf_onsitecheckin`(`entry_id`, `latitude`, `longitude`) VALUES "
+  $sql = sprintf("REPLACE INTO `wp_mf_onsitecheckin`(`entry_id`, `latitude`, `longitude`) VALUES "
           . " ( %s, %.10f, %.10f ) ", $entry_ID, $latitude, $longitude);
 
   $wpdb->get_results($sql);
