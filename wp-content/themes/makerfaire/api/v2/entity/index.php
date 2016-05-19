@@ -64,15 +64,18 @@ if ( $type == 'entity' ) {
             (select wp_mf_location.subarea_id
              from   wp_mf_location
              where  wp_mf_location.entry_id = entity.lead_id limit 1
-            ) as venue_id
-    FROM    `wp_mf_entity` entity, wp_rg_lead, wp_mf_faire
+            ) as venue_id,
+            wp_mf_onsitecheckin.latitude,
+            wp_mf_onsitecheckin.longitude
+    FROM    `wp_mf_entity` entity
+    JOIN wp_rg_lead on wp_rg_lead.id = entity.lead_id
+    JOIN wp_mf_faire on wp_mf_faire.faire  ='".strtolower($faire)."'
+    LEFT JOIN wp_mf_onsitecheckin ON wp_rg_lead.id = wp_mf_onsitecheckin.entry_id
     WHERE   entity.status = 'Accepted'
     AND 	LOWER(entity.faire)='".strtolower($faire)."'
-    AND   wp_mf_faire.faire  ='".strtolower($faire)."'
     AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
     and 	wp_rg_lead.status = 'active'
-    and   wp_rg_lead.id = entity.lead_id"
-                );
+    "            );
        //echo $select_query;
  	$mysqli->query("SET NAMES 'utf8'");
 
@@ -105,6 +108,10 @@ if ( $type == 'entity' ) {
 
 		// Application Locations
 		$app['venue_id_ref'] =  $row['venue_id'];
+      
+    // Attach the lat/long to the data feed
+		$app['latitude']	= ( isset( $row['latitude'] ) ) ? floatval( $row['latitude'] ) : '';
+		$app['longitude']	= ( isset( $row['longitude'] ) ) ? floatval( $row['longitude'] ) : '';
 
     // Mobile App Discover
 		$app['mobile_app_discover'] =  $row['mobile_app_discover'];
