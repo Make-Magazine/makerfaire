@@ -190,15 +190,15 @@ if( ! $total or !( is_user_logged_in() )) {
 
         if(!empty($entryData)){
         ?>
-          <div class="entryImg"><?php echo (isset($entry['22'])&& $entry['22']!=''?$entryData['22']:'<img src="'.get_template_directory_uri() .'/images/no-image.png" />');?></div>
+          <div class="entryImg hidden-xs"><?php echo (isset($entry['22'])&& $entry['22']!=''?$entryData['22']:'<img src="'.get_template_directory_uri() .'/images/no-image.png" />');?></div>
 
           <div class="entryData">
-            <div class="statusBox <?php echo $statusBlock;?>">
-              <div class="fleft"> <?php echo $entryData['faire_name'];?></div>
+            <div class="statusBox hidden-xs <?php echo $statusBlock;?>">
+              <div class="fleft hidden-xs"> <?php echo $entryData['faire_name'];?></div>
               <div class="fright statusText"><?php echo $entryData['303'];?></div>
             </div>
             <?php if ($entry['form_id']=='46') : ?>
-            <div style="background-color:#F4D03F; padding:10px">
+            <div class="hidden-xs" style="background-color:#F4D03F; padding:10px">
               The deadline has passed to change resources and request space size changes. 
               Additional requests can be directed to your Area Manager when you check-in at Maker Faire. 
               You may still make updates to your details for the website and mobile app information. 
