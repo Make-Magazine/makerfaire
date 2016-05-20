@@ -6,7 +6,7 @@ $token = (isset($wp_query->query_vars['token']) ? $wp_query->query_vars['token']
 $decodedtoken = base64_decode($token);
 $entryID = $decodedtoken;
 $entry = GFAPI::get_entry($entryID);
-$project_title = (isset($entry['151']) ? (string) $entry['151'] : '');
+$project_title = addslashes((isset($entry['151']) ? (string) $entry['151'] : ''));
 ?>
 
 <script type="text/javascript">
