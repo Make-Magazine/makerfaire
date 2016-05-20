@@ -70,7 +70,7 @@ get_header();
                 renderAuth0Form(true, array( "mode" => $mode));
             ?>
         </div>
-        <div class="col-md-offset-2">
+        <div class="col-md-offset-2 hidden-xs">
             <div> 
             <ul class="list-unstyled">
                 <li><?php echo $loginmessage; ?></li>
