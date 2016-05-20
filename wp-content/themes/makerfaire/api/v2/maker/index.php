@@ -80,8 +80,12 @@ if ( $type == 'maker' ) {
     $formType = $form['form_type'];
 
     //If the form is a sponsor set to null otherwise use 222.  See Manual categories in /category/index.php
-    $maker['category_id_refs'][] =  (strpos($formType, 'Sponsor') === false) ? '222' : null ;
-
+    if ((strpos($formType, 'Sponsor') === false)) 
+    {
+      $maker['category_id_refs'][] =  '222';
+      array_push( $makers, $maker );  
+    }
+    
 		// No longer have these
 		// Maker Thumbnail and Large Images
 		//$maker_image = isset($entry['217']) ? $entry['217']  : null;
@@ -100,7 +104,6 @@ if ( $type == 'maker' ) {
 		//$maker['website_url'] = ( ! empty( $maker_website ) ) ? esc_url( $maker_website ) : null;
 
 		// Put the maker into our list of makers
-		array_push( $makers, $maker );
 	}
 	// Merge the header and the entities
 	$merged = array_merge( $header, array( 'entity' => $makers ) );

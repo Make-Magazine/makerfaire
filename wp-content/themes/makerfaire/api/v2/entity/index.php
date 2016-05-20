@@ -111,7 +111,7 @@ if ( $type == 'entity' ) {
       
     // Attach the lat/long to the data feed
 		$app['latitude']	= ( isset( $row['latitude'] ) ) ? floatval( $row['latitude'] ) : '';
-		$app['longitude']	= ( isset( $row['longitude'] ) ) ? floatval( $row['longitude'] ) : '';
+		$app['longitude']	= ( isset( $row['longitude'] ) ) ? floatval( $row['longitude' ] ) : '';
 
     // Mobile App Discover
 		$app['mobile_app_discover'] =  $row['mobile_app_discover'];
