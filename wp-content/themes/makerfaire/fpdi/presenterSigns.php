@@ -80,21 +80,33 @@ function createOutput($entry_id,$pdf){
     $presentation_title = $row->presentation_title;
   }
     // Project ID
-    $pdf->SetFont('Benton Sans','',80);
-    $x = 80;    // set the starting font size
+    $pdf->SetFont('Benton Sans','B',49);
+    $x = 49;    // set the starting font size
     /* Cycle thru decreasing the font size until it's width is lower than the max width */
     while( $pdf->GetStringWidth( utf8_decode( $presenters)) > 700 ){
         $x--;   // Decrease the variable which holds the font size
-        $pdf->SetFont( 'Benton Sans','',$x);
+        $pdf->SetFont( 'Benton Sans','B',$x);
     }
 
     $lineHeight = $x*0.2645833333333*1.3;
-
-
     $pdf->setTextColor(160,0,0);
-    $pdf->SetXY(38, 155);
+
+    $presenterHeight = $pdf->GetStringWidth( utf8_decode( $presenters));
+
+    if($presenterHeight > 350){
+      $y1 =  45;
+      $y2 = 160;
+    }else{
+      $y1 =  55;
+      $y2 = 170;
+    }
+
+    $x = 38;
+
+    $pdf->SetXY($x, $y1);
     $pdf->MultiCell(355.6,$lineHeight, $presenters,0,'C');
-    $pdf->SetXY(38, 40);
+
+    $pdf->SetXY($x, $y2);
     $pdf->MultiCell(355.6,$lineHeight, $presenters,0,'C');
 
 
@@ -102,13 +114,13 @@ function createOutput($entry_id,$pdf){
     $pdf->setTextColor(0);
 
     //auto adjust the font so the text will fit
-    $x = 75;    // set the starting font size
-    $pdf->SetFont( 'Benton Sans','',75  );
+    $x = 49;    // set the starting font size
+    $pdf->SetFont( 'Benton Sans','B',49  );
 
     /* Cycle thru decreasing the font size until it's width is lower than the max width */
     while( $pdf->GetStringWidth( utf8_decode( $presentation_title)) > 600 ){
         $x--;   // Decrease the variable which holds the font size
-        $pdf->SetFont( 'Benton Sans','',$x);
+        $pdf->SetFont( 'Benton Sans','B',$x);
     }
     $lineHeight = $x*0.2645833333333*1.3;
 
