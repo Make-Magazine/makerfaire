@@ -80,20 +80,22 @@ function createOutput($entry_id,$pdf){
     $presentation_title = $row->presentation_title;
   }
     // Project ID
-    $pdf->SetFont('Benton Sans','B',55);
-    $x = 65;    // set the starting font size
+    $pdf->SetFont('Benton Sans','B',80);
+    $x = 80;    // set the starting font size
     /* Cycle thru decreasing the font size until it's width is lower than the max width */
-    while( $pdf->GetStringWidth( utf8_decode( $presenters)) > 355.6 ){
+    while( $pdf->GetStringWidth( utf8_decode( $presenters)) > 711 ){
         $x--;   // Decrease the variable which holds the font size
         $pdf->SetFont( 'Benton Sans','B',$x);
     }
 
     $lineHeight = $x*0.2645833333333*1.3;
+
+
     $pdf->setTextColor(160,0,0);
     $pdf->SetXY(38, 165);
     $pdf->MultiCell(355.6,$lineHeight, $presenters,0,'C');
-$pdf->SetXY(38, 50);
-$pdf->MultiCell(355.6,$lineHeight, $presenters,0,'C');
+    $pdf->SetXY(38, 50);
+    $pdf->MultiCell(355.6,$lineHeight, $presenters,0,'C');
 
 
     // Presentation Title
@@ -105,7 +107,7 @@ $pdf->MultiCell(355.6,$lineHeight, $presenters,0,'C');
     $pdf->SetFont( 'Benton Sans','B',80);
 
     /* Cycle thru decreasing the font size until it's width is lower than the max width */
-    while( $pdf->GetStringWidth( utf8_decode( $presentation_title)) > 355.6 ){
+    while( $pdf->GetStringWidth( utf8_decode( $presentation_title)) > 711 ){
         $x--;   // Decrease the variable which holds the font size
         $pdf->SetFont( 'Benton Sans','B',$x);
     }
