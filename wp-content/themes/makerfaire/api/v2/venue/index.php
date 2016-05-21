@@ -9,7 +9,7 @@
  * This page specifically handles the Venue data.
  *
  * @version 2.0
- * 
+ *
  * Read from location_elements
  */
 // Stop any direct calls to this file
@@ -22,7 +22,7 @@ if ($type == 'venue') {
 
   // Set the query args.
   /*
-   * 
+   *
     $args = array(
     'no_found_rows'  => true,
     'post_type' 	 => 'location',
@@ -40,25 +40,25 @@ if ($type == 'venue') {
   if ($mysqli->connect_errno) {
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
   }
-  $select_query = sprintf("select 
+  $select_query = sprintf("select
 		b.id as ID,
 		b.area as description,
 		group_concat(a.`id`  separator ',') as 'child_id_refs',
 		c.faire as faire,
     null as latitude,
     null as longitude
-		
+
                 from wp_mf_faire_subarea a
-		
+
                 join wp_mf_faire_area b on a.area_id=b.id
 		join wp_mf_faire c on b.faire_id=c.ID
-		
+
                 where c.faire= '$faire'
-             
+
 		group by b.id
 union all
 select c.id
-	,IFNULL(NULLIF(c.nicename,''),c.subarea) 
+	,concat(d.area,' ',c.subarea)
 	,(select group_concat( distinct CONCAT(a.subarea_id,'-',b.entry_id) separator ',')) as child_id_refs
 	,e.faire as faire
     ,null as latitude
@@ -67,12 +67,12 @@ from  wp_mf_location a
   left join `wp_mf_onsitecheckin` b on a.entry_id=b.entry_id
   join `wp_mf_faire_subarea` c on a.subarea_id=c.id
   join wp_mf_faire_area d on c.area_id=d.id
-  join wp_mf_faire e on d.faire_id=e.ID 
+  join wp_mf_faire e on d.faire_id=e.ID
   where faire = '$faire'
   group by a.subarea_id
-union all       
-select DISTINCT CONCAT(a.subarea_id,'-',b.entry_id) as ID
-	,CONCAT (d.area,' ',IFNULL(NULLIF(c.nicename,''),c.subarea),' (',b.entry_id,')')
+union all
+select CONCAT(d.area,' ',a.subarea_id,'-',b.entry_id) as ID
+	,CONCAT (d.area,' ',COALESCE(c.nicename,c.subarea))
 	,null as child_id_refs
 	,e.faire as faire
 	,b.latitude as latitude
@@ -81,8 +81,8 @@ from  wp_mf_location a
  join `wp_mf_onsitecheckin` b on a.entry_id=b.entry_id
  join `wp_mf_faire_subarea` c on a.subarea_id=c.id
  join wp_mf_faire_area d on c.area_id=d.id
- join wp_mf_faire e on d.faire_id=e.ID 
- where faire = '$faire' 
+ join wp_mf_faire e on d.faire_id=e.ID
+ where faire = '$faire'
              ");
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query($select_query);
