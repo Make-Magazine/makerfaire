@@ -90,10 +90,13 @@ function createOutput($entry_id,$pdf){
 
     $lineHeight = $x*0.2645833333333*1.3;
     $pdf->setTextColor(160,0,0);
-
+    $presenters = "Judy Castro, Terry & Belinda Kilby, Jillian & Jefferey Northrup, Kyrsten Mate & Jon Sarriugarte";
     $presenterHeight = $pdf->GetStringWidth( utf8_decode( $presenters));
-
-    if($presenterHeight > 350){
+//$presenters .= '-'.$presenterHeight;
+    if($presenterHeight > 700){
+      $y1 =  30;
+      $y2 = 145;
+    }elseif($presenterHeight > 350){
       $y1 =  45;
       $y2 = 160;
     }else{
