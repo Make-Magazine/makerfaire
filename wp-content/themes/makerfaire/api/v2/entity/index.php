@@ -47,7 +47,7 @@ if ( $type == 'entity' ) {
 	}
 
 	$select_query = sprintf("
-    SELECT  entity.lead_id,
+     SELECT  entity.lead_id,
             `entity`.`presentation_title`,
             `entity`.`desc_short` as Description,
             `entity`.`category` as `Categories`,
@@ -65,14 +65,18 @@ if ( $type == 'entity' ) {
              from   wp_mf_location
              where  wp_mf_location.entry_id = entity.lead_id limit 1
             ) as venue_id,
-            wp_mf_onsitecheckin.latitude,
-            wp_mf_onsitecheckin.longitude
+            IF(wp_mf_onsitecheckin.entry_id IS NOT NULL,
+             (select CONCAT(z.subarea_id,'-',z.entry_id)
+             from   wp_mf_location z
+             where  z.entry_id = entity.lead_id limit 1),null)
+            as pin_venue
+            
     FROM    `wp_mf_entity` entity
     JOIN wp_rg_lead on wp_rg_lead.id = entity.lead_id
-    JOIN wp_mf_faire on wp_mf_faire.faire  ='".strtolower($faire)."'
+    JOIN wp_mf_faire on wp_mf_faire.faire  ='$faire'
     LEFT JOIN wp_mf_onsitecheckin ON wp_rg_lead.id = wp_mf_onsitecheckin.entry_id
     WHERE   entity.status = 'Accepted'
-    AND 	LOWER(entity.faire)='".strtolower($faire)."'
+    AND 	LOWER(entity.faire)='$faire'
     AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
     and 	wp_rg_lead.status = 'active'
     "            );
@@ -107,12 +111,15 @@ if ( $type == 'entity' ) {
 		$app['large_img_url'] = esc_url( $app_image );
 
 		// Application Locations
-		$app['venue_id_ref'] =  $row['venue_id'];
+    if (!is_null($row['pin_venue']))
+    {
+    $app['venue_id_ref'] =  $row['pin_venue'];
+    }
+    else
+    {
+      $app['venue_id_ref']  =  $row['venue_id'];
+    }
       
-    // Attach the lat/long to the data feed
-		$app['latitude']	= ( isset( $row['latitude'] ) ) ? floatval( $row['latitude'] ) : '';
-		$app['longitude']	= ( isset( $row['longitude'] ) ) ? floatval( $row['longitude' ] ) : '';
-
     // Mobile App Discover
 		$app['mobile_app_discover'] =  $row['mobile_app_discover'];
 
