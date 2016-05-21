@@ -67,12 +67,12 @@ from  wp_mf_location a
   left join `wp_mf_onsitecheckin` b on a.entry_id=b.entry_id
   join `wp_mf_faire_subarea` c on a.subarea_id=c.id
   join wp_mf_faire_area d on c.area_id=d.id
-  join wp_mf_faire e on d.faire_id=e.ID
+  join wp_mf_faire e on d.faire_id=e.ID 
   where faire = '$faire'
   group by a.subarea_id
-union all
-select CONCAT(d.area,' ',a.subarea_id,'-',b.entry_id) as ID
-	,CONCAT (d.area,' ',COALESCE(c.nicename,c.subarea))
+union all       
+select DISTINCT CONCAT(a.subarea_id,'-',b.entry_id) as ID
+	,CONCAT (d.area,' ',IFNULL(NULLIF(c.nicename,''),c.subarea),' (',b.entry_id,')')
 	,null as child_id_refs
 	,e.faire as faire
 	,b.latitude as latitude
