@@ -71,8 +71,8 @@ from  wp_mf_location a
   where faire = '$faire'
   group by a.subarea_id
 union all       
-select DISTINCT CONCAT(a.subarea_id,'-',b.entry_id) as ID
-	,CONCAT (d.area,' ',IFNULL(NULLIF(c.nicename,''),c.subarea),' (',b.entry_id,')')
+select CONCAT(a.subarea_id,'-',a.entry_id) as ID
+	,CONCAT (d.area,' ',IFNULL(NULLIF(c.nicename,''),c.subarea),' (',a.entry_id,')')
 	,null as child_id_refs
 	,e.faire as faire
 	,b.latitude as latitude
