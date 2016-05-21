@@ -104,22 +104,22 @@ from  wp_mf_location a
     $venue['id'] = absint($row[0]);
 
     // REQUIRED: The venue name
-    $venue['name'] = html_entity_decode($row[3], ENT_COMPAT, 'utf-8');
+    $venue['name'] = html_entity_decode($row[1], ENT_COMPAT, 'utf-8');
 
     // Get the child locations
-    $venue['child_id_refs'] = explode(',', $row[4]);
+    $venue['child_id_refs'] = explode(',', $row[2]);
 
 
     // Get the description, if it exists.
-    $venue['description'] = html_entity_decode(trim(Markdown($row[3])), ENT_COMPAT, 'utf-8');
+    $venue['description'] = html_entity_decode(trim(Markdown($row[1])), ENT_COMPAT, 'utf-8');
 
     // Do we have a subtitle?
     //$venue['subtitle'] = ( $post->post_parent != 0 ) ? get_the_title( $post->post_parent ) : '';
     // Do we have lat/long?
     //$meta = get_post_meta( $post->ID );
     // Attach the lat/long to the data feed
-    //$venue['latitude']	= ( isset( $row[5] ) ) ? floatval( $row[5] ) : '';
-    //$venue['longitude']	= ( isset( $row[4] ) ) ? floatval( $row[4] ) : '';
+    $venue['latitude']	= ( isset( $row[4] ) ) ? floatval( $row[4] ) : '';
+    $venue['longitude']	= ( isset( $row[5] ) ) ? floatval( $row[5] ) : '';
     // They apparently changed the spec.
     //$venue['gps_lat']	= $venue['latitude'];
     //$venue['gps_long']	= $venue['longitude'];
