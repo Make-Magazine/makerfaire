@@ -66,7 +66,7 @@ if ( $type == 'entity' ) {
              where  wp_mf_location.entry_id = entity.lead_id limit 1
             ) as venue_id,
             IF(wp_mf_onsitecheckin.entry_id IS NOT NULL,
-             (select CONCAT(z.subarea_id,'-',z.entry_id)
+             (select CONCAT(z.subarea_id,z.entry_id)
              from   wp_mf_location z
              where  z.entry_id = entity.lead_id limit 1),null)
             as pin_venue
