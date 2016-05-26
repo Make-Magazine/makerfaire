@@ -20,7 +20,7 @@ if(get_field('sponsors_page_url'))
         </div>
         <div class="col-sm-5">
           <h5><a href="/sponsors">Become a sponsor</a></h5>
-          <h5><a href="/bay-area-2016/sponsors">All sponsors</a></h5>
+          <h5><a href="<?= $url ?>">All sponsors</a></h5>
         </div>
       </div>
       <div class="row">
