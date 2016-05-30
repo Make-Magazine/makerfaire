@@ -1304,6 +1304,8 @@ add_filter( 'gform_pre_render_82', 'populate_html' ); //NMF16 - FSP [form 82]
 add_filter( 'gform_pre_render_83', 'populate_html' ); //NMF16 - GSP [form 83]
 add_filter( 'gform_pre_render_84', 'populate_html' ); //NMF16 - shipping forms [84]
 
+add_filter( 'gform_pre_render_87', 'populate_html' ); //NFM16 CM payment form
+add_filter( 'gform_pre_render_85', 'populate_html' ); //NFM16 CM Non-Profit payment form
 
 /*
  * this logic is for page 2 of 'linked forms'
