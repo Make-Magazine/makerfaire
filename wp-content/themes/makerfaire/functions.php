@@ -159,7 +159,13 @@ function load_admin_scripts() {
   wp_enqueue_script('make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'));
   wp_enqueue_script('admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.js', array('jquery'));
   wp_enqueue_script('sack');
-
+  //custom scripts for national
+  $user = wp_get_current_user();
+  $is_national = ( in_array('national', (array) $user->roles) );
+  if ($is_national) {
+      wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsnationaladmin.js', array('jquery'), null);
+  }
+  
   //styles
   wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');

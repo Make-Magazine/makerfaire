@@ -1,7 +1,6 @@
 jQuery( document ).ready(function() {
   var $tableheader = jQuery('th#header');
 	var $tableheadentry = jQuery('th#details');
-  jQuery('#form_switcher').remove();
     
 	jQuery(function() {
     jQuery($tableheadentry).click(
