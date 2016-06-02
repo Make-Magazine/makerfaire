@@ -199,12 +199,12 @@ if( ! $total or !( is_user_logged_in() )) {
             </div>
             <?php if ($entry['form_id']=='46') : ?>
             <div class="hidden-xs" style="background-color:#F4D03F; padding:10px">
-              The deadline has passed to change resources and request space size changes. 
-              Additional requests can be directed to your Area Manager when you check-in at Maker Faire. 
-              You may still make updates to your details for the website and mobile app information. 
+              The deadline has passed to change resources and request space size changes.
+              Additional requests can be directed to your Area Manager when you check-in at Maker Faire.
+              You may still make updates to your details for the website and mobile app information.
               Any other changes will not be considered until you're onsite.</div>
             <?php endif; ?>
-            
+
             <h3 class="title"><?php echo $entryData['151'];?></h3>
             <div class="clear fleft entryID latReg"><?php echo $form_type.' '.$entryData['id'];?></div>
             <div class="clear">
@@ -224,7 +224,7 @@ if( ! $total or !( is_user_logged_in() )) {
                     </div>
                   </div>
                 </div>
-                <span class="btn-cyan" data-target="#getTickets<?php echo $entry['id'];?>" data-toggle="modal">Get Your Tickets</span>
+                <span class="btn-cyan" data-target="#getTickets<?php echo $entry['id'];?>" data-toggle="modal">Get Your Entry Passes</span>
                 <?php
               }
               ?>
