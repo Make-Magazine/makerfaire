@@ -59,16 +59,16 @@ function genEBtickets($entryID){
   //event brite event ID
   $EB_event_id   = (isset($faire[0]->EB_event_id) ? $faire[0]->EB_event_id:'');
 
-  //select ticketID FROM `eb_eventToTicket` where eventID = eb_event.ID and ticket_type = eb_ticket_type
   //determine what ticket types to request
-  $sql = 'select ticket_type, qty, hidden,
-          (select ticketID FROM `eb_eventToTicket`
-            where eventID = '.$event_id.' and
-                  eb_eventToTicket.ticket_type = eb_ticket_type.ticket_type) as ticket_id
-           from eb_ticket_type, wp_mf_form_types
-          where wp_mf_form_types.form_type="'.$form_type.'" and
-                eb_ticket_type.form_type = wp_mf_form_types.ID';
-
+  $sql = 'select  eb_ticket_type.ticket_type, qty, hidden,ticketID as ticket_id
+          from    eb_ticket_type
+                  left outer join eb_eventToTicket on
+                    eb_eventToTicket.eventID = '.$event_id.' and
+                    eb_eventToTicket.ticket_type = eb_ticket_type.ticket_type,
+                  wp_mf_form_types
+          where   wp_mf_form_types.form_type="'.$form_type.'" and
+                  eb_ticket_type.form_type = wp_mf_form_types.ID and
+                  ticketID is not null';
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     $eventbrite = new eventbrite();
@@ -83,7 +83,7 @@ function genEBtickets($entryID){
       $accessCode = $row->ticket_type.$entryID.$rand;
       //if this access Code has already been created, do not resend to EB
       $ACcount = $wpdb->get_var('select count(*) from eb_entry_access_code where access_code = "'.$accessCode .'"');
-      
+
       if($ACcount==0){
         $args = array(
           'id'   => $EB_event_id,
