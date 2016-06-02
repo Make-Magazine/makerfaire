@@ -66,9 +66,11 @@ function genEBtickets($entryID){
                     eb_eventToTicket.eventID = '.$event_id.' and
                     eb_eventToTicket.ticket_type = eb_ticket_type.ticket_type,
                   wp_mf_form_types
-          where   wp_mf_form_types.form_type="'.$form_type.'" and
+          where   wp_mf_form_types.form_type="'.$form_type.'"    and
+                  eb_ticket_type.event_id = '.$event_id.'        and
                   eb_ticket_type.form_type = wp_mf_form_types.ID and
                   ticketID is not null';
+  
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     $eventbrite = new eventbrite();
