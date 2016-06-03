@@ -29,6 +29,35 @@ if(get_field('sponsors_page_url'))
           <div id="carousel-sponsors-slider" class="carousel slide" data-ride="carousel">
             <!-- Wrapper for slides -->
             <div class="carousel-inner" role="listbox">
+
+              <!-- PLATINUM SPONSORS -->
+              <?php if( have_rows('platinum_sponsors', $id) ): ?>
+              <div class="item">
+                <div class="row spnosors-row">
+                  <div class="col-xs-12">
+                    <h3 class="sponsors-type text-center">Platinum</h3>
+                      <div class="sponsors-box">
+                      <?php
+                        while( have_rows('platinum_sponsors', $id) ): the_row();
+                          $sub_field_1 = get_sub_field('image'); //Photo
+                          $sub_field_2 = get_sub_field('url'); //URL
+
+                          echo '<div class="sponsors-box-md">';
+                          if( get_sub_field('url') ):
+                            echo '<a href="' . $sub_field_2 . '" target="_blank">';
+                          endif;
+                          echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+                          if( get_sub_field('url') ):
+                            echo '</a>';
+                          endif;
+                          echo '</div>';
+                        endwhile; ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <?php endif; ?>
+
               <!-- GOLDSMITH SPONSORS -->
               <?php if( have_rows('goldsmith_sponsors', $id) ): ?>
               <div class="item">
