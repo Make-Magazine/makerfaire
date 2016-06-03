@@ -19,7 +19,7 @@
             "min": "",
             "max": "",
             "layout": "table",
-            "button_label": "Add Row",
+            "button_label": "Add Sponsor",
             "sub_fields": [
                 {
                     "key": "field_56c7abd88d30b",
@@ -64,6 +64,67 @@
             ]
         },
         {
+            "key": "field_575127e440b85",
+            "label": "Platinum Sponsors",
+            "name": "platinum_sponsors",
+            "type": "repeater",
+            "instructions": "Click the \"Add Sponsor\" button to add a new sponsor. Dragging the row numbers on the left hand side will arrange the order of the sponsors.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": "",
+            "max": "",
+            "layout": "table",
+            "button_label": "Add Sponsor",
+            "sub_fields": [
+                {
+                    "key": "field_575127e440b86",
+                    "label": "Image",
+                    "name": "image",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": 800,
+                    "max_height": 800,
+                    "max_size": ".2",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_575127e440b87",
+                    "label": "URL",
+                    "name": "url",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
             "key": "field_56c7acf14c012",
             "label": "Goldsmith Sponsors",
             "name": "goldsmith_sponsors",
@@ -80,7 +141,7 @@
             "min": "",
             "max": "",
             "layout": "table",
-            "button_label": "Add Row",
+            "button_label": "Add Sponsor",
             "sub_fields": [
                 {
                     "key": "field_56c7ad0d4c013",
@@ -141,7 +202,7 @@
             "min": "",
             "max": "",
             "layout": "table",
-            "button_label": "Add Row",
+            "button_label": "Add Sponsor",
             "sub_fields": [
                 {
                     "key": "field_56c7ade519258",
@@ -202,7 +263,7 @@
             "min": "",
             "max": "",
             "layout": "table",
-            "button_label": "Add Row",
+            "button_label": "Add Sponsor",
             "sub_fields": [
                 {
                     "key": "field_56c7ae338c7fc",
@@ -263,7 +324,7 @@
             "min": "",
             "max": "",
             "layout": "table",
-            "button_label": "Add Row",
+            "button_label": "Add Sponsor",
             "sub_fields": [
                 {
                     "key": "field_56c7b06654bdb",
@@ -324,7 +385,7 @@
             "min": "",
             "max": "",
             "layout": "table",
-            "button_label": "Add Row",
+            "button_label": "Add Sponsor",
             "sub_fields": [
                 {
                     "key": "field_56c7b0bf0e05e",
@@ -382,7 +443,7 @@
             "min": "",
             "max": "",
             "layout": "table",
-            "button_label": "Add Row",
+            "button_label": "Add Sponsor",
             "sub_fields": [
                 {
                     "key": "field_56c7b12817abd",
@@ -441,5 +502,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1456124903
+    "modified": 1464936571
 }

@@ -39,6 +39,33 @@ get_header(); ?>
   </div>
   <?php endif; ?>
 
+  <!-- PLATINUM SPONSORS -->
+  <?php if( have_rows('platinum_sponsors') ): ?>
+  <div class="row spnosors-row">
+    <div class="col-xs-12">
+      <h3 class="sponsors-type text-center">PLATINUM SPONSOR</h3>
+        <div class="sponsors-box">
+
+        <?php
+          while( have_rows('platinum_sponsors') ): the_row();
+            $sub_field_1 = get_sub_field('image'); //Photo
+            $sub_field_2 = get_sub_field('url'); //URL
+            
+            echo '<div class="sponsors-box-xl">';
+            if( get_sub_field('url') ):
+              echo '<a href="' . $sub_field_2 . '" target="_blank">';
+            endif;
+            echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+            if( get_sub_field('url') ):
+              echo '</a>';
+            endif;
+            echo '</div>';
+          endwhile; ?>
+      </div>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <!-- GOLDSMITH SPONSORS -->
   <?php if( have_rows('goldsmith_sponsors') ): ?>
   <div class="row spnosors-row">
