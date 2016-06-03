@@ -423,11 +423,11 @@ function onsitecheckin_register_query_var( $vars ) {
     return $vars;
 }
 /* Template Include */
-add_filter('template_include', 'onsitecheckin_include', 1, 1); 
+add_filter('template_include', 'onsitecheckin_include', 1, 1);
 function onsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
-    $page_value = $wp_query->query_vars['onsitecheckin']; //Check for query var "blah"
+    $page_value = (isset($wp_query->query_vars['onsitecheckin'])?$wp_query->query_vars['onsitecheckin']:''); //Check for query var "blah"
 
     if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-onsite-checkin.php'; //Load your template or file
@@ -435,11 +435,11 @@ function onsitecheckin_include($template)
 
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
-add_filter('template_include', 'processonsitecheckin_include', 1, 1); 
+add_filter('template_include', 'processonsitecheckin_include', 1, 1);
 function processonsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
-    $page_value = $wp_query->query_vars['processonsitecheckin']; //Check for query var "blah"
+    $page_value = (isset($wp_query->query_vars['processonsitecheckin'])?$wp_query->query_vars['processonsitecheckin']:''); //Check for query var "blah"
 
     if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/php/process-onsite-checkin.php'; //Load your template or file
