@@ -26,6 +26,7 @@ wp_footer();
         <span>Collapse sidebar</span>
       </button>
     </div>
+    <?php do_action('rmt_head');?>
     <div class="navbar-title">
       <i>
         <span id="pageTitle"></span> :

@@ -356,7 +356,7 @@ a {
     }
 }
 
-.slidebar-toggle,.navbar .navbar-title {
+.slidebar-toggle,.navbar .navbar-title, .stagingMsg {
   position: relative;
   float: left;
   padding: 9px 10px;
