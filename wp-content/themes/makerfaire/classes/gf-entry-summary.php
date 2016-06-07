@@ -873,7 +873,8 @@ function entryTicketing($lead,$format='admin'){
         if($result->hidden==0){
           $table .=  '<tr>';
           $table .=  '<td><div class="title">' . $result->title . '</div><div class="subtitle">' .$result->subtitle.'</div></td>';
-          $table .=  '<td><a target="_blank" href="https://mfba16makers.eventbrite.com/?discount='.$result->access_code.'"><i class="fa fa-chevron-circle-right fa-3x" aria-hidden="true"></i></a></td>';
+          //$table .=  '<td><a target="_blank" href="https://mfba16makers.eventbrite.com/?discount='.$result->access_code.'"><i class="fa fa-chevron-circle-right fa-3x" aria-hidden="true"></i></a></td>';
+          $table .=  '<td><a target="_blank" href="https://www.eventbrite.com/e/'.$result->event_id.'?access='.$result->access_code.'"><i class="fa fa-chevron-circle-right fa-3x" aria-hidden="true"></i></a></td>';
           $table .=  '</tr>';
         }
       }
@@ -892,7 +893,7 @@ function entryTicketing($lead,$format='admin'){
 
       foreach($results as $result){
         $return .=  '<tr>';
-        $return .=  '<td><a target="_blank" href="https://mfba16makers.eventbrite.com/?discount='.$result->access_code.'">'.$result->access_code.'</a></td>';
+        $return .=  '<td><a target="_blank" href="https://www.eventbrite.com/e/'.$result->event_id.'?access='.$result->access_code.'">'.$result->access_code.'</a></td>';
         $return .=  '<td><h4>' . $result->title . '</h4>' .$result->subtitle.'</td>';
         $return .=  '<td><p class="'.($result->hidden==0?'checked':'').'" id="HT'.$result->access_code.'" onclick="hiddenTicket(\''.$result->access_code.'\')">';
         $return .=  '<i class="fa fa-'.($result->hidden==0?'check-':'').'square-o" aria-hidden="true"></i>';
