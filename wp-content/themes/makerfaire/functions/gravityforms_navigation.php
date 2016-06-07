@@ -117,11 +117,14 @@ add_action('admin_bar_menu', 'toolbar_link_to_mypage', 999);
 function toolbar_link_to_mypage($wp_admin_bar) {
 
   $user = wp_get_current_user();
+  $is_national = ( in_array('national', (array) $user->roles) );
   $locations = get_registered_nav_menus();
   $menus = wp_get_nav_menus();
   $menu_locations = get_nav_menu_locations();
 
-  $location_id = 'mf-admin-national-register-menu';
+  if ($is_national) {
+
+    $location_id = 'mf-admin-national-register-menu';
     if (isset($menu_locations[$location_id])) {
       foreach ($menus as $menu) {
         // If the ID of this menu is the ID associated with the location we're searching for
@@ -158,6 +161,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
         }
       }
     }
+  } else {
     // bay area
     $location_id = 'mf-admin-bayarea-register-menu';
     if (isset($menu_locations[$location_id])) {
@@ -223,7 +227,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
           }
         }
       }
-    
+    }
 
     //faire setup
     $location_id = 'mf-admin-fairesetup-register-menu';
