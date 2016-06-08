@@ -243,7 +243,7 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
                                 "Speakers"          => "speakers@makerfaire.com");
 
         if(in_array($form['id'], array(64, 65, 67, 68))){
-           $emailtoaliases["NationalMakers"] = "nationalmakers@makerfaire.com";
+           $emailtoaliases["National Team"] = "nationalmakers@makerfaire.com";
         }
 				?>
 				<div style="float:left">
