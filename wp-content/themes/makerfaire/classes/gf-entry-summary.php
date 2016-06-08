@@ -241,6 +241,10 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
                                 "Sales"             => "sales@makerfaire.com",
                                 "Sustainability"    => "sustainability@makerfaire.com",
                                 "Speakers"          => "speakers@makerfaire.com");
+
+        if(in_array($form['id'], array(64, 65, 67, 68))){
+           $emailtoaliases["NationalMakers"] = "nationalmakers@makerfaire.com";
+        }
 				?>
 				<div style="float:left">
 				<?php foreach ( $emailtoaliases as $name => $email ) {
