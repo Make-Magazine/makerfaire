@@ -191,6 +191,12 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     jQuery('#pageTitle').html(pageTitle);
     jQuery('#subTitle').html(subTitle);
     $scope.reports.tableName = tablename;
+
+    if("faire" in $routeParams){
+      $scope.reports.selFaire = $routeParams.faire;
+    }else{
+      $scope.reports.selFaire = '';
+    }
   }
   $scope.filterExport = function( grid, row, col, input ) {
     return 'unknown';
@@ -206,7 +212,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   };
 
 
-
+  var selTerm = '';
   //get grid data
   $http({
     method: 'post',
@@ -216,6 +222,16 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   })
   .then(function(response){
       angular.forEach(response.data.columnDefs, function(value, key) {
+        if(value.name=='faire' && $scope.reports.selFaire!=''){
+          angular.forEach(value.filter.selectOptions, function(selValue, selKey) {
+            if(selValue.label==$scope.reports.selFaire){
+              selTerm= selValue.value;
+            }
+          });
+          if(selTerm!=''){
+            response.data.columnDefs[key].filter.term=selTerm;
+          }
+        }
         /*if(value.field=='qty'){
           value.filters = [
             { condition: uiGridConstants.filter.GREATER_THAN,
@@ -233,6 +249,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
           value.sort.direction = uiGridConstants.ASC;
         }
       });
+
       $scope.gridOptions.columnDefs = response.data.columnDefs;
       //console.log(uiGridConstants.filter);
       $scope.gridOptions.data       = response.data.data;
@@ -307,7 +324,6 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       $scope.reports.loading = false;
       $scope.reports.showGrid = true;
     });
-
 }])
   .filter('griddropdown', function () {
     return function (input, map) {
