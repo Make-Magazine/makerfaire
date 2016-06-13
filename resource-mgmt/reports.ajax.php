@@ -500,36 +500,28 @@ function getBuildRptData(){
 //this function cross references faire entries to their assigned resources and attributes
 function ent2resource($faire){
   global $mysqli;
-  $locSel = ", (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
+
+    $sql = "select wp_rg_lead.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire,
+
+    ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,
+    ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name,
+          (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
           (select subarea from wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id) as subarea,
-          wp_mf_location.id as 'location_id', wp_mf_location.subarea_id, wp_mf_location.location";
-  $rescSel = ", wp_rmt_entry_resources.resource_id, wp_rmt_entry_resources.qty as 'resource_qty', "
-          . "wp_rmt_entry_resources.comment as 'resource_comment',"
-          . "(select token from wp_rmt_resources where wp_rmt_resources.id = resource_id) as res_label,";
-  $attSel = ", wp_rmt_entry_attributes.attribute_id, wp_rmt_entry_attributes.value as 'attribute_value', wp_rmt_entry_attributes.comment as 'attribute_comment',
-          (select token from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.id = attribute_id) as att_label";
-  $attnSel = ", wp_rmt_entry_attn.attn_id as 'attn_id', wp_rmt_entry_attn.comment as 'attn_comment',
-          (select value from wp_rmt_attn where wp_rmt_attn.id = attn_id) as attn_type";
-  $locJoin = "left outer join wp_mf_location on wp_mf_location.entry_id = wp_rg_lead.id ";
-  $attnJoin = "left outer join wp_rmt_entry_attn    on wp_rmt_entry_attn .entry_id = wp_rg_lead.id ";
-  $rescJoin = "left outer join wp_rmt_entry_resources 	 on wp_rmt_entry_resources.entry_id = wp_rg_lead.id";
-  $attJoin = "left outer join wp_rmt_entry_attributes  on wp_rmt_entry_attributes .entry_id = wp_rg_lead.id";
+          wp_rmt_entry_resources.resource_id, wp_rmt_entry_resources.qty as 'resource_qty', wp_rmt_entry_resources.comment as 'resource_comment',
+          wp_rmt_entry_attributes.attribute_id, wp_rmt_entry_attributes.value as 'attribute_value', wp_rmt_entry_attributes.comment as 'attribute_comment',
+          (select token from wp_rmt_resources where wp_rmt_resources.id = resource_id)          as res_label,
+          (select token from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.id = attribute_id)          as att_label,
+          wp_rmt_entry_attn.attn_id as 'attn_id', wp_rmt_entry_attn.comment as 'attn_comment',
+          wp_mf_location.id as 'location_id', wp_mf_location.subarea_id, wp_mf_location.location,
+          (select value from wp_rmt_attn where wp_rmt_attn.id = attn_id)          as attn_type
 
-  $sql = "select wp_rg_lead.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire, "
-        . " ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,"
-        . " ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name "
-          . ($entry['location_id']  != NULL ? $locSel :'') //add location fields if requested
-          . ($entry['attn_id']      != NULL ? $attSel :'') //add attention fields if requested
-          . ($entry['attribute_id'] != NULL ? $attnSel :'') //add attribute fields if requested
-          . ($entry['resource_id']  != NULL ? $rescSel :'') //add resource fields if requested
-        . " from wp_rg_lead "
-        . " left outer join wp_mf_faire on INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id) > 0 "
-          . ($entry['location_id']  != NULL ? $locJoin  :'') //add location table join if requeted
-          . ($entry['attn_id']      != NULL ? $attnJoin :'') //add attention table join if requested
-          . ($entry['attribute_id'] != NULL ? $attJoin  :'') //add attribute table join if requested
-          . ($entry['resource_id']  != NULL ? $rescJoin :'') //add resource table join if requested
-        . " where status = 'active' ";
-
+          from wp_rg_lead
+          left outer join wp_mf_faire on INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id) > 0
+          left outer join wp_rmt_entry_resources 	 on wp_rmt_entry_resources.entry_id = wp_rg_lead.id
+          left outer join wp_rmt_entry_attributes  on wp_rmt_entry_attributes .entry_id = wp_rg_lead.id
+          left outer join wp_rmt_entry_attn    on wp_rmt_entry_attn .entry_id = wp_rg_lead.id
+          left outer join wp_mf_location on wp_mf_location.entry_id = wp_rg_lead.id
+          where status = 'active' and faire is not NULL order by faire DESC";
   $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 
   $entryData = array();
