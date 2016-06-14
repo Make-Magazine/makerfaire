@@ -24,7 +24,7 @@
           }, {
             elementType: 'labels',
             stylers: [{
-              visibility: 'off'
+              visibility: 'on'
             }]
           }, {
             featureType: 'landscape',
