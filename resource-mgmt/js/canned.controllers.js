@@ -78,12 +78,12 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     var subTitle  = '';
 
     if(subRoute=='commercial')        {
-      vars = {"formSelect":["46", "60", "47", "71"],"selectedFields":[{"id":"55.2","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},{"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Launching a product or service","type":"checkbox","$$hashKey":"uiGrid-002D"},{"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"}],"rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:178","checked":true}],"attribute":[{"id":"all","value":"All Attributes","$$hashKey":"object:252","checked":true}],"attention":[{"id":"all","value":"All Attention","$$hashKey":"object:272","checked":true}],"meta":[]},"type":"customRpt","location":true};
+      vars = {"formSelect":["64", "68", "81"],"selectedFields":[{"id":"55.2","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},{"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Launching a product or service","type":"checkbox","$$hashKey":"uiGrid-002D"},{"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"}],"rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:178","checked":true}],"attribute":[{"id":"all","value":"All Attributes","$$hashKey":"object:252","checked":true}],"attention":[{"id":"all","value":"All Attention","$$hashKey":"object:272","checked":true}],"meta":[]},"type":"customRpt","location":true};
       var subTitle = 'Commercial';
       $scope.reports.callAJAX(vars);
     }
     if(subRoute=='am_summary'){
-      vars = {"formSelect":["46", "60", "47", "71"],
+      vars = {"formSelect":["64", "68", "81"],
               "selectedFields":[
                 {"id":16,
                  "label":"Short/Public Description [check notes] [ALL]",
@@ -131,7 +131,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }
     if(subRoute=='zoho'){
-      vars = {"formSelect":["46", "60", "47", "71"],
+      vars = {"formSelect":["64", "68", "81"],
               "selectedFields":[
                 {"id":16,
                  "label":"Short/Public Description [check notes] [ALL]",
@@ -211,7 +211,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }
     if(subRoute=="am_tcp"){
-      vars = {"formSelect":["46", "60", "47", "71"],"selectedFields":[
+      vars = {"formSelect":["64", "68", "81"],"selectedFields":[
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
           {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},

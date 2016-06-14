@@ -500,14 +500,9 @@ function getBuildRptData(){
 //this function cross references faire entries to their assigned resources and attributes
 function ent2resource($faire){
   global $mysqli;
-//  $faire = (isset($obj->table) ? $obj->table : '');
-  $faire = 'BA16';
-  $faireSQL = "select GROUP_CONCAT(form_ids SEPARATOR ', ') from wp_mf_faire ";
-  if($faire !=''){
-    $faireSQL .= "where faire='".strtoupper($faire)."'";
-  }
 
-  $sql = "select wp_rg_lead.id as 'entry_id', wp_rg_lead.form_id,
+    $sql = "select wp_rg_lead.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire,
+
     ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,
     ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name,
           (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
@@ -521,11 +516,12 @@ function ent2resource($faire){
           (select value from wp_rmt_attn where wp_rmt_attn.id = attn_id)          as attn_type
 
           from wp_rg_lead
+          left outer join wp_mf_faire on INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id) > 0
           left outer join wp_rmt_entry_resources 	 on wp_rmt_entry_resources.entry_id = wp_rg_lead.id
           left outer join wp_rmt_entry_attributes  on wp_rmt_entry_attributes .entry_id = wp_rg_lead.id
           left outer join wp_rmt_entry_attn    on wp_rmt_entry_attn .entry_id = wp_rg_lead.id
           left outer join wp_mf_location on wp_mf_location.entry_id = wp_rg_lead.id
-          where status = 'active' and wp_rg_lead.form_id in(46,47,71,60)";
+          where status = 'active' and faire is not NULL order by faire DESC";
   $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 
   $entryData = array();
@@ -534,10 +530,11 @@ function ent2resource($faire){
   $attnArray = array();
   foreach($entries as $entry){
     //set resource data
-    $data[$entry['entry_id']]['entry_id'] = $entry['entry_id'];
-    $data[$entry['entry_id']]['form_id']  = $entry['form_id'];
-    $data[$entry['entry_id']]['status']   = $entry['status'];
-    $data[$entry['entry_id']]['proj_name']   = $entry['proj_name'];
+    $data[$entry['entry_id']]['entry_id']   = $entry['entry_id'];
+    $data[$entry['entry_id']]['form_id']    = $entry['form_id'];
+    $data[$entry['entry_id']]['faire']      = $entry['faire'];
+    $data[$entry['entry_id']]['status']     = $entry['status'];
+    $data[$entry['entry_id']]['proj_name']  = $entry['proj_name'];
 
     if($entry['resource_id'] != NULL){
       $data[$entry['entry_id']]['resource'][$entry['resource_id']] = array('qty'=> $entry['resource_qty'], 'comment'=>$entry['resource_comment']);
@@ -566,25 +563,26 @@ function ent2resource($faire){
   }
 
   //default columns
-  $columnDefs[] = array('field' => 'entry_id', 'name'=>'Entry ID');
-  $columnDefs[] = array('field' => 'proj_name', 'name'=>'Entry Name');
-  $columnDefs[] = array('field' => 'form_id', 'name'=> 'Form');
-  $columnDefs[] = array('field' => 'status', 'name'=>'Status',
+  $columnDefs[] = array('field' => 'faire', 'displayName'=>'Faire', width=>'*');
+  $columnDefs[] = array('field' => 'entry_id', 'displayName'=>'Entry ID', width=>'*');
+  $columnDefs[] = array('field' => 'proj_name', 'displayName'=>'Entry Name', width=>'*');
+  $columnDefs[] = array('field' => 'form_id', 'displayName'=> 'Form', width=>'*');
+  $columnDefs[] = array('field' => 'status', 'displayName'=>'Status', width=>'*',
       'sort'=> array(
           'direction'=> 'uiGridConstants.ASC',
           'priority'=> 0
         ), 'enableSorting'=> true);
-  $columnDefs[] = array('field' => 'location.area', 'name'=>'Area',
+  $columnDefs[] = array('field' => 'location.area', 'displayName'=>'Area',
       'sort'=> array(
           'direction'=> 'uiGridConstants.ASC',
           'priority'=> 1
         ), 'enableSorting'=> true);
-  $columnDefs[] = array('field' => 'location.subarea', 'name'=>'Subarea',
+  $columnDefs[] = array('field' => 'location.subarea', 'displayName'=>'Subarea',
       'sort'=> array(
           'direction'=> 'uiGridConstants.ASC',
           'priority'=> 3
         ), 'enableSorting'=> true);
-  $columnDefs[] = array('field' => 'location.location', 'name'=>'Location',
+  $columnDefs[] = array('field' => 'location.location', 'displayName'=>'Location',
       'sort'=> array(
           'direction'=> 'uiGridConstants.ASC',
           'priority'=> 2

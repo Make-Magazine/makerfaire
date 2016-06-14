@@ -8,10 +8,10 @@ $type   = '';
 ?>
 <h2>Faire Signs</h2>
 <div class="row">
-  <div class="col-sm-2">
+  <div class="col-md-3">
     <strong>Exhibit Signs</strong>
   </div>
-  <div class="col-sm-10">
+  <div class="col-md-9">
     <form method="post" action="">
       <div class="col-sm-6">
         <select id="printForm" name="printForm">
@@ -31,13 +31,13 @@ $type   = '';
     </form>
   </div>
 </div>
-  <hr style="border-top-color: darkgray">
+<hr style="border-top-color: darkgray">
 <div class="row">
   <!-- Table Tags -->
-  <div class="col-sm-2">
+  <div class="col-lg-3">
     <strong>Table Tags</strong>
   </div>
-  <div class="col-sm-10">
+  <div class="col-lg-9">
     <form method="post" action=""> <?php
       $sql = "SELECT * FROM `wp_mf_faire` ORDER BY `wp_mf_faire`.`start_dt` DESC";
       $results = $wpdb->get_results($sql); ?>
@@ -58,10 +58,10 @@ $type   = '';
 <hr style="border-top-color: darkgray">
 <div class="row">
   <!-- Table Tags -->
-  <div class="col-sm-2">
+  <div class="col-sm-3">
     <strong>Presenter Signs</strong>
   </div>
-  <div class="col-sm-10">
+  <div class="col-sm-9">
     <form method="post" action=""> <?php
       $sql = "SELECT * FROM `wp_mf_faire` ORDER BY `wp_mf_faire`.`start_dt` DESC";
       $results = $wpdb->get_results($sql); ?>
@@ -79,13 +79,79 @@ $type   = '';
   </div>
 </div>
 
+<hr style="border-top-color: darkgray">
+<div class="row">
+  <div class="col-sm-3">
+    <strong>Create/Download Zip file for Faires</strong>
+    <br/> Only for Exhibit Signs ATM (may timeout)
+  </div>
+  <div class="col-sm-9">
+    <form method="post" action=""> <?php
+      $signDir = get_template_directory().'/signs/';
+      $dir = array_diff(scandir($signDir), array('..', '.'));
+      $options = '<option value=""></option>';
+      foreach($dir as $dirName){
+        if(is_dir($signDir.$dirName)){
+          $options .= '<option value="'.$dirName.'">'.$dirName.'</option>';
+        }
+      }
+
+      ?>
+      <div class="col-sm-6">
+        <select id="zipFiles" name="zipFiles">
+          <?php echo $options;?>
+        </select>
+        <br/>
+    <i>** Attn: Be sure you have ran the process to generate signs before this or your zip file will be EMPTY **</i>
+      </div>
+      <div class="col-sm-6">
+        <input type="submit" name="zipCreate" value="Download" class="button button-large button-primary" />
+      </div>
+    </form>
+  </div>
+</div>
+
 
 <?php
+//create and download a zip of exhibit signs
+if(isset($_POST['zipCreate']) && isset($_POST['zipFiles'])){
+  $signDir = $_POST['zipFiles'];
+
+  $zip = new ZipArchive();
+  $filepath = get_template_directory()."/signs/".$signDir.'/';
+  $filename = "exhibts-".$signDir.".zip";
+  $zip->open($filepath.$filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+  /*foreach (glob($filepath."*.pdf") as $file) {
+    $zip->addFile($file);
+  }*/
+
+  // Create recursive directory iterator
+  /** @var SplFileInfo[] $files */
+  $files = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($filepath),
+    RecursiveIteratorIterator::LEAVES_ONLY
+  );
+
+  foreach ($files as $name => $file){
+    // Skip directories (they would be added automatically)
+    if (!$file->isDir()){
+      $new_filename = substr($file,strrpos($file,'/') + 1);
+      $zip->addFile($file,$new_filename);
+    }
+  }
+
+
+  if (!$zip->status == ZIPARCHIVE::ER_OK)
+    echo "Failed to write files to zip\n";
+  $zip->close();
+  echo '<a href="/wp-content/themes/makerfaire/signs/'.$signDir.'/'.$filename.'" target="_blank">Download</a>';
+}
 //presenter signs
 if(isset($_POST['presenterSigns'])){
   $type = 'presenterSigns';
   ?>
   <br/><br/>
+  Verify the list of entries below match what you were expecting then click the button to start the process creating the signs.<br/>
   <input class="button button-large button-primary" style="text-align:center" value="Generate signs for listed entries" id="processButton"   onClick="printSigns()"/><br/>
   <br/>
   <?php
@@ -117,6 +183,7 @@ if(isset($_POST['tableTag'])){
   $faire = $_POST['tableTag'];
   ?>
   <br/><br/>
+  Verify the list of entries below match what you were expecting then click the button to start the process creating the signs.<br/>
   <input class="button button-large button-primary" style="text-align:center" value="Generate signs for listed entries" id="processButton"   onClick="printSigns()"/><br/>
   <br/>
   <?php
@@ -124,10 +191,11 @@ if(isset($_POST['tableTag'])){
 }
 
 if(isset($_POST['printForm'])){
-  $type = 'makersigns';
+  $type    = 'makersigns';
   $form_id = $_POST['printForm'];
   ?>
   <br/><br/>
+  Verify the list of entries below match what you were expecting then click the button to start the process creating the signs.<br/>
   <input class="button button-large button-primary" style="text-align:center" value="Generate signs for listed entries" id="processButton"   onClick="printSigns()"/><br/>
   <br/>
   <?php
@@ -144,7 +212,6 @@ if(isset($_POST['printForm'])){
   echo '<div class="container"><div class="row">';
   foreach($results as $entry){
     $entry_id = $entry->lead_id;
-
     ?>
     <div class="col-md-2">
       <a class="fairsign" target="_blank" id="<?php echo $entry_id;?>" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire;?>"><?php echo $entry_id;?></a>

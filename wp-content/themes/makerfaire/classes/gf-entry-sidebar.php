@@ -259,7 +259,7 @@ function mf_sidebar_entry_info($form_id, $lead) {
     }
   }
 
-	echo ('<h4><label class="detail-label">Location:</label></h4>');
+	echo ('<h4><label class="detail-label">Preliminary Location:</label></h4>');
   $locArray=array();
 
   foreach($lead as $key=>$field){

@@ -1,5 +1,5 @@
 // reports controller
-rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','$interval','uiGridConstants','uiGridGroupingConstants', function ($scope, $routeParams, $http,$interval,uiGridConstants,uiGridGroupingConstants) {
+rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiGridConstants', function ($scope, $routeParams, $http,uiGridConstants) {
   $scope.reports    = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = true;
@@ -9,7 +9,7 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','$in
 
 
   //set up gridOptions
-  $scope.gridOptions = {enableFiltering: true,
+    $scope.gridOptions = {enableFiltering: true,
     enableSorting: true,
     enableGridMenu: true,
     rowHeight: 100,
@@ -51,6 +51,12 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','$in
 
   var url = '/resource-mgmt/reports.ajax.php';
 
+  if("faire" in $routeParams){
+    $scope.reports.selFaire = $routeParams.faire;
+  }else{
+    $scope.reports.selFaire = '';
+  }
+
   //get grid data
   $http({
     method: 'post',
@@ -59,23 +65,22 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','$in
     headers: {'Content-Type': 'application/json'}
   })
   .then(function(response){
-      angular.forEach(response.data.columnDefs, function(value, key) {
-
-        if(("filter" in value)){
-          value.filter.type = uiGridConstants.filter.SELECT;
-        }
-        if(("sort" in value)){
-          value.sort.direction = uiGridConstants.ASC;
-        }
-      });
-      $scope.gridOptions.columnDefs = response.data.columnDefs;
-      $scope.gridOptions.data       = response.data.data;
-    }) //end response
-    .finally(function () {
-      $scope.reports.loading  = false;
-      $scope.reports.showGrid = true;
+    angular.forEach(response.data.columnDefs, function(value, key) {
+      if(value.field=='faire' && $scope.reports.selFaire!=''){
+        response.data.columnDefs[key].filter = { term: $scope.reports.selFaire, type: uiGridConstants.filter.INPUT };
+      }
+      if(("sort" in value)){
+        value.sort.direction = uiGridConstants.ASC;
+      }
     });
+    $scope.gridOptions.columnDefs = response.data.columnDefs;
+    $scope.gridOptions.data       = response.data.data;
 
+  }) //end response
+  .finally(function () {
+    $scope.reports.loading  = false;
+    $scope.reports.showGrid = true;
+  });
 }])
   .filter('griddropdown', function () {
     return function (input, map) {
