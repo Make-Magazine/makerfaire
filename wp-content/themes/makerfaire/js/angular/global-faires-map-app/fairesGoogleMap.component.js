@@ -9,7 +9,6 @@
       function($rootScope, GMapsInitializer, FaireMapsSharedData, $filter) {
         var ctrl = this;
         var gMap;
-
         function initMap(mapId) {
           var customMapType = new google.maps.StyledMapType([{
             stylers: [{
