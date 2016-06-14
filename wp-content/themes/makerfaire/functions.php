@@ -127,15 +127,17 @@ function load_scripts() {
   wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true);
   // jquery from Wordpress core (with no-conflict mode flag enabled):
   wp_enqueue_script('jquery');
+  $my_theme = wp_get_theme();
+  $my_version = $my_theme->get('Version');
   // Libraries concatenated by the grunt concat task (in Gruntfile.js):
-  wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js');
+  wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'),$my_version);
   // Other libraries:
   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
   wp_enqueue_script('bootgrid', get_stylesheet_directory_uri() . '/plugins/grid/jquery.bootgrid.min.js');
   wp_enqueue_script('thickbox', null);
 
   // Scripts
-  wp_enqueue_script('built', get_stylesheet_directory_uri() . '/js/built.js', array('jquery'));
+  wp_enqueue_script('built', get_stylesheet_directory_uri() . '/js/built.js', array('jquery'),$my_version);
 
   // Localize
   $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
@@ -165,7 +167,7 @@ function load_admin_scripts() {
   if ($is_national) {
       wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsnationaladmin.js', array('jquery'), null);
   }
-  
+
   //styles
   wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
