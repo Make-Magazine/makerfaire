@@ -256,6 +256,10 @@ function display_entry_schedule($entry_id) {
   if(!$show_sched){
     return;
   }
+  $faire_url = (strpos($faireID,'BA')!== false)?'/bay-area':'';
+  $faire_url = (strpos($faireID,'NY')!== false)?'/new-york':'';
+  $faire_url = (strpos($faireID,'NMF')!== false)?'/national':'';
+  
   $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
             from  wp_mf_location location
             join  wp_mf_faire_subarea subarea
@@ -275,12 +279,12 @@ function display_entry_schedule($entry_id) {
       <?php
       if($faire_logo!=''){
         $faire_logo = legacy_get_fit_remote_image_url($faire_logo,51,51);
-        echo '<a href="/bay-area"><img src="'.$faire_logo.'" alt="'.$faire.' - badge" /></a>';
+        echo '<a href="'.$faire_url.'"><img src="'.$faire_logo.'" alt="'.$faire.' - badge" /></a>';
       }
       ?>
       </span>
       <span class="faireTitle pull-left">
-        <a href="/bay-area">
+        <a href="<?= $faire_url ?>">
         <span class="faireLabel">Live at</span><br/>
         <div class="faireName"><?php echo (strpos($faireID,'NY')!== false?'World':'');?> Maker Faire <?php echo ucwords(str_replace('-',' ', $faire));?></div>
         </a>
@@ -297,8 +301,8 @@ function display_entry_schedule($entry_id) {
           <a class="flagship-icon-link" href="http://makerfaire.com/national-2016/schedule/">
             <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-schedule.png" width="40px" scale="0">
           </a>
-          <span class="pull-right hidden"><a href="http://makerfaire.com/bay-area-2016/schedule/">View full schedule</a><br/>
-            <a class="flagship-icon-link" href="/wp-content/uploads/2016/05/MF16_BA_ProgramGuide_LoRes.pdf">Download the program guide</a>
+          <span class="pull-right "><a href="http://makerfaire.com/bay-area-2016/schedule/">View full schedule</a><br/>
+            <a class="flagship-icon-link hidden" href="/wp-content/uploads/2016/05/MF16_BA_ProgramGuide_LoRes.pdf">Download the program guide</a>
           </span>
         </span>
       </div>
