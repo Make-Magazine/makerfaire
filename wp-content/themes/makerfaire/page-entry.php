@@ -256,9 +256,7 @@ function display_entry_schedule($entry_id) {
   if(!$show_sched){
     return;
   }
-  $faire_url = (strpos($faireID,'BA')!== false)?'/bay-area':'';
-  $faire_url = (strpos($faireID,'NY')!== false)?'/new-york':'';
-  $faire_url = (strpos($faireID,'NMF')!== false)?'/national':'';
+  $faire_url = "/$faire";
   
   $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
             from  wp_mf_location location
@@ -301,7 +299,7 @@ function display_entry_schedule($entry_id) {
           <a class="flagship-icon-link" href="http://makerfaire.com/national-2016/schedule/">
             <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-schedule.png" width="40px" scale="0">
           </a>
-          <span class="pull-right "><a href="http://makerfaire.com/bay-area-2016/schedule/">View full schedule</a><br/>
+          <span class="pull-right "><a href="http://makerfaire.com/national-2016/schedule/">View full schedule</a><br/>
             <a class="flagship-icon-link hidden" href="/wp-content/uploads/2016/05/MF16_BA_ProgramGuide_LoRes.pdf">Download the program guide</a>
           </span>
         </span>
