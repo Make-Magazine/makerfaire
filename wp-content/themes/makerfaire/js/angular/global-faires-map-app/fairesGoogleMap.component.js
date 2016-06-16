@@ -1,4 +1,4 @@
-(function(angular) {
+(function (angular) {
   'use strict';
   angular.module('faireMapsApp').component('fairesGoogleMap', {
     bindings: {
@@ -6,36 +6,99 @@
       mapData: '='
     },
     controller: ['$rootScope', 'GMapsInitializer', 'FaireMapsSharedData', '$filter',
-      function($rootScope, GMapsInitializer, FaireMapsSharedData, $filter) {
+      function ($rootScope, GMapsInitializer, FaireMapsSharedData, $filter) {
         var ctrl = this;
         var gMap;
         function initMap(mapId) {
           var customMapType = new google.maps.StyledMapType([{
-            stylers: [{
-              hue: '#FFFFFF'
+              stylers: [{
+                  hue: '#FFFFFF'
+                }, {
+                  visibility: 'simplified'
+                }, {
+                  gamma: 2
+                }, {
+                  weight: 0.5
+                }]
             }, {
-              visibility: 'simplified'
+              elementType: 'labels',
+              stylers: [{
+                  visibility: 'on'
+                }]
             }, {
-              gamma: 2
+              featureType: 'landscape',
+              stylers: [{
+                  color: '#FFFFFF'
+                }]
+            },
+            {
+              featureType: 'all',
+              elementType: 'geometry',
+              stylers: [{
+                  color: '#FFFFFF'
+                }, {
+                  visibility: 'on'
+                }]
             }, {
-              weight: 0.5
-            }]
-          }, {
-            elementType: 'labels',
-            stylers: [{
-              visibility: 'on'
-            }]
-          }, {
-            featureType: 'landscape',
-            stylers: [{
-              color: '#FFFFFF'
-            }]
-          }, {
-            featureType: 'water',
-            stylers: [{
-              color: '#d0eafc'
-            }]
-          }], {
+              featureType: 'water',
+              stylers: [{
+                  color: '#d0eafc'
+                }]
+            },
+            {
+              featureType: 'administrative.country',
+              elementType: 'labels',
+              stylers: [
+                {
+                  visibility: 'on'
+                }
+              ]
+            },
+            {
+              featureType: 'all',
+              elementType: 'labels.icon',
+              stylers: [{
+                  visibility: 'off'
+                }]
+            },
+            {
+              featureType: 'poi',
+              elementType: 'all',
+              stylers: [
+                {
+                  visibility: 'off'
+                }
+              ]
+            },
+            {
+              featureType: 'administrative.province',
+              elementType: 'labels',
+              stylers: [
+                {
+                  visibility: 'off'
+                }
+              ]
+            },
+            {
+              featureType: 'administrative.locality',
+              elementType: 'all',
+              stylers: [
+                {
+                  visibility: 'on'
+                }
+              ]
+            },
+            {
+              featureType: 'road',
+              elementType: 'all',
+              stylers: [
+                {
+                  visibility: 'off'
+                }
+              ]
+            }
+
+          ], {
             name: 'Custom Style'
           });
           var customMapTypeId = 'custom_style';
@@ -110,30 +173,30 @@
           function displayMarkerInfo() {
             var marker_map = this.getMap();
             FaireMapsSharedData.infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
-              this.title + '</h3>' +
-              '<div id="bodyContent"><p>' +
-              (this.dataRowSrc.venue_address_city || '') +
-              (this.dataRowSrc.venue_address_state && ', ' + this.dataRowSrc.venue_address_state || '') +
-              (this.dataRowSrc.venue_address_country && ', ' + this.dataRowSrc.venue_address_country + ' ' || '') +
-              (this.dataRowSrc.event_dt || '') +
-              '</p><p>' +
-              (this.dataRowSrc.faire_url &&
-                '<a href="' + this.dataRowSrc.faire_url + '" target="_blank">' + this.dataRowSrc.faire_url + '</a>' || '') +
-              '</p></div>' +
-              '</div>'
-            );
+                    this.title + '</h3>' +
+                    '<div id="bodyContent"><p>' +
+                    (this.dataRowSrc.venue_address_city || '') +
+                    (this.dataRowSrc.venue_address_state && ', ' + this.dataRowSrc.venue_address_state || '') +
+                    (this.dataRowSrc.venue_address_country && ', ' + this.dataRowSrc.venue_address_country + ' ' || '') +
+                    (this.dataRowSrc.event_dt || '') +
+                    '</p><p>' +
+                    (this.dataRowSrc.faire_url &&
+                            '<a href="' + this.dataRowSrc.faire_url + '" target="_blank">' + this.dataRowSrc.faire_url + '</a>' || '') +
+                    '</p></div>' +
+                    '</div>'
+                    );
             FaireMapsSharedData.infowindow.open(marker_map, this);
           }
           setMarkers(ctrl.mapData);
         }
-        GMapsInitializer.then(function() {
+        GMapsInitializer.then(function () {
           initMap(ctrl.mapId);
           /*
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-              gMap.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-            });
-          }*/
+           if (navigator.geolocation) {
+           navigator.geolocation.getCurrentPosition(function(position) {
+           gMap.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+           });
+           }*/
         });
       }
     ]

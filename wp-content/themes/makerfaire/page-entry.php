@@ -287,17 +287,17 @@ function display_entry_schedule($entry_id) {
       </span>
       <?php // TBD - dynamically set these links and images ?>
       <div class="faireActions">
-        <span class="pull-right">
+        <span class="hidden pull-right">
           <a class="flagship-icon-link" href="/wp-content/uploads/2016/05/MF16_Map_8x11.pdf">
             <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-map.png" width="40px" scale="0">
             Event Map
           </a>
         </span>
         <span class="pull-right">
-          <a class="flagship-icon-link" href="/wp-content/uploads/2016/05/MF16_BA_ProgramGuide_LoRes.pdf">
+          <a class="flagship-icon-link" href="http://makerfaire.com/national-2016/schedule/">
             <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-schedule.png" width="40px" scale="0">
           </a>
-          <span class="pull-right"><a href="http://makerfaire.com/bay-area-2016/schedule/">View full schedule</a><br/>
+          <span class="pull-right hidden"><a href="http://makerfaire.com/bay-area-2016/schedule/">View full schedule</a><br/>
             <a class="flagship-icon-link" href="/wp-content/uploads/2016/05/MF16_BA_ProgramGuide_LoRes.pdf">Download the program guide</a>
           </span>
         </span>
