@@ -160,7 +160,7 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
  
 
   //auto adjust the font so the text will fit
-  $sx = 36;    // set the starting font size
+  $sx = 56;    // set the starting font size
   $pdf->SetFont('Benton Sans', '', $sx);
   $project_short = filterText($sign_body);
   
@@ -170,7 +170,7 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
     $pdf->SetFont('Benton Sans', '', $sx);
   }
 
-  $lineHeight = $sx * 0.2645833333333 * 3.3;
+  $lineHeight = $sx * 0.2645833333333 * 5.3;
 
   $pdf->MultiCell(0, $lineHeight, $sign_body, 0, 'L');
 
