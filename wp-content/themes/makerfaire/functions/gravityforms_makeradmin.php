@@ -1,5 +1,4 @@
 <?php
-
 /* Changes to gravity view for maker admin tool */
 
 //Maker Admin - add new fields in gravity view
@@ -80,6 +79,9 @@ function makerCancelEntry(){
     //Update Status to Cancelled
     mf_update_entry_field($entryID,'303','Cancelled');
 
+    //update maker and entity table
+    GFRMTHELPER::updateMakerTables($entryID); //update maker table information
+
     //Make a note of the cancellation
     $cancelText = "The Exhibit has been cancelled by the maker.  Reason given is: ".stripslashes($reason);
     mf_add_note($entryID,$cancelText);
@@ -92,9 +94,8 @@ function makerCancelEntry(){
       }
     }
 
-    //GFJDBHELPER::gravityforms_sync_status_jdb($entry_info_entry_id,$acceptance_status_change);
 
-    echo $lead['151'].', Exhibit ID '.$entryID.' has been cancelled';
+    echo 'Thank You, Exhibit ID '.$entryID.' has been cancelled';
 
   }else{
     echo 'Error in cancelling this exhibit.';
