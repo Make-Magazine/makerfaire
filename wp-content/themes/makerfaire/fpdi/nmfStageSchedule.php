@@ -76,18 +76,16 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
   if ($mysqli->connect_errno) {
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
   }
-  $select_query = sprintf("SELECT CONCAT(TIME_FORMAT(`wp_mf_schedule`.`start_dt`,'%%l:%%i %%p')
-                                        
-										,'\t',
-                                       (select group_concat( distinct CONCAT(`First Name`,' ',`Last Name`) separator ', ') as Makers 
+  $select_query = sprintf("SELECT TIME_FORMAT(`wp_mf_schedule`.`start_dt`,'%%l:%%i %%p') as stagetime
+      ,(select group_concat( distinct CONCAT(`First Name`,' ',`Last Name`) separator ', ') as Makers 
                          from wp_mf_maker_to_entity maker_to_entity,
 							wp_mf_maker
                          where wp_mf_entity.lead_id               = maker_to_entity.entity_id AND 
 								wp_mf_maker.maker_id = maker_to_entity.maker_id AND
                                maker_to_entity.maker_type  != 'Contact' 
                          group by maker_to_entity.entity_id
-                        ),'\n','\t',
-                                         wp_mf_entity.presentation_title,'\n') as stagerow
+                        ) as stagemakers,
+                                         wp_mf_entity.presentation_title as stagetitle
                                 FROM `wp_mf_schedule`, 
 									  wp_mf_entity,
                                      `wp_mf_location`,                                                                            
@@ -104,9 +102,7 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query($select_query) or trigger_error($mysqli->error . "[$select_query]");
   $sign_body='';
- 	while ( $row = $result->fetch_array(MYSQLI_ASSOC)  ) {
-    $sign_body = $sign_body . filterText($row['stagerow']);
- }
+ 
   /* if (isset($entry['160.3']) && strlen($entry['160.3']) > 0) $makers[] = filterText($entry['160.3'] . ' ' .$entry['160.6']);
     if (isset($entry['158.3']) && strlen($entry['158.3']) > 0) $makers[] = filterText($entry['158.3'] . ' ' .$entry['158.6']);
     if (isset($entry['155.3']) && strlen($entry['155.3']) > 0) $makers[] = filterText($entry['155.3'] . ' ' .$entry['155.6']);
@@ -156,13 +152,13 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
   //field 16 - short description
   //auto adjust the font so the text will fit
   $pdf->setTextColor(255, 255, 255);
-  $pdf->SetXY(20, 90);
- 
+  $pdf->SetXY(20, 100);
+
 
   //auto adjust the font so the text will fit
   $sx = 20;    // set the starting font size
   $pdf->SetFont('Benton Sans', '', $sx);
-  $project_short = filterText($sign_body);
+  
   
   // Cycle thru decreasing the font size until it's width is lower than the max width
  /* while ($pdf->GetStringWidth(utf8_decode($sign_body)) > 1300) {
@@ -170,9 +166,28 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
     $pdf->SetFont('Benton Sans', '', $sx);
   }
 */
-  $lineHeight = $sx * 0.2645833333333 * 2.0;
+  $lineHeight = $sx * 0.2645833333333 * 1.3;
+	while ( $row = $result->fetch_array(MYSQLI_ASSOC)  ) {
+      $pdf->SetX(20);
+      $x = $pdf->GetX();
+      $y = $pdf->GetY();
 
-  $pdf->MultiCell(0, $lineHeight, $sign_body, 0, 'L');
+     //$pdf->MultiCell(0, $lineHeight, filterText($row['stagerow']), 0, 'L');
+      $pdf->SetFont('Benton Sans', 'B', 28);
+
+     $pdf->MultiCell(50, $lineHeight, filterText($row['stagetime']), 0, 'L');
+     $pdf->SetXY($x + 50, $y);
+     $pdf->SetFont('Benton Sans', 'B', 20);
+
+     $pdf->MultiCell(190, $lineHeight, filterText($row['stagemakers']), 0, 'L');
+     $y=$pdf->GetY();
+     $pdf->SetXY($x + 50, $y);
+     $pdf->SetFont('Benton Sans', '', 18);
+
+     $pdf->MultiCell(190, $lineHeight, filterText($row['stagetitle']), 0, 'L');
+     $pdf->Ln();
+ }
+ 
 
 }
 
