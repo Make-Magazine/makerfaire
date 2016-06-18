@@ -92,7 +92,7 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
                                       wp_mf_faire_area, 
                                       wp_mf_faire_subarea  
                                 WHERE  `wp_mf_schedule`.faire = '$faire' and 
-                                  wp_mf_faire_subarea.subarea = '$stage' and
+                                  wp_mf_faire_subarea.ID = '$stage' and
 									 DAYNAME(`wp_mf_schedule`.`start_dt`) = '$stageday' and
                                      wp_mf_schedule.entry_id = wp_mf_entity.lead_id AND 
                                      wp_mf_schedule.location_id = wp_mf_location.ID AND 
