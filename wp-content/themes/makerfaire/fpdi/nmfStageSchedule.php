@@ -156,21 +156,21 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
   //field 16 - short description
   //auto adjust the font so the text will fit
   $pdf->setTextColor(255, 255, 255);
-  $pdf->SetXY(26, 105);
+  $pdf->SetXY(20, 90);
  
 
   //auto adjust the font so the text will fit
-  $sx = 56;    // set the starting font size
+  $sx = 20;    // set the starting font size
   $pdf->SetFont('Benton Sans', '', $sx);
   $project_short = filterText($sign_body);
   
   // Cycle thru decreasing the font size until it's width is lower than the max width
-  while ($pdf->GetStringWidth(utf8_decode($sign_body)) > 1300) {
+ /* while ($pdf->GetStringWidth(utf8_decode($sign_body)) > 1300) {
     $sx--;   // Decrease the variable which holds the font size
     $pdf->SetFont('Benton Sans', '', $sx);
   }
-
-  $lineHeight = $sx * 0.2645833333333 * 3.3;
+*/
+  $lineHeight = $sx * 0.2645833333333 * 2.0;
 
   $pdf->MultiCell(0, $lineHeight, $sign_body, 0, 'L');
 
