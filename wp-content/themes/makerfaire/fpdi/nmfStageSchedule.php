@@ -77,8 +77,7 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
   }
   $select_query = sprintf("SELECT CONCAT(TIME_FORMAT(`wp_mf_schedule`.`start_dt`,'%%l:%%i %%p')
-                                        ,'\t',
-                                         wp_mf_entity.presentation_title
+                                        
 										,'\t',
                                        (select group_concat( distinct CONCAT(`First Name`,' ',`Last Name`) separator ', ') as Makers 
                          from wp_mf_maker_to_entity maker_to_entity,
@@ -87,7 +86,8 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
 								wp_mf_maker.maker_id = maker_to_entity.maker_id AND
                                maker_to_entity.maker_type  != 'Contact' 
                          group by maker_to_entity.entity_id
-                        ),'\n') as stagerow
+                        ),'\n','\t',
+                                         wp_mf_entity.presentation_title,'\n') as stagerow
                                 FROM `wp_mf_schedule`, 
 									  wp_mf_entity,
                                      `wp_mf_location`,                                                                            
@@ -170,7 +170,7 @@ function createOutput($faire, $stage, $stageday, $stagename, $pdf) {
     $pdf->SetFont('Benton Sans', '', $sx);
   }
 
-  $lineHeight = $sx * 0.2645833333333 * 5.3;
+  $lineHeight = $sx * 0.2645833333333 * 3.3;
 
   $pdf->MultiCell(0, $lineHeight, $sign_body, 0, 'L');
 
