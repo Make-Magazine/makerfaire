@@ -94,7 +94,7 @@ class maker {
                   on wp_mf_entity.lead_id = entity_id
                 left outer join wp_mf_faire
                   on wp_mf_entity.faire = wp_mf_faire.faire
-          WHERE maker_id='".$this->maker_id."'
+          WHERE maker_id='".$this->maker_id."' and status != 'trash'
           group by lead_id ORDER BY `wp_mf_entity`.`lead_id` DESC", ARRAY_A );
 
       foreach($results as $row){
@@ -105,6 +105,7 @@ class maker {
 
         //get entry
         $entry = GFAPI::get_entry($row['lead_id']);
+
         if(is_array($entry)){
           $data['date_created'] = $entry['date_created'];
           $data['ticketing'] = entryTicketing($entry,'MAT');

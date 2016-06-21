@@ -214,10 +214,8 @@ if (!is_user_logged_in())
                     <?php
                     //Delete Link
                     if($entryData['status']=='Proposed' || $entryData['status']=='In Progress'){
-                      $url = do_shortcode('[gv_entry_link action="delete" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-                      $url = str_replace('/view/', '/', $url);  //remove view slug from URL
                       ?>
-                      <a href="<?php echo $url;?>">Delete</a>
+                      <a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Delete</a>
                       <?php
                     }
                     ?>

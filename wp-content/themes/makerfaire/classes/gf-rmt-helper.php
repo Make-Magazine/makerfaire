@@ -984,6 +984,12 @@ class GFRMTHELPER {
     }else{
       $project_photo = (isset($lead['22']) ? $lead['22'] : '');
     }
+    //if the entry status is active, use field 303 as the status, else use entry status
+    if($lead['status'] == 'active'){
+      $status = (isset($lead['303']) ? htmlentities($lead['303']) : '');
+    }else{
+      $status = $lead['status'];
+    }
 
     $entityArray =
       array(
@@ -994,7 +1000,7 @@ class GFRMTHELPER {
         'onsitePhone'         => (isset($lead['265']) ? htmlentities($lead['265']) : ''),
         'public_description'  => (isset($lead['16'])  ? htmlentities($lead['16'])  : ''),
         'private_description' => (isset($lead['11'])  ? htmlentities($lead['11'])  : ''),
-        'status'              => (isset($lead['303']) ? htmlentities($lead['303']) : ''),
+        'status'              => $status,
         'categories'          => $leadCategory,
         'faire'               => $faire,
         'mobile_app_discover' => $MAD,

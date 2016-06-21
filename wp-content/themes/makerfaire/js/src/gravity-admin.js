@@ -122,8 +122,10 @@ jQuery(document).ready(function() {
       'delete_entry_id': entry_id
     };
     jQuery('#deleteText').hide();
+    jQuery('#deleteResponse').html('<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Processing...</span>');
+
     jQuery.post(object_name.ajaxurl, data, function(response) {
-      jQuery('.modal-title').hide();
+      //jQuery('.modal-title').hide();
       jQuery('#deleteResponse').text(response);
     });
   });
