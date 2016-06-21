@@ -80,28 +80,46 @@ class maker {
   }
 
   //returns a list of entries associated with this maker
-  public function get_entries() {
+  public function get_table_data() {
     $entries = array();
-    if($this->maker_id!=''){
+
+    if($this->maker_id != ''){
        global $wpdb;
 
       //based on maker email retrieve maker information from the DB
       $results = $wpdb->get_results(
-        "SELECT wp_mf_maker_to_entity.maker_type, wp_mf_entity.*
+        "SELECT wp_mf_maker_to_entity.maker_type, wp_mf_entity.*, wp_mf_faire.faire_name
           FROM  wp_mf_maker_to_entity
                 left outer join wp_mf_entity
                   on wp_mf_entity.lead_id = entity_id
+                left outer join wp_mf_faire
+                  on wp_mf_entity.faire = wp_mf_faire.faire
           WHERE maker_id='".$this->maker_id."'
           group by lead_id ORDER BY `wp_mf_entity`.`lead_id` DESC", ARRAY_A );
+
       foreach($results as $row){
         $data = array();
         foreach($row as $key=>$value){
           $data[$key] = $value;
         }
+
         //get entry
         $entry = GFAPI::get_entry($row['lead_id']);
-        $data['date_created'] = rgar( $entry, 'date_created' );
+        if(is_array($entry)){
+          $data['date_created'] = $entry['date_created'];
+          $data['ticketing'] = entryTicketing($entry,'MAT');
+        }else{
+          $data['date_created'] = '';
+          $data['ticketing']    = '';
+        }
+
+        //get form_type
+        $form_id  = $entry['form_id'];
+        $form     = GFAPI::get_form($form_id);
+        $data['form_type'] = (isset($form['form_type'])  ? $form['form_type'] : '');
+
         $entries[]=$data;
+
       }
     }
     return $entries;

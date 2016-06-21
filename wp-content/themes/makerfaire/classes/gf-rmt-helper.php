@@ -707,13 +707,11 @@ class GFRMTHELPER {
    * This table will add/update records to the following tables:
    *    wp_mf_entity, wp_mf_maker, wp_mf_maker_to_entity
    */
-   public function updateMakerTables($entryID){
+   public static function updateMakerTables($entryID){
     global $wpdb;
     $entry    = GFAPI::get_entry($entryID);
     $form_id  = $entry['form_id'];
     $form     = GFAPI::get_form($form_id);
-
-    $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
 
     //build Maker Data Array
     $data = self::buildMakerData($entry,$form);
@@ -725,7 +723,7 @@ class GFRMTHELPER {
      * Update Entity Table - wp_mf_entity
      */
     $wp_mf_entitysql = "insert into wp_mf_entity (lead_id, presentation_title, presentation_type, special_request, "
-                    . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover) "
+                    . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover,form_id) "
                     . " VALUES ('" . $entryID             . "',"
                             . ' "' . $entityData['project_name']            . '", '
                             . ' "' . $entityData['presentation_type']       . '", '
@@ -748,7 +746,7 @@ class GFRMTHELPER {
                     . '                         project_photo       = "'.$entityData['project_photo']           . '", '
                     . '                         status              = "'.$entityData['status']                  . '", '
                     . '                         category            = "'.$categories. '", '
-                    . '                         faire               = "'.$entityData['faire']                   . '", '             . '", '
+                    . '                         faire               = "'.$entityData['faire']                   . '", '
                     . '                         mobile_app_discover = "'.$entityData['mobile_app_discover']     . '"';
     $wpdb->get_results($wp_mf_entitysql);
 
@@ -796,8 +794,10 @@ class GFRMTHELPER {
 
         //build maker to entity table
         //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
-        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`" . " (`maker_id`, `entity_id`, `maker_type`) "
-                              . ' VALUES ("'.$guid.'",'.$entryData['entry_id'].',"'.$type.'") ON DUPLICATE KEY UPDATE maker_id="'.$guid.'";';
+        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`"
+                              . " (`maker_id`, `entity_id`, `maker_type`) "
+                              . ' VALUES ("'.$guid.'",'.$entryData['entry_id'].',"'.$type.'") '
+                              . ' ON DUPLICATE KEY UPDATE maker_id="'.$guid.'";';
 
         $wpdb->get_results($wp_mf_maker_to_entity);
       }
@@ -807,6 +807,7 @@ class GFRMTHELPER {
   //function to build the maker data table to update the wp_mf_maker table
   public static function buildMakerData($lead,$form){
     global $wpdb;
+    $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
     $entry_id     = $lead['id'];
 		$form_id      = $form['id'];
     $project_name = (isset($lead['109'])&&$lead['109']!='' ? $lead['109']:(isset($lead['151']) ? $lead['151']:''));

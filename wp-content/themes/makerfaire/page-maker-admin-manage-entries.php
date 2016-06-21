@@ -1,34 +1,32 @@
-<?php /** Template Name: Maker Admin Manage Entries */
-if (!is_user_logged_in())
-    auth_redirect();
-?>
+<?php /** Template Name: Maker Admin Manage Entries */?>
 <?php get_header(); ?>
 <div class="content col-md-12 maker-admin-manage-faire-entries">
   <script>
   jQuery(document).ready(function() {
     jQuery('[data-toggle="popover"]').popover();
-
-    //popover manage entries
-    jQuery("#manage-entries").popover({
-        html : true,
-        placement : "bottom",
-        content: function() {
-          return jQuery("#manage-entries-content").html();
-        },
-        title: ''
-    });
   });
   </script>
   <div class="clearfix">
     <?php
     $current_user = wp_get_current_user();
-
+    /**
+     * @example Safe usage: $current_user = wp_get_current_user();
+     * if ( !($current_user instanceof WP_User) )
+     *     return;
+     */
+    echo 'Username: ' . $current_user->user_login . '<br />';
+    echo 'User email: ' . $current_user->user_email . '<br />';
+    echo 'User first name: ' . $current_user->user_firstname . '<br />';
+    echo 'User last name: ' . $current_user->user_lastname . '<br />';
+    echo 'User display name: ' . $current_user->display_name . '<br />';
+    echo 'User ID: ' . $current_user->ID . '<br />';
+    
     //require_once our model
     require_once( 'models/maker.php' );
     //instantiate the model
-    $maker = new maker($current_user->user_email);
+    $fooModel = new maker($current_user->user_email);
 ?>
-    <h4 class="welcome-head pull-left">Hi, <?= $maker->first_name .' '. $maker->last_name?></h4>
+    <h4 class="welcome-head pull-left">Hi, <?= $fooModel->get_email() ?></h4>
     <div class="settings-pop-btn pull-right">
       <button type="button" class="btn btn-default btn-no-border notifications-button"
         data-toggle="popover" data-html="true" data-placement="bottom"
@@ -52,78 +50,69 @@ if (!is_user_logged_in())
     </span>
   </div>
   <hr class="header-break">
-  <?php
-  $entries = $maker->get_entries();
-
-  foreach($entries as $entry) {
-    if($entry['status']=='Accepted'){
-      $statusBlock = 'greenStatus';
-    }else{
-      $statusBlock = 'greyStatus';
-    }
-    ?>
-    <div class="maker-admin-list-wrp">
-      <div class="gv-list-view-title-maker-entry">
-        <div class="entryImg">
-          <div class="faire-entry-image-wrp">
-            <?php $image = legacy_get_fit_remote_image_url($entry['project_photo'],250,570);?>
-            <a class="thickbox" href="<?php echo $image;?>">
-              <img src="<?php echo $image;?>" alt="Project Photo">
-            </a>
-          </div>
+  <div class="maker-admin-list-wrp">
+    <div class="gv-list-view-title-maker-entry">
+      <div class="entryImg">
+        <div class="faire-entry-image-wrp">
+          <a class="thickbox" href="http://i1.wp.com/img1.etsystatic.com/058/0/5900797/il_570xN.706338171_t595.jpg">
+            <img src="http://i1.wp.com/img1.etsystatic.com/058/0/5900797/il_570xN.706338171_t595.jpg?zoom=2&amp;w=250" alt="Project Photo">
+          </a>
         </div>
-        <div class="entryData">
-          <div class="statusBox <?php echo $statusBlock;?>">
-            <div class="pull-left"><span class="gv-field-label">Maker Faire</span> <?php echo $entry['faire'];?></div>
-            <div class="pull-right statusText"><span class="gv-field-label">Status: </span> <?php echo $entry['status'];?></div>
-          </div>
-          <h3 class="entry-title"><?php echo $entry['presentation_title'];?></h3>
-          <div class="clear pull-left entryID latReg">
-            Exhibit: <span class="entryStandout"><?php echo $entry['lead_id'];?></span></div>
-          <div class="clear links latReg">
-            <div class="submit-date"><span class="gv-field-label">Submitted: </span> <?php echo date('M j, Y g:i  A',strtotime($entry['date_created']));?></div>
-            <div class="entry-action-buttons">
-              <button type="button" class="btn btn-default btn-no-border notifications-button"
-                data-toggle="popover" data-html="true" data-placement="bottom" data-trigger="focus"
-                data-content='<div class="manage-entry-popover"><a>Pay Commercial Maker Fee etc</a></div>'>
-                NOTIFICATIONS
-                <span class="fa-stack fa-lg">
-                <i class="fa fa-circle"></i>
-                <span class="notification-counter">3</span>
-                </span>
-              </button>
-
-              <button type="button" class="btn btn-default btn-no-border manage-button" id="manage-entries">MANAGE<i class="fa fa-cog"></i></button>
-              <div id="manage-entries-content" class="hidden">
-                <div class="manage-entry-popover">
-                  <a href="/manage-entries/entry/<?php echo $entry['lead_id'];?>/?page=gf_entries&amp;view=entry&amp;edit=7a1199eb19">Edit</a>
-                  <a href="#cancelEntry" data-toggle="modal" data-entry-id="<?php echo $entry['lead_id'];?>" data-projName="<?php echo $entry['presentation_title'];?>">Cancel</a>
-                  <a href="/manage-entries/entry/<?php echo $entry['lead_id'];?>/">View</a>
-                </div>
-              </div>
-
-            </div>
+      </div>
+      <div class="entryData">
+        <div class="statusBox greenStatus">
+          <div class="pull-left"><span class="gv-field-label">Maker Faire</span> New York 2015</div>
+          <div class="pull-right statusText"><span class="gv-field-label">Status: </span> Accepted</div>
+        </div>
+        <h3 class="entry-title"> The BQE</h3>
+        <div class="clear pull-left entryID latReg">
+          Exhibit: <span class="entryStandout">53541</span></div>
+        <div class="clear links latReg">
+          <div class="submit-date"><span class="gv-field-label">Submitted: </span> Sep 18, 2015</div>
+          <div class="entry-action-buttons">
+            <button type="button" class="btn btn-default btn-no-border notifications-button"
+              data-toggle="popover" data-html="true" data-placement="bottom" data-trigger="focus"
+              data-content='<div class="manage-entry-popover"><a>Pay Commercial Maker Fee etc</a></div>'>
+              NOTIFICATIONS
+              <span class="fa-stack fa-lg">
+              <i class="fa fa-circle"></i>
+              <span class="notification-counter">3</span>
+              </span>
+            </button>
+            <button type="button" class="btn btn-default btn-no-border manage-button"
+              data-toggle="popover" data-html="true" data-placement="bottom" data-trigger="focus"
+              data-content='<div class="manage-entry-popover">
+                <a href="http://local.wordpress.dev/manage-entries/entry/53541/?page=gf_entries&amp;view=entry&amp;edit=7a1199eb19">Edit</a>
+                <a href="#cancelEntry" data-toggle="modal" data-projName="The BQE">Cancel</a>
+                <a href="http://local.wordpress.dev/manage-entries/entry/53541/">View</a>
+              </div>'>
+              MANAGE
+              <i class="fa fa-cog"></i>
+            </button>
           </div>
         </div>
       </div>
-      <div class="clear"></div>
     </div>
-  <?php } ?>
+    <div class="clear"></div>
+  </div>
   <hr>
   <!-- Modal to cancel entry -->
-<div class="modal" id="cancelEntry">
+  <div class="modal" id="cancelEntry">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title">Cancel <span id="projName"></span>, Exhibit ID: <span id="cancelEntryID" name="entryID"></span></h4>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title">Cancel <span id="projName"></span>, Exhibit ID: <span id="cancelEntryID" name="entryID"></span></h4>
         </div>
         <div class="modal-body">
-            <div id="cancelText">
-                <p>Sorry you can't make it. Why are you canceling?</p><br/>
-                <textarea rows="4" cols="50" name="cancelReason"></textarea>
-            </div>
-        <span id="cancelResponse"></span><br/>
+          <div id="cancelText">
+            <p>Sorry you can't make it. Why are you canceling?</p>
+            <br>
+            <span class="input-placeholder-text" style="color: rgb(51, 51, 51); position: absolute;"></span>
+            <textarea rows="4" cols="50" name="cancelReason"></textarea>
+          </div>
+          <span id="cancelResponse"></span>
+          <br>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" id="submitCancel">Submit</button>

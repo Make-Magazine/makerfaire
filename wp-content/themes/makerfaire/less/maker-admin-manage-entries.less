@@ -1,6 +1,10 @@
 /* maker admin e.g. makerfaire.com/manage-entries */
 
 .maker-admin-manage-faire-entries{
+  .disabled {
+    color:  #9B9B9B;
+  }
+
   .maker-admin-list-wrp {
     position: relative;
     width: 100%;
@@ -19,6 +23,9 @@
       height: auto;
       min-height: 10em;
     }
+  }
+  i {
+    margin: .2em;
   }
   .entryData {
     font-weight: bold;
@@ -57,9 +64,6 @@
       p {
         margin: 0;
       }
-      i {
-        margin: .2em;
-      }
     }
   }
   .submit-date {
@@ -91,11 +95,9 @@
     margin-top: 10px;
   }
   .manage-entry-popover {
-    h6,
-    a {
+    h6, a, .disabled {
       display: block;
-      padding: 6px 20px;
-      margin: auto -14px;
+      padding: 6px 10px;
     }
     h6 {
       color: #00adef;
@@ -111,6 +113,13 @@
         background-color: darken(white, 2%);
       }
     }
+
+      .manage-links {
+        &:not(:last-child) {
+          border-bottom: thin solid lightgrey;
+        }
+      }
+
   }
   .submit-entry {
     .btn {
@@ -118,6 +127,31 @@
       font-size: 13px;
       color: #fff;
       text-transform: uppercase;
+    }
+  }
+  .popover {
+    max-width: 500px;
+    min-width: 200px;
+  }
+  .popover-content {
+    .footer{
+      font-size: 10px;
+      text-align: center;
+      color: #9B9B9B;
+      border: none;
+    }
+  }
+  .mat-ticketing {
+    border-bottom: thin solid lightgrey;
+    padding: 5px 0;
+    .subtitle {
+      color: #9B9B9B;
+    }
+    .title {
+      font-size: 15px;
+    }
+    i.fa-chevron-circle-right {
+      color: #00B4F3;
     }
   }
   .welcome-head {
