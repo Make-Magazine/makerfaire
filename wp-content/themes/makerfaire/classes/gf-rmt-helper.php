@@ -747,6 +747,7 @@ class GFRMTHELPER {
                     . '                         status              = "'.$entityData['status']                  . '", '
                     . '                         category            = "'.$categories. '", '
                     . '                         faire               = "'.$entityData['faire']                   . '", '
+                    . '                         form_id             =  '.$entityData['form_id']                 . ','
                     . '                         mobile_app_discover = "'.$entityData['mobile_app_discover']     . '"';
     $wpdb->get_results($wp_mf_entitysql);
 
