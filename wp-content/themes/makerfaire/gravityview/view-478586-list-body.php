@@ -1,8 +1,9 @@
 <?php /** Template Name: Maker Admin Manage Entries */
 if (!is_user_logged_in())
     auth_redirect();
+
+get_header();
 ?>
-<?php get_header(); ?>
 <div class="content col-md-12 maker-admin-manage-faire-entries">
   <script>
   jQuery(document).ready(function() {
@@ -28,9 +29,12 @@ if (!is_user_logged_in())
 
     //instantiate the model
     $maker   = new maker($current_user->user_email);
-    $entries = $maker->get_table_data();
 
+    $tableData = $maker->get_table_data();
+
+    $entries = $tableData['data'];
     $sponsorCheck = false;
+    //TBD this won't work with pagination
     //form Type = Startup Sponsor or Sponsor
     if(array_search("Sponsor", array_column($entries, 'form_type'))!== FALSE ||
        array_search("Startup Sponsor", array_column($entries, 'form_type'))!== FALSE) {
@@ -82,6 +86,7 @@ if (!is_user_logged_in())
   <hr class="header-break">
 
   <?php
+  echo $maker->createPageLinks( 'pagination pagination-sm' );
   foreach($entries as $entryData) {
     //prepare the data
     if($entryData['status']=='Accepted'){
@@ -115,7 +120,15 @@ if (!is_user_logged_in())
             <div class="pull-left"><span class="gv-field-label"><?php echo $entryData['faire_name'];?></span> </div>
             <div class="pull-right statusText"><span class="gv-field-label">Status: </span> <?php echo $entryData['status'];?></div>
           </div>
-          <h3 class="entry-title"><?php echo $entryData['presentation_title'];?></h3>
+          <h3 class="entry-title">
+            <?php //if status is accepted, the title links to the public facing entry page
+            if($entryData['status']=='Accepted') {?>
+              <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>"><?php echo $entryData['presentation_title'];?></a>
+            <?php
+            }else{
+              echo $entryData['presentation_title'];
+            } ?>
+          </h3>
           <div class="clear pull-left entryID latReg">
             <?php echo $entryData['form_type'];?>: <span class="entryStandout"><?php echo $entryData['lead_id'];?></span></div>
           <div class="clear links latReg">

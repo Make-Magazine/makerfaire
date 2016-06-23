@@ -774,7 +774,7 @@ class GFRMTHELPER {
          * If this maker is already in the DB - pull the maker_id, else let's create one
          */
         $results = $wpdb->get_results($wpdb->prepare("SELECT maker_id FROM wp_mf_maker WHERE email=%s", $email) );
-        $guid = ($wpdb->num_rows != 0?$guid = $results[0]->maker_id: createGUID($entryData['entry_id'] .'-'.$type));
+        $guid = ($wpdb->num_rows != 0?$guid = $results[0]->maker_id: createGUID($entryID .'-'.$type));
 
         $wp_mf_makersql = "INSERT INTO wp_mf_maker "
                         . " (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `maker_id`, `Photo`, `website`) "
@@ -797,7 +797,7 @@ class GFRMTHELPER {
         //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
         $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`"
                               . " (`maker_id`, `entity_id`, `maker_type`) "
-                              . ' VALUES ("'.$guid.'",'.$entryData['entry_id'].',"'.$type.'") '
+                              . ' VALUES ("'.$guid.'",'.$entryID.',"'.$type.'") '
                               . ' ON DUPLICATE KEY UPDATE maker_id="'.$guid.'";';
 
         $wpdb->get_results($wp_mf_maker_to_entity);

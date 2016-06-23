@@ -31,6 +31,14 @@ class maker {
   function __construct( $maker_email='', $args = array() ) {
     $this->maker_email = $maker_email;
     $this->get_maker_data();
+
+    //MAT pagination
+    //TBD: Rich, should this be it's own class??
+    $this->dispLimit = 20;
+    $this->dispPage  = get_query_var('page',1);
+
+    $this->totalNumEntries = 0;
+
     /**
      * Copy properties in from $args, if they exist.
      */
@@ -81,21 +89,49 @@ class maker {
 
   //returns a list of entries associated with this maker
   public function get_table_data() {
+    //use the Current User WP information
+    global $current_user; global $wpdb;
     $entries = array();
 
-    if($this->maker_id != ''){
-       global $wpdb;
+    $maker_array = array();
+    if ( current_user_can( 'mat_view_created_entries') ) {
+    //also return entries created by current user
+      $results = $wpdb->get_results("select wp_mf_maker_to_entity.maker_id "
+          . " from wp_rg_lead "
+          . " left outer join wp_mf_maker_to_entity "
+          . "   on wp_rg_lead.id = wp_mf_maker_to_entity.entity_id "
+          . " where created_by = $current_user->ID "
+          . "   and maker_id is not null "
+          . " group by maker_id", ARRAY_A );
+      foreach($results as $row){
+        $maker_array[] = $row['maker_id'];
+      }
+    }
+    $maker_array[] = $this->maker_id;
+    $maker_id = "'".implode("', '", $maker_array)."'";
 
+    if($maker_id != ''){
       //based on maker email retrieve maker information from the DB
-      $results = $wpdb->get_results(
-        "SELECT wp_mf_maker_to_entity.maker_type, wp_mf_entity.*, wp_mf_faire.faire_name
+      //get total number of rows
+      $query = "SELECT wp_mf_maker_to_entity.maker_type, wp_mf_entity.*, wp_mf_faire.faire_name
           FROM  wp_mf_maker_to_entity
                 left outer join wp_mf_entity
                   on wp_mf_entity.lead_id = entity_id
                 left outer join wp_mf_faire
                   on wp_mf_entity.faire = wp_mf_faire.faire
-          WHERE maker_id='".$this->maker_id."' and status != 'trash'
-          group by lead_id ORDER BY `wp_mf_entity`.`lead_id` DESC", ARRAY_A );
+          WHERE maker_id in(".$maker_id.") and status != 'trash'
+          group by lead_id
+          ORDER BY `wp_mf_entity`.`lead_id` DESC";
+      $total = $wpdb->get_row("SELECT count(*) as total from (".$query.") src", ARRAY_A );
+
+      $this->totalNumEntries = $total['total'];
+
+      // If the display limit is greater than the total number of entries,
+      //  reset the current page to 1
+      if($this->dispLimit > $this->totalNumEntries) $this->dispPage = 1;
+
+      $results = $wpdb->get_results(
+        $query ." LIMIT " . ( ( $this->dispPage - 1 ) * $this->dispLimit ) . ",". $this->dispLimit, ARRAY_A );
 
       foreach($results as $row){
         $data = array();
@@ -119,7 +155,7 @@ class maker {
         $form     = GFAPI::get_form($form_id);
         $data['form_type'] = (isset($form['form_type'])  ? $form['form_type'] : '');
 
-        $entries[]=$data;
+        $entries['data'][]=$data;
 
       }
     }
@@ -423,6 +459,45 @@ class maker {
     );
     $return = array('maker'=>$makerArray,'entity'=>$entityArray);
     return $makerArray;
+  }
+
+  //MAT pagination
+  public function createPageLinks( $list_class ='',  $links=3) {
+    if($this->dispLimit > $this->totalNumEntries){
+      return '';
+    }
+
+    $last       = ceil( $this->totalNumEntries / $this->dispLimit );
+
+    $start      = ( ( $this->dispPage - $links ) > 0 ) ? $this->dispPage - $links : 1;
+    $end        = ( ( $this->dispPage + $links ) < $last ) ? $this->dispPage + $links : $last;
+
+    $html       = '<ul class="' . $list_class . '">';
+
+    $class      = ( $this->dispPage == 1 ) ? "disabled" : "";
+    $html       .= '<li class="' . $class . '"><a href="?page=' . ( $this->dispPage - 1 ) . '">&laquo;</a></li>';
+
+    if ( $start > 1 ) {
+        $html   .= '<li><a href="?page=1">1</a></li>';
+        $html   .= '<li class="disabled"><span>...</span></li>';
+    }
+
+    for ( $i = $start ; $i <= $end; $i++ ) {
+        $class  = ( $this->dispPage == $i ) ? "active" : "";
+        $html   .= '<li class="' . $class . '"><a href="?page=' . $i . '">' . $i . '</a></li>';
+    }
+
+    if ( $end < $last ) {
+        $html   .= '<li class="disabled"><span>...</span></li>';
+        $html   .= '<li><a href="?page=' . $last . '">' . $last . '</a></li>';
+    }
+
+    $class      = ( $this->dispPage == $last ) ? "disabled" : "";
+    $html       .= '<li class="' . $class . '"><a href="?page=' . ( $this->dispPage + 1 ) . '">&raquo;</a></li>';
+
+    $html       .= '</ul>';
+
+    return $html;
   }
 }
 
