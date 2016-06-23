@@ -128,6 +128,14 @@ get_header();
               echo $entryData['presentation_title'];
             } ?>
           </h3>
+          <?php
+          //Add link to edit entry
+          if($entryData['status']!='Cancelled' and $entryData['maker_type']=='contact'){
+            $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+            $url = str_replace('/view/', '/', $url);  //remove view slug from URL
+            echo '<span class="editLink"><a href="'. $url .'">Edit Entry</a></span>';
+          }
+          ?>
           <div class="clear pull-left entryID latReg">
             <?php echo $entryData['form_type'];?>: <span class="entryStandout"><?php echo $entryData['lead_id'];?></span></div>
           <div class="clear links latReg">
