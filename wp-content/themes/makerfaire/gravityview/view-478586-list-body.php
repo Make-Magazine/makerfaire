@@ -18,6 +18,14 @@ get_header();
         },
         title: ''
     });
+
+    jQuery('body').on('click', function (e) {
+      //did not click a popover toggle or popover
+      if (jQuery(e.target).data('toggle') !== 'popover'
+          && jQuery(e.target).parents('.popover.in').length === 0) {
+          jQuery('[data-toggle="popover"]').popover('hide');
+      }
+    });
   });
   </script>
   <div class="clearfix">
