@@ -31,23 +31,7 @@ get_header();
     $maker   = new maker($current_user->user_email);
 
     $tableData = $maker->get_table_data();
-
     $entries = $tableData['data'];
-    $sponsorCheck = false;
-    //TBD this won't work with pagination
-    //form Type = Startup Sponsor or Sponsor
-    if(array_search("Sponsor", array_column($entries, 'form_type'))!== FALSE ||
-       array_search("Startup Sponsor", array_column($entries, 'form_type'))!== FALSE) {
-      $sponsorCheck = true;
-    }
-
-    $makerCheck = false;
-    //form type = Exhibit, Performer or Presentation
-    if(array_search("Exhibit", array_column($entries, 'form_type'))!== FALSE ||
-       array_search("Performer", array_column($entries, 'form_type'))!== FALSE ||
-       array_search("Presentation", array_column($entries, 'form_type'))!== FALSE){
-      $makerCheck = true;
-    }
 
 ?>
     <h4 class="welcome-head pull-left">Hi <?php echo $maker->first_name .' '. $maker->last_name; ?></h4>
@@ -60,16 +44,23 @@ get_header();
           <a href="/login/?mode=reset">Change Password</a>
           <a href="/login/?action=logout">Log Out</a>
           <h6 class="popover-head">Questions?</h6>
-          <?php if($sponsorCheck) { ?>
-            <a href="mailto:sponsorrelations@makerfaire.com">Contact the Sponsor Team</a>
-          <?php } ?>
-          <?php if($makerCheck) { ?>
-            <h6 class="popover-head">Check out the Maker Toolkits</h6>
+          <ul>
+            <?php if($maker->isSponsor) { ?>
+              <li>Sponsors
+                <ul><li><a href="mailto:sponsorrelations@makerfaire.com">Email Us</a></li></ul>
+              </li>
+            <?php } ?>
 
-          <a href="/national/maker-toolkit" target="_blank">National Maker Faire</a>
-          <a href="/bay-area-2016/maker-toolkit/" target="_blank">Bay Area</a>
-          <a href="/new-york/maker-toolkit/" target="_blank">World Maker Faire</a>
-          <?php } ?>
+            <?php if($maker->isMaker) { ?>
+              <li>Maker Toolkits
+                <ul>
+                  <li><a href="/national/maker-toolkit" target="_blank">National Maker Faire</a></li>
+                  <li><a href="/bay-area-2016/maker-toolkit/" target="_blank">Bay Area</a></li>
+                  <li><a href="/new-york/maker-toolkit/" target="_blank">World Maker Faire</a></li>
+                </ul>
+              </li>
+            <?php } ?>
+          </ul>
         </div>
       </div>
 
@@ -78,7 +69,7 @@ get_header();
   <div class="clearfix">
     <h2 class="title-head pull-left">Manage your Maker Faire Applications</h2>
     <span class="submit-entry pull-right">
-      <a href="/bay-area-2016/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
+      <a href="/new-york-2016/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
         Submit another entry
       </a>
     </span>

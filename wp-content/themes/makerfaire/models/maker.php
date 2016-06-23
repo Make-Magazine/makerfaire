@@ -39,6 +39,9 @@ class maker {
 
     $this->totalNumEntries = 0;
 
+    $this->isSponsor = FALSE;
+    $this->isMaker   = FALSE;
+
     /**
      * Copy properties in from $args, if they exist.
      */
@@ -153,10 +156,19 @@ class maker {
         //get form_type
         $form_id  = $entry['form_id'];
         $form     = GFAPI::get_form($form_id);
-        $data['form_type'] = (isset($form['form_type'])  ? $form['form_type'] : '');
-
+        if(isset($form['form_type']) &&
+            ($form['form_type']=='Sponsor' ||
+             $form['form_type']=='Startup Sponsor')){
+          $this->isSponsor = TRUE;
+        }
+        if(isset($form['form_type']) &&
+            ($form['form_type']=='Exhibit' ||
+             $form['form_type']=='Performer'||
+             $form['form_type']=='Presentation')){
+          $this->isMaker = TRUE;
+        }
+        $data['form_type'] = $form['form_type'];
         $entries['data'][]=$data;
-
       }
     }
     return $entries;
