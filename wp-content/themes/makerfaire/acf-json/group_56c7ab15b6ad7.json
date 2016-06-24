@@ -488,9 +488,9 @@
     "location": [
         [
             {
-                "param": "page",
+                "param": "page_template",
                 "operator": "==",
-                "value": "478626"
+                "value": "page-sponsors-template.php"
             }
         ]
     ],
@@ -502,5 +502,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1464936571
+    "modified": 1466795168
 }
