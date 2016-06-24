@@ -36,7 +36,7 @@ class maker {
     //TBD: Rich, should this be it's own class??
     $this->dispLimit = 20;
     $this->dispPage  = get_query_var('page',1);
-
+    if($this->dispPage <= 0)  $this->dispPage=1;
     $this->totalNumEntries = 0;
 
     $this->isSponsor = FALSE;
