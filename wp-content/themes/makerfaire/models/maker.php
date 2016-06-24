@@ -133,8 +133,7 @@ class maker {
       //  reset the current page to 1
       if($this->dispLimit > $this->totalNumEntries) $this->dispPage = 1;
 
-      $results = $wpdb->get_results(
-        $query ." LIMIT " . ( ( $this->dispPage - 1 ) * $this->dispLimit ) . ",". $this->dispLimit, ARRAY_A );
+      $results = $wpdb->get_results($query ." LIMIT " . ( ( $this->dispPage - 1 ) * $this->dispLimit ) . ",". $this->dispLimit, ARRAY_A );
 
       foreach($results as $row){
         $data = array();
