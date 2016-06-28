@@ -4,7 +4,7 @@ if (!is_user_logged_in())
 
 get_header();
 ?>
-<div class="content col-md-12 maker-admin-manage-faire-entries">
+<div class="content col-md-12 maker-admin-manage-faire-entries-mobile">
   <script>
   jQuery(document).ready(function() {
     //jQuery('[data-toggle="tooltip"]').tooltip();
@@ -39,7 +39,7 @@ get_header();
     $maker   = new maker($current_user->user_email);
 
     $tableData = $maker->get_table_data();
-    $entries = $tableData['data'];
+    $entries   = $tableData['data'];
 
 ?>
     <h4 class="welcome-head pull-left">Hi <?php echo $maker->first_name .' '. $maker->last_name; ?></h4>
@@ -70,9 +70,8 @@ get_header();
             <?php } ?>
           </ul>
         </div>
-      </div>
-
-    </div>
+      </div> <!-- / .popover-content -->
+    </div> <!-- / .settings-pop-btn -->
   </div>
   <div class="clearfix">
     <h2 class="title-head pull-left">Manage your Maker Faire Applications</h2>
@@ -83,9 +82,8 @@ get_header();
     </span>
   </div>
   <hr class="header-break">
-
   <?php
-  echo $maker->createPageLinks( 'pagination pagination-sm' );
+
   foreach($entries as $entryData) {
     //prepare the data
     if($entryData['status']=='Accepted'){
@@ -96,16 +94,12 @@ get_header();
     //$image = legacy_get_fit_remote_image_url($entryData['project_photo'],275,275);
     $image =  (isset($entryData['project_photo'])&&$entryData['project_photo']!=''?$entryData['project_photo']:get_template_directory_uri() .'/images/no-image.png');
     ?>
-  <style>
-  .image-container {
-    background-size:cover;
-    background-repeat:no-repeat;
-    width:275px;
-    height:275px;
-  }
-  </style>
     <div class="maker-admin-list-wrp">
       <div class="gv-list-view-title-maker-entry">
+        <div class="statusBox <?php echo $statusBlock;?>">
+          <div class="statusFaire"><span class="gv-field-label"><?php echo $entryData['faire_name'];?></span> </div>
+          <div class="statusText"><span class="gv-field-label">Status: </span> <?php echo $entryData['status'];?></div>
+        </div> <!-- close .statusBox -->
         <div class="entryImg">
           <div class="faire-entry-image-wrp">
             <a class="thickbox" href="<?php echo $image;?>">
@@ -113,53 +107,53 @@ get_header();
               <!--<img class="img-responsive" src="<?php echo $image;?>" alt="Project Photo" />-->
             </a>
           </div>
-        </div>
-        <div class="entryData">
-          <div class="statusBox <?php echo $statusBlock;?>">
-            <div class="pull-left"><span class="gv-field-label"><?php echo $entryData['faire_name'];?></span> </div>
-            <div class="pull-right statusText"><span class="gv-field-label">Status: </span> <?php echo $entryData['status'];?></div>
-          </div>
-          <h3 class="entry-title">
-            <?php //if status is accepted, the title links to the public facing entry page
-            if($entryData['status']=='Accepted') {?>
-              <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>"><?php echo $entryData['presentation_title'];?></a>
+        </div> <!-- close .entryImg-->
+        <div class="entry-main-content">
+          <div class="entryName entryData">
+            <h3 class="entry-title">
+              <?php //if status is accepted, the title links to the public facing entry page
+              if($entryData['status']=='Accepted') {?>
+                <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>"><?php echo $entryData['presentation_title'];?></a>
+              <?php
+              }else{
+                echo $entryData['presentation_title'];
+              } ?>
+            </h3>
             <?php
-            }else{
-              echo $entryData['presentation_title'];
-            } ?>
-          </h3>
-          <?php
-          //Add link to edit entry
-          if($entryData['status']!='Cancelled' and $entryData['maker_type']=='contact'){
-            $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-            $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-            echo '<span class="editLink"><a href="'. $url .'">Edit Entry</a></span>';
-          }
-          ?>
-          <div class="clear pull-left entryID latReg">
-            <?php echo $entryData['form_type'];?>: <span class="entryStandout"><?php echo $entryData['lead_id'];?></span></div>
-          <div class="clear links latReg">
-            <div class="submit-date"><span class="gv-field-label">Submitted: </span> <?php echo date('M j, Y g:i  A',strtotime($entryData['date_created']));?></div>
+            //Add link to edit entry
+            if($entryData['status']!='Cancelled' and $entryData['maker_type']=='contact'){
+              $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+              $url = str_replace('/view/', '/', $url);  //remove view slug from URL
+              echo '<span class="editLink"><a href="'. $url .'">Edit Entry</a></span>';
+            }
+            ?>
+          </div><!-- close .entryName -->
+          <div class="exhibitID entryData">
+            <?php echo $entryData['form_type'];?>: <span class="entryStandout"><?php echo $entryData['lead_id'];?></span>
+          </div> <!-- close exhibitID -->
+          <div class="actionSection">
+            <div class="submit-date">
+              <span class="gv-field-label">Submitted: </span> <?php echo date('M j, Y g:i  A',strtotime($entryData['date_created']));?>
+            </div>
             <!-- Action Bar for Entries -->
             <div class="entry-action-buttons">
               <!-- Get Your Tickets Section -->
               <?php
               //only display if there are tickets and if the entry has been accepted
-              if(!empty($entryData['ticketing']) && $entryData['status']=='Accepted'){
-                ?>
+              if(!empty($entryData['ticketing']) && $entryData['status']=='Accepted'){ ?>
                 <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
-                  GET YOUR TICKETS<i class="fa fa-ticket fa-lg" aria-hidden="true"></i>
+                  <span class="hideSmall">GET YOUR </span>TICKETS<i class="fa fa-ticket fa-lg" aria-hidden="true"></i>
                 </button>
                 <div class="popover-content hidden">
                   <?php
                   foreach($entryData['ticketing'] as $ticket){
                     ?>
                     <div class="row mat-ticketing">
-                      <div class="col-md-10">
+                      <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                         <div class="title"><?php echo $ticket['title'];?></div>
                         <div class="subtitle"><?php echo $ticket['subtitle'];?></div>
                       </div>
-                      <div class="col-md-2">
+                      <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                         <a target="_blank" href="<?php echo $ticket['link'];?>">
                           <i class="fa fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
                         </a>
@@ -181,8 +175,8 @@ get_header();
                 data-toggle="popover">
                 NOTIFICATIONS
                 <span class="fa-stack fa-lg">
-                <i class="fa fa-circle"></i>
-                <span class="notification-counter">3</span>
+                  <i class="fa fa-circle"></i>
+                  <span class="notification-counter">3</span>
                 </span>
               </button>
               <div class="popover-content hidden">
@@ -202,7 +196,7 @@ get_header();
                     $url = str_replace('/view/', '/', $url);  //remove view slug from URL
                     ?>
                     <a href="<?php echo $url;?>">View</a>
-                    <?php if($entryData['status']=='Accepted') {?>
+                    <?php if($entryData['status']=='Accepted') { ?>
                     <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>">View Public Information</a>
                     <?php } ?>
                   </div>
@@ -244,12 +238,12 @@ get_header();
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="clear"></div>
-    </div>
-  <?php } ?>
-  <hr>
+        </div><!-- /entry-main-content-->
+        <div class="clear"></div>
+      </div> <!-- close .gv-list-view-title-maker-entry -->
+    </div> <!-- close .maker-admin-list-wrp-->
+  <?php } //end foreach entry loop ?>
+
   <!-- Modal to cancel entry -->
 <div class="modal" id="cancelEntry">
     <div class="modal-dialog">
@@ -315,5 +309,6 @@ get_header();
       </div>
     </div>
   </div>
-</div>
+</div> <!-- / .maker-admin-manage-faire-entries-mobile -->
+<?php echo $maker->createPageLinks( 'pagination pagination-sm' );?>
 <?php get_footer(); ?>

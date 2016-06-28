@@ -1,104 +1,180 @@
 /* maker admin e.g. makerfaire.com/manage-entries */
-
-.maker-admin-manage-faire-entries{
-  .disabled {
-    color:  #9B9B9B;
-  }
-
+.maker-admin-manage-faire-entries-mobile {
   .maker-admin-list-wrp {
-    position: relative;
-    width: 100%;
-    margin: 2em 0;
-  }
-  .entryImg {
-    float: left;
-    padding-right: 5px;
-    width: 25%;
-    height: auto;
-    p {
-      margin: 0;
-    }
-    img {
-      width: 100%;
-      height: auto;
-      min-height: 10em;
-    }
+    padding: 15px 0;
   }
   i {
     margin: .2em;
   }
-  .entryData {
-    font-weight: bold;
-    font-size: 1.3rem;
-    padding-left: 5px;
-    width: 70%;
-    height: 100%;
-    width: 70%;
-    position: absolute;
-    right: 0;
-    top: 0;
+  .clear {
+    clear: both;
+  }
+  .gv-list-view-title-maker-entry {
+    @media (max-width: 767px) {
+      font-size: .9em;
+    }
+    @media (min-width: 768px) {
+      position: relative;
+    }
+    div.entryData {
+      line-height: 1.3em;
+      clear: both;
+    }
+    .entryImg {
+      @media (min-width: 768px) {
+        width: 25%;
+        overflow: hidden;
+        float: left;
+      }
+      .image-container {
+        background-size: cover;
+        background-repeat: no-repeat;
+        width: 100%;
+        float: left;
+        @media (max-width: 767px) {
+          height: 49vw;
+        }
+        @media (min-width: 768px) {
+          height: 20vw;
+        }
+      }
+    }
     .statusBox {
       height: 1.924em;
       display: block;
       padding: .2em 1em;
       border-radius: 4px;
+
+      .statusFaire {
+        float: left;
+      }
       .statusText {
         color: white;
+        float: right;
+      }
+
+      @media screen and (max-width: 767px) {
+        height: 3.1em;
+        .statusText, .statusFaire {
+          float: none;
+        }
       }
     }
-    .greenStatus {
+    .statusBox.greenStatus {
       background-color: #7ED321;
     }
-    .greyStatus {
+    .statusBox.greyStatus {
       background-color: #B6B6B6;
     }
-    .clear {
-      clear: both;
-    }
-    .links {
-      position: absolute;
-      bottom: 0;
-      width: 98%;
-      border-top: thin solid grey;
-      border-bottom: thin solid grey;
-      p {
-        margin: 0;
+
+    .statusBox, .entry-main-content {
+      float: right;
+      width: 72%;
+      @media screen and (max-width: 767px) {
+        float: none;
+        width: 100%;
       }
     }
-    .editLink {
-      margin-top: 25px;
-      margin-left: 15px;
-      float: left;
-      font-size: .9em;
+    .entryName {
+      .entry-title {
+        font-weight: 100;
+        clear: both;
+        float: left;
+        margin-bottom: 10px;
+        font-size: 1.93em;
+      }
+      .editLink {
+        margin-top: 2em;
+        margin-left: 1em;
+        float: left;
+        font-size: .9em;
+      }
     }
-  }
-  .submit-date {
-    line-height: 25px;
-  }
-  .notifications-button {
-    .fa-stack {
-      width: auto;
-      height: auto;
-      line-height: normal;
+    .submit-date {
+      float:left;
+      padding-top: 5px;
+      @media (max-width: 767px) {
+        margin-top: 2em;
+      }
     }
-    i.fa-circle {
-      font-size: 20px;
-      color: red;
-      margin: 0;
+    .entry-action-buttons {
+      float: right;
+      .hideSmall {
+        @media screen and (max-width: 1000px) {
+          display: none;
+        }
+      }
     }
-    .notification-counter {
-      color: white;
-      font-size: 13px;
-      line-height: 1.5em;
-      position: absolute;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      font-style: normal;
+    .submit-date,
+    .entry-action-buttons {
+      line-height: 2em;
+      font-size: 14px;
+      .btn {
+        @media screen and (max-width: 767px) {
+          padding-right: .5em;
+          padding-left: .5em;
+          font-size: .9em;
+        }
+      }
+      @media (max-width: 767px) {
+        border-top: solid 1px grey;
+        text-align: right;
+        float: none;
+      }
     }
-  }
-  .settings-pop-btn {
-    margin-top: 10px;
+    .notifications-button {
+      .fa-stack {
+        width: auto;
+        height: auto;
+        line-height: normal;
+      }
+      i.fa-circle {
+        color: red;
+        margin: 0;
+        @media (max-width: 767px) {
+          font-size: 1.2em;
+        }
+      }
+      .notification-counter {
+        color: white;
+        line-height: 1.5em;
+        position: absolute;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-style: normal;
+        font-size: 14px;
+        @media (max-width: 767px) {
+          font-size: .8em;
+        }
+      }
+    }
+    .mat-ticketing {
+      border-bottom: thin solid lightgrey;
+      padding: 5px 0;
+      .subtitle {
+        color: #9B9B9B;
+      }
+      .title {
+        font-size: 15px;
+      }
+      i.fa-chevron-circle-right {
+        color: #00B4F3;
+      }
+    }
+
+    .actionSection {
+      width: 72%;
+      @media (min-width: 768px) {
+        border-top: solid 1px grey;
+        border-bottom: solid 1px grey;
+        position: absolute;
+        bottom: 0;
+      }
+      @media (max-width: 767px) {
+        width: 100%;
+      }
+    }
   }
   .manage-entry-popover {
     h6, a, .disabled {
@@ -106,7 +182,6 @@
       padding: 6px 10px;
     }
     h6 {
-      /*color: #00adef;*/
       font-size: 17px;
       font-weight: 400;
       padding-top: 10px;
@@ -120,12 +195,11 @@
       }
     }
 
-      .manage-links {
-        &:not(:last-child) {
-          border-bottom: thin solid lightgrey;
-        }
+    .manage-links {
+      &:not(:last-child) {
+        border-bottom: thin solid lightgrey;
       }
-
+    }
   }
   .submit-entry {
     .btn {
@@ -136,7 +210,7 @@
     }
   }
   .popover {
-    max-width: 500px;
+    max-width: 100%;
     min-width: 200px;
   }
   .popover-content {
@@ -154,136 +228,6 @@
         padding-top: 0;
         padding-left: 0;
       }
-    }
-  }
-  .mat-ticketing {
-    border-bottom: thin solid lightgrey;
-    padding: 5px 0;
-    .subtitle {
-      color: #9B9B9B;
-    }
-    .title {
-      font-size: 15px;
-    }
-    i.fa-chevron-circle-right {
-      color: #00B4F3;
-    }
-  }
-  .welcome-head {
-    font-size: 1.25em;
-    font-weight: bold;
-    line-height: 1.24em;
-  }
-  .title-head {
-    font-weight: 100;
-    line-height: 1.54em;
-    margin: 0;
-  }
-  .header-break {
-    margin-top: 5px;
-  }
-  .popover-head {
-    font-size: 1.3rem;
-  }
-  .entry-title {
-    font-weight: 100;
-    clear: both;
-    float: left;
-    margin-bottom: 10px;
-    font-size: 1.93em;
-  }
-  .latReg {
-    font-weight: 500;
-  }
-  .entryID {
-    font-size: 1.385em;
-    margin-bottom: 15px;
-  }
-  // Make the images square and center them
-  .faire-entry-image-wrp {
-    height: 280px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    overflow: hidden;
-    p {
-      width: 100%;
-    }
-  }
-
-  @media screen and (min-width: 992px) and (max-width: 1199px) {
-    .faire-entry-image-wrp {
-      height: 230px;
-    }
-  }
-  @media screen and (min-width: 768px) and (max-width: 991px) {
-    .faire-entry-image-wrp {
-      height: 175px;
-    }
-  }
-  @media screen and (max-width: 767px) {
-    .faire-entry-image-wrp {
-      height: 150px;
-    }
-  }
-  @media screen and (min-width: 566px) {
-    .submit-date {
-      float: left;
-    }
-    .entry-action-buttons {
-      float: right;
-    }
-  }
-  @media screen and (max-width: 565px) {
-    .faire-entry-image-wrp {
-      height: auto;
-    }
-    .entryImg {
-      float: none;
-      padding-right: 0;
-      width: 100%;
-    }
-    .entryData {
-      padding-left: 0;
-      height: 100%;
-      width: 100%;
-      position: static;
-      right: inherit;
-      top: inherit;
-      margin-top: 10px;
-      .links {
-        position: static;
-        bottom: inherit;
-        width: 100%;
-        border-top: none;
-        border-bottom: none;
-      }
-    }
-    .submit-entry {
-      width: 100%;
-      .btn {
-        display: block;
-      }
-    }
-    .submit-date,
-    .entry-action-buttons {
-      border-top: solid 1px grey;
-      text-align: right;
-    }
-    h3.title {
-      clear: none;
-      float: none;
-      margin-top: 10px;
-    }
-  }
-  @media screen and (max-width: 450px) {
-    .faire-entry-image-wrp {
-      height: 400px;
-    }
-  }
-  @media screen and (max-width: 375px) {
-    .faire-entry-image-wrp {
-      height: 350px;
     }
   }
 }
