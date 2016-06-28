@@ -35,7 +35,7 @@ class maker {
     $this->dispLimit = 20;
     $this->dispPage  = get_query_var('page',1);
     if($this->dispPage <= 0)  $this->dispPage=1;
-    
+
     $this->totalNumEntries = 0;
 
     $this->isSponsor = FALSE;
@@ -131,9 +131,10 @@ class maker {
       // If the display limit is greater than the total number of entries,
       //  reset the current page to 1
       if($this->dispLimit > $this->totalNumEntries) $this->dispPage = 1;
-
-      $results = $wpdb->get_results($query ." LIMIT " . ( ( $this->dispPage - 1 ) * $this->dispLimit ) . ",". $this->dispLimit, ARRAY_A );
-
+      $limit = ($this->dispPage - 1 ) * $this->dispLimit;
+      $results = $wpdb->get_results($query ." LIMIT " . $limit . ",". $this->dispLimit, ARRAY_A );
+      
+      if(!$results) echo $wpdb->last_error;
       foreach($results as $row){
         $data = array();
         foreach($row as $key=>$value){
