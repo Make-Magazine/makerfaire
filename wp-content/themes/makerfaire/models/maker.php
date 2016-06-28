@@ -97,79 +97,72 @@ class maker {
 
     $maker_array = array();
     if ( current_user_can( 'mat_view_created_entries') ) {
-    //also return entries created by current user
-      $results = $wpdb->get_results("select wp_mf_maker_to_entity.maker_id "
-          . " from wp_rg_lead "
-          . " left outer join wp_mf_maker_to_entity "
-          . "   on wp_rg_lead.id = wp_mf_maker_to_entity.entity_id "
-          . " where created_by = $current_user->ID "
-          . "   and maker_id is not null "
-          . " group by maker_id", ARRAY_A );
-      foreach($results as $row){
-        $maker_array[] = $row['maker_id'];
-      }
-    }
-    $maker_array[] = $this->maker_id;
-    $maker_id = "'".implode("', '", $maker_array)."'";
-
-    if($maker_id != ''){
-      //based on maker email retrieve maker information from the DB
-      //get total number of rows
+      //also return entries created by current user
+      $query = "SELECT wp_mf_maker_to_entity.maker_type, wp_mf_entity.*, wp_mf_faire.faire_name "
+            . " FROM   wp_mf_maker_to_entity"
+              . " left outer join wp_mf_entity on wp_mf_entity.lead_id = entity_id"
+              . " left outer join wp_mf_faire on wp_mf_entity.faire = wp_mf_faire.faire"
+              . " left outer join wp_rg_lead on wp_rg_lead.id = wp_mf_maker_to_entity.entity_id"
+            . " WHERE (maker_id = '".$this->maker_id."' or created_by = '".$current_user->ID."')"
+              . " and wp_rg_lead.status != 'trash' group by lead_id ORDER BY `wp_mf_entity`.`lead_id`";
+    } else {
       $query = "SELECT wp_mf_maker_to_entity.maker_type, wp_mf_entity.*, wp_mf_faire.faire_name
-          FROM  wp_mf_maker_to_entity
-                left outer join wp_mf_entity
-                  on wp_mf_entity.lead_id = entity_id
-                left outer join wp_mf_faire
-                  on wp_mf_entity.faire = wp_mf_faire.faire
-          WHERE maker_id in(".$maker_id.") and status != 'trash'
-          group by lead_id
-          ORDER BY `wp_mf_entity`.`lead_id` DESC";
-      $total = $wpdb->get_row("SELECT count(*) as total from (".$query.") src", ARRAY_A );
-
-      $this->totalNumEntries = $total['total'];
-
-      // If the display limit is greater than the total number of entries,
-      //  reset the current page to 1
-      if($this->dispLimit > $this->totalNumEntries) $this->dispPage = 1;
-      $limit = ($this->dispPage - 1 ) * $this->dispLimit;
-      $results = $wpdb->get_results($query ." LIMIT " . $limit . ",". $this->dispLimit, ARRAY_A );
-      
-      if(!$results) echo $wpdb->last_error;
-      foreach($results as $row){
-        $data = array();
-        foreach($row as $key=>$value){
-          $data[$key] = $value;
-        }
-
-        //get entry
-        $entry = GFAPI::get_entry($row['lead_id']);
-
-        if(is_array($entry)){
-          $data['date_created'] = $entry['date_created'];
-          $data['ticketing'] = entryTicketing($entry,'MAT');
-        }else{
-          $data['date_created'] = '';
-          $data['ticketing']    = '';
-        }
-
-        //get form_type
-        $form_id  = $entry['form_id'];
-        $form     = GFAPI::get_form($form_id);
-        if(isset($form['form_type']) &&
-            ($form['form_type']=='Sponsor' ||
-             $form['form_type']=='Startup Sponsor')){
-          $this->isSponsor = TRUE;
-        }
-        if(isset($form['form_type']) &&
-            ($form['form_type']=='Exhibit' ||
-             $form['form_type']=='Performer'||
-             $form['form_type']=='Presentation')){
-          $this->isMaker = TRUE;
-        }
-        $data['form_type'] = $form['form_type'];
-        $entries['data'][]=$data;
-      }
+                FROM  wp_mf_maker_to_entity
+                      left outer join wp_mf_entity
+                        on wp_mf_entity.lead_id = entity_id
+                      left outer join wp_mf_faire
+                        on wp_mf_entity.faire = wp_mf_faire.faire
+                WHERE maker_id in(".$maker_id.") and status != 'trash'
+                group by lead_id
+                ORDER BY `wp_mf_entity`.`lead_id` DESC";
     }
+
+    //based on maker email retrieve maker information from the DB
+    //get entry count
+    $total = $wpdb->get_row("SELECT count(*) as total from (".$query.") src", ARRAY_A );
+    $this->totalNumEntries = $total['total'];
+
+    // If the display limit is greater than the total number of entries,
+    //  reset the current page to 1
+    if($this->dispLimit > $this->totalNumEntries) $this->dispPage = 1;
+    $limit = ($this->dispPage - 1 ) * $this->dispLimit;
+    $results = $wpdb->get_results($query ." LIMIT " . $limit . ",". $this->dispLimit, ARRAY_A );
+
+    foreach($results as $row){
+      $data = array();
+      foreach($row as $key=>$value){
+        $data[$key] = $value;
+      }
+
+      //get entry
+      $entry = GFAPI::get_entry($row['lead_id']);
+
+      if(is_array($entry)){
+        $data['date_created'] = $entry['date_created'];
+        $data['ticketing'] = entryTicketing($entry,'MAT');
+      }else{
+        $data['date_created'] = '';
+        $data['ticketing']    = '';
+      }
+
+      //get form_type
+      $form_id  = $entry['form_id'];
+      $form     = GFAPI::get_form($form_id);
+      if(isset($form['form_type']) &&
+          ($form['form_type']=='Sponsor' ||
+           $form['form_type']=='Startup Sponsor')){
+        $this->isSponsor = TRUE;
+      }
+      if(isset($form['form_type']) &&
+          ($form['form_type']=='Exhibit' ||
+           $form['form_type']=='Performer'||
+           $form['form_type']=='Presentation')){
+        $this->isMaker = TRUE;
+      }
+      $data['form_type'] = $form['form_type'];
+      $entries['data'][]=$data;
+    }
+
     return $entries;
   }
 
