@@ -21,8 +21,13 @@ gperk.confirmActionUrl = function(event, message, url) {
 * 
 */
 gperk.addTab = function(elem, id, label) {
-    
+
     var tabClass = id == '#gws_form_tab' ? 'gwp_form_tab' : 'gwp_field_tab';
+
+    var tabClass    = id.replace( '#', '' ),
+        altTabClass = tabClass.replace( 'gws', 'gwp' ),
+        tabClass    = tabClass != altTabClass ? tabClass + ' ' + altTabClass : tabClass;
+
     
     // destory tabs already initialized
     elem.tabs( 'destroy' );
