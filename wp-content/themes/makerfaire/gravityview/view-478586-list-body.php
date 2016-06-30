@@ -126,7 +126,10 @@ get_header();
           <div>
             <?php
             //Add link to edit entry
-            if($entryData['status']!='Cancelled' and $entryData['maker_type']=='contact'){
+            $disp_edit = (($entryData['status'] == 'Proposed' || $entryData['status']=='Wait List' || $entryData['status'] == 'Accepted')
+                          && $entryData['maker_type']=='contact' ? true: false);
+
+            if($disp_edit){
               $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
               $url = str_replace('/view/', '/', $url);  //remove view slug from URL
               echo '<span class="editLink"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a href="'. $url .'">Edit Application</a></span>';
@@ -219,7 +222,7 @@ get_header();
                     $class = '';
                     $tooltip = '';
                     //edit link
-                    if($entryData['status']!='Cancelled' and $entryData['maker_type']=='contact'){
+                    if($disp_edit){
                       $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
                       $url = str_replace('/view/', '/', $url);  //remove view slug from URL
                       echo '<a href="'. $url .'">Edit Application</a>';
