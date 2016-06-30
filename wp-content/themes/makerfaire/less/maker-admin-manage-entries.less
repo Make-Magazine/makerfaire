@@ -10,7 +10,7 @@
     clear: both;
   }
   .gv-list-view-title-maker-entry {
-    @media (max-width: 767px) {
+    @media (max-width: 1000px) {
       font-size: .9em;
     }
     @media (min-width: 768px) {
@@ -34,8 +34,11 @@
         @media (max-width: 767px) {
           height: 49vw;
         }
-        @media (min-width: 768px) {
-          height: 20vw;
+        @media screen and (min-width: 768px) and (max-width: 991px) {
+          height: 25vw;
+        }
+        @media screen and (min-width: 992px) {
+          height: 25vw;
         }
       }
     }
@@ -82,19 +85,23 @@
         float: left;
         margin-bottom: 10px;
         font-size: 1.93em;
+        @media screen and (max-width: 1200px) {
+          font-size: 1.3em;
+        }
       }
-      .editLink {
-        margin-top: 2em;
-        margin-left: 1em;
-        float: left;
-        font-size: .9em;
-      }
+    }
+    .editLink {
+      margin-top: 1em;
+      margin-left: 1em;
+      float: left;
+      font-size: .9em;
     }
     .submit-date {
       float:left;
-      padding-top: 5px;
+      padding-top: 3px;
       @media (max-width: 767px) {
         margin-top: 2em;
+        padding: 0;
       }
     }
     .entry-action-buttons {
@@ -110,9 +117,13 @@
       line-height: 2em;
       font-size: 14px;
       .btn {
-        @media screen and (max-width: 767px) {
-          padding-right: .5em;
-          padding-left: .5em;
+        line-height: 2em;
+        font-size: 14px;
+        @media screen and (max-width: 1000px) {
+          padding-right: .2em;
+          padding-left: .2em;
+        }
+        @media screen and (max-width: 1200px) {
           font-size: .9em;
         }
       }
@@ -120,6 +131,9 @@
         border-top: solid 1px grey;
         text-align: right;
         float: none;
+      }
+      @media screen and (max-width: 1200px) {
+        font-size: .8em;
       }
     }
     .notifications-button {
@@ -144,7 +158,7 @@
         text-align: center;
         font-style: normal;
         font-size: 14px;
-        @media (max-width: 767px) {
+        @media (max-width: 1199px) {
           font-size: .8em;
         }
       }
