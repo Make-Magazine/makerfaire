@@ -22,9 +22,9 @@
     $formType = $form['form_type'];
     $faire =$slug=$faireID=$show_sched=$faire_end='';
   }
-  
+
   if($form_id!=''){
-    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt "
+    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt,url_path "
             . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
     $results =  $wpdb->get_row( $formSQL );
     if($wpdb->num_rows > 0){
@@ -34,6 +34,7 @@
       $faire_logo   = $results->faire_logo;
       $faire_start  = $results->start_dt;
       $faire_end    = $results->end_dt;
+      $url_sub_path = $results->url_path;
     }
   }
 
@@ -135,7 +136,7 @@
           $backlink = wp_get_referer();
           $backMsg = '&#65513; Back to the Schedule';
         }else{
-          $backlink = "/".$faire."/meet-the-makers/";
+          $backlink = "/".$url_sub_path."/meet-the-makers/";
           $backMsg = '&#65513; Look for More Makers';
         }
         ?>
@@ -257,7 +258,7 @@ function display_entry_schedule($entry_id) {
     return;
   }
   $faire_url = "/$faire";
-  
+
   $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
             from  wp_mf_location location
             join  wp_mf_faire_subarea subarea
