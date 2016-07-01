@@ -28,7 +28,7 @@
             . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
     $results =  $wpdb->get_row( $formSQL );
     if($wpdb->num_rows > 0){
-      $faire        =  $slug = $results->faire_name;
+      $faire        = $slug = $results->faire_name;
       $faireID      = $results->id;
       $show_sched   = $results->show_sched;
       $faire_logo   = $results->faire_logo;
@@ -285,7 +285,7 @@ function display_entry_schedule($entry_id) {
       <span class="faireTitle pull-left">
         <a href="<?= $faire_url ?>">
         <span class="faireLabel">Live at</span><br/>
-        <div class="faireName"><?php echo (strpos($faireID,'NY')!== false?'World':'');?> Maker Faire <?php echo ucwords(str_replace('-',' ', $faire));?></div>
+        <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
         </a>
       </span>
       <?php // TBD - dynamically set these links and images ?>
