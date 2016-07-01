@@ -6,7 +6,8 @@ global $wp_query;
 //get faire ID (default to BA15
 $faire = (isset($_GET['faire'])?sanitize_text_field($_GET['faire']):'BA15');
 $results = $wpdb->get_results('SELECT * FROM wp_mf_faire where faire= "'.strtoupper($faire).'"');
-$faire_name = $results[0]->faire_name;
+$url_sub_path       = $results[0]->url_path;
+$faire_name         = $results[0]->faire_name;
 $current_form_ids   = explode(',',$results[0]->form_ids);
 
 //exclude these forms
@@ -49,7 +50,7 @@ get_header(); ?>
 
 			<div class="row padbottom">
 				<div class="col-md-8">
-					<a href="/<?php echo str_replace(' ','-', strtolower($faire_name));?>/meet-the-makers/">&#65513; Look for More Makers</a>
+					<a href="/<?php echo $url_sub_path;?>/meet-the-makers/">&#65513; Look for More Makers</a>
 				</div>
 			</div>
 			<div class="row">
