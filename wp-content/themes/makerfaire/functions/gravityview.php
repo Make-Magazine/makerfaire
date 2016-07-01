@@ -26,3 +26,16 @@ function check_entry_display( $check_entry_display, $entry ) {
   return $check_entry_display;
 }
 add_filter('gravityview/common/get_entry/check_entry_display', 'check_entry_display', 10, 2 );
+
+/* add query var for MAT to edit the entry */
+add_filter( 'query_vars', 'mat_register_query_var' );
+function mat_register_query_var( $vars ) {
+    $vars[] = 'edit_slug';
+    return $vars;
+}
+
+/* makersign Rewrite Rules */
+add_action('init', 'makersign_rewrite_rules');
+function makersign_rewrite_rules() {
+    add_rewrite_rule( 'makerSign/(\d*)/?(.*)$/?', 'fpdi/makersigns.php?eid=$matches[1]&faire=$matches[2]', 'top' );
+}

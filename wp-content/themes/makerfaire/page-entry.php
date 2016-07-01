@@ -6,7 +6,9 @@
  */
 
   global $wp_query;
-  $entryId = $wp_query->query_vars['e_id'];
+  $entryId   = $wp_query->query_vars['e_id'];
+  $editEntry = $wp_query->query_vars['edit_slug'];
+
   $entry = GFAPI::get_entry($entryId);
 
   //entry not found
@@ -22,14 +24,15 @@
     $formType = $form['form_type'];
     $faire =$slug=$faireID=$show_sched=$faire_end='';
   }
-  
+
   if($form_id!=''){
     $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt "
             . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
     $results =  $wpdb->get_row( $formSQL );
     if($wpdb->num_rows > 0){
-      $faire        =  $slug = $results->faire_name;
+      $faire        = $slug = $results->faire_name;
       $faireID      = $results->id;
+      $faireShort   = $results->faire;
       $show_sched   = $results->show_sched;
       $faire_logo   = $results->faire_logo;
       $faire_start  = $results->start_dt;
@@ -83,10 +86,10 @@
   // A group or association
   $displayType = (isset($entry['105']) ? $entry['105']:'');
 
-  $isGroup = $isList = $isSingle = false;
-  $isGroup =(strpos($displayType, 'group') !== false);
-  $isList =(strpos($displayType, 'list') !== false);
-  $isSingle =(strpos($displayType, 'One') !== false);
+  $isGroup  = $isList = $isSingle = false;
+  $isGroup  = (strpos($displayType, 'group') !== false);
+  $isList   = (strpos($displayType, 'list') !== false);
+  $isSingle = (strpos($displayType, 'One') !== false);
 
   $sharing_cards = new mf_sharing_cards();
 
@@ -104,19 +107,39 @@
   //Website
   $project_website = (isset($entry['27']) ? $entry['27']: '');
   //Video
-  $project_video = (isset($entry['32'])?$entry['32']:'');
+  $project_video   = (isset($entry['32'])?$entry['32']:'');
   //Title
-  $project_title = (isset($entry['151'])?(string)$entry['151']:'');
-  $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+  $project_title   = (isset($entry['151'])?(string)$entry['151']:'');
+  $project_title   = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
   $sharing_cards->project_title = $project_title;
 
   //Url
   global $wp;
-  $canonical_url = home_url( $wp->request ) . '/' ;
+  $canonical_url   = home_url( $wp->request ) . '/' ;
   $sharing_cards->canonical_url = $canonical_url;
 
   $sharing_cards->set_values();
   get_header();
+
+  /* Lets check if we are coming from the MAT tool -
+   * if we are, and user is logged in and has access to this record
+   *   Display edit functionality
+   */
+  $makerEdit = false;
+  if($editEntry=='edit'){
+    //check if loggest in user has access to this entry
+    $current_user = wp_get_current_user();
+
+    //require_once our model
+    require_once( get_template_directory().'/models/maker.php' );
+
+    //instantiate the model
+    $maker   = new maker($current_user->user_email);
+
+    if($maker->check_entry_access($entry)){
+      $makerEdit =  true;
+    }
+  }
 ?>
 
 <div class="clear"></div>
@@ -138,9 +161,23 @@
           $backlink = "/".$faire."/meet-the-makers/";
           $backMsg = '&#65513; Look for More Makers';
         }
+
+        //overwrite the backlink to send makers back to MAT if $makerEdit = true
+        if($makerEdit){
+          $backlink = "/manage-entries/";
+          $backMsg = '&#65513; Back to Your Maker Admin Tool';
+        }
         ?>
         <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
         <?php
+        //TBD - create a redirect
+        if($makerEdit){?>
+          <div>
+            <a target="_blank" href="/makerSign/<?php echo $entryId?>/<?php echo $faireShort;?>"><i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign</a>
+          </div>
+          <div>To modify your public information, edit the information directly on this page.</div>
+        <?php
+        }
       }
 
       if(is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted'){
@@ -257,7 +294,7 @@ function display_entry_schedule($entry_id) {
     return;
   }
   $faire_url = "/$faire";
-  
+
   $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
             from  wp_mf_location location
             join  wp_mf_faire_subarea subarea

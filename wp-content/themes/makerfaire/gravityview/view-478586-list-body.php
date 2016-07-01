@@ -132,16 +132,21 @@ get_header();
             if($disp_edit){
               $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
               $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-              echo '<span class="editLink"><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a href="'. $url .'">Edit Application</a></span>';
+              echo  '<span class="editLink">'
+                  . '  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>'
+                  . '  <a href="'. $url .'">Edit Application</a>'
+                  . '</span>';
             }
             ?>
           </div>
           <div>
             <?php
+            $viewEditLink = "/maker/entry/" . $entryData['lead_id']."/edit/";
+
             if($entryData['status']=='Accepted') { ?>
               <span class="editLink">
                 <i class="fa fa-eye" aria-hidden="true"></i>
-                <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>">View/Edit Public Information</a>
+                <a target="_blank" href="<?php echo $viewEditLink;?>">View/Edit Public Information</a>
               </span>
               <?php
             } ?>

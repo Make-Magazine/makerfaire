@@ -503,5 +503,25 @@ class maker {
 
     return $html;
   }
+
+  //check if current user has access to this entry
+  public function check_entry_access($entry ) {
+    global $current_user; global $wpdb;
+
+    //check if entry was created by logged on user and if they have the correct role set
+    if ( current_user_can( 'mat_view_created_entries') ) {
+      if($entry['created_by']==$current_user->ID) return true;
+    }
+
+    $query = "SELECT count(*)
+              FROM   wp_mf_maker_to_entity
+              left  outer join wp_mf_entity
+                    on wp_mf_entity.lead_id = entity_id
+              WHERE maker_id ='".$this->maker_id."'
+              AND   wp_mf_maker_to_entity.entity_id = ".$entry['id']."
+              AND   status != 'trash'";
+    $count = $wpdb->get_var($query);
+    if($count > 0) return true;
+  }
 }
 
