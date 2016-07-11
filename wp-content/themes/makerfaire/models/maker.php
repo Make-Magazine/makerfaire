@@ -96,6 +96,9 @@ class maker {
     $entries = array();
 
     $maker_array = array();
+    if($this->maker_id==''){
+      return array('data'=>array());
+    }
     if ( current_user_can( 'mat_view_created_entries') ) {
       //also return entries created by current user
       $query = "SELECT wp_mf_maker_to_entity.maker_type, wp_mf_entity.*, wp_mf_faire.faire_name "

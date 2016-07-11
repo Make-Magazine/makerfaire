@@ -8,8 +8,7 @@
   global $wp_query;
   $entryId   = $wp_query->query_vars['e_id'];
   $editEntry = $wp_query->query_vars['edit_slug'];
-
-  $entry = GFAPI::get_entry($entryId);
+  $entry     = GFAPI::get_entry($entryId);
 
   //entry not found
   if(isset($entry->errors)){
@@ -26,17 +25,17 @@
   }
 
   if($form_id!=''){
-    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt "
+    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt,url_path "
             . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
     $results =  $wpdb->get_row( $formSQL );
     if($wpdb->num_rows > 0){
       $faire        = $slug = $results->faire_name;
       $faireID      = $results->id;
-      $faireShort   = $results->faire;
       $show_sched   = $results->show_sched;
       $faire_logo   = $results->faire_logo;
       $faire_start  = $results->start_dt;
       $faire_end    = $results->end_dt;
+      $url_sub_path = $results->url_path;
     }
   }
 
@@ -86,10 +85,10 @@
   // A group or association
   $displayType = (isset($entry['105']) ? $entry['105']:'');
 
-  $isGroup  = $isList = $isSingle = false;
-  $isGroup  = (strpos($displayType, 'group') !== false);
-  $isList   = (strpos($displayType, 'list') !== false);
-  $isSingle = (strpos($displayType, 'One') !== false);
+  $isGroup = $isList = $isSingle = false;
+  $isGroup =(strpos($displayType, 'group') !== false);
+  $isList =(strpos($displayType, 'list') !== false);
+  $isSingle =(strpos($displayType, 'One') !== false);
 
   $sharing_cards = new mf_sharing_cards();
 
@@ -107,19 +106,20 @@
   //Website
   $project_website = (isset($entry['27']) ? $entry['27']: '');
   //Video
-  $project_video   = (isset($entry['32'])?$entry['32']:'');
+  $project_video = (isset($entry['32'])?$entry['32']:'');
   //Title
-  $project_title   = (isset($entry['151'])?(string)$entry['151']:'');
-  $project_title   = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+  $project_title = (isset($entry['151'])?(string)$entry['151']:'');
+  $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
   $sharing_cards->project_title = $project_title;
 
   //Url
   global $wp;
-  $canonical_url   = home_url( $wp->request ) . '/' ;
+  $canonical_url = home_url( $wp->request ) . '/' ;
   $sharing_cards->canonical_url = $canonical_url;
 
   $sharing_cards->set_values();
   get_header();
+
 
   /* Lets check if we are coming from the MAT tool -
    * if we are, and user is logged in and has access to this record
@@ -158,7 +158,7 @@
           $backlink = wp_get_referer();
           $backMsg = '&#65513; Back to the Schedule';
         }else{
-          $backlink = "/".$faire."/meet-the-makers/";
+          $backlink = "/".$url_sub_path."/meet-the-makers/";
           $backMsg = '&#65513; Look for More Makers';
         }
 
@@ -170,24 +170,28 @@
         ?>
         <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
         <?php
-        //TBD - create a redirect
+        //TBD - create a redirect for makerSign
         if($makerEdit){?>
-          <div>
-            <a target="_blank" href="/makerSign/<?php echo $entryId?>/<?php echo $faireShort;?>"><i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign</a>
+          <div class="makerEditHead">
+            <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
+            <a target="_blank" href="/makerSign/<?php echo $entryId?>/<?php echo $faireShort;?>">
+              <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
+            </a><br/>
+            To modify your public information, edit the information directly on this page.
           </div>
-          <div>To modify your public information, edit the information directly on this page.</div>
         <?php
         }
       }
 
       if(is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted'){
         //display schedule/location information if there is any
-        if (!empty(display_entry_schedule($entryId))) {
+        //do not display schedule if maker edit
+        if (!$makerEdit && !empty(display_entry_schedule($entryId))) {
           display_entry_schedule($entryId);
         }
 ?>
         <div class="page-header">
-          <h1><?php echo $project_title; ?>
+          <h1><span id="project_title" class="<?php echo ($makerEdit?'edit':'')?>"><?php echo $project_title; ?></span>
             <?php
              //check if this entry has one any awards
             $ribbons = checkForRibbons(0,$entryId);
@@ -196,19 +200,27 @@
           </h1>
         </div>
 
-        <img class="img-responsive" src="<?php echo $project_photo; ?>" />
-        <p class="lead"><?php echo nl2br(make_clickable($project_short)); ?></p>
+        <img class="img-responsive <?php echo ($makerEdit?'ajaxupload':'')?>" src="<?php echo $project_photo; ?>" />
+        <p id="project_short" class="lead <?php echo ($makerEdit?'edit_area':'')?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
         <?php
         if (!empty($project_website)) {
-          echo '<a href="' . $project_website . '" class="btn btn-info pull-left" target="_blank" style="margin-right:15px;">Project Website</a>';
+          if($makerEdit){
+            echo '<div id="website" class="edit">'. $project_website.'</div>';
+          }else{
+            echo '<a href="' . $project_website . '" class="btn btn-info pull-left" target="_blank" style="margin-right:15px;">Project Website</a>';
+          }
         }
         ?>
 
         <!-- Button to trigger video modal -->
         <?php
         if (!empty($project_video)) {
-          echo '<a href="#entryModal" role="button" id="modalButton" class="btn btn-info" data-toggle="modal">Project Video</a>';
+          if($makerEdit){
+            echo '<span id="video" class="edit">'. $project_video.'</span>';
+          }else{
+            echo '<a href="#entryModal" role="button" id="modalButton" class="btn btn-info" data-toggle="modal">Project Video</a>';
+          }
         }
         ?>
         <br />
@@ -251,8 +263,8 @@
           echo '<div class="row center-block">
                   ',(!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
           echo    '<div class="col-md-5">
-                    <h3 style="margin-top: 0px;">' . $groupname . '</h3>
-                    <p>' . make_clickable($groupbio) . '</p>
+                    <h3 style="margin-top: 0px;" class="'. ($makerEdit?'edit':'').'" id="groupname">' . $groupname . '</h3>
+                    <p  class="'. ($makerEdit?'edit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
                   </div>
                 </div>';
         } else {
@@ -321,7 +333,7 @@ function display_entry_schedule($entry_id) {
       <span class="faireTitle pull-left">
         <a href="<?= $faire_url ?>">
         <span class="faireLabel">Live at</span><br/>
-        <div class="faireName"><?php echo (strpos($faireID,'NY')!== false?'World':'');?> Maker Faire <?php echo ucwords(str_replace('-',' ', $faire));?></div>
+        <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
         </a>
       </span>
       <?php // TBD - dynamically set these links and images ?>
