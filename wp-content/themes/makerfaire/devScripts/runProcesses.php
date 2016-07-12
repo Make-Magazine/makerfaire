@@ -59,10 +59,13 @@ if(isset($_GET['page'])){
     $entry = GFAPI::get_entry(esc_attr($row->id));
     echo 'updating '.$entry['id'].'<br/>';
 
-    //format Entry information
-    $entryData = GFRMTHELPER::gravityforms_format_record($entry,$form);
-    //var_dump($entryData);
-    //update maker table information
-    GFRMTHELPER::updateMakerTable($entryData);
+    $current_user = wp_get_current_user();
+
+    //require_once our model
+    require_once( get_template_directory().'/models/maker.php' );
+
+    //instantiate the model
+    $maker   = new maker($current_user->user_email);
+    $maker->updateMakerTable();
   }
   echo('ending process');
