@@ -833,10 +833,11 @@ function set_entry_status($lead,$form){
 			//Handle acceptance status changes
 			if ($is_acceptance_status_changed ){
         if($acceptance_status_change=='Accepted'){
-          //generate EventBrite Tickets
-          //genEBtickets($entry_info_entry_id);
+          /* If the status is accepted, trigger a cron job to
+           *    generate EventBrite Tickets.
+           *  The cron job will trigger action sidebar_entry_update
+           */
           wp_schedule_single_event(time() + 1,'sidebar_entry_update', array($entry_info_entry_id));
-          //do_action( 'sidebar_entry_update', $entry_info_entry_id);
         }
 				//Create a note of the status change.
 				$results=mf_add_note( $entry_info_entry_id, 'EntryID:'.$entry_info_entry_id.' status changed to '.$acceptance_status_change);

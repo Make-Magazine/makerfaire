@@ -46,31 +46,35 @@ function genEBtickets($entryID){
   $form_type = $form['form_type'];
 
   //get faire ID for this form
-  $sql = "select wp_mf_faire.ID,eb_event.ID as event_id, EB_event_id "
-          . " from wp_mf_faire,eb_event "
+  $sql = "select wp_mf_faire.ID, eb_event.ID as event_id, EB_event_id as eib "
+          . " from wp_mf_faire, eb_event "
           . " where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0"
           . " and wp_mf_faire.ID = eb_event.wp_mf_faire_id";
   $faire = $wpdb->get_results($sql);
-  $faire_id      = (isset($faire[0]->ID) ? $faire[0]->ID:'');
-
-  //MF table event ID
-  $event_id      = (isset($faire[0]->event_id) ? $faire[0]->event_id:'');
-
-  //event brite event ID
-  $EB_event_id   = (isset($faire[0]->EB_event_id) ? $faire[0]->EB_event_id:'');
+  if($wpdb->num_rows > 0){
+    $eidArr = array();
+    $EIBarr = array();
+    foreach($faire as $row){
+      $eidArr[]               = $row->event_id;
+      $EIBarr[$row->event_id] = $row->eib;
+    }
+    //MF table event ID
+    $event_id = implode(",", $eidArr);
+  }
 
   //determine what ticket types to request
-  $sql = 'select  eb_ticket_type.ticket_type, qty, hidden,ticketID as ticket_id
+  $sql = 'select  eb_ticket_type.ticket_type, qty, hidden,ticketID as ticket_id,
+                  eb_eventToTicket.eventID
           from    eb_ticket_type
-                  left outer join eb_eventToTicket on
-                    eb_eventToTicket.eventID = '.$event_id.' and
-                    eb_eventToTicket.ticket_type = eb_ticket_type.ticket_type,
+            left outer join eb_eventToTicket on
+              eb_eventToTicket.eventID in ('.$event_id.') and
+              eb_eventToTicket.ticket_type = eb_ticket_type.ticket_type,
                   wp_mf_form_types
           where   wp_mf_form_types.form_type="'.$form_type.'"    and
-                  eb_ticket_type.event_id = '.$event_id.'        and
+                  eb_ticket_type.event_id in ('.$event_id.')        and
                   eb_ticket_type.form_type = wp_mf_form_types.ID and
                   ticketID is not null';
-  
+
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     $eventbrite = new eventbrite();
@@ -85,17 +89,18 @@ function genEBtickets($entryID){
       $accessCode = $row->ticket_type.$entryID.$rand;
       //if this access Code has already been created, do not resend to EB
       $ACcount = $wpdb->get_var('select count(*) from eb_entry_access_code where access_code = "'.$accessCode .'"');
-
+      $EB_event_id = $EIBarr[$row->eventID];
       if($ACcount==0){
         $args = array(
           'id'   => $EB_event_id,
           'data' => 'access_codes',
           'create' => array(
-            'access_code.code' => $accessCode,
-            'access_code.ticket_ids' => $row->ticket_id,
-            'access_code.quantity_available' => $row->qty
+            'access_code.code'                => $accessCode,
+            'access_code.ticket_ids'          => $row->ticket_id,
+            'access_code.quantity_available'  => $row->qty
           )
         );
+
         //call eventbrite to create access code
         $access_codes = $eventbrite->events($args);
         if(isset($access_codes->status_code)&&$access_codes->status_code==400){
