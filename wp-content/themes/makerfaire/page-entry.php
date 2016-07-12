@@ -140,7 +140,18 @@
       $makerEdit =  true;
     }
   }
-?>
+  if($makerEdit) {
+    ?>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.js"></script>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.autogrow.js"></script>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.ajaxupload.js"></script>
+
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.autogrow.js"></script>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.ajaxfileupload.js"></script>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jeditable-main.js"></script>
+    <?php
+  }
+    ?>
 
 <div class="clear"></div>
 
@@ -200,7 +211,9 @@
           </h1>
         </div>
 
-        <img class="img-responsive <?php echo ($makerEdit?'ajaxupload':'')?>" src="<?php echo $project_photo; ?>" />
+        <p class="ajaxupload" id="proj_img" title="Click to upload...">
+          <img class="img-responsive <?php echo ($makerEdit?'ajaxupload':'')?>" src="<?php echo $project_photo; ?>" />
+        </p>
         <p id="project_short" class="lead <?php echo ($makerEdit?'edit_area':'')?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
         <?php

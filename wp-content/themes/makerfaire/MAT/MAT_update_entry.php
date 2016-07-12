@@ -1,8 +1,7 @@
 <?php
-/* This function is called when the maker updates his entry via the main public
+/* This logic is called when the maker updates his entry via the main public
  * facing entry screen */
-function MAT_update_entry() {
-  global $wpdb;
+  include '../../../../wp-load.php';
   $value    = $_POST['value'];
   $entry_id = $_POST['entry_id'];
   $field    = $_POST['id'];
@@ -28,10 +27,9 @@ function MAT_update_entry() {
     case 'groupbio':
       GFAPI::update_entry_field( $entry_id, 110, $value);
       break;
+    default:
+      $value = 'Error';
+      break;
     }
   //wp_send_json($value);
   echo $value;
-  // IMPORTANT: don't forget to "exit"
-  exit;
-}
-add_action('wp_ajax_MAT-update-entry','MAT_update_entry');
