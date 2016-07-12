@@ -107,7 +107,7 @@ class maker {
               . " left outer join wp_mf_faire on wp_mf_entity.faire = wp_mf_faire.faire"
               . " left outer join wp_rg_lead on wp_rg_lead.id = wp_mf_maker_to_entity.entity_id"
             . " WHERE (maker_id = '".$this->maker_id."' or created_by = '".$current_user->ID."')"
-              . " and wp_rg_lead.status != 'trash' group by lead_id ORDER BY `wp_mf_entity`.`lead_id`";
+              . " and wp_rg_lead.status != 'trash' group by lead_id ORDER BY `wp_mf_entity`.`lead_id` DESC";
     } else {
       $query = "SELECT wp_mf_maker_to_entity.maker_type, wp_mf_entity.*, wp_mf_faire.faire_name
                 FROM  wp_mf_maker_to_entity
