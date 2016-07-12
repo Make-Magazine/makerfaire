@@ -676,9 +676,9 @@ class GFRMTHELPER {
         }
 
         $wp_mf_makersql = "INSERT INTO wp_mf_maker "
-                        . " (lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
-                        . ' VALUES ('.$entryData['entry_id'].', "'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'", "'.$phone.'", '
-                                     . '"'.$twitter.'", '.$form_id.',"'.$guid.'","'.$photo.'","'.$website.'")'
+                        . " (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `maker_id`, `Photo`, `website`) "
+                        . ' VALUES ("'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'", "'.$phone.'", '
+                                     . '"'.$twitter.'", "'.$guid.'","'.$photo.'","'.$website.'")'
                         . ' ON DUPLICATE KEY UPDATE lead_id='.$entryData['entry_id'].',form_id  = '.$form_id;
 
         //only update non blank fields
