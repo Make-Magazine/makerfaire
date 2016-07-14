@@ -221,8 +221,6 @@ get_header();
                     <?php if($entryData['status']=='Accepted') { ?>
                     <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>">View/Edit Public Information</a>
                     <?php } ?>
-                  </div>
-                  <div class="manage-links">
                     <?php
                     $class = '';
                     $tooltip = '';
@@ -235,7 +233,6 @@ get_header();
                       echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
                     }
                     ?>
-                    <a href="#">Copy Application</a>
                   </div>
                   <div>
                     <?php
@@ -288,26 +285,7 @@ get_header();
       </div>
     </div>
   </div>
-  <!-- Modal to copy entry to a new form -->
-  <div class="modal" id="copy_entry">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title">Copy Exhibit ID: <span id="copyEntryID" name="entryID"></span></h4>
-        </div>
-        <div class="modal-body">
-          No Open faires at the moment
-          <br><span id="copyResponse"></span>
-          <br>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" id="submitCopy">Submit</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <!--Modal to delete entry-->
   <div class="modal" id="deleteEntry">
     <div class="modal-dialog">
