@@ -30,6 +30,7 @@
     $results =  $wpdb->get_row( $formSQL );
     if($wpdb->num_rows > 0){
       $faire        = $slug = $results->faire_name;
+      $faireshort   = $results->faire;
       $faireID      = $results->id;
       $show_sched   = $results->show_sched;
       $faire_logo   = $results->faire_logo;
@@ -155,7 +156,7 @@
 
 <div class="clear"></div>
 
-<div class="container modal-fix">
+<div class="container modal-fix entry-page">
   <div class="row">
     <div class="content col-md-12">
 <?php //set the 'backlink' text and link (only set on valid entries)
