@@ -219,7 +219,7 @@
         <?php
         if (!empty($project_website)) {
           if($makerEdit){
-            echo '<div id="website" class="edit">'. $project_website.'</div>';
+            echo 'Website: <div id="website" class="edit">'. $project_website.'</div>';
           }else{
             echo '<a href="' . $project_website . '" class="btn btn-info pull-left" target="_blank" style="margin-right:15px;">Project Website</a>';
           }
@@ -230,7 +230,7 @@
         <?php
         if (!empty($project_video)) {
           if($makerEdit){
-            echo '<span id="video" class="edit">'. $project_video.'</span>';
+            echo 'Video: <span id="video" class="edit">'. $project_video.'</span>';
           }else{
             echo '<a href="#entryModal" role="button" id="modalButton" class="btn btn-info" data-toggle="modal">Project Video</a>';
           }
@@ -286,7 +286,7 @@
           foreach($makers as $key=>$maker) {
             if($maker['firstname'] !='' && $maker['lastname'] !=''){
               echo '<div class="row center-block">';
-              echo '<p class="'. ($makerEdit?'ajaxupload':'').'" id="maker_img'.$key.'" title="Click to upload...">';
+              echo '<p class="'. ($makerEdit?'ajaxupload':'').'" id="maker'.$key.'img" title="Click to upload...">';
               echo (!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
               echo '</p>';
               echo    '<div class="col-md-5">

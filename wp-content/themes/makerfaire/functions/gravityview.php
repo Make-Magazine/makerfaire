@@ -37,5 +37,5 @@ function mat_register_query_var( $vars ) {
 /* makersign Rewrite Rules */
 add_action('init', 'makersign_rewrite_rules');
 function makersign_rewrite_rules() {
-    add_rewrite_rule( 'makerSign/(\d*)/?(.*)$/?', '/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$matches[1]&faire=$matches[2]', 'top' );
+  add_rewrite_rule( '^maker-sign/([^/]*)/([^/]*)$', 'wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$matches[1]&faire=$matches[2]', 'top' );
 }
