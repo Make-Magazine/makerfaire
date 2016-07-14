@@ -8,11 +8,9 @@
   //TBD - prevent sql injection
   switch ($field) {
     case 'project_title':
-      //update field 151
       GFAPI::update_entry_field( $entry_id, 151, $value);
       break;
     case 'project_short':
-      //update short description
       GFAPI::update_entry_field( $entry_id, 16, $value);
       break;
     case 'website':
@@ -21,11 +19,79 @@
     case 'video':
       GFAPI::update_entry_field( $entry_id, 32, $value);
       break;
+    //group information
     case 'groupname':
       GFAPI::update_entry_field( $entry_id, 109, $value);
       break;
     case 'groupbio':
       GFAPI::update_entry_field( $entry_id, 110, $value);
+      break;
+    //maker bio
+    case 'maker1bio':
+      GFAPI::update_entry_field( $entry_id, 234, $value);
+      break;
+    case 'maker2bio':
+      GFAPI::update_entry_field( $entry_id, 258, $value);
+      break;
+    case 'maker3bio':
+      GFAPI::update_entry_field( $entry_id, 259, $value);
+      break;
+    case 'maker4bio':
+      GFAPI::update_entry_field( $entry_id, 260, $value);
+      break;
+    case 'maker5bio':
+      GFAPI::update_entry_field( $entry_id, 261, $value);
+      break;
+    case 'maker6bio':
+      GFAPI::update_entry_field( $entry_id, 262, $value);
+      break;
+    case 'maker7bio':
+      GFAPI::update_entry_field( $entry_id, 263, $value);
+      break;
+    //first name
+    case 'maker1fname':
+      GFAPI::update_entry_field( $entry_id, 160.3, $value);
+      break;
+    case 'maker2fname':
+      GFAPI::update_entry_field( $entry_id, 158.3, $value);
+      break;
+    case 'maker3fname':
+      GFAPI::update_entry_field( $entry_id, 155.3, $value);
+      break;
+    case 'maker4fname':
+      GFAPI::update_entry_field( $entry_id, 156.3, $value);
+      break;
+    case 'maker5fname':
+      GFAPI::update_entry_field( $entry_id, 157.3, $value);
+      break;
+    case 'maker6fname':
+      GFAPI::update_entry_field( $entry_id, 159.3, $value);
+      break;
+    case 'maker7fname':
+      GFAPI::update_entry_field( $entry_id, 154.3, $value);
+      break;
+
+    //last name
+    case 'maker1lname':
+      GFAPI::update_entry_field( $entry_id, 160.6, $value);
+      break;
+    case 'maker2lname':
+      GFAPI::update_entry_field( $entry_id, 158.6, $value);
+      break;
+    case 'maker3lname':
+      GFAPI::update_entry_field( $entry_id, 155.6, $value);
+      break;
+    case 'maker4lname':
+      GFAPI::update_entry_field( $entry_id, 156.6, $value);
+      break;
+    case 'maker5lname':
+      GFAPI::update_entry_field( $entry_id, 157.6, $value);
+      break;
+    case 'maker6lname':
+      GFAPI::update_entry_field( $entry_id, 159.6, $value);
+      break;
+    case 'maker7lname':
+      GFAPI::update_entry_field( $entry_id, 154.6, $value);
       break;
     default:
       $value = 'Error';

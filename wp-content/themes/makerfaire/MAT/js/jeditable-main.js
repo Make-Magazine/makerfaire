@@ -23,7 +23,10 @@ jQuery(document).ready(function() {
         type      : 'ajaxupload',
         submit    : 'Upload',
         cancel    : 'Cancel',
-        tooltip   : "Click to upload..."
+        tooltip   : "Click to upload...",
+        submitdata: function () {
+          return { 'entry_id': jQuery('#entry_id').val()};
+        }
   });
 
 });

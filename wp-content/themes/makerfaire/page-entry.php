@@ -41,37 +41,37 @@
 
   $makers = array();
   if (isset($entry['160.3']))
-    $makers[] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
+    $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
                       'bio'       => (isset($entry['234']) ? $entry['234']: ''),
                       'photo'     => (isset($entry['217']) ? $entry['217'] : '')
                 );
   if (isset($entry['158.3']))
-    $makers[] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
+    $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
                       'bio'       => (isset($entry['258']) ? $entry['258'] : ''),
                       'photo'     => (isset($entry['224']) ? $entry['224'] : '')
                 );
   if (isset($entry['155.3']))
-      $makers[] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
+      $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
                       'bio'         => (isset($entry['259']) ? $entry['259'] : ''),
                       'photo'       => (isset($entry['223']) ? $entry['223'] : '')
                 );
   if (isset($entry['156.3']))
-      $makers[] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
+      $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
                       'bio'         => (isset($entry['260']) ? $entry['260'] : ''),
                       'photo'       => (isset($entry['222']) ? $entry['222'] : '')
                   );
   if (isset($entry['157.3']))
-      $makers[] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
+      $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
                       'bio'         => (isset($entry['261']) ? $entry['261'] : ''),
                       'photo'       => (isset($entry['220']) ? $entry['220'] : '')
                   );
   if (isset($entry['159.3']))
-      $makers[] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
+      $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
                       'bio'         => (isset($entry['262']) ? $entry['262'] : ''),
                       'photo'       => (isset($entry['221']) ? $entry['221'] : '')
                   );
   if (isset($entry['154.3']))
-      $makers[] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
+      $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
                       'bio'         => (isset($entry['263']) ? $entry['263'] : ''),
                       'photo'       => (isset($entry['219']) ? $entry['219'] : '')
                   );
@@ -211,8 +211,8 @@
           </h1>
         </div>
 
-        <p class="ajaxupload" id="proj_img" title="Click to upload...">
-          <img class="img-responsive <?php echo ($makerEdit?'ajaxupload':'')?>" src="<?php echo $project_photo; ?>" />
+        <p class="<?php echo ($makerEdit?'ajaxupload':'')?>" id="proj_img" title="Click to upload...">
+          <img class="img-responsive" src="<?php echo $project_photo; ?>" />
         </p>
         <p id="project_short" class="lead <?php echo ($makerEdit?'edit_area':'')?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
@@ -273,21 +273,28 @@
         <hr />
         <?php
         if ($isGroup) {
-          echo '<div class="row center-block">
-                  ',(!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
+          echo '<div class="row center-block">';
+          echo '<p class="'. ($makerEdit?'ajaxupload':'').'" id="groupphoto" title="Click to upload...">';
+          echo (!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
+          echo '</p>';
           echo    '<div class="col-md-5">
                     <h3 style="margin-top: 0px;" class="'. ($makerEdit?'edit':'').'" id="groupname">' . $groupname . '</h3>
                     <p  class="'. ($makerEdit?'edit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
                   </div>
                 </div>';
         } else {
-          foreach($makers as $maker) {
+          foreach($makers as $key=>$maker) {
             if($maker['firstname'] !='' && $maker['lastname'] !=''){
-              echo '<div class="row center-block">
-                      ',(!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
+              echo '<div class="row center-block">';
+              echo '<p class="'. ($makerEdit?'ajaxupload':'').'" id="maker_img'.$key.'" title="Click to upload...">';
+              echo (!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
+              echo '</p>';
               echo    '<div class="col-md-5">
-                        <h3 style="margin-top: 0px;">' . $maker['firstname'] . ' ' . $maker['lastname'] . '</h3>
-                        <p>' . make_clickable($maker['bio']) . '</p>
+                        <h3 style="margin-top: 0px;">' .
+                          '<p  class="'. ($makerEdit?'edit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</p> ' .
+                          '<p  class="'. ($makerEdit?'edit':'').'" id="maker'.$key.'lname">'.$maker['lastname']  . '</p> ' .
+                       '</h3>
+                        <p  class="'. ($makerEdit?'edit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
                       </div>
                     </div>';
             }
