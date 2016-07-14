@@ -219,7 +219,7 @@ get_header();
                     ?>
                     <a href="<?php echo $url;?>">View Application</a>
                     <?php if($entryData['status']=='Accepted') { ?>
-                    <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>">View/Edit Public Information</a>
+                    <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>/edit">View/Edit Public Information</a>
                     <?php } ?>
                     <?php
                     $class = '';
