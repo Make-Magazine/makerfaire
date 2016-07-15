@@ -13,14 +13,16 @@ if (!is_user_logged_in())
     auth_redirect();
 //error_log('start of makersigns.php '.date('h:i:s'),0);
 // require tFPDF
+   
+   
 require_once('fpdf/fpdf.php');
-
 class PDF extends FPDF{
   // Page header
   function Header(){
     global $root;
-    $faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire'].'-':'');
-    $image = $root.'/wp-content/themes/makerfaire/images/'.$faire.'maker_sign.png';
+    global $wp_query;
+    $faire = (isset($wp_query->query_vars['faire']) ? $wp_query->query_vars['faire'] : '');
+    $image = $root.'/wp-content/themes/makerfaire/images/'.$faire.'-maker_sign.png';
     // Logo
     $this->Image($image, 0, 0, $this->w, $this->h);
     // Arial bold 15
@@ -37,9 +39,12 @@ $pdf->SetFont('Benton Sans','',12);
 $pdf->SetFillColor(255,255,255);
 
 //get the entry-id, if one isn't set return an error
-if(isset($_GET['eid']) && $_GET['eid']!=''){
-  $faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire']:'');
-  $entryid = sanitize_text_field($_GET['eid']);
+$eid = (isset($wp_query->query_vars['eid']) ? $wp_query->query_vars['eid'] : '');
+
+if(isset($eid) && $eid!=''){
+  $faire = (isset($wp_query->query_vars['faire']) ? $wp_query->query_vars['faire'] : '');
+    //$faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire']:'');
+  $entryid = sanitize_text_field($eid);
   createOutput($entryid, $pdf);
   if(isset($_GET['type']) && $_GET['type']=='download'){
     if (ob_get_contents()) ob_clean();
