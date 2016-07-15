@@ -139,6 +139,7 @@ get_header();
             }
             ?>
           </div>
+
           <div>
             <?php
             $viewEditLink = "/maker/entry/" . $entryData['lead_id']."/edit/";
@@ -153,6 +154,13 @@ get_header();
 
           </div>
           <div class="clear"></div>
+           <?php if($entryData['mat_message'] !='') { ?>
+          <div class="mat_message">
+            <?php echo $entryData['mat_message'];?>
+          </div>
+          <div class="clear"></div>
+          <?php }                                    ?>
+
           <div class="actionSection">
             <div class="submit-date">
               <span class="gv-field-label">Submitted: </span> <?php echo date('M j, Y g:i  A',strtotime($entryData['date_created']));?>

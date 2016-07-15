@@ -163,6 +163,10 @@ class maker {
         $this->isMaker = TRUE;
       }
       $data['form_type'] = $form['form_type'];
+
+      //get MAT messaging
+      $data['mat_message'] = rgar($form, 'mat_message');
+
       $entries['data'][]=$data;
     }
 
