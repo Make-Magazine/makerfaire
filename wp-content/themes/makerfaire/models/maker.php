@@ -530,5 +530,28 @@ class maker {
     $count = $wpdb->get_var($query);
     if($count > 0) return true;
   }
-}
 
+  /*
+   * Function to retrieve all tasks assigned to a specific entry
+   */
+  public function get_tasks_by_entry($entryID=0) {
+    $return['done'] = $return['toDo'] = array();
+    if($entryID==0) {
+      $return['error'] = 'Error - Entry ID not passed';
+      return $return;
+    }
+    global $wpdb;
+    $query = 'SELECT * FROM `wp_mf_entity_tasks` where lead_id = '. $entryID;
+
+    $results = $wpdb->get_results($query, ARRAY_A );
+    foreach($results as $result){
+      if($result['completed']==NULL){
+        $return['toDo'][]=$result;
+      }else{
+        $return['done'][]=$result;
+      }
+    }
+
+    return $return;
+  }
+}

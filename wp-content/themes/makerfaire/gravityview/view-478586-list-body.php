@@ -85,6 +85,8 @@ get_header();
   <?php
 
   foreach($entries as $entryData) {
+    //get tasks
+    $tasks     = $maker->get_tasks_by_entry($entryData['lead_id']);
     //prepare the data
     if($entryData['status']=='Accepted'){
       $statusBlock = 'greenStatus';
@@ -200,18 +202,39 @@ get_header();
               }
               ?>
 
-              <!-- Notifications -->
-              <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover"
-                data-toggle="popover">
-                NOTIFICATIONS
-                <span class="fa-stack fa-lg">
-                  <i class="fa fa-circle"></i>
-                  <span class="notification-counter">3</span>
-                </span>
-              </button>
-              <div class="popover-content hidden">
-                <div class="manage-entry-popover"><a>Pay Commercial Maker Fee etc</a></div>
-              </div>
+              <!-- Tasks -->
+              <?php if(isset($tasks) && count($tasks['toDo']) > 0 || count($tasks['done'])>0) {?>
+                <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover"
+                  data-toggle="popover">
+                  Tasks
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle"></i>
+                    <span class="notification-counter"><?php echo count($tasks['toDo']);?></span>
+                  </span>
+                </button>
+                <div class="popover-content hidden">
+                  <div class="manage-entry-popover row">
+                    <div class="manage-links">
+                      <h4 class="tasks"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</h4>
+                      <?php
+                      foreach($tasks['toDo'] as $task) { ?>
+                        <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?></a>
+                        <?php
+                      }
+                      ?>
+                    </div>
+                    <div class="manage-links">
+                      <h4 class="tasks"><i class="fa fa-check" aria-hidden="true"></i>Done</h4>
+                      <?php
+                      foreach($tasks['done'] as $task) { ?>
+                        <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?></a>
+                        <?php
+                      }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+              <?php } ?>
 
               <!-- Manage Entry links -->
               <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
