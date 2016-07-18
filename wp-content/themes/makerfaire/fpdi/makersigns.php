@@ -13,8 +13,8 @@ if (!is_user_logged_in())
     auth_redirect();
 //error_log('start of makersigns.php '.date('h:i:s'),0);
 // require tFPDF
-   
-   
+
+
 require_once('fpdf/fpdf.php');
 class PDF extends FPDF{
   // Page header
@@ -22,7 +22,7 @@ class PDF extends FPDF{
     global $root;
     global $wp_query;
     $faire = (isset($wp_query->query_vars['faire']) ? $wp_query->query_vars['faire'] : '');
-    $image = $root.'/wp-content/themes/makerfaire/images/'.$faire.'-maker_sign.png';
+    $image = $root.'/wp-content/themes/makerfaire/images/'.$faire.'-maker_sign.jpg';
     // Logo
     $this->Image($image, 0, 0, $this->w, $this->h);
     // Arial bold 15
