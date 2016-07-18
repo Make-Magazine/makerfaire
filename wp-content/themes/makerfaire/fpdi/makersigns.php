@@ -13,18 +13,29 @@ if (!is_user_logged_in())
     auth_redirect();
 //error_log('start of makersigns.php '.date('h:i:s'),0);
 // require tFPDF
-require_once('fpdf/fpdf.php');
 
+
+require_once('fpdf/fpdf.php');
 class PDF extends FPDF{
   // Page header
   function Header(){
+    // Header required when using restful structures for Chrome
+    header('HTTP/1.0 200 OK');
+    header('Cache-Control: public, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Accept-Ranges: bytes');
+    header("Content-Transfer-Encoding: binary");
+    header("Content-type: application/pdf");
+    // Faire sign setup
     global $root;
-    $faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire'].'-':'');
-    $image = $root.'/wp-content/themes/makerfaire/images/'.$faire.'maker_sign.png';
+    global $wp_query;
+    $faire = (isset($wp_query->query_vars['faire']) ? $wp_query->query_vars['faire'] : '');
+    $image = $root.'/wp-content/themes/makerfaire/images/'.$faire.'-maker_sign.jpg';
     // Logo
     $this->Image($image, 0, 0, $this->w, $this->h);
     // Arial bold 15
     $this->SetFont('Benton Sans','B',15);
+
   }
 }
 
@@ -37,12 +48,15 @@ $pdf->SetFont('Benton Sans','',12);
 $pdf->SetFillColor(255,255,255);
 
 //get the entry-id, if one isn't set return an error
-if(isset($_GET['eid']) && $_GET['eid']!=''){
-  $faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire']:'');
-  $entryid = sanitize_text_field($_GET['eid']);
+$eid = (isset($wp_query->query_vars['eid']) ? $wp_query->query_vars['eid'] : '');
+
+if(isset($eid) && $eid!=''){
+  $faire = (isset($wp_query->query_vars['faire']) ? $wp_query->query_vars['faire'] : '');
+    //$faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire']:'');
+  $entryid = sanitize_text_field($eid);
   createOutput($entryid, $pdf);
   if(isset($_GET['type']) && $_GET['type']=='download'){
-    if (ob_get_contents()) ob_clean();
+    ob_clean();
     $pdf->Output($entryid.'.pdf', 'D');
   }elseif(isset($_GET['type']) && $_GET['type'] == 'save'){
     $filename = TEMPLATEPATH.'/signs/'.$faire.'/'.$entryid.'.pdf';
@@ -50,10 +64,10 @@ if(isset($_GET['eid']) && $_GET['eid']!=''){
     if (!is_dir($dirname)){
       mkdir($dirname, 0755, true);
     }
+    ob_clean();
     $pdf->Output($filename, 'F');
-    echo $entryid;
   }else{
-    if (ob_get_contents()) ob_clean();
+    ob_clean();
     $pdf->Output($entryid.'.pdf', 'I');
   }
 
