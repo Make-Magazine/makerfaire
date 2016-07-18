@@ -56,7 +56,7 @@ if(isset($eid) && $eid!=''){
   $entryid = sanitize_text_field($eid);
   createOutput($entryid, $pdf);
   if(isset($_GET['type']) && $_GET['type']=='download'){
-    ob_clean();
+    if (ob_get_contents()) ob_clean();
     $pdf->Output($entryid.'.pdf', 'D');
   }elseif(isset($_GET['type']) && $_GET['type'] == 'save'){
     $filename = TEMPLATEPATH.'/signs/'.$faire.'/'.$entryid.'.pdf';
@@ -64,10 +64,10 @@ if(isset($eid) && $eid!=''){
     if (!is_dir($dirname)){
       mkdir($dirname, 0755, true);
     }
-    ob_clean();
+    if (ob_get_contents()) ob_clean();
     $pdf->Output($filename, 'F');
   }else{
-    ob_clean();
+    if (ob_get_contents()) ob_clean();
     $pdf->Output($entryid.'.pdf', 'I');
   }
 
