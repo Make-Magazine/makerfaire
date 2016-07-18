@@ -57,7 +57,7 @@ function custom_validation($validation_result) {
   $validation_result['form'] = $form;
   return $validation_result;
 }
-
+/*
 add_filter( 'gform_pre_render_35', 'populate_html' ); //BA16 FSP
 add_filter( 'gform_pre_render_36', 'populate_html' ); //BA16 GSP
 add_filter( 'gform_pre_render_37', 'populate_html' ); //NY15 Special Request
@@ -76,8 +76,8 @@ add_filter( 'gform_pre_render_84', 'populate_html' ); //NMF16 - shipping forms [
 
 add_filter( 'gform_pre_render_87', 'populate_html' ); //NFM16 CM payment form
 add_filter( 'gform_pre_render_85', 'populate_html' ); //NFM16 CM Non-Profit payment form
-
-
+*/
+add_filter( 'gform_pre_render', 'populate_html' ); //all forms
 
 /*
  * this logic is for page 2 of 'linked forms'
@@ -85,44 +85,45 @@ add_filter( 'gform_pre_render_85', 'populate_html' ); //NFM16 CM Non-Profit paym
  */
 
 function populate_html($form) {
-  //this is a 2-page form with the data from page one being displayed in an html field on page 2
-  $current_page = GFFormDisplay::get_current_page($form['id']);
-  $html_content = "The information you have submitted is as follows:<br/><ul>";
-  if ($current_page == 2) {
-    foreach ($form['fields'] as &$field) {
-      if ($field->inputName == 'entry-id') {
-        $entry_id = rgpost('input_' . $field->id);
+  if($form['form_type']=='Other'){
+    //this is a 2-page form with the data from page one being displayed in an html field on page 2
+    $current_page = GFFormDisplay::get_current_page($form['id']);
+    $html_content = "The information you have submitted is as follows:<br/><ul>";
+    if ($current_page == 2) {
+      foreach ($form['fields'] as &$field) {
+        if ($field->inputName == 'entry-id') {
+          $entry_id = rgpost('input_' . $field->id);
+        }
       }
-    }
 
-    $fieldIDarr['project-name'] = 151;
-    $fieldIDarr['short-project-desc'] = 16;
-    $fieldIDarr['exhibit-contain-fire'] = 83;
-    $fieldIDarr['interactive-exhibit'] = 84;
-    $fieldIDarr['fire-safety-issues'] = 85;
-    $fieldIDarr['serving-food'] = 44;
-    $fieldIDarr['you-are-entity'] = 45;
-    $fieldIDarr['plans-type'] = "55";
+      $fieldIDarr['project-name'] = 151;
+      $fieldIDarr['short-project-desc'] = 16;
+      $fieldIDarr['exhibit-contain-fire'] = 83;
+      $fieldIDarr['interactive-exhibit'] = 84;
+      $fieldIDarr['fire-safety-issues'] = 85;
+      $fieldIDarr['serving-food'] = 44;
+      $fieldIDarr['you-are-entity'] = 45;
+      $fieldIDarr['plans-type'] = "55";
 
-    //find the project name for submitted entry-id
-    $entry = GFAPI::get_entry($entry_id);
-    foreach ($form['fields'] as &$field) {
-      if (isset($fieldIDarr[$field->inputName])) {
-        if ($field->inputName == 'plans-type') {
-          $planstypevalues = array();
-          for ($i = 1; $i <= 6; $i++) {
-            if (isset($entry['55.' . $i]) && !empty($entry['55.' . $i])) {
-              $planstypevalues[] = $entry['55.' . $i];
+      //find the project name for submitted entry-id
+      $entry = GFAPI::get_entry($entry_id);
+      foreach ($form['fields'] as &$field) {
+        if (isset($fieldIDarr[$field->inputName])) {
+          if ($field->inputName == 'plans-type') {
+            $planstypevalues = array();
+            for ($i = 1; $i <= 6; $i++) {
+              if (isset($entry['55.' . $i]) && !empty($entry['55.' . $i])) {
+                $planstypevalues[] = $entry['55.' . $i];
+              }
             }
+            $field->defaultValue = implode(',', $planstypevalues);
+          } else {
+            $field->defaultValue = $entry[$fieldIDarr[$field->inputName]];
           }
-          $field->defaultValue = implode(',', $planstypevalues);
-        } else {
-          $field->defaultValue = $entry[$fieldIDarr[$field->inputName]];
         }
       }
     }
   }
-
   return($form);
 }
 
