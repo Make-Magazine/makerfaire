@@ -30,7 +30,6 @@ add_filter('query_vars', 'my_query_vars');
 
 function my_query_vars($query_vars) {
   $query_vars[] = 'e_id';
-  $query_vars[] = 'faire';
   $query_vars[] = 't_slug';
   $query_vars[] = 's_keyword';
   $query_vars[] = 'offset';
