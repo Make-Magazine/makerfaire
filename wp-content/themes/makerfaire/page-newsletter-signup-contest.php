@@ -76,6 +76,14 @@ get_header(); ?>
 
     </div>
 
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <p class="text-muted"><small>You will receive an email with survey link on signing up. Please follow the link to enter the contest. Contest restricted to U.S. only. No purchase necessary. Duplicate entries will be discarded. Winner will be randomly chosen and alerted via email. Prize is an Extreme Fliers MicroDrone 2.0 set with Quadcopter, HD camera, sensors, remote control, and spare motor set. Retail value: $207.98</small></p>
+        </div>
+      </div>
+    </div>
+
   <?php endwhile; else: ?>
   
     <div class="container">
