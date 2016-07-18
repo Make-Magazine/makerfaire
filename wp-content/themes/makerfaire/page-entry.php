@@ -21,16 +21,17 @@
     $form_id = $entry['form_id'];
     $form = GFAPI::get_form($form_id);
     $formType = $form['form_type'];
-    $faire =$slug=$faireID=$show_sched=$faire_end='';
+    $faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
   }
 
   if($form_id!=''){
     $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt,url_path "
             . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
+    
     $results =  $wpdb->get_row( $formSQL );
     if($wpdb->num_rows > 0){
       $faire        = $slug = $results->faire_name;
-      $faireshort   = $results->faire;
+      $faireShort   = $results->faire;
       $faireID      = $results->id;
       $show_sched   = $results->show_sched;
       $faire_logo   = $results->faire_logo;
@@ -186,7 +187,7 @@
         if($makerEdit){?>
           <div class="makerEditHead">
             <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
-            <a target="_blank" href="/makerSign/<?php echo $entryId?>/<?php echo $faireShort;?>">
+            <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>">
               <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
             </a><br/>
             To modify your public information, edit the information directly on this page.

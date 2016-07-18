@@ -8,7 +8,6 @@ function maker_url_vars($rules) {
   $newrules['([^\/]*)/meet-the-makers/search/([0-9]{1,})/?$'] = 'index.php?post_type=page&pagename=search-results-page-do-not-delete&f=$matches[1]&offset=$matches[2]';
   $newrules['([^\/]*)/meet-the-makers/topics/([^\/]*)/?$'] = 'index.php?offset=1&post_type=page&pagename=listing-page-do-not-delete&f=$matches[1]&t_slug=$matches[2]';
   $newrules['([^\/]*)/meet-the-makers/search/?$'] = 'index.php?offset=1&post_type=page&pagename=search-results-page-do-not-delete&f=$matches[1]';
-
   return $newrules + $rules;
 }
 
@@ -411,16 +410,21 @@ function remove_admin_bar() {
 }
 
 /* Rewrite Rules */
-add_action('init', 'onsitecheckin_rewrite_rules');
-function onsitecheckin_rewrite_rules() {
+add_action('init', 'makerfaire_rewrite_rules');
+function makerfaire_rewrite_rules() {
     add_rewrite_rule( 'onsitecheckin/?([^/]*)', 'index.php?onsitecheckin=true&token=$matches[1]', 'top' );
     add_rewrite_rule( 'processonsitecheckin/?([^/]*)', 'index.php?processonsitecheckin=true&token=$matches[1]', 'top' );
+    add_rewrite_rule( 'maker-sign/([^/]*)/([^/]*)$', 'index.php?makersign=true&eid=$matches[1]&faire=$matches[2]', 'top' );
+
 }
 /* Query Vars */
-add_filter( 'query_vars', 'onsitecheckin_register_query_var' );
-function onsitecheckin_register_query_var( $vars ) {
+add_filter( 'query_vars', 'makerfaire_register_query_var' );
+function makerfaire_register_query_var( $vars ) {
     $vars[] = 'processonsitecheckin';
     $vars[] = 'onsitecheckin';
+    $vars[] = 'makersign';
+    $vars[] = 'faire';
+    $vars[] = 'eid';
     $vars[] = 'token';
     return $vars;
 }
@@ -429,9 +433,9 @@ add_filter('template_include', 'onsitecheckin_include', 1, 1);
 function onsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
-    $page_value = (isset($wp_query->query_vars['onsitecheckin'])?$wp_query->query_vars['onsitecheckin']:''); //Check for query var "blah"
+    $page_value = (isset($wp_query->query_vars['onsitecheckin'])?$wp_query->query_vars['onsitecheckin']:'');
 
-    if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
+    if ($page_value && $page_value == "true") {
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-onsite-checkin.php'; //Load your template or file
     }
 
@@ -441,11 +445,22 @@ add_filter('template_include', 'processonsitecheckin_include', 1, 1);
 function processonsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
-    $page_value = (isset($wp_query->query_vars['processonsitecheckin'])?$wp_query->query_vars['processonsitecheckin']:''); //Check for query var "blah"
+    $page_value = (isset($wp_query->query_vars['processonsitecheckin'])?$wp_query->query_vars['processonsitecheckin']:'');
 
-    if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
+    if ($page_value && $page_value == "true") {
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/php/process-onsite-checkin.php'; //Load your template or file
     }
 
+    return $template; //Load normal template when $page_value != "true" as a fallback
+}
+add_filter('template_include', 'makersign_include', 1, 1);
+function makersign_include($template)
+{
+    global $wp_query; //Load $wp_query object
+    $page_value = (isset($wp_query->query_vars['makersign'])?$wp_query->query_vars['makersign']:'');
+
+    if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/fpdi/makersigns.php'; //Load your template or file
+    }
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
