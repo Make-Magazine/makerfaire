@@ -44,7 +44,7 @@ function gv_faire_name($display_value, $field, $entry, $form){
     }elseif($field["type"]=='maker_sign_link'){
       ///wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$entry['id']&faire=BA16
       $faireVar = ($faire_id!=''? '&faire='.$faire_id:'');
-      $display_value = '<a href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid='.$entry['id'].$faireVar.'" target="_blank">Faire Sign</a>';
+      $display_value = '<a href="/maker-sign/'.$entry['id'].'/'.$faireVar.'" target="_blank">Faire Sign</a>';
     }
 
     return $display_value;

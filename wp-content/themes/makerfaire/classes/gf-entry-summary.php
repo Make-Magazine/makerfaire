@@ -199,7 +199,7 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
           </tr>
           <tr>
             <td>
-              <a target="_blank" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire?>"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
+              <a target="_blank" href="/maker-sign/<?php echo $entry_id;?>/<?php echo $faire?>"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
             </td>
             <td>
               <a href="<?php echo admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id );?>"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>
