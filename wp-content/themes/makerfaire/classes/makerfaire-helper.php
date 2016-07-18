@@ -436,8 +436,7 @@ function onsitecheckin_include($template)
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
 add_filter('template_include', 'processonsitecheckin_include', 1, 1);
-function processonsitecheckin_include($template)
-{
+function processonsitecheckin_include($template) {
     global $wp_query; //Load $wp_query object
     $page_value = (isset($wp_query->query_vars['processonsitecheckin'])?$wp_query->query_vars['processonsitecheckin']:''); //Check for query var "blah"
 
