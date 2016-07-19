@@ -215,19 +215,19 @@ get_header();
                 <div class="popover-content hidden">
                   <div class="manage-entry-popover row">
                     <div class="manage-links">
-                      <h4 class="tasks"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</h4>
+                      <!--<h4 class="tasks"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</h4>-->
                       <?php
                       foreach($tasks['toDo'] as $task) { ?>
-                        <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?></a>
+                      <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="todoTasks" style="color:red"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</span></a>
                         <?php
                       }
                       ?>
                     </div>
                     <div class="manage-links">
-                      <h4 class="tasks"><i class="fa fa-check" aria-hidden="true"></i>Done</h4>
+                      <!--<h4 class="tasks"><i class="fa fa-check" aria-hidden="true"></i>Done</h4>-->
                       <?php
                       foreach($tasks['done'] as $task) { ?>
-                        <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?></a>
+                      <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="doneTasks" style="color:green"><i class="fa fa-check" aria-hidden="true"></i>Done</span></a>
                         <?php
                       }
                       ?>
