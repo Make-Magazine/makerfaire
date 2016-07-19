@@ -149,7 +149,9 @@ add_action('wp_enqueue_scripts', 'load_scripts');
 //Load custom gravity forms .s
 
 function enqueue_custom_script($form, $is_ajax) {
-  wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityforms.js', array('jquery'), null);
+  $my_theme = wp_get_theme();
+  $my_version = $my_theme->get('Version');
+  wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityforms.js', array('jquery'),$my_version);
 }
 
 add_action('gform_enqueue_scripts', 'enqueue_custom_script', 10, 2);
