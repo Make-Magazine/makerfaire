@@ -214,7 +214,7 @@ if(isset($_POST['printForm'])){
     $entry_id = $entry->lead_id;
     ?>
     <div class="col-md-2">
-      <a class="fairsign" target="_blank" id="<?php echo $entry_id;?>" href="/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire;?>"><?php echo $entry_id;?></a>
+      <a class="fairsign" target="_blank" id="<?php echo $entry_id;?>" href="/maker-sign/<?php echo $entry_id;?>/<?php echo $faire;?>"><?php echo $entry_id;?></a>
     </div>
     <?php
 
