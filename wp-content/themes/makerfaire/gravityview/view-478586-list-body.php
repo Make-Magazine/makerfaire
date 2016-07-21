@@ -279,7 +279,7 @@ get_header();
                     //Delete Link
                     if($entryData['status']=='Proposed' || $entryData['status']=='In Progress'){
                       ?>
-                      <a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Delete</a>
+                      <a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Delete Application</a>
                       <?php
                     }
                     ?>

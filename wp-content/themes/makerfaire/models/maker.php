@@ -275,6 +275,8 @@ class maker {
 
   //function to build the maker data table to update the wp_mf_maker table
   public static function buildMakerData($entry,$form){
+    //how does this work $lead not set?!?!?!?!
+
     global $wpdb;
     $entry_id     = $lead['id'];
 		$form_id      = $form['id'];
