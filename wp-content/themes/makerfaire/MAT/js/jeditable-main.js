@@ -19,7 +19,6 @@ jQuery(document).ready(function() {
       }
   });
   jQuery('.ajaxupload').editable('/wp-content/themes/makerfaire/MAT/MAT_update_entry_fileupload.php', {
-        indicator : 'Saving...',
         type      : 'ajaxupload',
         submit    : 'Upload',
         cancel    : 'Cancel',
