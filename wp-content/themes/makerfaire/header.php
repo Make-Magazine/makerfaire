@@ -65,6 +65,8 @@
   fbq('init', '399923000199419');
   fbq('track', "PageView");
   </script>
+  <noscript></noscript>
+  <!-- End Facebook Pixel Code -->
 
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
