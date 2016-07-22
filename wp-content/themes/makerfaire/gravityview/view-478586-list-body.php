@@ -76,7 +76,7 @@ get_header();
   <div class="clearfix">
     <h2 class="title-head pull-left">Manage your Maker Faire Applications</h2>
     <span class="submit-entry pull-right">
-      <a href="/new-york-2016/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
+      <a href="/new-york/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
         Submit another entry
       </a>
     </span>
