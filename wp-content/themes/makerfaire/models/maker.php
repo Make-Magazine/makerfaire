@@ -558,7 +558,6 @@ class maker {
         $return['done'][]=$result;
       }
     }
-
     return $return;
   }
 }
