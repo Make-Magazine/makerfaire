@@ -2,11 +2,6 @@
 #makerfaire {
   .top-header-bar-brand {
     background-color: #F0F0F0;
-    .container {
-      background: url('/wp-content/themes/makerfaire/img/magazine-icon.png') top right no-repeat;
-      background-size: 43px 50px;
-      background-position: right 11px bottom -18px;
-    }
     p {
       margin-bottom: 0;
       line-height: 1.3em;
@@ -58,6 +53,60 @@
         border-right: 6px solid transparent;
         border-left: 6px solid transparent;
       }
+    }
+  }
+
+  // New Subscribe stuff
+  #mz-header-subscribe {
+    z-index: 10;
+    margin-bottom: -6px;
+    margin-top: -15px;
+    @media (max-width: 991px) { 
+      margin-right: -7px;
+    }
+    div {
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      img {
+        width: 115px;
+        @media (max-width: 991px) { 
+          width: 100px;
+        }
+      }
+      .subscribe-red-btn {
+        background: #f40b0b;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 300;
+        letter-spacing: 1px;
+        padding: 6px 8px;
+        margin-bottom: 8px;
+        transition: background 0.2s;
+        &:hover {
+          background: #ea002a;
+          transition: background 0.2s;
+        }
+        @media (max-width: 991px) { 
+          position: absolute;
+          bottom: 0;
+          right: 8px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  .mobile-subscribe-link {
+    position: relative;
+    margin: 3px 0 22px;
+    background-color: #00ADEF;
+    margin-right: -15px;
+    margin-left: -15px;
+    a {
+        padding: 10px 15px;
+        color: #fdd837;
+        font-size: 18px;
+        display: block;
     }
   }
 }
