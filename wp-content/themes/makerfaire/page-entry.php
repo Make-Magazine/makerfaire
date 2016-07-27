@@ -27,7 +27,7 @@
   if($form_id!=''){
     $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt,url_path "
             . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
-    
+
     $results =  $wpdb->get_row( $formSQL );
     if($wpdb->num_rows > 0){
       $faire        = $slug = $results->faire_name;
@@ -99,6 +99,7 @@
 
   // Url
   $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
+  
   $sharing_cards->project_photo = $project_photo;
 
   // Description
