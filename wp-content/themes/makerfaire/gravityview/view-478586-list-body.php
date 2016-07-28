@@ -25,9 +25,27 @@ $form_id = 0;
 global $current_user;
 get_currentuserinfo();
 global $user_ID;global $user_email;
+$page_num = (isset($_GET['pagenum'])) ?$_GET['pagenum'] :   1;
+
+$page_size = (isset($view_settings['page_size'])) ? $view_settings['page_size'] : 20;
+$offset = (isset($page_num)) ? ($page_num -1)*$page_size : 0;
+
+global $wpdb;
+//find current active forms for the copy entry feature
+$entrySQL = "SELECT a.id FROM wp_rg_lead a
+ join wp_rg_lead_detail b on a.id=b.lead_id and b.field_number=98 
+ WHERE (created_by = $user_ID
+ or b.value='$user_email')
+ and a.status='active'
+ LIMIT $page_size OFFSET $offset";
+$entryResults = $wpdb->get_results($entrySQL);
+$entryArr = array();
+foreach($entryResults as $entryResult){
+    $entryArr[] = array($entryResult->id);
+}
 
 // Prepare paging criteria
-$criteria['paging'] = array(
+/*$criteria['paging'] = array(
     'offset' => 0,
     'page_size' => $view_settings['page_size']
 );
@@ -37,29 +55,24 @@ $criteria['search_criteria'] = array(
   'status'        => 'active',
   'field_filters' => array(
     'mode' => 'any',
-    array(
-      'key'   => '98',
-      'value' => $user_email,
-      'operator' => 'like'
-    ),
-    array(
+      array(
       'key' => 'created_by',
-      'value' => $user_ID,
+      'value' => 321,
       'operator' => 'is'
     )
   )
 );
-
 $entries = GFAPI::get_entries( $form_id, $criteria['search_criteria'] );
 
-/**
+ */
+/*
  * @action `gravityview_list_body_before` Tap in before the entry loop has been displayed
  * @param GravityView_View $this The GravityView_View instance
  */
 do_action( 'gravityview_list_body_before', $this );
-$total = count($entries);
+$total = count($entryArr);
 
-global $wpdb;
+//global $wpdb;
 //find current active forms for the copy entry feature
 $faireSQL = "SELECT form.id, form.title FROM wp_rg_form form, `wp_mf_faire` "
           . " WHERE start_dt <= CURDATE() and end_dt >= CURDATE() and "
@@ -82,19 +95,21 @@ if( ! $total or !( is_user_logged_in() )) {
 	<?php
 
 } else {
-
+ 
 	// There are entries. Loop through them.
-	foreach ( $entries as $entry ) {
-		$this->setCurrentEntry( $entry );
-
-    $form = GFAPI::get_form( $entry['form_id'] );
-    $form_type = (isset($form['form_type'])?'<p>'.$form['form_type'].':&nbsp;</p>':'');
-    if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
+	foreach ( $entryArr as $currentry ) {
+  $entry = GFAPI::get_entry($currentry[0]);
+  $this->setCurrentEntry( $entry );
+  $form = GFAPI::get_form( $entry['form_id'] );
+  $form_type = (isset($form['form_type'])?'<p>'.$form['form_type'].':&nbsp;</p>':'');
+    if(isset($form['form_type']) && $form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
        $form['form_type'] != 'Show Management' && $form['form_type'] != ''){ ?>
         <hr/>
 
 
         <?php
+                     
+   
         /**
          * @action `gravityview_entry_before` Tap in before the the entry is displayed, inside the entry container
          * @param array $entry Gravity Forms Entry array
@@ -301,7 +316,8 @@ if( ! $total or !( is_user_logged_in() )) {
 
 		</div>
         <?php } ?>
-	<?php } ?>
+	<?php 
+     } ?>
   <div class="modal" id="cancelEntry">
     <div class="modal-dialog">
       <div class="modal-content">
