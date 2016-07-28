@@ -100,13 +100,6 @@ function my_wp_default_styles($styles) {
 
 add_action("wp_default_styles", "my_wp_default_styles");
 
-/* Favicon in Header */
-add_action('wp_head', 'my_custom_fav_ico');
-
-function my_custom_fav_ico() {
-  echo '<link rel="shortcut icon" href="' . get_stylesheet_directory_uri() . '/images/favicon.ico' . '" />';
-}
-
 /* Disable Conflicting Code using Filters */
 add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
