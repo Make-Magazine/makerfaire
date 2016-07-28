@@ -1502,7 +1502,7 @@ class GVCommon {
 	public static function get_users( $context = 'change_entry_creator', $args = array() ) {
 
 		$default_args = array(
-			'number' => 2000,
+			'number' => 100000,
 			'orderby' => 'display_name',
 			'order' => 'ASC',
 			'fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename' )

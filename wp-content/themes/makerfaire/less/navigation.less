@@ -32,7 +32,6 @@ li.hidelink a:visited {
 }
 
 #makerfaire .navbar.desktop-nav {
-  padding-top: 22px;
   margin-bottom: 0;
   font-size: 12px;
   font-weight: 500;
@@ -44,9 +43,12 @@ li.hidelink a:visited {
     color: #4A4A4A;
   }
   .navbar-brand {
-    margin: 0 12px 0 0;
+    margin: 0 12px 5px 0;
     padding: 0;
     height: auto !important;
+    @media(min-width:768px) and (max-width:991px) {
+      margin: 0 5px 5px 0;
+    }
   }
   .menu-item {
     position: static;
@@ -93,6 +95,7 @@ li.hidelink a:visited {
   .container {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-end;
     .navbar-collapse {
       flex: 1;
     }
@@ -208,5 +211,31 @@ li.hidelink a:visited {
     .btn-cyan:hover {
       color: #fff;
     }
+  }
+}
+
+// Mobile nav button
+.navbar-header {
+  .navbar-toggle .icon-bar {
+    transition: all 500ms ease-in-out;
+  }
+  .navbar-toggle:not(.collapsed) .icon-bar:nth-of-type(2) {
+    top: 10px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    position: relative;
+    transition: all 500ms ease-in-out;
+  }
+  .navbar-toggle:not(.collapsed) .icon-bar:nth-of-type(3) {
+    background-color: transparent;
+    position: relative;
+    transition: all 500ms ease-in-out;
+  }
+  .navbar-toggle:not(.collapsed) .icon-bar:nth-of-type(4) {
+    top: -8px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    position: relative;
+    transition: all 500ms ease-in-out;
   }
 }

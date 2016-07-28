@@ -54,6 +54,20 @@
     })();
   </script>
 
+  <!-- Facebook Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('init', '399923000199419');
+  fbq('track', "PageView");
+  </script>
+  <noscript></noscript>
+  <!-- End Facebook Pixel Code -->
+
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -99,9 +113,6 @@
       <div class="col-sm-6 text-center">
         <p class="header-make-img"><a href="//makezine.com?utm_source=makerfaire.com&utm_medium=brand+bar&utm_campaign=explore+all+of+make" target="_blank">Explore all of <img src="<?php echo get_stylesheet_directory_uri(); ?>/img/make_logo.png" alt="Make: Makezine Logo" /></a></p>
       </div>
-      <div class="col-sm-3">
-        <p class="header-sub-link pull-right"><a id="trigger-overlay" href="#">SUBSCRIBE </a></p>
-      </div>
     </div>
   </div>
 </div>
@@ -132,17 +143,23 @@
             ) );
           ?>
         </ul>
+
+        <div class="mobile-subscribe-link hidden-md hidden-lg">
+          <a href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M6GMKZ">SUBSCRIBE to Make: and save</a>
+        </div>
       </div>
     </div>
   </nav>
   <!-- Desktop Nav -->
   <nav class="navbar hidden-xs desktop-nav">
     <div class="container">
+
       <div class="navbar-header">
         <a class="navbar-brand" href="<?php bloginfo('url'); ?>">
           <img src="/wp-content/uploads/2016/01/mf_logo.jpg" height="43" width="183" alt="maker faire">
         </a>
       </div>
+
       <div class="collapse navbar-collapse">
         <?php
           wp_nav_menu( array(
@@ -153,6 +170,17 @@
           ) );
         ?>
       </div>
+
+      <!-- New Header Subscribe stuff -->
+      <div id="mz-header-subscribe" class="hidden-xs">
+        <div>
+          <a id="trigger-overlay" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M6GMKZ" target="_blank">
+            <img src="<?php echo get_template_directory_uri() . '/img/Subscribe_CTA_2x.png'; ?>" alt="Make: Magazine latest magazine cover, subscribe here" />
+          </a>
+          <a class="subscribe-red-btn" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M6GMKZ" target="_blank">SUBSCRIBE</a>
+        </div>
+      </div>
+
     </div>
   </nav>
   <!-- Desktop Subnav bar -->
