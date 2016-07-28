@@ -27,7 +27,7 @@ get_currentuserinfo();
 global $user_ID;global $user_email;
 $page_num = (isset($_GET['pagenum'])) ?$_GET['pagenum'] :   1;
 
-$page_size = (isset($view_settings['page_size'])) ? $view_settings['page_size'] : 20;
+$page_size = (isset($view_settings['page_size'])) ? $view_settings['page_size'] : 25;
 $offset = (isset($page_num)) ? ($page_num -1)*$page_size : 0;
 
 global $wpdb;
