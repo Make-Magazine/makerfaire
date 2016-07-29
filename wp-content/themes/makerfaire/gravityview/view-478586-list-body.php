@@ -42,7 +42,6 @@ get_header();
     $entries   = $tableData['data'];
 
 ?>
-    <h4 class="welcome-head pull-left">Hi <?php echo $maker->first_name .' '. $maker->last_name; ?></h4>
     <div class="settings-pop-btn pull-right">
       <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
         Settings &amp; Help<i class="fa fa-cog"></i>
@@ -52,35 +51,20 @@ get_header();
           <a href="/login/?mode=reset">Change Password</a>
           <a href="/login/?action=logout">Log Out</a>
           <h6 class="popover-head">Questions?</h6>
-          <ul>
-            <?php if($maker->isSponsor) { ?>
-              <li>Sponsors
-                <ul><li><a href="mailto:sponsorrelations@makerfaire.com">Email Us</a></li></ul>
-              </li>
-            <?php } ?>
-
-            <?php if($maker->isMaker) { ?>
-              <li>Maker Toolkits
-                <ul>
-                  <li><a href="/national/maker-toolkit" target="_blank">National Maker Faire</a></li>
-                  <li><a href="/bay-area-2016/maker-toolkit/" target="_blank">Bay Area</a></li>
-                  <li><a href="/new-york/maker-toolkit/" target="_blank">World Maker Faire</a></li>
-                </ul>
-              </li>
-            <?php } ?>
-          </ul>
+          <a href="http://makerfaire.com/all-toolkits/">Visit your Toolkit</a>
         </div>
       </div> <!-- / .popover-content -->
     </div> <!-- / .settings-pop-btn -->
   </div>
   <div class="clearfix">
-    <h2 class="title-head pull-left">Manage your Maker Faire Applications</h2>
+    <h2 class="title-head pull-left">Manage your Maker Faire Entries</h2>
     <span class="submit-entry pull-right">
       <a href="/new-york/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
         Submit another entry
       </a>
     </span>
   </div>
+  User <?php echo $current_user->user_email;?><br/>
   <hr class="header-break">
   <?php
 
@@ -96,6 +80,7 @@ get_header();
     //$image = legacy_get_fit_remote_image_url($entryData['project_photo'],275,275);
     $image =  (isset($entryData['project_photo'])&&$entryData['project_photo']!=''?$entryData['project_photo']:get_template_directory_uri() .'/images/no-image.png');
     ?>
+
     <div class="maker-admin-list-wrp">
       <div class="gv-list-view-title-maker-entry">
         <div class="statusBox <?php echo $statusBlock;?>">
@@ -125,6 +110,13 @@ get_header();
           <div class="exhibitID entryData">
             <?php echo $entryData['form_type'];?>: <span class="entryStandout"><?php echo $entryData['lead_id'];?></span>
           </div> <!-- close exhibitID -->
+
+          <?php if($entryData['mat_message'] !='') { ?>
+          <div class="mat_message">
+            <?php echo $entryData['mat_message'];?>
+          </div>
+          <div class="clear"></div>
+          <?php }                                    ?>
           <div>
             <?php
             //Add link to edit entry
@@ -136,7 +128,7 @@ get_header();
               $url = str_replace('/view/', '/', $url);  //remove view slug from URL
               echo  '<span class="editLink">'
                   . '  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>'
-                  . '  <a href="'. $url .'">Edit Application</a>'
+                  . '  <a href="'. $url .'">Edit Entry</a>'
                   . '</span>';
             }
             ?>
@@ -149,19 +141,14 @@ get_header();
             if($entryData['status']=='Accepted') { ?>
               <span class="editLink">
                 <i class="fa fa-eye" aria-hidden="true"></i>
-                <a target="_blank" href="<?php echo $viewEditLink;?>">View/Edit Public Information</a>
+                <a href="<?php echo $viewEditLink;?>">View/Edit Public Information</a>
               </span>
               <?php
             } ?>
 
           </div>
           <div class="clear"></div>
-           <?php if($entryData['mat_message'] !='') { ?>
-          <div class="mat_message">
-            <?php echo $entryData['mat_message'];?>
-          </div>
-          <div class="clear"></div>
-          <?php }                                    ?>
+
 
           <div class="actionSection">
             <div class="submit-date">
@@ -248,9 +235,9 @@ get_header();
                     $url = do_shortcode('[gv_entry_link action="read" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
                     $url = str_replace('/view/', '/', $url);  //remove view slug from URL
                     ?>
-                    <a href="<?php echo $url;?>">View Application</a>
+                    <a href="<?php echo $url;?>">View Entry</a>
                     <?php if($entryData['status']=='Accepted') { ?>
-                    <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>/edit">View/Edit Public Information</a>
+                    <a href="/maker/entry/<?php echo $entryData['lead_id'];?>/edit">View/Edit Public Information</a>
                     <?php } ?>
                     <?php
                     $class = '';
@@ -259,7 +246,7 @@ get_header();
                     if($disp_edit){
                       $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
                       $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-                      echo '<a href="'. $url .'">Edit Application</a>';
+                      echo '<a href="'. $url .'">Edit Entry</a>';
                     }else{
                       echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
                     }
@@ -270,7 +257,7 @@ get_header();
                     //cancel link - only shown if Status is not currently Cancel
                     if($entryData['status']!='Cancelled'){
                       ?>
-                      <a href="#cancelEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Cancel Application</a>
+                      <a href="#cancelEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Cancel Entry</a>
                       <?php
                     }
 
@@ -279,7 +266,7 @@ get_header();
                     //Delete Link
                     if($entryData['status']=='Proposed' || $entryData['status']=='In Progress'){
                       ?>
-                      <a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Delete Application</a>
+                      <a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Delete Entry</a>
                       <?php
                     }
                     ?>

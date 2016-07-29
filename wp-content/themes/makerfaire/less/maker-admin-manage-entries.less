@@ -29,16 +29,28 @@
       .image-container {
         background-size: cover;
         background-repeat: no-repeat;
+        background-position: center;
         width: 100%;
         float: left;
         @media (max-width: 767px) {
           height: 49vw;
+          width:  49vw;
         }
-        @media screen and (min-width: 768px) and (max-width: 991px) {
-          height: 25vw;
+        @media screen and (min-width: 768px) and (max-width: 850px) {
+          height: 20vw;
+          width:  20vw;
+        }
+        @media screen and (min-width: 851px) and (max-width: 991px) {
+          height: 17vw;
+          width:  17vw;
         }
         @media screen and (min-width: 992px) {
-          height: 25vw;
+          height: 20vw;
+          width: 20vw;
+        }
+        @media screen and (min-width: 1300px) {
+          height: 17vw;
+          width: 17vw;
         }
       }
     }
@@ -72,7 +84,7 @@
 
     .statusBox, .entry-main-content {
       float: right;
-      width: 72%;
+      width: 73%;
       @media screen and (max-width: 767px) {
         float: none;
         width: 100%;
@@ -95,6 +107,11 @@
       margin-left: 1em;
       float: left;
       font-size: .9em;
+      @media (max-width: 1000px) {
+        margin-left: 0;
+        margin-top: .5em;
+        clear:both;
+      }
     }
     .submit-date {
       float:left;
@@ -163,6 +180,23 @@
         }
       }
     }
+    .entry-main-content {
+      @media screen and (min-width: 768px) and (max-width: 850px) {
+        position: relative;
+        height: 20vw;
+      }
+      @media screen and (min-width: 851px) and (max-width: 991px) {
+        position: relative;
+        height: 17vw;
+      }
+    }
+    .mat_message {
+      @media screen and (min-width: 768px) {
+        position: absolute;
+        top: 2.2em;
+        right: .2em;
+      }
+    }
     .mat-ticketing {
       border-bottom: thin solid lightgrey;
       padding: 5px 0;
@@ -178,14 +212,14 @@
     }
 
     .actionSection {
-      width: 72%;
+      width: 73%;
       @media (min-width: 768px) {
         border-top: solid 1px grey;
         border-bottom: solid 1px grey;
         position: absolute;
         bottom: 0;
       }
-      @media (max-width: 767px) {
+      @media (max-width: 990px) {
         width: 100%;
       }
     }
