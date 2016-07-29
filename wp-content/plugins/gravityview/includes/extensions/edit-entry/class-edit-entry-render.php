@@ -205,7 +205,7 @@ class GravityView_Edit_Entry_Render {
 
         // MF custom code to set form by entry instead of by the z
         $this->form_id = $this->entry['form_id'];
-        $this->original_form = GFAPI::get_form($this->form_id);
+        $this->original_form = $this->form = GFAPI::get_form($this->form_id);
 
         $this->view_id = $gravityview_view->getViewId();
 
@@ -766,7 +766,7 @@ class GravityView_Edit_Entry_Render {
                     echo esc_attr( $edit_entry_title );
             ?></span>
             </h2>
-
+            <?php echo '<h2>'.$this->form['title'].'</h2>'; ?>
             <?php $this->maybe_print_message(); ?>
 
             <?php // The ID of the form needs to be `gform_{form_id}` for the pluploader ?>
