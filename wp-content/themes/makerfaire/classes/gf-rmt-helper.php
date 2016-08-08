@@ -324,7 +324,7 @@ class GFRMTHELPER {
 
     /*  Field ID 62 = tables_chairs */
     if($entryData['tables_chairs'] == '1 table and 2 chairs'){
-      $resource[] = array($resourceID['TBL_8x30'],1,'');
+      $resource[] = array($resourceID['TBL_6x30'],1,'');
       $resource[] = array($resourceID['CH_FLD'],2,'');
     }elseif($entryData['tables_chairs'] == 'More than 1 table and 2 chairs. List specific number of tables and chairs below.'){
       /*  Field ID 347 (Number of Tables)

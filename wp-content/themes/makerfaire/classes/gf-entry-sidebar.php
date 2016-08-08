@@ -615,18 +615,7 @@ if ($mode == 'view') {
 			onclick="jQuery(\'#action\').val(\'send_conf_letter\');"/>';
     echo '  <div class="clear"></div>';?>
   </div>
-	<div class="detail-view-print">
-		<?php $entry_sidebar_button = '<input type="submit" name="sync_jdb" value="Send to JDB" class="button"
-				 style="width:auto;padding-bottom:2px;"
-				onclick="jQuery(\'#action\').val(\'sync_jdb\');"/>';
-					//echo $entry_sidebar_button;	?>
-	</div>
-	<div class="detail-view-print">
-		<?php $entry_sidebar_button = '<input type="submit" name="sync_status_jdb" value="Sync Status JDB" class="button"
-          style="width:auto;padding-bottom:2px;"
-          onclick="jQuery(\'#action\').val(\'sync_status_jdb\');"/>';
-		//echo $entry_sidebar_button;	?>
-	</div>
+	
 	<?php
 }
 

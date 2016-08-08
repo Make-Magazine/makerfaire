@@ -213,6 +213,7 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
         <label >Email Note To:</label><br />
 				<?php
 				$emailto1 = array("Alasdair Allan"          => "alasdair@makezine.com",
+                          "Audrey Donaldson"        => "audrey@makermedia.com",
                           "Bridgette Vanderlaan"    => "bvanderlaan@mac.com",
                           "Caleb Kraft"             => "caleb@makermedia.com",
                           "Dale Dougherty"          => "dale@makermedia.com",
@@ -224,13 +225,13 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
         $emailto2 = array("Kerry Moore"             => "kerry@contextfurniture.com",
                           "Kim Dow"                 => "dow@dowhouse.com",
                           "Louise Glasgow"          => "lglasgow@makermedia.com",
+                          "Matt Stultz"             => "mstultz@makermedia.com",
                           "Miranda Mota"            => "miranda@makermedia.com",
                           "Rob Bullington"          => "rbullington@makermedia.com",
                           "Sabrina Merlo"           => "smerlo@makermedia.com",
                           "Sherry Huss"             => "sherry@makermedia.com",
                           "Siana Alcorn"            => "siana@makermedia.com",
-                          "Tami Jo Benson"          => "tj@tamijo.com",
-                          "Travis Good"             => "travisgood@gmail.com");
+                          "Tami Jo Benson"          => "tj@tamijo.com");
         $emailtoaliases = array("3D Printing"       => "3dprinting@makermedia.com",
                                 "Editors"           => "editor@makezine.com",
                                 "Maker Relations"   => "makers@makerfaire.com",
