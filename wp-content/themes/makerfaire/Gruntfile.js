@@ -2,8 +2,9 @@ module.exports = function(grunt) {
   var watchList = ['less/**/*.less', 'js/**/*.js', '!js/*.js', 'js/angular/**/*.js', 'js/angular/global-faires-map-app.js'];
   var cssFiles = {
     'css/bootstrap.min.css': 'less/bootstrap/bootstrap.less',
-    'css/style.css': ['less/global.less', 'less/**/*.less', '!less/bootstrap/*', '!less/admin-styles/*'],
-    'css/mf-admin-style.css': ['less/admin-styles/*']
+    'css/style.css': ['less/global.less', 'less/**/*.less', '!less/portfolio-styles/*',  '!less/bootstrap/*', '!less/admin-styles/*'],
+    'css/mf-admin-style.css': ['less/admin-styles/*'],
+    'css/portfolio-style.css': ['less/portfolio-styles/portfolio.less']
   };
   // All configurations go here
   grunt.initConfig({
