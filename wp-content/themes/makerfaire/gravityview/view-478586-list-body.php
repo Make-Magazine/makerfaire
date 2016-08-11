@@ -125,8 +125,7 @@ get_header();
           <div>
             <?php
             //Add link to edit entry
-            $disp_edit = (($entryData['status'] == 'Proposed' || $entryData['status']=='Wait List' || $entryData['status'] == 'Accepted'|| $entryData['status'] == 'Rejected')
-                          && $entryData['maker_type']=='contact' ? true: false);
+            $disp_edit = (($entryData['status'] != 'Cancelled') && $entryData['maker_type']=='contact' ? true: false);
 
             if($disp_edit){
               $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
