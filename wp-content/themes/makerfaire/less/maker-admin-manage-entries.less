@@ -10,10 +10,10 @@
     clear: both;
   }
   .gv-list-view-title-maker-entry {
-    @media (max-width: 1000px) {
+    @media (max-width: 1199px) {
       font-size: .9em;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 767px) {
       position: relative;
     }
     div.entryData {
@@ -22,7 +22,7 @@
     }
     .entryImg {
       @media (min-width: 768px) {
-        width: 25%;
+        width: 20%;
         overflow: hidden;
         float: left;
       }
@@ -34,25 +34,27 @@
         float: left;
         @media (max-width: 767px) {
           height: 49vw;
-          width:  49vw;
         }
-        @media screen and (min-width: 768px) and (max-width: 850px) {
+        @media screen and (min-width: 768px) and (max-width: 1199px) {
           height: 20vw;
-          width:  20vw;
         }
-        @media screen and (min-width: 851px) and (max-width: 991px) {
+
+        @media screen and (min-width: 1200px) {
           height: 17vw;
-          width:  17vw;
-        }
-        @media screen and (min-width: 992px) {
-          height: 20vw;
-          width: 20vw;
-        }
-        @media screen and (min-width: 1300px) {
-          height: 17vw;
-          width: 17vw;
         }
       }
+    }
+    .entry-main-content {
+      @media (max-width: 767px) {
+          min-height: 47vw;
+        }
+        @media screen and (min-width: 768px) and (max-width: 1199px) {
+          min-height: 18vw;
+          font-size: .9em;
+        }
+        @media screen and (min-width: 1200px) {
+          min-height: 14.8vw;
+        }
     }
     .statusBox {
       height: 1.924em;
@@ -84,7 +86,7 @@
 
     .statusBox, .entry-main-content {
       float: right;
-      width: 73%;
+      width: 79%;
       @media screen and (max-width: 767px) {
         float: none;
         width: 100%;
@@ -97,7 +99,7 @@
         float: left;
         margin-bottom: 10px;
         font-size: 1.93em;
-        @media screen and (max-width: 1200px) {
+        @media screen and (max-width: 1199px) {
           font-size: 1.3em;
         }
       }
@@ -107,7 +109,7 @@
       margin-left: 1em;
       float: left;
       font-size: .9em;
-      @media (max-width: 1000px) {
+      @media (max-width: 1199px) {
         margin-left: 0;
         margin-top: .5em;
         clear:both;
@@ -124,7 +126,7 @@
     .entry-action-buttons {
       float: right;
       .hideSmall {
-        @media screen and (max-width: 1000px) {
+        @media screen and (max-width: 1199px) {
           display: none;
         }
       }
@@ -136,11 +138,11 @@
       .btn {
         line-height: 2em;
         font-size: 14px;
-        @media screen and (max-width: 1000px) {
+        @media screen and (max-width: 1199px) {
           padding-right: .2em;
           padding-left: .2em;
         }
-        @media screen and (max-width: 1200px) {
+        @media screen and (max-width: 1199px) {
           font-size: .9em;
         }
       }
@@ -149,7 +151,7 @@
         text-align: right;
         float: none;
       }
-      @media screen and (max-width: 1200px) {
+      @media screen and (max-width: 1199px) {
         font-size: .8em;
       }
     }
@@ -181,22 +183,16 @@
       }
     }
     .entry-main-content {
-      @media screen and (min-width: 768px) and (max-width: 850px) {
+      @media screen and (min-width: 768px) and (max-width: 1199px) {
         position: relative;
-        height: 20vw;
-      }
-      @media screen and (min-width: 851px) and (max-width: 991px) {
-        position: relative;
-        height: 17vw;
       }
     }
     .mat_message {
       @media screen and (min-width: 768px) {
-        position: absolute;
-        top: 2.2em;
-        right: .2em;
+        width: 100%;
       }
     }
+
     .mat-ticketing {
       border-bottom: thin solid lightgrey;
       padding: 5px 0;
@@ -212,15 +208,15 @@
     }
 
     .actionSection {
-      width: 73%;
+      width: 100%;
       @media (min-width: 768px) {
         border-top: solid 1px grey;
         border-bottom: solid 1px grey;
-        position: absolute;
-        bottom: 0;
-      }
-      @media (max-width: 990px) {
         width: 100%;
+        position: relative;
+        bottom: 0;
+        height: 2.5em;
+        margin-top: 1em;
       }
     }
   }

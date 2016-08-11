@@ -96,6 +96,15 @@ get_header();
           </div>
         </div> <!-- close .entryImg-->
         <div class="entry-main-content">
+          <!-- MAT messaging -->
+          <?php if($entryData['mat_message'] !='') { ?>
+          <div class="hidden-xs mat_message" style="background-color:#F4D03F; padding:10px">
+              <?php echo $entryData['mat_message'];?>
+          </div>
+          <div class="clear"></div>
+          <?php }                                    ?>
+
+          <!-- Project Name -->
           <div class="entryName entryData">
             <h3 class="entry-title">
               <?php //if status is accepted, the title links to the public facing entry page
@@ -107,16 +116,12 @@ get_header();
               } ?>
             </h3>
           </div><!-- close .entryName -->
+
+          <!-- Form Type -->
           <div class="exhibitID entryData">
             <?php echo $entryData['form_type'];?>: <span class="entryStandout"><?php echo $entryData['lead_id'];?></span>
           </div> <!-- close exhibitID -->
 
-          <?php if($entryData['mat_message'] !='') { ?>
-          <div class="mat_message">
-            <?php echo $entryData['mat_message'];?>
-          </div>
-          <div class="clear"></div>
-          <?php }                                    ?>
           <div>
             <?php
             //Add link to edit entry
