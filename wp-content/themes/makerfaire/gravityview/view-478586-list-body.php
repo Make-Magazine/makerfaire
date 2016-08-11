@@ -51,7 +51,7 @@ get_header();
           <a href="/login/?mode=reset">Change Password</a>
           <a href="/login/?action=logout">Log Out</a>
           <h6 class="popover-head">Questions?</h6>
-          <a href="http://makerfaire.com/all-toolkits/">Visit your Toolkit</a>
+          <a target="_blank" href="http://makerfaire.com/all-toolkits/">Visit your Toolkit</a>
         </div>
       </div> <!-- / .popover-content -->
     </div> <!-- / .settings-pop-btn -->
@@ -120,7 +120,7 @@ get_header();
           <div>
             <?php
             //Add link to edit entry
-            $disp_edit = (($entryData['status'] == 'Proposed' || $entryData['status']=='Wait List' || $entryData['status'] == 'Accepted')
+            $disp_edit = (($entryData['status'] == 'Proposed' || $entryData['status']=='Wait List' || $entryData['status'] == 'Accepted'|| $entryData['status'] == 'Rejected')
                           && $entryData['maker_type']=='contact' ? true: false);
 
             if($disp_edit){
@@ -248,7 +248,12 @@ get_header();
                       $url = str_replace('/view/', '/', $url);  //remove view slug from URL
                       echo '<a href="'. $url .'">Edit Entry</a>';
                     }else{
-                      echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
+                      if($entryData['maker_type'] != 'contact') {
+                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
+                      }else{
+                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only active entries can be edited">Edit Entry</div>';
+                      }
+
                     }
                     ?>
                   </div>

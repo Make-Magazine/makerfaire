@@ -5,6 +5,11 @@
   $value    = $_POST['value'];
   $entry_id = $_POST['entry_id'];
   $field    = $_POST['id'];
+  //trigger update
+  $entry    = GFAPI::get_entry( $entry_id );
+  $form_id  = $entry['form_id'];
+  $form = GFAPI::get_form($form_id);
+
   //TBD - prevent sql injection
   switch ($field) {
     case 'project_title':
@@ -97,5 +102,8 @@
       $value = 'Error';
       break;
     }
+
+  gf_do_action( array( 'gform_after_update_entry', $form_id), $form, $entry_id, $entry );
+
   //wp_send_json($value);
   echo $value;
