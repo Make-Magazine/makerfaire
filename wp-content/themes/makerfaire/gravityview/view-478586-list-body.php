@@ -142,7 +142,7 @@ get_header();
             <?php
             $viewEditLink = "/maker/entry/" . $entryData['lead_id']."/edit/";
 
-            if($entryData['status']=='Accepted') { ?>
+            if($entryData['status']=='Accepted' && $disp_edit) { ?>
               <span class="editLink">
                 <i class="fa fa-eye" aria-hidden="true"></i>
                 <a href="<?php echo $viewEditLink;?>">View/Edit Public Information</a>
@@ -240,7 +240,7 @@ get_header();
                     $url = str_replace('/view/', '/', $url);  //remove view slug from URL
                     ?>
                     <a href="<?php echo $url;?>">View Entry</a>
-                    <?php if($entryData['status']=='Accepted') { ?>
+                    <?php if($entryData['status']=='Accepted' && $disp_edit) { ?>
                     <a href="/maker/entry/<?php echo $entryData['lead_id'];?>/edit">View/Edit Public Information</a>
                     <?php } ?>
                     <?php

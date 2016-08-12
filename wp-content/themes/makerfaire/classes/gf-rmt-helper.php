@@ -359,7 +359,7 @@ class GFRMTHELPER {
     //if form type=payment we need to map resource fields back to the original entry
     if($entryData['fType'] == 'Payment' ){
       //get original entry id
-      $entryID = ($entryData['origEntryID'] !='' ?$entryData['origEntryID']:$entryID);
+      $entryID = ($entryData['origEntryID'] != '' ? $entryData['origEntryID']:$entryID);
       //check if any electrical resources have been set
       $sql = "SELECT wp_rmt_entry_resources.ID "
               . " from wp_rmt_entry_resources, wp_rmt_resources, wp_rmt_resource_categories "
@@ -579,6 +579,8 @@ class GFRMTHELPER {
    *    wp_mf_entity
    *    wp_mf_maker
    *    wp_mf_maker_to_entity
+   *
+   * NOT USED - PLEASE REFER TO updateMakerTables FUNCTION INSSTEAD
    */
   public static function updateMakerTable($entryData){
     global $wpdb;
