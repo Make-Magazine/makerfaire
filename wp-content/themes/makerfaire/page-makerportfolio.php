@@ -3,14 +3,8 @@
 <?php
 global $wp_query;
 $user = $wp_query->query_vars['makerid'];
-/* $user_data = null;
 
-  if ($user < 1) {
-  $user_data = get_user_by('login', $wp_query->query_vars['makerid']);
-  $user = $user_data->ID;
-  } else {
-  $user_data = get_userdata($user);
-  } */
+
 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 if ($mysqli->connect_errno) {
   echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
