@@ -748,7 +748,9 @@ function mf_admin_pre_render(){
         }
         break;
     }
-
+    
+    //update the change report with any changes
+    GVupdate_changeRpt($form,$entry_info_entry_id,$lead);
     // Return the original form which is required for the filter we're including for our custom processing.
     return $form;
 
