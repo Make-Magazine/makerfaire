@@ -17,25 +17,25 @@ if((isset($_FILES['value']['error']) && $_FILES['value'] == 0) ||
     case 'groupphoto':
       $fieldNum=111;
       break;
-    case 'maker_img1':
+    case 'maker1img':
       $fieldNum=217;
       break;
-    case 'maker_img2':
+    case 'maker2img':
       $fieldNum=224;
       break;
-    case 'maker_img3':
+    case 'maker3img':
       $fieldNum=223;
       break;
-    case 'maker_img4':
+    case 'maker4img':
       $fieldNum=222;
       break;
-    case 'maker_img5':
+    case 'maker5img':
       $fieldNum=220;
       break;
-    case 'maker_img6':
+    case 'maker6img':
       $fieldNum=221;
       break;
-    case 'maker_img7':
+    case 'maker7img':
       $fieldNum=219;
       break;
     default:
