@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: gravityview
 Requires at least: 3.3
-Tested up to: 4.4.2
+Tested up to: 4.5.2
 Stable tag: trunk
 Contributors: katzwebservices
 License: GPL 3 or higher
@@ -15,6 +15,21 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 1.0.17 on June 20, 2016 =
+* __Important update__: Fixed security issue introduced in 1.0.16 where logged-in users can see all entries.
+* Changed "Created by (or admin)" filter to use `gravityview_edit_others_entries` capability instead of `gravityview_view_others_entries`
+
+= 1.0.16 on May 13, 2016 =
+* Fixed: If a View has an empty "Any field has" filter, it prevents accessing single entries
+* Updated: "Created by (or admin)" filter now also allows users with the `gravityview_view_others_entries` capability to see entries
+* Now requires GravityView 1.15 or newer
+* Added additional logging
+
+= 1.0.15 on May 7, 2016 =
+* Fixed: Allow comparing against empty field values
+* Fixed: Properly replace Merge Tags when using using "Any form field" filter
+* Added: Chinese translation (Thanks, Edi Weigh!)
 
 = 1.0.14 on February 27, 2016 =
 * Fixed: When saving a filter condition using a product field the operator "is" disappears

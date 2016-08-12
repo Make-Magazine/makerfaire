@@ -1,5 +1,5 @@
 /* maker admin */
-.gv-list-container .maker-admin {
+.maker-admin {
   /* parent container */
   overflow: hidden;
   position: relative;
@@ -76,50 +76,20 @@
     float: left;
     margin-right: .2em;
   }
-  table.mat-ticketing {
-    font-weight: normal;
-    width: 100%;
+  .popover {
+    max-width: 500px;
+  }
+  .mat-ticketing {
+    border-bottom: thin solid lightgrey;
+    padding: 5px 0;
     .subtitle {
       color: #9B9B9B;
     }
-    tr {
-      border-bottom: thin solid lightgrey;
-    }
-    td {
-      padding: 5px;
-    }
     .title {
-      font-size: 20px;
+      font-size: 15px;
     }
     i.fa-chevron-circle-right {
       color: #00B4F3;
-    }
-
-  }
-  .ticketing {
-    .modal-body {
-      padding: 0;
-    }
-    .modal-footer {
-      font-size: 10px;
-      text-align: left;
-      color: #9B9B9B;
-      border: none;
-    }
-    .modal-dialog {
-      width: 400px;
-       @media screen and (max-width: 767px) {
-         width: 200px;
-
-        margin: 0px;
-     }
-    }
-    @media screen and (max-width: 767px) {
-        left: 0px;
-        right: 0px;
-        bottom: 0px;
-        top: 30px;
-        margin: 0px;
     }
   }
 }

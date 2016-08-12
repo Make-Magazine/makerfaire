@@ -1,6 +1,6 @@
 <?php
 
-class GWPerk {
+class GP_Perk {
 
     public $tooltips;
 
@@ -361,6 +361,22 @@ class GWPerk {
         }
 
     }
+
+    function add_css_class( $class, $classes = '' ) {
+        $classes = explode( ' ', $classes );
+        array_push( $classes, $class );
+        return implode( ' ', array_unique( $classes ) );
+    }
+
+    public static function doing_ajax( $action = false ) {
+
+        if(!defined('DOING_AJAX') || !DOING_AJAX)
+            return false;
+
+        return $action ? $action == $_REQUEST['action'] : true;
+    }
+
+
 
 
 
@@ -926,3 +942,5 @@ class GWPerk {
     }
 
 }
+
+class GWPerk extends GP_Perk { }

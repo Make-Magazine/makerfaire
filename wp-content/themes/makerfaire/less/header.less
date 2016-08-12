@@ -1,7 +1,9 @@
-/* TOP BRAND BAR */
 #makerfaire {
+  /* TOP BRAND BAR */
   .top-header-bar-brand {
     background-color: #F0F0F0;
+    z-index: 4;
+    position: relative;
     p {
       margin-bottom: 0;
       line-height: 1.3em;
@@ -27,6 +29,11 @@
       height: 12px;
       padding-left: 2px;
     }
+  }
+  #header {
+    background: #fff;
+    z-index: 4;
+    position: relative;
   }
 
   .home .quora#header {
@@ -72,6 +79,11 @@
         width: 115px;
         @media (max-width: 991px) { 
           width: 100px;
+        }
+      }
+      #trigger-overlay {
+        @media (max-width: 991px) {
+          display: none;
         }
       }
       .subscribe-red-btn {

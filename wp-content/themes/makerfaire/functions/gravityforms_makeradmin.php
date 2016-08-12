@@ -84,6 +84,9 @@ function makerCancelEntry(){
     $cancelText = "The Exhibit has been cancelled by the maker.  Reason given is: ".stripslashes($reason);
     mf_add_note($entryID,$cancelText);
 
+    //update maker and entity table
+    GFRMTHELPER::updateMakerTables($entryID); //update maker table information
+
     //Handle notifications for acceptance
     $notifications_to_send = GFCommon::get_notifications_to_send( 'maker_cancel_exhibit', $form, $lead );
     foreach ( $notifications_to_send as $notification ) {
@@ -91,10 +94,7 @@ function makerCancelEntry(){
           GFCommon::send_notification( $notification, $form, $lead );
       }
     }
-
-    //GFJDBHELPER::gravityforms_sync_status_jdb($entry_info_entry_id,$acceptance_status_change);
-
-    echo $lead['151'].', Exhibit ID '.$entryID.' has been cancelled';
+    echo 'Thank You, Exhibit ID '.$entryID.' has been cancelled';
 
   }else{
     echo 'Error in cancelling this exhibit.';
@@ -117,12 +117,15 @@ function makerDeleteEntry(){
     new GravityView_Cache;
 
     if( ! $trashed ) {
-        echo new WP_Error( 'trash_entry_failed', __('Moving the entry to the trash failed.', 'gravityview' ) );
+      echo new WP_Error( 'trash_entry_failed', __('Moving the entry to the trash failed.', 'gravityview' ) );
     }
 
     //Make a note of the delete
     mf_add_note($entryID,"The Exhibit has been deleted by the maker.");
 
+    //update maker and entity table
+    GFRMTHELPER::updateMakerTables($entryID); //update maker table information
+    //
     //Handle notifications for acceptance
     $notifications_to_send = GFCommon::get_notifications_to_send( 'maker_delete_exhibit', $form, $lead );
     foreach ( $notifications_to_send as $notification ) {
@@ -130,7 +133,8 @@ function makerDeleteEntry(){
             GFCommon::send_notification( $notification, $form, $lead );
         }
     }
-    echo $lead['151'].', Exhibit ID '.$entryID.' has been deleted';
+    echo 'Thank You, Exhibit ID '.$entryID.' has been deleted';
+
   }else{
     echo 'Error in deleting this entry.';
   }

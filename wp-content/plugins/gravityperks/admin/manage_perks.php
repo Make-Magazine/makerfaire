@@ -25,7 +25,7 @@ class GWPerksPage {
             #gwp-header-links { float: right; margin-top: -36px; }
                 #gwp-header-links li { display: inline; padding-left: 10px; }
 
-            .gp-active-perks { overflow: hidden; }
+            .gp-active-perks { }
 
             .perks { padding: 20px 0 0; }
 
@@ -37,9 +37,9 @@ class GWPerksPage {
                 .perks .no-perks-installed a { cursor: pointer; }
 
             .perks .all-perks-installed { padding: 60px 20px 20px; margin: 0 0 20px; text-align: center; font-size: 24px;
-                line-height: 36px; }
+                line-height: 36px; width: 100%; }
 
-            #install.tab-container { overflow: hidden; position: relative; }
+            #install.tab-container { position: relative; }
                 #install #need-license-splash { background-color: #fff; position: absolute; z-index: 99;
                     top: 100px; left: 50%; margin-left: -25%; width: 44%; padding: 3%;
                     box-shadow: 0 0 100px 100px #fff; }
@@ -49,10 +49,22 @@ class GWPerksPage {
                 #install #need-license-splash p { margin: 0 0 18px; }
                 #install #need-license-splash .dismiss-link { float: right; line-height: 22px; }
 
+            .perk-listings {
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-wrap: wrap;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
             .perk-listing { background-color: #f4f8fc; box-shadow: 0 0 20px #D8E9FA inset;
-                border: 1px solid #eee; float: left; margin: 0 10px 20px; width: 260px; }
+                border: 1px solid #eee; float: left; margin: 0 10px 20px; width: 260px;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+            }
 
-                .perk-listing .wrap { padding: 15px; border: 4px solid #fff; min-height: 140px; margin: 0;
+                .perk-listing .wrap { padding: 15px; border: 4px solid #fff; min-height: 160px; margin: 0;
                     position: relative; }
                 .perk-listing h3 { margin: 0 0 4px; }
                 .perk-listing p { margin: 0; padding: 0; }
@@ -163,11 +175,6 @@ class GWPerksPage {
                     }
                 <?php endif; ?>
 
-                // adjust perk listing height
-                setDynamicPerkHeight( $( '.gp-active-perks .perk-listing .wrap' ) );
-                setDynamicPerkHeight( $( '.gp-inactive-perks .perk-listing .wrap' ) );
-                setDynamicPerkHeight( $( '#install .perk-listing .wrap' ) );
-
             });
 
             function toggleTabs(elem, tab) {
@@ -198,22 +205,6 @@ class GWPerksPage {
                         perkListing.appendTo('div.gp-inactive-perks');
                     }
                 });
-            }
-
-            function setDynamicPerkHeight( group ) {
-
-                var maxHeight = 0;
-
-                jQuery.each( group, function() {
-                    var height = jQuery( this ).height();
-                    if( height > maxHeight )
-                        maxHeight = height;
-                } );
-
-                jQuery.each( group, function() {
-                    jQuery( this ).height( maxHeight );
-                } );
-
             }
 
             function showLicenseSplash() {
@@ -266,7 +257,7 @@ class GWPerksPage {
                         ?>
 
                         <h3 class="gp-inline-header"><?php _e('Active Perks', 'gravityperks'); ?></h3>
-                        <div class="gp-active-perks">
+                        <div class="gp-active-perks perk-listings">
                             <?php foreach($active_perks as $perk_file => $perk_data) {
                                 self::get_perk_listing($perk_file, $perk_data);
                             } ?>
@@ -279,7 +270,7 @@ class GWPerksPage {
                         ?>
 
                         <h3 class="gp-inline-header"><?php _e('Inactive Perks', 'gravityperks'); ?></h3>
-                        <div class="gp-inactive-perks">
+                        <div class="gp-inactive-perks perk-listings">
                             <?php foreach($inactive_perks as $perk_file => $perk_data) {
                                 self::get_perk_listing($perk_file, $perk_data);
                             } ?>

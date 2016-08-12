@@ -15,21 +15,13 @@ class GWPerksSettings {
 
             check_admin_referer( 'update', 'gwp_settings' );
 
-            $new_license = trim( stripslashes( gwpost( 'gwp_license_key' ) ) );
-            $old_license = trim( gwar( $settings, 'license_key' ) );
-            $is_diff_license = $new_license != $old_license;
-
-
             $settings = array_merge( $settings, array(
                 'license_key' => trim( stripslashes( $_POST['gwp_license_key'] ) )
-                ) );
+            ) );
 
             update_site_option( 'gwp_settings', $settings );
-            
-            // if a different license is entered, delete the 'gwp_has_valid_license' transient so the next 'has_valid_license'
-            // check will do a fresh check to confirm new licenses' validity
-            if( $is_diff_license )
-                GWPerks::flush_license();
+
+            GWPerks::flush_license();
             
         }
         

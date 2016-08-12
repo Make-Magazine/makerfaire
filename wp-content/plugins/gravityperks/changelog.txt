@@ -1,6 +1,26 @@
 
 # Changelog
 
+## 1.2.12
+
+    - Renamed GWPerk class to GP_Perk; GWPerk class is still accessible.
+    - Added GP_Perk::doing_ajax() method to deterine if an AJAX action is being processed.
+
+## 1.2.11
+
+    - Added GWPerk::add_css_class() helper function for adding a new CSS class to an existing CSS class string
+    - Added better translation support (and including new .pot file with plugin)
+    - Updated welcome pointer verbiage
+    - Updated admin.css with proper formatting
+    - Fixed minor security issue where unsanitized value would be stored in database. Props: Jeremy Felt
+
+## 1.2.10
+
+    - Updated settings page to always check license status after saving settings; resolves issues where license is renewed by remains invalid in cache
+    - Updated GravityPerks::flush_license() to also flush cached get_perks() response
+    - Updated GWAPI::get_api_args() with a 'timeout' of 15 to further diminsh the impact of any gwiz.com downtime on client websites
+    - Updated styling on Manage Perks page to better equalize the heights of perk listings
+
 ## 1.2.9.3
 
     - Added support for getting perk file name based on perk name; required for older perks moving to GP_Bootstrap

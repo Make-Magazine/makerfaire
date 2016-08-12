@@ -49,54 +49,54 @@ class GWAPI {
     *
     * @param mixed $with_download
     */
-    public function get_perks( $with_download = false ) {
+	public function get_perks( $with_download = false ) {
 
-        if( ! $with_download ) {
-            $perks = get_transient( 'gperks_get_perks' );
-            if( ! empty( $perks ) )
-                return $perks;
-        }
+		if( ! $with_download ) {
+			$perks = get_transient( 'gperks_get_perks' );
+			if( ! empty( $perks ) )
+				return $perks;
+		}
 
-        $api_params = self::get_api_args( array(
-            'edd_action'        => 'get_perks',
-            'name'              => $this->product,
-            'license'           => $this->license_key,
-            'with_download'     => $with_download,
-            'author'            => $this->author
-        ) );
+		$api_params = self::get_api_args( array(
+			'edd_action'        => 'get_perks',
+			'name'              => $this->product,
+			'license'           => $this->license_key,
+			'with_download'     => $with_download,
+			'author'            => $this->author
+		) );
 
-        $request_args = self::get_request_args( array(
-            'body' => urlencode_deep( $api_params )
-        ) );
+		$request_args = self::get_request_args( array(
+			'body' => urlencode_deep( $api_params )
+		) );
 
-        $request = wp_remote_post( GW_STORE_URL, $request_args );
-        if ( is_wp_error( $request ) ) {
-            return false;
-        }
+		$request = wp_remote_post( GW_STORE_URL, $request_args );
+		if ( is_wp_error( $request ) ) {
+			return false;
+		}
 
-        $request = json_decode( wp_remote_retrieve_body( $request ) );
-        if( ! $request ) {
-            return false;
-        }
+		$request = json_decode( wp_remote_retrieve_body( $request ) );
+		if( ! $request ) {
+			return false;
+		}
 
-        $perks = array();
+		$perks = array();
 
-        foreach( $request as $plugin_file => $perk ) {
+		foreach( $request as $plugin_file => $perk ) {
 
-            if( property_exists( $perk, 'sections' ) ) {
-	            $perk->sections = maybe_unserialize( $perk->sections );
-            }
+			if( property_exists( $perk, 'sections' ) ) {
+				$perk->sections = maybe_unserialize( $perk->sections );
+			}
 
-            $perks[$plugin_file] = $perk;
+			$perks[$plugin_file] = $perk;
 
-        }
+		}
 
-        if( ! $with_download ) {
-	        set_transient( 'gperks_get_perks', $perks, 60 * 60 * 12 );
-        }
+		if( ! $with_download ) {
+			set_transient( 'gperks_get_perks', $perks, 60 * 60 * 12 );
+		}
 
-        return ! empty( $perks ) ? $perks : false;
-    }
+		return ! empty( $perks ) ? $perks : false;
+	}
 
 	/**
 	 * This is the function that let's WordPress know if there is an update avialable
@@ -280,24 +280,23 @@ class GWAPI {
             );
         }
 
-        if ( is_wp_error( $response ) )
-            return false;
+	    $has_valid_license = false;
 
-        $license_data = json_decode( wp_remote_retrieve_body( $response ) );
+        if ( ! is_wp_error( $response ) ) {
 
-        if( is_object( $license_data ) ) {
+	        $license_data = json_decode( wp_remote_retrieve_body( $response ) );
 
-            // at some point EDD added 'site_inactive' status which indicates the license has not been activated for this
-            // site even though it already might have been, go ahead and activate it and see if it is still active
-            if( in_array( $license_data->license, array( 'inactive', 'site_inactive' ) ) ) {
-                $has_valid_license = $this->activate_license( $license );
-            } else {
-                $has_valid_license = $license_data->license == 'valid';
-            }
+	        if( is_object( $license_data ) ) {
 
-        } else {
+		        // at some point EDD added 'site_inactive' status which indicates the license has not been activated for this
+		        // site even though it already might have been, go ahead and activate it and see if it is still active
+		        if( in_array( $license_data->license, array( 'inactive', 'site_inactive' ) ) ) {
+			        $has_valid_license = $this->activate_license( $license );
+		        } else {
+			        $has_valid_license = $license_data->license == 'valid';
+		        }
 
-            $has_valid_license = false;
+	        }
 
         }
 
@@ -329,7 +328,8 @@ class GWAPI {
 
     public static function get_api_args( $args = array() ) {
         return wp_parse_args( $args, array(
-            'url' => self::get_site_url()
+            'url'     => self::get_site_url(),
+	        'timeout' => 15
         ) );
     }
 

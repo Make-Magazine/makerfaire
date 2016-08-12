@@ -27,7 +27,8 @@
         <li>Row 1: Field ID's</li>
         <li>Row 2: Field Names</li>
         <li>Row 3: Start of Data</li>
-        <li>Column A: Form ID</li>
+        <li>Column A: Faire ID</li>
+        <li>Column B: Form ID</li>
     </ul>
   </body>
 </html>
@@ -41,7 +42,6 @@ function calculate_signature($string, $private_key) {
     return $sig;
 }
 function call_api($data){
-
     $api_key      = '84ed801ad4';
     $private_key  = 'cacff8d71d9cc6e';
     $method  = 'POST';
@@ -53,7 +53,7 @@ function call_api($data){
     $endpoint = $domain.'/gravityformsapi/';
     echo 'sending to '.$endpoint.'<br/>';
     //$route = 'entries';
-    $route = 'forms/60/entries';
+    $route = 'forms/96/entries';
     $expires = strtotime('+60 mins');
     $string_to_sign = sprintf('%s:%s:%s:%s', $api_key, $method, $route, $expires);
     $sig = calculate_signature($string_to_sign, $private_key);
@@ -166,6 +166,8 @@ if (isset($_POST["submit"]) ) {
   foreach ($csv as $rowData){
     $faire = $rowData[0];
     $form  = $rowData[1];
+    unset($rowData[0]);
+    unset($rowData[1]);
     if(trim($faire)!='' && trim($form)!=''){
       //echo 'For ' .$faire .' setting form '.$form.'<br/>';
       $data  = array('form_id'=>$form,'status'=>'active',"id" => "","date_created" => "");
@@ -178,7 +180,7 @@ if (isset($_POST["submit"]) ) {
       $APIdata[] = $data;
     }
   }
-
-    $childID = call_api ($APIdata);
+//var_dump($APIdata);
+  $childID = call_api ($APIdata);
 }
 
