@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.2.14
+
+    - Added support for activation hooks for perks
+
+## 1.2.13
+
+    - Added CSS style for styling perk field setting rows
+
 ## 1.2.12
 
     - Renamed GWPerk class to GP_Perk; GWPerk class is still accessible.

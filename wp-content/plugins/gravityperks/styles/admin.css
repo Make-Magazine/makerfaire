@@ -221,6 +221,10 @@ body.perk-iframe {
     margin: 0 0 14px;
 }
 
+.gp-field-setting .gp-row:last-child {
+    margin: 0;
+}
+
 .ui-tabs-panel .gp-field-setting .gp-row label {
     margin: 0 0 5px !important;
 }

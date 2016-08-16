@@ -146,7 +146,7 @@ class GP_Perk {
             'property' => false,
             'method' => false,
             'version' => false
-            )) );
+        ) ) );
 
         if( !$class || !class_exists($class) )
             return false;
@@ -229,6 +229,10 @@ class GP_Perk {
     }
 
     protected function setup() { }
+
+    public function activate() { }
+
+    public function uninstall() { }
 
 
 
@@ -473,9 +477,9 @@ class GP_Perk {
         $this->update();
     }
 
-    public function activate() {
-        $this->set_property('is_active', true);
-    }
+//    public function activate() {
+//        $this->set_property('is_active', true);
+//    }
 
     public function deactivate() {
         $this->set_property('is_active', false);

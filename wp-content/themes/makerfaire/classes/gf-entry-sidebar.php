@@ -615,7 +615,7 @@ if ($mode == 'view') {
 			onclick="jQuery(\'#action\').val(\'send_conf_letter\');"/>';
     echo '  <div class="clear"></div>';?>
   </div>
-	
+
 	<?php
 }
 
@@ -748,7 +748,9 @@ function mf_admin_pre_render(){
         }
         break;
     }
-
+    
+    //update the change report with any changes
+    GVupdate_changeRpt($form,$entry_info_entry_id,$lead);
     // Return the original form which is required for the filter we're including for our custom processing.
     return $form;
 
@@ -906,6 +908,13 @@ function duplicate_entry_data($form_change,$current_entry_id ){
             $lead_detail_id, $row->long_detail));
     }
   }
+
+  //create RMT and maker/entity tables
+  $entry    = GFAPI::get_entry($lead_id);
+  $form_id  = $entry['form_id'];
+  $form     = GFAPI::get_form($form_id);
+
+  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form);
 }
 
 /* Modify Form Id Status */

@@ -988,7 +988,7 @@ class GWPerksPage {
         switch($action) {
 
         case 'activate':
-            $perk->activate();
+            //$perk->activate();
             $message = 1;
             break;
 

@@ -3,7 +3,7 @@
  * Plugin Name: Gravity Perks
  * Plugin URI: http://gravitywiz.com/2012/03/03/what-is-a-perk/?from=perks
  * Description: Effortlessly install and manage small functionality enhancements (aka "perks") for Gravity Forms.
- * Version: 1.2.12
+ * Version: 1.2.14
  * Author: David Smith
  * Author URI: http://gravitywiz.com/
  * License: GPL2
@@ -28,7 +28,7 @@ add_action( 'plugins_loaded', array( 'GravityPerks', 'init_perk_as_plugin_functi
 
 class GravityPerks {
 
-    public static $version = '1.2.12';
+    public static $version = '1.2.14';
     public static $tooltip_template = '<h6>%s</h6> %s';
 
     private static $basename;
@@ -146,7 +146,7 @@ class GravityPerks {
                 default:
                     require_once(self::get_base_path() . '/admin/manage_perks.php');
                     add_thickbox();
-                    GWPerksPage::process_actions();
+                    //GWPerksPage::process_actions();
                 }
 
             }
@@ -175,8 +175,25 @@ class GravityPerks {
         add_action( 'gform_field_appearance_settings', array( __class__, 'dynamic_setting_actions' ), 10, 2 );
         add_action( 'gform_field_advanced_settings',   array( __class__, 'dynamic_setting_actions' ), 10, 2 );
 
+        add_action( 'activate_plugin', array( __class__, 'register_perk_activation_hooks' ) );
+
         // load and init all active perks
         self::initialize_perks();
+
+    }
+
+    public function register_perk_activation_hooks( $plugin ) {
+
+        if( ! GP_Perk::is_perk( $plugin ) ) {
+            return;
+        }
+
+        $perk = GWPerk::get_perk( $plugin );
+        if( is_wp_error( $perk ) || ! $perk->is_supported() ) {
+            return;
+        }
+
+        $perk->activate();
 
     }
 
@@ -1196,13 +1213,13 @@ class GravityPerks {
         return self::markdown( $string );
     }
 
-    public static function markdown( $string ) {
+	public static function markdown( $string ) {
 
-        if( !function_exists('Markdown') )
-            require_once( GWPerks::get_base_path() . '/includes/markdown.php' );
+		if( !function_exists('Markdown') )
+			require_once( GWPerks::get_base_path() . '/includes/markdown.php' );
 
-        return Markdown( $string );
-    }
+		return Markdown( $string );
+	}
 
     public static function apply_filters( $filter_base, $modifiers, $value ) {
 
