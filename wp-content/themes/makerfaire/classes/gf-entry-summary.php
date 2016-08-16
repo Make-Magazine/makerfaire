@@ -28,6 +28,7 @@ $photo                    = (isset($lead['22'])?$lead['22']:'');
 $short_description        = (isset($lead['16'])?$lead['16']:'');
 $long_description         = (isset($lead['21'])?$lead['21']:'');
 $project_name             = (isset($lead['151'])?$lead['151']:'');
+$areyoua                  = (isset($lead['45'])?$lead['45']:'');
 $size_request             = (isset($lead['60'])?$lead['60']:'');
 $size_request_heightwidth = ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344'].' X ':'').(isset($lead['345'])?$lead['345']:'');
 $size_request_other       = (isset($lead['61'])?$lead['61']:'');
@@ -172,6 +173,13 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
 
               <?php echo !empty($makerfirstname7) ?  $makerfirstname7.' '.$makerlastname7.'</br>' : '' ; ?>
             </td>
+					</tr>
+          <tr>
+						<td valign="top"><strong>We are (a/an)...:</strong></td>
+						<td><?php
+              echo ( isset( $areyoua ) ) ? $areyoua : '' ;
+								?>
+						</td>
 					</tr>
 					<tr>
 						<td style="width: 80px;" valign="top"><strong>What are your plans:</strong></td>
