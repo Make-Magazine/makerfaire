@@ -3,7 +3,7 @@
 // BEGINING AMAZING HACKS
 function maker_url_vars($rules) {
   $newrules = array();
-  $newrules['maker/entry/(\d*)/?'] = 'index.php?post_type=page&pagename=entry-page-do-not-delete&e_id=$matches[1]';
+  $newrules['maker/entry/(\d*)/?(.*)$/?'] = 'index.php?post_type=page&pagename=entry-page-do-not-delete&e_id=$matches[1]&edit_slug=$matches[2]';
   $newrules['([^\/]*)/meet-the-makers/topics/([^\/]*)/([0-9]{1,})/?$'] = 'index.php?post_type=page&pagename=listing-page-do-not-delete&f=$matches[1]&t_slug=$matches[2]&offset=$matches[3]';
   $newrules['([^\/]*)/meet-the-makers/search/([0-9]{1,})/?$'] = 'index.php?post_type=page&pagename=search-results-page-do-not-delete&f=$matches[1]&offset=$matches[2]';
   $newrules['([^\/]*)/meet-the-makers/topics/([^\/]*)/?$'] = 'index.php?offset=1&post_type=page&pagename=listing-page-do-not-delete&f=$matches[1]&t_slug=$matches[2]';
@@ -432,9 +432,9 @@ add_filter('template_include', 'onsitecheckin_include', 1, 1);
 function onsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
-    $page_value = (isset($wp_query->query_vars['onsitecheckin'])?$wp_query->query_vars['onsitecheckin']:''); 
+    $page_value = (isset($wp_query->query_vars['onsitecheckin'])?$wp_query->query_vars['onsitecheckin']:'');
 
-    if ($page_value && $page_value == "true") { 
+    if ($page_value && $page_value == "true") {
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-onsite-checkin.php'; //Load your template or file
     }
 
@@ -444,9 +444,9 @@ add_filter('template_include', 'processonsitecheckin_include', 1, 1);
 function processonsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
-    $page_value = (isset($wp_query->query_vars['processonsitecheckin'])?$wp_query->query_vars['processonsitecheckin']:''); 
+    $page_value = (isset($wp_query->query_vars['processonsitecheckin'])?$wp_query->query_vars['processonsitecheckin']:'');
 
-    if ($page_value && $page_value == "true") { 
+    if ($page_value && $page_value == "true") {
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/php/process-onsite-checkin.php'; //Load your template or file
     }
 
@@ -456,7 +456,7 @@ add_filter('template_include', 'makersign_include', 1, 1);
 function makersign_include($template)
 {
     global $wp_query; //Load $wp_query object
-    $page_value = (isset($wp_query->query_vars['makersign'])?$wp_query->query_vars['makersign']:''); 
+    $page_value = (isset($wp_query->query_vars['makersign'])?$wp_query->query_vars['makersign']:'');
 
     if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/fpdi/makersigns.php'; //Load your template or file

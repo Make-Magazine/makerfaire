@@ -1,106 +1,234 @@
 /* maker admin e.g. makerfaire.com/manage-entries */
-
-.maker-admin-manage-faire-entries{
+.maker-admin-manage-faire-entries-mobile {
   .maker-admin-list-wrp {
-    position: relative;
-    width: 100%;
-    margin: 2em 0;
+    padding: 15px 0;
   }
-  .entryImg {
-    float: left;
-    padding-right: 5px;
-    width: 25%;
-    height: auto;
-    p {
-      margin: 0;
-    }
-    img {
-      width: 100%;
-      height: auto;
-      min-height: 10em;
-    }
+  i {
+    margin: .2em;
   }
-  .entryData {
-    font-weight: bold;
-    font-size: 1.3rem;
-    padding-left: 5px;
-    width: 70%;
-    height: 100%;
-    width: 70%;
-    position: absolute;
-    right: 0;
-    top: 0;
+  .clear {
+    clear: both;
+  }
+  .gv-list-view-title-maker-entry {
+    @media (max-width: 1199px) {
+      font-size: .9em;
+    }
+    @media (min-width: 767px) {
+      position: relative;
+    }
+    div.entryData {
+      line-height: 1.3em;
+      clear: both;
+    }
+    .entryImg {
+      @media (min-width: 768px) {
+        width: 20%;
+        overflow: hidden;
+        float: left;
+      }
+      .image-container {
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        width: 100%;
+        float: left;
+        @media (max-width: 767px) {
+          height: 49vw;
+        }
+        @media screen and (min-width: 768px) and (max-width: 1199px) {
+          height: 20vw;
+        }
+
+        @media screen and (min-width: 1200px) {
+          height: 17vw;
+        }
+      }
+    }
+    .entry-main-content {
+      @media (max-width: 767px) {
+          min-height: 47vw;
+        }
+        @media screen and (min-width: 768px) and (max-width: 1199px) {
+          min-height: 18vw;
+          font-size: .9em;
+        }
+        @media screen and (min-width: 1200px) {
+          min-height: 14.8vw;
+        }
+    }
     .statusBox {
       height: 1.924em;
       display: block;
       padding: .2em 1em;
       border-radius: 4px;
+
+      .statusFaire {
+        float: left;
+      }
       .statusText {
         color: white;
+        float: right;
+      }
+
+      @media screen and (max-width: 767px) {
+        height: 3.1em;
+        .statusText, .statusFaire {
+          float: none;
+        }
       }
     }
-    .greenStatus {
+    .statusBox.greenStatus {
       background-color: #7ED321;
     }
-    .greyStatus {
+    .statusBox.greyStatus {
       background-color: #B6B6B6;
     }
-    .clear {
-      clear: both;
+
+    .statusBox, .entry-main-content {
+      float: right;
+      width: 79%;
+      @media screen and (max-width: 767px) {
+        float: none;
+        width: 100%;
+      }
     }
-    .links {
-      position: absolute;
-      bottom: 0;
-      width: 98%;
-      border-top: thin solid grey;
-      border-bottom: thin solid grey;
-      p {
+    .entryName {
+      .entry-title {
+        font-weight: 100;
+        clear: both;
+        float: left;
+        margin-bottom: 10px;
+        font-size: 1.93em;
+        min-height: 2.2em;
+        @media screen and (max-width: 1199px) {
+          font-size: 1.3em;
+        }
+      }
+    }
+    .editLink {
+      margin-top: 1em;
+      margin-left: 1em;
+      float: left;
+      font-size: .9em;
+      @media (max-width: 1199px) {
+        margin-left: 0;
+        margin-top: .5em;
+        clear:both;
+      }
+    }
+    .submit-date {
+      float:left;
+      padding-top: 3px;
+      @media (max-width: 767px) {
+        margin-top: 2em;
+        padding: 0;
+      }
+    }
+    .entry-action-buttons {
+      float: right;
+      .hideSmall {
+        @media screen and (max-width: 1199px) {
+          display: none;
+        }
+      }
+    }
+    .submit-date,
+    .entry-action-buttons {
+      line-height: 2em;
+      font-size: 14px;
+      .btn {
+        line-height: 2em;
+        font-size: 14px;
+        @media screen and (max-width: 1199px) {
+          padding-right: .2em;
+          padding-left: .2em;
+        }
+        @media screen and (max-width: 1199px) {
+          font-size: .9em;
+        }
+      }
+      @media (max-width: 767px) {
+        border-top: solid 1px grey;
+        text-align: right;
+        float: none;
+      }
+      @media screen and (max-width: 1199px) {
+        font-size: .8em;
+      }
+    }
+    .notifications-button {
+      .fa-stack {
+        width: auto;
+        height: auto;
+        line-height: normal;
+      }
+      i.fa-circle {
+        color: red;
         margin: 0;
+        @media (max-width: 767px) {
+          font-size: 1.2em;
+        }
       }
-      i {
-        margin: .2em;
+      .notification-counter {
+        color: white;
+        line-height: 1.5em;
+        position: absolute;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-style: normal;
+        font-size: 14px;
+        @media (max-width: 1199px) {
+          font-size: .8em;
+        }
       }
     }
-  }
-  .submit-date {
-    line-height: 25px;
-  }
-  .notifications-button {
-    .fa-stack {
-      width: auto;
-      height: auto;
-      line-height: normal;
+    .entry-main-content {
+      @media screen and (min-width: 768px) and (max-width: 1199px) {
+        position: relative;
+      }
     }
-    i.fa-circle {
-      font-size: 20px;
-      color: red;
-      margin: 0;
+    .mat_message {
+      @media screen and (min-width: 768px) {
+        width: 100%;
+      }
     }
-    .notification-counter {
-      color: white;
-      font-size: 13px;
-      line-height: 1.5em;
-      position: absolute;
-      left: 0;
+
+    .mat-ticketing {
+      border-bottom: thin solid lightgrey;
+      padding: 5px 0;
+      .subtitle {
+        color: #9B9B9B;
+      }
+      .title {
+        font-size: 15px;
+      }
+      i.fa-chevron-circle-right {
+        color: #00B4F3;
+      }
+    }
+
+    .actionSection {
       width: 100%;
-      text-align: center;
-      font-style: normal;
+      @media (min-width: 768px) {
+        border-top: solid 1px grey;
+        border-bottom: solid 1px grey;
+        width: 100%;
+        position: relative;
+        bottom: 0;
+        height: 2.5em;
+        margin-top: 1em;
+      }
     }
-  }
-  .settings-pop-btn {
-    margin-top: 10px;
   }
   .manage-entry-popover {
-    h6,
-    a {
+    h6, a, .disabled {
       display: block;
-      padding: 6px 20px;
-      margin: auto -14px;
+      padding: 6px 10px;
     }
     h6 {
-      color: #00adef;
       font-size: 17px;
-      font-weight: 300;
+      font-weight: 400;
       padding-top: 10px;
       margin-bottom: -5px;
       border-top: solid 1px grey;
@@ -109,6 +237,12 @@
       color: inherit;
       &:hover {
         background-color: darken(white, 2%);
+      }
+    }
+
+    .manage-links {
+      &:not(:last-child) {
+        border-bottom: thin solid lightgrey;
       }
     }
   }
@@ -120,120 +254,33 @@
       text-transform: uppercase;
     }
   }
-  .welcome-head {
-    font-size: 1.25em;
-    font-weight: bold;
-    line-height: 1.24em;
+  .popover {
+    max-width: 100%;
+    min-width: 200px;
   }
-  .title-head {
-    font-weight: 100;
-    line-height: 1.54em;
-    margin: 0;
-  }
-  .header-break {
-    margin-top: 5px;
-  }
-  .popover-head {
-    font-size: 1.3rem;
-  }
-  .entry-title {
-    font-weight: 100;
-    clear: both;
-    float: left;
-    margin-bottom: 10px;
-    font-size: 1.93em;
-  }
-  .latReg {
-    font-weight: 500;
-  }
-  .entryID {
-    font-size: 1.385em;
-    margin-bottom: 15px;
-  }
-  // Make the images square and center them
-  .faire-entry-image-wrp {
-    height: 280px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    overflow: hidden;
-    p {
-      width: 100%;
+  .popover-content {
+    .footer{
+      font-size: 10px;
+      text-align: center;
+      color: #9B9B9B;
+      border: none;
     }
-  }
-  @media screen and (min-width: 992px) and (max-width: 1199px) {
-    .faire-entry-image-wrp {
-      height: 230px;
-    }
-  }
-  @media screen and (min-width: 768px) and (max-width: 991px) {
-    .faire-entry-image-wrp {
-      height: 175px;
-    }
-  }
-  @media screen and (max-width: 767px) {
-    .faire-entry-image-wrp {
-      height: 150px;
-    }
-  }
-  @media screen and (min-width: 566px) {
-    .submit-date {
-      float: left;
-    }
-    .entry-action-buttons {
-      float: right;
-    }
-  }
-  @media screen and (max-width: 565px) {
-    .faire-entry-image-wrp {
-      height: auto;
-    }
-    .entryImg {
-      float: none;
-      padding-right: 0;
-      width: 100%;
-    }
-    .entryData {
-      padding-left: 0;
-      height: 100%;
-      width: 100%;
-      position: static;
-      right: inherit;
-      top: inherit;
-      margin-top: 10px;
-      .links {
-        position: static;
-        bottom: inherit;
-        width: 100%;
-        border-top: none;
-        border-bottom: none;
+    ul {
+      list-style-type: none;
+      padding-left:10px;
+      padding-top: 10px;
+      ul {
+        padding-top: 0;
+        padding-left: 0;
       }
     }
-    .submit-entry {
-      width: 100%;
-      .btn {
-        display: block;
-      }
-    }
-    .submit-date,
-    .entry-action-buttons {
-      border-top: solid 1px grey;
-      text-align: right;
-    }
-    h3.title {
-      clear: none;
-      float: none;
-      margin-top: 10px;
-    }
   }
-  @media screen and (max-width: 450px) {
-    .faire-entry-image-wrp {
-      height: 400px;
+  .tasks {
+    .fa-arrow-right {
+      color: red;
     }
-  }
-  @media screen and (max-width: 375px) {
-    .faire-entry-image-wrp {
-      height: 350px;
+    i.fa-check {
+      color: green;
     }
   }
 }

@@ -1,47 +1,93 @@
-#entry-schedule {
-  border-top: 1px solid #2D7798;
-  border-bottom: 1px solid #E7ECF0;
-  margin-top: 10px;
-  padding-top: 10px;
-  overflow: hidden;
-
-  table {
-    margin-left: 61px;
-    width: 100%;
-    color: #4A4A4A;
-    border-top: 1px solid #E7ECF0;
-    tr {
-      border-bottom: 1px solid #E7ECF0;
-      line-height: 45px;
-    }
-    tr:last-child {
-      border-bottom: none;
-    }
-  }
-  .faireTitle {
-    padding: 0 10px;
-  }
-  .faireLabel {
-    color: #9B9B9B;
-    font-weight: bold;
-    font-size: 12px;
-  }
-  .faireName {
-    font-size: 20px;
-    color: #00AEEF;
-  }
-  .faireActions {
+.entry-page {
+  #entry-schedule {
+    border-top: 1px solid #2D7798;
+    border-bottom: 1px solid #E7ECF0;
     margin-top: 10px;
-    font-size: 12px;
-    color: #4A4A4A;
-    .actionIcon {
-      height: 32px;
-      width: 32px;
-      margin-right: 10px;
-      margin-left: 30px;
+    padding-top: 10px;
+    overflow: hidden;
+
+    table {
+      margin-left: 61px;
+      width: 100%;
+      color: #4A4A4A;
+      border-top: 1px solid #E7ECF0;
+      tr {
+        border-bottom: 1px solid #E7ECF0;
+        line-height: 45px;
+      }
+      tr:last-child {
+        border-bottom: none;
+      }
+    }
+    .faireTitle {
+      padding: 0 10px;
+    }
+    .faireLabel {
+      color: #9B9B9B;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .faireName {
+      font-size: 20px;
+      color: #00AEEF;
+    }
+    .faireActions {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #4A4A4A;
+      .actionIcon {
+        height: 32px;
+        width: 32px;
+        margin-right: 10px;
+        margin-left: 30px;
+      }
     }
   }
-}
-.backlink {
-  margin-top:10px;
+  .backlink {
+    margin-top:10px;
+  }
+  .makerEditHead {
+    padding: 10px 20px;
+    i {
+      padding-right: 10px;
+    }
+  }
+  .editSection {
+    position: relative;
+    display: block;
+    padding-right: 35px;
+    h1 {
+      margin-right: 50px;
+    }
+    .makerEdit {
+      padding-top: 7px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      display: none;
+      color: #397b98;
+    }
+    .editfield {
+      display: none;
+    }
+    input.editfield {
+      width: 80%;
+    }
+    textarea.editfield {
+      width: 80%;
+      height: 6em;
+    }
+
+    .makerEdit a {
+      color: #000;
+    }
+  }
+  .editSection:hover .makerEdit {
+    display: block;
+  }
+  .page-header {
+    .makerEdit {
+      padding-top: 27px;
+    }
+  }
 }

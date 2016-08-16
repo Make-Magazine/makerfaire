@@ -1,6 +1,6 @@
 <?php
 
-class GWPerk {
+class GP_Perk {
 
     public $tooltips;
 
@@ -146,7 +146,7 @@ class GWPerk {
             'property' => false,
             'method' => false,
             'version' => false
-            )) );
+        ) ) );
 
         if( !$class || !class_exists($class) )
             return false;
@@ -229,6 +229,10 @@ class GWPerk {
     }
 
     protected function setup() { }
+
+    public function activate() { }
+
+    public function uninstall() { }
 
 
 
@@ -362,6 +366,22 @@ class GWPerk {
 
     }
 
+    function add_css_class( $class, $classes = '' ) {
+        $classes = explode( ' ', $classes );
+        array_push( $classes, $class );
+        return implode( ' ', array_unique( $classes ) );
+    }
+
+    public static function doing_ajax( $action = false ) {
+
+        if(!defined('DOING_AJAX') || !DOING_AJAX)
+            return false;
+
+        return $action ? $action == $_REQUEST['action'] : true;
+    }
+
+
+
 
 
     // STATIC HELPER FUNCTIONS //
@@ -457,9 +477,9 @@ class GWPerk {
         $this->update();
     }
 
-    public function activate() {
-        $this->set_property('is_active', true);
-    }
+//    public function activate() {
+//        $this->set_property('is_active', true);
+//    }
 
     public function deactivate() {
         $this->set_property('is_active', false);
@@ -926,3 +946,5 @@ class GWPerk {
     }
 
 }
+
+class GWPerk extends GP_Perk { }

@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 1.0.14
+Version: 1.0.17
 Author: Katz Web Services, Inc.
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
@@ -32,9 +32,9 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '1.0.14';
+		protected $_version = '1.0.17';
 
-		protected $_min_gravityview_version = '1.7.1';
+		protected $_min_gravityview_version = '1.15';
 
 		/**
 		 * @since 1.0.11
@@ -103,8 +103,8 @@ function gv_extension_advanced_filtering_load() {
 		/**
 		 * Modify search criteria
 		 * @param  array $criteria       Existing search criteria array, if any
-		 * @param  [type] $form_ids       Form IDs for the search
-		 * @param  [type] $passed_view_id (optional)
+		 * @param  array $form_ids       Form IDs for the search
+		 * @param  int $passed_view_id (optional)
 		 * @return [type]                 [description]
 		 */
 		function filter_search_criteria( $criteria, $form_ids = null, $passed_view_id = NULL ) {
@@ -130,17 +130,20 @@ function gv_extension_advanced_filtering_load() {
 
 			if( !empty( $view_filters ) && is_array( $view_filters ) ) {
 
-				do_action('gravityview_log_debug', 'GravityView_Advanced_Filtering[filter_search_criteria] about to add search criteria', $view_filters );
+				do_action('gravityview_log_debug', __METHOD__ . ': Validating search criteria', $view_filters );
 
 				//sanitize filters - no empty search values
 				foreach( $view_filters as $k => $filter ) {
 					// Don't use `empty()` because `0` is a valid value
-					if( $k !== 'mode' && ( !isset( $filter['value'] ) || $filter['value'] === '' ) ) {
+					if( $k !== 'mode' && ! isset( $filter['value'] ) ) {
 						unset( $view_filters[ $k ] );
 					}
 				}
 
-				// add advanced filters if defined
+				/**
+				 * add advanced filters if defined
+				 * The count() checks against > 1 because "mode" will always be set.
+				 */
 				if ( count( $view_filters ) > 1 ) {
 
 					do_action('gravityview_log_debug', 'GravityView_Advanced_Filtering[filter_search_criteria] Added search criteria', $view_filters );
@@ -153,11 +156,13 @@ function gv_extension_advanced_filtering_load() {
 							$criteria['search_criteria']['field_filters']['mode'] = $filter;
 						}
 					}
+				} else {
+					do_action('gravityview_log_debug', __METHOD__ . ': Skipping; no filters were defined.' );
 				}
 
 			} else {
 
-				do_action('gravityview_log_debug', 'GravityView_Advanced_Filtering[filter_search_criteria] No additional search criteria.' );
+				do_action('gravityview_log_debug', __METHOD__ . ': No additional search criteria.' );
 
 			}
 
@@ -221,7 +226,8 @@ function gv_extension_advanced_filtering_load() {
 		 */
 		static function parse_advanced_filters( $filter = array(), $view_id = NULL ) {
 
-			if( empty( $filter['key'] ) || !function_exists('gravityview_get_field_type') || !class_exists('GFCommon') || !class_exists('GravityView_API') ) {
+			// Don't use `empty()` because `0` is a valid value for the key
+			if( ! isset( $filter['key'] ) || '' === $filter['key'] || !function_exists('gravityview_get_field_type') || !class_exists('GFCommon') || !class_exists('GravityView_API') ) {
 				return $filter;
 			}
 
@@ -400,10 +406,17 @@ function gv_extension_advanced_filtering_load() {
 					$filter['field'] = $filter['key'];
 				}
 			}
-
+			
 			foreach ( $init_filter_vars as $k => &$filter ) {
 
-				if ( ! isset( $filter['key'] ) || !isset( $filter['value'] ) ) {
+				// Not a filter
+				if ( 'mode' === $k || ! isset( $filter['key'] ) || ! isset( $filter['value'] ) ) {
+					continue;
+				}
+
+				// This is the default filter shown on Edit View screen. Removed because matching "Any form field" to "" makes no sense.
+				if( '0' === $filter['key'] && '' === $filter['value'] ) {
+					unset( $init_filter_vars[ $k ] );
 					continue;
 				}
 
@@ -430,9 +443,9 @@ function gv_extension_advanced_filtering_load() {
 					 *
 					 * @since 1.0.9
 					 */
-					$admin_caps = apply_filters( 'gravityview/adv_filter/admin_caps', array( 'manage_options', 'gravityforms_view_entries' ), $post_id );
+					$view_all_entries_caps = apply_filters( 'gravityview/adv_filter/admin_caps', array( 'manage_options', 'gravityforms_view_entries', 'gravityview_edit_others_entries' ), $post_id );
 
-					if ( $filter['value'] === 'created_by_or_admin' && GFCommon::current_user_can_any( $admin_caps ) ) {
+					if ( $filter['value'] === 'created_by_or_admin' && GVCommon::has_cap( $view_all_entries_caps ) ) {
 						unset( $init_filter_vars[ $k ] );
 					} else {
 						$filter['value'] = get_current_user_id();
@@ -645,8 +658,9 @@ function gv_extension_advanced_filtering_load() {
 			$init_filter_vars = !empty( $view_filter_vars ) ? $view_filter_vars : $default_init_filter_vars;
 
 			/**
-			 * allow field filters manipulation
+			 * @filter `gravityview/adv_filter/field_filters` allow field filters manipulation
 			 * @param array $field_filters configured filters
+			 * @param int $post_id
 			 */
 			$field_filters = apply_filters( 'gravityview/adv_filter/field_filters', $field_filters, $post_id );
 

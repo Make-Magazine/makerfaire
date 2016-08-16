@@ -57,12 +57,13 @@ function legacy_get_resized_remote_image_url( $url, $width, $height, $escape = t
 		$url = new_file_urls( $url );
 
 	$thumburl = jetpack_photon_url( $url, array( 'resize' => array( $width, $height ) ) );
-
+  
 	return ( $escape ) ? esc_url( $thumburl ) : $thumburl;
 	endif;
 }
+
 function legacy_get_fit_remote_image_url( $url, $width, $height, $escape = true ) {
-	if ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'photon' ) ) :
+  if ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'photon' ) ) :
 	$width = (int) $width;
 	$height = (int) $height;
 
@@ -75,15 +76,14 @@ function legacy_get_fit_remote_image_url( $url, $width, $height, $escape = true 
 	return ( $escape ) ? esc_url( $thumburl ) : $thumburl;
 	endif;
 }
+
 /**
  * Returns the body from a requested url
  *
  * @param string $url The url for the remote request
  * @return string
  */
-
-function legacy_file_get_contents ($url)
-{
+function legacy_file_get_contents ($url) {
 	//Move to wp_remote_get
 	$request =   wp_remote_get($url);
 	// Get the body of the response

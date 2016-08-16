@@ -3,7 +3,6 @@ jQuery(document).ready(function() {
   /*
    * Maker Admin - Cancel Entry functionality
    */
-
   /* Set up the modal for the maker admin cancel entry function */
   jQuery('#cancelEntry').on('show.bs.modal', function(e) {
     //make sure the cancel response is empty
@@ -30,9 +29,12 @@ jQuery(document).ready(function() {
       'cancel_entry_id': entry_id,
       'cancel_reason': cancel_reason
     };
+
+    jQuery('#cancelResponse').html('<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Processing...</span>');
     jQuery('#cancelText').hide();
+
     jQuery.post(object_name.ajaxurl, data, function(response) {
-      jQuery('.modal-title').hide();
+      //jQuery('.modal-title').hide();
       jQuery('#cancelResponse').text(response);
     });
   });
@@ -120,8 +122,10 @@ jQuery(document).ready(function() {
       'delete_entry_id': entry_id
     };
     jQuery('#deleteText').hide();
+    jQuery('#deleteResponse').html('<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Processing...</span>');
+
     jQuery.post(object_name.ajaxurl, data, function(response) {
-      jQuery('.modal-title').hide();
+      //jQuery('.modal-title').hide();
       jQuery('#deleteResponse').text(response);
     });
   });

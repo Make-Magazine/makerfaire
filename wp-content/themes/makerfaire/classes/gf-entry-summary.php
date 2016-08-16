@@ -872,20 +872,12 @@ function entryTicketing($lead,$format='admin'){
   if($wpdb->num_rows > 0){
     $attnArr = array();
     //determine output format
-    if($format=='MAT'){
-      $table = '';
+    if($format=='MAT'){  //return data
+      $return = array();
       foreach($results as $result){
         if($result->hidden==0){
-          $table .=  '<tr>';
-          $table .=  '<td><div class="title">' . $result->title . '</div><div class="subtitle">' .$result->subtitle.'</div></td>';
-          //$table .=  '<td><a target="_blank" href="https://mfba16makers.eventbrite.com/?discount='.$result->access_code.'"><i class="fa fa-chevron-circle-right fa-3x" aria-hidden="true"></i></a></td>';
-          $table .=  '<td><a target="_blank" href="https://www.eventbrite.com/e/'.$result->event_id.'?access='.$result->access_code.'"><i class="fa fa-chevron-circle-right fa-3x" aria-hidden="true"></i></a></td>';
-          $table .=  '</tr>';
+          $return[] = array('title'=>$result->title,'subtitle'=>$result->subtitle,'link'=>'https://www.eventbrite.com/e/'.$result->event_id.'?access='.$result->access_code);
         }
-      }
-      //do not return anything if there are no tickets to show
-      if ($table!=''){
-        $return  = '<table class="mat-ticketing">' . $table . '</table>';
       }
     }else{
       //admin format

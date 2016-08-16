@@ -78,6 +78,8 @@ module.exports = function(grunt) {
 								'GravityView - Advanced Filter Extension',
 								'Filter which entries are shown in a View based on their values.',
 								'https://gravityview.co/extensions/advanced-filter/',
+								'https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal',
+								'https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal',
 								'Katz Web Services, Inc.',
 								'http://www.katzwebservices.com',
 							    'https://gravityview.co'

@@ -1,324 +1,297 @@
-<?php
-/**
- * @file templates/list-body.php
- *
- * Display the entries loop when using a list layout
- *
- * @package GravityView
- * @subpackage GravityView/templates
- *
- * @global GravityView_View $this
- */
+<?php /** Template Name: Maker Admin Manage Entries */
+if (!is_user_logged_in())
+    auth_redirect();
 
+get_header();
+?>
+<div class="content col-md-12 maker-admin-manage-faire-entries-mobile">
+  <script>
+  jQuery(document).ready(function() {
+    //jQuery('[data-toggle="tooltip"]').tooltip();
+    jQuery('body').tooltip( {selector: '[data-toggle=tooltip]'} );
+    //returns content based on separate element - For Notificationd, get your tickets and
+    jQuery(".toggle-popover").popover({
+        html : true,
+        placement : "auto bottom",
+        content: function() {
+          return jQuery(this).next('.popover-content').html();
+        },
+        title: ''
+    });
 
-/*
- * Retrieve all entries for this user - created with user email as the contact email and created by this user id
- */
-$gravityview_view = GravityView_View::getInstance();
+    jQuery('body').on('click', function (e) {
+      //did not click a popover toggle or popover
+      if (jQuery(e.target).data('toggle') !== 'popover'
+          && jQuery(e.target).parents('.popover.in').length === 0) {
+          jQuery('[data-toggle="popover"]').popover('hide');
+      }
+    });
+  });
+  </script>
+  <div class="clearfix">
+    <?php
+    $current_user = wp_get_current_user();
 
-// Get the settings for the View ID
-$view_settings = gravityview_get_template_settings( $gravityview_view->getViewId() );
-$view_settings['page_size'] = $gravityview_view->getCurrentFieldSetting('page_size');
+    //require_once our model
+    require_once( get_template_directory().'/models/maker.php' );
 
-$form_id = 0;
+    //instantiate the model
+    $maker   = new maker($current_user->user_email);
 
-global $current_user;
-get_currentuserinfo();
-global $user_ID;global $user_email;
-$page_num = (isset($_GET['pagenum'])) ?$_GET['pagenum'] :   1;
+    $tableData = $maker->get_table_data();
+    $entries   = $tableData['data'];
 
-$page_size = (isset($view_settings['page_size'])) ? $view_settings['page_size'] : 25;
-$offset = (isset($page_num)) ? ($page_num -1)*$page_size : 0;
+?>
+    <div class="settings-pop-btn pull-right">
+      <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
+        Settings &amp; Help<i class="fa fa-cog"></i>
+      </button>
+      <div class="popover-content hidden">
+        <div class="manage-entry-popover">
+          <a href="/login/?mode=reset">Change Password</a>
+          <a href="/login/?action=logout">Log Out</a>
+          <h6 class="popover-head">Questions?</h6>
+          <a target="_blank" href="http://makerfaire.com/all-toolkits/">Visit your Toolkit</a>
+        </div>
+      </div> <!-- / .popover-content -->
+    </div> <!-- / .settings-pop-btn -->
+  </div>
+  <div class="clearfix">
+    <h2 class="title-head pull-left">Manage your Maker Faire Entries</h2>
+    <span class="submit-entry pull-right">
+      <a href="/new-york/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
+        Submit another entry
+      </a>
+    </span>
+  </div>
+  User <?php echo $current_user->user_email;?><br/>
+  <hr class="header-break">
+  <?php
 
-global $wpdb;
-//find current active forms for the copy entry feature
-$entrySQL = "SELECT a.id FROM wp_rg_lead a
- join wp_rg_lead_detail b on a.id=b.lead_id and b.field_number=98 
- WHERE (created_by = $user_ID
- or b.value='$user_email')
- and a.status='active'
- LIMIT $page_size OFFSET $offset";
-$entryResults = $wpdb->get_results($entrySQL);
-$entryArr = array();
-foreach($entryResults as $entryResult){
-    $entryArr[] = array($entryResult->id);
-}
+  foreach($entries as $entryData) {
+    //get tasks
+    $tasks     = $maker->get_tasks_by_entry($entryData['lead_id']);
+    //prepare the data
+    if($entryData['status']=='Accepted'){
+      $statusBlock = 'greenStatus';
+    }else{
+      $statusBlock = 'greyStatus';
+    }
+    //$image = legacy_get_fit_remote_image_url($entryData['project_photo'],275,275);
+    $image =  (isset($entryData['project_photo'])&&$entryData['project_photo']!=''?$entryData['project_photo']:get_template_directory_uri() .'/images/no-image.png');
+    ?>
 
-// Prepare paging criteria
-/*$criteria['paging'] = array(
-    'offset' => 0,
-    'page_size' => $view_settings['page_size']
-);
+    <div class="maker-admin-list-wrp">
+      <div class="gv-list-view-title-maker-entry">
+        <div class="statusBox <?php echo $statusBlock;?>">
+          <div class="statusFaire"><span class="gv-field-label"><?php echo $entryData['faire_name'];?></span> </div>
+          <div class="statusText"><span class="gv-field-label">Status: </span> <?php echo $entryData['status'];?></div>
+        </div> <!-- close .statusBox -->
+        <div class="entryImg">
+          <div class="faire-entry-image-wrp">
+            <a class="thickbox" href="<?php echo $image;?>">
+              <div class="image-container" style="background-image: url('<?php echo $image;?>');"></div>
+              <!--<img class="img-responsive" src="<?php echo $image;?>" alt="Project Photo" />-->
+            </a>
+          </div>
+        </div> <!-- close .entryImg-->
+        <div class="entry-main-content">
+          <!-- MAT messaging -->
+          <?php if($entryData['mat_message'] !='') { ?>
+          <div class="hidden-xs mat_message" style="background-color:#F4D03F; padding:10px">
+              <?php echo $entryData['mat_message'];?>
+          </div>
+          <div class="clear"></div>
+          <?php }                                    ?>
 
-//pull by user id or user email
-$criteria['search_criteria'] = array(
-  'status'        => 'active',
-  'field_filters' => array(
-    'mode' => 'any',
-      array(
-      'key' => 'created_by',
-      'value' => 321,
-      'operator' => 'is'
-    )
-  )
-);
-$entries = GFAPI::get_entries( $form_id, $criteria['search_criteria'] );
-
- */
-/*
- * @action `gravityview_list_body_before` Tap in before the entry loop has been displayed
- * @param GravityView_View $this The GravityView_View instance
- */
-do_action( 'gravityview_list_body_before', $this );
-$total = count($entryArr);
-
-//global $wpdb;
-//find current active forms for the copy entry feature
-$faireSQL = "SELECT form.id, form.title FROM wp_rg_form form, `wp_mf_faire` "
-          . " WHERE start_dt <= CURDATE() and end_dt >= CURDATE() and "
-          . " FIND_IN_SET (form.id, wp_mf_faire.form_ids)> 0";
-$faires = $wpdb->get_results($faireSQL);
-$formArr = array();
-foreach($faires as $faire){
-    $formArr[] = array($faire->id,$faire->title);
-}
-
-// There are no entries.
-if( ! $total or !( is_user_logged_in() )) {
-
-	?>
-	<div class="gv-list-view gv-no-results">
-		<div class="gv-list-view-title">
-			<h3><?php echo gv_no_results(); ?></h3>
-		</div>
-	</div>
-	<?php
-
-} else {
- 
-	// There are entries. Loop through them.
-	foreach ( $entryArr as $currentry ) {
-  $entry = GFAPI::get_entry($currentry[0]);
-  $this->setCurrentEntry( $entry );
-  $form = GFAPI::get_form( $entry['form_id'] );
-  $form_type = (isset($form['form_type'])?'<p>'.$form['form_type'].':&nbsp;</p>':'');
-    if(isset($form['form_type']) && $form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
-       $form['form_type'] != 'Show Management' && $form['form_type'] != ''){ ?>
-        <hr/>
-
-
-        <?php
-                     
-   
-        /**
-         * @action `gravityview_entry_before` Tap in before the the entry is displayed, inside the entry container
-         * @param array $entry Gravity Forms Entry array
-         * @param GravityView_View $this The GravityView_View instance
-         */
-        do_action( 'gravityview_entry_before', $entry, $this );
-
-        if ( $this->getField('directory_list-title') || $this->getField('directory_list-subtitle') ): ?>
-          <?php
-
-          /**
-           * @action `gravityview_entry_title_before` Tap in before the the entry title is displayed
-           * @param array $entry Gravity Forms Entry array
-           * @param GravityView_View $this The GravityView_View instance
-           */
-          do_action( 'gravityview_entry_title_before', $entry, $this );
-          //display subtitle here
-          $this->renderZone('subtitle', array(
-              'markup' => '<h4 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h4>',
-              'wrapper_class' => 'gv-list-view-subtitle',
-           ));
-          ?>
-        <div id="gv_list_<?php echo $entry['id']; ?>" class="maker-admin">
-          <div class="gv-list-view-title-maker-entry">
-          <?php
-
-            $entryData = array();
-            $links = '';
-            if ( $this->getField('directory_list-title') ) {
-              $i          = 0;
-              $title_args = array(
-                      'entry'      => $entry,
-                      'form'       => $this->getForm(),
-                      'hide_empty' => $this->getAtts( 'hide_empty' ),
-              );
-
-
-              //set status color
-              if($entry['303']=='Accepted'){
-                  $statusBlock = 'greenStatus';
-              }else{
-                  $statusBlock = 'greyStatus';
-              }
-
-              foreach ( $this->getField( 'directory_list-title' ) as $field ) {
-                $title_args['field'] = $field;
-
-                switch ($field['id']){
-                  case '22':
-                    $title_args['wpautop'] = true;
-                    break;
-                  case 'delete_entry':
-                    if($entry['303']=='Proposed' || $entry['303']=='In Progress'){
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-trash-o"></i>Delete</span>';
-                      $links .=  gravityview_field_output( $title_args );
-                    }
-                    break;
-                  case 'edit_link':
-                    //do not display if entry is cancelled
-                    if($entry['303']!='Cancelled'){
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-pencil-square-o"></i>{{label}} {{value}}</span>';
-                      $links .=  gravityview_field_output( $title_args );
-                    }
-                    break;
-                  case 'cancel_link':
-                    //do not display if entry is already cancelled
-                    if($entry['303']!='Cancelled'){
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-ban"></i>{{value}}</span>';
-                      $links .=  gravityview_field_output( $title_args );
-                    }
-                    break;
-                  case 'copy_entry':
-                    $title_args['markup'] = '<span class="edit"><i class="fa fa-files-o"></i>{{value}}</span>';
-                    $links .=  gravityview_field_output( $title_args );
-                    break;
-                  case 'entry_link':
-                    $title_args['markup'] = '<span class="edit"><i class="fa fa-eye"></i>{{value}}</span>';
-                    $links .=  gravityview_field_output( $title_args );
-                    break;
-                  case 'maker_sign_link':
-                    if($entry['303']=='Accepted' && $form['form_type']=='Exhibit'){
-                      $title_args['markup'] = '<span class="edit"><i class="fa fa-file-pdf-o"></i>{{value}}</span>';
-                      $links .=  gravityview_field_output( $title_args );
-                    }
-                    break;
-                  default:
-                    $title_args['markup'] = '{{label}} {{value}}';
-                }
-                $entryData[$field['id']] = gravityview_field_output( $title_args );
-                unset( $title_args['markup'] );
-              }
-            }
-
-        if(!empty($entryData)){
-        ?>
-          <div class="entryImg hidden-xs"><?php echo (isset($entry['22'])&& $entry['22']!=''?$entryData['22']:'<img src="'.get_template_directory_uri() .'/images/no-image.png" />');?></div>
-
-          <div class="entryData">
-            <div class="statusBox hidden-xs <?php echo $statusBlock;?>">
-              <div class="fleft hidden-xs"> <?php echo $entryData['faire_name'];?></div>
-              <div class="fright statusText"><?php echo $entryData['303'];?></div>
-            </div>
-            <?php if ($entry['form_id']=='46') : ?>
-            <div class="hidden-xs" style="background-color:#F4D03F; padding:10px">
-              The deadline has passed to change resources and request space size changes.
-              Additional requests can be directed to your Area Manager when you check-in at Maker Faire.
-              You may still make updates to your details for the website and mobile app information.
-              Any other changes will not be considered until you're onsite.</div>
-            <?php endif; ?>
-
-            <h3 class="title"><?php echo $entryData['151'];?></h3>
-            <div class="clear fleft entryID latReg"><?php echo $form_type.' '.$entryData['id'];?></div>
-            <div class="clear">
+          <!-- Project Name -->
+          <div class="entryName entryData">
+            <h3 class="entry-title">
+              <?php //if status is accepted, the title links to the public facing entry page
+              if($entryData['status']=='Accepted') {?>
+                <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>"><?php echo $entryData['presentation_title'];?></a>
               <?php
-              $return = entryTicketing($entry,'MAT');
-              if($return && $entry['303']=='Accepted'){
-              ?>
-                <div class="modal ticketing" id="getTickets<?php echo $entry['id'];?>">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-body">
-                        <?php echo $return;?>
+              }else{
+                echo $entryData['presentation_title'];
+              } ?>
+            </h3>
+          </div><!-- close .entryName -->
+
+          <!-- Form Type -->
+          <div class="exhibitID entryData">
+            <?php echo $entryData['form_type'];?>: <span class="entryStandout"><?php echo $entryData['lead_id'];?></span>
+          </div> <!-- close exhibitID -->
+
+          <div>
+            <?php
+            //Add link to edit entry
+            $disp_edit = (($entryData['status'] != 'Cancelled') && $entryData['maker_type']=='contact' ? true: false);
+
+            if($disp_edit){
+              $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+              $url = str_replace('/view/', '/', $url);  //remove view slug from URL
+              echo  '<span class="editLink">'
+                  . '  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>'
+                  . '  <a href="'. $url .'">Edit Entry</a>'
+                  . '</span>';
+            }
+            ?>
+          </div>
+
+          <div>
+            <?php
+            $viewEditLink = "/maker/entry/" . $entryData['lead_id']."/edit/";
+
+            if($entryData['status']=='Accepted' && $disp_edit) { ?>
+              <span class="editLink">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+                <a href="<?php echo $viewEditLink;?>">View/Edit Public Information</a>
+              </span>
+              <?php
+            } ?>
+
+          </div>
+          <div class="clear"></div>
+
+
+          <div class="actionSection">
+            <div class="submit-date">
+              <span class="gv-field-label">Submitted: </span> <?php echo date('M j, Y g:i  A',strtotime($entryData['date_created']));?>
+            </div>
+            <!-- Action Bar for Entries -->
+            <div class="entry-action-buttons">
+              <!-- Get Your Tickets Section -->
+              <?php
+              //only display if there are tickets and if the entry has been accepted
+              if(!empty($entryData['ticketing']) && $entryData['status']=='Accepted'){ ?>
+                <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
+                  <span class="hideSmall">GET YOUR </span>ENTRY PASSES<i class="fa fa-ticket fa-lg" aria-hidden="true"></i>
+                </button>
+                <div class="popover-content hidden">
+                  <?php
+                  foreach($entryData['ticketing'] as $ticket){
+                    ?>
+                    <div class="row mat-ticketing">
+                      <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                        <div class="title"><?php echo $ticket['title'];?></div>
+                        <div class="subtitle"><?php echo $ticket['subtitle'];?></div>
                       </div>
-                      <div class="modal-footer">
-                        To share a ticket with a friend, just send them the Eventbrite URL
+                      <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                        <a target="_blank" href="<?php echo $ticket['link'];?>">
+                          <i class="fa fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
+                        </a>
                       </div>
                     </div>
+                    <?php
+                  }
+                  ?>
+                  <div class="footer">
+                    To share a ticket with a friend, just send them the Eventbrite URL
                   </div>
                 </div>
-                <span class="btn-cyan" data-target="#getTickets<?php echo $entry['id'];?>" data-toggle="modal">Get Your Entry Passes</span>
                 <?php
               }
               ?>
-            </div>
-            <div class="clear links latReg">
-              <div class="fleft"><?php echo $entryData['date_created'];?></div>
-              <div class="fright"><?php echo $links;?></div>
+
+              <!-- Tasks -->
+              <?php if(isset($tasks) && count($tasks['toDo']) > 0 || count($tasks['done'])>0) {?>
+                <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover"
+                  data-toggle="popover">
+                  Tasks
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle"></i>
+                    <span class="notification-counter"><?php echo count($tasks['toDo']);?></span>
+                  </span>
+                </button>
+                <div class="popover-content hidden">
+                  <div class="manage-entry-popover row">
+                    <div class="manage-links">
+                      <!--<h4 class="tasks"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</h4>-->
+                      <?php
+                      foreach($tasks['toDo'] as $task) { ?>
+                      <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="todoTasks" style="color:red"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</span></a>
+                        <?php
+                      }
+                      ?>
+                    </div>
+                    <div class="manage-links">
+                      <!--<h4 class="tasks"><i class="fa fa-check" aria-hidden="true"></i>Done</h4>-->
+                      <?php
+                      foreach($tasks['done'] as $task) { ?>
+                      <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="doneTasks" style="color:green"><i class="fa fa-check" aria-hidden="true"></i>Done</span></a>
+                        <?php
+                      }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+              <?php } ?>
+
+              <!-- Manage Entry links -->
+              <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
+                MANAGE<i class="fa fa-cog fa-lg"></i>
+              </button>
+              <div class="popover-content hidden">
+                <div class="manage-entry-popover row">
+                  <div class="manage-links">
+                    <?php
+                    //View Link
+                    $url = do_shortcode('[gv_entry_link action="read" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+                    $url = str_replace('/view/', '/', $url);  //remove view slug from URL
+                    ?>
+                    <a href="<?php echo $url;?>">View Entry</a>
+                    <?php if($entryData['status']=='Accepted' && $disp_edit) { ?>
+                    <a href="/maker/entry/<?php echo $entryData['lead_id'];?>/edit">View/Edit Public Information</a>
+                    <?php } ?>
+                    <?php
+                    $class = '';
+                    $tooltip = '';
+                    //edit link
+                    if($disp_edit){
+                      $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+                      $url = str_replace('/view/', '/', $url);  //remove view slug from URL
+                      echo '<a href="'. $url .'">Edit Entry</a>';
+                    }else{
+                      if($entryData['maker_type'] != 'contact') {
+                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
+                      }else{
+                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only active entries can be edited">Edit Entry</div>';
+                      }
+
+                    }
+                    ?>
+                  </div>
+                  <div>
+                    <?php
+                    //cancel link - only shown if Status is not currently Cancel
+                    if($entryData['status']!='Cancelled'){
+                      ?>
+                      <a href="#cancelEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Cancel Entry</a>
+                      <?php
+                    }
+
+                    ?>
+                    <?php
+                    //Delete Link
+                    if($entryData['status']=='Proposed' || $entryData['status']=='In Progress'){
+                      ?>
+                      <a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Delete Entry</a>
+                      <?php
+                    }
+                    ?>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        <?php
-        }
-			?>
-			</div>
-      <div class="clear"></div>
+        </div><!-- /entry-main-content-->
+        <div class="clear"></div>
+      </div> <!-- close .gv-list-view-title-maker-entry -->
+    </div> <!-- close .maker-admin-list-wrp-->
+  <?php } //end foreach entry loop ?>
 
-			<?php
-
-			/**
-			 * @action `gravityview_entry_title_after` Tap in after the title block
-			 * @param array $entry Gravity Forms Entry array
-			 * @param GravityView_View $this The GravityView_View instance
-			 */
-			do_action( 'gravityview_entry_title_after', $entry, $this );
-
-			?>
-
-		<?php endif; ?>
-
-
-		<?php
-
-		// Is the footer configured?
-		if ( $this->getField('directory_list-footer-left') || $this->getField('directory_list-footer-right') ) {
-
-			/**
-			 * @action `gravityview_entry_footer_before` Tap in before the footer wrapper
-			 * @param array $entry Gravity Forms Entry array
-			 * @param GravityView_View $this The GravityView_View instance
-			 */
-			do_action( 'gravityview_entry_footer_before', $entry, $this );
-
-			?>
-
-			<div class="gv-grid gv-list-view-footer">
-				<div class="gv-grid-col-1-2 gv-left">
-					<?php $this->renderZone('footer-left'); ?>
-				</div>
-
-				<div class="gv-grid-col-1-2 gv-right">
-					<?php $this->renderZone('footer-right'); ?>
-				</div>
-			</div>
-
-			<?php
-
-			/**
-			 * @action `gravityview_entry_footer_after` Tap in after the footer wrapper
-			 * @param array $entry Gravity Forms Entry array
-			 * @param GravityView_View $this The GravityView_View instance
-			 */
-			do_action( 'gravityview_entry_footer_after', $entry, $this );
-
-		} // End if footer is configured
-
-
-		/**
-		 * @action `gravityview_entry_after` Tap in after the entry has been displayed, but before the container is closed
-		 * @param array $entry Gravity Forms Entry array
-		 * @param GravityView_View $this The GravityView_View instance
-		 */
-		do_action( 'gravityview_entry_after', $entry, $this );
-
-		?>
-
-		</div>
-        <?php } ?>
-	<?php 
-     } ?>
-  <div class="modal" id="cancelEntry">
+  <!-- Modal to cancel entry -->
+<div class="modal" id="cancelEntry">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -340,50 +313,20 @@ if( ! $total or !( is_user_logged_in() )) {
     </div>
   </div>
 
-  <!-- Modal to copy entry to a new form -->
-  <div class="modal" id="copy_entry">
+  <!--Modal to delete entry-->
+  <div class="modal" id="deleteEntry">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title">Copy Exhibit ID: <span id="copyEntryID" name="entryID"></span></h4>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title">Delete <span id="delProjName"></span>, Exhibit ID: <span id="deleteEntryID" name="entryID"></span></h4>
         </div>
         <div class="modal-body">
-    <?php if(!empty($formArr)){ ?>
-            <p>Please choose from the options below:</p><br/>
-            <select id="copy2Form">
-              <?php
-              foreach($formArr as $availForm){
-                echo '<option value='.$availForm[0].'>'.$availForm[1].'</option>';
-              }
-              ?>
-            </select>
-    <?php }else{
-            echo 'No Open faires at the moment';
-          }
-    ?>
-        <br/><span id="copyResponse"></span><br/>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" id="submitCopy">Submit</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-<!--Modal to delete entry-->
-<div class="modal" id="deleteEntry">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title">Delete <span id="delProjName"></span>, Exhibit ID: <span id="deleteEntryID" name="entryID"></span></h4>
-        </div>
-        <div class="modal-body">
-            <div id="deleteText">
+          <div id="deleteText">
             <p>Are you sure you want to trash this entry? You can not reverse this action.</p>
-            </div>
-        <span id="deleteResponse"></span><br/>
+          </div>
+          <span id="deleteResponse"></span>
+          <br>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" id="submitDelete">Yes, delete it</button>
@@ -393,11 +336,6 @@ if( ! $total or !( is_user_logged_in() )) {
       </div>
     </div>
   </div>
-  <?php
-} // End if has entries
-
-/**
- * @action `gravityview_list_body_after` Tap in after the entry loop has been displayed
- * @param GravityView_View $this The GravityView_View instance
- */
-do_action( 'gravityview_list_body_after', $this );
+</div> <!-- / .maker-admin-manage-faire-entries-mobile -->
+<?php echo $maker->createPageLinks( 'pagination pagination-sm' );?>
+<?php get_footer(); ?>
