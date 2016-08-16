@@ -264,7 +264,7 @@ get_header();
                   <div>
                     <?php
                     //cancel link - only shown if Status is not currently Cancel
-                    if($entryData['status']!='Cancelled'){
+                    if($entryData['status']!='Cancelled' && $entryData['status']!='Rejected'){
                       ?>
                       <a href="#cancelEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Cancel Entry</a>
                       <?php
