@@ -170,16 +170,16 @@
 
         if($slug=='schedule'){
           $backlink = wp_get_referer();
-          $backMsg = '<i class="fa fa-angle-left" aria-hidden="true"></i> Back to the Schedule';
+          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to the Schedule';
         }else{
           $backlink = "/".$url_sub_path."/meet-the-makers/";
-          $backMsg = '<i class="fa fa-angle-left" aria-hidden="true"></i> Look for More Makers';
+          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Look for More Makers';
         }
 
         //overwrite the backlink to send makers back to MAT if $makerEdit = true
         if($makerEdit){
           $backlink = "/manage-entries/";
-          $backMsg = '<i class="fa fa-angle-left" aria-hidden="true"></i> Back to Your Maker Admin Tool';
+          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to Your Maker Admin Tool';
         }
         ?>
         <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
