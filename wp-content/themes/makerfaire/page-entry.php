@@ -158,10 +158,10 @@
 
 <div class="clear"></div>
 
-<div class="container modal-fix entry-page">
+<div class="container entry-page">
   <div class="row">
-    <div class="content col-md-12">
-<?php //set the 'backlink' text and link (only set on valid entries)
+    <div class="content col-xs-12">
+      <?php //set the 'backlink' text and link (only set on valid entries)
       if($faire!=''){
         $url = parse_url(wp_get_referer()); //getting the referring URL
         $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
@@ -170,16 +170,16 @@
 
         if($slug=='schedule'){
           $backlink = wp_get_referer();
-          $backMsg = '&#65513; Back to the Schedule';
+          $backMsg = '<i class="fa fa-angle-left" aria-hidden="true"></i> Back to the Schedule';
         }else{
           $backlink = "/".$url_sub_path."/meet-the-makers/";
-          $backMsg = '&#65513; Look for More Makers';
+          $backMsg = '<i class="fa fa-angle-left" aria-hidden="true"></i> Look for More Makers';
         }
 
         //overwrite the backlink to send makers back to MAT if $makerEdit = true
         if($makerEdit){
           $backlink = "/manage-entries/";
-          $backMsg = '&#65513; Back to Your Maker Admin Tool';
+          $backMsg = '<i class="fa fa-angle-left" aria-hidden="true"></i> Back to Your Maker Admin Tool';
         }
         ?>
         <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
@@ -203,7 +203,7 @@
         if (!$makerEdit && !empty(display_entry_schedule($entryId))) {
           display_entry_schedule($entryId);
         }
-?>
+        ?>
         <div class="page-header">
           <h1><span id="project_title" class="<?php echo ($makerEdit?'edit':'')?>"><?php echo $project_title; ?></span>
             <?php
@@ -220,93 +220,78 @@
         <p id="project_short" class="lead <?php echo ($makerEdit?'edit_area':'')?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
         <?php
+        // Website button
         if (!empty($project_website)) {
           if($makerEdit){
             echo 'Website: <div id="website" class="edit">'. $project_website.'</div>';
           }else{
-            echo '<a href="' . $project_website . '" class="btn btn-info pull-left" target="_blank" style="margin-right:15px;">Project Website</a>';
+            echo '<a href="' . $project_website . '" class="btn btn-info" target="_blank">Project Website</a>';
           }
         }
-        ?>
 
-        <!-- Button to trigger video modal -->
-        <?php
+        // Inline video
         if (!empty($project_video)) {
-          if($makerEdit){
-            echo 'Video: <span id="video" class="edit">'. $project_video.'</span>';
-          }else{
-            echo '<a href="#entryModal" role="button" id="modalButton" class="btn btn-info" data-toggle="modal">Project Video</a>';
+          $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
+          //youtube has two type of url formats we need to look for and change
+          $videoID = parse_yturl($dispVideo);
+          if($videoID!=''){
+            $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
           }
-        }
-        ?>
-        <br />
-
-        <!-- Video Modal -->
-        <div id="entryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel"><?php echo $entry['151']; ?></h3>
-          </div>
-          <div class="modal-body">
-            <?php
-            $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
-            //youtube has two type of url formats we need to look for and change
-            $videoID = parse_yturl($dispVideo);
-            if($videoID!=''){
-              $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
-            }
-            ?>
-            <input id="entryVideo" type="hidden" value="<?php echo $dispVideo; ?>" />
-            <iframe width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-          </div>
-        </div>
-      <div class="clearfix">&nbsp;</div>
-      <div class="clearfix">&nbsp;</div>
-      <?php if($formType!='Sponsor' && $formType != 'Startup Sponsor'){ ?>
-        <h2>
-        <?php
-          if ($isGroup)
-            echo 'Group';
-          elseif($isList)
-            echo 'Makers';
-          else
-            echo 'Maker';
-        ?>
-        </h2>
-        <hr />
-        <?php
-        if ($isGroup) {
-          echo '<div class="row center-block">';
-          echo '<p class="'. ($makerEdit?'ajaxupload':'').'" id="groupphoto" title="Click to upload...">';
-          echo (!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,200,250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
-          echo '</p>';
-          echo    '<div class="col-md-5">
-                    <h3 style="margin-top: 0px;" class="'. ($makerEdit?'edit':'').'" id="groupname">' . $groupname . '</h3>
-                    <p  class="'. ($makerEdit?'edit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
+          echo '<div class="entry-video">
+                  <div class="embed-youtube">
+                    <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                   </div>
                 </div>';
-        } else {
-          foreach($makers as $key=>$maker) {
-            if($maker['firstname'] !='' && $maker['lastname'] !=''){
-              echo '<div class="row center-block">';
-              echo '<p class="'. ($makerEdit?'ajaxupload':'').'" id="maker'.$key.'img" title="Click to upload...">';
-              echo (!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],200,250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
-              echo '</p>';
-              echo    '<div class="col-md-5">
-                        <h3 style="margin-top: 0px;">' .
-                          '<p  class="'. ($makerEdit?'edit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</p> ' .
-                          '<p  class="'. ($makerEdit?'edit':'').'" id="maker'.$key.'lname">'.$maker['lastname']  . '</p> ' .
-                       '</h3>
-                        <p  class="'. ($makerEdit?'edit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
-                      </div>
-                    </div>';
+        } ?>
+
+      <div class="entry-page-maker-info"> <?php
+
+        if($formType!='Sponsor' && $formType != 'Startup Sponsor'){ ?>
+          <div class="page-header">
+            <h2>
+            <?php
+              if ($isGroup)
+                echo 'Group';
+              elseif($isList)
+                echo 'Makers';
+              else
+                echo 'Maker';
+            ?>
+            </h2>
+          </div>
+          <?php
+          if ($isGroup) {
+            echo '<div class="row padbottom">
+                    <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="groupphoto" title="Click to upload...">' .
+                      (!empty($groupphoto) ? '<div class="entry-page-maker-img img-thumbnail" style="background-image: url(' . legacy_get_fit_remote_image_url($groupphoto,350,300) . ');"></div>' : '<div class="entry-page-maker-img img-thumbnail" style="background-image: url(' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg);"></div>') . '
+                    </div>
+                    <div class="col-sm-9 col-lg-7">
+                      <h3 class="text-capitalize '. ($makerEdit?'edit':'').'" id="groupname">' . $groupname . '</h3>
+                      <p class="'. ($makerEdit?'edit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
+                    </div>
+                  </div>';
+          } else {
+            foreach($makers as $key=>$maker) {
+              if($maker['firstname'] !='' && $maker['lastname'] !=''){
+                echo '<div class="row padbottom">
+                        <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="maker'.$key.'img" title="Click to upload...">' .
+                          (!empty($maker['photo']) ? '<div class="entry-page-maker-img img-thumbnail" style="background-image: url(' . legacy_get_fit_remote_image_url($maker['photo'],350,300) . ');"></div>' : '<div class="entry-page-maker-img img-thumbnail" style="background-image: url(' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg)"></div>') .'
+                        </div>
+                        <div class="col-sm-9 col-lg-7">
+                          <h3>
+                            <span class="text-capitalize '. ($makerEdit?'edit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</span>
+                            <span class="text-capitalize '. ($makerEdit?'edit':'').'" id="maker'.$key.'lname">'.$maker['lastname'] . '</span>
+                          </h3>
+                          <p class="'. ($makerEdit?'edit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
+                        </div>
+                      </div>';
+              }
             }
           }
-        }
-      }
+        } ?>
 
-      ?>
-      <br />
+      </div>
+
       <?php
       echo display_groupEntries($entryId);
       } else { //entry is not active
@@ -314,8 +299,7 @@
       }
       ?>
 
-    </div><!--col-md-8-->
-
+    </div><!--col-xs-12-->
   </div><!--row-->
 </div><!--container-->
 
