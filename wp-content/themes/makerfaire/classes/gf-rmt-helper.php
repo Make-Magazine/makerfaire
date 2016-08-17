@@ -292,6 +292,94 @@ class GFRMTHELPER {
         'mobileAppDiscover'     => $MAD
 		);
 
+    if($form['id']==105){
+      $entry_data['origEntryID'] = (isset($lead['448']) ? $lead['448'] : '');
+    }
+    /*
+     * new product fields - use the .3 of the field id to get amount
+    378 - 4' x 30" Folding Banquet Table
+    379 - 6' x 30" Folding Banquet Table
+    380 - 8' x 30" Folding Banquet Table
+    381 - 6' x 18" Folding Conference Table
+    382 - 8' x 18" Folding Conference Table
+    383 - Stainless Top Pedestal Table, 30" Round x 42" High
+    385 - Quantity: 24" Round x specified height
+    387 - Quantity: 30" Round x specified height
+    388 - Wood Picnic Table with Umbrella Hole, 72"L x 52" W x 29" H
+    389 - 90" x 108" Banquet Table Linen
+    390 - 90" x 132" Banquet Table Linen
+    391 - 90" x 156" Banquet Table Linen
+    395 - 90" Round Table Linen
+    397 - Table Skirting with Velcro Clips, 14'L x 30"H
+    399 - Plastic Folding Chair, White
+    400 - Folding Wood Chair with Cushion, White
+    401 - Black Director's Chair, 48" High
+    402 - Black Cushion Bar Stool with Chrome Legs, 32" High
+    403 - Black Park Bench
+    404 - Backless Oak Bench, 6' L x 18" H
+    405 - Sandbag, 50lbs
+    406 - Umbrella with iron base, 9' high
+    408 - 120v - 5amps
+    409 - 120v - 10amps
+    410 - 120v - 20amps
+    411 - Special: 220v - 20amps
+    412 - 15' Extension Cord
+    413 - Power Strip, 6 Outlets
+    414 - 32" Monitor
+    415 - 40" Monitor
+    416 - 60" Monitor
+    417 - Add Chrome Stand to any monitor
+    419 - Optional: Add a wired drop to any above package
+    420 - Additional Wired Drops
+    421 - Add Switch
+    431 - Total Hours for 1 Booth Security Guard
+    432 - Maker Faire's "Maker Bench"
+    433 - 6' Chrome Stanchion, Black Rope
+    424 - Optional: Additional on-site support/labor (hourly)
+
+    //option
+    384 - 24" Round Table, Wood Top: 30" or 42" High example - "30"|0"
+    386 - 30" Round Table, Wood Top: 30" or 42" High example - "42"|0"
+    392 - Choose Color: 90" x 108" Linen
+    393 - Choose Color: 90" x 156" Linen
+    394 - Choose Color: 90" x 132" Linen
+    396 - Choose Color: 90" x 156" Linen
+    398 - Choose Color: Table Skirting (ex Black|0)
+    407 - Choose Color for Umbrella   (ex Ivory|0)
+
+    //text
+    422 - Desired WiFi Name (SSID)
+    423 - Desired WiFi Password
+    425 - Internet Activities
+    430 - Security Guard Schedule
+
+    //radio
+    418 - Internet WiFi Packages (radio)
+    426 - I need WiFi on 2.4 GHz... (radio Yes/No)
+
+  //other
+  427 - On-site Technical Contact Info  (name)
+  428 - Technical Contact Email (email)
+  429 - Technical Contact Cell Phone (phone)
+*/
+    $productArray = array("378.3", "379.3", "380.3", "381.3", "382.3", "383.3",
+        "385.3", "387.3", "388.3", "389.3", "390.3", "391.3", "395.3", "397.3",
+        "399.3", "400.3", "401.3", "402.3", "403.3", "404.3", "405.3", "406.3",
+        "408.3", "409.3", "410.3", "411.3", "412.3", "413.3", "414.3", "415.3",
+        "416.3", "417.3", "420.3", "421.3", "431.3", "432.3", "433.3",
+        "424.3");
+    foreach($productArray as $product){
+      if(isset($lead[$product]))  $entry_data[$product] = $lead[$product];
+    }
+
+    $otherFieldsArray = array("384", "386", "392", "393", "394", "396", "398",
+                              "407", "422", "423", "425", "430", "418", "426",
+                              "419"
+        );
+    foreach($otherFieldsArray as $option){
+      if(isset($lead[$option]))  $entry_data[$option] = $lead[$option];
+    }
+
 		return $entry_data;
 	}
 
@@ -330,7 +418,7 @@ class GFRMTHELPER {
       /*  Field ID 347 (Number of Tables)
        *  Field ID 348 (Number of Chairs) */
       $resource[] = array($resourceID['TBL_8x30'],$entryData['numTables'],'');
-      $resource[] = array($resourceID['CH_FLD'],$entryData['numChairs'],'');
+      $resource[] = array($resourceID['CH_FLD'], $entryData['numChairs'],'');
     }
 
     /*  Field ID 73 = power */
@@ -413,6 +501,43 @@ class GFRMTHELPER {
       if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
       if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
+
+      //mapping for sponsor order form
+      /* product fields - need to pull the .3 of the field to get the amount */
+      $productArray = array(
+        array('378.3', 'TBL_4x30',''),          array('379.3', 'TBL_6x30',''),
+        array('380.3', 'TBL_8x30',''),          array('381.3', 'TBL_6x18',''),
+        array('382.3', 'TBL_8x18',''),          array('383.3', 'TBL_30RND_HT',''),
+        array('385.3', 'TBL_24RND','384'),      array('387.3', 'TBL_30RND','386'),
+        array('388.3', 'BNCH_PIC',''),          array('389.3', 'TBL-CLTH_90"','392'),
+        array('390.3', 'TBL-CLTH_132"','394'),  array('391.3', 'TBL-CLTH_156"','393'),
+        array('395.3', 'TBL-CLTH_RND','396'),   array('397.3', 'TBL-CLTH_SKRT','398'),
+        array('399.3', 'CH_FLD',''),            array('400.3', 'CH_CUSH',''),
+        array('401.3', 'CH_DIR',''),            array('402.3', 'STOOL_BAR',''),
+        array('403.3', 'BNCH_PARK',''),         array('404.3', 'BNCH_SEAT',''),
+        array('405.3', 'SAND_BG_IN',''),        array('406.3', 'UMB_RNT','407'),
+        array('408.3', '120V-05A',''),          array('409.3', '120V-10A',''),
+        array('410.3', '120V-20A',''),          array('411.3', '220V-20A_1P',''),
+        array('412.3', 'EXT_15',''),            array('413.3', 'EXT_OUT_6',''),
+        array('414.3', 'AV_MN_32',''),          array('415.3', 'AV_MN_40',''),
+        array('416.3', 'AV_MN_60',''),          array('417.3', 'AV_STND',''),
+        array('420.3', 'INT-SP_ADDWIRE',''),    array('421.3', 'INT-SP_SWTCH',''),
+        array('424.3', 'INT-SP_LBR',''),        array('431.3', 'SCRTY_HR',''),
+        array('432.3', 'WB_8',''),              array('433.3', 'BARR_STAN',''));
+
+      foreach($productArray as $product){
+        $fieldID    = $product[0];
+        $resID      = $product[1];
+        $comment    = ($product[2]!='' ? $entryData[$product[2]] : '');
+        if(isset($entryData[$fieldID])){
+          if($entryData[$fieldID] == '') $entryData[$fieldID] = 0;
+          $resource[] = array($resourceID[$resID],$entryData[$fieldID],$comment);
+        }
+      }
+      if(isset($entryData[418]))
+        $resource[] = array($resourceID['INT-SP_WIFI'],1,$entryData[418]);
+      if(isset($entryData[419]))
+        $resource[] = array($resourceID['INT-SP_WIRE'],1,$entryData[419]);
     }
 
     /*
@@ -479,36 +604,80 @@ class GFRMTHELPER {
     if($entryData['fType'] == 'Payment'){
       $user = 0;  //user = 0 - payment form
     }
+
     //add resources to the table
     foreach($resource as $value){
-      $resource_id = $value[0]['id'];
-      $cat_id      = $value[0]['cat_id'];
+      $resource_id = $value[0]['id']; //set in $resourceID
+      $cat_id      = $value[0]['cat_id'];  //set in $resourceID
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
-      //find if they already have a resource set with the same Item (ie. chairs, tables, electricity, etc)
-      $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id '
-              . ' FROM `wp_rmt_entry_resources` entry_res,wp_rmt_resources res '
-              . ' where entry_id='.$entryID.' and entry_res.resource_id = res.ID and resource_category_id='.$cat_id);
-      //matching record found
-      if ( null !== $res ) {
-        //check lockbit
-        if($res->lockBit==0){
-          //If there are changes, update this record
-          if($res->resource_id!=$resource_id || $res->qty!=$qty){
-            $wpdb->get_results('update `wp_rmt_entry_resources` '
-                  . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.',update_stamp=now() where id='.$res->ID);
+
+      /* If Payment form, we allow them to set multiple items for the same category
+       *    If the resource is already set
+       *        if the qty is 0
+       *            delete resource
+       *        else
+       *            update existing resource
+       *    else if the resource is not set
+       *        if the qty is not 0
+       *            add resource
+       * if form type is not payment
+       *    if the entry already has a resource set with the same category
+       *        overwrite
+       *    else
+       *        add new
+       */
+
+      //on new records the user is always null unless this is a payment form
+      if($entryData['fType'] == 'Payment'){
+        $user = 'NULL';
+        // is resource already set?
+        $res = $wpdb->get_row('SELECT entry_res.* '
+                . ' FROM `wp_rmt_entry_resources` entry_res'
+                . ' where entry_id='.$entryID.' and resource_id ='.$resource_id);
+
+        //matching record found
+        if ( null !== $res ) {  // yes, is qty 0?
+          if($res->lockBit==0){ //do not update if this resource is locked
+            if($qty==0){  // yes, delete
+              $wpdb->get_results('delete from `wp_rmt_entry_resources` where id='.$res->ID);
+            } else { // no, update
+              //If there are changes, update this record
+              if($res->resource_id != $resource_id || $res->qty != $qty || $res->comment != $comment){
+                $wpdb->get_results('update `wp_rmt_entry_resources` '
+                      . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.',comment="'.$comment.'", update_stamp=now() where id='.$res->ID);
+              }
+            }
           }
+        } elseif($qty!=0) { //no record found, if qty is not 0 - add
+          //insert this record
+          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
+                  . " (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+                  . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
         }
-      }else{
-        //on new records the user is always null unless this is a payment form
-        if($entryData['fType'] != 'Payment'){
-          $user = 'NULL';
+      } else { //all other form types
+        //find if they already have a resource set with the same Item (ie. chairs, tables, electricity, etc)
+        $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id '
+                . ' FROM `wp_rmt_entry_resources` entry_res,wp_rmt_resources res '
+                . ' where entry_id='.$entryID.' and entry_res.resource_id = res.ID and resource_category_id='.$cat_id);
+
+        //matching record found
+        if ( null !== $res ) {
+          //check lockbit
+          if($res->lockBit==0){
+            //If there are changes, update this record
+            if($res->resource_id!=$resource_id || $res->qty!=$qty){
+              $wpdb->get_results('update `wp_rmt_entry_resources` '
+                    . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.', update_stamp=now() where id='.$res->ID);
+            }
+          }
+        }else{
+          //insert this record
+          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
+                  . " (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+                  . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
         }
-        //insert this record
-        $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
-                . " (`entry_id`, `resource_id`, `qty`, `comment`, user) "
-                . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
-      }
+      } //end check for payment form type
     }
 
     //add attributes to the table
