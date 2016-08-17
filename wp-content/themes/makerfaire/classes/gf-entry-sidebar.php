@@ -748,7 +748,7 @@ function mf_admin_pre_render(){
         }
         break;
     }
-    
+
     //update the change report with any changes
     GVupdate_changeRpt($form,$entry_info_entry_id,$lead);
     // Return the original form which is required for the filter we're including for our custom processing.
@@ -829,6 +829,9 @@ function set_entry_status($lead,$form){
            *  The cron job will trigger action sidebar_entry_update
            */
           wp_schedule_single_event(time() + 1,'sidebar_entry_update', array($entry_info_entry_id));
+          global $wpdb;
+          //lock space size attribute if set
+          $wpdb->get_results('update `wp_rmt_entry_attributes` set `lockBit` = 1 where attribute_id =  2 and entry_id='. $lead['id']);
         }
 				//Create a note of the status change.
 				$results=mf_add_note( $entry_info_entry_id, 'EntryID:'.$entry_info_entry_id.' status changed to '.$acceptance_status_change);
@@ -844,8 +847,6 @@ function set_entry_status($lead,$form){
 
         //update maker table information
         GFRMTHELPER::updateMakerTable($entryData);
-
-				//GFJDBHELPER::gravityforms_sync_status_jdb($entry_info_entry_id,$acceptance_status_change);
 			}
 		}
 	}
