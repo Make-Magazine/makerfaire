@@ -268,7 +268,7 @@
             echo '<div class="row padbottom">
                     <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="groupphoto" title="Click to upload...">
                       <div class="entry-page-maker-img">' .
-                        (!empty($groupphoto) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,350,300) . '" alt="Maker group photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker group placeholder photo" />') . '
+                        (!empty($groupphoto) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,400,400) . '" alt="Maker group photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker group placeholder photo" />') . '
                       </div>
                     </div>
                     <div class="col-sm-9 col-lg-7">
@@ -282,7 +282,7 @@
                 echo '<div class="row padbottom">
                         <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="maker'.$key.'img" title="Click to upload...">
                           <div class="entry-page-maker-img">' .
-                            (!empty($maker['photo']) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],350,300) . '" alt="Maker photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker placeholder photo" />') .'
+                            (!empty($maker['photo']) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],400,400) . '" alt="Maker photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker placeholder photo" />') .'
                           </div>
                         </div>
                         <div class="col-sm-9 col-lg-7">
