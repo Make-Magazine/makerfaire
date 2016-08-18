@@ -170,10 +170,13 @@ class maker {
       }
       $data['form_type'] = $form['form_type'];
 
-      //get MAT messaging
-      $data['mat_message'] = rgar($form, 'mat_message');
-
-      $entries['data'][]=$data;
+      //do not return if form type
+      if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
+         $form['form_type'] != 'Show Management' && $form['form_type'] != ''){
+          //get MAT messaging
+          $data['mat_message'] = rgar($form, 'mat_message');
+          $entries['data'][]=$data;
+       }
     }
 
     return $entries;
