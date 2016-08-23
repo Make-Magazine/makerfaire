@@ -563,11 +563,11 @@ function ent2resource($faire){
   }
 
   //default columns
-  $columnDefs[] = array('field' => 'faire', 'displayName'=>'Faire', width=>'*');
-  $columnDefs[] = array('field' => 'entry_id', 'displayName'=>'Entry ID', width=>'*');
-  $columnDefs[] = array('field' => 'proj_name', 'displayName'=>'Entry Name', width=>'*');
-  $columnDefs[] = array('field' => 'form_id', 'displayName'=> 'Form', width=>'*');
-  $columnDefs[] = array('field' => 'status', 'displayName'=>'Status', width=>'*',
+  $columnDefs[] = array('field' => 'faire', 'displayName'=>'Faire', 'width'=>'*');
+  $columnDefs[] = array('field' => 'entry_id', 'displayName'=>'Entry ID', 'width'=>'*');
+  $columnDefs[] = array('field' => 'proj_name', 'displayName'=>'Entry Name', 'width'=>'*');
+  $columnDefs[] = array('field' => 'form_id', 'displayName'=> 'Form', 'width'=>'*');
+  $columnDefs[] = array('field' => 'status', 'displayName'=>'Status', 'width'=>'*',
       'sort'=> array(
           'direction'=> 'uiGridConstants.ASC',
           'priority'=> 0
