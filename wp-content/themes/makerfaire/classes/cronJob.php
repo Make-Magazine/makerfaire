@@ -282,6 +282,9 @@ function build_ribbonJSON(){
   }
 }
 
+/*
+ * Cron process to create MAT records for specific forms
+ */
 add_action('cron_rmt_update', 'rmt_update');
 function rmt_update(){
   error_log('updating maker tables');
