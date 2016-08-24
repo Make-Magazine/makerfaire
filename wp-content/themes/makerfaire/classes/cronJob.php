@@ -284,17 +284,21 @@ function build_ribbonJSON(){
 
 add_action('cron_rmt_update', 'rmt_update');
 function rmt_update(){
-  error_log('begginning process');
+  error_log('updating maker tables');
   global $wpdb;
   $sql = "Select id,form_id
           from wp_rg_lead
           where status <> 'trash' and
-          form_id in (46,45,49,47,71) ORDER BY `wp_rg_lead`.`id` ASC";
+          form_id in (96) ORDER BY `wp_rg_lead`.`id` ASC";
   $results = $wpdb->get_results($sql);
   foreach($results as $row){
-    $form  = GFAPI::get_form( $row->form_id);
-    $entry = GFAPI::get_entry(esc_attr($row->id));
-    GFRMTHELPER::gravityforms_makerInfo($entry,$form);
-  }
-  error_log('ending process');
+   $form  = GFAPI::get_form( $row->form_id);
+   $entry = GFAPI::get_entry(esc_attr($row->id));
+   //format Entry information
+   $entryData = GFRMTHELPER::gravityforms_format_record($entry, $form);
+
+   //update maker table information
+   GFRMTHELPER::updateMakerTable($entryData);
+ }
+  error_log('end updating maker tables');
 }
