@@ -14,7 +14,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       'data'                : {table : 'wp_mf_faire',pageTitle:'Faire Data',subTitle:'Faire Data'},
       'orders'              : {table : 'wp_rmt_vendor_orders',pageTitle:'',subTitle:''},
       'areas'               : {table : 'wp_mf_faire_area',pageTitle:'Faire Data',subTitle:'Faire Areas'},
-      'subareas'            : {table : 'wp_mf_faire_subarea',pageTitle:'Faire Data',subTitle:'Faire Sub=areas'},
+      'subareas'            : {table : 'wp_mf_faire_subarea',pageTitle:'Faire Data',subTitle:'Faire SubAreas'},
       'global-faire'        : {table : 'wp_mf_global_faire',pageTitle:'Faire Data',subTitle:'Global Faire DAta'}
     },
     'entry' : {
@@ -26,12 +26,15 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     }
   };
 
-  $scope.resource    = {};
+  $scope.data     = [];
+  $scope.resource = {};
+  $scope.resource.selFaire = '';
   $scope.resource.loading = true;
   var mainRoute = ''; var subRoute = '';
   if($routeParams){
     mainRoute = $routeParams.main;
     subRoute  = $routeParams.sub;
+    $scope.resource.subRoute = subRoute;
     pageTitle = routeArray[mainRoute][subRoute]['pageTitle'];
     subTitle  = routeArray[mainRoute][subRoute]['subTitle'];
     jQuery('#pageTitle').html(pageTitle);
@@ -163,6 +166,49 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     var arr = Object.keys(obj).map(function (key) {return obj[key]});
     return arr;
   }
+
+  //faire dropdown
+  $scope.retrieveData = function(type) {
+    var vars = { 'type' :  type};
+    if(type == 'subareas') {
+      vars = { 'table' : 'wp_mf_faire_subarea' , 'type' : 'tableData', 'selfaire':$scope.resource.selFaire};
+      $scope.resource.loading = true;
+    }
+    //get grid data
+    $http({
+      method: 'post',
+      url: url,
+      data: jQuery.param(vars),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    })
+    .then(function(response){
+      if("error" in response.data) {
+        alert(response.data.error);
+      }else if(type=='faires'){
+        $scope.data[type] = response.data[type];
+      }else if(type=='subareas'){
+        angular.forEach(response.data.columnDefs, function(value, key) {
+          if(("filter" in value)){
+            value.filter.type = uiGridConstants.filter.SELECT;
+          }
+        });
+        $scope.gridOptions.columnDefs = response.data.columnDefs;
+        $scope.gridOptions.data       = response.data.data;
+        $scope.resource.pInfo         = response.data.pInfo;
+      }
+    }).finally(function () {
+      if(type=='faires'){
+        faires = $scope.data.faires;
+        angular.forEach(faires, function(value,key){
+          if(value.faire==$scope.subRoute){
+            $scope.resource.selFaire = key;
+          }
+        });
+      }
+      $scope.resource.loading = false;
+    });
+  }
+
 }])
   .filter('griddropdown', function () {
     return function (input, map) {
