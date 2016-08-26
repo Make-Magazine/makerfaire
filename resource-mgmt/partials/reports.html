@@ -76,15 +76,26 @@
     <button type="button" class="btn btn-success" ng-click="generateReport()">Generate Report</button>
     <br/><br/>
   </div>
-
+    <div ng-show="reports.route=='ent2resources'">
+      <div class="container" ng-init="retrieveData('faires')">
+        <div class="row">
+          <div class="col-md-3">
+            <h3>Select a Faire</h3>
+            <select ng-model="reports.selFaire" ng-change="retrieveData('ent2res')" name="faireSelect">
+              <option value="all">All Faires</option>
+              <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
   <div ng-if="reports.showGrid && !reports.showbuild" class="reportsView animated fadeInUp">
-    {{reports.selFaire}}
     <div ng-if="reports.subRoute=='drill'">
       <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('item')">Group by Item->Type</button>
       <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('faire')">Group by Faire->Area->Subarea</button>
     </div>
     <div class="table-responsive">
-      <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-resize-columns ui-grid-grouping class="grid">
+      <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-resize-columns ui-grid-auto-resize  class="grid">
         <div class="grid-msg-overlay" ng-hide="!reports.loading">
           <div class="msg">
             <span>

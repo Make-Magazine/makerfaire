@@ -106,6 +106,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
           value.filter.type = uiGridConstants.filter.SELECT;
         }
       });
+ 
     $scope.gridOptions.columnDefs = response.data.columnDefs;
     $scope.gridOptions.data       = response.data.data;
     $scope.resource.pInfo         = response.data.pInfo;
