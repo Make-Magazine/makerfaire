@@ -169,7 +169,7 @@ class maker {
         $this->isMaker = TRUE;
       }
       $data['form_type'] = $form['form_type'];
-
+      
       //do not return if form type
       if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
          $form['form_type'] != 'Show Management' && $form['form_type'] != ''){
@@ -178,7 +178,7 @@ class maker {
           $entries['data'][]=$data;
        }
     }
-
+    if(!isset($entries['data'])) $entries['data']=array();
     return $entries;
   }
 

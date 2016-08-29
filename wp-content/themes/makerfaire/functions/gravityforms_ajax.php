@@ -18,14 +18,49 @@ function update_entry_resatt() {
     $newValue  = $_POST['newValue'];
     $fieldName = $_POST['fieldName'];
     $sql = "update ".$table.' set '.$fieldName .'="'.$newValue.'",user= '.$current_user->ID.' where ID='.$ID;
+
+    //get data to update change report
+    if($table=='wp_rmt_entry_resources'){
+      $infosql = "select wp_rmt_entry_resources.*, wp_rmt_resources.token "
+              . " from wp_rmt_entry_resources"
+              . " left outer join wp_rmt_resources on wp_rmt_resources.ID=resource_id"
+              . " where wp_rmt_entry_resources.ID=".$ID;
+    }elseif($table=='wp_rmt_entry_attributes'){
+      $infosql = "select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token"
+              . " from wp_rmt_entry_attributes"
+              . " left outer join wp_rmt_entry_att_categories on wp_rmt_entry_att_categories.ID=attribute_id"
+              . " where wp_rmt_entry_attributes.ID=".$ID;
+    }elseif($table=='wp_rmt_entry_attn'){
+      $infosql = "select wp_rmt_entry_attn.*, wp_rmt_attn.value as token"
+              . " from wp_rmt_entry_attn"
+              . " left outer join wp_rmt_attn on wp_rmt_attn.ID=attn_id"
+              . " where wp_rmt_entry_attn.ID=".$ID;
+    }
+    $res = $wpdb->get_row($infosql,ARRAY_A);
+
+    $fieldID = ($table=='wp_rmt_entry_resources' ? $res['resource_id']:($table=='wp_rmt_entry_attributes'?$res['attribute_id']:($table=='wp_rmt_entry_attn'?$res['attn_id']:'')));
+    $type    = ($table=='wp_rmt_entry_resources' ? 'resource':($table=='wp_rmt_entry_attributes'?'attribute':($table=='wp_rmt_entry_attn'?'attention':'')));
+    $inserts = array();
+    $inserts[]= array(
+                  'user_id'           => $current_user->ID,
+                  'lead_id'           => $res['entry_id'],
+                  'form_id'           => 0,
+                  'field_id'          => $fieldID,
+                  'field_before'      => $res[$fieldName],
+                  'field_after'       => $newValue,
+                  'fieldLabel'        => 'RMT '.$type.': '.$res['token'].' - '.$fieldName,
+                  'status_at_update'  => '');
+    if(!empty($inserts))  updateChangeRPT($inserts);
   }
 
   $wpdb->get_results($sql);
   if($ID==0)  $ID = $wpdb->insert_id;
 
   //set lockBit to locked
-  $sql = "update ".$table.' set lockBit=1 where ID='.$ID;
-  $wpdb->get_results($sql);
+  if($table=='wp_rmt_entry_resources' || $table == 'wp_rmt_entry_attributes'){
+    $sql = "update ".$table.' set lockBit=1 where ID='.$ID;
+    $wpdb->get_results($sql);
+  }
 
   //return the ID
   $response = array('message'=>'Saved','ID'=>$ID,'user'=>$current_user->display_name,'dateupdate'=>current_time('m/d/y h:i a'));

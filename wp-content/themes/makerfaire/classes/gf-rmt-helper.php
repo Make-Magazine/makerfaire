@@ -25,7 +25,7 @@ class GFRMTHELPER {
 	}
 
 	/*
-	 * Function for formatting gravity forms lead into usable jdb data
+	 * Function for formatting gravity forms lead data
 	*/
 	public static function gravityforms_format_record($lead,$form) {
     $entry_id = $lead['id'];
@@ -607,7 +607,7 @@ class GFRMTHELPER {
 
     //add resources to the table
     foreach($resource as $value){
-      $resource_id = $value[0]['id']; //set in $resourceID
+      $resource_id = $value[0]['id'];       //set in $resourceID
       $cat_id      = $value[0]['cat_id'];  //set in $resourceID
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
@@ -632,10 +632,10 @@ class GFRMTHELPER {
       if($entryData['fType'] == 'Payment'){
         $user = 'NULL';
         // is resource already set?
-        $res = $wpdb->get_row('SELECT entry_res.* '
-                . ' FROM `wp_rmt_entry_resources` entry_res'
+        $res = $wpdb->get_row("select wp_rmt_entry_resources.*, wp_rmt_resources.token "
+                . " from wp_rmt_entry_resources"
+                . " left outer join wp_rmt_resources on wp_rmt_resources.ID=resource_id"
                 . ' where entry_id='.$entryID.' and resource_id ='.$resource_id);
-
         //matching record found
         if ( null !== $res ) {  // yes, is qty 0?
           if($res->lockBit==0){ //do not update if this resource is locked
@@ -646,6 +646,42 @@ class GFRMTHELPER {
               if($res->resource_id != $resource_id || $res->qty != $qty || $res->comment != $comment){
                 $wpdb->get_results('update `wp_rmt_entry_resources` '
                       . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.',comment="'.$comment.'", update_stamp=now() where id='.$res->ID);
+                $inserts = array();
+                //update change report
+                if($res->qty!=$qty){
+                  $inserts[] = array(
+                    'user_id'           => $user,
+                    'lead_id'           => $entryID,
+                    'form_id'           => $entryData['form_id'],
+                    'field_id'          => $resource_id,
+                    'field_before'      => $res->qty,
+                    'field_after'       => $qty,
+                    'fieldLabel'        => 'RMT resource: '.$res->token.' -  qty',
+                    'status_at_update'  => '');
+                }
+                if($res->resource_id!=$resource_id){
+                  $inserts[] = array(
+                    'user_id'           => $user,
+                    'lead_id'           => $entryID,
+                    'form_id'           => $entryData['form_id'],
+                    'field_id'          => $resource_id,
+                    'field_before'      => $res->resource_id,
+                    'field_after'       => $resource_id,
+                    'fieldLabel'        => 'RMT resource: id changed',
+                    'status_at_update'  => '');
+                }
+                if($res->comment != $comment){
+                  $inserts[] = array(
+                    'user_id'           => $user,
+                    'lead_id'           => $entryID,
+                    'form_id'           => $entryData['form_id'],
+                    'field_id'          => $resource_id,
+                    'field_before'      => $res->comment,
+                    'field_after'       => $comment,
+                    'fieldLabel'        => 'RMT resource: '.$res->token.' - comment',
+                    'status_at_update'  => '');
+                }
+                if(!empty($inserts))  updateChangeRPT($inserts);
               }
             }
           }
@@ -659,7 +695,8 @@ class GFRMTHELPER {
         //find if they already have a resource set with the same Item (ie. chairs, tables, electricity, etc)
         $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id '
                 . ' FROM `wp_rmt_entry_resources` entry_res,wp_rmt_resources res '
-                . ' where entry_id='.$entryID.' and entry_res.resource_id = res.ID and resource_category_id='.$cat_id);
+                . ' where entry_id='.$entryID.' and entry_res.resource_id = res.ID and'
+                . ' resource_category_id='.$cat_id);
 
         //matching record found
         if ( null !== $res ) {
@@ -669,6 +706,33 @@ class GFRMTHELPER {
             if($res->resource_id!=$resource_id || $res->qty!=$qty){
               $wpdb->get_results('update `wp_rmt_entry_resources` '
                     . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.', update_stamp=now() where id='.$res->ID);
+
+              //update change report
+              $inserts = array();
+
+              if($res->qty!=$qty){
+                $inserts[] = array(
+                  'user_id'           => $user,
+                  'lead_id'           => $entryID,
+                  'form_id'           => $entryData['form_id'],
+                  'field_id'          => $resource_id,
+                  'field_before'      => $res->qty,
+                  'field_after'       => $qty,
+                  'fieldLabel'        => 'RMT resource: '.$res->token.' qty',
+                  'status_at_update'  => '');
+              }
+              if($res->resource_id!=$resource_id){
+                $inserts[] = array(
+                  'user_id'           => $user,
+                  'lead_id'           => $entryID,
+                  'form_id'           => $entryData['form_id'],
+                  'field_id'          => $resource_id,
+                  'field_before'      => $res->resource_id,
+                  'field_after'       => $resource_id,
+                  'fieldLabel'        => 'RMT resource: id changed',
+                  'status_at_update'  => '');
+              }
+              if(!empty($inserts))  updateChangeRPT($inserts);
             }
           }
         }else{
@@ -687,9 +751,10 @@ class GFRMTHELPER {
       $comment      = htmlspecialchars($value[2]);
 
       //check if attribute is locked
-       $res = $wpdb->get_row("select * from `wp_rmt_entry_attributes` "
-                . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
-
+      $res = $wpdb->get_row("select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token"
+              . " from wp_rmt_entry_attributes"
+              . " left outer join wp_rmt_entry_att_categories on wp_rmt_entry_att_categories.ID=attribute_id"
+              . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
        //matching record found
       if ( null !== $res ) {
         if($res->lockBit==0){  //If this attribute is not locked, update this record
@@ -702,6 +767,32 @@ class GFRMTHELPER {
             $wpdb->get_results('update `wp_rmt_entry_attributes` '
                   . ' set comment="'.$comment.'", user='.$user.', value="'.$attvalue .'",	update_stamp=now()'
                   . ' where id='.$res->ID);
+            $inserts = array();
+            //update change report
+            if($res->comment!=$comment){
+              $inserts[] = array(
+                'user_id'           => $user,
+                'lead_id'           => $entryID,
+                'form_id'           => $entryData['form_id'],
+                'field_id'          => $attribute_id,
+                'field_before'      => $res->comment,
+                'field_after'       => $comment,
+                'fieldLabel'        => 'RMT attribute: '.$res->token.' -  comment',
+                'status_at_update'  => '');
+            }
+            if($res->value!=$attvalue){
+              $inserts[] = array(
+                'user_id'           => $user,
+                'lead_id'           => $entryID,
+                'form_id'           => $entryData['form_id'],
+                'field_id'          => $attribute_id,
+                'field_before'      => $res->value,
+                'field_after'       => $attvalue,
+                'fieldLabel'        => 'RMT attribute: '.$res->token.' -  value',
+                'status_at_update'  => '');
+            }
+
+            if(!empty($inserts))  updateChangeRPT($inserts);
           }
         }
       }else{
