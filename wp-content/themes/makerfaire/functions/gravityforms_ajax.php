@@ -6,14 +6,57 @@ function update_entry_resatt() {
   $table     = $_POST['table'];
   //set who is updating the record
   $current_user = wp_get_current_user();
+  $chgRptRec = array();
 
   if($ID==0){ //add new record
     $insertArr = $_POST['insertArr'];
     foreach($insertArr as $key=>$value){
-      $fields[] =$key;
-      $values[] =$value;
+      $fields[] = $key;
+      $values[] = $value;
     }
-      $sql = "insert into ".$table.' ('.implode(',',$fields).',user) VALUES ("'.implode('","',$values).'",'.$current_user->ID.')';
+
+    $sql = "insert into ".$table.' ('.implode(',',$fields).',user) VALUES ("'.implode('","',$values).'",'.$current_user->ID.')';
+    $entry_id = $insertArr['entry_id'];
+    //update change report for new recources/attributes/attention records added thru wp-admin
+    switch ($table) {
+      case 'wp_rmt_entry_resources':
+        $fieldID = $insertArr['resource_id'];
+        $type    = 'resource';
+        $res = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$fieldID);
+        $token     = $res->token;
+        $fields2Upd = array('qty','comment');
+
+        break;
+      case 'wp_rmt_entry_attributes':
+        $fieldID = $insertArr['attribute_id'];
+        $type    = 'attribute';
+        $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$fieldID);
+        $token     = $res->token;
+        $fields2Upd = array('value','comment');
+
+        break;
+      case 'wp_rmt_entry_attn':
+        $fieldID = $insertArr['attn_id'];
+        $type    = 'Attention';
+        $res = $wpdb->get_row('SELECT value as token FROM wp_rmt_attn where ID='.$fieldID);
+        $token     = $res->token;
+        $fields2Upd = array('comment');
+        break;
+      default:
+        $fieldID = '';
+        $type    = '';
+        $token   = '';
+        $fields2Upd = array();
+        break;
+    }
+
+    foreach($fields2Upd as $fieldName){
+      $chgRptRec[]= array('user_id'      => $current_user->ID, 'lead_id'           => $entry_id, 'form_id'    => 0,
+                          'field_id'     => $fieldID,          'status_at_update'  => '',
+                          'field_before' => '',                'field_after'       => $insertArr[$fieldName],
+                          'fieldLabel'   => 'RMT '.$type.': '.$token.' - '.$fieldName);
+    }
+
   }else{ //update existing record
     $newValue  = $_POST['newValue'];
     $fieldName = $_POST['fieldName'];
@@ -21,37 +64,52 @@ function update_entry_resatt() {
 
     //get data to update change report
     if($table=='wp_rmt_entry_resources'){
-      $infosql = "select wp_rmt_entry_resources.*, wp_rmt_resources.token "
-              . " from wp_rmt_entry_resources"
+      $infosql = "select wp_rmt_entry_resources.*, wp_rmt_resources.token  from wp_rmt_entry_resources"
               . " left outer join wp_rmt_resources on wp_rmt_resources.ID=resource_id"
               . " where wp_rmt_entry_resources.ID=".$ID;
     }elseif($table=='wp_rmt_entry_attributes'){
-      $infosql = "select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token"
-              . " from wp_rmt_entry_attributes"
+      $infosql = "select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token from wp_rmt_entry_attributes"
               . " left outer join wp_rmt_entry_att_categories on wp_rmt_entry_att_categories.ID=attribute_id"
               . " where wp_rmt_entry_attributes.ID=".$ID;
     }elseif($table=='wp_rmt_entry_attn'){
-      $infosql = "select wp_rmt_entry_attn.*, wp_rmt_attn.value as token"
-              . " from wp_rmt_entry_attn"
+      $infosql = "select wp_rmt_entry_attn.*, wp_rmt_attn.value as token from wp_rmt_entry_attn"
               . " left outer join wp_rmt_attn on wp_rmt_attn.ID=attn_id"
               . " where wp_rmt_entry_attn.ID=".$ID;
     }
     $res = $wpdb->get_row($infosql,ARRAY_A);
 
-    $fieldID = ($table=='wp_rmt_entry_resources' ? $res['resource_id']:($table=='wp_rmt_entry_attributes'?$res['attribute_id']:($table=='wp_rmt_entry_attn'?$res['attn_id']:'')));
-    $type    = ($table=='wp_rmt_entry_resources' ? 'resource':($table=='wp_rmt_entry_attributes'?'attribute':($table=='wp_rmt_entry_attn'?'attention':'')));
-    $inserts = array();
-    $inserts[]= array(
-                  'user_id'           => $current_user->ID,
-                  'lead_id'           => $res['entry_id'],
-                  'form_id'           => 0,
-                  'field_id'          => $fieldID,
-                  'field_before'      => $res[$fieldName],
-                  'field_after'       => $newValue,
-                  'fieldLabel'        => 'RMT '.$type.': '.$res['token'].' - '.$fieldName,
-                  'status_at_update'  => '');
-    if(!empty($inserts))  updateChangeRPT($inserts);
+    switch ($table) {
+      case 'wp_rmt_entry_resources':
+        $fieldID = $res['resource_id'];
+        $type    = 'Resource';
+        break;
+      case 'wp_rmt_entry_attributes':
+        $fieldID = $res['attribute_id'];
+        $type    = 'Attribute';
+        break;
+      case 'wp_rmt_entry_attn':
+        $fieldID = $res['attn_id'];
+        $type    = 'Attention';
+        break;
+      default:
+        $fieldID = '';
+        $type    = '';
+        break;
+    }
+    //add to change report array
+    $chgRptRec[]= array(
+                'user_id'           => $current_user->ID,
+                'lead_id'           => $res['entry_id'],
+                'form_id'           => 0,
+                'field_id'          => $fieldID,
+                'field_before'      => $res[$fieldName],
+                'field_after'       => $newValue,
+                'fieldLabel'        => 'RMT '.$type.': '.$res['token'].' - '.$fieldName,
+                'status_at_update'  => '');
   }
+
+  /* Add all changes and additions done thru wp-admin entry detail to the change report */
+  if(!empty($chgRptRec))  updateChangeRPT($chgRptRec);
 
   $wpdb->get_results($sql);
   if($ID==0)  $ID = $wpdb->insert_id;
