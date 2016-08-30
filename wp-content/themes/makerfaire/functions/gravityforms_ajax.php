@@ -16,45 +16,36 @@ function update_entry_resatt() {
     }
 
     $sql = "insert into ".$table.' ('.implode(',',$fields).',user) VALUES ("'.implode('","',$values).'",'.$current_user->ID.')';
-    $entry_id = $insertArr['entry_id'];
+
     //update change report for new recources/attributes/attention records added thru wp-admin
+    $user = $current_user->ID;
+    $entryID  = (isset($insertArr['entry_id'])?$insertArr['entry_id']:0);
+    $qty      = (isset($insertArr['qty'])?$insertArr['qty']:0);
+    $comment  = (isset($insertArr['comment'])?$insertArr['comment']:'');
+    $attvalue = (isset($insertArr['value'])?$insertArr['value']:'');
     switch ($table) {
       case 'wp_rmt_entry_resources':
-        $fieldID = $insertArr['resource_id'];
-        $type    = 'resource';
-        $res = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$fieldID);
-        $token     = $res->token;
-        $fields2Upd = array('qty','comment');
+        $fieldID     = $insertArr['resource_id'];
+        $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$fieldID);
 
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $fieldID, '', $qty, 'RMT Resource: '.$res->token.' -  qty');
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $fieldID, '', $comment, 'RMT Resource: '.$res->token.' - comment');
         break;
       case 'wp_rmt_entry_attributes':
-        $fieldID = $insertArr['attribute_id'];
-        $type    = 'attribute';
-        $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$fieldID);
-        $token     = $res->token;
-        $fields2Upd = array('value','comment');
+        $attribute_id = $insertArr['attribute_id'];
+        $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$attribute_id);
 
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $attribute_id, '', $attvalue, 'RMT Attribute: '.$res->token.' -  value');
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $attribute_id, '', $comment, 'RMT Attribute: '.$res->token.' -  comment');
         break;
       case 'wp_rmt_entry_attn':
         $fieldID = $insertArr['attn_id'];
-        $type    = 'Attention';
         $res = $wpdb->get_row('SELECT value as token FROM wp_rmt_attn where ID='.$fieldID);
-        $token     = $res->token;
-        $fields2Upd = array('comment');
+
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $fieldID, '', $comment, 'RMT Attention: '.$res->token.' -  comment');
         break;
       default:
-        $fieldID = '';
-        $type    = '';
-        $token   = '';
-        $fields2Upd = array();
         break;
-    }
-
-    foreach($fields2Upd as $fieldName){
-      $chgRptRec[]= array('user_id'      => $current_user->ID, 'lead_id'           => $entry_id, 'form_id'    => 0,
-                          'field_id'     => $fieldID,          'status_at_update'  => '',
-                          'field_before' => '',                'field_after'       => $insertArr[$fieldName],
-                          'fieldLabel'   => 'RMT '.$type.': '.$token.' - '.$fieldName);
     }
 
   }else{ //update existing record
@@ -96,20 +87,13 @@ function update_entry_resatt() {
         $type    = '';
         break;
     }
+
     //add to change report array
-    $chgRptRec[]= array(
-                'user_id'           => $current_user->ID,
-                'lead_id'           => $res['entry_id'],
-                'form_id'           => 0,
-                'field_id'          => $fieldID,
-                'field_before'      => $res[$fieldName],
-                'field_after'       => $newValue,
-                'fieldLabel'        => 'RMT '.$type.': '.$res['token'].' - '.$fieldName,
-                'status_at_update'  => '');
+    $chgRPTins[] = RMTchangeArray($current_user->ID, $res['entry_id'], 0, $fieldID, $res[$fieldName], $newValue, 'RMT '.$type.': '.$res['token'].' - '.$fieldName);
   }
 
   /* Add all changes and additions done thru wp-admin entry detail to the change report */
-  if(!empty($chgRptRec))  updateChangeRPT($chgRptRec);
+  if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
 
   $wpdb->get_results($sql);
   if($ID==0)  $ID = $wpdb->insert_id;
@@ -134,12 +118,49 @@ function delete_entry_resatt() {
   global $wpdb;
   $table = (isset($_POST['table']) ? $_POST['table']:'');
   $ID    = (isset($_POST['ID'])    ? $_POST['ID']:0);
+  //save resource/attribute
+  $resAtt = $wpdb->get_row('SELECT * FROM '.$table .' where ID='.$ID);
+
   $response = array('table'=>$table,'ID'=>$ID);
   if($ID != 0 && $table != ''){
     $sql = "DELETE from ".$table ." where ID =".$ID;
     $wpdb->get_results($sql);
     $response = array('message'=>'Deleted','ID'=>$ID);
   }
+
+  //update change report for deleted recources/attributes/attention records thru wp-admin
+  //set who is updating the record
+  $current_user = wp_get_current_user();
+  $user     = $current_user->ID;
+  $entryID  = (isset($_POST['entry_id'])?$_POST['entry_id']:0);
+  $chgRPTins = array();
+
+    switch ($table) {
+      case 'wp_rmt_entry_resources':
+        $fieldID     = $resAtt->resource_id;
+        $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$fieldID);
+
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $fieldID, $resAtt->qty,'', 'RMT Resource: '.$res->token.' -  qty');
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $fieldID, $resAtt->comment, '', 'RMT Resource: '.$res->token.' - comment');
+        break;
+      case 'wp_rmt_entry_attributes':
+        $attribute_id = $resAtt->attribute_id;
+        $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$attribute_id);
+
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $attribute_id, $resAtt->value,   '', 'RMT Attribute: '.$res->token.' -  value');
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $attribute_id, $resAtt->comment, '', 'RMT Attribute: '.$res->token.' -  comment');
+        break;
+      case 'wp_rmt_entry_attn':
+        $fieldID = $resAtt->attn_id;
+        $res = $wpdb->get_row('SELECT value as token FROM wp_rmt_attn where ID='.$fieldID);
+
+        $chgRPTins[] = RMTchangeArray($user, $entryID, 0, $fieldID, $resAtt->comment, '', 'RMT Attention: '.$res->token.' -  comment');
+        break;
+      default:
+        break;
+    }
+  /* Add all changes and additions done thru wp-admin entry detail to the change report */
+  if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
   wp_send_json( $response );
   // IMPORTANT: don't forget to "exit"
   exit;
