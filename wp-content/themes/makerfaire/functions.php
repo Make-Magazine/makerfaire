@@ -139,15 +139,26 @@ function load_scripts() {
 
 add_action('wp_enqueue_scripts', 'load_scripts');
 
-//Load custom gravity forms .s
+//Load custom gravity forms js for barnes and noble forms
+//Change the formid below to load for barnes and noble
 
-function enqueue_custom_script($form, $is_ajax) {
+function enqueue_custom_barnesandnoble_script($form, $is_ajax) {
   $my_theme = wp_get_theme();
   $my_version = $my_theme->get('Version');
-  wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityforms.js', array('jquery'),$my_version);
+  wp_enqueue_script('make-gravityformsbarnesandnoble', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnoble.js', array('jquery'),$my_version);
 }
 
-add_action('gform_enqueue_scripts', 'enqueue_custom_script', 10, 2);
+add_action('gform_enqueue_scripts_108', 'enqueue_custom_barnesandnoble_script', 10, 2);
+
+//Load custom gravity forms js for all forms
+
+function enqueue_custom_allforms_script($form, $is_ajax) {
+  $my_theme = wp_get_theme();
+  $my_version = $my_theme->get('Version');
+  wp_enqueue_script('make-gravityformsallforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsallforms.js', array('jquery'),$my_version);
+}
+
+add_action('gform_enqueue_scripts', 'enqueue_custom_allforms_script', 10, 2);
 
 function load_admin_scripts() {
   //scripts
