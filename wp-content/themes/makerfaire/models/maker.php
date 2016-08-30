@@ -97,7 +97,7 @@ class maker {
 
     $maker_array = array();
     if($this->maker_id==''){
-      return array('data'=>array());
+      //return array('data'=>array());
     }
 
     if ( current_user_can( 'mat_view_created_entries') ) {
@@ -170,12 +170,15 @@ class maker {
       }
       $data['form_type'] = $form['form_type'];
 
-      //get MAT messaging
-      $data['mat_message'] = rgar($form, 'mat_message');
-
-      $entries['data'][]=$data;
+      //do not return if form type
+      if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
+         $form['form_type'] != 'Show Management' && $form['form_type'] != ''){
+          //get MAT messaging
+          $data['mat_message'] = rgar($form, 'mat_message');
+          $entries['data'][]=$data;
+       }
     }
-
+    if(!isset($entries['data'])) $entries['data']=array();
     return $entries;
   }
 

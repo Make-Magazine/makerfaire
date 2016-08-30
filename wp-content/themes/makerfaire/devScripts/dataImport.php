@@ -41,7 +41,7 @@ function calculate_signature($string, $private_key) {
     $sig = rawurlencode(base64_encode($hash));
     return $sig;
 }
-function call_api($data){
+function call_api($data,$form){
     $api_key      = '84ed801ad4';
     $private_key  = 'cacff8d71d9cc6e';
     $method  = 'POST';
@@ -53,7 +53,7 @@ function call_api($data){
     $endpoint = $domain.'/gravityformsapi/';
     echo 'sending to '.$endpoint.'<br/>';
     //$route = 'entries';
-    $route = 'forms/96/entries';
+    $route = 'forms/'.$form.'/entries';
     $expires = strtotime('+60 mins');
     $string_to_sign = sprintf('%s:%s:%s:%s', $api_key, $method, $route, $expires);
     $sig = calculate_signature($string_to_sign, $private_key);
@@ -119,34 +119,32 @@ if (isset($_POST["submit"]) ) {
       $savedFile = "/dataUpload/upload/" . $name;
       $savedFile = $target_file;
        if (file_exists($savedFile)) {
-          echo $name . " already exists. ";
+        echo $name . " already exists. ";
        }else {
-           if ($_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK) {
-              //Store file in directory
-              if( move_uploaded_file($tmpName, $savedFile) ) {
-                  echo "Stored in: " . $savedFile . "<br />";
-              } else {
-                  echo "Not uploaded<br/>";
-              }
-
-           }
+        if ($_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK) {
+          //Store file in directory
+          if( move_uploaded_file($tmpName, $savedFile) ) {
+            echo "Stored in: " . $savedFile . "<br />";
+          } else {
+            echo "Not uploaded<br/>";
+          }
+        }
       }
 
       if(($handle = fopen($savedFile, 'r')) !== FALSE) {
-          // necessary if a large csv file
-          set_time_limit(0);
-          $row = 0;
-          while(($data = fgetcsv($handle, 0, ',')) !== FALSE) {
-              // number of fields in the csv
-              foreach($data as $value){
-                  $csv[$row][] = trim($value);
-              }
-              // inc the row
-              $row++;
+        // necessary if a large csv file
+        set_time_limit(0);
+        $row = 0;
+        while(($data = fgetcsv($handle, 0, ',')) !== FALSE) {
+          // number of fields in the csv
+          foreach($data as $value){
+            $csv[$row][] = trim($value);
           }
-          fclose($handle);
+          // inc the row
+          $row++;
+        }
+        fclose($handle);
       }
-
     }
   } else {
     echo "No file selected <br />";
@@ -180,6 +178,5 @@ if (isset($_POST["submit"]) ) {
       $APIdata[] = $data;
     }
   }
-//var_dump($APIdata);
-  $childID = call_api ($APIdata);
+  $childID = call_api ($APIdata, $form);
 }

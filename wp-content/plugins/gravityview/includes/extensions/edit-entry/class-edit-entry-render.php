@@ -304,6 +304,7 @@ class GravityView_Edit_Entry_Render {
              * @hack to avoid the capability validation of the method save_lead for GF 1.9+
              */
             unset( $_GET['page'] );
+            $orig_entry = $this->entry;
 
             GFFormsModel::save_lead( $form, $this->entry );
 
@@ -316,7 +317,7 @@ class GravityView_Edit_Entry_Render {
             $this->update_calculation_fields();
 
             // Perform actions normally performed after updating a lead
-            $this->after_update();
+            $this->after_update($orig_entry);
 
             /**
              * @action `gravityview/edit_entry/after_update` Perform an action after the entry has been updated using Edit Entry
@@ -714,9 +715,11 @@ class GravityView_Edit_Entry_Render {
      *
      * @return void
      */
-    function after_update() {
+    function after_update($orig_entry='') {
 
-        do_action( 'gform_after_update_entry', $this->form, $this->entry['id'] );
+        //MF custom code to log changes
+        do_action( 'gform_after_update_entry', $this->form, $this->entry['id'],$orig_entry );
+
         do_action( "gform_after_update_entry_{$this->form['id']}", $this->form, $this->entry['id'] );
 
         // Re-define the entry now that we've updated it.

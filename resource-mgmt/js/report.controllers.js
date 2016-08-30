@@ -265,18 +265,23 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       }
       if(("fields" in response.data)){
         $scope.fieldSelect.data = response.data.fields;
+        var selfields = [];
         //loop thru passed parameter fields
         if("fields" in $routeParams){
-          if($scope.fieldSelect.gridApi.selection.selectRow){
-            var selfields = $routeParams.fields.split(',');
-            angular.forEach($scope.fieldSelect.data, function(value, key) {
-              if(selfields.indexOf(String(value.id)) != -1){
-                // $interval whilst we wait for the grid to digest the data we just gave it
-                $interval( function() {$scope.fieldSelect.gridApi.selection.selectRow($scope.fieldSelect.data[key]);}, 0, 1);
-              }
-            });
+          selfields = $routeParams.fields.split(',');
+        }
+        //always check field 303 and 151
+        selfields.push('303','151');
 
-          }
+        if($scope.fieldSelect.gridApi.selection.selectRow){
+          //var selfields = $routeParams.fields.split(',');
+          angular.forEach($scope.fieldSelect.data, function(value, key) {
+            if(selfields.indexOf(String(value.id)) != -1){
+              // $interval whilst we wait for the grid to digest the data we just gave it
+              $interval( function() {$scope.fieldSelect.gridApi.selection.selectRow($scope.fieldSelect.data[key]);}, 0, 1);
+            }
+          });
+
         }
       }
       if(("rmt" in response.data)){

@@ -12,17 +12,6 @@ function add_main_text_before($form, $lead){
 // Summary Metabox
 function gf_summary_metabox($form, $lead) {
 
-$jdb_success = gform_get_meta( $lead['id'], 'mf_jdb_sync');
-
-if ( $jdb_success == '' ) {
-	$jdb_fail = gform_get_meta( $lead['id'], 'mf_jdb_sync_fail', true );
-	$jdb      = '[FAILED] : N/A';
-	if ( $jdb_success == '' )
-		$jdb  = '[FAILED] : ' . date( 'M jS, Y g:i A', $jdb_fail - ( 7 * 3600 ) );
-} else {
-	$jdb = '[SUCCESS] : ' . date( 'M jS, Y g:i A', $jdb_success - ( 7 * 3600 ) );
-}
-
 $entry_id = $lead['id'];
 $photo                    = (isset($lead['22'])?$lead['22']:'');
 $short_description        = (isset($lead['16'])?$lead['16']:'');

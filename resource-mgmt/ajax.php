@@ -1,68 +1,35 @@
 <?php
 /*  This ajax is used to return table data for RMT to allow insert, edit and delete logic */
 require_once 'config.php';
+$selfaire = (isset($_POST['selfaire']) ? $_POST['selfaire']: '');
+require_once 'ajax/tableOptions.php';
 
-//$tableOptions defines any foreign keys in the table that we need to pull additional data for
-$tableOptions = array();
-//resources
-$tableOptions['wp_rmt_resources']['fkey'] = array(
-        array('fkey' => 'resource_category_id', 'referenceTable'   => 'wp_rmt_resource_categories', 'referenceField'   => 'ID', 'referenceDisplay' => 'category'));
-//vendor resources
-$tableOptions['wp_rmt_vendor_resources']['fkey']  = array(
-        array('fkey' => 'vendor_id',   'referenceTable' => 'wp_rmt_vendors',   'referenceField' => 'ID', 'referenceDisplay' => 'company_name'),
-        array('fkey' => 'resource_id', 'referenceTable' => 'wp_rmt_resources', 'referenceField' => 'ID', 'referenceDisplay' => 'item'));
-$tableOptions['wp_rmt_vendor_orders']['fkey']  = array(
-        array('fkey' => 'vendor_resource_id', 'referenceTable'   => 'wp_rmt_vendor_resources', 'referenceField'   => 'ID', 'referenceDisplay' => 'ID'),
-        array('fkey' => 'faire_id',           'referenceTable'   => 'wp_mf_faire',             'referenceField'   => 'ID', 'referenceDisplay' => 'faire'));
-$tableOptions['wp_mf_faire_area']['fkey']    = array(
-        array('fkey' => 'faire_id',     'referenceTable' => 'wp_mf_faire',      'referenceField'   => 'ID', 'referenceDisplay' => 'faire'));
-$tableOptions['wp_mf_faire_subarea']['fkey']    = array(
-        array('fkey' => 'area_id',      'referenceTable' => 'wp_mf_faire_area', 'referenceField'   => 'ID', 'referenceDisplay' => 'area'));
-
-$tableOptions['wp_mf_faire_subarea']['addlFields']['faire'] = array('fieldName' => 'faire', 'filterType'=>'dropdown', 'fieldLabel' => 'Faire',
-    'fkey' => array('fkey' => 'faire', 'referenceTable' => 'wp_mf_faire', 'referenceField'   => 'ID', 'referenceDisplay' => 'faire'),
-    'dataSql' =>'(SELECT faire_id from wp_mf_faire_area where wp_mf_faire_area.ID = area_id) as faire'
-    );
-$tableOptions['wp_mf_faire_subarea']['addlFields']['assCount'] = array('fieldName' => 'assCount', 'fieldLabel' => 'Assigned',
-    'dataSql' =>'(SELECT count(*) from wp_mf_location where wp_mf_faire_subarea.ID = subarea_id) as assCount'
-    );
-
-$tableOptions['wp_rmt_entry_attributes']['fkey']    = array(
-        array('fkey' => 'attribute_id', 'referenceTable' => 'wp_rmt_entry_att_categories', 'referenceField'   => 'ID', 'referenceDisplay' => 'category'),
-        array('fkey' => 'user',         'referenceTable' => 'wp_users',                    'referenceField'   => 'ID', 'referenceDisplay' => 'user_email'));
-$tableOptions['wp_rmt_entry_attn']['fkey']    = array(
-        array('fkey' => 'attn_id',      'referenceTable' => 'wp_rmt_attn', 'referenceField' => 'ID', 'referenceDisplay' => 'value'),
-        array('fkey' => 'user',         'referenceTable' => 'wp_users',    'referenceField' => 'ID', 'referenceDisplay' => 'user_email'));
-$tableOptions['wp_rmt_entry_resources']['fkey']    = array(
-        array('fkey' => 'resource_id',  'referenceTable' => 'wp_rmt_resources', 'referenceField' => 'ID', 'referenceDisplay' => 'type'),
-        array('fkey' => 'user',         'referenceTable' => 'wp_users',         'referenceField' => 'ID', 'referenceDisplay' => 'user_email'));
-
-//Global Faire table
-$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
-        'fieldName' => 'venue_address_region', 'filterType'=>'dropdown','fieldLabel'=>'Region', 'enableCellEdit' => true, 'width' => 150,
-        'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
-                  'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
-                  'South America' =>  'South America',  'Middle East'   =>  'Middle East',
-                  'PACIFIC'       =>  'Pacific',        'Africa'        =>  'Africa')
-    );
-$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
-    'fieldName' => 'event_type', 'filterType'=>'dropdown','fieldLabel'=>'Event Type', 'enableCellEdit' => true,
-    'options' => array('Mini' => 'Mini', 'Featured' => 'Featured', 'Flagship' => 'Flagship', 'School' => 'School')
-  );
 $view_only = (isset($_POST['viewOnly'])?$_POST['viewOnly']:FALSE);
 if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
-	$type = $_POST['type'];
+	$type  = $_POST['type'];
 
 	switch ($type) {
 		case "deleteData":
 			deleteData($mysqli,$_POST['table'],$_POST['pKeyField'], $_POST['id']);
 			break;
     case "tableData":
-      getTableData($mysqli, $_POST['table']);
+      if($selfaire==''){
+        getTableData($mysqli, $_POST['table']);
+      }else{
+        //pull data based on selected faire
+        getDataByFaire($mysqli, $_POST['table'], $selfaire);
+      }
       break;
     case "insertData":
     case "updateData":
       save_data($mysqli, $_POST['table'], $_POST['data'],$_POST['pKeyField']);
+      break;
+    case "faires":
+      $sql = 'SELECT * FROM wp_mf_faire order by start_dt DESC';
+      $data[$type] = $wpdb->get_results($sql);
+      echo json_encode($data);
+      exit;
+
       break;
 		default:
 			invalidRequest();
@@ -353,4 +320,57 @@ function getFkeyData($tabFkeyData){
     $selectOptions[] = array('value' => $row[$referenceField], 'label' => $row[$referenceDisplay]);
   }
   return(array($options,$selectOptions));
+}
+
+//pull data based on selected faire
+function getDataByFaire($mysqli, $table, $selfaire) {
+  $data = array();
+  if($table=='wp_mf_faire_subarea'){
+    //area options query
+    $areaQuery = 'select * from wp_mf_faire_area where faire_id='.$selfaire;
+    $arearesult = $mysqli->query( $areaQuery );
+
+    //create array of table data
+    $editOptions = array();
+    $selectOptions = array();
+    while ($row = $arearesult->fetch_assoc()) {
+      $editOptions[]   = array('id' => $row['ID'], 'fkey' => $row['area']);
+      $selectOptions[] = array('value' => $row['ID'], 'label' => $row['area']);
+    }
+    //build columndefs
+    $data['columnDefs'][] = array('cellTemplate' => "<span class='ui-grid-cell-contents ng-binding ng-scope' ng-click='grid.appScope.deleteRow(row)'><i class='fa fa-trash'></i></span>",
+            'displayName' => "", 'enableCellEdit' => false, 'enableColumnMenu' => false, 'enableFiltering' => false, 'name' => "delete", 'sortable' => false, 'width' => "25");
+    $data['columnDefs'][] = array('displayName' => "SubArea ID", 'enableCellEdit' => false, 'enableFiltering' => false, 'headerCellClass' =>'$scope.highlightFilteredHeader', 'name' => "ID", 'width' => "110");
+    $data['columnDefs'][] = array('cellFilter' => "griddropdown:this",
+      'displayName'         => "Area Name",
+      'editDropdownIdLabel' => "id",
+      'editDropdownOptionsArray' => $editOptions,
+      'editDropdownValueLabel' => "fkey",
+      'editableCellTemplate' => "ui-grid/dropdownEditor",
+      'enableCellEdit' => true,
+      'field' => "area_id",
+      'filter' => array(
+          'selectOptions' => $selectOptions
+        ),
+      'headerCellClass' => '$scope.highlightFilteredHeader', 'width' => 150);
+    $data['columnDefs'][] = array('displayName' => "Internal Name", 'enableCellEdit' => true, 'enableFiltering' => true, 'name' => "subarea", 'width' =>"300");
+    $data['columnDefs'][] = array('displayName' => "Public Name", 'enableCellEdit' => true, 'enableFiltering' => true, 'name' => "nicename", 'width' =>"300");
+    $data['columnDefs'][] = array('displayName' => "Sort Order", 'enableCellEdit' => true, 'enableFiltering' => true, 'name' => "sort_order", 'width' => "130");
+    //build data
+    $query = "select wp_mf_faire_subarea.*, wp_mf_faire_area.faire_id as faire,
+                (SELECT count(*) from wp_mf_location where wp_mf_faire_subarea.ID = subarea_id) as assCount
+              from wp_mf_faire_subarea
+              left outer join wp_mf_faire_area on wp_mf_faire_area.ID = area_id
+              left outer join wp_mf_faire on wp_mf_faire_area.faire_id = wp_mf_faire.id
+              where wp_mf_faire_area.faire_id = ".$selfaire;
+    $result = $mysqli->query( $query );
+    //create array of table data
+    while ($row = $result->fetch_assoc()) {
+      $data['data'][]= $row;
+    }
+    $data['pInfo']   = 'ID';
+    $data['success'] = true;
+  }
+  echo json_encode($data);
+  exit;
 }

@@ -13,6 +13,7 @@ $formSelect     = (isset($obj->formSelect)?$obj->formSelect:'');
 $selectedFields = (isset($obj->selectedFields)?$obj->selectedFields:'');
 $rmtData        = (isset($obj->rmtData)?$obj->rmtData:'');
 $location       = (isset($obj->location)?$obj->location:false);
+$faire          = (isset($obj->faire)?$obj->faire:'');
 
 if($type != ''){
   if($type =="tableData"){
@@ -30,7 +31,7 @@ if($type != ''){
       invalidRequest('Error: Form or Fields not selected');
     }
   }elseif($type =="ent2resource"){
-    ent2resource($table);
+    ent2resource($table,$faire);
   }else{
     invalidRequest('Invalid Request type');
   }
@@ -498,122 +499,126 @@ function getBuildRptData(){
 }
 
 //this function cross references faire entries to their assigned resources and attributes
-function ent2resource($faire){
+function ent2resource($table, $faire){
   global $mysqli;
+  $data = array();
+  $columnDefs = array();
+
+  //find all non trashed entries for selected faires
+  //find RMT information
 
     $sql = "select wp_rg_lead.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire,
-
-    ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,
-    ( select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name,
-          (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
-          (select subarea from wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id) as subarea,
-          wp_rmt_entry_resources.resource_id, wp_rmt_entry_resources.qty as 'resource_qty', wp_rmt_entry_resources.comment as 'resource_comment',
-          wp_rmt_entry_attributes.attribute_id, wp_rmt_entry_attributes.value as 'attribute_value', wp_rmt_entry_attributes.comment as 'attribute_comment',
-          (select token from wp_rmt_resources where wp_rmt_resources.id = resource_id)          as res_label,
-          (select token from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.id = attribute_id)          as att_label,
-          wp_rmt_entry_attn.attn_id as 'attn_id', wp_rmt_entry_attn.comment as 'attn_comment',
-          wp_mf_location.id as 'location_id', wp_mf_location.subarea_id, wp_mf_location.location,
-          (select value from wp_rmt_attn where wp_rmt_attn.id = attn_id)          as attn_type
+      (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,
+      (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name,
+      (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
+      (select subarea from wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id) as subarea,
+          wp_rmt_entry_resources.resource_id,
+          wp_rmt_entry_resources.qty as 'resource_qty', wp_rmt_entry_resources.comment as 'resource_comment',
+          wp_rmt_entry_attributes.attribute_id,
+          wp_rmt_entry_attributes.value as 'attribute_value',
+          wp_rmt_entry_attributes.comment as 'attribute_comment',
+      (select token from wp_rmt_resources where wp_rmt_resources.id = resource_id)          as res_label,
+      (select token from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.id = attribute_id)          as att_label,
+          wp_rmt_entry_attn.attn_id as 'attn_id',
+          wp_rmt_entry_attn.comment as 'attn_comment',
+          wp_mf_location.id as 'location_id',
+          wp_mf_location.subarea_id,
+          wp_mf_location.location,
+      (select value from wp_rmt_attn where wp_rmt_attn.id = attn_id)          as attn_type
 
           from wp_rg_lead
-          left outer join wp_mf_faire on INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id) > 0
-          left outer join wp_rmt_entry_resources 	 on wp_rmt_entry_resources.entry_id = wp_rg_lead.id
-          left outer join wp_rmt_entry_attributes  on wp_rmt_entry_attributes .entry_id = wp_rg_lead.id
-          left outer join wp_rmt_entry_attn    on wp_rmt_entry_attn .entry_id = wp_rg_lead.id
-          left outer join wp_mf_location on wp_mf_location.entry_id = wp_rg_lead.id
-          where status = 'active' and faire is not NULL order by faire DESC";
+            left outer join wp_mf_faire on INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id) > 0
+            left outer join wp_rmt_entry_resources 	 on wp_rmt_entry_resources.entry_id = wp_rg_lead.id
+            left outer join wp_rmt_entry_attributes  on wp_rmt_entry_attributes .entry_id = wp_rg_lead.id
+            left outer join wp_rmt_entry_attn        on wp_rmt_entry_attn.entry_id = wp_rg_lead.id
+            left outer join wp_mf_location           on wp_mf_location.entry_id = wp_rg_lead.id
+          where status = 'active' and faire is not NULL and wp_mf_faire.ID=".$faire.
+         " order by faire DESC, status ASC";
+
   $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 
   $entryData = array();
-  $resArray = array();
-  $attArray = array();
+  $resArray  = array();
+  $attArray  = array();
   $attnArray = array();
+
   foreach($entries as $entry){
-    //set resource data
-    $data[$entry['entry_id']]['entry_id']   = $entry['entry_id'];
-    $data[$entry['entry_id']]['form_id']    = $entry['form_id'];
-    $data[$entry['entry_id']]['faire']      = $entry['faire'];
-    $data[$entry['entry_id']]['status']     = $entry['status'];
-    $data[$entry['entry_id']]['proj_name']  = $entry['proj_name'];
+    $dbdata = array();
+    //set basic data
+    $dbdata['entry_id']   = $entry['entry_id'];
+    $dbdata['form_id']    = $entry['form_id'];
+    $dbdata['faire']      = $entry['faire'];
+    $dbdata['status']     = $entry['status'];
+    $dbdata['proj_name']  = $entry['proj_name'];
 
     if($entry['resource_id'] != NULL){
-      $data[$entry['entry_id']]['resource'][$entry['resource_id']] = array('qty'=> $entry['resource_qty'], 'comment'=>$entry['resource_comment']);
+      $dbdata['resource'][$entry['resource_id']] = array('qty'=> $entry['resource_qty'], 'comment'=>$entry['resource_comment']);
       //add resource to resource array
       $resArray[$entry['resource_id']] = $entry['res_label'];
     }
     //set attribute data
     if($entry['attribute_id'] != NULL){
       //set resource data
-      $data[$entry['entry_id']]['attribute'][$entry['attribute_id']] = array('value'=> $entry['attribute_value'], 'comment'=>$entry['attribute_comment']);
+      $dbdata['attribute'][$entry['attribute_id']] = array('value'=> $entry['attribute_value'], 'comment'=>$entry['attribute_comment']);
       //add attribute to attribute array
       $attArray[$entry['attribute_id']] = $entry['att_label'];
     }
     //set attention data
     if($entry['attn_id'] != NULL){
       //set resource data
-      $data[$entry['entry_id']]['attention'][$entry['attn_id']] = array('comment'=>$entry['attn_comment']);
+      $dbdata['attention'][$entry['attn_id']] = array('comment'=>$entry['attn_comment']);
       //add attribute to attribute array
       $attnArray[$entry['attn_id']] = $entry['attn_type'];
     }
     //set location data
     if($entry['location_id'] != NULL){
       //set resource data
-      $data[$entry['entry_id']]['location'] = array('subarea'=> $entry['subarea'], 'location'=>$entry['location'], 'area'=>$entry['area']);
+      $dbdata['location'] = array('subarea'=> $entry['subarea'], 'location'=>$entry['location'], 'area'=>$entry['area']);
     }
+    $data[$entry['entry_id']] = $dbdata;
   }
 
   //default columns
-  $columnDefs[] = array('field' => 'faire', 'displayName'=>'Faire', width=>'*');
-  $columnDefs[] = array('field' => 'entry_id', 'displayName'=>'Entry ID', width=>'*');
-  $columnDefs[] = array('field' => 'proj_name', 'displayName'=>'Entry Name', width=>'*');
-  $columnDefs[] = array('field' => 'form_id', 'displayName'=> 'Form', width=>'*');
-  $columnDefs[] = array('field' => 'status', 'displayName'=>'Status', width=>'*',
-      'sort'=> array(
-          'direction'=> 'uiGridConstants.ASC',
-          'priority'=> 0
-        ), 'enableSorting'=> true);
-  $columnDefs[] = array('field' => 'location.area', 'displayName'=>'Area',
-      'sort'=> array(
-          'direction'=> 'uiGridConstants.ASC',
-          'priority'=> 1
-        ), 'enableSorting'=> true);
-  $columnDefs[] = array('field' => 'location.subarea', 'displayName'=>'Subarea',
-      'sort'=> array(
-          'direction'=> 'uiGridConstants.ASC',
-          'priority'=> 3
-        ), 'enableSorting'=> true);
-  $columnDefs[] = array('field' => 'location.location', 'displayName'=>'Location',
-      'sort'=> array(
-          'direction'=> 'uiGridConstants.ASC',
-          'priority'=> 2
-        ), 'enableSorting'=> true);
+  $columnDefs[] = array('field' => 'faire', 'displayName'=>'Faire', 'width'=>'50');
+  $columnDefs[] = array('field' => 'status', 'displayName'=>'Status', 'width'=>'100','sort'=> array('direction'=> 'uiGridConstants.ASC','priority'=> 0), 'enableSorting'=> true);
+  $columnDefs[] = array('field' => 'entry_id', 'displayName'=>'Entry ID', 'width'=>'75');
+  $columnDefs[] = array('field' => 'form_id', 'displayName'=> 'Form', 'width'=>'50');
+  $columnDefs[] = array('field' => 'proj_name', 'displayName'=>'Entry Name', 'width'=>'*');
+
+
+  $columnDefs[] = array('field' => 'location.area', 'displayName'=>'Area', 'sort'=> array('direction'=> 'uiGridConstants.ASC', 'priority'=> 1), 'enableSorting'=> true);
+  $columnDefs[] = array('field' => 'location.subarea', 'displayName'=>'Subarea', 'sort'=> array('direction'=> 'uiGridConstants.ASC', 'priority'=> 3), 'enableSorting'=> true);
+  $columnDefs[] = array('field' => 'location.location', 'displayName'=>'Location','sort'=> array('direction'=> 'uiGridConstants.ASC', 'priority'=> 2), 'enableSorting'=> true);
 
   $resArray  = array_unique($resArray);
   $attArray  = array_unique($attArray);
   $attnArray = array_unique($attnArray);
+  $colDefs2Sort = array();
   foreach($resArray as $key=>$resource){
-   $columnDefs[] = array('displayName'            => $resource,
-                         'field'=> 'resource.'.$key.'.qty');
-   $columnDefs[] = array('displayName'            => $resource .' - comment',
-                         'field'=> 'resource.'.$key.'.comment');
+   $colDefs2Sort[] = array('displayName' => $resource, 'field'=> 'resource.'.$key.'.qty');
+   $colDefs2Sort[] = array('displayName' => $resource .' - comment', 'field'=> 'resource.'.$key.'.comment');
   }
   foreach($attArray as $key=>$attribute){
-   $columnDefs[] = array('displayName'            => $attribute,
-                         'field'=> 'attribute.'.$key.'.value');
-   $columnDefs[] = array('displayName'            => $attribute .' - comment',
-                         'field'=> 'attribute.'.$key.'.comment');
+   $colDefs2Sort[] = array('displayName' => $attribute, 'field'=> 'attribute.'.$key.'.value');
+   $colDefs2Sort[] = array('displayName' => $attribute .' - comment', 'field'=> 'attribute.'.$key.'.comment');
   }
   foreach($attnArray as $key=>$attention){
-   $columnDefs[] = array('displayName'            => $attention,
-                         'field'=> 'attention.'.$key.'.comment');
+   $colDefs2Sort[] = array('displayName' => $attention, 'field'=> 'attention.'.$key.'.comment');
   }
-  //var_dump($columnDefs);
+  //sort $colDefs2Sort array by displayName
+  usort($colDefs2Sort, function($a, $b) {
+    return strcmp($a["displayName"], $b["displayName"]);
+  });
+  //array merge $colDefs2Sort with $columnDefs
+
+
   $retData = array();
   usort($data, "cmpEntryID");
+  //$data = (array) $data;
   //sort data by status, area, subarea, location
-
-  $retData['data'] = $data;
-  $retData['columnDefs'] = $columnDefs;
+  $columnDefs = array_merge($columnDefs,$colDefs2Sort);
+  $retData['data']        = $data;
+  $retData['columnDefs']  = $columnDefs;
   echo json_encode($retData);
   exit;
 }
