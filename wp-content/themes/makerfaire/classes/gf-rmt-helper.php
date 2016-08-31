@@ -480,27 +480,27 @@ class GFRMTHELPER {
 
       //field 14 - tables
       $pos = strpos($entryData['paymentTable'], 'One table');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],1,'');
       $pos = strpos($entryData['paymentTable'], 'Two tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],2,'');
       $pos = strpos($entryData['paymentTable'], 'Three Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],3,'');
       $pos = strpos($entryData['paymentTable'], 'Four Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],4,'');
       $pos = strpos($entryData['paymentTable'], 'Five Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],5,'');
       $pos = strpos($entryData['paymentTable'], 'Six Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],6,'');
       $pos = strpos($entryData['paymentTable'], 'Seven Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],7,'');
       $pos = strpos($entryData['paymentTable'], 'Eight Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],8,'');
       $pos = strpos($entryData['paymentTable'], 'Nine Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],9,'');
       $pos = strpos($entryData['paymentTable'], 'Ten Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],10,'');
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],0,'');
 
       //mapping for sponsor order form
       /* product fields - need to pull the .3 of the field to get the amount */
@@ -744,8 +744,8 @@ class GFRMTHELPER {
         $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $attribute_id, '', $comment, 'RMT attribute: '.$res->token.' -  comment');
       }
     }
-    //all changes/additions need to be written to change report
-    if($type=='update'){
+    //Write to the change report if this is a payment form or if this is an update thru MAT or admin resources tab
+    if($type=='update' || $entryData['fType'] == 'Payment'){
       if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
     }
     //set resource status and assign to
