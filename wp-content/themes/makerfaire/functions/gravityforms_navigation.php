@@ -188,7 +188,19 @@ function toolbar_link_to_mypage($wp_admin_bar) {
               'title' => 'Barnes And Noble Admin',
               'meta' => array('class' => 'my-toolbar-page'),
           );
+          $wp_admin_bar->add_node($args);
+          foreach ((array) $menu_items as $key => $menu_item) {
+               $args = array(
+                  'id' => $menu_item->object_id,
+                  'title' => $menu_item->title,
+                  'href' => $menu_item->url,
+                  'meta' => array('class' => 'my-toolbar-page'),
+                  'parent' => 'mf_admin_parent_' . $faire
+              );
 
+              $wp_admin_bar->add_node($args);
+            
+          }
           
         }
       }
