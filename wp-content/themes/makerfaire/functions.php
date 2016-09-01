@@ -173,6 +173,10 @@ function load_admin_scripts() {
       wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsnationaladmin.js', array('jquery'), null);
   }
 
+  $is_barnesandnoble = ( in_array('barnesandnoble', (array) $user->roles) );
+  if ($is_barnesandnoble) {
+      wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnobleadmin.js', array('jquery'), null);
+  }
   //styles
   wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');

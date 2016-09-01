@@ -11,6 +11,17 @@ function national_remove_admin_submenus() {
   }
 }
 
+//Remove edit forms
+add_action('admin_menu', 'barnesandnoble_remove_admin_submenus', 999);
+
+function barnesandnoble_remove_admin_submenus() {
+  $user = wp_get_current_user();
+  $is_barnesandnoble = ( in_array('barnesandnoble', (array) $user->roles) );
+  if ($is_barnesandnoble) {
+    remove_menu_page('gf_edit_forms');
+  }
+}
+
 //add new submenu for our custom built list page
 add_filter('gform_addon_navigation', 'add_menu_item');
 
@@ -118,6 +129,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
 
   $user = wp_get_current_user();
   $is_national = ( in_array('national', (array) $user->roles) );
+  $is_barnesandnoble = ( in_array('barnesandnoble', (array) $user->roles) );
   $locations = get_registered_nav_menus();
   $menus = wp_get_nav_menus();
   $menu_locations = get_nav_menu_locations();
@@ -161,7 +173,47 @@ function toolbar_link_to_mypage($wp_admin_bar) {
         }
       }
     }
-  } else {
+  } elseif ($is_barnesandnoble) {
+
+    $location_id = 'mf-admin-barnesandnoble-register-menu';
+    if (isset($menu_locations[$location_id])) {
+      foreach ($menus as $menu) {
+        // If the ID of this menu is the ID associated with the location we're searching for
+        if ($menu->term_id == $menu_locations[$location_id]) {
+          // This is the correct menu
+          $menu_items = wp_get_nav_menu_items($menu);
+
+          $args = array(
+              'id' => 'mf_admin_parent',
+              'title' => 'Barnes And Noble Admin',
+              'meta' => array('class' => 'my-toolbar-page'),
+          );
+
+          $wp_admin_bar->add_node($args);
+          buildFaireDrop($wp_admin_bar, 'BN16');
+
+          //build faire specific admin
+          foreach ((array) $menu_items as $key => $menu_item) {
+            if ($menu_item->menu_item_parent == 0) {
+              // each MF Admin menu has a parent item set that will tell us which faire to add these menu item's too
+              $faire = $menu_item->attr_title;
+            } else {
+              $args = array(
+                  'id' => $menu_item->object_id,
+                  'title' => $menu_item->title,
+                  'href' => $menu_item->url,
+                  'meta' => array('class' => 'my-toolbar-page'),
+                  'parent' => 'mf_admin_parent_' . $faire
+              );
+
+              $wp_admin_bar->add_node($args);
+            }
+          }
+        }
+      }
+    }
+  }
+  else {
     // bay area
     $location_id = 'mf-admin-bayarea-register-menu';
     if (isset($menu_locations[$location_id])) {
