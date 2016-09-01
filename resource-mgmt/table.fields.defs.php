@@ -97,7 +97,7 @@ $dateCellTemplate    =
 //change report
 $tableFields['wp_rg_lead_detail_changes'][] = array(
     'fieldName'   => 'lead_id',
-    'filterType'  => 'text',
+    'filterType'   => 'entrylink',
     'width'       => 75,
   );
 $tableFields['wp_rg_lead_detail_changes'][] = array(

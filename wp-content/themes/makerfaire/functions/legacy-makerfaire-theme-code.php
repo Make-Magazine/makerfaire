@@ -540,7 +540,7 @@ function make_cpt_icons() { ?>
 function make_copyright_footer() { ?>
   <div class="col-xs-12 footer_copyright">
     <div class="text-center">
-      <p class="muted"><small>Make: and Maker Faire are registered trademarks of <a href="//makermedia.com">Maker Media, Inc.</small></p>
+      <p class="muted"><small>Make: and Maker Faire are registered trademarks of <a href="//makermedia.com">Maker Media, Inc.</a> | <a href="//makermedia.com/privacy/">Privacy</a> | <a href="//makermedia.com/terms/">Terms</a></small></p>
       <p class="muted"><small>Copyright &copy; 2004-<?php echo date("Y") ?> Maker Media, Inc.  All rights reserved</small></p>
     </div>
   </div>

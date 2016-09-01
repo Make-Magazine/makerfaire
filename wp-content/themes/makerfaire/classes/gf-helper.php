@@ -58,7 +58,7 @@ function gform_previous_button_markup( $previous_button ) {
  */
 add_action( 'gform_after_submission', 'updateRMT', 10, 2 );
 function updateRMT( $entry, $form ) {
-  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form);
+  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form,'new');
 }
 
 /* This function will write all user changes to entries to a database table to create a change report */
