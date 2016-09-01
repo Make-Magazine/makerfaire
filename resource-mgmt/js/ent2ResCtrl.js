@@ -1,20 +1,19 @@
 // reports controller
-rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiGridConstants', function ($scope, $routeParams, $http,uiGridConstants) {
+rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiGridConstants', function ($scope, $routeParams, $http, uiGridConstants) {
   $scope.reports    = {};
   $scope.reports.loading   = true;
-  $scope.reports.showGrid  = true;
-  $scope.reports.showbuild = false;
-
+  $scope.reports.showGrid  = false;
+  $scope.data     = [];
   $scope.msg = {};
 
 
   //set up gridOptions
-    $scope.gridOptions = {enableFiltering: true,
+    $scope.gridOptions = {
+    enableFiltering: true,
     enableSorting: true,
     enableGridMenu: true,
-    rowHeight: 100,
-
-    exporterCsvFilename: 'export.csv',
+    minRowsToShow:22,
+    exporterCsvFilename: 'ent2resource.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
 
@@ -41,46 +40,71 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
   };
 
   //default
-  var tablename = 'wp_rmt_entry_resources';
-  var type      = 'ent2resource';
   var pageTitle = 'Reports';
-  var subTitle = 'Entry to Resource';
+  var subTitle  = 'Entry to Resource';
 
   jQuery('#pageTitle').html(pageTitle);
   jQuery('#subTitle').html(subTitle);
 
-  var url = '/resource-mgmt/reports.ajax.php';
-
   if("faire" in $routeParams){
     $scope.reports.selFaire = $routeParams.faire;
+    $scope.reports.subRoute = $routeParams.faire;
   }else{
     $scope.reports.selFaire = '';
   }
 
-  //get grid data
-  $http({
-    method: 'post',
-    url: url,
-    data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : type,'viewOnly':true }),
-    headers: {'Content-Type': 'application/json'}
-  })
-  .then(function(response){
-    angular.forEach(response.data.columnDefs, function(value, key) {
-      if(value.field=='faire' && $scope.reports.selFaire!=''){
-        response.data.columnDefs[key].filter = { term: $scope.reports.selFaire, type: uiGridConstants.filter.INPUT };
-      }
-      if(("sort" in value)){
-        value.sort.direction = uiGridConstants.ASC;
-      }
-    });
-    $scope.gridOptions.columnDefs = response.data.columnDefs;
-    $scope.gridOptions.data       = response.data.data;
+  $scope.reports.route = 'ent2resources';
 
-  }) //end response
-  .finally(function () {
-    $scope.reports.loading  = false;
-    $scope.reports.showGrid = true;
-  });
+    //faire dropdown
+  $scope.retrieveData = function(type) {
+    if(type=='faires'){
+      var vars = jQuery.param({ 'type' :  type});
+      var url = '/resource-mgmt/ajax.php';
+      var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
+    }else if(type=='ent2res'){
+      $scope.reports.loading = true;
+      var vars = JSON.stringify({ 'table' : 'wp_rmt_entry_resources' , 'type' : 'ent2resource','faire':$scope.reports.selFaire });
+      var url = '/resource-mgmt/reports.ajax.php';
+      var head2pass =  {'Content-Type': 'application/json'};
+    }
+
+    //get grid data
+    $http({
+      method: 'post',
+      url: url,
+      data: vars,
+      headers: head2pass
+    })
+    .then(function(response){
+      if("error" in response.data) {
+        alert(response.data.error);
+      }else if(type=='faires'){
+        $scope.data[type] = response.data[type];
+      }else if(type=='ent2res'){
+        //get grid data
+        angular.forEach(response.data.columnDefs, function(value, key) {
+          if(("sort" in value)){
+            value.sort.direction = uiGridConstants.ASC;
+          }
+        });
+
+        $scope.gridOptions.columnDefs = response.data.columnDefs;
+        $scope.gridOptions.data       = response.data.data;
+      }
+    }).finally(function () {
+      if(type=='faires'){
+        faires = $scope.data.faires;
+        angular.forEach(faires, function(value,key){
+          if(value.faire==$scope.subRoute){
+            $scope.reports.selFaire = key;
+          }
+        });
+      }
+      $scope.reports.loading  = false;
+      $scope.reports.showGrid = true;
+    });
+  };
+
 }])
   .filter('griddropdown', function () {
     return function (input, map) {

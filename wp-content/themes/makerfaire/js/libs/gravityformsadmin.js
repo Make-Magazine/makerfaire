@@ -1,7 +1,7 @@
 jQuery( document ).ready(function() {
   var $tableheader = jQuery('th#header');
 	var $tableheadentry = jQuery('th#details');
-    
+
 	jQuery(function() {
     jQuery($tableheadentry).click(
       function() {
@@ -92,7 +92,7 @@ jQuery( document ).ready(function() {
     }else{
       jQuery(currentEle).html('<input class="thVal" maxlength="4" type="text" size="4" value="'+value+'" />');
     }
-    console.log(jQuery(currentEle).html());
+
     jQuery(".thVal").focus();
     jQuery(".thVal").focusout(function () {
       //update value in db
@@ -328,6 +328,7 @@ function resAttDelete(currentEle){
     var data = {
         'action': 'delete-entry-resAtt',
         'ID': rowID,
+        'entry_id': jQuery('[name="entry_info_entry_id"]').val(),
         'table': fieldData['table']
       };
     jQuery.post(ajaxurl, data, function(response) {

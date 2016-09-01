@@ -58,7 +58,7 @@ function gform_previous_button_markup( $previous_button ) {
  */
 add_action( 'gform_after_submission', 'updateRMT', 10, 2 );
 function updateRMT( $entry, $form ) {
-  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form);
+  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form,'new');
 }
 
 /* This function will write all user changes to entries to a database table to create a change report */
@@ -112,40 +112,42 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry=array()){
   if(!empty($updates)){
     $current_user = wp_get_current_user();
     $user_id = $current_user->ID;//current user id
-    $inserts = '';
-    //field name
+    $inserts = array();
 
     //update database with this information
     foreach($updates as $update){
-     if($inserts !='') $inserts.= ',';
-      $inserts .= '('.$user_id.','.
-              $update['lead_id'].','.
-              $form['id'].','.
-              addslashes($update['field_id']).',"'.
-              addslashes($update['field_before']).'","'.
-              addslashes($update['field_after']).'","'.
-              addslashes($update['fieldLabel']).'","'.
-              addslashes($update['status_at_update']) . '"'.
-              ')';
+      $inserts[] = array(
+          'user_id'           => $user_id,
+          'lead_id'           => $update['lead_id'],
+          'form_id'           => $form['id'],
+          'field_id'          => addslashes($update['field_id']),
+          'field_before'      => addslashes($update['field_before']),
+          'field_after'       => addslashes($update['field_after']),
+          'fieldLabel'        => addslashes($update['fieldLabel']),
+          'status_at_update'  => addslashes($update['status_at_update']));
     }
-
-    $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel,status_at_update) values " .$inserts;
-
-
-    global $wpdb;
-    $wpdb->get_results($sql);
+    updateChangeRPT($inserts);
   }
 }
 
-/*
- * After Note Added handle jdb sync
-*/
-//add_action( 'gform_post_note_added', 'note_to_jdb', 10, 2 );
-function note_to_jdb( $noteid,$entryid,$userid,$username,$note,$notetype ) {
-	//error_log('$GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$noteid);
-	//$result=GFJDBHELPER::gravityforms_send_note_to_jdb($entryid,$noteid,$note);
-	//error_log('GFJDBHELPER:gravityforms_send_note_to_jdb:result:'.$result);
-
+/* function to add record to change report */
+function updateChangeRPT($updates){
+  $inserts = array();
+  $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel,status_at_update) values ";
+  foreach($updates as $update){
+      $inserts[]= '('.$update['user_id']      . ', ' .
+                      $update['lead_id']      . ', ' .
+                      $update['form_id']      . ', ' .
+                  '"'.$update['field_id']         . '", ' .
+                  '"'.$update['field_before']     . '", ' .
+                  '"'.$update['field_after']      . '", '.
+                  '"'.$update['fieldLabel']       . '", '.
+                  '"'.$update['status_at_update'] . '"'.
+              ')';
+    }
+  $sql .= implode(", ",$inserts);
+  global $wpdb;
+  $wpdb->get_results($sql);
 }
 
 //action to modify field 320 to display the text instead of the taxonomy code

@@ -26,11 +26,11 @@ resourceApp.config(['$routeProvider',
         controller: 'reportsCtrl'
       }).
       when('/ent2resources', {
-        templateUrl: 'partials/reports.html',
+        templateUrl: 'partials/ent2resources.html',
         controller: 'ent2ResCtrl'
       }).
       when('/ent2resources/:faire', {
-        templateUrl: 'partials/reports.html',
+        templateUrl: 'partials/ent2resources.html',
         controller: 'ent2ResCtrl'
       }).
       when('/:main/:sub', {

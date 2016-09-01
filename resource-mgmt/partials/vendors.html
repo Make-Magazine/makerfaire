@@ -1,12 +1,29 @@
 <div class="vendorsView col-xs-12 col-sm-12 col-md-12 col-lg-12 animated fadeInUp">
-  <button id="addNew" ng-click="addNew()">Add New</button>
-  <div ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-resize-columns ui-grid-exporter   class="grid">
-    <div class="grid-msg-overlay" ng-hide="!resource.loading">
-      <div class="msg">
-        <span>
-          Loading Data...
-          <i class="fa fa-spinner fa-spin"></i>
-        </span>
+
+  <div ng-show="resource.subRoute=='subareas'">
+    <div class="container" ng-init="retrieveData('faires')">
+      <div class="row">
+        <div class="col-md-3">
+          <h3>Select Faire</h3>
+          <select ng-model="resource.selFaire" ng-change="retrieveData('subareas')" name="faireSelect">
+            <option value="all">All Faires</option>
+            <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-hide="resource.selFaire=='' && resource.subRoute=='subareas'">
+    <button id="addNew" ng-click="addNew()">Add New</button>
+    <div ui-grid="gridOptions" ui-grid-edit ui-grid-row-edit ui-grid-cellNav ui-grid-resize-columns ui-grid-exporter ui-grid-auto-resize class="grid">
+      <div class="grid-msg-overlay" ng-hide="!resource.loading">
+        <div class="msg">
+          <span>
+            Loading Data...
+            <i class="fa fa-spinner fa-spin"></i>
+          </span>
+        </div>
       </div>
     </div>
   </div>

@@ -97,7 +97,7 @@ class maker {
 
     $maker_array = array();
     if($this->maker_id==''){
-      return array('data'=>array());
+      //return array('data'=>array());
     }
 
     if ( current_user_can( 'mat_view_created_entries') ) {
@@ -178,7 +178,7 @@ class maker {
           $entries['data'][]=$data;
        }
     }
-
+    if(!isset($entries['data'])) $entries['data']=array();
     return $entries;
   }
 

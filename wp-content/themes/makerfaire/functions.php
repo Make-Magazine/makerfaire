@@ -53,7 +53,6 @@ include_once TEMPLATEPATH . '/classes/gf-entry-notifications.php';
 include_once TEMPLATEPATH . '/classes/gf-helper.php';
 include_once TEMPLATEPATH . '/classes/makerfaire-helper.php';
 include_once TEMPLATEPATH . '/classes/gf-rmt-helper.php';
-include_once TEMPLATEPATH . '/classes/gf-jdb-helper.php';
 include_once TEMPLATEPATH . '/classes/mf-sharing-cards.php';
 if (!defined('LOCAL_DEV_ENVIRONMENT') || !LOCAL_DEV_ENVIRONMENT) {
   include_once TEMPLATEPATH . '/classes/mf-login.php';
@@ -139,15 +138,26 @@ function load_scripts() {
 
 add_action('wp_enqueue_scripts', 'load_scripts');
 
-//Load custom gravity forms .s
+//Load custom gravity forms js for barnes and noble forms
+//Change the formid below to load for barnes and noble
 
-function enqueue_custom_script($form, $is_ajax) {
+function enqueue_custom_barnesandnoble_script($form, $is_ajax) {
   $my_theme = wp_get_theme();
   $my_version = $my_theme->get('Version');
-  wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityforms.js', array('jquery'),$my_version);
+  wp_enqueue_script('make-gravityformsbarnesandnoble', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnoble.js', array('jquery'),$my_version);
 }
 
-add_action('gform_enqueue_scripts', 'enqueue_custom_script', 10, 2);
+add_action('gform_enqueue_scripts_108', 'enqueue_custom_barnesandnoble_script', 10, 2);
+
+//Load custom gravity forms js for all forms
+
+function enqueue_custom_allforms_script($form, $is_ajax) {
+  $my_theme = wp_get_theme();
+  $my_version = $my_theme->get('Version');
+  wp_enqueue_script('make-gravityformsallforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsallforms.js', array('jquery'),$my_version);
+}
+
+add_action('gform_enqueue_scripts', 'enqueue_custom_allforms_script', 10, 2);
 
 function load_admin_scripts() {
   //scripts
@@ -163,6 +173,10 @@ function load_admin_scripts() {
       wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsnationaladmin.js', array('jquery'), null);
   }
 
+  $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
+  if ($is_barnesandnoble) {
+      wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnobleadmin.js', array('jquery'), null);
+  }
   //styles
   wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');

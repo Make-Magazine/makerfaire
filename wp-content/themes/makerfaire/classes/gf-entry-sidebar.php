@@ -719,12 +719,6 @@ function mf_admin_pre_render(){
       case 'duplicate_entry_id' :
         duplicate_entry_id($lead,$form);
         break;
-      case 'sync_jdb' :
-        GFJDBHELPER::gravityforms_send_entry_to_jdb($entry_info_entry_id);
-        break;
-      case 'sync_status_jdb' :
-        GFJDBHELPER::gravityforms_sync_status_jdb($entry_info_entry_id,$entry_status);
-        break;
       case 'send_conf_letter' :
         //first update the schedule if one is set
         set_entry_schedule($lead,$form);

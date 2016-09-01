@@ -13,19 +13,19 @@ class GFRMTHELPER {
    * This function is called when there is an entry update or new entry submission
    * $type - this tells us if this is a new submission or an update to the entry
 	*/
-	public static function gravityforms_makerInfo($entry,$form) {
+	public static function gravityforms_makerInfo($entry,$form,$type='update') {
 		//format Entry information
     $entryData = self::gravityforms_format_record($entry,$form);
 
     //build/update RMT data
-    self::buildRmtData($entryData);
+    self::buildRmtData($entryData, $type);
 
     //update/insert into maker tables
     self::updateMakerTables($entry['id']);
 	}
 
 	/*
-	 * Function for formatting gravity forms lead into usable jdb data
+	 * Function for formatting gravity forms lead data
 	*/
 	public static function gravityforms_format_record($lead,$form) {
     $entry_id = $lead['id'];
@@ -383,7 +383,7 @@ class GFRMTHELPER {
 		return $entry_data;
 	}
 
-  public static function buildRmtData($entryData){
+  public static function buildRmtData($entryData,$type='update'){
     global $wpdb;
     $resourceID  = array();
     $attributeID = array();
@@ -396,7 +396,7 @@ class GFRMTHELPER {
      *  E N T R Y   R E S O U R C E S   M A P P I N G
      *   build list of resource ID's and tokens
      */
-    $sql = "select resource_category_id, ID,token from wp_rmt_resources";
+    $sql = "select resource_category_id, ID, token from wp_rmt_resources";
     foreach($wpdb->get_results($sql) as $row){
       $resourceID[$row->token] = array('id'=>$row->ID,'cat_id'=>$row->resource_category_id);
     }
@@ -480,27 +480,27 @@ class GFRMTHELPER {
 
       //field 14 - tables
       $pos = strpos($entryData['paymentTable'], 'One table');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],1,'');
       $pos = strpos($entryData['paymentTable'], 'Two tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],2,'');
       $pos = strpos($entryData['paymentTable'], 'Three Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],3,'');
       $pos = strpos($entryData['paymentTable'], 'Four Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],4,'');
       $pos = strpos($entryData['paymentTable'], 'Five Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],5,'');
       $pos = strpos($entryData['paymentTable'], 'Six Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],6,'');
       $pos = strpos($entryData['paymentTable'], 'Seven Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],7,'');
       $pos = strpos($entryData['paymentTable'], 'Eight Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],8,'');
       $pos = strpos($entryData['paymentTable'], 'Nine Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],9,'');
       $pos = strpos($entryData['paymentTable'], 'Ten Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],10,'');
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],0,'');
 
       //mapping for sponsor order form
       /* product fields - need to pull the .3 of the field to get the amount */
@@ -605,9 +605,10 @@ class GFRMTHELPER {
       $user = 0;  //user = 0 - payment form
     }
 
+    $chgRPTins = array();
     //add resources to the table
     foreach($resource as $value){
-      $resource_id = $value[0]['id']; //set in $resourceID
+      $resource_id = $value[0]['id'];       //set in $resourceID
       $cat_id      = $value[0]['cat_id'];  //set in $resourceID
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
@@ -632,34 +633,47 @@ class GFRMTHELPER {
       if($entryData['fType'] == 'Payment'){
         $user = 'NULL';
         // is resource already set?
-        $res = $wpdb->get_row('SELECT entry_res.* '
-                . ' FROM `wp_rmt_entry_resources` entry_res'
+        $res = $wpdb->get_row("select wp_rmt_entry_resources.*, wp_rmt_resources.token "
+                . " from wp_rmt_entry_resources"
+                . " left outer join wp_rmt_resources on wp_rmt_resources.ID=resource_id"
                 . ' where entry_id='.$entryID.' and resource_id ='.$resource_id);
-
         //matching record found
         if ( null !== $res ) {  // yes, is qty 0?
           if($res->lockBit==0){ //do not update if this resource is locked
             if($qty==0){  // yes, delete
               $wpdb->get_results('delete from `wp_rmt_entry_resources` where id='.$res->ID);
+              $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, $res->qty, '', 'RMT Resource: '.$res->token.' -  qty');
+              $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, $res->comment, '', 'RMT Resource: '.$res->token.' - comment');
             } else { // no, update
               //If there are changes, update this record
               if($res->resource_id != $resource_id || $res->qty != $qty || $res->comment != $comment){
                 $wpdb->get_results('update `wp_rmt_entry_resources` '
                       . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.',comment="'.$comment.'", update_stamp=now() where id='.$res->ID);
+
+                //update change report
+                if($res->qty!=$qty)
+                  $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, $res->qty, $qty, 'RMT Resource: '.$res->token.' -  qty');
+                if($res->comment != $comment)
+                  $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, $res->comment, $comment, 'RMT Resource: '.$res->token.' - comment');
+                if($res->resource_id!=$resource_id)
+                  $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, $res->resource_id, $resource_id, 'RMT Resource: id changed');
               }
             }
           }
         } elseif($qty!=0) { //no record found, if qty is not 0 - add
           //insert this record
-          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
-                  . " (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
                   . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
+          //update change report
+          $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$resource_id);
+          $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, '', $qty, 'RMT Resource: '.$res->token.' -  qty');
+          $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, '', $comment, 'RMT Resource: '.$res->token.' - comment');
         }
       } else { //all other form types
         //find if they already have a resource set with the same Item (ie. chairs, tables, electricity, etc)
         $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id '
-                . ' FROM `wp_rmt_entry_resources` entry_res,wp_rmt_resources res '
-                . ' where entry_id='.$entryID.' and entry_res.resource_id = res.ID and resource_category_id='.$cat_id);
+                            . ' FROM `wp_rmt_entry_resources` entry_res,wp_rmt_resources res '
+                            . ' where entry_id='.$entryID.' and entry_res.resource_id = res.ID and resource_category_id='.$cat_id);
 
         //matching record found
         if ( null !== $res ) {
@@ -668,14 +682,24 @@ class GFRMTHELPER {
             //If there are changes, update this record
             if($res->resource_id!=$resource_id || $res->qty!=$qty){
               $wpdb->get_results('update `wp_rmt_entry_resources` '
-                    . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.', update_stamp=now() where id='.$res->ID);
+                    . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.', user='.$user.', update_stamp=now() where id='.$res->ID);
+
+              //update change report
+              if($res->qty!=$qty)
+                $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, $res->qty, $qty, 'RMT resource: '.$res->token.' -  qty');
+              if($res->resource_id!=$resource_id)
+                $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, $res->resource_id, $resource_id, 'RMT resource: id changed');
             }
           }
         }else{
           //insert this record
-          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` "
-                  . " (`entry_id`, `resource_id`, `qty`, `comment`, user) "
-                  . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
+          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+                          . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
+
+          //update change report
+          $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$resource_id);
+          $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, '', $qty, 'RMT resource: '.$res->token.' -  qty');
+          $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $resource_id, '', $comment, 'RMT resource: '.$res->token.' - comment');
         }
       } //end check for payment form type
     }
@@ -687,9 +711,10 @@ class GFRMTHELPER {
       $comment      = htmlspecialchars($value[2]);
 
       //check if attribute is locked
-       $res = $wpdb->get_row("select * from `wp_rmt_entry_attributes` "
-                . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
-
+      $res = $wpdb->get_row("select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token"
+                          . " from wp_rmt_entry_attributes"
+                          . " left outer join wp_rmt_entry_att_categories on wp_rmt_entry_att_categories.ID=attribute_id"
+                          . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
        //matching record found
       if ( null !== $res ) {
         if($res->lockBit==0){  //If this attribute is not locked, update this record
@@ -702,14 +727,27 @@ class GFRMTHELPER {
             $wpdb->get_results('update `wp_rmt_entry_attributes` '
                   . ' set comment="'.$comment.'", user='.$user.', value="'.$attvalue .'",	update_stamp=now()'
                   . ' where id='.$res->ID);
+            //update change report
+            if($res->comment!=$comment)
+              $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $attribute_id, $res->comment, $comment, 'RMT attribute: '.$res->token.' -  comment');
+            if($res->value!=$attvalue)
+              $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $attribute_id, $res->value, $attvalue, 'RMT attribute: '.$res->token.' -  value');
           }
         }
       }else{
         $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
                       . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')');
+
+        //update change report
+        $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$attribute_id);
+        $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $attribute_id, '', $attvalue, 'RMT attribute: '.$res->token.' -  value');
+        $chgRPTins[] = RMTchangeArray($user, $entryID, $entryData['form_id'], $attribute_id, '', $comment, 'RMT attribute: '.$res->token.' -  comment');
       }
     }
-
+    //Write to the change report if this is a payment form or if this is an update thru MAT or admin resources tab
+    if($type=='update' || $entryData['fType'] == 'Payment'){
+      if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
+    }
     //set resource status and assign to
     //assign values can be found in functions.php in custom_entry_meta function
     $assignTo    = 'na';//not assigned to anyone
@@ -761,9 +799,8 @@ class GFRMTHELPER {
     $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
 
     //wp_mf_entity
-    $wp_mf_entitysql = "insert into wp_mf_entity "
-                    . "    (lead_id, presentation_title, presentation_type, special_request, "
-                    . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover) "
+    $wp_mf_entitysql = "insert into wp_mf_entity (lead_id, presentation_title, presentation_type, special_request,  OnsitePhone, "
+                                              . " desc_short, desc_long, project_photo, status, category, faire, mobile_app_discover) "
                     . " VALUES ('".$entryData['entry_id']             . "',"
                             . ' "'.htmlentities($entryData['project_name'])         . '", '
                             . ' "'.htmlentities($entryData['presentation_type'])    . '", '
@@ -846,8 +883,7 @@ class GFRMTHELPER {
           $guid = createGUID($entryData['entry_id'] .'-'.$type);
         }
 
-        $wp_mf_makersql = "INSERT INTO wp_mf_maker "
-                        . " (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `maker_id`, `Photo`, `website`) "
+        $wp_mf_makersql = "INSERT INTO wp_mf_maker  (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `maker_id`, `Photo`, `website`) "
                         . ' VALUES ("'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'", "'.$phone.'", '
                                      . '"'.$twitter.'", "'.$guid.'","'.$photo.'","'.$website.'")'
                         . ' ON DUPLICATE KEY UPDATE lead_id='.$entryData['entry_id'].',form_id  = '.$form_id;
@@ -947,8 +983,7 @@ class GFRMTHELPER {
         $results = $wpdb->get_results($wpdb->prepare("SELECT maker_id FROM wp_mf_maker WHERE email=%s", $email) );
         $guid = ($wpdb->num_rows != 0?$guid = $results[0]->maker_id: createGUID($entryID .'-'.$type));
 
-        $wp_mf_makersql = "INSERT INTO wp_mf_maker "
-                        . " (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `maker_id`, `Photo`, `website`) "
+        $wp_mf_makersql = "INSERT INTO wp_mf_maker (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `maker_id`, `Photo`, `website`) "
                         . ' VALUES ("'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'", "'.$phone.'", '
                                  . '"'.$twitter.'", "'.$guid.'", "'.$photo.'", "'.$website.'")'
                         . ' ON DUPLICATE KEY UPDATE maker_id="'.$guid.'"';
@@ -966,10 +1001,8 @@ class GFRMTHELPER {
 
         //build maker to entity table
         //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
-        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`"
-                              . " (`maker_id`, `entity_id`, `maker_type`) "
-                              . ' VALUES ("'.$guid.'",'.$entryID.',"'.$type.'") '
-                              . ' ON DUPLICATE KEY UPDATE maker_id="'.$guid.'";';
+        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity` (`maker_id`, `entity_id`, `maker_type`) "
+                              . ' VALUES ("'.$guid.'",'.$entryID.',"'.$type.'")  ON DUPLICATE KEY UPDATE maker_id="'.$guid.'";';
 
         $wpdb->get_results($wp_mf_maker_to_entity);
       }
@@ -1181,6 +1214,16 @@ class GFRMTHELPER {
     $return = array('maker'=>$makerArray,'entity'=>$entityArray);
     return $return;
   }
-
-
 }
+
+function RMTchangeArray($user, $entryID, $formID, $field_id, $field_before, $field_after, $fieldLabel){
+    $return = array('user_id'           => $user,
+      'lead_id'           => $entryID,
+      'form_id'           => $formID,
+      'field_id'          => $field_id,
+      'field_before'      => $field_before,
+      'field_after'       => $field_after,
+      'fieldLabel'        => $fieldLabel,
+      'status_at_update'  => '');
+    return $return;
+  }
