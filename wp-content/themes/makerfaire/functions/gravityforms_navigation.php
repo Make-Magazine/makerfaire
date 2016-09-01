@@ -16,7 +16,7 @@ add_action('admin_menu', 'barnesandnoble_remove_admin_submenus', 999);
 
 function barnesandnoble_remove_admin_submenus() {
   $user = wp_get_current_user();
-  $is_barnesandnoble = ( in_array('barnesandnoble', (array) $user->roles) );
+  $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
   if ($is_barnesandnoble) {
     remove_menu_page('gf_edit_forms');
   }
@@ -129,7 +129,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
 
   $user = wp_get_current_user();
   $is_national = ( in_array('national', (array) $user->roles) );
-  $is_barnesandnoble = ( in_array('barnesandnoble', (array) $user->roles) );
+  $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
   $locations = get_registered_nav_menus();
   $menus = wp_get_nav_menus();
   $menu_locations = get_nav_menu_locations();

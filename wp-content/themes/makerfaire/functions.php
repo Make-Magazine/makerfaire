@@ -173,7 +173,7 @@ function load_admin_scripts() {
       wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsnationaladmin.js', array('jquery'), null);
   }
 
-  $is_barnesandnoble = ( in_array('barnesandnoble', (array) $user->roles) );
+  $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
   if ($is_barnesandnoble) {
       wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnobleadmin.js', array('jquery'), null);
   }
