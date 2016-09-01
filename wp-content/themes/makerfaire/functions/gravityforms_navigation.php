@@ -189,26 +189,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
               'meta' => array('class' => 'my-toolbar-page'),
           );
 
-          $wp_admin_bar->add_node($args);
-          buildFaireDrop($wp_admin_bar, 'BN16');
-
-          //build faire specific admin
-          foreach ((array) $menu_items as $key => $menu_item) {
-            if ($menu_item->menu_item_parent == 0) {
-              // each MF Admin menu has a parent item set that will tell us which faire to add these menu item's too
-              $faire = $menu_item->attr_title;
-            } else {
-              $args = array(
-                  'id' => $menu_item->object_id,
-                  'title' => $menu_item->title,
-                  'href' => $menu_item->url,
-                  'meta' => array('class' => 'my-toolbar-page'),
-                  'parent' => 'mf_admin_parent_' . $faire
-              );
-
-              $wp_admin_bar->add_node($args);
-            }
-          }
+          
         }
       }
     }
