@@ -84,6 +84,7 @@ class GFEntryList {
 		if ( ! is_null( $read ) ) {
 			$search_criteria['field_filters'][] = array( 'key' => 'is_read', 'value' => (bool) $read );
 		}
+    $search_criteria = gf_apply_filters( array( 'gform_search_criteria_entry_list', $form_id ), $search_criteria, $form_id );
 
 		$search_field_id = rgget( 'field_id' );
 

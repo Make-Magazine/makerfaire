@@ -34,3 +34,17 @@ function BN_storeSelect( $form ) {
   }
   return($form);
 }
+
+add_filter( 'gform_search_criteria_entry_list_108', 'override_search_criteria' );
+function override_search_criteria( $search_criteria ) {
+  if(isset($_GET["store"]))
+  {$store = $_GET["store"];
+  
+  $search_criteria['field_filters']['mode'] = 'any';
+  $search_criteria['field_filters'][] = array( 'key' => '341', 'value' => $store );
+  $search_criteria['field_filters'][] = array( 'key' => '342', 'value' => $store );
+  $search_criteria['field_filters'][] = array( 'key' => '343', 'value' => $store );
+  }
+  return $search_criteria;
+  
+}

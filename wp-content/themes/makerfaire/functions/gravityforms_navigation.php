@@ -182,22 +182,22 @@ function toolbar_link_to_mypage($wp_admin_bar) {
         if ($menu->term_id == $menu_locations[$location_id]) {
           // This is the correct menu
           $menu_items = wp_get_nav_menu_items($menu);
-
           $args = array(
-              'id' => 'mf_admin_parent',
+              'id' => 'mf_admin_parent_barnesandnoble',
               'title' => 'Barnes And Noble Admin',
               'meta' => array('class' => 'my-toolbar-page'),
           );
           $wp_admin_bar->add_node($args);
           foreach ((array) $menu_items as $key => $menu_item) {
-               $args = array(
+          
+            $args = array(
                   'id' => $menu_item->object_id,
                   'title' => $menu_item->title,
                   'href' => $menu_item->url,
                   'meta' => array('class' => 'my-toolbar-page'),
-                  'parent' => 'mf_admin_parent_' . $faire
+                  'parent' => 'mf_admin_parent_barnesandnoble'
               );
-
+          
               $wp_admin_bar->add_node($args);
             
           }

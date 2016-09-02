@@ -6,8 +6,8 @@ jQuery(document).ready(function () {
 
   //Barnes and Noble Store Select
   //On page load if State is selected - populate the location drop down (this happens when the prev button is used)
-  if (jQuery('#input_108_378').length) {
-    if (jQuery('#input_108_378').val() !== null) {
+  if (jQuery('#input_108_378').length || jQuery('#input_108_350').length) {
+    if (jQuery('#input_108_378').val() !== null || jQuery('#input_108_350').val() !== null) {
       jQuery('#field_108_341').show();
       jQuery('#field_108_342').show();
       jQuery('#field_108_343').show();
@@ -25,6 +25,17 @@ jQuery(document).ready(function () {
   }
   //On state change, populate the location drop down
   jQuery("#input_108_378").change(function () {
+    var state = jQuery(this).val();
+    console.log(state);
+    if (state !== null)
+    {
+      jQuery('#field_108_341').show();
+      jQuery('#field_108_342').show();
+      jQuery('#field_108_343').show();
+      popStoreSel(state);
+    }
+  });
+  jQuery("#input_108_350").change(function () {
     var state = jQuery(this).val();
     console.log(state);
     if (state !== null)
