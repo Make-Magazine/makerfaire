@@ -128,16 +128,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
               "faire": faire,
-              "selectedFields":[
-                {"id":"55.2","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},
-                {"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Launching a product or service","type":"checkbox","$$hashKey":"uiGrid-002D"},
-                {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"}
-              ],
-              "rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:178","checked":true}],
-                         "attribute":[{"id":"all","value":"All Attributes","$$hashKey":"object:252","checked":true}],
-                         "attention":[{"id":"all","value":"All Attention","$$hashKey":"object:272","checked":true}],
-              "meta":[]
-            },"type":"customRpt","location":true};
+              "selectedFields":[{"id":"55.2","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},{"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Launching a product or service","type":"checkbox","$$hashKey":"uiGrid-002D"},{"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"}],"rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:178","checked":true}],"attribute":[{"id":"all","value":"All Attributes","$$hashKey":"object:252","checked":true}],"attention":[{"id":"all","value":"All Attention","$$hashKey":"object:272","checked":true}],"meta":[]},"type":"customRpt","location":true};
       var subTitle = 'Commercial';
       $scope.reports.callAJAX(vars);
     }else
@@ -156,7 +147,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{"resource":[],"attribute":[],"attention":[],
               "meta":[{"id":"res_status","type":"meta","value":"Resource Status","$$hashKey":"object:371","checked":true}]},
-              "type":"customRpt", "location":true
+              "type":"customRpt"
             };
       var subTitle = 'CM Payment(s)';
       $scope.reports.callAJAX(vars);
@@ -171,7 +162,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                  "type":"textarea",
                  "inputs":"",
                  "$$hashKey":"uiGrid-011P"},
-               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","$$hashKey":"uiGrid-01AB"},
                {"id":"55.1",
                  "label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]",
                  "choices":"Selling at Maker Faire [Commercial Maker]",
@@ -207,22 +197,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
                {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"}
              ],
-             "rmtData":{"resource":[
-                 {"id":"all","value":"All Resources","$$hashKey":"object:695","checked":true},
-                 {"id":"2","value":"Tables","$$hashKey":"object:696","checked":true},
-                 {"id":"3","value":"Chairs","$$hashKey":"object:697","checked":true},
-                 {"id":"9","value":"Electrical 120V","$$hashKey":"object:698","checked":true}],
-               "attribute":[
-                 {"id":"2","value":"Space Size","$$hashKey":"object:770","checked":true},
-                 {"id":"4","value":"Exposure","$$hashKey":"object:771","checked":true},
-                 {"id":"9","value":"Noise Level","$$hashKey":"object:773","checked":true},
-                 {"id":"11","value":"Internet","$$hashKey":"object:774","checked":true}],
-               "attention":[
-                 {"id":"9","value":"Area Manager Notes","$$hashKey":"object:792","checked":true},
-                 {"id":"10","value":"Early Setup","$$hashKey":"object:793","checked":true},
-                 {"id":"11","value":"No Friday","$$hashKey":"object:794","checked":true}],
-               "meta":[]},
-            "type":"customRpt","location":true};
+             "rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:695","checked":true},{"id":"2","value":"Tables","$$hashKey":"object:696","checked":true},{"id":"3","value":"Chairs","$$hashKey":"object:697","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:698","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:770","checked":true},{"id":"4","value":"Exposure","$$hashKey":"object:771","checked":true},{"id":"9","value":"Noise Level","$$hashKey":"object:773","checked":true},{"id":"11","value":"Internet","$$hashKey":"object:774","checked":true}],"attention":[{"id":"9","value":"Area Manager Notes","$$hashKey":"object:792","checked":true},{"id":"10","value":"Early Setup","$$hashKey":"object:793","checked":true},{"id":"11","value":"No Friday","$$hashKey":"object:794","checked":true}],"meta":[]},"type":"customRpt","location":true};
       var subTitle = 'AM summary';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=='zoho'){
@@ -236,7 +211,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                  "type":"textarea",
                  "inputs":"",
                  "$$hashKey":"uiGrid-022D"},
-               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","$$hashKey":"uiGrid-01AB"},
                {"id":"55.1",
                 "label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]",
                 "choices":"Selling at Maker Faire [Commercial Maker]",
@@ -311,7 +285,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
               "faire": faire,
         "selectedFields":[
-          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","$$hashKey":"uiGrid-01AB"},
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
           {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
