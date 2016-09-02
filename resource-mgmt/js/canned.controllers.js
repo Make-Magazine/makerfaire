@@ -1,5 +1,5 @@
 // reports controller
-rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$interval','uiGridConstants','uiGridGroupingConstants', function ($scope, $routeParams, $http,$interval,uiGridConstants,uiGridGroupingConstants) {
+rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$interval','uiGridConstants', function ($scope, $routeParams, $http,$interval,uiGridConstants) {
   $scope.reports    = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
