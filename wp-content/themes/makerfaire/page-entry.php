@@ -4,201 +4,200 @@
  *
  * @version 2.0
  */
-global $wp_query;
-$entryId = $wp_query->query_vars['e_id'];
-$editEntry = $wp_query->query_vars['edit_slug'];
-$entry = GFAPI::get_entry($entryId);
 
-//entry not found
-if (isset($entry->errors)) {
-  $form_id = '';
-  $formType = '';
-  $entry = array();
-  $faire = '';
-} else {
-  //find outwhich faire this entry is for to set the 'look for more makers link'
-  $form_id = $entry['form_id'];
-  $form = GFAPI::get_form($form_id);
-  $formType = $form['form_type'];
-  $faire = $slug = $faireID = $show_sched = $faireShort = $faire_end = '';
-}
+  global $wp_query;
+  $entryId   = $wp_query->query_vars['e_id'];
+  $editEntry = $wp_query->query_vars['edit_slug'];
+  $entry     = GFAPI::get_entry($entryId);
 
-if ($form_id != '') {
-  $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt,url_path "
-          . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
-
-  $results = $wpdb->get_row($formSQL);
-  if ($wpdb->num_rows > 0) {
-    $faire = $slug = $results->faire_name;
-    $faireShort = $results->faire;
-    $faireID = $results->id;
-    $show_sched = $results->show_sched;
-    $faire_logo = $results->faire_logo;
-    $faire_start = $results->start_dt;
-    $faire_end = $results->end_dt;
-    $url_sub_path = $results->url_path;
+  //entry not found
+  if(isset($entry->errors)){
+    $form_id = '';
+    $formType = '';
+    $entry=array();
+    $faire = '';
+  }else{
+    //find outwhich faire this entry is for to set the 'look for more makers link'
+    $form_id = $entry['form_id'];
+    $form = GFAPI::get_form($form_id);
+    $formType = $form['form_type'];
+    $faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
   }
-}
 
-$makers = array();
-if (isset($entry['160.3']))
-  $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
-      'bio' => (isset($entry['234']) ? $entry['234'] : ''),
-      'photo' => (isset($entry['217']) ? $entry['217'] : '')
-  );
-if (isset($entry['158.3']))
-  $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
-      'bio' => (isset($entry['258']) ? $entry['258'] : ''),
-      'photo' => (isset($entry['224']) ? $entry['224'] : '')
-  );
-if (isset($entry['155.3']))
-  $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
-      'bio' => (isset($entry['259']) ? $entry['259'] : ''),
-      'photo' => (isset($entry['223']) ? $entry['223'] : '')
-  );
-if (isset($entry['156.3']))
-  $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
-      'bio' => (isset($entry['260']) ? $entry['260'] : ''),
-      'photo' => (isset($entry['222']) ? $entry['222'] : '')
-  );
-if (isset($entry['157.3']))
-  $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
-      'bio' => (isset($entry['261']) ? $entry['261'] : ''),
-      'photo' => (isset($entry['220']) ? $entry['220'] : '')
-  );
-if (isset($entry['159.3']))
-  $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
-      'bio' => (isset($entry['262']) ? $entry['262'] : ''),
-      'photo' => (isset($entry['221']) ? $entry['221'] : '')
-  );
-if (isset($entry['154.3']))
-  $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
-      'bio' => (isset($entry['263']) ? $entry['263'] : ''),
-      'photo' => (isset($entry['219']) ? $entry['219'] : '')
-  );
+  if($form_id!=''){
+    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt,url_path "
+            . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
 
-$groupname = (isset($entry['109']) ? $entry['109'] : '');
-$groupphoto = (isset($entry['111']) ? $entry['111'] : '');
-$groupbio = (isset($entry['110']) ? $entry['110'] : '');
-
-// One maker
-// A list of makers (7 max)
-// A group or association
-$displayType = (isset($entry['105']) ? $entry['105'] : '');
-
-$isGroup = $isList = $isSingle = false;
-$isGroup = (strpos($displayType, 'group') !== false);
-$isList = (strpos($displayType, 'list') !== false);
-$isSingle = (strpos($displayType, 'One') !== false);
-
-$sharing_cards = new mf_sharing_cards();
-
-//Change Project Name
-$project_name = (isset($entry['151']) ? $entry['151'] : '');
-
-// Url
-$project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
-
-$sharing_cards->project_photo = $project_photo;
-
-// Description
-$project_short = (isset($entry['16']) ? $entry['16'] : '');
-$sharing_cards->project_short = $project_short;
-
-//Website
-$project_website = (isset($entry['27']) ? $entry['27'] : '');
-//Video
-$project_video = (isset($entry['32']) ? $entry['32'] : '');
-//Title
-$project_title = (isset($entry['151']) ? (string) $entry['151'] : '');
-$project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
-$sharing_cards->project_title = $project_title;
-
-//Url
-global $wp;
-$canonical_url = home_url($wp->request) . '/';
-$sharing_cards->canonical_url = $canonical_url;
-
-$sharing_cards->set_values();
-get_header();
-
-
-/* Lets check if we are coming from the MAT tool -
- * if we are, and user is logged in and has access to this record
- *   Display edit functionality
- */
-$makerEdit = false;
-if ($editEntry == 'edit') {
-  //check if loggest in user has access to this entry
-  $current_user = wp_get_current_user();
-
-  //require_once our model
-  require_once( get_template_directory() . '/models/maker.php' );
-
-  //instantiate the model
-  $maker = new maker($current_user->user_email);
-
-  if ($maker->check_entry_access($entry)) {
-    $makerEdit = true;
+    $results =  $wpdb->get_row( $formSQL );
+    if($wpdb->num_rows > 0){
+      $faire        = $slug = $results->faire_name;
+      $faireShort   = $results->faire;
+      $faireID      = $results->id;
+      $show_sched   = $results->show_sched;
+      $faire_logo   = $results->faire_logo;
+      $faire_start  = $results->start_dt;
+      $faire_end    = $results->end_dt;
+      $url_sub_path = $results->url_path;
+    }
   }
-}
-if ($makerEdit) {
-  ?>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.js"></script>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.autogrow.js"></script>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.ajaxupload.js"></script>
 
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.autogrow.js"></script>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.ajaxfileupload.js"></script>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jeditable-main.js"></script>
-  <?php
-}
-?>
+  $makers = array();
+  if (isset($entry['160.3']))
+    $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
+                      'bio'       => (isset($entry['234']) ? $entry['234']: ''),
+                      'photo'     => (isset($entry['217']) ? $entry['217'] : '')
+                );
+  if (isset($entry['158.3']))
+    $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
+                      'bio'       => (isset($entry['258']) ? $entry['258'] : ''),
+                      'photo'     => (isset($entry['224']) ? $entry['224'] : '')
+                );
+  if (isset($entry['155.3']))
+      $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
+                      'bio'         => (isset($entry['259']) ? $entry['259'] : ''),
+                      'photo'       => (isset($entry['223']) ? $entry['223'] : '')
+                );
+  if (isset($entry['156.3']))
+      $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
+                      'bio'         => (isset($entry['260']) ? $entry['260'] : ''),
+                      'photo'       => (isset($entry['222']) ? $entry['222'] : '')
+                  );
+  if (isset($entry['157.3']))
+      $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
+                      'bio'         => (isset($entry['261']) ? $entry['261'] : ''),
+                      'photo'       => (isset($entry['220']) ? $entry['220'] : '')
+                  );
+  if (isset($entry['159.3']))
+      $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
+                      'bio'         => (isset($entry['262']) ? $entry['262'] : ''),
+                      'photo'       => (isset($entry['221']) ? $entry['221'] : '')
+                  );
+  if (isset($entry['154.3']))
+      $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
+                      'bio'         => (isset($entry['263']) ? $entry['263'] : ''),
+                      'photo'       => (isset($entry['219']) ? $entry['219'] : '')
+                  );
+
+  $groupname  = (isset($entry['109']) ? $entry['109']:'');
+  $groupphoto = (isset($entry['111']) ? $entry['111']:'');
+  $groupbio   = (isset($entry['110']) ? $entry['110']:'');
+
+  // One maker
+  // A list of makers (7 max)
+  // A group or association
+  $displayType = (isset($entry['105']) ? $entry['105']:'');
+
+  $isGroup = $isList = $isSingle = false;
+  $isGroup =(strpos($displayType, 'group') !== false);
+  $isList =(strpos($displayType, 'list') !== false);
+  $isSingle =(strpos($displayType, 'One') !== false);
+
+  $sharing_cards = new mf_sharing_cards();
+
+  //Change Project Name
+  $project_name = (isset($entry['151']) ? $entry['151'] : '');
+
+  // Url
+  $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
+  
+  $sharing_cards->project_photo = $project_photo;
+
+  // Description
+  $project_short = (isset($entry['16']) ? $entry['16']: '');
+  $sharing_cards->project_short = $project_short;
+
+  //Website
+  $project_website = (isset($entry['27']) ? $entry['27']: '');
+  //Video
+  $project_video = (isset($entry['32'])?$entry['32']:'');
+  //Title
+  $project_title = (isset($entry['151'])?(string)$entry['151']:'');
+  $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+  $sharing_cards->project_title = $project_title;
+
+  //Url
+  global $wp;
+  $canonical_url = home_url( $wp->request ) . '/' ;
+  $sharing_cards->canonical_url = $canonical_url;
+
+  $sharing_cards->set_values();
+  get_header();
+
+
+  /* Lets check if we are coming from the MAT tool -
+   * if we are, and user is logged in and has access to this record
+   *   Display edit functionality
+   */
+  $makerEdit = false;
+  if($editEntry=='edit'){
+    //check if loggest in user has access to this entry
+    $current_user = wp_get_current_user();
+
+    //require_once our model
+    require_once( get_template_directory().'/models/maker.php' );
+
+    //instantiate the model
+    $maker   = new maker($current_user->user_email);
+
+    if($maker->check_entry_access($entry)){
+      $makerEdit =  true;
+    }
+  }
+  if($makerEdit) {
+    ?>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.js"></script>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.autogrow.js"></script>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.ajaxupload.js"></script>
+
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.autogrow.js"></script>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.ajaxfileupload.js"></script>
+    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jeditable-main.js"></script>
+    <?php
+  }
+    ?>
 
 <div class="clear"></div>
 
-<div class="container modal-fix entry-page">
+<div class="container entry-page">
   <div class="row">
-    <div class="content col-md-12">
-      <?php
-      //set the 'backlink' text and link (only set on valid entries)
-      if ($faire != '') {
+    <div class="content col-xs-12">
+      <?php //set the 'backlink' text and link (only set on valid entries)
+      if($faire!=''){
         $url = parse_url(wp_get_referer()); //getting the referring URL
         $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
         $path = explode("/", $url['path']); // splitting the path
         $slug = end($path); // get the value of the last element
 
-        if ($slug == 'schedule') {
+        if($slug=='schedule'){
           $backlink = wp_get_referer();
-          $backMsg = '&#65513; Back to the Schedule';
-        } else {
-          $backlink = "/" . $url_sub_path . "/meet-the-makers/";
-          $backMsg = '&#65513; Look for More Makers';
+          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to the Schedule';
+        }else{
+          $backlink = "/".$url_sub_path."/meet-the-makers/";
+          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Look for More Makers';
         }
 
         //overwrite the backlink to send makers back to MAT if $makerEdit = true
-        if ($makerEdit) {
+        if($makerEdit){
           $backlink = "/manage-entries/";
-          $backMsg = '&#65513; Back to Your Maker Admin Tool';
+          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to Your Maker Admin Tool';
         }
         ?>
-        <div class="backlink"><a href="<?php echo $backlink; ?>"><?php echo $backMsg; ?></a></div>
+        <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
         <?php
         //TBD - create a redirect for makerSign
-        if ($makerEdit) {
-          ?>
+        if($makerEdit){?>
           <div class="makerEditHead">
-            <input type="hidden" id="entry_id" value="<?php echo $entryId; ?>" />
-            <a target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>">
+            <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
+            <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>">
               <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
             </a><br/>
             To modify your public information, edit the information directly on this page.
           </div>
-          <?php
+        <?php
         }
       }
 
-      if (is_array($entry) && isset($entry['status']) && $entry['status'] == 'active' && isset($entry[303]) && $entry[303] == 'Accepted') {
+      if(is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted'){
         //display schedule/location information if there is any
         //do not display schedule if maker edit
         if (!$makerEdit && !empty(display_entry_schedule($entryId))) {
@@ -206,131 +205,119 @@ if ($makerEdit) {
         }
         ?>
         <div class="page-header">
-          <h1><span id="project_title" class="<?php echo ($makerEdit ? 'edit' : '') ?>"><?php echo $project_title; ?></span>
+          <h1><span id="project_title" class="<?php echo ($makerEdit?'edit':'')?>"><?php echo $project_title; ?></span>
             <?php
-            //check if this entry has one any awards
-            $ribbons = checkForRibbons(0, $entryId);
+             //check if this entry has one any awards
+            $ribbons = checkForRibbons(0,$entryId);
             echo $ribbons;
             ?>
           </h1>
         </div>
 
-        <p class="<?php echo ($makerEdit ? 'ajaxupload' : '') ?>" id="proj_img" title="Click to upload...">
+        <p class="<?php echo ($makerEdit?'ajaxupload':'')?>" id="proj_img" title="Click to upload...">
           <img class="img-responsive" src="<?php echo $project_photo; ?>" />
         </p>
-        <p id="project_short" class="lead <?php echo ($makerEdit ? 'edit_area' : '') ?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
+        <p id="project_short" class="lead <?php echo ($makerEdit?'edit_area':'')?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
         <?php
+        // Website button
         if (!empty($project_website)) {
-          if ($makerEdit) {
-            echo 'Website: <div id="website" class="edit">' . $project_website . '</div>';
-          } else {
-            echo '<a href="' . $project_website . '" class="btn btn-info pull-left" target="_blank" style="margin-right:15px;">Project Website</a>';
+          if($makerEdit){
+            echo 'Website: <div id="website" class="edit">'. $project_website.'</div>';
+          }else{
+            echo '<a href="' . $project_website . '" class="btn btn-info" target="_blank">Project Website</a>';
           }
         }
-        ?>
 
-        <!-- Button to trigger video modal -->
-        <?php
+        // Inline video
         if (!empty($project_video)) {
-          if ($makerEdit) {
-            echo 'Video: <span id="video" class="edit">' . $project_video . '</span>';
+          if($makerEdit) {
+            echo 'Video: <span id="video" class="edit">'. $project_video.'</span>';
           } else {
-            echo '<a href="#entryModal" role="button" id="modalButton" class="btn btn-info" data-toggle="modal">Project Video</a>';
-          }
-        }
-        ?>
-        <br />
-
-        <!-- Video Modal -->
-        <div id="entryModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel"><?php echo $entry['151']; ?></h3>
-          </div>
-          <div class="modal-body">
-            <?php
-            $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video);
+            $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
             //youtube has two type of url formats we need to look for and change
             $videoID = parse_yturl($dispVideo);
-            if ($videoID != '') {
-              $dispVideo = 'https://www.youtube.com/embed/' . $videoID;
+            if($videoID!=''){
+              $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
             }
-            ?>
-            <input id="entryVideo" type="hidden" value="<?php echo $dispVideo; ?>" />
-            <iframe width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-          </div>
-        </div>
-        <div class="clearfix">&nbsp;</div>
-        <div class="clearfix">&nbsp;</div>
-          <?php if ($formType != 'Sponsor' && $formType != 'Startup Sponsor') { ?>
-          <h2>
+            echo '<div class="entry-video">
+                    <div class="embed-youtube">
+                      <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                    </div>
+                  </div>';
+          }
+        } ?>
+
+      <div class="entry-page-maker-info"> <?php
+
+        if($formType!='Sponsor' && $formType != 'Startup Sponsor'){ ?>
+          <div class="page-header">
+            <h2>
             <?php
-            if ($isGroup)
-              echo 'Group';
-            elseif ($isList)
-              echo 'Makers';
-            else
-              echo 'Maker';
+              if ($isGroup)
+                echo 'Group';
+              elseif($isList)
+                echo 'Makers';
+              else
+                echo 'Maker';
             ?>
-          </h2>
-          <hr />
+            </h2>
+          </div>
           <?php
           if ($isGroup) {
-            echo '<div class="row center-block">';
-            echo '<p class="' . ($makerEdit ? 'ajaxupload' : '') . '" id="groupphoto" title="Click to upload...">';
-            echo (!empty($groupphoto) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto, 200, 250) . '" alt="Group Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Group Image">');
-            echo '</p>';
-            echo '<div class="col-md-5">
-                    <h3 style="margin-top: 0px;" class="' . ($makerEdit ? 'edit' : '') . '" id="groupname">' . $groupname . '</h3>
-                    <p  class="' . ($makerEdit ? 'edit_area' : '') . '" id="groupbio">' . make_clickable($groupbio) . '</p>
-                  </div>
-                </div>';
-          } else {
-            foreach ($makers as $key => $maker) {
-              if ($maker['firstname'] != '' && $maker['lastname'] != '') {
-                echo '<div class="row center-block">';
-                echo '<p class="' . ($makerEdit ? 'ajaxupload' : '') . '" id="maker' . $key . 'img" title="Click to upload...">';
-                echo (!empty($maker['photo']) ? '<img class="col-md-3 pull-left img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'], 200, 250) . '" alt="Maker Image">' : '<img class="col-md-3 pull-left img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker Image">');
-                echo '</p>';
-                echo '<div class="col-md-5">
-                        <h3 style="margin-top: 0px;">' .
-                '<p  class="' . ($makerEdit ? 'edit' : '') . '" id="maker' . $key . 'fname">' . $maker['firstname'] . '</p> ' .
-                '<p  class="' . ($makerEdit ? 'edit' : '') . '" id="maker' . $key . 'lname">' . $maker['lastname'] . '</p> ' .
-                '</h3>
-                        <p  class="' . ($makerEdit ? 'edit_area' : '') . '" id="maker' . $key . 'bio">' . make_clickable($maker['bio']) . '</p>
+            echo '<div class="row padbottom">
+                    <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="groupphoto" title="Click to upload...">
+                      <div class="entry-page-maker-img">' .
+                        (!empty($groupphoto) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,400,400) . '" alt="Maker group photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker group placeholder photo" />') . '
                       </div>
-                    </div>';
+                    </div>
+                    <div class="col-sm-9 col-lg-7">
+                      <h3 class="text-capitalize '. ($makerEdit?'edit':'').'" id="groupname">' . $groupname . '</h3>
+                      <p class="'. ($makerEdit?'edit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
+                    </div>
+                  </div>';
+          } else {
+            foreach($makers as $key=>$maker) {
+              if($maker['firstname'] !='' && $maker['lastname'] !=''){
+                echo '<div class="row padbottom">
+                        <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="maker'.$key.'img" title="Click to upload...">
+                          <div class="entry-page-maker-img">' .
+                            (!empty($maker['photo']) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],400,400) . '" alt="Maker photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker placeholder photo" />') .'
+                          </div>
+                        </div>
+                        <div class="col-sm-9 col-lg-7">
+                          <h3>
+                            <span class="text-capitalize '. ($makerEdit?'edit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</span>
+                            <span class="text-capitalize '. ($makerEdit?'edit':'').'" id="maker'.$key.'lname">'.$maker['lastname'] . '</span>
+                          </h3>
+                          <p class="'. ($makerEdit?'edit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
+                        </div>
+                      </div>';
               }
             }
           }
-        }
-        ?>
-        <br />
-        <?php
-        echo display_groupEntries($entryId);
+        } ?>
+
+      </div>
+
+      <?php
+      echo display_groupEntries($entryId);
       } else { //entry is not active
         echo '<h2>Invalid entry</h2>';
       }
       ?>
 
-    </div><!--col-md-8-->
-
+    </div><!--col-xs-12-->
   </div><!--row-->
 </div><!--container-->
 
 
 
-<?php
-get_footer();
+ <?php get_footer();
 
 function display_entry_schedule($entry_id) {
-  global $wpdb;
-  global $faireID;
-  global $faire;
-  global $show_sched;
-  global $faire_logo;
-  if (!$show_sched) {
+  global $wpdb;global $faireID; global $faire; global $show_sched; global $faire_logo;
+  if(!$show_sched){
     return;
   }
   $faire_url = "/$faire";
@@ -347,24 +334,24 @@ function display_entry_schedule($entry_id) {
           . " group by area, subarea, location";
   $results = $wpdb->get_results($sql);
 
-  if ($wpdb->num_rows > 0) {
+  if($wpdb->num_rows > 0){
     ?>
     <div id="entry-schedule">
       <span class="faireBadge pull-left">
-        <?php
-        if ($faire_logo != '') {
-          $faire_logo = legacy_get_fit_remote_image_url($faire_logo, 51, 51);
-          echo '<a href="' . $faire_url . '"><img src="' . $faire_logo . '" alt="' . $faire . ' - badge" /></a>';
-        }
-        ?>
+      <?php
+      if($faire_logo!=''){
+        $faire_logo = legacy_get_fit_remote_image_url($faire_logo,51,51);
+        echo '<a href="'.$faire_url.'"><img src="'.$faire_logo.'" alt="'.$faire.' - badge" /></a>';
+      }
+      ?>
       </span>
       <span class="faireTitle pull-left">
         <a href="<?= $faire_url ?>">
-          <span class="faireLabel">Live at</span><br/>
-          <div class="faireName"><?php echo ucwords(str_replace('-', ' ', $faire)); ?></div>
+        <span class="faireLabel">Live at</span><br/>
+        <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
         </a>
       </span>
-    <?php // TBD - dynamically set these links and images  ?>
+      <?php // TBD - dynamically set these links and images ?>
       <div class="faireActions">
         <span class="pull-right">
           <a class="flagship-icon-link" href="/wp-content/uploads/2016/06/NMF-Map_2016__8.5x11_Pg-2.pdf">
@@ -384,62 +371,59 @@ function display_entry_schedule($entry_id) {
       <div class="clear"></div>
 
       <table>
-        <?php
-        foreach ($results as $row) {
-          echo '<tr>';
-          if (!is_null($row->start_dt)) {
-            $start_dt = strtotime($row->start_dt);
-            $end_dt = strtotime($row->end_dt);
-            echo '<td><b>' . date("l, F j", $start_dt) . '<b></td>'
-            . ' <td>' . date("g:i a", $start_dt) . ' - ' . date("g:i a", $end_dt) . '</td>';
-          } else {
-            global $faire_start;
-            global $faire_end;
+      <?php
+      foreach($results as $row){
+        echo '<tr>';
+        if(!is_null($row->start_dt)){
+          $start_dt   = strtotime( $row->start_dt);
+          $end_dt     = strtotime($row->end_dt);
+          echo '<td><b>'.date("l, F j",$start_dt).'<b></td>'
+                  . ' <td>'. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</td>';
+        }else{
+          global $faire_start; global $faire_end;
 
-            $faire_start = strtotime($faire_start);
-            $faire_end = strtotime($faire_end);
+          $faire_start = strtotime($faire_start);
+          $faire_end   = strtotime($faire_end);
 
-            //tbd change this to be dynamically populated
-            echo '<td>Friday, Saturday and Sunday: ' . date("F j", $faire_start) . '-' . date("j", $faire_end) . '</td>';
-          }
-          echo '<td>' . $row->area . '</td><td>' . ($row->nicename != '' ? $row->nicename : $row->subarea) . '</td>';
-          echo '</tr>';
+          //tbd change this to be dynamically populated
+          echo '<td>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</td>';
         }
-        ?>
+        echo '<td>'.$row->area.'</td><td>'.($row->nicename!=''?$row->nicename:$row->subarea).'</td>';
+        echo '</tr>';
+
+      }
+      ?>
       </table>
     </div>
     <?php
   }
 }
 
-/* This function is used to display grouped entries and links */
-
-function display_groupEntries($entryID) {
-  global $wpdb;
-  global $faireID;
-  global $faire;
+/* This function is used to display grouped entries and links*/
+function display_groupEntries($entryID){
+  global $wpdb;global $faireID; global $faire;
   $return = '';
 
-  $sql = "select * from wp_rg_lead_rel where parentID=" . $entryID . " or childID=" . $entryID;
+  $sql = "select * from wp_rg_lead_rel where parentID=".$entryID." or childID=".$entryID;
   $results = $wpdb->get_results($sql);
-  if ($wpdb->num_rows > 0) {
-    if ($results[0]->parentID == $entryID) {
-      $title = 'Exhibits in this group:';
-      $type = 'parent';
-    } else {
-      $title = 'Part of a group:';
-      $type = 'child';
-    }
-    $return .= $title . '<br/>';
+  if($wpdb->num_rows > 0){
+    if($results[0]->parentID==$entryID){
+        $title = 'Exhibits in this group:';
+        $type = 'parent';
+      }else{
+        $title = 'Part of a group:';
+        $type = 'child';
+      }
+    $return .= $title.'<br/>';
     $return .= '<div class="row">';
-    foreach ($results as $row) {
-      $link_entryID = ($type == 'parent' ? $row->childID : $row->parentID);
+    foreach($results as $row){
+      $link_entryID = ($type=='parent'?$row->childID:$row->parentID);
       $entry = GFAPI::get_entry($link_entryID);
       //Title
-      $project_title = (string) $entry['151'];
-      $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
+      $project_title = (string)$entry['151'];
+      $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
       $return .= '<div class="col-md-4 col-sm-6">';
-      $return .= '<a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></div>';
+      $return .= '<a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></div>';
     }
     $return .= '</div>';
   }
