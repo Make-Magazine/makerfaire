@@ -10,9 +10,11 @@ $obj = json_decode($json);
 $type           = (isset($obj->type)?$obj->type:'');
 $table          = (isset($obj->table)?$obj->table:'');
 $formSelect     = (isset($obj->formSelect)?$obj->formSelect:'');
+$formType       = (isset($obj->formType)?$obj->formType:'');
 $selectedFields = (isset($obj->selectedFields)?$obj->selectedFields:'');
 $rmtData        = (isset($obj->rmtData)?$obj->rmtData:'');
 $location       = (isset($obj->location)?$obj->location:false);
+$payment        = (isset($obj->payments)?$obj->payments:false);
 $faire          = (isset($obj->faire)?$obj->faire:'');
 
 if($type != ''){
@@ -24,9 +26,9 @@ if($type != ''){
       retrieveRptData($table);
     }
   }elseif($type =="customRpt"){
-    if($formSelect != '' && $selectedFields!=''){
+    if(($formSelect != '' || $formType!='') && $selectedFields!=''){
       //build report
-      buildRpt($formSelect,$selectedFields,$rmtData,$location);
+      buildRpt($formSelect, $formType, $selectedFields, $rmtData, $location, $payment, $faire);
     }else{
       invalidRequest('Error: Form or Fields not selected');
     }
@@ -40,9 +42,10 @@ if($type != ''){
 }
 
 /* Build your own report function */
-function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),$location=false){
-  global $mysqli;
+function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array(), $rmtData=array(),$location=false,$payment=false,$faire=''){
+  global $wpdb;
   $forms = implode(",",$formSelect);
+
   $data['columnDefs'] = array();
   $data['columnDefs'][] = array('field'=>'entry_id');
   $data['columnDefs'][] = array('field'=>'form_id');
@@ -51,7 +54,7 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
   //TBD - remove duplicate field ID's
   $fieldArr   = array();
   $fieldIDArr = array();
-
+  $acceptedOnly = true;
   //build an array of selected fields
   foreach($selectedFields as $selFields){
     //build field array
@@ -59,10 +62,9 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
       //remove everything after the period
       $baseField = strpos($selFields->id, ".") ? substr($selFields->id, 0, strpos($selFields->id, ".")) : $selFields->id;
       $fieldArr[$baseField][] = array('field'=>'field_'.str_replace('.','_',$selFields->id),
-                                      'choice'=>$selFields->choices,
-                                      'type'=>$selFields->type
-          );
+                                      'choice'=>$selFields->choices, 'type'=>$selFields->type);
     }
+
     //create array of selected field id's
     $fieldIDArr[$selFields->id] = $selFields->id;
     if($selFields->type=='name'){
@@ -73,69 +75,117 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
 
     //build grid columns. using the id as an index to avoid dups
     $data['columnDefs'][$selFields->id] =   array('field'=> 'field_'.str_replace('.','_',$selFields->id),'displayName'=>$selFields->label);
-  }
-
-  //entry data
-  $sql = "SELECT wp_rg_lead_detail.*,wp_rg_lead_detail_long.value as 'long value'
-        FROM wp_rg_lead
-          left outer join wp_rg_lead_detail
-            on wp_rg_lead_detail.lead_id = wp_rg_lead.id
-          left OUTER join wp_rg_lead_detail_long
-            ON wp_rg_lead_detail.id = wp_rg_lead_detail_long.lead_detail_id
-        where wp_rg_lead.form_id in($forms)
-        and wp_rg_lead.status='active'
-        ORDER BY lead_id asc, field_number asc";
-
-  //loop thru entry data and build array
-  $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
-  $entryData = array();
-  foreach($entries as $entry){
-    //if name field
-    if(isset($fieldIDArr[$entry['field_number']])){
-      //field 320 is stored as category number, use cross reference to find text value
-      if($entry['field_number']==320){
-        $value = (isset($catCross[$entry['value']])?$catCross[$entry['value']]:$entry['value']);
-      }else{
-        $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
-      }
-
-      $value = htmlspecialchars_decode ($value);
-      $entryData[$entry['lead_id']]['entry_id'] = $entry['lead_id'];
-      $entryData[$entry['lead_id']]['form_id']  = $entry['form_id'];
-      $formPull = GFAPI::get_form( $entry['form_id'] );
-      $entryData[$entry['lead_id']]['form_type']  = (isset($formPull['form_type'])?$formPull['form_type']:'');
-      if(is_array($fieldIDArr[$entry['field_number']])){
-        $fieldID  = $fieldIDArr[$entry['field_number']]['fieldID'];
-        $setValue = (isset($entryData[$entry['lead_id']]['field_'.$fieldID])?$entryData[$entry['lead_id']]['field_'.$fieldID].' '.$value: $value);
-        $entryData[$entry['lead_id']]['field_'.$fieldID]  = $setValue;
-      }else{
-        $entryData[$entry['lead_id']]['field_'.str_replace('.','_',$entry['field_number'])]  = $value;
+    if($selFields->id==303){
+      if($selFields->choices!='Accepted'){
+        $acceptedOnly = false;
       }
     }
   }
 
-  foreach($entryData as $entryID=>$dataRow){
-    if(!empty($fieldArr)){
-      //check selected checkbox and radio fields.  If at least one of the selections are not there, we need to skip this entry
-      $remove = true;
-      foreach($fieldArr as $field){
-        foreach($field as $fieldRow){
-          if(isset($dataRow[$fieldRow['field']])){
-            if($fieldRow['type']=='radio'||$fieldRow['type']=='select'){ //check value
-              if($dataRow[$fieldRow['field']] == $fieldRow['choice']){
-                $remove = false;
-              }
-            }else{
-              $remove=false;
-            }
-          }
-        }
-      }
-      if($remove){
-        unset ($entryData[$entryID]);
+  $fieldIDquery = '';
+  //build $fieldIDquery for sql
+  foreach($fieldIDArr as $fieldID){
+    if($fieldIDquery =='') {
+      $fieldIDquery="field_number like '".$fieldID."' ";
+    }else{
+      $fieldIDquery.=" or field_number like '".$fieldID."' ";
+    }
+  }
+
+  $entryData = array();
+  //find all entries given criteria
+  $sql = "SELECT *
+        FROM wp_rg_lead". ($faire!=''? ', wp_mf_faire':'') .
+      " where wp_rg_lead.status='active' "
+          . ($forms!=''? ' and wp_rg_lead.form_id in('.$forms.')':'')
+          . ($faire!=''? ' and wp_mf_faire.id ='. $faire.' and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0':'');
+
+  //loop thru entry data and build array
+  $entries = $wpdb->get_results($sql,ARRAY_A);
+  //if($wpdb->num_rows > 0){
+  foreach($entries as $entry){
+    //pull form data and see if it matches the requested form type
+    $formPull = GFAPI::get_form( $entry['form_id'] );
+    $formType = (isset($formPull['form_type'])?$formPull['form_type']:'');
+
+    //if certain form types were selected, only return those form types
+    if(!empty($formTypeArr)){
+      if(in_array($formType, $formTypeArr)){
+        //continue with this record
+      }else{
         continue; //skip this record
       }
     }
+
+    $lead_id = $entry['id'];
+    //pull entry specifc detail based on requested fields
+    $detailSQL = "SELECT wp_rg_lead_detail.*,wp_rg_lead_detail_long.value as 'long value'
+                  FROM wp_rg_lead_detail
+                  left OUTER join wp_rg_lead_detail_long
+                    ON wp_rg_lead_detail.id = wp_rg_lead_detail_long.lead_detail_id"
+            . " where wp_rg_lead_detail.lead_id = $lead_id "
+            . " and ($fieldIDquery) "
+            . " ORDER BY lead_id asc, field_number asc";
+
+    $entrydetail = $wpdb->get_results($detailSQL,ARRAY_A);
+    foreach($entrydetail as $detail){
+      //build data
+      $entryData[$lead_id]['entry_id'] = $lead_id;
+      $entryData[$lead_id]['form_id']  = $entry['form_id'];
+      $entryData[$lead_id]['form_type']  = $formType;
+
+      //field 320 is stored as category number, use cross reference to find text value
+      if($detail['field_number']==320){
+        $value = (isset($catCross[$detail['value']])?$catCross[$detail['value']]:$detail['value']);
+      }else{
+        $value = (isset($detail['long_value']) && $detail['long_value']!=''?$detail['long_value']:$detail['value']);
+      }
+      $value = htmlspecialchars_decode ($value);
+
+      //build output for field data - format is field_55_4 for field id 55.4
+      $entryData[$lead_id]['field_'.str_replace('.','_',$detail['field_number'])]  = $value;
+    } //end entry detail loop
+  } //end nentries loop
+  /*
+var_dump($entryData);
+echo '<br/><br/><br/>';
+var_dump($fieldArr);*/
+  foreach($entryData as $entryID=>$dataRow){
+    if(!empty($fieldArr)){
+      // check selected checkbox and radio fields.
+      // If at least one of the selections are not there, we need to skip this entry
+      foreach($fieldArr as $field){
+        $remove = true; //default to remove this entry
+        foreach($field as $fieldRow){
+          //radio and selet boxes must match one of the passed values
+          if($fieldRow['type']=='radio' || $fieldRow['type']=='select'){ //check value
+            if(isset($dataRow[$fieldRow['field']])){
+              if($dataRow[$fieldRow['field']] == $fieldRow['choice']){
+                $remove = false;
+              }
+            }
+          }else{ //just include checkbox and text fields
+            $remove = false;
+          }
+        } //end loop thru field
+        //does this entry meet the field criteria?  no, exclude the record
+        if($acceptedOnly && $dataRow['field_303']!='Accepted')  $remove = true;
+
+        //Did they pass the criteria for this field?
+        // If not, then we need to stop processing fields and drop this entry
+        if($remove){
+          //echo 'break on '.$entryID.'<br/>';
+          break; //exit the field loop
+        }
+      }
+      if($remove){
+        //echo 'skipping - '.$entryID.'<br/><br/><br/>';
+        unset ($entryData[$entryID]);
+        continue; //skip this entry
+      }
+    }
+
+    //if we passed the field criteria, let's now include the other items such as RMT, location and payment info
     $incComments = false;
     //pull RMT data
     foreach($rmtData as $type=>$rmt){
@@ -164,7 +214,7 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
                   . ' entry_id ='.$entryID;
           }
           //loop thru data
-          $resources = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
+          $resources = $wpdb->get_results($sql,ARRAY_A);
           $entryRes = array();
 
           foreach($resources as $resource){
@@ -184,7 +234,7 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
           }
           //echo $sql.'<br/>';
           //loop thru data
-          $attributes = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
+          $attributes = $wpdb->get_results($sql,ARRAY_A);
           $entryAtt = array();
 
           foreach($attributes as $attribute){
@@ -204,7 +254,7 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
                     . ' and attn_id= wp_rmt_attn.ID';
           }
           //loop thru data
-          $attentions = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
+          $attentions = $wpdb->get_results($sql,ARRAY_A);
           $entryAttn = array();
 
           foreach($attentions as $attention){
@@ -214,11 +264,12 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
           $entryData[$entryID]['attn_'.$selRMT->id] = implode(', ',$entryAttn);
         }
 
-        //meta fields
+          //meta fields
         if($type=='meta'){
           $sql = "SELECT meta_value FROM `wp_rg_lead_meta` where meta_key = '$selRMT->id' and lead_id =".$entryID;
+
           //loop thru data
-          $metas = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
+          $metas = $wpdb->get_results($sql,ARRAY_A);
           $entryMeta = array();
 
           foreach($metas as $meta){
@@ -259,6 +310,39 @@ function buildRpt($formSelect=array(),$selectedFields=array(), $rmtData=array(),
         }
       }
     } //end location
+
+    //add payment information
+    if($payment){
+      if($entryID!=''){
+        //get scheduling information for this lead
+        $paysql = "select  wp_rg_lead_meta.lead_id as pymt_entry,
+                  wp_gf_addon_payment_transaction.transaction_type,
+                  wp_gf_addon_payment_transaction.transaction_id,
+                  wp_gf_addon_payment_transaction.amount,
+                  wp_gf_addon_payment_transaction.date_created
+                from wp_rg_lead_meta
+                left outer join wp_gf_addon_payment_transaction on wp_rg_lead_meta.lead_id = wp_gf_addon_payment_transaction.lead_id
+                where meta_value = $entryID and wp_rg_lead_meta.meta_key like 'entry_id' and wp_gf_addon_payment_transaction.transaction_type='payment'";
+
+        $payresults = $wpdb->get_results($paysql);
+        if($wpdb->num_rows > 0){
+          //add payment data to report
+          foreach($payresults as $payrow){
+            //payment transaction ID (from paypal)
+            $data['columnDefs']['trx_id']=   array('field'=> 'trx_id','displayName'=>'Pay trxID');
+            $entryData[$entryID]['trx_id'] = $payrow->transaction_id;
+
+            //payment amt
+            $data['columnDefs']['pay_amt']=   array('field'=> 'pay_amt','displayName'=>'Pay amount');
+            $entryData[$entryID]['pay_amt'] = $payrow->amount;
+
+            //payment amt
+            $data['columnDefs']['pay_date']=   array('field'=> 'pay_date','displayName'=>'Pay date');
+            $entryData[$entryID]['pay_date'] = $payrow->date_created;
+          }
+        }
+      }
+    }
   } //end entry data loop
 
   foreach($entryData as $row){
@@ -354,7 +438,7 @@ function retrieveRptData($table){
 
   //get table data
   $query = "select * ".$sql." from ".$table.$where.$orderBy;
-//echo '$query='.$query;
+
   $result = $mysqli->query( $query );
   //create array of table data
   while ($row = $result->fetch_assoc()) {

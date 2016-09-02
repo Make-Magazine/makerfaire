@@ -13,6 +13,10 @@ resourceApp.config(['$routeProvider',
         templateUrl: 'partials/canned.html',
         controller: 'cannedCtrl'
       }).
+      when('/canned/:sub/:faire', {
+        templateUrl: 'partials/canned.html',
+        controller: 'cannedCtrl'
+      }).
       when('/reports', {
         templateUrl: 'partials/reports.html',
         controller: 'reportsCtrl'
