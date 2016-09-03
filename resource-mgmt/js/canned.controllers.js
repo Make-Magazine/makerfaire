@@ -151,6 +151,27 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
             };
       var subTitle = 'CM Payment(s)';
       $scope.reports.callAJAX(vars);
+    }else
+    if(subRoute=='nonprofit_pymt'){
+       vars = {"formSelect":[],
+              "formType":["Exhibit"],
+              "faire": faire,
+              "payments":true,
+              "selectedFields":[
+                {"id":"304.17","label":"Flags","choices":"NP Fee Full","type":"checkbox","$$hashKey":"uiGrid-00KL"},
+                {"id":"304.18","label":"Flags","choices":"NP Fee Discount","type":"checkbox","$$hashKey":"uiGrid-00KL"},
+                {"id":"304.19","label":"Flags","choices":"NP Fee Waived","type":"checkbox","$$hashKey":"uiGrid-00KL"},
+
+                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"},
+                {"id":45,"label":"Are you a:","choices":"Non-profit","type":"radio","exact":true},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-00KB"}
+              ],
+              "rmtData":{"resource":[],"attribute":[],"attention":[],
+              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","$$hashKey":"object:371","checked":true}]},
+              "type":"customRpt"
+            };
+      var subTitle = 'CM Payment(s)';
+      $scope.reports.callAJAX(vars);
     }else if(subRoute=='am_summary'){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
