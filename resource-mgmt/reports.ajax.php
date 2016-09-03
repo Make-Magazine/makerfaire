@@ -344,6 +344,29 @@ var_dump($fieldArr);*/
             //payment amt
             $data['columnDefs']['pay_date']=   array('field'=> 'pay_date','displayName'=>'Pay date');
             $entryData[$entryID]['pay_date'] = $payrow->date_created;
+            $payEntry = GFAPI::get_entry($payrow->pymt_entry);
+
+            $payForm = GFAPI::get_form($payEntry['form_id']);
+            $pay_det = '';
+            foreach($payForm['fields'] as $payFields){
+              if($payFields['type']=='product'){
+                if($payFields['inputType']=='singleproduct'){
+                  if(is_array($payFields['inputs'])){
+                    foreach($payFields['inputs'] as $input){
+                      $pay_det .= $input['label'].': ';
+                      $pay_det .= $payEntry[$input['id']]." "."\n";
+                    }
+                    $pay_det.= " "."\n";
+                  }
+                }else{
+                  $pay_det.= $payFields['label'].': ';
+                  $pay_det.= $payEntry[$payFields['id']]." "."\n";
+                }
+              }
+            }
+            //payment details
+            $data['columnDefs']['pay_det']=   array('field'=> 'pay_det','displayName'=>'Payment Details');
+            $entryData[$entryID]['pay_det'] = $pay_det;
           }
         }
       }

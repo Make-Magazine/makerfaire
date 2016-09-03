@@ -1,13 +1,9 @@
-<div class="container" ng-init="retrieveData('faires')">
-  <div class="row">
-    <div class="col-md-3">
-      <h3>Select a Faire</h3>
-      <select ng-model="reports.selFaire" ng-change="reports.showLinks = true" name="faireSelect">
-        <option value="all">All Faires</option>
-        <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
-      </select>
-    </div>
-  </div>
+<div ng-init="retrieveData('faires')">
+  <h3>Select a Faire</h3>
+  <select ng-model="reports.selFaire" ng-change="reports.showLinks = true" name="faireSelect">
+    <option value="all">All Faires</option>
+    <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
+  </select>
 </div>
 
 <div ng-if="reports.showLinks" class="reportsView animated fadeInUp">
