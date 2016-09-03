@@ -62,14 +62,14 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
       //remove everything after the period
       $baseField = strpos($selFields->id, ".") ? substr($selFields->id, 0, strpos($selFields->id, ".")) : $selFields->id;
       $fieldArr[$baseField][] = array('field'=>'field_'.str_replace('.','_',$selFields->id),
-                                      'choice'=>$selFields->choices, 'type'=>$selFields->type);
+                                      'choice'=>$selFields->choices, 'type'=>$selFields->type, 'exact'=>(isset($selFields->exact)?$selFields->exact:''));
     }
 
     //create array of selected field id's
     $fieldIDArr[$selFields->id] = $selFields->id;
     if($selFields->type=='name'){
       foreach($selFields->inputs as $choice){
-        $fieldIDArr[$choice->id] = array('fieldID'=>$selFields->id );
+        $fieldIDArr[$choice->id] = $choice->id;
       }
     }
 
@@ -83,6 +83,7 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
   }
 
   $fieldIDquery = '';
+
   //build $fieldIDquery for sql
   foreach($fieldIDArr as $fieldID){
     if($fieldIDquery =='') {
@@ -156,15 +157,19 @@ var_dump($fieldArr);*/
       // If at least one of the selections are not there, we need to skip this entry
       foreach($fieldArr as $field){
         $remove = true; //default to remove this entry
-        foreach($field as $fieldRow){
+        foreach($field as $fieldRow) {
           //radio and selet boxes must match one of the passed values
           if($fieldRow['type']=='radio' || $fieldRow['type']=='select'){ //check value
-            if(isset($dataRow[$fieldRow['field']])){
-              if($dataRow[$fieldRow['field']] == $fieldRow['choice']){
-                $remove = false;
+            if(isset($fieldRow['exact'])&&$fieldRow['exact']==true){
+              if(isset($dataRow[$fieldRow['field']])){
+                if($dataRow[$fieldRow['field']] == $fieldRow['choice']){
+                  $remove = false;
+                }
               }
+            }else{ //not set to exact, then pass the field
+              $remove = false;
             }
-          }else{ //just include checkbox and text fields
+          } else{ //just include checkbox and text fields
             $remove = false;
           }
         } //end loop thru field

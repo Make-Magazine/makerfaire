@@ -140,7 +140,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":"304.21","label":"Flags","choices":"CM Fee Waived","type":"checkbox","$$hashKey":"uiGrid-00KL"},
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","$$hashKey":"uiGrid-01AB"},
+                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","exact":true},
                 {"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply:","choices":"Selling at Maker Faire [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-0029"},
                 {"id":"55.4","label":"What are your plans at Maker Faire? Check all that apply: ","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-00KB"}
@@ -162,6 +162,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                  "type":"textarea",
                  "inputs":"",
                  "$$hashKey":"uiGrid-011P"},
+               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
                {"id":"55.1",
                  "label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]",
                  "choices":"Selling at Maker Faire [Commercial Maker]",
@@ -211,6 +212,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                  "type":"textarea",
                  "inputs":"",
                  "$$hashKey":"uiGrid-022D"},
+               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
                {"id":"55.1",
                 "label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]",
                 "choices":"Selling at Maker Faire [Commercial Maker]",
@@ -290,7 +292,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"}
+          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
         ],
         "rmtData":{"resource":[{"id":"2","value":"Tables","$$hashKey":"object:4415","checked":true},
             {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:4417","checked":true},{"id":"10","value":"Electrical 220V","$$hashKey":"object:4418","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:4489","checked":true}],"attention":[],"meta":[]},"type":"customRpt","location":true}
