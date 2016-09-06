@@ -147,10 +147,8 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
       $entryData[$lead_id]['field_'.str_replace('.','_',$detail['field_number'])]  = $value;
     } //end entry detail loop
   } //end nentries loop
-  /*
-var_dump($entryData);
-echo '<br/><br/><br/>';
-var_dump($fieldArr);*/
+  
+  $colDefs2Sort = array();
   foreach($entryData as $entryID=>$dataRow){
     if(!empty($fieldArr)){
       // check selected checkbox and radio fields.
@@ -207,8 +205,9 @@ var_dump($fieldArr);*/
         }
         if($type=='resource'){
           if($selRMT->id!='all'){
-            $sql = 'SELECT qty,type,comment FROM `wp_rmt_entry_resources`, wp_rmt_resources '
-                    . ' where resource_id = wp_rmt_resources.ID and'
+            $sql = 'SELECT qty,type,comment, token '
+                . ' FROM `wp_rmt_entry_resources`, wp_rmt_resources '
+                . ' where resource_id = wp_rmt_resources.ID and'
                     . ' resource_category_id = '.$selRMT->id .' and'
                     . ' entry_id ='.$entryID;
           }else{
@@ -221,13 +220,21 @@ var_dump($fieldArr);*/
           //loop thru data
           $resources = $wpdb->get_results($sql,ARRAY_A);
           $entryRes = array();
-
-          foreach($resources as $resource){
-            $comment = ($incComments && $resource['comment']!=''?" (".$resource['comment'].")":'');
-            $entryRes[] = $resource['qty'] .' : '.$resource['type'].$comment;
+          if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
+            foreach($resources as $resource){
+              $colDefs2Sort['res_'.$resource['token']] =   array('field'=> 'res_'.$resource['token'],'displayName'=>$resource['token']);
+              $colDefs2Sort['res_'.$resource['token'].'_comment']  = array('field'=> 'res_'.$resource['token'].'_comment','displayName'=>$resource['token'].' - comment');
+              $entryData[$entryID]['res_'.$resource['token']] = $resource['qty'];
+              $entryData[$entryID]['res_'.$resource['token'].'_comment'] = $resource['comment'];
+            }
+          }else{
+            foreach($resources as $resource){
+              $comment = ($incComments && $resource['comment']!=''?" (".$resource['comment'].")":'');
+              $entryRes[] = $resource['qty'] .' : '.$resource['type'].$comment;
+            }
+            $data['columnDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
+            $entryData[$entryID]['res_'.$selRMT->id] = implode(', ',$entryRes);
           }
-          $data['columnDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
-          $entryData[$entryID]['res_'.$selRMT->id] = implode(', ',$entryRes);
         }
         if($type=='attribute'){
           if($selRMT->id!='all'){
@@ -237,7 +244,7 @@ var_dump($fieldArr);*/
                     . ' entry_id ='.$entryID
                     . ' and attribute_id= wp_rmt_entry_att_categories.ID';
           }
-          //echo $sql.'<br/>';
+
           //loop thru data
           $attributes = $wpdb->get_results($sql,ARRAY_A);
           $entryAtt = array();
@@ -376,7 +383,11 @@ var_dump($fieldArr);*/
   foreach($entryData as $row){
     $data['data'][] = $row;
   }
-
+  //sort $colDefs2Sort array by displayName
+  usort($colDefs2Sort, function($a, $b) {
+    return strcmp($a["displayName"], $b["displayName"]);
+  });
+  $data['columnDefs'] = array_merge($data['columnDefs'],$colDefs2Sort);
   //reindex columnDefs as the grid will blow up if the indexes aren't in order
   $data['columnDefs'] = array_values($data['columnDefs']);
 

@@ -320,6 +320,107 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
             {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:4417","checked":true},{"id":"10","value":"Electrical 220V","$$hashKey":"object:4418","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:4489","checked":true}],"attention":[],"meta":[]},"type":"customRpt","location":true}
       var subTitle = 'AM TCP';
       $scope.reports.callAJAX(vars);
+    }else if(subRoute=="table_chairs"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Presentation"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"2","value":"Tables","$$hashKey":"object:4415","checked":true,"aggregated":false},
+            {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Table/Chairs';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="barr_fence"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Presentation"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"19","value":"Barricade","checked":true,"aggregated":false},{"id":"18","value":"Fencing","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Barr/Fence';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="electrical"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Presentation"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"9","value":"Electrical 120V","checked":true,"aggregated":false},{"id":"10","value":"Electrical 220V","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Electrical';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="guest_seat"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Presentation"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"11","value":"Bench","checked":true,"aggregated":false},{"id":"12","value":"Bleachers","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Guest Seating';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="wb_stools"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Presentation"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"41","value":"Work Bench","checked":true,"aggregated":false},{"id":"42","value":"Stools","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Guest Seating';
+      $scope.reports.callAJAX(vars);
     }
     jQuery('#pageTitle').html(pageTitle);
     jQuery('#subTitle').html(subTitle);
