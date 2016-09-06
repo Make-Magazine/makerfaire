@@ -170,11 +170,11 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "meta":[{"id":"res_status","type":"meta","value":"Resource Status","$$hashKey":"object:371","checked":true}]},
               "type":"customRpt"
             };
-      var subTitle = 'CM Payment(s)';
+      var subTitle = 'Nonprofit Payment(s)';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=='am_summary'){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "selectedFields":[
                 {"id":16,
@@ -224,7 +224,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=='zoho'){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "selectedFields":[
                 {"id":16,
@@ -305,7 +305,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="am_tcp"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
         "selectedFields":[
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
@@ -322,7 +322,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="table_chairs"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
         "selectedFields":[
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
@@ -343,7 +343,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="barr_fence"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
         "selectedFields":[
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
@@ -363,7 +363,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="electrical"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
         "selectedFields":[
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
@@ -383,7 +383,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="guest_seat"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
         "selectedFields":[
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
@@ -403,7 +403,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="wb_stools"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
         "selectedFields":[
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},

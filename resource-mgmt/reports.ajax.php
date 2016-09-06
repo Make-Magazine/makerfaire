@@ -623,42 +623,31 @@ function getBuildRptData(){
 
 //this function cross references faire entries to their assigned resources and attributes
 function ent2resource($table, $faire){
-  global $mysqli;
+  global $wpdb;
   $data = array();
   $columnDefs = array();
 
   //find all non trashed entries for selected faires
-  //find RMT information
-
     $sql = "select wp_rg_lead.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire,
-      (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,
-      (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name,
-      (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
-      (select subarea from wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id) as subarea,
-          wp_rmt_entry_resources.resource_id,
-          wp_rmt_entry_resources.qty as 'resource_qty', wp_rmt_entry_resources.comment as 'resource_comment',
-          wp_rmt_entry_attributes.attribute_id,
-          wp_rmt_entry_attributes.value as 'attribute_value',
-          wp_rmt_entry_attributes.comment as 'attribute_comment',
-      (select token from wp_rmt_resources where wp_rmt_resources.id = resource_id)          as res_label,
-      (select token from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.id = attribute_id)          as att_label,
-          wp_rmt_entry_attn.attn_id as 'attn_id',
-          wp_rmt_entry_attn.comment as 'attn_comment',
-          wp_mf_location.id as 'location_id',
-          wp_mf_location.subarea_id,
-          wp_mf_location.location,
-      (select value from wp_rmt_attn where wp_rmt_attn.id = attn_id)          as attn_type
+              (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,
+              (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name,
+              (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
+              wp_mf_faire_subarea.subarea,
+              wp_mf_faire_area.area,
+              wp_mf_location.location, wp_mf_location.id as location_id
+            from wp_rg_lead
+              left outer join wp_mf_faire          on INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id) > 0
+              left outer join wp_mf_location       on wp_mf_location.entry_id = wp_rg_lead.id
+              left outer join wp_mf_faire_subarea  on wp_mf_location.subarea_id = wp_mf_faire_subarea.id
+              left outer join wp_mf_faire_area     on wp_mf_faire_subarea.area_id = wp_mf_faire_area.id
+            where status = 'active' and
+                  faire is not NULL and
+                  form_id!=1 and form_id!=9 and
+                  wp_mf_faire.ID=".$faire.
+          " order by wp_rg_lead.id asc";
 
-          from wp_rg_lead
-            left outer join wp_mf_faire on INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id) > 0
-            left outer join wp_rmt_entry_resources 	 on wp_rmt_entry_resources.entry_id = wp_rg_lead.id
-            left outer join wp_rmt_entry_attributes  on wp_rmt_entry_attributes .entry_id = wp_rg_lead.id
-            left outer join wp_rmt_entry_attn        on wp_rmt_entry_attn.entry_id = wp_rg_lead.id
-            left outer join wp_mf_location           on wp_mf_location.entry_id = wp_rg_lead.id
-          where status = 'active' and faire is not NULL and wp_rg_lead.form_id!=1 and wp_mf_faire.ID=".$faire.
-         " order by faire DESC, status ASC";
-
-  $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
+  //loop thru entry data and build array
+  $entries = $wpdb->get_results($sql,ARRAY_A);
 
   $entryData = array();
   $resArray  = array();
@@ -666,6 +655,8 @@ function ent2resource($table, $faire){
   $attnArray = array();
 
   foreach($entries as $entry){
+    if($entry['status'] !='Accepted' && $entry['status']!='Proposed') continue; //skip this record
+
     $dbdata = array();
     //set basic data
     $dbdata['entry_id']   = $entry['entry_id'];
@@ -682,30 +673,54 @@ function ent2resource($table, $faire){
     $dbdata['status']     = $entry['status'];
     $dbdata['proj_name']  = $entry['proj_name'];
 
-    if($entry['resource_id'] != NULL){
-      $dbdata['resource'][$entry['resource_id']] = array('qty'=> $entry['resource_qty'], 'comment'=>$entry['resource_comment']);
-      //add resource to resource array
-      $resArray[$entry['resource_id']] = $entry['res_label'];
-    }
-    //set attribute data
-    if($entry['attribute_id'] != NULL){
-      //set resource data
-      $dbdata['attribute'][$entry['attribute_id']] = array('value'=> $entry['attribute_value'], 'comment'=>$entry['attribute_comment']);
-      //add attribute to attribute array
-      $attArray[$entry['attribute_id']] = $entry['att_label'];
-    }
-    //set attention data
-    if($entry['attn_id'] != NULL){
-      //set resource data
-      $dbdata['attention'][$entry['attn_id']] = array('comment'=>$entry['attn_comment']);
-      //add attribute to attribute array
-      $attnArray[$entry['attn_id']] = $entry['attn_type'];
-    }
     //set location data
     if($entry['location_id'] != NULL){
       //set resource data
       $dbdata['location'] = array('subarea'=> $entry['subarea'], 'location'=>$entry['location'], 'area'=>$entry['area']);
     }
+
+
+    //pull resource information
+    $resSql = "select wp_rmt_entry_resources.resource_id,
+                      wp_rmt_entry_resources.qty as 'resource_qty',
+                      wp_rmt_entry_resources.comment as 'resource_comment',
+                      token as res_label
+          from wp_rmt_entry_resources,wp_rmt_resources where wp_rmt_entry_resources.entry_id = ".$entry['entry_id']." and wp_rmt_resources.id = resource_id";
+    $resources = $wpdb->get_results($resSql,ARRAY_A);
+    foreach($resources as $resource){
+      $dbdata['resource'][$resource['resource_id']] = array('qty'=> $resource['resource_qty'], 'comment'=>$resource['resource_comment']);
+      //add resource to resource array
+      $resArray[$resource['resource_id']] = $resource['res_label'];
+    }
+
+    // pull attribute data
+    $attSql = "select wp_rmt_entry_attributes.attribute_id,
+                      wp_rmt_entry_attributes.value as 'attribute_value',
+                      wp_rmt_entry_attributes.comment as 'attribute_comment',
+                      token  as att_label
+            from wp_rmt_entry_attributes, wp_rmt_entry_att_categories
+            where wp_rmt_entry_attributes .entry_id = ".$entry['entry_id']." and
+            wp_rmt_entry_att_categories.id = attribute_id";
+    $attributes = $wpdb->get_results($attSql,ARRAY_A);
+    foreach($attributes as $attribute){
+      //set resource data
+      $dbdata['attribute'][$attribute['attribute_id']] = array('value'=> $attribute['attribute_value'], 'comment'=>$attribute['attribute_comment']);
+      //add attribute to attribute array
+      $attribute[$attribute['attribute_id']] = $attribute['att_label'];
+    }
+
+    // pull attention data
+    $attnSql = "select attn_id as 'attn_id', comment as 'attn_comment', wp_rmt_attn.value as attn_type
+                from wp_rmt_entry_attn, wp_rmt_attn
+                where wp_rmt_attn.id = attn_id and wp_rmt_entry_attn.entry_id = ".$entry['entry_id'];
+    $attentions = $wpdb->get_results($attnSql,ARRAY_A);
+    foreach($attentions as $attention){
+      //set resource data
+      $dbdata['attention'][$attention['attn_id']] = array('comment'=>$attention['attn_comment']);
+      //add attribute to attribute array
+      $attnArray[$attention['attn_id']] = $attention['attn_type'];
+    }
+
     $data[$entry['entry_id']] = $dbdata;
   }
 
