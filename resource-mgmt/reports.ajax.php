@@ -147,7 +147,7 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
       $entryData[$lead_id]['field_'.str_replace('.','_',$detail['field_number'])]  = $value;
     } //end entry detail loop
   } //end nentries loop
-  
+
   $colDefs2Sort = array();
   foreach($entryData as $entryID=>$dataRow){
     if(!empty($fieldArr)){
@@ -655,7 +655,7 @@ function ent2resource($table, $faire){
             left outer join wp_rmt_entry_attributes  on wp_rmt_entry_attributes .entry_id = wp_rg_lead.id
             left outer join wp_rmt_entry_attn        on wp_rmt_entry_attn.entry_id = wp_rg_lead.id
             left outer join wp_mf_location           on wp_mf_location.entry_id = wp_rg_lead.id
-          where status = 'active' and faire is not NULL and wp_mf_faire.ID=".$faire.
+          where status = 'active' and faire is not NULL and wp_rg_lead.form_id!=1 and wp_mf_faire.ID=".$faire.
          " order by faire DESC, status ASC";
 
   $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
@@ -670,6 +670,14 @@ function ent2resource($table, $faire){
     //set basic data
     $dbdata['entry_id']   = $entry['entry_id'];
     $dbdata['form_id']    = $entry['form_id'];
+    //pull form data and see if it matches the requested form type
+    $formPull = GFAPI::get_form( $entry['form_id'] );
+    $formType = (isset($formPull['form_type'])?$formPull['form_type']:'');
+
+    //do not return Presenation records
+    if($formType=='Presentation') continue; //skip this record
+
+    $dbdata['form_type']  = $formType;
     $dbdata['faire']      = $entry['faire'];
     $dbdata['status']     = $entry['status'];
     $dbdata['proj_name']  = $entry['proj_name'];
@@ -705,7 +713,7 @@ function ent2resource($table, $faire){
   $columnDefs[] = array('field' => 'faire', 'displayName'=>'Faire', 'width'=>'50');
   $columnDefs[] = array('field' => 'status', 'displayName'=>'Status', 'width'=>'100','sort'=> array('direction'=> 'uiGridConstants.ASC','priority'=> 0), 'enableSorting'=> true);
   $columnDefs[] = array('field' => 'entry_id', 'displayName'=>'Entry ID', 'width'=>'75');
-  $columnDefs[] = array('field' => 'form_id', 'displayName'=> 'Form', 'width'=>'50');
+  $columnDefs[] = array('field' => 'form_type', 'displayName'=> 'Form Type', 'width'=>'150');
   $columnDefs[] = array('field' => 'proj_name', 'displayName'=>'Entry Name', 'width'=>'*');
 
 
@@ -736,12 +744,16 @@ function ent2resource($table, $faire){
 
 
   $retData = array();
-  usort($data, "cmpEntryID");
+  //usort($data, "cmpEntryID");
+
   //$data = (array) $data;
   //sort data by status, area, subarea, location
   $columnDefs = array_merge($columnDefs,$colDefs2Sort);
   $retData['data']        = $data;
   $retData['columnDefs']  = $columnDefs;
+  //reindex columnDefs as the grid will blow up if the indexes aren't in order
+  $retData['columnDefs'] = array_values($retData['columnDefs']);
+  $retData['data'] = array_values($retData['data']);
   echo json_encode($retData);
   exit;
 }
