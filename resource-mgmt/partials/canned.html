@@ -1,11 +1,50 @@
+<div ng-init="retrieveData('faires')">
+  <h3>Select a Faire</h3>
+  <select ng-model="reports.selFaire" ng-change="reports.showLinks = true" name="faireSelect">
+    <option value="all">All Faires</option>
+    <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
+  </select>
+</div>
 
-<a href="#canned/am_summary" class="btn btn-success"  role="button">AM Summary</a>
-<a href="#canned/zoho" class="btn btn-success"  role="button">Zoho</a>
-<a href="#canned/am_tcp" class="btn btn-success"  role="button">AM TCP</a>
+<div ng-if="reports.showLinks" class="reportsView animated fadeInUp cannedLinks">
+  <div class="row">
+    <div class="col-sm-2">
+      <a href="#canned/am_summary/{{reports.selFaire}}" class="btn btn-success"  role="button">AM Summary</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/zoho/{{reports.selFaire}}" class="btn btn-success"  role="button">Zoho</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/am_tcp/{{reports.selFaire}}" class="btn btn-success"  role="button">AM TCP</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/cm_pymt/{{reports.selFaire}}" class="btn btn-success"  role="button">CM Payment(s)</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/nonprofit_pymt/{{reports.selFaire}}" class="btn btn-success"  role="button">Nonprofit Payment(s)</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/table_chairs/{{reports.selFaire}}" class="btn btn-success"  role="button">Table/Chairs</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/barr_fence/{{reports.selFaire}}" class="btn btn-success"  role="button">Barr/Fence</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/electrical/{{reports.selFaire}}" class="btn btn-success"  role="button">Electrical</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/guest_seat/{{reports.selFaire}}" class="btn btn-success"  role="button">Guest Seating</a>
+    </div>
+    <div class="col-sm-2">
+      <a href="#canned/wb_stools/{{reports.selFaire}}" class="btn btn-success"  role="button">WB/Stools</a>
+    </div>
+  </div>
+</div>
+
 <br/><br/>
 <div ng-if="reports.showGrid" class="reportsView animated fadeInUp">
     <div class="table-responsive">
-      <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-resize-columns ui-grid-grouping ui-grid-auto-resize class="grid">
+      <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-resize-columns ui-grid-auto-resize class="grid">
         <div class="grid-msg-overlay" ng-hide="!reports.loading">
           <div class="msg">
             <span>

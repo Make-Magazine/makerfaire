@@ -232,7 +232,6 @@ class GFRMTHELPER {
 				'loctype'               => isset($lead['69'])   ? $lead['69']  : '',
 				'tables_chairs_details' => isset($lead['288'])  ? $lead['288'] : '',
 				'internet'              => isset($lead['77'])   ? $lead['77']  : '',
-				'project_photo'         => isset($lead['22'])   ? $lead['22']  : '',
 				'project_name'          => isset($lead['151'])  ? $lead['151'] : '',
 				'first_time'            => isset($lead['130'])  ? $lead['130'] : '',
 				'power'                 => isset($lead['73'])   ? $lead['73']  : '',
@@ -291,6 +290,14 @@ class GFRMTHELPER {
         'categories'            => $leadCategory,
         'mobileAppDiscover'     => $MAD
 		);
+
+    if($entry_data['fType']=='Presentation'){
+      $entry_data['project_photo'] = $entry_data['maker_array']['presenter']['photo'];
+
+    }else{
+      $entry_data['project_photo'] = (isset($lead['22'])   ? $lead['22']  : '');
+    }
+
 
     if($form['id']==105){
       $entry_data['origEntryID'] = (isset($lead['448']) ? $lead['448'] : '');
@@ -1079,14 +1086,14 @@ class GFRMTHELPER {
     // we need to have at least 1 presenter/maker.  if these fields are empty, pull from the contact info
     if(trim($makerArray['presenter']['first_name'])=='' && trim($makerArray['presenter']['last_name'])==''){
       //let's try to get the name from the contact info
-      $firstName  =  (isset($entryData['maker_array']['contact']['first_name']) ? esc_sql($entryData['maker_array']['contact']['first_name']) : '');
-      $lastName   =  (isset($entryData['maker_array']['contact']['last_name'])  ? esc_sql($entryData['maker_array']['contact']['last_name'])  : '');
+      $firstName  =  (isset($makerArray['contact']['first_name']) ? esc_sql($makerArray['contact']['first_name']) : '');
+      $lastName   =  (isset($makerArray['contact']['last_name'])  ? esc_sql($makerArray['contact']['last_name'])  : '');
     }
 
     // If sponsor, Set Presenter/Maker 1 name to company name
     if($form['form_type']=='Sponsor'){
-        $entryData['maker_array']['presenter']['first_name'] = htmlentities($project_name);
-        $entryData['maker_array']['presenter']['last_name']  = ' ';
+        $makerArray['presenter']['first_name'] = htmlentities($project_name);
+        $makerArray['presenter']['last_name']  = ' ';
       }
 
     // only set the below data if the entry is not marked as one maker
@@ -1185,7 +1192,7 @@ class GFRMTHELPER {
     $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
 
     if($form_type == 'Presentation') {
-      $project_photo = $entryData['maker_array']['presenter']['photo'];
+      $project_photo = $makerArray['presenter']['photo'];
     }else{
       $project_photo = (isset($lead['22']) ? $lead['22'] : '');
     }

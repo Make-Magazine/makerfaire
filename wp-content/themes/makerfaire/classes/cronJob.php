@@ -286,13 +286,13 @@ function build_ribbonJSON(){
  * Cron process to create MAT records for specific forms
  */
 add_action('cron_rmt_update', 'rmt_update');
-function rmt_update(){
-  error_log('updating maker tables');
+function rmt_update($form=9){
+  error_log('updating maker tables for form '. $form);
   global $wpdb;
   $sql = "Select id,form_id
           from wp_rg_lead
           where status <> 'trash' and
-          form_id in (96) ORDER BY `wp_rg_lead`.`id` ASC";
+          form_id in ($form) ORDER BY `wp_rg_lead`.`id` ASC";
   $results = $wpdb->get_results($sql);
   foreach($results as $row){
    $form  = GFAPI::get_form( $row->form_id);

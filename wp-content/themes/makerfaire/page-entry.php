@@ -99,7 +99,7 @@
 
   // Url
   $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
-  
+
   $sharing_cards->project_photo = $project_photo;
 
   // Description
@@ -278,7 +278,7 @@
                   </div>';
           } else {
             foreach($makers as $key=>$maker) {
-              if($maker['firstname'] !='' && $maker['lastname'] !=''){
+              if($maker['firstname'] !=''){
                 echo '<div class="row padbottom">
                         <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="maker'.$key.'img" title="Click to upload...">
                           <div class="entry-page-maker-img">' .
@@ -301,7 +301,7 @@
       </div>
 
       <?php
-      echo display_groupEntries($entryId);
+        echo display_groupEntries($entryId);
       } else { //entry is not active
         echo '<h2>Invalid entry</h2>';
       }

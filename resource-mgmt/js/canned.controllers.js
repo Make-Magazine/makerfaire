@@ -1,14 +1,52 @@
 // reports controller
-rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$interval','uiGridConstants','uiGridGroupingConstants', function ($scope, $routeParams, $http,$interval,uiGridConstants,uiGridGroupingConstants) {
+rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$interval','uiGridConstants', function ($scope, $routeParams, $http,$interval,uiGridConstants) {
   $scope.reports    = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
+  $scope.reports.showLinks = false;
+  $scope.data     = [];
 
   var url = '/resource-mgmt/reports.ajax.php';
   $scope.msg = {};
 
+  //faire dropdown
+  $scope.retrieveData = function(type) {
+    if(type=='faires'){
+      var vars = jQuery.param({ 'type' :  type});
+      var url = '/resource-mgmt/ajax.php';
+      var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
+    }
+
+    //get grid data
+    $http({
+      method: 'post',
+      url: url,
+      data: vars,
+      headers: head2pass
+    })
+    .then(function(response){
+      if("error" in response.data) {
+        alert(response.data.error);
+      }else if(type=='faires'){
+        $scope.data[type] = response.data[type];
+      }
+    }).finally(function () {
+      if(type=='faires'){
+        faires = $scope.data.faires;
+        angular.forEach(faires, function(value,key){
+          if(value.faire==$scope.subRoute){
+            $scope.reports.selFaire = key;
+          }
+        });
+      }
+    });
+  };
+
+
+
   //set up gridOptions for predefined reports
-  $scope.gridOptions = {enableFiltering: true,
+  $scope.gridOptions = {
+    enableFiltering: true,
     enableGridMenu: true,
     rowHeight: 100,
 
@@ -42,7 +80,13 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.reports.callAJAX = function(pvars){
     $scope.reports.showGrid  = true;
     $scope.reports.loading = true;
-
+    var sortParams = {
+      'field_303':  {'direction': uiGridConstants.ASC, 'priority':0},
+      'area':       {'direction': uiGridConstants.ASC, 'priority':1},
+      'subarea':    {'direction': uiGridConstants.ASC, 'priority':2},
+      'location':   {'direction': uiGridConstants.ASC, 'priority':3}
+                };
+                
     //get grid data
     $http({
       method: 'post',
@@ -57,6 +101,15 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           alert(response.data.message);
         }
       }else{
+        //get grid data
+        angular.forEach(response.data.columnDefs, function(value, key) {
+          //add sorting - status, area, sub area, location
+          var findMe = value.field;
+          if(findMe in sortParams){
+            value.sort = {'direction':sortParams[findMe].direction, 'priority': sortParams[findMe].priority};
+          }
+
+        });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
         $scope.reports.showGrid = true;
@@ -73,17 +126,71 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
 
   if($routeParams){
     $scope.reports.subRoute = $routeParams.sub;
+
+    if("faire" in $routeParams){
+      var faire = $routeParams.faire;
+      $scope.reports.selFaire = $routeParams.faire;
+      $scope.reports.showLinks = true;
+    }else{
+      $scope.reports.selFaire = '';
+      var faire = '';
+    }
     var subRoute  = $routeParams.sub;
     var pageTitle = 'Reports';
     var subTitle  = '';
 
     if(subRoute=='commercial')        {
-      vars = {"formSelect":["64", "68", "81"],"selectedFields":[{"id":"55.2","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},{"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Launching a product or service","type":"checkbox","$$hashKey":"uiGrid-002D"},{"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"}],"rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:178","checked":true}],"attribute":[{"id":"all","value":"All Attributes","$$hashKey":"object:252","checked":true}],"attention":[{"id":"all","value":"All Attention","$$hashKey":"object:272","checked":true}],"meta":[]},"type":"customRpt","location":true};
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
+              "faire": faire,
+              "selectedFields":[{"id":"55.2","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},{"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Launching a product or service","type":"checkbox","$$hashKey":"uiGrid-002D"},{"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"}],"rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:178","checked":true}],"attribute":[{"id":"all","value":"All Attributes","$$hashKey":"object:252","checked":true}],"attention":[{"id":"all","value":"All Attention","$$hashKey":"object:272","checked":true}],"meta":[]},"type":"customRpt","location":true};
       var subTitle = 'Commercial';
       $scope.reports.callAJAX(vars);
-    }
-    if(subRoute=='am_summary'){
-      vars = {"formSelect":["64", "68", "81"],
+    }else
+    if(subRoute=='cm_pymt'){
+       vars = {"formSelect":[],
+              "formType":["Exhibit"],
+              "faire": faire,
+              "payments":true,
+              "selectedFields":[
+                {"id":"304.21","label":"Flags","choices":"CM Fee Waived","type":"checkbox","$$hashKey":"uiGrid-00KL"},
+                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"},
+                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","exact":true},
+                {"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply:","choices":"Selling at Maker Faire [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-0029"},
+                {"id":"55.4","label":"What are your plans at Maker Faire? Check all that apply: ","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-00KB"}
+              ],
+              "rmtData":{"resource":[],"attribute":[],"attention":[],
+              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","$$hashKey":"object:371","checked":true}]},
+              "type":"customRpt"
+            };
+      var subTitle = 'CM Payment(s)';
+      $scope.reports.callAJAX(vars);
+    }else
+    if(subRoute=='nonprofit_pymt'){
+       vars = {"formSelect":[],
+              "formType":["Exhibit"],
+              "faire": faire,
+              "payments":true,
+              "selectedFields":[
+                {"id":"304.17","label":"Flags","choices":"NP Fee Full","type":"checkbox","$$hashKey":"uiGrid-00KL"},
+                {"id":"304.18","label":"Flags","choices":"NP Fee Discount","type":"checkbox","$$hashKey":"uiGrid-00KL"},
+                {"id":"304.19","label":"Flags","choices":"NP Fee Waived","type":"checkbox","$$hashKey":"uiGrid-00KL"},
+
+                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"},
+                {"id":45,"label":"Are you a:","choices":"Non-profit","type":"radio","exact":true},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-00KB"}
+              ],
+              "rmtData":{"resource":[],"attribute":[],"attention":[],
+              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","$$hashKey":"object:371","checked":true}]},
+              "type":"customRpt"
+            };
+      var subTitle = 'Nonprofit Payment(s)';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=='am_summary'){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
               "selectedFields":[
                 {"id":16,
                  "label":"Short/Public Description [check notes] [ALL]",
@@ -91,6 +198,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                  "type":"textarea",
                  "inputs":"",
                  "$$hashKey":"uiGrid-011P"},
+               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
                {"id":"55.1",
                  "label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]",
                  "choices":"Selling at Maker Faire [Commercial Maker]",
@@ -129,9 +237,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
              "rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:695","checked":true},{"id":"2","value":"Tables","$$hashKey":"object:696","checked":true},{"id":"3","value":"Chairs","$$hashKey":"object:697","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:698","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:770","checked":true},{"id":"4","value":"Exposure","$$hashKey":"object:771","checked":true},{"id":"9","value":"Noise Level","$$hashKey":"object:773","checked":true},{"id":"11","value":"Internet","$$hashKey":"object:774","checked":true}],"attention":[{"id":"9","value":"Area Manager Notes","$$hashKey":"object:792","checked":true},{"id":"10","value":"Early Setup","$$hashKey":"object:793","checked":true},{"id":"11","value":"No Friday","$$hashKey":"object:794","checked":true}],"meta":[]},"type":"customRpt","location":true};
       var subTitle = 'AM summary';
       $scope.reports.callAJAX(vars);
-    }
-    if(subRoute=='zoho'){
-      vars = {"formSelect":["64", "68", "81"],
+    }else if(subRoute=='zoho'){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
               "selectedFields":[
                 {"id":16,
                  "label":"Short/Public Description [check notes] [ALL]",
@@ -139,6 +248,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                  "type":"textarea",
                  "inputs":"",
                  "$$hashKey":"uiGrid-022D"},
+               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
                {"id":"55.1",
                 "label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]",
                 "choices":"Selling at Maker Faire [Commercial Maker]",
@@ -205,23 +315,111 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":"10","value":"Early Setup","$$hashKey":"object:1334","checked":true},
                 {"id":"11","value":"No Friday","$$hashKey":"object:1335","checked":true},
                 ],"meta":[]},
-              "type":"customRpt","location":true}
-
+              "type":"customRpt","location":true};
       var subTitle = 'Zoho';
       $scope.reports.callAJAX(vars);
-    }
-    if(subRoute=="am_tcp"){
-      vars = {"formSelect":["64", "68", "81"],"selectedFields":[
+    }else if(subRoute=="am_tcp"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+        "selectedFields":[
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
           {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"}
+          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
         ],
         "rmtData":{"resource":[{"id":"2","value":"Tables","$$hashKey":"object:4415","checked":true},
             {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:4417","checked":true},{"id":"10","value":"Electrical 220V","$$hashKey":"object:4418","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:4489","checked":true}],"attention":[],"meta":[]},"type":"customRpt","location":true}
       var subTitle = 'AM TCP';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="table_chairs"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"2","value":"Tables","$$hashKey":"object:4415","checked":true,"aggregated":false},
+            {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Table/Chairs';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="barr_fence"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"19","value":"Barricade","checked":true,"aggregated":false},{"id":"18","value":"Fencing","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Barr/Fence';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="electrical"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"9","value":"Electrical 120V","checked":true,"aggregated":false},{"id":"10","value":"Electrical 220V","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Electrical';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="guest_seat"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"11","value":"Bench","checked":true,"aggregated":false},{"id":"12","value":"Bleachers","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Guest Seating';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="wb_stools"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
+          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+        ],
+        "rmtData":{
+          "resource":[{"id":"41","value":"Work Bench","checked":true,"aggregated":false},{"id":"42","value":"Stools","checked":true,"aggregated":false}],
+          "attribute":[],"attention":[],"meta":[]},
+        "type":"customRpt",
+        "location":true}
+      var subTitle = 'Guest Seating';
       $scope.reports.callAJAX(vars);
     }
     jQuery('#pageTitle').html(pageTitle);
