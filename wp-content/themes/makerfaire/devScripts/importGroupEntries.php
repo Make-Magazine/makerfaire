@@ -247,7 +247,7 @@ function prcNewEntry($entryID){
   $digits = 3;
   $charIP = (string) $entry['ip'];
   $rand   =  substr(base_convert($charIP, 10, 36),0,$digits);
-$tickets=array();
+
   foreach($tickets as $ticket){
     $hidden     = $ticket['hidden'];
     $accessCode = $ticket['ticket_type'] . $entryID . $rand;
