@@ -80,7 +80,13 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.reports.callAJAX = function(pvars){
     $scope.reports.showGrid  = true;
     $scope.reports.loading = true;
-
+    var sortParams = {
+      'field_303':  {'direction': uiGridConstants.ASC, 'priority':0},
+      'area':       {'direction': uiGridConstants.ASC, 'priority':1},
+      'subarea':    {'direction': uiGridConstants.ASC, 'priority':2},
+      'location':   {'direction': uiGridConstants.ASC, 'priority':3}
+                };
+                
     //get grid data
     $http({
       method: 'post',
@@ -95,6 +101,15 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           alert(response.data.message);
         }
       }else{
+        //get grid data
+        angular.forEach(response.data.columnDefs, function(value, key) {
+          //add sorting - status, area, sub area, location
+          var findMe = value.field;
+          if(findMe in sortParams){
+            value.sort = {'direction':sortParams[findMe].direction, 'priority': sortParams[findMe].priority};
+          }
+
+        });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
         $scope.reports.showGrid = true;
@@ -328,9 +343,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
           {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
         ],
         "rmtData":{
@@ -349,9 +361,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
           {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
         ],
         "rmtData":{
@@ -369,9 +378,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
           {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
         ],
         "rmtData":{
@@ -389,9 +395,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
           {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
         ],
         "rmtData":{
@@ -409,9 +412,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
           {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
         ],
         "rmtData":{
