@@ -30,7 +30,7 @@ if ( isset($_POST["submit"]) ) {
       $name = end($name);
       $ext = strtolower($name);
 
-      $type = $_FILES['fileToUpload']['type'];
+      $type    = $_FILES['fileToUpload']['type'];
       $tmpName = $_FILES['fileToUpload']['tmp_name'];
 
       //Print File Details
@@ -95,8 +95,8 @@ if ( isset($_POST["submit"]) ) {
       $data  = array('form_id'=>$form,'status'=>'active',"id" => "","date_created" => "",'ip'=>$randIP);
       foreach($rowData as $key => $value){
         if($fieldIDs[$key] != ''  && $value !=''){
-          $data[$fieldIDs[$key]] = htmlspecialchars($value);
-          //echo 'Setting field '.$fieldIDs[$key]. ' to '.htmlspecialchars($value).'<br/>';
+          $data[$fieldIDs[$key]] = htmlentities($value, ENT_COMPAT,'ISO-8859-1', true);
+          echo 'Setting field '.$fieldIDs[$key]. ' to '.$data[$fieldIDs[$key]].'<br/>';
         }
       }
       $childID = GFAPI::add_entry($data);
@@ -105,7 +105,7 @@ if ( isset($_POST["submit"]) ) {
                             'faire'   => $faire,
                             'form_id' => $form);
     }
-
+    echo '<br/><br/>';
   }
 
   //now we need to update the database
@@ -120,11 +120,10 @@ if ( isset($_POST["submit"]) ) {
     $insertRel .= " (".$value['parentID'].", ".$value['childID'].", '".$value['faire']."', '".$value['form_id']."')".$contchar;
     gform_update_meta( $value['childID'], 'res_status','ready' );
     //process new entry
-    //prcNewEntry($value['childID']);
+    prcNewEntry($value['childID']);
   }
   // add to the wp_rg_lead_rel table
-  $sql = "INSERT INTO wp_rg_lead_rel "
-          . "(`parentID`, `childID`, `faire`, `form`) values " .$insertRel.";";
+  $sql = "INSERT INTO wp_rg_lead_rel (`parentID`, `childID`, `faire`, `form`) values " .$insertRel.";";
   $result=mysqli_query($mysqli,$sql) or die("error in SQL ".mysqli_error($mysqli).' '.$sql);
 }else{
   ?>
@@ -211,61 +210,49 @@ function prcNewEntry($entryID){
 
   $entry    = GFAPI::get_entry($entryID);
   $form_id  = $entry['form_id'];
-  $form = GFAPI::get_form($form_id);
+  $form     = GFAPI::get_form($form_id);
 
   //create RMT data
   GFRMTHELPER::gravityforms_makerInfo($entry,$form);
 
   //generate eventbrite tickets
-  /* SF Bazaar rules
-    (MA, FC, SC ) hidden tickets - set to default qty of 2
-    ME (Maker Entry Pass) = 2
-    FD (Friday Discount) = 10
-    SD (Saturday Discount) = 6 */
+  /*
+    NY16:
+      ME - 2 Maker Entry Passes - eid 26455360696, ticket id 52207452(event id 3)
+      SC - 2 Comp tickets       - eid 25957796468, ticket id 52164508(event id 4)
+      SD - 2 discount tickets   - eid 25957796468, ticket id 52164509(event id 4)
+   */
 
   $tickets = array();
-  $tickets[] =  array('ticket_type' => 'MA',
-      'ticket_id' =>'48998582',
-                   'hidden'      => 1,
-                   'qty'         => 2
-      );
-  $tickets[] =  array('ticket_type' => 'FC',
-      'ticket_id' =>'44091563',
-                   'hidden'      => 1,
-                   'qty'         => 2
+  $tickets[] =  array('ticket_type' => 'ME',
+                      'ticket_id'   => '52207452',
+                      'hidden'      => 0,
+                      'qty'         => 2,
+                      'eid'         => 26455360696
       );
   $tickets[] =  array('ticket_type' => 'SC',
-      'ticket_id' =>'44091560',
-                   'hidden'      => 1,
-                   'qty'         => 2
-      );
-  $tickets[] =  array('ticket_type' => 'ME',
-      'ticket_id' =>'44091559',
-                   'hidden'      => 0,
-                   'qty'         => 2
-      );
-  $tickets[] =  array('ticket_type' => 'FD',
-      'ticket_id' =>'44091564',
-                   'hidden'      => 0,
-                   'qty'         => 10
+                      'ticket_id'   => '52164508',
+                      'hidden'      => 0,
+                      'qty'         => 2,
+                      'eid'         => 25957796468
       );
   $tickets[] =  array('ticket_type' => 'SD',
-      'ticket_id' =>'44091561',
-                   'hidden'      => 0,
-                   'qty'         => 6
+                      'ticket_id'   => '52164509',
+                      'hidden'      => 0,
+                      'qty'         => 2,
+                      'eid'         => 25957796468
       );
 
   //generate access code for each ticket type
   $digits = 3;
-  $charIP = $entry['ip'];
-  $rand =  substr(base_convert($charIP, 10, 36),0,$digits);
-
-  $EB_event_id = '21038172741';
+  $charIP = (string) $entry['ip'];
+  $rand   =  substr(base_convert($charIP, 10, 36),0,$digits);
+$tickets=array();
   foreach($tickets as $ticket){
-    $hidden = $ticket['hidden'];
-    $accessCode = $ticket['ticket_type'].$entryID.$rand;
+    $hidden     = $ticket['hidden'];
+    $accessCode = $ticket['ticket_type'] . $entryID . $rand;
     $args = array(
-      'id'   => $EB_event_id,
+      'id'   => $ticket['eid'],
       'data' => 'access_codes',
       'create' => array(
         'access_code.code'               => $accessCode,
@@ -276,7 +263,7 @@ function prcNewEntry($entryID){
 
     //call eventbrite to create access code
     $access_codes = $eventbrite->events($args);
-    if(isset($access_codes->status_code)&&$access_codes->status_code==400){
+    if(isset($access_codes->status_code) && $access_codes->status_code==400){
       $response['msg'] =  $access_codes->error_description;
       exit;
     }else{
