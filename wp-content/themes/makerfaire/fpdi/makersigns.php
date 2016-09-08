@@ -38,7 +38,7 @@ class PDF extends FPDF {
     } else if (isset($_GET['faire']) && $_GET['faire']!='') {
       $faire = $_GET['faire'];
     }
-    $faire = (isset($wp_query->query_vars['faire']) ? $wp_query->query_vars['faire'] : '');
+    
     $image = $root . '/wp-content/themes/makerfaire/images/' . $faire . '-maker_sign.jpg';
     // Logo
     $this->Image($image, 0, 0, $this->w, $this->h);
