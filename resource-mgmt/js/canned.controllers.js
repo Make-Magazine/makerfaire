@@ -86,7 +86,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       'subarea':    {'direction': uiGridConstants.ASC, 'priority':2},
       'location':   {'direction': uiGridConstants.ASC, 'priority':3}
                 };
-                
+
     //get grid data
     $http({
       method: 'post',
@@ -331,8 +331,11 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
           {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
         ],
-        "rmtData":{"resource":[{"id":"2","value":"Tables","$$hashKey":"object:4415","checked":true},
-            {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:4417","checked":true},{"id":"10","value":"Electrical 220V","$$hashKey":"object:4418","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:4489","checked":true}],"attention":[],"meta":[]},"type":"customRpt","location":true}
+        "rmtData":{"resource":[
+            {"id":"2","value":"Tables","$$hashKey":"object:4415","checked":true,"aggregated":false},
+            {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true,"aggregated":false},
+            {"id":"9","value":"Electrical 120V","$$hashKey":"object:4417","checked":true},
+            {"id":"10","value":"Electrical 220V","$$hashKey":"object:4418","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:4489","checked":true}],"attention":[],"meta":[]},"type":"customRpt","location":true}
       var subTitle = 'AM TCP';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="table_chairs"){

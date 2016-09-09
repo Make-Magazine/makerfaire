@@ -83,12 +83,11 @@ $type   = '';
 <div class="row">
   <div class="col-sm-3">
     <strong>Create/Download Zip file for Faires</strong>
-    <br/> Only for Exhibit Signs ATM (may timeout)
   </div>
   <div class="col-sm-9">
     <form method="post" action=""> <?php
       $signDir = get_template_directory().'/signs/';
-      $dir = array_diff(scandir($signDir), array('..', '.'));
+      $dir     = array_diff(scandir($signDir), array('..', '.'));
       $options = '<option value=""></option>';
       foreach($dir as $dirName){
         if(is_dir($signDir.$dirName)){
@@ -98,14 +97,30 @@ $type   = '';
 
       ?>
       <div class="col-sm-6">
-        <select id="zipFiles" name="zipFiles">
-          <?php echo $options;?>
-        </select>
-        <br/>
-    <i>** Attn: Be sure you have ran the process to generate signs before this or your zip file will be EMPTY **</i>
+        <div class="row">
+          <div class="col-sm-3">
+            <select id="zipFiles" name="zipFiles">
+              <?php echo $options;?>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <b>Grouping:</b><br/>
+            <input type="radio" name="type" value="subarea" checked> By Subarea<br>
+            <input type="radio" name="type" value="area"> By Area<br>
+            <input type="radio" name="type" value="faire"> By Faire<br>
+          </div>
+          <div class="col-sm-5">
+            <b>Status:</b><br/>
+            <input type="radio" name="status" value="accepted" checked> Accepted Only<br>
+            <input type="radio" name="status" value="accAndProp"> Accepted and Proposed<br>
+            <input type="radio" name="status" value="all"> All Status
+          </div>
+        </div>
       </div>
       <div class="col-sm-6">
-        <input type="submit" name="zipCreate" value="Download" class="button button-large button-primary" />
+        <input type="submit" name="zipCreate" value="Create" class="button button-large button-primary" />
+        <br/>
+        <small><i>** Attention: **<br/> Be sure you have ran the process to generate signs before this or your zip file will be EMPTY</i></small>
       </div>
     </form>
   </div>
@@ -113,39 +128,86 @@ $type   = '';
 
 
 <?php
+
 //create and download a zip of exhibit signs
 if(isset($_POST['zipCreate']) && isset($_POST['zipFiles'])){
-  $signDir = $_POST['zipFiles'];
+  $type          = $_POST['type'];
+  $statusFilter  = $_POST['status'];
+  $signDir       = $_POST['zipFiles'];
+  $faire         = $signDir;
 
-  $zip = new ZipArchive();
-  $filepath = get_template_directory()."/signs/".$signDir.'/';
-  $filename = "exhibts-".$signDir.".zip";
-  $zip->open($filepath.$filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-  /*foreach (glob($filepath."*.pdf") as $file) {
-    $zip->addFile($file);
-  }*/
+  echo 'Creating Zip Files grouped by '.$type.'<br/>';
+  //create array of subareas
+  $sql = "SELECT wp_rg_lead.ID as entry_id, wp_rg_lead.form_id,
+        (select value from wp_rg_lead_detail where field_number=303 and wp_rg_lead_detail.lead_id = wp_rg_lead.ID) as entry_status,
+        wp_mf_faire_subarea.area_id, wp_mf_faire_area.area, wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea,wp_mf_location.location
+        FROM wp_mf_faire, wp_rg_lead
+        left outer join wp_mf_location on wp_rg_lead.ID  = wp_mf_location.entry_id
+        left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id  = wp_mf_faire_subarea.id
+        left outer join wp_mf_faire_area    on wp_mf_faire_subarea.area_id  = wp_mf_faire_area.id
+        where faire = '$signDir'
+        and wp_rg_lead.status  != 'trash'
+        and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0
+        and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.non_public_forms)<= 0";
+  $results = $wpdb->get_results($sql);
+  $entries = array();
 
-  // Create recursive directory iterator
-  /** @var SplFileInfo[] $files */
-  $files = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($filepath),
-    RecursiveIteratorIterator::LEAVES_ONLY
-  );
+  foreach($results as $row){
+    //exclude records based on status filter
+    if($statusFilter =='accepted'   && $row->entry_status!='Accepted')  continue;
 
-  foreach ($files as $name => $file){
-    // Skip directories (they would be added automatically)
-    if (!$file->isDir()){
-      $new_filename = substr($file,strrpos($file,'/') + 1);
-      $zip->addFile($file,$new_filename);
+    if($statusFilter =='accAndProp' && ($row->entry_status!='Accepted' && $row->entry_status!='Proposed')){
+      continue;
     }
-  }
+    $area    = ($row->area    != NULL ? $row->area:'No-Area');
+    $subarea = ($row->subarea != NULL ? $row->subarea:'No-subArea');
 
+    //create friendly names for file creation
+    $area = str_replace(' ','_',$area);
+    $subarea = str_replace(' ','_',$subarea);
+    //build array output based on selected type
+    if($type=='area') {
+      $entries[$area][$row->entry_status][] = $row->entry_id;
+    }
+    if($type=='subarea') {
+      $entries[$area.'-'.$subarea][$row->entry_status][] = $row->entry_id;
+    }
+    if($type=='faire') {
+      $entries['faire'][$row->entry_status][] = $row->entry_id;
+    }
+  } //end looping thru sql results
 
-  if (!$zip->status == ZIPARCHIVE::ER_OK)
-    echo "Failed to write files to zip\n";
-  $zip->close();
-  echo '<a href="/wp-content/themes/makerfaire/signs/'.$signDir.'/'.$filename.'" target="_blank">Download</a>';
-}
+  $error = '';
+
+  //build zip files based on selected type
+  foreach($entries as $typeKey=>$entType){
+     //create zip file
+    $zip = new ZipArchive();
+    $filepath = get_template_directory()."/signs/".$signDir.'/';
+    $filename = $signDir."-".$typeKey."-fairesigns.zip";
+    echo 'zip path = '.$filepath.$filename.'<br/>';
+    $zip->open($filepath.$filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+    foreach($entType as $statusKey=>$status){
+      $subPath = $typeKey.'/'.$statusKey.'/';
+      foreach($status as $entryID) {
+        //write zip file
+        $file = $entryID.'.pdf';
+        if (file_exists($filepath.$file)) {
+          $zip->addFile($filepath.$file,$file);
+        }else{
+          $error .= 'Missing PDF for ' .$entryID.'<br/>';
+        }
+      }
+    }
+    //close zip file
+    if (!$zip->status == ZIPARCHIVE::ER_OK)
+      echo "Failed to write files to zip\n";
+    $zip->close();
+    echo '<a href="/wp-content/themes/makerfaire/signs/'.$signDir.'/'.$filename.'" target="_blank">'.$filename.' Download</a><br/>';
+  } //end looping thru entry array
+  if($error!='')  echo $error;
+}//end create zip logic
+
 //presenter signs
 if(isset($_POST['presenterSigns'])){
   $type = 'presenterSigns';
@@ -175,7 +237,7 @@ if(isset($_POST['presenterSigns'])){
     <?php
   }
   echo '</div></div>';
-}
+} //end presenter signs
 
 //table tags
 if(isset($_POST['tableTag'])){
@@ -188,7 +250,7 @@ if(isset($_POST['tableTag'])){
   <br/>
   <?php
   genTableTags($faire);
-}
+} //end post tableTag
 
 if(isset($_POST['printForm'])){
   $type    = 'makersigns';
@@ -220,40 +282,34 @@ if(isset($_POST['printForm'])){
 
   }
   echo '</div></div>';
-}
-      ?>
-      <script>
-         function printSigns(){
-            jQuery('#processButton').val("Creating PDF's. . . ");
-            var formFaire = '<?php echo $faire;?>';
-            jQuery("a.fairsign").each(function(){
-              jQuery(this).html('Creating');
-              jQuery(this).attr("disabled","disabled");
+} //end printForm
+  ?>
+  <script>
+    function printSigns(){
+      jQuery('#processButton').val("Creating PDF's. . . ");
+      var formFaire = '<?php echo $faire;?>';
+      jQuery("a.fairsign").each(function(){
+        jQuery(this).html('Creating');
+        jQuery(this).attr("disabled","disabled");
 
-              jQuery.ajax({
-                   type: "GET",
-                   url: "/wp-content/themes/makerfaire/fpdi/<?php echo $type;?>.php",
-                   data: { eid: jQuery(this).attr('id'), type: 'save', faire: formFaire },
-                }).done(function(data) {
-                  jQuery('#'+data).html(data+ ' Created');
-                  jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/<?php echo ($type == 'makersigns'?'signs':$type);?>/"+formFaire+"/"+data+'.pdf')
-                });
-
-            });
-         }
-         function fireEvent(obj,evt){
-
-            var fireOnThis = obj;
-            if( document.createEvent ) {
-              var evObj = document.createEvent('MouseEvents');
-              evObj.initEvent( evt, true, false );
-              fireOnThis.dispatchEvent(evObj);
-            } else if( document.createEventObject ) {
-              fireOnThis.fireEvent('on'+evt);
-            }
-        }
-    </script>
-
-
-
-
+        jQuery.ajax({
+          type: "GET",
+          url: "/wp-content/themes/makerfaire/fpdi/<?php echo $type;?>.php",
+          data: { eid: jQuery(this).attr('id'), type: 'save', faire: formFaire },
+        }).done(function(data) {
+          jQuery('#'+data).html(data+ ' Created');
+          jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/<?php echo ($type == 'makersigns'?'signs':$type);?>/"+formFaire+"/"+data+'.pdf');
+        });
+      });
+    }
+    function fireEvent(obj,evt){
+      var fireOnThis = obj;
+      if( document.createEvent ) {
+        var evObj = document.createEvent('MouseEvents');
+        evObj.initEvent( evt, true, false );
+        fireOnThis.dispatchEvent(evObj);
+      } else if( document.createEventObject ) {
+        fireOnThis.fireEvent('on'+evt);
+      }
+    }
+  </script>

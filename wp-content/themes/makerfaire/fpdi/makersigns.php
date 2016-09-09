@@ -38,7 +38,7 @@ class PDF extends FPDF {
     } else if (isset($_GET['faire']) && $_GET['faire']!='') {
       $faire = $_GET['faire'];
     }
-    
+
     $image = $root . '/wp-content/themes/makerfaire/images/' . $faire . '-maker_sign.jpg';
     // Logo
     $this->Image($image, 0, 0, $this->w, $this->h);
@@ -57,11 +57,20 @@ $pdf->SetFont('Benton Sans', '', 12);
 $pdf->SetFillColor(255, 255, 255);
 
 //get the entry-id, if one isn't set return an error
-$eid = (isset($wp_query->query_vars['eid']) ? $wp_query->query_vars['eid'] : '');
+$eid = '';
+if (isset($wp_query->query_vars['eid'])) {
+  $eid = $wp_query->query_vars['eid'];
+} else if (isset($_GET['eid']) && $_GET['eid']!='') {
+  $eid = $_GET['eid'];
+}
 
 if (isset($eid) && $eid != '') {
-  $faire = (isset($wp_query->query_vars['faire']) ? $wp_query->query_vars['faire'] : '');
-  //$faire = (isset($_GET['faire']) && $_GET['faire']!='' ? $_GET['faire']:'');
+  $faire = '';
+  if (isset($wp_query->query_vars['faire'])) {
+    $faire = $wp_query->query_vars['faire'];
+  } else if (isset($_GET['faire']) && $_GET['faire']!='') {
+    $faire = $_GET['faire'];
+  }
   $entryid = sanitize_text_field($eid);
   createOutput($entryid, $pdf);
   if (isset($_GET['type']) && $_GET['type'] == 'download') {
@@ -77,6 +86,10 @@ if (isset($eid) && $eid != '') {
     if (ob_get_contents())
       ob_clean();
     $pdf->Output($filename, 'F');
+    //needed for faire signs mass creation
+    echo $entryid;
+
+    exit;
   }else {
     if (ob_get_contents())
       ob_clean();
