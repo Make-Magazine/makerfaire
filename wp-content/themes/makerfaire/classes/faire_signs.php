@@ -185,7 +185,7 @@ if(isset($_POST['zipCreate']) && isset($_POST['zipFiles'])){
     $zip = new ZipArchive();
     $filepath = get_template_directory()."/signs/".$signDir.'/';
     $filename = $signDir."-".$typeKey."-fairesigns.zip";
-    echo 'zip path = '.$filepath.$filename.'<br/>';
+    //echo 'zip path = '.$filepath.$filename.'<br/>';
     $zip->open($filepath.$filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
     foreach($entType as $statusKey=>$status){
       $subPath = $typeKey.'/'.$statusKey.'/';
