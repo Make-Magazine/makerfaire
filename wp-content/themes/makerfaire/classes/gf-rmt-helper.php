@@ -384,7 +384,7 @@ class GFRMTHELPER {
                               "419"
         );
     foreach($otherFieldsArray as $option){
-      if(isset($lead[$option]))  $entry_data[$option] = $lead[$option];
+      if(isset($lead[$option]) && trim($lead[$option])!='')  $entry_data[$option] = $lead[$option];
     }
 
 		return $entry_data;
@@ -541,9 +541,9 @@ class GFRMTHELPER {
           $resource[] = array($resourceID[$resID],$entryData[$fieldID],$comment);
         }
       }
-      if(isset($entryData[418]))
+      if(isset($entryData[418]) && trim($entryData[418])!='')
         $resource[] = array($resourceID['INT-SP_WIFI'],1,$entryData[418]);
-      if(isset($entryData[419]))
+      if(isset($entryData[419]) && trim($entryData[419])!='')
         $resource[] = array($resourceID['INT-SP_WIRE'],1,$entryData[419]);
     }
 

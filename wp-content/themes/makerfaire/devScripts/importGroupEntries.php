@@ -4,9 +4,7 @@
  * Script to do faire imports
  * - this import is used for grouped entries
  */
-?>
-
-<?php
+//TBD on future imports, they include space size and we lock it 
 include 'db_connect.php';
 
 ini_set("auto_detect_line_endings", "1");
