@@ -337,3 +337,59 @@ div.gf_entry_wrap ul#gf_form_toolbar_links li.gf_form_switcher {
     float: left;
   }
 }
+/* Faire Signs */
+#faire-signs {
+  .panel-heading.accordion-toggle:after {
+      content: "\f142";    /* adjust as needed, taken from bootstrap.css */
+      float: right;        /* adjust as needed */
+      color: grey;         /* adjust as needed */
+      font: 400 30px/1 dashicons;
+      position: relative;
+      top: -22px;
+  }
+  .panel-heading.accordion-toggle.collapsed:after {
+      /* symbol for "collapsed" panels */
+      content: "\f140";    /* adjust as needed, taken from bootstrap.css */
+  }
+  .panel-group .panel+.panel {
+    margin-top: 0px;
+  }
+  .right-border {
+    border-right: thin solid black;
+  }
+  .row.is-flex {
+      display: flex;
+      flex-wrap: wrap;
+  }
+  .row.is-flex > [class*='col-'] {
+      display: flex;
+      flex-direction: column;
+  }
+
+  /*
+  * And with max cross-browser enabled.
+  * Nobody should ever write this by hand.
+  * Use a preprocesser with autoprefixing.
+  */
+  .row.is-flex {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  }
+
+  .row.is-flex > [class*='col-'] {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+      flex-direction: column;
+  }
+}

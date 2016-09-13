@@ -115,15 +115,11 @@ function createOutput($entry_id,$pdf){
      */
     $locTable = retSubAreaByEntry($entry_id);
     $disp = '';
-    $fileName = $area = $locName = '';
+    $fileName = $locName = '';
     foreach($locTable as $location){
-      $area    = $location['area'];
-      $locName = ($location['location']!=''?$location['location']:($location['nicename']!=''?$location['nicename']:$location['subarea']));
       $disp   = $location['area'].': '.($location['nicename']!=''?$location['nicename']:$location['subarea']).': '.$location['location'];
     }
 
-    if($area!='')     $fileName .= $area .'-';
-    if($locName!='')  $fileName .= $locName .'-';
     $fileName .= $entry_id.'.pdf';
 
     $pdf->SetXY(100, 80);
