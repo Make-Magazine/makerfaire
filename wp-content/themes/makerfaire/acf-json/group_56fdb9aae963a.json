@@ -3,6 +3,30 @@
     "title": "Maker Week Page",
     "fields": [
         {
+            "key": "field_57d85ba80fe0c",
+            "label": "Ribbon Image",
+            "name": "ribbon_image",
+            "type": "image",
+            "instructions": "Upload a custom ribbon image. Use png image format with transparent background. Min width 500px and max width 1000px.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "preview_size": "thumbnail",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
             "key": "field_56fee7ecaffc4",
             "label": "Meet The Makers Header",
             "name": "meet_the_makers_header",
@@ -291,5 +315,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1463505993
+    "modified": 1473797276
 }

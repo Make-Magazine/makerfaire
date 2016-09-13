@@ -2,15 +2,17 @@
 /*
  * Template name: Maker Week Page
  */
-
+$ribbon_banner = get_field('ribbon_image');
 get_header('version-2'); ?>
 
 <div class="maker-week-page">
   <div class="maker-week-hero">
-    <img class="hero-banner-images" src="http://makerfaire.com/wp-content/uploads/2016/04/week_photos.jpg"
-      alt="Pictures of maker week makers">
-    <img class="hero-badge" src="http://makerfaire.com/wp-content/uploads/2016/04/makerweek_logo.png"
-      alt="Bay Area Maker Week">
+    <img class="hero-banner-images" src="http://makerfaire.com/wp-content/uploads/2016/04/week_photos.jpg" alt="Pictures of maker week makers">
+    <?php
+    if (!empty($ribbon_banner)) {
+      echo '<img class="hero-badge" src="' . $ribbon_banner . '" alt="Maker Week Ribbon">';
+    }
+    ?>
     <div class="flags-divider"></div>
     <div class="container">
       <div class="mw-info-header row">
