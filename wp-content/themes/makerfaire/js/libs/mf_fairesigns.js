@@ -44,7 +44,7 @@
         //alert(response.msg);
       }
     });
-    jQuery('#collapse'+faire+' .updateMsg').html('A batch process has been triggered to update the zip file.  Please check back in a few minutes.');
+    jQuery('#collapse'+faire+' .'+type+'.updateMsg').html('A batch process has been triggered to update the zip file.  Please check back in a few minutes.');
   }
 
   function createPDF(faire, type) {

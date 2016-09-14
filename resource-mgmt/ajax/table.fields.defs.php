@@ -100,6 +100,12 @@ $tableFields['wp_rg_lead_detail_changes'][] = array(
     'filterType'   => 'entrylink',
     'width'       => 75,
   );
+$tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'faire',   'filterType'   => 'dropdown',
+    'fkey'       => array('referenceTable'   => 'wp_mf_faire',
+                          'referenceField'   => 'ID',
+                          'referenceDisplay' => 'faire'),
+    'dataSql' =>'(SELECT wp_mf_faire.ID from wp_mf_faire, wp_rg_lead where wp_rg_lead.id = lead_id and INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id)> 0 limit 1) as faire'
+    );
 $tableFields['wp_rg_lead_detail_changes'][] = array(
     'fieldName'   => 'user_email',
     'filterType'  => 'text',   'fieldLabel'  => 'User Email',
@@ -110,11 +116,11 @@ $tableFields['wp_rg_lead_detail_changes'][] = array(
                           'referenceDisplay' => 'user_email'),
     'options' =>array(null=>'Initial','0'=>'Payment'));
 $tableFields['wp_rg_lead_detail_changes'][] = array(
-    'fieldName'   => 'dateUpdated',
+    'fieldName'   => 'dateUpdated','visible'=>false,
     'dataSql'     => '(select DATE_FORMAT(date_updated,"%Y-%m-%dT%TZ") from wp_rg_lead_detail_changes date where date.ID= wp_rg_lead_detail_changes.ID) as dateUpdated',
     'filterType'  => 'text',
     'fieldLabel'  => 'Date Updated',
-    'orderBy'     => 'DESC',
+    'orderBy'     => 'date_updated DESC',
     'width'       => 150,
     //'type'        => 'date',
     //'cellFilter'  => 'dd/MM/yyyy',

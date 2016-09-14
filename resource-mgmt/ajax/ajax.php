@@ -2,7 +2,7 @@
 /*  This ajax is used to return table data for RMT to allow insert, edit and delete logic */
 require_once 'config.php';
 $selfaire = (isset($_POST['selfaire']) ? $_POST['selfaire']: '');
-require_once 'ajax/tableOptions.php';
+require_once 'tableOptions.php';
 
 $view_only = (isset($_POST['viewOnly'])?$_POST['viewOnly']:FALSE);
 if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
