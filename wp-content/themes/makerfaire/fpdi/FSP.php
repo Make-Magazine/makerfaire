@@ -17,9 +17,9 @@ class PDF extends FPDI
     public function Header()
     {
         $docTitle   = 'Fire Safety Plan';
-        $faireName  = 'Maker Faire Bay Area 2016';
-        $badge      = 'http://makerfaire.com/wp-content/themes/makerfaire/images/MF16BA_Badge_255.jpg';
-        $dates      = 'May 20-22, 2016';
+        $faireName  = 'World Maker Faire 2016';
+        $badge      = 'http://makerfaire.com/wp-content/uploads/2016/07/MF16NY_Badge.png';
+        $dates      = 'October 1 & 2, 2016';
 
         $this->SetTextColor(0);
         $this->SetFont('Helvetica','B',20);
@@ -51,7 +51,7 @@ class PDF extends FPDI
 $pdf = new PDF();
 $pdf->SetMargins(15,15,15);
 
-$form_id = 35;
+$form_id = 101;
 $form = GFAPI::get_form( $form_id );
 $fieldData = array();
 //put fieldData in a usable array
@@ -65,7 +65,8 @@ foreach($entries as $entry){
 }
 
 // Output the new PDF
-ob_clean();
+if (ob_get_contents())
+  ob_clean();
 $pdf->Output('FSP.pdf', 'D');        //output download
 //$pdf->Output('doc.pdf', 'I');        //output in browser
 
