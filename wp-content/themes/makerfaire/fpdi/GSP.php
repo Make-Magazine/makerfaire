@@ -16,9 +16,10 @@ class PDF extends FPDI
     public function Header()
     {
         $docTitle   = 'General Safety Plan';
-        $faireName  = 'Maker Faire Bay Area 2016';
-        $badge      = 'http://makerfaire.com/wp-content/themes/makerfaire/images/MF16BA_Badge_255.jpg';
-        $dates      = 'May 20-22, 2016';
+        $faireName  = 'World Maker Faire 2016';
+        $root = $_SERVER['DOCUMENT_ROOT'];
+        $badge      = $root.'/wp-content/themes/makerfaire/images/MF16NY_Badge.jpg';
+        $dates      = 'October 1 & 2, 2016';
 
         //$this->useTemplate($this->_tplIdx);
         $this->SetTextColor(0);

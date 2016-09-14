@@ -18,7 +18,8 @@ class PDF extends FPDI
     {
         $docTitle   = 'Fire Safety Plan';
         $faireName  = 'World Maker Faire 2016';
-        $badge      = 'http://makerfaire.com/wp-content/uploads/2016/07/MF16NY_Badge.png';
+        $root = $_SERVER['DOCUMENT_ROOT'];
+        $badge      = $root.'/wp-content/themes/makerfaire/images/MF16NY_Badge.jpg';
         $dates      = 'October 1 & 2, 2016';
 
         $this->SetTextColor(0);
