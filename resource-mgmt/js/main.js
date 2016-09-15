@@ -17,6 +17,10 @@ resourceApp.config(['$routeProvider',
         templateUrl: 'partials/canned.html',
         controller: 'cannedCtrl'
       }).
+      when('/reports/build', {
+        templateUrl: 'partials/build.html',
+        controller: 'buildCtrl'
+      }).
       when('/reports', {
         templateUrl: 'partials/reports.html',
         controller: 'reportsCtrl'

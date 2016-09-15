@@ -5,41 +5,38 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.reports.showGrid  = false;
   $scope.reports.showLinks = false;
   $scope.data     = [];
-
-  var url = '/resource-mgmt/reports.ajax.php';
   $scope.msg = {};
 
   //faire dropdown
   $scope.retrieveData = function(type) {
     if(type=='faires'){
       var vars = jQuery.param({ 'type' :  type});
-      var url = '/resource-mgmt/ajax.php';
       var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
-    }
 
-    //get grid data
-    $http({
-      method: 'post',
-      url: url,
-      data: vars,
-      headers: head2pass
-    })
-    .then(function(response){
-      if("error" in response.data) {
-        alert(response.data.error);
-      }else if(type=='faires'){
-        $scope.data[type] = response.data[type];
-      }
-    }).finally(function () {
-      if(type=='faires'){
-        faires = $scope.data.faires;
-        angular.forEach(faires, function(value,key){
-          if(value.faire==$scope.subRoute){
-            $scope.reports.selFaire = key;
-          }
-        });
-      }
-    });
+      //get grid data
+      $http({
+        method: 'post',
+        url: '/resource-mgmt/ajax/ajax.php',
+        data: vars,
+        headers: head2pass
+      })
+      .then(function(response){
+        if("error" in response.data) {
+          alert(response.data.error);
+        }else if(type=='faires'){
+          $scope.data[type] = response.data[type];
+        }
+      }).finally(function () {
+        if(type=='faires'){
+          faires = $scope.data.faires;
+          angular.forEach(faires, function(value,key){
+            if(value.faire==$scope.subRoute){
+              $scope.reports.selFaire = key;
+            }
+          });
+        }
+      });
+    }
   };
 
 
@@ -90,7 +87,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     //get grid data
     $http({
       method: 'post',
-      url: url,
+      url: '/resource-mgmt/ajax/reports.ajax.php',
       data: JSON.stringify(pvars),
       headers: {'Content-Type': 'application/json'}
     })
@@ -216,15 +213,12 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                {"id":"55.6","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]",
                  "choices":"Soliciting crowdfunding support for a campaign","type":"checkbox","$$hashKey":"uiGrid-0139"},
                {"id":"55.7","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"None of the above","type":"checkbox","$$hashKey":"uiGrid-013B"},
-               {"id":96,"label":"Contact Name [ALL]","choices":"","type":"name",
-                 "inputs":[{"id":"96.2","label":"Prefix","name":"","choices":[{"text":"Mr.","value":"Mr.","isSelected":false,"price":""},
-                       {"text":"Mrs.","value":"Mrs.","isSelected":false,"price":""},{"text":"Miss","value":"Miss","isSelected":false,"price":""},
-                       {"text":"Ms.","value":"Ms.","isSelected":false,"price":""},{"text":"Dr.","value":"Dr.","isSelected":false,"price":""},
-                       {"text":"Prof.","value":"Prof.","isSelected":false,"price":""},{"text":"Rev.","value":"Rev.","isSelected":false,"price":""}],"isHidden":true,"inputType":"radio"},
+               {"id":96,"label":"Contact Name","choices":"",
+                 "type":"name",
+                 "inputs":[
                    {"id":"96.3","label":"First","name":""},
-                   {"id":"96.4","label":"Middle","name":"","isHidden":true},
                    {"id":"96.6","label":"Last","name":""},
-                   {"id":"96.8","label":"Suffix","name":"","isHidden":true}],"$$hashKey":"uiGrid-017X"},
+                   ],"$$hashKey":"uiGrid-017X"},
                {"id":98,"label":"Contact Email [ALL]","choices":"","type":"email","inputs":"","$$hashKey":"uiGrid-017Z"},
                {"id":99,"label":"Contact Phone Number [ALL]","choices":"","type":"phone","inputs":"","$$hashKey":"uiGrid-0181"},
                {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-01BT"},
@@ -277,15 +271,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               {"id":85,"label":"Describe any fire or safety issues. [MF_E, SP_SU, MC_E]","choices":"","type":"textarea","inputs":"","$$hashKey":"uiGrid-02F8"},
               {"id":96,"label":"Contact Name [ALL]","choices":"","type":"name",
                 "inputs":[
-                  {"id":"96.2","label":"Prefix","name":"",
-                    "choices":[{"text":"Mr.","value":"Mr.","isSelected":false,"price":""},
-                      {"text":"Mrs.","value":"Mrs.","isSelected":false,"price":""},{"text":"Miss","value":"Miss","isSelected":false,"price":""},
-                      {"text":"Ms.","value":"Ms.","isSelected":false,"price":""},{"text":"Dr.","value":"Dr.","isSelected":false,"price":""},
-                      {"text":"Prof.","value":"Prof.","isSelected":false,"price":""},{"text":"Rev.","value":"Rev.","isSelected":false,"price":""}],
-                    "isHidden":true,"inputType":"radio"},{"id":"96.3","label":"First","name":""},
-                  {"id":"96.4","label":"Middle","name":"","isHidden":true},
+                  {"id":"96.3","label":"First","name":""},
                   {"id":"96.6","label":"Last","name":""},
-                  {"id":"96.8","label":"Suffix","name":"","isHidden":true}],"$$hashKey":"uiGrid-028L"},
+                  ],"$$hashKey":"uiGrid-028L"},
               {"id":98,"label":"Contact Email [ALL]","choices":"","type":"email","inputs":"","$$hashKey":"uiGrid-028N"},
               {"id":99,"label":"Contact Phone Number [ALL]","choices":"","type":"phone","inputs":"","$$hashKey":"uiGrid-028P"},
               {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-02CH"},
@@ -432,7 +420,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       return 'unknown';
     };
 
-  var url = '/resource-mgmt/canned.reports.ajax.php';
   $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
     if( col.filters[0].term ){
       return 'header-filtered';

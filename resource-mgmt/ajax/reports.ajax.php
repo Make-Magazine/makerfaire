@@ -23,7 +23,7 @@ if($type != ''){
       getBuildRptData();
     }else{
       //build report data
-      retrieveRptData($table);
+      retrieveRptData($table,$faire);
     }
   }elseif($type =="customRpt"){
     if(($formSelect != '' || $formType!='') && $selectedFields!=''){
@@ -54,6 +54,7 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
   //TBD - remove duplicate field ID's
   $fieldArr   = array();
   $fieldIDArr = array();
+  $combineFields = array();
   $acceptedOnly = true;
   //build an array of selected fields
   foreach($selectedFields as $selFields){
@@ -70,6 +71,8 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
     if($selFields->type=='name'){
       foreach($selFields->inputs as $choice){
         $fieldIDArr[$choice->id] = $choice->id;
+        $combineFields[ $selFields->id][]=$choice->id;
+        //$data['columnDefs'][$choice->id] =   array('field'=> 'field_'.str_replace('.','_',$choice->id),'displayName'=>$selFields->label);
       }
     }
 
@@ -81,13 +84,13 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
       }
     }
   }
-
+//var_dump($fieldIDArr);
   $fieldIDquery = '';
 
   //build $fieldIDquery for sql
   foreach($fieldIDArr as $fieldID){
     if($fieldIDquery =='') {
-      $fieldIDquery="field_number like '".$fieldID."' ";
+      $fieldIDquery=" field_number like '".$fieldID."' ";
     }else{
       $fieldIDquery.=" or field_number like '".$fieldID."' ";
     }
@@ -146,6 +149,16 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
       //build output for field data - format is field_55_4 for field id 55.4
       $entryData[$lead_id]['field_'.str_replace('.','_',$detail['field_number'])]  = $value;
     } //end entry detail loop
+    //combine name fileds
+    foreach($combineFields as $combFieldID=>$combFieldArr){
+      $combinedField = '';
+      foreach($combFieldArr as $combField){
+        if(isset($entryData[$lead_id]['field_'.str_replace('.','_',$combField)])){
+          if($combField!='')  $combinedField .= ' '.$entryData[$lead_id]['field_'.str_replace('.','_',$combField)];
+        }
+      }
+      $entryData[$lead_id]['field_'.$combFieldID]= trim($combinedField);
+    }
   } //end nentries loop
 
   $colDefs2Sort = array();
@@ -395,15 +408,15 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
   exit;
 }
 
-function retrieveRptData($table){
-  global $mysqli;global $tableFields;
+function retrieveRptData($table,$faire){
+  global $wpdb; global $tableFields;
   $sql   = '';
   $where = '';
   $orderBy = '';
   //build columnDefs
   foreach($tableFields[$table] as $fields){
     if(isset($fields['orderBy']))
-      $orderBy = ' order by '.$fields['fieldName'].' '.$fields['orderBy'];
+      $orderBy = ' order by '.$fields['orderBy'];
     if(isset($fields['dataSql'])) $sql   .= ','.$fields['dataSql'];
     if(isset($fields['limit'])){
       if($where==''){
@@ -462,9 +475,9 @@ function retrieveRptData($table){
     }
     if(isset($fields['cellTooltip']))   $vars['cellTooltip']  = $fields['cellTooltip'];
     if(isset($fields['cellTemplate']))  $vars['cellTemplate'] = $fields['cellTemplate'];
-    if(isset($fields['cellFilter']))    $vars['cellFilter'] = $fields['cellFilter'];
+    if(isset($fields['cellFilter']))    $vars['cellFilter']   = $fields['cellFilter'];
     if(isset($fields['visible']))       $vars['visible']      = $fields['visible'];
-    if(isset($fields['type']))       $vars['type']      = $fields['type'];
+    if(isset($fields['type']))          $vars['type']         = $fields['type'];
 
     $vars['name']     = $fields['fieldName'];
     $vars['minWidth'] = 100;
@@ -478,10 +491,14 @@ function retrieveRptData($table){
   //get table data
   $query = "select * ".$sql." from ".$table.$where.$orderBy;
 
-  $result = $mysqli->query( $query );
+  //loop thru entry data and build array
+  $result = $wpdb->get_results($query,ARRAY_A);
+
   //create array of table data
-  while ($row = $result->fetch_assoc()) {
-    $data['data'][]= $row;
+  foreach($result as $row){
+    if(isset($row['faire']) && $faire!='' && $row['faire']==$faire){
+      $data['data'][]= $row;
+    }
   }
   echo json_encode($data);
   exit;

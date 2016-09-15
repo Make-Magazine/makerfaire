@@ -3,12 +3,12 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
   $scope.reports    = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
-  $scope.data     = [];
+
   $scope.msg = {};
 
 
   //set up gridOptions
-    $scope.gridOptions = {
+  $scope.gridOptions = {
     enableFiltering: true,
     enableSorting: true,
     enableGridMenu: true,
@@ -59,12 +59,12 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
   $scope.retrieveData = function(type) {
     if(type=='faires'){
       var vars = jQuery.param({ 'type' :  type});
-      var url = '/resource-mgmt/ajax.php';
+      var url = '/resource-mgmt/ajax/ajax.php';
       var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
     }else if(type=='ent2res'){
       $scope.reports.loading = true;
       var vars = JSON.stringify({ 'table' : 'wp_rmt_entry_resources' , 'type' : 'ent2resource','faire':$scope.reports.selFaire });
-      var url = '/resource-mgmt/reports.ajax.php';
+      var url = '/resource-mgmt/ajax/reports.ajax.php';
       var head2pass =  {'Content-Type': 'application/json'};
     }
 
@@ -79,7 +79,7 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
       if("error" in response.data) {
         alert(response.data.error);
       }else if(type=='faires'){
-        $scope.data[type] = response.data[type];
+        $scope.reports[type] = response.data[type];
       }else if(type=='ent2res'){
         //get grid data
         angular.forEach(response.data.columnDefs, function(value, key) {
@@ -93,7 +93,7 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
       }
     }).finally(function () {
       if(type=='faires'){
-        faires = $scope.data.faires;
+        faires = $scope.reports.faires;
         angular.forEach(faires, function(value,key){
           if(value.faire==$scope.subRoute){
             $scope.reports.selFaire = key;

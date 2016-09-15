@@ -45,7 +45,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
   $scope.filterExport = function( grid, row, col, input ) {
     return 'unknown';
   };
-  var url = '/resource-mgmt/ajax.php';
+  var url = '/resource-mgmt/ajax/ajax.php';
   $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
     if( col.filters[0].term ){
       return 'header-filtered';
@@ -106,7 +106,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
           value.filter.type = uiGridConstants.filter.SELECT;
         }
       });
- 
+
     $scope.gridOptions.columnDefs = response.data.columnDefs;
     $scope.gridOptions.data       = response.data.data;
     $scope.resource.pInfo         = response.data.pInfo;

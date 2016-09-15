@@ -1,127 +1,20 @@
 // reports controller
 rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$interval','uiGridConstants','uiGridGroupingConstants', function ($scope, $routeParams, $http,$interval,uiGridConstants,uiGridGroupingConstants) {
-  $scope.reports    = {};
+  $scope.reports           = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
-  $scope.reports.showbuild = false;
+
   $scope.reports.selectedFields = {};
+  $scope.msg = {};
 
   //set location based on url parameters
-  if("location" in $routeParams){
+  if("location" in $routeParams) {
     if($routeParams.location==='true'){
       $scope.reports.location = true;
     }
   }
 
-  $scope.msg = {};
-
-  //begin create your own report - show selected forms
-  $scope.reports.formName = function(rptID){
-    var reportName = rptID;
-    angular.forEach($scope.reports.forms, function(value, key) {
-      if(value.id==rptID) reportName = value.name;
-    });
-    return reportName;
-  };
-
-  //set up gridOptions for build your own report - field selection
-  $scope.fieldSelect = {
-    enableRowSelection: true,
-    enableSelectAll: true,
-    selectionRowHeaderWidth: 35,
-    rowHeight: 35,
-    showGridFooter:true,
-    enableFiltering: true,
-    onRegisterApi: function(gridApi){
-      $scope.fieldSelect.gridApi = gridApi;
-
-      gridApi.selection.on.rowSelectionChanged($scope,function(rows){
-        $scope.reports.selectedFields = gridApi.selection.getSelectedRows();
-      });
-    }
-  };
-
-  $scope.fieldSelect.columnDefs = [
-    { name: 'id',width:'50' },
-    { name: 'label'},
-    {name: 'choices'}
-  ];
-
-  $scope.fieldSelect.multiSelect = true;
-  $scope.selectAll = function() {
-    $scope.fieldSelect.gridApi.selection.selectAllRows();
-  };
-
-  $scope.clearAll = function() {
-    $scope.fieldSelect.gridApi.selection.clearSelectedRows();
-  };
-
-  $scope.generateReport = function() {
-    var formSelect     = $scope.reports.formSelect;
-    var selectedFields = $scope.reports.selectedFields;
-    var rmtData            = {};
-    rmtData['comments'] = $scope.reports.rmt.comment;
-    angular.forEach($scope.reports.rmt, function(type, key) {
-      build = [];
-      angular.forEach(type,function(field){
-        if(field.checked){
-          build.push(field);
-        }
-      })
-      rmtData[key] = build;
-    });
-    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'rmtData' : rmtData, 'type' : 'customRpt', 'location' : $scope.reports.location}
-    $scope.reports.callAJAX(vars);
-  }
-  /*end build your own report */
-
-  //set report column grouping
-  $scope.reports.changeGrouping = function(groupBy) {
-    $scope.gridApi.grouping.clearGrouping();
-    if(groupBy=='item'){
-      $scope.gridApi.grouping.groupColumn('item');
-      $scope.gridApi.grouping.groupColumn('resource_id');
-    }else if(groupBy=='faire'){
-      $scope.gridApi.grouping.groupColumn('faire');
-      $scope.gridApi.grouping.groupColumn('area');
-      $scope.gridApi.grouping.groupColumn('subarea');
-      $scope.gridApi.grouping.groupColumn('location');
-    }
-    $scope.gridApi.grouping.aggregateColumn('qty', uiGridGroupingConstants.aggregation.SUM);
-  };
-
-  //get report data
-  $scope.reports.callAJAX = function(pvars){
-    $scope.reports.loading = true;
-    //console.log(pvars);
-
-    //get grid data
-    $http({
-      method: 'post',
-      url: url,
-      data: JSON.stringify(pvars),
-      headers: {'Content-Type': 'application/json'}
-    })
-    .then(function(response){
-      if(("success" in response.data)){
-        //if success = false, display error message
-        if(!response.data.success){
-          alert(response.data.message);
-        }
-      }else{
-        $scope.gridOptions.columnDefs = response.data.columnDefs;
-        $scope.gridOptions.data       = response.data.data;
-        $scope.reports.showGrid = true;
-        $scope.reports.showbuild = false;
-
-      }
-    })
-    .finally(function () {
-      $scope.reports.loading = false;
-    });
-  }
-
-  //set up gridOptions for predefined reports
+  //set up gridOptions for reports
   $scope.gridOptions = {enableFiltering: true,
     enableSorting: true,
     enableGridMenu: true,
@@ -153,74 +46,33 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     }
   };
 
-  //default
-  var tablename = 'wp_rmt_entry_resources';
-  var type      = 'tableData';
-  if($routeParams){
-    $scope.reports.subRoute = $routeParams.sub;
-    var subRoute  = $routeParams.sub;
-    var pageTitle = 'Reports';
-    var subTitle  = '';
-    if(subRoute=='change')        {
-      tablename = 'wp_rg_lead_detail_changes';
-      subTitle = 'Entry Change Report';
+  //set report column grouping
+  $scope.reports.changeGrouping = function(groupBy) {
+    $scope.gridApi.grouping.clearGrouping();
+    if(groupBy=='item'){
+      $scope.gridApi.grouping.groupColumn('item');
+      $scope.gridApi.grouping.groupColumn('resource_id');
+    }else if(groupBy=='faire'){
+      $scope.gridApi.grouping.groupColumn('faire');
+      $scope.gridApi.grouping.groupColumn('area');
+      $scope.gridApi.grouping.groupColumn('subarea');
+      $scope.gridApi.grouping.groupColumn('location');
     }
-    if(subRoute=='drill')        {
-      subTitle = 'Resource Drill Down';
-    }
-    if(subRoute=='location')      {
-      tablename = 'wp_mf_location';
-      subTitle = 'Faire Location Report';
-    }
-    if(subRoute=='ent2resource') {
-      subTitle = 'Entry to Resource';
-      faire = '';
-      if('subsub' in $routeParams){
-        faire = $routeParams.subsub;
-      }
-
-      //TBD: fix this so we pass a faire parameter instead of passing it as tablename
-      tablename = faire;
-      type     = 'ent2resource';
-    }
-    if(subRoute=='build'){
-      tablename = 'formData';
-      $scope.reports.showbuild = true;
-      subTitle = 'Build Your Own Report';
-    }
-    jQuery('#pageTitle').html(pageTitle);
-    jQuery('#subTitle').html(subTitle);
-    $scope.reports.tableName = tablename;
-
-    if("faire" in $routeParams){
-      $scope.reports.selFaire = $routeParams.faire;
-    }else{
-      $scope.reports.selFaire = '';
-    }
-  }
-  $scope.filterExport = function( grid, row, col, input ) {
-    return 'unknown';
+    $scope.gridApi.grouping.aggregateColumn('qty', uiGridGroupingConstants.aggregation.SUM);
   };
 
-  var url = '/resource-mgmt/reports.ajax.php';
-  $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
-    if( col.filters[0].term ){
-      return 'header-filtered';
-    } else {
-      return '';
-    }
-  };
-
-
-  var selTerm = '';
-  //get grid data
-  $http({
-    method: 'post',
-    url: url,
-    data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : type,'viewOnly':true }),
-    headers: {'Content-Type': 'application/json'}
-  })
-  .then(function(response){
+  //function to retrieve grid Data by faire
+  $scope.retGridData = function() {
+    var url = '/resource-mgmt/ajax/reports.ajax.php';
+    var selTerm = '';
+    //get grid data
+    $http({
+      method: 'post',
+      url: url,
+      data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : type, 'faire':$scope.reports.selFaire }),
+      headers: {'Content-Type': 'application/json'}
+    })
+    .then(function(response){
       angular.forEach(response.data.columnDefs, function(value, key) {
         if(value.name=='faire' && $scope.reports.selFaire!=''){
           angular.forEach(value.filter.selectOptions, function(selValue, selKey) {
@@ -232,26 +84,18 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
             response.data.columnDefs[key].filter.term=selTerm;
           }
         }
-        /*if(value.field=='qty'){
-          value.filters = [
-            { condition: uiGridConstants.filter.GREATER_THAN,
-              placeholder: '>'
-            },
-            { condition: uiGridConstants.filter.LESS_THAN,
-              placeholder: '<'
-            }
-          ]
-        }*/
+        //apply select filter
         if(("filter" in value)){
           value.filter.type = uiGridConstants.filter.SELECT;
         }
+        //apply sort filter
         if(("sort" in value)){
           value.sort.direction = uiGridConstants.ASC;
         }
       });
 
+      //populate column defs and data
       $scope.gridOptions.columnDefs = response.data.columnDefs;
-      //console.log(uiGridConstants.filter);
       $scope.gridOptions.data       = response.data.data;
 
       //set up build your own data
@@ -329,6 +173,88 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       $scope.reports.loading = false;
       $scope.reports.showGrid = true;
     });
+  }
+
+  //default
+  var tablename = 'wp_rmt_entry_resources';
+  var type      = 'tableData';
+
+  //check route parameters to set header details
+  if($routeParams){
+    $scope.reports.subRoute = $routeParams.sub;
+    var subRoute  = $routeParams.sub;
+    var pageTitle = 'Reports';
+    var subTitle  = '';
+    if(subRoute=='change')        {
+      tablename = 'wp_rg_lead_detail_changes';
+      subTitle  = 'Entry Change Report';
+    }
+    if(subRoute=='drill')
+      tablename = 'wp_rmt_entry_resources';{
+      subTitle  = 'Resource Drill Down';
+    }
+    if(subRoute=='location')      {
+      tablename = 'wp_mf_location';
+      subTitle  = 'Faire Location Report';
+    }
+
+    jQuery('#pageTitle').html(pageTitle);
+    jQuery('#subTitle').html(subTitle);
+    $scope.reports.tableName = tablename;
+
+    if("faire" in $routeParams){
+      $scope.reports.selFaire  = $routeParams.faire;
+      $scope.retGridData(); //pull the faire data
+    }else{
+      $scope.reports.selFaire = '';
+    }
+  }
+
+  $scope.filterExport = function( grid, row, col, input ) {
+    return 'unknown';
+  };
+
+  $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
+    if( col.filters[0].term ){
+      return 'header-filtered';
+    } else {
+      return '';
+    }
+  };
+
+  //faire dropdown
+  $scope.retrieveData = function(type) {
+    if(type=='faires'){
+      var vars = jQuery.param({ 'type' :  type});
+      var url = '/resource-mgmt/ajax/ajax.php';
+      var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
+    }
+
+    //get grid data
+    $http({
+      method: 'post',
+      url: url,
+      data: vars,
+      headers: head2pass
+    })
+    .then(function(response){
+      if("error" in response.data) {
+        alert(response.data.error);
+      }else if(type=='faires'){
+        $scope.reports[type] = response.data[type];
+      }
+    }).finally(function () {
+      if(type=='faires'){
+        faires = $scope.reports.faires;
+        angular.forEach(faires, function(value,key){
+          if(value.faire==$scope.subRoute){
+            $scope.reports.selFaire = key;
+          }
+        });
+      }
+    });
+  }; //end faire drop down
+
 }])
   .filter('griddropdown', function () {
     return function (input, map) {
