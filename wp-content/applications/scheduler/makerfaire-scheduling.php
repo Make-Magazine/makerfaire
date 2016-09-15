@@ -42,9 +42,10 @@ $faire_id = isset($_GET['faire_id']) ? $_GET['faire_id']  : 'BA16';
 <?php
 $locations_array = get_entry_locations ( $faire_id );
 $select = new \Kendo\UI\MultiSelect('locationfilters');
+// Set Defaults here in the value array, by stage id.
 $select->dataSource ( $locations_array )
 ->change('onChange')
-->value(array('302','256','255','300','284','306','307'))
+->value(array('414','418','419','415','416'))
 ->dataTextField ( 'text' )
 ->dataValueField ( 'value' )
 ->placeholder ( 'Filter location ...' );;
