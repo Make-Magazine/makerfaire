@@ -78,14 +78,14 @@ if ( $type == 'schedule' ) {
 		// REQUIED: Application title paired to scheduled item
 		$schedule['name']       = html_entity_decode( $schedule_name , ENT_COMPAT, 'utf-8' );
 		$schedule['description'] = $row['Description'];                //??
-    $schedule['time_start'] = date( DATE_ATOM, strtotime( '+7 hour',  $start ) );
-		$schedule['time_end']   = date( DATE_ATOM, strtotime( '+7 hour', $stop ) );
+    $schedule['time_start'] = date( DATE_ATOM, strtotime( '+4 hour',  $start ) );
+		$schedule['time_end']   = date( DATE_ATOM, strtotime( '+4 hour', $stop ) );
 		
 		//ORIGINAL CALL
 		//$schedule['time_start'] = date( DATE_ATOM, strtotime( '-1 hour', strtotime( $dates[$day] . $start . $dates['time_zone'] ) ) );
 		//$schedule['time_end'] = date( DATE_ATOM, strtotime( '-1 hour', strtotime( $dates[$day] . $stop . $dates['time_zone'] ) ) );
 		// Rename the field, keeping 'time_end' to ensure this works.
-		$schedule['time_stop'] = date( DATE_ATOM, strtotime( '+7 hour', $stop ) );			
+		$schedule['time_stop'] = date( DATE_ATOM, strtotime( '+4 hour', $stop ) );			
 
 		// Schedule thumbnails. Nothing more than images from the application it is tied to
 		$app_image = $project_photo;
