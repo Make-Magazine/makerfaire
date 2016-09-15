@@ -54,6 +54,7 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
   //TBD - remove duplicate field ID's
   $fieldArr   = array();
   $fieldIDArr = array();
+  $combineFields = array();
   $acceptedOnly = true;
   //build an array of selected fields
   foreach($selectedFields as $selFields){
@@ -70,7 +71,8 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
     if($selFields->type=='name'){
       foreach($selFields->inputs as $choice){
         $fieldIDArr[$choice->id] = $choice->id;
-        $data['columnDefs'][$choice->id] =   array('field'=> 'field_'.str_replace('.','_',$choice->id),'displayName'=>$selFields->label);
+        $combineFields[ $selFields->id][]=$choice->id;
+        //$data['columnDefs'][$choice->id] =   array('field'=> 'field_'.str_replace('.','_',$choice->id),'displayName'=>$selFields->label);
       }
     }
 
@@ -147,6 +149,16 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
       //build output for field data - format is field_55_4 for field id 55.4
       $entryData[$lead_id]['field_'.str_replace('.','_',$detail['field_number'])]  = $value;
     } //end entry detail loop
+    //combine name fileds
+    foreach($combineFields as $combFieldID=>$combFieldArr){
+      $combinedField = '';
+      foreach($combFieldArr as $combField){
+        if(isset($entryData[$lead_id]['field_'.str_replace('.','_',$combField)])){
+          if($combField!='')  $combinedField .= ' '.$entryData[$lead_id]['field_'.str_replace('.','_',$combField)];
+        }
+      }
+      $entryData[$lead_id]['field_'.$combFieldID]= trim($combinedField);
+    }
   } //end nentries loop
 
   $colDefs2Sort = array();
