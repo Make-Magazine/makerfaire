@@ -63,6 +63,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
 
   //function to retrieve grid Data by faire
   $scope.retGridData = function() {
+    $scope.reports.loading   = true;
+    $scope.reports.showGrid  = true;
     var url = '/resource-mgmt/ajax/reports.ajax.php';
     var selTerm = '';
     //get grid data
