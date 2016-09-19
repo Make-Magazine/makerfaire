@@ -116,7 +116,7 @@ $tableFields['wp_rg_lead_detail_changes'][] = array(
                           'referenceDisplay' => 'user_email'),
     'options' =>array(null=>'Initial','0'=>'Payment'));
 $tableFields['wp_rg_lead_detail_changes'][] = array(
-    'fieldName'   => 'dateUpdated','visible'=>false,
+    'fieldName'   => 'dateUpdated',
     'dataSql'     => '(select DATE_FORMAT(date_updated,"%Y-%m-%dT%TZ") from wp_rg_lead_detail_changes date where date.ID= wp_rg_lead_detail_changes.ID) as dateUpdated',
     'filterType'  => 'text',
     'fieldLabel'  => 'Date Updated',
