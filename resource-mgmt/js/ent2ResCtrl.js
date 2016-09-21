@@ -3,6 +3,7 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
   $scope.reports    = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
+  $scope.reports.selFaire  = '';
 
   $scope.msg = {};
 
@@ -99,9 +100,10 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
             $scope.reports.selFaire = key;
           }
         });
+      }else if(type=='ent2res'){
+        $scope.reports.loading  = false;
+        $scope.reports.showGrid = true;
       }
-      $scope.reports.loading  = false;
-      $scope.reports.showGrid = true;
     });
   };
 

@@ -4,6 +4,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
   $scope.reports.showLinks = false;
+  $scope.reports.selFaire  = '';
   $scope.data     = [];
   $scope.msg = {};
 

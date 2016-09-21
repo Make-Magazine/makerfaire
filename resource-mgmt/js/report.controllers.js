@@ -3,6 +3,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   $scope.reports           = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
+  $scope.reports.selFaire  = '';
 
   $scope.reports.selectedFields = {};
   $scope.msg = {};
