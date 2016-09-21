@@ -40,7 +40,7 @@ function makerfaire_meet_the_makers_shortcode($atts, $content = null) {
 
   $result    = GFAPI::count_entries( $formIDarr, $search_criteria );
 
-  $offset= rand(0,$result); //randomly choose where to pick 3 entries from
+  $offset= rand(0,$result-3); //randomly choose where to pick 3 entries from (starting from 3 to the total number of entries - 3
   $entries   = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => $offset, 'page_size' => 3));
 
 $output = '<div class="row filter-container mmakers">'
