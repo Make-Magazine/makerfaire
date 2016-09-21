@@ -16,15 +16,29 @@
     <div ng-if="reports.subRoute=='drill'">
       <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('item')">Group by Item->Type</button>
       <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('faire')">Group by Faire->Area->Subarea</button>
+      <div class="table-responsive">
+        <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-grouping ui-grid-auto-resize  class="grid">
+          <div class="grid-msg-overlay" ng-hide="!reports.loading">
+            <div class="msg">
+              <span>
+                Loading Data...
+                <i class="fa fa-spinner fa-spin"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="table-responsive">
-      <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-grouping  ui-grid-resize-columns ui-grid-auto-resize  class="grid">
-        <div class="grid-msg-overlay" ng-hide="!reports.loading">
-          <div class="msg">
-            <span>
-              Loading Data...
-              <i class="fa fa-spinner fa-spin"></i>
-            </span>
+    <div ng-if="reports.subRoute!='drill'">
+      <div class="table-responsive">
+        <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-auto-resize  class="grid">
+          <div class="grid-msg-overlay" ng-hide="!reports.loading">
+            <div class="msg">
+              <span>
+                Loading Data...
+                <i class="fa fa-spinner fa-spin"></i>
+              </span>
+            </div>
           </div>
         </div>
       </div>
