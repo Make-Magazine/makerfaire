@@ -33,6 +33,7 @@ function remove_admin_bar_links() {
       $wp_admin_bar->remove_menu('wp-logo');
       $wp_admin_bar->remove_menu('my-account');       // Remove the user details tab
       $wp_admin_bar->remove_menu('comments');         // Remove the comments link
+      $wp_admin_bar->remove_menu('notes');         // Remove the comments link
     }
 }
 add_action( 'wp_before_admin_bar_render', 'remove_admin_bar_links' );
