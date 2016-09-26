@@ -516,7 +516,7 @@ class GFRMTHELPER {
         array('380.3', 'TBL_8x30',''),          array('381.3', 'TBL_6x18',''),
         array('382.3', 'TBL_8x18',''),          array('383.3', 'TBL_30RND_HT',''),
         array('385.3', 'TBL_24RND','384'),      array('387.3', 'TBL_30RND','386'),
-        array('388.3', 'BNCH_PIC',''),          array('389.3', 'TBL-CLTH_90"','392'),
+        array('388.3', 'BNCH_PIC',''),          array('389.3', 'TBL-CLTH_108"','392'),
         array('390.3', 'TBL-CLTH_132"','394'),  array('391.3', 'TBL-CLTH_156"','393'),
         array('395.3', 'TBL-CLTH_RND','396'),   array('397.3', 'TBL-CLTH_SKRT','398'),
         array('399.3', 'CH_FLD',''),            array('400.3', 'CH_CUSH',''),
