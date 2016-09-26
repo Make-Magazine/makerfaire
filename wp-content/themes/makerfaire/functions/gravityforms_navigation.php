@@ -19,8 +19,23 @@ function barnesandnoble_remove_admin_submenus() {
   $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
   if ($is_barnesandnoble) {
     remove_menu_page('gf_edit_forms');
+    remove_menu_page( 'index.php' );
+    remove_menu_page( 'profile.php' );
+
   }
 }
+
+function remove_admin_bar_links() {
+    global $wp_admin_bar;
+    $user = wp_get_current_user();
+    $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
+    if ($is_barnesandnoble) {
+      $wp_admin_bar->remove_menu('wp-logo');
+      $wp_admin_bar->remove_menu('my-account');       // Remove the user details tab
+      $wp_admin_bar->remove_menu('comments');         // Remove the comments link
+    }
+}
+add_action( 'wp_before_admin_bar_render', 'remove_admin_bar_links' );
 
 //add new submenu for our custom built list page
 add_filter('gform_addon_navigation', 'add_menu_item');
@@ -34,7 +49,7 @@ function add_menu_item($menu_items) {
   return $menu_items;
 }
 
-//add new entries list for navigation 
+//add new entries list for navigation
 function entries_list() {
   $view = rgget('view');
   $lead_id = rgget('lid');
@@ -189,7 +204,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
           );
           $wp_admin_bar->add_node($args);
           foreach ((array) $menu_items as $key => $menu_item) {
-          
+
             $args = array(
                   'id' => $menu_item->object_id,
                   'title' => $menu_item->title,
@@ -197,11 +212,11 @@ function toolbar_link_to_mypage($wp_admin_bar) {
                   'meta' => array('class' => 'my-toolbar-page'),
                   'parent' => 'mf_admin_parent_barnesandnoble'
               );
-          
+
               $wp_admin_bar->add_node($args);
-            
+
           }
-          
+
         }
       }
     }
