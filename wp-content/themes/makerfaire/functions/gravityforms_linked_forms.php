@@ -22,7 +22,7 @@ function custom_validation($validation_result) {
 
     //check if entry-id is valid
     $entry = GFAPI::get_entry($entryid);
-    if (is_array($entry)) {
+    if (is_array($entry) && $entry['status']=='Active') {
       //finding Field with ID of 1 and marking it as failed validation
       foreach ($form['fields'] as &$field) {
         if ($field->id == $contact_email['id']) {     //contact_email
