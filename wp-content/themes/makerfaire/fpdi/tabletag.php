@@ -45,7 +45,7 @@ if(isset($_GET['eid']) && $_GET['eid']!=''){
   }elseif(isset($_GET['type']) && $_GET['type'] == 'save'){
     global $locName; global $area;
     //file name is zone-location-entryid
-    $filename = TEMPLATEPATH.'/tabletags/'.$faire.'/'.$fileName;
+    $filename = TEMPLATEPATH.'/signs/'.$faire.'/tabletags/'.$fileName;
 
     $dirname = dirname($filename);
     if (!is_dir($dirname)){

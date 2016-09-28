@@ -44,7 +44,7 @@ if(isset($_GET['eid']) && $_GET['eid']!=''){
     if (ob_get_contents()) ob_clean();
     $pdf->Output($entryid.'.pdf', 'D');
   }elseif(isset($_GET['type']) && $_GET['type'] == 'save'){
-    $filename = TEMPLATEPATH.'/presenterSigns/'.$faire.'/'.$entryid.'.pdf';
+    $filename = TEMPLATEPATH.'/signs/'.$faire.'/presenter/'.$entryid.'.pdf';
     $dirname = dirname($filename);
     if (!is_dir($dirname)){
       mkdir($dirname, 0755, true);
@@ -64,6 +64,7 @@ if(isset($_GET['eid']) && $_GET['eid']!=''){
 
 function createOutput($entry_id,$pdf){
   global $wpdb;
+  $presenters = $presentation_title = '';
   $sql = "select entity.presentation_title,
           (select  group_concat( distinct concat(maker.`FIRST NAME`,' ',maker.`LAST NAME`) separator ', ') as Makers
               from    wp_mf_maker maker,
@@ -76,7 +77,7 @@ function createOutput($entry_id,$pdf){
           FROM    wp_mf_entity entity
           where entity.lead_id = ".$entry_id;
   foreach($wpdb->get_results($sql) as $row){
-    $presenters = $row->makers_list;
+    $presenters         = $row->makers_list;
     $presentation_title = $row->presentation_title;
   }
     // Project ID
@@ -90,7 +91,7 @@ function createOutput($entry_id,$pdf){
 
     $lineHeight = $x*0.2645833333333*1.3;
     $pdf->setTextColor(160,0,0);
-    $presenters = "Judy Castro, Terry & Belinda Kilby, Jillian & Jefferey Northrup, Kyrsten Mate & Jon Sarriugarte";
+    //$presenters = "Judy Castro, Terry & Belinda Kilby, Jillian & Jefferey Northrup, Kyrsten Mate & Jon Sarriugarte";
     $presenterHeight = $pdf->GetStringWidth( utf8_decode( $presenters));
 //$presenters .= '-'.$presenterHeight;
     if($presenterHeight > 700){

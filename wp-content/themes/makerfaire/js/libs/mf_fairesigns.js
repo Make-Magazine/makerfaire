@@ -2,6 +2,8 @@
     jQuery('#processButton').val("Creating PDF's. . . ");
     if(type=='signs'){
       fpdiLink = 'makersigns';
+    }else if(type=='presenter'){
+      fpdiLink = 'presenterSigns';
     }else{
       fpdiLink = 'tabletag';
     }
@@ -30,6 +32,7 @@
       fireOnThis.fireEvent('on'+evt);
     }
   }
+
   function createZip(faire,type) {
     var data = {
       'action': 'createSignZip',

@@ -78,7 +78,7 @@ if (isset($eid) && $eid != '') {
       ob_clean();
     $pdf->Output($entryid . '.pdf', 'D');
   }elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
-    $filename = TEMPLATEPATH . '/signs/' . $faire . '/' . $entryid . '.pdf';
+    $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
     $dirname = dirname($filename);
     if (!is_dir($dirname)) {
       mkdir($dirname, 0755, true);
