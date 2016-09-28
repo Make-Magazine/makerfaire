@@ -5,7 +5,9 @@ Template name: Wide Template
 get_header(); ?>
 
 <div class="clear"></div>
-
+<div class="post-thumbnail">
+		<?php the_post_thumbnail(); ?>
+</div><!-- .post-thumbnail -->
 <div class="container">
 
 	<div class="row">
