@@ -72,7 +72,7 @@ $project_title = addslashes((isset($entry['151']) ? (string) $entry['151'] : '')
         if (result) {
           BootstrapDialog.confirm({
             title: '<h2>Next Question...</h2>',
-            message: '<h1>Are you standing in your location at Maker Faire Bay Area 2016?</h1>',
+            message: '<h1>Are you standing in your location at Maker Faire New York 2016?</h1>',
             type: BootstrapDialog.TYPE_INFO, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
             closable: false, // <-- Default value is false
             draggable: false, // <-- Default value is false
