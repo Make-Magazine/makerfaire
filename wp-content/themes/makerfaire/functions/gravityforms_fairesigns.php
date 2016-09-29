@@ -139,7 +139,7 @@ function createSignZip(){
   $faire        = (isset($_POST['faire'])?$_POST['faire']:0);
   $signType     = (isset($_POST['type'])?$_POST['type']:'signs');
 
-  //if($signType!='presenter'){
+
     //create array of subareas
     $sql = "SELECT wp_rg_lead.ID as entry_id, wp_rg_lead.form_id,
           (select value from wp_rg_lead_detail where field_number=303 and wp_rg_lead_detail.lead_id = wp_rg_lead.ID) as entry_status,
@@ -178,23 +178,7 @@ function createSignZip(){
         $entries['faire'][$row->entry_status][] = $row->entry_id;
       }
     } //end looping thru sql results
- /* }else{
-    $entries = array();
-    $select_query = "SELECT entity.lead_id as entry_id
-                      FROM    wp_mf_schedule schedule,
-                              wp_mf_entity entity
 
-                      where   schedule.entry_id       = entity.lead_id
-                              AND entity.status       = 'Accepted'
-                              and schedule.faire      = '" . $faire . "' " .
-            " group BY   entity.lead_id";
-    $results = $wpdb->get_results($select_query);
-    $entries = array();
-
-    foreach($results as $row){
-      $entries['faire']['Accepted'][] = $row->entry_id;
-    }
-  }*/
   $error = '';
 
   //build zip files based on selected type

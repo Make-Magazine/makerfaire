@@ -158,6 +158,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":"55.4","label":"What are your plans at Maker Faire? Check all that apply: ","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-00KB"}
               ],
+              "location":true,
               "rmtData":{"resource":[],"attribute":[],"attention":[],
               "meta":[{"id":"res_status","type":"meta","value":"Resource Status","$$hashKey":"object:371","checked":true}]},
               "type":"customRpt"
@@ -229,7 +230,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
                {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"}
              ],
-             "rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:695","checked":true},{"id":"2","value":"Tables","$$hashKey":"object:696","checked":true},{"id":"3","value":"Chairs","$$hashKey":"object:697","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:698","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:770","checked":true},{"id":"4","value":"Exposure","$$hashKey":"object:771","checked":true},{"id":"9","value":"Noise Level","$$hashKey":"object:773","checked":true},{"id":"11","value":"Internet","$$hashKey":"object:774","checked":true}],"attention":[{"id":"9","value":"Area Manager Notes","$$hashKey":"object:792","checked":true},{"id":"10","value":"Early Setup","$$hashKey":"object:793","checked":true},{"id":"11","value":"No Friday","$$hashKey":"object:794","checked":true}],"meta":[]},"type":"customRpt","location":true};
+             "rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:695","checked":true},{"id":"2","value":"Tables","$$hashKey":"object:696","checked":true},{"id":"3","value":"Chairs","$$hashKey":"object:697","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:698","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:770","checked":true},{"id":"4","value":"Exposure","$$hashKey":"object:771","checked":true},{"id":"9","value":"Noise Level","$$hashKey":"object:773","checked":true},{"id":"11","value":"Internet","$$hashKey":"object:774","checked":true}],"attention":[{"id":"9","value":"Area Manager Notes","$$hashKey":"object:792","checked":true},{"id":"10","value":"Early Setup","$$hashKey":"object:793","checked":true},{"id":"11","value":"No Friday","$$hashKey":"object:794","checked":true}],"meta":[]},
+             "type":"customRpt","location":true};
       var subTitle = 'AM summary';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=='zoho'){
