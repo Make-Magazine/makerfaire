@@ -70,7 +70,7 @@ if ($type == 'entity') {
              from   wp_mf_location z
              where  z.entry_id = entity.lead_id limit 1),null)
             as pin_venue
-            
+
     FROM    `wp_mf_entity` entity
     JOIN wp_rg_lead on wp_rg_lead.id = entity.lead_id
     JOIN wp_mf_faire on wp_mf_faire.faire  ='$faire'
@@ -106,7 +106,7 @@ if ($type == 'entity') {
     if ($overrideImg != '')
       $app_image = $overrideImg;
 
-    $app['thumb_img_url'] = esc_url(legacy_get_resized_remote_image_url($app_image, '80', '80'));
+    $app['thumb_img_url'] = esc_url(legacy_get_fit_remote_image_url($app_image, '80', '80'));
     $app['large_image_url'] = esc_url($app_image);
     // Should actually be this... Adding it in for the future.
     $app['large_img_url'] = esc_url($app_image);
