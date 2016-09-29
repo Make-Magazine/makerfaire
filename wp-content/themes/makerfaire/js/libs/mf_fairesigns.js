@@ -17,7 +17,7 @@
         data: { eid: jQuery(this).attr('id'), type: 'save', faire: faire },
       }).done(function(data) {
         jQuery('#'+data).html(data+ ' Created');
-        jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/"+type+"/"+faire+"/"+data+'.pdf');
+        jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/signs/"+faire+"/"+type+"/"+data+'.pdf');
       });
     });
   }
