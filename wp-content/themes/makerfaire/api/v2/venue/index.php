@@ -72,7 +72,7 @@ from  wp_mf_location a
   group by a.subarea_id
 union all
 select CONCAT(a.subarea_id,'',b.entry_id) as ID
-	,CONCAT (d.area,' ',IFNULL(NULLIF(c.nicename,''),c.subarea))
+	,CONCAT (mfe.desc_short,' (',IFNULL(NULLIF(c.nicename,''),c.subarea),')')
 	,null as child_id_refs
 	,e.faire as faire
 	,b.latitude as latitude
@@ -82,7 +82,8 @@ from  wp_mf_location a
  join `wp_mf_faire_subarea` c on a.subarea_id=c.id
  join wp_mf_faire_area d on c.area_id=d.id
  join wp_mf_faire e on d.faire_id=e.ID
- where faire = '$faire'
+ join wp_mf_entity mfe on a.entry_id=mfe.lead_id
+ where e.faire = '$faire'
              ");
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query($select_query);
