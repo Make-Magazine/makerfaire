@@ -103,6 +103,7 @@ from  wp_mf_location a
 
     // REQUIRED: The venue ID
     $venue['id'] = absint($row[0]);
+    $venue['map_region'] = absint(5);
 
     // REQUIRED: The venue name
     $venue['name'] = html_entity_decode($row[1], ENT_COMPAT, 'utf-8');
