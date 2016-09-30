@@ -31,9 +31,22 @@ if ( ! empty( $location ) )
 		<meta name="viewport" content="width=device-width">
 		<style>
 			body { font-family: 'Benton Sans', Helvetica, sans-serif; }
-			a { text-decoration:none; color:#000; }
-			h1, h2, h3, h4 { margin:5px 0 0; }
+			a {
+        text-decoration:none; color:#00
+
+      }
+      page {-webkit-transform: rotate(-90deg);
+     -moz-transform:rotate(-90deg);
+     filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3);}
+      .detail td{vertical-align: text-top;}
+      .title {font-size: 1.5em;     display: block;
+
+    font-weight: bold;}
 		</style>
+    <style type="text/css" media="print">
+
+
+  </style>
 	</head>
 	<body>
 		<?php echo get_schedule_list( $location, $short_description, $day, $faire ); ?>
@@ -95,108 +108,62 @@ function get_schedule_list( $location, $short_description = false, $day_set = ''
   }else{
     $sql .= " order by nicename ASC, wp_mf_schedule.start_dt ASC, wp_mf_schedule.end_dt ASC,  'Exhibit' ASC";
   }
-  /*
-         $sql ="SELECT  DAYNAME(schedule.start_dt) as Day,
-                       DATE_FORMAT(schedule.start_dt,'%h:%i %p') as 'Start Time',
-                       DATE_FORMAT(schedule.end_dt,'%h:%i %p') as 'End Time',
-                       if(subarea.niceName = '' or subarea.niceName is null,subarea.subarea,subarea.niceName) as nicename,
-                       area.area, entity.presentation_title as 'Exhibit',
 
-                                (select  group_concat( distinct concat(maker.`FIRST NAME`,' ',maker.`LAST NAME`) separator ', ') as Makers
-                                    from    wp_mf_maker maker,
-                                            wp_mf_maker_to_entity maker_to_entity
-                                    where   schedule.entry_id           = maker_to_entity.entity_id  AND
-                                            maker_to_entity.maker_id    = maker.maker_id AND
-                                            maker_to_entity.maker_type != 'Contact'
-                                    group by maker_to_entity.entity_id) as Presenters
+  //group by stage and date
+  $dayOfWeek = '';
+  $stage     = '';
 
-                FROM    wp_mf_schedule schedule
-                join    wp_mf_entity entity on
-                            schedule.entry_id   = entity.lead_id and
-                            entity.status       = 'Accepted'
-                join    wp_mf_location location on
-                            schedule.location_id  = location.ID and
-                            schedule.entry_id = location.entry_id
-                join    wp_mf_faire_subarea subarea on
-                            location.subarea_id = subarea.id
-                join    wp_mf_faire_area area on
-                            subarea.area_id = area.id
+  foreach( $wpdb->get_results($sql, ARRAY_A ) as $key=>$row) {
+    if($orderBy=='time'){ //break by stage. day goes in h1
+      $stage = $row['nicename'];
+      if( $dayOfWeek!=$row['Day']){
+        //skip the page break after if this is the first time
+        if($dayOfWeek != '')    $output.= '<div style="page-break-after: always;"></div>';
+        $dayOfWeek=$row['Day'];
 
-                where   schedule.faire          = '".$faire."'
+        $output .='<h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">'.$dayOfWeek.'</h1>
+                   <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
+                   <p></p>
+                   <p></p>
+                   <p></p>';
+      }
+    }else{
+      if($stage!=$row['nicename'] || $dayOfWeek!=$row['Day']){
+        //skip the page break after if this is the first time
+        if($stage != '')    $output.= '<div style="page-break-after: always;"></div>';
+        $stage = $row['nicename'];
+        $dayOfWeek=$row['Day'];
 
-                        "
+        $output .='<h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">'.$stage.' <small>('.$row['area'].')</small> </h1>
+                   <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
+                   <p></p>
+                   <p></p>
+                   <p></p>';
+        $output .= '<div style="clear:both"><h2>'.$dayOfWeek.'</h2></div>';
+      }
+    }
 
-                        .($day_set!=''?" and DAYNAME(`schedule`.`start_dt`)='".ucfirst($day_set)."'":'');
+    $output .= '<table style="width:100%;">';
+    $output .= '<tr>';
+    $output .= '  <td width="20%" valign="top">';
+    $output .= '    <h2 style="font-size:.9em; color:#333; margin-top:3px;">' . $row['Start Time']  . ' &mdash; ' . $row['End Time']  . '</h2>';
+    if($orderBy=='time')    {
+        $output .= $stage.' ('.$row['area'].')' ;
+    }
 
-        if($orderBy=='time'){
-            $sql .= " order by schedule.start_dt ASC, schedule.end_dt ASC, nicename ASC, 'Exhibit' ASC";
-        }else{
-            $sql .= " order by nicename ASC, schedule.start_dt ASC, schedule.end_dt ASC,  'Exhibit' ASC";
-        }*/
-        //echo $sql;
-        //group by stage and date
-        $dayOfWeek = '';
-        $stage     = '';
+    $output .= '  </td>';
+    $output .= '  <td>'
+                . ' <span class="title">'. $row['presentation_title']  . ' ('.$row['entry_id'].')</span>'
+                .   '<b>Presenters: </b>'.$row['presenters']. '<br/>'
+                .   '<b>Contact: </b>'.$row['contact'].' - '.$row['contact-email'].' - '.$row['contact-phone'] . '<br/>'
+                .   ($row['twitter']!='' ?'<b>Twitter: </b>'.$row['twitter'].'<br/>':'')
+                .   ($row['special_request']!='' ? '<b>Requets: </b>'.$row['special_request'] : '')
+              . ' </td>';
+    $output .= '</tr>';
 
-        foreach( $wpdb->get_results($sql, ARRAY_A ) as $key=>$row) {
-          if($orderBy=='time'){ //break by stage. day goes in h1
-            $stage = $row['nicename'];
-            if( $dayOfWeek!=$row['Day']){
-              //skip the page break after if this is the first time
-              if($dayOfWeek != '')    $output.= '<div style="page-break-after: always;"></div>';
-              $dayOfWeek=$row['Day'];
-
-              $output .='<h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">'.$dayOfWeek.'</h1>
-                          <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
-                          <p></p>
-                          <p></p>
-                          <p></p>';
-           }
-          }else{
-               if($stage!=$row['nicename'] || $dayOfWeek!=$row['Day']){
-                   //skip the page break after if this is the first time
-                   if($stage != '')    $output.= '<div style="page-break-after: always;"></div>';
-                    $stage = $row['nicename'];
-                    $dayOfWeek=$row['Day'];
-
-                    $output .='<h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">'.$stage.' <small>('.$row['area'].')</small> </h1>
-                                <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
-                                <p></p>
-                                <p></p>
-                                <p></p>';
-                    $output .= '<div style="clear:both"><h2>'.$dayOfWeek.'</h2></div>';
-               }
-            }
-
-            $output .= '<table style="width:100%;">';
-
-            $output .= '<tr>';
-            $output .= '<td width="15%" style="padding:15px 0;" valign="top">';
-
-            $output .= '<h2 style="font-size:.9em; color:#333; margin-top:3px;">' . $row['Start Time']  . ' &mdash; ' . $row['End Time']  . '</h2>';
-            if($orderBy=='time')    {
-                $output .= $stage.' ('.$row['area'].')' ;
-            }
-            $output .= '</td>';
-            $output .= '<td><h3 style="margin-top:0;">' . $row['presentation_title']  . '</h3></td>';
-            $output .= '</tr>';
-            $output .= '<tr><td></td><td>';
-            $output .= '<table width="100%">'
-                    .   '<tr><td width="15%"><b>Presenters</b></td><td>'.$row['presenters'].'</td></tr>'
-                    .   '<tr><td><b>Project ID</b></td><td>'.$row['entry_id'].'</td></tr>'
-                    .   '<tr><td><b>Special Requests</b></td><td>'.$row['special_request'].'</td></tr>'
-                    .   '<tr><td><b>Contact Name</b></td><td>'.$row['contact'].'</td></tr>'
-                    .   '<tr><td><b>Contact Email</b></td><td>'.$row['contact-email'].'</td></tr>'
-                    .   '<tr><td><b>Contact Phone</b></td><td>'.$row['contact-phone'].'</td></tr>'
-                    .   '<tr><td><b>Twitter</b></td><td>'.$row['twitter'].'</td></tr>'
-                    .  '</table>';
-
-
-            $output .= '<tr><td colspan="2"><div style="border-bottom:2px solid #ccc;"></div></td></tr>';
-            $output .= '</td></tr>';
-            $output .= '</table>';
-        }
-
-
+    $output .= '<tr><td colspan="2"><div style="border-bottom:2px solid #ccc;"></div></td></tr>';
+    $output .= '</td></tr>';
+    $output .= '</table>';
+  }
 	return $output;
 }
