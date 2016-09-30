@@ -2,6 +2,8 @@
     jQuery('#processButton').val("Creating PDF's. . . ");
     if(type=='signs'){
       fpdiLink = 'makersigns';
+    }else if(type=='presenter'){
+      fpdiLink = 'presenterSigns';
     }else{
       fpdiLink = 'tabletag';
     }
@@ -15,7 +17,7 @@
         data: { eid: jQuery(this).attr('id'), type: 'save', faire: faire },
       }).done(function(data) {
         jQuery('#'+data).html(data+ ' Created');
-        jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/"+type+"/"+faire+"/"+data+'.pdf');
+        jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/signs/"+faire+"/"+type+"/"+data+'.pdf');
       });
     });
   }
@@ -30,6 +32,7 @@
       fireOnThis.fireEvent('on'+evt);
     }
   }
+
   function createZip(faire,type) {
     var data = {
       'action': 'createSignZip',

@@ -6,32 +6,6 @@ global $wpdb;
 $selfaire  = '';
 $type   = '';
 ?>
-<!--
-<hr style="border-top-color: darkgray">
-<div class="row">-->
-  <!-- Table Tags -->
-  <!--
-  <div class="col-sm-3">
-    <strong>Presenter Signs</strong>
-  </div>
-  <div class="col-sm-9">
-    <form method="post" action=""> <?php
-      //$sql = "SELECT * FROM `wp_mf_faire` ORDER BY `wp_mf_faire`.`start_dt` DESC";
-      //$results = $wpdb->get_results($sql); ?>
-      <div class="col-sm-9">
-        <select id="faire" name="faire"> <?php
-        //  foreach($results as $faire){ ?>
-            <option value="<?php //echo $faire->faire; ?>"><?php //echo $faire->faire; ?></option> <?php
-          //} ?>
-        </select>
-      </div>
-      <div class="col-sm-3">
-        <input type="submit" name="presenterSigns" value="Get Presenters" class="button button-large button-primary" />
-      </div>
-    </form>
-  </div>
-</div>-->
-
 
 <!-- New Collapsible menus and more user friendly interface -->
 <div id="faire-signs">
@@ -54,7 +28,7 @@ $type   = '';
             <div class="row  is-flex">
               <div class="col-sm-4 right-border">
                 <?php
-                $signDir = get_template_directory().'/signs/'.$row->faire.'/';
+                $signDir = get_template_directory().'/signs/'.$row->faire.'/maker/zip/';
                 $files = glob($signDir."*.zip");
                 if(is_array($files) && !empty($files)){
                   //Find all Zip files for this faire
@@ -62,7 +36,7 @@ $type   = '';
                     ?>
                     <div class="row">
                       <div class="col-sm-8">
-                        <?php echo '<a href="'.get_template_directory_uri().'/signs/'.$row->faire.'/'.basename($filename).'" target="_blank">'.basename($filename).'</a>';?>
+                        <?php echo '<a href="'.get_template_directory_uri().'/signs/'.$row->faire.'/maker/zip/'.basename($filename).'" target="_blank">'.basename($filename).'</a>';?>
                       </div>
                       <div class="col-sm-4">
                         <?php echo date("m/d/Y H:i",filemtime($filename));?>
@@ -96,8 +70,8 @@ $type   = '';
                   </div>
                 </div>
                 <br/>
-                <input style="text-align:center"  name="zipCreate" value="Re-Create Zip Files" class="button button-large button-primary" onClick="createZip('<?php echo $row->faire;?>','signs')" /><br/>
-                <span class="signs updateMsg"></span>
+                <input style="text-align:center"  name="zipCreate" value="Re-Create Zip Files" class="button button-large button-primary" onClick="createZip('<?php echo $row->faire;?>','maker')" /><br/>
+                <span class="maker updateMsg"></span>
               </div>
               <div class="col-sm-12">
                 <span class="signs pdfEntList"></span>
@@ -108,7 +82,7 @@ $type   = '';
             <div class="row  is-flex">
               <div class="col-sm-4 right-border">
                 <?php
-                $signDir  = get_template_directory().'/tabletags/'.$row->faire.'/';
+                $signDir  = get_template_directory().'/signs/'.$row->faire.'/tabletags/zip/';
                 $files = glob($signDir."*.zip");
                 if(is_array($files) && !empty($files)){
                   //Find all Zip files for this faire
@@ -116,7 +90,7 @@ $type   = '';
                     ?>
                     <div class="row">
                       <div class="col-sm-8">
-                        <?php echo '<a href="'.get_template_directory_uri().'/tabletags/'.$row->faire.'/'.basename($filename).'" target="_blank">'.basename($filename).'</a>';?>
+                        <?php echo '<a href="'.get_template_directory_uri().'/signs/'.$row->faire.'/tabletags/zip/'.basename($filename).'" target="_blank">'.basename($filename).'</a>';?>
                       </div>
                       <div class="col-sm-4">
                         <?php echo date("m/d/Y H:i",filemtime($filename));?>
@@ -157,13 +131,59 @@ $type   = '';
                 <span class="tabletags pdfEntList"></span>
               </div>
             </div>
-
-
-
-
-
-
-
+            <h4>Presenter Signs</h4>
+            <div class="row  is-flex">
+             <div class="col-sm-4 right-border">
+                <?php
+                $signDir = get_template_directory().'/signs/'.$row->faire.'/presenter/zip/';
+                $files = glob($signDir."*.zip");
+                if(is_array($files) && !empty($files)){
+                  //Find all Zip files for this faire
+                  foreach ($files as $filename) {
+                    ?>
+                    <div class="row">
+                      <div class="col-sm-8">
+                        <?php echo '<a href="'.get_template_directory_uri().'/signs/'.$row->faire.'/presenter/zip/'.basename($filename).'" target="_blank">'.basename($filename).'</a>';?>
+                      </div>
+                      <div class="col-sm-4">
+                        <?php echo date("m/d/Y H:i",filemtime($filename));?>
+                      </div>
+                    </div>
+                    <?php
+                  }
+                } else{
+                  echo 'No Zip files found';
+                }
+                ?>
+              </div>
+              <div class="col-sm-3  right-border">
+                <input style="text-align:center"  name="zipCreate" value="Generate Presesnter Signs" class="button button-large button-primary" onClick="createPDF('<?php echo $row->faire;?>','presenter')" /><br/>
+                <small>This needs to be done before you create the Zip file</small>
+              </div>
+              <div class="col-sm-5">
+                <input type="hidden" id="zipFiles" value="<?php echo $row->faire;?>" />
+                <div class="row">
+                  <div class="col-sm-4">
+                    <b>Grouping:</b><br/>
+                    <input type="radio" name="<?php echo $row->faire;?>seltype" value="area" checked> By Area<br>
+                    <input type="radio" name="<?php echo $row->faire;?>seltype" value="subarea"> By Subarea<br>
+                    <input type="radio" name="<?php echo $row->faire;?>seltype" value="faire"> By Faire<br>
+                  </div>
+                  <div class="col-sm-5">
+                    <b>Status:</b><br/>
+                    <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accepted" checked> Accepted Only<br>
+                    <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accAndProp"> Accepted and Proposed<br>
+                    <input type="radio" name="<?php echo $row->faire;?>selstatus" value="all"> All Status
+                  </div>
+                </div>
+                <br/>
+                <input style="text-align:center"  name="zipCreate" value="Re-Create Zip Files" class="button button-large button-primary" onClick="createZip('<?php echo $row->faire;?>', 'presenter')" /><br/>
+                <span class="presenter updateMsg"></span>
+              </div>
+              <div class="col-sm-12">
+                <span class="presenter pdfEntList"></span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -173,37 +193,3 @@ $type   = '';
     ?>
   </div>
 </div>
-
-<?php
-/*
-//presenter signs
-if(isset($_POST['presenterSigns'])){
-  $type = 'presenterSigns';
-  ?>
-  <br/><br/>
-  Verify the list of entries below match what you were expecting then click the button to start the process creating the signs.<br/>
-  <input class="button button-large button-primary" style="text-align:center" value="Generate signs for listed entries" id="processButton"   onClick="printSigns()"/><br/>
-  <br/>
-  <?php
-  $faire = $selfaire = (isset($_POST['faire'])?$_POST['faire']:'BA16');
-  $select_query = "SELECT entity.lead_id as entry_id
-                    FROM    wp_mf_schedule schedule,
-                            wp_mf_entity entity
-
-                    where   schedule.entry_id       = entity.lead_id
-                            AND entity.status       = 'Accepted'
-                            and schedule.faire      = '" . $faire . "' " .
-          " group BY   entity.lead_id";
-  echo '<div class="container"><div class="row">';
-  $results = $wpdb->get_results($select_query);
-  foreach($results as $entry){
-    $entry_id = $entry->entry_id;
-    ?>
-    <div class="col-md-2">
-      <a class="fairsign" target="_blank" id="<?php echo $entry_id;?>" href="/wp-content/themes/makerfaire/fpdi/presenterSigns.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire;?>"><?php echo $entry_id;?></a>
-    </div>
-    <?php
-  }
-  echo '</div></div>';
-} //end presenter signs*/
-?>
