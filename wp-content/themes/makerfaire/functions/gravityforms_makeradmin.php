@@ -95,7 +95,7 @@ function makerCancelEntry(){
       }
     }
     echo 'Thank You, Exhibit ID '.$entryID.' has been cancelled';
-
+    gf_do_action( array( 'gform_after_update_entry', $lead['form_id']), $form, $entryID, $lead );
   }else{
     echo 'Error in cancelling this exhibit.';
   }
@@ -106,7 +106,7 @@ add_action( 'wp_ajax_maker-cancel-entry', 'makerCancelEntry' );
 
 /* Used in maker admin, this function is called by ajax to allow a user to delete
  * an entry and to send a notification */
-function makerDeleteEntry(){
+function makerDeleteEntry() {
   $entryID = (isset($_POST['delete_entry_id']) ? $_POST['delete_entry_id']:0);
   if($entryID!=0){
     //get entry data and form data
