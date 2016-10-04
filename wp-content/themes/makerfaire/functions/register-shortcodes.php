@@ -321,136 +321,134 @@ function createSponsSlide($atts) {
   ?>
   <!-- IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS -->
   <?php if( have_rows('goldsmith_sponsors', $postid) || have_rows('silversmith_sponsors', $postid) || have_rows('coppersmith_sponsors', $postid) || have_rows('media_sponsors', $postid) ): ?>
-  <div class="sponsor-slide">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-7">
-          <h4 class="sponsor-slide-title"><?php echo $faireData['faire_name'];?> Sponsors: <span class="sponsor-slide-cat"></span></h4>
-        </div>
-        <div class="col-sm-5">
-          <h5><a href="/sponsors">Become a sponsor</a></h5>
-          <h5><a href="<?php echo $url;?>">All sponsors</a></h5>
-        </div>
+  <div class="sponsor-slide sponsor-slide-shortcode">
+    <div class="row">
+      <div class="col-sm-7">
+        <h4 class="sponsor-slide-title"><?php echo $faireData['faire_name'];?> Sponsors: <span class="sponsor-slide-cat"></span></h4>
       </div>
-      <div class="row">
-        <div class="col-xs-12">
+      <div class="col-sm-5">
+        <h5><a href="/sponsors">Become a sponsor</a></h5>
+        <h5><a href="<?php echo $url;?>">All sponsors</a></h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
 
-          <div id="carousel-sponsors-slider" class="carousel slide" data-ride="carousel">
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner" role="listbox">
-              <!-- GOLDSMITH SPONSORS -->
-              <?php if( have_rows('goldsmith_sponsors', $postid) ): ?>
-              <div class="item">
-                <div class="row spnosors-row">
-                  <div class="col-xs-12">
-                    <h3 class="sponsors-type text-center">GOLDSMITH</h3>
-                      <div class="sponsors-box">
-                      <?php
-                        while( have_rows('goldsmith_sponsors', $postid) ): the_row();
-                          $sub_field_1 = get_sub_field('image'); //Photo
-                          $sub_field_2 = get_sub_field('url'); //URL
+        <div id="carousel-sponsors-slider" class="carousel slide" data-ride="carousel">
+          <!-- Wrapper for slides -->
+          <div class="carousel-inner" role="listbox">
+            <!-- GOLDSMITH SPONSORS -->
+            <?php if( have_rows('goldsmith_sponsors', $postid) ): ?>
+            <div class="item">
+              <div class="row spnosors-row">
+                <div class="col-xs-12">
+                  <h3 class="sponsors-type text-center">GOLDSMITH</h3>
+                    <div class="sponsors-box">
+                    <?php
+                      while( have_rows('goldsmith_sponsors', $postid) ): the_row();
+                        $sub_field_1 = get_sub_field('image'); //Photo
+                        $sub_field_2 = get_sub_field('url'); //URL
 
-                          echo '<div class="sponsors-box-md">';
-                          if( get_sub_field('url') ):
-                            echo '<a href="' . $sub_field_2 . '" target="_blank">';
-                          endif;
-                          echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
-                          if( get_sub_field('url') ):
-                            echo '</a>';
-                          endif;
-                          echo '</div>';
-                        endwhile; ?>
-                    </div>
+                        echo '<div class="sponsors-box-md">';
+                        if( get_sub_field('url') ):
+                          echo '<a href="' . $sub_field_2 . '" target="_blank">';
+                        endif;
+                        echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+                        if( get_sub_field('url') ):
+                          echo '</a>';
+                        endif;
+                        echo '</div>';
+                      endwhile; ?>
                   </div>
                 </div>
               </div>
-              <?php endif; ?>
-
-              <!-- SILVERSMITH SPONSORS -->
-              <?php if( have_rows('silversmith_sponsors', $postid) ): ?>
-              <div class="item">
-                <div class="row spnosors-row">
-                  <div class="col-xs-12">
-                    <h3 class="sponsors-type text-center">SILVERSMITH</h3>
-                      <div class="sponsors-box">
-                      <?php
-                        while( have_rows('silversmith_sponsors', $postid) ): the_row();
-                          $sub_field_1 = get_sub_field('image'); //Photo
-                          $sub_field_2 = get_sub_field('url'); //URL
-
-                          echo '<div class="sponsors-box-md">';
-                          if( get_sub_field('url') ):
-                            echo '<a href="' . $sub_field_2 . '" target="_blank">';
-                          endif;
-                          echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
-                          if( get_sub_field('url') ):
-                            echo '</a>';
-                          endif;
-                          echo '</div>';
-                        endwhile; ?>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <?php endif; ?>
-
-              <!-- COPPERSMITH SPONSORS -->
-              <?php if( have_rows('coppersmith_sponsors', $postid) ): ?>
-              <div class="item">
-                <div class="row spnosors-row">
-                  <div class="col-xs-12">
-                    <h3 class="sponsors-type text-center">COPPERSMITH</h3>
-                      <div class="sponsors-box">
-                      <?php
-                        while( have_rows('coppersmith_sponsors', $postid) ): the_row();
-                          $sub_field_1 = get_sub_field('image'); //Photo
-                          $sub_field_2 = get_sub_field('url'); //URL
-
-                          echo '<div class="sponsors-box-md">';
-                          if( get_sub_field('url') ):
-                            echo '<a href="' . $sub_field_2 . '" target="_blank">';
-                          endif;
-                          echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
-                          if( get_sub_field('url') ):
-                            echo '</a>';
-                          endif;
-                          echo '</div>';
-                        endwhile; ?>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <?php endif; ?>
-
-              <!-- MEDIA SPONSORS -->
-              <?php if( have_rows('media_sponsors', $postid) ): ?>
-              <div class="item">
-                <div class="row spnosors-row">
-                  <div class="col-xs-12">
-                    <h3 class="sponsors-type text-center">MEDIA</h3>
-                      <div class="sponsors-box">
-                      <?php
-                        while( have_rows('media_sponsors', $postid) ): the_row();
-                          $sub_field_1 = get_sub_field('image'); //Photo
-                          $sub_field_2 = get_sub_field('url'); //URL
-
-                          echo '<div class="sponsors-box-md">';
-                          if( get_sub_field('url') ):
-                            echo '<a href="' . $sub_field_2 . '" target="_blank">';
-                          endif;
-                          echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
-                          if( get_sub_field('url') ):
-                            echo '</a>';
-                          endif;
-                          echo '</div>';
-                        endwhile; ?>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <?php endif; ?>
-
             </div>
+            <?php endif; ?>
+
+            <!-- SILVERSMITH SPONSORS -->
+            <?php if( have_rows('silversmith_sponsors', $postid) ): ?>
+            <div class="item">
+              <div class="row spnosors-row">
+                <div class="col-xs-12">
+                  <h3 class="sponsors-type text-center">SILVERSMITH</h3>
+                    <div class="sponsors-box">
+                    <?php
+                      while( have_rows('silversmith_sponsors', $postid) ): the_row();
+                        $sub_field_1 = get_sub_field('image'); //Photo
+                        $sub_field_2 = get_sub_field('url'); //URL
+
+                        echo '<div class="sponsors-box-md">';
+                        if( get_sub_field('url') ):
+                          echo '<a href="' . $sub_field_2 . '" target="_blank">';
+                        endif;
+                        echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+                        if( get_sub_field('url') ):
+                          echo '</a>';
+                        endif;
+                        echo '</div>';
+                      endwhile; ?>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- COPPERSMITH SPONSORS -->
+            <?php if( have_rows('coppersmith_sponsors', $postid) ): ?>
+            <div class="item">
+              <div class="row spnosors-row">
+                <div class="col-xs-12">
+                  <h3 class="sponsors-type text-center">COPPERSMITH</h3>
+                    <div class="sponsors-box">
+                    <?php
+                      while( have_rows('coppersmith_sponsors', $postid) ): the_row();
+                        $sub_field_1 = get_sub_field('image'); //Photo
+                        $sub_field_2 = get_sub_field('url'); //URL
+
+                        echo '<div class="sponsors-box-md">';
+                        if( get_sub_field('url') ):
+                          echo '<a href="' . $sub_field_2 . '" target="_blank">';
+                        endif;
+                        echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+                        if( get_sub_field('url') ):
+                          echo '</a>';
+                        endif;
+                        echo '</div>';
+                      endwhile; ?>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- MEDIA SPONSORS -->
+            <?php if( have_rows('media_sponsors', $postid) ): ?>
+            <div class="item">
+              <div class="row spnosors-row">
+                <div class="col-xs-12">
+                  <h3 class="sponsors-type text-center">MEDIA</h3>
+                    <div class="sponsors-box">
+                    <?php
+                      while( have_rows('media_sponsors', $postid) ): the_row();
+                        $sub_field_1 = get_sub_field('image'); //Photo
+                        $sub_field_2 = get_sub_field('url'); //URL
+
+                        echo '<div class="sponsors-box-md">';
+                        if( get_sub_field('url') ):
+                          echo '<a href="' . $sub_field_2 . '" target="_blank">';
+                        endif;
+                        echo '<img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+                        if( get_sub_field('url') ):
+                          echo '</a>';
+                        endif;
+                        echo '</div>';
+                      endwhile; ?>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <?php endif; ?>
+
           </div>
         </div>
       </div>
