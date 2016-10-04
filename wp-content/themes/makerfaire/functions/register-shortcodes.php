@@ -326,8 +326,7 @@ function createSponsSlide($atts) {
   );
   //IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
   if( have_rows('goldsmith_sponsors', $postid) || have_rows('silversmith_sponsors', $postid) || have_rows('coppersmith_sponsors', $postid) || have_rows('media_sponsors', $postid) ) {
-    $return  = '<div class="sponsor-slide">
-                  <div class="container">
+    $return  = '  <div class="sponsor-slide sponsor-slide-shortcode">
                     <div class="row">
                       <div class="col-sm-7">
                         <h4 class="sponsor-slide-title">'. $faireData['faire_name'].' Sponsors: <span class="sponsor-slide-cat"></span></h4>
@@ -377,7 +376,6 @@ function createSponsSlide($atts) {
           </div> <!-- end #carousel-sponsors-slider -->
         </div> <!-- end .col-xs-12 -->
       </div> <!-- end .row -->
-    </div> <!-- end .container -->
   </div> <!-- end .sponsor-slide -->';
 
   $return.= "<script>
