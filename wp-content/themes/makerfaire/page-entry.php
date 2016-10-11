@@ -5,25 +5,28 @@
  * @version 2.0
  */
 
-  global $wp_query;
-  $entryId   = $wp_query->query_vars['e_id'];
-  $editEntry = $wp_query->query_vars['edit_slug'];
-  $entry     = GFAPI::get_entry($entryId);
+global $wp_query;
+$entryId   = $wp_query->query_vars['e_id'];
+$editEntry = $wp_query->query_vars['edit_slug'];
+$entry     = GFAPI::get_entry($entryId);
 
-  //entry not found
-  if(isset($entry->errors)){
-    $form_id = '';
-    $formType = '';
-    $entry=array();
-    $faire = '';
-  }else{
-    //find outwhich faire this entry is for to set the 'look for more makers link'
-    $form_id = $entry['form_id'];
-    $form = GFAPI::get_form($form_id);
-    $formType = $form['form_type'];
-    $faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
-  }
+$sharing_cards = new mf_sharing_cards();
 
+//entry not found
+if(isset($entry->errors)){
+  $form_id = '';
+  $formType = '';
+  $entry=array();
+  $faire = '';
+  $sharing_cards->project_title = 'Invalid Entry';
+  $sharing_cards->project_photo = '';
+  $sharing_cards->project_short = '';
+}else{
+  //find outwhich faire this entry is for to set the 'look for more makers link'
+  $form_id = $entry['form_id'];
+  $form = GFAPI::get_form($form_id);
+  $formType = $form['form_type'];
+  $faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
   if($form_id!=''){
     $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt,url_path "
             . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
@@ -41,42 +44,8 @@
     }
   }
 
-  $makers = array();
-  if (isset($entry['160.3']))
-    $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
-                      'bio'       => (isset($entry['234']) ? $entry['234']: ''),
-                      'photo'     => (isset($entry['217']) ? $entry['217'] : '')
-                );
-  if (isset($entry['158.3']))
-    $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
-                      'bio'       => (isset($entry['258']) ? $entry['258'] : ''),
-                      'photo'     => (isset($entry['224']) ? $entry['224'] : '')
-                );
-  if (isset($entry['155.3']))
-      $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
-                      'bio'         => (isset($entry['259']) ? $entry['259'] : ''),
-                      'photo'       => (isset($entry['223']) ? $entry['223'] : '')
-                );
-  if (isset($entry['156.3']))
-      $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
-                      'bio'         => (isset($entry['260']) ? $entry['260'] : ''),
-                      'photo'       => (isset($entry['222']) ? $entry['222'] : '')
-                  );
-  if (isset($entry['157.3']))
-      $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
-                      'bio'         => (isset($entry['261']) ? $entry['261'] : ''),
-                      'photo'       => (isset($entry['220']) ? $entry['220'] : '')
-                  );
-  if (isset($entry['159.3']))
-      $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
-                      'bio'         => (isset($entry['262']) ? $entry['262'] : ''),
-                      'photo'       => (isset($entry['221']) ? $entry['221'] : '')
-                  );
-  if (isset($entry['154.3']))
-      $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
-                      'bio'         => (isset($entry['263']) ? $entry['263'] : ''),
-                      'photo'       => (isset($entry['219']) ? $entry['219'] : '')
-                  );
+  //get makers info
+  $makers = getMakerInfo($entry);
 
   $groupname  = (isset($entry['109']) ? $entry['109']:'');
   $groupphoto = (isset($entry['111']) ? $entry['111']:'');
@@ -91,8 +60,6 @@
   $isGroup =(strpos($displayType, 'group') !== false);
   $isList =(strpos($displayType, 'list') !== false);
   $isSingle =(strpos($displayType, 'One') !== false);
-
-  $sharing_cards = new mf_sharing_cards();
 
   //Change Project Name
   $project_name = (isset($entry['151']) ? $entry['151'] : '');
@@ -109,52 +76,53 @@
   //Website
   $project_website = (isset($entry['27']) ? $entry['27']: '');
   //Video
-  $project_video = (isset($entry['32'])?$entry['32']:'');
+  $project_video = (isset($entry['32']) ? $entry['32']:'');
   //Title
   $project_title = (isset($entry['151'])?(string)$entry['151']:'');
   $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
   $sharing_cards->project_title = $project_title;
+}
 
-  //Url
-  global $wp;
-  $canonical_url = home_url( $wp->request ) . '/' ;
-  $sharing_cards->canonical_url = $canonical_url;
+//Url
+global $wp;
+$canonical_url = home_url( $wp->request ) . '/' ;
+$sharing_cards->canonical_url = $canonical_url;
 
-  $sharing_cards->set_values();
-  get_header();
+$sharing_cards->set_values();
+get_header();
 
 
-  /* Lets check if we are coming from the MAT tool -
-   * if we are, and user is logged in and has access to this record
-   *   Display edit functionality
-   */
-  $makerEdit = false;
-  if($editEntry=='edit'){
-    //check if loggest in user has access to this entry
-    $current_user = wp_get_current_user();
+/* Lets check if we are coming from the MAT tool -
+ * if we are, and user is logged in and has access to this record
+ *   Display edit functionality
+ */
+$makerEdit = false;
+if($editEntry=='edit'){
+  //check if loggest in user has access to this entry
+  $current_user = wp_get_current_user();
 
-    //require_once our model
-    require_once( get_template_directory().'/models/maker.php' );
+  //require_once our model
+  require_once( get_template_directory().'/models/maker.php' );
 
-    //instantiate the model
-    $maker   = new maker($current_user->user_email);
+  //instantiate the model
+  $maker   = new maker($current_user->user_email);
 
-    if($maker->check_entry_access($entry)){
-      $makerEdit =  true;
-    }
+  if($maker->check_entry_access($entry)){
+    $makerEdit =  true;
   }
-  if($makerEdit) {
-    ?>
-    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.js"></script>
-    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.autogrow.js"></script>
-    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.ajaxupload.js"></script>
+}
+if($makerEdit) {
+  ?>
+  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.js"></script>
+  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.autogrow.js"></script>
+  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.ajaxupload.js"></script>
 
-    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.autogrow.js"></script>
-    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.ajaxfileupload.js"></script>
-    <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jeditable-main.js"></script>
-    <?php
-  }
-    ?>
+  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.autogrow.js"></script>
+  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.ajaxfileupload.js"></script>
+  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jeditable-main.js"></script>
+  <?php
+}
+  ?>
 
 <div class="clear"></div>
 
@@ -428,5 +396,46 @@ function display_groupEntries($entryID){
     $return .= '</div>';
   }
   echo $return;
+}
+
+//return makers info
+function getMakerInfo($entry) {
+  $makers = array();
+  if (isset($entry['160.3']))
+    $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
+                      'bio'       => (isset($entry['234']) ? $entry['234']: ''),
+                      'photo'     => (isset($entry['217']) ? $entry['217'] : '')
+                );
+  if (isset($entry['158.3']))
+    $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
+                      'bio'       => (isset($entry['258']) ? $entry['258'] : ''),
+                      'photo'     => (isset($entry['224']) ? $entry['224'] : '')
+                );
+  if (isset($entry['155.3']))
+      $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
+                      'bio'         => (isset($entry['259']) ? $entry['259'] : ''),
+                      'photo'       => (isset($entry['223']) ? $entry['223'] : '')
+                );
+  if (isset($entry['156.3']))
+      $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
+                      'bio'         => (isset($entry['260']) ? $entry['260'] : ''),
+                      'photo'       => (isset($entry['222']) ? $entry['222'] : '')
+                  );
+  if (isset($entry['157.3']))
+      $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
+                      'bio'         => (isset($entry['261']) ? $entry['261'] : ''),
+                      'photo'       => (isset($entry['220']) ? $entry['220'] : '')
+                  );
+  if (isset($entry['159.3']))
+      $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
+                      'bio'         => (isset($entry['262']) ? $entry['262'] : ''),
+                      'photo'       => (isset($entry['221']) ? $entry['221'] : '')
+                  );
+  if (isset($entry['154.3']))
+      $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
+                      'bio'         => (isset($entry['263']) ? $entry['263'] : ''),
+                      'photo'       => (isset($entry['219']) ? $entry['219'] : '')
+                  );
+  return $makers;
 }
 ?>
