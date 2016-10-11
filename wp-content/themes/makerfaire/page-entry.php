@@ -18,11 +18,8 @@ if(isset($entry->errors)){
   $formType = '';
   $entry=array();
   $faire = '';
-  $sharing_cards->project_title = 'Invalid Entry';
-  $sharing_cards->project_photo = '';
-  $sharing_cards->project_short = '';
 }else{
-  //find outwhich faire this entry is for to set the 'look for more makers link'
+  //find out which faire this entry is for to set the 'look for more makers link'
   $form_id = $entry['form_id'];
   $form = GFAPI::get_form($form_id);
   $formType = $form['form_type'];
@@ -61,26 +58,24 @@ if(isset($entry->errors)){
   $isList =(strpos($displayType, 'list') !== false);
   $isSingle =(strpos($displayType, 'One') !== false);
 
-  //Change Project Name
-  $project_name = (isset($entry['151']) ? $entry['151'] : '');
 
-  // Url
+  $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
   $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
-
-  $sharing_cards->project_photo = $project_photo;
-
-  // Description
-  $project_short = (isset($entry['16']) ? $entry['16']: '');
-  $sharing_cards->project_short = $project_short;
-
-  //Website
-  $project_website = (isset($entry['27']) ? $entry['27']: '');
-  //Video
-  $project_video = (isset($entry['32']) ? $entry['32']:'');
-  //Title
-  $project_title = (isset($entry['151'])?(string)$entry['151']:'');
+  $project_short = (isset($entry['16']) ? $entry['16']: '');    // Description
+  $project_website = (isset($entry['27']) ? $entry['27']: '');  //Website
+  $project_video = (isset($entry['32']) ? $entry['32']:'');     //Video
+  $project_title = (isset($entry['151'])?(string)$entry['151']:''); //Title
   $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+}
+
+if(is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted'){
+  $sharing_cards->project_short = $project_short;
+  $sharing_cards->project_photo = $project_photo;
   $sharing_cards->project_title = $project_title;
+}else{
+  $sharing_cards->project_title = 'Invalid Entry';
+  $sharing_cards->project_photo = '';
+  $sharing_cards->project_short = '';
 }
 
 //Url
