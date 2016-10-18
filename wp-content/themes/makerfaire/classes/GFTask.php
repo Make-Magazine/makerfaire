@@ -65,10 +65,11 @@ Class GFTask {
 				$task['id'] = $task_id;
 			}
 
-			$task['name']              = sanitize_text_field( rgpost( 'gform_task_name' ) );
-			$task['form2use']          = sanitize_text_field( rgpost( 'gform_task_form2use' ) );
+			$task['name']      = sanitize_text_field( rgpost( 'gform_task_name' ) );
+			$task['form2use']  = sanitize_text_field( rgpost( 'gform_task_form2use' ) );
 
 			$conditional_logic  = ! rgempty( 'gform_conditional_logic_meta' ) ? GFCommon::json_decode( rgpost( 'gform_conditional_logic_meta' ), true ) : null;
+ 
 			$task['conditionalLogic'] = GFFormsModel::sanitize_conditional_logic( $conditional_logic );
 
 
@@ -109,10 +110,10 @@ Class GFTask {
 		<link rel="stylesheet" href="<?php echo GFCommon::get_base_url() ?>/css/admin<?php echo $min; ?>.css?ver=<?php echo GFCommon::$version ?>" />
 
 		<script type="text/javascript">
-
+    gform.addFilter( 'gform_conditional_logic_description', 'TaskConditionalLogicDesc' );
+    gform.addFilter('gform_conditional_object', 'TaskConditionalLogic');
 		var gform_has_unsaved_changes = false;
 		jQuery(document).ready(function () {
-
 			jQuery("#entry_form input, #entry_form textarea, #entry_form select").change(function () {
 				gform_has_unsaved_changes = true;
 			});
@@ -138,6 +139,18 @@ Class GFTask {
 			return mergeTags;
 		}
 
+    function TaskConditionalLogicDesc( description, descPieces, objectType, obj ) {
+      //set descriptive text in conditional logic to say 'task'
+      descPieces.objectDescription = "this task if";
+      var descPiecesArr = makeArray( descPieces );
+
+      return descPiecesArr.join(' ');
+    }
+
+    function TaskConditionalLogic(object, objectType){
+      if(objectType=='task')  object = current_task;
+      return object;
+    }
 		<?php
 		if ( empty( $form['tasks'] ) ) {
 			$form['tasks'] = array();
@@ -410,8 +423,8 @@ Class GFTask {
     $ui_settings['task_form2use'] = ob_get_contents();
 		ob_clean();
     ob_start();
-    ?>
 
+    ?>
 		<tr valign="top" <?php echo rgar( $task, 'isDefault' ) ? 'style=display:none;' : ''; ?> >
 			<th scope="row">
 				<label for="gform_task_conditional_logic">
