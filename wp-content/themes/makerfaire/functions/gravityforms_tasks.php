@@ -42,10 +42,12 @@ function processTasks( $entry, $form) {
       $lead_id = $entry['id'];
       $taskID   = $form_id.'-'.$task['id'];
 			if ( GFCommon::evaluate_conditional_logic( $task['conditionalLogic'], $form, $entry ) ) {
-        $form2use = $task['form2use'];
+        $action_URL = $task['form2use'];
+        $action_URL .= '?entry-id='.$lead_id;
+        $action_URL .= '&contact-email='.$entry['98'];
         //check if this task was previously set, if yes  do nothing
         //if no, set the task
-        $sql = 'INSERT INTO wp_mf_entity_tasks set lead_id="'.$lead_id.'",created=now(), description="'.$task['name'].'", required=1, action_url = "'.$form2use.'", task_id="'.$taskID.'"'
+        $sql = 'INSERT INTO wp_mf_entity_tasks set lead_id="'.$lead_id.'",created=now(), description="'.$task['name'].'", required=1, action_url = "'.$action_URL.'", task_id="'.$taskID.'"'
              . ' ON DUPLICATE KEY UPDATE description="'.$task['name'].'"';
         $wpdb->get_row($sql);
 			}else{
