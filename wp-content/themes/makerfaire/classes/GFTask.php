@@ -69,7 +69,7 @@ Class GFTask {
 			$task['form2use']  = sanitize_text_field( rgpost( 'gform_task_form2use' ) );
 
 			$conditional_logic  = ! rgempty( 'gform_conditional_logic_meta' ) ? GFCommon::json_decode( rgpost( 'gform_conditional_logic_meta' ), true ) : null;
- 
+
 			$task['conditionalLogic'] = GFFormsModel::sanitize_conditional_logic( $conditional_logic );
 
 
@@ -403,20 +403,11 @@ Class GFTask {
     <tr>
       <th scope="row">
 				<label for="gform_task_form2use">
-					<?php _e( 'Form to Apply', 'makerfaire' ); ?>
+					<?php _e( 'URL to Form to Complete', 'makerfaire' ); ?>
 				</label>
 			</th>
       <td>
-        <select name="gform_task_form2use" id="gform_task_form2use">
-          <option value=""><?php esc_html_e( 'Choose Form', 'gravityforms' ) ?></option>
-          <?php
-          foreach ( $forms as $form_info ) {
-            ?>
-            <option <?php echo (esc_attr( rgget( 'form2use', $task ) )==absint( $form_info->id )?'selected':'');?> value="<?php echo absint( $form_info->id ); ?>"><?php echo esc_html( $form_info->title )?></option>
-          <?php
-          }
-          ?>
-        </select>
+        <input type="text" class="fieldwidth-2" name="gform_task_form2use" id="gform_task_name" value="<?php echo esc_attr( rgget( 'form2use', $task ) ); ?>" />
       </td>
     </tr>
     <?php

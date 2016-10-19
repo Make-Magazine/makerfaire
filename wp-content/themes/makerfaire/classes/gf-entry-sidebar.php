@@ -841,6 +841,7 @@ function set_entry_status($lead,$form){
 
         //update maker table information
         GFRMTHELPER::updateMakerTable($entryData);
+        processTasks( $lead, $form);
 			}
 		}
 	}
