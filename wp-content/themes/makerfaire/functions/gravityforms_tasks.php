@@ -45,6 +45,7 @@ function processTasks( $entry, $form) {
         $action_URL = $task['form2use'];
         $action_URL .= '?entry-id='.$lead_id;
         $action_URL .= '&contact-email='.$entry['98'];
+        $action_URL .= '&taskID="'.$taskID.'"';
         //check if this task was previously set, if yes  do nothing
         //if no, set the task
         $sql = 'INSERT INTO wp_mf_entity_tasks set lead_id="'.$lead_id.'",created=now(), description="'.$task['name'].'", required=1, action_url = "'.$action_URL.'", task_id="'.$taskID.'"'
@@ -62,5 +63,45 @@ function processTasks( $entry, $form) {
         }
       }
 		}
+  }
+}
+
+// add task ID to form to be used to mark tasks as completed
+add_filter( 'gform_pre_validation', 'mf_add_taskid' );
+add_filter( 'gform_pre_render',  'mf_add_taskid' );
+
+function mf_add_taskid( $form ) {
+  $taskID = '';
+  if(isset($_GET['taskID']))   $taskID = $_GET['taskID'];
+  if(isset($_POST['taskID']))  $taskID = $_POST['taskID'];
+  //if task ID is passed add this field to the form.
+  if($taskID!='') {
+    $props = array(
+      'id'        => '9999',
+      'label'     => 'Task ID',
+      'type'      => 'text',
+      //'adminOnly' => true,
+      'defaultValue'     => $taskID
+    );
+
+    $field = GF_Fields::create( $props );
+    array_push( $form['fields'], $field );
+  }
+
+	return $form;
+};
+
+add_filter('gform_after_submission', 'maybeCompleteTasks', 10, 2 ); //$entry, $form
+function maybeCompleteTasks ($entry, $form) {
+  if(isset($entry['9999'])) {
+    $entryID       = get_value_by_label('entry-id', $form);
+    if (!empty($entryID)) {
+      $entryid   = $entry[$entryID['id']];
+    }
+
+    global $wpdb;
+    //mark task as completed
+    $sql = "UPDATE `wp_mf_entity_tasks` SET `completed`=now() WHERE lead_id = '".$entryid."' and task_id='".$entry['9999']."'";
+    $wpdb->get_row($sql);
   }
 }
