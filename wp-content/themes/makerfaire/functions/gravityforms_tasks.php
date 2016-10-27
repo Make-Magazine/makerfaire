@@ -87,7 +87,6 @@ function mf_add_taskid( $form ) {
     $field = GF_Fields::create( $props );
     array_push( $form['fields'], $field );
   }
-
 	return $form;
 };
 
