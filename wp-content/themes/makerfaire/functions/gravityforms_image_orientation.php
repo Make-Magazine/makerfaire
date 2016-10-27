@@ -4,9 +4,12 @@
  * Used to fix orientation issues on iphone and android images
  */
 
-add_action( 'gform_post_submission', 'post_submission_handler', 10, 2 );
-function post_submission_handler( $entry, $form ) {
+add_action( 'gform_post_submission', 'fix_image_orientation', 10, 2 );
 
+function triggerCronImg($entry, $form) {
+  wp_schedule_single_event(time() + 1,'fix_image_orientation', array($entry, $form));
+}
+function fix_image_orientation( $entry, $form ) {
   $fields = $form['fields'];
   foreach ($fields as $field){
     //is this an image field
