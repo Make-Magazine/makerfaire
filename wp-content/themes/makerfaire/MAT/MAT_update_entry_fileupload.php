@@ -65,6 +65,11 @@ if((isset($_FILES['value']['error']) && $_FILES['value'] == 0) ||
   //trigger update
   gf_do_action( array( 'gform_after_update_entry', $form_id), $form, $entry_id, $entry );
   echo $upload;
+
+  //trigger cron job to correct image orientation if needed
+  $entry    = GFAPI::get_entry( $entry_id );
+  triggerCronImg($entry, $form) ;
+
   //for security reason, we force to remove all uploaded file
   @unlink($_FILES['value']);
 } else {
