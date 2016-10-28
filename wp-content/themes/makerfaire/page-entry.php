@@ -106,6 +106,80 @@ if($editEntry=='edit'){
     $makerEdit =  true;
   }
 }
+
+ //check if this entry has won any awards
+$ribbons = checkForRibbons(0,$entryId);
+
+//set the 'backlink' text and link (only set on valid entries)
+if($faire!=''){
+  $url = parse_url(wp_get_referer()); //getting the referring URL
+  $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
+  $path = explode("/", $url['path']); // splitting the path
+  $slug = end($path); // get the value of the last element
+
+  if($slug=='schedule'){
+    $backlink = wp_get_referer();
+    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to the Schedule';
+  }else{
+    $backlink = "/".$url_sub_path."/meet-the-makers/";
+    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Look for More Makers';
+  }
+
+  //overwrite the backlink to send makers back to MAT if $makerEdit = true
+  if($makerEdit){
+    $backlink = "/manage-entries/";
+    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to Your Maker Admin Tool';
+  }
+}
+
+//decide if we should display this entry
+$validEntry = false;
+if(is_array($entry) &&
+    isset($entry['status']) && $entry['status']=='active' &&
+    isset($entry[303]) && $entry[303]=='Accepted'){
+  $validEntry = true; //display the entry
+}
+
+// Website button
+$website = '';
+if (!empty($project_website)) {
+  if($makerEdit){
+    $website =  'Website: <div id="website" class="edit">'. $project_website.'</div>';
+  }else{
+    $website =  '<a href="' . $project_website . '" class="btn btn-info" target="_blank">Project Website</a>';
+  }
+}
+
+// Project Inline video
+$video = '';
+if (!empty($project_video)) {
+  if($makerEdit) {
+    $video = 'Video: <span id="video" class="edit">'. $project_video.'</span>';
+  } else {
+    $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
+    //youtube has two type of url formats we need to look for and change
+    $videoID = parse_yturl($dispVideo);
+    if($videoID!=''){
+      $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
+    }
+    $video =  '<div class="entry-video">
+                <div class="embed-youtube">
+                  <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                </div>
+              </div>';
+  }
+}
+
+//decide if display maker info
+$dispMakerInfo = true;
+if($formType=='Sponsor' || $formType == 'Startup Sponsor'){
+  $dispMakerInfo = false;
+}
+
+
+//build the html for the page
+/* JS used only if the person visiting this page can edit the information on it */
+
 if($makerEdit) {
   ?>
   <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.js"></script>
@@ -124,146 +198,90 @@ if($makerEdit) {
 <div class="container entry-page">
   <div class="row">
     <div class="content col-xs-12">
-      <?php //set the 'backlink' text and link (only set on valid entries)
-      if($faire!=''){
-        $url = parse_url(wp_get_referer()); //getting the referring URL
-        $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
-        $path = explode("/", $url['path']); // splitting the path
-        $slug = end($path); // get the value of the last element
-
-        if($slug=='schedule'){
-          $backlink = wp_get_referer();
-          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to the Schedule';
-        }else{
-          $backlink = "/".$url_sub_path."/meet-the-makers/";
-          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Look for More Makers';
-        }
-
-        //overwrite the backlink to send makers back to MAT if $makerEdit = true
-        if($makerEdit){
-          $backlink = "/manage-entries/";
-          $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to Your Maker Admin Tool';
-        }
-        ?>
         <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
         <?php
-        //TBD - create a redirect for makerSign
         if($makerEdit){?>
           <div class="makerEditHead">
             <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
             <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>">
               <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
             </a><br/>
-            To modify your public information, edit the information directly on this page.
+            To modify your public information, click on the section you'd like to change below.
           </div>
         <?php
         }
-      }
-
-      if(is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted'){
-        //display schedule/location information if there is any
-        //do not display schedule if maker edit
+      if($validEntry) {
+        //display schedule/location information if there is any (do not display schedule if maker edit)
         if (!$makerEdit && !empty(display_entry_schedule($entryId))) {
           display_entry_schedule($entryId);
         }
         ?>
+        <!-- Project Title and ribbons -->
         <div class="page-header">
-          <h1><span id="project_title" class="<?php echo ($makerEdit?'edit':'')?>"><?php echo $project_title; ?></span>
-            <?php
-             //check if this entry has one any awards
-            $ribbons = checkForRibbons(0,$entryId);
-            echo $ribbons;
-            ?>
+          <h1>
+            <span id="project_title" class="<?php echo ($makerEdit?'mfEdit':'')?>"><?php echo $project_title; ?></span>
+
+            <?php echo $ribbons;?>
           </h1>
         </div>
 
-        <p class="<?php echo ($makerEdit?'ajaxupload':'')?>" id="proj_img" title="Click to upload...">
-          <img class="img-responsive" src="<?php echo $project_photo; ?>" />
+        <!-- Project Image -->
+        <p class="<?php echo ($makerEdit?'mfEditUpload':'')?>" id="proj_img" title="Click to upload...">
+          <img class="img-responsive dispPhoto" src="<?php echo $project_photo; ?>" />
         </p>
-        <p id="project_short" class="lead <?php echo ($makerEdit?'edit_area':'')?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
+
+        <!-- Project Short Description -->
+        <p id="project_short" class="lead <?php echo ($makerEdit?' mfEdit_area':'')?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
 
         <?php
-        // Website button
-        if (!empty($project_website)) {
-          if($makerEdit){
-            echo 'Website: <div id="website" class="edit">'. $project_website.'</div>';
-          }else{
-            echo '<a href="' . $project_website . '" class="btn btn-info" target="_blank">Project Website</a>';
-          }
-        }
+        echo $website;  //project Website
+        echo $video;    //project Video
+        ?>
 
-        // Inline video
-        if (!empty($project_video)) {
-          if($makerEdit) {
-            echo 'Video: <span id="video" class="edit">'. $project_video.'</span>';
-          } else {
-            $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
-            //youtube has two type of url formats we need to look for and change
-            $videoID = parse_yturl($dispVideo);
-            if($videoID!=''){
-              $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
-            }
-            echo '<div class="entry-video">
-                    <div class="embed-youtube">
-                      <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                    </div>
-                  </div>';
-          }
-        } ?>
-
-      <div class="entry-page-maker-info"> <?php
-
-        if($formType!='Sponsor' && $formType != 'Startup Sponsor'){ ?>
-          <div class="page-header">
-            <h2>
-            <?php
-              if ($isGroup)
-                echo 'Group';
-              elseif($isList)
-                echo 'Makers';
-              else
-                echo 'Maker';
-            ?>
-            </h2>
-          </div>
+        <!-- Maker Info -->
+        <div class="entry-page-maker-info">
           <?php
-          if ($isGroup) {
-            echo '<div class="row padbottom">
-                    <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="groupphoto" title="Click to upload...">
-                      <div class="entry-page-maker-img">' .
-                        (!empty($groupphoto) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,400,400) . '" alt="Maker group photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker group placeholder photo" />') . '
+          if($dispMakerInfo) { ?>
+            <div class="page-header">
+              <h2><?php echo ($isGroup ? 'Group' : $isList ? 'Makers':'Maker');?></h2>
+            </div>
+
+            <?php
+            if ($isGroup) {
+              echo '<div class="row padbottom">
+                      <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
+                        <div class="entry-page-maker-img">' .
+                          (!empty($groupphoto) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,400,400) . '" alt="Maker group photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker group placeholder photo" />') . '
+                        </div>
                       </div>
-                    </div>
-                    <div class="col-sm-9 col-lg-7">
-                      <h3 class="text-capitalize '. ($makerEdit?'edit':'').'" id="groupname">' . $groupname . '</h3>
-                      <p class="'. ($makerEdit?'edit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
-                    </div>
-                  </div>';
-          } else {
-            foreach($makers as $key=>$maker) {
-              if($maker['firstname'] !=''){
-                echo '<div class="row padbottom">
-                        <div class="col-sm-3 '. ($makerEdit?'ajaxupload':'').'" id="maker'.$key.'img" title="Click to upload...">
-                          <div class="entry-page-maker-img">' .
-                            (!empty($maker['photo']) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],400,400) . '" alt="Maker photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker placeholder photo" />') .'
+                      <div class="col-sm-9 col-lg-7">
+                        <h3 class="text-capitalize '. ($makerEdit?'mfEdit ':'').'" id="groupname">' . $groupname . '</h3>
+                        <p class="'. ($makerEdit?'mfEdit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
+                      </div>
+                    </div>';
+            } else {
+              foreach($makers as $key=>$maker) {
+                if($maker['firstname'] !=''){
+                  echo '<div class="row padbottom">
+                          <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="maker'.$key.'img" title="Click to upload...">
+                            <div class="entry-page-maker-img">' .
+                              (!empty($maker['photo']) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],400,400) . '" alt="Maker photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker placeholder photo" />') .'
+                            </div>
                           </div>
-                        </div>
-                        <div class="col-sm-9 col-lg-7">
-                          <h3>
-                            <span class="text-capitalize '. ($makerEdit?'edit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</span>
-                            <span class="text-capitalize '. ($makerEdit?'edit':'').'" id="maker'.$key.'lname">'.$maker['lastname'] . '</span>
-                          </h3>
-                          <p class="'. ($makerEdit?'edit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
-                        </div>
-                      </div>';
+                          <div class="col-sm-9 col-lg-7">
+                            <h3>
+                              <span class="text-capitalize '. ($makerEdit?'mfEdit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</span>
+                              <span class="text-capitalize '. ($makerEdit?'mfEdit':'').'" id="maker'.$key.'lname">'.$maker['lastname'] . '</span>
+                            </h3>
+                            <p class="'. ($makerEdit?'mfEdit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
+                          </div>
+                        </div>';
+                }
               }
             }
-          }
-        } ?>
-
-      </div>
-
-      <?php
+          } ?>
+        </div>
+        <?php
         echo display_groupEntries($entryId);
       } else { //entry is not active
         echo '<h2>Invalid entry</h2>';
