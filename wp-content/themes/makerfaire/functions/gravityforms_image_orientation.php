@@ -5,9 +5,10 @@
  */
 
 add_action( 'gform_post_submission', 'fix_image_orientation', 10, 2 );
-
+add_action( 'cron_fix_image_orientation', 'fix_image_orientation', 10, 2 );
 function triggerCronImg($entry, $form) {
-  wp_schedule_single_event(time() + 1,'fix_image_orientation', array($entry, $form));
+  //wp_schedule_single_event(time() + 1,'cron_fix_image_orientation', array($entry, $form));
+  fix_image_orientation( $entry, $form );
 }
 function fix_image_orientation( $entry, $form ) {
   $fields = $form['fields'];
@@ -18,9 +19,9 @@ function fix_image_orientation( $entry, $form ) {
       if(isset($entry[$field['id']])) {
         $image = $entry[$field['id']];
 
-        //$exif = exif_read_data($image);
         $exif = @read_exif_data( $image );
 
+        //if image is jpg, check the image orientation and correct if necessary
         if ( $exif['MimeType'] == 'image/jpeg' ) {
           $exif_orient = isset($exif['Orientation'])?$exif['Orientation']:0;
           $rotateImage = 0;
@@ -40,11 +41,11 @@ function fix_image_orientation( $entry, $form ) {
         }
       }
     }
-    //if it is, check the image orientation and correct if necessary
   }
 }
 
 function rotateImage($image,$rotateImage) {
+  error_log( 'correcting image '.$image.' rotating '.$rotateImage.' degrees');
   $image = parse_url($image, PHP_URL_PATH);
 
   //To get the dir, use: dirname($path)
