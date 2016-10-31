@@ -6,6 +6,14 @@
 
 add_action( 'gform_post_submission', 'fix_image_orientation', 10, 2 );
 add_action( 'cron_fix_image_orientation', 'fix_image_orientation', 10, 2 );
+
+add_action( 'gform_after_update_entry', 'pre_image_orientation', 10, 2 );
+
+function pre_image_orientation( $form, $entry_id  ) {
+  $entry = GFAPI::get_entry($entry_id);
+  fix_image_orientation( $entry, $form );
+}
+
 function triggerCronImg($entry, $form) {
   //wp_schedule_single_event(time() + 1,'cron_fix_image_orientation', array($entry, $form));
   fix_image_orientation( $entry, $form );
