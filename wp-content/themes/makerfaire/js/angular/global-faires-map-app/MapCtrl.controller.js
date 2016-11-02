@@ -63,10 +63,10 @@
               } else if (typeof(json[key]) === 'string' && json[key].toLowerCase().match(value)) {
                 return true;
               }
-              
+
             }
             return false;
-            
+
           }
           return checkForValue(marker, faireFilters.search.toLowerCase());
         }
@@ -77,17 +77,24 @@
         // check if date is ok:
         function isDateOk(marker) {
           var eventDate;
+
           if (Object.prototype.toString.call(marker.event_end_dt) === "[object Date]" &&
-            marker.event_end_dt == '0000-00-00 00:00:00') { // if valid "End" date
+              !isNaN(marker.event_end_dt.getTime()) ) { // is end date valid and not set to 0's
             eventDate = marker.event_end_dt; // use end date
           } else if (Object.prototype.toString.call(marker.event_start_dt) === "[object Date]" &&
-            marker.event_start_dt != '0000-00-00 00:00:00') { // if NO valid "End" date
+              !isNaN(marker.event_start_dt.getTime()) ) { // is start date valid and not set to 0's
             eventDate = marker.event_start_dt; // use start date
           } else {
             ctrl.pastPresent.present++;
             return true;
           }
-          var isInPast = new Date(eventDate).getTime() < todaysDate.getTime();
+
+          //set event_date to midnight on the following day so we don't display a faire as being passed until the following day
+          var event_date = new Date(eventDate);
+          event_date.setDate(event_date.getDate() + 1); //END DATE + 1 day
+          event_date.setHours(0,0,0,0);  //event ends at midnight
+          var isInPast = event_date.getTime() < todaysDate.getTime();
+
           if (isInPast) {
             ctrl.pastPresent.past++;
           } else {
