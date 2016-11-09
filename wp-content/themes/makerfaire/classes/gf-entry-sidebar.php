@@ -33,9 +33,9 @@ function mf_sidebar_entry_locations($form_id, $lead) {
 			echo ('<input type="checkbox" value="'.$location_entry_id.'" style="margin: 3px;" name="delete_location_id[]"></input>'.$subarea.$area.' '.$location_code.' <br />');
 
 		}
-		$entry_delete_button = '<input type="submit" name="delete_entry_locations[]" value="Delete Selected" class="button"
+		$entry_delete_button = '<input type="button" name="delete_entry_locations[]" value="Delete Selected" class="button"
 			 style="width:auto;padding-bottom:2px;"
-			 onclick="jQuery(\'#action\').val(\'delete_entry_location\');"/><br />';
+			 onclick="updateMgmt(\'delete_entry_location\');"/><br />';
 		echo $entry_delete_button;
 	}
 	$result_subareas = $mysqli->query("select   wp_mf_faire_area.area ,subarea "
@@ -59,9 +59,9 @@ function mf_sidebar_entry_locations($form_id, $lead) {
 	// Create Update button for sidebar entry management
 	$entry_sidebar_button = '
 			Location Code: (optional) <input type="text" name="update_entry_location_code" id="update_entry_location_code" />
-			<input type="submit" name="update_entry_location" value="Update Location" class="button"
+			<input type="button" name="update_entry_location" value="Update Location" class="button"
 			 style="width:auto;padding-bottom:2px;"
-			onclick="jQuery(\'#action\').val(\'update_entry_location\');"/><br />';
+			onclick="updateMgmt(\'update_entry_location\');"/><br />';
 	echo $entry_sidebar_button;
 	}
 
@@ -76,9 +76,9 @@ function mf_sidebar_entry_ticket($form_id, $lead) {
     echo ('<input name="entry_ticket_code" id="entry_ticket_code type="text" style="margin-bottom: 4px;" value="'.(isset($lead['308'])?$lead['308']:'').'" />');
 
     // Create Update button for ticket code
-    $entry_sidebar_button = '<input type="submit" name="update_ticket_code" value="Update Ticket Code" class="button"
+    $entry_sidebar_button = '<input type="button" name="update_ticket_code" value="Update Ticket Code" class="button"
 		 style="width:auto;padding-bottom:2px;"
-		onclick="jQuery(\'#action\').val(\'update_ticket_code\');"/>';
+		onclick="updateMgmt(\'update_ticket_code\');"/>';
 	echo $entry_sidebar_button;
 }
 function mf_sidebar_entry_schedule($form_id, $lead) {
@@ -141,9 +141,9 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
 
     // Create Update button for sidebar entry management
     echo '
-          <input type="submit" name="update_entry_schedule" value="Add Location" class="button"
+          <input type="button" name="update_entry_schedule" value="Add Location" class="button"
               style="width:auto;padding-bottom:2px;    margin: 10px 0;"
-              onclick="jQuery(\'#action\').val(\'update_entry_schedule\');"/><br />';
+              onclick="updateMgmt(\'update_entry_schedule\');"/><br />';
     echo '  <div class="clear"></div><hr>';
 }
 
@@ -229,9 +229,9 @@ function display_schedule($form_id,$lead,$section='sidebar'){
       }
 
       if($section!='summary'){
-        $entry_delete_button = '<input type="submit" name="delete_entry_schedule[]" value="Delete Selected" class="button"
+        $entry_delete_button = '<input type="button" name="delete_entry_schedule[]" value="Delete Selected" class="button"
                          style="width:auto;padding-bottom:2px;"
-                        onclick="jQuery(\'#action\').val(\'delete_entry_schedule\');"/><br />';
+                        onclick="updateMgmt(\'delete_entry_schedule\');"/><br />';
         echo $entry_delete_button;
       }
       echo '<br/>';
@@ -326,8 +326,8 @@ function mf_sidebar_entry_status($form_id, $lead) {
       if ($lead[$field303['id']] == $choice['text']) $selected=' selected ';
       echo('<option '.$selected.' value="'.$choice['text'].'">'.$choice['text'].'</option>');
     }
-    echo('</select><input type="submit" name="update_management" value="Save Status" class="btn btn-danger"
-    onclick="jQuery(\'#action\').val(\'update_entry_status\');"/><br />');
+    echo('</select><input type="button" name="update_management" value="Save Status" class="btn btn-danger"
+    onclick="updateMgmt(\'update_entry_status\');" /><br />');
   }else{
     echo ('<label class="detail-label" for="entry_info_status_change">Status: </label>');
     echo '&nbsp;&nbsp; '.$lead[303].'<br/>';
@@ -344,9 +344,9 @@ function mf_sidebar_forms($form_id, $lead) {
 		if ($choice['id'] == $lead['form_id']) $selected=' selected ';
 		echo('<option '.$selected.' value="'.$choice['id'].'">'.$choice['title'].'</option>');
 	}
-	echo('</select><input type="submit" name="change_form_id" value="Change Form" class="button"
+	echo('</select><input type="button" name="change_form_id" value="Change Form" class="button"
 	 style="width:auto;padding-bottom:2px;"
-	onclick="jQuery(\'#action\').val(\'change_form_id\');"/><br />');
+	onclick="updateMgmt(\'change_form_id\');"/><br />');
 }
 
 function mf_sidebar_dup($form_id, $lead) {
@@ -364,9 +364,9 @@ function mf_sidebar_dup($form_id, $lead) {
 
 		echo('<option '.$selected.' value="'.$choice['id'].'">'.$choice['title'].'</option>');
 	}
-	echo('</select><Br/><br/><input type="submit" name="duplicate_entry_id" value="Duplicate Entry" class="button"
+	echo('</select><Br/><br/><input type="button" name="duplicate_entry_id" value="Duplicate Entry" class="button"
 	 style="width:auto;padding-bottom:2px;"
-	 onclick="jQuery(\'#action\').val(\'duplicate_entry_id\');"/><br />');
+	 onclick="updateMgmt(\'duplicate_entry_id\');"/><br />');
 }
 
 /* Side bar Layout */
@@ -557,9 +557,9 @@ if ($mode == 'view') {
 	<div class='postbox'>
 	<?php
   // Create Update button for sidebar entry management
-	$entry_sidebar_button = '<input type="submit" name="update_management" value="Update Management" class="button"
+	$entry_sidebar_button = '<input type="button" name="update_management" value="Update Management" class="button"
 		style="width:auto;padding-bottom:2px;"
-		onclick="jQuery(\'#action\').val(\'update_entry_management\');"/>';
+		onclick="updateMgmt(\'update_entry_management\');"/>';
 	echo $entry_sidebar_button;
 	// Load Entry Sidebar details
 	mf_sidebar_entry_info( $form['id'], $lead );
@@ -610,9 +610,9 @@ if ($mode == 'view') {
   <div class="detail-view-print">
     <?php
     //button to trigger send confirmation letter event
-    echo '<input type="submit" name="send_conf_letter" value="Send Confirmation Letter" class="button"
+    echo '<input type="button" name="send_conf_letter" value="Send Confirmation Letter" class="button"
 			 style="width:auto;padding-bottom:2px;"
-			onclick="jQuery(\'#action\').val(\'send_conf_letter\');"/>';
+			onclick="updateMgmt(\'send_conf_letter\');"/>';
     echo '  <div class="clear"></div>';?>
   </div>
 
@@ -668,15 +668,15 @@ function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = ''
   <?php
   if ( sizeof( $notes ) > 0 && $is_editable && GFCommon::current_user_can_any( 'gravityforms_edit_entry_notes' ) ) {
     ?>
-    <input type="submit" name="delete_note_sidebar" value="Delete Selected Note(s)" class="button" style="width:100%;padding-bottom:2px;" onclick="jQuery('#action').val('delete_note_sidebar');">
+    <input type="button" name="delete_note_sidebar" value="Delete Selected Note(s)" class="button" style="width:100%;padding-bottom:2px;" onclick="updateMgmt('delete_note_sidebar');">
     <?php
   }
 }
 
 
 // This is where our custom post action handing occurs
-add_action("gform_admin_pre_render_action", "mf_admin_pre_render");
-function mf_admin_pre_render(){
+add_action( 'wp_ajax_MFupdate-entry', 'mf_admin_MFupdate_entry' );
+function mf_admin_MFupdate_entry(){
   //Get the current action
   $mfAction=RGForms::post( 'action' );
 
@@ -1116,7 +1116,7 @@ function add_note_sidebar($lead, $form){
 		$email_to      = $_POST['gentry_email_notes_to_sidebar'];
 		$email_from    = $current_user->user_email;
 		$email_subject = stripslashes( 'Response Required Maker Application: '.$lead['id'].' '.$project_name);
-		$entry_url = get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=mf_entries&view=mfentry&id=' . $form['id'] . '&lid=' . rgar( $lead, 'id' );
+		$entry_url = get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=gf_entries&view=mfentry&id=' . $form['id'] . '&lid=' . rgar( $lead, 'id' );
 		$body = stripslashes( $_POST['new_note_sidebar'] ). '<br /><br />Please reply in entry:<a href="'.$entry_url.'">'.$entry_url.'</a>';
 		$headers = "From: \"$email_from\" <$email_from> \r\n";
 		//Enable HTML Email Formatting in the body

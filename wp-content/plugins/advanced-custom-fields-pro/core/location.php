@@ -999,38 +999,24 @@ class acf_location {
 		
 		
 		// validate
-		if( ! $attachment ) {
-			
-			return false;
-			
-		}
+		if( !$attachment ) return false;
 		
 		
-		// compare
-		if( $rule['operator'] == "==" ) {
-			
-        	$match = ( $attachment == $rule['value'] );
-        	
-        	// override for "all"
-	        if( $rule['value'] == "all" ) {
-	        
-				$match = true;
-				
-			}
-			
-        } elseif( $rule['operator'] == "!=" ) {
-        	
-        	$match = ( $attachment != $rule['value'] );
-        		
-        	// override for "all"
-	        if( $rule['value'] == "all" ) {
-	        
-				$match = false;
-				
-			}
-			
-        }
+		// match
+		$match = ( $attachment === $rule['value'] );
+		
+		
+		// override for "all"
+        if( $rule['value'] == "all" ) $match = true;
+		
+		
+		// reverse if 'not equal to'
+        if( $rule['operator'] === '!=' ) {
+	        	
+        	$match = !$match;
         
+        }
+                
         
         // return
         return $match;
@@ -1106,36 +1092,22 @@ class acf_location {
 		
 		
 		// validate
-		if( ! $widget ) {
-			
-			return false;
-			
-		}
+		if( !$widget ) return false;
 		
 		
-		// compare
-		if( $rule['operator'] == "==" ) {
-			
-        	$match = ( $widget == $rule['value'] );
-        	
-        	// override for "all"
-	        if( $rule['value'] == "all" ) {
-	        
-				$match = true;
-				
-			}
-			
-        } elseif( $rule['operator'] == "!=" ) {
-        	
-        	$match = ( $widget != $rule['value'] );
-        		
-        	// override for "all"
-	        if( $rule['value'] == "all" ) {
-	        
-				$match = false;
-				
-			}
-			
+		// match
+		$match = ( $widget === $rule['value'] );
+		
+		
+		// override for "all"
+        if( $rule['value'] == "all" ) $match = true;
+		
+		
+		// reverse if 'not equal to'
+        if( $rule['operator'] === '!=' ) {
+	        	
+        	$match = !$match;
+        
         }
         
                 
@@ -1165,7 +1137,12 @@ new acf_location();
 
 function acf_get_field_group_visibility( $field_group, $args = array() ) {
 	
+	// bail early if not active
+	if( !$field_group['active'] ) return false;
+	
+	
 	// vars
+	$visibility = false;
 	$args = acf_parse_args($args, array(
 		'post_id'		=> 0,
 		'post_type'		=> 0,
@@ -1189,14 +1166,6 @@ function acf_get_field_group_visibility( $field_group, $args = array() ) {
 	
 	// filter for 3rd party customization
 	$args = apply_filters('acf/location/screen', $args, $field_group);
-	
-	
-	// bail early if not active
-	if( !$field_group['active'] ) return false;
-	
-	
-	// vars
-	$visibility = false;
 	
 	
 	// loop through location rules

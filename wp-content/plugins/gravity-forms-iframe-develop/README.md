@@ -3,8 +3,6 @@
 Embed a Gravity Form in an iframe on any site.
 
 __Contributors:__ [Brady Vercher](https://github.com/bradyvercher)  
-__Requires:__ 3.7  
-__Tested up to:__ 3.9  
 __License:__ [GPL-2.0+](http://www.gnu.org/licenses/gpl-2.0.html)
 
 The typical process to embed a Gravity Form on a site where the plugin isn't installed requires:
@@ -14,7 +12,7 @@ The typical process to embed a Gravity Form on a site where the plugin isn't ins
 3. Inserting the form shortcode in the new page.
 4. Manually writing an iframe tag with the page permalink and giving it a static height.
 
-With the Gravity Forms Iframe add-on, just enable a setting to allow the form to be embedded and copy the code snippet. That's it. As a bonus, the iframe automatically resizes whenever the form height changes -- for instance, when fields are shown or hidden due to conditional logic.
+With the _Gravity Forms Iframe_ add-on, just enable a setting to allow the form to be embedded and copy the code snippet. That's it. As a bonus, the iframe automatically resizes whenever the form height changes -- for instance, when fields are shown or hidden due to conditional logic.
 
 ## Features
 
@@ -52,35 +50,59 @@ Templates can be added in a theme or child theme to override the plugin's templa
 * gravity-forms-iframe-{$form_id}.php
 * gravity-forms-iframe.php
 
-## Installation ##
+## Installation
 
-### Upload ###
+### Upload
 
 1. Download the [latest release](https://github.com/bradyvercher/gravity-forms-iframe/archive/master.zip) from GitHub.
 2. Go to the __Plugins &rarr; Add New__ screen in your WordPress admin panel and click the __Upload__ tab at the top.
 3. Upload the zipped archive.
 4. Click the __Activate Plugin__ link after installation completes.
 
-### Manual ###
+### Manual
 
 1. Download the [latest release](https://github.com/bradyvercher/gravity-forms-iframe/archive/master.zip) from GitHub.
 2. Unzip the archive.
 3. Copy the folder to `/wp-content/plugins/`.
-4. Go to the __Plugins__ screen in your WordPress admin panel and click the __Activate__ link under Gravity Forms Iframe.
+4. Go to the __Plugins__ screen in your WordPress admin panel and click the __Activate__ link under _Gravity Forms Iframe_.
 
 Read the Codex for more information about [installing plugins manually](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
 
-### Git ###
+### Git
 
 Clone this repository in `/wp-content/plugins/`:
 
 `git clone git@github.com:bradyvercher/gravity-forms-iframe.git`
 
-Then go to the __Plugins__ screen in your WordPress admin panel and click the __Activate__ link under Gravity Forms Iframe.
+Then go to the __Plugins__ screen in your WordPress admin panel and click the __Activate__ link under _Gravity Forms Iframe_.
 
-## Updating ##
+## Changelog
 
-There are a couple of plugins for managing updates to GitHub-hosted plugins. Either of these should notify you when this plugin is updated:
+### 2.0.1
 
-* [Git Plugin Updates](https://github.com/brainstormmedia/git-plugin-updates)
-* [GitHub Updater](https://github.com/afragen/github-updater)
+* Make GravityFormsIframe_Addon::form_settings_fields() compatible with the parent class.
+
+### 2.0.0
+
+* Moved to the Cedaro GitHub account.
+* Refactored the plugin structure.
+* Introduced a 'gfiframe_head' action in the template header.
+
+### 1.0.3
+
+* Defined 'gravityforms_iframe' capability in the Add-on class to integrate with the Members plugin.
+
+### 1.0.2
+
+* Fixed a long-standing bug that may have prevented scripts from loading in the iframe template.
+* Fixed deprecated notices in Gravity Forms 1.9+.
+
+### 1.0.1
+
+* Deprecated the .php extension in the embed rewrite rule to prevent conflicts with WordPress Multisite.
+* Disabled the WordPress toolbar in iframes when forms are embedded on the host domain.
+* Added a POT file for translators.
+
+### 1.0.0
+
+* Initial release.

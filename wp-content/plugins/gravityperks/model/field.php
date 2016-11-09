@@ -94,6 +94,10 @@ class GWField {
 
     function filter_enqueue_field_scripts($form, $ajax) {
 
+        if( ! is_array( $form['fields'] ) ) {
+            return;
+        }
+
         $has_this_field_type = false;
 
         foreach( $form['fields'] as $field ) {

@@ -1,9 +1,9 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 3.3
-Tested up to: 4.5.2
+Tested up to: 4.6.1
 Stable tag: trunk
-Contributors: katzwebservices, luistinygod
+Contributors: The GravityView Team
 License: GPL 3 or higher
 
 Beautifully display and edit your Gravity Forms entries.
@@ -19,6 +19,117 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 1.18.1 on November 3, 2016 =
+
+* Updated: 100% Chinese translation—thank you [Michael Edi](https://www.transifex.com/user/profile/michaeledi/)!
+* Fixed: Entry approval not working when using [custom entry slugs](http://docs.gravityview.co/article/57-customizing-urls)
+* Fixed: `Undefined index: is_active` warning is shown when editing entries with User Registration Addon active
+* Fixed: Strip extra whitespace in Entry Note field templates
+
+= 1.18 on October 11, 2016 =
+
+* Updated minimum requirements: WordPress 3.5, Gravity Forms 1.9.14
+* Modified: Entries that are unapproved (not approved or disapproved) are shown as yellow circles
+* Added: Shortcut to create a View for an existing form
+* Added: Entry Note emails now have a message "This note was sent from {url}" to provide context for the note recipient
+* Fixed: Edit Entry did not save other field values when Post fields were in the Edit Entry form
+* Fixed: When using "Start Fresh" View presets, form fields were not being added to the "Add Field" field picker
+* Fixed: Hidden visible inputs were showing in the "Add Field" picker (for example, the "Middle Name" input was hidden in the Name field, but showing as an option)
+* Fixed: Fatal error when editing Post Content and Post Image fields
+* Fixed: Lightbox images not loading
+* Fixed: Lightbox loading indicator displaying below the overlay
+* Fixed: "New form created" message was not shown when saving a draft using a "Start Fresh" View preset
+* Gravity Forms User Registration Addon changes:
+    * Gravity Forms User Registration 2.0 is no longer supported
+    * Fixed Processing "Update User" feeds
+    * Fixed: Inactive User Registration feeds were being processed
+    * Fixed: User Registration "Update User" feeds were being processed, even if the Update Conditions weren't met
+    * Fixed: Unable to use `gravityview/edit_entry/user_registration/trigger_update` filter
+* Fixed: Prevent negative entry counts when approving and disapproving entries
+* Fixed: PHP notice when WooCommerce Memberships is active
+* Tweak: Entry Note emails now have paragraphs automatically added to them
+* Tweak: When the global "Show Support Port" setting is "Hide", always hide; if set to "Show", respect each user's Support Port display preference
+* Updated: Complete German translation—thank you [hubert123456](https://www.transifex.com/user/profile/hubert123456/)!
+
+__Developer Notes__
+
+* Migrated `is_approved` entry meta values; statuses are now managed by the `GravityView_Entry_Approval_Status` class
+    - "Approved" => `1`, use `GravityView_Entry_Approval_Status::APPROVED` constant
+    - "0" => `2`, use `GravityView_Entry_Approval_Status::DISAPPROVED` constant
+    - Use `$new_value = GravityView_Entry_Approval_Status::maybe_convert_status( $old_value )` to reliably translate meta values
+* Added: `GVCommon::get_entry_id()` method to get the entry ID from a slug or ID
+* Added: `gravityview_go_back_url` filter to modify the link URL used for the single entry back-link in `gravityview_back_link()` function
+* Added: `gravityview/field/notes/wpautop_email` filter to disable `wpautop()` on Entry Note emails
+* Added: `$email_footer` to the `gravityview/field/notes/email_content` filter content
+* Modified: `note-add-note.php` template: added `current-url` hidden field
+* Modified: `list-single.php` template file: added `.gv-grid-col-1-3` CSS class to the `.gv-list-view-content-image` container
+* Fixed: Mask the Entry ID in the link to lightbox files
+
+= 1.17.4 on September 7, 2016 =
+
+* Added: Support for editing [Gravity Perks Unique ID](https://gravitywiz.com/documentation/gp-unique-id/) fields
+* Fixed: Issue searching and sorting fields with multiple inputs (like names)
+* Fixed: Restore Gravity Forms Quiz Addon details in the field picker
+
+__Developer Notes__
+
+* Added: `gravityview_get_directory_widgets()`, `gravityview_set_directory_widgets()` wrapper functions to get and set View widget configurations
+* Added: Second `$apply_filter` parameter to `GVCommon::get_directory_fields()` function to set whether or not to apply the `gravityview/configuration/fields` filter
+
+= 1.17.3 on August 31, 2016 =
+
+* Added: Search Bar support for Gravity Forms Survey fields: filter by survey responses
+* Added: Search Bar support for Gravity Flow: search entries by the current Step, Step Status, or Workflow Status
+* Added: `[gvlogic]` and other shortcodes now can be used inside Email field settings content
+* Added: Support for embedding Views in the front page of a site; the [GravityView - Allow Front Page Views plugin](https://github.com/gravityview/gravityview-front-page-views) is no longer required
+* Tweak: In Edit View, holding down the option (or alt) key while switching forms allows you to change forms without resetting field configurations - this is useful if you want to switch between duplicate forms
+* Fixed: Restored correct Gravity Flow status and workflow values
+* Fixed: Conflict when editing an entry in Gravity Flow
+* Fixed: Tooltip title text of the field and widget "gear" icon
+* Changed the plugin author from "Katz Web Services, Inc." to "GravityView" - it seemed like it was time!
+
+__Developer Notes__
+
+* Modified: `gravityview_get_forms()` function and `GVCommon::get_forms()` method to be compatible with `GFAPI::get_forms()`. Now accepts `$active` and `$trash` arguments, as well as returning all form data (not just `id` and `title` keys)
+* Modified: `template/fields/post_image.php` file to use `gravityview_get_link()` to generate the anchor link
+* Modified: `rel="noopener noreferrer"` now added to all links generated using `gravityview_get_link()` with `target="_blank"`. This fixes a generic security issue (not specific to GravityView) when displaying links to submitted websites and "Open link in new window" is checked - [read more about it here](https://dev.to/ben/the-targetblank-vulnerability-by-example)
+* Modified: Don't convert underscores to periods if not numeric in `GravityView_Widget_Search::prepare_field_filter()` - this fixes searching entry meta
+* Modified: Added third `gravityview_search_field_label` parameter: `$field` - it's the field configuration array passed by the Search Bar
+* Modified: HTML tags are now stripped from Email field body and subject content
+* Modified: Moved `GravityView_Admin_View_Item`, `GravityView_Admin_View_Field`, and `GravityView_Admin_View_Widget` to their own files
+* Added: Deprecation notices for methods that haven't been used since Version 1.2!
+
+= 1.17.2 on August 9, 2016 =
+
+* Fixed: "Start Fresh" fails when there are no pre-existing forms in Gravity Forms
+* Fixed: Edit Entry not saving values for fields that were initially hidden
+* Added: Support for embedding Views in Ultimate Member profile tabs
+* Fixed: File Upload fields potentially displaying PHP warnings
+* Fixed: Check plugin and theme existence before loading hooks
+* Fixed: "Hide empty fields" not working when "Make Phone Number Clickable" is checked for Phone fields
+* Fixed: Potential PHP warning when adding Password fields in Edit View
+* Fixed: Dutch (Netherlands) `nl_NL` translation file fixed
+* Fixed: Divi theme shortcode buttons and modal form added to Edit View screen
+* Fixed: Possible for Approve Entries checkbox to use the wrong Form ID
+* Fixed: Search issues with special characters
+    - Searches that contained ampersands `&` were not working
+    - Searches containing plus signs `+` were not working 
+    - The "Select" Search Bar input type would not show the active search if search term contained an `&`
+* Fixed: Multisite issue: when Users are logged-in but not added to any sites, they aren't able to see View content
+* Fixed: Never show GravityView Toolbar menu to users who aren't able to edit Views, Forms, or Entries
+* Fixed: Allow passing `post_id` in `[gravityview]` shortcode
+* Tweak: Use system fonts instead of Open Sans in the admin
+* Modified: The default setting for "No-Conflict Mode" is now "On". GravityView _should look good_ on your site!
+* Updated translations (thank you!)
+    - Turkish translation by Süha Karalar
+    - Chinese translation by Michael Edi
+
+__Developer Notes:__
+
+* Added: `gravityview_view_saved` action, triggered after a View has been saved in the admin
+* Modified: Changed the Phone field template to use `gravityview_get_link()` to generate the anchor tag
+* Added: `gravityview/common/get_entry_id_from_slug/form_id` filter to modify the form ID used to generate entry slugs, in order to avoid hash collisions with data from other forms
 
 = 1.17.1 on June 27 =
 * Fixed: Entry approval with Gravity Forms 2.0

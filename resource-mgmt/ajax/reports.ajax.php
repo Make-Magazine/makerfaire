@@ -462,7 +462,7 @@ function retrieveRptData($table,$faire){
                       );
         break;
       case 'entrylink':
-        $vars = array('cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=mf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
+        $vars = array('cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=gf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
         break;
       case 'hidden':
         $vars = array('visible'=>false);

@@ -1,5 +1,99 @@
 # Change Log
 
+## [3.2.5](https://github.com/auth0/wp-auth0/tree/3.2.5) (2016-09-07)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.2.0...3.2.5)
+
+**Closed issues:**
+
+- Profile data not returned in get\_auth0userinfo\(\) [\#236](https://github.com/auth0/wp-auth0/issues/236)
+- Login Only Not Allowed [\#234](https://github.com/auth0/wp-auth0/issues/234)
+- Dashboard widget, Uninitialized string offset [\#232](https://github.com/auth0/wp-auth0/issues/232)
+- allow toggle to override users avatars [\#231](https://github.com/auth0/wp-auth0/issues/231)
+- Lock in register page does not show custom fields [\#229](https://github.com/auth0/wp-auth0/issues/229)
+- Wordpress user creation with duplicate emails [\#219](https://github.com/auth0/wp-auth0/issues/219)
+- Setup Wizard errors out halfway [\#218](https://github.com/auth0/wp-auth0/issues/218)
+- Add compatibility class that can be used to improve integration with 3rd-party plugins  [\#208](https://github.com/auth0/wp-auth0/issues/208)
+- Bug - Twitter authentication fails when user's Twitter name has non-ASCII characters [\#207](https://github.com/auth0/wp-auth0/issues/207)
+- Callback URL's not working [\#203](https://github.com/auth0/wp-auth0/issues/203)
+- Support Lock10 with custom fields [\#195](https://github.com/auth0/wp-auth0/issues/195)
+- Broken \(or confusing?\) flow in creating passwordless auth [\#194](https://github.com/auth0/wp-auth0/issues/194)
+- Add support button pointing to support.auth0.com [\#178](https://github.com/auth0/wp-auth0/issues/178)
+- Disable social logins [\#153](https://github.com/auth0/wp-auth0/issues/153)
+
+**Merged pull requests:**
+
+- 3.2.5 - Lock 10 custom fields + added avatars + bugfixes [\#237](https://github.com/auth0/wp-auth0/pull/237) ([glena](https://github.com/glena))
+- fix migration [\#228](https://github.com/auth0/wp-auth0/pull/228) ([glena](https://github.com/glena))
+- fix [\#227](https://github.com/auth0/wp-auth0/pull/227) ([glena](https://github.com/glena))
+- Fix federated clientid [\#226](https://github.com/auth0/wp-auth0/pull/226) ([glena](https://github.com/glena))
+- changed the federated client metadata url to be relative to th ehome … [\#225](https://github.com/auth0/wp-auth0/pull/225) ([glena](https://github.com/glena))
+
+## [3.2.0](https://github.com/auth0/wp-auth0/tree/3.2.0) (2016-08-16)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.1.4...3.2.0)
+
+**Merged pull requests:**
+
+- Lock10 + guardian support [\#224](https://github.com/auth0/wp-auth0/pull/224) ([glena](https://github.com/glena))
+- Force logo to https [\#222](https://github.com/auth0/wp-auth0/pull/222) ([lesaff](https://github.com/lesaff))
+- added federated SLO [\#221](https://github.com/auth0/wp-auth0/pull/221) ([glena](https://github.com/glena))
+
+## [3.1.4](https://github.com/auth0/wp-auth0/tree/3.1.4) (2016-07-01)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.1.3...3.1.4)
+
+**Closed issues:**
+
+- Lock blank after signup [\#216](https://github.com/auth0/wp-auth0/issues/216)
+
+**Merged pull requests:**
+
+- 3.1.4 [\#220](https://github.com/auth0/wp-auth0/pull/220) ([glena](https://github.com/glena))
+
+## [3.1.3](https://github.com/auth0/wp-auth0/tree/3.1.3) (2016-06-15)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.1.2...3.1.3)
+
+**Merged pull requests:**
+
+- Add auth0\_before\_login hook and exception type [\#215](https://github.com/auth0/wp-auth0/pull/215) ([schamp](https://github.com/schamp))
+- Fix some minor spelling issues in README.md [\#205](https://github.com/auth0/wp-auth0/pull/205) ([thameera](https://github.com/thameera))
+
+## [3.1.2](https://github.com/auth0/wp-auth0/tree/3.1.2) (2016-06-13)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.1.1...3.1.2)
+
+**Merged pull requests:**
+
+- refactor error handling, fix rules creation with site name, fix SLO [\#214](https://github.com/auth0/wp-auth0/pull/214) ([glena](https://github.com/glena))
+
+## [3.1.1](https://github.com/auth0/wp-auth0/tree/3.1.1) (2016-06-06)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/2.2.0...3.1.1)
+
+**Merged pull requests:**
+
+- V3 [\#211](https://github.com/auth0/wp-auth0/pull/211) ([glena](https://github.com/glena))
+
+## [2.2.0](https://github.com/auth0/wp-auth0/tree/2.2.0) (2016-05-11)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/2.1.11...2.2.0)
+
+**Closed issues:**
+
+- Connection doesn't require username [\#202](https://github.com/auth0/wp-auth0/issues/202)
+
+**Merged pull requests:**
+
+- 2.2.0 [\#206](https://github.com/auth0/wp-auth0/pull/206) ([glena](https://github.com/glena))
+
+## [2.1.11](https://github.com/auth0/wp-auth0/tree/2.1.11) (2016-04-27)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/2.1.9...2.1.11)
+
+**Closed issues:**
+
+- auth0 account creation [\#192](https://github.com/auth0/wp-auth0/issues/192)
+
+**Merged pull requests:**
+
+- v2.1.11 [\#198](https://github.com/auth0/wp-auth0/pull/198) ([glena](https://github.com/glena))
+- v2.1.10 [\#197](https://github.com/auth0/wp-auth0/pull/197) ([glena](https://github.com/glena))
+- Fix WordPress typo in README [\#193](https://github.com/auth0/wp-auth0/pull/193) ([pieterbeulque](https://github.com/pieterbeulque))
+
 ## [2.1.9](https://github.com/auth0/wp-auth0/tree/2.1.9) (2016-04-07)
 [Full Changelog](https://github.com/auth0/wp-auth0/compare/2.1.8...2.1.9)
 

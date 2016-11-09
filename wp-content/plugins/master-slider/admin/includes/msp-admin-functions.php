@@ -108,10 +108,14 @@ function msp_save_custom_styles() {
 }
 
 
-
-
-
-
+/**
+ * Get the number of PRO users
+ *
+ * @return int
+ */
+function msp_get_pro_users_num(){
+    echo '12500+';
+}
 
 
 
@@ -133,7 +137,7 @@ if ( ! function_exists( 'axpp' ) ) {
 		} elseif ( $dump ) {
 			echo '<pre>'; var_dump( $expression ); echo '</pre>';
 		} else {
-			echo '<pre>'; print_r ( $expression ); echo '</pre>';
+			echo '<pre style="margin-left:170px;">'; print_r ( $expression ); echo '</pre>';
 		}
 		return true;
 	}

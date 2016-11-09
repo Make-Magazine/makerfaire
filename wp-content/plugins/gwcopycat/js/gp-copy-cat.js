@@ -26,8 +26,8 @@
             } );
 
             $( '#gform_wrapper_' + this._formId + ' .gwcopy' ).find( 'input, textarea, select' ).each( function() {
-                var isCheckbox = $( this ).is( 'input[type="checkbox"]' );
-                if( ! isCheckbox ) {
+                var isCheckable = $( this ).is( ':checkbox, :radio' );
+                if( ! isCheckable ) {
                     copyObj.copyValues( this );
                 } else if( $( this ).is( ':checked' ) ) {
                     copyObj.copyValues( this );
@@ -61,9 +61,9 @@
                 targetGroup.each(function(i){
 
                     var targetElem     = $( this ),
-                        isCheckbox     = targetElem.is( ':checkbox' ),
-                        hasValue       = isCheckbox ? targetElem.is( ':checked' ) : targetElem.val(),
-                        hasSourceValue = isCheckbox || sourceValues[i] || sourceValues.join( ' ' );
+                        isCheckable     = targetElem.is( ':checkbox, :radio' ),
+                        hasValue       = isCheckable ? targetElem.is( ':checked' ) : targetElem.val(),
+                        hasSourceValue = isCheckable || sourceValues[i] || sourceValues.join( ' ' );
 
                     // if overwrite is false and a value exists, skip
                     if( ! isOverride && hasValue ) {
@@ -75,7 +75,7 @@
                         return true;
                     }
 
-                    if( isCheckbox ) {
+                    if( isCheckable ) {
                         if( $.inArray( targetElem.val(), sourceValues ) != -1 ) {
                             targetElem.prop( 'checked', true );
                         }
@@ -87,12 +87,20 @@
                         targetElem.val( copyObj.cleanValueByInputType( sourceValues.join( ' ' ), targetElem.attr( 'type' ) ) );
                     }
 
-                } ).change();
+                } )
+                    .change()
+                    // @hack trigger chosen:updated on every change since it doesn't "hurt" anything to do so; alternative is checking if chosen is activated
+                    .trigger( 'chosen:updated' );
 
             }
 
         };
 
+        /**
+         * Clear values when checkbox has been unselected. Only used by checkbox-triggered copies.
+         *
+         * @param elem
+         */
         this.clearValues = function(elem) {
 
             var fieldId = $(elem).parents('li.gwcopy').attr('id').replace('field_' + this._formId + '_', '');
@@ -113,9 +121,12 @@
 
                     var $targetElem = $( this ),
                         fieldValue  = $targetElem.val(),
+                        isCheckable = $targetElem.is( ':checkbox, :radio' ),
                         isCheckbox  = $targetElem.is( ':checkbox' );
 
                     if( isCheckbox ) {
+                        $targetElem.prop( 'checked', $.inArray( fieldValue, sourceValues ) !== -1 );
+                    } else if( isCheckable ) {
                         $targetElem.prop( 'checked', false );
                     } else if( fieldValue == sourceValues[i] ) {
                         $targetElem.val( '' );
@@ -157,7 +168,7 @@
                 }
             }
 
-            if( group.is( 'input:radio, input:checkbox' ) ) {
+            if( groupType == 'source' && group.is( 'input:radio, input:checkbox' ) ) {
                 group = group.filter( ':checked' );
             }
 

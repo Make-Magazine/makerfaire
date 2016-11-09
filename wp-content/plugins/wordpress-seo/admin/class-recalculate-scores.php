@@ -22,12 +22,8 @@ class WPSEO_Recalculate_Scores {
 	 * Run the localize script.
 	 */
 	public function recalculate_assets() {
-		wp_enqueue_script( 'wpseo-recalculate-script', plugins_url( 'js/wp-seo-recalculate-' . '310' . WPSEO_CSSJS_SUFFIX . '.js', WPSEO_FILE ), array(
-			'jquery',
-			'jquery-ui-core',
-			'jquery-ui-progressbar',
-			'yoast-seo',
-		), WPSEO_VERSION, true );
+		$asset_manager = new WPSEO_Admin_Asset_Manager();
+		$asset_manager->enqueue_script( 'recalculate' );
 	}
 
 	/**
@@ -45,7 +41,7 @@ class WPSEO_Recalculate_Scores {
 		);
 
 		?>
-		<div id="wpseo_recalculate" style="display:none;">
+		<div id="wpseo_recalculate" class="hidden">
 			<p><?php esc_html_e( 'Recalculating SEO scores for all pieces of content with a focus keyword.', 'wordpress-seo' ); ?></p>
 
 			<div id="wpseo_progressbar"></div>
@@ -53,5 +49,4 @@ class WPSEO_Recalculate_Scores {
 		</div>
 		<?php
 	}
-
 }

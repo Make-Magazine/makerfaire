@@ -1,19 +1,21 @@
 ===  Free Tools to grow your Email List, Social Sharing and Analytics ===
 Contributors: SumoMe
-Tags: MailChimp, Aweber, Infusionsoft, Mad Mimi, Campaign Monitor, constant contact,  GetResponse, Eloqua,  ActiveCampaign, MyEmma, Infusionsoft, Feedblitz, HubSpot, Sailthru, Vero, Zapier, Ontraport, Pardot, Klaviyo, popup, exit intent, growth, subscribers, twitter, facebook share, social plugin,  social sharing, subscription, email form, share,  sharing, social , social media buttons , links, click to tweet ,  analytics , newsletter,  widget,lightbox, analytics, newsletter, newsletter, Facebook, floating social buttons, google plus, google analytics, Image sharing,  pinterest plugin, pintrest, share image,   sharebar, sharing, social bookmarking, social plugin, sms, tweet button,  heat map, heatmaps, twitter share, contact form, scroll box, content analytics, inbound marketing, mailing list, share buttons, welcome mat, landing page
+Tags: MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, popup, exit intent, growth, subscribers, twitter, facebook share, social plugin,  social sharing, subscription, email form, share,  sharing, social , social media buttons , links, click to tweet ,  analytics , newsletter,  widget,lightbox, analytics, newsletter, newsletter, Facebook, floating social buttons, google plus, Image sharing,  pinterest plugin, pintrest, share image,   sharebar, sharing, social bookmarking, social plugin, sms, tweet button,  heat map, heatmaps, twitter share, contact form, scroll box, content analytics, inbound marketing, mailing list, share buttons, welcome mat, landing page
 Requires at least: 3.0.1
-Tested up to: 4.3.1
-Stable tag: 4.5
+Tested up to: 4.6.1
+Stable tag: 1.21
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Free and easy way to double your email subscribers. Sharing tools to double your traffic from Facebook, Twitter, Pinterest & more.
+Free and easy way to double your email subscribers. And Sharing tools to double your traffic from Facebook, Twitter, Pinterest & more.
 
 == Description ==
 
-SumoMe provides free tools you need to grow your WordPress site. This plugin will make it easy for your readers to join your email list, share your articles and optimize with analytics. The free tools include:
+Most blogs are designed for hit-and-run readers. People find your blog, read your article, and leave. Wouldn't it be nice if some of those people subscribe or share your amazing post?
 
->`List Builder` will let you create a fancy lightbox pop up to [build email subscriptions](http://sumome.com/?src=wordpress) (for MailChimp, Aweber, GetResponse, MyEmma, ActiveCampaign, Infusionsoft, HubSpot, Feedblitz, Ontraport, Klaviyo, Constant Contact, Mad Mimi, Vero, Zapier, Pardot, or others).
+>SumoMe provides free tools you need to grow your WordPress site. This plugin will make it easy for your readers to join your email list, share your articles and optimize with analytics. The free tools include:
+>
+>`List Builder` will let you create a fancy lightbox pop up to [build email subscriptions](http://sumome.com/?src=wordpress) (for MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, or others).
 >
 >`Share` makes it insanely easy for people to share on mobile or web all of your great content.
 >
@@ -22,10 +24,6 @@ SumoMe provides free tools you need to grow your WordPress site. This plugin wil
 >`Heat Maps` help you see where people are clicking (or not) on your website.
 >
 >`Scroll Box` is an email collection box triggered by how far your reader makes it down the screen.
->
->`Google Analytics` makes it super easy to view your Google Analytics directly on your site.
->
->`Discover` gets you free traffic.
 >
 >`Smart Bar` is a Floating Bar that can appear at the top or bottom of your website. You can encourage people to subscribe to your newsletter, go to a specific page or follow you on your social networks.
 >
@@ -40,7 +38,7 @@ Now, people will find your blog, read your article, share your article on Twitte
 = Features =
 
 * Free and Easy integration with any WordPress theme
-* Simple email integration with MailChimp, Aweber, Constant Contact, and Campaign Monitor
+* Simple email integration with MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, and Maropost
 * 100% mobile optimized. A lot of your traffic is mobile, make sure your tools are too
 * Asynchronous loading that won't affect page load speed
 * Total control over which growth features to enable
@@ -82,9 +80,9 @@ While most email subscription boxes are static widgets in your sidebar, our Mail
 
 Now you can figure out which text, size, timing, colors and more will convert best on your site. A/B testing can be setup in seconds and most people see 20-100% more email subscribers after testing.
 
-= Advanced display rules = 
+= Advanced display rules =
 
-Now you can target all of our apps to any specific visitors you’d like. Want an email pop up or share to only show for visitors coming from Facebook. Done. Want your email pop up customized for a specific audience, done.
+Now you can target all of our apps to any specific visitors you'd like. Want an email pop up or share to only show for visitors coming from Facebook. Done. Want your email pop up customized for a specific audience, done.
 
 = Choose when to request subscribes =
 
@@ -97,7 +95,7 @@ The optional smart timing will automatically load the Aweber email subscription 
 
 = Automatically Connect with major email providers =
 
-Our email list builder easily connects with all major email providers including Aweber, MailChimp, Constant Contact, GetResponse and Campaign Monitor. This means that if you use an email manager like MailChimp, your new subscribers can automatically subscribe to your list instantly.
+Our email list builder easily connects with all major email providers including MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, and Maropost. This means that if you use an email manager like MailChimp, your new subscribers can automatically subscribe to your list instantly.
 
 Alternately, you can simply set List Builder to collect email addresses that you can export in CSV format.
 
@@ -152,7 +150,7 @@ ImageSharer makes it super easy to add image sharing for all three powerful soci
 
 = Latest Updates =
 
-* 6/20 - Smart bar can now appear at the bottom of your pages, TONS more templates for Scroll Box / Smart Bar and List Builder, 
+* 6/20 - Smart bar can now appear at the bottom of your pages, TONS more templates for Scroll Box / Smart Bar and List Builder,
 * 5/21 Added tons new List Builder design templates
 * Added URL shortener for all sharing tools
 * Made Scroll Box and Smart Bar (hello bar alternative) to Pro versions (AB testing, multiple popups, advanced display rules)
@@ -170,7 +168,7 @@ ImageSharer makes it super easy to add image sharing for all three powerful soci
 1. Activate the plugin through the `Plugins` menu in WordPress
 1. Click on the blue thingy in the top right.
 1. Register and click on the Sumo Store to install the apps you want.
-1. Eat a taco and enjoy the increased traffic to your site. 
+1. Eat a taco and enjoy the increased traffic to your site.
 
 == Frequently Asked Questions ==
 
@@ -178,19 +176,19 @@ ImageSharer makes it super easy to add image sharing for all three powerful soci
 
 Not at all. This plugin loads asynchronously so it won't down your site at all.
 
-= Where do I login to SumoMe? = 
+= Where do I login to SumoMe? =
 
-Once you install the plugin and activate it. Go to any page on your site and you'll see a little blue thing in the top right, click on it and then the crown icon to login. 
+Once you install the plugin and activate it. Go to any page on your site and you'll see a little blue thing in the top right, click on it and then the crown icon to login.
 
 = How can I install an app? =
 
-Once you've logged into SumoMe, click on Sumo Store and click Install for whichever app you'd like to install. Once you have installed the List Builder app, you can integrate with MailChimp.
+Once you've logged into SumoMe, click on Sumo Store and click Install for whichever app you'd like to install. Once you have installed the List Builder app, you can integrate with MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, or Maropost.
 
 = How does Highlighter work? =
 
 Once you or a visitor to your site clicks and selects a piece of text on your site, they can choose to share that text on Facebook or Twitter. Subsequent visitors will then see that text highlighted and it'll be easier for them to share your site.
 
-= Can I delete a highlight? = 
+= Can I delete a highlight? =
 
 Yup. Click on the highlight while logged in. Then click on delete highlight.
 
@@ -198,17 +196,17 @@ Yup. Click on the highlight while logged in. Then click on delete highlight.
 
 Most people see a double in growing their email list from the list builder application.
 
-= What does the Smart mode mean on List Builder? = 
+= What does the Smart mode mean on List Builder? =
 
-We calculate the ideal time to show a person 
+We calculate the ideal time to show a person
 
 = Can I customize the look and feel of the popup? =
 
 You can use our default options or fully control the CSS in the advanced section.
 
-= Do you provide instant connections to any email providers? = 
+= Do you provide instant connections to any email providers? =
 
-Yes, we provide instant integration with Mailchimp, Aweber, GetResponse, Constant Contact, Klaviyo, Pardot, Vero, Zapier, Ontraport, Mad Mimi, MyEmma and Campaign Monitor.  When a user joins, their email is automatically subscribed to your MailChimp, Aweber, or other newsletter list. Alternately, you can simply download a CSV list of your newsletter subscribers.
+Yes, we provide instant integration with MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, and Maropost.  When a user joins, their email is automatically subscribed to your MailChimp, Aweber, or other newsletter list. Alternately, you can simply download a CSV list of your newsletter subscribers.
 
 == Other Notes ==
 
@@ -221,6 +219,28 @@ Email newsletter integration options
 * Constant Contact newsletter integration
 * Campaign Monitor newsletter integration
 * GetResponse newsletter integration
+* ActiveCampaign newsletter integration
+* MyEmma newsletter integration
+* Mad Mimi newsletter integration
+* Infusionsoft newsletter integration
+* Feedblitz newsletter integration
+* HubSpot newsletter integration
+* MyNewsletterBuilder newsletter integration
+* Inbox First newsletter integration
+* Sailthru newsletter integration
+* Klaviyo newsletter integration
+* Vero newsletter integration
+* Pardot newsletter integration
+* Zapier newsletter integration
+* Ontraport newsletter integration
+* ExactTarget newsletter integration
+* Vertical Response newsletter integration
+* Drip newsletter integration
+* MailerLite newsletter integration
+* WhatCounts newsletter integration
+* ConvertKit newsletter integration
+* MailJet newsletter integration
+* Maropost newsletter integration
 
 Why people use MailChimp
 
@@ -253,11 +273,11 @@ Why you should encourage Twitter sharing
 
 [See all of our screenshots at SumoMe.com](http://sumome.com/?src=wordpress_ss)
 
-1. This screen shot is how to Sign up once you have activated the plugin. 
+1. This screen shot is how to Sign up once you have activated the plugin.
 2. This is the screen to choose which apps to install.
 3. Fully customizable email pop ups (List Builder app)
 4. Total control of the design and feel of the pop ups
-5. Connect with all major email providers (MailChimp, Aweber, HubSpot, ActiveCampaign)
+5. Connect with all major email providers (MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost)
 6. A/B testing to maximize your conversion rate
 7. Advanced display rules to control which visitors see your pop ups
 8. Detailed stats page to track your email growth
@@ -274,20 +294,20 @@ Why you should encourage Twitter sharing
 
 == Changelog ==
 
-= 1.04 = 
+= 1.04 =
 * Old school original version
 
 = 1.05 =
 * Fixed screenshots
 
-= 1.06 = 
+= 1.06 =
 * Made it super simple and easy to auto-resize the window.
 
-= 1.07 = 
+= 1.07 =
 * Redesigned dashboard and list builder email templates now available
 
-= 1.08 = 
-* Added Smart Bar app to create easy email collect form at the top of your site. 
+= 1.08 =
+* Added Smart Bar app to create easy email collect form at the top of your site.
 
 = 1.8 =
 * Show apps for configuring in WordPress admin
@@ -304,21 +324,50 @@ Why you should encourage Twitter sharing
 = 1.12 =
 * images, yay
 
-== Upgrade Notice == 
+= 1.13 =
+* images, updated instructions
 
-= 1.04 = 
+= 1.14 =
+* Added new integrations (MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost)
+
+= 1.15 =
+* Integration with WordPress Admin.
+* Statistics inside WordPress dashboard.
+* Better on-boarding.
+
+= 1.16 =
+* CSS and pathname fixes
+
+= 1.17 =
+* CSS, notification bubble, and more random Site ID
+
+= 1.18 =
+* Fixes site ID conflict
+
+= 1.19 =
+* Fixes logout redirect, and updated WordPress tested version.
+
+= 1.20 =
+* Added social media. Fixed help link.
+
+= 1.21 =
+* Updating versions.
+
+== Upgrade Notice ==
+
+= 1.04 =
 * You are original!
 
-= 1.05 = 
+= 1.05 =
 * Yay images
 
-= 1.06 = 
+= 1.06 =
 * Redesigned dashboard and list builder email templates now available
 
-= 1.07 = 
+= 1.07 =
 * Hello Smart Bar
 
-= 1.6 = 
+= 1.6 =
 * Added Share app - Get more traffic to your site with these super easy to setup share buttons
 
 = 1.7 =
@@ -336,5 +385,34 @@ Why you should encourage Twitter sharing
 = 1.11 =
 * Added way more integrations
 
-= 1.12 = 
+= 1.12 =
 * images, neat
+
+= 1.13 =
+* images, updated instructions
+
+= 1.14 =
+* Added new integrations (MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost)
+
+= 1.15 =
+* Integration with WordPress Admin.
+* Statistics inside WordPress dashboard.
+* Better on-boarding.
+
+= 1.16 =
+* CSS and pathname fixes
+
+= 1.17 =
+* CSS, notification bubble, and more random Site ID
+
+= 1.18 =
+* Fixes site ID conflict
+
+= 1.19 =
+* Fixes logout redirect, and updated WordPress tested version.
+
+= 1.20 =
+* Added social media. Fixed help link.
+
+= 1.21 =
+* Updating versions.

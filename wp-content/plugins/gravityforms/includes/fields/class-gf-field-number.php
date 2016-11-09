@@ -175,10 +175,12 @@ class GF_Field_Number extends GF_Field {
 		$value                 = GFCommon::format_number( $value, $this->numberFormat, rgar( $entry, 'currency' ), $include_thousands_sep );
 
 		$placeholder_attribute = $this->get_field_placeholder_attribute();
+		$required_attribute    = $this->isRequired ? 'aria-required="true"' : '';
+		$invalid_attribute     = $this->failed_validation ? 'aria-invalid="true"' : 'aria-invalid="false"';
 
 		$tabindex = $this->get_tabindex();
 
-		$input = sprintf( "<div class='ginput_container ginput_container_number'><input name='input_%d' id='%s' type='{$html_input_type}' {$step_attr} {$min_attr} {$max_attr} value='%s' class='%s' {$tabindex} {$logic_event} {$read_only} %s %s/>%s</div>", $id, $field_id, esc_attr( $value ), esc_attr( $class ), $disabled_text, $placeholder_attribute, $instruction );
+		$input = sprintf( "<div class='ginput_container ginput_container_number'><input name='input_%d' id='%s' type='{$html_input_type}' {$step_attr} {$min_attr} {$max_attr} value='%s' class='%s' {$tabindex} {$logic_event} {$read_only} %s %s %s %s/>%s</div>", $id, $field_id, esc_attr( $value ), esc_attr( $class ), $disabled_text, $placeholder_attribute, $required_attribute, $invalid_attribute, $instruction );
 		return $input;
 	}
 
@@ -195,7 +197,36 @@ class GF_Field_Number extends GF_Field {
 		return GFCommon::format_number( $value, $this->numberFormat, $currency, $include_thousands_sep );
 	}
 
+	/**
+	 * Gets merge tag values.
+	 *
+	 * @since  Unknown
+	 * @access public
+	 *
+	 * @uses GFCommon::format_number()
+	 *
+	 * @param array|string $value      The value of the input.
+	 * @param string       $input_id   The input ID to use.
+	 * @param array        $entry      The Entry Object.
+	 * @param array        $form       The Form Object
+	 * @param string       $modifier   The modifier passed.
+	 * @param array|string $raw_value  The raw value of the input.
+	 * @param bool         $url_encode If the result should be URL encoded.
+	 * @param bool         $esc_html   If the HTML should be escaped.
+	 * @param string       $format     The format that the value should be.
+	 * @param bool         $nl2br      If the nl2br function should be used.
+	 *
+	 * @return string The processed merge tag.
+	 */
 	public function get_value_merge_tag( $value, $input_id, $entry, $form, $modifier, $raw_value, $url_encode, $esc_html, $format, $nl2br ) {
+		/**
+		 * Filters is the thousands separator should be used when displaying the a number field result.
+		 *
+		 * @since Unknown
+		 *
+		 * @param bool   $modifier != 'value' If the modifier passed in the merge tag is not 'value', false. Otherwise, true.
+		 * @param object GF_Field_Number      An instance of this class.
+		 */
 		$include_thousands_sep = apply_filters( 'gform_include_thousands_sep_pre_format_number', $modifier != 'value', $this );
 		$formatted_value       = GFCommon::format_number( $value, $this->numberFormat, rgar( $entry, 'currency' ), $include_thousands_sep );
 
@@ -213,7 +244,9 @@ class GF_Field_Number extends GF_Field {
 			$value = '0';
 		}
 
-		return $value;
+		$value_safe = $this->sanitize_entry_value( $value, $form['id'] );
+
+		return $value_safe;
 	}
 
 	public function sanitize_settings() {

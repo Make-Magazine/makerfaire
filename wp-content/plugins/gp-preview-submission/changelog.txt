@@ -1,6 +1,18 @@
 
 # Changelog
 
+## 1.2
+
+    - Added support for processing field label and choice label merge tags (activate via filter)
+
+## 1.1.9
+
+    - Fixed issue where GF cache was incorrect when replacing merge tags
+
+## 1.1.8
+
+    - Updated perk to use GP_Bootstrap
+
 ## 1.1.7
 
     - Fixed issue where Survey fields were not displayed correctly in preview

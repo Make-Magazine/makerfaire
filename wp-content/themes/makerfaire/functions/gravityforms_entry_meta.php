@@ -133,3 +133,12 @@ function format_ratings( $value, $form_id, $field_id,$entry ) {
   }
   return $value;
 }
+
+
+//remove the default entry detail box on the sidebar as we have our own custom one
+add_filter('gform_entry_detail_meta_boxes','remove_gf_meta_box',10,3);
+
+function remove_gf_meta_box($meta_boxes, $entry, $form) {
+  unset($meta_boxes['submitdiv']);
+  return $meta_boxes;
+}

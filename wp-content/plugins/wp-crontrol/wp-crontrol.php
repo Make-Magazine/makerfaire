@@ -4,7 +4,7 @@
  * Plugin URI:  https://wordpress.org/plugins/wp-crontrol/
  * Description: WP Crontrol lets you view and control what's happening in the WP-Cron system.
  * Author:      <a href="https://johnblackbourn.com/">John Blackbourn</a> & <a href="http://www.scompt.com/">Edward Dale</a>
- * Version:     1.3
+ * Version:     1.3.1
  * Text Domain: wp-crontrol
  * Domain Path: /languages/
  * License:     GPL v2 or later
@@ -417,7 +417,6 @@ class Crontrol {
 		<div class="wrap">
 		<h1><?php esc_html_e( 'WP-Cron Schedules', 'wp-crontrol' ); ?></h1>
 		<p><?php esc_html_e( 'WP-Cron schedules are the time intervals that are available for scheduling events. You can only delete custom schedules.', 'wp-crontrol' ); ?></p>
-		<div id="ajax-response"></div>
 		<table class="widefat striped">
 		<thead>
 			<tr>
@@ -537,11 +536,11 @@ class Crontrol {
 		global $wp_version;
 
 		if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) {
-			return new WP_Error( 'disable_wp_cron', __( 'The DISABLE_WP_CRON constant is set to true. WP-Cron spawning is disabled.', 'wp-crontrol' ) );
+			return new WP_Error( 'crontrol_info', sprintf( __( 'The %s constant is set to true. WP-Cron spawning is disabled.', 'wp-crontrol' ), 'DISABLE_WP_CRON' ) );
 		}
 
 		if ( defined( 'ALTERNATE_WP_CRON' ) && ALTERNATE_WP_CRON ) {
-			return true;
+			return new WP_Error( 'crontrol_info', sprintf( __( 'The %s constant is set to true.', 'wp-crontrol' ), 'ALTERNATE_WP_CRON' ) );
 		}
 
 		$cached_status = get_transient( 'wp-cron-test-ok' );
@@ -590,11 +589,19 @@ class Crontrol {
 		$status = $this->test_cron_spawn();
 
 		if ( is_wp_error( $status ) ) {
-			?>
-			<div id="cron-status-error" class="error">
-				<p><?php printf( esc_html__( 'There was a problem spawning a call to the WP-Cron system on your site. This means WP-Cron events on your site may not work. The problem was: %s', 'wp-crontrol' ), '<br><strong>' . esc_html( $status->get_error_message() ) . '</strong>' ); ?></p>
-			</div>
-			<?php
+			if (  'crontrol_info' === $status->get_error_code() ) {
+				?>
+				<div id="cron-status-notice" class="notice notice-info">
+					<p><?php echo esc_html( $status->get_error_message() ); ?></p>
+				</div>
+				<?php
+			} else {
+				?>
+				<div id="cron-status-error" class="error">
+					<p><?php printf( esc_html__( 'There was a problem spawning a call to the WP-Cron system on your site. This means WP-Cron events on your site may not work. The problem was: %s', 'wp-crontrol' ), '<br><strong>' . esc_html( $status->get_error_message() ) . '</strong>' ); ?></p>
+				</div>
+				<?php
+			}
 		}
 
 	}
@@ -678,7 +685,7 @@ class Crontrol {
 							<th valign="top" scope="row"><label for="args"><?php esc_html_e( 'Arguments:', 'wp-crontrol' ); ?></label></th>
 							<td>
 								<input type="text" class="regular-text" id="args" name="args" value="<?php echo esc_attr( $existing['args'] ); ?>"/>
-								<p class="description"><?php esc_html_e( "e.g. [25], ['asdf'], or ['i','want',25,'cakes']", 'wp-crontrol' ); ?></p>
+								<p class="description"><?php esc_html_e( 'e.g. [25], ["asdf"], or ["i","want",25,"cakes"]', 'wp-crontrol' ); ?></p>
 							</td>
 						</tr>
 					<?php endif; ?>
@@ -775,7 +782,6 @@ class Crontrol {
 		?>
 		<div class="wrap">
 		<h1><?php esc_html_e( 'WP-Cron Events', 'wp-crontrol' ); ?></h1>
-		<p></p>
 		<table class="widefat striped">
 		<thead>
 			<tr>

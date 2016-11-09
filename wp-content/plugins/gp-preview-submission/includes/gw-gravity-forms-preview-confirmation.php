@@ -9,32 +9,24 @@ class GWPreviewConfirmation {
 
     public static function init() {
 
-        // add the "gform_submit" to post so the GFFormsModel::get_form_unique_id() function will pull correct ID
-        /*if( ! rgpost( 'gform_submit' ) && rgpost( 'gform_form_id' ) )
-            $_POST['gform_submit'] = rgpost( 'gform_form_id' );*/
-
         add_filter( 'gform_pre_render', array( __class__, 'prepop_merge_tags' ) );
         add_filter( 'gform_pre_render', array( __class__, 'replace_merge_tags' ) );
         add_filter( 'gform_replace_merge_tags', array( __class__, 'product_summary_merge_tag' ), 10, 3 );
         add_filter( 'gform_merge_tag_filter', array( __class__, 'global_modifiers' ), 10, 5 );
 
+        add_filter( 'gform_pre_validation', array( __class__, 'replace_field_label_merge_tags' ) );
+        add_filter( 'gform_admin_pre_render', array( __class__, 'replace_entry_detail_merge_tags' ) );
+    
     }
-
+    
     public static function replace_merge_tags( $form ) {
 
         $current_page = isset( GFFormDisplay::$submission[ $form['id'] ] ) ? GFFormDisplay::$submission[ $form['id'] ]['page_number'] : 1;
-        $replace_merge_tags_in_labels = apply_filters( 'gppc_replace_merge_tags_in_labels', false, $form );
 
         // get all HTML fields on the current page
         foreach($form['fields'] as &$field) {
 
-            if( $replace_merge_tags_in_labels ) {
-                // @todo: add support for individual input labels
-                $label = GFCommon::get_label( $field );
-                if( gp_preview_submission()->has_any_merge_tag( $label ) ) {
-                    $field['label'] = self::preview_replace_variables( $label, $form );
-                }
-            }
+            self::replace_field_label_merge_tags( $form );
 
             // skip all fields on the first page
             if( rgar( $field, 'pageNumber' ) <= 1 ) {
@@ -55,6 +47,57 @@ class GWPreviewConfirmation {
             if( gp_preview_submission()->has_any_merge_tag( $html_content ) ) {
                 $field['content'] = self::preview_replace_variables( $html_content, $form );
             }
+
+        }
+
+        return $form;
+    }
+    
+    public static function replace_field_label_merge_tags( $form, $entry = null ) {
+      
+		$replace_merge_tags_in_labels = apply_filters( 'gppc_replace_merge_tags_in_labels', false, $form );
+		if( ! $replace_merge_tags_in_labels ) {
+			return $form;
+		}
+
+	    foreach($form['fields'] as &$field) {
+
+		    $label = GFCommon::get_label( $field );
+
+		    if( gp_preview_submission()->has_any_merge_tag( $label ) ) {
+			    $field->label = self::preview_replace_variables( $label, $form, $entry );
+		    }
+
+		    // the label of the Single Product field is captured and retrieved from the post on subsequent
+		    // page loads; update it in the $_POST as well to account for this.
+		    if( in_array( $field->get_input_type(), array( 'singleproduct', 'calculation' ) ) ) {
+			    $_POST[ sprintf( 'input_%d_%d', $field->id, 1 ) ] = $field->label;
+		    }
+
+		    $choices = $field->choices;
+		    if( is_array( $choices ) ) {
+			    foreach( $choices as &$choice ) {
+				    if( gp_preview_submission()->has_any_merge_tag( $choice['text'] ) ) {
+					    $choice['text'] = self::preview_replace_variables( $choice['text'], $form, $entry );
+				    }
+			    }
+		    }
+		    $field->choices = $choices;
+
+	    }
+
+		return $form;
+    }
+    
+    public static function replace_entry_detail_merge_tags ( $form ) {
+
+        if( GFForms::get_page() == 'entry_detail' || GFForms::get_page() == 'entry_detail_edit' ) {
+
+	        remove_filter( 'gform_admin_pre_render', array( __class__, 'replace_entry_detail_merge_tags' ) );
+            $entry = is_callable( array( 'GFEntryDetail', 'get_current_entry' ) ) ? GFEntryDetail::get_current_entry() : null;
+	        add_filter( 'gform_admin_pre_render', array( __class__, 'replace_entry_detail_merge_tags' ) );
+
+            $form = GWPreviewConfirmation::replace_field_label_merge_tags( $form, $entry );
 
         }
 
@@ -281,6 +324,9 @@ class GWPreviewConfirmation {
         
         if( empty( self::$entry ) ) {
 
+            // flush runtime cache so we have a clean slate (fixes issue with WC GF Product Add-ons plugin)
+            GFCache::flush();
+
 	        if ( isset( $_GET['gf_token'] ) ) {
 		        $incomplete_submission_info = GFFormsModel::get_incomplete_submission_values( $_GET['gf_token'] );
 		        if ( $incomplete_submission_info['form_id'] == $form['id'] ) {
@@ -312,10 +358,12 @@ class GWPreviewConfirmation {
         return self::$entry;
     }
 
-    public static function preview_replace_variables( $content, $form ) {
+    public static function preview_replace_variables( $content, $form, $entry = null ) {
 
-        $entry = self::create_lead($form);
-
+        if ( $entry == null ) {
+            $entry = self::create_lead($form);  
+        }
+          
         // add filter that will handle getting temporary URLs for file uploads and post image fields (removed below)
         // beware, the GFFormsModel::create_lead() function also triggers the gform_merge_tag_filter at some point and will
         // result in an infinite loop if not called first above

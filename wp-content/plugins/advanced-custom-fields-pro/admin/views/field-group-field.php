@@ -1,7 +1,8 @@
 <?php 
 
-// global
-global $post;
+// vars
+$field = false;
+$i = 0;
 
 
 // extract args
@@ -46,7 +47,7 @@ $atts['class'] = str_replace('_', '-', $atts['class']);
 	<div class="handle">
 		<ul class="acf-hl acf-tbody">
 			<li class="li-field-order">
-				<span class="acf-icon acf-sortable-handle"><?php echo ($i + 1); ?></span>
+				<span class="acf-icon acf-sortable-handle" title="<?php _e('Drag to reorder','acf'); ?>"><?php echo ($i + 1); ?></span>
 				<pre class="pre-field-key"><?php echo $field['key']; ?></pre>
 			</li>
 			<li class="li-field-label">

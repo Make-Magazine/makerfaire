@@ -230,7 +230,7 @@ class Markdown_Parser {
 	var $predef_titles = array();
 
 
-	function Markdown_Parser() {
+	public function __construct() {
 	#
 	# Constructor function. Initialize appropriate member variables.
 	#
@@ -1682,7 +1682,7 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 	var $predef_abbr = array();
 
 
-	function MarkdownExtra_Parser() {
+	function __construct() {
 	#
 	# Constructor function. Initialize the parser object.
 	#
@@ -1708,7 +1708,7 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 			"doAbbreviations"    => 70,
 			);
 		
-		parent::Markdown_Parser();
+		parent::__construct();
 	}
 	
 	
@@ -2259,13 +2259,15 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 		if ($matches[3] == '-' && preg_match('{^- }', $matches[1]))
 			return $matches[0];
 		$level = $matches[3]{0} == '=' ? 1 : 2;
-		$attr  = $this->_doHeaders_attr($id =& $matches[2]);
+		$id =& $matches[2];
+		$attr  = $this->_doHeaders_attr($id);
 		$block = "<h$level$attr>".$this->runSpanGamut($matches[1])."</h$level>";
 		return "\n" . $this->hashBlock($block) . "\n\n";
 	}
 	function _doHeaders_callback_atx($matches) {
 		$level = strlen($matches[1]);
-		$attr  = $this->_doHeaders_attr($id =& $matches[3]);
+		$id =& $matches[3];
+		$attr  = $this->_doHeaders_attr( $id );
 		$block = "<h$level$attr>".$this->runSpanGamut($matches[2])."</h$level>";
 		return "\n" . $this->hashBlock($block) . "\n\n";
 	}

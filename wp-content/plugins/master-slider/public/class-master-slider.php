@@ -58,25 +58,25 @@ class Master_Slider {
 
 
   /**
-   * 
+   *
    * @return [type] [description]
    */
   private function includes() {
 
     // load common functionalities
     include_once( MSWP_AVERTA_INC_DIR . '/index.php' );
-      
+
 
     // Dashboard and Administrative Functionality
     if ( is_admin() ) {
 
-      // Load AJAX spesific codes on demand 
+      // Load AJAX spesific codes on demand
       if ( defined('DOING_AJAX') && DOING_AJAX ){
         include_once( MSWP_AVERTA_ADMIN_DIR . '/includes/classes/class-msp-admin-ajax.php');
         include_once( MSWP_AVERTA_ADMIN_DIR . '/includes/msp-admin-functions.php');
       }
-      
-      // Load admin spesific codes 
+
+      // Load admin spesific codes
       else {
         $this->admin = include( MSWP_AVERTA_ADMIN_DIR . '/class-master-slider-admin.php' );
       }
@@ -92,7 +92,7 @@ class Master_Slider {
 
   /**
    * Init Masterslider when WordPress Initialises.
-   *  
+   *
    * @return void
    */
   public function init(){
@@ -100,8 +100,12 @@ class Master_Slider {
     // Before init action
     do_action( 'before_masterslider_init' );
 
-    // Load plugin text domain
-    $this->load_plugin_textdomain();
+    // @Deprecate WP Version 5.0
+    global $wp_version;
+    if ( version_compare( $wp_version, '4.6', '<' ) ) {
+        // Load plugin text domain
+        $this->load_plugin_textdomain();
+    }
 
     // Init action
     do_action( 'masterslider_init' );
@@ -121,7 +125,7 @@ class Master_Slider {
     if ( null == self::$instance ) {
       self::$instance = new self;
     }
-    
+
     return self::$instance;
   }
 
@@ -136,7 +140,7 @@ class Master_Slider {
    *                                       activated on an individual blog.
    */
   public static function activate( $network_wide ) {
-    
+
     if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 
       if ( $network_wide  ) {
@@ -159,7 +163,7 @@ class Master_Slider {
     } else {
       self::single_activate();
     }
-    
+
   }
 
   /**
@@ -273,11 +277,11 @@ class Master_Slider {
       $roles = array( 'administrator', 'editor' );
 
       foreach ( $roles as $role ) {
-        if( ! $role = get_role( $role ) ) 
+        if( ! $role = get_role( $role ) )
           continue;
-        $role->add_cap( 'access_masterslider'  ); 
-        $role->add_cap( 'publish_masterslider' ); 
-        $role->add_cap( 'delete_masterslider'  ); 
+        $role->add_cap( 'access_masterslider'  );
+        $role->add_cap( 'publish_masterslider' );
+        $role->add_cap( 'delete_masterslider'  );
         $role->add_cap( 'create_masterslider'  );
         $role->add_cap( 'export_masterslider'  );
         $role->add_cap( 'duplicate_masterslider'  );
@@ -294,7 +298,7 @@ class Master_Slider {
    * @since    1.0.0
    */
   public static function set_default_options( $force_update = false ){
-    
+
   }
 
 
@@ -323,29 +327,29 @@ class Master_Slider {
 
 endif;
 
-function MSP(){ return Master_Slider::get_instance(); } 
+function MSP(){ return Master_Slider::get_instance(); }
 MSP();
 
 
 class MSP_AttachmentFields {
-  
+
     private $fields = array();
-    
+
   function __construct($fields = null) {
     if(isset($fields) && is_array($fields))
       $this->$fields = $fields;
   }
-    
+
     public function add($field){
         if(is_array($field))
             $this->fields[] = $field;
     }
-    
+
     public function init(){
         add_filter( 'attachment_fields_to_edit', array( $this, 'addFields'  ), 11, 2 );
         add_filter( 'attachment_fields_to_save', array( $this, 'saveFields' ), 11, 2 );
     }
-    
+
     public function addFields( $form_fields, $post ){
 
         $form_fields['image_rating'] = array(
@@ -364,7 +368,7 @@ class MSP_AttachmentFields {
 
         return $form_fields;
     }
-    
+
     public function saveFields($post, $attachment) {
         return $post;
     }

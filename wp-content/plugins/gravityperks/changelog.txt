@@ -1,6 +1,23 @@
 
 # Changelog
 
+## 1.2.18
+
+    - Fixed fatal error introduced in 1.2.17
+
+## 1.2.17
+
+    - Fixed PHP7 warnings with Markdown class.
+
+## 1.2.16
+
+    - Fixed strict standards notice for GravityPerks::register_perk_activation_hooks() being called statically.
+    - Updated adminOnly check to use object notation rather than gwar()
+
+## 1.2.15
+
+    - Fixed notice that occurs when 3rd party plugins return an invalid form object or a bad form ID is provided to the GF shortcode
+
 ## 1.2.14
 
     - Added support for activation hooks for perks

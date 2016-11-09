@@ -1,0 +1,536 @@
+
+.sumome-plugin-main .statistics-container {
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display:none;
+}
+.sumome-plugin-main .statistics-inner-container {
+
+}
+.sumome-plugin-main .statistics {
+  min-height: 100px;
+  background-color: #f0f3f5;
+  max-width: 960px;
+  margin: 0px auto;
+  word-wrap: normal;
+  -ms-word-wrap: normal;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+  width: auto;
+  line-height: initial;
+  font-style: initial;
+  font-weight: initial;
+  border-collapse: collapse;
+  border-spacing: 0;
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+  quotes: none;
+  border: none;
+  border: initial;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+  /* copied stats styles */
+  /*background-color: #f0f3f5;*/
+  border-radius: 5px;
+  margin-bottom: 20px;
+  padding: 20px 20px 0;
+}
+.sumome-plugin-main .statistics:before,
+.sumome-plugin-main .statistics:after {
+  content: "";
+  content: none;
+}
+.sumome-plugin-main .statistics div, .sumome-plugin-main .statistics span, .sumome-plugin-main .statistics applet, .sumome-plugin-main .statistics object, .sumome-plugin-main .statistics iframe,
+.sumome-plugin-main .statistics h1, .sumome-plugin-main .statistics h2, .sumome-plugin-main .statistics h3, .sumome-plugin-main .statistics h4, .sumome-plugin-main .statistics h5, .sumome-plugin-main .statistics h6, .sumome-plugin-main .statistics p, .sumome-plugin-main .statistics blockquote, .sumome-plugin-main .statistics pre,
+.sumome-plugin-main .statistics a, .sumome-plugin-main .statistics abbr, .sumome-plugin-main .statistics acronym, .sumome-plugin-main .statistics address, .sumome-plugin-main .statistics big, .sumome-plugin-main .statistics cite, .sumome-plugin-main .statistics code,
+.sumome-plugin-main .statistics del, .sumome-plugin-main .statistics dfn, .sumome-plugin-main .statistics em, .sumome-plugin-main .statistics img, .sumome-plugin-main .statistics ins, .sumome-plugin-main .statistics kbd, .sumome-plugin-main .statistics q, .sumome-plugin-main .statistics s, .sumome-plugin-main .statistics samp,
+.sumome-plugin-main .statistics small, .sumome-plugin-main .statistics strike, .sumome-plugin-main .statistics strong, .sumome-plugin-main .statistics sub, .sumome-plugin-main .statistics sup, .sumome-plugin-main .statistics tt, .sumome-plugin-main .statistics var,
+.sumome-plugin-main .statistics b, .sumome-plugin-main .statistics u, .sumome-plugin-main .statistics i, .sumome-plugin-main .statistics center,
+.sumome-plugin-main .statistics dl, .sumome-plugin-main .statistics dt, .sumome-plugin-main .statistics dd, .sumome-plugin-main .statistics ol, .sumome-plugin-main .statistics ul, .sumome-plugin-main .statistics li,
+.sumome-plugin-main .statistics fieldset, .sumome-plugin-main .statistics form, .sumome-plugin-main .statistics label, .sumome-plugin-main .statistics legend,
+.sumome-plugin-main .statistics table, .sumome-plugin-main .statistics caption, .sumome-plugin-main .statistics tbody, .sumome-plugin-main .statistics tfoot, .sumome-plugin-main .statistics thead, .sumome-plugin-main .statistics tr, .sumome-plugin-main .statistics th, .sumome-plugin-main .statistics td,
+.sumome-plugin-main .statistics article, .sumome-plugin-main .statistics aside, .sumome-plugin-main .statistics canvas, .sumome-plugin-main .statistics details, .sumome-plugin-main .statistics embed,
+.sumome-plugin-main .statistics figure, .sumome-plugin-main .statistics figcaption, .sumome-plugin-main .statistics footer, .sumome-plugin-main .statistics header, .sumome-plugin-main .statistics hgroup,
+.sumome-plugin-main .statistics menu, .sumome-plugin-main .statistics nav, .sumome-plugin-main .statistics output, .sumome-plugin-main .statistics ruby, .sumome-plugin-main .statistics section, .sumome-plugin-main .statistics summary,
+.sumome-plugin-main .statistics time, .sumome-plugin-main .statistics mark, .sumome-plugin-main .statistics audio, .sumome-plugin-main .statistics video {
+  word-wrap: normal;
+  -ms-word-wrap: normal;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+  line-height: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+  opacity: 1;
+  color: inherit;
+  border: initial;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+.sumome-plugin-main .statistics div {
+  width: auto;
+  float: none;
+}
+.sumome-plugin-main .statistics table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.sumome-plugin-main .statistics caption,
+.sumome-plugin-main .statistics th,
+.sumome-plugin-main .statistics td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+.sumome-plugin-main .statistics q,
+.sumome-plugin-main .statistics blockquote {
+  quotes: none;
+}
+.sumome-plugin-main .statistics q:before,
+.sumome-plugin-main .statistics q:after,
+.sumome-plugin-main .statistics blockquote:before,
+.sumome-plugin-main .statistics blockquote:after {
+  content: "";
+  content: none;
+}
+.sumome-plugin-main .statistics img {
+  width: auto;
+}
+.sumome-plugin-main .statistics a img {
+  border: none;
+}
+.sumome-plugin-main .statistics input[type=text], .statistics input[type=password],
+.sumome-plugin-main .statistics input[type=radio], .statistics input[type=checkbox],
+.sumome-plugin-main .statistics textarea {
+  border-width: 1px;
+  outline: 0;
+  border-color: black;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  max-width: initial;
+  max-height: initial;
+  min-width: initial;
+  min-height: initial;
+  line-height: initial;
+  position: static;
+  -webkit-border-radius: 3px 3px;
+  -moz-border-radius: 3px / 3px;
+  border-radius: 3px / 3px;
+}
+.sumome-plugin-main .statistics input[type=text]:focus,
+.sumome-plugin-main .statistics input[type=password]:focus,
+.sumome-plugin-main .statistics input[type=radio]:focus,
+.sumome-plugin-main .statistics input[type=checkbox]:focus,
+.sumome-plugin-main .statistics textarea:focus {
+  outline: 0;
+}
+.sumome-plugin-main .statistics input[type=radio],
+.sumome-plugin-main .statistics input[type=checkbox] {
+  max-width: initial;
+  max-height: initial;
+  min-width: initial;
+  min-height: initial;
+  position: static;
+  display: inline-block;
+}
+.sumome-plugin-main .statistics select {
+  border-color: black;
+  outline: 0;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  max-width: initial;
+  max-height: initial;
+  min-width: initial;
+  min-height: initial;
+  position: static;
+  -webkit-border-radius: 3px 3px;
+  -moz-border-radius: 3px / 3px;
+  border-radius: 3px / 3px;
+}
+.sumome-plugin-main .statistics select:focus {
+  outline: 0;
+}
+.sumome-plugin-main .statistics button {
+  border: initial;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+.sumome-plugin-main .statistics address:before, .sumome-plugin-main .statistics address:after,
+.sumome-plugin-main .statistics article:before, .sumome-plugin-main .statistics article:after,
+.sumome-plugin-main .statistics aside:before, .sumome-plugin-main .statistics aside:after,
+.sumome-plugin-main .statistics audio:before, .sumome-plugin-main .statistics audio:after,
+.sumome-plugin-main .statistics blockquote:before, .sumome-plugin-main .statistics blockquote:after,
+.sumome-plugin-main .statistics canvas:before, .sumome-plugin-main .statistics canvas:after,
+.sumome-plugin-main .statistics dd:before, .sumome-plugin-main .statistics dd:after,
+.sumome-plugin-main .statistics div:before, .sumome-plugin-main .statistics div:after,
+.sumome-plugin-main .statistics dl:before, .sumome-plugin-main .statistics dl:after,
+.sumome-plugin-main .statistics fieldset:before, .sumome-plugin-main .statistics fieldset:after,
+.sumome-plugin-main .statistics figcaption:before, .sumome-plugin-main .statistics figcaption:after,
+.sumome-plugin-main .statistics figure:before, .sumome-plugin-main .statistics figure:after,
+.sumome-plugin-main .statistics footer:before, .sumome-plugin-main .statistics footer:after,
+.sumome-plugin-main .statistics form:before, .sumome-plugin-main .statistics form:after,
+.sumome-plugin-main .statistics header:before, .sumome-plugin-main .statistics header:after,
+.sumome-plugin-main .statistics hr:before, .sumome-plugin-main .statistics hr:after,
+.sumome-plugin-main .statistics main:before, .sumome-plugin-main .statistics main:after,
+.sumome-plugin-main .statistics output:before, .sumome-plugin-main .statistics output:after,
+.sumome-plugin-main .statistics pre:before, .sumome-plugin-main .statistics pre:after,
+.sumome-plugin-main .statistics section:before, .sumome-plugin-main .statistics section:after,
+.sumome-plugin-main .statistics table:before, .sumome-plugin-main .statistics table:after,
+.sumome-plugin-main .statistics tfoot:before, .sumome-plugin-main .statistics tfoot:after,
+.sumome-plugin-main .statistics video:before, .sumome-plugin-main .statistics video:after {
+  content: none;
+}
+.sumome-plugin-main .statistics a {
+  text-decoration: none;
+}
+.sumome-plugin-main .statistics h4 {
+  font-weight: 700;
+}
+.sumome-plugin-main .statistics .statsEmpty {
+  padding-bottom: 20px;
+}
+.sumome-plugin-main .statistics .center {
+  display: block;
+  margin: 0 auto;
+}
+.sumome-plugin-main .statistics .article,
+.sumome-plugin-main .statistics .articleLink {
+  display: table-cell;
+}
+.sumome-plugin-main .statistics .article {
+  vertical-align: middle;
+}
+.sumome-plugin-main .statistics > table.row {
+  width: 100%;
+}
+.sumome-plugin-main .statistics > table.row .wrapper {
+  display: inline-block;
+  vertical-align: top;
+  /*width: 100%;*/
+  min-width: 280px;
+  width: 19.8%;
+}
+.sumome-plugin-main .statistics > table.row .wrapper table.four.columns {
+  margin-bottom: 20px;
+  width: 100%;
+}
+.sumome-plugin-main .statistics > table.row .wrapper.last {
+  margin-right: 0;
+}
+.sumome-plugin-main .statistics > table.row .statTable td {
+  padding-bottom: 4px;
+  vertical-align: top;
+}
+.sumome-plugin-main .statistics > table.row:last-child,
+.sumome-plugin-main .statistics > table.row:last-child .wrapper {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  margin: 0px 10px;
+}
+.sumome-plugin-main .statistics h1 {
+  font-size: 38px;
+  line-height: 38px;
+  text-align: center;
+  color: #ffffff;
+  padding-top: 8px;
+  padding-bottom: 6px;
+}
+.sumome-plugin-main .statistics h2 {
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 500;
+  padding-top: 14px;
+  text-align: center;
+  color: #ffffff;
+}
+.sumome-plugin-main .statistics h3 {
+  font-size: 32px;
+  line-height: 40px;
+  text-align: center;
+  color: #ffffff;
+  padding-bottom: 8px;
+}
+.sumome-plugin-main .statistics h4 {
+  font-size: 12px;
+  line-height: 12px;
+  font-weight: 700;
+  padding-top: 10px;
+  padding-bottom: 6px;
+  text-align: center;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+.sumome-plugin-main .statistics h5 {
+  font-size: 28px;
+  line-height: 28px;
+  letter-spacing: -3px;
+  text-align: center;
+  color: #495259;
+}
+.sumome-plugin-main .statistics h6 {
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 700;
+  padding-top: 8px;
+  padding-bottom: 4px;
+  text-align: center;
+  color: #495259;
+  text-transform: uppercase;
+}
+.sumome-plugin-main .statistics p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 12px;
+  letter-spacing: -1px;
+  color: #495259;
+}
+.sumome-plugin-main .statistics p.date {
+  font-size: 18px;
+  font-weight: 400;
+  padding-top: 6px;
+  text-align: center;
+  letter-spacing: 0;
+  color: #ffffff;
+  line-height: 22px;
+}
+.sumome-plugin-main .statistics .proText {
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 26px;
+  text-align: center;
+  letter-spacing: 0px;
+}
+.sumome-plugin-main .statistics .proContainer {
+  height: auto;
+  background: #6c62c5;
+  padding: 9px 10px 8px 10px;
+  border-radius: 5px;
+}
+.sumome-plugin-main .statistics a:visited {
+  color: #ffffff !important;
+}
+.sumome-plugin-main .statistics .small-button {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: none;
+  margin-bottom: 5px;
+}
+.sumome-plugin-main .statistics .article {
+  height: auto;
+  font-size: 23px;
+  line-height: 28px;
+  background: #6c62c5;
+  padding: 30px 14px;
+  border-radius: 5px;
+  text-align: center;
+  color: #ffffff !important;
+  height: 233px;
+}
+.sumome-plugin-main .statistics .article:hover {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+.sumome-plugin-main .statistics .appTitle {
+  height: 28px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.sumome-plugin-main .statistics .titlePadding {
+  padding-left: 20px;
+}
+.sumome-plugin-main .statistics .statTable {
+  border-radius: 4px;
+  width: 280px;
+  background-color: #fff;
+}
+.sumome-plugin-main .statistics .negativeNumber {
+  font-size: 17px;
+  color: #f33f13;
+  text-align: center;
+  padding-top: 4px;
+  padding-bottom: 6px;
+}
+.sumome-plugin-main .statistics .positiveNumber {
+  font-size: 17px;
+  color: #56c92b;
+  text-align: center;
+  padding-top: 4px;
+  padding-bottom: 6px;
+}
+.sumome-plugin-main .statistics .neutralNumber {
+  font-size: 11px;
+  color: #ffffff;
+  background-color: #a4a9ac;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+.sumome-plugin-main .statistics .graphLeft {
+  padding-left: 10px;
+  letter-spacing: 0;
+  height: 12px;
+  text-align: left;
+}
+.sumome-plugin-main .statistics p {
+  margin-bottom: 0px;
+}
+.sumome-plugin-main .statistics .graphBar {
+  height: 10px;
+  border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+}
+.sumome-plugin-main .statistics .graphBlank {
+  padding-top: 10px;
+  letter-spacing: 0;
+}
+.sumome-plugin-main .statistics .graphDivider {
+  padding: 0 10px 6px 10px !important;
+  padding-bottom: 6px !important;
+}
+.sumome-plugin-main .statistics .grayLine {
+  height: 1px;
+  width: 100%;
+  background: #c2dced;
+  margin-bottom: 4px;
+  font-size: 0px;
+}
+.sumome-plugin-main .statistics .graphNumberRight {
+  font-weight: 700;
+  letter-spacing: 0;
+  padding-left: 4px;
+  padding-right: 10px;
+  text-align: right;
+  float: right;
+}
+.sumome-plugin-main .statistics .totalNumber {
+  text-align: center;
+  padding-top: 3px;
+  padding-bottom: 7px;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats {
+  position: relative !important;
+  top: initial;
+  left: initial;
+  padding: 20px 0 0 20px;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats .articleLink .article {
+  height: 233px;
+}
+.sumome-plugin-main .statistics h3.headline {
+  color: #000000;
+  text-align: left;
+  font-size: 18px;
+  line-height: 28px;
+  padding-bottom: 20px;
+  text-align: center;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats > table.row .wrapper {
+  margin-right: 20px;
+  width: calc(100% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-2 > table.row .wrapper {
+  width: calc(50% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-3 > table.row .wrapper {
+  width: calc(33.333333333% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-4 > table.row .wrapper {
+  width: calc(25% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-5 > table.row .wrapper {
+  width: calc(20% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-6 > table.row .wrapper {
+  width: calc(16.666666666% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-7 > table.row .wrapper {
+  width: calc(14.285714285% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-8 > table.row .wrapper {
+  width: calc(12.5% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-9 > table.row .wrapper {
+  width: calc(12.5% - 20px) !important;
+}
+.sumome-plugin-main .statistics.sumome-dashboard-stats.columns-10 > table.row .wrapper {
+  width: calc(11.111111111% - 20px) !important;
+}
+
+.sumome-plugin-main .statistics-search {
+  padding: 0px;
+  width:960px;
+  margin:0px auto;
+  border-radius-top-right: 5px;
+  border-radius-top-left: 5px;
+}
+.sumome-plugin-main .statistics-search .sumome-switch input {
+  margin: 0px !important;
+}
+.sumome-plugin-main .statistics-search .sumome-switch label {
+  margin-bottom: 16px !important;
+}
+.sumome-plugin-main .statistics-search select {
+  margin: 0 0 16px 0 !important;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-date-select-wrapper {
+  background-color: #f0f3f5;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-date-select-wrapper select,
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-date-select-wrapper input {
+  margin: 0 0 0 0 !important;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-date-select-wrapper input.sumome-dashboard-end-date {
+  cursor: default;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-date-select-wrapper select.sumome-dashboard-date-select {
+  background-color: #ffffff;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-date-select-wrapper .sumome-columns {
+  padding-left: 20px;
+  padding-right: 20px;
+  width: auto;
+  display: inline-block;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-date-select-wrapper .sumome-button {
+  margin-bottom: 0px;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-date-select-wrapper div.sumome-small-12 {
+  margin-top: 20px;
+}
+.sumome-plugin-main .statistics-search .sumome-row-header span {
+  cursor: default;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-wrapper {
+  background-color: #f0f3f5;
+  width: 100% !important;
+}
+.sumome-plugin-main .statistics-search .sumome-dashboard-stats-wrapper div.row {
+  display: inline;
+  width: 100%;
+}
+

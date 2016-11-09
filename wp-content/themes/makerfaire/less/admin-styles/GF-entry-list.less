@@ -1,0 +1,132 @@
+.forms_page_gf_entries {
+  #entry_list_form {
+    .subsubsub {
+      .unread, .star, .gv_approved, .gv_disapproved {
+        display: none;
+      }
+    }
+  }
+  h1 span.gf_admin_page_formid {
+    background-color: #D54E21;
+    float: left;
+  }
+
+  .column-field_id-22 {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  #gf_form_toolbar {
+    padding-top: 0;
+
+  }
+
+  ul#gf_form_toolbar_links {
+    display: block;
+  }
+  #faire_nav {
+    /* Top Navigation - Locations */
+    ul li {
+      border-right: thin solid lightgrey;
+      z-index: 999;
+      a {
+        padding: 5px 0;
+      }
+      /* Faires */
+      ul li {
+        width: 260px;
+        padding: 0;
+      }
+    }
+    ul li:last-child {
+     /* border: none; */
+    }
+    /* basic nav styling */
+    li {
+      float: left;
+      position: relative;
+      list-style: none;
+      margin: 0;
+    }
+    a {
+      margin-right: 15px;
+      display: block;
+      text-decoration: none;
+      color: #000;
+    }
+    ul ul {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      visibility: hidden;
+      opacity: 0;
+    }
+    ul ul ul {
+      left: 100%;
+      top: 0;
+    }
+    li:hover,
+    li:hover li {
+      background: #ddd;
+    }
+    li li:hover,
+    li li:hover li {
+      background: #bbb;
+    }
+    li li li:hover {
+      background: #999;
+    }
+    li:hover > ul {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* drop down arrow styling */
+    li a:after {
+      content: '\f107';
+     font-family: FontAwesome;
+     font-weight: normal;
+     font-style: normal;
+     margin:0px 0px 0px 10px;
+     text-decoration:none;
+    }
+    li li a:after {
+      content: '\f105';
+     font-family: FontAwesome;
+     font-weight: normal;
+     font-style: normal;
+     margin:0px 0px 0px 10px;
+     text-decoration:none;
+    }
+    li > a:only-child:after {
+      content: '';
+      border: 0;
+    }
+  }
+  li.open > a > span{
+     border-top: 0px !important;
+     border-bottom: 4px dashed !important;
+  }
+
+  /* Entry List filters */
+  #entry_filters {
+    float: right;
+  }
+  .title {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  .appliedFilters {
+    padding: 10px;
+    border: 1px solid #ddd;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .07);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .07);
+    background-color: #fff;
+    color: #32373c;
+    outline: 0;
+    -webkit-transition: .05s border-color ease-in-out;
+    transition: .05s border-color ease-in-out;
+    tr {
+      border: 1px solid #ddd;
+    }
+  }
+}

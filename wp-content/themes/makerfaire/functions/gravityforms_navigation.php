@@ -42,101 +42,11 @@ add_action( 'wp_before_admin_bar_render', 'remove_admin_bar_links' );
 add_filter('gform_addon_navigation', 'add_menu_item');
 
 function add_menu_item($menu_items) {
-  $menu_items[] = array("name" => "mf_entries", "label" => "Entries", "callback" => "entries_list", "permission" => "edit_posts");
   $menu_items[] = array("name" => "mf_fsp", "label" => "Download FSP", "callback" => "build_pdf_fsp", "permission" => "edit_posts");
   $menu_items[] = array("name" => "mf_gsp", "label" => "Download GSP", "callback" => "build_pdf_gsp", "permission" => "edit_posts");
   $menu_items[] = array("name" => "mf_fairesign", "label" => "Faire Signs", "callback" => "build_faire_signs", "permission" => "edit_posts");
 
   return $menu_items;
-}
-
-//add new entries list for navigation
-function entries_list() {
-  $view = rgget('view');
-  $lead_id = rgget('lid');
-
-  if ($view == 'mfentry' && ( rgget('lid') || !rgblank(rgget('pos')) )) {
-    //require_once( GFCommon::get_base_path() . '/entry_detail.php' );
-    include_once TEMPLATEPATH . '/classes/entry_detail_makerfaire.php';
-    GFEntryDetail::lead_detail_page();
-  } else if ($view == 'entries' || empty($view)) {
-    include_once TEMPLATEPATH . '/classes/entry_list_makerfaire.php';
-    if (!class_exists('GFEntryList')) {
-      require_once(GFCommon::get_base_path() . "/entry_list.php");
-    }
-    GFEntryList::all_leads_page();
-  } else {
-    $form_id = rgget('id');
-    do_action('gform_entries_view', $view, $form_id, $lead_id);
-  }
-}
-
-//remove old entries navigation
-function remove_menu_links() {
-  global $submenu;
-  if (isset($submenu['gf_edit_forms'])) {
-    foreach ($submenu['gf_edit_forms'] as $key => $item) {
-      if (in_array('gf_entries', $item)) {
-        unset($submenu['gf_edit_forms'][$key]);
-      }
-    }
-  }
-}
-
-add_action('admin_menu', 'remove_menu_links', 9999);
-
-/**
- * Redirect gravity form admin pages to the new makerfaire specific admin pages
- */
-function redirect_gf_admin_pages() {
-  global $pagenow;
-
-  /* Check current admin page. */
-  if ($pagenow == 'admin.php') {
-    if (isset($_GET['page']) && $_GET['page'] == 'gf_entries') {
-      //include any parameters in the return URL
-      $returnURL = '';
-      foreach ($_GET as $key => $param) {
-        if ($key != 'page') {
-          if ($key == 'view' && $param == 'entry')
-            $param = 'mfentry';
-          $returnURL .= '&' . $key . '=' . $param;
-        }
-      }
-      wp_redirect(admin_url('admin.php') . "?page=mf_entries" . $returnURL);
-      exit;
-    }
-  }
-}
-
-add_action('admin_menu', 'redirect_gf_admin_pages');
-
-
-/* Styles to adjust admin screen go here */
-add_action('admin_head', 'remove_gf_form_toolbar');
-
-function remove_gf_form_toolbar() {
-  ?>
-  <style>
-    #gf_form_toolbar li.gf_form_toolbar_editor {
-      display:none;
-    }
-    #gf_form_toolbar li.gf_form_toolbar_settings {
-      display:none;
-    }
-    #notifications_container {
-      /*display:none;*/
-    }
-
-    #entry_form div#submitdiv {
-      display:none;
-    }
-    .detail-view-print {
-      margin-bottom: 20px;
-    }
-  </style>
-  <?php
-
 }
 
 add_action('admin_bar_menu', 'toolbar_link_to_mypage', 999);
@@ -339,7 +249,7 @@ function buildFaireDrop($wp_admin_bar, $faire_id = null) {
         'id' => 'mf_admin_parent_' . $row->faire,
         'title' => $row->faire_name . ' (' . $row->count . ')',
         'meta' => array('class' => 'my-toolbar-page'),
-        'href' => admin_url('admin.php') . '?page=mf_entries&faire=' . $row->faire,
+        'href' => admin_url('admin.php') . '?page=gf_entries&faire=' . $row->faire,
         'parent' => 'mf_admin_parent'
     );
     $wp_admin_bar->add_node($args);
@@ -353,7 +263,7 @@ function buildFaireDrop($wp_admin_bar, $faire_id = null) {
                     ORDER BY FIELD(form_id, " . $row->form_ids . ")";
 
     foreach ($wpdb->get_results($formSQL) as $formRow) {
-      $adminURL = admin_url('admin.php') . "?page=mf_entries&view=entries&id=" . $formRow->form_id;
+      $adminURL = admin_url('admin.php') . "?page=gf_entries&view=entries&id=" . $formRow->form_id;
 
       $args = array(
           'id' => 'mf_admin_child_' . $formRow->form_id,

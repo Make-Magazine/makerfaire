@@ -265,7 +265,7 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
 					style="width: 90%; height: 140px;" cols=""
 					rows=""></textarea>
 					<?php
-						$note_button = '<input type="submit" name="add_note_sidebar" value="' . __( 'Add Note', 'gravityforms' ) . '" class="button" style="width:auto;padding-bottom:2px;" onclick="jQuery(\'#action\').val(\'add_note_sidebar\');"/>';
+						$note_button = '<input type="button" name="add_note_sidebar" value="' . __( 'Add Note', 'gravityforms' ) . '" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\');"/>';
 						echo apply_filters( 'gform_addnote_button', $note_button );	?>
 			</td>
 		</tr>
@@ -364,7 +364,7 @@ function gf_collapsible_sections($form, $lead){
 
     $return = array();
     foreach($results as $addData){
-      $outputURL = admin_url( 'admin.php' ) . "?page=mf_entries&view=mfentry&id=".$addData->form_id . '&lid='.$addData->lead_id;
+      $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=mfentry&id=".$addData->form_id . '&lid='.$addData->lead_id;
       $addEntriesCnt++;
       $addEntries .=  '<tr>';
 

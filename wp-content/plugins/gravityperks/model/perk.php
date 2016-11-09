@@ -878,7 +878,7 @@ class GP_Perk {
         $input_name = 'input_' . str_replace('.', '_', $input_id);
         $value = gwpost( $input_name );
 
-        if( empty( $value ) && gwar($field, "adminOnly") && !IS_ADMIN){
+        if( empty( $value ) && $field->adminOnly && ! IS_ADMIN ) {
             $value = GFFormsModel::get_default_value($field, $input_id);
         }
 
