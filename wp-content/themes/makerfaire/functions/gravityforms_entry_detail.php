@@ -65,18 +65,17 @@ function mf_entry_detail_head($form, $lead) {
  * This is where our custom post action handing occurs
  */
 
-add_action( 'wp_ajax_MFupdate-entry', 'mf_admin_MFupdate_entry' );
+add_action( 'wp_ajax_mf-update-entry', 'mf_admin_MFupdate_entry' );
 function mf_admin_MFupdate_entry(){
   //Get the current action
   $mfAction = $_POST['mfAction'];
 
   //Only process if there was a gravity forms action
   if (!empty($mfAction)){
-    $entry_info_entry_id=$_POST['entry_info_entry_id'];
-    $lead = GFAPI::get_entry( $entry_info_entry_id );
-    $form_id    =  isset($lead['form_id']) ? $lead['form_id'] : 0;
-    $form = RGFormsModel::get_form_meta($form_id);
-    $entry_status =  isset($lead['303']) ? $lead['303'] : '';
+    $entry_id     = $_POST['entry_id'];
+    $lead         = GFAPI::get_entry( $entry_id );
+    $form_id      = isset($lead['form_id']) ? $lead['form_id'] : 0;
+    $form         = RGFormsModel::get_form_meta($form_id);
 
     switch ($mfAction ) {
       // Entry Management Update
@@ -84,12 +83,12 @@ function mf_admin_MFupdate_entry(){
         set_entry_status_content($lead,$form);
         break;
       case 'update_entry_status' :
-        set_entry_status($lead,$form);
+        set_entry_status($lead,$form,$entry_id);
         break;
       case 'update_ticket_code' :
-        $ticket_code = $_POST['entry_ticket_code'];
-        $entry_info_entry_id=$_POST['entry_info_entry_id'];
-        mf_update_entry_field($entry_info_entry_id,'308',$ticket_code);
+        $ticket_code          = $_POST['entry_ticket_code'];
+        $entry_id  = $_POST['entry_info_entry_id'];
+        mf_update_entry_field($entry_id,'308',$ticket_code);
         break;
       case 'update_entry_schedule' :
         set_entry_schedule($lead,$form);
@@ -119,7 +118,7 @@ function mf_admin_MFupdate_entry(){
             GFCommon::send_notification( $notification, $form, $lead );
           }
         }
-        mf_add_note( $entry_info_entry_id, 'Confirmation Letter sent');
+        mf_add_note( $entry_id, 'Confirmation Letter sent');
         break;
       //Sidebar Note Add
       case 'add_note_sidebar' :
@@ -134,10 +133,108 @@ function mf_admin_MFupdate_entry(){
     }
 
     //update the change report with any changes
-    GVupdate_changeRpt($form,$entry_info_entry_id,$lead);
+    GVupdate_changeRpt($form,$entry_id,$lead);
     // Return the original form which is required for the filter we're including for our custom processing.
     return $form;
 
   }
 }
 
+/* Modify Set Entry Status */
+function set_entry_status($lead,$form,$entry_id){
+	$acceptance_status_change  = $_POST['entry_info_status_change'];
+  $acceptance_current_status = isset($lead['303']) ? $lead['303'] : '';
+
+	$is_acceptance_status_changed = (strcmp($acceptance_current_status, $acceptance_status_change) != 0);
+
+	if (!empty($entry_id)){
+		if (!empty($acceptance_status_change)){
+      //Update Field for Acceptance Status
+      mf_update_entry_field($entry_id,'303',$acceptance_status_change);
+
+      //Reload entry to get any changes in status
+      $lead['303'] = $acceptance_status_change;
+
+			//Handle acceptance status changes
+			if ($is_acceptance_status_changed ){
+        if($acceptance_status_change == 'Accepted'){
+          /*
+           * If the status is accepted, trigger a cron job to generate EventBrite Tickets.
+           * The cron job will trigger action sidebar_entry_update
+           */
+          wp_schedule_single_event(time() + 1,'sidebar_entry_update', array($entry_id));
+          global $wpdb;
+          //lock space size attribute if set
+          $wpdb->get_results('update `wp_rmt_entry_attributes` set `lockBit` = 1 where attribute_id =  2 and entry_id='. $lead['id']);
+        }
+
+				//Create a note of the status change.
+				$results = mf_add_note($entry_id, 'EntryID:'.$entry_id.' status changed to '.$acceptance_status_change);
+
+				//Handle notifications for acceptance
+				$notifications_to_send = GFCommon::get_notifications_to_send( 'mf_acceptance_status_changed', $form, $lead );
+        foreach ( $notifications_to_send as $notification ) {
+          if($notification['isActive']){
+            GFCommon::send_notification( $notification, $form, $lead );
+          }
+				}
+
+        //format Entry information
+        $entryData = GFRMTHELPER::gravityforms_format_record($lead,$form);
+
+        //update maker table information
+        GFRMTHELPER::updateMakerTable($entryData);
+			}
+		}
+	}
+}
+
+/**
+ * Updates a single field of an entry.
+ *
+ * @since  1.9
+ * @access public
+ * @static
+ *
+ * @param int    $entry_id The ID of the Entry object
+ * @param string $input_id The id of the input to be updated. For single input fields such as text, paragraph, website, drop down etc... this will be the same as the field ID.
+ *                         For multi input fields such as name, address, checkboxes, etc... the input id will be in the format {FIELD_ID}.{INPUT NUMBER}. ( i.e. "1.3" )
+ *                         The $input_id can be obtained by inspecting the key for the specified field in the $entry object.
+ *
+ * @param mixed  $value    The value to which the field should be set
+ *
+ * @return bool Whether the entry property was updated successfully
+ */
+ function mf_update_entry_field( $entry_id, $input_id, $value ) {
+	global $wpdb;
+
+	$entry = GFAPI::get_entry( $entry_id );
+	if ( is_wp_error( $entry ) ) {
+		return $entry;
+	}
+
+	$form = GFAPI::get_form( $entry['form_id'] );
+	if ( ! $form ) {
+		return false;
+	}
+
+	$field = GFFormsModel::get_field( $form, $input_id );
+
+	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id=%d AND  CAST(field_number AS CHAR) ='%s'", $entry_id, $input_id ) );
+
+	$result = true;
+	if ( ! isset( $entry[ $input_id ] ) || $entry[ $input_id ] != $value ){
+		$result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
+	}
+
+	return $result;
+}
+
+/*
+ * Add a single note
+ */
+function mf_add_note($leadid,$notetext){
+	global $current_user;
+	$user_data = get_userdata( $current_user->ID );
+	RGFormsModel::add_note( $leadid, $current_user->ID, $user_data->display_name, $notetext );
+}

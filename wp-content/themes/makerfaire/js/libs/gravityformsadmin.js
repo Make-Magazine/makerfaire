@@ -502,20 +502,20 @@ function hiddenTicket(accessCode) {
  */
 
   function updateMgmt(action) {
-    //TBD determine what data is needed for each action
-
-    alert('you clicked me for '+action);
     var entry_id = jQuery("input[name=entry_info_entry_id]").val();
     var data = {
-      'action': 'MFupdate-entry',
+      'action': 'mf-update-entry',
       'mfAction': action,
-      'entry_id': entry_id,
-      'rating': this.value,
-      'rating_user': userSettings.uid
+      'entry_id': entry_id
     };
-    /*
+
+    //add additional data for each action
+    if(action=='update_entry_status')
+      data.entry_info_status_change = jQuery("select[name=entry_info_status_change]").val();
+
     jQuery.post(ajaxurl, data, function(response) {
       //jQuery('#updateMSG').text(response);
       alert('data updated');
-    });*/
+    });
+
   }
