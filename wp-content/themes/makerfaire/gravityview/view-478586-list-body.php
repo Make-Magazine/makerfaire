@@ -197,7 +197,7 @@ get_header();
               <?php if(isset($tasks) && count($tasks['toDo']) > 0 || count($tasks['done'])>0) {?>
                 <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover"
                   data-toggle="popover">
-                  Tasks
+                  TASKS
                   <span class="fa-stack fa-lg">
                     <i class="fa fa-circle"></i>
                     <span class="notification-counter"><?php echo count($tasks['toDo']);?></span>
