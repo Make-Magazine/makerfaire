@@ -211,6 +211,11 @@ class GravityView_Edit_Entry_Render {
         self::$original_form = $gravityview_view->getForm();
         $this->form = $gravityview_view->getForm();
         $this->form_id = $gravityview_view->getFormId();
+
+        // MF custom code to set form by entry instead of by the z
+        $this->form_id = $this->entry['form_id'];
+        $this->original_form = $this->form = GFAPI::get_form($this->form_id);
+
         $this->view_id = $gravityview_view->getViewId();
 
         self::$nonce_key = GravityView_Edit_Entry::get_nonce_key( $this->view_id, $this->form_id, $this->entry['id'] );
@@ -323,7 +328,7 @@ class GravityView_Edit_Entry_Render {
 
 	        // Delete the values for hidden inputs
 	        $this->unset_hidden_field_values();
-            
+
             $this->entry['date_created'] = $date_created;
 
             // Process calculation fields
@@ -514,7 +519,7 @@ class GravityView_Edit_Entry_Render {
      *
      * @uses GFFormsModel::media_handle_upload
      * @uses set_post_thumbnail
-     * 
+     *
      * @param array $form GF Form array
      * @param GF_Field $field GF Field
      * @param string $field_id Numeric ID of the field
@@ -800,6 +805,8 @@ class GravityView_Edit_Entry_Render {
      * @return void
      */
     private function after_update() {
+      /* update has occurred, reset the validation form as this has admin only fields set to false */
+      unset($this->form_after_validation);
 
         do_action( 'gform_after_update_entry', $this->form, $this->entry['id'], self::$original_entry );
         do_action( "gform_after_update_entry_{$this->form['id']}", $this->form, $this->entry['id'] );
@@ -955,7 +962,7 @@ class GravityView_Edit_Entry_Render {
         ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
         $html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
-
+        $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
         ob_get_clean();
 
 	    remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
@@ -1177,7 +1184,7 @@ class GravityView_Edit_Entry_Render {
             foreach ( (array)$field->inputs as $input ) {
 
                 $input_id = strval( $input['id'] );
-                
+
                 if ( isset( $this->entry[ $input_id ] ) && ! gv_empty( $this->entry[ $input_id ], false, false ) ) {
                     $field_value[ $input_id ] =  'post_category' === $field->type ? GFCommon::format_post_category( $this->entry[ $input_id ], true ) : $this->entry[ $input_id ];
                     $allow_pre_populated = false;
@@ -1584,7 +1591,7 @@ class GravityView_Edit_Entry_Render {
 
         return $form;
     }
-    
+
 
     /**
      * Filter area fields based on specified conditions
