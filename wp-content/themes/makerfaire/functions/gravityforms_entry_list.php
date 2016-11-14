@@ -66,9 +66,10 @@ function mf_custom_toolbar( $menu_items, $form_id ) {
         }
       } ?>
     </span><?php
-  } 
+  }
   return $menu_items;
 }
+
 function return_MF_navigation(){
   global $wpdb;
   //pull from the faire table - faire, faire location, faire name, and faire form ID's
