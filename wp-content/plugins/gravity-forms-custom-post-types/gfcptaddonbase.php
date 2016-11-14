@@ -44,7 +44,9 @@ if (!class_exists('GFCPTAddonBase')) {
 
 			add_filter("gform_preview_styles", array(&$this, 'preview_print_styles'), 10, 2);
 
-			add_filter( 'gform_entry_field_value', array( $this, 'display_term_name_on_entry_detail' ), 10, 4 );
+			add_filter( 'gform_entry_field_value',   array( $this, 'display_term_name_on_entry_detail' ), 10, 4 );
+			add_filter( 'gform_entries_field_value', array( $this, 'display_term_name_on_entry_list' ), 10, 4 );
+			add_filter( 'gform_export_field_value',  array( $this, 'display_term_name_on_export' ), 10, 4 );
 
 		}
 
@@ -510,14 +512,36 @@ if (!class_exists('GFCPTAddonBase')) {
 
 		}
 
-		function display_term_name_on_entry_detail( $value, $field, $entry, $form ) {
+		function get_term_name( $term_id, $field ) {
 
-			if( $field->populateTaxonomy && ! empty( $value ) ) {
-				$term = get_term( (int) $value, $field->populateTaxonomy );
-				$value = $term->name;
+			$return = $term_id;
+
+			if( $field->populateTaxonomy && ! empty( $term_id ) ) {
+				$term = get_term( (int) $term_id, $field->populateTaxonomy );
+				if( ! is_wp_error( $term ) ) {
+					$return = $term->name;
+				}
+			}
+
+			return $return;
+		}
+
+		function display_term_name_on_entry_detail( $value, $field, $entry, $form ) {
+			return $this->get_term_name( $value, $field );
+		}
+
+		function display_term_name_on_entry_list( $value, $form_id, $field_id ) {
+
+			if( is_numeric( $field_id ) ) {
+				$field = GFFormsModel::get_field( GFAPI::get_form( $form_id ), $field_id );
+				$value = $this->get_term_name( $value, $field );
 			}
 
 			return $value;
+		}
+
+		function display_term_name_on_export( $value, $form_id, $field_id ) {
+			return $this->display_term_name_on_entry_list( $value, $form_id, $field_id );
 		}
 
 	}

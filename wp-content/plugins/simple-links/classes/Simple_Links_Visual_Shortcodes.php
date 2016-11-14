@@ -15,7 +15,7 @@
  *        would become a bear to convert everyone over to simplelinks.
  *
  * @todo Customize the "edit" Modal that pops up when clicking edit on the shortcode.
- *       Currently using the default WP embed which works but verbiage does not make sense. Even better, if I can make this open into the shortcode gerneration form, that would be really sweet
+ *       Currently using the default WP embed which works but verbiage does not make sense. Even better, if I can make this open into the shortcode generation form, that would be really sweet
  *
  * @author Mat Lipe
  * @since  11/25/2015

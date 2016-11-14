@@ -138,7 +138,7 @@ class SimpleLinksTheLink {
 			esc_attr( $this->getData( 'web_address' ) ),
 			esc_attr( $this->getData( 'target' ) ),
 			esc_attr( strip_tags( $this->getData( 'description' ) ) ),
-			esc_attr( empty( $this->meta_data[ 'link_target_nofollow' ][ 0 ] ) ? '' : 'rel="nofollow"' ),
+			empty( $this->meta_data[ 'link_target_nofollow' ][ 0 ] ) ? '' : 'rel="nofollow"',
 			$image,
 			$this->link->post_title
 		);

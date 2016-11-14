@@ -127,7 +127,7 @@ class Simple_Links_Settings {
 
         add_meta_box(
                 'sl-visual-shortcodes',
-                __( 'Visual Shortcodes BETA', 'simple-links' ),
+                __( 'Visual Shortcodes', 'simple-links' ),
                 array( $this, 'visual_shortcodes' ),
                 'sl-settings-boxes',
                 'advanced',
@@ -164,12 +164,6 @@ class Simple_Links_Settings {
             <?php _e( 'These settings will effect the visual shortcodes', 'simple-links' ); ?>
         </h4>
         <ul>
-            <li style="color: red; font-weight: bold">
-                <?php _e( 'This feature is still in beta. Please use with caution and report any issues using the ', 'simple-links' ); ?>
-                <a href="https://matlipe.com/contact/">
-                    <?php _e( 'contact form', 'simple-links' ); ?>
-                </a>
-            </li>
             <li>
                 <?php _e( 'Enable Visual Shortcodes', 'simple-links' ); ?>:
                 <input type="checkbox" name="<?php echo Simple_Links_Visual_Shortcodes::SETTING; ?>" value="1" <?php checked( $enabled ); ?>>

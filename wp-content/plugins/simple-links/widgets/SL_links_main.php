@@ -4,7 +4,7 @@
  * Creates the main widget for the simple links plugin
  *
  * @author mat lipe
- * @uses   registerd by init
+ * @uses   registered by init
  * @uses   the output can be filtered by using the 'simple_links_widget_output' filter
  *         *   apply_filters( 'simple_links_widget_output', $output, $args );
  *         the $args can be filtered by using the 'simple_links_widget_args' filter
@@ -77,8 +77,7 @@ class SL_links_main extends WP_Widget {
 	 *
 	 * @since 1.7.0
 	 *
-	 * @uses  add to the filter like so add_filter('simple_links_widget_links_object', array( 'SL_links_main',
-	 *        'twoColumns'), 1, 4 );
+	 * @uses  add to the filter like so add_filter('simple_links_widget_links_object', array( 'SL_links_main', 'twoColumns'), 1, 4 );
 	 * @uses  currently just hanging out for future use
 	 *
 	 * @TODO  integrate this into core options

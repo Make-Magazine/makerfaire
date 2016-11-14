@@ -1063,7 +1063,7 @@ class GFEntryDetail {
 		$class .= ' gf_entry_pagination_link';
 		$class .= $pos !== false ? ' gf_entry_pagination_link_active' : ' gf_entry_pagination_link_inactive';
 
-		return '<a ' . $href . ' class="' . $class . '" title="' . esc_attr( $label ) . '"><i class="fa-lg ' . esc_attr( $icon ) . '"></i></a>';
+		return '<a ' . $href . ' class="' . $class . '" title="' . esc_attr( $label ) . '"><i class="fa-lg ' . esc_attr( $icon ) . '"></i></a></li>';
 	}
 
 	public static function payment_details_box( $entry, $form ) {
@@ -1388,7 +1388,7 @@ class GFEntryDetail {
 		if ( $allow_display_empty_fields ) {
 			$display_empty_fields = rgget( 'gf_display_empty_fields', $_COOKIE );
 		}
-
+		
 		if ( ! $lead ) {
 			$lead = self::get_current_entry();
 		}

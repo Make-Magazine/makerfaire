@@ -311,6 +311,13 @@ class simple_links_admin {
 				) );
 
 				$screen->add_help_tab( array(
+					'id'      => 'visual-shortcodes',
+					'title'   => __( 'Visual Shortcodes', 'simple-links' ),
+					'content' => '<p><strong>' . __( 'Turn visual shortcodes on  for all simple-links shortcodes', 'simple-links' ) . '</strong><br>
+                        ' . __( 'Turning this feature on will make any use of the [simple-links] shortcode will display the actual list of links within the post/page content editor. You may still use the shortcode form to create the initial shortcode. After that you may edit the shortcode by hovering over the list of links and clicking the edit icon. Currently editing the shortcode does not give you the full editing form, but instead uses the basic "Insert From Url" field in the WordPress embed form.', 'simple-links' ) . '.</p>',
+				) );
+
+				$screen->add_help_tab( array(
 					'id'      => 'crockpot-recipe',
 					'title'   => 'Crock-Pot Recipe',
 					'content' => '<p>For folks out the like me that rarely have time to leave the computer and cook, a Crock-Pot meal is a great way

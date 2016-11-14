@@ -77,6 +77,10 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 
 == Changelog ==
 
+= 3.1.7 =
+
+* Added support for displaying term label on Entry List and Export views (rather than term ID; does not work with Checkbox and Multi-select on Entry List).
+
 = 3.1.6 =
 
 * Added support for displaying term label on Entry Detail view (rather than term ID)
