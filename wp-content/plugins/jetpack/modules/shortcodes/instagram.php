@@ -8,7 +8,7 @@
  * @return (string) the filtered or the original content
  **/
 function jetpack_instagram_embed_reversal( $content ) {
-	if ( false === stripos( $content, 'instagram.com' ) ) {
+	if ( ! is_string( $content ) || false === stripos( $content, 'instagram.com' ) ) {
 		return $content;
 	}
 
@@ -73,7 +73,7 @@ function jetpack_instagram_handler( $matches, $atts, $url ) {
 
 	if ( is_feed() ) {
 		$media_url = sprintf( 'http://instagr.am/p/%s/media/?size=l', $matches[4] );
-		return sprintf( '<a href="%s" title="%s"><img src="%s" alt="Instagram Photo" /></a>', esc_url( $url ), esc_attr__( 'View on Instagram', 'jetpack' ), esc_url( $media_url ) );
+		return sprintf( '<a href="%s" title="%s" target="_blank"><img src="%s" alt="Instagram Photo" /></a>', esc_url( $url ), esc_attr__( 'View on Instagram', 'jetpack' ), esc_url( $media_url ) );
 	}
 
 	$atts = shortcode_atts( array(

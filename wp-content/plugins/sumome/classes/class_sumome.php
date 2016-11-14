@@ -16,6 +16,7 @@ class WP_Plugin_SumoMe {
   }
 
   public function activate_SumoMe_plugin() {
+    WP_Plugin_SumoMe::upgrade_manual_sumome_installation();
     WP_Plugin_SumoMe::ajax_sumome_show_dashboard_overlay();
   }
 
@@ -108,6 +109,40 @@ class WP_Plugin_SumoMe {
   private function blacklisted_site_id($site_id) {
     $blacklist=array("8ce3f35797bf87c1644e567db13d9b3c2d9422027c10a7874b3446c9283c9aad");
     if ($site_id && in_array($site_id, $blacklist)) return true;
+  }
+
+
+  public function upgrade_manual_sumome_installation() {
+    $headerFile=get_template_directory()."/header.php";
+
+    if (file_exists($headerFile) && is_writable($headerFile)) {
+      $header_contents = file_get_contents($headerFile);
+
+      $pattern='/<script\\b[^>]*>(.*?)<\\/script>/i';
+      preg_match($pattern, $header_contents, $manuallyInsertedScriptTag);
+
+      if ($manuallyInsertedScriptTag) {
+        $dom = new \DOMDocument('1.0', 'utf-8');
+        $dom->loadHTML($manuallyInsertedScriptTag[0]);
+        $nodes = $dom->getElementsByTagName('script');
+        $manuallyInsertedScriptTagSiteID=$nodes->item(0)->getAttribute('data-sumo-site-id');
+      }
+
+      if (trim($manuallyInsertedScriptTagSiteID)!="") {
+
+        //save users site ID from the manually inserted tag
+        update_option('sumome_site_id', $manuallyInsertedScriptTagSiteID);
+
+        $sumomeScriptTag='<script src="//load.sumome.com/" data-sumo-site-id="' . esc_attr($manuallyInsertedScriptTagSiteID) . '" async="async"></script>';
+        $modified_header = str_replace($sumomeScriptTag,"",$header_contents);
+
+        //make backup of header.php just in case
+        copy($headerFile,get_template_directory()."/header.bak[".date('Y-m-d_H.i.s')."].php");
+
+        //remove manually inserted SumoMe tag
+        if (trim($modified_header)) file_put_contents($headerFile,$modified_header);
+      }
+    }
   }
 
 

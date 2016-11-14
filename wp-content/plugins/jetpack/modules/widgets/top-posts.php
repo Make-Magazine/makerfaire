@@ -36,12 +36,13 @@ class Jetpack_Top_Posts_Widget extends WP_Widget {
 			apply_filters( 'jetpack_widget_name', __( 'Top Posts &amp; Pages', 'jetpack' ) ),
 			array(
 				'description' => __( 'Shows your most viewed posts and pages.', 'jetpack' ),
+				'customize_selective_refresh' => true,
 			)
 		);
 
 		$this->default_title =  __( 'Top Posts &amp; Pages', 'jetpack' );
 
-		if ( is_active_widget( false, false, $this->id_base ) ) {
+		if ( is_active_widget( false, false, $this->id_base ) || is_customize_preview() ) {
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_style' ) );
 		}
 
@@ -244,8 +245,8 @@ class Jetpack_Top_Posts_Widget extends WP_Widget {
 		if ( 'text' != $display ) {
 			$get_image_options = array(
 				'fallback_to_avatars' => true,
-				/** This filter is documented in modules/shortcodes/audio.php */
-				'gravatar_default' => apply_filters( 'jetpack_static_url', set_url_scheme( 'http://en.wordpress.com/i/logo/white-gray-80.png' ) ),
+				/** This filter is documented in modules/stats.php */
+				'gravatar_default' => apply_filters( 'jetpack_static_url', set_url_scheme( 'https://en.wordpress.com/i/logo/white-gray-80.png' ) ),
 			);
 			if ( 'grid' == $display ) {
 				$get_image_options['avatar_size'] = 200;
@@ -295,7 +296,7 @@ class Jetpack_Top_Posts_Widget extends WP_Widget {
 		if ( ! $posts ) {
 			if ( current_user_can( 'edit_theme_options' ) ) {
 				echo '<p>' . sprintf(
-					__( 'There are no posts to display. <a href="%s">Want more traffic?</a>', 'jetpack' ),
+					__( 'There are no posts to display. <a href="%s" target="_blank">Want more traffic?</a>', 'jetpack' ),
 					'http://en.support.wordpress.com/getting-more-site-traffic/'
 				) . '</p>';
 			}
@@ -307,7 +308,6 @@ class Jetpack_Top_Posts_Widget extends WP_Widget {
 		switch ( $display ) {
 		case 'list' :
 		case 'grid' :
-			wp_enqueue_style( 'widget-grid-and-list' );
 			foreach ( $posts as &$post ) {
 				$image = Jetpack_PostImages::get_image( $post['post_id'], array( 'fallback_to_avatars' => true ) );
 				$post['image'] = $image['src'];
@@ -449,6 +449,9 @@ class Jetpack_Top_Posts_Widget extends WP_Widget {
 
 		/**
 		 * Filter the number of days used to calculate Top Posts for the Top Posts widget.
+		 * We do not recommend accessing more than 10 days of results at one.
+		 * When more than 10 days of results are accessed at once, results should be cached via the WordPress transients API.
+		 * Querying for -1 days will give results for an infinite number of days.
 		 *
 		 * @module widgets
 		 *
@@ -459,12 +462,9 @@ class Jetpack_Top_Posts_Widget extends WP_Widget {
 		 */
 		$days = (int) apply_filters( 'jetpack_top_posts_days', 2, $args );
 
-		if ( $days < 1 ) {
+		/** Handling situations where the number of days makes no sense - allows for unlimited days where $days = -1 */
+		if ( 0 == $days || false == $days ) {
 			$days = 2;
-		}
-
-		if ( $days > 10 ) {
-			$days = 10;
 		}
 
 		$post_view_posts = stats_get_csv( 'postviews', array( 'days' => absint( $days ), 'limit' => 11 ) );
@@ -510,12 +510,23 @@ class Jetpack_Top_Posts_Widget extends WP_Widget {
 		foreach ( (array) $post_ids as $post_id ) {
 			$post = get_post( $post_id );
 
-			if ( ! $post )
+			if ( ! $post ) {
 				continue;
+			}
+
+			/**
+			 * Attachment pages use the 'inherit' post status by default.
+			 * To be able to remove attachment pages from private and password protect posts,
+			 * we need to replace their post status by the parent post' status.
+			 */
+			if ( 'inherit' == $post->post_status && 'attachment' == $post->post_type ) {
+				$post->post_status = get_post_status( $post_id );
+			}
 
 			// hide private and password protected posts
-			if ( 'publish' != $post->post_status || ! empty( $post->post_password ) || empty( $post->ID ) )
+			if ( 'publish' != $post->post_status || ! empty( $post->post_password ) ) {
 				continue;
+			}
 
 			// Both get HTML stripped etc on display
 			if ( empty( $post->post_title ) ) {

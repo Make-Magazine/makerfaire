@@ -3,7 +3,7 @@ Contributors: SumoMe
 Tags: MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, popup, exit intent, growth, subscribers, twitter, facebook share, social plugin,  social sharing, subscription, email form, share,  sharing, social , social media buttons , links, click to tweet ,  analytics , newsletter,  widget,lightbox, analytics, newsletter, newsletter, Facebook, floating social buttons, google plus, Image sharing,  pinterest plugin, pintrest, share image,   sharebar, sharing, social bookmarking, social plugin, sms, tweet button,  heat map, heatmaps, twitter share, contact form, scroll box, content analytics, inbound marketing, mailing list, share buttons, welcome mat, landing page
 Requires at least: 3.0.1
 Tested up to: 4.6.1
-Stable tag: 1.21
+Stable tag: 1.22
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -353,6 +353,9 @@ Why you should encourage Twitter sharing
 = 1.21 =
 * Updating versions.
 
+= 1.22 =
+* Upgrading users that inserted the SumoMe tag manually.
+
 == Upgrade Notice ==
 
 = 1.04 =
@@ -416,3 +419,6 @@ Why you should encourage Twitter sharing
 
 = 1.21 =
 * Updating versions.
+
+= 1.22 =
+* Upgrading users that inserted the SumoMe tag manually.

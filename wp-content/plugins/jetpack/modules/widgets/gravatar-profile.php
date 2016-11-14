@@ -22,12 +22,17 @@ class Jetpack_Gravatar_Profile_Widget extends WP_Widget {
 			apply_filters( 'jetpack_widget_name', __( 'Gravatar Profile', 'jetpack' ) ),
 			array(
 				'classname'   => 'widget-grofile grofile',
-				'description' => __( 'Display a mini version of your Gravatar Profile', 'jetpack' )
+				'description' => __( 'Display a mini version of your Gravatar Profile', 'jetpack' ),
+				'customize_selective_refresh' => true,
 			)
 		);
 
 		if ( is_admin() ) {
 			add_action( 'admin_footer-widgets.php', array( $this, 'admin_script' ) );
+		}
+
+		if ( is_customize_preview() ) {
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		}
 	}
 
@@ -69,19 +74,8 @@ class Jetpack_Gravatar_Profile_Widget extends WP_Widget {
 			) );
 			$gravatar_url = add_query_arg( 's', 320, $profile['thumbnailUrl'] ); // the default grav returned by grofiles is super small
 
-			wp_enqueue_style(
-				'gravatar-profile-widget',
-				plugins_url( 'gravatar-profile.css', __FILE__ ),
-				array(),
-				'20120711'
-			);
-
-			wp_enqueue_style(
-				'gravatar-card-services',
-				is_ssl() ? 'https://secure.gravatar.com/css/services.css' : 'http://s.gravatar.com/css/services.css',
-				array(),
-				defined( 'GROFILES__CACHE_BUSTER' ) ? GROFILES__CACHE_BUSTER : gmdate( 'YW' )
-			);
+			// Enqueue front end assets.
+			$this->enqueue_scripts();
 
 			?>
 			<img src="<?php echo esc_url( $gravatar_url ); ?>" class="grofile-thumbnail no-grav" alt="<?php echo esc_attr( $profile['displayName'] ); ?>" />
@@ -121,7 +115,7 @@ class Jetpack_Gravatar_Profile_Widget extends WP_Widget {
 			<?php
 
 			/**
-			 * Fires when an item is displayed on the frontend.
+			 * Fires when an item is displayed on the front end.
 			 *
 			 * Can be used to track stats about the number of displays for a specific item
 			 *
@@ -221,6 +215,27 @@ class Jetpack_Gravatar_Profile_Widget extends WP_Widget {
 		<?php
 	}
 
+	/**
+	 * Enqueue CSS and JavaScript.
+	 *
+	 * @since 4.0.0
+	 */
+	function enqueue_scripts() {
+		wp_enqueue_style(
+			'gravatar-profile-widget',
+			plugins_url( 'gravatar-profile.css', __FILE__ ),
+			array(),
+			'20120711'
+		);
+
+		wp_enqueue_style(
+			'gravatar-card-services',
+			'https://secure.gravatar.com/css/services.css',
+			array(),
+			defined( 'GROFILES__CACHE_BUSTER' ) ? GROFILES__CACHE_BUSTER : gmdate( 'YW' )
+		);
+	}
+
 	function form( $instance ) {
 		$title               = isset( $instance['title'] ) ? $instance['title'] : '';
 		$email               = isset( $instance['email'] ) ? $instance['email'] : '';
@@ -282,7 +297,7 @@ class Jetpack_Gravatar_Profile_Widget extends WP_Widget {
 			</label>
 		</p>
 
-		<p><a href="<?php echo esc_url( $profile_url ); ?>" target="_blank" title="<?php esc_attr_e( 'Opens in new window', 'jetpack' ); ?>"><?php esc_html_e( 'Edit Your Profile', 'jetpack' )?></a> | <a href="http://gravatar.com" target="_blank" title="<?php esc_attr_e( 'Opens in new window', 'jetpack' ); ?>"><?php esc_html_e( "What's a Gravatar?", 'jetpack' ); ?></a></p>
+		<p><a href="<?php echo esc_url( $profile_url ); ?>" target="_blank" title="<?php esc_attr_e( 'Opens in new window', 'jetpack' ); ?>"><?php esc_html_e( 'Edit Your Profile', 'jetpack' )?></a> | <a href="https://gravatar.com" target="_blank" title="<?php esc_attr_e( 'Opens in new window', 'jetpack' ); ?>"><?php esc_html_e( "What's a Gravatar?", 'jetpack' ); ?></a></p>
 
 		<?php
 	}
