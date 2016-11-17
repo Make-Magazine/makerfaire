@@ -34,3 +34,34 @@ function change_email_to($notification, $form, $entry) {
   }
   return $notification;
 }
+
+//override for the wp email function
+  add_filter('wp_mail', 'change_email_for_wp', 10, 2);
+  function change_email_for_wp($args) {
+    if (Jetpack::is_staging_site()) {
+      $notification = array(
+        'to'          => 'kate@makermedia.com,alicia@makermedia.com',
+        'bcc'         => '',
+        'from'        => 'staging@makermedia.com',
+        'subject'     => $args['subject'],
+        'message'     => $args['message'],
+        'headers'     => $args['headers'],
+        'toType'      => 'email',
+        'attachments' => $args['attachments'],
+      );
+    }elseif (Jetpack::is_development_mode()) {
+      if(defined('MF_OVERRITE_EMAIL')){
+        $notification = array(
+          'to'          => MF_OVERRITE_EMAIL,
+          'bcc'         => '',
+          'from'        => 'staging@makermedia.com',
+          'subject'     => $args['subject'],
+          'message'     => $args['message'],
+          'headers'     => $args['headers'],
+          'toType'      => 'email',
+          'attachments' => $args['attachments'],
+        );
+      }
+    }
+    return($notification);
+  }
