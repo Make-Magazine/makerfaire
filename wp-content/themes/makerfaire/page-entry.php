@@ -68,6 +68,7 @@ if(isset($entry->errors)){
   $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 }
 
+//set sharing card data
 if(is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted'){
   $sharing_cards->project_short = $project_short;
   $sharing_cards->project_photo = $project_photo;
@@ -138,6 +139,14 @@ if(is_array($entry) &&
     isset($entry['status']) && $entry['status']=='active' &&
     isset($entry[303]) && $entry[303]=='Accepted'){
   $validEntry = true; //display the entry
+}
+
+//check flags
+foreach($entry as $key=>$field ) {
+  $pos = strpos($key, '304.');
+  if ($pos !== false) {
+    if($field=='no-public-view')  $validEntry = false;
+  }
 }
 
 // Website button

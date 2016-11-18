@@ -206,10 +206,12 @@ function display_flags_prelim_locs($form, $lead) {
       // Create Update button for sidebar entry management
       $entry_sidebar_button = '<input type="button" name="update_management" value="Update Management" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_entry_management\');"/>';
       echo $entry_sidebar_button;
+      echo '<span style="padding:10px 5px;display:block;" class="upd_mgmt_msg"></span>';
       // Load flags and prelim location section
       mf_sidebar_entry_info( $form['id'], $lead );
       ?>
       <?php
+      echo '<span style="padding:10px 5px;display:block;" class="upd_mgmt_msg"></span>';
       // Create Update button for sidebar entry management
       echo $entry_sidebar_button;	?>
     </div>
@@ -556,41 +558,68 @@ function display_schedule($form_id,$lead,$section='sidebar'){
 
 /* This is where we run code on the entry info screen.  Logic for action handling goes here */
 function mf_sidebar_entry_info($form_id, $lead) {
-	// Load Fields to show on entry info
+  // Load Fields to show on entry info
 	$form = GFAPI::get_form($form_id);
-	$field302=RGFormsModel::get_field($form,'302');
-	$field303=RGFormsModel::get_field($form,'303');
-	$field304=RGFormsModel::get_field($form,'304');
-	$field307=RGFormsModel::get_field($form,'307');
 
-	echo ('<h4><label class="detail-label">Flags:</label></h4>');
-  if(is_array($field304['inputs'])){
-    foreach($field304['inputs'] as $choice){
-      $selected = '';
-      if (stripslashes($lead[$choice['id']]) == stripslashes($choice['label'])) $selected=' checked ';
-      echo('<input type="checkbox" '.$selected.' name="entry_info_flags_change[]" style="margin: 3px;" value="'.$choice['id'].'_'.$choice['label'].'" />'.$choice['label'].' <br />');
-    }
-  }
+  //flags
+  echo ('<h4><label class="detail-label">Flags:</label></h4>');
+  $field = RGFormsModel::get_field($form,'304');
+  $value   = RGFormsModel::get_lead_field_value( $lead, $field );
+  $fieldName = 'entry_info_flags_change';
+  echo mf_checkbox_display($field, $value, $form_id, $fieldName);
 
+
+  //preliminary locations
 	echo ('<h4><label class="detail-label">Preliminary Location:</label></h4>');
-  $locArray=array();
+  $field = RGFormsModel::get_field($form,'302');
+  $value   = RGFormsModel::get_lead_field_value( $lead, $field );
+  $fieldName = 'entry_info_location_change';
 
-  foreach($lead as $key=>$field){
-      if(strpos($key,'302')!== false){
-          $locArray[]=stripslashes($field);
-      }
-  }
-
-  if(is_array($field302['inputs'])){
-    foreach($field302['inputs'] as $choice){
-      $selected = '';
-                  if(in_array(stripslashes($choice['label']),$locArray)) $selected=' checked ';
-      //if (stripslashes($lead[$choice['id']]) == stripslashes($choice['label'])) $selected=' checked ';
-      echo('<input type="checkbox" '.$selected.' name="entry_info_location_change[]" style="margin: 3px;" value="'.$choice['id'].'_'.$choice['label'].'" />'.$choice['label'].' <br />');
-    }
-  }
+  echo mf_checkbox_display($field, $value, $form_id, $fieldName);
 
 	echo ('<textarea name="entry_location_comment" id="entry_location_comment" style="width: 100%; height: 50px; margin-bottom: 4px;" cols="" rows="">'.(isset($lead['307'])?$lead['307']:'').'</textarea>');
+}
+
+function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
+  $choices = '';
+  $is_entry_detail = $field->is_entry_detail();
+  $is_form_editor  = $field->is_form_editor();
+  if ( is_array( $field->choices ) ) {
+    $choice_number = 1;
+
+    foreach ( $field->choices as $choice ) {
+      if ( $choice_number % 10 == 0 ) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
+        $choice_number ++;
+      }
+
+      $input_id = $field->id . '.' . $choice_number;
+
+      if ( $is_entry_detail || $is_form_editor || $form_id == 0 ){
+        $id = $field->id . '_' . $choice_number ++;
+      } else {
+        $id = $form_id . '_' . $field->id . '_' . $choice_number ++;
+      }
+
+      if ( ! isset( $_GET['gf_token'] ) && empty( $_POST ) && rgar( $choice, 'isSelected' ) ) {
+        $checked = "checked='checked'";
+      } elseif ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, rgget( $input_id, $value ) ) ) {
+        $checked = "checked='checked'";
+      } elseif ( ! is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, $value ) ) {
+        $checked = "checked='checked'";
+      } else {
+        $checked = '';
+      }
+
+      $choice_value = $choice['value'];
+      if ( $field->enablePrice ) {
+        $price = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
+        $choice_value .= '|' . $price;
+      }
+      $choice_value  = esc_attr( $choice_value );
+
+      echo('<input type="checkbox" '.$checked.' name="entry_info_flags_change[]" style="margin: 3px;" value="'.$input_id.'_'.$choice_value.'" />'.$choice['text'].' <br />');
+    }
+  }
 }
 
 function mf_sidebar_disp_meta_field($form_id, $lead,$meta_key='') {

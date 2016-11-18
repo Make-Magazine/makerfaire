@@ -33,13 +33,12 @@ $sorting_criteria = array('key' => '151', 'direction' => 'ASC' );
 $paging_criteria  = array('offset' => $offset, 'page_size' => $page_size );
 
 //search by primary category
-//$search_criteria['field_filters'][] = array( '320' => '1', 'value' => $search_category);
 $search_criteria['status'] = 'active';
 $search_criteria['field_filters'][] = array( '321' => '1', 'value' => $search_category);
 $search_criteria['field_filters'][] = array( '303' => '1', 'value' => 'Accepted');
 
 $entries =  GFAPI::get_entries( $current_form_ids, $search_criteria, $sorting_criteria, $paging_criteria, $total_count);
-//var_dump($entries);
+
 $current_url = '/'.$f.'/meet-the-makers/topics/'.$topic_slug;
 
 // Load Categories
@@ -70,17 +69,28 @@ get_header(); ?>
 			<div class="clear"></div>
 			<div class="clear"></div>
 
-			<?php foreach ($entries as $entry) :
-			$project_name = isset($entry['151']) ? $entry['151']  : '';
-			$entry_id = isset($entry['id']) ? $entry['id']  : '';
-			?>
-			<hr>
-			<div class="row">
-				<div class="col-md-8">
-					<h3 class="nomargins maker-results"><a href="/maker/entry/<?php echo $entry_id; ?>"><?php echo $project_name;?></a></h3>
-				</div>
-			</div>
-			<?php endforeach;?>
+			<?php foreach ($entries as $entry) {
+        //check if entry marked for no public view
+        $validEntry = true;
+        foreach($entry as $key=>$field ) {
+          $pos = strpos($key, '304.');
+          if ($pos !== false) {
+            if($field=='no-public-view')  $validEntry = false;
+          }
+        }
+        if($validEntry) {
+          $project_name = isset($entry['151']) ? $entry['151']  : '';
+          $entry_id = isset($entry['id']) ? $entry['id']  : '';
+          ?>
+          <hr>
+          <div class="row">
+            <div class="col-md-8">
+              <h3 class="nomargins maker-results"><a href="/maker/entry/<?php echo $entry_id; ?>"><?php echo $project_name;?></a></h3>
+            </div>
+          </div>
+      <?php
+        }
+      }?>
 			<hr>
 
 			<?php

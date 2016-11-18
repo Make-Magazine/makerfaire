@@ -509,10 +509,13 @@ function hiddenTicket(accessCode) {
       'entry_id': entry_id
     };
 
+    var processing_icon = '<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>';
     //add additional data for each action
     if(action=='update_entry_status') {
       data.entry_info_status_change = jQuery("select[name=entry_info_status_change]").val();
     } else if(action=='update_entry_management') {
+      //set processing icon on the screen
+      jQuery(".upd_mgmt_msg").html(processing_icon);
       //preliminary location
       var entry_info_location_change=[];
       jQuery("[name='entry_info_location_change[]']:checked").each(function () {
@@ -580,6 +583,11 @@ function hiddenTicket(accessCode) {
     }
 
     jQuery.post(ajaxurl, data, function(response) {
-      location.reload();
+      if(action=='update_entry_management') {
+        window.setTimeout(function () {
+            jQuery(".upd_mgmt_msg").html('Data Updated');
+        }, 3000);
+      }
+      //location.reload();
     });
   }
