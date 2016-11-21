@@ -245,28 +245,39 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
         }
 				?>
 				<div style="float:left">
-				<?php foreach ( $emailtoaliases as $name => $email ) {
-					echo('<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" /><strong>'.$name.'</strong> <br />');
-					 } ?>
-					 </div>
-			   <div style="float:left">
-				<?php foreach ( $emailto1 as $name => $email ) {
-					echo('<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.'<br />');
-					 } ?>
-					 </div>
-			   <div style="float:left">
-				<?php foreach ( $emailto2 as $name => $email ) {
-					echo('<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.' <br />');
-					 } ?>
+          <?php
+          $output = '';
+          foreach ( $emailtoaliases as $name => $email ) {
+            $output .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" /><strong>'.$name.'</strong> <br />';
+					 }
+           echo $output;
+           ?>
 				</div>
-				</td>
-			<td style="vertical-align: top; padding: 10px;"><textarea
-					name="new_note_sidebar"
-					style="width: 90%; height: 140px;" cols=""
-					rows=""></textarea>
-					<?php
-						$note_button = '<input type="button" name="add_note_sidebar" value="' . __( 'Add Note', 'gravityforms' ) . '" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\');"/>';
-						echo apply_filters( 'gform_addnote_button', $note_button );	?>
+			  <div style="float:left">
+          <?php
+          $output = '';
+          foreach ( $emailto1 as $name => $email ) {
+            $output .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.'<br />';
+					}
+          echo $output;
+          ?>
+				</div>
+			  <div style="float:left">
+          <?php
+          $output = '';
+          foreach ( $emailto2 as $name => $email ) {
+            $output .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.' <br />';
+					}
+          echo $output;
+          ?>
+				</div>
+			</td>
+			<td style="vertical-align: top; padding: 10px;">
+        <textarea	name="new_note_sidebar"	style="width: 90%; height: 140px;" cols=""	rows=""></textarea>
+        <?php
+          $note_button = '<input type="button" name="add_note_sidebar" value="' . __( 'Add Note', 'gravityforms' ) . '" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\');"/>';
+          echo apply_filters( 'gform_addnote_button', $note_button );
+          echo '<span class="updMsg add_note_sidebarMsg"></span>'?>
 			</td>
 		</tr>
 	</tbody>

@@ -107,11 +107,10 @@ jQuery( document ).ready(function() {
 
   //update custom meta fields on change
   jQuery(" .metafield").change(function(){
-
     var meta_field = jQuery(this).attr('id');
 
     //set meta field status to a processing spinner
-    jQuery("#"+meta_field+'Status').html('<i class="fa fa-spinner fa-spin fa-2x"></i>');
+    jQuery("#"+meta_field+'Status').html('<i class="fa fa-spinner fa-spin"></i>');
 
     //update meta field on GF entry screen
     var entry_id = jQuery("input[name=entry_info_entry_id]").val();
@@ -502,6 +501,9 @@ function hiddenTicket(accessCode) {
  */
 
   function updateMgmt(action) {
+    //set the processing icon
+    jQuery("span."+action+'Msg').html('<i class="fa fa-spinner fa-spin"></i>');
+
     var entry_id = jQuery("input[name=entry_info_entry_id]").val();
     var data = {
       'action': 'mf-update-entry',
@@ -583,11 +585,12 @@ function hiddenTicket(accessCode) {
     }
 
     jQuery.post(ajaxurl, data, function(response) {
-      if(action=='update_entry_management') {
-        window.setTimeout(function () {
-            jQuery(".upd_mgmt_msg").html('Data Updated');
-        }, 3000);
+      if(response=='updated'){
+        //after update - set meta field status to success
+        jQuery("span."+action+'Msg').html('<i style="color:green" class="fa fa-check"></i>');
+      }else{
+        //after update - set meta field status to failed
+        jQuery("span."+action+'Msg').html('<i style="color:red" class="fa fa-times"></i>');
       }
-      //location.reload();
     });
   }
