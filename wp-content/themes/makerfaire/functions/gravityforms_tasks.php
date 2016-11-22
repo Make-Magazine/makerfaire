@@ -67,7 +67,7 @@ function processTasks( $entry, $form) {
 }
 
 // add task ID to form to be used to mark tasks as completed
-add_filter( 'gform_pre_validation', 'mf_add_taskid' );
+//add_filter( 'gform_pre_validation', 'mf_add_taskid' );
 add_filter( 'gform_pre_render',  'mf_add_taskid' );
 
 function mf_add_taskid( $form ) {
@@ -80,11 +80,11 @@ function mf_add_taskid( $form ) {
       'id'        => '9999',
       'label'     => 'Task ID',
       'type'      => 'text',
-      'adminOnly' => true,
       'defaultValue'     => $taskID
     );
 
     $field = GF_Fields::create( $props );
+    $field->cssClass = 'hidden';
     array_push( $form['fields'], $field );
   }
 	return $form;
