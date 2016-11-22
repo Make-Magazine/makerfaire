@@ -80,7 +80,7 @@ function mf_add_taskid( $form ) {
       'id'        => '9999',
       'label'     => 'Task ID',
       'type'      => 'text',
-      //'adminOnly' => true,
+      'adminOnly' => true,
       'defaultValue'     => $taskID
     );
 
