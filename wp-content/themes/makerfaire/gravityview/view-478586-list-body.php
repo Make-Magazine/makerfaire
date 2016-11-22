@@ -44,7 +44,7 @@ get_header();
 ?>
     <div class="settings-pop-btn pull-right">
       <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
-        Settings &amp; Help<i class="fa fa-cog"></i>
+        Settings &amp; Help<div class="toggle-popover fa fa-cog" data-toggle="popover"></div>
       </button>
       <div class="popover-content hidden">
         <div class="manage-entry-popover">
@@ -131,8 +131,9 @@ get_header();
               $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
               $url = str_replace('/view/', '/', $url);  //remove view slug from URL
               echo  '<span class="editLink">'
-                  . '  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>'
-                  . '  <a href="'. $url .'">Edit Entry</a>'
+                  . '  <a href="'. $url .'">'
+                  . '  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>'.
+                      'Edit Entry</a>'
                   . '</span>';
             }
             ?>
@@ -144,8 +145,10 @@ get_header();
 
             if($entryData['status']=='Accepted' && $disp_edit) { ?>
               <span class="editLink">
-                <i class="fa fa-eye" aria-hidden="true"></i>
-                <a href="<?php echo $viewEditLink;?>">View/Edit Public Information</a>
+                <a href="<?php echo $viewEditLink;?>">
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                  View/Edit Public Information
+                </a>
               </span>
               <?php
             } ?>
@@ -165,7 +168,8 @@ get_header();
               //only display if there are tickets and if the entry has been accepted
               if(!empty($entryData['ticketing']) && $entryData['status']=='Accepted'){ ?>
                 <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
-                  <span class="hideSmall">GET YOUR </span>ENTRY PASSES<i class="fa fa-ticket fa-lg" aria-hidden="true"></i>
+                  <span class="hideSmall">GET YOUR </span>ENTRY PASSES
+                  <div class="fa fa-ticket fa-lg toggle-popover" data-toggle="popover"></div>
                 </button>
                 <div class="popover-content hidden">
                   <?php
@@ -196,17 +200,15 @@ get_header();
               <!-- Tasks -->
               <?php if(isset($tasks) && count($tasks['toDo']) > 0 || count($tasks['done'])>0) {
                 ?>
-                <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover" data-toggle="popover">
-                  TASKS
+                <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover" data-toggle="popover">TASKS
                   <div class="notification-counter toggle-popover" data-toggle="popover"><?php echo count($tasks['toDo']);?></div>
                 </button>
                 <div class="popover-content hidden">
                   <div class="manage-entry-popover row">
                     <div class="manage-links">
-                      <!--<h4 class="tasks"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</h4>-->
                       <?php
                       foreach($tasks['toDo'] as $task) { ?>
-                      <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="todoTasks" style="color:red"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</span></a>
+                        <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="todoTasks" style="color:red"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</span></a>
                         <?php
                       }
                       ?>
@@ -225,8 +227,8 @@ get_header();
               <?php } ?>
 
               <!-- Manage Entry links -->
-              <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
-                MANAGE<i class="fa fa-cog fa-lg"></i>
+              <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">MANAGE
+                <div class="toggle-popover fa fa-cog fa-lg" data-toggle="popover"></div>
               </button>
               <div class="popover-content hidden">
                 <div class="manage-entry-popover row">
