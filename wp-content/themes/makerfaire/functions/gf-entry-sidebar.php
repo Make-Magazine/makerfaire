@@ -8,7 +8,7 @@ function add_sidebar_sections($form, $lead) {
   $sidebar .= display_entry_notes_box($form, $lead);  //returned
   $sidebar .= display_flags_prelim_locs($form, $lead); //returned
   $sidebar .= display_sched_loc_box($form, $lead);  //returned
-  $sidebar .= display_ticket_code_box($form, $lead);  //returned
+  //$sidebar .= display_ticket_code_box($form, $lead);  //returned
   $sidebar .= display_form_change_box($form, $lead);  //returned
   $sidebar .= display_dupCopy_entry_box($form, $lead); //returned
   $sidebar .= display_send_conf_box($form, $lead); //returned
@@ -80,8 +80,7 @@ function display_entry_info_box($form, $lead) {
         default :
           if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
             $return .= "<a class=\"submitdelete deletion\" onclick=\"jQuery('#action').val('trash'); jQuery('#entry_form').submit()\" href=\"#\">".
-                        __( 'Move to Trash', 'gravityforms' ) ."</a>".
-                        GFCommon::spam_enabled( $form['id'] ) ? '|' : '';
+                        __( 'Move to Trash', 'gravityforms' ) ."</a>". (GFCommon::spam_enabled( $form['id'] ) ? '|' : '');
           }
           if ( GFCommon::spam_enabled( $form['id'] ) ) {
             $return .= "<a class=\"submitdelete deletion\" onclick=\"jQuery('#action').val('spam'); jQuery('#entry_form').submit()\" href=\"#\">". __( 'Mark as Spam', 'gravityforms' ) ."</a>";
@@ -252,7 +251,7 @@ function display_form_change_box($form, $lead) {
   }
   $output .= '</select>';
   $output .= '<input type="button" name="change_form_id" value="Change Form" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'change_form_id\');"/><br />';
-
+  $output .= '<span class="updMsg change_form_idMsg"></span>';
   $output .=  '</div>';
 
   return $output;
@@ -281,11 +280,12 @@ function display_dupCopy_entry_box($form, $lead) {
 
 function display_send_conf_box($form, $lead) {
   return '<div class="postbox">
-    <div class="detail-view-print">
-      <!--button to trigger send confirmation letter event -->
-      <input type="button" name="send_conf_letter" value="Send Confirmation Letter" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'send_conf_letter\');"/>
-      <span class="updMsg send_conf_letterMsg"></span>
-    </div>';
+            <div class="detail-view-print">
+              <!--button to trigger send confirmation letter event -->
+              <input type="button" name="send_conf_letter" value="Send Confirmation Letter" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'send_conf_letter\');"/>
+              <span class="updMsg send_conf_letterMsg"></span>
+            </div>
+          </div>';
 }
 
 /* Notes Sidebar Grid Function */
@@ -298,13 +298,13 @@ function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = ''
   foreach ( $notes as $note ) {
     $count ++;
     $is_last = $count >= $notes_count ? true : false;
-    $return .= '<tr valign="top">';
+    $return .= '<tr valign="top" class="note'. $note->id .'">';
     if ( $is_editable && GFCommon::current_user_can_any( 'gravityforms_edit_entry_notes' ) ) {
       $return .= '<td class="check-column" scope="row" style="padding:9px 3px 0 0">
                     <input type="checkbox" value="'. $note->id .'" name="note[]" />
-          </td>';
+                  </td>';
     }
-    $return .= '<td class="entry-detail-note'. $is_last ? ' lastrow' : '' .'">';
+    $return .= '<td class="entry-detail-note'. ($is_last ? ' lastrow' : '') .'">';
     $class   = $note->note_type ? " gforms_note_{$note->note_type}" : '';
     $return .= '<div style="margin-top: 4px;">
                   <div class="note-avatar">'.apply_filters( 'gform_notes_avatar', get_avatar( $note->user_id, 48 ), $note ).
@@ -328,39 +328,10 @@ function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = ''
 
   if ( sizeof( $notes ) > 0 && $is_editable && GFCommon::current_user_can_any( 'gravityforms_edit_entry_notes' ) ) {
     $return .= '
-    <input type="button" name="delete_note_sidebar" value="Delete Selected Note(s)" class="button" style="width:100%;padding-bottom:2px;" onclick="updateMgmt(\'delete_note_sidebar\');">';
+    <input type="button" name="delete_note_sidebar" value="Delete Selected Note(s)" class="button" style="width:100%;padding-bottom:2px;" onclick="updateMgmt(\'delete_note_sidebar\');">
+    <span class="updMsg delete_note_sidebarMsg"></span>';
   }
   return $return;
-}
-
-function add_note_sidebar($lead, $form){
-	global $current_user;
-
-	$user_data = get_userdata( $current_user->ID );
-	$project_name = $lead['151'];
-	$email_to     = $_POST['gentry_email_notes_to_sidebar'];
-
-	$email_note_info = '';
-
-	//emailing notes if configured
-	if ( !empty($email_to) ) {
-		GFCommon::log_debug( 'GFEntryDetail::lead_detail_page(): Preparing to email entry notes.' );
-		$email_to      = $_POST['gentry_email_notes_to_sidebar'];
-		$email_from    = $current_user->user_email;
-		$email_subject = stripslashes( 'Response Required Maker Application: '.$lead['id'].' '.$project_name);
-		$entry_url = get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=gf_entries&view=mfentry&id=' . $form['id'] . '&lid=' . rgar( $lead, 'id' );
-		$body = stripslashes( $_POST['new_note_sidebar'] ). '<br /><br />Please reply in entry:<a href="'.$entry_url.'">'.$entry_url.'</a>';
-		$headers = "From: \"$email_from\" <$email_from> \r\n";
-		//Enable HTML Email Formatting in the body
-		add_filter( 'wp_mail_content_type','wpse27856_set_content_type' );
-		$result  = wp_mail( $email_to, $email_subject, $body, $headers );
-		//Remove HTML Email Formatting
-		remove_filter( 'wp_mail_content_type','wpse27856_set_content_type' );
-		$email_note_info = '<br /><br />:SENT TO:['.implode(",", $email_to).']';
-	}
-
-	mf_add_note( $lead['id'],  nl2br(stripslashes($_POST['new_note_sidebar'].$email_note_info)));
-
 }
 
 function wpse27856_set_content_type(){
