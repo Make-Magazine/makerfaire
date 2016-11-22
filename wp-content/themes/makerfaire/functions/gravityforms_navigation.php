@@ -38,6 +38,32 @@ function remove_admin_bar_links() {
 }
 add_action( 'wp_before_admin_bar_render', 'remove_admin_bar_links' );
 
+/**
+ * Redirect old custom gravity form admin pages to the correct path
+ */
+function redirect_gf_admin_pages() {
+  global $pagenow;
+
+  /* Check current admin page. */
+  if ($pagenow == 'admin.php') {
+    if (isset($_GET['page']) && $_GET['page'] == 'mf_entries') {
+      //include any parameters in the return URL
+      $returnURL = '';
+      foreach ($_GET as $key => $param) {
+        if ($key != 'page') {
+          if ($key == 'view' && $param == 'mfentry')
+            $param = 'entry';
+          $returnURL .= '&' . $key . '=' . $param;
+        }
+      }
+      wp_redirect(admin_url('admin.php') . "?page=gf_entries" . $returnURL);
+      exit;
+    }
+  }
+}
+
+add_action('admin_menu', 'redirect_gf_admin_pages');
+
 //add new submenu for our custom built list page
 add_filter('gform_addon_navigation', 'add_menu_item');
 
