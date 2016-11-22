@@ -273,7 +273,7 @@ function display_dupCopy_entry_box($form, $lead) {
   }
   $output .=  '</select><br/><br/>';
   $output .= '<input type="button" name="duplicate_entry_id" value="Duplicate Entry" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'duplicate_entry_id\');"/><br />';
-
+  $output .= '<span class="updMsg duplicate_entry_idMsg"></span>';
   $output .= '</div>';
   return $output;
 }

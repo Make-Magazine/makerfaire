@@ -627,5 +627,8 @@ function hiddenTicket(accessCode) {
                         '</tr>';
         jQuery('#the-comment-list').after(new_note)
       }
+      if(action == 'duplicate_entry_id' && r.entryID!=''){
+        jQuery("span.duplicate_entry_idMsg").after(r.entryID);
+      }
     });
   }
