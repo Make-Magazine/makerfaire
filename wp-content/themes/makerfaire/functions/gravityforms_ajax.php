@@ -195,7 +195,7 @@ add_action( 'wp_ajax_mf-update-entry', 'mf_admin_MFupdate_entry' );
 function mf_admin_MFupdate_entry(){
   //Get the current action
   $mfAction = $_POST['mfAction'];
-
+  $response = array('rebuild'=>'', 'rebuildHTML'=>'');
   //Only process if there was a gravity forms action
   if (!empty($mfAction)){
     $entry_id     = $_POST['entry_id'];
@@ -226,7 +226,7 @@ function mf_admin_MFupdate_entry(){
         set_form_id($lead,$form);
         break;
       case 'duplicate_entry_id' :
-        duplicate_entry_id($lead,$form);
+        $response['entryID'] = duplicate_entry_id($lead,$form);
         break;
       case 'send_conf_letter' :
         //first update the schedule if one is set
@@ -251,17 +251,23 @@ function mf_admin_MFupdate_entry(){
         }
         break;
       default:
-        echo 'Error: Invalid Action Passed';
+        $response['result'] = 'Error: Invalid Action Passed';
         break;
     }
 
     //update the change report with any changes
     GVupdate_changeRpt($form,$entry_id,$lead);
-    echo 'updated';
+    $response['result'] = 'updated';
   } else{
-    echo 'Error: No Action Passed';
+    $response['result'] = 'Error: No Action Passed';
   }
 
+  //rebuild schedule sidebar to send back
+  if($mfAction == 'update_entry_schedule' || $mfAction == 'delete_entry_schedule') {
+    $response['rebuild']     = 'schedBox';
+    $response['rebuildHTML'] = display_sched_loc_box($form, $lead);
+  }
+  wp_send_json( $response );
   // IMPORTANT: don't forget to "exit"
   exit;
 }
@@ -468,6 +474,7 @@ function duplicate_entry_id($lead,$form){
 
   $result     = duplicate_entry_data($form_change,$entry_id);
   error_log('UPDATE RESULTS = '.print_r($result,true));
+  return $result;
 }
 
 /**
@@ -496,7 +503,7 @@ function duplicate_entry_data($form_change,$current_entry_id ){
   $source_url = GFCommon::truncate_url(RGFormsModel::get_current_page_url(), 200);
   $wpdb->query($wpdb->prepare("INSERT INTO $lead_table(form_id, ip, source_url, date_created, user_agent, currency, created_by) VALUES(%d, %s, %s, utc_timestamp(), %s, %s, {$user_id})", $form_change, RGFormsModel::get_ip(), $source_url, $user_agent, $currency));
   $lead_id    = $wpdb->insert_id;
-  echo 'Entry '.$lead_id.' created in Form '.$form_change;
+  $return = 'Entry '.$lead_id.' created in Form '.$form_change;
 
   //add a note to the new entry
   $results=mf_add_note( $lead_id, 'Copied Entry ID:'.$current_entry_id.' into form '.$form_change.'. New Entry ID ='.$lead_id);
@@ -523,6 +530,7 @@ function duplicate_entry_data($form_change,$current_entry_id ){
   $form     = GFAPI::get_form($form_id);
 
   $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form);
+  return $return;
 }
 
 /* Modify Set Entry Schedule */
@@ -545,7 +553,7 @@ function set_entry_schedule($lead,$form){
 	if($entry_schedule_start!='' && $entry_schedule_end!=''){
     $mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
     if ($mysqli->connect_errno) {
-      echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+      error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
     }
     $insert_query = sprintf("INSERT INTO `wp_mf_schedule` (`entry_id`, location_id, `faire`, `start_dt`, `end_dt`)
       SELECT $entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end'
@@ -554,9 +562,9 @@ function set_entry_schedule($lead,$form){
     //MySqli Insert Query
     $insert_row = $mysqli->query($insert_query);
     if($insert_row){
-      echo 'Success! <br />';
+      //echo 'Success! <br />';
     }else{
-      echo ('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
+      error_log('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
     };
   }
 }
@@ -571,7 +579,7 @@ function set_entry_location($lead,$form,&$location_id=''){
 
 	$mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
 	if ($mysqli->connect_errno) {
-		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+		error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
 	}
 
   $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`, `location_element_id`) "
@@ -579,9 +587,9 @@ function set_entry_location($lead,$form,&$location_id=''){
 	//MySqli Insert Query
 	$insert_row = $mysqli->query($insert_query);
 	if($insert_row){
-		echo 'Success! <br />';
+		//echo 'Success! <br />';
 	}else{
-		echo ('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
+		error_log('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
 	};
   $location_id = $mysqli->insert_id;
 }
@@ -595,7 +603,7 @@ function delete_entry_schedule($lead,$form){
 
 	$mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
 	if ($mysqli->connect_errno) {
-		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+		error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
 	}
 
   //delete schedule and location

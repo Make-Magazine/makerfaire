@@ -80,7 +80,7 @@ function display_entry_info_box($form, $lead) {
         default :
           if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
             $return .= "<a class=\"submitdelete deletion\" onclick=\"jQuery('#action').val('trash'); jQuery('#entry_form').submit()\" href=\"#\">".
-                        __( 'Move to Trash', 'gravityforms' ) ."</a>". (GFCommon::spam_enabled( $form['id'] ) ? '|' : '');
+                        __( 'Move to Trash', 'gravityforms' ) ."</a> ". (GFCommon::spam_enabled( $form['id'] ) ? '|' : '');
           }
           if ( GFCommon::spam_enabled( $form['id'] ) ) {
             $return .= "<a class=\"submitdelete deletion\" onclick=\"jQuery('#action').val('spam'); jQuery('#entry_form').submit()\" href=\"#\">". __( 'Mark as Spam', 'gravityforms' ) ."</a>";
@@ -402,21 +402,22 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
     $output .= '<br/>';
     $output .= 'Optional Schedule Start/End
                  <div class="clear"></div>' .
-                '<div style="padding:10px 0;width:40px;float:left">Start: </div><div style="float:left"><input type="text" value="" name="datetimepickerstart" id="datetimepickerstart"></div>' .
+                '<div style="padding:10px 0;width:40px;float:left">Start: </div>' .
+                '<div style="float:left"><input type="text" value="" name="datetimepickerstart" id="datetimepickerstart"></div>' .
                 '<div class="clear" style="padding:10px 0;width:40px;float:left">End:</div>
                  <div style="float:left"><input type="text" value="" name="datetimepickerend" id="datetimepickerend"></div>
                  <div class="clear"></div>';
 
     // Create Update button for sidebar entry management
     $output .=  '<input type="button" name="update_entry_schedule" value="Add Location" class="button" style="width:auto;padding-bottom:2px; margin: 10px 0;" onclick="updateMgmt(\'update_entry_schedule\');"/><br />
-                 <div class="clear"></div><hr>';
+                 <span class="updMsg update_entry_scheduleMsg"></span>';
     return $output;
 }
 
 function display_schedule($form_id,$lead,$section='sidebar'){
   global $wpdb;
   //first, let's display any schedules already entered for this entry
-  $entry_id=$lead['id'];
+  $entry_id = $lead['id'];
   $sql = "select `wp_mf_schedule`.`ID` as schedule_id, `wp_mf_schedule`.`entry_id`, location.ID as location_id, location.location,area.area, subarea.subarea,
                   `wp_mf_faire`.`faire`, `wp_mf_schedule`.`start_dt`, `wp_mf_schedule`.`end_dt`, `wp_mf_schedule`.`day`, wp_mf_faire.time_zone,
                   subarea.ID as subarea_id
@@ -458,7 +459,7 @@ function display_schedule($form_id,$lead,$section='sidebar'){
     foreach($schedules as $data){
       $location_id = $data['location'];
       $stage       = $data['stage'];
-      $output .= '<div class="stageName">'.$stage.'</div>';
+      $output     .= '<div class="stageName">'.$stage.'</div>';
 
       $scheduleArr = (isset($data['schedule'])?$data['schedule']:'');
       if(is_array($scheduleArr)){
@@ -498,7 +499,8 @@ function display_schedule($form_id,$lead,$section='sidebar'){
       $entry_delete_button = '<input type="button" name="delete_entry_schedule[]" value="Delete Selected" class="button"
                        style="width:auto;padding-bottom:2px;"
                       onclick="updateMgmt(\'delete_entry_schedule\');"/><br />';
-      $output .= $entry_delete_button;
+      $updMsg    .= '<span class="updMsg delete_entry_scheduleMsg"></span>';
+      $output .= $entry_delete_button.$updMsg;
     }
     $output .= '<br/>';
     return $output;

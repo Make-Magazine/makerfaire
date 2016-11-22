@@ -106,7 +106,7 @@ jQuery( document ).ready(function() {
   }
 
   //update custom meta fields on change
-  jQuery(" .metafield").change(function(){
+  jQuery(document).on('change', '.metafield', function() {
     var meta_field = jQuery(this).attr('id');
 
     //set meta field status to a processing spinner
@@ -132,7 +132,7 @@ jQuery( document ).ready(function() {
     });
   });
 
-  jQuery('#entry_location_subarea_change').change(function(){
+  jQuery(document).on('change', '#entry_location_subarea_change', function() {
     var subarea_id = jQuery(this).val();
 
     var el = jQuery("#locationSel");
@@ -151,14 +151,11 @@ jQuery( document ).ready(function() {
       });
     }
 
-
     //hide entry location box
     jQuery('#update_entry_location_code').val('').hide();
-    //jQuery('#update_entry_location_code').hide();
-
   });
 
-  jQuery('#locationSel').change(function(){
+  jQuery(document).on('change', '#locationSel', function() {
     var locText = '';
     if(jQuery(this).val()!='new'){
       locText = ( jQuery(this).find(":selected").text() );
@@ -587,15 +584,29 @@ function hiddenTicket(accessCode) {
       data.gentry_email_notes_to_sidebar = gentry_email_notes_to_sidebar;
     }
 
-    jQuery.post(ajaxurl, data, function(response) {
-      if(response=='updated'){
+    jQuery.post(ajaxurl, data, function(r) {
+      if(r.result=='updated'){
         //after update - set meta field status to success
         jQuery("span."+action+'Msg').html('<i style="color:green" class="fa fa-check"></i>');
       }else{
         //after update - set meta field status to failed
         jQuery("span."+action+'Msg').html('<i style="color:red" class="fa fa-times"></i>');
       }
-
+      if(r.rebuild!='' && r.rebuildHTML!=''){
+        jQuery("."+r.rebuild).replaceWith(r.rebuildHTML);
+        //reset the date time picker fields
+        jQuery('#datetimepicker').datetimepicker({value:'2015/04/15 05:03',step:10});
+        jQuery('#datetimepickerstart').datetimepicker({
+          formatTime:'g:i a',
+          formatDate:'d.m.Y',
+          defaultTime:'10:00 am'
+        });
+        jQuery('#datetimepickerend').datetimepicker({
+          formatTime:'g:i a',
+          formatDate:'d.m.Y',
+          defaultTime:'10:00 am'
+        });
+      }
       //other updates after
       if(action=='add_note_sidebar') {
         //need to add the new note to the sidebar
