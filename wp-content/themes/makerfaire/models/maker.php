@@ -256,7 +256,7 @@ class maker {
 
     $results = $wpdb->get_results($query, ARRAY_A );
     foreach($results as $result){
-      if($result['completed']==NULL){
+      if($result['completed']==NULL || $result['completed'] == '0000-00-00 00:00:00'){
         $return['toDo'][]=$result;
       }else{
         $return['done'][]=$result;

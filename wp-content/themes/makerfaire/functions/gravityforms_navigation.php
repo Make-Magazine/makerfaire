@@ -402,3 +402,22 @@ function buildFaireDrop($wp_admin_bar, $faire_id = null) {
 
   return $wp_admin_bar;
 }
+
+// add a custom menu item to the Form Settings page menu for Tasks
+add_filter( 'gform_form_settings_menu', 'mf_tasks_settings_menu_item' );
+function mf_tasks_settings_menu_item( $menu_items ) {
+  $menu_items[] = array(
+    'name' => 'mf_tasks_settings_page',
+    'label' => __( 'Tasks' ),
+    'query' => array( 'tid' => null )
+  );
+  return $menu_items;
+}
+
+// handle displaying content for tasks page
+add_action( 'gform_form_settings_page_mf_tasks_settings_page', 'mf_tasks_settings_page' );
+function mf_tasks_settings_page() {
+  require_once( TEMPLATEPATH.'/classes/GFTask.php' );
+  //page header loaded in below function because admin messages were not yet available to the header to display
+	GFTask::task_page();
+}
