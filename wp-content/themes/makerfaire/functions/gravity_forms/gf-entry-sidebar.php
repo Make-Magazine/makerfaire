@@ -3,15 +3,15 @@
 add_action("gform_entry_detail_sidebar_before", "add_sidebar_sections", 10,2);
 function add_sidebar_sections($form, $lead) {
   $sidebar  = '';
-  $sidebar .= display_entry_info_box($form, $lead); //returned
-  $sidebar .= display_entry_rating_box($form, $lead); //returned
-  $sidebar .= display_entry_notes_box($form, $lead);  //returned
-  $sidebar .= display_flags_prelim_locs($form, $lead); //returned
-  $sidebar .= display_sched_loc_box($form, $lead);  //returned
-  //$sidebar .= display_ticket_code_box($form, $lead);  //returned
-  $sidebar .= display_form_change_box($form, $lead);  //returned
-  $sidebar .= display_dupCopy_entry_box($form, $lead); //returned
-  $sidebar .= display_send_conf_box($form, $lead); //returned
+  $sidebar .= display_entry_info_box($form, $lead);
+  $sidebar .= display_entry_rating_box($form, $lead);
+  $sidebar .= display_entry_notes_box($form, $lead);
+  $sidebar .= display_flags_prelim_locs($form, $lead);
+  $sidebar .= display_sched_loc_box($form, $lead);
+  $sidebar .= display_ticket_code_box($form, $lead);
+  $sidebar .= display_form_change_box($form, $lead);
+  $sidebar .= display_dupCopy_entry_box($form, $lead);
+  $sidebar .= display_send_conf_box($form, $lead);
   echo $sidebar;
 }
 
@@ -242,7 +242,7 @@ function display_form_change_box($form, $lead) {
   $output = '<div class="postbox">';
   //load 'Change Form' form
   $forms   = GFAPI::get_forms(true,false);  // Load Fields to show on entry info
-  $output .= '<h4><label class="detail-label" for="entry_form_change">Form:</label></h4>';
+  $output .= '<h4><label class="detail-label" for="entry_form_change">Change Form:</label></h4>';
   $output .= '<select style="width:250px" name="entry_form_change">';
   foreach( $forms as $choice ){
     $selected = '';
@@ -281,6 +281,7 @@ function display_dupCopy_entry_box($form, $lead) {
 function display_send_conf_box($form, $lead) {
   return '<div class="postbox">
             <div class="detail-view-print">
+              <br/>
               <!--button to trigger send confirmation letter event -->
               <input type="button" name="send_conf_letter" value="Send Confirmation Letter" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'send_conf_letter\');"/>
               <span class="updMsg send_conf_letterMsg"></span>
@@ -312,7 +313,7 @@ function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = ''
                 <h6 class="note-author">' .esc_html( $note->user_name ). '</h6>
               <p class="note-email">
                 <a href="mailto:'. esc_attr( $note->user_email ).'">'. esc_html( $note->user_email ) .'</a><br />'.
-                __( 'added on', 'gravityforms' ).
+                __( 'added on ', 'gravityforms' ).
                 esc_html( GFCommon::format_date( $note->date_created, false ) ) .
              '</p>
             </div>
