@@ -258,7 +258,7 @@ function display_form_change_box($form, $lead) {
 }
 
 function display_dupCopy_entry_box($form, $lead) {
-  $output .= '<div class="postbox">';
+  $output = '<div class="postbox">';
 
   //load Duplicate/Copy Entry form
   $forms = GFAPI::get_forms(true,false);  // Load Fields to show on entry info
