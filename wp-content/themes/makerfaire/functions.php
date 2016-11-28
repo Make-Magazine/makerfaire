@@ -86,6 +86,10 @@ foreach (glob(TEMPLATEPATH . '/functions/*.php') as $file) {
   include_once $file;
 }
 
+//include any subfolders like 'gravity_forms'
+foreach (glob(TEMPLATEPATH . '/functions/*/*.php') as $file) {
+  include_once $file;
+}
 // add post-thumbnails support to theme
 add_theme_support('post-thumbnails');
 add_image_size('schedule-thumb', 140, 140, true);

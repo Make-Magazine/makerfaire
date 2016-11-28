@@ -22,7 +22,7 @@ function custom_validation($validation_result) {
 
     //check if entry-id is valid
     $entry = GFAPI::get_entry($entryid);
-    
+
     if (is_array($entry) && $entry['status']=='active') {
       //finding Field with ID of 1 and marking it as failed validation
       foreach ($form['fields'] as &$field) {
@@ -58,26 +58,7 @@ function custom_validation($validation_result) {
   $validation_result['form'] = $form;
   return $validation_result;
 }
-/*
-add_filter( 'gform_pre_render_35', 'populate_html' ); //BA16 FSP
-add_filter( 'gform_pre_render_36', 'populate_html' ); //BA16 GSP
-add_filter( 'gform_pre_render_37', 'populate_html' ); //NY15 Special Request
-add_filter( 'gform_pre_render_38', 'populate_html' ); //NY15 ETA and Heavy EQMT
-add_filter( 'gform_pre_render_39', 'populate_html' ); //BA16 Maker Shipping
 
-add_filter( 'gform_pre_render_55', 'populate_html' ); //Payment Form Master
-add_filter( 'gform_pre_render_56', 'populate_html' ); //Payment Form Test
-add_filter( 'gform_pre_render_57', 'populate_html' ); //BA16 Payment Form Commercial Maker
-add_filter( 'gform_pre_render_58', 'populate_html' ); //BA16 Payment Form Health Permit Fee
-add_filter( 'gform_pre_render_59', 'populate_html' ); //BA16 Payment Form Non Profit
-
-add_filter( 'gform_pre_render_82', 'populate_html' ); //NMF16 - FSP [form 82]
-add_filter( 'gform_pre_render_83', 'populate_html' ); //NMF16 - GSP [form 83]
-add_filter( 'gform_pre_render_84', 'populate_html' ); //NMF16 - shipping forms [84]
-
-add_filter( 'gform_pre_render_87', 'populate_html' ); //NFM16 CM payment form
-add_filter( 'gform_pre_render_85', 'populate_html' ); //NFM16 CM Non-Profit payment form
-*/
 add_filter( 'gform_pre_render', 'populate_html' ); //all forms
 
 /*
