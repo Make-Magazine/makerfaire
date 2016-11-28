@@ -144,14 +144,17 @@ class maker {
       if(is_array($entry)){
         $data['date_created'] = $entry['date_created'];
         $today = date("Y-m-d H:i:s");
-
+        //set ticketing and task information if the faire is not past
         if ($row['end_dt'] >= $today) {
           $data['ticketing']    = entryTicketing($entry,'MAT');
+          //get tasks
+          $data['tasks'] = $this->get_tasks_by_entry($row['lead_id']);
         }
 
       }else{
         $data['date_created'] = '';
         $data['ticketing']    = '';
+        $data['tasks']        = '';
       }
 
       //get form_type

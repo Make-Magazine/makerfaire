@@ -69,8 +69,6 @@ get_header();
   <?php
 
   foreach($entries as $entryData) {
-    //get tasks
-    $tasks     = $maker->get_tasks_by_entry($entryData['lead_id']);
     //prepare the data
     if($entryData['status']=='Accepted'){
       $statusBlock = 'greenStatus';
@@ -198,8 +196,12 @@ get_header();
               ?>
 
               <!-- Tasks -->
-              <?php if(isset($tasks) && count($tasks['toDo']) > 0 || count($tasks['done'])>0) {
+              <?php
+
+              if(!empty($entryData['tasks']) && count($entryData['tasks']['toDo']) > 0 || count($entryData['tasks']['done'])>0){
+                $tasks = $entryData['tasks'];
                 ?>
+
                 <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover" data-toggle="popover">TASKS
                   <div class="notification-counter toggle-popover" data-toggle="popover"><?php echo count($tasks['toDo']);?></div>
                 </button>
