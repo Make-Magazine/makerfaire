@@ -341,7 +341,7 @@ function gf_collapsible_sections($form, $lead){
   //form data
   $addFormsData = getmetaData($entry_id);
   $pmtFormsData = getmetaData($entry_id,'payments');
-  $return .= '
+  $return = '
   <div id="tabs" class="adminEntrySummary">
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation"><a href="#tabs-1" aria-controls="tabs-1" role="tab" data-toggle="tabs-1"><br/>Content</a></li>
@@ -393,7 +393,6 @@ function gf_collapsible_sections($form, $lead){
         <div class="panel-group">'.
 
           $ticketing = entryTicketing($lead);
-
           if($ticketing){
             $return .= $ticketing;
           }else{
