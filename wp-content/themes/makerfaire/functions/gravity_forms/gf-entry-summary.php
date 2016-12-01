@@ -64,142 +64,94 @@ if ( isset( $long_description ) && $long_description!='') {
 //pull faireID
 global $wpdb;
 $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.form_ids,'. $form['id'].')> 0');
-?>
+$return = '
 <table class="fixed entry-detail-view">
 	<thead>
-		<th colspan="2" style="text-align: left" id="header">
-			<h1>
-				<?php echo esc_html($project_name); ?>
-			</h1>
-		</th>
+		<th colspan="2" style="text-align: left" id="header"><h1>'. esc_html($project_name).'</h1></th>
 	</thead>
 	<tbody>
 		<tr>
 			<td style="width:440px; padding:5px;" valign="top">
-				<a href="<?php echo $photo;?>" class='thickbox'>
-				<img width="400px" src="<?php echo legacy_get_resized_remote_image_url($photo, 400,400);?>" alt="" /></a>
+				<a href="'. $photo.'" class="thickbox"><img width="400px" src="'.legacy_get_resized_remote_image_url($photo, 400,400).'" alt="" /></a>
 			</td>
 			<td style="word-break: break-all;" valign="top">
 				<table style="word-break: break-all;">
 					<tr>
 						<td colspan="2">
-							<p>
-								<?php echo stripslashes( nl2br( $main_description, "\n" )  ); ?>
-							</p>
+							<p>'.stripslashes( nl2br( $main_description, "\n" )  ).'</p>
 						</td>
 					</tr>
 					<tr>
 						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Type:</strong></td>
-						<td valign="top"><?php echo esc_attr( ucfirst( $entry_form_type ) ); ?></td>
+						<td valign="top">'.esc_attr( ucfirst( $entry_form_type ) ).'</td>
 					</tr>
 					<tr>
 						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Status:</strong></td>
-						<td valign="top"><?php echo esc_attr( $entry_form_status ); ?></td>
+						<td valign="top">'. esc_attr( $entry_form_status ).'</td>
 					</tr>
 					<tr>
 						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Website:</strong></td>
-						<td valign="top"><a
-							href="<?php echo esc_url(  $wkey ); ?>" target="_blank"><?php echo esc_url( $wkey ); ?></a></td>
+						<td valign="top"><a href="'. esc_url(  $wkey ).'" target="_blank">'. esc_url( $wkey ).'</a></td>
 					</tr>
 					<tr>
 						<td valign="top"><strong>Video:</strong></td>
-						<td><?php
-              echo ( isset( $vkey ) ) ? '<a href="' . esc_url( $vkey ) . '" target="_blank">' . esc_url( $vkey ) . '</a><br/>' : '' ;
-								?>
-						</td>
+						<td>'. (( isset( $vkey ) ) ? '<a href="' . esc_url( $vkey ) . '" target="_blank">' . esc_url( $vkey ) . '</a><br/>' : '') . '</td>
 					</tr>
 					<tr>
 						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Maker Names:</strong></td>
-						<td valign="top"><?php echo !empty($makergroupname) ? $makergroupname.'(Group)</br>' : ''; ?>
-              <?php
-              if(!empty($makerPhoto1)){?>
-                <a href="<?php echo $makerPhoto1;?>" class='thickbox'>
-                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto1, 30,30);?>" alt="" />
-                </a>
-              <?php  }?>
-              <?php echo !empty($makerfirstname1) ?  $makerfirstname1.' '.$makerlastname1.'</br>' : '' ;
-              if(!empty($makerPhoto2)){?>
-                <a href="<?php echo $makerPhoto2;?>" class='thickbox'>
-                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto2, 30,30);?>" alt="" />
-                </a>
-              <?php  }
-              echo !empty($makerfirstname2) ?  $makerfirstname2.' '.$makerlastname2.'</br>' : '' ;
-              if(!empty($makerPhoto3)){?>
-                <a href="<?php echo $makerPhoto3;?>" class='thickbox'>
-                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto3, 30,30);?>" alt="" />
-                </a>
-              <?php  }
-              echo !empty($makerfirstname3) ?  $makerfirstname3.' '.$makerlastname3.'</br>' : '' ; ?>
-              <?php if(!empty($makerPhoto4)){?>
-                  <a href="<?php echo $makerPhoto4;?>" class='thickbox'>
-                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto4, 30,30);?>" alt="" />
-                  </a>
-              <?php  }?>
-              <?php echo !empty($makerfirstname4) ?  $makerfirstname4.' '.$makerlastname4.'</br>' : '' ; ?>
-              <?php if(!empty($makerPhoto5)){?>
-                  <a href="<?php echo $makerPhoto5;?>" class='thickbox'>
-                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto5, 30,30);?>" alt="" />
-                  </a>
-              <?php  }?>
-              <?php echo !empty($makerfirstname5) ?  $makerfirstname5.' '.$makerlastname5.'</br>' : '' ; ?>
-              <?php if(!empty($makerPhoto6)){?>
-                  <a href="<?php echo $makerPhoto6;?>" class='thickbox'>
-                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto6, 30,30);?>" alt="" />
-                  </a>
-              <?php  }?>
-              <?php echo !empty($makerfirstname6) ?  $makerfirstname6.' '.$makerlastname6.'</br>' : '' ; ?>
-              <?php if(!empty($makerPhoto7)){?>
-                  <a href="<?php echo $makerPhoto7;?>" class='thickbox'>
-                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerPhoto7, 30,30);?>" alt="" />
-                  </a>
-              <?php  }?>
-              <?php if(!empty($makerGroupPhoto)){?>
-                  Group Photo<br/>
-                  <a href="<?php echo $makerGroupPhoto;?>" class='thickbox'>
-                  <img width="30px" src="<?php echo legacy_get_resized_remote_image_url($makerGroupPhoto, 30,30);?>" alt="" />
-                  </a>
-              <?php  }?>
+						<td valign="top">'. (!empty($makergroupname) ? $makergroupname.'(Group)</br>' : '');
 
-              <?php echo !empty($makerfirstname7) ?  $makerfirstname7.' '.$makerlastname7.'</br>' : '' ; ?>
+              //loop thru all 7 maker photos
+              for ($x = 1; $x <= 7; $x++) {
+                if(!empty(${"makerPhoto_$x"})){
+                  $return .= '<a href="'. ${"makerPhoto_$x"}.'" class="thickbox"><img width="30px" src="'. legacy_get_resized_remote_image_url(${"makerPhoto_$x"}, 30,30).'" alt="" /></a>';
+                }
+                $return .= (!empty(${"makerfirstname$x"}) ?  ${"makerfirstname$x"}.' '.${"makerlastname$x"}.'</br>' : '') ;
+              }
+
+              if(!empty($makerGroupPhoto)){
+                  $return .=   'Group Photo<br/>
+                    <a href="'. $makerGroupPhoto.'" class="thickbox">
+                    <img width="30px" src="'.legacy_get_resized_remote_image_url($makerGroupPhoto, 30,30).'" alt="" />
+                    </a>';
+              }
+
+              $return .=  (!empty($makerfirstname7) ?  $makerfirstname7.' '.$makerlastname7.'</br>' : '') ;
+              $return .= '
             </td>
 					</tr>
           <tr>
 						<td valign="top"><strong>We are (a/an)...:</strong></td>
-						<td><?php
-              echo ( isset( $areyoua ) ) ? $areyoua : '' ;
-								?>
-						</td>
+						<td>'.(( isset( $areyoua ) ) ? $areyoua : '') .'</td>
 					</tr>
 					<tr>
 						<td style="width: 80px;" valign="top"><strong>What are your plans:</strong></td>
-						<td valign="top">
-						<?php
+						<td valign="top">';
+
 						for ($i=0; $i < count($whatareyourplansvalues); $i++) {
-							echo (!empty($lead['55.'.$i])) ? $lead['55.'.$i].'<br />' : '';
+							$return .=  ((!empty($lead['55.'.$i])) ? $lead['55.'.$i].'<br />' : '');
 						}
-            ?>
+            $return .= '
             </td>
 					</tr>
 					<tr>
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
-              <?php echo ( isset( $size_request ) ) ? $size_request : 'Not Filled out' ; ?>
-              <?php echo ( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '' ; ?>
-              <?php echo ( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '' ; ?>
+              '.(( isset( $size_request ) ) ? $size_request : 'Not Filled out') .
+                (( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '') .
+                (( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '') .'
 						</td>
 					</tr>
           <tr>
             <td valign="top"><strong>Schedule/Location:</strong></td>
-            <td>
-              <?php echo display_schedule($form['id'],$lead,'summary');?>
-            </td>
+            <td>'. display_schedule($form['id'],$lead,'summary').'</td>
           </tr>
           <tr>
             <td>
-              <a target="_blank" href="/maker-sign/<?php echo $entry_id;?>/<?php echo $faire?>"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
+              <a target="_blank" href="/maker-sign/'. $entry_id.'/'. $faire.'"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
             </td>
             <td>
-              <a href="<?php echo admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id );?>"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>
+              <a href="'. admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id ).'"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>
             </td>
 					</tr>
 				</table>
@@ -207,8 +159,8 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
 		</tr>
 		<tr>
 			<td>
-        <label >Email Note To:</label><br />
-				<?php
+        <label >Email Note To:</label><br />';
+
 				$emailto1 = array("Alasdair Allan"          => "alasdair@makezine.com",
                           "Audrey Donaldson"        => "audrey@makermedia.com",
                           "Bridgette Vanderlaan"    => "bvanderlaan@mac.com",
@@ -243,47 +195,37 @@ $faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.
         if(in_array($form['id'], array(64, 65, 67, 68))){
            $emailtoaliases["National Team"] = "nationalmakers@makerfaire.com";
         }
-				?>
-				<div style="float:left">
-          <?php
-          $output = '';
+				$return .=
+       '<div style="float:left">';
           foreach ( $emailtoaliases as $name => $email ) {
-            $output .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" /><strong>'.$name.'</strong> <br />';
+            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" /><strong>'.$name.'</strong> <br />';
 					 }
-           echo $output;
-           ?>
+        $return .= '
 				</div>
-			  <div style="float:left">
-          <?php
-          $output = '';
+			  <div style="float:left">';
           foreach ( $emailto1 as $name => $email ) {
-            $output .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.'<br />';
+            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.'<br />';
 					}
-          echo $output;
-          ?>
+        $return .=   '
 				</div>
-			  <div style="float:left">
-          <?php
-          $output = '';
+			  <div style="float:left">';
           foreach ( $emailto2 as $name => $email ) {
-            $output .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.' <br />';
+            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.' <br />';
 					}
-          echo $output;
-          ?>
+        $return .= '
 				</div>
 			</td>
 			<td style="vertical-align: top; padding: 10px;">
-        <textarea	name="new_note_sidebar"	style="width: 90%; height: 140px;" cols=""	rows=""></textarea>
-        <?php
+        <textarea	name="new_note_sidebar"	style="width: 90%; height: 140px;" cols=""	rows=""></textarea>';
           $note_button = '<input type="button" name="add_note_sidebar" value="' . __( 'Add Note', 'gravityforms' ) . '" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\');"/>';
-          echo apply_filters( 'gform_addnote_button', $note_button );
-          echo '<span class="updMsg add_note_sidebarMsg"></span>'?>
+          $return .=  apply_filters( 'gform_addnote_button', $note_button );
+          $return .=  '<span class="updMsg add_note_sidebarMsg"></span>
 			</td>
 		</tr>
 	</tbody>
-</table>
+</table>';
 
-<?php
+  return $return;
 } //end function
 
 function gf_collapsible_sections($form, $lead){
@@ -335,7 +277,7 @@ function gf_collapsible_sections($form, $lead){
   if(isset($lead['163']) && $lead['163'] != '')  $emailArray[$lead['163']]['Maker 7']  = $makerfirstname7.' '.$makerlastname7;
 
   foreach($form['fields'] as $field){
-      $fieldData[$field['id']] = $field;
+    $fieldData[$field['id']] = $field;
   }
 
   $data = array('content'=> array(11,16,320,321,66,67,293),
@@ -373,7 +315,7 @@ function gf_collapsible_sections($form, $lead){
                   . ' WHERE value = "'.$key.'"'
                   . '   and lead_id != '.$entry_id.' group by lead_id order by lead_id');
 
-    $return = array();
+    //$return = array();
     foreach($results as $addData){
       $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=mfentry&id=".$addData->form_id . '&lid='.$addData->lead_id;
       $addEntriesCnt++;
@@ -399,64 +341,63 @@ function gf_collapsible_sections($form, $lead){
   //form data
   $addFormsData = getmetaData($entry_id);
   $pmtFormsData = getmetaData($entry_id,'payments');
-  ?>
+  $return .= '
   <div id="tabs" class="adminEntrySummary">
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation"><a href="#tabs-1" aria-controls="tabs-1" role="tab" data-toggle="tabs-1"><br/>Content</a></li>
       <li role="presentation"><a href="#tabs-2" aria-controls="tabs-2" role="tab" data-toggle="tabs-2">Logistics/<br/>Production</a></li>
       <li role="presentation"><a href="#additional" aria-controls="additional" role="tab" data-toggle="additional">Additional<br/>Information</a></li>
-      <li role="presentation"><a href="#addForms" aria-controls="addForms" role="tab" data-toggle="addForms">Additional<br/>Forms (<?php echo $addFormsData[1];?>)</a></li>
-      <li role="presentation"><a href="#payments" aria-controls="payments" role="tab" data-toggle="payments"><br/>Payments (<?php echo $pmtFormsData[1];?>)</a></li>
-      <li role="presentation"><a href="#tabs-3" aria-controls="tabs-3" role="tab" data-toggle="tabs-3">Other<br/>Entries (<?php echo $addEntriesCnt;?>)</a></li>
+      <li role="presentation"><a href="#addForms" aria-controls="addForms" role="tab" data-toggle="addForms">Additional<br/>Forms ('. $addFormsData[1].')</a></li>
+      <li role="presentation"><a href="#payments" aria-controls="payments" role="tab" data-toggle="payments"><br/>Payments ('. $pmtFormsData[1].')</a></li>
+      <li role="presentation"><a href="#tabs-3" aria-controls="tabs-3" role="tab" data-toggle="tabs-3">Other<br/>Entries ('. $addEntriesCnt.')</a></li>
       <li role="presentation"><a href="#images" aria-controls="images" role="tab" data-toggle="images"><br/>Images</a></li>
       <li role="presentation" aria-selected="true"><a href="#resources" aria-controls="resources" role="tab" data-toggle="resources"><br/>Resources</a></li>
       <li role="presentation" aria-selected="true"><a href="#ticketing" aria-controls="ticketing" role="tab" data-toggle="ticketing"><br/>Ticketing</a></li>
     </ul>
     <div class="tab-content">
       <div role="tabpanel" class="tab-pane" id="tabs-1">
-        <?php echo displayContent($data['content'],$lead,$fieldData);?>
+        '. displayContent($data['content'],$lead,$fieldData).'
       </div>
       <div role="tabpanel" class="tab-pane" id="tabs-2">
-        <?php echo displayContent($data['logistics'],$lead,$fieldData);?>
+        '. displayContent($data['logistics'],$lead,$fieldData).'
       </div>
       <div role="tabpanel" class="tab-pane" id="additional">
-        <?php echo displayContent($data['additional'],$lead,$fieldData);?>
+        '. displayContent($data['additional'],$lead,$fieldData).'
       </div>
 
       <div role="tabpanel" class="tab-pane" id="addForms">
-        <?php echo $addFormsData[0];?>
+        '. $addFormsData[0] .'
       </div>
       <div role="tabpanel" class="tab-pane" id="payments">
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
           <div class="panel panel-default">
-            <?php echo $pmtFormsData[0];?>
+            '. $pmtFormsData[0] .'
           </div>
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="tabs-3">
-        <?php echo $addEntries;?>
+        '. $addEntries.'
       </div>
       <div role="tabpanel" class="tab-pane"  id="images">
-        <?php echo displayContent($data['images'],$lead,$fieldData,'grid');?>
-        <?php echo displayContent($data['imagesOver'],$lead,$fieldData,'grid');?>
+        '. displayContent($data['images'],$lead,$fieldData,'grid').'
+        '. displayContent($data['imagesOver'],$lead,$fieldData,'grid').'
       </div>
 
       <div role="tabpanel" class="tab-pane"  id="resources">
         <div class="entry-resource">
-          <?php entryResources($lead);?>
+          '. entryResources($lead).'
         </div>
       </div>
 
       <div role="tabpanel" class="tab-pane"  id="ticketing">
-        <div class="panel-group">
-          <?php
-          $return = entryTicketing($lead);
+        <div class="panel-group">'.
 
-          if($return){
-            echo $return;
+          $ticketing = entryTicketing($lead);
+
+          if($ticketing){
+            $return .= $ticketing;
           }else{
-            //echo 'No tickets found';
-             ?>
+            $return .= '
             <div id="noTickets">
               No Access Codes found for this entry. Click the ticket icon to generate<br/>
               <br/>
@@ -467,15 +408,15 @@ function gf_collapsible_sections($form, $lead){
               <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom"></i>
               <span class="sr-only">Loading...</span>
             </div>
-            <i>Please be patient.  This may take a while to complete</i>
-            <?php
+            <i>Please be patient.  This may take a while to complete</i>';
           }
-          ?>
+        $return .= '
         </div>
       </div>
     </div> <!-- .tab-content -->
-  </div>
-  <?php
+  </div>';
+
+  return $return;
 }
 
 function displayContent($content,$lead,$fieldData,$display = 'table'){
@@ -821,16 +762,17 @@ function entryResources($lead){
   foreach($results as $result){
     $attnArr[] = array('key'=>$result->ID,'value'=>$result->value);
   }
-  ?>
+  $return = '
   <script>
     //store items as JS object
-    var items = [];
-    <?php foreach($itemArr as $itemKey=>$item){?>
-      items.push({'key':<?php echo $itemKey;?>,'value': "<?php echo $item;?>"});
-    <?php } ?>
-    var types      = <?php echo json_encode($typeArr);?>;
-    var attributes = <?php echo json_encode($attArr);?>;
-    var attention  = <?php echo json_encode($attnArr);?>;
+    var items = [];';
+    foreach($itemArr as $itemKey=>$item){
+      $return .= 'items.push({"key":'. $itemKey.',"value": "'. $item.'"});';
+    }
+    $return .= '
+    var types      = '. json_encode($typeArr).';
+    var attributes = '. json_encode($attArr).';
+    var attention  = '. json_encode($attnArr).';
   </script>
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
@@ -840,7 +782,7 @@ function entryResources($lead){
         </h4>
       </div>
       <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel">
-        <div class="panel-body"><?php echo $resourceDisp;?></div>
+        <div class="panel-body">'.$resourceDisp.'</div>
       </div>
     </div>
     <div class="panel panel-default">
@@ -850,7 +792,7 @@ function entryResources($lead){
         </h4>
       </div>
       <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel">
-        <div class="panel-body"><?php echo $attDisp;?></div>
+        <div class="panel-body">'.$attDisp.'</div>
       </div>
     </div>
     <div class="panel panel-default">
@@ -860,10 +802,11 @@ function entryResources($lead){
         </h4>
       </div>
       <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel">
-        <div class="panel-body"><?php echo $attnDisp;?></div>
+        <div class="panel-body">'.$attnDisp.'</div>
       </div>
     </div>
-  </div> <?php
+  </div>';
+  return $return;
 }
 
 function entryTicketing($lead,$format='admin'){
