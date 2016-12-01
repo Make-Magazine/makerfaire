@@ -1129,7 +1129,7 @@ function exports_reports_current_user_can_any( $caps ) {
 	if ( !is_user_logged_in() ) {
 		return false;
 	}
-	get_currentuserinfo();
+	$current_user = wp_get_current_user();
 	if ( !is_array( $caps ) ) {
 		return current_user_can( $caps );
 	}
@@ -1147,7 +1147,7 @@ function exports_reports_current_user_can_which( $caps ) {
 	if ( !is_user_logged_in() ) {
 		return false;
 	}
-	get_currentuserinfo();
+	$current_user = wp_get_current_user();
 	foreach ( $caps as $cap ) {
 		if ( current_user_can( $cap ) ) {
 			return $cap;
@@ -1174,7 +1174,7 @@ function exports_reports_has_role( $role ) {
 	if ( !is_user_logged_in() ) {
 		return false;
 	}
-	get_currentuserinfo();
+	$current_user = wp_get_current_user();
 	if ( null !== get_role( $role ) && in_array( $role, $current_user->roles ) )
 		return true;
 
