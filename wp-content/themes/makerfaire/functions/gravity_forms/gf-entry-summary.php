@@ -72,7 +72,7 @@ $return = '
 	<tbody>
 		<tr>
 			<td style="width:440px; padding:5px;" valign="top">
-				<a href="'. $photo.'" class="thickbox"><img width="400px" src="'.legacy_get_resized_remote_image_url($photo, 400,400).'" alt="" /></a>
+				<a href="'. $photo.'" class="thickbox"><img width="400px" src="'.legacy_get_fit_remote_image_url($photo, 400,400).'" alt="" /></a>
 			</td>
 			<td style="word-break: break-all;" valign="top">
 				<table style="word-break: break-all;">
@@ -315,7 +315,7 @@ function gf_collapsible_sections($form, $lead){
                   . ' WHERE value = "'.$key.'"'
                   . '   and lead_id != '.$entry_id.' group by lead_id order by lead_id');
 
-    //$return = array();
+
     foreach($results as $addData){
       $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=mfentry&id=".$addData->form_id . '&lid='.$addData->lead_id;
       $addEntriesCnt++;

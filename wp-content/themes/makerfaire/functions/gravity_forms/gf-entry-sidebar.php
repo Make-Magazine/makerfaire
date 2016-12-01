@@ -9,8 +9,16 @@ function add_sidebar_sections($form, $lead) {
   $sidebar .= display_flags_prelim_locs($form, $lead);
   $sidebar .= display_sched_loc_box($form, $lead);
   $sidebar .= display_ticket_code_box($form, $lead);
-  $sidebar .= display_form_change_box($form, $lead);
-  $sidebar .= display_dupCopy_entry_box($form, $lead);
+  //get list of forms
+  global $wpdb;
+  $results = $wpdb->get_results("SELECT * FROM `wp_rg_form` where is_active = 1 and is_trash = 0");
+  $formList = array();
+  foreach($results as $form){
+    $formList[] = array('id'=>$form->id,'title'=>$form->title);
+  }
+
+  $sidebar .= display_form_change_box($form, $lead, $formList);
+  $sidebar .= display_dupCopy_entry_box($form, $lead, $formList);
   $sidebar .= display_send_conf_box($form, $lead);
   echo $sidebar;
 }
@@ -238,13 +246,12 @@ function display_ticket_code_box($form, $lead) {
   return $return;
 }
 
-function display_form_change_box($form, $lead) {
+function display_form_change_box($form, $lead, $formList) {
   $output = '<div class="postbox">';
-  //load 'Change Form' form
-  $forms   = GFAPI::get_forms(true,false);  // Load Fields to show on entry info
+
   $output .= '<h4><label class="detail-label" for="entry_form_change">Change Form:</label></h4>';
   $output .= '<select style="width:250px" name="entry_form_change">';
-  foreach( $forms as $choice ){
+  foreach( $formList as $choice ){
     $selected = '';
     if ($choice['id'] == $lead['form_id']) $selected=' selected ';
     $output .= '<option '.$selected.' value="'.$choice['id'].'">'.$choice['title'].'</option>';
@@ -257,18 +264,15 @@ function display_form_change_box($form, $lead) {
   return $output;
 }
 
-function display_dupCopy_entry_box($form, $lead) {
+function display_dupCopy_entry_box($form, $lead,$formList) {
   $output = '<div class="postbox">';
-
-  //load Duplicate/Copy Entry form
-  $forms = GFAPI::get_forms(true,false);  // Load Fields to show on entry info
 
   $output .= '<h4><label class="detail-label" for="entry_form_copy">Duplicate/Copy Entry ID '.$lead['id'].'</label></h4>';
   $output .= 'Into Form:<br/>';
   $output .= '<select style="width:250px" name="entry_form_copy">';
-  foreach( $forms as $choice ) {
+  foreach( $formList as $choice ) {
     $selected = '';
-    if ($choice['id'] == $form['id']) $selected=' selected ';
+    if ($choice['id'] == $lead['form_id']) $selected=' selected ';
     $output .= '<option '.$selected.' value="'.$choice['id'].'">'.$choice['title'].'</option>';
   }
   $output .=  '</select><br/><br/>';
@@ -500,7 +504,7 @@ function display_schedule($form_id,$lead,$section='sidebar'){
       $entry_delete_button = '<input type="button" name="delete_entry_schedule[]" value="Delete Selected" class="button"
                        style="width:auto;padding-bottom:2px;"
                       onclick="updateMgmt(\'delete_entry_schedule\');"/><br />';
-      $updMsg    .= '<span class="updMsg delete_entry_scheduleMsg"></span>';
+      $updMsg  = '<span class="updMsg delete_entry_scheduleMsg"></span>';
       $output .= $entry_delete_button.$updMsg;
     }
     $output .= '<br/>';
