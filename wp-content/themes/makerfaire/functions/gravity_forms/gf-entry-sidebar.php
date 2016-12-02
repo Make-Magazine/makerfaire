@@ -39,6 +39,7 @@ function display_entry_info_box($form, $lead) {
       <div id="minor-publishing">
         <table width="100%" class="entry-status">'.
           mf_sidebar_entry_status( $form, $lead ) .
+          '<tr><td colspan="2"><hr /></td></tr>'.
           mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ) .
           mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ) .
        '</table>
@@ -619,14 +620,16 @@ function mf_sidebar_entry_status($form, $lead) {
     // Load Fields to show on entry info
     $field303 = RGFormsModel::get_field($form,'303');
     $output .= '  <td>';
-    $output .= '    <select name="entry_info_status_change" onchange="updateMgmt(\'update_entry_status\');">';
+    //$output .= '    <select name="entry_info_status_change" onchange="updateMgmt(\'update_entry_status\');">';
+    $output .= '    <select name="entry_info_status_change">';
     foreach( $field303['choices'] as $choice ){
       $selected = '';
       if ($lead[$field303['id']] == $choice['text']) $selected=' selected ';
       $output .= '<option '.$selected.' value="'.$choice['text'].'">'.$choice['text'].'</option>';
     }
-    $output .= '    </select></td>';
-    //$output .= '<td><input type="button" name="update_management" value="Save Status" class="btn btn-danger" onclick="updateMgmt(\'update_entry_status\');" /></td>';
+    $output .= '    </select></td>'
+            . '</tr><tr><td>&nbsp;</td>';
+    $output .= '<td><input type="button" name="update_management" value="Save Status" class="btn btn-danger" onclick="updateMgmt(\'update_entry_status\');" /></td>';
     $output .= '<td><span class="updMsg update_entry_statusMsg"></span></td>';
   }else{
     $output .= '<td><label class="detail-label" for="entry_info_status_change">Status:&nbsp;</label></td>';
