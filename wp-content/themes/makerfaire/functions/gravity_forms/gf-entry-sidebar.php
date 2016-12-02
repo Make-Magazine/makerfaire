@@ -38,7 +38,7 @@ function display_entry_info_box($form, $lead) {
    '<div id="infoboxdiv" class="postbox">
       <div id="minor-publishing">
         <table width="100%" class="entry-status">'.
-          mf_sidebar_entry_status( $form['id'], $lead ) .
+          mf_sidebar_entry_status( $form, $lead ) .
           mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ) .
           mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ) .
        '</table>
@@ -216,7 +216,7 @@ function display_flags_prelim_locs($form, $lead) {
     $return .= $entry_sidebar_button. $msgBox;
 
     // Load flags and prelim location section
-    $return .= mf_sidebar_entry_info( $form['id'], $lead );
+    $return .= mf_sidebar_entry_info( $form, $lead );
 
     // Create Update button for sidebar entry management
     $return .= $entry_sidebar_button.$msgBox;
@@ -240,8 +240,16 @@ function display_sched_loc_box($form, $lead) {
 
 function display_ticket_code_box($form, $lead) {
   $return = '<div class="postbox">';
-    // Load Entry Sidebar details: Ticket Code (Field 308)
-    $return .= mf_sidebar_entry_ticket( $form['id'], $lead );
+
+  // Load Entry Sidebar details: Ticket Code (Field 308)
+  $field308=RGFormsModel::get_field($form,'308');
+  $return .= '<h4><label class="detail-label">Ticket Code:</label></h4>';
+  $return .= '<input name="entry_ticket_code" id="entry_ticket_code type="text" style="margin-bottom: 4px;" value="'.(isset($lead['308'])?$lead['308']:'').'" />';
+
+  // Create Update button for ticket code
+  $return .= '<input type="button" name="update_ticket_code" value="Update Ticket Code" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_ticket_code\');"/>';
+  $return .= '<span class="updMsg update_ticket_codeMsg"></span>';
+
   $return .= '</div>';
   return $return;
 }
@@ -345,15 +353,7 @@ function wpse27856_set_content_type(){
 
 //creates box to update the ticket code field 308
 function mf_sidebar_entry_ticket($form_id, $lead) {
-  $form = GFAPI::get_form($form_id);
-  $field308=RGFormsModel::get_field($form,'308');
-  $output  = '<h4><label class="detail-label">Ticket Code:</label></h4>';
-  $output .= '<input name="entry_ticket_code" id="entry_ticket_code type="text" style="margin-bottom: 4px;" value="'.(isset($lead['308'])?$lead['308']:'').'" />';
 
-  // Create Update button for ticket code
-  $entry_sidebar_button  = '<input type="button" name="update_ticket_code" value="Update Ticket Code" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_ticket_code\');"/>';
-  $msgBox = '<span class="updMsg update_ticket_codeMsg"></span>';
-	return $output . $entry_sidebar_button .$msgBox;
 }
 
 function mf_sidebar_entry_schedule($form_id, $lead) {
@@ -513,16 +513,16 @@ function display_schedule($form_id,$lead,$section='sidebar'){
 }
 
 /* This is where we run code on the entry info screen.  Logic for action handling goes here */
-function mf_sidebar_entry_info($form_id, $lead) {
+function mf_sidebar_entry_info($form, $lead) {
   // Load Fields to show on entry info
-	$form = GFAPI::get_form($form_id);
+  $form_id = $form['id'];
 
   //flags
-  $output = '<h4><label class="detail-label">Flags:</label></h4>';
-  $field = RGFormsModel::get_field($form,'304');
-  $value   = RGFormsModel::get_lead_field_value( $lead, $field );
+  $output    = '<h4><label class="detail-label">Flags:</label></h4>';
+  $field     = RGFormsModel::get_field($form,'304');
+  $value     = RGFormsModel::get_lead_field_value( $lead, $field );
   $fieldName = 'entry_info_flags_change';
-  $output .=  mf_checkbox_display($field, $value, $form_id, $fieldName);
+  $output   .=  mf_checkbox_display($field, $value, $form_id, $fieldName);
 
 
   //preliminary locations
@@ -609,7 +609,7 @@ function mf_sidebar_disp_meta_field($form_id, $lead,$meta_key='') {
   return $output;
 }
 
-function mf_sidebar_entry_status($form_id, $lead) {
+function mf_sidebar_entry_status($form, $lead) {
   $output  = '<tr>';
   if ( current_user_can( 'update_entry_status') ) {
     $output .= '  <td>'.
@@ -617,7 +617,6 @@ function mf_sidebar_entry_status($form_id, $lead) {
                     '<label class="detail-label" for="entry_info_status_change">Entry Status:&nbsp;</label>' .
                '  </td>';
     // Load Fields to show on entry info
-    $form     = GFAPI::get_form($form_id);
     $field303 = RGFormsModel::get_field($form,'303');
     $output .= '  <td>';
     $output .= '    <select name="entry_info_status_change" onchange="updateMgmt(\'update_entry_status\');">';
