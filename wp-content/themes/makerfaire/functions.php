@@ -66,7 +66,7 @@ include_once TEMPLATEPATH . '/classes/cronJob.php';
 if (is_admin()) {
   include_once TEMPLATEPATH . '/classes/eventbrite.class.inc';
 }
-/*
+
 require_once( 'taxonomies/type.php' );
 require_once( 'taxonomies/sponsor-category.php' );
 require_once( 'taxonomies/location.php' );
@@ -74,6 +74,7 @@ require_once( 'taxonomies/faire.php' );
 require_once( 'taxonomies/location_category.php' );
 require_once( 'taxonomies/makerfaire_category.php' );
 require_once( 'taxonomies/group.php' );
+/*
 require_once( 'plugins/post-types/event-items.php' );
 require_once( 'post-types/sponsor.php' );
 require_once( 'post-types/location.php' );*/

@@ -151,9 +151,9 @@ function updateChangeRPT($updates){
 }
 
 //action to modify field 320 to display the text instead of the taxonomy code
-add_filter("gform_entry_field_value", "setTaxName", 10, 4);
-function setTaxName($value, $field, $lead, $form){
-    $field_type = RGFormsModel::get_input_type($field);
+add_filter("gform_entry_field_value", "setCatName", 10, 4);
+function setCatName($value, $field, $lead, $form){
+  $field_type = RGFormsModel::get_input_type($field);
 
 	if( in_array( $field_type, array('checkbox', 'select', 'radio') ) ){
 		$value = RGFormsModel::get_lead_field_value( $lead, $field );
