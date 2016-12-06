@@ -1,4 +1,5 @@
 jQuery( document ).ready(function() {
+  /* per mf-1616 we are not currently using this logic
   jQuery(".checkbox_makerfaire_plans input").on("click", function() {
     var value = jQuery(this).attr("value");
     if (value==='Selling at Maker Faire [Commercial Maker]' || value==='Promoting a product or service [Commercial Maker]') {
@@ -19,7 +20,7 @@ jQuery( document ).ready(function() {
         jQuery('input[value="Other"]').prop("disabled",false);
       }
     }
-  });
+  });*/
 	jQuery(".presentation_type input").on("click", function() {
 		var value = jQuery(this).attr("value");
     if (value=='Standard Presentation (1-2 presenters)' || value=='Panel Presentation (up to 5 participants, with moderator)') {
