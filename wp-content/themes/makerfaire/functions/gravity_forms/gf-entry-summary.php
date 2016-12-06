@@ -134,6 +134,14 @@ $return = '
             $return .= '
             </td>
 					</tr>
+          <tr>
+            <td valign="top"><strong>Fee Indicator:</strong></td>
+						<td>'.(( isset( $lead[434] ) ) ? $lead[434] : 'No') .'</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>CM Indicator:</strong></td>
+						<td>'.(( isset( $lead[376] ) ) ? $lead[376] : 'No') .'</td>
+          </tr>
 					<tr>
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
