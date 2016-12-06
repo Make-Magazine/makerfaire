@@ -178,10 +178,10 @@ function display_entry_rating_box($form, $lead) {
 function display_entry_notes_box($form, $lead) {
   /* Notes Sidebar Area */
   $return = '
-  <div class="postbox">
+  <div class="postbox notesbox">
     <h3>
       <label for="name">'. __( 'Notes', 'gravityforms' ) .' </label>
-    </h3>' .wp_nonce_field( 'gforms_update_note', 'gforms_update_note' ) .
+    </h3>' .wp_nonce_field( 'gforms_update_note', 'gforms_update_note',true,false ) .
    '<div class="inside">';
 
   $notes = RGFormsModel::get_lead_notes( $lead['id'] );
@@ -341,8 +341,7 @@ function notes_sidebar_grid( $notes, $is_editable, $emails = null, $subject = ''
     </table>';
 
   if ( sizeof( $notes ) > 0 && $is_editable && GFCommon::current_user_can_any( 'gravityforms_edit_entry_notes' ) ) {
-    $return .= '
-    <input type="button" name="delete_note_sidebar" value="Delete Selected Note(s)" class="button" style="width:100%;padding-bottom:2px;" onclick="updateMgmt(\'delete_note_sidebar\');">
+    $return .= '<input type="button" name="delete_note_sidebar" value="Delete Selected Note(s)" class="button" style="width:100%;padding-bottom:2px;" onclick="updateMgmt(\'delete_note_sidebar\');">
     <span class="updMsg delete_note_sidebarMsg"></span>';
   }
   return $return;

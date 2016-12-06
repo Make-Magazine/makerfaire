@@ -607,26 +607,7 @@ function hiddenTicket(accessCode) {
           defaultTime:'10:00 am'
         });
       }
-      //other updates after
-      if(action=='add_note_sidebar') {
-        //need to add the new note to the sidebar
-        var new_note = '<tr valign="top">' +
-                         '<td class="check-column" scope="row" style="padding:9px 3px 0 0">' +
-                            '<input type="checkbox" value="11288" name="note[]">' +
-                         '</td>'+
-                         '<td class="entry-detail-note">'+
-                            '<div style="margin-top: 4px;">'+
-                              '<div class="note-avatar">'+
-                                '<img alt="" src="https://s.gravatar.com/avatar/7dbc984a7929b5a9cadd699b0aa156da?s=480&amp;r=pg&amp;d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fja.png" class="media-object img-thumbnail pull-left avatar avatar-48 photo" height="48" width="48" originals="480" scale="2">'+
-                              '</div>'+
-                              '<h6 class="note-author">jaykravitz</h6>'+
-                              '<p class="note-email"><a href="mailto:jay@thecrucible.org">jay@thecrucible.org</a><br>added onSeptember 26, 2016 at 12:51 pm</p>' +
-                            '</div>'+
-                            '<div class="detail-note-content gforms_note_note">Alicia Rocks</div>'+
-                          '</td>'+
-                        '</tr>';
-        jQuery('#the-comment-list').after(new_note)
-      }
+
       if(action == 'duplicate_entry_id' && r.entryID!=''){
         jQuery("span.duplicate_entry_idMsg").after(r.entryID);
       }

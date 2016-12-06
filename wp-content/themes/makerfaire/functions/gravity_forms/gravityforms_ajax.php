@@ -266,6 +266,9 @@ function mf_admin_MFupdate_entry(){
   if($mfAction == 'update_entry_schedule' || $mfAction == 'delete_entry_schedule') {
     $response['rebuild']     = 'schedBox';
     $response['rebuildHTML'] = display_sched_loc_box($form, $lead);
+  }elseif($mfAction=='add_note_sidebar'){
+    $response['rebuild']     = 'notesbox';
+    $response['rebuildHTML'] = display_entry_notes_box($form, $lead);
   }
   wp_send_json( $response );
   // IMPORTANT: don't forget to "exit"
@@ -627,3 +630,32 @@ function delete_note_sidebar($notes){
     RGFormsModel::delete_notes( $notes);
 }
 
+function add_note_sidebar($lead, $form){
+	global $current_user;
+
+	$user_data = get_userdata( $current_user->ID );
+	$project_name = $lead['151'];
+	$email_to     = $_POST['gentry_email_notes_to_sidebar'];
+
+	$email_note_info = '';
+
+	//emailing notes if configured
+	if ( !empty($email_to) ) {
+		GFCommon::log_debug( 'GFEntryDetail::lead_detail_page(): Preparing to email entry notes.' );
+		$email_to      = $_POST['gentry_email_notes_to_sidebar'];
+		$email_from    = $current_user->user_email;
+		$email_subject = stripslashes( 'Response Required Maker Application: '.$lead['id'].' '.$project_name);
+		$entry_url = get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=gf_entries&view=mfentry&id=' . $form['id'] . '&lid=' . rgar( $lead, 'id' );
+		$body = stripslashes( $_POST['new_note_sidebar'] ). '<br /><br />Please reply in entry:<a href="'.$entry_url.'">'.$entry_url.'</a>';
+		$headers = "From: \"$email_from\" <$email_from> \r\n";
+		//Enable HTML Email Formatting in the body
+		add_filter( 'wp_mail_content_type','wpse27856_set_content_type' );
+		$result  = wp_mail( $email_to, $email_subject, $body, $headers );
+		//Remove HTML Email Formatting
+		remove_filter( 'wp_mail_content_type','wpse27856_set_content_type' );
+		$email_note_info = '<br /><br />:SENT TO:['.implode(",", $email_to).']';
+	}
+
+	mf_add_note( $lead['id'],  nl2br(stripslashes($_POST['new_note_sidebar'].$email_note_info)));
+
+}
