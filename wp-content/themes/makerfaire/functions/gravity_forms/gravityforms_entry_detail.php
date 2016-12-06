@@ -32,7 +32,7 @@ function mf_entry_detail_head($form, $lead) {
         $outputVar .= '&filterField[]='.$newValue;
     }
   }
-  $outputURL = admin_url( 'admin.php' ) . "?page=mf_entries&view=entries&id=".$form['id']  . $outputVar;
+  $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=entries&id=".$form['id']  . $outputVar;
   if(isset($_GET['sort']))    $outputURL .= '&sort='.rgget('sort');
   if(isset($_GET['filter']))  $outputURL .= '&filter='.rgget( 'filter' );
   if(isset($_GET['dir']))     $outputURL .= '&dir='.rgget( 'dir' );

@@ -6,7 +6,6 @@
 add_filter( 'gform_toolbar_menu', 'mf_custom_toolbar', 10, 2 );
 function mf_custom_toolbar( $menu_items, $form_id ) {
   $menu_items = array(); //empty out the gravity form toolbar.  this will be replaced by a custom MF toolbar
-  if($_GET['view']=='entries') {
     echo return_MF_navigation();
     //append the filter results
     $form         = GFAPI::get_form( $form_id );
@@ -66,7 +65,6 @@ function mf_custom_toolbar( $menu_items, $form_id ) {
         }
       } ?>
     </span><?php
-  }
   return $menu_items;
 }
 
@@ -165,6 +163,7 @@ function modify_field_display_values( $value, $form_id, $field_id, $lead ) {
     $form         = GFAPI::get_form( $form_id );
     $field        = RGFormsModel::get_field( $form, $field_id );
     $input_type =  $field->get_input_type();
+    $columns='';
     if ( $input_type == 'website') {
       if ( $field !== null ) {
         $value = $field->get_value_entry_list( $value, $lead, $field_id, $columns, $form );
