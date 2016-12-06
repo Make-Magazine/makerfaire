@@ -218,7 +218,7 @@ foreach($limitArray as $limit){
   $field = $limit[0];
   $max   = $limit[1];
   //limits are for all forms
-  new GFLimitCheckboxes($form, array(
+  new GFLimitCheckboxes(9, array(
       $field => array('max' => $max)
   ));
   /*foreach($limit[2] as $form){

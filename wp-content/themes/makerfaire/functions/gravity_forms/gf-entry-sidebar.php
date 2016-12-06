@@ -8,7 +8,7 @@ function add_sidebar_sections($form, $lead) {
   $sidebar .= display_entry_notes_box($form, $lead);
   $sidebar .= display_flags_prelim_locs($form, $lead);
   $sidebar .= display_sched_loc_box($form, $lead);
-  $sidebar .= display_ticket_code_box($form, $lead);
+  //$sidebar .= display_ticket_code_box($form, $lead);
   //get list of forms
   global $wpdb;
   $results = $wpdb->get_results("SELECT * FROM `wp_rg_form` where is_active = 1 and is_trash = 0");

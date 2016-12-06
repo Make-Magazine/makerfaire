@@ -6,65 +6,71 @@
 add_filter( 'gform_toolbar_menu', 'mf_custom_toolbar', 10, 2 );
 function mf_custom_toolbar( $menu_items, $form_id ) {
   $menu_items = array(); //empty out the gravity form toolbar.  this will be replaced by a custom MF toolbar
-    echo return_MF_navigation();
-    //append the filter results
-    $form         = GFAPI::get_form( $form_id );
-    ?>
-    <span class="gf_admin_page_subtitle">
-      <?php
-      if(isset($_GET['field_id'])){
-        foreach($_GET['field_id'] as $key=>$value){
-          $strpos_row_key = strpos( $value, '|' );
-          if ( $strpos_row_key !== false ) { //multi-field filter
-            $filterValues = explode("|",$value);
-            $fieldValue = $filterValues[2];
-            if($filterValues[0]=='entry_id'){
-              $fieldName = 'Entry ID';
-            }elseif(is_numeric($filterValues[0]) && $filterValues[0]==0){
-              $fieldName = 'Any Form Field';
-            }else{
-              $field = GFFormsModel::get_field( $form, $filterValues[0] );
-              if ( $field ) {
-                $fieldName= (isset($field['adminLabel'])&&$field['adminLabel']!=''?$field['adminLabel']:$field['label']);
-              }else{
-                $meta = GFFormsModel::get_entry_meta(array( $form['id']));
-                $metaField = $meta[$filterValues[0]];
-                if($metaField){
-                  $fieldName  = (isset($metaField['label'])&&$metaField['label']!=''?$metaField['label']:$filterValues[0]);
-                  if(is_array($metaField['filter']['choices'])){
-                    foreach($metaField['filter']['choices'] as $choice){
-                      if($choice['value']==$filterValues[2])
-                        $fieldValue = $choice['text'];
-                    }
-                  }
+  $output = return_MF_navigation();
+  //append the filter results
+  $form         = GFAPI::get_form( $form_id );
+  $fieldSep  = '|';
+  $output .= '<span class="gf_admin_page_subtitle">';
 
-                }else{
-                  $fieldName = $filterValues[0];
+  if(isset($_GET['filterField']) && is_array($_GET['filterField'])){
+    foreach($_GET['filterField'] as $key=>$value){
+      $strpos_row_key = strpos( $value, $fieldSep );
+      if ( $strpos_row_key !== false ) { //multi-field filter
+        $filterValues = explode($fieldSep,$value);
+        $field_id           = $filterValues[0];
+        $filter_operation   = $filterValues[1];
+        $fieldValue         = $filterValues[2];
+        if($field_id=='entry_id'){
+          $fieldName = 'Entry ID';
+        }elseif(is_numeric($field_id) && $field_id==0){
+          $fieldName = 'Any Form Field';
+        }else{
+          $field = GFFormsModel::get_field( $form, $field_id );
+          if ( $field ) {
+            $fieldName= (isset($field['adminLabel'])&&$field['adminLabel']!=''?$field['adminLabel']:$field['label']);
+          }else{
+            $meta = GFFormsModel::get_entry_meta(array( $form['id']));
+            $metaField = $meta[$field_id];
+            if($metaField){
+              $fieldName  = (isset($metaField['label'])&&$metaField['label']!=''?$metaField['label']:$filterValues[0]);
+              if(is_array($metaField['filter']['choices'])){
+                foreach($metaField['filter']['choices'] as $choice){
+                  if($choice['value']==$fieldValue)
+                    $fieldValue = $choice['text'];
                 }
               }
-            }
 
-            $newArray = $_GET['filterField'];
-            $newOutput = '';
-            unset($newArray[$key]);
-            foreach($newArray as $newValue){
-              $newOutput .= '&filterField[]='.$newValue;
+            }else{
+              $fieldName = $field_id;
             }
-            //get admin title for the field.
-            $newURL  = "?page=gf_entries&view=entries&id=" . $form_id;
-            $newURL .= ($sort_field     != '' ? "&sort=" . $sort_field : '');
-            $newURL .= ($sort_direction !=' ' ? "&dir=" . $sort_direction : '');
-            $newURL .= ($star           != '' ? "&star=" . $star:'');
-            $newURL .= ($read           != '' ? "&read=" . $read:'');
-            $newURL .= ($filter         != '' ? "&filter=" . $filter : '');
-            $newURL .= ($faire          != '' ? "&faire=" . $faire : '');
-            $newURL .= $newOutput;
-            echo '<span class="gf_admin_page_formname">'.$fieldName.($filterValues[1]!='is'?' ('.$filterValues[1].') ':'').': '.$fieldValue;
-            echo ' <a style="color:red" href="javascript:document.location = \''.$newURL.'\';">X</a></span>';
           }
         }
-      } ?>
-    </span><?php
+
+        //remove the current variable so we can allow for a 'delete' link
+        $newArray = $_GET['filterField'];
+        $newOutput = '';
+        unset($newArray[$key]);
+        foreach($newArray as $newValue){
+          $newOutput .= '&filterField[]='.$newValue;
+        }
+
+        //get admin title for the field.
+        $newURL  = "?page=gf_entries&view=entries&id=" . $form_id;
+        $newURL .= (rgget('sort')   != '' ? "&sort=" . rgget('sort') : '');
+        $newURL .= (rgget('dir')    != '' ? "&dir=" . rgget('dir') : '');
+        $newURL .= (rgget('star')   != '' ? "&star=" . rgget('star') : '');
+        $newURL .= (rgget('read')   != '' ? "&read=" . rgget('read') : '');
+        $newURL .= (rgget('filter') != '' ? "&filter=" . rgget('filter') : '');
+        $newURL .= (rgget('faire')  != '' ? "&faire=" . rgget('faire') : '');
+        $newURL .= $newOutput;
+
+        $output .=  '<span class="gf_admin_page_formname">'.$fieldName.($filterValues[1]!='is'?' ('.$filterValues[1].') ':'').': '.$fieldValue;
+        $output .=  ' <a style="color:red" href="javascript:document.location = \''.$newURL.'\';">X</a></span>';
+      }
+    }
+  }
+  $output .= '</span>';
+  echo $output;
   return $menu_items;
 }
 
@@ -190,4 +196,49 @@ function modify_field_display_values( $value, $form_id, $field_id, $lead ) {
     }
   }
   return $value;
+}
+
+add_filter( 'gform_search_criteria_entry_list', 'multi_search_criteria_entry_list', 10, 2 );
+function multi_search_criteria_entry_list($search_criteria, $form_id){
+  $fieldSep  = '|';
+  $form        = GFAPI::get_form($form_id);
+  $filterField = rgget('filterField');
+  if(isset($_GET['filterField']) && is_array($_GET['filterField'])){
+    foreach($_GET['filterField'] as $key=>$value){
+      $strpos_row_key = strpos( $value, $fieldSep );
+      if ( $strpos_row_key !== false ) { //multi-field filter
+        $filterValues = explode($fieldSep,$value);
+        $field_id           = $filterValues[0];
+        $search_operFF   = $filterValues[1];
+        $fieldValue         = $filterValues[2];
+
+        //let's check if an entry ID was entered in the 'All form fields' filter
+        if($field_id==0 && is_numeric($fieldValue)){
+            $entry = GFAPI::get_entry( $fieldValue );
+            if(is_array($entry)){
+                $key = 'entry_id';
+                $search_operFF = 'is';
+            }
+        }
+        $filter_operator = empty( $search_operFF ) ? 'is' : $search_operFF;
+
+        $field = GFFormsModel::get_field( $form, $key );
+        if ( $field ) {
+          $input_type = GFFormsModel::get_input_type( $field );
+          if ( $field->type == 'product' && in_array( $input_type, array( 'radio', 'select' ) ) ) {
+            $filter_operator = 'contains';
+          }
+        }
+
+        $search_criteria['field_filters'][] = array(
+          'key'      => $field_id,
+          'operator' => $filter_operator,
+          'value'    => $fieldValue,
+        );
+
+      }
+    }
+  }
+
+  return $search_criteria;
 }
