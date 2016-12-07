@@ -197,36 +197,39 @@ get_header();
 
               <!-- Tasks -->
               <?php
+              if(isset($entryData['tasks'])){
+                if(!empty($entryData['tasks']) && count($entryData['tasks']['toDo']) > 0 || count($entryData['tasks']['done'])>0){
+                  $tasks = $entryData['tasks'];
+                  ?>
 
-              if(!empty($entryData['tasks']) && count($entryData['tasks']['toDo']) > 0 || count($entryData['tasks']['done'])>0){
-                $tasks = $entryData['tasks'];
-                ?>
-
-                <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover" data-toggle="popover">TASKS
-                  <div class="notification-counter toggle-popover" data-toggle="popover"><?php echo count($tasks['toDo']);?></div>
-                </button>
-                <div class="popover-content hidden">
-                  <div class="manage-entry-popover row">
-                    <div class="manage-links">
-                      <?php
-                      foreach($tasks['toDo'] as $task) { ?>
-                        <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="todoTasks" style="color:red"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</span></a>
+                  <button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover" data-toggle="popover">TASKS
+                    <div class="notification-counter toggle-popover" data-toggle="popover"><?php echo count($tasks['toDo']);?></div>
+                  </button>
+                  <div class="popover-content hidden">
+                    <div class="manage-entry-popover row">
+                      <div class="manage-links">
                         <?php
-                      }
-                      ?>
-                    </div>
-                    <div class="manage-links">
-                      <!--<h4 class="tasks"><i class="fa fa-check" aria-hidden="true"></i>Done</h4>-->
-                      <?php
-                      foreach($tasks['done'] as $task) { ?>
-                      <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="doneTasks" style="color:green"><i class="fa fa-check" aria-hidden="true"></i>Done</span></a>
+                        foreach($tasks['toDo'] as $task) { ?>
+                          <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="todoTasks" style="color:red"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</span></a>
+                          <?php
+                        }
+                        ?>
+                      </div>
+                      <div class="manage-links">
+                        <!--<h4 class="tasks"><i class="fa fa-check" aria-hidden="true"></i>Done</h4>-->
                         <?php
-                      }
-                      ?>
+                        foreach($tasks['done'] as $task) { ?>
+                        <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="doneTasks" style="color:green"><i class="fa fa-check" aria-hidden="true"></i>Done</span></a>
+                          <?php
+                        }
+                        ?>
+                      </div>
                     </div>
                   </div>
-                </div>
-              <?php } ?>
+                  <?php
+                }
+              }
+              ?>
 
               <!-- Manage Entry links -->
               <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">MANAGE
