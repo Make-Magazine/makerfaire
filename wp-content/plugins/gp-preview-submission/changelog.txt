@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.1
+
+    - Fixed potential XSS security vulnerability
+
 ## 1.2
 
     - Added support for processing field label and choice label merge tags (activate via filter)

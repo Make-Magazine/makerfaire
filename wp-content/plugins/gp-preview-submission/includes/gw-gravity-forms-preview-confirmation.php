@@ -21,7 +21,7 @@ class GWPreviewConfirmation {
     
     public static function replace_merge_tags( $form ) {
 
-        $current_page = isset( GFFormDisplay::$submission[ $form['id'] ] ) ? GFFormDisplay::$submission[ $form['id'] ]['page_number'] : 1;
+        $current_page = isset( GFFormDisplay::$submission[ $form['id'] ] ) ? rgar( GFFormDisplay::$submission[ $form['id'] ], 'page_number' ) : 1;
 
         // get all HTML fields on the current page
         foreach($form['fields'] as &$field) {
@@ -134,7 +134,7 @@ class GWPreviewConfirmation {
     }
 
     public static function add_page_progression_input( $form_tag, $form ) {
-        $input = sprintf( '<input type="hidden" value="%s" name="gpps_page_progression_%s" />', self::get_page_progression( $form['id'] ), $form['id'] );
+        $input = sprintf( '<input type="hidden" value="%s" name="gpps_page_progression_%s" />', esc_html( self::get_page_progression( $form['id'] ) ), $form['id'] );
         return $form_tag . $input;
     }
 
@@ -146,7 +146,7 @@ class GWPreviewConfirmation {
         if( $source_page > $progression )
             $progression = $source_page;
 
-        return $progression;
+        return intval( $progression );
     }
 
     public static function add_dynamic_field_value_filter( $name, $field, $input_id = false ) {

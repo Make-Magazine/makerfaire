@@ -40,12 +40,14 @@
 
         };
 
-        this.copyValues = function( elem, isOverride ) {
+        this.copyValues = function( elem, isOverride, forceEmptyCopy ) {
 
             var copyObj    = this,
                 fieldId    = $(elem).parents('li.gwcopy').attr('id').replace('field_' + this._formId + '_', '' ),
-                fields     = this._fields[fieldId],
-                isOverride = copyObj._overwrite || isOverride;
+                fields     = this._fields[fieldId];
+
+            isOverride     = copyObj._overwrite || isOverride;
+            forceEmptyCopy = typeof forceEmptyCopy == 'undefined' ? false : forceEmptyCopy;
 
             for( var i = 0; i < fields.length; i++ ) {
 
@@ -71,7 +73,7 @@
                     }
 
                     // if there is no source value for this element, skip
-                    if( ! hasSourceValue ) {
+                    if( ! hasSourceValue && ! forceEmptyCopy ) {
                         return true;
                     }
 
@@ -112,6 +114,11 @@
                     sourceValues = [],
                     targetGroup  = this.getFieldGroup( field, 'target' ),
                     sourceGroup  = this.getFieldGroup( field, 'source' );
+
+                if( field.source == fieldId && $( elem ).is( ':checkbox' ) ) {
+                    this.copyValues( elem, true, true );
+                    return;
+                }
 
                 sourceGroup.each( function( i ) {
                     sourceValues[i] = $(this).val();

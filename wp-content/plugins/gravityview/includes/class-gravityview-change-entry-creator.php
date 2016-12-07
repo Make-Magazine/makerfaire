@@ -204,8 +204,7 @@ class GravityView_Change_Entry_Creator {
             return;
         }
 
-        //MF custom code
-        $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email') ));
+        $users = GVCommon::get_users( 'change_entry_creator' );
 
         $output = '<label for="change_created_by">';
         $output .= esc_html__('Change Entry Creator:', 'gravityview');
@@ -213,8 +212,7 @@ class GravityView_Change_Entry_Creator {
         <select name="created_by" id="change_created_by" class="widefat">';
         $output .= '<option value=""> &mdash; '.esc_attr_x( 'No User', 'No user assigned to the entry', 'gravityview').' &mdash; </option>';
         foreach($users as $user) {
-          //MF custom code
-          $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_email.')' ).'</option>';
+            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
         }
         $output .= '</select>';
         $output .= '<input name="originally_created_by" value="'.esc_attr( $entry['created_by'] ).'" type="hidden" />';

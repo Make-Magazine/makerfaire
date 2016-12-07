@@ -2,7 +2,7 @@
 
 class GP_Preview_Submission extends GWPerk {
 
-    public $version = '1.2';
+    public $version = '1.2.1';
     public $min_gravity_perks_version = '1.2';
     public $min_gravity_forms_version = '1.8';
     public $min_wp_version = '3.7';

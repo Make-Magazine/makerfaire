@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.12
+
+    - Added support for clearing deselected checkbox values when copying into a Single Line Text field
+
 ## 1.3.11
 
     - Fixed issue when clearing checked checkboxes

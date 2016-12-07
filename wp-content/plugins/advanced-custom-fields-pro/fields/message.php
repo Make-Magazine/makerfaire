@@ -138,13 +138,9 @@ class acf_field_message extends acf_field {
 		acf_render_field_setting( $field, array(
 			'label'			=> __('Escape HTML','acf'),
 			'instructions'	=> __('Allow HTML markup to display as visible text instead of rendering','acf'),
-			'type'			=> 'radio',
 			'name'			=> 'esc_html',
-			'choices'		=> array(
-				1				=> __("Yes",'acf'),
-				0				=> __("No",'acf'),
-			),
-			'layout'	=>	'horizontal',
+			'type'			=> 'true_false',
+			'ui'			=> 1,
 		));
 		
 	}

@@ -124,13 +124,9 @@ class acf_field_tab extends acf_field {
 		acf_render_field_setting( $field, array(
 			'label'			=> __('End-point','acf'),
 			'instructions'	=> __('Use this field as an end-point and start a new group of tabs','acf'),
-			'type'			=> 'radio',
 			'name'			=> 'endpoint',
-			'choices'		=> array(
-				1				=> __("Yes",'acf'),
-				0				=> __("No",'acf'),
-			),
-			'layout'	=>	'horizontal',
+			'type'			=> 'true_false',
+			'ui'			=> 1,
 		));
 				
 	}

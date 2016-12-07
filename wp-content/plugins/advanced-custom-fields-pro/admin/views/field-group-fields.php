@@ -20,23 +20,22 @@ extract( $args );
 		<li class="li-field-type"><?php _e('Type','acf'); ?></li>
 	</ul>
 	
-	<div class="acf-field-list<?php if( $layout ){ echo " layout-{$layout}"; } ?>">	
-		<?php
+	<div class="acf-field-list<?php if( $layout ){ echo " layout-{$layout}"; } ?>">
 		
-		if( $fields ) {
-			
-			foreach( $fields as $i => $field ) {
-				
-				acf_get_view('field-group-field', array( 'field' => $field, 'i' => $i ));
-				
-			}
-		
-		}
-		
-		?>
 		<div class="no-fields-message" <?php if( $fields ){ echo 'style="display:none;"'; } ?>>
 			<?php _e("No fields. Click the <strong>+ Add Field</strong> button to create your first field.",'acf'); ?>
 		</div>
+		
+		<?php if( $fields ):
+			
+			foreach( $fields as $i => $field ):
+				
+				acf_get_view('field-group-field', array( 'field' => $field, 'i' => $i ));
+				
+			endforeach;
+		
+		endif; ?>
+		
 	</div>
 	
 	<ul class="acf-hl acf-tfoot">
