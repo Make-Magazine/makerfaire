@@ -6,71 +6,74 @@
 add_filter( 'gform_toolbar_menu', 'mf_custom_toolbar', 10, 2 );
 function mf_custom_toolbar( $menu_items, $form_id ) {
   $menu_items = array(); //empty out the gravity form toolbar.  this will be replaced by a custom MF toolbar
-  $output = return_MF_navigation();
-  //append the filter results
-  $form         = GFAPI::get_form( $form_id );
-  $fieldSep  = '|';
-  $output .= '<span class="gf_admin_page_subtitle">';
+  $view = (isset($_GET['view'])?$_GET['view']:'');
+  if($view=='' || $view=='entries') {
+    $output = return_MF_navigation();
+    //append the filter results
+    $form         = GFAPI::get_form( $form_id );
+    $fieldSep  = '|';
+    $output .= '<span class="gf_admin_page_subtitle">';
 
-  if(isset($_GET['filterField']) && is_array($_GET['filterField'])){
-    foreach($_GET['filterField'] as $key=>$value){
-      $strpos_row_key = strpos( $value, $fieldSep );
-      if ( $strpos_row_key !== false ) { //multi-field filter
-        $filterValues = explode($fieldSep,$value);
-        $field_id           = $filterValues[0];
-        $filter_operation   = $filterValues[1];
-        $fieldValue         = $filterValues[2];
-        if($field_id=='entry_id'){
-          $fieldName = 'Entry ID';
-        }elseif(is_numeric($field_id) && $field_id==0){
-          $fieldName = 'Any Form Field';
-        }else{
-          $field = GFFormsModel::get_field( $form, $field_id );
-          if ( $field ) {
-            $fieldName= (isset($field['adminLabel'])&&$field['adminLabel']!=''?$field['adminLabel']:$field['label']);
+    if(isset($_GET['filterField']) && is_array($_GET['filterField'])){
+      foreach($_GET['filterField'] as $key=>$value){
+        $strpos_row_key = strpos( $value, $fieldSep );
+        if ( $strpos_row_key !== false ) { //multi-field filter
+          $filterValues = explode($fieldSep,$value);
+          $field_id           = $filterValues[0];
+          $filter_operation   = $filterValues[1];
+          $fieldValue         = $filterValues[2];
+          if($field_id=='entry_id'){
+            $fieldName = 'Entry ID';
+          }elseif(is_numeric($field_id) && $field_id==0){
+            $fieldName = 'Any Form Field';
           }else{
-            $meta = GFFormsModel::get_entry_meta(array( $form['id']));
-            $metaField = $meta[$field_id];
-            if($metaField){
-              $fieldName  = (isset($metaField['label'])&&$metaField['label']!=''?$metaField['label']:$filterValues[0]);
-              if(is_array($metaField['filter']['choices'])){
-                foreach($metaField['filter']['choices'] as $choice){
-                  if($choice['value']==$fieldValue)
-                    $fieldValue = $choice['text'];
-                }
-              }
-
+            $field = GFFormsModel::get_field( $form, $field_id );
+            if ( $field ) {
+              $fieldName= (isset($field['adminLabel'])&&$field['adminLabel']!=''?$field['adminLabel']:$field['label']);
             }else{
-              $fieldName = $field_id;
+              $meta = GFFormsModel::get_entry_meta(array( $form['id']));
+              $metaField = $meta[$field_id];
+              if($metaField){
+                $fieldName  = (isset($metaField['label'])&&$metaField['label']!=''?$metaField['label']:$filterValues[0]);
+                if(is_array($metaField['filter']['choices'])){
+                  foreach($metaField['filter']['choices'] as $choice){
+                    if($choice['value']==$fieldValue)
+                      $fieldValue = $choice['text'];
+                  }
+                }
+
+              }else{
+                $fieldName = $field_id;
+              }
             }
           }
+
+          //remove the current variable so we can allow for a 'delete' link
+          $newArray = $_GET['filterField'];
+          $newOutput = '';
+          unset($newArray[$key]);
+          foreach($newArray as $newValue){
+            $newOutput .= '&filterField[]='.$newValue;
+          }
+
+          //get admin title for the field.
+          $newURL  = "?page=gf_entries&view=entries&id=" . $form_id;
+          $newURL .= (rgget('sort')   != '' ? "&sort=" . rgget('sort') : '');
+          $newURL .= (rgget('dir')    != '' ? "&dir=" . rgget('dir') : '');
+          $newURL .= (rgget('star')   != '' ? "&star=" . rgget('star') : '');
+          $newURL .= (rgget('read')   != '' ? "&read=" . rgget('read') : '');
+          $newURL .= (rgget('filter') != '' ? "&filter=" . rgget('filter') : '');
+          $newURL .= (rgget('faire')  != '' ? "&faire=" . rgget('faire') : '');
+          $newURL .= $newOutput;
+
+          $output .=  '<span class="gf_admin_page_formname">'.$fieldName.($filterValues[1]!='is'?' ('.$filterValues[1].') ':'').': '.$fieldValue;
+          $output .=  ' <a style="color:red" href="javascript:document.location = \''.$newURL.'\';">X</a></span>';
         }
-
-        //remove the current variable so we can allow for a 'delete' link
-        $newArray = $_GET['filterField'];
-        $newOutput = '';
-        unset($newArray[$key]);
-        foreach($newArray as $newValue){
-          $newOutput .= '&filterField[]='.$newValue;
-        }
-
-        //get admin title for the field.
-        $newURL  = "?page=gf_entries&view=entries&id=" . $form_id;
-        $newURL .= (rgget('sort')   != '' ? "&sort=" . rgget('sort') : '');
-        $newURL .= (rgget('dir')    != '' ? "&dir=" . rgget('dir') : '');
-        $newURL .= (rgget('star')   != '' ? "&star=" . rgget('star') : '');
-        $newURL .= (rgget('read')   != '' ? "&read=" . rgget('read') : '');
-        $newURL .= (rgget('filter') != '' ? "&filter=" . rgget('filter') : '');
-        $newURL .= (rgget('faire')  != '' ? "&faire=" . rgget('faire') : '');
-        $newURL .= $newOutput;
-
-        $output .=  '<span class="gf_admin_page_formname">'.$fieldName.($filterValues[1]!='is'?' ('.$filterValues[1].') ':'').': '.$fieldValue;
-        $output .=  ' <a style="color:red" href="javascript:document.location = \''.$newURL.'\';">X</a></span>';
       }
     }
+    $output .= '</span>';
+    echo $output;
   }
-  $output .= '</span>';
-  echo $output;
   return $menu_items;
 }
 
@@ -242,3 +245,41 @@ function multi_search_criteria_entry_list($search_criteria, $form_id){
 
   return $search_criteria;
 }
+
+  // Add custom MF Edit link to the entry actions - this will include our multi filter options
+  //add_action( 'gform_entries_first_column_actions', 'add_MF_edit_link', 10, 5 );
+	/**
+	 * Add an Edit link to the GF Entry actions row
+	 * @param int $form_id      ID of the current form
+	 * @param int $field_id     The ID of the field in the first column, where the row actions are shown
+	 * @param string $value        The value of the `$field_id` field
+	 * @param array  $lead         The current entry data
+	 * @param string $query_string URL query string for a link to the current entry. Missing the `?page=` part, which is strange. Example: `gf_entries&view=entry&id=35&lid=5212&filter=&paged=1`
+	 */
+	function add_MF_edit_link( $form_id = NULL, $field_id = NULL, $value = NULL, $lead = array(), $query_string = NULL ) {
+    if(isset($_GET['filterField']) && is_array($_GET['filterField'])){
+      $filterFields = $_GET['filterField'];
+    }else{
+      $filterFields = array();
+    }
+
+    $filter_qs = '';
+    foreach($filterFields as $filterField){
+      $filter_qs .= '&filterField[]='.esc_attr($filterField);
+    }
+
+    $params = array(
+        'page' => 'gf_entries',
+        'view' => 'entry',
+        'id'	=> (int)$form_id,
+        'lid'	=>	(int)$lead["id"],
+        'screen_mode'	=> 'edit',
+      );
+		?>
+
+    <span class="edit edit_entry">
+			|
+		    <a title="<?php esc_attr_e( 'Edit this entry', 'gravityview'); ?>" href="<?php echo esc_url( add_query_arg( $params, admin_url( 'admin.php?page='.$query_string ) ).$filter_qs ); ?>"><?php esc_html_e( 'MF Edit', 'gravityview' ); ?></a>
+		</span>
+		<?php
+	}
