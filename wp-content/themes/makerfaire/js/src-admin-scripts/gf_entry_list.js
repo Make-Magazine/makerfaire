@@ -18,6 +18,7 @@ jQuery(window).load(function() {
     }
   });
   jQuery("#entry_filters .gform-filter-field").prepend(newOptions);
+
   //add custom filters to end of edit and view links
   jQuery('.row-actions .edit a').each(function() {
     var filterParam = getAllUrlParams().filterField;
@@ -64,6 +65,8 @@ jQuery(window).load(function() {
 
     document.location = location;
   }
+  jQuery('#entry_list_form').show();
+  jQuery('#entry_search_container').show();
 });
 
 //find all the instances of a parameter in the url
