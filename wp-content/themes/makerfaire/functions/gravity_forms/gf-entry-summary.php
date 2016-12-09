@@ -435,7 +435,7 @@ function displayContent($content,$lead,$fieldData,$display = 'table'){
   foreach($content as $fieldID){
     if(isset($fieldData[$fieldID])){
       $field = $fieldData[$fieldID];
-      $value         = RGFormsModel::get_lead_field_value( $lead, $field );
+      $value = RGFormsModel::get_lead_field_value( $lead, $field );
       if(RGFormsModel::get_input_type($field)!='fileupload'){
         $display_value = GFCommon::get_lead_field_display( $field, $value, $lead['currency'] );
         $display_value = apply_filters( 'gform_entry_field_value', $display_value, $field, $lead, $form );

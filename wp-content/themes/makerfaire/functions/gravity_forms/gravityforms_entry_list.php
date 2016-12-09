@@ -7,7 +7,8 @@ add_filter( 'gform_toolbar_menu', 'mf_custom_toolbar', 10, 2 );
 function mf_custom_toolbar( $menu_items, $form_id ) {
   $menu_items = array(); //empty out the gravity form toolbar.  this will be replaced by a custom MF toolbar
   $view = (isset($_GET['view'])?$_GET['view']:'');
-  if($view=='' || $view=='entries') {
+  $page = (isset($_GET['page'])?$_GET['page']:'');
+  if(($view=='' || $view=='entries')&&$page=='gf_entries') {
     $output = return_MF_navigation();
     //append the filter results
     $form         = GFAPI::get_form( $form_id );

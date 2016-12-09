@@ -582,6 +582,16 @@ function hiddenTicket(accessCode) {
         gentry_email_notes_to_sidebar.push(jQuery(this).val());
       });
       data.gentry_email_notes_to_sidebar = gentry_email_notes_to_sidebar;
+    } else if(action=='update_fee_mgmt') {
+      //set processing icon on the screen
+      jQuery(".update_fee_mgmt_msg").html(processing_icon);
+      //preliminary location
+      var entry_info_fee_mgmt=[];
+      jQuery("[name='entry_info_fee_mgmt[]']:checked").each(function () {
+        // push all checked locations to array
+        entry_info_fee_mgmt.push(jQuery(this).val());
+      });
+      data.entry_info_fee_mgmt = entry_info_fee_mgmt;
     }
 
     jQuery.post(ajaxurl, data, function(r) {

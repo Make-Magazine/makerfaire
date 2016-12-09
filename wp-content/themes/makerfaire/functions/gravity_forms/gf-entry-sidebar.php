@@ -5,6 +5,7 @@ function add_sidebar_sections($form, $lead) {
   $sidebar  = '';
   $sidebar .= display_entry_info_box($form, $lead);
   $sidebar .= display_entry_rating_box($form, $lead);
+  $sidebar .= display_entry_fee_mgmt_box($form, $lead);
   $sidebar .= display_entry_notes_box($form, $lead);
   $sidebar .= display_flags_prelim_locs($form, $lead);
   $sidebar .= display_sched_loc_box($form, $lead);
@@ -23,6 +24,20 @@ function add_sidebar_sections($form, $lead) {
   echo $sidebar;
 }
 
+function addExpandBox($data, $title, $boxClass=''){
+  return '<div class="meta-box-sortables '.$boxClass.'">'
+          . ' <div class="postbox">'
+          . '   <button type="button" class="handlediv button-link" aria-expanded="true">'
+          . '     <span class="screen-reader-text">Toggle panel: '.$boxClass.'</span>'
+          . '     <span class="toggle-indicator" aria-hidden="true"></span>'
+          . '   </button>'
+          . '   <h3 class="hndle ui-sortable-handle">'.$title.'</h3>'
+          . '   <div class="inside">'.
+                  $data.'
+                </div>
+              </div>
+            </div>';
+}
 function display_entry_info_box($form, $lead) {
   $mode       = empty( $_POST['screen_mode'] )  ? 'view' : $_POST['screen_mode'];
 	$street     = (isset($lead['101.1'])          ? $lead['101.1']:'');
@@ -111,9 +126,7 @@ function display_entry_info_box($form, $lead) {
     </div>";
   return $return;
 }
-
 function display_entry_rating_box($form, $lead) {
-  $return = '';
   /* Ratings Sidebar Area */
   global $wpdb;
   // Retrieve any ratings
@@ -139,18 +152,8 @@ function display_entry_rating_box($form, $lead) {
   }
 
   $ratingAvg = ($ratingNum!=0?round($ratingTotal/$ratingNum):0);
-  $return .=
-    '<div class="postbox">
-    <h3>Entry Rating:
-      <a href="#" onclick="return false;"
-        data-toggle="popover" data-trigger="hover"
-        data-placement="top" data-html="true"
-        data-content="1 = No way<br/>2 = Low priority<br/>3 = Yes, If there’s room<br/>4 = Yes definitely<br/>5 = Hell yes">
-        (?)
-      </a>'. $ratingAvg .' stars
-    </h3>
-
-    <div class="entryRating inside">
+  $return =
+    '<div class="entryRating">
       <span class="star-rating">
         <input type="radio" name="rating" value="1" '. ($currRating==1?'checked':'').'><i></i>
         <input type="radio" name="rating" value="2" '. ($currRating==2?'checked':'').'><i></i>
@@ -170,20 +173,27 @@ function display_entry_rating_box($form, $lead) {
                     '</table>'.$ratingResults;
       }
       $return .=
-    '</div>
-  </div>';
-  return $return;
+    '</div>';
+  $title = 'Entry Rating:
+            <a href="#" onclick="return false;"
+              data-toggle="popover" data-trigger="hover"
+              data-placement="top" data-html="true"
+              data-content="1 = No way<br/>2 = Low priority<br/>3 = Yes, If there’s room<br/>4 = Yes definitely<br/>5 = Hell yes">
+              (?)
+            </a>'. $ratingAvg .' stars';
+  return addExpandBox($return,$title);
 }
+function display_entry_fee_mgmt_box($form, $lead) {
+  $fieldName  = 'entry_info_fee_mgmt';
+  $field_id   = '442';
 
+  $return     = field_display($lead,$form,$field_id,$fieldName);
+  $return .= '<input type="button" name="update_fee_mgmt" value="Update Fee Management" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_fee_mgmt\');"/>';
+  $return .= '<span class="updMsg update_fee_mgmtMsg"></span>';
+  return addExpandBox($return,'Fee Management');
+}
 function display_entry_notes_box($form, $lead) {
   /* Notes Sidebar Area */
-  $return = '
-  <div class="postbox notesbox">
-    <h3>
-      <label for="name">'. __( 'Notes', 'gravityforms' ) .' </label>
-    </h3>' .wp_nonce_field( 'gforms_update_note', 'gforms_update_note',true,false ) .
-   '<div class="inside">';
-
   $notes = RGFormsModel::get_lead_notes( $lead['id'] );
 
   //getting email values
@@ -197,12 +207,9 @@ function display_entry_notes_box($form, $lead) {
   }
   //displaying notes grid
   $subject = '';
-  $return .= notes_sidebar_grid( $notes, true, $emails, $subject );
+  $return = notes_sidebar_grid( $notes, true, $emails, $subject );
 
-  $return .=
-   '</div>
-  </div>';
-  return $return;
+  return addExpandBox($return,'Notes','notesbox');
 }
 
 function display_flags_prelim_locs($form, $lead) {
@@ -210,19 +217,47 @@ function display_flags_prelim_locs($form, $lead) {
   $mode       = empty( $_POST['screen_mode'] )  ? 'view' : $_POST['screen_mode'];
   /* Entry Management Sidebar Area */
   if ($mode == 'view') {
-    $return = '<div class="postbox">';
     // Create Update button for sidebar entry management
     $entry_sidebar_button = '<input type="button" name="update_management" value="Update Management" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_entry_management\');"/>';
     $msgBox = '<span class="updMsg update_entry_managementMsg"></span>';
-    $return .= $entry_sidebar_button. $msgBox;
+    $return = $entry_sidebar_button. $msgBox;
 
     // Load flags and prelim location section
-    $return .= mf_sidebar_entry_info( $form, $lead );
+    $form_id = $form['id'];
+
+    //flags
+    $return    .= '<h4><label class="detail-label">Flags:</label></h4>';
+    $fieldName  = 'entry_info_flags_change';
+    $field_id   = '304';
+    $return    .= field_display($lead,$form,$field_id,$fieldName);
+
+    //preliminary locations
+    $return     .= '<h4><label class="detail-label">Preliminary Location:</label></h4>';
+    $changeHook  = 'entry_info_location_change';
+    $field_id    = '302';
+    $return     .= field_display($lead,$form,$field_id,$changeHook);
+
+    $return     .= '<textarea name="entry_location_comment" id="entry_location_comment" style="width: 100%; height: 50px; margin-bottom: 4px;" cols="" rows="">'.(isset($lead['307'])?$lead['307']:'').'</textarea>';
 
     // Create Update button for sidebar entry management
-    $return .= $entry_sidebar_button.$msgBox;
-    $return .= '</div>';
-	}
+    $return     .= $entry_sidebar_button.$msgBox;
+
+    return addExpandBox($return,'Flags / Preliminary Location');
+	}else{
+    return '';
+  }
+}
+
+function field_display($lead,$form,$field_id,$fieldName) {
+  $return    = '';
+
+  $form_id = $form['id'];
+  $field     = RGFormsModel::get_field($form,$field_id);
+  //is this a valid field in the form
+  if($field!=NULL){
+    $value     = RGFormsModel::get_lead_field_value( $lead, $field );
+    $return   .= mf_checkbox_display($field, $value, $form_id, $fieldName);
+  }
   return $return;
 }
 
@@ -231,12 +266,12 @@ function display_sched_loc_box($form, $lead) {
   $mode       = empty( $_POST['screen_mode'] )  ? 'view' : $_POST['screen_mode'];
 	/* Scheduling Management Sidebar Area */
 	if ($mode == 'view') {
-    $return .= '<div class="postbox schedBox">';
     // Load Entry Sidebar details: schedule
-    $return .=  mf_sidebar_entry_schedule( $form['id'], $lead );
-		$return .= '</div>';
+    $return =  mf_sidebar_entry_schedule( $form['id'], $lead );
+    return addExpandBox($return,'Schedule/Location','schedBox');
+  }  else {
+    return '';
   }
-  return $return;
 }
 
 function display_ticket_code_box($form, $lead) {
@@ -358,8 +393,7 @@ function mf_sidebar_entry_ticket($form_id, $lead) {
 
 function mf_sidebar_entry_schedule($form_id, $lead) {
     global $wpdb;
-    $output  = '<link rel="stylesheet" type="text/css" href="'.get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css"/>
-                <h4><label class="detail-label">Schedule/Location:</label></h4>';
+    $output  = '<link rel="stylesheet" type="text/css" href="'.get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css"/>';
     $output .= display_schedule($form_id,$lead);
     // Set up the Add to Schedule Section
     $output .= '<h4 class="topBorder">Add New:</h4>';
@@ -512,31 +546,6 @@ function display_schedule($form_id,$lead,$section='sidebar'){
   }
 }
 
-/* This is where we run code on the entry info screen.  Logic for action handling goes here */
-function mf_sidebar_entry_info($form, $lead) {
-  // Load Fields to show on entry info
-  $form_id = $form['id'];
-
-  //flags
-  $output    = '<h4><label class="detail-label">Flags:</label></h4>';
-  $field     = RGFormsModel::get_field($form,'304');
-  $value     = RGFormsModel::get_lead_field_value( $lead, $field );
-  $fieldName = 'entry_info_flags_change';
-  $output   .=  mf_checkbox_display($field, $value, $form_id, $fieldName);
-
-
-  //preliminary locations
-	$output   .= '<h4><label class="detail-label">Preliminary Location:</label></h4>';
-  $field     = RGFormsModel::get_field($form,'302');
-  $value     = RGFormsModel::get_lead_field_value( $lead, $field );
-  $fieldName = 'entry_info_location_change';
-
-  $output .= mf_checkbox_display($field, $value, $form_id, $fieldName);
-
-	$output .= '<textarea name="entry_location_comment" id="entry_location_comment" style="width: 100%; height: 50px; margin-bottom: 4px;" cols="" rows="">'.(isset($lead['307'])?$lead['307']:'').'</textarea>';
-  return $output;
-}
-
 function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
   $choices = '';
   $is_entry_detail = $field->is_entry_detail();
@@ -574,7 +583,7 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
       }
       $choice_value  = esc_attr( $choice_value );
 
-      $output .= '<input type="checkbox" '.$checked.' name="entry_info_flags_change[]" style="margin: 3px;" value="'.$input_id.'_'.$choice_value.'" />'.$choice['text'].' <br />';
+      $output .= '<input type="checkbox" '.$checked.' name="'.$fieldName.'[]" style="margin: 3px;" value="'.$input_id.'_'.$choice_value.'" />'.$choice['text'].' <br />';
     }
   }
   return $output;

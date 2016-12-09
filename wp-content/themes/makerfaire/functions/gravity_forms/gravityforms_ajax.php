@@ -250,6 +250,9 @@ function mf_admin_MFupdate_entry(){
           delete_note_sidebar($_POST['note']);
         }
         break;
+      case 'update_fee_mgmt' :
+        set_feeMgmt($lead,$form);
+        break;
       default:
         $response['result'] = 'Error: Invalid Action Passed';
         break;
@@ -658,4 +661,27 @@ function add_note_sidebar($lead, $form){
 
 	mf_add_note( $lead['id'],  nl2br(stripslashes($_POST['new_note_sidebar'].$email_note_info)));
 
+}
+
+function set_feeMgmt($lead,$form){
+  $entry_id         = $lead['id'];
+	$fee_mgmt_change  = $_POST['entry_info_fee_mgmt'];
+
+	$field442 = RGFormsModel::get_field($form,'442');
+
+	if (!empty($entry_id)){
+		/* Clear out old choices */
+		foreach($field442['inputs'] as $choice){
+			mf_update_entry_field($entry_id,$choice['id'],'');
+		}
+
+		/* Save entries */
+		if (!empty($fee_mgmt_change)){
+			foreach($fee_mgmt_change as $fee_mgmt){
+				$exploded_fee_mgmt = explode("_",$fee_mgmt);
+				$entry_info_entry[$exploded_fee_mgmt[0]] = $exploded_fee_mgmt[1];
+				mf_update_entry_field($entry_id,$exploded_fee_mgmt[0],$exploded_fee_mgmt[1]);
+			}
+		}
+	}
 }
