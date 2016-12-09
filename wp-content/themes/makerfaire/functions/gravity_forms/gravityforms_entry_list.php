@@ -284,3 +284,12 @@ function multi_search_criteria_entry_list($search_criteria, $form_id){
 		</span>
 		<?php
 	}
+
+  //remove GF filter links from screen options
+  add_filter( 'gform_filter_links_entry_list','remove_gf_filter',10,3);
+  function remove_gf_filter($filter_links, $form, $include_counts) {
+    return array();
+  }
+
+  //remove teh approve/dissaprove column added by gravity view
+  add_filter('gravityview/approve_entries/hide-if-no-connections', '__return_true');

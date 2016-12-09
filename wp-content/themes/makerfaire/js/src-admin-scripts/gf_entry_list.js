@@ -19,8 +19,8 @@ jQuery(window).load(function() {
   });
   jQuery("#entry_filters .gform-filter-field").prepend(newOptions);
 
-  //add custom filters to end of edit and view links
-  jQuery('.row-actions .edit a').each(function() {
+  //add multi filters to end of edit and view links
+  jQuery('.column-primary a').each(function() {
     var filterParam = getAllUrlParams().filterField;
 
     var oldFilters = '';
