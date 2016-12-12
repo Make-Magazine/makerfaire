@@ -157,7 +157,7 @@ get_header();
 
           <div class="actionSection">
             <div class="submit-date">
-              <span class="gv-field-label">Submitted: </span> <?php echo date('M j, Y g:i  A',strtotime($entryData['date_created']));?>
+              <span class="gv-field-label">Submitted: </span> <?php echo esc_html( GFCommon::format_date( $entryData['date_created'], false, 'm/d/Y' )); ?>
             </div>
             <!-- Action Bar for Entries -->
             <div class="entry-action-buttons">
