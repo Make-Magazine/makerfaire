@@ -11,16 +11,16 @@ jQuery( document ).ready(function() {
 jQuery(window).load(function() {
   var topFields = ['entry_id','302','304','303'];
   var newOptions = '';
-  jQuery("#entry_filters .gform-filter-field > option").each(function() {
+  jQuery(".forms_page_gf_entries  #entry_filters .gform-filter-field > option").each(function() {
     if(jQuery.inArray(this.value, topFields)!=-1){
       newOptions += '<option value="'+this.value+'">'+this.text+'</option>';
       jQuery(this).remove();
     }
   });
-  jQuery("#entry_filters .gform-filter-field").prepend(newOptions);
+  jQuery(".forms_page_gf_entries #entry_filters .gform-filter-field").prepend(newOptions);
 
   //add multi filters to end of edit and view links
-  jQuery('.column-primary a').each(function() {
+  jQuery('.forms_page_gf_entries .column-primary a').each(function() {
     var filterParam = getAllUrlParams().filterField;
 
     var oldFilters = '';
