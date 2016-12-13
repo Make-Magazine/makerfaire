@@ -173,41 +173,30 @@ class GVCommon {
 			'page_size' => 1,
 		);
 
-		/**
-		 * @filter `gravityview/common/get_entry_id_from_slug/form_id` The form ID used to get the custom entry ID. Change this to avoid collisions with data from other forms with the same values and the same field ID.
-		 * @since 1.17.2
-		 * @param int $form_id ID of the form to search. Default: `0` (searches all forms)
-		 */
-		$form_id = apply_filters( 'gravityview/common/get_entry_id_from_slug/form_id', 0 );
-
-		$results = GFAPI::get_entries( intval( $form_id ), $search_criteria, null, $paging );
+		$results = GFAPI::get_entries( 0, $search_criteria, null, $paging );
 
 		$result = ( ! empty( $results ) && ! empty( $results[0]['id'] ) ) ? $results[0]['id'] : null;
 
 		return $result;
 	}
 
+
 	/**
-	 * Alias of GFAPI::get_forms()
+	 * Returns the list of available forms
 	 *
-	 * @see GFAPI::get_forms()
-	 *
-	 * @since 1.19 Allow "any" $active status option
-	 *
-	 * @param bool|string $active Status of forms. Use `any` to get array of forms with any status. Default: `true`
-	 * @param bool $trash Include forms in trash? Default: `false`
-	 *
-	 * @return array Empty array if GFAPI class isn't available or no forms. Otherwise, the array of Forms
+	 * @access public
+	 * @param mixed $form_id
+	 * @return array Empty array if GFAPI isn't available or no forms. Otherwise, associative array with id, title keys
 	 */
-	public static function get_forms(  $active = true, $trash = false ) {
+	public static function get_forms() {
 		$forms = array();
 		if ( class_exists( 'GFAPI' ) ) {
-			if( 'any' === $active ) {
-				$active_forms = GFAPI::get_forms( true, $trash );
-				$inactive_forms = GFAPI::get_forms( false, $trash );
-				$forms = array_merge( array_filter( $active_forms ), array_filter( $inactive_forms ) );
-			} else {
-				$forms = GFAPI::get_forms( $active, $trash );
+			$gf_forms = GFAPI::get_forms();
+			foreach ( $gf_forms as $form ) {
+				$forms[] = array(
+					'id' => $form['id'],
+					'title' => $form['title'],
+				);
 			}
 		}
 		return $forms;
@@ -234,8 +223,9 @@ class GVCommon {
 
 		if ( $form ) {
 			foreach ( $form['fields'] as $field ) {
+
 				if ( $include_parent_field || empty( $field['inputs'] ) ) {
-					$fields["{$field['id']}"] = array(
+					$fields["{$field->id}"] = array(
 						'label' => rgar( $field, 'label' ),
 						'parent' => null,
 						'type' => rgar( $field, 'type' ),
@@ -244,18 +234,13 @@ class GVCommon {
 					);
 				}
 
-				if ( $add_default_properties && ! empty( $field['inputs'] ) ) {
-					foreach ( $field['inputs'] as $input ) {
-
-						if( ! empty( $input['isHidden'] ) ) {
-							continue;
-						}
-
-						/**
+				if ( $add_default_properties && ! empty( $field->inputs ) ) {
+					foreach ( $field->inputs as $input ) {
+                        /**
                          * @hack
                          * In case of email/email confirmation, the input for email has the same id as the parent field
                          */
-						if( 'email' === $field['type'] && false === strpos( $input['id'], '.' ) ) {
+						if( 'email' === $field->type && false === strpos( $input['id'], '.' ) ) {
                             continue;
                         }
 						$fields["{$input['id']}"] = array(
@@ -270,7 +255,7 @@ class GVCommon {
 				}
 
 
-				if( GFCommon::is_product_field( $field['type'] ) ){
+				if( GFCommon::is_product_field( $field->type ) ){
 					$has_product_fields = true;
 				}
 
@@ -541,53 +526,6 @@ class GVCommon {
 
 
 	/**
-	 * Get the entry ID from a string that may be the Entry ID or the Entry Slug
-	 *
-	 * @since TODO
-	 *
-	 * @param string $entry_id_or_slug The ID or slug of an entry.
-	 * @param bool $force_allow_ids Whether to force allowing getting the ID of an entry, even if custom slugs are enabled
-	 *
-	 * @return false|int|null Returns the ID of the entry found, if custom slugs is enabled. Returns original value if custom slugs is disabled. Returns false if not allowed to convert slug to ID. Returns NULL if entry not found for the passed slug.
-	 */
-	public static function get_entry_id( $entry_id_or_slug = '', $force_allow_ids = false ) {
-
-		$entry_id = false;
-
-		/**
-		 * @filter `gravityview_custom_entry_slug` Whether to enable and use custom entry slugs.
-		 * @param boolean True: Allow for slugs based on entry values. False: always use entry IDs (default)
-		 */
-		$custom_slug = apply_filters( 'gravityview_custom_entry_slug', false );
-
-		/**
-		 * @filter `gravityview_custom_entry_slug_allow_id` When using a custom slug, allow access to the entry using the original slug (the Entry ID).
-		 * - If disabled (default), only allow access to an entry using the custom slug value.  (example: `/entry/custom-slug/` NOT `/entry/123/`)
-		 * - If enabled, you could access using the custom slug OR the entry id (example: `/entry/custom-slug/` OR `/entry/123/`)
-		 * @param boolean $custom_slug_id_access True: allow accessing the slug by ID; False: only use the slug passed to the method.
-		 */
-		$custom_slug_id_access = $force_allow_ids || apply_filters( 'gravityview_custom_entry_slug_allow_id', false );
-
-		/**
-		 * If we're using custom entry slugs, we do a meta value search
-		 * instead of doing a straightup ID search.
-		 */
-		if ( $custom_slug ) {
-			// Search for IDs matching $entry_id_or_slug
-			$entry_id = self::get_entry_id_from_slug( $entry_id_or_slug );
-		}
-
-		// If custom slug is off, search using the entry ID
-		// ID allow ID access is on, also use entry ID as a backup
-		if ( false === $custom_slug || true === $custom_slug_id_access ) {
-			// Search for IDs matching $entry_slug
-			$entry_id = $entry_id_or_slug;
-		}
-
-		return $entry_id;
-	}
-
-	/**
 	 * Return a single entry object
 	 *
 	 * Since 1.4, supports custom entry slugs. The way that GravityView fetches an entry based on the custom slug is by searching `gravityview_unique_id` meta. The `$entry_slug` is fetched by getting the current query var set by `is_single_entry()`
@@ -602,7 +540,36 @@ class GVCommon {
 
 		if ( class_exists( 'GFAPI' ) && ! empty( $entry_slug ) ) {
 
-			$entry_id = self::get_entry_id( $entry_slug, $force_allow_ids );
+			/**
+			 * @filter `gravityview_custom_entry_slug` Whether to enable and use custom entry slugs.
+			 * @param boolean True: Allow for slugs based on entry values. False: always use entry IDs (default)
+			 */
+			$custom_slug = apply_filters( 'gravityview_custom_entry_slug', false );
+
+			/**
+			 * @filter `gravityview_custom_entry_slug_allow_id` When using a custom slug, allow access to the entry using the original slug (the Entry ID).
+			 * - If disabled (default), only allow access to an entry using the custom slug value.  (example: `/entry/custom-slug/` NOT `/entry/123/`)
+			 * - If enabled, you could access using the custom slug OR the entry id (example: `/entry/custom-slug/` OR `/entry/123/`)
+			 * @param boolean $custom_slug_id_access True: allow accessing the slug by ID; False: only use the slug passed to the method.
+			 */
+			$custom_slug_id_access = $force_allow_ids || apply_filters( 'gravityview_custom_entry_slug_allow_id', false );
+
+			/**
+			 * If we're using custom entry slugs, we do a meta value search
+			 * instead of doing a straightup ID search.
+			 */
+			if ( $custom_slug ) {
+
+				$entry_id = self::get_entry_id_from_slug( $entry_slug );
+
+			}
+
+			// If custom slug is off, search using the entry ID
+			// ID allow ID access is on, also use entry ID as a backup
+			if ( empty( $custom_slug ) || ! empty( $custom_slug_id_access ) ) {
+				// Search for IDs matching $entry_slug
+				$entry_id = $entry_slug;
+			}
 
 			if ( empty( $entry_id ) ) {
 				return false;
@@ -906,21 +873,14 @@ class GVCommon {
 	 *
 	 * Alias of GFFormsModel::get_field
 	 *
-	 * @since 1.19 Allow passing form ID as well as form array
-	 *
 	 * @uses GFFormsModel::get_field
 	 * @see GFFormsModel::get_field
 	 * @access public
-	 * @param array|int $form Form array or ID
+	 * @param array $form
 	 * @param string|int $field_id
 	 * @return GF_Field|null Gravity Forms field object, or NULL: Gravity Forms GFFormsModel does not exist or field at $field_id doesn't exist.
 	 */
 	public static function get_field( $form, $field_id ) {
-
-		if ( is_numeric( $form ) ) {
-			$form = GFAPI::get_form( $form );
-		}
-
 		if ( class_exists( 'GFFormsModel' ) ){
 			return GFFormsModel::get_field( $form, $field_id );
 		} else {
@@ -1115,25 +1075,19 @@ class GVCommon {
 	 * 	[other zones]
 	 * )
 	 *
-	 * @since 1.17.4 Added $apply_filter parameter
-	 *
 	 * @param  int $post_id View ID
-	 * @param  bool $apply_filter Whether to apply the `gravityview/configuration/fields` filter [Default: true]
 	 * @return array          Multi-array of fields with first level being the field zones. See code comment.
 	 */
-	public static function get_directory_fields( $post_id, $apply_filter = true ) {
+	public static function get_directory_fields( $post_id ) {
 		$fields = get_post_meta( $post_id, '_gravityview_directory_fields', true );
 
-		if( $apply_filter ) {
-			/**
-			 * @filter `gravityview/configuration/fields` Filter the View fields' configuration array
-			 * @since 1.6.5
-			 *
-			 * @param $fields array Multi-array of fields with first level being the field zones
-			 * @param $post_id int Post ID
-			 */
-			$fields = apply_filters( 'gravityview/configuration/fields', $fields, $post_id );
-		}
+		/**
+		 * @filter `gravityview/configuration/fields` Filter the View fields' configuration array
+		 * @since 1.6.5
+		 * @param $fields array Multi-array of fields with first level being the field zones
+		 * @param $post_id int Post ID
+		 */
+		$fields = apply_filters( 'gravityview/configuration/fields', $fields, $post_id );
 
 		return $fields;
 	}
@@ -1421,14 +1375,6 @@ class GVCommon {
 
 		$final_atts['href'] = esc_url_raw( $href );
 
-		/**
-		 * Fix potential security issue with target=_blank
-		 * @see https://dev.to/ben/the-targetblank-vulnerability-by-example
-		 */
-		if( '_blank' === rgar( $final_atts, 'target' ) ) {
-			$final_atts['rel'] = trim( rgar( $final_atts, 'rel', '' ) . ' noopener noreferrer' );
-		}
-
 		// Sort the attributes alphabetically, to help testing
 		ksort( $final_atts );
 
@@ -1461,11 +1407,10 @@ class GVCommon {
 	 */
 	public static function array_merge_recursive_distinct( array &$array1, array &$array2 ) {
 		$merged = $array1;
-		foreach ( $array2 as $key => $value ) {
+
+		foreach ( $array2 as $key => &$value )  {
 			if ( is_array( $value ) && isset( $merged[ $key ] ) && is_array( $merged[ $key ] ) ) {
 				$merged[ $key ] = self::array_merge_recursive_distinct( $merged[ $key ], $value );
-			} else if ( is_numeric( $key ) && isset( $merged[ $key ] ) ) {
-				$merged[] = $value;
 			} else {
 				$merged[ $key ] = $value;
 			}
@@ -1484,7 +1429,7 @@ class GVCommon {
 	public static function get_users( $context = 'change_entry_creator', $args = array() ) {
 
 		$default_args = array(
-			'number' => 2000,
+			'number' => 100000,
 			'orderby' => 'display_name',
 			'order' => 'ASC',
 			'fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename' )

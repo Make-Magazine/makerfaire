@@ -72,8 +72,7 @@ abstract class GravityView_FieldType {
             'options' => NULL,
             'merge_tags' => true,
             'class' => '',
-            'tooltip' => NULL,
-            'requires' => NULL
+            'tooltip' => NULL
         );
     }
 

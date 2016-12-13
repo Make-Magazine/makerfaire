@@ -133,69 +133,6 @@ class GravityView_Widget_Search extends GravityView_Widget {
 		return $this->search_method;
 	}
 
-	/**
-	 * Get the input types available for different field types
-	 *
-	 * @since 1.17.5
-	 *
-	 * @return array [field type name] => (array|string) search bar input types
-	 */
-	public static function get_input_types_by_field_type() {
-		/**
-		 * Input Type groups
-		 * @see admin-search-widget.js (getSelectInput)
-		 * @var array
-		 */
-		$input_types = array(
-			'text' => array( 'input_text' ),
-			'address' => array( 'input_text' ),
-			'number' => array( 'input_text' ),
-			'date' => array( 'date', 'date_range' ),
-			'boolean' => array( 'single_checkbox' ),
-			'select' => array( 'select', 'radio', 'link' ),
-			'multi' => array( 'select', 'multiselect', 'radio', 'checkbox', 'link' ),
-		);
-
-		$input_types = apply_filters( 'gravityview/search/input_types', $input_types );
-
-		return $input_types;
-	}
-
-	/**
-	 * Get labels for different types of search bar inputs
-	 *
-	 * @since 1.17.5
-	 *
-	 * @return array [input type] => input type label
-	 */
-	public static function get_search_input_labels() {
-		/**
-		 * Input Type labels l10n
-		 * @see admin-search-widget.js (getSelectInput)
-		 * @var array
-		 */
-		$input_labels = array(
-			'input_text' => esc_html__( 'Text', 'gravityview' ),
-			'date' => esc_html__( 'Date', 'gravityview' ),
-			'select' => esc_html__( 'Select', 'gravityview' ),
-			'multiselect' => esc_html__( 'Select (multiple values)', 'gravityview' ),
-			'radio' => esc_html__( 'Radio', 'gravityview' ),
-			'checkbox' => esc_html__( 'Checkbox', 'gravityview' ),
-			'single_checkbox' => esc_html__( 'Checkbox', 'gravityview' ),
-			'link' => esc_html__( 'Links', 'gravityview' ),
-			'date_range' => esc_html__( 'Date range', 'gravityview' ),
-		);
-
-		$input_labels = apply_filters( 'gravityview/search/input_labels', $input_labels );
-
-		return $input_labels;
-	}
-
-	public static function get_search_input_label( $input_type ) {
-		$labels = self::get_search_input_labels();
-
-		return rgar( $labels, $input_type, false );
-	}
 
 	/**
 	 * Add script to Views edit screen (admin)
@@ -214,6 +151,39 @@ class GravityView_Widget_Search extends GravityView_Widget {
 
 		wp_enqueue_script( 'gravityview_searchwidget_admin', plugins_url( 'assets/js'.$script_source.'/admin-search-widget'.$script_min.'.js', __FILE__ ), array( 'jquery', 'gravityview_views_scripts' ), GravityView_Plugin::version );
 
+
+		/**
+		 * Input Type labels l10n
+		 * @see admin-search-widget.js (getSelectInput)
+		 * @var array
+		 */
+		$input_labels = array(
+			'input_text' => esc_html__( 'Text', 'gravityview' ),
+			'date' => esc_html__( 'Date', 'gravityview' ),
+			'select' => esc_html__( 'Select', 'gravityview' ),
+			'multiselect' => esc_html__( 'Select (multiple values)', 'gravityview' ),
+			'radio' => esc_html__( 'Radio', 'gravityview' ),
+			'checkbox' => esc_html__( 'Checkbox', 'gravityview' ),
+			'single_checkbox' => esc_html__( 'Checkbox', 'gravityview' ),
+			'link' => esc_html__( 'Links', 'gravityview' ),
+			'date_range' => esc_html__( 'Date range', 'gravityview' ),
+		);
+
+		/**
+		 * Input Type groups
+		 * @see admin-search-widget.js (getSelectInput)
+		 * @var array
+		 */
+		$input_types = array(
+			'text' => array( 'input_text' ),
+			'address' => array( 'input_text' ),
+			'number' => array( 'input_text' ),
+			'date' => array( 'date', 'date_range' ),
+			'boolean' => array( 'single_checkbox' ),
+			'select' => array( 'select', 'radio', 'link' ),
+			'multi' => array( 'select', 'multiselect', 'radio', 'checkbox', 'link' ),
+		);
+
 		wp_localize_script( 'gravityview_searchwidget_admin', 'gvSearchVar', array(
 			'nonce' => wp_create_nonce( 'gravityview_ajaxsearchwidget' ),
 			'label_nofields' => esc_html__( 'No search fields configured yet.', 'gravityview' ),
@@ -222,8 +192,8 @@ class GravityView_Widget_Search extends GravityView_Widget {
 			'label_searchfield' => esc_html__( 'Search Field', 'gravityview' ),
 			'label_inputtype' => esc_html__( 'Input Type', 'gravityview' ),
 			'label_ajaxerror' => esc_html__( 'There was an error loading searchable fields. Save the View or refresh the page to fix this issue.', 'gravityview' ),
-			'input_labels' => json_encode( self::get_search_input_labels() ),
-			'input_types' => json_encode( self::get_input_types_by_field_type() ),
+			'input_labels' => json_encode( $input_labels ),
+			'input_types' => json_encode( $input_types ),
 		) );
 
 	}
@@ -449,7 +419,7 @@ class GravityView_Widget_Search extends GravityView_Widget {
 
 		$get = stripslashes_deep( $get );
 
-		$get = gv_map_deep( $get, 'rawurldecode' );
+		$get = gv_map_deep( $get, 'urldecode' );
 
 		// add free search
 		if ( ! empty( $get['gv_search'] ) ) {
@@ -472,14 +442,14 @@ class GravityView_Widget_Search extends GravityView_Widget {
 		$curr_start = !empty( $get['gv_start'] ) ? $get['gv_start'] : '';
 		$curr_end = !empty( $get['gv_start'] ) ? $get['gv_end'] : '';
 
-		/**
-		 * @filter `gravityview_date_created_adjust_timezone` Whether to adjust the timezone for entries. \n
-		 * date_created is stored in UTC format. Convert search date into UTC (also used on templates/fields/date_created.php)
-		 * @since 1.12
-		 * @param[out,in] boolean $adjust_tz  Use timezone-adjusted datetime? If true, adjusts date based on blog's timezone setting. If false, uses UTC setting. Default: true
-		 * @param[in] string $context Where the filter is being called from. `search` in this case.
-		 */
-		$adjust_tz = apply_filters( 'gravityview_date_created_adjust_timezone', true, 'search' );
+        /**
+         * @filter `gravityview_date_created_adjust_timezone` Whether to adjust the timezone for entries. \n
+         * date_created is stored in UTC format. Convert search date into UTC (also used on templates/fields/date_created.php)
+         * @since 1.12
+         * @param[out,in] boolean $adjust_tz  Use timezone-adjusted datetime? If true, adjusts date based on blog's timezone setting. If false, uses UTC setting. Default: true
+         * @param[in] string $context Where the filter is being called from. `search` in this case.
+         */
+        $adjust_tz = apply_filters( 'gravityview_date_created_adjust_timezone', true, 'search' );
 
 
 		/**
@@ -564,16 +534,14 @@ class GravityView_Widget_Search extends GravityView_Widget {
 
 		$gravityview_view = GravityView_View::getInstance();
 
-		$field_id = str_replace( 'filter_', '', $key );
-
 		// calculates field_id, removing 'filter_' and for '_' for advanced fields ( like name or checkbox )
-		if ( preg_match('/^[0-9_]+$/ism', $field_id ) ) {
-			$field_id = str_replace( '_', '.', $field_id );
-		}
+		$field_id = str_replace( '_', '.', str_replace( 'filter_', '', $key ) );
 
 		// get form field array
 		$form = $gravityview_view->getForm();
 		$form_field = gravityview_get_field( $form, $field_id );
+
+		$value = gv_map_deep( $value, '_wp_specialchars' ); // Gravity Forms encodes ampersands but not quotes
 
 		// default filter array
 		$filter = array(
@@ -640,9 +608,9 @@ class GravityView_Widget_Search extends GravityView_Widget {
 
 					foreach ( $value as $val ) {
 						$filter[] = array(
-							'key'   => $field_id,
-							'value' => $val,
-							'operator' => 'is',
+								'key'   => $field_id,
+								'value' => $val,
+								'operator' => 'is',
 						);
 					}
 				}
@@ -769,29 +737,6 @@ class GravityView_Widget_Search extends GravityView_Widget {
 	}
 
 	/**
-	 * Check whether the configured search fields have a date field
-	 *
-	 * @since 1.17.5
-	 *
-	 * @param array $search_fields
-	 *
-	 * @return bool True: has a `date` or `date_range` field
-	 */
-	private function has_date_field( $search_fields ) {
-
-		$has_date = false;
-
-		foreach ( $search_fields as $k => $field ) {
-			if ( in_array( $field['input'], array( 'date', 'date_range', 'entry_date' ) ) ) {
-				$has_date = true;
-				break;
-			}
-		}
-
-		return $has_date;
-	}
-
-	/**
 	 * Renders the Search Widget
 	 * @param array $widget_args
 	 * @param string $content
@@ -816,11 +761,16 @@ class GravityView_Widget_Search extends GravityView_Widget {
 			return;
 		}
 
+		$has_date = false;
 
 		// prepare fields
 		foreach ( $search_fields as $k => $field ) {
 
 			$updated_field = $field;
+
+			if ( in_array( $field['input'], array( 'date', 'date_range' ) ) ) {
+				$has_date = true;
+			}
 
 			$updated_field = $this->get_search_filter_details( $updated_field );
 
@@ -839,6 +789,7 @@ class GravityView_Widget_Search extends GravityView_Widget {
 						'start' => $this->rgget_or_rgpost( 'gv_start' ),
 						'end' => $this->rgget_or_rgpost( 'gv_end' ),
 					);
+					$has_date = true;
 					break;
 
 				case 'entry_id':
@@ -880,7 +831,7 @@ class GravityView_Widget_Search extends GravityView_Widget {
 
 		$gravityview_view->search_clear = ! empty( $widget_args['search_clear'] ) ? $widget_args['search_clear'] : false;
 
-		if ( $this->has_date_field( $search_fields ) ) {
+		if ( $has_date ) {
 			// enqueue datepicker stuff only if needed!
 			$this->enqueue_datepicker();
 		}
@@ -959,6 +910,12 @@ class GravityView_Widget_Search extends GravityView_Widget {
 				case 'entry_id':
 					$label = __( 'Entry ID:', 'gravityview' );
 					break;
+				case 'created_by':
+					$label = __( 'Submitted by:', 'gravityview' );
+					break;
+				case 'is_fulfilled':
+					$label = __( 'Is Fulfilled', 'gravityview' );
+					break;
 				default:
 					// If this is a field input, not a field
 					if ( strpos( $field['field'], '.' ) > 0 && ! empty( $form_field['inputs'] ) ) {
@@ -980,12 +937,10 @@ class GravityView_Widget_Search extends GravityView_Widget {
 
 		/**
 		 * @filter `gravityview_search_field_label` Modify the label for a search field. Supports returning HTML
-		 * @since 1.17.3 Added $field parameter
 		 * @param[in,out] string $label Existing label text, sanitized.
 		 * @param[in] array $form_field Gravity Forms field array, as returned by `GFFormsModel::get_field()`
-		 * @param[in] array $field Field setting as sent by the GV configuration - has `field`, `input` (input type), and `label` keys
 		 */
-		$label = apply_filters( 'gravityview_search_field_label', esc_attr( $label ), $form_field, $field );
+		$label = apply_filters( 'gravityview_search_field_label', esc_attr( $label ), $form_field );
 
 		return $label;
 	}
@@ -1080,7 +1035,7 @@ class GravityView_Widget_Search extends GravityView_Widget {
 
 	/**
 	 * Based on the search method, fetch the value for a specific key
-	 *
+	 * 
 	 * @since 1.16.4
 	 *
 	 * @param string $name Name of the request key to fetch the value for
@@ -1092,7 +1047,7 @@ class GravityView_Widget_Search extends GravityView_Widget {
 
 		$value = stripslashes_deep( $value );
 
-		$value = gv_map_deep( $value, 'rawurldecode' );
+		$value = gv_map_deep( $value, 'urldecode' );
 
 		$value = gv_map_deep( $value, '_wp_specialchars' );
 
@@ -1162,7 +1117,7 @@ class GravityView_Widget_Search extends GravityView_Widget {
 	 *
 	 * @see https://github.com/10up/flexibility
 	 *
-	 * @since 1.17
+	 * @since TODO
 	 *
 	 * @return void
 	 */
@@ -1175,7 +1130,7 @@ class GravityView_Widget_Search extends GravityView_Widget {
 	/**
 	 * If the current visitor is running IE 8 or 9, enqueue Flexibility
 	 *
-	 * @since 1.17
+	 * @since TODO
 	 *
 	 * @return void
 	 */

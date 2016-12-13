@@ -23,7 +23,7 @@ class GravityView_Field_Phone extends GravityView_Field {
 	/**
 	 * Add option to link phone number
 	 *
-	 * @since 1.17
+	 * @since TODO
 	 *
 	 * @param array $field_options
 	 * @param string $template_id

@@ -219,17 +219,14 @@ class GravityView_Support_Port {
 	/**
 	 * Check whether to show Support for a user
 	 *
-	 * If the user doesn't have the `gravityview_support_port` capability, returns false; then
-	 * If global setting is "hide", returns false; then
-     * If user preference is not set, return global setting; then
-     * If user preference is set, return that setting.
+	 * If the user doesn't have the `gravityview_support_port` capability, returns false.
+	 * If there is no preference set for the user, use the global plugin setting.
 	 *
 	 * @since 1.15
-     * @since 1.17.5 Changed behavior to respect global setting
 	 *
 	 * @param int $user Optional. ID of the user to check, defaults to 0 for current user.
 	 *
-	 * @return bool Whether to show GravityView support port
+	 * @return bool Whether to show GravityView support
 	 */
 	static public function show_for_user( $user = 0 ) {
 
@@ -237,21 +234,14 @@ class GravityView_Support_Port {
 			return false;
 		}
 
-		$global_setting = GravityView_Settings::getSetting( 'support_port' );
+		$pref = get_user_option( self::user_pref_name, $user );
 
-		if ( empty( $global_setting ) ) {
-            return false;
+		// Not set; default to plugin setting
+		if ( false === $pref ) {
+			return GravityView_Settings::getSetting( 'support_port' );
 		}
 
-		// Get the per-user Support Port setting
-		$user_pref = get_user_option( self::user_pref_name, $user );
-
-		// Not configured; default to global setting (which is true at this point)
-		if ( false === $user_pref ) {
-			$user_pref = $global_setting;
-		}
-
-		return ! empty( $user_pref );
+		return ! empty( $pref );
 	}
 
 
@@ -276,19 +266,12 @@ class GravityView_Support_Port {
 	 * Modifies the output of profile.php to add GravityView Support preference
 	 *
 	 * @since 1.15
-     * @since 1.17.5 Only show if global setting is active
 	 *
 	 * @param WP_User $user Current user info
 	 *
 	 * @return void
 	 */
 	public function user_field( $user ) {
-
-		$global_setting = GravityView_Settings::getSetting( 'support_port' );
-
-		if ( empty( $global_setting ) ) {
-            return;
-		}
 
 		/**
 		 * @filter `gravityview/support_port/show_profile_setting` Should the "GravityView Support Port" setting be shown on user profiles?

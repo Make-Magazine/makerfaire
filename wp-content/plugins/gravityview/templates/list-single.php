@@ -59,7 +59,7 @@
 			<?php
 
 				$this->renderZone('image', array(
-					'wrapper_class' => 'gv-list-view-content-image gv-grid-col-1-3',
+					'wrapper_class' => 'gv-list-view-content-image',
 					'markup'     => '<h4 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h4>',
 				));
 

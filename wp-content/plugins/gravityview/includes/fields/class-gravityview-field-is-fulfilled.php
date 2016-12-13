@@ -35,7 +35,6 @@ class GravityView_Field_Is_Fulfilled extends GravityView_Field {
 	 */
 	public function __construct() {
 		$this->label = esc_html__( 'Is Fulfilled', 'gravityview' );
-		$this->default_search_label = $this->label;
 
 		add_filter( 'gravityview_field_entry_value_' . $this->name . '_pre_link', array( $this, 'get_content' ), 10, 4 );
 

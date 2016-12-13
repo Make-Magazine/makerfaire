@@ -1,4 +1,4 @@
-# Copyright (C) 2016 GravityView
+# Copyright (C) 2016 Katz Web Services, Inc.
 # This file is distributed under the GPLv2 or later.
 # Translators:
 # Süha Karalar <suhakaralar@gmail.com>, 2014
@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: GravityView\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-05-13 20:20:24+00:00\n"
-"PO-Revision-Date: 2016-11-14 22:54+0000\n"
+"PO-Revision-Date: 2016-06-27 20:17+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Turkish (Turkey) (http://www.transifex.com/katzwebservices/gravityview/language/tr_TR/)\n"
 "MIME-Version: 1.0\n"
@@ -26,41 +26,17 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: gravityview.php:332
+#: gravityview.php:339
 msgid "Top"
 msgstr "Üst"
 
-#: gravityview.php:333
+#: gravityview.php:340
 msgid "Left"
 msgstr "Sol"
 
-#: gravityview.php:333
+#: gravityview.php:340
 msgid "Right"
 msgstr "Sağ"
-
-#: includes/admin/class-gravityview-admin-view-field.php:23
-msgid "Type: %s"
-msgstr "Tür: %s"
-
-#: includes/admin/class-gravityview-admin-view-field.php:27
-msgid "Field ID: %s"
-msgstr "Alan NO: %s"
-
-#: includes/admin/class-gravityview-admin-view-field.php:40
-msgid "Admin Label: %s"
-msgstr "Yönetici Etiketi: %s"
-
-#: includes/admin/class-gravityview-admin-view-item.php:136
-msgid "Configure %s Settings"
-msgstr "%s Ayarlarını Düzenle"
-
-#: includes/admin/class-gravityview-admin-view-item.php:137
-msgid "Remove %s"
-msgstr "%s Sil"
-
-#: includes/admin/class-gravityview-admin-view-item.php:138
-msgid "This field links to the Single Entry"
-msgstr "Bu alan Tekil Kayıt'a bağlanmıştır"
 
 #: includes/admin/class-gravityview-support-port.php:83
 msgid "GravityView Support"
@@ -126,12 +102,12 @@ msgstr "Bize ulaştığınız için teşekkürler! Ekibimiz sizinle en kısa zam
 
 #. translators: "Support Port" can be translated as "Support Portal" or
 #. "Support Window"
-#: includes/admin/class-gravityview-support-port.php:310
-#: includes/admin/class-gravityview-support-port.php:316
+#: includes/admin/class-gravityview-support-port.php:293
+#: includes/admin/class-gravityview-support-port.php:299
 msgid "GravityView Support Port"
 msgstr "GravityView Destek Portalı"
 
-#: includes/admin/class-gravityview-support-port.php:321
+#: includes/admin/class-gravityview-support-port.php:304
 msgid "Show GravityView Support Port when on a GravityView-related page"
 msgstr "GravityView ile alakalı bir sayfadaysam Destek Portalını göster"
 
@@ -232,52 +208,52 @@ msgid "Filter &amp; Sort"
 msgstr "Süz &amp; Sırala"
 
 #: includes/admin/metaboxes/class-gravityview-admin-metaboxes.php:187
-#: includes/class-admin-views.php:430
+#: includes/class-admin-views.php:412
 msgid "Data Source"
 msgstr "Veri Kaynağı"
 
-#: includes/admin/metaboxes/views/data-source.php:22
+#: includes/admin/metaboxes/views/data-source.php:20
 msgid "Where would you like the data to come from for this View?"
 msgstr "Bu Görünüm için verinin hangi kaynaktan gelmesini istersiniz?"
 
-#: includes/admin/metaboxes/views/data-source.php:29
+#: includes/admin/metaboxes/views/data-source.php:27
 msgid "Start Fresh"
 msgstr "Sıfırdan başlayın"
 
-#: includes/admin/metaboxes/views/data-source.php:32
+#: includes/admin/metaboxes/views/data-source.php:30
 msgid "or use an existing form"
 msgstr "yada mevcut bir formu kullanın"
 
-#: includes/admin/metaboxes/views/data-source.php:39
+#: includes/admin/metaboxes/views/data-source.php:37
 msgid "list of forms"
 msgstr "form listesi"
 
-#: includes/admin/metaboxes/views/data-source.php:48
+#: includes/admin/metaboxes/views/data-source.php:44
 msgid "Switch View"
 msgstr "Görünüm'ü Değiştir"
 
-#: includes/admin/metaboxes/views/data-source.php:48
+#: includes/admin/metaboxes/views/data-source.php:44
 msgid "Switch View Type"
 msgstr "Görünüm Türünü Değiştir"
 
-#: includes/admin/metaboxes/views/data-source.php:52
-#: includes/admin/metaboxes/views/data-source.php:57
+#: includes/admin/metaboxes/views/data-source.php:48
+#: includes/admin/metaboxes/views/data-source.php:53
 msgid "Attention"
 msgstr "Dikkat"
 
-#: includes/admin/metaboxes/views/data-source.php:53
+#: includes/admin/metaboxes/views/data-source.php:49
 msgid ""
 "Changing the form will reset your field configuration. Changes will be "
 "permanent once you save the View."
 msgstr "Formu değiştirmek alan ayarlarınızı sıfırlayacaktır. Yaptığınız değişiklikler kaydettikten sonra kalıcıdır."
 
-#: includes/admin/metaboxes/views/data-source.php:58
+#: includes/admin/metaboxes/views/data-source.php:54
 msgid ""
 "Changing the View Type will reset your field configuration. Changes will be "
 "permanent once you save the View."
 msgstr "Görünüm Türünü değiştirmek alan ayarlarınızı sıfırlayacaktır. Yaptığınız değişiklikler kaydettikten sonra kalıcıdır."
 
-#: includes/admin/metaboxes/views/data-source.php:63
+#: includes/admin/metaboxes/views/data-source.php:59
 msgid "GravityView requires Javascript to be enabled."
 msgstr "GravityView Javascript'in çalışır durumda olmasını gerektirir."
 
@@ -287,7 +263,7 @@ msgstr "Şimdi Satın Al"
 
 #: includes/admin/metaboxes/views/select-template.php:35
 #: includes/fields/class-gravityview-field-select.php:19
-#: includes/widgets/search-widget/class-search-widget.php:180
+#: includes/widgets/search-widget/class-search-widget.php:163
 msgid "Select"
 msgstr "Seç"
 
@@ -312,7 +288,7 @@ msgstr "Çoklu Kayıt"
 #: includes/class-gravityview-entry-link-shortcode.php:205
 #: includes/extensions/edit-entry/class-edit-entry-admin.php:58
 #: includes/extensions/edit-entry/class-edit-entry-admin.php:116
-#: includes/extensions/edit-entry/class-edit-entry-render.php:848
+#: includes/extensions/edit-entry/class-edit-entry-render.php:759
 #: includes/extensions/edit-entry/fields/edit_link.php:14
 msgid "Edit Entry"
 msgstr "Kaydı Düzenle"
@@ -388,13 +364,13 @@ msgid "(no title)"
 msgstr "(başlıksız)"
 
 #: includes/class-admin-add-shortcode.php:138
-#: includes/class-admin-views.php:1031
+#: includes/class-admin-views.php:995
 #: includes/extensions/edit-entry/partials/form-buttons.php:31
 msgid "Cancel"
 msgstr "İptal"
 
 #: includes/class-admin-add-shortcode.php:183
-#: includes/class-admin-views.php:1035
+#: includes/class-admin-views.php:999
 msgid "Loading&hellip;"
 msgstr "data&hellip; yükleniyor"
 
@@ -402,190 +378,237 @@ msgstr "data&hellip; yükleniyor"
 msgid "Please select a View"
 msgstr "Lütfen Görünüm seçin"
 
-#: includes/class-admin-approve-entries.php:137
+#: includes/class-admin-approve-entries.php:123
+#: includes/class-admin-approve-entries.php:208
+msgid "Approved"
+msgstr "Onaylandı"
+
+#: includes/class-admin-approve-entries.php:130
+msgid "Disapproved"
+msgstr ""
+
+#: includes/class-admin-approve-entries.php:146
 msgid "GravityView Fields"
 msgstr "GravityView Alanları"
 
-#: includes/class-admin-approve-entries.php:138
+#: includes/class-admin-approve-entries.php:147
 msgid ""
 "Allow administrators to approve or reject entries and users to opt-in or "
 "opt-out of their entries being displayed."
 msgstr "Yöneticilere kayıtları onaylama yada reddetme ve kullanıcılara kayıtlarını gösterme yada gizleme yetkisi ver."
 
-#: includes/class-admin-approve-entries.php:160
+#: includes/class-admin-approve-entries.php:169
 msgid "Approve/Reject"
 msgstr "Onayla/Reddet"
 
-#: includes/class-admin-approve-entries.php:166
+#: includes/class-admin-approve-entries.php:175
 msgid "User Opt-In"
 msgstr "Kullanıcı Seçmeli"
 
-#: includes/class-admin-approve-entries.php:190
+#: includes/class-admin-approve-entries.php:199
 msgid "Approved? (Admin-only)"
 msgstr "Onaylandı? (Sadece-admin)"
 
-#: includes/class-admin-approve-entries.php:192
+#: includes/class-admin-approve-entries.php:201
 msgid "Approved?"
 msgstr "Onaylandı?"
 
-#: includes/class-admin-approve-entries.php:212
+#: includes/class-admin-approve-entries.php:221
 msgid "Show Entry on Website"
 msgstr "Kaydı Site üzerinde göster"
 
-#: includes/class-admin-approve-entries.php:214
+#: includes/class-admin-approve-entries.php:223
 msgid "Opt-In"
 msgstr "Seçmeli"
 
-#: includes/class-admin-approve-entries.php:222
+#: includes/class-admin-approve-entries.php:231
 msgid "Yes, display my entry on the website"
 msgstr "Evet, kaydımı site üzerinde göster"
 
-#: includes/class-admin-approve-entries.php:326
+#: includes/class-admin-approve-entries.php:335
 msgid "%d entries"
 msgstr "%d kayıt"
 
-#: includes/class-admin-approve-entries.php:326
+#: includes/class-admin-approve-entries.php:335
 msgid "1 entry"
 msgstr "1 kayıt"
 
-#: includes/class-admin-approve-entries.php:331
+#: includes/class-admin-approve-entries.php:340
 msgid "%s approved."
 msgstr "%s onaylandı."
 
-#: includes/class-admin-approve-entries.php:335
-msgid "%s unapproved."
-msgstr ""
-
-#: includes/class-admin-approve-entries.php:339
+#: includes/class-admin-approve-entries.php:345
 msgid "%s disapproved."
 msgstr "%s onaylanmadı."
 
-#: includes/class-admin-approve-entries.php:493
+#: includes/class-admin-approve-entries.php:429
+#: tests/unit-tests/GravityView_Uninstall_Test.php:195 uninstall.php:100
+msgid "Disapproved the Entry for GravityView"
+msgstr "GravityView için kaydın onayını geri al"
+
+#: includes/class-admin-approve-entries.php:429
+#: tests/unit-tests/GravityView_Uninstall_Test.php:196 uninstall.php:101
+msgid "Approved the Entry for GravityView"
+msgstr "GravityView için kaydı onayla"
+
+#: includes/class-admin-approve-entries.php:728
+msgid "Entry not approved for directory viewing. Click to approve this entry."
+msgstr "Kayıt dizin görüntülemesi için onaylanmamış. Kaydı onaylamak için tıklayın."
+
+#: includes/class-admin-approve-entries.php:729
+msgid "Entry approved for directory viewing. Click to disapprove this entry."
+msgstr "Kayıt dizin görüntülemesi için onaylanmış. Onayı geri almak için tıklayın."
+
+#: includes/class-admin-approve-entries.php:730
 msgid "Show entry in directory view?"
 msgstr "Kaydı dizin içinde göster?"
+
+#: includes/class-admin-approve-entries.php:750
+msgid "Approve"
+msgstr "Onayla"
+
+#: includes/class-admin-approve-entries.php:754
+msgid "Disapprove"
+msgstr "Onayı Geri Al"
+
+#: includes/class-admin-label.php:19
+msgid "Type: %s"
+msgstr "Tür: %s"
+
+#: includes/class-admin-label.php:23
+msgid "Field ID: %s"
+msgstr "Alan NO: %s"
+
+#: includes/class-admin-label.php:36
+msgid "Admin Label: %s"
+msgstr "Yönetici Etiketi: %s"
+
+#: includes/class-admin-label.php:173
+msgid "Configure %s Settings"
+msgstr "%s Ayarlarını Düzenle"
+
+#: includes/class-admin-label.php:174
+msgid "Remove %s"
+msgstr "%s Sil"
+
+#: includes/class-admin-label.php:175
+msgid "This field links to the Single Entry"
+msgstr "Bu alan Tekil Kayıt'a bağlanmıştır"
 
 #: includes/class-admin-views.php:99
 msgid "All forms"
 msgstr "Tüm formlar"
 
-#: includes/class-admin-views.php:140 includes/class-admin-views.php:171
-msgid "Create a View"
-msgstr ""
-
-#: includes/class-admin-views.php:142 includes/class-admin-views.php:173
-msgid "Create a View using this form as a data source"
-msgstr ""
-
-#: includes/class-admin-views.php:159
+#: includes/class-admin-views.php:148
 msgid "No Title (View #%d)"
 msgstr "Başlık Yok (Görünüm #%d)"
 
-#: includes/class-admin-views.php:187
+#: includes/class-admin-views.php:168
 msgid "Connected Views"
 msgstr "Bağlı Görünümler"
 
-#: includes/class-admin-views.php:189
+#: includes/class-admin-views.php:170
 msgid "GravityView Views using this form as a data source"
 msgstr "GravityView Görünümleri veri kaynağı olarak bu formu kullanmaktadır"
 
-#: includes/class-admin-views.php:263
+#: includes/class-admin-views.php:245
 msgid "CSS Merge Tags"
 msgstr "CSS Kaynaşma Etiketleri"
 
-#: includes/class-admin-views.php:264
+#: includes/class-admin-views.php:246
 msgid ""
 "Developers: The CSS classes will be sanitized using the "
 "%ssanitize_title_with_dashes()%s function."
 msgstr "Geliştiriciler için: CSS sınıfları %ssanitize_title_with_dashes()%s fonksiyonu ile ayıklanacaktır."
 
-#: includes/class-admin-views.php:324
+#: includes/class-admin-views.php:306
 msgid "Not connected."
 msgstr "Bağlanmadı."
 
-#: includes/class-admin-views.php:333
+#: includes/class-admin-views.php:315
 msgid "The connected form can not be found; it may no longer exist."
 msgstr "Bağlantı yapılan form bulunamadı; form silinmiş olabilir."
 
-#: includes/class-admin-views.php:369
+#: includes/class-admin-views.php:351
 #: includes/class-gravityview-admin-bar.php:140
 msgid "Edit Form"
 msgstr "Formu Düzenle"
 
-#: includes/class-admin-views.php:376
+#: includes/class-admin-views.php:358
 msgid "Entries"
 msgstr "Kayıtlar"
 
-#: includes/class-admin-views.php:381 includes/class-admin.php:167
-#: includes/class-gravityview-settings.php:525
-#: includes/class-gravityview-settings.php:551
+#: includes/class-admin-views.php:363 includes/class-admin.php:101
+#: includes/class-gravityview-settings.php:283
+#: includes/class-gravityview-settings.php:309
 msgid "Settings"
 msgstr "Ayarlar"
 
-#: includes/class-admin-views.php:381
+#: includes/class-admin-views.php:363
 msgid "Edit settings for this form"
 msgstr "Bu formun ayarlarını değiştirin"
 
-#: includes/class-admin-views.php:386
+#: includes/class-admin-views.php:368
 msgid "Preview Form"
 msgstr "Form Önizleme"
 
-#: includes/class-admin-views.php:386
+#: includes/class-admin-views.php:368
 msgid "Preview this form"
 msgstr "Form Önizleme"
 
-#: includes/class-admin-views.php:617
+#: includes/class-admin-views.php:588
 msgid "+ Add All Fields"
 msgstr "+ Tüm Alanları Ekle"
 
-#: includes/class-admin-views.php:618
+#: includes/class-admin-views.php:589
 msgid "Add all the available fields at once."
 msgstr "Mevcut tüm alanları tek seferde ekle."
 
-#: includes/class-admin-views.php:668
-#: includes/widgets/search-widget/class-search-widget.php:303
+#: includes/class-admin-views.php:639
+#: includes/widgets/search-widget/class-search-widget.php:273
 msgid "Entry ID"
 msgstr "Kayıt NO"
 
-#: includes/class-admin-views.php:670
+#: includes/class-admin-views.php:641
 msgid "The unique ID of the entry."
 msgstr "Kaydın eşsiz NO bilgisi."
 
-#: includes/class-admin-views.php:673
-#: includes/widgets/search-widget/class-search-widget.php:299
+#: includes/class-admin-views.php:644
+#: includes/widgets/search-widget/class-search-widget.php:269
 msgid "Entry Date"
 msgstr "Kayıt Tarihi"
 
-#: includes/class-admin-views.php:674
-#: includes/fields/class-gravityview-field-date-created.php:27
+#: includes/class-admin-views.php:645
+#: includes/fields/class-gravityview-field-date-created.php:26
 msgid "The date the entry was created."
 msgstr "Kaydın oluşturulduğu tarih."
 
-#: includes/class-admin-views.php:678
+#: includes/class-admin-views.php:649
 #: includes/fields/class-gravityview-field-source-url.php:20
 msgid "Source URL"
 msgstr "Kaynak URL"
 
-#: includes/class-admin-views.php:680
+#: includes/class-admin-views.php:651
 msgid "The URL of the page where the form was submitted."
 msgstr "Formun gönderildiği sayfanın URL adresi."
 
-#: includes/class-admin-views.php:683
+#: includes/class-admin-views.php:654
 msgid "User IP"
 msgstr "Kullanıcı IP"
 
-#: includes/class-admin-views.php:685
+#: includes/class-admin-views.php:656
 msgid "The IP Address of the user who created the entry."
 msgstr "Kaydı oluşturan kullanıcının IP adresi."
 
-#: includes/class-admin-views.php:688
+#: includes/class-admin-views.php:659
 msgid "User"
 msgstr "Kullanıcı"
 
-#: includes/class-admin-views.php:690
+#: includes/class-admin-views.php:661
 msgid "Details of the logged-in user who created the entry (if any)."
 msgstr "Kaydı oluşturan kayıtlı kullanıcının bilgileri (eğer varsa)."
 
-#: includes/class-admin-views.php:697
+#: includes/class-admin-views.php:668
 #: includes/fields/class-gravityview-field-custom.php:33
 #: includes/fields/class-gravityview-field-custom.php:48
 #: includes/widgets/class-gravityview-widget-custom-content.php:30
@@ -593,85 +616,85 @@ msgstr "Kaydı oluşturan kayıtlı kullanıcının bilgileri (eğer varsa)."
 msgid "Custom Content"
 msgstr "Özel İçerik"
 
-#: includes/class-admin-views.php:699
+#: includes/class-admin-views.php:670
 msgid "Insert custom text or HTML."
 msgstr "Özel yazı yada HTML girin."
 
-#: includes/class-admin-views.php:706
+#: includes/class-admin-views.php:677
 #: includes/fields/class-gravityview-field-other-entries.php:25
 msgid "Other Entries"
 msgstr "Diğer Kayıtlar"
 
-#: includes/class-admin-views.php:708
+#: includes/class-admin-views.php:679
 #: includes/fields/class-gravityview-field-other-entries.php:26
 msgid "Display other entries created by the entry creator."
 msgstr "Kayıt sahibine ait diğer kayıtları görüntüle."
 
-#: includes/class-admin-views.php:715
+#: includes/class-admin-views.php:686
 #: includes/fields/class-gravityview-field-entry-link.php:32
 msgid "Link to Entry"
 msgstr "Kayıt Bağlantısı"
 
-#: includes/class-admin-views.php:716
+#: includes/class-admin-views.php:687
 #: includes/fields/class-gravityview-field-entry-link.php:33
 msgid "A dedicated link to the single entry with customizable text."
 msgstr "Sadece tekil kayda giden ve yazısı özelleştirilebilir bağlantı."
 
-#: includes/class-admin-views.php:813
+#: includes/class-admin-views.php:784
 msgid "Add Widget"
 msgstr "Bileşen Ekle"
 
-#: includes/class-admin-views.php:815
+#: includes/class-admin-views.php:786
 msgid "Add Field"
 msgstr "Alan Ekle"
 
-#: includes/class-admin-views.php:897
+#: includes/class-admin-views.php:868
 msgid "\"+ %s\" or drag existing %ss here."
 msgstr "\"+ %s\" yada mevcut %ss buraya sürükleyin."
 
-#: includes/class-admin-views.php:971
+#: includes/class-admin-views.php:936
 msgid "This View is configured using the %s View type, which is disabled."
 msgstr "Görünüm, kullanılmayan %s Görünüm türü ile ayarlanmış."
 
-#: includes/class-admin-views.php:972
+#: includes/class-admin-views.php:937
 msgid ""
 "The data is not lost; re-activate the associated plugin and the "
 "configuration will re-appear."
 msgstr "Veriler kaybolmadı; alakalı eklentiyi yeniden etkinleştirdiğinizde yapılandırma seçenekleri yeniden görüntülenecektir."
 
-#: includes/class-admin-views.php:1029
+#: includes/class-admin-views.php:993
 msgid "Enter View name here"
 msgstr "Görünüm Adını buraya girin"
 
-#: includes/class-admin-views.php:1030
+#: includes/class-admin-views.php:994
 msgid "Close"
 msgstr "Kapat"
 
-#: includes/class-admin-views.php:1032
+#: includes/class-admin-views.php:996
 msgid "Continue"
 msgstr "Devam Et"
 
-#: includes/class-admin-views.php:1033
+#: includes/class-admin-views.php:997
 msgid "Ok"
 msgstr "Tamam"
 
-#: includes/class-admin-views.php:1034
+#: includes/class-admin-views.php:998
 msgid ""
 "Error while creating the View for you. Check the settings or contact "
 "GravityView support."
 msgstr "Görünüm oluşturulurken hata oluştu. Lütfen ayarları kontrol edin yada GravityView destek bölümüne başvurun."
 
-#: includes/class-admin-views.php:1036
+#: includes/class-admin-views.php:1000
 msgid "There was an error loading dynamic content."
 msgstr "Dinamik içeriği yüklerken bir hata oluştu."
 
-#: includes/class-admin-views.php:1037
+#: includes/class-admin-views.php:1001
 msgid ""
 "Error while adding the field. Please try again or contact GravityView "
 "support."
 msgstr "Alanı eklerken hata oluştu. Lütfen tekrar deneyin yada GravityView destek bölümüne başvurun."
 
-#: includes/class-admin-views.php:1038
+#: includes/class-admin-views.php:1002
 msgid ""
 "Would you like to remove all fields in this zone? (You are seeing this "
 "message because you were holding down the ALT key)"
@@ -708,76 +731,33 @@ msgstr "GravityView yüklediğiniz için teşekkür ederiz. Artık Gravity Forms
 msgid "List of Changes"
 msgstr "Değişiklik Listesi"
 
-#: includes/class-admin-welcome.php:271
-msgid "What&rsquo;s New"
-msgstr "Yenilikler"
-
-#: includes/class-admin-welcome.php:584
+#: includes/class-admin-welcome.php:653
 msgid "GravityView is brought to you by:"
 msgstr "GravityView'i çıkaranlar:"
 
-#: includes/class-admin-welcome.php:608
+#: includes/class-admin-welcome.php:684
 msgid "Contributors"
 msgstr "Katkıda Bulunanlar"
 
-#: includes/class-admin-welcome.php:633
+#: includes/class-admin-welcome.php:707
 msgid "Want to contribute?"
 msgstr "Katkıda bulunmak istermisiniz?"
 
-#: includes/class-admin-welcome.php:634
+#: includes/class-admin-welcome.php:708
 msgid ""
 "If you want to contribute to the code, %syou can on Github%s. If your "
 "contributions are accepted, you will be thanked here."
 msgstr "Kodlara katkı yapmak isterseniz, %sGithub üzerinden yapabilirsiniz%s. Katkınız onaylanırsa size buradan teşekkür edilecektir."
 
-#: includes/class-admin.php:72 includes/class-post-types.php:73
-msgid "No Views found in Trash"
-msgstr "Çöp Kutusunda Görünüm Bulunamadı"
-
-#: includes/class-admin.php:74
-msgid "No Views found."
-msgstr ""
-
-#: includes/class-admin.php:81
-msgid ""
-"%sYou don't have any active views. Let&rsquo;s go %screate one%s!%s\n"
-"\n"
-"If you feel like you're lost in space and need help getting started, check out the %sGetting Started%s page."
-msgstr "%sAktif bir Görünüm oluşturmadınız. Yeni bir Görünüm %soluşturun%s!%s \n\nNereden başlayacağınızı bilmiyorsanız, %sBaşlangıç%s sayfasına bakabilirsiniz."
-
-#: includes/class-admin.php:83
-msgid "There are no active Views"
-msgstr "Etkin Görünüm mevcut değil"
-
-#: includes/class-admin.php:108
-msgid "The connected form is in the trash."
-msgstr ""
-
-#: includes/class-admin.php:109
-msgid "Restore the form from the trash"
-msgstr ""
-
-#: includes/class-admin.php:110
-msgid "or select another form."
-msgstr ""
-
-#: includes/class-admin.php:112
-msgid "The form connected to this View no longer exists."
-msgstr ""
-
-#: includes/class-admin.php:113
-msgid "Select another form as the data source for this View."
-msgstr ""
-
-#: includes/class-admin.php:171
+#: includes/class-admin.php:105
 msgid "Support"
 msgstr "Destek"
 
-#: includes/class-admin.php:216
+#: includes/class-admin.php:150
 msgid "A new form was created for this View: \"%s\""
 msgstr "\"%s\" Görünümü için yeni bir form oluşturuldu"
 
-#: includes/class-admin.php:217
+#: includes/class-admin.php:151
 msgid ""
 "%sThere are no entries for the new form, so the View will also be empty.%s To start collecting entries, you can add submissions through %sthe preview form%s and also embed the form on a post or page using this code: %s\n"
 "\n"
@@ -786,70 +766,70 @@ msgid ""
 msgstr "%sYeni form için hiç kayıt bulunamadı, ayrıca Görünüm&rsquo;de tamamen boş olabilir.%s Kayıt toplamaya başlamak için, %sönizleme formu%snu aşağıdaki gömme kodunu kullanarak yazı yada sayfanıza ekleyebilirsiniz: %s\n\n     Gravity Forms altında formunuzu %sdüzenlediğinizde%s güncellenmiş alanlar burada görünecektir. %sForm ayarlarını%s özelleştirmeyi unutmayın.\n     "
 
 #. translators: %s and %s are HTML tags linking to the View on the website
-#: includes/class-admin.php:230 includes/class-admin.php:232
-#: includes/class-admin.php:235
+#: includes/class-admin.php:164 includes/class-admin.php:166
+#: includes/class-admin.php:169
 msgid "View updated. %sView on website.%s"
 msgstr "Görünüm güncellendi. %sÖnyüzde görüntüle.%s"
 
-#: includes/class-admin.php:233
+#: includes/class-admin.php:167
 msgid "View deleted."
 msgstr "Görünüm silindi."
 
 #. translators: %s: date and time of the revision
-#: includes/class-admin.php:237
+#: includes/class-admin.php:171
 msgid "View restored to revision from %s"
 msgstr "Görünüm %s sürümünden geri yüklendi"
 
 #. translators: %s and %s are HTML tags linking to the View on the website
-#: includes/class-admin.php:239
+#: includes/class-admin.php:173
 msgid "View published. %sView on website.%s"
 msgstr "Görünüm yayınlandı. %sÖnyüzde görüntüle%s"
 
 #. translators: %s and %s are HTML tags linking to the View on the website
-#: includes/class-admin.php:241
+#: includes/class-admin.php:175
 msgid "View saved. %sView on website.%s"
 msgstr "Görünüm kaydedildi. %sÖnyüzde görüntüle%s"
 
-#: includes/class-admin.php:242
+#: includes/class-admin.php:176
 msgid "View submitted."
 msgstr "Görünüm gönderildi."
 
 #. translators: Date and time the View is scheduled to be published
-#: includes/class-admin.php:245
+#: includes/class-admin.php:179
 msgid "View scheduled for: %1$s."
 msgstr "Görünüm yayınlanma tarihi: %1$s."
 
 #. translators: Publish box date format, see http:php.net/date
-#: includes/class-admin.php:247
+#: includes/class-admin.php:181
 msgid "M j, Y @ G:i"
 msgstr "M j, Y @ G:i"
 
 #. translators: %s and %s are HTML tags linking to the View on the website
-#: includes/class-admin.php:250
+#: includes/class-admin.php:184
 msgid "View draft updated. %sView on website.%s"
 msgstr "Görünüm taslağı güncellendi. %sÖnyüzde görüntüle%s"
 
-#: includes/class-admin.php:256
+#: includes/class-admin.php:190
 msgid "%s View updated."
 msgid_plural "%s Views updated."
 msgstr[0] "%s Görünümler güncellendi."
 
-#: includes/class-admin.php:257
+#: includes/class-admin.php:191
 msgid "%s View not updated, somebody is editing it."
 msgid_plural "%s Views not updated, somebody is editing them."
 msgstr[0] "%s Görünümler güncellenmedi, birileri Görünümler üzerinde düzenleme yapıyor."
 
-#: includes/class-admin.php:258
+#: includes/class-admin.php:192
 msgid "%s View permanently deleted."
 msgid_plural "%s Views permanently deleted."
 msgstr[0] "%s Görünümler kalıcı olarak silindi."
 
-#: includes/class-admin.php:259
+#: includes/class-admin.php:193
 msgid "%s View moved to the Trash."
 msgid_plural "%s Views moved to the Trash."
 msgstr[0] "%s Görünümler çöp kutusuna taşındı."
 
-#: includes/class-admin.php:260
+#: includes/class-admin.php:194
 msgid "%s View restored from the Trash."
 msgid_plural "%s Views restored from the Trash."
 msgstr[0] "%s Görünümler çöp kutusundan çıkarıldı."
@@ -862,35 +842,35 @@ msgstr "Bu aramada hiç sonuç bulunamadı"
 msgid "No entries match your request."
 msgstr "Talebinize uyan kayıt bulunamadı."
 
-#: includes/class-api.php:818
+#: includes/class-api.php:810
 msgid "&larr; Go back"
 msgstr "&larr; Geri dön"
 
-#: includes/class-api.php:1104
+#: includes/class-api.php:1096
 msgid "Map It"
 msgstr "Haritada Göster"
 
-#: includes/class-common.php:288
+#: includes/class-common.php:273
 #: includes/fields/class-gravityview-field-post-id.php:26
 msgid "Post ID"
 msgstr "Yazı NO"
 
 #. translators: %s: relative time from now, used for generic date comparisons.
 #. "1 day ago", or "20 seconds ago"
-#: includes/class-common.php:856
+#: includes/class-common.php:823
 msgid "%s ago"
 msgstr "%s önce"
 
-#: includes/class-common.php:1150 includes/class-data.php:628
+#: includes/class-common.php:1104 includes/class-data.php:618
 msgid "Default"
 msgstr "Varsayılan"
 
-#: includes/class-common.php:1193 includes/class-data.php:629
+#: includes/class-common.php:1147 includes/class-data.php:619
 #: includes/fields/class-gravityview-field-date-created.php:25
 msgid "Date Created"
 msgstr "Oluşturulma Tarihi"
 
-#: includes/class-common.php:1303
+#: includes/class-common.php:1257
 msgid "Email hidden; Javascript is required."
 msgstr "Eposta gizlenmiş; Javascript etkin olmalı."
 
@@ -942,157 +922,142 @@ msgid "Show only approved entries"
 msgstr "Sadece onaylı kayıtları göster"
 
 #: includes/class-data.php:580
-msgid "Show all entries to administrators"
-msgstr ""
-
-#: includes/class-data.php:581
-msgid "Administrators will be able to see entries with any approval status."
-msgstr ""
-
-#: includes/class-data.php:582
-msgid ""
-"Logged-out visitors and non-administrators will only see approved entries, "
-"while administrators will see entries with all statuses. This makes it "
-"easier for administrators to moderate entries from a View."
-msgstr ""
-
-#: includes/class-data.php:590
 msgid "Hide View data until search is performed"
 msgstr "Arama gerçekleşmeden Görünüm verisini gösterme"
 
-#: includes/class-data.php:593
+#: includes/class-data.php:583
 msgid ""
 "When enabled it will only show any View entries after a search is performed."
 msgstr "Etkinleştirildiğinde arama yapıldıktan sonra Görünüm kayıtlarını gösterir."
 
-#: includes/class-data.php:598
+#: includes/class-data.php:588
 msgid "Hide empty fields"
 msgstr "Boş Alanları Gizle"
 
-#: includes/class-data.php:605
+#: includes/class-data.php:595
 msgid "Allow User Edit"
 msgstr "Kullanıcı Müdahalesine İzin Ver"
 
-#: includes/class-data.php:607
+#: includes/class-data.php:597
 msgid "Allow logged-in users to edit entries they created."
 msgstr "Giriş yapmış kullanıcılara kendi kayıtlarını düzenleme izni ver."
 
-#: includes/class-data.php:609
+#: includes/class-data.php:599
 msgid ""
 "Display \"Edit Entry\" fields to non-administrator users if they created the"
 " entry. Edit Entry fields will always be displayed to site administrators."
 msgstr "Eğer yönetici olmayan kullanıcılar tarafından oluşturulduysa \"Kayıt Düzenle\" seçeneğini göster. Bu seçenek site yöneticilerine sürekli görünür olacaktır."
 
-#: includes/class-data.php:614
+#: includes/class-data.php:604
 msgid "Allow User Delete"
 msgstr "Kayıt Silmeye İzin Ver"
 
-#: includes/class-data.php:616
+#: includes/class-data.php:606
 msgid "Allow logged-in users to delete entries they created."
 msgstr "Giriş yapmış kullanıcılara, sahibi oldukları kayıtları silmelerine izin ver."
 
-#: includes/class-data.php:618
+#: includes/class-data.php:608
 msgid ""
 "Display \"Delete Entry\" fields to non-administrator users if they created "
 "the entry. Delete Entry fields will always be displayed to site "
 "administrators."
 msgstr "Yönetici olmayan kullanıcılara, sahibi oldukları kayıtlar için  \"Kayıt Sil\" menüsünü görünür yap. Ayrıca yöneticiler için Kayıt Sil menüsü her zaman görünür."
 
-#: includes/class-data.php:623
+#: includes/class-data.php:613
 msgid "Sort by field"
 msgstr "Alana göre sırala"
 
-#: includes/class-data.php:634
+#: includes/class-data.php:624
 msgid "Sort direction"
 msgstr "Sıralama yönü"
 
-#: includes/class-data.php:639
+#: includes/class-data.php:629
 msgid "ASC"
 msgstr "Artan"
 
-#: includes/class-data.php:640
+#: includes/class-data.php:630
 msgid "DESC"
 msgstr "Azalan"
 
-#: includes/class-data.php:646
+#: includes/class-data.php:636
 msgid "Enable sorting by column"
 msgstr "Sütuna göre sıralamayı etkinleştir"
 
-#: includes/class-data.php:647
+#: includes/class-data.php:637
 msgid "Column Sorting"
 msgstr "Sütun Sıralama"
 
-#: includes/class-data.php:656
+#: includes/class-data.php:646
 msgid "Filter by Start Date"
 msgstr "Başlangıç Tarihine Göre Sırala"
 
-#: includes/class-data.php:658
+#: includes/class-data.php:648
 msgid ""
 "Show entries submitted after this date. Supports relative dates, such as "
 "\"-1 week\" or \"-1 month\"."
 msgstr "Bu tarihten sonra gönderilen kayıtları göster. Önceki tarihler desteklenmektedir. \"-1 hafta\" yada \"-1 ay\" gibi."
 
-#: includes/class-data.php:665
+#: includes/class-data.php:655
 msgid "Filter by End Date"
 msgstr "Bitiş Tarihine Göre Sırala"
 
-#: includes/class-data.php:667
+#: includes/class-data.php:657
 msgid ""
 "Show entries submitted before this date. Supports relative dates, such as "
 "\"now\" or \"-3 days\"."
 msgstr "Bu tarihten önce gönderilen kayıtları göster. Önceki tarihler desteklenmektedir. \"şimdi\" yada \"-3 gün\" gibi."
 
-#: includes/class-data.php:674
+#: includes/class-data.php:664
 msgid "CSS Class"
 msgstr "Özel CSS Sınıfı:"
 
-#: includes/class-data.php:675
+#: includes/class-data.php:665
 msgid "CSS class to add to the wrapping HTML container."
 msgstr "HTML bloğunu çevreleyen CSS sınıfı."
 
-#: includes/class-data.php:682
+#: includes/class-data.php:672
 msgid "Search Value"
 msgstr "Değer Ara"
 
-#: includes/class-data.php:683
+#: includes/class-data.php:673
 msgid "Define a default search value for the View"
 msgstr "Görünüm için varsayılan arama değeri belirle"
 
-#: includes/class-data.php:690
-#: includes/widgets/search-widget/class-search-widget.php:222
+#: includes/class-data.php:680
+#: includes/widgets/search-widget/class-search-widget.php:192
 msgid "Search Field"
 msgstr "Alanlarda Ara"
 
-#: includes/class-data.php:691
+#: includes/class-data.php:681
 msgid ""
 "If Search Value is set, you can define a specific field to search in. "
 "Otherwise, all fields will be searched."
 msgstr "Eğer Arama Değeri atandıysa, belirli bir alanda arama yapabiliriniz. Aksi takdirde tüm alanlar aranacaktır."
 
-#: includes/class-data.php:698
+#: includes/class-data.php:688
 msgid "Single Entry Title"
 msgstr "Tekil Kayıt Başlığı"
 
-#: includes/class-data.php:700
+#: includes/class-data.php:690
 msgid ""
 "When viewing a single entry, change the title of the page to this setting. "
 "Otherwise, the title will not change between the Multiple Entries and Single"
 " Entry views."
 msgstr "Tekil kayıtları görüntülerken sayfanın başlığını bu ayarı kullanarak değiştirebilirsiniz. Aksi takdirde Çoklu Kayıt ve Tekil Kayıt görünümleri arasında geçiş yaptığınızda başlık aynı kalır."
 
-#: includes/class-data.php:707
+#: includes/class-data.php:697
 msgid "Back Link Label"
 msgstr "Geri Dönüş Bağlantısı Etiketi"
 
-#: includes/class-data.php:709
+#: includes/class-data.php:699
 msgid "The text of the link that returns to the multiple entries view."
 msgstr "Çoklu kayıt görünümüne dönüş yapan bağlantının yazısı."
 
-#: includes/class-data.php:716
+#: includes/class-data.php:706
 msgid "Prevent Direct Access"
 msgstr "Doğrudan Erişimi Kapat"
 
-#: includes/class-data.php:718
+#: includes/class-data.php:708
 msgid "Only allow access to this View when embedded using the shortcode."
 msgstr "Sadece kısakod ile gömülüyse bu Görünüme erişime izin ver."
 
@@ -1104,24 +1069,24 @@ msgstr "Uyarılar"
 msgid "Logs"
 msgstr "Kütükler"
 
-#: includes/class-frontend-views.php:517
+#: includes/class-frontend-views.php:450
 msgid ""
 "When using a Start Fresh template, you must save the View before a Preview "
 "is available."
 msgstr "Yeni bir taslak kullanırken önizleme yapabilmek için Görünümü kaydetmelisiniz."
 
-#: includes/class-frontend-views.php:659
+#: includes/class-frontend-views.php:591
 msgid "You are not allowed to view this content."
 msgstr "Bu içeriği görmeye yetkiniz yok."
 
-#: includes/class-frontend-views.php:748
+#: includes/class-frontend-views.php:680
 msgid ""
 "You have attempted to view an entry that is not visible or may not exist."
 msgstr "Görünür olmayan yada var olmayan bir kaydı görüntülemek istediniz."
 
 #: includes/class-gravityview-admin-bar.php:107
 msgid "Edit Entry %s"
-msgstr "%s kaydını düzenle"
+msgstr ""
 
 #: includes/class-gravityview-admin-bar.php:139
 #: includes/class-post-types.php:69
@@ -1130,7 +1095,7 @@ msgstr "Görünüm'ü Düzenle"
 
 #: includes/class-gravityview-admin-bar.php:144
 msgid "Edit Form #%d"
-msgstr "%d formunu düzenle"
+msgstr ""
 
 #: includes/class-gravityview-admin-duplicate-view.php:237
 msgid "Clone"
@@ -1164,7 +1129,7 @@ msgstr "Bu Görünümü kopyalamaya izniniz yok."
 msgid "Copy creation failed, could not find original View with ID #%d"
 msgstr "Kopyalama yapılamadı, #%d NO lu esas Görünüm bulunamadı"
 
-#: includes/class-gravityview-admin-notices.php:204
+#: includes/class-gravityview-admin-notices.php:201
 msgid "Dismiss"
 msgstr "Boşver"
 
@@ -1235,70 +1200,6 @@ msgid ""
 "plugin."
 msgstr "GravityView ve Gravity Forms Directory eklentilerinin ikiside etkin. Bu durum bazı sorunlara yol açabilir. Eğer bir sorunla karşılaşırsanız  Gravity Forms Directory eklentisini etkisizleştirin."
 
-#: includes/class-gravityview-entry-approval-status.php:56
-msgid "Disapproved"
-msgstr "Onaylanmadı"
-
-#: includes/class-gravityview-entry-approval-status.php:57
-msgid "Disapprove"
-msgstr "Onayı Geri Al"
-
-#: includes/class-gravityview-entry-approval-status.php:58
-msgid "Entry not approved for directory viewing. Click to approve this entry."
-msgstr "Kayıt dizin görüntülemesi için onaylanmamış. Kaydı onaylamak için tıklayın."
-
-#: includes/class-gravityview-entry-approval-status.php:62
-msgid "Approved"
-msgstr "Onaylandı"
-
-#: includes/class-gravityview-entry-approval-status.php:63
-msgid "Approve"
-msgstr "Onayla"
-
-#: includes/class-gravityview-entry-approval-status.php:64
-msgid "Entry approved for directory viewing. Click to disapprove this entry."
-msgstr "Kayıt dizin görüntülemesi için onaylanmış. Onayı geri almak için tıklayın."
-
-#: includes/class-gravityview-entry-approval-status.php:68
-msgid "Unapproved"
-msgstr ""
-
-#: includes/class-gravityview-entry-approval-status.php:69
-msgid "Reset Approval"
-msgstr ""
-
-#: includes/class-gravityview-entry-approval-status.php:70
-msgid "Entry not yet reviewed. Click to approve this entry."
-msgstr ""
-
-#: includes/class-gravityview-entry-approval.php:113
-#: includes/class-gravityview-entry-approval.php:122
-#: includes/class-gravityview-entry-approval.php:131
-#: includes/extensions/entry-notes/class-gravityview-field-notes.php:427
-msgid "The request was invalid. Refresh the page and try again."
-msgstr "İstek geçersiz oldu. Sayfayı yenileyin ve tekrar deneyin."
-
-#: includes/class-gravityview-entry-approval.php:140
-#: includes/extensions/edit-entry/class-edit-entry-render.php:1910
-msgid "You do not have permission to edit this entry."
-msgstr "Bu kaydı düzenleme yetkiniz yok."
-
-#: includes/class-gravityview-entry-approval.php:339
-#: includes/class-gravityview-uninstall.php:65
-#: tests/unit-tests/GravityView_Uninstall_Test.php:192
-msgid "Approved the Entry for GravityView"
-msgstr "GravityView için kaydı onayla"
-
-#: includes/class-gravityview-entry-approval.php:342
-msgid "Reset Entry approval for GravityView"
-msgstr ""
-
-#: includes/class-gravityview-entry-approval.php:345
-#: includes/class-gravityview-uninstall.php:64
-#: tests/unit-tests/GravityView_Uninstall_Test.php:191
-msgid "Disapproved the Entry for GravityView"
-msgstr "GravityView için kaydın onayını geri al"
-
 #: includes/class-gravityview-entry-link-shortcode.php:208
 #: includes/extensions/delete-entry/class-delete-entry.php:117
 #: includes/extensions/delete-entry/class-delete-entry.php:146
@@ -1327,221 +1228,178 @@ msgid ""
 "upgrade your server's PHP."
 msgstr "Bu eklenti PHP %s ve üzeri sürümleri gerektirir. Lütfen hosting firmanızla iletişime geçerek güncelleme talep ediniz."
 
-#: includes/class-gravityview-settings.php:118
-msgid ""
-"If you delete then re-install GravityView, it will be like installing "
-"GravityView for the first time."
-msgstr "Eğer eklentiyi siler ve yeniden yüklerseniz GravityView ilk defa kuruluyormuş gibi baştan yüklenecektir."
-
-#: includes/class-gravityview-settings.php:119
-msgid ""
-"Delete all Views, GravityView entry approval status, GravityView-generated "
-"entry notes (including approval and entry creator changes), and GravityView "
-"plugin settings."
-msgstr ""
-
-#: includes/class-gravityview-settings.php:160
-msgid "I am going to continue using GravityView"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:163
-msgid "I no longer need GravityView"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:166
-msgid "The plugin doesn't work"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:169
-msgid "I found a better plugin"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:170
-msgid "What plugin you are using, and why?"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:173
-msgid "Other"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:257
-msgid ""
-"There was an error sharing your feedback. Sorry! Please email us at "
-"support@gravityview.co"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:263
-msgid "Why did you uninstall GravityView?"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:273
-msgid "Comments"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:274
-msgid "Please share your thoughts about GravityView"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:277
-msgid "How likely are you to recommend GravityView?"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:291
-msgid "Please follow up with me about my feedback"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:298
-msgid "Send Us Your Feedback"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:303
-msgid "Thank you for using GravityView!"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:305
-msgid ""
-"Your feedback helps us improve GravityView. If you have any questions or "
-"comments, email us: support@gravityview.co"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:346
-msgid "Delete all GravityView content and settings"
-msgstr "Tüm GravityView içeriği ve ayarlarını sil"
-
-#: includes/class-gravityview-settings.php:354
-msgid "Uninstall %s"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:393
+#: includes/class-gravityview-settings.php:154
 msgid "GravityView Settings"
 msgstr "GravityView Ayarları"
 
-#: includes/class-gravityview-settings.php:437
+#: includes/class-gravityview-settings.php:195
 msgid ""
 "Your GravityView license %s. This means you&rsquo;re missing out on updates "
 "and support! %sActivate your license%s or %sget a license here%s."
 msgstr "GravityView lisansınızın durumu: %s. Bunun anlamı güncelleme ve destekten mahrum kalıyorsunuz demektir! %sLisansınızı etkinleştirin%s yada %shemen bir lisans alın%s."
 
-#: includes/class-gravityview-settings.php:444
+#: includes/class-gravityview-settings.php:202
 msgid "Inactive License"
 msgstr "Pasif Lisans"
 
-#: includes/class-gravityview-settings.php:451
+#: includes/class-gravityview-settings.php:209
 msgid "Expired License"
-msgstr "Zamanı Geçmiş Lisans"
+msgstr ""
 
-#: includes/class-gravityview-settings.php:456
+#: includes/class-gravityview-settings.php:214
 msgid "Invalid License"
 msgstr "Geçersiz Lisans"
 
-#: includes/class-gravityview-settings.php:457
+#: includes/class-gravityview-settings.php:215
 msgid "is invalid"
 msgstr "geçersiz"
 
-#: includes/class-gravityview-settings.php:460
+#: includes/class-gravityview-settings.php:218
 msgid "is inactive"
 msgstr "pasif"
 
-#: includes/class-gravityview-settings.php:461
-#: includes/class-gravityview-settings.php:470
+#: includes/class-gravityview-settings.php:219
+#: includes/class-gravityview-settings.php:228
 msgid "Activate your license key below."
 msgstr "Lisans anahtarınızı aşağıdan etkinleştirin."
 
-#: includes/class-gravityview-settings.php:469
+#: includes/class-gravityview-settings.php:227
 msgid "has not been activated"
 msgstr "etkinleştirilmedi"
 
-#: includes/class-gravityview-settings.php:691
-#: includes/class-gravityview-settings.php:724
+#: includes/class-gravityview-settings.php:441
+#: includes/class-gravityview-settings.php:474
 msgid "Update Settings"
 msgstr "Ayarları Güncelle"
 
-#: includes/class-gravityview-settings.php:792
-#: includes/class-gv-license-handler.php:540
+#: includes/class-gravityview-settings.php:537
+#: includes/class-gv-license-handler.php:538
 msgid "You don't have the ability to edit plugin settings."
 msgstr "Eklenti ayarlarını düzenleme yetkiniz yok."
 
-#: includes/class-gravityview-settings.php:818
+#: includes/class-gravityview-settings.php:563
 msgid ""
 "The license key you entered has been saved, but not activated. Please "
 "activate the license."
 msgstr "Girdiğiniz lisans anahtarı kaydedildi fakat etkinleştirilmedi. Lütfen etkinleştirin."
 
-#: includes/class-gravityview-settings.php:833
+#: includes/class-gravityview-settings.php:578
 msgid "Required"
 msgstr "Zorunlu"
 
-#: includes/class-gravityview-settings.php:850
+#: includes/class-gravityview-settings.php:595
 msgid "License Key"
 msgstr "Lisans Anahtarı"
 
-#: includes/class-gravityview-settings.php:851
+#: includes/class-gravityview-settings.php:596
 msgid ""
 "Enter the license key that was sent to you on purchase. This enables plugin "
 "updates &amp; support."
 msgstr "Satın alma esnasında size gönderilen lisans anahtarını giriniz. Bu sayede eklenti güncellemeleri ve desteği alabilirsiniz."
 
-#: includes/class-gravityview-settings.php:853
+#: includes/class-gravityview-settings.php:598
 #: includes/class-gv-license-handler.php:120
 #: includes/class-gv-license-handler.php:134
-#: includes/class-gv-license-handler.php:542
+#: includes/class-gv-license-handler.php:540
 msgid "Verifying license&hellip;"
 msgstr "Lisans anahtarı doğrulanıyor&hellip;"
 
-#: includes/class-gravityview-settings.php:872
+#: includes/class-gravityview-settings.php:617
 msgid "Support Email"
 msgstr "Destek Eposta Adresi"
 
-#: includes/class-gravityview-settings.php:873
+#: includes/class-gravityview-settings.php:618
 msgid ""
 "In order to provide responses to your support requests, please provide your "
 "email address."
 msgstr "Destek taleplerinize yanıt verebilmemiz için lütfen eposta adresinizi yazınız."
 
-#: includes/class-gravityview-settings.php:882
+#: includes/class-gravityview-settings.php:627
 msgid "Show Support Port?"
 msgstr "Destek Portalını Göster?"
 
-#: includes/class-gravityview-settings.php:895
+#: includes/class-gravityview-settings.php:640
 msgid "The Support Port looks like this."
 msgstr "Destek Portalı böyle birşey."
 
-#: includes/class-gravityview-settings.php:895
+#: includes/class-gravityview-settings.php:640
 msgid ""
 "The Support Port provides quick access to how-to articles and tutorials. For"
 " administrators, it also makes it easy to contact support."
 msgstr "Destek Portalı eğitici içerik ve nasıl yapılır makalelerine kestirmeden erişmenizi sağlar. Ayrıca yönetici yetkisine sahip kullanıcıların destek birimiyle iletişime geçmesini kolaylaştırır."
 
-#: includes/class-gravityview-settings.php:896
+#: includes/class-gravityview-settings.php:641
 msgid "Show the Support Port on GravityView pages?"
 msgstr "Destek Portalı GravityView sayfalarında görünsün mü?"
 
-#: includes/class-gravityview-settings.php:901
+#: includes/class-gravityview-settings.php:646
 msgid "No-Conflict Mode"
 msgstr "Çakışmasız Durum"
 
-#: includes/class-gravityview-settings.php:914
+#: includes/class-gravityview-settings.php:659
 msgid ""
 "Set this to ON to prevent extraneous scripts and styles from being printed "
 "on GravityView admin pages, reducing conflicts with other plugins and "
 "themes."
 msgstr "Arkaplanda farklı betik ve sitil dosyalarının GravityView yönetim sayfasında yüklenmesini istemiyorsanız bu ayarı kullanmalısınız. Bu sayede diğer eklenti ve temalarla yaşanabilecek çakışmalar asgariye indirilmiş olur."
 
-#: includes/class-gravityview-settings.php:914
+#: includes/class-gravityview-settings.php:659
 msgid "If your Edit View tabs are ugly, enable this setting."
-msgstr "Eğer Görünüm Düzenle sekmeleri çirkin görünüyorsa bu ayarı etkinleştirin."
+msgstr ""
 
-#: includes/class-gravityview-settings.php:938
+#: includes/class-gravityview-settings.php:664
+msgid "Remove Data on Delete?"
+msgstr ""
+
+#: includes/class-gravityview-settings.php:671
+msgid "Keep GravityView content and settings"
+msgstr ""
+
+#: includes/class-gravityview-settings.php:671
+msgid ""
+"If you delete then re-install the plugin, all GravityView data will be kept."
+" Views, settings, etc. will be untouched."
+msgstr ""
+
+#: includes/class-gravityview-settings.php:676
+msgid "Delete all GravityView content and settings"
+msgstr ""
+
+#: includes/class-gravityview-settings.php:676
+msgid ""
+"If you delete then re-install GravityView, it will be like installing "
+"GravityView for the first time."
+msgstr ""
+
+#: includes/class-gravityview-settings.php:676
+msgid ""
+"When GravityView is uninstalled and deleted, delete all Views, GravityView "
+"entry approvals, GravityView-generated entry notes (including approval and "
+"entry creator changes), and GravityView plugin settings. No Gravity Forms "
+"data will be touched."
+msgstr ""
+
+#: includes/class-gravityview-settings.php:679
+msgid ""
+"Should GravityView content and entry approval status be removed from the "
+"site when the GravityView plugin is deleted?"
+msgstr ""
+
+#: includes/class-gravityview-settings.php:679
+msgid "Permanently Delete"
+msgstr ""
+
+#: includes/class-gravityview-settings.php:704
 msgid "You are running GravityView version %s"
 msgstr "GravityView sürüm %s kullanıyorsunuz"
 
 #: includes/class-gv-license-handler.php:119
-#: includes/class-gv-license-handler.php:543
+#: includes/class-gv-license-handler.php:541
 msgid "Activate License"
 msgstr "Lisansı Etkinleştir"
 
 #: includes/class-gv-license-handler.php:126
-#: includes/class-gv-license-handler.php:544
+#: includes/class-gv-license-handler.php:542
 msgid "Deactivate License"
 msgstr "Lisansı İptal Et"
 
@@ -1553,97 +1411,97 @@ msgstr "Lisansı iptal ediliyor&hellip;"
 msgid "Check License"
 msgstr "Lisansı Kontrol Et"
 
-#: includes/class-gv-license-handler.php:319
+#: includes/class-gv-license-handler.php:316
 msgid "License Details:"
-msgstr "Lisans Detayları:"
+msgstr ""
+
+#: includes/class-gv-license-handler.php:335
+msgid "Access your GravityView account"
+msgstr ""
+
+#: includes/class-gv-license-handler.php:336
+msgid "This development site does not count toward license activation limits"
+msgstr ""
 
 #: includes/class-gv-license-handler.php:338
-msgid "Access your GravityView account"
-msgstr "GravityView hesabınıza erişin"
+msgid "License level: %s"
+msgstr ""
 
-#: includes/class-gv-license-handler.php:339
-msgid "This development site does not count toward license activation limits"
-msgstr "Bu geliştirme sitesinde kullanılan lisans etkinleştirme sınırlarına dahil değildir"
+#: includes/class-gv-license-handler.php:340
+msgid "Activations: %d of %s sites"
+msgstr ""
 
 #: includes/class-gv-license-handler.php:341
-msgid "License level: %s"
-msgstr "Lisans düzeyi:%s"
-
-#: includes/class-gv-license-handler.php:343
-msgid "Activations: %d of %s sites"
-msgstr "Aktivasyonlar:%s sitelerin %d"
-
-#: includes/class-gv-license-handler.php:344
 msgid "Renew on: %s"
-msgstr "%s üzerine yenile"
+msgstr ""
 
-#: includes/class-gv-license-handler.php:379
+#: includes/class-gv-license-handler.php:377
 msgid "Upgrades available:"
-msgstr "Mevcut yükseltmeler:"
+msgstr ""
 
-#: includes/class-gv-license-handler.php:396
+#: includes/class-gv-license-handler.php:394
 msgid "Get access to Extensions"
-msgstr "Uzantılara erişin"
+msgstr ""
 
-#: includes/class-gv-license-handler.php:400
+#: includes/class-gv-license-handler.php:398
 msgid "Get access to Entry Importer and other Premium plugins"
-msgstr "Kayıt Aktarıcı ve diğer özel eklentilere erişim sağlayın"
+msgstr ""
 
-#: includes/class-gv-license-handler.php:528
+#: includes/class-gv-license-handler.php:526
 msgid "Status"
 msgstr "Durum"
 
-#: includes/class-gv-license-handler.php:529
+#: includes/class-gv-license-handler.php:527
 msgid "There was an error processing the request."
 msgstr "Talep işlenirken hata oluştu."
 
-#: includes/class-gv-license-handler.php:530
+#: includes/class-gv-license-handler.php:528
 msgid ""
 "Could not deactivate the license. The license key you attempted to "
 "deactivate may not be active or valid."
 msgstr "Lisans pasif hale getirilemedi. İptal etmeye çalıştığınız lisans anahtarı etkin yada geçerli olmayabilir."
 
-#: includes/class-gv-license-handler.php:531
-#: includes/class-gv-license-handler.php:532
+#: includes/class-gv-license-handler.php:529
+#: includes/class-gv-license-handler.php:530
 msgid "The license key is valid, but it has not been activated for this site."
 msgstr "Lisans anahtarı geçerli, fakat bu site için etkinleştirilemedi."
 
-#: includes/class-gv-license-handler.php:533
+#: includes/class-gv-license-handler.php:531
 msgid "Invalid: this license has reached its activation limit."
 msgstr "Geçersiz: bu lisans anahtarı etkinleştirme haddine ulaştı."
 
-#: includes/class-gv-license-handler.php:533
+#: includes/class-gv-license-handler.php:531
 msgid ""
 "You can manage license activations %son your GravityView account page%s."
-msgstr "Lisans etkinleştirmelerini %s GravityView hesap sayfanızdan %s yönetebilirsiniz."
+msgstr ""
 
-#: includes/class-gv-license-handler.php:534
+#: includes/class-gv-license-handler.php:532
 msgid "The license has been deactivated."
 msgstr "Lisans iptal edildi."
 
-#: includes/class-gv-license-handler.php:535
+#: includes/class-gv-license-handler.php:533
 msgid "The license key is valid and active."
 msgstr "Lisans anahtarı etkin ve geçerli."
 
-#: includes/class-gv-license-handler.php:536
+#: includes/class-gv-license-handler.php:534
 msgid "The license key entered is invalid."
 msgstr "Girilen lisans anahtarı geçersiz."
 
-#: includes/class-gv-license-handler.php:537
+#: includes/class-gv-license-handler.php:535
 msgid "Invalid license key."
-msgstr "Geçersiz Lisans anahtarı"
+msgstr ""
 
-#: includes/class-gv-license-handler.php:538
+#: includes/class-gv-license-handler.php:536
 msgid "This license key has been revoked."
 msgstr "Lisans anahtarı iptal edilmiştir."
 
-#: includes/class-gv-license-handler.php:539
+#: includes/class-gv-license-handler.php:537
 msgid ""
 "This license key has expired. %sRenew your license on the GravityView "
 "website%s to receive updates and support."
-msgstr "Bu lisans anahtarının süresi doldu. %sGravityView web sitesi%s üzerinden lisans güncellemeleri ve destek alabilrsiniz."
+msgstr ""
 
-#: includes/class-gv-license-handler.php:545
+#: includes/class-gv-license-handler.php:543
 msgid "Verify License"
 msgstr "Lisansı Doğrula"
 
@@ -1663,7 +1521,7 @@ msgstr "Gömülü Kayıt %d"
 
 #: includes/class-oembed.php:255
 msgid "This entry will be displayed as it is configured in View %d"
-msgstr "Bu kayıt %d Görünümünde ayarlandığı şekilde görüntülenecektir."
+msgstr "BU kayıt %d Görünümünde ayarlandığı şekilde görüntülenecektir."
 
 #: includes/class-post-types.php:64
 msgid "Parent View:"
@@ -1689,17 +1547,21 @@ msgstr "Görünüm'ü Güncelle"
 msgid "Search Views"
 msgstr "Görünümlerde Ara"
 
+#: includes/class-post-types.php:73
+msgid "No Views found in Trash"
+msgstr "Çöp Kutusunda Görünüm Bulunamadı"
+
 #: includes/class-post-types.php:74
 msgid "Filter Views list"
-msgstr "Görünüm listesini sırala"
+msgstr ""
 
 #: includes/class-post-types.php:75
 msgid "Views list navigation"
-msgstr "Görünüm liste dolaşımı"
+msgstr ""
 
 #: includes/class-post-types.php:76
 msgid "Views list"
-msgstr "Görünüm listesi"
+msgstr ""
 
 #: includes/class-post-types.php:79
 msgid "view"
@@ -1708,6 +1570,17 @@ msgstr "görünüm"
 #: includes/class-post-types.php:80
 msgid "Create views based on a Gravity Forms form"
 msgstr "Gravity Forms temelli yeni Görünümler oluştur"
+
+#: includes/class-post-types.php:170
+msgid ""
+"%sYou don't have any active views. Let&rsquo;s go %screate one%s!%s\n"
+"\n"
+"If you feel like you're lost in space and need help getting started, check out the %sGetting Started%s page."
+msgstr "%sAktif bir Görünüm oluşturmadınız. Yeni bir Görünüm %soluşturun%s!%s \n\nNereden başlayacağınızı bilmiyorsanız, %sBaşlangıç%s sayfasına bakabilirsiniz."
+
+#: includes/class-post-types.php:172
+msgid "There are no active Views"
+msgstr ""
 
 #: includes/extensions/delete-entry/class-delete-entry.php:115
 msgid "Delete Link Text"
@@ -1732,7 +1605,7 @@ msgstr "Kayıt mevcut değil."
 
 #: includes/extensions/delete-entry/class-delete-entry.php:439
 msgid "Moving the entry to the trash failed."
-msgstr "Kayıt çöpe taşınırken hata oluştu."
+msgstr ""
 
 #: includes/extensions/delete-entry/class-delete-entry.php:537
 msgid "Are you sure you want to delete this entry? This cannot be undone."
@@ -1748,7 +1621,7 @@ msgstr "Bu kaydı silme yetkiniz yok."
 
 #: includes/extensions/delete-entry/class-delete-entry.php:573
 msgid "The entry is already in the trash."
-msgstr "Kayıt zaten çöp kutusunda."
+msgstr ""
 
 #: includes/extensions/delete-entry/class-delete-entry.php:575
 msgid "You cannot delete the entry; it is already in the trash."
@@ -1760,7 +1633,7 @@ msgstr "%s kaydını silerken hata oluştu."
 
 #: includes/extensions/delete-entry/class-delete-entry.php:715
 msgid "The entry was successfully moved to the trash."
-msgstr "Kayıt başarıyla çöp kutusuna taşındı."
+msgstr ""
 
 #: includes/extensions/delete-entry/class-delete-entry.php:718
 msgid "The entry was successfully deleted."
@@ -1785,7 +1658,7 @@ msgid ""
 msgstr "Eğer kaydı oluşturan kullanıcının bu kaydı düzenlemesini istemiyorsanız buradan ayarlayabilirsiniz."
 
 #: includes/extensions/edit-entry/class-edit-entry-admin.php:159
-#: includes/fields/class-gravityview-field.php:408
+#: includes/fields/class-gravityview-field.php:299
 msgid "Open link in a new tab or window?"
 msgstr "Bağlantı yeni sekmede mi yoksa pencerede mi açılsın?"
 
@@ -1793,39 +1666,43 @@ msgstr "Bağlantı yeni sekmede mi yoksa pencerede mi açılsın?"
 msgid "Make field editable to:"
 msgstr "Alanı şunlar için düzenlenebilir yap:"
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:901
+#: includes/extensions/edit-entry/class-edit-entry-render.php:806
 msgid "There was a problem with your submission."
 msgstr "Gönderinizle ilgili bir sorun oluştu."
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:901
+#: includes/extensions/edit-entry/class-edit-entry-render.php:806
 msgid "Errors have been highlighted below."
 msgstr "Hatalar aşağıda belirtilmiştir."
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:907
+#: includes/extensions/edit-entry/class-edit-entry-render.php:812
 msgid "Entry Updated. %sReturn to Entry%s"
 msgstr "Kayıt güncellendi. %sKayda Dön%s"
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:1046
+#: includes/extensions/edit-entry/class-edit-entry-render.php:990
 msgid "You don&rsquo;t have permission to edit this post."
 msgstr "Bu yazıyı düzenleme yetkiniz yok."
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:1053
+#: includes/extensions/edit-entry/class-edit-entry-render.php:997
 msgid "This field is not editable; the post no longer exists."
 msgstr "Bu alan düzenlenebilir değil; yazı silinmiş olabilir."
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:1428
+#: includes/extensions/edit-entry/class-edit-entry-render.php:1372
 msgid "Maximum number of files reached"
 msgstr "Azami dosya erişim sayısı"
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:1904
+#: includes/extensions/edit-entry/class-edit-entry-render.php:1784
 msgid "The link to edit this entry is not valid; it may have expired."
 msgstr "Bu kaydı düzenleyecek bağlantı geçerli değil, zamanaşımına uğramış olabilir."
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:1914
+#: includes/extensions/edit-entry/class-edit-entry-render.php:1790
+msgid "You do not have permission to edit this entry."
+msgstr "Bu kaydı düzenleme yetkiniz yok."
+
+#: includes/extensions/edit-entry/class-edit-entry-render.php:1794
 msgid "You cannot edit the entry; it is in the trash."
 msgstr "Bu kaydı düzenleyemezsiniz; çünnkü çöp kutusunda."
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:1954
+#: includes/extensions/edit-entry/class-edit-entry-render.php:1834
 msgid "You do not have permission to edit this field."
 msgstr "Bu alanı düzenleme yetkiniz yok."
 
@@ -1845,111 +1722,111 @@ msgstr "Alan silinirken Ajax hatası oluştu."
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:101
 msgid "Entry Notes"
-msgstr "Kayıt Notları"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:103
 msgid "Display, add, and delete notes for an entry."
-msgstr "Kayıt için notları silin, ekleyin yada düzenleyin."
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:367
 msgid "Note Settings"
-msgstr "Not Ayarları"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:371
 msgid "Display notes?"
-msgstr "Kayıtlar görüntülensin mi?"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:374
 msgid "Display notes to users who are not logged-in?"
-msgstr "Giriş yapmamış kullanıcılara notlar gösterilsin mi?"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:378
 msgid "Enable adding notes?"
-msgstr "Not ekleme etkinleştirilsin mi?"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:381
 msgid "Allow emailing notes?"
-msgstr "Notlar eposta ile iletilsin mi?"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:385
 msgid "Allow deleting notes?"
-msgstr "Notlar silinebilsin mi?"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:409
 msgid "Add Note"
-msgstr "Not Ekle"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:410
 msgid "Note added."
-msgstr "Not eklendi."
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:411
 msgid "Note Content"
-msgstr "Not İçeriği"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:413
 msgid "Are you sure you want to delete the selected notes?"
-msgstr "Seçili notları silmek istediğinizden emin misiniz?"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:414
 msgid "Notes for this entry"
-msgstr "Bu kayıt için notlar"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:415
 msgid "Toggle all notes"
-msgstr "Tüm notları gez"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:416
 msgid "There are no notes."
-msgstr "Hiç not yok."
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:417
 msgid "Processing&hellip;"
-msgstr "İşleniyor&hellip;"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:418
 msgid "Other email address"
-msgstr "Diğer e-posta adresi"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:422
 msgid "Email subject"
-msgstr "E-posta konusu"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:423
 msgid "New entry note"
-msgstr "Yeni kayıt notu"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:424
-msgid "This note was sent from {url}"
+msgid "Also email this note to"
 msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:425
-msgid "Also email this note to"
-msgstr "Ayrıca bu notu e-posta ile şu adrese gönder :"
+msgid "There was an error adding the note."
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:426
-msgid "There was an error adding the note."
-msgstr "Not eklenirken hata oluştu."
+msgid "The request was invalid. Refresh the page and try again."
+msgstr ""
+
+#: includes/extensions/entry-notes/class-gravityview-field-notes.php:428
+msgid "You don't have the ability to delete notes."
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:429
-msgid "You don't have the ability to delete notes."
-msgstr "Notları silmek için yeterli yetkiniz bulunmamaktadır."
-
-#: includes/extensions/entry-notes/class-gravityview-field-notes.php:430
 msgid "You don't have the ability to add notes."
-msgstr "Not eklemek için yeterli yetkiniz bulunmamaktadır."
+msgstr ""
 
-#: includes/extensions/entry-notes/class-gravityview-field-notes.php:467
+#: includes/extensions/entry-notes/class-gravityview-field-notes.php:466
 msgid "added on {date_created_formatted}"
-msgstr "eklendi {date_created_formatted}"
+msgstr ""
 
-#: includes/extensions/entry-notes/class-gravityview-field-notes.php:535
+#: includes/extensions/entry-notes/class-gravityview-field-notes.php:534
 msgid "The note is empty."
-msgstr "Not boştur."
+msgstr ""
 
 #: includes/fields/class-gravityview-field-address.php:20
 msgid "Address"
-msgstr "Adres"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-address.php:39
 msgid "Show Map Link:"
@@ -1959,25 +1836,17 @@ msgstr "Harita Bağlantısı Göster:"
 msgid "Display a \"Map It\" link below the address"
 msgstr "\"Haritada Bul\" bağlantısını  adresin altında göster."
 
-#: includes/fields/class-gravityview-field-approval.php:23
-msgid "Approve Entries"
-msgstr ""
-
-#: includes/fields/class-gravityview-field-approval.php:25
-msgid "Approve and reject entries from the View."
-msgstr ""
-
 #: includes/fields/class-gravityview-field-calculation.php:23
 msgid "Calculation"
-msgstr "Hesaplama"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-captcha.php:19
 msgid "CAPTCHA"
-msgstr "DOĞRULAMA"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-checkbox.php:19
-#: includes/widgets/search-widget/class-search-widget.php:183
-#: includes/widgets/search-widget/class-search-widget.php:184
+#: includes/widgets/search-widget/class-search-widget.php:166
+#: includes/widgets/search-widget/class-search-widget.php:167
 msgid "Checkbox"
 msgstr "Onay Kutusu"
 
@@ -1985,87 +1854,83 @@ msgstr "Onay Kutusu"
 #: includes/fields/class-gravityview-field-radio.php:46
 #: includes/fields/class-gravityview-field-select.php:46
 msgid "This input has a label and a value. What should be displayed?"
-msgstr "Bu girişe ait etiket ve bir değer mevcuttur. Hangisi görüntülenmeli?"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-checkbox.php:49
 #: includes/fields/class-gravityview-field-checkbox.php:57
 msgid "A check mark, if the input is checked"
-msgstr "Bir onay işareti, giriş kontrol edilmişse"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-checkbox.php:50
 #: includes/fields/class-gravityview-field-radio.php:48
 #: includes/fields/class-gravityview-field-select.php:48
 msgid "Value of the input"
-msgstr "Girdi değeri"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-checkbox.php:51
 #: includes/fields/class-gravityview-field-checkbox.php:58
 #: includes/fields/class-gravityview-field-radio.php:49
 #: includes/fields/class-gravityview-field-select.php:49
 msgid "Label of the input"
-msgstr "Girdi etiketi"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-checkbox.php:65
 #: includes/fields/class-gravityview-field-radio.php:45
 #: includes/fields/class-gravityview-field-select.php:45
 msgid "What should be displayed:"
-msgstr "Ne görüntülenmesi gerekir:"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-created-by.php:19
 msgid "Created By"
 msgstr "Oluşturan"
 
-#: includes/fields/class-gravityview-field-created-by.php:20
-msgid "Submitted by:"
-msgstr "Gönderen:"
-
-#: includes/fields/class-gravityview-field-created-by.php:38
+#: includes/fields/class-gravityview-field-created-by.php:37
 msgid "Entry Creator: Display Name"
 msgstr "Kayıt Sahibi: Görünen Ad"
 
-#: includes/fields/class-gravityview-field-created-by.php:42
+#: includes/fields/class-gravityview-field-created-by.php:41
 msgid "Entry Creator: Email"
 msgstr "Kayıt Sahibi: Eposta"
 
-#: includes/fields/class-gravityview-field-created-by.php:46
+#: includes/fields/class-gravityview-field-created-by.php:45
 msgid "Entry Creator: Username"
 msgstr "Kayıt Sahibi: Kullanıcı Adı"
 
-#: includes/fields/class-gravityview-field-created-by.php:50
+#: includes/fields/class-gravityview-field-created-by.php:49
 msgid "Entry Creator: User ID"
 msgstr "Kayıt Sahibi: Kullanıcı NO"
 
-#: includes/fields/class-gravityview-field-created-by.php:54
+#: includes/fields/class-gravityview-field-created-by.php:53
 msgid "Entry Creator: Roles"
-msgstr "Kaydı Oluşturan: Roller"
+msgstr ""
 
-#: includes/fields/class-gravityview-field-created-by.php:123
+#: includes/fields/class-gravityview-field-created-by.php:122
 msgid "User Format"
 msgstr "Kullanıcı Biçimi"
 
-#: includes/fields/class-gravityview-field-created-by.php:124
+#: includes/fields/class-gravityview-field-created-by.php:123
 msgid "How should the User information be displayed?"
 msgstr "Kullanıcı bilgisi hangi biçimde görünmeli?"
 
-#: includes/fields/class-gravityview-field-created-by.php:126
+#: includes/fields/class-gravityview-field-created-by.php:125
 msgid "Display Name (Example: \"Ellen Ripley\")"
 msgstr "Görünen Adı (Örn: \"Ahmet Yılmaz\")"
 
-#: includes/fields/class-gravityview-field-created-by.php:127
+#: includes/fields/class-gravityview-field-created-by.php:126
 msgid "Username (Example: \"nostromo\")"
 msgstr "Kullanıcı Adı (Örnek: \"rumuz01\")"
 
-#: includes/fields/class-gravityview-field-created-by.php:128
+#: includes/fields/class-gravityview-field-created-by.php:127
 msgid "User ID # (Example: 426)"
 msgstr "Kullanıcı NO # (Örnek: 426)"
 
 #: includes/fields/class-gravityview-field-creditcard.php:19
 msgid "Credit Card"
-msgstr "Kredi Kartı"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-currency.php:27
 msgid "Currency"
-msgstr "Para Birimi"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-custom.php:49
 msgid ""
@@ -2085,7 +1950,7 @@ msgid ""
 msgstr "Her yazı bloğunu HTML paragraf etiketi ile çevrele (düz yazılar için tavsiye edilir)"
 
 #: includes/fields/class-gravityview-field-date.php:20
-#: includes/widgets/search-widget/class-search-widget.php:179
+#: includes/widgets/search-widget/class-search-widget.php:162
 msgid "Date"
 msgstr "Tarih"
 
@@ -2135,7 +2000,7 @@ msgstr "Bağlantı Yazısı:"
 
 #: includes/fields/class-gravityview-field-fileupload.php:17
 msgid "File Upload"
-msgstr "Dosya Yükleme"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-fileupload.php:31
 msgid "Display as a Link:"
@@ -2147,7 +2012,7 @@ msgstr "Yüklenen dosyaları gömülü içerik yerine bağlantı olarak görünt
 
 #: includes/fields/class-gravityview-field-gquiz_score.php:15
 msgid "Quiz Score"
-msgstr "Quiz Puanı"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-gquiz_score.php:28
 msgid "Show Max Score?"
@@ -2161,69 +2026,32 @@ msgstr "Puanı kesir olarak göster: \"[puan]/[tavan puan]\". Seçili olmadığ�
 
 #: includes/fields/class-gravityview-field-hidden.php:19
 msgid "Hidden"
-msgstr "Gizli"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-html.php:24
 msgid "HTML"
-msgstr "HTML"
-
-#: includes/fields/class-gravityview-field-is-approved.php:40
-#: includes/fields/class-gravityview-field-is-approved.php:120
-msgid "Approval Status"
-msgstr ""
-
-#: includes/fields/class-gravityview-field-is-approved.php:41
-msgid "Display the entry's current approval status."
-msgstr ""
-
-#: includes/fields/class-gravityview-field-is-approved.php:42
-msgid "Approval:"
-msgstr ""
-
-#: includes/fields/class-gravityview-field-is-approved.php:173
-msgid "Approved Label"
-msgstr ""
-
-#: includes/fields/class-gravityview-field-is-approved.php:174
-msgid "If the entry is approved, display this value"
-msgstr ""
-
-#: includes/fields/class-gravityview-field-is-approved.php:180
-msgid "Disapproved Label"
-msgstr ""
-
-#: includes/fields/class-gravityview-field-is-approved.php:181
-msgid "If the entry is not approved, display this value"
-msgstr ""
-
-#: includes/fields/class-gravityview-field-is-approved.php:187
-msgid "Unapproved Label"
-msgstr ""
-
-#: includes/fields/class-gravityview-field-is-approved.php:188
-msgid ""
-"If the entry has not yet been approved or disapproved, display this value"
 msgstr ""
 
 #: includes/fields/class-gravityview-field-is-fulfilled.php:37
+#: includes/widgets/search-widget/class-search-widget.php:917
 msgid "Is Fulfilled"
 msgstr "Tamamlandı"
 
-#: includes/fields/class-gravityview-field-is-fulfilled.php:81
+#: includes/fields/class-gravityview-field-is-fulfilled.php:80
 msgid "Not Fulfilled"
 msgstr "Tamamlanmadı"
 
-#: includes/fields/class-gravityview-field-is-fulfilled.php:85
+#: includes/fields/class-gravityview-field-is-fulfilled.php:84
 msgid "Fulfilled"
 msgstr "Tamamlandı"
 
 #: includes/fields/class-gravityview-field-list.php:38
 msgid "List"
-msgstr "Liste"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-multiselect.php:19
 msgid "Multi Select"
-msgstr "Çoklu Seçim"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-name.php:17
 msgid "Name"
@@ -2231,7 +2059,7 @@ msgstr "Ad"
 
 #: includes/fields/class-gravityview-field-number.php:25
 msgid "Number"
-msgstr "Sayı"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-number.php:33
 msgid "Format number?"
@@ -2302,11 +2130,11 @@ msgstr "Bu kullanıcıya ait başka kayıt yok."
 
 #: includes/fields/class-gravityview-field-page.php:19
 msgid "Page"
-msgstr "Sayfa"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-password.php:20
 msgid "Password"
-msgstr "Şifre"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-payment-amount.php:27
 msgid "Payment Amount"
@@ -2318,7 +2146,7 @@ msgstr "Ödeme Tarihi"
 
 #: includes/fields/class-gravityview-field-payment-date.php:30
 msgid "The date the payment was received."
-msgstr "Ödeme alınan tarih."
+msgstr ""
 
 #: includes/fields/class-gravityview-field-payment-method.php:27
 msgid "Payment Method"
@@ -2326,7 +2154,7 @@ msgstr "Ödeme Yöntemi"
 
 #: includes/fields/class-gravityview-field-payment-method.php:28
 msgid "The way the entry was paid for (ie \"Credit Card\", \"PayPal\", etc.)"
-msgstr "Ödemenin yapıldığı yöntem (Kredi Kartı, PayPal vs.)"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-payment-status.php:25
 msgid "Payment Status"
@@ -2336,67 +2164,67 @@ msgstr "Ödeme Durumu"
 msgid ""
 "The current payment status of the entry (ie \"Processing\", \"Failed\", "
 "\"Cancelled\", \"Approved\")."
-msgstr "Kaydın ödeme durumu (\"İşleniyor\", \"Başarısız\", \"İptal Edildi\", \"Onaylandı\")."
+msgstr ""
 
 #: includes/fields/class-gravityview-field-phone.php:19
 msgid "Phone"
-msgstr "Telefon"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-phone.php:44
 msgid "Make Phone Number Clickable"
-msgstr "Telefon Numarası tıklanabilir hale getir"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-phone.php:45
 msgid "Allow dialing a number by clicking it?"
-msgstr "Numaraya tıklandığında arama yapılmasına izin veriyormusunuz?"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-post-category.php:19
 msgid "Post Category"
-msgstr "Yayın Kategorisi:"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-post-content.php:19
 msgid "Post Content"
-msgstr "Yazı İçeriği"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-post-custom-field.php:19
 msgid "Post Custom Field"
-msgstr "Yazı Özel Alanı"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-post-excerpt.php:19
 msgid "Post Excerpt"
-msgstr "Yazı Özeti"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-post-image.php:20
 msgid "Post Image"
-msgstr "Yazı Resmi"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-post-tags.php:22
 msgid "Post Tags"
-msgstr "Yazı Etiketleri"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-post-title.php:22
 msgid "Post Title"
-msgstr "Yazı Başlığı"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-quiz.php:15
 msgid "Quiz"
-msgstr "Quiz"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-quiz.php:28
 msgid "Show Answer Explanation?"
-msgstr "Cevap Açıklaması Görünsün mü?"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-quiz.php:29
 msgid "If the field has an answer explanation, show it?"
-msgstr "Eğer bu alana ait cevap açıklaması mevcutsa görüntülensin?"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-radio.php:19
 msgid "Radio Buttons"
-msgstr "Radyo Düğmeleri"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-section.php:22
 msgid "Section"
-msgstr "Bölüm"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-source-url.php:36
 msgid "Link to URL:"
@@ -2412,11 +2240,11 @@ msgstr "Bağlantı yazısını özelleştirin. Boş bırakırsanız, bağlantı 
 
 #: includes/fields/class-gravityview-field-text.php:19
 msgid "Single Line Text"
-msgstr "Tek Satır Metin"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-textarea.php:22
 msgid "Paragraph Text"
-msgstr "Paragraf Metin"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-textarea.php:36
 msgid "Maximum words shown"
@@ -2438,7 +2266,7 @@ msgstr "Düz yazı biçimindeki URI, www, FTP ve eposta bağlantılarını tıkl
 
 #: includes/fields/class-gravityview-field-time.php:56
 msgid "Time"
-msgstr "Zaman"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-transaction-id.php:27
 msgid "Transaction ID"
@@ -2450,15 +2278,15 @@ msgstr "İşlem Türü"
 
 #: includes/fields/class-gravityview-field-transaction-type.php:38
 msgid "The type of the order: one-time payment or subscription"
-msgstr "Sipariş türü: tek seferlik ödeme yada abonelik"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-transaction-type.php:81
 msgid "One-Time Payment"
-msgstr "Tek seferlik ödeme"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-transaction-type.php:85
 msgid "Subscription"
-msgstr "Abonelik"
+msgstr ""
 
 #: includes/fields/class-gravityview-field-website.php:22
 msgid "Website"
@@ -2484,51 +2312,37 @@ msgstr "Tam URL adresini gösterme, sadece alan adını göster."
 msgid "Open link in the same window?"
 msgstr "Bağlantı aynı pencerede mi açılsın?"
 
-#: includes/fields/class-gravityview-field-workflow_final_status.php:16
-#: includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravity-flow.php:101
-msgid "Workflow Status"
-msgstr "İş Akışı Durum"
-
-#: includes/fields/class-gravityview-field-workflow_step.php:16
-#: includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravity-flow.php:96
-msgid "Workflow Step"
-msgstr "İş Akışı Adımı"
-
-#: includes/fields/class-gravityview-field-workflow_step.php:59
-msgid "Workflow Complete"
-msgstr "İş Akışı Tmamlandı"
-
-#: includes/fields/class-gravityview-field.php:380
+#: includes/fields/class-gravityview-field.php:271
 msgid "Link to the post"
 msgstr "Yazıya bağlantı ver"
 
-#: includes/fields/class-gravityview-field.php:381
+#: includes/fields/class-gravityview-field.php:272
 msgid "Link to the post created by the entry."
 msgstr "Girdi tarafından oluşturulan yazıya bağlantı ver"
 
-#: includes/fields/class-gravityview-field.php:386
+#: includes/fields/class-gravityview-field.php:277
 msgid "Link to the category or tag"
 msgstr "Kategori yada etikete bağlantı ver"
 
-#: includes/fields/class-gravityview-field.php:387
+#: includes/fields/class-gravityview-field.php:278
 msgid ""
 "Link to the current category or tag. \"Link to single entry\" must be "
 "unchecked."
 msgstr "Mevcut kategori yada etikete bağlantı ver. \"Tekil kayda bağlantı ver\" seçili olmamalı."
 
-#: includes/fields/class-gravityview-field.php:392
+#: includes/fields/class-gravityview-field.php:283
 msgid "Use the live post data"
 msgstr "Canlı yazı verisini kullan"
 
-#: includes/fields/class-gravityview-field.php:393
+#: includes/fields/class-gravityview-field.php:284
 msgid "Instead of using the entry data, instead use the current post data."
 msgstr "Kayıt verisini kullanmak yerine mevcut yazı verisini kullan."
 
-#: includes/fields/class-gravityview-field.php:398
+#: includes/fields/class-gravityview-field.php:289
 msgid "Override Date Format"
 msgstr "Tarih Biçimini Değiştir"
 
-#: includes/fields/class-gravityview-field.php:399
+#: includes/fields/class-gravityview-field.php:290
 msgid "Define how the date is displayed (using %sthe PHP date format%s)"
 msgstr "Tarih biçimini belirleyin (%sPHP date format kullanarak%s)"
 
@@ -2548,6 +2362,10 @@ msgstr "%1$s için yeni sürüm mevcut. <a target=\"_blank\" class=\"thickbox\" 
 #: includes/lib/EDD_SL_Plugin_Updater.php:332
 msgid "You do not have permission to install plugin updates"
 msgstr "Eklenti güncellemelerini yükleme yetkiniz yok"
+
+#: includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravity-flow.php:90
+msgid "Workflow Complete"
+msgstr ""
 
 #: includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravityformsquiz.php:54
 msgid "Quiz Score Total"
@@ -2639,7 +2457,7 @@ msgstr "Alt Başlık"
 
 #: includes/presets/default-list/class-gravityview-default-template-list.php:44
 msgid "Data placed here will be bold."
-msgstr "Burada yer alan veri koyu harflerle gösterilecektir."
+msgstr ""
 
 #: includes/presets/default-list/class-gravityview-default-template-list.php:50
 msgid "Image"
@@ -2647,7 +2465,7 @@ msgstr "Resim"
 
 #: includes/presets/default-list/class-gravityview-default-template-list.php:51
 msgid "Leave empty to remove."
-msgstr "Kaldırmak için boş bırakın."
+msgstr ""
 
 #: includes/presets/default-list/class-gravityview-default-template-list.php:57
 msgid "Other Fields"
@@ -2655,7 +2473,7 @@ msgstr "Diğer Alanlar"
 
 #: includes/presets/default-list/class-gravityview-default-template-list.php:58
 msgid "Below the subheading, a good place for description and other data."
-msgstr "Alt başlığın devamında açıklama ve diğer veriler için iyi bir alan mevcuttur."
+msgstr ""
 
 #: includes/presets/default-list/class-gravityview-default-template-list.php:66
 msgid "Footer Left"
@@ -2851,94 +2669,98 @@ msgstr "Temizle düğmesini göster"
 #: includes/widgets/search-widget/class-search-widget.php:65
 #: includes/wordpress-widgets/class-gravityview-search-wp-widget.php:227
 msgid "Search Mode"
-msgstr "Arama Biçimi"
+msgstr ""
 
 #: includes/widgets/search-widget/class-search-widget.php:66
 #: includes/wordpress-widgets/class-gravityview-search-wp-widget.php:236
 msgid "Should search results match all search fields, or any?"
-msgstr "Arama sonuçları tüm arama alanlarla eşleşecek şekilde mi olmalı yada herhangi bir alan olabilir mi?"
+msgstr ""
 
 #: includes/widgets/search-widget/class-search-widget.php:70
 #: includes/wordpress-widgets/class-gravityview-search-wp-widget.php:230
 msgid "Match Any Fields"
-msgstr "Herhangi bir alana göre"
+msgstr ""
 
 #: includes/widgets/search-widget/class-search-widget.php:71
 #: includes/wordpress-widgets/class-gravityview-search-wp-widget.php:234
 msgid "Match All Fields"
-msgstr "Tüm alanlar dahil"
+msgstr ""
 
 #: includes/widgets/search-widget/class-search-widget.php:75
 msgid "Search Bar"
 msgstr "Arama Kutusu"
 
-#: includes/widgets/search-widget/class-search-widget.php:178
+#: includes/widgets/search-widget/class-search-widget.php:161
 msgid "Text"
 msgstr "Yazı"
 
-#: includes/widgets/search-widget/class-search-widget.php:181
+#: includes/widgets/search-widget/class-search-widget.php:164
 msgid "Select (multiple values)"
 msgstr "Seç (çoklu değerler)"
 
-#: includes/widgets/search-widget/class-search-widget.php:182
+#: includes/widgets/search-widget/class-search-widget.php:165
 msgid "Radio"
 msgstr "Radyo Düğmesi"
 
-#: includes/widgets/search-widget/class-search-widget.php:185
+#: includes/widgets/search-widget/class-search-widget.php:168
 msgid "Links"
 msgstr "Bağlantılar"
 
-#: includes/widgets/search-widget/class-search-widget.php:186
+#: includes/widgets/search-widget/class-search-widget.php:169
 msgid "Date range"
 msgstr "Tarih aralığı"
 
-#: includes/widgets/search-widget/class-search-widget.php:219
+#: includes/widgets/search-widget/class-search-widget.php:189
 msgid "No search fields configured yet."
 msgstr "Hiçbir arama alanı belirlenmemiş."
 
-#: includes/widgets/search-widget/class-search-widget.php:220
+#: includes/widgets/search-widget/class-search-widget.php:190
 msgid "Add Search Field"
 msgstr "Arama Alanı Ekle"
 
-#: includes/widgets/search-widget/class-search-widget.php:221
+#: includes/widgets/search-widget/class-search-widget.php:191
 msgid "Label"
-msgstr "Etiket"
+msgstr ""
 
-#: includes/widgets/search-widget/class-search-widget.php:223
+#: includes/widgets/search-widget/class-search-widget.php:193
 msgid "Input Type"
 msgstr "Giriş Türü"
 
-#: includes/widgets/search-widget/class-search-widget.php:224
+#: includes/widgets/search-widget/class-search-widget.php:194
 msgid ""
 "There was an error loading searchable fields. Save the View or refresh the "
 "page to fix this issue."
-msgstr "Aranabilir alanları yüklenirken bir hata oluştu. Görünümü kaydedin veya bu sorunu gidermek için sayfayı yenileyin."
+msgstr ""
 
-#: includes/widgets/search-widget/class-search-widget.php:295
+#: includes/widgets/search-widget/class-search-widget.php:265
 msgid "Search Everything"
 msgstr "Herşeyde Ara"
 
-#: includes/widgets/search-widget/class-search-widget.php:307
+#: includes/widgets/search-widget/class-search-widget.php:277
 msgid "Entry Creator"
 msgstr "Kayıt Sahibi"
 
-#: includes/widgets/search-widget/class-search-widget.php:954
+#: includes/widgets/search-widget/class-search-widget.php:905
 msgid "Search Entries:"
 msgstr "Kayıtlarda ara:"
 
-#: includes/widgets/search-widget/class-search-widget.php:957
+#: includes/widgets/search-widget/class-search-widget.php:908
 msgid "Filter by date:"
 msgstr "Tarihe göre sırala:"
 
-#: includes/widgets/search-widget/class-search-widget.php:960
+#: includes/widgets/search-widget/class-search-widget.php:911
 msgid "Entry ID:"
 msgstr "Kayıt NO:"
 
-#: includes/widgets/search-widget/class-search-widget.php:1076
+#: includes/widgets/search-widget/class-search-widget.php:914
+msgid "Submitted by:"
+msgstr "Gönderen:"
+
+#: includes/widgets/search-widget/class-search-widget.php:1031
 msgid "Clear"
 msgstr "Temizle"
 
-#: includes/widgets/search-widget/class-search-widget.php:1142
+#: includes/widgets/search-widget/class-search-widget.php:1097
 msgid "Show a different month"
 msgstr "Farklı bir ay göster"
 
@@ -3040,44 +2862,44 @@ msgstr "Harf"
 msgid "Pass/Fail"
 msgstr "Geçti/Kaldı"
 
-#: includes/admin/class-gravityview-admin-view-item.php:150
-msgctxt "Label in field picker for empty label"
-msgid "Field #%s (No Label)"
-msgstr "Alan #%s (Etiket Yok)"
-
 #: includes/admin/class-gravityview-support-port.php:86
 msgctxt "a support form search has returned empty for the following word"
 msgid "No results found for"
-msgstr "Şu değere göre sonuç bulunamadı: "
+msgstr ""
 
 #: includes/admin/class-gravityview-support-port.php:95
 msgctxt ""
 "Error shown when submitting support request and there is no subject provided"
 msgid "Please enter a subject"
-msgstr "Lütfen konu giriniz"
+msgstr ""
 
 #: includes/admin/class-gravityview-support-port.php:97
 msgctxt ""
 "Error shown when submitting support request and there is no message provided"
 msgid "Please enter a message"
-msgstr "Lütfen mesajınızı giriniz"
+msgstr ""
 
-#: includes/class-admin-views.php:433
+#: includes/class-admin-label.php:187
+msgctxt "Label in field picker for empty label"
+msgid "Field #%s (No Label)"
+msgstr "Alan #%s (Etiket Yok)"
+
+#: includes/class-admin-views.php:415
 msgctxt "Column title that shows what template is being used for Views"
 msgid "Template"
-msgstr "Şablon"
+msgstr ""
 
 #: includes/class-debug-bar.php:175
 msgctxt "Debugging output data is empty."
 msgid "Empty"
 msgstr "Boş"
 
-#: includes/class-frontend-views.php:1388
+#: includes/class-frontend-views.php:1295
 msgctxt "Clear all data from the form"
 msgid "Clear"
 msgstr "Temizle"
 
-#: includes/class-frontend-views.php:1389
+#: includes/class-frontend-views.php:1296
 msgctxt "Reset the search form to the state that existed on page load"
 msgid "Reset"
 msgstr "Sıfırla"
@@ -3085,7 +2907,7 @@ msgstr "Sıfırla"
 #: includes/class-gravityview-admin-bar.php:143
 msgctxt "Edit View with the ID of %d"
 msgid "Edit View #%d"
-msgstr "#%d Görünümümnü Düzenle"
+msgstr ""
 
 #: includes/class-gravityview-change-entry-creator.php:72
 msgctxt ""
@@ -3110,40 +2932,45 @@ msgctxt "No user assigned to the entry"
 msgid "No User"
 msgstr "Kullanıcı Yok"
 
-#: includes/class-gravityview-settings.php:287
-msgctxt "A scale from 0 (bad) to 10 (good)"
-msgid "%s (\"Not at all likely\") to %s (\"Extremely likely\")"
-msgstr ""
-
-#: includes/class-gravityview-settings.php:887
+#: includes/class-gravityview-settings.php:632
 msgctxt "Setting: Show or Hide"
 msgid "Show"
-msgstr "Göster"
+msgstr ""
 
-#: includes/class-gravityview-settings.php:891
+#: includes/class-gravityview-settings.php:636
 msgctxt "Setting: Show or Hide"
 msgid "Hide"
-msgstr "Gizle"
+msgstr ""
 
-#: includes/class-gravityview-settings.php:906
+#: includes/class-gravityview-settings.php:651
 msgctxt "Setting: On or off"
 msgid "On"
 msgstr "Açık"
 
-#: includes/class-gravityview-settings.php:910
+#: includes/class-gravityview-settings.php:655
 msgctxt "Setting: On or off"
 msgid "Off"
 msgstr "Kapalı"
 
-#: includes/class-gv-license-handler.php:342
+#: includes/class-gravityview-settings.php:669
+msgctxt "Setting: what to do when uninstalling plugin"
+msgid "Keep GravityView Data"
+msgstr ""
+
+#: includes/class-gravityview-settings.php:674
+msgctxt "Setting: what to do when uninstalling plugin"
+msgid "Permanently Delete"
+msgstr ""
+
+#: includes/class-gv-license-handler.php:339
 msgctxt "1: Customer name; 2: Customer email"
 msgid "Licensed to: %1$s (%2$s)"
-msgstr "Lisans Sahibi: %1$s (%2$s)"
+msgstr ""
 
-#: includes/class-gv-license-handler.php:387
+#: includes/class-gv-license-handler.php:385
 msgctxt "1: GravityView upgrade name, 2: Cost of upgrade"
 msgid "Upgrade to %1$s for %2$s"
-msgstr "%2$s için %1$s  Yükselt"
+msgstr ""
 
 #: includes/class-post-types.php:61
 msgctxt "Post Type General Name"
@@ -3171,7 +2998,7 @@ msgctxt "User capability"
 msgid "Entry Creator"
 msgstr "Kayıt Sahibi"
 
-#: includes/extensions/edit-entry/class-edit-entry-render.php:1930
+#: includes/extensions/edit-entry/class-edit-entry-render.php:1810
 msgctxt "Link shown when invalid Edit Entry link is clicked"
 msgid "Go back."
 msgstr "Geri dön."
@@ -3181,21 +3008,16 @@ msgctxt "%s is opening and closing HTML link"
 msgid ""
 "Only users with specific capabilities will be able to view, add and delete "
 "notes. %sRead more%s."
-msgstr "Sadece özel yetkinliği olan kullanıcılar notları görüntüleyebilir, silebilir ve düzenleyebilir.  %sDaha fazla bilgi al%s"
+msgstr ""
 
 #: includes/extensions/entry-notes/class-gravityview-field-notes.php:420
 msgctxt "Example email address used as a placeholder"
 msgid "you@example.com"
-msgstr "siz@ornek.com"
+msgstr ""
 
-#: includes/extensions/entry-notes/class-gravityview-field-notes.php:428
+#: includes/extensions/entry-notes/class-gravityview-field-notes.php:427
 msgctxt "Message to display when submitting a note without content."
 msgid "Note cannot be blank."
-msgstr "Not boş olamaz."
-
-#: includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravity-flow.php:90
-msgctxt "Gravity Flow Workflow Step Status"
-msgid "Status: %s"
 msgstr ""
 
 #: includes/widgets/poll/class-gravityview-widget-poll.php:26
@@ -3205,27 +3027,27 @@ msgid ""
 "entries displayed in the View."
 msgstr "Not: buradaki anket sonuçları sadece Görünüm'de listelenen sonuçları değil, %stüm form kayıtlarını%s içermektedir."
 
-#: includes/widgets/search-widget/class-search-widget.php:1137
+#: includes/widgets/search-widget/class-search-widget.php:1092
 msgctxt "Close calendar"
 msgid "Close"
 msgstr "Kapat"
 
-#: includes/widgets/search-widget/class-search-widget.php:1138
+#: includes/widgets/search-widget/class-search-widget.php:1093
 msgctxt "Previous month in calendar"
 msgid "Prev"
 msgstr "Önceki"
 
-#: includes/widgets/search-widget/class-search-widget.php:1139
+#: includes/widgets/search-widget/class-search-widget.php:1094
 msgctxt "Next month in calendar"
 msgid "Next"
 msgstr "Sonraki"
 
-#: includes/widgets/search-widget/class-search-widget.php:1140
+#: includes/widgets/search-widget/class-search-widget.php:1095
 msgctxt "Today in calendar"
 msgid "Today"
 msgstr "Bugün"
 
-#: includes/widgets/search-widget/class-search-widget.php:1141
+#: includes/widgets/search-widget/class-search-widget.php:1096
 msgctxt "Week in calendar"
 msgid "Week"
 msgstr "Hafta"

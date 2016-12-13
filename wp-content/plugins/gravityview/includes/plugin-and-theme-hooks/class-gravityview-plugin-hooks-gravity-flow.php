@@ -19,9 +19,9 @@
 class GravityView_Plugin_Hooks_Gravity_Flow extends GravityView_Plugin_and_Theme_Hooks {
 
 	/**
-	 * @var string Check for the Gravity Flow constant
+	 * @var string Check for the class name, since that's needed by this class.
 	 */
-	protected $constant_name = 'GRAVITY_FLOW_VERSION';
+	protected $class_name = 'Gravity_Flow_API';
 
 
 	/**
@@ -33,77 +33,67 @@ class GravityView_Plugin_Hooks_Gravity_Flow extends GravityView_Plugin_and_Theme
 
 		parent::add_hooks();
 
-		add_filter( 'gravityview/search/searchable_fields', array( $this, 'modify_search_bar_fields_dropdown'), 10, 2 );
+		add_filter( 'gravityview_field_entry_value_workflow_final_status', array( $this, 'modify_entry_value_workflow_final_status' ), 10, 4 );
 
+		add_filter( 'gravityview_field_entry_value_workflow_step', array( $this, 'modify_entry_value_workflow_step' ), 10, 4 );
 	}
-	
 
 	/**
-	 * Get the available status choices from Gravity Flow
+	 * Convert the status key with the full status label. Uses custom labels, if set.
 	 *
-	 * @uses Gravity_Flow::get_entry_meta()
+	 * @uses Gravity_Flow::translate_status_label()
 	 *
-	 * @since 1.17.3
+	 * @param string $output HTML value output
+	 * @param array  $entry The GF entry array
+	 * @param  array $field_settings Settings for the particular GV field
+	 * @param array $field Current field being displayed
 	 *
-	 * @param int $form_id
-	 * @param string $status_key By default, get all statuses
+	 * @since 1.17
 	 *
-	 * @return array
+	 * @return string If Gravity Flow not found, or entry not processed yet, returns initial value. Otherwise, returns name of workflow step.
 	 */
-	public static function get_status_options( $form_id = 0, $status_key = 'workflow_final_status' ) {
+	function modify_entry_value_workflow_final_status( $output, $entry, $field_settings, $field ) {
 
-		if( empty( $form_id ) ) {
-			$form_id = GravityView_View::getInstance()->getFormId();
+		if( ! empty( $output ) ) {
+			$output = gravity_flow()->translate_status_label( $output );
 		}
 
-		$entry_meta = gravity_flow()->get_entry_meta( array(), $form_id );
-
-		return (array) rgars( $entry_meta, $status_key . '/filter/choices' );
+		return $output;
 	}
 
-
 	/**
-	 * Get the list of active Workflow Steps and Workflow Step Statuses
-	 *
-	 * @since 1.17.3
+	 * Get the value of the Workflow Step based on the `workflow_step` entry meta int value
 	 *
 	 * @uses Gravity_Flow_API::get_current_step
 	 *
-	 * @param array $fields Array of searchable fields
-	 * @param  int $form_id
+	 * @param string $output HTML value output
+	 * @param array  $entry The GF entry array
+	 * @param  array $field_settings Settings for the particular GV field
+	 * @param array $field Current field being displayed
 	 *
-	 * @return array Updated Array of searchable fields
+	 * @since 1.17
+	 *
+	 * @return string If Gravity Flow not found, or entry not processed yet, returns initial value. Otherwise, returns name of workflow step.
 	 */
-	public function modify_search_bar_fields_dropdown( $fields, $form_id ) {
+	function modify_entry_value_workflow_step( $output, $entry, $field_settings, $field ) {
 
-		$GFlow = new Gravity_Flow_API( $form_id );
+		// If not set, the entry hasn't started a workflow
+		$has_workflow_step = isset( $entry['workflow_step'] );
 
-		$workflow_steps = $GFlow->get_steps();
+		if( $has_workflow_step ) {
 
-		if( $workflow_steps ) {
+			$GFlow = new Gravity_Flow_API( $entry['form_id'] );
 
-			foreach ( $workflow_steps as $step ) {
-
-				$step_id = sprintf( 'workflow_step_status_%d', $step->get_id() );
-
-				$fields[ $step_id ] = array(
-					'label' => sprintf( _x( 'Status: %s', 'Gravity Flow Workflow Step Status', 'gravityview' ), $step->get_name() ),
-					'type'  => 'select',
-				);
+			if ( $current_step = $GFlow->get_current_step( $entry ) ) {
+				$output = esc_html( $current_step->get_name() );
+			} else {
+				$output = esc_html__( 'Workflow Complete', 'gravityview' );
 			}
 
-			$fields['workflow_step'] = array(
-				'label' => esc_html__( 'Workflow Step', 'gravityview' ),
-				'type'  => 'select',
-			);
-
-			$fields['workflow_final_status'] = array(
-				'label' => esc_html__( 'Workflow Status', 'gravityview' ),
-				'type'  => 'select',
-			);
+			unset( $GFlow );
 		}
 
-		return $fields;
+		return $output;
 	}
 
 }
