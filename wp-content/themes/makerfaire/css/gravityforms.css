@@ -29,10 +29,17 @@ a.gform_save_link {
 	width:auto !important;
 	max-width:98% !important;
 }
+.gform_wrapper .field_sublabel_above .ginput_complex.ginput_container label {
+      font-size: .875em !important;
+}
+.gform_wrapper .gform_page_footer .button.gform_previous_button {
+  vertical-align: top;
+  margin-right: 10px;
+}
 .ginput_complex input
 {
-	width:auto !important;
-	max-width:97% !important;
+	//width:auto !important;
+	//max-width:97% !important;
 }
 .ginput_complex.ginput_container.has_first_name.has_last_name span {
     width: 45% !important;
