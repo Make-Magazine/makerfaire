@@ -58,7 +58,7 @@ jQuery.editable.addInputType('ajaxupload', {
           dataType: 'html',
           success: function (data, status) {
             if(jQuery(original).attr('id') != "proj_img"){
-              var imgclass="col-md-3 pull-left img-responsive";
+              var imgclass="pull-left img-responsive";
             }else{
               var imgclass="img-responsive";
             }

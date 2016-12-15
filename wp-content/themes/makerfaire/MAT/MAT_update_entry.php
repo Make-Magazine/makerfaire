@@ -2,9 +2,13 @@
 /* This logic is called when the maker updates his entry via the main public
  * facing entry screen */
   include '../../../../wp-load.php';
-  $value    = $_POST['value'];
+
+
+  $value    = htmlspecialchars(stripslashes($_POST['value']),ENT_QUOTES);
+
   $entry_id = $_POST['entry_id'];
   $field    = $_POST['id'];
+
   //trigger update
   $entry    = GFAPI::get_entry( $entry_id );
   $form_id  = $entry['form_id'];
