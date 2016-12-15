@@ -284,13 +284,13 @@ if(!empty($my_posts)){
 
 <!-- What do i do with these?
 Duplicate to $project_website;
-<p>Homepage: <i><?php echo $entry['27']; ?></i></p>
+<p>Homepage: <i><?php //echo $entry['27']; ?></i></p>
 
 Duplicate $entry['22']
-<li>Project Photo: <?php echo $project_photo; ?></li>
+<li>Project Photo: <?php //echo $project_photo; ?></li>
 
 Duplicate to $entry['151']
-<li>Short Desription<?php echo $entry['16']; ?></li>
+<li>Short Desription<?php //echo $entry['16']; ?></li>
 -->
 
  <?php
