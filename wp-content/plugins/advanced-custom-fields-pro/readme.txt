@@ -106,6 +106,10 @@ http://support.advancedcustomfields.com/
 
 == Changelog ==
 
+= 5.5.2 =
+* Tab field: Fixed bug causing value loading issues for field's with the same name
+* Repeater field: Fixed bug in 'collapsed' setting where field key was shown instead of field label
+
 = 5.5.1 =
 * Select field: Fixed bug preventing some field settings from being selected
 * Date picker field: Improved compatibility with customised values

@@ -3,7 +3,7 @@
 Plugin Name: Advanced Code Editor
 Plugin URI: http://en.bainternet.info
 Description: Enables syntax highlighting in the integrated themes and plugins source code editors with line numbers, AutoComplete and much more. Supports PHP, HTML, CSS and JS.
-Version: 2.2.6
+Version: 2.2.7
 Author: BaInternet
 Author URI: http://en.bainternet.info
 */
@@ -56,12 +56,12 @@ if (!class_exists('advanced_code_editor')){
 		 * plugin version 
 		 * @var string
 		 */
-		public $version = '2.2.6';
+		public $version = '2.2.7';
 
 		/**
 		 * Class constarctor
 		 */
-		public function advanced_code_editor(){
+		public function __construct(){
 			if( is_admin()){
 				$this->tablename = 'filemeta';
 				$this->version = '2.2.6';
@@ -597,8 +597,7 @@ if (!class_exists('advanced_code_editor')){
 		 */
 		function ajax_create_directory(){
 			check_ajax_referer('create_directory');
-			global $current_user;
-			get_currentuserinfo();
+			$current_user = wp_get_current_user();
 			if (isset($_POST['di_name']) && isset($_POST['dir'])){
 				if (current_user_can('manage_options')){
 					$dir_name = '';
@@ -642,8 +641,7 @@ if (!class_exists('advanced_code_editor')){
 		 */
 		function ajax_delete_file(){
 			check_ajax_referer('delete_file');
-			global $current_user;
-			get_currentuserinfo();
+			$current_user = wp_get_current_user();
 			if(isset($_POST['F_T_D']) && $_POST['F_T_D'] != '' && isset($_POST['f_type'])){
 				$f_name = '';
 				if($_POST['f_type'] == "plugin" ){
@@ -666,8 +664,7 @@ if (!class_exists('advanced_code_editor')){
 		 */
 		function ajax_create_file(){
 			check_ajax_referer('create_new_file');
-			global $current_user;
-			get_currentuserinfo();
+			$current_user = wp_get_current_user();
 			if(isset($_POST)){
 			$checks = false;
 			$file_name = '';
