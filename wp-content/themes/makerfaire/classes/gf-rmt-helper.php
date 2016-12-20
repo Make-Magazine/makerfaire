@@ -756,15 +756,29 @@ class GFRMTHELPER {
       if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
     }
     //set resource status and assign to
-    //assign values can be found in functions.php in custom_entry_meta function
+    //resource assign to values can be found in functions.php in custom_entry_meta function
+
+    /*  set default values */
     $assignTo    = 'na';//not assigned to anyone
     $status      = 'ready';//ready
-    //field ID 83
-    if( $entryData['fire'] == 'Yes' ||
-        $entryData['activity']=='Yes' ||
-        $entryData['activity_wrist'] == 'Yes'  ||
-        $entryData['booth_size'] == "Other"
-            ){
+
+    /* MF-1644 new logic based on indicators
+     *    1) CMIndicator(376) = Yes
+     *         Resource Status needs to be set to Review
+     *         Resource Assign To set to Kerry
+     *    2) CMIndicator = No + FeeIndicator (434) = Yes
+     *         Resource Statues => Review
+     *         Resource Assign To => Siana
+     *    3) If CM=no and Fee indicator=No
+     *         Resource status= ready (unless any of the other logic turns it into review)
+     */
+    if($entryData['376']=='Yes') { //cm indicator
+      $status   = 'review';
+      $assignTo = 'kerry'; //Kerry
+    }elseif($entryData['434']=='Yes') { //fee indicator
+      $status   = 'review';
+      $assignTo = 'siana'; //Kerry
+    }elseif( $entryData['fire'] == 'Yes'){  //field 83
       $status   = 'review';
       $assignTo = 'jay'; //Jay
     }elseif($entryData['power'] == 'Yes' &&
@@ -774,6 +788,10 @@ class GFRMTHELPER {
     }elseif($entryData['special_request']!=''){
       $status   = 'review';
       $assignTo = 'kerry'; //Kerry
+    }
+    //overrides all other logic 
+    if($entryData['fType'] == 'Payment') {
+      $status = 'ready';
     }
 
     // update custom meta field (do not update if meta already exists)
