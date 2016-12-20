@@ -64,6 +64,7 @@ if ( isset( $long_description ) && $long_description!='') {
 //pull faireID
 global $wpdb;
 $faire = $wpdb->get_var('select faire from wp_mf_faire where find_in_set ('. $form['id'].', wp_mf_faire.form_ids) > 0');
+
 $return = '
 <table class="fixed entry-detail-view">
 	<thead>
