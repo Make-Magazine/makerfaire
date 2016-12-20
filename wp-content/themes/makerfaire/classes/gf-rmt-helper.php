@@ -419,12 +419,12 @@ class GFRMTHELPER {
 
     /*  Field ID 62 = tables_chairs */
     if($entryData['tables_chairs'] == '1 table and 2 chairs'){
-      $resource[] = array($resourceID['TBL_6x30'],1,'');
+      $resource[] = array($resourceID['TBL_8x30'],1,'');
       $resource[] = array($resourceID['CH_FLD'],2,'');
     }elseif($entryData['tables_chairs'] == 'More than 1 table and 2 chairs. List specific number of tables and chairs below.'){
       /*  Field ID 347 (Number of Tables)
        *  Field ID 348 (Number of Chairs) */
-      $resource[] = array($resourceID['TBL_6x30'],$entryData['numTables'],'');
+      $resource[] = array($resourceID['TBL_8x30'],$entryData['numTables'],'');
       $resource[] = array($resourceID['CH_FLD'], $entryData['numChairs'],'');
     }
 
@@ -487,27 +487,27 @@ class GFRMTHELPER {
 
       //field 14 - tables
       $pos = strpos($entryData['paymentTable'], 'One table');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'');
       $pos = strpos($entryData['paymentTable'], 'Two tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],2,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'');
       $pos = strpos($entryData['paymentTable'], 'Three Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],3,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'');
       $pos = strpos($entryData['paymentTable'], 'Four Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],4,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'');
       $pos = strpos($entryData['paymentTable'], 'Five Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],5,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'');
       $pos = strpos($entryData['paymentTable'], 'Six Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],6,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'');
       $pos = strpos($entryData['paymentTable'], 'Seven Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],7,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'');
       $pos = strpos($entryData['paymentTable'], 'Eight Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],8,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'');
       $pos = strpos($entryData['paymentTable'], 'Nine Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],9,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'');
       $pos = strpos($entryData['paymentTable'], 'Ten Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],10,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],0,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
 
       //mapping for sponsor order form
       /* product fields - need to pull the .3 of the field to get the amount */
