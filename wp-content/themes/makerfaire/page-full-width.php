@@ -31,10 +31,10 @@ get_header(); ?>
                   <li><a href="//www.facebook.com/makerfaire" class="icoFacebook" title="Facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
                   <li><a href="//twitter.com/makerfaire" class="icoTwitter" title="Twitter" target="_blank"><i class="fa fa-twitter" target="_blank"></i></a></li>
                   <li><a href="//www.pinterest.com/makemagazine/maker-faire/" class="icoPinterest" title="Pinterest" target="_blank"><i class="fa fa-pinterest-p" target="_blank"></i></a></li>
-                  <li><a href="//plus.google.com/104410464300110463062/posts" class="icoGoogle-plus" title="Google+" target="_blank"><i class="fa fa-google-plus" target="_blank"></i></a></li>
+                  <li><a href="//www.youtube.com/user/MakerFaire" class="icoYoutube" title="Youtube" target="_blank"><i class="fa fa-youtube-play" target="_blank"></i></a></li>
                 </ul>
               </div>
-              <a href="mailto:press@makerfaire.com">press@makerfaire.com</a>
+              <a href="mailto:pr@makerfaire.com">pr@makerfaire.com</a>
             </div>
 
             <div class="col-xs-7 mcp-newsletter">  
