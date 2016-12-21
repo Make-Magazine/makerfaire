@@ -756,7 +756,7 @@ class GFRMTHELPER {
       if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
     }
     //set resource status and assign to
-    //resource assign to values can be found in wp-content/themes/makerfaire/functions/gravity_forms/gravityforms_entry_meta.phpin custom_entry_meta function
+    //resource assign to values can be found in wp-content/themes/makerfaire/functions/gravity_forms/gravityforms_entry_meta.php in custom_entry_meta function
 
     /*  set default values */
     $assignTo    = 'na';//not assigned to anyone
@@ -774,20 +774,20 @@ class GFRMTHELPER {
      */
     if(isset($entryData['376']) && $entryData['376']=='Yes') { //cm indicator
       $status   = 'review';
-      $assignTo = 'cm_team'; //Kerry
+      $assignTo = 'cm_team';
     }elseif(isset($entryData['434']) && $entryData['434']=='Yes') { //fee indicator
       $status   = 'review';
-      $assignTo = 'fee_team'; //Kerry
+      $assignTo = 'fee_team';
     }elseif( $entryData['fire'] == 'Yes'){  //field 83
       $status   = 'review';
-      $assignTo = 'jay'; //Jay
+      $assignTo = 'fire';
     }elseif($entryData['power'] == 'Yes' &&
             $entryData['amps']=='Other. Power request specified in the Special Power Requirements box'){
       $status   = 'review';
-      $assignTo = 'kerry'; //Kerry
+      $assignTo = 'power';
     }elseif($entryData['special_request']!=''){
       $status   = 'review';
-      $assignTo = 'kerry'; //Kerry
+      $assignTo = 'special_request'; //Kerry
     }
     //overrides all other logic
     if($entryData['fType'] == 'Payment') {
@@ -801,10 +801,10 @@ class GFRMTHELPER {
     //  if the current status or assign to is blank, or
     //  if the calculated assign to is different than the curent assign to,
     //      update the vaues
-    if($assignTo != $res_assign || empty($res_status) || $res_assign) {
+    if($assignTo != $res_assign || empty($res_status) || empty($res_assign)) {
       //update the status and assign to
-      gform_update_meta( $entryData['entry_id'], 'res_status',$status );
-      gform_update_meta( $entryData['entry_id'], 'res_assign',$assignTo );
+      gform_update_meta( $entryData['entry_id'], 'res_status', $status, $entryData['form_id'] );
+      gform_update_meta( $entryData['entry_id'], 'res_assign', $assignTo, $entryData['form_id'] );
     }
   }
 

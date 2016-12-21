@@ -13,7 +13,6 @@ function custom_entry_meta($entry_meta, $form_id) {
   $entry_meta['entryRating'] = array(
       'label' => 'Rating',
       'is_numeric' => true,
-      'update_entry_meta_callback' => 'def_entry_rating',
       'is_default_column' => true,
       'filter' => array(
           'operators' => array('is', 'isnot', '<', '>'),
@@ -53,19 +52,18 @@ function custom_entry_meta($entry_meta, $form_id) {
       'label' => 'Resource Assign To',
       'is_numeric' => false,
       'is_default_column' => false,
-      'update_entry_meta_callback' => 'def_entry_res_status',
       'filter' => array(
           'operators' => array('is', 'isnot', '<', '>'),
           'choices' => array(
-              array('value' => 'na', 'text' => 'Not Assigned'),
-              array('value' => 'cm_team', 'text' => 'CM Team').
-              array('value' => 'fee_team', 'text' => 'Fee Team'),
-              array('value' => 'jay', 'text' => 'Jay'),
-              array('value' => 'jonathan', 'text' => 'Jonathan'),
-              array('value' => 'kerry', 'text' => 'Kerry'),
-              array('value' => 'louise', 'text' => 'Louise'),
-              array('value' => 'siana', 'text' => 'Siana'),
-              array('value' => 'other', 'text' => 'Other'),
+              array('value' => 'na',              'text' => 'Not Assigned'),
+              array('value' => 'cm_team',         'text' => 'CM Fee'),
+              array('value' => 'fee_team',        'text' => 'Gen Fee'),
+              array('value' => 'fire',            'text' => 'Fire'),
+              array('value' => 'power',           'text' => 'Power'),
+              array('value' => 'special_request', 'text' => 'Special Requests'),
+              array('value' => 'louise',          'text' => 'Louise'),
+              array('value' => 'jay',             'text' => 'Jay'),
+              array('value' => 'other',           'text' => 'Other')
           )
       )
   );
