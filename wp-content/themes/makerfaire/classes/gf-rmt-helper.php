@@ -381,7 +381,7 @@ class GFRMTHELPER {
 
     $otherFieldsArray = array("384", "386", "392", "393", "394", "396", "398",
                               "407", "422", "423", "425", "430", "418", "426",
-                              "419"
+                              "419", "376", "434"
         );
     foreach($otherFieldsArray as $option){
       if(isset($lead[$option]) && trim($lead[$option])!='')  $entry_data[$option] = $lead[$option];
@@ -772,10 +772,10 @@ class GFRMTHELPER {
      *    3) If CM=no and Fee indicator=No
      *         Resource status= ready (unless any of the other logic turns it into review)
      */
-    if($entryData['376']=='Yes') { //cm indicator
+    if(isset($entryData['376']) && $entryData['376']=='Yes') { //cm indicator
       $status   = 'review';
       $assignTo = 'kerry'; //Kerry
-    }elseif($entryData['434']=='Yes') { //fee indicator
+    }elseif(isset($entryData['434']) && $entryData['434']=='Yes') { //fee indicator
       $status   = 'review';
       $assignTo = 'siana'; //Kerry
     }elseif( $entryData['fire'] == 'Yes'){  //field 83
@@ -789,7 +789,7 @@ class GFRMTHELPER {
       $status   = 'review';
       $assignTo = 'kerry'; //Kerry
     }
-    //overrides all other logic 
+    //overrides all other logic
     if($entryData['fType'] == 'Payment') {
       $status = 'ready';
     }
