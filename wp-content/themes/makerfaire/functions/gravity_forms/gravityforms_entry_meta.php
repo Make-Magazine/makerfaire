@@ -58,6 +58,8 @@ function custom_entry_meta($entry_meta, $form_id) {
           'operators' => array('is', 'isnot', '<', '>'),
           'choices' => array(
               array('value' => 'na', 'text' => 'Not Assigned'),
+              array('value' => 'cm_team', 'text' => 'CM Team').
+              array('value' => 'fee_team', 'text' => 'Fee Team'),
               array('value' => 'jay', 'text' => 'Jay'),
               array('value' => 'jonathan', 'text' => 'Jonathan'),
               array('value' => 'kerry', 'text' => 'Kerry'),

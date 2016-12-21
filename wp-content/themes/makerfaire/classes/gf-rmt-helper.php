@@ -756,7 +756,7 @@ class GFRMTHELPER {
       if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
     }
     //set resource status and assign to
-    //resource assign to values can be found in functions.php in custom_entry_meta function
+    //resource assign to values can be found in wp-content/themes/makerfaire/functions/gravity_forms/gravityforms_entry_meta.phpin custom_entry_meta function
 
     /*  set default values */
     $assignTo    = 'na';//not assigned to anyone
@@ -774,10 +774,10 @@ class GFRMTHELPER {
      */
     if(isset($entryData['376']) && $entryData['376']=='Yes') { //cm indicator
       $status   = 'review';
-      $assignTo = 'kerry'; //Kerry
+      $assignTo = 'cm_team'; //Kerry
     }elseif(isset($entryData['434']) && $entryData['434']=='Yes') { //fee indicator
       $status   = 'review';
-      $assignTo = 'siana'; //Kerry
+      $assignTo = 'fee_team'; //Kerry
     }elseif( $entryData['fire'] == 'Yes'){  //field 83
       $status   = 'review';
       $assignTo = 'jay'; //Jay
@@ -795,13 +795,15 @@ class GFRMTHELPER {
     }
 
     // update custom meta field (do not update if meta already exists)
-    $metaValue = gform_get_meta( $entryData['entry_id'], 'res_status' );
-    if(empty($metaValue)){
-      gform_update_meta( $entryData['entry_id'], 'res_status',$status );
-    }
+    $res_status = gform_get_meta( $entryData['entry_id'], 'res_status' );
+    $res_assign = gform_get_meta( $entryData['entry_id'], 'res_assign' );
 
-    $metaValue = gform_get_meta( $entryData['entry_id'], 'res_assign' );
-    if(empty($metaValue)){
+    //  if the current status or assign to is blank, or
+    //  if the calculated assign to is different than the curent assign to,
+    //      update the vaues
+    if($assignTo != $res_assign || empty($res_status) || $res_assign) {
+      //update the status and assign to
+      gform_update_meta( $entryData['entry_id'], 'res_status',$status );
       gform_update_meta( $entryData['entry_id'], 'res_assign',$assignTo );
     }
   }
