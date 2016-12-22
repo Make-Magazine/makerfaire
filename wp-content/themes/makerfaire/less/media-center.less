@@ -1,6 +1,9 @@
 #media-center-page {
   header {
-    padding: 20px 0;
+    padding: 30px 0;
+    background: url(../images/bg-border.png);
+    background-repeat: repeat-x;
+    background-position: bottom;
     h1 {
       margin-top: 0;
       margin-bottom: 15px;
@@ -38,5 +41,124 @@
     }
   }
   
+  .mcp-body {
+    .content {
+      height: 768px;
+    }
+    .tabbable,
+    ul.nav-pills {
+      height: 100%;
+    }
+    ul.nav-pills {
+
+      li {
+        height: 12.5%;
+        margin-top: 0;
+        a {
+          font-size: 22px;
+          font-weight: 300;
+          height: 100%;
+          padding-top: 30px;
+          border-radius: 0;
+        }
+      }
+    }
+
+    article {
+      > div {
+        height: 768px;
+        overflow-y: auto;
+        padding-top: 30px;
+        padding-bottom: 15px;
+        padding-right: 30px;
+        &::-webkit-scrollbar {
+          width: 3px;
+          background-color: transparent;
+        }
+        &::-webkit-scrollbar-track {
+          -webkit-box-shadow: none;
+          border-radius: 2px;
+          background-color: #d5d5d5;
+        }
+        &::-webkit-scrollbar-thumb {
+          -webkit-border-radius: 10px;
+          border-radius: 10px;
+          background: #3FAFED;
+        }
+        &::-webkit-scrollbar-button:start:increment,
+        &::-webkit-scrollbar-button:end:increment  {
+          height: 80px;
+          display: block;
+          background-color: transparent;
+        }
+      }
+      h2 {
+        color: #3FAFED;
+        font-weight: 300;
+        font-size: 40px;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        strong {
+          font-weight: 500;
+          color: #f40b0b;
+        }
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+
+      .mcp-download-btn {
+        width: 29%;
+        display: inline-block;
+        text-align: center;
+        font-size: 20px;
+        margin: 15px 3% 10px 0;
+        border: none;
+        border-bottom: 2px solid #f40b0b;
+        background-color: transparent;
+        position: relative;
+        &:after {
+          font-family: FontAwesome;
+          content: "\f019";
+          position: absolute;
+          right: 8px;
+        }
+      }
+      .mcp-news {
+        .media {
+          h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+          }
+          p {
+            color: #aaaaaa;
+            font-size: 14px;
+            margin-bottom: 0;
+          }
+          i {
+            color: #3FAFED;
+          }
+        }
+        .mcp-news-btm-border {
+          height: 6px;
+          margin-top: 20px;
+          margin-bottom: 20px;
+          border-top: 2px dotted #f29f31;
+          border-bottom: 2px solid #3FAFED;
+        }
+        .mcp-news-notworthy {
+          h3 {
+            color: #6a6a6a;
+          }
+          a {
+            display: block;
+            margin-bottom: 8px;
+          }
+        }
+      }
+
+    }
+
+  }
 
 }
