@@ -65,7 +65,7 @@
     }
 
     article {
-      > div {
+      .tab-pane {
         height: 768px;
         overflow-y: auto;
         padding-top: 30px;
@@ -156,9 +156,33 @@
           }
         }
       }
+      .mcp-videos {
+        .mcp-big-video {
+          margin-bottom: 8px;
+          img {
+            width: 100%;
+          }
+        }
+        .mcp-small-video {
+          margin-bottom: 30px;
+          margin-right: -3px;
+          margin-left: -3px;
+          div {
+            padding-right: 3px;
+            padding-left: 3px;
+          }
+        }
+        .list-inline {
+          margin-left: 0;
+          li {
+            border-right: 1px solid #4a4a4a;
+            &:last-child {
+              border-right: none;
+            }
+          }
+        }
+      }
 
     }
-
   }
-
 }

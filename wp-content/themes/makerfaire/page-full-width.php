@@ -212,6 +212,35 @@ get_header(); ?>
             <div class="tab-pane mcp-photos" id="f">
             </div>
             <div class="tab-pane mcp-videos" id="g">
+              <h2><strong>Faire</strong> Videos</h2>
+              <p>For more see our <a href="https://www.youtube.com/user/MakerFaire/featured" target="_blank">channel on YouTube <i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+              <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+
+                <article <?php post_class(); ?>>
+
+                  <?php the_content(); ?>
+
+                </article>
+
+              <?php endwhile; ?>
+
+              <?php else: ?>
+
+                <p><?php _e('Sorry, no posts matched your criteria.'); ?></p>
+
+              <?php endif; ?>
+
+              <ul class="list-inline">VIDEOS:
+                <li>
+                  <a href="https://www.youtube.com/playlist?list=PL5JM5DSzHwSrKIRpw1N6GrqBUEzIsHtnU" target="_blank">Bay Area</a>
+                </li>
+                <li>
+                  <a href="https://www.youtube.com/playlist?list=PL5JM5DSzHwSrKIRpw1N6GrqBUEzIsHtnU" target="_blank">World - New York</a>
+                </li>
+                <li>
+                  <a href="https://www.youtube.com/playlist?list=PL5JM5DSzHwSrKIRpw1N6GrqBUEzIsHtnU" target="_blank">National - Washington DC</a>
+                </li>
+              </ul>
             </div>
 
             <div class="tab-pane mcp-logos" id="h">
@@ -231,21 +260,6 @@ get_header(); ?>
             </div>
           </article>
 
-  <!--           <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-
-              <article <?php post_class(); ?>>
-
-                <?php the_content(); ?>
-
-              </article>
-
-            <?php endwhile; ?>
-
-            <?php else: ?>
-
-              <p><?php _e('Sorry, no posts matched your criteria.'); ?></p>
-
-            <?php endif; ?> -->
 
         </div>
 
