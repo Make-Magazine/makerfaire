@@ -22,9 +22,9 @@ get_header(); ?>
 
         <div class="col-xs-12 col-sm-9 col-md-7">
 
-          <div class="row">
+          <div class="row mcp-header-right">
 
-            <div class="col-xs-5 mcp-connect">
+            <div class="col-xs-12 col-sm-5 mcp-connect">
               <p>Connect with us</p>
               <div class="social-network-container">
                 <ul class="social-network social-circle">
@@ -35,9 +35,10 @@ get_header(); ?>
                 </ul>
               </div>
               <a href="mailto:pr@makerfaire.com">pr@makerfaire.com</a>
+              <hr />
             </div>
 
-            <div class="col-xs-7 mcp-newsletter">  
+            <div class="col-xs-12 col-sm-7 mcp-newsletter">  
               <p>Sign Up For Maker Faire Media Alerts</p>
               <p><small>Timely, pertinent information sent only when needed.</small></p>
               
