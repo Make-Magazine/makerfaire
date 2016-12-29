@@ -60,4 +60,30 @@
   #recent-twitter {
     min-height: 222px;
   }
+  .mmakers .col-sm-4 {
+    @media screen and (min-width:768px) {
+      padding-left: 0;
+      overflow: hidden;
+      a {
+        height: 50%;
+      }
+    }
+    @media screen and (min-width: 1200px) {
+      height: 485px;
+    }
+    @media screen and (min-width: 992px) and (max-width: 1199px) {
+      height: 398px;
+    }
+    @media screen and (min-width: 768px) and (max-width: 991px) {
+      height: 304px;
+    }
+  }
+  @media screen and (min-width:768px) {
+    .quora .navbar-collapse {
+      padding: 0;
+    }
+    .mf-news .col-sm-4 {
+      padding-right: 0;
+    }
+  }
 }
