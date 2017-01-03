@@ -275,7 +275,7 @@ function buildFaireDrop($wp_admin_bar, $faire_id = null) {
         'id' => 'mf_admin_parent_' . $row->faire,
         'title' => $row->faire_name . ' (' . $row->count . ')',
         'meta' => array('class' => 'my-toolbar-page'),
-        'href' => admin_url('admin.php') . '?page=gf_entries&faire=' . $row->faire,
+        //'href' => admin_url('admin.php') . '?page=gf_entries&faire=' . $row->faire,
         'parent' => 'mf_admin_parent'
     );
     $wp_admin_bar->add_node($args);
