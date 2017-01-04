@@ -43,17 +43,20 @@ function makerfaire_meet_the_makers_shortcode($atts, $content = null) {
   $offset= rand(0,$result-3); //randomly choose where to pick 3 entries from (starting from 3 to the total number of entries - 3
   $entries   = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => $offset, 'page_size' => 3));
 
+  $image1 = ($entries[0]['22']!=''?$entries[0]['22']:'/wp-content/themes/makerfaire/images/grey-makey.png');
+  $image2 = ($entries[1]['22']!=''?$entries[1]['22']:'/wp-content/themes/makerfaire/images/grey-makey.png');
+  $image3 = ($entries[2]['22']!=''?$entries[2]['22']:'/wp-content/themes/makerfaire/images/grey-makey.png');
 $output = '<div class="row filter-container mmakers">'
           . ' <div class="col-xs-12 col-sm-8"><a href="/maker/entry/' . $entries[0]['id'] . '" class="post">'
-          . '   <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[0]['22'],622,402) . '" alt="Featured Maker 1">'
+          . '   <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image1,622,402) . '" alt="Featured Maker 1">'
           . '   <div class="text-box"><span class="section">' . $entries[0]['16'] . '</span></div></a>'
           . ' </div><div class="col-xs-12 col-sm-4">'
           . '   <a href="/maker/entry/' . $entries[1]['id'] . '" class="post">'
-          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[1]['22'],622,402) . '" alt="Featured Maker 2">'
+          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image2,622,402) . '" alt="Featured Maker 2">'
           . '     <div class="text-box"><span class="section">' . substr($entries[1]['151'],0,48) . '</span></div>'
           . '   </a>'
           . '   <a href="/maker/entry/' . $entries[2]['id'] . '" class="post">'
-          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($entries[2]['22'],622,402) . '" alt="Featured Maker 3">'
+          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image3,622,402) . '" alt="Featured Maker 3">'
           . '     <div class="text-box"><span class="section">' . substr($entries[2]['151'],0,48) . '</span></div>'
           . '   </a>'
           . '</div></div>';
