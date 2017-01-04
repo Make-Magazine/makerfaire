@@ -2,25 +2,27 @@
 /* Side bar Layout */
 add_action("gform_entry_detail_sidebar_before", "add_sidebar_sections", 10,2);
 function add_sidebar_sections($form, $lead) {
+  $mode = empty( $_POST['screen_mode'] ) ? 'view' : $_POST['screen_mode'];
   $sidebar  = '';
   $sidebar .= display_entry_info_box($form, $lead);
-  $sidebar .= display_entry_rating_box($form, $lead);
-  $sidebar .= display_entry_fee_mgmt_box($form, $lead);
-  $sidebar .= display_entry_notes_box($form, $lead);
-  $sidebar .= display_flags_prelim_locs($form, $lead);
-  $sidebar .= display_sched_loc_box($form, $lead);
-  //$sidebar .= display_ticket_code_box($form, $lead);
-  //get list of forms
-  global $wpdb;
-  $results = $wpdb->get_results("SELECT * FROM `wp_rg_form` where is_active = 1 and is_trash = 0");
-  $formList = array();
-  foreach($results as $form){
-    $formList[] = array('id'=>$form->id,'title'=>$form->title);
-  }
+  if ($mode == 'view') {
+    $sidebar .= display_entry_rating_box($form, $lead);
+    $sidebar .= display_entry_fee_mgmt_box($form, $lead);
+    $sidebar .= display_entry_notes_box($form, $lead);
+    $sidebar .= display_flags_prelim_locs($form, $lead);
+    $sidebar .= display_sched_loc_box($form, $lead);
+    //get list of forms
+    global $wpdb;
+    $results = $wpdb->get_results("SELECT * FROM `wp_rg_form` where is_active = 1 and is_trash = 0");
+    $formList = array();
+    foreach($results as $form){
+      $formList[] = array('id'=>$form->id,'title'=>$form->title);
+    }
 
-  $sidebar .= display_form_change_box($form, $lead, $formList);
-  $sidebar .= display_dupCopy_entry_box($form, $lead, $formList);
-  $sidebar .= display_send_conf_box($form, $lead);
+    $sidebar .= display_form_change_box($form, $lead, $formList);
+    $sidebar .= display_dupCopy_entry_box($form, $lead, $formList);
+    $sidebar .= display_send_conf_box($form, $lead);
+  }
   echo $sidebar;
 }
 
@@ -55,12 +57,11 @@ function display_entry_info_box($form, $lead) {
         <table width="100%" class="entry-status">'.
           mf_sidebar_entry_status( $form, $lead ) .
           '<tr><td colspan="2"><hr /></td></tr>'.
-          mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ) .
-          mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ) .
-       '</table>
-        <small>Change a selection above to update entry</small>
-        <hr />
-        Contact:<div style="padding:5px">'. (isset($lead['96.3'])?$lead['96.3']:'').' '. (isset($lead['96.6'])?$lead['96.6']:'').'<br />'.
+          ($mode == 'view' ? mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ) .
+                             mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ):'') .
+       '</table>' .
+          ($mode == 'view' ? '<small>Change a selection above to update entry</small><hr /> ': '').
+       'Contact:<div style="padding:5px">'. (isset($lead['96.3'])?$lead['96.3']:'').' '. (isset($lead['96.6'])?$lead['96.6']:'').'<br />'.
         $street  .'<br />'.
         $street2 .'<br />'.
         $city    .', '. $state.'  '. $zip.'<br />'.

@@ -1,8 +1,10 @@
 {
     "key": "group_56ce502e98520",
-    "title": "Sponsors Page URL",
+    "title": "Sponsors Slider",
     "fields": [
         {
+            "default_value": "",
+            "placeholder": "",
             "key": "field_56ce504f64937",
             "label": "Sponsors Page URL",
             "name": "sponsors_page_url",
@@ -14,9 +16,28 @@
                 "width": "",
                 "class": "",
                 "id": ""
-            },
+            }
+        },
+        {
             "default_value": "",
-            "placeholder": ""
+            "min": "",
+            "max": "",
+            "step": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "key": "field_586c1ea700302",
+            "label": "Sponsors Page Year",
+            "name": "sponsors_page_year",
+            "type": "number",
+            "instructions": "Enter the 4 digit year to be displayed.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
         }
     ],
     "location": [
@@ -25,6 +46,20 @@
                 "param": "page",
                 "operator": "==",
                 "value": "478622"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "flagship-faire-landing-page.php"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "MTM-page-template.php"
             }
         ]
     ],
@@ -36,5 +71,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1456362936
+    "modified": 1483482388
 }

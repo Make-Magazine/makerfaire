@@ -21,7 +21,8 @@ $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'faire', 'filter
     'fkey'       => array('referenceTable'   => 'wp_mf_faire',
                           'referenceField'   => 'ID',
                           'referenceDisplay' => 'faire'),
-    'dataSql' =>'(SELECT wp_mf_faire.ID from wp_mf_faire, wp_rg_lead where wp_rg_lead.id = entry_id and INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id)> 0) as faire'
+    'dataSql' =>'(SELECT wp_mf_faire.ID from wp_mf_faire, wp_rg_lead where wp_rg_lead.id = entry_id and '
+    . '  find_in_set (wp_rg_lead.form_id,wp_mf_faire.form_ids) > 0) as faire'
     );
 $tableFields['wp_rmt_entry_resources'][] = array('fieldName' => 'area', 'filterType'=>'text',
         'dataSql' =>'(SELECT area '
@@ -104,7 +105,8 @@ $tableFields['wp_rg_lead_detail_changes'][] = array('fieldName' => 'faire',   'f
     'fkey'       => array('referenceTable'   => 'wp_mf_faire',
                           'referenceField'   => 'ID',
                           'referenceDisplay' => 'faire'),
-    'dataSql' =>'(SELECT wp_mf_faire.ID from wp_mf_faire, wp_rg_lead where wp_rg_lead.id = lead_id and INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id)> 0 limit 1) as faire'
+    'dataSql' =>'(SELECT wp_mf_faire.ID from wp_mf_faire, wp_rg_lead where wp_rg_lead.id = lead_id and '
+    . ' find_in_set (wp_rg_lead.form_id,wp_mf_faire.form_ids) > 0 limit 1) as faire'
     );
 $tableFields['wp_rg_lead_detail_changes'][] = array(
     'fieldName'   => 'user_email',

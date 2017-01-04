@@ -63,7 +63,8 @@ if ( isset( $long_description ) && $long_description!='') {
 
 //pull faireID
 global $wpdb;
-$faire = $wpdb->get_var('select faire from wp_mf_faire where INSTR (wp_mf_faire.form_ids,'. $form['id'].')> 0');
+$faire = $wpdb->get_var('select faire from wp_mf_faire where find_in_set ('. $form['id'].', wp_mf_faire.form_ids) > 0');
+
 $return = '
 <table class="fixed entry-detail-view">
 	<thead>
@@ -325,7 +326,7 @@ function gf_collapsible_sections($form, $lead){
 
 
     foreach($results as $addData){
-      $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=mfentry&id=".$addData->form_id . '&lid='.$addData->lead_id;
+      $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=entry&id=".$addData->form_id . '&lid='.$addData->lead_id;
       $addEntriesCnt++;
       $addEntries .=  '<tr>';
 

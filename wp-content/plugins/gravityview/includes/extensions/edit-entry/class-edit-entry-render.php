@@ -718,7 +718,8 @@ class GravityView_Edit_Entry_Render {
     function after_update($orig_entry='') {
 
         //MF custom code to log changes
-        do_action( 'gform_after_update_entry', $this->form, $this->entry['id'],$orig_entry );
+      $form = GFAPI::get_form($this->form['id']);
+        do_action( 'gform_after_update_entry', $form, $this->entry['id'],$orig_entry );
 
         do_action( "gform_after_update_entry_{$this->form['id']}", $this->form, $this->entry['id'] );
 

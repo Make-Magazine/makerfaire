@@ -26,8 +26,6 @@
   <!-- Le styles -->
   <?php wp_head(); ?>
   <!-- Remarketing pixel -->
-  <!-- sumome -->
-  <script src="//load.sumome.com/" data-sumo-site-id="3aa0a00731e2c63a4b3d480f0fef6df9476553c74fc88aa80b948e2a878b3d71" async="async"></script>
   <script type="text/javascript">
     adroll_adv_id = "QZ72KCGOPBGLLLPAE3SDSI";
     adroll_pix_id = "RGZKRB7CHJF5RBMNCUJREU";

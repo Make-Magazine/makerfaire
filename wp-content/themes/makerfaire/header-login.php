@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
-	<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# object: http://ogp.me/ns/object#">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# object: http://ogp.me/ns/object#">
 	<meta charset="utf-8">
 	<meta name="apple-itunes-app" content="app-id=463248665"/>
 
@@ -34,10 +34,7 @@
 	// </script>
 
 	<?php wp_head(); ?>
-         <!-- sumome -->
-        <script src="//load.sumome.com/" data-sumo-site-id="3aa0a00731e2c63a4b3d480f0fef6df9476553c74fc88aa80b948e2a878b3d71" async="async"></script>
-	
-	</head>
+</head>
 
 
 <body id="bootstrap-js" onLoad="onLoad()" <?php body_class(); ?> >
@@ -47,7 +44,6 @@
 Topbar
 ======
 -->
-
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
 		<div class="container">

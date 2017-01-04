@@ -8,6 +8,7 @@
 if(get_field('sponsors_page_url'))
 {
   $url = get_field('sponsors_page_url');
+  $year = get_field('sponsors_page_year');
   $id = url_to_postid( $url ); ?>
 
   <!-- IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS -->
@@ -16,11 +17,11 @@ if(get_field('sponsors_page_url'))
     <div class="container">
       <div class="row">
         <div class="col-sm-7">
-          <h4 class="sponsor-slide-title">2016 Maker Faire Sponsors: <span class="sponsor-slide-cat"></span></h4>
+          <h4 class="sponsor-slide-title"><?php if($year){echo $year . ' ';} ?>Maker Faire Sponsors: <span class="sponsor-slide-cat"></span></h4>
         </div>
         <div class="col-sm-5">
           <h5><a href="/sponsors">Become a sponsor</a></h5>
-          <h5><a href="<?= $url ?>">All sponsors</a></h5>
+          <h5><a href="<? echo $url; ?>">All sponsors</a></h5>
         </div>
       </div>
       <div class="row">

@@ -381,7 +381,7 @@ class GFRMTHELPER {
 
     $otherFieldsArray = array("384", "386", "392", "393", "394", "396", "398",
                               "407", "422", "423", "425", "430", "418", "426",
-                              "419"
+                              "419", "376", "434"
         );
     foreach($otherFieldsArray as $option){
       if(isset($lead[$option]) && trim($lead[$option])!='')  $entry_data[$option] = $lead[$option];
@@ -419,12 +419,12 @@ class GFRMTHELPER {
 
     /*  Field ID 62 = tables_chairs */
     if($entryData['tables_chairs'] == '1 table and 2 chairs'){
-      $resource[] = array($resourceID['TBL_6x30'],1,'');
+      $resource[] = array($resourceID['TBL_8x30'],1,'');
       $resource[] = array($resourceID['CH_FLD'],2,'');
     }elseif($entryData['tables_chairs'] == 'More than 1 table and 2 chairs. List specific number of tables and chairs below.'){
       /*  Field ID 347 (Number of Tables)
        *  Field ID 348 (Number of Chairs) */
-      $resource[] = array($resourceID['TBL_6x30'],$entryData['numTables'],'');
+      $resource[] = array($resourceID['TBL_8x30'],$entryData['numTables'],'');
       $resource[] = array($resourceID['CH_FLD'], $entryData['numChairs'],'');
     }
 
@@ -487,27 +487,27 @@ class GFRMTHELPER {
 
       //field 14 - tables
       $pos = strpos($entryData['paymentTable'], 'One table');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],1,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],1,'');
       $pos = strpos($entryData['paymentTable'], 'Two tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],2,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],2,'');
       $pos = strpos($entryData['paymentTable'], 'Three Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],3,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],3,'');
       $pos = strpos($entryData['paymentTable'], 'Four Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],4,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],4,'');
       $pos = strpos($entryData['paymentTable'], 'Five Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],5,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],5,'');
       $pos = strpos($entryData['paymentTable'], 'Six Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],6,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],6,'');
       $pos = strpos($entryData['paymentTable'], 'Seven Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],7,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],7,'');
       $pos = strpos($entryData['paymentTable'], 'Eight Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],8,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],8,'');
       $pos = strpos($entryData['paymentTable'], 'Nine Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],9,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],9,'');
       $pos = strpos($entryData['paymentTable'], 'Ten Tables');
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],10,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],10,'');
       $pos = strpos($entryData['paymentTable'], "I don't need a table");
-      if ($pos !== false)     $resource[] = array($resourceID['TBL_6x30'],0,'');
+      if ($pos !== false)     $resource[] = array($resourceID['TBL_8x30'],0,'');
 
       //mapping for sponsor order form
       /* product fields - need to pull the .3 of the field to get the amount */
@@ -756,35 +756,55 @@ class GFRMTHELPER {
       if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
     }
     //set resource status and assign to
-    //assign values can be found in functions.php in custom_entry_meta function
+    //resource assign to values can be found in wp-content/themes/makerfaire/functions/gravity_forms/gravityforms_entry_meta.php in custom_entry_meta function
+
+    /*  set default values */
     $assignTo    = 'na';//not assigned to anyone
     $status      = 'ready';//ready
-    //field ID 83
-    if( $entryData['fire'] == 'Yes' ||
-        $entryData['activity']=='Yes' ||
-        $entryData['activity_wrist'] == 'Yes'  ||
-        $entryData['booth_size'] == "Other"
-            ){
+
+    /* MF-1644 new logic based on indicators
+     *    1) CMIndicator(376) = Yes
+     *         Resource Status needs to be set to Review
+     *         Resource Assign To set to Kerry
+     *    2) CMIndicator = No + FeeIndicator (434) = Yes
+     *         Resource Statues => Review
+     *         Resource Assign To => Siana
+     *    3) If CM=no and Fee indicator=No
+     *         Resource status= ready (unless any of the other logic turns it into review)
+     */
+    if(isset($entryData['376']) && $entryData['376']=='Yes') { //cm indicator
       $status   = 'review';
-      $assignTo = 'jay'; //Jay
+      $assignTo = 'cm_team';
+    }elseif(isset($entryData['434']) && $entryData['434']=='Yes') { //fee indicator
+      $status   = 'review';
+      $assignTo = 'fee_team';
+    }elseif( $entryData['fire'] == 'Yes'){  //field 83
+      $status   = 'review';
+      $assignTo = 'fire';
     }elseif($entryData['power'] == 'Yes' &&
             $entryData['amps']=='Other. Power request specified in the Special Power Requirements box'){
       $status   = 'review';
-      $assignTo = 'kerry'; //Kerry
+      $assignTo = 'power';
     }elseif($entryData['special_request']!=''){
       $status   = 'review';
-      $assignTo = 'kerry'; //Kerry
+      $assignTo = 'special_request'; //Kerry
+    }
+    //overrides all other logic
+    if($entryData['fType'] == 'Payment') {
+      $status = 'ready';
     }
 
     // update custom meta field (do not update if meta already exists)
-    $metaValue = gform_get_meta( $entryData['entry_id'], 'res_status' );
-    if(empty($metaValue)){
-      gform_update_meta( $entryData['entry_id'], 'res_status',$status );
-    }
+    $res_status = gform_get_meta( $entryData['entry_id'], 'res_status' );
+    $res_assign = gform_get_meta( $entryData['entry_id'], 'res_assign' );
 
-    $metaValue = gform_get_meta( $entryData['entry_id'], 'res_assign' );
-    if(empty($metaValue)){
-      gform_update_meta( $entryData['entry_id'], 'res_assign',$assignTo );
+    //  if the current status or assign to is blank, or
+    //  if the calculated assign to is different than the curent assign to,
+    //      update the vaues
+    if($assignTo != $res_assign || empty($res_status) || empty($res_assign)) {
+      //update the status and assign to
+      gform_update_meta( $entryData['entry_id'], 'res_status', $status, $entryData['form_id'] );
+      gform_update_meta( $entryData['entry_id'], 'res_assign', $assignTo, $entryData['form_id'] );
     }
   }
 

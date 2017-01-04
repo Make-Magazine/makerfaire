@@ -64,7 +64,7 @@ function mf_custom_toolbar( $menu_items, $form_id ) {
           $newURL .= (rgget('star')   != '' ? "&star=" . rgget('star') : '');
           $newURL .= (rgget('read')   != '' ? "&read=" . rgget('read') : '');
           $newURL .= (rgget('filter') != '' ? "&filter=" . rgget('filter') : '');
-          $newURL .= (rgget('faire')  != '' ? "&faire=" . rgget('faire') : '');
+
           $newURL .= $newOutput;
 
           $output .=  '<span class="gf_admin_page_formname">'.$fieldName.($filterValues[1]!='is'?' ('.$filterValues[1].') ':'').': '.$fieldValue;
@@ -87,7 +87,7 @@ function return_MF_navigation(){
 
   foreach($wpdb->get_results($sql) as $row){
     //create an array keyed by faire location- Bay Area, New York, DC
-    $faireNav[$row->faire_location][$row->faire] = array('faire-name' => $row->faire_name, 'url'=>admin_url( 'admin.php' ) . '?page=gf_entries&faire='.$row->faire, 'count'=>0);
+    $faireNav[$row->faire_location][$row->faire] = array('faire-name' => $row->faire_name, 'url'=>admin_url( 'admin.php' ) . '?page=gf_entries', 'count'=>0);
 
     //build an array of form id's removing any blank spaces before hand
     $formids = explode(",", trim($row->form_ids));
@@ -130,12 +130,12 @@ function return_MF_navigation(){
 
   foreach($faireNav as $locKey=>$locations){
     //first build list of locations
-    $nav .='<li class="dropdown"><a href="#" style="text-decoration: none" class="dropdown-toggle" data-toggle="dropdown">'.$locKey.'</a>';
+    $nav .='<li class="dropdown"><span style="text-decoration: none" class="dropdown-toggle" data-toggle="dropdown">'.$locKey.'</span>';
 
     if(is_array($locations)){ //break this down by Faire
       $nav .= '<ul>';
       foreach($locations as $faireKey=>$faire) {
-        $nav .= '<li><a href="'.$faire['url'].'">'.$faire['faire-name'].' ('.$faire['count'].')</a>';
+        $nav .= '<li><span>'.$faire['faire-name'].' ('.$faire['count'].')</span>';
         if(is_array($faire['forms'])){  //break this down by Form
           $nav .= '<ul>';
           foreach($faire['forms'] as $formID=>$form) {

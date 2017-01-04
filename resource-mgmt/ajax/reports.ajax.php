@@ -462,7 +462,7 @@ function retrieveRptData($table,$faire){
                       );
         break;
       case 'entrylink':
-        $vars = array('cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="http://makerfaire.com/wp-admin/admin.php?page=gf_entries&view=mfentry&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
+        $vars = array('cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
         break;
       case 'hidden':
         $vars = array('visible'=>false);
@@ -653,7 +653,7 @@ function ent2resource($table, $faire){
               wp_mf_faire_area.area,
               wp_mf_location.location, wp_mf_location.id as location_id
             from wp_rg_lead
-              left outer join wp_mf_faire          on INSTR (wp_mf_faire.form_ids,wp_rg_lead.form_id) > 0
+              left outer join wp_mf_faire          on find_in_set (wp_rg_lead.form_id,wp_mf_faire.form_ids) > 0
               left outer join wp_mf_location       on wp_mf_location.entry_id = wp_rg_lead.id
               left outer join wp_mf_faire_subarea  on wp_mf_location.subarea_id = wp_mf_faire_subarea.id
               left outer join wp_mf_faire_area     on wp_mf_faire_subarea.area_id = wp_mf_faire_area.id
