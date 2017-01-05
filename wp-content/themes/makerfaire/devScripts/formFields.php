@@ -120,7 +120,15 @@ $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
             </div>
             <div class="col-sm-3">
               <?php
-              if($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'){
+              if($field['type']=='product') {
+
+                echo '<table width="100%">';
+                echo '<tr><th>Label</th><th>Price</th></tr>';
+                foreach($field['choices'] as $choice){
+                  echo '<tr><td>'.($choice->value!=$choice->text?$choice->value.'-'.$choice->text:$choice->text).'</td><td>'.$choice->price.'</td></tr>';
+                }
+                echo '</table>';
+              }elseif($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'){
                 echo '<ul>';
                 if(isset($field['inputs']) && !empty($field['inputs'])){
                   foreach($field['inputs'] as $choice){
