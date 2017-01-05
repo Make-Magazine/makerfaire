@@ -170,33 +170,33 @@
 
     article {
       background-color: #fff;
-    }
-    .tab-pane {
-      height: 768px;
-      overflow-y: auto;
-      padding-top: 30px;
-      padding-bottom: 15px;
-      padding-right: 30px;
-      padding-left: 30px;
-      &::-webkit-scrollbar {
-        width: 3px;
-        background-color: transparent;
-      }
-      &::-webkit-scrollbar-track {
-        -webkit-box-shadow: none;
-        border-radius: 2px;
-        background-color: #d5d5d5;
-      }
-      &::-webkit-scrollbar-thumb {
-        -webkit-border-radius: 10px;
-        border-radius: 10px;
-        background: #3FAFED;
-      }
-      &::-webkit-scrollbar-button:start:increment,
-      &::-webkit-scrollbar-button:end:increment  {
-        height: 80px;
-        display: block;
-        background-color: transparent;
+      > .tab-pane {
+        height: 768px;
+        overflow-y: auto;
+        padding-top: 30px;
+        padding-bottom: 15px;
+        padding-right: 30px;
+        padding-left: 30px;
+        &::-webkit-scrollbar {
+          width: 3px;
+          background-color: transparent;
+        }
+        &::-webkit-scrollbar-track {
+          -webkit-box-shadow: none;
+          border-radius: 2px;
+          background-color: #d5d5d5;
+        }
+        &::-webkit-scrollbar-thumb {
+          -webkit-border-radius: 10px;
+          border-radius: 10px;
+          background: #3FAFED;
+        }
+        &::-webkit-scrollbar-button:start:increment,
+        &::-webkit-scrollbar-button:end:increment  {
+          height: 80px;
+          display: block;
+          background-color: transparent;
+        }
       }
     }
     h2 {
@@ -265,6 +265,29 @@
       a {
         display: block;
         margin-bottom: 8px;
+      }
+    }
+
+    //Photos tab
+    .mcp-photos-pills {
+      margin-top: 25px;
+      li {
+        border-right: 1px solid #4a4a4a;
+        padding-left: 5px;
+        padding-right: 5px;
+        float: none;
+        display: inline-block;
+        a {
+          color: #397b98;
+          padding: 0;
+          background-color: transparent;
+          &:hover {
+            color: #00bef3;
+          }
+        }
+        &:last-child {
+          border-right: none;
+        }
       }
     }
 

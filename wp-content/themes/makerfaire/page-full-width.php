@@ -212,8 +212,40 @@ get_header(); ?>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac condimentum eros, at porta orci. Cras dictum sodales nunc sed vulputate. Suspendisse at arcu in risus consectetur maximus. Donec eu fringilla massa, ut convallis nunc. Mauris tempor, justo vel pulvinar finibus, magna ipsum pulvinar enim, et eleifend velit nisl ac felis. Vivamus porta leo sit amet nibh sagittis, nec faucibus neque consectetur. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris tempus, nisl finibus euismod molestie, ligula mi convallis erat, ut tincidunt sem enim tincidunt ex. Nulla ligula libero, consectetur in faucibus eu, lobortis non justo.</p>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac condimentum eros, at porta orci. Cras dictum sodales nunc sed vulputate. Suspendisse at arcu in risus consectetur maximus. Donec eu fringilla massa, ut convallis nunc. Mauris tempor, justo vel pulvinar finibus, magna ipsum pulvinar enim, et eleifend velit nisl ac felis. Vivamus porta leo sit amet nibh sagittis, nec faucibus neque consectetur. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris tempus, nisl finibus euismod molestie, ligula mi convallis erat, ut tincidunt sem enim tincidunt ex. Nulla ligula libero, consectetur in faucibus eu, lobortis non justo.</p>
               </div>
+
+
               <div class="tab-pane mcp-photos" id="f">
+                <h2><strong>Faire</strong> Photos</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br /><a href="https://www.flickr.com/photos/146635418@N02/albums/with/72157677029830411" target="_blank">View our other Flickr galleries <i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                  <div role="tabpanel" class="tab-pane active" id="ba-photos">
+                    <?php echo do_shortcode("[flickr_set id='72157677029830411']"); ?>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="ny-photos">
+                    <?php echo do_shortcode("[flickr_set id='72157677029830411']"); ?>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="dc-photos">
+                    <?php echo do_shortcode("[flickr_set id='72157677029830411']"); ?>
+                  </div>
+                </div>
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills mcp-photos-pills" role="tablist">PHOTOS:
+                  <li role="presentation" class="active">
+                    <a href="#ba-photos" aria-controls="home" role="tab" data-toggle="tab">Bay Area</a>
+                  </li>
+                  <li role="presentation">
+                    <a href="#ny-photos" aria-controls="profile" role="tab" data-toggle="tab">World - New York</a>
+                  </li>
+                  <li role="presentation">
+                    <a href="#dc-photos" aria-controls="messages" role="tab" data-toggle="tab">National - Washington D.C.</a>
+                  </li>
+                </ul>
+
               </div>
+
               <div class="tab-pane mcp-videos" id="g">
                 <h2><strong>Faire</strong> Videos</h2>
                 <p>For more see our <a href="https://www.youtube.com/user/MakerFaire/featured" target="_blank">channel on YouTube <i class="fa fa-external-link" aria-hidden="true"></i></a></p>
