@@ -493,6 +493,7 @@ function duplicate_entry_id($lead,$form){
  */
 function duplicate_entry_data($form_change,$current_entry_id ){
   global $wpdb;
+  global $current_user;
 
   $lead_table        = GFFormsModel::get_lead_table_name();
   $lead_detail_table = GFFormsModel::get_lead_details_table_name();
@@ -530,12 +531,16 @@ function duplicate_entry_data($form_change,$current_entry_id ){
     }
   }
 
-  //create RMT and maker/entity tables
-  $entry    = GFAPI::get_entry($lead_id);
-  $form_id  = $entry['form_id'];
-  $form     = GFAPI::get_form($form_id);
+  //update/insert into maker tables
+  GFRMTHELPER::updateMakerTables($lead_id);
 
-  $result = GFRMTHELPER::gravityforms_makerInfo($entry,$form);
+  //copy resources and attributes
+  $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` (`entry_id`, `resource_id`, `qty`, `comment`, `user`, `update_stamp`, `lockBit`)
+          select '$lead_id', `resource_id`, `qty`, `comment`, '$user_id', now(),0 from wp_rmt_entry_resources where entry_id = $current_entry_id");
+
+  $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes` (`entry_id`, `attribute_id`, `value`, `comment`, `user`, `update_stamp`, `lockBit`)
+          select '$lead_id', `attribute_id`, `value`, `comment`,  '$user_id', now(), 0 from wp_rmt_entry_attributes where entry_id = $current_entry_id");
+
   return $return;
 }
 

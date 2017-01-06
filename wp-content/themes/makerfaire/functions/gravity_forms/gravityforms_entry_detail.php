@@ -39,7 +39,7 @@ function mf_entry_detail_head($form, $lead) {
   if(isset($_GET['star']))    $outputURL .= '&star='.rgget( 'star' );
   if(isset($_GET['read']))    $outputURL .= '&read='.rgget( 'read' );
   if(isset($_GET['paged']))   $outputURL .= '&paged='.rgget( 'paged' );
-  if(isset($_GET['faire']))   $outputURL .= '&faire='.rgget( 'faire' );
+  
   $outputURL = '<a href="'. $outputURL .'">Return to entries list</a>';
 
   ?>
