@@ -1,5 +1,4 @@
 <?php
-
 /* This function checks if the entry-id set on the form is valid
  * If it is, then it compares the entered email to see if it matches the previous
  * one used on the entry. if it all passes, then they can move to the next step
@@ -17,7 +16,7 @@ function custom_validation($validation_result) {
 
   //make sure we are in the right form
   if (!empty($entryID) && !empty($contact_email)) {
-    $entryid = rgpost('input_' . $entryID['id']);
+    $entryid   = rgpost('input_' . $entryID['id']);
     $sub_email = rgpost('input_' . $contact_email['id']);
 
     //check if entry-id is valid
@@ -59,56 +58,135 @@ function custom_validation($validation_result) {
   return $validation_result;
 }
 
-add_filter( 'gform_pre_render', 'populate_html' ); //all forms
+add_filter( 'gform_pre_render', 'populate_fields' ); //all forms
 
 /*
  * this logic is for page 2 of 'linked forms'
  * It will take the entry id submitted on page one and use that to pull in various data from the original form submission
  */
 
-function populate_html($form) {
+function populate_fields($form) {
   if($form['form_type']=='Other'){
     //this is a 2-page form with the data from page one being displayed in an html field on page 2
     $current_page = GFFormDisplay::get_current_page($form['id']);
-    $html_content = "The information you have submitted is as follows:<br/><ul>";
-    if ($current_page == 2) {
-      foreach ($form['fields'] as &$field) {
-        if ($field->inputName == 'entry-id') {
-          $entry_id = rgpost('input_' . $field->id);
-        }
-      }
 
-      $fieldIDarr['project-name'] = 151;
-      $fieldIDarr['short-project-desc'] = 16;
-      $fieldIDarr['exhibit-contain-fire'] = 83;
-      $fieldIDarr['interactive-exhibit'] = 84;
-      $fieldIDarr['fire-safety-issues'] = 85;
-      $fieldIDarr['serving-food'] = 44;
-      $fieldIDarr['you-are-entity'] = 45;
-      $fieldIDarr['plans-type'] = "55";
+    if ($current_page > 1) {
+      $entry_id = rgpost('input_3');
 
-      //find the project name for submitted entry-id
-      $entry = GFAPI::get_entry($entry_id);
-      foreach ($form['fields'] as &$field) {
-        if (isset($fieldIDarr[$field->inputName])) {
-          if ($field->inputName == 'plans-type') {
-            $planstypevalues = array();
-            for ($i = 1; $i <= 6; $i++) {
-              if (isset($entry['55.' . $i]) && !empty($entry['55.' . $i])) {
-                $planstypevalues[] = $entry['55.' . $i];
+      //is entry id set?
+      if($entry_id != '') {
+        //pull the original entry
+        $entry = GFAPI::get_entry($entry_id); //original entry ID
+        $form_id = $form['id'];
+        $jqueryVal = '';
+        //find the submitted original entry id
+        foreach ($form['fields'] as &$field) {
+          switch($field->type) {
+            //parameter name is stored in a different place
+            case 'name':
+            case 'address':
+              foreach($field->inputs as $key=>$input) {
+                if ($input['name']!='') {
+                  $parmName =  $input['name'];
+                  $pos = strpos($parmName, 'field-');
+                  if ($pos !== false) { //populate by field ID?
+                    $field_id = str_replace("field-", "", $input['name']);
+                    $field->inputs[$key]['defaultValue'] = $entry[$field_id];
+                    $jqueryVal .= "jQuery('#input_".$form_id."_".str_replace('.','_',$field_id)."').val('".$entry[$field_id]."');";
+                  }
+                }
               }
+              break;
+          }
+
+          if ($field->inputName != '') {
+            $parmName = $field->inputName;
+            //check for 'field-' to see if the value should be populated by original entry field data
+            $pos = strpos($parmName, 'field-');
+
+            if ($pos !== false) { //populate by field ID?
+              //strip the 'field-' from the parameter name to get the field number
+              $field_id = str_replace("field-", "", $parmName);
+              $fieldType = $field->type;
+
+              switch ($fieldType) {
+                case 'name':
+                  foreach($field->inputs as &$input) {  //loop thru name inputs
+                    if(isset($input['name']) && $input['name']!=''){  //check if parameter name is set
+                      $pos = strpos($input['name'], 'field-');
+                      if ($pos !== false) { //is it requesting to be set by field id?
+                        //strip the 'field-' from the parameter name to get the field number
+                        $field_id = str_replace("field-", "", $input['name']);
+                        $input['content'] = (isset($entry[$field_id]) ? $entry[$field_id] : '');;
+                      }
+                    }
+                  }
+                  break;
+                case 'checkbox':
+                  //find which fields are set
+                  foreach($field->inputs as $key=>$input) {
+                    if(!empty($entry[$input['id']])) {
+                      if($field->choices[$key]['value'] == $entry[$input['id']]){
+                        $field->choices[$key]['isSelected'] = true;
+                        $jqueryVal .= "jQuery( '#choice_".$form_id."_".str_replace('.','_',$input['id'])."' ).prop( 'checked', true );";
+                      }
+                    }
+                  }
+
+                  break;
+                default:
+                  $field->defaultValue = (isset($entry[$field_id]) ? $entry[$field_id] : "");
+                  break;
+              }
+            }else { //populate by specific parameter name
+              //populate fields
+              $fieldIDarr = array(
+                  'project-name'         => 151,
+                  'contact-email'        =>  98,
+                  'exhibit-contain-fire' =>  83,
+                  'interactive-exhibit'  =>  84,
+                  'fire-safety-issues'   =>  85,
+                  'serving-food'         =>  44,
+                  'you-are-entity'       =>  45,
+                  'plans-type'           => "55",
+                  'short-project-desc'   =>  16,
+                  'entry-id'             => $entry_id);
+
+              //find the project name for submitted entry-id
+              if (isset($fieldIDarr[$parmName])) {
+                if ($parmName == 'plans-type') {
+                  $planstypevalues = array();
+                  for ($i = 1; $i <= 6; $i++) {
+                    if (isset($entry['55.' . $i]) && !empty($entry['55.' . $i])) {
+                      $planstypevalues[] = $entry['55.' . $i];
+                    }
+                  }
+                  $value = implode(',', $planstypevalues);
+                } elseif($parmName == 'entry-id') {
+                  $value = $entry_id;
+                } else {
+                  $value = $entry[$fieldIDarr[$parmName]];
+                }
+              }
+
+              $field->defaultValue = $value;
             }
-            $field->defaultValue = implode(',', $planstypevalues);
-          } else {
-            $field->defaultValue = $entry[$fieldIDarr[$field->inputName]];
           }
         }
       }
-    }
-  }
-  return($form);
-}
 
+    } //end check current page
+  }
+  echo 'here';
+  ?>
+  <script>
+    jQuery( document ).ready(function() {
+      <?php echo $jqueryVal;?>
+    });
+  </script>
+  <?php
+  return $form;
+}
 
 //when a linked form is submitted, find the initial formid based on entry id
 // and add the fields from the linked form to that original entry
@@ -118,5 +196,3 @@ function GSP_after_submission($entry, $form ){
   $updateEntryID = get_value_by_label('entry-id', $form, $entry);
   gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
 }
-
-
