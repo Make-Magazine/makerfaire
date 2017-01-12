@@ -1,3 +1,5 @@
+@import "global.less";
+
 #media-center-page {
   header {
     padding: 30px 0;
@@ -96,11 +98,17 @@
         z-index: initial;
         position: static;
       }
+      > .row {
+        @media screen and (max-width: 991px) {
+          margin-right: 0;
+        }
+      }
     }
     .content {
       height: 768px;
       @media screen and (max-width: 991px) {
         height: auto;
+        padding-right: 0;
       }
     }
     .tabbable,
@@ -111,9 +119,14 @@
       padding: 0;
       margin: 0;
       border: none;
+      @media screen and (min-width: 1200px) {
+        width: 22%;
+      }
+      @media screen and (min-width: 991px) and (max-width: 1199px) {
+        width: 25%;
+      }
       li {
         background-color: #085a7e;
-        height: 12.5%;
         margin-top: 0;
         margin-bottom: 0;
         a {
@@ -121,15 +134,80 @@
           color: #fff;
           font-weight: 300;
           height: 100%;
-          padding-top: 30px;
+          padding-top: 0;
           padding-bottom: 0;
           border-radius: 0;
           border: none;
           margin: 0;
           background-color: transparent;
+          span {
+            top: 35%;
+            position: relative;
+            line-height: 1em;
+          }
         }
+        //Calculating each tabs height based on how many have been added
         &.active a {
           background-color: #3FAFED;
+        }
+        /* one item */
+        &:first-child:nth-last-child(1) {
+          height: 25%
+        }
+        /* two items */
+        &:first-child:nth-last-child(2),
+        &:first-child:nth-last-child(2) ~ li {
+          height: 25%
+        }
+        /* three items */
+        &:first-child:nth-last-child(3),
+        &:first-child:nth-last-child(3) ~ li {
+          height: 25%
+        }
+        /* four items */
+        &:first-child:nth-last-child(4),
+        &:first-child:nth-last-child(4) ~ li {
+          height: 25%
+        }
+        /* five items */
+        &:first-child:nth-last-child(5),
+        &:first-child:nth-last-child(5) ~ li {
+          height: 20%
+        }
+        /* six items */
+        &:first-child:nth-last-child(6),
+        &:first-child:nth-last-child(6) ~ li {
+          height: 16.666%
+        }
+        /* seven items */
+        &:first-child:nth-last-child(7),
+        &:first-child:nth-last-child(7) ~ li {
+          height: 14.285%
+        }
+        /* eight items */
+        &:first-child:nth-last-child(8),
+        &:first-child:nth-last-child(8) ~ li {
+          height: 12.5%
+        }
+        /* nine items */
+        &:first-child:nth-last-child(9),
+        &:first-child:nth-last-child(9) ~ li {
+          height: 11.11%
+        }
+        /* ten items */
+        &:first-child:nth-last-child(10),
+        &:first-child:nth-last-child(10) ~ li {
+          height: 10%
+        }
+        /* eleven items */
+        &:first-child:nth-last-child(11),
+        &:first-child:nth-last-child(11) ~ li {
+          height: 9.09%
+        }
+        /* twelve items */
+        &:first-child:nth-last-child(12),
+        &:first-child:nth-last-child(12) ~ li {
+          height: 8.333%
         }
       }
     }
@@ -144,9 +222,11 @@
     .panel+.panel {
       border-top: 1px solid #3FAFED;
       margin-top: 0;
+      border-radius: 0;
     }
     .panel-heading {
       padding: 0;
+      border-radius: 0;
       a {
         color: #fff;
         font-size: 22px;
@@ -170,6 +250,9 @@
 
     article {
       background-color: #fff;
+      @media screen and (min-width: 1200px) {
+        width: 78%;
+      }
       > .tab-pane {
         height: 768px;
         overflow-y: auto;
@@ -333,3 +416,142 @@
     }
   }
 }
+
+  .gform_wrapper .mcp-form ul li#field_127_96 {
+    width: 50%;
+    float: left;
+  }
+
+
+
+//Global GF form.mcp-form class styles
+.gform_wrapper {
+  .mcp-form {
+    //field headings/labels
+    .top_label .gfield_label {
+      color: #3FAFED;
+      font-weight: 300 !important;
+      font-size: 20px !important;
+      display: block;
+    }
+
+    //Each field group
+    ul li.gfield {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    //Make all fields 50% width
+    ul.gform_fields li.gfield {
+      width: 50%;
+      display: inline-block;
+    }
+    //Reseting the clear all
+    ul li.gfield {
+      clear: none;
+    }
+
+    .top_label div.ginput_container {
+      margin-top: 15px;
+    }
+
+    //margin-top reset between heading and fields
+    ul li.field_description_below div.ginput_container_checkbox,
+    ul li.field_description_below div.ginput_container_radio {
+      margin-top: 0px;
+    }
+
+    //text input field groups
+    input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=button]):not([type=image]):not([type=file]) {
+      border: none;
+      border-bottom: 1px solid #3FAFED;
+      width: 100%;
+    }
+
+    //Hide the required star thats in the title
+    .gfield_required {
+      display: none;
+    }
+
+    .gform_wrapper .top_label li.gfield.gf_left_half+.gform_footer,
+    .gform_wrapper .top_label li.gfield.gf_left_half+li.gfield,
+    .gform_wrapper .top_label li.gfield.gf_right_half+.gform_footer,
+    .gform_wrapper .top_label li.gfield.gf_right_half+li.gfield {
+      clear: none;
+    }
+
+    //Hiding the field lables under the field
+    .field_sublabel_below .ginput_complex.ginput_container label,
+    .field_sublabel_below div[class*=gfield_time_].ginput_container label {
+      visibility: hidden;
+      display: none;
+    }
+
+    //Multiple input groups 100% instead of default 50%
+    .ginput_complex.ginput_container.has_first_name.has_last_name span {
+      width: 100% !important;
+      margin-right: 0;
+      padding-right: 0;
+      margin-top: 13px;
+    }
+
+    .ginput_complex {
+      max-width: 100% !important;
+    }
+
+    #field_127_472,
+    #field_127_473,
+    #field_127_474,
+    #field_127_101,
+    #field_127_89 {
+      float: left;
+      clear: left;
+    }
+
+    #input_127_96 {
+      margin-top: 0;
+      #input_127_96_3_container {
+        margin-top: 0;
+      }
+    }
+
+    #field_127_99 {
+      margin-top: 18px;
+    }
+
+    #field_127_474,
+    #field_127_471 {
+      margin-top: 30px;
+      .gfield_label {
+        margin-bottom: -5px !important;
+      }
+    }
+
+    #input_127_101_2_container input {
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+
+    #input_127_101_4_container,
+    #input_127_101_6_container {
+      margin-top: 7px;
+    }
+
+    #input_127_45_other {
+      width: 91%;
+    }
+
+    textarea {
+      width: 100%;
+      border: 1px solid #3FAFED;
+    }
+
+    #gform_submit_button_127 {
+      .btn-cyan;
+    }
+  }
+}
+
+
+
+
+

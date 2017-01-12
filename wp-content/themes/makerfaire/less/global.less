@@ -10,6 +10,10 @@ body {
   font-size: 16px;
 }
 
+p {
+  font-weight: 300;
+}
+
 h1,
 h2,
 h3,
@@ -23,8 +27,15 @@ h1 {
   margin-bottom: 15px;
   font-size: 42px;
 }
-
+h2 {
+  font-size: 32px;
+}
+h3 {
+  font-size: 25px;
+  font-weight: 300;
+}
 h4 {
+  font-size: 20px;
   margin-top: 12px;
 }
 
@@ -186,11 +197,66 @@ a:focus {
   background-color: #3FAFED;
   color: #ffffff;
   transition: background-color 0.2s ease;
+  &:hover, &:active, &:focus {
+    background-color: #1490d4;
+    transition: background-color 0.2s ease;
+  }
 }
 
-.btn-cyan:hover {
-  background-color: #1490d4;
-  transition: background-color 0.2s ease;
+.btn-contrast-border {
+  border: solid 2px #12AFE9;
+  margin: 3px;
+  color: #333;
+  background: #fff;
+  font-size: 14px;
+  line-height: 14px;
+  padding: 3px 12px;
+  &:hover, &:active, &:focus {
+    color: white;
+    background: #12AFE9;
+  }
+}
+
+.dwnld-btn {
+  border: solid 1px #12AFE9;
+  color: #12AFE9;
+  margin: 3px;
+  text-transform: uppercase;
+  background: #fff;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 3px 40px;
+  position: relative;
+  &:hover, &:active, &:focus {
+    color: #005980;
+    border-color: #005980;
+  }
+  &:after {
+    font-family: FontAwesome;
+    content: "\f019";
+    position: absolute;
+    right: 8px;
+  }
+}
+
+hr.double-line-hr {
+  height: 6px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-top: 2px dotted #f29f31;
+  border-bottom: 3px solid #3FAFED;
+}
+
+.location-holder-top {
+  background: url(../images/bg-border.png);
+  background-repeat: repeat-x;
+  background-position: top;
+}
+
+.location-holder-bottom {
+  background: url(../images/bg-border.png);
+  background-repeat: repeat-x;
+  background-position: bottom;
 }
 
 // Form input field boxes
