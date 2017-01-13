@@ -104,15 +104,7 @@ get_header();
 
           <!-- Project Name -->
           <div class="entryName entryData">
-            <h3 class="entry-title">
-              <?php //if status is accepted, the title links to the public facing entry page
-              if($entryData['status']=='Accepted') {?>
-                <a target="_blank" href="/maker/entry/<?php echo $entryData['lead_id'];?>"><?php echo $entryData['presentation_title'];?></a>
-              <?php
-              }else{
-                echo $entryData['presentation_title'];
-              } ?>
-            </h3>
+            <h3 class="entry-title"><?php echo $entryData['presentation_title']; ?></h3>
           </div><!-- close .entryName -->
 
           <!-- Form Type -->
