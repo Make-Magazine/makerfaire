@@ -104,6 +104,7 @@ function populate_fields($form) {
             //check for 'field-' to see if the value should be populated by original entry field data
             $pos = strpos($parmName, 'field-');
 
+            //populate field using field id's from original form
             if ($pos !== false) { //populate by field ID?
               //strip the 'field-' from the parameter name to get the field number
               $field_id = str_replace("field-", "", $parmName);
