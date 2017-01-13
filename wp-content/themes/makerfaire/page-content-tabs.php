@@ -14,13 +14,13 @@ get_header(); ?>
 
       <div class="row">
 
-        <div class="col-xs-12 col-sm-3 col-md-5">
+        <div class="col-xs-12 col-sm-9">
 
           <h1><?php echo get_the_title(); ?></h1>
 
         </div>
 
-        <div class="col-xs-12 col-sm-9 col-md-7">
+        <div class="col-xs-12 col-sm-3">
 
           <?php the_field('header_right_side_content'); ?>
 
