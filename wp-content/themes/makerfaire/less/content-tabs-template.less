@@ -498,13 +498,18 @@
       max-width: 100% !important;
     }
 
+    #field_127_477,
     #field_127_472,
     #field_127_473,
     #field_127_474,
     #field_127_101,
-    #field_127_89 {
+    #field_127_471 {
       float: left;
       clear: left;
+    }
+
+    #field_127_476 {
+      float: right;
     }
 
     #input_127_96 {
@@ -519,7 +524,8 @@
     }
 
     #field_127_474,
-    #field_127_471 {
+    #field_127_471,
+    #field_127_89 {
       margin-top: 30px;
       .gfield_label {
         margin-bottom: -5px !important;
@@ -548,6 +554,11 @@
     #gform_submit_button_127 {
       .btn-cyan;
     }
+  }
+  &.gf_browser_chrome .mcp-form .gfield_checkbox li input,
+  &.gf_browser_chrome .mcp-form .gfield_checkbox li input[type=checkbox],
+  &.gf_browser_chrome .mcp-form .gfield_radio li input[type=radio] {
+    margin-top: 0;
   }
 }
 
