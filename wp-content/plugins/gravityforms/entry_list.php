@@ -923,8 +923,8 @@ final class GF_Entry_List_Table extends WP_List_Table {
 		$search_field_id = rgget( 'field_id' );
 		$search_operator = rgget( 'operator' );
 
-		$orderby = $this->get_order();
-		$order   = $this->get_orderby();
+		$orderby = $this->get_orderby();
+		$order   = $this->get_order();
 
 		$search_qs  = empty( $search ) ? '' : '&s=' . esc_attr( urlencode( $search ) );
 		$orderby_qs = empty( $orderby ) ? '' : '&orderby=' . esc_attr( $orderby );
