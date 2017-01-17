@@ -33,13 +33,15 @@ function mf_entry_detail_head($form, $lead) {
     }
   }
   $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=entries&id=".$form['id']  . $outputVar;
-  if(isset($_GET['sort']))    $outputURL .= '&sort='.rgget('sort');
-  if(isset($_GET['filter']))  $outputURL .= '&filter='.rgget( 'filter' );
-  if(isset($_GET['dir']))     $outputURL .= '&dir='.rgget( 'dir' );
-  if(isset($_GET['star']))    $outputURL .= '&star='.rgget( 'star' );
-  if(isset($_GET['read']))    $outputURL .= '&read='.rgget( 'read' );
-  if(isset($_GET['paged']))   $outputURL .= '&paged='.rgget( 'paged' );
-  
+
+  if(isset($_GET['sort']))      $outputURL .= '&sort='.rgget('sort');
+  if(isset($_GET['filter']))    $outputURL .= '&filter='.rgget( 'filter' );
+  if(isset($_GET['dir']))       $outputURL .= '&dir='.rgget( 'dir' );
+  if(isset($_GET['star']))      $outputURL .= '&star='.rgget( 'star' );
+  if(isset($_GET['read']))      $outputURL .= '&read='.rgget( 'read' );
+  if(isset($_GET['paged']))     $outputURL .= '&paged='.rgget( 'paged' );
+  if(isset($_GET['order']))     $outputURL .= '&order='.rgget( 'order' );
+  if(isset($_GET['orderby']))   $outputURL .= '&orderby='.rgget( 'orderby' );
   $outputURL = '<a href="'. $outputURL .'">Return to entries list</a>';
 
   ?>
