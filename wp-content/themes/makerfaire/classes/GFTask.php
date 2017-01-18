@@ -555,14 +555,16 @@ class GFTaskTable extends WP_List_Table {
 
 	function prepare_items() {
 		//$this->items = $this->form['tasks'];
-    foreach ($this->form['tasks'] as $task){
-      if(is_numeric($task['form2use'])){
-        $dispForm = GFAPI::get_form($task['form2use']);
-        $task['form2use'] = $dispForm['title'];
-      }else{
-        $task['form2use'] = '';
+    if(isset($this->form['tasks'])){
+      foreach ($this->form['tasks'] as $task){
+        if(is_numeric($task['form2use'])){
+          $dispForm = GFAPI::get_form($task['form2use']);
+          $task['form2use'] = $dispForm['title'];
+        }else{
+          $task['form2use'] = '';
+        }
+        $this->items[] = $task;
       }
-      $this->items[] = $task;
     }
 	}
 

@@ -17,22 +17,54 @@ function my_custom_form_setting( $settings, $form ) {
   $select .= '</select>';
 
   $settings['Form Basics']['form_type'] = '
-    <tr><th><label for="my_custom_setting">Form Type</label></th>
+    <tr><th>Form Type</th>
       <td>'.$select .'</td></tr>';
 
   // Add MAT message
   $mat_message = rgar($form, 'mat_message');
-  $settings['Form Basics']['mat_message'] = '
-    <tr><th><label for="my_custom_setting">MAT Messaging</label></th>
+  $mat_array['mat_message'] = '
+    <tr><th>Messaging</th>
       <td><textarea rows="4" cols="50" name="mat_message">'.$mat_message.'</textarea></td></tr>';
-  return $settings;
+
+  //add radio to display or hide edit entry resources link
+  $mat_disp_res_link = rgar($form, 'mat_disp_res_link');
+  $mat_array['mat_disp_res_link'] =
+    '<tr>
+      <th>Display Setup/Resources</th>
+      <td><input type="radio" name="mat_disp_res_link" value="no" '.($mat_disp_res_link=='no' || $mat_disp_res_link==''?'checked':'').'> No&nbsp;
+          <input type="radio" name="mat_disp_res_link" value="yes" '.($mat_disp_res_link=='yes'?'checked':'').'> Yes<br>
+      </td>
+    </tr>';
+
+  // Setup/Rsources Modal layout
+  $mat_res_modal_layout = rgar($form, 'mat_res_modal_layout');
+  $mat_array['mat_res_modal_layout'] = '
+    <tr><th>Setup/Resource Modal Layout</th>
+      <td><textarea rows="4" cols="50" name="mat_res_modal_layout">'.$mat_res_modal_layout.'</textarea></td></tr>';
+
+  //url to edit resources form
+  $mat_edit_res_url = rgar($form, 'mat_edit_res_url');
+  $mat_array['mat_edit_res_url'] =
+    '<tr>
+      <th>URL to Edit Resources Form</th>
+      <td><input type="text" name="mat_edit_res_url" value="'.$mat_edit_res_url.'" /></td>
+    </tr>';
+
+  //place MAT section after Form Basics
+  $newSettings = array_slice($settings, 0, 1, true) +
+    array("MAT" => $mat_array) +
+    array_slice($settings, 1, count($settings) - 1, true) ;
+  return $newSettings;
 }
 
-/* This will save the form type & MAT messaging selected by admin users */
+/* This will save the form type & MAT messaging & MAT display flag selected by admin users */
 add_filter( 'gform_pre_form_settings_save', 'save_form_type_form_setting' );
 function save_form_type_form_setting($form) {
-    $form['form_type']   = rgpost('form_type');
-    $form['mat_message'] = rgpost('mat_message');
+    $form['form_type']            = rgpost('form_type');
+    $form['mat_message']          = rgpost('mat_message');
+    $form['mat_disp_res_link']    = rgpost('mat_disp_res_link');
+    $form['mat_edit_res_url']     = rgpost('mat_edit_res_url');
+    $form['mat_res_modal_layout'] = rgpost('mat_res_modal_layout');
     return $form;
 }
 

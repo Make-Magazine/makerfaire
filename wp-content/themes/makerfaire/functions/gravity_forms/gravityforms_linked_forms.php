@@ -178,7 +178,7 @@ function populate_fields($form) {
 
     } //end check current page
   }
-  echo 'here';
+  
   ?>
   <script>
     jQuery( document ).ready(function() {

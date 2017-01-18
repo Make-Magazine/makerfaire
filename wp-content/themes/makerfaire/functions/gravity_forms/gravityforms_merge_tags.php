@@ -59,18 +59,53 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $text = str_replace('{sched_loc}', $schedule, $text);
     //die($text);
   }
+
   //Entry Resources
-  if (strpos($text, '{entry_resources}') !== false) {
+  if (strpos($text, '{entry_resources') !== false) {
+    $startPos         = strpos($text, '{entry_resources'); //pos of start of merge tag
+    $closeBracketPos  = strpos($text, '}', $startPos); //find the closing bracket of the merge tag
+
+    //pull full merge tag
+    $res_merge_tag    = substr ( $text , $startPos, $closeBracketPos - $startPos + 1);
+
+    //exclude resources
+    $excResources = ''; //default
+    $excStartPos  = strpos($res_merge_tag, 'not="'); //pos of start of excluded resource id's
+
+    //are there resources to exclude?
+    if ($excStartPos !== false) {
+      $excStartPos += 5;   //add 5 to move past the not="
+      //find the end of the not section
+      $excEndPos        = strpos($res_merge_tag, '"', $excStartPos);
+      $excResources     = substr($res_merge_tag , $excStartPos, $excEndPos - $excStartPos);
+    }
+
+    //include resources
+    $incResources = ''; //default
+    $incStartPos  = strpos($res_merge_tag, ':');   //pos of start of excluded resource id's
+
+    //are there specific resources to include?
+    if ($incStartPos !== false) {
+      $incStartPos += 1;   //add 1 to move past the :"
+      //find the end of the include section
+      $incEndPos        = strpos($res_merge_tag, ' ', $incStartPos);
+
+      //can be ended by a space or the closing bracket
+      if ($incEndPos === false) $incEndPos = strpos($res_merge_tag, '}', $incStartPos);
+
+      $incResources     = substr($res_merge_tag , $incStartPos, $incEndPos - $incStartPos);
+    }
+
     //set lead meta field res_status to sent
     gform_update_meta( $entry_id, 'res_status','sent' );
-    $resTable = '<table cellpadding="10"><tr><th>Resource</th><th>Quantity</th></tr>';
-    $resources = get_resources($lead);
+    $resTable = '<table cellpadding="10" width=100%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
+    $resources = get_resources($lead, $excResources, $incResources);
 
     foreach($resources as $entRes){
       $resTable .= '<tr><td>'.$entRes['resource'].'</td><td>'.$entRes['qty'].'</td></tr>';
     }
     $resTable .= '</table>';
-    $text = str_replace('{entry_resources}', $resTable, $text);
+    $text = str_replace($res_merge_tag, $resTable, $text);
   }
 
   //individual attributes {entry_attributes:2,4,6,9}
@@ -83,7 +118,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $attIDs = substr($text, $attStartPos+1,$closeBracketPos-$attStartPos-1);
 
     $attArr = explode(",",$attIDs);
-    $attTable  = '<table cellpadding="10"><tr><th>Attribute</th><th>Value</th></tr>';
+    $attTable  = '<table cellpadding="10"  width=100%><tr><th width="40%">Attribute</th><th>Value</th></tr>';
     foreach($attArr as $att){
       $AttText = get_attribute($lead,trim($att));
       if(!empty($AttText)){
@@ -156,24 +191,35 @@ function get_attribute($lead,$attID){
   return $return;
 }
 
-/* Return array of resource information for lead*/
-function get_resources($lead){
+/*
+ * Return array of resource information for lead
+ * $lead   = Entry object
+ * $excRes = comma separatd list of resource catgories to exclude
+ * $incRes = comma separatd list of resource catgories to include
+ */
+function get_resources($lead, $excRes = '', $incRes=''){
   global $wpdb;
   $return = array();
   $entry_id = (isset($lead['id'])?$lead['id']:'');
 
   if($entry_id!=''){
+    $excSQL = ($excRes!='' ? " and wp_rmt_resource_categories.ID not in($excRes) " : '');
+    $incSQL = ($incRes!='' ? " and wp_rmt_resource_categories.ID in($incRes) " : '');
+
     //gather resource data
     $sql = "SELECT er.qty, type, wp_rmt_resource_categories.category as item "
             . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
             . "where er.resource_id = wp_rmt_resources.ID "
             . "and resource_category_id = wp_rmt_resource_categories.ID  "
+            . $excSQL . $incSQL
             . "and er.entry_id = ".$entry_id." order by item ASC, type ASC";
+if($entry_id==58985)echo '$sql='.$sql.'<br/>';
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
       $return[]= array('resource'=>$result->item.' - '.$result->type, 'qty'=> $result->qty);
     }
   }
+
   return $return;
 }
 

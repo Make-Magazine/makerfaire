@@ -112,22 +112,9 @@ get_header();
             <?php echo $entryData['form_type'];?>: <span class="entryStandout"><?php echo $entryData['lead_id'];?></span>
           </div> <!-- close exhibitID -->
 
-          <div>
             <?php
             //Add link to edit entry
-            $disp_edit = (($entryData['status'] != 'Cancelled') && $entryData['maker_type']=='contact' ? true: false);
-
-            if($disp_edit){
-              $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-              $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-              echo  '<span class="editLink">'
-                  . '  <a href="'. $url .'">'
-                  . '  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>'.
-                      'Edit Entry</a>'
-                  . '</span>';
-            }
-            ?>
-          </div>
+            $disp_edit = (($entryData['status'] != 'Cancelled') && $entryData['maker_type']=='contact' ? true: false); ?>
 
           <div>
             <?php
@@ -140,6 +127,23 @@ get_header();
                   View/Edit Public Information
                 </a>
               </span>
+              <?php if($entryData['mat_disp_res_link'] =='yes') { ?>
+                <span class="editLink">
+                  <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
+                    <div class="fa fa-eye fa-lg toggle-popover" data-toggle="popover"></div>
+                    View/Edit Setup
+                  </button>
+                <div class="popover-content hidden">
+                  <?php echo $entryData['mat_res_modal_layout'];?>
+                  <div class="clear">
+                    <?php if($entryData['mat_edit_res_url'] != '') {
+                      echo '<a target="_blank" href="'.$entryData['mat_edit_res_url'].'">Edit</a>';
+                    }
+                    ?>
+                  </div>
+                </div>
+                </span>
+              <?php } ?>
               <?php
             } ?>
 
@@ -239,23 +243,6 @@ get_header();
                     <?php if($entryData['status']=='Accepted' && $disp_edit) { ?>
                     <a href="/maker/entry/<?php echo $entryData['lead_id'];?>/edit">View/Edit Public Information</a>
                     <?php } ?>
-                    <?php
-                    $class = '';
-                    $tooltip = '';
-                    //edit link
-                    if($disp_edit){
-                      $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-                      $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-                      echo '<a href="'. $url .'">Edit Entry</a>';
-                    }else{
-                      if($entryData['maker_type'] != 'contact') {
-                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
-                      }else{
-                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only active entries can be edited">Edit Entry</div>';
-                      }
-
-                    }
-                    ?>
                   </div>
                   <div>
                     <?php
