@@ -2,7 +2,7 @@
 
 function get_faire_by_shortid($faire_id='') {
   global $wpdb;
-  
+
   $faireData = array();
   if($faire_id!=''){
     //based on maker email retrieve maker information from the DB
@@ -19,7 +19,6 @@ function get_faire_by_shortid($faire_id='') {
       $faireData['end_dt']            = $results['end_dt'];
       $faireData['time_zone']         = $results['time_zone'];
       $faireData['show_sched']        = $results['show_sched'];
-      $faireData['faire_logo']        = $results['faire_logo'];
     }
   }
   return $faireData;
