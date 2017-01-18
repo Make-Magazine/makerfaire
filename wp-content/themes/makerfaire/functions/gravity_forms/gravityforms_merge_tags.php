@@ -213,7 +213,7 @@ function get_resources($lead, $excRes = '', $incRes=''){
             . "and resource_category_id = wp_rmt_resource_categories.ID  "
             . $excSQL . $incSQL
             . "and er.entry_id = ".$entry_id." order by item ASC, type ASC";
-if($entry_id==58985)echo '$sql='.$sql.'<br/>';
+
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
       $return[]= array('resource'=>$result->item.' - '.$result->type, 'qty'=> $result->qty);
