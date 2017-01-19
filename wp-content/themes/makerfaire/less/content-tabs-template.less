@@ -101,10 +101,10 @@
       margin: 0;
       border: none;
       @media screen and (min-width: 1200px) {
-        width: 22%;
+        width: 254px;
       }
       @media screen and (min-width: 991px) and (max-width: 1199px) {
-        width: 25%;
+        width: 238px;
       }
       li {
         background-color: #085a7e;
@@ -128,8 +128,19 @@
           }
         }
         //Calculating each tabs height based on how many have been added
-        &.active a {
+        &.active {
+          right: 0;
+          margin-left: -16vw;
           background-color: #3FAFED;
+          a {
+            float: right;
+            @media screen and (min-width: 1200px) {
+              width: 254px;
+            }
+            @media screen and (min-width: 991px) and (max-width: 1199px) {
+              width: 238px;
+            }
+          }
         }
         /* one item */
         &:first-child:nth-last-child(1) {
@@ -358,6 +369,9 @@
     //Video tab
     .mcp-big-video {
       margin-bottom: 8px;
+      @media screen and (min-width: 1200px) {
+        max-width: 780px;
+      }
       img {
         width: 100%;
       }
@@ -366,6 +380,9 @@
       margin-bottom: 30px;
       margin-right: -3px;
       margin-left: -3px;
+      @media screen and (min-width: 1200px) {
+        max-width: 756px;
+      }
       div {
         padding-right: 3px;
         padding-left: 3px;
@@ -408,6 +425,7 @@
       color: #3FAFED;
       font-weight: 300 !important;
       font-size: 20px !important;
+      line-height: 1.1em;
       display: block;
     }
 
@@ -426,10 +444,6 @@
       clear: none;
     }
 
-    .top_label div.ginput_container {
-      margin-top: 15px;
-    }
-
     //margin-top reset between heading and fields
     ul li.field_description_below div.ginput_container_checkbox,
     ul li.field_description_below div.ginput_container_radio {
@@ -441,6 +455,7 @@
       border: none;
       border-bottom: 1px solid #3FAFED;
       width: 100%;
+      font-size: 14px;
     }
 
     //Hide the required star thats in the title
@@ -467,7 +482,7 @@
       width: 100% !important;
       margin-right: 0;
       padding-right: 0;
-      margin-top: 13px;
+      margin-top: 8px;
     }
 
     .ginput_complex {
@@ -477,6 +492,8 @@
     ul li#field_118_96 {
       width: 50%;
       float: left;
+      clear: left;
+      margin-top: 15px;
     }
 
     #field_118_477,
@@ -500,27 +517,22 @@
       }
     }
 
-    #field_118_99 {
-      margin-top: 18px;
+    #field_118_99,
+    #field_118_471 {
+      margin-top: 15px;
     }
 
     #field_118_474,
-    #field_118_471,
     #field_118_89 {
-      margin-top: 30px;
+      margin-top: 25px;
       .gfield_label {
         margin-bottom: -5px !important;
       }
     }
 
     #input_118_101_2_container input {
-      margin-top: 15px;
-      margin-bottom: 15px;
-    }
-
-    #input_118_101_4_container,
-    #input_118_101_6_container {
-      margin-top: 7px;
+      margin-top: 8px;
+      margin-bottom: 8px;
     }
 
     //other choice
@@ -551,6 +563,7 @@
     textarea {
       width: 100%;
       border: 1px solid #3FAFED;
+      font-size: 14px;
     }
 
     #gform_submit_button_118 {
