@@ -17,7 +17,7 @@ get_header(); ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">PRESENTING SPONSORS</h3>
-        <div class="sponsors-box">
+        <div class="faire-sponsors-box">
 
         <?php
           while( have_rows('presenting_sponsors') ): the_row();
@@ -44,7 +44,7 @@ get_header(); ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">PLATINUM SPONSOR</h3>
-        <div class="sponsors-box">
+        <div class="faire-sponsors-box">
 
         <?php
           while( have_rows('platinum_sponsors') ): the_row();
@@ -71,7 +71,7 @@ get_header(); ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">GOLDSMITH SPONSORS</h3>
-        <div class="sponsors-box">
+        <div class="faire-sponsors-box">
 
         <?php
           while( have_rows('goldsmith_sponsors') ): the_row();
@@ -98,7 +98,7 @@ get_header(); ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">SILVERSMITH SPONSORS</h3>
-        <div class="sponsors-box">
+        <div class="faire-sponsors-box">
 
         <?php
           while( have_rows('silversmith_sponsors') ): the_row();
@@ -125,7 +125,7 @@ get_header(); ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">COPPERSMITH SPONSORS</h3>
-        <div class="sponsors-box">
+        <div class="faire-sponsors-box">
 
         <?php
           while( have_rows('coppersmith_sponsors') ): the_row();
@@ -152,7 +152,7 @@ get_header(); ?>
   <div class="row spnosors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">MEDIA SPONSORS</h3>
-        <div class="sponsors-box">
+        <div class="faire-sponsors-box">
     
         <?php
           while( have_rows('media_sponsors') ): the_row();

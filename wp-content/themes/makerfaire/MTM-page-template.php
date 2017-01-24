@@ -194,7 +194,7 @@ if(get_field('sponsors_page_url')) {
                 <div class="row spnosors-row">
                   <div class="col-xs-12">
                     <h3 class="sponsors-type text-center">GOLDSMITH</h3>
-                      <div class="sponsors-box">
+                      <div class="faire-sponsors-box">
                       <?php
                         while( have_rows('goldsmith_sponsors', $id) ): the_row();
                           $sub_field_1 = get_sub_field('image'); //Photo
@@ -222,7 +222,7 @@ if(get_field('sponsors_page_url')) {
                 <div class="row spnosors-row">
                   <div class="col-xs-12">
                     <h3 class="sponsors-type text-center">SILVERSMITH</h3>
-                      <div class="sponsors-box">
+                      <div class="faire-sponsors-box">
                       <?php
                         while( have_rows('silversmith_sponsors', $id) ): the_row();
                           $sub_field_1 = get_sub_field('image'); //Photo
@@ -250,7 +250,7 @@ if(get_field('sponsors_page_url')) {
                 <div class="row spnosors-row">
                   <div class="col-xs-12">
                     <h3 class="sponsors-type text-center">COPPERSMITH</h3>
-                      <div class="sponsors-box">
+                      <div class="faire-sponsors-box">
                       <?php
                         while( have_rows('coppersmith_sponsors', $id) ): the_row();
                           $sub_field_1 = get_sub_field('image'); //Photo
@@ -278,7 +278,7 @@ if(get_field('sponsors_page_url')) {
                 <div class="row spnosors-row">
                   <div class="col-xs-12">
                     <h3 class="sponsors-type text-center">MEDIA</h3>
-                      <div class="sponsors-box">
+                      <div class="faire-sponsors-box">
                       <?php
                         while( have_rows('media_sponsors', $id) ): the_row();
                           $sub_field_1 = get_sub_field('image'); //Photo
