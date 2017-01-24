@@ -1,0 +1,51 @@
+<html>
+<head>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/jquery.js?ver=1.10.2'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-content/plugins/jquery-collapse-o-matic/js/collapse.min.js?ver=1.5.2'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-content/plugins/wp-filebase/js/live-admin.js?ver=0.3.0.02'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.core.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.widget.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.tabs.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-content/themes/custom-community/_inc/js/reflection.js?ver=3.7.1'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-content/themes/custom-community/_inc/js/jquery-ui-tabs-rotate.js?ver=3.7.1'></script>
+<script type="text/javascript" src="http://www.bouliron.fr/development/wp-content/plugins/wpdatatables/assets/js/fileupload/jquery.iframe-transport.js" type="text/css"></script>
+<script type="text/javascript" src="http://www.bouliron.fr/development/wp-content/plugins/wpdatatables/assets/js/fileupload/jquery.fileupload.js" type="text/css"></script>
+
+</head>
+<body>
+<input type="file" name="files[]" id="fileupload" />
+<script type="text/javascript">
+	jQuery('#fileupload').fileupload({
+		url: '/index.php',
+		forceIframeTransport: true,
+			        dataType: 'json',
+			        done: function (e, data) {
+				            $.each(data.result.files, function (index, file) {
+				                $('<p/>').text(file.name).appendTo('#files_<?php echo $table->getId() ?>');
+				            });
+				        },
+				        progressall: function (e, data) {
+				            var progress = parseInt(data.loaded / data.total * 100, 10);
+				            $('#progress_<?php echo $table->getId() ?> .progress-bar').css(
+				                'width',
+				                progress + '%'
+				            );
+				        }
+	});
+</script>
+</body>
+<link rel='stylesheet' id='bootstrap-css'  href='http://www.bouliron.fr/development/wp-content/themes/custom-community/_inc/css/bootstrap-responsive.css?ver=3.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='custom-css'  href='http://www.bouliron.fr/development/wp-content/themes/custom-community/_inc/css/custom-responsive.css?ver=3.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='jquery-ui-style-css'  href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/themes/smoothness/jquery-ui.css?ver=3.7.1' type='text/css' media='all' />
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/admin-bar.min.js?ver=3.7.1'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.mouse.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.resizable.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.draggable.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.button.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.position.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.dialog.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.progressbar.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://www.bouliron.fr/development/wp-includes/js/jquery/ui/jquery.ui.datepicker.min.js?ver=1.10.3'></script>
+<script type='text/javascript' src='http://plentz.github.io/jquery-maskmoney/javascripts/jquery.maskMoney.js?ver=3.7.1'></script>
+</html>
