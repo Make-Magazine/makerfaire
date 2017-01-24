@@ -79,15 +79,14 @@ add_action('admin_bar_menu', 'toolbar_link_to_mypage', 999);
 
 function toolbar_link_to_mypage($wp_admin_bar) {
 
-  $user = wp_get_current_user();
-  $is_national = ( in_array('national', (array) $user->roles) );
+  $user              = wp_get_current_user();
+  $is_national       = ( in_array('national', (array) $user->roles) );
   $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
-  $locations = get_registered_nav_menus();
-  $menus = wp_get_nav_menus();
-  $menu_locations = get_nav_menu_locations();
+  $locations         = get_registered_nav_menus();
+  $menus             = wp_get_nav_menus();
+  $menu_locations    = get_nav_menu_locations();
 
   if ($is_national) {
-
     $location_id = 'mf-admin-national-register-menu';
     if (isset($menu_locations[$location_id])) {
       foreach ($menus as $menu) {
@@ -97,7 +96,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
           $menu_items = wp_get_nav_menu_items($menu);
 
           $args = array(
-              'id' => 'mf_admin_parent',
+              'id' => 'mf_admin_parent_national',
               'title' => 'National Admin',
               'meta' => array('class' => 'my-toolbar-page'),
           );
@@ -116,7 +115,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
                   'title' => $menu_item->title,
                   'href' => $menu_item->url,
                   'meta' => array('class' => 'my-toolbar-page'),
-                  'parent' => 'mf_admin_parent_' . $faire
+                  'parent' => 'mf_admin_parent_national'
               );
 
               $wp_admin_bar->add_node($args);
@@ -159,68 +158,44 @@ function toolbar_link_to_mypage($wp_admin_bar) {
     }
   }
   else {
-    // bay area
-    $location_id = 'mf-admin-bayarea-register-menu';
-    if (isset($menu_locations[$location_id])) {
-      foreach ($menus as $menu) {
-        // If the ID of this menu is the ID associated with the location we're searching for
-        if ($menu->term_id == $menu_locations[$location_id]) {
-          // This is the correct menu
-          $menu_items = wp_get_nav_menu_items($menu);
-
-          $args = array(
+    //create MF admin with information from the faire table
+    $args = array(
               'id' => 'mf_admin_parent',
               'title' => 'MF Admin',
               'meta' => array('class' => 'my-toolbar-page'),
           );
 
-          $wp_admin_bar->add_node($args);
-          buildFaireDrop($wp_admin_bar);
+    $wp_admin_bar->add_node($args);
+    buildFaireDrop($wp_admin_bar);
 
-          //build faire specific admin
-          foreach ((array) $menu_items as $key => $menu_item) {
-            if ($menu_item->menu_item_parent == 0) {
-              // each MF Admin menu has a parent item set that will tell us which faire to add these menu item's too
-              $faire = $menu_item->attr_title;
-            } else {
-              $args = array(
-                  'id' => $menu_item->object_id,
-                  'title' => $menu_item->title,
-                  'href' => $menu_item->url,
-                  'meta' => array('class' => 'my-toolbar-page'),
-                  'parent' => 'mf_admin_parent_' . $faire
-              );
+    //add custom menu items
+    $locations = array('mf-admin-bayarea-register-menu','mf-admin-newyork-register-menu','mf-admin-chicago-register-menu');
+    foreach($locations as $location_id) {
+      //is this a navigation menu?
+      if (isset($menu_locations[$location_id])) {
+        foreach ($menus as $menu) {
+          // If the ID of this menu is the ID associated with the location we're searching for
+          if ($menu->term_id == $menu_locations[$location_id]) {
+            // This is the correct menu
+            $menu_items = wp_get_nav_menu_items($menu);
 
-              $wp_admin_bar->add_node($args);
+            //build faire specific admin
+            foreach ((array) $menu_items as $key => $menu_item) {
+              if ($menu_item->menu_item_parent == 0) {
+                // each MF Admin menu has a parent item set that will tell us which faire to add these menu item's too
+                $faire = $menu_item->attr_title;
+              } else {
+                $args = array(
+                    'id' => $menu_item->object_id,
+                    'title' => $menu_item->title,
+                    'href' => $menu_item->url,
+                    'meta' => array('class' => 'my-toolbar-page'),
+                    'parent' => 'mf_admin_parent_' . $faire
+                );
+
+                $wp_admin_bar->add_node($args);
+              }
             }
-          }
-        }
-      }
-    }
-    //new york
-    $location_id = 'mf-admin-newyork-register-menu';
-    if (isset($menu_locations[$location_id])) {
-      foreach ($menus as $menu) {
-        // If the ID of this menu is the ID associated with the location we're searching for
-        if ($menu->term_id == $menu_locations[$location_id]) {
-          // This is the correct menu
-          $menu_items = wp_get_nav_menu_items($menu);
-          $wp_admin_bar->add_node($args);
-
-          foreach ((array) $menu_items as $key => $menu_item) {
-            if ($menu_item->menu_item_parent == 0) {
-              //build faire specific admin
-              $faire = $menu_item->attr_title;
-            } else {
-              $args = array(
-                  'id' => $menu_item->object_id,
-                  'title' => $menu_item->title,
-                  'href' => $menu_item->url,
-                  'meta' => array('class' => 'my-toolbar-page'),
-                  'parent' => 'mf_admin_parent_' . $faire
-              );
-            }
-            $wp_admin_bar->add_node($args);
           }
         }
       }
@@ -253,7 +228,8 @@ function toolbar_link_to_mypage($wp_admin_bar) {
   }
 }
 
-function buildFaireDrop($wp_admin_bar, $faire_id = null) {
+function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
+  $args = array();
   //build faire drop downs
   global $wpdb;
 
@@ -266,65 +242,85 @@ function buildFaireDrop($wp_admin_bar, $faire_id = null) {
                 where FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0 and
                         wp_rg_lead.status = 'active'
                 group by wp_mf_faire.faire
-                ORDER BY `wp_mf_faire`.`start_dt` DESC";
+                ORDER BY `wp_mf_faire`.`faire_location` ASC, start_dt desc";
 
-
+  $menu_array = array();
   foreach ($wpdb->get_results($sql) as $row) {
-    //parent menu
-    $args = array(
-        'id' => 'mf_admin_parent_' . $row->faire,
-        'title' => $row->faire_name . ' (' . $row->count . ')',
-        'meta' => array('class' => 'my-toolbar-page'),
-        //'href' => admin_url('admin.php') . '?page=gf_entries&faire=' . $row->faire,
-        'parent' => 'mf_admin_parent'
+    //menu array
+    $menu_array[$row->faire_location][$row->faire] = array(
+        'count'=>$row->count,
+        'faire_name' => $row->faire_name,
+        'form_ids'   => $row->form_ids
     );
-    $wp_admin_bar->add_node($args);
+  }
 
-    //build submenu, with form names
-    $formSQL = "
+  //buid the menu
+  foreach($menu_array as $key=>$menu) {
+    $menuID = strtolower(str_replace(' ', '_', $key));
+
+    //level 1 - Faire name
+    array_push($args,array(
+        'id' => 'mf_admin_parent_' . $menuID,
+        'title' => $key,
+        'meta' => array('class' => 'my-toolbar-page'),
+        'parent' => 'mf_admin_parent'
+    ));
+
+    //level 2 - Faire year
+    foreach($menu as $faire => $faireInfo) {
+      array_push($args,array(
+          'id' => 'mf_admin_parent_' . $faire,
+          'title' => $faireInfo['faire_name'] . ' (' . $faireInfo['count'] . ')',
+          'meta' => array('class' => 'my-toolbar-page'),
+          'parent' => 'mf_admin_parent_' . $menuID
+      ));
+
+      //Level 3 - Faire Form names
+      $formSQL = "
             SELECT form_id,form.title,count(*) as count
                     FROM `wp_rg_lead` join wp_rg_form form
-                    WHERE form.id = form_id and `form_id` IN (" . $row->form_ids . ") and status = 'active'
+                    WHERE form.id = form_id and `form_id` IN (" . $faireInfo['form_ids'] . ") and status = 'active'
                     group by form_id
-                    ORDER BY FIELD(form_id, " . $row->form_ids . ")";
+                    ORDER BY FIELD(form_id, " . $faireInfo['form_ids'] . ")";
+      foreach ($wpdb->get_results($formSQL) as $formRow) {
+        $adminURL = admin_url('admin.php') . "?page=gf_entries&view=entries&id=" . $formRow->form_id;
 
-    foreach ($wpdb->get_results($formSQL) as $formRow) {
-      $adminURL = admin_url('admin.php') . "?page=gf_entries&view=entries&id=" . $formRow->form_id;
-
-      $args = array(
-          'id' => 'mf_admin_child_' . $formRow->form_id,
-          'title' => $formRow->title . ' (' . $formRow->count . ')',
-          'href' => $adminURL,
-          'meta' => array('class' => 'my-toolbar-page'),
-          'parent' => 'mf_admin_parent_' . $row->faire);
-      $wp_admin_bar->add_node($args);
-
-      //build submenu of entry status
-      $statusSql = "SELECT wp_rg_lead_detail.id,value,count(*)as count FROM `wp_rg_lead_detail` join wp_rg_lead on wp_rg_lead.id = lead_id WHERE wp_rg_lead.form_id = " . $formRow->form_id . "    AND wp_rg_lead_detail.field_number = 303 and status = 'active' group by value";
-
-      foreach ($wpdb->get_results($statusSql) as $statusRow) {
-        $args = array(
-            'id' => 'mf_admin_subchild_' . $statusRow->id,
-            'title' => $statusRow->value . ' (' . $statusRow->count . ')',
-            'href' => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->value),
+        array_push($args,array(
+            'id' => 'mf_admin_child_' . $formRow->form_id,
+            'title' => $formRow->title . ' (' . $formRow->count . ')',
+            'href' => $adminURL,
             'meta' => array('class' => 'my-toolbar-page'),
-            'parent' => 'mf_admin_child_' . $formRow->form_id);
-        $wp_admin_bar->add_node($args);
+            'parent' => 'mf_admin_parent_' . $faire));
+
+        //Level 4 - entry status
+        $statusSql = "SELECT wp_rg_lead_detail.id,value,count(*)as count FROM `wp_rg_lead_detail` join wp_rg_lead on wp_rg_lead.id = lead_id "
+                . " WHERE wp_rg_lead.form_id = " . $formRow->form_id . "    AND wp_rg_lead_detail.field_number = 303 and status = 'active' group by value";
+
+        foreach ($wpdb->get_results($statusSql) as $statusRow) {
+          array_push($args,array(
+              'id'      => 'mf_admin_subchild_' . $statusRow->id,
+              'title'   => $statusRow->value . ' (' . $statusRow->count . ')',
+              'href'    => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->value),
+              'meta'    => array('class' => 'my-toolbar-page'),
+              'parent' => 'mf_admin_child_' . $formRow->form_id));
+        }
+      }
+
+      //add scheduling link
+      if (!(isset($faire_id))) {
+        $args[] = array(
+            'id' => 'mf_admin_scheduling_' . $faire,
+            'title' => 'Scheduling',
+            'href' => 'http://makerfaire.com/wp-content/applications/scheduler/makerfaire-scheduling.php?faire_id=' . $faire,
+            'meta' => array('class' => 'my-toolbar-page'),
+            'parent' => 'mf_admin_parent_' . $faire);
       }
     }
   }
-  //add scheduling link
+
+  //add RMT link
   if (!(isset($faire_id))) {
-    $args = array(
-        'id' => 'mf_admin_subchild_' . $statusRow->id,
-        'title' => 'Scheduling',
-        'href' => 'http://makerfaire.com/wp-content/applications/scheduler/makerfaire-scheduling.php?faire_id=' . $row->faire,
-        'meta' => array('class' => 'my-toolbar-page'),
-        'parent' => 'mf_admin_parent_' . $row->faire);
-    $wp_admin_bar->add_node($args);
-
-
-    $args = array(
+    $args[] = array(
         'id' => 'mf_admin_parent_rmt',
         'title' => 'RMT',
         'href' => 'http://makerfaire.com/resource-mgmt/',
@@ -332,11 +328,12 @@ function buildFaireDrop($wp_admin_bar, $faire_id = null) {
         'target' => '_blank',
         'parent' => 'mf_admin_parent'
     );
-
-    $wp_admin_bar->add_node($args);
   }
 
-  return $wp_admin_bar;
+  //add the items to the menu now
+  foreach($args as $arg){
+    $wp_admin_bar->add_node($arg);
+  }
 }
 
 // add a custom menu item to the Form Settings page menu for Tasks
