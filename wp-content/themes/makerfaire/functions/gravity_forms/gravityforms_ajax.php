@@ -318,11 +318,8 @@ function set_entry_status($lead,$form){
           }
 				}
 
-        //format Entry information
-        $entryData = GFRMTHELPER::gravityforms_format_record($lead,$form);
-
         //update maker table information
-        GFRMTHELPER::updateMakerTable($entryData);
+        GFRMTHELPER::updateMakerTables($entry_id);
 			}
 		}
 	}
