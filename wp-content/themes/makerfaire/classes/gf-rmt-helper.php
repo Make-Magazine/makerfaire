@@ -512,7 +512,7 @@ class GFRMTHELPER {
       //mapping for sponsor order form
       /* product fields - need to pull the .3 of the field to get the amount */
       $productArray = array(
-        array('378.3', 'TBL_4x30',''),          array('379.3', 'TBL_6x30',''),
+        array('378.3', 'TBL_4x30',''),          array('379.3', 'TBL_8x30',''),
         array('380.3', 'TBL_8x30',''),          array('381.3', 'TBL_6x18',''),
         array('382.3', 'TBL_8x18',''),          array('383.3', 'TBL_30RND_HT',''),
         array('385.3', 'TBL_24RND','384'),      array('387.3', 'TBL_30RND','386'),
