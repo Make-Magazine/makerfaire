@@ -413,6 +413,8 @@ add_action('init', 'makerfaire_rewrite_rules');
 function makerfaire_rewrite_rules() {
     add_rewrite_rule( 'onsitecheckin/?([^/]*)', 'index.php?onsitecheckin=true&token=$matches[1]', 'top' );
     add_rewrite_rule( 'processonsitecheckin/?([^/]*)', 'index.php?processonsitecheckin=true&token=$matches[1]', 'top' );
+    add_rewrite_rule( 'onsitepinning/?([^/]*)', 'index.php?onsitepinning=true&token=$matches[1]', 'top' );
+    add_rewrite_rule( 'processonsitepinning/?([^/]*)', 'index.php?processpinning=true&token=$matches[1]', 'top' );
     add_rewrite_rule( 'maker-sign/([^/]*)/([^/]*)$', 'index.php?makersign=true&eid=$matches[1]&faire=$matches[2]', 'top' );
     add_rewrite_rule( 'maker/([^/]*)$', 'index.php?makerportfolio=true&makerid=$matches[1]', 'top' );
 
@@ -422,6 +424,8 @@ add_filter( 'query_vars', 'makerfaire_register_query_var' );
 function makerfaire_register_query_var( $vars ) {
     $vars[] = 'processonsitecheckin';
     $vars[] = 'onsitecheckin';
+    $vars[] = 'processonsitepinning';
+    $vars[] = 'onsitepinning';
     $vars[] = 'makersign';
     $vars[] = 'makerportfolio';
     $vars[] = 'faire';
@@ -451,6 +455,30 @@ function processonsitecheckin_include($template)
 
     if ($page_value && $page_value == "true") {
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/php/process-onsite-checkin.php'; //Load your template or file
+    }
+
+    return $template; //Load normal template when $page_value != "true" as a fallback
+}
+add_filter('template_include', 'onsitepinning_include', 1, 1);
+function onsitepinning_include($template)
+{
+    global $wp_query; //Load $wp_query object
+    $page_value = (isset($wp_query->query_vars['onsitepinning'])?$wp_query->query_vars['onsitepinning']:'');
+
+    if ($page_value && $page_value == "true") {
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-onsite-pinning.php'; //Load your template or file
+    }
+
+    return $template; //Load normal template when $page_value != "true" as a fallback
+}
+add_filter('template_include', 'processonsitepinning_include', 1, 1);
+function processonsitepinning_include($template)
+{
+    global $wp_query; //Load $wp_query object
+    $page_value = (isset($wp_query->query_vars['processonsitepinning'])?$wp_query->query_vars['processonsitepinning']:'');
+
+    if ($page_value && $page_value == "true") {
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/php/process-onsite-pinning.php'; //Load your template or file
     }
 
     return $template; //Load normal template when $page_value != "true" as a fallback
