@@ -45,7 +45,7 @@ class GFRMTHELPER {
 
     //pull all RMT rules
     $sql = "SELECT rules.id as rule_id, rules.form_type, rules.rmt_type, rules.rmt_field, rules.value, rules.comment, "
-                . " logic.field_number, logic.operator, logic.value "
+                . " logic.field_number, logic.operator, logic.value as logic_value "
          . "FROM wp_rmt_rules rules, `wp_rmt_rules_logic` logic "
          . "WHERE rules.id=logic.rule_id "
          . "ORDER BY `rule_id` ASC";
@@ -53,15 +53,15 @@ class GFRMTHELPER {
     $rules = array();
     foreach($wpdb->get_results($sql) as $row){
       //build rule array
-      $rules[$row->rule_id] = array('form_type' => $row->form_type,
-                                    'rmt_type'  => $row->rmt_type,
-                                    'rmt_field' => $row->rmt_field,
-                                    'value'     => $row->value,
-                                    'comment'   => $row->comment);
+      $rules[$row->rule_id]['form_type'] = $row->form_type;
+      $rules[$row->rule_id]['rmt_type']  = $row->rmt_type;
+      $rules[$row->rule_id]['rmt_field'] = $row->rmt_field;
+      $rules[$row->rule_id]['value']     = $row->value;
+      $rules[$row->rule_id]['comment']   = $row->comment;
       $rules[$row->rule_id]['logic'][] = array(
           'field_number' => $row->field_number,
           'operator'     => $row->operator,
-          'value'        => $row->value);
+          'value'        => $row->logic_value);
     }
 
     foreach($rules as $rule){
@@ -70,30 +70,43 @@ class GFRMTHELPER {
         $field_number = $logic['field_number'];
         if($field_number=='faire_location'){
           $entryfield = $faire_location;
+        }elseif($field_number=='form_type'){
+          $entryfield = $form_type;
         }elseif(isset($entry[$field_number])){
           $entryfield = $entry[$field_number];
         }
+
         //check logic here
         if($logic['operator'] == 'is') {
           if($entryfield == $logic['value']) {
             $pass = true;
+          }else{
+            $pass = false;
+            break;
           }
         } elseif($logic['operator'] == 'not') {
           if($entryfield != $logic['value']) {
             $pass = true;
+          }else{
+            $pass = false;
+            break;
           }
         } else {
-          //
+          //other operator logic goes here
         }
       }
 
       //logic met - set RMT field
       if($pass){
-        if($rules['rmt_type']=='resource') {
+        //look if there is a a field in the value or comment field (these are surrounded by {} )
+        $value   = findFieldData($rule['value'], $entry);
+        $comment = findFieldData($rule['comment'], $entry);
+
+        if($rule['rmt_type']=='resource') {
           //set $value and $comment {}
-          $resource[] = array($rules['rmt_field'],$value,$comment);
-        } elseif($rules['rmt_type']=='attribute') {
-          $attribute[] = array($rules['rmt_field'],$value,$comment);
+          $resource[] = array($rule['rmt_field'],$value,$comment);
+        } elseif($rule['rmt_type']=='attribute') {
+          $attribute[] = array($rule['rmt_field'],$value,$comment);
         }
       }
     }
@@ -308,14 +321,14 @@ class GFRMTHELPER {
     }elseif(isset($entry['434']) && $entry['434']=='Yes') { //fee indicator
       $status   = 'review';
       $assignTo = 'fee_team';
-    }elseif( $entry['fire'] == 'Yes'){  //field 83
+    }elseif( $entry['83'] == 'Yes'){  //field 83
       $status   = 'review';
       $assignTo = 'fire';
-    }elseif($entry['power'] == 'Yes' &&
-            $entry['amps']=='Other. Power request specified in the Special Power Requirements box'){
+    }elseif($entry['73'] == 'Yes' &&
+            $entry['75']=='Other. Power request specified in the Special Power Requirements box'){
       $status   = 'review';
       $assignTo = 'power';
-    }elseif($entry['special_request']!=''){
+    }elseif($entry['64']!=''){
       $status   = 'review';
       $assignTo = 'special_request'; //Kerry
     }
@@ -654,4 +667,23 @@ function RMTchangeArray($user, $entryID, $formID, $field_id, $field_before, $fie
       'fieldLabel'        => $fieldLabel,
       'status_at_update'  => '');
     return $return;
+  }
+
+  function findFieldData($var, $entry) {
+    //check if we need to set an entry field as the value
+    $pos = strpos($var, '{');
+    while ($pos !== false) {
+      $endPos = strpos($var, '}');
+      $field_id  = substr($var, $pos+1,$endPos-$pos-1);
+      $req_field = substr($var, $pos,$endPos-$pos+1);
+      if(isset($entry[$field_id])) {
+        //if the field is an array, create a comma separated list
+        $fieldData = (is_array($entry[$field_id]) ? implode(',', $entry[$field_id]):$entry[$field_id]);
+      }else{
+        $fieldData = '';
+      }
+      $var = str_replace($req_field, $fieldData, $var);
+      $pos = strpos($var, '{');
+    }
+    return $var;
   }
