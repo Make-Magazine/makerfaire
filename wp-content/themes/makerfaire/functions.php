@@ -129,6 +129,8 @@ function load_scripts() {
   wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'),$my_version);
   // Other libraries:
   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
+  wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
+  wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js');
   
   wp_enqueue_script('thickbox', null);
 
