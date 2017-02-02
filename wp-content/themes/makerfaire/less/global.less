@@ -6,12 +6,9 @@
   font-style: normal;
 }
 
-body {
-  font-size: 16px;
-}
-
 p {
   font-weight: 300;
+  line-height: 1.4em;
 }
 
 h1,
@@ -20,7 +17,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 400;
+  small {
+    font-weight: 300;
+  }
 }
 
 h1 {
@@ -65,7 +64,21 @@ a:focus {
 }
 
 .lead {
-  font-size: 18px;
+  font-size: 20px;
+  ul {
+    li {
+      line-height: 120%;
+    }
+  }
+}
+
+ul,
+ol {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.5em;
+  color: #333;
+  list-style-type: square;
 }
 
 // Special layout
@@ -187,7 +200,7 @@ a:focus {
 
 // Primary Call to Action button
 .btn-cyan {
-  padding: 10px 8px;
+  padding: 8px;
   font-size: 15px;
   line-height: 1em;
   border: none;
@@ -241,10 +254,11 @@ a:focus {
 
 hr.double-line-hr {
   height: 6px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-top: 2px dotted #f29f31;
-  border-bottom: 3px solid #3FAFED;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-top: 2px dotted #ffcc66;
+  border-bottom: 3px solid #67bde1;
+  padding: 1px 0 1px;
 }
 
 .location-holder-top {
@@ -272,6 +286,68 @@ hr.double-line-hr {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+// Form Input Radio and Check Boxes
+input[type=radio].fa-radio {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  ~ label:before {
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f1db";
+    letter-spacing: 10px;
+    font-size: 1.2em;
+    //color: #0090C7;
+    width: 1.4em;
+  }
+  &:checked ~ label:before  {
+    content: "\f00c";
+    font-size: 1.2em;
+    color: #0090C7;
+    letter-spacing: 5px;
+  }
+  &:focus ~ label:before,
+  &:focus ~ label {
+    //color: green;
+  }
+}
+input[type=checkbox].fa-checkbox {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  ~ label:before {
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f096";
+    letter-spacing: 10px;
+    font-size: 1.2em;
+    //color: #0090C7;
+    width: 1.4em;
+    vertical-align: bottom;
+  }
+  &:checked ~ label:before  {
+    content: "\f046";
+    font-size: 1.2em;
+    color: #0090C7;
+    letter-spacing: 5px;
+    vertical-align: bottom;
+  }
+  &:focus ~ label:before,
+  &:focus ~ label {
+    //color: green;
+  }
 }
 
 // Youtube responsiveness for Jetpack shortcode

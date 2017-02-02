@@ -93,6 +93,7 @@ foreach (glob(TEMPLATEPATH . '/functions/*/*.php') as $file) {
 // add post-thumbnails support to theme
 add_theme_support('post-thumbnails');
 add_image_size('schedule-thumb', 140, 140, true);
+remove_filter ('the_content', 'wpautop');
 
 // Define our current Version number using the stylesheet version
 function my_wp_default_styles($styles) {
