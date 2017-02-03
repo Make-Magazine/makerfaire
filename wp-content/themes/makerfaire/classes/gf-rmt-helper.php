@@ -74,6 +74,8 @@ class GFRMTHELPER {
           $entryfield = $form_type;
         }elseif(isset($entry[$field_number])){
           $entryfield = $entry[$field_number];
+        }else{
+          $entryfield = '';
         }
 
         //check logic here
@@ -86,6 +88,14 @@ class GFRMTHELPER {
           }
         } elseif($logic['operator'] == 'not') {
           if($entryfield != $logic['value']) {
+            $pass = true;
+          }else{
+            $pass = false;
+            break;
+          }
+        } elseif($logic['operator'] == 'contains') {
+          $pos = strpos($entryfield, $logic['value']);
+          if ($pos !== false){
             $pass = true;
           }else{
             $pass = false;
@@ -315,20 +325,20 @@ class GFRMTHELPER {
      *    3) If CM=no and Fee indicator=No
      *         Resource status= ready (unless any of the other logic turns it into review)
      */
-    if(isset($entry['376']) && $entry['376']=='Yes') { //cm indicator
+    if(isset($entry['376']) && $entry['376'] == 'Yes') { //cm indicator
       $status   = 'review';
       $assignTo = 'cm_team';
-    }elseif(isset($entry['434']) && $entry['434']=='Yes') { //fee indicator
+    }elseif(isset($entry['434']) && $entry['434'] ==' Yes') { //fee indicator
       $status   = 'review';
       $assignTo = 'fee_team';
-    }elseif( $entry['83'] == 'Yes'){  //field 83
+    }elseif( isset($entry['83']) && $entry['83'] == 'Yes'){  //field 83
       $status   = 'review';
       $assignTo = 'fire';
-    }elseif($entry['73'] == 'Yes' &&
-            $entry['75']=='Other. Power request specified in the Special Power Requirements box'){
+    }elseif(isset($entry['73']) && $entry['73'] == 'Yes' &&
+            isset($entry['75']) && $entry['75'] == 'Other. Power request specified in the Special Power Requirements box'){
       $status   = 'review';
       $assignTo = 'power';
-    }elseif($entry['64']!=''){
+    }elseif(isset($entry['64']) && $entry['64'] != ''){
       $status   = 'review';
       $assignTo = 'special_request'; //Kerry
     }
