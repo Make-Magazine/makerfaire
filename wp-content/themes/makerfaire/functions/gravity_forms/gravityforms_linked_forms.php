@@ -256,13 +256,10 @@ function GSP_after_submission($entry, $form ){
                 }
                 break;
             }
-
-            $sql = "insert into wp_rg_lead_detail (`lead_id`, `form_id`, `field_number`, `value`) VALUES ($origEntryID,$origform_id,$orig_field_id,'$entry[$sub_field_id]') "
-              . "on duplicate key update value = '$entry[$sub_field_id]'";
-            global $wpdb;
-            $wpdb->get_results($sql);
+            $updField = (isset($entry[$sub_field_id])?$entry[$sub_field_id]:'');
+            //use mf_update_entry_field to update the db to avoid duplicates
+            mf_update_entry_field( $origEntryID, $orig_field_id, $updField );
           }
-          echo '<br/>';
         }
       }
     }
