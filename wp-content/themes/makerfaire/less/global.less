@@ -6,8 +6,9 @@
   font-style: normal;
 }
 
-body {
-  font-size: 16px;
+p {
+  font-weight: 300;
+  line-height: 1.4em;
 }
 
 h1,
@@ -16,15 +17,24 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 400;
+  small {
+    font-weight: 300;
+  }
 }
 
 h1 {
   margin-bottom: 15px;
   font-size: 42px;
 }
-
+h2 {
+  font-size: 32px;
+}
+h3 {
+  font-size: 25px;
+  font-weight: 300;
+}
 h4 {
+  font-size: 20px;
   margin-top: 12px;
 }
 
@@ -54,7 +64,21 @@ a:focus {
 }
 
 .lead {
-  font-size: 18px;
+  font-size: 20px;
+  ul {
+    li {
+      line-height: 120%;
+    }
+  }
+}
+
+ul,
+ol {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.5em;
+  color: #333;
+  list-style-type: square;
 }
 
 // Special layout
@@ -176,7 +200,7 @@ a:focus {
 
 // Primary Call to Action button
 .btn-cyan {
-  padding: 10px 8px;
+  padding: 8px;
   font-size: 15px;
   line-height: 1em;
   border: none;
@@ -186,11 +210,67 @@ a:focus {
   background-color: #3FAFED;
   color: #ffffff;
   transition: background-color 0.2s ease;
+  &:hover, &:active, &:focus {
+    background-color: #1490d4;
+    transition: background-color 0.2s ease;
+  }
 }
 
-.btn-cyan:hover {
-  background-color: #1490d4;
-  transition: background-color 0.2s ease;
+.btn-contrast-border {
+  border: solid 2px #12AFE9;
+  margin: 3px;
+  color: #333;
+  background: #fff;
+  font-size: 14px;
+  line-height: 14px;
+  padding: 3px 12px;
+  &:hover, &:active, &:focus {
+    color: white;
+    background: #12AFE9;
+  }
+}
+
+.dwnld-btn {
+  border: solid 1px #12AFE9;
+  color: #12AFE9;
+  margin: 3px;
+  text-transform: uppercase;
+  background: #fff;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 3px 40px;
+  position: relative;
+  &:hover, &:active, &:focus {
+    color: #005980;
+    border-color: #005980;
+  }
+  &:after {
+    font-family: FontAwesome;
+    content: "\f019";
+    position: absolute;
+    right: 8px;
+  }
+}
+
+hr.double-line-hr {
+  height: 6px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-top: 2px dotted #ffcc66;
+  border-bottom: 3px solid #67bde1;
+  padding: 1px 0 1px;
+}
+
+.location-holder-top {
+  background: url(../images/bg-border.png);
+  background-repeat: repeat-x;
+  background-position: top;
+}
+
+.location-holder-bottom {
+  background: url(../images/bg-border.png);
+  background-repeat: repeat-x;
+  background-position: bottom;
 }
 
 // Form input field boxes
@@ -206,6 +286,68 @@ a:focus {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+// Form Input Radio and Check Boxes
+input[type=radio].fa-radio {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  ~ label:before {
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f1db";
+    letter-spacing: 10px;
+    font-size: 1.2em;
+    //color: #0090C7;
+    width: 1.4em;
+  }
+  &:checked ~ label:before  {
+    content: "\f00c";
+    font-size: 1.2em;
+    color: #0090C7;
+    letter-spacing: 5px;
+  }
+  &:focus ~ label:before,
+  &:focus ~ label {
+    //color: green;
+  }
+}
+input[type=checkbox].fa-checkbox {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  ~ label:before {
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f096";
+    letter-spacing: 10px;
+    font-size: 1.2em;
+    //color: #0090C7;
+    width: 1.4em;
+    vertical-align: bottom;
+  }
+  &:checked ~ label:before  {
+    content: "\f046";
+    font-size: 1.2em;
+    color: #0090C7;
+    letter-spacing: 5px;
+    vertical-align: bottom;
+  }
+  &:focus ~ label:before,
+  &:focus ~ label {
+    //color: green;
+  }
 }
 
 // Youtube responsiveness for Jetpack shortcode
@@ -262,5 +404,95 @@ a:focus {
         display: none;
       }
     }
+  }
+}
+
+// SOCIAL MEDIA ROUND ICONS
+.social-network-container {
+  margin-top: 0;
+  ul.social-network {
+      float: left;
+      list-style: none;
+      display: inline;
+      margin-left:0 !important;
+      margin-bottom: 0;
+      padding: 0;
+
+      li {
+          display: inline;
+          margin: 0 5px;
+      }
+      li:first-child {
+          margin-left: 0;
+      }
+      a.icoRss:hover {
+          background-color: #F56505;
+      }
+      a.icoFacebook:hover {
+          background-color:#3B5998;
+      }
+      a.icoTwitter:hover {
+          background-color:#33ccff;
+      }
+      a.icoInstagram:hover {
+          background-color:#3f729b;
+      }
+      a.icoGoogle-plus:hover {
+        background-color:#DC4E41;
+      }
+      a.icoPinterest:hover {
+          background-color:#cc2127;
+      }
+      a.icoLinkedin:hover {
+          background-color:#007bb7;
+      }
+      a.icoYoutube:hover {
+        background-color: #bb0000;
+      }
+      a.icoInstagram:hover i, 
+      a.icoFacebook:hover i, 
+      a.icoTwitter:hover i,
+      a.icoPinterest:hover i, 
+      a.icoVimeo:hover i, 
+      a.icoLinkedin:hover i {
+          color:#fff;
+      }
+      a.socialIcon:hover, .socialHoverClass {
+          color:#44BCDD;
+      }
+
+      &.social-circle i {
+          color: #fff;
+          margin:0;
+          line-height:30px;
+          text-align: center;
+      }
+
+      &.social-circle li a {
+          display:inline-block;
+          position:relative;
+          margin:0 auto 0 auto;
+          -moz-border-radius:50%;
+          -webkit-border-radius:50%;
+          border-radius:50%;
+          text-align:center;
+          width: 30px;
+          height: 30px;
+          font-size:20px;
+          background-color: #D3D3D3;
+          -webkit-transition: all 0.2s;
+          -moz-transition: all 0.2s;
+          -o-transition: all 0.2s;
+          -ms-transition: all 0.2s;
+          transition: all 0.2s;
+      }
+
+      &.social-circle li a:hover {
+          -webkit-transition: all 0.2s;
+          -moz-transition: all 0.2s;
+          -o-transition: all 0.2s;
+          -ms-transition: all 0.2s;
+          transition: all 0.2s;
+      }
   }
 }

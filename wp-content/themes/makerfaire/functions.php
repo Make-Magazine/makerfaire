@@ -93,6 +93,7 @@ foreach (glob(TEMPLATEPATH . '/functions/*/*.php') as $file) {
 // add post-thumbnails support to theme
 add_theme_support('post-thumbnails');
 add_image_size('schedule-thumb', 140, 140, true);
+remove_filter ('the_content', 'wpautop');
 
 // Define our current Version number using the stylesheet version
 function my_wp_default_styles($styles) {
@@ -117,7 +118,7 @@ function load_scripts() {
   wp_enqueue_style('font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', false);
   wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.css');
   wp_enqueue_style('ytv', get_stylesheet_directory_uri() . '/css/ytv.css');
-  wp_enqueue_style('bootgrid', get_stylesheet_directory_uri() . '/plugins/grid/jquery.bootgrid.min.css');
+
   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
   wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css');
   wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true);
@@ -129,7 +130,9 @@ function load_scripts() {
   wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'),$my_version);
   // Other libraries:
   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
-  wp_enqueue_script('bootgrid', get_stylesheet_directory_uri() . '/plugins/grid/jquery.bootgrid.min.js');
+  wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
+  wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js');
+  
   wp_enqueue_script('thickbox', null);
 
   // Scripts

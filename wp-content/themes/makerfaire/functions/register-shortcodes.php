@@ -350,7 +350,7 @@ function createSponsSlide($atts) {
                                   <div class="row spnosors-row">
                                     <div class="col-xs-12">
                                       <h3 class="sponsors-type text-center">'.$sponsor['name'].'</h3>
-                                      <div class="sponsors-box">';
+                                      <div class="faire-sponsors-box">';
                                         while( have_rows($sponsor['type'], $postid) ) {
                                           the_row();
                                           $sub_field_1 = get_sub_field('image'); //Photo
@@ -366,7 +366,7 @@ function createSponsSlide($atts) {
                                           }
                                           $return.=  '</div> <!-- end .sponsors-box-md-->';
                                         }
-                                    $return.= '</div> <!-- end sponsors-box-->
+                                    $return.= '</div> <!-- end faire-sponsors-box-->
                                     </div> <!-- end col-xs-12 -->
                                   </div> <!-- end spnosors-row -->
                                 </div> <!-- end item-->';

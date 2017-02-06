@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Template Name: Query
  *
  * v2 of the Maker Faire API

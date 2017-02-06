@@ -297,11 +297,9 @@ function rmt_update($form=9){
   foreach($results as $row){
    $form  = GFAPI::get_form( $row->form_id);
    $entry = GFAPI::get_entry(esc_attr($row->id));
-   //format Entry information
-   $entryData = GFRMTHELPER::gravityforms_format_record($entry, $form);
 
    //update maker table information
-   GFRMTHELPER::updateMakerTable($entryData);
+   GFRMTHELPER::updateMakerTables($entry['id']);
  }
   error_log('end updating maker tables');
 }

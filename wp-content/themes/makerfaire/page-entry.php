@@ -25,19 +25,20 @@ if(isset($entry->errors)){
   $formType = $form['form_type'];
   $faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
   if($form_id!=''){
-    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched, faire_logo,start_dt, end_dt,url_path "
+    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide "
             . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
 
     $results =  $wpdb->get_row( $formSQL );
     if($wpdb->num_rows > 0){
-      $faire        = $slug = $results->faire_name;
-      $faireShort   = $results->faire;
-      $faireID      = $results->id;
-      $show_sched   = $results->show_sched;
-      $faire_logo   = $results->faire_logo;
-      $faire_start  = $results->start_dt;
-      $faire_end    = $results->end_dt;
-      $url_sub_path = $results->url_path;
+      $faire          = $slug = $results->faire_name;
+      $faireShort     = $results->faire;
+      $faireID        = $results->id;
+      $show_sched     = $results->show_sched;
+      $faire_start    = $results->start_dt;
+      $faire_end      = $results->end_dt;
+      $url_sub_path   = $results->url_path;
+      $faire_map      = $results->faire_map;
+      $program_guide  = $results->program_guide;
     }
   }
 
@@ -306,10 +307,14 @@ if($makerEdit) {
  <?php get_footer();
 
 function display_entry_schedule($entry_id) {
-  global $wpdb;global $faireID; global $faire; global $show_sched; global $faire_logo;
+  global $wpdb; global $faireID; global $faire; global $show_sched; global $backMsg; global $url_sub_path;
+  global $faire_map; global $program_guide;
+
   if(!$show_sched){
     return;
   }
+  $backlink = "/".$url_sub_path."/meet-the-makers/";
+
   $faire_url = "/$faire";
 
   $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
@@ -327,16 +332,8 @@ function display_entry_schedule($entry_id) {
   if($wpdb->num_rows > 0){
     ?>
     <div id="entry-schedule">
-      <span class="faireBadge pull-left">
-      <?php
-      if($faire_logo!=''){
-        $faire_logo = legacy_get_fit_remote_image_url($faire_logo,51,51);
-        echo '<a href="'.$faire_url.'"><img src="'.$faire_logo.'" alt="'.$faire.' - badge" /></a>';
-      }
-      ?>
-      </span>
       <span class="faireTitle pull-left">
-        <a href="<?= $faire_url ?>">
+        <a href="<?= $backlink ?>">
         <span class="faireLabel">Live at</span><br/>
         <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
         </a>
@@ -344,18 +341,24 @@ function display_entry_schedule($entry_id) {
       <?php // TBD - dynamically set these links and images ?>
       <div class="faireActions">
         <span class="pull-right">
-          <a class="flagship-icon-link" href="/wp-content/uploads/2016/06/NMF-Map_2016__8.5x11_Pg-2.pdf">
+          <?php if($faire_map!='') { ?>
+          <a class="flagship-icon-link" href="<?php echo $faire_map;?>">
             <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-map.png" width="40px" scale="0">
             Event Map
           </a>
+          <?php } ?>
         </span>
         <span class="pull-right">
-          <a class="flagship-icon-link" href="http://makerfaire.com/national-2016/schedule/">
+          <a class="flagship-icon-link" href="/<?php echo $url_sub_path;?>/schedule/">
             <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-schedule.png" width="40px" scale="0">
           </a>
-          <span class="pull-right "><a href="http://makerfaire.com/national-2016/schedule/">View full schedule</a><br/>
-            <a class="flagship-icon-link" href="/wp-content/uploads/2016/06/NMF-ProgramGuide_2016_v2.pdf">Download the program guide</a>
+
+          <span class="pull-right "><a href="/<?php echo $url_sub_path;?>/schedule/">View full schedule</a><br/>
+            <?php if($program_guide != '') { ?>
+            <a class="flagship-icon-link" href="<?php echo $program_guide;?>">Download the program guide</a>
+            <?php } ?>
           </span>
+
         </span>
       </div>
       <div class="clear"></div>
@@ -367,7 +370,7 @@ function display_entry_schedule($entry_id) {
         if(!is_null($row->start_dt)){
           $start_dt   = strtotime( $row->start_dt);
           $end_dt     = strtotime($row->end_dt);
-          echo '<td><b>'.date("l, F j",$start_dt).'<b></td>'
+          echo '<td><b>'.date("l, F j",$start_dt).'</b></td>'
                   . ' <td>'. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</td>';
         }else{
           global $faire_start; global $faire_end;

@@ -12,6 +12,7 @@
 function custom_rewrite_rule() {
 	add_rewrite_rule('^mf/([^/]*)/([^/]*)/?','index.php?pagename=maker-faire-gravity-forms-display-page&makerfaire=$matches[1]&entryid=$matches[2]','top');
 	add_rewrite_rule('^mfarchives/([^/]*)/?','index.php?pagename=entry-archives&entryslug=$matches[1]','top');
+	add_rewrite_rule('^api/v3/([^/]*)/?','index.php?pagename=api&api=true&type=$matches[1]','top');
 }
 add_action('init', 'custom_rewrite_rule', 10, 0);
 
@@ -22,6 +23,29 @@ function custom_rewrite_tag() {
 	add_rewrite_tag('%makerfaire%', '([^&]+)');
 }
 add_action('init', 'custom_rewrite_tag', 10, 0);
+
+/* Template Include */
+/* Query Vars */
+
+add_filter( 'query_vars', 'api_register_query_var' );
+function api_register_query_var( $vars ) {
+    $vars[] = 'type';
+    $vars[] = 'api';
+    return $vars;
+}
+ 
+add_filter('template_include', 'api_include', 1, 1);
+function api_include($template)
+{
+    global $wp_query; //Load $wp_query object
+    $page_value = (isset($wp_query->query_vars['api'])?$wp_query->query_vars['api']:''); 
+    if ($page_value && $page_value == "true") { 
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-api.php'; //Load your template or file
+    }
+
+    return $template; //Load normal template when $page_value != "true" as a fallback
+}
+
 
 /* Gravity Forms Specific Helper calls*/
 
