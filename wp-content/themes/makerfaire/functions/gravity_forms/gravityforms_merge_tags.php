@@ -20,6 +20,8 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
     $merge_tags[] = array('label' => 'Scheduled Locations', 'tag' => '{sched_loc}');
     $merge_tags[] = array('label' => 'Faire ID', 'tag' => '{faire_id}');
+    $merge_tags[] = array('label' => 'Resource Lock Ind', 'tag' => '{rmt_res_lock}');
+    $merge_tags[] = array('label' => 'Attribute Lock Ind', 'tag' => '{rmt_att_lock}');
 
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
@@ -39,14 +41,16 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
 * @return string
 */
 function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
+  global $wpdb;
   $entry_id = (isset($lead['id'])?$lead['id']:'');
+
   //faire id
   if (strpos($text, '{faire_id}')       !== false) {
-    global $wpdb;
     $sql = "select faire from wp_mf_faire where FIND_IN_SET (".$lead['form_id'].",wp_mf_faire.form_ids)> 0";
     $faireId = $wpdb->get_var($sql);
     $text = str_replace('{faire_id}', $faireId, $text);
   }
+
   //Entry Schedule
   if (strpos($text, '{entry_schedule}') !== false) {
     $schedule = get_schedule($lead);
@@ -57,7 +61,6 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   if (strpos($text, '{sched_loc}') !== false) {
     $schedule = get_schedule($lead,true);
     $text = str_replace('{sched_loc}', $schedule, $text);
-    //die($text);
   }
 
   //Entry Resources
@@ -138,7 +141,6 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
 
   //attention field
   if (strpos($text, '{CONF_COMMENT}') !== false) {
-    global $wpdb;
     $sql = "SELECT comment "
         . " from wp_rmt_entry_attn,wp_rmt_attn"
         . " where entry_id = ".$entry_id
@@ -147,6 +149,44 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $attnText = $wpdb->get_var($sql);
     $text = str_replace('{CONF_COMMENT}', $attnText, $text);
   }
+
+  //resource lock indicator
+  if (strpos($text, '{rmt_res_lock') !== false) {
+    $startPos        = strpos($text, '{rmt_res_lock'); //pos of start of merge tag
+    $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
+    $closeBracketPos = strpos($text, '}', $startPos);  //find the closing bracket of the merge tag
+
+    //resource ID
+    $RMTid = substr($text, $RmtStartPos+1,$closeBracketPos-$RmtStartPos-1);
+
+    //is this a valid RMT field??
+    if(is_numeric($RMTid)) {
+      //find locked value of RMT field
+      $lockBit = $wpdb->get_var('SELECT lockBit FROM `wp_rmt_entry_resources` where resource_id = '.$RMTid. ' and entry_id = '.$entry_id.' limit 1');
+      $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
+      $text = str_replace($mergeTag, ($lockBit==1?'Yes':'No'), $text);
+    }
+  }
+
+
+  //attribute lock indicator
+  if (strpos($text, '{rmt_att_lock') !== false) {
+    $startPos        = strpos($text, '{rmt_att_lock'); //pos of start of merge tag
+    $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
+    $closeBracketPos = strpos($text, '}', $startPos);  //find the closing bracket of the merge tag
+
+    //attribute ID
+    $RMTid = substr($text, $RmtStartPos+1,$closeBracketPos-$RmtStartPos-1);
+
+    //is this a valid RMT field??
+    if(is_numeric($RMTid)) {
+      //find locked value of RMT field
+      $lockBit = $wpdb->get_var('SELECT lockBit FROM `wp_rmt_entry_attributes` where attribute_id = '.$RMTid. ' and entry_id = '.$entry_id.' limit 1');
+      $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
+      $text = str_replace($mergeTag, ($lockBit==1?'Yes':'No'), $text);
+    }
+  }
+
   return $text;
 }
 
