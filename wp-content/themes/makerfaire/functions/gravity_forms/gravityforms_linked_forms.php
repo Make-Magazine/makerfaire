@@ -66,6 +66,7 @@ add_filter( 'gform_pre_render', 'populate_fields' ); //all forms
  */
 
 function populate_fields($form) {
+  $jqueryVal = '';
   if($form['form_type']=='Other'){
     //this is a 2-page form with the data from page one being displayed in an html field on page 2
     $current_page = GFFormDisplay::get_current_page($form['id']);
@@ -78,7 +79,6 @@ function populate_fields($form) {
         //pull the original entry
         $entry = GFAPI::get_entry($entry_id); //original entry ID
         $form_id = $form['id'];
-        $jqueryVal = '';
         //find the submitted original entry id
         foreach ($form['fields'] as &$field) {
           switch($field->type) {
@@ -178,14 +178,15 @@ function populate_fields($form) {
 
     } //end check current page
   }
-  
-  ?>
-  <script>
-    jQuery( document ).ready(function() {
-      <?php echo $jqueryVal;?>
-    });
-  </script>
-  <?php
+  if($jqueryVal!=''){
+    ?>
+    <script>
+      jQuery( document ).ready(function() {
+        <?php echo $jqueryVal;?>
+      });
+    </script>
+    <?php
+  }
   return $form;
 }
 
@@ -193,7 +194,77 @@ function populate_fields($form) {
 // and add the fields from the linked form to that original entry
 add_action( 'gform_after_submission', 'GSP_after_submission', 10, 2 );
 function GSP_after_submission($entry, $form ){
-  // update meta
-  $updateEntryID = get_value_by_label('entry-id', $form, $entry);
-  gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
+  if($form['form_type']=='Other'){
+    // update linked entry id
+    $updateEntryID = get_value_by_label('entry-id', $form, $entry);
+
+    if(is_numeric($updateEntryID['value'])) {
+      $origEntryID = $updateEntryID['value'];
+      $origEntry = GFAPI::get_entry($updateEntryID['value']);
+      $origform_id = $origEntry['form_id'];
+      gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
+
+      //check if field- is set to update original entry fields
+      foreach ($form['fields'] as &$field) {
+        $parmName = '';
+        switch($field->type) {
+          //parameter name is stored in a different place
+          case 'name':
+          case 'address':
+            foreach($field->inputs as $key=>$input) {
+              if ($input['name']!='') {
+                $parmName =  $input['name'];
+                $pos = strpos($parmName, 'field-');
+                if ($pos !== false) { //populate by field ID?
+                  $field_id = str_replace("field-", "", $input['name']);
+                }
+              }
+            }
+            break;
+        }
+
+        if ($parmName=='' && $field->inputName != '') {
+          $parmName = $field->inputName;
+        }
+        if($parmName!=''){
+          //check for 'field-' to see if the value should be populated by original entry field data
+          $pos = strpos($parmName, 'field-');
+
+          //populate field using field id's from original form
+          if ($pos !== false) { //populate by field ID?
+            //strip the 'field-' from the parameter name to get the field number
+            $orig_field_id = str_replace("field-", "", $parmName);
+            $sub_field_id = $field['id'];
+            $fieldType = $field->type;
+
+            switch ($fieldType) {
+              case 'name':
+                foreach($field->inputs as &$input) {  //loop thru name inputs
+
+                  if(isset($input['name']) && $input['name']!=''){  //check if parameter name is set
+                    $pos = strpos($input['name'], 'field-');
+                    if ($pos !== false) { //is it requesting to be set by field id?
+                      //strip the 'field-' from the parameter name to get the field number
+                      $orig_field_id = str_replace("field-", "", $input['name']);
+                      $sub_field_id  = $input['id'];
+                      $sql = "insert into wp_rg_lead_detail (`lead_id`, `form_id`, `field_number`, `value`) VALUES ($origEntryID,$origform_id,$orig_field_id,'$entry[$sub_field_id]') "
+                        . "on duplicate key update value = '$entry[$sub_field_id]'";
+                      global $wpdb;
+                      $wpdb->get_results($sql);
+                    }
+                  }
+                }
+                break;
+            }
+
+            $sql = "insert into wp_rg_lead_detail (`lead_id`, `form_id`, `field_number`, `value`) VALUES ($origEntryID,$origform_id,$orig_field_id,'$entry[$sub_field_id]') "
+              . "on duplicate key update value = '$entry[$sub_field_id]'";
+            global $wpdb;
+            $wpdb->get_results($sql);
+          }
+          echo '<br/>';
+        }
+      }
+    }
+  }
 }
