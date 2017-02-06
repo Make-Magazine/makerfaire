@@ -76,6 +76,8 @@
 	margin-bottom: 1em;
 	background: rgba(0,0,0,0) url(/wp-content/themes/makerfaire/images/bg-border.png) repeat-x 0 100%;
 	box-shadow: 2px 2px 5px #afafaf;
+  position: relative;
+  z-index: -1;
 }
 
 #toolKit div#toolkitItems div img {
@@ -103,9 +105,7 @@
 	color: #fff;
 }
 
-#toolKit 
-
-div#searchbar-sticky-wrapper.sticky-wrapper.is-sticky {
+#toolKit div#searchbar-sticky-wrapper.sticky-wrapper , #toolKit div#searchbar-sticky-wrapper.sticky-wrapper.is-sticky {
   height: 48px;
   float: right;
   width: 400px;
