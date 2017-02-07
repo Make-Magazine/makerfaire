@@ -28,11 +28,10 @@ function calc_field_ind($entry, $form) {
       } else {
         $updField = 'No';
       }
-      $entry[$field_id] = $updField;
-      $sql = "insert into wp_rg_lead_detail (`lead_id`, `form_id`, `field_number`, `value`) VALUES ($entry_id,$form_id,$field_id,'$updField') "
-              . "on duplicate key update value = '$updField'";
-      global $wpdb;
-      $wpdb->get_results($sql);
+
+      //use mf_update_entry_field to update the db to avoid duplicates
+      mf_update_entry_field( $entry_id, $field_id, $updField );
+
     }
   }
   return $entry;
