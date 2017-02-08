@@ -667,6 +667,7 @@ function entryResources($lead){
       $userInfo = get_userdata( $result->user );
       $dispUser = $userInfo->display_name;
     }
+
     $resourceDisp .= '<tr id="resRow'.$result->ID.'">'
                       . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow'.$result->ID.'\','.$result->lockBit.')">'.($result->lockBit==1?'<i class="fa fa-lock fa-lg"></i>':'<i class="fa fa-unlock-alt fa-lg"></i>').'</span></td>'
                       . ' <td id="resitem_'.$result->ID.'" data-itemID="'.$result->item_id.'">'.$result->item.'</td>'
@@ -674,7 +675,8 @@ function entryResources($lead){
                       . ' <td id="resqty_'.$result->ID.'"  class="editable numeric">'.$result->qty.'</td>'
                       . ' <td id="rescomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
                       . ' <td id="resuser_'.$result->ID.'">'.$dispUser.'</td>'
-                      . ' <td id="resdateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
+                      . ' <td id="resdateupdate_'.$result->ID.'">'. esc_html( GFCommon::format_date( $result->update_stamp, false, 'm/d/y h:i a',false ))
+                      .'</td>'
                       . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow'.$result->ID.'\')"><i class="fa fa-minus-circle fa-lg"></i></span></td>'
                   . ' </tr>';
   }
