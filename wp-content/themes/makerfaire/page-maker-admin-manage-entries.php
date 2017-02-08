@@ -54,7 +54,7 @@
     <div class="gv-list-view-title-maker-entry">
       <div class="entryImg">
         <div class="faire-entry-image-wrp">
-          <a class="thickbox" href="http://i1.wp.com/img1.etsystatic.com/058/0/5900797/il_570xN.706338171_t595.jpg">
+          <a href="http://i1.wp.com/img1.etsystatic.com/058/0/5900797/il_570xN.706338171_t595.jpg">
             <img src="http://i1.wp.com/img1.etsystatic.com/058/0/5900797/il_570xN.706338171_t595.jpg?zoom=2&amp;w=250" alt="Project Photo">
           </a>
         </div>

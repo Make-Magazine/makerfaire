@@ -7,6 +7,7 @@ get_header();
 <div class="content col-md-12 maker-admin-manage-faire-entries-mobile">
   <script>
   jQuery(document).ready(function() {
+    jQuery('a[href$="jpg"], a[href$="png"], a[href$="jpeg"]').fancybox();
     //jQuery('[data-toggle="tooltip"]').tooltip();
     jQuery('body').tooltip( {selector: '[data-toggle=tooltip]'} );
     //returns content based on separate element - For Notificationd, get your tickets and
@@ -87,7 +88,7 @@ get_header();
         </div> <!-- close .statusBox -->
         <div class="entryImg">
           <div class="faire-entry-image-wrp">
-            <a class="thickbox" href="<?php echo $image;?>">
+            <a href="<?php echo $image;?>">
               <div class="image-container" style="background-image: url('<?php echo $image;?>');"></div>
               <!--<img class="img-responsive" src="<?php echo $image;?>" alt="Project Photo" />-->
             </a>

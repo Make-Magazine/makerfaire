@@ -73,7 +73,7 @@ $return = '
 	<tbody>
 		<tr>
 			<td style="width:440px; padding:5px;" valign="top">
-				<a href="'. $photo.'" class="thickbox"><img width="400px" src="'.legacy_get_fit_remote_image_url($photo, 400,400).'" alt="" /></a>
+				<a href="'. $photo.'" ><img width="400px" src="'.legacy_get_fit_remote_image_url($photo, 400,400).'" alt="" /></a>
 			</td>
 			<td style="word-break: break-all;" valign="top">
 				<table style="word-break: break-all;">
@@ -105,14 +105,14 @@ $return = '
               //loop thru all 7 maker photos
               for ($x = 1; $x <= 7; $x++) {
                 if(!empty(${"makerPhoto_$x"})){
-                  $return .= '<a href="'. ${"makerPhoto_$x"}.'" class="thickbox"><img width="30px" src="'. legacy_get_resized_remote_image_url(${"makerPhoto_$x"}, 30,30).'" alt="" /></a>';
+                  $return .= '<a href="'. ${"makerPhoto_$x"}.'" ><img width="30px" src="'. legacy_get_resized_remote_image_url(${"makerPhoto_$x"}, 30,30).'" alt="" /></a>';
                 }
                 $return .= (!empty(${"makerfirstname$x"}) ?  ${"makerfirstname$x"}.' '.${"makerlastname$x"}.'</br>' : '') ;
               }
 
               if(!empty($makerGroupPhoto)){
                   $return .=   'Group Photo<br/>
-                    <a href="'. $makerGroupPhoto.'" class="thickbox">
+                    <a href="'. $makerGroupPhoto.'" >
                     <img width="30px" src="'.legacy_get_resized_remote_image_url($makerGroupPhoto, 30,30).'" alt="" />
                     </a>';
               }
