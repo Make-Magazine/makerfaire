@@ -359,11 +359,7 @@ function set_entry_status($lead,$form){
 	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id=%d AND  CAST(field_number AS CHAR) ='%s'", $entry_id, $input_id ) );
 
 	$result = true;
-	if ( ! isset( $entry[ $input_id ] ) || $entry[ $input_id ] != $value ){
-		$result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
-	}else{
-    $result = GFFormsModel::update_lead_field_value( $form, $entry, $field, 0, $input_id, $value );
-	}
+  $result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
 
 	return $result;
 }

@@ -251,17 +251,13 @@ function field_display($lead,$form,$field_id,$fieldName) {
 
   $form_id = $form['id'];
   $field     = RGFormsModel::get_field($form,$field_id);
+
   //is this a valid field in the form
   if($field!=NULL){
     $value     = RGFormsModel::get_lead_field_value( $lead, $field );
     $return   .= mf_checkbox_display($field, $value, $form_id, $fieldName);
   }
-
-  $value   = RGFormsModel::get_lead_field_value( $lead, $field );
-  $return  = GFCommon::get_field_input( $field, $value, $lead['id'], $form_id, $form );
-
-
-
+  
   return $return;
 }
 
