@@ -9,7 +9,7 @@ class GravityView_Field_Phone extends GravityView_Field {
 
 	var $name = 'phone';
 
-	var $is_searchable = false;
+	var $is_searchable = true;
 
 	var $_gf_field_class_name = 'GF_Field_Phone';
 
@@ -23,7 +23,7 @@ class GravityView_Field_Phone extends GravityView_Field {
 	/**
 	 * Add option to link phone number
 	 *
-	 * @since TODO
+	 * @since 1.17
 	 *
 	 * @param array $field_options
 	 * @param string $template_id

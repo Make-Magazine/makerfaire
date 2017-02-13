@@ -238,7 +238,7 @@ class GravityView_View_Data {
 			'template_id' => gravityview_get_template_id( $view_id ),
 			'atts' => $atts,
 			'fields' => $this->get_fields( $view_id ),
-			'widgets' => get_post_meta( $view_id, '_gravityview_directory_widgets', true ),
+			'widgets' => gravityview_get_directory_widgets( $view_id ),
 			'form' => gravityview_get_form( $form_id ),
 		);
 
@@ -344,7 +344,7 @@ class GravityView_View_Data {
 	 * @param  string $content $post->post_content content
 	 * @return int|null|array If a single View is found, the ID of the View. If there are multiple views in the content, array of IDs parsed. If not found, NULL
 	 */
-	function parse_post_content( $content ) {
+	public function parse_post_content( $content ) {
 
 		/**
 		 * @hack This is so that the shortcode is registered for the oEmbed preview in the Admin
@@ -365,6 +365,8 @@ class GravityView_View_Data {
 		$ids = array();
 
 		foreach ($shortcodes as $key => $shortcode) {
+
+			$shortcode[3] = htmlspecialchars_decode( $shortcode[3], ENT_QUOTES );
 
 			$args = shortcode_parse_atts( $shortcode[3] );
 
@@ -574,6 +576,16 @@ class GravityView_View_Data {
 				'type' => 'checkbox',
 				'group'	=> 'default',
 				'value' => 0,
+				'show_in_shortcode' => true,
+			),
+			'admin_show_all_statuses' => array(
+				'label' => __( 'Show all entries to administrators', 'gravityview' ),
+				'desc'	=> __('Administrators will be able to see entries with any approval status.', 'gravityview'),
+				'tooltip' => __('Logged-out visitors and non-administrators will only see approved entries, while administrators will see entries with all statuses. This makes it easier for administrators to moderate entries from a View.', 'gravityview'),
+				'requires' => 'show_only_approved',
+				'type' => 'checkbox',
+				'group'	=> 'default',
+				'value' => 0,
 				'show_in_shortcode' => false,
 			),
 			'hide_until_searched' => array(
@@ -710,6 +722,11 @@ class GravityView_View_Data {
 				'value'	=> '',
 				'show_in_shortcode' => false,
 				'full_width' => true,
+			),
+			'post_id' => array(
+				'type' => 'number',
+				'value' => '',
+				'show_in_shortcode' => false,
 			),
 		));
 

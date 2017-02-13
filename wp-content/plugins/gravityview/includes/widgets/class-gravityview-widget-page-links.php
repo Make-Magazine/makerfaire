@@ -31,16 +31,13 @@ class GravityView_Widget_Page_Links extends GravityView_Widget {
 			return;
 		}
 
-		$page_size = $gravityview_view->paging['page_size'];
-		$total = $gravityview_view->total_entries;
-
 		$atts = shortcode_atts( array(
+			'page_size' => rgar( $gravityview_view->paging, 'page_size' ),
+			'total' => $gravityview_view->total_entries,
 			'show_all' => !empty( $this->settings['show_all']['default'] ),
+			'current' => (int) rgar( $_GET, 'pagenum', 1 ),
 		), $widget_args, 'gravityview_widget_page_links' );
-
-		// displaying info
-		$curr_page = empty( $_GET['pagenum'] ) ? 1 : intval( $_GET['pagenum'] );
-
+		
 		$page_link_args = array(
 			'base' => add_query_arg('pagenum','%#%', gv_directory_link() ),
 			'format' => '&pagenum=%#%',
@@ -50,8 +47,8 @@ class GravityView_Widget_Page_Links extends GravityView_Widget {
 			'type' => 'list',
 			'end_size' => 1,
 			'mid_size' => 2,
-			'total' => empty( $page_size ) ? 0 : ceil( $total / $page_size ),
-			'current' => $curr_page,
+			'total' => empty( $atts['page_size'] ) ? 0 : ceil( $atts['total'] / $atts['page_size'] ),
+			'current' => $atts['current'],
 			'show_all' => !empty( $atts['show_all'] ), // to be available at backoffice
 		);
 
@@ -66,8 +63,8 @@ class GravityView_Widget_Page_Links extends GravityView_Widget {
 
 		if( !empty( $page_links )) {
 			$class = !empty( $widget_args['custom_class'] ) ? $widget_args['custom_class'] : '';
-			$class = gravityview_sanitize_html_class( $class );
-			echo '<div class="gv-widget-page-links '.$class.'">'. $page_links .'</div>';
+			$class = gravityview_sanitize_html_class( 'gv-widget-page-links ' . $class );
+			echo '<div class="'.$class.'">'. $page_links .'</div>';
 		} else {
 			do_action( 'gravityview_log_debug', 'GravityView_Widget_Page_Links[render_frontend] No page links; paginate_links() returned empty response.' );
 		}
