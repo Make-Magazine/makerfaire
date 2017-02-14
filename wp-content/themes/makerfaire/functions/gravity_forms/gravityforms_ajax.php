@@ -273,6 +273,8 @@ function mf_admin_MFupdate_entry(){
     $response['rebuild']     = 'notesbox';
     $response['rebuildHTML'] = display_entry_notes_box($form, $lead);
   }
+
+  processTasks( $lead, $form);
   wp_send_json( $response );
   // IMPORTANT: don't forget to "exit"
   exit;
