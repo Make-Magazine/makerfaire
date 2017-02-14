@@ -265,6 +265,8 @@ function mf_admin_MFupdate_entry(){
     $response['result'] = 'Error: No Action Passed';
   }
 
+  //get updated lead 
+  $lead = GFAPI::get_entry( $entry_id );
   //rebuild schedule sidebar to send back
   if($mfAction == 'update_entry_schedule' || $mfAction == 'delete_entry_schedule') {
     $response['rebuild']     = 'schedBox';
