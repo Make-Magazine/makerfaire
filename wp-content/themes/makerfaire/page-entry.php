@@ -213,7 +213,7 @@ if($makerEdit) {
         if($makerEdit){?>
           <div class="makerEditHead">
             <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
-            <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>">
+            <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>/">
               <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
             </a><br/>
             To modify your public information, click on the section you'd like to change below.

@@ -158,7 +158,7 @@ $return = '
           </tr>
           <tr>
             <td>
-              <a target="_blank" href="/maker-sign/'. $entry_id.'/'. $faire.'"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
+              <a target="_blank" href="/maker-sign/'. $entry_id.'/'. $faire.'/"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
             </td>
             <td>
               <a href="'. admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id ).'"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>
