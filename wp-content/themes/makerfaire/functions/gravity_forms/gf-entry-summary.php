@@ -19,7 +19,8 @@ $long_description         = (isset($lead['21'])?$lead['21']:'');
 $project_name             = (isset($lead['151'])?$lead['151']:'');
 $areyoua                  = (isset($lead['45'])?$lead['45']:'');
 $size_request             = (isset($lead['60'])?$lead['60']:'');
-$size_request_heightwidth = ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344'].' X ':'').(isset($lead['345'])?$lead['345']:'');
+$size_request_heightwidth = ((isset($lead['345']) && strlen($lead['345']) > 0 ) ? $lead['345'].' X ':'').
+                            ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344']:'');
 $size_request_other       = (isset($lead['61'])?$lead['61']:'');
 $entry_form_type          = $form['title'];
 $entry_form_status        = (isset($lead['303'])?$lead['303']:'');
@@ -146,7 +147,7 @@ $return = '
 					<tr>
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
-              '.(( isset( $size_request ) ) ? $size_request : 'Not Filled out') .
+              '.(( isset( $size_request ) ) ? $size_request.' - ' : 'Not Filled out') .
                 (( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '') .
                 (( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '') .'
 						</td>
@@ -157,7 +158,7 @@ $return = '
           </tr>
           <tr>
             <td>
-              <a target="_blank" href="/maker-sign/'. $entry_id.'/'. $faire.'"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
+              <a target="_blank" href="/maker-sign/'. $entry_id.'/'. $faire.'/"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
             </td>
             <td>
               <a href="'. admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id ).'"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>

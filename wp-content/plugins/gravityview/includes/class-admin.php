@@ -60,6 +60,71 @@ class GravityView_Admin {
 	}
 
 	/**
+	 * Get text for no views found.
+	 *
+	 * @since 1.18 Moved to GravityView_Admin
+	 *
+	 * @return string HTML message with no container tags.
+	 */
+	public static function no_views_text() {
+		
+		if ( isset( $_REQUEST['post_status'] ) && 'trash' === $_REQUEST['post_status'] ) {
+			return __( 'No Views found in Trash', 'gravityview' );
+		} elseif( ! empty( $_GET['s'] ) ) {
+			return __( 'No Views found.', 'gravityview' );
+		}
+
+		// Floaty the Astronaut says "oi"
+		$image = self::get_floaty();
+
+		if ( GVCommon::has_cap( 'edit_gravityviews' ) ) {
+			$output = sprintf( esc_attr__( "%sYou don't have any active views. Let&rsquo;s go %screate one%s!%s\n\nIf you feel like you're lost in space and need help getting started, check out the %sGetting Started%s page.", 'gravityview' ), '<h3>', '<a href="' . admin_url( 'post-new.php?post_type=gravityview' ) . '">', '</a>', '</h3>', '<a href="' . admin_url( 'edit.php?post_type=gravityview&page=gv-getting-started' ) . '">', '</a>' );
+		} else {
+			$output = esc_attr__( 'There are no active Views', 'gravityview' );
+		}
+
+		return $image . wpautop( $output );
+	}
+
+	/**
+	 * Display error HTML in Edit View when the form is in the trash or no longer exists in Gravity Forms
+	 *
+	 * @since 1.19
+	 *
+	 * @param int $form_id Gravity Forms
+	 *
+	 * @return void
+	 */
+	public static function connected_form_warning( $form_id = 0 ) {
+        global $pagenow;
+
+		if ( ! is_int( $form_id ) || $pagenow === 'post-new.php' ) {
+			return;
+		}
+
+		$form_info = GFFormsModel::get_form( $form_id, true );
+
+		$error = '';
+		if ( empty( $form_info ) ) {
+			$error = esc_html__( 'The form connected to this View no longer exists.', 'gravityview' );
+			$error .= ' ' . esc_html__( 'Select another form as the data source for this View.', 'gravityview' );
+		} elseif ( $form_info->is_trash ) {
+			$error = esc_html__( 'The connected form is in the trash.', 'gravityview' );
+			$error .= ' ' . gravityview_get_link( admin_url( 'admin.php?page=gf_edit_forms&filter=trash' ), esc_html__( 'Restore the form from the trash', 'gravityview' ) );
+			$error .= ' ' . esc_html__( 'or select another form.', 'gravityview' );
+		}
+
+		if( $error ) {
+			?>
+			<div class="wp-dialog notice-warning inline error wp-clearfix">
+				<?php echo gravityview_get_floaty(); ?>
+				<h3><?php echo $error; ?></h3>
+			</div>
+			<?php
+		}
+	}
+
+	/**
 	 * Function to launch admin objects
 	 *
 	 * @access public
@@ -70,7 +135,9 @@ class GravityView_Admin {
 		/** @define "GRAVITYVIEW_DIR" "../" */
 		include_once( GRAVITYVIEW_DIR .'includes/admin/class.field.type.php' );
 		include_once( GRAVITYVIEW_DIR .'includes/admin/class.render.settings.php' );
-		include_once( GRAVITYVIEW_DIR .'includes/class-admin-label.php' );
+		include_once( GRAVITYVIEW_DIR .'includes/admin/class-gravityview-admin-view-item.php' );
+		include_once( GRAVITYVIEW_DIR .'includes/admin/class-gravityview-admin-view-field.php' );
+		include_once( GRAVITYVIEW_DIR .'includes/admin/class-gravityview-admin-view-widget.php' );
 		include_once( GRAVITYVIEW_DIR .'includes/class-admin-views.php' );
 		include_once( GRAVITYVIEW_DIR .'includes/class-admin-welcome.php' );
 		include_once( GRAVITYVIEW_DIR .'includes/class-admin-add-shortcode.php' );
@@ -181,7 +248,7 @@ class GravityView_Admin {
 				date_i18n( __( 'M j, Y @ G:i', 'gravityview' ), strtotime( ( isset( $post->post_date ) ? $post->post_date : NULL )  ) )
 			) . $new_form_text,
 			/* translators: %s and %s are HTML tags linking to the View on the website */
-			10  => sprintf(__( 'View draft updated. %sView on website.%s', 'gravityview' ), '<a href="'.get_permalink( $post_id ).'">', '</a>'),
+			10  => sprintf(__( 'View draft updated. %sView on website.%s', 'gravityview' ), '<a href="'.get_permalink( $post_id ).'">', '</a>') . $new_form_text,
 
 			/**
 			 * These apply to `bulk_post_updated_messages`

@@ -7,6 +7,8 @@
     }else{
       fpdiLink = 'tabletag';
     }
+    var folder = type;
+    if(type=='signs') folder = 'maker';
     jQuery("a.fairsign").each(function(){
       jQuery(this).html('Creating');
       jQuery(this).attr("disabled","disabled");
@@ -17,7 +19,7 @@
         data: { eid: jQuery(this).attr('id'), type: 'save', faire: faire },
       }).done(function(data) {
         jQuery('#'+data).html(data+ ' Created');
-        jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/signs/"+faire+"/"+type+"/"+data+'.pdf');
+        jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/signs/"+faire+"/"+folder+"/"+data+'.pdf');
       });
     });
   }

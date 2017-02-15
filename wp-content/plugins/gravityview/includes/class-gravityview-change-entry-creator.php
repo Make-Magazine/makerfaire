@@ -85,8 +85,8 @@ class GravityView_Change_Entry_Creator {
 
     	// Plugin that was provided here:
     	// @link https://gravityview.co/support/documentation/201991205/
-    	remove_action("gform_entry_info", 'gravityview_change_entry_creator_form', 10, 2);
-    	remove_action("gform_after_update_entry", 'gravityview_update_entry_creator', 10, 2);
+    	remove_action("gform_entry_info", 'gravityview_change_entry_creator_form', 10 );
+    	remove_action("gform_after_update_entry", 'gravityview_update_entry_creator', 10 );
 
     	// Disable for Gravity Forms Add-ons 3.6.2 and lower
     	if( class_exists( 'KWS_GF_Change_Lead_Creator' ) ) {
@@ -96,9 +96,9 @@ class GravityView_Change_Entry_Creator {
     		// Now, no validation is required in the methods; let's hook in.
     		remove_action('admin_init', array( $Old_Lead_Creator, 'set_screen_mode' ) );
 
-    		remove_action("gform_entry_info", array( $Old_Lead_Creator, 'add_select' ), 10, 2);
+    		remove_action("gform_entry_info", array( $Old_Lead_Creator, 'add_select' ), 10 );
 
-    		remove_action("gform_after_update_entry", array( $Old_Lead_Creator, 'update_entry_creator' ), 10, 2);
+    		remove_action("gform_after_update_entry", array( $Old_Lead_Creator, 'update_entry_creator' ), 10 );
     	}
 
     }
@@ -205,8 +205,7 @@ class GravityView_Change_Entry_Creator {
         }
 
         //MF custom code
-        $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email') ));
-
+        $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email'), 'number' => 100000));
         $output = '<label for="change_created_by">';
         $output .= esc_html__('Change Entry Creator:', 'gravityview');
         $output .= '</label>

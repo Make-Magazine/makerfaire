@@ -265,6 +265,8 @@ function mf_admin_MFupdate_entry(){
     $response['result'] = 'Error: No Action Passed';
   }
 
+  //get updated lead
+  $lead = GFAPI::get_entry( $entry_id );
   //rebuild schedule sidebar to send back
   if($mfAction == 'update_entry_schedule' || $mfAction == 'delete_entry_schedule') {
     $response['rebuild']     = 'schedBox';
@@ -273,6 +275,8 @@ function mf_admin_MFupdate_entry(){
     $response['rebuild']     = 'notesbox';
     $response['rebuildHTML'] = display_entry_notes_box($form, $lead);
   }
+
+  processTasks( $lead, $form);
   wp_send_json( $response );
   // IMPORTANT: don't forget to "exit"
   exit;
@@ -359,11 +363,7 @@ function set_entry_status($lead,$form){
 	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id=%d AND  CAST(field_number AS CHAR) ='%s'", $entry_id, $input_id ) );
 
 	$result = true;
-	if ( ! isset( $entry[ $input_id ] ) || $entry[ $input_id ] != $value ){
-    $result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
-	}else{
-    $result = GFFormsModel::update_lead_field_value( $form, $entry, $field, 0, $input_id, $value );
-  }
+  $result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
 
 	return $result;
 }

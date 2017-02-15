@@ -12,10 +12,12 @@ Class GFTask {
 	);
 
 	private static function get_task( $form, $task_id ) {
-		foreach ( $form['tasks'] as $id => $task ) {
-			if ( $id == $task_id ) {
-				return $task;
-			}
+    if(isset($form['tasks']) && is_array($form['tasks'])){
+      foreach ( $form['tasks'] as $id => $task ) {
+        if ( $id == $task_id ) {
+          return $task;
+        }
+      }
 		}
 
 		return array();

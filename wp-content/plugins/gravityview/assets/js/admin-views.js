@@ -11,6 +11,7 @@
  * @since 1.0.0
  *
  * @typedef {{
+ *   passed_form_id: bool,
  *   label_cancel: string
  *   label_continue: string,
  *   loading_text: string,
@@ -57,6 +58,12 @@
 		startFreshStatus: false,
 
 		/**
+		 * @since 1.17.3
+		 * @type {bool} Whether the alt (modifier) key is currently being clicked
+		 */
+		altKey: false,
+
+		/**
 		 * @since 1.14
 		 * @type {int} The width of the modal dialogs to use for field and widget settings
 		 */
@@ -81,6 +88,9 @@
 			// Start bind to $('body')
 			$( 'body' )
 
+				// Track modifier keys being clicked
+				.on( 'keydown keyup', vcfg.altKeyListener )
+
 				// select form
 				.on( 'change', '#gravityview_form_id', vcfg.formChange )
 
@@ -89,6 +99,9 @@
 
 				// when saving the View, try to create form before proceeding
 				.on( 'click', '#publish, #save-post', vcfg.processFormSubmit )
+
+				// when saving the View, try to create form before proceeding
+				.on( 'submit', '#post', vcfg.processFormSubmit )
 
 				// Hover overlay show/hide
 				.on( 'click', ".gv-view-types-hover", vcfg.selectTemplateHover )
@@ -127,21 +140,48 @@
 				.on( 'dblclick', ".gv-fields", vcfg.openFieldSettings )
 
 				// Update checkbox visibility when having dependency checkboxes
-				.on( 'change', ".gv-setting-list", vcfg.toggleCheckboxes );
+				.on( 'change', ".gv-setting-list, #gravityview_settings", vcfg.toggleCheckboxes )
+
+				.on( 'change', "#gravityview_settings", vcfg.zebraStripeSettings );
 
 			// End bind to $('body')
 
+			if( gvGlobals.passed_form_id ) {
+				$( '#gravityview_form_id' ).trigger( 'change' );
+			}
+		},
+
+		/**
+		 * Listen for whether the altKey is being held down. If so, we modify some behavior.
+		 *
+		 * This is necessary here because clicking on <select> doesn't register the altKey properly
+		 *
+		 * @since 1.17.3
+		 *
+		 * @param {jQuery} e
+		 */
+		altKeyListener: function( e ) {
+			viewConfiguration.altKey = e.altKey;
+		},
+
+		/**
+		 * Update zebra striping when settings are changed
+		 * This prevents two gray rows next to each other.
+		 * @since 1.19
+		 */
+		zebraStripeSettings: function() {
+			$( '#gravityview_settings table').find('tr').removeClass('alternate').filter(':visible:even' ).addClass( 'alternate' );
 		},
 
 		/**
 		 * Show/hide checkboxes that have visibility conditionals
 		 * @see GravityView_FieldType_checkboxes
-		 * @param  {jQueryEvent} e
+		 * @param  {jQuery} e
 		 */
 		toggleCheckboxes: function (  e ) {
 
-			var $parent = $( this );
-			$conditionals = $( this ).find( '[data-requires]' );
+			var $parent = $( e.currentTarget );
+			$conditionals = $parent.find( '[data-requires]' );
 
 			$conditionals.each( function ()  {
 				var requires = $( this ).data( 'requires' );
@@ -283,6 +323,8 @@
 
 			vcfg.togglePreviewButton();
 
+			vcfg.zebraStripeSettings();
+
 		},
 
 		/**
@@ -406,6 +448,11 @@
 		formChange: function ( e ) {
 			e.preventDefault();
 			var vcfg = viewConfiguration;
+
+			// Holding down on the alt key while switching forms allows you to change forms without resetting configurations
+			if( vcfg.altKey ) {
+				return;
+			}
 
 			vcfg.startFreshStatus = false;
 
@@ -759,18 +806,7 @@
 				nonce: gvGlobals.nonce
 			};
 
-			$.post( ajaxurl, data, function ( response ) {
-				if ( response ) {
-					var content = $.parseJSON( response );
-					$( '#directory-header-widgets' ).html( content.header );
-					$( '#directory-footer-widgets' ).html( content.footer );
-					$( '#directory-active-fields' ).append( content.directory );
-					$( '#single-active-fields' ).append( content.single );
-					vcfg.showViewConfig();
-					vcfg.waiting('stop');
-				}
-			} );
-
+			vcfg.updateViewConfig( data );
 		},
 
 		/**
@@ -787,6 +823,18 @@
 				nonce: gvGlobals.nonce
 			};
 
+			vcfg.updateViewConfig( data );
+		},
+
+		/**
+		 * POST to AJAX and insert the returned field HTML into zone DOM
+		 *
+		 * @since 1.17.2
+		 * @param {object} data `action`, `template_id` and `nonce` keys
+		 */
+		updateViewConfig: function ( data ) {
+			var vcfg = viewConfiguration;
+			
 			$.post( ajaxurl, data, function ( response ) {
 				if ( response ) {
 					var content = $.parseJSON( response );
@@ -798,13 +846,11 @@
 					vcfg.waiting('stop');
 				}
 			} );
-
-
 		},
 
 		/**
 		 * Toggle the "loading" indicator
-		 * @since TODO
+		 * @since 1.16.5
 		 * @param {string} action "start" or "stop"
 		 */
 		waiting: function( action ) {
@@ -1338,15 +1384,15 @@
 		 */
 		serializeForm: function ( e ) {
 
-			if ( $( e.target ).data( 'gv-valid' ) ) {
+			var $post = $('#post');
+
+			if ( $post.data( 'gv-valid' ) ) {
 				return true;
 			}
 
-			var $post = $('#post');
-
 			e.stopImmediatePropagation();
 
-			$( e.target ).data( 'gv-valid', false );
+			$post.data( 'gv-valid', false );
 
 			/**
 			 * Add slashes to date fields so stripslashes doesn't strip all of them
@@ -1367,16 +1413,21 @@
 
 			// Add a field to the form that contains all the data.
 			$post.append( $( '<input/>', {
-				'name': 'fields',
+				'name': 'gv_fields',
 				'value': serialized_data,
 				'type': 'hidden'
 			} ) );
 
-
 			// make sure the "slow" browsers did append all the serialized data to the form
 			setTimeout( function () {
 
-				$( e.target ).data( 'gv-valid', true ).click();
+				$post.data( 'gv-valid', true );
+
+				if ( 'click' === e.type ) {
+					$( e.target ).click();
+				} else {
+					$post.submit();
+				}
 
 			}, 101 );
 
@@ -1398,6 +1449,7 @@
 		 */
 		createPresetForm: function ( e, templateId ) {
 			var vcfg = viewConfiguration;
+			var $target = $( e.target );
 
 			e.stopPropagation();
 
@@ -1407,6 +1459,7 @@
 				template_id: templateId,
 				nonce: gvGlobals.nonce
 			};
+
 
 			$.ajax( {
 				type: "POST",
@@ -1424,11 +1477,15 @@
 						vcfg.gvSelectForm.find( "option:selected" ).removeAttr( "selected" ).end().append( response );
 
 						// Continue submitting the form, since we preventDefault() above
-						$( e.target ).click();
+						if ( 'click' === e.type ) {
+							$target.click();
+						} else {
+							$('#post').submit();
+						}
 
 					} else {
 
-						$( "#post" ).before( '<div id="message" class="error below-h2"><p>' + gvGlobals.label_publisherror + '</p></div>' );
+						$target.before( '<div id="message" class="error below-h2"><p>' + gvGlobals.label_publisherror + '</p></div>' );
 
 					}
 
@@ -1623,6 +1680,10 @@
 		var activate_tab = $.cookie( cookie_key );
 		if ( activate_tab === 'undefined' ) {
 			activate_tab = 0;
+		}
+
+		if ( location.hash && $( location.hash ).length ) {
+			activate_tab = $( location.hash ).index() - 1;
 		}
 
 		// View Configuration - Tabs (persisten after refresh)

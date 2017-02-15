@@ -11,11 +11,13 @@
 wp_nonce_field( 'gravityview_select_form', 'gravityview_select_form_nonce' );
 
 //current value
-$current_form = gravityview_get_form_id( $post->ID );
+$current_form = (int) rgar( (array) $_GET, 'form_id', gravityview_get_form_id( $post->ID ) );
+
+// If form is in trash or not existing, show error
+GravityView_Admin::connected_form_warning( $current_form );
 
 // check for available gravity forms
-$forms = gravityview_get_forms();
-
+$forms = gravityview_get_forms('any');
 ?>
 <label for="gravityview_form_id" ><?php esc_html_e( 'Where would you like the data to come from for this View?', 'gravityview' ); ?></label>
 
@@ -39,6 +41,8 @@ $forms = gravityview_get_forms();
 				<option value="<?php echo $form['id']; ?>" <?php selected( $form['id'], $current_form, true ); ?>><?php echo esc_html( $form['title'] ); ?></option>
 			<?php } ?>
 		</select>
+	<?php } else { ?>
+		<select name="gravityview_form_id" id="gravityview_form_id" class="hidden"><option selected="selected" value=""></option></select>
 	<?php } ?>
 
 	&nbsp;<a class="button button-primary" <?php if( empty( $current_form ) ) { echo 'style="display:none;"'; } ?> id="gv_switch_view_button" href="#gv_switch_view" title="<?php esc_attr_e( 'Switch View', 'gravityview' ); ?>"><?php esc_html_e( 'Switch View Type', 'gravityview' ); ?></a>

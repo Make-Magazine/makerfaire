@@ -214,7 +214,7 @@ class GFRMTHELPER {
         $cat_id = $wpdb->get_var("select resource_category_id from wp_rmt_resources where id = ".$resource_id);
 
         //find if they already have a resource set with the same Item (ie. chairs, tables, electricity, etc)
-        $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id '
+        $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id, res.token '
                             . ' FROM `wp_rmt_entry_resources` entry_res,wp_rmt_resources res '
                             . ' where entry_id='.$entryID.' and entry_res.resource_id = res.ID and resource_category_id='.$cat_id);
 

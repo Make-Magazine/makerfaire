@@ -132,7 +132,7 @@ function load_scripts() {
   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
   wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
   wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js');
-  
+
   wp_enqueue_script('thickbox', null);
 
   // Scripts
@@ -256,3 +256,5 @@ function send_smtp_email($phpmailer) {
   // Encryption system to use - ssl or tls
   $phpmailer->SMTPSecure = "";
 }
+
+add_filter( 'gform_enable_field_label_visibility_settings', '__return_true' );
