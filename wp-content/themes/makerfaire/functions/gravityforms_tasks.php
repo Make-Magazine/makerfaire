@@ -92,7 +92,12 @@ function mf_add_taskid( $form ) {
 
 add_filter('gform_after_submission', 'maybeCompleteTasks', 10, 2 ); //$entry, $form
 function maybeCompleteTasks ($entry, $form) {
-  if(isset($entry['9999'])) {
+  $taskID = '';
+  if(isset($_GET['taskID']))   $taskID = $_GET['taskID'];
+  if(isset($_POST['taskID']))  $taskID = $_POST['taskID'];
+  
+  //if task ID is passed, mark task as complete
+  if($taskID!='') {
     $entryID       = get_value_by_label('entry-id', $form);
     if (!empty($entryID)) {
       $entryid   = $entry[$entryID['id']];
@@ -100,7 +105,7 @@ function maybeCompleteTasks ($entry, $form) {
 
     global $wpdb;
     //mark task as completed
-    $sql = "UPDATE `wp_mf_entity_tasks` SET `completed`=now() WHERE lead_id = '".$entryid."' and task_id='".$entry['9999']."'";
+    $sql = "UPDATE `wp_mf_entity_tasks` SET `completed`=now() WHERE lead_id = '".$entryid."' and task_id='".$taskID."'";
     $wpdb->get_row($sql);
   }
 }
