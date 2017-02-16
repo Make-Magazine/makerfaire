@@ -20,7 +20,7 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
     $merge_tags[] = array('label' => 'Scheduled Locations', 'tag' => '{sched_loc}');
     $merge_tags[] = array('label' => 'Faire ID', 'tag' => '{faire_id}');
-    $merge_tags[] = array('label' => 'Resource Lock Ind', 'tag' => '{rmt_res_lock}');
+    $merge_tags[] = array('label' => 'Resource Category Lock Ind', 'tag' => '{rmt_res_cat_lock}');
     $merge_tags[] = array('label' => 'Attribute Lock Ind', 'tag' => '{rmt_att_lock}');
 
     //add merge tag for Attention field - Confirmation Comment
@@ -151,20 +151,24 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   }
 
   //resource lock indicator
-  if (strpos($text, '{rmt_res_lock') !== false) {
-    $startPos        = strpos($text, '{rmt_res_lock'); //pos of start of merge tag
+  if (strpos($text, '{rmt_res_cat_lock') !== false) {
+    $startPos        = strpos($text, '{rmt_res_cat_lock'); //pos of start of merge tag
     $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
     $closeBracketPos = strpos($text, '}', $startPos);  //find the closing bracket of the merge tag
 
     //resource ID
-    $RMTid = substr($text, $RmtStartPos+1,$closeBracketPos-$RmtStartPos-1);
+    $RMTcatID = substr($text, $RmtStartPos+1,$closeBracketPos-$RmtStartPos-1);
 
     //is this a valid RMT field??
-    if(is_numeric($RMTid)) {
+    if(is_numeric($RMTcatID)) {
       //find locked value of RMT field
-      $lockBit = $wpdb->get_var('SELECT lockBit FROM `wp_rmt_entry_resources` where resource_id = '.$RMTid. ' and entry_id = '.$entry_id.' limit 1');
+      $lockCount = $wpdb->get_var('SELECT count(*) as count
+        FROM `wp_rmt_entry_resources`
+        left outer join wp_rmt_resources
+            on wp_rmt_entry_resources.resource_id = wp_rmt_resources.id
+        where wp_rmt_resources.resource_category_id = '.$RMTcatID.' and lockBit=1 and entry_id = '.$entry_id);
       $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
-      $text = str_replace($mergeTag, ($lockBit==1?'Yes':'No'), $text);
+      $text = str_replace($mergeTag, ($lockCount>0?'Yes':'No'), $text);
     }
   }
 
