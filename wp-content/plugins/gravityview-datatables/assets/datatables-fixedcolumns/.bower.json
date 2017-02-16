@@ -9,14 +9,14 @@
     "datatables": ">=1.8.0"
   },
   "homepage": "https://github.com/DataTables/FixedColumns",
-  "version": "3.2.1",
-  "_release": "3.2.1",
+  "version": "3.2.2",
+  "_release": "3.2.2",
   "_resolution": {
     "type": "version",
-    "tag": "3.2.1",
-    "commit": "5d2d156d0f90b71e4b048cd40107bb86029c5426"
+    "tag": "3.2.2",
+    "commit": "7ce9255998fe8fc52b56f932a054ea14e7fe032a"
   },
-  "_source": "git://github.com/DataTables/FixedColumns.git",
+  "_source": "https://github.com/DataTables/FixedColumns.git",
   "_target": ">=3.0.2",
   "_originalSource": "datatables-fixedcolumns"
 }

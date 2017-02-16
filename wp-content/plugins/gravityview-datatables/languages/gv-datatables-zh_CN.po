@@ -1,13 +1,14 @@
-# Copyright (C) 2016 Katz Web Services, Inc.
+# Copyright (C) 2017 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
+# michael edi <michaeledi@163.com>, 2016
 # Zachary Katz <zack@katz.co>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2016-04-04 21:13+0000\n"
+"PO-Revision-Date: 2017-01-11 00:20+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -26,13 +27,13 @@ msgstr ""
 
 #: includes/class-admin-datatables.php:41
 msgid "DataTables"
-msgstr "DataTables"
+msgstr "DataTables "
 
-#: includes/class-datatables-data.php:701
+#: includes/class-datatables-data.php:720
 msgid "Loading data&hellip;"
-msgstr "加载数据中…"
+msgstr "加载数据中&hellip;"
 
-#: includes/class-datatables-data.php:702
+#: includes/class-datatables-data.php:721
 msgid "No entries match your request."
 msgstr "没有条目符合您的要求。"
 
@@ -55,16 +56,16 @@ msgstr "可见表的列"
 #: includes/extensions/class-datatables-buttons.php:29
 #: includes/extensions/class-datatables-buttons.php:57
 msgid "Export Buttons"
-msgstr ""
+msgstr "导出按钮"
 
 #: includes/extensions/class-datatables-buttons.php:30
 msgid ""
 "Display buttons that allow users to print or export the current results."
-msgstr ""
+msgstr "显示一系列按钮，允许用户打印或导出当前结果。"
 
 #: includes/extensions/class-datatables-buttons.php:47
 msgid "Enable Buttons"
-msgstr ""
+msgstr "启用按钮"
 
 #: includes/extensions/class-datatables-buttons.php:87
 msgid "Copy"
@@ -139,24 +140,22 @@ msgstr "启用滚动"
 msgid "Table Height"
 msgstr "表格高度"
 
-#: lib/EDD_SL_Plugin_Updater.php:179
+#: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
-msgstr "有一个新的版本 %1$s可用。<a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">查看版本 %3$s 的详细信息</a>。"
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
+msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:186
+#: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
-"href=\"%4$s\">update now</a>."
-msgstr "有一个新的版本 %1$s可用。<a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">查看版本 %3$s 详情</a>或<a href=\"%4$s\">现在更新</a>。"
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
+msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:334
+#: lib/EDD_SL_Plugin_Updater.php:369
 msgid "You do not have permission to install plugin updates"
 msgstr "你无权安装插件更新"
 
-#: lib/EDD_SL_Plugin_Updater.php:334
+#: lib/EDD_SL_Plugin_Updater.php:369
 msgid "Error"
 msgstr "错误"
 
@@ -176,9 +175,9 @@ msgstr "%s 扩展需要PHP版本 %s 或更新的。请访问您的主机升级�
 
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/datatables/"
-msgstr ""
+msgstr "https://gravityview.co/extensions/datatables/"
 
-#: includes/class-datatables-data.php:635
+#: includes/class-datatables-data.php:654
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr "全部"

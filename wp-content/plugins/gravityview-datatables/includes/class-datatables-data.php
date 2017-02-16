@@ -313,8 +313,11 @@ class GV_Extension_DataTables_Data {
 		global $gravityview_view;
 
 		if( empty( $_POST ) ) {
+			do_action( 'gravityview_log_debug', __METHOD__ . ': no $_POST' );
 			return;
 		}
+
+		do_action( 'gravityview_log_debug', __METHOD__ . ': $_POST', $_POST );
 
 		// Prevent error output
 		ob_start();
@@ -361,6 +364,8 @@ class GV_Extension_DataTables_Data {
 
 		$atts = $view_data['atts'];
 
+		do_action( 'gravityview_log_debug', __METHOD__ . ': $view_data[atts] before checking for order', $atts );
+
 		// check for order/sorting
 		if( isset( $_POST['order'][0]['column'] ) ) {
 			$order_index = $_POST['order'][0]['column'];
@@ -370,6 +375,8 @@ class GV_Extension_DataTables_Data {
 				$atts['sort_direction'] = !empty( $_POST['order'][0]['dir'] ) ? strtoupper( $_POST['order'][0]['dir'] ) : 'ASC';
 			}
 		}
+
+		do_action( 'gravityview_log_debug', __METHOD__ . ': $view_data[atts] after checking for order', $atts );
 
 		// check for search
 		if( !empty( $_POST['search']['value'] ) ) {
@@ -392,6 +399,8 @@ class GV_Extension_DataTables_Data {
 			// regular mode - get view entries
 			$mode = 'page';
 		}
+
+		do_action( 'gravityview_log_debug', __METHOD__ . ': $atts passed to View data', $atts );
 
 		$view_data['atts'] = $atts;
 
@@ -434,8 +443,9 @@ class GV_Extension_DataTables_Data {
 				$output = function_exists( 'wp_json_encode') ? wp_json_encode( $temp ) : json_encode( $temp );
 
 				if( $has_content_length ){
+					$strlen = function_exists( 'mb_strlen' ) ? mb_strlen( $output ) : strlen( $output );
 					// Fix strange characters before JSON response because of "Transfer-Encoding: chunked" header
-					@header( 'Content-Length: ' . strlen( $output ) );
+					@header( 'Content-Length: ' . $strlen );
 				}
 
 				exit( $output );
@@ -443,6 +453,8 @@ class GV_Extension_DataTables_Data {
 		}
 
 		$view_entries = GravityView_frontend::get_view_entries( $atts, $view_data['form_id'] );
+
+		do_action( 'gravityview_log_debug', '[DataTables] $view_entries before get_output_data', $view_entries );
 
 		$data = $this->get_output_data( $view_entries, $view_data );
 
@@ -470,13 +482,15 @@ class GV_Extension_DataTables_Data {
 		// End prevent error output
 		$errors = ob_get_clean();
 
+
 		if( ! empty( $errors ) ) {
 			do_action( 'gravityview_log_error', __METHOD__ . ' Errors generated during DataTables response', $errors );
 		}
 
 		if( $has_content_length ) {
+			$strlen = function_exists( 'mb_strlen' ) ? mb_strlen( $json ) : strlen( $json );
 			// Fix strange characters before JSON response because of "Transfer-Encoding: chunked" header
-			@header( 'Content-Length: ' . strlen( $json ) );
+			@header( 'Content-Length: ' . $strlen );
 		}
 
 		exit( $json );
@@ -509,6 +523,10 @@ class GV_Extension_DataTables_Data {
 			);
 		}
 
+		if ( ! empty( $search_criteria['field_filters'] ) && empty( $search_criteria['field_filters']['mode'] ) ) {
+			$search_criteria['field_filters']['mode'] = 'any';
+		}
+
 		return $search_criteria;
 	}
 
@@ -525,6 +543,7 @@ class GV_Extension_DataTables_Data {
 	function get_output_data( $view_entries, $view_data ) {
 
 		GravityView_View::getInstance()->setEntries( $view_entries );
+		GravityView_View::getInstance()->setForm( $view_data['form'] );
 
 		// build output data
 		$data = array();

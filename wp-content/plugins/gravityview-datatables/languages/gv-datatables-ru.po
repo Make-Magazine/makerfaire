@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Katz Web Services, Inc.
+# Copyright (C) 2017 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
 msgid ""
@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2016-04-04 21:08+0000\n"
+"PO-Revision-Date: 2017-01-11 00:20+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Russian (http://www.transifex.com/katzwebservices/gravityview-datatables/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -27,13 +27,13 @@ msgstr ""
 msgid "DataTables"
 msgstr ""
 
-#: includes/class-datatables-data.php:701
+#: includes/class-datatables-data.php:720
 msgid "Loading data&hellip;"
 msgstr ""
 
-#: includes/class-datatables-data.php:702
+#: includes/class-datatables-data.php:721
 msgid "No entries match your request."
-msgstr ""
+msgstr "Нет записей соответствующих запросу."
 
 #: includes/class-datatables-template.php:31
 msgid "DataTables Table"
@@ -45,11 +45,11 @@ msgstr ""
 
 #: includes/class-datatables-template.php:50
 msgid "Link to single entry"
-msgstr ""
+msgstr "Ссылка на одиночную запись"
 
 #: includes/class-datatables-template.php:61
 msgid "Visible Table Columns"
-msgstr ""
+msgstr "Видимые столбцы таблицы"
 
 #: includes/extensions/class-datatables-buttons.php:29
 #: includes/extensions/class-datatables-buttons.php:57
@@ -138,46 +138,44 @@ msgstr ""
 msgid "Table Height"
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:179
+#: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:186
+#: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
-"href=\"%4$s\">update now</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:334
+#: lib/EDD_SL_Plugin_Updater.php:369
 msgid "You do not have permission to install plugin updates"
-msgstr ""
+msgstr "У вас нет полномочий устанавилвать обновления плагина"
 
-#: lib/EDD_SL_Plugin_Updater.php:334
+#: lib/EDD_SL_Plugin_Updater.php:369
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #: lib/class-gravityview-extension.php:349
 msgid "Could not activate the %s Extension; GravityView is not active."
-msgstr ""
+msgstr "Не возможно активировать %s дополнение; Плагин GravityView не активирован."
 
 #: lib/class-gravityview-extension.php:353
 msgid "The %s Extension requires GravityView Version %s or newer."
-msgstr ""
+msgstr "Дополнению  %s необходим плагинGravityView версии %s или свежее."
 
 #: lib/class-gravityview-extension.php:357
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
-msgstr ""
+msgstr "Дополнению %s необходим PHP версии %s или старше. Пожалуйста, попросите поддержку вашего хостинга обновить PHP."
 
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/datatables/"
 msgstr ""
 
-#: includes/class-datatables-data.php:635
+#: includes/class-datatables-data.php:654
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr ""

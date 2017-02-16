@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2016-01-21 18:11+0000\n"
+"PO-Revision-Date: 2016-11-12 10:00+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Russian (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
-"X-Generator: grunt-wp-i18n 0.5.3\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-Bookmarks: \n"
 "X-Poedit-Country: United States\n"
@@ -23,43 +23,43 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:353 partials/metabox.php:2
+#: advanced-filter.php:360 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr ""
 
-#: advanced-filter.php:355
+#: advanced-filter.php:362
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr ""
 
-#: advanced-filter.php:356
+#: advanced-filter.php:363
 msgid "Limit to Logged-in User Entries"
 msgstr ""
 
-#: advanced-filter.php:357
+#: advanced-filter.php:364
 msgid ""
 "To limit entries to those created by the current user, select \"Created "
 "By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
 msgstr ""
 
-#: advanced-filter.php:358
+#: advanced-filter.php:365
 msgid ""
 "If you want to limit entries to those created by the current user, but allow"
 " the administrators to view all the entries, select \"Logged-in User "
 "(disabled for admins)\" from the drop-down menu."
 msgstr ""
 
-#: advanced-filter.php:578
+#: advanced-filter.php:623
 msgid "Created By"
-msgstr ""
+msgstr "Создано"
 
-#: advanced-filter.php:582
+#: advanced-filter.php:627
 msgid "Logged-in User (disabled for Admins)"
 msgstr ""
 
-#: advanced-filter.php:586
+#: advanced-filter.php:631
 msgid "Logged-in User"
 msgstr ""
 
@@ -67,36 +67,36 @@ msgstr ""
 msgid ""
 "There is a new version of %1$s available. <a target=\"_blank\" "
 "class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
-msgstr ""
+msgstr "Новая версия  %1$s доступна. <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">Подробности о новой версии %3$s здесь</a>."
 
 #: lib/EDD_SL_Plugin_Updater.php:188
 msgid ""
 "There is a new version of %1$s available. <a target=\"_blank\" "
 "class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
 "href=\"%4$s\">update now</a>."
-msgstr ""
+msgstr "Новая версия  %1$s доступна. <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">Узнать подробности о новой версии %3$s здесь</a> или <a href=\"%4$s\">обновить сейчас</a>."
 
 #: lib/EDD_SL_Plugin_Updater.php:332
 msgid "You do not have permission to install plugin updates"
-msgstr ""
+msgstr "У вас нет полномочий устанавилвать обновления плагина"
 
 #: lib/EDD_SL_Plugin_Updater.php:332
 msgid "Error"
-msgstr ""
+msgstr "Ошибка"
 
 #: lib/class-gravityview-extension.php:351
 msgid "Could not activate the %s Extension; GravityView is not active."
-msgstr ""
+msgstr "Не возможно активировать %s дополнение; Плагин GravityView не активирован."
 
 #: lib/class-gravityview-extension.php:355
 msgid "The %s Extension requires GravityView Version %s or newer."
-msgstr ""
+msgstr "Дополнению  %s необходим плагинGravityView версии %s или свежее."
 
 #: lib/class-gravityview-extension.php:359
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
-msgstr ""
+msgstr "Дополнению %s необходим PHP версии %s или старше. Пожалуйста, попросите поддержку вашего хостинга обновить PHP."
 
 #: partials/metabox.php:4
 msgid "You must save the View before you can configure Advanced Filters."
