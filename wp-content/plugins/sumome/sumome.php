@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: SumoMe
-Plugin URI: http://sumome.com
-Description: Free Tools to grow your email list from SumoMe.com
-Version: 1.22
+Plugin URI: https://sumo.com
+Description: Free Tools to grow your email list from Sumo.com
+Version: 1.24
 Author: SumoMe
-Author URI: http://www.SumoMe.com
+Author URI: https://www.Sumo.com
 */
 
 define('SUMOME__PLUGIN_DIR', plugin_dir_path( __FILE__ ));

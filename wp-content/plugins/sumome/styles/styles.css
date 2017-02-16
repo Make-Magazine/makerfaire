@@ -260,7 +260,8 @@
 }
 
 .sumome-plugin-main .sumome-logged-in-container .header-banner {
-  background-image:url('../images/sumome-banner.jpg');
+  background-image:url('../images/sumo-banner.jpg');
+  background-size:100% auto;
   background-repeat:no-repeat;
   min-height:238px;
   background-position:center;
