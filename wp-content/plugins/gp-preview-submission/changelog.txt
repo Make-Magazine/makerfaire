@@ -1,6 +1,19 @@
 
 # Changelog
 
+## 1.2.4
+
+    - Fixed issue where :value modifier was not respected for multi-input fields.
+
+## 1.2.3
+
+    - Added support for applying gform_get_input_value filter to generated entry.
+    - Another fix for GF Partial Entries; see 1.2.2.
+
+## 1.2.2
+
+    - Fixed conflict with GF Partial Entries; GFFormDisplay not available during GFPE heartbeat requests which generated a fatal error.
+
 ## 1.2.1
 
     - Fixed potential XSS security vulnerability
