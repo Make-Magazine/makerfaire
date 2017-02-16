@@ -154,7 +154,7 @@ foreach($entry as $key=>$field ) {
 $website = '';
 if (!empty($project_website)) {
   if($makerEdit){
-    $website =  'Website: <div id="website" class="edit">'. $project_website.'</div>';
+    $website =  'Website: <div id="website" class="mfEdit">'. $project_website.'</div>';
   }else{
     $website =  '<a href="' . $project_website . '" class="btn btn-info" target="_blank">Project Website</a>';
   }
@@ -164,7 +164,7 @@ if (!empty($project_website)) {
 $video = '';
 if (!empty($project_video)) {
   if($makerEdit) {
-    $video = 'Video: <span id="video" class="edit">'. $project_video.'</span>';
+    $video = 'Video: <span id="video" class="mfEdit">'. $project_video.'</span>';
   } else {
     $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
     //youtube has two type of url formats we need to look for and change
