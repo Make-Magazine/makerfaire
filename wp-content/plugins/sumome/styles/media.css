@@ -234,11 +234,11 @@
   }
 
   .sumome-plugin-main .sumome-logged-in-container .header-banner {
-    background-image: url('../images/sumome-banner.jpg');
+    background-image: url('../images/sumo-banner.jpg');
     background-repeat: no-repeat;
     min-height: 150px;
     background-position: top center;
-    background-size: auto 150px;
+    background-size: 100% 150px;
   }
 
   .sumome-plugin-main .sumome-plugin-popup-contents .site-ID {

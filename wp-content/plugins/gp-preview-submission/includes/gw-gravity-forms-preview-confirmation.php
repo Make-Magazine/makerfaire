@@ -21,6 +21,11 @@ class GWPreviewConfirmation {
     
     public static function replace_merge_tags( $form ) {
 
+	    // safeguard for when this filter is called via a Partial Entries AJAX call
+	    if( ! class_exists( 'GFFormDisplay' ) ) {
+		    return $form;
+	    }
+
         $current_page = isset( GFFormDisplay::$submission[ $form['id'] ] ) ? rgar( GFFormDisplay::$submission[ $form['id'] ], 'page_number' ) : 1;
 
         // get all HTML fields on the current page
@@ -151,6 +156,11 @@ class GWPreviewConfirmation {
 
     public static function add_dynamic_field_value_filter( $name, $field, $input_id = false ) {
 
+	    // safeguard for when this filter is called via a Partial Entries AJAX call
+	    if( ! class_exists( 'GFFormDisplay' ) ) {
+		    return;
+	    }
+
         $form = GFAPI::get_form( $field['formId'] );
 
         $value = self::preview_replace_variables( $name, $form );
@@ -181,7 +191,7 @@ class GWPreviewConfirmation {
     /**
     * Adds special support for file upload, post image and multi input merge tags.
     */
-    public static function preview_special_merge_tags( $value, $input_id, $options, $field ) {
+    public static function preview_special_merge_tags( $value, $input_id, $modifier, $field ) {
 
         $input_type             = GFFormsModel::get_input_type($field);
         $is_upload_field        = in_array( $input_type, array( 'post_image', 'fileupload' ) );
@@ -218,7 +228,7 @@ class GWPreviewConfirmation {
 
         if( is_array( rgar( $field, 'inputs' ) ) ) {
             $value = GFFormsModel::get_lead_field_value( $entry, $field );
-            $value = GFCommon::get_lead_field_display( $field, $value, $currency, true );
+            $value = GFCommon::get_lead_field_display( $field, $value, $currency, $modifier != 'value' );
         } else {
 
             switch( $input_type ) {
@@ -244,7 +254,7 @@ class GWPreviewConfirmation {
                         }
 
                     } else {
-                        $value = $input_id == 'all_fields' || $options == 'link' ? self::preview_image_display( $field, $form, $value ) : $value;
+                        $value = $input_id == 'all_fields' || $modifier == 'link' ? self::preview_image_display( $field, $form, $value ) : $value;
                     }
                     break;
                 default:
@@ -257,11 +267,11 @@ class GWPreviewConfirmation {
 
 
 
-        $value = apply_filters( 'gpps_special_merge_tags_value',                                             $value, $field, $input_id, $options, $form, $entry );
-        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $form['id'] ),                  $value, $field, $input_id, $options, $form, $entry );
-        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s_%s', $form['id'], $field['id'] ), $value, $field, $input_id, $options, $form, $entry );
-        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $input_type ),                  $value, $field, $input_id, $options, $form, $entry );
-        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s_%s', $form['id'], $input_type ),  $value, $field, $input_id, $options, $form, $entry );
+        $value = apply_filters( 'gpps_special_merge_tags_value',                                             $value, $field, $input_id, $modifier, $form, $entry );
+        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $form['id'] ),                  $value, $field, $input_id, $modifier, $form, $entry );
+        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s_%s', $form['id'], $field['id'] ), $value, $field, $input_id, $modifier, $form, $entry );
+        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $input_type ),                  $value, $field, $input_id, $modifier, $form, $entry );
+        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s_%s', $form['id'], $input_type ),  $value, $field, $input_id, $modifier, $form, $entry );
 
         return $value;
     }
@@ -348,10 +358,27 @@ class GWPreviewConfirmation {
                         if( empty( self::$entry[$field['id']] ) ) {
                             self::$entry[$field['id']] = rgpost( "input_{$form['id']}_{$field['id']}_signature_filename" );
                         }
-                        break;
+	                    break;
                 }
 
             }
+
+            // process $entry through 'gform_get_input_value' (specifically added for support with encrypting/decrypting
+	        foreach ( $form['fields'] as $field ) {
+		        $inputs = $field->get_entry_inputs();
+		        if ( is_array( $inputs ) ) {
+			        foreach ( $inputs as $input ) {
+				        self::$entry[ (string) $input['id'] ] = gf_apply_filters( array( 'gform_get_input_value', $form['id'], $field->id, $input['id'] ), rgar( self::$entry, (string) $input['id'] ), self::$entry, $field, $input['id'] );
+			        }
+		        } else {
+			        $value = rgar( self::$entry, (string) $field->id );
+			        if ( GFFormsModel::is_encrypted_field( self::$entry['id'], $field->id ) ) {
+				        $value = GFCommon::decrypt( $value );
+			        }
+			        self::$entry[ $field->id ] = gf_apply_filters( array( 'gform_get_input_value', $form['id'], $field->id ), $value, self::$entry, $field, '' );
+		        }
+	        }
+
 
         }
         

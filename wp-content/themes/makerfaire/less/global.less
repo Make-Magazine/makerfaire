@@ -44,12 +44,19 @@ h4 {
 
 a {
   color: #397b98;
-}
-
-a:hover,
-a:focus {
-  color: #00bef3;
-  text-decoration: none;
+  &:hover,
+  &:focus {
+    color: #00aeef;
+    text-decoration: none;
+  }
+  &:active,
+  &:visited {
+    color: #397b98;
+  }
+  &.disabled {
+    color: #9b9b9b;
+    font-weight: 300;
+  }
 }
 
 .no-js .mf-form div.step,
@@ -214,28 +221,50 @@ ol {
   background-color: #3FAFED;
   color: #ffffff;
   transition: background-color 0.2s ease;
-  &:hover, &:active, &:focus {
+  &:hover, &:focus, &:visited {
     background-color: #1490d4;
     transition: background-color 0.2s ease;
   }
 }
 
 .btn-contrast-border {
-  border: solid 2px #12AFE9;
+  border: solid 2px #4ebefc;
   margin: 3px;
   color: #333;
   background: #fff;
   font-size: 14px;
   line-height: 14px;
   padding: 3px 12px;
-  &:hover, &:active, &:focus {
+  &:hover, &:active, &:focus, &:visited {
     color: white;
     background: #12AFE9;
   }
 }
 
+.btn-danger {
+  border: 0;
+  border-bottom: 2px solid #87111f;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  &:hover {
+    background: #c51a28;
+  }
+  &:focus,
+  &.focus,
+  &:active,
+  &.active,
+  .btn-danger .open > .btn-info.dropdown-toggle {
+    color: #fff;
+    background: #aa1722;
+  }
+  &:visited {
+    color: #fff;
+  }
+}
+
 .dwnld-btn {
   border: solid 1px #12AFE9;
+  border-radius: 3px;
   color: #12AFE9;
   margin: 3px;
   text-transform: uppercase;
@@ -244,9 +273,16 @@ ol {
   line-height: 20px;
   padding: 3px 40px;
   position: relative;
-  &:hover, &:active, &:focus {
+  text-align: center;
+  transition: all 0.15s ease;
+  &:visited {
+    color: #12AFE9;
+    border-color: #12AFE9;
+  }
+  &:hover, &:active, &:focus, {
     color: #005980;
     border-color: #005980;
+    transition: all 0.15s ease;
   }
   &:after {
     font-family: FontAwesome;

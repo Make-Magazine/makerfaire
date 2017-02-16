@@ -10,9 +10,6 @@
       </div>
     </div>
 
-    <div class="sumome-plugin-center">
-      <img class="appsumo-logo" src="<?php print plugins_url('images/appsumo-logo.png', dirname(__FILE__))?>">
-    </div>
 
     <div class="sumome-plugin-center">Need to restore an existing account?
       <div class="sumome-plugin-linkalike sumome-link-button sumome-tile-advanced-settings item-tile sumome-popup-no-dim" data-name="sumome-control-advanced-settings" data-title="">Click here</div>

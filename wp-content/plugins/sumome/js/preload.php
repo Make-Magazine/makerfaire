@@ -141,7 +141,7 @@ var setCookie = function(cname, cvalue, exdays) {
 }
 
 function sumome_login_refresh() {
-  document.location.href='<?php print admin_url('admin.php?page=sumome')?>';
+  document.location.href='<?php print admin_url('admin.php?page=sumo')?>';
 }
 
 </script>

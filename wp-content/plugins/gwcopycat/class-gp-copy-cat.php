@@ -2,7 +2,7 @@
 
 class GP_Copy_Cat extends GWPerk {
 
-    public $version = '1.3.12';
+    public $version = '1.4.9';
     protected $min_perks_version = '1.0.6';
     protected $min_gravity_forms_version = '1.9.3';
 
@@ -17,7 +17,7 @@ class GP_Copy_Cat extends GWPerk {
     }
 
     public function register_scripts() {
-        wp_register_script( 'gp-copy-cat', $this->get_base_url() . '/js/gp-copy-cat.js', array( 'jquery' ), $this->version );
+        wp_register_script( 'gp-copy-cat', $this->get_base_url() . '/js/gp-copy-cat.js', array( 'jquery', 'gform_gravityforms' ), $this->version );
         $this->register_noconflict_script( 'gp-copy-cat' );
     }
 
@@ -76,29 +76,54 @@ class GP_Copy_Cat extends GWPerk {
 
             foreach( $matches as $match ) {
 
-                list( $class, $source_field, $target_field ) = $match;
+                list( $class, $source_field_id, $target_field_id ) = $match;
 
                 $source_form_id = $target_form_id = $form['id'];
 
-                $source_bits = explode( '.', $source_field );
-                if( count( $source_bits ) == 3 ) {
-                    $source_form_id = array_shift( $source_bits );
-                    $source_field   = $source_bits[1] == 0 ? $source_bits[0] : implode( '.', $source_bits );
+                $source_bits  = explode( '.', $source_field_id );
+                $source_field = GFFormsModel::get_field( $form, intval( $source_field_id ) );
+                if( $source_field == null ) {
+                	continue;
                 }
 
-                $target_bits = explode( '.', $target_field );
-                if( count( $target_bits ) == 3 ) {
-                    $target_form_id = array_shift( $target_bits );
-                    $target_field   = $target_bits[1] == 0 ? $target_bits[0] : implode( '.', $target_bits );
+                if( count( $source_bits ) == 3 && $source_field->get_input_type() != 'list' ) {
+                    $source_form_id  = array_shift( $source_bits );
+                    $source_field_id = $source_bits[1] == 0 ? $source_bits[0] : implode( '.', $source_bits );
                 }
 
-                $copy_fields[ $field['id'] ][] = array( 'source' => $source_field, 'target' => $target_field, 'sourceFormId' => $source_form_id, 'targetFormId' => $target_form_id );
+                $target_bits = explode( '.', $target_field_id );
+                $target_field = GFFormsModel::get_field( $form, intval( $target_field_id ) );
+	            if( $target_field == null || $target_field_id == $field->id ) {
+		            continue;
+	            }
+
+                if( count( $target_bits ) == 3 && $target_field->get_input_type() != 'list' ) {
+                    $target_form_id  = array_shift( $target_bits );
+                    $target_field_id = $target_bits[1] == 0 ? $target_bits[0] : implode( '.', $target_bits );
+                }
+
+                $copy_fields[ $field['id'] ][] = array( 'source' => $source_field_id, 'target' => $target_field_id, 'sourceFormId' => $source_form_id, 'targetFormId' => $target_form_id );
 
             }
 
         }
 
-        return $copy_fields;
+	    /**
+	     * Modify the data that will be passed to the Copy Cat script on the frontend.
+	     *
+	     * @since 1.4.3
+	     *
+	     * @param array $copy_fields {
+	     *     An array of data that dictates which fields should be copied to which.
+	     *
+	     *     @type int|string $source       The field ID from which the value will be retrieved.
+	     *     @type int|string $target       The field ID to which the value will be copied.
+	     *     @type int        $sourceFormId The ID of the form from which the value will be retrieved.
+	     *     @type int        $targetFormId The ID of the form to which the value will be copied.
+	     * }
+	     * @param array $form The current form object.
+	     */
+        return gf_apply_filters( array( 'gpcc_copy_cat_fields', $form['id'] ), $copy_fields, $form );
     }
 
     function documentation() {

@@ -18,7 +18,7 @@ function getSumomeStats() {
     statisticsDate='<?php print date('Y-m-d')?>'; //default=last week
   }
   jQuery.ajax({
-    url: 'https://sumome.com/apps/dashboard/stats',
+    url: 'https://sumo.com/apps/dashboard/stats',
     type: 'POST',
     dataType: 'json',
     beforeSend: function(req) {
