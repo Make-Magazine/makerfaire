@@ -55,23 +55,31 @@ $results = $wpdb->get_results($sql);
   jQuery( "#fsp_download" ).click(function() {
     var faire   = jQuery('#faire').val();
     var form_id = jQuery('#form_id').val();
-    var url = '<?php echo get_template_directory_uri();?>/fpdi/FSP.php?faire='+faire+'&form='+form_id;
-    
-    var link = document.createElement('a');
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
+    if(form_id=='') {
+      alert ('Please enter the FSP form ID for the faire you selected.');
+    } else {
+      var url = '<?php echo get_template_directory_uri();?>/fpdi/FSP.php?faire='+faire+'&form='+form_id;
+
+      var link = document.createElement('a');
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+    }
   });
 
   jQuery( "#gsp_download" ).click(function() {
     var faire   = jQuery('#GSPfaire').val();
     var form_id = jQuery('#GSPform_id').val();
-    var url = '<?php echo get_template_directory_uri();?>/fpdi/GSP.php?faire='+faire+'&form='+form_id;
+    if(form_id=='') {
+      alert ('Please enter the GSP form ID for the faire you selected.');
+    } else {
+      var url = '<?php echo get_template_directory_uri();?>/fpdi/GSP.php?faire='+faire+'&form='+form_id;
 
-    var link = document.createElement('a');
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
+      var link = document.createElement('a');
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+    }
   });
 
 </script>
