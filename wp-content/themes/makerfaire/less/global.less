@@ -220,6 +220,12 @@ ol {
   }
 }
 
+.btn {
+  &:visited {
+    color: #fff;
+  }
+}
+
 // Primary Call to Action button
 .btn-cyan {
   padding: 8px;
@@ -233,7 +239,8 @@ ol {
   color: #ffffff;
   transition: background-color 0.2s ease;
   text-align: center;
-  &:hover, &:focus, &:visited {
+  &:visited, &:hover, &:focus {
+    color: #fff;
     background-color: #4EBEFC;
     transition: background-color 0.2s ease;
   }
@@ -247,7 +254,7 @@ ol {
   font-size: 14px;
   line-height: 14px;
   padding: 3px 12px;
-  &:hover, &:active, &:focus, &:visited {
+  &:visited, &:hover, &:active, &:focus{
     color: white;
     background: #4EBEFC;
   }
@@ -258,7 +265,11 @@ ol {
   border-bottom: 2px solid #87111f;
   text-transform: uppercase;
   margin-bottom: 15px;
+  &:visited {
+    color: #fff;
+  }
   &:hover {
+    color: #fff;
     background: #c51a28;
   }
   &:focus,
@@ -268,9 +279,6 @@ ol {
   .btn-danger .open > .btn-info.dropdown-toggle {
     color: #fff;
     background: #aa1722;
-  }
-  &:visited {
-    color: #fff;
   }
 }
 
@@ -287,7 +295,7 @@ ol {
   position: relative;
   text-align: center;
   transition: all 0.15s ease;
-  &:hover, &:active, &:focus, &:visited {
+  &:visited, &:hover, &:active, &:focus {
     color: #4EBEFC;
     border-color: #4EBEFC;
     transition: all 0.15s ease;
