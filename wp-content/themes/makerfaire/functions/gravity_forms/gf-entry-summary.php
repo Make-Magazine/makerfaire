@@ -400,7 +400,7 @@ function gf_collapsible_sections($form, $lead){
       </div>
 
       <div role="tabpanel" class="tab-pane"  id="ticketing">
-        <div class="panel-group">'.
+        <div class="panel-group">';
 
           $ticketing = entryTicketing($lead);
           if($ticketing){
