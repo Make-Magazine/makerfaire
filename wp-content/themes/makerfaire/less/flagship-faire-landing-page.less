@@ -110,7 +110,7 @@
   }
   h3.line-item {
     color: #9B9B9B;
-    font-size: 12px;
+    font-size: 18px;
     margin-top: 10px;
   }
   .line-item {
@@ -119,13 +119,15 @@
     line-height: 27px;
     margin: 2px;
     padding: 0;
-    color: #4A4A4A;
-    &:hover,
-    &.disabled {
-      color:  #9B9B9B;
+    color: #1989C7;
+    &:visited, &:hover, &:active {
+      color:  #3FAFED;
+      text-decoration: underline;
     }
     &.disabled {
+      color: #9B9B9B;
       pointer-events: none;
+      font-weight: 200;
     }
   }
   .btn-contrast-border {
