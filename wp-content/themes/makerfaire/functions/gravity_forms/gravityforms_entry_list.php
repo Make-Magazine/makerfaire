@@ -59,11 +59,11 @@ function mf_custom_toolbar( $menu_items, $form_id ) {
 
           //get admin title for the field.
           $newURL  = "?page=gf_entries&view=entries&id=" . $form_id;
-          $newURL .= (rgget('sort')   != '' ? "&sort=" . rgget('sort') : '');
-          $newURL .= (rgget('dir')    != '' ? "&dir=" . rgget('dir') : '');
-          $newURL .= (rgget('star')   != '' ? "&star=" . rgget('star') : '');
-          $newURL .= (rgget('read')   != '' ? "&read=" . rgget('read') : '');
-          $newURL .= (rgget('filter') != '' ? "&filter=" . rgget('filter') : '');
+          $newURL .= (rgget('orderby')  != '' ? "&orderby=" . rgget('orderby') : '');
+          $newURL .= (rgget('order')    != '' ? "&order=" . rgget('order') : '');
+          $newURL .= (rgget('star')     != '' ? "&star=" . rgget('star') : '');
+          $newURL .= (rgget('read')     != '' ? "&read=" . rgget('read') : '');
+          $newURL .= (rgget('filter')   != '' ? "&filter=" . rgget('filter') : '');
 
           $newURL .= $newOutput;
 
