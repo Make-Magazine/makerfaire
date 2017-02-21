@@ -2291,7 +2291,15 @@ abstract class GFAddOn {
 	 * @return string|null
 	 */
 	public function get_default_field_select_field( $field ) {
-		
+
+		// Prepare field name.
+		$field_name = str_replace( '.', '_', $field['name'] );
+
+		// If field's value is already set, return it.
+		if ( $this->get_setting( $field_name ) ) {
+			return $this->get_setting( $field_name );
+		}
+
 		// If field's default value is not an array and not empty, return it.
 		if ( ! rgempty( 'default_value', $field ) && ! is_array( $field['default_value'] ) ) {
 			return $field['default_value'];
