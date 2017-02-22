@@ -7,6 +7,8 @@ add_action('gform_entry_post_save', 'calc_field_ind', 5, 2);
 add_action('gform_after_update_entry', 'calc_field_pre_process', 5, 3 );
 function calc_field_pre_process($form,$entry_id,$orig_entry=array()){
   $entry = GFAPI::get_entry(esc_attr($entry_id));
+  //need to reset $form as gravity view removes admin only fields
+  $form = GFAPI::get_form($entry['form_id']);
   calc_field_ind($entry, $form);
 }
 
