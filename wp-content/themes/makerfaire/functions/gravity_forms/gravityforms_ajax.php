@@ -380,9 +380,9 @@ function mf_add_note($leadid,$notetext){
 /* Modify Set Entry Status */
 function set_entry_status_content($lead,$form){
   $entry_id = $lead['id'];
-	$location_change          = $_POST['entry_info_location_change'];
-	$flags_change             = $_POST['entry_info_flags_change'];
-	$location_comment_change  = $_POST['entry_location_comment'];
+	$location_change          = (isset($_POST['entry_info_location_change'])?$_POST['entry_info_location_change']:'');
+	$flags_change             = (isset($_POST['entry_info_flags_change'])?$_POST['entry_info_flags_change']:'');
+	$location_comment_change  = (isset($_POST['entry_location_comment'])?$_POST['entry_location_comment']:'');
 
 	$field302 = RGFormsModel::get_field($form,'302');
 	$field304 = RGFormsModel::get_field($form,'304');

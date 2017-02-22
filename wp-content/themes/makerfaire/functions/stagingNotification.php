@@ -37,7 +37,7 @@ function change_email_to($notification, $form, $entry) {
 
 //override for the wp email function
 add_filter('wp_mail', 'change_email_for_wp', 10, 2);
-function change_email_for_wp($args) {
+function change_email_for_wp($notification) {
   if (Jetpack::is_staging_site()) {
     $notification = array(
       'to'          => 'kate@makermedia.com,alicia@makermedia.com',
