@@ -565,10 +565,10 @@ class GFTaskTable extends WP_List_Table {
 
 		$this->_column_headers = array(
 			array(
-				'cb'      => '',
-				'name'    => esc_html__( 'Name', 'makerfaire' ),
-				'form2use' => esc_html__( 'Form to Apply', 'makerfaire' ),
-        'formID' => esc_html__( 'Form to Apply', 'makerfaire' )
+				'cb'        => '',
+				'name'      => esc_html__( 'Name', 'makerfaire' ),
+				'form2use'  => esc_html__( 'Form URL', 'makerfaire' ),
+        'formID'    => esc_html__( 'Form to Apply', 'makerfaire' )
 			),
 			array(),
 			array(),
@@ -584,8 +584,6 @@ class GFTaskTable extends WP_List_Table {
       if(is_numeric($task['form2use'])){
         $dispForm = GFAPI::get_form($task['form2use']);
         $task['form2use'] = $dispForm['title'];
-      }else{
-        $task['form2use'] = '';
       }
       $this->items[] = $task;
     }
