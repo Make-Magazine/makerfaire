@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.11
+
+    - Added support for setting Time fields as read-only.
+
+## 1.2.10
+
+    - Updated perk to use GP Bootstrap 
+
 ## 1.2.9
 
     - Fixed issue where inputs were marked as readonly when editing entries in backend

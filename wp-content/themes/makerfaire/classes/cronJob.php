@@ -297,11 +297,41 @@ function rmt_update($form=9){
   foreach($results as $row){
    $form  = GFAPI::get_form( $row->form_id);
    $entry = GFAPI::get_entry(esc_attr($row->id));
-   //format Entry information
-   $entryData = GFRMTHELPER::gravityforms_format_record($entry, $form);
 
    //update maker table information
-   GFRMTHELPER::updateMakerTable($entryData);
+   GFRMTHELPER::updateMakerTables($entry['id']);
  }
   error_log('end updating maker tables');
+}
+
+/* This cron job is triggered daily.
+ * It looks for accepted records on current faires and checks if tickets have been created for them.
+    If they have not, it will start the process to request new tickets.
+ */
+add_action('cron_eb_ticketing', 'cron_genEBtickets');
+
+function cron_genEBtickets(){
+  global $wpdb;
+  $sql =  "SELECT lead_id "
+        . "FROM   wp_mf_faire, wp_rg_lead_detail "
+        . "       left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
+        . "WHERE  field_number=303 and value='Accepted' "
+          . " and end_dt > now() "
+          . " and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
+          . " and eb_entry_access_code.EBticket_id is NULL "
+          . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL";
+  $sql = "select lead_id, EBticket_id "
+          . "from wp_mf_faire, wp_rg_lead_detail "
+          . "left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
+          . "where field_number=303 and value='Accepted' "
+          . "and end_dt > now() "
+          . "and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
+          . "and eb_entry_access_code.EBticket_id is NULL ORDER BY `wp_rg_lead_detail`.`lead_id` ASC";
+  $results = $wpdb->get_results($sql);
+  foreach($results as $entry){
+    error_log('Creating ticket codes for '.$entry->lead_id);
+    $response = genEBtickets($entry->lead_id);
+    if(isset($response['msg']))
+      error_log('Ticket Response - '.$response['msg']);
+  }
 }

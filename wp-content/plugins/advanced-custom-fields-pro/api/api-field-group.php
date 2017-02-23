@@ -71,7 +71,7 @@ function acf_get_valid_field_group( $field_group = false ) {
 	
 	
 	// filter
-	$field_group = apply_filters('acf/get_valid_field_group', $field_group);
+	$field_group = apply_filters('acf/validate_field_group', $field_group);
 
 	
 	// translate
@@ -392,6 +392,10 @@ function _acf_get_field_group_by_id( $post_id = 0 ) {
 	
 	// unserialize data
 	$field_group = maybe_unserialize( $post->post_content );
+	
+	
+	// new field group does not contain any post_content
+	if( empty($field_group) ) $field_group = array();
 	
 	
 	// update attributes
@@ -1149,8 +1153,11 @@ function acf_import_field_group( $field_group ) {
 
 function acf_prepare_field_group_for_export( $field_group ) {
 	
-	// extract field group ID
-	$id = acf_extract_var( $field_group, 'ID' );
+	// extract some args
+	$extract = acf_extract_vars($field_group, array(
+		'ID',
+		'local'	// local may have added 'php' or 'json'
+	));
 	
 	
 	// prepare fields

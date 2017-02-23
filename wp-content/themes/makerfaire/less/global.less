@@ -6,6 +6,14 @@
   font-style: normal;
 }
 
+body {
+  font-weight: 300;
+  @media screen and (max-width: 767px) {
+    // Clear the fixed navbar
+    margin-top: 59px;
+  }
+}
+
 p {
   font-weight: 300;
   line-height: 1.4em;
@@ -17,6 +25,7 @@ h3,
 h4,
 h5,
 h6 {
+  font-weight: 400;
   small {
     font-weight: 300;
   }
@@ -24,28 +33,44 @@ h6 {
 
 h1 {
   margin-bottom: 15px;
-  font-size: 42px;
+  font-size: 48px;
 }
 h2 {
-  font-size: 32px;
+  font-size: 38px;
 }
 h3 {
-  font-size: 25px;
+  font-size: 26px;
   font-weight: 300;
 }
 h4 {
   font-size: 20px;
   margin-top: 12px;
 }
-
-a {
-  color: #397b98;
+h5 {
+  font-size: 18px;
+}
+h6 {
+  font-size: 12px;
 }
 
-a:hover,
-a:focus {
-  color: #00bef3;
-  text-decoration: none;
+a {
+  color: #1989C7;
+  font-weight: 400;
+  transition: color 0.1s ease;
+  &:visited {
+    color: #1989C7;
+  }
+  &:active,
+  &:hover,
+  &:focus {
+    color: #37AFED;
+    text-decoration: underline;
+    transition: color 0.1s ease;
+  }
+  &.disabled {
+    color: #9b9b9b;
+    font-weight: 200;
+  }
 }
 
 .no-js .mf-form div.step,
@@ -63,7 +88,8 @@ a:focus {
   clear: both;
 }
 
-.lead {
+.lead,
+.large {
   font-size: 20px;
   ul {
     li {
@@ -75,7 +101,7 @@ a:focus {
 ul,
 ol {
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.5em;
   color: #333;
   list-style-type: square;
@@ -198,6 +224,12 @@ ol {
   }
 }
 
+.btn {
+  &:visited {
+    color: #fff;
+  }
+}
+
 // Primary Call to Action button
 .btn-cyan {
   padding: 8px;
@@ -207,32 +239,68 @@ ol {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
-  background-color: #3FAFED;
+  background-color: #1989C7;
   color: #ffffff;
-  transition: background-color 0.2s ease;
-  &:hover, &:active, &:focus {
-    background-color: #1490d4;
-    transition: background-color 0.2s ease;
+  transition: all 0.15s ease;
+  text-align: center;
+  &:visited {
+    color: #ffffff;
+  }
+  &:hover, &:focus {
+    color: #fff;
+    background-color: #4EBEFC;
+    transition: all 0.15s ease;
   }
 }
 
 .btn-contrast-border {
-  border: solid 2px #12AFE9;
+  border: solid 2px #1989C7;
   margin: 3px;
   color: #333;
   background: #fff;
   font-size: 14px;
   line-height: 14px;
   padding: 3px 12px;
-  &:hover, &:active, &:focus {
+  transition: all 0.15s ease;
+  &:visited {
+    color: #333;
+  }
+  &:hover, &:active, &:focus{
     color: white;
-    background: #12AFE9;
+    border: solid 2px #4EBEFC;
+    background: #4EBEFC;
+    transition: all 0.15s ease;
+  }
+}
+
+.btn-danger {
+  border: 0;
+  border-bottom: 2px solid #87111f;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  transition: all 0.15s ease;
+  &:visited {
+    color: #fff;
+  }
+  &:hover {
+    color: #fff;
+    background: #c51a28;
+    transition: all 0.15s ease;
+  }
+  &:focus,
+  &.focus,
+  &:active,
+  &.active,
+  .btn-danger .open > .btn-info.dropdown-toggle {
+    color: #fff;
+    background: #aa1722;
   }
 }
 
 .dwnld-btn {
-  border: solid 1px #12AFE9;
-  color: #12AFE9;
+  border: solid 1px #1989C7;
+  border-radius: 3px;
+  color: #1989C7;
   margin: 3px;
   text-transform: uppercase;
   background: #fff;
@@ -240,9 +308,12 @@ ol {
   line-height: 20px;
   padding: 3px 40px;
   position: relative;
-  &:hover, &:active, &:focus {
-    color: #005980;
-    border-color: #005980;
+  text-align: center;
+  transition: all 0.15s ease;
+  &:visited, &:hover, &:active, &:focus {
+    color: #4EBEFC;
+    border-color: #4EBEFC;
+    transition: all 0.15s ease;
   }
   &:after {
     font-family: FontAwesome;

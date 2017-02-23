@@ -86,6 +86,7 @@ class GravityView_frontend {
 
 	private function initialize() {
 		add_action( 'wp', array( $this, 'parse_content'), 11 );
+		add_filter( 'parse_query', array( $this, 'parse_query_fix_frontpage' ), 10 );
 		add_action( 'template_redirect', array( $this, 'set_entry_data'), 1 );
 
 		// Enqueue scripts and styles after GravityView_Template::register_styles()
@@ -97,6 +98,8 @@ class GravityView_frontend {
 		add_filter( 'the_title', array( $this, 'single_entry_title' ), 1, 2 );
 		add_filter( 'the_content', array( $this, 'insert_view_in_content' ) );
 		add_filter( 'comments_open', array( $this, 'comments_open' ), 10, 2 );
+
+		add_action( 'gravityview_after', array( $this, 'context_not_configured_warning' ) );
 	}
 
 	/**
@@ -261,11 +264,77 @@ class GravityView_frontend {
 	}
 
 	/**
+	 * Allow GravityView entry endpoints on the front page of a site
+	 *
+	 * @link  https://core.trac.wordpress.org/ticket/23867 Fixes this core issue
+	 * @link https://wordpress.org/plugins/cpt-on-front-page/ Code is based on this
+	 *
+	 * @since 1.17.3
+	 *
+	 * @param WP_Query &$query (passed by reference)
+	 *
+	 * @return void
+	 */
+	public function parse_query_fix_frontpage( &$query ) {
+		global $wp_rewrite;
+
+		$is_front_page = ( $query->is_home || $query->is_page );
+		$show_on_front = ( 'page' === get_option('show_on_front') );
+		$front_page_id = get_option('page_on_front');
+
+		if (  $is_front_page && $show_on_front && $front_page_id ) {
+
+			// Force to be an array, potentially a query string ( entry=16 )
+			$_query = wp_parse_args( $query->query );
+
+			// pagename can be set and empty depending on matched rewrite rules. Ignore an empty pagename.
+			if ( isset( $_query['pagename'] ) && '' === $_query['pagename'] ) {
+				unset( $_query['pagename'] );
+			}
+
+			// this is where will break from core wordpress
+			$ignore = array( 'preview', 'page', 'paged', 'cpage' );
+			$endpoints = rgobj( $wp_rewrite, 'endpoints' );
+			foreach ( (array) $endpoints as $endpoint ) {
+				$ignore[] = $endpoint[1];
+			}
+			unset( $endpoints );
+
+			// Modify the query if:
+			// - We're on the "Page on front" page (which we are), and:
+			// - The query is empty OR
+			// - The query includes keys that are associated with registered endpoints. `entry`, for example.
+			if ( empty( $_query ) || ! array_diff( array_keys( $_query ), $ignore ) ) {
+
+				$qv =& $query->query_vars;
+
+				// Prevent redirect when on the single entry endpoint
+				if( self::is_single_entry() ) {
+					add_filter( 'redirect_canonical', '__return_false' );
+				}
+
+				$query->is_page = true;
+				$query->is_home = false;
+				$qv['page_id']  = $front_page_id;
+
+				// Correct <!--nextpage--> for page_on_front
+				if ( ! empty( $qv['paged'] ) ) {
+					$qv['page'] = $qv['paged'];
+					unset( $qv['paged'] );
+				}
+			}
+
+			// reset the is_singular flag after our updated code above
+			$query->is_singular = $query->is_single || $query->is_page || $query->is_attachment;
+		}
+	}
+
+	/**
 	 * Read the $post and process the View data inside
 	 * @param  array  $wp Passed in the `wp` hook. Not used.
 	 * @return void
 	 */
-	function parse_content( $wp = array() ) {
+	public function parse_content( $wp = array() ) {
 		global $post;
 
 		// If in admin and NOT AJAX request, get outta here.
@@ -443,6 +512,11 @@ class GravityView_frontend {
 			return $content;
 		}
 
+		// Only render in the loop. Fixes issues with the_content filter being applied in places like the sidebar
+		if( ! in_the_loop() ) {
+			return $content;
+		}
+
 		if ( $this->isGravityviewPostType() ) {
 
 			/** @since 1.7.4 */
@@ -482,6 +556,53 @@ class GravityView_frontend {
 		$open = apply_filters( 'gravityview/comments_open', $open, $post_id );
 
 		return $open;
+	}
+
+	/**
+	 * Display a warning when a View has not been configured
+	 *
+	 * @since 1.19.2
+	 *
+	 * @param int $view_id The ID of the View currently being displayed
+	 *
+	 * @return void
+	 */
+	public function context_not_configured_warning( $view_id = 0 ) {
+
+		if ( ! class_exists( 'GravityView_View' ) ) {
+			return;
+		}
+
+		$fields = GravityView_View::getInstance()->getContextFields();
+
+		if ( ! empty( $fields ) ) {
+			return;
+		}
+
+		$context = GravityView_View::getInstance()->getContext();
+
+		switch( $context ) {
+			case 'directory':
+				$tab = __( 'Multiple Entries', 'gravityview' );
+				break;
+			case 'edit':
+				$tab = __( 'Edit Entry', 'gravityview' );
+				break;
+			case 'single':
+			default:
+				$tab = __( 'Single Entry', 'gravityview' );
+				break;
+		}
+
+
+		$title = sprintf( esc_html_x('The %s layout has not been configured.', 'Displayed when a View is not configured. %s is replaced by the tab label', 'gravityview' ), $tab );
+		$edit_link = admin_url( sprintf( 'post.php?post=%d&action=edit#%s-view', $view_id, $context ) );
+		$action_text = sprintf( esc_html__('Add fields to %s', 'gravityview' ), $tab );
+		$message = esc_html__( 'You can only see this message because you are able to edit this View.', 'gravityview' );
+
+		$output = sprintf( '<h3>%s <strong><a href="%s">%s</a></strong></h3><p>%s</p>', $title, esc_url( $edit_link ), $action_text, $message );
+
+		echo GVCommon::generate_notice( $output, 'gv-error error', 'edit_gravityview', $view_id );
 	}
 
 
@@ -565,10 +686,11 @@ class GravityView_frontend {
 		/**
 		 * Don't render View if user isn't allowed to see it
 		 * @since 1.15
+		 * @since 1.17.2 Added check for if a user has no caps but is logged in (member of multisite, but not any site). Treat as if logged-out.
 		 */
-		if( is_user_logged_in() && false === GVCommon::has_cap( 'read_gravityview', $view_id ) ) {
+		if( is_user_logged_in() && ! ( empty( wp_get_current_user()->caps ) && empty( wp_get_current_user()->roles ) ) && false === GVCommon::has_cap( 'read_gravityview', $view_id ) ) {
 
-			do_action( 'gravityview_log_debug', sprintf( '[render_view] Returning: View %d is not visible by current user.', $view_id ) );
+			do_action( 'gravityview_log_debug', sprintf( '%s Returning: View %d is not visible by current user.', __METHOD__, $view_id ) );
 
 			return null;
 		}
@@ -671,6 +793,11 @@ class GravityView_frontend {
 			if ( empty( $entry ) || ! self::is_entry_approved( $entry, $atts ) ) {
 
 				do_action( 'gravityview_log_debug', '[render_view] Entry does not exist. This may be because of View filters limiting access.' );
+
+				// Only display warning once when multiple Views are embedded
+				if( $view_id !== (int) GravityView_frontend::get_context_view_id() ) {
+					return null;
+				}
 
 				/**
 				 * @filter `gravityview/render/entry/not_visible` Modify the message shown to users when the entry doesn't exist or they aren't allowed to view it.
@@ -841,8 +968,19 @@ class GravityView_frontend {
 	 */
 	public static function process_search_only_approved( $args, $search_criteria ) {
 
+		/** @since 1.19 */
+		if( ! empty( $args['admin_show_all_statuses'] ) && GVCommon::has_cap('gravityview_moderate_entries') ) {
+			do_action( 'gravityview_log_debug', __METHOD__ . ': User can moderate entries; showing all approval statuses' );
+			return $search_criteria;
+		}
+
 		if ( ! empty( $args['show_only_approved'] ) ) {
-			$search_criteria['field_filters'][] = array( 'key' => 'is_approved', 'value' => 'Approved' );
+
+			$search_criteria['field_filters'][] = array(
+				'key' => GravityView_Entry_Approval::meta_key,
+				'value' => GravityView_Entry_Approval_Status::APPROVED
+			);
+
 			$search_criteria['field_filters']['mode'] = 'all'; // force all the criterias to be met
 
 			do_action( 'gravityview_log_debug', '[process_search_only_approved] Search Criteria if show only approved: ', $search_criteria );
@@ -859,6 +997,9 @@ class GravityView_frontend {
 	 *   checking the entry approved field, returning true if show_only_approved = false.
 	 *
 	 * @since 1.7
+	 * @since 1.18 Converted check to use GravityView_Entry_Approval_Status::is_approved
+	 *
+	 * @uses GravityView_Entry_Approval_Status::is_approved
 	 *
 	 * @param array $entry  Entry object
 	 * @param array $args   View settings (optional)
@@ -872,13 +1013,15 @@ class GravityView_frontend {
 			return true;
 		}
 
-		$is_approved = gform_get_meta( $entry['id'], 'is_approved' );
-
-		if ( $is_approved ) {
+		/** @since 1.19 */
+		if( ! empty( $args['admin_show_all_statuses'] ) && GVCommon::has_cap('gravityview_moderate_entries') ) {
+			do_action( 'gravityview_log_debug', __METHOD__ . ': User can moderate entries, so entry is approved for viewing' );
 			return true;
 		}
 
-		return false;
+		$is_approved = gform_get_meta( $entry['id'], GravityView_Entry_Approval::meta_key );
+
+		return GravityView_Entry_Approval_Status::is_approved( $is_approved );
 	}
 
 	/**
@@ -897,7 +1040,12 @@ class GravityView_frontend {
 	 */
 	public static function get_search_criteria( $args, $form_id ) {
 
-		// Search Criteria
+		/**
+		 * @filter `gravityview_fe_search_criteria` Modify the search criteria
+		 * @see GravityView_Widget_Search::filter_entries Adds the default search criteria
+		 * @param array $search_criteria Empty `field_filters` key
+		 * @param int $form_id ID of the Gravity Forms form that is being searched
+		 */
 		$search_criteria = apply_filters( 'gravityview_fe_search_criteria', array( 'field_filters' => array() ), $form_id );
 
 		$original_search_criteria = $search_criteria;
@@ -999,7 +1147,7 @@ class GravityView_frontend {
 			'page_size' => $page_size,
 		);
 
-		do_action( 'gravityview_log_debug', '[get_view_entries] Paging: ', $paging );
+		do_action( 'gravityview_log_debug', __METHOD__ . ': Paging: ', $paging );
 
 		// Sorting
 		$sorting = self::updateViewSorting( $args, $form_id );
@@ -1035,13 +1183,13 @@ class GravityView_frontend {
 		 */
 		$parameters = apply_filters( 'gravityview_get_entries_'.$args['id'], $parameters, $args, $form_id );
 
-		do_action( 'gravityview_log_debug', '[get_view_entries] $parameters passed to gravityview_get_entries(): ', $parameters );
+		do_action( 'gravityview_log_debug', __METHOD__ . ': $parameters passed to gravityview_get_entries(): ', $parameters );
 
 		//fetch entries
 		$count = 0;
 		$entries = gravityview_get_entries( $form_id, $parameters, $count );
 
-		do_action( 'gravityview_log_debug', sprintf( '[get_view_entries] Get Entries. Found: %s entries', $count ), $entries );
+		do_action( 'gravityview_log_debug', sprintf( '%s: Get Entries. Found: %s entries', __METHOD__, $count ), $entries );
 
 		/**
 		 * @filter `gravityview_view_entries` Filter the entries output to the View
@@ -1067,7 +1215,7 @@ class GravityView_frontend {
 	 *
 	 * @since 1.7
 	 *
-	 * @param $args View settings. Required to have `sort_field` and `sort_direction` keys
+	 * @param array $args View settings. Required to have `sort_field` and `sort_direction` keys
 	 * @param int $form_id The ID of the form used to sort
 	 * @return array $sorting Array with `key`, `direction` and `is_numeric` keys
 	 */
@@ -1113,6 +1261,10 @@ class GravityView_frontend {
 		$form = gravityview_get_form( $form_id );
 
 		$sort_field = GFFormsModel::get_field( $form, $sort_field_id );
+
+		if( ! $sort_field ) {
+			return $sort_field_id;
+		}
 
 		switch ( $sort_field['type'] ) {
 

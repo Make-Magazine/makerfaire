@@ -2,8 +2,8 @@
 Contributors: SumoMe
 Tags: MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, popup, exit intent, growth, subscribers, twitter, facebook share, social plugin,  social sharing, subscription, email form, share,  sharing, social , social media buttons , links, click to tweet ,  analytics , newsletter,  widget,lightbox, analytics, newsletter, newsletter, Facebook, floating social buttons, google plus, Image sharing,  pinterest plugin, pintrest, share image,   sharebar, sharing, social bookmarking, social plugin, sms, tweet button,  heat map, heatmaps, twitter share, contact form, scroll box, content analytics, inbound marketing, mailing list, share buttons, welcome mat, landing page
 Requires at least: 3.0.1
-Tested up to: 4.6.1
-Stable tag: 1.22
+Tested up to: 4.7.2
+Stable tag: 1.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,9 +13,9 @@ Free and easy way to double your email subscribers. And Sharing tools to double 
 
 Most blogs are designed for hit-and-run readers. People find your blog, read your article, and leave. Wouldn't it be nice if some of those people subscribe or share your amazing post?
 
->SumoMe provides free tools you need to grow your WordPress site. This plugin will make it easy for your readers to join your email list, share your articles and optimize with analytics. The free tools include:
+>Sumo provides free tools you need to grow your WordPress site. This plugin will make it easy for your readers to join your email list, share your articles and optimize with analytics. The free tools include:
 >
->`List Builder` will let you create a fancy lightbox pop up to [build email subscriptions](http://sumome.com/?src=wordpress) (for MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, or others).
+>`List Builder` will let you create a fancy lightbox pop up to [build email subscriptions](http://sumo.com/?src=wordpress) (for MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, or others).
 >
 >`Share` makes it insanely easy for people to share on mobile or web all of your great content.
 >
@@ -146,7 +146,7 @@ According to Buffer, image tweets on Twitter get fully 2x the engagement of text
 
 = Easy image sharing for all three social networks =
 
-ImageSharer makes it super easy to add image sharing for all three powerful social networks without any coding or frustrating setup.  Simply install the SumoMe plugin, click to activate ImageSharer, and watch your share stats start rolling in.
+ImageSharer makes it super easy to add image sharing for all three powerful social networks without any coding or frustrating setup.  Simply install the Sumo plugin, click to activate ImageSharer, and watch your share stats start rolling in.
 
 = Latest Updates =
 
@@ -158,7 +158,7 @@ ImageSharer makes it super easy to add image sharing for all three powerful soci
 * Added SMS and WhatsApp social sharing buttons
 
 
-[`See more` at SumoMe.com](http://sumome.com/?src=wordpress_bottom)
+[`See more` at Sumo.com](http://sumo.com/?src=wordpress_bottom)
 
 [youtube http://www.youtube.com/watch?v=L_kbSb97QS0]
 
@@ -176,13 +176,13 @@ ImageSharer makes it super easy to add image sharing for all three powerful soci
 
 Not at all. This plugin loads asynchronously so it won't down your site at all.
 
-= Where do I login to SumoMe? =
+= Where do I login to Sumo? =
 
 Once you install the plugin and activate it. Go to any page on your site and you'll see a little blue thing in the top right, click on it and then the crown icon to login.
 
 = How can I install an app? =
 
-Once you've logged into SumoMe, click on Sumo Store and click Install for whichever app you'd like to install. Once you have installed the List Builder app, you can integrate with MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, or Maropost.
+Once you've logged into Sumo, click on Sumo Store and click Install for whichever app you'd like to install. Once you have installed the List Builder app, you can integrate with MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, or Maropost.
 
 = How does Highlighter work? =
 
@@ -271,7 +271,7 @@ Why you should encourage Twitter sharing
 
 == Screenshots ==
 
-[See all of our screenshots at SumoMe.com](http://sumome.com/?src=wordpress_ss)
+[See all of our screenshots at Sumo.com](http://sumo.com/?src=wordpress_ss)
 
 1. This screen shot is how to Sign up once you have activated the plugin.
 2. This is the screen to choose which apps to install.
@@ -354,7 +354,13 @@ Why you should encourage Twitter sharing
 * Updating versions.
 
 = 1.22 =
-* Upgrading users that inserted the SumoMe tag manually.
+* Upgrading users that inserted the Sumo tag manually.
+
+= 1.23 =
+* Sumo
+
+= 1.24 =
+* Sumo transition
 
 == Upgrade Notice ==
 
@@ -421,4 +427,10 @@ Why you should encourage Twitter sharing
 * Updating versions.
 
 = 1.22 =
-* Upgrading users that inserted the SumoMe tag manually.
+* Upgrading users that inserted the Sumo tag manually.
+
+= 1.23 =
+* Sumo
+
+= 1.24 =
+* Sumo transition

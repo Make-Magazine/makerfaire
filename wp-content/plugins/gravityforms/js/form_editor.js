@@ -537,8 +537,8 @@ function LoadFieldSettings(){
     jQuery("#field_default_value_textarea").val(field.defaultValue == undefined ? "" : field.defaultValue);
     jQuery("#field_description").val(field.description == undefined ? "" : field.description);
     jQuery("#field_css_class").val(field.cssClass == undefined ? "" : field.cssClass);
-    jQuery("#field_range_min").val( field.rangeMin == undefined || field.rangeMin == false ? "" : field.rangeMin);
-    jQuery("#field_range_max").val(field.rangeMax == undefined  || field.rangeMax == false? "" : field.rangeMax);
+    jQuery("#field_range_min").val( field.rangeMin == undefined || field.rangeMin === false ? "" : field.rangeMin);
+    jQuery("#field_range_max").val(field.rangeMax == undefined  || field.rangeMax === false ? "" : field.rangeMax);
     jQuery("#field_name_format").val(field.nameFormat);
     jQuery('#field_force_ssl').prop('checked', field.forceSSL ? true : false);
     jQuery('#credit_card_style').val(field.creditCardStyle ? field.creditCardStyle : "style1");

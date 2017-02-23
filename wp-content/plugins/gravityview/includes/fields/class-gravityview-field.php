@@ -31,6 +31,11 @@ abstract class GravityView_Field {
 	public $label;
 
 	/**
+	 * @var string The default search label used by the search widget, if not set
+	 */
+	public $default_search_label;
+
+	/**
 	 * `standard`, `advanced`, `post`, `pricing`, `meta`, `gravityview`
 	 * @since 1.15.2
 	 * @type string The group belongs to this field in the field picker
@@ -42,7 +47,7 @@ abstract class GravityView_Field {
 	 * @type boolean Can the field be searched?
 	 * @since 1.15.2
 	 */
-	public $is_searchable;
+	public $is_searchable = true;
 
 	/**
 	 * @internal Not yet implemented
@@ -62,6 +67,26 @@ abstract class GravityView_Field {
 	 * @since 1.15.2
 	 */
 	public $is_numeric;
+
+	/**
+	 * @var null|string The key used to search and sort entry meta in Gravity Forms. Used if the field stores data as custom entry meta.
+	 * @see https://www.gravityhelp.com/documentation/article/gform_entry_meta/
+	 * @since TODO
+	 */
+	public $entry_meta_key = null;
+
+	/**
+	 * @var string|array Optional. The callback function after entry meta is updated, only used if $entry_meta_key is set.
+	 * @see https://www.gravityhelp.com/documentation/article/gform_entry_meta/
+	 * @since TODO
+	 */
+	var $entry_meta_update_callback = null;
+
+	/**
+	 * @var bool Whether to show meta when set to true automatically adds the column to the entry list, without having to edit and add the column for display
+	 * @since TODO
+	 */
+	var $entry_meta_is_default_column = false;
 
 	/**
 	 * @internal Not yet implemented
@@ -109,12 +134,64 @@ abstract class GravityView_Field {
 
 		add_filter( 'gravityview/sortable/field_blacklist', array( $this, '_filter_sortable_fields' ), 1 );
 
+		if( $this->entry_meta_key ) {
+			add_filter( 'gform_entry_meta', array( $this, 'add_entry_meta' ) );
+			add_filter( 'gravityview/common/sortable_fields', array( $this, 'add_sortable_field' ), 10, 2 );
+		}
+
 		if( $this->_custom_merge_tag ) {
 			add_filter( 'gform_custom_merge_tags', array( $this, '_filter_gform_custom_merge_tags' ), 10, 4 );
 			add_filter( 'gform_replace_merge_tags', array( $this, '_filter_gform_replace_merge_tags' ), 10, 7 );
 		}
 
+		if( 'meta' === $this->group || '' !== $this->default_search_label ) {
+			add_filter( 'gravityview_search_field_label', array( $this, 'set_default_search_label' ), 10, 3 );
+		}
+
 		GravityView_Fields::register( $this );
+	}
+
+	/**
+	 * Add the field to the Filter & Sort available fields
+	 *
+	 * @since TODO
+	 *
+	 * @param array $fields Sub-set of GF form fields that are sortable
+	 *
+	 * @return array Modified $fields array to include approval status in the sorting dropdown
+	 */
+	public function add_sortable_field( $fields ) {
+
+		$added_field = array(
+			'label' => $this->label,
+			'type'  => $this->name
+		);
+
+		$fields["{$this->entry_meta_key}"] = $added_field;
+
+		return $fields;
+	}
+
+	/**
+	 * Allow setting a default search label for search fields based on the field type
+	 *
+	 * Useful for entry meta "fields" that don't have Gravity Forms labels, like `created_by`
+	 *
+	 * @since 1.17.3
+	 *
+	 * @param string $label Existing label text, sanitized.
+	 * @param array $gf_field Gravity Forms field array, as returned by `GFFormsModel::get_field()`
+	 * @param array $field Field setting as sent by the GV configuration - has `field`, `input` (input type), and `label` keys
+	 *
+	 * @return string
+	 */
+	function set_default_search_label( $label = '', $gf_field = null, $field = array() ) {
+
+		if( $this->name === $field['field'] && '' === $label ) {
+			$label = esc_html( $this->default_search_label );
+		}
+
+		return $label;
 	}
 
 	/**
@@ -262,6 +339,38 @@ abstract class GravityView_Field {
 		}
 
 		return $not_sortable;
+	}
+
+	/**
+	 * Add the custom entry meta key to make it searchable and sortable
+	 *
+	 * @see https://www.gravityhelp.com/documentation/article/gform_entry_meta/
+	 *
+	 * @param array $entry_meta Array of custom entry meta keys with associative arrays
+	 *
+	 * @return mixed
+	 */
+	function add_entry_meta( $entry_meta ) {
+
+		if( ! isset( $entry_meta["{$this->entry_meta_key}"] ) ) {
+
+			$added_meta = array(
+				'label'             => $this->label,
+				'is_numeric'        => $this->is_numeric,
+				'is_default_column' => $this->entry_meta_is_default_column,
+			);
+
+			if ( $this->entry_meta_update_callback && is_callable( $this->entry_meta_update_callback ) ) {
+				$added_meta['update_entry_meta_callback'] = $this->entry_meta_update_callback;
+			}
+
+			$entry_meta["{$this->entry_meta_key}"] = $added_meta;
+
+		} else {
+			do_action( 'gravityview_log_error', __METHOD__ . ' Entry meta already set: ' . $this->entry_meta_key, $entry_meta["{$this->entry_meta_key}"] );
+		}
+
+		return $entry_meta;
 	}
 
 	private function field_support_options() {

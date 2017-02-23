@@ -12,9 +12,9 @@ if (!isset($noClose)) print '<div class="sumome-plugin-dashboard-widget-close-bu
 		<div class="forms">
 
 			<div class="sumome-wp-dash-logged-in <?php print $sumomeStatus?>">
-				<div class="sumome-plugin-dashboard-widget-header-title">SumoMe is Connected!</div>
+				<div class="sumome-plugin-dashboard-widget-header-title">Sumo is Connected!</div>
 				<div class="sumome-plugin-dashboard-widget-header-button">
-		            <button type="submit" class="button green dashboard-button" onclick="document.location.href='<?php print admin_url('admin.php?page=sumome')?>'">DASHBOARD</button>
+		            <button type="submit" class="button green dashboard-button" onclick="document.location.href='<?php print admin_url('admin.php?page=sumo')?>'">DASHBOARD</button>
 		        </div>
 			</div>
 
@@ -24,11 +24,11 @@ if (!isset($noClose)) print '<div class="sumome-plugin-dashboard-widget-close-bu
 				<div class="sumome-popup-forms">
 
 				</div>
-				<div class="sumome-plugin-dashboard-widget-header-title">Please Connect SumoMe</div>
-				<div class="sumome-plugin-dashboard-widget-header-desc">SumoMe is the #1 plugin to grow your WordPress site.<br>
+				<div class="sumome-plugin-dashboard-widget-header-title">Please Connect Sumo</div>
+				<div class="sumome-plugin-dashboard-widget-header-desc">Sumo is the #1 plugin to grow your WordPress site.<br>
 				Connect today and you'll <b>grow</b> your traffic, <b>build</b> a massive following, and <b>track</b> your progress.</div>
 				<div class="sumome-plugin-dashboard-widget-header-button">
-		            <button type="submit" class="button green connect-button" id="connectFormButton">CONNECT SUMOME</button>
+		            <button type="submit" class="button green connect-button" id="connectFormButton">CONNECT SUMO</button>
 		            <div class="sumome-plugin-dashboard-widget-learn-more">Learn More</div>
 		        </div>
 			</div>
@@ -38,7 +38,7 @@ if (!isset($noClose)) print '<div class="sumome-plugin-dashboard-widget-close-bu
 		<div class="sumome-plugin-dashboard-widget-top-note-container">
 			<div class="sumome-plugin-dashboard-widget-top-note">
 				<div class="sumome-plugin-dashboard-widget-top-note-title">Grow Your Site</div>
-				<div class="sumome-plugin-dashboard-widget-top-note-desc">SumoMe is the most trusted way to grow your site,<br> <b>used by 500,000+ websites.</b><br><br>
+				<div class="sumome-plugin-dashboard-widget-top-note-desc">Sumo is the most trusted way to grow your site,<br> <b>used by 500,000+ websites.</b><br><br>
 				<ul>
 					<li>12 of the most essential tools, all in ONE place</li>
 					<li>No coding needed</li>
@@ -109,9 +109,9 @@ if (!isset($noClose)) print '<div class="sumome-plugin-dashboard-widget-close-bu
 		</div>
 
 		<div class="sumome-plugin-dashboard-widget-separator2">
-			<div class="sumome-plugin-dashboard-widget-middle-note-title">Your Favorite Websites Already Use SumoMe</div>
+			<div class="sumome-plugin-dashboard-widget-middle-note-title">Your Favorite Websites Already Use Sumo</div>
 
-			<div class="sumome-plugin-dashboard-widget-middle-note-desc">500,000+ sites are powered by SumoMe.</div>
+			<div class="sumome-plugin-dashboard-widget-middle-note-desc">500,000+ sites are powered by Sumo.</div>
 
 			<div class="sumome-plugin-dashboard-widget-middle-note-clients">
 				<img src="<?php print plugins_url('images/sumome-site-clients-airbnb.png', dirname(__FILE__))?>">
@@ -143,13 +143,13 @@ if (!isset($noClose)) print '<div class="sumome-plugin-dashboard-widget-close-bu
 
 			<div class="sumome-wp-dash-logged-in <?php print $sumomeStatus?>">
 				<div class="sumome-plugin-dashboard-widget-header-button sumome-plugin-dashboard-widget-footer-button">
-		            <button type="submit" class="button green dashboard-button" onclick="document.location.href='<?php print admin_url('admin.php?page=sumome')?>'">DASHBOARD</button>
+		            <button type="submit" class="button green dashboard-button" onclick="document.location.href='<?php print admin_url('admin.php?page=sumo')?>'">DASHBOARD</button>
 		        </div>
 			</div>
 
 			<div class="sumome-wp-dash-logged-out <?php print $sumomeStatus?>">
 					<div class="sumome-plugin-dashboard-widget-header-button sumome-plugin-dashboard-widget-footer-button">
-		            <button type="submit" class="button green connect-button" id="connectFormButton">CONNECT SUMOME</button>
+		            <button type="submit" class="button green connect-button" id="connectFormButton">CONNECT SUMO</button>
 		            <div class="sumome-plugin-dashboard-widget-learn-more">Learn More</div>
 		        </div>
 			</div>
@@ -161,7 +161,7 @@ if (!isset($noClose)) print '<div class="sumome-plugin-dashboard-widget-close-bu
 		<?php
 		if (substr_count($_SERVER['REQUEST_URI'], 'dashboard')>0) {
 			?>
-			<a href="<?php print admin_url('admin.php?page=sumome-siteID')?>">Click here</a>
+			<a href="<?php print admin_url('admin.php?page=sumo-siteID')?>">Click here</a>
 			<?php
 		} else {
 			?>

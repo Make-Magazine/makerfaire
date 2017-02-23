@@ -87,7 +87,7 @@ jQuery(document).ready(function() {
       }
 
       if (dataName=="sumome-control-advanced-settings") {
-		    document.location.href='<?php print admin_url('admin.php?page=sumome-siteID')?>';
+		    document.location.href='<?php print admin_url('admin.php?page=sumo-siteID')?>';
       } else if (jQuery(this).hasClass('sumome-popup-iframe')) {
         var popupHref=jQuery(this).data('href');
         if (jQuery(this).attr('href')) popupHref=jQuery(this).attr('href');
@@ -101,11 +101,11 @@ jQuery(document).ready(function() {
         return false;
 
       } else if (dataName=="sumome-control-about") {
-        window.open('https://sumome.com/about?src=wpplugin');
+        window.open('https://sumo.com/about?src=wpplugin');
       } else if (dataName=="sumome-control-account-settings") {
-        window.open('https://sumome.com/account');
+        window.open('https://sumo.com/account');
       } else if (dataName=="sumome-control-statistics") {
-        document.location.href='<?php print admin_url('admin.php?page=sumome-statistics')?>';
+        document.location.href='<?php print admin_url('admin.php?page=sumo-statistics')?>';
       } else {
         jQuery('.'+dataName).click();
       }

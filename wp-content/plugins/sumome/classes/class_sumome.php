@@ -47,15 +47,15 @@ class WP_Plugin_SumoMe {
   }
 
   public function admin_menu() {
-    add_menu_page('SumoMe', 'SumoMe', 'manage_options', 'sumome', array($this, 'sumome_render_dashboard_page'), plugins_url('images/icon.png', SUMOME__PLUGIN_FILE));
+    add_menu_page('Sumo', 'Sumo', 'manage_options', 'sumo', array($this, 'sumome_render_dashboard_page'), plugins_url('images/icon.png', SUMOME__PLUGIN_FILE));
 
     if (isset($_COOKIE['__smUser'])) {
-      add_submenu_page('sumome', 'Dashboard', 'Dashboard', 'manage_options', 'sumome', array($this, 'sumome_render_dashboard_page') );
-      add_submenu_page('sumome', 'Statistics', 'Statistics', 'manage_options', 'sumome-statistics', array($this, 'sumome_render_statistics_page'));
-      add_submenu_page('sumome', 'About', 'About', 'manage_options', 'sumome-about', array($this, 'sumome_render_welcome_page'));
+      add_submenu_page('sumo', 'Dashboard', 'Dashboard', 'manage_options', 'sumo', array($this, 'sumome_render_dashboard_page') );
+      add_submenu_page('sumo', 'Statistics', 'Statistics', 'manage_options', 'sumo-statistics', array($this, 'sumome_render_statistics_page'));
+      add_submenu_page('sumo', 'About', 'About', 'manage_options', 'sumo-about', array($this, 'sumome_render_welcome_page'));
     }
 
-    add_submenu_page(null, 'SiteID', 'SiteID', 'manage_options', 'sumome-siteID', array($this, 'sumome_render_siteID_page'));
+    add_submenu_page(null, 'SiteID', 'SiteID', 'manage_options', 'sumo-siteID', array($this, 'sumome_render_siteID_page'));
   }
 
   public function sanitize_site_id($value) {
@@ -133,7 +133,8 @@ class WP_Plugin_SumoMe {
         //save users site ID from the manually inserted tag
         update_option('sumome_site_id', $manuallyInsertedScriptTagSiteID);
 
-        $sumomeScriptTag='<script src="//load.sumome.com/" data-sumo-site-id="' . esc_attr($manuallyInsertedScriptTagSiteID) . '" async="async"></script>';
+        $sumomeScriptTag[]='<script src="//load.sumome.com/" data-sumo-site-id="' . esc_attr($manuallyInsertedScriptTagSiteID) . '" async="async"></script>';
+        $sumomeScriptTag[]='<script src="//load.sumo.com/" data-sumo-site-id="' . esc_attr($manuallyInsertedScriptTagSiteID) . '" async="async"></script>';
         $modified_header = str_replace($sumomeScriptTag,"",$header_contents);
 
         //make backup of header.php just in case
@@ -207,7 +208,7 @@ class WP_Plugin_SumoMe {
       <script>
       function sumo_logout_redirect(){
         setTimeout(function(){
-          document.location.href='<?php print admin_url('admin.php?page=sumome')?>';
+          document.location.href='<?php print admin_url('admin.php?page=sumo')?>';
         }, 500);
       }
       </script>
@@ -238,7 +239,7 @@ class WP_Plugin_SumoMe {
   }
 
   public function dashboard_setup() {
-    add_meta_box( 'my_dashboard_widget', 'SumoMe', array($this , 'dashboard_widget'), 'dashboard', 'normal', 'high');
+    add_meta_box( 'my_dashboard_widget', 'Sumo', array($this , 'dashboard_widget'), 'dashboard', 'normal', 'high');
   }
 
   public function dashboard_widget() {

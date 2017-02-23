@@ -1,8 +1,7 @@
 header{
-	.row-header{
-		.brand-be{
+	.row-header {
+		.brand-be {
 			margin: 0px;
-
 			a{
 				display: inline-block;
 				line-height: 70px;
@@ -17,10 +16,7 @@ header{
 	}
 }
 
-body {
-	font-family: @font-text;
-}
-h1, h2, h3, h4, h5, h6, .be-post-title, .content-title, .widget-title, .letf-menu-article {
+.be-post-title, .content-title, .widget-title, .letf-menu-article {
 	font-family: @font-title;
 }
 .header-menu li a {
@@ -58,10 +54,6 @@ h1, h2, h3, h4, h5, h6, .be-post-title, .content-title, .widget-title, .letf-men
 		clear:both;
 	}
 }
-
-
-
-
 
 .be-post-title{
 	overflow: inherit;
@@ -265,12 +257,7 @@ h3.info-block-label{
 }
 
 
-
-
-
-
 .tt-frontend-viewport{
-
 	.tt-el-embed{
 		position: relative;
 		margin-bottom: 20px;
@@ -285,21 +272,10 @@ h3.info-block-label{
 			width: 100%;
 		}
 	}
-
 }
 
 
-
-
-
-
-
-
-
-
-
 .be-post{
-
 	.folio-edit-uri{
 		position: absolute;
 		right: 10px;
@@ -530,7 +506,6 @@ blockquote {
 
 
 /* Elements */
-
 .tt-google-map {
 	img {
 		max-width: none;
@@ -538,7 +513,6 @@ blockquote {
 }
 
 //.team-entry
-
 .team-entry img {
 	margin: 0;
 	width: 100%;
@@ -552,7 +526,6 @@ blockquote {
 
 
 // Contact form 7
-
 .wpcf7 { 
 	.wpcf7-form-control-wrap {
 		margin-bottom: 15px !important;
@@ -573,58 +546,47 @@ blockquote {
 }
 
 
-
-
-
-
 .item-media{
 	position: relative;
 	img {
 		margin-top:0;
 	}
-
 	.item-featured{
 		position: absolute;
-	    top: 0px;
-	    right: 12px;
-	    z-index: 10;
-	    display: inline-block;
-	    background-color: @brand-color;
-	    color: #fff;
-	    width: 28px;
-	    text-align: center;
-	    padding: 0px;
-	    padding-top: 12px;
-	    padding-bottom: 2px;
-	    line-height: 14px;
-	    font-size: 14px;
-
-		i{
-
-		}
-
+    top: 0px;
+    right: 12px;
+    z-index: 10;
+    display: inline-block;
+    background-color: @brand-color;
+    color: #fff;
+    width: 28px;
+    text-align: center;
+    padding: 0px;
+    padding-top: 12px;
+    padding-bottom: 2px;
+    line-height: 14px;
+    font-size: 14px;
 		&::before{
 			content: '';
-		    width: 0;
-		    height: 0;
-		    border-style: solid;
-		    border-width: 10px 14px 0 0;
-		    border-color: @brand-color transparent transparent transparent;
-		    bottom: -10px;
-		    left: 0px;
-		    position: absolute;
+	    width: 0;
+	    height: 0;
+	    border-style: solid;
+	    border-width: 10px 14px 0 0;
+	    border-color: @brand-color transparent transparent transparent;
+	    bottom: -10px;
+	    left: 0px;
+	    position: absolute;
 		}
-
 		&::after{
 			content: '';
-		    width: 0;
-		    height: 0;
-		    border-style: solid;
-		    border-width: 0 14px 10px 0;
-		    border-color: transparent @brand-color transparent transparent;
-		    position: absolute;
-		    bottom: -10px;
-		    right: 0px;
+	    width: 0;
+	    height: 0;
+	    border-style: solid;
+	    border-width: 0 14px 10px 0;
+	    border-color: transparent @brand-color transparent transparent;
+	    position: absolute;
+	    bottom: -10px;
+	    right: 0px;
 		}
 	}
 }

@@ -59,15 +59,15 @@ function mf_custom_toolbar( $menu_items, $form_id ) {
 
           //get admin title for the field.
           $newURL  = "?page=gf_entries&view=entries&id=" . $form_id;
-          $newURL .= (rgget('sort')   != '' ? "&sort=" . rgget('sort') : '');
-          $newURL .= (rgget('dir')    != '' ? "&dir=" . rgget('dir') : '');
-          $newURL .= (rgget('star')   != '' ? "&star=" . rgget('star') : '');
-          $newURL .= (rgget('read')   != '' ? "&read=" . rgget('read') : '');
-          $newURL .= (rgget('filter') != '' ? "&filter=" . rgget('filter') : '');
+          $newURL .= (rgget('orderby')  != '' ? "&orderby=" . rgget('orderby') : '');
+          $newURL .= (rgget('order')    != '' ? "&order=" . rgget('order') : '');
+          $newURL .= (rgget('star')     != '' ? "&star=" . rgget('star') : '');
+          $newURL .= (rgget('read')     != '' ? "&read=" . rgget('read') : '');
+          $newURL .= (rgget('filter')   != '' ? "&filter=" . rgget('filter') : '');
 
           $newURL .= $newOutput;
 
-          $output .=  '<span class="gf_admin_page_formname">'.$fieldName.($filterValues[1]!='is'?' ('.$filterValues[1].') ':'').': '.$fieldValue;
+          $output .=  '<span class="gf_admin_page_formname">'.stripslashes($fieldName).($filterValues[1]!='is'?' ('.stripslashes($filterValues[1]).') ':'').': '.stripslashes($fieldValue);
           $output .=  ' <a style="color:red" href="javascript:document.location = \''.$newURL.'\';">X</a></span>';
         }
       }
@@ -207,14 +207,15 @@ function multi_search_criteria_entry_list($search_criteria, $form_id){
   $fieldSep  = '|';
   $form        = GFAPI::get_form($form_id);
   $filterField = rgget('filterField');
-  if(isset($_GET['filterField']) && is_array($_GET['filterField'])){
-    foreach($_GET['filterField'] as $key=>$value){
+
+  if(isset($filterField) && is_array($filterField)){
+    foreach($filterField as $key=>$value){
       $strpos_row_key = strpos( $value, $fieldSep );
       if ( $strpos_row_key !== false ) { //multi-field filter
         $filterValues    = explode($fieldSep,$value);
-        $field_id        = $filterValues[0];
-        $search_operFF   = $filterValues[1];
-        $fieldValue      = $filterValues[2];
+        $field_id        = stripslashes($filterValues[0]);
+        $search_operFF   = stripslashes($filterValues[1]);
+        $fieldValue      = stripslashes($filterValues[2]);
 
         //let's check if an entry ID was entered in the 'All form fields' filter
         if($field_id=="0" && is_numeric($fieldValue)){

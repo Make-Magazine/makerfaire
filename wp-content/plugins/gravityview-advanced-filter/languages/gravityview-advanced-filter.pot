@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 msgid ""
 msgstr ""
-"Project-Id-Version: GravityView - Advanced Filter Extension 1.0.17\n"
+"Project-Id-Version: GravityView - Advanced Filter Extension 1.0.18\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
 "MIME-Version: 1.0\n"
@@ -24,43 +24,43 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:359 partials/metabox.php:2
+#: advanced-filter.php:360 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr ""
 
-#: advanced-filter.php:361
+#: advanced-filter.php:362
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr ""
 
-#: advanced-filter.php:362
+#: advanced-filter.php:363
 msgid "Limit to Logged-in User Entries"
 msgstr ""
 
-#: advanced-filter.php:363
+#: advanced-filter.php:364
 msgid ""
 "To limit entries to those created by the current user, select \"Created "
 "By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
 msgstr ""
 
-#: advanced-filter.php:364
+#: advanced-filter.php:365
 msgid ""
 "If you want to limit entries to those created by the current user, but "
 "allow the administrators to view all the entries, select \"Logged-in User "
 "(disabled for admins)\" from the drop-down menu."
 msgstr ""
 
-#: advanced-filter.php:622
+#: advanced-filter.php:623
 msgid "Created By"
 msgstr ""
 
-#: advanced-filter.php:626
+#: advanced-filter.php:627
 msgid "Logged-in User (disabled for Admins)"
 msgstr ""
 
-#: advanced-filter.php:630
+#: advanced-filter.php:631
 msgid "Logged-in User"
 msgstr ""
 

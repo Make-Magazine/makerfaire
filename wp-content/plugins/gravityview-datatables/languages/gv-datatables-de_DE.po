@@ -1,12 +1,13 @@
-# Copyright (C) 2016 Katz Web Services, Inc.
+# Copyright (C) 2017 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
+# Hubert Test <hubert@trash-mail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2016-04-04 21:08+0000\n"
+"PO-Revision-Date: 2017-01-11 00:20+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: German (Germany) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -25,23 +26,23 @@ msgstr ""
 
 #: includes/class-admin-datatables.php:41
 msgid "DataTables"
-msgstr ""
+msgstr "DataTables"
 
-#: includes/class-datatables-data.php:701
+#: includes/class-datatables-data.php:720
 msgid "Loading data&hellip;"
-msgstr ""
+msgstr "Lade Daten"
 
-#: includes/class-datatables-data.php:702
+#: includes/class-datatables-data.php:721
 msgid "No entries match your request."
 msgstr "Keine übereinstimmenden Einträge."
 
 #: includes/class-datatables-template.php:31
 msgid "DataTables Table"
-msgstr ""
+msgstr "DataTables Tabelle"
 
 #: includes/class-datatables-template.php:32
 msgid "Display items in a dynamic table powered by DataTables."
-msgstr ""
+msgstr "Zeige Einträge in einer dynamischen Tabelle erstellt von DataTables"
 
 #: includes/class-datatables-template.php:50
 msgid "Link to single entry"
@@ -54,108 +55,106 @@ msgstr "Sichtbare Tabellenspalten"
 #: includes/extensions/class-datatables-buttons.php:29
 #: includes/extensions/class-datatables-buttons.php:57
 msgid "Export Buttons"
-msgstr ""
+msgstr "Export Buttons"
 
 #: includes/extensions/class-datatables-buttons.php:30
 msgid ""
 "Display buttons that allow users to print or export the current results."
-msgstr ""
+msgstr "Zeige Buttons, die Nutzern das Ausdrucken oder Exportieren der aktuellen Ergebnisse erlaubt"
 
 #: includes/extensions/class-datatables-buttons.php:47
 msgid "Enable Buttons"
-msgstr ""
+msgstr "Aktiviere Buttons"
 
 #: includes/extensions/class-datatables-buttons.php:87
 msgid "Copy"
-msgstr ""
+msgstr "Kopieren"
 
 #: includes/extensions/class-datatables-buttons.php:91
 msgid "Print"
-msgstr ""
+msgstr "Drucken"
 
 #: includes/extensions/class-datatables-fixedheader.php:21
 msgid "Keep headers or columns in place and visible while scrolling a table."
-msgstr ""
+msgstr "Fixiere Kopfzeilen oder Spalten sichtbar während des Scrollens"
 
 #: includes/extensions/class-datatables-fixedheader.php:27
 msgid "Enable FixedHeader"
-msgstr ""
+msgstr "Aktiviere FixedHeader"
 
 #: includes/extensions/class-datatables-fixedheader.php:39
 msgid "Enable FixedColumns"
-msgstr ""
+msgstr "Aktiviere FixedColumns"
 
 #: includes/extensions/class-datatables-fixedheader.php:59
 msgid "FixedColumns"
-msgstr ""
+msgstr "FixedColums"
 
 #: includes/extensions/class-datatables-fixedheader.php:60
 msgid ""
 "Fix the first column in place while horizontally scrolling a table. The "
 "first column and its contents will remain visible at all times."
-msgstr ""
+msgstr "Fixiert die erste Spalte während des horizontalen Scrollens. Die erste Spalte und deren Inhalt ist dauerhaft sichtbar"
 
 #: includes/extensions/class-datatables-fixedheader.php:64
 msgid "FixedHeader"
-msgstr ""
+msgstr "FixedHeader"
 
 #: includes/extensions/class-datatables-fixedheader.php:65
 msgid ""
 "Float the column headers above the table to keep the column titles visible "
 "at all times."
-msgstr ""
+msgstr "Zeigt die Kopfzeile dauerhaft an"
 
 #: includes/extensions/class-datatables-responsive.php:35
 msgid "Responsive Tables"
-msgstr ""
+msgstr "Responsive Tabellen"
 
 #: includes/extensions/class-datatables-responsive.php:36
 msgid ""
 "Optimize table layout for different screen sizes through the dynamic "
 "insertion and removal of columns from the table."
-msgstr ""
+msgstr "Optimiert das Tabellen-Layout für verschiedene Bildschirmgrößen durch dynamisches Einfügen und Entfernen von Spalten der Tabelle"
 
 #: includes/extensions/class-datatables-responsive.php:62
 msgid "Enable Responsive Tables"
-msgstr ""
+msgstr "Aktiviere Responsive Tabellen"
 
 #: includes/extensions/class-datatables-scroller.php:29
 msgid "Scroller"
-msgstr ""
+msgstr "Scroller"
 
 #: includes/extensions/class-datatables-scroller.php:30
 msgid ""
 "Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.\n"
 "\n"
 "\t\t\t\tNote: Scroller will not work well if your View has columns of varying height."
-msgstr ""
+msgstr "Erlaubt das Anzeigen von großen Datensätzen auf einer einzigen Seite. Das Ziel von Scroller für DataTables ist schnelles Rendern von großen Datensätzen.\nBemerkung: Scroller funktioniert nicht in Views mit Spalten variierender Höhe"
 
 #: includes/extensions/class-datatables-scroller.php:46
 msgid "Enable Scroller"
-msgstr ""
+msgstr "Aktiviere Scroller"
 
 #: includes/extensions/class-datatables-scroller.php:56
 msgid "Table Height"
-msgstr ""
+msgstr "Tabellenhöhe"
 
-#: lib/EDD_SL_Plugin_Updater.php:179
+#: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:186
+#: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
-"href=\"%4$s\">update now</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:334
+#: lib/EDD_SL_Plugin_Updater.php:369
 msgid "You do not have permission to install plugin updates"
-msgstr ""
+msgstr "Du hast keine Berechtigungen zur Installation von Plugin-Updates"
 
-#: lib/EDD_SL_Plugin_Updater.php:334
+#: lib/EDD_SL_Plugin_Updater.php:369
 msgid "Error"
 msgstr "Fehler"
 
@@ -175,9 +174,9 @@ msgstr "Die %s Erweiterung erfordert PHP Version %s oder neuer. Bitten Sie Ihren
 
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/datatables/"
-msgstr ""
+msgstr "https://gravityview.co/extensions/datatables/"
 
-#: includes/class-datatables-data.php:635
+#: includes/class-datatables-data.php:654
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
-msgstr ""
+msgstr "Alle"

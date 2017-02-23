@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Katz Web Services, Inc.
+# Copyright (C) 2017 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
 # Zachary Katz <zack@katz.co>, 2016
@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2016-04-04 21:16+0000\n"
+"PO-Revision-Date: 2017-01-11 00:20+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Finnish (http://www.transifex.com/katzwebservices/gravityview-datatables/language/fi/)\n"
 "MIME-Version: 1.0\n"
@@ -28,11 +28,11 @@ msgstr ""
 msgid "DataTables"
 msgstr "DataTables"
 
-#: includes/class-datatables-data.php:701
+#: includes/class-datatables-data.php:720
 msgid "Loading data&hellip;"
 msgstr ""
 
-#: includes/class-datatables-data.php:702
+#: includes/class-datatables-data.php:721
 msgid "No entries match your request."
 msgstr "Mikään merkintä ei täytä kyselyäsi."
 
@@ -139,24 +139,22 @@ msgstr ""
 msgid "Table Height"
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:179
+#: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:186
+#: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
-"href=\"%4$s\">update now</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:334
+#: lib/EDD_SL_Plugin_Updater.php:369
 msgid "You do not have permission to install plugin updates"
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:334
+#: lib/EDD_SL_Plugin_Updater.php:369
 msgid "Error"
 msgstr ""
 
@@ -178,7 +176,7 @@ msgstr ""
 msgid "https://gravityview.co/extensions/datatables/"
 msgstr ""
 
-#: includes/class-datatables-data.php:635
+#: includes/class-datatables-data.php:654
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr ""

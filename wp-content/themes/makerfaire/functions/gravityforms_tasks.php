@@ -26,7 +26,9 @@ add_action('gform_after_update_entry', 'processTasks_setup', 10, 2 ); //$form, $
 
 
 function processTasks_setup($form, $entry_id) {
+  //need to set $entry and reset $form as gravity view removes admin only fields
   $entry = GFAPI::get_entry(esc_attr($entry_id));
+  $form = GFAPI::get_form($entry['form_id']);
   processTasks( $entry, $form);
 }
 
@@ -41,11 +43,12 @@ function processTasks( $entry, $form) {
 		foreach ( $tasks as $task ) {
       $lead_id = $entry['id'];
       $taskID   = $form_id.'-'.$task['id'];
-			if ( GFCommon::evaluate_conditional_logic( $task['conditionalLogic'], $form, $entry ) ) {
+      if ( GFCommon::evaluate_conditional_logic( $task['conditionalLogic'], $form, $entry ) ) {
         $action_URL = $task['form2use'];
         $action_URL .= '?entry-id='.$lead_id;
         $action_URL .= '&contact-email='.$entry['98'];
         $action_URL .= '&taskID='.$taskID;
+
         //check if this task was previously set, if yes  do nothing
         //if no, set the task
         $sql = 'INSERT INTO wp_mf_entity_tasks set lead_id="'.$lead_id.'",created=now(), description="'.$task['name'].'", required=1, action_url = "'.$action_URL.'", task_id="'.$taskID.'"'
@@ -55,7 +58,6 @@ function processTasks( $entry, $form) {
         //check if this task was previously set
         $sql = 'select count(*) from wp_mf_entity_tasks where lead_id = '.$lead_id .' and task_id="'.$taskID.'" and completed is NULL';
         $count = $wpdb->get_var($sql);
-
         //if found, delete
         if($count>0){
           $sql = 'delete from wp_mf_entity_tasks where lead_id = '.$lead_id .' and task_id="'.$taskID.'"';
@@ -92,7 +94,12 @@ function mf_add_taskid( $form ) {
 
 add_filter('gform_after_submission', 'maybeCompleteTasks', 10, 2 ); //$entry, $form
 function maybeCompleteTasks ($entry, $form) {
-  if(isset($entry['9999'])) {
+  $taskID = '';
+  if(isset($_GET['taskID']))   $taskID = $_GET['taskID'];
+  if(isset($_POST['taskID']))  $taskID = $_POST['taskID'];
+
+  //if task ID is passed, mark task as complete
+  if($taskID!='') {
     $entryID       = get_value_by_label('entry-id', $form);
     if (!empty($entryID)) {
       $entryid   = $entry[$entryID['id']];
@@ -100,7 +107,7 @@ function maybeCompleteTasks ($entry, $form) {
 
     global $wpdb;
     //mark task as completed
-    $sql = "UPDATE `wp_mf_entity_tasks` SET `completed`=now() WHERE lead_id = '".$entryid."' and task_id='".$entry['9999']."'";
+    $sql = "UPDATE `wp_mf_entity_tasks` SET `completed`=now() WHERE lead_id = '".$entryid."' and task_id='".$taskID."'";
     $wpdb->get_row($sql);
   }
 }

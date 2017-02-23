@@ -33,7 +33,7 @@ function addExpandBox($data, $title, $boxClass=''){
           . '     <span class="screen-reader-text">Toggle panel: '.$boxClass.'</span>'
           . '     <span class="toggle-indicator" aria-hidden="true"></span>'
           . '   </button>'
-          . '   <h3 class="hndle ui-sortable-handle">'.$title.'</h3>'
+          . '   <h2 class="hndle ui-sortable-handle">'.$title.'</h2>'
           . '   <div class="inside">'.
                   $data.'
                 </div>
@@ -52,9 +52,7 @@ function display_entry_info_box($form, $lead) {
 	$phone      = (isset($lead["99"])             ? $lead["99"]:'');
 	$phonetype  = (isset($lead["148"])            ? $lead["148"]:'');
   $return =
-   '<div id="infoboxdiv" class="postbox">
-      <div id="minor-publishing">
-        <table width="100%" class="entry-status">'.
+   '<table width="100%" class="entry-status">'.
           mf_sidebar_entry_status( $form, $lead ) .
           '<tr><td colspan="2"><hr /></td></tr>'.
           ($mode == 'view' ? mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ) .
@@ -122,10 +120,9 @@ function display_entry_info_box($form, $lead) {
           $return .= '&nbsp;&nbsp;<input class="button button-large" type="submit" tabindex="5" value="' . __( 'Cancel', 'gravityforms' ) . '" name="cancel" onclick="jQuery(\'#screen_mode\').val(\'view\');"/>';
         }
       }
-  $return .= "
-      </div>
-    </div>";
-  return $return;
+
+  $title = 'Entry Information';
+  return addExpandBox($return,$title);
 }
 function display_entry_rating_box($form, $lead) {
   /* Ratings Sidebar Area */
@@ -170,8 +167,9 @@ function display_entry_rating_box($form, $lead) {
                     . '   <td class="entry-view-field-name">Rating</td>'
                     . '   <td class="entry-view-field-name">User</td>'
                     . '   <td class="entry-view-field-name">Date Rated</td>'
-                    . '</tr>'.
-                    '</table>'.$ratingResults;
+                    . '</tr>'
+                    .$ratingResults
+                    .'</table>';
       }
       $return .=
     '</div>';
@@ -254,11 +252,13 @@ function field_display($lead,$form,$field_id,$fieldName) {
 
   $form_id = $form['id'];
   $field     = RGFormsModel::get_field($form,$field_id);
+
   //is this a valid field in the form
   if($field!=NULL){
-    $value     = RGFormsModel::get_lead_field_value( $lead, $field );
-    $return   .= mf_checkbox_display($field, $value, $form_id, $fieldName);
+    $value   = RGFormsModel::get_lead_field_value( $lead, $field );
+    $return  = mf_checkbox_display($field, $value, $form_id, $fieldName);
   }
+
   return $return;
 }
 
@@ -292,10 +292,7 @@ function display_ticket_code_box($form, $lead) {
 }
 
 function display_form_change_box($form, $lead, $formList) {
-  $output = '<div class="postbox">';
-
-  $output .= '<h4><label class="detail-label" for="entry_form_change">Change Form:</label></h4>';
-  $output .= '<select style="width:250px" name="entry_form_change">';
+  $output = '<select style="width:250px" name="entry_form_change">';
   foreach( $formList as $choice ){
     $selected = '';
     if ($choice['id'] == $lead['form_id']) $selected=' selected ';
@@ -304,16 +301,13 @@ function display_form_change_box($form, $lead, $formList) {
   $output .= '</select>';
   $output .= '<input type="button" name="change_form_id" value="Change Form" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'change_form_id\');"/><br />';
   $output .= '<span class="updMsg change_form_idMsg"></span>';
-  $output .=  '</div>';
 
-  return $output;
+  return addExpandBox($output,'Change Form');
 }
 
 function display_dupCopy_entry_box($form, $lead,$formList) {
-  $output = '<div class="postbox">';
-
-  $output .= '<h4><label class="detail-label" for="entry_form_copy">Duplicate/Copy Entry ID '.$lead['id'].'</label></h4>';
-  $output .= 'Into Form:<br/>';
+  $title = 'Duplicate/Copy Entry ID '.$lead['id'];
+  $output = 'Into Form:<br/>';
   $output .= '<select style="width:250px" name="entry_form_copy">';
   foreach( $formList as $choice ) {
     $selected = '';
@@ -323,19 +317,18 @@ function display_dupCopy_entry_box($form, $lead,$formList) {
   $output .=  '</select><br/><br/>';
   $output .= '<input type="button" name="duplicate_entry_id" value="Duplicate Entry" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'duplicate_entry_id\');"/><br />';
   $output .= '<span class="updMsg duplicate_entry_idMsg"></span>';
-  $output .= '</div>';
-  return $output;
+
+  return addExpandBox($output,$title);
 }
 
 function display_send_conf_box($form, $lead) {
-  return '<div class="postbox">
-            <div class="detail-view-print">
-              <br/>
+  $title = 'Send Confirmation Letter';
+  $output = '<div class="detail-view-print">
               <!--button to trigger send confirmation letter event -->
               <input type="button" name="send_conf_letter" value="Send Confirmation Letter" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'send_conf_letter\');"/>
               <span class="updMsg send_conf_letterMsg"></span>
-            </div>
           </div>';
+  return addExpandBox($output,$title);
 }
 
 /* Notes Sidebar Grid Function */
@@ -567,9 +560,7 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
         $id = $form_id . '_' . $field->id . '_' . $choice_number ++;
       }
 
-      if ( ! isset( $_GET['gf_token'] ) && empty( $_POST ) && rgar( $choice, 'isSelected' ) ) {
-        $checked = "checked='checked'";
-      } elseif ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, rgget( $input_id, $value ) ) ) {
+      if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, rgget( $input_id, $value ) ) ) {
         $checked = "checked='checked'";
       } elseif ( ! is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, $value ) ) {
         $checked = "checked='checked'";

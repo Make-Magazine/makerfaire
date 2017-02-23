@@ -19,7 +19,8 @@ $long_description         = (isset($lead['21'])?$lead['21']:'');
 $project_name             = (isset($lead['151'])?$lead['151']:'');
 $areyoua                  = (isset($lead['45'])?$lead['45']:'');
 $size_request             = (isset($lead['60'])?$lead['60']:'');
-$size_request_heightwidth = ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344'].' X ':'').(isset($lead['345'])?$lead['345']:'');
+$size_request_heightwidth = ((isset($lead['345']) && strlen($lead['345']) > 0 ) ? $lead['345'].' X ':'').
+                            ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344']:'');
 $size_request_other       = (isset($lead['61'])?$lead['61']:'');
 $entry_form_type          = $form['title'];
 $entry_form_status        = (isset($lead['303'])?$lead['303']:'');
@@ -147,7 +148,7 @@ $return = '
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
               '.(( isset( $size_request ) ) ? $size_request : 'Not Filled out') .
-                (( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '') .
+                (( isset( $size_request_heightwidth ) && $size_request_heightwidth!='') ? ' - '. $size_request_heightwidth : '') .
                 (( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '') .'
 						</td>
 					</tr>
@@ -157,7 +158,7 @@ $return = '
           </tr>
           <tr>
             <td>
-              <a target="_blank" href="/maker-sign/'. $entry_id.'/'. $faire.'"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
+              <a target="_blank" href="/maker-sign/'. $entry_id.'/'. $faire.'/"><input class="button button-large button-primary" style="text-align:center" value="Download Maker Sign" /></a>
             </td>
             <td>
               <a href="'. admin_url( 'admin-post.php?action=createCSVfile&exForm='.$form['id'].'&exEntry='. $entry_id ).'"><input class="button button-large button-primary"  style="text-align:center" value="Export All Fields" /></a>
@@ -399,7 +400,7 @@ function gf_collapsible_sections($form, $lead){
       </div>
 
       <div role="tabpanel" class="tab-pane"  id="ticketing">
-        <div class="panel-group">'.
+        <div class="panel-group">';
 
           $ticketing = entryTicketing($lead);
           if($ticketing){
@@ -667,6 +668,7 @@ function entryResources($lead){
       $userInfo = get_userdata( $result->user );
       $dispUser = $userInfo->display_name;
     }
+
     $resourceDisp .= '<tr id="resRow'.$result->ID.'">'
                       . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow'.$result->ID.'\','.$result->lockBit.')">'.($result->lockBit==1?'<i class="fa fa-lock fa-lg"></i>':'<i class="fa fa-unlock-alt fa-lg"></i>').'</span></td>'
                       . ' <td id="resitem_'.$result->ID.'" data-itemID="'.$result->item_id.'">'.$result->item.'</td>'
@@ -674,7 +676,8 @@ function entryResources($lead){
                       . ' <td id="resqty_'.$result->ID.'"  class="editable numeric">'.$result->qty.'</td>'
                       . ' <td id="rescomment_'.$result->ID.'" class="editable textAreaEdit">'.$result->comment.'</td>'
                       . ' <td id="resuser_'.$result->ID.'">'.$dispUser.'</td>'
-                      . ' <td id="resdateupdate_'.$result->ID.'">'.date('m/d/y h:i a',strtotime($result->update_stamp)).'</td>'
+                      . ' <td id="resdateupdate_'.$result->ID.'">'. esc_html( GFCommon::format_date( $result->update_stamp, false, 'm/d/y h:i a',false ))
+                      .'</td>'
                       . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow'.$result->ID.'\')"><i class="fa fa-minus-circle fa-lg"></i></span></td>'
                   . ' </tr>';
   }

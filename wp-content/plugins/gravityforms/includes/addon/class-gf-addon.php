@@ -2291,7 +2291,15 @@ abstract class GFAddOn {
 	 * @return string|null
 	 */
 	public function get_default_field_select_field( $field ) {
-		
+
+		// Prepare field name.
+		$field_name = str_replace( '.', '_', $field['name'] );
+
+		// If field's value is already set, return it.
+		if ( $this->get_setting( $field_name ) ) {
+			return $this->get_setting( $field_name );
+		}
+
 		// If field's default value is not an array and not empty, return it.
 		if ( ! rgempty( 'default_value', $field ) && ! is_array( $field['default_value'] ) ) {
 			return $field['default_value'];
@@ -4399,7 +4407,7 @@ abstract class GFAddOn {
 
 				<h3><span><i class="fa fa-times"></i> <?php printf( esc_html__( 'Uninstall %s Add-On', 'gravityforms' ), $this->get_short_title() ) ?></span></h3>
 				<div class="delete-alert alert_red">
-					<h3><i class="fa fa-exclamation-triangle gf_invalid"></i> Warning</h3>
+					<h3><i class="fa fa-exclamation-triangle gf_invalid"></i> <?php printf( esc_html__('Warning', 'gravityforms' ) ); ?></h3>
 					<div class="gf_delete_notice">
 						<?php echo $this->uninstall_warning_message() ?>
 					</div>

@@ -122,8 +122,7 @@ function load_scripts() {
   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
   wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css');
   wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true);
-   wp_enqueue_style('fancybox-style',  '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css');
- // jquery from Wordpress core (with no-conflict mode flag enabled):
+  // jquery from Wordpress core (with no-conflict mode flag enabled):
   wp_enqueue_script('jquery');
   $my_theme = wp_get_theme();
   $my_version = $my_theme->get('Version');
@@ -133,9 +132,8 @@ function load_scripts() {
   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
   wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
   wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js');
-  wp_enqueue_script('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js', true);
-  
-  //wp_enqueue_script('thickbox', null);
+
+  wp_enqueue_script('thickbox', null);
 
   // Scripts
   wp_enqueue_script('built', get_stylesheet_directory_uri() . '/js/built.js', array('jquery'),$my_version);
@@ -170,13 +168,11 @@ add_action('gform_enqueue_scripts', 'enqueue_custom_allforms_script', 10, 2);
 
 function load_admin_scripts() {
   //scripts
-  wp_enqueue_script('wp-admin-js', get_stylesheet_directory_uri() . '/js/libs/wp-admin.js', array('jquery', 'jquery-ui-tabs'));
   wp_enqueue_script('make-gravityforms-admin', get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'));
   wp_enqueue_script('make-fairesigns-admin', get_stylesheet_directory_uri() . '/js/libs/mf_fairesigns.js', array('jquery'));
   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), null);
   wp_enqueue_script('make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'));
   wp_enqueue_script('admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.js', array('jquery'));
-  wp_enqueue_script('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js', true);
   wp_enqueue_script('sack');
   //custom scripts for national
   $user = wp_get_current_user();
@@ -193,8 +189,6 @@ function load_admin_scripts() {
   wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
   wp_enqueue_style('mf-admin-style', get_stylesheet_directory_uri() . '/css/mf-admin-style.css');
-  wp_enqueue_style('fancybox-style',  '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css');
-  
 }
 
 add_action('admin_enqueue_scripts', 'load_admin_scripts');
@@ -262,3 +256,5 @@ function send_smtp_email($phpmailer) {
   // Encryption system to use - ssl or tls
   $phpmailer->SMTPSecure = "";
 }
+
+add_filter( 'gform_enable_field_label_visibility_settings', '__return_true' );

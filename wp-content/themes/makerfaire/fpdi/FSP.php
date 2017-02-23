@@ -4,6 +4,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+//set up database
+$root = $_SERVER['DOCUMENT_ROOT'];
+require_once( $root . '/wp-config.php' );
+require_once( $root . '/wp-includes/wp-db.php' );
+if (!is_user_logged_in())
+  auth_redirect();
 
 // require tFPDF
 require_once('fpdf/fpdf.php');
@@ -17,10 +23,15 @@ class PDF extends FPDI
     public function Header()
     {
         $docTitle   = 'Fire Safety Plan';
-        $faireName  = 'World Maker Faire 2016';
-        $root = $_SERVER['DOCUMENT_ROOT'];
-        $badge      = $root.'/wp-content/themes/makerfaire/images/MF16NY_Badge.jpg';
-        $dates      = 'October 1 & 2, 2016';
+        $faire = (isset($_GET['faire']) ? $faire = $_GET['faire'] : '');
+        global $wpdb;
+        $faire = (isset($_GET['faire']) && $_GET['faire']!=''?$_GET['faire']:'BA16');
+        $faireData = $wpdb->get_row('select faire_name, start_dt, end_dt from wp_mf_faire where faire="'.$faire.'"');
+
+        $faireName  = $faireData->faire_name;
+        $start_dt = date('F j',strtotime($faireData->start_dt));
+        $end_dt   = date('j, Y',strtotime($faireData->end_dt));
+        $dates    = $start_dt .' - '. $end_dt;
 
         $this->SetTextColor(0);
         $this->SetFont('Helvetica','B',20);
@@ -40,7 +51,7 @@ class PDF extends FPDI
         $this->Cell(0,0,$dates,0);
 
         //faire logo
-        $this->Image($badge,153,11,45,0,'jpg');
+        //$this->Image($badge,153,11,45,0,'jpg');
 
         //set font size for PDF answers
         $this->SetFont('Helvetica','',10);
@@ -52,7 +63,7 @@ class PDF extends FPDI
 $pdf = new PDF();
 $pdf->SetMargins(15,15,15);
 
-$form_id = 101;
+$form_id = (isset($_GET['form']) && $_GET['form']!=''?$_GET['form']:'101');
 $form = GFAPI::get_form( $form_id );
 $fieldData = array();
 //put fieldData in a usable array

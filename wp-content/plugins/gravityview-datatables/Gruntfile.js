@@ -191,7 +191,21 @@ module.exports = function(grunt) {
 			transifex: 'tx pull -a',
 
 			// Create a ZIP file
-			zip: 'git-archive-all ../gravityview-datatables.zip',
+			zip: {
+				cmd: function( filename = 'gravityview-datatables' ) {
+
+					// First, create the full archive
+					var command = 'git-archive-all gravityview-datatables.zip &&';
+
+					command += 'unzip -o gravityview-datatables.zip &&';
+
+					command += 'zip -r ../' + filename + '.zip gravityview-datatables &&';
+
+					command += 'rm -rf gravityview-datatables/ && rm -f gravityview-datatables.zip';
+
+					return command;
+				}
+			},
 
 			// Install / update all packages, then remove jQuery
 			bower: 'bower install; bower update; bower uninstall jquery --force;'
@@ -222,7 +236,9 @@ module.exports = function(grunt) {
 								'Display entries in a dynamic table powered by DataTables & GravityView.',
 								'http://gravityview.co/extensions/datatables/',
 								'Katz Web Services, Inc.',
+								'GravityView',
 								'http://www.katzwebservices.com',
+								'https://gravityview.co',
 							    'gv-datatables',
 							    'GPLv2 or later',
 							    'http://www.gnu.org/licenses/gpl-2.0.html'
@@ -247,7 +263,7 @@ module.exports = function(grunt) {
 		addtextdomain: {
 			options: {
 				textdomain: 'gv-datatables',    // Project text domain.
-				updateDomains: [ 'gravityview', 'gravity-view', 'gravityforms', 'edd_sl', 'edd' ]  // List of text domains to replace.
+				updateDomains: [ 'gravityview', 'gravity-view', 'gravityforms', 'edd_sl', 'edd', 'easy-digital-downloads' ]  // List of text domains to replace.
 			},
 			target: {
 				files: {

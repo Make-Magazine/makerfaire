@@ -1,7 +1,7 @@
 <?php
 /* Displays faire sign code */
 function build_faire_signs(){
-  require_once( TEMPLATEPATH.'/classes/faire_signs.php' );
+  require_once( TEMPLATEPATH.'/adminPages/faire_signs.php' );
 }
 
 /*This is for the Export all Fields button in the Entry Summary */
@@ -79,14 +79,6 @@ function createCSVfile() {
 }
 add_action( 'wp_ajax_createCSVfile', 'createCSVfile' );
 add_action( 'admin_post_createCSVfile', 'createCSVfile' );
-
-function build_pdf_fsp(){
-  require_once( TEMPLATEPATH.'/fpdi/FSP.php' );
-}
-
-function build_pdf_gsp(){
-  require_once( TEMPLATEPATH.'/fpdi/GSP.php' );
- }
 
 //function to create table tags by faire
 function genTableTags($faire) {

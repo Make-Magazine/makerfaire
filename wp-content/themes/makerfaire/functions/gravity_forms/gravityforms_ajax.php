@@ -265,6 +265,8 @@ function mf_admin_MFupdate_entry(){
     $response['result'] = 'Error: No Action Passed';
   }
 
+  //get updated lead
+  $lead = GFAPI::get_entry( $entry_id );
   //rebuild schedule sidebar to send back
   if($mfAction == 'update_entry_schedule' || $mfAction == 'delete_entry_schedule') {
     $response['rebuild']     = 'schedBox';
@@ -273,6 +275,8 @@ function mf_admin_MFupdate_entry(){
     $response['rebuild']     = 'notesbox';
     $response['rebuildHTML'] = display_entry_notes_box($form, $lead);
   }
+
+  processTasks( $lead, $form);
   wp_send_json( $response );
   // IMPORTANT: don't forget to "exit"
   exit;
@@ -318,11 +322,8 @@ function set_entry_status($lead,$form){
           }
 				}
 
-        //format Entry information
-        $entryData = GFRMTHELPER::gravityforms_format_record($lead,$form);
-
         //update maker table information
-        GFRMTHELPER::updateMakerTable($entryData);
+        GFRMTHELPER::updateMakerTables($entry_id);
 			}
 		}
 	}
@@ -359,12 +360,10 @@ function set_entry_status($lead,$form){
 
 	$field = GFFormsModel::get_field( $form, $input_id );
 
-	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id=%d AND  CAST(field_number AS CHAR) ='%s'", $entry_id, $input_id ) );
+	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id=%d AND  CAST(field_number AS CHAR) ='%s' order by id DESC limit 1", $entry_id, $input_id ) );
 
 	$result = true;
-	if ( ! isset( $entry[ $input_id ] ) || $entry[ $input_id ] != $value ){
-		$result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
-	}
+  $result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
 
 	return $result;
 }
@@ -381,9 +380,9 @@ function mf_add_note($leadid,$notetext){
 /* Modify Set Entry Status */
 function set_entry_status_content($lead,$form){
   $entry_id = $lead['id'];
-	$location_change          = $_POST['entry_info_location_change'];
-	$flags_change             = $_POST['entry_info_flags_change'];
-	$location_comment_change  = $_POST['entry_location_comment'];
+	$location_change          = (isset($_POST['entry_info_location_change'])?$_POST['entry_info_location_change']:'');
+	$flags_change             = (isset($_POST['entry_info_flags_change'])?$_POST['entry_info_flags_change']:'');
+	$location_comment_change  = (isset($_POST['entry_location_comment'])?$_POST['entry_location_comment']:'');
 
 	$field302 = RGFormsModel::get_field($form,'302');
 	$field304 = RGFormsModel::get_field($form,'304');

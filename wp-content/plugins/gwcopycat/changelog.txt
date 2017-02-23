@@ -1,6 +1,52 @@
 
 # Changelog
 
+## 1.4.9
+
+    - Fixed issue where target List field rows could be completely removed when targeted from another List field.
+    - Fixed issue where read only checkboxes were unchecked incorrectly have being checked.
+
+## 1.4.8
+
+    - Fixed issue where copying checkbox field to checkbox field did not correctly clear unselected checkbox fields from the target field.
+
+## 1.4.7
+
+    - Fixed issue where targeting a field from itself (via copy cat class) would cause infinte loop.
+
+## 1.4.6
+
+    - Fixed issue introduced in 1.4.5 that would incorrectly sort values when copying from multi-input fields.
+
+## 1.4.5
+
+    - Added support for copying to/from a specific List field column or input.
+    - Fixed issue where copying to a clickable field would not correctly "check" the field.
+
+## 1.4.4
+
+    - Updated to only select inputs from inside the .ginput_container class.
+
+## 1.4.3
+
+    - Added 'gpcc_copy_cat_fields' filter to allow adding copy cat fields programmatically. See: https://gist.github.com/spivurno/51df05b385c0b93f3eef7c582a2d9d13
+
+## 1.4.2
+
+    - Updated List field support to copy by row/column index; better supports mapping non-identical List fields to each other.
+
+## 1.4.1
+
+    - Fixed issue were gravityforms.js dependency was not enforced.
+
+## 1.4
+
+    - Added support for copying to and from List fields. A special thanks to [Edi Weigh](https://ff3dm.com/) for sponsoring this feature.
+
+## 1.3.13
+
+    - Fixed issue where conditional logic based on checkable fields (i.e radio, checkbox) was not applied when copying to a checkable field
+
 ## 1.3.12
 
     - Added support for clearing deselected checkbox values when copying into a Single Line Text field

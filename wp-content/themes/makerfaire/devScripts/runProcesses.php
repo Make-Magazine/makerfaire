@@ -65,7 +65,9 @@ if(isset($_GET['page'])){
     require_once( get_template_directory().'/models/maker.php' );
 
     //instantiate the model
-    $maker   = new maker($current_user->user_email);
-    $maker->updateMakerTable();
+    //$maker   = new maker($current_user->user_email);
+
+    //update maker table information
+    GFRMTHELPER::updateMakerTables($entry['id']);
   }
   echo('ending process');

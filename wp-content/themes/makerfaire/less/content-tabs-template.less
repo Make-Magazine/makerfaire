@@ -130,7 +130,7 @@
         //Calculating each tabs height based on how many have been added
         &.active {
           right: 0;
-          margin-left: -16vw;
+          margin-left: -22vw;
           background-color: #3FAFED;
           a {
             float: right;
@@ -289,28 +289,6 @@
       }
     }
 
-    //Logos tab
-    .mcp-download-btn {
-      width: 29%;
-      display: inline-block;
-      text-align: center;
-      font-size: 20px;
-      margin: 15px 3% 10px 0;
-      border: none;
-      border-bottom: 2px solid #f40b0b;
-      background-color: transparent;
-      position: relative;
-      @media screen and (max-width: 767px) {
-        width: 46%;
-      }
-      &:after {
-        font-family: FontAwesome;
-        content: "\f019";
-        position: absolute;
-        right: 8px;
-      }
-    }
-
     //News tab
     .media {
       h4 {
@@ -337,10 +315,6 @@
       h3 {
         color: #6a6a6a;
       }
-      a {
-        display: block;
-        margin-bottom: 8px;
-      }
     }
 
     //Photos tab
@@ -357,7 +331,7 @@
           padding: 0;
           background-color: transparent;
           &:hover {
-            color: #00bef3;
+            color: #00aeef;
           }
         }
         &:last-child {
@@ -398,6 +372,17 @@
         &:last-child {
           border-right: none;
         }
+      }
+    }
+
+    //Logos tab
+    .mcp-logos {
+      .row {
+        margin-top: 15px;
+        margin-bottom: 15px;
+      }
+      .dwnld-btn {
+        display: block;
       }
     }
 
@@ -564,6 +549,7 @@
       width: 100%;
       border: 1px solid #3FAFED;
       font-size: 14px;
+      height: 140px !important;
     }
 
     #gform_submit_button_127 {
