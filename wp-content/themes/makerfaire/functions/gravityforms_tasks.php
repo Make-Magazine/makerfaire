@@ -51,7 +51,14 @@ function processTasks( $entry, $form) {
 
         //check if this task was previously set, if yes  do nothing
         //if no, set the task
-        $sql = 'INSERT INTO wp_mf_entity_tasks set lead_id="'.$lead_id.'",created=now(), description="'.$task['name'].'", required=1, action_url = "'.$action_URL.'", task_id="'.$taskID.'"'
+        $sql = 'INSERT INTO wp_mf_entity_tasks '
+                . 'set  lead_id="'.$lead_id.'",'
+                . '     created=now(), '
+                . '     description="'.$task['name'].'", '
+                . '     required=1, '
+                . '     action_url = "'.$action_URL.'", '
+                . '     task_id="'.$taskID.'", '
+                . '     form_id='. $task['formID']
              . ' ON DUPLICATE KEY UPDATE description="'.$task['name'].'"';
         $wpdb->get_row($sql);
 			}else{
@@ -94,20 +101,29 @@ function mf_add_taskid( $form ) {
 
 add_filter('gform_after_submission', 'maybeCompleteTasks', 10, 2 ); //$entry, $form
 function maybeCompleteTasks ($entry, $form) {
-  $taskID = '';
-  if(isset($_GET['taskID']))   $taskID = $_GET['taskID'];
-  if(isset($_POST['taskID']))  $taskID = $_POST['taskID'];
+  global $wpdb;
 
-  //if task ID is passed, mark task as complete
-  if($taskID!='') {
-    $entryID       = get_value_by_label('entry-id', $form);
-    if (!empty($entryID)) {
-      $entryid   = $entry[$entryID['id']];
-    }
-
+  //is this an additional form?
+  $entryID       = get_value_by_label('entry-id', $form);
+  if (!empty($entryID)) {
     global $wpdb;
-    //mark task as completed
-    $sql = "UPDATE `wp_mf_entity_tasks` SET `completed`=now() WHERE lead_id = '".$entryid."' and task_id='".$taskID."'";
-    $wpdb->get_row($sql);
+    $sql = "";
+
+    //let's check if this form has been assigned to the entry
+    $entryid   = $entry[$entryID['id']]; //original entry id
+
+    //was a task ID set?
+    $taskID = '';
+    if(isset($_GET['taskID']))   $taskID = $_GET['taskID'];
+    if(isset($_POST['taskID']))  $taskID = $_POST['taskID'];
+    //if task ID is passed, mark task as complete
+    if($taskID!='') {
+      //mark task as completed
+      $sql = "UPDATE `wp_mf_entity_tasks` SET `completed`=now() WHERE lead_id = '".$entryid."' and task_id='".$taskID."'";
+    }else{
+      //check if this form has been assigned to the entry
+      $sql = "UPDATE `wp_mf_entity_tasks` SET `completed`=now() WHERE lead_id = '".$entryid."' and form_id='".$form['id']."'";
+    }
+    if($sql!='') $wpdb->get_row($sql);
   }
 }

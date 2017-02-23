@@ -43,9 +43,9 @@ function change_email_for_wp($notification) {
       'to'          => 'kate@makermedia.com,alicia@makermedia.com',
       'bcc'         => '',
       'from'        => 'staging@makermedia.com',
-      'subject'     => $args['subject'],
-      'message'     => $args['message'],
-      'headers'     => $args['headers'],
+      'subject'     => $notification['subject'],
+      'message'     => $notification['message'],
+      'headers'     => $notification['headers'],
       'toType'      => 'email',
       'attachments' => $args['attachments'],
     );
@@ -55,11 +55,11 @@ function change_email_for_wp($notification) {
         'to'          => MF_OVERRITE_EMAIL,
         'bcc'         => '',
         'from'        => 'staging@makermedia.com',
-        'subject'     => $args['subject'],
-        'message'     => $args['message'],
-        'headers'     => $args['headers'],
+        'subject'     => $notification['subject'],
+        'message'     => $notification['message'],
+        'headers'     => $notification['headers'],
         'toType'      => 'email',
-        'attachments' => $args['attachments'],
+        'attachments' => $notification['attachments'],
       );
     }
   }

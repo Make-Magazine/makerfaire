@@ -69,6 +69,7 @@ Class GFTask {
 
 			$task['name']      = sanitize_text_field( rgpost( 'gform_task_name' ) );
 			$task['form2use']  = sanitize_text_field( rgpost( 'gform_task_form2use' ) );
+      $task['formID']    = sanitize_text_field( rgpost( 'gform_task_formID' ) );
 
 			$conditional_logic  = ! rgempty( 'gform_conditional_logic_meta' ) ? GFCommon::json_decode( rgpost( 'gform_conditional_logic_meta' ), true ) : null;
 
@@ -404,12 +405,27 @@ Class GFTask {
 		ob_start(); ?>
     <tr>
       <th scope="row">
+				<label for="gform_task_formID">
+					<?php _e( 'Associated Form ID', 'makerfaire' ); ?>
+				</label>
+			</th>
+      <td>
+        <input type="text" class="fieldwidth-2" name="gform_task_formID" id="gform_task_formID" value="<?php echo esc_attr( rgget( 'formID', $task ) ); ?>" />
+      </td>
+    </tr>
+    <?php
+    $ui_settings['task_formID'] = ob_get_contents();
+		ob_clean();
+		ob_start();
+    ?>
+    <tr>
+      <th scope="row">
 				<label for="gform_task_form2use">
 					<?php _e( 'URL to Form to Complete', 'makerfaire' ); ?>
 				</label>
 			</th>
       <td>
-        <input type="text" class="fieldwidth-2" name="gform_task_form2use" id="gform_task_name" value="<?php echo esc_attr( rgget( 'form2use', $task ) ); ?>" />
+        <input type="text" class="fieldwidth-2" name="gform_task_form2use" id="gform_task_form2use" value="<?php echo esc_attr( rgget( 'form2use', $task ) ); ?>" />
       </td>
     </tr>
     <?php
@@ -450,6 +466,7 @@ Class GFTask {
 	private static function validate_task() {
     $name              = sanitize_text_field( rgpost( 'gform_task_name' ) );
     $form2use          = sanitize_text_field( rgpost( 'gform_task_form2use' ) );
+    $formID            = sanitize_text_field( rgpost( 'gform_task_formID' ) );
     $is_valid = true;
     if($name == ''){
       $is_valid = false;
@@ -459,6 +476,11 @@ Class GFTask {
     if($form2use == ''){
       $is_valid = false;
 			GFCommon::add_error_message( esc_html__( 'Please select a form to apply for this task.', 'makerfaire' ) );
+    }
+
+    if($formID == ''){
+      $is_valid = false;
+			GFCommon::add_error_message( esc_html__( 'Please enter the formID this task is associated with.', 'makerfaire' ) );
     }
 
 		return $is_valid;
@@ -545,7 +567,8 @@ class GFTaskTable extends WP_List_Table {
 			array(
 				'cb'      => '',
 				'name'    => esc_html__( 'Name', 'makerfaire' ),
-				'form2use' => esc_html__( 'Form to Apply', 'makerfaire' )
+				'form2use' => esc_html__( 'Form to Apply', 'makerfaire' ),
+        'formID' => esc_html__( 'Form to Apply', 'makerfaire' )
 			),
 			array(),
 			array(),
