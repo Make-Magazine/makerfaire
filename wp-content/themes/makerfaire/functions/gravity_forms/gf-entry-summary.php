@@ -147,8 +147,8 @@ $return = '
 					<tr>
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
-              '.(( isset( $size_request ) ) ? $size_request.' - ' : 'Not Filled out') .
-                (( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '') .
+              '.(( isset( $size_request ) ) ? $size_request : 'Not Filled out') .
+                (( isset( $size_request_heightwidth ) && $size_request_heightwidth!='') ? ' - '. $size_request_heightwidth : '') .
                 (( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '') .'
 						</td>
 					</tr>
