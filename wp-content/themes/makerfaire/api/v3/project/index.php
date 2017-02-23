@@ -53,6 +53,12 @@ if ($type == 'project') {
                    maker_to_entity.maker_type  != 'Contact'
              group by maker_to_entity.entity_id
             ) as exhibit_makers,
+            (select group_concat( distinct maker_id separator ',') as Makers
+             from wp_mf_maker_to_entity maker_to_entity
+             where entity.lead_id               = maker_to_entity.entity_id AND
+                   maker_to_entity.maker_type  = 'Contact'
+             group by maker_to_entity.entity_id
+            ) as lead_maker,
             wp_rg_lead.form_id,
             wp_rg_lead.status,
             (select wp_mf_location.subarea_id
@@ -106,13 +112,6 @@ if ($type == 'project') {
     // Should actually be this... Adding it in for the future.
     $app['large_img_url'] = esc_url($app_image);
 
-    
-
-    // Application Makers
-    $app_id = $app['id']; // get the entity id
-    $app['account_id_refs'] = array_merge(array($app_id));
-
-
     // Application Categories
     $category_ids = $row['Categories'];
     $app['category_id_refs'] = explode(',', $category_ids);
@@ -124,9 +123,11 @@ if ($type == 'project') {
     $formType = $form['form_type'];
 
 
-      $maker_ids = $row['exhibit_makers'];
-      $app['exhibit_accounts'] = (!empty($maker_ids) ) ? explode(',', $maker_ids) : null;
+    $maker_ids = $row['exhibit_makers'];
+    $app['exhibit_accounts'] = (!empty($maker_ids) ) ? explode(',', $maker_ids) : null;
     
+    $lead_maker_ids = $row['lead_maker'];
+    $app['lead_accounts'] = (!empty($lead_maker_ids) ) ? explode(',', $lead_maker_ids) : null;
 
     // Application Description
     $app['description'] = $row['Description'];
