@@ -194,7 +194,7 @@ function modify_field_display_values( $value, $form_id, $field_id, $lead ) {
 
           //custom MF code
           //$file_path = legacy_get_resized_remote_image_url($file_path, 115, 115);
-          $value     = "<a class='thickbox' href='$file_path' target='_blank' title='" . __( 'Click to view', 'gravityforms' ) . "'><img class='thickbox' style='width: 115px;' src='$file_path'/></a>";
+          $value     = "<a href='$file_path' target='_blank' title='" . __( 'Click to view', 'gravityforms' ) . "'><img class='thickbox' style='width: 115px;' src='$file_path'/></a>";
         }
       }
     }
