@@ -181,7 +181,7 @@ $return = '
                           "Jess Hobbs"              => "jess@makermedia.com",
                           "Jonathan Maginn"         => "jonathan.maginn@sbcglobal.net",
                           "Kate Rowe"               => "krowe@makermedia.com");
-        $emailto2 = array("Kerry Moore"             => "kerry@contextfurniture.com",
+        $emailto2 = array("Kerry Moore"             => "kmoore@makermedia.com",
                           "Kim Dow"                 => "dow@dowhouse.com",
                           "Louise Glasgow"          => "lglasgow@makermedia.com",
                           "Matt Stultz"             => "mstultz@makermedia.com",
