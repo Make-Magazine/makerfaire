@@ -5,7 +5,7 @@
 get_header();
 ?>
 <main id="main" class="quora front-page" role="main">
-	<!-- Homepage carousel-->	
+	<!-- Homepage carousel-->
     <div class="carousel-holder">
         <div class="social-popup popup-active hidden-xs">
             <a class="open" href="#"><i class="icon-share"></i></a>
@@ -22,12 +22,13 @@ get_header();
         <div class="carousel-inner">
             <div class="mask">
                 <div class="slideset">
-                    <?php 
+                    <?php
                     $sorting = array( 'key' => 5, 'direction' => 'ASC' );
-                    $entries = GFAPI::get_entries(24, null, $sorting, array('offset' => 0, 'page_size' => 10)); 
-                    
+                    $search_criteria['status'] = 'active';
+                    $entries = GFAPI::get_entries(24, $search_criteria, $sorting, array('offset' => 0, 'page_size' => 10));
+
                     ?>
-                    
+
                     <?php foreach ($entries as $entry): ?>
                     <div class="slide" data-url="<?php echo $entry['4'] ?>">
                         <div class="bg-stretch">
@@ -46,7 +47,7 @@ get_header();
                             </div>
                         </div>
                     </div>
-                    <?php endforeach; ?>  
+                    <?php endforeach; ?>
                 </div>
             </div>
             <div class="btn-box">
@@ -66,8 +67,8 @@ get_header();
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
     <?php the_content(); ?>
     <!-- The last holder-->
-	<?php endwhile; ?>    
-<?php endif; ?> 
+	<?php endwhile; ?>
+<?php endif; ?>
 
 </main>
 <?php get_footer(); ?>
