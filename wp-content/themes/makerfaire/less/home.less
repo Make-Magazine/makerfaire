@@ -2,24 +2,61 @@
 .front-page {
 
   .upcoming-event-container {
-    margin-top: 30px;
-    img {
-
+    margin-top: 25px;
+    .panel {
+      img {
+        width: 18%;
+        float: left;
+      }
+      .home-event-text {
+        width: 82%;
+        padding-left: 15px;
+        float: left;
+        @media screen and (max-width: 767px) {
+          width: 100%;
+          padding-left: 0;
+        }
+        h3 {
+          font-size: 16px;
+          margin-top: 0;
+          margin-bottom: 5px;
+          color: inherit;
+        }
+        h2 {
+          margin-top: 0px;
+          margin-bottom: 5px;
+          font-size: 42px;
+          color: inherit;
+          @media screen and (min-width: 992px) and (max-width: 1199px) {
+            font-size: 32px;
+          }
+          @media screen and (min-width: 768px) and (max-width: 991px) {
+            font-size: 36px;
+          }
+          @media screen and (max-width: 767px) {
+            font-size: 6vw;
+          }
+        }
+        h4 {
+          font-size: 16px;
+          color: inherit;
+          margin-top: 0;
+        }
+      }
     }
-    h3 {
-
-    }
-    h2 {
-      margin-top: 0px;
-      font-size: 28px;
-    }
-    h4 {
-
+    .btn {
+      margin-bottom: 0;
+      margin-left: 15px;
+      @media screen and (max-width: 400px) {
+        margin-bottom: 5px;
+        margin-left: 0;
+        width: 100%;
+      }
     }
   }
 
   .mmakers {
-    margin-top: 30px;
+    margin-top: 50px;
     .mtm-cont {
       height: 500px;
       @media screen and (max-width: 767px) {
@@ -192,7 +229,7 @@
   }
 
   .mf-news {
-    margin-top: 30px;
+    margin-top: 50px;
     .mf-news-cont {
       height: 500px;
       @media screen and (max-width: 767px) {

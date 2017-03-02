@@ -66,16 +66,41 @@ get_header();
   <div class="container">
 
     <div class="row upcoming-event-container">
-      <article class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-        <a href="">
-          <img alt="Maker Faire Event Badge" class="pull-left img-responsive hidden-xs" src="" />
-          <h3>McCormick Center, Chicago, IL</h3>
-          <h2>Maker Faire Chicago</h2>
-          <h4></h4>
-        </a>
-        <a class="btn btn-danger pull-right" href="">BUY TICKETS</a>
-        <a class="btn btn-danger pull-right" href="">CALL FOR MAKERS</a>
-      </article>
+
+      <?php if( have_rows('event_info') ): ?>
+        <?php while( have_rows('event_info') ): the_row();
+
+          $image = get_sub_field('image');
+          $small_top_text = get_sub_field('small_top_text');
+          $large_center_text = get_sub_field('large_center_text');
+          $small_bottom_text = get_sub_field('small_bottom_text');
+          $event_url = get_sub_field('event_url');
+          $call_for_makers_button = get_sub_field('call_for_makers_button');
+          $buy_now_button = get_sub_field('buy_now_button'); ?>
+
+          <article class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <a href="<?php echo $event_url; ?>">
+                  <img src="<?php echo $image; ?>" alt="Maker Faire Event Badge" class="img-responsive hidden-xs" />
+                  <div class="home-event-text">
+                    <h3><?php echo $small_top_text; ?></h3>
+                    <h2><?php echo $large_center_text; ?></h2>
+                    <h4><?php echo $small_bottom_text; ?></h4>
+                  </div>
+                </a>
+                <?php if ($buy_now_button) { ?>
+                  <a class="btn btn-danger pull-right" href="<?php echo $buy_now_button; ?>">BUY TICKETS</a>
+                <?php }
+                if ($call_for_makers_button) { ?>
+                  <a class="btn btn-danger pull-right" href="<?php echo $call_for_makers_button; ?>">CALL FOR MAKERS</a>
+                <?php } ?>
+              </div>
+            </div>
+          </article>
+
+        <?php endwhile; ?>
+      <?php endif; ?>   
 
     </div>
 
@@ -85,17 +110,20 @@ get_header();
     <div class="mmakers">
       <div class="row">
         <div class="col-xs-12">
-          <p class="see-all pull-right">Meet the Maker Faire New York 2016 Makers: <a href="/new-york-2016/meet-the-makers/">See all</a></p>
+          <p class="see-all pull-right"><?php echo get_field( "mtm_title" ); ?></p>
         </div>
       </div>
-      <?php echo do_shortcode("[mmakers faire=NY16]"); ?>
+      <?php
+      $mtm_shortcode = get_field( "mtm_shortcode" );
+      echo do_shortcode($mtm_shortcode);
+      ?>
     </div>
 
 
     <div class="mf-news">
       <div class="row">
         <div class="col-xs-12">
-          <p class="see-all pull-right">News from <em>Make:</em> <a href="http://makezine.com/tag/maker-faire/">See all</a></p>
+          <p class="see-all pull-right"><?php echo get_field( "mf_news_title" ); ?></p>
         </div>
       </div>
       <?php echo do_shortcode("[mf-news]"); ?>
