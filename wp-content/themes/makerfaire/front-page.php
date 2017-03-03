@@ -79,24 +79,28 @@ get_header();
           $buy_now_button = get_sub_field('buy_now_button'); ?>
 
           <article class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <a href="<?php echo $event_url; ?>">
-                  <img src="<?php echo $image; ?>" alt="Maker Faire Event Badge" class="img-responsive hidden-xs" />
-                  <div class="home-event-text">
-                    <h3><?php echo $small_top_text; ?></h3>
-                    <h2><?php echo $large_center_text; ?></h2>
-                    <h4><?php echo $small_bottom_text; ?></h4>
-                  </div>
-                </a>
-                <?php if ($buy_now_button) { ?>
-                  <a class="btn btn-danger pull-right" href="<?php echo $buy_now_button; ?>">BUY TICKETS</a>
+            <a href="<?php echo $event_url; ?>">
+              <?php if ($image) { ?>
+                <img src="<?php echo $image; ?>" alt="Maker Faire Event Badge" class="img-responsive hidden-xs" />
+              <?php } ?>
+              <div class="home-event-text">
+                <?php if ($small_top_text) { ?>
+                  <h3><?php echo $small_top_text; ?></h3>
                 <?php }
-                if ($call_for_makers_button) { ?>
-                  <a class="btn btn-danger pull-right" href="<?php echo $call_for_makers_button; ?>">CALL FOR MAKERS</a>
+                if ($large_center_text) { ?>
+                  <h2><?php echo $large_center_text; ?></h2>
+                <?php }
+                if ($small_bottom_text) { ?>
+                  <h4><?php echo $small_bottom_text; ?></h4>
                 <?php } ?>
               </div>
-            </div>
+            </a>
+            <?php if ($buy_now_button) { ?>
+              <a class="btn btn-danger pull-right" href="<?php echo $buy_now_button; ?>">BUY TICKETS</a>
+            <?php }
+            if ($call_for_makers_button) { ?>
+              <a class="btn btn-danger pull-right" href="<?php echo $call_for_makers_button; ?>">CALL FOR MAKERS</a>
+            <?php } ?>
           </article>
 
         <?php endwhile; ?>

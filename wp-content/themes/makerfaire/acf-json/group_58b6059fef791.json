@@ -122,7 +122,7 @@
                     "key": "field_58b6074ddd3f3",
                     "label": "Event URL",
                     "name": "event_url",
-                    "type": "url",
+                    "type": "text",
                     "instructions": "The image and all the text will link to this URL.",
                     "required": 0,
                     "conditional_logic": 0,
@@ -132,13 +132,16 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "placeholder": ""
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
                 },
                 {
                     "key": "field_58b6077edd3f4",
                     "label": "\"Call For Makers\" button",
                     "name": "call_for_makers_button",
-                    "type": "url",
+                    "type": "text",
                     "instructions": "Enter a URL here to show the \"Call For Makers\" button.",
                     "required": 0,
                     "conditional_logic": 0,
@@ -148,13 +151,16 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "placeholder": ""
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
                 },
                 {
                     "key": "field_58b607e260f74",
                     "label": "\"Buy Now\" button",
                     "name": "buy_now_button",
-                    "type": "url",
+                    "type": "text",
                     "instructions": "Enter a URL here to show the \"Buy Now\" button.",
                     "required": 0,
                     "conditional_logic": 0,
@@ -164,7 +170,10 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "placeholder": ""
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
                 }
             ]
         },
@@ -279,5 +288,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1488416833
+    "modified": 1488492173
 }
