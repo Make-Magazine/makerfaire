@@ -380,8 +380,6 @@ function mf_hide_faires( $query ) {
 }
 
 // add_action( 'pre_get_posts', 'mf_hide_faires' );
- *
- */
 
 
 
