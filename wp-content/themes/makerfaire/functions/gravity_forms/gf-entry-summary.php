@@ -74,7 +74,7 @@ $return = '
 	<tbody>
 		<tr>
 			<td style="width:440px; padding:5px;" valign="top">
-				<a href="'. $photo.'" class="thickbox"><img width="400px" src="'.legacy_get_fit_remote_image_url($photo, 400,400).'" alt="" /></a>
+				<a href="'. $photo.'" ><img width="400px" src="'.legacy_get_fit_remote_image_url($photo, 400,400).'" alt="" /></a>
 			</td>
 			<td style="word-break: break-all;" valign="top">
 				<table style="word-break: break-all;">
@@ -106,14 +106,14 @@ $return = '
               //loop thru all 7 maker photos
               for ($x = 1; $x <= 7; $x++) {
                 if(!empty(${"makerPhoto_$x"})){
-                  $return .= '<a href="'. ${"makerPhoto_$x"}.'" class="thickbox"><img width="30px" src="'. legacy_get_resized_remote_image_url(${"makerPhoto_$x"}, 30,30).'" alt="" /></a>';
+                  $return .= '<a href="'. ${"makerPhoto_$x"}.'" ><img width="30px" src="'. legacy_get_resized_remote_image_url(${"makerPhoto_$x"}, 30,30).'" alt="" /></a>';
                 }
                 $return .= (!empty(${"makerfirstname$x"}) ?  ${"makerfirstname$x"}.' '.${"makerlastname$x"}.'</br>' : '') ;
               }
 
               if(!empty($makerGroupPhoto)){
                   $return .=   'Group Photo<br/>
-                    <a href="'. $makerGroupPhoto.'" class="thickbox">
+                    <a href="'. $makerGroupPhoto.'" >
                     <img width="30px" src="'.legacy_get_resized_remote_image_url($makerGroupPhoto, 30,30).'" alt="" />
                     </a>';
               }
@@ -147,8 +147,8 @@ $return = '
 					<tr>
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
-              '.(( isset( $size_request ) ) ? $size_request.' - ' : 'Not Filled out') .
-                (( isset( $size_request_heightwidth ) ) ? $size_request_heightwidth : '') .
+              '.(( isset( $size_request ) ) ? $size_request : 'Not Filled out') .
+                (( isset( $size_request_heightwidth ) && $size_request_heightwidth!='') ? ' - '. $size_request_heightwidth : '') .
                 (( strlen( $size_request_other ) > 0 ) ? ' <br />Comment: '.$size_request_other : '') .'
 						</td>
 					</tr>
@@ -181,7 +181,7 @@ $return = '
                           "Jess Hobbs"              => "jess@makermedia.com",
                           "Jonathan Maginn"         => "jonathan.maginn@sbcglobal.net",
                           "Kate Rowe"               => "krowe@makermedia.com");
-        $emailto2 = array("Kerry Moore"             => "kerry@contextfurniture.com",
+        $emailto2 = array("Kerry Moore"             => "kmoore@makermedia.com",
                           "Kim Dow"                 => "dow@dowhouse.com",
                           "Louise Glasgow"          => "lglasgow@makermedia.com",
                           "Matt Stultz"             => "mstultz@makermedia.com",
@@ -406,6 +406,9 @@ function gf_collapsible_sections($form, $lead){
           if($ticketing){
             $return .= $ticketing;
           }else{
+            $EBcount = $wpdb->get_var("select count(*) from eb_event, wp_mf_faire where wp_mf_faire_id = wp_mf_faire.id and "
+                 . "FIND_IN_SET (".$lead['form_id'].",wp_mf_faire.form_ids)> 0");
+            if($EBcount >=1){
             $return .= '
             <div id="noTickets">
               No Access Codes found for this entry. Click the ticket icon to generate<br/>
@@ -416,8 +419,15 @@ function gf_collapsible_sections($form, $lead){
             <div style="display:none" id="createTickets">
               <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom"></i>
               <span class="sr-only">Loading...</span>
-            </div>
-            <i>Please be patient.  This may take a while to complete</i>';
+              <i>Please be patient.  This may take a while to complete</i>
+            </div>';
+            }else{
+              //no eventbrite event set up
+              $return .= '
+                  <div id="noTickets">
+                    I\'m sorry.  There is not an Eventbrite event set up for this faire.
+                  </div>';
+            }
           }
         $return .= '
         </div>

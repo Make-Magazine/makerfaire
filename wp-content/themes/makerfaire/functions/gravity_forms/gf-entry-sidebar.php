@@ -167,8 +167,9 @@ function display_entry_rating_box($form, $lead) {
                     . '   <td class="entry-view-field-name">Rating</td>'
                     . '   <td class="entry-view-field-name">User</td>'
                     . '   <td class="entry-view-field-name">Date Rated</td>'
-                    . '</tr>'.
-                    '</table>'.$ratingResults;
+                    . '</tr>'
+                    .$ratingResults
+                    .'</table>';
       }
       $return .=
     '</div>';

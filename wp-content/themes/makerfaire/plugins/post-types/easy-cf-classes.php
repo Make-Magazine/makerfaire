@@ -466,7 +466,7 @@ if ( !class_exists( "Easy_CF_Field_Image" ) ) {
 				'<p><label for="%s"><strong>%s</strong></label></p>'.
 
 				$display .
-				'<p><a class="thickbox" id="upload_image-%s" href="'. get_admin_url() .'media-upload.php?post_id=%s&amp;type=image&amp;&amp;tab=library&amp;TB_iframe=1&amp;width=640&amp;height=534" title="%s">%s</a>' . $remove . '</p>'.
+				'<p><a id="upload_image-%s" href="'. get_admin_url() .'media-upload.php?post_id=%s&amp;type=image&amp;&amp;tab=library&amp;TB_iframe=1&amp;width=640&amp;height=534" title="%s">%s</a>' . $remove . '</p>'.
 				'</div>'.
 				'<script type="text/javascript">
 					jQuery("#upload_image-%s").click(function() {'.

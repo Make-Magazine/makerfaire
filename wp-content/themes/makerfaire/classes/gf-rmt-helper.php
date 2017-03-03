@@ -328,7 +328,7 @@ class GFRMTHELPER {
     if(isset($entry['376']) && $entry['376'] == 'Yes') { //cm indicator
       $status   = 'review';
       $assignTo = 'cm_team';
-    }elseif(isset($entry['434']) && $entry['434'] ==' Yes') { //fee indicator
+    }elseif(isset($entry['434']) && $entry['434'] =='Yes') { //fee indicator
       $status   = 'review';
       $assignTo = 'fee_team';
     }elseif( isset($entry['83']) && $entry['83'] == 'Yes'){  //field 83
