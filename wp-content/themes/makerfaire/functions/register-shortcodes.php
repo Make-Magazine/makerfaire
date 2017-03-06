@@ -30,7 +30,7 @@ function makerfaire_meet_the_makers_shortcode($atts, $content = null) {
     $sql = "select form_ids from wp_mf_faire where faire like '%".$fairelp."%'";
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
-     $formIDarr =  array_merge($formIDarr,explode(",", $result->form_ids));
+     $formIDarr = array_merge($formIDarr,explode(",", $result->form_ids));
     }
   }
   //MF-918 change to have this auto pull instead of having to set the entry id and description
@@ -38,28 +38,54 @@ function makerfaire_meet_the_makers_shortcode($atts, $content = null) {
   $search_criteria['field_filters'][] = array( 'key' => '303', 'value' => 'Accepted' );
   $search_criteria['field_filters']['mode'] = 'all';
 
-  $result    = GFAPI::count_entries( $formIDarr, $search_criteria );
+  $result = GFAPI::count_entries( $formIDarr, $search_criteria );
 
-  $offset= rand(0,$result-3); //randomly choose where to pick 3 entries from (starting from 3 to the total number of entries - 3
-  $entries   = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => $offset, 'page_size' => 3));
+  $offset = rand(0,$result-3); //randomly choose where to pick 3 entries from (starting from 3 to the total number of entries - 3
+  $entries = GFAPI::get_entries( $formIDarr, $search_criteria, null, array('offset' => $offset, 'page_size' => 3));
 
   $image1 = ($entries[0]['22']!=''?$entries[0]['22']:'/wp-content/themes/makerfaire/images/grey-makey.png');
   $image2 = ($entries[1]['22']!=''?$entries[1]['22']:'/wp-content/themes/makerfaire/images/grey-makey.png');
   $image3 = ($entries[2]['22']!=''?$entries[2]['22']:'/wp-content/themes/makerfaire/images/grey-makey.png');
-$output = '<div class="row filter-container mmakers">'
-          . ' <div class="col-xs-12 col-sm-8"><a href="/maker/entry/' . $entries[0]['id'] . '" class="post">'
-          . '   <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image1,622,402) . '" alt="Featured Maker 1">'
-          . '   <div class="text-box"><span class="section">' . $entries[0]['16'] . '</span></div></a>'
-          . ' </div><div class="col-xs-12 col-sm-4">'
-          . '   <a href="/maker/entry/' . $entries[1]['id'] . '" class="post">'
-          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image2,622,402) . '" alt="Featured Maker 2">'
-          . '     <div class="text-box"><span class="section">' . substr($entries[1]['151'],0,48) . '</span></div>'
+
+  $description0 = $entries[0]['16'];
+  $desc_length0 = iconv_strlen($description0, 'UTF-8');
+  if ($desc_length0 > 200) {
+    $description0 = substr($description0, 0, 200) . '...';
+  }
+  $description1 = $entries[1]['16'];
+  $desc_length1 = iconv_strlen($description1, 'UTF-8');
+  if ($desc_length1 > 200) {
+    $description1 = substr($description1, 0, 200) . '...';
+  }
+  $description2 = $entries[2]['16'];
+  $desc_length2 = iconv_strlen($description2, 'UTF-8');
+  if ($desc_length2 > 200) {
+    $description2 = substr($description2, 0, 200) . '...';
+  }
+
+  $output = '<div class="mtm-cont">'
+          . ''
+          . '   <a class="mtm-big-img" href="/maker/entry/' . $entries[0]['id'] . '" style="background: url(' . legacy_get_resized_remote_image_url($image1,622,402) . ');">'
+          . '     <div class="mtm-text-box">'
+          . '       <h2>' . substr($entries[0]['151'],0,48) . '</h2>'
+          . '       <p>' . $description0 . '</p>'
+          . '     </div>'
           . '   </a>'
-          . '   <a href="/maker/entry/' . $entries[2]['id'] . '" class="post">'
-          . '     <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image3,622,402) . '" alt="Featured Maker 3">'
-          . '     <div class="text-box"><span class="section">' . substr($entries[2]['151'],0,48) . '</span></div>'
+          . ' <div class="mtm-sm-img">'
+          . '   <a href="/maker/entry/' . $entries[1]['id'] . '" style="background: url(' . legacy_get_resized_remote_image_url($image2,622,402) . ');">'
+          . '     <div class="mtm-text-box mtm-text-box-sm">'
+          . '       <h2>' . substr($entries[1]['151'],0,48) . '</h2>'
+          . '       <p>' . $description1 . '</p>'
+          . '     </div>'
           . '   </a>'
-          . '</div></div>';
+          . '   <a href="/maker/entry/' . $entries[2]['id'] . '" style="background: url(' . legacy_get_resized_remote_image_url($image3,622,402) . ');">'
+          . '     <div class="mtm-text-box mtm-text-box-sm">'
+          . '       <h2>' . substr($entries[2]['151'],0,48) . '</h2>'
+          . '       <p>' . $description2 . '</p>'
+          . '     </div>'
+          . '   </a>'
+          . ' </div>'
+          . '</div>';
 
   return $output;
 }
@@ -85,41 +111,59 @@ function makerfaire_makezine_rss_news() {
   // Build an array of all the items, starting with element 0 (first element).
   $rss_items = $rss->get_items( 0, $maxitems );
 
-  //image #2
-  $description=$rss_items[1]->get_description();
+  //image #3
+  $description = $rss_items[2]->get_description();
   $image = get_first_image_url($description);
   $description = strip_tags($description);
-  $title =esc_html( $rss_items[1]->get_title() );
-  $url=esc_url( $rss_items[1]->get_permalink());
-  $output = '<div class="row filter-container mf-news">'
-          . '<div class="col-xs-12 col-sm-4">'
-          . '  <a href="'.$url.'" class="post">'
-          . '    <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image,622,402) . '" alt="Featured Maker Faire post 1">'
-          . '    <div class="text-box"><span class="section">' . $title . '</span></div>'
+  $desc_length = iconv_strlen($description, 'UTF-8');
+  if ($desc_length > 200) {
+    $description = substr($description, 0, 200) . '...';
+  }
+  $title = esc_html( $rss_items[2]->get_title() );
+  $url = esc_url( $rss_items[2]->get_permalink());
+  $output .= '<div class="mf-news-cont">'
+          . '  <a class="mf-news-big-img" href="'.$url.'" style="background: url(' . legacy_get_resized_remote_image_url($image,622,402) . ');">'
+          . '     <div class="mf-news-text-box">'
+          . '       <h2>' . $title . '</h2>'
+          . '       <p>' . $description . '</p>'
+          . '     </div>'
           . '  </a>';
 
-  //image #3
-  $description=$rss_items[2]->get_description();
-  $image = get_first_image_url($description);
-  $description = strip_tags($description);
-  $title =esc_html( $rss_items[2]->get_title() );
-  $url=esc_url( $rss_items[2]->get_permalink());
-  $output .= '  <a href="'.$url . '" class="post">'
-          . '    <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image,622,402) . '" alt="Featured Maker Faire post 2">'
-          . '    <div class="text-box"><span class="section">' . $title . '</span></div>'
-          . '  </a>'
-          . '</div>';
-
   //image #1
-  $description=$rss_items[0]->get_description();
+  $description = $rss_items[0]->get_description();
   $image = get_first_image_url($description);
   $description = strip_tags($description);
-  $title =esc_html( $rss_items[0]->get_title() );
-  $url=esc_url( $rss_items[0]->get_permalink());
-  $output .= ' <div class="col-xs-12 col-sm-8"><a href="' . $url. '" class="post">'
-          . '  <img class="img-responsive" src="' . legacy_get_resized_remote_image_url($image,622,402) . '" alt="Featured Maker Faire post 3">'
-          . '  <div class="text-box"><span class="section">' . $title . '</span></div></a>'
-          . '</div>'
+  $desc_length = iconv_strlen($description, 'UTF-8');
+  if ($desc_length > 200) {
+    $description = substr($description, 0, 200) . '...';
+  }  
+  $title = esc_html( $rss_items[0]->get_title() );
+  $url = esc_url( $rss_items[0]->get_permalink());
+  $output .= '  <div class="mf-news-sm-img">'
+          . '     <a href="'.$url . '" style="background: url(' . legacy_get_resized_remote_image_url($image,622,402) . ');">'
+          . '       <div class="mf-news-text-box mf-news-text-box-sm">'
+          . '         <h2>' . $title . '</h2>'
+          . '         <p>' . $description . '</p>'
+          . '       </div>'
+          . '     </a>';
+
+  //image #2
+  $description = $rss_items[1]->get_description();
+  $image = get_first_image_url($description);
+  $description = strip_tags($description);
+  $desc_length = iconv_strlen($description, 'UTF-8');
+  if ($desc_length > 200) {
+    $description = substr($description, 0, 200) . '...';
+  }
+  $title = esc_html( $rss_items[1]->get_title() );
+  $url = esc_url( $rss_items[1]->get_permalink());
+  $output .= '    <a href="'.$url . '" style="background: url(' . legacy_get_resized_remote_image_url($image,622,402) . ');">'
+          . '       <div class="mf-news-text-box mf-news-text-box-sm">'
+          . '         <h2>' . $title . '</h2>'
+          . '         <p>' . $description . '</p>'
+          . '       </div>'
+          . '     </a>'
+          . '   </div>'
           . '</div>';
   RETURN $output;
 }
