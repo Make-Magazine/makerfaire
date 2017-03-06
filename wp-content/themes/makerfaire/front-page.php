@@ -26,7 +26,7 @@ get_header();
           $sorting = array( 'key' => 5, 'direction' => 'ASC' );
           $search_criteria['status'] = 'active';
           $entries = GFAPI::get_entries(24, $search_criteria, $sorting, array('offset' => 0, 'page_size' => 10));
-          foreach ($entries as $entry): 
+          foreach ($entries as $entry):
           ?>
           <div class="slide" data-url="<?php echo $entry['4'] ?>">
             <div class="bg-stretch">
@@ -104,7 +104,7 @@ get_header();
           </article>
 
         <?php endwhile; ?>
-      <?php endif; ?>   
+      <?php endif; ?>
 
     </div>
 
@@ -140,7 +140,7 @@ get_header();
   <div class="location-holder">
     <div class="container">
       <div class="picture-holder">
-        <img alt="image description" height="74" src="http://makerfaire.staging.wpengine.com/wp-content/uploads/2015/04/maker-robot.png" width="53">
+        <img alt="image description" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">
       </div>
       <a href="/map/">There are Maker Faires all over the world. Find one near you! <i class="icon-arrow-right"></i></a>
     </div>
@@ -160,7 +160,7 @@ get_header();
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-lg-10 col-lg-offset-1">
-          <div class="picture-holder"><img alt="image description" height="71" src="http://makerfaire.staging.wpengine.com/wp-content/uploads/2015/04/maker-robot-textbox.png" width="66"></div>
+          <div class="picture-holder"><img alt="image description" height="71" src="/uploads/2015/04/maker-robot-textbox.png" width="66"></div>
           <h1>What is Maker Faire?</h1>We call it the Greatest Show (& Tell) on Earth. Maker Faire is part science fair, part county fair, and part something entirely new! As a celebration of the Maker Movement, it's a family-friendly showcase of invention, creativity, and resourcefulness. Faire gathers together tech enthusiasts, crafters, educators, tinkerers, food artisans, hobbyists, engineers, science clubs, artists, students, and commercial exhibitors. Makers come to show their creations and share their learnings. Attendees flock to Maker Faire to glimpse the future and find the inspiration to become Makers themselves.
         </div>
       </div>
