@@ -14,7 +14,6 @@
     overflow: hidden;
 
     table {
-      margin-left: 61px;
       width: 100%;
       color: #4A4A4A;
       border-top: 1px solid #E7ECF0;
@@ -27,7 +26,10 @@
       }
     }
     .faireTitle {
-      padding: 0 10px;
+      float: left;
+      @media screen and (max-width: 767px) {
+        float: none;
+      }
     }
     .faireLabel {
       color: #9B9B9B;
@@ -42,11 +44,34 @@
       margin-top: 10px;
       font-size: 12px;
       color: #4A4A4A;
-      .actionIcon {
-        height: 32px;
-        width: 32px;
-        margin-right: 10px;
-        margin-left: 30px;
+      float: right;
+      .flagship-icon-link {
+        float: right;
+        &:hover {
+          text-decoration: none;
+          h4 {
+            text-decoration: underline;
+          }
+        }
+        span {
+          color: #ea002a;
+        }
+        h4 {
+          font-size: 12px;
+          margin-top: 0;
+          margin-bottom: 0;
+          display: inline-block;
+          padding: 0 15px 0 2px;
+        }
+        @media screen and (max-width: 550px) {
+          float: none;
+          display: block;
+          margin-bottom: 7px;
+        }
+      }
+      @media screen and (max-width: 767px) {
+        float: none;
+        display: block;
       }
     }
   }
@@ -137,7 +162,9 @@
     margin-left: 5px;
   }
   #proj_img img {
-    max-width: 750px;
-    max-height: 500px;
+    @media screen and (min-width: 768px) {
+      max-width: 750px;
+      max-height: 500px;
+    }
   }
 }
