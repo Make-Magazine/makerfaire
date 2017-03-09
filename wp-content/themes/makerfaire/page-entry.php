@@ -332,7 +332,7 @@ function display_entry_schedule($entry_id) {
   if($wpdb->num_rows > 0){
     ?>
     <div id="entry-schedule">
-      <span class="faireTitle pull-left">
+      <span class="faireTitle">
         <a href="<?= $backlink ?>">
         <span class="faireLabel">Live at</span><br/>
         <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
@@ -340,26 +340,35 @@ function display_entry_schedule($entry_id) {
       </span>
       <?php // TBD - dynamically set these links and images ?>
       <div class="faireActions">
-        <span class="pull-right">
-          <?php if($faire_map!='') { ?>
-          <a class="flagship-icon-link" href="<?php echo $faire_map;?>">
-            <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-map.png" width="40px" scale="0">
-            Event Map
-          </a>
-          <?php } ?>
-        </span>
-        <span class="pull-right">
-          <a class="flagship-icon-link" href="/<?php echo $url_sub_path;?>/schedule/">
-            <img class="actionIcon" src="http://makerfaire.com/wp-content/uploads/2016/01/icon-schedule.png" width="40px" scale="0">
-          </a>
 
-          <span class="pull-right "><a href="/<?php echo $url_sub_path;?>/schedule/">View full schedule</a><br/>
-            <?php if($program_guide != '') { ?>
-            <a class="flagship-icon-link" href="<?php echo $program_guide;?>">Download the program guide</a>
-            <?php } ?>
+        <?php if($faire_map!='') { ?>
+        <a class="flagship-icon-link" href="<?php echo $faire_map;?>">
+          <span class="fa-stack fa-lg">
+            <i class="fa fa-circle fa-stack-2x"></i>
+            <i class="fa fa-map-marker fa-stack-1x fa-inverse"></i>
           </span>
+          <h4>Event Map</h4>
+        </a>
+        <?php } ?>
 
-        </span>
+        <a class="flagship-icon-link" href="/<?php echo $url_sub_path;?>/schedule/">
+          <span class="fa-stack fa-lg">
+            <i class="fa fa-circle fa-stack-2x"></i>
+            <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
+          </span>
+          <h4>View full schedule</h4>
+        </a>
+
+        <?php if($program_guide != '') { ?>
+        <a class="flagship-icon-link" href="<?php echo $program_guide;?>">
+          <span class="fa-stack fa-lg">
+            <i class="fa fa-circle fa-stack-2x"></i>
+            <i class="fa fa-download fa-stack-1x fa-inverse"></i>
+          </span>
+          <h4>Download the program guide</h4>
+        </a>
+        <?php } ?>
+
       </div>
       <div class="clear"></div>
 
@@ -371,7 +380,7 @@ function display_entry_schedule($entry_id) {
           $start_dt   = strtotime( $row->start_dt);
           $end_dt     = strtotime($row->end_dt);
           echo '<td><b>'.date("l, F j",$start_dt).'</b></td>'
-                  . ' <td>'. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</td>';
+            . ' <td>'. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</td>';
         }else{
           global $faire_start; global $faire_end;
 
