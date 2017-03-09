@@ -1,5 +1,8 @@
 
 <?php
+//Wordpress header and Theme header call
+get_header();
+
 /*
  * Template Name: Login Page
  */
@@ -46,8 +49,6 @@ if (strpos(wp_referer_field(),'edit-entry') > 0)
 if ($mode == "reset")
         $loginmessage = "Change your password";
 
-//Wordpress header and Theme header call
-get_header();
 
 ?>
 <style>
