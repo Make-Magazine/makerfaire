@@ -59,11 +59,12 @@ get_header();
   </div>
   <div class="clearfix">
     <h2 class="title-head pull-left">Manage your Maker Faire Entries</h2>
+    <!--
     <span class="submit-entry pull-right">
       <a href="/new-york/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
         Submit another entry
       </a>
-    </span>
+    </span>-->
   </div>
   User <?php echo $current_user->user_email;?><br/>
   <hr class="header-break">

@@ -181,7 +181,7 @@ $return = '
                           "Jess Hobbs"              => "jess@makermedia.com",
                           "Jonathan Maginn"         => "jonathan.maginn@sbcglobal.net",
                           "Kate Rowe"               => "krowe@makermedia.com");
-        $emailto2 = array("Kerry Moore"             => "kerry@contextfurniture.com",
+        $emailto2 = array("Kerry Moore"             => "kmoore@makermedia.com",
                           "Kim Dow"                 => "dow@dowhouse.com",
                           "Louise Glasgow"          => "lglasgow@makermedia.com",
                           "Matt Stultz"             => "mstultz@makermedia.com",
@@ -406,6 +406,9 @@ function gf_collapsible_sections($form, $lead){
           if($ticketing){
             $return .= $ticketing;
           }else{
+            $EBcount = $wpdb->get_var("select count(*) from eb_event, wp_mf_faire where wp_mf_faire_id = wp_mf_faire.id and "
+                 . "FIND_IN_SET (".$lead['form_id'].",wp_mf_faire.form_ids)> 0");
+            if($EBcount >=1){
             $return .= '
             <div id="noTickets">
               No Access Codes found for this entry. Click the ticket icon to generate<br/>
@@ -416,8 +419,15 @@ function gf_collapsible_sections($form, $lead){
             <div style="display:none" id="createTickets">
               <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom"></i>
               <span class="sr-only">Loading...</span>
-            </div>
-            <i>Please be patient.  This may take a while to complete</i>';
+              <i>Please be patient.  This may take a while to complete</i>
+            </div>';
+            }else{
+              //no eventbrite event set up
+              $return .= '
+                  <div id="noTickets">
+                    I\'m sorry.  There is not an Eventbrite event set up for this faire.
+                  </div>';
+            }
           }
         $return .= '
         </div>

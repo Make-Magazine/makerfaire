@@ -128,7 +128,11 @@ $tableFields['wp_rg_lead_detail_changes'][] = array(
     //'cellFilter'  => 'dd/MM/yyyy',
     'cellTemplate'=> '<div class="ui-grid-cell-contents">{{COL_FIELD | date:"M-d-yy h:mm a"}}</div>',
         );
-
+$tableFields['wp_rg_lead_detail_changes'][] = array(
+    'fieldName'   => 'field_id',
+    'filterType'  => 'text',
+    'visible'     => true
+  );
 $tableFields['wp_rg_lead_detail_changes'][] = array(
     'fieldName'   => 'fieldLabel',
     'filterType'  => 'text',
@@ -164,11 +168,6 @@ $tableFields['wp_rg_lead_detail_changes'][] = array(
   );
 $tableFields['wp_rg_lead_detail_changes'][] = array(
     'fieldName'   => 'form_id',
-    'filterType'  => 'text',
-    'visible'     => false
-  );
-$tableFields['wp_rg_lead_detail_changes'][] = array(
-    'fieldName'   => 'field_id',
     'filterType'  => 'text',
     'visible'     => false
   );

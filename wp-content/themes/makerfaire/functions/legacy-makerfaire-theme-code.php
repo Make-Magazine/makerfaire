@@ -364,7 +364,7 @@ if (!current_user_can('edit_posts')) {
  *
  * @global $query
  *
- *
+ */
 function mf_hide_faires( $query ) {
   if ( is_admin() && $query->is_main_query() ) {
     $tax_query = array(
@@ -380,8 +380,6 @@ function mf_hide_faires( $query ) {
 }
 
 // add_action( 'pre_get_posts', 'mf_hide_faires' );
- *
- */
 
 
 
