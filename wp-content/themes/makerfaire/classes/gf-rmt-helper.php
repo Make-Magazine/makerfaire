@@ -361,9 +361,15 @@ class GFRMTHELPER {
     }
   }
 
-  /*
-   * This table will add/update records to the following tables:
-   *    wp_mf_entity, wp_mf_maker, wp_mf_maker_to_entity
+  /* Function to add/update the maker data tables for entity/project and maker data
+   *
+   *  Entity/project and maker data only saved for
+   *   - Exhibit
+   *   - Presentation
+   *   - Performance
+   *   - Startup Sponsor
+   *   - Sponsor
+   *  All other form types are skipped
    */
    public static function updateMakerTables($entryID){
     global $wpdb;
@@ -371,18 +377,28 @@ class GFRMTHELPER {
     $form_id  = $entry['form_id'];
     $form     = GFAPI::get_form($form_id);
 
+    //exit this function if form type is not an Exhibit, Presentation or Sponsor
+    $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
+    if($form_type != 'Exhibit' && $form_type != 'Presentation' && $form_type != 'Performance' && strpos('Sponsor', $form_type) !== false ){
+      return;
+    }
+
     //build Maker Data Array
     $data = self::buildMakerData($entry,$form);
     $makerData  = $data['maker'];
     $entityData = $data['entity'];
 
-    $categories = is_array($entityData['categories'] ? implode(',',$entityData['categories']) :'');
+    $categories = (is_array($entityData['categories']) ? implode(',',$entityData['categories']) :'');
+
     /*
      * Update Entity Table - wp_mf_entity
+     * fields: lead_id, form_id, presentation_title, presentation_type, special_request, OnsitePhone,
+     * desc_short, desc_long, project_photo, status, category, faire, mobile_app_discover, form_type, project_video
      */
-    $wp_mf_entitysql = "insert into wp_mf_entity (lead_id, presentation_title, presentation_type, special_request, "
-                    . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover,form_id) "
-                    . " VALUES ('" . $entryID             . "',"
+    $wp_mf_entitysql = "insert into wp_mf_entity (lead_id, form_id, presentation_title, presentation_type, special_request, "
+                    . "     OnsitePhone, desc_short, desc_long, project_photo, status, category, faire, mobile_app_discover, "
+                    . "     form_type, project_video) "
+                    . " VALUES ('" . $entryID . "',". $entityData['form_id']. ','
                             . ' "' . $entityData['project_name']            . '", '
                             . ' "' . $entityData['presentation_type']       . '", '
                             . ' "' . $entityData['special_request']         . '", '
@@ -394,7 +410,9 @@ class GFRMTHELPER {
                             . ' "' . $categories . '", '
                             . ' "' . $entityData['faire']                   . '", '
                             . '  ' . $entityData['mobile_app_discover']     . ','
-                            . '  ' . $entityData['form_id'].') '
+                            . ' "' . $form_type  . '", '
+                            . ' "' . $entityData['project_video']           . '"'
+                            .') '
                     . ' ON DUPLICATE KEY UPDATE presentation_title  = "'.$entityData['project_name']            . '", '
                     . '                         presentation_type   = "'.$entityData['presentation_type']       . '", '
                     . '                         special_request     = "'.$entityData['special_request']         . '", '
@@ -406,7 +424,9 @@ class GFRMTHELPER {
                     . '                         category            = "'.$categories. '", '
                     . '                         faire               = "'.$entityData['faire']                   . '", '
                     . '                         form_id             =  '.$entityData['form_id']                 . ','
-                    . '                         mobile_app_discover = "'.$entityData['mobile_app_discover']     . '"';
+                    . '                         mobile_app_discover = "'.$entityData['mobile_app_discover']     . '", '
+                    . '                         form_type           = "'.$form_type                             . '", '
+                    . '                         project_video       = "'.$entityData['project_video']           . '"';
     $wpdb->get_results($wp_mf_entitysql);
 
     /*  Update Maker Table - wp_mf_maker table
@@ -482,23 +502,11 @@ class GFRMTHELPER {
     }
   }
 
- /* Function to build the maker data tables for entity/project and maker data
-  *
-  *  Entity/project and maker data only saved for
-  *   - Exhibit
-  *   - Presentation
-  *   - Performance
-  *   - Startup Sponsor
-  *   - Sponsor
-  *  All other form types are skipped
-  */
+  //function to build the maker data table to update the wp_mf_maker table
   public static function buildMakerData($lead,$form){
     global $wpdb;
     $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
-    //exit this function if not an Exhibit, Presentation or Sponsor
-    if($form_type != 'Exhibit' && $form_type != 'Presentation' && $form_type != 'Performance' && strpos('Sponsor', $form_type) !== false ){
-      return;
-    }
+
     $entry_id     = $lead['id'];
 		$form_id      = $form['id'];
 
@@ -542,8 +550,10 @@ class GFRMTHELPER {
 
     // Presenter / Maker 1
     if(!$isGroup){
-      //if this isn't a group we need to have a valid email for the presenter(maker 1) record.
-      // if not set, use contact email
+      /*
+       * if this isn't a group we need to have a valid email for the presenter(maker 1) record.
+       *    if it is not set, use contact email
+       */
       $email = (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:$entry_id.'-presenter@makermedia.com');
       $makerArray['presenter'] = array(
           'first_name'  => (isset($lead['160.3']) ? $lead['160.3']:''),
@@ -734,20 +744,22 @@ class GFRMTHELPER {
 
     //Categories (current fields in use)
     foreach($lead as $leadKey=>$leadValue){
-      //4 additional categories
-      $pos = strpos($leadKey, '321');
-      if ($pos !== false) {
-        $leadCategory[]=$leadValue;
-      }
-      //main catgory
-      $pos = strpos($leadKey, '320');
-      if ($pos !== false) {
-        $leadCategory[]=$leadValue;
-      }
-      //check the flag field 304
-      $pos = strpos($leadKey, '304');
-      if ($pos !== false) {
-        if($leadValue=='Mobile App Discover')  $MAD = 1;
+      if(trim($leadValue!='')){
+        //4 additional categories
+        $pos = strpos($leadKey, '321');
+        if ($pos !== false) {
+          $leadCategory[] = $leadValue;
+        }
+        //main catgory
+        $pos = strpos($leadKey, '320');
+        if ($pos !== false) {
+          $leadCategory[] = $leadValue;
+        }
+        //check the flag field 304
+        $pos = strpos($leadKey, '304');
+        if ($pos !== false) {
+          if($leadValue=='Mobile App Discover')  $MAD = 1;
+        }
       }
     }
 
@@ -778,6 +790,7 @@ class GFRMTHELPER {
         'onsitePhone'         => (isset($lead['265']) ? htmlentities($lead['265']) : ''),
         'public_description'  => (isset($lead['16'])  ? htmlentities($lead['16'])  : ''),
         'private_description' => (isset($lead['11'])  ? htmlentities($lead['11'])  : ''),
+        'project_video'       => (isset($lead['32'])  ? htmlentities($lead['32'])  : ''),
         'status'              => $status,
         'categories'          => $leadCategory,
         'faire'               => $faire,
