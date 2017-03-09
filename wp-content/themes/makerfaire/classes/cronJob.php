@@ -41,7 +41,7 @@ function update_mfTables($form,$limit,$start){
   global $wpdb;
   $sql = "Select id
             from wp_rg_lead
-           where status <> 'trash' and form_id  = $form "
+           where form_id  = $form "
           //. " and id > 60701"
        . " ORDER BY `wp_rg_lead`.`id` ASC "
           //. "limit 0, 100"
