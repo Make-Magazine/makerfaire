@@ -3,19 +3,20 @@
 error_reporting('NONE');
 
 /**
- * v2 of the Maker Faire API - ENTITY
+ * v3 of the Maker Faire API - ENTITY
  *
  * Built specifically for the mobile app but we have interest in building it further
  * This page is the controller to grabbing the appropriate API version and files.
  *
  * This page specifically handles the Entity type for the mobile app. AKA the applications.
  *
- * @version 2.0
+ * @version 3.0
  */
 // Stop any direct calls to this file
 defined('ABSPATH') or die('This file cannot be called directly!');
 $type = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_query->query_vars['type'] ) : null );
 $faire = (!empty($_REQUEST['faire']) ? sanitize_text_field($_REQUEST['faire']) : null );
+$dest  = (!empty($_REQUEST['dest'])  ? sanitize_text_field($_REQUEST['dest'])  : null );
 
 
 // Double check again we have requested this file
@@ -33,7 +34,7 @@ if ($type == 'project') {
     $query = new WP_Query( $args );
    */
 
-  
+
 
   $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
   if ($mysqli->connect_errno) {
@@ -46,7 +47,10 @@ if ($type == 'project') {
             `entity`.`desc_short` as Description,
             `entity`.`category` as `Categories`,
             `entity`.`project_photo`,
+            `entity`.`form_type`,
+            `entity`.`project_video`,
             entity.mobile_app_discover,
+            wp_mf_faire.faire_name,
             (select group_concat( distinct maker_id separator ',') as Makers
              from wp_mf_maker_to_entity maker_to_entity
              where entity.lead_id               = maker_to_entity.entity_id AND
@@ -59,8 +63,11 @@ if ($type == 'project') {
                    maker_to_entity.maker_type  = 'Contact'
              group by maker_to_entity.entity_id
             ) as lead_maker,
+            (SELECT sum(numRibbons)FROM `wp_mf_ribbons` where ribbonType = 1 and entry_id=entity.lead_id group by entry_id) as redRibbonCnt,
+            (SELECT sum(numRibbons)FROM `wp_mf_ribbons` where ribbonType = 0 and entry_id=entity.lead_id group by entry_id) as blueRibbonCnt,
             wp_rg_lead.form_id,
             wp_rg_lead.status,
+            wp_rg_lead.date_created,
             (select wp_mf_location.subarea_id
              from   wp_mf_location
              where  wp_mf_location.entry_id = entity.lead_id limit 1
@@ -80,7 +87,7 @@ if ($type == 'project') {
     AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
     and 	wp_rg_lead.status = 'active'
     ");
-  //echo $select_query;
+
   $mysqli->query("SET NAMES 'utf8'");
 
   $result = $mysqli->query($select_query) or trigger_error($mysqli->error . "[$select_query]");
@@ -116,24 +123,33 @@ if ($type == 'project') {
     $category_ids = $row['Categories'];
     $app['category_id_refs'] = explode(',', $category_ids);
 
-    //add the sponsor category 333 if using a sponsor form
-    //look for the word sponsor in the form name
-    $form = GFAPI::get_form($row['form_id']);
-    $formTitle = $form['title'];
-    $formType = $form['form_type'];
-
-
     $maker_ids = $row['exhibit_makers'];
     $app['exhibit_accounts'] = (!empty($maker_ids) ) ? explode(',', $maker_ids) : null;
-    
+
     $lead_maker_ids = $row['lead_maker'];
     $app['lead_accounts'] = (!empty($lead_maker_ids) ) ? explode(',', $lead_maker_ids) : null;
 
     // Application Description
     $app['description'] = $row['Description'];
 
-    // Put the application into our list of apps
-    array_push($apps, $app);
+    //add makershare data
+    if($dest=='makershare'){
+      //only return exhibit, presentation and performance
+      if($row['form_type'] == 'Exhibit' || $row['form_type'] == 'Presentation' || $row['form_type'] == 'Performance') {
+        $app['form_type']     = $row['form_type'];
+        $app['faire_name']    = $row['faire_name'];
+        $app['submission']    = $row['date_created'];
+        $app['project_video'] = $row['project_video'];
+        $app['redRibbonCnt']  = ($row['redRibbonCnt']  != NULL ? $row['redRibbonCnt']  : 0);
+        $app['blueRibbonCnt'] = ($row['blueRibbonCnt'] != NULL ? $row['blueRibbonCnt'] : 0);
+
+        // Put the application into our list of apps
+        array_push($apps, $app);
+      }
+    }else{
+      // Put the application into our list of apps
+      array_push($apps, $app);
+    }
   }
 
   $header = array(
@@ -142,7 +158,7 @@ if ($type == 'project') {
           'results' => intval($count),
       ),
   );
-  
+
   // Merge the header and the entities
   $merged = array_merge($header, array('project' => $apps));
 
