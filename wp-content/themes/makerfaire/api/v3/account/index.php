@@ -97,8 +97,8 @@ if ( $type == 'account' ) {
 
     //logic specific for makershare
     if($dest=='makershare'){
-      //don't return makers under 13
-      if($row['age_range'] != '0-6' && $row['age_range'] != '7-12' ){
+      //don't return makers under 13 or group makers
+      if($row['age_range'] != '0-6' && $row['age_range'] != '7-12' && $row['role'] != 'group'){
         $maker['role']     = $row['role'];
         $maker['location'] = array( 'city'    => $row['city'],
                                     'state'   => $row['state'],
