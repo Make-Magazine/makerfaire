@@ -560,7 +560,7 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
         $id = $form_id . '_' . $field->id . '_' . $choice_number ++;
       }
 
-      if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, rgget( $input_id, $value ) ) ) {
+      if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, stripslashes(rgget( $input_id, $value ) )) ) {
         $checked = "checked='checked'";
       } elseif ( ! is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, $value ) ) {
         $checked = "checked='checked'";
