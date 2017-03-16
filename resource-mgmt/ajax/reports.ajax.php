@@ -82,8 +82,8 @@ function cannedRpt(){
 
   $data['columnDefs'] = array();
   $data['columnDefs'][] = array('field'=>'entry_id');
-  if($dispFormID)
-    $data['columnDefs'][] = array('field'=>'form_id');
+  $visible = ($dispFormID ? false : true);
+  $data['columnDefs'][] = array('field'=>'form_id','visible'=> $visible);
   $data['columnDefs'][] = array('field'=>'form_type');
 
   //pull all entries based on formSelect, faire, and status
@@ -108,16 +108,18 @@ function cannedRpt(){
     //remove duplicates for query
     if(!isset($fieldIDArr[$selFields->id])){
       //build wp_rg_lead_detail query
-      if($selFields->choices=='all' || $selFields->type=='name'){
+      if($selFields->choices=='all'){
+        $fieldQuery[] = " field_number like '".$selFields->id.".%' ";
+        $fieldIDArr[$selFields->id][] = $selFields;
+      } elseif($selFields->type=='name'){
         //for name field
-        if($selFields->type=='name') {
-          foreach($selFields->inputs as $choice){
-            $combineFields[$selFields->id][] = $choice->id;
+        foreach($selFields->inputs as $choice){
+          $combineFields[$selFields->id][] = $choice->id;
 
-            //set criteria for this field id
-            $fieldIDArr[$choice->id][] = $selFields;
-          }
+          //set criteria for this field id
+          $fieldIDArr[$choice->id][] = $selFields;
         }
+
         //return all selected options
         $fieldQuery[] = " field_number like '".$selFields->id.".%' ";
       }else{
@@ -127,7 +129,12 @@ function cannedRpt(){
       }
 
       //add requested field to columns
-      $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string');
+      if(isset($selFields->hide)&&$selFields->hide==true){
+        //don't add this field to display
+        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string',visible=> false);
+      }else{
+        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string');
+      }
     }
 
     //determine if they want only accepted records
@@ -185,7 +192,18 @@ function cannedRpt(){
         $value = convert_smart_quotes($value);
 
         //check field criteria
-        $fieldCritArr = $fieldIDArr[$detail['field_number']];
+
+
+        //check if we pulled by specific field id or if this was a request for all values
+        $fieldID = $detail['field_number'];
+        if(isset($fieldIDArr[$fieldID])){
+          $fieldCritArr = $fieldIDArr[$fieldID];
+        }else{//let's look for the base id
+          //remove everything after the period
+          $fieldID = (strpos($fieldID, ".") ? substr($fieldID, 0, strpos($fieldID, ".")) : $fieldID);
+          $fieldCritArr = (isset($fieldIDArr[$fieldID])?$fieldIDArr[$fieldID]:'');
+        }
+
         if(is_array($fieldCritArr)){
           foreach($fieldCritArr as $fieldCriteria){
             //radio and select boxes must match one of the passed values
@@ -197,16 +215,17 @@ function cannedRpt(){
                 }
               }//end loop thru field
 
-              if($detail['field_number']==303 && $acceptedOnly && $value!='Accepted')  $passCriteria = false;
+              if($fieldID==303 && $acceptedOnly && $value!='Accepted')  $passCriteria = false;
 
               if(!$passCriteria){
                 break; //exit the field detail loop
               }
             }
-            //build output for field data - format is field_55_4 for field id 55.4
-            $fieldData['field_'.str_replace('.','_',$detail['field_number'])]  = $value;
           }
         }
+        //build output for field data - format is field_55_4 for field id 55.4
+        $fieldKey = 'field_'.str_replace('.','_',$fieldID);
+        $fieldData[$fieldKey] = (isset($fieldData[$fieldKey])?$fieldData[$fieldKey]."\r":'').$value;
       }
 
       //combine name fileds
@@ -322,7 +341,8 @@ function pullRmtData($rmtData, $entryID){
       $selRMT = $reqResArr[$resource['resource_category_id']];
       if(!empty($selRMT)){
         if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
-          $colDefs2Sort['res_'.$resource['token']] =   array('field'=> 'res_'.$resource['token'],'displayName'=>$resource['token']);
+          $aggrType='uiGridConstants.aggregationTypes.sum';
+          $colDefs2Sort['res_'.$resource['token']] =   array('field'=> 'res_'.$resource['token'],'displayName'=>$resource['token'],'aggregationType'=> $aggrType);
           $colDefs2Sort['res_'.$resource['token'].'_comment']  = array('field'=> 'res_'.$resource['token'].'_comment','displayName'=>$resource['token'].' - comment');
           $return['data']['res_'.$resource['token']] = $resource['qty'];
           $return['data']['res_'.$resource['token'].'_comment'] = $resource['comment'];
@@ -537,20 +557,20 @@ function pullPayData($entryID) {
               if(is_array($payFields['inputs'])){
                 foreach($payFields['inputs'] as $input){
                   $pay_det .= $input['label'].': ';
-                  $pay_det .= $payEntry[$input['id']]."\r\n";
+                  $pay_det .= $payEntry[$input['id']]."\r";
                 }
-                $pay_det.= "\r\n";
+                $pay_det.= "\r";
               }
             }else{
               $pay_det.= $payFields['label'].': ';
-              $pay_det.= $payEntry[$payFields['id']]."\r\n";
+              $pay_det.= $payEntry[$payFields['id']]."\r";
             }
           }
         }
       }
       //payment transaction ID (from paypal)
       $return['colDefs']['trx_id']=   array('field'=> 'trx_id','displayName'=>'Pay trxID');
-      $return['data']['trx_id'] = implode("\r\n", $transaction_id);
+      $return['data']['trx_id'] = implode("\r", $transaction_id);
 
       //payment amt
       $return['colDefs']['pay_amt']=   array('field'=> 'pay_amt','displayName'=>'Pay amount','cellFilter'=> 'currency');
@@ -558,7 +578,7 @@ function pullPayData($entryID) {
 
       //payment date
       $return['colDefs']['pay_date']=   array('field'=> 'pay_date','displayName'=>'Pay date');
-      $return['data']['pay_date'] = implode("\r\n", $date_created);
+      $return['data']['pay_date'] = implode("\r", $date_created);
 
       //payment details
       $return['colDefs']['pay_det']=   array('field'=> 'pay_det','displayName'=>'Payment Details');
