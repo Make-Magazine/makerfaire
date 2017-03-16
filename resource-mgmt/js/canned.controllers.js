@@ -47,7 +47,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     enableFiltering: true,
     enableGridMenu: true,
     rowHeight: 100,
-
+    showColumnFooter: true,
     exporterMenuPdf: false, // hide PDF export
     exporterCsvFilename: $routeParams.sub+'-export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
@@ -107,7 +107,12 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           if(findMe in sortParams){
             value.sort = {'direction':sortParams[findMe].direction, 'priority': sortParams[findMe].priority};
           }
-
+          if('aggregationType' in value){
+            if(value.aggregationType =='uiGridConstants.aggregationTypes.sum'){
+              value.aggregationType = uiGridConstants.aggregationTypes.sum;
+              value.aggregationHideLabel = true;
+            }
+          }
         });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
@@ -144,11 +149,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "faire": faire,
               "payments":true,
               "selectedFields":[
-                {"id":"304.21","label":"Flags","choices":"CM Fee Waived","type":"checkbox"},
+                {"id":"442","label":"Fee Management","choices":"all","type":"checkbox"},
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":""},
                 {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","exact":true},
-                {"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply:","choices":"Selling at Maker Faire [Commercial Maker]","type":"checkbox"},
-                {"id":"55.4","label":"What are your plans at Maker Faire? Check all that apply: ","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox"},
+                {"id":"55","label":"What are your plans at Maker Faire?","choices":"all","type":"checkbox"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"}
               ],
               "location":true,
@@ -321,11 +325,12 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "dispFormID":false,
+              "useFormSC": true,
               "selectedFields":[
-                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
-                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":""},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
+                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","hide":true},
               ],
               "rmtData":{
                 "resource":[
@@ -343,13 +348,13 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-              "acceptedOnly": true,
-              "dispStatus":false,
               "dispFormID":false,
               "useFormSC": true,
               "selectedFields":[
                 {"id":151,"label":"Exhibit","type":"text"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
+                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","hide":true},
+
               ],
               "orderBy":'location',
               "rmtData":{
@@ -366,11 +371,12 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "dispFormID":false,
+              "useFormSC": true,
               "selectedFields":[
-                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
-                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":""},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
+                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","hide":true},
               ],
               "rmtData":{
                 "resource":[
