@@ -379,7 +379,7 @@ class GFRMTHELPER {
 
     //exit this function if form type is not an Exhibit, Presentation or Sponsor
     $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
-    if($form_type != 'Exhibit' && $form_type != 'Presentation' && $form_type != 'Performance' && strpos('Sponsor', $form_type) !== false ){
+    if($form_type != 'Exhibit' && $form_type != 'Presentation' && $form_type != 'Performance' && $form_type != 'Sponsor' && $form_type != 'Startup Sponsor' ){
       return;
     }
 

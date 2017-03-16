@@ -29,7 +29,7 @@ $loginmessage = '';
 switch ($sign) {
     case "1":
         $currentloginurl = basename($_SERVER['REQUEST_URI']);
-        $loginmessage = 'Sign in to submit an entry. <br />If you haven\'t signed in before, <a href=\''.$currentloginurl.'&mode=signup\'>Sign Up.</a>';
+        $loginmessage = 'Sign in to submit an entry. <br />If you haven\'t signed in before, Sign Up.';
         break;
      case "2":
         $loginmessage = "Sign in to submit or manage an entry";
@@ -38,7 +38,7 @@ switch ($sign) {
         $loginmessage = "Sign in to manage your entries";
         break;
     case "5":
-        $loginmessage = 'Sign in to submit your information. <br />If you haven\'t signed in before, <a href=\''.$currentloginurl.'&mode=signup\'>Sign Up.</a>';
+        $loginmessage = 'Sign in to submit your information. <br />If you haven\'t signed in before, Sign Up.';
         break;
     default:
         $loginmessage = 'Sign In';

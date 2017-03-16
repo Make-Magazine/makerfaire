@@ -3,6 +3,8 @@
 add_action("gform_entry_detail_sidebar_before", "add_sidebar_sections", 10,2);
 function add_sidebar_sections($form, $lead) {
   $mode = empty( $_POST['screen_mode'] ) ? 'view' : $_POST['screen_mode'];
+  //the form is being pulled from the &id parameter in the url.  if they change the lid parameter in the url but not the id, the form object will be wrong here
+  $form = GFAPI::get_form( $lead['form_id'] );
   $sidebar  = '';
   $sidebar .= display_entry_info_box($form, $lead);
   if ($mode == 'view') {
@@ -222,7 +224,6 @@ function display_flags_prelim_locs($form, $lead) {
     $return = $entry_sidebar_button. $msgBox;
 
     // Load flags and prelim location section
-    $form_id = $form['id'];
 
     //flags
     $return    .= '<h4><label class="detail-label">Flags:</label></h4>';
@@ -560,7 +561,7 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
         $id = $form_id . '_' . $field->id . '_' . $choice_number ++;
       }
 
-      if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, rgget( $input_id, $value ) ) ) {
+      if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, stripslashes(rgget( $input_id, $value ) )) ) {
         $checked = "checked='checked'";
       } elseif ( ! is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, $value ) ) {
         $checked = "checked='checked'";
