@@ -427,7 +427,30 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
               "location":true};
-      var subTitle = 'Guest Seating';
+      var subTitle = 'WB/Stools';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="label"){
+      vars = {"formSelect":[],
+              "formType":["Exhibit"],
+              "faire": faire,
+        "selectedFields":[
+          {"id":320,"label":"Pick the category that best fits your project.","choices":"all","type":"select"},
+          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"}
+        ],
+        "rmtData":{
+          "resource":[
+            {"id":"9","value":"Electrical 120V","checked":true},
+            {"id":"10","value":"Electrical 220V","checked":true}],
+          "attribute":[
+            {"id":"2","value":"Space Size","checked":true},
+            {"id":"4","value":"Exposure","checked":true},
+            {"id":"6","value":"Light Level","checked":true},
+            {"id":"9","value":"Noise Level","checked":true},
+            {"id":"11","value":"Internet","checked":true}],
+          "attention":[],
+          "meta":[]},
+        "type":"customRpt"};
+      var subTitle = 'Label Placement';
       $scope.reports.callAJAX(vars);
     }
     jQuery('#pageTitle').html(pageTitle);

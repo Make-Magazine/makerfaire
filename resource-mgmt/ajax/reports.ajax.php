@@ -114,7 +114,7 @@ function cannedRpt(){
     if(!isset($fieldIDArr[$selFields->id])){
       //build wp_rg_lead_detail query
       if($selFields->choices=='all'){
-        $fieldQuery[] = " field_number like '".$selFields->id.".%' ";
+        $fieldQuery[] = " field_number like '".$selFields->id."%' ";
         $fieldIDArr[$selFields->id][] = $selFields;
       } elseif($selFields->type=='name'){
         //for name field
@@ -201,16 +201,13 @@ function cannedRpt(){
         $value = htmlspecialchars_decode ($value);
         $value = convert_smart_quotes($value);
 
-        //check field criteria
-
-
         //check if we pulled by specific field id or if this was a request for all values
         $fieldID = $detail['field_number'];
         if(isset($fieldIDArr[$fieldID])){
           $fieldCritArr = $fieldIDArr[$fieldID];
         }else{//let's look for the base id
           //remove everything after the period
-          $fieldID = (strpos($fieldID, ".") ? substr($fieldID, 0, strpos($fieldID, ".")) : $fieldID);
+          $fieldID      = (strpos($fieldID, ".") ? substr($fieldID, 0, strpos($fieldID, ".")) : $fieldID);
           $fieldCritArr = (isset($fieldIDArr[$fieldID])?$fieldIDArr[$fieldID]:'');
         }
 
@@ -234,8 +231,8 @@ function cannedRpt(){
           }
         }
         //build output for field data - format is field_55_4 for field id 55.4
-        $fieldKey = 'field_'.str_replace('.','_',$fieldID);
-        $fieldData[$fieldKey] = (isset($fieldData[$fieldKey])?$fieldData[$fieldKey]."\r":'').$value;
+        $fieldKey             = 'field_'.str_replace('.','_',$fieldID);
+        $fieldData[$fieldKey] = (isset($fieldData[$fieldKey]) ? $fieldData[$fieldKey]."\r":'') . $value;
       }
 
       //combine name fileds
