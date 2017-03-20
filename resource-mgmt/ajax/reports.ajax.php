@@ -60,6 +60,11 @@ function cannedRpt(){
   $location       = (isset($obj->location)    ? $obj->location:false);
   $payment        = (isset($obj->payments)    ? $obj->payments:false);
 
+  $entryIDorder   = (isset($obj->entryIDorder)   ? $obj->entryIDorder:10);
+  $formIDorder    = (isset($obj->formIDorder)    ? $obj->formIDorder:20);
+  $formTypeorder  = (isset($obj->formTypeorder)  ? $obj->formTypeorder:30);
+  $locationOrder  = (isset($obj->locationOrder)  ? $obj->locationOrder:40);
+
   $forms      = implode(",",$formSelect);
   $formTypes  = implode("', '",$formTypeArr);
   if(!empty($formTypes)) $formTypes = "'".$formTypes."'";
@@ -81,10 +86,10 @@ function cannedRpt(){
   */
 
   $data['columnDefs'] = array();
-  $data['columnDefs'][] = array('field'=>'entry_id');
+  $data['columnDefs'][] = array('field'=>'entry_id','displayName' =>($useFormSC?'ENTRY ID':'Entry Id'), 'displayOrder'=>$entryIDorder);
   $visible = ($dispFormID ? false : true);
-  $data['columnDefs'][] = array('field'=>'form_id','visible'=> $visible);
-  $data['columnDefs'][] = array('field'=>'form_type');
+  $data['columnDefs'][] = array('field'=>'form_id','visible'=> $visible, 'displayOrder'=>$formIDorder);
+  $data['columnDefs'][] = array('field'=>'form_type','displayName' =>($useFormSC?'TYPE':'Form Type'), 'displayOrder'=>$formTypeorder);
 
   //pull all entries based on formSelect, faire, and status
   //question: does wp_mf_entity have the information i need for all forms?? non exhibits missing information?
@@ -94,7 +99,7 @@ function cannedRpt(){
   $fieldIDarr     = array(); //unique array of field ID's
   $fieldArr       = array(); //array of field data keyed by field id
   $combineFields  = array();
-  $fieldQuery     = array();
+  $fieldQuery     = array(" field_number like '376' ");
   $acceptedOnly   = true;
 
   //build list of categories
@@ -131,9 +136,11 @@ function cannedRpt(){
       //add requested field to columns
       if(isset($selFields->hide)&&$selFields->hide==true){
         //don't add this field to display
-        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string',visible=> false);
+        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string',visible=> false,
+                                                      'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
       }else{
-        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string');
+        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string',
+                                                      'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
       }
     }
 
@@ -180,8 +187,11 @@ function cannedRpt(){
             . " and ($fieldSQL) "
             . " ORDER BY lead_id asc, field_number asc";
       $details = $wpdb->get_results($detailSQL,ARRAY_A);
-
+      $cmInd = '';
       foreach($details as $detail){
+        if($detail['field_number'] == 376){
+          $cmInd = $detail['value'];
+        }
         //field 320 is stored as category number, use cross reference to find text value
         if($detail['field_number'] == 320){
           $value = (isset($catCross[$detail['value']])?$catCross[$detail['value']]:$detail['value']);
@@ -256,6 +266,30 @@ function cannedRpt(){
         }
       }
 
+      //translate form type into shortcodes
+      if($useFormSC){
+        switch ($form_type) {
+          case 'Show Management':
+            $form_type = 'SHOW';
+            if($cmInd == 'Yes'){
+              $form_type = 'CM';
+            }
+            break;
+          case 'Exhibit':
+            $form_type = 'MAK';
+            break;
+          case 'Sponsor':
+            $form_type = 'SPR';
+            break;
+          case 'Startup Sponsor':
+            $form_type = 'STAR';
+            break;
+          case 'Performance':
+            $form_type = 'PERF';
+            break;
+        }
+      }
+
       //add data to array
       if($passCriteria) {
         $colDefs = array();
@@ -266,7 +300,7 @@ function cannedRpt(){
           $colDefs   =  array_merge($colDefs,$rmtRetData['colDefs']);
         }
         if($location) {
-          $locRetData = pullLocData($lead_id);
+          $locRetData = pullLocData($lead_id,$useFormSC,$locationOrder);
           $fieldData =  array_merge($fieldData,$locRetData['data']);
           $colDefs   =  array_merge($colDefs,$locRetData['colDefs']);
         }
@@ -289,7 +323,22 @@ function cannedRpt(){
   //return data
   $data['data'] = array_values($entryData);
 
-
+  //sort columns by display order
+  /*usort($data['columnDefs'], function($a, $b) {
+    return (float) $a["displayOrder"] - (float) $b["displayOrder"];
+  });*/
+  usort(
+    $data['columnDefs'],
+    function($a, $b) {
+        $result = 0;
+        if ($a["displayOrder"] > $b["displayOrder"]) {
+            $result = 1;
+        } else if ($a["displayOrder"] < $b["displayOrder"]) {
+            $result = -1;
+        }
+        return $result;
+    }
+  );
   //reindex columnDefs as the grid will blow up if the indexes aren't in order
   $data['columnDefs'] = array_values($data['columnDefs']);
 
@@ -320,13 +369,13 @@ function pullRmtData($rmtData, $entryID){
     $resIDs = implode(", ", $resArr);
 
     if(!$pullAll){
-      $sql = 'SELECT qty,type,comment, token, resource_category_id '
+      $sql = 'SELECT qty,type,comment, token, resource_category_id,resource_id '
           . ' FROM `wp_rmt_entry_resources`, wp_rmt_resources '
           . ' where resource_id = wp_rmt_resources.ID and'
               . ' resource_category_id in('.$resIDs .') and'
               . ' entry_id ='.$entryID;
     }else{
-      $sql = 'SELECT qty, concat(type, " ", wp_rmt_resource_categories.category) as type, comment, resource_category_id '
+      $sql = 'SELECT qty, concat(type, " ", wp_rmt_resource_categories.category) as type, comment, resource_category_id,resource_id '
         . '     FROM `wp_rmt_entry_resources`, wp_rmt_resources, wp_rmt_resource_categories '
         . '    where resource_id = wp_rmt_resources.ID '
         . '      and resource_category_id = wp_rmt_resource_categories.ID '
@@ -339,23 +388,26 @@ function pullRmtData($rmtData, $entryID){
 
     foreach($resources as $resource){
       $selRMT = $reqResArr[$resource['resource_category_id']];
+      $displayOrder = (isset($selRMT->order)?$selRMT->order+$resource['resource_id']:9999);
       if(!empty($selRMT)){
         if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
           $aggrType='uiGridConstants.aggregationTypes.sum';
-          $colDefs2Sort['res_'.$resource['token']] =   array('field'=> 'res_'.$resource['token'],'displayName'=>$resource['token'],'aggregationType'=> $aggrType);
-          $colDefs2Sort['res_'.$resource['token'].'_comment']  = array('field'=> 'res_'.$resource['token'].'_comment','displayName'=>$resource['token'].' - comment');
+          $colDefs2Sort['res_'.$resource['token'].'_comment']  = array('field'=> 'res_'.$resource['token'].'_comment','displayName'=>$resource['token'].' - comment','displayOrder' => $displayOrder+.2);
+          $colDefs2Sort['res_'.$resource['token']] =   array('field'=> 'res_'.$resource['token'],'displayName'=>$resource['token'],'aggregationType'=> $aggrType,'displayOrder' => $displayOrder+.1);
           $return['data']['res_'.$resource['token']] = $resource['qty'];
           $return['data']['res_'.$resource['token'].'_comment'] = $resource['comment'];
         }else{
           $comment = ($incComments && $resource['comment']!=''?" (".$resource['comment'].")":'');
           $entryRes[] = $resource['qty'] .' : '.$resource['type'].$comment;
-          $return['colDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
+          $return['colDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value,'displayOrder' => $displayOrder);
           $return['data']['res_'.$selRMT->id] = implode(', ',$entryRes);
         }
       }
     }
     if($pullAll){
-      $return['colDefs']['res_all']=   array('field'=> 'res_all','displayName'=>$reqResArr['all']->value);
+      $return['colDefs']['res_all']= array('field'=> 'res_all',
+                                      'displayName'=>$reqResArr['all']->value,
+                                      'displayOrder' => (isset($reqResArr['all']->order)?$reqResArr['all']->order:9999));
       $return['data']['res_all'] = implode(', ',$entryRes);
     }
   }
@@ -394,14 +446,18 @@ function pullRmtData($rmtData, $entryID){
     foreach($attributes as $attribute){
       $selRMT     = $reqAttArr[$attribute['attribute_id']];
       if(!empty($selRMT)){
-        $return['colDefs']['att_'.$selRMT->id]=   array('field'=> 'att_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
+        $return['colDefs']['att_'.$selRMT->id]=   array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
+                                                        'displayName'=>$selRMT->value,
+                                                        'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
         $return['data']['att_'.$selRMT->id] = $attribute['value'];
         $entryAtt[] = $attribute['value'];
       }
     }
 
     if($pullAll){
-      $return['colDefs']['att_all']=   array('field'=> 'att_all','displayName'=>$reqAttArr['all']->value);
+      $return['colDefs']['att_all']=   array('field'=> 'att_all',
+                                              'displayName' => $reqAttArr['all']->value,
+                                              'displayOrder' => (isset($reqAttArr['all']->order)?$reqAttArr['all']->order:9999));
       $return['data']['att_all'] = implode(', ',$entryAtt);
     }
   }
@@ -438,7 +494,9 @@ function pullRmtData($rmtData, $entryID){
 
     foreach($attentions as $attention){
       $selRMT     = $reqAttnArr[$attention['attn_id']];
-      $return['colDefs']['attn_'.$selRMT->id] = array('field'=> 'attn_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
+      $return['colDefs']['attn_'.$selRMT->id] = array('field'=> 'attn_'.str_replace('.','_',$selRMT->id),
+                                                      'displayName'=>$selRMT->value,
+                                                      'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
       $return['data']['attn_'.$selRMT->id] = $attention['comment'];
     }
   }
@@ -466,7 +524,10 @@ function pullRmtData($rmtData, $entryID){
 
     foreach($metas as $meta){
       $selRMT     = $reqMetaArr[$meta['meta_key']];
-      $return['colDefs']['meta_'.$selRMT->id]=   array('field'=> 'meta_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value);
+      $return['colDefs']['meta_'.$selRMT->id] = array('field'       => 'meta_'.str_replace('.','_',$selRMT->id),
+                                                      'displayName' => $selRMT->value,
+                                                      'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999)
+                                                    );
       $return['data']['meta_'.$selRMT->id] = $meta['meta_value'];
     }
   }
@@ -480,13 +541,14 @@ function pullRmtData($rmtData, $entryID){
 }
 
 /* Pull Location information */
-function pullLocData($entryID) {
+function pullLocData($entryID, $useFormSC, $locationOrder) {
+  global $wpdb;
+  //global $useFormSC;
   $return = array();
   $return['data'] = array();
   $return['colDefs'] = array();
 
   //schedule information
-  global $wpdb;
   if($entryID!=''){
     //get scheduling information for this lead
     $sql = "SELECT  area.area,subarea.subarea,subarea.nicename, location.location
@@ -502,11 +564,17 @@ function pullLocData($entryID) {
       foreach($results as $row){
         $subarea = ($row->nicename!=''&&$row->nicename!=''?$row->nicename:$row->subarea);
 
-        $return['colDefs']['area']=   array('field'=> 'area','displayName'=>'Area');
-        $return['data']['area'] = $row->area;
-        $return['colDefs']['subarea']=   array('field'=> 'subarea','displayName'=>'Subarea');
+        $return['colDefs']['area']=   array('field'=> 'area','displayName'=>($useFormSC?'A':'Area'), 'displayOrder'=>$locationOrder);
+        $area = $row->area;
+        if($useFormSC){
+          $area = str_replace(' ','',$area);
+          $area = str_replace('Zone','Z',$area);
+          $area = str_replace('Out','O',$area);
+        }
+        $return['data']['area'] = $area;
+        $return['colDefs']['subarea']=   array('field'=> 'subarea', 'displayName'=>($useFormSC?'SUBAREA':'Subarea'), 'displayOrder'=>$locationOrder+1);
         $return['data']['subarea'] = $row->subarea;
-        $return['colDefs']['location']=   array('field'=> 'location','displayName'=>'Location');
+        $return['colDefs']['location']=   array('field'=> 'location','displayName'=>($useFormSC?'LOC':'Location'), 'displayOrder'=>$locationOrder+2);
         $return['data']['location'] = $row->location;
       }
     }

@@ -188,43 +188,40 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "useFormSC": true,
+              "entryIDorder": 200,
+              "locationOrder": 300,
+              "formTypeorder":400,
               "selectedFields":[
-                {"id":16,
-                 "label":"Short/Public Description",
-                 "choices":"",
-                 "type":"textarea",
-                 "inputs":""},
-               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-               {"id":96,"label":"Contact Name","choices":"",
-                 "type":"name",
-                 "inputs":[
-                   {"id":"96.3","label":"First","name":""},
-                   {"id":"96.6","label":"Last","name":""},
-                  ]},
-               {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":""},
-               {"id":99,"label":"Contact Phone Number","choices":"","type":"phone","inputs":""},
-               {"id":151,"label":"Record Name (Project/Title/Company)","choices":"","type":"text","inputs":""},
-               {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-               {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-               {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
-               {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
-               {"id":303,"label":"Status","choices":"Cancelled","type":"radio"}
+                {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":1700},
+                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+                {"id":96, "label":"MAKER NAME", "choices":"", "type":"name",
+                 "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""},], "order":700
+                },
+                {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":800},
+                {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":900},
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":100},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
+                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"}
              ],
              "rmtData":{
                 "resource":[
-                  {"id":"all","value":"All Resources","checked":true},
-                  {"id":"2","value":"Tables","checked":true},
-                  {"id":"3","value":"Chairs","checked":true},
-                  {"id":"9","value":"Electrical 120V","checked":true}
+                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":1800},
+                  {"id":"2","value":"TABLE","checked":true, "order":1100},
+                  {"id":"3","value":"CHAIR","checked":true, "order":1200},
+                  {"id":"9","value":"ELEC","checked":true, "order":1300}
                 ],
                 "attribute":[
-                  {"id":"2","value":"Space Size","checked":true},
-                  {"id":"4","value":"Exposure","checked":true},
-                  {"id":"9","value":"Noise Level","checked":true},
-                  {"id":"11","value":"Internet","checked":true}
+                  {"id":"2","value":"SIZE","checked":true, "order":1000},
+                  {"id":"4","value":"IN/OUT","checked":true, "order":1600},
+                  {"id":"9","value":"NZ","checked":true, "order":1500},
+                  {"id":"11","value":"INT","checked":true, "order":1400}
                 ],
                 "attention":[
-                  {"id":"9","value":"Area Manager Notes","checked":true},
+                  {"id":"9","value":"Area Manager Notes","checked":true, "order":1900},
                   {"id":"10","value":"Early Setup","checked":true},
                   {"id":"11","value":"No Friday","checked":true}
                 ],
@@ -294,8 +291,12 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "useFormSC": true,
+              "entryIDorder": 200,
+              "locationOrder": 300,
+              "formTypeorder":400,
               "selectedFields":[
-                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":100},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
@@ -305,13 +306,13 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"2","value":"Tables","checked":true,"aggregated":false},
-                  {"id":"3","value":"Chairs","checked":true,"aggregated":false},
-                  {"id":"9","value":"Electrical 120V","checked":true},
-                  {"id":"10","value":"Electrical 220V","checked":true}
+                  {"id":"2","value":"TABLE","checked":true,"aggregated":false, "order":600},
+                  {"id":"3","value":"CHAIR","checked":true,"aggregated":false, "order":700},
+                  {"id":"9","value":"ELEC","checked":true, "order":800},
+                  {"id":"10","value":"ELEC 220V","checked":true, "order":900}
                 ],
                 "attribute":[
-                  {"id":"2","value":"Space Size","checked":true}
+                  {"id":"2","value":"SIZE","checked":true, "order":500}
                 ],
                 "attention":[],
                 "meta":[]
