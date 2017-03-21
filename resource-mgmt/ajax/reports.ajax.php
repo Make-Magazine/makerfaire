@@ -345,7 +345,7 @@ function cannedRpt(){
   exit;
 } //end function
 
-function pullRmtData($rmtData, $entryID,$useFormSC){
+function pullRmtData($rmtData, $entryID, $useFormSC){
   global $wpdb;
   $return = array();
   $return['data'] = array();
