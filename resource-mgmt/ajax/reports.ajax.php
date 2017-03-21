@@ -447,12 +447,13 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       $value  = $attribute['value'];
       //search and replace
       if($useFormSC){
+        $value = strtolower($value);
         /*        Space Size
          * Contains       Replace entire value With
          *  Tabletop         TABLE
          *  mobile           Mobile
          */
-        if (strpos($value, 'Tabletop') !== false) {
+        if (strpos($value, 'tabletop') !== false) {
           $value = 'TABLE';
         }
         if (strpos($value, 'mobile') !== false) {
@@ -461,7 +462,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
 
         /*    Find           Replace
          * single quote       blank
-         * space              blank
+         * ' x '              blank
          */
         $value = str_replace("'",'',$value);
         $value = str_replace(' x ','x',$value);
@@ -471,10 +472,24 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
          *  Inside      In
          *  Outside     Out
          *  Either      i/o
+         *  ' under a'  blank
+         *  ' under'    blank
+         *  tents       tent
+         *  tent        Tent
+         *  large       Lg
+         *  ?           Out on grass
          */
-        $value = str_replace('Inside','In',$value);
-        $value = str_replace('Outside','Out',$value);
-        $value = str_replace('Either','i/o',$value);
+        $value = str_replace('inside','In',$value);
+        $value = str_replace('outside','Out',$value);
+        $value = str_replace('either','i/o',$value);
+        $value = str_replace(' under a','',$value);
+        $value = str_replace(' under','',$value);
+        $value = str_replace('tents','tent',$value);
+        $value = str_replace('tent','Tent',$value);
+        $value = str_replace('dark','Dark',$value);
+        $value = str_replace('large','Lg',$value);
+        $value = str_replace('either','i/o',$value);
+        $value = str_replace('?','Out on grass',$value);
 
         /*        Noise
          *  Contains       Replace entire value With
@@ -483,13 +498,16 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
          *    Repetitive        REP
          *    Loud!             LOUD!
          */
-        if (strpos($value, 'Normal') !== false) {
+        if (strpos($value, 'normal') !== false) {
           $value = '';
         }
-        if (strpos($value, 'Ampified') !== false) {
+        if (strpos($value, 'ampified') !== false) {
           $value = 'AMP';
         }
-        if (strpos($value, 'Loud') !== false) {
+        if (strpos($value, 'repetitive') !== false) {
+          $value = 'REP';
+        }
+        if (strpos($value, 'loud') !== false) {
           $value = 'LOUD!';
         }
 
@@ -499,10 +517,10 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
          *    Nice to have           Nice
          *    must have              MUST
          */
-        if (strpos($value, 'No internet') !== false) {
+        if (strpos($value, 'no internet') !== false) {
           $value = '';
         }
-        if (strpos($value, 'Nice to have') !== false) {
+        if (strpos($value, 'nice to have') !== false) {
           $value = 'Nice';
         }
         if (strpos($value, 'must have') !== false) {
