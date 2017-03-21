@@ -294,7 +294,7 @@ function cannedRpt(){
         $colDefs = array();
         //pull rmt data and location information
         if(!empty($rmtData)){
-          $rmtRetData = pullRmtData($rmtData,$lead_id);
+          $rmtRetData = pullRmtData($rmtData,$lead_id,$useFormSC);
           $fieldData =  array_merge($fieldData,$rmtRetData['data']);
           $colDefs   =  array_merge($colDefs,$rmtRetData['colDefs']);
         }
@@ -345,7 +345,7 @@ function cannedRpt(){
   exit;
 } //end function
 
-function pullRmtData($rmtData, $entryID){
+function pullRmtData($rmtData, $entryID,$useFormSC){
   global $wpdb;
   $return = array();
   $return['data'] = array();
@@ -427,7 +427,7 @@ function pullRmtData($rmtData, $entryID){
     $reqIDs = implode(", ", $reqArr);
 
     if(!$pullAll){
-      $sql = 'select value,attribute_id '
+      $sql = 'select value, attribute_id '
           . '   from wp_rmt_entry_attributes '
           . '  where entry_id ='.$entryID
           . '    and attribute_id in('.$reqIDs .')';
@@ -443,13 +443,78 @@ function pullRmtData($rmtData, $entryID){
     $entryAtt = array();
 
     foreach($attributes as $attribute){
-      $selRMT     = $reqAttArr[$attribute['attribute_id']];
+      $selRMT = $reqAttArr[$attribute['attribute_id']];
+      $value  = $attribute['value'];
+      //search and replace
+      if($useFormSC){
+        /*        Space Size
+         * Contains       Replace entire value With
+         *  Tabletop         TABLE
+         *  mobile           Mobile
+         */
+        if (strpos($value, 'Tabletop') !== false) {
+          $value = 'TABLE';
+        }
+        if (strpos($value, 'mobile') !== false) {
+          $value = 'Mobile';
+        }
+
+        /*    Find           Replace
+         * single quote       blank
+         * space              blank
+         */
+        $value = str_replace("'",'',$value);
+        $value = str_replace(' x ','x',$value);
+
+        /*      Exposure
+         *   Find      Replace
+         *  Inside      In
+         *  Outside     Out
+         *  Either      i/o
+         */
+        $value = str_replace('Inside','In',$value);
+        $value = str_replace('Outside','Out',$value);
+        $value = str_replace('Either','i/o',$value);
+
+        /*        Noise
+         *  Contains       Replace entire value With
+         *    Normal            blank
+         *    Amplified         AMP
+         *    Repetitive        REP
+         *    Loud!             LOUD!
+         */
+        if (strpos($value, 'Normal') !== false) {
+          $value = '';
+        }
+        if (strpos($value, 'Ampified') !== false) {
+          $value = 'AMP';
+        }
+        if (strpos($value, 'Loud') !== false) {
+          $value = 'LOUD!';
+        }
+
+        /*        Internet
+         *   Contains       Replace entire value With
+         *    No internet            blank
+         *    Nice to have           Nice
+         *    must have              MUST
+         */
+        if (strpos($value, 'No internet') !== false) {
+          $value = '';
+        }
+        if (strpos($value, 'Nice to have') !== false) {
+          $value = 'Nice';
+        }
+        if (strpos($value, 'must have') !== false) {
+          $value = 'MUST';
+        }
+      }
       if(!empty($selRMT)){
         $return['colDefs']['att_'.$selRMT->id]=   array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
                                                         'displayName'=>$selRMT->value,
                                                         'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
-        $return['data']['att_'.$selRMT->id] = $attribute['value'];
-        $entryAtt[] = $attribute['value'];
+        $return['data']['att_'.$selRMT->id] = $value;
+        $entryAtt[] = $value;
       }
     }
 
