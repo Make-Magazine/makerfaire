@@ -234,7 +234,7 @@ function send_smtp_email($phpmailer) {
   $phpmailer->SMTPAuth = true;
 
   // SMTP port number - likely to be 25, 465 or 587
-  $phpmailer->Port = "587";
+  $phpmailer->Port = "2525";
 
   // Username to use for SMTP authentication
   $phpmailer->Username = "webmaster@makermedia.com";
