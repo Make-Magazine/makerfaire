@@ -3,9 +3,17 @@
     <div class="row">
       <div class="col-md-3">
         <h3>Select a Faire</h3>
-        <select ng-model="reports.selFaire" ng-change="retGridData()" name="faireSelect">
+          <select ng-model="reports.selFaire" ng-change="checkSubroute()" name="faireSelect">
           <option value="">Please select a Faire</option>
           <option ng-repeat="(key, faire) in reports.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
+        </select>
+      </div>
+      <!-- Form DropDown -->
+      <div ng-if="reports.showForms" class="col-md-3">
+        <h3>Select a Form</h3>
+        <select ng-model="reports.selForm" ng-change="retGridData()" name="formSelect">
+          <option value="">Please select a Form</option>
+          <option ng-repeat="(key, form) in reports.forms" value="{{form.id}}">{{form.title}}</option>
         </select>
       </div>
     </div>

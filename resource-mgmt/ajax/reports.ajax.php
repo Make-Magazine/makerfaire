@@ -23,6 +23,8 @@ if($type != ''){
   if($type =="tableData"){
     if($table=='formData'){
       getBuildRptData();
+    }elseif($table=='wp_mf_entity_tasks'){
+      pullEntityTasks($formSelect);
     }else{
       //build report data
       retrieveRptData($table,$faire);
@@ -1124,8 +1126,7 @@ function retrieveRptData($table,$faire){
   exit;
 }
 
-function invalidRequest($message='')
-{
+function invalidRequest($message='') {
 	$data = array();
 	$data['success'] = false;
 	$data['message'] = ($message!=''?$message:"Invalid request.");
@@ -1142,6 +1143,7 @@ function getFkeyData($tabFkeyData,$fkey){
   $options = array();
   $selectOptions = array();
   $optionquery = "select " . $referenceField . ", " . $referenceDisplay . " from "   . $referenceTable." order by ".$referenceDisplay."  asc";
+  //echo $optionquery;
   $result = $mysqli->query( $optionquery );
   while ($row = $result->fetch_assoc()) {
     $options[]       = array('id'    => intval($row[$referenceField]), 'fkey'  => $row[$referenceDisplay]);
@@ -1436,12 +1438,62 @@ function convert_smart_quotes($string) {
     "\xE2\x80\x9F" => '"', // U+201F double high-reversed-9 quotation mark
     "\xE2\x80\xB9" => "'", // U+2039 single left-pointing angle quotation mark
     "\xE2\x80\xBA" => "'", // U+203A single right-pointing angle quotation mark
- );
- $chr = array_keys  ($chr_map); // but: for efficiency you should
- $rpl = array_values($chr_map); // pre-calculate these two arrays
- $string = str_replace($chr, $rpl, html_entity_decode($string, ENT_QUOTES, "UTF-8"));
+  );
+  $chr = array_keys  ($chr_map); // but: for efficiency you should
+  $rpl = array_values($chr_map); // pre-calculate these two arrays
+  $string = str_replace($chr, $rpl, html_entity_decode($string, ENT_QUOTES, "UTF-8"));
 
+  return $string;
+}
 
+function pullEntityTasks($formSelect) {
+  global $wpdb;
+  $data = array();
+  $data['data'] = array();
+  $data['columnDefs'] = array();
+  //pull data
+  $sql = "SELECT    tasks.lead_id, tasks.created, tasks.completed, tasks.description, tasks.required, meta.meta_value
+          FROM      wp_mf_entity_tasks AS tasks
+          LEFT JOIN wp_rg_lead_meta AS meta
+                 ON meta.`form_id` = $formSelect
+                AND meta.meta_key = 'entry_id'
+                AND tasks.lead_id = meta.meta_value
+          WHERE     tasks.`form_id` = $formSelect
+          UNION ALL
+          SELECT    NULL, NULL, NULL, NULL, NULL, meta_value
+          FROM      wp_rg_lead_meta
+          WHERE     meta_value NOT IN
+                    (SELECT  lead_id FROM    wp_mf_entity_tasks)
+                AND `form_id` = $formSelect
+                AND meta_key = 'entry_id'";
 
-    return $string;
+  $result = $wpdb->get_results($sql);
+  $data['columnDefs'] = array(
+      array("name"=>"lead_id","displayName"=>"Entry","width"=>"100"),
+      array("name"=>"created","width"=>"150"),
+      array("name"=>"completed","width"=>"150"),
+      array("name"=>"description","width"=>"150"),
+      array("name"=>"required","displayName"=>"Required","width"=>"100"),
+      array("name"=>"not_assigned","displayName"=>"Filled out but not Assigned"),
+  );
+
+  //create array of table data
+  foreach($result as $row){
+    if($row->lead_id == NULL && $row->meta_value != NULL){
+      $not_assigned = 'Yes';
+      $lead_id = $row->meta_value;
+    }else {
+      $not_assigned = '';
+      $lead_id = $row->lead_id;
+    }
+    $data['data'][] = array('lead_id'     => $lead_id,
+                            'created'     => $row->created,
+                            'completed'   => $row->completed,
+                            'description' => $row->description,
+                            'required'    => ($row->required==1?'Yes':'No'),
+                            'not_assigned' => $not_assigned);
+
+  }
+  echo json_encode($data);
+  exit;
 }
