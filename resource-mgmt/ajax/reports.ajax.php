@@ -501,7 +501,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
         if (strpos($value, 'normal') !== false) {
           $value = '';
         }
-        if (strpos($value, 'ampified') !== false) {
+        if (strpos($value, 'amplified') !== false) {
           $value = 'AMP';
         }
         if (strpos($value, 'repetitive') !== false) {
