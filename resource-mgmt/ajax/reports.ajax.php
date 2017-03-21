@@ -56,6 +56,13 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
   $fieldIDArr = array();
   $combineFields = array();
   $acceptedOnly = true;
+
+  //build list of categories
+  $categories = get_categories(array( 'taxonomy' => 'makerfaire_category', 'hide_empty' => false ));
+  foreach($categories as $category){
+    $catCross[$category->term_id] = $category->name;
+  }
+
   //build an array of selected fields
   foreach($selectedFields as $selFields){
     //build field array

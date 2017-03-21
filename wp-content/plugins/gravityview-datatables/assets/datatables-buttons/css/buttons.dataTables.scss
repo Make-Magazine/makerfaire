@@ -10,7 +10,7 @@ a.dt-button {
 	box-sizing: border-box;
 	margin-right: 0.333em;
 	padding: 0.5em 1em;
-	border: 1px solid #999 !important;
+	border: 1px solid #999;
 	border-radius: 2px;
 	cursor: pointer;
 	font-size: 0.88em;
@@ -28,7 +28,7 @@ a.dt-button {
 
 	&.disabled {
 		color: #999;
-		border: 1px solid #d0d0d0 !important;
+		border: 1px solid #d0d0d0;
 		cursor: default;
 		@include dtb-two-stop-gradient(#ffffff, #f9f9f9);
 	}
@@ -49,12 +49,12 @@ a.dt-button {
 	}
 
 	&:hover:not(.disabled) {
-		border: 1px solid #666 !important;
+		border: 1px solid #666;
 		@include dtb-two-stop-gradient(#f9f9f9, #e0e0e0);
 	}
 
 	&:focus:not(.disabled) {
-		border: 1px solid #426c9e !important;
+		border: 1px solid #426c9e;
 		text-shadow: 0 1px 0 #c4def1;
 		outline: none;
 		@include dtb-two-stop-gradient(#bddef4, #79ace9);

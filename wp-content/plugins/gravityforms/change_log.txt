@@ -1,4 +1,22 @@
 ------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.4
+	- Fixed textarea content not being cleared when adding a new list field item.
+
+------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.3
+	- Fixed the Number field range settings in the form editor not accepting 0.
+
+------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.2
+	- Added gformAddSpinner() to gravityforms.js.
+	- Updated gformInitSpinner() to use gformAddSpinner().
+	- AF: Fixed field select not auto-populating previously selected field value.
+
+------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.1
+    - Fixed formatting issue with settings update confirmation message.
+
+------------------------------------------------------------------------------------------------------------------
 Version 2.1.3
     - Added security enhancements. Credit: James Golovich from Pritect, Inc. (https://pritect.net)
     - Added Dutch (Belgium) translation. Credit: Dave Loodts

@@ -3,264 +3,12 @@
  * this script will hold all the cronjobs for makerfaire
  */
 
-
 //for testing
 /*define( 'BLOCK_LOAD', true );
 require_once( '../../../../wp-config.php' );
 require_once( '../../../../wp-includes/wp-db.php' );
 $wpdb = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 build_wp_mf_maker(); //for testing*/
-
-//add_action('cron_wp_mf_maker', 'build_wp_mf_maker');
-//add_action('cron_wp_mf_api_entity', 'build_wp_mf_api_entity');
-
-function build_wp_mf_api_entity(){
-    global $wpdb;
-    $sql = "REPLACE INTO `wp_mf_api_entity`
-            (`ID`,
-            `project_title`,
-            `project_description`,
-            `project_url`,
-            `category_id`,
-            `child_id_ref`,
-            `thumb_image_url`,
-            `large_image_url`)
-            SELECT
-        `wp_rg_lead_detail`.`lead_id` AS `lead_id`,
-        trim(GROUP_CONCAT(DISTINCT IF((FORMAT(`wp_rg_lead_detail`.`field_number`,
-                    2) = 151),
-                `wp_rg_lead_detail`.`value`,
-                NULL)
-            SEPARATOR ',')) AS `Title`,COALESCE(
-        trim(GROUP_CONCAT(DISTINCT IF((FORMAT(`wp_rg_lead_detail`.`field_number`,
-                    2) = 16),
-                `l`.`value`,
-                NULL)
-            SEPARATOR ',')),trim(GROUP_CONCAT(DISTINCT IF((FORMAT(`wp_rg_lead_detail`.`field_number`,
-                    2) = 16),
-                `wp_rg_lead_detail`.`value`,
-                NULL)
-            SEPARATOR ','))) AS `Description`,
-       trim( GROUP_CONCAT(DISTINCT IF((FORMAT(`wp_rg_lead_detail`.`field_number`,
-                    2) = 27),
-                `wp_rg_lead_detail`.`value`,
-                NULL)
-            SEPARATOR ',')) AS `URL`,
-         trim(GROUP_CONCAT(DISTINCT IF((FORMAT(`wp_rg_lead_detail`.`field_number`,
-                    2) BETWEEN 146.9999 AND 147.9999),
-                    SUBSTRING_INDEX(SUBSTRING_INDEX(`wp_rg_lead_detail`.`value`, ':', 2), ':', -1),
-               NULL)
-            SEPARATOR ',')) AS `Categories`,
-		trim(GROUP_CONCAT(distinct maker_id
-            SEPARATOR ',')) AS `maker_ids`,
-		trim(GROUP_CONCAT(distinct IF((FORMAT(`wp_rg_lead_detail`.`field_number`,
-                    2) = 22),
-                `wp_rg_lead_detail`.`value`,
-                NULL)
-            SEPARATOR ',')) AS `Photo`,
-        trim(GROUP_CONCAT(DISTINCT IF((FORMAT(`wp_rg_lead_detail`.`field_number`,
-                    2) = 22),
-                `wp_rg_lead_detail`.`value`,
-                NULL)
-            SEPARATOR ',')) AS `ThumbPhoto`
-    FROM
-        (`wp_rg_lead_detail`
-        left outer JOIN `wp_rg_lead_detail_long` `l` ON ((`wp_rg_lead_detail`.`id` = `l`.`lead_detail_id`)))
-        JOIN `wp_rg_lead` `b` ON ((`wp_rg_lead_detail`.`lead_id` = `b`.`id`))
-        JOIN `wp_mf_maker` `c` ON (`b`.`id` = `c`.lead_id) and not isnull(`c`.`First Name`)
-    GROUP BY `wp_rg_lead_detail`.`lead_id`;";
-     $wpdb->get_results($sql);
-}
-function build_wp_mf_maker(){
-  global $wpdb;
-
-  //first empty existing tables
-  $sql = "Truncate Table wp_mf_entity;";
-  $wpdb->get_results($sql);
-
-  $sql = "Truncate Table wp_mf_maker;";
-  $wpdb->get_results($sql);
-
-  $sql = "Truncate Table wp_mf_maker_to_entity;";
-  $wpdb->get_results($sql);
-
-  $crossRef = buildCrossRef();
-  //retrieve data
-  $sql = "SELECT detail.lead_id, lead.form_id, detail.field_number, detail.value, lead.status, wp_mf_faire.faire, detail_long.value as descLong
-          FROM wp_rg_lead lead join wp_rg_lead_detail detail on lead.id = detail.lead_id and lead.status != 'trash' left outer JOIN wp_rg_lead_detail_long detail_long ON (detail.id = detail_long.lead_detail_id) join wp_mf_faire on FIND_IN_SET (detail.form_id, wp_mf_faire.form_ids)> 0";
-
-  $dataArray = array();
-  $leadArray = array();
-  foreach($wpdb->get_results($sql) as $row){
-    //build array of leads
-    $dataArray[$row->form_id][$row->lead_id][$row->field_number] = $row->value;
-    if(isset($row->descLong)&&$row->descLong!=NULL){
-        $dataArray[$row->form_id][$row->lead_id][$row->field_number] = $row->descLong;
-    }
-    $dataArray[$row->form_id][$row->lead_id]['data'] = array('status'=>$row->status, 'faire'=>$row->faire);
-  }
-  $x = 0; $m = 0;
-
-  foreach($dataArray as $form_id=>$formEntries){
-    foreach($formEntries as $key=>$lead){
-      $faire = $lead['data']['faire'];
-      $status=(isset($lead[$crossRef['wp_mf_entity_array']['status']])?$lead[$crossRef['wp_mf_entity_array']['status']]:'');
-
-      //ensure field 303 is set
-      if($status !=''){
-        //build array of categories
-        $leadCategory = array();
-        $MAD = 0;
-        foreach($lead as $leadKey=>$leadValue){
-          //4 additional categories
-          $pos = strpos($leadKey, '321');
-          if ($pos !== false) {
-            $leadCategory[]=$leadValue;
-          }
-          //main catgory
-          $pos = strpos($leadKey, '320');
-          if ($pos !== false) {
-            $leadCategory[]=$leadValue;
-          }
-          //check the flag field 304
-          $pos = strpos($leadKey, '304');
-          if ($pos !== false) {
-            if($leadValue=='Mobile App Discover')  $MAD = 1;
-          }
-        }
-
-        //verify we only have unique categories
-        $leadCategory = array_unique($leadCategory);
-        $catList = implode(',', $leadCategory);
-
-        //build wp_mf_entity table
-        $presentationType   = (isset($lead[$crossRef['wp_mf_entity_array']['presentation_type']])   ? esc_sql($lead[$crossRef['wp_mf_entity_array']['presentation_type']])  : '');
-        $presentationTitle  = (isset($lead[$crossRef['wp_mf_entity_array']['presentation_title']])  ? esc_sql($lead[$crossRef['wp_mf_entity_array']['presentation_title']]) : '');
-        $specialRequest     = (isset($lead[$crossRef['wp_mf_entity_array']['special_request']])     ? esc_sql($lead[$crossRef['wp_mf_entity_array']['special_request']])    : '');
-        $onSitePhone        = (isset($lead[$crossRef['wp_mf_entity_array']['OnsitePhone']])         ? esc_sql($lead[$crossRef['wp_mf_entity_array']['OnsitePhone']])        : '');
-        $descShort          = (isset($lead[$crossRef['wp_mf_entity_array']['desc_short']])          ? esc_sql($lead[$crossRef['wp_mf_entity_array']['desc_short']])         : '');
-        $descLong           = (isset($lead[$crossRef['wp_mf_entity_array']['desc_long']])           ? esc_sql($lead[$crossRef['wp_mf_entity_array']['desc_long']])          : '');
-        $projectPhoto       = (isset($lead[$crossRef['wp_mf_entity_array']['project_photo']])       ? esc_sql($lead[$crossRef['wp_mf_entity_array']['project_photo']])      : '');
-
-        $wp_mf_entitysql = "insert into wp_mf_entity "
-                 . "    (lead_id, presentation_title, presentation_type, special_request, "
-                 . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover) "
-                 . " VALUES ('".$key."',"
-                    . ' "'.$presentationTitle .'", '
-                    . ' "'.$presentationType  .'", '
-                    . ' "'.$specialRequest    .'", '
-                    . ' "'.$onSitePhone       .'", '
-                    . ' "'.$descShort         .'", '
-                    . ' "'.$descLong          .'", '
-                    . ' "'.$projectPhoto      .'", '
-                    . ' "'.$status            .'", '
-                    . ' "'.$catList           .'", '
-                    . ' "'.$faire             .'", '
-                    . '  '.$MAD               .') ';
-        $x++;
-
-        $wpdb->get_results($wp_mf_entitysql);
-        if($wpdb->insert_id==false){
-          echo 'error inserting record wp_mf_entity:'.$wp_mf_entitysql.'<br/><br/>';
-          $entityID = 0;
-        }
-
-        //build wp_mf_maker table (up to 10 rows)
-        foreach($crossRef['wp_mf_maker_array'] as $type =>$typeArray){
-          $firstName  = (isset($typeArray['First Name']) && isset($lead[$typeArray['First Name']]) ? esc_sql($lead[$typeArray['First Name']]) : '');
-          $lastName   = (isset($typeArray['Last Name'])  && isset($lead[$typeArray['Last Name']])  ? esc_sql($lead[$typeArray['Last Name']])  : '');
-          $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])      ? esc_sql($lead[$typeArray['Email']])      : '');
-
-          //we need to have at least 1 presenter.  if these fields are empty, pull from the contact info
-          if(trim($firstName)=='' && trim($lastName)==''){
-            if($type=='presenter'){
-              $typeArray = $crossRef['wp_mf_maker_array']['contact'];
-              //reset first name, last name and email
-              $firstName  = (isset($typeArray['First Name']) && isset($lead[$typeArray['First Name']]) ? esc_sql($lead[$typeArray['First Name']]) : '');
-              $lastName   = (isset($typeArray['Last Name'])  && isset($lead[$typeArray['Last Name']])  ? esc_sql($lead[$typeArray['Last Name']])  : '');
-              $email      = (isset($typeArray['Email'])      && isset($lead[$typeArray['Email']])      ? esc_sql($lead[$typeArray['Email']])      : '');
-            }
-          }
-          //make sure email is all lower case and no spaces
-          $email= trim(strtolower($email));
-          if(trim($email)=='' || (trim($firstName)=='' && trim($lastName)=='')){
-              //don't write the record, no maker here
-          }else{
-            $bio        = (isset($typeArray['Bio'])        && isset($lead[$typeArray['Bio']])       ? esc_sql($lead[$typeArray['Bio']])        : '');
-            $phone      = (isset($typeArray['phone'])      && isset($lead[$typeArray['phone']])     ? esc_sql($lead[$typeArray['phone']])      : '');
-            $twitter    = (isset($typeArray['TWITTER'])    && isset($lead[$typeArray['TWITTER']])   ? esc_sql($lead[$typeArray['TWITTER']])    : '');
-            $photo      = (isset($typeArray['Photo'])      && isset($lead[$typeArray['Photo']])     ? esc_sql($lead[$typeArray['Photo']])      : '');
-            $website    = (isset($typeArray['website'])    && isset($lead[$typeArray['website']])   ? esc_sql($lead[$typeArray['website']])    : '');
-
-            $results = $wpdb->get_results($wpdb->prepare("SELECT maker_id FROM wp_mf_maker WHERE email=%s", $email) );
-            if ($wpdb->num_rows != 0){
-              $guid = $results[0]->maker_id;
-            }else{
-              $guid = createGUID($key .'-'.$type);
-            }
-
-            $wp_mf_makersql = "INSERT INTO wp_mf_maker(lead_id, `First Name`, `Last Name`, `Bio`, `Email`, `phone`, "
-                                                    . " `TWITTER`,  `form_id`, `maker_id`, `Photo`, `website`) "
-                                . " VALUES (".$key.", '".$firstName."','".$lastName."','".$bio."','".$email."', '".$phone."',"
-                                          . " '".$twitter."', ".$form_id.",'".$guid."','".$photo."','".$website."')";
-            $wp_mf_makersql .= " ON DUPLICATE KEY UPDATE form_id  = ".$form_id;
-
-            //only update non blank fields
-            $wp_mf_makersql .= ($key!=''? ", lead_id = '".$key."'":'');
-            $wp_mf_makersql .= ($firstName!=''? ", `First Name` = '".$firstName."'":'');
-            $wp_mf_makersql .= ($lastName!='' ? ", `Last Name`  = '".$lastName."'":'');
-            $wp_mf_makersql .= ($bio!=''      ? ",  Bio  = '".$bio."'":'');
-            $wp_mf_makersql .= ($phone!=''    ? ", phone  = '".$phone."'":'');
-            $wp_mf_makersql .= ($twitter!=''  ? ", TWITTER  = '".$twitter."'":'');
-            $wp_mf_makersql .= ($photo!=''    ? ", Photo  = '".$photo."'":'');
-            $wp_mf_makersql .= ($website!=''  ? ", website  = '".$website."'":'');
-
-            $wpdb->get_results($wp_mf_makersql);
-            if($wpdb->insert_id==false){
-                echo 'error inserting record wp_mf_maker:'.$wp_mf_makersql.'<br/><br/>';
-            }
-            $m++;
-
-            //build maker to entity table
-            //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
-            $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity`" . " (`maker_id`, `entity_id`, `maker_type`) "
-                                  . ' VALUES ("'.$guid.'",'.$key.',"'.$type.'") ON DUPLICATE KEY UPDATE maker_id=maker_id;';
-
-            $wpdb->get_results($wp_mf_maker_to_entity);
-            if($wpdb->insert_id==false){
-                echo 'error inserting record wp_mf_maker_to_entity:'.$wp_mf_maker_to_entity.'<br/><br/>';
-            }
-          }
-        }
-      } //end check field 303 status
-    }
-  }
-}
-
-/*
- * We can get up to 10 records from one form entry
- * Contact, Presenter 1-7, and group
- */
-function buildCrossRef(){
-  //fields for wp_mf_maker
-  $crossRef['wp_mf_maker_array'] =
-  array('contact'    => array('First Name' =>  '96.3', 'Last Name' =>  '96.6',               'Email' =>  '98', 'phone' =>  '99', 'TWITTER' => '201', 'identifier' => 1),
-        'presenter'  => array('First Name' => '160.3', 'Last Name' => '160.6', 'Bio' => '234', 'Email' => '161', 'phone' => '185', 'TWITTER' => '201', 'Photo' => '217', 'website' => '209', 'identifier' => 2),
-        'presenter2' => array('First Name' => '158.3', 'Last Name' => '158.6', 'Bio' => '258', 'Email' => '162', 'phone' => '192', 'TWITTER' => '208', 'Photo' => '224', 'website' => '216', 'identifier' => 3),
-        'presenter3' => array('First Name' => '155.3', 'Last Name' => '155.6', 'Bio' => '259', 'Email' => '167', 'phone' => '190', 'TWITTER' => '207', 'Photo' => '223', 'website' => '215', 'identifier' => 4),
-        'presenter4' => array('First Name' => '156.3', 'Last Name' => '156.6', 'Bio' => '260', 'Email' => '166', 'phone' => '191', 'TWITTER' => '206', 'Photo' => '222', 'website' => '214', 'identifier' => 5),
-        'presenter5' => array('First Name' => '157.3', 'Last Name' => '157.6', 'Bio' => '261', 'Email' => '165', 'phone' => '189', 'TWITTER' => '205', 'Photo' => '220', 'website' => '213', 'identifier' => 6),
-        'presenter6' => array('First Name' => '159.3', 'Last Name' => '159.6', 'Bio' => '262', 'Email' => '164', 'phone' => '188', 'TWITTER' => '204', 'Photo' => '221', 'website' => '211', 'identifier' => 7),
-        'presenter7' => array('First Name' => '154.3', 'Last Name' => '154.6', 'Bio' => '263', 'Email' => '163', 'phone' => '187', 'TWITTER' => '203', 'Photo' => '219', 'website' => '212', 'identifier' => 8),
-        'group'      => array('First Name' => '109.3', 'Last Name' => '109.6', 'Bio' => '110',                                 'TWITTER' => '322', 'Photo' => '111', 'website' => '112', 'identifier' => 9)
-  );
-
-  //fields for wp_mf_entity
-  $crossRef['wp_mf_entity_array']  = array('presentation_title' => 151, 'presentation_type' => 1, 'special_request' => 64, 'OnsitePhone' => 265, 'desc_short' => 16, 'desc_long' => 11, 'project_photo' => 22, 'project_website' => 27, 'project_video' => 32, 'status' => 303);
-
-  return $crossRef;
-}
-
 
 //this cron action will create the JSON files used by the blue ribbon page
 add_action('cron_ribbonJSON', 'build_ribbonJSON');
@@ -285,21 +33,59 @@ function build_ribbonJSON(){
 /*
  * Cron process to create MAT records for specific forms
  */
-add_action('cron_rmt_update', 'rmt_update');
-function rmt_update($form=9){
-  error_log('updating maker tables for form '. $form);
+add_action('cron_update_mfTables', 'update_mfTables',10,3);
+
+function update_mfTables($form,$limit,$start){
+  error_log('updating maker tables for form '. $form.' ('.$start.', '.$limit.')');
+
   global $wpdb;
-  $sql = "Select id,form_id
-          from wp_rg_lead
-          where status <> 'trash' and
-          form_id in ($form) ORDER BY `wp_rg_lead`.`id` ASC";
+  $sql = "Select id
+            from wp_rg_lead
+           where form_id  = $form "
+          //. " and id > 60701"
+       . " ORDER BY `wp_rg_lead`.`id` ASC "
+          //. "limit 0, 100"
+          ;
+  if($limit!="0"){
+    $sql .= " limit ".$start.', '.$limit;
+  }
   $results = $wpdb->get_results($sql);
   foreach($results as $row){
-   $form  = GFAPI::get_form( $row->form_id);
-   $entry = GFAPI::get_entry(esc_attr($row->id));
+    error_log('processing '. $row->id);
+    //update maker table information
+    GFRMTHELPER::updateMakerTables($row->id);
+  }
+  error_log('end updating maker tables for form '. $form.' ('.$start.', '.$limit.')');
+}
 
-   //update maker table information
-   GFRMTHELPER::updateMakerTables($entry['id']);
- }
-  error_log('end updating maker tables');
+/* This cron job is triggered daily.
+ * It looks for accepted records on current faires and checks if tickets have been created for them.
+    If they have not, it will start the process to request new tickets.
+ */
+add_action('cron_eb_ticketing', 'cron_genEBtickets');
+
+function cron_genEBtickets(){
+  global $wpdb;
+  $sql =  "SELECT lead_id "
+        . "FROM   wp_mf_faire, wp_rg_lead_detail "
+        . "       left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
+        . "WHERE  field_number=303 and value='Accepted' "
+          . " and end_dt > now() "
+          . " and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
+          . " and eb_entry_access_code.EBticket_id is NULL "
+          . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL";
+  $sql = "select lead_id, EBticket_id "
+          . "from wp_mf_faire, wp_rg_lead_detail "
+          . "left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
+          . "where field_number=303 and value='Accepted' "
+          . "and end_dt > now() "
+          . "and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
+          . "and eb_entry_access_code.EBticket_id is NULL ORDER BY `wp_rg_lead_detail`.`lead_id` ASC";
+  $results = $wpdb->get_results($sql);
+  foreach($results as $entry){
+    error_log('Creating ticket codes for '.$entry->lead_id);
+    $response = genEBtickets($entry->lead_id);
+    if(isset($response['msg']))
+      error_log('Ticket Response - '.$response['msg']);
+  }
 }

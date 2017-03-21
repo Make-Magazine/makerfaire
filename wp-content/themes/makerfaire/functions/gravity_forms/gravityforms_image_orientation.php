@@ -11,6 +11,8 @@ add_action( 'gform_after_update_entry', 'pre_image_orientation', 10, 2 );
 
 function pre_image_orientation( $form, $entry_id  ) {
   $entry = GFAPI::get_entry($entry_id);
+  //need to reset $form as gravity view removes admin only fields
+  $form = GFAPI::get_form($entry['form_id']);
   fix_image_orientation( $entry, $form );
 }
 

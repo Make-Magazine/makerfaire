@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 1.0.17
+Version: 1.0.18
 Author: Katz Web Services, Inc.
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
@@ -32,7 +32,7 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '1.0.17';
+		protected $_version = '1.0.18';
 
 		protected $_min_gravityview_version = '1.15';
 
@@ -108,17 +108,12 @@ function gv_extension_advanced_filtering_load() {
 		 * @return [type]                 [description]
 		 */
 		function filter_search_criteria( $criteria, $form_ids = null, $passed_view_id = NULL ) {
-			global $gravityview_view;
-
-			if( is_admin() && ( !defined('DOING_AJAX') || ( defined('DOING_AJAX') && ! DOING_AJAX ) ) ) {
-				return $criteria;
-			}
 
 			$view_id = !empty( $passed_view_id ) ? $passed_view_id : GravityView_View::getInstance()->getViewId();
 
 			if( empty( $view_id ) )  {
 
-				do_action('gravityview_log_error', 'GravityView_Advanced_Filtering[filter_search_criteria] Empty View ID.', $gravityview_view);
+				do_action('gravityview_log_error', 'GravityView_Advanced_Filtering[filter_search_criteria] Empty View ID.' );
 
 				$criteria['search_criteria']['field_filters'][] = self::get_lock_filter();
 				$criteria['search_criteria']['field_filters']['mode'] = 'all';
@@ -235,8 +230,7 @@ function gv_extension_advanced_filtering_load() {
 				$form_id = gravityview_get_form_id( $view_id );
 				$form = gravityview_get_form( $form_id );
 			} else {
-				global $gravityview_view;
-				$form = $gravityview_view->form;
+				$form = GravityView_View::getInstance()->getForm();
 			}
 
 			// replace merge tags
@@ -244,6 +238,13 @@ function gv_extension_advanced_filtering_load() {
 
 			// If it's a numeric value, it's a field
 			if( is_numeric( $filter['key'] ) ) {
+
+				// The "any form field" key is 0
+				if ( empty( $filter['key'] ) ) {
+					unset( $filter['key'] );
+					return $filter;
+				}
+
 				$field = GVCommon::get_field( $form, $filter['key'] );
 				$field_type = $field->type;
 			}

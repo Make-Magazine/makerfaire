@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: pt_BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: grunt-wp-i18n 0.5.3\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-Bookmarks: \n"
 "X-Poedit-Country: United States\n"
@@ -23,43 +23,43 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:353 partials/metabox.php:2
+#: advanced-filter.php:360 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr ""
 
-#: advanced-filter.php:355
+#: advanced-filter.php:362
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr ""
 
-#: advanced-filter.php:356
+#: advanced-filter.php:363
 msgid "Limit to Logged-in User Entries"
 msgstr ""
 
-#: advanced-filter.php:357
+#: advanced-filter.php:364
 msgid ""
 "To limit entries to those created by the current user, select \"Created "
 "By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
 msgstr ""
 
-#: advanced-filter.php:358
+#: advanced-filter.php:365
 msgid ""
 "If you want to limit entries to those created by the current user, but allow"
 " the administrators to view all the entries, select \"Logged-in User "
 "(disabled for admins)\" from the drop-down menu."
 msgstr ""
 
-#: advanced-filter.php:578
+#: advanced-filter.php:623
 msgid "Created By"
 msgstr ""
 
-#: advanced-filter.php:582
+#: advanced-filter.php:627
 msgid "Logged-in User (disabled for Admins)"
 msgstr ""
 
-#: advanced-filter.php:586
+#: advanced-filter.php:631
 msgid "Logged-in User"
 msgstr ""
 

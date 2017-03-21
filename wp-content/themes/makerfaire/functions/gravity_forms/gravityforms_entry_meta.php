@@ -63,6 +63,7 @@ function custom_entry_meta($entry_meta, $form_id) {
               array('value' => 'special_request', 'text' => 'Special Requests'),
               array('value' => 'louise',          'text' => 'Louise'),
               array('value' => 'jay',             'text' => 'Jay'),
+              array('value' => 'space_size',      'text' => 'Space Size'),
               array('value' => 'other',           'text' => 'Other')
           )
       )

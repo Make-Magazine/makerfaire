@@ -3,6 +3,7 @@ module.exports = function(grunt) {
   var cssFiles = {
     'css/bootstrap.min.css': 'less/bootstrap/bootstrap.less',
     'css/style.css': ['less/global.less', 'less/**/*.less', '!less/portfolio-styles/*',  '!less/bootstrap/*', '!less/admin-styles/*'],
+    'css/angular-reporting.css': [ 'node_modules/angular-ui-grid/ui-grid.css','../../../resource-mgmt/css/animate.min.css','../../../resource-mgmt/css/main.css'],
     'css/mf-admin-style.css': ['less/admin-styles/*'],
     'css/portfolio-style.css': ['less/portfolio-styles/portfolio.less']
   };
@@ -62,6 +63,16 @@ module.exports = function(grunt) {
             'node_modules/fancybox/**/jquery.fancybox.pack.js',
             'node_modules/hammerjs/hammer.min.js',
             'js/libs-src/*.js'
+          ],
+          'js/built-angular-libs.js': [
+            'node_modules/angular/angular.min.js',
+            'node_modules/angular-route/angular-route.min.js',
+            'node_modules/angular-utils-pagination/dirPagination.js'
+          ],
+          'js/built-angular-reporting.js': [
+            'node_modules/angular-sanitize/angular-sanitize.min.js',
+            'node_modules/angular-ui-grid/ui-grid.min.js',
+            'node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js'
           ],
           'js/built-admin-scripts.js': [
             'js/src-admin-scripts/*.js'

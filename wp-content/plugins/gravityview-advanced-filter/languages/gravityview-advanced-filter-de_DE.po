@@ -1,20 +1,21 @@
 # Copyright (C) 2016 Katz Web Services, Inc.
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 # Translators:
+# Hubert Test <hubert@trash-mail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2016-01-21 18:11+0000\n"
-"Last-Translator: Zachary Katz <zack@katz.co>\n"
+"PO-Revision-Date: 2016-09-21 11:57+0000\n"
+"Last-Translator: Hubert Test <hubert@trash-mail.com>\n"
 "Language-Team: German (Germany) (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: grunt-wp-i18n 0.5.3\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-Bookmarks: \n"
 "X-Poedit-Country: United States\n"
@@ -23,62 +24,62 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:353 partials/metabox.php:2
+#: advanced-filter.php:360 partials/metabox.php:2
 msgid "Advanced Filter"
-msgstr ""
+msgstr "Erweiterte Filter"
 
-#: advanced-filter.php:355
+#: advanced-filter.php:362
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
-msgstr ""
+msgstr "Limitiere die sichtbaren Einträge basierend auf ihren Werten. Die Einträge werden gefiltert bevor die View angezeigt wird. Führt ein Nutzer eine Suche durch, werden die Ergebnisse erst durch diese Einstellungen gefiltert"
 
-#: advanced-filter.php:356
+#: advanced-filter.php:363
 msgid "Limit to Logged-in User Entries"
-msgstr ""
+msgstr "Begrenze auf Einträge von eingeloggten Nutzern"
 
-#: advanced-filter.php:357
+#: advanced-filter.php:364
 msgid ""
 "To limit entries to those created by the current user, select \"Created "
 "By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
-msgstr ""
+msgstr "Willst du nur Einträge des aktuellen Nutzers anzeigen, wähle \"Erstellt von\" &amp; \"eingeloggter Nutzer\" aus den Drop-Down-Menüs"
 
-#: advanced-filter.php:358
+#: advanced-filter.php:365
 msgid ""
 "If you want to limit entries to those created by the current user, but allow"
 " the administrators to view all the entries, select \"Logged-in User "
 "(disabled for admins)\" from the drop-down menu."
-msgstr ""
+msgstr "Willst du nur Einträge des aktuellen Nutzers anzeigen, den Administratoren aber erlauben alle Einträge zu sehen, wähle \"eingeloggter Nutzer (abgeschalten für Admins)\" aus dem Drop-Down-Menü"
 
-#: advanced-filter.php:578
+#: advanced-filter.php:623
 msgid "Created By"
-msgstr ""
+msgstr "Erstellt von"
 
-#: advanced-filter.php:582
+#: advanced-filter.php:627
 msgid "Logged-in User (disabled for Admins)"
-msgstr ""
+msgstr "eingeloggter Nutzer (abgeschalten für Admins)"
 
-#: advanced-filter.php:586
+#: advanced-filter.php:631
 msgid "Logged-in User"
-msgstr ""
+msgstr "eingeloggter Nutzer"
 
 #: lib/EDD_SL_Plugin_Updater.php:181
 msgid ""
 "There is a new version of %1$s available. <a target=\"_blank\" "
 "class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
-msgstr ""
+msgstr "Es existiert eine neue Version von %1$s. <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">Sieh dir die Details an: %3$s</a>."
 
 #: lib/EDD_SL_Plugin_Updater.php:188
 msgid ""
 "There is a new version of %1$s available. <a target=\"_blank\" "
 "class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
 "href=\"%4$s\">update now</a>."
-msgstr ""
+msgstr "Es existiert eine neue Version von %1$s. <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">Sieh dir die Details an: %3$s</a> oder <a href=\"%4$s\">update jetzt</a>."
 
 #: lib/EDD_SL_Plugin_Updater.php:332
 msgid "You do not have permission to install plugin updates"
-msgstr ""
+msgstr "Du hast keine Berechtigungen zur Installation von Plugin-Updates"
 
 #: lib/EDD_SL_Plugin_Updater.php:332
 msgid "Error"
@@ -100,8 +101,8 @@ msgstr "Die %s Erweiterung erfordert PHP Version %s oder neuer. Bitten Sie Ihren
 
 #: partials/metabox.php:4
 msgid "You must save the View before you can configure Advanced Filters."
-msgstr ""
+msgstr "Du musst die View speichern, bevor du den erweiterten Filter anpassen kannst"
 
 #: partials/metabox.php:5
 msgid "Advanced Filtering requires Javascript to be enabled."
-msgstr ""
+msgstr "Erweiterte Filter benötigen aktiviertes Javascript"

@@ -122,7 +122,21 @@ module.exports = function(grunt) {
 			transifex: 'tx pull -a',
 
 			// Create a ZIP file
-			zip: 'git-archive-all ../gravityview-advanced-filter.zip'
+			zip: {
+				cmd: function( filename = 'gravityview-advanced-filter' ) {
+
+					// First, create the full archive
+					var command = 'git-archive-all gravityview-advanced-filter.zip &&';
+
+					command += 'unzip -o gravityview-advanced-filter.zip &&';
+
+					command += 'zip -r ../' + filename + '.zip gravityview-advanced-filter &&';
+
+					command += 'rm -rf gravityview/ && rm -f gravityview-advanced-filter.zip';
+
+					return command;
+				}
+			}
 		}
 
 	});

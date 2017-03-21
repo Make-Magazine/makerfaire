@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: gravityview
 Requires at least: 3.3
-Tested up to: 4.5.2
+Tested up to: 4.7
 Stable tag: trunk
 Contributors: katzwebservices
 License: GPL 3 or higher
@@ -15,6 +15,10 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 1.0.18 on December 14, 2016 =
+* Fixed: Issue with "Any form field" filters preventing access to single entries
+* New translations: Spanish translation by Joaquin Rodriguez, German translation by Hubert Test. Thank you!
 
 = 1.0.17 on June 20, 2016 =
 * __Important update__: Fixed security issue introduced in 1.0.16 where logged-in users can see all entries.

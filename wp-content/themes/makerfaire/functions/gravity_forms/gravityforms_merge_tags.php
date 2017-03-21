@@ -102,7 +102,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     //set lead meta field res_status to sent
     gform_update_meta( $entry_id, 'res_status','sent' );
     $resTable = '<table cellpadding="10" width=100%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
-    $resources = get_resources($lead, $excResources, $incResources);
+    $resources = get_mf_resources($lead, $excResources, $incResources);
 
     foreach($resources as $entRes){
       $resTable .= '<tr><td>'.$entRes['resource'].'</td><td>'.$entRes['qty'].'</td></tr>';
@@ -241,7 +241,8 @@ function get_attribute($lead,$attID){
  * $excRes = comma separatd list of resource catgories to exclude
  * $incRes = comma separatd list of resource catgories to include
  */
-function get_resources($lead, $excRes = '', $incRes=''){
+/* Return array of resource information for lead*/
+function get_mf_resources($lead, $excRes = '', $incRes=''){
   global $wpdb;
   $return = array();
   $entry_id = (isset($lead['id'])?$lead['id']:'');

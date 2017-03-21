@@ -328,7 +328,7 @@ class GFRMTHELPER {
     if(isset($entry['376']) && $entry['376'] == 'Yes') { //cm indicator
       $status   = 'review';
       $assignTo = 'cm_team';
-    }elseif(isset($entry['434']) && $entry['434'] ==' Yes') { //fee indicator
+    }elseif(isset($entry['434']) && $entry['434'] =='Yes') { //fee indicator
       $status   = 'review';
       $assignTo = 'fee_team';
     }elseif( isset($entry['83']) && $entry['83'] == 'Yes'){  //field 83
@@ -361,9 +361,15 @@ class GFRMTHELPER {
     }
   }
 
-  /*
-   * This table will add/update records to the following tables:
-   *    wp_mf_entity, wp_mf_maker, wp_mf_maker_to_entity
+  /* Function to add/update the maker data tables for entity/project and maker data
+   *
+   *  Entity/project and maker data only saved for
+   *   - Exhibit
+   *   - Presentation
+   *   - Performance
+   *   - Startup Sponsor
+   *   - Sponsor
+   *  All other form types are skipped
    */
    public static function updateMakerTables($entryID){
     global $wpdb;
@@ -371,18 +377,28 @@ class GFRMTHELPER {
     $form_id  = $entry['form_id'];
     $form     = GFAPI::get_form($form_id);
 
+    //exit this function if form type is not an Exhibit, Presentation or Sponsor
+    $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
+    if($form_type != 'Exhibit' && $form_type != 'Presentation' && $form_type != 'Performance' && $form_type != 'Sponsor' && $form_type != 'Startup Sponsor' ){
+      return;
+    }
+
     //build Maker Data Array
     $data = self::buildMakerData($entry,$form);
     $makerData  = $data['maker'];
     $entityData = $data['entity'];
 
-    $categories = is_array($entityData['categories'] ? implode(',',$entityData['categories']) :'');
+    $categories = (is_array($entityData['categories']) ? implode(',',$entityData['categories']) :'');
+
     /*
      * Update Entity Table - wp_mf_entity
+     * fields: lead_id, form_id, presentation_title, presentation_type, special_request, OnsitePhone,
+     * desc_short, desc_long, project_photo, status, category, faire, mobile_app_discover, form_type, project_video
      */
-    $wp_mf_entitysql = "insert into wp_mf_entity (lead_id, presentation_title, presentation_type, special_request, "
-                    . "     OnsitePhone, desc_short, desc_long, project_photo, status,category,faire,mobile_app_discover,form_id) "
-                    . " VALUES ('" . $entryID             . "',"
+    $wp_mf_entitysql = "insert into wp_mf_entity (lead_id, form_id, presentation_title, presentation_type, special_request, "
+                    . "     OnsitePhone, desc_short, desc_long, project_photo, status, category, faire, mobile_app_discover, "
+                    . "     form_type, project_video) "
+                    . " VALUES ('" . $entryID . "',". $entityData['form_id']. ','
                             . ' "' . $entityData['project_name']            . '", '
                             . ' "' . $entityData['presentation_type']       . '", '
                             . ' "' . $entityData['special_request']         . '", '
@@ -394,7 +410,9 @@ class GFRMTHELPER {
                             . ' "' . $categories . '", '
                             . ' "' . $entityData['faire']                   . '", '
                             . '  ' . $entityData['mobile_app_discover']     . ','
-                            . '  ' . $entityData['form_id'].') '
+                            . ' "' . $form_type  . '", '
+                            . ' "' . $entityData['project_video']           . '"'
+                            .') '
                     . ' ON DUPLICATE KEY UPDATE presentation_title  = "'.$entityData['project_name']            . '", '
                     . '                         presentation_type   = "'.$entityData['presentation_type']       . '", '
                     . '                         special_request     = "'.$entityData['special_request']         . '", '
@@ -406,7 +424,9 @@ class GFRMTHELPER {
                     . '                         category            = "'.$categories. '", '
                     . '                         faire               = "'.$entityData['faire']                   . '", '
                     . '                         form_id             =  '.$entityData['form_id']                 . ','
-                    . '                         mobile_app_discover = "'.$entityData['mobile_app_discover']     . '"';
+                    . '                         mobile_app_discover = "'.$entityData['mobile_app_discover']     . '", '
+                    . '                         form_type           = "'.$form_type                             . '", '
+                    . '                         project_video       = "'.$entityData['project_video']           . '"';
     $wpdb->get_results($wp_mf_entitysql);
 
     /*  Update Maker Table - wp_mf_maker table
@@ -422,32 +442,54 @@ class GFRMTHELPER {
       if((trim($firstName) == '' && trim($lastName) == '') || trim($email) == '') {
         //don't write the record, no maker here.  Move along
       }else{
-        $bio      = (isset($typeArray['bio'])     ? htmlentities($typeArray['bio']) : '');
-        $phone    = (isset($typeArray['phone'])   ? esc_sql($typeArray['phone'])    : '');
-        $twitter  = (isset($typeArray['twitter']) ? esc_sql($typeArray['twitter'])  : '');
-        $photo    = (isset($typeArray['photo'])   ? esc_sql($typeArray['photo'])    : '');
-        $website  = (isset($typeArray['website']) ? esc_sql($typeArray['website'])  : '');
+        $bio        = (isset($typeArray['bio'])         ? htmlentities($typeArray['bio'])   : '');
+        $phone      = (isset($typeArray['phone'])       ? esc_sql($typeArray['phone'])      : '');
+        $twitter    = (isset($typeArray['twitter'])     ? esc_sql($typeArray['twitter'])    : '');
+        $photo      = (isset($typeArray['photo'])       ? esc_sql($typeArray['photo'])      : '');
+        $website    = (isset($typeArray['website'])     ? esc_sql($typeArray['website'])    : '');
+        $phone_type = (isset($typeArray['phone_type'])  ? esc_sql($typeArray['phone_type']) : '');
+        $age_range  = (isset($typeArray['age_range'])   ? esc_sql($typeArray['age_range'])  : '');
+        $city       = (isset($typeArray['city'])        ? esc_sql($typeArray['city'])       : '');
+        $state      = (isset($typeArray['state'])       ? esc_sql($typeArray['state'])      : '');
+        $country    = (isset($typeArray['country'])     ? esc_sql($typeArray['country'])    : '');
+        $zipcode    = (isset($typeArray['zipcode'])     ? esc_sql($typeArray['zipcode'])    : '');
+        $address    = (isset($typeArray['address'])     ? esc_sql($typeArray['address'])    : '');
+        $address2   = (isset($typeArray['address2'])    ? esc_sql($typeArray['address2'])   : '');
+        $role       = (isset($typeArray['role'])        ? esc_sql($typeArray['role'])       : '');
 
         /*  GUID
          * If this maker is already in the DB - pull the maker_id, else let's create one
          */
         $results = $wpdb->get_results($wpdb->prepare("SELECT maker_id FROM wp_mf_maker WHERE email=%s", $email) );
         $guid = ($wpdb->num_rows != 0?$guid = $results[0]->maker_id: createGUID($entryID .'-'.$type));
-
-        $wp_mf_makersql = "INSERT INTO wp_mf_maker (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, `TWITTER`,  `maker_id`, `Photo`, `website`) "
-                        . ' VALUES ("'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'", "'.$phone.'", '
-                                 . '"'.$twitter.'", "'.$guid.'", "'.$photo.'", "'.$website.'")'
-                        . ' ON DUPLICATE KEY UPDATE maker_id="'.$guid.'"';
+        $wp_mf_makersql = "INSERT INTO `wp_mf_maker`"
+                      . "             (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, "
+                      . "              `TWITTER`, `maker_id`, `Photo`, `website`, `phone_type`, "
+                      . "              `age_range`, `city`, `state`, `country`, `zipcode`, "
+                      . "              `address`, `address2`, `role`) "
+                      . '  VALUES ("'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'","'.$phone.'",'
+                      . '          "'.$twitter.'","'.$guid.'","'.$photo.'","'.$website.'","'.$phone_type.'",'
+                      . '          "'.$age_range.'","'.$city.'","'.$state.'","'.$country.'","'.$zipcode.'",'
+                      . '          "'.$address.'","'.$address2.'","'.$role.'")'
+                      . '  ON DUPLICATE KEY UPDATE maker_id="'.$guid.'"';
 
         //only update non blank fields
-        $wp_mf_makersql .= ($firstName != '' ? ', `First Name` = "' . $firstName . '"' : '');
-        $wp_mf_makersql .= ($lastName  != '' ? ', `Last Name`  = "' . $lastName  . '"' : '');
-        $wp_mf_makersql .= ($bio       != '' ? ', `Bio`        = "' . $bio       . '"' : '');
-        $wp_mf_makersql .= ($phone     != '' ? ', `phone`      = "' . $phone     . '"' : '');
-        $wp_mf_makersql .= ($twitter   != '' ? ', `TWITTER`    = "' . $twitter   . '"' : '');
-        $wp_mf_makersql .= ($photo     != '' ? ', `Photo`      = "' . $photo     . '"' : '');
-        $wp_mf_makersql .= ($website   != '' ? ', `website`    = "' . $website   . '"' : '');
-
+        $wp_mf_makersql .= ($firstName  != '' ? ', `First Name` = "' . $firstName   . '"' : '');//first name
+        $wp_mf_makersql .= ($lastName   != '' ? ', `Last Name`  = "' . $lastName    . '"' : '');//last name
+        $wp_mf_makersql .= ($bio        != '' ? ', `Bio`        = "' . $bio         . '"' : '');//bio
+        $wp_mf_makersql .= ($phone      != '' ? ', `phone`      = "' . $phone       . '"' : '');//phone
+        $wp_mf_makersql .= ($twitter    != '' ? ', `TWITTER`    = "' . $twitter     . '"' : '');//twitter
+        $wp_mf_makersql .= ($photo      != '' ? ', `Photo`      = "' . $photo       . '"' : '');//photo
+        $wp_mf_makersql .= ($website    != '' ? ', `website`    = "' . $website     . '"' : '');//website
+        $wp_mf_makersql .= ($phone_type != '' ? ', `phone_type` = "' . $phone_type  . '"' : '');//phone_type
+        $wp_mf_makersql .= ($age_range  != '' ? ', `age_range`  = "' . $age_range   . '"' : '');//age_range
+        $wp_mf_makersql .= ($city       != '' ? ', `city`       = "' . $city        . '"' : '');//city
+        $wp_mf_makersql .= ($state      != '' ? ', `state`      = "' . $state       . '"' : '');//state
+        $wp_mf_makersql .= ($country    != '' ? ', `country`    = "' . $country     . '"' : '');//country
+        $wp_mf_makersql .= ($zipcode    != '' ? ', `zipcode`    = "' . $zipcode     . '"' : '');//zipcode
+        $wp_mf_makersql .= ($address    != '' ? ', `address`    = "' . $address     . '"' : '');//address
+        $wp_mf_makersql .= ($address2   != '' ? ', `address2`   = "' . $address2    . '"' : '');//address2
+        $wp_mf_makersql .= ($role       != '' ? ', `role`       = "' . $role        . '"' : '');//maker role
         $wpdb->get_results($wp_mf_makersql);
 
         //build maker to entity table
@@ -464,19 +506,19 @@ class GFRMTHELPER {
   public static function buildMakerData($lead,$form){
     global $wpdb;
     $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
+
     $entry_id     = $lead['id'];
 		$form_id      = $form['id'];
-    $project_name = (isset($lead['109'])&&$lead['109']!='' ? $lead['109']:(isset($lead['151']) ? $lead['151']:''));
 
-    // Load Names
-    $isGroup =false;
-    if(isset($lead['105'])){
-      $isGroup =(strpos($lead['105'], 'group') !== false?true:false);
-    }
+    //      109 - group name    151 - project name
+    $project_name = (isset($lead['109'])&& trim($lead['109']) !='' ? $lead['109']:(isset($lead['151']) ? $lead['151']:''));
 
-    $isOneMaker =false;
-    if(isset($lead['105'])&&$lead['105']!=''){
-      $isOneMaker =(strpos($lead['105'], 'One') !== false?true:false);
+    // Check if this is a group of makers, one maker or multiple makers
+    $isGroup    = false; //default to false
+    $isOneMaker = true;
+    if(isset($lead['105'])  && $lead['105']!= ''){
+      $isGroup    = (strpos($lead['105'], 'group')  !== false ? true:false);
+      $isOneMaker = (strpos($lead['105'], 'One')    !== false ? true:false);
     }
 
     /*
@@ -494,13 +536,24 @@ class GFRMTHELPER {
           'phone'       => (isset($lead['99'])    ? $lead['99']:''),
           'twitter'     => (isset($lead['201'])   ? $lead['201']:''),
           'photo'       => '',
-          'website'     => ''
+          'website'     => '',
+          'phone_type'  => (isset($lead['148'])   ? $lead['148']:''),
+          'age_range'   => '',
+          'city'        => (isset($lead['101.3'])   ? $lead['101.3']:''),
+          'state'       => (isset($lead['101.4'])   ? $lead['101.4']:''),
+          'country'     => (isset($lead['101.6'])   ? $lead['101.6']:''),
+          'zipcode'     => (isset($lead['101.5'])   ? $lead['101.5']:''),
+          'address'     => (isset($lead['101.1'])   ? $lead['101.1']:''),
+          'address2'    => (isset($lead['101.2'])   ? $lead['101.2']:''),
+          'role'        => 'contact'
       );
 
     // Presenter / Maker 1
     if(!$isGroup){
-      //if this isn't a group we need to have a valid email for the presenter(maker 1) record.
-      // if not set, use contact email
+      /*
+       * if this isn't a group we need to have a valid email for the presenter(maker 1) record.
+       *    if it is not set, use contact email
+       */
       $email = (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:$entry_id.'-presenter@makermedia.com');
       $makerArray['presenter'] = array(
           'first_name'  => (isset($lead['160.3']) ? $lead['160.3']:''),
@@ -511,9 +564,25 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['201'])   ? $lead['201']:''),
           'photo'       => (isset($lead['217'])   ? $lead['217']:''),
           'website'     => (isset($lead['209'])   ? $lead['209']:''),
+          'phone_type'  => (isset($lead['200'])   ? $lead['200']:''),
+          'age_range'   => (isset($lead['310'])   ? $lead['310']:''),
+          'city'        => (isset($lead['369.3']) ? $lead['369.3']:''),
+          'state'       => (isset($lead['369.4']) ? $lead['369.4']:''),
+          'country'     => (isset($lead['369.6']) ? $lead['369.6']:''),
+          'zipcode'     => (isset($lead['369.5']) ? $lead['369.5']:''),
+          'address'     => (isset($lead['369.1']) ? $lead['369.1']:''),
+          'address2'    => (isset($lead['369.2']) ? $lead['369.2']:''),
+          'role'        => (isset($lead['443'])   ? $lead['443']:''), //not set for performance/presentation
       );
-    }else{
-      // if field 105 indicates this is a group,
+    }else{ // if field 105 indicates this is a group,
+      //address information not set for group use contact address
+      $city        = (isset($lead['101.3']) ? $lead['101.3']:'');
+      $state       = (isset($lead['101.4']) ? $lead['101.4']:'');
+      $country     = (isset($lead['101.6']) ? $lead['101.6']:'');
+      $zipcode     = (isset($lead['101.5']) ? $lead['101.5']:'');
+      $address     = (isset($lead['101.1']) ? $lead['101.1']:'');
+      $address2    = (isset($lead['101.2']) ? $lead['101.2']:'');
+
       //  set Presenter/Maker 1 to the group information
       $makerArray['presenter'] = array(
           'first_name'  => $project_name,
@@ -524,6 +593,15 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['322'])   ? $lead['322']:''),
           'photo'       => (isset($lead['111'])   ? $lead['111']:''),
           'website'     => (isset($lead['112'])   ? $lead['112']:''),
+          'age_range'   => (isset($lead['309'])   ? $lead['309']:''), //not set for performance/presentation
+          'phone_type'  => (isset($lead['148'])   ? $lead['148']:''),
+          'city'        => $city,
+          'state'       => $state,
+          'country'     => $country,
+          'zipcode'     => $zipcode,
+          'address'     => $address,
+          'address2'    => $address2,
+          'role'        => 'group'
       );
     }
 
@@ -536,9 +614,9 @@ class GFRMTHELPER {
 
     // If sponsor, Set Presenter/Maker 1 name to company name
     if($form['form_type']=='Sponsor'){
-        $makerArray['presenter']['first_name'] = htmlentities($project_name);
-        $makerArray['presenter']['last_name']  = ' ';
-      }
+      $makerArray['presenter']['first_name'] = htmlentities($project_name);
+      $makerArray['presenter']['last_name']  = ' ';
+    }
 
     // only set the below data if the entry is not marked as one maker
     if(!$isOneMaker){
@@ -551,6 +629,15 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['208'])   ? $lead['208']:''),
           'photo'       => (isset($lead['224'])   ? $lead['224']:''),
           'website'     => (isset($lead['216'])   ? $lead['216']:''),
+          'phone_type'  => (isset($lead['199'])   ? $lead['199']:''),
+          'age_range'   => (isset($lead['311'])   ? $lead['311']:''),
+          'city'        => (isset($lead['370.3']) ? $lead['370.3']:''),
+          'state'       => (isset($lead['370.4']) ? $lead['370.4']:''),
+          'country'     => (isset($lead['370.6']) ? $lead['370.6']:''),
+          'zipcode'     => (isset($lead['370.5']) ? $lead['370.5']:''),
+          'address'     => (isset($lead['370.1']) ? $lead['370.1']:''),
+          'address2'    => (isset($lead['370.2']) ? $lead['370.2']:''),
+          'role'        => (isset($lead['444'])   ? $lead['444']:'')//not set for performance/presentation
       );
       $makerArray['presenter3'] = array(
           'first_name'  => (isset($lead['155.3']) ? $lead['155.3']:''),
@@ -561,6 +648,15 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['207'])   ? $lead['207']:''),
           'photo'       => (isset($lead['223'])   ? $lead['223']:''),
           'website'     => (isset($lead['215'])   ? $lead['215']:''),
+          'phone_type'  => (isset($lead['193'])   ? $lead['193']:''),
+          'age_range'   => (isset($lead['312'])   ? $lead['312']:''),
+          'city'        => (isset($lead['371.3']) ? $lead['371.3']:''),
+          'state'       => (isset($lead['371.4']) ? $lead['371.4']:''),
+          'country'     => (isset($lead['371.6']) ? $lead['371.6']:''),
+          'zipcode'     => (isset($lead['371.5']) ? $lead['371.5']:''),
+          'address'     => (isset($lead['371.1']) ? $lead['371.1']:''),
+          'address2'    => (isset($lead['371.2']) ? $lead['371.2']:''),
+          'role'        => (isset($lead['445'])   ? $lead['445']:'')//not set for performance/presentation
       );
       $makerArray['presenter4'] = array(
           'first_name'  => (isset($lead['156.3']) ? $lead['156.3']:''),
@@ -571,6 +667,15 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['206'])   ? $lead['206']:''),
           'photo'       => (isset($lead['222'])   ? $lead['222']:''),
           'website'     => (isset($lead['214'])   ? $lead['214']:''),
+          'phone_type'  => (isset($lead['198'])   ? $lead['198']:''),
+          'age_range'   => (isset($lead['313'])   ? $lead['313']:''),
+          'city'        => (isset($lead['372.3']) ? $lead['372.3']:''),
+          'state'       => (isset($lead['372.4']) ? $lead['372.4']:''),
+          'country'     => (isset($lead['372.6']) ? $lead['372.6']:''),
+          'zipcode'     => (isset($lead['372.5']) ? $lead['372.5']:''),
+          'address'     => (isset($lead['372.1']) ? $lead['372.1']:''),
+          'address2'    => (isset($lead['372.2']) ? $lead['372.2']:''),
+          'role'        => (isset($lead['446'])   ? $lead['446']:'')//not set for performance/presentation
       );
       $makerArray['presenter5'] = array(
           'first_name'  => (isset($lead['157.3']) ? $lead['157.3']:''),
@@ -581,6 +686,15 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['205'])   ? $lead['205']:''),
           'photo'       => (isset($lead['220'])   ? $lead['220']:''),
           'website'     => (isset($lead['213'])   ? $lead['213']:''),
+          'phone_type'  => (isset($lead['195'])   ? $lead['195']:''),
+          'age_range'   => (isset($lead['314'])   ? $lead['314']:''),
+          'city'        => (isset($lead['373.3']) ? $lead['373.3']:''),
+          'state'       => (isset($lead['373.4']) ? $lead['373.4']:''),
+          'country'     => (isset($lead['373.6']) ? $lead['373.6']:''),
+          'zipcode'     => (isset($lead['373.5']) ? $lead['373.5']:''),
+          'address'     => (isset($lead['373.1']) ? $lead['373.1']:''),
+          'address2'    => (isset($lead['373.2']) ? $lead['373.2']:''),
+          'role'        => (isset($lead['447'])   ? $lead['447']:'')//not set for performance/presentation
       );
       $makerArray['presenter6'] = array(
           'first_name'  => (isset($lead['159.3']) ? $lead['159.3']:''),
@@ -591,6 +705,15 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['204'])   ? $lead['204']:''),
           'photo'       => (isset($lead['221'])   ? $lead['221']:''),
           'website'     => (isset($lead['211'])   ? $lead['211']:''),
+          'phone_type'  => (isset($lead['197'])   ? $lead['197']:''),
+          'age_range'   => (isset($lead['315'])   ? $lead['315']:''),
+          'city'        => (isset($lead['374.3']) ? $lead['374.3']:''),
+          'state'       => (isset($lead['374.4']) ? $lead['374.4']:''),
+          'country'     => (isset($lead['374.6']) ? $lead['374.6']:''),
+          'zipcode'     => (isset($lead['374.5']) ? $lead['374.5']:''),
+          'address'     => (isset($lead['374.1']) ? $lead['374.1']:''),
+          'address2'    => (isset($lead['374.2']) ? $lead['374.2']:''),
+          'role'        => (isset($lead['448'])   ? $lead['448']:'')//not set for performance/presentation
       );
       $makerArray['presenter7'] = array(
           'first_name'  => (isset($lead['154.3']) ? $lead['154.3']:''),
@@ -601,6 +724,15 @@ class GFRMTHELPER {
           'twitter'     => (isset($lead['203'])   ? $lead['203']:''),
           'photo'       => (isset($lead['219'])   ? $lead['219']:''),
           'website'     => (isset($lead['212'])   ? $lead['212']:''),
+          'phone_type'  => (isset($lead['196'])   ? $lead['196']:''),
+          'age_range'   => (isset($lead['316'])   ? $lead['316']:''),
+          'city'        => (isset($lead['375.3']) ? $lead['375.3']:''),
+          'state'       => (isset($lead['375.4']) ? $lead['375.4']:''),
+          'country'     => (isset($lead['375.6']) ? $lead['375.6']:''),
+          'zipcode'     => (isset($lead['375.5']) ? $lead['375.5']:''),
+          'address'     => (isset($lead['375.1']) ? $lead['375.1']:''),
+          'address2'    => (isset($lead['375.2']) ? $lead['375.2']:''),
+          'role'        => (isset($lead['449'])   ? $lead['449']:'')//not set for performance/presentation
       );
     }
 
@@ -612,20 +744,22 @@ class GFRMTHELPER {
 
     //Categories (current fields in use)
     foreach($lead as $leadKey=>$leadValue){
-      //4 additional categories
-      $pos = strpos($leadKey, '321');
-      if ($pos !== false) {
-        $leadCategory[]=$leadValue;
-      }
-      //main catgory
-      $pos = strpos($leadKey, '320');
-      if ($pos !== false) {
-        $leadCategory[]=$leadValue;
-      }
-      //check the flag field 304
-      $pos = strpos($leadKey, '304');
-      if ($pos !== false) {
-        if($leadValue=='Mobile App Discover')  $MAD = 1;
+      if(trim($leadValue!='')){
+        //4 additional categories
+        $pos = strpos($leadKey, '321');
+        if ($pos !== false) {
+          $leadCategory[] = $leadValue;
+        }
+        //main catgory
+        $pos = strpos($leadKey, '320');
+        if ($pos !== false) {
+          $leadCategory[] = $leadValue;
+        }
+        //check the flag field 304
+        $pos = strpos($leadKey, '304');
+        if ($pos !== false) {
+          if($leadValue=='Mobile App Discover')  $MAD = 1;
+        }
       }
     }
 
@@ -656,6 +790,7 @@ class GFRMTHELPER {
         'onsitePhone'         => (isset($lead['265']) ? htmlentities($lead['265']) : ''),
         'public_description'  => (isset($lead['16'])  ? htmlentities($lead['16'])  : ''),
         'private_description' => (isset($lead['11'])  ? htmlentities($lead['11'])  : ''),
+        'project_video'       => (isset($lead['32'])  ? htmlentities($lead['32'])  : ''),
         'status'              => $status,
         'categories'          => $leadCategory,
         'faire'               => $faire,

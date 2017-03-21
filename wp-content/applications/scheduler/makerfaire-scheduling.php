@@ -244,6 +244,24 @@ function status_to_color($entry_status) {
 
 
 function create_makerfaire_scheduler($faire_id) {
+  
+  $mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
+	if ($mysqli->connect_errno) {
+		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+	}
+	$sqlForDate =  "SELECT 	 `wp_mf_faire`.`start_dt`
+			FROM  wp_mf_faire
+			where faire='$faire_id'";
+  $result = $mysqli->query ($sqlForDate ) or trigger_error ( $mysqli->error );
+  $start_dt = '';
+  if ($result) {
+		while ( $row = $result->fetch_row () ) {
+			$start_dt = $row [0];
+      echo "<h1>StartDate=$row</h1>";
+			
+		}
+	}
+    
 	$transport = new \Kendo\Data\DataSourceTransport ();
 
 	$create = new \Kendo\Data\DataSourceTransportCreate ();
@@ -325,7 +343,7 @@ function create_makerfaire_scheduler($faire_id) {
 		timezone: "Europe/London", // Use the London timezone*/
 
 		->currentTimeMarker(false)
-		->date(new DateTime ( '2016/10/01 00:00', new DateTimeZone ( 'UTC' ) ) )->height ( 900 )->pdf ( $pdf )->addToolbarItem ( new \Kendo\UI\SchedulerToolbarItem ( 'pdf' ) )->addResource ( $subareasResource, $entriesResource )->group ( array (
+		->date(new DateTime ( $start_dt, new DateTimeZone ( 'UTC' ) ) )->height ( 900 )->pdf ( $pdf )->addToolbarItem ( new \Kendo\UI\SchedulerToolbarItem ( 'pdf' ) )->addResource ( $subareasResource, $entriesResource )->group ( array (
 			'resources' => array (
 					'Stages'
 			)

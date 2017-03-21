@@ -19,6 +19,7 @@ $entries   = $tableData['data'];
 <div class="content col-md-12 maker-admin-manage-faire-entries-mobile">
   <script>
   jQuery(document).ready(function() {
+    jQuery('a[href$="jpg"], a[href$="png"], a[href$="jpeg"]').fancybox();
     //jQuery('[data-toggle="tooltip"]').tooltip();
     jQuery('body').tooltip( {selector: '[data-toggle=tooltip]'} );
     //returns content based on separate element - For Notificationd, get your tickets and
@@ -57,11 +58,12 @@ $entries   = $tableData['data'];
   </div>
   <div class="clearfix">
     <h2 class="title-head pull-left">Manage your Maker Faire Entries</h2>
+    <!--
     <span class="submit-entry pull-right">
       <a href="/new-york/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
         Submit another entry
       </a>
-    </span>
+    </span>-->
   </div>
   User <?php echo $current_user->user_email;?><br/>
   <hr class="header-break">
@@ -123,7 +125,7 @@ $entries   = $tableData['data'];
         </div> <!-- close .statusBox -->
         <div class="entryImg">
           <div class="faire-entry-image-wrp">
-            <a class="thickbox" href="<?php echo $image;?>">
+            <a href="<?php echo $image;?>">
               <div class="image-container" style="background-image: url('<?php echo $image;?>');"></div>
             </a>
           </div>

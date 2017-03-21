@@ -1,6 +1,6 @@
 /*!
  * Print button for Buttons and DataTables.
- * 2015 SpryMedia Ltd - datatables.net/license
+ * 2016 SpryMedia Ltd - datatables.net/license
  */
 
 (function( factory ){
@@ -99,7 +99,7 @@ DataTable.ext.buttons.print = {
 		}
 		html += '</tbody>';
 
-		if ( config.footer ) {
+		if ( config.footer && data.footer ) {
 			html += '<tfoot>'+ addRow( data.footer, 'th' ) +'</tfoot>';
 		}
 
@@ -126,14 +126,25 @@ DataTable.ext.buttons.print = {
 			head += _relToAbs( this );
 		} );
 
-		$(win.document.head).html( head );
+		try {
+			win.document.head.innerHTML = head; // Work around for Edge
+		}
+		catch (e) {
+			$(win.document.head).html( head ); // Old IE
+		}
 
 		// Inject the table and other surrounding information
-		$(win.document.body).html(
+		win.document.body.innerHTML =
 			'<h1>'+title+'</h1>'+
-			'<div>'+config.message+'</div>'+
-			html
-		);
+			'<div>'+
+				(typeof config.message === 'function' ?
+					config.message( dt, button, config ) :
+					config.message
+				)+
+			'</div>'+
+			html;
+
+		$(win.document.body).addClass('dt-print-view');
 
 		if ( config.customize ) {
 			config.customize( win );

@@ -18,7 +18,7 @@
         url: "/wp-content/themes/makerfaire/fpdi/"+fpdiLink+".php",
         data: { eid: jQuery(this).attr('id'), type: 'save', faire: faire },
       }).done(function(data) {
-        jQuery('#'+data).html(data+ ' Created');
+        jQuery('#'+data).html(data);
         jQuery('#'+data).attr("href", "/wp-content/themes/makerfaire/signs/"+faire+"/"+folder+"/"+data+'.pdf');
       });
     });

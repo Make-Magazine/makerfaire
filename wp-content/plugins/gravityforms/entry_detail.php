@@ -126,9 +126,9 @@ class GFEntryDetail {
 		$status = in_array( $filter, array( 'trash', 'spam' ) ) ? $filter : 'active';
 
 		$position       = rgget( 'pos' ) ? rgget( 'pos' ) : 0;
-		$sort_direction = rgget( 'dir' ) ? rgget( 'dir' ) : 'DESC';
+		$sort_direction = rgget( 'order' ) ? rgget( 'order' ) : 'DESC';
 
-		$sort_field      = empty( $_GET['sort'] ) ? 0 : $_GET['sort'];
+		$sort_field      = empty( $_GET['orderby'] ) ? 0 : $_GET['orderby'];
 		$sort_field_meta = RGFormsModel::get_field( $form, $sort_field );
 		$is_numeric      = $sort_field_meta['type'] == 'number';
 
@@ -183,7 +183,7 @@ class GFEntryDetail {
 		$paging = array( 'offset' => $position, 'page_size' => 1 );
 
 		if ( ! empty( $sort_field ) ) {
-			$sorting = array( 'key' => $_GET['sort'], 'direction' => $sort_direction, 'is_numeric' => $is_numeric );
+			$sorting = array( 'key' => $_GET['orderby'], 'direction' => $sort_direction, 'is_numeric' => $is_numeric );
 		} else {
 			$sorting = array();
 		}

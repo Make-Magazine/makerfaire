@@ -68,8 +68,7 @@ add_action('admin_menu', 'redirect_gf_admin_pages');
 add_filter('gform_addon_navigation', 'add_menu_item');
 
 function add_menu_item($menu_items) {
-  $menu_items[] = array("name" => "mf_fsp", "label" => "Download FSP", "callback" => "build_pdf_fsp", "permission" => "edit_posts");
-  $menu_items[] = array("name" => "mf_gsp", "label" => "Download GSP", "callback" => "build_pdf_gsp", "permission" => "edit_posts");
+  $menu_items[] = array("name" => "mf_fsp_gsp", "label" => "FSP/GSP", "callback" => "build_fsp_gsp", "permission" => "edit_posts");
   $menu_items[] = array("name" => "mf_fairesign", "label" => "Faire Signs", "callback" => "build_faire_signs", "permission" => "edit_posts");
 
   return $menu_items;
@@ -353,4 +352,9 @@ function mf_tasks_settings_page() {
   require_once( TEMPLATEPATH.'/classes/GFTask.php' );
   //page header loaded in below function because admin messages were not yet available to the header to display
 	GFTask::task_page();
+}
+
+/* Displays faire sign code */
+function build_fsp_gsp(){
+  require_once( TEMPLATEPATH.'/adminPages/other_form_download.php' );
 }

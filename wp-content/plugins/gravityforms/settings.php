@@ -301,8 +301,8 @@ class GFSettings {
 			// Re-caching version info
 			$version_info = GFCommon::get_version_info( false );
 			?>
-			<div class="updated fade" style="padding:6px;">
-				<?php esc_html_e( 'Settings Updated', 'gravityforms' ); ?>.
+			<div class="updated fade">
+                <p><?php esc_html_e( 'Settings Updated', 'gravityforms' ); ?>.</p>
 			</div>
 		<?php
 		}
