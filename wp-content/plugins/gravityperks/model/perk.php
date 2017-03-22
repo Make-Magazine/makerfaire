@@ -766,11 +766,13 @@ class GP_Perk {
 
     public static function generate_options($perk, $values, $selected_value) {
 
-        $options = array();
+        $options  = array();
+        $is_assoc = self::is_associative_array( $values );
 
-        foreach($values as $text => $value) {
-            if(is_numeric($text)) {
-                $text = $value;
+        foreach( $values as $value => $text ) {
+        	// allow non-associative arrays to be passed, use $value as as $text and $value
+            if( ! $is_assoc ) {
+                $value = $text;
             }
             $is_selected = $selected_value == $value ? 'selected="selected"' : '';
             $options[] = "<option value=\"$value\" $is_selected>$text</option>";
@@ -808,6 +810,11 @@ class GP_Perk {
                 <input type=\"$type\" id=\"$id\" name=\"$id\" value=\"$value\" />
             </div>";
     }
+
+    public static function is_associative_array( $array ) {
+	    return array_keys( $array ) !== range( 0, count( $array ) - 1 );
+    }
+
 
 
 

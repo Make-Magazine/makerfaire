@@ -6,7 +6,7 @@
 
 if ( defined('WPB_VC_VERSION') ) {
 
-	wpb_map(
+	vc_map(
 	    array(
 			'name' 			=> __( 'Master Slider', 'master-slider' ),
 			'base' 			=> 'masterslider_pb',

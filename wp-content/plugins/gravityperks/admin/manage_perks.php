@@ -5,9 +5,10 @@ class GWPerksPage {
     public static function load_page() {
         
         // temporary fix for old perks relying on markdown
-        if( ! function_exists( 'Markdown' ) )
+        if( ! function_exists( 'Markdown' ) ) {
             require_once( GWPerks::get_base_path() . '/includes/markdown.php' );
-        
+        }
+
         self::load_perk_pointers();
 
         add_action( 'admin_print_footer_scripts', array(__class__, 'output_tb_resize_script'), 11 );

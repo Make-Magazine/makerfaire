@@ -3,7 +3,7 @@
 * Plugin Name: GP Read Only
 * Description: Mark your form fields as read-only to allow users to see field data but not modify it.
 * Plugin URI: http://gravitywiz.com/
-* Version: 1.2.11
+* Version: 1.2.14
 * Author: David Smith
 * Author URI: http://gravitywiz.com/
 * License: GPL2

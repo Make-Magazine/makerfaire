@@ -1,27 +1,27 @@
-===  Free Tools to grow your Email List, Social Sharing and Analytics ===
+===  Free Tools to Automate Your Site Growth ===
 Contributors: SumoMe
-Tags: MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, popup, exit intent, growth, subscribers, twitter, facebook share, social plugin,  social sharing, subscription, email form, share,  sharing, social , social media buttons , links, click to tweet ,  analytics , newsletter,  widget,lightbox, analytics, newsletter, newsletter, Facebook, floating social buttons, google plus, Image sharing,  pinterest plugin, pintrest, share image,   sharebar, sharing, social bookmarking, social plugin, sms, tweet button,  heat map, heatmaps, twitter share, contact form, scroll box, content analytics, inbound marketing, mailing list, share buttons, welcome mat, landing page
+Tags: analytics, campaign monitor, click to tweet, contact form, content analytics, convertkit, drip, email form, ExactTarget, exit-intent, Facebook, facebook share, FeedBlitz, floating social buttons, growth, heat map, heatmaps, Hubspot, image sharing, inbound marketing, Inbox First, infusionsoft, landing page, lightbox, links, mailchimp, mailerlite, mailing list, mailjet, MyEmma, MyNewsletterBuilder, newsletter, Ontraport, pardot, popup, sailthru, scroll box, share, share buttons, share image, sharebar, sharing, site traffic, sms, social, social bookmarking, social media buttons, social plugin, social sharing, subscribers, subscription, traffic growth, tweet button, twitter, twitter share, vero, vertical response, welcome mat, WhatCounts, widget, zapier
 Requires at least: 3.0.1
 Tested up to: 4.7.2
-Stable tag: 1.24
+Stable tag: 1.25
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Free and easy way to double your email subscribers. And Sharing tools to double your traffic from Facebook, Twitter, Pinterest & more.
+Free and easy way to double your email subscribers, plus sharing tools to double your traffic from Facebook, Twitter, Pinterest & more.
 
 == Description ==
 
-Most blogs are designed for hit-and-run readers. People find your blog, read your article, and leave. Wouldn't it be nice if some of those people subscribe or share your amazing post?
+Most blogs are designed for hit-and-run readers. People find your blog, read your article, and leave. Wouldn't it be nice if some of those people subscribed or shared your amazing post?
 
->Sumo provides free tools you need to grow your WordPress site. This plugin will make it easy for your readers to join your email list, share your articles and optimize with analytics. The free tools include:
+>Sumo provides free tools you need to grow your WordPress site. This plugin will make it easy for your readers to join your email list, share your articles, and optimize with analytics. The free tools include:
 >
->`List Builder` will let you create a fancy lightbox pop up to [build email subscriptions](http://sumo.com/?src=wordpress) (for MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, or others).
+>`List Builder` will let you create a fancy lightbox pop up to [build email subscriptions](http://sumo.com/?src=wordpress) (for MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost, and others).
 >
->`Share` makes it insanely easy for people to share on mobile or web all of your great content.
+>`Share` makes it insanely easy for people to share your content on mobile or web.
 >
->`Welcome Mat` displays a full-screen call to action that shows when visitors land on your site.
+>`Welcome Mat` displays a full-screen call-to-action that shows when visitors land on your site.
 >
->`Heat Maps` help you see where people are clicking (or not) on your website.
+>`Heat Maps` help you see where people are clicking (or not clicking) on your website.
 >
 >`Scroll Box` is an email collection box triggered by how far your reader makes it down the screen.
 >
@@ -29,124 +29,12 @@ Most blogs are designed for hit-and-run readers. People find your blog, read you
 >
 >`Highlighter` makes it easy to click to tweet about your article by selecting popular parts of your writing (like Kindle and Medium).
 >
->`Image Sharer` makes it stupid simple to share your images (with a link to your post) on Pinterest, Facebook and Twitter.
+>`Image Sharer` makes it simple to share your images (with a link to your post) on Pinterest, Facebook and Twitter.
 >
 >And even more great free tools in our Sumo Store.
 
 Now, people will find your blog, read your article, share your article on Twitter/Facebook/Pinterest, and subscribe via email to your email newsletter.
 
-= Features =
-
-* Free and Easy integration with any WordPress theme
-* Simple email integration with MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, and Maropost
-* 100% mobile optimized. A lot of your traffic is mobile, make sure your tools are too
-* Asynchronous loading that won't affect page load speed
-* Total control over which growth features to enable
-* Easy sharing on Twitter
-* Customize templates to make your email popup look amazing
-* See gravatars of your most recent email subscribers
-* Highlighting of popular Twitter sections (like Kindle and Medium)
-* Simply delete any tweet highlights you don't want
-* Promotion of your Twitter handle
-* Works with other social plugins like Digg Digg
-* Popover that significantly increase email subscribes
-* Custom email subscription popover timing
-* Optional smart email popover timing (like Exit Monitor)
-* Customizable email subscribe box wording and colors
-* Full HTML control of popover content
-* Or simply export email subscribers in a .csv file
-* Quickly growth your email newsletter list
-* View email subscription statistics for all time
-* Easily add Facebook, Twitter, and Pinterest sharing to your images
-* Images have higher engagement on social networks
-* Include your Twitter username in tweeted images
-* Share count shows how often people share your images
-* Install image sharing in literally seconds
-* Choose which features/apps you want to enable
-* Smart Bar to ask for emails at the top of your website
-* Heat maps so you can visually see where your visitors are clicking (or not)
-* Share app - Get more traffic to your site with these super easy to setup share buttons!
-* Contact Form - Simplest way to have your readers contact you
-* Content Analytics - See how far people are scrolling on your website
-* Welcome Mat - Now you can instantly add a full-screen call to action to grow your email list or drive visitors to a certain page.
-
-= List Builder (email subscribe feature) =
-
-The most important asset on your blog isn't your theme or even your content. It's your email list. As you build your email subscriber list, promoting your new posts becomes faster and more effective as you can quickly send a notification to thousands of interested people who want to ready your content.
-
-While most email subscription boxes are static widgets in your sidebar, our MailChimp/Aweber list builder generates extra attention and higher signup rates by launching an unobtrusive popover signup box. You can decide whether this box loads manually after the visitor has been on your page for a few seconds or automatically when the mouse moves away from the page (much like Exit Monitor).
-
-= A/B testing your email pop ups =
-
-Now you can figure out which text, size, timing, colors and more will convert best on your site. A/B testing can be setup in seconds and most people see 20-100% more email subscribers after testing.
-
-= Advanced display rules =
-
-Now you can target all of our apps to any specific visitors you'd like. Want an email pop up or share to only show for visitors coming from Facebook. Done. Want your email pop up customized for a specific audience, done.
-
-= Choose when to request subscribes =
-
-You can adjust the List Builder settings to automatically load the popover subscription form after a set period of time - like 10 seconds - so it loads after your visitor has started reading. Alternately, you can set a much shorter load time - like 1 second - so that more of your visitors see the MailChimp subscribe box before leaving.
-
-= Optional smart load timing =
-
-The optional smart timing will automatically load the Aweber email subscription box when we think the reader is getting ready to leave. Much like Exit Monitor, we do this by monitoring mouse movements that determine exit intent. When the mouse moves toward the X to close your website, the popover will quickly ask for their email. (Note: This isn't a popup, so it won't interfere with closing the tab.)
-
-
-= Automatically Connect with major email providers =
-
-Our email list builder easily connects with all major email providers including MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, and Maropost. This means that if you use an email manager like MailChimp, your new subscribers can automatically subscribe to your list instantly.
-
-Alternately, you can simply set List Builder to collect email addresses that you can export in CSV format.
-
-= Easily modify design =
-
-The email form is completely customizable. You can quickly change the wording, confirmation message, and colors to match the rest of your website. This will increase conversions by making users more comfortable subscribing.
-
-= Or go completely old school =
-
-If you really want to customize your email popover, you can actually edit the full HTML. You can add a different form, select specific pages to not show the popover on, and even add a redirected confirmation URL. Customize to your heart's content.
-
-
-= Share (optimized social sharing buttons) =
-
-This app is used by many top 1000 sites. Instantly add sharing buttons to your desktop and mobile experience. Most people using Share see at least 20% more page views afterwards. The buttons auto optimize themselves and you can choose from these different places to share on (Facebook, Twitter, Pinterest, Reddit, Buffer, Delicious, Digg, Evernote, Amazon Wishlist, Instapaper, Pocket, LinkedIn, Tumblr, StumbleUpon, Yummly). Includes SMS sharing and WhatsApp sharing.
-
-= Highlighter (Twitter sharing feature) =
-
-Designed to encourage sharing on Twitter, the Highlighter feature lets readers easily select portions of your article to share as quotes on Twitter. Popularly tweeted sections are highlighted on your blog which boosts Twitter sharing significantly. It's an automatic click-to-tweet.
-
-= Get more tweets =
-
-The Highlighter feature improves Twitter shares in two important ways. First, we let users highlight portions of your text to quickly quote on Twitter. Similar to Kindle's sharing feature or Medium's commenting design, this functionality makes tweeting about your latest post quick and easy. Social sharing has never been easier.
-
-= Highlight popular sentences =
-
-When someone tweets a quote from your article, our plugin automatically highlights that portion of your text. Much like the popular highlights feature in Kindle, this attracts your reader's attention and boosts social sharing. These highlights can also be edited by the admin if you don't want a particular highlight showing.
-
-= Include your username in tweets =
-
-Tweets generated through Highlighter will both link to your article and include your Twitter username. This will build traffic to your website while also boosting your Twitter profile and building your Twitter following. Adding your Twitter username is as easy as typing your username into the Highlighter settings - you don't need to give access to your Twitter account.
-
-= ImageSharer (Image sharing feature) =
-
-Have you ever noticed how some blogs and websites make it easy to share their images on social networks like Pinterest?  Because these images link back to your article, people who share your images on Pinterest, Twitter, and Facebook can drive significant traffic to your website.  ImageSharer makes it easy for you to add professional image sharing to your website with just a click of the button.
-
-= Image sharing for Pinterest =
-
-Pinterest is one of the fastest growing social networks right now, and some studies have found Pinterest users spend more than other social network visitors.  By making it easy for your visitors to share their favorite images from your blog on Pinterest, we're helping you unlock a major source of valuable traffic that many bloggers aren't even pursuing yet.
-
-= Image sharing for Facebook =
-
-Did you know that photo posts on Facebook get 84% more click-throughs than text posts (according to KISSmetrics)?  The ImageSharer plugin makes it stupid simple for your readers to easily share your beautiful images on Facebook with just a click of the button.
-
-= Image sharing for Twitter =
-
-According to Buffer, image tweets on Twitter get fully 2x the engagement of text tweets!  Essentially, every time one of your readers shares an image from your blog, you're getting the equivalent of two ordinary tweets.
-
-= Easy image sharing for all three social networks =
-
-ImageSharer makes it super easy to add image sharing for all three powerful social networks without any coding or frustrating setup.  Simply install the Sumo plugin, click to activate ImageSharer, and watch your share stats start rolling in.
 
 = Latest Updates =
 
@@ -273,13 +161,13 @@ Why you should encourage Twitter sharing
 
 [See all of our screenshots at Sumo.com](http://sumo.com/?src=wordpress_ss)
 
-1. This screen shot is how to Sign up once you have activated the plugin.
-2. This is the screen to choose which apps to install.
-3. Fully customizable email pop ups (List Builder app)
+1. This screen shot is how to Sign up once you have activated the plugin
+2. This view shows the suite of Sumo apps
+3. Fully customizable email pop ups from our List Builder 3 app
 4. Total control of the design and feel of the pop ups
 5. Connect with all major email providers (MailChimp, Aweber, Constant Contact, Campaign Monitor, GetResponse, ActiveCampaign, MyEmma, Mad Mimi, Infusionsoft, Feedblitz, HubSpot, MyNewsletterBuilder, Inbox First, Sailthru, Klaviyo, Vero, Pardot, Zapier, Ontraport, ExactTarget, Vertical Response, Drip, MailerLite, WhatCounts, ConvertKit, MailJet, Maropost)
 6. A/B testing to maximize your conversion rate
-7. Advanced display rules to control which visitors see your pop ups
+7. Advanced display rules to control which visitors see your pop ups and when
 8. Detailed stats page to track your email growth
 9. Super sexy sharing buttons for mobile and desktop (Share app)
 10. Performance of how your shares are doing
@@ -362,6 +250,9 @@ Why you should encourage Twitter sharing
 = 1.24 =
 * Sumo transition
 
+= 1.25 =
+* Sumo transition. Added more information to statistics section.  Fixed broken link.
+
 == Upgrade Notice ==
 
 = 1.04 =
@@ -434,3 +325,6 @@ Why you should encourage Twitter sharing
 
 = 1.24 =
 * Sumo transition
+
+= 1.25 =
+* Sumo transition. Added more information to statistics section.  Fixed broken link.

@@ -172,7 +172,7 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
     if( isset( $_GET['dismiss_phlox_notice'] ) && $_GET['dismiss_phlox_notice'] == 1 ){
         set_transient( 'masterslider_display_phlox_notice', 1, 3 * DAY_IN_SECONDS );
     }
-    if( false === get_transient( 'masterslider_display_phlox_notice' ) ) {
+    if( false === get_transient( 'masterslider_display_phlox_notice' ) || ! empty( $_GET['phlox'] ) ) {
         set_transient( 'masterslider_display_phlox_notice', 1, 5 * YEAR_IN_SECONDS );
 ?>
 

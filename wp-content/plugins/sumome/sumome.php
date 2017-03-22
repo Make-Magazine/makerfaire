@@ -2,8 +2,8 @@
 /*
 Plugin Name: SumoMe
 Plugin URI: https://sumo.com
-Description: Free Tools to grow your email list from Sumo.com
-Version: 1.24
+Description: Free Tools to automate your site growth from Sumo.com
+Version: 1.25
 Author: SumoMe
 Author URI: https://www.Sumo.com
 */
@@ -19,7 +19,7 @@ register_deactivation_hook(__FILE__, array('WP_Plugin_SumoMe', 'deactivate_SumoM
 
 function sumome_plugin_settings_link($links)
 {
-  $settings_link = '<a href="options-general.php?page=sumome">Settings</a>';
+  $settings_link = '<a href="options-general.php?page=sumo">Settings</a>';
   array_unshift($links, $settings_link);
   return $links;
 }

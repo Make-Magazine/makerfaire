@@ -1,12 +1,12 @@
 === Master Slider - Responsive Touch Slider ===
-Contributors: averta
+Contributors: averta, averta_support
 Donate link: http://averta.net/
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: banner rotator, carousel, content slider, gallery, image slider, responsive slider, showcase, slideshow, swipe, touch slider, video gallery, SEO, vertical slide, HTML5 slider, hardware accelerate, best slider, animation, mobile slider, iOS, android, video slider, youtube slider, horizontal slider, vertical slider, fullwidth slider, fullscreen slider, post slider, photo slider, online album, mobile slider, WordPress slider,wpml, ,ultisite, wistia, woocommerce, product slider, woocommerce slider, portfolio, gallery
 Requires at least: 4.0
-Tested up to: 4.6.1
-Stable tag: 2.9.5
+Tested up to: 4.7.2
+Stable tag: 2.9.6
 
 The most advanced responsive and HTML5 WordPress slider plugin with touch swipe navigation that works smoothly on desktop and devices.
 
@@ -229,6 +229,9 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Changelog ==
 
+= Version 2.9.6 / (15.3.2017) =
+- [Fix]: Minor bugs fixes
+
 = Version 2.9.5 / (21.9.2016) =
 - [Fix]: Minor bugs fixes
 
@@ -414,5 +417,5 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Upgrade Notice ==
 
-= Version 2.9.5 / (21.9.2016) =
+= Version 2.9.6 / (15.3.2017) =
 - [Fix]: Minor bugs fixes
