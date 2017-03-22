@@ -176,23 +176,13 @@ class maker {
       //do not return if form type
       if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
          $form['form_type'] != 'Show Management' && $form['form_type'] != ''){
-          //get MAT messaging
-           /**
-            * Allow the text to be filtered so custom merge tags can be replaced.
-            *
-            * @param string $text The text in which merge tags are being processed.
-            * @param false|array $form The Form object if available or false.
-            * @param false|array $entry The Entry object if available or false.
-            * @param bool $url_encode Indicates if the urlencode function should be applied.
-            * @param bool $esc_html Indicates if the esc_html function should be applied.
-            * @param bool $nl2br Indicates if the nl2br function should be applied.
-            * @param string $format The format requested for the location the merge is being used. Possible values: html, text or url.
-            */
-           $text = apply_filters( 'gform_replace_merge_tags', rgar($form, 'mat_message'), $form, $entry, false, false, false, 'text' );
-          echo 'after filter '.$text;
-          $data['mat_message'] = $text;
-          $entries['data'][]=$data;
-       }
+        //get MAT messaging
+        $text = GFCommon::replace_variables(rgar($form, 'mat_message'),$form, $entry,false,false);
+        $text = do_shortcode( $text ); //process any conditional logic
+        $data['mat_message']          = $text;
+
+        $entries['data'][]=$data;
+      }
     }
     if(!isset($entries['data'])) $entries['data']=array();
     return $entries;
