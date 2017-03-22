@@ -175,34 +175,27 @@ class maker {
 
       //do not return if form type
       if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
-         $form['form_type'] != 'Show Management' && $form['form_type'] != ''){
-          //get MAT messaging
-          $data['mat_message']          = rgar($form, 'mat_message');
-          $data['mat_disp_res_link']    = rgar($form, 'mat_disp_res_link');
-          /**
-            * Allow the text to be filtered so custom merge tags can be replaced.
-            *
-            * @param string $text The text in which merge tags are being processed.
-            * @param false|array $form The Form object if available or false.
-            * @param false|array $entry The Entry object if available or false.
-            * @param bool $url_encode Indicates if the urlencode function should be applied.
-            * @param bool $esc_html Indicates if the esc_html function should be applied.
-            * @param bool $nl2br Indicates if the nl2br function should be applied.
-            * @param string $format The format requested for the location the merge is being used. Possible values: html, text or url.
-            */
-           $text = apply_filters( 'gform_replace_merge_tags', rgar($form, 'mat_res_modal_layout'), $form, $entry, false, false, false, 'html' );
-          $data['mat_res_modal_layout'] = $text;
-          $url = rgar($form, 'mat_edit_res_url');
-          
-          //add entry ID parameter
-          if($url != '') {
-            $url .= '?entry-id='.$row['lead_id'];
-            if(isset($entry['98'])) $url .= '&contact-email='.$entry['98'];
-          }
-          $data['mat_edit_res_url'] = $url;
+        $form['form_type'] != 'Show Management' && $form['form_type'] != ''){
+        //get MAT messaging
+        $text = GFCommon::replace_variables(rgar($form, 'mat_message'),$form, $entry,false,false);
+        $text = do_shortcode( $text ); //process any conditional logic
+        $data['mat_message']          = $text;
+        $data['mat_disp_res_link']    = rgar($form, 'mat_disp_res_link');
 
-          $entries['data'][]=$data;
-       }
+        $text = GFCommon::replace_variables(rgar($form, 'mat_res_modal_layout'),$form, $entry);
+        $text = do_shortcode( $text ); //process any conditional logic
+        $data['mat_res_modal_layout'] = $text;
+        $url = rgar($form, 'mat_edit_res_url');
+
+        //add entry ID parameter
+        if($url != '') {
+          $url .= '?entry-id='.$row['lead_id'];
+          if(isset($entry['98'])) $url .= '&contact-email='.$entry['98'];
+        }
+        $data['mat_edit_res_url'] = $url;
+
+        $entries['data'][]=$data;
+      }
     }
     if(!isset($entries['data'])) $entries['data']=array();
     return $entries;
