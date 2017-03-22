@@ -176,10 +176,13 @@ class maker {
       //do not return if form type
       if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
          $form['form_type'] != 'Show Management' && $form['form_type'] != ''){
-          //get MAT messaging
-          $data['mat_message'] = rgar($form, 'mat_message');
-          $entries['data'][]=$data;
-       }
+        //get MAT messaging
+        $text = GFCommon::replace_variables(rgar($form, 'mat_message'),$form, $entry,false,false);
+        $text = do_shortcode( $text ); //process any conditional logic
+        $data['mat_message']          = $text;
+
+        $entries['data'][]=$data;
+      }
     }
     if(!isset($entries['data'])) $entries['data']=array();
     return $entries;
