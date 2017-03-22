@@ -5,7 +5,7 @@
 
     window.gwCopyObj = function( formId, fields, overwrite ) {
 
-        this.self = this;
+        var self = this;
 
         self.formId   = formId;
         self.fields   = fields;
@@ -44,8 +44,10 @@
             var fieldId = gf_get_input_id_by_html_id( $( elem ).parents( 'li.gwcopy' ).attr( 'id' ) ),
                 fields  = self.fields[ fieldId ];
 
-            isOverride     = self.override || isOverride;
-            forceEmptyCopy = typeof forceEmptyCopy == 'undefined' ? false : forceEmptyCopy;
+            isOverride = self.override || isOverride;
+            if( typeof forceEmptyCopy == 'undefined' ) {
+				forceEmptyCopy = isOverride;
+            }
 
             for( var i = 0; i < fields.length; i++ ) {
 
@@ -128,8 +130,11 @@
 
                 // force user events to trigger
                 if( targetGroup.is( ':checkbox, :radio' ) ) {
-	                // trigger 'keypress' on all checked checkboxes to trigger applicable conditional logic
-                    targetGroup.filter( ':checked' ).keypress();
+                	if( ! isOverride ) {
+		                // trigger 'keypress' on all checked checkboxes to trigger applicable conditional logic
+		                targetGroup.filter( ':checked' )
+	                }
+	                targetGroup.keypress();
                 } else {
                     targetGroup
                         .change()
@@ -218,7 +223,7 @@
 	            isInputSpecific = fieldId != rawFieldId,
                 formId          = field[ groupType + 'FormId' ], // i.e. 'sourceFormId' or 'targetFormId',
                 $field          = $( '#field_' + formId + '_' + fieldId ),
-                group           = $field.find( '.ginput_container' ).find( 'input:not( :button ), select, textarea' ),
+                group           = $field.find( 'input[name^="input"]:not( :button ), select[name^="input"], textarea[name^="input"]' ),
 	            isListField     = self.isListField( group );
 
             // Many 3rd parties add additional non-capturable inputs to the List field. Let's filter those out.

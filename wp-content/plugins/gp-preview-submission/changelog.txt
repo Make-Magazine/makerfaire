@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.2.6
+
+    - Added support for pulling text value for GF Slider fields.
+
+## 1.2.5
+
+    - Added support for pulling calculated values from post rather than attempting to recalculate; provides support for GP eCommerce Fields (coming soon!).
+
 ## 1.2.4
 
     - Fixed issue where :value modifier was not respected for multi-input fields.

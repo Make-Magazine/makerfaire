@@ -1,6 +1,22 @@
 
 # Changelog
 
+## 1.4.14
+
+    - Fixed issue in gwCopyCat class where assignment issue result in errors.
+
+## 1.4.13
+
+    - Updated copyValues() to trigger conditional logic for unchecked inputs in addition to checked inputs.
+
+## 1.4.12
+
+    - Updated forceEmptyCopy option to default to the value of isOverride; this will automatically overwriting existing values with empty valeus.
+
+## 1.4.11
+
+    - Fixed issue where coping to hidden fields was broken in v1.4
+
 ## 1.4.9
 
     - Fixed issue where target List field rows could be completely removed when targeted from another List field.

@@ -2,7 +2,7 @@
 
 class GP_Copy_Cat extends GWPerk {
 
-    public $version = '1.4.9';
+    public $version = '1.4.14';
     protected $min_perks_version = '1.0.6';
     protected $min_gravity_forms_version = '1.9.3';
 
@@ -34,7 +34,7 @@ class GP_Copy_Cat extends GWPerk {
         }
 
         $copy_fields      = $this->get_copy_cat_fields( $form );
-        $enable_overwrite = gf_apply_filters( 'gpcc_overwrite_existing_values', $form['id'], true, $form ); /* @since 1.3.7 Used to default to false */
+        $enable_overwrite = gf_apply_filters( array( 'gpcc_overwrite_existing_values', $form['id'] ), true, $form ); /* @since 1.3.7 Used to default to false */
         $script           = 'new gwCopyObj( ' . $form['id'] . ', ' . json_encode( $copy_fields ) . ', ' . ( $enable_overwrite ? 'true' : 'false' ) . ' );';
 
         GFFormDisplay::add_init_script( $form['id'], 'gp-copy-cat', GFFormDisplay::ON_PAGE_RENDER, $script );
