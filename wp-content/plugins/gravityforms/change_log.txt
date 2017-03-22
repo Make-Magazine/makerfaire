@@ -1,4 +1,31 @@
 ------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.9
+	- Fixed missing country input settings for the international type Address field when the country input is set to hidden.
+	- Fixed PHP warning when getting the conditional logic default value for the Time field if an array was returned by the gform_field_value filter.
+	- Fixed an issue with the checkbox type Category field inputs when the gform_post_category_choices filter is used to override the choices.
+
+------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.8
+	- Fixed the honeypot field ID type being double instead of integer.
+	- Fixed an issue with number field validation when the submitted value contained leading or trailing spaces.
+
+------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.7
+	- Added "gform_list_post_item_add" Javascript action. See https://www.gravityhelp.com/documentation/article/gform_list_post_item_add/.
+	- Added "gform_list_post_item_delete" Javascript action. See https://www.gravityhelp.com/documentation/article/gform_list_post_item_delete/.
+
+------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.6
+	- Added ability to import entries when creating acceptance tests.
+	- Fixed the single file upload field validation and extension messages not being redisplayed after the existing file is deleted.
+
+------------------------------------------------------------------------------------------------------------------
+Version 2.1.3.5
+	- Added the gform_temp_file_expiration_days filter. See https://www.gravityhelp.com/documentation/article/gform_temp_file_expiration_days/
+	- Fixed wrong entry being displayed when using the next/previous links on the entry detail page when the entry list has been sorted.
+	- Fixed the Paragraph field character limit not being displayed on form render.
+
+------------------------------------------------------------------------------------------------------------------
 Version 2.1.3.4
 	- Fixed textarea content not being cleared when adding a new list field item.
 

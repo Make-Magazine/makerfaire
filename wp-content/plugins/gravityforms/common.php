@@ -2559,7 +2559,7 @@ class GFCommon {
 	public static function get_select_choices( $field, $value = '', $support_placeholders = true ) {
 		$choices = '';
 
-		if ( RG_CURRENT_VIEW == 'entry' && empty( $value ) && empty( $field->placeholder ) ) {
+		if ( rgget('view') == 'entry' && empty( $value ) && empty( $field->placeholder ) ) {
 			$choices .= "<option value=''></option>";
 		}
 
@@ -2579,7 +2579,7 @@ class GFCommon {
 					$field_value .= '|' . $price;
 				}
 
-				if ( ! isset( $_GET['gf_token'] ) && empty( $_POST ) && rgblank( $value ) && RG_CURRENT_VIEW != 'entry' ) {
+				if ( ! isset( $_GET['gf_token'] ) && empty( $_POST ) && rgblank( $value ) && rgget('view') != 'entry' ) {
 					$selected = rgar( $choice, 'isSelected' ) ? "selected='selected'" : '';
 				} else {
 					if ( is_array( $value ) ) {
@@ -2778,7 +2778,7 @@ class GFCommon {
 		$field_id = $is_admin || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
 		$form_id  = $is_admin && empty( $form_id ) ? rgget( 'id' ) : $form_id;
 
-		if ( RG_CURRENT_VIEW == 'entry' ) {
+		if ( rgget('view') == 'entry' ) {
 			$lead      = RGFormsModel::get_lead( $lead_id );
 			$post_id   = $lead['post_id'];
 			$post_link = '';
@@ -2804,9 +2804,9 @@ class GFCommon {
 		}
 
 		// Product fields are not editable
-		if ( RG_CURRENT_VIEW == 'entry' && self::is_product_field( $field->type ) ) {
+		if ( rgget('view') == 'entry' && self::is_product_field( $field->type ) ) {
 			return "<div class='ginput_container'>" . esc_html__( 'Product fields are not editable' , 'gravityforms' ) . '</div>';
-		} else if ( RG_CURRENT_VIEW == 'entry' && $field->type == 'donation' ) {
+		} else if ( rgget('view') == 'entry' && $field->type == 'donation' ) {
 			return "<div class='ginput_container'>" . esc_html__( 'Donations are not editable' , 'gravityforms' ) . '</div>';
 		}
 
@@ -3647,36 +3647,36 @@ class GFCommon {
 			$choices[] = array( 'text' => 'You must select at least one category.', 'value' => '' );
 		}
 
-		$choice_number = 1;
-		foreach ( $choices as $choice ) {
-
-			if ( $choice_number % 10 == 0 ) {
-				//hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
-				$choice_number ++;
-			}
-
-			$input_id = $field->id . '.' . $choice_number;
-			$inputs[] = array( 'id' => $input_id, 'label' => $choice['text'], 'name' => '' );
-			$choice_number ++;
-		}
-
 		$field->choices = $choices;
 
-		$is_form_editor = GFCommon::is_form_editor();
+		$is_form_editor  = GFCommon::is_form_editor();
 		$is_entry_detail = GFCommon::is_entry_detail();
-		$is_admin = $is_form_editor || $is_entry_detail;
+		$is_admin        = $is_form_editor || $is_entry_detail;
 
 		$form_id = $is_admin ? rgget( 'id' ) : $field->formId;
 
 		/**
-		 * Allows you to filter (modify) the post cateogry choices when using post fields
+		 * Allows you to filter (modify) the post category choices when using post fields
 		 *
-		 * @param array $field The Cateogry choices field
-		 * @param int $form_id The CUrrent form ID
+		 * @param GF_Field $field The Category choices field
+		 * @param int $form_id The Current form ID
 		 */
 		$field->choices = gf_apply_filters( array( 'gform_post_category_choices', $form_id, $field->id ), $field->choices, $field, $form_id );
 
-		if ( RGFormsModel::get_input_type( $field ) == 'checkbox' ) {
+		if ( $field->get_input_type() == 'checkbox' ) {
+			$choice_number = 1;
+			foreach ( $field->choices as $choice ) {
+
+				if ( $choice_number % 10 == 0 ) {
+					//hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
+					$choice_number ++;
+				}
+
+				$input_id = $field->id . '.' . $choice_number;
+				$inputs[] = array( 'id' => $input_id, 'label' => $choice['text'], 'name' => '' );
+				$choice_number ++;
+			}
+
 			$field->inputs = $inputs;
 		}
 
@@ -4183,8 +4183,16 @@ class GFCommon {
 		}
 	}
 
+	/**
+	 * Adds a leading zero if the first character is a comma or period.
+	 *
+	 * @param string $value The field value.
+	 *
+	 * @return string
+	 */
 	public static function maybe_add_leading_zero( $value ) {
-		$first_char = GFCommon::safe_substr( $value, 0, 1, 'utf-8' );
+		$value      = trim( $value );
+		$first_char = GFCommon::safe_substr( $value, 0, 1 );
 		if ( in_array( $first_char, array( '.', ',' ) ) ) {
 			$value = '0' . $value;
 		}

@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms
 Plugin URI: http://www.gravityforms.com
 Description: Easily create web forms and manage form entries within the WordPress admin.
-Version: 2.1.3.4
+Version: 2.1.3.9
 Author: rocketgenius
 Author URI: http://www.rocketgenius.com
 Text Domain: gravityforms
@@ -92,17 +92,10 @@ if ( ! defined( 'IS_ADMIN' ) ) {
  *
  * Defined from URL parameters.
  *
- * @since Unknown
+ * @since      Unknown
+ * @deprecated 2.1.3.6
  *
- * @used-by GFCommon::get_select_choices()
- * @used-by GFCommon::get_field_input()
- * @used-by GFFormsModel::save_input()
- * @used-by GF_Field_Address::get_state_field()
- * @used-by GF_Field_Checkbox::get_checkbox_choices()
- * @used-by GF_Field_Name::get_field_input()
- * @used-by GF_Field_Number::get_field_input()
- * @used-by GF_Field_Radio::get_radio_choices()
- * @uses    GFForms::get()
+ * @uses GFForms::get()
  *
  * @var string|boolean RG_CURRENT_VIEW The view if available.  False otherwise.
  */
@@ -210,7 +203,7 @@ class GFForms {
 	 *
 	 * @var string $version The version number.
 	 */
-	public static $version = '2.1.3.4';
+	public static $version = '2.1.3.9';
 
 	/**
 	 * Runs after Gravity Forms is loaded.
@@ -3910,7 +3903,7 @@ SET d.value = l.value"
 			</div>
 
 		</div>
-		
+
 		<script type="text/javascript">
 			function GF_ShowEditTitle(){
 				jQuery( '#edit-title-container' ).css( 'visibility', 'visible' )
@@ -3922,9 +3915,9 @@ SET d.value = l.value"
 			}
 
 			function GF_SaveTitle(){
-				
+
 				var title = jQuery( '#edit-title-input' ).val();
-				
+
 				jQuery.post(ajaxurl, {
 						action			: "gf_save_title",
 						gf_save_title	: '<?php echo wp_create_nonce( 'gf_save_title' ); ?>',
@@ -3986,7 +3979,7 @@ SET d.value = l.value"
 
 		// Get all forms.
 		$all_forms = RGFormsModel::get_forms( null, 'title' );
-		
+
 		// Sort forms by active state.
 		$forms = array( 'active' => array(), 'inactive' => array(), );
 		foreach ( $all_forms as $form ) {

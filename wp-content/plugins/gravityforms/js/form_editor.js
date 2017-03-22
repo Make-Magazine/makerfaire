@@ -1211,8 +1211,7 @@ function UpdateAddressFields(){
     }
 
     //hide country drop down if this address type applies to a specific country
-    var countryInput = GetInput(field, field.id + ".6");
-    var hide_country = jQuery("#field_address_country_" + addressType).val() != "" || countryInput.isHidden;
+    var hide_country = jQuery("#field_address_country_" + addressType).val() != "";
 
     if(hide_country){
         jQuery('.field_selected #input_' + field.id + '_6_container').hide();

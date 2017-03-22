@@ -118,9 +118,9 @@ class GFEntryDetail {
 		if ( isset( self::$_entry ) ) {
 			return self::$_entry;
 		}
-		$form = self::get_current_form();
+		$form    = self::get_current_form();
 		$form_id = absint( $form['id'] );
-		$lead_id = rgpost( 'entry_id' ) ? absint( rgpost( 'entry_id' ) ): absint( rgget( 'lid' ) );
+		$lead_id = rgpost( 'entry_id' ) ? absint( rgpost( 'entry_id' ) ) : absint( rgget( 'lid' ) );
 
 		$filter = rgget( 'filter' );
 		$status = in_array( $filter, array( 'trash', 'spam' ) ) ? $filter : 'active';
@@ -183,7 +183,7 @@ class GFEntryDetail {
 		$paging = array( 'offset' => $position, 'page_size' => 1 );
 
 		if ( ! empty( $sort_field ) ) {
-			$sorting = array( 'key' => $_GET['orderby'], 'direction' => $sort_direction, 'is_numeric' => $is_numeric );
+			$sorting = array( 'key' => $sort_field, 'direction' => $sort_direction, 'is_numeric' => $is_numeric );
 		} else {
 			$sorting = array();
 		}
