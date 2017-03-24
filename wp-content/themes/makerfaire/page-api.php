@@ -47,7 +47,7 @@ $type = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_qu
  if ( empty( $key ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
 	echo '<h2>Invalid: No Key.</h2>';
-	
+
 	return;
 } elseif ( $key !== MF_API_KEY ) {
 	header( 'HTTP/1.0 403 Forbidden' );
@@ -64,7 +64,10 @@ $type = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_qu
 
 	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['type'] ) . '"</h2>';
 	return;
-} /*elseif ( empty( $faire ) ) {
+}else{
+  header('HTTP/1.1 200 OK');
+}
+  /*elseif ( empty( $faire ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
 
 	echo '<h2>Invalid: Faire</h2>';
