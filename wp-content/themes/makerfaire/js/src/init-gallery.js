@@ -44,7 +44,7 @@ function initCustomGallery() {
     stretchSlideToMask: true,
     pauseOnHover: true,
     maskAutoSize: true,
-    autoRotation: false,
+    autoRotation: true,
     switchTime: 3000,
     animSpeed: 500,
     onInit: function(self) {
@@ -89,7 +89,7 @@ function initThumbnailsGallery() {
     });
     holder.find('.slideset').carouFredSel({
       responsive: true,
-      auto: false,
+      auto: true,
       circular: true,
       infinite: true,
       direction: 'left',
