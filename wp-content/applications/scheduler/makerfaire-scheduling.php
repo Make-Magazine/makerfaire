@@ -33,7 +33,8 @@ require_once ("../../../wp-load.php");
  $current_user = wp_get_current_user();
 require_once '../lib/Kendo/Autoload.php';
 $faire_id = isset($_GET['faire_id']) ? $_GET['faire_id']  : 'BA16';
-
+$default_locations = isset($_GET['loc']) ? $_GET['loc']  : str_getcsv(get_default_locations($faire_id));
+$default_locations =  isset($default_locations) ? $default_locations : "414";
 ?>
 
 
@@ -45,7 +46,7 @@ $select = new \Kendo\UI\MultiSelect('locationfilters');
 // Set Defaults here in the value array, by stage id.
 $select->dataSource ( $locations_array )
 ->change('onChange')
-->value(array('414','418','419','415','416'))
+->value($default_locations)
 ->dataTextField ( 'text' )
 ->dataValueField ( 'value' )
 ->placeholder ( 'Filter location ...' );;
@@ -162,6 +163,26 @@ function onChange(e) {
 
 </body></html>
 <?php
+function get_default_locations($faire_id) {
+	$mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
+	if ($mysqli->connect_errno) {
+		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+	}
+	$default_locations = "";
+
+	$result = $mysqli->query ( "SELECT 	`wp_mf_faire`.`default_locations`
+			FROM wp_mf_faire
+			where faire='$faire_id'" ) or trigger_error ( $mysqli->error );
+
+	if ($result) {
+		while ( $row = $result->fetch_row () ) {
+			$default_locations = $row [0];	
+      
+		}
+	}
+	// Create Update button for sidebar entry management
+	return $default_locations;
+}
 function get_entry_locations($faire_id) {
 	$mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
 	if ($mysqli->connect_errno) {
@@ -256,8 +277,11 @@ function create_makerfaire_scheduler($faire_id) {
   $start_dt = '';
   if ($result) {
 		while ( $row = $result->fetch_row () ) {
-			$start_dt = $row [0];
-      echo "<h1>StartDate=$row</h1>";
+			 $start_dt = DateTime::createFromFormat('Y-m-d H:i:s', $row [0]); // your original DTO
+      $start_dt->add(new DateInterval('P7D'));
+   
+     $start_dt = $start_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
+    
 			
 		}
 	}
@@ -343,7 +367,7 @@ function create_makerfaire_scheduler($faire_id) {
 		timezone: "Europe/London", // Use the London timezone*/
 
 		->currentTimeMarker(false)
-		->date(new DateTime ( $start_dt, new DateTimeZone ( 'UTC' ) ) )->height ( 900 )->pdf ( $pdf )->addToolbarItem ( new \Kendo\UI\SchedulerToolbarItem ( 'pdf' ) )->addResource ( $subareasResource, $entriesResource )->group ( array (
+		->date(new DateTime ( $start_dt ) )->height ( 900 )->pdf ( $pdf )->addToolbarItem ( new \Kendo\UI\SchedulerToolbarItem ( 'pdf' ) )->addResource ( $subareasResource, $entriesResource )->group ( array (
 			'resources' => array (
 					'Stages'
 			)
@@ -352,8 +376,8 @@ function create_makerfaire_scheduler($faire_id) {
 			'majorTick' => 30,
 			'showWorkHours' => true,
 			'workWeekEnd' => 7,
-			'workDayStart' => new DateTime ( '2015/1/1 15:00', new DateTimeZone ( 'UTC' ) ),
-			'workDayEnd' => new DateTime ( '2015/1/2 00:00', new DateTimeZone ( 'UTC' ) )
+			'workDayStart' => new DateTime ( '2016/5/20 15:00', new DateTimeZone ( 'UTC' ) ),
+			'workDayEnd' => new DateTime ( '2016/5/22 00:00', new DateTimeZone ( 'UTC' ) )
 	), array (
 			'type' => 'workWeek',
 			'majorTick' => 30,
@@ -361,8 +385,8 @@ function create_makerfaire_scheduler($faire_id) {
 			'workWeekStart' => 5,
 			'workWeekEnd' => 7,
 			'showWorkHours' => true,
-			'workDayStart' => new DateTime ( '2015/1/1 15:00', new DateTimeZone ( 'UTC' ) ),
-			'workDayEnd' => new DateTime ( '2015/1/2 00:00', new DateTimeZone ( 'UTC' ) )
+			'workDayStart' => new DateTime ( '2016/5/20 15:00', new DateTimeZone ( 'UTC' ) ),
+			'workDayEnd' => new DateTime ( '2016/5/22 00:00', new DateTimeZone ( 'UTC' ) )
 	), 'agenda' )->dataSource ( $dataSource );
 
 	return $scheduler;
