@@ -70,7 +70,7 @@ function initThumbnailsGallery() {
     if (jQuery(window).width() < 768) {
       var thumbNumber = 4;
     } else if (jQuery(window).width() > 1199) {
-      var thumbNumber = 9;
+      var thumbNumber = 10;
     } else {
       var thumbNumber = 7;
     }
