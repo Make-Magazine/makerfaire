@@ -68,11 +68,11 @@ function initCustomGallery() {
 function initThumbnailsGallery() {
   jQuery('.gallery-holder div.carousel').each(function() {
     if (jQuery(window).width() < 768) {
-      var thumbNumber = 5;
+      var thumbNumber = 4;
     } else if (jQuery(window).width() > 1199) {
-      var thumbNumber = 12;
-    } else {
       var thumbNumber = 9;
+    } else {
+      var thumbNumber = 7;
     }
     var holder = jQuery(this),
       btnPrev = holder.find('.btn-prev'),
@@ -89,7 +89,7 @@ function initThumbnailsGallery() {
     });
     holder.find('.slideset').carouFredSel({
       responsive: true,
-      auto: true,
+      auto: false,
       circular: true,
       infinite: true,
       direction: 'left',
