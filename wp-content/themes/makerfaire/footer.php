@@ -413,36 +413,5 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(pa, s);
   })();
 </script>
-
-<script>
-//April fools day easter egg
-jQuery(document).ready(function() {
-  jQuery('body').click(function(event){
-    var px = event.pageX;
-    var py = event.pageY;
-    var child = jQuery('#makey-egg-holder').children().size();
-    var child_temp = child + 1;
-    var count = jQuery('#count').val();
-    var img_no = jQuery('#img_count').val();
-    if(img_no > 10)
-    {
-      img_no = 1;  
-    } 
-    jQuery('#img' + count).css({"top" : py, "left" : px}).fadeIn(1500);
-    jQuery('#makey-egg-holder').append('<img class="makey-easter-egg" width="30" id="img' + child_temp + '" src="/wp-content/themes/makerfaire/img/makey-pointer.png" />');
-    count++;
-    img_no++;
-    jQuery('#count').val(count);
-    jQuery('#img_count').val(img_no);
-  });   
-});
-</script>
-<style>
-.makey-easter-egg {
-  display: none;
-  position:absolute;
-  z-index: 9999;
-}
-</style>
 </body>
 </html>
