@@ -5,6 +5,31 @@
     .fa-lg {
       vertical-align: -8%;
     }
+    @media screen and (max-width: 767px) {
+      display: none;
+    }
+  }
+  .entry-page-mobie-flex {
+    @media screen and (max-width: 767px) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  .faireTitle {
+    float: left;
+    @media screen and (max-width: 767px) {
+      float: none;
+      order: -4;
+    }
+    .faireLabel {
+      color: #9B9B9B;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .faireName {
+      font-size: 20px;
+      color: #00AEEF;
+    }
   }
   #entry-schedule {
     border-top: 1px solid #2D7798;
@@ -12,7 +37,10 @@
     margin-top: 10px;
     padding-top: 10px;
     overflow: hidden;
-
+    @media screen and (max-width: 767px) {
+      border-top: none;
+      padding-top: 0;
+    }
     table {
       width: 100%;
       color: #4A4A4A;
@@ -24,21 +52,6 @@
       tr:last-child {
         border-bottom: none;
       }
-    }
-    .faireTitle {
-      float: left;
-      @media screen and (max-width: 767px) {
-        float: none;
-      }
-    }
-    .faireLabel {
-      color: #9B9B9B;
-      font-weight: bold;
-      font-size: 12px;
-    }
-    .faireName {
-      font-size: 20px;
-      color: #00AEEF;
     }
     .faireActions {
       margin-top: 10px;
@@ -154,23 +167,40 @@
   }
   .page-header {
     margin-top: 35px;
+    @media screen and (max-width: 767px) {
+      margin-top: 0;
+      margin-bottom: 0;
+      border-bottom: 0;
+      order: -2;
+    }
     h1 {
       @media screen and (max-width: 767px) {
         font-size: 8vw;
+        margin-top: 0;
       }
     }
     .makerEdit {
       padding-top: 27px;
     }
   }
+  #project_short {
+    @media screen and (max-width: 767px) {
+      order: -1;
+    }
+  }
   .mfEdit button, .mfEdit_area button, .mfEditUpload button {
     margin-top: 5px;
     margin-left: 5px;
   }
-  #proj_img img {
-    @media screen and (min-width: 768px) {
-      max-width: 750px;
-      max-height: 500px;
+  #proj_img {
+    @media screen and (max-width: 767px) {
+      order: -3;
+    }
+    img {
+      @media screen and (min-width: 768px) {
+        max-width: 750px;
+        max-height: 500px;
+      }
     }
   }
 }

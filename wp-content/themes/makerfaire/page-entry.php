@@ -207,7 +207,7 @@ if($makerEdit) {
 
 <div class="container entry-page">
   <div class="row">
-    <div class="content col-xs-12">
+    <div class="content col-xs-12 entry-page-mobie-flex">
         <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
         <?php
         if($makerEdit){?>
@@ -215,7 +215,8 @@ if($makerEdit) {
             <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
             <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>/">
               <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
-            </a><br/>
+            </a>
+            <br/>
             To modify your public information, click on the section you'd like to change below.
           </div>
         <?php
@@ -331,13 +332,13 @@ function display_entry_schedule($entry_id) {
 
   if($wpdb->num_rows > 0){
     ?>
-    <div id="entry-schedule">
-      <span class="faireTitle">
-        <a href="<?= $backlink ?>">
+    <span class="faireTitle">
+      <a href="<?= $backlink ?>">
         <span class="faireLabel">Live at</span><br/>
         <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
-        </a>
-      </span>
+      </a>
+    </span>
+    <div id="entry-schedule">
       <?php // TBD - dynamically set these links and images ?>
       <div class="faireActions">
 
