@@ -19,8 +19,11 @@
     }
   }
   .faireTitle {
+    margin-bottom: -60px;
+    display: block;
     @media screen and (max-width: 767px) {
       order: -4;
+      margin-bottom: 0;
     }
     .faireLabel {
       color: #9B9B9B;
@@ -29,11 +32,14 @@
     }
     .faireName {
       font-size: 20px;
+      line-height: 1em;
       color: #00AEEF;
+      @media screen and (max-width: 767px) {
+        padding-bottom: 5px;
+      }
     }
   }
   #entry-schedule {
-    border-top: 1px solid #2D7798;
     border-bottom: 1px solid #E7ECF0;
     margin-top: 10px;
     padding-top: 10px;
