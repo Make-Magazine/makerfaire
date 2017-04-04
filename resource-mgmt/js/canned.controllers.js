@@ -152,8 +152,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":"442","label":"Fee Management","choices":"all","type":"checkbox"},
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":""},
                 {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","exact":true},
-                {"id":"55","label":"What are your plans at Maker Faire?","choices":"all","type":"checkbox"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"}
+                {"id":"55", "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true}
               ],
               "location":true,
               "rmtData":{"resource":[],"attribute":[],"attention":[],
@@ -174,8 +174,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":"304.19","label":"Flags","choices":"NP Fee Waived","type":"checkbox"},
 
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":""},
-                {"id":45,"label":"Are you a:","choices":"Non-profit","type":"radio","exact":true},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"}
+                {"id":45,"label":"Are you a:","choices":"Non-profit or Cause or Mission based organization (Exhibit Fee applicable)","type":"radio","exact":true},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true}
               ],
               "rmtData":{"resource":[],"attribute":[],"attention":[],
               "meta":[{"id":"res_status","type":"meta","value":"Resource Status","checked":true}]},
@@ -312,10 +312,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"2","value":"TABLE","checked":true,"aggregated":false, "order":600},
-                  {"id":"3","value":"CHAIR","checked":true,"aggregated":false, "order":700},
-                  {"id":"9","value":"ELEC","checked":true, "order":800},
-                  {"id":"10","value":"ELEC 220V","checked":true, "order":900}
+                  {"id":"2","value":"TABLE","checked":true,"aggregated":false, "order":600,"comments":false},
+                  {"id":"3","value":"CHAIR","checked":true,"aggregated":false, "order":700,"comments":false},
+                  {"id":"9","value":"ELEC","checked":true, "order":800,"comments":false},
+                  {"id":"10","value":"ELEC 220V","checked":true, "order":900,"comments":false}
                 ],
                 "attribute":[
                   {"id":"2","value":"SIZE","checked":true, "order":500}
@@ -440,7 +440,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Exhibit"],
               "faire": faire,
         "selectedFields":[
-          {"id":320,"label":"Pick the category that best fits your project.","choices":"all","type":"select"},
+          {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
+          {"id":320,"label":"Primary Category","choices":"all","type":"select"},
           {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"}
         ],
         "rmtData":{

@@ -110,29 +110,34 @@ function cannedRpt(){
     $catCross[$category->term_id] = $category->name;
   }
 
+  $exactCriteria = array();
   //loop thru selected fields and build sql for entry details and array of requested fields
   foreach($selectedFields as $selFields){
-    //remove duplicates for query
-    if(!isset($fieldIDArr[$selFields->id])){
       //build wp_rg_lead_detail query
-      if($selFields->choices=='all'){
-        $fieldQuery[] = " field_number like '".$selFields->id."%' ";
-        $fieldIDArr[$selFields->id][] = $selFields;
-      } elseif($selFields->type=='name'){
+      if($selFields->type=='name'){
         //for name field
         foreach($selFields->inputs as $choice){
           $combineFields[$selFields->id][] = $choice->id;
 
           //set criteria for this field id
-          $fieldIDArr[$choice->id][] = $selFields;
+          $fieldIDArr[$choice->id] = $selFields;
         }
 
         //return all selected options
         $fieldQuery[] = " field_number like '".$selFields->id.".%' ";
-      }else{
+      } elseif($selFields->type=='radio' || $selFields->type == 'select' || $selFields->type == 'checkbox'){
+        if($selFields->choices == 'all'){
+          $fieldQuery[] = " field_number like '".$selFields->id.".%' ";
+          $fieldIDArr[$selFields->id] = $selFields; //search for all values
+        }else{
+          $fieldQuery[] = " field_number like '".$selFields->id."' ";
+          $fieldIDArr[$selFields->id][] = $selFields; //search for specific values
+        }
+
+      }else{ //text/textarea
         $fieldQuery[] = " field_number like '".$selFields->id."' ";
         //set criteria for this field id
-        $fieldIDArr[$selFields->id][] = $selFields;
+        $fieldIDArr[$selFields->id] = $selFields;
       }
 
       //add requested field to columns
@@ -144,15 +149,13 @@ function cannedRpt(){
         $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string',
                                                       'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
       }
-    }
 
-    //determine if they want only accepted records
-    if($selFields->id==303){
-      if($selFields->choices!='Accepted'){
-        $acceptedOnly = false;
-      }
+
+    if(isset($selFields->exact) && $selFields->exact){
+      $exactCriteria[$selFields->id] = $selFields->choices;
     }
   }
+
   $fieldSQL  = implode(" or ",$fieldQuery);
 
   //form type is not set on entries prior to BA16
@@ -171,14 +174,16 @@ function cannedRpt(){
           . (!empty($forms)     ? " AND wp_rg_lead.form_id in(".$forms.")" : '')
           . (!empty($formTypes) ? " AND entity.form_type   in(".$formTypes.",'')" : '');
 
-  //loop thru entries
   $entries = $wpdb->get_results($sql,ARRAY_A);
   $entryData = array();
 
+  //loop thru entries
   foreach($entries as $entry){
     $lead_id = $entry['lead_id'];
     $passCriteria = true;
     $fieldData = array();
+
+    //Are specific detail fields requested?
     if(!empty($fieldSQL)){
       //pull entry specifc detail based on requested fields
       $detailSQL = "SELECT detail.*, detail_long.value as 'long value'
@@ -213,28 +218,37 @@ function cannedRpt(){
           $fieldCritArr = (isset($fieldIDArr[$fieldID])?$fieldIDArr[$fieldID]:'');
         }
 
+        // radio and select options
         if(is_array($fieldCritArr)){
+          //default to failing criteria
+          $passCriteria = false;
+
+          //radio and select boxes must match one of the passed values
           foreach($fieldCritArr as $fieldCriteria){
-            //radio and select boxes must match one of the passed values
             if($fieldCriteria->type == 'radio' || $fieldCriteria->type=='select'){ //check value
-              if(isset($fieldCriteria->exact) && $fieldCriteria->exact==true){
-                //does this entry meet the field criteria?  no, exclude the record
-                if($fieldCriteria->choices != $value){
-                  $passCriteria = false;
-                }
-              }//end loop thru field
-
-              if($fieldID==303 && $acceptedOnly && $value!='Accepted')  $passCriteria = false;
-
-              if(!$passCriteria){
-                break; //exit the field detail loop
+              if($fieldCriteria->choices == $value){
+                $passCriteria = true;
               }
             }
           }
         }
+        if(!$passCriteria){
+          //exit detail loop
+          break;
+        }
         //build output for field data - format is field_55_4 for field id 55.4
         $fieldKey             = 'field_'.str_replace('.','_',$fieldID);
         $fieldData[$fieldKey] = (isset($fieldData[$fieldKey]) ? $fieldData[$fieldKey]."\r":'') . $value;
+      }
+
+      //exclude exact fields if they do not match
+      //  (doing this outside of the details loop as the requested field may not be set
+
+      foreach($exactCriteria as $exact=>$criteria){
+        $data2Test = (isset($fieldData['field_'.$exact])?$fieldData['field_'.$exact]:'');
+        if($data2Test != $criteria){
+          $passCriteria = false;
+        }
       }
 
       //combine name fileds
@@ -266,13 +280,10 @@ function cannedRpt(){
       }
 
       //translate form type into shortcodes
-      if($useFormSC){
+      //if($useFormSC){
         switch ($form_type) {
           case 'Show Management':
             $form_type = 'SHOW';
-            if($cmInd == 'Yes'){
-              $form_type = 'CM';
-            }
             break;
           case 'Exhibit':
             $form_type = 'MAK';
@@ -287,6 +298,10 @@ function cannedRpt(){
             $form_type = 'PERF';
             break;
         }
+      //}
+
+      if($cmInd == 'Yes'){
+        $form_type = 'CM';
       }
 
       //add data to array
@@ -355,231 +370,107 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
 
   //process resources
   if(isset($rmtData->resource) && !empty($rmtData->resource)){
-    //build array of requested RMT data
-    $resArr = array();
-    $pullAll = false;
-    $reqResArr = array();
-    foreach($rmtData->resource as $reqData){
-      if($reqData->id=='all') $pullAll = true;
-      $resArr[] = $reqData->id;
-      $reqResArr[$reqData->id] = $reqData;
-    }
+    foreach($rmtData->resource as $selRMT){
+      if($selRMT->id!='all'){
+        $sql = 'SELECT  qty,type,comment, token,resource_id '
+            . ' FROM   `wp_rmt_entry_resources`, wp_rmt_resources '
+            . ' where   resource_id = wp_rmt_resources.ID and'
+            . '         resource_category_id = '.$selRMT->id .' and'
+            . '         entry_id ='.$entryID;
+      }else{
+        $sql = 'SELECT  resource_id, qty, concat(type, " ", wp_rmt_resource_categories.category) as type, comment '
+            . ' FROM    `wp_rmt_entry_resources`, wp_rmt_resources, wp_rmt_resource_categories '
+            . ' WHERE   resource_id = wp_rmt_resources.ID and'
+            . '         resource_category_id = wp_rmt_resource_categories.ID and'
+            . '         entry_id ='.$entryID;
+      }
 
-    $resIDs = implode(", ", $resArr);
-
-    if(!$pullAll){
-      $sql = 'SELECT qty,type,comment, token, resource_category_id,resource_id '
-          . ' FROM `wp_rmt_entry_resources`, wp_rmt_resources '
-          . ' where resource_id = wp_rmt_resources.ID and'
-              . ' resource_category_id in('.$resIDs .') and'
-              . ' entry_id ='.$entryID;
-    }else{
-      $sql = 'SELECT qty, concat(type, " ", wp_rmt_resource_categories.category) as type, comment, resource_category_id,resource_id '
-        . '     FROM `wp_rmt_entry_resources`, wp_rmt_resources, wp_rmt_resource_categories '
-        . '    where resource_id = wp_rmt_resources.ID '
-        . '      and resource_category_id = wp_rmt_resource_categories.ID '
-        . '      and entry_id ='.$entryID;
-    }
-
-    //loop thru data
-    $resources = $wpdb->get_results($sql,ARRAY_A);
-    $entryRes = array();
-
-    foreach($resources as $resource){
-      $selRMT = $reqResArr[$resource['resource_category_id']];
-      $displayOrder = (isset($selRMT->order)?$selRMT->order+$resource['resource_id']:9999);
-      if(!empty($selRMT)){
-        if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
-          $aggrType='uiGridConstants.aggregationTypes.sum';
-          $colDefs2Sort['res_'.$resource['token'].'_comment']  = array('field'=> 'res_'.$resource['token'].'_comment','displayName'=>$resource['token'].' - comment','displayOrder' => $displayOrder+.2);
-          $colDefs2Sort['res_'.$resource['token']] =   array('field'=> 'res_'.$resource['token'],'displayName'=>$resource['token'],'aggregationType'=> $aggrType,'displayOrder' => $displayOrder+.1);
+      //loop thru data
+      $resources = $wpdb->get_results($sql,ARRAY_A);
+      $entryRes = array();
+      $displayOrder = $selRMT->order;
+      if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
+        $aggrType='uiGridConstants.aggregationTypes.sum';
+        foreach($resources as $resource){
+          $displayOrder = $displayOrder + $resource['resource_id'];
+          $colDefs2Sort['res_'.$resource['token']]             = array('field'=> 'res_'.$resource['token'],
+              'displayName'=>$resource['token'],
+              'aggregationType'=> $aggrType,
+              'displayOrder' => $displayOrder+.1);
           $return['data']['res_'.$resource['token']] = $resource['qty'];
-          $return['data']['res_'.$resource['token'].'_comment'] = $resource['comment'];
-        }else{
+
+          //resource comments
+          $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
+          if($dispComments){
+            $colDefs2Sort['res_'.$resource['token'].'_comment']  = array('field'=> 'res_'.$resource['token'].'_comment','displayName'=>$resource['token'].' - comment','displayOrder' => $displayOrder+.2);
+            $return['data']['res_'.$resource['token'].'_comment'] = $resource['comment'];
+          }
+        }
+      }else{
+        foreach($resources as $resource){
           $comment = ($incComments && $resource['comment']!=''?" (".$resource['comment'].")":'');
           $entryRes[] = $resource['qty'] .' : '.$resource['type'].$comment;
-          $return['colDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),'displayName'=>$selRMT->value,'displayOrder' => $displayOrder);
-          $return['data']['res_'.$selRMT->id] = implode(', ',$entryRes);
         }
+        $return['colDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),
+            'displayName'=>$selRMT->value,
+            'displayOrder' => $displayOrder);
+        $return['data']['res_'.$selRMT->id] = implode(', ',$entryRes);
       }
-    }
-    if($pullAll){
-      $return['colDefs']['res_all']= array('field'=> 'res_all',
-                                      'displayName'=>$reqResArr['all']->value,
-                                      'displayOrder' => (isset($reqResArr['all']->order)?$reqResArr['all']->order:9999));
-      $return['data']['res_all'] = implode(', ',$entryRes);
     }
   }
 
   //process attribute
   if(isset($rmtData->attribute) && !empty($rmtData->attribute)){
-    //build array of requested RMT data
-    $reqArr   = array();
-    $pullAll  = false;
-    $reqAttArr = array();
-
-    foreach($rmtData->attribute as $reqData){
-      if($reqData->id=='all') $pullAll = true;
-      $reqArr[] = $reqData->id;
-      $reqAttArr[$reqData->id] = $reqData;
-    }
-
-    $reqIDs = implode(", ", $reqArr);
-
-    if(!$pullAll){
-      $sql = 'select value, attribute_id '
-          . '   from wp_rmt_entry_attributes '
-          . '  where entry_id ='.$entryID
-          . '    and attribute_id in('.$reqIDs .')';
-    }else{
-      $sql = 'select concat(category," ",value) as value, attribute_id '
-          . '   from wp_rmt_entry_attributes,wp_rmt_entry_att_categories '
-          . '  where entry_id ='.$entryID
-          . '    and attribute_id= wp_rmt_entry_att_categories.ID';
-    }
-
-    //loop thru data
-    $attributes = $wpdb->get_results($sql,ARRAY_A);
-    $entryAtt = array();
-
-    foreach($attributes as $attribute){
-      $selRMT = $reqAttArr[$attribute['attribute_id']];
-      $value  = $attribute['value'];
-      //search and replace
-      if($useFormSC){
-        $value = strtolower($value);
-        /*        Space Size
-         * Contains       Replace entire value With
-         *  Tabletop         TABLE
-         *  mobile           Mobile
-         */
-        if (strpos($value, 'tabletop') !== false) {
-          $value = 'TABLE';
-        }
-        if (strpos($value, 'mobile') !== false) {
-          $value = 'Mobile';
-        }
-
-        /*    Find           Replace
-         * single quote       blank
-         * ' x '              blank
-         */
-        $value = str_replace("'",'',$value);
-        $value = str_replace(' x ','x',$value);
-
-        /*      Exposure
-         *   Find      Replace
-         *  Inside      In
-         *  Outside     Out
-         *  Either      i/o
-         *  ' under a'  blank
-         *  ' under'    blank
-         *  tents       tent
-         *  tent        Tent
-         *  large       Lg
-         *  ?           Out on grass
-         */
-        $value = str_replace('inside','In',$value);
-        $value = str_replace('outside','Out',$value);
-        $value = str_replace('either','i/o',$value);
-        $value = str_replace(' under a','',$value);
-        $value = str_replace(' under','',$value);
-        $value = str_replace('tents','tent',$value);
-        $value = str_replace('tent','Tent',$value);
-        $value = str_replace('dark','Dark',$value);
-        $value = str_replace('large','Lg',$value);
-        $value = str_replace('either','i/o',$value);
-        $value = str_replace('?','Out on grass',$value);
-
-        /*        Noise
-         *  Contains       Replace entire value With
-         *    Normal            blank
-         *    Amplified         AMP
-         *    Repetitive        REP
-         *    Loud!             LOUD!
-         */
-        if (strpos($value, 'normal') !== false) {
-          $value = '';
-        }
-        if (strpos($value, 'amplified') !== false) {
-          $value = 'AMP';
-        }
-        if (strpos($value, 'repetitive') !== false) {
-          $value = 'REP';
-        }
-        if (strpos($value, 'loud') !== false) {
-          $value = 'LOUD!';
-        }
-
-        /*        Internet
-         *   Contains       Replace entire value With
-         *    No internet            blank
-         *    Nice to have           Nice
-         *    must have              MUST
-         */
-        if (strpos($value, 'no internet') !== false) {
-          $value = '';
-        }
-        if (strpos($value, 'nice to have') !== false) {
-          $value = 'Nice';
-        }
-        if (strpos($value, 'must have') !== false) {
-          $value = 'MUST';
-        }
+    foreach($rmtData->attribute as $selRMT){
+      if($selRMT->id!='all'){
+        $sql = 'select value from wp_rmt_entry_attributes where entry_id ='.$entryID.' and attribute_id='.$selRMT->id;
+      }else{
+        $sql = 'select concat(category," ",value) as value from wp_rmt_entry_attributes,wp_rmt_entry_att_categories where '
+                . ' entry_id ='.$entryID
+                . ' and attribute_id= wp_rmt_entry_att_categories.ID';
       }
-      if(!empty($selRMT)){
-        $return['colDefs']['att_'.$selRMT->id]=   array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
-                                                        'displayName'=>$selRMT->value,
-                                                        'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
-        $return['data']['att_'.$selRMT->id] = $value;
+
+      //loop thru data
+      $attributes = $wpdb->get_results($sql,ARRAY_A);
+      $entryAtt = array();
+
+      foreach($attributes as $attribute){
+        //search and replace
+        if($useFormSC){
+          $value = formSC($attribute['value']);
+        }else{
+          $value = $attribute['value'];
+        }
         $entryAtt[] = $value;
       }
-    }
-
-    if($pullAll){
-      $return['colDefs']['att_all']=   array('field'=> 'att_all',
-                                              'displayName' => $reqAttArr['all']->value,
-                                              'displayOrder' => (isset($reqAttArr['all']->order)?$reqAttArr['all']->order:9999));
-      $return['data']['att_all'] = implode(', ',$entryAtt);
+      $return['columnDefs']['att_'.$selRMT->id] = array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
+                                                        'displayName'=>$selRMT->value,
+                                                        'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
+      $return['data']['att_'.$selRMT->id] = implode(', ',$entryAtt);
     }
   }
 
   //process attention
   if(isset($rmtData->attention) && !empty($rmtData->attention)){
-    //build array of requested RMT data
-    $reqArr    = array();
-    $pullAll    = false;
-    $reqAttnArr = array();
+    foreach($rmtData->attention as $selRMT){
+      if($selRMT->id!='all'){
+        $sql = 'select comment from wp_rmt_entry_attn where entry_id ='.$entryID.' and attn_id='.$selRMT->id;
+      }else{
+        $sql = 'select concat(wp_rmt_attn.value," ",comment) as comment from wp_rmt_entry_attn,wp_rmt_attn where '
+                . ' entry_id ='.$entryID
+                . ' and attn_id= wp_rmt_attn.ID';
+      }
+      //loop thru data
+      $attentions = $wpdb->get_results($sql,ARRAY_A);
+      $entryAttn = array();
 
-    foreach($rmtData->attention as $reqData){
-      if($reqData->id=='all') $pullAll = true;
-      $reqArr[] = $reqData->id;
-      $reqAttnArr[$reqData->id] = $reqData;
-    }
-
-    $reqIDs = implode(", ", $reqArr);
-
-    if(!$pullAll){
-      $sql = 'select comment,attn_id '
-          .  '  from wp_rmt_entry_attn '
-          .  ' where entry_id ='.$entryID.' '
-          .  '   and attn_id in('.$reqIDs.')';
-    }else{
-      $sql = 'select concat(wp_rmt_attn.value," ",comment) as comment,attn_id '
-          .  '  from wp_rmt_entry_attn,wp_rmt_attn '
-          .  ' where entry_id ='.$entryID
-          .  '   and attn_id= wp_rmt_attn.ID';
-    }
-    //loop thru data
-    $attentions = $wpdb->get_results($sql,ARRAY_A);
-    $entryAttn = array();
-
-    foreach($attentions as $attention){
-      $selRMT     = $reqAttnArr[$attention['attn_id']];
-      $return['colDefs']['attn_'.$selRMT->id] = array('field'=> 'attn_'.str_replace('.','_',$selRMT->id),
+      foreach($attentions as $attention){
+        $entryAttn[] = $attention['comment'];
+      }
+      $return['columnDefs']['attn_'.$selRMT->id] = array('field'=> 'attn_'.str_replace('.','_',$selRMT->id),
                                                       'displayName'=>$selRMT->value,
                                                       'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
-      $return['data']['attn_'.$selRMT->id] = $attention['comment'];
+      $return['data']['attn_'.$selRMT->id]  = implode(', ',$entryAttn);
     }
   }
 
@@ -1534,8 +1425,11 @@ function pullEntityTasks($formSelect) {
   $data = array();
   $data['data'] = array();
   $data['columnDefs'] = array();
+  $project_link = "/wp-admin/admin.php?page=gf_entries&view=entry&id=111&lid=59591&order=ASC&filter&paged=1&pos=0&field_id&operator";
   //pull data
-  $sql = "SELECT    tasks.lead_id, tasks.created, tasks.completed, tasks.description, tasks.required, meta.meta_value
+  $sql = "SELECT    tasks.lead_id, tasks.created, tasks.completed, tasks.description, tasks.required, meta.meta_value,
+    (select value from wp_rg_lead_detail where field_number = 151 and lead_id = tasks.lead_id) as project_name,
+    (select form_id from wp_rg_lead where id = tasks.lead_id) as form_id
           FROM      wp_mf_entity_tasks AS tasks
           LEFT JOIN wp_rg_lead_meta AS meta
                  ON meta.`form_id` = $formSelect
@@ -1543,7 +1437,9 @@ function pullEntityTasks($formSelect) {
                 AND tasks.lead_id = meta.meta_value
           WHERE     tasks.`form_id` = $formSelect
           UNION ALL
-          SELECT    NULL, NULL, NULL, NULL, NULL, meta_value
+          SELECT    NULL, NULL, NULL, NULL, NULL, meta_value,
+          (select value from wp_rg_lead_detail where field_number = 151 and lead_id = meta_value) as project_name,
+          (select form_id from wp_rg_lead where id = meta_value) as form_id
           FROM      wp_rg_lead_meta
           WHERE     meta_value NOT IN
                     (SELECT  lead_id FROM    wp_mf_entity_tasks)
@@ -1551,8 +1447,12 @@ function pullEntityTasks($formSelect) {
                 AND meta_key = 'entry_id'";
 
   $result = $wpdb->get_results($sql);
+
   $data['columnDefs'] = array(
-      array("name"=>"lead_id","displayName"=>"Entry","width"=>"100"),
+      array("name"=>"lead_id","displayName"=>"Entry","width"=>"65",
+          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+          ),
+      array("name"=>"project_name","displayName"=>"Project Name","width"=>"300"),
       array("name"=>"created","width"=>"150"),
       array("name"=>"completed","width"=>"150"),
       array("name"=>"description","width"=>"150"),
@@ -1570,6 +1470,7 @@ function pullEntityTasks($formSelect) {
       $lead_id = $row->lead_id;
     }
     $data['data'][] = array('lead_id'     => $lead_id,
+                            'project_name' => $row->project_name,
                             'created'     => $row->created,
                             'completed'   => $row->completed,
                             'description' => $row->description,
@@ -1579,4 +1480,87 @@ function pullEntityTasks($formSelect) {
   }
   echo json_encode($data);
   exit;
+}
+
+function formSC($value) {
+  $value = strtolower($value);
+  /*        Space Size
+   * Contains       Replace entire value With
+   *  Tabletop         TABLE
+   *  mobile           Mobile
+   */
+  if (strpos($value, 'tabletop') !== false) {
+    $value = 'TABLE';
+  }
+  if (strpos($value, 'mobile') !== false) {
+    $value = 'Mobile';
+  }
+
+  /*    Find           Replace
+   * single quote       blank
+   * ' x '              blank
+   */
+  $value = str_replace("'",'',$value);
+  $value = str_replace(' x ','x',$value);
+
+  /*      Exposure
+   *   Find      Replace
+   *  Inside      In
+   *  Outside     Out
+   *  Either      i/o
+   *  ' under a'  blank
+   *  ' under'    blank
+   *  tents       tent
+   *  tent        Tent
+   *  large       Lg
+   *  ?           Out on grass
+   */
+  $value = str_replace('inside','In',$value);
+  $value = str_replace('outside','Out',$value);
+  $value = str_replace('either','i/o',$value);
+  $value = str_replace(' under a','',$value);
+  $value = str_replace(' under','',$value);
+  $value = str_replace('tents','tent',$value);
+  $value = str_replace('tent','Tent',$value);
+  $value = str_replace('dark','Dark',$value);
+  $value = str_replace('large','Lg',$value);
+  $value = str_replace('either','i/o',$value);
+  $value = str_replace('?','Out on grass',$value);
+
+  /*        Noise
+   *  Contains       Replace entire value With
+   *    Normal            blank
+   *    Amplified         AMP
+   *    Repetitive        REP
+   *    Loud!             LOUD!
+   */
+  if (strpos($value, 'normal') !== false) {
+    $value = '';
+  }
+  if (strpos($value, 'amplified') !== false) {
+    $value = 'AMP';
+  }
+  if (strpos($value, 'repetitive') !== false) {
+    $value = 'REP';
+  }
+  if (strpos($value, 'loud') !== false) {
+    $value = 'LOUD!';
+  }
+
+  /*        Internet
+   *   Contains       Replace entire value With
+   *    No internet            blank
+   *    Nice to have           Nice
+   *    must have              MUST
+   */
+  if (strpos($value, 'no internet') !== false) {
+    $value = '';
+  }
+  if (strpos($value, 'nice to have') !== false) {
+    $value = 'Nice';
+  }
+  if (strpos($value, 'must have') !== false) {
+    $value = 'MUST';
+  }
+  return $value;
 }
