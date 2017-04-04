@@ -332,9 +332,10 @@ function display_entry_schedule($entry_id) {
 
   if($wpdb->num_rows > 0){
     ?>
-    <span class="faireTitle">
+    <span class="faireTitle">      
+      <span class="faireLabel">Live at</span>
+      <br/>
       <a href="<?= $backlink ?>">
-        <span class="faireLabel">Live at</span><br/>
         <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
       </a>
     </span>
