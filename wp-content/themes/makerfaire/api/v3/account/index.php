@@ -43,13 +43,15 @@ if ( $type == 'account' ) {
            `wp_mf_maker`.country,
            `wp_mf_maker`.zipcode,
            `wp_mf_maker`.role,
-            wp_mf_entity.category
+            wp_mf_entity.category,
+            wp_mf_entity.form_type
       FROM `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity, wp_mf_faire,wp_rg_lead
       WHERE wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id
       AND   wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id
       AND   wp_mf_entity.status = 'Accepted'
       AND   wp_mf_maker_to_entity.maker_type != 'contact'
       AND   LOWER(wp_mf_faire.faire) = '".$faire."'
+      AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
       AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0
       AND   wp_rg_lead.id = `wp_mf_maker_to_entity`.`entity_id`
       AND   wp_rg_lead.status = 'active'
@@ -72,7 +74,6 @@ if ( $type == 'account' ) {
   $count=0;
 	// Loop through the posts
 	while ( $row = $result->fetch_array(MYSQLI_ASSOC)  ) {
-    $count++;
 		//Check for null makers
 		if (!isset($row['lead_id'])) continue;
 
@@ -97,17 +98,22 @@ if ( $type == 'account' ) {
 
     //logic specific for makershare
     if($dest=='makershare'){
-      //don't return makers under 13 or group makers
-      if($row['age_range'] != '0-6' && $row['age_range'] != '7-12' && $row['role'] != 'group'){
-        $maker['role']     = $row['role'];
-        $maker['location'] = array( 'city'    => $row['city'],
-                                    'state'   => $row['state'],
-                                    'zipcode' => $row['zipcode'],
-                                    'country' => $row['country']);
-        array_push( $makers, $maker );
+      //only return exhibit, presentation and performance
+      if($row['form_type'] == 'Exhibit' || $row['form_type'] == 'Presentation' || $row['form_type'] == 'Performance') {
+        //don't return makers under 13 or group makers
+        if($row['age_range'] != '0-6' && $row['age_range'] != '7-12' && $row['role'] != 'group'){
+          $maker['role']     = $row['role'];
+          $maker['location'] = array( 'city'    => $row['city'],
+                                      'state'   => $row['state'],
+                                      'zipcode' => $row['zipcode'],
+                                      'country' => $row['country']);
+          $count++;
+          array_push( $makers, $maker );
+        }
       }
     } else {
       // Put the maker into our list of makers
+      $count++;
       array_push( $makers, $maker );
     }
 

@@ -44,7 +44,7 @@ function initCustomGallery() {
     stretchSlideToMask: true,
     pauseOnHover: true,
     maskAutoSize: true,
-    autoRotation: false,
+    autoRotation: true,
     switchTime: 3000,
     animSpeed: 500,
     onInit: function(self) {
@@ -68,11 +68,11 @@ function initCustomGallery() {
 function initThumbnailsGallery() {
   jQuery('.gallery-holder div.carousel').each(function() {
     if (jQuery(window).width() < 768) {
-      var thumbNumber = 5;
+      var thumbNumber = 4;
     } else if (jQuery(window).width() > 1199) {
-      var thumbNumber = 12;
+      var thumbNumber = 10;
     } else {
-      var thumbNumber = 9;
+      var thumbNumber = 7;
     }
     var holder = jQuery(this),
       btnPrev = holder.find('.btn-prev'),
