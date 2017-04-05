@@ -2,6 +2,7 @@
 /*
 ajax to populate resource management table
 */
+
 require_once 'config.php';
 require_once 'table.fields.defs.php';
 
