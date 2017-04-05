@@ -548,6 +548,8 @@ function set_entry_schedule($lead,$form){
   $entry_id              = $lead['id'];
 	$entry_schedule_start  = (isset($_POST['datetimepickerstart'])   ? $_POST['datetimepickerstart']   : '');
 	$entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
+  $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
+  $sched_type            = (isset($_POST['sched_type'])            ? $_POST['sched_type']            : '');
 
   //location fields
   $entry_location_subarea_change = (isset($_POST['entry_location_subarea_change']) ? $_POST['entry_location_subarea_change'] : '');
@@ -565,8 +567,8 @@ function set_entry_schedule($lead,$form){
     if ($mysqli->connect_errno) {
       error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
     }
-    $insert_query = sprintf("INSERT INTO `wp_mf_schedule` (`entry_id`, location_id, `faire`, `start_dt`, `end_dt`)
-      SELECT $entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end'
+    $insert_query = sprintf("INSERT INTO `wp_mf_schedule` (`entry_id`, location_id, `faire`, `start_dt`, `end_dt`, type)
+      SELECT $entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end', '$sched_type'
         from wp_mf_faire where find_in_set($form_id,form_ids) > 0");
 
     //MySqli Insert Query

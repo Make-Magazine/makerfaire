@@ -434,14 +434,25 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
 
     // Load Fields to show on entry info
     $output .= '<br/>';
-    $output .= 'Optional Schedule Start/End
-                 <div class="clear"></div>' .
-                '<div style="padding:10px 0;width:40px;float:left">Start: </div>' .
-                '<div style="float:left"><input type="text" value="" name="datetimepickerstart" id="datetimepickerstart"></div>' .
-                '<div class="clear" style="padding:10px 0;width:40px;float:left">End:</div>
-                 <div style="float:left"><input type="text" value="" name="datetimepickerend" id="datetimepickerend"></div>
-                 <div class="clear"></div>';
-
+    $output .= '<input type="checkbox" id="dispSchedSect" value="yes" />  Add Date/Time & Type (optional)
+                <!-- Only show when #dispSchedSect is selected-->
+                <div id="schedSect" style="display:none">
+                  <label for="schedAdd">Start/End:</label>
+                  <div class="clear"></div>
+                  <div style="padding:10px 0;width:40px;float:left">Start: </div>
+                  <div style="float:left"><input type="text" value="" name="datetimepickerstart" id="datetimepickerstart"></div>
+                  <div class="clear" style="padding:10px 0;width:40px;float:left">End:</div>
+                  <div style="float:left"><input type="text" value="" name="datetimepickerend" id="datetimepickerend"></div>
+                  <div class="clear"></div>
+                  <label for="typeSel">Type: </label>
+                  <select id="typeSel">
+                    <option value="">Please Select</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="talk">Talk</option>
+                    <option value="performance">Performance</option>
+                    <option value="demo">Demo</option>
+                  </select>
+                </div>';
     // Create Update button for sidebar entry management
     $output .=  '<input type="button" name="update_entry_schedule" value="Add Location" class="button" style="width:auto;padding-bottom:2px; margin: 10px 0;" onclick="updateMgmt(\'update_entry_schedule\');"/><br />
                  <span class="updMsg update_entry_scheduleMsg"></span>';
@@ -452,7 +463,9 @@ function display_schedule($form_id,$lead,$section='sidebar'){
   global $wpdb;
   //first, let's display any schedules already entered for this entry
   $entry_id = $lead['id'];
-  $sql = "select `wp_mf_schedule`.`ID` as schedule_id, `wp_mf_schedule`.`entry_id`, location.ID as location_id, location.location,area.area, subarea.subarea,
+  $sql = "select `wp_mf_schedule`.`ID` as schedule_id, `wp_mf_schedule`.`entry_id`,  `wp_mf_schedule`.type,
+                  location.ID as location_id, location.location,
+                  area.area, subarea.subarea,
                   `wp_mf_faire`.`faire`, `wp_mf_schedule`.`start_dt`, `wp_mf_schedule`.`end_dt`, `wp_mf_schedule`.`day`, wp_mf_faire.time_zone,
                   subarea.ID as subarea_id
 
@@ -475,20 +488,22 @@ function display_schedule($form_id,$lead,$section='sidebar'){
     $end_dt   = ($row['end_dt']   != NULL ? strtotime($row['end_dt'])    : '');
     $schedule_id = ($row['schedule_id'] != NULL ? (int) $row['schedule_id'] : '');
     $date     = ($start_dt != '' ? date("n/j/y",$start_dt) : '');
-    $timeZone = $row['time_zone'];
+    $timeZone   = $row['time_zone'];
     $subarea_id = $row['subarea_id'];
+    $type       = $row['type'];
 
     //build array
     $schedules[$subarea_id]['location'] = $row['location_id'];
     $schedules[$subarea_id]['stage']    = $stage;
+
     if($date!=''){
-      $schedules[$subarea_id]['schedule'][$date][$schedule_id] = array('start_dt' => $start_dt, 'end_dt' => $end_dt, 'timeZone'=>$timeZone);
+      $schedules[$subarea_id]['schedule'][$date][$schedule_id] = array('start_dt' => $start_dt, 'end_dt' => $end_dt, 'timeZone'=>$timeZone, 'type'=>$type);
     }
   }
 
   //make sure there is data to display
   if($wpdb->num_rows !=0){
-    $output = '';
+    $output = '<div id="locationList">';
     //let's loop thru the schedule array now
     foreach($schedules as $data){
       $location_id = $data['location'];
@@ -499,8 +514,8 @@ function display_schedule($form_id,$lead,$section='sidebar'){
       if(is_array($scheduleArr)){
         foreach($scheduleArr as $date=>$schedule){
           if($date!=''){
-            $output .= '<div>'.date('l n/j/y',strtotime($date)).'<br/>';
-            $output .= '<div>';
+            $output .= '<div><span class="schedDate">'.date('l n/j/y',strtotime($date)).'</span>';
+            $output .= '<div class="schedOuter">';
             foreach($schedule as $schedule_id=>$schedData){
               $start_dt   = $schedData['start_dt'];
               $end_dt     = $schedData['end_dt'];
@@ -513,8 +528,10 @@ function display_schedule($form_id,$lead,$section='sidebar'){
               if($section!='summary'){
                 $output .= '<input type="checkbox" value="'.$schedule_id.'" name="delete_schedule_id[]"></input>';
               }
-
-              $output .= '<span class="schedDate">'.date("g:i A",$start_dt).' - '.date("g:i A",$end_dt).' ('.$timeZone.')</span><div class="clear"></div>';
+              $output .= '<div class="schedInfo">';
+              $output .= '  <span>'.date("g:i A",$start_dt).' - '.date("g:i A",$end_dt).' ('.$timeZone.')</span>';
+              $output .= '  <div class="innerInfo">Type: '.$schedData['type'].'</div>';
+              $output .= '</div>';
             }
             $output .= '</div></div>';
           }
@@ -522,7 +539,8 @@ function display_schedule($form_id,$lead,$section='sidebar'){
       }else{ //if there is no schedule data
         //location only display checkbox to delete
         if($section!='summary'){
-          $output .= '<input type="checkbox" value="'.$location_id.'" name="delete_location_id[]" /> <span class="schedDate">Remove Location</span>';
+          $output .= '<input type="checkbox" value="'.$location_id.'" name="delete_location_id[]" /> '
+                  .  '<span class="schedDate">Remove Location</span>';
         }
         $output .= '<div class="clear"></div>';
       }
@@ -531,12 +549,13 @@ function display_schedule($form_id,$lead,$section='sidebar'){
 
     if($section!='summary'){
       $entry_delete_button = '<input type="button" name="delete_entry_schedule[]" value="Delete Selected" class="button"
-                       style="width:auto;padding-bottom:2px;"
-                      onclick="updateMgmt(\'delete_entry_schedule\');"/><br />';
+                                    style="width:auto;padding-bottom:2px;"
+                                   onclick="updateMgmt(\'delete_entry_schedule\');"/><br />';
       $updMsg  = '<span class="updMsg delete_entry_scheduleMsg"></span>';
       $output .= $entry_delete_button.$updMsg;
     }
     $output .= '<br/>';
+    $output .= '</div>';
     return $output;
   }
 }
