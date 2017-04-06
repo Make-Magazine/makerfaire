@@ -148,13 +148,15 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Exhibit"],
               "faire": faire,
               "payments":true,
+              "paymentOrder": 100,
+              "entryIDorder": 200,
               "selectedFields":[
-                {"id":"442","label":"Fee Management","choices":"all","type":"checkbox"},
-                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":""},
-                {"id":376,"label":"CM Ind","choices":"Yes","type":"radio"},
-                {"id":434,"label":"Fee Ind","choices":"Yes","type":"radio","exact":true},
-                {"id":"55", "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true}
+                {"id":"442","label":"Fee Management","choices":"all","type":"checkbox", "order":400},
+                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
+                {"id":376,"label":"CM Ind","choices":"Yes","type":"radio", "order":500},
+                {"id":434,"label":"Fee Ind","choices":"Yes","type":"radio","exact":true, "order":600},
+                {"id":"55", "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox", "order":700},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
               ],
               "location":true,
               "rmtData":{"resource":[],"attribute":[],"attention":[],
@@ -176,7 +178,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
 
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":""},
                 {"id":45,"label":"Are you a:","choices":"Non-profit or Cause or Mission based organization (Exhibit Fee applicable)","type":"radio","exact":true},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true}
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true}
               ],
               "rmtData":{"resource":[],"attribute":[],"attention":[],
               "meta":[{"id":"res_status","type":"meta","value":"Resource Status","checked":true}]},
