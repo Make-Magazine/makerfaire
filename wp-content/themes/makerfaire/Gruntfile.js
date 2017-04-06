@@ -66,15 +66,15 @@ module.exports = function(grunt) {
           ],
           'js/built-angular-libs.js': [
             'node_modules/angular/angular.js',
+            'node_modules/angular-route/angular-route.js',
             'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
-            'node_modules/angular-route/angular-route.min.js',
             'node_modules/angular-utils-pagination/dirPagination.js',
-            'node_modules/angular-animate/angular-animate.min.js'
+            'node_modules/angular-animate/angular-animate.js'
           ],
           'js/built-angular-reporting.js': [
-            'node_modules/angular-sanitize/angular-sanitize.min.js',
+            'node_modules/angular-sanitize/angular-sanitize.js',
             'node_modules/angular-ui-grid/ui-grid.min.js',
-            'node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js'
+            //'node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js'
           ],
           'js/built-admin-scripts.js': [
             'js/src-admin-scripts/*.js'

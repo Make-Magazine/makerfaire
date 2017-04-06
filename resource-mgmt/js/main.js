@@ -2,8 +2,9 @@ var resourceApp = angular.module('resourceApp', ['ngRoute', 'rmgControllers', 'n
                                                  'ui.grid', 'ui.grid.edit', 'ui.grid.rowEdit','ui.grid.cellNav','ui.grid.exporter',
                                                  'ui.grid.selection', 'ui.grid.grouping', 'ui.grid.autoResize']);
 
-resourceApp.config(['$routeProvider',
-  function($routeProvider) {
+resourceApp.config(['$locationProvider', '$routeProvider',
+  function config($locationProvider, $routeProvider) {
+    $locationProvider.hashPrefix('');
     $routeProvider.
       when('/canned', {
         templateUrl: 'partials/canned.html',
@@ -48,7 +49,8 @@ resourceApp.config(['$routeProvider',
       otherwise({
         templateUrl: "partials/empty.html"
       });
-  }]);
+  }
+]);
 
 jQuery('.tree-toggle').click(function () {
 	jQuery(this).parent().children('ul.tree').toggle(200);
