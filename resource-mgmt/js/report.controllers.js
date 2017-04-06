@@ -17,7 +17,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   }
 
   //set up gridOptions for reports
-  $scope.gridOptions = {enableFiltering: true,
+  $scope.gridOptions = {
+    enableFiltering: true,
     enableSorting: true,
     enableGridMenu: true,
     rowHeight: 100,
@@ -69,6 +70,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     $scope.reports.showGrid  = true;
     var url = '/resource-mgmt/ajax/reports.ajax.php';
     var selTerm = '';
+    $scope.gridOptions.columnDefs = [];
     //get grid data
     $http({
       method: 'post',
@@ -99,7 +101,6 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       });
 
       //populate column defs and data
-      $scope.gridOptions.columnDefs = [];
       $scope.gridOptions.columnDefs = response.data.columnDefs;
       $scope.gridOptions.data       = response.data.data;
 
