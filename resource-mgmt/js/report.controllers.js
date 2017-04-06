@@ -99,6 +99,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       });
 
       //populate column defs and data
+      $scope.columnDefs = [];
       $scope.gridOptions.columnDefs = response.data.columnDefs;
       $scope.gridOptions.data       = response.data.data;
 
