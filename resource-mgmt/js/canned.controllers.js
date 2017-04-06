@@ -151,7 +151,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":"442","label":"Fee Management","choices":"all","type":"checkbox"},
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":""},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","exact":true},
+                {"id":376,"label":"CM Ind","choices":"Yes","type":"radio"},
+                {"id":434,"label":"Fee Ind","choices":"Yes","type":"radio","exact":true},
                 {"id":"55", "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true}
               ],
@@ -160,7 +161,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "meta":[{"id":"res_status","type":"meta","value":"Resource Status","checked":true}]},
               "type":"customRpt"
             };
-      var subTitle = 'CM Payment(s)';
+      var subTitle = 'Payment(s)';
       $scope.reports.callAJAX(vars);
     }else
     if(subRoute=='nonprofit_pymt'){
