@@ -1459,7 +1459,9 @@ function pullEntityTasks($formSelect) {
       array("name"=>"description","width"=>"150"),
       array("name"=>"required","displayName"=>"Required","width"=>"100"),
       array("name"=>"not_assigned","displayName"=>"Not Assigned"),
-      array("name"=>"other_entry","displayName"=>"Other Entry ID")
+      array("name"=>"other_entry","displayName"=>"Other Entry ID",
+          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+          ),
   );
 
   //create array of table data
