@@ -1429,16 +1429,18 @@ function pullEntityTasks($formSelect) {
   $project_link = "/wp-admin/admin.php?page=gf_entries&view=entry&id=111&lid=59591&order=ASC&filter&paged=1&pos=0&field_id&operator";
   //pull data
   $sql = "SELECT    tasks.lead_id, tasks.created, tasks.completed, tasks.description, tasks.required, meta.meta_value,meta.lead_id as other_entry,
+    wp_rg_lead.form_id,
     (select value from wp_rg_lead_detail where field_number = 151 and lead_id = tasks.lead_id) as project_name,
     (select form_id from wp_rg_lead where id = tasks.lead_id) as form_id
           FROM      wp_mf_entity_tasks AS tasks
+          join      wp_rg_lead on tasks.lead_id= wp_rg_lead.id
           LEFT JOIN wp_rg_lead_meta AS meta
                  ON meta.`form_id` = $formSelect
                 AND meta.meta_key = 'entry_id'
                 AND tasks.lead_id = meta.meta_value
           WHERE     tasks.`form_id` = $formSelect
           UNION ALL
-          SELECT    NULL, NULL, NULL, NULL, NULL, meta_value,lead_id as other_entry,
+          SELECT    NULL, NULL, NULL, NULL, NULL, meta_value,lead_id as other_entry, form_id,
           (select value from wp_rg_lead_detail where field_number = 151 and lead_id = meta_value) as project_name,
           (select form_id from wp_rg_lead where id = meta_value) as form_id
           FROM      wp_rg_lead_meta
@@ -1451,8 +1453,9 @@ function pullEntityTasks($formSelect) {
 
   $data['columnDefs'] = array(
       array("name"=>"lead_id","displayName"=>"Entry","width"=>"65",
-          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.formid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
           ),
+      array("name"=>"formid","displayName"=>"Form ID","width"=>"300",visible=> false),
       array("name"=>"project_name","displayName"=>"Project Name","width"=>"300"),
       array("name"=>"created","width"=>"150"),
       array("name"=>"completed","width"=>"150"),
@@ -1460,7 +1463,7 @@ function pullEntityTasks($formSelect) {
       array("name"=>"required","displayName"=>"Required","width"=>"100"),
       array("name"=>"not_assigned","displayName"=>"Not Assigned"),
       array("name"=>"other_entry","displayName"=>"Other Entry ID",
-          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$formSelect.'&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
           ),
   );
 
@@ -1474,6 +1477,7 @@ function pullEntityTasks($formSelect) {
       $lead_id = $row->lead_id;
     }
     $data['data'][] = array('lead_id'     => $lead_id,
+                            'formid'      => $row->form_id,
                             'project_name' => $row->project_name,
                             'created'     => $row->created,
                             'completed'   => $row->completed,
