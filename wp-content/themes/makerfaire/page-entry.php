@@ -156,7 +156,7 @@ if (!empty($project_website)) {
   if($makerEdit){
     $website =  'Website: <div id="website" class="mfEdit">'. $project_website.'</div>';
   }else{
-    $website =  '<a href="' . $project_website . '" class="btn btn-info" target="_blank">Project Website</a>';
+    $website =  '<a href="' . $project_website . '" class="btn btn-cyan" target="_blank">Project Website</a>';
   }
 }
 
@@ -370,34 +370,30 @@ function display_entry_schedule($entry_id) {
           <h4>Download the program guide</h4>
         </a>
         <?php } ?>
-
       </div>
-      <div class="clear"></div>
 
-      <table>
-      <?php
-      foreach($results as $row){
-        echo '<tr>';
-        if(!is_null($row->start_dt)){
-          $start_dt   = strtotime( $row->start_dt);
-          $end_dt     = strtotime($row->end_dt);
-          echo '<td><b>'.date("l, F j",$start_dt).'</b></td>'
-            . ' <td>'. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</td>';
-        }else{
-          global $faire_start; global $faire_end;
+      <div class="entry-date-time">
+        <?php
+        foreach($results as $row){
+          if(!is_null($row->start_dt)){
+            $start_dt   = strtotime( $row->start_dt);
+            $end_dt     = strtotime($row->end_dt);
+            echo '<h5>'.date("l, F j",$start_dt).'</h5>'
+              . ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
+          }else{
+            global $faire_start; global $faire_end;
 
-          $faire_start = strtotime($faire_start);
-          $faire_end   = strtotime($faire_end);
+            $faire_start = strtotime($faire_start);
+            $faire_end   = strtotime($faire_end);
 
-          //tbd change this to be dynamically populated
-          echo '<td>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</td>';
+            //tbd change this to be dynamically populated
+            echo '<h5>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+          }
+          echo '<p><small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</p>';
+
         }
-        echo '<td>'.$row->area.'</td><td>'.($row->nicename!=''?$row->nicename:$row->subarea).'</td>';
-        echo '</tr>';
-
-      }
-      ?>
-      </table>
+        ?>
+      </div>
     </div>
     <?php
   }
