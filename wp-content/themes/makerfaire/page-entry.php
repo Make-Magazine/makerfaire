@@ -372,6 +372,8 @@ function display_entry_schedule($entry_id) {
         <?php } ?>
       </div>
 
+      <div class="clearfix"></div>
+
       <div class="entry-date-time">
         <?php
         foreach($results as $row){
