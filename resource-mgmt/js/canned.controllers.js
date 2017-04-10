@@ -40,8 +40,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }
   };
 
-
-
   //set up gridOptions for predefined reports
   $scope.gridOptions = {
     enableFiltering: true,
