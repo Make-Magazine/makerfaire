@@ -261,8 +261,8 @@ if($makerEdit) {
             if ($isGroup) {
               echo '<div class="row padbottom">
                       <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
-                        <div class="entry-page-maker-img">' .
-                          (!empty($groupphoto) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,400,400) . '" alt="Maker group photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker group placeholder photo" />') . '
+                        <div class="entry-page-maker-img" style="background: url(' .
+                          (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
                         </div>
                       </div>
                       <div class="col-sm-9 col-lg-7">
@@ -275,8 +275,8 @@ if($makerEdit) {
                 if($maker['firstname'] !=''){
                   echo '<div class="row padbottom">
                           <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="maker'.$key.'img" title="Click to upload...">
-                            <div class="entry-page-maker-img">' .
-                              (!empty($maker['photo']) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],400,400) . '" alt="Maker photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker placeholder photo" />') .'
+                            <div class="entry-page-maker-img" style="background: url(' .
+                              (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'],400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
                             </div>
                           </div>
                           <div class="col-sm-9 col-lg-7">

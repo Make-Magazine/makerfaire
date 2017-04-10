@@ -126,10 +126,7 @@
       height: 262.5px;
       border: 2px solid #cccccc;
       border-radius: 3px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      overflow: hidden;
+      background-size: cover !important;
       @media screen and (min-width: 992px) and (max-width: 1199px) {
         height: 212.5px;
       }
@@ -143,6 +140,10 @@
     }
     h3 {
       margin-top: 0;
+      @media screen and (max-width: 767px) {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
     }
     p {
       font-weight: 300;
