@@ -4,7 +4,6 @@ ajax to populate resource management table
 */
 
 require_once 'config.php';
-require_once 'table.fields.defs.php';
 
 $json = file_get_contents('php://input');
 $obj = json_decode($json);
@@ -1005,31 +1004,22 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
   exit;
 }
 
-function retrieveRptData($table,$faire){
-  global $wpdb; global $tableFields;
+function retrieveRptData($table, $faire){
+  global $wpdb;
+  require_once 'table.fields.defs.php';
   $sql   = '';
   $where = '';
   $orderBy = '';
   //build columnDefs
-  foreach($tableFields[$table] as $fields){
-    if(isset($fields['orderBy']))
-      $orderBy = ' order by '.$fields['orderBy'];
-    if(isset($fields['dataSql'])) $sql   .= ','.$fields['dataSql'];
-    if(isset($fields['limit'])){
-      if($where==''){
-        $where .= ' where ';
-      }else{
-        $where .= ' and ';
-      }
-      $where .= $fields['fieldName'] .' '. $fields['limit']['opt'].' '.$fields['limit']['value'];
-    }
+  foreach($tableFields[$table]['colDefs'] as $fields){
     $vars = array();
     switch($fields['filterType']){
       case 'dropdown':
         $options = array();  $selectOptions=array();
+
         //retrieve dropdown info
-        if(isset($fields['fkey'])){
-          $fkeyData      = getFkeyData($fields['fkey'],$fields['fieldName']);
+        if(isset($fields['fkeySQL'])){
+          $fkeyData      = getFkeyData($fields['fkeySQL']);
           $options       = $fkeyData[0];
           $selectOptions = $fkeyData[1];
           //additional select options outside of fkey
@@ -1052,14 +1042,14 @@ function retrieveRptData($table,$faire){
         //usort($options, "cmpfkey");
         //usort($selectOptions, "cmpval");
 
-        $vars = array('displayName'=> (isset($fields['fieldLabel'])?$fields['fieldLabel']:$fields['fieldName']),
+        $vars = array('displayName'=> ucfirst((isset($fields['fieldLabel'])?$fields['fieldLabel']:$fields['fieldName'])),
                       'filter'=> array('selectOptions'=>$selectOptions),
                       'cellFilter'               => 'griddropdown:this',
                       'editDropdownOptionsArray' => $options
                       );
         break;
       case 'entrylink':
-        $vars = array('cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
+        $vars = array('cellTemplate'=>'<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.form_id}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>');
         break;
       case 'hidden':
         $vars = array('visible'=>false);
@@ -1086,16 +1076,14 @@ function retrieveRptData($table,$faire){
   $data['columnDefs'] = $columnDefs;
 
   //get table data
-  $query = "select * ".$sql." from ".$table.$where.$orderBy;
+  $query = $tableFields[$table]['query'];
 
   //loop thru entry data and build array
   $result = $wpdb->get_results($query,ARRAY_A);
 
   //create array of table data
   foreach($result as $row){
-    if(isset($row['faire']) && $faire!='' && $row['faire']==$faire){
-      $data['data'][]= $row;
-    }
+    $data['data'][]= $row;
   }
   echo json_encode($data);
   exit;
@@ -1109,20 +1097,16 @@ function invalidRequest($message='') {
 	exit;
 }
 
-function getFkeyData($tabFkeyData,$fkey){
+function getFkeyData($fkeySQL){
   global $mysqli;
-  $referenceTable   = $tabFkeyData['referenceTable'];
-  $referenceField   = $tabFkeyData['referenceField'];
-  $referenceDisplay = $tabFkeyData['referenceDisplay'];
   //build options drop down
   $options = array();
   $selectOptions = array();
-  $optionquery = "select " . $referenceField . ", " . $referenceDisplay . " from "   . $referenceTable." order by ".$referenceDisplay."  asc";
-  //echo $optionquery;
-  $result = $mysqli->query( $optionquery );
+
+  $result = $mysqli->query( $fkeySQL );
   while ($row = $result->fetch_assoc()) {
-    $options[]       = array('id'    => intval($row[$referenceField]), 'fkey'  => $row[$referenceDisplay]);
-    $selectOptions[] = array('value' => intval($row[$referenceField]), 'label' => $row[$referenceDisplay]);
+    $options[]       = array('id'    => intval($row['ID']), 'fkey'  => $row['field']);
+    $selectOptions[] = array('value' => intval($row['ID']), 'label' => $row['field']);
   }
   return(array($options,$selectOptions));
 }
@@ -1462,8 +1446,9 @@ function pullEntityTasks($formSelect) {
       array("name"=>"description","width"=>"150"),
       array("name"=>"required","displayName"=>"Required","width"=>"100"),
       array("name"=>"not_assigned","displayName"=>"Not Assigned"),
+      array("name"=>"otherFormid","displayName"=>"Other Form ID","width"=>"300",visible=> false),
       array("name"=>"other_entry","displayName"=>"Other Entry ID",
-          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$formSelect.'&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.otherFormid}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
           ),
   );
 
@@ -1484,6 +1469,7 @@ function pullEntityTasks($formSelect) {
                             'description' => $row->description,
                             'required'    => ($row->required==1?'Yes':'No'),
                             'not_assigned' => $not_assigned,
+                            'otherFormid'  => $formSelect,
                             'other_entry'  => $row->other_entry
                     );
 
