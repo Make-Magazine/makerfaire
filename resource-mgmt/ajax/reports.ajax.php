@@ -1437,19 +1437,19 @@ function pullEntityTasks($formSelect) {
 
   $data['columnDefs'] = array(
       array("name"=>"lead_id","displayName"=>"Entry","width"=>"65",
-          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.formid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+          "cellTemplate"=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.formid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
           ),
-      array("name"=>"formid","displayName"=>"Form ID","width"=>"300",visible=> false),
+      array("name"=>"formid","displayName"=>"Form ID","width"=>"300","visible"=> false),
       array("name"=>"project_name","displayName"=>"Project Name","width"=>"300"),
       array("name"=>"created","width"=>"150"),
       array("name"=>"completed","width"=>"150"),
       array("name"=>"description","width"=>"150"),
-      array("name"=>"required","displayName"=>"Required","width"=>"100"),
-      array("name"=>"not_assigned","displayName"=>"Not Assigned"),
-      array("name"=>"otherFormid","displayName"=>"Other Form ID","width"=>"300",visible=> false),
-      array("name"=>"other_entry","displayName"=>"Other Entry ID",
-          cellTemplate=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.otherFormid}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+      array("name"=>"required","displayName"=>"Req?","width"=>"70"),
+      array("name"=>"oformid","displayName"=>"Other Form ID","width"=>"65"),
+      array("name"=>"oentry","displayName"=>"Other Entry ID", "width"=>"165",
+          "cellTemplate"=> '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.oformid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
           ),
+      array("name"=>"not_assigned","displayName"=>"Not Assigned","width"=>"100")
   );
 
   //create array of table data
@@ -1461,6 +1461,7 @@ function pullEntityTasks($formSelect) {
       $not_assigned = '';
       $lead_id = $row->lead_id;
     }
+    $other_entry = ($row->other_entry==NULL?'':$row->other_entry);
     $data['data'][] = array('lead_id'     => $lead_id,
                             'formid'      => $row->form_id,
                             'project_name' => $row->project_name,
@@ -1469,8 +1470,8 @@ function pullEntityTasks($formSelect) {
                             'description' => $row->description,
                             'required'    => ($row->required==1?'Yes':'No'),
                             'not_assigned' => $not_assigned,
-                            'otherFormid'  => $formSelect,
-                            'other_entry'  => $row->other_entry
+                            'oformid'      => $formSelect,
+                            'oentry'       => $other_entry
                     );
 
   }
