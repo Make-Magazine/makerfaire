@@ -64,8 +64,9 @@ get_header(); ?>
         <div class="sched-col-4">
           <span class="dropdown">
             <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <?php _e('Stage','MiniMakerFaire');?> {{schedStage}}
+              <?php _e('Stage','MiniMakerFaire');?>
               <i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
+              <br/>{{schedStage}}
             </button>
             <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
               <li>
@@ -86,8 +87,10 @@ get_header(); ?>
         <div class="sched-col-6">
           <span class="dropdown">
             <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <?php _e('Topics','MiniMakerFaire');?> {{schedTopic}}
+              <?php _e('Topics','MiniMakerFaire');?>
               <i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
+              <br/>
+              {{schedTopic}}
             </button>
             <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
               <li>
