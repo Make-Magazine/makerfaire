@@ -2,16 +2,52 @@
   margin-bottom: 30px;
   .backlink {
     margin-top:10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #2D7798;
+    padding-bottom: 10px;
     .fa-lg {
       vertical-align: -8%;
     }
+    @media screen and (max-width: 767px) {
+      display: none;
+    }
+  }
+  .entry-page-mobie-flex {
+    @media screen and (max-width: 767px) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+  .faireTitle {
+    margin-bottom: -57px;
+    display: block;
+    @media screen and (max-width: 767px) {
+      order: -4;
+      margin-bottom: 0;
+    }
+    .faireLabel {
+      color: #9B9B9B;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .faireName {
+      font-size: 20px;
+      line-height: 1em;
+      color: #00AEEF;
+      @media screen and (max-width: 767px) {
+        padding-bottom: 5px;
+      }
+    }
   }
   #entry-schedule {
-    border-top: 1px solid #2D7798;
     border-bottom: 1px solid #E7ECF0;
     margin-top: 10px;
     padding-top: 10px;
     overflow: hidden;
+    @media screen and (max-width: 767px) {
+      border-top: none;
+      padding-top: 0;
+    }
 
     table {
       width: 100%;
@@ -25,23 +61,9 @@
         border-bottom: none;
       }
     }
-    .faireTitle {
-      float: left;
-      @media screen and (max-width: 767px) {
-        float: none;
-      }
-    }
-    .faireLabel {
-      color: #9B9B9B;
-      font-weight: bold;
-      font-size: 12px;
-    }
-    .faireName {
-      font-size: 20px;
-      color: #00AEEF;
-    }
     .faireActions {
-      margin-top: 10px;
+      margin-top: 5px;
+      margin-bottom: 5px;
       font-size: 12px;
       color: #4A4A4A;
       float: right;
@@ -74,11 +96,25 @@
         display: block;
       }
     }
+    .entry-date-time {
+      margin-bottom: 15px;
+      h5 {
+        margin-top: 15px;
+        margin-bottom: 5px;
+      }
+      p {
+        margin-bottom: 0;
+        small {
+          font-size: 75%;
+        }
+      }
+      
+    }
   }
   h1, h2 {
     margin-bottom: 0;
   }
-  .btn.btn-info {
+  .btn.btn-cyan {
     margin-bottom: 25px;
   }
   .entry-video {
@@ -90,10 +126,7 @@
       height: 262.5px;
       border: 2px solid #cccccc;
       border-radius: 3px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      overflow: hidden;
+      background-size: cover !important;
       @media screen and (min-width: 992px) and (max-width: 1199px) {
         height: 212.5px;
       }
@@ -107,6 +140,10 @@
     }
     h3 {
       margin-top: 0;
+      @media screen and (max-width: 767px) {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
     }
     p {
       font-weight: 300;
@@ -153,24 +190,48 @@
     display: block;
   }
   .page-header {
-    margin-top: 35px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    @media screen and (max-width: 767px) {
+      margin-top: 0;
+      margin-bottom: 0;
+      border-bottom: 0;
+      order: -2;
+    }
     h1 {
       @media screen and (max-width: 767px) {
-        font-size: 8vw;
+        font-size: 7vw;
+        margin-top: 0;
+      }
+      @media screen and (max-width: 449px) {
+        font-size: 9vw;
+        margin-top: 0;
       }
     }
     .makerEdit {
       padding-top: 27px;
     }
   }
+  #project_short {
+    @media screen and (max-width: 767px) {
+      order: -1;
+      margin-bottom: 15px;
+    }
+  }
   .mfEdit button, .mfEdit_area button, .mfEditUpload button {
     margin-top: 5px;
     margin-left: 5px;
   }
-  #proj_img img {
-    @media screen and (min-width: 768px) {
-      max-width: 750px;
-      max-height: 500px;
+  #proj_img {
+    @media screen and (max-width: 767px) {
+      order: -3;
+    }
+    img {
+      @media screen and (min-width: 768px) {
+        max-width: 750px;
+        max-height: 500px;
+      }
     }
   }
 }

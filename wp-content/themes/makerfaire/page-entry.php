@@ -156,7 +156,7 @@ if (!empty($project_website)) {
   if($makerEdit){
     $website =  'Website: <div id="website" class="mfEdit">'. $project_website.'</div>';
   }else{
-    $website =  '<a href="' . $project_website . '" class="btn btn-info" target="_blank">Project Website</a>';
+    $website =  '<a href="' . $project_website . '" class="btn btn-cyan" target="_blank">Project Website</a>';
   }
 }
 
@@ -207,7 +207,7 @@ if($makerEdit) {
 
 <div class="container entry-page">
   <div class="row">
-    <div class="content col-xs-12">
+    <div class="content col-xs-12 entry-page-mobie-flex">
         <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
         <?php
         if($makerEdit){?>
@@ -215,7 +215,8 @@ if($makerEdit) {
             <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
             <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>/">
               <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
-            </a><br/>
+            </a>
+            <br/>
             To modify your public information, click on the section you'd like to change below.
           </div>
         <?php
@@ -260,8 +261,8 @@ if($makerEdit) {
             if ($isGroup) {
               echo '<div class="row padbottom">
                       <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
-                        <div class="entry-page-maker-img">' .
-                          (!empty($groupphoto) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($groupphoto,400,400) . '" alt="Maker group photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker group placeholder photo" />') . '
+                        <div class="entry-page-maker-img" style="background: url(' .
+                          (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
                         </div>
                       </div>
                       <div class="col-sm-9 col-lg-7">
@@ -274,8 +275,8 @@ if($makerEdit) {
                 if($maker['firstname'] !=''){
                   echo '<div class="row padbottom">
                           <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="maker'.$key.'img" title="Click to upload...">
-                            <div class="entry-page-maker-img">' .
-                              (!empty($maker['photo']) ? '<img class="img-responsive" src="' . legacy_get_fit_remote_image_url($maker['photo'],400,400) . '" alt="Maker photo" />' : '<img class="img-responsive" src="' . get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg" alt="Maker placeholder photo" />') .'
+                            <div class="entry-page-maker-img" style="background: url(' .
+                              (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'],400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
                             </div>
                           </div>
                           <div class="col-sm-9 col-lg-7">
@@ -331,13 +332,14 @@ function display_entry_schedule($entry_id) {
 
   if($wpdb->num_rows > 0){
     ?>
-    <div id="entry-schedule">
-      <span class="faireTitle">
-        <a href="<?= $backlink ?>">
-        <span class="faireLabel">Live at</span><br/>
+    <span class="faireTitle">      
+      <span class="faireLabel">Live at</span>
+      <br/>
+      <a href="<?= $backlink ?>">
         <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
-        </a>
-      </span>
+      </a>
+    </span>
+    <div id="entry-schedule">
       <?php // TBD - dynamically set these links and images ?>
       <div class="faireActions">
 
@@ -368,34 +370,32 @@ function display_entry_schedule($entry_id) {
           <h4>Download the program guide</h4>
         </a>
         <?php } ?>
-
       </div>
-      <div class="clear"></div>
 
-      <table>
-      <?php
-      foreach($results as $row){
-        echo '<tr>';
-        if(!is_null($row->start_dt)){
-          $start_dt   = strtotime( $row->start_dt);
-          $end_dt     = strtotime($row->end_dt);
-          echo '<td><b>'.date("l, F j",$start_dt).'</b></td>'
-            . ' <td>'. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</td>';
-        }else{
-          global $faire_start; global $faire_end;
+      <div class="clearfix"></div>
 
-          $faire_start = strtotime($faire_start);
-          $faire_end   = strtotime($faire_end);
+      <div class="entry-date-time">
+        <?php
+        foreach($results as $row){
+          if(!is_null($row->start_dt)){
+            $start_dt   = strtotime( $row->start_dt);
+            $end_dt     = strtotime($row->end_dt);
+            echo '<h5>'.date("l, F j",$start_dt).'</h5>'
+              . ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
+          }else{
+            global $faire_start; global $faire_end;
 
-          //tbd change this to be dynamically populated
-          echo '<td>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</td>';
+            $faire_start = strtotime($faire_start);
+            $faire_end   = strtotime($faire_end);
+
+            //tbd change this to be dynamically populated
+            echo '<h5>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+          }
+          echo '<p><small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</p>';
+
         }
-        echo '<td>'.$row->area.'</td><td>'.($row->nicename!=''?$row->nicename:$row->subarea).'</td>';
-        echo '</tr>';
-
-      }
-      ?>
-      </table>
+        ?>
+      </div>
     </div>
     <?php
   }

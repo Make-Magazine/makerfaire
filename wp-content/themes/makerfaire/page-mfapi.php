@@ -40,6 +40,7 @@ global $wp_query;
 // Check that all required fields are passed before running anything and assign them to variables
 $key = ( ! empty( $_REQUEST['key'] ) ? sanitize_text_field( $_REQUEST['key'] ) : null );
 $type = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_query->query_vars['type'] ) : null );
+
 //$faire = ( ! empty( $_REQUEST['faire'] ) ? sanitize_text_field( $_REQUEST['faire'] ) : null );
 
 // Check that our keys passed are in our $keys array and that a type and faire are passed
@@ -66,8 +67,7 @@ $type = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_qu
 	return;
 }else{
   header('HTTP/1.1 200 OK');
-}
-  /*elseif ( empty( $faire ) ) {
+} /*elseif ( empty( $faire ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
 
 	echo '<h2>Invalid: Faire</h2>';
