@@ -43,6 +43,6 @@ function mf_invoice_cpt() {
 	register_post_type( 'invoice', $args );
 	// Deny access to the post_type query arg
 	if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'invoice' ) {
-		wp_die( 'Unauthorized' );
+		//wp_die( 'Unauthorized' );
 	}
 }
