@@ -38,7 +38,9 @@ function mf_fairedata( WP_REST_Request $request ) {
   foreach($formArr as $formID){
     $return .= $formID.' ';
   }
-  return $data;
+  //return $data;
+  wp_send_json($data);
+  exit;
 }
 
 function getMTMentries($formIDs) {

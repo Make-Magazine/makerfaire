@@ -17,6 +17,7 @@
     $http.get('/wp-json/makerfaire/v2/fairedata/schedule/'+formIDs)
       .then(function successCallback(response) {
         $scope.catJson = [];
+        $scope.types=[];
         angular.forEach(response.data.category,function(catArr){
            $scope.catJson[catArr.id] = catArr.name.trim();
         });
@@ -25,6 +26,7 @@
         $scope.schedStage = '';
         $scope.schedTopic = '';
         $scope.schedules = response.data.schedule;
+        $scope.days = [];
         $scope.tags = []; //unique list of categories
 
         var typeArr = [];
@@ -36,6 +38,8 @@
             compare them to the catJson to get the category name,
             and output an array of category names */
         angular.forEach($scope.schedules, function(scheduleDay, scheduleKey){
+
+          $scope.days.push(scheduleKey);
           if($scope.dateFilter=='') $scope.dateFilter = scheduleKey;
           angular.forEach(scheduleDay, function(schedule){
             //check if there is more than one type
@@ -65,6 +69,7 @@
             schedule.category = categories;
           });
         });
+
         var uniquetypeArr = [];
         jQuery.each(typeArr, function(i, el){
           if(jQuery.inArray(el, uniquetypeArr) === -1) uniquetypeArr.push(el);
