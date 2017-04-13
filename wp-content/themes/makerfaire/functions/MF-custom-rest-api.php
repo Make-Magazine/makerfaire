@@ -170,7 +170,7 @@ function getMTMentries($formIDs) {
                left outer join wp_rg_lead_detail as lead_detail on
                    schedule.entry_id = lead_detail.lead_id and field_number = 303
                where lead.status = 'active' and lead_detail.value='Accepted' "
-               . " and lead_detail.form_id in(".implode(",",$formIDarr).")";
+               . " and lead_detail.form_id in(".implode(",",$formIDarr).") order by subarea.sort_order";
 
     //retrieve project name, img (22), maker list, topics
     foreach($wpdb->get_results($query) as $row){

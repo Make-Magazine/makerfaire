@@ -73,7 +73,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page ?>
                   <li>
                     <a ng-click="setStage('')"><?php _e('All','MiniMakerFaire');?></a>
                   </li>
-                  <li ng-repeat="schedule in schedules[dateFilter] | unique:'nicename' | orderBy: nicename ">
+                  <li ng-repeat="schedule in schedules[dateFilter] | unique:'nicename'">
                     <a ng-click="setStage(schedule.nicename)">{{schedule.nicename}}</a>
                   </li>
                 </ul>
