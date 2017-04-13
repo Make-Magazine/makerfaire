@@ -25,7 +25,12 @@
         $scope.schedType = 'all';
         $scope.schedStage = '';
         $scope.schedTopic = '';
-        $scope.schedules = response.data.schedule;
+        var unorderedSched = response.data.schedule;
+        var schedules = {};
+        Object.keys(unorderedSched).sort().forEach(function(key) {
+          schedules[key] = unorderedSched[key];
+        });
+        $scope.schedules = schedules;
         $scope.days = [];
         $scope.tags = []; //unique list of categories
 
@@ -40,7 +45,9 @@
         angular.forEach($scope.schedules, function(scheduleDay, scheduleKey){
 
           $scope.days.push(scheduleKey);
-          if($scope.dateFilter=='') $scope.dateFilter = scheduleKey;
+          if($scope.dateFilter=='') {
+            $scope.dateFilter = scheduleKey;
+          }
           angular.forEach(scheduleDay, function(schedule){
             //check if there is more than one type
             addType = schedule.type;

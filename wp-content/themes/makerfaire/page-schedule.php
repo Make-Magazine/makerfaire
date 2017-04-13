@@ -40,7 +40,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page ?>
       </div>
 
       <ul class="day-nav list-unstyled">
-        <li class="day-nav-box" ng-repeat="schedDay in days | orderBy: schedDay" ng-class="{'active':$first}">
+        <li class="day-nav-box" ng-repeat="(schedDay,schedule) in schedules" ng-class="{'active':$first}">
           <a class="day-nav-item" data-toggle="tab" href="#Sched{{schedDay | date: 'd'}}"  ng-click="setDateFilter(schedDay)">
             <h2>{{schedDay | date: "EEEE"}}</h2>
             <h4>{{schedDay | date: "shortDate"}}</h4>
