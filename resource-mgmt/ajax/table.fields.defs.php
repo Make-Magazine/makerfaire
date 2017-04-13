@@ -5,15 +5,6 @@
 $tableFields = array();
 /*
  * Create table definitons for returning data
- * layout - index = table name
- *  array('fieldName'   => 'resource_category_id',      //name of the field in the table
-              'filterType'   => 'text',                  //filter type - text, drop down, etc
-              'fieldLabel'  => 'Item',                  //label to display
-              'fkey'        => array(                   //if field data is pulled from somewhere else use this section
-                    'referenceTable'   => 'wp_rmt_resource_categories',   //fkey table
-                    'referenceField'   => 'ID',                           //fkey ID
-                    'referenceDisplay' => 'category')                     //fkey field to display
-        ),
  */
 
 //entry resource table
@@ -94,13 +85,13 @@ $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'start_dt', '
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'end_dt',   'filterType'   => 'text');
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'form_id', 'filterType' => 'text', 'fieldLabel' => 'form_id','visible' => false);
 $tableFields['wp_mf_location']['query'] =
-          'SELECT location.location,location.entry_id, location.subarea_id, subarea.subarea, subarea.nicename, subarea.area_id, area.area, '
-        . '       schedule.start_dt, schedule.end_dt, wp_rg_lead.form_id, '
-        . '(SELECT value FROM `wp_rg_lead_detail` where field_number = \'151\' and lead_id = location.entry_id  limit 1) as exName '
-        . 'FROM   `wp_mf_location` location '
-        . 'left outer join wp_rg_lead on wp_rg_lead.id = location.entry_id '
-        . 'left outer join wp_mf_faire_subarea subarea on location.subarea_id = subarea.id '
-        . 'left outer join wp_mf_faire_area area on subarea.area_id = area.id '
-        . 'left outer join wp_mf_schedule schedule on schedule.location_id = location.id '
-        . 'left outer join wp_mf_faire on find_in_set (form_id,wp_mf_faire.form_ids) > 0 '
-        . 'where  wp_mf_faire.ID = '.$faire;
+          'SELECT wp_mf_location.location,wp_mf_location.entry_id, wp_mf_location.subarea_id, '
+                . 'wp_mf_faire_subarea.subarea, wp_mf_faire_subarea.nicename, wp_mf_faire_subarea.area_id, '
+                . 'wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_rg_lead.form_id, '
+        . '(SELECT value FROM `wp_rg_lead_detail` where field_number = "151" and lead_id = wp_mf_location.entry_id  limit 1) as exName '
+        . 'FROM    wp_mf_location '
+        . 'left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.ID '
+        . 'left outer join  wp_mf_faire_area    on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
+        . 'left outer join  wp_mf_schedule      on wp_mf_schedule.location_id = wp_mf_location.ID '
+        . 'left outer join  wp_rg_lead          on wp_rg_lead.ID = wp_mf_location.entry_id '
+        . 'left outer join wp_mf_faire     on find_in_set (form_id,wp_mf_faire.form_ids) > 0  and  wp_mf_faire.ID = '.$faire;

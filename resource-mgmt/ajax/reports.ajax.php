@@ -833,7 +833,7 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
           //loop thru data
           $resources = $wpdb->get_results($sql,ARRAY_A);
           $entryRes = array();
-          
+
           if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
             foreach($resources as $resource){
               $colDefs2Sort['res_'.$resource['token']] =   array('field'=> 'res_'.$resource['token'],'displayName'=>$resource['token']);
@@ -1085,7 +1085,9 @@ function retrieveRptData($table, $faire){
 
   //loop thru entry data and build array
   $result = $wpdb->get_results($query,ARRAY_A);
-
+ if($wpdb->last_error !== '') :
+    $wpdb->print_error();
+endif;
   //create array of table data
   foreach($result as $row){
     $data['data'][]= $row;
