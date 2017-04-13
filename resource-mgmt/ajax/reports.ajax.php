@@ -393,16 +393,20 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
         $aggrType='uiGridConstants.aggregationTypes.sum';
         foreach($resources as $resource){
           $displayOrder = $displayOrder + $resource['resource_id'];
-          $colDefs2Sort['res_'.$resource['token']]             = array('field'=> 'res_'.$resource['token'],
-              'displayName'=>$resource['token'],
-              'aggregationType'=> $aggrType,
-              'displayOrder' => $displayOrder+.1);
+          $colDefs2Sort['res_'.$resource['token']] =
+            array('field'=> 'res_'.$resource['token'],
+                  'displayName'=>$resource['token'],
+                  'aggregationType'=> $aggrType,
+                  'displayOrder' => $displayOrder+.1);
           $return['data']['res_'.$resource['token']] = $resource['qty'];
 
           //resource comments
           $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
           if($dispComments){
-            $colDefs2Sort['res_'.$resource['token'].'_comment']  = array('field'=> 'res_'.$resource['token'].'_comment','displayName'=>$resource['token'].' - comment','displayOrder' => $displayOrder+.2);
+            $colDefs2Sort['res_'.$resource['token'].'_comment']  = array(
+                'field'=> 'res_'.$resource['token'].'_comment',
+                'displayName' => $resource['token'].' - comment',
+                'displayOrder' => $displayOrder+.2);
             $return['data']['res_'.$resource['token'].'_comment'] = $resource['comment'];
           }
         }
@@ -443,7 +447,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
         }
         $entryAtt[] = $value;
       }
-      $return['columnDefs']['att_'.$selRMT->id] = array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
+      $return['colDefs']['att_'.$selRMT->id] = array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
                                                         'displayName'=>$selRMT->value,
                                                         'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
       $return['data']['att_'.$selRMT->id] = implode(', ',$entryAtt);
@@ -467,7 +471,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       foreach($attentions as $attention){
         $entryAttn[] = $attention['comment'];
       }
-      $return['columnDefs']['attn_'.$selRMT->id] = array('field'=> 'attn_'.str_replace('.','_',$selRMT->id),
+      $return['colDefs']['attn_'.$selRMT->id] = array('field'=> 'attn_'.str_replace('.','_',$selRMT->id),
                                                       'displayName'=>$selRMT->value,
                                                       'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
       $return['data']['attn_'.$selRMT->id]  = implode(', ',$entryAttn);

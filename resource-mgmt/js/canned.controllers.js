@@ -216,10 +216,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                   {"id":"9","value":"ELEC","checked":true, "order":1300}
                 ],
                 "attribute":[
-                  {"id":"2","value":"SIZE","checked":true, "order":1000},
-                  {"id":"4","value":"IN/OUT","checked":true, "order":1600},
-                  {"id":"9","value":"NZ","checked":true, "order":1500},
-                  {"id":"11","value":"INT","checked":true, "order":1400}
+                  {"id":"2",  "value":"SIZE","checked":true, "order":1000},
+                  {"id":"4",  "value":"IN/OUT","checked":true, "order":1600},
+                  {"id":"9",  "value":"NZ","checked":true, "order":1500},
+                  {"id":"11", "value":"INT","checked":true, "order":1400}
                 ],
                 "attention":[
                   {"id":"9","value":"Area Manager Notes","checked":true, "order":1900},
@@ -313,13 +313,13 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"2","value":"TABLE","checked":true,"aggregated":false, "order":600,"comments":false},
-                  {"id":"3","value":"CHAIR","checked":true,"aggregated":false, "order":700,"comments":false},
-                  {"id":"9","value":"ELEC","checked":true, "order":800,"comments":false},
-                  {"id":"10","value":"ELEC 220V","checked":true, "order":900,"comments":false}
+                  {"id":"2","value":"TABLE","checked":true,"aggregated":false, "order":2000,"comments":false},
+                  {"id":"3","value":"CHAIR","checked":true,"aggregated":false, "order":3000,"comments":false},
+                  {"id":"9","value":"ELEC","checked":true, "order":4000,"comments":false},
+                  {"id":"10","value":"ELEC 220V","checked":true, "order":5000,"comments":false}
                 ],
                 "attribute":[
-                  {"id":"2","value":"SIZE","checked":true, "order":500}
+                  {"id":"2","value":"SIZE","checked":true, "order":1000}
                 ],
                 "attention":[],
                 "meta":[]
@@ -335,15 +335,18 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "faire": faire,
               "dispFormID":false,
               "useFormSC": true,
+              "entryIDorder": 200,
+              "locationOrder": 300,
+              "formTypeorder":400,
               "selectedFields":[
-                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":""},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","hide":true},
+                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":500},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":600},
+                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","hide":true, "order":700},
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"2","value":"Tables","checked":true,"aggregated":false},
-                  {"id":"3","value":"Chairs","checked":true,"aggregated":false}
+                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":2000},
+                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":3000}
                 ],
                 "attribute":[],"attention":[],"meta":[]
               },
@@ -437,27 +440,48 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       var subTitle = 'WB/Stools';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="label"){
-      vars = {"formSelect":[],
-              "formType":["Exhibit"],
+      vars = {"formSelect":[],"formType":["Exhibit"],
               "faire": faire,
-        "selectedFields":[
-          {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
-          {"id":320,"label":"Primary Category","choices":"all","type":"select"},
-          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"}
-        ],
-        "rmtData":{
-          "resource":[
-            {"id":"9","value":"Electrical 120V","checked":true},
-            {"id":"10","value":"Electrical 220V","checked":true}],
-          "attribute":[
-            {"id":"2","value":"Space Size","checked":true},
-            {"id":"4","value":"Exposure","checked":true},
-            {"id":"6","value":"Light Level","checked":true},
-            {"id":"9","value":"Noise Level","checked":true},
-            {"id":"11","value":"Internet","checked":true}],
-          "attention":[],
-          "meta":[]},
-        "type":"customRpt"};
+              "selectedFields":[
+                {"id":44,"label":"Will you be giving away, selling, or sampling food (packaged or unpackaged) at Maker Faire?","choices":"Yes","type":"radio"},
+                {"id":56,"label":"Have your company or products ever been featured in a crowdfunding campaign or do you have plans to start a campaign (Kickstarter, Indiegogo, etc?)","choices":"Yes","type":"radio"},
+                {"id":66,"label":"Do you have a hands-on activity for attendees?","choices":"Yes","type":"radio"},
+                {"id":68,"label":"Placement Request","choices":"","type":"text","inputs":""},
+                {"id":"70.1","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"With other Makers under a large tent","type":"checkbox"},
+                {"id":"70.2","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"Open air","type":"checkbox"},
+                {"id":"70.3","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"I can bring a tent/canopy with weights","type":"checkbox"},
+                {"id":"70.4","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"Asphalt","type":"checkbox"},
+                {"id":"70.5","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"Grass","type":"checkbox"},
+                {"id":73,"label":"Does your exhibit require power?","choices":"Yes","type":"radio"},
+                {"id":83,"label":"Does your exhibit make use of fire (any size flame), chemicals, or other dangerous materials or tools (propane, welders, etc)?","choices":"Yes","type":"radio"},
+                {"id":84,"label":"Do you have an interactive exhibit involving using tools of any kind, riding (bikes, go carts, swings, etc), climbing, etc?","choices":"Yes","type":"radio"},
+                {"id":"101.6","label":"Address","choices":"Country","type":"address"},
+                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
+                {"id":"302.1","label":"Location","choices":"Bikes","type":"checkbox"},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
+                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":320,"label":"Pick the category that best fits your project.","choices":"all","type":"select"},
+                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"}
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"9","value":"Electrical 120V","checked":true},
+                  {"id":"10","value":"Electrical 220V","checked":true}
+                ],
+                "attribute":[
+                  {"id":"2","value":"Space Size","checked":true},
+                  {"id":"4","value":"Exposure","checked":true},
+                  {"id":"6","value":"Light Level","checked":true},
+                  {"id":"9","value":"Noise Level","checked":true},
+                  {"id":"11","value":"Internet","checked":true}
+                ],
+                "attention":[],
+                "meta":[]
+              },"type":"customRpt"};
+
       var subTitle = 'Label Placement';
       $scope.reports.callAJAX(vars);
     }
