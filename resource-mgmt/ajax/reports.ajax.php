@@ -833,6 +833,7 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
           //loop thru data
           $resources = $wpdb->get_results($sql,ARRAY_A);
           $entryRes = array();
+          
           if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
             foreach($resources as $resource){
               $colDefs2Sort['res_'.$resource['token']] =   array('field'=> 'res_'.$resource['token'],'displayName'=>$resource['token']);
