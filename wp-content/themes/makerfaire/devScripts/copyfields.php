@@ -6,6 +6,19 @@
   </head>
   <body>
     <form method="post" enctype="multipart/form-data">
+      <?php if(isset($_GET['alicia']) && $_GET['alicia'] == 'is_amazing'){
+        ?>
+      What form would you like to copy from(default form 9)<br/>
+      <input type="text" name="formCopyFrom" />
+      <br/><br/>
+        <?php
+      }else{
+        ?>
+        <b>Copy fields from form 9</b>
+        <input type="hidden" name="formCopyFrom" value="9" /><br/><br/>
+        <?php
+      }
+      ?>
       What fields would you like to copy (comma separated list)<br/>
       <input type="text" name="fieldList" />
       <br/><br/>
@@ -19,11 +32,12 @@
 <?php
 include '../../../../wp-load.php';
 if(isset($_POST['copyForm'])&& isset($_POST['fieldList'])){
-  $fieldList = $_POST['fieldList'];
+  $fieldList  = $_POST['fieldList'];
   $copyForms  = $_POST['copyForm'];
+  $form2copy  = $_POST['formCopyFrom'];
 
   //get master form
-  $form    = GFAPI::get_form( 9 );
+  $form    = GFAPI::get_form( $form2copy );
 
   //remove any extra spaces in the field list
   $fieldList = str_replace(' ', '', $fieldList);
@@ -48,7 +62,7 @@ if(isset($_POST['copyForm'])&& isset($_POST['fieldList'])){
     //place them into an array
     $copyForms = explode(",", $copyForms);
     foreach($copyForms as $copyForm){
-      echo 'Copying fields '.$_POST['fieldList'] . ' to form '.$copyForm.'<br/>';
+      echo 'Copying fields '.$_POST['fieldList'] . ' from form '.$form2copy.' to form '.$copyForm.'<br/>';
       $updForm = GFAPI::get_form( $copyForm );
 
       //find out if the field is already in the form
@@ -62,6 +76,7 @@ if(isset($_POST['copyForm'])&& isset($_POST['fieldList'])){
       if($errMsg==''){
         $updForm['fields'] = array_merge($updForm['fields'],$fieldsUpd);
         $result = GFAPI::update_form( $updForm );
+        //$result = true;
         if(!$result){
           var_dump($result);
         }else{
