@@ -138,11 +138,11 @@
                     "maxlength": ""
                 },
                 {
-                    "key": "field_58b6077edd3f4",
-                    "label": "\"Call For Makers\" button",
-                    "name": "call_for_makers_button",
+                    "key": "field_58f0d7296921e",
+                    "label": "Button 1 text",
+                    "name": "button_1_text",
                     "type": "text",
-                    "instructions": "Enter a URL here to show the \"Call For Makers\" button.",
+                    "instructions": "Text for the first button",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -158,10 +158,48 @@
                 },
                 {
                     "key": "field_58b607e260f74",
-                    "label": "\"Buy Now\" button",
-                    "name": "buy_now_button",
+                    "label": "Button 1 URL",
+                    "name": "button_1_url",
                     "type": "text",
-                    "instructions": "Enter a URL here to show the \"Buy Now\" button.",
+                    "instructions": "Enter a URL here for the first button",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_58f0d76c6921f",
+                    "label": "Button 2 text",
+                    "name": "button_2_text",
+                    "type": "text",
+                    "instructions": "Text for the second button",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_58b6077edd3f4",
+                    "label": "Button 2 URL",
+                    "name": "button_2_url",
+                    "type": "text",
+                    "instructions": "Enter a URL here for the second button",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -288,5 +326,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1488492173
+    "modified": 1492179415
 }
