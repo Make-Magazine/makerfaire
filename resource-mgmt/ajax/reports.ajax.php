@@ -165,11 +165,11 @@ function cannedRpt(){
                   wp_rg_lead.form_id,
                   wp_rg_lead.status"
          ." FROM  `wp_mf_entity` entity
-            JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id
-            JOIN  wp_mf_faire on wp_mf_faire.ID  ='$faire'
+            JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id "
 
-           WHERE  FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0
-             AND 	wp_rg_lead.status = 'active'"
+          . (!empty($faire)?'JOIN  wp_mf_faire on wp_mf_faire.ID  ='.$faire:'')
+          . " where wp_rg_lead.status = 'active'"
+          . (!empty($faire)     ? " AND FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0" : '')
           . (!empty($status)    ? " AND entity.status      in(".$status.")" : '')
           . (!empty($forms)     ? " AND wp_rg_lead.form_id in(".$forms.")" : '')
           . (!empty($formTypes) ? " AND entity.form_type   in(".$formTypes.",'')" : '');
