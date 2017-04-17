@@ -121,7 +121,7 @@ function makerfaire_makezine_rss_news() {
   }
   $title = esc_html( $rss_items[2]->get_title() );
   $url = esc_url( $rss_items[2]->get_permalink());
-  $output .= '<div class="mf-news-cont">'
+  $output  = '<div class="mf-news-cont">'
           . '  <a class="mf-news-big-img" href="'.$url.'" style="background: url(' . legacy_get_resized_remote_image_url($image,622,402) . ');">'
           . '     <div class="mf-news-text-box">'
           . '       <h2>' . $title . '</h2>'
@@ -136,7 +136,7 @@ function makerfaire_makezine_rss_news() {
   $desc_length = iconv_strlen($description, 'UTF-8');
   if ($desc_length > 200) {
     $description = substr($description, 0, 200) . '...';
-  }  
+  }
   $title = esc_html( $rss_items[0]->get_title() );
   $url = esc_url( $rss_items[0]->get_permalink());
   $output .= '  <div class="mf-news-sm-img">'

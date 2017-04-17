@@ -74,13 +74,13 @@ function cron_genEBtickets(){
           . " and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
           . " and eb_entry_access_code.EBticket_id is NULL "
           . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL";
-  $sql = "select lead_id, EBticket_id "
+  /*$sql = "select lead_id, EBticket_id "
           . "from wp_mf_faire, wp_rg_lead_detail "
           . "left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
           . "where field_number=303 and value='Accepted' "
           . "and end_dt > now() "
           . "and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
-          . "and eb_entry_access_code.EBticket_id is NULL ORDER BY `wp_rg_lead_detail`.`lead_id` ASC";
+          . "and eb_entry_access_code.EBticket_id is NULL ORDER BY `wp_rg_lead_detail`.`lead_id` ASC";*/
   $results = $wpdb->get_results($sql);
   foreach($results as $entry){
     error_log('Creating ticket codes for '.$entry->lead_id);
