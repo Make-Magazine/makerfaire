@@ -44,8 +44,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.gridOptions = {
     enableFiltering: true,
     enableGridMenu: true,
-    rowHeight: 100,
+    showGridFooter: true,
     showColumnFooter: true,
+    rowHeight: 100,
     exporterMenuPdf: false, // hide PDF export
     exporterCsvFilename: $routeParams.sub+'-export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
@@ -151,7 +152,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":"442","label":"Fee Management","choices":"all","type":"checkbox", "order":400},
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
-                {"id":376,"label":"CM Ind","choices":"Yes","type":"radio", "order":500},
+                {"id":376,"label":"CM Ind","choices":"all","type":"radio", "order":500},
                 {"id":434,"label":"Fee Ind","choices":"Yes","type":"radio","exact":true, "order":600},
                 {"id":"55", "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox", "order":700},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
@@ -195,7 +196,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formTypeorder":400,
               "selectedFields":[
                 {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":1700},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
                 {"id":96, "label":"MAKER NAME", "choices":"", "type":"name",
                  "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""},], "order":700
                 },
@@ -243,7 +244,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formTypeorder":400,
               "selectedFields":[
                 {"id":16,"label":"EXHIBIT SUMMARY","choices":"","type":"textarea","inputs":"", "order":1500},
-                {"id":376,"label":"CM","choices":"Yes","type":"radio"},
+                {"id":376,"label":"CM","choices":"all","type":"radio"},
                 {"id":83,"label":"FIRE","choices":"Yes","type":"radio", "order":1800},
                 {"id":83,"label":"FIRE","choices":"No","type":"radio", "order":1800},
                 {"id":85,"label":"Describe any fire or safety issues.","choices":"","type":"textarea","inputs":""},
@@ -309,7 +310,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
                 {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
               ],
               "rmtData":{
                 "resource":[
@@ -341,7 +342,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":500},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":600},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","hide":true, "order":700},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true, "order":700},
               ],
               "rmtData":{
                 "resource":[
@@ -364,7 +365,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"Exhibit","type":"text"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","hide":true},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true},
 
               ],
               "orderBy":'location',
@@ -387,7 +388,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":""},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","hide":true},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true},
               ],
               "rmtData":{
                 "resource":[
@@ -407,7 +408,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
               ],
               "rmtData":{
                 "resource":[
@@ -427,7 +428,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
               ],
               "rmtData":{
                 "resource":[
@@ -464,7 +465,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
                 {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
                 {"id":320,"label":"Pick the category that best fits your project.","choices":"all","type":"select"},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"}
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"}
               ],
               "rmtData":{
                 "resource":[

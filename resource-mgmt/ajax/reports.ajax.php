@@ -159,20 +159,12 @@ function cannedRpt(){
   $fieldSQL  = implode(" or ",$fieldQuery);
 
   //form type is not set on entries prior to BA16
-  $sql = "SELECT  entity.lead_id,
-                  entity.status,
-                  entity.form_type,
-                  wp_rg_lead.form_id,
-                  wp_rg_lead.status"
-         ." FROM  `wp_mf_entity` entity
-            JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id "
-
+  $sql = "SELECT  wp_rg_lead.id as lead_id, wp_rg_lead.form_id
+          FROM    wp_rg_lead  "
           . (!empty($faire)?'JOIN  wp_mf_faire on wp_mf_faire.ID  ='.$faire:'')
-          . " where wp_rg_lead.status = 'active'"
+      . " where wp_rg_lead.status = 'active'"
           . (!empty($faire)     ? " AND FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0" : '')
-          . (!empty($status)    ? " AND entity.status      in(".$status.")" : '')
-          . (!empty($forms)     ? " AND wp_rg_lead.form_id in(".$forms.")" : '')
-          . (!empty($formTypes) ? " AND entity.form_type   in(".$formTypes.",'')" : '');
+          . (!empty($forms)     ? " AND wp_rg_lead.form_id in(".$forms.")" : '');
 
   $entries = $wpdb->get_results($sql,ARRAY_A);
   $entryData = array();
@@ -226,7 +218,9 @@ function cannedRpt(){
           //radio and select boxes must match one of the passed values
           foreach($fieldCritArr as $fieldCriteria){
             if($fieldCriteria->type == 'radio' || $fieldCriteria->type=='select'){ //check value
-              if($fieldCriteria->choices == $value){
+              if($fieldCriteria->choices=='all') {
+                $passCriteria = true;
+              }elseif($fieldCriteria->choices == $value){
                 $passCriteria = true;
               }
             }
@@ -297,6 +291,7 @@ function cannedRpt(){
           case 'Performance':
             $form_type = 'PERF';
             break;
+
         }
       //}
 
