@@ -8,11 +8,11 @@ if(isset($_GET['cron'])){
   if($_GET['cron']=='genEBtickets'){
     mancron_genEBtickets();
   }elseif($_GET['cron']=='build_ribbonJSON'){
-    if(isset($_GET['form'])){
-      build_ribbonJSON($_GET['form']);
-    }
+    build_ribbonJSON();
   }elseif($_GET['cron']=='cronRmtData'){
-    cronRmtData();
+    if(isset($_GET['form'])){
+      cronRmtData($_GET['form']);
+    }
   }
   echo('ending process');
 }else{
@@ -59,7 +59,7 @@ function cronRmtData($formID,$limit=0,$start=0) {
   if($limit!="0"){
     $sql .= " limit ".$start.', '.$limit;
   }
-  
+
   $results = $wpdb->get_results($sql);
   foreach($results as $row){
     echo 'processing '. $row->id;
