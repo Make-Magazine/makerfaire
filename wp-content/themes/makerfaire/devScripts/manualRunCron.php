@@ -11,7 +11,7 @@ if(isset($_GET['cron'])){
     build_ribbonJSON();
   }elseif($_GET['cron']=='cronRmtData'){
     if(isset($_GET['form'])){
-      cronRmtData($_GET['form']);
+      cronRmtData($_GET['form'],0,0);
     }
   }
   echo('ending process');
@@ -62,7 +62,7 @@ function cronRmtData($formID,$limit=0,$start=0) {
 
   $results = $wpdb->get_results($sql);
   foreach($results as $row){
-    echo 'processing '. $row->id;
+    echo 'processing '. $row->id.'<br/>';
     $entryID = $row->id;
     $entry    = GFAPI::get_entry($entryID);
     $form_id  = $entry['form_id'];

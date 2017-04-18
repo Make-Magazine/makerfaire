@@ -56,7 +56,7 @@ function get_value_by_label($key, $form, $entry=array()) {
       return $return;
     }
   }
-  return false;
+  return '';
 }
 
 /*
