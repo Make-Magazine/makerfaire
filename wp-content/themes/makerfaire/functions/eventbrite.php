@@ -61,7 +61,7 @@ function genEBtickets($entryID){
     //MF table event ID
     $event_id = implode(",", $eidArr);
   }else{
-    $event_id = '';
+    $event_id = 0;
   }
 
   //determine what ticket types to request
