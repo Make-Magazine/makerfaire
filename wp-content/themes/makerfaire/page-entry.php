@@ -260,9 +260,9 @@ if($makerEdit) {
             </div>
 
             <?php
-            $typeArray = get_value_by_id(105, $form);
-            var_dump($typeArray);
-            if($makerEdit)  echo 'Selected Type is - '. $displayType;
+            //$typeArray = get_value_by_id(105, $form);
+            //var_dump($typeArray);
+            //if($makerEdit)  echo 'Selected Type is - '. $displayType;
             if ($isGroup) {
               echo '<div class="row padbottom">
                       <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
