@@ -216,7 +216,6 @@ function mf_custom_import_entries() {
     <div id="home" class="tab-pane fade">
       <ul class="bullet">
         <li>File format - CSV </li>
-        <li>Do not upload more than 15 records at a time. It will time out!</li>
         <li>Row 1: Field Labels</li>
         <li>Row 2: Start of Data</li>
       </ul>
