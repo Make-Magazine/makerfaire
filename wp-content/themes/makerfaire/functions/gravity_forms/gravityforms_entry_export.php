@@ -29,12 +29,15 @@ function mf_custom_import_entries() {
   $fieldAray = array(
       'location' => array(
           'fields' => array(
-            array('Add/Change/Del Ind', array('add','change','del')),
-            array('Form ID - Numeric', 'numeric'),
             array('Entry ID - Numeric', 'numeric'),
-            array('SubArea ID - Numeric', 'numeric')
+            array('SubArea ID - Numeric', 'numeric'),
+            array('Location', ''),
+            array('Final Space Size',''),
+            array('Exposure', ''),
+            array('Conf L Notes',''),
+            array('Form ID - Numeric', 'numeric')
           ),
-          'fieldCount'  => 8
+          'fieldCount'  => 7
           ),
       'entry'    => array()
   );
@@ -56,17 +59,17 @@ function mf_custom_import_entries() {
           $file         = fopen($filename, "r");
           $row          = 1;
           $data2Process = array();
-          while (($getData = fgetcsv($file, 10000, ",")) !== FALSE){
-            if(count($getData)!= $numCols){
+          while (($csvFile = fgetcsv($file, 10000, ",")) !== FALSE){
+            if(count($csvFile)!= $numCols){
               $error .= 'Incorrect number of columns for the '. ucfirst($fileType) . ' import.<br/>'
-                     .  'Uploaded '. count($getData).' columns, expected '.$numCols.' columns.';
+                     .  'Uploaded '. count($csvFile).' columns, expected '.$numCols.' columns.';
               break;
             }
-
-            $passCriteria = true;
-            foreach($getData as $key=>$data){
-              $data = trim($data);
-              if($row!=1){ //skip first row of headers
+            if($row!=1){  //skip header rows
+              $passCriteria = true;
+              //row 1 contains field names
+              foreach($csvFile as $key=>$data){
+                $data = trim($data);
                 //check for required data
                 if(isset($importFields[$key])){
                   if(is_array($importFields[$key][1])){
@@ -84,10 +87,10 @@ function mf_custom_import_entries() {
                   }
                 }
               }
-            }
-            //if passed criteria, process row
-            if($passCriteria){
-              $data2Process[] = $getData;
+              //if passed criteria, process row
+              if($passCriteria){
+                $data2Process[] = $csvFile;
+              }
             }
             $row++;
           }
@@ -95,40 +98,76 @@ function mf_custom_import_entries() {
           fclose($file);
           //process data after all rows are imported
           if(!empty($data2Process)){
+            global $wpdb;
             $error = 'File Uploaded Succesfully';
             if($fileType=='location'){
-              foreach($data2Process as $data){
-                $entryID    = $data[2];
-                $subArea    = $data[3];
-                $location   = $data[4];
-                $spaceSize  = $data[5];
-                $exposure   = $data[6];
-                $note       = $data[7];
+              $chgRPTins = array();
+              foreach($data2Process as $data){;
+                $entryID    = $data[0];
+                $subArea    = $data[1];
+                $location   = $data[2];
+                $spaceSize  = $data[3];
+                $exposure   = $data[4];
+                $note       = $data[5];
+                $formID     = $data[6];
 
-                switch ($data[0]) {
-                  case 'add':
-                    $sql = "INSERT INTO `wp_mf_location` (`entry_id`, `subarea_id`, `location`) VALUES ($entryID,$subArea,$location)";
-                    //if Space Size is set, update the Attribute
-                    $sql = "insert into wp_rmt_entry_attributes (entry_id, attribute_id, value, user, lockBit) values ($entryID, 2, '$spaceSize', 321, 1)";
-                    //if Exposure is set, update the Attribute
-                    $sql = "insert into wp_rmt_entry_attributes (entry_id, attribute_id, value, user, lockBit) values ($entryID, 4, '$exposure', 321, 1)";
-                    //if Note is set, update the Attention field
-                    $sql = "insert into wp_rmt_entry_attn (entry_id, attn_id, comment, user) values ($entryID, 9, '$note', 321)";
-                    break;
-                  case 'change':
-                    $sql = "UPDATE `wp_mf_location` SET `subarea_id`= $subArea, `location=$location where entry_id=$entryID";
-                    //if Space Size is set, update the Attribute
-                    $sql = "insert into wp_rmt_entry_attributes (entry_id, attribute_id, value, user, lockBit) values ($entryID, 2, '$spaceSize', 321, 1)";
-                    //if Exposure is set, update the Attribute
-                    $sql = "insert into wp_rmt_entry_attributes (entry_id, attribute_id, value, user, lockBit) values ($entryID, 4, '$exposure', 321, 1)";
-                    //if Note is set, update the Attention field
-                    $sql = "insert into wp_rmt_entry_attn (entry_id, attn_id, comment, user) values ($entryID, 9, '$note', 321)";
-                    break;
-                  case 'del':
-                    $sql = "DELETE from `wp_mf_location` where entry_id=$entryID";
-                    break;
+                /*  SubArea/Location  */
+                //delete any previously assigned subareas/locations
+                $wpdb->query("delete from wp_mf_location where entry_id = $entryID");
+
+                //now add in the uploaded  subareas/locations
+                $wpdb->insert('wp_mf_location',array('entry_id'=>$entryID,'subarea_id'=>$subArea,'location'=>$location),array('%d','%d','%s'));
+
+                $user = 321;
+                //update attributes
+                $return = updateAttribute($entryID, 2, $spaceSize,$user,$formID);
+                if(!empty($return)) $chgRPTins[] = $return;
+                $return = updateAttribute($entryID, 4, $exposure,$user,$formID);
+                if(!empty($return)) $chgRPTins[] = $return;
+                //if $space size is empty we need to set the resource status
+                if($spaceSize==''){
+                  gform_update_meta( $entryID, 'res_status', 'review',$formID);
                 }
-              }
+
+                /*    Confirmation comments     */
+                //first clear out any confirmation comments, then add from upload
+
+                $res = $wpdb->get_row("select * from wp_rmt_entry_attn where entry_id = $entryID and attn_id = 13");
+                if ( null !== $res ) { //update conf comment
+                  $wpdb->update(
+                      'wp_rmt_entry_attn',
+                      array('entry_id'=>$entryID,'attn_id'=>13,'comment'=>$note,'user'=>$user),
+                      array( 'ID' => $res->ID ),
+                      array('%d','%d', '%s','%d')
+                    );
+                  //update change report if the conf comment changed
+                  if($res->comment != $note)
+                    $chgRPTins[] = array(
+                                  'user_id'           => $user,
+                                  'lead_id'           => $entryID,
+                                  'form_id'           => $formID,
+                                  'field_id'          => 13,
+                                  'field_before'      => $res->comment,
+                                  'field_after'       => $note,
+                                  'fieldLabel'        => 'RMT Attention: Confirmation Comment',
+                                  'status_at_update'  => '');
+                }else{ ///insert
+                  $wpdb->insert('wp_rmt_entry_attn',array('entry_id'=>$entryID,'attn_id'=>13,'comment'=>$note,'user'=>$user),array('%d','%d', '%s','%d'));
+                  $chgRPTins[] = array(
+                                  'user_id'           => $user,
+                                  'lead_id'           => $entryID,
+                                  'form_id'           => $formID,
+                                  'field_id'          => 13,
+                                  'field_before'      => '',
+                                  'field_after'       => $note,
+                                  'fieldLabel'        => 'RMT Attention: Confirmation Comment',
+                                  'status_at_update'  => '');
+                }
+
+              } //end foreach
+
+              if(!empty($chgRPTins))
+                updateChangeRPT($chgRPTins);
             }
           }else{
             $error .= 'No Data to process<br/>';
@@ -186,22 +225,13 @@ function mf_custom_import_entries() {
       <h3>Location Import Layout</h3>
       <table width="95%">
         <tr><th>Column</th><th>Value(s)</th></tr>
-        <tr>
-          <td>A</td>
-          <td>
-            Add    = Add the entry to the area/subarea/location entered.<br/>
-            Change = If entry is assigned to a area/subarea, change it to the area/subarea and location entered.<br/>
-            Del    = If entry is assigned to a area/subarea, remove it from the area/subarea.
-          </td>
-          <td>Required</td>
-        </tr>
-        <tr><td>B</td><td>Form ID (Numeric Value)</td><td>Required</td></tr>
-        <tr><td>C</td><td>Entry ID (Numeric Value)</td><td>Required</td></tr>
-        <tr><td>D</td><td>SubArea ID (Numeric Value)</td><td>Required</td></tr>
-        <tr><td>E</td><td>Location</td><td></td></tr>
-        <tr><td>F</td><td>Space Size - updates/adds Space Size Attribute </td><td></td></tr>
-        <tr><td>G</td><td>Exposure - updates/adds Exposure Attribute </td><td></td></tr>
-        <tr><td>H</td><td>Notes - updates/adds RMT Notes</td><td></td></tr>
+        <tr><td>A</td><td>Entry ID(Numeric)</td><td>Required</td></tr>
+        <tr><td>B</td><td>SubArea ID(Numeric)</td><td>Required</td></tr>
+        <tr><td>C</td><td>Location</td><td></td></tr>
+        <tr><td>D</td><td>Space Size - updates/adds Space Size Attribute<br/><i>(if blank will set review status to not ready)</i></td></tr>
+        <tr><td>E</td><td>Exposure - updates/adds Exposure Attribute </td><td></td></tr>
+        <tr><td>F</td><td>Confirmation Comment - updates/adds RMT Notes</td><td></td></tr>
+        <tr><td>G</td><td>Form ID(Numeric)</td><td>Required</td></tr>
       </table>
     </div>
     <div id="entry" class="tab-pane fade">
@@ -214,25 +244,6 @@ function mf_custom_import_entries() {
         <li>Column B: Form ID</li>
         <li>Column C-?? fields</li>
       </ul>
-      <table width="95%">
-        <tr><th>Column</th><th>Value(s)</th></tr>
-        <tr>
-          <td>A</td>
-          <td>
-            Add    = Add the entry to the area/subarea/location entered.<br/>
-            Change = If entry is assigned to a area/subarea, change it to the area/subarea and location entered.<br/>
-            Del    = If entry is assigned to a area/subarea, remove it from the area/subarea.
-          </td>
-          <td>Required</td>
-        </tr>
-        <tr><td>B</td><td>Form ID (Numeric Value)</td><td>Required</td></tr>
-        <tr><td>C</td><td>Entry ID (Numeric Value)</td><td>Required</td></tr>
-        <tr><td>D</td><td>SubArea ID (Numeric Value)</td><td>Required</td></tr>
-        <tr><td>E</td><td>Location</td><td></td></tr>
-        <tr><td>F</td><td>Space Size - updates/adds Space Size Attribute </td><td></td></tr>
-        <tr><td>G</td><td>Exposure - updates/adds Exposure Attribute </td><td></td></tr>
-        <tr><td>H</td><td>Notes - updates/adds RMT Notes</td><td></td></tr>
-      </table>
     </div>
   </div>
 
@@ -272,4 +283,49 @@ function mf_custom_export_entries() {
 
 }
 
+//function to update attributes for mf import
+function updateAttribute($entryID, $attribute_id,$attvalue,$user,$formID){
+  global $wpdb;
+  $chgRPTins = '';
+  $res = $wpdb->get_row("select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token"
+                      . " from wp_rmt_entry_attributes left outer join wp_rmt_entry_att_categories on wp_rmt_entry_att_categories.ID=attribute_id"
+                      . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
+   //matching record found
+  if ( null !== $res ) {  //update the attribute
+    if($res->value!=$attvalue){
+      $wpdb->update('wp_rmt_entry_attributes',array('value'=>$attvalue,'user'=>$user,'update_stamp'=>'now()'),array('ID'=>$res->ID),array('%s','%d','%s'));
+      if($wpdb->last_error !== '') :
+        $wpdb->print_error();
+      endif;
+      //update change report
+      $chgRPTins = array(
+          'user_id'           => $user,
+          'lead_id'           => $entryID,
+          'form_id'           => $formID,
+          'field_id'          => $attribute_id,
+          'field_before'      => $res->value,
+          'field_after'       => $attvalue,
+          'fieldLabel'        => 'RMT attribute: '.$res->token.' -  value',
+          'status_at_update'  => '');
+    }
+  }else{ //add the attribute
+    $wpdb->insert('wp_rmt_entry_attributes',array('entry_id'=>$entryID,'attribute_id'=>$attribute_id,'value'=>$attvalue,'user'=>$user),array('%d','%d', '%s','%d'));
+    if($wpdb->last_error !== '') :
+      $wpdb->print_error();
+    endif;
+    //update change report
+    $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$attribute_id);
+    $chgRPTins = array(
+          'user_id'           => $user,
+          'lead_id'           => $entryID,
+          'form_id'           => $formID,
+          'field_id'          => $attribute_id,
+          'field_before'      => '',
+          'field_after'       => $attvalue,
+          'fieldLabel'        => 'RMT attribute: '.$res->token.' -  value',
+          'status_at_update'  => '');
+  }
+
+  return $chgRPTins;
+}
 
