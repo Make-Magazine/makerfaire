@@ -399,18 +399,20 @@ function mf_custom_import_entries() {
               'entry_creator' =>  array('required' => 'yes', 'verification' => 'numeric'),
               'link_entry_id' =>  array('required' => 'no',  'verification' => 'numeric'),
               'subarea_id'    =>  array('required' => 'no',  'verification' => 'numeric'),
+              'location'      =>  array('required' => 'yes', 'verification' => 'none'),
               'visible'       =>  array('required' => 'no',  'verification' => 'boolean'),
               '303'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '320'           =>  array('required' => 'yes', 'verification' => 'numeric'),
               '55'            =>  array('required' => 'no', 'verification' => 'non-blank'),
               '376'           =>  array('required' => 'no',  'verification' => 'yes/no'),
               '434'           =>  array('required' => 'no',  'verification' => 'yes/no'),
+              '73'            =>  array('required' => 'no',  'verification' => 'yes/no'),
               '151'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '16'            =>  array('required' => 'yes', 'verification' => 'non-blank', 'limit'=>250),
               '22'            =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '160.3'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '160.6'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '234'           =>  array('required' => 'yes', 'verification' => 'non-blank', 'limit'=>250),
+              '160.6'         =>  array('required' => 'yes', 'verification' => 'none'),
+              '234'           =>  array('required' => 'yes', 'verification' => 'none', 'limit'=>250),
               '217'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '96.3'          =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '96.6'          =>  array('required' => 'yes', 'verification' => 'non-blank'),
@@ -478,7 +480,7 @@ function mf_custom_import_entries() {
               }
               break;
             case 'yes/no';
-              if($field != 'yes' && $field != 'no' ){
+              if(strtolower($field) != 'yes' && strtolower($field) != 'no' ){
                 $error .= 'Error on row '.$row.'. Data in column "'.$fieldKey.'" is invalid.  Valid values are yes and no only. Row skipped.<br/>';
                 $passCriteria = false;
               }
@@ -511,8 +513,8 @@ function mf_custom_import_entries() {
     //first let's strip the numeric field id's and add that to the entry object
     foreach($rowData as $key=>$field){
       if(is_numeric($key)){
-        $entry[$key] = htmlspecialchars($field,ENT_QUOTES, 'UTF-8');
-        //$entry[$key] = $field;
+        //$entry[$key] = htmlspecialchars($field,ENT_QUOTES, 'UTF-8');
+        $entry[$key] = $field;
       }
     }
 
