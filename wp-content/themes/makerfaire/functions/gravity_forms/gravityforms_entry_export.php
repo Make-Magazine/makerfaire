@@ -405,6 +405,7 @@ function mf_custom_import_entries() {
               '320'           =>  array('required' => 'yes', 'verification' => 'numeric'),
               '55'            =>  array('required' => 'no', 'verification' => 'non-blank'),
               '376'           =>  array('required' => 'no',  'verification' => 'yes/no'),
+              '130'           =>  array('required' => 'no',  'verification' => 'yes/no'),
               '434'           =>  array('required' => 'no',  'verification' => 'yes/no'),
               '73'            =>  array('required' => 'no',  'verification' => 'yes/no'),
               '151'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
