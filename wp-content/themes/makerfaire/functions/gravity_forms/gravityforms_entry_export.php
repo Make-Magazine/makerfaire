@@ -217,13 +217,14 @@ function mf_custom_import_entries() {
     $res = $wpdb->get_row("select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token"
                         . " from wp_rmt_entry_attributes left outer join wp_rmt_entry_att_categories on wp_rmt_entry_att_categories.ID=attribute_id"
                         . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
-     //matching record found
+
+    //matching record found
     if ( null !== $res ) {  //update the attribute
       if($res->value!=$attvalue){
         $wpdb->update('wp_rmt_entry_attributes',array('value'=>$attvalue,'user'=>$user,'update_stamp'=>'now()'),array('ID'=>$res->ID),array('%s','%d','%s'));
-        if($wpdb->last_error !== '') :
+        if($wpdb->last_error !== ''){
           $wpdb->print_error();
-        endif;
+        }
         //update change report
         $chgRPTins = array(
             'user_id'           => $user,
@@ -237,9 +238,9 @@ function mf_custom_import_entries() {
       }
     }else{ //add the attribute
       $wpdb->insert('wp_rmt_entry_attributes',array('entry_id'=>$entryID,'attribute_id'=>$attribute_id,'value'=>$attvalue,'user'=>$user),array('%d','%d', '%s','%d'));
-      if($wpdb->last_error !== '') :
+      if($wpdb->last_error !== ''){
         $wpdb->print_error();
-      endif;
+      }
       //update change report
       $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$attribute_id);
       $chgRPTins = array(
@@ -317,7 +318,7 @@ function mf_custom_import_entries() {
       global $wpdb;
       $error = 'File Uploaded Succesfully';
       $chgRPTins = array();
-      foreach($data2Process as $data){;
+      foreach($data2Process as $data){
         $entryID    = $data[0];
         $subArea    = $data[1];
         $location   = $data[2];
@@ -340,7 +341,7 @@ function mf_custom_import_entries() {
         if(!empty($return)) $chgRPTins[] = $return;
         //if $space size is empty we need to set the resource status
         if($spaceSize==''){
-          gform_update_meta( $entryID, 'res_status', 'review',$formID);
+          gform_update_meta( $entryID, 'res_status', 'review', $formID);
         }
 
         /*    Confirmation comments     */
@@ -348,12 +349,8 @@ function mf_custom_import_entries() {
 
         $res = $wpdb->get_row("select * from wp_rmt_entry_attn where entry_id = $entryID and attn_id = 13");
         if ( null !== $res ) { //update conf comment
-          $wpdb->update(
-              'wp_rmt_entry_attn',
-              array('entry_id'=>$entryID,'attn_id'=>13,'comment'=>$note,'user'=>$user),
-              array( 'ID' => $res->ID ),
-              array('%d','%d', '%s','%d')
-            );
+          $wpdb->update('wp_rmt_entry_attn',array('entry_id'=>$entryID,'attn_id'=>13,'comment'=>$note,'user'=>$user),array('ID'=> $res->ID),array('%d','%d', '%s','%d'));
+
           //update change report if the conf comment changed
           if($res->comment != $note)
             $chgRPTins[] = array(

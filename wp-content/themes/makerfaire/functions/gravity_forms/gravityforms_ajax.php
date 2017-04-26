@@ -284,6 +284,7 @@ function mf_admin_MFupdate_entry(){
 
 /* Modify Set Entry Status */
 function set_entry_status($lead,$form){
+  global $wpdb;
   $entry_id = $lead['id'];
 	$acceptance_status_change  = $_POST['entry_info_status_change'];
   $acceptance_current_status = isset($lead['303']) ? $lead['303'] : '';
@@ -306,9 +307,12 @@ function set_entry_status($lead,$form){
            * The cron job will trigger action sidebar_entry_update
            */
           wp_schedule_single_event(time() + 1,'sidebar_entry_update', array($entry_id));
-          global $wpdb;
           //lock space size attribute if set
           $wpdb->get_results('update `wp_rmt_entry_attributes` set `lockBit` = 1 where attribute_id =  2 and entry_id='. $lead['id']);
+        }
+
+        if($acceptance_status_change == 'Cancelled'){
+          $wpdb->delete( 'wp_mf_location', array( 'entry_id' => $lead['id'] ) );
         }
 
 				//Create a note of the status change.
