@@ -19,7 +19,7 @@ if(isset($_GET['cron'])){
     genManTickets($entryID, $parentID);
   }
 
-  echo('ending process');
+  echo 'ending process';
 }else{
   echo 'Please add process name in cron variable to run.<br/>';
   echo 'Options are:<br/>'
@@ -98,32 +98,21 @@ function genManTickets($entryID=0, $parentID=0){
      SD -6 Sat/Sun discount tickets -   eid 31971408343   ticket code 61987494
    */
   $tickets = array();
-  $tickets[] =  array('ticket_type' => 'ME',
-                      'ticket_id'   => '61774227',
-                      'hidden'      => 0,
-                      'qty'         => 2,
-                      'eid'         => 31946847882
-      );
-  $tickets[] =  array('ticket_type' => 'FD',
-                      'ticket_id'   => '61987493',
-                      'hidden'      => 0,
-                      'qty'         => 10,
-                      'eid'         => 31971408343
-      );
-  $tickets[] =  array('ticket_type' => 'SD',
-                      'ticket_id'   => '61987494',
-                      'hidden'      => 0,
-                      'qty'         => 6,
-                      'eid'         => 31971408343
-      );
+  $tickets[] =  array('ticket_type' => 'ME', 'ticket_id' => '61774227', 'hidden' => 0, 'qty' =>  2, 'eid' => 31946847882);
+  $tickets[] =  array('ticket_type' => 'FD', 'ticket_id' => '61987493', 'hidden' => 0, 'qty' => 10, 'eid' => 31971408343);
+  $tickets[] =  array('ticket_type' => 'SD', 'ticket_id' => '61987494', 'hidden' => 0, 'qty' =>  6, 'eid' => 31971408343);
   if($entryID!=0){
     //process tickets for single entry
+    echo 'processing entry id '.$entryID;
   }elseif($parentID!=0){
+    echo 'Processing parent id '.$parentID.'<br/>';
     //process group entry tickets
     $sql = "SELECT childID FROM `wp_rg_lead_rel` where parentID = ".$parentID;
 
     $results = $wpdb->get_results($sql);
-    foreach($results as $entryID){
+    foreach($results as $row){
+      $entryID = $row->childID;
+      echo 'Creating tickets for '.$entryID.'<br/>';
       $entry    = GFAPI::get_entry($entryID);
 
       //generate access code for each ticket type

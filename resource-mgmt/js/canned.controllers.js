@@ -443,41 +443,42 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }else if(subRoute=="label"){
       vars = {"formSelect":[],"formType":["Exhibit"],
               "faire": faire,
+              "useFormSC": true,
               "selectedFields":[
-                {"id": "44",  "label":"Will you be giving away, selling, or sampling food (packaged or unpackaged) at Maker Faire?","choices":"all","type":"radio"},
-                {"id": "56",  "label":"Have your company or products ever been featured in a crowdfunding campaign or do you have plans to start a campaign (Kickstarter, Indiegogo, etc?)","choices":"all","type":"radio"},
-                {"id": "66",  "label":"Do you have a hands-on activity for attendees?","choices":"all","type":"radio"},
+                {"id": "44",  "label":"Food","choices":"all","type":"radio"},
+                {"id": "56",  "label":"CF","choices":"all","type":"radio"},
+                {"id": "66",  "label":"HandsOn","choices":"all","type":"radio"},
                 {"id": "68",  "label":"Placement Request","choices":"","type":"text","inputs":""},
-                {"id": "70.1","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"With other Makers under a large tent","type":"checkbox"},
-                {"id": "70.2","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"Open air","type":"checkbox"},
-                {"id": "70.3","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"I can bring a tent/canopy with weights","type":"checkbox"},
-                {"id": "70.4","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"Asphalt","type":"checkbox"},
-                {"id": "70.5","label":"For outdoor exhibits, please mark all options that could work for you.","choices":"Grass","type":"checkbox"},
-                {"id": "73",  "label":"Does your exhibit require power?","choices":"all","type":"radio"},
-                {"id": "83",  "label":"Does your exhibit make use of fire (any size flame), chemicals, or other dangerous materials or tools (propane, welders, etc)?","choices":"all","type":"radio"},
-                {"id": "84",  "label":"Do you have an interactive exhibit involving using tools of any kind, riding (bikes, go carts, swings, etc), climbing, etc?","choices":"all","type":"radio"},
+                {"id": "70.1","label":"Outdoor Options","choices":"With other Makers under a large tent","type":"checkbox"},
+                {"id": "70.2","label":"Outdoor Options","choices":"Open air","type":"checkbox"},
+                {"id": "70.3","label":"Outdoor Options","choices":"I can bring a tent/canopy with weights","type":"checkbox"},
+                {"id": "70.4","label":"Outdoor Options","choices":"Asphalt","type":"checkbox"},
+                {"id": "70.5","label":"Outdoor Options","choices":"Grass","type":"checkbox"},
+                {"id": "73",  "label":"Power","choices":"all","type":"radio"},
+                {"id": "83",  "label":"Fire","choices":"all","type":"radio"},
+                {"id": "84",  "label":"Tools","choices":"all","type":"radio"},
                 {"id":"101.6","label":"Address","choices":"Country","type":"address"},
-                {"id":"151",  "label":"Record Name","choices":"","type":"text","inputs":""},
+                {"id":"151",  "label":"EXHIBIT","choices":"","type":"text","inputs":""},
                 {"id":"302.1","label":"Location","choices":"Bikes","type":"checkbox"},
                 {"id":"303",  "label":"Status","choices":"Proposed","type":"radio"},
                 {"id":"303",  "label":"Status","choices":"Accepted","type":"radio"},
                 {"id":"303",  "label":"Status","choices":"Rejected","type":"radio"},
                 {"id":"303",  "label":"Status","choices":"Wait List","type":"radio"},
                 {"id":"303",  "label":"Status","choices":"Cancelled","type":"radio"},
-                {"id":"320",  "label":"Pick the category that best fits your project.","choices":"all","type":"select"},
+                {"id":"320",  "label":"Primary Cat","choices":"all","type":"select"},
                 {"id":"376",  "label":"CM Indicator","choices":"all","type":"radio"}
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"9","value":"Electrical 120V","checked":true},
-                  {"id":"10","value":"Electrical 220V","checked":true}
+                  {"id":"9","value":"ELEC 120V","checked":true},
+                  {"id":"10","value":"ELEC 220V","checked":true}
                 ],
                 "attribute":[
-                  {"id":"2","value":"Space Size","checked":true},
-                  {"id":"4","value":"Exposure","checked":true},
-                  {"id":"6","value":"Light Level","checked":true},
-                  {"id":"9","value":"Noise Level","checked":true},
-                  {"id":"11","value":"Internet","checked":true}
+                  {"id":"2","value":"SIZE","checked":true},
+                  {"id":"4","value":"IN/OUT","checked":true},
+                  {"id":"6","value":"LIGHT","checked":true},
+                  {"id":"9","value":"NZ","checked":true},
+                  {"id":"11","value":"INT","checked":true}
                 ],
                 "attention":[],
                 "meta":[]
