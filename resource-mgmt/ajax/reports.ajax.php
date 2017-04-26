@@ -384,7 +384,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       $resources = $wpdb->get_results($sql,ARRAY_A);
       $entryRes = array();
       $displayOrder = $selRMT->order;
-      
+
       if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
         $aggrType='uiGridConstants.aggregationTypes.sum';
         foreach($resources as $resource){
@@ -397,7 +397,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
           $return['data']['res_'.$resource['token']] = $resource['qty'];
 
           //resource comments
-          if($comments){
+          if($comments!=''){
             $dispComments = $comments;
           }else{
             $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
@@ -413,7 +413,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
         }
       }else{
         //resource comments
-        if($comments){
+        if($comments!=''){
           $incComments = $comments;
         }else{
           $incComments = (isset($selRMT->comments)? $selRMT->comments:true);
