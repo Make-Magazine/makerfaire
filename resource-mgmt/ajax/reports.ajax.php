@@ -291,7 +291,6 @@ function cannedRpt(){
           case 'Performance':
             $form_type = 'PERF';
             break;
-
         }
       //}
 
@@ -362,6 +361,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
   $return['colDefs'] = array();
   $colDefs2Sort = array();
   $incComments = false;
+  $comments = (isset($rmtData->comments)?$rmtData->comments:'');
 
   //process resources
   if(isset($rmtData->resource) && !empty($rmtData->resource)){
@@ -384,6 +384,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       $resources = $wpdb->get_results($sql,ARRAY_A);
       $entryRes = array();
       $displayOrder = $selRMT->order;
+      
       if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
         $aggrType='uiGridConstants.aggregationTypes.sum';
         foreach($resources as $resource){
@@ -396,7 +397,12 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
           $return['data']['res_'.$resource['token']] = $resource['qty'];
 
           //resource comments
-          $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
+          if($comments){
+            $dispComments = $comments;
+          }else{
+            $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
+          }
+
           if($dispComments){
             $colDefs2Sort['res_'.$resource['token'].'_comment']  = array(
                 'field'=> 'res_'.$resource['token'].'_comment',
@@ -406,6 +412,13 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
           }
         }
       }else{
+        //resource comments
+        if($comments){
+          $incComments = $comments;
+        }else{
+          $incComments = (isset($selRMT->comments)? $selRMT->comments:true);
+        }
+
         foreach($resources as $resource){
           $comment = ($incComments && $resource['comment']!=''?" (".$resource['comment'].")":'');
           $entryRes[] = $resource['qty'] .' : '.$resource['type'].$comment;
