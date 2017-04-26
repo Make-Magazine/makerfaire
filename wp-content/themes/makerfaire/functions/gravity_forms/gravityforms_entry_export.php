@@ -275,11 +275,11 @@ function mf_custom_import_entries() {
           'fieldCount'  => 7
           )
       );
+    $row = 1;
     //process the imported file
     while (($csvFile = fgetcsv($file, 10000, ",")) !== FALSE){
       if(count($csvFile)!= $numCols){
-        $error .= 'Incorrect number of columns for the Location import.<br/>'
-               .  'Uploaded '. count($csvFile).' columns, expected '.$numCols.' columns.';
+        $error .= 'Incorrect number of columns for the Location import.<br/>Uploaded '. count($csvFile).' columns, expected '.$numCols.' columns.';
         break;
       }
 
@@ -331,7 +331,7 @@ function mf_custom_import_entries() {
         /*  SubArea/Location  */
         //delete any previously assigned subareas/locations
         $wpdb->query("delete from wp_mf_location where entry_id = $entryID");
-
+        
         //now add in the uploaded  subareas/locations
         $wpdb->insert('wp_mf_location',array('entry_id'=>$entryID,'subarea_id'=>$subArea,'location'=>$location),array('%d','%d','%s'));
 
