@@ -198,15 +198,25 @@ add_filter('user_can_richedit', create_function('', 'return false;'), 50);
 
 //This function is used to enqueue the angularJS!!!!
 function angular_scripts() {
-  if (is_page('ribbons')) {
+  if (is_page('ribbons') || is_page_template('page-schedule.php')) {
     $my_theme = wp_get_theme();
     $my_version = $my_theme->get('Version');
-    wp_enqueue_script('built-angular-libs', get_stylesheet_directory_uri() . '/js/built-angular-libs.js', array('jquery'),$my_version);
-    wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/ribbonApp.js', array('built-angular-libs'));
 
-    //localize
-    wp_localize_script('angular-scripts', 'MyAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
-    wp_localize_script('angular-scripts', 'angularLocalized', array('partials' => trailingslashit(get_template_directory_uri()) . 'partials/'));
+    wp_enqueue_script('angularjs', get_stylesheet_directory_uri() . '/js/built-angular-libs.js', array('built-libs'),false,true);
+
+
+    if(is_page('ribbons') ){
+      wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/ribbonApp.js', array('angularjs'));
+      //localize
+      wp_localize_script('angular-scripts', 'MyAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+      wp_localize_script('angular-scripts', 'angularLocalized', array('partials' => trailingslashit(get_template_directory_uri()) . 'partials/'));
+    }elseif(is_page_template('page-schedule.php')) {
+      wp_enqueue_script('angular-filter','//cdnjs.cloudflare.com/ajax/libs/angular-filter/0.4.7/angular-filter.js',array('angularjs'),false,true);
+      wp_enqueue_script('angular-schedule',get_stylesheet_directory_uri() . '/js/angular/schedule_cont.js',array( 'angularjs','angular-filter'),false,true);
+
+      //angular ui-bootstrap style
+      wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
+    }
   }
 }
 

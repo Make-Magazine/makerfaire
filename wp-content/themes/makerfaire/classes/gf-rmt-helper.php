@@ -29,11 +29,8 @@ class GFRMTHELPER {
     $form_type   = $form['form_type'];
 
     //original entry ID
-    if($form['id']==105){
-      $origEntryID = (isset($entry['448']) ? $entry['448'] : '');
-    }else{
-      $origEntryID = (isset($entry['20']) ? $entry['20'] : '');
-    }
+    $return = get_value_by_label('entry-id', $form, $entry);
+    $origEntryID = $return['value'];
 
     global $current_user;
     $user = (isset($current_user->ID) ? $current_user->ID:NULL);
@@ -178,6 +175,7 @@ class GFRMTHELPER {
                 . " from wp_rmt_entry_resources"
                 . " left outer join wp_rmt_resources on wp_rmt_resources.ID=resource_id"
                 . ' where entry_id='.$entryID.' and resource_id ='.$resource_id);
+
         //matching record found
         if ( null !== $res ) {  // yes, is qty 0?
           if($res->lockBit==0){ //do not update if this resource is locked

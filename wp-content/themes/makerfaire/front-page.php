@@ -75,8 +75,10 @@ get_header();
           $large_center_text = get_sub_field('large_center_text');
           $small_bottom_text = get_sub_field('small_bottom_text');
           $event_url = get_sub_field('event_url');
-          $call_for_makers_button = get_sub_field('call_for_makers_button');
-          $buy_now_button = get_sub_field('buy_now_button'); ?>
+          $button_1_text = get_sub_field('button_1_text');
+          $button_1_url = get_sub_field('button_1_url'); 
+          $button_2_text = get_sub_field('button_2_text');
+          $button_2_url = get_sub_field('button_2_url'); ?>
 
           <article class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <a href="<?php echo $event_url; ?>">
@@ -95,11 +97,11 @@ get_header();
                 <?php } ?>
               </div>
             </a>
-            <?php if ($buy_now_button) { ?>
-              <a class="btn btn-danger pull-right" href="<?php echo $buy_now_button; ?>">BUY TICKETS</a>
+            <?php if ($button_1_text && $button_1_url) { ?>
+              <a class="btn btn-danger pull-right" href="<?php echo $button_1_url; ?>"><?php echo $button_1_text; ?></a>
             <?php }
-            if ($call_for_makers_button) { ?>
-              <a class="btn btn-danger pull-right" href="<?php echo $call_for_makers_button; ?>">CALL FOR MAKERS</a>
+            if ($button_2_text && $button_2_url) { ?>
+              <a class="btn btn-danger pull-right" href="<?php echo $button_2_url; ?>"><?php echo $button_2_text; ?></a>
             <?php } ?>
           </article>
 

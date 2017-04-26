@@ -152,32 +152,34 @@ foreach($entry as $key=>$field ) {
 
 // Website button
 $website = '';
-if (!empty($project_website)) {
-  if($makerEdit){
-    $website =  'Website: <div id="website" class="mfEdit">'. $project_website.'</div>';
-  }else{
+
+if($makerEdit){
+  $website =  '<div><b>Website:</b> <span id="website" class="mfEdit">'. $project_website.'</span></div>';
+}else{
+  if (!empty($project_website)) {
     $website =  '<a href="' . $project_website . '" class="btn btn-cyan" target="_blank">Project Website</a>';
   }
 }
 
+
 // Project Inline video
 $video = '';
 if (!empty($project_video)) {
-  if($makerEdit) {
-    $video = 'Video: <span id="video" class="mfEdit">'. $project_video.'</span>';
-  } else {
-    $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
-    //youtube has two type of url formats we need to look for and change
-    $videoID = parse_yturl($dispVideo);
-    if($videoID!=''){
-      $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
-    }
-    $video =  '<div class="entry-video">
-                <div class="embed-youtube">
-                  <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                </div>
-              </div>';
+  $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
+  //youtube has two type of url formats we need to look for and change
+  $videoID = parse_yturl($dispVideo);
+  if($videoID!=''){
+    $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
   }
+  $video =  '<div class="entry-video">
+              <div class="embed-youtube">
+                <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+              </div>
+            </div>';
+}
+
+if($makerEdit) {
+  $video = '<b>Video:</b> <span id="video" class="mfEdit">'. $project_video.'</span>';
 }
 
 //decide if display maker info
@@ -208,19 +210,19 @@ if($makerEdit) {
 <div class="container entry-page">
   <div class="row">
     <div class="content col-xs-12 entry-page-mobie-flex">
-        <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
-        <?php
-        if($makerEdit){?>
-          <div class="makerEditHead">
-            <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
-            <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>/">
-              <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
-            </a>
-            <br/>
-            To modify your public information, click on the section you'd like to change below.
-          </div>
-        <?php
-        }
+      <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
+      <?php
+      if($makerEdit){?>
+        <div class="makerEditHead">
+          <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
+          <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>/">
+            <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
+          </a>
+          <br/>
+          To modify your public information, click on the section you'd like to change below.
+        </div>
+      <?php
+      }
       if($validEntry) {
         //display schedule/location information if there is any (do not display schedule if maker edit)
         if (!$makerEdit && !empty(display_entry_schedule($entryId))) {
@@ -258,6 +260,9 @@ if($makerEdit) {
             </div>
 
             <?php
+            //$typeArray = get_value_by_id(105, $form);
+            //var_dump($typeArray);
+            //if($makerEdit)  echo 'Selected Type is - '. $displayType;
             if ($isGroup) {
               echo '<div class="row padbottom">
                       <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
@@ -332,7 +337,7 @@ function display_entry_schedule($entry_id) {
 
   if($wpdb->num_rows > 0){
     ?>
-    <span class="faireTitle">      
+    <span class="faireTitle">
       <span class="faireLabel">Live at</span>
       <br/>
       <a href="<?= $backlink ?>">

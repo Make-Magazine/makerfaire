@@ -226,15 +226,45 @@
   .schedBox {
     .stageName {
       padding-bottom: 10px;
-      font-size:1.3em;
+      font-weight: bold;
     }
-    input[type="checkbox"] {
+    .schedOuter {
+      border-bottom: thin solid lightgray;
+      margin-bottom: 10px;
+      padding-bottom:10px;
+    }
+    .schedOuter input[type="checkbox"] {
       margin: 3px;
       float: left;
     }
     .schedDate {
-      padding: 0 5px;
-      float: left;
+      font-size: 1.2em;
+    }
+    #schedSect {
+      margin-bottom: 10px;
+    }
+    #scheduledItems {
+      border-bottom: thin dashed grey;
+      padding-bottom: 1em;
+      margin-bottom: 1em;
+    }
+    label {
+      font-weight: 700;
+      line-height: 1.5;
+      padding: 7px 0;
+      display: block;
+    }
+    #typeSel, #locationSel {
+      width: 90%;
+    }
+
+    .startDt {
+      margin-top: 10px;
+    }
+
+    .schedInfo {
+      padding-left: 30px;
+      padding-bottom: 5px;
     }
   }
   #noTickets, #createTickets {
