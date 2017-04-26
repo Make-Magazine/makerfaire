@@ -13,14 +13,20 @@ if(isset($_GET['cron'])){
     if(isset($_GET['form'])){
       cronRmtData($_GET['form'],0,0);
     }
+  }elseif($_GET['cron']=='genManTickets'){
+    $entryID  = (isset($_GET['entryID'])?$_GET['entryID']:0);
+    $parentID = (isset($_GET['parentID'])?$_GET['parentID']:0);
+    genManTickets($entryID, $parentID);
   }
+
   echo('ending process');
 }else{
   echo 'Please add process name in cron variable to run.<br/>';
   echo 'Options are:<br/>'
   . '?cron=genEBtickets<br/>'
   . '?cron=build_ribbonJSON<Br/>'
-  . '?cron=cronRmtData&form=999<Br/>';
+  . '?cron=cronRmtData&form=999<Br/>'
+  . '?cron=genManTickets&entryID=999&parentID=999';
 }
 
 function mancron_genEBtickets(){
@@ -73,3 +79,87 @@ function cronRmtData($formID,$limit=0,$start=0) {
   }
 }
 
+function genManTickets($entryID=0, $parentID=0){
+  global $wpdb;
+  if (!class_exists('eventbrite')) {
+    require_once('../classes/eventbrite.class.inc');
+  }
+  $eventbrite = new eventbrite();
+
+  //generate eventbrite tickets
+  /*
+    BA17:
+      ME - 2 Maker Entry Passes - eid 26455360696, ticket id 52207452(event id 3)
+      SC - 2 Comp tickets       - eid 25957796468, ticket id 52164508(event id 4)
+      SD - 2 discount tickets   - eid 25957796468, ticket id 52164509(event id 4)
+
+   * ME - 2 Maker Entry Passes -        eid: 31946847882  ticket code 61774227
+     FD - 10 Friday discount tickets -  eid 31971408343   ticket code 61987493
+     SD -6 Sat/Sun discount tickets -   eid 31971408343   ticket code 61987494
+   */
+  $tickets = array();
+  $tickets[] =  array('ticket_type' => 'ME',
+                      'ticket_id'   => '61774227',
+                      'hidden'      => 0,
+                      'qty'         => 2,
+                      'eid'         => 31946847882
+      );
+  $tickets[] =  array('ticket_type' => 'FD',
+                      'ticket_id'   => '61987493',
+                      'hidden'      => 0,
+                      'qty'         => 10,
+                      'eid'         => 31971408343
+      );
+  $tickets[] =  array('ticket_type' => 'SD',
+                      'ticket_id'   => '61987494',
+                      'hidden'      => 0,
+                      'qty'         => 6,
+                      'eid'         => 31971408343
+      );
+  if($entryID!=0){
+    //process tickets for single entry
+  }elseif($parentID!=0){
+    //process group entry tickets
+    $sql = "SELECT childID FROM `wp_rg_lead_rel` where parentID = ".$parentID;
+
+    $results = $wpdb->get_results($sql);
+    foreach($results as $entryID){
+      $entry    = GFAPI::get_entry($entryID);
+
+      //generate access code for each ticket type
+      $digits = 3;
+      $charIP = (string) $entry['ip'];
+      $rand   =  substr(base_convert($charIP, 10, 36),0,$digits);
+
+      foreach($tickets as $ticket){
+        $hidden     = $ticket['hidden'];
+        $accessCode = $ticket['ticket_type'] . $entryID . $rand;
+        $args = array(
+          'id'   => $ticket['eid'],
+          'data' => 'access_codes',
+          'create' => array(
+            'access_code.code'               => $accessCode,
+            'access_code.ticket_ids'         => $ticket['ticket_id'],
+            'access_code.quantity_available' => $ticket['qty']
+          )
+        );
+
+        //call eventbrite to create access code
+        $access_codes = $eventbrite->events($args);
+        if(isset($access_codes->status_code) && $access_codes->status_code==400){
+          var_dump($access_codes->error_description); echo '<br/>';
+          exit;
+        }else{
+          var_dump($access_codes->resource_uri); echo '<br/>';
+        }
+
+        //save access codes to db
+        $dbSQL = 'INSERT INTO `eb_entry_access_code`(`entry_id`, `access_code`, `hidden`,EBticket_id) '
+                . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$ticket['ticket_id'].')'
+                . ' on duplicate key update access_code = "'.$accessCode.'"';
+
+        $wpdb->get_results($dbSQL);
+      }
+    }
+  }
+}
