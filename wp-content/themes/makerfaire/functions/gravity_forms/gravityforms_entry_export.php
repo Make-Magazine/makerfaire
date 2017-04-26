@@ -259,6 +259,7 @@ function mf_custom_import_entries() {
 
   function processLocation($file,$user) {
     global $numCols;
+    $numCols = 7;
     $error = '';
     $fieldAray = array(
       'location' => array(
