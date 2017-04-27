@@ -260,7 +260,8 @@ function filterText($text) {
 
   //now translate any unicode stuff...
   $conv = array(
-      "&amp;" => '&');
+      "&amp;" => "&",
+      "&#039;" => "'");
   return strtr($string, $conv);
 }
 

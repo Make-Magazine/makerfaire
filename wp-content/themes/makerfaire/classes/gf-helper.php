@@ -226,26 +226,82 @@ function createGUID($id){
         return $uuid;
 }
 
+remove_action('wp_ajax_gf_resend_notifications', 'resend_notifications');
+add_action('wp_ajax_gf_resend_notifications', 'MF_send_notifications');
 
-/* function to send confirmation letters to a group of entries */
-function MF_send_confirmation($leads){
-  $message = '';
+function MF_send_notifications() {
 
-  //loop thru leads and look for a confirmation notification
-  foreach ( $leads as $lead_id ) {
-    $lead = RGFormsModel::get_lead( $lead_id );
-    $form_id = $lead['form_id'];
-    $form = RGFormsModel::get_form_meta( $form_id );
-    //find if there are any confirmation_letter for this form
-    $event = 'confirmation_letter';
-    $notifications = GFCommon::get_notifications_to_send( $event, $form, $lead );
-    $notifications_to_send = array();
-    //running through filters that disable form submission notifications
-    foreach ( $notifications as $notification ) {
-      $notifications_to_send[] = $notification['id'];
-    }
-    GFCommon::send_notifications( $notifications_to_send, $form, $lead, true, $event );
-  }
+  	check_admin_referer( 'gf_resend_notifications', 'gf_resend_notifications' );
+		$form_id = absint( rgpost( 'formId' ) );
+		$leads   = rgpost( 'leadIds' ); // may be a single ID or an array of IDs
+		if ( 0 == $leads ) {
+			// get all the lead ids for the current filter / search
+			$filter = rgpost( 'filter' );
+			$search = rgpost( 'search' );
+			$star   = $filter == 'star' ? 1 : null;
+			$read   = $filter == 'unread' ? 0 : null;
+			$status = in_array( $filter, array( 'trash', 'spam' ) ) ? $filter : 'active';
 
-  return $message;
+			$search_criteria['status'] = $status;
+
+			if ( $star ) {
+				$search_criteria['field_filters'][] = array( 'key' => 'is_starred', 'value' => (bool) $star );
+			}
+			if ( ! is_null( $read ) ) {
+				$search_criteria['field_filters'][] = array( 'key' => 'is_read', 'value' => (bool) $read );
+			}
+
+			$search_field_id = rgpost( 'fieldId' );
+
+			if ( isset( $_POST['fieldId'] ) && $_POST['fieldId'] !== '' ) {
+				$key            = $search_field_id;
+				$val            = $search;
+				$strpos_row_key = strpos( $search_field_id, '|' );
+				if ( $strpos_row_key !== false ) { //multi-row
+					$key_array = explode( '|', $search_field_id );
+					$key       = $key_array[0];
+					$val       = $key_array[1] . ':' . $val;
+				}
+				$search_criteria['field_filters'][] = array(
+					'key'      => $key,
+					'operator' => rgempty( 'operator', $_POST ) ? 'is' : rgpost( 'operator' ),
+					'value'    => $val,
+				);
+			}
+
+			$leads = GFFormsModel::search_lead_ids( $form_id, $search_criteria );
+		} else {
+			$leads = ! is_array( $leads ) ? array( $leads ) : $leads;
+		}
+
+		/**
+		 * Filters the notifications to be re-sent
+		 *
+		 * @since Unknown
+		 *
+		 * @param array $form_meta The Form Object
+		 * @param array $leads     The entry IDs
+		 */
+		$form = gf_apply_filters( array( 'gform_before_resend_notifications', $form_id ), RGFormsModel::get_form_meta( $form_id ), $leads );
+
+		if ( empty( $leads ) || empty( $form ) ) {
+			esc_html_e( 'There was an error while resending the notifications.', 'gravityforms' );
+			die();
+		};
+
+		$notifications = json_decode( rgpost( 'notifications' ) );
+		if ( ! is_array( $notifications ) ) {
+			die( esc_html__( 'No notifications have been selected. Please select a notification to be sent.', 'gravityforms' ) );
+		}
+
+		if ( ! rgempty( 'sendTo', $_POST ) && ! GFCommon::is_valid_email_list( rgpost( 'sendTo' ) ) ) {
+			die( sprintf( esc_html__( 'The %sSend To%s email address provided is not valid.', 'gravityforms' ), '<strong>', '</strong>' ) );
+		}
+
+		foreach ( $leads as $lead_id ) {
+			$lead = RGFormsModel::get_lead( $lead_id );
+      GFCommon::send_notifications( $notifications, $form, $lead, true );
+		}
+
+		die();
 }

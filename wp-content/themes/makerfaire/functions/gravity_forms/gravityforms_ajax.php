@@ -312,7 +312,7 @@ function set_entry_status($lead,$form){
         }
 
         if($acceptance_status_change == 'Cancelled'){
-          $wpdb->delete( 'wp_mf_location', array( 'entry_id' => $lead['id'] ) );
+          //$wpdb->delete( 'wp_mf_location', array( 'entry_id' => $lead['id'] ) );
         }
 
 				//Create a note of the status change.

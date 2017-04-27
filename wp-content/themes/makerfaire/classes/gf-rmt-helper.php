@@ -30,7 +30,7 @@ class GFRMTHELPER {
 
     //original entry ID
     $return = get_value_by_label('entry-id', $form, $entry);
-    $origEntryID = $return['value'];
+    $origEntryID = (isset($return['value'])?$return['value']:'');
 
     global $current_user;
     $user = (isset($current_user->ID) ? $current_user->ID:NULL);
