@@ -42,7 +42,29 @@ function mf_invoice_cpt() {
 	);
 	register_post_type( 'invoice', $args );
 	// Deny access to the post_type query arg
-	if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'invoice' ) {
-		//wp_die( 'Unauthorized' );
-	}
+  if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'invoice' && !current_user_can( 'manage_options' ) ) {
+    wp_die( 'Unauthorized' );
+  }
+}
+
+//* Send a notice to the user when CPT is created
+add_action( 'acf/save_post', 'send_invoice_notice', 20 );
+function send_invoice_notice( $post_id ) {
+    if ( 'invoice' == get_post_type( $post_id ) ) {
+      // Get client's first name
+      $name = get_field( 'invoice_client_name', $post_id );
+      $first_name = explode( ' ', $name );
+      // Get client's email
+      $to = get_field( 'invoice_client_email', $post_id );
+      //$to = 'alicia@makermedia.com';
+      // Get invoice link with client's email passed as query string
+      $permalink = trailingslashit( get_permalink( $post_id ) ) . '?client_email=' . $to;
+      // Set email subject
+      $subject = 'Your MakerFaire Service Invoice';
+      // Set email message
+      $message = 'Hi, ' . $first_name[0] . '. An invoice was just created and assigned to you on MakerFaire. Click here to view invoice details: ' . $permalink;
+      // Send email
+      die($to.' '.$subject.' '.$message);
+      wp_mail( $to, $subject, $message );
+    }
 }
