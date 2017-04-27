@@ -40,15 +40,15 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }
   };
 
-
-
   //set up gridOptions for predefined reports
   $scope.gridOptions = {
     enableFiltering: true,
     enableGridMenu: true,
+    showGridFooter: true,
+    showColumnFooter: true,
     rowHeight: 100,
-
-    exporterCsvFilename: 'export.csv',
+    exporterMenuPdf: false, // hide PDF export
+    exporterCsvFilename: $routeParams.sub+'-export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
 
@@ -106,7 +106,12 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           if(findMe in sortParams){
             value.sort = {'direction':sortParams[findMe].direction, 'priority': sortParams[findMe].priority};
           }
-
+          if('aggregationType' in value){
+            if(value.aggregationType =='uiGridConstants.aggregationTypes.sum'){
+              value.aggregationType = uiGridConstants.aggregationTypes.sum;
+              value.aggregationHideLabel = true;
+            }
+          }
         });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
@@ -137,36 +142,27 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     var pageTitle = 'Reports';
     var subTitle  = '';
 
-    if(subRoute=='commercial')        {
-      vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor"],
-              "faire": faire,
-              "selectedFields":[{"id":"55.2","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},
-                {"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply: [MF_E, SP_SU]","choices":"Launching a product or service","type":"checkbox","$$hashKey":"uiGrid-002D"},
-                {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"}],
-              "rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:178","checked":true}],"attribute":[{"id":"all","value":"All Attributes","$$hashKey":"object:252","checked":true}],"attention":[{"id":"all","value":"All Attention","$$hashKey":"object:272","checked":true}],"meta":[]},"type":"customRpt","location":true};
-      var subTitle = 'Commercial';
-      $scope.reports.callAJAX(vars);
-    }else
     if(subRoute=='cm_pymt'){
        vars = {"formSelect":[],
               "formType":["Exhibit"],
               "faire": faire,
               "payments":true,
+              "paymentOrder": 100,
+              "entryIDorder": 200,
               "selectedFields":[
-                {"id":"304.21","label":"Flags","choices":"CM Fee Waived","type":"checkbox","$$hashKey":"uiGrid-00KL"},
-                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"},
-                {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio","exact":true},
-                {"id":"55.3","label":"What are your plans at Maker Faire? Check all that apply:","choices":"Selling at Maker Faire [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-0029"},
-                {"id":"55.4","label":"What are your plans at Maker Faire? Check all that apply: ","choices":"Promoting a product or service [Commercial Maker]","type":"checkbox","$$hashKey":"uiGrid-002B"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-00KB"}
+                {"id":"442","label":"Fee Management","choices":"all","type":"checkbox", "order":400},
+                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
+                {"id":376,"label":"CM Ind","choices":"all","type":"radio", "order":500},
+                {"id":434,"label":"Fee Ind","choices":"Yes","type":"radio","exact":true, "order":600},
+                {"id":"55", "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox", "order":700},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
               ],
               "location":true,
               "rmtData":{"resource":[],"attribute":[],"attention":[],
-              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","$$hashKey":"object:371","checked":true}]},
+              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","checked":true}]},
               "type":"customRpt"
             };
-      var subTitle = 'CM Payment(s)';
+      var subTitle = 'Payment(s)';
       $scope.reports.callAJAX(vars);
     }else
     if(subRoute=='nonprofit_pymt'){
@@ -175,210 +171,320 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "faire": faire,
               "payments":true,
               "selectedFields":[
-                {"id":"304.17","label":"Flags","choices":"NP Fee Full","type":"checkbox","$$hashKey":"uiGrid-00KL"},
-                {"id":"304.18","label":"Flags","choices":"NP Fee Discount","type":"checkbox","$$hashKey":"uiGrid-00KL"},
-                {"id":"304.19","label":"Flags","choices":"NP Fee Waived","type":"checkbox","$$hashKey":"uiGrid-00KL"},
+                {"id":"304.17","label":"Flags","choices":"NP Fee Full","type":"checkbox"},
+                {"id":"304.18","label":"Flags","choices":"NP Fee Discount","type":"checkbox"},
+                {"id":"304.19","label":"Flags","choices":"NP Fee Waived","type":"checkbox"},
 
-                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-00B3"},
-                {"id":45,"label":"Are you a:","choices":"Non-profit","type":"radio","exact":true},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-00KB"}
+                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":""},
+                {"id":45,"label":"Are you a:","choices":"Non-profit or Cause or Mission based organization (Exhibit Fee applicable)","type":"radio","exact":true},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true}
               ],
               "rmtData":{"resource":[],"attribute":[],"attention":[],
-              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","$$hashKey":"object:371","checked":true}]},
+              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","checked":true}]},
               "type":"customRpt"
             };
       var subTitle = 'Nonprofit Payment(s)';
       $scope.reports.callAJAX(vars);
-    }else if(subRoute=='am_summary'){
+    }else
+    if(subRoute=='am_summary'){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "useFormSC": true,
+              "entryIDorder": 200,
+              "locationOrder": 300,
+              "formTypeorder":400,
               "selectedFields":[
-                {"id":16,
-                 "label":"Short/Public Description [check notes] [ALL]",
-                 "choices":"",
-                 "type":"textarea",
-                 "inputs":"",
-                 "$$hashKey":"uiGrid-011P"},
-               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-               {"id":96,"label":"Contact Name","choices":"",
-                 "type":"name",
-                 "inputs":[
-                   {"id":"96.3","label":"First","name":""},
-                   {"id":"96.6","label":"Last","name":""},
-                   ],"$$hashKey":"uiGrid-017X"},
-               {"id":98,"label":"Contact Email [ALL]","choices":"","type":"email","inputs":"","$$hashKey":"uiGrid-017Z"},
-               {"id":99,"label":"Contact Phone Number [ALL]","choices":"","type":"phone","inputs":"","$$hashKey":"uiGrid-0181"},
-               {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-01BT"},
-               {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
-               {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-               {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
-               {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-               {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"}
+                {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":1700},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
+                {"id":96, "label":"MAKER NAME", "choices":"", "type":"name",
+                 "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""},], "order":700
+                },
+                {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":800},
+                {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":900},
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":100},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
+                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"}
              ],
-             "rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:695","checked":true},{"id":"2","value":"Tables","$$hashKey":"object:696","checked":true},{"id":"3","value":"Chairs","$$hashKey":"object:697","checked":true},{"id":"9","value":"Electrical 120V","$$hashKey":"object:698","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:770","checked":true},{"id":"4","value":"Exposure","$$hashKey":"object:771","checked":true},{"id":"9","value":"Noise Level","$$hashKey":"object:773","checked":true},{"id":"11","value":"Internet","$$hashKey":"object:774","checked":true}],"attention":[{"id":"9","value":"Area Manager Notes","$$hashKey":"object:792","checked":true},{"id":"10","value":"Early Setup","$$hashKey":"object:793","checked":true},{"id":"11","value":"No Friday","$$hashKey":"object:794","checked":true}],"meta":[]},
-             "type":"customRpt","location":true};
+             "rmtData":{
+                "resource":[
+                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":1800},
+                  {"id":"2","value":"TABLE","checked":true, "order":1100},
+                  {"id":"3","value":"CHAIR","checked":true, "order":1200},
+                  {"id":"9","value":"ELEC","checked":true, "order":1300}
+                ],
+                "attribute":[
+                  {"id":"2",  "value":"SIZE","checked":true, "order":1000},
+                  {"id":"4",  "value":"IN/OUT","checked":true, "order":1600},
+                  {"id":"9",  "value":"NZ","checked":true, "order":1500},
+                  {"id":"11", "value":"INT","checked":true, "order":1400}
+                ],
+                "attention":[
+                  {"id":"9","value":"Area Manager Notes","checked":true, "order":1900},
+                  {"id":"10","value":"Early Setup","checked":true},
+                  {"id":"11","value":"No Friday","checked":true}
+                ],
+                "meta":[]
+              },
+             "type":"customRpt",
+             "location":true};
       var subTitle = 'AM summary';
       $scope.reports.callAJAX(vars);
-    }else if(subRoute=='zoho'){
+    }else
+    if(subRoute=='zoho'){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "useFormSC": true,
+              "entryIDorder": 200,
+              "locationOrder": 300,
+              "formTypeorder":400,
               "selectedFields":[
-                {"id":16,
-                 "label":"Short/Public Description [check notes] [ALL]",
-                 "choices":"",
-                 "type":"textarea",
-                 "inputs":"",
-                 "$$hashKey":"uiGrid-022D"},
-               {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-              {"id":83,"label":"Does your exhibit make use of fire (any size flame), chemicals, or other dangerous materials or tools (propane, welders, etc)? [MF_E, SP_SU, MC_E]",
-              "choices":"Yes","type":"radio","$$hashKey":"uiGrid-02F0"},
-              {"id":83,"label":"Does your exhibit make use of fire (any size flame), chemicals, or other dangerous materials or tools (propane, welders, etc)? [MF_E, SP_SU, MC_E]",
-              "choices":"No","type":"radio","$$hashKey":"uiGrid-02F0"},
-              {"id":85,"label":"Describe any fire or safety issues. [MF_E, SP_SU, MC_E]","choices":"","type":"textarea","inputs":"","$$hashKey":"uiGrid-02F8"},
-              {"id":96,"label":"Contact Name [ALL]","choices":"","type":"name",
-                "inputs":[
-                  {"id":"96.3","label":"First","name":""},
-                  {"id":"96.6","label":"Last","name":""},
-                  ],"$$hashKey":"uiGrid-028L"},
-              {"id":98,"label":"Contact Email [ALL]","choices":"","type":"email","inputs":"","$$hashKey":"uiGrid-028N"},
-              {"id":99,"label":"Contact Phone Number [ALL]","choices":"","type":"phone","inputs":"","$$hashKey":"uiGrid-028P"},
-              {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-02CH"},
-              {"id":293,"label":"Does your exhibit require attendees to wear an activity wristband?","choices":"Yes","type":"radio","$$hashKey":"uiGrid-02JZ"},
-              {"id":293,"label":"Does your exhibit require attendees to wear an activity wristband?","choices":"No","type":"radio","$$hashKey":"uiGrid-02K1"},
-              {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
-              {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-              {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
-              {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-              {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
-              {"id":317,"label":"Will your exhibit produce any waste?","choices":"Yes","type":"radio","$$hashKey":"uiGrid-02OZ"},
-              {"id":317,"label":"Will your exhibit produce any waste?","choices":"No","type":"radio","$$hashKey":"uiGrid-02P1"}],
-            "rmtData":{"resource":[{"id":"all","value":"All Resources","$$hashKey":"object:1236","checked":true},
-                {"id":"2","value":"Tables","$$hashKey":"object:1237","checked":true},
-                {"id":"3","value":"Chairs","$$hashKey":"object:1238","checked":true},
-                {"id":"9","value":"Electrical 120V","$$hashKey":"object:1239","checked":true},
-                {"id":"15","value":"Water","$$hashKey":"object:1244","checked":true},
-                {"id":"18","value":"Fencing","$$hashKey":"object:1247","checked":true},
-                {"id":"19","value":"Barricade","$$hashKey":"object:1248","checked":true},
-                {"id":"45","value":"Umbrella","$$hashKey":"object:1267","checked":true},
-                {"id":"47","value":"Grindings","$$hashKey":"object:1269","checked":true}],
-              "attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:1311","checked":true},
-                {"id":"4","value":"Exposure","$$hashKey":"object:1312","checked":true},
-                {"id":"9","value":"Noise Level","$$hashKey":"object:1314","checked":true},
-                {"id":"11","value":"Internet","$$hashKey":"object:1315","checked":true}],
-              "attention":[{"id":"9","value":"Area Manager Notes","$$hashKey":"object:1333","checked":true},
-                {"id":"10","value":"Early Setup","$$hashKey":"object:1334","checked":true},
-                {"id":"11","value":"No Friday","$$hashKey":"object:1335","checked":true},
-                ],"meta":[]},
-              "type":"customRpt","location":true};
+                {"id":16,"label":"EXHIBIT SUMMARY","choices":"","type":"textarea","inputs":"", "order":1500},
+                {"id":376,"label":"CM","choices":"all","type":"radio"},
+                {"id":83,"label":"FIRE","choices":"Yes","type":"radio", "order":1800},
+                {"id":83,"label":"FIRE","choices":"No","type":"radio", "order":1800},
+                {"id":85,"label":"Describe any fire or safety issues.","choices":"","type":"textarea","inputs":""},
+                {"id":96,"label":"MAKER NAME","choices":"","type":"name", "order":500,
+                  "inputs":[
+                    {"id":"96.3","label":"First","name":""},
+                    {"id":"96.6","label":"Last","name":""},
+                    ]
+                },
+                {"id":98,"label":"EMAIL","choices":"","type":"email","inputs":"", "order":700},
+                {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":600},
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":100},
+                {"id":293,"label":"WRIST","choices":"Yes","type":"radio", "order":1700},
+                {"id":293,"label":"WRIST","choices":"No","type":"radio", "order":1700},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
+                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":317,"label":"WASTE","choices":"Yes","type":"radio", "order":1900},
+                {"id":317,"label":"Will your exhibit produce any waste?","choices":"No","type":"radio"}
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":1600},
+                  {"id":"2","value":"TABLE","checked":true, "order":900},
+                  {"id":"3","value":"CHAIR","checked":true, "order":1000},
+                  {"id":"9","value":"ELEC","checked":true, "order":1100},
+                  {"id":"15","value":"H2O","checked":true, "order":2000},
+                  {"id":"18","value":"FENCE","checked":true, "order":2100},
+                  {"id":"19","value":"BARR","checked":true, "order":2200},
+                  {"id":"45","value":"UMB","checked":true, "order":2300},
+                  {"id":"47","value":"GRIND","checked":true, "order":2400}],
+                "attribute":[
+                  {"id":"2","value":"SIZE","checked":true, "order":800},
+                  {"id":"4","value":"IN/OUT","checked":true, "order":1400},
+                  {"id":"9","value":"NZ","checked":true, "order":1300},
+                  {"id":"11","value":"INT","checked":true, "order":1200}
+                ],
+                "attention":[
+                  {"id":"9","value":"Area Manager Notes","checked":true, "order":2500},
+                  {"id":"10","value":"Early Setup","checked":true},
+                  {"id":"11","value":"No Friday","checked":true},
+                  ],"meta":[]},
+              "type":"customRpt",
+              "location":true
+            };
       var subTitle = 'Zoho';
       $scope.reports.callAJAX(vars);
-    }else if(subRoute=="am_tcp"){
+    }else
+    if(subRoute=="am_tcp"){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-        "selectedFields":[
-          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
-          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Rejected","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Wait List","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Cancelled","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-        ],
-        "rmtData":{"resource":[
-            {"id":"2","value":"Tables","$$hashKey":"object:4415","checked":true,"aggregated":false},
-            {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true,"aggregated":false},
-            {"id":"9","value":"Electrical 120V","$$hashKey":"object:4417","checked":true},
-            {"id":"10","value":"Electrical 220V","$$hashKey":"object:4418","checked":true}],"attribute":[{"id":"2","value":"Space Size","$$hashKey":"object:4489","checked":true}],"attention":[],"meta":[]},"type":"customRpt","location":true}
+              "useFormSC": true,
+              "entryIDorder": 200,
+              "locationOrder": 300,
+              "formTypeorder":400,
+              "selectedFields":[
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":100},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
+                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"2","value":"TABLE","checked":true,"aggregated":false, "order":2000,"comments":false},
+                  {"id":"3","value":"CHAIR","checked":true,"aggregated":false, "order":3000,"comments":false},
+                  {"id":"9","value":"ELEC","checked":true, "order":4000,"comments":false},
+                  {"id":"10","value":"ELEC 220V","checked":true, "order":5000,"comments":false}
+                ],
+                "attribute":[
+                  {"id":"2","value":"SIZE","checked":true, "order":1000}
+                ],
+                "attention":[],
+                "meta":[]
+              },
+              "type":"customRpt",
+              "location":true};
       var subTitle = 'AM TCP';
       $scope.reports.callAJAX(vars);
-    }else if(subRoute=="table_chairs"){
+    }else
+    if(subRoute=="table_chairs"){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-        "selectedFields":[
-          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
-          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-        ],
-        "rmtData":{
-          "resource":[{"id":"2","value":"Tables","$$hashKey":"object:4415","checked":true,"aggregated":false},
-            {"id":"3","value":"Chairs","$$hashKey":"object:4416","checked":true,"aggregated":false}],
-          "attribute":[],"attention":[],"meta":[]},
-        "type":"customRpt",
-        "location":true}
+              "dispFormID":false,
+              "useFormSC": true,
+              "entryIDorder": 200,
+              "locationOrder": 300,
+              "formTypeorder":400,
+              "selectedFields":[
+                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":500},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":600},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true, "order":700},
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":2000},
+                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":3000}
+                ],
+                "attribute":[],"attention":[],"meta":[]
+              },
+              "type":"customRpt",
+              "location":true};
       var subTitle = 'Table/Chairs';
       $scope.reports.callAJAX(vars);
-    }else if(subRoute=="barr_fence"){
+    }else
+    if(subRoute=="barr_fence"){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-        "selectedFields":[
-          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
-          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-        ],
-        "rmtData":{
-          "resource":[{"id":"19","value":"Barricade","checked":true,"aggregated":false},{"id":"18","value":"Fencing","checked":true,"aggregated":false}],
-          "attribute":[],"attention":[],"meta":[]},
-        "type":"customRpt",
-        "location":true}
+              "dispFormID":false,
+              "useFormSC": true,
+              "selectedFields":[
+                {"id":151,"label":"Exhibit","type":"text"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true},
+
+              ],
+              "orderBy":'location',
+              "rmtData":{
+                "resource":[
+                  {"id":"19","value":"Barricade","checked":true,"aggregated":false},
+                  {"id":"18","value":"Fencing","checked":true,"aggregated":false}
+                ],
+                "attribute":[],"attention":[],"meta":[]},
+              "type":"customRpt",
+              "location":true};
       var subTitle = 'Barr/Fence';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="electrical"){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-        "selectedFields":[
-          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
-          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-        ],
-        "rmtData":{
-          "resource":[{"id":"9","value":"Electrical 120V","checked":true,"aggregated":false},{"id":"10","value":"Electrical 220V","checked":true,"aggregated":false}],
-          "attribute":[],"attention":[],"meta":[]},
-        "type":"customRpt",
-        "location":true}
-      var subTitle = 'Electrical';
+              "dispFormID":false,
+              "useFormSC": true,
+              "selectedFields":[
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":""},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true},
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":false},
+                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":false}
+                ],
+                "attribute":[],"attention":[],"meta":[]},
+              "type":"customRpt",
+              "location":true};
+            var subTitle = 'Electrical';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="guest_seat"){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-        "selectedFields":[
-          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
-          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-        ],
-        "rmtData":{
-          "resource":[{"id":"11","value":"Bench","checked":true,"aggregated":false},{"id":"12","value":"Bleachers","checked":true,"aggregated":false}],
-          "attribute":[],"attention":[],"meta":[]},
-        "type":"customRpt",
-        "location":true}
+              "selectedFields":[
+                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"11","value":"Bench","checked":true,"aggregated":false},
+                  {"id":"12","value":"Bleachers","checked":true,"aggregated":false}
+                ],
+                "attribute":[],"attention":[],"meta":[]},
+              "type":"customRpt",
+              "location":true};
       var subTitle = 'Guest Seating';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="wb_stools"){
       vars = {"formSelect":[],
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-        "selectedFields":[
-          {"id":151,"label":"Record Name (Project/Title/Company) [ALL]","choices":"","type":"text","inputs":"","$$hashKey":"uiGrid-061A"},
-          {"id":303,"label":"Status","choices":"Proposed","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":303,"label":"Status","choices":"Accepted","type":"radio","$$hashKey":"uiGrid-06AI"},
-          {"id":376,"label":"CM Indicator","choices":"Yes","type":"radio"},
-        ],
-        "rmtData":{
-          "resource":[{"id":"41","value":"Work Bench","checked":true,"aggregated":false},{"id":"42","value":"Stools","checked":true,"aggregated":false}],
-          "attribute":[],"attention":[],"meta":[]},
-        "type":"customRpt",
-        "location":true}
-      var subTitle = 'Guest Seating';
+              "selectedFields":[
+                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"41","value":"Work Bench","checked":true,"aggregated":false},
+                  {"id":"42","value":"Stools","checked":true,"aggregated":false}
+                ],
+                "attribute":[],"attention":[],"meta":[]},
+              "type":"customRpt",
+              "location":true};
+      var subTitle = 'WB/Stools';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=="label"){
+      vars = {"formSelect":[],"formType":["Exhibit"],
+              "faire": faire,
+              "useFormSC": true,
+              "selectedFields":[
+                {"id": "44",  "label":"Food","choices":"all","type":"radio"},
+                {"id": "56",  "label":"CF","choices":"all","type":"radio"},
+                {"id": "66",  "label":"HandsOn","choices":"all","type":"radio"},
+                {"id": "68",  "label":"Placement Request","choices":"","type":"text","inputs":""},
+                {"id": "70.1","label":"Outdoor Options","choices":"With other Makers under a large tent","type":"checkbox"},
+                {"id": "70.2","label":"Outdoor Options","choices":"Open air","type":"checkbox"},
+                {"id": "70.3","label":"Outdoor Options","choices":"I can bring a tent/canopy with weights","type":"checkbox"},
+                {"id": "70.4","label":"Outdoor Options","choices":"Asphalt","type":"checkbox"},
+                {"id": "70.5","label":"Outdoor Options","choices":"Grass","type":"checkbox"},
+                {"id": "73",  "label":"Power","choices":"all","type":"radio"},
+                {"id": "83",  "label":"Fire","choices":"all","type":"radio"},
+                {"id": "84",  "label":"Tools","choices":"all","type":"radio"},
+                {"id":"101.6","label":"Address","choices":"Country","type":"address"},
+                {"id":"151",  "label":"EXHIBIT","choices":"","type":"text","inputs":""},
+                {"id":"302.1","label":"Location","choices":"Bikes","type":"checkbox"},
+                {"id":"303",  "label":"Status","choices":"Proposed","type":"radio"},
+                {"id":"303",  "label":"Status","choices":"Accepted","type":"radio"},
+                {"id":"303",  "label":"Status","choices":"Rejected","type":"radio"},
+                {"id":"303",  "label":"Status","choices":"Wait List","type":"radio"},
+                {"id":"303",  "label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":"320",  "label":"Primary Cat","choices":"all","type":"select"},
+                {"id":"376",  "label":"CM Indicator","choices":"all","type":"radio"}
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"9","value":"ELEC 120V","checked":true},
+                  {"id":"10","value":"ELEC 220V","checked":true}
+                ],
+                "attribute":[
+                  {"id":"2","value":"SIZE","checked":true},
+                  {"id":"4","value":"IN/OUT","checked":true},
+                  {"id":"6","value":"LIGHT","checked":true},
+                  {"id":"9","value":"NZ","checked":true},
+                  {"id":"11","value":"INT","checked":true}
+                ],
+                "attention":[],
+                "meta":[]
+              },"type":"customRpt"};
+
+      var subTitle = 'Label Placement';
       $scope.reports.callAJAX(vars);
     }
     jQuery('#pageTitle').html(pageTitle);

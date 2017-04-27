@@ -31,6 +31,21 @@ if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
       exit;
 
       break;
+    case "forms":
+      if(isset($_POST['faire'])){
+        $sql = 'SELECT * '
+             . '  FROM wp_rg_form, wp_mf_faire '
+             . ' WHERE  find_in_set (wp_rg_form.id,wp_mf_faire.non_public_forms) > 0 '
+             . '   AND wp_mf_faire.id ='. $_POST['faire'] .' order by title';
+      }else{
+        $sql = 'SELECT * FROM wp_rg_form order by title';
+      }
+
+      $data[$type] = $wpdb->get_results($sql);
+      echo json_encode($data);
+      exit;
+
+      break;
 		default:
 			invalidRequest();
 	}

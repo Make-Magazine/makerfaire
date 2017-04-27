@@ -166,6 +166,15 @@ jQuery( document ).ready(function() {
     }
     jQuery('#update_entry_location_code').val(locText);
   });
+
+  //show schedule section when #dispSchedSect is checked
+  jQuery("#dispSchedSect").change(function() {
+    if(this.checked) {
+      jQuery('#schedSect').show();
+    }else{
+      jQuery('#schedSect').hide();
+    }
+  });
 });
 
 /* input - fieldID
@@ -543,6 +552,7 @@ function hiddenTicket(accessCode) {
       data.datetimepickerend              = jQuery("input[name=datetimepickerend]").val();
       data.entry_location_subarea_change  = jQuery("select[name=entry_location_subarea_change]").val();
       data.update_entry_location_code     = jQuery("input[name=update_entry_location_code]").val();
+      data.sched_type                     = jQuery("select[name=typeSel]").val();
     } else if(action=='delete_entry_schedule') {
       //schedule id's to delete
       var delete_schedule_id=[];

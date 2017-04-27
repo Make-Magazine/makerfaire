@@ -3,6 +3,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   $scope.reports           = {};
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
+  $scope.reports.showForms = false;
   $scope.reports.selFaire  = '';
 
   $scope.reports.selectedFields = {};
@@ -16,7 +17,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
   }
 
   //set up gridOptions for reports
-  $scope.gridOptions = {enableFiltering: true,
+  $scope.gridOptions = {
+    enableFiltering: true,
     enableSorting: true,
     enableGridMenu: true,
     rowHeight: 100,
@@ -68,11 +70,12 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     $scope.reports.showGrid  = true;
     var url = '/resource-mgmt/ajax/reports.ajax.php';
     var selTerm = '';
+    $scope.gridOptions.columnDefs = [];
     //get grid data
     $http({
       method: 'post',
       url: url,
-      data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : type, 'faire':$scope.reports.selFaire }),
+      data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : type, 'faire':$scope.reports.selFaire,'formSelect':$scope.reports.selForm}),
       headers: {'Content-Type': 'application/json'}
     })
     .then(function(response){
@@ -200,6 +203,10 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       tablename = 'wp_mf_location';
       subTitle  = 'Faire Location Report';
     }
+    if(subRoute=='tasksComp')
+      tablename = 'wp_mf_entity_tasks';{
+      subTitle  = 'Tasks Completed';
+    }
 
     jQuery('#pageTitle').html(pageTitle);
     jQuery('#subTitle').html(subTitle);
@@ -224,11 +231,21 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       return '';
     }
   };
-
+  $scope.checkSubroute = function(type) {
+    if($routeParams.sub=='tasksComp'){
+      $scope.retrieveData('forms');
+    }else{
+      $scope.retGridData();
+    }
+  }
   //faire dropdown
   $scope.retrieveData = function(type) {
     if(type=='faires'){
       var vars = jQuery.param({ 'type' :  type});
+      var url = '/resource-mgmt/ajax/ajax.php';
+      var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
+    }else if(type=='forms'){
+      var vars = jQuery.param({ 'type' :  type, 'faire':$scope.reports.selFaire});
       var url = '/resource-mgmt/ajax/ajax.php';
       var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
     }
@@ -243,7 +260,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     .then(function(response){
       if("error" in response.data) {
         alert(response.data.error);
-      }else if(type=='faires'){
+      }else if(type=='faires' || type=='forms'){
         $scope.reports[type] = response.data[type];
       }
     }).finally(function () {
@@ -254,6 +271,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
             $scope.reports.selFaire = key;
           }
         });
+      }else if(type=='forms'){
+        $scope.reports.showForms = true;
       }
     });
   }; //end faire drop down

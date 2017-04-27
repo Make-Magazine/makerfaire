@@ -56,9 +56,22 @@ function get_value_by_label($key, $form, $entry=array()) {
       return $return;
     }
   }
-  return false;
+  return '';
 }
 
+//=============================================
+// Returns gravityform form field array based on field ID
+//=============================================
+function get_value_by_id($key, $form) {
+  $return = array();
+  foreach ($form['fields'] as &$field) {
+    $lead_key = $field['id'];
+    if ($lead_key == $key) {
+      return $field;
+    }
+  }
+  return array();
+}
 /*
  * function to allow easier testing of forms by skipping pages and going
  * directly to the page of the form you want to test

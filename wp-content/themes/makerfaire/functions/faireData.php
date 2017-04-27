@@ -7,7 +7,7 @@ function get_faire_by_shortid($faire_id='') {
   if($faire_id!=''){
     //based on maker email retrieve maker information from the DB
     $results = $wpdb->get_row("SELECT * FROM wp_mf_faire WHERE faire='$faire_id'", ARRAY_A );
-;
+    
     //if faire found
     if ( null !== $results ) {
       $faireData['faire_name']        = $results['faire_name'];

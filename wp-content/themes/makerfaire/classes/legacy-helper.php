@@ -56,7 +56,10 @@ function legacy_get_resized_remote_image_url( $url, $width, $height, $escape = t
 	if ( function_exists( 'new_file_urls' ) )
 		$url = new_file_urls( $url );
 
-	$thumburl = jetpack_photon_url( $url, array( 'resize' => array( $width, $height ) ) );
+	  $thumburl = jetpack_photon_url($url, array(
+	    'resize' => array($width, $height),
+	    'strip' => 'all',
+	  ));
 
 	return ( $escape ) ? esc_url( $thumburl ) : $thumburl;
   else:
@@ -73,7 +76,10 @@ function legacy_get_fit_remote_image_url( $url, $width, $height, $escape = true 
 	if ( function_exists( 'new_file_urls' ) )
 		$url = new_file_urls( $url );
 
-	$thumburl = jetpack_photon_url( $url, array( 'fit' => array( $width, $height ) ) );
+	$thumburl = jetpack_photon_url( $url, array(
+		'fit' => array($width, $height),
+		'strip' => 'all',
+	));
 
 	return ( $escape ) ? esc_url( $thumburl ) : $thumburl;
   else:

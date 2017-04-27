@@ -85,6 +85,7 @@ if ($type == 'project') {
     WHERE   entity.status = 'Accepted'
     AND 	LOWER(entity.faire)='$faire'
     AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
+    AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0
     and 	wp_rg_lead.status = 'active'
     ");
 
@@ -97,7 +98,6 @@ if ($type == 'project') {
   $count = 0;
   // Loop through the posts
   while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-    $count++;
     // Store the app information
     //$app_data = json_decode( mf_clean_content( $post->post_content ) );
     // REQUIRED: Application ID
@@ -144,10 +144,12 @@ if ($type == 'project') {
         $app['blueRibbonCnt'] = ($row['blueRibbonCnt'] != NULL ? $row['blueRibbonCnt'] : 0);
 
         // Put the application into our list of apps
+        $count++;
         array_push($apps, $app);
       }
     }else{
       // Put the application into our list of apps
+      $count++;
       array_push($apps, $app);
     }
   }
