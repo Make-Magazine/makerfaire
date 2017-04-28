@@ -5,13 +5,11 @@
 //* Define running total global variable
 $running_total = 0;
 
-	//* Set variables
-	$invoice_id = get_the_title();
-	$name       = get_field( 'invoice_client_name' );
-	$email      = get_field( 'invoice_client_email' );
-  ?>
+//* Set variables
+$invoice_id = get_the_title();
+$name       = get_field( 'invoice_client_name' );
+$email      = get_field( 'invoice_client_email' );
 
-<?php
 
 add_filter( 'gform_field_value_client_name', 'gf_filter_client_name' );
 function gf_filter_client_name() {
@@ -22,6 +20,7 @@ function gf_filter_amount() {
 	global $running_total;
 	return esc_attr( number_format( $running_total, 2 ) );
 }
+
 get_header(); ?>
 
 <div class="clear"></div>
@@ -29,11 +28,8 @@ get_header(); ?>
 		<?php the_post_thumbnail(); ?>
 </div><!-- .post-thumbnail -->
 <div class="container">
-
 	<div class="row">
-
 		<div class="content col-md-12">
-
 			<div class="invoice">
         <h2>Invoice Number <?php echo $invoice_id; ?></h2>
         <p>Bill to: <strong><?php echo $name; ?></strong></p>
@@ -71,13 +67,10 @@ get_header(); ?>
       </div>
 
       <div class="payment-form">
-        <?php echo do_shortcode( '[gravityform id="147" name="Invoice" title="false" description="false"]' ); ?>
+        <?php echo do_shortcode( '[gravityform id="151" name="Invoice" title="false" description="false"]' ); ?>
       </div>
-
 		</div><!--Content-->
-
 	</div>
-
 </div><!--Container-->
 
 <?php get_footer(); ?>

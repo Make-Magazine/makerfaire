@@ -116,7 +116,8 @@ add_action( 'gform_after_submission', 'GSP_after_submission', 10, 2 );
 function GSP_after_submission($entry, $form ){
   // update meta
   $updateEntryID = get_value_by_label('entry-id', $form, $entry);
-  gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
+  if(isset($updateEntryID['value']))
+    gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
 }
 
 

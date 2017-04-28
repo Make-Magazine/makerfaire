@@ -20,6 +20,17 @@ function my_custom_form_setting( $settings, $form ) {
     <tr><th><label for="my_custom_setting">Form Type</label></th>
       <td>'.$select .'</td></tr>';
 
+  // Add option to create invoice from form
+  $create_invoice = rgar($form, 'create_invoice');
+  $settings['Form Basics']['create_invoice'] = '
+    <tr>
+      <th><label for="my_custom_setting">Create Invoice</label></th>
+      <td>
+        <input type="radio" name="create_invoice" '.($create_invoice=='no' ?'checked':'').' value="no"> No<br>
+        <input type="radio" name="create_invoice" '.($create_invoice=='yes'?'checked':'').'  value="yes"> Yes
+      </td>
+    </tr>';
+
   // Add MAT message
   $mat_message = rgar($form, 'mat_message');
   $settings['Form Basics']['mat_message'] = '
@@ -33,6 +44,7 @@ add_filter( 'gform_pre_form_settings_save', 'save_form_type_form_setting' );
 function save_form_type_form_setting($form) {
     $form['form_type']   = rgpost('form_type');
     $form['mat_message'] = rgpost('mat_message');
+    $form['create_invoice'] = rgpost('create_invoice');
     return $form;
 }
 
@@ -57,6 +69,24 @@ function get_value_by_label($key, $form, $entry=array()) {
     }
   }
   return '';
+}
+
+
+//=============================================================================
+// Return all field IDs/number based on the Parameter Name for a specific form
+//=============================================================================
+function get_all_fieldby_name($key, $form, $entry=array()) {
+  $return = array();
+  foreach ($form['fields'] as &$field) {
+    $lead_key = $field['inputName'];
+    if ($lead_key == $key) {
+      $return[] = array(
+        'id'    => $field['id'],
+        'value' => (!empty($entry) ? $entry[$field['id']]:'')
+      );
+    }
+  }
+  return $return;
 }
 
 //=============================================

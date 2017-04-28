@@ -318,37 +318,6 @@ function set_entry_status($lead,$form){
 				//Create a note of the status change.
 				$results = mf_add_note($entry_id, 'EntryID:'.$entry_id.' status changed to '.$acceptance_status_change);
 
-        //build invoice
-        //TBD determine when this is done
-        // Create post object
-        $new_invoice = array(
-          'post_title'    => 'Invoice for ' .$entry_id,
-          'post_content'  => '',
-          'post_type'     => 'invoice'
-        );
-
-        // Insert the post into the database
-        //var_dump($form['fields']);
-        //die();
-
-        //TBD - check if invoice post already created, if yes use that, if no create new one
-
-        $post_id = wp_insert_post($new_invoice);
-        $field = get_value_by_label('client_name', $form,$lead);
-        $invoice_client_name = $field['value'];
-        update_field('invoice_client_name', $invoice_client_name, $post_id);
-
-        $field = get_value_by_label('client_email', $form,$lead);
-        $invoice_client_email = $field['value'];
-        update_field('invoice_client_email', $invoice_client_email, $post_id);
-        $invoice_services = get_invoice_services($form, $lead);
-
-        //$selector would be the field name
-        update_field('invoice_services', $invoice_services, $post_id);
-
-        //TBD - update invoice id # back on entry
-        echo 'post id = '.$post_id;
-        die();
 				//Handle notifications for acceptance
 				$notifications_to_send = GFCommon::get_notifications_to_send( 'mf_acceptance_status_changed', $form, $lead );
         foreach ( $notifications_to_send as $notification ) {
@@ -725,80 +694,4 @@ function set_feeMgmt($lead,$form){
 			}
 		}
 	}
-}
-
-function get_invoice_services($form, $lead) {
-  $key = 'invoice_calc';
-  $invoice_services = array();
-  foreach ($form['fields'] as &$field) {
-    $lead_key = $field['inputName'];
-    if ($lead_key == $key) {
-      $calcString = $field['calculationFormula'];
-      //field data
-      $field_data_start = strpos($calcString, '{');
-      $field_data_end   = strpos($calcString, '}');
-      if($field_data_start!== false && $field_data_end!==false){
-        $field_data_length = $field_data_end - $field_data_start +1;
-      }
-      $field_data = substr($calcString, $field_data_start, $field_data_length);
-
-      //Qty
-      $qty_field_start = strrpos($field_data,':');
-      if($qty_field_start!== false){
-        $qty_length = $field_data_end - $qty_field_start-1;
-      }
-      $qty = substr($field_data, $qty_field_start+1, $qty_length);
-
-      //$service Name
-      $service_length = $field_data_length - $qty_length-3; //3 is to account for the {} and the : separator
-      $service_name = substr($field_data, $field_data_start+1, $service_length);
-      //use field label if the service name is blank
-      if($service_name==''){
-        $service_name = $field['label'];
-      }
-
-      //field id (for qty) - using data in {}, numeric value after :
-      $amt = str_replace($field_data, '', $calcString);//numeric data after removing {} and *
-      $amt = str_replace('*', '', $amt);//numeric data after removing {} and *
-
-      /*
-      echo '$calcString='.$calcString.'<br/>';
-      echo '$field_data='.$field_data.'<br/>';
-      echo '$service_name='.$service_name.'<br/>';
-      echo '$qty='.$qty.'<br/>';
-      echo '$amt='.$amt.'<br/>';
-      */
-      /*
-       * determine amt field
-       * Look for price in the label field.  Should be in this format:
-       *  30” x 72” Folding Banquet Table: $60.00
-       */
-
-      $orderedQty = (!empty($lead) ? $lead[$qty]:0);
-      if($orderedQty!=0) {
-        $invoice_services[] =
-        array(
-          "invoice_service_name"      => $service_name,
-          "invoice_service_amount"    => $amt,
-          "invoice_service_quantity"  => $orderedQty
-        );
-      }
-    }
-  }
-  //var_dump($invoice_services);
-  //die();
-  return $invoice_services;
-
-  $invoice_services = array(
-    array(
-      "invoice_service_name"	=> '30” x 48”" Folding Banquet Table',
-      "invoice_service_amount"	=> 47,
-      "invoice_service_quantity"  =>  5
-    ),
-    array(
-      "invoice_service_name"	=> '30” x 72” Folding Banquet Table',
-      "invoice_service_amount"	=> 60,
-      "invoice_service_quantity"  =>  2
-    )
-  );
 }
