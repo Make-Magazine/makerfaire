@@ -69,7 +69,7 @@ if($wpdb->num_rows > 0){
 
                                             </script>
                                             <script async defer
-                                                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJHKq4cnlAd4WkaJKYal-8n6V1Y8MCPxw&signed_in=true&callback=initMap"></script>
+                                                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJHKq4cnlAd4WkaJKYal-8n6V1Y8MCPxw&callback=initMap"></script>
 
 				</article>
 
