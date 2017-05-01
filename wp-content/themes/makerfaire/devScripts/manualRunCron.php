@@ -17,6 +17,10 @@ if(isset($_GET['cron'])){
     $entryID  = (isset($_GET['entryID'])?$_GET['entryID']:0);
     $parentID = (isset($_GET['parentID'])?$_GET['parentID']:0);
     genManTickets($entryID, $parentID);
+  }elseif($_GET['cron']=='createSignZip'){
+    $area = (isset($_GET['area'])?$_GET['area']:'');
+    $area = str_replace('_',' ',$area);
+    createMFSignZip($area);
   }
 
   echo 'ending process';
@@ -26,9 +30,93 @@ if(isset($_GET['cron'])){
   . '?cron=genEBtickets<br/>'
   . '?cron=build_ribbonJSON<Br/>'
   . '?cron=cronRmtData&form=999<Br/>'
-  . '?cron=genManTickets&entryID=999&parentID=999';
+  . '?cron=genManTickets&entryID=999&parentID=999<br/>'
+  . '?cron=createSignZip&area=abcd'      ;
 }
 
+function createMFSignZip($area) {
+  global $wpdb;
+  echo 'Creating zip file for '.$area.'<br/>';
+  $response = array();
+  $statusFilter = 'accAndProp';
+  $type         = 'area';
+  $faire        = 'BA17';
+  $signType     = 'maker';
+
+
+    //create array of subareas
+    $sql = "SELECT wp_rg_lead.ID as entry_id, wp_rg_lead.form_id,
+          (select value from wp_rg_lead_detail where field_number=303 and wp_rg_lead_detail.lead_id = wp_rg_lead.ID) as entry_status,
+          wp_mf_faire_subarea.area_id, wp_mf_faire_area.area, wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea,wp_mf_location.location
+          FROM wp_mf_faire, wp_rg_lead
+          left outer join wp_mf_location on wp_rg_lead.ID  = wp_mf_location.entry_id
+          left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id  = wp_mf_faire_subarea.id
+          left outer join wp_mf_faire_area    on wp_mf_faire_subarea.area_id  = wp_mf_faire_area.id
+          where faire = '$faire'
+          and wp_rg_lead.status  != 'trash'
+          and wp_mf_faire_area.area = '$area'
+          and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0
+          and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.non_public_forms)<= 0";
+    
+    $results = $wpdb->get_results($sql);
+    $entries = array();
+
+    foreach($results as $row){
+      //exclude records based on status filter
+      if($statusFilter =='accepted'   && $row->entry_status!='Accepted')  continue;
+      if($statusFilter =='accAndProp' && ($row->entry_status!='Accepted' && $row->entry_status!='Proposed')){
+        continue;
+      }
+      $area    = ($row->area    != NULL ? $row->area:'No-Area');
+      $subarea = ($row->subarea != NULL ? $row->subarea:'No-subArea');
+
+      //create friendly names for file creation
+      $area = str_replace(' ','_',$area);
+      $subarea = str_replace(' ','_',$subarea);
+      //build array output based on selected type
+      if($type=='area') {
+        $entries[$area][$row->entry_status][] = $row->entry_id;
+      }
+      if($type=='subarea') {
+        $entries[$area.'-'.$subarea][$row->entry_status][] = $row->entry_id;
+      }
+      if($type=='faire') {
+        $entries['faire'][$row->entry_status][] = $row->entry_id;
+      }
+    } //end looping thru sql results
+
+  $error = '';
+
+  //build zip files based on selected type
+  foreach($entries as $typeKey=>$entType){
+     //create zip file
+    $zip = new ZipArchive();
+
+    $filepath = get_template_directory()."/signs/".$faire.'/'.$signType.'/';
+    if (!file_exists($filepath.'zip')) {
+      mkdir($filepath.'zip', 0777, true);
+    }
+    $filename = $faire."-".$typeKey."-faire".$signType.".zip";
+
+    $zip->open($filepath.'zip/'.$filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+    foreach($entType as $statusKey=>$status){
+      $subPath = $typeKey.'/'.$statusKey.'/';
+      foreach($status as $entryID) {
+        //write zip file
+        $file = $entryID.'.pdf';
+        if (file_exists($filepath.$file)) {
+          $zip->addFile($filepath.$file,$file);
+        }else{
+          $error .= 'Missing PDF for ' .$entryID.'<br/>';
+        }
+      }
+    }
+    //close zip file
+    if (!$zip->status == ZIPARCHIVE::ER_OK)
+      echo "Failed to write files to zip\n";
+    $zip->close();
+  } //end looping thru entry array
+}
 function mancron_genEBtickets(){
   global $wpdb;
   $sql =  "SELECT lead_id "
