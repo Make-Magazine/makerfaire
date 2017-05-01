@@ -72,8 +72,11 @@ function mf_updateInvoice($form,$entry_id,$orig_entry=array()){
     //see if this entry already has an invoice created
     $invoice_num   = get_value_by_label('invoice_num', $form, $lead);
     $invNumFieldID = (is_array($invoice_num) && isset($invoice_num['id'])?$invoice_num['id']:0);
+    //invoice post id
+    $inv_post_id   = get_value_by_label('inv_post_id', $form, $lead);
+    $invPostFieldID = (is_array($inv_post_id) && isset($inv_post_id['id'])?$inv_post_id['id']:0);
 
-    $post_id       = (is_array($invoice_num) && $invoice_num['value']!=''?$invoice_num['value']:0);
+    $post_id       = (is_array($inv_post_id) && $inv_post_id['value']!=''?$inv_post_id['value']:0);
     if($post_id == 0){ //create the invoice
       $invNum = 'MF' .$entry_id.date("mdy");//create invoice number
 
@@ -85,7 +88,9 @@ function mf_updateInvoice($form,$entry_id,$orig_entry=array()){
       );
       $post_id = wp_insert_post($new_invoice);
       //update entry with invoice number
-      mf_update_entry_field($entry_id,$invNumFieldID,$post_id);
+      mf_update_entry_field($entry_id,$invNumFieldID,$invNum);
+      //update entry with invoice post id
+      mf_update_entry_field($entry_id,$invPostFieldID,$post_id);
     }
 
     /*    Set Client Name */
