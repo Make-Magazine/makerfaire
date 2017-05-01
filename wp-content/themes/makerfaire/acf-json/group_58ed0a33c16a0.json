@@ -4,7 +4,7 @@
     "fields": [
         {
             "key": "field_58ed0a45bf9a8",
-            "label": "Client Name",
+            "label": "Billing Company Name",
             "name": "invoice_client_name",
             "type": "text",
             "instructions": "",
@@ -22,8 +22,46 @@
             "maxlength": ""
         },
         {
+            "key": "field_5907906bbfd22",
+            "label": "Billing Contact Name",
+            "name": "billing_contact_name",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_59079084bfd23",
+            "label": "Billing Address",
+            "name": "billing_address",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
             "key": "field_58ed0a57bf9a9",
-            "label": "Client Email",
+            "label": "Billing Email",
             "name": "invoice_client_email",
             "type": "email",
             "instructions": "",
@@ -38,6 +76,25 @@
             "placeholder": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_59079091bfd24",
+            "label": "Billing Phone #",
+            "name": "billing_phone_#",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
         },
         {
             "key": "field_58ed0a7abf9aa",
@@ -139,5 +196,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1493334407
+    "modified": 1493668101
 }

@@ -69,57 +69,64 @@ function mf_updateInvoice($form,$entry_id,$orig_entry=array()){
 /* Sponsor Invoice */
   function createInvoice($form, $lead) {
     $entry_id = $lead['id'];
-    //see if this entry already has an invoice created
-    $invoice_num   = get_value_by_label('invoice_num', $form, $lead);
-    $invNumFieldID = (is_array($invoice_num) && isset($invoice_num['id'])?$invoice_num['id']:0);
-    //invoice post id
-    $inv_post_id   = get_value_by_label('inv_post_id', $form, $lead);
-    $invPostFieldID = (is_array($inv_post_id) && isset($inv_post_id['id'])?$inv_post_id['id']:0);
 
-    $post_id       = (is_array($inv_post_id) && $inv_post_id['value']!=''?$inv_post_id['value']:0);
+    /*  see if this entry already has an invoice created */
+
+    //invoice post id
+    $fieldData       = get_value_by_label('inv_post_id', $form, $lead);
+    $invPostFieldID  = (is_array($fieldData) && isset($fieldData['id']) ? $fieldData['id']:0);
+    $post_id         = (is_array($fieldData) && $fieldData['value']!= '' ? $fieldData['value']:0);
+
     if($post_id == 0){ //create the invoice
-      $invNum = 'MF' .$entry_id.date("mdy");//create invoice number
+      //Pull the original entry id
+      $data         = get_value_by_label('entry-id', $form, $lead);
+      $origEntryID  = (is_array($data) && $data['value'] != '' ? $data['value']:0);
+
+      /* Build the Invoice Number
+       * mf<order entryid><original entry id>
+       */
+      $invNum = 'MF' .$entry_id.$origEntryID;//create invoice number
 
       // Create new invoice post
       $new_invoice = array(
         'post_title'    => $invNum,
         'post_content'  => '',
+        'post_status'   => 'publish',
         'post_type'     => 'invoice'
       );
       $post_id = wp_insert_post($new_invoice);
+
       //update entry with invoice number
+      $fieldData   = get_value_by_label('invoice_num', $form, $lead);
+      $invNumFieldID = (is_array($fieldData) && isset($fieldData['id']) ? $fieldData['id']:0); //set invoice_num field id
       mf_update_entry_field($entry_id,$invNumFieldID,$invNum);
+
       //update entry with invoice post id
       mf_update_entry_field($entry_id,$invPostFieldID,$post_id);
     }
 
-    /*    Set Client Name */
-    $return = get_all_fieldby_name('client_name', $form,$lead);
-    if(!empty($return)){
-      foreach($return as $name){
-        if(!empty($name['value']))
-          $invoice_client_name = $name['value'];
+    /* Set Invoice ACF fields */
+    $invoiceFields = array('billing_company_name', 'billing_contact_name', 'billing_address', 'billing_email', 'billing_phone_num');
+    foreach($invoiceFields as $field){
+      $return = get_all_fieldby_name($field, $form, $lead);
+      if(!empty($return)){
+        foreach($return as $name){
+          if(!empty($name['value'])){
+            $fieldValue = $name['value'];
+            echo 'for '.$field.'('.$name['id'].') value is ';
+            var_dump($fieldValue);
+            echo '<br/><br/>';
+          }
+        }
+      }else{
+        $fieldValue = '';
       }
-    }else{
-      $invoice_client_name = 'client_name not found';
-    }
-    update_field('invoice_client_name', $invoice_client_name, $post_id);
 
-    /*    Set Client Email */
-    $return = get_all_fieldby_name('client_email', $form,$lead);
-    if(!empty($return)){
-      foreach($return as $email){
-        if(!empty($email['value']))
-          $invoice_client_email = $email['value'];
-      }
-    }else{
-      $invoice_client_email = 'client_email not found';
+      update_field($field, $fieldValue, $post_id);
     }
-    update_field('invoice_client_email', $invoice_client_email, $post_id);
 
+    //build the repeater field data for invoice services
     $invoice_services = get_invoice_services($form, $lead);
-
-    //$selector would be the field name
     update_field('invoice_services', $invoice_services, $post_id);
 
   } //end function create_invoice
@@ -130,7 +137,7 @@ function get_invoice_services($form, $lead) {
   $key =  'invoice_calc';
   foreach ($form['fields'] as $field) {
     $lead_key = $field['inputName'];
-    if($field['id']==710) echo '710='.$lead[$field['id']];
+
     if(isset($lead[$field['id']]) && $lead[$field['id']]!=''){
       if ($lead_key == $key) {  //process the calculation data
         $calcString = $field['calculationFormula'];
