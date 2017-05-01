@@ -392,7 +392,11 @@ function mf_remove_dashboard() {
 }
 //redirect makers to the edit entry page  **need to replace site url with actual view path **
 function mf_login_redirect($redirect_to, $request, $user) {
-  return ( is_array($user->roles) && in_array('maker', $user->roles) ? site_url() : admin_url());
+  if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+    return ( is_array($user->roles) && in_array('maker', $user->roles) ? site_url() : admin_url());
+  } else {
+		return $redirect_to;
+	}
 }
 
 add_filter('login_redirect', 'mf_login_redirect', 10, 3);
