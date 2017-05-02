@@ -315,6 +315,39 @@ function get_invoice_services($form, $lead) {
             "invoice_service_quantity"  => 1
           );
   }
+  if(isset($lead['717']) && $lead['717'] != 0) {
+    $invoice_services[] =
+          array(
+            "invoice_service_name"      => 'Basic Internet',
+            "invoice_service_amount"    => $lead['717'],
+            "invoice_service_quantity"  => 1
+          );
+  }
+  if(isset($lead['710']) && $lead['710'] != 0) {
+    $invoice_services[] =
+          array(
+            "invoice_service_name"      => 'Fast Internet',
+            "invoice_service_amount"    => $lead['710'],
+            "invoice_service_quantity"  => 1
+          );
+  }
+  if(isset($lead['704']) && $lead['704'] != 0) {
+    $invoice_services[] =
+          array(
+            "invoice_service_name"      => 'Faster Internet',
+            "invoice_service_amount"    => $lead['704'],
+            "invoice_service_quantity"  => 1
+          );
+  }
+  if(isset($lead['686']) && $lead['686'] != 0) {
+    $invoice_services[] =
+          array(
+            "invoice_service_name"      => 'Fastest Internet',
+            "invoice_service_amount"    => $lead['686'],
+            "invoice_service_quantity"  => 1
+          );
+  }
+  
   return $invoice_services;
 
 } //end function get_invoice_services
