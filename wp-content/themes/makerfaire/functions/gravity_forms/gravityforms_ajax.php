@@ -309,6 +309,16 @@ function set_entry_status($lead,$form){
           wp_schedule_single_event(time() + 1,'sidebar_entry_update', array($entry_id));
           //lock space size attribute if set
           $wpdb->get_results('update `wp_rmt_entry_attributes` set `lockBit` = 1 where attribute_id =  2 and entry_id='. $lead['id']);
+
+          //if the form type is invoice, set the invoice date
+          if(isset($form['create_invoice']) && $form['create_invoice']=='yes'){
+            //get post id
+            $fieldData       = get_value_by_label('inv_post_id', $form, $lead);
+            $post_id         = (is_array($fieldData) && $fieldData['value']!= '' ? $fieldData['value']:0);
+            if($post_id!=0){
+              update_field('invoice_date', date('m/d/Y'), $post_id);
+            }
+          }
         }
 
         if($acceptance_status_change == 'Cancelled'){

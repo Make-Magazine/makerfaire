@@ -78,12 +78,22 @@ function get_value_by_label($key, $form, $entry=array()) {
 function get_all_fieldby_name($key, $form, $entry=array()) {
   $return = array();
   foreach ($form['fields'] as &$field) {
-    $lead_key = $field['inputName'];
-    if ($lead_key == $key) {
-      $return[] = array(
-        'id'    => $field['id'],
-        'value' => (!empty($entry) ? $entry[$field['id']]:'')
-      );
+
+    //paramater names are stored in a different place
+    if($field['type']=='name' || $field['type']=='address'){
+      foreach($field['inputs'] as $choice){
+        if(isset($choice['name']) && $choice['name']==$key){
+          $return[] = array('id' => $choice['id'], 'value' => (!empty($entry) ? $entry[$choice['id']]:''));
+        }
+      }
+    }else{
+      $lead_key = $field['inputName'];
+      if ($lead_key == $key) {
+        $return[] = array(
+          'id'    => $field['id'],
+          'value' => (!empty($entry) ? $entry[$field['id']]:'')
+        );
+      }
     }
   }
   return $return;

@@ -7,9 +7,13 @@ $running_total = 0;
 
 //* Set variables
 $invoice_id = get_the_title();
-$name       = get_field( 'invoice_client_name' );
-$email      = get_field( 'invoice_client_email' );
-
+$billing_company_name = get_field('billing_company_name');
+$billing_contact_name = get_field('billing_contact_name');
+$billing_address      = get_field('billing_address');
+$billing_email        = get_field('billing_email');
+$billing_phone_num    = get_field('billing_phone_num');
+$invoice_date         = get_field('invoice_date');
+$origEntryID          = get_field('original_entry_id');
 
 add_filter( 'gform_field_value_client_name', 'gf_filter_client_name' );
 function gf_filter_client_name() {
@@ -29,33 +33,68 @@ get_header(); ?>
 </div><!-- .post-thumbnail -->
 <div class="container">
 	<div class="row">
+    <br/><br/>
 		<div class="content col-md-12">
 			<div class="invoice">
-        <h2 class="text-center">Invoice</h2>
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-6"><img src="http://makerfaire.com/wp-content/uploads/2016/01/mf_logo.jpg" width="200px"/></div>
-            <div class="col-sm-6">
-              Invoice number <?php echo $invoice_id; ?><br/>
-              Invoice Date: [Order Acceptance Date]<br/>
-              Due Date: Due Upon Receipt
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-6">
-              Bill to:    [Billing Company Name]			<br/>
-              Contact: [Billing Contact Name]<br/>
-              [Billing Address]<br/>
-              [Billing Email]<br/>
-              [Billing Phone #]
-            </div>
-            <div class="col-sm-6">
-              Deliver to: Exhibit Space Onsite
-          </div>
+        <div class="row">
+          <div class="col-sm-6"><img src="http://makerfaire.com/wp-content/uploads/2016/01/mf_logo.jpg" width="300px"/></div>
+          <div class="col-sm-6"><h2>INVOICE</h2></div>
         </div>
 
+        <br/><br/>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-3"><b>Bill to:</b></div>
+              <div class="col-sm-9"><?php echo $billing_company_name;?></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-3"><b>Contact:</b></div>
+              <div class="col-sm-9"><?php echo $billing_contact_name;?></div>
+            </div>
+            <br/>
+            <div class="row">
+              <div class="col-sm-3">&nbsp;</div>
+              <div class="col-sm-9"><?php echo $billing_address;?></div>
+            </div>
+            <br/>
+            <div class="row">
+              <div class="col-sm-3">&nbsp;</div>
+              <div class="col-sm-9"><?php echo $billing_email;?></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-3">&nbsp;</div>
+              <div class="col-sm-9"><?php echo $billing_phone_num;?></div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+                        <div class="row">
+              <div class="col-sm-3"><b>Invoice number:</b></div>
+              <div class="col-sm-9"><?php echo $invoice_id; ?></div>
+            </div>
+            <?php if($invoice_date!=''){?>
+            <div class="row">
+              <div class="col-sm-3"><b>Invoice Date:</b></div>
+              <div class="col-sm-9"><?php echo $invoice_date;?></div>
+            </div>
+            <?php } ?>
+            <div class="row">
+              <div class="col-sm-3"><b>Due Date:</b></div>
+              <div class="col-sm-9">Due Upon Receipt</div>
+            </div>
+            <br/>
+            <div class="row">
+              <div class="col-sm-3"><b>Deliver to:</b></div>
+              <div class="col-sm-9">Exhibit Space Onsite</div>
+            </div>
 
-        <?php if ( have_rows( 'invoice_services' ) ): //* Start the table if services are listed ?>
+          </div>
+        </div>
+        <br/><Br/>
+
+        <?php
+        if ( have_rows( 'invoice_services' ) ) {
+          //* Start the table if services are listed ?>
           <table class="services">
             <tr>
               <th>Item</th>
@@ -64,7 +103,9 @@ get_header(); ?>
               <th>Amount</th>
             </tr>
 
-            <?php while ( have_rows( 'invoice_services' ) ) : the_row(); ?>
+            <?php
+            while ( have_rows( 'invoice_services' ) ) {
+              the_row(); ?>
               <?php
                 //* Set repeater variables
                 $service_name     = get_sub_field( 'invoice_service_name' );
@@ -74,9 +115,9 @@ get_header(); ?>
               ?>
               <?php //* Output a details row for each service ?>
               <tr class="service">
-                <td class="name"><?php echo $service_name; ?></td>
-                <td class="quantity"><?php echo $service_quantity; ?></td>
-                <td class="amount"><?php echo '$' . number_format($service_amount,2); ?></td>
+                <td><?php echo $service_name; ?></td>
+                <td><?php echo $service_quantity; ?></td>
+                <td><?php echo '$' . number_format($service_amount,2); ?></td>
                 <td><?php echo '$' . number_format($service_total,2); ?></td>
               </tr>
 
@@ -84,15 +125,18 @@ get_header(); ?>
                 global $running_total;
                 $running_total += get_sub_field( 'invoice_service_amount' ) * get_sub_field( 'invoice_service_quantity' );
               ?>
-            <?php endwhile; ?>
+        <?php } ?>
           </table>
-        <?php else : echo 'No services listed'; ?>
-        <?php endif; ?>
-      </div>
+        <?php
+        }else{
+          echo 'No services listed';
+        } ?>
 
-      <div class="payment-form">
+        <!-- Payment Form -->
         <?php echo do_shortcode( '[gravityform id="151" name="Invoice" title="false" description="false"]' ); ?>
-      </div>
+        <a href="mailto:sponsorrelations@makermedia.com?subject=Special Billing Options <?php echo $billing_company_name.' '.$origEntryID;?>">Special Billing Options</a>
+        <br/><br/>
+      </div><!-- /invoice -->
 		</div><!--Content-->
 	</div>
 </div><!--Container-->

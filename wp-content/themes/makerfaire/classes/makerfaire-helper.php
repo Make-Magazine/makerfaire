@@ -392,7 +392,11 @@ function mf_remove_dashboard() {
 }
 //redirect makers to the edit entry page  **need to replace site url with actual view path **
 function mf_login_redirect($redirect_to, $request, $user) {
-  return ( is_array($user->roles) && in_array('maker', $user->roles) ? site_url() : admin_url());
+  if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+    return ( is_array($user->roles) && in_array('maker', $user->roles) ? site_url() : admin_url());
+  } else {
+		return $redirect_to;
+	}
 }
 
 add_filter('login_redirect', 'mf_login_redirect', 10, 3);
@@ -416,8 +420,6 @@ function makerfaire_rewrite_rules() {
     add_rewrite_rule( 'onsitepinning/?([^/]*)', 'index.php?onsitepinning=true&token=$matches[1]', 'top' );
     add_rewrite_rule( 'processonsitepinning/?([^/]*)', 'index.php?processpinning=true&token=$matches[1]', 'top' );
     add_rewrite_rule( 'maker-sign/(\d*)/?(.*)$/?', 'index.php?makersign=true&eid=$matches[1]&faire=$matches[2]', 'top' );
-    add_rewrite_rule( 'maker/([^/]*)$', 'index.php?makerportfolio=true&makerid=$matches[1]', 'top' );
-
 }
 /* Query Vars */
 add_filter( 'query_vars', 'makerfaire_register_query_var' );
@@ -427,7 +429,6 @@ function makerfaire_register_query_var( $vars ) {
     $vars[] = 'processonsitepinning';
     $vars[] = 'onsitepinning';
     $vars[] = 'makersign';
-    $vars[] = 'makerportfolio';
     $vars[] = 'faire';
     $vars[] = 'eid';
     $vars[] = 'makerid';
@@ -491,17 +492,6 @@ function makersign_include($template)
 
     if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/fpdi/makersigns.php'; //Load your template or file
-    }
-    return $template; //Load normal template when $page_value != "true" as a fallback
-}
-add_filter('template_include', 'makerportfolio_include', 1, 1);
-function makerportfolio_include($template)
-{
-    global $wp_query; //Load $wp_query object
-    $page_value = (isset($wp_query->query_vars['makerportfolio'])?$wp_query->query_vars['makerportfolio']:'');
-
-    if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
-        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-makerportfolio.php'; //Load your template or file
     }
     return $template; //Load normal template when $page_value != "true" as a fallback
 }

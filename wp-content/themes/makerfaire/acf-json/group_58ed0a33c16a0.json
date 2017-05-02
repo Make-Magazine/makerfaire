@@ -5,7 +5,26 @@
         {
             "key": "field_58ed0a45bf9a8",
             "label": "Billing Company Name",
-            "name": "invoice_client_name",
+            "name": "billing_company_name",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5907c9fccb255",
+            "label": "Invoice Date",
+            "name": "invoice_date",
             "type": "text",
             "instructions": "",
             "required": 0,
@@ -41,6 +60,24 @@
             "maxlength": ""
         },
         {
+            "key": "field_58ed0a57bf9a9",
+            "label": "Billing Email",
+            "name": "billing_email",
+            "type": "email",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_59079084bfd23",
             "label": "Billing Address",
             "name": "billing_address",
@@ -60,27 +97,9 @@
             "maxlength": ""
         },
         {
-            "key": "field_58ed0a57bf9a9",
-            "label": "Billing Email",
-            "name": "invoice_client_email",
-            "type": "email",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_59079091bfd24",
             "label": "Billing Phone #",
-            "name": "billing_phone_#",
+            "name": "billing_phone_num",
             "type": "text",
             "instructions": "",
             "required": 0,
@@ -177,6 +196,44 @@
                     "step": ""
                 }
             ]
+        },
+        {
+            "key": "field_5907cd125d43d",
+            "label": "Original Entry ID",
+            "name": "original_entry_id",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5907cd1e5d43e",
+            "label": "Order Form Entry ID",
+            "name": "order_form_entry_id",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
         }
     ],
     "location": [
@@ -196,5 +253,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1493668101
+    "modified": 1493683501
 }
