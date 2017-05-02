@@ -54,7 +54,7 @@ add_action('gform_after_update_entry', 'mf_updateInvoice', 10, 3 );
 function mf_createInvoice( $entry, $form ) {
   //Create Invoice option from form settings
   if(isset($form['create_invoice']) && $form['create_invoice']=='yes'){
-    createInvoice($form, $lead);
+    createInvoice($form, $entry);
   }
 }
 
@@ -241,14 +241,21 @@ function get_invoice_services($form, $lead) {
   foreach ($form['fields'] as $field) {
     $lead_key = $field['inputName'];
 
+    //if this field is set in the entry, process it
     if(isset($lead[$field['id']]) && $lead[$field['id']]!=''){
-      if ($lead_key == $key) {  //process the calculation data
+      $orderedQty = 0;
+
+      //if the parameter name is set to invoice_calc, process it
+      if ($lead_key == $key) {
         $calcString = $field['calculationFormula'];
-        //var_dump($field);echo '<br/><br/>';
+
         //field data
         $field_data_start = strpos($calcString, '{');
         $field_data_end   = strpos($calcString, '}');
+
+        //if the field contains {} then pull the formula data from it
         if($field_data_start!== false && $field_data_end!==false){
+
           $field_data_length = $field_data_end - $field_data_start +1;
           $field_data = substr($calcString, $field_data_start, $field_data_length);
 
@@ -285,7 +292,7 @@ function get_invoice_services($form, $lead) {
           $orderedQty = 1;
         }
 
-        if($orderedQty!=0) {
+        if($orderedQty!=0){
           $invoice_services[] =
           array(
             "invoice_service_name"      => $service_name,
@@ -293,8 +300,8 @@ function get_invoice_services($form, $lead) {
             "invoice_service_quantity"  => $orderedQty
           );
         }
-      }
-    }
+        } //end check for parameter name
+    } //end check if field set in lead
   } //end for each
   return $invoice_services;
 

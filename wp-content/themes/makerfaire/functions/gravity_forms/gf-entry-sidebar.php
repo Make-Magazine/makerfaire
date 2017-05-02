@@ -642,10 +642,12 @@ function mf_sidebar_entry_status($form, $lead) {
     $output .= '  <td>';
     //$output .= '    <select name="entry_info_status_change" onchange="updateMgmt(\'update_entry_status\');">';
     $output .= '    <select name="entry_info_status_change">';
-    foreach( $field303['choices'] as $choice ){
-      $selected = '';
-      if ($lead[$field303['id']] == $choice['text']) $selected=' selected ';
-      $output .= '<option '.$selected.' value="'.$choice['text'].'">'.$choice['text'].'</option>';
+    if(isset($field303['choices'])){
+      foreach($field303['choices'] as $choice ){
+        $selected = '';
+        if ($lead[$field303['id']] == $choice['text']) $selected=' selected ';
+        $output .= '<option '.$selected.' value="'.$choice['text'].'">'.$choice['text'].'</option>';
+      }
     }
     $output .= '    </select></td>'
             . '</tr><tr><td>&nbsp;</td>';

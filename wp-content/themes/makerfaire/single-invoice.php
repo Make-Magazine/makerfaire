@@ -24,7 +24,15 @@ function gf_filter_amount() {
 	global $running_total;
 	return esc_attr( number_format( $running_total, 2 ) );
 }
-
+add_filter( 'gform_submit_button', 'add_paragraph_below_submit', 10, 2 );
+function add_paragraph_below_submit( $button, $form ) {
+  if(isset($form['form_type']) && $form['form_type']=='Invoice'){
+    $button = "<button class='button gform_next_button' id='gform_submit_button_{$form['id']}'><span>Pay Now</span></button>";
+    return $button .= " PayPal or Credit Card";
+  }else{
+    return $button;
+  }
+}
 get_header(); ?>
 
 <div class="clear"></div>
@@ -111,7 +119,8 @@ get_header(); ?>
                 $service_name     = get_sub_field( 'invoice_service_name' );
                 $service_amount   = get_sub_field( 'invoice_service_amount');
                 $service_quantity = get_sub_field( 'invoice_service_quantity' );
-                $service_total    = (is_numeric($service_quantity) && is_numeric($service_amount)?($service_quantity*$service_amount):0);
+                if($service_quantity!=0){
+                  $service_total    = (is_numeric($service_quantity) && is_numeric($service_amount)?($service_quantity*$service_amount):0);
               ?>
               <?php //* Output a details row for each service ?>
               <tr class="service">
@@ -122,8 +131,9 @@ get_header(); ?>
               </tr>
 
               <?php
-                global $running_total;
-                $running_total += get_sub_field( 'invoice_service_amount' ) * get_sub_field( 'invoice_service_quantity' );
+                  global $running_total;
+                  $running_total += get_sub_field( 'invoice_service_amount' ) * get_sub_field( 'invoice_service_quantity' );
+                }
               ?>
         <?php } ?>
           </table>
