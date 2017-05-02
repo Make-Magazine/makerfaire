@@ -247,6 +247,7 @@ function get_invoice_services($form, $lead) {
 
       //if the parameter name is set to invoice_calc, process it
       if ($lead_key == $key) {
+        $result = GFCommon::calculate( $field, $form, $lead );
         $calcString = $field['calculationFormula'];
 
         //field data
@@ -300,9 +301,20 @@ function get_invoice_services($form, $lead) {
             "invoice_service_quantity"  => $orderedQty
           );
         }
-        } //end check for parameter name
+      } //end check for parameter name
     } //end check if field set in lead
   } //end for each
+
+  //hardcoding for Custom Order field TBD - find a better way to do this
+  if(isset($lead['750']) && $lead['750'] != 0 &&
+     isset($lead['749']) && $lead['749'] != ''){
+    $invoice_services[] =
+          array(
+            "invoice_service_name"      => 'Custom Order: <br/>'.$lead['749'],
+            "invoice_service_amount"    => $lead['750'],
+            "invoice_service_quantity"  => 1
+          );
+  }
   return $invoice_services;
 
 } //end function get_invoice_services
