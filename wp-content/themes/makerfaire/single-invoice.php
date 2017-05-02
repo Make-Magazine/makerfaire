@@ -143,7 +143,7 @@ get_header(); ?>
         } ?>
 
         <!-- Payment Form -->
-        <?php echo do_shortcode( '[gravityform id="151" name="Invoice" title="false" description="false"]' ); ?>
+        <?php echo do_shortcode( '[gravityform id="152" name="Invoice" title="false" description="false"]' ); ?>
         <a href="mailto:sponsorrelations@makermedia.com?subject=Special Billing Options <?php echo $billing_company_name.' '.$origEntryID;?>">Special Billing Options</a>
         <br/><br/>
       </div><!-- /invoice -->
