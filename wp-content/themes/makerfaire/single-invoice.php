@@ -124,7 +124,7 @@ get_header(); ?>
               ?>
               <?php //* Output a details row for each service ?>
               <tr class="service">
-                <td><?php echo $service_name; ?></td>
+                <td class="service_name"><?php echo $service_name; ?></td>
                 <td><?php echo $service_quantity; ?></td>
                 <td><?php echo '$' . number_format($service_amount,2); ?></td>
                 <td><?php echo '$' . number_format($service_total,2); ?></td>
