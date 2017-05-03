@@ -69,7 +69,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
       build = [];
       angular.forEach(type,function(field){
         if(field.checked){
-          field.aggregated = false;
+          
           field.comments = comments;
           build.push(field);
         }

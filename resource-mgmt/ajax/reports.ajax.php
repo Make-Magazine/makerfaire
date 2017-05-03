@@ -256,8 +256,8 @@ function cannedRpt(){
         }
         $fieldData['field_'.$combFieldID]= trim($combinedField);
       }
-
-      $form_type = $entry['form_type'];
+      $form_type = '';
+      //$form_type = $form['form_type'];
       //record prior to BA16
       if($form_type==''){
         $formPull = GFAPI::get_form( $entry['form_id'] );
@@ -383,7 +383,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       //loop thru data
       $resources = $wpdb->get_results($sql,ARRAY_A);
       $entryRes = array();
-      $displayOrder = $selRMT->order;
+
+      $displayOrder = (isset($selRMT->order)?$selRMT->order:0);
 
       if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
         $aggrType='uiGridConstants.aggregationTypes.sum';
