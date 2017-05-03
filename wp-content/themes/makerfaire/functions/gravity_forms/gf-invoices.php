@@ -110,7 +110,10 @@ function mf_updateInvoice($form,$entry_id,$orig_entry=array()){
     }
 
     /* Set Invoice ACF fields */
-    $invoiceFields = array('billing_company_name','billing_email', 'billing_phone_num');
+    $invoiceFields = array(
+        'billing_company_name','billing_email', 'billing_phone_num',
+        'billing_address', 'billing_address2', 'billing_city', 'billing_state',
+        'billing_zip', 'billing_country');
     foreach($invoiceFields as $field){
       $return = get_all_fieldby_name($field, $form, $lead);
       $fieldValue = '';
@@ -150,83 +153,6 @@ function mf_updateInvoice($form,$entry_id,$orig_entry=array()){
       }
     }
     update_field('billing_contact_name', $fName.' '. $lName, $post_id);
-
-    /* ACF - billing_address
-     * Parameter Names -
-     *    billing_address1
-     *    billing_address2
-     *    billing_city
-     *    billing_state
-     *    billing_zip_code
-     *    billing_country
-     */
-    //billing_address1
-    $return = get_all_fieldby_name('billing_address1', $form, $lead);
-    $address1 = '';
-    if(!empty($return)){
-      foreach($return as $name){
-        if(!empty($name['value'])){
-          $address1 = $name['value'];
-        }
-      }
-    }
-
-    //billing_address2
-    $return = get_all_fieldby_name('billing_address2', $form, $lead);
-    $address2 = '';
-    if(!empty($return)){
-      foreach($return as $name){
-        if(!empty($name['value'])){
-          $address2 = $name['value'];
-        }
-      }
-    }
-    //billing_city
-    $return = get_all_fieldby_name('billing_city', $form, $lead);
-    $city = '';
-    if(!empty($return)){
-      foreach($return as $name){
-        if(!empty($name['value'])){
-          $city = $name['value'];
-        }
-      }
-    }
-
-    //billing_state
-    $return = get_all_fieldby_name('billing_state', $form, $lead);
-    $state = '';
-    if(!empty($return)){
-      foreach($return as $name){
-        if(!empty($name['value'])){
-          $state = $name['value'];
-        }
-      }
-    }
-
-    //billing_zip_code
-    $return = get_all_fieldby_name('billing_zip_code', $form, $lead);
-    $zip = '';
-    if(!empty($return)){
-      foreach($return as $name){
-        if(!empty($name['value'])){
-          $zip = $name['value'];
-        }
-      }
-    }
-
-    //billing_country
-    $return = get_all_fieldby_name('billing_country', $form, $lead);
-    $country = '';
-    if(!empty($return)){
-      foreach($return as $name){
-        if(!empty($name['value'])){
-          $country = $name['value'];
-        }
-      }
-    }
-
-    $invAddress = $address1 . (!empty($address2)?'<br/>'.$address2:'')  .'<br/>'.$city.', '.$state.' '.$zip.'<br/>'.$country;
-    update_field('billing_address', $invAddress, $post_id);
 
     //build the repeater field data for invoice services
     $invoice_services = get_invoice_services($form, $lead);
@@ -347,7 +273,7 @@ function get_invoice_services($form, $lead) {
             "invoice_service_quantity"  => 1
           );
   }
-  
+
   return $invoice_services;
 
 } //end function get_invoice_services

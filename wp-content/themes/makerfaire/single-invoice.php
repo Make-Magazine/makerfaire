@@ -10,15 +10,49 @@ $invoice_id = get_the_title();
 $billing_company_name = get_field('billing_company_name');
 $billing_contact_name = get_field('billing_contact_name');
 $billing_address      = get_field('billing_address');
+$billing_address2     = get_field('billing_address2');
+$billing_city         = get_field('billing_city');
+$billing_state        = get_field('billing_state');
+$billing_zip          = get_field('billing_zip');
+$billing_country      = get_field('billing_country');
 $billing_email        = get_field('billing_email');
 $billing_phone_num    = get_field('billing_phone_num');
 $invoice_date         = get_field('invoice_date');
 $origEntryID          = get_field('original_entry_id');
 
-add_filter( 'gform_field_value_client_name', 'gf_filter_client_name' );
-function gf_filter_client_name() {
-	return esc_attr( get_field( 'invoice_client_name' ) );
+add_filter( 'gform_field_value_billing_company_name', 'gf_filter_billing_company_name' );
+function gf_filter_billing_company_name() {
+	return esc_attr( get_field( 'billing_company_name' ) );
 }
+add_filter( 'gform_field_value_billing_email', 'gf_filter_billing_email' );
+function gf_filter_billing_email() {
+	return esc_attr( get_field( 'billing_email' ) );
+}
+add_filter( 'gform_field_value_billing_address', 'gf_filter_billing_address' );
+function gf_filter_billing_address() {
+	return esc_attr( get_field( 'billing_address' ) );
+}
+add_filter( 'gform_field_value_billing_address2', 'gf_filter_billing_address2' );
+function gf_filter_billing_address2() {
+	return esc_attr( get_field( 'billing_address2' ) );
+}
+add_filter( 'gform_field_value_billing_city', 'gf_filter_billing_city' );
+function gf_filter_billing_city() {
+	return esc_attr( get_field( 'billing_city' ) );
+}
+add_filter( 'gform_field_value_billing_state', 'gf_filter_billing_state' );
+function gf_filter_billing_state() {
+	return esc_attr( get_field( 'billing_state' ) );
+}
+add_filter( 'gform_field_value_billing_zip', 'gf_filter_billing_zip' );
+function gf_filter_billing_zip() {
+	return esc_attr( get_field( 'billing_zip' ) );
+}
+add_filter( 'gform_field_value_billing_country', 'gf_filter_billing_country' );
+function gf_filter_billing_country() {
+	return esc_attr( get_field( 'billing_country' ) );
+}
+
 add_filter( 'gform_field_value_invoice_amount', 'gf_filter_amount' );
 function gf_filter_amount() {
 	global $running_total;
@@ -63,7 +97,13 @@ get_header(); ?>
             <br/>
             <div class="row">
               <div class="col-sm-3">&nbsp;</div>
-              <div class="col-sm-9"><?php echo $billing_address;?></div>
+              <div class="col-sm-9">
+                <?php echo $billing_address .'<br/>'.
+                           (!empty($billing_address2)?$billing_address2.'<br/>':'').
+                           $billing_city.', '.$billing_state.' '.$billing_zip.'<br/>'.
+                           $billing_country;
+                ?>
+              </div>
             </div>
             <br/>
             <div class="row">
@@ -143,7 +183,7 @@ get_header(); ?>
         } ?>
 
         <!-- Payment Form -->
-        <?php echo do_shortcode( '[gravityform id="152" name="Invoice" title="false" description="false"]' ); ?>
+        <?php echo do_shortcode( '[gravityform id="151" name="Invoice" title="false" description="false"]' ); ?>
         <a href="mailto:sponsorrelations@makermedia.com?subject=Special Billing Options <?php echo $billing_company_name.' '.$origEntryID;?>">Special Billing Options</a>
         <br/><br/>
       </div><!-- /invoice -->
