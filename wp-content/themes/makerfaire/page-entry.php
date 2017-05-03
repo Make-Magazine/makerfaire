@@ -332,7 +332,7 @@ function display_entry_schedule($entry_id) {
             left join wp_mf_schedule schedule
                     on location.ID = schedule.location_id
              where location.entry_id=$entry_id"
-          . " group by area, subarea, location";
+          . " group by area, subarea, location, schedule.start_dt";
   $results = $wpdb->get_results($sql);
 
   if($wpdb->num_rows > 0){
