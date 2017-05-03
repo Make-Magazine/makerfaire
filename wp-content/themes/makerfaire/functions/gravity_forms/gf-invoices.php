@@ -204,7 +204,13 @@ function get_invoice_services($form, $lead) {
           //field id (for qty) - using data in {}, numeric value after :
           $amt = str_replace($field_data, '', $calcString);//numeric data after removing {} and *
           $amt = str_replace('*', '', $amt);//numeric data after removing {} and *
-
+          //is the amt field numeric or do we need to pull the value from a field
+          if(!is_numeric($amt)){
+            $fieldID = $amt;
+            $fieldID = str_replace('{', '', $fieldID);
+            $fieldID = str_replace('}', '', $fieldID);
+            $amt = (isset($lead[$fieldID])?$lead[$fieldID]:0);
+          }
           /*
            * determine amt field
            * Look for price in the label field.  Should be in this format:
