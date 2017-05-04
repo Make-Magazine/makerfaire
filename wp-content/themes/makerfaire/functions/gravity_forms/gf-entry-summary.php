@@ -501,7 +501,9 @@ function getmetaData($entry_id,$type=''){
        * If type = payments, only display forms with type of Payment
        */
       if( ($type == ''         && $formPull['form_type'] != 'Payment') ||
-          ($type == 'payments' && $formPull['form_type'] == 'Payment')){
+          ($type == 'payments' && $formPull['form_type'] == 'Payment') ||
+          ($type == 'payments' && $formPull['form_type'] == 'Invoice')
+        ){
         $formCount ++;
         $formTable = '<table>';
 

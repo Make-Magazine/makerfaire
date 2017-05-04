@@ -60,6 +60,21 @@ function gf_filter_amount() {
 	global $running_total;
 	return esc_attr( number_format( $running_total, 2 ) );
 }
+
+add_filter( 'gform_pre_render_152', 'gf_orig_entry_id' );
+function gf_orig_entry_id($form) {
+	$origEntryID = get_field('original_entry_id');
+  $searchKey = 'entry-id';
+  foreach ($form['fields'] as &$field) {
+    $lead_key = $field['inputName'];
+    if ($lead_key == $searchKey) {
+      $field['defaultValue']=$origEntryID;
+      break;
+    }
+  }
+	return $form;
+}
+
 add_filter( 'gform_submit_button', 'add_paragraph_below_submit', 10, 2 );
 function add_paragraph_below_submit( $button, $form ) {
   if(isset($form['form_type']) && $form['form_type']=='Invoice'){
