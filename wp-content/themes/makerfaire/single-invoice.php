@@ -184,7 +184,19 @@ get_header(); ?>
 
         <!-- Payment Form -->
         <?php echo do_shortcode( '[gravityform id="152" name="Invoice" title="false" description="false"]' ); ?>
-        <a href="mailto:ar@makermedia.com,sponsorrelations@makermedia.com?bcc=kate@makermedia.com&subject=Special Billing Options <?php echo $billing_company_name.' '.$origEntryID;?>">Special Billing Options</a>
+        <?php
+          $subject = "Special Billing Options - ". $billing_company_name.'- '.$origEntryID;
+          $entry    = GFAPI::get_entry($origEntryID);
+
+          $sponsorName = (is_array($entry) && isset($entry['151'])?$entry['151']:$billing_company_name);//field 151 from $origEntryID
+          $invoiceLink = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+          $body = "[Add your billing requests and details above this line.]%0D%0A
+            %0D%0A
+            Sponsor Name: ".$sponsorName."%0D%0A
+            Invoice Number: ".$invoice_id."%0D%0A
+            Invoice: ".$invoiceLink;
+        ?>
+        <a href="mailto:ar@makermedia.com,sponsorrelations@makermedia.com?bcc=kate@makermedia.com&subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
         <br/><br/>
       </div><!-- /invoice -->
 		</div><!--Content-->
