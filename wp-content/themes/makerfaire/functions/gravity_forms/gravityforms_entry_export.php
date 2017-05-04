@@ -221,7 +221,7 @@ function mf_custom_import_entries() {
     //matching record found
     if ( null !== $res ) {  //update the attribute
       if($res->value!=$attvalue){
-        $wpdb->update('wp_rmt_entry_attributes',array('value'=>$attvalue,'user'=>$user,'update_stamp'=>'now()'),array('ID'=>$res->ID),array('%s','%d','%s'));
+        $wpdb->update('wp_rmt_entry_attributes',array('value'=>$attvalue,'user'=>$user,'update_stamp'=>'now()','lockBit'=>1),array('ID'=>$res->ID),array('%s','%d','%s'));
         if($wpdb->last_error !== ''){
           $wpdb->print_error();
         }
@@ -237,7 +237,7 @@ function mf_custom_import_entries() {
             'status_at_update'  => '');
       }
     }else{ //add the attribute
-      $wpdb->insert('wp_rmt_entry_attributes',array('entry_id'=>$entryID,'attribute_id'=>$attribute_id,'value'=>$attvalue,'user'=>$user),array('%d','%d', '%s','%d'));
+      $wpdb->insert('wp_rmt_entry_attributes',array('entry_id'=>$entryID,'attribute_id'=>$attribute_id,'value'=>$attvalue,'user'=>$user,'lockBit'=>1),array('%d','%d', '%s','%d'));
       if($wpdb->last_error !== ''){
         $wpdb->print_error();
       }
@@ -331,7 +331,7 @@ function mf_custom_import_entries() {
         /*  SubArea/Location  */
         //delete any previously assigned subareas/locations
         $wpdb->query("delete from wp_mf_location where entry_id = $entryID");
-        
+
         //now add in the uploaded  subareas/locations
         $wpdb->insert('wp_mf_location',array('entry_id'=>$entryID,'subarea_id'=>$subArea,'location'=>$location),array('%d','%d','%s'));
 
