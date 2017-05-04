@@ -141,7 +141,25 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     var subRoute  = $routeParams.sub;
     var pageTitle = 'Reports';
     var subTitle  = '';
-
+    if(subRoute=='sponsor_pymt'){
+       vars = {"formSelect":[],
+              "formType":["Sponsor"],
+              "faire": faire,
+              "payments":true,
+              "paymentOrder": 100,
+              "entryIDorder": 200,
+              "selectedFields":[
+                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
+              ],
+              "location":true,
+              "rmtData":{"resource":[],"attribute":[],"attention":[],
+              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","checked":true}]},
+              "type":"customRpt"
+            };
+      var subTitle = 'Payment(s)';
+      $scope.reports.callAJAX(vars);
+    }else
     if(subRoute=='cm_pymt'){
        vars = {"formSelect":[],
               "formType":["Exhibit"],

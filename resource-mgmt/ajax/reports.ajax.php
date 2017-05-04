@@ -66,6 +66,7 @@ function cannedRpt(){
   $formIDorder    = (isset($obj->formIDorder)    ? $obj->formIDorder:20);
   $formTypeorder  = (isset($obj->formTypeorder)  ? $obj->formTypeorder:30);
   $locationOrder  = (isset($obj->locationOrder)  ? $obj->locationOrder:40);
+  $paymentOrder   = (isset($obj->paymentOrder)   ? $obj->paymentOrder:50);
 
   $forms      = implode(",",$formSelect);
   $formTypes  = implode("', '",$formTypeArr);
@@ -143,7 +144,7 @@ function cannedRpt(){
       //add requested field to columns
       if(isset($selFields->hide)&&$selFields->hide==true){
         //don't add this field to display
-        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string',visible=> false,
+        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string','visible'=> false,
                                                       'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
       }else{
         $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string',
@@ -313,7 +314,7 @@ function cannedRpt(){
           $colDefs   =  array_merge($colDefs,$locRetData['colDefs']);
         }
         if($payment) {
-          $PayRetData = pullPayData($lead_id);
+          $PayRetData = pullPayData($lead_id,$paymentOrder);
           $fieldData =  array_merge($fieldData,$PayRetData['data']);
           $colDefs   =  array_merge($colDefs,$PayRetData['colDefs']);
         }
@@ -568,7 +569,7 @@ function pullLocData($entryID, $useFormSC, $locationOrder) {
   return $return;
 }
 
-function pullPayData($entryID) {
+function pullPayData($entryID, $paymentOrder) {
   global $wpdb;
   $return = array();
   $return['data'] = array();
@@ -617,25 +618,25 @@ function pullPayData($entryID) {
               }
             }else{
               $pay_det.= $payFields['label'].': ';
-              $pay_det.= $payEntry[$payFields['id']]."\r";
+              $pay_det.= $payEntry[$payFields['id'].'.2']."\r";
             }
           }
         }
       }
       //payment transaction ID (from paypal)
-      $return['colDefs']['trx_id']=   array('field'=> 'trx_id','displayName'=>'Pay trxID');
+      $return['colDefs']['trx_id']=   array('field'=> 'trx_id','displayName'=>'Pay trxID', 'displayOrder'=>$paymentOrder);
       $return['data']['trx_id'] = implode("\r", $transaction_id);
 
       //payment amt
-      $return['colDefs']['pay_amt']=   array('field'=> 'pay_amt','displayName'=>'Pay amount','cellFilter'=> 'currency');
+      $return['colDefs']['pay_amt']=   array('field'=> 'pay_amt','displayName'=>'Pay amount','cellFilter'=> 'currency', 'displayOrder'=>$paymentOrder+1);
       $return['data']['pay_amt'] = $amount;
 
       //payment date
-      $return['colDefs']['pay_date']=   array('field'=> 'pay_date','displayName'=>'Pay date');
+      $return['colDefs']['pay_date']=   array('field'=> 'pay_date','displayName'=>'Pay date', 'displayOrder'=>$paymentOrder+2);
       $return['data']['pay_date'] = implode("\r", $date_created);
 
       //payment details
-      $return['colDefs']['pay_det']=   array('field'=> 'pay_det','displayName'=>'Payment Details');
+      $return['colDefs']['pay_det']=   array('field'=> 'pay_det','displayName'=>'Payment Details', 'displayOrder'=>$paymentOrder+3);
       $return['data']['pay_det'] = $pay_det;
     }
   }
