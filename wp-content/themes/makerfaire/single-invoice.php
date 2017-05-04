@@ -19,6 +19,8 @@ $billing_email        = get_field('billing_email');
 $billing_phone_num    = get_field('billing_phone_num');
 $invoice_date         = get_field('invoice_date');
 $origEntryID          = get_field('original_entry_id');
+$entry    = GFAPI::get_entry($origEntryID);
+$sponsorName = (is_array($entry) && isset($entry['151'])?$entry['151']:$billing_company_name);//field 151 from $origEntryID
 
 add_filter( 'gform_field_value_billing_company_name', 'gf_filter_billing_company_name' );
 function gf_filter_billing_company_name() {
@@ -135,7 +137,10 @@ get_header(); ?>
               <div class="col-sm-3"><b>Deliver to:</b></div>
               <div class="col-sm-9">Exhibit Space Onsite</div>
             </div>
-
+            <div class="row">
+              <div class="col-sm-3"><b>Sponsor:</b></div>
+              <div class="col-sm-9"><?php echo $sponsorName;?></div>
+            </div>
           </div>
         </div>
         <br/><Br/>
@@ -186,9 +191,7 @@ get_header(); ?>
         <?php echo do_shortcode( '[gravityform id="152" name="Invoice" title="false" description="false"]' ); ?>
         <?php
           $subject = "Special Billing Options - ". $billing_company_name.'- '.$origEntryID;
-          $entry    = GFAPI::get_entry($origEntryID);
 
-          $sponsorName = (is_array($entry) && isset($entry['151'])?$entry['151']:$billing_company_name);//field 151 from $origEntryID
           $invoiceLink = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
           $body = "[Add your billing requests and details above this line.]%0D%0A
             %0D%0A
