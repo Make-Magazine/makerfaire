@@ -395,7 +395,7 @@ class GFRMTHELPER {
      */
     $wp_mf_entitysql = "insert into wp_mf_entity (lead_id, form_id, presentation_title, presentation_type, special_request, "
                     . "     OnsitePhone, desc_short, desc_long, project_photo, status, category, faire, mobile_app_discover, "
-                    . "     form_type, project_video) "
+                    . "     form_type, project_video,inspiration) "
                     . " VALUES ('" . $entryID . "',". $entityData['form_id']. ','
                             . ' "' . $entityData['project_name']            . '", '
                             . ' "' . $entityData['presentation_type']       . '", '
@@ -409,7 +409,8 @@ class GFRMTHELPER {
                             . ' "' . $entityData['faire']                   . '", '
                             . '  ' . $entityData['mobile_app_discover']     . ','
                             . ' "' . $form_type  . '", '
-                            . ' "' . $entityData['project_video']           . '"'
+                            . ' "' . $entityData['project_video']           . '", '
+                            . ' "' . $entityData['inspiration']                  . '" '
                             .') '
                     . ' ON DUPLICATE KEY UPDATE presentation_title  = "'.$entityData['project_name']            . '", '
                     . '                         presentation_type   = "'.$entityData['presentation_type']       . '", '
@@ -424,7 +425,8 @@ class GFRMTHELPER {
                     . '                         form_id             =  '.$entityData['form_id']                 . ','
                     . '                         mobile_app_discover = "'.$entityData['mobile_app_discover']     . '", '
                     . '                         form_type           = "'.$form_type                             . '", '
-                    . '                         project_video       = "'.$entityData['project_video']           . '"';
+                    . '                         project_video       = "'.$entityData['project_video']           . '", '
+                    . '                         inspiration         = "'.$entityData['inspiration']             . '"';
     $wpdb->get_results($wp_mf_entitysql);
 
     /*  Update Maker Table - wp_mf_maker table
@@ -793,7 +795,8 @@ class GFRMTHELPER {
         'categories'          => $leadCategory,
         'faire'               => $faire,
         'mobile_app_discover' => $MAD,
-        'form_id'             => $form_id
+        'form_id'             => $form_id,
+        'inspiration'         => (isset($lead['287'])  ? htmlentities($lead['287'])  : ''),
     );
     $return = array('maker'=>$makerArray,'entity'=>$entityArray);
     return $return;

@@ -21,6 +21,15 @@ if(isset($_GET['cron'])){
     $area = (isset($_GET['area'])?$_GET['area']:'');
     $area = str_replace('_',' ',$area);
     createMFSignZip($area);
+  }elseif($_GET['cron']=='update_mfTables'){
+    $form  = (isset($_GET['form'])?$_GET['form']:'');
+    $limit = (isset($_GET['limit'])?$_GET['limit']:0);
+    $start = (isset($_GET['start'])?$_GET['start']:0);
+    if($form!=''){
+      update_mfTables($form,$limit,$start);
+    }else{
+      echo 'Fail. You need to at least give me a form id to use<Br/>?cron=update_mfTables&form&limit&start<br/>';
+    }
   }
 
   echo 'ending process';
@@ -31,7 +40,8 @@ if(isset($_GET['cron'])){
   . '?cron=build_ribbonJSON<Br/>'
   . '?cron=cronRmtData&form=999<Br/>'
   . '?cron=genManTickets&entryID=999&parentID=999<br/>'
-  . '?cron=createSignZip&area=abcd'      ;
+  . '?cron=createSignZip&area=abcd<br/>'
+  . '?cron=update_mfTables&form&limit&start';
 }
 
 function createMFSignZip($area) {
@@ -57,7 +67,7 @@ function createMFSignZip($area) {
           and wp_mf_faire_area.area = '$area'
           and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0
           and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.non_public_forms)<= 0";
-    
+
     $results = $wpdb->get_results($sql);
     $entries = array();
 

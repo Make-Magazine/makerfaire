@@ -49,6 +49,7 @@ if ($type == 'project') {
             `entity`.`project_photo`,
             `entity`.`form_type`,
             `entity`.`project_video`,
+            `entity`.`inspiration`,
             entity.mobile_app_discover,
             wp_mf_faire.faire_name,
             (select group_concat( distinct maker_id separator ',') as Makers
@@ -140,6 +141,7 @@ if ($type == 'project') {
         $app['faire_name']    = $row['faire_name'];
         $app['submission']    = $row['date_created'];
         $app['project_video'] = $row['project_video'];
+        $app['inspiration']   = $row['inspiration'];
         $app['redRibbonCnt']  = ($row['redRibbonCnt']  != NULL ? $row['redRibbonCnt']  : 0);
         $app['blueRibbonCnt'] = ($row['blueRibbonCnt'] != NULL ? $row['blueRibbonCnt'] : 0);
 

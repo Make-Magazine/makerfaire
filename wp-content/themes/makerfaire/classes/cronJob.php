@@ -35,16 +35,14 @@ function build_ribbonJSON(){
  */
 add_action('cron_update_mfTables', 'update_mfTables',10,3);
 
-function update_mfTables($form,$limit,$start){
+function update_mfTables($form,$limit=0,$start){
   error_log('updating maker tables for form '. $form.' ('.$start.', '.$limit.')');
 
   global $wpdb;
   $sql = "Select id
             from wp_rg_lead
            where form_id  = $form "
-          //. " and id > 60701"
        . " ORDER BY `wp_rg_lead`.`id` ASC "
-          //. "limit 0, 100"
           ;
   if($limit!="0"){
     $sql .= " limit ".$start.', '.$limit;
