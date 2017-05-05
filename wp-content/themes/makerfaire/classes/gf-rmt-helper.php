@@ -138,16 +138,10 @@ class GFRMTHELPER {
       }
     }
 
-    $lockRMT = false;
+
     //if this is a payment form overwrite the user
     if($form_type == 'Payment'){
       $user = 0;  //user = 0 - payment form
-
-      if(isset($form['create_invoice']) && $form['create_invoice']=='yes'){
-        //sponsor order form - do not lock
-      }else{
-        $lockRMT = true;
-      }
     }
 
     $chgRPTins = array();
@@ -184,11 +178,6 @@ class GFRMTHELPER {
 
         //matching record found
         if ( null !== $res ) {  // yes, is qty 0?
-          if($lockRMT){
-            $lockBit = 1;
-          }else{
-            $lockBit = $res->lockBit;
-          }
           if($res->lockBit==0){ //do not update if this resource is locked
             if($qty==0){  // yes, delete
               $wpdb->get_results('delete from `wp_rmt_entry_resources` where id='.$res->ID);
@@ -196,15 +185,10 @@ class GFRMTHELPER {
               $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->comment, '', 'RMT Resource: '.$res->token.' - comment');
             } else { // no, update
               //If there are changes, update this record
-              if($res->resource_id != $resource_id || $res->qty != $qty || $res->comment != $comment || $lockRMT){
-                $wpdb->update('wp_rmt_entry_resources',
-                        array('resource_id'=>$resource_id, 'qty'=>$qty, 'user'=>$user, 'comment'=>$comment, 'update_stamp'=>'now()','lockBit'=>$lockBit),
-                        array('id'=>$res->ID),array('%d','%d','%d', '%s','%d')
-                        );
-                /*
+              if($res->resource_id != $resource_id || $res->qty != $qty || $res->comment != $comment){
                 $wpdb->get_results('update `wp_rmt_entry_resources` '
                       . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.',comment="'.$comment.'", update_stamp=now() where id='.$res->ID);
-                */
+
                 //update change report
                 if($res->qty!=$qty)
                   $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->qty, $qty, 'RMT Resource: '.$res->token.' -  qty');
@@ -216,17 +200,9 @@ class GFRMTHELPER {
             }
           }
         } elseif($qty!=0) { //no record found, if qty is not 0 - add
-          if($lockRMT){
-            $lockBit = 1;
-          }else{
-            $lockBit = 0;
-          }
           //insert this record
-          $wpdb->insert('wp_rmt_entry_resources',
-                  array('entry_id'=>$entryID,'resource_id'=>$resource_id,'qty'=>$qty,'comment'=>$comment,'user'=>$user,'lockBit'=>$lockBit),
-                  array('%d','%d','%d','%s','%d','%d'));
-          /*$wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
-                  . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');*/
+          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+                  . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
           //update change report
           $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$resource_id);
           $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $qty, 'RMT Resource: '.$res->token.' -  qty');
@@ -279,31 +255,23 @@ class GFRMTHELPER {
       $attvalue     = htmlspecialchars($value[1]);
       $comment      = htmlspecialchars($value[2]);
 
-      //check if attribute is set
+      //check if attribute is locked
       $res = $wpdb->get_row("select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token"
                           . " from wp_rmt_entry_attributes"
                           . " left outer join wp_rmt_entry_att_categories on wp_rmt_entry_att_categories.ID=attribute_id"
                           . ' where entry_id = '.$entryID.' and attribute_id = '.$attribute_id);
-
-      //matching record found
+       //matching record found
       if ( null !== $res ) {
-        if($lockRMT){
-          $lockBit = 1;
-        }else{
-          $lockBit = $res->lockBit;
-        }
         if($res->lockBit==0){  //If this attribute is not locked, update this record
           //if this is a payment record, append the payment comment to the end of the existing comment
           if($form_type == 'Payment'){
             $comment = $res->comment.'<br/>'.$form_type . ' Form Comment - ' . $comment;
           }
           //if there are changes, update the record
-          if($res->comment!=$comment || $res->value!=$attvalue || $lockRMT){
-          /*  $wpdb->get_results('update `wp_rmt_entry_attributes` '
+          if($res->comment!=$comment || $res->value!=$attvalue){
+            $wpdb->get_results('update `wp_rmt_entry_attributes` '
                   . ' set comment="'.$comment.'", user='.$user.', value="'.$attvalue .'",	update_stamp=now()'
-                  . ' where id='.$res->ID);*/
-            $wpdb->update('wp_rmt_entry_attributes',array('comment'=>$comment,'value'=>$attvalue,'user'=>$user,'update_stamp'=>'now()','lockBit'=>$lockBit),
-                    array('id'=>$res->ID),array('%s','%s','%d','%d'));
+                  . ' where id='.$res->ID);
             //update change report
             if($res->comment!=$comment)
               $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $attribute_id, $res->comment, $comment, 'RMT attribute: '.$res->token.' -  comment');
@@ -312,16 +280,8 @@ class GFRMTHELPER {
           }
         }
       }else{
-        if($lockRMT){
-          $lockBit = 1;
-        }else{
-          $lockBit = 0;
-        }
-        $wpdb->insert('wp_rmt_entry_attributes',
-                array('entry_id'=>$entryID,'attribute_id'=>$attribute_id,'value'=>$attvalue,'comment'=>$comment,'user'=>$user,'lockBit'=>$lockBit),
-                array('%d','%d','%s','%s','%d','%d'));
-        /*$wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
-                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')');*/
+        $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
+                      . " VALUES (".$entryID.",".$attribute_id .',"'.$attvalue . '","' . $comment.'",'.$user.')');
 
         //update change report
         $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$attribute_id);
