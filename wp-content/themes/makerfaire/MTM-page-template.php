@@ -59,7 +59,8 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-12">
-				<h1>Featured <?php echo $faireName;?> Makers: </h1>
+				<h1 class="hidden-xs">Featured <?php echo $faireName;?> Makers:</h1>
+        <h1 class="visible-xs-inline-block">Featured Makers:</h1>
 				<div class="gallery-holder">
 					<div class="cycle-gallery carousel-gallery">
 
@@ -68,7 +69,7 @@
                 <div class="slide">
                   <a href="/maker/entry/<?php echo $randEntry['id']; ?>">
                     <span class="maker-slider-btn">Learn More About This Maker</span>
-                    <img class="img-responsive cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($randPhoto,1134,442); ?>" alt="Slide Show from Maker Faire <?php echo $faireName;?>">
+                    <img class="img-responsive cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($randPhoto,1134,442); ?>" srcset="<?php echo legacy_get_resized_remote_image_url($randPhoto,767,575); ?>" alt="Slide Show from Maker Faire <?php echo $faireName;?>">
                   </a>
 									<a href="/maker/entry/<?php echo $randEntry['id']; ?>">
                     <div class="text-holder">
@@ -77,23 +78,24 @@
                     </div>
                   </a>
                 </div>
+
                 <?php for ($i = 0; $i < count($entries); $i++) { if ($i == $randEntryKey) { continue; }  ?>
-	              <div class="slide">
-                  <a href="/maker/entry/<?php echo $entries[$i]['id']; ?>">
-                    <span class="maker-slider-btn">Learn More About This Maker</span>
-                    <?php
-                    //find out if there is an override image for this page
-                    $overrideImg = findOverride($entries[$i]['id'],'mtm');
-                    $projPhoto = ($overrideImg==''?$entries[$i]['22']:$overrideImg);?>
-                    <img class="img-responsive cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($projPhoto,1134,442); ?>" alt="Slide Show from Maker Faire <?php echo $faireName;?>">
-                  </a>
-                  <a href="/maker/entry/<?php echo $entries[$i]['id']; ?>">
-					  				<div class="text-holder">
-                      <strong class="title">Featured Maker Story</strong>
-                      <p><mark><?php echo $entries[$i]['151']; ?>: </mark><?php echo $entries[$i]['16']; ?></p>
-                    </div>
-                  </a>
-                </div>
+  	              <div class="slide">
+                    <a href="/maker/entry/<?php echo $entries[$i]['id']; ?>">
+                      <span class="maker-slider-btn">Learn More About This Maker</span>
+                      <?php
+                      //find out if there is an override image for this page
+                      $overrideImg = findOverride($entries[$i]['id'],'mtm');
+                      $projPhoto = ($overrideImg==''?$entries[$i]['22']:$overrideImg);?>
+                      <img class="img-responsive cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($projPhoto,1134,442); ?>" srcset="<?php echo legacy_get_resized_remote_image_url($projPhoto,767,575); ?>" alt="Slide Show from Maker Faire <?php echo $faireName;?>">
+                    </a>
+                    <a href="/maker/entry/<?php echo $entries[$i]['id']; ?>">
+  					  				<div class="text-holder">
+                        <strong class="title">Featured Maker Story</strong>
+                        <p><mark><?php echo $entries[$i]['151']; ?>: </mark><?php echo $entries[$i]['16']; ?></p>
+                      </div>
+                    </a>
+                  </div>
                 <?php } // end for ?>
 							</div>
 						</div>
@@ -126,6 +128,7 @@
 						<a class="btn-next" href="#"><i class="icon-arrow-right"></i></a>
 					</div>
 				</div>
+        <h2 class="visible-xs-block mobile-mtm-faire-name text-center"><?php echo $faireName;?></h2>
 			</div>
 		</div>
 	</div>
@@ -319,7 +322,10 @@ jQuery(function() {
   jQuery('#carousel-sponsors-slider').on('slid.bs.carousel', function () {
     var title = jQuery('.item.active .sponsors-type').html();
     jQuery('.sponsor-slide-cat').text(title);
-  })
+  });
+  if (jQuery(window).width() < 767) {
+    jQuery( ".maker-slider-btn" ).html("Learn More");
+  }
 });
 </script>
 

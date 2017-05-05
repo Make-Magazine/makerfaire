@@ -17,6 +17,16 @@
     font-size: 20px;
     line-height: 22px;
     font-weight: 300;
+    @media screen and (min-width: 768px) and (max-width: 991px) {
+      -moz-column-count: 3;
+      -webkit-column-count: 3;
+      column-count: 3;
+    }
+    @media screen and (max-width: 767px) {
+      -moz-column-count: 2;
+      -webkit-column-count: 2;
+      column-count: 2;
+    }
   }
   .browse-box .columns li {
     padding: 0 10px 7px 0;
@@ -92,6 +102,11 @@
   }
   .cycle-gallery .mask .slide .text-holder p {
     margin: 0;
+    @media screen and (max-width: 767px) {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
   .cycle-gallery .mask .slide .text-holder .title {
     font-weight: 700;
@@ -138,13 +153,16 @@
     left: auto;
     right: 0;
   }
-    .gallery-holder {
+  .gallery-holder {
     padding: 0 0 60px;
   }
   .gallery-holder .carousel {
     position: relative;
     padding: 0 48px;
     min-height: 124px;
+    @media screen and (max-width: 767px) {
+      display: none;
+    }
   }
   .gallery-holder .carousel .mask {
     position: relative;
@@ -235,6 +253,23 @@
     background: #085a7e;
     padding: 5px 20px;
     border-radius: 5px;
+    @media(max-width:767px) {
+      top: initial;
+      bottom: 70px;
+      right: initial;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+      border: 2px solid #67bde1;
+      background-color: transparent;
+      color: #67bde1;
+    }
+  }
+  .featured-holder .carousel-gallery .top-buttons .btn-prev,
+  .featured-holder .carousel-gallery .top-buttons .btn-next  {
+    margin: 0;
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
   }
   @media(min-width:768px) and (max-width:991px) {
     .browse-box .columns {
@@ -252,5 +287,23 @@
 .page-template-MTM-page-template {
   .sponsor-slide {
     border-top: none;
+  }
+  .search-box .form-group button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .mobile-mtm-faire-name {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1em;
+    font-size: 24px;
+    color: #f40b0b;
+  }
+  .quora .featured-holder {
+    padding: 30px 0 40px;
+  }
+  .quora .gallery-holder {
+    padding: 0 0 20px;
   }
 }
