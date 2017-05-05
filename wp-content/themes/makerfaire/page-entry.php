@@ -168,7 +168,7 @@ if (!empty($project_video)) {
   $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
   //youtube has two type of url formats we need to look for and change
   $videoID = parse_yturl($dispVideo);
-  if($videoID!=''){
+  if($videoID!=false){
     $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
   }
   $video =  '<div class="entry-video">
