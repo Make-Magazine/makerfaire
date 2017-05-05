@@ -19,5 +19,15 @@
     "grunt-text-replace": "^0.4.0"
   },
   "author": "Maker Media",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "angular": "^1.6.4",
+    "angular-animate": "^1.6.4",
+    "angular-filter": "^0.5.16",
+    "angular-route": "^1.6.4",
+    "angular-sanitize": "^1.6.4",
+    "angular-ui-bootstrap": "^2.5.0",
+    "angular-ui-grid": "^4.0.4",
+    "angular-utils-pagination": "^0.11.1"
+  }
 }

@@ -328,11 +328,12 @@ function display_entry_schedule($entry_id) {
             join  wp_mf_faire_subarea subarea
                             ON  location.subarea_id = subarea.ID
             join wp_mf_faire_area area
-                            ON subarea.area_id = area.ID and area.faire_id = $faireID
+                            ON subarea.area_id = area.ID 
             left join wp_mf_schedule schedule
                     on location.ID = schedule.location_id
-             where location.entry_id=$entry_id"
-          . " group by area, subarea, location, schedule.start_dt";
+             where schedule.entry_id=$entry_id"
+          . " group by area, subarea, location, schedule.start_dt"
+          . " order by schedule.start_dt";
   $results = $wpdb->get_results($sql);
 
   if($wpdb->num_rows > 0){
@@ -378,16 +379,37 @@ function display_entry_schedule($entry_id) {
       </div>
 
       <div class="clearfix"></div>
-
-      <div class="entry-date-time">
+      <div class="row padbottom">
+                      
+      <div class="entry-date-time col-sm-3">
         <?php
+        $prev_start_dt = NULL;
+        $prev_location = NULL;
         foreach($results as $row){
           if(!is_null($row->start_dt)){
             $start_dt   = strtotime( $row->start_dt);
             $end_dt     = strtotime($row->end_dt);
-            echo '<h5>'.date("l, F j",$start_dt).'</h5>'
-              . ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
-          }else{
+            $current_start_dt = date("l, F j",$start_dt);
+            $current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
+            if ($prev_start_dt != $current_start_dt)
+            {
+              if ($prev_start_dt != NULL)
+              {
+              echo '</div><div class="col-sm-3">';
+              }
+              echo '<h5>'.$current_start_dt.'</h5>';
+              $prev_start_dt = $current_start_dt;
+            }
+             echo ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
+           if ($prev_location != $current_location)
+            {
+             $prev_location = $current_location;
+           
+             echo '<p><small class="text-muted">LOCATION:</small> '.$current_location.'</p>';
+            }
+             
+             
+            }else{
             global $faire_start; global $faire_end;
 
             $faire_start = strtotime($faire_start);
@@ -395,12 +417,14 @@ function display_entry_schedule($entry_id) {
 
             //tbd change this to be dynamically populated
             echo '<h5>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
-          }
           echo '<p><small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</p>';
 
+            }
+         
         }
-        ?>
-      </div>
+        ?></div> <!-- Col ending -->
+        <div> <!-- row ending -->
+        </div>
     </div>
     <?php
   }
