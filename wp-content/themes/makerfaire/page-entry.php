@@ -400,13 +400,14 @@ function display_entry_schedule($entry_id) {
               echo '<h5>'.$current_start_dt.'</h5>';
               $prev_start_dt = $current_start_dt;
             }
-             echo ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
-           if ($prev_location != $current_location)
+            if ($prev_location != $current_location)
             {
              $prev_location = $current_location;
            
              echo '<p><small class="text-muted">LOCATION:</small> '.$current_location.'</p>';
             }
+            echo ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
+         
              
              
             }else{
