@@ -395,7 +395,7 @@ function display_entry_schedule($entry_id) {
             {
               if ($prev_start_dt != NULL)
               {
-              echo '</div><div class="col-sm-3">';
+              echo '</div><div class="entry-date-time col-sm-3">';
               }
               echo '<h5>'.$current_start_dt.'</h5>';
               $prev_start_dt = $current_start_dt;
