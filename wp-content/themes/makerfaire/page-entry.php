@@ -393,13 +393,16 @@ function display_entry_schedule($entry_id) {
             $current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
             if ($prev_start_dt != $current_start_dt)
             {
+              //This is not the first new date
               if ($prev_start_dt != NULL)
               {
               echo '</div><div class="entry-date-time col-sm-3">';
               }
               echo '<h5>'.$current_start_dt.'</h5>';
               $prev_start_dt = $current_start_dt;
+              $prev_location = null;
             }
+            // this is a new location
             if ($prev_location != $current_location)
             {
              $prev_location = $current_location;
