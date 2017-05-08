@@ -22,25 +22,25 @@
   //TBD - prevent sql injection (is this taken care of on GFAPI::update_entry_field?)
   switch ($field) {
     case 'project_title':
-      $fieldID    = 151;
+      $fieldID    = '151';
       $fieldLabel = 'Project / Exhibit Name';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'project_short':
-      $fieldID    = 16;
+      $fieldID    = '16';
       $fieldLabel = 'Short Description';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'website':
-      $fieldID    = 27;
+      $fieldID    = '27';
       $fieldLabel = 'Website';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'video':
-      $fieldID = 32;
+      $fieldID = '32';
       $fieldLabel = 'Website';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
@@ -48,99 +48,99 @@
     //group information
     case 'groupname':
       $fieldLabel = 'Group Name';
-      $fieldID    = 109;
+      $fieldID    = '109';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'groupbio':
       $fieldLabel = 'Group Bio';
-      $fieldID    = 110;
+      $fieldID    = '110';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     //maker bio
     case 'maker1bio':
       $fieldLabel = 'Maker 1 Bio';
-      $fieldID    = 234;
+      $fieldID    = '234';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker2bio':
       $fieldLabel = 'Maker 2 Bio';
-      $fieldID    = 258;
+      $fieldID    = '258';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker3bio':
       $fieldLabel = 'Maker 3 Bio';
-      $fieldID    = 259;
+      $fieldID    = '259';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker4bio':
       $fieldLabel = 'Maker 4 Bio';
-      $fieldID    = 260;
+      $fieldID    = '260';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker5bio':
       $fieldLabel = 'Maker 5 Bio';
-      $fieldID    = 261;
+      $fieldID    = '261';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker6bio':
       $fieldLabel = 'Maker 6 Bio';
-      $fieldID    = 262;
+      $fieldID    = '262';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker7bio':
       $fieldLabel = 'Maker 7 Bio';
-      $fieldID    = 263;
+      $fieldID    = '263';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     //first name
     case 'maker1fname':
       $fieldLabel = 'Maker 1 First Name';
-      $fieldID    = 160.3;
+      $fieldID    = '160.3';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker2fname':
       $fieldLabel = 'Maker 2 First Name';
-      $fieldID    = 158.3;
+      $fieldID    = '158.3';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker3fname':
       $fieldLabel = 'Maker 3 First Name';
-      $fieldID    = 155.3;
+      $fieldID    = '155.3';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker4fname':
       $fieldLabel = 'Maker 4 First Name';
-      $fieldID    = 156.3;
+      $fieldID    = '156.3';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker5fname':
       $fieldLabel = 'Maker 5 First Name';
-      $fieldID    = 157.3;
+      $fieldID    = '157.3';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker6fname':
       $fieldLabel = 'Maker 6 First Name';
-      $fieldID    = 159.3;
+      $fieldID    = '159.3';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker7fname':
       $fieldLabel = 'Maker 7 First Name';
-      $fieldID    = 154.3;
+      $fieldID    = '154.3';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
@@ -148,43 +148,43 @@
     //last name
     case 'maker1lname':
       $fieldLabel = 'Maker 1 Last Name';
-      $fieldID    = 160.6;
+      $fieldID    = '160.6';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker2lname':
       $fieldLabel = 'Maker 2 Last Name';
-      $fieldID    = 158.6;
+      $fieldID    = '158.6';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker3lname':
       $fieldLabel = 'Maker 3 Last Name';
-      $fieldID    = 155.6;
+      $fieldID    = '155.6';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker4lname':
       $fieldLabel = 'Maker 4 Last Name';
-      $fieldID    = 156.6;
+      $fieldID    = '156.6';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker5lname':
       $fieldLabel = 'Maker 5 Last Name';
-      $fieldID    = 157.6;
+      $fieldID    = '157.6';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker6lname':
       $fieldLabel = 'Maker 6 Last Name';
-      $fieldID    = 159.6;
+      $fieldID    = '159.6';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
     case 'maker7lname':
       $fieldLabel = 'Maker 7 Last Name';
-      $fieldID    = 154.6;
+      $fieldID    = '154.6';
       updateFieldValue($fieldID,$fieldLabel,$value);
 
       break;
@@ -208,7 +208,7 @@
     //update field and change report if needed
     if($fieldValue!=$newValue){
       GFAPI::update_entry_field( $entry_id, $fieldID, $newValue);
-      $chgRPTins = RMTchangeArray($user, $entry_id, $form_id, $fieldID, $fieldValue, $newValue, $fieldLabel);
+      $chgRPTins[] = RMTchangeArray($user, $entry_id, $form_id, $fieldID, $fieldValue, $newValue, $fieldLabel);
       updateChangeRPT($chgRPTins);
     }
   }
