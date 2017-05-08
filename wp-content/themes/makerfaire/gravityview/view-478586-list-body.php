@@ -118,7 +118,8 @@ get_header();
             <?php
             //Add link to edit entry
             $disp_edit = (($entryData['status'] != 'Cancelled') && $entryData['maker_type']=='contact' ? true: false);
-
+            //BA17 temp change to remove Edit Entry link
+            /*
             if($disp_edit){
               $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
               $url = str_replace('/view/', '/', $url);  //remove view slug from URL
@@ -127,7 +128,7 @@ get_header();
                   . '  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>'.
                       'Edit Entry</a>'
                   . '</span>';
-            }
+            }*/
             ?>
           </div>
 
@@ -245,6 +246,8 @@ get_header();
                     $class = '';
                     $tooltip = '';
                     //edit link
+                    //BA17 temp change to remove Edit Entry link
+                    /*
                     if($disp_edit){
                       $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
                       $url = str_replace('/view/', '/', $url);  //remove view slug from URL
@@ -255,8 +258,8 @@ get_header();
                       }else{
                         echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only active entries can be edited">Edit Entry</div>';
                       }
-
                     }
+                    */
                     ?>
                   </div>
                   <div>

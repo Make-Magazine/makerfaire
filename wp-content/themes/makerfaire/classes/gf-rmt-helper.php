@@ -177,29 +177,21 @@ class GFRMTHELPER {
                 . ' where entry_id='.$entryID.' and resource_id ='.$resource_id);
 
         //matching record found
-        if ( null !== $res ) {  // yes, is qty 0?
-          if($res->lockBit==0){ //do not update if this resource is locked
-            if($qty==0){  // yes, delete
-              $wpdb->get_results('delete from `wp_rmt_entry_resources` where id='.$res->ID);
-              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->qty, '', 'RMT Resource: '.$res->token.' -  qty');
-              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->comment, '', 'RMT Resource: '.$res->token.' - comment');
-            } else { // no, update
-              //If there are changes, update this record
-              if($res->resource_id != $resource_id || $res->qty != $qty || $res->comment != $comment){
-                $wpdb->get_results('update `wp_rmt_entry_resources` '
-                      . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.',comment="'.$comment.'", update_stamp=now() where id='.$res->ID);
+        if ( null !== $res ) {  // yes
+          //If there are changes, update this record
+          if($res->resource_id != $resource_id || $res->qty != $qty || $res->comment != $comment){
+            $wpdb->get_results('update `wp_rmt_entry_resources` '
+                  . ' set `resource_id` = '.$resource_id.', `qty` = '.$qty.',user='.$user.',comment="'.$comment.'", update_stamp=now() where id='.$res->ID);
 
-                //update change report
-                if($res->qty!=$qty)
-                  $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->qty, $qty, 'RMT Resource: '.$res->token.' -  qty');
-                if($res->comment != $comment)
-                  $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->comment, $comment, 'RMT Resource: '.$res->token.' - comment');
-                if($res->resource_id!=$resource_id)
-                  $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->resource_id, $resource_id, 'RMT Resource: id changed');
-              }
-            }
+            //update change report
+            if($res->qty!=$qty)
+              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->qty, $qty, 'RMT Resource: '.$res->token.' -  qty');
+            if($res->comment != $comment)
+              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->comment, $comment, 'RMT Resource: '.$res->token.' - comment');
+            if($res->resource_id!=$resource_id)
+              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->resource_id, $resource_id, 'RMT Resource: id changed');
           }
-        } elseif($qty!=0) { //no record found, if qty is not 0 - add
+        } else { //no record found, if qty is not 0 - add
           //insert this record
           $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
                   . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
@@ -308,7 +300,7 @@ class GFRMTHELPER {
      *      wp-content/themes/makerfaire/functions/gravity_forms/gravityforms_entry_meta.php
      *      in custom_entry_meta function
      */
-
+    //if resouce and attribute update
     /*  set default values */
     $assignTo    = 'na';//not assigned to anyone
     $status      = 'ready';//ready
