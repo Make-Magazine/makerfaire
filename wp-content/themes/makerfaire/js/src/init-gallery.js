@@ -45,7 +45,7 @@ function initCustomGallery() {
     pauseOnHover: true,
     maskAutoSize: true,
     autoRotation: true,
-    switchTime: 3000,
+    switchTime: 5000,
     animSpeed: 500,
     onInit: function(self) {
       pagerInstance = jQuery('.gallery-holder div.carousel .slideset');
