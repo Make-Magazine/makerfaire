@@ -39,7 +39,7 @@
               <li><a href="//www.facebook.com/makerfaire" class="icoFacebook" title="Facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
               <li><a href="//twitter.com/makerfaire" class="icoTwitter" title="Twitter" target="_blank"><i class="fa fa-twitter" target="_blank"></i></a></li>
               <li><a href="//www.instagram.com/makerfaire/" class="icoInstagram" title="Instagram" target="_blank"><i class="fa fa-instagram" target="_blank"></i></a></li>
-              <li><a href="//www.youtube.com/user/MakerFaireVideo" class="icoYoutube" title="YouTube" target="_blank"><i class="fa fa-youtube" target="_blank"></i></a></li>
+              <li><a href="//www.youtube.com/makerfaire" class="icoYoutube" title="YouTube" target="_blank"><i class="fa fa-youtube" target="_blank"></i></a></li>
           </ul>
         </div>
         <div class="clearfix"></div>
@@ -84,7 +84,7 @@
               <li><a href="//www.facebook.com/makerfaire" class="icoFacebook" title="Facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
               <li><a href="//twitter.com/makerfaire" class="icoTwitter" title="Twitter" target="_blank"><i class="fa fa-twitter" target="_blank"></i></a></li>
               <li><a href="//www.instagram.com/makerfaire/" class="icoInstagram" title="Instagram" target="_blank"><i class="fa fa-instagram" target="_blank"></i></a></li>
-              <li><a href="//www.youtube.com/user/MakerFaireVideo" class="icoYoutube" title="YouTube" target="_blank"><i class="fa fa-youtube" target="_blank"></i></a></li>
+              <li><a href="//www.youtube.com/makerfaire" class="icoYoutube" title="YouTube" target="_blank"><i class="fa fa-youtube" target="_blank"></i></a></li>
           </ul>
         </div>
         <div class="clearfix"></div>
