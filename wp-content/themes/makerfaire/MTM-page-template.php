@@ -69,7 +69,7 @@
                 <div class="slide">
                   <a href="/maker/entry/<?php echo $randEntry['id']; ?>">
                     <span class="maker-slider-btn">Learn More About This Maker</span>
-                    <img class="img-responsive cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($randPhoto,1134,442); ?>" srcset="<?php echo legacy_get_resized_remote_image_url($randPhoto,767,575); ?> 1x, 
+                    <img class="cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($randPhoto,1134,442); ?>" srcset="<?php echo legacy_get_resized_remote_image_url($randPhoto,767,575); ?> 1x, 
                                                                                                                                                           <?php echo legacy_get_resized_remote_image_url($randPhoto,800,600); ?> 2x,
                                                                                                                                                           <?php echo legacy_get_resized_remote_image_url($randPhoto,1134,442); ?> 1x
                                                                                                                                                           <?php echo legacy_get_resized_remote_image_url($randPhoto,1400,546); ?> 2x" alt="Slide Show from Maker Faire <?php echo $faireName;?>">
@@ -90,7 +90,7 @@
                       //find out if there is an override image for this page
                       $overrideImg = findOverride($entries[$i]['id'],'mtm');
                       $projPhoto = ($overrideImg==''?$entries[$i]['22']:$overrideImg);?>
-                      <img class="img-responsive cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($projPhoto,1134,442); ?>" srcset="<?php echo legacy_get_resized_remote_image_url($projPhoto,767,575); ?> 1x,
+                      <img class="cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($projPhoto,1134,442); ?>" srcset="<?php echo legacy_get_resized_remote_image_url($projPhoto,767,575); ?> 1x,
                                                                                                                                                             <?php echo legacy_get_resized_remote_image_url($projPhoto,800,600); ?> 2x,
                                                                                                                                                             <?php echo legacy_get_resized_remote_image_url($projPhoto,1134,442); ?> 1x,
                                                                                                                                                             <?php echo legacy_get_resized_remote_image_url($projPhoto,1400,546); ?> 2x" alt="Slide Show from Maker Faire <?php echo $faireName;?>">
