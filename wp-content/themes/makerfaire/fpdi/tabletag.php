@@ -96,17 +96,17 @@ function createOutput($entry_id,$pdf){
 
 
     //field 22 - QRCode
-    $token=base64_encode($entry_id);
-    $onsitecheckinurl='http://makerfaire.com/onsitecheckin/'.$token.'/';
-    $project_photo = 'https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl='.urlencode($onsitecheckinurl);
-    $pdf->Image($project_photo,7,80,null,null,image_type_to_extension(IMAGETYPE_PNG,false));
+    //$token=base64_encode($entry_id);
+    //$onsitecheckinurl='http://makerfaire.com/onsitecheckin/'.$token.'/';
+    //$project_photo = 'https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl='.urlencode($onsitecheckinurl);
+    //$pdf->Image($project_photo,7,80,null,null,image_type_to_extension(IMAGETYPE_PNG,false));
 
     //qr text
-    $pdf->SetXY(10, 120);
-    $pdf->SetFont( 'Benton Sans','',12);
-    $lineHeight = 13*0.2645833333333*1.3;
-    $qrText = "Want to be found on the Maker Faire mobile app?\nScan this code at your booth location and follow the prompts.";
-    $pdf->MultiCell(0, $lineHeight, $qrText,0,'L');
+    //$pdf->SetXY(10, 120);
+    //$pdf->SetFont( 'Benton Sans','',12);
+    //$lineHeight = 13*0.2645833333333*1.3;
+    //$qrText = "Want to be found on the Maker Faire mobile app?\nScan this code at your booth location and follow the prompts.";
+    //$pdf->MultiCell(0, $lineHeight, $qrText,0,'L');
 
     // Location Info
     /* retSubAreaByEntry: function to return location information by entry id
