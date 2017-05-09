@@ -64,8 +64,8 @@ function cannedRpt(){
 
   $entryIDorder   = (isset($obj->entryIDorder)   ? $obj->entryIDorder:10);
   $formIDorder    = (isset($obj->formIDorder)    ? $obj->formIDorder:20);
-  $formTypeorder  = (isset($obj->formTypeorder)  ? $obj->formTypeorder:30);
-  $locationOrder  = (isset($obj->locationOrder)  ? $obj->locationOrder:40);
+  $locationOrder  = (isset($obj->locationOrder)  ? $obj->locationOrder:30);
+  $formTypeorder  = (isset($obj->formTypeorder)  ? $obj->formTypeorder:40);
   $paymentOrder   = (isset($obj->paymentOrder)   ? $obj->paymentOrder:50);
 
   $forms      = implode(",",$formSelect);
@@ -140,7 +140,7 @@ function cannedRpt(){
         //set criteria for this field id
         $fieldIDArr[$selFields->id] = $selFields;
       }
-
+      if($selFields->id=='151'&& !isset($selFields->order)) $selFields->order=25;
       //add requested field to columns
       if(isset($selFields->hide)&&$selFields->hide==true){
         //don't add this field to display
@@ -385,7 +385,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       $resources = $wpdb->get_results($sql,ARRAY_A);
       $entryRes = array();
 
-      $displayOrder = (isset($selRMT->order)?$selRMT->order:0);
+      $displayOrder = (isset($selRMT->order)?$selRMT->order:100);
 
       if(isset($selRMT->aggregated) && $selRMT->aggregated==false){
         $aggrType='uiGridConstants.aggregationTypes.sum';
@@ -459,7 +459,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       }
       $return['colDefs']['att_'.$selRMT->id] = array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
                                                         'displayName'=>$selRMT->value,
-                                                        'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
+                                                        'displayOrder' => (isset($selRMT->order)?$selRMT->order:200));
       $return['data']['att_'.$selRMT->id] = implode(', ',$entryAtt);
     }
   }
@@ -483,7 +483,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       }
       $return['colDefs']['attn_'.$selRMT->id] = array('field'=> 'attn_'.str_replace('.','_',$selRMT->id),
                                                       'displayName'=>$selRMT->value,
-                                                      'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999));
+                                                      'displayOrder' => (isset($selRMT->order)?$selRMT->order:300));
       $return['data']['attn_'.$selRMT->id]  = implode(', ',$entryAttn);
     }
   }
@@ -513,7 +513,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       $selRMT     = $reqMetaArr[$meta['meta_key']];
       $return['colDefs']['meta_'.$selRMT->id] = array('field'       => 'meta_'.str_replace('.','_',$selRMT->id),
                                                       'displayName' => $selRMT->value,
-                                                      'displayOrder' => (isset($selRMT->order)?$selRMT->order:9999)
+                                                      'displayOrder' => (isset($selRMT->order)?$selRMT->order:400)
                                                     );
       $return['data']['meta_'.$selRMT->id] = $meta['meta_value'];
     }

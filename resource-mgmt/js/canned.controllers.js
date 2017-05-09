@@ -193,7 +193,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":"304.18","label":"Flags","choices":"NP Fee Discount","type":"checkbox"},
                 {"id":"304.19","label":"Flags","choices":"NP Fee Waived","type":"checkbox"},
 
-                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":""},
+                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":45,"label":"Are you a:","choices":"Non-profit or Cause or Mission based organization (Exhibit Fee applicable)","type":"radio","exact":true},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true}
               ],
@@ -358,7 +358,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "locationOrder": 300,
               "formTypeorder":400,
               "selectedFields":[
-                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":500},
+                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":250},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":600},
                 {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true, "order":700},
               ],
@@ -381,7 +381,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "dispFormID":false,
               "useFormSC": true,
               "selectedFields":[
-                {"id":151,"label":"Exhibit","type":"text"},
+                {"id":151,"label":"Exhibit","type":"text", "order":25},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
                 {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true},
 
@@ -404,7 +404,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "dispFormID":false,
               "useFormSC": true,
               "selectedFields":[
-                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":""},
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
                 {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true},
               ],
@@ -423,7 +423,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "selectedFields":[
-                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
+                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
@@ -443,7 +443,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "selectedFields":[
-                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":""},
+                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
@@ -476,7 +476,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id": "83",  "label":"Fire","choices":"all","type":"radio"},
                 {"id": "84",  "label":"Tools","choices":"all","type":"radio"},
                 {"id":"101.6","label":"Address","choices":"Country","type":"address"},
-                {"id":"151",  "label":"EXHIBIT","choices":"","type":"text","inputs":""},
+                {"id":"151",  "label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":25},
                 {"id":"302.1","label":"Location","choices":"Bikes","type":"checkbox"},
                 {"id":"303",  "label":"Status","choices":"Proposed","type":"radio"},
                 {"id":"303",  "label":"Status","choices":"Accepted","type":"radio"},
@@ -488,15 +488,15 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"9","value":"ELEC 120V","checked":true},
-                  {"id":"10","value":"ELEC 220V","checked":true}
+                  {"id":"9","value":"ELEC 120V","checked":true,"order":2000},
+                  {"id":"10","value":"ELEC 220V","checked":true,"order":2100}
                 ],
                 "attribute":[
-                  {"id":"2","value":"SIZE","checked":true},
-                  {"id":"4","value":"IN/OUT","checked":true},
-                  {"id":"6","value":"LIGHT","checked":true},
-                  {"id":"9","value":"NZ","checked":true},
-                  {"id":"11","value":"INT","checked":true}
+                  {"id":"2","value":"SIZE","checked":true,"order":3000},
+                  {"id":"4","value":"IN/OUT","checked":true,"order":3100},
+                  {"id":"6","value":"LIGHT","checked":true,"order":3200},
+                  {"id":"9","value":"NZ","checked":true,"order":3300},
+                  {"id":"11","value":"INT","checked":true,"order":3400}
                 ],
                 "attention":[],
                 "meta":[]
