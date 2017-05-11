@@ -14,7 +14,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       'data'                : {table : 'wp_mf_faire',pageTitle:'Faire Data',subTitle:'Faire Data'},
       'global-faire'        : {table : 'wp_mf_global_faire',pageTitle:'Faire Data',subTitle:'Global Faire Data'},
       'orders'              : {table : 'wp_rmt_vendor_orders',pageTitle:'',subTitle:''},
-      'areas'               : {table : 'wp_mf_faire_area',pageTitle:'Faire Data',subTitle:'Faire Areas', faireSpecific: true},
+      'areas'               : {table : 'wp_mf_faire_area',pageTitle:'Faire Data',subTitle:'Faire Areas'},
       'subareas'            : {table : 'wp_mf_faire_subarea',pageTitle:'Faire Data',subTitle:'Faire SubAreas', faireSpecific: true},
       'schedule'            : {table : 'wp_mf_schedule',pageTitle:'Faire Data',subTitle:'Assigned Location/Schedule', faireSpecific: true}
     },
@@ -88,9 +88,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       }
     };
   //if this report requires faire data, don't load the data until we get it.
-  if(!$scope.resource.faireSpecific || $scope.resource.selFaire != ''){
-
-
+  if(!$scope.resource.faireSpecific || ($scope.resource.faireSpecific &&$scope.resource.selFaire != '')){
     //get grid data
     $http({
       method: 'post',
@@ -129,7 +127,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
   $scope.saveRow = function( rowEntity ) {
     var pkey = $scope.resource.pInfo;
     var index = $scope.gridOptions.data.indexOf(rowEntity);
-    
+
     var data = {'table'     : $scope.dispTablename ,
                 'type'      : 'updateData',
                 'data'      : rowEntity,

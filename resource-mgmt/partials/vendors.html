@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div ng-hide="resource.selFaire==''">
+  <div ng-hide="resource.faireSpecific && resource.selFaire==''">
     <div ng-show="resource.subRoute=='subareas'">
       <button id="addNew" ng-click="addNew()">Add New</button>
     </div>
