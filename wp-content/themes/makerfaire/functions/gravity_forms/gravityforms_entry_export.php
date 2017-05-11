@@ -220,11 +220,12 @@ function mf_custom_import_entries() {
 
     //matching record found
     if ( null !== $res ) {  //update the attribute
-      if($res->value!=$attvalue){
+
         $wpdb->update('wp_rmt_entry_attributes',array('value'=>$attvalue,'user'=>$user,'update_stamp'=>'now()','lockBit'=>1),array('ID'=>$res->ID),array('%s','%d','%s'));
         if($wpdb->last_error !== ''){
           $wpdb->print_error();
         }
+      if($res->value!=$attvalue){
         //update change report
         $chgRPTins = array(
             'user_id'           => $user,
