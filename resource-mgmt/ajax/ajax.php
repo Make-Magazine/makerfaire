@@ -339,19 +339,22 @@ function getFkeyData($tabFkeyData){
 
 //pull data based on selected faire
 function getDataByFaire($mysqli, $table, $selfaire) {
-  $data = array();
-  if($table=='wp_mf_faire_subarea'){
-    //area options query
-    $areaQuery = 'select * from wp_mf_faire_area where faire_id='.$selfaire;
-    $arearesult = $mysqli->query( $areaQuery );
+  $data = array();$data['columnDefs'] = array();$data['data']=array();
 
-    //create array of table data
-    $editOptions = array();
-    $selectOptions = array();
-    while ($row = $arearesult->fetch_assoc()) {
-      $editOptions[]   = array('id' => $row['ID'], 'fkey' => $row['area']);
-      $selectOptions[] = array('value' => $row['ID'], 'label' => $row['area']);
-    }
+  //area options query
+  $areaQuery = 'select * from wp_mf_faire_area where faire_id='.$selfaire;
+  $arearesult = $mysqli->query( $areaQuery );
+
+  //create array of table data
+  $editOptions = array();
+  $selectOptions = array();
+  while ($row = $arearesult->fetch_assoc()) {
+    $editOptions[]   = array('id' => $row['ID'], 'fkey' => $row['area']);
+    $selectOptions[] = array('value' => $row['ID'], 'label' => $row['area']);
+  }
+
+  //create array of subarea information
+  if($table=='wp_mf_faire_subarea'){
     //build columndefs
     $data['columnDefs'][] = array('cellTemplate' => "<span class='ui-grid-cell-contents ng-binding ng-scope' ng-click='grid.appScope.deleteRow(row)'><i class='fa fa-trash'></i></span>",
             'displayName' => "", 'enableCellEdit' => false, 'enableColumnMenu' => false, 'enableFiltering' => false, 'name' => "delete", 'sortable' => false, 'width' => "25");
@@ -383,6 +386,49 @@ function getDataByFaire($mysqli, $table, $selfaire) {
     while ($row = $result->fetch_assoc()) {
       $data['data'][]= $row;
     }
+    $data['pInfo']   = 'ID';
+    $data['success'] = true;
+  }elseif($table=='wp_mf_schedule'){
+    //build columndefs
+    $data['columnDefs'][] = array(
+        'cellTemplate' => "<span class='ui-grid-cell-contents ng-binding ng-scope' ng-click='grid.appScope.deleteRow(row)'><i class='fa fa-trash'></i></span>",
+        'displayName'  => "", 'enableCellEdit' => false, 'enableColumnMenu' => false, 'enableFiltering' => false, 'name' => "delete",
+        'sortable'     => false, 'width' => "25");
+    $data['columnDefs'][] = array('displayName' => "ID", 'enableCellEdit' => false, 'enableFiltering' => false, 'name' => "ID", 'visible' => "false",'width'=>50);
+    $data['columnDefs'][] = array('displayName' => "Entry", 'enableCellEdit' => false, 'enableFiltering' => true, 'name' => "entry_id", 'width' =>"80");
+    $data['columnDefs'][] = array('displayName' => "Exhibit", 'enableCellEdit' => false, 'enableFiltering' => true, 'name' => "exName",'dataType'=>'external');
+
+    $data['columnDefs'][] = array('displayName' => "SubArea", 'enableCellEdit' => false, 'enableFiltering' => true, 'name' => "subarea", 'width' => "110");
+    //$data['columnDefs'][] = array('displayName' => "Location", 'enableCellEdit' => false, 'enableFiltering' => true, 'name' => "location_id", 'width' =>"100");
+    $data['columnDefs'][] = array('displayName' => "Start", 'enableCellEdit' => true, 'enableFiltering' => true, 'name' => "start_dt", 'width' =>"150");
+    $data['columnDefs'][] = array('displayName' => "End",   'enableCellEdit' => true, 'enableFiltering' => true, 'name' => "end_dt", 'width' =>"150");
+    //set type drop down
+    $typeOptions = array('demo', 'performance', 'talk', 'workshop');
+    $typeEditOptions = array();$typeSelectOptions=array();
+    foreach($typeOptions as $type){
+      $typeEditOptions[]   = array('id'=>$type,'fkey'=>  ucfirst($type));
+      $typeSelectOptions[] = array('value' => $type, 'label' => ucfirst($type));
+    }
+    $data['columnDefs'][] = array('cellFilter' => "griddropdown:this",
+        'displayName' => "Type", 'enableCellEdit' => true,'editDropdownIdLabel' => "id",'editDropdownOptionsArray' => $typeEditOptions,
+        'editDropdownValueLabel' => "fkey",   'editableCellTemplate' => "ui-grid/dropdownEditor",
+        'field' => "type", 'width' =>"100",   'filter' => array('selectOptions' => $typeSelectOptions)
+        );
+
+
+
+    //build data
+    $query = 'SELECT  wp_mf_schedule.*,'
+            . '(SELECT nicename FROM `wp_mf_location`, wp_mf_faire_subarea WHERE wp_mf_location.ID = 6319 and wp_mf_location.subarea_id = wp_mf_faire_subarea.id) as subarea, '
+            . '(SELECT value FROM `wp_rg_lead_detail` where field_number = "151" and lead_id = wp_mf_schedule.entry_id limit 1) as exName '
+            . ' from wp_mf_schedule, wp_mf_faire where wp_mf_faire.faire = wp_mf_schedule.faire and wp_mf_faire.id='.$selfaire;
+
+    $result = $mysqli->query( $query );
+    //create array of table data
+    while ($row = $result->fetch_assoc()) {
+      $data['data'][]= $row;
+    }
+
     $data['pInfo']   = 'ID';
     $data['success'] = true;
   }

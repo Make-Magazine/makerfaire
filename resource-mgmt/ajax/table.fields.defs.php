@@ -83,11 +83,12 @@ $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'exName',   '
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'location', 'filterType' => 'text');
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'start_dt', 'filterType' => 'text');
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'end_dt',   'filterType'   => 'text');
+$tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'schedType',   'filterType'   => 'text');
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'form_id', 'filterType' => 'text', 'fieldLabel' => 'form_id','visible' => false);
 $tableFields['wp_mf_location']['query'] =
           'SELECT wp_mf_location.location,wp_mf_location.entry_id, wp_mf_location.subarea_id, '
                 . 'wp_mf_faire_subarea.subarea, wp_mf_faire_subarea.nicename, wp_mf_faire_subarea.area_id, '
-                . 'wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_rg_lead.form_id, '
+                . 'wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_mf_schedule.type as schedType, wp_rg_lead.form_id, '
         . '(SELECT value FROM `wp_rg_lead_detail` where field_number = "151" and lead_id = wp_mf_location.entry_id  limit 1) as exName '
         . 'FROM    wp_mf_location '
         . 'left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.ID '

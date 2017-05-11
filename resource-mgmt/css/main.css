@@ -382,3 +382,6 @@ a {
 
 .navbar .navbar-title{float:right}
 .cannedLinks .btn {width: 100%; margin: 5px;}
+
+.vendorsView #addNew{float:right;}
+.clear{clear:both;}

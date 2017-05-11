@@ -12,10 +12,11 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     },
     'faire': {
       'data'                : {table : 'wp_mf_faire',pageTitle:'Faire Data',subTitle:'Faire Data'},
+      'global-faire'        : {table : 'wp_mf_global_faire',pageTitle:'Faire Data',subTitle:'Global Faire Data'},
       'orders'              : {table : 'wp_rmt_vendor_orders',pageTitle:'',subTitle:''},
-      'areas'               : {table : 'wp_mf_faire_area',pageTitle:'Faire Data',subTitle:'Faire Areas'},
-      'subareas'            : {table : 'wp_mf_faire_subarea',pageTitle:'Faire Data',subTitle:'Faire SubAreas'},
-      'global-faire'        : {table : 'wp_mf_global_faire',pageTitle:'Faire Data',subTitle:'Global Faire DAta'}
+      'areas'               : {table : 'wp_mf_faire_area',pageTitle:'Faire Data',subTitle:'Faire Areas', faireSpecific: true},
+      'subareas'            : {table : 'wp_mf_faire_subarea',pageTitle:'Faire Data',subTitle:'Faire SubAreas', faireSpecific: true},
+      'schedule'            : {table : 'wp_mf_schedule',pageTitle:'Faire Data',subTitle:'Assigned Location/Schedule', faireSpecific: true}
     },
     'entry' : {
       'resources'           : {table : 'wp_rmt_entry_resources', pageTitle:'Entry Specific Data',subTitle:'Assigned Resources'},
@@ -29,12 +30,17 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
   $scope.data     = [];
   $scope.resource = {};
   $scope.resource.selFaire = '';
+  $scope.resource.faireSpecific = false;
   $scope.resource.loading = true;
   var mainRoute = ''; var subRoute = '';
   if($routeParams){
     mainRoute = $routeParams.main;
     subRoute  = $routeParams.sub;
     $scope.resource.subRoute = subRoute;
+
+    if ("faireSpecific" in routeArray[mainRoute][subRoute]){
+      $scope.resource.faireSpecific = routeArray[mainRoute][subRoute]['faireSpecific'];
+    }
     pageTitle = routeArray[mainRoute][subRoute]['pageTitle'];
     subTitle  = routeArray[mainRoute][subRoute]['subTitle'];
     jQuery('#pageTitle').html(pageTitle);
@@ -54,31 +60,58 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     }
   };
 
-  $scope.msg = {};
-  $scope.gridOptions = {enableCellEditOnFocus: true,
-    enableFiltering: true,minRowsToShow:20,rowEditWaitInterval: 1,
-    enableGridMenu: true,
-    exporterCsvFilename: mainRoute+'_'+subRoute+'_export.csv',
-    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
-    exporterFieldCallback: function( grid, row, col, input ) {
+    $scope.msg = {};
+    $scope.gridOptions = {
+      enableCellEditOnFocus: true,
+      enableFiltering: true,minRowsToShow:20,rowEditWaitInterval: 1,
+      enableGridMenu: true,
+      exporterCsvFilename: mainRoute+'_'+subRoute+'_export.csv',
+      exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+      exporterFieldCallback: function( grid, row, col, input ) {
 
-      if(("editDropdownOptionsArray" in col.colDef)){
+        if(("editDropdownOptionsArray" in col.colDef)){
 
-        //convert gridArray to usable hash
-        var optionsHash =  {};
-        var gridArray = col.colDef.editDropdownOptionsArray;
-        for (var i = 0; i < gridArray.length; i++) {
-          optionsHash[gridArray[i].id] = gridArray[i].fkey;
+          //convert gridArray to usable hash
+          var optionsHash =  {};
+          var gridArray = col.colDef.editDropdownOptionsArray;
+          for (var i = 0; i < gridArray.length; i++) {
+            optionsHash[gridArray[i].id] = gridArray[i].fkey;
+          }
+          if (!input){
+            return '';
+          } else {
+            return optionsHash[input];
+          }
+        }else{
+          return input;
         }
-        if (!input){
-          return '';
-        } else {
-          return optionsHash[input];
-        }
-      }else{
-        return input;
       }
-    }};
+    };
+  //if this report requires faire data, don't load the data until we get it.
+  if(!$scope.resource.faireSpecific || $scope.resource.selFaire != ''){
+
+
+    //get grid data
+    $http({
+      method: 'post',
+      url: url,
+      data: jQuery.param({ 'table' : $scope.dispTablename , 'type' : 'tableData' }),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    })
+    .then(function(response){
+      angular.forEach(response.data.columnDefs, function(value, key) {
+          if(("filter" in value)){
+            value.filter.type = uiGridConstants.filter.SELECT;
+          }
+        });
+
+      $scope.gridOptions.columnDefs = response.data.columnDefs;
+      $scope.gridOptions.data       = response.data.data;
+      $scope.resource.pInfo         = response.data.pInfo;
+    })
+    .finally(function () { $scope.resource.loading = false; });
+  } //end check if need faire data
+
 
   //add a new row to the tale
   $scope.addNew = function() {
@@ -93,27 +126,10 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     $scope.gridApi.rowEdit.flushDirtyRows( $scope.gridApi.grid );
   };
 
-  //get grid data
-  $http({
-    method: 'post',
-    url: url,
-    data: jQuery.param({ 'table' : $scope.dispTablename , 'type' : 'tableData' }),
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-	})
-  .then(function(response){
-    angular.forEach(response.data.columnDefs, function(value, key) {
-        if(("filter" in value)){
-          value.filter.type = uiGridConstants.filter.SELECT;
-        }
-      });
-
-    $scope.gridOptions.columnDefs = response.data.columnDefs;
-    $scope.gridOptions.data       = response.data.data;
-    $scope.resource.pInfo         = response.data.pInfo;
-  })
-  .finally(function () { $scope.resource.loading = false; });
-
   $scope.saveRow = function( rowEntity ) {
+    var pkey = $scope.resource.pInfo;
+    var index = $scope.gridOptions.data.indexOf(rowEntity);
+    
     var data = {'table'     : $scope.dispTablename ,
                 'type'      : 'updateData',
                 'data'      : rowEntity,
@@ -127,8 +143,6 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 		})
     .then(function successCallback(response) {
-        var pkey = $scope.resource.pInfo;
-        var index = $scope.gridOptions.data.indexOf(rowEntity);
         if(!rowEntity.pkey) $scope.gridOptions.data[index][pkey] = response.data.id;
         promise.resolve();
       }, function errorCallback(response) {
@@ -172,7 +186,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
   $scope.retrieveData = function(type) {
     var vars = { 'type' :  type};
     if(type == 'subareas') {
-      vars = { 'table' : 'wp_mf_faire_subarea' , 'type' : 'tableData', 'selfaire':$scope.resource.selFaire};
+      vars = { 'table' : $scope.dispTablename, 'type' : 'tableData', 'selfaire':$scope.resource.selFaire};
       $scope.resource.loading = true;
     }
     //get grid data

@@ -23,7 +23,8 @@ $tableOptions['wp_mf_faire_subarea']['addlFields']['faire'] = array('fieldName' 
 $tableOptions['wp_mf_faire_subarea']['addlFields']['assCount'] = array('fieldName' => 'assCount', 'fieldLabel' => 'Assigned',
     'dataSql' =>'(SELECT count(*) from wp_mf_location where wp_mf_faire_subarea.ID = subarea_id) as assCount'
     );
-
+$tableOptions['wp_mf_schedule']['addlFields']['exName'] = array('fieldName' => 'exName', 'fieldLabel' => 'Exhibit Name');
+$tableOptions['wp_mf_schedule']['addlFields']['subarea'] = array('fieldName' => 'subarea', 'fieldLabel' => 'subarea');
 $tableOptions['wp_rmt_entry_attributes']['fkey']    = array(
         array('fkey' => 'attribute_id', 'referenceTable' => 'wp_rmt_entry_att_categories', 'referenceField'   => 'ID', 'referenceDisplay' => 'category'),
         array('fkey' => 'user',         'referenceTable' => 'wp_users',                    'referenceField'   => 'ID', 'referenceDisplay' => 'user_email'));
