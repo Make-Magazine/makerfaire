@@ -95,4 +95,4 @@ $tableFields['wp_mf_location']['query'] =
         . 'left outer join  wp_mf_faire_area    on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
         . 'left outer join  wp_mf_schedule      on wp_mf_schedule.location_id = wp_mf_location.ID '
         . 'left outer join  wp_rg_lead          on wp_rg_lead.ID = wp_mf_location.entry_id '
-        . 'left outer join wp_mf_faire     on find_in_set (form_id,wp_mf_faire.form_ids) > 0  and  wp_mf_faire.ID = '.$faire;
+        . 'left outer join wp_mf_faire     on find_in_set (form_id,wp_mf_faire.form_ids) > 0  where  wp_mf_faire.ID = '.$faire;
