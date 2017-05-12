@@ -282,6 +282,9 @@ function cannedRpt(){
             break;
           case 'Exhibit':
             $form_type = 'MAK';
+            if($cmInd == 'Yes'){
+              $form_type = 'CM';
+            }
             break;
           case 'Sponsor':
             $form_type = 'SPR';
@@ -295,9 +298,7 @@ function cannedRpt(){
         }
       //}
 
-      if($cmInd == 'Yes'){
-        $form_type = 'CM';
-      }
+
 
       //add data to array
       if($passCriteria) {
