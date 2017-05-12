@@ -618,8 +618,8 @@ function pullPayData($entryID, $paymentOrder) {
                 $pay_det.= "\r";
               }
             }else{
-              $pay_det.= $payFields['label'].': ';
-              $pay_det.= $payEntry[$payFields['id'].'.2']."\r";
+              $pay_det.= (isset($payFields['label'])?$payFields['label']:'').': ';
+              $pay_det.= (isset($payEntry[$payFields['id'].'.2'])?$payEntry[$payFields['id'].'.2']:'')."\r";
             }
           }
         }
