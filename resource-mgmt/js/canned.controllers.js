@@ -148,6 +148,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "payments":true,
               "paymentOrder": 100,
               "entryIDorder": 200,
+              "locationOrder": 400,
               "selectedFields":[
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
@@ -167,6 +168,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "payments":true,
               "paymentOrder": 100,
               "entryIDorder": 200,
+              "locationOrder": 900,
               "selectedFields":[
                 {"id":"442","label":"Fee Management","choices":"all","type":"checkbox", "order":400},
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
