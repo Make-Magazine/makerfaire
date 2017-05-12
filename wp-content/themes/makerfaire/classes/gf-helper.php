@@ -178,8 +178,7 @@ function updateChangeRPT($updates){
 add_filter("gform_entry_field_value", "setCatName", 10, 4);
 function setCatName($value, $field, $lead, $form){
   $field_type = RGFormsModel::get_input_type($field);
-
-	if( in_array( $field_type, array('checkbox', 'select', 'radio') ) ){
+ 	if( in_array( $field_type, array('checkbox',  'radio') ) ){
 		$value = RGFormsModel::get_lead_field_value( $lead, $field );
 		return GFCommon::get_lead_field_display( $field, $value, $lead["currency"], true );
 	}
