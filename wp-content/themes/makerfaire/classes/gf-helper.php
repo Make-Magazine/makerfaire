@@ -226,10 +226,9 @@ function createGUID($id){
 }
 
 remove_action('wp_ajax_gf_resend_notifications', 'resend_notifications');
-add_action('wp_ajax_gf_resend_notifications', 'MF_send_notifications');
+add_action('wp_ajax_gf_resend_notifications', 'MF_resend_notifications');
 
-function MF_send_notifications() {
-
+function MF_resend_notifications() {
   	check_admin_referer( 'gf_resend_notifications', 'gf_resend_notifications' );
 		$form_id = absint( rgpost( 'formId' ) );
 		$leads   = rgpost( 'leadIds' ); // may be a single ID or an array of IDs
@@ -299,7 +298,26 @@ function MF_send_notifications() {
 
 		foreach ( $leads as $lead_id ) {
 			$lead = RGFormsModel::get_lead( $lead_id );
-      GFCommon::send_notifications( $notifications, $form, $lead, true );
+      foreach ( $notifications as $notification_id ) {
+        $notification = $form['notifications'][ $notification_id ];
+				if ( ! $notification ) {
+					continue;
+				}
+        //always check conditional logic
+        if (!GFCommon::evaluate_conditional_logic( rgar( $notification, 'conditionalLogic' ), $form, $lead ) ) {
+          GFCommon::log_debug( "MF_send_notifications(): Notification conditional logic not met, not processing notification (#{$notification_id} - {$notification['name']})." );
+          continue;
+        }
+
+				//overriding To email if one was specified
+				if ( rgpost( 'sendTo' ) ) {
+          GFCommon::log_debug( "MF_send_notifications(): sendTo changed to (".rgpost( 'sendTo' ).")." );
+					$notification['to']     = rgpost( 'sendTo' );
+					$notification['toType'] = 'email';
+				}
+        GFCommon::send_notification( $notification, $form, $lead );
+        //GFCommon::send_notifications( $notifications, $form, $lead, true );
+      }
 		}
 
 		die();
