@@ -1615,22 +1615,12 @@ function paymentRpt($table,$faire) {
 
   $data['columnDefs'] = array(
       array("field"=>"form_id","displayName"=>"Pay Form Id","visible"=>false,"displayOrder"=>20),
-      array("field"=>"entry_id","displayName"=>"Pay Entry Id","displayOrder"=>30),
-      array("field"=>"origEntry_id","displayName"=>"Orig Entry Id","displayOrder"=>35),
-      array("field"=>"origForm_id","displayName"=>"Orig FormId","displayOrder"=>35),
-      array("field"=>"form_type","displayName"=>"Orig Form Type","displayOrder"=>40),
+      array("field"=>"entry_id","displayName"=>"Pay Entry Id","visible"=>false,"displayOrder"=>30),
+      array("field"=>"origEntry_id","displayName"=>"Entry Id","displayOrder"=>35),
+      array("field"=>"origForm_id","displayName"=>"FormId","displayOrder"=>35),
+      array("field"=>"form_type","displayName"=>"Form Type","displayOrder"=>40),
       array("field"=>"field_151","displayName"=>"Exhibit Name","type"=>"string","displayOrder"=>50),
-
-      array("field"=>"trx_id","displayName"=>"Pay trxID","displayOrder"=>100),
-      array("field"=>"pay_amt","displayName"=>"Pay amount","cellFilter"=>"currency","displayOrder"=>101),
-      array("field"=>"pay_date","displayName"=>"Pay date","displayOrder"=>102),
-      array("field"=>"pay_det","displayName"=>"Payment Details","displayOrder"=>103),
-
-
-      array("field"=>"meta_res_status","displayName"=>"Resource Status","displayOrder"=>200),
-      array("field"=>"area","displayName"=>"Area","displayOrder"=>400),
-      array("field"=>"subarea","displayName"=>"Subarea","displayOrder"=>401),
-      array("field"=>"location","displayName"=>"Location","displayOrder"=>402),
+      //array("field"=>"meta_res_status","displayName"=>"Resource Status","displayOrder"=>200),
       array("field"=>"field_303","displayName"=>"Status","type"=>"string","visible"=>false,"displayOrder"=>800)
     );
 
@@ -1675,15 +1665,22 @@ function paymentRpt($table,$faire) {
             'meta_res_status'=>'',
             'field_303'=>$row->field_303);
 
+        //order form field data
         $fieldRetData = pullFieldData($row->entry_id,$reqFields);
         $fieldData =  array_merge($fieldData,$fieldRetData['data']);
         $colDefs   =  array_merge($colDefs,$fieldRetData['colDefs']);
-        $locRetData = pullLocData($oEntryID,true);
+
+        //location data
+        $locRetData = pullLocData($oEntryID,false);
         $fieldData =  array_merge($fieldData,$locRetData['data']);
+        $colDefs   =  array_merge($colDefs,$locRetData['colDefs']);
+
+        //Payment data
         $PayRetData = pullPayData($oEntryID);
         $fieldData =  array_merge($fieldData,$PayRetData['data']);
+        $colDefs   =  array_merge($colDefs,$PayRetData['colDefs']);
 
-        $data['data'][] =$fieldData;
+        $data['data'][] = $fieldData;
       }
     }
     $data['columnDefs'] = array_merge($data['columnDefs'],$colDefs);
