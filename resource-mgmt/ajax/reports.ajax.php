@@ -608,7 +608,8 @@ function pullPayData($entryID, $paymentOrder=50) {
 
         $payEntry = GFAPI::get_entry($payrow->pymt_entry);
         $payForm  = GFAPI::get_form($payEntry['form_id']);
-
+        $pay_status = $payEntry['payment_status'];
+        
         foreach($payForm['fields'] as $payFields){
           if($payFields['type']=='product'){
             if($payFields['inputType']=='singleproduct'){
@@ -643,7 +644,7 @@ function pullPayData($entryID, $paymentOrder=50) {
       $return['data']['pay_det'] = $pay_det;
 
       $return['colDefs']['pay_status'] =  array('field'=> 'pay_status','displayName'=>'Payment Status', 'displayOrder'=>$paymentOrder+3);
-      $return['data']['pay_status'] = $payEntry['payment_status'];
+      $return['data']['pay_status'] = $pay_status;
     }
   }
 
