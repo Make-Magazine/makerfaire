@@ -608,7 +608,7 @@ function pullPayData($entryID, $paymentOrder=50) {
 
         $payEntry = GFAPI::get_entry($payrow->pymt_entry);
         $payForm  = GFAPI::get_form($payEntry['form_id']);
-        $pay_status = $payEntry['pay_status'];
+        $pay_status = $payEntry['payment_status'];
 
         foreach($payForm['fields'] as $payFields){
           if($payFields['type']=='product'){
