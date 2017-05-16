@@ -1628,30 +1628,23 @@ function paymentRpt($table,$faire) {
       $formType = (isset($formPull['form_type'])?$formPull['form_type']:'');
       $retformType = shortFormType($formType);
       if($row->field_303=='Accepted'){
+        $oEntryID = $row->origEntry_id;
         $fieldData = array(
             'entry_id'=>$row->entry_id,
             'form_id'=>$row->form_id,
-            'origEntry_id'=>$row->origEntry_id,
+            'origEntry_id'=>$oEntryID,
             'origForm_id'=>$row->origForm_id,
             'form_type' => $retformType,
-            'trx_id'=>'',
-            'pay_amt'=>'',
-            'pay_date'=>'',
-            'pay_det'=>'',
             'field_151'=> $row->field_151,
             'meta_res_status'=>'',
-            'area'=>'',
-            'subarea'=>'',
-            'location'=>'',
             'field_303'=>$row->field_303);
 
-        $locRetData = pullLocData($row->origEntry_id,true);
+        $locRetData = pullLocData($oEntryID,true);
         $fieldData =  array_merge($fieldData,$locRetData['data']);
+        $PayRetData = pullPayData($oEntryID);
+        $fieldData =  array_merge($fieldData,$PayRetData['data']);
 
         $data['data'][] =$fieldData;
-
-        $PayRetData = pullPayData($row->origEntry_id);
-        $fieldData =  array_merge($fieldData,$PayRetData['data']);
       }
     }
   }
