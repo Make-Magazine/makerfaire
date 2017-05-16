@@ -641,6 +641,33 @@ function pullPayData($entryID, $paymentOrder=50) {
       //payment details
       $return['colDefs']['pay_det']=   array('field'=> 'pay_det','displayName'=>'Payment Details', 'displayOrder'=>$paymentOrder+3);
       $return['data']['pay_det'] = $pay_det;
+
+      $return['colDefs']['pay_status'] =  array('field'=> 'pay_status','displayName'=>'Payment Status', 'displayOrder'=>$paymentOrder+3);
+      $return['data']['pay_status'] = $payEntry['payment_status'];
+    }
+  }
+
+  return $return;
+}
+
+/* Pull requested Field Data (no pass/fail logic) */
+function pullFieldData($entryID, $reqFields) {
+  global $wpdb;
+  //global $useFormSC;
+  $return = array();
+  $return['data'] = array();
+  $return['colDefs'] = array();
+  $reqIDArr = array_keys($reqFields);
+  if($entryID!='' && is_array($reqIDArr)){
+    $reqIDs = implode(",", $reqIDArr);
+    /* $reqFields = array of id's to pull and labels for report */
+    $sql = "select value,field_number from wp_rg_lead_detail where field_number in($reqIDs) and lead_id=$entryID";
+    $results = $wpdb->get_results($sql);
+    if($wpdb->num_rows > 0){
+      foreach($results as $row){
+        $return['data']['field_'.$row->field_number] = $row->value;
+        $return['colDefs']['field_'.$row->field_number]=   array('field'=> 'field_'.$row->field_number, 'displayName'=>$reqFields[$row->field_number]);
+      }
     }
   }
 
@@ -1608,6 +1635,13 @@ function paymentRpt($table,$faire) {
 
   //find payment invoices for the selected faire
   if($table == 'sponsorOrder'){
+    //requested fields from the sponsor order form
+    $reqFields = array(751=>'Invoice Number',
+        444=>'Company Billing Name',
+        446=>'Billing Email',
+        161=>'Contact Email',
+        666=>'Order Total'
+        );
     $sql = 'SELECT wp_rg_lead.id as entry_id,wp_rg_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
             . '(select value from wp_rg_lead_detail where field_number = 151 and lead_id=meta_value limit 1) as field_151, '
             . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=meta_value limit 1) as field_303 '
@@ -1622,6 +1656,7 @@ function paymentRpt($table,$faire) {
             . '       wp_rg_lead.status="active" ';
 
     $result = $wpdb->get_results($sql);
+    $colDefs = array();
     foreach($result as $row){
       //pull form data and see if it matches the requested form type
       $formPull = GFAPI::get_form( $row->origForm_id );
@@ -1639,6 +1674,9 @@ function paymentRpt($table,$faire) {
             'meta_res_status'=>'',
             'field_303'=>$row->field_303);
 
+        $fieldRetData = pullFieldData($row->entry_id,$reqFields);
+        $fieldData =  array_merge($fieldData,$fieldRetData['data']);
+        $colDefs   =  array_merge($colDefs,$fieldRetData['colDefs']);
         $locRetData = pullLocData($oEntryID,true);
         $fieldData =  array_merge($fieldData,$locRetData['data']);
         $PayRetData = pullPayData($oEntryID);
@@ -1647,6 +1685,8 @@ function paymentRpt($table,$faire) {
         $data['data'][] =$fieldData;
       }
     }
+    $data['columnDefs'] = array_merge($data['columnDefs'],$colDefs);
+    $data['columnDefs'] = array_values($data['columnDefs']);
   }
   echo json_encode($data);
   exit;
