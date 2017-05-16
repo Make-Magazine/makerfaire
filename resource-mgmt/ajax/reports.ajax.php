@@ -39,6 +39,8 @@ if($type != ''){
     }
   }elseif($type =="ent2resource"){
     ent2resource($table,$faire);
+  }elseif($type=='paymentRpt'){
+    paymentRpt($table,$faire);
   }else{
     invalidRequest('Invalid Request type');
   }
@@ -529,7 +531,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
 }
 
 /* Pull Location information */
-function pullLocData($entryID, $useFormSC, $locationOrder) {
+function pullLocData($entryID, $useFormSC=false, $locationOrder=30) {
   global $wpdb;
   //global $useFormSC;
   $return = array();
@@ -570,7 +572,7 @@ function pullLocData($entryID, $useFormSC, $locationOrder) {
   return $return;
 }
 
-function pullPayData($entryID, $paymentOrder) {
+function pullPayData($entryID, $paymentOrder=50) {
   global $wpdb;
   $return = array();
   $return['data'] = array();
@@ -1578,4 +1580,105 @@ function formSC($value) {
     $value = 'MUST';
   }
   return $value;
+}
+
+function paymentRpt($table,$faire) {
+  global $wpdb; $data = array();  $data['data'] = array();  $data['columnDefs'] = array();
+
+  $data['columnDefs'] = array(
+      array("field"=>"form_id","displayName"=>"Pay Form Id","visible"=>false,"displayOrder"=>20),
+      array("field"=>"entry_id","displayName"=>"Pay Entry Id","displayOrder"=>30),
+      array("field"=>"origEntry_id","displayName"=>"Orig Entry Id","displayOrder"=>35),
+      array("field"=>"origForm_id","displayName"=>"Orig FormId","displayOrder"=>35),
+      array("field"=>"form_type","displayName"=>"Orig Form Type","displayOrder"=>40),
+      array("field"=>"field_151","displayName"=>"Exhibit Name","type"=>"string","displayOrder"=>50),
+
+      array("field"=>"trx_id","displayName"=>"Pay trxID","displayOrder"=>100),
+      array("field"=>"pay_amt","displayName"=>"Pay amount","cellFilter"=>"currency","displayOrder"=>101),
+      array("field"=>"pay_date","displayName"=>"Pay date","displayOrder"=>102),
+      array("field"=>"pay_det","displayName"=>"Payment Details","displayOrder"=>103),
+
+
+      array("field"=>"meta_res_status","displayName"=>"Resource Status","displayOrder"=>200),
+      array("field"=>"area","displayName"=>"Area","displayOrder"=>400),
+      array("field"=>"subarea","displayName"=>"Subarea","displayOrder"=>401),
+      array("field"=>"location","displayName"=>"Location","displayOrder"=>402),
+      array("field"=>"field_303","displayName"=>"Status","type"=>"string","visible"=>false,"displayOrder"=>800)
+    );
+
+  //find payment invoices for the selected faire
+  if($table == 'sponsorOrder'){
+    $sql = 'SELECT wp_rg_lead.id as entry_id,wp_rg_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
+            . '(select value from wp_rg_lead_detail where field_number = 151 and lead_id=meta_value limit 1) as field_151, '
+            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=meta_value limit 1) as field_303 '
+            . 'FROM wp_rg_form_meta '
+            . 'left outer join wp_mf_faire on find_in_set (wp_rg_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
+            . 'left outer join wp_rg_lead on wp_rg_lead.form_id = wp_rg_form_meta.form_id '
+            . 'left outer join wp_rg_lead_meta on wp_rg_lead_meta.lead_id = wp_rg_lead.id and meta_key = "entry_id"'
+            . 'left outer join wp_rg_lead origLead on origLead.id = meta_value '
+            . 'WHERE  display_meta like \'%"form_type":"Payment"%\' and '
+            . '       display_meta like \'%"create_invoice":"yes"%\' and '
+            . '       wp_mf_faire.id='.$faire.' and '
+            . '       wp_rg_lead.status="active" ';
+
+    $result = $wpdb->get_results($sql);
+    foreach($result as $row){
+      //pull form data and see if it matches the requested form type
+      $formPull = GFAPI::get_form( $row->origForm_id );
+      $formType = (isset($formPull['form_type'])?$formPull['form_type']:'');
+      $retformType = shortFormType($formType);
+      if($row->field_303=='Accepted'){
+        $fieldData = array(
+            'entry_id'=>$row->entry_id,
+            'form_id'=>$row->form_id,
+            'origEntry_id'=>$row->origEntry_id,
+            'origForm_id'=>$row->origForm_id,
+            'form_type' => $retformType,
+            'trx_id'=>'',
+            'pay_amt'=>'',
+            'pay_date'=>'',
+            'pay_det'=>'',
+            'field_151'=> $row->field_151,
+            'meta_res_status'=>'',
+            'area'=>'',
+            'subarea'=>'',
+            'location'=>'',
+            'field_303'=>$row->field_303);
+
+        $locRetData = pullLocData($row->origEntry_id,true);
+        $fieldData =  array_merge($fieldData,$locRetData['data']);
+
+        $data['data'][] =$fieldData;
+
+        $PayRetData = pullPayData($row->origEntry_id);
+        $fieldData =  array_merge($fieldData,$PayRetData['data']);
+      }
+    }
+  }
+  echo json_encode($data);
+  exit;
+}
+
+function shortFormType($form_type){
+  switch ($form_type) {
+    case 'Show Management':
+      $form_type = 'SHOW';
+      break;
+    case 'Exhibit':
+      $form_type = 'MAK';
+      if($cmInd == 'Yes'){
+        $form_type = 'CM';
+      }
+      break;
+    case 'Sponsor':
+      $form_type = 'SPR';
+      break;
+    case 'Startup Sponsor':
+      $form_type = 'STAR';
+      break;
+    case 'Performance':
+      $form_type = 'PERF';
+      break;
+  }
+  return $form_type;
 }

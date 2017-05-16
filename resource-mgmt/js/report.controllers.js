@@ -191,21 +191,23 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     var subRoute  = $routeParams.sub;
     var pageTitle = 'Reports';
     var subTitle  = '';
-    if(subRoute=='change')        {
+
+    if(subRoute=='change') {
       tablename = 'wp_rg_lead_detail_changes';
       subTitle  = 'Entry Change Report';
-    }
-    if(subRoute=='drill')
-      tablename = 'wp_rmt_entry_resources';{
+    } else if(subRoute=='drill') {
+      tablename = 'wp_rmt_entry_resources';
       subTitle  = 'Resource Drill Down';
-    }
-    if(subRoute=='location')      {
+    } else if(subRoute=='location') {
       tablename = 'wp_mf_location';
       subTitle  = 'Faire Location Report';
-    }
-    if(subRoute=='tasksComp')
-      tablename = 'wp_mf_entity_tasks';{
+    } else if(subRoute=='tasksComp') {
+      tablename = 'wp_mf_entity_tasks';
       subTitle  = 'Tasks Completed';
+    } else if(subRoute=='sponsorPay') {
+      tablename = 'sponsorOrder';
+      type      = "paymentRpt"
+      subTitle  = 'Sponsor Payments';
     }
 
     jQuery('#pageTitle').html(pageTitle);
