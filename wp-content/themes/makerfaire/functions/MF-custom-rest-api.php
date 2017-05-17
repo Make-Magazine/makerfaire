@@ -6,8 +6,26 @@ add_action( 'rest_api_init', function () {
 		'methods' => 'GET',
 		'callback' => 'mf_fairedata'
 	));
-});
 
+  register_rest_route( 'makerfaire', '/v2/entry/(?P<type>[a-z0-9\-]+)/(?P<entryid>[a-z0-9\-]+)', array(
+		'methods' => 'GET',
+		'callback' => 'mf_updateEntry'
+	));
+});
+function mf_updateEntry( WP_REST_Request $request ) {
+  $type     = $request['type'];
+  $entry_id  = $request['entryid'];
+  if($type=='accept'){
+    wp_set_current_user(20);
+    $current_user = wp_get_current_user();
+    
+    $lead         = GFAPI::get_entry( $entry_id );
+    $form_id      = isset($lead['form_id']) ? $lead['form_id'] : 0;
+    $form         = RGFormsModel::get_form_meta($form_id);
+    $_POST['entry_info_status_change'] = 'Accepted';
+    set_entry_status($lead,$form);
+  }
+}
 function mf_fairedata( WP_REST_Request $request ) {
 	$type     = $request['type'];
   $formIDs  = $request['formids'];
