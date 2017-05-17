@@ -138,7 +138,7 @@ function approveEntry(entryID){
     jQuery.ajax( {
       url: '/wp-json/makerfaire/v2/entry/accept/'+entryID,
       success: function ( data ) {
-        //alert('successful');
+        alert(entryID + ' status changed to Accepted');
       },
       cache: false
     } );
