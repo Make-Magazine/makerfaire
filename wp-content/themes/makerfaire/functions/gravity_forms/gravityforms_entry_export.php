@@ -220,8 +220,8 @@ function mf_custom_import_entries() {
 
     //matching record found
     if ( null !== $res ) {  //update the attribute
-
-        $wpdb->update('wp_rmt_entry_attributes',array('value'=>$attvalue,'user'=>$user,'update_stamp'=>'now()','lockBit'=>1),array('ID'=>$res->ID),array('%s','%d','%s'));
+        $updateStamp=date( "Y-m-d h:i:s", time() ); //TBD correct time this sets the time 6 hours ahead
+        $wpdb->update('wp_rmt_entry_attributes',array('value'=>$attvalue,'user'=>$user,'update_stamp'=>$updateStamp,'lockBit'=>1),array('ID'=>$res->ID),array('%s','%d','%s','%s'));
         if($wpdb->last_error !== ''){
           $wpdb->print_error();
         }

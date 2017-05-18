@@ -26,7 +26,7 @@ $type   = '';
           <div class="panel-body">
             <h4>Maker Signs</h4>
             <div class="row  is-flex">
-              <div class="col-sm-4 right-border">
+              <div class="col-sm-5 right-border">
                 <?php
                 $signDir = get_template_directory().'/signs/'.$row->faire.'/maker/zip/';
                 $files = glob($signDir."*.zip");
@@ -49,7 +49,7 @@ $type   = '';
                 }
                 ?>
               </div>
-              <div class="col-sm-3  right-border">
+              <div class="col-sm-2  right-border">
                 <input style="text-align:center"  name="zipCreate" value="Generate Maker Signs" class="button button-large button-primary" onClick="createPDF('<?php echo $row->faire;?>','signs')" /><br/>
                 <small>This needs to be done before you create the Zip file</small>
               </div>
@@ -62,7 +62,7 @@ $type   = '';
                     <input type="radio" name="<?php echo $row->faire;?>seltype" value="subarea"> By Subarea<br>
                     <input type="radio" name="<?php echo $row->faire;?>seltype" value="faire"> By Faire<br>
                   </div>
-                  <div class="col-sm-5">
+                  <div class="col-sm-8">
                     <b>Status:</b><br/>
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accepted" checked> Accepted Only<br>
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accAndProp"> Accepted and Proposed<br>
@@ -80,7 +80,7 @@ $type   = '';
 
             <h4>Table Tags</h4>
             <div class="row  is-flex">
-              <div class="col-sm-4 right-border">
+              <div class="col-sm-5 right-border">
                 <?php
                 $signDir  = get_template_directory().'/signs/'.$row->faire.'/tabletags/zip/';
                 $files = glob($signDir."*.zip");
@@ -103,7 +103,7 @@ $type   = '';
                 }
                 ?>
               </div>
-              <div class="col-sm-3  right-border">
+              <div class="col-sm-2  right-border">
                 <input style="text-align:center"  name="zipCreate" value="Generate Table Tags" class="button button-large button-primary" onClick="createPDF('<?php echo $row->faire;?>','tabletags')" /><br/>
                 <small>This needs to be done before you create the Zip file</small>
               </div>
@@ -116,7 +116,7 @@ $type   = '';
                     <input type="radio" name="<?php echo $row->faire;?>seltype" value="subarea"> By Subarea<br>
                     <input type="radio" name="<?php echo $row->faire;?>seltype" value="faire"> By Faire<br>
                   </div>
-                  <div class="col-sm-5">
+                  <div class="col-sm-8">
                     <b>Status:</b><br/>
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accepted" checked> Accepted Only<br>
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accAndProp"> Accepted and Proposed<br>
@@ -133,7 +133,7 @@ $type   = '';
             </div>
             <h4>Presenter Signs</h4>
             <div class="row  is-flex">
-             <div class="col-sm-4 right-border">
+             <div class="col-sm-5 right-border">
                 <?php
                 $signDir = get_template_directory().'/signs/'.$row->faire.'/presenter/zip/';
                 $files = glob($signDir."*.zip");
@@ -156,7 +156,7 @@ $type   = '';
                 }
                 ?>
               </div>
-              <div class="col-sm-3  right-border">
+              <div class="col-sm-2  right-border">
                 <input style="text-align:center"  name="zipCreate" value="Generate Presesnter Signs" class="button button-large button-primary" onClick="createPDF('<?php echo $row->faire;?>','presenter')" /><br/>
                 <small>This needs to be done before you create the Zip file</small>
               </div>
@@ -169,7 +169,7 @@ $type   = '';
                     <input type="radio" name="<?php echo $row->faire;?>seltype" value="subarea"> By Subarea<br>
                     <input type="radio" name="<?php echo $row->faire;?>seltype" value="faire"> By Faire<br>
                   </div>
-                  <div class="col-sm-5">
+                  <div class="col-sm-8">
                     <b>Status:</b><br/>
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accepted" checked> Accepted Only<br>
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accAndProp"> Accepted and Proposed<br>

@@ -294,3 +294,12 @@ function multi_search_criteria_entry_list($search_criteria, $form_id){
 
   //remove teh approve/dissaprove column added by gravity view
   add_filter('gravityview/approve_entries/hide-if-no-connections', '__return_true');
+
+  /* Quick fix for BA17 Add approve option  to entry list first column */
+  add_action( 'gform_entries_first_column_actions', 'first_column_actions', 10, 5 );
+  function first_column_actions( $form_id, $field_id, $value, $entry ) {
+    if($form_id==127){
+      $lead_id = $entry['id'];
+      echo ' | <a href="javascript:approveEntry('.$entry['id'].')">Accept</a>';
+    }
+  }

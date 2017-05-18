@@ -39,6 +39,8 @@ if($type != ''){
     }
   }elseif($type =="ent2resource"){
     ent2resource($table,$faire);
+  }elseif($type=='paymentRpt'){
+    paymentRpt($table,$faire);
   }else{
     invalidRequest('Invalid Request type');
   }
@@ -429,7 +431,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
         $return['colDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),
             'displayName'=>$selRMT->value,
             'displayOrder' => $displayOrder);
-        $return['data']['res_'.$selRMT->id] = implode(', ',$entryRes);
+        $return['data']['res_'.$selRMT->id] = implode("\r",$entryRes);
       }
     }
   }
@@ -438,9 +440,9 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
   if(isset($rmtData->attribute) && !empty($rmtData->attribute)){
     foreach($rmtData->attribute as $selRMT){
       if($selRMT->id!='all'){
-        $sql = 'select value from wp_rmt_entry_attributes where entry_id ='.$entryID.' and attribute_id='.$selRMT->id;
+        $sql = 'select value,comment from wp_rmt_entry_attributes where entry_id ='.$entryID.' and attribute_id='.$selRMT->id;
       }else{
-        $sql = 'select concat(category," ",value) as value from wp_rmt_entry_attributes,wp_rmt_entry_att_categories where '
+        $sql = 'select concat(category," ",value) as value,comment from wp_rmt_entry_attributes,wp_rmt_entry_att_categories where '
                 . ' entry_id ='.$entryID
                 . ' and attribute_id= wp_rmt_entry_att_categories.ID';
       }
@@ -448,6 +450,14 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       //loop thru data
       $attributes = $wpdb->get_results($sql,ARRAY_A);
       $entryAtt = array();
+      $entryComment = array();
+
+      //attribute comments
+      if($comments!=''){
+        $dispComments = $comments;
+      }else{
+        $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
+      }
 
       foreach($attributes as $attribute){
         //search and replace
@@ -456,12 +466,24 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
         }else{
           $value = $attribute['value'];
         }
-        $entryAtt[] = $value;
+
+        $comment = ($dispComments && $attribute['comment']!=''?" (".$attribute['comment'].")":'');
+        $entryAtt[] = $value.' : '.$comment;
       }
+
+      $displayOrder = (isset($selRMT->order)?$selRMT->order:200);
       $return['colDefs']['att_'.$selRMT->id] = array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
                                                         'displayName'=>$selRMT->value,
-                                                        'displayOrder' => (isset($selRMT->order)?$selRMT->order:200));
-      $return['data']['att_'.$selRMT->id] = implode(', ',$entryAtt);
+                                                        'displayOrder' => $displayOrder);
+      $return['data']['att_'.$selRMT->id] = implode("\r",$entryAtt);
+      //comments
+      if($dispComments && $selRMT->id!='all'){
+        $return['colDefs']['att_'.$selRMT->id.'_comment'] = array(
+                'field'=> 'att_'.str_replace('.','_',$selRMT->id).'_comment',
+                'displayName' => $selRMT->id.' - comment',
+                'displayOrder' => $displayOrder+.2);
+        $return['data']['att_'.$selRMT->id.'_comment'] = implode("\r",$entryComment);
+      }
     }
   }
 
@@ -529,7 +551,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
 }
 
 /* Pull Location information */
-function pullLocData($entryID, $useFormSC, $locationOrder) {
+function pullLocData($entryID, $useFormSC=false, $locationOrder=30) {
   global $wpdb;
   //global $useFormSC;
   $return = array();
@@ -570,7 +592,7 @@ function pullLocData($entryID, $useFormSC, $locationOrder) {
   return $return;
 }
 
-function pullPayData($entryID, $paymentOrder) {
+function pullPayData($entryID, $paymentOrder=50) {
   global $wpdb;
   $return = array();
   $return['data'] = array();
@@ -606,6 +628,7 @@ function pullPayData($entryID, $paymentOrder) {
 
         $payEntry = GFAPI::get_entry($payrow->pymt_entry);
         $payForm  = GFAPI::get_form($payEntry['form_id']);
+        $pay_status = $payEntry['payment_status'];
 
         foreach($payForm['fields'] as $payFields){
           if($payFields['type']=='product'){
@@ -639,6 +662,33 @@ function pullPayData($entryID, $paymentOrder) {
       //payment details
       $return['colDefs']['pay_det']=   array('field'=> 'pay_det','displayName'=>'Payment Details', 'displayOrder'=>$paymentOrder+3);
       $return['data']['pay_det'] = $pay_det;
+
+      $return['colDefs']['pay_status'] =  array('field'=> 'pay_status','displayName'=>'Payment Status', 'displayOrder'=>$paymentOrder+3);
+      $return['data']['pay_status'] = $pay_status;
+    }
+  }
+
+  return $return;
+}
+
+/* Pull requested Field Data (no pass/fail logic) */
+function pullFieldData($entryID, $reqFields) {
+  global $wpdb;
+  //global $useFormSC;
+  $return = array();
+  $return['data'] = array();
+  $return['colDefs'] = array();
+  $reqIDArr = array_keys($reqFields);
+  if($entryID!='' && is_array($reqIDArr)){
+    $reqIDs = implode(",", $reqIDArr);
+    /* $reqFields = array of id's to pull and labels for report */
+    $sql = "select value,field_number from wp_rg_lead_detail where field_number in($reqIDs) and lead_id=$entryID";
+    $results = $wpdb->get_results($sql);
+    if($wpdb->num_rows > 0){
+      foreach($results as $row){
+        $return['data']['field_'.$row->field_number] = $row->value;
+        $return['colDefs']['field_'.$row->field_number]=   array('field'=> 'field_'.$row->field_number, 'displayName'=>$reqFields[$row->field_number]);
+      }
     }
   }
 
@@ -1578,4 +1628,108 @@ function formSC($value) {
     $value = 'MUST';
   }
   return $value;
+}
+
+function paymentRpt($table,$faire) {
+  global $wpdb; $data = array();  $data['data'] = array();  $data['columnDefs'] = array();
+
+  $data['columnDefs'] = array(
+      array("field"=>"form_id","displayName"=>"Pay Form Id","visible"=>false,"displayOrder"=>20),
+      array("field"=>"entry_id","displayName"=>"Pay Entry Id","visible"=>false,"displayOrder"=>30),
+      array("field"=>"origEntry_id","displayName"=>"Entry Id","displayOrder"=>35),
+      array("field"=>"origForm_id","displayName"=>"FormId","displayOrder"=>35),
+      array("field"=>"form_type","displayName"=>"Form Type","displayOrder"=>40),
+      array("field"=>"field_151","displayName"=>"Exhibit Name","type"=>"string","displayOrder"=>50),
+      //array("field"=>"meta_res_status","displayName"=>"Resource Status","displayOrder"=>200),
+      array("field"=>"field_303","displayName"=>"Status","type"=>"string","visible"=>false,"displayOrder"=>800)
+    );
+
+  //find payment invoices for the selected faire
+  if($table == 'sponsorOrder'){
+    //requested fields from the sponsor order form
+    $reqFields = array(751=>'Invoice Number',
+        444=>'Company Billing Name',
+        446=>'Billing Email',
+        161=>'Contact Email',
+        666=>'Order Total'
+        );
+    $sql = 'SELECT wp_rg_lead.id as entry_id,wp_rg_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
+            . '(select value from wp_rg_lead_detail where field_number = 151 and lead_id=meta_value limit 1) as field_151, '
+            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=meta_value limit 1) as field_303 '
+            . 'FROM wp_rg_form_meta '
+            . 'left outer join wp_mf_faire on find_in_set (wp_rg_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
+            . 'left outer join wp_rg_lead on wp_rg_lead.form_id = wp_rg_form_meta.form_id '
+            . 'left outer join wp_rg_lead_meta on wp_rg_lead_meta.lead_id = wp_rg_lead.id and meta_key = "entry_id"'
+            . 'left outer join wp_rg_lead origLead on origLead.id = meta_value '
+            . 'WHERE  display_meta like \'%"form_type":"Payment"%\' and '
+            . '       display_meta like \'%"create_invoice":"yes"%\' and '
+            . '       wp_mf_faire.id='.$faire.' and '
+            . '       wp_rg_lead.status="active" ';
+
+    $result = $wpdb->get_results($sql);
+    $colDefs = array();
+    foreach($result as $row){
+      //pull form data and see if it matches the requested form type
+      $formPull = GFAPI::get_form( $row->origForm_id );
+      $formType = (isset($formPull['form_type'])?$formPull['form_type']:'');
+      $retformType = shortFormType($formType);
+      if($row->field_303=='Accepted'){
+        $oEntryID = $row->origEntry_id;
+        $fieldData = array(
+            'entry_id'=>$row->entry_id,
+            'form_id'=>$row->form_id,
+            'origEntry_id'=>$oEntryID,
+            'origForm_id'=>$row->origForm_id,
+            'form_type' => $retformType,
+            'field_151'=> $row->field_151,
+            'meta_res_status'=>'',
+            'field_303'=>$row->field_303);
+
+        //order form field data
+        $fieldRetData = pullFieldData($row->entry_id,$reqFields);
+        $fieldData =  array_merge($fieldData,$fieldRetData['data']);
+        $colDefs   =  array_merge($colDefs,$fieldRetData['colDefs']);
+
+        //location data
+        $locRetData = pullLocData($oEntryID,false);
+        $fieldData =  array_merge($fieldData,$locRetData['data']);
+        $colDefs   =  array_merge($colDefs,$locRetData['colDefs']);
+
+        //Payment data
+        $PayRetData = pullPayData($oEntryID);
+        $fieldData =  array_merge($fieldData,$PayRetData['data']);
+        $colDefs   =  array_merge($colDefs,$PayRetData['colDefs']);
+
+        $data['data'][] = $fieldData;
+      }
+    }
+    $data['columnDefs'] = array_merge($data['columnDefs'],$colDefs);
+    $data['columnDefs'] = array_values($data['columnDefs']);
+  }
+  echo json_encode($data);
+  exit;
+}
+
+function shortFormType($form_type){
+  switch ($form_type) {
+    case 'Show Management':
+      $form_type = 'SHOW';
+      break;
+    case 'Exhibit':
+      $form_type = 'MAK';
+      if($cmInd == 'Yes'){
+        $form_type = 'CM';
+      }
+      break;
+    case 'Sponsor':
+      $form_type = 'SPR';
+      break;
+    case 'Startup Sponsor':
+      $form_type = 'STAR';
+      break;
+    case 'Performance':
+      $form_type = 'PERF';
+      break;
+  }
+  return $form_type;
 }

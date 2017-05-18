@@ -20,7 +20,7 @@ jQuery(window).load(function() {
   jQuery(".forms_page_gf_entries #entry_filters .gform-filter-field").prepend(newOptions);
 
   //add multi filters to end of edit and view links
-  jQuery('.forms_page_gf_entries .column-primary a').each(function() {
+  jQuery('.forms_page_gf_entries .column-primary .edit a').each(function() {
     var filterParam = getAllUrlParams().filterField;
 
     var oldFilters = '';
@@ -132,3 +132,14 @@ function getAllUrlParams(url) {
 
   return obj;
 }
+
+function approveEntry(entryID){
+
+    jQuery.ajax( {
+      url: '/wp-json/makerfaire/v2/entry/accept/'+entryID,
+      success: function ( data ) {
+        alert(entryID + ' status changed to Accepted');
+      },
+      cache: false
+    } );
+  }
