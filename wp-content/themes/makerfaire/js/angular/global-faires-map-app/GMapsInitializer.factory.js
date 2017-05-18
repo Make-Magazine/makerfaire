@@ -3,7 +3,7 @@
   angular.module('faireMapsApp').factory('GMapsInitializer', ['$window', '$q',
     function($window, $q) {
       // &key=AIzaSyCJHKq4cnlAd4WkaJKYal-8n6V1Y8MCPxw
-      var asyncUrl = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCJHKq4cnlAd4WkaJKYal-8n6V1Y8MCPxw&v=3.exp&callback=googleMapsInitialized',
+      var asyncUrl = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAWCxi-jR1anl8W8doVmAdeXwhts9LWQqc&v=3.exp&callback=googleMapsInitialized',
         mapsDefer = $q.defer();
       //Callback function - resolving promise after maps successfully loaded
       $window.googleMapsInitialized = mapsDefer.resolve;
