@@ -431,7 +431,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
         $return['colDefs']['res_'.$selRMT->id]=   array('field'=> 'res_'.str_replace('.','_',$selRMT->id),
             'displayName'=>$selRMT->value,
             'displayOrder' => $displayOrder);
-        $return['data']['res_'.$selRMT->id] = implode(', ',$entryRes);
+        $return['data']['res_'.$selRMT->id] = implode("\r",$entryRes);
       }
     }
   }
@@ -440,9 +440,9 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
   if(isset($rmtData->attribute) && !empty($rmtData->attribute)){
     foreach($rmtData->attribute as $selRMT){
       if($selRMT->id!='all'){
-        $sql = 'select value from wp_rmt_entry_attributes where entry_id ='.$entryID.' and attribute_id='.$selRMT->id;
+        $sql = 'select value,comment from wp_rmt_entry_attributes where entry_id ='.$entryID.' and attribute_id='.$selRMT->id;
       }else{
-        $sql = 'select concat(category," ",value) as value from wp_rmt_entry_attributes,wp_rmt_entry_att_categories where '
+        $sql = 'select concat(category," ",value) as value,comment from wp_rmt_entry_attributes,wp_rmt_entry_att_categories where '
                 . ' entry_id ='.$entryID
                 . ' and attribute_id= wp_rmt_entry_att_categories.ID';
       }
@@ -450,6 +450,14 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       //loop thru data
       $attributes = $wpdb->get_results($sql,ARRAY_A);
       $entryAtt = array();
+      $entryComment = array();
+
+      //attribute comments
+      if($comments!=''){
+        $dispComments = $comments;
+      }else{
+        $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
+      }
 
       foreach($attributes as $attribute){
         //search and replace
@@ -458,12 +466,24 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
         }else{
           $value = $attribute['value'];
         }
-        $entryAtt[] = $value;
+
+        $comment = ($dispComments && $attribute['comment']!=''?" (".$attribute['comment'].")":'');
+        $entryAtt[] = $value.' : '.$comment;
       }
+
+      $displayOrder = (isset($selRMT->order)?$selRMT->order:200);
       $return['colDefs']['att_'.$selRMT->id] = array('field'=> 'att_'.str_replace('.','_',$selRMT->id),
                                                         'displayName'=>$selRMT->value,
-                                                        'displayOrder' => (isset($selRMT->order)?$selRMT->order:200));
-      $return['data']['att_'.$selRMT->id] = implode(', ',$entryAtt);
+                                                        'displayOrder' => $displayOrder);
+      $return['data']['att_'.$selRMT->id] = implode("\r",$entryAtt);
+      //comments
+      if($dispComments && $selRMT->id!='all'){
+        $return['colDefs']['att_'.$selRMT->id.'_comment'] = array(
+                'field'=> 'att_'.str_replace('.','_',$selRMT->id).'_comment',
+                'displayName' => $selRMT->id.' - comment',
+                'displayOrder' => $displayOrder+.2);
+        $return['data']['att_'.$selRMT->id.'_comment'] = implode("\r",$entryComment);
+      }
     }
   }
 
