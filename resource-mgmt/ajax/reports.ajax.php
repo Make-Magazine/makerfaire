@@ -103,6 +103,7 @@ function cannedRpt(){
   $fieldSQL       = ''; //sql to pull field_numbers
   $fieldIDarr     = array(); //unique array of field ID's
   $fieldArr       = array(); //array of field data keyed by field id
+  $fieldIDArr[376] = (object)  array("id"=>376,"label"=>"CM Ind","choices"=>"all","type"=>"radio");
   $combineFields  = array();
   $fieldQuery     = array(" field_number like '376' ");
   $acceptedOnly   = true;
@@ -188,9 +189,11 @@ function cannedRpt(){
             . " where detail.lead_id = $lead_id "
             . " and ($fieldSQL) "
             . " ORDER BY lead_id asc, field_number asc";
+
       $details = $wpdb->get_results($detailSQL,ARRAY_A);
       $cmInd = '';
       foreach($details as $detail){
+        $passCriteria = true;
         if($detail['field_number'] == 376){
           $cmInd = $detail['value'];
         }
@@ -205,6 +208,7 @@ function cannedRpt(){
 
         //check if we pulled by specific field id or if this was a request for all values
         $fieldID = $detail['field_number'];
+
         if(isset($fieldIDArr[$fieldID])){
           $fieldCritArr = $fieldIDArr[$fieldID];
         }else{//let's look for the base id
@@ -215,16 +219,17 @@ function cannedRpt(){
 
         // radio and select options
         if(is_array($fieldCritArr)){
-          //default to failing criteria
-          $passCriteria = false;
-
           //radio and select boxes must match one of the passed values
           foreach($fieldCritArr as $fieldCriteria){
             if($fieldCriteria->type == 'radio' || $fieldCriteria->type=='select'){ //check value
+              //default to failing criteria
+              $passCriteria = false;
               if($fieldCriteria->choices=='all') {
                 $passCriteria = true;
+                break;
               }elseif($fieldCriteria->choices == $value){
                 $passCriteria = true;
+                break;
               }
             }
           }
@@ -238,13 +243,14 @@ function cannedRpt(){
         $fieldData[$fieldKey] = (isset($fieldData[$fieldKey]) ? $fieldData[$fieldKey]."\r":'') . $value;
       }
 
-      //exclude exact fields if they do not match
-      //  (doing this outside of the details loop as the requested field may not be set
-
-      foreach($exactCriteria as $exact=>$criteria){
-        $data2Test = (isset($fieldData['field_'.$exact])?$fieldData['field_'.$exact]:'');
-        if($data2Test != $criteria){
-          $passCriteria = false;
+      if(!empty($exactCriteria)){
+        //exclude exact fields if they do not match
+        //  (doing this outside of the details loop as the requested field may not be set
+        foreach($exactCriteria as $exact=>$criteria){
+          $data2Test = (isset($fieldData['field_'.$exact])?$fieldData['field_'.$exact]:'');
+          if($data2Test != $criteria){
+            $passCriteria = false;
+          }
         }
       }
 
@@ -260,19 +266,19 @@ function cannedRpt(){
         $fieldData['field_'.$combFieldID]= trim($combinedField);
       }
       $form_type = '';
-      //$form_type = $form['form_type'];
+
       //record prior to BA16
       if($form_type==''){
         $formPull = GFAPI::get_form( $entry['form_id'] );
         $form_type = (isset($formPull['form_type']) ? $formPull['form_type']:'');
+      }
 
-        //if certain form types were selected, only return those form types
-        if(!empty($formTypeArr)){
-          if(in_array($form_type, $formTypeArr)){
-            //continue with this record
-          }else{
-            $passCriteria = false;; //skip this record
-          }
+      //if certain form types were selected, only return those form types
+      if(!empty($formTypeArr)){
+        if(in_array($form_type, $formTypeArr)){
+          //continue with this record
+        }else{
+          $passCriteria = false; //skip this record
         }
       }
 
@@ -851,12 +857,10 @@ function buildRpt($formSelect=array(),$formTypeArr=array(),$selectedFields=array
         //Did they pass the criteria for this field?
         // If not, then we need to stop processing fields and drop this entry
         if($remove){
-          //echo 'break on '.$entryID.'<br/>';
           break; //exit the field loop
         }
       }
       if($remove){
-        //echo 'skipping - '.$entryID.'<br/><br/><br/>';
         unset ($entryData[$entryID]);
         continue; //skip this entry
       }
