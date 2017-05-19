@@ -4,7 +4,10 @@
 */
 get_header();
 $schedule_ids = get_field('schedule_ids');
-if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page ?>
+if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
+  create_calendar(get_field('schedule_ids'));
+  ?>
+<a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>
   <input type="hidden" id="forms2use" value="<?php echo get_field('schedule_ids'); ?>" />
 
   <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp">
