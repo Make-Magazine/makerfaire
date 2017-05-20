@@ -45,8 +45,14 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
       <ul class="day-nav list-unstyled">
         <li class="day-nav-box" ng-repeat="(schedDay,schedule) in schedules" ng-class="{'active':$first}">
           <a class="day-nav-item" data-toggle="tab" href="#Sched{{schedDay | date: 'd'}}"  ng-click="setDateFilter(schedDay)">
-            <h2>{{schedDay | date: "EEEE"}}</h2>
-            <h4>{{schedDay | date: "shortDate"}}</h4>
+            <div class="row">
+              <div class="col-xs-6">
+                <h2>{{schedDay | date: "EEEE"}}</h2>
+              </div>
+              <div class="col-xs-6">
+                <h4>{{schedDay | date: "shortDate"}}</h4>
+              </div>
+            </div>
           </a>
         </li>
       </ul>
@@ -105,10 +111,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
               </span>
             </div>
           </div>
-
         </div>
-
-
 
         <div class="tab-content sched-body">
           <div ng-repeat="(schedDay,schedule) in schedules" id="Sched{{schedDay | date: 'd'}}" class="tab-pane" ng-class="{ 'active': $first }">
@@ -128,7 +131,18 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                     <p class="sched-description">{{daySched.maker_list}}</p>
                   </div>
 
-                  <div class="sched-col-3">{{daySched.time_start | date: "EEEE"}}<br/>{{daySched.time_start | date: "shortTime"}} - <br/>{{daySched.time_end | date: "shortTime"}}</div>
+                  <div class="sched-col-3">
+                    <div class="row">
+                      <div class="col-xs-2 col-sm-12">
+                      {{daySched.time_start | date: "EEEE"}}
+                      </div>
+                      <div class="col-xs-10 col-sm-12">
+                        {{daySched.time_start | date: "shortTime"}} -
+                        <span class="lineBr"><br/></span>
+                        {{daySched.time_end | date: "shortTime"}}
+                      </div>
+                    </div>
+                  </div>
 
                   <div class="sched-col-4">{{daySched.nicename}}</div>
 
@@ -144,8 +158,6 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                       <span data-ng-repeat="catName in daySched.category">{{catName}}<font ng-show="!$last">, </font></span>
                     </div>
                   </div>
-                </div>
-
                 <div class="col-xs-10 col-xs-offset-2 sched-more-info">
                   <div class="panel-heading">
                     <span ng-click="daySched.isCollapsed = !daySched.isCollapsed" ng-init="daySched.isCollapsed=true"><?php _e('quick view','MiniMakerFaire');?>
@@ -159,6 +171,9 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                     </div>
                   </div>
                 </div>
+                </div>
+
+
 
               </div>
             </div>
