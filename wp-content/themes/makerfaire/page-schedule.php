@@ -127,10 +127,10 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
 
                   <div class="sched-col-3">
                     <div class="row">
-                      <div class="col-xs-2 col-sm-12">
+                      <div class="col-xs-3 col-sm-12">
                       {{daySched.time_start | date: "EEEE"}}
                       </div>
-                      <div class="col-xs-10 col-sm-12">
+                      <div class="col-xs-9 col-sm-12">
                         {{daySched.time_start | date: "shortTime"}} -
                         <span class="lineBr"><br/></span>
                         {{daySched.time_end | date: "shortTime"}}
