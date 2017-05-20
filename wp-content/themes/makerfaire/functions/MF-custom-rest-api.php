@@ -18,7 +18,7 @@ function mf_updateEntry( WP_REST_Request $request ) {
   if($type=='accept'){
     wp_set_current_user(20);
     $current_user = wp_get_current_user();
-    
+
     $lead         = GFAPI::get_entry( $entry_id );
     $form_id      = isset($lead['form_id']) ? $lead['form_id'] : 0;
     $form         = RGFormsModel::get_form_meta($form_id);
@@ -176,6 +176,7 @@ function getMTMentries($formIDs) {
     $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
               lead_detail.form_id, area.area, subarea.subarea, subarea.nicename,
               lead_detail.value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
+              location.latitude, location.longitude,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '22')  as photo,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '151') as name,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '16')  as short_desc,
@@ -188,7 +189,9 @@ function getMTMentries($formIDs) {
                left outer join wp_rg_lead_detail as lead_detail on
                    schedule.entry_id = lead_detail.lead_id and field_number = 303
                where lead.status = 'active' and lead_detail.value='Accepted' "
-               . " and lead_detail.form_id in(".implode(",",$formIDarr).") order by subarea.sort_order";
+               . " and lead_detail.form_id in(".implode(",",$formIDarr).") "
+            . "   and schedule.end_dt>= now()  "
+            . "order by subarea.sort_order";
 
     //retrieve project name, img (22), maker list, topics
     foreach($wpdb->get_results($query) as $row){
@@ -240,6 +243,8 @@ function getMTMentries($formIDs) {
             'maker_list'    => $makerList,
             'nicename'      => $stage,
             'category'      => $catList,
+            'latitude'      => $row->latitude,
+            'longitude'     => $row->longitude,
             'day'           => (int) $row->day,
             'desc'          => $row->short_desc,
             'type'          => ucwords($type)
