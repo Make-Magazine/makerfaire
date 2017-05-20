@@ -499,6 +499,9 @@
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
+          @media (max-width:767px) {
+            margin-bottom: 0;
+          }
           @media (min-width:992px) and (max-width:1199px) {
             max-height: 41px;
           }
@@ -506,9 +509,7 @@
             max-height: 33px;
             line-height: 1.2em;
           }
-          @media (max-width:767px) {
-            margin-bottom: 0;
-          }
+
         }
         .sched-type {
           img {
