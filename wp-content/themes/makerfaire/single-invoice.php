@@ -1,4 +1,6 @@
 <?php
+if (!is_user_logged_in())
+    auth_redirect();
 /*
  *	Single invoice template
  */
@@ -84,6 +86,7 @@ function add_paragraph_below_submit( $button, $form ) {
     return $button;
   }
 }
+
 get_header(); ?>
 
 <div class="clear"></div>
