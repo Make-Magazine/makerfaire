@@ -1,6 +1,7 @@
 <?php
 function create_calendar($formIDs){
   $schedules = getSchedule($formIDs);
+
   $ics = array();
   $str = '';
 
@@ -16,6 +17,8 @@ function create_calendar($formIDs){
                       'dtstart'     => $start,
                       'dtend'       => $end,
                       'description' => $day['desc'],
+          'latitude'=>$day['latitude'],
+          'longitude'=>$day['longitude'],
                       'url'         => "http://makerfaire.com/maker/entry/".$day['id']);
     }
   }
