@@ -2,7 +2,7 @@
 /*
  * Used to ask the logged in maker if they want to copy entries from previous faires
  */
-add_filter( 'gform_pre_render', 'maybe_copyEntry' );
+add_filter( 'gform_pre_render', 'maybe_copyEntry',999 );
 function maybe_copyEntry( $form ) {
   if(!isset($_GET['copyEntry'])){
     //check form type
@@ -20,9 +20,8 @@ function maybe_copyEntry( $form ) {
           //show modal offering to copy previous entries
           echo getModalData($maker_id);
         }else{
-          echo 'you do not have previous entries';
+         // echo 'You do not have previous entries';
         }
-
         break;
     }
   }else{
@@ -33,7 +32,7 @@ function maybe_copyEntry( $form ) {
     $entry = GFAPI::get_entry($entry2Copy);
 
     foreach($form['fields'] as &$field){
-      $fieldID = (int) $field['id'];
+      $fieldID = (string) $field['id'];
       $fieldType = $field['type'];
       switch ($fieldType) {
         case 'textarea':
@@ -42,50 +41,66 @@ function maybe_copyEntry( $form ) {
         case 'number':
         case 'phone':
         case 'email':
+        case 'select':
           if(isset($entry[$fieldID])) {
             $field['defaultValue'] = $entry[$fieldID];
           }
           break;
         case 'checkbox':
-          //var_dump($field);
-          foreach($field['inputs'] as $inputID=>&$input){
-            $fieldID = $input['id'];
-            if(isset($entry[$fieldID])) {
-              echo $fieldID.' is set '.$field['choices'][$inputID]['isSelected'];
-              var_dump($field['choices'][$inputID]);
-              $field['choices'][$inputID]['isSelected'] = true;
+          $fieldChoices = $field['choices'];
+          foreach($field['inputs'] as $key => $input){
+            $fieldChoiceID = (string) $input['id'];
+            //if this field is checked on the entry we need to update the associated array for choices
+            if(isset($entry[$fieldChoiceID]) && $entry[$fieldChoiceID]!='') {
+              $fieldChoices[$key]['isSelected'] = true;
             }
           }
-          echo '<br/>';
+          $field['choices'] = $fieldChoices;
           break;
-        case 'fileupload':
-        case 'checkbox':
+
         case 'radio':
-        case 'name':
-        case 'list':
-        case 'select':
-        case 'address':
+          if(isset($entry[$fieldID]) && $entry[$fieldID]!=''){
+            $fieldChoices = $field['choices'];
+            foreach($field['choices'] as $key=>$choice){
+              $value = ($choice['value'] != ''? $choice['value']:$choice['text']);
+
+              if((string) $value == (string)$entry[$fieldID]){
+                $fieldChoices[$key]['isSelected'] = true;
+              }
+            }
+            $field['choices'] = $fieldChoices;
+          }
           break;
+
+        case 'name':
+        case 'address':
+          $fieldInputs = $field['inputs'];
+          foreach($field['inputs'] as $key=>$input){
+            $fieldID = (string) $input['id'];
+
+            //if this field is set on the entry we need to update the default value
+            if(isset($entry[$fieldID]) && $entry[$fieldID]!='') {
+              $fieldInputs[$key]['defaultValue'] = $entry[$fieldID];
+            }
+          }
+          $field['inputs'] = $fieldInputs;
+          break;
+
+        case 'list':
         case 'section':
         case 'html':
         case 'page':
         case 'date':
+        case 'fileupload':
+          //var_dump($field);
+          //echo '<br/>';
+          //break;
           //do nothing
           break;
         default:
-          echo 'field id '.$fieldID.' type is '.$fieldType.'<br/>';
+          //echo 'field id '.$fieldID.' type is '.$fieldType.'<br/>';
           break;
       }
-      //if($fieldType!='section' && $fieldType!='text' && $fieldType!='textarea')
-
-      //var_dump($field);
-      //  echo '<br/><br/>';
-
-      /*if(isset($entry($fieldID))){
-        echo 'we found a match';
-        var_dump($field);
-        echo '<br/><br/>';
-      }*/
     }
   }
   return $form;
