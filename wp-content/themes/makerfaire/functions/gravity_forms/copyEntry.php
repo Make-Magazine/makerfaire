@@ -141,7 +141,8 @@ function getModalData($maker_id){
           <h4 class="modal-title">Copy Previous Entry</h4>
         </div>
         <div class="modal-body">
-          <p>Hello '.$name.'<br/><br/>You have previously filled out a similiar entry for another faire.  Would you like to copy the data into this appliation?</p>';
+          <p>Hello '.$name.'<br/><br/>'
+          . 'We noticed you\'ve applied before. Would you like to copy data from a previous entry into this appliation?</p>';
   foreach ($prevEntries as $entryID=>$prevEntry){
     $return .=  '<div class="row">'
               .   '<div class="col-sm-2">'.$prevEntry['faire'].'</div>'
