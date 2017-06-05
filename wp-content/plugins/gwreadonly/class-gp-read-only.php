@@ -2,12 +2,12 @@
 
 class GP_Read_Only extends GWPerk {
 
-    public $version = '1.2.11';
+    public $version = '1.3';
     protected $min_gravity_perks_version = '1.0.beta3';
     protected $min_gravity_forms_version = '1.6.11';
     protected $min_wp_version = '3.0';
 
-    private $unsupported_field_types = array( 'hidden', 'html', 'list', 'captcha', 'page', 'section' );
+    private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
     private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time' );
 
     public function init() {
@@ -115,6 +115,14 @@ class GP_Read_Only extends GWPerk {
                     "<select" => "<select disabled='disabled'",
                 );
                 break;
+	        case 'list':
+	        	// remove add/remove buttons
+	        	$input_html = preg_replace( '/<td class=\'gfield_list_icons\'>[\s\S]+?<\/td>/', '', $input_html );
+		        $search = array(
+			        "<input"  => "<input readonly='readonly'",
+			        "<select" => "<select disabled='disabled'",
+		        );
+	        	break;
             default:
                 $search = "<input";
                 $replace = $search . " readonly='readonly'";
@@ -123,6 +131,23 @@ class GP_Read_Only extends GWPerk {
 
         if( ! is_array( $search ) ) {
             $search = array( $search => $replace );
+        }
+
+        if( $input_type == 'date' && $field->dateType == 'datepicker' ) {
+	        /**
+	         * Disable the datepicker for read-only Datepicker fields.
+             *
+             * @since 1.2.13
+             *
+             * @param bool          $is_disabled Whether or not to disable the datepicker for this read-only input.
+	         * @param GF_Field_Date $field       GF_Field_Date The current Date field object.
+	         * @param int           $entry_id    The current entry ID; 0 when no entry ID is provided.
+	         */
+            $disable_datepicker = gf_apply_filters( array( 'gpro_disable_datepicker', $form_id, $field->id ), false, $field, $entry_id );
+            if( $disable_datepicker ) {
+                // Find 'datepicker' CSS class and remove it.
+                $search['\'datepicker '] = '';
+            }
         }
 
         foreach( $search as $_search => $replace ) {
@@ -211,7 +236,11 @@ class GP_Read_Only extends GWPerk {
 	                $full_input_id = implode( '_', array_filter( array( $field_id, $input_id ) ) );
             }
 
-            $_POST[ "input_{$full_input_id}" ] = $value;
+            // Only use hidden capture if $_POST does not already contain a value for this inputs;
+            // this allows support for checking/unchecking via JS (i.e. checkbox fields).
+            if( empty( $_POST[ "input_{$full_input_id}" ] ) && $value ) {
+	            $_POST[ "input_{$full_input_id}" ] = $value;
+            }
 
         }
 
