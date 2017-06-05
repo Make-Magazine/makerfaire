@@ -4,6 +4,11 @@
  */
 add_filter( 'gform_pre_render', 'maybe_copyEntry',999 );
 function maybe_copyEntry( $form ) {
+  //if this is gravity view do not use modal copy entry
+  if(isset($_GET['view']) && $_GET['view']=='entry'){
+    return $form;
+  }
+  
   if(!isset($_GET['copyEntry'])){
     //check form type
     switch ($form['form_type']){
