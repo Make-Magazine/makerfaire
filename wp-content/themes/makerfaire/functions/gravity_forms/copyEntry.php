@@ -19,8 +19,10 @@ function maybe_copyEntry( $form ) {
 
         //instantiate the model
         $maker   = new maker($current_user->user_email);
+
         $tableData = $maker->get_table_data();
-        if(!empty($tableData)){
+
+        if(!empty($tableData['data'])){
           //show modal offering to copy previous entries
           echo getModalData($tableData);
         }else{
