@@ -135,7 +135,8 @@ function getModalData($tableData){
           <p>Hello '.$name.',</p><br/>'
           . '<p>We noticed you\'ve applied before. Would you like to copy data from a previous entry into this application?'
           . '<br/><small><i>If you copy an entry, you will have the chance to make edits and upload new images before submitting your new application.</i></small></p>'
-          . '<hr/>';
+          . '<hr/>'
+          . '<div class="pre-scrollable">';
 
   foreach ($prevEntries as $prevEntry){
     if($prevEntry['maker_type']=='contact'){ //contact or entry creator
@@ -148,8 +149,8 @@ function getModalData($tableData){
     }
   }
 
-  $return .= '
-        </div>
+  $return .= '</div>
+        </div> <!-- close .modal-body-->
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Start from Scratch</button>
         </div>
