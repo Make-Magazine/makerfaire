@@ -119,8 +119,7 @@ get_header();
             //Add link to edit entry
             $disp_edit = (($entryData['status'] != 'Cancelled') && $entryData['maker_type']=='contact' ? true: false);
 
-            //BA17 temp change to remove Edit Entry link for Exhibits
-            if($disp_edit && $entryData['form_type']!='Exhibit'){
+            if($disp_edit){
               $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
               $url = str_replace('/view/', '/', $url);  //remove view slug from URL
               echo  '<span class="editLink">'
@@ -245,21 +244,20 @@ get_header();
                     <?php
                     $class = '';
                     $tooltip = '';
+
                     //edit link
-                    //BA17 temp change to remove Edit Entry link for Exhibits
-                    if($entryData['form_type']!='Exhibit'){
-                      if($disp_edit){
-                        $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-                        $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-                        echo '<a href="'. $url .'">Edit Entry</a>';
+                    if($disp_edit){
+                      $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+                      $url = str_replace('/view/', '/', $url);  //remove view slug from URL
+                      echo '<a href="'. $url .'">Edit Entry</a>';
+                    }else{
+                      if($entryData['maker_type'] != 'contact') {
+                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
                       }else{
-                        if($entryData['maker_type'] != 'contact') {
-                          echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
-                        }else{
-                          echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only active entries can be edited">Edit Entry</div>';
-                        }
+                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only active entries can be edited">Edit Entry</div>';
                       }
                     }
+
                     ?>
                   </div>
                   <div>
