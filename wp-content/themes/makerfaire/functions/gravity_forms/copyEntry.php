@@ -4,113 +4,117 @@
  */
 add_filter( 'gform_pre_render', 'maybe_copyEntry',999 );
 function maybe_copyEntry( $form ) {
-  //if this is gravity view do not use modal copy entry
-  if(isset($_GET['view']) && $_GET['view']=='entry'){
-    return $form;
-  }
-  
-  if(!isset($_GET['copyEntry'])){
-    //check form type
-    switch ($form['form_type']){
-      case 'Exhibit':
-      case 'Presentation':
-      case 'Performance':
-      case 'Startup Sponsor':
-      case 'Sponsor':
-        $current_user = wp_get_current_user();
-
-        //require_once our model
-        require_once( get_template_directory().'/models/maker.php' );
-
-        //instantiate the model
-        $maker   = new maker($current_user->user_email);
-
-        $tableData = $maker->get_table_data();
-
-        if(!empty($tableData['data'])){
-          //show modal offering to copy previous entries
-          echo getModalData($tableData);
-        }else{
-         // echo 'You do not have previous entries';
-        }
-        break;
+  //only use copy entry modal on page 1
+  $current_page = GFFormDisplay::get_current_page( $form['id'] );
+  if ( $current_page == 1 ) {
+    //if this is gravity view do not use modal copy entry
+    if(isset($_GET['view']) && $_GET['view']=='entry'){
+      return $form;
     }
-  }else{
-    //copy previous entry data
-    echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
 
-    $entry2Copy = $_GET['copyEntry'];
-    $entry = GFAPI::get_entry($entry2Copy);
+    if(!isset($_GET['copyEntry'])){
+      //check form type
+      switch ($form['form_type']){
+        case 'Exhibit':
+        case 'Presentation':
+        case 'Performance':
+        case 'Startup Sponsor':
+        case 'Sponsor':
+          $current_user = wp_get_current_user();
 
-    foreach($form['fields'] as &$field){
-      $fieldID = (string) $field['id'];
-      $fieldType = $field['type'];
-      switch ($fieldType) {
-        case 'textarea':
-        case 'text':
-        case 'website':
-        case 'number':
-        case 'phone':
-        case 'email':
-        case 'select':
-          if(isset($entry[$fieldID])) {
-            $field['defaultValue'] = $entry[$fieldID];
+          //require_once our model
+          require_once( get_template_directory().'/models/maker.php' );
+
+          //instantiate the model
+          $maker   = new maker($current_user->user_email);
+
+          $tableData = $maker->get_table_data();
+
+          if(!empty($tableData['data'])){
+            //show modal offering to copy previous entries
+            echo getModalData($tableData);
+          }else{
+           // echo 'You do not have previous entries';
           }
           break;
-        case 'checkbox':
-          $fieldChoices = $field['choices'];
-          foreach($field['inputs'] as $key => $input){
-            $fieldChoiceID = (string) $input['id'];
-            //if this field is checked on the entry we need to update the associated array for choices
-            if(isset($entry[$fieldChoiceID]) && $entry[$fieldChoiceID]!='') {
-              $fieldChoices[$key]['isSelected'] = true;
+      }
+    }else{
+      //copy previous entry data
+      echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
+
+      $entry2Copy = $_GET['copyEntry'];
+      $entry = GFAPI::get_entry($entry2Copy);
+
+      foreach($form['fields'] as &$field){
+        $fieldID = (string) $field['id'];
+        $fieldType = $field['type'];
+        switch ($fieldType) {
+          case 'textarea':
+          case 'text':
+          case 'website':
+          case 'number':
+          case 'phone':
+          case 'email':
+          case 'select':
+            if(isset($entry[$fieldID])) {
+              $field['defaultValue'] = $entry[$fieldID];
             }
-          }
-          $field['choices'] = $fieldChoices;
-          break;
-
-        case 'radio':
-          if(isset($entry[$fieldID]) && $entry[$fieldID]!=''){
+            break;
+          case 'checkbox':
             $fieldChoices = $field['choices'];
-            foreach($field['choices'] as $key=>$choice){
-              $value = ($choice['value'] != ''? $choice['value']:$choice['text']);
-
-              if((string) $value == (string)$entry[$fieldID]){
+            foreach($field['inputs'] as $key => $input){
+              $fieldChoiceID = (string) $input['id'];
+              //if this field is checked on the entry we need to update the associated array for choices
+              if(isset($entry[$fieldChoiceID]) && $entry[$fieldChoiceID]!='') {
                 $fieldChoices[$key]['isSelected'] = true;
               }
             }
             $field['choices'] = $fieldChoices;
-          }
-          break;
+            break;
 
-        case 'name':
-        case 'address':
-          $fieldInputs = $field['inputs'];
-          foreach($field['inputs'] as $key=>$input){
-            $fieldID = (string) $input['id'];
+          case 'radio':
+            if(isset($entry[$fieldID]) && $entry[$fieldID]!=''){
+              $fieldChoices = $field['choices'];
+              foreach($field['choices'] as $key=>$choice){
+                $value = ($choice['value'] != ''? $choice['value']:$choice['text']);
 
-            //if this field is set on the entry we need to update the default value
-            if(isset($entry[$fieldID]) && $entry[$fieldID]!='') {
-              $fieldInputs[$key]['defaultValue'] = $entry[$fieldID];
+                if((string) $value == (string)$entry[$fieldID]){
+                  $fieldChoices[$key]['isSelected'] = true;
+                }
+              }
+              $field['choices'] = $fieldChoices;
             }
-          }
-          $field['inputs'] = $fieldInputs;
-          break;
+            break;
 
-        case 'list':
-        case 'section':
-        case 'html':
-        case 'page':
-        case 'date':
-        case 'fileupload':
-          //var_dump($field);
-          //echo '<br/>';
-          //break;
-          //do nothing
-          break;
-        default:
-          //echo 'field id '.$fieldID.' type is '.$fieldType.'<br/>';
-          break;
+          case 'name':
+          case 'address':
+            $fieldInputs = $field['inputs'];
+            foreach($field['inputs'] as $key=>$input){
+              $fieldID = (string) $input['id'];
+
+              //if this field is set on the entry we need to update the default value
+              if(isset($entry[$fieldID]) && $entry[$fieldID]!='') {
+                $fieldInputs[$key]['defaultValue'] = $entry[$fieldID];
+              }
+            }
+            $field['inputs'] = $fieldInputs;
+            break;
+
+          case 'list':
+          case 'section':
+          case 'html':
+          case 'page':
+          case 'date':
+          case 'fileupload':
+            //var_dump($field);
+            //echo '<br/>';
+            //break;
+            //do nothing
+            break;
+          default:
+            //echo 'field id '.$fieldID.' type is '.$fieldType.'<br/>';
+            break;
+        }
       }
     }
   }
