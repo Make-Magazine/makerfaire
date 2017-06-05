@@ -2,7 +2,7 @@
 
 class GP_Copy_Cat extends GWPerk {
 
-    public $version = '1.4.9';
+    public $version = '1.4.20';
     protected $min_perks_version = '1.0.6';
     protected $min_gravity_forms_version = '1.9.3';
 
@@ -33,9 +33,28 @@ class GP_Copy_Cat extends GWPerk {
             return;
         }
 
-        $copy_fields      = $this->get_copy_cat_fields( $form );
-        $enable_overwrite = gf_apply_filters( 'gpcc_overwrite_existing_values', $form['id'], true, $form ); /* @since 1.3.7 Used to default to false */
-        $script           = 'new gwCopyObj( ' . $form['id'] . ', ' . json_encode( $copy_fields ) . ', ' . ( $enable_overwrite ? 'true' : 'false' ) . ' );';
+        $enable_overwrite = gf_apply_filters( array( 'gpcc_overwrite_existing_values', $form['id'] ), true, $form ); /* @since 1.3.7 Used to default to false */
+	    /**
+	     * Enable overwriting target values when form is initialized.
+	     *
+	     * By default, source values will not overwrite target values when the form is initialized. This means data that
+	     * is pre-populated into target fields will take precedence over values copied from source fields.
+	     *
+	     * @since 1.4.15
+	     *
+	     * @param bool  $enable_overwrite_on_init Whether to overwrite target values when the form renders.
+	     * @param array $form                     The current form object.
+	     */
+        $enable_overwrite_on_init = gf_apply_filters( array( 'gpcc_overwrite_existing_values_on_init', $form['id'] ), false, $form );
+
+        $args = array(
+        	'formId'                => $form['id'],
+            'fields'                => $this->get_copy_cat_fields( $form ),
+	        'overwrite'       => $enable_overwrite,
+	        'overwriteOnInit' => $enable_overwrite_on_init,
+        );
+
+        $script = 'new gwCopyObj( ' . json_encode( $args ) . ' );';
 
         GFFormDisplay::add_init_script( $form['id'], 'gp-copy-cat', GFFormDisplay::ON_PAGE_RENDER, $script );
 
@@ -50,9 +69,16 @@ class GP_Copy_Cat extends GWPerk {
         $copy_field_ids = array_keys( $this->get_copy_cat_fields( $form ) );
 
         foreach( $form['fields'] as &$field ) {
-            if( in_array( $field['id'], $copy_field_ids ) ) {
-                $field['cssClass'] .= ' gwcopy';
+
+        	if( in_array( $field['id'], $copy_field_ids ) ) {
+                $field->cssClass .= ' gwcopy';
             }
+
+            // Set maxrows class for use in script.
+            if( $field->get_input_type() == 'list' ) {
+	            $field->cssClass .= sprintf( ' gp-field-maxrows-%d', $field->maxRows );
+            }
+
         }
 
         return $form;
