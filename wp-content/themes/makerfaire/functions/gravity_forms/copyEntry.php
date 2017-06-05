@@ -13,12 +13,16 @@ function maybe_copyEntry( $form ) {
       case 'Startup Sponsor':
       case 'Sponsor':
         $current_user = wp_get_current_user();
-        $email = $current_user->user_email;
-        //check for previous entries
-        $maker_id = chkPrevEntries($email);
-        if($maker_id!=''){
+
+        //require_once our model
+        require_once( get_template_directory().'/models/maker.php' );
+
+        //instantiate the model
+        $maker   = new maker($current_user->user_email);
+        $tableData = $maker->get_table_data();
+        if(!empty($tableData)){
           //show modal offering to copy previous entries
-          echo getModalData($maker_id);
+          echo getModalData($tableData);
         }else{
          // echo 'You do not have previous entries';
         }
@@ -106,20 +110,7 @@ function maybe_copyEntry( $form ) {
   return $form;
 }
 
-function chkPrevEntries($email){
-  if($email=='')  return '';
-
-  global $wpdb;
-
-  $maker_id = $wpdb->get_var( $wpdb->prepare( "select maker_id from wp_mf_maker where Email like %s", $email));
-  if($maker_id!=''){
-    return $maker_id;
-  }
-
-  return '';
-}
-
-function getModalData($maker_id){
+function getModalData($tableData){
   global $current_user;
   if($current_user->user_firstname=='' && $current_user->user_lastname==''){
     $name = $current_user->user_login;
@@ -127,8 +118,8 @@ function getModalData($maker_id){
     $name = $current_user->user_firstname.' '.$current_user->user_lastname;
   }
   $currentURL = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-  $prevEntries = getPrevEntries($maker_id);
 
+  $prevEntries = $tableData['data'];
   $return = '
   <!-- Modal -->
   <div id="copyModal" class="modal fade" role="dialog">
@@ -143,17 +134,20 @@ function getModalData($maker_id){
         <div class="modal-body">
           <p>Hello '.$name.',</p><br/>'
           . '<p>We noticed you\'ve applied before. Would you like to copy data from a previous entry into this application?'
-          . '<br/><small>If you copy an entry, you will have the chance to make edits and upload new images before submitting your new application.</small></p>'
+          . '<br/><small><i>If you copy an entry, you will have the chance to make edits and upload new images before submitting your new application.</i></small></p>'
           . '<hr/>';
 
-  foreach ($prevEntries as $entryID=>$prevEntry){
-    $return .=  '<div class="row">'
-              .   '<div class="col-sm-3">'.$prevEntry['faire'].'</div>'
-              .   '<div class="col-sm-2">'.$entryID.'</div>'
-              .   '<div class="col-sm-5">'.$prevEntry['title'].'</div>'
-              .   '<div class="col-sm-2"><a href="'.$currentURL.'?copyEntry='.$entryID.'">Copy this Entry</a></div>'
+  foreach ($prevEntries as $prevEntry){
+    if($prevEntry['maker_type']=='contact'){ //contact or entry creator
+      $return .=  '<div class="row">'
+              .   '<div class="col-sm-3">'.$prevEntry['faire_name'].'</div>'
+              .   '<div class="col-sm-2">'.$prevEntry['lead_id'].'</div>'
+              .   '<div class="col-sm-5">'.$prevEntry['presentation_title'].'</div>'
+              .   '<div class="col-sm-2"><a href="'.$currentURL.'?copyEntry='.$prevEntry['lead_id'].'">Copy this Entry</a></div>'
               . '</div>';
+    }
   }
+
   $return .= '
         </div>
         <div class="modal-footer">
@@ -166,29 +160,5 @@ function getModalData($maker_id){
   <script>
     jQuery("#copyModal").modal("show");
   </script>';
-  return $return;
-}
-
-function getPrevEntries($maker_id) {
-  global $wpdb;
-  $return = array();
-
-  //TBD should pull by matching form type to current application
-  //    but not all faires have form type set in wp_mf_entity as of right now
-  $entries =
-    $wpdb->get_results(
-      $wpdb->prepare(
-        "SELECT wp_mf_entity.lead_id, wp_mf_maker_to_entity.maker_type, wp_mf_entity.presentation_title, wp_mf_entity.status, wp_mf_faire.faire_name as faire "
-      . "FROM `wp_mf_maker_to_entity` "
-      . "left outer join wp_mf_entity on wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id "
-      . "left outer join wp_mf_faire on wp_mf_faire.faire = wp_mf_entity.faire "
-      . "WHERE `maker_id` LIKE %s "
-      . "AND    wp_mf_entity.status != 'trash' "
-      . "AND    presentation_title  != '' "
-      . "GROUP BY lead_id order by lead_id DESC", $maker_id)
-    );
-  foreach($entries as $entry){
-    $return[$entry->lead_id] = array('maker_type'=>$entry->maker_type, 'title'=>$entry->presentation_title, 'status'=>$entry->status, 'faire'=>$entry->faire,);
-  }
   return $return;
 }
