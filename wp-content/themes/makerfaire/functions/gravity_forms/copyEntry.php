@@ -26,7 +26,7 @@ function maybe_copyEntry( $form ) {
     }
   }else{
     //copy previous entry data
-    echo 'Copying data for entry '.$_GET['copyEntry'].'<br/>';
+    echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
 
     $entry2Copy = $_GET['copyEntry'];
     $entry = GFAPI::get_entry($entry2Copy);
@@ -141,20 +141,23 @@ function getModalData($maker_id){
           <h4 class="modal-title">Copy Previous Entry</h4>
         </div>
         <div class="modal-body">
-          <p>Hello '.$name.'<br/><br/>'
-          . 'We noticed you\'ve applied before. Would you like to copy data from a previous entry into this appliation?</p>';
+          <p>Hello '.$name.',</p><br/>'
+          . '<p>We noticed you\'ve applied before. Would you like to copy data from a previous entry into this application?'
+          . '<br/><small>If you copy an entry, you will have the chance to make edits and upload new images before submitting your new application.</small></p>'
+          . '<hr/>';
+
   foreach ($prevEntries as $entryID=>$prevEntry){
     $return .=  '<div class="row">'
-              .   '<div class="col-sm-2">'.$prevEntry['faire'].'</div>'
+              .   '<div class="col-sm-3">'.$prevEntry['faire'].'</div>'
               .   '<div class="col-sm-2">'.$entryID.'</div>'
-              .   '<div class="col-sm-6">'.$prevEntry['title'].'</div>'
+              .   '<div class="col-sm-5">'.$prevEntry['title'].'</div>'
               .   '<div class="col-sm-2"><a href="'.$currentURL.'?copyEntry='.$entryID.'">Copy this Entry</a></div>'
               . '</div>';
   }
   $return .= '
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Start from Scratch</button>
         </div>
       </div>
 
@@ -175,9 +178,10 @@ function getPrevEntries($maker_id) {
   $entries =
     $wpdb->get_results(
       $wpdb->prepare(
-        "SELECT wp_mf_entity.lead_id, wp_mf_maker_to_entity.maker_type, wp_mf_entity.presentation_title, wp_mf_entity.status, wp_mf_entity.faire "
+        "SELECT wp_mf_entity.lead_id, wp_mf_maker_to_entity.maker_type, wp_mf_entity.presentation_title, wp_mf_entity.status, wp_mf_faire.faire_name as faire "
       . "FROM `wp_mf_maker_to_entity` "
       . "left outer join wp_mf_entity on wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id "
+      . "left outer join wp_mf_faire on wp_mf_faire.faire = wp_mf_entity.faire "
       . "WHERE `maker_id` LIKE %s "
       . "AND    wp_mf_entity.status != 'trash' "
       . "AND    presentation_title  != '' "
