@@ -83,7 +83,9 @@ class GWPreviewConfirmation {
 		    if( is_array( $choices ) ) {
 			    foreach( $choices as &$choice ) {
 				    if( gp_preview_submission()->has_any_merge_tag( $choice['text'] ) ) {
+				    	$is_same_choice_and_value = $choice['text'] == $choice['value'];
 					    $choice['text'] = self::preview_replace_variables( $choice['text'], $form, $entry );
+					    $choice['value'] = $is_same_choice_and_value ? $choice['text'] : self::preview_replace_variables( $choice['value'], $form, $entry );
 				    }
 			    }
 		    }
@@ -202,6 +204,16 @@ class GWPreviewConfirmation {
 
         if( $is_excluded_field_type ) {
 	        return $value;
+        }
+
+        // add support for Gravity Forms Slider add-on by WP Gurus
+        if( $input_type == 'slider' && defined( 'GF_SLIDER_FIELD_ADDON_VERSION' ) ) {
+        	// pulled straight of the GF Slider add-on code
+	        if( ! empty($field->strValue) && (!empty($field->stri_value_setting) && $field->stri_value_setting==1)){
+		        $strings = explode(',',$field->strValue);
+		        $value = $strings[ $_POST['input_'.$field->id] - 1 ];
+		        return $value;
+	        }
         }
 
         // added to prevent overriding :noadmin filter (and other filters that remove fields)
@@ -359,6 +371,19 @@ class GWPreviewConfirmation {
                             self::$entry[$field['id']] = rgpost( "input_{$form['id']}_{$field['id']}_signature_filename" );
                         }
 	                    break;
+	                // Improves support for GP eCommerce Fields; calculations will be wrong if calculated prior to submission.
+	                // We'll assume posted values are correct since they will be re-validated on submission regardless.
+	                case 'calculation':
+	                case 'number':
+	                	if( ! $field->has_calculation() ) {
+	                		continue;
+		                }
+		                $is_product = $field['type'] == 'product';
+		                $input_id   = $is_product ? sprintf( '%s.%s', $field->id, 2 ) : $field->id;
+		                if( empty( self::$entry[ $field['id'] ] ) ) {
+			                self::$entry[ $input_id ] = rgpost( sprintf( 'input_%s', str_replace( '.', '_', $input_id ) ) );
+		                }
+	                	break;
                 }
 
             }

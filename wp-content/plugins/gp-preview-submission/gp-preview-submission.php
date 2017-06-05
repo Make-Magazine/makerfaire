@@ -3,7 +3,7 @@
  * Plugin Name: GP Preview Submission
  * Plugin URI: http://gravitywiz.com/
  * Description: Add a simple submission preview to allow users to confirm their submission is correct before submitting the form.
- * Version: 1.2.4
+ * Version: 1.2.7
  * Author: David Smith
  * Author URI: http://gravitywiz.com
  * License: GPL2
