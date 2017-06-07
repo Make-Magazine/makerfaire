@@ -69,6 +69,7 @@ if ($mode == "reset")
                 wp_login_form();
             else 
                 renderAuth0Form(true, array( "mode" => $mode));
+            
             ?>
         </div>
         <div class="col-md-offset-2 hidden-xs">
@@ -92,7 +93,7 @@ function renderAuth0Form($canShowLegacyLogin = true, $specialSettings = array())
     
     if (!$canShowLegacyLogin || !isset($_GET['wle'])) {
         //Require auth0
-        require_once( ABSPATH . 'wp-content/plugins/auth0/templates/auth0-login-form.php');
+        require_once( ABSPATH . 'wp-content/plugins/auth0/templates/auth0-login-form-lock10.php');
 
     }else{
         wp_login_form(); 
