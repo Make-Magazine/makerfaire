@@ -45,6 +45,7 @@ function custom_entry_meta($entry_meta, $form_id) {
               array('value' => 'ready', 'text' => 'Ready'),
               array('value' => 'review', 'text' => 'Review'),
               array('value' => 'sent', 'text' => 'Sent'),
+              array('value' => 'import', 'text' => 'Imported'),
           )
       )
   );

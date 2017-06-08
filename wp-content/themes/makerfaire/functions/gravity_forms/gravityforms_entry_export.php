@@ -346,6 +346,9 @@ function mf_custom_import_entries() {
           gform_update_meta( $entryID, 'res_status', 'review', $formID);
         }
 
+        //ensure 19 and 20 (original space size and exposure are locked)
+        $wpdb->update('wp_rmt_entry_attributes',array('lockBit'=>1),array('attribute_id'=>19,'entry_id'=>$entryID),array('%d'),array('%d','%d'));
+        $wpdb->update('wp_rmt_entry_attributes',array('lockBit'=>1),array('attribute_id'=>20,'entry_id'=>$entryID),array('%d'),array('%d','%d'));
         /*    Confirmation comments     */
         //first clear out any confirmation comments, then add from upload
 
