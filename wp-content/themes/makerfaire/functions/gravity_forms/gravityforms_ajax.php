@@ -307,8 +307,10 @@ function set_entry_status($lead,$form){
            * The cron job will trigger action sidebar_entry_update
            */
           wp_schedule_single_event(time() + 1,'sidebar_entry_update', array($entry_id));
-          //lock space size attribute if set
-          $wpdb->get_results('update `wp_rmt_entry_attributes` set `lockBit` = 1 where attribute_id =  2 and entry_id='. $lead['id']);
+
+          //lock attribute 19 and 20 upon setting the status to accepted (original space size and exposure are locked)
+          $wpdb->update('wp_rmt_entry_attributes',array('lockBit'=>1),array('attribute_id'=>19,'entry_id'=>$lead['id']),array('%d'),array('%d','%d'));
+          $wpdb->update('wp_rmt_entry_attributes',array('lockBit'=>1),array('attribute_id'=>20,'entry_id'=>$lead['id']),array('%d'),array('%d','%d'));
 
           //if the form type is invoice, set the invoice date
           if(isset($form['create_invoice']) && $form['create_invoice']=='yes'){
