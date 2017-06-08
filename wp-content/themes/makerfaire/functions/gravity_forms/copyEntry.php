@@ -11,8 +11,8 @@ function maybe_copyEntry( $form ) {
     if(isset($_GET['view']) && $_GET['view']=='entry'){
       return $form;
     }
-
-    if(!isset($_GET['copyEntry'])){
+    $entry2Copy = (isset($_GET['copyEntry'])?$_GET['copyEntry']:'');
+    if($entry2Copy==''){
       //check form type
       switch ($form['form_type']){
         case 'Exhibit':
@@ -39,81 +39,83 @@ function maybe_copyEntry( $form ) {
           break;
       }
     }else{
-      //copy previous entry data
-      echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
+      if(is_int($entry2Copy!='none')){
+        //copy previous entry data
+        echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
 
-      $entry2Copy = $_GET['copyEntry'];
-      $entry = GFAPI::get_entry($entry2Copy);
+        $entry2Copy = $_GET['copyEntry'];
+        $entry = GFAPI::get_entry($entry2Copy);
 
-      foreach($form['fields'] as &$field){
-        $fieldID = (string) $field['id'];
-        $fieldType = $field['type'];
-        switch ($fieldType) {
-          case 'textarea':
-          case 'text':
-          case 'website':
-          case 'number':
-          case 'phone':
-          case 'email':
-          case 'select':
-            if(isset($entry[$fieldID])) {
-              $field['defaultValue'] = $entry[$fieldID];
-            }
-            break;
-          case 'checkbox':
-            $fieldChoices = $field['choices'];
-            foreach($field['inputs'] as $key => $input){
-              $fieldChoiceID = (string) $input['id'];
-              //if this field is checked on the entry we need to update the associated array for choices
-              if(isset($entry[$fieldChoiceID]) && $entry[$fieldChoiceID]!='') {
-                $fieldChoices[$key]['isSelected'] = true;
+        foreach($form['fields'] as &$field){
+          $fieldID = (string) $field['id'];
+          $fieldType = $field['type'];
+          switch ($fieldType) {
+            case 'textarea':
+            case 'text':
+            case 'website':
+            case 'number':
+            case 'phone':
+            case 'email':
+            case 'select':
+              if(isset($entry[$fieldID])) {
+                $field['defaultValue'] = $entry[$fieldID];
               }
-            }
-            $field['choices'] = $fieldChoices;
-            break;
-
-          case 'radio':
-            if(isset($entry[$fieldID]) && $entry[$fieldID]!=''){
+              break;
+            case 'checkbox':
               $fieldChoices = $field['choices'];
-              foreach($field['choices'] as $key=>$choice){
-                $value = ($choice['value'] != ''? $choice['value']:$choice['text']);
-
-                if((string) $value == (string)$entry[$fieldID]){
+              foreach($field['inputs'] as $key => $input){
+                $fieldChoiceID = (string) $input['id'];
+                //if this field is checked on the entry we need to update the associated array for choices
+                if(isset($entry[$fieldChoiceID]) && $entry[$fieldChoiceID]!='') {
                   $fieldChoices[$key]['isSelected'] = true;
                 }
               }
               $field['choices'] = $fieldChoices;
-            }
-            break;
+              break;
 
-          case 'name':
-          case 'address':
-            $fieldInputs = $field['inputs'];
-            foreach($field['inputs'] as $key=>$input){
-              $fieldID = (string) $input['id'];
+            case 'radio':
+              if(isset($entry[$fieldID]) && $entry[$fieldID]!=''){
+                $fieldChoices = $field['choices'];
+                foreach($field['choices'] as $key=>$choice){
+                  $value = ($choice['value'] != ''? $choice['value']:$choice['text']);
 
-              //if this field is set on the entry we need to update the default value
-              if(isset($entry[$fieldID]) && $entry[$fieldID]!='') {
-                $fieldInputs[$key]['defaultValue'] = $entry[$fieldID];
+                  if((string) $value == (string)$entry[$fieldID]){
+                    $fieldChoices[$key]['isSelected'] = true;
+                  }
+                }
+                $field['choices'] = $fieldChoices;
               }
-            }
-            $field['inputs'] = $fieldInputs;
-            break;
+              break;
 
-          case 'list':
-          case 'section':
-          case 'html':
-          case 'page':
-          case 'date':
-          case 'fileupload':
-            //var_dump($field);
-            //echo '<br/>';
-            //break;
-            //do nothing
-            break;
-          default:
-            //echo 'field id '.$fieldID.' type is '.$fieldType.'<br/>';
-            break;
+            case 'name':
+            case 'address':
+              $fieldInputs = $field['inputs'];
+              foreach($field['inputs'] as $key=>$input){
+                $fieldID = (string) $input['id'];
+
+                //if this field is set on the entry we need to update the default value
+                if(isset($entry[$fieldID]) && $entry[$fieldID]!='') {
+                  $fieldInputs[$key]['defaultValue'] = $entry[$fieldID];
+                }
+              }
+              $field['inputs'] = $fieldInputs;
+              break;
+
+            case 'list':
+            case 'section':
+            case 'html':
+            case 'page':
+            case 'date':
+            case 'fileupload':
+              //var_dump($field);
+              //echo '<br/>';
+              //break;
+              //do nothing
+              break;
+            default:
+              //echo 'field id '.$fieldID.' type is '.$fieldType.'<br/>';
+              break;
+          }
         }
       }
     }
@@ -153,7 +155,8 @@ function getModalData($tableData){
     if($prevEntry['maker_type']=='contact'){ //contact or entry creator
       $return .=  '<div class="row">'
               .   '<div class="col-sm-3">'.$prevEntry['faire_name'].'</div>'
-              .   '<div class="col-sm-2">'.$prevEntry['lead_id'].'</div>'
+              .   '<div class="col-sm-1">'.$prevEntry['form_type'].'</div>'
+              .   '<div class="col-sm-1">'.$prevEntry['lead_id'].'</div>'
               .   '<div class="col-sm-5">'.$prevEntry['presentation_title'].'</div>'
               .   '<div class="col-sm-2"><a href="'.$currentURL.'?copyEntry='.$prevEntry['lead_id'].'">Copy this Entry</a></div>'
               . '</div>';
@@ -163,7 +166,7 @@ function getModalData($tableData){
   $return .= '</div>
         </div> <!-- close .modal-body-->
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Start from Scratch</button>
+          <button type="button" class="btn btn-default"><a href="'.$currentURL.'?copyEntry=none">Start from Scratch</a></button>
         </div>
       </div>
 
