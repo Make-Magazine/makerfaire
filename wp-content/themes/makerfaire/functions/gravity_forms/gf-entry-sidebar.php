@@ -565,9 +565,15 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
   $is_entry_detail = $field->is_entry_detail();
   $is_form_editor  = $field->is_form_editor();
   $output = '';
+  //echo 'value is <br/>';
+  //var_dump ($value);
+  //echo '<br/><br/>';
   if ( is_array( $field->choices ) ) {
     $choice_number = 1;
     foreach ( $field->choices as $choice ) {
+      //echo 'choice is<br/>';
+      //var_dump($choice);
+      //echo '<br/>';
       if ( $choice_number % 10 == 0 ) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
         $choice_number ++;
       }
@@ -579,8 +585,9 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
       } else {
         $id = $form_id . '_' . $field->id . '_' . $choice_number ++;
       }
-
-      if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, stripslashes(rgget( $input_id, $value ) )) ) {
+      $choiceValue = (!empty($choice['value'])?$choice['value']:$choice['text']);
+      if ( is_array( $value )  && in_array($choiceValue,$value)){
+      //if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, stripslashes(rgget( $input_id, $value ) )) ) {
         $checked = "checked='checked'";
       } elseif ( ! is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, $value ) ) {
         $checked = "checked='checked'";
