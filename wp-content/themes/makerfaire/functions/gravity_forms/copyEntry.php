@@ -39,11 +39,11 @@ function maybe_copyEntry( $form ) {
           break;
       }
     }else{
-      if(is_int($entry2Copy!='none')){
+      if($entry2Copy!='none'){
         //copy previous entry data
         echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
 
-        $entry2Copy = $_GET['copyEntry'];
+        $entry2Copy = (int) $_GET['copyEntry'];
         $entry = GFAPI::get_entry($entry2Copy);
 
         foreach($form['fields'] as &$field){
