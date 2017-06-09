@@ -34,6 +34,10 @@ jQuery( document ).ready(function() {
       }
     }
   });
+
+  //remove old faire options from event registration form
+  jQuery('.gchoice_127_470_1').hide();
+
 });
 //this is used to reset HTML5 fields - email, url and telephone if the section they are in is hidden
 gform.addAction('gform_post_conditional_logic_field_action', function (formId, action, targetId, defaultValues, isInit) {
