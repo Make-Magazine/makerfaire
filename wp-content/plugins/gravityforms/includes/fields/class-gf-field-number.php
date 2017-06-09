@@ -167,7 +167,7 @@ class GF_Field_Number extends GF_Field {
 					$instruction = "<div class='instruction $validation_class'>" . $message . '</div>';
 				}
 			}
-		} elseif ( RG_CURRENT_VIEW == 'entry' ) {
+		} elseif ( rgget('view') == 'entry' ) {
 			$value = GFCommon::format_number( $value, $this->numberFormat, rgar( $entry, 'currency' ) );
 		}
 

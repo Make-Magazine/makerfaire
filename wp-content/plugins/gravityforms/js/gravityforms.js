@@ -269,7 +269,7 @@ function gformDeleteUploadedFile(formId, fieldId, deleteButton){
     parent.find(".ginput_preview").eq(fileIndex).remove();
 
     //displaying single file upload field
-    parent.find("input[type=\"file\"]").removeClass("gform_hidden");
+    parent.find('input[type="file"],.validation_message,#extensions_message_' + formId + '_' + fieldId).removeClass("gform_hidden");
 
     //displaying post image label
     parent.find(".ginput_post_image_file").show();
@@ -763,6 +763,8 @@ function gformAddListItem( addButton, max ) {
     gformToggleIcons( $container, max );
     gformAdjustClasses( $container );
 
+    gform.doAction( 'gform_list_post_item_add', $clone, $container );
+
 }
 
 function gformDeleteListItem( deleteButton, max ) {
@@ -775,6 +777,8 @@ function gformDeleteListItem( deleteButton, max ) {
 
     gformToggleIcons( $container, max );
     gformAdjustClasses( $container );
+ 
+    gform.doAction( 'gform_list_post_item_delete', $container );
 
 }
 
