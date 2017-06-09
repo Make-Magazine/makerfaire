@@ -349,6 +349,7 @@ function mf_custom_import_entries() {
         //ensure 19 and 20 (original space size and exposure are locked)
         $wpdb->update('wp_rmt_entry_attributes',array('lockBit'=>1),array('attribute_id'=>19,'entry_id'=>$entryID),array('%d'),array('%d','%d'));
         $wpdb->update('wp_rmt_entry_attributes',array('lockBit'=>1),array('attribute_id'=>20,'entry_id'=>$entryID),array('%d'),array('%d','%d'));
+
         /*    Confirmation comments     */
         //first clear out any confirmation comments, then add from upload
 
@@ -550,7 +551,7 @@ function mf_custom_import_entries() {
       $wpdb->insert('wp_mf_location',array('entry_id'=>$entryID,'subarea_id'=>$rowData['subarea_id'],'location'=>$rowData['location']),array('%d','%d','%s'));
     }
     //set resource status to ready
-    gform_update_meta( $entryID, 'res_status','ready' );
+    gform_update_meta( $entryID, 'res_status','import' );
 
     //create maker table info
      GFRMTHELPER::updateMakerTables($entryID);

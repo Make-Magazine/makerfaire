@@ -150,15 +150,21 @@ function getModalData($tableData){
           . '<br/><small><i>If you copy an entry, you will have the chance to make edits and upload new images before submitting your new application.</i></small></p>'
           . '<hr/>'
           . '<div class="pre-scrollable">';
-
+  $return .=  '<div class="row header hidden-xs ">'
+              .   '<div class="col-sm-2 col-md-3 ">Faire</div>'
+              .   '<div class="col-sm-2">Type</div>'
+              .   '<div class="col-sm-1">ID</div>'
+              .   '<div class="col-sm-4">Name</div>'
+              .   '<div class="col-sm-3 col-md-2"></div>'
+              . '</div>';
   foreach ($prevEntries as $prevEntry){
     if($prevEntry['maker_type']=='contact'){ //contact or entry creator
-      $return .=  '<div class="row">'
-              .   '<div class="col-sm-3">'.$prevEntry['faire_name'].'</div>'
-              .   '<div class="col-sm-1">'.$prevEntry['form_type'].'</div>'
+      $return .=  '<div class="row striped">'
+              .   '<div class="col-sm-2 col-md-3">'.$prevEntry['faire_name'].'</div>'
+              .   '<div class="col-sm-2">'.$prevEntry['form_type'].'</div>'
               .   '<div class="col-sm-1">'.$prevEntry['lead_id'].'</div>'
-              .   '<div class="col-sm-5">'.$prevEntry['presentation_title'].'</div>'
-              .   '<div class="col-sm-2"><a href="'.$currentURL.'?copyEntry='.$prevEntry['lead_id'].'">Copy this Entry</a></div>'
+              .   '<div class="col-sm-4">'.$prevEntry['presentation_title'].'</div>'
+              .   '<div class="col-sm-3 col-md-2"><a href="'.$currentURL.'?copyEntry='.$prevEntry['lead_id'].'">Copy this Entry</a></div>'
               . '</div>';
     }
   }
