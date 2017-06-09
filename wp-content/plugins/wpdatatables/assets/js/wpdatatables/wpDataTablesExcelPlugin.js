@@ -549,9 +549,10 @@
         if ( changed_cells.length > 0 ) {
             var ajax_data = {
                 action: 'wdt_save_table_cells_frontend',
+                wdtNonce: $('#wdtNonceFronendEdit').val(),
                 table_id: wpdatatable_id,
                 cells: changed_cells,
-                rows: changed_rows
+                rows: changed_rows,
             };
 
             $.ajax({
@@ -792,7 +793,8 @@
             var ajax_data = {
                 action: 'wdt_delete_table_rows',
                 table_id: wpdatatable_id,
-                rows: deleteRows
+                rows: deleteRows,
+                wdtNonce: $('#wdtNonceFronendEdit').val()
             };
 
             $.ajax({

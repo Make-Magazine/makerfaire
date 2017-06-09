@@ -1,29 +1,27 @@
 === Master Slider - Responsive Touch Slider ===
-Contributors: averta
+Contributors: averta, averta_support
 Donate link: http://averta.net/
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: banner rotator, carousel, content slider, gallery, image slider, responsive slider, showcase, slideshow, swipe, touch slider, video gallery, SEO, vertical slide, HTML5 slider, hardware accelerate, best slider, animation, mobile slider, iOS, android, video slider, youtube slider, horizontal slider, vertical slider, fullwidth slider, fullscreen slider, post slider, photo slider, online album, mobile slider, WordPress slider,wpml, ,ultisite, wistia, woocommerce, product slider, woocommerce slider, portfolio, gallery
-Requires at least: 4.0
-Tested up to: 4.6.1
-Stable tag: 2.9.5
+Requires at least: 4.1
+Tested up to: 4.7.3
+Stable tag: 2.9.8
 
 The most advanced responsive and HTML5 WordPress slider plugin with touch swipe navigation that works smoothly on desktop and devices.
 
 == Description ==
 
->[Demo sliders](http://avt.li/mswftem "Live demos of Master Slider free version") | [Features](http://avt.li/mswfea "All features") | [Documentation](http://avt.li/mswfdoc "Master Slider documentation") | [Video tutorials](http://avt.li/msfvids "Watch all video tutorials") | [Support forum](http://wordpress.org/support/plugin/master-slider "Free support")
+>[Demos](http://avt.li/mswftem "Live demos of Master Slider free version") | [Features](http://avt.li/mswfea "All features") | [Documentation](http://avt.li/mswfdoc "Master Slider documentation") | [Video tutorials](http://avt.li/msfvids "Watch all video tutorials") | [Support](http://wordpress.org/support/plugin/master-slider "Free support")
 
+[youtube https://www.youtube.com/watch?v=nyjpGEHwOn8]
+[Watch all video tutorials](http://avt.li/msfvids)
 
 = Overview =
 
 Master Slider is a free responsive image and content slider with super smooth hardware accelerated transitions. It supports touch navigation with pure swipe gesture that you have never experienced before. It's a truly responsive and device friendly slider which works perfectly in all major devices.
 
->Looking for a perfect free theme for Master Slider? [Get Phlox theme for free](http://avt.li/msphpp "Phlox theme - Free Minimal and Responsive WordPress Theme")
-
-[youtube https://www.youtube.com/watch?v=nyjpGEHwOn8]
-
-[Watch all video tutorials](http://avt.li/msfvids)
+>Looking for a perfect Free WP theme for Master Slider? [Get Phlox theme](http://avt.li/msphpp "Phlox theme - Free Minimal and Responsive WordPress Theme")
 
 Master Slider is built using WordPress best practices both on the front and the back end. This results in an efficient, robust and intuitive plugin. It's works with any theme, including the default WordPress themes.
 
@@ -194,12 +192,16 @@ You can use automatic update to update the plugin safely.
 
 = Where can I find Master Slider documentation and user guides =
 
-If you have any question about working with "Master Slider", you can take a look at [online documentations](http://masterslider.com/doc/wp/free/)
+If you have any question about working with "Master Slider", you can take a look at [online documentations](http://docs.averta.net/display/MSWPF/)
 
-If you get stuck you can follow these [steps to get support](http://masterslider.com/doc/wp/free/#support).
+= When I preview the slider in admin page everything looks fine, but when I add it to my website the slider looks different. How can I fix that? =
+It is a known issue with few poor coded themes that can be easily fixed. In fact, some styles in your theme conflicts with the styles in Master Slider. You can simply submit a ticket in support section, our support agents will advice you how to fix the conflicts.
 
 = Will Master Slider work with my theme? =
 Master Slider works with any theme, including the default WordPress themes.
+
+= Can you recommend a free theme that is optimized for Master Slider =
+Fortunately there are plenty of options out there, including the default WordPress themes too. But the one that we recommend most is [Phlox theme](http://avt.li/msphpp "Phlox theme - Free Minimal and Responsive WordPress Theme") which is a free, versatile and optimized theme for Master Slider.
 
 = I added text to slide (slide info), but it does not appear in slider =
 You need to add "slide info" control too. To do that, go for editing slider, under "slider controls" tab, select and add "slide info" control
@@ -228,6 +230,16 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 
 == Changelog ==
+
+= Version 2.9.8 / (15.4.2017) =
+- [Fix]: Italian translation added
+- [Fix]: Minor bugs fixed
+
+= Version 2.9.7 / (26.3.2017) =
+- [Fix]: A minor issue with PHP 7 fixed
+
+= Version 2.9.6 / (15.3.2017) =
+- [Fix]: Minor bugs fixes
 
 = Version 2.9.5 / (21.9.2016) =
 - [Fix]: Minor bugs fixes
@@ -414,5 +426,6 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Upgrade Notice ==
 
-= Version 2.9.5 / (21.9.2016) =
-- [Fix]: Minor bugs fixes
+= Version 2.9.8 / (15.4.2017) =
+- [Fix]: Italian translation added
+- [Fix]: Minor bugs fixed

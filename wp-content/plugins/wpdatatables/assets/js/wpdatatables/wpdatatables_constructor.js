@@ -71,9 +71,9 @@ var aceEditor = null;
     }
 
     /**
-     * Add a Nonce
+     * Add nonce value
      */
-    constructedTableData.nonce = $('#wdtConstructorNonce').val()
+    var wdtNonce = $('#wdtNonce').val()
 
     /**
      * Next step handler
@@ -338,7 +338,8 @@ var aceEditor = null;
                 type: 'POST',
                 data: {
                     action: 'wpdatatables_create_and_open_in_editor',
-                    table_data: constructedTableData
+                    table_data: constructedTableData,
+                    wdtNonce: wdtNonce,
                 },
                 success: function (link) {
                     window.location = link+table_type;
@@ -616,7 +617,8 @@ var aceEditor = null;
             url: ajaxurl,
             data: {
                 action: 'wpdatatables_preview_file_table',
-                table_data: constructedTableData
+                table_data: constructedTableData,
+                wdtNonce: wdtNonce,
             },
             type: 'post',
             dataType: 'json',
@@ -683,7 +685,8 @@ var aceEditor = null;
             url: ajaxurl,
             data: {
                 action: 'wpdatatables_generate_wp_based_query',
-                table_data: constructedTableData
+                table_data: constructedTableData,
+                wdtNonce: wdtNonce,
             },
             type: 'post',
             dataType: 'json',
@@ -708,7 +711,7 @@ var aceEditor = null;
             data: {
                 action: 'wpdatatables_refresh_wp_query_preview',
                 query: aceEditor.getValue(),
-                nonce: constructedTableData.nonce
+                wdtNonce: wdtNonce,
             },
             type: 'post',
             success: function (data) {
@@ -763,7 +766,8 @@ var aceEditor = null;
             url: ajaxurl,
             data: {
                 action: 'wpdatatables_generate_mysql_based_query',
-                table_data: constructedTableData
+                table_data: constructedTableData,
+                wdtNonce: wdtNonce,
             },
             type: 'post',
             dataType: 'json',
@@ -791,7 +795,8 @@ var aceEditor = null;
             url: ajaxurl,
             data: {
                 action: 'wpdatatables_constructor_generate_wdt',
-                table_data: constructedTableData
+                table_data: constructedTableData,
+                wdtNonce: wdtNonce,
             },
             type: 'post',
             dataType: 'json',
@@ -825,7 +830,8 @@ var aceEditor = null;
             url: ajaxurl,
             data: {
                 action: 'wpdatatables_constructor_get_mysql_table_columns',
-                tables: tables
+                tables: tables,
+                wdtNonce: wdtNonce,
             },
             type: 'post',
             dataType: 'json',
@@ -873,7 +879,8 @@ var aceEditor = null;
             dataType: 'json',
             data: {
                 action: 'wpdatatables_constructor_read_file_data',
-                table_data: constructedTableData
+                table_data: constructedTableData,
+                wdtNonce: wdtNonce,
             },
             type: 'post',
             success: function (data) {

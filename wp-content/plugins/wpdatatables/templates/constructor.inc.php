@@ -2,7 +2,7 @@
     <div id="wdtPreloadLayer" class="overlayed">
     </div>
 
-	<input type="hidden" id="wdtConstructorNonce" value="<?php echo wp_create_nonce( 'wdt_constructor_nonce_'.get_current_user_id() ); ?>" />
+    <?php wp_nonce_field('wdt_constructor_nonce', 'wdtNonce'); ?>
     
     <div class="wrap">
 	    <div id="poststuff">

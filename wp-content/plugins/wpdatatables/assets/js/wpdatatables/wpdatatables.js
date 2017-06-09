@@ -33,7 +33,44 @@ var wdtCustomUploader = null;
                         if (typeof tableDescription.tabletWidth !== 'undefined') {
                             wdtBreakpointDefinition.tablet = parseInt(tableDescription.tabletWidth);
                         }
-                        wpDataTablesResponsiveHelpers[tableDescription.tableId] = new ResponsiveDatatablesHelper($(tableDescription.selector).dataTable(), wdtBreakpointDefinition);
+                        wpDataTablesResponsiveHelpers[tableDescription.tableId] = new ResponsiveDatatablesHelper($(tableDescription.selector).dataTable(), wdtBreakpointDefinition, {
+                            showDetail: function (detailsRow) {
+                                if( tableDescription.conditional_formatting_columns ) {
+                                    var responsive_rows = detailsRow.find('li');
+                                    var oSettings = wpDataTables[tableDescription.tableId].fnSettings();
+                                    var params = {};
+
+                                    params.thousandsSeparator = tableDescription.number_format == 1 ? '.' : ',';
+                                    params.decimalSeparator = tableDescription.number_format == 1 ? ',' : '.';
+                                    params.dateFormat = tableDescription.datepickFormat;
+                                    params.momentDateFormat = params.dateFormat.replace('dd','DD').replace('M','MMM').replace('mm','MM');
+                                    params.momentTimeFormat = tableDescription.timeFormat.replace('H','H').replace('i','mm');
+
+                                    for( var i = 0; i < tableDescription.conditional_formatting_columns.length; i++ ) {
+                                        var column =  oSettings.oInstance.api().column(tableDescription.conditional_formatting_columns[i] + ':name', {search: 'applied'});
+                                        var conditionalFormattingRules = oSettings.aoColumns[column.index()].conditionalFormattingRules;
+                                        params.columnType = oSettings.aoColumns[column.index()].wdtType;
+
+                                        for ( var j in conditionalFormattingRules ) {
+                                            responsive_rows.each(function() {
+                                                $(this).find('.columnValue').contents().filter(function() {
+                                                    if ( this.nodeType === 8 ) {
+                                                        $(this).remove();
+                                                    }
+                                                });
+
+                                                var value_cell = $(this).find('.columnValue').html();
+
+                                                var column_index = $(this).data('column');
+                                                if ( column_index == column.index() ) {
+                                                    wdtCheckConditionalFormatting(conditionalFormattingRules[j], params, $(this), true);
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     }
                     wdtAddOverlay('#' + tableDescription.tableId);
                 }
@@ -110,14 +147,17 @@ var wdtCustomUploader = null;
                             $inputElement.val(values);
                             $inputElement.selecter('refresh');
                         } else {
-                            if (inputElementType == 'attachment') {
+                            if (inputElementType == 'attachment' || $.inArray(columnType, ['icon']) !== -1) {
                                 if (val != '') {
                                     if ($(val).children('img').first().attr('src') != undefined) {
                                         val = $(val).children('img').first().attr('src') + '||' + $(val).attr('href');
 
                                     } else if ($(val).attr('href') != undefined) {
                                         val = $(val).attr('href');
-                                    }
+
+                                    } else if ($(val).attr('src') != undefined) {
+                                    val = $(val).attr('src');
+                                }
 
                                     $inputElement.parent().parent().find('div.files').html('<p>' + val.split('/').pop() + ' [<a href="#" data-key="' + $inputElement.attr('id') + '" class="wdtdeleteFile">' + wpdatatables_frontend_strings.detach_file + '</a>]</p>')
                                 } else {
@@ -125,7 +165,7 @@ var wdtCustomUploader = null;
                                 }
                             } else {
                                 if (val.indexOf('<a ') != -1) {
-                                    if ($.inArray(columnType, ['link', 'email']) !== -1) {
+                                    if ($.inArray(columnType, ['link', 'email', 'icon']) !== -1) {
                                         $link = $(val);
                                         if ($link.attr('href').indexOf($link.html()) === -1) {
                                             val = $link.attr('href').replace('mailto:', '') + '||' + $link.html();
@@ -158,7 +198,7 @@ var wdtCustomUploader = null;
                     });
                 }
 
-                // Saving of the table data for frontend 
+                // Saving of the table data for frontend
                 wpDataTablesFunctions[tableDescription.tableId].saveTableData = function (forceRedraw, closeDialog) {
                     if (typeof (forceRedraw) === undefined) {
                         forceRedraw = false;
@@ -168,7 +208,9 @@ var wdtCustomUploader = null;
                     }
                     $(tableDescription.selector + '_edit_dialog').parent().addClass('overlayed');
                     wpDataTablesUpdatingFlags[tableDescription.tableId] = true;
-                    var formdata = {table_id: tableDescription.tableWpId};
+                    var formdata = {
+                        table_id: tableDescription.tableWpId,
+                    };
                     var aoData = [];
                     var valid = true;
                     var validation_message = '';
@@ -221,6 +263,8 @@ var wdtCustomUploader = null;
                         } else if ($(this).data('input_type') == 'multi-selectbox') {
                             if ($(this).val()) {
                                 formdata[$(this).data('key')] = $(this).val().join(', ');
+                            } else {
+                                formdata[$(this).data('key')] = '';
                             }
                         } else {
                             formdata[$(this).data('key')] = $(this).val();
@@ -242,6 +286,7 @@ var wdtCustomUploader = null;
                         dataType: 'json',
                         data: {
                             action: 'wdt_save_table_frontend',
+                            wdtNonce: $('#wdtNonceFronendEdit').val(),
                             formdata: formdata
                         },
                         success: function (return_data) {
@@ -292,7 +337,7 @@ var wdtCustomUploader = null;
                 }
             }
             //[<--/ Full version -->]//
-            
+
             // Apply the selecter to show entries
             dataTableOptions.fnInitComplete = function( oSettings, json ) {
                 jQuery('#' + tableDescription.tableId + '_length select').selecter();
@@ -377,13 +422,13 @@ var wdtCustomUploader = null;
                                 }else{
                                     var sum_str = wdtFormatNumber( sum, tableDescription.decimal_places, decimalSeparator, thousandsSeparator );
                                 }
-                                
+
                                 $( '#'+tableDescription.tableId+ ' tfoot tr.sum_row td.sum_cell[data-column_header="'+tableDescription.sum_columns[i]+'"]' ).html( '&#8721; = ' + sum_str );
-                               
+
                             }
                         }
                     });
-                    
+
                 }
             }
 
@@ -393,78 +438,19 @@ var wdtCustomUploader = null;
                     sName: 'updateConditionalFormatting',
                     fn: function( oSettings ){
                         for( var i = 0; i < tableDescription.conditional_formatting_columns.length; i++ ) {
+                            var params = {};
                             var column =  oSettings.oInstance.api().column(tableDescription.conditional_formatting_columns[i] + ':name', {search: 'applied'});
                             var conditionalFormattingRules = oSettings.aoColumns[column.index()].conditionalFormattingRules;
-                            var columnType = oSettings.aoColumns[column.index()].wdtType;
-                            var thousandsSeparator = tableDescription.number_format == 1 ? '.' : ',';
-                            var decimalSeparator = tableDescription.number_format == 1 ? ',' : '.';
-                            var dateFormat = tableDescription.datepickFormat;
-                            var momentDateFormat = dateFormat.replace('dd','DD').replace('M','MMM').replace('mm','MM');
-                            var momentTimeFormat = tableDescription.timeFormat.replace('H','H').replace('i','mm');
+                            params.columnType = oSettings.aoColumns[column.index()].wdtType;
+                            params.thousandsSeparator = tableDescription.number_format == 1 ? '.' : ',';
+                            params.decimalSeparator = tableDescription.number_format == 1 ? ',' : '.';
+                            params.dateFormat = tableDescription.datepickFormat;
+                            params.momentDateFormat = params.dateFormat.replace('dd','DD').replace('M','MMM').replace('mm','MM');
+                            params.momentTimeFormat = tableDescription.timeFormat.replace('H','H').replace('i','mm');
                             for( var j in conditionalFormattingRules ){
                                 var nodes = column.nodes();
                                 column.nodes().to$().each( function(){
-                                    var ruleMatched = false;
-                                    if( ( columnType == 'int' ) || ( columnType == 'float' ) ){
-                                        // Process numeric comparison
-                                        var cellVal = parseFloat( wdtUnformatNumber( $(this).html(), thousandsSeparator, decimalSeparator, true) )
-                                        var ruleVal = conditionalFormattingRules[j].cellVal;
-                                    }else if( columnType == 'date' ){
-                                        // Process date comparison with datepicker methods
-                                        var cellVal = $.datepicker.parseDate(dateFormat, $(this).html());
-                                        var ruleVal = $.datepicker.parseDate(dateFormat, conditionalFormattingRules[j].cellVal);
-                                    }else if( columnType == 'datetime' ){
-                                        // Process date comparison with datepicker methods
-                                        var cellVal = moment( $(this).html(), momentDateFormat+' '+momentTimeFormat).toDate();
-                                        var ruleVal = moment( conditionalFormattingRules[j].cellVal, momentDateFormat+' '+momentTimeFormat).toDate();
-                                    }else if( columnType == 'time' ){
-                                        // Process date comparison with datepicker methods
-                                        var cellVal = moment( $(this).html(), momentTimeFormat).toDate();
-                                        var ruleVal = moment( conditionalFormattingRules[j].cellVal, momentTimeFormat).toDate();
-                                    }else{
-                                        // Process string comparison
-                                        var cellVal = $(this).html();
-                                        var ruleVal = conditionalFormattingRules[j].cellVal;
-                                    }
-                                    switch( conditionalFormattingRules[j].ifClause ){
-                                        case 'lt':
-                                            ruleMatched = cellVal < ruleVal;
-                                        break;
-                                        case 'lteq':
-                                            ruleMatched = cellVal <= ruleVal;
-                                        break;
-                                        case 'eq':
-                                            if( columnType == 'date'
-                                                || columnType == 'datetime'
-                                                || columnType == 'time' ){
-                                                cellVal = cellVal != null ? cellVal.getTime() : null;
-                                                ruleVal = ruleVal != null ? ruleVal.getTime() : null;
-                                            }
-                                            ruleMatched = cellVal == ruleVal;
-                                        break;
-                                        case 'neq':
-                                            if( columnType == 'date' || columnType == 'datetime' ){
-                                                cellVal = cellVal != null ? cellVal.getTime() : null;
-                                                ruleVal = ruleVal != null ? ruleVal.getTime() : null;
-                                            }
-                                            ruleMatched = cellVal != ruleVal;
-                                            break;
-                                        case 'gteq':
-                                            ruleMatched = cellVal >= ruleVal;
-                                        break;
-                                        case 'gt':
-                                            ruleMatched = cellVal > ruleVal;
-                                        break;
-                                        case 'contains':
-                                            ruleMatched = cellVal.indexOf( ruleVal ) !== -1;
-                                        break;
-                                        case 'contains_not':
-                                            ruleMatched = cellVal.indexOf( ruleVal ) == -1;
-                                        break;
-                                    }
-                                    if( ruleMatched ){
-                                        wdtApplyCellAction( $(this), conditionalFormattingRules[j].action, conditionalFormattingRules[j].setVal  );
-                                    }
+                                    wdtCheckConditionalFormatting(conditionalFormattingRules[j], params, $(this));
                                 });
                             }
                         }
@@ -474,7 +460,7 @@ var wdtCustomUploader = null;
                     wpDataTables[tableDescription.tableId].fnDraw();
                 }
             }
-                
+
             // Init the callback for checking if the selected row is first/last in the dataset
             wpDataTables[tableDescription.tableId].checkSelectedLimits = function () {
                 if (wpDataTablesUpdatingFlags[tableDescription.tableId]) {
@@ -553,6 +539,9 @@ var wdtCustomUploader = null;
                  */
                 $(tableDescription.selector + '_next_edit_dialog').click(function (e) {
                     e.preventDefault();
+                    if (wpDataTables[tableDescription.tableId].fnSettings()._iDisplayLength == -1 ) {
+                        wpDataTables[tableDescription.tableId].fnSettings()._iDisplayLength  = wpDataTables[tableDescription.tableId].fnSettings()._iRecordsTotal
+                    }
                     var sel_row_index = $(tableDescription.selector + ' > tbody > tr.selected').index();
                     if (sel_row_index < wpDataTables[tableDescription.tableId].fnSettings()._iDisplayLength - 1) {
                         $(tableDescription.selector + ' > tbody > tr.selected').removeClass('selected');
@@ -621,12 +610,17 @@ var wdtCustomUploader = null;
                  */
                 var dateFormat = tableDescription.datepickFormat.replace(/y/g, 'yy').replace(/Y/g, 'yyyy').replace(/M/g, 'mmm');
                 var datePickerInit = function (selector, additional_params, state) {
+
+                    if( $('#wdtDatePickContainer').length == 0 ){
+                        $('<div id="wdtDatePickContainer" class="wpDataTables"></div>').appendTo('body');
+                    }
+
                     var input = $(selector).pickadate({
                         format: dateFormat,
                         formatSubmit: dateFormat,
                         selectYears: 20,
                         selectMonths: true,
-                        container: '.wpDataTablesWrapper',
+                        container: '#wdtDatePickContainer',
                         onClose: additional_params,
                         firstDay: 1
                     });
@@ -649,7 +643,7 @@ var wdtCustomUploader = null;
                     var picker = $(selector).pickatime({
                         interval: timepickRange,
                         format: timeFormat,
-                        container: '.wpDataTablesWrapper',
+                        container: '#wdtDatePickContainer',
                         onClose: additional_params
                     }).pickatime('picker');
                     if (state == 'opened') {
@@ -671,66 +665,72 @@ var wdtCustomUploader = null;
                     dtPickersHtml += '</div>';
                     $(dtPickersHtml).insertBefore( $input );
 
-                    var dt_datepick = $input
-                        .parent().
-                        find('.dtpick_block input.dt_datepick')
-                        .pickadate({
-                            format: dateFormat,
-                            formatSubmit: dateFormat,
-                            selectYears: true,
-                            selectMonths: true,
-                            container: '.wpDataTablesWrapper',
-                            onSet: function(item){
-                                if( 'clear' in item ){
-                                    $input.val('');
-                                }
-                                if( 'select' in item ){
-                                    dt_timepick.open()
-                                }
-                            }
-                        }).pickadate('picker');
+                    $input.each(function(){
 
-                    var dt_timepick = $input
-                        .parent()
-                        .find('.dtpick_block input.dt_timepick')
-                        .pickatime({
-                            container: '.wpDataTablesWrapper',
-                            interval: timepickRange,
-                            format: timeFormat,
-                            onRender: function(){
-                                $('<button>'+wpdatatables_frontend_strings.back_to_date+'</button>')
-                                    .on('click',function(){
-                                        dt_timepick.close();
-                                        dt_datepick.open();
-                                    })
-                                    .prependTo( this.$root.find('.picker__box') );
-                            },
-                            onSet: function( item ){
-                                if( 'select' in item ){
-                                    $input
-                                        .val( dt_datepick.get()+ ' ' + dt_timepick.get() )
-                                        .change()
-                                }
-                                if( 'clear' in item ){
-                                    $input.val('');
-                                }
-                            }
-                        }).pickatime('picker');
+                        var $this = $(this);
 
-                    // Attach datetimepicker to from
-                    $input
-                        .on('focus', function(){
-                            dt_datepick.open()
-                        })
-                        .on('click', function(e){
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
+                        var dt_datepick = $this
+                            .parent()
+                            .find('.dtpick_block input.dt_datepick')
+                            .pickadate({
+                                format: dateFormat,
+                                formatSubmit: dateFormat,
+                                selectYears: true,
+                                selectMonths: true,
+                                container: '#wdtDatePickContainer',
+                                onSet: function(item){
+                                    if( 'clear' in item ){
+                                        $this.val('');
+                                    }
+                                    if( 'select' in item ){
+                                        dt_timepick.open()
+                                    }
+                                }
+                            }).pickadate('picker');
+
+                        var dt_timepick = $this
+                            .parent()
+                            .find('.dtpick_block input.dt_timepick')
+                            .pickatime({
+                                container: '#wdtDatePickContainer',
+                                interval: timepickRange,
+                                format: timeFormat,
+                                onRender: function(){
+                                    $('<button>'+wpdatatables_frontend_strings.back_to_date+'</button>')
+                                        .on('click',function(){
+                                            dt_timepick.close();
+                                            dt_datepick.open();
+                                        })
+                                        .prependTo( this.$root.find('.picker__box') );
+                                },
+                                onSet: function( item ){
+                                    if( 'select' in item ){
+                                        $this
+                                            .val( dt_datepick.get()+ ' ' + dt_timepick.get() )
+                                            .change()
+                                    }
+                                    if( 'clear' in item ){
+                                        $this
+                                            .val('');
+                                    }
+                                }
+                            }).pickatime('picker');
+
+                        // Attach datetimepicker to from
+                        $this
+                            .on('focus', function(){
+                                dt_datepick.open()
+                            })
+                            .on('click', function(e){
+                                e.preventDefault();
+                                e.stopImmediatePropagation();
+                                dt_datepick.open();
+                            });
+
+                        if (state == 'opened') {
                             dt_datepick.open();
-                        });
-
-                    if (state == 'opened') {
-                        dt_datepick.open();
-                    }
+                        }
+                    });
 
                 }
                 dateTimePickerInit(tableDescription.selector + '_edit_dialog input.datetimepicker');
@@ -800,14 +800,20 @@ var wdtCustomUploader = null;
                  */
                 $('.edit_table[aria-controls="' + tableDescription.tableId + '"]').click(function () {
                     if ($(this).hasClass('disabled'))
-                        return false;
+                       return false;
 
                     var row = $(tableDescription.selector + ' tr.selected').get(0);
                     var data = wpDataTables[tableDescription.tableId].fnGetData(row);
                     wpDataTablesFunctions[tableDescription.tableId].applyData(data);
                     wpDataTables[tableDescription.tableId].checkSelectedLimits();
                     $.remodal.lookup[wpDataTableDialogs[tableDescription.tableId].data('remodal')].open();
-                });
+                    if($('.editDialogInput').closest('tr').is(':visible')){
+                       return;
+                    }
+                    else {
+                        $(tableDescription.selector + '_edit_dialog div.input_alert_notify').show();
+                    }
+                    });
 
 
                 if (tableDescription.inlineEditing) {
@@ -823,10 +829,22 @@ var wdtCustomUploader = null;
 
                     $('#' + tableDescription.tableId + '_edit_dialog .editDialogInput').each(function (index) {
 
+                        var $inputElement = $('#' + tableDescription.tableId + '_edit_dialog .editDialogInput:eq(' + index + ')');
+                        var inputElementType = $inputElement.data('input_type');
+
+                        if( inputElementType == 'mce-editor' ) {
+                            tinymce.execCommand('mceRemoveEditor',true, $inputElement.attr('id'));
+                            tinymce.init({
+                                selector: '#' + $inputElement.attr('id'),
+                                menubar:false
+                            });
+                        }
+
                         if ($(this).is('select')) {
                             $(this).find('option:first').attr('selected', 'selected');
                             $(this).selecter('refresh');
                         }
+
                     });
 
                     // Set the default values
@@ -851,7 +869,12 @@ var wdtCustomUploader = null;
                         $('#' + tableDescription.tableId + '_edit_dialog input.editDialogInput[data-input_type="attachment"]').val();
                         $('#' + tableDescription.tableId + '_edit_dialog div.files').html('');
                     }
-
+                    if($('.editDialogInput').closest('tr').is(':visible')){
+                        return;
+                    }
+                    else {
+                        $(tableDescription.selector + '_edit_dialog div.input_alert_notify').show();
+                    }
                 });
 
                 /**
@@ -882,7 +905,8 @@ var wdtCustomUploader = null;
                                 action: 'wdt_delete_table_row',
                                 id_key: tableDescription.idColumnKey,
                                 id_val: id_val,
-                                table_id: tableDescription.tableWpId
+                                table_id: tableDescription.tableWpId,
+                                wdtNonce: $('#wdtNonceFronendEdit').val()
                             },
                             success: function () {
                                 wpDataTables[tableDescription.tableId].fnDraw(false);
@@ -898,16 +922,19 @@ var wdtCustomUploader = null;
                     $.remodal.lookup[$deleteDialog.data('remodal')].open();
                 });
 
-                // Add a popover that include edit elements
+                // Add a popover that includes edit elements
                 if (tableDescription.popoverTools) {
                     $(tableDescription.selector + '_wrapper').css('position', 'relative');
-                    $('<div class="wpDataTablesPopover editTools"></div>').prependTo(tableDescription.selector + '_wrapper').hide();
+                    $('<div class="wpDataTablesPopover editTools ' + tableDescription.tableId + '"></div>').prependTo(tableDescription.selector + '_wrapper').hide();
                     $('.new_table_entry[aria-controls="' + tableDescription.tableId + '"]').prependTo(tableDescription.selector + '_wrapper .wpDataTablesPopover.editTools').css('float', 'right');
                     $('.edit_table[aria-controls="' + tableDescription.tableId + '"]').prependTo(tableDescription.selector + '_wrapper .wpDataTablesPopover.editTools').css('float', 'right');
                     $('.delete_table_entry[aria-controls="' + tableDescription.tableId + '"]').prependTo(tableDescription.selector + '_wrapper .wpDataTablesPopover.editTools').css('float', 'right');
                 }
 
                 var clickEvent = function (e) {
+                    if ( $(this).hasClass('group') ) {
+                        return false;
+                    }
                     // Set controls popover position
                     var popoverVerticalPosition = $(this).offset().top - $(tableDescription.selector + '_wrapper').offset().top - $('.wpDataTablesPopover.editTools').outerHeight() - 7;
                     // Check a cell is edited
@@ -926,7 +953,7 @@ var wdtCustomUploader = null;
                         $('.delete_table_entry[aria-controls="' + tableDescription.tableId + '"]').removeClass('disabled');
                         if (tableDescription.popoverTools) {
                             if (!editedRow) {
-                                $('.wpDataTablesPopover.editTools').show().css('top', popoverVerticalPosition);
+                                $('.wpDataTablesPopover.editTools.' + tableDescription.tableId + '').show().css('top', popoverVerticalPosition);
                             } else {
                                 return false;
                             }
@@ -935,7 +962,7 @@ var wdtCustomUploader = null;
                         $('.edit_table[aria-controls="' + tableDescription.tableId + '"]').addClass('disabled');
                         $('.delete_table_entry[aria-controls="' + tableDescription.tableId + '"]').addClass('disabled');
                         if (tableDescription.popoverTools) {
-                            $('.wpDataTablesPopover.editTools').hide();
+                            $('.wpDataTablesPopover.editTools.' + tableDescription.tableId + '').hide();
                         }
                     }
                 }
@@ -943,7 +970,7 @@ var wdtCustomUploader = null;
                 var ua = navigator.userAgent,
                         event = (ua.match(/iPad/i)) ? "touchstart" : "click";
 
-                $(document).on(event, tableDescription.selector + ' tbody tr', clickEvent);
+                $(document).off(event, tableDescription.selector + ' tbody tr').on(event, tableDescription.selector + ' tbody tr', clickEvent);
 
                 /**
                  * Detached the chosen attachment
@@ -974,37 +1001,6 @@ var wdtCustomUploader = null;
             });
 
         });
-
-        //[<-- Full version -->]//
-        /**
-         * Charts
-         */
-        if (typeof wpDataTablesCharts !== 'undefined') {
-            google.load("visualization", "1", {packages: ["corechart"], callback: function () {
-                    for (var chartId in wpDataTablesCharts) {
-                        switch (wpDataTablesCharts[chartId].type) {
-                            case 'Line':
-                                var chart = new google.visualization.LineChart(document.getElementById(wpDataTablesCharts[chartId].container));
-                                break;
-                            case 'Area':
-                                var chart = new google.visualization.AreaChart(document.getElementById(wpDataTablesCharts[chartId].container));
-                                break;
-                            case 'Bar':
-                                var chart = new google.visualization.BarChart(document.getElementById(wpDataTablesCharts[chartId].container));
-                                break;
-                            case 'Column':
-                                var chart = new google.visualization.ColumnChart(document.getElementById(wpDataTablesCharts[chartId].container));
-                                break;
-                            case 'Pie':
-                                var chart = new google.visualization.PieChart(document.getElementById(wpDataTablesCharts[chartId].container));
-                                break;
-                        }
-                        chart.draw(google.visualization.arrayToDataTable(wpDataTablesCharts[chartId].values), wpDataTablesCharts[chartId].options);
-                    }
-                }
-            });
-        }
-        //[<--/ Full version -->]//
 
     })
 
@@ -1087,6 +1083,96 @@ function wdtAddOverlay(table_selector) {
 
 function wdtRemoveOverlay(table_selector) {
     jQuery(table_selector).removeClass('overlayed');
+}
+
+/**
+ * Get cell value cleared from neighbour html tags
+ * @param element
+ * @param responsive
+ * @returns {*}
+ */
+function getPurifiedValue (element, responsive) {
+    if ( responsive ) {
+        var cellVal = element.children('.columnValue').html();
+    } else {
+        var cellVal = element.clone().children().remove().end().html();
+    }
+
+    return cellVal;
+}
+
+/**
+ * Conditional formatting
+ * @param conditionalFormattingRules
+ * @param params
+ * @param element
+ * @param responsive
+ */
+function wdtCheckConditionalFormatting (conditionalFormattingRules, params, element, responsive) {
+
+    var ruleMatched = false;
+    if( ( params.columnType == 'int' ) || ( params.columnType == 'float' ) ){
+        // Process numeric comparison
+        var cellVal = parseFloat( wdtUnformatNumber( getPurifiedValue(element, responsive), params.thousandsSeparator, params.decimalSeparator, true) )
+        var ruleVal = conditionalFormattingRules.cellVal;
+    }else if( params.columnType == 'date' ){
+        // Process date comparison with datepicker methods
+        var cellVal = jQuery.datepicker.parseDate(params.dateFormat, getPurifiedValue(element, responsive));
+        var ruleVal = jQuery.datepicker.parseDate(params.dateFormat, conditionalFormattingRules.cellVal);
+    }else if( params.columnType == 'datetime' ){
+        // Process date comparison with datepicker methods
+        var cellVal = moment( getPurifiedValue(element, responsive), params.momentDateFormat + ' ' + params.momentTimeFormat).toDate();
+        var ruleVal = moment( conditionalFormattingRules.cellVal, params.momentDateFormat + ' ' + params.momentTimeFormat).toDate();
+    }else if( params.columnType == 'time' ){
+        // Process date comparison with datepicker methods
+        var cellVal = moment( getPurifiedValue(element, responsive), params.momentTimeFormat).toDate();
+        var ruleVal = moment( conditionalFormattingRules.cellVal, params.momentTimeFormat).toDate();
+    }else{
+        // Process string comparison
+        var cellVal = getPurifiedValue(element, responsive);
+        var ruleVal = conditionalFormattingRules.cellVal;
+    }
+
+    switch( conditionalFormattingRules.ifClause ){
+        case 'lt':
+            ruleMatched = cellVal < ruleVal;
+            break;
+        case 'lteq':
+            ruleMatched = cellVal <= ruleVal;
+            break;
+        case 'eq':
+            if( params.columnType == 'date'
+                || params.columnType == 'datetime'
+                || params.columnType == 'time' ){
+                cellVal = cellVal != null ? cellVal.getTime() : null;
+                ruleVal = ruleVal != null ? ruleVal.getTime() : null;
+            }
+            ruleMatched = cellVal == ruleVal;
+            break;
+        case 'neq':
+            if( params.columnType == 'date' || params.columnType == 'datetime' ){
+                cellVal = cellVal != null ? cellVal.getTime() : null;
+                ruleVal = ruleVal != null ? ruleVal.getTime() : null;
+            }
+            ruleMatched = cellVal != ruleVal;
+            break;
+        case 'gteq':
+            ruleMatched = cellVal >= ruleVal;
+            break;
+        case 'gt':
+            ruleMatched = cellVal > ruleVal;
+            break;
+        case 'contains':
+            ruleMatched = cellVal.indexOf( ruleVal ) !== -1;
+            break;
+        case 'contains_not':
+            ruleMatched = cellVal.indexOf( ruleVal ) == -1;
+            break;
+    }
+
+    if( ruleMatched ){
+        wdtApplyCellAction( element, conditionalFormattingRules.action, conditionalFormattingRules.setVal  );
+    }
 }
 
 jQuery.fn.dataTableExt.oStdClasses.sWrapper = "wpDataTables wpDataTablesWrapper";

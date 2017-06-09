@@ -13,7 +13,10 @@ class FloatWDTColumn extends WDTColumn {
     
     public function prepareCellOutput( $content ) {
 
-		if( $content === '' ){ return $content; }
+		if( $content === '' || $content === null) {
+			$content = '';
+			return $content;
+		}
 
 		$number_format = get_option('wdtNumberFormat') ? get_option('wdtNumberFormat') : 1;
 		$decimal_places = get_option('wdtDecimalPlaces') !== false ? get_option('wdtDecimalPlaces') : 2;

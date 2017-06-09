@@ -3,8 +3,8 @@ Contributors: johnny5
 Donate link: http://urbangiraffe.com/about/
 Tags: post, admin, seo, pages, manage, 301, 404, redirect, permalink
 Requires at least: 4.2
-Tested up to: 4.7
-Stable tag: 2.5
+Tested up to: 4.8
+Stable tag: 2.6.1
 
 Redirection is a WordPress plugin to manage 301 redirections and keep track of 404 errors without requiring knowledge of Apache .htaccess files.
 
@@ -97,13 +97,27 @@ The plugin works in a similar manner to how WordPress handles permalinks and sho
 
 == Changelog ==
 
+= 2.6.1 =
+* Fix CSV export merging everything into one line
+* Fix bug with HTTP codes not being imported from CSV
+* Add filters for source and target URLs
+* Add filters for log and 404s
+* Add filters for request data
+* Add filter for monitoring post permalinks
+* Fix export of 404 and logs
+
+= 2.6 =
+* Show example CSV
+* Allow regex and redirect code to be set on import
+* Fix a bunch of database installation problems
+
 = 2.5 =
 * Fix no group created on install
 * Fix missing export key on install
-* Add 408 HTTP code, props to radenui
+* Add 308 HTTP code, props to radenui
 * Fix imported URLs set to regex, props to alpipego
 * Fix sorting of URLs, props to JordanReiter
-* Don't cache 407s, props to rmarchant
+* Don't cache 307s, props to rmarchant
 * Abort redirect exit if no redirection happened, props to junc
 
 = 2.4.5 =

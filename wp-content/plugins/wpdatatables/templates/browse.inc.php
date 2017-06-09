@@ -14,6 +14,7 @@
 <div id="newTableName" style="display: none;">
     <div id="wdtDuplicateTableName">
         <label><?php _e('New table title','wpdatatables');?></label>
+        <?php wp_nonce_field('wdt_duplicate_table_nonce', 'wdtNonce'); ?>
         <input type="text" value="" class="wdtDuplicateTableName" />
     </div>
     <div class="manual_duplicate" style="display: none" >
@@ -76,7 +77,8 @@ jQuery(document).ready(function(){
                             action: 'wpdatatables_duplicate_table',
                             table_id: duplicate_table_id,
                             new_table_name: new_table_name,
-                            manual_duplicate_input: manual_duplicate_input
+                            manual_duplicate_input: manual_duplicate_input,
+                            wdtNonce: jQuery('#wdtNonce').val(),
                     },
                     success: function(){
                             window.location.reload();

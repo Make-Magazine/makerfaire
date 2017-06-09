@@ -272,7 +272,7 @@
             var table_settings = this.instance.getSettings();
             var $__9 = this;
             var options = {
-                    container: '#wpbody',
+                    container: '.wpExcelTable',
                     interval: table_settings.timepickRange,
                     format: table_settings.timepickTimeFormat,
                     onRender: function(){
@@ -450,7 +450,7 @@
             var table_settings = this.instance.getSettings();
             var $__9 = this;
             var options = {
-                container: '#wpbody',
+                container: '.wpExcelTable',
                 interval: table_settings.timepickRange,
                 format: table_settings.timepickTimeFormat,
                 onSet: function( item ){
@@ -1071,6 +1071,17 @@
     }
 
     /**
+     * CUSTOM TEXT RENDERER DEFINITION.
+     */
+    function wdtTextRenderer(instance, td, row, col, prop, value, cellProperties) {
+        var escaped = Handsontable.helper.stringify(value);
+        escaped = wdtStripTags(escaped, '<br/><br><b><strong><h1><h2><h3><a><i><em><ol><ul><li><img><blockquote><div><hr><p><span><select><option><sup><sub>'); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)
+        td.innerHTML = escaped;
+
+        return td;
+    }
+
+    /**
      * CUSTOM DATE RENDERER DEFINITION.
      */
     function wdtDateRenderer(instance, td, row, col, prop, value, cellProperties) {
@@ -1145,6 +1156,7 @@
 
     //registers custom renderers
     function registerRenderers() {
+        Handsontable.renderers.registerRenderer('text', wdtTextRenderer);
         Handsontable.renderers.registerRenderer('wdt.date', wdtDateRenderer);
         Handsontable.renderers.registerRenderer('wdt.datetime', wdtDateTimeRenderer);
         Handsontable.renderers.registerRenderer('wdt.time', wdtTimeRenderer);
@@ -1172,6 +1184,11 @@
             renderer: 'wdt.date'
         };
 
+        Handsontable.wdtTextCell = {
+            editor: 'text',
+            renderer: 'text'
+        };
+
         Handsontable.wdtDateTimeCell = {
             editor: 'wdt.datetime',
             validator: Handsontable.wdtDateTimeValidator,
@@ -1190,6 +1207,7 @@
             renderer: 'text'
         };
 
+        Handsontable.cellTypes['text'] = Handsontable.wdtTextCell;
         Handsontable.cellTypes['wdt.date'] = Handsontable.wdtDateCell;
         Handsontable.cellTypes['wdt.datetime'] = Handsontable.wdtDateTimeCell;
         Handsontable.cellTypes['wdt.time'] = Handsontable.wdtTimeCell;
@@ -1347,3 +1365,15 @@ if( typeof wpDataTablesExcelOptions == 'undefined' ) {
         });
     })
 })(jQuery);
+
+function wdtStripTags(input, allowed) {
+    var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi,
+        commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
+
+    // making sure the allowed arg is a string containing only tags in lowercase (<a><b><c>)
+    allowed = (((allowed || "") + "").toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
+
+    return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
+        return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
+    });
+}

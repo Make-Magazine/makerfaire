@@ -26,7 +26,7 @@ class TimeWDTColumn extends WDTColumn {
     public function prepareCellOutput( $content ) {
         if(!is_array($content)){
             if( !empty($content) && ( $content != '0000-00-00' ) ){
-                $timestamp = is_int( $content ) ? $content : strtotime( str_replace('/', '-', $content ) );
+                $timestamp = is_numeric( $content ) ? $content : strtotime( str_replace('/', '-', $content ) );
                 $formattedValue = date( get_option('wdtTimeFormat'), $timestamp );
             }else{
                 $formattedValue = '';

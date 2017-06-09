@@ -26,6 +26,9 @@ class WPExcelDataTable extends WPDataTable
         wp_enqueue_script('wpdatatables-urijs',WDT_JS_PATH.'urijs/URI.min.js');
 
         wp_enqueue_script('moment', WDT_JS_PATH.'moment/moment.js');
+
+	    wp_enqueue_media();
+	    
         if( $minified_js ){
             wp_register_script('wpdatatables_excel',WDT_JS_PATH.'wpdatatables/wpdatatables_excel.min.js',array('jquery','handsontable', 'wpdatatables-urijs'));
             wp_enqueue_script('wpdatatables_excel_plugin', WDT_JS_PATH.'wpdatatables/wpDataTablesExcelPlugin.min.js',array('jquery', 'handsontable', 'jquery-ui-tooltip'));

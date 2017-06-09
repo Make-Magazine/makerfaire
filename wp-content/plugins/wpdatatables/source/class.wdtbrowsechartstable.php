@@ -162,6 +162,9 @@ class WDTBrowseChartsTable extends WP_List_Table {
             case 'highcharts_line_chart':
                 return __( 'Highcharts Line Chart', 'wpdatatables' );
                 break;
+            case 'highcharts_spline_chart':
+                return __( 'Highcharts Spline Chart', 'wpdatatables' );
+                break;
             case 'highcharts_basic_area_chart':
                 return __( 'Highcharts Basic Area Chart', 'wpdatatables' );
                 break;
@@ -206,6 +209,33 @@ class WDTBrowseChartsTable extends WP_List_Table {
                 break;
             case 'highcharts_solid_gauge_chart':
                 return __( 'Highcharts Solid Gauge Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_line_chart':
+                return __( 'ChartJS Line Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_area_chart':
+                return __( 'ChartJS Area Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_stacked_area_chart':
+                return __( 'ChartJS Stacked Area Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_column_chart':
+                return __( 'ChartJS Column Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_radar_chart':
+                return __( 'ChartJS Radar Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_polar_area_chart':
+                return __( 'ChartJS Polar Area Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_pie_chart':
+                return __( 'ChartJS Pie Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_doughnut_chart':
+                return __( 'ChartJS Doughnut Chart', 'wpdatatables' );
+                break;
+            case 'chartjs_bubble_chart':
+                return __( 'ChartJS Bubble Chart', 'wpdatatables' );
                 break;
             default:
                 return $item;

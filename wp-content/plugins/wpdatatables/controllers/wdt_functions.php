@@ -9,6 +9,8 @@
 ?>
 <?php
 
+global $wp_version;
+
 /**
  * The installation/activation method, installs the plugin table
  */
@@ -55,7 +57,7 @@ function wpdatatables_activation_create_tables(){
 						table_id int(11) NOT NULL,
 						orig_header varchar(255) NOT NULL,
 						display_header varchar(255) NOT NULL,
-						filter_type enum('null_str','text','number','number-range','date-range','datetime-range','time-range','select','checkbox') NOT NULL,
+						filter_type enum('none','null_str','text','number','number-range','date-range','datetime-range','time-range','select','checkbox') NOT NULL,
 						column_type enum('autodetect','string','int','float','date','link','email','image','formula','datetime','time') NOT NULL,
 						input_type enum('none','text','textarea','mce-editor','date','datetime','time','link','email','selectbox','multi-selectbox','attachment') NOT NULL default 'text',
 						input_mandatory tinyint(1) NOT NULL default '0',
@@ -87,7 +89,7 @@ function wpdatatables_activation_create_tables(){
                                   id int(11) NOT NULL AUTO_INCREMENT,
                                   wpdatatable_id int(11) NOT NULL,
                                   title varchar(255) NOT NULL,
-                                  engine enum('google','highcharts') NOT NULL,
+                                  engine enum('google','highcharts','chartjs') NOT NULL,
                                   type varchar(255) NOT NULL,
                                   json_render_data text NOT NULL,
                                   UNIQUE KEY id (id)
@@ -473,7 +475,7 @@ function wpdatatable_shortcode_handler( $atts, $content = null ) {
 		wp_enqueue_script('jquery-ui-datepicker');
 		wp_enqueue_script('jquery-ui-button');
 		wp_enqueue_style( 'dashicons' );
-		wp_enqueue_script('wdt_google_charts','//www.google.com/jsapi');
+		wp_enqueue_script('wdt_google_charts','//www.gstatic.com/charts/loader.js');
 		wp_enqueue_script('formstone-selecter',WDT_JS_PATH.'selecter/jquery.fs.selecter.min.js');
 		wp_enqueue_style('formstone-selecter',WDT_CSS_PATH.'jquery.fs.selecter.css');
 		//[<-- Full version -->]//
@@ -666,12 +668,14 @@ function wpdatatables_load_textdomain(){
 /**
  * Workaround for NULLs in WP
  */
-add_filter( 'query', 'wpdatatables_support_nulls' );
+if ( $wp_version < 4.4 ) {
+    add_filter( 'query', 'wpdatatables_support_nulls' );
 
-function wpdatatables_support_nulls( $query ){
-	$query = str_ireplace( "'NULL'", "NULL", $query );
-	$query = str_replace('null_str','null',$query);
-	return $query;
+    function wpdatatables_support_nulls( $query ){
+            $query = str_ireplace( "'NULL'", "NULL", $query );
+            $query = str_replace('null_str','null',$query);
+            return $query;
+    }
 }
 
 //[<-- Full version -->]//
@@ -729,8 +733,7 @@ if( function_exists( 'vc_map' ) ){
 	 */
 	function wdt_get_all_tables_vc(){
 		global $wpdb;
-		$query = "SELECT id, title
-                                                FROM {$wpdb->prefix}wpdatatables ORDER BY id";
+		$query = "SELECT id, title FROM {$wpdb->prefix}wpdatatables ORDER BY id";
 
 		$all_tables = $wpdb->get_results( $query, ARRAY_A );
 
@@ -748,8 +751,7 @@ if( function_exists( 'vc_map' ) ){
 	 */
 	function wdt_get_all_charts_vc(){
 		global $wpdb;
-		$query = "SELECT id, title
-                                                FROM {$wpdb->prefix}wpdatacharts ORDER BY id";
+		$query = "SELECT id, title FROM {$wpdb->prefix}wpdatacharts ORDER BY id";
 
 		$all_charts = $wpdb->get_results( $query, ARRAY_A );
 

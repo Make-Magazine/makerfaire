@@ -18,7 +18,7 @@ function getSumomeStats() {
     statisticsDate='<?php print date('Y-m-d')?>'; //default=last week
   }
   jQuery.ajax({
-    url: 'https://sumo.com/apps/dashboard/stats',
+    url: 'https://sumome.com/apps/dashboard/stats',
     type: 'POST',
     dataType: 'json',
     beforeSend: function(req) {
@@ -31,7 +31,15 @@ function getSumomeStats() {
     data: {'site_id':siteID,'date': statisticsDate},
     success: function(data) {
       jQuery('.loading').hide();
-      jQuery('.statistics').html(data.htmlBody);
+
+      var returnText;
+      if (data.htmlBody!=null) {
+        returnText=data.htmlBody;
+      } else {
+        returnText='<h3 class="headline">'+data.headline+'</h3>';
+      }
+
+      jQuery('.statistics').html(returnText);
       statisticsDateDropdown();
       jQuery(".sumome-dashboard-date-select option[value='"+statisticsDate +"']").attr('selected', 'selected');
       jQuery('.statistics-container').show();

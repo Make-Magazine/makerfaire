@@ -19,8 +19,7 @@ $itemArray['Statistics']['class']="sumome-popup-no-dim sumo-statistics";
 $itemArray['Statistics']['columns']=1;
 
 $itemArray['I Need Help']['data-name']="sumome-control-help";
-$itemArray['I Need Help']['data-href']="http://help.sumome.com";
-$itemArray['I Need Help']['class']="sumome-popup-no-dim";
+$itemArray['I Need Help']['class']="sumome-control-help sumome-popup-no-dim";
 $itemArray['I Need Help']['columns']=1;
 
 $itemArray['About']['data-name']="sumome-control-about";

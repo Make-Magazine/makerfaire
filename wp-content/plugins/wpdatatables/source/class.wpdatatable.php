@@ -21,10 +21,6 @@ class WPDataTable {
     private $_filtering_form = false;
     private $_hide_before_load = false;
     public static $wdt_internal_idcount = 0;
-    private $_horAxisCol = '';
-    private $_verAxisCol = '';
-    private $_chartType = '';
-    private $_chartTitle = '';
     public static $mc = null;
     private $_fromCache = false;
     private $_pagination = true;
@@ -42,7 +38,6 @@ class WPDataTable {
     private $_lengthDisplay = 10;
     private $_cssClassArray = array( );
     private $_style	 = '';
-    private $_chartSeriesArr = array();
     private $_editable = false;
     private $_id = '';
     private $_idColumnKey = '';
@@ -437,7 +432,9 @@ class WPDataTable {
 
     public function advancedFilterEnabled() {
         return $this->_showAdvancedFilter;
+        return $this->show_Filter;
     }
+
 
     public function enableAdvancedFilter() {
         $this->_showAdvancedFilter = true;
@@ -660,7 +657,7 @@ class WPDataTable {
             foreach( $wdtColumnTypes as $key => $columnType ){
                 if( in_array( $columnType, array( 'date', 'datetime', 'time' ) ) ){
                     foreach( $this->_dataRows as &$dataRow ){
-                        $dataRow[$key] = is_int( $dataRow[$key] ) ? $dataRow[$key] : strtotime( $dataRow[$key] );
+                        $dataRow[$key] = is_int( $dataRow[$key] ) ? $dataRow[$key] : strtotime( str_replace( '/', '-', $dataRow[$key] ) );
                     }
                 }
             }
@@ -748,6 +745,18 @@ class WPDataTable {
 	    return $this->_dataRows;
     }
 
+    public function getDataRowsFormatted(){
+        $dataRowsFormatted = array();
+        foreach( $this->_dataRows as $dataRow ){
+            $formattedRow = array();
+            foreach( $dataRow as $colHeader => $cellValue ){
+                $formattedRow[$colHeader] = $this->returnCellValue( $cellValue, $colHeader );
+            }
+            $dataRowsFormatted[] = $formattedRow;
+        }
+        return $dataRowsFormatted;
+    }
+
     public function getRow( $index ) {
         if( !isset($index) || !isset($this->_dataRows[$index]) ) {
             throw new WDTException('Invalid row index!');
@@ -795,65 +804,6 @@ class WPDataTable {
             $this->addWDTRow( $row );
         }
     }
-
-    public function setChartHorizontalAxis($dataColumnIndex){
-        if( !isset($dataColumnIndex) || !isset($this->_wdtNamedColumns[$dataColumnIndex]) ) {
-            throw new WDTException('Please provide a correct column index.');
-        }
-        $this->_horAxisCol = $dataColumnIndex;
-    }
-
-    //[<-- Full version -->]//
-    public function setChartVerticalAxis($dataColumnIndex){
-        // if we are getting the data from cache - just skip the call
-        if(self::$mc && $this->_fromCache){
-            return false;
-        }
-        if( !isset($dataColumnIndex) || !isset($this->_wdtNamedColumns[$dataColumnIndex]) ) {
-                throw new WDTException('Invalid columnKey provided!');
-        }
-        $this->_verAxisCol = $dataColumnIndex;
-    }
-
-    public function setChartTitle($title){
-        if(empty($title)) { return false; };
-        $this->_chartTitle = $title;
-    }
-
-    public function getChartTitle(){
-        return $this->_chartTitle;
-    }
-
-    public function setChartType($type){
-        if(empty($type)
-                || ( !in_array(
-                        $type,
-                        array(
-                            'Area',
-                            'Bar',
-                            'Column',
-                            'Line',
-                            'Pie'
-                        )
-                    )
-                    )
-            ) {
-            throw new WDTException('Invalid chart type provided!');
-        };
-        $this->_chartType = $type;
-    }
-
-    public function getChartType(){
-        return $this->_chartType;
-    }
-
-    public function addChartSeries($dataColumnIndex){
-        if( !isset($dataColumnIndex) || !isset($this->_wdtNamedColumns[$dataColumnIndex]) ) {
-                throw new WDTException('Invalid columnKey provided!');
-        }
-        $this->_chartSeriesArr[] = $dataColumnIndex;
-    }
-    //[<--/ Full version -->]//
 
     public function disableScripts(){
      	$this->scriptsEnabled = false;
@@ -928,7 +878,11 @@ class WPDataTable {
                     for ( $i=0 ; $i<count($aColumns) ; $i++ )
                     {
                         if( $_POST['columns'][$i]['searchable'] == "true" ){
-                            $search .= '`'.$aColumns[$i]."` LIKE '%".addslashes( $_POST['search']['value'] )."%' OR ";
+                            if (in_array( $wdtParameters['data_types'][$_POST['columns'][$i]['name']], array('date','datetime','time') )){
+                                continue;
+                            } else {
+                                $search .= '`' . $aColumns[ $i ] . "` LIKE '%" . addslashes( $_POST['search']['value'] ) . "%' OR ";
+                            }
                         }
                     }
                     $search = substr_replace( $search, "", -3 );
@@ -1331,7 +1285,7 @@ class WPDataTable {
 
         return $this->arrayBasedConstruct($namedDataArray, $wdtParameters);
     }
-    
+
     protected function _renderWithJSAndStyles() {
         $tpl = new PDTTpl();
         $minified_js = get_option('wdtMinifiedJs');
@@ -1342,13 +1296,13 @@ class WPDataTable {
 	}
 
 	if($this->TTEnabled()){
-	    wp_enqueue_script('wpdt-buttons', WDT_JS_PATH.'export-tools/dataTables.buttons.js', array('jquery','datatables'));
-	    wp_enqueue_script('wpdt-jszip', WDT_JS_PATH.'export-tools/jszip.js', array('jquery','datatables'));
-	    wp_enqueue_script('wpdt-dfmake', WDT_JS_PATH.'export-tools/pdfmake.js', array('jquery','datatables'));
-	    wp_enqueue_script('wpdt-vfs_fonts', WDT_JS_PATH.'export-tools/vfs_fonts.js', array('jquery','datatables'));
-	    wp_enqueue_script('wpdt-buttons-html5', WDT_JS_PATH.'export-tools/buttons.html5.js', array('jquery','datatables'));
-	    wp_enqueue_script('wpdt-button-print', WDT_JS_PATH.'export-tools/buttons.print.js', array('jquery','datatables'));
-	    wp_enqueue_script('wpdt-buttonvis', WDT_JS_PATH.'export-tools/buttons.colVis.js', array('jquery','datatables'));
+	    wp_enqueue_script('wpdt-buttons', WDT_JS_PATH.'export-tools/dataTables.buttons.min.js', array('jquery','datatables'));
+        wp_enqueue_script('wpdt-buttons-html5', WDT_JS_PATH.'export-tools/buttons.html5.min.js', array('jquery','datatables'));
+        !empty($this->_tableToolsConfig['excel'] ) ? wp_enqueue_script('wpdt-jszip', WDT_JS_PATH.'export-tools/jszip.min.js', array('jquery','datatables')) : null;
+        !empty($this->_tableToolsConfig['pdf'] ) ? wp_enqueue_script('wpdt-dfmake', WDT_JS_PATH.'export-tools/pdfmake.min.js', array('jquery','datatables')) : null;
+        !empty($this->_tableToolsConfig['pdf'] ) ? wp_enqueue_script('wpdt-vfs_fonts', WDT_JS_PATH.'export-tools/vfs_fonts.js', array('jquery','datatables')) : null;
+        !empty($this->_tableToolsConfig['print'] ) ? wp_enqueue_script('wpdt-button-print', WDT_JS_PATH.'export-tools/buttons.print.min.js', array('jquery','datatables')) : null;
+        !empty($this->_tableToolsConfig['columns'] ) ? wp_enqueue_script('wpdt-buttonvis', WDT_JS_PATH.'export-tools/buttons.colVis.min.js', array('jquery','datatables')) : null;
 	}
     // Moment JS
     wp_register_script('momentjs', WDT_JS_PATH.'moment/moment.js');
@@ -1372,7 +1326,7 @@ class WPDataTable {
 	    wp_enqueue_script('wpdatatables-advancedfilter');
 	}
 	if($this->isEditable()){
-	    wp_enqueue_script('wpdt-buttons', WDT_JS_PATH.'export-tools/dataTables.buttons.js', array('jquery','datatables'));
+	    wp_enqueue_script('wpdt-buttons', WDT_JS_PATH.'export-tools/dataTables.buttons.min.js', array('jquery','datatables'));
 	    wp_register_script('jquery-maskmoney',WDT_JS_PATH.'maskmoney/jquery.maskMoney.js',array('jquery'));
 	    wp_enqueue_script('jquery-maskmoney');
 	    // Media upload
@@ -1454,84 +1408,6 @@ class WPDataTable {
         return $return_data;
     }
 
-    //[<-- Full version -->]//
-    /**
-     * Renders the chart block, which will be supposed to render in the
-     * div with provided ID
-     * @param string Container div ID
-     */
-    public function renderChart( $divId ) {
-        if(!$divId){
-            throw new WDTException('No div ID provided!');
-        }
-
-        do_action( 'wpdatatable_before_render_chart', $this->getWpId() );
-
-        $tpl = new PDTTpl();
-        $tpl->setTemplate( 'chart_js_template.inc.php' );
-        $series_headers = array();
-        $series_values = array();
-
-        foreach($this->_chartSeriesArr as $dataColumnIndex){
-            $series_headers[] = $this->getColumn($dataColumnIndex)->getTitle();
-        }
-
-
-        $chartProperties = array();
-
-        $chartProperties['values'] = array();
-        $chartProperties['values'][] = $series_headers;
-        foreach($this->getDataRows() as $row) {
-            $series_values_entry = array();
-            foreach($this->_chartSeriesArr as $dataColumnIndex){
-                $val = $row[$dataColumnIndex];
-                if(($dataType = $this->getColumn($dataColumnIndex)->getDataType()) != 'string') {
-                        if($dataType == 'date') {
-                            $val = str_replace( '/', '-', $val );
-                            $val = date( get_option('wdtDateFormat'), strtotime( $val ) );
-                        }elseif($dataType == 'int') {
-                            $val = (int)$val;
-                        }elseif($dataType == 'float') {
-                            $val = (float)$val;
-                        }
-                    $series_values_entry[] = $val;
-                } else {
-                    $series_values_entry[] = $val;
-                }
-            }
-            $chartProperties['values'][] = $series_values_entry;
-        }
-
-        $chartProperties['type'] = $this->getChartType();
-        $chartProperties['container'] = $divId;
-        $chartProperties['options'] = array();
-        $chartProperties['options']['title'] = $this->getChartTitle();
-        if(!empty($this->_horAxisCol)){
-            $chartProperties['options']['hAxis'] = array('title' => $this->getColumn($this->_horAxisCol)->getTitle());
-        }
-        if(!empty($this->_verAxisCol)){
-            $chartProperties['options']['vAxis'] = array('title' => $this->getColumn($this->_verAxisCol)->getTitle());
-        }
-        $tpl->addData('tableId',$this->getId());
-        $tpl->addData('chartProperties',json_encode( $chartProperties, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG ));
-        $return_data = $tpl->returnData();
-
-        $return_data = apply_filters( 'wpdatatables_filter_chart', $return_data, $series_headers, $series_values, $this->getWpId() );
-
-        return $return_data;
-    }
-
-    /**
-     * Prints the rendered chart
-     */
-    public function printChart( $divId ) {
-        if (!$divId) {
-            throw new WDTException('No div ID provided!');
-        }
-        echo $this->renderChart($divId);
-    }
-    //[<--/ Full version -->]//
-
     /**
      * Helper method which prepares the column data from values stored in DB
      */
@@ -1590,13 +1466,9 @@ class WPDataTable {
     public static function solveFormula( $formula, $headers_in_formula, $row ){
         $vars = array();
         foreach( $headers_in_formula as $header ){
-            $vars[
-            str_replace(
-                array( '$','_','&',' ' ),
-                '',
-                $header
-            )
-            ] = floatval( $row[$header] );
+            $formula = str_replace($header, WDTTools::sanitizeHeader($header), $formula);
+
+            $vars[ WDTTools::sanitizeHeader( $header ) ] = floatval( $row[$header] );
         };
         $formula = str_replace( array('$','_','&' ), '', $formula );
 
@@ -1870,7 +1742,7 @@ class WPDataTable {
                  ->setNotNull( (bool) $column->input_mandatory );
             if( $column->visible ){
                 // Get display before/after and color
-                $cssColumnHeader = str_replace(' ','.',$column->orig_header);
+                $cssColumnHeader = 'column-'.sanitize_html_class($column->orig_header);
                 if( $column->text_before != '' ){
                     $this->_columnsCSS .= "\n#{$this->getId()} > tbody > tr > td.{$cssColumnHeader}:before,
                                            \n#{$this->getId()} > tbody > tr.row-detail ul li.{$cssColumnHeader} span.columnValue:before

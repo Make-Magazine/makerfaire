@@ -10,6 +10,7 @@
 				<p><i><?php _e('Please refer to','wpdatatables');?> <a href="http://wpdatatables.com/documentation/general/configuration/"><?php _e('wpDataTables documentation on this feature','wpdatatables');?></a> <?php _e('if you have some questions or problems with the plugin.','wpdatatables'); ?></i></p>
 				<h2><?php _e('wpDataTables settings','wpdatatables'); ?></h2>
 				<form method="post" action="<?php echo WDT_ROOT_URL ?>" id="wpDataTablesSettings">
+                    <?php wp_nonce_field('wdt_settings_nonce', 'wdtNonce'); ?>
 				<div id="normal-sortables" class="meta-box-sortables ui-sortable">
 					<div id="tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all settings">
 						<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all settings">
@@ -195,7 +196,7 @@
 								    <label for="wdtDecimalPlaces"><?php _e('Decimal places','wpdatatables'); ?></label>
 								</th>
 								<td>
-									<input type="number" name="wdtDecimalPlaces" id="wdtDecimalPlaces" value="<?php echo $wdtDecimalPlaces ?>" />
+									<input type="number" name="wdtDecimalPlaces" id="wdtDecimalPlaces" min="1" value="<?php echo $wdtDecimalPlaces ?>" />
 								    <span class="description"><?php _e('Define the amount of decimal places for the float numbers','wpdatatables'); ?>.</span>
 								</td>
 							    </tr>
@@ -319,7 +320,7 @@
 								    <label for="wdtTableInnerBorderColor"><?php _e('Table inner border color','wpdatatables'); ?><?php //[<-- Full version insertion #18 -->]// ?></label>
 								</th>
 								<td>
-								    <input type="text" <?php //[<-- Full version insertion #08 -->]// ?> name="wdtTableInnerBorderColor" id="wdtTableInnerBorderColor" value="<?php echo (!empty($wdtFontColorSettings['wdtTableInnerBorderColor']) ? $wdtFontColorSettings['wdtTableOuterBorderColor'] : '') ?>"  />
+								    <input type="text" <?php //[<-- Full version insertion #08 -->]// ?> name="wdtTableInnerBorderColor" id="wdtTableInnerBorderColor" value="<?php echo (!empty($wdtFontColorSettings['wdtTableInnerBorderColor']) ? $wdtFontColorSettings['wdtTableInnerBorderColor'] : '') ?>"  />
 								    <span class="description"><?php _e('This color is used for the inner border in the table between cells','wpdatatables'); ?>.</span>
 								</td>
 							    </tr>           
@@ -525,7 +526,7 @@
 								    <label for="wdtCustomCss"><?php _e('Custom wpDataTables CSS','wpdatatables'); ?></label>
 								</th>
 								<td>
-								    <textarea name="wdtCustomCss" id="wdtCustomCss" style="width: 430px; height: 200px;"><?php echo (!empty($wdtCustomCss) ? $wdtCustomCss : '') ?></textarea><br/>
+								    <textarea name="wdtCustomCss" id="wdtCustomCss" style="width: 430px; height: 200px;"><?php echo (!empty($wdtCustomCss) ? stripslashes($wdtCustomCss) : '') ?></textarea><br/>
 								    <span class="description"><?php _e('This CSS will be inserted as an inline style block on every page that has a wpDataTable','wpdatatables'); ?>.</span>
 								</td>
 							    </tr>
@@ -649,6 +650,7 @@
 	    e.stopImmediatePropagation();
 	    var data = {
 			action: 'wdt_save_settings',
+            wdtNonce: jQuery('#wdtNonce').val(),
 			<?php //[<-- Full version insertion #20 -->]// ?>
 			wpUseSeparateCon: (jQuery('#wpUseSeparateCon').attr('checked') == 'checked'),
 			wpMySqlHost: jQuery('#wpMySqlHost').val(),

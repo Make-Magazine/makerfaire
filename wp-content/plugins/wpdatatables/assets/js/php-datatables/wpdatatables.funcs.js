@@ -51,9 +51,9 @@ jQuery(document).ready(function($) {
 			if($(a).text()!=''){
 				a = $(a).text();
 			}
-			a = (a==="-") ? -1 : a.replace( /[^\d\-\.]/g, "" );
+			a = (a === "-" || a === "") ? 0 : a.replace( /[^\d\-\.]/g, "" );
 
-			if(a!=-1){
+			if(a!=-1 && a != ""){
 				while(a.indexOf('.')!=-1){
 					a = a.replace(".","");
 				}
@@ -325,10 +325,21 @@ function wdtFormatNumber(n, c, d, t){
 function wdtUnformatNumber( number, thousandsSeparator, decimalsSeparator, isFloat ){
 	if( typeof isFloat == 'undefined' ) { isFloat = false; }
 
-	var return_string = number.toString().replace( new RegExp( '\\'+thousandsSeparator, 'g'), '' );
+	var return_string = String(number).replace( new RegExp( '\\'+thousandsSeparator, 'g'), '' );
 
 	if( isFloat && decimalsSeparator == ',' ){
 		return_string = return_string.replace( new RegExp( '\\'+decimalsSeparator ), '.' );
 	}
 	return return_string;
 }
+
+// Selectbox for mobile
+jQuery(document).on('touchstart','span.selecter-selected',function(){
+	if(jQuery(this).parent().hasClass('closed')){
+		jQuery(this).next().css('display', 'block');
+		jQuery(this).parent().removeClass('closed').addClass('open');
+	} else{
+		jQuery(this).next().css('display', 'none');
+		jQuery(this).parent().removeClass('open').addClass('closed');
+	}
+});

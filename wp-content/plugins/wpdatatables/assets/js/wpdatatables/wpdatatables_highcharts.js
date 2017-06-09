@@ -45,7 +45,7 @@ var wpDataTablesHighchart = function(){
                 panKey: 'shift',
                 plotBackgroundColor: 'undefined',
                 plotBackgroundImage: 'undefined',
-                plotBorderColor: '#C0C0C0',
+                plotBorderColor: 'undefined',
                 plotBorderWidth: 0,
                 type: 'line',
                 zoomType: 'undefined'
@@ -200,9 +200,7 @@ var wpDataTablesHighchart = function(){
                             }
                         }
                     };
-                    this.options.tooltip = {
-                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                    };
+                    this.options.tooltip.pointFormat = '{series.name}: <b>{point.percentage:.1f}%</b>'
                     break;
                 case 'highcharts_3d_pie_chart':
                     this.options.chart.type = 'pie';
@@ -314,6 +312,9 @@ var wpDataTablesHighchart = function(){
                 case 'highcharts_solid_gauge_chart':
                     this.options.chart.type = 'gauge';
                     break;
+                case 'highcharts_spline_chart':
+                    this.options.chart.type = 'spline';
+                    break;
                 case 'highcharts_line_chart':
                 default:
                     this.options.chart.type = 'line';
@@ -325,6 +326,110 @@ var wpDataTablesHighchart = function(){
         },
         setColumnIndexes: function( columnIndexes ){
             this.columnIndexes = columnIndexes;
+        },
+        setChartConfig: function( chartConfig ){
+            // Chart
+            this.setWidth(chartConfig.width);
+            chartConfig.height ? this.options.chart.height = chartConfig.height : null;
+            this.options.chart.backgroundColor = chartConfig.background_color;
+            chartConfig.border_width ?  this.options.chart.borderWidth = chartConfig.border_width : null;
+            this.options.chart.borderColor = chartConfig.border_color;
+            chartConfig.border_radius ?  this.options.chart.borderRadius = chartConfig.border_radius : null;
+            chartConfig.zoom_type ?  this.options.chart.zoomType = chartConfig.zoom_type : null;
+            chartConfig.panning ?  this.options.chart.panning = chartConfig.panning : null;
+            chartConfig.pan_key ?  this.options.chart.panKey = chartConfig.pan_key : null;
+            this.options.chart.plotBackgroundColor = chartConfig.plot_background_color;
+            chartConfig.plot_background_image ?  this.options.chart.plotBackgroundImage = chartConfig.plot_background_image : null;
+            chartConfig.plot_border_width ?  this.options.chart.plotBorderWidth = chartConfig.plot_border_width : null;
+            this.options.chart.plotBorderColor = chartConfig.plot_border_color;
+            // Series
+            if( this.options.chart.type != 'pie' ) {
+                var j = 0;
+                for (var i in chartConfig.series_data) {
+                    this.options.series[j].name = chartConfig.series_data[i].label;
+                    this.options.series[j].color = chartConfig.series_data[i].color;
+                    j++;
+                }
+            }
+            // Axes
+            if (chartConfig.show_grid == 0) {
+                this.options.xAxis.lineWidth = 0;
+                this.options.xAxis.minorGridLineWidth = 0;
+                this.options.xAxis.lineColor = 'transparent';
+                this.options.xAxis.minorTickLength = 0;
+                this.options.xAxis.tickLength = 0;
+                this.options.yAxis.lineWidth = 0;
+                this.options.yAxis.gridLineWidth = 0;
+                this.options.yAxis.minorGridLineWidth = 0;
+                this.options.yAxis.lineColor = 'transparent';
+                this.options.yAxis.labels = {
+                    enabled: false
+                };
+                this.options.yAxis.minorTickLength = 0;
+                this.options.yAxis.tickLength = 0;
+            } else {
+                delete this.options.xAxis.lineWidth;
+                delete this.options.xAxis.minorGridLineWidth;
+                delete this.options.xAxis.lineColor;
+                delete this.options.xAxis.minorTickLength;
+                delete this.options.xAxis.tickLength;
+                delete this.options.yAxis.lineWidth;
+                delete this.options.yAxis.gridLineWidth;
+                delete this.options.yAxis.minorGridLineWidth;
+                delete this.options.yAxis.lineColor;
+                this.options.yAxis.labels = {
+                    enabled: true
+                };
+                this.options.yAxis.minorTickLength = 0;
+                this.options.yAxis.tickLength = 0;
+            }
+            chartConfig.highcharts_line_dash_style ? this.options.yAxis.gridLineDashStyle = chartConfig.highcharts_line_dash_style : null;
+            chartConfig.horizontal_axis_label ? this.options.xAxis.title = { text: chartConfig.horizontal_axis_label } : null;
+            chartConfig.horizontal_axis_crosshair == 1 ? this.options.xAxis.crosshair = true : this.options.xAxis.crosshair = false;
+            chartConfig.vertical_axis_label ? this.options.yAxis.title = { text: chartConfig.vertical_axis_label } : null;
+            chartConfig.vertical_axis_crosshair == 1 ? this.options.yAxis.crosshair = true : this.options.yAxis.crosshair = false;
+            chartConfig.vertical_axis_min ? this.options.yAxis.min = chartConfig.vertical_axis_min : this.options.yAxis.min = undefined;
+            chartConfig.vertical_axis_max ? this.options.yAxis.max = chartConfig.vertical_axis_max : this.options.yAxis.max = undefined;
+            chartConfig.inverted == 1 ? this.options.chart.inverted = true : this.options.chart.inverted = false;
+            // Title
+            chartConfig.show_title == 1 ? this.options.title.text = chartConfig.chart_title : this.options.title.text = '';
+            chartConfig.title_floating == 1 ? this.options.title.floating = true : this.options.title.floating = false;
+            chartConfig.title_align ? this.options.title.align = chartConfig.title_align : null;
+            chartConfig.subtitle ? this.options.subtitle.text = chartConfig.subtitle : null;
+            chartConfig.subtitle_align ? this.options.subtitle.align = chartConfig.subtitle_align : null;
+            // Tooltip
+            chartConfig.tooltip_enabled == 1 ? this.options.tooltip.enabled = true : this.options.tooltip.enabled = false;
+            this.options.tooltip.backgroundColor = chartConfig.tooltip_background_color;
+            chartConfig.tooltip_border_width ? this.options.tooltip.borderWidth = chartConfig.tooltip_border_width : null;
+            this.options.tooltip.borderColor = chartConfig.tooltip_border_color;
+            chartConfig.tooltip_border_radius ? this.options.tooltip.borderRadius = chartConfig.tooltip_border_radius : null;
+            chartConfig.tooltip_shared == 1 ? this.options.tooltip.shared = true : this.options.tooltip.shared = false;
+            chartConfig.tooltip_value_prefix  ? this.options.tooltip.valuePrefix = chartConfig.tooltip_value_prefix : null;
+            chartConfig.tooltip_value_suffix  ? this.options.tooltip.valueSuffix = chartConfig.tooltip_value_suffix : null;
+            // Legend
+            chartConfig.show_legend == 1 ? this.options.legend.enabled = true : this.options.legend.enabled = false;
+            this.options.legend.backgroundColor = chartConfig.legend_background_color;
+            chartConfig.legend_title ? this.options.legend.title.text = chartConfig.legend_title : null;
+            chartConfig.legend_layout ? this.options.legend.layout = chartConfig.legend_layout : null;
+            chartConfig.legend_align ? this.options.legend.align = chartConfig.legend_align : null;
+            chartConfig.legend_vertical_align ? this.options.legend.verticalAlign = chartConfig.legend_vertical_align : null;
+            chartConfig.legend_border_width ? this.options.legend.borderWidth = chartConfig.legend_border_width : null;
+            this.options.legend.borderColor = chartConfig.legend_border_color;
+            chartConfig.legend_border_radius ? this.options.legend.borderRadius = chartConfig.legend_border_radius : null;
+            // Exporting
+            chartConfig.exporting == 1 ? this.options.exporting.enabled = true : this.options.exporting.enabled = false;
+            chartConfig.exporting_data_labels == 1 ? this.options.exporting.chartOptions.plotOptions.series.dataLabels.enabled = true : this.options.exporting.chartOptions.plotOptions.series.dataLabels.enabled = false;
+            chartConfig.exporting_file_name ? this.options.exporting.filename = chartConfig.exporting_file_name : null;
+            chartConfig.exporting_width ? this.options.exporting.width = chartConfig.exporting_width : null;
+            chartConfig.exporting_button_align ? this.options.exporting.buttons.contextButton.align = chartConfig.exporting_button_align : null;
+            chartConfig.exporting_button_vertical_align ? this.options.exporting.buttons.contextButton.verticalAlign = chartConfig.exporting_button_vertical_align : null;
+            this.options.exporting.buttons.contextButton.symbolStroke = chartConfig.exporting_button_color;
+            chartConfig.exporting_button_text ? this.options.exporting.buttons.contextButton.text = chartConfig.exporting_button_text : null;
+            // Credits
+            chartConfig.credits == 1 ? this.options.credits.enabled = true : this.options.credits.enabled = false;
+            chartConfig.credits_href ? this.options.credits.href = chartConfig.credits_href: null;
+            chartConfig.credits_text ? this.options.credits.text = chartConfig.credits_text: null;
+
         },
         getColumnIndexes: function(){
             return this.columnIndexes;
@@ -375,9 +480,15 @@ var wpDataTablesHighchart = function(){
                                     }
                                 }else{
                                     if( obj.numberFormat == 1 ){
-                                        seriesDataEntry.push( parseFloat( wdtUnformatNumber(entry, '.', ',', true) ) );
+                                        seriesDataEntry.push({
+                                            name: obj.options.xAxis.categories[i],
+                                            y: parseFloat( wdtUnformatNumber(entry, '.', ',', true) )
+                                        });
                                     }else{
-                                        seriesDataEntry.push(  parseFloat( wdtUnformatNumber(entry, ',', '.', true) ) );
+                                        seriesDataEntry.push({
+                                            name: obj.options.xAxis.categories[i],
+                                            y: parseFloat( wdtUnformatNumber(entry, ',', '.', true) )
+                                        });
                                     }
                                 }
                             }

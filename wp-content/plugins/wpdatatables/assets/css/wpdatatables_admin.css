@@ -676,6 +676,15 @@ div.wpDataTables div.max_columns_error {
     background-color: #fdd;
 }
 
+.steps .chartWizardStep.step4{
+    min-width: 1030px;
+    display: flex;
+}
+
+.steps .chartWizardStep.step4 fieldset{
+    width: 50%;
+}
+
 .wpDataTables #series_settings_container div.chart_series_block {
     margin: 3px;
     position: relative;
@@ -834,16 +843,17 @@ div.dt-button-info > div {
     padding: 1em;
 }
 
-div.ui-tabs.ui-widget.ui-widget-content.ui-corner-all.settings {
+div.ui-tabs.ui-widget.ui-widget-content.ui-corner-all.settings, div.ui-tabs.ui-widget.ui-widget-content.ui-corner-all.chart-container {
     background:none;
     background-image: none;
     border-radius: 0;
     border:none;
 }
-div.ui-tabs-panel.ui-widget-content.ui-corner-bottom.settings {
+div.ui-tabs-panel.ui-widget-content.ui-corner-bottom.settings, div.ui-tabs-panel.ui-widget-content.ui-corner-bottom.chart-container {
     padding: 1em 0;
 }
-ul.ui-tabs-nav.ui-helper-reset.ui-helper-clearfix.ui-widget-header.ui-corner-all.settings {
+ul.ui-tabs-nav.ui-helper-reset.ui-helper-clearfix.ui-widget-header.ui-corner-all.settings,
+ul.ui-tabs-nav.ui-helper-reset.ui-helper-clearfix.ui-widget-header.ui-corner-all.chart-container {
     border: none;
     border-bottom: 1px solid #ccc;
     margin: 0;
@@ -853,16 +863,19 @@ ul.ui-tabs-nav.ui-helper-reset.ui-helper-clearfix.ui-widget-header.ui-corner-all
     background: none;
 }
 
-li.ui-state-default.ui-corner-top.settings.ui-tabs-active{
+li.ui-state-default.ui-corner-top.settings.ui-tabs-active,
+li.ui-state-default.ui-corner-top.chart-container.ui-tabs-active {
     background: #f1f1f1;
     color: #000;
     border: 1px solid #d3d3d3;
     border-bottom: 1px solid #f1f1f1;
 }
-li.ui-state-default.ui-corner-top.settings.ui-state-hover {
+li.ui-state-default.ui-corner-top.settings.ui-state-hover,
+li.ui-state-default.ui-corner-top.chart-container.ui-state-hover {
     border: 1px solid #d3d3d3;
 }
-li.ui-state-default.ui-corner-top.settings {
+li.ui-state-default.ui-corner-top.settings,
+li.ui-state-default.ui-corner-top.chart-container {
     float: left;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -872,10 +885,12 @@ li.ui-state-default.ui-corner-top.settings {
     border-bottom:1px solid  #e5e5e5;
 
 }
-.ui-state-default.settings a, .ui-state-default.settings a:link, .ui-state-default.settings a:visited {
+.ui-state-default.settings a, .ui-state-default.settings a:link, .ui-state-default.settings a:visited,
+.ui-state-default.chart-container a, .ui-state-default.chart-container a:link, .ui-state-default.chart-container a:visited{
     color: #555;
 }
-.ui-state-active.settings a, .ui-state-active.settings a:link, .ui-state-active.settings a:visited {
+.ui-state-active.settings a, .ui-state-active.settings a:link, .ui-state-active.settings a:visited,
+.ui-state-active.chart-container a, .ui-state-active.chart-container a:link, .ui-state-active.chart-container a:visited {
     color: #000;
 }
 div.wdtDuplicateTableName {
@@ -894,4 +909,44 @@ div.manual_duplicate {
     padding: 0px 10px;
     margin-top: 20px;
     text-align: justify;
+}
+.chart-preview-container {
+    margin: 10px;
+    max-width: 49%;
+    float: right;
+    width: 50%;
+}
+.chart-options-container {
+    border: 1px solid #eee !important;
+}
+#chart-container-tabs ul {
+    border: 0;
+    padding: 0;
+}
+#chart-container-tabs ul .ui-tabs-active {
+    padding-right: 0 !important;
+}
+#chart-container-tabs ul .ui-state-default {
+    margin-bottom: -1px;
+    margin-right: 0;
+    width: 90px;
+    border: 1px solid rgb(211, 211, 211);
+}
+
+#chart-container-tabs ul li a {
+    box-shadow: none;
+    cursor: auto;
+    width: 100%;
+}
+.ui-tabs-vertical .ui-tabs-nav {
+    padding: .2em .1em .2em .2em;
+    float: left;
+}
+.ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+.ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
+.ui-tabs-vertical .ui-tabs-panel {
+    padding: 1em;
+    float: left;
+    width: 79%;
 }

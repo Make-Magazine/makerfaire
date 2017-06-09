@@ -54,15 +54,24 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
         },
         // Parse a link for edit inputs
         parseLink: function () {
+            var $link = $(obj.params.value);
             if (obj.params.value.indexOf('<a ') != -1) {
                 if ($.inArray(obj.params.columnType, ['link', 'email']) !== -1) {
-                    var $link = $(obj.params.value);
                     if ($link.attr('href').indexOf($link.html()) === -1) {
                         obj.params.value = $link.attr('href').replace('mailto:', '') + '||' + $link.html();
                     } else {
-                        obj.params.value = $link;
+                        obj.params.value = $link.html();
+                    }
+                } else if ($.inArray(obj.params.columnType, ['icon']) !== -1) {
+                    var $linkthumb = $($link.html());
+                    if ($link.attr('href').indexOf($link.html()) === -1) {
+                        obj.params.value = $link.attr('href') + '||' + $linkthumb.attr('src');
+                    } else {
+                        obj.params.value = $link.html();
                     }
                 }
+            } else if (obj.params.value.indexOf('<img ') != -1) {
+                obj.params.value = $link.attr('src');
             }
         },
         // Save a cell value function
@@ -136,7 +145,7 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
         validateAndSave: function ($this) {
             // Validation
             var type_array = new Array('email', 'link');
-            if ($.inArray(obj.params.inputType, type_array) !== -1) {
+            if ($.inArray(obj.params.inputType, type_array) !== -1 && obj.params.columnType != 'icon') {
                 obj.fieldValidation(obj.params.inputType, $this);
                 if (obj.params.notNull) {
                     obj.mandatoryFieldValidation($this);
@@ -260,7 +269,11 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
 
                 // Saving event
                 $(obj.params.editSelector).blur(function () {
-                    obj.params.value = $(this).val();
+                    if( obj.params.columnType == 'icon' ) {
+                        obj.params.value = '<img src="' + $(this).val() + '" />';
+                    } else {
+                        obj.params.value = $(this).val();
+                    }
 
                     obj.validateAndSave($(this));
                 })
@@ -276,7 +289,7 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 var additional_params = function () {
                     obj.params.value = $(obj.params.editSelector).val();
                     $.when(obj.saveData(obj.params.value, obj.params.rowId, obj.params.columnId)).then($(obj.params.editSelector).prepend(obj.params.expandButton));
-                    obj.datePicker.stop();
+                    // obj.datePicker.stop();
                 };
 
                 // Saving
@@ -456,12 +469,12 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                             $('#files_' + $button.data('rel_input')).html('<p>' + attachment.filename + ' [<a href="#" data-key="' + $button.data('rel_input') + '" class="wdtdeleteFile">' + wpdatatables_frontend_strings.detach_file + '</a>]</p>');
                         });
                     }else{
-                            // When a file is selected, grab the URL and set it as the text field's value
-                            wdtCustomUploader.off('select').on('select', function () {
-                                attachment = wdtCustomUploader.state().get('selection').first().toJSON();
-                                $relInput.val(attachment.url);
-                                $('#files_' + $button.data('rel_input')).html('<p>' + attachment.filename + ' [<a href="#" data-key="' + $button.data('rel_input') + '" class="wdtdeleteFile">' + wpdatatables_frontend_strings.detach_file + '</a>]</p>');
-                            });
+                        // When a file is selected, grab the URL and set it as the text field's value
+                        wdtCustomUploader.off('select').on('select', function () {
+                            attachment = wdtCustomUploader.state().get('selection').first().toJSON();
+                            $relInput.val(attachment.url);
+                            $('#files_' + $button.data('rel_input')).html('<p>' + attachment.filename + ' [<a href="#" data-key="' + $button.data('rel_input') + '" class="wdtdeleteFile">' + wpdatatables_frontend_strings.detach_file + '</a>]</p>');
+                        });
                     }
                     // Open the uploader dialog
                     wdtCustomUploader.open();
@@ -484,7 +497,7 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
             obj.datePicker = input.pickadate('picker');
 
             if (state == 'opened') {
-                picker.open();
+                obj.datePicker.open();
             }
         },
         // Apply pickatime
@@ -598,10 +611,15 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 obj.removeSelection();
 
                 // Add editing class
-                $(this).addClass('editing');
+                if (!$(this).hasClass("dataTables_empty")) {
+                    $(this).addClass('editing');
+                }
 
                 // Set variables
                 obj.params.table = $(tableDescription.selector).DataTable();
+                if (wpDataTables[obj.params.tableId].fnSettings().fnRecordsTotal() == 0) {
+                    return false;
+                }
                 obj.params.cellData = obj.params.table.cell(this).data();
                 obj.params.cellInfo = obj.params.table.cell(this).index();
                 obj.params.columnId = obj.params.cellInfo.column;

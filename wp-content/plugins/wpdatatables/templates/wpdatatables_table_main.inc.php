@@ -30,6 +30,7 @@
 <?php $sumColumnValues = array(); ?>
 <?php //[<--/ Full version -->]// ?>
 <?php do_action('wpdatatables_before_table', $wpDataTable->getWpId()); ?>
+<?php wp_nonce_field('wdt_frontend_edit_table_nonce', 'wdtNonceFronendEdit'); ?>
 <input type="hidden" id="<?php echo $wpDataTable->getId() ?>_desc" value='<?php echo $wpDataTable->getJsonDescription(); ?>' />
 <table id="<?php echo $wpDataTable->getId() ?>" class="<?php if ($wpDataTable->isScrollable()) { ?>scroll<?php } ?> display responsive nowrap <?php echo $wpDataTable->getCSSClasses() ?> wpDataTable" style="<?php echo $wpDataTable->getCSSStyle() ?>" data-described-by='<?php echo $wpDataTable->getId() ?>_desc' data-wpdatatable_id="<?php echo $wpDataTable->getWpId(); ?>">
     <thead>
@@ -39,7 +40,7 @@
 	<tr>
             <?php do_action('wpdatatables_before_header', $wpDataTable->getWpId()); ?>
             <?php $expandShown = false; ?>
-	    <?php foreach($wpDataTable->getColumns() as $dataColumn) { ?><th <?php if(!$expandShown && $dataColumn->isVisibleOnMobiles()){ ?>data-class="expand"<?php $expandShown = true; } ?> <?php if($dataColumn->getHiddenAttr()) { ?>data-hide="<?php echo $dataColumn->getHiddenAttr() ?>"<?php } ?> class="header <?php if( $dataColumn->sortEnabled() ) { ?>sort<?php } ?> <?php echo $dataColumn->getCSSClasses(); ?>" style="<?php echo $dataColumn->getCSSStyle(); ?>"><?php echo ( $dataColumn->getFilterType()->type != 'null') ? $dataColumn->getTitle() : '' ?></th><?php } ?>
+	    <?php foreach($wpDataTable->getColumns() as $dataColumn) { ?><th <?php if(!$expandShown && $dataColumn->isVisibleOnMobiles()){ ?>data-class="expand"<?php $expandShown = true; } ?> <?php if($dataColumn->getHiddenAttr()) { ?>data-hide="<?php echo $dataColumn->getHiddenAttr() ?>"<?php } ?> class="wdtheader <?php if( $dataColumn->sortEnabled() ) { ?>sort<?php } ?> <?php echo $dataColumn->getCSSClasses(); ?>" style="<?php echo $dataColumn->getCSSStyle(); ?>"><?php echo ( $dataColumn->getFilterType()->type != 'null') ? $dataColumn->getTitle() : '' ?></th><?php } ?>
             <?php do_action('wpdatatables_after_header', $wpDataTable->getWpId()); ?>
 	</tr>
 		<?php //[<-- Full version -->]// ?>
@@ -47,7 +48,7 @@
 	<tr>
             <?php do_action('wpdatatables_before_header', $wpDataTable->getWpId()); ?>
             <?php $expandShown = false; ?>
-	    <?php foreach($wpDataTable->getColumns() as $dataColumn) { ?><th <?php if(!$expandShown && $dataColumn->isVisibleOnMobiles()){ ?>data-class="expand"<?php $expandShown = true; } ?> <?php if($dataColumn->getHiddenAttr()) { ?>data-hide="<?php echo $dataColumn->getHiddenAttr() ?>"<?php } ?> class="header <?php if( $dataColumn->sortEnabled() ) { ?>sort<?php } ?> <?php echo $dataColumn->getCSSClasses(); ?>" style="<?php echo $dataColumn->getCSSStyle(); ?>"><?php  echo $dataColumn->getTitle() ?></th><?php } ?>
+	    <?php foreach($wpDataTable->getColumns() as $dataColumn) { ?><th <?php if(!$expandShown && $dataColumn->isVisibleOnMobiles()){ ?>data-class="expand"<?php $expandShown = true; } ?> <?php if($dataColumn->getHiddenAttr()) { ?>data-hide="<?php echo $dataColumn->getHiddenAttr() ?>"<?php } ?> class="wdtheader <?php if( $dataColumn->sortEnabled() ) { ?>sort<?php } ?> <?php echo $dataColumn->getCSSClasses(); ?>" style="<?php echo $dataColumn->getCSSStyle(); ?>"><?php  echo $dataColumn->getTitle() ?></th><?php } ?>
             <?php do_action('wpdatatables_after_header', $wpDataTable->getWpId()); ?>
 	</tr>
 	<?php //[<--/ Full version -->]// ?>
@@ -80,7 +81,7 @@
     <tfoot>
 	<?php do_action('wpdatatables_before_footer', $wpDataTable->getWpId()); ?>
 	<tr <?php if($wpDataTable->getFilteringForm()) { ?>style="display: none"<?php } ?>>
-	    <?php foreach( $wpDataTable->getColumns() as $dataColumn) { ?><td class="header <?php if( $dataColumn->sortEnabled() ) { ?>sort<?php } ?> <?php echo $dataColumn->getCSSClasses(); ?>" style="<?php echo $dataColumn->getCSSStyle(); ?>"><?php echo $dataColumn->getTitle(); ?></td><?php } ?>
+	    <?php foreach( $wpDataTable->getColumns() as $dataColumn) { ?><td class="wdtheader <?php if( $dataColumn->sortEnabled() ) { ?>sort<?php } ?> <?php echo $dataColumn->getCSSClasses(); ?>" style="<?php echo $dataColumn->getCSSStyle(); ?>"><?php echo $dataColumn->getTitle(); ?></td><?php } ?>
 	</tr>
         <?php if( !empty( $sumColumnValues ) ){ ?>
 	<tr class="sum_row">
@@ -111,7 +112,8 @@
 <?php do_action('wpdatatables_before_editor_dialog', $wpDataTable->getWpId()); ?>
 <div class="data_validation_notify" style="display: none"></div>
 <div class="data_saved_notify" style="display: none"><?php _e('Data saved!','wpdatatables'); ?></div>
-<table>
+<div class="input_alert_notify" style="display: none"><?php _e('Please choose input type for columns that you want to edit','wpdatatables'); ?></div>
+	<table>
 	<thead>
 	<tr>
 	<th style="width: 20%"></th>

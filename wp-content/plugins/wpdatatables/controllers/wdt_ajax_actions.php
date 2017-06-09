@@ -15,7 +15,7 @@
 	 function wdt_get_ajax_data(){
         global $wdt_var1, $wdt_var2, $wdt_var3;
 
-	 	$id = filter_var( $_GET['table_id'], FILTER_SANITIZE_NUMBER_INT );
+	 	$id = (int) $_GET['table_id'];
 	 	
 	 	do_action('wpdatatables_get_ajax_data', $id);
 	 	
@@ -34,7 +34,7 @@
         $wdt_var2 = isset( $_GET['wdt_var2'] ) ? wpdatatables_sanitize_query( $_GET['wdt_var2'] ) : $table_data['var2'];
         $wdt_var3 = isset( $_GET['wdt_var3'] ) ? wpdatatables_sanitize_query( $_GET['wdt_var3'] ) : $table_data['var3'];
 
-        $table_view =  isset( $_POST['table'] ) ? $_POST['table']: '';
+        $table_view =  isset( $_POST['table'] ) ? sanitize_text_field($_POST['table']) : '';
 
         foreach( $column_data as $column ){
              $column_order[(int)$column->pos] = $column->orig_header;
@@ -100,122 +100,169 @@
 	add_action( 'wp_ajax_get_wdtable', 'wdt_get_ajax_data' );
 	add_action( 'wp_ajax_nopriv_get_wdtable', 'wdt_get_ajax_data' );
 
-	/**
-	 * Saves the table from frontend
-	 */
-	 function wdt_save_table_frontend(){
-	 	global $wpdb;
-	 	$formdata = $_POST['formdata'];
-                
+    /**
+     * Saves the table from frontend
+     */
+    function wdt_save_table_frontend(){
+        global $wpdb, $wp_version;
+        $formdata = $_POST['formdata'];
+
+        if( !wp_verify_nonce($_POST['wdtNonce'], 'wdt_frontend_edit_table_nonce') ){ exit(); }
+
         $return_result = array( 'success' => '', 'error' => '', 'is_new' => false );
-	 	
-		$table_id = filter_var( $formdata['table_id'], FILTER_SANITIZE_NUMBER_INT );
-	 	unset($formdata['table_id']);
-	 	
-	 	$formdata = apply_filters('wpdatatables_filter_frontend_formdata', $formdata, $table_id);
-	 	
-	 	$table_data = wdt_get_table_by_id( $table_id );
-	 	$mysql_table_name = $table_data['mysql_table_name'];
-	 	
-	 	$columns_data = wdt_get_columns_by_table_id( $table_id );
- 	 	$id_key = '';
-                $id_val = '';
-                $date_format = get_option('wdtDateFormat');
-                $time_format = get_option('wdtTimeFormat');
-                $valueQuote = '';
 
-                if(get_option('wdtUseSeparateCon')){
-                    $valueQuote = "'";
-                }
-                foreach($columns_data as $column){
-                        if( $column->id_column ){
-                            $id_key = $column->orig_header;
-                            $id_val = filter_var( $formdata[$id_key], FILTER_SANITIZE_NUMBER_INT );
-                            unset($formdata[$id_key]);
+        $table_id = (int) $formdata['table_id'];
+        unset($formdata['table_id'], $formdata['nonce']);
+
+        $formdata = apply_filters('wpdatatables_filter_frontend_formdata', $formdata, $table_id);
+
+        $table_data = wdt_get_table_by_id( $table_id );
+        $mysql_table_name = $table_data['mysql_table_name'];
+
+        $columns_data = wdt_get_columns_by_table_id( $table_id );
+        $id_key = '';
+        $id_val = '';
+        $date_format = get_option('wdtDateFormat');
+        $time_format = get_option('wdtTimeFormat');
+
+        // NULL value for different wordpress versions
+        $null_value = ( !get_option('wdtUseSeparateCon') ) ? NULL : "NULL";
+
+        if ( $wp_version < 4.4 ) {
+            $null_value = ( !get_option('wdtUseSeparateCon') ) ? WDTTools::wrapQuotes( 'NULL' ) : "NULL";
+        }
+
+        foreach($columns_data as $column){
+            if( $column->id_column ){
+                $id_key = $column->orig_header;
+                $id_val = (int) $formdata[$id_key];
+                unset($formdata[$id_key]);
+            }else{
+
+                // Defining the values for User ID columns and for "none" input types
+                if( $column->id == $table_data['userid_column_id'] ){
+                    $formdata[ $column->orig_header ] = get_current_user_id();
+                }elseif($column->input_type == 'none'){
+                    if($id_val == '0'){
+                        // For new values we take the default value (if defined)
+                        if( !empty( $column->default_value ) ){
+                            $formdata[$column->orig_header] = $column->default_value;
                         }else{
-                            
-                            // Defining the values for User ID columns and for "none" input types
-                            if( $column->id == $table_data['userid_column_id'] ){
-                                $formdata[ $column->orig_header ] = get_current_user_id();
-                            }elseif($column->input_type == 'none'){
-                               if($id_val == '0'){
-                                   // For new values we take the default value (if defined)
-                                   if( !empty( $column->default_value ) ){
-                                       $formdata[$column->orig_header] = $column->default_value;
-                                   }else{
-                                       unset($formdata[$column->orig_header]);
-                                   }
-                               }else{
-                                   // For updating values we do not modify the cell at all
-                                   unset($formdata[$column->orig_header]);
-                               }
-                            }
-                            
-                            if( isset( $formdata[$column->orig_header] ) ){
-				
-                                // Sanitize data
-                                $formdata[$column->orig_header] = strip_tags( $formdata[$column->orig_header], '<br/><br><b><strong><h1><h2><h3><a><i><em><ol><ul><li><img><blockquote><div><hr><p><span><select><option><sup><sub>' );
-
-                                // Formatting for DB based on column type
-                                switch($column->column_type){
-                                       case 'date':
-                                           if($formdata[$column->orig_header] != ''){
-
-                                               $formdata[$column->orig_header] = 
-                                                                       $valueQuote . DateTime::createFromFormat(
-                                                                               $date_format,
-                                                                               $formdata[$column->orig_header]
-                                                                       )->format('Y-m-d') . $valueQuote;
-                                           }else{
-                                               $formdata[$column->orig_header] = $valueQuote.'NULL'.$valueQuote;
-                                           }
-                                           break;
-                                       case 'datetime':
-                                           if($formdata[$column->orig_header] != ''){
-
-                                               $formdata[$column->orig_header] =
-                                                   $valueQuote . DateTime::createFromFormat(
-                                                       $date_format.' '.$time_format,
-                                                       $formdata[$column->orig_header]
-                                                   )->format('Y-m-d H:i:s') . $valueQuote;
-                                           }else{
-                                               $formdata[$column->orig_header] = $valueQuote.'NULL'.$valueQuote;
-                                           }
-                                           break;
-                                       case 'float':
-                                           $number_format = get_option('wdtNumberFormat') ? get_option('wdtNumberFormat') : 1;
-                                           if($number_format == 1){
-                                                   $formdata[$column->orig_header] = str_replace('.','',$formdata[$column->orig_header]);
-                                                   $formdata[$column->orig_header] = str_replace(',','.',$formdata[$column->orig_header]);
-                                           }else{
-                                                   $formdata[$column->orig_header] = str_replace(',','',$formdata[$column->orig_header]);
-                                           }
-                                           $formdata[$column->orig_header] = filter_var( $formdata[$column->orig_header], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND );
-                                       default:
-                                           $formdata[$column->orig_header] = $valueQuote.$formdata[$column->orig_header].$valueQuote;
-                                           break;
-                                }
-                                if( $column->input_type == 'textarea' ){
-                                    $formdata[$column->orig_header] = str_replace( "\n" , '<br/>', $formdata[$column->orig_header] );
-                                }
-                                
-                            }
-
+                            unset($formdata[$column->orig_header]);
                         }
+                    }else{
+                        // For updating values we do not modify the cell at all
+                        unset($formdata[$column->orig_header]);
+                    }
                 }
 
-         $formdata = apply_filters( 'wpdatatables_filter_formdata_before_save', $formdata, $table_id );
+                if( isset( $formdata[$column->orig_header] ) ){
 
-	 	// If the plugin is using WP DB
-	 	if(!get_option('wdtUseSeparateCon')){
+                    // Sanitize data
+                    $formdata[$column->orig_header] = strip_tags( $formdata[$column->orig_header], '<br/><br><b><strong><h1><h2><h3><a><i><em><ol><ul><li><img><blockquote><div><hr><p><span><select><option><sup><sub>' );
+
+                    // Formatting for DB based on column type
+                    switch($column->column_type){
+                        case 'date':
+                            if($formdata[$column->orig_header] != ''){
+
+                                $formdata[$column->orig_header] =
+                                    WDTTools::wrapQuotes(
+                                        DateTime::createFromFormat(
+                                            $date_format,
+                                            $formdata[$column->orig_header]
+                                        )->format('Y-m-d')
+                                    );
+                            }else{
+                                $formdata[$column->orig_header] = $null_value;
+                            }
+                            break;
+                        case 'datetime':
+                            if($formdata[$column->orig_header] != ''){
+
+                                $formdata[$column->orig_header] =
+                                    WDTTools::wrapQuotes(
+                                        DateTime::createFromFormat(
+                                            $date_format.' '.$time_format,
+                                            $formdata[$column->orig_header]
+                                        )->format('Y-m-d H:i:s')
+                                    );
+                            }else{
+                                $formdata[$column->orig_header] = $null_value;
+                            }
+                            break;
+                        case 'float':
+                            $number_format = get_option('wdtNumberFormat') ? get_option('wdtNumberFormat') : 1;
+                            if($number_format == 1){
+                                $formdata[$column->orig_header] = str_replace('.','',$formdata[$column->orig_header]);
+                                $formdata[$column->orig_header] = str_replace(',','.',$formdata[$column->orig_header]);
+                            }else{
+                                $formdata[$column->orig_header] = str_replace(',','',$formdata[$column->orig_header]);
+                            }
+                            $formdata[$column->orig_header] = WDTTools::wrapQuotes( (float) $formdata[$column->orig_header] );
+                            if ($formdata[$column->orig_header] == '') {
+                                $formdata[$column->orig_header] = NULL;
+                            }
+                            break;
+                        case 'int':
+                            $formdata[$column->orig_header] = WDTTools::wrapQuotes( (int) $formdata[$column->orig_header] );
+                            if ($formdata[$column->orig_header] == '') {
+                                $formdata[$column->orig_header] = NULL;
+                            }
+                            break;
+                        case 'email':
+                            $formdata[$column->orig_header] = WDTTools::wrapQuotes( $formdata[$column->orig_header] );
+                            break;
+                        case 'string':
+                            if( $column->input_type == 'textarea' ){
+                                $formdata[$column->orig_header] = str_replace( "\n" , '<br/>', $formdata[$column->orig_header] );
+                            } elseif ( $column->input_type == 'text' ) {
+                                $formdata[$column->orig_header] = $formdata[$column->orig_header];
+                            };
+                            $formdata[$column->orig_header] = WDTTools::wrapQuotes( $formdata[$column->orig_header] );
+                            break;
+                        case 'link':
+                            $formdata[$column->orig_header] = WDTTools::wrapQuotes( $formdata[$column->orig_header] );
+                            break;
+                        case 'image':
+                            $formdata[$column->orig_header] = WDTTools::wrapQuotes( esc_url($formdata[$column->orig_header]) );
+                            break;
+                        case 'time':
+                            if ($formdata[$column->orig_header] != '') {
+                                $formdata[$column->orig_header] =
+                                    WDTTools::wrapQuotes(
+                                        DateTime::createFromFormat(
+                                            $time_format,
+                                            $formdata[$column->orig_header]
+                                        )->format('H:i:s')
+                                    );
+                            } else {
+                                $formdata[$column->orig_header] = $null_value;
+                            }
+                            break;
+                        default:
+                            $formdata[$column->orig_header] = WDTTools::wrapQuotes( sanitize_text_field($formdata[$column->orig_header]) );
+                            break;
+                    }
+
+                }
+
+            }
+        }
+        
+        $formdata = apply_filters( 'wpdatatables_filter_formdata_before_save', $formdata, $table_id );
+
+        // If the plugin is using WP DB
+        if(!get_option('wdtUseSeparateCon')){
             $formdata = stripslashes_deep($formdata);
-			if($id_val != '0'){
+            if($id_val != '0'){
                 $res = $wpdb->update($mysql_table_name,
-                                      $formdata,
-                                        array(
-                                                $id_key => $id_val
-                                            )
-                                        );
+                    $formdata,
+                    array(
+                        $id_key => $id_val
+                    )
+                );
+
                 if( !$res ){
                     if( !empty( $wpdb->last_error ) ){
                         $return_result['error'] = __('There was an error trying to update the row! Error: ', 'wpdatatables' ).$wpdb->last_error;
@@ -225,77 +272,78 @@
                 }else{
                     $return_result['success'] = $id_val;
                 }
-			}else{
+            }else{
                 $return_result['is_new'] = true;
                 $res = $wpdb->insert($mysql_table_name,
-                                      $formdata );
+                    $formdata );
                 if( !$res ){
                     $return_result['error'] = __( 'There was an error trying to insert a new row! Error: ', 'wpdatatables' ).$wpdb->last_error;
                 }else{
                     $return_result['success'] = $wpdb->insert_id;
                     $id_val = $wpdb->insert_id;
                 }
-			}
-	 	}else{
-                    // If plugin is using a separate DB
-                    $sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
-                    if($id_val != '0'){
-                        $query = 'UPDATE '.$mysql_table_name.' SET ';
-                        $i = 1;
-                        foreach($formdata AS $column_key=>$column_value){
-                            if($column_value == "''"){
-                                    $column_value = "NULL";
-                            }
-                            $query .= '`'.$column_key.'` = '.$column_value.' ';
-                            if($i < count($formdata)){
-                                    $query .= ', ';
-                            }
-                            $i++;
-                        }
-                        $query .= ' WHERE `'.$id_key.'` = '.$id_val;
-                        $query = apply_filters( 'wpdatatables_query_before_save_frontend', $query, $table_id );
-                        if( $sql->doQuery($query) ){
-                            $return_result['success'] = $id_val;
-                        }else{
-                            if( $sql->getLastError() !== '' ){
-                                $return_result['error'] = __( 'There was an error trying to update the row! Error: ', 'wpdatatables' ).$sql->getLastError();
-                            }else{
-                                $return_result['success'] = $id_val;
-                                $id_val = $sql->getLastInsertId();
-                            }
-                        }
-                    }else{
-                        $return_result['is_new'] = true;
-                        $query = 'INSERT INTO '.$mysql_table_name.' ';
-                        $columns = array();
-                        $values = array();
-                        foreach($formdata AS $column_key=>$column_value){
-                            if($column_value == "''"){
-                                    $column_value = "NULL";
-                            }
-                            $columns[] = '`'.$column_key.'`';
-                            $values[] = $column_value;
-                        }
-                        $query .= ' ('.implode(',',$columns).') VALUES ';
-                        $query .= ' ('.implode(',',$values).')';
-                        $query = apply_filters( 'wpdatatables_query_before_save_frontend', $query, $table_id );
-                        $sql->doQuery($query);
-                        if( $sql->getLastError() == '' ){
-                           $return_result['success'] = $sql->getLastInsertId();
-                        }else{
-                            $return_result['error'] = __( 'There was an error trying to insert a new row! Error: ', 'wpdatatables' ).$sql->getLastError();
-                        }
+            }
+        }else{
+            // If plugin is using a separate DB
+            $sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+            if($id_val != '0'){
+                $query = 'UPDATE '.$mysql_table_name.' SET ';
+                $i = 1;
+                foreach($formdata AS $column_key=>$column_value){
+                    if($column_value == "''"){
+                        $column_value = $null_value;
                     }
-	 	}
-	 	
-	 	do_action('wpdatatables_after_frontent_edit_row', $formdata, $id_val, $table_id );
-                
-	 	echo json_encode( $return_result );
-	 	
-	 	exit();
-	 }
-	add_action( 'wp_ajax_wdt_save_table_frontend', 'wdt_save_table_frontend' );
-	add_action( 'wp_ajax_nopriv_wdt_save_table_frontend', 'wdt_save_table_frontend' );
+                    $query .= '`'.$column_key.'` = '.$column_value.' ';
+                    if($i < count($formdata)){
+                        $query .= ', ';
+                    }
+                    $i++;
+                }
+                $query .= ' WHERE `'.$id_key.'` = '.$id_val;
+                $query = apply_filters( 'wpdatatables_query_before_save_frontend', $query, $table_id );
+                if( $sql->doQuery($query) ){
+                    $id_val = $sql->getLastInsertId();
+                    $return_result['success'] = $id_val;
+                }else{
+                    if( $sql->getLastError() !== '' ){
+                        $return_result['error'] = __( 'There was an error trying to update the row! Error: ', 'wpdatatables' ).$sql->getLastError();
+                    }else{
+                        $return_result['success'] = $id_val;
+                    }
+                }
+            }else{
+                $return_result['is_new'] = true;
+                $query = 'INSERT INTO '.$mysql_table_name.' ';
+                $columns = array();
+                $values = array();
+
+                foreach($formdata AS $column_key=>$column_value){
+                    if($column_value == "''"){
+                        $column_value = $null_value;
+                    }
+                    $columns[] = '`'.$column_key.'`';
+                    $values[] = $column_value;
+                }
+                $query .= ' ('.implode(',',$columns).') VALUES ';
+                $query .= ' ('.implode(',',$values).')';
+                $query = apply_filters( 'wpdatatables_query_before_save_frontend', $query, $table_id );
+                $sql->doQuery($query);
+                if( $sql->getLastError() == '' ){
+                    $return_result['success'] = $sql->getLastInsertId();
+                }else{
+                    $return_result['error'] = __( 'There was an error trying to insert a new row! Error: ', 'wpdatatables' ).$sql->getLastError();
+                }
+            }
+        }
+
+        do_action('wpdatatables_after_frontent_edit_row', $formdata, $id_val, $table_id );
+
+        echo json_encode( $return_result );
+
+        exit();
+    }
+    add_action( 'wp_ajax_wdt_save_table_frontend', 'wdt_save_table_frontend' );
+    add_action( 'wp_ajax_nopriv_wdt_save_table_frontend', 'wdt_save_table_frontend' );
 
     /**
      * Save changes on excel table cells
@@ -303,9 +351,12 @@
     function wdt_save_table_cells_frontend(){
         global $wpdb;
 
+        // Permissions check
+        if( !wp_verify_nonce($_POST['wdtNonce'], 'wdt_frontend_edit_table_nonce') ){ exit(); }
+
         $return_result = array( 'success' => array(), 'error' => '', 'has_new' => false );
 
-        $table_id = filter_var( $_POST['table_id'], FILTER_SANITIZE_NUMBER_INT );
+        $table_id = (int) $_POST['table_id'];
 
         $cells_data = apply_filters('wpdatatables_excel_filter_frontend_formdata', $_POST['cells'], $table_id);
 
@@ -327,8 +378,10 @@
         $id_column_key = null;
         $q_placeholder = '%s';
         if( get_option('wdtUseSeparateCon') ){
-            $q_placeholder = '?';
+            $q_placeholder = 'x?x';
         }
+
+
 
         $formula_columns = array();
         $all_columns_names = array();
@@ -406,9 +459,9 @@
                         } else {
                             $cell_id_value = ( $q_action_flag == 'update' )? $cell_id_value: $sql->getLastInsertId();
                             $return_result['success'][] = array(
-                                                    "$id_column_key" => $cell_id_value,
-                                                    'action' => $q_action_flag
-                                );
+                                "$id_column_key" => $cell_id_value,
+                                'action' => $q_action_flag
+                            );
 
                             if( $q_action_flag == 'insert' ) {
                                 $return_result['has_new'] = true;
@@ -495,11 +548,13 @@
 	  * Handle table row delete
 	  */
 	  function wdt_delete_table_row(){
-	 	global $wpdb;
+          global $wpdb;
 
-		$table_id = filter_var( $_POST['table_id'], FILTER_SANITIZE_NUMBER_INT );
-	 	$id_key = filter_var( $_POST['id_key'], FILTER_SANITIZE_STRING );
-	 	$id_val = filter_var( $_POST['id_val'], FILTER_SANITIZE_NUMBER_INT );
+          if( !wp_verify_nonce($_POST['wdtNonce'], 'wdt_frontend_edit_table_nonce') ){ exit(); }
+
+		$table_id = (int)$_POST['table_id'];
+	 	$id_key = sanitize_text_field($_POST['id_key']);
+	 	$id_val = (int)$_POST['id_val'];
 	 	
 	 	$table_data = wdt_get_table_by_id( $table_id );
 	 	$mysql_table_name = $table_data['mysql_table_name'];
@@ -531,9 +586,11 @@
     function wdt_delete_table_rows() {
         global $wpdb;
 
+        if( !wp_verify_nonce($_POST['wdtNonce'], 'wdt_frontend_edit_table_nonce') ){ exit(); }
+
         $return_result = array( 'success' => array(), 'error' => '' );
 
-        $table_id = filter_var( $_POST['table_id'], FILTER_SANITIZE_NUMBER_INT );
+        $table_id = (int)$_POST['table_id'];
 
         $rows = apply_filters('wpdatatables_excel_filter_delete_rows', $_POST['rows'], $table_id);
 
@@ -549,7 +606,7 @@
 
         //first key(should be only key) as a id column name
         reset( $rows );
-        $id_col_name = key( $rows );
+        $id_col_name = sanitize_text_field(key( $rows ));
 
         if( empty( $rows[$id_col_name] ) ) {
             $return_result['error'] =  __('Nothing to delete.', 'wpdatatables');
@@ -581,12 +638,12 @@
             $column_meta = $columns_meta[0];
 
             if( $column_meta->id_column ) {
-                $id_column_key = $column_meta->orig_header;
+                $id_column_key = sanitize_text_field($column_meta->orig_header);
 
                 $delete_row_ids = $rows[$id_column_key];
 
                 foreach( $delete_row_ids as $row_id ) {
-                    $row_id = intval( $row_id );
+                    $row_id = (int)$row_id;
 
                     if( empty( $row_id ) ) {
                         continue;

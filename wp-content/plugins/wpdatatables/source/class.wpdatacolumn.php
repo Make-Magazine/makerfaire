@@ -303,7 +303,7 @@ class WDTColumn {
         $colJsDefinition = new StdClass();
         $colJsDefinition->sType = $this->_jsDataType;
         $colJsDefinition->wdtType = $this->_dataType;
-        $colJsDefinition->className = $this->getCSSClasses().' '.$this->_orig_header;
+        $colJsDefinition->className = $this->getCSSClasses().' column-'.sanitize_html_class($this->_orig_header);
         $colJsDefinition->bVisible = $this->isVisible();
         $colJsDefinition->bSortable = $this->sortEnabled();
         $colJsDefinition->searchable = $this->_searchable;

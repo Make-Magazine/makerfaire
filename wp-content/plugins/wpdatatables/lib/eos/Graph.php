@@ -21,8 +21,12 @@ class Graph
 {
     private static $width = 640;
     private static $height = 480;
-    //GD Image reference
+
+    /**
+     * @var resource
+     */
     private static $image;
+
     public static $labelAxis = true;
     public static $backgroundColor = array(255, 255, 255);
     public static $gridColor = array(150, 150, 150);
@@ -35,17 +39,20 @@ class Graph
      * Sets up the Graph class with an image width and height defaults to
      * 640x480
      *
-     * @param Integer $width Image width
-     * @param Integer $height Image height
+     * @param int $width Image width
+     * @param int $height Image height
      */
     public static function init($width = 640, $height = 480)
     {
         // default width and height equal to that of a poor monitor (in early 2000s)
         self::$width = $width;
         self::$height = $height;
-        //initialize main class
+
+        // initialize main class
         Parser::init();
-    } //end function eqGraph
+        //can't really mess this up, return true
+        return true;
+    }
 
 
     /**
@@ -53,15 +60,15 @@ class Graph
      *
      * Creates a GD image based on the equation given with the parameters that are set
      *
-     * @param String $eq Equation to use.  Needs variable in equation to create graph, all variables are interpreted as 'x'
-     * @param Integer $xLow Lower x-bound for graph
-     * @param Integer $xHigh Upper x-bound for graph
-     * @param Float $xStep Stepping points while solving, the lower, the better precision. Slow if lower than .01
-     * @param Boolean $xyGrid Draw grid-lines?
-     * @param Boolean $yGuess Guess the upper/lower yBounds?
-     * @param Integer $yLow Lower y-bound
-     * @param Integer $yHigh Upper y-bound
-     * @return Null
+     * @param string $eq Equation to use.  Needs variable in equation to create graph, all variables are interpreted as 'x'
+     * @param integer $xLow Lower x-bound for graph
+     * @param integer $xHigh Upper x-bound for graph
+     * @param float $xStep Stepping points while solving, the lower, the better precision. Slow if lower than .01
+     * @param bool $xyGrid Draw grid-lines?
+     * @param bool $yGuess Guess the upper/lower yBounds?
+     * @param int $yLow Lower y-bound
+     * @param int $yHigh Upper y-bound
+     * @return null
      */
     public static function graph($eq, $xLow, $xHigh, $xStep = null, $xyGrid = false, $yGuess = true, $yLow = null, $yHigh = null)
     {
@@ -98,19 +105,23 @@ class Graph
 
         $xScale = self::$width / ($xHigh - $xLow);
         $counter = 0;
+        // @codeCoverageIgnoreStart
         if (Math::$DEBUG) {
             $hand = fopen("Graph.txt", "w");
             fwrite($hand, "$eq\n");
         }
+        // @codeCoverageIgnoreEnd
         for ($i = $xLow; $i <= $xHigh; $i += $xStep) {
             $tester = sprintf("%10.3f", $i);
             if ($tester == "-0.000") $i = 0;
             $y = Parser::solve($eq, $i);
             //eval('$y='. str_replace('&x', $i, $eq).";"); /* used to debug my Parser class results */
+            // @codeCoverageIgnoreStart
             if (Math::$DEBUG) {
                 $tmp1 = sprintf("y(%5.3f) = %10.3f\n", $i, $y);
                 fwrite($hand, $tmp1);
             }
+            // @codeCoverageIgnoreEnd
 
             // If developer asked us to find the upper and lower bounds for y...
             if ($yGuess == true) {
@@ -124,6 +135,7 @@ class Graph
 
         //Now that we have all the variables stored...find the yScale
         $yScale = self::$height / (($yHigh) - ($yLow));
+        // @codeCoverageIgnoreStart
         //Calculate the stepping points for lines now
         if ($yHigh - $yLow > $yMaxLines) {
             $yJump = ceil(($yHigh - $yLow) / $yMaxLines);
@@ -135,20 +147,25 @@ class Graph
         } else {
             $xJump = 1;
         }
+        // @codeCoverageIgnoreEnd
 
         // add 0.01 to each side so that if y is from 1 to 5, the lines at 1 and 5 are seen
         $yLow -= 0.01;
         $yHigh += 0.01;
 
+        // @codeCoverageIgnoreStart
         if (Math::$DEBUG) {
             fwrite($hand, $yLow . " -- " . $yHigh . "\n");
         }
+        // @codeCoverageIgnoreEnd
 
         // if developer wanted a grid on the graph, add it now
         if ($xyGrid == true) {
+            // @codeCoverageIgnoreStart
             if (Math::$DEBUG) {
                 fwrite($hand, "Drawing Grid\n");
             }
+            // @codeCoverageIgnoreEnd
             for ($i = ceil($yLow); $i <= floor($yHigh); $i += $yJump) {
                 $i0 = abs($yHigh - $i);
                 ImageLine($img, 0, $i0 * $yScale, self::$width, $i0 * $yScale, $gColor);
@@ -203,16 +220,20 @@ class Graph
                 ImageLine($img, $x1, $y1, $x2, $y2, $lColor);
             $counter++;
         }
+        // @codeCoverageIgnoreStart
         if (Math::$DEBUG) {
             fclose($hand);
         }
+        // @codeCoverageIgnoreEnd
         self::$image = $img;
-    } //end function 'graph'
+    }
 
     /**
      * Sends JPG to browser
      *
      * Sends a JPG image with proper header to output
+     *
+     * @codeCoverageIgnore
      */
     public static function outJPG()
     {
@@ -224,6 +245,8 @@ class Graph
      * Sends PNG to browser
      *
      * Sends a PNG image with proper header to output
+     *
+     * @codeCoverageIgnore
      */
     public static function outPNG()
     {
@@ -255,4 +278,4 @@ class Graph
     {
         return self::getImage();
     }
-} //end class 'eqGraph'
+}

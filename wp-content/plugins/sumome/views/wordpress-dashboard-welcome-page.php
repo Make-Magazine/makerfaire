@@ -28,7 +28,7 @@ if (!isset($noClose)) print '<div class="sumome-plugin-dashboard-widget-close-bu
 				<div class="sumome-plugin-dashboard-widget-header-desc">Sumo is the #1 plugin to grow your WordPress site.<br>
 				Connect today and you'll <b>grow</b> your traffic, <b>build</b> a massive following, and <b>track</b> your progress.</div>
 				<div class="sumome-plugin-dashboard-widget-header-button">
-		            <button type="submit" class="button green connect-button" id="connectFormButton">CONNECT SUMO</button>
+		            <button type="submit" class="button green connect-button" id="connectFormButton">Connect</button>
 		            <div class="sumome-plugin-dashboard-widget-learn-more">Learn More</div>
 		        </div>
 			</div>
@@ -149,7 +149,7 @@ if (!isset($noClose)) print '<div class="sumome-plugin-dashboard-widget-close-bu
 
 			<div class="sumome-wp-dash-logged-out <?php print $sumomeStatus?>">
 					<div class="sumome-plugin-dashboard-widget-header-button sumome-plugin-dashboard-widget-footer-button">
-		            <button type="submit" class="button green connect-button" id="connectFormButton">CONNECT SUMO</button>
+		            <button type="submit" class="button green connect-button" id="connectFormButton">Connect</button>
 		            <div class="sumome-plugin-dashboard-widget-learn-more">Learn More</div>
 		        </div>
 			</div>

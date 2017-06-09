@@ -96,7 +96,8 @@
             data: {
                 action: 'wpdatatables_add_new_manual_column',
                 table_id: $('#wpdatatables_table_id').val(),
-                column_data: newColumnData
+                wdtNonce: $('#wdtNonceFronendEdit').val(),
+                column_data: newColumnData,
             },
             success: function(){
                 window.location.reload( true );
@@ -136,7 +137,8 @@
             data: {
                 action: 'wpdatatables_delete_manual_column',
                 table_id: $('#wpdatatables_table_id').val(),
-                column_name: $('#wdtDeleteColumnSelect').val()
+                wdtNonce: $('#wdtNonceFronendEdit').val(),
+                column_name: $('#wdtDeleteColumnSelect').val(),
             },
             success: function(){
                 window.location.reload( true );

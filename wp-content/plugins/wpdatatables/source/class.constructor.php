@@ -266,7 +266,7 @@
  	 public function generateManualTable( $table_data ){
  	 	global $wpdb;
                 
-                $this->_table_data = apply_filters( 'wdt_before_generate_manual_table', $table_data );
+        $this->_table_data = apply_filters( 'wdt_before_generate_manual_table', $table_data );
  	 	
  	 	// Generate the MySQL table name
  	 	$this->generateTableName();
@@ -275,7 +275,7 @@
 		$wpdb->insert(
 			$wpdb->prefix."wpdatatables",
 			array(
-                    'title' => $this->_table_data['name'],
+                    'title' => sanitize_text_field($this->_table_data['name']),
                     'table_type' => 'manual',
                     'content' => 'SELECT * FROM '.$this->_name,
                     'server_side' => 1,
@@ -301,7 +301,7 @@
  				'table_id' => $wpdatatable_id,
  				'orig_header' => 'wdt_ID',
  				'display_header' => 'wdt_ID',
- 				'filter_type' => 'null_str',
+ 				'filter_type' => 'none',
  				'column_type' => 'int',
  				'visible' => 0,
  				'pos' => $column_index,
@@ -310,8 +310,8 @@
  		); 
  		$column_index++;
 
-         $additional_statment = '';
-         $additional_statement = apply_filters('wpdt_add_default_columns', $additional_statment, $wpdatatable_id, $column_index);
+         $additional_statement = '';
+         $additional_statement = apply_filters('wpdt_add_default_columns', $additional_statement, $wpdatatable_id, $column_index);
          if ( !empty($additional_statement) ) {
              $create_statement .= $additional_statement['statment'];
              $column_index = $additional_statement['column_index'];
@@ -319,15 +319,15 @@
                 
  	 	foreach( $this->_table_data['columns'] as $column ){
  	 		
-                $column_header = self::generateMySQLColumnName( $column['name'], $column_headers );
+                $column_header = self::generateMySQLColumnName( sanitize_text_field($column['name']), $column_headers );
                     
  	 		$column_headers[] = $column_header;
             if( !isset( $column['orig_header'] ) ){
-                $column['orig_header'] = $column['name'];
+                $column['orig_header'] = sanitize_text_field($column['name']);
             }
             $this->_column_headers[ $column['orig_header'] ] = $column_header;
 
-            $columnProperties = self::defineColumnProperties( $column_header, $column['type'] );
+            $columnProperties = self::defineColumnProperties( $column_header, sanitize_text_field($column['type']) );
                         
  	 		// Create the column metadata in WPDB
  	 		$wpdb->insert(
@@ -335,13 +335,13 @@
  	 			array(
  	 				'table_id' => $wpdatatable_id,
  	 				'orig_header' => $column_header,
- 	 				'display_header' => $column['name'],
- 	 				'filter_type' => $columnProperties['filter_type'],
- 	 				'column_type' => $columnProperties['column_type'],
+ 	 				'display_header' => sanitize_text_field($column['name']),
+ 	 				'filter_type' => sanitize_text_field($columnProperties['filter_type']),
+ 	 				'column_type' => sanitize_text_field($columnProperties['column_type']),
  	 				'pos' => $column_index,
-                    'possible_values' => str_replace( ',,;,|', '|', $column['possible_values'] ),
-                    'default_value' => $column['default_value'],
-                    'input_type' => $columnProperties['editor_type']
+                    'possible_values' => str_replace( ',,;,|', '|', sanitize_text_field($column['possible_values']) ),
+                    'default_value' => sanitize_text_field($column['default_value']),
+                    'input_type' => sanitize_text_field($columnProperties['editor_type'])
  	 			)
  	 		);
  	 		
@@ -429,7 +429,6 @@
                  $this->_has_groups = true;
              }
              
-             // Prepare the tables fields
              $this->_tables_fields = self::generateTablesFieldsStructureWPBased( $this->_table_data['post_columns'] );
              
              // Initializing structure for the SELECT part of query
@@ -1225,7 +1224,7 @@
          public function generateWdtBasedOnQuery( $table_data ){
              global $wpdb;
              
-            $table_data['query'] = wpdatatables_sanitize_query( $table_data['query'] );
+            $table_data['query'] = wpdatatables_sanitize_query( ($table_data['query']) );
 
             $table_array = array(
                                     'title' => '',
@@ -1342,7 +1341,7 @@
          public function previewFileTable( $table_data ){
              
             if( !empty( $table_data['file'] ) ){
-                $xls_url = urldecode( $table_data['file'] );
+                $xls_url = urldecode( esc_url($table_data['file']) );
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     $xls_url = str_replace( site_url(), str_replace('\\', '/', ABSPATH), $xls_url ); 
                 }else{
@@ -1431,7 +1430,7 @@
             $columnTypes = array();
              
             if( !empty( $table_data['file'] ) ){
-                $xls_url = urldecode( $table_data['file'] );
+                $xls_url = urldecode( esc_url($table_data['file']) );
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     $xls_url = str_replace( site_url(), str_replace('\\', '/', ABSPATH), $xls_url ); 
                 }else{
@@ -1445,7 +1444,7 @@
                 if( $table_data['columns'][$i]['orig_header'] == '%%NEW_COLUMN%%' ){
                     $table_data['columns'][$i]['orig_header'] = 'column'.$i;
                 }
-                $columnTypes[$table_data['columns'][$i]['orig_header']] = $table_data['columns'][$i]['type'];
+                $columnTypes[$table_data['columns'][$i]['orig_header']] = sanitize_text_field($table_data['columns'][$i]['type']);
             }
             
             $this->_id = $this->generateManualTable( $table_data );
@@ -1510,7 +1509,7 @@
                 
                 // Set all cells in the row to their defaults
                 foreach( $table_data['columns'] as $column ){
-                    $insertArray[ $this->_column_headers[ $column['orig_header'] ] ] = "'" . esc_sql( $column['default_value'] ) . "'";
+                    $insertArray[ $this->_column_headers[ $column['orig_header'] ] ] = "'" . sanitize_text_field( $column['default_value'] ) . "'";
                 }
 
                 if ( $table_type == 'google' ) {
@@ -1554,15 +1553,19 @@
                                 if ($objReader instanceof PHPExcel_Reader_CSV) {
                                         $date = strtotime( $dataRow[$row][$dataColumnIndex] );
                                 } else {
-                                    $date = esc_sql(PHPExcel_Shared_Date::ExcelToPHP($dataRow[$row][$dataColumnIndex]));
+                                    if ($dataRow[$row][$dataColumnIndex] == null) {
+                                        $date = null;
+                                    } else{
+                                        $date = PHPExcel_Shared_Date::ExcelToPHP($dataRow[$row][$dataColumnIndex]);
+                                    }
                                 }
 
                                 if( $columnTypes[$dataColumnHeading] == 'date' ){
-                                    $insertArray[$this->_column_headers[$dataColumnHeading]] = "'" . date('Y-m-d', $date) . "'";
+                                    $insertArray[$this->_column_headers[$dataColumnHeading]] = ($date == null) ? 'NULL' : "'" . date('Y-m-d', $date) . "'";
                                 }elseif( $columnTypes[$dataColumnHeading] == 'datetime' ){
-                                    $insertArray[$this->_column_headers[$dataColumnHeading]] = "'" . date('Y-m-d H:i:s', $date) . "'";
+                                    $insertArray[$this->_column_headers[$dataColumnHeading]] = ($date == null) ? 'NULL' : "'" . date('Y-m-d H:i:s', $date) . "'";
                                 }elseif( $columnTypes[$dataColumnHeading] == 'time' ){
-                                    $insertArray[$this->_column_headers[$dataColumnHeading]] = "'" . date('H:i:s', $date) . "'";
+                                    $insertArray[$this->_column_headers[$dataColumnHeading]] = ($date == null) ? 'NULL' : "'" . date('H:i:s', $date) . "'";
                                 }
 
                             }
@@ -1692,6 +1695,7 @@
              }
                 
              // Fill in with default value if requested
+             $column_data['default_value'] = sanitize_text_field($column_data['default_value']);
              if( $column_data['fill_default'] == 1 ){
                  $update_fill_default = "UPDATE {$table_data['mysql_table_name']} 
                                             SET `{$new_column_mysql_name}` = '{$column_data['default_value']}' 
@@ -1720,12 +1724,12 @@
                     array(
                             'table_id' => $table_id,
                             'orig_header' => $new_column_mysql_name,
-                            'display_header' => $column_data['name'],
+                            'display_header' => sanitize_text_field($column_data['name']),
                             'filter_type' => $columnProperties['filter_type'],
                             'column_type' => $columnProperties['column_type'],
                             'pos' => $column_index,
-                            'possible_values' => str_replace( ',,;,|', '|', $column_data['possible_values'] ),
-                            'default_value' => $column_data['default_value'],
+                            'possible_values' => str_replace( ',,;,|', '|', sanitize_text_field($column_data['possible_values']) ),
+                            'default_value' => sanitize_text_field($column_data['default_value']),
                             'input_type' => $columnProperties['editor_type']
                     )
             );

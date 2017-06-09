@@ -21,6 +21,19 @@ class WDTTools {
                 'file' => __('Attachment','wpdatatables')
             );
     }
+
+    public static function sanitizeHeader( $header ){
+        return
+            str_replace(
+                range('0','9'),
+                range('a','j'),
+                str_replace(
+                    array('$','_','&',' ' ),
+                    '',
+                    $header
+                )
+            );
+    }
     
     public static function applyPlaceholders( $string ){
         global $wdt_var1, $wdt_var2, $wdt_var3, $wpdb;
@@ -112,13 +125,18 @@ class WDTTools {
         $url_arr = explode( '/', $url );
         $spreadsheet_key = $url_arr[ count($url_arr)-2 ];
         $csv_url = "https://docs.google.com/spreadsheets/d/{$spreadsheet_key}/pub?hl=en_US&hl=en_US&single=true&output=csv";
-        $url_query = parse_url($url, PHP_URL_QUERY);
+	    if (strpos($url, '#') !== false) {
+            $url_query = parse_url($url, PHP_URL_FRAGMENT);
+        }else{
+		    $url_query = parse_url($url, PHP_URL_QUERY);
+        }
+
         if( !empty( $url_query ) ) {
             parse_str( $url_query, $url_query_params );
             if( !empty( $url_query_params['gid'] ) ) {
                 $csv_url .= '&gid=' . $url_query_params['gid'];
             }else{
-	            $csv_url .= '&gid=0' . $url_query_params['gid'];
+	            $csv_url .= '&gid=0';
             }
         }
         $csv_data = WDTTools::curlGetData( $csv_url );
@@ -356,6 +374,14 @@ class WDTTools {
     }
 
     /**
+     * Helper method to wrap values in quotes for DB
+     */
+    public static function wrapQuotes( $value ){
+        $valueQuote = get_option('wdtUseSeparateCon') ? "'" : '';
+        return $valueQuote.$value.$valueQuote;
+    }
+
+    /**
      * Helper method to detect the headers that are present in formula
      */
     public static function getColHeadersInFormula( $formula, $headers ) {
@@ -368,6 +394,43 @@ class WDTTools {
         return $headers_in_formula;
     }
 
+    public static function hex2rgba($color, $opacity = false) {
+
+    $default = 'rgb(0,0,0)';
+
+    //Return default if no color provided
+    if(empty($color))
+        return $default;
+
+    //Sanitize $color if "#" is provided
+    if ($color[0] == '#' ) {
+        $color = substr( $color, 1 );
+    }
+
+    //Check if color has 6 or 3 characters and get values
+    if (strlen($color) == 6) {
+        $hex = array( $color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5] );
+    } elseif ( strlen( $color ) == 3 ) {
+        $hex = array( $color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2] );
+    } else {
+        return $default;
+    }
+
+    //Convert hexadec to rgb
+    $rgb =  array_map('hexdec', $hex);
+
+    //Check if opacity is set(rgba or rgb)
+    if($opacity){
+        if(abs($opacity) > 1)
+            $opacity = 1.0;
+        $output = 'rgba('.implode(",",$rgb).','.$opacity.')';
+    } else {
+        $output = 'rgb('.implode(",",$rgb).')';
+    }
+
+    //Return rgb(a) color string
+    return $output;
+}
     //[<-- Full version insertion #10 -->]//
     
 }

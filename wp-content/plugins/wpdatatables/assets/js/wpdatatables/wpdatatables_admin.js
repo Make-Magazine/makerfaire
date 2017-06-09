@@ -17,8 +17,7 @@ function wdtAlertDialog(str, title){
 }
 
 function applySelecter(){
-	jQuery('select').selecter('destroy');
-	jQuery('select').selecter();
+	jQuery('select:not(.selecter-element)').selecter();
 }
 
 jQuery(window).load(function(){

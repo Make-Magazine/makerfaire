@@ -15,6 +15,7 @@
 <?php } ?>
 
 <?php do_action('wpdatatables_before_table', $wpDataTable->getWpId()); ?>
+<?php wp_nonce_field('wdt_frontend_edit_table_nonce', 'wdtNonceFronendEdit'); ?>
 	<input type="hidden" id="<?php echo $wpDataTable->getId() ?>_desc" value='<?php echo $wpDataTable->getJsonDescription(); ?>' />
 
 <?php if( !$wpDataTable->serverSide() ): ?>

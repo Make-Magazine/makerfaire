@@ -36,7 +36,12 @@ $wdt_admin_translation_array = array(
     'ok' => __('OK', 'wpdatatables'),
     'no_formatting_rules' => __('No formatting rules for this column yet.', 'wpdatatables'),
     'merge' => __('Merge', 'wpdatatables'),
-    'replace' => __('Replace', 'wpdatatables')
+    'replace' => __('Replace', 'wpdatatables'),
+    'close' => __('Close','wpdatatables'),
+    'success' => __('Success!','wpdatatables'),
+    'table_saved' => __('Table settings saved'),
+    'modal_title' => __('Notice', 'wpdatatables'),
+    'modal_text' => __('You enabled front-end editing for this table, but did not provide editor input types for any columns. Please define editor input types for at least 1 column, or the front-end editing wont be functional', 'wpdatatables')
     //[<-- Full version insertion #01 -->]//
 );
 
@@ -67,7 +72,7 @@ function wpdatatables_admin_menu()
         add_submenu_page('wpdatatables-administration', 'Create Chart Wizard', __('Create Chart Wizard', 'wpdatatables'), 'manage_options', 'wpdatatables-chart-wizard', 'wpdatatables_chart_wizard'),
         add_submenu_page('wpdatatables-administration', 'wpDataTables settings', __('Settings', 'wpdatatables'), 'manage_options', 'wpdatatables-settings', 'wpdatatables_settings'),
         add_submenu_page('wpdatatables-administration', 'wpDataTables add-ons', '<span style="color: #ff8c00">' . __('Addons', 'wpdatatables') . '</span>', 'manage_options', 'wpdatatables-addons', 'wpdatatables_addons'),
-        add_submenu_page(null, 'wpDataTables editor', 'Editor', 'manage_options', 'wpdatatables-editor', 'wpdatatables_editor')
+        add_submenu_page(null, 'wpDataTables editor', 'Editor', 'manage_options', 'wpdatatables-editor', 'wpdatatables_editor'),
     );
     foreach ($wdt_pages as $wdt_page) {
         add_action('admin_print_styles-' . $wdt_page, 'wdt_admin_styles');
@@ -92,7 +97,6 @@ function wdt_admin_scripts()
     wp_enqueue_script('jquery-ui-sortable');
     wp_enqueue_script('jquery-ui-dialog');
     wp_enqueue_script('jquery-ui-datepicker');
-    wp_enqueue_script('jquery-ui-tabs');
     do_action('wpdatatables_admin_scripts');
 }
 
@@ -135,16 +139,16 @@ function wdt_admin_styles($page)
 function wdt_get_all_tables()
 {
     global $wpdb;
-    $query = "SELECT id, title, table_type
-							FROM {$wpdb->prefix}wpdatatables ";
+    
+    $query = "SELECT id, title, table_type FROM {$wpdb->prefix}wpdatatables ";
 
     if (isset($_REQUEST['s'])) {
-        $query .= " WHERE title LIKE '%" . sanitize_text_field($_POST['s']) . "%' ";
+        $query .= " WHERE title LIKE '%" . sanitize_text_field($_POST['s']) . "%'";
     }
 
     if (isset($_REQUEST['orderby'])) {
         if (in_array($_REQUEST['orderby'], array('id', 'title', 'table_type'))) {
-            $query .= " ORDER BY " . $_GET['orderby'];
+            $query .= " ORDER BY " . sanitize_text_field($_REQUEST['orderby']);
             if ($_REQUEST['order'] == 'desc') {
                 $query .= " DESC";
             } else {
@@ -221,6 +225,7 @@ function wdt_get_table_count()
 function wdt_create_columns_from_table($table, $table_id)
 {
     global $wpdb;
+    $table_id = (int)($table_id);
 
     do_action('wpdatatables_before_create_columns', $table, $table_id);
 
@@ -233,7 +238,7 @@ function wdt_create_columns_from_table($table, $table_id)
     );
     $columns_to_delete = $wpdb->get_col($existing_columns_query);
     if (!empty($_POST['columns_to_delete'])) {
-        $columns_to_delete = array_merge($columns_to_delete, $_POST['columns_to_delete']);
+        $columns_to_delete = array_merge($columns_to_delete, array_map('sanitize_text_field', $_POST['columns_to_delete']));
     }
 
     $columns = $table->getColumns();
@@ -450,7 +455,7 @@ function wpdatatables_enqueue_editing_scripts()
     // Admin JS
     wp_enqueue_script('wpdatatables-admin', WDT_JS_PATH . 'wpdatatables/wpdatatables_admin.js');
     // Google Charts
-    wp_enqueue_script('wdt_google_charts', 'https://www.google.com/jsapi');
+    wp_enqueue_script('wdt_google_charts', '//www.gstatic.com/charts/loader.js');
     // Selecter
     wp_enqueue_script('wpdatatables-selecter', WDT_JS_PATH . 'selecter/jquery.fs.selecter.min.js');
     wp_enqueue_style('wpdatatables-selecter', WDT_CSS_PATH . 'jquery.fs.selecter.css');
@@ -520,7 +525,7 @@ function wpdatatables_browse()
     }
     $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
     if ($action == 'edit') {
-        $id = $_GET['table_id'];
+        $id = (int)$_GET['table_id'];
         $tpl = new PDTTpl();
         $tpl->setTemplate('edit_table.inc.php');
         wpdatatables_enqueue_editing_scripts();
@@ -559,15 +564,15 @@ function wpdatatables_browse()
 
             if (!is_array($id)) {
                 //[<-- Full version -->]//
-                wpdatatables_delete_manual_table($id);
+                wpdatatables_delete_manual_table( (int)$id );
                 //[<--/ Full version -->]//
-                wpdatatables_delete_table( $id );
+                wpdatatables_delete_table( (int)$id );
             } else {
                 foreach ($id as $single_id) {
                     //[<-- Full version -->]//
-                    wpdatatables_delete_manual_table($single_id);
+                    wpdatatables_delete_manual_table( (int)$single_id );
                     //[<--/ Full version -->]//
-                    wpdatatables_delete_table( $single_id );
+                    wpdatatables_delete_table( (int)$single_id );
                 }
             }
         }
@@ -627,6 +632,7 @@ function wpdatatables_addnew()
     if (!current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
+    
     $tpl = new PDTTpl();
     wpdatatables_enqueue_editing_scripts();
     $tpl->setTemplate('edit_table.inc.php');
@@ -642,7 +648,6 @@ function wpdatatables_addnew()
     echo $newtable_page;
 
     do_action('wpdatatables_addnew_page');
-
 }
 
 /**
@@ -670,6 +675,7 @@ function wpdatatables_charts()
     if (!current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
+    
     $tpl = new PDTTpl();
 
     /**
@@ -679,11 +685,11 @@ function wpdatatables_charts()
         $delete_id = $_REQUEST['chart_id'];
         if (is_array($delete_id)) {
             foreach ($delete_id as $single_delete_id) {
-                $single_delete_id = filter_var($single_delete_id, FILTER_SANITIZE_NUMBER_INT);
+                $single_delete_id = (int)$single_delete_id;
                 wpDataChart::deleteChart($single_delete_id);
             }
         } else {
-            $delete_id = filter_var($delete_id, FILTER_SANITIZE_NUMBER_INT);
+            $delete_id = (int)$delete_id;
             wpDataChart::deleteChart($delete_id);
         }
     }
@@ -740,15 +746,18 @@ function wpdatatables_chart_wizard()
     if (!current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
+    
     $tpl = new PDTTpl();
 
     //[<-- Full version -->]//
     // Google Chart JS
-    wp_enqueue_script('wdt_google_charts', '//www.google.com/jsapi');
+    wp_enqueue_script('wdt_google_charts', '//www.gstatic.com/charts/loader.js');
     // Highcharts JS
     wp_enqueue_script('wdt_highcharts', '//code.highcharts.com/highcharts.js');
     wp_enqueue_script('wdt_highcharts3d', '//code.highcharts.com/highcharts-3d.js');
     wp_enqueue_script('wdt_exporting', '//code.highcharts.com/modules/exporting.js');
+    // ChartJS
+    wp_enqueue_script('wdt_chartjs', WDT_JS_PATH . 'chartjs/Chart.js');
     // iCheck
     wp_enqueue_script('wpdatatables-icheck', WDT_JS_PATH . 'icheck/icheck.min.js');
     wp_enqueue_style('wpdatatables-icheck', WDT_CSS_PATH . 'icheck.minimal.css');
@@ -767,18 +776,21 @@ function wpdatatables_chart_wizard()
     wp_enqueue_script('wpdatatables-image-picker', WDT_JS_PATH . 'image-picker/image-picker.min.js');
     wp_enqueue_style('wpdatatables-image-picker', WDT_CSS_PATH . 'image-picker.css');
     // Chart wizard JS
+	wp_enqueue_script('jquery-ui-tabs');
     wp_enqueue_script('wpdatatables-chart-wizard', WDT_JS_PATH . 'wpdatatables/wpdatatables_chart_wizard.js');
     //[<-- Full version -->]//
     // Google Chart wpDataTable JS library
     wp_enqueue_script('wpdatatables-google-chart', WDT_JS_PATH . 'wpdatatables/wpdatatables_google_charts.js');
-    // Highchart wpDataTable JS library
+    // Highcharts wpDataTable JS library
     wp_enqueue_script('wpdatatables-highcharts', WDT_JS_PATH . 'wpdatatables/wpdatatables_highcharts.js');
+    // ChartJS wpDataTable JS library
+    wp_enqueue_script('wpdatatables-chartjs', WDT_JS_PATH . 'wpdatatables/wpdatatables_chartjs.js');
     //[<--/ Full version -->]//
 
     wp_localize_script('wpdatatables-edit', 'wpdatatables_edit_strings', $wdt_admin_translation_array);
 
     // Edit or add new
-    $chart_id = isset($_GET['chart_id']) ? filter_var($_GET['chart_id'], FILTER_SANITIZE_NUMBER_INT) : false;
+    $chart_id = isset($_GET['chart_id']) ? (int)$_GET['chart_id'] : false;
     if (!empty($chart_id)) {
         $chartObj = new WPDataChart();
         $chartObj->setId($chart_id);
@@ -789,12 +801,14 @@ function wpdatatables_chart_wizard()
 
     $tpl->setTemplate('chart_wizard.inc.php');
     $tpl->addData('chart_id', $chart_id);
+    
     if (!empty($chart_id)) {
         $tpl->addData('wpShowTitle', __('wpDataTables Chart Edit Wizard', 'wpdatatables'));
         $tpl->addData('chartObj', $chartObj);
     } else {
         $tpl->addData('wpShowTitle', __('wpDataTables Chart Create Wizard', 'wpdatatables'));
     }
+    
     $tpl->addData('chartDataJson', json_encode(array()));
     $chart_wizard_page = $tpl->returnData();
 
@@ -815,6 +829,7 @@ function wpdatatables_settings()
     }
 
     wp_enqueue_script('wdt-colorpicker');
+    wp_enqueue_script('jquery-ui-tabs');
 
     $languages = array();
 
@@ -934,7 +949,6 @@ function wpdatatables_constructor()
     echo $constructor_page;
 
     do_action('wpdatatables_constructor_page');
-
 }
 
 /**
@@ -950,7 +964,7 @@ function wpdatatables_editor()
     wp_enqueue_script('wpdatatables-selecter', WDT_JS_PATH . 'selecter/jquery.fs.selecter.min.js');
     wp_enqueue_style('wpdatatables-selecter', WDT_CSS_PATH . 'jquery.fs.selecter.css');
 
-    $table_id = $_GET['table_id'];
+    $table_id = (int)$_GET['table_id'];
 
     $table_data = wdt_get_table_by_id($table_id);
     $column_data = wdt_get_columns_by_table_id($table_id);
@@ -1005,7 +1019,7 @@ function wpdatatables_editor()
     wp_enqueue_script('jquery-ui-datepicker');
     wp_enqueue_script('jquery-ui-button');
     wp_enqueue_style('dashicons');
-    wp_enqueue_script('wdt_google_charts', 'https://www.google.com/jsapi');
+    wp_enqueue_script('wdt_google_charts', '//www.gstatic.com/charts/loader.js');
     wp_enqueue_script('formstone-selecter', WDT_JS_PATH . 'selecter/jquery.fs.selecter.min.js');
     wp_enqueue_style('formstone-selecter', WDT_CSS_PATH . 'jquery.fs.selecter.css');
     //[<-- Full version -->]//
@@ -1029,7 +1043,7 @@ function wpdatatables_editor()
     //[<-- Full version -->]//
     // Check the saerch values passed from URL
     if (isset($_GET['wdt_search'])) {
-        $tbl->setDefaultSearchValue($_GET['wdt_search']);
+        $tbl->setDefaultSearchValue(sanitize_text_field($_GET['wdt_search']));
     }
     //[<--/ Full version -->]//
 
@@ -1039,6 +1053,9 @@ function wpdatatables_editor()
         // set visibility
         if (!$column->visible) {
             $tbl->getColumn($column->orig_header)->hide();
+        }
+        if( !empty( $column->input_mandatory ) ){
+            $tbl->getColumn($column->orig_header)->setNotNull( $column->input_mandatory );
         }
 
         //[<-- Full version -->]//
@@ -1050,7 +1067,7 @@ function wpdatatables_editor()
         // Check the default values passed from URL
         if (isset($_GET['wdt_column_filter'])) {
             foreach ($_GET['wdt_column_filter'] as $fltColKey => $fltDefVal) {
-                $tbl->getColumn($fltColKey)->setDefaultValue($fltDefVal);
+                $tbl->getColumn((int)$fltColKey)->setDefaultValue(sanitize_text_field($fltDefVal));
             }
         }
 
@@ -1077,14 +1094,7 @@ function wpdatatables_editor()
                 $tbl->setDefaultSortDirection('DESC');
             }
         }
-        if ($table_data['chart'] != 'none') {
-            if ($column->use_in_chart) {
-                $tbl->addChartSeries($column->orig_header);
-            }
-            if ($column->chart_horiz_axis) {
-                $tbl->setChartHorizontalAxis($column->orig_header);
-            }
-        }
+
         // Set ID column if specified
         if ($column->id_column) {
             $tbl->setIdColumnKey($column->orig_header);
@@ -1095,8 +1105,8 @@ function wpdatatables_editor()
         $tbl->getColumn($column->orig_header)->setInputType($column->input_type);
         //[<--/ Full version -->]//
     }
+    
     $output_str = '';
-
     if ($table_data['title']) {
         $output_str .= apply_filters('wpdatatables_filter_table_title', (empty($table_data['title']) ? '' : '<h2>' . $table_data['title'] . '</h2>'), $table_id);
     }
@@ -1108,9 +1118,11 @@ function wpdatatables_editor()
     if ($table_data['inline_editing']) {
         $tbl->enableInlineEditing();
     }
+    
     if ($table_data['popover_tools']) {
         $tbl->enablePopoverTools();
     }
+    
     $tbl->enableServerProcessing();
     //[<--/ Full version -->]//
 
@@ -1131,7 +1143,6 @@ function wpdatatables_editor()
     echo $editor_page;
 
     do_action('wpdatatables_settings_page');
-
 }
 
 ?>

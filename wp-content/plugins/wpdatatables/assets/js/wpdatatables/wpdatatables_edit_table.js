@@ -218,6 +218,36 @@ var additional_options;
 
         $('#wdtResponsive').change();
 
+        /**
+         * Hide Limit Table Layout when Scrollable is checked
+         */
+        $( '#wdtScrollable' ).change(function() {
+            if(($(this).is(':checked'))){
+                $('#wpFixedLayout').removeAttr('checked').change();
+                $('tr.limit_table_layout').hide();
+            }else{
+                $('tr.limit_table_layout').show();
+            }
+        });
+        /**
+         * Hide Word wrap when Limit table layout and scrollable checked
+         * Show Word wrap and Width  when Limit table tayout is checked
+         */
+        $('#wpFixedLayout').change(function() {
+            if(($('#wpFixedLayout').is(':checked'))){
+                $('tr.word_wrap_row').show();
+                $('tr.column_width').show();
+            }else{
+                $('#wpWordWrap').removeAttr('checked').change();
+                $('tr.word_wrap_row').hide();
+                $('tr.column_width').hide();
+                $('input.columnWidth').val("");
+            }
+        });
+
+
+
+
         // Show editor roles picker for manually created tables
         if( $('#wdt_table_manual').val() == '1' ){
             $('.table_editable_row').show();
@@ -270,11 +300,26 @@ var additional_options;
             tb_remove();
         };
 
+        alertChooseInput = function () {
+            if ($('#wpTableEditable').is(':checked')){
+                var isNONE = true;
+                $(".editable_table_column_row span.selecter-selected").each(function() {
+                    if ($(this).text()!=='None') {
+                        isNONE = false;
+                    }
+                });
+                if (isNONE) {
+                    wdtAlertDialog(wpdatatables_edit_strings.modal_text, wpdatatables_edit_strings.modal_title);
+                }
+            }
+        }
+
         $('.submitStep1').click(function(e){
             e.preventDefault();
             e.stopImmediatePropagation();
             $clickedSaveButton = $(this);
             saveTable();
+            alertChooseInput();
         });
 
         $('.submitStep2').click(function(e){
@@ -282,6 +327,8 @@ var additional_options;
             $clickedSaveButton = $(this);
             e.stopImmediatePropagation();
             saveTable();
+            alertChooseInput();
+
         });
         
         // Toggle 'show SUM' checkbox for float and integer columns
@@ -401,6 +448,7 @@ var additional_options;
             // collecting table settings data
             var data = { };
             data.action = 'wdt_save_table';
+            data.wdtNonce = $('#wdtNonce').val();
             data.table_title = $('#wpTableTitle').val();
             data.show_title = $('#wpShowTableTitle').is(':checked') ? 1 : 0;
             data.table_type = $('#wpTableType').val();
@@ -447,7 +495,7 @@ var additional_options;
             data.table_charttitle = '';
             data.table_serverside = $('#wpServerSide').is(':checked');
             if( data.table_serverside ){
-                data.table_auto_refresh = parseInt( $('#wdtAutoRefresh').val() );
+                data.table_auto_refresh = $('#wdtAutoRefresh').val();
             }else{
                 data.table_auto_refresh = 0;
             }
@@ -562,13 +610,14 @@ var additional_options;
 
                                 if($('#wpTableEditable').is(':checked')){
                                     if($('#wdtIdColumn').val() == ''){
-                                        wdtAlertDialog(wpdatatables_edit_strings.id_column_not_set,wpdatatables_edit_strings.error_label); 
+                                        wdtAlertDialog(wpdatatables_edit_strings.id_column_not_set,wpdatatables_edit_strings.error_label);
                                         return;
                                     }
                                 }
                                 var data = { };
                                 data.action = 'wdt_save_columns';
                                 data.table_id = $('#wpDataTableId').val();
+                                data.wdtColumnsNonce = $('#wdtColumnsNonce').val();
                                 data.columns = JSON.stringify( collectColumnsData() );
 
                                 $.ajax({
@@ -599,6 +648,17 @@ var additional_options;
                                             $('#wpTablePopoverTools').change();
                                             $('.submitStep2').removeAttr('disabled');
                                             applySelecter();
+
+                                            if($('#wpFixedLayout').is(':checked')){
+                                                $('tr.column_width').show();
+                                                $('tr.word_wrap_row').show();
+                                            }else{
+                                                $('#wpWordWrap').removeAttr('checked').change();
+                                                $('tr.word_wrap_row').hide();
+                                                $('tr.column_width').hide();
+                                                $('input.columnWidth').val("");
+                                            }
+
                                             $( $.templates("#wdtSaveDoneTemplate").render() ).insertBefore($clickedSaveButton).fadeIn( 300 );
                                             setTimeout(
                                                 function(){
@@ -737,7 +797,11 @@ var additional_options;
                                         setVal:  jQuery(this).find('input.setVal').val()
                                     });
                                 });
-                                $currentFormattingRulesContainer.val( JSON.stringify( formattingRules ) );
+                                if( formattingRules.length ){
+                                    $currentFormattingRulesContainer.val( JSON.stringify( formattingRules ) );
+                                }else{
+                                    $currentFormattingRulesContainer.val( '' );
+                                }
                             }
                             $currentFormattingRulesContainer = null;
                             $(this).dialog('close');
@@ -1263,7 +1327,14 @@ var additional_options;
             aceEditor.getSession().setMode("ace/mode/sql");
             aceEditor.setTheme("ace/theme/idle_fingers");
         }
-    
+            if($('#wdtScrollable').is(':checked')){
+                $('#wpFixedLayout').removeAttr('checked').change();
+                $('tr.limit_table_layout').hide();
+            }
+        if($('#wpFixedLayout').is(':checked')){
+            $('tr.column_width').show();
+            $('tr.word_wrap_row').show();
+        }
     });
 
 })(jQuery);

@@ -850,7 +850,7 @@ span.filter_column.filter_number_range {
  }
 
 
-div.data_validation_notify  {
+div.data_validation_notify, div.input_alert_notify {
      color:  #a94442;
      background-color:  #f2dede;
      border-color:  #ebccd1;
@@ -1126,4 +1126,8 @@ div.dt-button-info > div {
     overflow-y: scroll;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+}
+
+.wpDataTables .selecter.bottom.open .selecter-options {
+    bottom: initial !important;
 }

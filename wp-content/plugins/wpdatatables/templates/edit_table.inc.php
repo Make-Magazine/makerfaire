@@ -16,6 +16,7 @@
 					<div id="message" class="updated" <?php if (empty($table_id)) { ?>style="display: none;"<?php } ?> >
 						<p id="wdtScId"><?php _e('To insert the table on your page use the shortcode','wpdatatables');?>: <strong>[wpdatatable id=<?php if (!empty($table_id)) {echo $table_id; } ?>]</strong></p>
 					</div>
+                    <?php wp_nonce_field('wdt_save_table_nonce', 'wdtNonce'); ?>
 					<input type="hidden" id="wdt_date_format" value="<?php echo $wdtDateFormat; ?>" />
 					<input type="hidden" id="wpdatatable_id" value="<?php if (!empty($table_id)) { echo $table_id; } ?>" />
 					<input type='hidden' id='wdt_table_manual' value='<?php if( isset($table_data['table_type']) && ($table_data['table_type'] == 'manual') ) { echo '1'; } else { echo '0'; } ?>' />
@@ -233,7 +234,8 @@
 												<span class="description"><?php _e('Check this checkbox if you would like to get the New, Edit and Delete buttons in a popover on click on a table row, instead of in TableTools block above the table','wpdatatables'); ?></span>
 											</td>
 										</tr>
-										<?php do_action('wpdatatables_additional_option', !empty( $table_id ) ? $table_id : 0, $table_data); ?>										<tr valign="top" class="editing_own_rows_row step1_row">
+										<?php if( !empty( $table_id ) ){ do_action('wpdatatables_additional_option', $table_id, $table_data ); } ?>
+										<tr valign="top" class="editing_own_rows_row step1_row">
 											<th scope="row">
 												<label for="wpTableEditingOwnRowsOnly"><?php _e('Users see and edit only their data','wpdatatables');?></label>
 											</th>
@@ -375,7 +377,7 @@
 												<span class="description"><?php _e('Check this checkbox if you would like to have sorting feature in your table','wpdatatables');?>.</span>
 											</td>
 										</tr>
-										<tr valign="top" class="step1_row">
+										<tr valign="top" class="limit_table_layout">
 											<th scope="row">
 												<label for="wpFixedLayout"><?php _e('Limit table layout','wpdatatables');?></label>
 											</th>
@@ -384,7 +386,7 @@
 												<span class="description"><?php _e('Check this checkbox if you would like to limit the table\'s width to 100% of parent container (div)','wpdatatables');?>.</span>
 											</td>
 										</tr>
-										<tr valign="top" class="step1_row">
+										<tr valign="top" class="word_wrap_row" style="display: none;">
 											<th scope="row">
 												<label for="wpWordWrap"><?php _e('Word wrap','wpdatatables');?></label>
 											</th>
@@ -556,6 +558,7 @@
 <script id="columnsTableTmpl" type="text/x-jsrender">
 	{{if !singleColumn}}
 	<table>
+        <?php wp_nonce_field('wdt_save_columns_nonce', 'wdtColumnsNonce'); ?>
 		<tr class="sort_columns_block">
 	{{/if}}
 		{{for columns_data tmpl="#columnBlockTmpl" ~filterTypes=filterTypes ~columnTypes=columnTypes ~editorTypes=editorTypes ~tableEditable=tableEditable ~tableType=tableType ~tableServerSide=tableServerSide /}}
@@ -753,7 +756,7 @@
 					<input type="text" class="columnPos" value="{{>pos}}" />
 				</td>
 			</tr>
-			<tr>
+			<tr class="column_width" style="display: none;">
 				<td>
 					<b><?php _e('Width','wpdatatables');?></b>:
 					<button class="button button-primary showHint">?</button><br/>

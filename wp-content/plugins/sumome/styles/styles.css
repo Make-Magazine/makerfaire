@@ -193,14 +193,19 @@
   height:41px;
 }
 .sumome-plugin-main .site-ID-container button.button {
-  height:40px;
-  line-height:40px;
-  vertical-align:middle;
-  padding:0px 20px;
-  border-radius: 0px 0px 0px 0px;
-  background-color:#c8cbcd;
-  color:#65717b;
-  position:relative;
+  line-height: 42px;
+  vertical-align: middle;
+  padding: 0px 20px;
+  color: #495259;
+  position: relative;
+  border: 0px;
+  left: 10px;
+  top: -1px;
+  cursor: pointer;
+  border-radius: 4px;
+  height: 42px;
+  background-color: #ccc;
+  font-weight:bold;
 }
 .sumome-plugin-popup-container .site-ID button.button {
   height:40px;
@@ -466,17 +471,24 @@
 }
 
 .sumome-plugin-main .site-ID .list-number-title {
-  font-size: 25px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #495259;
+  padding-bottom: 10px;
 }
 .sumome-plugin-main .site-ID table {
   margin: 0px auto;
 }
 .sumome-plugin-main .sumome-site-id {
-  width: 570px;
-  height: 40px;
-  padding-top: 8px;
-  font-size: 15px;
+  width: 650px;
+  height: 42px;
+  padding: 10px 10px;
   vertical-align: bottom;
+  background-color: #fff;
+  box-shadow: none;
+  font-size: 16px;
+  border: 1px solid #d1d4d5;
+  border-radius: 4px;
 }
 .sumome-plugin-main .site-ID .button-primary {
   padding-top: 14px;
@@ -687,20 +699,19 @@
 }
 
 
-
-
 .sumome-plugin-dashboard-widget-inner.dim {
-    opacity:.2;
-    pointer-events: none;
+  opacity:.2;
+  pointer-events: none;
 }
-
-
 
 .sumome-plugin-dashboard-widget-header {
   background-image:url(../images/sumome-site-welcome-header.jpg);
-  background-size:100%;
+  background-size:100% auto;
   background-repeat:no-repeat;
   color:#fff;
+  min-height: 238px;
+  background-position: center;
+  background-repeat: no-repeat;
   -webkit-background-size: cover; /* For WebKit*/
   -moz-background-size: cover;    /* Mozilla*/
   -o-background-size: cover;      /* Opera*/
@@ -754,7 +765,7 @@
   padding-bottom:30px;
   text-align:center;
   line-height:40px;
-  color:#0f74b5;
+  color:#495259;
 }
 .sumome-plugin-dashboard-widget-top-note-desc {
   width:80%;
@@ -797,12 +808,13 @@
 
 
 .sumome-plugin-dashboard-widget-row-title {
-  color:#0f74b5;
+  color:#495259;
   text-align:left;
   font-size:20px;
   margin:0px auto;
   width:80%;
   margin-bottom:20px;
+  font-weight: bold;
 }
 .sumome-plugin-dashboard-widget-row-desc {
   text-align:left;
@@ -846,7 +858,7 @@
 .sumome-plugin-dashboard-widget-header-button {
   text-align:center;
   padding-top: 30px;
-  padding-bottom: 70px;
+  padding-bottom: 20px;
 }
 
 .sumome-plugin-dashboard-widget-footer-button {
@@ -859,18 +871,20 @@
 .sumome-plugin-dashboard-widget-inner button.green.connect-button,
 .sumome-plugin-dashboard-widget-inner button.green.dashboard-button
  {
-    background-image: linear-gradient(#87d955,#5bc739);
-    background-color: #87d955;
-    border-color: #87d955 !important;
+    background-color: #5bc639;
     width: auto;
     height: auto;
-    line-height: 4em;
-    border-radius: 99999px !important;
-    color:#fff;
-    margin:0px auto;
-    font-size:1.4em;
-    padding: 0 3em;
-    box-shadow: unset;
+    color: #fff;
+    margin: 0px auto;
+    font-size: 1.4em;
+    border: 0px;
+    border-radius: 4px;
+    font-family: "Open Sans Semibold", helvetica, arial;
+    font-size: 20px;
+    padding: 20px 50px;
+    font-weight: 600;
+    border:0px;
+    box-shadow: none !important;
 }
 
 /*minimized*/

@@ -6,7 +6,7 @@
 
 // Current version
 //[<-- Full version -->]//
-define( 'WDT_CURRENT_VERSION', '1.7' );
+define( 'WDT_CURRENT_VERSION', '1.7.2' );
 //[<--/ Full version -->]//
 //[<-- Full version insertion #15 -->]//
 
@@ -19,7 +19,7 @@ define( 'WDT_URL_REGEX', '/^\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!
 /**
  * wpDataTables-related settings, too "technical" to be used in GUI
  */
-define( 'WDT_PARSE_SHORTCODES_IN_STRINGS', true );
+define( 'WDT_PARSE_SHORTCODES_IN_STRINGS', false );
 define ('WDT_DETECT_DATES_IN_EXCEL', true );
 
 /**

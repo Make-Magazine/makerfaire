@@ -100,6 +100,8 @@ jQuery(document).ready(function() {
         e.stopImmediatePropagation();
         return false;
 
+      } else if (dataName=="sumome-control-help") {
+        window.open('http://help.sumome.com');
       } else if (dataName=="sumome-control-about") {
         window.open('https://sumo.com/about?src=wpplugin');
       } else if (dataName=="sumome-control-account-settings") {

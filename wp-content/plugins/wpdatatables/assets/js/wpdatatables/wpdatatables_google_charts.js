@@ -1,4 +1,4 @@
-google.load('visualization', '1', {packages: ['corechart', 'bar', 'gauge', 'scatter']});
+google.charts.load('current', {packages: ['corechart', 'bar', 'gauge', 'scatter']});
 
 var wpDataTablesGoogleChart = function(){
 
@@ -77,7 +77,11 @@ var wpDataTablesGoogleChart = function(){
                         }else{
                             this.rows[j][i] = new Date(remDate);
                             if( this.connectedWPDataTable == null ){
-                                this.rows[j][i].setTime( this.rows[j][i].getTime() + this.rows[j][i].getTimezoneOffset()*60*1000 );
+                                var timeVal = this.rows[j][i].getTime();
+                                if( this.columns[i].type == 'datetime' ){
+                                    timeVal += this.rows[j][i].getTimezoneOffset()*60*1000;
+                                }
+                                this.rows[j][i].setTime( timeVal );
                             } else {
                                 this.rows[j][i].setTime( this.rows[j][i].getTime() );
                             }
@@ -188,22 +192,116 @@ var wpDataTablesGoogleChart = function(){
             this.chart.draw( this.googleDataTable, this.options );
         },
         refresh: function(){
-            this.googleDataTable = new google.visualization.DataTable();
-            for( var i in this.columns ){
-                this.googleDataTable.addColumn( this.columns[i] );
+            if( typeof google.visualization.DataTable !== 'undefined'  && this.chart != null  ){
+                this.googleDataTable = new google.visualization.DataTable();
+                for( var i in this.columns ){
+                    this.googleDataTable.addColumn( this.columns[i] );
+                }
+                this.detectDates();
+                this.googleDataTable.addRows( this.rows );
+                if( this.renderCallback !== null ){
+                    this.renderCallback( this );
+                }
+                this.chart.draw( this.googleDataTable, this.options );
             }
-            this.detectDates();
-            this.googleDataTable.addRows( this.rows );
-            if( this.renderCallback !== null ){
-                this.renderCallback( this );
-            }
-            this.chart.draw( this.googleDataTable, this.options );
         },
         setConnectedWPDataTable: function( wpDataTable ){
             this.connectedWPDataTable = wpDataTable;
         },
         getConnectedWPDataTable: function(){
             return this.connectedWPDataTable;
+        },
+        setChartConfig: function(chartConfig) {
+            // Chart
+            if (chartConfig.responsive_width == 1) {
+                this.options.animation = false;
+                delete this.options.width;
+                jQuery(window).resize(function(){
+                    obj.chart.draw( obj.googleDataTable, obj.options );
+                });
+            } else {
+                this.options.width = chartConfig.width;
+            }
+            chartConfig.height ? this.options.height = chartConfig.height : null;
+            this.options.backgroundColor.fill = chartConfig.background_color;
+            chartConfig.border_width ? this.options.backgroundColor.strokeWidth = chartConfig.border_width : null;
+            this.options.backgroundColor.stroke = chartConfig.border_color;
+            chartConfig.border_radius ? this.options.backgroundColor.rx = chartConfig.border_radius : null;
+            chartConfig.border_radius ? this.options.backgroundColor.rx = chartConfig.border_radius : null;
+            this.options.chartArea.backgroundColor.fill = chartConfig.plot_background_color;
+            chartConfig.plot_border_width ? this.options.chartArea.backgroundColor.strokeWidth = chartConfig.plot_border_width : null;
+            this.options.chartArea.backgroundColor.stroke = chartConfig.plot_border_color;
+            chartConfig.font_size ? this.options.fontSize = chartConfig.font_size : null;
+            chartConfig.font_name ? this.options.fontName = chartConfig.font_name : null;
+            if (chartConfig.chart_type == 'google_pie_chart'){
+                chartConfig.three_d == 1 ? this.options.is3D = true : this.options.is3D = false;
+            }
+            // Series
+            var j = 0;
+            for (var i in chartConfig.series_data) {
+                this.columns[j+1].label = chartConfig.series_data[i].label;
+                if (chartConfig.series_data[i].color != ''){
+                    this.options.series[j] = {
+                        color: chartConfig.series_data[i].color
+                    };
+                }
+                j++;
+            }
+            if (chartConfig.chart_type == 'google_line_chart'){
+                chartConfig.curve_type == 1 ? this.options.curveType = 'function' : this.options.curveType = 'none';
+            }
+            // Axes
+            if (chartConfig.show_grid == 0) {
+                this.options.hAxis.gridlines = {
+                    color: 'transparent'
+                };
+                this.options.vAxis.gridlines = {
+                    color: 'transparent'
+                };
+            } else {
+                delete this.options.hAxis.gridlines;
+                delete this.options.vAxis.gridlines;
+            }
+            chartConfig.horizontal_axis_label ? this.options.hAxis.title = chartConfig.horizontal_axis_label : null;
+            if (chartConfig.horizontal_axis_crosshair == 1 && chartConfig.vertical_axis_crosshair == 0) {
+                this.options.crosshair = {
+                    trigger: 'both',
+                    orientation: 'horizontal'
+                }
+            } else if (chartConfig.horizontal_axis_crosshair == 0 && chartConfig.vertical_axis_crosshair == 1) {
+                this.options.crosshair = {
+                    trigger: 'both',
+                    orientation: 'vertical'
+                }
+            } else if (chartConfig.horizontal_axis_crosshair == 1 && chartConfig.vertical_axis_crosshair == 1) {
+                this.options.crosshair = {
+                    trigger: 'both',
+                    orientation: 'both'
+                }
+            } else {
+                this.options.crosshair = {}
+            }
+            chartConfig.horizontal_axis_direction ? this.options.hAxis.direction = chartConfig.horizontal_axis_direction : null;
+            chartConfig.vertical_axis_label ? this.options.vAxis.title = chartConfig.vertical_axis_label : null;
+            chartConfig.vertical_axis_direction ? this.options.vAxis.direction = chartConfig.vertical_axis_direction : null;
+            chartConfig.vertical_axis_min ? this.options.vAxis.viewWindow.min = chartConfig.vertical_axis_min : null;
+            chartConfig.vertical_axis_max ? this.options.vAxis.viewWindow.max= chartConfig.vertical_axis_max : null;
+            chartConfig.inverted == 1 ? this.options.orientation = 'vertical' : this.options.orientation = 'horizontal';
+            // Title
+            chartConfig.show_title == 1 ? this.options.title = chartConfig.chart_title : this.options.title = '';
+            chartConfig.title_floating == 1 ? this.options.titlePosition = 'in' : this.options.titlePosition = 'out';
+            // Tooltip
+            chartConfig.tooltip_enabled == 1 ? this.options.tooltip.trigger = 'focus' : this.options.tooltip.trigger = 'none';
+            // Legend
+            chartConfig.legend_position ? this.options.legend.position = chartConfig.legend_position : null;
+            if (chartConfig.legend_vertical_align == 'bottom') {
+                this.options.legend.alignment = 'end';
+            } else if (chartConfig.legend_vertical_align == 'middle') {
+                this.options.legend.alignment = 'center';
+            } else {
+                this.options.legend.alignment = 'start';
+            }
+
         },
         enableFollowFiltering: function(){
             if( this.connectedWPDataTable == null ){ return; }
@@ -278,7 +376,7 @@ var wpDataTablesGoogleChart = function(){
                         rowsToRender = output;
                     }
                     obj.rows = rowsToRender;
-                    obj.refresh();
+                    obj.refresh();;
                 }
             });
         },
@@ -289,8 +387,8 @@ var wpDataTablesGoogleChart = function(){
             return this.columnIndexes;
         }
 
-    }
+    };
 
     return obj;
 
-}
+};
