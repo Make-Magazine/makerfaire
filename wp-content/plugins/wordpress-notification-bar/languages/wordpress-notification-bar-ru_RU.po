@@ -1,0 +1,148 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress Notification Bar-ru_RU\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-12-12 12:25-0500\n"
+"PO-Revision-Date: 2014-06-15 14:14+0400\n"
+"Last-Translator: Flector <rlector@gmail.com>\n"
+"Language-Team: Flector <rlector@gmail.com>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: ../\n"
+"X-Generator: Poedit 1.6.5\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: wordpress-notification-bar.php:27
+msgid "WordPress Notification Bar"
+msgstr "WordPress Notification Bar"
+
+#: wordpress-notification-bar.php:42
+#, php-format
+msgid ""
+"WordPress %s and higher required. The plugin has now disabled itself. On a "
+"side note why are you running an old version :( Upgrade!"
+msgstr ""
+"Требуется WordPress версии %s. Плагин будет сейчас деактивирован. Обновитесь!"
+
+#: framework/framework.php:116
+msgid "Settings reset."
+msgstr "Настройки удалены."
+
+#: framework/framework.php:353
+msgid "Save Changes"
+msgstr "Сохранить настройки"
+
+#: framework/framework.php:354
+msgid "Reset"
+msgstr "Сброс"
+
+#: framework/framework.php:384
+msgid "All custom settings values be deleted. Are you sure you want to reset?"
+msgstr "Все настройки будут удалены. Вы действительно хотите их удалить?"
+
+#: framework/field-types/upload.php:8
+msgid "Media Image Library"
+msgstr "Медиафайлы"
+
+#: framework/validations/color.php:13
+msgid "Please enter a valid color value."
+msgstr "Пожалуйста введите правильное значение цвета."
+
+#: framework/validations/email.php:10
+msgid "Please enter a valid email."
+msgstr "Пожалуйста введите правильный email."
+
+#: framework/validations/number.php:11
+msgid "Please enter a valid number."
+msgstr "Пожалуйста введите правильный номер."
+
+#: framework/validations/required.php:10
+msgid "is required."
+msgstr "требуется."
+
+#: inc/config.php:21
+msgid "Notification Bar"
+msgstr "Notification Bar"
+
+#: inc/config.php:50 inc/config.php:76
+msgid "Message"
+msgstr "Сообщение"
+
+#: inc/config.php:65
+msgid "Enabled"
+msgstr "Включить"
+
+#: inc/config.php:66
+msgid "Check if you want to enable the notification bar on your site."
+msgstr ""
+"Бар плагина будет выводиться для всех посетителей, а не только в админке "
+"блога."
+
+#: inc/config.php:68 inc/config.php:101
+msgid "Yes"
+msgstr "Да"
+
+#: inc/config.php:77
+msgid "Enter your message."
+msgstr "Введите ваше сообщение."
+
+#: inc/config.php:83
+msgid "Button Label"
+msgstr "Текст кнопки"
+
+#: inc/config.php:84
+msgid ""
+"Enter a title for your call to action button. If not entered the button will "
+"not appear."
+msgstr ""
+"Введите здесь текст кнопки. Если не вводить текст кнопки, то кнопка не будет "
+"выводиться в баре."
+
+#: inc/config.php:90
+msgid "Button Link"
+msgstr "Ссылка кнопки"
+
+#: inc/config.php:91
+msgid "Enter a link for the button."
+msgstr "Введите здесь ссылку, которая будет открываться при клике на кнопку."
+
+#: inc/config.php:98
+msgid "Button Target"
+msgstr "Новое окно"
+
+#: inc/config.php:99
+msgid ""
+"Open link in new window. If this is not checked the link will open in the "
+"same window."
+msgstr "При включении ссылка кнопки будет открываться в новом окне браузера."
+
+#: inc/config.php:110
+msgid "Style"
+msgstr "Стиль"
+
+#: inc/config.php:116
+msgid "Position"
+msgstr "Позиция"
+
+#: inc/config.php:118
+msgid "Sticky, stays at the top of the page even when you scroll down."
+msgstr "Прикреплено. Бар всегда будет оставаться вверху страницы."
+
+#: inc/config.php:125
+msgid "Background Color"
+msgstr "Цвет фона"
+
+#: inc/config.php:134
+msgid ""
+"<p>Enter your information then click \"Save Changes\" to see a preview "
+"above. Check \"Enabled\" when you are ready to go live.</p>"
+msgstr ""
+"<p>Введите информацию, а затем кликните на \"Сохранить настройки\", чтобы "
+"увидеть превью. <br />Поставьте галку на \"Включить\", когда полностью "
+"настроете плагин.</p>"
