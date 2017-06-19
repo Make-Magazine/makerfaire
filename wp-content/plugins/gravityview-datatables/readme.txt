@@ -1,7 +1,7 @@
 === GravityView - DataTables Extension ===
 Tags: gravityview
 Requires at least: 3.3
-Tested up to: 4.7
+Tested up to: 4.7.3
 Stable tag: trunk
 Contributors: katzwebservices, luistinygod
 License: GPL 3 or higher
@@ -16,7 +16,12 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
-= 2.1 on January 10, 2017 =
+= 2.1.1 on April 13, 2017 =
+
+* Fixed: Incorrect paging counts
+* Added: Support for `gravityview/search-all-split-words` filter added in GravityView 1.20.2
+
+= 2.1 on February 7, 2017 =
 
 * Updated scripts  ([see script changelogs](https://cdn.datatables.net/))
     - DataTables core updated from 1.10.11 to 1.10.13

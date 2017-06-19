@@ -1,7 +1,7 @@
 # GravityView - DataTables Extension #
 **Tags:** gravityview  
 **Requires at least:** 3.3  
-**Tested up to:** 4.5  
+**Tested up to:** 4.7.3  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices, luistinygod  
 **License:** GPL 3 or higher  
@@ -15,6 +15,29 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 ## Changelog ##
+
+### 2.1.1 on April 13, 2017 ###
+
+* Fixed: Incorrect paging counts
+* Added: Support for `gravityview/search-all-split-words` filter added in GravityView 1.20.2
+
+### 2.1 on February 7, 2017 ###
+
+* Updated scripts  ([see script changelogs](https://cdn.datatables.net/))
+    - DataTables core updated from 1.10.11 to 1.10.13
+    - Buttons updated from 1.1.2 to 1.2.4
+    - Responsive updated from 2.0.2 to 2.1.1
+    - Scroller updated from 1.4.1 to 1.4.2
+    - FixedHeader updated from 3.1.1 to 3.1.2
+    - FixedColumns from 3.2.1 to 3.2.2
+* Fixed: Non-Latin characters affected server response length
+* Fixed: Set "any" as default search mode
+* Updated the plugin's auto-updater script
+
+__Developer Notes:__
+
+* Added: Additional logging available via Gravity Forms Logging Addon
+* Tweak: Make sure the connected form is set during the request using GravityView_View::setForm
 
 ### 2.0 on April 4, 2016 ###
 
