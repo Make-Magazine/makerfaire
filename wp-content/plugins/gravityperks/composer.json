@@ -1,0 +1,5 @@
+{
+	"require": {
+		"Michelf/php-markdown": "1.7.0"
+	}
+}
