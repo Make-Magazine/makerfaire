@@ -1,14 +1,14 @@
-# Copyright (C) 2016 Katz Web Services, Inc.
+# Copyright (C) 2017 GravityView
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 msgid ""
 msgstr ""
-"Project-Id-Version: GravityView - Advanced Filter Extension 1.0.18\n"
+"Project-Id-Version: GravityView - Advanced Filter Extension 1.0.20\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
 "Language-Team: Katz Web Services, Inc. <support@katz.co>\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
@@ -24,64 +24,61 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:360 partials/metabox.php:2
+#: advanced-filter.php:392 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr ""
 
-#: advanced-filter.php:362
+#: advanced-filter.php:394
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr ""
 
-#: advanced-filter.php:363
+#: advanced-filter.php:395
 msgid "Limit to Logged-in User Entries"
 msgstr ""
 
-#: advanced-filter.php:364
+#: advanced-filter.php:396
 msgid ""
 "To limit entries to those created by the current user, select \"Created "
 "By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
 msgstr ""
 
-#: advanced-filter.php:365
+#: advanced-filter.php:397
 msgid ""
 "If you want to limit entries to those created by the current user, but "
 "allow the administrators to view all the entries, select \"Logged-in User "
 "(disabled for admins)\" from the drop-down menu."
 msgstr ""
 
-#: advanced-filter.php:623
+#: advanced-filter.php:655
 msgid "Created By"
 msgstr ""
 
-#: advanced-filter.php:627
+#: advanced-filter.php:659
 msgid "Logged-in User (disabled for Admins)"
 msgstr ""
 
-#: advanced-filter.php:631
+#: advanced-filter.php:663
 msgid "Logged-in User"
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:181
-msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+#: lib/EDD_SL_Plugin_Updater.php:201
+msgid "There is a new version of %1$s available. %2$sView version %3$s details%4$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:188
+#: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
-"href=\"%4$s\">update now</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:332
+#: lib/EDD_SL_Plugin_Updater.php:396
 msgid "You do not have permission to install plugin updates"
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:332
+#: lib/EDD_SL_Plugin_Updater.php:396
 msgid "Error"
 msgstr ""
 

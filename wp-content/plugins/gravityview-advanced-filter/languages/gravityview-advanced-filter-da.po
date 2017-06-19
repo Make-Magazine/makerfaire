@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2016-01-21 18:11+0000\n"
+"PO-Revision-Date: 2017-01-11 21:00+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Danish (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/da/)\n"
 "MIME-Version: 1.0\n"
@@ -53,7 +53,7 @@ msgstr ""
 
 #: advanced-filter.php:623
 msgid "Created By"
-msgstr ""
+msgstr "Oprettet af"
 
 #: advanced-filter.php:627
 msgid "Logged-in User (disabled for Admins)"
@@ -67,22 +67,22 @@ msgstr ""
 msgid ""
 "There is a new version of %1$s available. <a target=\"_blank\" "
 "class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
-msgstr ""
+msgstr "Der er en ny version af %1$s. <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">Se version %3$s oplysninger</a>."
 
 #: lib/EDD_SL_Plugin_Updater.php:188
 msgid ""
 "There is a new version of %1$s available. <a target=\"_blank\" "
 "class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
 "href=\"%4$s\">update now</a>."
-msgstr ""
+msgstr "Der er en ny version af %1$s. <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">Se version %3$s details</a> or <a href=\"%4$s\">opdater nu</a>."
 
 #: lib/EDD_SL_Plugin_Updater.php:332
 msgid "You do not have permission to install plugin updates"
-msgstr ""
+msgstr "Du har ikke tilladelse til at installere plugin opdateringer"
 
 #: lib/EDD_SL_Plugin_Updater.php:332
 msgid "Error"
-msgstr ""
+msgstr "Fejl"
 
 #: lib/class-gravityview-extension.php:351
 msgid "Could not activate the %s Extension; GravityView is not active."
@@ -96,7 +96,7 @@ msgstr "Denne %s Extension kræver GravityView Version %s eller nyere."
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
-msgstr ""
+msgstr "%s udvidelsen kræver PHP Version %s eller nyere.\nBed venligst din udbyder om at opgradere din servers PHP."
 
 #: partials/metabox.php:4
 msgid "You must save the View before you can configure Advanced Filters."
