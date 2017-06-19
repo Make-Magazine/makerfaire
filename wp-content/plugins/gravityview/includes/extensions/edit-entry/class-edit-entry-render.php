@@ -974,7 +974,7 @@ class GravityView_Edit_Entry_Render {
         ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
         $html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
-        //MF custom code to remove the 'all fields' verification 
+        //MF custom code to remove the 'all fields' verification
         $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
 
         ob_get_clean();
@@ -1686,6 +1686,13 @@ class GravityView_Edit_Entry_Render {
 	     * @param int $view_id View ID
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
+      //MF oferride - Never display admin only fields
+      foreach( $fields as $k => $field ) {
+        if( $field->adminOnly ) {
+          unset( $fields[ $k ] );
+        }
+      }
+      return $fields;
 
 	    if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
             foreach( $fields as $k => $field ) {
@@ -1698,9 +1705,9 @@ class GravityView_Edit_Entry_Render {
 
 	    foreach( $fields as &$field ) {
 		    $field->adminOnly = false;
-        }
+      }
 
-        return $fields;
+      return $fields;
     }
 
     // --- Conditional Logic
