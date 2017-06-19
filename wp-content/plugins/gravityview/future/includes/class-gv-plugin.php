@@ -2,8 +2,9 @@
 namespace GV;
 
 /** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) )
+if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
 	die();
+}
 
 /**
  * The GravityView WordPress plugin class.
@@ -68,27 +69,18 @@ final class Plugin {
 	 * @return \GV\Plugin The global instance of GravityView Plugin.
 	 */
 	public static function get() {
-		if ( ! self::$__instance instanceof self )
+		if ( ! self::$__instance instanceof self ) {
 			self::$__instance = new self;
+		}
 		return self::$__instance;
 	}
 
 	/**
-	 * Bootstrap.
+	 * Register hooks that are fired when the plugin is activated and deactivated.
 	 *
 	 * @return void
 	 */
-	private function __construct() {
-		$this->init();
-	}
-
-	/**
-	 * Initialize all plugin hooks, constants, settings, etc.
-	 *
-	 * @return void
-	 */
-	private function init() {
-		/** Register hooks that are fired when the plugin is activated and deactivated. */
+	public function register_activation_hooks() {
 		register_activation_hook( $this->dir( 'gravityview.php' ), array( $this, 'activate' ) );
 		register_deactivation_hook( $this->dir( 'gravityview.php' ), array( $this, 'deactivate' ) );
 	}
@@ -100,6 +92,18 @@ final class Plugin {
 	 * @return void
 	 */
 	public function activate() {
+		/** Register the gravityview post type upon WordPress core init. */
+		require_once $this->dir( 'future/includes/class-gv-view.php' );
+		View::register_post_type();
+
+		/** Add the entry rewrite endpoint. */
+		require_once $this->dir( 'future/includes/class-gv-entry.php' );
+		Entry::add_rewrite_endpoint();
+
+		/** Flush all URL rewrites. */
+		flush_rewrite_rules();
+
+		update_option( 'gv_version', \GravityView_Plugin::version );
 	}
 
 	/**
@@ -109,6 +113,7 @@ final class Plugin {
 	 * @return void
 	 */
 	public function deactivate() {
+		flush_rewrite_rules();
 	}
 
 	/**
@@ -131,7 +136,7 @@ final class Plugin {
 	 * @since future
 	 *
 	 * @param string $path Optional. Extra path appended to the URL.
-	 * @return The URL to this plugin, with trailing slash.
+	 * @return string The URL to this plugin, with trailing slash.
 	 */
 	public function url( $path = '/' ) {
 		return plugins_url( $path, $this->dir( 'gravityview.php' ) );
@@ -185,11 +190,8 @@ final class Plugin {
 	 * @return bool true if compatible, false otherwise (or not active/installed).
 	 */
 	public function is_compatible_gravityforms() {
-		try {
-			return version_compare( $this->get_gravityforms_version(), self::$min_gf_version, '>=' );
-		} catch ( \ErrorException $e ) {
-			return false;
-		}
+		$version = $this->get_gravityforms_version();
+		return $version ? version_compare( $version, self::$min_gf_version, '>=' ) : false;
 	}
 
 	/**
@@ -200,7 +202,7 @@ final class Plugin {
 	 * @return string The version of PHP.
 	 */
 	private function get_php_version() {
-		return !empty( $GLOBALS['GRAVITYVIEW_TESTS_PHP_VERSION_OVERRIDE'] ) ?
+		return ! empty( $GLOBALS['GRAVITYVIEW_TESTS_PHP_VERSION_OVERRIDE'] ) ?
 			$GLOBALS['GRAVITYVIEW_TESTS_PHP_VERSION_OVERRIDE'] : phpversion();
 	}
 
@@ -212,7 +214,7 @@ final class Plugin {
 	 * @return string The version of WordPress.
 	 */
 	private function get_wordpress_version() {
-		return !empty( $GLOBALS['GRAVITYVIEW_TESTS_WP_VERSION_OVERRIDE'] ) ?
+		return ! empty( $GLOBALS['GRAVITYVIEW_TESTS_WP_VERSION_OVERRIDE'] ) ?
 			$GLOBALS['GRAVITYVIEW_TESTS_WP_VERSION_OVERRIDE'] : $GLOBALS['wp_version'];
 	}
 
@@ -221,14 +223,15 @@ final class Plugin {
 	 *
 	 * Overridable with GRAVITYVIEW_TESTS_GF_VERSION_OVERRIDE during testing.
 	 *
-	 * @throws \ErrorException If the Gravity Forms plugin is not active or installed (E_ERROR severity)
-	 * @return string The version of Gravity Forms.
+	 * @return string|null The version of Gravity Forms or null if inactive.
 	 */
 	private function get_gravityforms_version() {
-		if ( !class_exists( '\GFCommon' ) || !empty( $GLOBALS['GRAVITYVIEW_TESTS_GF_INACTIVE_OVERRIDE'] ) )
-			throw new \ErrorException( __( 'Gravity Forms is inactive or not installed.', 'gravityview' ) );
+		if ( ! class_exists( '\GFCommon' ) || ! empty( $GLOBALS['GRAVITYVIEW_TESTS_GF_INACTIVE_OVERRIDE'] ) ) {
+			gravityview()->log->error( 'Gravity Forms is inactive or not installed.' );
+			return null;
+		}
 
-		return !empty( $GLOBALS['GRAVITYVIEW_TESTS_GF_VERSION_OVERRIDE'] ) ?
+		return ! empty( $GLOBALS['GRAVITYVIEW_TESTS_GF_VERSION_OVERRIDE'] ) ?
 			$GLOBALS['GRAVITYVIEW_TESTS_GF_VERSION_OVERRIDE'] : \GFCommon::$version;
 	}
 

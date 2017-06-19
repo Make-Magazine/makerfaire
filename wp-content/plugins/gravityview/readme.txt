@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 3.3
-Tested up to: 4.7
+Tested up to: 4.8
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 3 or higher
@@ -19,6 +19,109 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 1.21.5.1 on June 13, 2017 =
+
+* Modified: We stopped allowing any HTML in Paragraph Text fields in 1.21.5, but this functionality was used by lots of people. We now use a different function to allow safe HTML by default.
+* Added: `gravityview/fields/textarea/allowed_kses` filter to modify the allowed HTML to be displayed.
+
+= 1.21.5 on June 8, 2017 =
+
+* Added: The `{current_post}` Merge Tag adds information about the current post. [Read more about it](http://docs.gravityview.co/article/412-currentpost-merge-tag).
+* Added: `gravityview/gvlogic/parse_atts/after` action to modify `[gvlogic]` shortcode attributes after it's been parsed
+* Added: A new setting to opt-in for access to the latest pre-release versions of GravityView (in Views > Settings)
+* Added: Support for Restrict Content Pro when in "No-Conflict Mode"
+* Fixed: Saving an entry could strip the entry creator information. Now, when the entry creator is not in the "Change Entry Creator" users list, we add them back in to the list.
+* Fixed: Potential security issue
+* Fixed: Multiple notifications could sometimes be sent when editing an entry in GravityView.
+* Fixed: Gravity Forms tooltip scripts being loaded admin-wide.
+* Updated: Dutch translations (thanks, Thom!)
+
+= 1.21.4 on April 13, 2017 =
+
+* Fixed: "Enable sorting by column" not visible when using table-based View Presets
+* Fixed: Error activating the plugin when Gravity Forms is not active
+* Fixed: Numeric sorting
+* Fixed: Compatibility issue with WPML 3.6.1 and lower
+* Tweak: When using `?cache` to disable entries caching, cached data is removed
+
+= 1.21.3 on April 4, 2017 =
+
+* Fixed: Post Images stopped working in Edit Entry
+* Fixed: Conflict with our Social Sharing & SEO Extension
+* Fixed: Unable to search for a value of `0`
+* Fixed: Inaccurate search results when using the `search_field` and `search_value` settings in the `[gravityview]` shortcode
+    - The search mode will now always be set to `all` when using these settings
+
+__Developer Updates:__
+
+* We decided to not throw exceptions in the new `gravityview()` wrapper function. Instead, we will log errors via Gravity Forms logging.
+
+= 1.21.2 on March 31, 2017 =
+
+* Added: Support for embedding `[gravityview]` shortcodes in Advanced Custom Fields (ACF) fields
+* Fixed: PHP warnings and notices
+
+= 1.21.1 on March 30, 2017 =
+
+* Fixed: Advanced Filters no longer filtered 😕
+* Fixed: Fatal error when viewing Single Entry with a Single Entry Title setting that included Merge Tags
+* Fixed: Cache wasn't cleared when an entry was created using Gravity Forms API (thanks Steve with Gravity Flow!)
+
+= 1.21 on March 29, 2017 =
+
+* Fixed: Edit Entry compatibility with Gravity Forms 2.2
+* Fixed: Single Entry not accessible when filtering a View by Gravity Flow's "Final Status" field
+* Fixed: Needed to re-save permalink settings for Single Entry and Edit Entry to work
+* Fixed: Incorrect pagination calculations when passing `offset` via the `[gravityview]` shortcode
+
+__Developer Updates:__
+
+* Modified: `GVCommon::check_entry_display()` now returns WP_Error instead of `false` when an error occurs. This allows for additional information to be passed.
+* Added: `gravityview/search-all-split-words` filter to change search behavior for the "Search All" search input. Default (`true`) converts words separated by spaces into separate search terms. `false` will search whole word.
+* Much progress has been made on the `gravityview()` wrapper function behind the scenes. Getting closer to parity all the time.
+
+= 1.20.1 on March 1, 2017 =
+
+* Added: Support for comma-separated email addresses when adding a note and using "Other email address"
+* Fixed: Edit Entry issue with File Uploads not saving properly
+* Fixed: Support for `offset` attribute in the `[gravityview]` shortcode
+* Updated: Auto-upgrade script
+
+= 1.20 on February 24, 2017 =
+
+* Added: Product Fields are now editable
+    - Quantity,
+    - Product fields are hidden if the entry contains external transaction data
+    - Support for Coupon Addon
+* Fixed: Single Entry not accessible when filtering by a Checkbox field in the Advanced Filters Extension
+* Fixed: WPML links to Single Entry not working if using directory or sub-domain URL formats
+* Fixed: Product field prices not always formatted as a currency
+* Fixed: Product fields sometimes appeared twice in the Add Field field picker
+* Fixed: PHP warning when updating entries. Thanks for reporting, Werner!
+* Modified: Don't show CAPTCHA fields in Edit Entry
+* Fixed: "Trying to get property of non-object" bug when updating an entry connected to Gravity Forms User Registration
+* Fixed: Yoast SEO scripts and styles not loading properly on Edit View screen
+* Updated: Minimum version of Gravity Forms User Registration updated to 3.2
+
+__Developer Notes:__
+
+
+* Added: `GVCommon::entry_has_transaction_data()` to check whether entry array contains payment gateway transaction information
+* Added: `gravityview/edit_entry/hide-coupon-fields` to modify whether to hide Coupon fields in Edit Entry (default: `false`)
+* Added: `GravityView_frontend::get_view_entries_parameters()` method to get the final entry search parameters for a View without fetching the entries as well
+* Added: `GVCommon::get_product_field_types()` to fetch Gravity Forms product field types array
+* Added: `gravityview/edit_entry/field_blacklist` filter to modify what field types should not be shown in Edit Entry
+* Added: `GravityView_Plugin_Hooks_Gravity_Forms_Coupon` class
+* Added: Third `GravityView_Edit_Entry_Render` parameter to `gravityview/edit_entry/field_value`, `gravityview/edit_entry/field_value_{field_type}` filters and `gravityview/edit_entry/after_update` action
+* Updated: `list-body.php` and `list-single.php` template files to prevent empty `<div>` from rendering (and looking bad) when there are no fields configured for the zones
+* Updated: `fields/product.php` template file
+* Updated: Flexibility library for IE CSS flexbox support
+* Modified: `gravityview/edit_entry/hide-product-fields` default will now be determined by whether entry has gateway transaction information
+* Modified: Only print errors when running the unit tests if the `--debug` setting is defined, like `phpunit --debug --verbose`
+* Modified: If overriding `get_field_input()` using `GravityView_Field`, returning empty value will now result in the default `GF_Field` input being used
+* Modified: GravityView_Edit_Entry_User_Registration::restore_display_name() now returns a value instead of void
+* Tweak: Edit Entry links no longer require `page=gf_entries&view=entry` at the end of the URL (in case you noticed)
 
 = 1.19.4 on January 19, 2017 =
 

@@ -81,10 +81,10 @@ class GravityView_Edit_Entry {
     private function add_hooks() {
 
         // Add front-end access to Gravity Forms delete file action
-        add_action( 'wp_ajax_nopriv_rg_delete_file', array( 'RGForms', 'delete_file') );
+        add_action( 'wp_ajax_nopriv_rg_delete_file', array( 'GFForms', 'delete_file') );
 
         // Make sure this hook is run for non-admins
-        add_action( 'wp_ajax_rg_delete_file', array( 'RGForms', 'delete_file') );
+        add_action( 'wp_ajax_rg_delete_file', array( 'GFForms', 'delete_file') );
 
         add_filter( 'gravityview_blacklist_field_types', array( $this, 'modify_field_blacklist' ), 10, 2 );
 
@@ -151,8 +151,6 @@ class GravityView_Edit_Entry {
         $base = gv_entry_link( $entry, $post_id );
 
         $url = add_query_arg( array(
-            'page' => 'gf_entries', // Needed for GFForms::get_page()
-            'view' => 'entry', // Needed for GFForms::get_page()
             'edit' => wp_create_nonce( $nonce_key )
         ), $base );
 
@@ -175,7 +173,6 @@ class GravityView_Edit_Entry {
         return $url;
     }
 
-
 	/**
 	 * Edit mode doesn't allow certain field types.
 	 * @param  array $fields  Existing blacklist fields
@@ -188,24 +185,43 @@ class GravityView_Edit_Entry {
 			return $fields;
 		}
 
-		$add_fields = array(
-			//'post_image',
-			'product',
-			'quantity',
-			'shipping',
-			'total',
-			'option',
-			'coupon',
+		$add_fields = $this->get_field_blacklist();
+
+		return array_merge( $fields, $add_fields );
+	}
+
+	/**
+	 * Returns array of field types that should not be displayed in Edit Entry
+	 *
+	 * @since 1.20
+	 *
+	 * @param array $entry Gravity Forms entry array
+	 *
+	 * @return array Blacklist of field types
+	 */
+	function get_field_blacklist( $entry = array() ) {
+
+		$fields = array(
+			'page',
 			'payment_status',
 			'payment_date',
 			'payment_amount',
 			'is_fulfilled',
 			'transaction_id',
 			'transaction_type',
-			// 'payment_method', This is editable in the admin, so allowing it here
+			'captcha',
+			'honeypot',
 		);
 
-		return array_merge( $fields, $add_fields );
+		/**
+		 * @filter `gravityview/edit_entry/field_blacklist` Array of fields that should not be displayed in Edit Entry
+		 * @since 1.20
+		 * @param array $fields Blacklist field type array
+		 * @param array $entry Gravity Forms entry array
+		 */
+		$fields = apply_filters( 'gravityview/edit_entry/field_blacklist', $fields, $entry );
+
+		return $fields;
 	}
 
 
