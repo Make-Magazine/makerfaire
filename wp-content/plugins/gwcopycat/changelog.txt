@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.21
+
+	- Added support for targeting Credit Card field expiration date.
+
 ## 1.4.20
 
 	- Fixed issue where when resuming from Gravity Forms' Save & Continue - and - deleting an entry from a source List field, it would remove all except one row from the target List field.

@@ -17,7 +17,7 @@
 
 			var $formWrapper = $( '#gform_wrapper_{0}'.format( self.formId ) );
 
-			//$formWrapper.on( 'click', '.gwcopy input[type="checkbox"]', function() {
+			//$formWrapper.on( 'click.gpcopycat', '.gwcopy input[type="checkbox"]', function() {
       jQuery('.gwcopy input[type="checkbox"]').on( 'click', function() {
 				if( $( this ).is( ':checked' ) ) {
 					self.copyValues( this );
@@ -30,7 +30,7 @@
 				self.copyValues( this );
 			} );
 
-      $formWrapper.find( '.gwcopy' ).find( 'input, textarea, select' ).each( function() {
+			$formWrapper.find( '.gwcopy' ).find( 'input, textarea, select' ).each( function() {
 				if( ! $( this ).is( ':checkbox, :radio' ) ) {
 					self.copyValues( this, self.overwriteOnInit );
 				} else if( $( this ).is( ':checked' ) ) {
@@ -280,7 +280,7 @@
 			if( isInputSpecific( rawFieldId ) && ! isListField ) {
 
 				var inputId       = rawFieldId.split( '.' )[1],
-					filteredGroup = group.filter( '#input_' + formId + '_' + fieldId + '_' + inputId + ', input[name="input_' + rawFieldId + '"]' );
+					filteredGroup = group.filter( '[id^="input_' + formId + '_' + fieldId + '_' + inputId + '"], input[name="input_' + rawFieldId + '"]' );
 
 				// some fields (like email with confirmation enabled) have multiple inputs but the first input has no HTML ID (input_1_1 vs input_1_1_1)
 				if( filteredGroup.length <= 0 ) {
