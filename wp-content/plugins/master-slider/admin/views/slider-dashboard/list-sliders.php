@@ -177,11 +177,11 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
 ?>
 
 <div id="smd-modal-1" class="aux-smd-modal aux-smd-show">
-  <img src="<?php echo MSWP_AVERTA_ADMIN_URL; ?>/assets/images/thirdparty/phlox-popup.jpg" />
+  <img src="<?php echo MSWP_AVERTA_ADMIN_URL; ?>/assets/images/thirdparty/phlox-popup.png" />
   <a href="#" class="aux-smd-close" title="Close"></a>
   <div class="msp-ad-btns-container">
-    <a href="http://avt.li/phmslpu" class="msp-ad-btn aux-md-get-now">Get it Now</a>
-    <a href="?page=master-slider&dismiss_phlox_notice=1" class="msp-ad-btn aux-md-try-later">Remind Me Later</a>
+    <a href="http://avt.li/phmslpu" class="msp-ad-btn aux-md-get-now"><?php _e( 'Get it Now', MSWP_TEXT_DOMAIN ); ?></a>
+    <a href="?page=master-slider&dismiss_phlox_notice=1" class="msp-ad-btn aux-md-try-later"><?php _e( 'Remind Me Later', MSWP_TEXT_DOMAIN ); ?></a>
   </div>
 </div>
 

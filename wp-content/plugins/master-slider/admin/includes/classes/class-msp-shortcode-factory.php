@@ -61,7 +61,7 @@ class MSP_Shortcode_Factory {
 		$attrs = '';
 
 		// the list of attributes which should be excluded from slide shortcode
-		$exclude_slide_attrs = array( 'layers', 'layer_ids', 'ishide', 'info' );
+		$exclude_slide_attrs = array( 'layers', 'layer_ids', 'ishide', 'info', 'is_overlay_layers' );
 
 		foreach ( $slide as $attr => $attr_value ) {
 
@@ -145,7 +145,9 @@ class MSP_Shortcode_Factory {
 
         foreach ( $slides as $slide ) {
             if( ! empty( $slide['ishide'] ) && 'true' != $slide['ishide'] ){
-                $shortcodes .= $this->get_ms_slide_shortcode( $slide );
+                if( 'true' != $slide['is_overlay_layers'] ){
+                    $shortcodes .= $this->get_ms_slide_shortcode( $slide );
+                }
             }
         }
 

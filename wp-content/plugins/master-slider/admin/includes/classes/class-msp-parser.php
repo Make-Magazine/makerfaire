@@ -148,21 +148,21 @@ class MSP_Parser {
 
 
           'ps_post_type'    => isset( $setting['postType'] ) ? (string) $setting['postType'] : '',
-      'ps_tax_term_ids'   => $tax_term_ids,
-      'ps_post_count'   => isset( $setting['postCount'] ) ? (int) $setting['postCount'] : 10,
-      'ps_image_from'   => isset( $setting['postImageType'] ) ? (string) $setting['postImageType'] : 'auto',
-      'ps_order'      => isset( $setting['postOrder'] ) ? (string) $setting['postOrder'] : 'DESC',
-      'ps_orderby'    => isset( $setting['postOrderDir'] ) ? (string) $setting['postOrderDir'] : 'menu_order date',
-      'ps_posts_not_in'   => isset( $setting['postExcludeIds'] ) ? (string) $setting['postExcludeIds'] : '',
-      'ps_excerpt_len'  => isset( $setting['postExcerptLen'] ) ? (int) $setting['postExcerptLen'] : 100,
-      'ps_offset'     => isset( $setting['postOffset'] ) ? (int) $setting['postOffset'] : 0,
-      'ps_link_slide'   => isset( $setting['postLinkSlide'] ) ? (boolean) $setting['postLinkSlide'] : false,
-      'ps_link_target'  => isset( $setting['postLinkTarget'] ) ? (string) $setting['postLinkTarget'] : '_self',
-      'ps_slide_bg'     => isset( $setting['postSlideBg'] ) ? msp_get_the_relative_media_url( $setting['postSlideBg'] ) : '',
+          'ps_tax_term_ids'   => $tax_term_ids,
+          'ps_post_count'   => isset( $setting['postCount'] ) ? (int) $setting['postCount'] : 10,
+          'ps_image_from'   => isset( $setting['postImageType'] ) ? (string) $setting['postImageType'] : 'auto',
+          'ps_order'      => isset( $setting['postOrder'] ) ? (string) $setting['postOrder'] : 'DESC',
+          'ps_orderby'    => isset( $setting['postOrderDir'] ) ? (string) $setting['postOrderDir'] : 'menu_order date',
+          'ps_posts_not_in'   => isset( $setting['postExcludeIds'] ) ? (string) $setting['postExcludeIds'] : '',
+          'ps_excerpt_len'  => isset( $setting['postExcerptLen'] ) ? (int) $setting['postExcerptLen'] : 100,
+          'ps_offset'     => isset( $setting['postOffset'] ) ? (int) $setting['postOffset'] : 0,
+          'ps_link_slide'   => isset( $setting['postLinkSlide'] ) ? (boolean) $setting['postLinkSlide'] : false,
+          'ps_link_target'  => isset( $setting['postLinkTarget'] ) ? (string) $setting['postLinkTarget'] : '_self',
+          'ps_slide_bg'     => isset( $setting['postSlideBg'] ) ? msp_get_the_relative_media_url( $setting['postSlideBg'] ) : '',
 
-      'wc_only_featured'  => $this->is_key_true( $setting, 'wcOnlyFeatured', 'false' ),
-      'wc_only_instock'   => $this->is_key_true( $setting, 'wcOnlyInstock' , 'false' ),
-      'wc_only_onsale'  => $this->is_key_true( $setting, 'wcOnlyOnsale'  , 'false' ),
+          'wc_only_featured'  => $this->is_key_true( $setting, 'wcOnlyFeatured', 'false' ),
+          'wc_only_instock'   => $this->is_key_true( $setting, 'wcOnlyInstock' , 'false' ),
+          'wc_only_onsale'  => $this->is_key_true( $setting, 'wcOnlyOnsale'  , 'false' ),
 
 
           'facebook_username' => isset( $setting['setType'] ) && ( 'photostream' == $setting['setType'] ) ? $setid : '',
@@ -197,8 +197,8 @@ class MSP_Parser {
           'thumbs_space'     => 5,
           'thumbs_hideunder' => '',
           'thumbs_arrows'    => 'false',
-      'thumbs_in_tab'    => 'false',
-      'thumbs_hoverchange'=> 'false',
+          'thumbs_in_tab'    => 'false',
+         'thumbs_hoverchange'=> 'false',
 
           'scroll'           => 'false',  // display scrollbar?
           'scroll_autohide'  => 'true',   // auto hide scroll?
@@ -208,7 +208,7 @@ class MSP_Parser {
           'scroll_margin'    => '',
           'scroll_hideunder' => '',
           'scroll_color'     => '#3D3D3D',
-      'scroll_width'     => '',
+          'scroll_width'     => '',
 
 
           'circletimer'          => 'false',  // display circletimer?
@@ -226,7 +226,7 @@ class MSP_Parser {
           'timebar_align'    => 'bottom',
           'timebar_hideunder'=> '',
           'timebar_color'    => '#FFFFFF',
-      'timebar_width'    => '',
+          'timebar_width'    => '',
 
 
           'slideinfo'          => 'false',   // display timebar?
@@ -237,18 +237,17 @@ class MSP_Parser {
           'slideinfo_margin'   => '',
           'slideinfo_hideunder'=> '',
           'slideinfo_width'  => '',
-      'slideinfo_height'   => '',
+          'slideinfo_height'   => '',
 
-      'on_change_start'    => '',
-      'on_change_end'    => '',
-      'on_waiting'     => '',
-      'on_resize'      => '',
-      'on_video_play'    => '',
-      'on_video_close'   => '',
-      'on_swipe_start'   => '',
-      'on_swipe_move'    => '',
-      'on_swipe_end'     => ''
-
+          'on_change_start'    => '',
+          'on_change_end'    => '',
+          'on_waiting'     => '',
+          'on_resize'      => '',
+          'on_video_play'    => '',
+          'on_video_close'   => '',
+          'on_swipe_start'   => '',
+          'on_swipe_move'    => '',
+          'on_swipe_end'     => ''
       );
 
 
@@ -332,6 +331,8 @@ class MSP_Parser {
             'css_id'    => isset( $slide['cssId'] ) ? (string) $slide['cssId'] : '',
 
             'ishide'  => $this->is_key_true( $slide, 'ishide', 'false' ),
+
+            'is_overlay_layers' => $this->is_key_true( $slide, 'isOverlayLayers', 'false' ),
 
             'src'       => isset( $slide['bg'] ) ? esc_attr( msp_get_the_relative_media_url( $slide['bg'] ) ) : '',
             'src_full'  => isset( $slide['bg'] ) ? esc_attr( msp_get_the_relative_media_url( $slide['bg'] ) ) : '',
@@ -753,7 +754,7 @@ class MSP_Parser {
             $slides[] = $this->parse_slide( $slide );
           }
 
-          $this->recent_slides = $slides;
+          $this->recent_slides =  array_filter( $slides );
         }
         return $this->recent_slides;
   }

@@ -4,9 +4,9 @@ Donate link: http://averta.net/
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: banner rotator, carousel, content slider, gallery, image slider, responsive slider, showcase, slideshow, swipe, touch slider, video gallery, SEO, vertical slide, HTML5 slider, hardware accelerate, best slider, animation, mobile slider, iOS, android, video slider, youtube slider, horizontal slider, vertical slider, fullwidth slider, fullscreen slider, post slider, photo slider, online album, mobile slider, WordPress slider,wpml, ,ultisite, wistia, woocommerce, product slider, woocommerce slider, portfolio, gallery
-Requires at least: 4.1
-Tested up to: 4.7.3
-Stable tag: 2.9.8
+Requires at least: 4.5
+Tested up to: 4.8.0
+Stable tag: 3.0.1
 
 The most advanced responsive and HTML5 WordPress slider plugin with touch swipe navigation that works smoothly on desktop and devices.
 
@@ -231,6 +231,13 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Changelog ==
 
+= 3.0.0 =
+
+= Version 3.0.0 / (17.06.2017) =
+- [Fix]: An issue with overlay color for slides fixed.
+- [Improvement]: The corresponding styles will be generated after duplicating the slider automatically.
+- [Improvement]: Some minor bugs fixed.
+
 = Version 2.9.8 / (15.4.2017) =
 - [Fix]: Italian translation added
 - [Fix]: Minor bugs fixed
@@ -426,6 +433,5 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Upgrade Notice ==
 
-= Version 2.9.8 / (15.4.2017) =
-- [Fix]: Italian translation added
+= Version 3.0.0 / (17.06.2017) =
 - [Fix]: Minor bugs fixed
