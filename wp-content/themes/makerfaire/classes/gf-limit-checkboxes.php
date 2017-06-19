@@ -49,9 +49,9 @@ class GFLimitCheckboxes {
 
         }
 
-        GFFormDisplay::add_init_script($form['id'], 'limit_checkboxes', GFFormDisplay::ON_PAGE_RENDER, $script);
-
         if($output_script):
+          GFFormDisplay::add_init_script($form['id'], 'limit_checkboxes', GFFormDisplay::ON_PAGE_RENDER, $script);
+
             ?>
 
             <script type="text/javascript">
