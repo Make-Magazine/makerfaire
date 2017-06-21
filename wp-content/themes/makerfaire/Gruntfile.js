@@ -55,7 +55,9 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'js/built.js': ['js/src/misc-libs.js', 'js/src/*.js'],
+          'js/built.js': [
+            'js/src/*.js'
+          ],
           'js/built-libs.js': [
             'node_modules/bootstrap/**/bootstrap.min.js',
             'node_modules/bootstrap-dialog/**/bootstrap-dialog.min.js',
