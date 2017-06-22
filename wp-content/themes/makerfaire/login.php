@@ -30,35 +30,35 @@ switch ($sign) {
     case "1":
         $currentloginurl = basename($_SERVER['REQUEST_URI']);
         $loginmessage = "Log in to submit an entry.
-<br />If you haven\’t logged in before, Sign up.
+<br />If you haven’t logged in before, Sign up.
  <br /><br />
 If you’ve logged in before and are experiencing issues, we’ve updated our login system. <br />
 - Try resetting your password. <br />
 - If you previously logged in with Facebook or Google, you will have to Sign Up again. Your previous account will be connected to your new sign up.<br />";
         break;
      case "2":
-        $loginmessage = "Sign in to submit or manage an entry <br /><br />
+        $loginmessage = "Log in to submit or manage an entry <br /><br />
 If you’ve logged in before and are experiencing issues, we’ve updated our login system. <br />
 - Try resetting your password. <br />
 - If you previously logged in with Facebook or Google, you will have to Sign Up again. Your previous account will be connected to your new sign up.<br />";
 
         break;
     case "3":
-        $loginmessage = "Sign in to manage your entries <br /><br />
+        $loginmessage = "Log in to manage your entries <br /><br />
 If you’ve logged in before and are experiencing issues, we’ve updated our login system. <br />
 - Try resetting your password. <br />
 - If you previously logged in with Facebook or Google, you will have to Sign Up again. Your previous account will be connected to your new sign up.<br />";
 
         break;
     case "5":
-        $loginmessage = "Sign in to submit your information. <br />If you haven\'t signed in before, Sign Up. <br /><br />
+        $loginmessage = "Log in to submit your information. <br />If you haven't signed in before, Sign Up. <br /><br />
 If you’ve logged in before and are experiencing issues, we’ve updated our login system. <br />
 - Try resetting your password. <br />
 - If you previously logged in with Facebook or Google, you will have to Sign Up again. Your previous account will be connected to your new sign up.<br />";
 
         break;
     default:
-        $loginmessage = "Sign In <br /><br />
+        $loginmessage = "Log In <br /><br />
 If you’ve logged in before and are experiencing issues, we’ve updated our login system. <br />
 - Try resetting your password. <br />
 - If you previously logged in with Facebook or Google, you will have to Sign Up again. Your previous account will be connected to your new sign up.<br />";
