@@ -49,12 +49,8 @@ class GFLimitCheckboxes {
 
         }
 
-        GFFormDisplay::add_init_script($form['id'], 'limit_checkboxes', GFFormDisplay::ON_PAGE_RENDER, $script);
-
         if($output_script):
-            ?>
-
-            <script type="text/javascript">
+          $scriptOut = "
             jQuery(document).ready(function($) {
                 $.fn.checkboxLimit = function(n) {
 
@@ -86,11 +82,10 @@ class GFLimitCheckboxes {
                         return checkboxes.filter(':checked').length <= n;
                     });
 
-                }
-            });
-            </script>
-
-            <?php
+                };"
+              .$script.
+            "});";
+          GFFormDisplay::add_init_script($form['id'], 'limit_checkboxes', GFFormDisplay::ON_PAGE_RENDER, $scriptOut);
         endif;
 
         return $form;
@@ -221,11 +216,6 @@ foreach($limitArray as $limit){
   new GFLimitCheckboxes(9, array(
       $field => array('max' => $max)
   ));
-  /*foreach($limit[2] as $form){
-    new GFLimitCheckboxes($form, array(
-      $field => array('max' => $max)
-    ));
-  }*/
 }
 
 

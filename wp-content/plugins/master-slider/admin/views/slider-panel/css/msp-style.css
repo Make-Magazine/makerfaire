@@ -2357,3 +2357,270 @@ button.msp-tempalte-save {
 }
 
 .msp-pattern-prev.ms-pattern:hover{border-color: #B3B3B3;}
+
+/* ------------------------------------------------------------------
+New pro tab styles
+*/
+
+@import url('//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800');
+
+.msp-metabox-row.msp-new-pro-tab {
+    margin: 0;
+    clear: both;
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.msp-new-pro-tab .msp-content-wrapper {
+    width: 750px;
+    margin: 0 auto;
+}
+
+.msp-new-pro-tab h1 {
+    font-size: 45px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.msp-new-pro-tab h2 {
+    font-size: 30px;
+    font-weight: 400;
+    color: #fff;
+}
+
+.msp-new-pro-tab h3 {
+    color: #464646;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.msp-new-pro-header {
+    position: relative;
+    background-color: #5B30D8;
+    background-image: url('../images/pro-features/header.jpg') ;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.msp-new-pro-logo {
+    padding-top: 70px;
+    padding-bottom: 55px;
+    background-image: url(../images/pro-features/header-logo.png);
+    background-repeat: no-repeat;
+    background-position: center 50px;
+}
+
+.msp-new-pro-logo h2 {
+    margin: 0px 0 15px 0;
+}
+
+.msp-new-pro-headerBg {
+    height: 506px;
+
+}
+
+.msp-new-pro-headerBg::after,
+.msp-new-pro-headerBg::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    display: block;
+    width: 50%;
+    max-width: 940px;
+    height: 520px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 40% , #5b30d8 80%);
+}
+
+.msp-new-pro-headerBg::before {
+    left: auto;
+    right: 50%;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0) 40% , #5b30d8 80%);
+}
+
+
+.msp-new-pro-headerBg p::before {
+    content: "";
+    background-image: url('../images/pro-features/package.png');
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 22px;
+    height: 23px;
+    padding-right: 7px;
+    position: relative;
+    top: 4px;
+}
+
+.msp-new-pro-headerBg p {
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.msp-new-pro-features {
+    padding: 42px 0;
+}
+
+.msp-new-pro-features p {
+    font-size: 16px;
+    color: #444;
+    padding-bottom: 35px;
+
+}
+
+.msp-new-pro-flex-container {
+    left: 15px;
+    position: relative;
+}
+
+.msp-new-pro-avatar {
+    margin-top: 15px;
+}
+
+.msp-new-pro-flex-container::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.msp-new-pro-features-items {
+    float: left;
+    width: 33.3333%;
+    text-align: left;
+    font-size: 16px;
+    line-height: 1.4em;
+}
+
+.msp-new-pro-features-items li::before {
+    content: "";
+    background-image: url('../images/pro-features/check.png');
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    padding-right: 5px;
+    vertical-align: inherit;
+    position: relative;
+    top: 3px;
+}
+
+.msp-new-pro-testimonials {
+    background-color: #F3F3F3;
+    padding: 42px 0 53px 0;
+}
+
+.msp-new-pro-testimonials h3 {
+    margin-bottom: 50px;
+}
+
+.msp-new-pro-testimonials h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #444;
+    line-height: normal;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.msp-new-pro-testimonials h4 span {
+    font-size: 14px;
+    font-weight: 600;
+    font-style: italic;
+    line-height: 0;
+    color: #a7a7a7;
+}
+
+.msp-new-pro-testimonials p {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 0px;
+}
+
+
+.msp-new-pro-testimonials .msp-metabox-tabs {
+    background: transparent;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.msp-new-pro-testimonials .msp-metabox-tabs .tabs {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.msp-new-pro-testimonials .msp-metabox-tabs .tabs li {
+    float: none;
+    display: inline-block;
+}
+
+.msp-new-pro-testimonials .msp-metabox-tabs .tabs li a {
+    width: 8px;
+    height: 8px;
+    border: solid 1px #333;
+    padding: 0;
+    margin-right: 2px;
+    margin-top: 10px;
+    border-radius: 50%;
+    background: white;
+}
+
+.msp-new-pro-testimonials .msp-metabox-tabs .tabs li.active a {
+    background: #333;
+}
+
+.msp-new-pro-guarantee {
+    background-color: #839fcb;
+    text-align: left;
+    color: #fff;
+    padding: 72px 0 70px 70px;
+}
+
+.msp-new-pro-guarantee h3 {
+    color: #fff;
+    text-align: left;
+    margin: 0 auto;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.msp-new-pro-guarantee p {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0 auto;
+}
+
+.msp-new-pro-guarantee img {
+    float: left;
+    padding-right: 32px;
+}
+
+.msp-new-pro-buy {
+    background-color: #444;
+    padding: 60px 0;
+}
+
+.msp-new-pro-buy h2 {
+    margin: 0 0 40px 0px;
+    font-size: 25px;
+    color: white;
+    font-weight: 500;
+}
+
+.msp-new-pro-btn {
+    display: inline-block;
+    padding: 13px 34px;
+    background: #1FC896;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 35px;
+    border-radius: 5em;
+}
+
+.msp-new-pro-btn:hover,
+.msp-new-pro-btn:active {
+    background: #22a96e;
+    color: white;
+}
+

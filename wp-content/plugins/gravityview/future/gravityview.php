@@ -1,14 +1,17 @@
 <?php
 /** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) )
+if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
 	die();
+}
 
-/** The future branch of GravityView requires PHP 5.3+ namespaces and SPL. */
-if ( version_compare( phpversion(), '5.3' , '<' ) )
-	return false;
+/** Require core and mocks */
 
-/** @define "GRAVITYVIEW_DIR" "../" Require core */
+/** @define "GRAVITYVIEW_DIR" "../" */
+require GRAVITYVIEW_DIR . 'future/_mocks.php';
 require GRAVITYVIEW_DIR . 'future/includes/class-gv-core.php';
+
+/** T-minus 3... 2.. 1... */
+\GV\Core::bootstrap();
 
 /**
  * The main GravityView wrapper function.
@@ -25,4 +28,4 @@ function gravityview() {
 }
 
 /** Liftoff...*/
-gravityview();
+add_action( 'plugins_loaded', 'gravityview' );

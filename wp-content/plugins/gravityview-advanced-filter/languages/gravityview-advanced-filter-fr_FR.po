@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2016-01-21 18:11+0000\n"
+"PO-Revision-Date: 2017-01-05 16:41+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: French (France) (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/fr_FR/)\n"
 "MIME-Version: 1.0\n"
@@ -53,7 +53,7 @@ msgstr ""
 
 #: advanced-filter.php:623
 msgid "Created By"
-msgstr ""
+msgstr "Créé par"
 
 #: advanced-filter.php:627
 msgid "Logged-in User (disabled for Admins)"
@@ -96,7 +96,7 @@ msgstr "L'extension %s nécessite la version %s de GravityView ou ultérieure."
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
-msgstr ""
+msgstr "L'extension %s nécessite la version PHP %s ou ultérieure. Veuillez demander à votre hébergeur d'améliorer le PHP de votre serveur. "
 
 #: partials/metabox.php:4
 msgid "You must save the View before you can configure Advanced Filters."

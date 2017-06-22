@@ -1,7 +1,7 @@
 # GravityView - Advanced Filter Extension #
 **Tags:** gravityview  
 **Requires at least:** 3.3  
-**Tested up to:** 4.7  
+**Tested up to:** 4.7.2  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices  
 **License:** GPL 3 or higher  
@@ -15,6 +15,17 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 ## Changelog ##
+
+### 1.0.20 on February 28, 2017 ###
+
+* Fixed: Filtering by "Entry ID" not saving
+* Fixed: Filtering by a checkbox or multiselect field can prevent viewing a single entry
+* Updated translations: Danish, Spanish (Mexico), French, Norwegian, Portuguese (Brazil)
+
+### 1.0.19 on January 5, 2017 ###
+
+* Fixed: Fatal error in the Dashboard if `GravityView_View` is not set
+* Fixed: Prevent accessing plugin file directly
 
 ### 1.0.18 on December 14, 2016 ###
 * Fixed: Issue with "Any form field" filters preventing access to single entries

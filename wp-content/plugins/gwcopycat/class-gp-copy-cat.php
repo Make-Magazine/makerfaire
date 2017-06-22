@@ -2,7 +2,7 @@
 
 class GP_Copy_Cat extends GWPerk {
 
-    public $version = '1.4.20';
+    public $version = GP_COPY_CAT_VERSION;
     protected $min_perks_version = '1.0.6';
     protected $min_gravity_forms_version = '1.9.3';
 

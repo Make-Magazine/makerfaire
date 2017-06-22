@@ -1,6 +1,48 @@
 
 # Changelog
 
+## 1.2.21
+
+    - Added doing-it-wrong notice when a perk is instantiated too early.
+    - Fixed styling of no license and update required messages on the Plugins page.
+    - Fixed issue where 3rd party plugin could cause fatal error on perk's settings pages.
+
+## 1.2.19
+
+	- Replaced Markdown library to resolve on-going conflicts with newer versions of PHP (7+).
+	- Fixed issue where Gravity Perks updates were not dispalying correctly do to an encoding issue in the API request.
+
+## 1.2.18.7
+
+    - Added 'gp-child-settings' helper style for use in Form Editor.
+
+## 1.2.18.6
+
+    - Fixed fatal error when activating plugin in Network mode due to removed function.
+    - Fixed notice generated due to missing 3rd parameter for 'update_plugin_complete_actions' filter.
+
+## 1.2.18.5
+
+    - Fixed issue where WP Engine's PHP validator was throwing a false positive error when PHP version was upgraded.
+
+## 1.2.18.4
+
+    - Updated GP_Perk::generate_options() method to better handle numeric associative arrays.
+
+## 1.2.18.3
+
+    - Fixed issue where in some cases the perk post-installation actions would show up for non-perk plugins.
+
+## 1.2.18.2
+
+    - Fixed issue with perk installation and updates for Windows servers.
+    - Changed plugin author to Gravity Wiz.
+
+## 1.2.18.1
+
+    - Updated plugin URL
+    - Fixed PHP standards issue
+
 ## 1.2.18
 
     - Fixed fatal error introduced in 1.2.17

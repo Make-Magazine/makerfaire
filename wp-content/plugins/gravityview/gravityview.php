@@ -3,7 +3,7 @@
  * Plugin Name:       	GravityView
  * Plugin URI:        	https://gravityview.co
  * Description:       	The best, easiest way to display Gravity Forms entries on your website.
- * Version:          	1.19.4
+ * Version:          	1.21.5.1
  * Author:            	GravityView
  * Author URI:        	https://gravityview.co
  * Text Domain:       	gravityview
@@ -31,7 +31,7 @@ define( 'GRAVITYVIEW_FILE', __FILE__ );
 define( 'GRAVITYVIEW_URL', plugin_dir_url( __FILE__ ) );
 
 
-/** @define "GRAVITYVIEW_DIR" "./" The absolute path to the plugin directory */
+/** @define "GRAVITYVIEW_DIR" "./" The absolute path to the plugin directory, with trailing slash */
 define( 'GRAVITYVIEW_DIR', plugin_dir_path( __FILE__ ) );
 
 /**
@@ -70,16 +70,16 @@ register_activation_hook( __FILE__, array( 'GravityView_Plugin', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'GravityView_Plugin', 'deactivate' ) );
 
 /**
- * The future is here and now.
+ * The future is here and now... perhaps.
  */
-require GRAVITYVIEW_DIR . '/future/gravityview.php';
+require GRAVITYVIEW_DIR . 'future/loader.php';
 
 /**
  * GravityView_Plugin main class.
  */
 final class GravityView_Plugin {
 
-	const version = '1.19.4';
+	const version = '1.21.5.1';
 
 	private static $instance;
 
@@ -121,7 +121,7 @@ final class GravityView_Plugin {
 		require_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-compatibility.php' );
 		require_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-roles-capabilities.php' );
 		require_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-admin-notices.php' );
-		require_once( GRAVITYVIEW_DIR .'includes/class-admin.php' );
+		require_once( GRAVITYVIEW_DIR . 'includes/class-admin.php' );
 		require_once( GRAVITYVIEW_DIR . 'includes/class-post-types.php');
 		require_once( GRAVITYVIEW_DIR . 'includes/class-cache.php');
 	}
@@ -212,18 +212,47 @@ final class GravityView_Plugin {
 	 */
 	public static function activate() {
 
+		/**
+		 * Do not allow activation if PHP version is lower than 5.3.
+		 */
+		$version = phpversion();
+		if ( version_compare( $version, '5.3', '<' ) ) {
+
+			if ( php_sapi_name() == 'cli' ) {
+				printf( __( "GravityView requires PHP Version %s or newer. You're using Version %s. Please ask your host to upgrade your server's PHP.", 'gravityview' ),
+					GV_FUTURE_MIN_PHP_VERSION , phpversion() );
+			} else {
+				printf( '<body style="padding: 0; margin: 0; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Oxygen-Sans, Ubuntu, Cantarell, \'Helvetica Neue\', sans-serif;">' );
+				printf( '<img src="' . plugins_url( 'assets/images/astronaut-200x263.png', GRAVITYVIEW_FILE ) . '" alt="The GravityView Astronaut Says:" style="float: left; height: 60px; margin-right : 10px;" />' );
+				printf( __( "%sGravityView requires PHP Version %s or newer.%s \n\nYou're using Version %s. Please ask your host to upgrade your server's PHP.", 'gravityview' ),
+					'<h3 style="font-size:16px; margin: 0 0 8px 0;">', GV_FUTURE_MIN_PHP_VERSION , "</h3>\n\n", $version );
+				printf( '</body>' );
+			}
+
+			exit; /** Die without activating. Sorry. */
+		}
+
 		self::require_files();
 
-		// register post types
-		GravityView_Post_Types::init_post_types();
+		/** Deprecate in favor of \GV\View::register_post_type. */
+		if ( ! defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			// register post types
+			GravityView_Post_Types::init_post_types();
+		}
 
-		// register rewrite rules
-		GravityView_Post_Types::init_rewrite();
+		/** Deprecate in favor of \GV\View::add_rewrite_endpoint. */
+		if ( ! defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			// register rewrite rules
+			GravityView_Post_Types::init_rewrite();
+		}
 
-		flush_rewrite_rules();
+		/** Deprecate. Handled in \GV\Plugin::activate now. */
+		if ( ! defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			flush_rewrite_rules();
 
-		// Update the current GV version
-		update_option( 'gv_version', self::version );
+			// Update the current GV version
+			update_option( 'gv_version', self::version );
+		}
 
 		// Add the transient to redirect to configuration page
 		set_transient( '_gv_activation_redirect', true, 60 );
@@ -239,11 +268,13 @@ final class GravityView_Plugin {
 	 * Plugin deactivate function.
 	 *
 	 * @access public
-	 * @static
+	 * @deprecated
 	 * @return void
 	 */
 	public static function deactivate() {
-		flush_rewrite_rules();
+		if ( ! defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			flush_rewrite_rules();
+		}
 	}
 
 	/**
@@ -295,9 +326,15 @@ final class GravityView_Plugin {
 	/**
 	 * Check if is_admin(), and make sure not DOING_AJAX
 	 * @since 1.7.5
+	 * @deprecated
+	 * @see \GV\Frontend_Request::is_admin via gravityview()->request->is_admin()
 	 * @return bool
 	 */
 	public static function is_admin() {
+
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			return gravityview()->request->is_admin();
+		}
 
 		$doing_ajax = defined( 'DOING_AJAX' ) ? DOING_AJAX : false;
 

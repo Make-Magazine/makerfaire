@@ -115,7 +115,9 @@ function msp_add_master_admin_class( $classes ){
     if( ! empty( $_GET['page'] ) && MSWP_SLUG == $_GET['page'] ){
         $classes .= ' msp';
     }
-    if( empty( $_GET['slider_id'] ) ){
+    if( empty( $_GET['slider_id'] ) ||
+       ( ! empty( $_GET['action'] ) && in_array( $_GET['action'], array( 'duplicate', 'delete' ) ) )
+       ){
         $classes .= ' master-list';
     }
     return $classes;

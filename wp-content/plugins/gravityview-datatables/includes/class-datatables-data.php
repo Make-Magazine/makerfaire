@@ -466,6 +466,15 @@ class GV_Extension_DataTables_Data {
 			'data' => $data,
 		);
 
+		/**
+		 * Fix offset compatibility with version 1.20.2+
+		 *
+		 * @see https://github.com/gravityview/GravityView/commit/6bda23a8418d4f7103d0f3c39bcf26e756277205
+		 */
+		if ( version_compare( GravityView_Plugin::version, '1.20.1', '>' ) ) {
+			$output['recordsTotal'] = $output['recordsFiltered'] += $atts['offset'];
+		}
+
 		do_action( 'gravityview_log_debug', '[DataTables] Ajax request answer', $output );
 
 		$json = function_exists( 'wp_json_encode') ? wp_json_encode( $output ) : json_encode( $output );
@@ -511,9 +520,29 @@ class GV_Extension_DataTables_Data {
 			return $search_criteria;
 		}
 
-		$words = explode( ' ', stripslashes_deep( $_POST['search']['value'] ) );
+		$search_all_value = stripslashes_deep( $_POST['search']['value'] );
 
-		$words = array_filter( $words );
+		/**
+		 * @filter `gravityview/search-all-split-words` Search for each word separately or the whole phrase?
+		 * @since 2.1.1
+		 * @param bool $split_words True: split a phrase into words; False: search whole word only [Default: true]
+		 */
+		$split_words = apply_filters( 'gravityview/search-all-split-words', true );
+
+		if( $split_words ) {
+
+			// Search for a piece
+			$words = explode( ' ', $search_all_value );
+
+			$words = array_filter( $words );
+
+		} else {
+
+			// Replace multiple spaces with one space
+			$search_all_value = preg_replace( '/\s+/ism', ' ', $search_all_value );
+
+			$words = array( $search_all_value );
+		}
 
 		foreach ( $words as $word ) {
 			$search_criteria['field_filters'][] = array(

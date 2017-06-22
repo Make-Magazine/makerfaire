@@ -15,6 +15,12 @@ class GravityView_Field_List extends GravityView_Field {
 
 	var $name = 'list';
 
+	/**
+	 * @var bool
+	 * @since 1.15.3
+	 */
+	var $is_searchable = true;
+
 	var $search_operators = array( 'contains' );
 
 	/**
@@ -23,12 +29,7 @@ class GravityView_Field_List extends GravityView_Field {
 	 */
 	var $is_sortable = false;
 
-	/**
-	 * @var bool
-	 * @since 1.15.3
-	 */
-	var $is_searchable = false;
-
+	/** @see GF_Field_List */
 	var $_gf_field_class_name = 'GF_Field_List';
 
 	var $group = 'advanced';
@@ -128,7 +129,7 @@ class GravityView_Field_List extends GravityView_Field {
 		// Each list row
 		foreach ( $list_rows as $list_row ) {
 			$current_column = 0;
-			foreach ( $list_row as $column_key => $column_value ) {
+			foreach ( (array) $list_row as $column_key => $column_value ) {
 
 				// If the label of the column matches $column_id, or the numeric key value matches, add the value
 				if( (string)$column_key === (string)$column_id || ( is_numeric( $column_id ) && (int)$column_id === $current_column ) ) {

@@ -1,0 +1,144 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wnb-fa_IR\n"
+"POT-Creation-Date: 2013-07-28 00:45-0800\n"
+"PO-Revision-Date: 2013-09-13 10:31+0330\n"
+"Last-Translator: \n"
+"Language-Team: GraphicBaz Design Team <Delhamid.Alex@Gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: http://www.graphicbaz.ir/wordpress/wordpress-notification-"
+"bar/\n"
+"Language: Persian\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+msgid "WordPress Notification Bar"
+msgstr "نوار اطلاع رسانی وردپرس"
+
+#: wordpress-notification-bar.php:42
+#, php-format
+msgid ""
+"WordPress %s and higher required. The plugin has now disabled itself. On a "
+"side note why are you running an old version :( Upgrade!"
+msgstr ""
+"وردپرس %s یا بالاتر لازم است. پلاگین خودکار غیر فعال شده است. چرا از ورژن "
+"جدید وردپرس استفاده نمیکنید؟؟ همین الان ارتقا دهید"
+
+#: framework/framework.php:108
+msgid "Settings reset."
+msgstr "بازیابی تنظیمات"
+
+#: framework/framework.php:346
+msgid "Save Changes"
+msgstr "ذخیره تغییرات"
+
+#: framework/framework.php:347
+msgid "Reset"
+msgstr "ریست"
+
+#: framework/framework.php:378
+msgid "All custom settings values be deleted. Are you sure you want to reset?"
+msgstr "تمامی تنظیمات پاک خواهند شد, ادامه میدهید؟"
+
+#: framework/field-types/upload.php:8
+msgid "Media Image Library"
+msgstr "رسانه ها"
+
+#: framework/validations/color.php:13
+msgid "Please enter a valid color value."
+msgstr "لطفا یک کد رنگ معتبر وارد کنید"
+
+#: framework/validations/email.php:10
+msgid "Please enter a valid email."
+msgstr "لطفا یک ایمیل معتبر وارد کنید"
+
+#: framework/validations/number.php:11
+msgid "Please enter a valid number."
+msgstr "لطفا یک عدد معتبر وارد کنید"
+
+#: framework/validations/required.php:10
+msgid "is required."
+msgstr "لازم است."
+
+#: inc/config.php:23
+msgid "Notification Bar"
+msgstr "نوار اطلاع رسانی گرافیکباز"
+
+#: inc/config.php:52
+#: Settings\mahdi\Desktop\wordpress-notification-bar/inc/config.php:78
+msgid "Message"
+msgstr "پیام"
+
+#: inc/config.php:67
+msgid "Enabled"
+msgstr "وضعیت"
+
+#: inc/config.php:68
+msgid "Check if you want to enable the notification bar on your site."
+msgstr "اگر میخواهید نوار اطلاع رسانی در سایت نمایش داده شود تیک را فعال کنید."
+
+#: inc/config.php:70
+#: Settings\mahdi\Desktop\wordpress-notification-bar/inc/config.php:103
+msgid "Yes"
+msgstr "فعال"
+
+#: inc/config.php:79
+msgid "Enter your message."
+msgstr "پیام خود را وارد کنید."
+
+#: inc/config.php:85
+msgid "Button Label"
+msgstr "عنوان دکمه"
+
+#: inc/config.php:86
+msgid ""
+"Enter a title for your call to action button. If not entered the button will "
+"not appear."
+msgstr "یک عنوان برای دکمه وارد کنید, در غیر اینصورت دکمه نمایش داده نمیشود."
+
+#: inc/config.php:92
+msgid "Button Link"
+msgstr "لینک دکمه"
+
+#: inc/config.php:93
+msgid "Enter a link for the button."
+msgstr "برای دکمه یک آدرس وارد کنید."
+
+#: inc/config.php:100
+msgid "Button Target"
+msgstr "در صفحه جدید"
+
+#: inc/config.php:101
+msgid ""
+"Open link in new window. If this is not checked the link will open in the "
+"same window."
+msgstr "در صورت فعال بودن, لینک در صفحه جدید باز میشود."
+
+#: inc/config.php:112
+msgid "Style"
+msgstr "سبک"
+
+#: inc/config.php:118
+msgid "Position"
+msgstr "موقعیت"
+
+#: inc/config.php:120
+msgid "Sticky, stays at the top of the page even when you scroll down."
+msgstr "در بالای صفحه باقی بماند."
+
+#: inc/config.php:127
+msgid "Background Color"
+msgstr "رنگ پس زمینه"
+
+#: inc/config.php:137
+msgid ""
+"<p>Enter your information then click \"Save Changes\" to see a preview "
+"above. Check \"Enabled\" when you are ready to go live.</p>"
+msgstr ""
+"<p>فارسي سازي و بهينه شده توسط : <a href=\"http://www.GraphicBaz.ir\" title="
+"\"تيم طراحي گرافيکباز\" target=\"_blank\">تيم طراحي گرافيکباز</a><br /"
+">اطلاعات لازم را وارد کنيد و سپس براي مشاهده پيش نمايش روي \"ذخيره تغييرات\" "
+"کليک کنيد. براي فعال کردن پلاگين, در بخش \"وضعيت\" تيک \"فعال\" را بزنيد</p>"

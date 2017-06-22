@@ -21,7 +21,7 @@ class MSP_Settings {
         add_action( 'admin_init', array( $this, 'admin_init' ) );
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 11 );
         add_action( 'admin_action_msp_envato_license', array( $this, 'envato_license_updated' ) );
-        
+
         add_action( 'admin_footer-master-slider_page_masterslider-setting', array( $this, 'print_setting_script' ) );
         add_filter( 'axiom_wedev_setting_section_submit_button', array( $this, 'section_submit_button' ), 10, 2 );
     }
@@ -53,7 +53,7 @@ class MSP_Settings {
     function section_submit_button( $button_markup, $section ){
         if( isset( $section['id'] ) && 'msp_envato_license' == $section['id'] ){
             $is_license_actived = get_option( MSWP_SLUG . '_is_license_actived', 0 );
-            return sprintf( '<a id="validate_envato_license" class="button button-primary button-large" data-activate="%1$s" data-isactive="%3$d" data-deactivate="%2$s" data-validation="%4$s" >%1$s</a>%5$s', 
+            return sprintf( '<a id="validate_envato_license" class="button button-primary button-large" data-activate="%1$s" data-isactive="%3$d" data-deactivate="%2$s" data-validation="%4$s" >%1$s</a>%5$s',
                             __( 'Activate License', 'master-slider' ), __( 'Deactivate License', 'master-slider' ), (int)$is_license_actived,
                             __( 'Validating ..', 'master-slider' ), '<div class="msp-msg-nag">is not actived</div>' );
         }
@@ -62,7 +62,7 @@ class MSP_Settings {
 
 
     function admin_menu() {
-        
+
         add_submenu_page(
             MSWP_SLUG,
             __( 'Settings' , 'master-slider' ),
@@ -75,7 +75,7 @@ class MSP_Settings {
 
     function get_settings_sections() {
         $sections = array(
-            
+
             array(
                 'id' => 'msp_general_setting',
                 'title' => __( 'General Settings', 'master-slider' )
@@ -101,9 +101,9 @@ class MSP_Settings {
      * @return array settings fields
      */
     function get_settings_fields() {
-        
+
         $settings_fields = array();
-            
+
         $settings_fields['msp_general_setting'] = array(
             array(
                 'name'  => 'hide_info_table',
@@ -136,14 +136,31 @@ class MSP_Settings {
             )
         );
 
-        $settings_fields['upgrade_to_pro'] = array(
-            array(
-                'name' => 'upgrade_text',
-                'desc' => __( 'Upgrade to Pro version to unlock more features!', 'master-slider' ) . sprintf( ' <a href="http://avt.li/mslset" target="_blank">%s</a>', __( 'Checkout the list of features ..', 'master-slider' ) ),
-                'type' => 'plain_text',
-                'label'=> __( 'Need more features?', 'master-slider' )
-            )
-        );
+        // AB test the pro features in setting pro tab
+        if( 1 == get_option( 'master-slider_ab_pro_feature_setting_content_type', 2 ) ){
+
+            $settings_fields['upgrade_to_pro'] = array(
+                array(
+                    'name' => 'upgrade_text',
+                    'desc' => __( 'Upgrade to Pro version to unlock more features!', 'master-slider' ) . sprintf( ' <a href="http://avt.li/mslset" target="_blank">%s</a>', __( 'Checkout the list of features ..', 'master-slider' ) ),
+                    'type' => 'plain_text',
+                    'label'=> __( 'Need more features?', 'master-slider' )
+                )
+            );
+
+        } else {
+
+            $settings_fields['upgrade_to_pro'] = array(
+                array(
+                    'name' => 'upgrade_text',
+                    'desc' => '<a href="http://avt.li/mslset2" target="_blank"><img src="'. MSWP_AVERTA_ADMIN_URL .'/assets/images/thirdparty/pro-tab-setting.png" /></a>',
+                    'type' => 'plain_text',
+                    'label'=> ''
+                )
+            );
+        }
+
+
 
         return $settings_fields;
     }
@@ -177,7 +194,7 @@ class MSP_Settings {
 
     /**
      * This code uses localstorage for displaying active tabs
-     * 
+     *
      */
     function print_setting_script() {
         ?>

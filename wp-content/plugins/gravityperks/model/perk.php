@@ -27,6 +27,11 @@ class GP_Perk {
 	        return;
         }
 
+        if( ! $perk_file && empty( $this->basename ) ) {
+        	_doing_it_wrong( __CLASS__ . ':' . __METHOD__, 'Oops! You\'re instantiating this perk to early.', '1.2.21' );
+        	return;
+        }
+
         $this->basename = $perk_file;
         $this->slug = strtolower( basename( $perk_file, '.php' ) );
 
@@ -433,6 +438,7 @@ class GP_Perk {
     *
     */
     function display_documentation() {
+    	_deprecated_function( __method__, '1.2.18.8' );
         echo GWPerks::markdown( $this->get_documentation() );
     }
 
@@ -766,11 +772,13 @@ class GP_Perk {
 
     public static function generate_options($perk, $values, $selected_value) {
 
-        $options = array();
+        $options  = array();
+        $is_assoc = self::is_associative_array( $values );
 
-        foreach($values as $text => $value) {
-            if(is_numeric($text)) {
-                $text = $value;
+        foreach( $values as $value => $text ) {
+        	// allow non-associative arrays to be passed, use $value as as $text and $value
+            if( ! $is_assoc ) {
+                $value = $text;
             }
             $is_selected = $selected_value == $value ? 'selected="selected"' : '';
             $options[] = "<option value=\"$value\" $is_selected>$text</option>";
@@ -808,6 +816,11 @@ class GP_Perk {
                 <input type=\"$type\" id=\"$id\" name=\"$id\" value=\"$value\" />
             </div>";
     }
+
+    public static function is_associative_array( $array ) {
+	    return array_keys( $array ) !== range( 0, count( $array ) - 1 );
+    }
+
 
 
 

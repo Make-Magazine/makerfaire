@@ -260,7 +260,7 @@ class GravityView_API {
 		} else {
       //MF custom code
       $value = $display_value = apply_filters( "gform_entry_field_value", $display_value, $field, $entry, $form );
-      $display_value = $value;
+			$display_value = $value;
 		}
 
 		// Check whether the field exists in /includes/fields/{$field_type}.php
@@ -310,6 +310,17 @@ class GravityView_API {
 		 * @param array  $field Field array, as fetched from GravityView_View::getCurrentField()
 		 */
 		$output = apply_filters( 'gravityview_field_entry_value_' . $field_type . '_pre_link', $output, $entry, $field_settings, $gravityview_view->getCurrentField() );
+
+		/**
+		 * @filter `gravityview_field_entry_value_pre_link` Modify the field value output for a field before Show As Link setting is applied. Example: `gravityview_field_entry_value_pre_link`
+		 * @since 1.21.4
+		 * @used-by GV_Inline_Edit
+		 * @param string $output HTML value output
+		 * @param array  $entry The GF entry array
+		 * @param array  $field_settings Settings for the particular GV field
+		 * @param array  $field Field array, as fetched from GravityView_View::getCurrentField()
+		 */
+		$output = apply_filters( 'gravityview_field_entry_value_pre_link', $output, $entry, $field_settings, $gravityview_view->getCurrentField() );
 
 		/**
 		 * Link to the single entry by wrapping the output in an anchor tag
@@ -661,7 +672,12 @@ class GravityView_API {
 			return '';
 		}
 
-		$query_arg_name = GravityView_Post_Types::get_entry_var_name();
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			$query_arg_name = \GV\Entry::get_endpoint_name();
+		} else {
+			/** Deprecated. Use \GV\Entry::get_endpoint_name instead. */
+			$query_arg_name = GravityView_Post_Types::get_entry_var_name();
+		}
 
 		$entry_slug = self::get_entry_slug( $entry['id'], $entry );
 
@@ -708,8 +724,15 @@ class GravityView_API {
 		 * has the view id so that Advanced Filters can be applied correctly when rendering the single view
 		 * @see GravityView_frontend::get_context_view_id()
 		 */
-		if( class_exists( 'GravityView_View_Data' ) && GravityView_View_Data::getInstance()->has_multiple_views() ) {
-			$args['gvid'] = gravityview_get_view_id();
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			if ( gravityview()->views->count() > 1 ) {
+				$args['gvid'] = gravityview_get_view_id();
+			}
+		} else {
+			/** Deprecated, do not use has_multiple_views(), please. */
+			if ( class_exists( 'GravityView_View_Data' ) && GravityView_View_Data::getInstance()->has_multiple_views() ) {
+				$args['gvid'] = gravityview_get_view_id();
+			}
 		}
 
 		return add_query_arg( $args, $directory_link );
@@ -882,7 +905,11 @@ function gravityview_convert_value_to_term_list( $value, $taxonomy = 'post_tag' 
 
 	$output = array();
 
-	$terms = explode( ', ', $value );
+	if ( is_array( $value ) ) {
+		$terms = array_filter( array_values( $value ), 'strlen' );
+	} else {
+		$terms = explode( ', ', $value );
+	}
 
 	foreach ($terms as $term_name ) {
 
@@ -890,7 +917,7 @@ function gravityview_convert_value_to_term_list( $value, $taxonomy = 'post_tag' 
 		if( $taxonomy === 'category' ) {
 
 			// Use rgexplode to prevent errors if : doesn't exist
-			list( $term_name, $term_id ) = rgexplode( ':', $value, 2 );
+			list( $term_name, $term_id ) = rgexplode( ':', $term_name, 2 );
 
 			// The explode was succesful; we have the category ID
 			if( !empty( $term_id )) {
@@ -968,6 +995,16 @@ function gravityview_get_current_views() {
 		return array();
 	}
 
+	if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+		if ( ! gravityview()->views->count() ) {
+			return array();
+		}
+		return array_combine(
+			array_map( function ( $view ) { return $view->ID; }, gravityview()->views->all() ),
+			array_map( function ( $view ) { return $view->as_data(); }, gravityview()->views->all() )
+		);
+	}
+	/** \GravityView_View_Data::get_views is deprecated. */
 	return $fe->getGvOutputData()->get_views();
 }
 
@@ -981,14 +1018,24 @@ function gravityview_get_current_view_data( $view_id = 0 ) {
 
 	$fe = GravityView_frontend::getInstance();
 
-	if( ! $fe->getGvOutputData() ) { return array(); }
-
 	// If not set, grab the current view ID
-	if( empty( $view_id ) ) {
+	if ( empty( $view_id ) ) {
 		$view_id = $fe->get_context_view_id();
 	}
 
-	return $fe->getGvOutputData()->get_view( $view_id );
+	if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+		$view = gravityview()->views->get( $view_id );
+		if ( ! $view ) {
+			/** Emulate the weird behavior of \GravityView_View_Data::get_view adding a view which wasn't there to begin with. */
+			gravityview()->views->add( \GV\View::by_id( $view_id ) );
+			$view = gravityview()->views->get( $view_id );
+		}
+		return $view ? $view->as_data() : array();
+	} else {
+		if ( ! $fe->getGvOutputData() ) { return array(); }
+
+		return $fe->getGvOutputData()->get_view( $view_id );
+	}
 }
 
 // Templates' hooks

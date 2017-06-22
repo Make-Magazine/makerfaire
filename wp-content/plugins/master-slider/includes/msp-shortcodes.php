@@ -707,6 +707,11 @@ function msp_masterslider_slide_shortcode( $atts, $content = null ) {
 	// if blank image is not set use original img instead
 	$src_blank 	= empty( $src_blank ) ? $src : $src_blank;
 
+    if( ! empty( $pattern ) || ! empty( $tintcolor ) ){
+        $inline_style   = ! empty( $tintcolor ) ? 'style="background-color:' . $tintcolor . ';"' : '';
+        $slide_content .= "\t\t\t\t\t" . sprintf('<div class="ms-pattern %s" %s ></div>', $pattern, $inline_style )."\n";
+    }
+
 	// decode escaped square brackets
 	$title 		= str_replace( array( "%5B", "%5D" ), array('[', ']'), $title 		);
 	$alt   		= str_replace( array( "%5B", "%5D" ), array('[', ']'), $alt   		);

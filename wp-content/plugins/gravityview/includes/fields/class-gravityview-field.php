@@ -148,6 +148,14 @@ abstract class GravityView_Field {
 			add_filter( 'gravityview_search_field_label', array( $this, 'set_default_search_label' ), 10, 3 );
 		}
 
+		/**
+		 * Auto-assign label from Gravity Forms label, if exists
+		 * @since 1.20
+		 */
+		if( empty( $this->label ) && ! empty( $this->_gf_field_class_name ) && class_exists( $this->_gf_field_class_name ) ) {
+			$this->label = ucfirst( GF_Fields::get( $this->name )->get_form_editor_field_title() );
+		}
+
 		GravityView_Fields::register( $this );
 	}
 
@@ -210,16 +218,6 @@ abstract class GravityView_Field {
 	 */
 	public function _filter_gform_replace_merge_tags( $text, $form = array(), $entry = array(), $url_encode = false, $esc_html = false  ) {
 
-		/**
-		 * This prevents the gform_replace_merge_tags filter from being called twice, as defined in:
-		 * @see GFCommon::replace_variables()
-		 * @see GFCommon::replace_variables_prepopulate()
-		 * @todo Remove eventually: Gravity Forms fixed this issue in 1.9.14
-		 */
-		if( false === $form ) {
-			return $text;
-		}
-
 		// Is there is field merge tag? Strip whitespace off the ned, too.
 		preg_match_all( '/{' . preg_quote( $this->_custom_merge_tag ) . ':?(.*?)(?:\s)?}/ism', $text, $matches, PREG_SET_ORDER );
 
@@ -237,6 +235,8 @@ abstract class GravityView_Field {
 	 * Instead of adding multiple hooks, add all hooks into this one method to improve speed
 	 *
 	 * @since 1.8.4
+	 *
+	 * @see GFCommon::replace_variables()
 	 *
 	 * @param array $matches Array of Merge Tag matches found in text by preg_match_all
 	 * @param string $text Text to replace

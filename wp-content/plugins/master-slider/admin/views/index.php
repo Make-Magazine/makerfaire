@@ -21,7 +21,7 @@ function msp_thankyou_footer() {
         __('If you like %sMaster Slider%s and want to support us, please rate us %s ★★★★★ %s, that is a huge help!', 'master-slider' ),
         '<a href="http://masterslider.com/?msl" title="Version ' . MSWP_AVERTA_VERSION . '" target="_blank">',
         '</a>',
-        '<a href="https://wordpress.org/support/view/plugin-reviews/master-slider/?filter=5#postform" target="_blank">',
+        '<a href="https://wordpress.org/support/view/plugin-reviews/master-slider/?filter=5#new-post" target="_blank">',
         '</a>'
     );
 

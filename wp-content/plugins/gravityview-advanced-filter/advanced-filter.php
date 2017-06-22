@@ -3,12 +3,15 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 1.0.18
-Author: Katz Web Services, Inc.
+Version: 1.0.20
+Author: GravityView
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
 Domain Path: /languages/
 */
+
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) { die; }
 
 add_action( 'plugins_loaded', 'gv_extension_advanced_filtering_load' );
 
@@ -32,7 +35,7 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '1.0.18';
+		protected $_version = '1.0.20';
 
 		protected $_min_gravityview_version = '1.15';
 
@@ -109,7 +112,17 @@ function gv_extension_advanced_filtering_load() {
 		 */
 		function filter_search_criteria( $criteria, $form_ids = null, $passed_view_id = NULL ) {
 
-			$view_id = !empty( $passed_view_id ) ? $passed_view_id : GravityView_View::getInstance()->getViewId();
+			$backup_view_id = 0;
+
+		    if( class_exists( 'GravityView_frontend' ) ) {
+			    $backup_view_id = GravityView_frontend::getInstance()->get_context_view_id();
+            }
+
+            if( empty( $backup_view_id ) && class_exists( 'GravityView_View' ) ) {
+		        $backup_view_id = GravityView_View::getInstance()->getViewId();
+            }
+
+			$view_id = !empty( $passed_view_id ) ? $passed_view_id : $backup_view_id;
 
 			if( empty( $view_id ) )  {
 
@@ -312,6 +325,25 @@ function gv_extension_advanced_filtering_load() {
 			$form = gravityview_get_form( $form_id );
 
 			$filters = GFCommon::get_field_filters_from_post( $form );
+
+
+			/**
+             * The `entry_id` key gets turned into `id` - we need to change it back so it saves properly
+             *
+             * @see GFCommon::get_field_filters_from_post
+			 */
+			foreach ( $filters as $key => & $filter ) {
+
+			    // $filter["mode"] = "any"/"all"
+			    if ( ! is_numeric( $key ) ) {
+                    continue;
+				}
+
+				// Entry ID is posted as `id`
+				if( 'id' === rgar( $filter, 'key' ) ) {
+					$filter['key'] = 'entry_id';
+                }
+			}
 
 			update_post_meta( $post_id, '_gravityview_filters', $filters );
 

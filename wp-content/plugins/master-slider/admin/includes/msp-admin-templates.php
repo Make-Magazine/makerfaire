@@ -9,7 +9,7 @@ function msp_get_panel_header(){
           </a>
           <div class="msp-phlox-badge">
             <a href="http://avt.li/phmsltbtn" target="_blank">
-                <img src="<?php echo MSWP_AVERTA_ADMIN_URL; ?>/assets/images/thirdparty/phlox-badge.jpg" />
+                <img src="<?php echo MSWP_AVERTA_ADMIN_URL; ?>/assets/images/thirdparty/phlox-badge.png" />
             </a>
           </div>
         </div>

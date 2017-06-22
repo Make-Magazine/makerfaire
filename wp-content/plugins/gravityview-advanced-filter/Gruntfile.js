@@ -81,6 +81,7 @@ module.exports = function(grunt) {
 								'https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal',
 								'https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal',
 								'Katz Web Services, Inc.',
+								'GravityView',
 								'http://www.katzwebservices.com',
 							    'https://gravityview.co'
 							];
@@ -132,7 +133,7 @@ module.exports = function(grunt) {
 
 					command += 'zip -r ../' + filename + '.zip gravityview-advanced-filter &&';
 
-					command += 'rm -rf gravityview/ && rm -f gravityview-advanced-filter.zip';
+					command += 'rm -rf gravityview-advanced-filter/ && rm -f gravityview-advanced-filter.zip';
 
 					return command;
 				}
