@@ -15,7 +15,7 @@
         <h4>Explore Making</h4>
         <ul class="list-unstyled">
           <li><a href="//makezine.com/blog?utm_source=makerfaire.com&utm_medium=footer&utm_term=Make+News" target="_blank">Make: News &amp; Projects</a></li>
-          <li><a href="https://makershare.com" target="_blank">Maker Share</a></li>
+          <li><a href="https://makershare.com?utm_source=makerfaire.com&utm_medium=footer" target="_blank">Maker Share</a></li>
           <li><a href="//www.makershed.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=Maker+Shed" target="_blank">Maker Shed</a></li>
           <li><a href="//makercamp.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=makercamp" target="_blank">Maker Camp</a></li>
           <li><a href="https://readerservices.makezine.com/mk/default.aspx?utm_source=makerfaire.com&utm_medium=footer&utm_term=subscribe+to+make" target="_blank">Subscribe to Make:</a></li>
@@ -146,11 +146,11 @@
           <div id="collapse2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading2">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked">
-                <li><a href="/blog">Make: News &amp; Projects</a></li>
-                <li><a href="https://makershare.com" target="_blank">Maker Share</a></li>
-                <li><a href="//www.makershed.com" target="_blank">Maker Shed</a></li>
-                <li><a href="//makercamp.com" target="_blank">Maker Camp</a></li>
-                <li><a href="//readerservices.makezine.com/mk/default.aspx?" target="_blank">Subscribe to Make:</a></li>
+                <li><a href="//makezine.com/blog?utm_source=makerfaire.com&utm_medium=footer&utm_term=Make+News" target="_blank">Make: News &amp; Projects</a></li>
+                <li><a href="https://makershare.com?utm_source=makerfaire.com&utm_medium=footer" target="_blank">Maker Share</a></li>
+                <li><a href="//www.makershed.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=Maker+Shed" target="_blank">Maker Shed</a></li>
+                <li><a href="//makercamp.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=makercamp" target="_blank">Maker Camp</a></li>
+                <li><a href="https://readerservices.makezine.com/mk/default.aspx?utm_source=makerfaire.com&utm_medium=footer&utm_term=subscribe+to+make" target="_blank">Subscribe to Make:</a></li>
                 <li><a href="/maker-movement">Maker Movement</a></li>
               </ul>
             </div>
