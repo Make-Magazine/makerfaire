@@ -3,15 +3,13 @@
  * Plugin Name: Gravity Perks
  * Plugin URI: http://gravitywiz.com/
  * Description: Effortlessly install and manage small functionality enhancements (aka "perks") for Gravity Forms.
- * Version: 1.2.21
+ * Version: 1.2.23
  * Author: Gravity Wiz
  * Author URI: http://gravitywiz.com/
  * License: GPL2
  * Text Domain: gravityperks
  * Domain Path: /languages
  */
-
-use \Michelf\Markdown;
 
 /**
  * Include the perk model as early as possible to when Perk plugins are loaded, they can safely extend
@@ -30,7 +28,7 @@ add_action( 'plugins_loaded', array( 'GravityPerks', 'init_perk_as_plugin_functi
 
 class GravityPerks {
 
-    public static $version = '1.2.21';
+    public static $version = '1.2.23';
     public static $tooltip_template = '<h6>%s</h6> %s';
 
     private static $basename;
@@ -88,8 +86,6 @@ class GravityPerks {
     // INITIALIZE //
 
     public static function init() {
-
-	    require_once( dirname( __FILE__ ) . '/vendor/autoload.php' );
 
         self::define_constants();
         self::$basename = plugin_basename( __FILE__ );
@@ -484,7 +480,7 @@ class GravityPerks {
 
             if(!self::has_valid_license()) {
                 $message = self::get_message('register_gravity_perks');
-                self::display_plugin_row_message($message, $plugin_data);
+                self::display_plugin_row_message($message, $plugin_data, true, $plugin_file );
             }
 
         }
@@ -524,9 +520,16 @@ class GravityPerks {
         <?php
     }
 
-    public static function display_plugin_row_message( $message, $plugin_data, $is_error = false ) {
+    public static function display_plugin_row_message( $message, $plugin_data, $is_error = false, $plugin_file = false ) {
 
 	    $id = sanitize_title( $plugin_data['Name'] );
+	    $is_active = false;
+
+	    if( $plugin_file ) {
+	    	$is_active = is_network_admin() ? is_plugin_active_for_network( $plugin_file ) : is_plugin_active( $plugin_file );
+	    }
+
+	    $active = $is_active ? 'active' : 'inactive';
 
 	    ?>
 
@@ -537,7 +540,7 @@ class GravityPerks {
 		    .gwp-plugin-notice .update-message p:before { content: '\f534'; font-size: 18px; }
 	    </style>
 
-	    <tr class="plugin-update-tr active gwp-plugin-notice">
+	    <tr class="plugin-update-tr <?php echo $active; ?> gwp-plugin-notice">
 		    <td colspan="3" class="colspanchange">
 			    <div class="update-message notice inline notice-error notice-alt"><p><?php echo $message ?></p></div>
 		    </td>
@@ -750,52 +753,22 @@ class GravityPerks {
     }
 
     public static function display_perks_status_message() {
-        // return to this in the future; removing for now along with all of the "last modified" functions
-        return;
-        foreach(array('activate', 'deleted', 'deactivate', 'install', 'gwp_error') as $action) {
-            if( isset($_GET[$action]) ) {
-                $current_action = $action;
-                break;
-            }
-        }
 
-        if(!isset($current_action))
-            return;
+    	// @todo Revisit this function; see pre 1.2.21 version for original version. Has been stripped down for now.
 
-        $blog_id = is_multisite() ? self::get_requesting_blog_id() : false;
-        $is_error = false;
+		$error = rgget( 'gwp_error' );
+		if( ! $error ) {
+			return;
+		}
+
+	    $is_error = true;
         $message = '';
 
-        switch($current_action) {
-        case 'activate':
-            $message = __('You\'ve just activated a <strong>perk</strong>. ', 'gravityperks');
-            break;
-        case 'deactivate':
-            $message = __('You\'ve just deactivated a <strong>perk</strong>. ', 'gravityperks');
-            break;
-        case 'deleted':
-            $delete_result = get_transient('plugins_delete_result_' . get_current_user_id() );
-            if( !is_wp_error($delete_result) )
-                $message = __('You\'ve just deleted a <strong>perk</strong>. ', 'gravityperks');
-            break;
-        case 'gwp_error':
-            $is_error = true;
-            switch(gwget('gwp_error')) {
-            case 'networkperks':
-                $message = __('Gravity Perks must be network activated before a <strong>perk</strong> can be network activated.', 'gravityperks');
-                break;
-            }
-        }
-
-        if( !$is_error ) {
-            if( is_multisite() ) {
-                $site_select = self::get_manage_perks_site_select();
-                $message .= sprintf( __('Manage all your perks on the %sManage Perks%s %s page.', 'gravityperks'),
-                    '<a href="javascript:void(0);" onclick="jQuery(this).hide(); jQuery(\'#manage-perks-site-select\').show();">', '</a>', $site_select);
-            } else {
-                $message .= sprintf( __('Manage all your perks on the %sManage Perks%s page.', 'gravityperks'), '<a href="' . get_admin_url($blog_id, 'admin.php?page=gwp_perks') . '">', '</a>' );
-            }
-        }
+	    switch( rgget( 'gwp_error' ) ) {
+		    case 'networkperks':
+			    $message = __( '<strong>Gravity Perks</strong> must be network activated before a <strong>perk</strong> can be network activated.', 'gravityperks' );
+			    break;
+	    }
 
         ?>
 
@@ -866,9 +839,13 @@ class GravityPerks {
 	        return;
         }
 
-        $plugin = gwar($_REQUEST, 'plugin');
+        $plugin = gwar( $_REQUEST, 'plugin' );
+        if( ! GWPerk::is_perk( $plugin ) ) {
+        	return;
+        }
+
         $redirect = self_admin_url( 'plugins.php?gwp_error=networkperks&plugin=' . $plugin );
-        wp_redirect( esc_url_raw( add_query_arg( '_error_nonce', wp_create_nonce('plugin-activation-error_' . $plugin ), $redirect ) ) );
+        wp_redirect( esc_url_raw( add_query_arg( '_error_nonce', wp_create_nonce( 'plugin-activation-error_' . $plugin ), $redirect ) ) );
         exit;
 
     }
@@ -1234,8 +1211,10 @@ class GravityPerks {
 	 * @return mixed
 	 */
 	public static function markdown( $string ) {
-
-		return Markdown::defaultTransform( $string );
+		if( ! version_compare( phpversion(), '5.3', '>=' ) ) {
+			return sprintf( '<div class="error"><p>%s</p></div>%s', __( 'Does this page look strange? Your PHP version is out-of-date. <strong>Please upgrade.</strong>', 'gravityperks' ), $string );
+		}
+		return include 'includes/_markdown.php';
 	}
 
     public static function apply_filters( $filter_base, $modifiers, $value ) {
