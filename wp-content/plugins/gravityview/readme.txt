@@ -20,6 +20,15 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 
 == Changelog ==
 
+= 1.21.5.2 on June 26, 2017 =
+
+* Tweak: Improved plugin speed by reducing amount of information logged
+* Fixed: Duplicate descriptions on the settings screen
+* Fixed: Our "No-Conflict Mode" made the settings screen look bad. Yes, we recognize the irony.
+* Updated: Translations - thank you, translators!
+    - Turkish translation by [@suhakaralar](https://www.transifex.com/accounts/profile/suhakaralar/)
+    - Dutch translations by Thom
+
 = 1.21.5.1 on June 13, 2017 =
 
 * Modified: We stopped allowing any HTML in Paragraph Text fields in 1.21.5, but this functionality was used by lots of people. We now use a different function to allow safe HTML by default.
