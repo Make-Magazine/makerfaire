@@ -903,7 +903,6 @@ class GravityView_View_Data {
 				'desc'	=> __('Only allow access to this View when embedded using the shortcode.', 'gravityview'),
 				'type'	=> 'checkbox',
 				'value'	=> '',
-				'tooltip' => false,
 				'show_in_shortcode' => false,
 				'full_width' => true,
 			),

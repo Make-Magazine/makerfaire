@@ -240,18 +240,18 @@ class GravityView_Change_Entry_Creator {
 	    }
 
 	    $output .= '<select name="created_by" id="change_created_by" class="widefat">';
-        $output .= '<option value="' . selected( $entry['created_by'], '0', false ) . '"> &mdash; '.esc_attr_x( 'No User', 'No user assigned to the entry', 'gravityview').' &mdash; </option>';
+      $output .= '<option value="' . selected( $entry['created_by'], '0', false ) . '"> &mdash; '.esc_attr_x( 'No User', 'No user assigned to the entry', 'gravityview').' &mdash; </option>';
 
-        foreach($users as $user) {
+      foreach($users as $user) {
         //MF custom code
-            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
-        }
-        $output .= '</select>';
-        $output .= '<input name="originally_created_by" value="'.esc_attr( $entry['created_by'] ).'" type="hidden" />';
+        $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
+      }
+      $output .= '</select>';
+      $output .= '<input name="originally_created_by" value="'.esc_attr( $entry['created_by'] ).'" type="hidden" />';
 
 	    unset( $is_created_by_in_users, $created_by_user, $users, $created_by_id, $count_users );
 
-        echo $output;
+      echo $output;
     }
 
 }
