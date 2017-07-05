@@ -181,6 +181,24 @@ class maker {
         $text = do_shortcode( $text ); //process any conditional logic
         $data['mat_message']          = $text;
 
+        //MAT switch to display the edit resources link
+        $data['mat_disp_res_link']    = rgar($form, 'mat_disp_res_link');
+
+        //process any shortcode logic in the resource modal layout
+        $text = GFCommon::replace_variables(rgar($form, 'mat_res_modal_layout'),$form, $entry);
+        $text = do_shortcode( $text );
+        $data['mat_res_modal_layout'] = $text;
+
+        //set the URL for the edit resource link
+        $url = rgar($form, 'mat_edit_res_url');
+
+        //add entry ID parameter and email
+        if($url != '') {
+          $url .= '?entry-id='.$row['lead_id'];
+          if(isset($entry['98'])) $url .= '&contact-email='.$entry['98'];
+        }
+        $data['mat_edit_res_url'] = $url;
+
         $entries['data'][]=$data;
       }
     }

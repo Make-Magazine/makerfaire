@@ -3,6 +3,18 @@ if (!is_user_logged_in())
     auth_redirect();
 
 get_header();
+
+$current_user = wp_get_current_user();
+
+//require_once our model
+require_once( get_template_directory().'/models/maker.php' );
+
+//instantiate the model
+$maker   = new maker($current_user->user_email);
+
+$tableData = $maker->get_table_data();
+$entries   = $tableData['data'];
+
 ?>
 <div class="content col-md-12 maker-admin-manage-faire-entries-mobile">
   <script>
@@ -30,19 +42,6 @@ get_header();
   });
   </script>
   <div class="clearfix">
-    <?php
-    $current_user = wp_get_current_user();
-
-    //require_once our model
-    require_once( get_template_directory().'/models/maker.php' );
-
-    //instantiate the model
-    $maker   = new maker($current_user->user_email);
-
-    $tableData = $maker->get_table_data();
-    $entries   = $tableData['data'];
-
-?>
     <div class="settings-pop-btn pull-right">
       <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
         Settings &amp; Help<div class="toggle-popover fa fa-cog" data-toggle="popover"></div>
@@ -69,18 +68,55 @@ get_header();
   User <?php echo $current_user->user_email;?><br/>
   <hr class="header-break">
   <?php
-
   foreach($entries as $entryData) {
-    //prepare the data
-    if($entryData['status']=='Accepted'){
-      $statusBlock = 'greenStatus';
-    }else{
-      $statusBlock = 'greyStatus';
-    }
-    //$image = legacy_get_fit_remote_image_url($entryData['project_photo'],275,275);
-    $image =  (isset($entryData['project_photo'])&&$entryData['project_photo']!=''?$entryData['project_photo']:get_template_directory_uri() .'/images/no-image.png');
-    ?>
+    $image =  (isset($entryData['project_photo']) && $entryData['project_photo'] != '' ? $entryData['project_photo']:get_template_directory_uri() .'/images/no-image.png');
 
+    //status specific logic
+    $statusBlock  = ($entryData['status'] == 'Accepted'?'greenStatus':'greyStatus');
+    $dispCancel   = ($entryData['status']!='Cancelled' && $entryData['status']!='Rejected'?true:false);
+    $dispDelete   = ($entryData['status']=='Proposed' || $entryData['status']=='In Progress'?true:false);
+    $disp_edit    = ($entryData['maker_type']=='contact' ? true : false); //Should we display a edit Entry Link?
+
+    //determine which edit link we display
+    $dispRMTeditLink = false;
+    $dispGVeditLink  = false;
+
+    if($disp_edit){
+      if($entryData['mat_disp_res_link'] == 'yes' && $entryData['status'] == 'Accepted'){
+        $dispRMTeditLink = true;
+      }else{
+        if($entryData['status'] == 'Accepted' || $entryData['status'] == 'Proposed')
+          $dispGVeditLink = true;
+      }
+    }
+
+    //Public facing profile page edit link
+    $viewEditLink = ($entryData['status']=='Accepted'?"/maker/entry/" . $entryData['lead_id']."/edit/":'');
+
+    //GV View Link
+    $GVviewLink = do_shortcode('[gv_entry_link action="read" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+    $GVviewLink = str_replace('/view/', '/', $GVviewLink);  //remove view slug from URL
+
+    //GV Edit Link
+    $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+    $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
+
+    //RMT edit link
+    $RMTeditLink = '<span class="editLink">
+                      <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
+                        <div class="fa fa-eye fa-lg toggle-popover" data-toggle="popover"></div>View/Edit Setup
+                      </button>
+                      <div class="popover-content hidden">'.
+                        $entryData['mat_res_modal_layout'].'
+                        <div class="clear">';
+                          if($entryData['mat_edit_res_url'] != '') {
+                            $RMTeditLink .= '<a target="_blank" href="'.$entryData['mat_edit_res_url'].'">Edit</a>';
+                          }
+    $RMTeditLink .= '   </div>
+                      </div>
+                    </span>';
+
+    ?>
     <div class="maker-admin-list-wrp">
       <div class="gv-list-view-title-maker-entry">
         <div class="statusBox <?php echo $statusBlock;?>">
@@ -91,13 +127,12 @@ get_header();
           <div class="faire-entry-image-wrp">
             <a href="<?php echo $image;?>">
               <div class="image-container" style="background-image: url('<?php echo $image;?>');"></div>
-              <!--<img class="img-responsive" src="<?php echo $image;?>" alt="Project Photo" />-->
             </a>
           </div>
         </div> <!-- close .entryImg-->
         <div class="entry-main-content">
-          <!-- MAT messaging -->
           <?php if($entryData['mat_message'] !='') { ?>
+          <!-- MAT messaging -->
           <div class="hidden-xs mat_message" style="background-color:#F4D03F; padding:10px">
               <?php echo $entryData['mat_message'];?>
           </div>
@@ -106,7 +141,7 @@ get_header();
 
           <!-- Project Name -->
           <div class="entryName entryData">
-            <h3 class="entry-title"><?php echo $entryData['presentation_title']; ?></h3>
+            <h3 class="entry-title"><?php echo $entryData['presentation_title'];?></h3>
           </div><!-- close .entryName -->
 
           <!-- Form Type -->
@@ -116,38 +151,27 @@ get_header();
 
           <div>
             <?php
-            //Add link to edit entry
-            $disp_edit = (($entryData['status'] != 'Cancelled') && $entryData['maker_type']=='contact' ? true: false);
-
-            if($disp_edit){
-              $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-              $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-              echo  '<span class="editLink">'
-                  . '  <a href="'. $url .'">'
-                  . '  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>'.
-                      'Edit Entry</a>'
-                  . '</span>';
-            }
-            ?>
-          </div>
-
-          <div>
-            <?php
-            $viewEditLink = "/maker/entry/" . $entryData['lead_id']."/edit/";
-
-            if($entryData['status']=='Accepted' && $disp_edit) { ?>
+            if($viewEditLink!='' && $disp_edit) { ?>
               <span class="editLink">
                 <a href="<?php echo $viewEditLink;?>">
                   <i class="fa fa-eye" aria-hidden="true"></i>
                   View/Edit Public Information
                 </a>
               </span>
+            <?php
+            }
+            if($dispRMTeditLink) {
+              echo $RMTeditLink;
+            }elseif($dispGVeditLink){
+              ?>
+              <span class="editLink">
+                <a href="<?php echo $GVeditLink;?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit Entry</a>
+              </span>
               <?php
-            } ?>
-
+            }
+            ?>
           </div>
           <div class="clear"></div>
-
 
           <div class="actionSection">
             <div class="submit-date">
@@ -158,7 +182,7 @@ get_header();
               <!-- Get Your Tickets Section -->
               <?php
               //only display if there are tickets and if the entry has been accepted
-              if(!empty($entryData['ticketing']) && $entryData['status']=='Accepted'){ ?>
+              if(!empty($entryData['ticketing']) && $entryData['status'] == 'Accepted'){ ?>
                 <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
                   <span class="hideSmall">GET YOUR </span>ENTRY PASSES
                   <div class="fa fa-ticket fa-lg toggle-popover" data-toggle="popover"></div>
@@ -213,7 +237,7 @@ get_header();
                         <!--<h4 class="tasks"><i class="fa fa-check" aria-hidden="true"></i>Done</h4>-->
                         <?php
                         foreach($tasks['done'] as $task) { ?>
-                        <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="doneTasks" style="color:green"><i class="fa fa-check" aria-hidden="true"></i>Done</span></a>
+                          <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="doneTasks" style="color:green"><i class="fa fa-check" aria-hidden="true"></i>Done</span></a>
                           <?php
                         }
                         ?>
@@ -232,6 +256,7 @@ get_header();
               <div class="popover-content hidden">
                 <div class="manage-entry-popover row">
                   <div class="manage-links">
+                    <a href="<?php echo $GVviewLink;?>">View Entry</a>
                     <?php
                     //View Link
                     $url = do_shortcode('[gv_entry_link action="read" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
@@ -245,11 +270,15 @@ get_header();
                     $class = '';
                     $tooltip = '';
 
-                    //edit link
+                    //edit section
                     if($disp_edit){
-                      $url = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-                      $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-                      echo '<a href="'. $url .'">Edit Entry</a>';
+                      if($viewEditLink != '') {
+                        echo '<a href="'. $viewEditLink.'">View/Edit Public Information</a>';
+                      }
+
+                      if(!$dispRMTeditLink && $dispGVeditLink){
+                        echo '<a href="'. $GVeditLink .'">Edit Entry</a>';
+                      }
                     }else{
                       if($entryData['maker_type'] != 'contact') {
                         echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
@@ -262,17 +291,12 @@ get_header();
                   </div>
                   <div>
                     <?php
-                    //cancel link - only shown if Status is not currently Cancel
-                    if($entryData['status']!='Cancelled' && $entryData['status']!='Rejected'){
-                      ?>
+                    if($dispCancel){  ?>
                       <a href="#cancelEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Cancel Entry</a>
-                      <?php
-                    }
-
-                    ?>
                     <?php
+                    }
                     //Delete Link
-                    if($entryData['status']=='Proposed' || $entryData['status']=='In Progress'){
+                    if($dispDelete){
                       ?>
                       <a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Delete Entry</a>
                       <?php
