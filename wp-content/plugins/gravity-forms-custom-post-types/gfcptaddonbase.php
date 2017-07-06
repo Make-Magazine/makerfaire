@@ -515,8 +515,8 @@ if (!class_exists('GFCPTAddonBase')) {
 		function get_term_name( $term_id, $field ) {
 
 			$return = $term_id;
-
-			if( $field->populateTaxonomy && ! empty( $term_id ) ) {
+      
+			if( isset($field->populateTaxonomy)&&$field->populateTaxonomy && ! empty( $term_id ) ) {
 				$term = get_term( (int) $term_id, $field->populateTaxonomy );
 				if( ! is_wp_error( $term ) ) {
 					$return = $term->name;
