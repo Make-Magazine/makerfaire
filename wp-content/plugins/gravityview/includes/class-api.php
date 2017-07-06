@@ -259,6 +259,7 @@ class GravityView_API {
 			}
 		} else {
       //MF custom code
+      $display_value = rgar( $entry, $field_id );
       $value = apply_filters( "gform_entry_field_value", $display_value, $field, $entry, $form );
 			$display_value = $value;
 		}
