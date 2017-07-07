@@ -60,6 +60,9 @@ function custom_validation($validation_result) {
 }
 
 add_filter( 'gform_pre_render', 'populate_fields' ); //all forms
+add_filter( 'gform_pre_validation', 'populate_fields' );
+add_filter( 'gform_admin_pre_render', 'populate_fields' );
+add_filter( 'gform_pre_submission_filter', 'populate_fields' );
 
 /*
  * this logic is for page 2 of 'linked forms'
@@ -68,13 +71,19 @@ add_filter( 'gform_pre_render', 'populate_fields' ); //all forms
  */
 
 function populate_fields($form) {
+  if(!isset($form['form_type'])){
+    $form['form_type'] = 'Other';
+  }
   $jqueryVal = '';
   if($form['form_type']=='Other'){
     //this is a 2-page form with the data from page one being displayed in an html field on following pages
     $current_page = GFFormDisplay::get_current_page($form['id']);
 
     if ($current_page > 1) {
-      $entry_id = rgpost('input_3');
+      //find the submitted entry id
+      $return = get_value_by_label('entry-id', $form, array());
+
+      $entry_id = rgpost('input_'.$return['id']);
 
       //is entry id set?
       if($entry_id != '') {
@@ -82,7 +91,10 @@ function populate_fields($form) {
         $entry = GFAPI::get_entry($entry_id); //original entry ID
         $form_id = $form['id'];
         //find the submitted original entry id
+        //var_Dump($form);
         foreach ($form['fields'] as &$field) {
+          $parmName = '';
+          $value = '';
           switch($field->type) {
             //parameter name is stored in a different place
             case 'name':
@@ -101,7 +113,7 @@ function populate_fields($form) {
               break;
           }
 
-          if ($field->inputName != '') {
+          if (isset($field->inputName) && $field->inputName != '') {
             $parmName = $field->inputName;
             //check for 'field-' to see if the value should be populated by original entry field data
             $pos = strpos($parmName, 'field-');
@@ -141,7 +153,10 @@ function populate_fields($form) {
                   $field->defaultValue = (isset($entry[$field_id]) ? $entry[$field_id] : "");
                   break;
               }
-            }else { //populate by specific parameter name
+            }elseif ( strpos( $field->inputName, '{' ) !== false ) {  //is paramater name set to a merge field?
+              $field->defaultValue = GFCommon::replace_variables_prepopulate( $field->inputName,false,$entry, false, $form);
+              echo 'new value is '.$field->defaultValue.'<br/>';
+            } else { //populate by specific parameter name
               //populate fields
               $fieldIDarr = array(
                   'project-name'         => 151,
@@ -189,6 +204,7 @@ function populate_fields($form) {
     </script>
     <?php
   }
+  
   return $form;
 }
 

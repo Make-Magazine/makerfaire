@@ -58,12 +58,6 @@ $entries   = $tableData['data'];
   </div>
   <div class="clearfix">
     <h2 class="title-head pull-left">Manage your Maker Faire Entries</h2>
-    <!--
-    <span class="submit-entry pull-right">
-      <a href="/new-york/call-for-makers/" target="_blank" class="btn btn-primary btn-no-border">
-        Submit another entry
-      </a>
-    </span>-->
   </div>
   User <?php echo $current_user->user_email;?><br/>
   <hr class="header-break">
@@ -72,30 +66,28 @@ $entries   = $tableData['data'];
     $image =  (isset($entryData['project_photo']) && $entryData['project_photo'] != '' ? $entryData['project_photo']:get_template_directory_uri() .'/images/no-image.png');
 
     //status specific logic
-    $statusBlock  = ($entryData['status'] == 'Accepted'?'greenStatus':'greyStatus');
-    $dispCancel   = ($entryData['status']!='Cancelled' && $entryData['status']!='Rejected'?true:false);
-    $dispDelete   = ($entryData['status']=='Proposed' || $entryData['status']=='In Progress'?true:false);
-    $disp_edit    = ($entryData['maker_type']=='contact' ? true : false); //Should we display a edit Entry Link?
+    $statusBlock  = ($entryData['status'] == 'Accepted' ? 'greenStatus':'greyStatus');
+    $dispCancel   = ($entryData['status'] != 'Cancelled' && $entryData['status']!='Rejected'?true:false);
+    $dispDelete   = ($entryData['status'] == 'Proposed' || $entryData['status'] == 'In Progress'?true:false);
+    $disp_edit    = ($entryData['status'] != 'Cancelled' && $entryData['maker_type'] == 'contact' ? true : false); //Should we display a edit Entry Link?
 
-    //determine which edit link we display
+    //determine what link is used for Edit Entry and if it is displayed
     $dispRMTeditLink = false;
     $dispGVeditLink  = false;
-
-    if($disp_edit){
+    if($entryData['maker_type'] == 'contact') {
       if($entryData['mat_disp_res_link'] == 'yes' && $entryData['status'] == 'Accepted'){
-        $dispRMTeditLink = true;
+        $dispRMTeditLink = true;  //display resource edit only link
       }else{
         if($entryData['status'] == 'Accepted' || $entryData['status'] == 'Proposed')
-          $dispGVeditLink = true;
+          $dispGVeditLink = true; //display full form edit thru gravity forms
       }
     }
 
-    //Public facing profile page edit link
-    $viewEditLink = ($entryData['status']=='Accepted'?"/maker/entry/" . $entryData['lead_id']."/edit/":'');
+    // Should we display the View/Edit Public Information link
+    $dispEditPub  = ($entryData['status'] == 'Accepted' && $entryData['maker_type'] == 'contact' ? true : false);
 
-    //GV View Link
-    $GVviewLink = do_shortcode('[gv_entry_link action="read" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-    $GVviewLink = str_replace('/view/', '/', $GVviewLink);  //remove view slug from URL
+    //Public facing profile page edit link 'View/Edit Public Information'
+    $viewEditLink = "/maker/entry/" . $entryData['lead_id']."/edit/";
 
     //GV Edit Link
     $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
@@ -151,7 +143,7 @@ $entries   = $tableData['data'];
 
           <div>
             <?php
-            if($viewEditLink!='' && $disp_edit) { ?>
+            if($dispEditPub) { ?>
               <span class="editLink">
                 <a href="<?php echo $viewEditLink;?>">
                   <i class="fa fa-eye" aria-hidden="true"></i>
@@ -256,26 +248,24 @@ $entries   = $tableData['data'];
               <div class="popover-content hidden">
                 <div class="manage-entry-popover row">
                   <div class="manage-links">
-                    <a href="<?php echo $GVviewLink;?>">View Entry</a>
                     <?php
                     //View Link
                     $url = do_shortcode('[gv_entry_link action="read" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
                     $url = str_replace('/view/', '/', $url);  //remove view slug from URL
-                    ?>
-                    <a href="<?php echo $url;?>">View Entry</a>
-                    <?php if($entryData['status']=='Accepted' && $disp_edit) { ?>
-                    <a href="/maker/entry/<?php echo $entryData['lead_id'];?>/edit">View/Edit Public Information</a>
-                    <?php } ?>
+                    ?><a href="<?php echo $url;?>">View Entry</a><?php
+
+                    if($dispEditPub) { ?>
+                      <span class="editLink">
+                        <a href="<?php echo $viewEditLink;?>">
+                          <i class="fa fa-eye" aria-hidden="true"></i>
+                          View/Edit Public Information
+                        </a>
+                      </span>
                     <?php
-                    $class = '';
-                    $tooltip = '';
+                    }
 
                     //edit section
-                    if($disp_edit){
-                      if($viewEditLink != '') {
-                        echo '<a href="'. $viewEditLink.'">View/Edit Public Information</a>';
-                      }
-
+                    /*if($disp_edit){
                       if(!$dispRMTeditLink && $dispGVeditLink){
                         echo '<a href="'. $GVeditLink .'">Edit Entry</a>';
                       }
@@ -285,8 +275,16 @@ $entries   = $tableData['data'];
                       }else{
                         echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only active entries can be edited">Edit Entry</div>';
                       }
+                    }*/
+                    if($dispRMTeditLink) {
+                      echo $RMTeditLink;
+                    }elseif($dispGVeditLink){
+                      ?>
+                      <span class="editLink">
+                        <a href="<?php echo $GVeditLink;?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit Entry</a>
+                      </span>
+                      <?php
                     }
-
                     ?>
                   </div>
                   <div>
