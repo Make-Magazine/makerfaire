@@ -72,7 +72,7 @@ add_filter( 'gform_pre_submission_filter', 'populate_fields' );
 
 function populate_fields($form) {
   if(!isset($form['form_type'])){
-    $form['form_type'] = 'Other';
+    return $form;
   }
   $jqueryVal = '';
   if($form['form_type']=='Other'){
@@ -204,7 +204,7 @@ function populate_fields($form) {
     </script>
     <?php
   }
-  
+
   return $form;
 }
 
