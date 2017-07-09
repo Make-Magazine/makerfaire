@@ -71,11 +71,11 @@ add_filter( 'gform_pre_submission_filter', 'populate_fields' );
  */
 
 function populate_fields($form) {
-  if(!isset($form['form_type'])){
+  if( !class_exists( 'GFFormDisplay' ) ) {
     return $form;
   }
   $jqueryVal = '';
-  if($form['form_type']=='Other'){
+  if(isset($form['form_type']) && $form['form_type']=='Other'){
     //this is a 2-page form with the data from page one being displayed in an html field on following pages
     $current_page = GFFormDisplay::get_current_page($form['id']);
 
