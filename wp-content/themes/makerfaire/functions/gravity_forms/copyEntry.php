@@ -110,9 +110,6 @@ function maybe_copyEntry( $form ) {
             case 'page':
             case 'date':
             case 'fileupload':
-              //var_dump($field);
-              //echo '<br/>';
-              //break;
               //do nothing
               break;
             default:

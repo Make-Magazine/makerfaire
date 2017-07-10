@@ -90,8 +90,8 @@ function populate_fields($form) {
         //pull the original entry
         $entry = GFAPI::get_entry($entry_id); //original entry ID
         $form_id = $form['id'];
+
         //find the submitted original entry id
-        //var_Dump($form);
         foreach ($form['fields'] as &$field) {
           $parmName = '';
           $value = '';
@@ -153,9 +153,11 @@ function populate_fields($form) {
                   $field->defaultValue = (isset($entry[$field_id]) ? $entry[$field_id] : "");
                   break;
               }
-            }elseif ( strpos( $field->inputName, '{' ) !== false ) {  //is paramater name set to a merge field?
-              $field->defaultValue = GFCommon::replace_variables_prepopulate( $field->inputName,false,$entry, false, $form);
-              echo 'new value is '.$field->defaultValue.'<br/>';
+            }elseif ( strpos( $field->inputName, 'rmt_att_lock' ) !== false ||
+                      strpos( $field->inputName, 'rmt_res_cat_lock') !==false
+                    ) {  //is paramater name set to a merge field?
+              $text = $field->inputName;
+              $field->defaultValue = rmt_lock_ind($text, $entry_id);
             } else { //populate by specific parameter name
               //populate fields
               $fieldIDarr = array(
@@ -288,4 +290,51 @@ function GSP_after_submission($entry, $form ){
       }
     }
   }
+}
+
+function rmt_lock_ind($text, $entry_id) {
+  $rmtLock = 'No'; //default
+  global $wpdb;
+
+  //resource lock indicator
+  if (strpos($text, 'rmt_res_cat_lock') !== false) {
+    $startPos        = strpos($text, '{rmt_res_cat_lock'); //pos of start of merge tag
+    $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
+    $closeBracketPos = strlen($text);
+
+    //resource ID
+    $RMTcatID = substr($text, $RmtStartPos+1,$closeBracketPos-$RmtStartPos-1);
+
+    //is this a valid RMT field??
+    if(is_numeric($RMTcatID)) {
+      //find locked value of RMT field
+      $lockCount = $wpdb->get_var('SELECT count(*) as count
+        FROM `wp_rmt_entry_resources`
+        left outer join wp_rmt_resources
+            on wp_rmt_entry_resources.resource_id = wp_rmt_resources.id
+        where wp_rmt_resources.resource_category_id = '.$RMTcatID.' and lockBit=1 and entry_id = '.$entry_id);
+      $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
+      $rmtLock = str_replace($mergeTag, ($lockCount>0?'Yes':'No'), $text);
+    }
+  }
+
+
+  //attribute lock indicator
+  if (strpos($text, 'rmt_att_lock') !== false) {
+    $startPos        = strpos($text, '{rmt_att_lock'); //pos of start of merge tag
+    $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
+    $closeBracketPos = strlen($text);
+
+    //attribute ID
+    $RMTid = substr($text, $RmtStartPos+1,$closeBracketPos-$RmtStartPos-1);
+
+    //is this a valid RMT field??
+    if(is_numeric($RMTid)) {
+      //find locked value of RMT field
+      $lockBit = $wpdb->get_var('SELECT lockBit FROM `wp_rmt_entry_attributes` where attribute_id = '.$RMTid. ' and entry_id = '.$entry_id.' limit 1');
+      $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
+      $rmtLock = str_replace($mergeTag, ($lockBit==1?'Yes':'No'), $text);
+    }
+  }
+  return $rmtLock;
 }
