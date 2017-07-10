@@ -115,6 +115,7 @@ function populate_fields($form) {
 
           if (isset($field->inputName) && $field->inputName != '') {
             $parmName = $field->inputName;
+
             //check for 'field-' to see if the value should be populated by original entry field data
             $pos = strpos($parmName, 'field-');
 
@@ -140,8 +141,14 @@ function populate_fields($form) {
                 case 'checkbox':
                   //find which fields are set
                   foreach($field->inputs as $key=>$input) {
-                    if(!empty($entry[$input['id']])) {
-                      if($field->choices[$key]['value'] == $entry[$input['id']]){
+                    //need to get the decimal indicator from the input in order to set the field id
+                    if (($pos = strpos($input['id'], ".")) !== FALSE) {
+                      $decPos = substr($input['id'], $pos+1);
+                    }
+                    $fieldNum = $field_id.'.'.$decPos;
+                    //check if field is set in the entry
+                    if(!empty($entry[$fieldNum])) {
+                      if($field->choices[$key]['value'] == $entry[$fieldNum]){
                         $field->choices[$key]['isSelected'] = true;
                         $jqueryVal .= "jQuery( '#choice_".$form_id."_".str_replace('.','_',$input['id'])."' ).prop( 'checked', true );";
                       }
