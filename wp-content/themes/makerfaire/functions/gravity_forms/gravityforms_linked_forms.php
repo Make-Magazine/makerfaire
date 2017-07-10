@@ -298,7 +298,7 @@ function rmt_lock_ind($text, $entry_id) {
 
   //resource lock indicator
   if (strpos($text, 'rmt_res_cat_lock') !== false) {
-    $startPos        = strpos($text, '{rmt_res_cat_lock'); //pos of start of merge tag
+    $startPos        = strpos($text, 'rmt_res_cat_lock'); //pos of start of merge tag
     $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
     $closeBracketPos = strlen($text);
 
@@ -321,7 +321,7 @@ function rmt_lock_ind($text, $entry_id) {
 
   //attribute lock indicator
   if (strpos($text, 'rmt_att_lock') !== false) {
-    $startPos        = strpos($text, '{rmt_att_lock'); //pos of start of merge tag
+    $startPos        = strpos($text, 'rmt_att_lock'); //pos of start of merge tag
     $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
     $closeBracketPos = strlen($text);
 
