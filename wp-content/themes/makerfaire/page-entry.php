@@ -252,52 +252,70 @@ if($makerEdit) {
         ?>
 
         <!-- Maker Info -->
-        <div class="entry-page-maker-info">
-          <?php
-          if($dispMakerInfo) { ?>
-            <div class="page-header">
-              <h2><?php echo ($isGroup ? 'Group' : $isList ? 'Makers':'Maker');?></h2>
-            </div>
+        <?php
+        $output = '<div class="entry-page-maker-info">';
 
-            <?php
-            //$typeArray = get_value_by_id(105, $form);
-            //var_dump($typeArray);
-            //if($makerEdit)  echo 'Selected Type is - '. $displayType;
-            if ($isGroup) {
-              echo '<div class="row padbottom">
-                      <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
-                        <div class="entry-page-maker-img" style="background: url(' .
-                          (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
-                        </div>
+        if($dispMakerInfo) {
+          $output .=
+          '<div class="page-header">
+             <h2>'. ($isGroup ? 'Group' : $isList ? 'Makers':'Maker').'</h2>
+           </div>';
+
+          if ($isGroup) {
+            $output .=
+              '<div class="row padbottom">
+                <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
+                  <div class="entry-page-maker-img" style="background: url(' .
+                    (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
+                  </div>
+                </div>
+                <div class="col-sm-9 col-lg-7">
+                  <h3 class="text-capitalize '. ($makerEdit?'mfEdit ':'').'" id="groupname">' . $groupname . '</h3>
+                  <p class="'. ($makerEdit?'mfEdit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
+                </div>
+              </div>';
+          } else {
+            $makerCount = 0;
+            foreach($makers as $key=>$maker) {
+              if($maker['firstname'] !=''){
+                $output .=
+                  '<div class="row padbottom">
+                    <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="maker'.$key.'img" title="Click to upload...">
+                      <div class="entry-page-maker-img" style="background: url(' .
+                        (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'],400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
                       </div>
-                      <div class="col-sm-9 col-lg-7">
-                        <h3 class="text-capitalize '. ($makerEdit?'mfEdit ':'').'" id="groupname">' . $groupname . '</h3>
-                        <p class="'. ($makerEdit?'mfEdit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
-                      </div>
-                    </div>';
-            } else {
-              foreach($makers as $key=>$maker) {
-                if($maker['firstname'] !=''){
-                  echo '<div class="row padbottom">
-                          <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="maker'.$key.'img" title="Click to upload...">
-                            <div class="entry-page-maker-img" style="background: url(' .
-                              (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'],400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
-                            </div>
-                          </div>
-                          <div class="col-sm-9 col-lg-7">
-                            <h3>
-                              <span class="text-capitalize '. ($makerEdit?'mfEdit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</span>
-                              <span class="text-capitalize '. ($makerEdit?'mfEdit':'').'" id="maker'.$key.'lname">'.$maker['lastname'] . '</span>
-                            </h3>
-                            <p class="'. ($makerEdit?'mfEdit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
-                          </div>
-                        </div>';
-                }
+                    </div>
+                    <div class="col-sm-9 col-lg-7">
+                      <h3>
+                        <span class="text-capitalize '. ($makerEdit?'mfEdit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</span>
+                        <span class="text-capitalize '. ($makerEdit?'mfEdit':'').'" id="maker'.$key.'lname">'.$maker['lastname'] . '</span>
+                      </h3>
+                      <p class="'. ($makerEdit?'mfEdit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
+                    </div>
+                  </div>';
+                $makerCount++;
               }
             }
-          } ?>
-        </div>
-        <?php
+
+            if($makerCount<7){
+              $output .=
+              '<div><input type="checkbox" onclick="" value="Add an Additional Maker?" id="choice_111_273_1" tabindex="180">
+               <label>Add an Additional Maker?</label></div>';
+
+              $newKey = $makerCount++;
+              $output .= '<div><h3>Name</h3></div>';
+              $output .=
+               '<div class="row padbottom">
+                  <div class="col-lg-3">First<br/><input type="text" id="firstName"></div>
+                  <div class="col-lg-3">Last<br/><input type="text" id="lastName"></div>
+                  <div class="col-lg-3">Image<br/><input type="file" id="upload" name="value"></div>
+                  <div class="col-lg-3">Bio<br/><input type="textarea" id="bio"></div>
+                </div>';
+            }
+          }
+        }
+        $output .= '</div>';
+        echo $output; //end maker info section
         echo display_groupEntries($entryId);
       } else { //entry is not active
         echo '<h2>Invalid entry</h2>';
