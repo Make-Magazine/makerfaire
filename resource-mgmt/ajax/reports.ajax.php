@@ -56,7 +56,7 @@ function cannedRpt(){
   $formTypeArr    = (isset($obj->formType)    ? $obj->formType:array());
   $faire          = (isset($obj->faire)       ? $obj->faire:'');
 
-  $dispFormID     = (isset($obj->dispFormID)  ? $obj->dispFormID:true);
+  $dispFormID     = (isset($obj->dispFormID)  ? $obj->dispFormID:false);
   $formTypeLabel  = (isset($obj->formTypeLabel) ? $obj->formTypeLabel: ($useFormSC ? "TYPE" : 'Form Type'));
   $entryIDLabel   = (isset($obj->entryIDLabel) ? $obj->entryIDLabel: ($useFormSC?'ENTRY ID':'Entry Id'));
 
