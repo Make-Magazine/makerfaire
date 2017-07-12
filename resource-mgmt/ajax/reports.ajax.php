@@ -51,14 +51,16 @@ if($type != ''){
 /* Build your own report function */
 function cannedRpt(){
   global $wpdb; global $obj;
+  $useFormSC      = (isset($obj->useFormSC)   ? $obj->useFormSC:false);
   $formSelect     = (isset($obj->formSelect)  ? $obj->formSelect:array());
   $formTypeArr    = (isset($obj->formType)    ? $obj->formType:array());
   $faire          = (isset($obj->faire)       ? $obj->faire:'');
 
   $dispFormID     = (isset($obj->dispFormID)  ? $obj->dispFormID:true);
-  $useFormSC      = (isset($obj->useFormSC)   ? $obj->useFormSC:false);
-  $orderBy        = (isset($obj->orderBy)     ? $obj->orderBy:'');
+  $formTypeLabel  = (isset($obj->formTypeLabel) ? $obj->formTypeLabel: ($useFormSC ? "TYPE" : 'Form Type'));
+  $entryIDLabel   = (isset($obj->entryIDLabel) ? $obj->entryIDLabel: ($useFormSC?'ENTRY ID':'Entry Id'));
 
+  $orderBy        = (isset($obj->orderBy)     ? $obj->orderBy:'');
   $selectedFields = (isset($obj->selectedFields)  ? $obj->selectedFields:array());
   $rmtData        = (isset($obj->rmtData)     ? $obj->rmtData:array());
   $location       = (isset($obj->location)    ? $obj->location:false);
@@ -69,6 +71,7 @@ function cannedRpt(){
   $locationOrder  = (isset($obj->locationOrder)  ? $obj->locationOrder:30);
   $formTypeorder  = (isset($obj->formTypeorder)  ? $obj->formTypeorder:40);
   $paymentOrder   = (isset($obj->paymentOrder)   ? $obj->paymentOrder:50);
+  $CMOrder        = (isset($obj->CMOrder)        ? $obj->CMOrder:60);
 
   $forms      = implode(",",$formSelect);
   $formTypes  = implode("', '",$formTypeArr);
@@ -91,10 +94,11 @@ function cannedRpt(){
   */
 
   $data['columnDefs'] = array();
-  $data['columnDefs'][] = array('field'=>'entry_id','displayName' =>($useFormSC?'ENTRY ID':'Entry Id'), 'displayOrder'=>$entryIDorder);
-  $visible = ($dispFormID ? false : true);
+  $data['columnDefs'][] = array('field'=>'entry_id','displayName' =>$entryIDLabel, 'displayOrder'=>$entryIDorder);
+
+  $visible = $dispFormID;
   $data['columnDefs'][] = array('field'=>'form_id','visible'=> $visible, 'displayOrder'=>$formIDorder);
-  $data['columnDefs'][] = array('field'=>'form_type','displayName' =>($useFormSC?'TYPE':'Form Type'), 'displayOrder'=>$formTypeorder);
+  $data['columnDefs'][] = array('field'=>'form_type','displayName' =>$formTypeLabel, 'displayOrder'=>$formTypeorder);
 
   //pull all entries based on formSelect, faire, and status
   //question: does wp_mf_entity have the information i need for all forms?? non exhibits missing information?
@@ -103,7 +107,8 @@ function cannedRpt(){
   $fieldSQL       = ''; //sql to pull field_numbers
   $fieldIDarr     = array(); //unique array of field ID's
   $fieldArr       = array(); //array of field data keyed by field id
-  $fieldIDArr[376] = (object)  array("id"=>376,"label"=>"CM Ind","choices"=>"all","type"=>"radio");
+  $fieldIDarr     = array();
+  $fieldIDArr[376] = (object)  array("id"=>376,"label"=>"CM Ind","choices"=>"all","type"=>"radio", "order"=> $CMOrder);
   $combineFields  = array();
   $fieldQuery     = array(" field_number like '376' ");
   $acceptedOnly   = true;
@@ -117,46 +122,48 @@ function cannedRpt(){
   $exactCriteria = array();
   //loop thru selected fields and build sql for entry details and array of requested fields
   foreach($selectedFields as $selFields){
-      //build wp_rg_lead_detail query
-      if($selFields->type=='name'){
-        //for name field
-        foreach($selFields->inputs as $choice){
-          $combineFields[$selFields->id][] = $choice->id;
+    $selFieldsID = $selFields->id;
+    //build wp_rg_lead_detail query
+    if($selFields->type=='name'){
+      //for name field
+      foreach($selFields->inputs as $choice){
+        $combineFields[$selFieldsID][] = $choice->id;
 
-          //set criteria for this field id
-          $fieldIDArr[$choice->id] = $selFields;
-        }
-
-        //return all selected options
-        $fieldQuery[] = " field_number like '".$selFields->id.".%' ";
-      } elseif($selFields->type=='radio' || $selFields->type == 'select' || $selFields->type == 'checkbox'){
-        if($selFields->choices == 'all'){
-          $fieldQuery[] = " field_number like '".$selFields->id.".%' ";
-          $fieldIDArr[$selFields->id] = $selFields; //search for all values
-        }else{
-          $fieldQuery[] = " field_number like '".$selFields->id."' ";
-          $fieldIDArr[$selFields->id][] = $selFields; //search for specific values
-        }
-
-      }else{ //text/textarea
-        $fieldQuery[] = " field_number like '".$selFields->id."' ";
         //set criteria for this field id
-        $fieldIDArr[$selFields->id] = $selFields;
-      }
-      if($selFields->id=='151'&& !isset($selFields->order)) $selFields->order=25;
-      //add requested field to columns
-      if(isset($selFields->hide)&&$selFields->hide==true){
-        //don't add this field to display
-        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string','visible'=> false,
-                                                      'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
-      }else{
-        $data['columnDefs'][$selFields->id] = array('field'=> 'field_'.str_replace('.','_',$selFields->id), 'displayName'=>$selFields->label, 'type'=>'string',
-                                                      'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
+        $fieldIDArr[$choice->id] = $selFields;
       }
 
+      //return all selected options
+      $fieldQuery[] = " field_number like '".$selFieldsID.".%' ";
+    } elseif($selFields->type=='radio' || $selFields->type == 'select' || $selFields->type == 'checkbox'){
+
+      if($selFields->choices == 'all' && $selFields->type == 'checkbox'){
+        $fieldQuery[] = " field_number like '".$selFieldsID.".%' ";
+        $fieldIDArr[$selFieldsID] = $selFields; //search for all values
+      }else{
+        $fieldQuery[] = " field_number like '".$selFieldsID."' ";
+        $fieldIDArr[$selFieldsID][] = $selFields; //search for specific values
+      }
+    }else{ //text/textarea
+      $fieldQuery[] = " field_number like '".$selFieldsID."' ";
+      //set criteria for this field id
+      $fieldIDArr[$selFieldsID] = $selFields;
+    }
+
+    if($selFieldsID=='151'&& !isset($selFields->order)) $selFields->order=25;
+
+    //add requested field to columns
+    if(isset($selFields->hide)&&$selFields->hide==true){
+      //don't add this field to display
+      $data['columnDefs'][$selFieldsID] = array('field'=> 'field_'.str_replace('.','_',$selFieldsID), 'displayName'=>$selFields->label, 'type'=>'string','visible'=> false,
+                                                    'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
+    }else{
+      $data['columnDefs'][$selFieldsID] = array('field'=> 'field_'.str_replace('.','_',$selFieldsID), 'displayName'=>$selFields->label, 'type'=>'string',
+                                                    'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
+    }
 
     if(isset($selFields->exact) && $selFields->exact){
-      $exactCriteria[$selFields->id] = $selFields->choices;
+      $exactCriteria[$selFieldsID] = $selFields->choices;
     }
   }
 
@@ -306,8 +313,6 @@ function cannedRpt(){
         }
       //}
 
-
-
       //add data to array
       if($passCriteria) {
         $colDefs = array();
@@ -342,9 +347,6 @@ function cannedRpt(){
   $data['data'] = array_values($entryData);
 
   //sort columns by display order
-  /*usort($data['columnDefs'], function($a, $b) {
-    return (float) $a["displayOrder"] - (float) $b["displayOrder"];
-  });*/
   usort(
     $data['columnDefs'],
     function($a, $b) {
@@ -446,11 +448,14 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
   if(isset($rmtData->attribute) && !empty($rmtData->attribute)){
     foreach($rmtData->attribute as $selRMT){
       if($selRMT->id!='all'){
-        $sql = 'select value,comment from wp_rmt_entry_attributes where entry_id ='.$entryID.' and attribute_id='.$selRMT->id;
+        $sql = 'select value,comment '
+            . 'from wp_rmt_entry_attributes '
+            . 'where entry_id ='.$entryID.' and attribute_id='.$selRMT->id;
       }else{
-        $sql = 'select concat(category," ",value) as value,comment from wp_rmt_entry_attributes,wp_rmt_entry_att_categories where '
-                . ' entry_id ='.$entryID
-                . ' and attribute_id= wp_rmt_entry_att_categories.ID';
+        $sql = 'select concat(category," ",value) as value,comment '
+             . 'from wp_rmt_entry_attributes, wp_rmt_entry_att_categories '
+             . 'where entry_id ='.$entryID
+             . ' and attribute_id = wp_rmt_entry_att_categories.ID';
       }
 
       //loop thru data
@@ -458,23 +463,19 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
       $entryAtt = array();
       $entryComment = array();
 
-      //attribute comments
-      if($comments!=''){
-        $dispComments = $comments;
-      }else{
-        $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
-      }
+      //add attribute comments in separate column?
+      $dispComments = (isset($selRMT->comments)? $selRMT->comments:true);
 
       foreach($attributes as $attribute){
-        //search and replace
-        if($useFormSC){
-          $value = formSC($attribute['value']);
-        }else{
-          $value = $attribute['value'];
+        $value = ($useFormSC ? formSC($attribute['value']) : $attribute['value']); //find and replace certain data in the value
+        $entryComment[] = $attribute['comment'];  //set entry comment to display in separate column
+
+        //if $dispComments is false, add the comment to the value displayed
+        if(!$dispComments && $attribute['comment']!=''){
+          $value .= ' : '." (".$attribute['comment'].")";
         }
 
-        $comment = ($dispComments && $attribute['comment']!=''?" (".$attribute['comment'].")":'');
-        $entryAtt[] = $value.' : '.$comment;
+        $entryAtt[] = $value;
       }
 
       $displayOrder = (isset($selRMT->order)?$selRMT->order:200);
@@ -482,11 +483,12 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
                                                         'displayName'=>$selRMT->value,
                                                         'displayOrder' => $displayOrder);
       $return['data']['att_'.$selRMT->id] = implode("\r",$entryAtt);
+
       //comments
       if($dispComments && $selRMT->id!='all'){
         $return['colDefs']['att_'.$selRMT->id.'_comment'] = array(
                 'field'=> 'att_'.str_replace('.','_',$selRMT->id).'_comment',
-                'displayName' => $selRMT->id.' - comment',
+                'displayName' => $selRMT->value.' - comment',
                 'displayOrder' => $displayOrder+.2);
         $return['data']['att_'.$selRMT->id.'_comment'] = implode("\r",$entryComment);
       }
