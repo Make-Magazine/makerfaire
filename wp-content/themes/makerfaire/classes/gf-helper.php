@@ -164,7 +164,7 @@ function updateChangeRPT($updates){
     //fields 320 and 302 are set as category id's. look up the category name and save this as the before and after field
     if($update['field_id']==320 || strpos($update['field_id'], '302.')!== false){
       $update['field_before'] = get_CPT_name($update['field_before']);
-      $update['field_after'] = get_CPT_name($update['field_after']);
+      $update['field_after']  = get_CPT_name($update['field_after']);
     }
       $inserts[]= '('.$update['user_id']      . ', ' .
                       $update['lead_id']      . ', ' .
