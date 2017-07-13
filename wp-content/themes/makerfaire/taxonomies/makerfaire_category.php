@@ -100,13 +100,14 @@ add_action( 'init', 'prelim_loc_init' );
 
 function get_CPT_name($cat_id){
   $cat_id = (int) $cat_id;
-  $typeArr = array('makerfaire_category','ny_prelim_loc','ba_prelim_loc');
+  if($cat_id!=0){
+    $typeArr = array('makerfaire_category','ny_prelim_loc','ba_prelim_loc');
 
-  foreach($typeArr as $type){
-    $category = get_term( $cat_id, $type );
-    if ($category && !is_wp_error( $category ) )
-      return $category->name;
+    foreach($typeArr as $type){
+      $category = get_term( $cat_id, $type );
+      if ($category && !is_wp_error( $category ) )
+        return $category->name;
+    }
   }
   return $cat_id;
-
 }
