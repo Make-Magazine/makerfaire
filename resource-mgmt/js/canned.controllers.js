@@ -482,11 +482,11 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                   //{"id":"10","value":"ELEC 220V","checked":true,"order":2100}
                 ],
                 "attribute":[
-                  {"id":"19","value":"BOOTH_SIZE","checked":true,"order":30},//column D
-                  {"id":"20","value":"BOOTH_LOCATION","checked":true,"order":40},//column E
-                  {"id":"6","value":"LIGHTING","checked":true,"order":140},//column O
-                  {"id":"9","value":"NOISE","checked":true,"order":150},  //column P
-                  {"id":"11","value":"INTERNET","checked":true,"order":170}  //column R
+                  {"id":"19","value":"BOOTH_SIZE","checked":true,"order":30,'comments':true},//column D
+                  {"id":"20","value":"BOOTH_LOCATION","checked":true,"order":40,'comments':true},//column E
+                  {"id":"6","value":"LIGHTING","checked":true,"order":140,'comments':true},//column O
+                  {"id":"9","value":"NOISE","checked":true,"order":150,'comments':true},  //column P
+                  {"id":"11","value":"INTERNET","checked":true,"order":170,'comments':true}  //column R
                 ],
                 "attention":[],
                 "meta":[]
