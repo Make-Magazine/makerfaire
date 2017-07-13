@@ -163,18 +163,8 @@ function updateChangeRPT($updates){
   foreach($updates as $update){
     //fields 320 and 302 are set as category id's. look up the category name and save this as the before and after field
     if($update['field_id']==320 || strpos($update['field_id'], '302.')!== false){
-      $catBefore  = (int) $update['field_before'];
-      $catAfter   = (int) $update['field_after'];
-      $query = "select term_id, name FROM `wp_terms` WHERE `term_id` = ".$catBefore." or term_id = ".$catAfter;
-      $results = $wpdb->get_results($query);
-
-      foreach($results as $result){
-        if($result->term_id==$catBefore){
-          $update['field_before'] = $result->name;
-        }elseif($result->term_id==$catAfter){
-          $update['field_after'] = $result->name;
-        }
-      }
+      $update['field_before'] = get_CPT_name($update['field_before']);
+      $update['field_after'] = get_CPT_name($update['field_after']);
     }
       $inserts[]= '('.$update['user_id']      . ', ' .
                       $update['lead_id']      . ', ' .
@@ -206,24 +196,10 @@ function setCatName($value, $field, $lead, $form){
 
 add_filter( 'gform_export_field_value', 'set_export_values', 10, 4 );
 function set_export_values( $value, $form_id, $field_id, $lead ) {
-
-    if($field_id==320){
-        $form = GFAPI::get_form( $form_id );
-
-        foreach( $form['fields'] as $field ) {
-            if ( $field->id == $field_id) {
-                if( in_array( $field->type, array('checkbox', 'select', 'radio') ) ){
-                    $value = RGFormsModel::get_lead_field_value( $lead, $field );
-                    return GFCommon::get_lead_field_display( $field, $value, $lead["currency"], true );
-                }else{
-                        return $value;
-                }
-
-            }
-
-        }
-    }
-    return $value;
+  if($field_id==320|| strpos($field_id, '302.')!== false){
+    $value = get_CPT_name($value);
+  }
+  return $value;
 }
 
 function createGUID($id){

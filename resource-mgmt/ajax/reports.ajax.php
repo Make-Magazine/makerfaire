@@ -202,14 +202,13 @@ function cannedRpt(){
         if($detail['field_number'] == 376){
           $cmInd = $detail['value'];
         }
-        //field 320 is stored as category number, use cross reference to find text value
-        if($detail['field_number'] == 320){
-          $value = (isset($catCross[$detail['value']])?$catCross[$detail['value']]:$detail['value']);
-        }else{
-          $value = (isset($detail['long_value']) && $detail['long_value']!=''?$detail['long_value']:$detail['value']);
+
+        //field 320 snd 302 is stored as category number, use cross reference to find text value
+        $value = (isset($detail['long_value']) && $detail['long_value']!=''?$detail['long_value']:$detail['value']);
+        if($detail['field_number'] == 320 || strpos($detail['field_number'], '302.')!== false){
+          $value = get_CPT_name($value);
         }
-        $value = htmlspecialchars_decode ($value);
-        $value = convert_smart_quotes($value);
+        $value = convert_smart_quotes(htmlspecialchars_decode ($value));
 
         //check if we pulled by specific field id or if this was a request for all values
         $fieldID = $detail['field_number'];

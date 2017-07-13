@@ -36,19 +36,13 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
   usort($jsonArray, "cmp");
   $fieldData = array();
   $fieldData[]='entry id';
-  $catCross = array();
+
   foreach($jsonArray as $field){
     $fieldID = (string) $field['id'];
 
     if($field['type']!='section' && $field['type']!='page'){
       $label = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
       if($label=='' && $field['type']=='checkbox') $label = $field['choices'][0]->text;
-      //build category crossreference
-      if($fieldID=='320'||$fieldID=='302'){
-        foreach($field['choices'] as $choice){
-          $catCross[$choice->value]=$choice->text;
-        }
-      }
 
       if($field['type']=='checkbox'||$field['type']=='address'){
         if(isset($field['inputs']) && !empty($field['inputs'])){
@@ -85,7 +79,7 @@ foreach($entries as $entry){
   $fieldNum = (string) $entry['field_number'];
   //field 302 and 320 is stored as category number, use cross reference to find text value
   if($fieldNum=='320' || strpos($fieldNum, '302.')!== false){
-    $value = (isset($catCross[$entry['value']])?$catCross[$entry['value']]:$entry['value']);
+    $value = get_CPT_name($entry['value']);
   }else{
     $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
   }
