@@ -97,3 +97,17 @@ function prelim_loc_init() {
 	) );
 }
 add_action( 'init', 'prelim_loc_init' );
+
+function get_CPT_name($category){
+  $cat_id = (int) $category;
+  if($cat_id!=0){
+    $typeArr = array('makerfaire_category','ny_prelim_loc','ba_prelim_loc');
+
+    foreach($typeArr as $type){
+      $cat = get_term( $cat_id, $type );
+      if ($cat && !is_wp_error( $cat ) )
+        return $cat->name;
+    }
+  }
+  return $category;
+}

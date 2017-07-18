@@ -156,9 +156,16 @@ function GVupdate_changeRpt($form,$entry_id,$orig_entry=array()){
 
 /* function to add record to change report */
 function updateChangeRPT($updates){
+  global $wpdb;
   $inserts = array();
+
   $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel,status_at_update) values ";
   foreach($updates as $update){
+    //fields 320 and 302 are set as category id's. look up the category name and save this as the before and after field
+    if($update['field_id']==320 || strpos($update['field_id'], '302.')!== false){
+      $update['field_before'] = get_CPT_name($update['field_before']);
+      $update['field_after']  = get_CPT_name($update['field_after']);
+    }
       $inserts[]= '('.$update['user_id']      . ', ' .
                       $update['lead_id']      . ', ' .
                       $update['form_id']      . ', ' .
@@ -170,7 +177,6 @@ function updateChangeRPT($updates){
               ')';
     }
   $sql .= implode(", ",$inserts);
-  global $wpdb;
   $wpdb->get_results($sql);
 }
 
@@ -190,24 +196,10 @@ function setCatName($value, $field, $lead, $form){
 
 add_filter( 'gform_export_field_value', 'set_export_values', 10, 4 );
 function set_export_values( $value, $form_id, $field_id, $lead ) {
-
-    if($field_id==320){
-        $form = GFAPI::get_form( $form_id );
-
-        foreach( $form['fields'] as $field ) {
-            if ( $field->id == $field_id) {
-                if( in_array( $field->type, array('checkbox', 'select', 'radio') ) ){
-                    $value = RGFormsModel::get_lead_field_value( $lead, $field );
-                    return GFCommon::get_lead_field_display( $field, $value, $lead["currency"], true );
-                }else{
-                        return $value;
-                }
-
-            }
-
-        }
-    }
-    return $value;
+  if($field_id==320|| strpos($field_id, '302.')!== false){
+    $value = get_CPT_name($value);
+  }
+  return $value;
 }
 
 function createGUID($id){

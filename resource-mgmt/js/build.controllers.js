@@ -60,17 +60,16 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
     var formSelect     = $scope.reports.formSelect;
     var selectedFields = $scope.reports.selectedFields;
     var rmtData            = {};
-    var comments = false;
+    var aggregated = false;
     if($scope.reports.rmt.comment==true){
-      var comments = true;
+      var aggregated = true;
     }
 
     angular.forEach($scope.reports.rmt, function(type, key) {
       build = [];
       angular.forEach(type,function(field){
         if(field.checked){
-          
-          field.comments = comments;
+          field.aggregated = aggregated;
           build.push(field);
         }
       })

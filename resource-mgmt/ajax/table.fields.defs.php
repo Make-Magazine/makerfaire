@@ -68,7 +68,8 @@ $tableFields['wp_rg_lead_detail_changes']['query'] =
         . 'FROM wp_rg_lead_detail_changes '
         . 'left outer join wp_rg_lead on wp_rg_lead.id = lead_id '
         . 'left outer join  wp_mf_faire on find_in_set (wp_rg_lead.form_id,wp_mf_faire.form_ids) > 0 '
-        . 'where  wp_mf_faire.ID = '.$faire;
+        . 'where  wp_mf_faire.ID = '.$faire
+        . '  ORDER BY `date_updated` DESC';
 
 /*
  * assigned location report

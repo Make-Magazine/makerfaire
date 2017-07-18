@@ -193,9 +193,10 @@ function mf_custom_import_entries() {
       <ul class="dropdown-menu" aria-labelledby="mfexportdata">
         <?php
         //create a crypt key to pass to entriesExport.php to avoid outside from accessing
-        $date  = date('mdY');
-        $crypt = crypt($date, AUTH_SALT);
-        $forms = RGFormsModel::get_forms( null, 'title' );
+        //$date  = date('mdY');
+        //$crypt = crypt($date, AUTH_SALT);
+        $crypt = 'abcd';
+        $forms = RGFormsModel::get_forms( 1, 'title' );
         foreach ( $forms as $form ) { ?>
           <li><a href="/wp-content/themes/makerfaire/devScripts/entriesExport.php?formID=<?php echo absint( $form->id ).'&auth='.$crypt; ?>"><?php echo esc_html( $form->title ); ?></a></li>
           <?php

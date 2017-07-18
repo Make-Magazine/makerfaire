@@ -169,12 +169,12 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "paymentOrder": 100,
               "entryIDorder": 200,
               "locationOrder": 900,
+              "CMOrder": 500,
               "selectedFields":[
-                {"id":"442","label":"Fee Management","choices":"all","type":"checkbox", "order":400},
+                {"id":442,"label":"Fee Management","choices":"all","type":"checkbox", "order":400},
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
-                {"id":376,"label":"CM Ind","choices":"all","type":"radio", "order":500},
                 {"id":434,"label":"Fee Ind","choices":"Yes","type":"radio","exact":true, "order":600},
-                {"id":"55", "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox", "order":700},
+                {"id":55, "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox", "order":700},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
               ],
               "location":true,
@@ -216,7 +216,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formTypeorder":400,
               "selectedFields":[
                 {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":1700},
-                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
                 {"id":96, "label":"MAKER NAME", "choices":"", "type":"name",
                  "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""},], "order":700
                 },
@@ -264,7 +263,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formTypeorder":400,
               "selectedFields":[
                 {"id":16,"label":"EXHIBIT SUMMARY","choices":"","type":"textarea","inputs":"", "order":1500},
-                {"id":376,"label":"CM","choices":"all","type":"radio"},
                 {"id":83,"label":"FIRE","choices":"Yes","type":"radio", "order":1800},
                 {"id":83,"label":"FIRE","choices":"No","type":"radio", "order":1800},
                 {"id":85,"label":"Describe any fire or safety issues.","choices":"","type":"textarea","inputs":""},
@@ -329,8 +327,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
-                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
-                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"}
               ],
               "rmtData":{
                 "resource":[
@@ -359,10 +356,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "entryIDorder": 200,
               "locationOrder": 300,
               "formTypeorder":400,
+              "CMOrder": 700,
               "selectedFields":[
                 {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":250},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":600},
-                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true, "order":700},
               ],
               "rmtData":{
                 "resource":[
@@ -384,9 +381,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "useFormSC": true,
               "selectedFields":[
                 {"id":151,"label":"Exhibit","type":"text", "order":25},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true},
-
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true}
               ],
               "orderBy":'location',
               "rmtData":{
@@ -407,8 +402,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "useFormSC": true,
               "selectedFields":[
                 {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":25},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":376,"label":"CM Indicator","choices":"all","type":"radio","hide":true},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true}
               ],
               "rmtData":{
                 "resource":[
@@ -427,8 +421,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"}
               ],
               "rmtData":{
                 "resource":[
@@ -447,8 +440,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":376,"label":"CM Indicator","choices":"all","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"}
               ],
               "rmtData":{
                 "resource":[
@@ -463,42 +455,38 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }else if(subRoute=="label"){
       vars = {"formSelect":[],"formType":["Exhibit"],
               "faire": faire,
+              "dispFormID":false,
               "useFormSC": true,
+              "formTypeorder": 10,
+              "formTypeLabel": "SALES",
+              "entryIDLabel": "PROJECT_ID",
               "selectedFields":[
-                {"id": "44",  "label":"Food","choices":"all","type":"radio"},
-                {"id": "56",  "label":"CF","choices":"all","type":"radio"},
-                {"id": "66",  "label":"HandsOn","choices":"all","type":"radio"},
-                {"id": "68",  "label":"Placement Request","choices":"","type":"text","inputs":""},
-                {"id": "70.1","label":"Outdoor Options","choices":"With other Makers under a large tent","type":"checkbox"},
-                {"id": "70.2","label":"Outdoor Options","choices":"Open air","type":"checkbox"},
-                {"id": "70.3","label":"Outdoor Options","choices":"I can bring a tent/canopy with weights","type":"checkbox"},
-                {"id": "70.4","label":"Outdoor Options","choices":"Asphalt","type":"checkbox"},
-                {"id": "70.5","label":"Outdoor Options","choices":"Grass","type":"checkbox"},
-                {"id": "73",  "label":"Power","choices":"all","type":"radio"},
-                {"id": "83",  "label":"Fire","choices":"all","type":"radio"},
-                {"id": "84",  "label":"Tools","choices":"all","type":"radio"},
-                {"id":"101.6","label":"Address","choices":"Country","type":"address"},
-                {"id":"151",  "label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":25},
-                {"id":"302.1","label":"Location","choices":"Bikes","type":"checkbox"},
-                {"id":"303",  "label":"Status","choices":"Proposed","type":"radio"},
-                {"id":"303",  "label":"Status","choices":"Accepted","type":"radio"},
-                {"id":"303",  "label":"Status","choices":"Rejected","type":"radio"},
-                {"id":"303",  "label":"Status","choices":"Wait List","type":"radio"},
-                {"id":"303",  "label":"Status","choices":"Cancelled","type":"radio"},
-                {"id":"320",  "label":"Primary Cat","choices":"all","type":"select"},
-                {"id":"376",  "label":"CM Indicator","choices":"all","type":"radio"}
+                {"id":"151",  "label":"PROJECT_NAME","choices":"","type":"text","inputs":"", "order":20},//column C
+                {"id": "73",  "label":"POWER","choices":"all","type":"radio","order":50},   //column F
+                {"id": "75",  "label":"AMPS","choices":"all","type":"radio","order":60},    //column G
+                {"id": "303", "label":"STATUS","choices":"all","type":"radio","order":70}, //column H
+                {"id": "56",  "label":"CROWDSOURCE_FUNDING","choices":"all","type":"radio", "order":80},  //column I
+                {"id":"320",  "label":"TOPIC","choices":"all","type":"select", "order":90}, //column J
+                {"id":"302",  "label":"PRE_LOC","choices":"all","type":"checkbox", "order":100}, //column K
+                {"id": "68",  "label":"REQUEST","choices":"","type":"text","inputs":"", "order":110},  //column L
+                {"id": "70",  "label":"OTHER","choices":"all","type":"checkbox", "order":120}, //column M
+                {"id":"101.6","label":"COUNTRY","choices":"Country","type":"address", "order":130},  //column N
+                {"id": "66",  "label":"ACTIVITY","choices":"all","type":"radio","order":160},   //column Q
+                {"id": "44",  "label":"FOOD","choices":"all","type":"radio","order":180},    //column S
+                {"id": "84",  "label":"TOOL","choices":"all","type":"radio","order":190},  //column T
+                {"id": "83",  "label":"FIRE","choices":"all","type":"radio","order":200}, //column U
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"9","value":"ELEC 120V","checked":true,"order":2000},
-                  {"id":"10","value":"ELEC 220V","checked":true,"order":2100}
+                  //{"id":"9","value":"ELEC 120V","checked":true,"order":2000},
+                  //{"id":"10","value":"ELEC 220V","checked":true,"order":2100}
                 ],
                 "attribute":[
-                  {"id":"2","value":"SIZE","checked":true,"order":3000},
-                  {"id":"4","value":"IN/OUT","checked":true,"order":3100},
-                  {"id":"6","value":"LIGHT","checked":true,"order":3200},
-                  {"id":"9","value":"NZ","checked":true,"order":3300},
-                  {"id":"11","value":"INT","checked":true,"order":3400}
+                  {"id":"19","value":"BOOTH_SIZE","checked":true,"order":30,'comments':true},//column D
+                  {"id":"20","value":"BOOTH_LOCATION","checked":true,"order":40,'comments':true},//column E
+                  {"id":"6","value":"LIGHTING","checked":true,"order":140,'comments':true},//column O
+                  {"id":"9","value":"NOISE","checked":true,"order":150,'comments':true},  //column P
+                  {"id":"11","value":"INTERNET","checked":true,"order":170,'comments':true}  //column R
                 ],
                 "attention":[],
                 "meta":[]
