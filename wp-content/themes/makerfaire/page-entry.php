@@ -252,18 +252,16 @@ if($makerEdit) {
         ?>
 
         <!-- Maker Info -->
+        <div class="entry-page-maker-info">
         <?php
-        $output = '<div class="entry-page-maker-info">';
+          if($dispMakerInfo) { ?>
+            <div class="page-header">
+              <h2><?php echo ($isGroup ? 'Group' : $isList ? 'Makers':'Maker');?></h2>
+            </div>
 
-        if($dispMakerInfo) {
-          $output .=
-          '<div class="page-header">
-             <h2>'. ($isGroup ? 'Group' : $isList ? 'Makers':'Maker').'</h2>
-           </div>';
-
-          if ($isGroup) {
-            $output .=
-              '<div class="row padbottom">
+            <?php
+            if ($isGroup) {
+              echo '<div class="row padbottom">
                 <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
                   <div class="entry-page-maker-img" style="background: url(' .
                     (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
@@ -278,7 +276,7 @@ if($makerEdit) {
             $makerCount = 0;
             foreach($makers as $key=>$maker) {
               if($maker['firstname'] !=''){
-                $output .=
+                echo
                   '<div class="row padbottom">
                     <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="maker'.$key.'img" title="Click to upload...">
                       <div class="entry-page-maker-img" style="background: url(' .
@@ -297,25 +295,27 @@ if($makerEdit) {
               }
             }
 
+
+            /*
             if($makerCount<7){
-              $output .=
+              echo
               '<div><input type="checkbox" onclick="" value="Add an Additional Maker?" id="choice_111_273_1" tabindex="180">
                <label>Add an Additional Maker?</label></div>';
 
               $newKey = $makerCount++;
-              $output .= '<div><h3>Name</h3></div>';
-              $output .=
+              echo '<div><h3>Name</h3></div>';
+              echo
                '<div class="row padbottom">
                   <div class="col-lg-3">First<br/><input type="text" id="firstName"></div>
                   <div class="col-lg-3">Last<br/><input type="text" id="lastName"></div>
                   <div class="col-lg-3">Image<br/><input type="file" id="upload" name="value"></div>
                   <div class="col-lg-3">Bio<br/><input type="textarea" id="bio"></div>
                 </div>';
-            }
+            }*/
           }
         }
-        $output .= '</div>';
-        echo $output; //end maker info section
+        echo '</div>';
+
         echo display_groupEntries($entryId);
       } else { //entry is not active
         echo '<h2>Invalid entry</h2>';
