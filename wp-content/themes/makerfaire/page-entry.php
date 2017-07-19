@@ -130,7 +130,7 @@ if($faire!=''){
   //overwrite the backlink to send makers back to MAT if $makerEdit = true
   if($makerEdit){
     $backlink = "/manage-entries/";
-    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to Your Maker Admin Tool';
+    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to Your Maker Faire Portal';
   }
 }
 
