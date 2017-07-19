@@ -128,7 +128,7 @@ function populate_fields($form) {
               switch ($fieldType) {
                 case 'name':
                   foreach($field->inputs as &$input) {  //loop thru name inputs
-                    if(isset($input['name']) && $input['name']!=''){  //check if parameter name is set
+                    if(isset($input['name']) && $input['name'] != ''){  //check if parameter name is set
                       $pos = strpos($input['name'], 'field-');
                       if ($pos !== false) { //is it requesting to be set by field id?
                         //strip the 'field-' from the parameter name to get the field number
