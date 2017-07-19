@@ -281,7 +281,7 @@ function GSP_after_submission($entry, $form ){
                       $orig_field_id = str_replace("field-", "", $input['name']);
                       $sub_field_id  = $input['id'];
                       $sql = "insert into wp_rg_lead_detail (`lead_id`, `form_id`, `field_number`, `value`) VALUES ($origEntryID,$origform_id,$orig_field_id,'$entry[$sub_field_id]') "
-                        . "on duplicate key update value = '$entry[$sub_field_id]'";
+                            . "on duplicate key update value = '$entry[$sub_field_id]'";
                       global $wpdb;
                       $wpdb->get_results($sql);
                     }
@@ -291,7 +291,9 @@ function GSP_after_submission($entry, $form ){
             }
             $updField = (isset($entry[$sub_field_id])?$entry[$sub_field_id]:'');
             //use mf_update_entry_field to update the db to avoid duplicates
-            mf_update_entry_field( $origEntryID, $orig_field_id, $updField );
+            if(!$field->gwreadonly_enable){
+              mf_update_entry_field( $origEntryID, $orig_field_id, $updField );
+            }
           }
         }
       }
