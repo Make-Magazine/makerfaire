@@ -472,15 +472,15 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
 
       foreach($attributes as $attribute){
         $value = ($useFormSC ? formSC($attribute['value']) : $attribute['value']); //find and replace certain data in the value
-        $entryComment[] = $attribute['comment'];  //set entry comment to display in separate column
 
         //add comment to the value if aggregated and not blank
         if($aggregated && $attribute['comment']!=''){
           $value .= ' : '." (".$attribute['comment'].")";
         }
         $entryValue[] = $value;
-        $entryComment[] = $attribute['comment'];
+        $entryComment[] = $attribute['comment'];  //set entry comment to display in separate column
       }
+
       //new
       //set return data and column definitions
       $return['colDefs']['att_'.$selRMT->id] = array( 'field'         => 'att_'.str_replace('.','_',$selRMT->id),

@@ -483,7 +483,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 ],
                 "attribute":[
                   {"id":"19","value":"BOOTH_SIZE","checked":true,"order":30,'comments':true},//column D
-                  {"id":"20","value":"BOOTH_LOCATION","checked":true,"order":40,'comments':true},//column E
+                  {"id":"20","value":"BOOTH_LOCATION","checked":true,"order":40,'comments':false},//column E
                   {"id":"6","value":"LIGHTING","checked":true,"order":140,'comments':true},//column O
                   {"id":"9","value":"NOISE","checked":true,"order":150,'comments':true},  //column P
                   {"id":"11","value":"INTERNET","checked":true,"order":170,'comments':true}  //column R
