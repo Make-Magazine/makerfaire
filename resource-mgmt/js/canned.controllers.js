@@ -453,7 +453,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       var subTitle = 'WB/Stools';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="label"){
-      vars = {"formSelect":[],"formType":["Exhibit"],
+      vars = {"formSelect":[],"formType":["Exhibit","Startup Sponsor","Sponsor","Show Management"],
+
               "faire": faire,
               "dispFormID":false,
               "useFormSC": true,
@@ -464,11 +465,11 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":"151",  "label":"PROJECT_NAME","choices":"","type":"text","inputs":"", "order":20},//column C
                 {"id": "73",  "label":"POWER","choices":"all","type":"radio","order":50},   //column F
                 {"id": "75",  "label":"AMPS","choices":"all","type":"radio","order":60},    //column G
-                {"id": "303", "label":"STATUS","choices":"all","type":"radio","order":70}, //column H
+                {"id":"303",  "label":"STATUS","choices":"all","type":"radio","order":70}, //column H
                 {"id": "56",  "label":"CROWDSOURCE_FUNDING","choices":"all","type":"radio", "order":80},  //column I
                 {"id":"320",  "label":"TOPIC","choices":"all","type":"select", "order":90}, //column J
                 {"id":"302",  "label":"PRE_LOC","choices":"all","type":"checkbox", "order":100}, //column K
-                {"id": "68",  "label":"REQUEST","choices":"","type":"text","inputs":"", "order":110},  //column L
+                {"id":"307",  "label":"REQUEST","choices":"","type":"text","inputs":"", "order":110},  //column L
                 {"id": "70",  "label":"OTHER","choices":"all","type":"checkbox", "order":120}, //column M
                 {"id":"101.6","label":"COUNTRY","choices":"Country","type":"address", "order":130},  //column N
                 {"id": "66",  "label":"ACTIVITY","choices":"all","type":"radio","order":160},   //column Q
@@ -483,7 +484,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 ],
                 "attribute":[
                   {"id":"19","value":"BOOTH_SIZE","checked":true,"order":30,'comments':true},//column D
-                  {"id":"20","value":"BOOTH_LOCATION","checked":true,"order":40,'comments':true},//column E
+                  {"id":"20","value":"BOOTH_LOCATION","checked":true,"order":40,'comments':false},//column E
                   {"id":"6","value":"LIGHTING","checked":true,"order":140,'comments':true},//column O
                   {"id":"9","value":"NOISE","checked":true,"order":150,'comments':true},  //column P
                   {"id":"11","value":"INTERNET","checked":true,"order":170,'comments':true}  //column R
