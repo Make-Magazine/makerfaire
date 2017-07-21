@@ -10,85 +10,59 @@ error_reporting('NONE');
  *
  * This page specifically handles the Entity type for the mobile app. AKA the applications.
  *
- * @version 3.0
+ * Variables accepted:
+ *  type    Required  Can only be 'project'
+ *  faire   Optional  Request information for a specific faire.  If empty, all faire data is returned
+ *  dest    Optional  Who is requesting the data
+ *                    Valid options - makershare
+ *  lchange Optional  If supplied, must be in mmddyyyy format.  Will return all data on and after this date.
+ *
+ * @version 3.2
  */
+
 // Stop any direct calls to this file
 defined('ABSPATH') or die('This file cannot be called directly!');
+
+//variables passed in call
 $type = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_query->query_vars['type'] ) : null );
-$faire = (!empty($_REQUEST['faire']) ? sanitize_text_field($_REQUEST['faire']) : null );
-$dest  = (!empty($_REQUEST['dest'])  ? sanitize_text_field($_REQUEST['dest'])  : null );
+$faire = (!empty($_REQUEST['faire']) ? sanitize_text_field($_REQUEST['faire']) : '' );
+$dest  = (!empty($_REQUEST['dest'])  ? sanitize_text_field($_REQUEST['dest'])  : '' );
+$lchange  = ( ! empty( $_REQUEST['lchange'] )  ? sanitize_text_field( $_REQUEST['lchange'] )  : '' );
 
 
 // Double check again we have requested this file
 if ($type == 'project') {
-
-  // Set the query args.
-  /*
-   * $args = array(
-    'no_found_rows'	 => true,
-    'post_type'		 => 'mf_form',
-    'post_status'	 => 'accepted',
-    'posts_per_page' => absint( MF_POSTS_PER_PAGE ),
-    'faire'			 => sanitize_title( $faire ),
-    );
-    $query = new WP_Query( $args );
-   */
-
-
-
   $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
   if ($mysqli->connect_errno) {
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
   }
 
+  //TBD update tables. ensure entity has all faire id's and
+  //maker to entity has correct role info
   $select_query = sprintf("
      SELECT  entity.lead_id,
             `entity`.`presentation_title`,
-            `entity`.`desc_short` as Description,
-            `entity`.`category` as `Categories`,
             `entity`.`project_photo`,
+            `entity`.`category` as `Categories`,
+            `entity`.`desc_short` as Description,
             `entity`.`form_type`,
+            (select faire_name from wp_mf_faire where wp_mf_faire.faire=entity.faire) as faire_name,
+             wp_rg_lead.date_created,
             `entity`.`project_video`,
             `entity`.`inspiration`,
-            entity.mobile_app_discover,
-            wp_mf_faire.faire_name,
-            (select group_concat( distinct maker_id separator ',') as Makers
-             from wp_mf_maker_to_entity maker_to_entity
-             where entity.lead_id               = maker_to_entity.entity_id AND
-                   maker_to_entity.maker_type  != 'Contact'
-             group by maker_to_entity.entity_id
-            ) as exhibit_makers,
-            (select group_concat( distinct maker_id separator ',') as Makers
-             from wp_mf_maker_to_entity maker_to_entity
-             where entity.lead_id               = maker_to_entity.entity_id AND
-                   maker_to_entity.maker_type  = 'Contact'
-             group by maker_to_entity.entity_id
-            ) as lead_maker,
+             entity.mobile_app_discover,
             (SELECT sum(numRibbons)FROM `wp_mf_ribbons` where ribbonType = 1 and entry_id=entity.lead_id group by entry_id) as redRibbonCnt,
             (SELECT sum(numRibbons)FROM `wp_mf_ribbons` where ribbonType = 0 and entry_id=entity.lead_id group by entry_id) as blueRibbonCnt,
-            wp_rg_lead.form_id,
-            wp_rg_lead.status,
-            wp_rg_lead.date_created,
-            (select wp_mf_location.subarea_id
-             from   wp_mf_location
-             where  wp_mf_location.entry_id = entity.lead_id limit 1
-            ) as venue_id,
-            IF(wp_mf_onsitecheckin.entry_id IS NOT NULL,
-             (select CONCAT(z.subarea_id,z.entry_id)
-             from   wp_mf_location z
-             where  z.entry_id = entity.lead_id limit 1),null)
-            as pin_venue
+             wp_rg_lead.form_id,
+             wp_rg_lead.status
 
-    FROM    `wp_mf_entity` entity
-    JOIN wp_rg_lead on wp_rg_lead.id = entity.lead_id
-    JOIN wp_mf_faire on wp_mf_faire.faire  ='$faire'
-    LEFT JOIN wp_mf_onsitecheckin ON wp_rg_lead.id = wp_mf_onsitecheckin.entry_id
-    WHERE   entity.status = 'Accepted'
-    AND 	LOWER(entity.faire)='$faire'
-    AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
-    AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0
-    and 	wp_rg_lead.status = 'active'
-    ");
+    FROM  `wp_mf_entity` entity
+    JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id
+    WHERE wp_rg_lead.status = 'active' "
+    .($faire    != '' ? " AND LOWER(entity.faire)='".$faire."' " : '')
+    .($lchange  != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '')
+  );
+
 
   $mysqli->query("SET NAMES 'utf8'");
 
@@ -97,10 +71,10 @@ if ($type == 'project') {
   // Initalize the app container
   $apps = array();
   $count = 0;
-  // Loop through the posts
+
+  // Loop through the projects
   while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
     // Store the app information
-    //$app_data = json_decode( mf_clean_content( $post->post_content ) );
     // REQUIRED: Application ID
     $app['id'] = absint($row['lead_id']);
 
@@ -117,18 +91,23 @@ if ($type == 'project') {
 
     $app['thumb_img_url'] = esc_url(legacy_get_fit_remote_image_url($app_image, '80', '80'));
     $app['large_image_url'] = esc_url($app_image);
-    // Should actually be this... Adding it in for the future.
     $app['large_img_url'] = esc_url($app_image);
 
     // Application Categories
     $category_ids = $row['Categories'];
     $app['category_id_refs'] = explode(',', $category_ids);
 
-    $maker_ids = $row['exhibit_makers'];
-    $app['exhibit_accounts'] = (!empty($maker_ids) ) ? explode(',', $maker_ids) : null;
-
-    $lead_maker_ids = $row['lead_maker'];
-    $app['lead_accounts'] = (!empty($lead_maker_ids) ) ? explode(',', $lead_maker_ids) : null;
+    //run sub query to pull the contact and makers for this project along with their roles.
+    $subQuery = "select maker_id, maker_type from wp_mf_maker_to_entity where entity_id = ".$app['id'];
+    $subResult = $mysqli->query($subQuery) or trigger_error($mysqli->error . "[$subQuery]");
+    $makersArr = array();
+    while ($subRow = $subResult->fetch_array(MYSQLI_ASSOC)) {
+      if(($dest=='makershare' && $subRow['maker_type']!='group') ||
+          $dest!='makershare'){
+        $makersArr[] = array('maker_id'=>$subRow['maker_id'],'role'=>$subRow['maker_type']);
+      }
+    }
+    $app['exhibit_accounts'] = $makersArr;
 
     // Application Description
     $app['description'] = $row['Description'];
@@ -142,6 +121,7 @@ if ($type == 'project') {
         $app['submission']    = $row['date_created'];
         $app['project_video'] = $row['project_video'];
         $app['inspiration']   = $row['inspiration'];
+        //TBD determine how to send these based on ribbon last change date
         $app['redRibbonCnt']  = ($row['redRibbonCnt']  != NULL ? $row['redRibbonCnt']  : 0);
         $app['blueRibbonCnt'] = ($row['blueRibbonCnt'] != NULL ? $row['blueRibbonCnt'] : 0);
 

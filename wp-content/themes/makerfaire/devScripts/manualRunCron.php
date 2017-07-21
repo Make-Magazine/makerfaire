@@ -26,6 +26,9 @@ if(isset($_GET['cron'])){
     $limit = (isset($_GET['limit'])?$_GET['limit']:0);
     $start = (isset($_GET['start'])?$_GET['start']:0);
     if($form!=''){
+      echo 'updating MF tables for form '.$form;
+      $formData = GFAPI::get_form($form);
+      echo ' form type = '.$formData['form_type'].'<br/>';
       update_mfTables($form,$limit,$start);
     }else{
       echo 'Fail. You need to at least give me a form id to use<Br/>?cron=update_mfTables&form&limit&start<br/>';
@@ -41,7 +44,7 @@ if(isset($_GET['cron'])){
   . '?cron=cronRmtData&form=999<Br/>'
   . '?cron=genManTickets&entryID=999&parentID=999<br/>'
   . '?cron=createSignZip&area=abcd<br/>'
-  . '?cron=update_mfTables&form&limit&start';
+  . '?cron=update_mfTables&form=999&faire=ABCD&limit&start';
 }
 
 function createMFSignZip($area) {
