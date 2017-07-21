@@ -36,12 +36,24 @@
       word-break: break-word;
       font-size: 14px;
     }
-th:nth-child(1){width:7%;}
-th:nth-child(2){width:10%;}
-th:nth-child(3){width:16%;}
-th:nth-child(4){width:33%;}
-th:nth-child(5){width:26%;}
-th:nth-child(6){width:8%;}
+    th:nth-child(1){width:7%;}
+    th:nth-child(2){width:10%;}
+    th:nth-child(3){width:16%;}
+    th:nth-child(4){width:33%;}
+    th:nth-child(5){width:19%;}
+    th:nth-child(6){width:15%;}
+    .map-category-Flagship {
+      color: #D42410;
+    }
+    .map-category-Featured {
+      color: #085a7e;
+    }
+    .map-category-Mini {
+      color: #5CBBDD;
+    }
+    .map-category-School {
+      color: #7ED321;
+    }
   }
   h1 {
     font-weight: 300;
@@ -58,7 +70,7 @@ th:nth-child(6){width:8%;}
       float: left;
       font-size: 14px;
       font-weight: 300;
-      margin: 6px 20px 0 0;
+      margin: 10px 20px 0 0;
     }
     .searchbox {
       input[type="text"] {
@@ -78,28 +90,93 @@ th:nth-child(6){width:8%;}
         }
       }
     }
-    .checkbox {
+
+    .filters {
+      display: inline-block;
       float: right;
-      @media all and (max-width: 480px) {
+      @media all and (max-width: 991px) {
         float: left;
-        margin: 10px 5px;
+        clear: both;
+        padding-top: 5px;
       }
-      margin: 5px;
-      font-size: 14px;
+      .map-filter-title {
+        display: inline-block;
+        margin-bottom: 0;
+        margin-top: 6px;
+        margin-right: 5px;
+        font-size: 14px;
+        font-weight: 300;
+        @media all and (max-width: 550px) {
+          display: none;
+        }
+      }
+      .ng-isolate-scope {
+        display: inline-block;
+      }
+      .map-filter-flagship {
+        color: #D42410;
+      }
+      .map-filter-featured {
+        color: #085a7e;
+      }
+      .map-filter-mini {
+        color: #67D0F7;
+        span {
+          color: #5CBBDD;
+        }
+      }
+      .map-filter-school {
+        color: #7ED321;
+      }
+    }
+    .checkbox {
+      @media all and (max-width: 480px) {
+        margin: 10px 5px 10px 28px;
+        font-size: 14px;
+      }
+      margin: 5px 0px 5px 38px;
+      font-size: 16px;
       line-height: 20px;
       vertical-align: bottom;
-      .fa.fa-square-o,
-      .fa.fa-check-square-o {
-        font-size: 1.5em;
+      // input circle checkbox with fontawesome:
+      .checkbox-fa-icon {
+        display: none;
+        &~.fa.fa-circle {
+          display: none;
+          color: inherit;
+        }
+        &~.fa.fa-circle-o {
+          display: inline;
+          padding-right: 2px;
+          color: inherit;
+        }
+        &:checked {
+          &~.fa.fa-circle {
+            display: inline;
+          }
+          &~.fa.fa-circle-o {
+            display: none;
+          }
+        }
+      }
+      .fa.fa-circle,
+      .fa.fa-circle-o {
+        font-size: 22px;
         vertical-align: middle;
+        &:before {
+          content: "\f111";
+          position: absolute;
+          left: -22px;
+          top: -1px;
+        }
       }
       label {
-        padding-left: 0;
+        padding-left: 2px;
         @media all and (min-width: 1200px) {
-          padding-left: 20px;
+          padding-left: 5px;
         }
         @media all and (max-width: 991px) {
-          padding-left: 7px;
+          padding-left: 5px;
         }
       }
     }
@@ -135,14 +212,18 @@ th:nth-child(6){width:8%;}
     p {
       font-size: 14px;
       font-weight: 300;
+      margin-bottom: 0px;
+      margin-top: 3px;
     }
     @media all and (max-width: 767px) {
       flex-flow: column;
       margin: 10px 0;
+      font-size: 18px;
     }
     justify-content: space-between;
     color: white;
     div {
+      line-height: 1.1em;
       width: 24.5%;
       @media all and (max-width: 767px) {
         width: 100%;
@@ -155,25 +236,25 @@ th:nth-child(6){width:8%;}
     .flagship-key {
       background-color: #D42410;
       &:hover {
-        background-color: #B62601;
+        background-color: #c4210f;
       }
     }
     .featured-key {
-      background-color: #01A3E0;
+      background-color: #085a7e;
       &:hover {
-        background-color: #358DC7;
+        background-color: #074f6e;
       }
     }
     .mini-key {
       background-color: #67D0F7;
       &:hover {
-        background-color: #69BAE1;
+        background-color: #57cbf6;
       }
     }
     .school-key {
       background-color: #7ED321;
       &:hover {
-        background-color: #75BF04;
+        background-color: #75c41f;
       }
     }
   }
