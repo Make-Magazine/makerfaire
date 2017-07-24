@@ -42,18 +42,6 @@
     th:nth-child(4){width:33%;}
     th:nth-child(5){width:19%;}
     th:nth-child(6){width:15%;}
-    .map-category-Flagship {
-      color: #D42410;
-    }
-    .map-category-Featured {
-      color: #085a7e;
-    }
-    .map-category-Mini {
-      color: #5CBBDD;
-    }
-    .map-category-School {
-      color: #7ED321;
-    }
   }
   h1 {
     font-weight: 300;
@@ -75,13 +63,13 @@
     .searchbox {
       input[type="text"] {
         float: left;
-        max-width: 200px;
+        max-width: 215px;
         padding-right: 23px;
       }
       .fa.fa-times-circle {
         font-size: 20px;
         color: rgba(0,0,0,0.5);
-        padding: 4px;
+        padding: 7px 4px 4px 4px;
         margin-left: -25px;
         float: left;
         &:hover {
@@ -106,7 +94,7 @@
         margin-right: 5px;
         font-size: 14px;
         font-weight: 300;
-        @media all and (max-width: 550px) {
+        @media all and (max-width: 767px) {
           display: none;
         }
       }
@@ -115,25 +103,45 @@
       }
       .map-filter-flagship {
         color: #D42410;
+        .checkbox-fa-icon:checked {
+          &~.fa-circle,
+          &~ng-transclude span {
+            color: #c4210f;
+          }
+        }
       }
       .map-filter-featured {
         color: #085a7e;
+        .checkbox-fa-icon:checked {
+          &~.fa-circle,
+          &~ng-transclude span {
+            color: #074f6e;
+          }
+        }
       }
       .map-filter-mini {
         color: #67D0F7;
         span {
           color: #5CBBDD;
         }
+        .checkbox-fa-icon:checked {
+          &~.fa-circle,
+          &~ng-transclude span {
+            color: #57cbf6;
+          }
+        }
       }
       .map-filter-school {
         color: #7ED321;
+        .checkbox-fa-icon:checked {
+          &~.fa-circle,
+          &~ng-transclude span {
+            color: #75c41f;
+          }
+        }
       }
     }
     .checkbox {
-      @media all and (max-width: 480px) {
-        margin: 10px 5px 10px 28px;
-        font-size: 14px;
-      }
       margin: 5px 0px 5px 38px;
       font-size: 16px;
       line-height: 20px;
@@ -147,7 +155,6 @@
         }
         &~.fa.fa-circle-o {
           display: inline;
-          padding-right: 2px;
           color: inherit;
         }
         &:checked {
@@ -164,7 +171,6 @@
         font-size: 22px;
         vertical-align: middle;
         &:before {
-          content: "\f111";
           position: absolute;
           left: -22px;
           top: -1px;
@@ -177,6 +183,20 @@
         }
         @media all and (max-width: 991px) {
           padding-left: 5px;
+        }
+      }
+      @media all and (max-width: 1199px) {
+        margin: 5px 0 5px 33px;
+      }
+      @media all and (max-width: 480px) {
+        margin: 0px 5px 5px -5px;
+        font-size: 14px;
+        .fa.fa-circle-o,
+        .fa.fa-circle {
+          font-size: 18px;
+          &:before {
+            position: static;
+          }
         }
       }
     }
