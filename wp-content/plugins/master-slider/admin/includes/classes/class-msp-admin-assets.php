@@ -44,6 +44,10 @@ class MSP_Admin_Assets {
   }
 
 
+  public function enqueue_setting_page_assets(){
+    wp_enqueue_style( MSWP_SLUG .'-main-style',   MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/css/msp-style.css',        array(), MSWP_AVERTA_VERSION );
+  }
+
   public function enqueue_global_assets(){
 
     $this->load_global_styles();
