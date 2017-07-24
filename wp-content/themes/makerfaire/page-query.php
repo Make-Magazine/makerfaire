@@ -22,7 +22,7 @@ define( 'MF_POSTS_PER_PAGE', 2000 );
 define( 'MF_API_KEY', sanitize_text_field( get_option( 'make_app_api_key' ) ) );
 
 // Set the Eventbase API version
-define( 'MF_EVENTBASE_API_VERSION', '2.06' );
+define( 'MF_EVENTBASE_API_VERSION', '3.2' );
 
 
 /**
@@ -50,7 +50,7 @@ $faire = ( ! empty( $_REQUEST['faire'] ) ? sanitize_text_field( $_REQUEST['faire
  if ( empty( $key ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
 	echo '<h2>Invalid: No Key.</h2>';
-	
+
 	return;
 } elseif ( $key !== MF_API_KEY ) {
 	header( 'HTTP/1.0 403 Forbidden' );

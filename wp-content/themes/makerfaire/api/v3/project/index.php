@@ -99,13 +99,13 @@ if ($type == 'project') {
     $app['category_id_refs'] = explode(',', $category_ids);
 
     //run sub query to pull the contact and makers for this project along with their roles.
-    $subQuery = "select maker_id, maker_type from wp_mf_maker_to_entity where entity_id = ".$app['id'];
+    $subQuery = "select maker_id, maker_type, maker_role from wp_mf_maker_to_entity where entity_id = ".$app['id'];
     $subResult = $mysqli->query($subQuery) or trigger_error($mysqli->error . "[$subQuery]");
     $makersArr = array();
     while ($subRow = $subResult->fetch_array(MYSQLI_ASSOC)) {
       if(($dest=='makershare' && $subRow['maker_type']!='group') ||
           $dest!='makershare'){
-        $makersArr[] = array('maker_id'=>$subRow['maker_id'],'role'=>$subRow['maker_type']);
+        $makersArr[] = array('maker_id'=>$subRow['maker_id'],'role'=>$subRow['maker_role']);
       }
     }
     $app['exhibit_accounts'] = $makersArr;
@@ -140,7 +140,7 @@ if ($type == 'project') {
 
   $header = array(
       'header' => array(
-          'version' => '3.0',
+          'version' => '3.2',
           'results' => intval($count),
       ),
   );
