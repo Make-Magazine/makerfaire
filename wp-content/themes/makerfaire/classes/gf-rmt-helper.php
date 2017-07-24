@@ -492,8 +492,9 @@ class GFRMTHELPER {
 
         //build maker to entity table
         //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
-        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity` (`maker_id`, `entity_id`, `maker_type`) "
-                              . ' VALUES ("'.$guid.'",'.$entryID.',"'.$role.'")  ON DUPLICATE KEY UPDATE maker_id="'.$guid.'";';
+        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity` (`maker_id`, `entity_id`, `maker_type`,'maker_role') "
+                              . ' VALUES ("'.$guid.'",'.$entryID.',"'.$type.', "'.$role.'")  '
+                              . ' ON DUPLICATE KEY UPDATE maker_id="'.$guid.'". role="'.$role.'";';
 
         $wpdb->get_results($wp_mf_maker_to_entity);
       }

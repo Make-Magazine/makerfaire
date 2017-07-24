@@ -46,6 +46,7 @@ if ($type == 'project') {
             `entity`.`category` as `Categories`,
             `entity`.`desc_short` as Description,
             `entity`.`form_type`,
+            entity.faire,
             (select faire_name from wp_mf_faire where wp_mf_faire.faire=entity.faire) as faire_name,
              wp_rg_lead.date_created,
             `entity`.`project_video`,
@@ -118,6 +119,7 @@ if ($type == 'project') {
       if($row['form_type'] == 'Exhibit' || $row['form_type'] == 'Presentation' || $row['form_type'] == 'Performance') {
         $app['form_type']     = $row['form_type'];
         $app['faire_name']    = $row['faire_name'];
+        $app['faire']         = $row['faire'];
         $app['submission']    = $row['date_created'];
         $app['project_video'] = $row['project_video'];
         $app['inspiration']   = $row['inspiration'];

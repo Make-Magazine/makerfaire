@@ -25,13 +25,40 @@ if(isset($_GET['cron'])){
     $form  = (isset($_GET['form'])?$_GET['form']:'');
     $limit = (isset($_GET['limit'])?$_GET['limit']:0);
     $start = (isset($_GET['start'])?$_GET['start']:0);
-    if($form!=''){
+    $faire  = (isset($_GET['faire'])?$_GET['faire']:'');
+
+    //check faire first
+    if($faire!=''){
+      $faireData = $wpdb->get_row( "select form_ids from wp_mf_faire where faire='".$faire."'");
+      $formIDs = explode(',',trim($faireData->form_ids));
+      foreach($formIDs as $formID){
+        $formData = GFAPI::get_form($formID);
+        $form_type = (isset($formData['form_type'])?$formData['form_type']:'');
+        if($form_type=='') echo 'Form Type not set for form '.$formID.'<br/>';
+        if($form_type != 'Exhibit'
+                /*
+           $form_type != 'Exhibit' &&
+           $form_type != 'Presentation' &&
+           $form_type != 'Performance' &&
+           $form_type != 'Sponsor' &&
+           $form_type != 'Startup Sponsor' */
+          ){
+          continue;
+        }else{
+          echo 'updating MF tables for form '.$formID.'<br/>';
+          echo ' form type = '.$formData['form_type'].'<br/>';
+          update_mfTables($formID,$limit,$start);
+        }
+      }
+
+    //then form if faire not set
+    }elseif($form!=''){
       echo 'updating MF tables for form '.$form;
       $formData = GFAPI::get_form($form);
       echo ' form type = '.$formData['form_type'].'<br/>';
       update_mfTables($form,$limit,$start);
     }else{
-      echo 'Fail. You need to at least give me a form id to use<Br/>?cron=update_mfTables&form&limit&start<br/>';
+      echo 'Fail. You need to at least give me a form id or faire id to use<Br/>?cron=update_mfTables&form&limit&start<br/>';
     }
   }
 
