@@ -464,7 +464,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":"151",  "label":"PROJECT_NAME","choices":"","type":"text","inputs":"", "order":20},//column C
                 {"id": "73",  "label":"POWER","choices":"all","type":"radio","order":50},   //column F
                 {"id": "75",  "label":"AMPS","choices":"all","type":"radio","order":60},    //column G
-                {"id":"303", "label":"STATUS","choices":"all","type":"radio","order":70}, //column H
+                {"id":"303",  "label":"STATUS","choices":"all","type":"radio","order":70}, //column H
                 {"id": "56",  "label":"CROWDSOURCE_FUNDING","choices":"all","type":"radio", "order":80},  //column I
                 {"id":"320",  "label":"TOPIC","choices":"all","type":"select", "order":90}, //column J
                 {"id":"302",  "label":"PRE_LOC","choices":"all","type":"checkbox", "order":100}, //column K

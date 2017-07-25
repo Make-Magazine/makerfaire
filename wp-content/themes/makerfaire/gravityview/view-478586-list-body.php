@@ -95,14 +95,14 @@ $entries   = $tableData['data'];
 
     //RMT edit link
     $RMTeditLink = '<span class="editLink">
-                      <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
-                        <div class="fa fa-eye fa-lg toggle-popover" data-toggle="popover"></div>View/Edit Setup
+                      <button type="button" class="btn btn-default btn-no-border edit-button toggle-popover" data-toggle="popover">
+                        <i class="fa fa-eye" aria-hidden="true"></i>View/Edit Setup
                       </button>
                       <div class="popover-content hidden">'.
                         $entryData['mat_res_modal_layout'].'
                         <div class="clear">';
                           if($entryData['mat_edit_res_url'] != '') {
-                            $RMTeditLink .= '<a target="_blank" href="'.$entryData['mat_edit_res_url'].'">Edit</a>';
+                            $RMTeditLink .= '<a href="'.$entryData['mat_edit_res_url'].'">Edit</a>';
                           }
     $RMTeditLink .= '   </div>
                       </div>
