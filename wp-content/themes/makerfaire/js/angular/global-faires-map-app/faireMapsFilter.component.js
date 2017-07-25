@@ -4,8 +4,8 @@
     template: '<div class="checkbox">\
         <label>\
           <input type="checkbox" class="checkbox-fa-icon" ng-model="$ctrl.defaultState" ng-click="$ctrl.toggleFilter()">\
-          <i class="fa fa-square-o"></i>\
-          <i class="fa fa-check-square-o"></i>\
+          <i class="fa fa-circle-o"></i>\
+          <i class="fa fa-circle"></i>\
           <ng-transclude></ng-transclude>\
         </label>\
       </div>',
