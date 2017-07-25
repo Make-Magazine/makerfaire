@@ -52,7 +52,7 @@ function change_email_for_wp($notification) {
       'message'     => $notification['message'],
       'headers'     => $notification['headers'],
       'toType'      => 'email',
-      'attachments' => (isset($args['attachments'])?$args['attachments']:''),
+      'attachments' => (isset($args)&& isset($args['attachments'])?$args['attachments']:''),
     );
   }elseif (Jetpack::is_development_mode()) {
     if(defined('MF_OVERRITE_EMAIL')){
