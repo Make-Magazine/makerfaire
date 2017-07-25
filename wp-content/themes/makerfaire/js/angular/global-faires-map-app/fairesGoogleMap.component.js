@@ -139,7 +139,7 @@
                   gMarkerZIndex = 2;
                   break;
                 case 'Featured':
-                  gMarkerIcon.fillColor = '#01A3E0';
+                  gMarkerIcon.fillColor = '#085a7e';
                   gMarkerIcon.scale = 8;
                   break;
                 case 'School':
