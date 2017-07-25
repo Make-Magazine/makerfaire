@@ -173,7 +173,8 @@ function getTableData($mysqli,$table){
             $options       = $fkeyData[0];
             $selectOptions = $fkeyData[1];
           }
-                    //additional select options outside of fkey
+
+          //additional select options outside of fkey
           if(isset($addlFields['options'])){
             foreach($addlFields['options'] as $optKey=>$option){
               $options[]       = array('id'    => $optKey, 'fkey'   => $option);
