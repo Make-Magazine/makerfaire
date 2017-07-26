@@ -82,11 +82,9 @@ function display_thank_you_modal_if_signed_up() { ?>
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" id="email" name="email" value="" />
             <input type="hidden" id="format_mime" name="format" value="mime" />
-            <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
             <input type="hidden" name="custom_url" value="<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" />
-            <input type="hidden" id="format_mime" name="format" value="mime" />
             <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $_SERVER["HTTP_HOST"]; ?>" />
             <label class="list-radio pull-right">
