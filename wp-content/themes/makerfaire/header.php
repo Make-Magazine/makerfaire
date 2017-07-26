@@ -149,7 +149,7 @@
         </ul>
 
         <div class="mobile-subscribe-link hidden-md hidden-lg">
-          <a href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M6GMKZ">SUBSCRIBE to Make: and save</a>
+          <a href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M7GMFE">SUBSCRIBE to Make: and save</a>
         </div>
       </div>
     </div>
@@ -178,10 +178,10 @@
       <!-- New Header Subscribe stuff -->
       <div id="mz-header-subscribe" class="hidden-xs">
         <div>
-          <a id="trigger-overlay" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M6GMKZ" target="_blank">
+          <a id="trigger-overlay" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M7GMFE" target="_blank">
             <img src="<?php echo get_template_directory_uri() . '/img/Subscribe_CTA_2x.png'; ?>" alt="Make: Magazine latest magazine cover, subscribe here" />
           </a>
-          <a class="subscribe-red-btn" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M6GMKZ" target="_blank">SUBSCRIBE</a>
+          <a class="subscribe-red-btn" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M7GMFE" target="_blank">SUBSCRIBE</a>
         </div>
       </div>
 
