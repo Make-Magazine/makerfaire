@@ -33,8 +33,8 @@ get_header(); ?>
 
             <form id="nlp-form" class="nlp-form" action="http://whatcounts.com/bin/listctrl" method="POST">
               <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
-              <input type="hidden" name="list_makerfaire" value="yes" />
-              <input type="hidden" name="list_makermedia" value="yes" />
+              <input type="hidden" name="custom_list_makerfaire" value="yes" />
+              <input type="hidden" name="custom_list_makermedia" value="yes" />
               <input type="hidden" name="cmd" value="subscribe" />
               <input type="hidden" id="email" name="email" value="" />
               <input type="hidden" id="format_mime" name="format" value="mime" />

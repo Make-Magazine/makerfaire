@@ -58,8 +58,8 @@
           <p>Stay inspired and get fresh updates</p>
           <form class="sub-form whatcounts-signup1" action="http://whatcounts.com/bin/listctrl" method="POST">
             <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
-            <input type="hidden" name="list_makerfaire" value="yes" />
-            <input type="hidden" name="list_makermedia" value="yes" />
+            <input type="hidden" name="custom_list_makerfaire" value="yes" />
+            <input type="hidden" name="custom_list_makermedia" value="yes" />
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
@@ -101,8 +101,8 @@
           <p>Stay inspired and get fresh updates</p>
           <form class="sub-form whatcounts-signup1m" action="http://whatcounts.com/bin/listctrl" method="POST">
             <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
-            <input type="hidden" name="list_makerfaire" value="yes" />
-            <input type="hidden" name="list_makermedia" value="yes" />
+            <input type="hidden" name="custom_list_makerfaire" value="yes" />
+            <input type="hidden" name="custom_list_makermedia" value="yes" />
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
