@@ -7,57 +7,66 @@
  *
  * This page specifically handles the Maker data.
  *
- * @version 3.0
+ * Variables accepted:
+ *  type    Required  Can only be 'account'
+ *  faire   Optional  Request information for a specific faire.  If empty, all faire data is returned
+ *  dest    Optional  Who is requesting the data
+ *                    Valid options - makershare
+ *  lchange Optional  If supplied, must be in mmddyyyy format.  Will return all data on and after this date.
+ *
+ * @version 3.2
  */
 
 // Stop any direct calls to this file
 defined( 'ABSPATH' ) or die( 'This file cannot be called directly!' );
 global $wp_query;
-$type  = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_query->query_vars['type'] ) : null );
-$faire = ( ! empty( $_REQUEST['faire'] ) ? sanitize_text_field( $_REQUEST['faire'] ) : null );
-$dest  = ( ! empty( $_REQUEST['dest'] )  ? sanitize_text_field( $_REQUEST['dest'] )  : null );
+$type     = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_query->query_vars['type'] ) : null );
+$faire    = ( ! empty( $_REQUEST['faire'] ) ? sanitize_text_field( $_REQUEST['faire'] ) : '' );
+$dest     = ( ! empty( $_REQUEST['dest'] )  ? sanitize_text_field( $_REQUEST['dest'] )  : '' );
+$lchange  = ( ! empty( $_REQUEST['lchange'] )  ? sanitize_text_field( $_REQUEST['lchange'] )  : '' );
 
 // Double check again we have requested this file
 if ( $type == 'account' ) {
-
-
 	$mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
 	if ($mysqli->connect_errno) {
 		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 	}
-	$select_query = sprintf("SELECT * FROM
-    (SELECT wp_mf_entity.lead_id,
-            wp_mf_maker_to_entity.maker_type,
-           `wp_mf_maker`.`First Name` as first_name,
-           `wp_mf_maker`.`Last Name` as last_name,
-           `wp_mf_maker`.`Bio`,
-           `wp_mf_maker`.`Photo`,
-           `wp_mf_maker`.`Email`,
-           `wp_mf_maker`.`TWITTER`,
-           `wp_mf_maker`.`website`,
-           `wp_rg_lead`.`form_id`,
-           `wp_mf_maker`.`maker_id`,
-           `wp_mf_maker`.age_range,
-           `wp_mf_maker`.city,
-           `wp_mf_maker`.state,
-           `wp_mf_maker`.country,
-           `wp_mf_maker`.zipcode,
-           `wp_mf_maker`.role,
-            wp_mf_entity.category,
-            wp_mf_entity.form_type
-      FROM `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity, wp_mf_faire,wp_rg_lead
-      WHERE wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id
-      AND   wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id
-      AND   wp_mf_entity.status = 'Accepted'
-      AND   wp_mf_maker_to_entity.maker_type != 'contact'
-      AND   LOWER(wp_mf_faire.faire) = '".$faire."'
-      AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
-      AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0
-      AND   wp_rg_lead.id = `wp_mf_maker_to_entity`.`entity_id`
-      AND   wp_rg_lead.status = 'active'
-      ORDER BY `wp_mf_maker`.`maker_id` ASC, wp_mf_maker_to_entity.maker_type ASC)
+
+  //if dest = makershare, age_range must be set
+  //if lchange is set, only return makers changed on or after given date
+  $where = array();
+  if($dest == 'makershare') $where[] = " age_range != ''";
+  if($lchange != '')        $where[] = " wp_mf_maker.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')";
+
+
+  if($faire == ''){
+      $select_query = "select maker_id, `First Name` as first_name, `Last Name` as last_name,
+                              Bio, Email, Photo, TWITTER, website, age_range,
+                              city, state, country, zipcode, last_change_date,
+                              (select faire
+                                from  wp_mf_entity, wp_mf_maker_to_entity
+                                where lead_id = wp_mf_maker_to_entity.entity_id
+                                AND   wp_mf_maker_to_entity.maker_id=wp_mf_maker.maker_id) as faire
+                      FROM  wp_mf_maker "
+                    .(!empty($where)?' where '. implode(' AND ',$where):'')
+                    ." order by maker_id ASC";
+  }else{
+    //if faire is set, only pull makers associated with that faire
+    $select_query = sprintf("SELECT * FROM
+        (SELECT wp_mf_maker.maker_id, `First Name` as first_name, `Last Name` as last_name,
+                Bio, Email, Photo, TWITTER, website, age_range,
+                city, state, country, zipcode, wp_mf_maker.last_change_date
+         FROM   `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity
+         WHERE  wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id
+         AND    wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id
+         AND    LOWER(wp_mf_entity.faire) = '".$faire."'
+         AND    status != 'trash' "
+         .(!empty($where)?' AND '.implode(' AND ',$where):'')
+    ." ORDER BY `wp_mf_maker`.`maker_id` ASC, wp_mf_maker_to_entity.maker_type ASC)
     AS tmp_table GROUP by `maker_id`
   ");
+  }
+
 	$mysqli->query("SET NAMES 'utf8'");
 	$result = $mysqli->query ( $select_query );
 
@@ -72,11 +81,9 @@ if ( $type == 'account' ) {
 	// Init the entities header
 	$makers = array();
   $count=0;
+
 	// Loop through the posts
 	while ( $row = $result->fetch_array(MYSQLI_ASSOC)  ) {
-		//Check for null makers
-		if (!isset($row['lead_id'])) continue;
-
 		// REQUIRED: The maker ID
 		$maker['id'] = $row['maker_id'];
 
@@ -89,28 +96,19 @@ if ( $type == 'account' ) {
 		$maker['twitter']     = $row['TWITTER'];
     $maker['website']     = $row['website'];
 
-		//$maker['name'] = $row['first_name'].' '.$row['last_name'];
-    /* Not currently used
-    //look for the word sponsor in the form name
-    $form = GFAPI::get_form( $row['form_id'] );
-    $formTitle = $form['title'];
-    $formType  = $form['form_type'];*/
 
     //logic specific for makershare
     if($dest=='makershare'){
-      //only return exhibit, presentation and performance
-      if($row['form_type'] == 'Exhibit' || $row['form_type'] == 'Presentation' || $row['form_type'] == 'Performance') {
-        //don't return makers under 13 or group makers
-        if($row['age_range'] != '0-6' && $row['age_range'] != '7-12' && $row['role'] != 'group'){
-          $maker['role']     = $row['role'];
-          $maker['location'] = array( 'city'    => $row['city'],
-                                      'state'   => $row['state'],
-                                      'zipcode' => $row['zipcode'],
-                                      'country' => $row['country']);
-          $count++;
-          array_push( $makers, $maker );
-        }
+      //don't return makers under 13 or group makers
+      if($row['age_range'] != '0-6' && $row['age_range'] != '7-12'){
+        $maker['location'] = array( 'city'    => $row['city'],
+                                    'state'   => $row['state'],
+                                    'zipcode' => $row['zipcode'],
+                                    'country' => $row['country']);
+        $count++;
+        array_push( $makers, $maker );
       }
+
     } else {
       // Put the maker into our list of makers
       $count++;

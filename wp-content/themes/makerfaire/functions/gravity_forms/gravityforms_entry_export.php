@@ -52,6 +52,8 @@ function mf_custom_import_entries() {
 
           if($fileType=='location') {
             $error = processLocation($file,$userID);
+          }else if($fileType=='ribbon') {
+            $error = processRibbon($file,$userID);
           }else{
             $error = processEntry($file,$userID);
           }
@@ -73,6 +75,7 @@ function mf_custom_import_entries() {
     <!--<li><a data-toggle="tab" href="#home">Basic Info</a></li>-->
     <li><a data-toggle="tab" href="#location">Location Layout</a></li>
     <li><a data-toggle="tab" href="#entry">Entry Layout</a></li>
+    <li><a data-toggle="tab" href="#ribbons">Ribbon Layout</a></li>
   </ul>
 
   <div class="tab-content">
@@ -88,7 +91,8 @@ function mf_custom_import_entries() {
             <td>Type of Import:</td>
             <td>
               <input type="radio" name="importType" value="location" checked> Location Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/location_import.csv" download>Example</a><br>
-              <input type="radio" name="importType" value="entry"> Entry Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a>
+              <input type="radio" name="importType" value="entry"> Entry Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a><br>
+              <input type="radio" name="importType" value="ribbon"> Ribbon Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/ribbon_import_example.csv" download>Example</a>
             </td>
           </tr>
           <tr>
@@ -105,7 +109,7 @@ function mf_custom_import_entries() {
     <div id="location" class="tab-pane fade">
       <h3>Location Import Layout</h3>
 
-      <table class="border" width="100%">
+      <table class="table border" width="100%">
         <tr>
           <th>entry_id</th>
           <th>subarea_id</th>
@@ -128,7 +132,7 @@ function mf_custom_import_entries() {
     </div>
 
     <div id="entry" class="tab-pane fade">
-      <h3>Entry Import Layout</h3>
+      <h3>Ribbon Import Layout</h3>
       <ul class="bullet">
         <li>CSV format</li>
         <li>Row 1 - Field Names/Field ID's (Field Names must match what is in example and field ID's must be numeric</li>
@@ -171,6 +175,30 @@ function mf_custom_import_entries() {
         </li>
       </ul>
 
+    </div>
+    <div id="ribbons" class="tab-pane fade">
+      <h3>Ribbon Import Layout</h3>
+
+      <table class="table border" width="100%">
+        <tr>
+          <th>Event&nbsp;<span class="required">*</span></i></th>
+          <th>Year&nbsp;<span class="required">*</span></th>
+          <th>Issuer</th>
+          <th>Ribbon Type&nbsp;<span class="required">*</span></th>
+          <th>Entry ID&nbsp;<span class="required">*</span></th>
+          <th>Exhibit Name</th>
+          <th>Notes</th>
+        </tr>
+        <tr>
+          <td>ie:New York,<br/>Bay Area</td>
+          <td>4&nbsp;digit</td>
+          <td>Name of person giving the ribbon</td>
+          <td>blue = 0<br/>red = 1</td>
+          <td>Numeric</td>
+          <td>Will overwrite the exhibit name in the database</td>
+          <td></td>
+        </tr>
+      </table>
     </div>
   </div>
 
@@ -263,20 +291,15 @@ function mf_custom_import_entries() {
     global $numCols;
     $numCols = 7;
     $error = '';
-    $fieldAray = array(
-      'location' => array(
-          'fields' => array(
-            array('Entry ID - Numeric', 'numeric'),
-            array('SubArea ID - Numeric', 'numeric'),
+    $importFields = array(
+            array('Entry ID', 'numeric'),
+            array('SubArea ID', 'numeric'),
             array('Location', ''),
             array('Final Space Size',''),
             array('Exposure', ''),
             array('Conf L Notes',''),
-            array('Form ID - Numeric', 'numeric')
-          ),
-          'fieldCount'  => 7
-          )
-      );
+            array('Form ID', 'numeric')
+          );
     $row = 1;
     //process the imported file
     while (($csvFile = fgetcsv($file, 10000, ",")) !== FALSE){
@@ -319,9 +342,11 @@ function mf_custom_import_entries() {
     //process data after all rows are imported
     if(!empty($data2Process)){
       global $wpdb;
-      $error = 'File Uploaded Succesfully';
+      $error .= 'File Uploaded Succesfully<br/>';
       $chgRPTins = array();
+      $processCount = 0;
       foreach($data2Process as $data){
+        $processCount++;
         $entryID    = $data[0];
         $subArea    = $data[1];
         $location   = $data[2];
@@ -383,7 +408,7 @@ function mf_custom_import_entries() {
         }
 
       } //end foreach
-
+      $error .= 'Processed Records - '.$processCount;
       if(!empty($chgRPTins))
         updateChangeRPT($chgRPTins);
 
@@ -556,4 +581,93 @@ function mf_custom_import_entries() {
 
     //create maker table info
      GFRMTHELPER::updateMakerTables($entryID);
+  }
+
+  function processRibbon($file,$userID) {
+    //defaults
+    $error    = '';
+    $numCols  = 7; //number of columns the imported file should have
+
+    //input file field layout
+    $importFields = array(
+            array('Event', ''),
+            array('Year', 'numeric'),
+            array('Issuer', ''),
+            array('Ribbon Type (0 or 1)',array('0','1')),
+            array('Entry ID - Numeric', 'numeric'),
+            array('Exhibit Name',''),
+            array('Notes', '')
+          );
+    $row = 1;
+
+    //process the imported file
+    while (($csvFile = fgetcsv($file, 10000, ",")) !== FALSE){
+      if(count($csvFile)!= $numCols){
+        $error .= 'Incorrect number of columns for the Ribbon import.<br/>Uploaded '. count($csvFile).' columns, expected '.$numCols.' columns.';
+        break;
+      }
+
+      if($row!=1){ //skip the header row
+        $passCriteria = true;
+        foreach($csvFile as $key=>$data){
+          $data = trim($data);
+
+          //check for required data
+          if(isset($importFields[$key])){
+            if(is_array($importFields[$key][1])){
+              //check if value is in data array
+              if(!in_array(strtolower($data),$importFields[$key][1])){
+                $error .= 'Error on row '.$row.'. Data in column "'.$importFields[$key][0].'" is invalid. Row skipped.<br/>';
+                $passCriteria = false;
+              }
+            }elseif($importFields[$key][1]=='numeric'){
+              //check if value is numeric
+              if(!is_numeric($data)){
+                $error .= 'Error on row '.$row.'. Data in column "'.$importFields[$key][0].'" is not numeric. Row skipped.<br/>';
+                $passCriteria = false;
+              }
+            }
+          }
+        }
+        if($passCriteria){
+          $data2Process[] = $csvFile;
+        }
+
+      }
+      $row++;
+    }
+
+    fclose($file); //close the imported file, we are done with it
+
+    //process data after all rows are imported
+    if(!empty($data2Process)){
+      global $wpdb;
+      $error .= 'File Uploaded Succesfully!<br/>';
+      $chgRPTins = array();
+      $processCount = 0;
+      foreach($data2Process as $data){
+        $processCount++;
+        $location     = $data[0];
+        $year         = $data[1];
+        $issuer       = $data[2];
+        $ribbonType   = $data[3];
+        $entry_id     = $data[4];
+        $exhibitName  = $data[5];
+        $notes        = $data[6];
+
+        /*  SubArea/Location  */
+
+        //now add in the uploaded  subareas/locations
+        $wpdb->insert('wp_mf_ribbons',array('location'=>$location,'year'=>$year,'ribbonType'=>$ribbonType, 'numRibbons'=>1,'entry_id'=>$entry_id,
+                                            'issuer_name'=>$issuer,'project_name'=>$exhibitName,'notes'=>$notes),array('%s','%d','%d','%d','%d','%s','%s','%s'));
+
+        //update mf_entity_table last change date so API reconizes the ribbons have been added
+        $wpdb->update('wp_mf_entity',array('last_change_date'=>current_time('mysql')),array('lead_id'=>$entry_id),array('%s'),array('%d'));
+
+      } //end foreach
+      $error .= 'Processed Records - '.$processCount;
+    }else{
+      if($error=='') $error .= 'No Data to process<br/>';
+    }
+    return $error;
   }

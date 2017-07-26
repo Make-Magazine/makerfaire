@@ -24,6 +24,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       'attributes'          : {table : 'wp_rmt_entry_attributes',pageTitle:'Entry Specific Data',subTitle:'Assigned Attributes'},
       'atttibuteCategories' : {table : 'wp_rmt_entry_att_categories',pageTitle:'Manage RMT Data',subTitle:'Attributes'},
       'workflow'            : {table :'wp_rmt_attn',pageTitle:'Manage RMT Data',subTitle:'Workflow/Attention'},
+      'ribbons'             : {table :'wp_mf_ribbons',pageTitle:'Manage Ribbon Data',subTitle:'Ribbons'},
     }
   };
 
