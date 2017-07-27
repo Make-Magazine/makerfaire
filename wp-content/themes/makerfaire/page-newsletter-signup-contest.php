@@ -32,10 +32,10 @@ get_header(); ?>
           <div class="col-sm-8 col-md-6 col-lg-4 col-sm-offset-2 col-md-offset-3 col-lg-offset-4">
 
             <form id="nlp-form" class="nlp-form" action="http://whatcounts.com/bin/listctrl" method="POST">
-              <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- MakerFaire Newsletter -->
-              <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
+              <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
+              <input type="hidden" name="custom_list_makerfaire" value="yes" />
+              <input type="hidden" name="custom_list_makermedia" value="yes" />
               <input type="hidden" name="cmd" value="subscribe" />
-              <input type="hidden" name="multiadd" value="1" />
               <input type="hidden" id="email" name="email" value="" />
               <input type="hidden" id="format_mime" name="format" value="mime" />
               <input type="hidden" name="goto" value="" />
