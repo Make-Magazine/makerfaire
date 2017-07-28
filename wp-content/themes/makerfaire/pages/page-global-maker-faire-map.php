@@ -7,7 +7,7 @@
         <h1>Faires around the world</h1>
       </div>
     </div>
- <nav class="map-filters-wrp affix-bottom" data-spy="affix" data-offset-top="210">
+    <nav class="map-filters-wrp affix-bottom" data-spy="affix" data-offset-top="210">
       <div class="container">
         <div class="col-md-12">
           <div class="searchbox">
@@ -23,22 +23,23 @@
             </div>
           </div>
           <div class="filters ng-cloak" ng-if="$ctrl.faireMarkers">
-            <faires-map-filter default-state="true" filter="School">
-              School <span class="hidden-sm hidden-xs">Maker Faires</span>
+            <p class="map-filter-title">Select by Type</p>
+            <faires-map-filter class="map-filter-flagship" default-state="true" filter="Flagship">
+              Flagship
             </faires-map-filter>
-            <faires-map-filter default-state="true" filter="Mini">
-              Mini <span class="hidden-sm hidden-xs">Maker Faires</span>
+            <faires-map-filter class="map-filter-featured" default-state="true" filter="Featured">
+              Featured
             </faires-map-filter>
-            <faires-map-filter default-state="true" filter="Featured">
-              Featured <span class="hidden-sm hidden-xs">Faires</span>
+            <faires-map-filter class="map-filter-mini" default-state="true" filter="Mini">
+              Mini
             </faires-map-filter>
-            <faires-map-filter default-state="true" filter="Flagship">
-              Flagship <span class="hidden-sm hidden-xs">Faires</span>
+            <faires-map-filter class="map-filter-school" default-state="true" filter="School">
+              School
             </faires-map-filter>
           </div>
         </div>
       </div>
- </nav>
+    </nav>
     <div class="container">
       <div class="col-md-12">
         <div class="loading-spinner" ng-if="!$ctrl.faireMarkers">
@@ -86,40 +87,40 @@
             <tr ng-init="sort='event_start_dt';reverse=false">
               <th class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">
                 ANNUAL
-               <span ng-show="sort == 'annual'">
-                 <span ng-show="!reverse">^</span>
-                 <span ng-show="reverse">v</span>
-               </span>
+                <span ng-show="sort == 'annual'">
+                  <span ng-show="!reverse">^</span>
+                  <span ng-show="reverse">v</span>
+                </span>
               </th>
               <th class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE
-              <span ng-show="sort == 'category'">
-                 <span ng-show="!reverse">^</span>
-                 <span ng-show="reverse">v</span>
-               </span>
-              </th>
+                <span ng-show="sort == 'category'">
+                  <span ng-show="!reverse">^</span>
+                  <span ng-show="reverse">v</span>
+                 </span>
+                </th>
               <th class="cursor-pointer" ng-click="sort='event_start_dt';reverse=!reverse">DATE
-              <span ng-show="sort == 'event_start_dt'">
-                 <span ng-show="!reverse">^</span>
-                 <span ng-show="reverse">v</span>
-               </span>
+                <span ng-show="sort == 'event_start_dt'">
+                  <span ng-show="!reverse">^</span>
+                  <span ng-show="reverse">v</span>
+                </span>
               </th>
               <th class="cursor-pointer" ng-click="sort='name';reverse=!reverse">EVENT NAME
-              <span ng-show="sort == 'name'">
-                 <span ng-show="!reverse">^</span>
-                 <span ng-show="reverse">v</span>
-               </span>
+                <span ng-show="sort == 'name'">
+                  <span ng-show="!reverse">^</span>
+                  <span ng-show="reverse">v</span>
+                </span>
               </th>
               <th>LOCATION</th>
               <th class="cursor-pointer" ng-click="sort='venue_address_country';reverse=!reverse">COUNTRY
-              <span ng-show="sort == 'venue_address_country'">
-                 <span ng-show="!reverse">^</span>
-                 <span ng-show="reverse">v</span>
-               </span>
+                <span ng-show="sort == 'venue_address_country'">
+                  <span ng-show="!reverse">^</span>
+                  <span ng-show="reverse">v</span>
+                </span>
               </th>
             </tr>
             <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 20">
               <td>{{row.annual | ordinal}}</td>
-              <td>{{row.category}}</td>
+              <td class="map-category-{{row.category}}"><i class="fa fa-circle"></i> {{row.category}}</td>
               <td>{{row.event_dt}}</td>
               <td>
                 <a target="_blank" ng-if="row.faire_url" href="{{row.faire_url}}">{{row.name}}</a>

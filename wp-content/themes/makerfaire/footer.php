@@ -15,6 +15,7 @@
         <h4>Explore Making</h4>
         <ul class="list-unstyled">
           <li><a href="//makezine.com/blog?utm_source=makerfaire.com&utm_medium=footer&utm_term=Make+News" target="_blank">Make: News &amp; Projects</a></li>
+          <li><a href="https://makershare.com?utm_source=makerfaire.com&utm_medium=footer" target="_blank">Maker Share</a></li>
           <li><a href="//www.makershed.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=Maker+Shed" target="_blank">Maker Shed</a></li>
           <li><a href="//makercamp.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=makercamp" target="_blank">Maker Camp</a></li>
           <li><a href="https://readerservices.makezine.com/mk/default.aspx?utm_source=makerfaire.com&utm_medium=footer&utm_term=subscribe+to+make" target="_blank">Subscribe to Make:</a></li>
@@ -30,6 +31,7 @@
           <li><a href="//makermedia.com/work-with-us/job-openings" target="_blank">Careers</a></li>
           <li><a href="//help.makermedia.com/hc/en-us" target="_blank">Help</a></li>
           <li><a href="//makermedia.com/privacy" target="_blank">Privacy</a></li>
+          <li><a href="http://makezine.com/join" target="_blank">Newsletters</a></li>
         </ul>
       </div>
       <div class="col-sm-6 col-md-3 social-foot-col">
@@ -55,9 +57,9 @@
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
           <form class="sub-form whatcounts-signup1" action="http://whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire Newsletter -->
-            <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
-            <input type="hidden" name="multiadd" value="1" />
+            <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
+            <input type="hidden" name="custom_list_makerfaire" value="yes" />
+            <input type="hidden" name="custom_list_makermedia" value="yes" />
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
@@ -98,9 +100,9 @@
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
           <form class="sub-form whatcounts-signup1m" action="http://whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire Newsletter -->
-            <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
-            <input type="hidden" name="multiadd" value="1" />
+            <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
+            <input type="hidden" name="custom_list_makerfaire" value="yes" />
+            <input type="hidden" name="custom_list_makermedia" value="yes" />
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
@@ -144,10 +146,11 @@
           <div id="collapse2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading2">
             <div class="panel-body">
               <ul class="nav nav-pills nav-stacked">
-                <li><a href="/blog">Make: News</a></li>
-                <li><a href="//www.makershed.com" target="_blank">Maker Shed</a></li>
-                <li><a href="//makercamp.com" target="_blank">Maker Camp</a></li>
-                <li><a href="//readerservices.makezine.com/mk/default.aspx?" target="_blank">Subscribe to Make:</a></li>
+                <li><a href="//makezine.com/blog?utm_source=makerfaire.com&utm_medium=footer&utm_term=Make+News" target="_blank">Make: News &amp; Projects</a></li>
+                <li><a href="https://makershare.com?utm_source=makerfaire.com&utm_medium=footer" target="_blank">Maker Share</a></li>
+                <li><a href="//www.makershed.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=Maker+Shed" target="_blank">Maker Shed</a></li>
+                <li><a href="//makercamp.com/?utm_source=makerfaire.com&utm_medium=footer&utm_term=makercamp" target="_blank">Maker Camp</a></li>
+                <li><a href="https://readerservices.makezine.com/mk/default.aspx?utm_source=makerfaire.com&utm_medium=footer&utm_term=subscribe+to+make" target="_blank">Subscribe to Make:</a></li>
                 <li><a href="/maker-movement">Maker Movement</a></li>
               </ul>
             </div>
@@ -167,6 +170,7 @@
                 <li><a href="//makermedia.com/work-with-us/job-openings" target="_blank">Careers</a></li>
                 <li><a href="//help.makermedia.com/hc/en-us" target="_blank">Help</a></li>
                 <li><a href="//makermedia.com/privacy" target="_blank">Privacy</a></li>
+                <li><a href="http://makezine.com/join" target="_blank">Newsletters</a></li>
               </ul>
             </div>
           </div>
@@ -386,7 +390,7 @@
   <div class="fancybox" style="display:none;">
     <h3>Yes, I'm interested in staying in touch with the School Maker Faire Program</h3>
     <form name="MailingList" action="http://whatcounts.com/bin/listctrl" method="POST">
-      <input type=hidden name="slid" value="6B5869DC547D3D4637EA6E33C6C8170D" />
+      <input type="hidden" name="slid" value="6B5869DC547D3D4637EA6E33C6C8170D" />
       <input type="hidden" name="cmd" value="subscribe" />
       <input type="hidden" name="custom_host" value="makerfaire.com" />
       <input type="hidden" name="custom_incentive" value="none" />

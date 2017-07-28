@@ -24,7 +24,7 @@ define( 'MF_POSTS_PER_PAGE', 2000 );
 define( 'MF_API_KEY', 'f22c7aba-5c1e-478f-9513-09aa7e28105d' );
 
 // Set the Eventbase API version
-define( 'MF_EVENTBASE_API_VERSION', '2.06' );
+define( 'MF_EVENTBASE_API_VERSION', '3.2' );
 
 
 /**

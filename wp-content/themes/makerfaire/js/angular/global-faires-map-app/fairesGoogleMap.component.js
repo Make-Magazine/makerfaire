@@ -139,7 +139,7 @@
                   gMarkerZIndex = 2;
                   break;
                 case 'Featured':
-                  gMarkerIcon.fillColor = '#01A3E0';
+                  gMarkerIcon.fillColor = '#085a7e';
                   gMarkerIcon.scale = 8;
                   break;
                 case 'School':
@@ -173,18 +173,18 @@
           function displayMarkerInfo() {
             var marker_map = this.getMap();
             FaireMapsSharedData.infowindow.setContent('<div id="content"><h3 class="firstHeading">' +
-                    this.title + '</h3>' +
-                    '<div id="bodyContent"><p>' +
-                    (this.dataRowSrc.venue_address_city || '') +
-                    (this.dataRowSrc.venue_address_state && ', ' + this.dataRowSrc.venue_address_state || '') +
-                    (this.dataRowSrc.venue_address_country && ', ' + this.dataRowSrc.venue_address_country + ' ' || '') +
-                    (this.dataRowSrc.event_dt || '') +
-                    '</p><p>' +
-                    (this.dataRowSrc.faire_url &&
-                            '<a href="' + this.dataRowSrc.faire_url + '" target="_blank">' + this.dataRowSrc.faire_url + '</a>' || '') +
-                    '</p></div>' +
-                    '</div>'
-                    );
+              this.title + '</h3>' +
+              '<div id="bodyContent"><p>' +
+              (this.dataRowSrc.venue_address_city || '') +
+              (this.dataRowSrc.venue_address_state && ', ' + this.dataRowSrc.venue_address_state || '') +
+              (this.dataRowSrc.venue_address_country && ', ' + this.dataRowSrc.venue_address_country + ' ' || '') +
+              (this.dataRowSrc.event_dt || '') +
+              '</p><p>' +
+              (this.dataRowSrc.faire_url &&
+              '<a href="' + this.dataRowSrc.faire_url + '" target="_blank">' + this.dataRowSrc.faire_url + '</a>' || '') +
+              '</p></div>' +
+              '</div>'
+              );
             FaireMapsSharedData.infowindow.open(marker_map, this);
           }
           setMarkers(ctrl.mapData);

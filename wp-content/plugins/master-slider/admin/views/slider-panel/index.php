@@ -74,9 +74,10 @@
      * Display the new or previous type of pro tab paged
      * Valid numbers for $pro_content_type are: 1, 2
      */
-    $pro_content_type = get_option( 'master-slider_ab_pro_feature_panel_content_type', 1 );
+    //$pro_content_type = get_option( 'master-slider_ab_pro_feature_panel_content_type', 1 );
+    $pro_content_type = 1;
     // ab testing check
-    if( 2 == $pro_content_type ){
+    if( 1 == $pro_content_type ){
 ?>
 
 <script type="text/x-handlebars" id="pro-features">

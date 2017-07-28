@@ -369,7 +369,11 @@ class GFRMTHELPER {
 
     //exit this function if form type is not an Exhibit, Presentation or Sponsor
     $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
-    if($form_type != 'Exhibit' && $form_type != 'Presentation' && $form_type != 'Performance' && $form_type != 'Sponsor' && $form_type != 'Startup Sponsor' ){
+    if($form_type != 'Exhibit' &&
+       $form_type != 'Presentation' &&
+       $form_type != 'Performance' &&
+       $form_type != 'Sponsor' &&
+       $form_type != 'Startup Sponsor' ){
       return;
     }
 
@@ -387,7 +391,7 @@ class GFRMTHELPER {
      */
     $wp_mf_entitysql = "insert into wp_mf_entity (lead_id, form_id, presentation_title, presentation_type, special_request, "
                     . "     OnsitePhone, desc_short, desc_long, project_photo, status, category, faire, mobile_app_discover, "
-                    . "     form_type, project_video,inspiration) "
+                    . "     form_type, project_video,inspiration,last_change_date) "
                     . " VALUES ('" . $entryID . "',". $entityData['form_id']. ','
                             . ' "' . $entityData['project_name']            . '", '
                             . ' "' . $entityData['presentation_type']       . '", '
@@ -397,12 +401,13 @@ class GFRMTHELPER {
                             . ' "' . $entityData['private_description']     . '", '
                             . ' "' . $entityData['project_photo']           . '", '
                             . ' "' . $entityData['status']                  . '", '
-                            . ' "' . $categories . '", '
+                            . ' "' . $categories                            . '", '
                             . ' "' . $entityData['faire']                   . '", '
                             . '  ' . $entityData['mobile_app_discover']     . ','
-                            . ' "' . $form_type  . '", '
+                            . ' "' . $form_type                             . '", '
                             . ' "' . $entityData['project_video']           . '", '
-                            . ' "' . $entityData['inspiration']                  . '" '
+                            . ' "' . $entityData['inspiration']             . '", '
+                            . ' now()'
                             .') '
                     . ' ON DUPLICATE KEY UPDATE presentation_title  = "'.$entityData['project_name']            . '", '
                     . '                         presentation_type   = "'.$entityData['presentation_type']       . '", '
@@ -418,7 +423,8 @@ class GFRMTHELPER {
                     . '                         mobile_app_discover = "'.$entityData['mobile_app_discover']     . '", '
                     . '                         form_type           = "'.$form_type                             . '", '
                     . '                         project_video       = "'.$entityData['project_video']           . '", '
-                    . '                         inspiration         = "'.$entityData['inspiration']             . '"';
+                    . '                         inspiration         = "'.$entityData['inspiration']             . '", '
+                    . '                         last_change_date    = now()';
     $wpdb->get_results($wp_mf_entitysql);
 
     /*  Update Maker Table - wp_mf_maker table
@@ -458,12 +464,12 @@ class GFRMTHELPER {
                       . "             (`First Name`, `Last Name`, `Bio`, `Email`, `phone`, "
                       . "              `TWITTER`, `maker_id`, `Photo`, `website`, `phone_type`, "
                       . "              `age_range`, `city`, `state`, `country`, `zipcode`, "
-                      . "              `address`, `address2`, `role`) "
+                      . "              `address`, `address2`, last_change_date) "
                       . '  VALUES ("'.$firstName.'","'.$lastName.'","'.$bio.'","'.$email.'","'.$phone.'",'
                       . '          "'.$twitter.'","'.$guid.'","'.$photo.'","'.$website.'","'.$phone_type.'",'
                       . '          "'.$age_range.'","'.$city.'","'.$state.'","'.$country.'","'.$zipcode.'",'
-                      . '          "'.$address.'","'.$address2.'","'.$role.'")'
-                      . '  ON DUPLICATE KEY UPDATE maker_id="'.$guid.'"';
+                      . '          "'.$address.'","'.$address2.'", now())'
+                      . '  ON DUPLICATE KEY UPDATE maker_id="'.$guid.'", last_change_date=now()';
 
         //only update non blank fields
         $wp_mf_makersql .= ($firstName  != '' ? ', `First Name` = "' . $firstName   . '"' : '');//first name
@@ -481,13 +487,14 @@ class GFRMTHELPER {
         $wp_mf_makersql .= ($zipcode    != '' ? ', `zipcode`    = "' . $zipcode     . '"' : '');//zipcode
         $wp_mf_makersql .= ($address    != '' ? ', `address`    = "' . $address     . '"' : '');//address
         $wp_mf_makersql .= ($address2   != '' ? ', `address2`   = "' . $address2    . '"' : '');//address2
-        $wp_mf_makersql .= ($role       != '' ? ', `role`       = "' . $role        . '"' : '');//maker role
+
         $wpdb->get_results($wp_mf_makersql);
 
         //build maker to entity table
         //(key is on maker_id, entity_id and maker_type.  if record already exists, no update is needed)
-        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity` (`maker_id`, `entity_id`, `maker_type`) "
-                              . ' VALUES ("'.$guid.'",'.$entryID.',"'.$type.'")  ON DUPLICATE KEY UPDATE maker_id="'.$guid.'";';
+        $wp_mf_maker_to_entity = "INSERT INTO `wp_mf_maker_to_entity` (`maker_id`, `entity_id`, `maker_type`,`maker_role`) "
+                              . ' VALUES ("'.$guid.'",'.$entryID.',"'.$type.'", "'.$role.'")  '
+                              . ' ON DUPLICATE KEY UPDATE maker_id="'.$guid.'", maker_role="'.$role.'";';
 
         $wpdb->get_results($wp_mf_maker_to_entity);
       }

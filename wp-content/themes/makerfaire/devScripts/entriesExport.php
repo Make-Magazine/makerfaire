@@ -1,6 +1,7 @@
 <?php
 include 'db_connect.php';
 //check that the request is valid
+/*
 $auth = (isset($_GET['auth'])?$_GET['auth']:'');
 if($auth==''){
   exit();
@@ -10,8 +11,9 @@ $date  = date('mdY');
 $crypt = crypt($date, AUTH_SALT);
 if($auth != $crypt){
   exit();
-}
+}*/
 $form=(isset($_GET['formID'])?$_GET['formID']:46);
+
 // output headers so that the file is downloaded rather than displayed
 header('Content-type: text/csv');
 header('Content-Disposition: attachment; filename="exportForm'.$form.'-'.$date.'.csv"');
@@ -34,28 +36,26 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
   usort($jsonArray, "cmp");
   $fieldData = array();
   $fieldData[]='entry id';
+
   foreach($jsonArray as $field){
+    $fieldID = (string) $field['id'];
+
     if($field['type']!='section' && $field['type']!='page'){
       $label = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
       if($label=='' && $field['type']=='checkbox') $label = $field['choices'][0]->text;
-      //build category crossreference
-      if($field['id']==320){
-        $catCross = array();
-        foreach($field['choices'] as $choice){
-          $catCross[$choice->value]=$choice->text;
-        }
-      }
+
       if($field['type']=='checkbox'||$field['type']=='address'){
         if(isset($field['inputs']) && !empty($field['inputs'])){
           foreach($field['inputs'] as $choice){
-            $fieldData[$choice->id] = $label.' '.$choice->label.'('.$choice->id.')';
+            $choiceID = (string) $choice->id;
+            $fieldData[$choiceID] = $label.' '.$choice->label.'('.$choiceID.')';
           }
         }else{
-          $fieldData[$field['id']] = $label.'('.$field['id'].')';
+          $fieldData[$fieldID] = $label.'('.$fieldID.')';
         }
 
       }else{
-        $fieldData[$field['id']] = $label.'('.$field['id'].')';
+        $fieldData[$fieldID] = $label.'('.$fieldID.')';
       }
     }
   }
@@ -74,15 +74,17 @@ $sql = "SELECT wp_rg_lead_detail.*,wp_rg_lead_detail_long.value as 'long value'
 //loop thru entry data
 $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 $entryData = array();
+
 foreach($entries as $entry){
-  //field 320 is stored as category number, use cross reference to find text value
-  if($entry['field_number']==320){
-    $value = (isset($catCross[$entry['value']])?$catCross[$entry['value']]:$entry['value']);
+  $fieldNum = (string) $entry['field_number'];
+  //field 302 and 320 is stored as category number, use cross reference to find text value
+  if($fieldNum=='320' || strpos($fieldNum, '302.')!== false){
+    $value = get_CPT_name($entry['value']);
   }else{
     $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
   }
   $value = htmlspecialchars_decode ($value);
-  $entryData[$entry['lead_id']][$entry['field_number']]=$value;
+  $entryData[$entry['lead_id']][$fieldNum]=$value;
 }
 
 // create a file pointer connected to the output stream

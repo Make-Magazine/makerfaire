@@ -25,10 +25,39 @@ if(isset($_GET['cron'])){
     $form  = (isset($_GET['form'])?$_GET['form']:'');
     $limit = (isset($_GET['limit'])?$_GET['limit']:0);
     $start = (isset($_GET['start'])?$_GET['start']:0);
-    if($form!=''){
+    $faire = (isset($_GET['faire'])?$_GET['faire']:'');
+    $type  = (isset($_GET['type'])?$_GET['type']:'');
+
+    //check faire first
+    if($faire!=''){
+      if($type==''){
+        echo 'Fail. You need to provide a form type to continue<Br/>/wp-content/themes/makerfaire/devScripts/manualRunCron.php?cron=update_mfTables&faire=NY17&type=sstartup<br/>';
+      }else{
+        $type = ($type == 'sstartup' ? 'Sponsor Startup': ucwords($type));
+        $faireData = $wpdb->get_row( "select form_ids from wp_mf_faire where faire='".$faire."'");
+        $formIDs = explode(',',trim($faireData->form_ids));
+        foreach($formIDs as $formID){
+          $formData = GFAPI::get_form($formID);
+          $form_type = (isset($formData['form_type'])?$formData['form_type']:'');
+          if($form_type=='') echo 'Form Type not set for form '.$formID.'<br/>';
+          
+          if($type != $form_type){
+            continue;
+          }else{
+            echo 'updating MF tables for form '.$formID.'<br/>';
+            echo ' form type = '.$formData['form_type'].'<br/>';
+            update_mfTables($formID,$limit,$start);
+          }
+        }
+      }
+    }elseif($form!=''){
+      //then use form if faire not set
+      echo 'updating MF tables for form '.$form;
+      $formData = GFAPI::get_form($form);
+      echo ' form type = '.$formData['form_type'].'<br/>';
       update_mfTables($form,$limit,$start);
     }else{
-      echo 'Fail. You need to at least give me a form id to use<Br/>?cron=update_mfTables&form&limit&start<br/>';
+      echo 'Fail. You need to at least give me a form id or faire id to use<Br/>?cron=update_mfTables&form&limit&start<br/>';
     }
   }
 
@@ -41,7 +70,7 @@ if(isset($_GET['cron'])){
   . '?cron=cronRmtData&form=999<Br/>'
   . '?cron=genManTickets&entryID=999&parentID=999<br/>'
   . '?cron=createSignZip&area=abcd<br/>'
-  . '?cron=update_mfTables&form&limit&start';
+  . '?cron=update_mfTables&form=999&faire=ABCD&limit&start';
 }
 
 function createMFSignZip($area) {

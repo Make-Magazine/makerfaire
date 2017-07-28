@@ -1,9 +1,11 @@
 <?php
 //$tableOptions defines any foreign keys in the table that we need to pull additional data for
 $tableOptions = array();
+
 //resources
 $tableOptions['wp_rmt_resources']['fkey'] = array(
         array('fkey' => 'resource_category_id', 'referenceTable'   => 'wp_rmt_resource_categories', 'referenceField'   => 'ID', 'referenceDisplay' => 'category'));
+
 //vendor resources
 $tableOptions['wp_rmt_vendor_resources']['fkey']  = array(
         array('fkey' => 'vendor_id',   'referenceTable' => 'wp_rmt_vendors',   'referenceField' => 'ID', 'referenceDisplay' => 'company_name'),
@@ -16,6 +18,7 @@ $tableOptions['wp_mf_faire_area']['fkey']    = array(
 $tableOptions['wp_mf_faire_subarea']['fkey']    = array(
         array('fkey' => 'area_id',      'referenceTable' => 'wp_mf_faire_area', 'referenceField'   => 'ID', 'referenceDisplay' => 'area'));
 
+//faire subarea
 $tableOptions['wp_mf_faire_subarea']['addlFields']['faire'] = array('fieldName' => 'faire', 'filterType'=>'dropdown', 'fieldLabel' => 'Faire',
     'fkey' => array('fkey' => 'faire', 'referenceTable' => 'wp_mf_faire', 'referenceField'   => 'ID', 'referenceDisplay' => 'faire'),
     'dataSql' =>'(SELECT faire_id from wp_mf_faire_area where wp_mf_faire_area.ID = area_id) as faire'
@@ -23,14 +26,22 @@ $tableOptions['wp_mf_faire_subarea']['addlFields']['faire'] = array('fieldName' 
 $tableOptions['wp_mf_faire_subarea']['addlFields']['assCount'] = array('fieldName' => 'assCount', 'fieldLabel' => 'Assigned',
     'dataSql' =>'(SELECT count(*) from wp_mf_location where wp_mf_faire_subarea.ID = subarea_id) as assCount'
     );
+
+//faire schedule
 $tableOptions['wp_mf_schedule']['addlFields']['exName'] = array('fieldName' => 'exName', 'fieldLabel' => 'Exhibit Name');
 $tableOptions['wp_mf_schedule']['addlFields']['subarea'] = array('fieldName' => 'subarea', 'fieldLabel' => 'subarea');
+
+//entry attributes
 $tableOptions['wp_rmt_entry_attributes']['fkey']    = array(
         array('fkey' => 'attribute_id', 'referenceTable' => 'wp_rmt_entry_att_categories', 'referenceField'   => 'ID', 'referenceDisplay' => 'category'),
         array('fkey' => 'user',         'referenceTable' => 'wp_users',                    'referenceField'   => 'ID', 'referenceDisplay' => 'user_email'));
+
+//entry attention
 $tableOptions['wp_rmt_entry_attn']['fkey']    = array(
         array('fkey' => 'attn_id',      'referenceTable' => 'wp_rmt_attn', 'referenceField' => 'ID', 'referenceDisplay' => 'value'),
         array('fkey' => 'user',         'referenceTable' => 'wp_users',    'referenceField' => 'ID', 'referenceDisplay' => 'user_email'));
+
+//entry resources
 $tableOptions['wp_rmt_entry_resources']['fkey']    = array(
         array('fkey' => 'resource_id',  'referenceTable' => 'wp_rmt_resources', 'referenceField' => 'ID', 'referenceDisplay' => 'type'),
         array('fkey' => 'user',         'referenceTable' => 'wp_users',         'referenceField' => 'ID', 'referenceDisplay' => 'user_email'));
@@ -47,3 +58,8 @@ $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
     'fieldName' => 'event_type', 'filterType'=>'dropdown','fieldLabel'=>'Event Type', 'enableCellEdit' => true,
     'options' => array('Mini' => 'Mini', 'Featured' => 'Featured', 'Flagship' => 'Flagship', 'School' => 'School')
   );
+
+//Ribbons
+$tableOptions['wp_mf_ribbons']['addlFields']['form_id'] = array('fieldName' => 'form_id', 'fieldLabel' => 'Form ID',
+    'dataSql' =>'(SELECT form_id from wp_rg_lead where wp_rg_lead.ID = entry_id) as form_id'
+    );

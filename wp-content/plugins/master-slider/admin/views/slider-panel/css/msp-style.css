@@ -2624,3 +2624,10 @@ New pro tab styles
     color: white;
 }
 
+#upgrade_to_pro .form-table th{
+    width:0;
+    padding:0;
+}
+#upgrade_to_pro .form-table td{
+    padding:0;
+}

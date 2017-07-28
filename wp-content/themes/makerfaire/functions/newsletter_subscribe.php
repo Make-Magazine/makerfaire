@@ -13,15 +13,15 @@ function subscribe_return_path_overlay() { ?>
           <div class="col-sm-4 overlay-2">
             <h2>Get the Magazine</h2>
             <p>Make: is the voice of the Maker Movement, empowering, inspiring, and connecting Makers worldwide to tinker and hack. Subscribe to Make Magazine Today!</p>
-            <a class="black-overlay-btn" target="_blank" href="https://readerservices.makezine.com/mk/default.aspx?utm_source=makerfaire.com&utm_medium=brand+bar&utm_campaign=mag+sub&pc=MK&pk=M5BMFR">SUBSCRIBE</a>
+            <a class="black-overlay-btn" target="_blank" href="https://readerservices.makezine.com/mk/default.aspx?utm_source=makerfaire.com&utm_medium=brand+bar&utm_campaign=mag+sub&pc=MK&pk=M7GMFE">SUBSCRIBE</a>
           </div>
           <div class="col-sm-4 overlay-3">
             <h2>Sign Up for the Maker Faire Newsletter</h2>
             <p>Keep informed, stay inspired.</p>
             <form class="sub-form whatcounts-signup1o" action="http://whatcounts.com/bin/listctrl" method="POST">
-              <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A"/>
-              <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
-              <input type="hidden" name="multiadd" value="1" />
+              <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
+              <input type="hidden" name="custom_list_makerfaire" value="yes" />
+              <input type="hidden" name="custom_list_makermedia" value="yes" />
               <input type="hidden" name="cmd" value="subscribe"/>
               <input type="hidden" name="custom_source" value="Subscribe return path overlay"/>
               <input type="hidden" name="custom_incentive" value="none"/>
@@ -78,33 +78,31 @@ function display_thank_you_modal_if_signed_up() { ?>
             ?>
           <h4>You might also like these newsletters:</h4>
           <form class="whatcounts-signup2" action="http://whatcounts.com/bin/listctrl" method="POST">
+            <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
             <input type="hidden" name="cmd" value="subscribe" />
-            <input type="hidden" name="multiadd" value="1" />
             <input type="hidden" id="email" name="email" value="" />
             <input type="hidden" id="format_mime" name="format" value="mime" />
-            <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
             <input type="hidden" name="custom_url" value="<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" />
-            <input type="hidden" id="format_mime" name="format" value="mime" />
             <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $_SERVER["HTTP_HOST"]; ?>" />
             <label class="list-radio pull-right">
-              <input type="checkbox" id="list_6B5869DC547D3D46B52F3516A785F101_yes" name="slid_1" value="6B5869DC547D3D46B52F3516A785F101" />
+              <input type="checkbox" id="list_6B5869DC547D3D46B52F3516A785F101_yes" name="custom_list_makenewsletter" value="yes" />
               <span for="list_6B5869DC547D3D46B52F3516A785F101_yes" class="newcheckbox"></span>
             </label>
             <h4>Make: Weekly Digest</h4>
             <p>The best stuff each week from Make: magazine</p>
             <hr />
             <label class="list-radio pull-right">
-              <input type="checkbox" id="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" name="slid_2" value="6B5869DC547D3D4637EA6E33C6C8170D" />
+              <input type="checkbox" id="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" name="custom_list_makeeducation" value="yes" />
               <span for="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" class="newcheckbox"></span>
             </label>
             <h4>Make: Education</h4>
             <p>How making is transforming learning</p>
             <hr />
             <label class="list-radio pull-right">
-              <input type="checkbox" id="list_6B5869DC547D3D467B33E192ADD9BE4B_yes" name="slid_3" value="6B5869DC547D3D467B33E192ADD9BE4B" />
+              <input type="checkbox" id="list_6B5869DC547D3D467B33E192ADD9BE4B_yes" name="custom_list_makerpro" value="yes" />
               <span for="list_6B5869DC547D3D467B33E192ADD9BE4B_yes" class="newcheckbox"></span>
             </label>
             <h4>Maker Pro</h4>
