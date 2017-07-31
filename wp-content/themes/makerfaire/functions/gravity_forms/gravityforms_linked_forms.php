@@ -290,12 +290,13 @@ function GSP_after_submission($entry, $form ){
                 break;
             }
             $updField = (isset($entry[$sub_field_id])?$entry[$sub_field_id]:'');
-            
+
             //use mf_update_entry_field to update the db to avoid duplicates
             if(!$field->gwreadonly_enable){
               mf_update_entry_field( $origEntryID, $orig_field_id, $updField );
+              $updEntry = GFAPI::get_entry($origEntryID);
               $origForm = GFAPI::get_form($origform_id);
-              GFRMTHELPER::gravityforms_makerInfo($origEntry,$origForm,$type='update');
+              GFRMTHELPER::gravityforms_makerInfo($updEntry,$origForm,$type='update');
             }
           }
         }
