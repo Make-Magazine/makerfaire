@@ -23,7 +23,7 @@
             </div>
           </div>
           <div class="filters ng-cloak" ng-if="$ctrl.faireMarkers">
-            <p class="map-filter-title">Sort By Type</p>
+            <p class="map-filter-title">Select by Type</p>
             <faires-map-filter class="map-filter-flagship" default-state="true" filter="Flagship">
               Flagship
             </faires-map-filter>

@@ -171,36 +171,33 @@ $return = '
 			<td>
         <label >Email Note To:</label><br />';
 
-				$emailto1 = array("Alasdair Allan"          => "alasdair@makezine.com",
-                          "Audrey Donaldson"        => "audrey@makermedia.com",
-                          "Bridgette Vanderlaan"    => "bvanderlaan@mac.com",
-                          "Caleb Kraft"             => "caleb@makermedia.com",
+				$emailto1 = array("Caleb Kraft"             => "caleb@makermedia.com",
                           "Dale Dougherty"          => "dale@makermedia.com",
-                          "DC Denison"              => "dcdenison@makermedia.com",
                           "Jay Kravitz"             => "jay@thecrucible.org",
                           "Jess Hobbs"              => "jess@makermedia.com",
                           "Jonathan Maginn"         => "jonathan.maginn@sbcglobal.net",
-                          "Kate Rowe"               => "krowe@makermedia.com");
+                          "DC Denison"              => "dcdenison@mac.com",
+                          "Jonathon Christian"      => "jonathan.a.christian@gmail.com",
+                          "Siana Alcorn"            => "siana@makermedia.com",
+                          "Tami Jo Benson"          => "tj@tamijo.com");
         $emailto2 = array("Kerry Moore"             => "kmoore@makermedia.com",
                           "Kim Dow"                 => "dow@dowhouse.com",
                           "Louise Glasgow"          => "lglasgow@makermedia.com",
                           "Matt Stultz"             => "mstultz@makermedia.com",
-                          "Emily McGrath"           => "emcgrath@makermedia.com",
                           "Rob Bullington"          => "rbullington@makermedia.com",
                           "Sabrina Merlo"           => "smerlo@makermedia.com",
-                          "Sherry Huss"             => "sherry@makermedia.com",
-                          "Siana Alcorn"            => "siana@makermedia.com",
-                          "Tami Jo Benson"          => "tj@tamijo.com");
-        $emailtoaliases = array("3D Printing"       => "3dprinting@makermedia.com",
+                          "Sherry Huss"             => "sherry@makermedia.com");
+        $emailtoaliases = array("Dev"               => "dev@makermedia.com",
+                                "3D Printing"       => "3dprinting@makermedia.com",
                                 "Editors"           => "editor@makezine.com",
                                 "Maker Relations"   => "makers@makerfaire.com",
-                                "Marketing"         => "marketing@makermedia.com",
                                 "PR"                => "pr@makerfaire.com",
-                                "Shed"              => "shedmakers@makermedia.com",
                                 "Education"         => "education@makermedia.com",
                                 "Sales"             => "sales@makerfaire.com",
                                 "Sustainability"    => "sustainability@makerfaire.com",
-                                "Speakers"          => "speakers@makerfaire.com");
+                                "Speakers"          => "speakers@makerfaire.com",
+                                "MakerShare"        => "admin@makershare.com"
+                    );
 
         if(in_array($form['id'], array(64, 65, 67, 68))){
            $emailtoaliases["National Team"] = "nationalmakers@makerfaire.com";
@@ -208,19 +205,22 @@ $return = '
 				$return .=
        '<div style="float:left">';
           foreach ( $emailtoaliases as $name => $email ) {
-            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" /><strong>'.$name.'</strong> <br />';
+            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'
+                    . '<span title="'.$email.'"><strong>'.$name.'</strong></span><br />';
 					 }
         $return .= '
 				</div>
 			  <div style="float:left">';
           foreach ( $emailto1 as $name => $email ) {
-            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.'<br />';
+            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'
+                    .  '<span title="'.$email.'">'.$name.'</span><br />';
 					}
         $return .=   '
 				</div>
 			  <div style="float:left">';
           foreach ( $emailto2 as $name => $email ) {
-            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'.$name.' <br />';
+            $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="'.$email.'" />'
+                    .  '<span title="'.$email.'">'.$name.'</span><br />';
 					}
         $return .= '
 				</div>

@@ -76,7 +76,7 @@ get_header();
           $small_bottom_text = get_sub_field('small_bottom_text');
           $event_url = get_sub_field('event_url');
           $button_1_text = get_sub_field('button_1_text');
-          $button_1_url = get_sub_field('button_1_url'); 
+          $button_1_url = get_sub_field('button_1_url');
           $button_2_text = get_sub_field('button_2_text');
           $button_2_url = get_sub_field('button_2_url'); ?>
 
@@ -151,7 +151,10 @@ get_header();
 
   <div class="container mf-sumome">
     <h2>Share Your Maker Faire Experience</h2>
-    <h4>#makerfaire and #MFBA17 on <i aria-hidden="true" class="fa fa-twitter"></i>, <i aria-hidden="true" class="fa fa-instagram"></i></h4>
+    <h4>#MFNY17 and #makerfaire  on
+      <a href="https://twitter.com/makerfaire"><i aria-hidden="true" class="fa fa-twitter"></i></a>
+      <a href="https://www.instagram.com/makerfaire/"><i aria-hidden="true" class="fa fa-instagram"></i></a>
+      <a href="https://www.facebook.com/makerfaire"><i class="fa fa-facebook" aria-hidden="true"></i></a></h4>
     <div class="clearfix"></div>
     <script async src="https://d36hc0p18k1aoc.cloudfront.net/public/js/modules/tintembed.js"></script>
     <div class="tintup" data-columns="" data-id="makerfaire" data-infinitescroll="true" data-mobilescroll="true" data-personalization-id="764268" style="height:600px;width:100%;"></div><!-- END TINT SCRIPT -->

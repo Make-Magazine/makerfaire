@@ -57,9 +57,9 @@
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
           <form class="sub-form whatcounts-signup1" action="http://whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire Newsletter -->
-            <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
-            <input type="hidden" name="multiadd" value="1" />
+            <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
+            <input type="hidden" name="custom_list_makerfaire" value="yes" />
+            <input type="hidden" name="custom_list_makermedia" value="yes" />
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
@@ -100,9 +100,9 @@
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
           <form class="sub-form whatcounts-signup1m" action="http://whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire Newsletter -->
-            <input type="hidden" name="slid_2" value="6B5869DC547D3D46941051CC68679543" /><!-- Maker Media Newsletter -->
-            <input type="hidden" name="multiadd" value="1" />
+            <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
+            <input type="hidden" name="custom_list_makerfaire" value="yes" />
+            <input type="hidden" name="custom_list_makermedia" value="yes" />
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
@@ -390,7 +390,7 @@
   <div class="fancybox" style="display:none;">
     <h3>Yes, I'm interested in staying in touch with the School Maker Faire Program</h3>
     <form name="MailingList" action="http://whatcounts.com/bin/listctrl" method="POST">
-      <input type=hidden name="slid" value="6B5869DC547D3D4637EA6E33C6C8170D" />
+      <input type="hidden" name="slid" value="6B5869DC547D3D4637EA6E33C6C8170D" />
       <input type="hidden" name="cmd" value="subscribe" />
       <input type="hidden" name="custom_host" value="makerfaire.com" />
       <input type="hidden" name="custom_incentive" value="none" />

@@ -39,6 +39,26 @@ jQuery(window).load(function() {
     var href = jQuery(this).attr('href');
     jQuery(this).attr('href', href + oldFilters);
   });
+  
+  jQuery( "a[title^='View this entry']" ).each(function() {
+    var filterParam = getAllUrlParams().filterField;
+
+    var oldFilters = '';
+    // if there are, be sure to include them
+    if(filterParam == undefined){
+      //keep going, nothing to add here
+    }else if(Array.isArray(filterParam)){
+      //add the current filterField parameters to the new URL
+      for (i = 0, len = filterParam.length, oldFilters = ""; i < len; i++) {
+        oldFilters += '&filterField[]='+filterParam[i];
+      }
+    }else{
+      oldFilters = '&filterField[]='+filterParam;
+    }
+
+    var href = jQuery(this).attr('href');
+    jQuery(this).attr('href', href + oldFilters);
+  });
 
   //overwrite the 'Search' gravity form JSfunction
   Search = function(sort_field_id, sort_direction, form_id, search, filter, field_id, operator) {
