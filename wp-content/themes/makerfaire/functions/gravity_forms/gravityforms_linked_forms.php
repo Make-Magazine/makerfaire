@@ -290,6 +290,7 @@ function GSP_after_submission($entry, $form ){
                 break;
             }
             $updField = (isset($entry[$sub_field_id])?$entry[$sub_field_id]:'');
+            
             //use mf_update_entry_field to update the db to avoid duplicates
             if(!$field->gwreadonly_enable){
               mf_update_entry_field( $origEntryID, $orig_field_id, $updField );
