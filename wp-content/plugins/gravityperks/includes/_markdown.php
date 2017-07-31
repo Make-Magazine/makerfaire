@@ -4,6 +4,6 @@
 // Include this file as a function call for markdown();
 require_once( GravityPerks::get_base_path() . '/vendor/autoload.php' );
 
-use \Michelf\Markdown;
+$Parsedown = new Parsedown();
 
-return Michelf\Markdown::defaultTransform( $string );
+return $Parsedown->text( $string );

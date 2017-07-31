@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.2.25
+
+	- Replaced Markdown library to resolve several PHP errors.
+
+## 1.2.24
+
+	- Fixed fatal error when Gravity Forms was deactivated before Gravity Perks.
+
 ## 1.2.23
 
 	- Fixed fatal error w/ older versions of PHP and the usage of namespaces.

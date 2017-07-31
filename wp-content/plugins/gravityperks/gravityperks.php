@@ -3,7 +3,7 @@
  * Plugin Name: Gravity Perks
  * Plugin URI: http://gravitywiz.com/
  * Description: Effortlessly install and manage small functionality enhancements (aka "perks") for Gravity Forms.
- * Version: 1.2.23
+ * Version: 1.2.25
  * Author: Gravity Wiz
  * Author URI: http://gravitywiz.com/
  * License: GPL2
@@ -28,7 +28,7 @@ add_action( 'plugins_loaded', array( 'GravityPerks', 'init_perk_as_plugin_functi
 
 class GravityPerks {
 
-    public static $version = '1.2.23';
+    public static $version = '1.2.25';
     public static $tooltip_template = '<h6>%s</h6> %s';
 
     private static $basename;
@@ -756,7 +756,7 @@ class GravityPerks {
 
     	// @todo Revisit this function; see pre 1.2.21 version for original version. Has been stripped down for now.
 
-		$error = rgget( 'gwp_error' );
+		$error = isset( $_GET['gwp_error'] ) ? $_GET['gwp_error'] : false;
 		if( ! $error ) {
 			return;
 		}
@@ -764,7 +764,7 @@ class GravityPerks {
 	    $is_error = true;
         $message = '';
 
-	    switch( rgget( 'gwp_error' ) ) {
+	    switch( $error ) {
 		    case 'networkperks':
 			    $message = __( '<strong>Gravity Perks</strong> must be network activated before a <strong>perk</strong> can be network activated.', 'gravityperks' );
 			    break;
