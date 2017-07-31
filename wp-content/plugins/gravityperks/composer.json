@@ -1,5 +1,5 @@
 {
 	"require": {
-		"Michelf/php-markdown": "1.7.0"
+		"erusev/parsedown": "1.6.3"
 	}
 }
