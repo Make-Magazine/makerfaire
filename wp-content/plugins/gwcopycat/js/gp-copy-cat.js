@@ -17,8 +17,8 @@
 
 			var $formWrapper = $( '#gform_wrapper_{0}'.format( self.formId ) );
 
-			//$formWrapper.on( 'click.gpcopycat', '.gwcopy input[type="checkbox"]', function() {
-      jQuery('.gwcopy input[type="checkbox"]').on( 'click', function() {
+			$formWrapper.on( 'change', '.gwcopy input[type="checkbox"]', function() {
+
 				if( $( this ).is( ':checked' ) ) {
 					self.copyValues( this );
 				} else {
@@ -26,7 +26,7 @@
 				}
 			} );
 
-			$formWrapper.on( 'change.gpcopycat', '.gwcopy input:not(:checkbox), .gwcopy textarea, .gwcopy select', function() {
+			$formWrapper.on( 'change', '.gwcopy input:not(:checkbox), .gwcopy textarea, .gwcopy select', function() {
 				self.copyValues( this );
 			} );
 
