@@ -182,3 +182,27 @@ function change_column_data( $value, $form_id, $field_id, $entry, $query_string 
   }
   return $value;
 }
+/* This filter is used to correct the current form when in entry view.
+ * When the entry id is set manually the form is not corrected
+ */
+
+add_filter( 'gform_admin_pre_render', 'correct_currententry_formid' );
+function correct_currententry_formid( $form ) {
+    $current_page = $_GET['page'];
+    $current_view = $_GET['view'];
+    $current_formid = $_GET['id'];
+    $current_entryid = $_GET['lid'];
+    
+    if ($current_page=='gf_entries' && $current_view=="entry"){
+      // Different form is in URL than in the form itself.
+      global $wpdb;
+      $result = $wpdb->get_results( $wpdb->prepare( "SELECT id,form_id from wp_rg_lead WHERE id=%d", $current_entryid) );
+      if ($result[0]) {
+        if ($current_formid != $result[0]->form_id)
+        {
+          $form = GFFormsModel::get_form_meta( absint( $result[0]->form_id ) );
+        }
+      }
+    }
+    return $form;
+}
