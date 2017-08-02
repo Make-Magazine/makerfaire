@@ -7,11 +7,11 @@ namespace Composer\Autoload;
 class ComposerStaticInite9b71de6b8325833c0332b325d652541
 {
     public static $prefixesPsr0 = array (
-        'M' => 
+        'P' => 
         array (
-            'Michelf' => 
+            'Parsedown' => 
             array (
-                0 => __DIR__ . '/..' . '/michelf/php-markdown',
+                0 => __DIR__ . '/..' . '/erusev/parsedown',
             ),
         ),
     );

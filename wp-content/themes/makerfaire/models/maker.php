@@ -262,10 +262,27 @@ class maker {
 
     $results = $wpdb->get_results($query, ARRAY_A );
     foreach($results as $result){
-      if($result['completed']==NULL || $result['completed'] == '0000-00-00 00:00:00'){
-        $return['toDo'][]=$result;
-      }else{
-        $return['done'][]=$result;
+      // is the task active?
+      $isActive = false; //default
+
+      //separate out task_id from the results into form id and task id
+      //ie: 166-58c17deb68af3  formID = 166   taskID = 58c17deb68af3
+      $formID  = substr($result['task_id'], 0, strpos($result['task_id'], "-"));
+      $task_id = substr($result['task_id'], strpos($result['task_id'], "-") + 1);
+
+      //pull the associated form and look for tasks
+      $form = GFAPI::get_form($formID);
+      if(isset($form['tasks'])){
+        //check if this task is active
+        $isActive = $form['tasks'][$task_id]['isActive'];
+      }
+
+      if($isActive){
+        if($result['completed']==NULL || $result['completed'] == '0000-00-00 00:00:00'){
+          $return['toDo'][]=$result;
+        }else{
+          $return['done'][]=$result;
+        }
       }
     }
     return $return;

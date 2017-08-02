@@ -78,7 +78,7 @@ $entryData = array();
 foreach($entries as $entry){
   $fieldNum = (string) $entry['field_number'];
   //field 302 and 320 is stored as category number, use cross reference to find text value
-  if($fieldNum=='320' || strpos($fieldNum, '302.')!== false){
+  if($fieldNum=='320' || strpos($fieldNum, '321.')!== false || strpos($fieldNum, '302.')!== false){
     $value = get_CPT_name($entry['value']);
   }else{
     $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
