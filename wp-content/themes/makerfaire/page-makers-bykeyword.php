@@ -26,10 +26,40 @@ $offset=($currentpage-1)*$page_size;
 $total_count = 0;
 $f = $wp_query->query_vars['f'];
 //$search_criteria = array( 'key' => '147', 'value' =>  $search_term);
-$search_criteria['status'] = 'active';
-$search_criteria['field_filters'][] = array( '151' => '1', 'operator' => 'contains','value' => $search_term);
-$search_criteria['field_filters'][] = array( '15' => '1', 'operator' => 'contains','value' => $search_term);
-$search_criteria['field_filters'][] = array( '303' => '1', 'value' => 'Accepted');
+//$search_criteria['status'] = 'active';
+$search_criteria['field_filters'][] = array( 'key' => '16', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '320', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '321', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '151', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '109', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '110', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '112', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '154', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '155', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '156', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '157', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '158', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '159', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '160', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '209', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '210', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '211', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '212', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '213', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '214', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '215', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '216', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '234', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '258', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '259', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '260', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '261', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '262', 'operator' => 'contains','value' => $search_term);
+$search_criteria['field_filters'][] = array( 'key' => '263', 'operator' => 'contains','value' => $search_term);
+
+$search_criteria['field_filters']['mode'] = 'any';
+
+
 
 $sorting_criteria = array('key' => '151', 'direction' => 'ASC' );
 $paging_criteria = array('offset' => $offset, 'page_size' => $page_size );
@@ -68,12 +98,16 @@ get_header(); ?>
 
 			<?php
       foreach ($entries as $entry) {
-        //check if entry marked for no public view
+        //check if entry marked for no public view or not accepted
         $validEntry = true;
         foreach($entry as $key=>$field ) {
           $pos = strpos($key, '304.');
           if ($pos !== false) {
             if($field=='no-public-view')  $validEntry = false;
+          }
+          $pos = strpos($key, '303');
+          if ($pos !== false ){
+              if($field!='Accepted')  $validEntry = false;
           }
         }
         if($validEntry) {
