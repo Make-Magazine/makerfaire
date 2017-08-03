@@ -454,7 +454,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="label"){
       vars = {"formSelect":[],"formType":["Exhibit","Startup Sponsor","Sponsor","Show Management"],
-
               "faire": faire,
               "dispFormID":false,
               "useFormSC": true,

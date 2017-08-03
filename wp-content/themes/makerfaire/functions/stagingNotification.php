@@ -45,14 +45,14 @@ function change_email_for_wp($notification) {
   if(class_exists('Jetpack')){
   if (Jetpack::is_staging_site()) {
     $notification = array(
-      'to'          => 'kate@makermedia.com,alicia@makermedia.com',
+      'to'          => 'alicia@makermedia.com',
       'bcc'         => '',
       'from'        => 'staging@makermedia.com',
       'subject'     => $notification['subject'],
       'message'     => $notification['message'],
       'headers'     => $notification['headers'],
       'toType'      => 'email',
-      'attachments' => $args['attachments'],
+      'attachments' => (isset($args)&& isset($args['attachments'])?$args['attachments']:''),
     );
   }elseif (Jetpack::is_development_mode()) {
     if(defined('MF_OVERRITE_EMAIL')){

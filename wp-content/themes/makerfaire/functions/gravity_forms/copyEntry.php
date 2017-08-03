@@ -4,6 +4,9 @@
  */
 add_filter( 'gform_pre_render', 'maybe_copyEntry',999 );
 function maybe_copyEntry( $form ) {
+  if(!isset($form['form_type'])){
+    return $form;
+  }
   //only use copy entry modal on page 1
   $current_page = GFFormDisplay::get_current_page( $form['id'] );
   if ( $current_page == 1 ) {
@@ -107,9 +110,6 @@ function maybe_copyEntry( $form ) {
             case 'page':
             case 'date':
             case 'fileupload':
-              //var_dump($field);
-              //echo '<br/>';
-              //break;
               //do nothing
               break;
             default:

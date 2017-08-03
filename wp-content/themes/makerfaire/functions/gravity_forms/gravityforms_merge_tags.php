@@ -20,6 +20,8 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
     $merge_tags[] = array('label' => 'Scheduled Locations', 'tag' => '{sched_loc}');
     $merge_tags[] = array('label' => 'Faire ID', 'tag' => '{faire_id}');
+    $merge_tags[] = array('label' => 'Resource Category Lock Ind', 'tag' => '{rmt_res_cat_lock}');
+    $merge_tags[] = array('label' => 'Attribute Lock Ind', 'tag' => '{rmt_att_lock}');
 
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
@@ -39,14 +41,16 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
 * @return string
 */
 function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
+  global $wpdb;
   $entry_id = (isset($lead['id'])?$lead['id']:'');
+
   //faire id
   if (strpos($text, '{faire_id}')       !== false) {
-    global $wpdb;
     $sql = "select faire from wp_mf_faire where FIND_IN_SET (".$lead['form_id'].",wp_mf_faire.form_ids)> 0";
     $faireId = $wpdb->get_var($sql);
     $text = str_replace('{faire_id}', $faireId, $text);
   }
+
   //Entry Schedule
   if (strpos($text, '{entry_schedule}') !== false) {
     $schedule = get_schedule($lead);
@@ -57,20 +61,54 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   if (strpos($text, '{sched_loc}') !== false) {
     $schedule = get_schedule($lead,true);
     $text = str_replace('{sched_loc}', $schedule, $text);
-    //die($text);
   }
+
   //Entry Resources
-  if (strpos($text, '{entry_resources}') !== false) {
+  if (strpos($text, '{entry_resources') !== false) {
+    $startPos         = strpos($text, '{entry_resources'); //pos of start of merge tag
+    $closeBracketPos  = strpos($text, '}', $startPos); //find the closing bracket of the merge tag
+
+    //pull full merge tag
+    $res_merge_tag    = substr ( $text , $startPos, $closeBracketPos - $startPos + 1);
+
+    //exclude resources
+    $excResources = ''; //default
+    $excStartPos  = strpos($res_merge_tag, 'not="'); //pos of start of excluded resource id's
+
+    //are there resources to exclude?
+    if ($excStartPos !== false) {
+      $excStartPos += 5;   //add 5 to move past the not="
+      //find the end of the not section
+      $excEndPos        = strpos($res_merge_tag, '"', $excStartPos);
+      $excResources     = substr($res_merge_tag , $excStartPos, $excEndPos - $excStartPos);
+    }
+
+    //include resources
+    $incResources = ''; //default
+    $incStartPos  = strpos($res_merge_tag, ':');   //pos of start of excluded resource id's
+
+    //are there specific resources to include?
+    if ($incStartPos !== false) {
+      $incStartPos += 1;   //add 1 to move past the :"
+      //find the end of the include section
+      $incEndPos        = strpos($res_merge_tag, ' ', $incStartPos);
+
+      //can be ended by a space or the closing bracket
+      if ($incEndPos === false) $incEndPos = strpos($res_merge_tag, '}', $incStartPos);
+
+      $incResources     = substr($res_merge_tag , $incStartPos, $incEndPos - $incStartPos);
+    }
+
     //set lead meta field res_status to sent
     gform_update_meta( $entry_id, 'res_status','sent' );
-    $resTable = '<table cellpadding="10"><tr><th>Resource</th><th>Quantity</th></tr>';
-    $resources = get_mf_resources($lead);
+    $resTable = '<table cellpadding="10" width=100%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
+    $resources = get_mf_resources($lead, $excResources, $incResources);
 
     foreach($resources as $entRes){
       $resTable .= '<tr><td>'.$entRes['resource'].'</td><td>'.$entRes['qty'].'</td></tr>';
     }
     $resTable .= '</table>';
-    $text = str_replace('{entry_resources}', $resTable, $text);
+    $text = str_replace($res_merge_tag, $resTable, $text);
   }
 
   //individual attributes {entry_attributes:2,4,6,9}
@@ -83,7 +121,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $attIDs = substr($text, $attStartPos+1,$closeBracketPos-$attStartPos-1);
 
     $attArr = explode(",",$attIDs);
-    $attTable  = '<table cellpadding="10"><tr><th>Attribute</th><th>Value</th></tr>';
+    $attTable  = '<table cellpadding="10"  width=100%><tr><th width="40%">Attribute</th><th>Value</th></tr>';
     foreach($attArr as $att){
       $AttText = get_attribute($lead,trim($att));
       if(!empty($AttText)){
@@ -103,7 +141,6 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
 
   //attention field
   if (strpos($text, '{CONF_COMMENT}') !== false) {
-    global $wpdb;
     $sql = "SELECT comment "
         . " from wp_rmt_entry_attn,wp_rmt_attn"
         . " where entry_id = ".$entry_id
@@ -112,6 +149,48 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $attnText = $wpdb->get_var($sql);
     $text = str_replace('{CONF_COMMENT}', $attnText, $text);
   }
+
+  //resource lock indicator
+  if (strpos($text, '{rmt_res_cat_lock') !== false) {
+    $startPos        = strpos($text, '{rmt_res_cat_lock'); //pos of start of merge tag
+    $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
+    $closeBracketPos = strpos($text, '}', $startPos);  //find the closing bracket of the merge tag
+
+    //resource ID
+    $RMTcatID = substr($text, $RmtStartPos+1,$closeBracketPos-$RmtStartPos-1);
+
+    //is this a valid RMT field??
+    if(is_numeric($RMTcatID)) {
+      //find locked value of RMT field
+      $lockCount = $wpdb->get_var('SELECT count(*) as count
+        FROM `wp_rmt_entry_resources`
+        left outer join wp_rmt_resources
+            on wp_rmt_entry_resources.resource_id = wp_rmt_resources.id
+        where wp_rmt_resources.resource_category_id = '.$RMTcatID.' and lockBit=1 and entry_id = '.$entry_id);
+      $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
+      $text = str_replace($mergeTag, ($lockCount>0?'Yes':'No'), $text);
+    }
+  }
+
+
+  //attribute lock indicator
+  if (strpos($text, '{rmt_att_lock') !== false) {
+    $startPos        = strpos($text, '{rmt_att_lock'); //pos of start of merge tag
+    $RmtStartPos     = strpos($text, ':',$startPos);   //pos of start RMT field ID
+    $closeBracketPos = strpos($text, '}', $startPos);  //find the closing bracket of the merge tag
+
+    //attribute ID
+    $RMTid = substr($text, $RmtStartPos+1,$closeBracketPos-$RmtStartPos-1);
+
+    //is this a valid RMT field??
+    if(is_numeric($RMTid)) {
+      //find locked value of RMT field
+      $lockBit = $wpdb->get_var('SELECT lockBit FROM `wp_rmt_entry_attributes` where attribute_id = '.$RMTid. ' and entry_id = '.$entry_id.' limit 1');
+      $mergeTag = substr($text, $startPos,$closeBracketPos-$startPos+1);
+      $text = str_replace($mergeTag, ($lockBit==1?'Yes':'No'), $text);
+    }
+  }
+
   return $text;
 }
 
@@ -156,24 +235,36 @@ function get_attribute($lead,$attID){
   return $return;
 }
 
+/*
+ * Return array of resource information for lead
+ * $lead   = Entry object
+ * $excRes = comma separatd list of resource catgories to exclude
+ * $incRes = comma separatd list of resource catgories to include
+ */
 /* Return array of resource information for lead*/
-function get_mf_resources($lead){
+function get_mf_resources($lead, $excRes = '', $incRes=''){
   global $wpdb;
   $return = array();
   $entry_id = (isset($lead['id'])?$lead['id']:'');
 
   if($entry_id!=''){
+    $excSQL = ($excRes!='' ? " and wp_rmt_resource_categories.ID not in($excRes) " : '');
+    $incSQL = ($incRes!='' ? " and wp_rmt_resource_categories.ID in($incRes) " : '');
+
     //gather resource data
     $sql = "SELECT er.qty, type, wp_rmt_resource_categories.category as item "
             . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
             . "where er.resource_id = wp_rmt_resources.ID "
             . "and resource_category_id = wp_rmt_resource_categories.ID  "
+            . $excSQL . $incSQL
             . "and er.entry_id = ".$entry_id." order by item ASC, type ASC";
+
     $results = $wpdb->get_results($sql);
     foreach($results as $result){
       $return[]= array('resource'=>$result->item.' - '.$result->type, 'qty'=> $result->qty);
     }
   }
+
   return $return;
 }
 

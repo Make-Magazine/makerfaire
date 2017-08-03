@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class GP_Read_Only extends GWPerk {
 
@@ -285,7 +285,7 @@ class GP_Read_Only extends GWPerk {
                     $index++;
                 }
 
-                if( $choice['isSelected'] ) {
+                if( isset($choice['isSelected']) && $choice['isSelected'] ) {
                     $full_input_id = sprintf( '%d.%d', $field['id'], $index );
                     $price         = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
                     $choice_value  = $field['type'] == 'product' ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
