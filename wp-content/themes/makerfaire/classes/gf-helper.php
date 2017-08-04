@@ -327,23 +327,25 @@ function MF_resend_notifications() {
 }
 
 add_filter( 'template_include', 'wpm_load_script_for_template', 1000 );
-        function wpm_load_script_for_template( $template ){
-        wp_enqueue_script( 'kendoJs1', get_template_directory_uri() . '/lib/Kendo/woahbar/woahbar.js', array('jquery'));
-        wp_enqueue_script( 'kendoJs2', get_template_directory_uri() . '/lib/Kendo/content/js/kendo.all.min.js', array('jquery'));
-        wp_enqueue_script( 'kendoJs3', get_template_directory_uri() . '/lib/Kendo/content/js/kendo.timezones.min.js', array('jquery'));
-        wp_enqueue_script( 'kendoJs4', get_template_directory_uri() . '/lib/Kendo/content/shared/js/console.js', array('jquery'));
-        wp_enqueue_script( 'kendoJs6', get_template_directory_uri() . '/lib/Kendo/content/shared/js/prettify.js', array('jquery'));
- 
-        wp_enqueue_style('kendo1-styles', get_template_directory_uri() . '/lib/Kendo', array());
-        wp_enqueue_style('kendo2-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.common.min.css', array());
-        wp_enqueue_style('kendo3-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.rtl.min.css', array());
-        wp_enqueue_style('kendo4-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.default.min.css', array());
-        wp_enqueue_style('kendo5-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.default.mobile.min.css', array());
-        wp_enqueue_style('kendo6-styles', get_template_directory_uri() . '/lib/Kendo/content/css/dataviz/kendo.dataviz.min.css', array());
-        wp_enqueue_style('kendo7-styles', get_template_directory_uri() . '/lib/Kendo/content/css/dataviz/kendo.dataviz.default.min.css', array());
-        wp_enqueue_style('kendo8-styles', get_template_directory_uri() . '/lib/Kendo/styles/examples.css', array());
- 		    wp_enqueue_style('kendo9-styles', get_template_directory_uri() . '/lib/Kendo/woahbar/woahbar.css', array());
- 
-        return $template; }
+function wpm_load_script_for_template( $template ){
+  if ((strpos($template, 'page-mfscheduler.php') !== false) ) {
+    wp_enqueue_script( 'kendoJs1', get_template_directory_uri() . '/lib/Kendo/woahbar/woahbar.js', array('jquery'));
+    wp_enqueue_script( 'kendoJs2', get_template_directory_uri() . '/lib/Kendo/content/js/kendo.all.min.js', array('jquery'));
+    wp_enqueue_script( 'kendoJs3', get_template_directory_uri() . '/lib/Kendo/content/js/kendo.timezones.min.js', array('jquery'));
+    wp_enqueue_script( 'kendoJs4', get_template_directory_uri() . '/lib/Kendo/content/shared/js/console.js', array('jquery'));
+    wp_enqueue_script( 'kendoJs6', get_template_directory_uri() . '/lib/Kendo/content/shared/js/prettify.js', array('jquery'));
+
+    wp_enqueue_style('kendo1-styles', get_template_directory_uri() . '/lib/Kendo', array());
+    wp_enqueue_style('kendo2-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.common.min.css', array());
+    wp_enqueue_style('kendo3-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.rtl.min.css', array());
+    wp_enqueue_style('kendo4-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.default.min.css', array());
+    wp_enqueue_style('kendo5-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.default.mobile.min.css', array());
+    wp_enqueue_style('kendo6-styles', get_template_directory_uri() . '/lib/Kendo/content/css/dataviz/kendo.dataviz.min.css', array());
+    wp_enqueue_style('kendo7-styles', get_template_directory_uri() . '/lib/Kendo/content/css/dataviz/kendo.dataviz.default.min.css', array());
+    wp_enqueue_style('kendo8-styles', get_template_directory_uri() . '/lib/Kendo/styles/examples.css', array());
+    wp_enqueue_style('kendo9-styles', get_template_directory_uri() . '/lib/Kendo/woahbar/woahbar.css', array());
+  }
+  return $template; 
+}
 
     
