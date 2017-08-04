@@ -108,7 +108,7 @@ add_action("wp_default_styles", "my_wp_default_styles");
 /* Disable Conflicting Code using Filters */
 add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
-/* Load up jQuery */
+
 
 function load_scripts() {
   // Styles
@@ -124,7 +124,7 @@ function load_scripts() {
   wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css');
   wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true);
   // jquery from Wordpress core (with no-conflict mode flag enabled):
-  wp_enqueue_script('jquery');
+
   $my_theme = wp_get_theme();
   $my_version = $my_theme->get('Version');
   // Libraries concatenated by the grunt concat task (in Gruntfile.js):

@@ -11,6 +11,8 @@
 /* Rewrite rules */
 function custom_rewrite_rule() {
 	add_rewrite_rule('^mf/([^/]*)/([^/]*)/?','index.php?pagename=maker-faire-gravity-forms-display-page&makerfaire=$matches[1]&entryid=$matches[2]','top');
+	add_rewrite_rule('^mfscheduler/([^/]*)/?','index.php?pagename=mfscheduler&faire_id=$matches[1]','top');
+	add_rewrite_rule('^mfscheduler-tasks/?','index.php?pagename=mfscheduler-tasks','top');
 	add_rewrite_rule('^mfarchives/([^/]*)/?','index.php?pagename=entry-archives&entryslug=$matches[1]','top');
 	add_rewrite_rule('^mfapi/v3/([^/]*)/?','index.php?pagename=mfapi&api=true&type=$matches[1]','top');
 }
@@ -18,6 +20,7 @@ add_action('init', 'custom_rewrite_rule', 10, 0);
 
 
 function custom_rewrite_tag() {
+	add_rewrite_tag('%faire_id%', '([^&]+)');
 	add_rewrite_tag('%entryid%', '([^&]+)');
 	add_rewrite_tag('%entryslug%', '([^&]+)');
 	add_rewrite_tag('%makerfaire%', '([^&]+)');
@@ -31,6 +34,7 @@ add_filter( 'query_vars', 'api_register_query_var' );
 function api_register_query_var( $vars ) {
     $vars[] = 'type';
     $vars[] = 'api';
+    $vars[] = 'faire_id';
     return $vars;
 }
 
@@ -38,9 +42,16 @@ add_filter('template_include', 'api_include', 1, 1);
 function api_include($template)
 {
     global $wp_query; //Load $wp_query object
-    $page_value = (isset($wp_query->query_vars['api'])?$wp_query->query_vars['api']:'');
-    if ($page_value && $page_value == "true") {
+    $pagename_value = (isset($wp_query->query_vars['pagename'])?$wp_query->query_vars['pagename']:'');
+    
+    if ($pagename_value=="api") {
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-api.php'; //Load your template or file
+    }
+    elseif ($pagename_value=="mfscheduler") {
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-mfscheduler.php'; //Load your template or file
+    }
+    elseif ($pagename_value=="mfscheduler-tasks") {
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-mfscheduler-tasks.php'; //Load your template or file
     }
 
     return $template; //Load normal template when $page_value != "true" as a fallback
@@ -314,3 +325,25 @@ function MF_resend_notifications() {
 
 		die();
 }
+
+add_filter( 'template_include', 'wpm_load_script_for_template', 1000 );
+        function wpm_load_script_for_template( $template ){
+        wp_enqueue_script( 'kendoJs1', get_template_directory_uri() . '/lib/Kendo/woahbar/woahbar.js', array('jquery'));
+        wp_enqueue_script( 'kendoJs2', get_template_directory_uri() . '/lib/Kendo/content/js/kendo.all.min.js', array('jquery'));
+        wp_enqueue_script( 'kendoJs3', get_template_directory_uri() . '/lib/Kendo/content/js/kendo.timezones.min.js', array('jquery'));
+        wp_enqueue_script( 'kendoJs4', get_template_directory_uri() . '/lib/Kendo/content/shared/js/console.js', array('jquery'));
+        wp_enqueue_script( 'kendoJs6', get_template_directory_uri() . '/lib/Kendo/content/shared/js/prettify.js', array('jquery'));
+ 
+        wp_enqueue_style('kendo1-styles', get_template_directory_uri() . '/lib/Kendo', array());
+        wp_enqueue_style('kendo2-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.common.min.css', array());
+        wp_enqueue_style('kendo3-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.rtl.min.css', array());
+        wp_enqueue_style('kendo4-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.default.min.css', array());
+        wp_enqueue_style('kendo5-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.default.mobile.min.css', array());
+        wp_enqueue_style('kendo6-styles', get_template_directory_uri() . '/lib/Kendo/content/css/dataviz/kendo.dataviz.min.css', array());
+        wp_enqueue_style('kendo7-styles', get_template_directory_uri() . '/lib/Kendo/content/css/dataviz/kendo.dataviz.default.min.css', array());
+        wp_enqueue_style('kendo8-styles', get_template_directory_uri() . '/lib/Kendo/styles/examples.css', array());
+ 		    wp_enqueue_style('kendo9-styles', get_template_directory_uri() . '/lib/Kendo/woahbar/woahbar.css', array());
+ 
+        return $template; }
+
+    
