@@ -4,7 +4,8 @@
  */
 
 // Check that all required fields are passed before running anything and assign them to variables
- 
+ http_response_code (200);
+
 get_header('admin');  
 global $wp_query;
 $faire_id = ( ! empty( $wp_query->query_vars['faire_id'] ) ? sanitize_text_field( $wp_query->query_vars['faire_id'] ) : null );

@@ -310,7 +310,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
         $args[] = array(
             'id' => 'mf_admin_scheduling_' . $faire,
             'title' => 'Scheduling',
-            'href' => 'http://makerfaire.com/wp-content/applications/scheduler/makerfaire-scheduling.php?faire_id=' . $faire,
+            'href' => '/mfscheduler/' . $faire,
             'meta' => array('class' => 'my-toolbar-page'),
             'parent' => 'mf_admin_parent_' . $faire);
       }
