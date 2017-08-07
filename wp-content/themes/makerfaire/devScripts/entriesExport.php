@@ -16,7 +16,7 @@ $form=(isset($_GET['formID'])?$_GET['formID']:46);
 
 // output headers so that the file is downloaded rather than displayed
 header('Content-type: text/csv');
-header('Content-Disposition: attachment; filename="exportForm'.$form.'-'.$date.'.csv"');
+header('Content-Disposition: attachment; filename="exportForm'.$form.'.csv"');
 
 // do not cache the file
 header('Pragma: no-cache');
@@ -44,7 +44,7 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
       $label = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
       if($label=='' && $field['type']=='checkbox') $label = $field['choices'][0]->text;
 
-      if($field['type']=='checkbox'||$field['type']=='address'){
+      if($field['type']=='checkbox'||$field['type']=='address' || $field['type']=='name'){
         if(isset($field['inputs']) && !empty($field['inputs'])){
           foreach($field['inputs'] as $choice){
             $choiceID = (string) $choice->id;
@@ -53,7 +53,6 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
         }else{
           $fieldData[$fieldID] = $label.'('.$fieldID.')';
         }
-
       }else{
         $fieldData[$fieldID] = $label.'('.$fieldID.')';
       }
