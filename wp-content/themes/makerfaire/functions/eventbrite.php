@@ -64,6 +64,17 @@ function genEBtickets($entryID){
     $event_id = 0;
   }
 
+  // Entry level is stored in field 442 and can only be Presenting, Goldsmith, Silversmith, Coppersmith or Blacksmith
+  $validLevels = array('Presenting', 'Goldsmith', 'Silversmith', 'Coppersmith', 'Blacksmith');
+
+  $entReturn = get_value_by_label('entLevel', $form,$entry);
+  if(is_array($entReturn)){
+    $entArray = end($entReturn);
+    $entLevel = $entArray['value'];
+  }else{
+    $entLevel = $entReturn;
+  }
+
   //determine what ticket types to request
   $sql = 'select  eb_ticket_type.ticket_type, qty, hidden,ticketID as ticket_id,
                   eb_eventToTicket.eventID
@@ -73,11 +84,13 @@ function genEBtickets($entryID){
               eb_eventToTicket.ticket_type = eb_ticket_type.ticket_type,
                   wp_mf_form_types
           where   wp_mf_form_types.form_type="'.$form_type.'"    and
-                  eb_ticket_type.event_id in ('.$event_id.')        and
+                  eb_ticket_type.event_id in ('.$event_id.')     and
                   eb_ticket_type.form_type = wp_mf_form_types.ID and
+                  entLevel="'.$entLevel.'"                       and
                   ticketID is not null';
 
   $results = $wpdb->get_results($sql);
+  
   if($wpdb->num_rows > 0){
     $eventbrite = new eventbrite();
 

@@ -91,11 +91,23 @@ function get_value_by_label($key, $form, $entry=array()) {
   foreach ($form['fields'] as &$field) {
     $lead_key = $field['inputName'];
     if ($lead_key == $key) {
-      $return['id']    = $field['id'];
-      if(!empty($entry)){
-        $return['value'] = $entry[$field['id']];
+      //is this a checkbox field?
+      if($field['type']=='checkbox'){
+        $retArray = array();
+        
+        foreach($field['inputs'] as $input){
+          if(isset($entry[$input['id']]) && $entry[$input['id']]==$input['label']){
+            $retArray[] = array('id'=>$input['id'], 'value' => $input['label']);
+          }
+        }
+        $return = $retArray;
       }else{
-        $return['value']='';
+        $return['id']    = $field['id'];
+        if(!empty($entry)){
+          $return['value'] = $entry[$field['id']];
+        }else{
+          $return['value']='';
+        }
       }
       return $return;
     }
@@ -192,7 +204,7 @@ function correct_currententry_formid( $form ) {
     $current_view = $_GET['view'];
     $current_formid = $_GET['id'];
     $current_entryid = $_GET['lid'];
-    
+
     if ($current_page=='gf_entries' && $current_view=="entry"){
       // Different form is in URL than in the form itself.
       global $wpdb;
