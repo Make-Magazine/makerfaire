@@ -32,19 +32,21 @@ elseif ($_SERVER ['REQUEST_METHOD'] == 'POST') {
 		case 'create' :
 				
 			$subareaid = $model->SubareaID;
+			$sched_type = $model->PresentationType;
 			$start = date ( 'Y-m-d H:i:s', strtotime ( $model->Start ) );
 			$end = date ( 'Y-m-d H:i:s', strtotime ( $model->End ) );
 			$entries = $model->Entries [0];
-			$model -> locationID = add_entry_schedule ( $faire_id, $subareaid, $start, $end, $entries );
+			$model -> locationID = add_entry_schedule ( $faire_id, $subareaid, $start, $end, $entries,$sched_type );
 			$result= $model;// $result=1 ; // $result = $result->createWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
 			break;
 		case 'update' :
 			$locationID = $model->locationID;
 			$subareaid = $model->SubareaID;
-			$start = date ( 'Y-m-d H:i:s', strtotime ( $model->Start ) );
+			$sched_type = $model->PresentationType;
+      $start = date ( 'Y-m-d H:i:s', strtotime ( $model->Start ) );
 			$end = date ( 'Y-m-d H:i:s', strtotime ( $model->End ) );
 			$entries = $model->Entries [0];
-			$result = update_entry_schedule ($locationID, $faire_id, $subareaid, $start, $end, $entries );
+			$result = update_entry_schedule ($locationID, $faire_id, $subareaid, $start, $end, $entries,$sched_type );
 			break;
 		case 'destroy' :
 			$locationID = $model->locationID;
@@ -60,7 +62,7 @@ elseif ($_SERVER ['REQUEST_METHOD'] == 'POST') {
 }
 
 /* Modify Set Entry Status */
-function add_entry_schedule($faire_id, $subarea_id, $entry_schedule_start, $entry_schedule_end, $entry_info_entry_id) {
+function add_entry_schedule($faire_id, $subarea_id, $entry_schedule_start, $entry_schedule_end, $entry_info_entry_id, $sched_type) {
 	// $entry_schedule_change = (isset($_POST['entry_schedule_change']) ? $_POST['entry_schedule_change'] : '');
 	// $entry_schedule_start = (isset($_POST['datetimepickerstart']) ? $_POST['datetimepickerstart'] : '');
 	// $entry_schedule_end = (isset($_POST['datetimepickerend']) ? $_POST['datetimepickerend'] : '');
@@ -82,8 +84,9 @@ function add_entry_schedule($faire_id, $subarea_id, $entry_schedule_start, $entr
 					location_id,
 					`faire`,
 					`start_dt`,
-					`end_dt`)
-					SELECT $entry_info_entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end'
+					`end_dt`,
+          `type`)
+					SELECT $entry_info_entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end','$sched_type'
 					from wp_mf_faire where faire= '$faire_id'
 					" );
 	
@@ -100,7 +103,7 @@ function add_entry_schedule($faire_id, $subarea_id, $entry_schedule_start, $entr
 }
 
 /* Modify Set Entry Status */
-function update_entry_schedule($locationID, $faire_id, $subarea_id, $entry_schedule_start, $entry_schedule_end, $entry_info_entry_id) {
+function update_entry_schedule($locationID, $faire_id, $subarea_id, $entry_schedule_start, $entry_schedule_end, $entry_info_entry_id,$sched_type) {
 		// set the location
 		$result_message="";
 	$mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
@@ -111,7 +114,8 @@ function update_entry_schedule($locationID, $faire_id, $subarea_id, $entry_sched
 				SET
 				`entry_id` = $entry_info_entry_id,
 				`start_dt` = '$entry_schedule_start',
-				`end_dt` = '$entry_schedule_end'
+				`end_dt` = '$entry_schedule_end',
+        `type` = '$sched_type'
 				WHERE `ID` = $locationID " );
 	$insert_row = $mysqli->query ( $insert_query );
 	if ($insert_row) {
@@ -171,7 +175,10 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 	    `wp_mf_schedule`.`end_dt`,
         wp_mf_entity.presentation_title,
         wp_mf_entity.presentation_type,
-        wp_mf_entity.desc_short
+        wp_mf_entity.desc_short,
+      `wp_mf_schedule`.`type`,
+      wp_mf_entity.status
+        
 	FROM
 	    `wp_mf_schedule`
 			JOIN 
@@ -197,9 +204,11 @@ function read_schedule($faire_id, $subarea_id, &$total) {
       $total ++;
 			// order entries by subarea(stage), then date
 			$stage = $row ['subarea_id'];
+			$status = $row ['status'];
 			$start_dt =  new DateTime(@$row ['start_dt']);
 			// $start_dt_formatted = date('Y/j/n h:i:s A',$start_dt);
 			$end_dt = new DateTime(@$row ['end_dt']);
+			$sched_type = @$row ['type'];
 			$schedule_entry_id = $row ['ID'];
 			$entry_ids = array (
 					$row ['entry_id'] 
@@ -209,6 +218,7 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 			$type= $row['presentation_type'];
 			$desc_short= $row['desc_short'];
 			$maker_name= $row['maker_name'];
+      
 			// build array
 			/*$schedule_entries [] = array (
 					'locationID' => $schedule_entry_id,
@@ -233,13 +243,38 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 		'SubareaID' => $stage,
 		'Entries' => $entry_ids,
     'Event' => $maker_name,
-		'Title' => $title);
+		'Title' => $title,
+    'StatusColor' => status_to_color($status),
+    'PresentationType' => $sched_type);
 		}
 	} else {
 		echo ('Error :' . $select_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
 	}
 	
 	return $schedule_entries;
+}
+
+function status_to_color($entry_status) {
+	$result = '';
+	switch ($entry_status) {
+		case 'Accepted' :
+			$result = '#90EE90'; // $result = $result->createWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
+			break;
+		case 'Proposed' :
+		case 'Wait List' :
+			$result = '#FAFAD2'; // $result = $result->updateWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
+			break;
+		case 'Cancelled' :
+		case 'No Show' :
+		case 'Rejected' :
+			$result = '#F08080'; // $result = $result->destroyWithAssociation('Meetings', 'MeetingAttendees', $request->models, 'MeetingID');
+			break;
+		default :
+			$result = '#E0FFFF'; // $result = $result->readWithAssociation('Meetings', 'MeetingAttendees', 'MeetingID', array('AttendeeID' => 'Attendees'), array('MeetingID', 'RoomID'), $request);
+			break;
+	}
+
+	return $result;
 }
 /* Modify Set Entry Status */
 function add_entry_location($entry_id, $subarea_id, &$location_id = '') {

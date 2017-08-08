@@ -37,6 +37,7 @@ echo $select->render();
 $scheduler = create_makerfaire_scheduler ( $faire_id );
 echo $scheduler->render();
 ?>
+ <!-- Calendar Scheduler (Content Templates) -->
 
 <script>
     jQuery(document).ready(function() {
@@ -48,22 +49,24 @@ echo $scheduler->render();
     });
 </script>
 <script id="presentation-template" type="text/x-kendo-template">
-# if(entries){ #
- <a target="_blank" title="#: title #" href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid=#: entries[0] #">#: entries[0] #</a>
+ <div class="mf-entry-template" style="background-color:#: StatusColor #">
+ # if(entries){ #
+   <a target="_blank" title="#: title #" href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid=#: entries[0] #">#: entries[0] #</a>
+   
 # } #
-<p>#: title #</p>
+<p>#: title #</p></div>
 </script>
 <!-- begin#woahbar -->
 <div class="woahbar" style="display: none;">
 	<span> <a class="woahbar-link" href="/wp-admin/">Back to wp-admin</a> Howdy, <?php echo $current_user->user_login;?>
 	</span> <a class="close-notify" onclick="woahbar_hide();"> <img
 		class="woahbar-up-arrow"
-		src="/wp-content/applications/woahbar/woahbar-up-arrow.png" /></a>
+		src="/wp-content/themes/makerfaire/lib/Kendo/woahbar/woahbar-up-arrow.png" /></a>
 </div>
 <div class="woahbar-stub" style="display: none;">
 	<a class="show-notify" onclick="woahbar_show();"> <img
 		class="woahbar-down-arrow"
-		src="/wp-content/applications/woahbar/woahbar-down-arrow.png" />
+		src="/wp-content/themes/makerfaire/lib/Kendo/woahbar/woahbar-down-arrow.png" />
 	</a>
 </div>
 <style>
@@ -71,11 +74,11 @@ echo $scheduler->render();
         Use the DejaVu Sans font for display and embedding in the PDF file.
         The standard PDF fonts have no support for Unicode characters.
     */
-
+.mf-entry-template p,
+.mf-entry-template a,
 .k-scheduler-table a
 {
-    color: #eb1b26;
-    font-weight: bold;
+    color: #1989C7;
 }
 .k-scheduler {
 	font-family: "DejaVu Sans", "Arial", sans-serif;
@@ -88,8 +91,7 @@ echo $scheduler->render();
 }
 </style>
 
-<!-- Load Pako ZLIB library to enable PDF compression -->
-<script src="../content/shared/js/pako.min.js"></script>
+
 <style>
 .k-scheduler-layout {
 	table-layout: fixed;
@@ -181,13 +183,29 @@ function get_entry_locations($faire_id) {
 
 			$locations [] = array (
 					'text' => $subarea,
-					'value' => $subarea_id,
-					'color' => 'deepskyblue'
+					'value' => $subarea_id
 			);
 		}
 	}
+  else {
+    $locations [] = array (
+					'text' => 'No Stages Setup',
+					'value' => '-1'
+			);
+  }
+  return $locations;
+}
+
+function get_entry_presentationTypes() {
+	$presentationTypes = array ();
+
+			$presentationTypes [] = array ('text' => "Unknown",'value' => "unknown");
+			$presentationTypes [] = array ('text' => "Workshop",'value' => "workshop");
+			$presentationTypes [] = array ('text' => "Talk",'value' => "talk");
+			$presentationTypes [] = array ('text' => "Performance",'value' => "performance");
+			$presentationTypes [] = array ('text' => "Demo",'value' => "demo");
 	// Create Update button for sidebar entry management
-	return $locations;
+	return $presentationTypes;
 }
 function get_entries($faire_id) {
 	$mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
@@ -261,7 +279,6 @@ function create_makerfaire_scheduler($faire_id) {
 			
 		}
 	}
-    
 	$transport = new \Kendo\Data\DataSourceTransport ();
 
 	$create = new \Kendo\Data\DataSourceTransportCreate ();
@@ -305,25 +322,38 @@ function create_makerfaire_scheduler($faire_id) {
 
 	$subareaIdField = new \Kendo\Data\DataSourceSchemaModelField ( 'subareaId' );
 	$subareaIdField->from ( 'SubareaID' )->nullable ( true );
+ 
+  
+  
+  $presentationTypeField = new \Kendo\Data\DataSourceSchemaModelField ( 'presentationType' );
+	$presentationTypeField->from ( 'PresentationType' )->nullable ( true );
 
 	$entriesField = new \Kendo\Data\DataSourceSchemaModelField ( 'entries' );
 	$entriesField->from ( 'Entries' )->nullable ( true );
 
-	$model->id ( 'locationID' )->addField ( $locationIdField )->addField ( $titleField )->addField ( $startField )->addField ( $endField )->addField ( $isAllDayField )->addField ( $subareaIdField )->addField ( $entriesField );
+	$model->id ( 'locationID' )
+          ->addField ( $locationIdField )
+          ->addField ( $titleField )
+          ->addField ( $startField )
+          ->addField ( $endField )
+          ->addField ( $isAllDayField )
+          ->addField ( $subareaIdField )
+          ->addField ( $entriesField )
+          ->addField ( $presentationTypeField );
 
 	$schema = new \Kendo\Data\DataSourceSchema ();
 	$schema->model ( $model );
 
 	$dataSource = new \Kendo\Data\DataSource ();
 	$dataSource->transport ( $transport )->schema ( $schema )->batch ( false );
-
-
-
-
+  
+  
+  $typesResource = new \Kendo\UI\SchedulerResource ();
+	$types_array = get_entry_presentationTypes ();
+	$typesResource->field ( 'presentationType' )->title ( 'Type' )->name ( 'Types' )->dataSource ( $types_array );
 	$subareasResource = new \Kendo\UI\SchedulerResource ();
 	$locations_array = get_entry_locations ( $faire_id );
-
-	$subareasResource->field ( 'subareaId' )->title ( 'Stage' )->name ( 'Stages' )->dataSource ( $locations_array );
+  $subareasResource->field ( 'subareaId' )->title ( 'Stage' )->name ( 'Stages' )->dataSource ( $locations_array );
 
 
 	$entries = get_entries ( $faire_id );
@@ -336,14 +366,13 @@ function create_makerfaire_scheduler($faire_id) {
 	$scheduler = new \Kendo\UI\Scheduler ( 'scheduler' );
 
 	$scheduler->eventTemplateId ( 'presentation-template' )
-		//->editable(array('update' => 'true','template'=>'customEditorTemplate'))
 		->timezone('UTC')
-		/* NOTE: For Next Faire, use Timezones from Faire table and use Local Timezone
-
-		timezone: "Europe/London", // Use the London timezone*/
-
 		->currentTimeMarker(false)
-		->date(new DateTime ( $start_dt ) )->height ( 900 )->pdf ( $pdf )->addToolbarItem ( new \Kendo\UI\SchedulerToolbarItem ( 'pdf' ) )->addResource ( $subareasResource, $entriesResource )->group ( array (
+		->date(new DateTime ( $start_dt ) )
+    ->height ( 900 )->pdf ( $pdf )
+    ->addToolbarItem ( new \Kendo\UI\SchedulerToolbarItem ( 'pdf' ) )
+    ->addResource ( $subareasResource, $entriesResource,  $typesResource)
+    ->group ( array (
 			'resources' => array (
 					'Stages'
 			)
@@ -375,6 +404,5 @@ function debug_to_console($data) {
 
 		echo $output;
 }
-
-
 ?>
+

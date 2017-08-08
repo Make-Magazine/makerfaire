@@ -334,6 +334,7 @@ function wpm_load_script_for_template( $template ){
     wp_enqueue_script( 'kendoJs3', get_template_directory_uri() . '/lib/Kendo/content/js/kendo.timezones.min.js', array('jquery'));
     wp_enqueue_script( 'kendoJs4', get_template_directory_uri() . '/lib/Kendo/content/shared/js/console.js', array('jquery'));
     wp_enqueue_script( 'kendoJs6', get_template_directory_uri() . '/lib/Kendo/content/shared/js/prettify.js', array('jquery'));
+    wp_enqueue_script( 'kendoJs7', get_template_directory_uri() . '/lib/Kendo//content/shared/js/pako.min.js', array('jquery'));
 
     wp_enqueue_style('kendo1-styles', get_template_directory_uri() . '/lib/Kendo', array());
     wp_enqueue_style('kendo2-styles', get_template_directory_uri() . '/lib/Kendo/content/css/web/kendo.common.min.css', array());
