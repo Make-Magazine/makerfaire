@@ -86,11 +86,11 @@ function genEBtickets($entryID){
           where   wp_mf_form_types.form_type="'.$form_type.'"    and
                   eb_ticket_type.event_id in ('.$event_id.')     and
                   eb_ticket_type.form_type = wp_mf_form_types.ID and
-                  entLevel="'.$entLevel.'"                       and
+                  entLevel="'.strtolower ($entLevel).'"          and
                   ticketID is not null';
 
   $results = $wpdb->get_results($sql);
-  
+
   if($wpdb->num_rows > 0){
     $eventbrite = new eventbrite();
 
