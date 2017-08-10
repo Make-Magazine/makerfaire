@@ -85,7 +85,7 @@ class acf_form_nav_menu {
 		// verify and remove nonce
 		if( !acf_verify_nonce('nav_menu') ) return $menu_id;
 		
-	    
+			   
 	    // validate and show errors
 		acf_validate_save_post( true );
 		
@@ -142,7 +142,7 @@ class acf_form_nav_menu {
 	*  @return	$post_id (int)
 	*/
 	
-	function wp_edit_nav_menu_walker( $class, $menu_id ) {
+	function wp_edit_nav_menu_walker( $class, $menu_id = 0 ) {
 		
 		// global
 		global $acf_menu;
@@ -153,7 +153,9 @@ class acf_form_nav_menu {
 		
 		
 		// include walker
-		acf_include('includes/walkers/class-acf-walker-nav-menu-edit.php');
+		if( class_exists('Walker_Nav_Menu_Edit') ) {
+			acf_include('includes/walkers/class-acf-walker-nav-menu-edit.php');
+		}
 		
 		
 		// return
@@ -267,6 +269,44 @@ class acf_form_nav_menu {
 	
 	// append html
 	$('#post-body-content').append( $('#tmpl-acf-menu-settings').html() );
+	
+	
+	// avoid WP over-writing $_POST data
+	// - https://core.trac.wordpress.org/ticket/41502#ticket
+	$(document).on('submit', '#update-nav-menu', function() {
+
+		// vars
+		var $form = $(this);
+		var $input = $('input[name="nav-menu-data"]');
+		
+		
+		// decode json
+		var json = $form.serializeArray();
+		var json2 = [];
+		
+		
+		// loop
+		$.each( json, function( i, pair ) {
+			
+			// avoid nesting (unlike WP)
+			if( pair.name === 'nav-menu-data' ) return;
+			
+			
+			// bail early if is 'acf[' input
+			if( pair.name.indexOf('acf[') > -1 ) return;
+						
+			
+			// append
+			json2.push( pair );
+			
+		});
+		
+		
+		// update
+		$input.val( JSON.stringify(json2) );
+		
+	});
+		
 		
 })(jQuery);	
 </script>

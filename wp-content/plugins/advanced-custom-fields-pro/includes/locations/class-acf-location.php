@@ -19,6 +19,10 @@ class acf_location {
 	var $category = 'post';
 	
 	
+	/** @var bool Rule availability */
+	var $public = true;
+	
+	
 	/*
 	*  __construct
 	*

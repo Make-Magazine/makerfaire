@@ -2,8 +2,6 @@
 
 if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if( acf_version_compare('wp', '<', '4.7') ) return;
-
 if( ! class_exists('acf_location_post_template') ) :
 
 class acf_location_post_template extends acf_location {
@@ -28,6 +26,7 @@ class acf_location_post_template extends acf_location {
 		$this->name = 'post_template';
 		$this->label = __("Post Template",'acf');
 		$this->category = 'post';
+		$this->public = acf_version_compare('wp', '>=', '4.7');
     	
 	}
 	

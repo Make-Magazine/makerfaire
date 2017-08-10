@@ -100,6 +100,10 @@ class acf_locations {
 		// loop
 		foreach( $this->locations as $location ) {
 			
+			// bail ealry if not public
+			if( !$location->public ) continue;
+			
+			
 			// translate
 			$cat = $location->category;
 			$cat = isset( $l10n[$cat] ) ? $l10n[$cat] : $cat;
