@@ -3,7 +3,7 @@
 Plugin Name: WordPress Notification Bar
 Plugin URI: http://seedprod.com/wordpress-notification-bar/
 Description: Global Notification Bar for WordPress
-Version:  1.3.8
+Version:  1.3.9
 Text Domain: wordpress-notification-bar
 Domain Path: /languages
 Author: SeedProd
@@ -27,7 +27,7 @@ define( 'SEED_WNB_SHORTNAME', 'seed_wnb' ); // Used to reference namespace funct
 define( 'SEED_WNB_FILE', 'wordpress-notification-bar/wordpress-notification-bar.php' ); // Used for settings link.
 define( 'SEED_WNB_TEXTDOMAIN', 'wordpress-notification-bar' ); // Your textdomain
 define( 'SEED_WNB_PLUGIN_NAME', __( 'WordPress Notification Bar', 'seed_wnb' ) ); // Plugin Name shows up on the admin settings screen.
-define( 'SEED_WNB_VERSION', '1.3.8' ); // Plugin Version Number. Recommend you use Semantic Versioning http://semver.org/
+define( 'SEED_WNB_VERSION', '1.3.9' ); // Plugin Version Number. Recommend you use Semantic Versioning http://semver.org/
 define( 'SEED_WNB_REQUIRED_WP_VERSION', '3.0' ); // Required Version of WordPress
 define( 'SEED_WNB_PLUGIN_PATH', plugin_dir_path( __FILE__ ) ); // Example output: /Applications/MAMP/htdocs/wordpress/wp-content/plugins/seed_wnb/
 define( 'SEED_WNB_PLUGIN_URL', plugin_dir_url( __FILE__ ) ); // Example output: http://localhost:8888/wordpress/wp-content/plugins/seed_wnb/

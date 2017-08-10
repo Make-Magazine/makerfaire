@@ -1,10 +1,10 @@
 === Plugin Name ===
-Contributors: johnnytee
+Contributors: seedprod, johnnytee
 Donate link: http://seedprod.com/
 Tags: message, floating bar, notice, notification, sticky header, special offer, discount offer, offer, important, notification bar, attention bar, highlight bar
 Requires at least: 3.0.0
-Tested up to: 4.7.1
-Stable tag: 1.3.8
+Tested up to: 4.8.0
+Stable tag: 1.3.9
 
 A quick and easy notification bar and call to action for your site.
 
@@ -57,6 +57,9 @@ A quick and easy **notification bar** and **call to action** for your site.
 
 
 == Changelog ==
+= 1.3.9 =
+* Added Italian Translation
+
 = 1.3.8 =
 * New Pro Version Released
 
@@ -117,6 +120,9 @@ A quick and easy **notification bar** and **call to action** for your site.
 
 
 == Upgrade Notice ==
+= 1.3.9 =
+* Added Italian Translation
+
 = 1.3.7 =
 * Changed z-index so the bar does not cover the WP Admin bar
 
