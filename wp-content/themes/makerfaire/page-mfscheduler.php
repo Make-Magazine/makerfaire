@@ -82,6 +82,7 @@ echo $scheduler->render();
 }
 .k-scheduler {
 	font-family: "DejaVu Sans", "Arial", sans-serif;
+  font-size: 80%;
 }
 
 /* Hide toolbar, navigation and footer during export */
@@ -272,7 +273,8 @@ function create_makerfaire_scheduler($faire_id) {
   if ($result) {
 		while ( $row = $result->fetch_row () ) {
 			 $start_dt = DateTime::createFromFormat('Y-m-d H:i:s', $row [0]); // your original DTO
-      $start_dt->add(new DateInterval('P7D'));
+      //DEBUG: Interval looks like it is no longer needed.
+      //$start_dt->add(new DateInterval('P7D'));
    
      $start_dt = $start_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
     
