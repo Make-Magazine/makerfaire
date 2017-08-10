@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms
 Plugin URI: http://www.gravityforms.com
 Description: Easily create web forms and manage form entries within the WordPress admin.
-Version: 2.2.3
+Version: 2.2.4.1
 Author: rocketgenius
 Author URI: http://www.rocketgenius.com
 Text Domain: gravityforms
@@ -132,7 +132,7 @@ define( 'GF_SUPPORTED_WP_VERSION', version_compare( get_bloginfo( 'version' ), G
  *
  * @var string GF_MIN_WP_VERSION_SUPPORT_TERMS The version number
  */
-define( 'GF_MIN_WP_VERSION_SUPPORT_TERMS', '4.6' );
+define( 'GF_MIN_WP_VERSION_SUPPORT_TERMS', '4.7' );
 
 
 if ( ! defined( 'GRAVITY_MANAGER_URL' ) ) {
@@ -153,6 +153,7 @@ if ( ! defined( 'GRAVITY_MANAGER_PROXY_URL' ) ) {
 	define( 'GRAVITY_MANAGER_PROXY_URL', 'http://proxy.gravityplugins.com' );
 }
 
+require_once( plugin_dir_path( __FILE__ ) . 'currency.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'common.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'forms_model.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'widget.php' );
@@ -208,7 +209,7 @@ class GFForms {
 	 *
 	 * @var string $version The version number.
 	 */
-	public static $version = '2.2.3';
+	public static $version = '2.2.4.1';
 
 	/**
 	 * Runs after Gravity Forms is loaded.
@@ -4495,11 +4496,11 @@ class GFForms {
 				'tooltip' => __( 'Whether or not to display the form description.', 'gravityforms' )
 			),
 			array(
-				'label'   => __( 'Enable AJAX', 'gravityforms' ),
+				'label'   => __( 'Enable Ajax', 'gravityforms' ),
 				'attr'    => 'ajax',
 				'section' => 'standard',
 				'type'    => 'checkbox',
-				'tooltip' => __( 'Specify whether or not to use AJAX to submit the form.', 'gravityforms' )
+				'tooltip' => __( 'Specify whether or not to use Ajax to submit the form.', 'gravityforms' )
 			),
 			array(
 				'label'   => 'Tabindex',

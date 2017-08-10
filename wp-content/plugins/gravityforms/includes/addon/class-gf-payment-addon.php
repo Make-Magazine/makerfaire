@@ -2152,6 +2152,19 @@ abstract class GFPaymentAddOn extends GFFeedAddOn {
 
 	//--------- Feed Settings ----------------
 
+	/**
+	 * Remove the add new button from the title if the form requires a credit card field.
+	 *
+	 * @return string
+	 */
+	public function feed_list_title() {
+		if ( $this->_requires_credit_card && ! $this->has_credit_card_field( $this->get_current_form() ) ) {
+			return $this->form_settings_title();
+		}
+
+		return parent::feed_list_title();
+	}
+
 	public function feed_list_message() {
 
 		if ( $this->_requires_credit_card && ! $this->has_credit_card_field( $this->get_current_form() ) ) {
@@ -3330,10 +3343,6 @@ abstract class GFPaymentAddOn extends GFFeedAddOn {
 	 * @return RGCurrency
 	 */
 	public function get_currency( $currency_code = '' ) {
-		if ( ! class_exists( 'RGCurrency' ) ) {
-			require_once( GFCommon::get_base_path() . '/currency.php' );
-		}
-
 		if ( empty( $currency_code ) ) {
 			$currency_code = GFCommon::get_currency();
 		}
