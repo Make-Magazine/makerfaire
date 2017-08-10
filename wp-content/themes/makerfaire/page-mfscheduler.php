@@ -322,6 +322,10 @@ function create_makerfaire_scheduler($faire_id) {
 
 	$subareaIdField = new \Kendo\Data\DataSourceSchemaModelField ( 'subareaId' );
 	$subareaIdField->from ( 'SubareaID' )->nullable ( true );
+  
+  
+  $statusColorField = new \Kendo\Data\DataSourceSchemaModelField ( 'StatusColor' );
+	$statusColorField->from ( 'StatusColor' )->nullable ( true );
  
   
   
@@ -339,7 +343,8 @@ function create_makerfaire_scheduler($faire_id) {
           ->addField ( $isAllDayField )
           ->addField ( $subareaIdField )
           ->addField ( $entriesField )
-          ->addField ( $presentationTypeField );
+          ->addField ( $presentationTypeField )
+          ->addField ( $statusColorField );
 
 	$schema = new \Kendo\Data\DataSourceSchema ();
 	$schema->model ( $model );
