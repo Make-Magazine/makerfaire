@@ -13,6 +13,8 @@
     $scope.showSchedules = false;
     $scope.propertyName = 'time_start';
     var formIDs = jQuery('#forms2use').val();
+    var defType = jQuery('#schedType').val();
+    var defDOW  = jQuery('#schedDOW').val();
     if(formIDs=='') alert ('error!  Please set the form to pull from on the admin page.')
     $http.get('/wp-json/makerfaire/v2/fairedata/schedule/'+formIDs)
       .then(function successCallback(response) {
@@ -22,7 +24,6 @@
            $scope.catJson[catArr.id] = catArr.name.trim();
         });
 
-        $scope.schedType = 'all';
         $scope.schedStage = '';
         $scope.schedTopic = '';
         var unorderedSched = response.data.schedule;
@@ -36,7 +37,7 @@
 
         var typeArr = [];
         var addType = '';
-        $scope.dateFilter = '';
+        $scope.dateFilter = defDOW;
 
         /* input categories are a comma sepated list of category id's
             the below will split these into an array,
@@ -45,8 +46,8 @@
         angular.forEach($scope.schedules, function(scheduleDay, scheduleKey){
 
           $scope.days.push(scheduleKey);
-          if($scope.dateFilter=='') {
-            $scope.dateFilter = scheduleKey;
+          if(defDOW=='All') {
+            defDOW = $filter('date')(scheduleKey, "EEEE");
           }
           angular.forEach(scheduleDay, function(schedule){
             //check if there is more than one type
@@ -92,6 +93,9 @@
         console.log(error);
       }).finally( function (){
        $scope.showSchedules = true;
+       //after data is loaded set default schedule type and day of week
+       $scope.schedType = defType;
+       $scope.dateFilter = defDOW;
       });
     $scope.predicate = 'time_start';
     $scope.reverse = true;
@@ -103,7 +107,8 @@
       $scope.schedType = type;
     }
     $scope.setDateFilter = function (date) {
-      $scope.dateFilter = date;
+      var filterdow = $filter('date')(date, "EEEE");
+      $scope.dateFilter = filterdow;
     }
     $scope.setStage = function(stage){
       $scope.schedStage = stage;
@@ -135,7 +140,7 @@
   }).filter('typeFilter', function() {
     // Create the return function and set the required parameter name to **input**
     return function(schedules,schedType) {
-      if(schedType!='all'){
+      if(schedType!='All'){
         var out = [];
         // Using the angular.forEach method, go through the array of data and perform the operation of figuring out if the language is statically or dynamically typed.
         angular.forEach(schedules, function(schedule) {

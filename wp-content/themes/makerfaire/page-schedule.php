@@ -3,12 +3,19 @@
 * Template name: Schedule
 */
 get_header();
+
+//look for day of week or type filter variables
+$sched_dow  = (isset($wp_query->query_vars['sched_dow'])  ? ucfirst(urldecode($wp_query->query_vars['sched_dow'])):'All');
+$sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($wp_query->query_vars['sched_type'])):'All');
+
 $schedule_ids = get_field('schedule_ids');
 if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
   create_calendar(get_field('schedule_ids'));
   ?>
 <a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>
   <input type="hidden" id="forms2use" value="<?php echo get_field('schedule_ids'); ?>" />
+  <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
+  <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
   <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp">
     <div ng-cloak>
@@ -18,10 +25,10 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
             <?php _e('Category','MiniMakerFaire');?> <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
-            <li class="topic-nav-item-inner activeTopic" ng-class="{ 'activeTopic': schedType== 'all' }">
-              <a href="#" ng-click="setTypeFilter('all')">
+            <li class="topic-nav-item-inner" ng-class="{ 'activeTopic': schedType== 'All' }">
+              <a href="#" ng-click="setTypeFilter('All')">
                 <div class="topic-nav-item">
-                  <p><?php _e('ALL','MiniMakerFaire');?></p>
+                  <p><?php _e('ALL','makerfaire');?></p>
                 </div>
                 <div class="active-topic-arrow"></div>
               </a>
@@ -43,8 +50,8 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
       </div>
 
       <ul class="day-nav list-unstyled">
-        <li class="day-nav-box" ng-repeat="(schedDay,schedule) in schedules" ng-class="{'active':$first}">
-          <a class="day-nav-item" data-toggle="tab" href="#Sched{{schedDay | date: 'd'}}"  ng-click="setDateFilter(schedDay)">
+        <li class="day-nav-box" ng-repeat="(schedDay,schedule) in schedules" ng-class="{'active':'{{schedDay | date: 'EEEE'}}' == dateFilter}">
+          <a class="day-nav-item" data-toggle="tab" href="#Sched{{schedDay | date: 'EEEE'}}"  ng-click="setDateFilter(schedDay)">
             <h2>{{schedDay | date: "EEEE"}}</h2>
             <h4>{{schedDay | date: "shortDate"}}</h4>
           </a>
@@ -108,7 +115,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
         </div>
 
         <div class="tab-content sched-body">
-          <div ng-repeat="(schedDay,schedule) in schedules" id="Sched{{schedDay | date: 'd'}}" class="tab-pane" ng-class="{ 'active': $first }">
+          <div ng-repeat="(schedDay,schedule) in schedules" id="Sched{{schedDay | date: 'EEEE'}}" class="tab-pane" ng-class="{'active':'{{schedDay | date: 'EEEE'}}' == dateFilter}">
             <div ng-repeat="(key,daySched) in schedule | typeFilter: schedType | stageFilter: schedStage | catFilter:schedTopic | filter:filterData |  orderBy:propertyName">
               <div class="row sched-row">
                 <div class="sched-col-1">
