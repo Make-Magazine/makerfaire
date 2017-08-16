@@ -8,7 +8,7 @@ function subscribe_return_path_overlay() { ?>
       <div class="container">
         <div class="row">
           <div class="col-sm-4 overlay-1">
-            <img class="img-responsive" src="//makezine.com/wp-content/uploads/2015/10/Magazine-cover-44-for-overlay.jpg" alt="Make Magazine Volume 44 Cover" />
+            <img class="img-responsive" src="<?php echo get_template_directory_uri() . '/img/Make-magazine-cover-55-for-overlay.jpg'; ?>" alt="Make: magazine cover, subscribe here" />
           </div>
           <div class="col-sm-4 overlay-2">
             <h2>Get the Magazine</h2>

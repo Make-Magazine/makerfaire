@@ -179,7 +179,7 @@
       <div id="mz-header-subscribe" class="hidden-xs">
         <div>
           <a id="trigger-overlay" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M7GMFE" target="_blank">
-            <img src="<?php echo get_template_directory_uri() . '/img/Subscribe_CTA_2x.png'; ?>" alt="Make: Magazine latest magazine cover, subscribe here" />
+            <img src="<?php echo get_template_directory_uri() . '/img/Make-magazine-cover-55.png'; ?>" alt="Make: magazine cover, subscribe here" />
           </a>
           <a class="subscribe-red-btn" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M7GMFE" target="_blank">SUBSCRIBE</a>
         </div>
