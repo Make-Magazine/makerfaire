@@ -23,7 +23,7 @@ function mf_update_task_active() {
 //process tasks when an entry is updated.
 add_action('gform_after_submission', 'processTasks', 10, 2 ); //$entry, $form
 add_action('gform_after_update_entry', 'processTasks_setup', 10, 2 ); //$form, $entry_id
-
+add_action('gform_post_add_entry', 'processTasks', 10, 2 ); //$entry, $form
 
 function processTasks_setup($form, $entry_id) {
   //need to set $entry and reset $form as gravity view removes admin only fields

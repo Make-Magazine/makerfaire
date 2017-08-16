@@ -139,37 +139,31 @@ function mf_custom_import_entries() {
         <li>Row 2 - Start of Data</li>
         <li>Required Fields
           <ul>
-            <li>form_id</li>
+            <li>form_id - Numeric</li>
+            <li>entry_creator - Numeric userID to associate this entry to</li>
+            <li>16  - Non Blank - Public Description (limit to 250 characters</li>
+            <li>22  - Non Blank - Photo URL</li>
+            <li>96.3 - Non Blank - Contact First Name</li>
+            <li>96.6 - Non Blank - Contact First Name</li>
+            <li>98   - Non Blank - Contact Email</li>
+            <li>101.3 - Non Blank - Contact City</li>
+            <li>101.4 - Non Blank - Contact State</li>
+            <li>101.5 - Non Blank - Contact Zip</li>
+            <li>101.6 - Non Blank - Contact Country</li>
+            <li>151 - Non Blank - Project Name</li>
+            <li>160.3 - Non Blank - Maker First Name</li>
+            <li>160.6 - Non Blank - Maker First Name</li>
+            <li>217 - Maker Photo</li>
+            <li>234 - Maker Bio</li>
             <li>303 - Status to set the entry to</li>
             <li>320 - Primary Category</li>
-            <li>151 - Project Name</li>
-            <li>16 - Public Description (limit to 250 characters</li>
-            <li>22 - Photo URL</li>
-            <li>105 - Who would you like listed as the maker of the project? (One Maker)</li>
-            <li>160.3 - Maker First Name</li>
-            <li>160.6 - Maker First Name</li>
-            <li>234 - Maker Bio</li>
-            <li>217 - Maker Photo</li>
-            <li>96.3 - Contact First Name</li>
-            <li>96.6 - Contact First Name</li>
-            <li>98 - Contact Email</li>
-            <li>101.3 - Contact City</li>
-            <li>101.4 - Contact State</li>
-            <li>101.5 - Contact Zip</li>
-            <li>101.6 - Contact Country</li>
           </ul>
         </li>
         <li>Optional Fields
           <ul>
+            <li>location - used to assign entry to a specific location</li>
             <li>link_entry_id - used to link the created entry to</li>
             <li>subarea_id - used to assign this entry to a specific subarea</li>
-            <li>location - used to assign entry to a specific location</li>
-            <li>eid - used to create entry passes</li>
-            <li>ticket_code - used to create entry passes</li>
-            <li>num_tickets - used to create entry passes</li>
-            <li>visible - used to create entry passes</li>
-            <li>304 - Used to set Disbale Autorsesponder or other flags</li>
-            <li>27 - Project Website</li>
             <li>Any other fields from the form you are importing into</li>
           </ul>
         </li>
@@ -429,7 +423,6 @@ function mf_custom_import_entries() {
               'link_entry_id' =>  array('required' => 'no',  'verification' => 'numeric'),
               'subarea_id'    =>  array('required' => 'no',  'verification' => 'numeric'),
               'location'      =>  array('required' => 'yes', 'verification' => 'none'),
-              'visible'       =>  array('required' => 'no',  'verification' => 'boolean'),
               '303'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '320'           =>  array('required' => 'yes', 'verification' => 'numeric'),
               '55'            =>  array('required' => 'no', 'verification' => 'non-blank'),
@@ -551,9 +544,9 @@ function mf_custom_import_entries() {
     $return = GFAPI::add_entry( $entry );
     if( is_wp_error( $return ) ) {
       echo 'attempted to add '.$entry[151].'<br/>';
-        echo $return->get_error_message();
-        var_dump($entry);
-        echo '<br/>';
+      echo $return->get_error_message();
+      var_dump($entry);
+      echo '<br/>';
     }else{
       $entryID = $return;
       //echo 'Created Entry ID '.$entryID;
@@ -580,7 +573,10 @@ function mf_custom_import_entries() {
     gform_update_meta( $entryID, 'res_status','import' );
 
     //create maker table info
-     GFRMTHELPER::updateMakerTables($entryID);
+    $entry    = GFAPI::get_entry($entryID);
+    $form_id  = $entry['form_id'];
+    $form     = GFAPI::get_form($form_id);
+    GFRMTHELPER::gravityforms_makerInfo($entry,$form,'new');
   }
 
   function processRibbon($file,$userID) {
