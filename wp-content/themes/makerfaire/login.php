@@ -9,7 +9,7 @@ get_header();
 // Get the action
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'login';
 $mode = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : 'signin';
-$sign = isset($_REQUEST['sign']) ? $_REQUEST['sign'] : '';
+$sign = isset($_REQUEST['sign']) ? (int) $_REQUEST['sign'] : '';
 
 //Skip if user is logged in.
 if (is_user_logged_in() && $action == 'logout')
@@ -18,8 +18,8 @@ if (is_user_logged_in() && $action == 'logout')
     wp_redirect(home_url());
 }
 //Enqueue Auth0 Required scripts
-wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('cdn_url'), 'jquery' );	
-		
+wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('cdn_url'), 'jquery' );
+
 //Enqueue Login Style
 $current_theme = wp_get_theme();
 wp_enqueue_style('login-styles', get_stylesheet_directory_uri() . '/css/login-styles.css', array(), $current_theme->get( 'Version' ));
@@ -64,7 +64,7 @@ If you’ve logged in before and are experiencing issues, we’ve updated our lo
 - If you previously logged in with Facebook or Google, you will have to Sign Up again. Your previous account will be connected to your new sign up.<br />";
 
         break;
-} 
+}
 if (strpos(wp_referer_field(),'edit-entry') > 0)
         $loginmessage = 'Sign in to submit or manage<br /> your entries.';
 if ($mode == "reset")
@@ -84,17 +84,17 @@ if ($mode == "reset")
         <div class="col-md-2 col-md-offset-2">
             <?php
             /**
-             * Detect Auth0 plugin. 
+             * Detect Auth0 plugin.
              */
             if (isset($_GET['wle']))
                 wp_login_form();
-            else 
+            else
                 renderAuth0Form(true, array( "mode" => $mode));
-            
+
             ?>
         </div>
         <div class="col-md-offset-2 hidden-xs">
-            <div> 
+            <div>
             <ul class="list-unstyled">
                 <li><?php echo $loginmessage; ?></li>
 		<li class="mftagline padtop">
@@ -111,13 +111,13 @@ if ($mode == "reset")
 /* Page specific functions */
 function renderAuth0Form($canShowLegacyLogin = true, $specialSettings = array())
 {
-    
+
     if (!$canShowLegacyLogin || !isset($_GET['wle'])) {
         //Require auth0
         require_once( ABSPATH . 'wp-content/plugins/auth0/templates/auth0-login-form-lock10.php');
 
     }else{
-        wp_login_form(); 
+        wp_login_form();
     }
 }
 ?>
