@@ -44,7 +44,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
   $scope.fieldSelect.columnDefs = [
     { name: 'id',width:'50' },
     { name: 'label'},
-    {name: 'choices'}
+    { name: 'choices'}
   ];
 
   $scope.fieldSelect.multiSelect = true;

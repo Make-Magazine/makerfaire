@@ -494,6 +494,77 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
 
       var subTitle = 'Label Placement';
       $scope.reports.callAJAX(vars);
+    }else if(subRoute=="spdist"){
+      vars = {"formSelect":[],
+              "formType":["Sponsor"],
+              "faire": faire,
+              "selectedFields":[
+                {"id":151,"label":"Sponsor Company Name","choices":"","type":"text","inputs":""},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
+                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":737,"label":"Additional Items","choices":"","type":"textarea"},
+                {"id":749,"label":"Custom Order","choices":"","type":"textarea","inputs":""},
+                {"id":750,"label":"Custom Order Price","choices":"","type":"number","inputs":""}
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"all","value":"All Resources","checked":true,"aggregated":true},
+                  {"id":"2","value":"Tables","checked":true,"aggregated":true},
+                  {"id":"3","value":"Chairs","checked":true,"aggregated":true},
+                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":true},
+                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":true},
+                  {"id":"11","value":"Bench","checked":true,"aggregated":true},
+                  {"id":"14","value":"Garbage","checked":true,"aggregated":true},
+                  {"id":"19","value":"Barricade","checked":true,"aggregated":true},
+                  {"id":"22","value":"Pipe & Drape","checked":true,"aggregated":true},
+                  {"id":"29","value":"Sand Bags","aggregated":true},
+                  {"id":"30","value":"Linens","checked":true,"aggregated":true},
+                  {"id":"41","value":"Work Bench","checked":true,"aggregated":true},
+                  {"id":"42","value":"Stools","checked":true,"aggregated":true},
+                  {"id":"45","value":"Umbrella","checked":true,"aggregated":true},
+                  {"id":"52","value":"Extension Cords","checked":true,"aggregated":true},
+                  {"id":"53","value":"Security","checked":true,"aggregated":true},
+                  {"id":"54","value":"Internet _Sponsors","checked":true,"aggregated":true},
+                  {"id":"55","value":"Audio Visual","checked":true,"aggregated":true},
+                  {"id":"56","value":"Flooring","checked":true,"aggregated":true}
+                ],
+                "attribute":[
+                  {"id":"all","value":"All Attributes","checked":true,"aggregated":true}
+                ],
+                "attention":[],"meta":[],"comment":[]
+              },
+              "type":"customRpt",
+              "location":true};
+      var subTitle = 'Sponsor Distribution';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute==="spint"){
+      vars = {"formSelect":[],
+              "formType":["Sponsor"],
+              "faire": faire,
+              "selectedFields":[
+                {"id":78,"label":"Does your exhibit use or disrupt radio frequencies?","choices":"all","type":"radio"},
+                {"id":"79","label":"Booth includes: (check all that apply)","choices":"all","type":"checkbox"},
+                {"id":81,"label":"Describe additional details of your RF use.","choices":"","type":"textarea","inputs":""},
+                {"id":151,"label":"Sponsor Company Name","choices":"","type":"text","inputs":""},
+                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
+                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"}
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"54","value":"Internet _Sponsors","checked":true,"aggregated":true}
+                ],
+                "attribute":[],"attention":[],"meta":[],"comment":[]
+              },
+              "type":"customRpt",
+              "location":true};
+      var subTitle = 'Sponsor Internet';
+      $scope.reports.callAJAX(vars);
     }
     jQuery('#pageTitle').html(pageTitle);
     jQuery('#subTitle').html(subTitle);
