@@ -867,6 +867,8 @@ function getBuildRptData(){
           $label = (isset($field['adminLabel']) && $field['adminLabel'] != '' ? $field['adminLabel'] : $fieldLabel);
 
           if($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select'||$field['type']=='address'){
+            //add an option to select all choices
+            $fieldReturn[] = array('id' => $field['id'], 'label' => $label, 'choices'=>'all','type'=>$field['type']);
             if(isset($field['inputs']) && !empty($field['inputs'])){
               foreach($field['inputs'] as $choice){
                 $label = ($label!=''?$label:$choice->label);
