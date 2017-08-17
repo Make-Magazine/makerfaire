@@ -36,7 +36,7 @@ if($type != ''){
       invalidRequest('Error: Form or Fields not selected');
     }
   }elseif($type =="ent2resource"){
-    ent2resource($table,$faire);
+    ent2resource($table,$faire,$formType);
   }elseif($type=='paymentRpt'){
     paymentRpt($table,$faire);
   }else{
@@ -925,7 +925,7 @@ function getBuildRptData(){
 }
 
 //this function cross references faire entries to their assigned resources and attributes
-function ent2resource($table, $faire){
+function ent2resource($table, $faire, $type){
   global $wpdb;
   $data = array();
   $columnDefs = array();
@@ -967,7 +967,9 @@ function ent2resource($table, $faire){
     //pull form data and see if it matches the requested form type
     $formPull = GFAPI::get_form( $entry['form_id'] );
     $formType = (isset($formPull['form_type'])?$formPull['form_type']:'');
-
+    if($type != 'all'){
+      if(ucwords($type) != $formType) continue;
+    }
     //do not return Presenation records
     if($formType=='Presentation') continue; //skip this record
 

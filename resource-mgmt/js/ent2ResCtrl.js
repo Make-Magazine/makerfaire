@@ -50,6 +50,8 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
   if("faire" in $routeParams){
     $scope.reports.selFaire = $routeParams.faire;
     $scope.reports.subRoute = $routeParams.faire;
+  }else if("type" in $routeParams){
+    $scope.reports.type = $routeParams.type;
   }else{
     $scope.reports.selFaire = '';
   }
@@ -65,7 +67,7 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
     }else if(type=='ent2res'){
       $scope.reports.loading = true;
       $scope.reports.showGrid = true;
-      var vars = JSON.stringify({ 'table' : 'wp_rmt_entry_resources' , 'type' : 'ent2resource','faire':$scope.reports.selFaire });
+      var vars = JSON.stringify({ 'table' : 'wp_rmt_entry_resources' , 'type' : 'ent2resource','faire':$scope.reports.selFaire, 'formType':$scope.reports.type });
       var url = '/resource-mgmt/ajax/reports.ajax.php';
       var head2pass =  {'Content-Type': 'application/json'};
     }

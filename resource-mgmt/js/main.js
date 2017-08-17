@@ -38,7 +38,11 @@ resourceApp.config(['$locationProvider', '$routeProvider',
         templateUrl: 'partials/ent2resources.html',
         controller: 'ent2ResCtrl'
       }).
-      when('/ent2resources/:faire', {
+      when('/ent2resources/:type', {
+        templateUrl: 'partials/ent2resources.html',
+        controller: 'ent2ResCtrl'
+      }).
+      when('/ent2resources/:type/:faire', {
         templateUrl: 'partials/ent2resources.html',
         controller: 'ent2ResCtrl'
       }).
