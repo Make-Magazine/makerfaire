@@ -67,7 +67,7 @@ $entries   = $tableData['data'];
 
     //status specific logic
     $statusBlock  = ($entryData['status'] == 'Accepted' ? 'greenStatus':'greyStatus');
-    $dispCancel   = ($entryData['status'] != 'Cancelled' && $entryData['status']!='Rejected'?true:false);
+    $dispCancel   = ($entryData['status'] != 'Cancelled' && $entryData['status']!='Rejected' && $entryData['maker_type'] == 'contact' ?true:false);
     $dispDelete   = ($entryData['status'] == 'Proposed' || $entryData['status'] == 'In Progress'?true:false);
     $disp_edit    = ($entryData['status'] != 'Cancelled' && $entryData['maker_type'] == 'contact' ? true : false); //Should we display a edit Entry Link?
 
@@ -255,12 +255,9 @@ $entries   = $tableData['data'];
                     ?><a href="<?php echo $url;?>">View Entry</a><?php
 
                     if($dispEditPub) { ?>
-                      <span class="editLink">
                         <a href="<?php echo $viewEditLink;?>">
-                          <i class="fa fa-eye" aria-hidden="true"></i>
                           View/Edit Public Information
                         </a>
-                      </span>
                     <?php
                     }
 
@@ -280,9 +277,7 @@ $entries   = $tableData['data'];
                       echo $RMTeditLink;
                     }elseif($dispGVeditLink){
                       ?>
-                      <span class="editLink">
-                        <a href="<?php echo $GVeditLink;?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit Entry</a>
-                      </span>
+                        <a href="<?php echo $GVeditLink;?>">Edit Entry</a>
                       <?php
                     }
                     ?>
