@@ -31,6 +31,13 @@ function mf_custom_toolbar( $menu_items, $form_id ) {
             $field = GFFormsModel::get_field( $form, $field_id );
             if ( $field ) {
               $fieldName= (isset($field['adminLabel'])&&$field['adminLabel']!=''?$field['adminLabel']:$field['label']);
+              if(is_array($field['choices'])){
+                foreach($field['choices'] as $choice){
+                  if($choice['value']==$fieldValue){
+                    $fieldValue = $choice['text'];
+                  }
+                }
+              }
             }else{
               $meta = GFFormsModel::get_entry_meta(array( $form['id']));
               $metaField = $meta[$field_id];
@@ -39,7 +46,7 @@ function mf_custom_toolbar( $menu_items, $form_id ) {
                 if(is_array($metaField['filter']['choices'])){
                   foreach($metaField['filter']['choices'] as $choice){
                     if($choice['value']==$fieldValue)
-                      $fieldValue = $choice['text'];
+                      $fieldValue = $choice['value'];
                   }
                 }
 
