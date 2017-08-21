@@ -1013,7 +1013,7 @@ function ent2resource($table, $faire, $type){
       //set resource data
       $dbdata['attribute'][$attribute['attribute_id']] = array('value'=> $attribute['attribute_value'], 'comment'=>$attribute['attribute_comment']);
       //add attribute to attribute array
-      $attribute[$attribute['attribute_id']] = $attribute['att_label'];
+      $attArray[$attribute['attribute_id']] = $attribute['att_label'];
     }
 
     // pull attention data
@@ -1037,8 +1037,6 @@ function ent2resource($table, $faire, $type){
   $columnDefs[] = array('field' => 'entry_id', 'displayName'=>'Entry ID', 'width'=>'75');
   $columnDefs[] = array('field' => 'form_type', 'displayName'=> 'Form Type', 'width'=>'150');
   $columnDefs[] = array('field' => 'proj_name', 'displayName'=>'Entry Name', 'width'=>'*');
-
-
   $columnDefs[] = array('field' => 'location.area', 'displayName'=>'Area', 'sort'=> array('direction'=> 'uiGridConstants.ASC', 'priority'=> 1), 'enableSorting'=> true);
   $columnDefs[] = array('field' => 'location.subarea', 'displayName'=>'Subarea', 'sort'=> array('direction'=> 'uiGridConstants.ASC', 'priority'=> 3), 'enableSorting'=> true);
   $columnDefs[] = array('field' => 'location.location', 'displayName'=>'Location','sort'=> array('direction'=> 'uiGridConstants.ASC', 'priority'=> 2), 'enableSorting'=> true);
