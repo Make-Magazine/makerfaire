@@ -7,6 +7,11 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
 
   $scope.msg = {};
 
+  var reportName = 'ent2resource';
+  if("type" in $routeParams && $routeParams.type!='all'){
+    $scope.reports.type = $routeParams.type;
+    reportName = $routeParams.type+'_'+ reportName;
+  }
 
   //set up gridOptions
   $scope.gridOptions = {
@@ -14,7 +19,7 @@ rmgControllers.controller('ent2ResCtrl', ['$scope', '$routeParams', '$http','uiG
     enableSorting: true,
     enableGridMenu: true,
     minRowsToShow:22,
-    exporterCsvFilename: 'ent2resource.csv',
+    exporterCsvFilename: reportName+'.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
 
