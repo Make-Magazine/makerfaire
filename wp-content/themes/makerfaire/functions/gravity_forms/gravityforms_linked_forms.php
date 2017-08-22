@@ -220,8 +220,6 @@ function populate_fields($form) {
 
 add_action( 'gform_pre_submission', 'pre_submission' );
 function pre_submission($form){
-  /* Check form type  - Only form type Other is used to link data from other entries */
-  if($form['form_type']=='Other'){
     //check if this is a linked form
     $updateEntryID = get_value_by_label('entry-id', $form);
     if(is_array($updateEntryID)) {
@@ -286,14 +284,12 @@ function pre_submission($form){
         }
       } //end foreach loop
 
-      /* After we are done updating the fields, go back in and
-            update RMT on the linked entry */
+      /* After we are done updating the fields, go back in and update RMT on the linked entry */
       $origEntry = GFAPI::get_entry($origEntryID);
       $origform_id = $origEntry['form_id'];
       $origForm = GFAPI::get_form($origform_id);
       GFRMTHELPER::gravityforms_makerInfo($origEntry,$origForm,$type='update');
     }
-  }
 }
 
 //when a linked form is submitted, find the initial formid based on entry id
