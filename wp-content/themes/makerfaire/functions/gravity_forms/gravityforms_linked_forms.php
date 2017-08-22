@@ -217,89 +217,89 @@ function populate_fields($form) {
   return $form;
 }
 
-
-add_action( 'gform_pre_submission', 'pre_submission' );
-function pre_submission($form){
-    //check if this is a linked form
-    $updateEntryID = get_value_by_label('entry-id', $form);
-    if(is_array($updateEntryID)) {
-      $entFldID     = $updateEntryID['id'];
-      $origEntryID  = $_POST['input_'.$entFldID]; //entry id we are linking to
-
-      //Loop thru form fields and look for parameter names of 'field-*'
-      //  These are set to update original entry fields
-      foreach ($form['fields'] as $field) {
-        //find parameter name
-        $parmName = '';
-        switch($field->type) {
-          //parameter name is stored in a different place
-          case 'name':
-          case 'address':
-            foreach($field->inputs as $key=>$input) {
-              if ($input['name']!='') {
-                $parmName =  $input['name'];
-                $pos = strpos($parmName, 'field-');
-                if ($pos !== false) { //populate by field ID?
-                  $field_id = str_replace("field-", "", $input['name']);
-                }
-              }
-            }
-            break;
-        }
-
-        if ($parmName=='' && $field->inputName != '') {
-          $parmName = $field->inputName;
-        }
-
-        if($parmName!=''){
-          /* Now that we have the parameter name, check if it contains 'field-' */
-          $pos = strpos($parmName, 'field-');
-
-          if ($pos !== false) {
-            //find the field ID passed to update the linked entry
-            $updField = str_replace("field-", "", $parmName);  //strip the 'field-' from the parameter name to get the field number
-
-            //  Do not update values from read only fields
-            if(!$field->gwreadonly_enable){
-              //multiple field options to update
-              if($field->type == 'checkbox'){
-                foreach($field->inputs as $input){
-                  $updField = $input['id'];
-                  $inputID  = str_replace(".", "_", $updField);
-                  /*
-                   * if the field is set, update with submitted  value
-                   *  else, update with blanks
-                   */
-                  $updValue =  (isset($_POST['input_'.$inputID]) ? $_POST['input_'.$inputID] : '');
-                  mf_update_entry_field( $origEntryID, $updField, stripslashes($updValue) );
-
-                }
-              }else{
-                //find submitted value
-                $updValue =  (isset($_POST['input_'.$field['id']])?$_POST['input_'.$field['id']]:'');
-                mf_update_entry_field( $origEntryID, $updField, stripslashes($updValue) );
-              }
+/* Used to update linked fields back to original entry */
+function updLinked_fields($form,$origEntryID){
+  //Loop thru form fields and look for parameter names of 'field-*'
+  //  These are set to update original entry fields
+  foreach ($form['fields'] as $field) {
+    //find parameter name
+    $parmName = '';
+    switch($field->type) {
+      //parameter name is stored in a different place
+      case 'name':
+      case 'address':
+        foreach($field->inputs as $key=>$input) {
+          if ($input['name']!='') {
+            $parmName =  $input['name'];
+            $pos = strpos($parmName, 'field-');
+            if ($pos !== false) { //populate by field ID?
+              $field_id = str_replace("field-", "", $input['name']);
             }
           }
         }
-      } //end foreach loop
-
-      /* After we are done updating the fields, go back in and update RMT on the linked entry */
-      $origEntry = GFAPI::get_entry($origEntryID);
-      $origform_id = $origEntry['form_id'];
-      $origForm = GFAPI::get_form($origform_id);
-      GFRMTHELPER::gravityforms_makerInfo($origEntry,$origForm,$type='update');
+        break;
     }
+
+    if ($parmName=='' && $field->inputName != '') {
+      $parmName = $field->inputName;
+    }
+
+    if($parmName!=''){
+      /* Now that we have the parameter name, check if it contains 'field-' */
+      $pos = strpos($parmName, 'field-');
+
+      if ($pos !== false) {
+        //find the field ID passed to update the linked entry
+        $updField = str_replace("field-", "", $parmName);  //strip the 'field-' from the parameter name to get the field number
+
+        //  Do not update values from read only fields
+        if(!$field->gwreadonly_enable){
+          //multiple field options to update
+          if($field->type == 'checkbox'){
+            foreach($field->inputs as $input){
+              $updField = $input['id'];
+              $inputID  = str_replace(".", "_", $updField);
+              /*
+               * if the field is set, update with submitted  value
+               *  else, update with blanks
+               */
+              $updValue =  (isset($_POST['input_'.$inputID]) ? $_POST['input_'.$inputID] : '');
+              mf_update_entry_field( $origEntryID, $updField, stripslashes($updValue) );
+
+            }
+          }else{
+            //find submitted value
+            $updValue =  (isset($_POST['input_'.$field['id']])?$_POST['input_'.$field['id']]:'');
+            mf_update_entry_field( $origEntryID, $updField, stripslashes($updValue) );
+          }
+        }
+      }
+    }
+  } //end foreach loop
+
+  /* After we are done updating the fields, go back in and update RMT on the linked entry */
+  $origEntry = GFAPI::get_entry($origEntryID);
+  $origform_id = $origEntry['form_id'];
+  $origForm = GFAPI::get_form($origform_id);
+  GFRMTHELPER::gravityforms_makerInfo($origEntry,$origForm,$type='update');
 }
 
 //when a linked form is submitted, find the initial formid based on entry id
 // and add the fields from the linked form to that original entry
-add_action( 'gform_after_submission', 'GSP_after_submission', 10, 2 );
-function GSP_after_submission($entry, $form ){
+add_action('gform_after_update_entry', 'update_linked_data_pre', 10, 3 );  // $form,$entry_id,$orig_entry=array()
+function update_linked_data_pre($form,$entry_id,$orig_entry=array()){
+  $entry = GFAPI::get_entry(esc_attr($entry_id));
+  update_linked_data($entry, $form);
+}
+
+add_action('gform_after_submission', 'update_linked_data', 10, 2 ); //$entry, $form
+function update_linked_data($entry, $form ){
   // update meta
   $updateEntryID = get_value_by_label('entry-id', $form, $entry);
-  if(isset($updateEntryID['value']))
+  if(isset($updateEntryID['value'])){
     gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
+    updLinked_fields($form,$updateEntryID['value']);
+  }
 }
 
 function rmt_lock_ind($text, $entry_id) {
