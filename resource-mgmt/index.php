@@ -7,7 +7,7 @@ require_once '../wp-load.php';
 
 if (!is_user_logged_in())
     auth_redirect();
-include 'header.html';
+include 'header.php';
 
 /* required to display wp-admin bar */
 /** WordPress Administration Screen API */

@@ -1,3 +1,7 @@
+<?php
+$my_theme = wp_get_theme();
+$my_version = $my_theme->get('Version');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,9 +19,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
   <!-- scripts built with grunt -->
-  <script src="/wp-content/themes/makerfaire/js/built-libs.js"></script>
-  <script src="/wp-content/themes/makerfaire/js/built-angular-libs.js"></script>
-  <script src="/wp-content/themes/makerfaire/js/built-angular-reporting.js"></script>
+  <script src="/wp-content/themes/makerfaire/js/built-libs.js?ver=<?php echo $my_version;?>"></script>
+  <script src="/wp-content/themes/makerfaire/js/built-angular-libs.js?ver=<?php echo $my_version;?>"></script>
+  <script src="/wp-content/themes/makerfaire/js/built-angular-reporting.js?ver=<?php echo $my_version;?>"></script>
 
   <!-- to export grid data -->
   <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
