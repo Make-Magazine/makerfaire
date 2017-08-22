@@ -991,20 +991,20 @@ function ent2resource($table, $faire, $type){
     $resSql = "select wp_rmt_entry_resources.resource_id,
                       wp_rmt_entry_resources.qty as 'resource_qty',
                       wp_rmt_entry_resources.comment as 'resource_comment',
-                      token as res_label
+                      token as res_label,description
           from wp_rmt_entry_resources,wp_rmt_resources where wp_rmt_entry_resources.entry_id = ".$entry['entry_id']." and wp_rmt_resources.id = resource_id";
     $resources = $wpdb->get_results($resSql,ARRAY_A);
     foreach($resources as $resource){
       $dbdata['resource'][$resource['resource_id']] = array('qty'=> $resource['resource_qty'], 'comment'=>$resource['resource_comment']);
       //add resource to resource array
-      $resArray[$resource['resource_id']] = $resource['res_label'];
+      $resArray[$resource['resource_id']] = array('name'=>$resource['res_label'], 'desc'=>$resource['description']);
     }
 
     // pull attribute data
     $attSql = "select wp_rmt_entry_attributes.attribute_id,
                       wp_rmt_entry_attributes.value as 'attribute_value',
                       wp_rmt_entry_attributes.comment as 'attribute_comment',
-                      token  as att_label
+                      token  as att_label,category
             from wp_rmt_entry_attributes, wp_rmt_entry_att_categories
             where wp_rmt_entry_attributes .entry_id = ".$entry['entry_id']." and
             wp_rmt_entry_att_categories.id = attribute_id";
@@ -1013,7 +1013,7 @@ function ent2resource($table, $faire, $type){
       //set resource data
       $dbdata['attribute'][$attribute['attribute_id']] = array('value'=> $attribute['attribute_value'], 'comment'=>$attribute['attribute_comment']);
       //add attribute to attribute array
-      $attArray[$attribute['attribute_id']] = $attribute['att_label'];
+      $attArray[$attribute['attribute_id']] = array('name'=>$attribute['att_label'],'desc'=>$attribute['category']);
     }
 
     // pull attention data
@@ -1041,17 +1041,32 @@ function ent2resource($table, $faire, $type){
   $columnDefs[] = array('field' => 'location.subarea', 'displayName'=>'Subarea', 'sort'=> array('direction'=> 'uiGridConstants.ASC', 'priority'=> 3), 'enableSorting'=> true);
   $columnDefs[] = array('field' => 'location.location', 'displayName'=>'Location','sort'=> array('direction'=> 'uiGridConstants.ASC', 'priority'=> 2), 'enableSorting'=> true);
 
-  $resArray  = array_unique($resArray);
-  $attArray  = array_unique($attArray);
+  //set up info for the sub header row
+    $subHeader = array(
+        0=> array(
+          'entry_id'   => 0,
+          'form_id'    => 0,
+          'form_type'  => '',
+          'faire'      => 'Field Descriptions',
+          'status'     => 0,
+          'proj_name'  => '',
+        )
+    );
+
+  //$resArray  = array_unique($resArray);
+  //$attArray  = array_unique($attArray);
   $attnArray = array_unique($attnArray);
   $colDefs2Sort = array();
+
   foreach($resArray as $key=>$resource){
-   $colDefs2Sort[] = array('displayName' => $resource, 'field'=> 'resource.'.$key.'.qty');
-   $colDefs2Sort[] = array('displayName' => $resource .' - comment', 'field'=> 'resource.'.$key.'.comment');
+   $colDefs2Sort[] = array('displayName' => $resource['name'], 'field'=> 'resource.'.$key.'.qty');
+   $colDefs2Sort[] = array('displayName' => $resource['name'] .' - comment', 'field'=> 'resource.'.$key.'.comment');
+   $subHeader['0']['resource'][$key] = array('qty'=> $resource['desc']);
   }
   foreach($attArray as $key=>$attribute){
-   $colDefs2Sort[] = array('displayName' => $attribute, 'field'=> 'attribute.'.$key.'.value');
-   $colDefs2Sort[] = array('displayName' => $attribute .' - comment', 'field'=> 'attribute.'.$key.'.comment');
+   $colDefs2Sort[] = array('displayName' => $attribute['name'], 'field'=> 'attribute.'.$key.'.value');
+   $colDefs2Sort[] = array('displayName' => $attribute['name'] .' - comment', 'field'=> 'attribute.'.$key.'.comment');
+   $subHeader['0']['attribute'][$key] = array('qty'=> $attribute['desc']);
   }
   foreach($attnArray as $key=>$attention){
    $colDefs2Sort[] = array('displayName' => $attention, 'field'=> 'attention.'.$key.'.comment');
@@ -1069,7 +1084,9 @@ function ent2resource($table, $faire, $type){
   //$data = (array) $data;
   //sort data by status, area, subarea, location
   $columnDefs = array_merge($columnDefs,$colDefs2Sort);
-  $retData['data']        = $data;
+  //merge subheader data with $data
+  //$data[''] = $subHeader;
+  $retData['data']        = array_merge($subHeader,$data);
   $retData['columnDefs']  = $columnDefs;
   //reindex columnDefs as the grid will blow up if the indexes aren't in order
   $retData['columnDefs'] = array_values($retData['columnDefs']);
