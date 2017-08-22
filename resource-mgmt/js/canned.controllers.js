@@ -553,7 +553,22 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
-                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"}
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":793,"label":"Let's Talk","choices":"all","type":"radio"},
+                {"id":160,"label":"Name Maker 1","choices":"","type":"name","inputs":[
+                  {"id":"160.2","label":"Prefix","name":"","choices":[
+                      {"text":"Mr.","value":"Mr.","isSelected":false,"price":""},
+                      {"text":"Mrs.","value":"Mrs.","isSelected":false,"price":""},{"text":"Miss","value":"Miss","isSelected":false,"price":""},
+                      {"text":"Ms.","value":"Ms.","isSelected":false,"price":""},{"text":"Dr.","value":"Dr.","isSelected":false,"price":""},
+                      {"text":"Prof.","value":"Prof.","isSelected":false,"price":""},{"text":"Rev.","value":"Rev.","isSelected":false,"price":""}
+                    ],"isHidden":true,"inputType":"radio"},
+                  {"id":"160.3","label":"First","name":""},
+                  {"id":"160.4","label":"Middle","name":"","isHidden":true},
+                  {"id":"160.6","label":"Last","name":""},
+                  {"id":"160.8","label":"Suffix","name":"","isHidden":true}
+                ]},
+                {"id":161,"label":"Email Maker 1","choices":"","type":"email","inputs":""},
+                {"id":99,"label":"Contact Phone Number [ALL]","choices":"","type":"phone","inputs":""},
               ],
               "rmtData":{
                 "resource":[
