@@ -27,7 +27,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
   //set up gridOptions for build your own report - field selection
   $scope.fieldSelect = {
     enableRowSelection: true,
-    enableSelectAll: true,
+    enableSelectAll: false,
     selectionRowHeaderWidth: 35,
     rowHeight: 35,
     showGridFooter:true,

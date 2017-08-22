@@ -205,7 +205,7 @@ function cannedRpt(){
 
         //field 320 snd 302 is stored as category number, use cross reference to find text value
         $value = (isset($detail['long_value']) && $detail['long_value']!=''?$detail['long_value']:$detail['value']);
-        if($detail['field_number'] == 320 || strpos($detail['field_number'], '302.')!== false){
+        if($detail['field_number'] == 320 || strpos($detail['field_number'], '321.')!== false || strpos($detail['field_number'], '302.')!== false){
           $value = get_CPT_name($value);
         }
         $value = convert_smart_quotes(htmlspecialchars_decode ($value));
@@ -244,7 +244,7 @@ function cannedRpt(){
         }
         //build output for field data - format is field_55_4 for field id 55.4
         $fieldKey             = 'field_'.str_replace('.','_',$fieldID);
-        $fieldData[$fieldKey] = (isset($fieldData[$fieldKey]) ? $fieldData[$fieldKey]."\r":'') . $value;
+        $fieldData[$fieldKey] = (isset($fieldData[$fieldKey]) ? $fieldData[$fieldKey]." \r":'') . $value;
       }
 
       if(!empty($exactCriteria)){
@@ -872,12 +872,12 @@ function getBuildRptData(){
             if(isset($field['inputs']) && !empty($field['inputs'])){
               foreach($field['inputs'] as $choice){
                 $label = ($label!=''?$label:$choice->label);
-                $fieldReturn[] = array('id' => $choice->id, 'label' => $label, 'choices'=>$choice->label,'type'=>$field['type']);
+                $fieldReturn[] = array('id' => $choice->id, 'label' => $label, 'choices'=>htmlspecialchars_decode($choice->label),'type'=>$field['type']);
               }
             }else{
               foreach($field['choices'] as $choice){
                 $label = ($label!=''?$label:$choice->value);
-                $fieldReturn[] = array('id' => $field['id'], 'label' => $label, 'choices'=>$choice->value,'type'=>$field['type']);
+                $fieldReturn[] = array('id' => $field['id'], 'label' => $label, 'choices'=>htmlspecialchars_decode(($choice->text!=''?$choice->text:$choice->value)),'type'=>$field['type']);
               }
             }
           }else{
