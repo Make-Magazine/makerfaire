@@ -9,15 +9,32 @@ $sched_dow  = (isset($wp_query->query_vars['sched_dow'])  ? ucfirst(urldecode($w
 $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($wp_query->query_vars['sched_type'])):'All');
 
 $schedule_ids = get_field('schedule_ids');
+if ( have_posts() ){
+  ?>
+  <div class="container">
+    <div class="row">
+      <div class="content col-md-12">
+        <?php
+        while ( have_posts() ){
+          the_post(); ?>
+          <article <?php post_class(); ?>>
+            <?php the_content(); ?>
+          </article><?php
+        }
+        ?>
+      </div>
+    </div>
+  </div><?php
+}
 if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
   create_calendar(get_field('schedule_ids'));
   ?>
-<a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>
   <input type="hidden" id="forms2use" value="<?php echo get_field('schedule_ids'); ?>" />
   <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
   <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
   <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp">
+    <a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>
     <div ng-cloak>
       <div class="topic-nav" ng-if="showType">
         <div class="btn-group">
