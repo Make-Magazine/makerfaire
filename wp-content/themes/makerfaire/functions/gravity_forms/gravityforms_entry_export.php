@@ -54,6 +54,8 @@ function mf_custom_import_entries() {
             $error = processLocation($file,$userID);
           }else if($fileType=='ribbon') {
             $error = processRibbon($file,$userID);
+          }else if($fileType=='sponsor') {
+            $error = processEntry($file,$userID,true);
           }else{
             $error = processEntry($file,$userID);
           }
@@ -73,8 +75,8 @@ function mf_custom_import_entries() {
   <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#import">File Import</a></li>
     <!--<li><a data-toggle="tab" href="#home">Basic Info</a></li>-->
-    <li><a data-toggle="tab" href="#location">Location Layout</a></li>
-    <li><a data-toggle="tab" href="#entry">Entry Layout</a></li>
+    <li><a data-toggle="tab" href="#location">Location Import Info</a></li>
+    <li><a data-toggle="tab" href="#entry">Entry Import Info</a></li>
     <li><a data-toggle="tab" href="#ribbons">Ribbon Layout</a></li>
   </ul>
 
@@ -91,6 +93,7 @@ function mf_custom_import_entries() {
             <td>Type of Import:</td>
             <td>
               <input type="radio" name="importType" value="location" checked> Location Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/location_import.csv" download>Example</a><br>
+              <input type="radio" name="importType" value="sponsor"> Sponsor Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a><br>
               <input type="radio" name="importType" value="entry"> Entry Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a><br>
               <input type="radio" name="importType" value="ribbon"> Ribbon Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/ribbon_import_example.csv" download>Example</a>
             </td>
@@ -132,43 +135,43 @@ function mf_custom_import_entries() {
     </div>
 
     <div id="entry" class="tab-pane fade">
-      <h3>Ribbon Import Layout</h3>
-      <ul class="bullet">
-        <li>CSV format</li>
-        <li>Row 1 - Field Names/Field ID's (Field Names must match what is in example and field ID's must be numeric</li>
-        <li>Row 2 - Start of Data</li>
-        <li>Required Fields
-          <ul>
-            <li>form_id - Numeric</li>
-            <li>entry_creator - Numeric userID to associate this entry to</li>
-            <li>16  - Non Blank - Public Description (limit to 250 characters</li>
-            <li>22  - Non Blank - Photo URL</li>
-            <li>96.3 - Non Blank - Contact First Name</li>
-            <li>96.6 - Non Blank - Contact First Name</li>
-            <li>98   - Non Blank - Contact Email</li>
-            <li>101.3 - Non Blank - Contact City</li>
-            <li>101.4 - Non Blank - Contact State</li>
-            <li>101.5 - Non Blank - Contact Zip</li>
-            <li>101.6 - Non Blank - Contact Country</li>
-            <li>151 - Non Blank - Project Name</li>
-            <li>160.3 - Non Blank - Maker First Name</li>
-            <li>160.6 - Non Blank - Maker First Name</li>
-            <li>217 - Maker Photo</li>
-            <li>234 - Maker Bio</li>
-            <li>303 - Status to set the entry to</li>
-            <li>320 - Primary Category</li>
-          </ul>
-        </li>
-        <li>Optional Fields
-          <ul>
-            <li>location - used to assign entry to a specific location</li>
-            <li>link_entry_id - used to link the created entry to</li>
-            <li>subarea_id - used to assign this entry to a specific subarea</li>
-            <li>Any other fields from the form you are importing into</li>
-          </ul>
-        </li>
-      </ul>
+      This option can be used to import exhibits and sponsors. The import file needs to be in a CSV format. Row 1 contains field names or ID's and Row 2 is the start of data. The data must match the format listed for that field in the form you are importing to.<br/>
+      <br/>
+      For more information on the field layouts, please go to:<br/>
+      <a href="http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=9">http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=999</a><br/>
+      <br/>
 
+      <table class="table border" width="100%">
+        <tr><th>Field Names/Field ID</th><th>Verification</th><th>description</th><th>Required</th></tr>
+        <tr><td>entry_creator</td><td>Numeric</td><td>userID to associate this entry to</td><td>Sponsors/ Exhibits</td></tr>
+        <tr><td>form_id</td><td>Numeric</td><td>Sponsors/ Exhibits</td><td>Sponsors/ Exhibits</td></tr></tr>
+        <tr><td>link_entry_id</td><td>Numeric</td><td>Used to link to a parent entry</td><td>Optional</td></tr>
+        <tr><td>16</td><td>Non Blank</td><td>Public Description (limit to 250 characters</td><td>Sponsors/ Exhibits</td></tr>
+        <tr><td>22</td><td>Non Blank</td><td>Photo URL</td><td>Sponsors/ Exhibits</td></tr>
+        <tr><td>96.3</td><td>Non Blank</td><td>Contact First Name</td><td>Sponsors/ Exhibits</td></tr>
+        <tr><td>96.6</td><td></td><td>Contact Last Name</td><td>Sponsors/ Exhibits</td></tr>
+        <tr><td>98</td><td>Non Blank</td><td>Contact Email</td><td>Sponsors/ Exhibits</td></tr>
+        <tr><td>151</td><td>Non Blank</td><td>Project Name</td><td>Sponsors/ Exhibits</td></tr>
+        <tr><td>303</td><td>Non Blank</td><td>Status to set the entry to</td><td>Sponsors/ Exhibits</td></tr>
+        <tr><td>101.3</td><td>Non Blank</td><td>Contact City</td><td>Exhibit Only</td></tr>
+        <tr><td>101.4</td><td>Non Blank</td><td>Contact State (full state name)</td><td>Exhibit Only</td></tr>
+        <tr><td>101.5</td><td>Non Blank</td><td>Contact Zip</td><td>Exhibit Only</td></tr>
+        <tr><td>101.6</td><td>Non Blank</td><td>Contact Country (ie United States)</td><td>Exhibit Only</td></tr>
+        <tr><td>320</td><td>Numeric</td><td>Primary Category</td><td>Exhibit Only</td></tr>
+        <tr><td>287</td><td>Non Blank</td><td>What inspired you to make this project?</td><td>Exhibit Only</td></tr>
+        <tr><td>160.3</td><td>Non Blank</td><td>Maker 1 - First Name</td><td>Exhibit Only</td></tr>
+        <tr><td>160.6</td><td></td><td>Maker 1 - Last Name</td><td>Exhibit Only</td></tr>
+        <tr><td>161</td><td>Non Blank</td><td>Maker 1 - Email (must be unique)</td><td>Exhibit Only</td></tr>
+        <tr><td>217</td><td>Non Blank</td><td>Maker 1 - Photo URL</td><td>Exhibit Only</td></tr>
+        <tr><td>234</td><td>Non Blank</td><td>Maker 1 - Bio</td><td>Exhibit Only</td></tr>
+        <tr><td>369.1</td><td>Non Blank</td><td>Maker 1 - Address</td><td>Exhibit Only</td></tr>
+        <tr><td>369.3</td><td>Non Blank</td><td>Maker 1 - City</td><td>Exhibit Only</td></tr>
+        <tr><td>369.4</td><td>Non Blank</td><td>Maker 1 - State (full state name)</td><td>Exhibit Only</td></tr>
+        <tr><td>369.5</td><td>Non Blank</td><td>Maker 1 - Zip</td><td>Exhibit Only</td></tr>
+        <tr><td>369.6</td><td>Non Blank</td><td>Maker 1 - Country (ie United States)</td><td>Exhibit Only</td></tr>
+        <tr><td>443</td><td>Non Blank</td><td>Maker 1 - Role in project</td><td>Exhibits Only</td></tr>
+        <tr><td>310</td><td>Non Blank</td><td>Maker 1 Age range<br/><i>must match one of the options from the form</i></td><td>Exhibit Only</td></tr>
+      </table>
     </div>
     <div id="ribbons" class="tab-pane fade">
       <h3>Ribbon Import Layout</h3>
@@ -413,7 +416,7 @@ function mf_custom_import_entries() {
   }
 
   /* Process the impored entry upload file */
-  function processEntry($file, $user) {
+  function processEntry($file, $user, $sponsorImport=false) {
     $data2Process = array();
     $error  = '';
 
@@ -421,30 +424,35 @@ function mf_custom_import_entries() {
               'form_id'       =>  array('required' => 'yes', 'verification' => 'numeric'),
               'entry_creator' =>  array('required' => 'yes', 'verification' => 'numeric'),
               'link_entry_id' =>  array('required' => 'no',  'verification' => 'numeric'),
-              'subarea_id'    =>  array('required' => 'no',  'verification' => 'numeric'),
-              'location'      =>  array('required' => 'yes', 'verification' => 'none'),
-              '303'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '320'           =>  array('required' => 'yes', 'verification' => 'numeric'),
-              '55'            =>  array('required' => 'no', 'verification' => 'non-blank'),
-              '376'           =>  array('required' => 'no',  'verification' => 'yes/no'),
-              '130'           =>  array('required' => 'no',  'verification' => 'yes/no'),
-              '434'           =>  array('required' => 'no',  'verification' => 'yes/no'),
-              '73'            =>  array('required' => 'no',  'verification' => 'yes/no'),
-              '151'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '16'            =>  array('required' => 'yes', 'verification' => 'non-blank', 'limit'=>250),
               '22'            =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '160.3'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '160.6'         =>  array('required' => 'yes', 'verification' => 'none'),
-              '234'           =>  array('required' => 'yes', 'verification' => 'none', 'limit'=>250),
-              '217'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '96.3'          =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '96.6'          =>  array('required' => 'yes', 'verification' => 'non-blank'),
               '98'            =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '101.3'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '101.4'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '101.5'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
-              '101.6'         =>  array('required' => 'yes', 'verification' => 'non-blank')
+              '151'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
+              '303'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
     );
+    $exhibitReq = array(
+        '101.3'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '101.4'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '101.5'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '101.6'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '320'           =>  array('required' => 'yes', 'verification' => 'numeric'),
+        '287'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '160.3'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '160.6'         =>  array('required' => 'yes', 'verification' => 'none'),
+        '161'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '217'           =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '234'           =>  array('required' => 'yes', 'verification' => 'none', 'limit'=>250),
+        '369.1'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '369.3'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '369.4'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '369.5'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '369.6'         =>  array('required' => 'yes', 'verification' => 'non-blank'),
+        '443'            =>  array('required' => 'no', 'verification' => 'non-blank'),
+        '310'            =>  array('required' => 'no', 'verification' => 'non-blank')
+    );
+    //default 105 to 'One Maker' if not passed
 
     $row = 1;
     //read the uploaded file
@@ -458,7 +466,13 @@ function mf_custom_import_entries() {
             $error .= "Missing required field '".$key."'.<br/>";
           }
         }
-
+        if(!$sponsorImport){
+          foreach($exhibitReq as $key=>$header){
+            if($header['required']=='yes' && !in_array($key, $csvFile)){
+              $error .= "Missing required field '".$key."'.<br/>";
+            }
+          }
+        }
         if($error!=''){
           $error .= 'Import Failed.';
           break; //exit the while loop
