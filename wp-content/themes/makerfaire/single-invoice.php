@@ -3,6 +3,11 @@
  *	Single invoice template
  */
 //* Define running total global variable
+
+//require user login to access invoice page
+if (!is_user_logged_in())
+    auth_redirect();
+
 $running_total = 0;
 
 //* Set variables
