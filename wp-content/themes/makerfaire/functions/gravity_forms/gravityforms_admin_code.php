@@ -94,7 +94,7 @@ function get_value_by_label($key, $form, $entry=array()) {
       //is this a checkbox field?
       if($field['type']=='checkbox'){
         $retArray = array();
-        
+
         foreach($field['inputs'] as $input){
           if(isset($entry[$input['id']]) && $entry[$input['id']]==$input['label']){
             $retArray[] = array('id'=>$input['id'], 'value' => $input['label']);
@@ -200,12 +200,12 @@ function change_column_data( $value, $form_id, $field_id, $entry, $query_string 
 
 add_filter( 'gform_admin_pre_render', 'correct_currententry_formid' );
 function correct_currententry_formid( $form ) {
-    $current_page = $_GET['page'];
-    $current_view = $_GET['view'];
-    $current_formid = $_GET['id'];
-    $current_entryid = $_GET['lid'];
+    $current_page = (isset($_GET['page'])?$_GET['page']:'');
+    $current_view = (isset($_GET['view'])?$_GET['view']:'');
 
     if ($current_page=='gf_entries' && $current_view=="entry"){
+      $current_formid = $_GET['id'];
+      $current_entryid = $_GET['lid'];
       // Different form is in URL than in the form itself.
       global $wpdb;
       $result = $wpdb->get_results( $wpdb->prepare( "SELECT id,form_id from wp_rg_lead WHERE id=%d", $current_entryid) );

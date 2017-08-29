@@ -99,8 +99,6 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       $incResources     = substr($res_merge_tag , $incStartPos, $incEndPos - $incStartPos);
     }
 
-    //set lead meta field res_status to sent
-    gform_update_meta( $entry_id, 'res_status','sent' );
     $resTable = '<table cellpadding="10" width=100%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
     $resources = get_mf_resources($lead, $excResources, $incResources);
 
