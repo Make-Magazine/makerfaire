@@ -22,4 +22,5 @@ function set_resource_status( $notification, $form, $entry ) {
     //set lead meta field res_status to sent
     gform_update_meta( $entry_id, 'res_status','sent' );
   }
+  return $notification;
 }
