@@ -1,51 +1,63 @@
 <?php
-class IntWDTColumn extends WDTColumn {
-    
+
+defined('ABSPATH') or die("Cannot access pages directly.");
+
+class IntWDTColumn extends WDTColumn
+{
+
     protected $_dataType = 'int';
     protected $_jsDataType = 'numeric';
-    
-    public function __construct( $properties = array () ) {
-        parent::__construct( $properties );
+
+    /**
+     * IntWDTColumn constructor.
+     * @param array $properties
+     */
+    public function __construct($properties = array())
+    {
+        parent::__construct($properties);
         $this->_dataType = 'int';
         $this->_jsDataType = 'formatted-num';
-
-        $number_format = get_option('wdtNumberFormat') ? get_option('wdtNumberFormat') : 1;
-
-        $this->_jsFiltertype = 'number';
+        $this->_filterType = 'number';
         $this->addCSSClass('numdata integer');
     }
-    
-    public function prepareCellOutput( $content ) {
 
-	    if( $content === '' || $content === null) {
-		    $content = '';
-		    return $content;
-	    }
-        
-        $number_format = get_option('wdtNumberFormat') ? get_option('wdtNumberFormat') : 1;
-        if($number_format == 1){
-            $content = number_format( 
-                           (int) $content, 
-                           0, 
-                           ',', 
-                           $this->thousandsSeparatorVisible() ? '.' : ''
-                        );
-        }else{
-            $content = number_format( 
-                           (int) $content, 
-                           0, 
-                           '.', 
-                           $this->thousandsSeparatorVisible() ? ',' : ''
-                        );
+    /**
+     * @param $content
+     * @return mixed|string
+     */
+    public function prepareCellOutput($content)
+    {
+
+        if ($content === '' || $content === null) {
+            $content = '';
+            return $content;
         }
-        $content = apply_filters( 'wpdatatables_filter_int_cell', $content );
+
+        $number_format = get_option('wdtNumberFormat') ? get_option('wdtNumberFormat') : 1;
+        if ($number_format == 1) {
+            $content = number_format(
+                (int)$content,
+                0,
+                ',',
+                $this->isShowThousandsSeparator() ? '.' : ''
+            );
+        } else {
+            $content = number_format(
+                (int)$content,
+                0,
+                '.',
+                $this->isShowThousandsSeparator() ? ',' : ''
+            );
+        }
+        $content = apply_filters('wpdatatables_filter_int_cell', $content, $this->getParentTable()->getWpId());
         return $content;
-    }        
-    
-    public function getGoogleChartColumnType(){
+    }
+
+    /**
+     * @return string
+     */
+    public function getGoogleChartColumnType()
+    {
         return 'number';
-    }    
+    }
 }
-
-
-?>

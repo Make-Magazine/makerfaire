@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') or die("Cannot access pages directly.");
+
 /**
  * Class wdtFilterWidget is used to create filtering widget for wpDataTables
  *
@@ -24,12 +27,15 @@
 
 		echo $args['before_widget'];
 
-		$title = $args['before_title'] . $title . $args['after_title'];
-				
-		$tpl = new PDTTpl();
-		$tpl->setTemplate('filter_widget.inc.php');
-		$tpl->addData('title',$title);
-		echo $tpl->showData();
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $title = $args['before_title'] . $title . $args['after_title'];
+
+        ob_start();
+        include(WDT_TEMPLATE_PATH . 'frontend/filter_widget.inc.php');
+        $filterWidgetHtml = ob_get_contents();
+        ob_end_clean();
+
+        echo$filterWidgetHtml;
 		echo $args['after_widget'];
 	}
 

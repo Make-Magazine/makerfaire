@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') or die("Cannot access pages directly.");
+
 /**
  * MySQL abstract layer for the WPDataTables module
  * 
@@ -13,7 +15,7 @@ class PDTSql {
     private $dbname;
     private $dbuser;
     private $dbpass;
-    private $dbport = 3306;
+    private $dbport;
     private $link;
     private $sqllog;
     private $query;
@@ -28,12 +30,12 @@ class PDTSql {
      * @param string $sqluser
      * @param string $sqlpassword 
      */
-    function __construct( $sqlhost, $sqldbname, $sqluser, $sqlpassword, $sqlport = 3306 ) {
+    function __construct( $sqlhost, $sqldbname, $sqluser, $sqlpassword, $sqlport  ) {
         $this->dbhost = (((string) $sqlhost)) ? $sqlhost : '';
         $this->dbname = (((string) $sqldbname)) ? $sqldbname : '';
         $this->dbuser = (((string) $sqluser)) ? $sqluser : '';
         $this->dbpass = (((string) $sqlpassword)) ? $sqlpassword : '';
-        $this->dbport = (((int) $sqlport)) ? $sqlport : '';
+        $this->dbport = (((int) $sqlport)) ? $sqlport : '3306';
         $this->sqlConnect();
     }
 
@@ -136,12 +138,11 @@ class PDTSql {
 
     /**
      * Get all results of a query as an indexed array
-     * @param $query
-     * @param parameters - a single array, or all values
-     * separated by comma
-     * @return boolean 
+     *
+     * @return array|bool
      */
     function getArray() {
+        $tmp = null;
         if ($result = $this->prepare(func_get_args())) {
             while ($row = mysqli_fetch_array($result))
                 $tmp[] = $row;
@@ -182,11 +183,7 @@ class PDTSql {
     /**
      * Get the results of a query as an assoc array
      * grouped by a provided key
-     * @param $key a key by which we group the result
-     * @param $query
-     * @param parameters - a single array, or all values
-     * separated by comma
-     * @return boolean 
+     * @return bool
      */
     function getAssocGroups() {
         $properties = func_get_args();
@@ -204,11 +201,7 @@ class PDTSql {
 
     /**
      * Get the results of a query sorted by a provided key
-     * @param $key a key by which we group the result
-     * @param $query
-     * @param parameters - a single array, or all values
-     * separated by comma
-     * @return boolean 
+     * @return bool
      */
     function getAssocByKey() {
         $properties = func_get_args();

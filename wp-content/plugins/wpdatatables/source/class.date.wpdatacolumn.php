@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') or die("Cannot access pages directly.");
+
 /**
  * Class IntColumn is a child column class used
  * to describe columns with float numeric content
@@ -8,52 +10,45 @@
  *
  * @since May 2012
  */
-
 class DateWDTColumn extends WDTColumn {
-	
-    protected $_jsDataType = 'date';
+
+    protected $_jsDataType = 'date-custom';
     protected $_dataType = 'date';
-    
-    public function __construct( $properties = array () ) {
-		parent::__construct( $properties );
-		$this->_dataType = 'date';
-		
-		switch(get_option('wdtDateFormat')){
-			case 'd/m/Y':
-			case 'd.m.Y':
-			case 'd-m-Y':
-			case 'd.m.y':
-			case 'd-m-y':
-				$this->_jsDataType = 'date-eu';
-				break;
-			case 'd-m-Y':
-				$this->_jsDataType = 'date-dd-mmm-yyyy';
-				break;
-		}
-				
+
+    /**
+     * DateWDTColumn constructor.
+     * @param array $properties
+     */
+    public function __construct($properties = array()) {
+        parent::__construct($properties);
+        $this->_dataType = 'date';
     }
-    
-    public function prepareCellOutput( $content ) {
-        if(!is_array($content)){
-            if( !empty($content) && ( $content != '0000-00-00' ) ){
-                $timestamp = is_numeric( $content ) ? $content : strtotime( str_replace('/', '-', $content ) );
-                $formattedValue = date( get_option('wdtDateFormat'), $timestamp );
-            }else{
+
+    /**
+     * @param $content
+     * @return false|mixed|string
+     */
+    public function prepareCellOutput($content) {
+        if (!is_array($content)) {
+            if (!empty($content) && ($content != '0000-00-00')) {
+                $timestamp = is_numeric($content) ? $content : strtotime(str_replace('/', '-', $content));
+                $formattedValue = date(get_option('wdtDateFormat'), $timestamp);
+            } else {
                 $formattedValue = '';
             }
-        }else{
+        } else {
             $content['value'] = str_replace('/', '-', $content['value']);
-            $formattedValue = date( get_option('wdtDateFormat'), strtotime($content['value']) );
+            $formattedValue = date(get_option('wdtDateFormat'), strtotime($content['value']));
         }
-        $formattedValue = apply_filters('wpdatatables_filter_date_cell', $formattedValue);
+        $formattedValue = apply_filters('wpdatatables_filter_date_cell', $formattedValue, $this->getParentTable()->getWpId());
         return $formattedValue;
     }
-    
-    public function getGoogleChartColumnType(){
+
+    /**
+     * @return string
+     */
+    public function getGoogleChartColumnType() {
         return 'date';
     }
-    
+
 }
-
-
-?>

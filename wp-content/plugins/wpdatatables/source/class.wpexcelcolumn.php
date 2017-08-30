@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') or die("Cannot access pages directly.");
+
 /**
  * Created by PhpStorm.
  * User: Milos Roksandic
@@ -48,23 +50,27 @@ class WDTExcelColumn {
 
         $colJsDefinition->title = $this->wdtColumn->getTitle();
         $colJsDefinition->data = $this->wdtColumn->getOriginalHeader();
-        $colJsDefinition->defaultValue = $this->wdtColumn->getDefaultValue();
+        $colJsDefinition->defaultValue = $this->wdtColumn->getFilterDefaultValue();
         $colJsDefinition->className = $this->wdtColumn->getCSSClasses();
 
-        if( $this->wdtColumn->getType() == 'float' ) {
+        if( $this->wdtColumn->getDataType() == 'float' ) {
             $decimal_places = (int) (get_option('wdtDecimalPlaces'));
             if ( $decimal_places > 0 ) {
                 $format = '0,0.' . str_repeat( '0', $decimal_places );
                 $colJsDefinition->format = $format;
             }
-        } else if( $this->wdtColumn->getType() == 'formula' ) {
+        } else if( $this->wdtColumn->getDataType() == 'formula' ) {
             $colJsDefinition->readOnly = true;
         }
 
         $cell_editor_type = $this->getEditorType();
 
         if( $cell_editor_type == 'wdt.dropdown' || $cell_editor_type == 'wdt.multi-select' ) {
-            $colJsDefinition->source = $this->wdtColumn->getPossibleValues();
+            if ($this->wdtColumn->getPossibleValuesType() === 'read') {
+                $colJsDefinition->source = WDTColumn::getColumnDistinctValues($this->wdtColumn);
+            } elseif ($this->wdtColumn->getPossibleValuesType() === 'list') {
+                $colJsDefinition->source = $this->wdtColumn->getPossibleValues();
+            }
         }
 
         if( $cell_editor_type == 'wdt.date' || $cell_editor_type == 'date') {
@@ -175,7 +181,7 @@ class WDTExcelColumn {
      * @return string
      */
     public function getRendererType() {
-        switch( $this->wdtColumn->getType() ) {
+        switch( $this->wdtColumn->getDataType() ) {
             case 'string':
                 return 'text';
             case 'int':

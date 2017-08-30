@@ -1,51 +1,61 @@
 <?php
+
+defined('ABSPATH') or die("Cannot access pages directly.");
+
 class FloatWDTColumn extends WDTColumn {
 
     protected $_jsDataType = 'formatted-num';
     protected $_dataType = 'float';
-    
-    public function __construct( $properties = array () ) {
-		parent::__construct( $properties );
-		$this->dataType = 'float';
-		$this->_jsFilterType = 'number';
-		$this->addCSSClass('numdata float');
-    }
-    
-    public function prepareCellOutput( $content ) {
 
-		if( $content === '' || $content === null) {
-			$content = '';
-			return $content;
-		}
-
-		$number_format = get_option('wdtNumberFormat') ? get_option('wdtNumberFormat') : 1;
-		$decimal_places = get_option('wdtDecimalPlaces') !== false ? get_option('wdtDecimalPlaces') : 2;
-		
-		if($number_format == 1){
-			$formattedValue = number_format( 
-                                            (float) $content, 
-                                            $decimal_places, 
-                                            ',', 
-                                            $this->thousandsSeparatorVisible() ? '.' : ''
-                                        );
-		}else{
-			$formattedValue = number_format(
-                                            (float) $content, 
-                                            $decimal_places,
-                                            '.', 
-                                            $this->thousandsSeparatorVisible() ? ',' : ''
-                                            );
-		}
-    	
-		$formattedValue = apply_filters( 'wpdatatables_filter_float_cell', $formattedValue );
-		return $formattedValue;
+    /**
+     * FloatWDTColumn constructor.
+     * @param array $properties
+     */
+    public function __construct($properties = array()) {
+        parent::__construct($properties);
+        $this->_dataType = 'float';
+        $this->_filterType = 'number';
+        $this->addCSSClass('numdata float');
+        $this->setDecimalPlaces(WDTTools::defineDefaultValue($properties, 'decimalPlaces', -1));
     }
-    
-    public function getGoogleChartColumnType(){
+
+    /**
+     * @param $content
+     * @return mixed|string
+     */
+    public function prepareCellOutput($content) {
+
+        if ($content === '' || $content === null) {
+            $content = '';
+            return $content;
+        }
+
+        $numberFormat = get_option('wdtNumberFormat') ? get_option('wdtNumberFormat') : 1;
+        $decimalPlaces = $this->getDecimalPlaces() != -1 ? $this->getDecimalPlaces() : get_option('wdtDecimalPlaces');
+
+        if ($numberFormat == 1) {
+            $formattedValue = number_format(
+                (float)$content,
+                $decimalPlaces,
+                ',',
+                '.'
+            );
+        } else {
+            $formattedValue = number_format(
+                (float)$content,
+                $decimalPlaces
+            );
+        }
+
+        $formattedValue = apply_filters('wpdatatables_filter_float_cell', $formattedValue, $this->getParentTable()->getWpId());
+        return $formattedValue;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGoogleChartColumnType() {
         return 'number';
-    }    
-    
+    }
+
 }
-
-
-?>

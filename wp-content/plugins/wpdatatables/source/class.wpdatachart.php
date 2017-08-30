@@ -1,10 +1,11 @@
 <?php
 
+defined('ABSPATH') or die("Cannot access pages directly.");
+
 /**
  * Chart engine of wpDataTables plugin
  */
-class WPDataChart
-{
+class WPDataChart {
 
     private $_id = NULL;
     private $_wpdatatable_id = NULL;
@@ -110,152 +111,131 @@ class WPDataChart
 
     private $_type_counters;
 
-    public function __construct()
-    {
+    public function __construct() {
 
     }
 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->_id = $id;
     }
 
-    public function getId()
-    {
+    public function getId() {
         return $this->_id;
     }
 
     // Chart
 
-    public function setWidth($width)
-    {
+    public function setWidth($width) {
         $this->_width = $width;
     }
 
-    public function getWidth()
-    {
+    public function getWidth() {
         return $this->_width;
     }
 
     /**
      * @return boolean
      */
-    public function isResponsiveWidth()
-    {
+    public function isResponsiveWidth() {
         return $this->_responsiveWidth;
     }
 
     /**
      * @param boolean $responsiveWidth
      */
-    public function setResponsiveWidth($responsiveWidth)
-    {
+    public function setResponsiveWidth($responsiveWidth) {
         $this->_responsiveWidth = $responsiveWidth;
     }
 
-    public function setHeight($height)
-    {
+    public function setHeight($height) {
         $this->_height = $height;
     }
 
-    public function getHeight()
-    {
+    public function getHeight() {
         return $this->_height;
     }
 
     /**
      * @param boolean $group_chart
      */
-    public function setGroupChart($group_chart)
-    {
+    public function setGroupChart($group_chart) {
         $this->_group_chart = $group_chart;
     }
 
     /**
      * @return boolean
      */
-    public function isGroupChart()
-    {
+    public function isGroupChart() {
         return $this->_group_chart;
     }
 
     /**
      * @param $background_color
      */
-    public function setBackgroundColor($background_color)
-    {
+    public function setBackgroundColor($background_color) {
         $this->_background_color = $background_color;
     }
 
     /**
      * @return string
      */
-    public function getBackgroundColor()
-    {
+    public function getBackgroundColor() {
         return $this->_background_color;
     }
 
     /**
      * @param $border_width
      */
-    public function setBorderWidth($border_width)
-    {
+    public function setBorderWidth($border_width) {
         $this->_border_width = $border_width;
     }
 
     /**
      * @return int
      */
-    public function getBorderWidth()
-    {
+    public function getBorderWidth() {
         return $this->_border_width;
     }
 
     /**
      * @param $border_color
      */
-    public function setBorderColor($border_color)
-    {
+    public function setBorderColor($border_color) {
         $this->_border_color = $border_color;
     }
 
     /**
      * @return string
      */
-    public function getBorderColor()
-    {
+    public function getBorderColor() {
         return $this->_border_color;
     }
 
     /**
      * @param $border_radius
      */
-    public function setBorderRadius($border_radius)
-    {
+    public function setBorderRadius($border_radius) {
         $this->_border_radius = $border_radius;
     }
 
     /**
      * @return int
      */
-    public function getBorderRadius()
-    {
+    public function getBorderRadius() {
         return $this->_border_radius;
     }
 
     /**
      * @param $zoom_type
      */
-    public function setZoomType($zoom_type)
-    {
+    public function setZoomType($zoom_type) {
         $this->_zoom_type = $zoom_type;
     }
 
     /**
      * @return string
      */
-    public function getZoomType()
-    {
+    public function getZoomType() {
         return $this->_zoom_type;
     }
 
@@ -263,192 +243,168 @@ class WPDataChart
     /**
      * @param $panning
      */
-    public function setPanning($panning)
-    {
+    public function setPanning($panning) {
         $this->_panning = (bool)$panning;
     }
 
     /**
      * @return bool
      */
-    public function getPanning()
-    {
+    public function getPanning() {
         return $this->_panning;
     }
 
     /**
      * @param $pan_key
      */
-    public function setPanKey($pan_key)
-    {
+    public function setPanKey($pan_key) {
         $this->_pan_key = $pan_key;
     }
 
     /**
      * @return string
      */
-    public function getPanKey()
-    {
+    public function getPanKey() {
         return $this->_pan_key;
     }
 
     /**
      * @param $plot_background_color
      */
-    public function setPlotBackgroundColor($plot_background_color)
-    {
+    public function setPlotBackgroundColor($plot_background_color) {
         $this->_plot_background_color = $plot_background_color;
     }
 
     /**
      * @return string
      */
-    public function getPlotBackgroundColor()
-    {
+    public function getPlotBackgroundColor() {
         return $this->_plot_background_color;
     }
 
     /**
      * @param $plot_background_image
      */
-    public function setPlotBackgroundImage($plot_background_image)
-    {
+    public function setPlotBackgroundImage($plot_background_image) {
         $this->_plot_background_image = $plot_background_image;
     }
 
     /**
      * @return string
      */
-    public function getPlotBackgroundImage()
-    {
+    public function getPlotBackgroundImage() {
         return $this->_plot_background_image;
     }
 
     /**
      * @param $plot_border_width
      */
-    public function setPlotBorderWidth($plot_border_width)
-    {
+    public function setPlotBorderWidth($plot_border_width) {
         $this->_plot_border_width = $plot_border_width;
     }
 
     /**
      * @return int
      */
-    public function getPlotBorderWidth()
-    {
+    public function getPlotBorderWidth() {
         return $this->_plot_border_width;
     }
 
     /**
      * @param $plot_border_color
      */
-    public function setPlotBorderColor($plot_border_color)
-    {
+    public function setPlotBorderColor($plot_border_color) {
         $this->_plot_border_color = $plot_border_color;
     }
 
     /**
      * @return string
      */
-    public function getPlotBorderColor()
-    {
+    public function getPlotBorderColor() {
         return $this->_plot_border_color;
     }
 
     /**
      * @param $credits
      */
-    public function setCredits($credits)
-    {
+    public function setCredits($credits) {
         $this->_credits = (bool)$credits;
     }
 
     /**
      * @return bool
      */
-    public function getCredits()
-    {
+    public function getCredits() {
         return $this->_credits;
     }
 
     /**
      * @return null
      */
-    public function getFontSize()
-    {
+    public function getFontSize() {
         return $this->_font_size;
     }
 
     /**
      * @param null $font_size
      */
-    public function setFontSize($font_size)
-    {
+    public function setFontSize($font_size) {
         $this->_font_size = $font_size;
     }
 
     /**
      * @return string
      */
-    public function getFontName()
-    {
+    public function getFontName() {
         return $this->_font_name;
     }
 
     /**
      * @param string $font_name
      */
-    public function setFontName($font_name)
-    {
+    public function setFontName($font_name) {
         $this->_font_name = $font_name;
     }
 
     /**
      * @return string
      */
-    public function getFontStyle()
-    {
+    public function getFontStyle() {
         return $this->_font_style;
     }
 
     /**
      * @param string $font_style
      */
-    public function setFontStyle($font_style)
-    {
+    public function setFontStyle($font_style) {
         $this->_font_style = $font_style;
     }
 
     /**
      * @return string
      */
-    public function getFontColor()
-    {
+    public function getFontColor() {
         return $this->_font_color;
     }
 
     /**
      * @param string $font_color
      */
-    public function setFontColor($font_color)
-    {
+    public function setFontColor($font_color) {
         $this->_font_color = $font_color;
     }
 
     /**
      * @param boolean $three_d
      */
-    public function setThreeD($three_d)
-    {
+    public function setThreeD($three_d) {
         $this->_three_d = (bool)$three_d;
     }
 
     /**
      * @return boolean
      */
-    public function isThreeD()
-    {
+    public function isThreeD() {
         return $this->_three_d;
     }
 
@@ -457,16 +413,14 @@ class WPDataChart
     /**
      * @param string $curve_type
      */
-    public function setCurveType($curve_type)
-    {
+    public function setCurveType($curve_type) {
         $this->_curve_type = (bool)$curve_type;
     }
 
     /**
      * @return string
      */
-    public function getCurveType()
-    {
+    public function getCurveType() {
         return $this->_curve_type;
     }
 
@@ -475,128 +429,112 @@ class WPDataChart
     /**
      * @param $show_grid
      */
-    public function setShowGrid($show_grid)
-    {
+    public function setShowGrid($show_grid) {
         $this->_show_grid = (bool)$show_grid;
     }
 
     /**
      * @return bool
      */
-    public function getShowGrid()
-    {
+    public function getShowGrid() {
         return $this->_show_grid;
     }
 
     /**
      * @param string $highcharts_line_dash_style
      */
-    public function setHighchartsLineDashStyle($highcharts_line_dash_style)
-    {
+    public function setHighchartsLineDashStyle($highcharts_line_dash_style) {
         $this->_highcharts_line_dash_style = $highcharts_line_dash_style;
     }
 
     /**
      * @return string
      */
-    public function getHighchartsLineDashStyle()
-    {
+    public function getHighchartsLineDashStyle() {
         return $this->_highcharts_line_dash_style;
     }
 
     /**
      * @param $label
      */
-    public function setMajorAxisLabel($label)
-    {
+    public function setMajorAxisLabel($label) {
         $this->_axes['major']['label'] = $label;
     }
 
     /**
      * @return mixed
      */
-    public function getMajorAxisLabel()
-    {
+    public function getMajorAxisLabel() {
         return $this->_axes['major']['label'];
     }
 
     /**
      * @param boolean $horizontal_axis_crosshair
      */
-    public function setHorizontalAxisCrosshair($horizontal_axis_crosshair)
-    {
+    public function setHorizontalAxisCrosshair($horizontal_axis_crosshair) {
         $this->_horizontal_axis_crosshair = (bool)$horizontal_axis_crosshair;
     }
 
     /**
      * @return boolean
      */
-    public function isHorizontalAxisCrosshair()
-    {
+    public function isHorizontalAxisCrosshair() {
         return $this->_horizontal_axis_crosshair;
     }
 
     /**
      * @param int $horizontal_axis_direction
      */
-    public function setHorizontalAxisDirection($horizontal_axis_direction)
-    {
+    public function setHorizontalAxisDirection($horizontal_axis_direction) {
         $this->_horizontal_axis_direction = $horizontal_axis_direction;
     }
 
     /**
      * @return int
      */
-    public function getHorizontalAxisDirection()
-    {
+    public function getHorizontalAxisDirection() {
         return $this->_horizontal_axis_direction;
     }
 
     /**
      * @param $label
      */
-    public function setMinorAxisLabel($label)
-    {
+    public function setMinorAxisLabel($label) {
         $this->_axes['minor']['label'] = $label;
     }
 
     /**
      * @return mixed
      */
-    public function getMinorAxisLabel()
-    {
+    public function getMinorAxisLabel() {
         return $this->_axes['minor']['label'];
     }
 
     /**
      * @param boolean $vertical_axis_crosshair
      */
-    public function setVerticalAxisCrosshair($vertical_axis_crosshair)
-    {
+    public function setVerticalAxisCrosshair($vertical_axis_crosshair) {
         $this->_vertical_axis_crosshair = (bool)$vertical_axis_crosshair;
     }
 
     /**
      * @return boolean
      */
-    public function isVerticalAxisCrosshair()
-    {
+    public function isVerticalAxisCrosshair() {
         return $this->_vertical_axis_crosshair;
     }
 
     /**
      * @param int $vertical_axis_direction
      */
-    public function setVerticalAxisDirection($vertical_axis_direction)
-    {
+    public function setVerticalAxisDirection($vertical_axis_direction) {
         $this->_vertical_axis_direction = $vertical_axis_direction;
     }
 
     /**
      * @return int
      */
-    public function getVerticalAxisDirection()
-    {
+    public function getVerticalAxisDirection() {
         return $this->_vertical_axis_direction;
     }
 
@@ -604,48 +542,42 @@ class WPDataChart
     /**
      * @param mixed $vertical_axis_min
      */
-    public function setVerticalAxisMin($vertical_axis_min)
-    {
+    public function setVerticalAxisMin($vertical_axis_min) {
         $this->_vertical_axis_min = (int)$vertical_axis_min;
     }
 
     /**
      * @return mixed
      */
-    public function getVerticalAxisMin()
-    {
+    public function getVerticalAxisMin() {
         return $this->_vertical_axis_min;
     }
 
     /**
      * @param mixed $vertical_axis_max
      */
-    public function setVerticalAxisMax($vertical_axis_max)
-    {
+    public function setVerticalAxisMax($vertical_axis_max) {
         $this->_vertical_axis_max = (int)$vertical_axis_max;
     }
 
     /**
      * @return mixed
      */
-    public function getVerticalAxisMax()
-    {
+    public function getVerticalAxisMax() {
         return $this->_vertical_axis_max;
     }
 
     /**
      * @param $inverted
      */
-    public function setInverted($inverted)
-    {
+    public function setInverted($inverted) {
         $this->_inverted = (bool)$inverted;
     }
 
     /**
      * @return bool
      */
-    public function isInverted()
-    {
+    public function isInverted() {
         return $this->_inverted;
     }
 
@@ -654,160 +586,140 @@ class WPDataChart
     /**
      * @param string $title
      */
-    public function setTitle($title)
-    {
+    public function setTitle($title) {
         $this->_title = $title;
     }
 
     /**
      * @return string
      */
-    public function getTitle()
-    {
+    public function getTitle() {
         return $this->_title;
     }
 
     /**
      * @param boolean $show_title
      */
-    public function setShowTitle($show_title)
-    {
+    public function setShowTitle($show_title) {
         $this->_show_title = $show_title;
     }
 
     /**
      * @return boolean
      */
-    public function isShowTitle()
-    {
+    public function isShowTitle() {
         return $this->_show_title;
     }
 
     /**
      * @param boolean $title_floating
      */
-    public function setTitleFloating($title_floating)
-    {
+    public function setTitleFloating($title_floating) {
         $this->_title_floating = (bool)$title_floating;
     }
 
     /**
      * @return boolean
      */
-    public function isTitleFloating()
-    {
+    public function isTitleFloating() {
         return $this->_title_floating;
     }
 
     /**
      * @param string $title_align
      */
-    public function setTitleAlign($title_align)
-    {
+    public function setTitleAlign($title_align) {
         $this->_title_align = $title_align;
     }
 
     /**
      * @return string
      */
-    public function getTitleAlign()
-    {
+    public function getTitleAlign() {
         return $this->_title_align;
     }
 
     /**
      * @return string
      */
-    public function getTitlePosition()
-    {
+    public function getTitlePosition() {
         return $this->_title_position;
     }
 
     /**
      * @param string $title_position
      */
-    public function setTitlePosition($title_position)
-    {
+    public function setTitlePosition($title_position) {
         $this->_title_position = $title_position;
     }
 
     /**
      * @return string
      */
-    public function getTitleFontName()
-    {
+    public function getTitleFontName() {
         return $this->_title_font_name;
     }
 
     /**
      * @param string $title_font_name
      */
-    public function setTitleFontName($title_font_name)
-    {
+    public function setTitleFontName($title_font_name) {
         $this->_title_font_name = $title_font_name;
     }
 
     /**
      * @return string
      */
-    public function getTitleFontStyle()
-    {
+    public function getTitleFontStyle() {
         return $this->_title_font_style;
     }
 
     /**
      * @param string $title_font_style
      */
-    public function setTitleFontStyle($title_font_style)
-    {
+    public function setTitleFontStyle($title_font_style) {
         $this->_title_font_style = $title_font_style;
     }
 
     /**
      * @return string
      */
-    public function getTitleFontColor()
-    {
+    public function getTitleFontColor() {
         return $this->_title_font_color;
     }
 
     /**
      * @param string $title_font_color
      */
-    public function setTitleFontColor($title_font_color)
-    {
+    public function setTitleFontColor($title_font_color) {
         $this->_title_font_color = $title_font_color;
     }
 
     /**
      * @param string $subtitle
      */
-    public function setSubtitle($subtitle)
-    {
+    public function setSubtitle($subtitle) {
         $this->_subtitle = $subtitle;
     }
 
     /**
      * @return string
      */
-    public function getSubtitle()
-    {
+    public function getSubtitle() {
         return $this->_subtitle;
     }
 
     /**
      * @param string $subtitle_align
      */
-    public function setSubtitleAlign($subtitle_align)
-    {
+    public function setSubtitleAlign($subtitle_align) {
         $this->_subtitle_align = $subtitle_align;
     }
 
     /**
      * @return string
      */
-    public function getSubtitleAlign()
-    {
+    public function getSubtitleAlign() {
         return $this->_subtitle_align;
     }
 
@@ -816,334 +728,280 @@ class WPDataChart
     /**
      * @param boolean $tooltip_enabled
      */
-    public function setTooltipEnabled($tooltip_enabled)
-    {
+    public function setTooltipEnabled($tooltip_enabled) {
         $this->_tooltip_enabled = (bool)$tooltip_enabled;
     }
 
     /**
      * @return boolean
      */
-    public function isTooltipEnabled()
-    {
+    public function isTooltipEnabled() {
         return $this->_tooltip_enabled;
     }
 
     /**
      * @param string $tooltip_background_color
      */
-    public function setTooltipBackgroundColor($tooltip_background_color)
-    {
+    public function setTooltipBackgroundColor($tooltip_background_color) {
         $this->_tooltip_background_color = $tooltip_background_color;
     }
 
     /**
      * @return string
      */
-    public function getTooltipBackgroundColor()
-    {
+    public function getTooltipBackgroundColor() {
         return $this->_tooltip_background_color;
     }
 
     /**
      * @param int $tooltip_border_width
      */
-    public function setTooltipBorderWidth($tooltip_border_width)
-    {
+    public function setTooltipBorderWidth($tooltip_border_width) {
         $this->_tooltip_border_width = $tooltip_border_width;
     }
 
     /**
      * @return int
      */
-    public function getTooltipBorderWidth()
-    {
+    public function getTooltipBorderWidth() {
         return $this->_tooltip_border_width;
     }
 
     /**
      * @param null $tooltip_border_color
      */
-    public function setTooltipBorderColor($tooltip_border_color)
-    {
+    public function setTooltipBorderColor($tooltip_border_color) {
         $this->_tooltip_border_color = $tooltip_border_color;
     }
 
     /**
      * @return null
      */
-    public function getTooltipBorderColor()
-    {
+    public function getTooltipBorderColor() {
         return $this->_tooltip_border_color;
     }
 
     /**
      * @param int $tooltip_border_radius
      */
-    public function setTooltipBorderRadius($tooltip_border_radius)
-    {
+    public function setTooltipBorderRadius($tooltip_border_radius) {
         $this->_tooltip_border_radius = (int)$tooltip_border_radius;
     }
 
     /**
      * @return int
      */
-    public function getTooltipBorderRadius()
-    {
+    public function getTooltipBorderRadius() {
         return $this->_tooltip_border_radius;
     }
 
     /**
      * @param boolean $tooltip_shared
      */
-    public function setTooltipShared($tooltip_shared)
-    {
+    public function setTooltipShared($tooltip_shared) {
         $this->_tooltip_shared = (bool)$tooltip_shared;
     }
 
     /**
      * @return boolean
      */
-    public function isTooltipShared()
-    {
+    public function isTooltipShared() {
         return $this->_tooltip_shared;
     }
 
     /**
      * @param string $tooltip_value_prefix
      */
-    public function setTooltipValuePrefix($tooltip_value_prefix)
-    {
+    public function setTooltipValuePrefix($tooltip_value_prefix) {
         $this->_tooltip_value_prefix = $tooltip_value_prefix;
     }
 
     /**
      * @return string
      */
-    public function getTooltipValuePrefix()
-    {
+    public function getTooltipValuePrefix() {
         return $this->_tooltip_value_prefix;
     }
 
     /**
      * @param string $tooltip_value_suffix
      */
-    public function setTooltipValueSuffix($tooltip_value_suffix)
-    {
+    public function setTooltipValueSuffix($tooltip_value_suffix) {
         $this->_tooltip_value_suffix = $tooltip_value_suffix;
     }
 
     /**
      * @return string
      */
-    public function getTooltipValueSuffix()
-    {
+    public function getTooltipValueSuffix() {
         return $this->_tooltip_value_suffix;
     }
 
     // Legend
 
-    public function setShowLegend($show_legend)
-    {
+    public function setShowLegend($show_legend) {
         $this->_show_legend = (bool)$show_legend;
     }
 
-    public function getShowLegend()
-    {
+    public function getShowLegend() {
         return $this->_show_legend;
     }
 
     /**
      * @return string
      */
-    public function getLegendPosition()
-    {
+    public function getLegendPosition() {
         return $this->_legend_position;
     }
 
     /**
      * @param string $legend_position
      */
-    public function setLegendPosition($legend_position)
-    {
+    public function setLegendPosition($legend_position) {
         $this->_legend_position = $legend_position;
     }
 
-    public function setLegendBackgroundColor($legend_background_color)
-    {
+    public function setLegendBackgroundColor($legend_background_color) {
         $this->_legend_background_color = $legend_background_color;
     }
 
-    public function getLegendBackgroundColor()
-    {
+    public function getLegendBackgroundColor() {
         return $this->_legend_background_color;
     }
 
-    public function setLegendTitle($legend_title)
-    {
+    public function setLegendTitle($legend_title) {
         $this->_legend_title = $legend_title;
     }
 
-    public function getLegendTitle()
-    {
+    public function getLegendTitle() {
         return $this->_legend_title;
     }
 
-    public function setLegendLayout($legend_layout)
-    {
+    public function setLegendLayout($legend_layout) {
         $this->_legend_layout = $legend_layout;
     }
 
-    public function getLegendLayout()
-    {
+    public function getLegendLayout() {
         return $this->_legend_layout;
     }
 
-    public function setLegendAlign($legend_align)
-    {
+    public function setLegendAlign($legend_align) {
         $this->_legend_align = $legend_align;
     }
 
-    public function getLegendAlign()
-    {
+    public function getLegendAlign() {
         return $this->_legend_align;
     }
 
-    public function setLegendVerticalAlign($legend_vertical_align)
-    {
+    public function setLegendVerticalAlign($legend_vertical_align) {
         $this->_legend_vertical_align = $legend_vertical_align;
     }
 
-    public function getLegendVerticalAlign()
-    {
+    public function getLegendVerticalAlign() {
         return $this->_legend_vertical_align;
     }
 
-    public function setLegendBorderWidth($legend_border_width)
-    {
+    public function setLegendBorderWidth($legend_border_width) {
         $this->_legend_border_width = $legend_border_width;
     }
 
-    public function getLegendBorderWidth()
-    {
+    public function getLegendBorderWidth() {
         return $this->_legend_border_width;
     }
 
-    public function setLegendBorderColor($legend_border_color)
-    {
+    public function setLegendBorderColor($legend_border_color) {
         $this->_legend_border_color = $legend_border_color;
     }
 
-    public function getLegendBorderColor()
-    {
+    public function getLegendBorderColor() {
         return $this->_legend_border_color;
     }
 
-    public function setLegendBorderRadius($legend_border_radius)
-    {
+    public function setLegendBorderRadius($legend_border_radius) {
         $this->_legend_border_radius = $legend_border_radius;
     }
 
-    public function getLegendBorderRadius()
-    {
+    public function getLegendBorderRadius() {
         return $this->_legend_border_radius;
     }
 
     /**
      * @return string
      */
-    public function getLegendPositionCjs()
-    {
+    public function getLegendPositionCjs() {
         return $this->_legend_position_cjs;
     }
 
     /**
      * @param string $legend_position_cjs
      */
-    public function setLegendPositionCjs($legend_position_cjs)
-    {
+    public function setLegendPositionCjs($legend_position_cjs) {
         $this->_legend_position_cjs = $legend_position_cjs;
     }
 
     // Exporting
 
-    public function setExporting($exporting)
-    {
+    public function setExporting($exporting) {
         $this->_exporting = (bool)$exporting;
     }
 
-    public function getExporting()
-    {
+    public function getExporting() {
         return $this->_exporting;
     }
 
-    public function setExportingDataLabels($exporting_data_labels)
-    {
+    public function setExportingDataLabels($exporting_data_labels) {
         $this->_exporting_data_labels = (bool)$exporting_data_labels;
     }
 
-    public function getExportingDataLabels()
-    {
+    public function getExportingDataLabels() {
         return $this->_exporting_data_labels;
     }
 
-    public function setExportingFileName($exporting_file_name)
-    {
+    public function setExportingFileName($exporting_file_name) {
         $this->_exporting_file_name = $exporting_file_name;
     }
 
-    public function getExportingFileName()
-    {
+    public function getExportingFileName() {
         return $this->_exporting_file_name;
     }
 
-    public function setExportingWidth($exporting_width)
-    {
+    public function setExportingWidth($exporting_width) {
         $this->_exporting_width = $exporting_width;
     }
 
-    public function getExportingWidth()
-    {
+    public function getExportingWidth() {
         return $this->_exporting_width;
     }
 
-    public function setExportingButtonAlign($exporting_button_align)
-    {
+    public function setExportingButtonAlign($exporting_button_align) {
         $this->_exporting_button_align = $exporting_button_align;
     }
 
-    public function getExportingButtonAlign()
-    {
+    public function getExportingButtonAlign() {
         return $this->_exporting_button_align;
     }
 
-    public function setExportingButtonVerticalAlign($exporting_button_vertical_align)
-    {
+    public function setExportingButtonVerticalAlign($exporting_button_vertical_align) {
         $this->_exporting_button_vertical_align = $exporting_button_vertical_align;
     }
 
-    public function getExportingButtonVerticalAlign()
-    {
+    public function getExportingButtonVerticalAlign() {
         return $this->_exporting_button_vertical_align;
     }
 
-    public function setExportingButtonColor($exporting_button_color)
-    {
+    public function setExportingButtonColor($exporting_button_color) {
         $this->_exporting_button_color = $exporting_button_color;
     }
 
-    public function getExportingButtonColor()
-    {
+    public function getExportingButtonColor() {
         return $this->_exporting_button_color;
     }
 
-    public function setExportingButtonText($exporting_button_text)
-    {
+    public function setExportingButtonText($exporting_button_text) {
         $this->_exporting_button_text = $exporting_button_text;
     }
 
-    public function getExportingButtonText()
-    {
+    public function getExportingButtonText() {
         return $this->_exporting_button_text;
     }
 
@@ -1152,40 +1010,35 @@ class WPDataChart
     /**
      * @return string
      */
-    public function getCreditsText()
-    {
+    public function getCreditsText() {
         return $this->_credits_text;
     }
 
     /**
      * @param string $credits_text
      */
-    public function setCreditsText($credits_text)
-    {
+    public function setCreditsText($credits_text) {
         $this->_credits_text = $credits_text;
     }
 
     /**
      * @return string
      */
-    public function getCreditsHref()
-    {
+    public function getCreditsHref() {
         return $this->_credits_href;
     }
 
     /**
      * @param string $credits_href
      */
-    public function setCreditsHref($credits_href)
-    {
+    public function setCreditsHref($credits_href) {
         $this->_credits_href = $credits_href;
     }
 
     /**
      * @param $series_data
      */
-    public function setUserDefinedSeriesData($series_data)
-    {
+    public function setUserDefinedSeriesData($series_data) {
         if (is_array($series_data)) {
             $this->_user_defined_series_data = $series_data;
         }
@@ -1194,120 +1047,105 @@ class WPDataChart
     /**
      * @return array
      */
-    public function getUserDefinedSeriesData()
-    {
+    public function getUserDefinedSeriesData() {
         return $this->_user_defined_series_data;
     }
 
     /**
      * @param $follow_filtering
      */
-    public function setFollowFiltering($follow_filtering)
-    {
+    public function setFollowFiltering($follow_filtering) {
         $this->_follow_filtering = (bool)$follow_filtering;
     }
 
     /**
      * @return bool
      */
-    public function getFollowFiltering()
-    {
+    public function getFollowFiltering() {
         return $this->_follow_filtering;
     }
 
     /**
      * @param $engine
      */
-    public function setEngine($engine)
-    {
+    public function setEngine($engine) {
         $this->_engine = $engine;
     }
 
     /**
      * @return string
      */
-    public function getEngine()
-    {
+    public function getEngine() {
         return $this->_engine;
     }
 
     /**
      * @param $type
      */
-    public function setType($type)
-    {
+    public function setType($type) {
         $this->_type = $type;
     }
 
     /**
      * @return string
      */
-    public function getType()
-    {
+    public function getType() {
         return $this->_type;
     }
 
     /**
      * @param $row_range
      */
-    public function setRowRange($row_range)
-    {
+    public function setRowRange($row_range) {
         $this->_row_range = $row_range;
     }
 
     /**
      * @return array
      */
-    public function getRowRange()
-    {
+    public function getRowRange() {
         return $this->_row_range;
     }
 
     /**
      * @param $selected_columns
      */
-    public function setSelectedColumns($selected_columns)
-    {
+    public function setSelectedColumns($selected_columns) {
         $this->_selected_columns = $selected_columns;
     }
 
     /**
      * @return array
      */
-    public function getSelectedColumns()
-    {
+    public function getSelectedColumns() {
         return $this->_selected_columns;
     }
 
     /**
      * @param $wdt_id
      */
-    public function setwpDataTableId($wdt_id)
-    {
+    public function setwpDataTableId($wdt_id) {
         $this->_wpdatatable_id = $wdt_id;
     }
 
     /**
      * @return null
      */
-    public function getwpDataTableId()
-    {
+    public function getwpDataTableId() {
         return $this->_wpdatatable_id;
     }
 
     /**
      * @param $range_type
      */
-    public function setRangeType($range_type)
-    {
+    public function setRangeType($range_type) {
         $this->_range_type = $range_type;
     }
 
     /**
      * @return string
      */
-    public function getRangeType()
-    {
+    public function getRangeType() {
         return $this->_range_type;
     }
 
@@ -1316,8 +1154,7 @@ class WPDataChart
      * @param bool $loadFromDB
      * @return WPDataChart
      */
-    public static function factory($constructedChartData, $loadFromDB = true)
-    {
+    public static function factory($constructedChartData, $loadFromDB = true) {
         $chartObj = new self();
 
         if (isset($constructedChartData['chart_id'])) {
@@ -1374,7 +1211,7 @@ class WPDataChart
             );
             $chartObj->setUserDefinedSeriesData($constructedChartData['series_data']);
         }
-        
+
         $chartObj->setCurveType(WDTTools::defineDefaultValue($constructedChartData, 'curve_type', 'none'));
 
         // Axes
@@ -1444,16 +1281,15 @@ class WPDataChart
         return $chartObj;
     }
 
-    public function loadChildWPDataTable()
-    {
+    public function loadChildWPDataTable() {
         if (empty($this->_wpdatatable_id)) {
             return false;
         }
-        $this->_wpdatatable = wdt_get_wpdatatable($this->_wpdatatable_id, empty($this->_follow_filtering));
+
+        $this->_wpdatatable = WPDataTable::loadWpDataTable($this->_wpdatatable_id, null, empty($this->_follow_filtering));
     }
 
-    public function shiftStringColumnUp()
-    {
+    public function shiftStringColumnUp() {
         /**
          * Check if the string column is not in the beginning and move it up
          */
@@ -1513,8 +1349,7 @@ class WPDataChart
 
     }
 
-    public function prepareSeriesData()
-    {
+    public function prepareSeriesData() {
         // Init render data if it is empty
         if (empty($this->_render_data)) {
             $this->_render_data = array(
@@ -1700,8 +1535,7 @@ class WPDataChart
     /**
      * Prepares the data for Google charts format
      */
-    public function prepareData()
-    {
+    public function prepareData() {
 
         // Prepare series and columns
         if (empty($this->_render_data['columns'])) {
@@ -1709,7 +1543,7 @@ class WPDataChart
         }
 
         $dateFormat = ($this->getEngine() == 'google') ? DateTime::RFC2822 : get_option('wdtDateFormat');
-        $timeFormat =  get_option('wdtTimeFormat');
+        $timeFormat = get_option('wdtTimeFormat');
 
         // The data itself
         if (empty($this->_render_data['rows'])) {
@@ -1720,14 +1554,14 @@ class WPDataChart
                         $dataType = $this->_wpdatatable->getColumn($columnKey)->getDataType();
                         switch ($dataType) {
                             case 'date':
-                                $timestamp = is_int( $row[$columnKey] ) ? $row[$columnKey] : strtotime( str_replace('/', '-', $row[$columnKey] ) );
+                                $timestamp = is_int($row[$columnKey]) ? $row[$columnKey] : strtotime(str_replace('/', '-', $row[$columnKey]));
                                 $return_data_row[] = date(
                                     $dateFormat,
                                     $timestamp
                                 );
                                 break;
                             case 'datetime':
-                                $timestamp = is_int( $row[$columnKey] ) ? $row[$columnKey] : strtotime( str_replace('/', '-', $row[$columnKey] ) );
+                                $timestamp = is_int($row[$columnKey]) ? $row[$columnKey] : strtotime(str_replace('/', '-', $row[$columnKey]));
                                 if ($this->getEngine() == 'google') {
                                     $return_data_row[] = date(
                                         $dateFormat,
@@ -1735,7 +1569,7 @@ class WPDataChart
                                     );
                                 } else {
                                     $return_data_row[] = date(
-                                        $dateFormat .' '. $timeFormat,
+                                        $dateFormat . ' ' . $timeFormat,
                                         $timestamp
                                     );
                                 }
@@ -1769,17 +1603,17 @@ class WPDataChart
                         $dataType = $this->_wpdatatable->getColumn($columnKey)->getDataType();
                         switch ($dataType) {
                             case 'date':
-                                $timestamp = is_int( $this->_wpdatatable->getCell($columnKey, $rowIndex) ) ?
+                                $timestamp = is_int($this->_wpdatatable->getCell($columnKey, $rowIndex)) ?
                                     $this->_wpdatatable->getCell($columnKey, $rowIndex)
-                                    : strtotime( str_replace('/', '-', $this->_wpdatatable->getCell($columnKey, $rowIndex) ) );
+                                    : strtotime(str_replace('/', '-', $this->_wpdatatable->getCell($columnKey, $rowIndex)));
                                 $return_data_row[] = date(
                                     $dateFormat,
                                     $timestamp
                                 );
                                 break;
                             case 'datetime':
-                                $timestamp = is_int( $this->_wpdatatable->getCell($columnKey, $rowIndex) ) ?
-                                    $this->_wpdatatable->getCell($columnKey, $rowIndex) : strtotime( str_replace('/', '-', $this->_wpdatatable->getCell($columnKey, $rowIndex) ) );
+                                $timestamp = is_int($this->_wpdatatable->getCell($columnKey, $rowIndex)) ?
+                                    $this->_wpdatatable->getCell($columnKey, $rowIndex) : strtotime(str_replace('/', '-', $this->_wpdatatable->getCell($columnKey, $rowIndex)));
                                 if ($this->getEngine() == 'google') {
                                     $return_data_row[] = date(
                                         $dateFormat,
@@ -1787,7 +1621,7 @@ class WPDataChart
                                     );
                                 } else {
                                     $return_data_row[] = date(
-                                        $dateFormat .' '. $timeFormat,
+                                        $dateFormat . ' ' . $timeFormat,
                                         $timestamp
                                     );
                                 }
@@ -1822,8 +1656,7 @@ class WPDataChart
         return $this->_render_data;
     }
 
-    public function groupData()
-    {
+    public function groupData() {
         if (isset($this->_render_data['group_chart'])) {
             if ($this->isGroupChart() || $this->_render_data['group_chart'] == true) {
                 $output = array();
@@ -1859,8 +1692,7 @@ class WPDataChart
 
     }
 
-    public function getAxesAndSeries()
-    {
+    public function getAxesAndSeries() {
         if (empty($this->_render_data['columns'])) {
             $this->prepareSeriesData();
             $this->shiftStringColumnUp();
@@ -1868,8 +1700,7 @@ class WPDataChart
         return $this->_render_data;
     }
 
-    public function prepareHighchartsRender()
-    {
+    public function prepareHighchartsRender() {
         $highchartsRender = array(
             'title' => array(
                 'text' => $this->_show_title ? $this->getTitle() : ''
@@ -1884,9 +1715,7 @@ class WPDataChart
                 'highcharts_pie_with_gradient_chart',
                 'highcharts_donut_chart',
                 'highcharts_3d_pie_chart',
-                'highcharts_3d_donut_chart',
-                'highcharts_angular_gauge_chart',
-                'highcharts_solid_gauge_chart'
+                'highcharts_3d_donut_chart'
             )
         )
         ) {
@@ -2055,8 +1884,7 @@ class WPDataChart
     /**
      * Prepare ChartJS Data and Options
      */
-    public function prepareChartJSRender()
-    {
+    public function prepareChartJSRender() {
 
         $seriesEntry = array();
 
@@ -2074,7 +1902,7 @@ class WPDataChart
         );
 
         if ($this->_render_data['series']) {
-            if (!empty($this->_chartjs_render_data['options']['data']['datasets'])){
+            if (!empty($this->_chartjs_render_data['options']['data']['datasets'])) {
                 $this->_chartjs_render_data['options']['data']['datasets'] = array();
             }
             if (in_array(
@@ -2162,8 +1990,8 @@ class WPDataChart
                             $seriesEntry['backgroundColor'] = $colors[($key - 1) % 10];
                             $seriesEntry['hoverBackgroundColor'] = $colors[($key - 1) % 10];
                             $seriesEntry['data'][0]['x'] = $row[$i];
-                            $seriesEntry['data'][0]['y'] = $row[$i+1];
-                            $seriesEntry['data'][0]['r'] = $row[$i+2];
+                            $seriesEntry['data'][0]['y'] = $row[$i + 1];
+                            $seriesEntry['data'][0]['r'] = $row[$i + 2];
                             $this->_chartjs_render_data['options']['data']['datasets'][$key] = array_merge($this->_chartjs_render_data['options']['data']['datasets'][$key], $seriesEntry);
                         }
                     }
@@ -2206,7 +2034,7 @@ class WPDataChart
         $this->_chartjs_render_data['options']['options']['scales']['xAxes'][0]['scaleLabel']['labelString'] = $this->getMajorAxisLabel();
         $this->_chartjs_render_data['options']['options']['scales']['yAxes'][0]['scaleLabel']['display'] = true;
         $this->_chartjs_render_data['options']['options']['scales']['yAxes'][0]['scaleLabel']['labelString'] = $this->getMinorAxisLabel();
-        if($this->getVerticalAxisMin()){
+        if ($this->getVerticalAxisMin()) {
             $this->_chartjs_render_data['options']['options']['scales']['yAxes'][0]['ticks']['min'] = $this->getVerticalAxisMin();
         } else {
             $this->_chartjs_render_data['options']['options']['scales']['yAxes'][0]['ticks']['beginAtZero'] = true;
@@ -2229,7 +2057,7 @@ class WPDataChart
 
         // Tooltip
         $this->_chartjs_render_data['options']['options']['tooltips']['enabled'] = $this->isTooltipEnabled();
-        if($this->isTooltipShared()){
+        if ($this->isTooltipShared()) {
             $this->_chartjs_render_data['options']['options']['tooltips']['mode'] = 'label';
         } else {
             $this->_chartjs_render_data['options']['options']['tooltips']['mode'] = 'single';
@@ -2243,16 +2071,14 @@ class WPDataChart
 
     }
 
-    public function returnGoogleChartData()
-    {
+    public function returnGoogleChartData() {
         $this->prepareData();
         $this->groupData();
         $this->shiftStringColumnUp();
         return $this->_render_data;
     }
 
-    public function returnHighChartsData()
-    {
+    public function returnHighChartsData() {
         $this->prepareData();
         $this->groupData();
         $this->shiftStringColumnUp();
@@ -2260,8 +2086,7 @@ class WPDataChart
         return $this->_highcharts_render_data;
     }
 
-    public function returnChartJSData()
-    {
+    public function returnChartJSData() {
         $this->prepareData();
         $this->groupData();
         $this->shiftStringColumnUp();
@@ -2269,8 +2094,7 @@ class WPDataChart
         return $this->_chartjs_render_data;
     }
 
-    public function returnData()
-    {
+    public function returnData() {
         if ($this->getEngine() == 'google') {
             return $this->returnGoogleChartData();
         } else if ($this->getEngine() == 'highcharts') {
@@ -2285,8 +2109,7 @@ class WPDataChart
      * Saves the chart data to DB
      * @global WPDB $wpdb
      */
-    public function save()
-    {
+    public function save() {
         global $wpdb;
 
         $this->prepareSeriesData();
@@ -2349,8 +2172,7 @@ class WPDataChart
 
     }
 
-    public function getColumnIndexes()
-    {
+    public function getColumnIndexes() {
         foreach ($this->getSelectedColumns() as $columnKey) {
             $this->_render_data['column_indexes'][] = $this->_wpdatatable->getColumnHeaderOffset($columnKey);
         }
@@ -2359,8 +2181,7 @@ class WPDataChart
     /**
      * Return the shortcode
      */
-    public function getShortCode()
-    {
+    public function getShortCode() {
         if (!empty($this->_id)) {
             return '[wpdatachart id=' . $this->_id . ']';
         } else {
@@ -2370,9 +2191,9 @@ class WPDataChart
 
     /**
      * Load from DB
+     * @return bool
      */
-    public function loadFromDB()
-    {
+    public function loadFromDB() {
         global $wpdb;
 
         if (empty($this->_id)) {
@@ -2387,6 +2208,10 @@ class WPDataChart
             $this->_id
         );
         $chartData = $wpdb->get_row($chartQuery);
+
+        if ($chartData === null) {
+            return false;
+        }
 
         $renderData = json_decode($chartData->json_render_data, true);
         $this->_render_data = $renderData['render_data'];
@@ -2545,10 +2370,11 @@ class WPDataChart
             $this->setFontStyle($renderData['chartjs_render_data']['options']['globalOptions']['defaultFontStyle']);
             $this->setFontColor($renderData['chartjs_render_data']['options']['globalOptions']['defaultFontColor']);
             // Series
-            $this->setCurveType($renderData['chartjs_render_data']['options']['data']['datasets'][0]['lineTension']);
+            isset($renderData['chartjs_render_data']['options']['data']['datasets'][0]['lineTension']) ?
+                $this->setCurveType($renderData['chartjs_render_data']['options']['data']['datasets'][0]['lineTension']) : null;
             // Axes
             $this->setMajorAxisLabel($renderData['chartjs_render_data']['options']['options']['scales']['xAxes'][0]['scaleLabel']['labelString']);
-            $this->setMinorAxisLabel($renderData['chartjs_render_data']['options']['options']['scales']['yAxes'][ 0]['scaleLabel']['labelString']);
+            $this->setMinorAxisLabel($renderData['chartjs_render_data']['options']['options']['scales']['yAxes'][0]['scaleLabel']['labelString']);
             isset($renderData['chartjs_render_data']['options']['options']['scales']['yAxes'][0]['ticks']['min']) ?
                 $this->setVerticalAxisMin($renderData['chartjs_render_data']['options']['options']['scales']['yAxes'][0]['ticks']['min']) : null;
             isset($renderData['chartjs_render_data']['options']['options']['scales']['yAxes'][0]['ticks']['max']) ?
@@ -2560,7 +2386,7 @@ class WPDataChart
             $this->setTitleFontColor($renderData['chartjs_render_data']['options']['options']['title']['fontColor']);
             // Tooltip
             $this->setTooltipEnabled($renderData['chartjs_render_data']['options']['options']['tooltips']['enabled']);
-            if($renderData['chartjs_render_data']['options']['options']['tooltips']['mode'] == 'single'){
+            if ($renderData['chartjs_render_data']['options']['options']['tooltips']['mode'] == 'single') {
                 $this->setTooltipShared(false);
             } else {
                 $this->setTooltipShared(true);
@@ -2580,9 +2406,7 @@ class WPDataChart
     /**
      * Render Chart
      */
-    public function renderChart()
-    {
-
+    public function renderChart() {
         $minified_js = get_option('wdtMinifiedJs');
 
         $this->prepareData();
@@ -2594,29 +2418,29 @@ class WPDataChart
 
         $this->shiftStringColumnUp();
 
-	    $js_ext = $minified_js ? '.min.js' :  '.js';
-	    wp_enqueue_script('wpdatatables-render-chart', WDT_JS_PATH . 'wpdatatables/wpdatacharts_render' . $js_ext );
+        $js_ext = $minified_js ? '.min.js' : '.js';
+        wp_enqueue_script('wpdatatables-render-chart', WDT_JS_PATH . 'wpdatatables/wdt.chartsRender' . $js_ext);
 
         if ($this->_engine == 'google') {
             // Google Chart JS
-	        wp_enqueue_script('wdt_google_charts', '//www.gstatic.com/charts/loader.js');
-	        wp_enqueue_script('wpdatatables-google-chart', WDT_JS_PATH . 'wpdatatables/wpdatatables_google_charts'.$js_ext);
+            wp_enqueue_script('wdt_google_charts', '//www.gstatic.com/charts/loader.js');
+            wp_enqueue_script('wpdatatables-google-chart', WDT_JS_PATH . 'wpdatatables/wdt.googleCharts' . $js_ext);
             $json_chart_render_data = json_encode($this->_render_data);
-        } else if ($this->_engine == 'highcharts'){
+        } else if ($this->_engine == 'highcharts') {
             $this->prepareHighchartsRender();
             // Highchart JS
             wp_enqueue_script('wdt_highcharts', '//code.highcharts.com/highcharts.js');
             wp_enqueue_script('wdt_highcharts3d', '//code.highcharts.com/highcharts-3d.js');
             wp_enqueue_script('wdt_exporting', '//code.highcharts.com/modules/exporting.js');
-	        // Highchart wpDataTable JS library
-            wp_enqueue_script('wpdatatables-highcharts', WDT_JS_PATH . 'wpdatatables/wpdatatables_highcharts'.$js_ext);
+            // Highchart wpDataTable JS library
+            wp_enqueue_script('wpdatatables-highcharts', WDT_JS_PATH . 'wpdatatables/wdt.highcharts' . $js_ext);
             $json_chart_render_data = json_encode($this->_highcharts_render_data);
-        } else if ($this->_engine == 'chartjs'){
+        } else if ($this->_engine == 'chartjs') {
             $this->prepareChartJSRender();
             // ChartJS
             wp_enqueue_script('wdt_chartjs', WDT_JS_PATH . 'chartjs/Chart.js');
-	        // ChartJS wpDataTable JS library
-	        wp_enqueue_script('wpdatatables-chartjs', WDT_JS_PATH . 'wpdatatables/wpdatatables_chartjs'.$js_ext);
+            // ChartJS wpDataTable JS library
+            wp_enqueue_script('wpdatatables-chartjs', WDT_JS_PATH . 'wpdatatables/wdt.chartJS' . $js_ext);
             $json_chart_render_data = json_encode($this->_chartjs_render_data);
         }
 
@@ -2632,8 +2456,7 @@ class WPDataChart
     /**
      * Return render data
      */
-    public function getRenderData()
-    {
+    public function getRenderData() {
         return $this->_render_data;
     }
 
@@ -2641,8 +2464,7 @@ class WPDataChart
      * Return highcharts render data
      * @return array
      */
-    public function getHighchartsRenderData()
-    {
+    public function getHighchartsRenderData() {
         return $this->_highcharts_render_data;
     }
 
@@ -2650,17 +2472,21 @@ class WPDataChart
      * Return ChartJS render data
      * @return null
      */
-    public function getChartJSRenderData()
-    {
+    public function getChartJSRenderData() {
         return $this->_chartjs_render_data;
     }
 
     /**
      * Delete chart by ID
+     * @param $chartId
+     * @return bool
      */
-    public static function deleteChart($chartId)
-    {
+    public static function deleteChart($chartId) {
         global $wpdb;
+
+        if (!isset($_REQUEST['wdtNonce']) || empty($chartId) || !current_user_can('manage_options') || !wp_verify_nonce($_REQUEST['wdtNonce'], 'wdtDeleteChartNonce')) {
+            return false;
+        }
 
         $wpdb->delete(
             $wpdb->prefix . "wpdatacharts",
@@ -2669,6 +2495,19 @@ class WPDataChart
             )
         );
 
+        return true;
+
+    }
+
+    /**
+     * Get all charts non-paged for the MCE editor
+     * @return array|null|object
+     */
+    public static function getAllCharts() {
+        global $wpdb;
+        $query = "SELECT id, title FROM {$wpdb->prefix}wpdatacharts ";
+        $allCharts = $wpdb->get_results($query, ARRAY_A);
+        return $allCharts;
     }
 
 }

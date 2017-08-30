@@ -1,4 +1,7 @@
 <?php
+
+defined('ABSPATH') or die("Cannot access pages directly.");
+
 class WDTException extends Exception {
     
     public function __construct($message, $code = 0, Exception $previous = null) {

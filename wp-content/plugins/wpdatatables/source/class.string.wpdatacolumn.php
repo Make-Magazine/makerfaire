@@ -1,24 +1,27 @@
 <?php
-class StringWDTColumn extends WDTColumn {
-	
+
+defined('ABSPATH') or die("Cannot access pages directly.");
+
+class StringWDTColumn extends WDTColumn
+{
+
     protected $_dataType = 'string';
     protected $_jsDataType = 'string';
-    
-    public function __construct( $properties = array () ) {
-        parent::__construct( $properties );
-        $this->_dataType = 'string';
-    }
-    
-    public function prepareCellOutput( $content ) {
-    	
-        $value = str_replace( "\n","<br/>", $content );
-        if(WDT_PARSE_SHORTCODES_IN_STRINGS){
-                $content = do_shortcode( $content );
-        }
-        $content = apply_filters( 'wpdatatables_filter_string_cell', $content );
-        return $content;
-    }    
-    
-}
 
-?>
+    public function __construct($properties = array())
+    {
+        parent::__construct($properties);
+        $this->_dataType = 'string';
+        $this->_foreignKeyRule = WDTTools::defineDefaultValue($properties, 'foreignKeyRule', null);
+    }
+
+    public function prepareCellOutput($content)
+    {
+        if (get_option('wdtParseShortcodes')) {
+            $content = do_shortcode($content);
+        }
+        $content = apply_filters('wpdatatables_filter_string_cell', $content, $this->getParentTable()->getWpId());
+        return $content;
+    }
+
+}

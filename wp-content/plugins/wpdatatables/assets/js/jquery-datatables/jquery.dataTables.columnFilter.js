@@ -1,37 +1,38 @@
 /*
-* File:        jquery.dataTables.columnFilter.js
-* Version:     1.5.0.
-* Author:      Jovan Popovic 
-* 
-* Copyright 2011-2012 Jovan Popovic, all rights reserved.
-*
-* This source file is free software, under either the GPL v2 license or a
-* BSD style license, as supplied with this software.
-* 
-* This source file is distributed in the hope that it will be useful, but 
-* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-* or FITNESS FOR A PARTICULAR PURPOSE. 
-* 
-* Parameters:"
-* @sPlaceHolder                 String      Place where inline filtering function should be placed ("tfoot", "thead:before", "thead:after"). Default is "tfoot"
-* @sRangeSeparator              String      Separator that will be used when range values are sent to the server-side. Default value is "~".
-* @sRangeFormat                 string      Default format of the From ... to ... range inputs. Default is From {from} to {to}
-* @aoColumns                    Array       Array of the filter settings that will be applied on the columns
-*/
+ * File:        jquery.dataTables.columnFilter.js
+ * Version:     1.5.0.
+ * Author:      Jovan Popovic
+ *
+ * Copyright 2011-2012 Jovan Popovic, all rights reserved.
+ *
+ * This source file is free software, under either the GPL v2 license or a
+ * BSD style license, as supplied with this software.
+ *
+ * This source file is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Parameters:"
+ * @sPlaceHolder                 String      Place where inline filtering function should be placed ("tfoot", "thead:before", "thead:after"). Default is "tfoot"
+ * @sRangeSeparator              String      Separator that will be used when range values are sent to the server-side. Default value is "~".
+ * @sRangeFormat                 string      Default format of the From ... to ... range inputs. Default is From {from} to {to}
+ * @aoColumns                    Array       Array of the filter settings that will be applied on the columns
+ */
 (function ($) {
     $.fn.columnFilter = function (options) {
 
         var asInitVals, i, label, th;
 
         //var sTableId = "table";
-        var sRangeFormat = wpdatatables_frontend_strings.from+" {from} "+wpdatatables_frontend_strings.to+" {to}";
+        var sRangeFormat = wpdatatables_frontend_strings.from + " {from} " + wpdatatables_frontend_strings.to + " {to}";
         //Array of the functions that will override sSearch_ parameters
         var afnSearch_ = new Array();
         var aiCustomSearch_Indexes = new Array();
 
         var oFunctionTimeout = null;
 
-        var fnOnFiltered = function () { };
+        var fnOnFiltered = function () {
+        };
 
         function _fnGetColumnValues(oSettings, iColumn, bUnique, bFiltered, bIgnoreEmpty) {
             ///<summary>
@@ -75,7 +76,7 @@
                 if (bIgnoreEmpty == true && sValue.length == 0) continue;
 
                 // ignore unique values?
-                else if (bUnique == true && jQuery.inArray(sValue, asResultData) > -1) continue;
+                else if (bUnique == true && $.inArray(sValue, asResultData) > -1) continue;
 
                 // else push the value onto the result data array
                 else asResultData.push(sValue);
@@ -93,7 +94,8 @@
             //return oTable.fnSettings().oApi._fnColumnIndexToVisible(oTable.fnSettings(), iColumnIndex);
         }
 
-        function fnCreateInput(oTable, regex, smart, bIsNumber, iFilterLength, iMaxLenght, defaultValue) {
+        function fnCreateInput(oTable, regex, smart, bIsNumber, aoColumn) {
+            var serverSide = oTable.fnSettings().oFeatures.bServerSide;
             var sCSSClass = "text_filter";
             if (bIsNumber)
                 sCSSClass = "number_filter";
@@ -101,18 +103,20 @@
             label = label.replace(/(^\s*)|(\s*$)/g, "");
             var currentFilter = oTable.fnSettings().aoPreSearchCols[i].sSearch;
             var search_init = 'search_init ';
-            var inputvalue = label;
+            var inputValue = label;
             if (currentFilter != '' && currentFilter != '^') {
                 if (bIsNumber && currentFilter.charAt(0) == '^')
-                    inputvalue = currentFilter.substr(1); //ignore trailing ^
+                    inputValue = currentFilter.substr(1); //ignore trailing ^
                 else
-                    inputvalue = currentFilter;
+                    inputValue = currentFilter;
                 search_init = '';
             }
-            
-            var input = $('<input type="text" class="' + search_init + sCSSClass + '" placeholder="' + inputvalue + '" />');
-            if (iMaxLenght != undefined && iMaxLenght != -1) {
-                input.attr('maxlength', iMaxLenght);
+
+            inputValue = aoColumn.filterLabel ? aoColumn.filterLabel : inputValue;
+
+            var input = $('<input type="text" class="' + search_init + 'form-control ' + sCSSClass + '" placeholder="' + inputValue + '" />');
+            if (aoColumn.iMaxLenght != undefined && aoColumn.iMaxLenght != -1) {
+                input.attr('maxlength', aoColumn.iMaxLenght);
             }
             th.html(input);
             if (bIsNumber)
@@ -123,42 +127,40 @@
             asInitVals[i] = label;
             var index = i;
 
-            if (bIsNumber && !oTable.fnSettings().oFeatures.bServerSide) {
-                input.keyup(function () {
-                    /* Filter on the column all numbers that starts with the entered value */
-                    oTable.fnFilter('^' + this.value, _fnColumnIndex(index), true, false); //Issue 37
-                    fnOnFiltered();
-                });
-            } else {
-                input.keyup(function (e) {
-                    if (oTable.fnSettings().oFeatures.bServerSide && iFilterLength != 0) {
-                        //If filter length is set in the server-side processing mode
-                        //Check has the user entered at least iFilterLength new characters
+            input.keyup(function (e) {
+                if (oTable.fnSettings().oFeatures.bServerSide && aoColumn.iFilterLength != 0) {
+                    //If filter length is set in the server-side processing mode
+                    //Check has the user entered at least iFilterLength new characters
 
-                        var currentFilter = oTable.fnSettings().aoPreSearchCols[index].sSearch;
-                        var iLastFilterLength = $(this).data("dt-iLastFilterLength");
-                        if (typeof iLastFilterLength == "undefined")
-                            iLastFilterLength = 0;
-                        var iCurrentFilterLength = this.value.length;
-                        if (Math.abs(iCurrentFilterLength - iLastFilterLength) < iFilterLength
-                        //&& currentFilter.length == 0 //Why this?
-					        ) {
-                            //Cancel the filtering
-                            return;
-                        }
-                        else {
-                            //Remember the current filter length
-                            $(this).data("dt-iLastFilterLength", iCurrentFilterLength);
-                        }
-                    }
-                    /* Filter on the column (the index) of this element */
-                    if (e.keyCode == '37' || e.keyCode == '38' || e.keyCode == '39' || e.keyCode == '40' || e.keyCode == '16') {
+                    var iLastFilterLength = $(this).data("dt-iLastFilterLength");
+                    if (typeof iLastFilterLength == "undefined")
+                        iLastFilterLength = 0;
+                    var iCurrentFilterLength = this.value.length;
+                    if (Math.abs(iCurrentFilterLength - iLastFilterLength) < aoColumn.iFilterLength) {
+                        //Cancel the filtering
                         return;
                     }
-                    oTable.fnFilter(this.value, _fnColumnIndex(index), regex, smart); //Issue 37
-                    fnOnFiltered();
-                });
-            }
+                    else {
+                        //Remember the current filter length
+                        $(this).data("dt-iLastFilterLength", iCurrentFilterLength);
+                    }
+                }
+                /* Filter on the column (the index) of this element */
+                if (e.keyCode == '37' || e.keyCode == '38' || e.keyCode == '39' || e.keyCode == '40' || e.keyCode == '16') {
+                    return;
+                }
+
+                var search = '';
+                if (aoColumn.exactFiltering) {
+                    search = serverSide ? this.value : "^" + this.value + "$";
+                    oTable.fnFilter(this.value ? search : '', _fnColumnIndex(index), true, false)
+                } else {
+                    search = bIsNumber && !serverSide ? '^' + this.value : this.value;
+                    oTable.fnFilter(search, _fnColumnIndex(index), regex, smart);
+                }
+
+                fnOnFiltered();
+            });
 
             input.focus(function () {
                 if ($(this).hasClass("search_init")) {
@@ -169,41 +171,39 @@
             input.blur(function () {
                 if (this.value == "") {
                     $(this).addClass("search_init");
-                    //this.value = asInitVals[index];
                 }
             });
-            
-            if(defaultValue != ''){
-            	if(jQuery.isArray(defaultValue)){
-            		defaultValue = defaultValue[0];
-            	}
-	            jQuery(input).val(defaultValue);
-	            jQuery(input).keyup();
-        	}
-            
+
+            if (aoColumn.defaultValue != '') {
+                var defaultValue = $.isArray(aoColumn.defaultValue) ?
+                    aoColumn.defaultValue[0] : aoColumn.defaultValue;
+                $(input).val(defaultValue);
+                $(input).keyup();
+            }
+
         }
 
         function fnCreateRangeInput(oTable, defaultValue) {
 
-                    var fromDefaultValue = '', toDefaultValue = '';
-			        	
-	           if(defaultValue != ''){
-		           	if(jQuery.isArray(defaultValue)){
-		           		fromDefaultValue = defaultValue[0];
-		           		if(defaultValue[1]){
-		           			toDefaultValue = defaultValue[1];
-		           		}
-		           	}else{
-		           		fromDefaultValue = defaultValue[0];
-		           	}
-	           }
-	           
-			th.html('');
+            var fromDefaultValue = '', toDefaultValue = '';
+
+            if (defaultValue != '') {
+                if ($.isArray(defaultValue)) {
+                    fromDefaultValue = defaultValue[0];
+                    if (defaultValue[1]) {
+                        toDefaultValue = defaultValue[1];
+                    }
+                } else {
+                    fromDefaultValue = defaultValue[0];
+                }
+            }
+
+            th.html('');
             var sFromId = oTable.attr("id") + '_range_from_' + i;
-            var from = $('<input type="text" class="number_range_filter" id="' + sFromId + '" rel="' + i + '" placeholder="'+wpdatatables_frontend_strings.from+'" />');
+            var from = $('<input type="text" class="form-control number-range-filter" id="' + sFromId + '" rel="' + i + '" placeholder="' + wpdatatables_frontend_strings.from + '" />');
             th.append(from);
             var sToId = oTable.attr("id") + '_range_to_' + i;
-            var to = $('<input type="text" class="number_range_filter" id="' + sToId + '" rel="' + i + '" placeholder="'+wpdatatables_frontend_strings.to+'" />');
+            var to = $('<input type="text" class="form-control number-range-filter" id="' + sToId + '" rel="' + i + '" placeholder="' + wpdatatables_frontend_strings.to + '" />');
             th.append(to);
             th.wrapInner('<span class="filter_column filter_number_range" />');
             var index = i;
@@ -213,50 +213,53 @@
 
 
             /* 	Custom filtering function which will filter data in column four between two values
-            *	Author: 	Allan Jardine, Modified by Jovan Popovic
-            */
+             *	Author: 	Allan Jardine, Modified by Jovan Popovic
+             */
             //$.fn.dataTableExt.afnFiltering.push(
             oTable.dataTableExt.afnFiltering.push(
-	        function (oSettings, aData, iDataIndex) {
-	            if (oTable.attr("id") != oSettings.sTableId)
-	                return true;
-	                
-                    var table_description = $.parseJSON( $( '#' + oTable.data('described-by') ).val() );
-	            var number_format = (typeof table_description.number_format !== 'undefined') ? parseInt(table_description.number_format) : 1;
-	            // Try to handle missing nodes more gracefully
-	            if (document.getElementById(sFromId) == null)
-	                return true;
+                function (oSettings, aData, iDataIndex) {
+                    if (oTable.attr("id") != oSettings.sTableId)
+                        return true;
 
-	            var replace_format = number_format == 1 ? /\./g : /,/g;
-	            
+                    var table_description = $.parseJSON($('#' + oTable.data('described-by')).val());
+                    var number_format = (typeof table_description.number_format !== 'undefined') ? parseInt(table_description.number_format) : 1;
+                    // Try to handle missing nodes more gracefully
+                    if (document.getElementById(sFromId) == null)
+                        return true;
+
+                    var replace_format = number_format == 1 ? /\./g : /,/g;
+
                     var iMin = document.getElementById(sFromId).value.replace(replace_format, '');
                     var iMax = document.getElementById(sToId).value.replace(replace_format, '');
-	            var iValue = aData[_fnColumnIndex(index)] == "-" ? '0' : aData[_fnColumnIndex(index)].replace(replace_format, '');
-	            if(number_format == 1){ 
-                        iMin = iMin.replace(/,/g,'.');
-                        iMax = iMax.replace(/,/g,'.');
-                        iValue = iValue.replace(/,/g,'.');
-                    };
-	            if(iMin !== '') { iMin = iMin * 1; }
-                    if(iMax !== '') { iMax = iMax * 1; }
+                    var iValue = aData[_fnColumnIndex(index)] == "-" ? '0' : aData[_fnColumnIndex(index)].replace(replace_format, '');
+                    if (number_format == 1) {
+                        iMin = iMin.replace(/,/g, '.');
+                        iMax = iMax.replace(/,/g, '.');
+                        iValue = iValue.replace(/,/g, '.');
+                    }
+                    if (iMin !== '') {
+                        iMin = iMin * 1;
+                    }
+                    if (iMax !== '') {
+                        iMax = iMax * 1;
+                    }
                     iValue = iValue * 1;
-	            if (iMin === "" && iMax === "") {
-	                return true;
-	            }
-	            else if (iMin === "" && iValue <= iMax) {
-	                return true;
-	            }
-	            else if (iMin <= iValue && "" === iMax) {
-	                return true;
-	            }
-	            else if (iMin <= iValue && iValue <= iMax) {
-	                return true;
-	            }
-	            return false;
-	        }
-        );
+                    if (iMin === "" && iMax === "") {
+                        return true;
+                    }
+                    else if (iMin === "" && iValue <= iMax) {
+                        return true;
+                    }
+                    else if (iMin <= iValue && "" === iMax) {
+                        return true;
+                    }
+                    else if (iMin <= iValue && iValue <= iMax) {
+                        return true;
+                    }
+                    return false;
+                }
+            );
             //------------end range filtering function
-
 
 
             $('#' + sFromId + ',#' + sToId, th).keyup(function () {
@@ -269,56 +272,56 @@
                 oTable.fnDraw();
                 fnOnFiltered();
             });
-            
-            if(fromDefaultValue != ''){
-            	jQuery(from).val(fromDefaultValue);
-            	jQuery(document).ready(function(){
-            		jQuery(from).keyup();
-            	});
+
+            if (fromDefaultValue != '') {
+                $(from).val(fromDefaultValue);
+                $(document).ready(function () {
+                    $(from).keyup();
+                });
             }
-            if(toDefaultValue != ''){
-            	jQuery(to).val(toDefaultValue);
-            	jQuery(document).ready(function(){
-            		jQuery(to).keyup();
-            	});
+            if (toDefaultValue != '') {
+                $(to).val(toDefaultValue);
+                $(document).ready(function () {
+                    $(to).keyup();
+                });
             }
 
         }
 
         function fnCreateDateRangeInput(oTable, defaultValue) {
-        	
-        	
-			var fromDefaultValue = '', toDefaultValue = '';
-			        	
-	           if(defaultValue != ''){
-		           	if(jQuery.isArray(defaultValue)){
-		           		fromDefaultValue = defaultValue[0];
-		           		if(defaultValue[1]){
-		           			toDefaultValue = defaultValue[1];
-		           		}
-		           	}else{
-		           		fromDefaultValue = defaultValue[0];
-		           	}
-	           }
-	           
-	           
+
+
+            var fromDefaultValue = '', toDefaultValue = '';
+
+            if (defaultValue != '') {
+                if ($.isArray(defaultValue)) {
+                    fromDefaultValue = defaultValue[0];
+                    if (defaultValue[1]) {
+                        toDefaultValue = defaultValue[1];
+                    }
+                } else {
+                    fromDefaultValue = defaultValue[0];
+                }
+            }
+
+
             var aoFragments = sRangeFormat.split(/[}{]/);
-	    
-	    var descriptionContainer = $.parseJSON($('#'+oTable.data('described-by')).val());
-            var dateFormat = descriptionContainer.datepickFormat.replace(/y/g,'yy').replace(/Y/g, 'yyyy').replace(/M/g,'mmm');
-            
+
+            var descriptionContainer = $.parseJSON($('#' + oTable.data('described-by')).val());
+            var dateFormat = descriptionContainer.datepickFormat.replace(/y/g, 'yy').replace(/Y/g, 'yyyy').replace(/M/g, 'mmm');
+
             th.html("");
             //th.html(_fnRangeLabelPart(0));
             var sFromId = oTable.attr("id") + '_range_from_' + i;
-            var from = $('<input type="text" class="date_range_filter" id="' + sFromId + '" rel="' + i + '" placeholder="'+wpdatatables_frontend_strings.from+'" />');
+            var from = $('<input type="text" class="form-control date-range-filter wdt-datepicker" id="' + sFromId + '" rel="' + i + '" placeholder="' + wpdatatables_frontend_strings.from + '" />');
             //th.append(from);
             //th.append(_fnRangeLabelPart(1));
-            
+
             var sToId = oTable.attr("id") + '_range_to_' + i;
-            var to = $('<input type="text" class="date_range_filter" id="' + sToId + '" rel="' + i + '" placeholder="'+wpdatatables_frontend_strings.to+'" />');
+            var to = $('<input type="text" class="form-control date-range-filter wdt-datepicker" id="' + sToId + '" rel="' + i + '" placeholder="' + wpdatatables_frontend_strings.to + '" />');
             //th.append(to);
             //th.append(_fnRangeLabelPart(2));
-            
+
             for (ti = 0; ti < aoFragments.length; ti++) {
                 if (aoFragments[ti] == properties.sDateFromToken) {
                     th.append(from);
@@ -331,21 +334,7 @@
                 }
             }
             th.wrapInner('<span class="filter_column filter_date_range" />');
-            
-            from.pickadate({
-					 	  	format: dateFormat, 
-					 	  	formatSubmit: dateFormat, 
-					 	  	selectYears: true,
-					 	  	selectMonths: true
-			 	  		});
-            
-            to.pickadate({
-					 	  	format: dateFormat, 
-					 	  	formatSubmit: dateFormat, 
-					 	  	selectYears: true,
-					 	  	selectMonths: true
-			 	  		});
-            
+
             var index = i;
             aiCustomSearch_Indexes.push(i);
 
@@ -354,59 +343,64 @@
 
             //$.fn.dataTableExt.afnFiltering.push(
             oTable.dataTableExt.afnFiltering.push(
-	        function (oSettings, aData, iDataIndex) {
-	            if (oTable.attr("id") != oSettings.sTableId)
-	                return true;
+                function (oSettings, aData, iDataIndex) {
+                    if (oTable.attr("id") != oSettings.sTableId)
+                        return true;
 
-	            var dStartDate = $.datepicker.parseDate($.datepicker.regional[""].dateFormat, from.val());
-	            var dEndDate = $.datepicker.parseDate($.datepicker.regional[""].dateFormat, to.val());
+                    var dStartDate = from.val() != '' ? new Date(from.val()) : from.val();
+                    var dEndDate = to.val() != '' ? new Date(to.val()) : to.val();
 
-	            if (dStartDate == null && dEndDate == null) {
-	                return true;
-	            }
+                    if (dStartDate == '' && dEndDate == '') {
+                        return true;
+                    }
 
-	            var dCellDate = null;
-	            try {
-	                if (aData[_fnColumnIndex(index)] == null || aData[_fnColumnIndex(index)] == "")
-	                    return false;
-	                dCellDate = $.datepicker.parseDate($.datepicker.regional[""].dateFormat, aData[_fnColumnIndex(index)]);
-	            } catch (ex) {
-	                return false;
-	            }
-	            if (dCellDate == null)
-	                return false;
+                    var dCellDate = null;
+                    try {
+                        if (aData[_fnColumnIndex(index)] == null || aData[_fnColumnIndex(index)] == "")
+                            return false;
+                        dCellDate = new Date(aData[_fnColumnIndex(index)]);
+                    } catch (ex) {
+                        return false;
+                    }
+                    if (dCellDate == null)
+                        return false;
 
 
-	            if (dStartDate == null && dCellDate <= dEndDate) {
-	                return true;
-	            }
-	            else if (dStartDate <= dCellDate && dEndDate == null) {
-	                return true;
-	            }
-	            else if (dStartDate <= dCellDate && dCellDate <= dEndDate) {
-	                return true;
-	            }
-	            return false;
-	        }
-        );
+                    if (dStartDate == '' && dCellDate <= dEndDate) {
+                        return true;
+                    }
+                    else if (dStartDate <= dCellDate && dEndDate == '') {
+                        return true;
+                    }
+                    else if (dStartDate <= dCellDate && dCellDate <= dEndDate) {
+                        return true;
+                    }
+                    return false;
+                }
+            );
             //------------end date range filtering function
+
+            $('#' + sFromId + ',#' + sToId, th).blur(function () {
+                oTable.fnDraw();
+                fnOnFiltered();
+            });
 
             $('#' + sFromId + ',#' + sToId, th).change(function () {
                 oTable.fnDraw();
                 fnOnFiltered();
             });
-            
-            if(fromDefaultValue != ''){
-            	jQuery(from).val(fromDefaultValue);
-            	jQuery(document).ready(function(){
-            		jQuery(from).change();
-            	});
+
+            if (fromDefaultValue != '') {
+                $(from).val(fromDefaultValue);
+                $(document).ready(function () {
+                    $(from).change();
+                });
             }
-            if(toDefaultValue != ''){
-            	jQuery(to).val(toDefaultValue);
-            	jQuery(document).ready(function(){
-            		jQuery(to).change();
-            	});
+            if (toDefaultValue != '') {
+                $(to).val(toDefaultValue);
+                $(document).ready(function () {
+                    $(to).change();
+                });
             }
 
         }
@@ -416,13 +410,13 @@
 
             var fromDefaultValue = '', toDefaultValue = '';
 
-            if(defaultValue != ''){
-                if(jQuery.isArray(defaultValue)){
+            if (defaultValue != '') {
+                if ($.isArray(defaultValue)) {
                     fromDefaultValue = defaultValue[0];
-                    if(defaultValue[1]){
+                    if (defaultValue[1]) {
                         toDefaultValue = defaultValue[1];
                     }
-                }else{
+                } else {
                     fromDefaultValue = defaultValue[0];
                 }
             }
@@ -430,25 +424,24 @@
 
             var aoFragments = sRangeFormat.split(/[}{]/);
 
-            var descriptionContainer = $.parseJSON($('#'+oTable.data('described-by')).val());
-            var dateFormat = descriptionContainer.datepickFormat.replace(/y/g,'yy').replace(/Y/g, 'yyyy').replace(/M/g,'mmm');
-            var timeFormat = descriptionContainer.timeFormat.replace('H','HH');
-            var momentTimeFormat = timeFormat.replace('i','mm');
-            var timepickRange = parseInt( descriptionContainer.timepickRange ) ? parseInt( descriptionContainer.timepickRange ) : 5;
+            var descriptionContainer = $.parseJSON($('#' + oTable.data('described-by')).val());
+            var dateFormat = descriptionContainer.datepickFormat.replace(/y/g, 'yy').replace(/Y/g, 'yyyy').replace(/M/g, 'mmm');
+            var timeFormat = descriptionContainer.timeFormat.replace('H', 'HH');
+            var momentTimeFormat = timeFormat.replace('i', 'mm');
 
             th.html("");
             //th.html(_fnRangeLabelPart(0));
             var sFromId = oTable.attr("id") + '_range_from_' + i;
-            var fromHTML = '<input type="text" class="date_range_filter" id="' + sFromId + '" rel="' + i + '" placeholder="'+wpdatatables_frontend_strings.from+'" />';
-            fromHTML += '<div style="display: none !important;"><input type="text" id="'+sFromId+'_date" class="date" rel="'+i+'"/>';
-            fromHTML += '<input type="text" id="'+sFromId+'_time" class="time" rel="'+i+'"/></div>';
+            var fromHTML = '<input type="text" class="form-control date-time-range-filter wdt-datetimepicker" id="' + sFromId + '" rel="' + i + '" placeholder="' + wpdatatables_frontend_strings.from + '" />';
+            //fromHTML += '<div style="display: none !important;"><input type="text" id="'+sFromId+'_date" class="date" rel="'+i+'"/>';
+            //fromHTML += '<input type="text" id="'+sFromId+'_time" class="time" rel="'+i+'"/></div>';
 
             var from = $(fromHTML);
 
             var sToId = oTable.attr("id") + '_range_to_' + i;
-            var toHTML = '<input type="text" class="date_range_filter" id="' + sToId + '" rel="' + i + '" placeholder="'+wpdatatables_frontend_strings.to+'" />';
-            toHTML += '<div style="display: none !important;"><input type="text" id="'+sToId+'_date" class="date" rel="'+i+'"/>';
-            toHTML += '<input type="text" id="'+sToId+'_time" class="time" rel="'+i+'"/></div>';
+            var toHTML = '<input type="text" class="form-control date-time-range-filter wdt-datetimepicker" id="' + sToId + '" rel="' + i + '" placeholder="' + wpdatatables_frontend_strings.to + '" />';
+            //toHTML += '<div style="display: none !important;"><input type="text" id="'+sToId+'_date" class="date" rel="'+i+'"/>';
+            //toHTML += '<input type="text" id="'+sToId+'_time" class="time" rel="'+i+'"/></div>';
 
             var to = $(toHTML);
 
@@ -463,113 +456,6 @@
             }
             th.wrapInner('<span class="filter_column filter_date_range" />');
 
-            // Datepicker - From
-            var datepicker_from = from.find('input.date').pickadate({
-                format: dateFormat,
-                formatSubmit: dateFormat,
-                selectYears: true,
-                selectMonths: true,
-                container: from.parent(),
-                onSet: function(item){
-                    if( 'clear' in item ){
-                        from.val('').change();
-                    }
-                    if( 'select' in item ){
-                        timepicker_from.open()
-                    }
-                }
-            }).pickadate('picker');
-
-            // Timepicker - From
-            var timepicker_from = from.find('input.time').pickatime({
-                container: from.parent(),
-                interval: timepickRange,
-                format: timeFormat,
-                onRender: function(){
-                    $('<button>'+wpdatatables_frontend_strings.back_to_date+'</button>')
-                        .on('click',function(){
-                            timepicker_from.close();
-                            datepicker_from.open();
-                        })
-                        .prependTo( this.$root.find('.picker__box') );
-                },
-                onSet: function( item ){
-                    if( 'select' in item ){
-                            from
-                                .val( datepicker_from.get()+ ' ' + timepicker_from.get() )
-                                .change()
-                    }
-                    if( 'clear' in item ){
-                        from.val('').change();
-                    }
-                }
-            }).pickatime('picker');
-
-            // Attach datetimepicker to from
-            from
-                .on('focus', function(){
-                    datepicker_from.open()
-                })
-                .on('click', function(e){
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    datepicker_from.open();
-                });
-
-            // Datepicker - To
-            var datepicker_to = to.find('input.date').pickadate({
-                format: dateFormat,
-                formatSubmit: dateFormat,
-                selectYears: true,
-                selectMonths: true,
-                container: to.parent(),
-                onSet: function(item){
-                    if( 'clear' in item ){
-                        to.val('').change();
-                    }
-                    if( 'select' in item ){
-                        timepicker_to.open()
-                    }
-                }
-            }).pickadate('picker');
-
-            // Timepicker - To
-            var timepicker_to= to.find('input.time').pickatime({
-                container: to.parent(),
-                format: timeFormat,
-                interval: timepickRange,
-                onRender: function(){
-                    $('<button>'+wpdatatables_frontend_strings.back_to_date+'</button>')
-                        .on('click',function(){
-                            timepicker_to.close();
-                            datepicker_to.open();
-                        })
-                        .prependTo( this.$root.find('.picker__box') );
-                },
-                onSet: function( item ){
-                    if( 'select' in item ){
-                        to
-                            .val( datepicker_to.get()+ ' ' + timepicker_to.get() )
-                            .change()
-                    }
-                    if( 'clear' in item ){
-                        to.val('').change();
-                    }
-                }
-            }).pickatime('picker');
-
-            // Attach datetimepicker to from
-            to
-                .on('focus', function(){
-                    datepicker_to.open()
-                })
-                .on('click', function(e){
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    datepicker_to.open();
-                });
-
-
             var index = i;
             aiCustomSearch_Indexes.push(i);
 
@@ -580,8 +466,8 @@
                     if (oTable.attr("id") != oSettings.sTableId)
                         return true;
 
-                    var dStartDate = moment( from.val(), dateFormat.toUpperCase()+ ' '+momentTimeFormat).toDate();
-                    var dEndDate = moment( to.val(), dateFormat.toUpperCase()+ ' '+momentTimeFormat ).toDate();
+                    var dStartDate = moment(from.val(), dateFormat.toUpperCase() + ' ' + momentTimeFormat).toDate();
+                    var dEndDate = moment(to.val(), dateFormat.toUpperCase() + ' ' + momentTimeFormat).toDate();
 
                     if (dStartDate == 'Invalid Date' && dEndDate == 'Invalid Date') {
                         return true;
@@ -591,7 +477,7 @@
                     try {
                         if (aData[_fnColumnIndex(index)] == null || aData[_fnColumnIndex(index)] == "")
                             return false;
-                        dCellDate = moment( aData[_fnColumnIndex(index)], dateFormat.toUpperCase()+ ' '+momentTimeFormat ).toDate();
+                        dCellDate = moment(aData[_fnColumnIndex(index)], dateFormat.toUpperCase() + ' ' + momentTimeFormat).toDate();
                     } catch (ex) {
                         return false;
                     }
@@ -612,22 +498,26 @@
                 }
             );
             //------------end date range filtering function
+            $('#' + sFromId + ',#' + sToId, th).blur(function () {
+                oTable.fnDraw();
+                fnOnFiltered();
+            });
 
             $('#' + sFromId + ',#' + sToId, th).change(function () {
                 oTable.fnDraw();
                 fnOnFiltered();
             });
 
-            if(fromDefaultValue != ''){
-                jQuery(from).val(fromDefaultValue);
-                jQuery(document).ready(function(){
-                    jQuery(from).change();
+            if (fromDefaultValue != '') {
+                $(from).val(fromDefaultValue);
+                $(document).ready(function () {
+                    $(from).change();
                 });
             }
-            if(toDefaultValue != ''){
-                jQuery(to).val(toDefaultValue);
-                jQuery(document).ready(function(){
-                    jQuery(to).change();
+            if (toDefaultValue != '') {
+                $(to).val(toDefaultValue);
+                $(document).ready(function () {
+                    $(to).change();
                 });
             }
 
@@ -638,13 +528,13 @@
 
             var fromDefaultValue = '', toDefaultValue = '';
 
-            if(defaultValue != ''){
-                if(jQuery.isArray(defaultValue)){
+            if (defaultValue != '') {
+                if ($.isArray(defaultValue)) {
                     fromDefaultValue = defaultValue[0];
-                    if(defaultValue[1]){
+                    if (defaultValue[1]) {
                         toDefaultValue = defaultValue[1];
                     }
-                }else{
+                } else {
                     fromDefaultValue = defaultValue[0];
                 }
             }
@@ -652,20 +542,19 @@
 
             var aoFragments = sRangeFormat.split(/[}{]/);
 
-            var descriptionContainer = $.parseJSON($('#'+oTable.data('described-by')).val());
-            var dateFormat = descriptionContainer.datepickFormat.replace(/y/g,'yy').replace(/Y/g, 'yyyy').replace(/M/g,'mmm');
-            var timeFormat = descriptionContainer.timeFormat.replace('H','HH');
-            var momentTimeFormat = timeFormat.replace('i','mm');
-            var timepickRange = parseInt( descriptionContainer.timepickRange ) ? parseInt( descriptionContainer.timepickRange ) : 5;
+            var descriptionContainer = $.parseJSON($('#' + oTable.data('described-by')).val());
+            var dateFormat = descriptionContainer.datepickFormat.replace(/y/g, 'yy').replace(/Y/g, 'yyyy').replace(/M/g, 'mmm');
+            var timeFormat = descriptionContainer.timeFormat.replace('H', 'HH');
+            var momentTimeFormat = timeFormat.replace('i', 'mm');
 
             th.html("");
             var sFromId = oTable.attr("id") + '_range_from_' + i;
-            var fromHTML = '<input type="text" class="date_range_filter" id="' + sFromId + '" rel="' + i + '" placeholder="'+wpdatatables_frontend_strings.from+'" />';
+            var fromHTML = '<input type="text" class="form-control time-range-filter wdt-timepicker" id="' + sFromId + '" rel="' + i + '" placeholder="' + wpdatatables_frontend_strings.from + '" />';
 
             var from = $(fromHTML);
 
             var sToId = oTable.attr("id") + '_range_to_' + i;
-            var toHTML = '<input type="text" class="date_range_filter" id="' + sToId + '" rel="' + i + '" placeholder="'+wpdatatables_frontend_strings.to+'" />';
+            var toHTML = '<input type="text" class="form-control rime-range-filter wdt-timepicker" id="' + sToId + '" rel="' + i + '" placeholder="' + wpdatatables_frontend_strings.to + '" />';
 
             var to = $(toHTML);
 
@@ -680,27 +569,6 @@
             }
             th.wrapInner('<span class="filter_column filter_date_range" />');
 
-            // Timepicker - From
-            var timepicker_from = from.pickatime({
-                container: from.parent(),
-                interval: timepickRange,
-                format: timeFormat,
-                onSet: function( item ){
-                        from.change()
-                }
-            }).pickatime('picker');
-
-            // Timepicker - To
-            var timepicker_to = to.pickatime({
-                container: to.parent(),
-                format: timeFormat,
-                interval: timepickRange,
-                onSet: function( item ){
-                        to
-                            .change()
-                }
-            }).pickatime('picker');
-
             var index = i;
             aiCustomSearch_Indexes.push(i);
 
@@ -711,8 +579,8 @@
                     if (oTable.attr("id") != oSettings.sTableId)
                         return true;
 
-                    var dStartTime = moment( from.val(), momentTimeFormat).toDate();
-                    var dEndTime = moment( to.val(), momentTimeFormat ).toDate();
+                    var dStartTime = moment(from.val(), momentTimeFormat).toDate();
+                    var dEndTime = moment(to.val(), momentTimeFormat).toDate();
 
                     if (dStartTime == 'Invalid Date' && dEndTime == 'Invalid Date') {
                         return true;
@@ -722,7 +590,7 @@
                     try {
                         if (aData[_fnColumnIndex(index)] == null || aData[_fnColumnIndex(index)] == "")
                             return false;
-                        dCellTime = moment( aData[_fnColumnIndex(index)], momentTimeFormat ).toDate();
+                        dCellTime = moment(aData[_fnColumnIndex(index)], momentTimeFormat).toDate();
                     } catch (ex) {
                         return false;
                     }
@@ -743,78 +611,92 @@
                 }
             );
             //------------end date range filtering function
+            $('#' + sFromId + ',#' + sToId, th).blur(function () {
+                oTable.fnDraw();
+                fnOnFiltered();
+            });
 
             $('#' + sFromId + ',#' + sToId, th).change(function () {
                 oTable.fnDraw();
                 fnOnFiltered();
             });
 
-            if(fromDefaultValue != ''){
-                jQuery(from).val(fromDefaultValue);
-                jQuery(document).ready(function(){
-                    jQuery(from).change();
+            if (fromDefaultValue != '') {
+                $(from).val(fromDefaultValue);
+                $(document).ready(function () {
+                    $(from).change();
                 });
             }
-            if(toDefaultValue != ''){
-                jQuery(to).val(toDefaultValue);
-                jQuery(document).ready(function(){
-                    jQuery(to).change();
+            if (toDefaultValue != '') {
+                $(to).val(toDefaultValue);
+                $(document).ready(function () {
+                    $(to).change();
                 });
             }
 
         }
 
 
-        function fnCreateColumnSelect(oTable, aData, iColumn, nTh, sLabel, bRegex, oSelected, defaultValue) {
-            if (aData == null)
-                aData = _fnGetColumnValues(oTable.fnSettings(), iColumn, true, false, true);
+        function fnCreateColumnSelect(oTable, aoColumn, iColumn, nTh, sLabel) {
+            var serverSide = oTable.fnSettings().oFeatures.bServerSide;
+            if (aoColumn.values == null)
+                aoColumn.values = _fnGetColumnValues(oTable.fnSettings(), iColumn, true, false, true);
+            if (aoColumn.possibleValuesAddEmpty == true && !serverSide) {
+                aoColumn.values.unshift('possibleValuesAddEmpty');
+            }
             var index = iColumn;
             var currentFilter = oTable.fnSettings().aoPreSearchCols[i].sSearch;
             if (currentFilter == null || currentFilter == "")//Issue 81
-                currentFilter = oSelected;
-                
-	            if(defaultValue != ''){
-	            	if(jQuery.isArray(defaultValue)){
-                            defaultValue = defaultValue[0];
-	            	}
-	            }
+                currentFilter = aoColumn.selected;
 
-			
-            var r = '<select class="search_init select_filter"><option value="" class="search_init">' + sLabel + '</option>';
+            if (aoColumn.defaultValue != '') {
+                if ($.isArray(aoColumn.defaultValue)) {
+                    aoColumn.defaultValue = aoColumn.defaultValue[0];
+                }
+            }
+
+            sLabel = aoColumn.filterLabel ? aoColumn.filterLabel : sLabel;
+
+            var r = '<select class="search_init select_filter selectpicker" data-index="' + iColumn + '"><option value="" class="search_init">' + ' ' + '</option>';
             var j = 0;
-            var iLen = aData.length;
+            var iLen = aoColumn.values.length;
             for (j = 0; j < iLen; j++) {
-                if (typeof (aData[j]) != 'object') {
+                if (typeof (aoColumn.values[j]) != 'object') {
                     var selected = '';
-                    if (escape(aData[j]) == currentFilter
-                        || escape(aData[j]) == escape(currentFilter)
-                        )
-                        selected = 'selected '
-                        
-                        if((defaultValue != '') && (escape(aData[j]) == escape(defaultValue))){
-                        	selected = 'selected= "selected" ';
-                        }
-                        
-                    r += '<option ' + selected + ' value="' + escape(aData[j]) + '">' + aData[j] + '</option>';
+                    if (encodeURI(aoColumn.values[j]) == currentFilter
+                        || encodeURI(aoColumn.values[j]) == encodeURI(currentFilter)
+                    )
+                        selected = 'selected ';
+
+                    if ((aoColumn.defaultValue != '') && (encodeURI(aoColumn.values[j]) == encodeURI(aoColumn.defaultValue))) {
+                        selected = 'selected= "selected" ';
+                    }
+
+                    var optionLabel = aoColumn.values[j];
+                    if (aoColumn.values[j] == 'possibleValuesAddEmpty') {
+                        optionLabel = ' ';
+                    }
+
+                    r += '<option ' + selected + ' value="' + encodeURI(aoColumn.values[j]) + '">' + optionLabel + '</option>';
                 }
                 else {
                     var selected = '';
-                    if (bRegex) {
+                    if (aoColumn.bRegex) {
                         //Do not escape values if they are explicitely set to avoid escaping special characters in the regexp
-                        if(aData[j].value == currentFilter) {
-                        	selected = 'selected= "selected" ';
+                        if (aoColumn.values[j].value == currentFilter) {
+                            selected = 'selected= "selected" ';
                         }
-                        
-                        if((defaultValue != '') && (aData[j].value == defaultValue)){
-                        	selected = 'selected= "selected" ';
+
+                        if ((aoColumn.defaultValue != '') && (aoColumn.values[j].value == aoColumn.defaultValue)) {
+                            selected = 'selected= "selected" ';
                         }
-                        r += '<option ' + selected + 'value="' + aData[j].value + '">' + aData[j].label + '</option>';
+                        r += '<option ' + selected + 'value="' + aoColumn.values[j].value + '">' + aoColumn.values[j].label + '</option>';
                     } else {
-                        if (escape(aData[j].value) == currentFilter) selected = 'selected ';
-                        if((defaultValue != '') && (aData[j].value == defaultValue)){
-                        	selected = 'selected= "selected" ';
+                        if (encodeURI(aoColumn.values[j].value) == currentFilter) selected = 'selected ';
+                        if ((aoColumn.defaultValue != '') && (aoColumn.values[j].value == aoColumn.defaultValue)) {
+                            selected = 'selected= "selected" ';
                         }
-                        r += '<option ' + selected + 'value="' + escape(aData[j].value) + '">' + aData[j].label + '</option>';
+                        r += '<option ' + selected + 'value="' + encodeURI(aoColumn.values[j].value) + '">' + aoColumn.values[j].label + '</option>';
                     }
                 }
             }
@@ -822,94 +704,81 @@
             var select = $(r + '</select>');
             nTh.html(select);
             nTh.wrapInner('<span class="filter_column filter_select" />');
-            select.selecter();
             select.change(function () {
-                //var val = $(this).val();
+
                 if ($(this).val() != "") {
                     $(this).removeClass("search_init");
                 } else {
                     $(this).addClass("search_init");
                 }
-                if (bRegex)
-                    oTable.fnFilter($(this).val(), iColumn, bRegex); //Issue 41
-                else
-                    oTable.fnFilter(unescape($(this).val()), iColumn); //Issue 25
+
+                var search = '';
+                if ($(this).val() == 'possibleValuesAddEmpty' && !serverSide) {
+                    oTable.fnFilter('^$', iColumn, true, false);
+                } else {
+                    if (aoColumn.exactFiltering) {
+                        search = serverSide ? decodeURIComponent($(this).val()) : '^' + decodeURIComponent($(this).val()) + '$';
+                        oTable.fnFilter($(this).val() ? search : '', iColumn, true, false);
+                    } else {
+                        if (aoColumn.bRegex)
+                            oTable.fnFilter($(this).val(), iColumn, aoColumn.bRegex);
+                        else
+                            oTable.fnFilter(decodeURIComponent($(this).val()), iColumn);
+                    }
+                }
+
                 fnOnFiltered();
             });
-            select.css('display','none !important');
-            if (currentFilter != null && currentFilter != "")//Issue 81
+
+            if (currentFilter != null && currentFilter != "")
                 oTable.fnFilter(unescape(currentFilter), iColumn);
-                
-            if(defaultValue != ''){
-            	select.change();
-            }
+
+            if (aoColumn.defaultValue != '')
+                select.change();
+
+            $('.selectpicker[data-index=' + iColumn + ']').selectpicker('refresh');
         }
 
-        function fnCreateSelect(oTable, aData, bRegex, oSelected, defaultValue) {
-            var oSettings = oTable.fnSettings();
-            if (aData == null && oSettings.ajax != "" && !oSettings.oFeatures.bServerSide) {
-                // Add a function to the draw callback, which will check for the Ajax data having 
-                // been loaded. Use a closure for the individual column elements that are used to 
-                // built the column filter, since 'i' and 'th' (etc) are locally "global".
-                oSettings.aoDrawCallback.push({
-                    "fn": (function (iColumn, nTh, sLabel) {
-                        return function () {
-                            // Only rebuild the select on the second draw - i.e. when the Ajax
-                            // data has been loaded.
-                            if (oSettings.iDraw == 2 && oSettings.ajax != null && oSettings.ajax != "" && !oSettings.oFeatures.bServerSide) {
-                                return fnCreateColumnSelect(oTable, null, _fnColumnIndex(iColumn), nTh, sLabel, bRegex, oSelected); //Issue 37
-                            }
-                        };
-                    })(i, th, label),
-                    "sName": "column_filter_" + i
-                });
-            }
-            // Regardless of the Ajax state, build the select on first pass
-            fnCreateColumnSelect(oTable, aData, _fnColumnIndex(i), th, label, bRegex, oSelected, defaultValue); //Issue 37
+        function fnCreateSelect(oTable, aoColumn) {
+
+            fnCreateColumnSelect(oTable, aoColumn, _fnColumnIndex(i), th, label);
 
         }
 
-        function fnCreateCheckbox(oTable, aData, sSelector, defaultValue) {
-        	
-        	if(!jQuery.isArray(defaultValue)){
-        		defaultValue = [defaultValue];
-        	}
+        function fnCreateCheckbox(oTable, aoColumn) {
 
-            if (aData == null)
-                aData = _fnGetColumnValues(oTable.fnSettings(), i, true, true, true);
+            if (!$.isArray(aoColumn.defaultValue)) {
+                aoColumn.defaultValue = [aoColumn.defaultValue];
+            }
+
+            if (aoColumn.values == null)
+                aoColumn.values = _fnGetColumnValues(oTable.fnSettings(), i, true, true, true);
             var index = i;
 
-            var r = '', j, iLen = aData.length;
-            
+            var r = '', j, iLen = aoColumn.values.length;
+
             var dialogRender = true;
-            
-            if(typeof sSelector !== 'undefined'){
-            	if($(sSelector).is('td') || $(sSelector).is('th')){
-            		dialogRender = true;
-            	}else{
-            		dialogRender = false;
-            	}
+
+            if (typeof aoColumn.sSelector !== 'undefined') {
+                dialogRender = !!($(aoColumn.sSelector).is('td') || $(aoColumn.sSelector).is('th'));
             }
 
             //clean the string
-            var localLabel = label.replace('%', 'Perc').replace("&", "AND").replace("$", "DOL").replace("£", "STERL").replace("@", "AT").replace(/\s/g, "_").replace(' ','_');
+            var localLabel = label.replace('%', 'Perc').replace("&", "AND").replace("$", "DOL").replace("£", "STERL").replace("@", "AT").replace(/\s/g, "_").replace(' ', '_');
             localLabel = localLabel.replace(/[^a-zA-Z 0-9]+/g, '');
             var localGroupLabel = wdtRandString();
-            
+
             //clean the string
 
             //button label override
-            var labelBtn = label;
-            if (properties.sFilterButtonText != null || properties.sFilterButtonText != undefined) {
-                labelBtn = properties.sFilterButtonText;
-            }
+            var labelBtn = aoColumn.filterLabel ? aoColumn.filterLabel : label;
 
             var relativeDivWidthToggleSize = 10;
             var numRow = 12; //numero di checkbox per colonna
             var numCol = Math.floor(iLen / numRow);
             if (iLen % numRow > 0) {
                 numCol = numCol + 1;
-            };
+            }
 
             //count how many column should be generated and split the div size
             var divWidth = 100 / numCol - 2;
@@ -920,67 +789,84 @@
                 divWidth = 20;
             }
 
-            var divRowDef = '<div style="float:left; min-width: ' + divWidth + '%; " >';
+            var divRowDef = '<div style="min-width: ' + divWidth + '%; " >';
             var divClose = '</div>';
 
-			if(dialogRender){
-	            var uniqueId = oTable.attr("id") + localLabel;
-	            var buttonId = "chkBtnOpen" + uniqueId;
-	            var checkToggleDiv = uniqueId + "-flt-toggle";
-	            r += '<button id="' + buttonId + '" class="checkbox_filter btn" > ' + labelBtn + '</button>'; //filter button which opens the dialog
-	            r += '<div id="' + checkToggleDiv + '" '
-	            	+ 'title="' + label + '" '
-	            	+ 'class="toggle-check ui-widget-content ui-corner-all"  >'; //dialog div
-	            //r+= '<div align="center" style="margin-top: 5px; "> <button id="'+buttonId+'Reset" class="checkbox_filter" > reset </button> </div>'; //reset button and its div
-	            r += divRowDef;
-			}
+            if (dialogRender) {
+                var uniqueId = oTable.attr("id") + localLabel;
+                var buttonId = "chkBtnOpen" + uniqueId;
+                var checkToggleDiv = uniqueId + "-flt-toggle";
+                r += '<button id="' + buttonId + '" class="checkbox-filter btn" > ' + labelBtn + '</button>'; //filter button which opens the dialog
+                r += '<div id="' + checkToggleDiv + '" '
+                    + 'title="' + label + '" '
+                    + 'class="toggle-check"  >'; //dialog div
+                r += divRowDef;
+            }
 
             for (j = 0; j < iLen; j++) {
-            	
-            	var localLabel = wdtRandString();
+
+                localLabel = wdtRandString();
 
                 //if last check close div
                 if (j % numRow == 0 && j != 0) {
                     //r += divClose + divRowDef;
                 }
-                
+
                 //check button
                 var checked = '';
-                if(jQuery.inArray(aData[j], defaultValue) != -1){
-                	checked = 'checked="checked" ';
+                if (typeof aoColumn.values[j] != 'object') {
+                    checked = $.inArray(aoColumn.values[j].toString(), aoColumn.defaultValue) != -1 ? 'checked="checked" ' : '';
+                } else {
+                    checked = $.inArray(aoColumn.values[j].value.toString(), aoColumn.defaultValue) != -1 ? 'checked="checked" ' : '';
                 }
 
-                r += '<div class="wdt_checkbox_option"><input class="search_init checkbox_filter wdtFilterCheckbox" type="checkbox" id= "' + localLabel + '" name= "' + localGroupLabel + '" value=\'' + aData[j] + '\' '+checked+' /> <label for="' + localLabel + '">' + aData[j] + '</label></div>';
-                
-                
+                if (typeof (aoColumn.values[j]) != 'object') {
+                    r += '<div class="wdt_checkbox_option checkbox"><label><input type="checkbox" class="search_init checkbox-filter wdtFilterCheckbox" id= "' + localLabel + '" name= "' + localGroupLabel + '" value=\'' + aoColumn.values[j] + '\' ' + checked + '><i class="input-helper"></i>' + aoColumn.values[j] + '</label></div>';
+                } else {
+                    r += '<div class="wdt_checkbox_option checkbox"><label><input type="checkbox" class="search_init checkbox-filter wdtFilterCheckbox" id= "' + localLabel + '" name= "' + localGroupLabel + '" value=\'' + aoColumn.values[j].value + '\' ' + checked + '><i class="input-helper"></i>' + aoColumn.values[j].label + '</label></div>';
+                }
+
+
                 //on every checkbox selection
-                $(document).on('change','#'+localLabel,function(){
-                	
+                $(document).on('change', '#' + localLabel, function () {
+
                     var search = '';
                     var or = '|'; //var for select checks in 'or' into the regex
-                    var resSize = $('input:checkbox[name="' + localGroupLabel + '"]:checked').size();
-                    $('input:checkbox[name="' + localGroupLabel + '"]:checked').each(function (index) {
 
-                        //search = search + ' ' + $(this).val();
+                    if (dialogRender) {
+                        var checkboxInputs =
+                            $(this).closest('.modal-content').find('input:checkbox[name="' + localGroupLabel + '"]:checked');
+                    } else {
+                        checkboxInputs = $('input:checkbox[name="' + localGroupLabel + '"]:checked');
+                    }
+
+                    var resSize = checkboxInputs.size();
+
+                    checkboxInputs.each(function (index) {
+
                         //concatenation for selected checks in or
                         if ((index == 0 && resSize == 1)
-                				|| (index != 0 && index == resSize - 1)) {
+                            || (index != 0 && index == resSize - 1)) {
                             or = '';
                         }
                         //trim
                         search = search.replace(/^\s+|\s+$/g, "");
 
-                        //search = search + $(this).val().replace(/\+/g,'\\+') + or;
+                        //search = search + ' ' + $(this).val();
                         //search = search + '(?=.*' + $(this).val().replace(/\+/g,'\\+') + ')';
-                        search = search + '^' + $(this).val().replace(/\+/g,'\\+') + '$' + or;
-                        
+                        if (aoColumn.exactFiltering) {
+                            search = search + '^' + $(this).val().replace(/\+/g, '\\+') + '$' + or;
+                        } else {
+                            search = search + $(this).val().replace(/\+/g, '\\+') + or;
+                        }
+
                         or = '|';
 
                     });
 
                     for (var jj = 0; jj < iLen; jj++) {
                         if (search != "") {
-                            $('#' + localLabel).removeClass("search_init"); 
+                            $('#' + localLabel).removeClass("search_init");
                         } else {
                             $('#' + localLabel).addClass("search_init");
                         }
@@ -990,98 +876,51 @@
                     oTable.fnFilter(search, index, true, false);
                     fnOnFiltered();
                 });
-                
+
             }
-            
-            th.html( r );
-            
+
+            th.html(r);
+
             th.wrapInner('<span class="filter_column filter_checkbox" />');
-            
-            $('input.wdtFilterCheckbox').iCheck({
-                checkboxClass: 'icheckbox_minimal',
-                radioClass: 'iradio_minimal',
-                increaseArea: '20%' // optional
-              }).on('ifChanged', function (event) {
-                $(event.target).trigger('change');
-              });
-            if( (navigator.platform.indexOf("iPhone") != -1) || (navigator.platform.indexOf("iPod") != -1) ){
-                // Workaround for iPhones
-                $('div.wdt_checkbox_option label').click(function(e){
+
+            $(document).ready(function () {
+                for (var ind in aoColumn.defaultValue) {
+                    $('input.wdtFilterCheckbox[value="' + aoColumn.defaultValue[ind] + '"]').change();
+                }
+            });
+
+            if (dialogRender) {
+                var dlg = $('#' + checkToggleDiv).wrap('<div class="wdtCheckboxModalWrap" />').hide();
+
+                $('#wdt-frontend-modal').on('click', '#wdt-checkbox-filter-close', function (e) {
                     e.preventDefault();
-                    e.stopImmediatePropagation();
-                    $(this).parent().find('input').iCheck('toggle');
+                    $('#wdt-frontend-modal').modal('hide');
+                    if ($(this).closest('.modal-content').find('#' + checkToggleDiv).length > 0)
+                        $('#' + checkToggleDiv).html($(this).closest('.modal-content').find('#' + checkToggleDiv));
+                });
+
+                $('#wdt-frontend-modal').on('click', '#wdt-checkbox-filter-reset', function (e) {
+                    e.preventDefault();
+                    if ($(this).closest('.modal-content').find('#' + checkToggleDiv).length > 0)
+                        $(this).closest('.modal-content').find($('input:checkbox[name="' + localGroupLabel + '"]:checked')).each(function () {
+                            $(this).attr('checked', false).change();
+                            $(this).addClass("search_init");
+                        });
+
+                    oTable.fnFilter('', index, true, false);
+                    fnOnFiltered();
+                });
+
+                $('#' + buttonId).click(function (e) {
+                    e.preventDefault();
+                    $('#wdt-frontend-modal .modal-title').html(labelBtn);
+                    $('#wdt-frontend-modal .modal-body').html(dlg.clone().show());
+                    $('#wdt-frontend-modal .modal-footer').html('<button class="btn btn-danger btn-icon-text waves-effect" id="wdt-checkbox-filter-reset" href="#">Reset</button><button class="btn btn-success btn-icon-text waves-effect" id="wdt-checkbox-filter-close" href="#"><i class="zmdi zmdi-check"></i>OK</button>');
+                    $('#wdt-frontend-modal').modal('show');
                 });
             }
 
-            $(document).ready(function(){
-            	for(var ind in defaultValue){
-            		$('input.wdtFilterCheckbox[value="'+defaultValue[ind]+'"]').change();
-            	}
-            });
-            
-			if(dialogRender){
-				var $dlg = wdtDialog('', labelBtn);
-				$dlg.addClass('wdtFilterDialog');
-				$('#' + checkToggleDiv).appendTo($dlg).wrap('<div class="wdtCheckboxModalWrap" />');
-				$dlg.append('<button class="btn" id="wdt_checkbox_reset_'+$dlg.attr('id')+'" href="#">Reset</button>');
-				$dlg.append('<button class="btn" id="wdt_checkbox_close_'+$dlg.attr('id')+'" href="#">OK</button>');
-				jQuery('#wdt_checkbox_close_'+$dlg.attr('id')).click(function(e){
-					e.preventDefault();
-					jQuery.remodal.lookup[$dlg.data('remodal')].close();
-				});
-				jQuery('#wdt_checkbox_reset_'+$dlg.attr('id')).click(function(e){
-					e.preventDefault();
-                    $('input:checkbox[name="' + localGroupLabel + '"]:checked').each(function(index3) {
-                        $(this).attr('checked', false).change().iCheck('update');
-                        $(this).addClass("search_init");
-                    });
-                    oTable.fnFilter('', index, true, false);
-                    fnOnFiltered();
-   				});
-	            $('#' + buttonId).click(function (e) {
-	            	e.preventDefault();
-	            	jQuery.remodal.lookup[$dlg.data('remodal')].open();
-	                var target = $(this);
-	            });
-			}
-
-            var fnOnFilteredCurrent = fnOnFiltered;
-
-            fnOnFiltered = function () {
-                var target = $('#' + buttonId);
-                fnOnFilteredCurrent();
-            };
-            //reset
-            /*
-            $('#'+buttonId+"Reset").button();
-            $('#'+buttonId+"Reset").click(function(){
-            $('#'+buttonId).removeClass("filter_selected"); //LM remove border if filter selected
-            $('input:checkbox[name="'+localLabel+'"]:checked').each(function(index3) {
-            $(this).attr('checked', false);
-            $(this).addClass("search_init");
-            });
-            oTable.fnFilter('', index, true, false);
-            return false;
-            }); 
-            */
         }
-
-
-
-
-        function _fnRangeLabelPart(iPlace) {
-            switch (iPlace) {
-                case 0:
-                    return sRangeFormat.substring(0, sRangeFormat.indexOf("{from}"));
-                case 1:
-                    return sRangeFormat.substring(sRangeFormat.indexOf("{from}") + 6, sRangeFormat.indexOf("{to}"));
-                default:
-                    return sRangeFormat.substring(sRangeFormat.indexOf("{to}") + 4);
-            }
-        }
-
-
-
 
         var oTable = this;
 
@@ -1132,26 +971,27 @@
                     tr.appendTo($(oTable.fnSettings().nTHead));
                     aoFilterCells = oTable.fnSettings().aoHeader[1];
                 } else {
-		    var tr = $("tr:first", oTable.fnSettings().nTHead).detach();
+                    var tr = $("tr:first", oTable.fnSettings().nTHead).detach();
                     tr.appendTo($(oTable.fnSettings().nTHead));
                     aoFilterCells = oTable.fnSettings().aoHeader[0];
                 }
                 /*else {
-                //tr.prependTo($("thead", oTable));
-                sFilterRow = "tr:first";
-                }*/
+                 //tr.prependTo($("thead", oTable));
+                 sFilterRow = "tr:first";
+                 }*/
 
                 sFilterRow = "tr:first";
 
                 oHost = oTable.fnSettings().nTHead;
 
-                
+
             }
-            
+
             //$(sFilterRow + " th", oHost).each(function (index) {//bug with ColVis
             $(aoFilterCells).each(function (index) {//fix for ColVis
                 i = index;
-                var aoColumn = { type: "text",
+                var aoColumn = {
+                    type: "text",
                     bRegex: false,
                     bSmart: true,
                     iMaxLenght: -1,
@@ -1164,6 +1004,7 @@
                 }
                 //label = $(this).text(); //Before fix for ColVis
                 label = $($(this)[0].cell).text(); //Fix for ColVis
+                $($(this)[0].cell).addClass('column-' + aoColumn.origHeader.toString().toLowerCase().replace(/\ /g, '-'));
                 if (aoColumn.sSelector == null) {
                     //th = $($(this)[0]);//Before fix for ColVis
                     th = $($(this)[0].cell); //Fix for ColVis
@@ -1183,12 +1024,12 @@
                         case "null":
                             break;
                         case "number":
-                            fnCreateInput(oTable, true, false, true, aoColumn.iFilterLength, aoColumn.iMaxLenght, aoColumn.defaultValue);
+                            fnCreateInput(oTable, true, false, true, aoColumn);
                             break;
                         case "select":
                             if (aoColumn.bRegex != true)
                                 aoColumn.bRegex = false;
-                            fnCreateSelect(oTable, aoColumn.values, aoColumn.bRegex, aoColumn.selected, aoColumn.defaultValue);
+                            fnCreateSelect(oTable, aoColumn);
                             break;
                         case "number-range":
                             fnCreateRangeInput(oTable, aoColumn.defaultValue);
@@ -1203,47 +1044,54 @@
                             fnCreateTimeRangeInput(oTable, aoColumn.defaultValue);
                             break;
                         case "checkbox":
-                            fnCreateCheckbox(oTable, aoColumn.values, aoColumn.sSelector, aoColumn.defaultValue);
+                            fnCreateCheckbox(oTable, aoColumn);
                             break;
                         case "text":
                         default:
                             bRegex = (aoColumn.bRegex == null ? false : aoColumn.bRegex);
                             bSmart = (aoColumn.bSmart == null ? false : aoColumn.bSmart);
-                            fnCreateInput(oTable, bRegex, bSmart, false, aoColumn.iFilterLength, aoColumn.iMaxLenght, aoColumn.defaultValue);
+                            fnCreateInput(oTable, bRegex, bSmart, false, aoColumn);
                             break;
 
                     }
                 }
             });
 
-            for ( j = 0; j < aiCustomSearch_Indexes.length; j++) {
+            for (j = 0; j < aiCustomSearch_Indexes.length; j++) {
                 //var index = aiCustomSearch_Indexes[j];
                 var fnSearch_ = function () {
                     var id = oTable.attr("id");
-                    if((typeof $("#" + id + "_range_from_" + aiCustomSearch_Indexes[j]).val() === 'undefined') 
-                    	|| (typeof $("#" + id + "_range_to_" + aiCustomSearch_Indexes[j]).val() === 'undefined')){
-                   			return properties.sRangeSeparator;
-                    	}
+                    if ((typeof $("#" + id + "_range_from_" + aiCustomSearch_Indexes[j]).val() === 'undefined')
+                        || (typeof $("#" + id + "_range_to_" + aiCustomSearch_Indexes[j]).val() === 'undefined')) {
+                        return properties.sRangeSeparator;
+                    }
                     return $("#" + id + "_range_from_" + aiCustomSearch_Indexes[j]).val() + properties.sRangeSeparator + $("#" + id + "_range_to_" + aiCustomSearch_Indexes[j]).val();
                 }
                 afnSearch_.push(fnSearch_);
             }
-            
+
             if (oTable.fnSettings().oFeatures.bServerSide) {
                 var fnServerDataOriginal = oTable.fnSettings().fnServerData;
-                
-                oTable.fnSettings().ajax = { 
+
+                if (typeof oTable.fnSettings().ajax.data !== 'undefined') {
+                    var currentDataMethod = oTable.fnSettings().ajax.data;
+                }
+
+                oTable.fnSettings().ajax = {
                     url: oTable.fnSettings().ajax.url,
                     type: 'POST',
-                    data: function(d){
-                        for ( j = 0; j < aiCustomSearch_Indexes.length; j++) {
+                    data: function (d) {
+                        if (typeof currentDataMethod !== 'undefined') {
+                            currentDataMethod(d);
+                        }
+                        for (j = 0; j < aiCustomSearch_Indexes.length; j++) {
                             var index = aiCustomSearch_Indexes[j];
                             d.columns[index].search.value = afnSearch_[j]();
                         }
                         d.sRangeSeparator = properties.sRangeSeparator;
                     }
                 };
-                
+
                 if (fnServerDataOriginal != null) {
                     try {
                         fnServerDataOriginal(sSource, aoData, fnCallback, oTable.fnSettings()); //TODO: See Issue 18
