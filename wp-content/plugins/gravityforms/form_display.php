@@ -2932,14 +2932,14 @@ class GFFormDisplay {
 	 */
 	public static function get_field_content( $field, $value = '', $force_frontend_label = false, $form_id = 0, $form = null ) {
 
-		$field_label = $field->get_field_label( $form, $value );
+		$field_label   = $field->get_field_label( $force_frontend_label, $value );
 		$admin_buttons = $field->get_admin_buttons();
 
 		$input_type = GFFormsModel::get_input_type( $field );
 
-		$is_form_editor = GFCommon::is_form_editor();
+		$is_form_editor  = GFCommon::is_form_editor();
 		$is_entry_detail = GFCommon::is_entry_detail();
-		$is_admin = $is_form_editor || $is_entry_detail;
+		$is_admin        = $is_form_editor || $is_entry_detail;
 
 		if ( $input_type == 'adminonly_hidden' ) {
 			$field_content = ! $is_admin ? '{FIELD}' : sprintf( "%s<label class='gfield_label' >%s</label>{FIELD}", $admin_buttons, esc_html( $field_label ) );

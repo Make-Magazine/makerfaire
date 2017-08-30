@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms
 Plugin URI: http://www.gravityforms.com
 Description: Easily create web forms and manage form entries within the WordPress admin.
-Version: 2.2.4.1
+Version: 2.2.5
 Author: rocketgenius
 Author URI: http://www.rocketgenius.com
 Text Domain: gravityforms
@@ -209,7 +209,7 @@ class GFForms {
 	 *
 	 * @var string $version The version number.
 	 */
-	public static $version = '2.2.4.1';
+	public static $version = '2.2.5';
 
 	/**
 	 * Runs after Gravity Forms is loaded.
@@ -1381,8 +1381,6 @@ class GFForms {
 			$parent = array( 'name' => 'gf_settings', 'callback' => array( 'GFForms', 'settings_page' ) );
 		} else if ( GFCommon::current_user_can_any( 'gravityforms_export_entries' ) ) {
 			$parent = array( 'name' => 'gf_export', 'callback' => array( 'GFForms', 'export_page' ) );
-		} else if ( GFCommon::current_user_can_any( 'gravityforms_view_updates' ) ) {
-			$parent = array( 'name' => 'gf_update', 'callback' => array( 'GFForms', 'update_page' ) );
 		} else if ( GFCommon::current_user_can_any( 'gravityforms_view_addons' ) ) {
 			$parent = array( 'name' => 'gf_addons', 'callback' => array( 'GFForms', 'addons_page' ) );
 		} else if ( GFCommon::current_user_can_any( 'gravityforms_system_status' ) ) {
@@ -1957,7 +1955,8 @@ class GFForms {
 		wp_register_script( 'gform_form_admin', $base_url . "/js/form_admin{$min}.js", array(
 			'jquery',
 			'jquery-ui-autocomplete',
-			'gform_placeholder'
+			'gform_placeholder',
+			'gform_gravityforms',
 		), $version );
 		wp_register_script( 'gform_form_editor', $base_url . "/js/form_editor{$min}.js", array(
 			'jquery',
@@ -2278,12 +2277,8 @@ class GFForms {
 			return 'import_form';
 		}
 
-		if ( rgget( 'page' ) == 'gf_update' ) {
-			return 'updates';
-		}
-
 		if ( rgget( 'page' ) == 'gf_system_status' ) {
-			return 'system_status';
+			return rgget( 'subview' ) === 'updates' ? 'updates' : 'system_status';
 		}
 
 		return false;
@@ -5114,7 +5109,7 @@ if ( ! function_exists( 'rgblank' ) ) {
 	 * @return bool True if empty.  False otherwise.
 	 */
 	function rgblank( $text ) {
-		return empty( $text ) && strval( $text ) != '0';
+		return empty( $text ) && ! is_array( $text ) && strval( $text ) != '0';
 	}
 }
 

@@ -1,6 +1,19 @@
 ------------------------------------------------------------------------------------------------------------------
-Version 2.2.4.1
+Version 2.2.5
+	- Updated form view recording so that IP isn't included.
+	- Fixed an issue where the taxonomy returned in the $args by the gform_post_category_args filter is not used when populating the Category field choices.
+	- Fixed admin field labels being displayed when the form is embedded in an admin page or the front-end via Ajax.
+	- Fixed the Post Content field validation not checking the submitted value does not exceed the configured maximum characters.
+	- Fixed PHP notices in the form editor when creating a new form with quotes in the description.
+	- Fixed content templates being processed during post creation for fields hidden by conditional logic.
+	- Fixed the forms list views column displaying cached counts for a time after the views have been reset.
+	- Fixed missing dependency for form_admin.js on gravityforms.js (requires the gform object).
+	- Fixed JS error caused when 3rd party plugins include conditional_logic.js without genearting a gf_form_conditional_logic variable.
+	- Fixed a PHP notice which could occur if an array was passed to the rgblank helper function.
+	- Fixed dynamic population of the Multi Select field failing when multiple choices are passed in the query string.
 	- Fixed an issue with the redirect confirmation for Ajax enabled forms where the URL is encoded incorrectly.
+	- AF: Fixed js and css files registered with field enqueue conditions not being included in some situations.
+	- AF: Fixed js files registered with field enqueue conditions being included when the field is set to administrative which, in some situations, could cause JavaScript errors.
 
 ------------------------------------------------------------------------------------------------------------------
 Version 2.2.4
