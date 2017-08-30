@@ -138,20 +138,35 @@ function msp_flush_slider_cache( $slider_id ){
 /**
  * Flush and re-cache all slideres if slider cache is enabled
  *
+ * @param  int      $slider_type   The list of slider types that you intent to flush. Empty means flush all sliders types.
+ *
  * @return bool     True if the cache is flushed and false otherwise
  */
-function msp_flush_all_sliders_cache(){
+function msp_flush_all_sliders_cache( $slider_types = array() ){
 
     $is_cache_enabled = ( 'on' == msp_get_setting( '_enable_cache', 'msp_general_setting', 'off' ) );
     if( ! $is_cache_enabled ){ return false; }
 
-    $all_sliders = get_masterslider_names();
-    foreach ( $all_sliders as $slider_id => $slider_name ) {
-        msp_generate_slider_output( $slider_id, true );
+    $all_sliders = get_mastersliders();
+    foreach ( $all_sliders as $slider_info ) {
+        if( empty( $slider_types ) || ( ! empty( $slider_info['type'] ) && in_array( $slider_info['type'] , $slider_types ) ) ){
+            msp_delete_slider_transient( $slider_info['ID'] );
+        }
     }
 
     return true;
 }
+
+
+ /**
+  * Remove the value of a slider output transient.
+  *
+  * @param  int     $slider_id     The slider id
+  * @return mixed   true if successful, false otherwise
+  */
+ function msp_delete_slider_transient( $slider_id ) {
+     return delete_transient( 'masterslider_output_' . $slider_id );
+ }
 
 
 /**

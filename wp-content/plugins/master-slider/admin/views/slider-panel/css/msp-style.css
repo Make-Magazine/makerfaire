@@ -2060,7 +2060,7 @@ button.msp-savepreset {
 .msp-templte-selected {
     position: absolute;
     top: 0;
-    right: -1px;
+    right: 0;
     width: 22px;
     height: 22px;
     background: url(../images/ui-spritesheet.png) -194px -146px no-repeat #2EA2CC;

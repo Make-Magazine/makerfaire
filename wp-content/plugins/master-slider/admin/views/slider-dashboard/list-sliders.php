@@ -33,10 +33,14 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
 
             foreach ( $starter_sections as $starter_section ) {
                 ?>
-                <div class="msp-dialog-inner-title ui-helper-clearfix">
-                    <span><?php echo $starter_section['title']; ?></span>
-                </div>
+                <div class="msp-dialog-inner-title ui-helper-clearfix msp-type-<?php echo esc_attr( $starter_section['id'] ); ?>">
                 <?php
+                if( ! empty( $starter_section['title'] ) ) {
+                    echo '<span>' . $starter_section['title'] . '</span>';
+                } elseif( ! empty( $starter_section['content'] ) ) {
+                    echo '<div>' . $starter_section['content'] . '</div>';
+                }
+                echo "</div>";
 
                 $section_id = $starter_section['id'];
                 $section_fields = isset( $starter_fields[ $section_id ] ) ? $starter_fields[ $starter_section['id'] ] : array();
@@ -52,13 +56,24 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
                             data-starter-uid="<?php echo $starter_data['id']; ?>" data-starter-section="<?php echo $section_id; ?>" data-disabled-msg="<?php echo $disabled_msg; ?>"  >
                         <div class="msp-templte-selected"></div>
                         <img src="<?php echo $starter_data['screenshot']; ?>" />
-                        <?php if ( $is_unavailable && 'wc-product-slider' !== $starter_data['id'] ): ?>
+                        <?php if ( $is_unavailable && 'wc-product-slider' !== $starter_data['id'] ):
+                            $demo_url = add_query_arg(
+                                array(
+                                    'utm_source'  => 'usersite',
+                                    'utm_medium'  => 'lite',
+                                    'v'           => MSWP_AVERTA_VERSION,
+                                    'utm_content' => 'samplepreview',
+                                    'utm_campaign'=> 'masterslider'
+                                ),
+                                $starter_data['demo_url']
+                            );
+                        ?>
                             <div class="msp-template-info">
-                                <a href="<?php echo esc_url( $starter_data['demo_url'] ); ?>" target="_blank"><img src="<?php echo esc_url( MSWP_AVERTA_ADMIN_URL ); ?>/assets/images/thirdparty/preview.png" alt="Preview"><?php _e( 'Preview', MSWP_TEXT_DOMAIN ); ?></a>
+                                <a href="<?php echo esc_url( $demo_url ); ?>" target="_blank"><img src="<?php echo esc_url( MSWP_AVERTA_ADMIN_URL ); ?>/assets/images/thirdparty/preview.png" alt="Preview"><?php _e( 'Preview', MSWP_TEXT_DOMAIN ); ?></a>
                                 <a href="<?php echo esc_url( $starter_data['test_drive_url'] ); ?>" target="_blank"><img src="<?php echo esc_url( MSWP_AVERTA_ADMIN_URL ); ?>/assets/images/thirdparty/test-drive.png" alt="Test Drive"><?php _e( 'Test Drive', MSWP_TEXT_DOMAIN ); ?></a>
                             </div>
                         <?php endif ?>
-                        <div class="msp-template-caption"><?php echo $starter_data['label']; ?><span></span></div>
+                        <div class="msp-template-caption" title="<?php echo esc_attr( $starter_data['label'] ); ?>"><?php echo $starter_data['label']; ?><span></span></div>
                     </div>
                     <?php
 

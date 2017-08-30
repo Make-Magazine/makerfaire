@@ -4,18 +4,24 @@ function msp_get_slider_starter_sections () {
 
     $sections = array(
         array(
-            'id'  => 'main_types',
+            'id'    => 'main_types',
             'title' => __( 'Slider Types', 'master-slider' ),
             'desc'  => ''
         ),
         array(
-            'id'  => 'masterslider_samples_group1',
+            'id'    => 'masterslider_samples_group1',
             'title' => __( 'Sample Sliders', 'master-slider' ),
             'desc'  => ''
         ),
         array(
-            'id'  => 'masterslider_pro_custom_samples1',
-            'title' => sprintf( __( 'Sample Sliders for PRO version %s', 'master-slider' ), '( <a href="http://avt.li/msfunlock" target="_blank">'. __( 'Upgrade to unlock', 'master-slider' ) .'</a> )' ),
+            'id'      => 'masterslider_pro_custom_samples1',
+            'title'   => '',
+            'desc'    => '',
+            'content' => '<h4>'. __( 'Starter Templates (Pro version)', MSWP_TEXT_DOMAIN ) .'</h4><p>'. __( 'To kick start with Master Slider ready to use sliders.', MSWP_TEXT_DOMAIN ) .'</p><a href="http://avt.li/msfunlock" class="msp-ac-btn msp-btn-blue" target="_blank">'. __( 'Upgrade to unlock', MSWP_TEXT_DOMAIN ) .'</a>'
+        ),
+        array(
+            'id'    => 'masterslider_dynamic_group',
+            'title' => __( 'Dynamic Sliders', MSWP_TEXT_DOMAIN ),
             'desc'  => ''
         )
     );
