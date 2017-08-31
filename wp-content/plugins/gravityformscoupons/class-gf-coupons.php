@@ -800,7 +800,7 @@ class GFCoupons extends GFFeedAddOn {
 								    couponAmount = jQuery(\'#couponAmount\').val();
 								if ( couponAmount ){
 									if (type == \'flat\'){
-										couponAmount = cur.toMoney(couponAmount);
+										couponAmount = cur.toMoney(couponAmount, true);
 									}
 									else{
 										couponAmount = cur.numberFormat(couponAmount, cur.currency["decimals"], cur.currency["decimal_separator"], cur.currency["thousand_separator"]) + \'%\';

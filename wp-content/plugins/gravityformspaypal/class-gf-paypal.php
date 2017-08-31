@@ -692,7 +692,8 @@ class GFPayPal extends GFPaymentAddOn {
 					if ( is_array( $options ) ) {
 						$option_index = 1;
 						foreach ( $options as $option ) {
-							$option_label = urlencode( $option['field_label'] );
+							// Trim option label to prevent PayPal displaying an error instead of the cart.
+							$option_label = urlencode( substr( $option['field_label'], 0, 64 ) );
 							$option_name  = urlencode( $option['option_name'] );
 							$query_string .= "&on{$option_index}_{$product_index}={$option_label}&os{$option_index}_{$product_index}={$option_name}";
 							$option_index ++;

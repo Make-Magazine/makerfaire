@@ -1,9 +1,9 @@
 # Copyright 2009-2017 Rocketgenius, Inc.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gravity Forms 2.2.5\n"
+"Project-Id-Version: Gravity Forms 2.2.5.2\n"
 "Report-Msgid-Bugs-To: http://www.gravtiyhelp.com\n"
-"POT-Creation-Date: 2017-08-24 17:07:09+00:00\n"
+"POT-Creation-Date: 2017-08-31 13:28:31+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -7563,7 +7563,7 @@ msgstr ""
 
 #: includes/fields/class-gf-field-calculation.php:35
 #: includes/fields/class-gf-field-hiddenproduct.php:31
-#: includes/fields/class-gf-field-number.php:79
+#: includes/fields/class-gf-field-number.php:78
 #: includes/fields/class-gf-field-singleproduct.php:37
 msgid "Please enter a valid quantity"
 msgstr ""
@@ -7833,23 +7833,23 @@ msgstr ""
 msgid "Name prefix"
 msgstr ""
 
-#: includes/fields/class-gf-field-number.php:76
+#: includes/fields/class-gf-field-number.php:75
 msgid "Please enter a valid quantity. Quantity cannot contain decimals."
 msgstr ""
 
-#: includes/fields/class-gf-field-number.php:125
+#: includes/fields/class-gf-field-number.php:124
 msgid "Please enter a value between %s and %s."
 msgstr ""
 
-#: includes/fields/class-gf-field-number.php:127
+#: includes/fields/class-gf-field-number.php:126
 msgid "Please enter a value greater than or equal to %s."
 msgstr ""
 
-#: includes/fields/class-gf-field-number.php:129
+#: includes/fields/class-gf-field-number.php:128
 msgid "Please enter a value less than or equal to %s."
 msgstr ""
 
-#: includes/fields/class-gf-field-number.php:131
+#: includes/fields/class-gf-field-number.php:130
 msgid "Please enter a valid number"
 msgstr ""
 

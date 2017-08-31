@@ -1,4 +1,13 @@
 ------------------------------------------------------------------------------------------------------------------
+Version 2.2.5.2
+	- Fixed JavaScript errors preventing conditional logic settings being displayed for new or duplicate confirmations with the Hebrew translation.
+
+------------------------------------------------------------------------------------------------------------------
+Version 2.2.5.1
+	- Fixed the Multi Select field not using the choice isSelected property when determining which choices are selected on display.
+	- Fixed required Number field with a min range setting of 1 passing validation when a value of 0 is submitted.
+
+------------------------------------------------------------------------------------------------------------------
 Version 2.2.5
 	- Updated form view recording so that IP isn't included.
 	- Fixed an issue where the taxonomy returned in the $args by the gform_post_category_args filter is not used when populating the Category field choices.

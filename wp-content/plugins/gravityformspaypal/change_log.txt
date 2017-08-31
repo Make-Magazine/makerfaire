@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------
+Version 2.8.1
+	- Fixed an issue where PayPal can display an error instead of the cart if the option labels exceed 64 characters.
+
+---------------------------------------------------------------------
 Version 2.8
     - Added Chinese translation. Credit: Edi Michael.
 	- Updated strings for translations.
