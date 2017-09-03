@@ -362,8 +362,10 @@ function mf_custom_import_entries() {
         //update attributes
         $return = updateAttribute($entryID, 2, $spaceSize,$user,$formID);
         if(!empty($return)) $chgRPTins[] = $return;
+
         $return = updateAttribute($entryID, 4, $exposure,$user,$formID);
         if(!empty($return)) $chgRPTins[] = $return;
+
         //if $space size is empty we need to set the resource status
         if($spaceSize==''){
           gform_update_meta( $entryID, 'res_status', 'review', $formID);
@@ -375,8 +377,8 @@ function mf_custom_import_entries() {
 
         /*    Confirmation comments     */
         //first clear out any confirmation comments, then add from upload
-
         $res = $wpdb->get_row("select * from wp_rmt_entry_attn where entry_id = $entryID and attn_id = 13");
+
         if ( null !== $res ) { //update conf comment
           $wpdb->update('wp_rmt_entry_attn',array('entry_id'=>$entryID,'attn_id'=>13,'comment'=>$note,'user'=>$user),array('ID'=> $res->ID),array('%d','%d', '%s','%d'));
 
@@ -583,14 +585,15 @@ function mf_custom_import_entries() {
       //subarea_id	location
       $wpdb->insert('wp_mf_location',array('entry_id'=>$entryID,'subarea_id'=>$rowData['subarea_id'],'location'=>$rowData['location']),array('%d','%d','%s'));
     }
-    //set resource status to ready
-    gform_update_meta( $entryID, 'res_status','import' );
 
     //create maker table info
     $entry    = GFAPI::get_entry($entryID);
     $form_id  = $entry['form_id'];
     $form     = GFAPI::get_form($form_id);
     GFRMTHELPER::gravityforms_makerInfo($entry,$form,'new');
+
+    //set resource status to ready
+    gform_update_meta( $entryID, 'res_status','import' );
   }
 
   function processRibbon($file,$userID) {
