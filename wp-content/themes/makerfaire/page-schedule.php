@@ -96,12 +96,13 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                   <i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
                   <br/>{{schedStage}}
                 </button>
-                <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+
+                <ul ng-repeat="(schedDay,schedule) in schedules" ng-show="'{{schedDay | date: 'EEEE'}}' == dateFilter" class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
                   <li>
                     <a ng-click="setStage('')"><?php _e('All','MiniMakerFaire');?></a>
                   </li>
-                  <li ng-repeat="schedule in schedules[dateFilter] | unique:'nicename'">
-                    <a ng-click="setStage(schedule.nicename)">{{schedule.nicename}}</a>
+                  <li ng-repeat="(key,daySched) in schedule | typeFilter: schedType | stageFilter: schedStage | catFilter:schedTopic | filter:filterData |  orderBy:propertyName | unique: 'nicename'" ng-repeat="(daySched,schedule) in schedules">
+                    <a  ng-click="setStage(daySched.nicename)">{{daySched.nicename}}</a>
                   </li>
                 </ul>
               </span>
