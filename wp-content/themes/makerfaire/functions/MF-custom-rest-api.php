@@ -289,7 +289,7 @@ function getMTMentries($formIDs) {
         $makerList = $fieldData['160.3']. ' ' .$fieldData['160.6'];
       }else{
         $makerArr = array();
-        if(isset($fieldData['160.3']))  $makerArr[] = $fieldData['160.3']. ' ' .$fieldData['160.6'];
+        if(isset($fieldData['160.3']))  $makerArr[] = (isset($fieldData['160.3'])?$fieldData['160.3']. ' ':'') .(isset($fieldData['160.6'])?$fieldData['160.6']:'');
         if(isset($fieldData['158.3']))  $makerArr[] = $fieldData['158.3']. ' ' .$fieldData['158.6'];
         if(isset($fieldData['155.3']))  $makerArr[] = $fieldData['155.3']. ' ' .$fieldData['155.6'];
         if(isset($fieldData['156.3']))  $makerArr[] = $fieldData['156.3']. ' ' .$fieldData['156.6'];
