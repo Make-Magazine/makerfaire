@@ -12,7 +12,7 @@ function create_calendar($formIDs){
       $dt = new DateTime($day['time_end']);
       $end = $dt->format('Ymd\THis');
 
-      $ics[] = array( 'location'    => '2495 South Delaware Street San Mateo, CA 94403'.' - '.$day['nicename'],
+      $ics[] = array( 'location'    => 'New York Hall of Science 47-01 111th St, Corona, NY 11368'.' - '.$day['nicename'],
                       'summary'     => $day['name'],
                       'dtstart'     => $start,
                       'dtend'       => $end,
