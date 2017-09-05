@@ -99,11 +99,11 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       $incResources     = substr($res_merge_tag , $incStartPos, $incEndPos - $incStartPos);
     }
 
-    $resTable = '<table cellpadding="10" width=100%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
+    $resTable = '<table cellpadding="10" width=60%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
     $resources = get_mf_resources($lead, $excResources, $incResources);
 
     foreach($resources as $entRes){
-      $resTable .= '<tr><td>'.$entRes['resource'].'</td><td>'.$entRes['qty'].'</td></tr>';
+      $resTable .= '<tr><td>'.$entRes['resource'].'</td><td style="text-align:center">'.$entRes['qty'].'</td></tr>';
     }
     $resTable .= '</table>';
     $text = str_replace($res_merge_tag, $resTable, $text);
@@ -119,14 +119,14 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $attIDs = substr($text, $attStartPos+1,$closeBracketPos-$attStartPos-1);
 
     $attArr = explode(",",$attIDs);
-    $attTable  = '<table cellpadding="10"  width=100%><tr><th width="40%">Attribute</th><th>Value</th></tr>';
+    $attTable  = '<table cellpadding="10"  width=60%><tr><th width="40%">Attribute</th><th>Value</th></tr>';
     foreach($attArr as $att){
       $AttText = get_attribute($lead,trim($att));
       if(!empty($AttText)){
         $attTable .= '<tr>';
         foreach($AttText as $attDetail){
           $attTable .= '<td>'.$attDetail['attribute'].'</td>'.
-                       '<td>'.$attDetail['value'].'</td>';
+                       '<td style="text-align:center">'.$attDetail['value'].'</td>';
         }
         $attTable .= '</tr>';
       }
