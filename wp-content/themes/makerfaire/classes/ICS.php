@@ -177,6 +177,6 @@ class ICS {
     return preg_replace('/([\,;])/','\\\$1', $str);
   }
   function save($str) {
-    file_put_contents("FaireSchedule.ics",$str);
+    file_put_contents(get_template_directory() ."/FaireSchedule.ics",$str);
   }
 }
