@@ -18,7 +18,7 @@ function subscribe_return_path_overlay() { ?>
           <div class="col-sm-4 overlay-3">
             <h2>Sign Up for the Maker Faire Newsletter</h2>
             <p>Keep informed, stay inspired.</p>
-            <form class="sub-form whatcounts-signup1o" action="http://whatcounts.com/bin/listctrl" method="POST">
+            <form class="sub-form whatcounts-signup1o" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
               <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
               <input type="hidden" name="custom_list_makerfaire" value="yes" />
               <input type="hidden" name="custom_list_makermedia" value="yes" />
@@ -77,7 +77,7 @@ function display_thank_you_modal_if_signed_up() { ?>
             }
             ?>
           <h4>You might also like these newsletters:</h4>
-          <form class="whatcounts-signup2" action="http://whatcounts.com/bin/listctrl" method="POST">
+          <form class="whatcounts-signup2" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
             <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" id="email" name="email" value="" />
@@ -144,7 +144,7 @@ function display_thank_you_modal_if_signed_up() { ?>
     jQuery(document).on('submit', '.whatcounts-signup1', function (e) {
       e.preventDefault();
       var bla = jQuery('#wc-email').val();
-      jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1').serialize());
+      jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1').serialize());
       jQuery('.fancybox-thx').trigger('click');
       jQuery('.nl-modal-email-address').text(bla);
       jQuery('.whatcounts-signup2 #email').val(bla);
@@ -153,7 +153,7 @@ function display_thank_you_modal_if_signed_up() { ?>
     jQuery(document).on('submit', '.whatcounts-signup1m', function (e) {
       e.preventDefault();
       var bla = jQuery('#wc-email-m').val();
-      jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1m').serialize());
+      jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1m').serialize());
       jQuery('.fancybox-thx').trigger('click');
       jQuery('.nl-modal-email-address').text(bla);
       jQuery('.whatcounts-signup2 #email').val(bla);
@@ -162,14 +162,14 @@ function display_thank_you_modal_if_signed_up() { ?>
     jQuery(document).on('submit', '.whatcounts-signup1o', function (e) {
       e.preventDefault();
       var bla = jQuery('#wc-email-o').val();
-      jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1o').serialize());
+      jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1o').serialize());
       jQuery('.fancybox-thx').trigger('click');
       jQuery('.nl-modal-email-address').text(bla);
       jQuery('.whatcounts-signup2 #email').val(bla);
     });
     jQuery(document).on('submit', '.whatcounts-signup2', function (e) {
       e.preventDefault();
-      jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup2').serialize());
+      jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup2').serialize());
       jQuery('.nl-thx-p1').hide();
       jQuery('.nl-thx-p2').show();
     });

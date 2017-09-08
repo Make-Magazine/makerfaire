@@ -34,7 +34,7 @@ get_header('version-2'); ?>
 
           <div class="col-sm-8 col-md-6 col-lg-4 col-sm-offset-2 col-md-offset-3 col-lg-offset-4">
 
-            <form id="nlp-form" class="nlp-form form-inline" action="http://whatcounts.com/bin/listctrl" method="POST">
+            <form id="nlp-form" class="nlp-form form-inline" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
               <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
               <input type="hidden" name="custom_list_makerfaire" value="yes" />
               <input type="hidden" name="cmd" value="subscribe" />
@@ -396,7 +396,7 @@ get_header('version-2'); ?>
                     return false;
                   }
                   else {
-                    jQuery.post('http://whatcounts.com/bin/listctrl', jQuery('#nlp-form').serialize());
+                    jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('#nlp-form').serialize());
                     jQuery('.nl-thx-p1').hide();
                     jQuery('.nl-thx-p2').show();
                     jQuery('.fancybox-thx').trigger('click');
