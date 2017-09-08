@@ -235,6 +235,12 @@ class GFRMTHELPER {
           $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $comment, 'RMT resource: '.$res->token.' - comment');
         }
       } //end check for payment form type
+
+      //lock the resource if this a payment form
+      if($form_type=='Payment'){
+        $sql = "update wp_rmt_entry_resources set lockBit=1 where entry_id=".$entryID." and resource_id=".$resource_id;
+        $wpdb->get_results($sql);
+      }
     }
 
     /*
@@ -279,6 +285,11 @@ class GFRMTHELPER {
         $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID='.$attribute_id);
         $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $attribute_id, '', $attvalue, 'RMT attribute: '.$res->token.' -  value');
         $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $attribute_id, '', $comment, 'RMT attribute: '.$res->token.' -  comment');
+      }
+      //lock the attribute if this a payment form
+      if($form_type=='Payment'){
+        $sql = "update wp_rmt_entry_attributes set lockBit=1 where entry_id=".$entryID." and attribute_id=".$attribute_id;
+        $wpdb->get_results($sql);
       }
     }
 
@@ -335,6 +346,7 @@ class GFRMTHELPER {
     //overrides all other logic
     if($form_type == 'Payment') {
       $status = 'ready';
+      gform_update_meta( $entryID, 'res_status', $status, $form['id'] );
     }
 
     // update custom meta field (do not update if meta already exists)
