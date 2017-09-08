@@ -56,7 +56,7 @@
           ?>
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
-          <form class="sub-form whatcounts-signup1" action="http://whatcounts.com/bin/listctrl" method="POST">
+          <form class="sub-form whatcounts-signup1" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
             <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
             <input type="hidden" name="custom_list_makerfaire" value="yes" />
             <input type="hidden" name="custom_list_makermedia" value="yes" />
@@ -99,7 +99,7 @@
           ?>
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
-          <form class="sub-form whatcounts-signup1m" action="http://whatcounts.com/bin/listctrl" method="POST">
+          <form class="sub-form whatcounts-signup1m" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
             <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
             <input type="hidden" name="custom_list_makerfaire" value="yes" />
             <input type="hidden" name="custom_list_makermedia" value="yes" />
@@ -389,7 +389,7 @@
   </script>
   <div class="fancybox" style="display:none;">
     <h3>Yes, I'm interested in staying in touch with the School Maker Faire Program</h3>
-    <form name="MailingList" action="http://whatcounts.com/bin/listctrl" method="POST">
+    <form name="MailingList" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
       <input type="hidden" name="slid" value="6B5869DC547D3D4637EA6E33C6C8170D" />
       <input type="hidden" name="cmd" value="subscribe" />
       <input type="hidden" name="custom_host" value="makerfaire.com" />
