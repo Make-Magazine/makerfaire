@@ -14,15 +14,22 @@ function update_entry_resatt() {
       $fields[] = $key;
       $values[] = $value;
     }
-
-    $sql = "insert into ".$table.' ('.implode(',',$fields).',user) VALUES ("'.implode('","',$values).'",'.$current_user->ID.')';
+    if($table=='wp_rmt_entry_resources'){
+      $sql = "insert into ".$table.' ('.implode(',',$fields).',user) VALUES ("'.implode('","',$values).'",'.$current_user->ID.')'
+              . ' on duplicate key update qty='.$insertArr['qty'].',comment="'.htmlspecialchars($insertArr['comment']).'",user="'.$current_user->ID.'"';
+    }elseif($table=='wp_rmt_entry_attributes'){
+      $sql = "insert into ".$table.' ('.implode(',',$fields).',user) VALUES ("'.implode('","',$values).'",'.$current_user->ID.')'
+              . ' on duplicate key update value="'.htmlspecialchars($insertArr['value']).'",comment="'.htmlspecialchars($insertArr['comment']).'",user="'.$current_user->ID.'"';
+    }else{
+      $sql = "insert into ".$table.' ('.implode(',',$fields).',user) VALUES ("'.implode('","',$values).'",'.$current_user->ID.')';
+    }
 
     //update change report for new recources/attributes/attention records added thru wp-admin
     $user = $current_user->ID;
     $entryID  = (isset($insertArr['entry_id'])?$insertArr['entry_id']:0);
     $qty      = (isset($insertArr['qty'])?$insertArr['qty']:0);
-    $comment  = (isset($insertArr['comment'])?$insertArr['comment']:'');
-    $attvalue = (isset($insertArr['value'])?$insertArr['value']:'');
+    $comment  = (isset($insertArr['comment'])?htmlspecialchars($insertArr['comment']):'');
+    $attvalue = (isset($insertArr['value'])?htmlspecialchars($insertArr['value']):'');
     switch ($table) {
       case 'wp_rmt_entry_resources':
         $fieldID     = $insertArr['resource_id'];

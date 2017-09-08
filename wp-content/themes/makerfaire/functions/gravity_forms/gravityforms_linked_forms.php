@@ -276,12 +276,6 @@ function updLinked_fields($form,$origEntryID){
       }
     }
   } //end foreach loop
-
-  /* After we are done updating the fields, go back in and update RMT on the linked entry */
-  $origEntry = GFAPI::get_entry($origEntryID);
-  $origform_id = $origEntry['form_id'];
-  $origForm = GFAPI::get_form($origform_id);
-  GFRMTHELPER::gravityforms_makerInfo($origEntry,$origForm,$type='update');
 }
 
 //when a linked form is submitted, find the initial formid based on entry id

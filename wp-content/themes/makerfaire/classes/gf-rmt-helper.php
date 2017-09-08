@@ -169,7 +169,7 @@ class GFRMTHELPER {
 
       //on new records the user is always null unless this is a payment form
       if($form_type == 'Payment'){
-        $user = 'NULL';
+        $user = '0';
         // is resource already set?
         $res = $wpdb->get_row("select wp_rmt_entry_resources.*, wp_rmt_resources.token "
                 . " from wp_rmt_entry_resources"
