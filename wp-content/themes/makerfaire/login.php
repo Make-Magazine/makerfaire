@@ -95,11 +95,12 @@ if ($mode == "reset")
         </div>
         <div class="col-md-offset-2 hidden-xs">
             <div>
-            <ul class="list-unstyled">
-                <li><?php echo $loginmessage; ?></li>
-		<li class="mftagline padtop">
-                <img style="width: auto; height: 58px; margin-right:10px;" src="http://makerfaire.com/wp-content/uploads/2015/05/makey-lg-01.png">The Maker Faire Team
-                </li>	</ul>
+                <ul class="list-unstyled">
+                    <li><?php echo $loginmessage; ?></li>
+                    <li class="mftagline padtop">
+                        <img style="width: auto; height: 58px; margin-right:10px;" src="https://makerfaire.com/wp-content/uploads/2015/05/makey-lg-01.png">The Maker Faire Team
+                    </li>
+                </ul>
             </div>
         </div>
      </div>

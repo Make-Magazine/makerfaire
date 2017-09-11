@@ -130,7 +130,7 @@ function getModalData($tableData){
   }else{
     $name = $current_user->user_firstname.' '.$current_user->user_lastname;
   }
-  $currentURL = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+  $currentURL = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
   $prevEntries = $tableData['data'];
   $return = '
