@@ -386,8 +386,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "orderBy":'location',
               "rmtData":{
                 "resource":[
-                  {"id":"19","value":"Barricade","checked":true,"aggregated":false},
-                  {"id":"18","value":"Fencing","checked":true,"aggregated":false}
+                  {"id":"19","value":"Barricade","checked":true,"aggregated":true},
+                  {"id":"18","value":"Fencing","checked":true,"aggregated":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
@@ -444,8 +444,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"41","value":"Work Bench","checked":true,"aggregated":false},
-                  {"id":"42","value":"Stools","checked":true,"aggregated":false}
+                  {"id":"41","value":"Work Bench","checked":true,"aggregated":true},
+                  {"id":"42","value":"Stools","checked":true,"aggregated":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
