@@ -406,8 +406,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":false},
-                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":false}
+                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":true},
+                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
