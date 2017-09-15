@@ -137,7 +137,16 @@ function display_thank_you_modal_if_signed_up() { ?>
       autoHeight : true,
       padding : 0,
       afterLoad   : function() {
-        this.content = this.content.html();
+          this.content = this.content.html();
+      }
+    });
+    jQuery(".nl-thx-p2").fancybox({
+      autoSize : false,
+      width  : 400,
+      autoHeight : true,
+      padding : 0,
+      afterLoad   : function() {
+          this.content = this.content.html();
       }
     });
     // Desktop
@@ -170,8 +179,8 @@ function display_thank_you_modal_if_signed_up() { ?>
     jQuery(document).on('submit', '.whatcounts-signup2', function (e) {
       e.preventDefault();
       jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup2').serialize());
-      jQuery('.nl-thx-p1').hide();
-      jQuery('.nl-thx-p2').show();
+      jQuery('.fancybox-thx').hide();
+      jQuery('.nl-thx-p2').trigger('click');
     });
     jQuery('input[type="checkbox"]').click(function(e){
       e.stopPropagation();
