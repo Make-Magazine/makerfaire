@@ -104,7 +104,7 @@ function get_first_image_url($html) {
 }
 
 function makerfaire_makezine_rss_news() {
-  $url = 'http://makezine.com/tag/maker-faire/feed/';
+  $url = 'https://makezine.com/tag/maker-faire/feed/';
   $rss = fetch_feed( $url);
   // Figure out how many total items there are, but limit it to 5.
   $maxitems = $rss->get_item_quantity( 3 );

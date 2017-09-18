@@ -152,6 +152,7 @@ foreach($entry as $key=>$field ) {
 
 // Website button
 $website = '';
+$project_website = str_replace( 'http://', 'https://', $project_website );
 
 if($makerEdit){
   $website =  '<div><b>Website:</b> <span id="website" class="mfEdit">'. $project_website.'</span></div>';
@@ -164,6 +165,8 @@ if($makerEdit){
 
 // Project Inline video
 $video = '';
+$project_video = str_replace( 'http://', 'https://', $project_video );
+
 if (!empty($project_video)) {
   $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
   //youtube has two type of url formats we need to look for and change
