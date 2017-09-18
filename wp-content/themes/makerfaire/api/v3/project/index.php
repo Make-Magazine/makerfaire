@@ -58,8 +58,8 @@ if ($type == 'project') {
     FROM  `wp_mf_entity` entity
     JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id
     WHERE wp_rg_lead.status = 'active' "
+    .($faire    != '' ? " AND LOWER(entity.faire)='".$faire."' " : '')
     .($lchange  != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '');
-echo $select_query;
 
   $mysqli->query("SET NAMES 'utf8'");
 
