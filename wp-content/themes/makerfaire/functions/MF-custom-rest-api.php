@@ -11,7 +11,91 @@ add_action( 'rest_api_init', function () {
 		'methods' => 'GET',
 		'callback' => 'mf_updateEntry'
 	));
+
+  //makerfaire api for makershare
+  register_rest_route( 'makerfaire', '/v2/mfapi/(?P<type>[a-z0-9\-]+)/(?P<key>[a-z0-9\-]+)', array(
+		'methods' => 'GET',
+		'callback' => 'mf_mfapi'
+	));
 });
+
+function mf_mfapi( WP_REST_Request $request ) {
+  // Define the API version.
+  define( 'MF_API_VERSION', 'v3' );
+
+  // Set the post per page for our queries
+  define( 'MF_POSTS_PER_PAGE', 2000 );
+
+  // Set the API keys to run this API.
+  //define( 'MF_API_KEY', sanitize_text_field( get_option( 'make_app_api_key' ) ) );
+  // MIIBOgIBAAJBAKUSW7BsZCFVHarjMixDfaVy6OjB2QKtlfMoNQEafDW%2FJx%2BZzWBY
+  define( 'MF_API_KEY', 'f22c7aba-5c1e-478f-9513-09aa7e28105d' );
+  $allowed_types = array(
+    'category',
+    'account',
+    'project'
+  );
+
+  $type     = $request['type'];
+  $key      = $request['key'];
+  if ( empty( $key ) ) {
+    header( 'HTTP/1.0 403 Forbidden' );
+    echo '<h2>Invalid: No Key.</h2>';
+
+    return;
+  } elseif ( $key !== MF_API_KEY ) {
+    header( 'HTTP/1.0 403 Forbidden' );
+
+    echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['key'] ) . '"</h2>';
+    return;
+  } elseif ( empty( $type ) ) {
+    header( 'HTTP/1.0 403 Forbidden' );
+
+    echo '<h2>Invalid: Type</h2>'.$type;
+    return;
+  } elseif ( ! in_array( $type, $allowed_types ) ) {
+    header( 'HTTP/1.0 403 Forbidden' );
+
+    echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['type'] ) . '"</h2>';
+    return;
+  }else{
+    header('HTTP/1.1 200 OK');
+  } /*elseif ( empty( $faire ) ) {
+    header( 'HTTP/1.0 403 Forbidden' );
+
+    echo '<h2>Invalid: Faire</h2>';
+    return;
+  }*/
+
+
+  /**
+   * RUN THE CONTROLLER
+   * Process the passed query string and fetch the appropriate API section
+   */
+
+  // Get the appropriate API file.
+  $api_path = $_SERVER['DOCUMENT_ROOT'] . '/wp-content/themes/makerfaire/api/' . sanitize_title( MF_API_VERSION ) . '/' . sanitize_title( $type ) . '/index.php';
+
+
+
+  // Prevent Path Traversal
+  if ( strpos( $api_path, '../' ) !== false || strpos( $api_path, "..\\" ) !== false || strpos( $api_path, '/..' ) !== false || strpos( $api_path, '\..' ) !== false )
+    return;
+ 
+  // Make sure the api file exists...
+  //if ( ! file_exists( $api_path ) )
+  if (!file_exists($api_path))
+    return;
+
+  // Set the JSON header
+  header( 'Content-type: application/json' );
+  //print_r($api_path);
+  //return;
+  // Load the file and process everything
+  include_once( $api_path );
+
+}
+
 function mf_updateEntry( WP_REST_Request $request ) {
   $type     = $request['type'];
   $entry_id  = $request['entryid'];

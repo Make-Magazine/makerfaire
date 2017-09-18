@@ -24,11 +24,9 @@ error_reporting('NONE');
 defined('ABSPATH') or die('This file cannot be called directly!');
 
 //variables passed in call
-$type = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_query->query_vars['type'] ) : null );
 $faire = (!empty($_REQUEST['faire']) ? sanitize_text_field($_REQUEST['faire']) : '' );
 $dest  = (!empty($_REQUEST['dest'])  ? sanitize_text_field($_REQUEST['dest'])  : '' );
 $lchange  = ( ! empty( $_REQUEST['lchange'] )  ? sanitize_text_field( $_REQUEST['lchange'] )  : '' );
-
 
 // Double check again we have requested this file
 if ($type == 'project') {
@@ -39,7 +37,7 @@ if ($type == 'project') {
 
   //TBD update tables. ensure entity has all faire id's and
   //maker to entity has correct role info
-  $select_query = sprintf("
+  $select_query = "
      SELECT  entity.lead_id,
             `entity`.`presentation_title`,
             `entity`.`project_photo`,
@@ -60,10 +58,8 @@ if ($type == 'project') {
     FROM  `wp_mf_entity` entity
     JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id
     WHERE wp_rg_lead.status = 'active' "
-    .($faire    != '' ? " AND LOWER(entity.faire)='".$faire."' " : '')
-    .($lchange  != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '')
-  );
-
+    .($lchange  != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '');
+echo $select_query;
 
   $mysqli->query("SET NAMES 'utf8'");
 
