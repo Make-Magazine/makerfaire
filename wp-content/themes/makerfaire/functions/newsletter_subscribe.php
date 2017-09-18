@@ -114,19 +114,19 @@ function display_thank_you_modal_if_signed_up() { ?>
         </div>
       </div>
     </div>
-    <div class="nl-modal-cont nl-thx-p2" style="display:none;">
-      <div class="col-sm-4 hidden-xs nl-modal">
-        <span class="fa-stack fa-4x">
-        <i class="fa fa-circle-thin fa-stack-2x"></i>
-        <i class="fa fa-thumbs-o-up fa-stack-1x"></i>
-        </span>
-      </div>
-      <div class="col-sm-8 col-xs-12 nl-modal">
-        <h3>Awesome!</h3>
-        <p>Thanks for signing up. Please check your email to confirm.</p>
-      </div>
-      <div class="clearfix"></div>
+  </div>
+  <div class="nl-modal-cont nl-thx-p2" style="display:none;">
+    <div class="col-sm-4 hidden-xs nl-modal">
+      <span class="fa-stack fa-4x">
+      <i class="fa fa-circle-thin fa-stack-2x"></i>
+      <i class="fa fa-thumbs-o-up fa-stack-1x"></i>
+      </span>
     </div>
+    <div class="col-sm-8 col-xs-12 nl-modal">
+      <h3>Awesome!</h3>
+      <p>Thanks for signing up. Please check your email to confirm.</p>
+    </div>
+    <div class="clearfix"></div>
   </div>
   <script>
   // Footer newsletter sign up form and modal
