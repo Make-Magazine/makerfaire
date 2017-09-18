@@ -437,9 +437,11 @@ function display_entry_schedule($entry_id) {
 
               $faire_start = strtotime($faire_start);
               $faire_end   = strtotime($faire_end);
+              $dateRange   = progDateRange($faire_start, $faire_end);
+              //var_dump($dateRange);
 
               //tbd change this to be dynamically populated
-              echo '<h5>Friday, Saturday and Sunday: '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+              echo '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
               echo '<p><small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</p>';
               echo '</div>';
           }
@@ -522,5 +524,22 @@ function getMakerInfo($entry) {
                       'photo'       => (isset($entry['219']) ? $entry['219'] : '')
                   );
   return $makers;
+}
+
+function progDateRange($faire_start, $faire_end) {
+    $dates = array();
+    $flexDate = $faire_start;
+    while ($flexDate <= $faire_end){
+      $dates[] = date("l",$flexDate);
+      $flexDate = strtotime('+1 day', $flexDate);
+    }
+    return $dates;
+}
+function natural_language_join(array $list, $conjunction = 'and') {
+  $last = array_pop($list);
+  if ($list) {
+    return implode(', ', $list) . ' ' . $conjunction . ' ' . $last;
+  }
+  return $last;
 }
 ?>
