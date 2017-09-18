@@ -1311,7 +1311,8 @@ function paymentRpt($table,$faire) {
         );
     $sql = 'SELECT wp_rg_lead.id as entry_id,wp_rg_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
             . '(select value from wp_rg_lead_detail where field_number = 151 and lead_id=meta_value limit 1) as field_151, '
-            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=meta_value limit 1) as field_303 '
+            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=meta_value limit 1) as field_303, '
+            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=wp_rg_lead.id limit 1) as status_payentry '
             . 'FROM wp_rg_form_meta '
             . 'left outer join wp_mf_faire on find_in_set (wp_rg_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
             . 'left outer join wp_rg_lead on wp_rg_lead.form_id = wp_rg_form_meta.form_id '
@@ -1329,7 +1330,7 @@ function paymentRpt($table,$faire) {
       $formPull = GFAPI::get_form( $row->origForm_id );
       $formType = (isset($formPull['form_type'])?$formPull['form_type']:'');
       $retformType = shortFormType($formType);
-      if($row->field_303=='Accepted'){
+      if($row->field_303=='Accepted' && $row->status_payentry=='Accepted'){
         $oEntryID = $row->origEntry_id;
         $fieldData = array(
             'entry_id'=>$row->entry_id,
