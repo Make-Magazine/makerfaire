@@ -152,7 +152,7 @@ foreach($entry as $key=>$field ) {
 
 // Website button
 $website = '';
-$project_website = str_replace( 'http://', 'https://', $project_website );
+//$project_website = str_replace( 'http://', 'https://', $project_website );
 
 if($makerEdit){
   $website =  '<div><b>Website:</b> <span id="website" class="mfEdit">'. $project_website.'</span></div>';
