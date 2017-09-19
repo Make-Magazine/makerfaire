@@ -37,6 +37,7 @@ if ($type == 'project') {
 
   //TBD update tables. ensure entity has all faire id's and
   //maker to entity has correct role info
+  //include entries marked as Accepted and active (not trashed)
   $select_query = "
      SELECT  entity.lead_id,
             `entity`.`presentation_title`,
@@ -44,6 +45,8 @@ if ($type == 'project') {
             `entity`.`category` as `Categories`,
             `entity`.`desc_short` as Description,
             `entity`.`form_type`,
+            entity.status as entity_status,
+            (select value from wp_rg_lead_detail where field_number = 105 and wp_rg_lead_detail.lead_id=entity.lead_id limit 1) as projType,
             entity.faire,
             (select faire_name from wp_mf_faire where wp_mf_faire.faire=entity.faire) as faire_name,
              wp_rg_lead.date_created,
@@ -57,7 +60,7 @@ if ($type == 'project') {
 
     FROM  `wp_mf_entity` entity
     JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id
-    WHERE wp_rg_lead.status = 'active' "
+    WHERE wp_rg_lead.status = 'active' AND entity.status='Accepted' "
     .($faire    != '' ? " AND LOWER(entity.faire)='".$faire."' " : '')
     .($lchange  != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '');
 
@@ -71,6 +74,18 @@ if ($type == 'project') {
 
   // Loop through the projects
   while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+    $app = array();
+    // check the project type (field 105 - Who would you like listed as the maker of the project?).
+    $isGroup    = false; //default to false
+    if(isset($row['projType'])  && $row['projType']!= ''){
+      $isGroup    = (strpos($row['projType'], 'group')  !== false ? true:false);
+    }
+
+    // if the project is marked as 'A group or association', do not pass this to makershare
+    if($dest=='makershare' && $isGroup) {
+      continue;
+    }
+
     // Store the app information
     // REQUIRED: Application ID
     $app['id'] = absint($row['lead_id']);
@@ -95,14 +110,21 @@ if ($type == 'project') {
     $app['category_id_refs'] = explode(',', $category_ids);
 
     //run sub query to pull the contact and makers for this project along with their roles.
-    $subQuery = "select maker_id, maker_type, maker_role from wp_mf_maker_to_entity where entity_id = ".$app['id'];
+    //exclude makers where age_range is blank
+    $subQuery = "select wp_mf_maker_to_entity.maker_id, maker_type, maker_role, wp_mf_maker.age_range "
+              . "from wp_mf_maker_to_entity "
+              . "left outer join wp_mf_maker on wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id "
+              . "where entity_id = ".$app['id']." and wp_mf_maker.age_range !='' ";
     $subResult = $mysqli->query($subQuery) or trigger_error($mysqli->error . "[$subQuery]");
     $makersArr = array();
     while ($subRow = $subResult->fetch_array(MYSQLI_ASSOC)) {
-      if(($dest=='makershare' && $subRow['maker_type']!='group') ||
-          $dest!='makershare'){
+      if($subRow['age_range'] != '0-6' && $subRow['age_range'] != '7-12'){
         $makersArr[] = array('maker_id'=>$subRow['maker_id'],'role'=>$subRow['maker_role']);
       }
+    }
+    //if this project has no makers that are over 13, skip this project
+    if(empty($makersArr)){
+      continue;
     }
     $app['exhibit_accounts'] = $makersArr;
 

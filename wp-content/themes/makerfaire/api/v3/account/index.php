@@ -19,11 +19,12 @@
 
 // Stop any direct calls to this file
 defined( 'ABSPATH' ) or die( 'This file cannot be called directly!' );
+
 global $wp_query;
-$type     = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_query->query_vars['type'] ) : null );
-$faire    = ( ! empty( $_REQUEST['faire'] ) ? sanitize_text_field( $_REQUEST['faire'] ) : '' );
-$dest     = ( ! empty( $_REQUEST['dest'] )  ? sanitize_text_field( $_REQUEST['dest'] )  : '' );
-$lchange  = ( ! empty( $_REQUEST['lchange'] )  ? sanitize_text_field( $_REQUEST['lchange'] )  : '' );
+
+$faire    = ( ! empty( $_REQUEST['faire'] )     ? sanitize_text_field($_REQUEST['faire']) : '' );
+$dest     = ( ! empty( $_REQUEST['dest'] )      ? sanitize_text_field( $_REQUEST['dest'] )  : '' );
+$lchange  = ( ! empty( $_REQUEST['lchange'] )   ? sanitize_text_field( $_REQUEST['lchange'] )  : '' );
 
 // Double check again we have requested this file
 if ( $type == 'account' ) {
@@ -52,31 +53,24 @@ if ( $type == 'account' ) {
                     ." order by maker_id ASC";
   }else{
     //if faire is set, only pull makers associated with that faire
-    $select_query = sprintf("SELECT * FROM
+    //Pull Accepted records and exclude contacts as they do not have an age range set for makershare
+    $select_query = "SELECT * FROM
         (SELECT wp_mf_maker.maker_id, `First Name` as first_name, `Last Name` as last_name,
                 Bio, Email, Photo, TWITTER, website, age_range,
-                city, state, country, zipcode, wp_mf_maker.last_change_date
+                city, state, country, zipcode, wp_mf_maker.last_change_date, wp_mf_entity.status
          FROM   `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity
          WHERE  wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id
          AND    wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id
-         AND    LOWER(wp_mf_entity.faire) = '".$faire."'
-         AND    status != 'trash' "
+         AND    LOWER(wp_mf_entity.faire) = '".strtolower($faire)."'
+         AND    status = 'Accepted'
+         AND    wp_mf_maker_to_entity.maker_type != 'contact'"
          .(!empty($where)?' AND '.implode(' AND ',$where):'')
     ." ORDER BY `wp_mf_maker`.`maker_id` ASC, wp_mf_maker_to_entity.maker_type ASC)
-    AS tmp_table GROUP by `maker_id`
-  ");
+    AS tmp_table GROUP by `maker_id`";
   }
 
 	$mysqli->query("SET NAMES 'utf8'");
 	$result = $mysqli->query ( $select_query );
-
-	// Define the API header (specific for Eventbase)
-	$header = array(
-		'header' => array(
-			'version' => esc_html( MF_EVENTBASE_API_VERSION ),
-			'results' => intval( $result->num_rows ),
-		),
-	);
 
 	// Init the entities header
 	$makers = array();
