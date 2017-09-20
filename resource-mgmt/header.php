@@ -24,9 +24,9 @@ $my_version = $my_theme->get('Version');
   <script src="/wp-content/themes/makerfaire/js/built-angular-reporting.js?ver=<?php echo $my_version;?>"></script>
 
   <!-- to export grid data -->
-  <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
-  <script src="http://ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
-  <script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
+  <script src="/resource-mgmt/js/grunt-scripts/csv.js"></script>
+  <script src="/resource-mgmt/js/grunt-scripts/pdfmake.js"></script>
+  <script src="/resource-mgmt/js/grunt-scripts/vfs_fonts.js"></script>
   <base href="/resource-mgmt/"></base>
 </head>
 <body>
