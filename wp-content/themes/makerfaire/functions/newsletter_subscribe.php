@@ -114,24 +114,33 @@ function display_thank_you_modal_if_signed_up() { ?>
         </div>
       </div>
     </div>
-    <div class="nl-modal-cont nl-thx-p2" style="display:none;">
-      <div class="col-sm-4 hidden-xs nl-modal">
-        <span class="fa-stack fa-4x">
-        <i class="fa fa-circle-thin fa-stack-2x"></i>
-        <i class="fa fa-thumbs-o-up fa-stack-1x"></i>
-        </span>
-      </div>
-      <div class="col-sm-8 col-xs-12 nl-modal">
-        <h3>Awesome!</h3>
-        <p>Thanks for signing up.</p>
-      </div>
-      <div class="clearfix"></div>
+  </div>
+  <div class="nl-modal-cont nl-thx-p2" style="display:none;">
+    <div class="col-sm-4 hidden-xs nl-modal">
+      <span class="fa-stack fa-4x">
+      <i class="fa fa-circle-thin fa-stack-2x"></i>
+      <i class="fa fa-thumbs-o-up fa-stack-1x"></i>
+      </span>
     </div>
+    <div class="col-sm-8 col-xs-12 nl-modal">
+      <h3>Awesome!</h3>
+      <p>Thanks for signing up. Please check your email to confirm.</p>
+    </div>
+    <div class="clearfix"></div>
   </div>
   <script>
   // Footer newsletter sign up form and modal
   jQuery(document).ready(function(){
     jQuery(".fancybox-thx").fancybox({
+      autoSize : false,
+      width  : 400,
+      autoHeight : true,
+      padding : 0,
+      afterLoad   : function() {
+          this.content = this.content.html();
+      }
+    });
+    jQuery(".nl-thx-p2").fancybox({
       autoSize : false,
       width  : 400,
       autoHeight : true,
@@ -170,8 +179,8 @@ function display_thank_you_modal_if_signed_up() { ?>
     jQuery(document).on('submit', '.whatcounts-signup2', function (e) {
       e.preventDefault();
       jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup2').serialize());
-      jQuery('.nl-thx-p1').hide();
-      jQuery('.nl-thx-p2').show();
+      jQuery('.fancybox-thx').hide();
+      jQuery('.nl-thx-p2').trigger('click');
     });
     jQuery('input[type="checkbox"]').click(function(e){
       e.stopPropagation();

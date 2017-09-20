@@ -24,11 +24,9 @@ error_reporting('NONE');
 defined('ABSPATH') or die('This file cannot be called directly!');
 
 //variables passed in call
-$type = ( ! empty( $wp_query->query_vars['type'] ) ? sanitize_text_field( $wp_query->query_vars['type'] ) : null );
 $faire = (!empty($_REQUEST['faire']) ? sanitize_text_field($_REQUEST['faire']) : '' );
 $dest  = (!empty($_REQUEST['dest'])  ? sanitize_text_field($_REQUEST['dest'])  : '' );
 $lchange  = ( ! empty( $_REQUEST['lchange'] )  ? sanitize_text_field( $_REQUEST['lchange'] )  : '' );
-
 
 // Double check again we have requested this file
 if ($type == 'project') {
@@ -39,13 +37,16 @@ if ($type == 'project') {
 
   //TBD update tables. ensure entity has all faire id's and
   //maker to entity has correct role info
-  $select_query = sprintf("
+  //include entries marked as Accepted and active (not trashed)
+  $select_query = "
      SELECT  entity.lead_id,
             `entity`.`presentation_title`,
             `entity`.`project_photo`,
             `entity`.`category` as `Categories`,
             `entity`.`desc_short` as Description,
             `entity`.`form_type`,
+            entity.status as entity_status,
+            (select value from wp_rg_lead_detail where field_number = 105 and wp_rg_lead_detail.lead_id=entity.lead_id limit 1) as projType,
             entity.faire,
             (select faire_name from wp_mf_faire where wp_mf_faire.faire=entity.faire) as faire_name,
              wp_rg_lead.date_created,
@@ -59,11 +60,9 @@ if ($type == 'project') {
 
     FROM  `wp_mf_entity` entity
     JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id
-    WHERE wp_rg_lead.status = 'active' "
+    WHERE wp_rg_lead.status = 'active' AND entity.status='Accepted' "
     .($faire    != '' ? " AND LOWER(entity.faire)='".$faire."' " : '')
-    .($lchange  != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '')
-  );
-
+    .($lchange  != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '');
 
   $mysqli->query("SET NAMES 'utf8'");
 
@@ -75,6 +74,18 @@ if ($type == 'project') {
 
   // Loop through the projects
   while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+    $app = array();
+    // check the project type (field 105 - Who would you like listed as the maker of the project?).
+    $isGroup    = false; //default to false
+    if(isset($row['projType'])  && $row['projType']!= ''){
+      $isGroup    = (strpos($row['projType'], 'group')  !== false ? true:false);
+    }
+
+    // if the project is marked as 'A group or association', do not pass this to makershare
+    if($dest=='makershare' && $isGroup) {
+      continue;
+    }
+
     // Store the app information
     // REQUIRED: Application ID
     $app['id'] = absint($row['lead_id']);
@@ -99,14 +110,21 @@ if ($type == 'project') {
     $app['category_id_refs'] = explode(',', $category_ids);
 
     //run sub query to pull the contact and makers for this project along with their roles.
-    $subQuery = "select maker_id, maker_type, maker_role from wp_mf_maker_to_entity where entity_id = ".$app['id'];
+    //exclude makers where age_range is blank
+    $subQuery = "select wp_mf_maker_to_entity.maker_id, maker_type, maker_role, wp_mf_maker.age_range "
+              . "from wp_mf_maker_to_entity "
+              . "left outer join wp_mf_maker on wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id "
+              . "where entity_id = ".$app['id']." and wp_mf_maker.age_range !='' ";
     $subResult = $mysqli->query($subQuery) or trigger_error($mysqli->error . "[$subQuery]");
     $makersArr = array();
     while ($subRow = $subResult->fetch_array(MYSQLI_ASSOC)) {
-      if(($dest=='makershare' && $subRow['maker_type']!='group') ||
-          $dest!='makershare'){
+      if($subRow['age_range'] != '0-6' && $subRow['age_range'] != '7-12'){
         $makersArr[] = array('maker_id'=>$subRow['maker_id'],'role'=>$subRow['maker_role']);
       }
+    }
+    //if this project has no makers that are over 13, skip this project
+    if(empty($makersArr)){
+      continue;
     }
     $app['exhibit_accounts'] = $makersArr;
 

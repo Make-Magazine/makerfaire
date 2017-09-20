@@ -23,10 +23,10 @@
 
 			//Check for audio support and add elements if supported
 				audioSupported = true;
-				content+= '<audio id="chimeSound0" preload="auto"><source src="http://ux.makermedia.com/wp-content/themes/style-guide-theme/img/sound/chime1.mp3"/><source src="http://ux.makermedia.com/wp-content/themes/style-guide-theme/img/sound/chime1.ogg" /></audio>';
-				content+= '<audio id="chimeSound1" preload="auto"><source src="http://ux.makermedia.com/wp-content/themes/style-guide-theme/img/sound/chime2.mp3"/><source src="http://ux.makermedia.com/wp-content/themes/style-guide-theme/img/sound/chime2.ogg" /></audio>';
-				content+= '<audio id="chimeSound2" preload="auto"><source src="http://ux.makermedia.com/wp-content/themes/style-guide-theme/img/sound/chime3.mp3"/><source src="http://ux.makermedia.com/wp-content/themes/style-guide-theme/img/sound/chime3.ogg" /></audio>';
-				content+= '<audio id="contraSound" preload="auto" loop><source src="http://ux.makermedia.com/wp-content/themes/style-guide-theme/img/sound/contra.mp3"/><source src="http://ux.makermedia.com/wp-content/themes/style-guide-theme/img/sound/contra.ogg" /></audio>';
+				content+= '<audio id="chimeSound0" preload="auto"><source src="/wp-content/themes/makerfaire/magical/sound/chime1.mp3"/><source src="/wp-content/themes/makerfaire/magical/sound/chime1.ogg" /></audio>';
+				content+= '<audio id="chimeSound1" preload="auto"><source src="/wp-content/themes/makerfaire/magical/sound/chime2.mp3"/><source src="/wp-content/themes/makerfaire/magical/sound/chime2.ogg" /></audio>';
+				content+= '<audio id="chimeSound2" preload="auto"><source src="/wp-content/themes/makerfaire/magical/sound/chime3.mp3"/><source src="/wp-content/themes/makerfaire/magical/sound/chime3.ogg" /></audio>';
+				content+= '<audio id="contraSound" preload="auto" loop><source src="/wp-content/themes/makerfaire/magical/sound/contra.mp3"/><source src="/wp-content/themes/makerfaire/magical/sound/contra.ogg" /></audio>';
 			
 			
 			//Add rainbow, unicorns, and sounds to page only if they do not already exist

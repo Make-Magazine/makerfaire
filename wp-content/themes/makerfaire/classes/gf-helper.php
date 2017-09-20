@@ -14,7 +14,6 @@ function custom_rewrite_rule() {
 	add_rewrite_rule('^mfscheduler/([^/]*)/?','index.php?pagename=mfscheduler&faire_id=$matches[1]','top');
 	add_rewrite_rule('^mfscheduler-tasks/?','index.php?pagename=mfscheduler-tasks','top');
 	add_rewrite_rule('^mfarchives/([^/]*)/?','index.php?pagename=entry-archives&entryslug=$matches[1]','top');
-	add_rewrite_rule('^mfapi/v3/([^/]*)/?','index.php?pagename=mfapi&api=true&type=$matches[1]','top');
 }
 add_action('init', 'custom_rewrite_rule', 10, 0);
 
@@ -43,7 +42,7 @@ function api_include($template)
 {
     global $wp_query; //Load $wp_query object
     $pagename_value = (isset($wp_query->query_vars['pagename'])?$wp_query->query_vars['pagename']:'');
-    
+
     if ($pagename_value=="api") {
         return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/page-api.php'; //Load your template or file
     }
@@ -346,7 +345,6 @@ function wpm_load_script_for_template( $template ){
     wp_enqueue_style('kendo8-styles', get_template_directory_uri() . '/lib/Kendo/styles/examples.css', array());
     wp_enqueue_style('kendo9-styles', get_template_directory_uri() . '/lib/Kendo/woahbar/woahbar.css', array());
   }
-  return $template; 
+  return $template;
 }
 
-    

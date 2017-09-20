@@ -600,7 +600,7 @@ function set_entry_schedule($lead,$form){
       //echo 'Success! <br />';
     }else{
       error_log('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
-    };
+    }
   }
 }
 
@@ -625,7 +625,9 @@ function set_entry_location($lead,$form,&$location_id=''){
 		//echo 'Success! <br />';
 	}else{
 		error_log('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
-	};
+	}
+
+  setLocChgRpt($entry_schedule_change, $update_entry_location_code, $lead, 'add');
   $location_id = $mysqli->insert_id;
 }
 
@@ -652,6 +654,10 @@ function delete_entry_schedule($lead,$form){
 
   //delete location only
 	if (!empty($delete_entry_location)){
+    //update change report
+    $location = $wpdb->get_row( "SELECT subarea_id, location FROM wp_mf_location where wp_mf_location.ID IN ($delete_entry_location)" );
+    setLocChgRpt($location->subarea_id, $location->location, $lead, 'delete');
+
     //delete from schedule and location table
     $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.ID IN ($delete_entry_location)";
     $wpdb->get_results($delete_query);
@@ -714,3 +720,34 @@ function set_feeMgmt($lead,$form){
 		}
 	}
 }
+
+function setLocChgRpt($subarea, $locCode='', $entry, $type='add'){
+  global $wpdb;
+  $sql = "SELECT area, subarea "
+            . "FROM `wp_mf_faire_subarea` "
+            . "left outer join wp_mf_faire_area on wp_mf_faire_area.id = wp_mf_faire_subarea.area_id  "
+            . "WHERE wp_mf_faire_subarea.`ID` = ".$subarea;
+  $field = $wpdb->get_row($sql);
+  $subarea = $field->subarea;
+  $area = $field->area;
+
+  if($type=='add'){
+    $before = '';
+    $after = $area.' - '.$subarea.' ('.$locCode.')';
+  }else{
+    $after = '';
+    $before = $area.' - '.$subarea.' ('.$locCode.')';
+  }
+
+    global $current_user;
+    $chgRptArr = array(
+      array('user_id'           => $current_user->ID,
+            'lead_id'           => $entry['id'],
+            'form_id'           => $entry['form_id'],
+            'field_id'          => 0,
+            'field_before'      => $before,
+            'field_after'       => $after,
+            'fieldLabel'        => 'Location '.$type,
+            'status_at_update'  => ''));
+    updateChangeRPT($chgRptArr);
+  }
