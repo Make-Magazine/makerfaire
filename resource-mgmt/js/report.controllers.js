@@ -26,7 +26,6 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     exporterCsvFilename: 'export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {
-
       if(("editDropdownOptionsArray" in col.colDef)){
         //console.log(col);
         //convert gridArray to usable hash
@@ -35,10 +34,15 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
         for (var i = 0; i < gridArray.length; i++) {
           optionsHash[gridArray[i].id] = gridArray[i].fkey;
         }
+        console.log('exporterFieldCallback: input - '+input + ' hash value='+optionsHash[input]);
         if (!input){
           return '';
         } else {
-          return optionsHash[input];
+          if(optionsHash[input]!==undefined){
+            return optionsHash[input];
+          }else{
+            return input;
+          }
         }
       }else{
         return input;
@@ -179,7 +183,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       $scope.reports.loading = false;
       $scope.reports.showGrid = true;
     });
-  }
+  };
 
   //default
   var tablename = 'wp_rmt_entry_resources';
@@ -192,21 +196,21 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     var pageTitle = 'Reports';
     var subTitle  = '';
 
-    if(subRoute=='change') {
+    if(subRoute==='change') {
       tablename = 'wp_rg_lead_detail_changes';
       subTitle  = 'Entry Change Report';
-    } else if(subRoute=='drill') {
+    } else if(subRoute==='drill') {
       tablename = 'wp_rmt_entry_resources';
       subTitle  = 'Resource Drill Down';
-    } else if(subRoute=='location') {
+    } else if(subRoute==='location') {
       tablename = 'wp_mf_location';
       subTitle  = 'Faire Location Report';
-    } else if(subRoute=='tasksComp') {
+    } else if(subRoute==='tasksComp') {
       tablename = 'wp_mf_entity_tasks';
       subTitle  = 'Tasks Completed';
-    } else if(subRoute=='sponsorPay') {
+    } else if(subRoute==='sponsorPay') {
       tablename = 'sponsorOrder';
-      type      = "paymentRpt"
+      type      = "paymentRpt";
       subTitle  = 'Sponsor Payments';
     }
 
@@ -234,19 +238,19 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     }
   };
   $scope.checkSubroute = function(type) {
-    if($routeParams.sub=='tasksComp'){
+    if($routeParams.sub==='tasksComp'){
       $scope.retrieveData('forms');
     }else{
       $scope.retGridData();
     }
-  }
+  };
   //faire dropdown
   $scope.retrieveData = function(type) {
-    if(type=='faires'){
+    if(type==='faires'){
       var vars = jQuery.param({ 'type' :  type});
       var url = '/resource-mgmt/ajax/ajax.php';
       var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
-    }else if(type=='forms'){
+    }else if(type==='forms'){
       var vars = jQuery.param({ 'type' :  type, 'faire':$scope.reports.selFaire});
       var url = '/resource-mgmt/ajax/ajax.php';
       var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
@@ -262,18 +266,18 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     .then(function(response){
       if("error" in response.data) {
         alert(response.data.error);
-      }else if(type=='faires' || type=='forms'){
+      }else if(type==='faires' || type==='forms'){
         $scope.reports[type] = response.data[type];
       }
     }).finally(function () {
-      if(type=='faires'){
+      if(type==='faires'){
         faires = $scope.reports.faires;
         angular.forEach(faires, function(value,key){
-          if(value.faire==$scope.subRoute){
+          if(value.faire===$scope.subRoute){
             $scope.reports.selFaire = key;
           }
         });
-      }else if(type=='forms'){
+      }else if(type==='forms'){
         $scope.reports.showForms = true;
       }
     });
@@ -295,9 +299,9 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
 
       if (!input){
         return '';
-      } else if (result = optionsHash[input]) {
+      } else if (result === optionsHash[input]) {
         return result;
-      } else if ( ( match = input.match(/(.+)( \(\d+\))/) ) && ( result = optionsHash[match[1]] ) ) {
+      } else if ( ( match === input.match(/(.+)( \(\d+\))/) ) && ( result === optionsHash[match[1]] ) ) {
         return result + match[2];
       } else {
         return input;
