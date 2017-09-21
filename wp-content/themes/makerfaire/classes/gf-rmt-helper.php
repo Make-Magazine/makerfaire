@@ -392,6 +392,7 @@ class GFRMTHELPER {
     //build Maker Data Array
     $data = self::buildMakerData($entry,$form);
     $makerData  = $data['maker'];
+
     $entityData = $data['entity'];
 
     $categories = (is_array($entityData['categories']) ? implode(',',$entityData['categories']) :'');
@@ -565,7 +566,7 @@ class GFRMTHELPER {
        * if this isn't a group we need to have a valid email for the presenter(maker 1) record.
        *    if it is not set, use contact email
        */
-      $email = (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:$entry_id.'-presenter@makermedia.com');
+      $email = (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:$entry_id.'-presenter1@makermedia.com');
       $makerArray['presenter'] = array(
           'first_name'  => (isset($lead['160.3']) ? $lead['160.3']:''),
           'last_name'   => (isset($lead['160.6']) ? $lead['160.6']:''),
@@ -631,11 +632,19 @@ class GFRMTHELPER {
 
     // only set the below data if the entry is not marked as one maker
     if(!$isOneMaker){
+      //set presenter 2 email, default if blank
+      $email = (isset($lead['162']) && $lead['162']!='' ? $lead['162']:'');
+      if(!$isGroup && $email == ''){
+        $email = $entry_id.'-presenter2@makermedia.com';
+      }elseif($email==''){
+        $email = $entry_id.'-group2@makermedia.com';
+      }
+
       $makerArray['presenter2']= array(
           'first_name'  => (isset($lead['158.3']) ? $lead['158.3']:''),
           'last_name'   => (isset($lead['158.6']) ? $lead['158.6']:''),
           'bio'         => (isset($lead['258'])   ? $lead['258']:''),
-          'email'       => (isset($lead['162'])   ? $lead['162']:$entry_id.'-group@makermedia.com'),
+          'email'       => $email,
           'phone'       => (isset($lead['192'])   ? $lead['192']:''),
           'twitter'     => (isset($lead['208'])   ? $lead['208']:''),
           'photo'       => (isset($lead['224'])   ? $lead['224']:''),
@@ -650,11 +659,19 @@ class GFRMTHELPER {
           'address2'    => (isset($lead['370.2']) ? $lead['370.2']:''),
           'role'        => (isset($lead['444'])   ? $lead['444']:'')//not set for performance/presentation
       );
+
+      //set presenter 3 email, default if blank
+      $email = (isset($lead['167']) && $lead['167']!='' ? $lead['167']:'');
+      if(!$isGroup && $email == ''){
+        $email = $entry_id.'-presenter3@makermedia.com';
+      }elseif($email==''){
+        $email = $entry_id.'-group3@makermedia.com';
+      }
       $makerArray['presenter3'] = array(
           'first_name'  => (isset($lead['155.3']) ? $lead['155.3']:''),
           'last_name'   => (isset($lead['155.6']) ? $lead['155.6']:''),
           'bio'         => (isset($lead['259'])   ? $lead['259']:''),
-          'email'       => (isset($lead['167'])   ? $lead['167']:$entry_id.'-group@makermedia.com'),
+          'email'       => $email,
           'phone'       => (isset($lead['190'])   ? $lead['190']:''),
           'twitter'     => (isset($lead['207'])   ? $lead['207']:''),
           'photo'       => (isset($lead['223'])   ? $lead['223']:''),
@@ -669,11 +686,19 @@ class GFRMTHELPER {
           'address2'    => (isset($lead['371.2']) ? $lead['371.2']:''),
           'role'        => (isset($lead['445'])   ? $lead['445']:'')//not set for performance/presentation
       );
+
+      //set presenter 4 email, default if blank
+      $email = (isset($lead['166']) && $lead['166']!='' ? $lead['166']:'');
+      if(!$isGroup && $email == ''){
+        $email = $entry_id.'-presenter4@makermedia.com';
+      }elseif($email==''){
+        $email = $entry_id.'-group4@makermedia.com';
+      }
       $makerArray['presenter4'] = array(
           'first_name'  => (isset($lead['156.3']) ? $lead['156.3']:''),
           'last_name'   => (isset($lead['156.6']) ? $lead['156.6']:''),
           'bio'         => (isset($lead['260'])   ? $lead['260']:''),
-          'email'       => (isset($lead['166'])   ? $lead['166']:$entry_id.'-group@makermedia.com'),
+          'email'       => $email,
           'phone'       => (isset($lead['191'])   ? $lead['191']:''),
           'twitter'     => (isset($lead['206'])   ? $lead['206']:''),
           'photo'       => (isset($lead['222'])   ? $lead['222']:''),
@@ -688,11 +713,19 @@ class GFRMTHELPER {
           'address2'    => (isset($lead['372.2']) ? $lead['372.2']:''),
           'role'        => (isset($lead['446'])   ? $lead['446']:'')//not set for performance/presentation
       );
+
+      //set presenter 5 email, default if blank
+      $email = (isset($lead['165']) && $lead['165']!='' ? $lead['165']:'');
+      if(!$isGroup && $email == ''){
+        $email = $entry_id.'-presenter5@makermedia.com';
+      }elseif($email==''){
+        $email = $entry_id.'-group5@makermedia.com';
+      }
       $makerArray['presenter5'] = array(
           'first_name'  => (isset($lead['157.3']) ? $lead['157.3']:''),
           'last_name'   => (isset($lead['157.6']) ? $lead['157.6']:''),
           'bio'         => (isset($lead['261'])   ? $lead['261']:''),
-          'email'       => (isset($lead['165'])   ? $lead['165']:$entry_id.'-group@makermedia.com'),
+          'email'       => $email,
           'phone'       => (isset($lead['189'])   ? $lead['189']:''),
           'twitter'     => (isset($lead['205'])   ? $lead['205']:''),
           'photo'       => (isset($lead['220'])   ? $lead['220']:''),
@@ -707,11 +740,19 @@ class GFRMTHELPER {
           'address2'    => (isset($lead['373.2']) ? $lead['373.2']:''),
           'role'        => (isset($lead['447'])   ? $lead['447']:'')//not set for performance/presentation
       );
+
+      //set presenter 6 email, default if blank
+      $email = (isset($lead['164']) && $lead['164']!='' ? $lead['164']:'');
+      if(!$isGroup && $email == ''){
+        $email = $entry_id.'-presenter6@makermedia.com';
+      }elseif($email==''){
+        $email = $entry_id.'-group6@makermedia.com';
+      }
       $makerArray['presenter6'] = array(
           'first_name'  => (isset($lead['159.3']) ? $lead['159.3']:''),
           'last_name'   => (isset($lead['159.6']) ? $lead['159.6']:''),
           'bio'         => (isset($lead['262'])   ? $lead['262']:''),
-          'email'       => (isset($lead['164'])   ? $lead['164']:$entry_id.'-group@makermedia.com'),
+          'email'       => $email,
           'phone'       => (isset($lead['188'])   ? $lead['188']:''),
           'twitter'     => (isset($lead['204'])   ? $lead['204']:''),
           'photo'       => (isset($lead['221'])   ? $lead['221']:''),
@@ -726,11 +767,19 @@ class GFRMTHELPER {
           'address2'    => (isset($lead['374.2']) ? $lead['374.2']:''),
           'role'        => (isset($lead['448'])   ? $lead['448']:'')//not set for performance/presentation
       );
+
+      //set presenter 7 email, default if blank
+      $email = (isset($lead['163']) && $lead['163']!='' ? $lead['163']:'');
+      if(!$isGroup && $email == ''){
+        $email = $entry_id.'-presenter7@makermedia.com';
+      }elseif($email==''){
+        $email = $entry_id.'-group7@makermedia.com';
+      }
       $makerArray['presenter7'] = array(
           'first_name'  => (isset($lead['154.3']) ? $lead['154.3']:''),
           'last_name'   => (isset($lead['154.6']) ? $lead['154.6']:''),
           'bio'         => (isset($lead['263'])   ? $lead['263']:''),
-          'email'       => (isset($lead['163'])   ? $lead['163']:$entry_id.'-group@makermedia.com'),
+          'email'       => $email,
           'phone'       => (isset($lead['187'])   ? $lead['187']:''),
           'twitter'     => (isset($lead['203'])   ? $lead['203']:''),
           'photo'       => (isset($lead['219'])   ? $lead['219']:''),
