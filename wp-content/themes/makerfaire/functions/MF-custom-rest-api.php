@@ -81,7 +81,7 @@ function mf_mfapi( WP_REST_Request $request ) {
   // Prevent Path Traversal
   if ( strpos( $api_path, '../' ) !== false || strpos( $api_path, "..\\" ) !== false || strpos( $api_path, '/..' ) !== false || strpos( $api_path, '\..' ) !== false )
     return;
- 
+
   // Make sure the api file exists...
   //if ( ! file_exists( $api_path ) )
   if (!file_exists($api_path))
@@ -324,7 +324,7 @@ function getMTMentries($formIDs) {
             'id'            => $row->entry_id,
             'time_start'    => $startDate,
             'time_end'      => $endDate,
-            'name'          => $row->name,
+            'name'          => htmlspecialchars_decode($row->name,ENT_QUOTES),
             'thumb_img_url' => $fitPhoto,
             'maker_list'    => $makerList,
             'nicename'      => $stage,
@@ -332,7 +332,7 @@ function getMTMentries($formIDs) {
             'latitude'      => $row->latitude,
             'longitude'     => $row->longitude,
             'day'           => (int) $row->day,
-            'desc'          => $row->short_desc,
+            'desc'          => htmlspecialchars_decode($row->short_desc,ENT_QUOTES),
             'type'          => ucwords($type)
       );
 

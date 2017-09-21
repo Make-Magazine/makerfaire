@@ -34,7 +34,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
   <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
   <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp">
-    <a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>
+    <!--<a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>-->
     <div ng-cloak>
       <div class="topic-nav" ng-if="showType">
         <div class="btn-group">
