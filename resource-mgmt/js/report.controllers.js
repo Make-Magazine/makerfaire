@@ -34,7 +34,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
         for (var i = 0; i < gridArray.length; i++) {
           optionsHash[gridArray[i].id] = gridArray[i].fkey;
         }
-        console.log('exporterFieldCallback: input - '+input + ' hash value='+optionsHash[input]);
+        //console.log('exporterFieldCallback: input - '+input + ' hash value='+optionsHash[input]);
         if (!input){
           return '';
         } else {
