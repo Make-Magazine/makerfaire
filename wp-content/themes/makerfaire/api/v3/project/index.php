@@ -24,9 +24,12 @@ error_reporting('NONE');
 defined('ABSPATH') or die('This file cannot be called directly!');
 
 //variables passed in call
-$faire = (!empty($_REQUEST['faire']) ? sanitize_text_field($_REQUEST['faire']) : '' );
-$dest  = (!empty($_REQUEST['dest'])  ? sanitize_text_field($_REQUEST['dest'])  : '' );
-$lchange  = ( ! empty( $_REQUEST['lchange'] )  ? sanitize_text_field( $_REQUEST['lchange'] )  : '' );
+$faire    = filter_input(INPUT_GET, 'faire', FILTER_SANITIZE_STRING);
+$dest     = filter_input(INPUT_GET, 'dest', FILTER_SANITIZE_STRING);
+$lchange  = filter_input(INPUT_GET, 'lchange', FILTER_SANITIZE_STRING);
+
+$statusIn = filter_input(INPUT_GET, 'status', FILTER_SANITIZE_STRING);
+$status   = ($statusIn!=''?"'" . implode("','",explode(",",$statusIn)) . "'":"'Accepted'");
 
 // Double check again we have requested this file
 if ($type == 'project') {
@@ -60,9 +63,10 @@ if ($type == 'project') {
 
     FROM  `wp_mf_entity` entity
     JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id
-    WHERE wp_rg_lead.status = 'active' AND entity.status='Accepted' "
-    .($faire    != '' ? " AND LOWER(entity.faire)='".$faire."' " : '')
-    .($lchange  != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '');
+    WHERE wp_rg_lead.status = 'active' "
+    .($status  != "'all'" ? " AND entity.status in($status)":'')
+    .($faire   != '' ? " AND LOWER(entity.faire)='".$faire."' " : '')
+    .($lchange != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '');
 
   $mysqli->query("SET NAMES 'utf8'");
 
@@ -101,9 +105,9 @@ if ($type == 'project') {
     if ($overrideImg != '')
       $app_image = $overrideImg;
 
-    $app['thumb_img_url'] = esc_url(legacy_get_fit_remote_image_url($app_image, '80', '80'));
-    $app['large_image_url'] = esc_url($app_image);
-    $app['large_img_url'] = esc_url($app_image);
+    $app['thumb_img_url']   = esc_url(legacy_get_fit_remote_image_url($app_image, '80', '80'));
+    $app['large_image_url'] = esc_url(legacy_get_fit_remote_image_url($app_image, '800', '800'));
+    $app['large_img_url']   = esc_url($app_image);
 
     // Application Categories
     $category_ids = $row['Categories'];

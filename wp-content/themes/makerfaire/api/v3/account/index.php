@@ -22,9 +22,12 @@ defined( 'ABSPATH' ) or die( 'This file cannot be called directly!' );
 
 global $wp_query;
 
-$faire    = ( ! empty( $_REQUEST['faire'] )     ? sanitize_text_field($_REQUEST['faire']) : '' );
-$dest     = ( ! empty( $_REQUEST['dest'] )      ? sanitize_text_field( $_REQUEST['dest'] )  : '' );
-$lchange  = ( ! empty( $_REQUEST['lchange'] )   ? sanitize_text_field( $_REQUEST['lchange'] )  : '' );
+$faire    = filter_input(INPUT_GET, 'faire', FILTER_SANITIZE_STRING);
+$dest     = filter_input(INPUT_GET, 'dest', FILTER_SANITIZE_STRING);
+$lchange  = filter_input(INPUT_GET, 'lchange', FILTER_SANITIZE_STRING);
+
+$statusIn = filter_input(INPUT_GET, 'status', FILTER_SANITIZE_STRING);
+$status   = ($statusIn!=''?"'" . implode("','",explode(",",$statusIn)) . "'":"'Accepted'");
 
 // Double check again we have requested this file
 if ( $type == 'account' ) {
@@ -61,9 +64,9 @@ if ( $type == 'account' ) {
          FROM   `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity
          WHERE  wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id
          AND    wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id
-         AND    LOWER(wp_mf_entity.faire) = '".strtolower($faire)."'
-         AND    status = 'Accepted'
-         AND    wp_mf_maker_to_entity.maker_type != 'contact'"
+         AND    LOWER(wp_mf_entity.faire) = '".strtolower($faire)."'"
+         .($status  != "'all'" ? " AND wp_mf_entity.status in($status)":'')
+         . " AND    wp_mf_maker_to_entity.maker_type != 'contact'"
          .(!empty($where)?' AND '.implode(' AND ',$where):'')
     ." ORDER BY `wp_mf_maker`.`maker_id` ASC, wp_mf_maker_to_entity.maker_type ASC)
     AS tmp_table GROUP by `maker_id`";
