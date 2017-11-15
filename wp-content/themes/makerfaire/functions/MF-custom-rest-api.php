@@ -1,12 +1,19 @@
 <?php
 /* adds a custom REST API endpoint of makerfaire*/
 add_action( 'rest_api_init', function () {
-
+  //get faire data such as Meet the Makers and Schedule information based on form id(s)
 	register_rest_route( 'makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)', array(
 		'methods' => 'GET',
 		'callback' => 'mf_fairedata'
 	));
 
+  //get ribbon information by year
+  register_rest_route( 'makerfaire', '/v2/mfRibbons/(?P<year>[a-z0-9\-]+)', array(
+		'methods' => 'GET',
+		'callback' => 'mf_ribbons'
+	));
+
+  //update an entry
   register_rest_route( 'makerfaire', '/v2/entry/(?P<type>[a-z0-9\-]+)/(?P<entryid>[a-z0-9\-]+)', array(
 		'methods' => 'GET',
 		'callback' => 'mf_updateEntry'
@@ -96,6 +103,13 @@ function mf_mfapi( WP_REST_Request $request ) {
 
 }
 
+function mf_ribbons( WP_REST_Request $request ) {
+  $year     = $request['year'];
+  $data['ribbons'] = getRibbons($year);
+  wp_send_json($data);
+  exit;
+}
+
 function mf_updateEntry( WP_REST_Request $request ) {
   $type     = $request['type'];
   $entry_id  = $request['entryid'];
@@ -135,12 +149,6 @@ function mf_fairedata( WP_REST_Request $request ) {
     $data['error'] = 'Error: Type or Form IDs not submitted';
   }
 
-  $return = 'your type is '.$type.' and your formids are ';
-  $formArr = explode("-",$formIDs);
-  foreach($formArr as $formID){
-    $return .= $formID.' ';
-  }
-  //return $data;
   wp_send_json($data);
   exit;
 }
@@ -349,6 +357,7 @@ function getMTMentries($formIDs) {
               where lead_detail.lead_id = $entryID "
            . "and cast(field_number as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
            . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
+
     $entryData = $wpdb->get_results($query);
     //field 105 - who would you like listed
     //    one maker, a group or association, a list of makers
@@ -370,7 +379,7 @@ function getMTMentries($formIDs) {
       if($isGroup) {
         $makerList = $fieldData[109];
       }elseif($isOneMaker){
-        $makerList = $fieldData['160.3']. ' ' .$fieldData['160.6'];
+        $makerList = $fieldData['160.3']. (isset($fieldData['160.6'])?' ' .$fieldData['160.6']:'');
       }else{
         $makerArr = array();
         if(isset($fieldData['160.3']))  $makerArr[] = (isset($fieldData['160.3'])?$fieldData['160.3']. ' ':'') .(isset($fieldData['160.6'])?$fieldData['160.6']:'');

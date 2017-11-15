@@ -5,72 +5,101 @@ global $wpdb;
 
 if(isset($_GET['cron'])){
   echo('beginning process<br/>');
-  if($_GET['cron']=='genEBtickets'){
-    mancron_genEBtickets();
-  }elseif($_GET['cron']=='build_ribbonJSON'){
-    build_ribbonJSON();
-  }elseif($_GET['cron']=='cronRmtData'){
-    if(isset($_GET['form'])){
-      cronRmtData($_GET['form'],0,0);
-    }
-  }elseif($_GET['cron']=='genManTickets'){
-    $entryID  = (isset($_GET['entryID'])?$_GET['entryID']:0);
-    $parentID = (isset($_GET['parentID'])?$_GET['parentID']:0);
-    genManTickets($entryID, $parentID);
-  }elseif($_GET['cron']=='createSignZip'){
-    $area = (isset($_GET['area'])?$_GET['area']:'');
-    $area = str_replace('_',' ',$area);
-    createMFSignZip($area);
-  }elseif($_GET['cron']=='update_mfTables'){
-    $form  = (isset($_GET['form'])?$_GET['form']:'');
-    $limit = (isset($_GET['limit'])?$_GET['limit']:0);
-    $start = (isset($_GET['start'])?$_GET['start']:0);
-    $faire = (isset($_GET['faire'])?$_GET['faire']:'');
-    $type  = (isset($_GET['type'])?$_GET['type']:'');
-
-    //check faire first
-    if($faire!=''){
-      if($type==''){
-        echo 'Fail. You need to provide a form type to continue<Br/>/wp-content/themes/makerfaire/devScripts/manualRunCron.php?cron=update_mfTables&faire=NY17&type=sstartup<br/>';
+  switch ($_GET['cron']) {
+    case 'genEBtickets':
+      mancron_genEBtickets();
+      break;
+    case 'cronRmtData':
+      if(isset($_GET['form'])){
+        cronRmtData($_GET['form'],0,0);
       }else{
-        $type = ($type == 'sstartup' ? 'Sponsor Startup': ucwords($type));
-        $faireData = $wpdb->get_row( "select form_ids from wp_mf_faire where faire='".$faire."'");
-        $formIDs = explode(',',trim($faireData->form_ids));
-        foreach($formIDs as $formID){
-          $formData = GFAPI::get_form($formID);
-          $form_type = (isset($formData['form_type'])?$formData['form_type']:'');
-          if($form_type=='') echo 'Form Type not set for form '.$formID.'<br/>';
-          
-          if($type != $form_type){
-            continue;
-          }else{
-            echo 'updating MF tables for form '.$formID.'<br/>';
-            echo ' form type = '.$formData['form_type'].'<br/>';
-            update_mfTables($formID,$limit,$start);
-          }
-        }
+        echo 'You must pass a form ID';
       }
-    }elseif($form!=''){
-      //then use form if faire not set
-      echo 'updating MF tables for form '.$form;
-      $formData = GFAPI::get_form($form);
-      echo ' form type = '.$formData['form_type'].'<br/>';
-      update_mfTables($form,$limit,$start);
-    }else{
-      echo 'Fail. You need to at least give me a form id or faire id to use<Br/>?cron=update_mfTables&form&limit&start<br/>';
-    }
+      break;
+    case 'genManTickets':
+      $entryID  = (isset($_GET['entryID'])?$_GET['entryID']:0);
+      $parentID = (isset($_GET['parentID'])?$_GET['parentID']:0);
+      genManTickets($entryID, $parentID);
+      break;
+    case 'createSignZip':
+      $area = (isset($_GET['area'])?$_GET['area']:'');
+      $area = str_replace('_',' ',$area);
+      createMFSignZip($area);
+      break;
+    case 'update_mfTables':
+      updateMfTablesPre();
+      break;
+    default:
+      break;
   }
+
 
   echo 'ending process';
 }else{
   echo 'Please add process name in cron variable to run.<br/>';
   echo 'Options are:<br/>'
   . '?cron=genEBtickets<br/>'
-  . '?cron=build_ribbonJSON<Br/>'
   . '?cron=cronRmtData&form=999<Br/>'
   . '?cron=genManTickets&entryID=999&parentID=999<br/>'
   . '?cron=createSignZip&area=abcd<br/>'
   . '?cron=update_mfTables&form=999&faire=ABCD&limit&start';
+}
+
+function updateMfTablesPre(){
+  global $wpdb;
+  $form  = (isset($_GET['form'])?$_GET['form']:'');
+  $limit = (isset($_GET['limit'])?$_GET['limit']:0);
+  $start = (isset($_GET['start'])?$_GET['start']:0);
+  $faire = (isset($_GET['faire'])?$_GET['faire']:'');
+  $type  = (isset($_GET['type'])?$_GET['type']:'');
+
+  //check faire first
+  if($faire!=''){
+    if($type==''){
+      echo "Fail. You need to pass a form type using the variable 'type' to continue<Br/>";
+      echo 'Valid Form Types Are:';
+      echo '<ul>';
+      echo ' <li>Exhibit</li>';
+      echo ' <li>Presentation</li>';
+      echo ' <li>Performance</li>';
+      echo ' <li>Startup Sponsor</li>';
+      echo ' <li>Sponsor</li>';
+      echo '</ul>';
+    } else {
+      $type = ($type == 'sstartup' ? 'Sponsor Startup': ucwords($type));
+      $faireData = $wpdb->get_row( "select form_ids from wp_mf_faire where faire='".$faire."'");
+      $formIDs = explode(',',trim($faireData->form_ids));
+      foreach($formIDs as $formID){
+        $formData = GFAPI::get_form($formID);
+        $form_type = (isset($formData['form_type'])?$formData['form_type']:'');
+        if($form_type=='') echo 'Form Type not set for form '.$formID.'<br/>';
+
+        if($type != $form_type){
+          continue;
+        }else{
+          echo 'updating MF tables for form '.$formID.'<br/>';
+          echo ' form type = '.$formData['form_type'].'<br/>';
+          update_mfTables($formID,$limit,$start);
+        }
+      }
+    }
+  }elseif($form!=''){
+    //then use form if faire not set
+    echo 'updating MF tables for form '.$form;
+    $formData = GFAPI::get_form($form);
+    echo ' form type = '.$formData['form_type'].'<br/>';
+    update_mfTables($form,$limit,$start);
+  }else{
+    echo 'Fail. You need to at least give me a form id or faire id to use';
+    echo 'Valid Form Types Are:';
+    echo '<ul>';
+    echo ' <li>Exhibit</li>';
+    echo ' <li>Presentation</li>';
+    echo ' <li>Performance</li>';
+    echo ' <li>Startup Sponsor</li>';
+    echo ' <li>Sponsor</li>';
+    echo '</ul>';
+  }
 }
 
 function createMFSignZip($area) {

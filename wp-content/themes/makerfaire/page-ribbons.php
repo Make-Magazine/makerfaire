@@ -42,22 +42,21 @@ foreach($yearSql as $year) {
         <?php endif; ?>
         <!-- start blue ribbon data -->
         <div>
-          <div ng-controller="ribbonController" class="my-controller"
-            ng-init='loadData(<?php echo $firstYear;?>, [<?php echo $yearJSON;?>])'>
+          <div ng-controller="ribbonController" class="my-controller" ng-init='loadData(<?php echo $firstYear;?>, [<?php echo $yearJSON;?>])'>
             <div class="ribbonFilter">
               <div class="pull-left">
-                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="box gallery"><i class="fa fa-picture-o"></i>Gallery</a>
-                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="box list"><i class="fa fa-list"></i>List</a>
+                <div ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="box gallery"><i class="fa fa-picture-o"></i>Gallery</div>
+                <div ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="box list"><i class="fa fa-list"></i>List</div>
               </div>
               <div class="ribbonHeader pull-right">
                 <select ng-model="faireYear" ng-init="faireYear = '<?php echo $firstYear;?>'" ng-change="loadData(faireYear)">
                   <option ng-repeat="year in years" value="{{year.id}}">{{year.name}}</option>
                 </select>
-                <select ng-model="query.faireData.faire">
+                <select ng-model="query.location">
                   <option value="" selected>All Faires</option>
                   <option ng-repeat="faire in faires" value="{{faire}}">{{faire}}</option>
                 </select>
-                <select ng-model="query.faireData.ribbonType">
+                <select ng-model="query.ribbonType">
                   <option value="" selected>All Ribbons</option>
                   <option value="blue">Blue</option>
                   <option value="red">Red</option>
@@ -75,7 +74,7 @@ foreach($yearSql as $year) {
               <div class="ribbData col-xs-12 col-sm-4 col-md-3" dir-paginate="ribbon in ribbons| filter:query |itemsPerPage: 40" current-page="currentPage">
                 <a href="{{ribbon.link}}" target="_blank">
                   <div class="projImg">
-                    <img class="img-responsive" fallback-src="/wp-content/themes/makerfaire/images/grey-makey.png" ng-src="{{ribbon.project_photo != '' && ribbon.project_photo || '/wp-content/uploads/2015/10/grey-makey.png'}}" />
+                    <img class="img-responsive" fallback-src="/wp-content/themes/makerfaire/images/grey-makey.png" ng-src="{{ribbon.project_photo != '' && ribbon.project_photo || '/wp-content/themes/makerfaire/images/grey-makey.png'}}" />
                     <div class="ribbons">
                       <div class="blueRibbon" ng-if="ribbon.blueCount > 0">
                         {{ribbon.blueCount}}
@@ -92,8 +91,11 @@ foreach($yearSql as $year) {
                   </div>{{ribbon.maker_name}}
                   <br>
                   <br>
-                  <span ng-repeat="faire in ribbon.faireData" class="{{faire.ribbonType}}data">
-                    {{faire.faire}} {{faire.year}}
+                  <span class="bluedata" ng-if="ribbon.blueCount > 0">
+                    {{ribbon.location}} {{ribbon.faireYear}}
+                  </span>
+                  <span class="reddata" ng-if="ribbon.redCount > 0">
+                    {{ribbon.location}} {{ribbon.faireYear}}
                   </span>
                 </div>
               </div>
@@ -103,34 +105,36 @@ foreach($yearSql as $year) {
               </div>
             </div>
             <div ng-show="layout == 'list'" class="ribbonList">
-              <div ng-repeat="blueRibbons in blueList">
-                <div ng-show="(blueRibbons.winners | filter:query).length">
+              <div ng-repeat="ribbon in blueRibbons  | filter:query | groupBy: 'blueCount' | toArray: true | orderBy: -blueCount">
+                <div ng-if="ribbon.$key > 0">
                   <div class="ribbonTitle">
                     <div class="blueMakey"></div>
-                    <div>{{blueRibbons.numRibbons}} Blue Ribbons</div>
+                    <div>{{ribbon.$key}} Blue Ribbons</div>
                   </div>
                   <ul>
-                    <li ng-repeat="bRibbonData in blueRibbons.winners | filter:query">
+                    <li ng-repeat="bRibbonData in ribbon | orderBy: 'project_name'">
                       <a href="{{bRibbonData.link}}" target="_blank">{{ bRibbonData.project_name }}</a>
                     </li>
                   </ul>
-                </div>
+
                 <div class="clear"></div>
+                </div>
               </div>
               <div class="clear"></div>
-              <div ng-repeat="redRibbons in redList">
-                <div ng-show="(redRibbons.winners | filter:query).length">
+              <div ng-repeat="rribbon in redRibbons | filter:query | groupBy: 'redCount' | toArray: true | orderBy: -redCount">
+                <div ng-if="rribbon.$key > 0">
                   <div class="ribbonTitle">
                     <div class="redMakey"></div>
-                    <div>{{redRibbons.numRibbons}} Red Ribbons</div>
+                    <div>{{rribbon.$key}} Red Ribbons</div>
                   </div>
                   <ul>
-                    <li ng-repeat="rRibbonData in redRibbons.winners | filter:query">
+                    <li ng-repeat="rRibbonData in rribbon | orderBy: 'project_name'">
                       <a href="{{rRibbonData.link}}" target="_blank">{{ rRibbonData.project_name }}</a>
                     </li>
                   </ul>
+
+                  <div class="clear"></div>
                 </div>
-                <div class="clear"></div>
               </div>
             </div>
           </div>
