@@ -382,8 +382,8 @@ get_header('version-2'); ?>
                   }
                 });
                 if (anyBoxesChecked == false) {
-                  jQuery('.pull-right[data-toggle="tooltip"]').tooltip()
-                  jQuery('.pull-right[data-toggle="tooltip"]').tooltip('show')
+                  jQuery('.pull-right[data-toggle="tooltip"]').tooltip();
+                  jQuery('.pull-right[data-toggle="tooltip"]').tooltip('show');
                   return false;
                 }
                 // Now get the email into the form and send
@@ -391,15 +391,15 @@ get_header('version-2'); ?>
                   var nlpEmail = jQuery('#nlp-input').val();
                   jQuery('#nlp-form #email').val(nlpEmail);
                   if (jQuery('#nlp-form #email').val() == '') {
-                    jQuery('#nlp-input').tooltip()
-                    jQuery('#nlp-input').tooltip('show')
+                    jQuery('#nlp-input').tooltip();
+                    jQuery('#nlp-input').tooltip('show');
                     return false;
                   }
                   else {
                     jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('#nlp-form').serialize());
-                    jQuery('.nl-thx-p1').hide();
-                    jQuery('.nl-thx-p2').show();
                     jQuery('.fancybox-thx').trigger('click');
+                    jQuery('.nl-modal-email-address').text(nlpEmail);
+                    jQuery('#whatcounts-signup2 #email').val(nlpEmail);
                   }
                 }
               });
