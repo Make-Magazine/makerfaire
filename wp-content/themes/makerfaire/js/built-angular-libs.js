@@ -47182,6 +47182,7 @@ angular.module('ngAnimate', [], function initAngularHelpers() {
 //!! node_modules/angular-filter/dist/angular-filter.js
 /**
  * Bunch of useful filters for angularJS(with no external dependencies!)
+ * 
  * @version v0.5.17 - 2017-09-22 * @link https://github.com/a8m/angular-filter
  * @author Ariel Mashraki <ariel@mashraki.co.il>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -47210,8 +47211,8 @@ var isDefined = angular.isDefined,
  * @returns {Array}
  */
 function toArray(object) {
-  return isArray(object) 
-    ? object 
+  return isArray(object)
+    ? object
     : Object.keys(object).map(function(key) {
       return object[key];
     });
@@ -48534,7 +48535,7 @@ angular.module('a8m.math.abs', [])
  * @kind function
  *
  * @description
- * Convert bytes into appropriate display 
+ * Convert bytes into appropriate display
  * 1024 bytes => 1 KB
  */
 angular.module('a8m.math.byteFmt', [])
@@ -48578,15 +48579,15 @@ angular.module('a8m.math.degrees', [])
     }
   });
 
- 
- 
+
+
 /**
  * @ngdoc filter
  * @name formatBytes
  * @kind function
  *
  * @description
- * Convert bytes into appropriate display 
+ * Convert bytes into appropriate display
  * 1024 kilobytes => 1 MB
  */
 angular.module('a8m.math.kbFmt', [])
@@ -48720,8 +48721,8 @@ angular.module('a8m.math.radians', [])
     }
   });
 
- 
- 
+
+
 /**
  * @ngdoc filter
  * @name Radix
@@ -49099,17 +49100,17 @@ angular.module('a8m.split', [])
 
       _regexp = new RegExp(escapeRegExp(delimiter), 'g');
       _matches = input.match(_regexp);
-      
+
       if (isNull(_matches) || skip >= _matches.length) {
         return [input];
       }
 
       if (skip === 0) return input.split(delimiter);
-      
+
       _splitted = input.split(delimiter);
       _temp = _splitted.splice(0, skip + 1);
       _splitted.unshift(_temp.join(delimiter));
-    
+
       return _splitted;
     };
   })
@@ -49465,7 +49466,7 @@ angular.module('a8m.filter-watcher', [])
       }
     }];
   });
-  
+
 
 /**
  * @ngdoc module
