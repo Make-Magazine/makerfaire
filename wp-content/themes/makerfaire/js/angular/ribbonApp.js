@@ -1,6 +1,6 @@
 (function(angular) {
   'use strict';
-  var ribbonApp = angular.module('ribbonApp', ['ngRoute', 'angularUtils.directives.dirPagination']);
+  var ribbonApp = angular.module('ribbonApp', ['ngRoute', 'angular.filter', 'angularUtils.directives.dirPagination']);
 
   ribbonApp.directive('fallbackSrc', function() {
     var fallbackSrc = {
@@ -13,41 +13,48 @@
     return fallbackSrc;
   });
 
-  ribbonApp.controller('ribbonController', function($scope, $http) {
+  ribbonApp.controller('ribbonController', ['$scope', '$filter', '$http', function($scope, $filter, $http) {
     $scope.layout      = 'grid';
     $scope.currentPage = 1;
     $scope.pageSize    = 40;
     $scope.faires      = [];
+    var faires         = [];
 
     $scope.loadData = function(year, years) {
       var faireYear = year;
       $scope.years = years || $scope.years;
-
-      $http.get('/wp-content/themes/makerfaire/partials/data/' + faireYear + 'ribbonData.json')
+      $http.get('/wp-json/makerfaire/v2/mfRibbons/'+faireYear)
         .then(function successCallback(response) {
           var data = response.data;
-          $scope.ribbons = data.json;
+          $scope.ribbons      = data.ribbons;
+          $scope.blueRibbons  = data.ribbons;
+          $scope.redRibbons   = $scope.ribbons;
+
           //for random order
           shuffle($scope.ribbons);
-          $scope.blueList = data.blueList;
-          $scope.redList = data.redList;
-
-          angular.forEach($scope.ribbons, function(row) {
-            /* create faires data */
-            angular.forEach(row.faireData, function(value) {
-              if ($scope.faires.indexOf(value.faire) == -1) {
-                $scope.faires.push(value.faire);
-              }
-            });
-            $scope.faires.sort();
+          var faires = [];
+          angular.forEach(data.ribbons, function(row) {
+            if (faires.indexOf(row.location) === -1) {
+                faires.push(row.location);
+            }
           });
+          faires.sort();
+          $scope.faires = faires;
+          $scope.blueCount = function(arr) {
+            return $filter('blueCount')
+              ($filter('blueCount')(arr, 'blueCount'));
+          };
+          $scope.redCount = function(arr) {
+            return $filter('redCount')
+              ($filter('redCount')(arr, 'redCount'));
+          };
         }, function errorCallback() {
           // log error
-          alert('error');
+          alert('I am sorry. There has been an error in retrieving the Maker Faire ribbon data');
         });
     };
 
-  });
+  }]);
 
   function shuffle(array) {
     var currentIndex = array.length,
@@ -69,3 +76,4 @@
     return array;
   }
 })(window.angular);
+

@@ -10,26 +10,6 @@ require_once( '../../../../wp-includes/wp-db.php' );
 $wpdb = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 build_wp_mf_maker(); //for testing*/
 
-//this cron action will create the JSON files used by the blue ribbon page
-add_action('cron_ribbonJSON', 'build_ribbonJSON');
-
-function build_ribbonJSON(){
-  global $wpdb;
-  require_once( TEMPLATEPATH. '/partials/ribbonJSON.php' );
-
-  $yearSql  = $wpdb->get_results("SELECT distinct(year) FROM wp_mf_ribbons  where entry_id > 0 order by year desc");
-
-  foreach($yearSql as $year){
-    $json = createJSON($year->year);
-    //write json file
-    unlink(TEMPLATEPATH.'/partials/data/'.$year->year.'ribbonData.json'); //delete json file if exists
-    $fp = fopen(TEMPLATEPATH.'/partials/data/'.$year->year.'ribbonData.json', 'w');//create json file
-
-    fwrite($fp, $json);
-    fclose($fp);
-  }
-}
-
 /*
  * Cron process to create MAT records for specific forms
  */

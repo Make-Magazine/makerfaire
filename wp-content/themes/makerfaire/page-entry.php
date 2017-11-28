@@ -165,7 +165,7 @@ if($makerEdit){
 
 // Project Inline video
 $video = '';
-$project_video = str_replace( 'http://', 'https://', $project_video );
+//$project_video = str_replace( 'http://', 'https://', $project_video );
 
 if (!empty($project_video)) {
   $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
@@ -174,7 +174,7 @@ if (!empty($project_video)) {
   if($videoID!=false){
     $dispVideo = 'https://www.youtube.com/embed/'.$videoID;
   }
-  $video =  '<div class="entry-video">
+  $video = '<div class="entry-video">
               <div class="embed-youtube">
                 <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
               </div>

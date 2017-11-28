@@ -1,17 +1,4 @@
 <?php
-
-// This function is called via ajax to retriev the blue ribbon data
-function retrieveRibbonData() {
-   global $wpdb;
-   require_once( TEMPLATEPATH. '/partials/ribbonJSON.php' );
-    // IMPORTANT: don't forget to "exit"
-    exit;
-}
-add_action( 'wp_ajax_nopriv_getRibbonData', 'retrieveRibbonData' );
-add_action( 'wp_ajax_getRibbonData', 'retrieveRibbonData' );
-
-
-
 /* This function is used by the individual entry pages to display if this entry one any ribbons */
 function checkForRibbons($postID=0,$entryID=0){
     global $wpdb;
