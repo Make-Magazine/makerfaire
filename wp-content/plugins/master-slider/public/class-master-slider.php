@@ -269,8 +269,11 @@ class Master_Slider {
         update_option( 'master-slider_ab_pro_feature_setting_content_type', rand(1, 2) );
     }
 
+    //
+    msp_get_ad_info();
+
     // dont display phlox notice in first 3 days
-    set_transient( 'masterslider_display_phlox_notice', 1, 3 * DAY_IN_SECONDS );
+    msp_set_transient( 'masterslider_display_popup_notice', 1000, 3 * DAY_IN_SECONDS );
 
     do_action( 'masterslider_activated', get_current_blog_id() );
   }

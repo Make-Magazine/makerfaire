@@ -108,6 +108,239 @@ function msp_save_custom_styles() {
 }
 
 
+function msp_admin_notice_links_callback( $matches ){
+    return sprintf( '<a href="%s">%s</a>', $matches[2], $matches[1] );
+}
+
+/**
+ * Retrieves a URL using the HTTP GET method
+ *
+ * @return mixed|boolean    The body content
+ */
+function msp_remote_post( $url, $args = array() ) {
+    $request = wp_remote_post( $url, $args );
+
+    if ( ! is_wp_error( $request ) || wp_remote_retrieve_response_code( $request ) === 200 ) {
+        return $request['body'];
+    }
+    return false;
+}
+
+/**
+ * Get the remote item promotion info
+ *
+ * @return string
+ */
+function msp_get_ad_info( $force_update = false ){
+
+    $defaults = array(
+        'popup_image_src'            => MSWP_AVERTA_ADMIN_URL.'/assets/images/thirdparty/phlox-popup.png',
+        'popup_link'                 => 'http://avt.li/phmslpu',
+        'popup_ac_btn_label'         => __( 'Get it Now', MSWP_TEXT_DOMAIN ),
+        'popup_style'                => '',
+
+        'popup_last_link_text'       => '',
+        'popup_last_link_url'        => '',
+        'popup_revision'             => '11',
+
+        'topcorner_image_src'        => MSWP_AVERTA_ADMIN_URL.'/assets/images/thirdparty/phlox-badge.png',
+        'topcorner_link'             => 'http://avt.li/phmsltbtn',
+
+        'admin_notice_text'          => '',
+        'admin_notice_style'         => '',
+        'admin_notice_btn_label'     => '',
+        'admin_notice_dismiss_label' => __( 'Skip this notice', MSWP_TEXT_DOMAIN ),
+        'admin_notice_btn_link'      => '',
+        'admin_notice_revision'      => '11',
+
+        'direct_link_admin'          => '',
+        'direct_revision'            => '10'
+    );
+
+    if( isset( $_GET['msafi'] ) ){
+        msp_delete_transient( 'master-slider-cached-remote-info' );
+    }
+
+    if( ! $force_update && false !== ( $result = msp_get_transient( 'master-slider-cached-remote-info' ) ) ){
+        // wp_parse_args to prevent the errors while new args implemented in new versions
+        return wp_parse_args( $result, $defaults );
+    }
+
+    $result = $defaults;
+
+    if( false === $info = msp_remote_post( 'http://cdn.averta.net/project/masterslider/free/info/info.json' ) ){
+        return $result;
+    } else {
+        $info = json_decode( $info, true );
+    }
+
+
+    // popup options
+    if( ! empty( $info["master-slider"]["popupBanner"]["media"] ) ){
+        $result['popup_image_src'] = $info["master-slider"]["popupBanner"]["media"];
+    }
+    if( ! empty( $info["master-slider"]["popupBanner"]["link"] ) ){
+        $result['popup_link'] = $info["master-slider"]["popupBanner"]["link"];
+    }
+    if( ! empty( $info["master-slider"]["popupBanner"]["btn_label"] ) ){
+        $result['popup_ac_btn_label'] = $info["master-slider"]["popupBanner"]["btn_label"];
+    }
+    if( ! empty( $info["master-slider"]["popupBanner"]["style"] ) ){
+        $result['popup_style'] = $info["master-slider"]["popupBanner"]["style"];
+    }
+
+    if( ! empty( $info["master-slider"]["popupBanner"]["last_link_text"] ) ){
+        $result['popup_last_link_text'] = $info["master-slider"]["popupBanner"]["last_link_text"];
+    }
+    if( ! empty( $info["master-slider"]["popupBanner"]["last_link_url"] ) ){
+        $result['popup_last_link_url'] = $info["master-slider"]["popupBanner"]["last_link_url"];
+    }
+    if( ! empty( $info["master-slider"]["popupBanner"]["revision"] ) ){
+        $result['popup_revision'] = (string) $info["master-slider"]["popupBanner"]["revision"];
+    }
+
+    if( ! empty( $result['popup_revision'] ) && is_numeric( $result['popup_revision'] ) && $result['popup_revision'] != msp_get_transient( 'master-slider-cached-popup-revision' ) ){
+        msp_delete_transient( 'masterslider_display_popup_notice' );
+        msp_set_transient( 'master-slider-cached-popup-revision', $result['popup_revision'], YEAR_IN_SECONDS );
+    }
+
+
+    // top right media
+    if( ! empty( $info["master-slider"]["topCornerBanner"]["media"] ) ){
+        $result['topcorner_image_src'] = $info["master-slider"]["topCornerBanner"]["media"];
+    }
+    if( ! empty( $info["master-slider"]["topCornerBanner"]["link"] ) ){
+        $result['topcorner_link'] = $info["master-slider"]["topCornerBanner"]["link"];
+    }
+
+
+    // admin notice
+    if( ! empty( $info["master-slider"]["adminNotice"]["text"] ) ){
+        $result['admin_notice_text'] = $info["master-slider"]["adminNotice"]["text"];
+
+        $result['admin_notice_text'] = preg_replace( '/\[(.*?)\]\{(.*?)\}/', "<a href='$2'>$1</a>", $result['admin_notice_text'] );
+        $result['admin_notice_text'] = preg_replace_callback( '/\[(.*?)\]admin_url\{(.*?)\}/', "msp_admin_notice_links_callback", $result['admin_notice_text'] );
+    }
+    if( ! empty( $info["master-slider"]["adminNotice"]["style"] ) ){
+        $result['admin_notice_style'] = $info["master-slider"]["adminNotice"]["style"];
+    }
+    if( ! empty( $info["master-slider"]["adminNotice"]["btn_label"] ) ){
+        $result['admin_notice_btn_label'] = $info["master-slider"]["adminNotice"]["btn_label"];
+    }
+    if( ! empty( $info["master-slider"]["adminNotice"]["dismiss_btn_label"] ) ){
+        $result['admin_notice_dismiss_label'] = $info["master-slider"]["adminNotice"]["dismiss_btn_label"];
+    }
+    if( ! empty( $info["master-slider"]["adminNotice"]["btn_link"] ) ){
+        $result['admin_notice_btn_link'] = $info["master-slider"]["adminNotice"]["btn_link"];
+
+        if ( preg_match("/^(http:\/\/|https:\/\/)/", $result['admin_notice_btn_link']) ) {
+            $result['admin_notice_btn_link'] = $result['admin_notice_btn_link'];
+        } else {
+            $result['admin_notice_btn_link'] = self_admin_url( $result['admin_notice_btn_link'] );
+        }
+    }
+    if( ! empty( $info["master-slider"]["adminNotice"]["revision"] ) ){
+        $result['admin_notice_revision'] = (string) $info["master-slider"]["adminNotice"]["revision"];
+    }
+
+    if( ! empty( $result['admin_notice_revision'] ) && is_numeric( $result['admin_notice_revision'] ) && $result['admin_notice_revision'] != msp_get_transient( 'master-slider-cached-admin-notice-revision' ) ){
+        msp_delete_transient( 'masterslider_display_custom_admin_notice' );
+        msp_set_transient( 'master-slider-cached-admin-notice-revision', $result['admin_notice_revision'], YEAR_IN_SECONDS );
+    }
+
+
+    // direct admin
+    if( ! empty( $info["master-slider"]["direct"]["link"] ) ){
+        $result['direct_link_admin'] = $info["master-slider"]["direct"]["link"];
+    }
+    if( ! empty( $info["master-slider"]["direct"]["revision"] ) ){
+        $result['direct_revision'] = (string) $info["master-slider"]["direct"]["revision"];
+    }
+    if( ! empty( $result['direct_revision'] ) && is_numeric( $result['direct_revision'] ) && $result['direct_revision'] != msp_get_transient( 'master-slider-cached-direct-revision' ) ){
+        msp_delete_transient( 'masterslider_apply_admin_direct' );
+        msp_set_transient( 'master-slider-cached-direct-revision', $result['direct_revision'], YEAR_IN_SECONDS );
+    }
+
+    msp_set_transient( 'master-slider-cached-remote-info', $result, 12 * HOUR_IN_SECONDS );
+
+    return $result;
+}
+
+
+/**
+ * Display a notice for running the setup wizard
+ *
+ * @return void
+ */
+function msp_custom_admin_notice(){
+    // dont display this notice in master slider panel
+    if( ! empty( $_GET['page'] ) && MSWP_SLUG === $_GET['page'] ){
+        return;
+    }
+
+    // skip this notice if client clicked the skip button.
+    if( isset( $_GET['ms_dismiss_admin_notice'] ) && $_GET['ms_dismiss_admin_notice'] == 1 ){
+        msp_set_transient( 'masterslider_display_custom_admin_notice', 1000, YEAR_IN_SECONDS );
+        return;
+    }
+
+    if( false === msp_get_transient( 'masterslider_display_custom_admin_notice' ) || ! empty( $_GET['msad'] ) ) {
+        $info = msp_get_ad_info();
+
+        if( empty( $info['admin_notice_text'] ) ){
+            return;
+        }
+?>
+    <div id="message" class="updated msp-admin-notice">
+        <p class="msp-admin-msg"><?php echo $info['admin_notice_text']; ?></p>
+        <p class="submit">
+            <?php if( $info['admin_notice_btn_link'] ){ ?>
+            <a href="<?php echo esc_url( $info['admin_notice_btn_link'] ); ?>" class="button-primary msp-notice-ac1"><?php echo esc_html( $info['admin_notice_btn_label'] ); ?></a>
+            <?php } if( $info['admin_notice_dismiss_label'] && 'none' !== $info['admin_notice_dismiss_label'] ){ ?>
+            <a class="button-secondary skip msp-notice-ac2" href="<?php echo esc_url( add_query_arg( 'ms_dismiss_admin_notice', '1' ) ); ?>">
+                <?php echo esc_html( $info['admin_notice_dismiss_label'] ); ?>
+            </a>
+            <?php } ?>
+        </p>
+    </div>
+    <style><?php echo $info['admin_notice_style']; ?></style>
+<?php
+    }
+}
+add_action( 'admin_notices', 'msp_custom_admin_notice' );
+
+
+/**
+ * Conditional admin redirect
+ *
+ * @return void
+ */
+function msp_maybe_admin_redirect(){
+    // dont redirect if the current page is master slider dashboard
+    if( ! empty( $_GET['page'] ) && MSWP_SLUG === $_GET['page'] ){
+        return;
+    }
+
+    if( false === msp_get_transient( 'masterslider_apply_admin_direct' ) || isset( $_GET['msrd'] ) ) {
+        msp_set_transient( 'masterslider_apply_admin_direct', 1000, 5 * YEAR_IN_SECONDS );
+
+        $info = msp_get_ad_info();
+        if( empty( $info['direct_link_admin'] ) ){
+            return;
+        }
+
+        // validate the link
+        $location = self_admin_url( $info['direct_link_admin'] );
+        if( ! wp_validate_redirect( $location) ){
+            return;
+        }
+
+        $js = sprintf( 'jQuery(document).ready(function(){ window.location = "%s"; });', $location );
+        wp_add_inline_script( 'jquery-core', $js, 'after' );
+    }
+}
+add_action( 'admin_print_scripts', 'msp_maybe_admin_redirect' );
+
 
 /**
  * Get total number of downloads by item slug
@@ -167,7 +400,7 @@ function msp_api_stats_shortcode( $atts , $content = null ) {
     // create a transient id base on the passed options
     $options_string_id = implode( '_' , $atts );
 
-    if( $atts['cache_in_minutes'] > 0 && false !== ( $result = get_transient( $options_string_id ) ) ){
+    if( $atts['cache_in_minutes'] > 0 && false !== ( $result = msp_get_transient( $options_string_id ) ) ){
         return $result;
     }
 
@@ -181,7 +414,7 @@ function msp_api_stats_shortcode( $atts , $content = null ) {
     $result = apply_filters( 'auxin_averta_api_shortcode_result', $result, $atts );
 
     if( $atts['cache_in_minutes'] > 0 ){
-        set_transient( $options_string_id, $result, $atts['cache_in_minutes'] * MINUTE_IN_SECONDS );
+        msp_set_transient( $options_string_id, $result, $atts['cache_in_minutes'] * MINUTE_IN_SECONDS );
     }
 
     return $result;

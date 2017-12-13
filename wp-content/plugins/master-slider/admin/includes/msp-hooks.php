@@ -66,7 +66,7 @@ function msp_request_remote_sample_sliders( $force_to_fetch = false ) {
     }
 
     // try to use cached data
-    if( ! $force_to_fetch && false !== ( $result = get_transient( 'msp_get_remote_sample_sliders' ) ) && ! empty( $result ) ){
+    if( ! $force_to_fetch && false !== ( $result = msp_get_transient( 'msp_get_remote_sample_sliders' ) ) && ! empty( $result ) ){
         return $result;
     }
 
@@ -90,7 +90,7 @@ function msp_request_remote_sample_sliders( $force_to_fetch = false ) {
                 '</p></div>';
 
             } else {
-                set_transient( 'msp_get_remote_sample_sliders', $result, 3 * HOUR_IN_SECONDS );
+                msp_set_transient( 'msp_get_remote_sample_sliders', $result, 3 * HOUR_IN_SECONDS );
                 return $result;
             }
         }

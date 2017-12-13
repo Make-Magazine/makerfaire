@@ -1,4 +1,4 @@
-<?php // 
+<?php //
 /**
  * Load frontend scripts and styles
  *
@@ -26,11 +26,11 @@ class MSP_Frontend_Assets {
 	 * Construct
 	 */
 	public function __construct() {
-		
+
 		$this->assets_dir = MSWP_AVERTA_PUB_URL . '/assets';
 		$this->version    = MSWP_AVERTA_VERSION;
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_assets'  ), 15 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_assets'     ), 15 );
 		add_action( 'wp_head'			, array( $this, 'inline_css_fallback' ) );
 		add_action( 'wp_head'			, array( $this, 'meta_generator'      ) );
 	}
@@ -40,11 +40,11 @@ class MSP_Frontend_Assets {
 	 * @return void
 	 */
 	public function admin_hooks() {
-		
+
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_assets'  ), 15 );
 		add_action( 'admin_head'		   , array( $this, 'inline_css_fallback' ) );
 	}
-	
+
 	/**
 	 * Register and load frontend scripts
 	 * @return void
@@ -54,29 +54,29 @@ class MSP_Frontend_Assets {
 
 		// Filter base front end assets directory
 		$this->assets_dir = apply_filters( 'masterslider_frontend_assets_dir', $this->assets_dir );
-		
-		
+
+
 		// JS //////////////////////////////////////////////////////////////////////////////
-		
-		wp_register_script( 'jquery-easing'	, 
-		                     $this->assets_dir . '/js/jquery.easing.min.js' , 
+
+		wp_register_script( 'jquery-easing'	,
+		                     $this->assets_dir . '/js/jquery.easing.min.js' ,
 		                     array( 'jquery' ), $this->version, true );
 
-		wp_register_script( 'masterslider-core' , 
-		                     $this->assets_dir . '/js/masterslider.min.js'	, 
+		wp_register_script( 'masterslider-core' ,
+		                     $this->assets_dir . '/js/masterslider.min.js'	,
 		                     array( 'jquery', 'jquery-easing' ), $this->version, true );
-		
+
 		// always load assets by default if 'allways_load_ms_assets' option was enabled
 		if( 'on' == msp_get_setting( 'allways_load_ms_assets' , 'msp_advanced' ) ) {
 			wp_enqueue_script( 'masterslider-core'   );
 		}
 
 		// Print JS Object //////////////////////////////////////////////////////////////////
-		
+
 		wp_localize_script( 'masterslider', 'masterslider_js_params', apply_filters( 'masterslider_js_params', array(
 			'ajax_url'        => admin_url( 'admin-ajax.php' )
 		) ) );
-		
+
 
 		// CSS //////////////////////////////////////////////////////////////////////////////
 		$enqueue_styles = $this->get_styles();
@@ -93,12 +93,12 @@ class MSP_Frontend_Assets {
 
 	/**
 	 * Get styles for the frontend
-	 * 
+	 *
 	 * @return array
 	 */
 	public function get_styles() {
 
-		
+
 		$styles_queue = array(
 
 			$this->prefix . 'main' => array(
@@ -106,7 +106,7 @@ class MSP_Frontend_Assets {
 				'deps'    => array(),
 				'version' => $this->version
 			)
-		
+
 		);
 
 		// load custom.css if the directory is writable. else use inline css fallback
@@ -127,7 +127,7 @@ class MSP_Frontend_Assets {
 
 	    }
 
-		return apply_filters( 'masterslider_enqueue_styles', $styles_queue );		
+		return apply_filters( 'masterslider_enqueue_styles', $styles_queue );
 	}
 
 
@@ -137,7 +137,7 @@ class MSP_Frontend_Assets {
 	function inline_css_fallback(){
 
 	    $inline_css = msp_get_option( 'custom_inline_style', '' );
-	    
+
 	    // if custom.css is not writable, print css styles in page header
 	    if( ! empty( $inline_css ) ) {
 	    	if( current_user_can( 'manage_options' ) )
@@ -153,7 +153,7 @@ class MSP_Frontend_Assets {
 	 * Print meta generator tag
 	 */
 	function meta_generator(){
-	    echo sprintf( '<meta name="generator" content="MasterSlider %s - Responsive Touch Image Slider | www.avt.li/msf" />', MSWP_AVERTA_VERSION )."\n";
+	    echo sprintf( '<meta name="generator" content="MasterSlider %s - Responsive Touch Image Slider | avt.li/msf" />', MSWP_AVERTA_VERSION )."\n";
 	}
 
 }
