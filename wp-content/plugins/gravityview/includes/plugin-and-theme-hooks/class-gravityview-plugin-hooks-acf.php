@@ -43,12 +43,21 @@ class GravityView_Plugin_Hooks_ACF extends GravityView_Plugin_and_Theme_Hooks {
 	 */
 	function add_meta_keys_from_post( $meta_keys = array(), $post_id = 0 ) {
 
-		// Can never be too careful
-		if ( ! function_exists( 'get_field_objects' ) ) {
+		// Can never be too careful: double-check that ACF is active and the function exists
+		if ( ! function_exists( 'get_field_objects' ) || ! class_exists('acf_field_functions' ) ) {
 			return $meta_keys;
 		}
 
-		if( $acf_keys = get_field_objects( $post_id, array( 'load_value' => false ) ) ) {
+		$acf_field_functions = new acf_field_functions;
+
+		remove_action('acf/format_value', array( $acf_field_functions, 'format_value'), 5 );
+
+		$acf_keys = get_field_objects( $post_id, array( 'load_value' => false ) );
+
+		// Restore existing filters added by format_value
+		add_action('acf/format_value', array( $acf_field_functions, 'format_value'), 5, 3 );
+
+		if( $acf_keys ) {
 			return array_merge( array_keys( $acf_keys ), $meta_keys );
 		}
 

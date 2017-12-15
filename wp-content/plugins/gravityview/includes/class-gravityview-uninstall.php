@@ -39,16 +39,24 @@ class GravityView_Uninstall {
 	private function delete_entry_meta() {
 		global $wpdb;
 
-		$meta_table = class_exists( 'GFFormsModel' ) ? GFFormsModel::get_lead_meta_table_name() : $wpdb->prefix . 'rg_lead_meta';
+		$tables = array();
 
-		$sql = "
-			DELETE FROM $meta_table
-			WHERE (
-				`meta_key` = 'is_approved'
-			);
-		";
+		if ( version_compare( GravityView_GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
+			$tables []= GFFormsModel::get_entry_meta_table_name();
+		}
+		$tables []= GFFormsModel::get_lead_meta_table_name();
 
-		$wpdb->query( $sql );
+		$suppress = $wpdb->suppress_errors();
+		foreach ( $tables as $meta_table ) {
+			$sql = "
+				DELETE FROM $meta_table
+				WHERE (
+					`meta_key` = 'is_approved'
+				);
+			";
+			$wpdb->query( $sql );
+		}
+		$wpdb->suppress_errors( $suppress );
 	}
 
 	/**
@@ -59,21 +67,30 @@ class GravityView_Uninstall {
 	private function delete_entry_notes() {
 		global $wpdb;
 
-		$notes_table = class_exists( 'GFFormsModel' ) ? GFFormsModel::get_lead_notes_table_name() : $wpdb->prefix . 'rg_lead_notes';
+		$tables = array();
+
+		if ( version_compare( GravityView_GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) && method_exists( 'GFFormsModel', 'get_entry_notes_table_name' ) ) {
+			$tables[] = GFFormsModel::get_entry_notes_table_name();
+		}
+
+		$tables[] = GFFormsModel::get_lead_notes_table_name();
 
 		$disapproved = __('Disapproved the Entry for GravityView', 'gravityview');
 		$approved = __('Approved the Entry for GravityView', 'gravityview');
 
-		$sql = $wpdb->prepare( "
-			DELETE FROM $notes_table
-            WHERE (
-                `note_type` = 'gravityview' OR
-				`value` = %s OR
-				`value` = %s
-            );
-        ", $approved, $disapproved );
-
-		$wpdb->query( $sql );
+		$suppress = $wpdb->suppress_errors();
+		foreach ( $tables as $notes_table ) {
+			$sql = $wpdb->prepare( "
+				DELETE FROM $notes_table
+				WHERE (
+					`note_type` = 'gravityview' OR
+					`value` = %s OR
+					`value` = %s
+				);
+			", $approved, $disapproved );
+			$wpdb->query( $sql );
+		}
+		$wpdb->suppress_errors( $suppress );
 	}
 
 	/**

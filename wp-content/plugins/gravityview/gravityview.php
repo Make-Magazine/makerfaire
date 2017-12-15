@@ -3,7 +3,7 @@
  * Plugin Name:       	GravityView
  * Plugin URI:        	https://gravityview.co
  * Description:       	The best, easiest way to display Gravity Forms entries on your website.
- * Version:          	1.21.5.2
+ * Version:          	1.22.2
  * Author:            	GravityView
  * Author URI:        	https://gravityview.co
  * Text Domain:       	gravityview
@@ -43,7 +43,7 @@ define( 'GV_MIN_GF_VERSION', '1.9.14' );
  * GravityView requires at least this version of WordPress to function properly.
  * @since 1.12
  */
-define( 'GV_MIN_WP_VERSION', '4.0' );
+define( 'GV_MIN_WP_VERSION', '4.4' );
 
 /**
  * GravityView requires at least this version of PHP to function properly.
@@ -79,7 +79,7 @@ require GRAVITYVIEW_DIR . 'future/loader.php';
  */
 final class GravityView_Plugin {
 
-	const version = '1.21.5.2';
+	const version = '1.22.2';
 
 	private static $instance;
 
@@ -117,6 +117,7 @@ final class GravityView_Plugin {
 	private static function require_files() {
 		require_once( GRAVITYVIEW_DIR . 'includes/helper-functions.php' );
 		require_once( GRAVITYVIEW_DIR . 'includes/class-common.php');
+		require_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-html-elements.php');
 		require_once( GRAVITYVIEW_DIR . 'includes/connector-functions.php');
 		require_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-compatibility.php' );
 		require_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-roles-capabilities.php' );
@@ -156,22 +157,23 @@ final class GravityView_Plugin {
 		}
 
 		include_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-entry-approval-status.php' );
-		include_once( GRAVITYVIEW_DIR .'includes/class-gravityview-entry-approval.php' );
+		include_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-entry-approval.php' );
 
-		include_once( GRAVITYVIEW_DIR .'includes/class-gravityview-entry-notes.php' );
-		include_once( GRAVITYVIEW_DIR .'includes/load-plugin-and-theme-hooks.php' );
+		include_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-entry-notes.php' );
+		include_once( GRAVITYVIEW_DIR . 'includes/load-plugin-and-theme-hooks.php' );
 
 		// Load Extensions
 		// @todo: Convert to a scan of the directory or a method where this all lives
+		include_once( GRAVITYVIEW_DIR . 'includes/class-gravityview-gfformsmodel.php' );
 		include_once( GRAVITYVIEW_DIR .'includes/extensions/edit-entry/class-edit-entry.php' );
 		include_once( GRAVITYVIEW_DIR .'includes/extensions/delete-entry/class-delete-entry.php' );
 		include_once( GRAVITYVIEW_DIR .'includes/extensions/entry-notes/class-gravityview-field-notes.php' );
 
 		// Load WordPress Widgets
-		include_once( GRAVITYVIEW_DIR .'includes/wordpress-widgets/register-wordpress-widgets.php' );
+		include_once( GRAVITYVIEW_DIR . 'includes/wordpress-widgets/register-wordpress-widgets.php' );
 
 		// Load GravityView Widgets
-		include_once( GRAVITYVIEW_DIR .'includes/widgets/register-gravityview-widgets.php' );
+		include_once( GRAVITYVIEW_DIR . 'includes/widgets/register-gravityview-widgets.php' );
 
 		// Add oEmbed
 		include_once( GRAVITYVIEW_DIR . 'includes/class-oembed.php' );

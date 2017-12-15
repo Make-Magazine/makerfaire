@@ -54,6 +54,9 @@ class GV_Unit_Tests_Bootstrap {
 		// load test function so tests_add_filter() is available
 		require_once $this->wp_tests_dir . '/includes/functions.php';
 
+		// stub remote HTTP calls
+		tests_add_filter( 'pre_http_request', array( $this, 'mock_http' ), 10, 3 );
+
 		// In WordPress 4.0 this is not being set, so let's just set it to localhost
 		$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 
@@ -110,7 +113,11 @@ class GV_Unit_Tests_Bootstrap {
 	 */
 	public function load() {
 
-		require_once '/tmp/gravityforms/gravityforms.php';
+		if( file_exists( $this->plugin_dir . '/tmp/gravityforms/gravityforms.php' ) ) {
+			require_once $this->plugin_dir . '/tmp/gravityforms/gravityforms.php';
+		} else {
+			require_once '/tmp/gravityforms/gravityforms.php';
+		}
 
 		require_once $this->plugin_dir . '/gravityview.php';
 
@@ -118,7 +125,11 @@ class GV_Unit_Tests_Bootstrap {
 		remove_all_filters( 'query', 10 );
 
 		// set up Gravity Forms database
-		@GFForms::setup( true );
+		if ( function_exists( 'gf_upgrade' ) ) {
+			gf_upgrade()->maybe_upgrade();
+		} else {
+			@GFForms::setup( true );
+		}
 
 		$this->create_stubs();
 	}
@@ -229,6 +240,16 @@ class GV_Unit_Tests_Bootstrap {
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * Block all HTTP calls unless specifically mocked.
+	 */
+	public function mock_http( $override, $args, $url ) {
+		if ( $response = apply_filters( 'gravityview/tests/mock_http', $args, $url ) ) {
+			return $response;
+		}
+		return new WP_Error( 'HTTP calls denied in test mode. Use gravityview/tests/mock_http to filter.' );
 	}
 
 }

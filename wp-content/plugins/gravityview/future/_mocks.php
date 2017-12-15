@@ -98,12 +98,28 @@ function GravityView_frontend_get_view_entries( $args, $form_id, $parameters, $c
 		$entries = $form->entries
 			->filter( \GV\GF_Entry_Filter::from_search_criteria( $criteria['search_criteria'] ) )
 			->offset( $args['offset'] )
-			->limit( $criteria['paging']['page_size'] )
-			->page( ( ( $criteria['paging']['offset'] - $args['offset'] ) / $criteria['paging']['page_size'] ) + 1 );
+			->limit( $criteria['paging']['page_size'] );
+
+		if ( $criteria['paging']['page_size'] ) {
+			$entries = $entries->page( ( ( $criteria['paging']['offset'] - $args['offset'] ) / $criteria['paging']['page_size'] ) + 1 );
+		}
+
 		if ( ! empty( $criteria['sorting'] ) ) {
 			$field = new \GV\Field();
 			$field->ID = $criteria['sorting']['key'];
-			$direction = strtolower( $criteria['sorting']['direction'] ) == 'asc' ? \GV\Entry_Sort::ASC : \GV\Entry_Sort::DESC;
+			switch( strtolower( $criteria['sorting']['direction'] ) ) {
+				case 'asc':
+					$direction = \GV\Entry_Sort::ASC;
+					break;
+				case 'rand':
+					$direction = \GV\Entry_Sort::RAND;
+					break;
+				default:
+				case 'desc':
+					$direction = \GV\Entry_Sort::DESC;
+					break;
+			}
+
 			$mode = $criteria['sorting']['is_numeric'] ? \GV\Entry_Sort::NUMERIC : \GV\Entry_Sort::ALPHA;
 			$entries = $entries->sort( new \GV\Entry_Sort( $field, $direction, $mode ) );
 		}

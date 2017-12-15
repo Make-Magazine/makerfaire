@@ -258,10 +258,9 @@ class GravityView_API {
 				$display_value = self::replace_variables( $display_value, $form, $entry );
 			}
 		} else {
-      //MF custom code
-      $display_value = rgar( $entry, $field_id );
-      $value = apply_filters( "gform_entry_field_value", $display_value, $field, $entry, $form );
-			$display_value = $value;
+     //MF custom code
+      $value = $display_value = apply_filters( "gform_entry_field_value", $display_value, $field, $entry, $form );
+      $display_value = $value;
 		}
 
 		// Check whether the field exists in /includes/fields/{$field_type}.php
@@ -495,6 +494,10 @@ class GravityView_API {
 		// If we've saved the permalink in memory, use it
 		// @since 1.3
 		$link = wp_cache_get( 'gv_directory_link_'.$post_id );
+
+		if( (int) $post_id === (int) get_option( 'page_on_front' ) ) {
+			$link = home_url();
+		}
 
 		if( empty( $link ) ) {
 
