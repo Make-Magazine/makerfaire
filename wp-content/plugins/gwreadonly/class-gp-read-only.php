@@ -8,7 +8,7 @@ class GP_Read_Only extends GWPerk {
 	protected $min_wp_version = '3.0';
 
 	private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
-	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time' );
+	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'workflow_user', 'workflow_role', 'workflow_assignee_select' );
 
 	public function init() {
 
@@ -96,15 +96,15 @@ class GP_Read_Only extends GWPerk {
 			case 'textarea':
 			case 'post_content':
 			case 'post_excerpt':
-			case 'workflow_discussion': // Powered by Gravity Flow.
+			case 'workflow_discussion': // @gravityflow
 				$search = "<textarea";
 				$replace = $search . " readonly='readonly'";
 				break;
 			case 'multiselect':
 			case 'select':
-			case 'workflow_user': // Powered by Gravity Flow.
-			case 'workflow_role': // Powered by Gravity Flow.
-			case 'workflow_assignee_select': // Powered by Gravity Flow.
+			case 'workflow_user': // @gravityflow
+			case 'workflow_role': // @gravityflow
+			case 'workflow_assignee_select': // @gravityflow
 				$search = "<select";
 				$replace = $search . " disabled='disabled'";
 				break;
@@ -289,7 +289,7 @@ class GP_Read_Only extends GWPerk {
 					$index++;
 				}
 
-				if( $choice['isSelected'] ) {
+				if( rgar( $choices, 'isSelected' ) ) {
 					$full_input_id = sprintf( '%d.%d', $field['id'], $index );
 					$price         = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
 					$choice_value  = $field['type'] == 'product' ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
@@ -303,7 +303,7 @@ class GP_Read_Only extends GWPerk {
 			$input_type = GFFormsModel::get_input_type( $field );
 
 			// if no choice is preselected and this is a select, get the first choice's value since it will be selected by default in the browser
-			if( empty( $values ) && $input_type == 'select' ) {
+			if( empty( $values ) && in_array( $input_type, array( 'select', 'workflow_user', 'workflow_role', 'workflow_assignee_select' ) ) ) {
 				$values[] = rgars( $choices, '0/value' );
 			}
 
