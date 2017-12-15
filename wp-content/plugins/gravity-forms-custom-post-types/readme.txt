@@ -3,8 +3,8 @@ Contributors: spivurno,bradvin,wpsmith
 Donate link: http://gravitywiz.com/donate/
 Tags: form,forms,gravity,gravity form,gravity forms,CPT,custom post types,custom post type,taxonomy,taxonomies
 Requires at least: 3.0.1
-Tested up to: 4.8
-Stable tag: 3.1.5
+Tested up to: 4.9
+Stable tag: 3.1.10
 
 Map your Gravity-Forms-generated posts to a custom post type and/or custom taxonomies.
 
@@ -76,6 +76,23 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 7. Setting: Mapping a Single Line Text field to a taxonomy (and enabling Enhanced UI)
 
 == Changelog ==
+
+= 3.1.11 =
+
+* Fixed issue where dynamic placeholder was duplicated in some instances.
+
+= 3.1.10 =
+
+* Fixed issue where dynamic placeholder was added even when default placeholder was specified.
+
+= 3.1.9 =
+
+* Added support for displaying Post Title on entry list, detail and export for fields populated with a post type.
+* Updated default sort order for pages to "menu_order".
+
+= 3.1.8 =
+
+* Fixed issue mapping taxonomies for Single Line Text fiela and Multi Select fields. Thanks, Cameron!
 
 = 3.1.7 =
 
