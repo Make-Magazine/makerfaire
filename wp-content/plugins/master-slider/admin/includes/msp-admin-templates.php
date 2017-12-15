@@ -1,15 +1,19 @@
 <?php
 
 function msp_get_panel_header(){
+
+    $info = msp_get_ad_info();
+
 ?>
   <div id="msp-header">
         <div class="msp-logo">
           <a href="<?php echo admin_url( 'admin.php?page='.MSWP_SLUG ); ?>">
             <img src="<?php echo MSWP_AVERTA_ADMIN_URL; ?>/views/slider-panel/images/masterslider.gif" />
           </a>
+
           <div class="msp-phlox-badge">
-            <a href="http://avt.li/phmsltbtn" target="_blank">
-                <img src="<?php echo MSWP_AVERTA_ADMIN_URL; ?>/assets/images/thirdparty/phlox-badge.png" />
+            <a href="<?php echo esc_url( $info['topcorner_link'] ); ?>" target="_blank">
+                <img src="<?php echo esc_url( $info['topcorner_image_src'] ); ?>" />
             </a>
           </div>
         </div>

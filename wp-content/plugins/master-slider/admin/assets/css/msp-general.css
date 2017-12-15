@@ -1,7 +1,7 @@
 /* This stylesheet is used to style the admin page for masterslider plugin.*/
 
 .manage-column.column-ID {
-	width:50px;
+	width:60px;
 }
 .manage-column.column-shortcode {
 	width: 150px;
@@ -736,15 +736,23 @@ tbody .latest-updates {
 }
 
 .aux-md-get-now,
-.aux-md-get-now:hover {
-    background: #3d3d3d;
+.aux-md-try-later{
+    padding: 15px;
+}
+
+.aux-md-get-now {
+    background: #bdb52c;
+    border: 1px solid #ada526;
     color: #fff;
     margin-right: 5px;
 }
-.aux-md-try-later,
-.aux-md-try-later:hover {
+.aux-md-try-later {
     background: #fff;
     color: #3d3d3d;
+}
+.aux-md-get-now:hover,
+.aux-md-try-later:hover {
+    color:inherit;
 }
 
 .msp-logo {

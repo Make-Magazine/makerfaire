@@ -9,13 +9,13 @@ if ( ! is_object( $wpdb ) ) {
 	wp_die( 'Access denied' );
 }
 // FOR EXPORTS ONLY
-if ( isset( $_GET['download'] ) && isset( $_GET['_wpnonce'] ) && false !== wp_verify_nonce( $_GET['_wpnonce'], 'wp-admin-ui-export' ) ) {
+if ( isset( $_GET['exports_and_reports_download'] ) && isset( $_GET['_wpnonce'] ) && false !== wp_verify_nonce( $_GET['_wpnonce'], 'wp-admin-ui-export' ) ) {
     do_action('wp_admin_ui_export_download');
-    $file = WP_ADMIN_UI_EXPORT_DIR.'/'.str_replace(array('/','..'),'',$_GET['export']);
+    $file = WP_ADMIN_UI_EXPORT_DIR.'/'.str_replace(array('/','..'),'',$_GET['exports_and_reports_export']);
 
     $file = realpath( $file );
 
-	if ( ! isset( $_GET['export'] ) || empty( $_GET['export'] ) || ! file_exists( $file ) ) {
+	if ( ! isset( $_GET['exports_and_reports_export'] ) || empty( $_GET['exports_and_reports_export'] ) || ! file_exists( $file ) ) {
 		wp_die( 'File not found.' );
 	}
 
@@ -52,9 +52,9 @@ if ( isset( $_GET['download'] ) && isset( $_GET['_wpnonce'] ) && false !== wp_ve
  *
  * @package Admin UI for Plugins
  *
- * @version 1.9.7
+ * @version 1.9.8.20171011
  * @author Scott Kingsley Clark
- * @link http://scottkclark.com/
+ * @link https://www.scottkclark.com/
  *
  * @param mixed $options
  */
@@ -128,7 +128,7 @@ class WP_Admin_UI
         do_action('wp_admin_ui_pre_init',$options);
         $options = $this->do_hook('options',$options);
         $this->base_url = plugins_url( 'Admin.class.php', __FILE__  );
-        $this->export_url = admin_url( 'admin-ajax.php' ) . '?action=wp_admin_ui_export&download=1&_wpnonce='.wp_create_nonce('wp-admin-ui-export').'&export=';
+        $this->export_url = admin_url( 'admin-ajax.php' ) . '?action=wp_admin_ui_export&exports_and_reports_download=1&_wpnonce='.wp_create_nonce('wp-admin-ui-export').'&exports_and_reports_export=';
         $this->assets_url = str_replace('/Admin.class.php','',$this->base_url).'/assets';
         if(false!==$this->get_var('id'))
             $this->id = sanitize_text_field( $_GET['id'] );
@@ -243,7 +243,7 @@ class WP_Admin_UI
      */
     function var_update ($array=false,$allowed=false,$url=false,$exclusive=false)
     {
-        $excluded = array('do','id','pg','search_query','order','order_dir','limit','action','export','export_type','export_delimiter','remove_export','updated','duplicate');
+        $excluded = array('do','id','pg','search_query','order','order_dir','limit','action','exports_and_reports_download','exports_and_reports_export','export_type','export_delimiter','remove_export','updated','duplicate');
         if(false===$allowed)
             $allowed = array();
         if(!isset($_GET))
@@ -829,7 +829,7 @@ class WP_Admin_UI
             elseif($attributes['type']=='bool')
                 $this->row[$column] = ($this->row[$column]==1?'Yes':'No');
             elseif($attributes['type']=='number')
-                $this->row[$column] = intval($this->row[$column]);
+                $this->row[$column] = (int) ($this->row[$column]);
             elseif($attributes['type']=='decimal')
                 $this->row[$column] = number_format($this->row[$column],2);
             elseif($attributes['type']=='related'&&false!==$attributes['related'])
@@ -1693,8 +1693,8 @@ class WP_Admin_UI
         if(false!==$this->pagination&&!$full)
         {
             $start = ($this->page-1)*$this->limit;
-            $end = ($this->page-1)*$this->limit+$this->limit;
-            $limitsql .= (int) $start.','. (int) $end;
+
+            $limitsql .= (int) $start.','. (int) $this->limit;
         }
         else
             $sql = str_replace (' LIMIT %%LIMIT%% ','',$sql);

@@ -19,8 +19,9 @@ if ( ! defined( 'WP_ADMIN_UI_EXPORT_DIR' ) ) {
 	define( 'WP_ADMIN_UI_EXPORT_DIR', WP_CONTENT_DIR . '/exports' );
 }
 
-if ( ! function_exists( 'is_plugin_active' ) || ! is_plugin_active( dirname( __FILE__ ) . '/exports-and-reports.php' ) ) {
-	wp_die();
+if ( ! function_exists( 'is_plugin_active' )
+     || ! is_plugin_active( basename( dirname( __FILE__ ) ) . '/exports-and-reports.php' ) ) {
+	wp_die( 'Exports and Reports plugin not activated' );
 }
 
 set_time_limit( 6000 );
@@ -191,7 +192,7 @@ else {
 			    'message' => 'Report exported'
 			);
 
-			if ( ! empty( $_GET[ 'download' ] ) ) {
+			if ( ! empty( $_GET[ 'exports_and_reports_download' ] ) ) {
 				$download = true;
 			}
 		}

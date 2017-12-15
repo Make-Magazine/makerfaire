@@ -170,6 +170,7 @@ class A_Gallery_Display_View extends Mixin
 class C_Display_Type extends C_DataMapper_Model
 {
     var $_mapper_interface = 'I_Display_Type_Mapper';
+    var $__settings = array();
     function define($properties = array(), $mapper = FALSE, $context = FALSE)
     {
         parent::define($mapper, $properties, $context);
@@ -200,12 +201,33 @@ class C_Display_Type extends C_DataMapper_Model
      */
     function &__get($property)
     {
-        if (isset($this->settings) && isset($this->settings[$property])) {
-            $retval =& $this->settings[$property];
-            return $retval;
+        if ($property == 'settings') {
+            if (isset($this->_stdObject->settings)) {
+                //$this->__settings = array_merge($this->_stdObject->settings, $this->__settings);
+            }
+            return $this->_stdObject->settings;
+        }
+        if (isset($this->_stdObject->settings[$property]) && $this->_stdObject->settings[$property] != NULL) {
+            return $this->_stdObject->settings[$property];
         } else {
             return parent::__get($property);
         }
+    }
+    function &__set($property, $value)
+    {
+        if ($property == 'settings') {
+            $retval = $this->_stdObject->settings = $value;
+        } else {
+            $retval = $this->_stdObject->settings[$property] = $value;
+        }
+        return $retval;
+    }
+    function __isset($property_name)
+    {
+        if ($property_name == 'settings') {
+            return isset($this->_stdObject->settings);
+        }
+        return isset($this->_stdObject->settings[$property_name]) || parent::__isset($property_name);
     }
 }
 class Mixin_Display_Type_Validation extends Mixin
@@ -2290,6 +2312,38 @@ class Mixin_Display_Type_Form extends Mixin
     function initialize()
     {
         $this->object->implement('I_Display_Type_Form');
+    }
+    /**
+     * A wrapper to wp_enqueue_script() and ATP's mark_script()
+     *
+     * Unlike wp_enqueue_script() the version parameter is last as NGG should always use NGG_SCRIPT_VERSION
+     * @param string $handle
+     * @param string $source
+     * @param array $dependencies
+     * @param bool $in_footer
+     * @param string $version
+     */
+    public function enqueue_script($handle, $source = '', $dependencies = array(), $in_footer = FALSE, $version = NGG_SCRIPT_VERSION)
+    {
+        wp_enqueue_script($handle, $source, $dependencies, $version, $in_footer);
+        $atp = C_Attach_Controller::get_instance();
+        if ($atp !== NULL) {
+            $atp->mark_script($handle);
+        }
+    }
+    /**
+     * A wrapper to wp_enqueue_style()
+     *
+     * Unlike wp_enqueue_style() the version parameter is last as NGG should always use NGG_SCRIPT_VERSION
+     * @param string $handle
+     * @param string $source
+     * @param array $dependencies
+     * @param string $media
+     * @param string $version
+     */
+    public function enqueue_style($handle, $source = '', $dependencies = array(), $media = 'all', $version = NGG_SCRIPT_VERSION)
+    {
+        wp_enqueue_style($handle, $source, $dependencies, $version, $media);
     }
     /**
      * Returns the name of the display type. Sub-class should override

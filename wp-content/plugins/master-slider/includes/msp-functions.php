@@ -165,7 +165,7 @@ function msp_flush_all_sliders_cache( $slider_types = array() ){
   * @return mixed   true if successful, false otherwise
   */
  function msp_delete_slider_transient( $slider_id ) {
-     return delete_transient( 'masterslider_output_' . $slider_id );
+     return msp_delete_transient( 'masterslider_output_' . $slider_id );
  }
 
 
@@ -304,7 +304,7 @@ function msp_update_slider_custom_css_and_fonts( $slider_id ) {
  */
 function msp_set_slider_transient( $slider_id, $value, $cache_period = null ) {
     $cache_period = is_numeric( $cache_period ) ? (float)msp_get_setting( '_cache_period', 'msp_general_setting', 12 ) : $cache_period;
-    return set_transient( 'master_slider_output_' . $slider_id , $value, (int)$cache_period * HOUR_IN_SECONDS );
+    return msp_set_transient( 'master_slider_output_' . $slider_id , $value, (int)$cache_period * HOUR_IN_SECONDS );
 }
 
 
@@ -315,7 +315,7 @@ function msp_set_slider_transient( $slider_id, $value, $cache_period = null ) {
  * @return mixed   Value of transient or False If the transient does not exist or does not have a value
  */
 function msp_get_slider_transient( $slider_id ) {
-    return get_transient( 'master_slider_output_' . $slider_id );
+    return msp_get_transient( 'master_slider_output_' . $slider_id );
 }
 
 
@@ -734,6 +734,76 @@ function msp_get_setting( $option, $section, $default = '' ) {
     }
 
     return $default;
+}
+
+/**
+ * Set/update the value of a transient.
+ *
+ * You do not need to serialize values. If the value needs to be serialized, then
+ * it will be serialized before it is set.
+ *
+ *
+ * @param string $transient  Transient name. Expected to not be SQL-escaped. Must be
+ *                           172 characters or fewer in length.
+ * @param mixed  $value      Transient value. Must be serializable if non-scalar.
+ *                           Expected to not be SQL-escaped.
+ * @param int    $expiration Optional. Time until expiration in seconds. Default 0 (no expiration).
+ * @return bool False if value was not set and true if value was set.
+ */
+function msp_set_transient( $transient, $value, $expiration = 0 ) {
+    global $_wp_using_ext_object_cache;
+
+    $current_using_cache = $_wp_using_ext_object_cache;
+    $_wp_using_ext_object_cache = false;
+
+    $result = set_transient( $transient, $value, $expiration );
+
+    $_wp_using_ext_object_cache = $current_using_cache;
+
+    return $result;
+}
+
+
+/**
+ * Get the value of a transient.
+ *
+ * If the transient does not exist, does not have a value, or has expired,
+ * then the return value will be false.
+ *
+ * @param string $transient Transient name. Expected to not be SQL-escaped.
+ * @return mixed Value of transient.
+ */
+function msp_get_transient( $transient ) {
+    global $_wp_using_ext_object_cache;
+
+    $current_using_cache = $_wp_using_ext_object_cache;
+    $_wp_using_ext_object_cache = false;
+
+    $result = get_transient( $transient );
+
+    $_wp_using_ext_object_cache = $current_using_cache;
+
+    return $result;
+}
+
+
+/**
+ * Delete a transient.
+ *
+ * @param string $transient Transient name. Expected to not be SQL-escaped.
+ * @return bool true if successful, false otherwise
+ */
+function msp_delete_transient( $transient ) {
+    global $_wp_using_ext_object_cache;
+
+    $current_using_cache = $_wp_using_ext_object_cache;
+    $_wp_using_ext_object_cache = false;
+
+    $result = delete_transient( $transient );
+
+    $_wp_using_ext_object_cache = $current_using_cache;
+
+    return $result;
 }
 
 /*-----------------------------------------------------------------------------------*/

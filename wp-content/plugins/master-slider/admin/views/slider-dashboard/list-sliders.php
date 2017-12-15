@@ -184,24 +184,32 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
 <?php } ?>
 
 <?php
-    if( isset( $_GET['dismiss_phlox_notice'] ) && $_GET['dismiss_phlox_notice'] == 1 ){
-        set_transient( 'masterslider_display_phlox_notice', 1, 3 * DAY_IN_SECONDS );
+    if( isset( $_GET['dismiss_mspp_notice'] ) && $_GET['dismiss_mspp_notice'] == 1 ){
+        msp_set_transient( 'masterslider_display_popup_notice', 1000, 3 * DAY_IN_SECONDS );
     }
-    if( false === get_transient( 'masterslider_display_phlox_notice' ) || ! empty( $_GET['phlox'] ) ) {
-        set_transient( 'masterslider_display_phlox_notice', 1, 5 * YEAR_IN_SECONDS );
+    if( false === msp_get_transient( 'masterslider_display_popup_notice' ) || ! empty( $_GET['msad'] ) ) {
+        msp_set_transient( 'masterslider_display_popup_notice', 1000, 5 * YEAR_IN_SECONDS );
+
+        $info = msp_get_ad_info();
 ?>
 
 <div id="smd-modal-1" class="aux-smd-modal aux-smd-show">
-  <img src="<?php echo MSWP_AVERTA_ADMIN_URL; ?>/assets/images/thirdparty/phlox-popup.png" />
-  <a href="#" class="aux-smd-close" title="Close"></a>
-  <div class="msp-ad-btns-container">
-    <a href="http://avt.li/phmslpu" class="msp-ad-btn aux-md-get-now"><?php _e( 'Get it Now', MSWP_TEXT_DOMAIN ); ?></a>
-    <a href="?page=master-slider&dismiss_phlox_notice=1" class="msp-ad-btn aux-md-try-later"><?php _e( 'Remind Me Later', MSWP_TEXT_DOMAIN ); ?></a>
-  </div>
+    <img src="<?php echo esc_url( $info['popup_image_src'] ); ?>" />
+    <a href="#" class="aux-smd-close" title="<?php esc_attr_e( 'Close', MSWP_TEXT_DOMAIN ); ?>"></a>
+    <div class="msp-ad-btns-container">
+        <div>
+            <a href="<?php echo esc_url( $info['popup_link'] ); ?>" class="msp-ad-btn aux-md-get-now aux-md-ac1" target="_blank"><?php echo $info['popup_ac_btn_label']; ?></a>
+            <a href="?page=master-slider&dismiss_mspp_notice=1" class="msp-ad-btn aux-md-try-later aux-md-ac1"><?php _e( 'Remind Me Later', MSWP_TEXT_DOMAIN ); ?></a>
+        </div>
+        <?php if( ! empty( $info['popup_last_link_text'] ) ){ ?>
+        <a href="<?php echo esc_url( $info['popup_last_link_url'] ); ?>" class="aux-md-more-info aux-md-link3" target="_blank"><?php echo esc_html( $info['popup_last_link_text'] ); ?></a>
+        <?php } ?>
+    </div>
 </div>
 
 <div class="aux-smd-overlay"></div>
 
+<style><?php echo $info['popup_style']; ?></style>
 <script>
     (function($, window, document, undefined){
         "use strict";
