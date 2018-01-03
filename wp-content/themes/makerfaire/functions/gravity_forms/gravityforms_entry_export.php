@@ -93,7 +93,7 @@ function mf_custom_import_entries() {
             <td>Type of Import:</td>
             <td>
               <input type="radio" name="importType" value="location" checked> Location Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/location_import.csv" download>Example</a><br>
-              <input type="radio" name="importType" value="sponsor"> Sponsor Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a><br>
+              <input type="radio" name="importType" value="sponsor"> Sponsor Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/sponsor_upload_example.csv" download>Example</a><br>
               <input type="radio" name="importType" value="entry"> Entry Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a><br>
               <input type="radio" name="importType" value="ribbon"> Ribbon Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/ribbon_import_example.csv" download>Example</a>
             </td>

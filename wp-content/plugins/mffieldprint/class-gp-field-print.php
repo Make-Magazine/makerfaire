@@ -83,14 +83,16 @@ class GP_Field_Print extends GWPerk {
         function printField(fieldID) {
           var divToPrint=document.getElementById("field_<?php echo $form['id'];?>_"+fieldID);
           newWin= window.open("");
-
+/*use this line to add CSS
           newWin.document.write('<html><head><title>Print it!</title>');
-          /*use this line to add CSS
+
             newWin.document.write('<link rel="stylesheet" type="text/css" href="styles.css">\n\');
+
+          newWin.document.write('</head>');
+          newWin.document.write('<body>');
           */
-          newWin.document.write('</head><body>');
           newWin.document.write(divToPrint.outerHTML);
-          win.document.write('</body></html>');
+          /*win.document.write('</body></html>');*/
 
           newWin.print();
           newWin.close();
