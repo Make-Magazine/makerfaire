@@ -7,7 +7,7 @@ class GP_Read_Only extends GWPerk {
 	protected $min_gravity_forms_version = '1.6.11';
 	protected $min_wp_version = '3.0';
 
-	private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
+  private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
 	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'workflow_user', 'workflow_role', 'workflow_assignee_select' );
 
 	public function init() {
@@ -289,7 +289,7 @@ class GP_Read_Only extends GWPerk {
 					$index++;
 				}
 
-				if( rgar( $choices, 'isSelected' ) ) {
+				if( rgar( $choice, 'isSelected' ) ) {
 					$full_input_id = sprintf( '%d.%d', $field['id'], $index );
 					$price         = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
 					$choice_value  = $field['type'] == 'product' ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
