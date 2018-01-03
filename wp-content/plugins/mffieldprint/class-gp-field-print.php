@@ -105,24 +105,12 @@ class GP_Field_Print extends GWPerk {
   public function print_field_content( $input_html, $field, $value, $entry_id, $form_id ) {
 
     //display only on entry
-		if( $field->is_entry_detail() ) {
+		if( $field->is_entry_detail() || GFCommon::is_form_editor()) {
 			return $input_html;
 		}
 
 		$input_type = RGFormsModel::get_input_type($field);
 		if( !in_array( $input_type, $this->supported_field_types ) || ! rgar( $field, $this->key( 'enable' ) ) ) {
-      if($field->id == 113){
-
-        if(!in_array( $input_type, $this->supported_field_types )) {
-          echo 'not supported';
-
-        }
-        if(! rgar( $field, $this->key( 'enable' ))){
-          echo 'not enabled ';
-        }
-        echo 'fail ';
-      }
-
 			return $input_html;
 		}
 
