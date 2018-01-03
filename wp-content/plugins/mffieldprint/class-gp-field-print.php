@@ -85,8 +85,9 @@ class GP_Field_Print extends GWPerk {
           newWin= window.open("");
 
           newWin.document.write('<html><head><title>Print it!</title>');
-          //use this line to add CSS
-          //newWin.document.write('<link rel="stylesheet" type="text/css" href="styles.css">\n\');
+          /*use this line to add CSS
+            newWin.document.write('<link rel="stylesheet" type="text/css" href="styles.css">\n\');
+          */
           newWin.document.write('</head><body>');
           newWin.document.write(divToPrint.outerHTML);
           win.document.write('</body></html>');
