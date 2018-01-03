@@ -75,9 +75,10 @@ function mf_custom_import_entries() {
   <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#import">File Import</a></li>
     <!--<li><a data-toggle="tab" href="#home">Basic Info</a></li>-->
-    <li><a data-toggle="tab" href="#location">Location Import Info</a></li>
-    <li><a data-toggle="tab" href="#entry">Entry Import Info</a></li>
-    <li><a data-toggle="tab" href="#ribbons">Ribbon Layout</a></li>
+    <li><a data-toggle="tab" href="#location">Location</a></li>
+    <li><a data-toggle="tab" href="#sponsor">Sponsor</a></li>
+    <li><a data-toggle="tab" href="#entry">Entry</a></li>
+    <li><a data-toggle="tab" href="#ribbons">Ribbon</a></li>
   </ul>
 
   <div class="tab-content">
@@ -111,7 +112,8 @@ function mf_custom_import_entries() {
 
     <div id="location" class="tab-pane fade">
       <h3>Location Import Layout</h3>
-
+      <a href="/wp-content/themes/makerfaire/devScripts/location_import.csv" download>Example</a>
+      <hr>
       <table class="table border" width="100%">
         <tr>
           <th>entry_id</th>
@@ -134,48 +136,75 @@ function mf_custom_import_entries() {
       </table>
     </div>
 
-    <div id="entry" class="tab-pane fade">
-      This option can be used to import exhibits and sponsors. The import file needs to be in a CSV format. Row 1 contains field names or ID's and Row 2 is the start of data. The data must match the format listed for that field in the form you are importing to.<br/>
-      <br/>
-      For more information on the field layouts, please go to:<br/>
-      <a href="http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=9">http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=999</a><br/>
-      <br/>
+    <div id="sponsor" class="tab-pane fade">
+      <h3>Sponsor Import Layout</h3>
+      <a href="/wp-content/themes/makerfaire/devScripts/sponsor_upload_example.csv" download>Example</a>
+      <hr>
 
       <table class="table border" width="100%">
         <tr><th>Field Names/Field ID</th><th>Verification</th><th>description</th><th>Required</th></tr>
-        <tr><td>entry_creator</td><td>Numeric</td><td>userID to associate this entry to</td><td>Sponsors/ Exhibits</td></tr>
-        <tr><td>form_id</td><td>Numeric</td><td>Sponsors/ Exhibits</td><td>Sponsors/ Exhibits</td></tr></tr>
-        <tr><td>link_entry_id</td><td>Numeric</td><td>Used to link to a parent entry</td><td>Optional</td></tr>
-        <tr><td>16</td><td>Non Blank</td><td>Public Description (limit to 250 characters</td><td>Sponsors/ Exhibits</td></tr>
-        <tr><td>22</td><td>Non Blank</td><td>Photo URL</td><td>Sponsors/ Exhibits</td></tr>
-        <tr><td>96.3</td><td>Non Blank</td><td>Contact First Name</td><td>Sponsors/ Exhibits</td></tr>
-        <tr><td>96.6</td><td></td><td>Contact Last Name</td><td>Sponsors/ Exhibits</td></tr>
-        <tr><td>98</td><td>Non Blank</td><td>Contact Email</td><td>Sponsors/ Exhibits</td></tr>
-        <tr><td>151</td><td>Non Blank</td><td>Project Name</td><td>Sponsors/ Exhibits</td></tr>
-        <tr><td>303</td><td>Non Blank</td><td>Status to set the entry to</td><td>Sponsors/ Exhibits</td></tr>
-        <tr><td>101.3</td><td>Non Blank</td><td>Contact City</td><td>Exhibit Only</td></tr>
-        <tr><td>101.4</td><td>Non Blank</td><td>Contact State (full state name)</td><td>Exhibit Only</td></tr>
-        <tr><td>101.5</td><td>Non Blank</td><td>Contact Zip</td><td>Exhibit Only</td></tr>
-        <tr><td>101.6</td><td>Non Blank</td><td>Contact Country (ie United States)</td><td>Exhibit Only</td></tr>
-        <tr><td>320</td><td>Numeric</td><td>Primary Category</td><td>Exhibit Only</td></tr>
-        <tr><td>287</td><td>Non Blank</td><td>What inspired you to make this project?</td><td>Exhibit Only</td></tr>
-        <tr><td>160.3</td><td>Non Blank</td><td>Maker 1 - First Name</td><td>Exhibit Only</td></tr>
-        <tr><td>160.6</td><td></td><td>Maker 1 - Last Name</td><td>Exhibit Only</td></tr>
-        <tr><td>161</td><td>Non Blank</td><td>Maker 1 - Email (must be unique)</td><td>Exhibit Only</td></tr>
-        <tr><td>217</td><td>Non Blank</td><td>Maker 1 - Photo URL</td><td>Exhibit Only</td></tr>
-        <tr><td>234</td><td>Non Blank</td><td>Maker 1 - Bio</td><td>Exhibit Only</td></tr>
-        <tr><td>369.1</td><td>Non Blank</td><td>Maker 1 - Address</td><td>Exhibit Only</td></tr>
-        <tr><td>369.3</td><td>Non Blank</td><td>Maker 1 - City</td><td>Exhibit Only</td></tr>
-        <tr><td>369.4</td><td>Non Blank</td><td>Maker 1 - State (full state name)</td><td>Exhibit Only</td></tr>
-        <tr><td>369.5</td><td>Non Blank</td><td>Maker 1 - Zip</td><td>Exhibit Only</td></tr>
-        <tr><td>369.6</td><td>Non Blank</td><td>Maker 1 - Country (ie United States)</td><td>Exhibit Only</td></tr>
-        <tr><td>443</td><td>Non Blank</td><td>Maker 1 - Role in project</td><td>Exhibits Only</td></tr>
-        <tr><td>310</td><td>Non Blank</td><td>Maker 1 Age range<br/><i>must match one of the options from the form</i></td><td>Exhibit Only</td></tr>
+        <tr><td>entry_creator</td><td>Numeric</td><td>userID to associate this entry to</td><td>Yes</td></tr>
+        <tr><td>form_id</td><td>Numeric</td><td>Sponsors/ Exhibits</td><td>Yes</td></tr></tr>
+        <tr><td>link_entry_id</td><td>Numeric</td><td>Used to link to a parent entry</td><td></td></tr>
+        <tr><td>16</td><td>Non Blank</td><td>Public Description (limit to 250 characters</td><td>Yes</td></tr>
+        <tr><td>22</td><td>Non Blank</td><td>Photo URL</td><td>Yes</td></tr>
+        <tr><td>96.3</td><td>Non Blank</td><td>Contact First Name</td><td>Yes</td></tr>
+        <tr><td>96.6</td><td></td><td>Contact Last Name</td><td>Yes</td></tr>
+        <tr><td>98</td><td>Non Blank</td><td>Contact Email</td><td>Yes</td></tr>
+        <tr><td>151</td><td>Non Blank</td><td>Project Name</td><td>Yes</td></tr>
+        <tr><td>303</td><td>Non Blank</td><td>Status to set the entry to. (ie. Accepted)</td><td>Yes</td></tr>
       </table>
+      Additional fields can be added to the import by entering that field ID in the first row. This must be a valid field for the form you are inputing and the format must match the field.
+    </div>
+
+    <div id="entry" class="tab-pane fade">
+      <h3>Entry Import Layout</h3>
+      <a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a>
+      <hr>
+      <i>Row 1 contains field names or ID's and Row 2 is the start of data. The data must match the format listed for that field in the form you are importing into.</i>
+        <br/>
+
+      <table class="table border" width="100%">
+        <tr><th>Field Names/Field ID</th><th>Verification</th><th>description</th><th>Required</th></tr>
+        <tr><td>entry_creator</td><td>Numeric</td><td>userID to associate this entry to</td><td>Yes</td></tr>
+        <tr><td>form_id</td><td>Numeric</td><td>Sponsors/ Exhibits</td><td>Yes</td></tr></tr>
+        <tr><td>link_entry_id</td><td>Numeric</td><td>Used to link to a parent entry</td><td>Optional</td></tr>
+        <tr><td>16</td><td>Non Blank</td><td>Public Description (limit to 250 characters</td><td>Yes</td></tr>
+        <tr><td>22</td><td>Non Blank</td><td>Photo URL</td><td>Yes</td></tr>
+        <tr><td>96.3</td><td>Non Blank</td><td>Contact First Name</td><td>Yes</td></tr>
+        <tr><td>96.6</td><td></td><td>Contact Last Name</td><td>Yes</td></tr>
+        <tr><td>98</td><td>Non Blank</td><td>Contact Email</td><td>Yes</td></tr>
+        <tr><td>151</td><td>Non Blank</td><td>Project Name</td><td>Yes</td></tr>
+        <tr><td>303</td><td>Non Blank</td><td>Status to set the entry to</td><td>Yes</td></tr>
+        <tr><td>101.3</td><td>Non Blank</td><td>Contact City</td><td>Yes</td></tr>
+        <tr><td>101.4</td><td>Non Blank</td><td>Contact State (full state name)</td><td>Yes</td></tr>
+        <tr><td>101.5</td><td>Non Blank</td><td>Contact Zip</td><td>Yes</td></tr>
+        <tr><td>101.6</td><td>Non Blank</td><td>Contact Country (ie United States)</td><td>Yes</td></tr>
+        <tr><td>320</td><td>Numeric</td><td>Primary Category</td><td>Yes</td></tr>
+        <tr><td>287</td><td>Non Blank</td><td>What inspired you to make this project?</td><td>Yes</td></tr>
+        <tr><td>160.3</td><td>Non Blank</td><td>Maker 1 - First Name</td><td>Yes</td></tr>
+        <tr><td>160.6</td><td></td><td>Maker 1 - Last Name</td><td>Yes</td></tr>
+        <tr><td>161</td><td>Non Blank</td><td>Maker 1 - Email (must be unique)</td><td>Yes</td></tr>
+        <tr><td>217</td><td>Non Blank</td><td>Maker 1 - Photo URL</td><td>Yes</td></tr>
+        <tr><td>234</td><td>Non Blank</td><td>Maker 1 - Bio</td><td>Yes</td></tr>
+        <tr><td>369.1</td><td>Non Blank</td><td>Maker 1 - Address</td><td>Yes</td></tr>
+        <tr><td>369.3</td><td>Non Blank</td><td>Maker 1 - City</td><td>Yes</td></tr>
+        <tr><td>369.4</td><td>Non Blank</td><td>Maker 1 - State (full state name)</td><td>Yes</td></tr>
+        <tr><td>369.5</td><td>Non Blank</td><td>Maker 1 - Zip</td><td>Yes</td></tr>
+        <tr><td>369.6</td><td>Non Blank</td><td>Maker 1 - Country (ie United States)</td><td>Yes</td></tr>
+        <tr><td>443</td><td>Non Blank</td><td>Maker 1 - Role in project</td><td>Yes</td></tr>
+        <tr><td>310</td><td>Non Blank</td><td>Maker 1 Age range<br/><i>must match one of the options from the form</i></td><td>Yes</td></tr>
+      </table>
+      <br/>
+      Additional fields can be added to the import by entering that field ID in the first row. This must be a valid field for the form you are inputing and the format must match the field.
+      <br/>
+      For more information on the field layouts, please go to (where 999 is the form you are importing into):<br/>
+      <a href="http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=9">http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=999</a><br/>
     </div>
     <div id="ribbons" class="tab-pane fade">
       <h3>Ribbon Import Layout</h3>
-
+      <a href="/wp-content/themes/makerfaire/devScripts/ribbon_import_example.csv" download>Example</a>
+      <hr>
       <table class="table border" width="100%">
         <tr>
           <th>Event&nbsp;<span class="required">*</span></i></th>
