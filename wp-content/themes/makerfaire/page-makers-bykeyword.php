@@ -109,6 +109,7 @@ get_header(); ?>
           if ($pos !== false ){
               if($field!='Accepted')  $validEntry = false;
           }
+          if($entry['status']!='active')  $validEntry = false;
         }
         if($validEntry) {
           $project_name = isset($entry['151']) ? $entry['151']  : '';
