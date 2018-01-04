@@ -208,7 +208,7 @@ function cannedRpt(){
         if($detail['field_number'] == 320 || strpos($detail['field_number'], '321.')!== false || strpos($detail['field_number'], '302.')!== false){
           $value = get_CPT_name($value);
         }
-        $value = convert_smart_quotes(htmlspecialchars_decode ($value));
+        $value = stripslashes(convert_smart_quotes(htmlspecialchars_decode ($value)));
 
         //check if we pulled by specific field id or if this was a request for all values
         $fieldID = $detail['field_number'];
