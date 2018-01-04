@@ -311,20 +311,24 @@ function gf_collapsible_sections($form, $lead){
           </thead>';
   $addEntriesCnt=0;
   foreach($emailArray as $key=>$email){
-    $results = $wpdb->get_results( 'SELECT *, '
-                          . ' (select value from wp_rg_lead_detail detail2 '
-                          . '  where detail2.lead_id = wp_rg_lead_detail.lead_id and '
-                          . '        field_number    = 151 '
-                          . ' ) as projectName, '
-                          . ' (select value from wp_rg_lead_detail detail2 '
-                          . '  where detail2.lead_id = wp_rg_lead_detail.lead_id and '
-                          . '        field_number    = 303 '
-                          . ' ) as status '
-                  . ' FROM wp_rg_lead_detail '
-                  . ' join wp_rg_form on wp_rg_form.id = wp_rg_lead_detail.form_id '
-                  . ' WHERE value = "'.$key.'"'
-                  . '   and lead_id != '.$entry_id.' group by lead_id order by lead_id');
-
+    $results = $wpdb->get_results( 'SELECT  *,
+                                            (SELECT value
+                                               FROM wp_rg_lead_detail detail2
+                                              WHERE detail2.lead_id = wp_rg_lead_detail.lead_id
+                                                AND field_number = 151 ) as projectName,
+                                            (SELECT value
+                                               FROM wp_rg_lead_detail detail2
+                                              WHERE detail2.lead_id = wp_rg_lead_detail.lead_id
+                                                AND field_number = 303 ) as status,
+                                            (SELECT status
+                                               FROM wp_rg_lead
+                                              WHERE wp_rg_lead.id = wp_rg_lead_detail.lead_id) as lead_status
+                                      FROM wp_rg_lead_detail
+                                      JOIN wp_rg_form on wp_rg_form.id = wp_rg_lead_detail.form_id
+                                     WHERE value = "'.$key.'"' .
+                                     ' AND lead_id != '.$entry_id.'
+                                  GROUP BY lead_id
+                                  ORDER BY lead_id');
 
     foreach($results as $addData){
       $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=entry&id=".$addData->form_id . '&lid='.$addData->lead_id;
@@ -342,7 +346,7 @@ function gf_collapsible_sections($form, $lead){
       $addEntries .=  '<td><a target="_blank" href="'.$outputURL.'">'.$addData->lead_id.'</a></td>'
           . '<td>'.$addData->projectName.'</td>'
           . '<td>'.$addData->title.'</td>'
-          . '<td>'.$addData->status.'</td>'
+          . '<td>'.($addData->lead_status=='active'?$addData->status:ucwords($addData->lead_status)).'</td>'
           . '</tr>';
     }
   }
