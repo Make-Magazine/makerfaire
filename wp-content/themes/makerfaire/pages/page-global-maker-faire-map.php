@@ -33,7 +33,7 @@
             <faires-map-filter class="map-filter-mini" default-state="true" filter="Mini">
               Mini
             </faires-map-filter>
-            <faires-map-filter class="map-filter-school" default-state="true" filter="School">
+            <faires-map-filter class="map-filter-school" default-state="false" filter="School">
               School
             </faires-map-filter>
           </div>
