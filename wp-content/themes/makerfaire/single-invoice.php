@@ -102,8 +102,15 @@ get_header(); ?>
 		<div class="content col-md-12">
 			<div class="invoice">
         <div class="row">
-          <div class="col-sm-6"><img src="http://makerfaire.com/wp-content/uploads/2016/01/mf_logo.jpg" width="300px"/></div>
-          <div class="col-sm-6"><h2>INVOICE</h2></div>
+          <div class="col-xs-10 col-sm-6">
+            <img src="http://makerfaire.com/wp-content/uploads/2016/01/mf_logo.jpg" width="300px"/>
+          </div>
+          <div class="col-xs-2 col-sm-push-4 col-sm-2">
+            <button class="btn btn-default pull-right" onclick="window.print();return false;">Print</button>
+          </div>
+          <div class="col-xs-12 col-sm-pull-2 col-sm-4">
+            <h2>INVOICE</h2>
+          </div>
         </div>
 
         <br/><br/>
