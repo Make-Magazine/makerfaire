@@ -117,17 +117,17 @@ get_header(); ?>
         <div class="row invoice-billing">
           <div class="col-sm-6">
             <div class="row">
-              <div class="col-sm-3"><b>Bill to:</b></div>
-              <div class="col-sm-9"><?php echo $billing_company_name;?></div>
+              <div class="col-xs-3"><b>Bill to:</b></div>
+              <div class="col-xs-9"><?php echo $billing_company_name;?></div>
             </div>
             <div class="row">
-              <div class="col-sm-3"><b>Contact:</b></div>
-              <div class="col-sm-9"><?php echo $billing_contact_name;?></div>
+              <div class="col-xs-3"><b>Contact:</b></div>
+              <div class="col-xs-9"><?php echo $billing_contact_name;?></div>
             </div>
             <br/>
             <div class="row">
-              <div class="col-sm-3">&nbsp;</div>
-              <div class="col-sm-9">
+              <div class="col-xs-3">&nbsp;</div>
+              <div class="col-xs-9">
                 <?php echo $billing_address .'<br/>'.
                            (!empty($billing_address2)?$billing_address2.'<br/>':'').
                            $billing_city.', '.$billing_state.' '.$billing_zip.'<br/>'.
@@ -137,37 +137,37 @@ get_header(); ?>
             </div>
             <br/>
             <div class="row">
-              <div class="col-sm-3">&nbsp;</div>
-              <div class="col-sm-9"><?php echo $billing_email;?></div>
+              <div class="col-xs-3">&nbsp;</div>
+              <div class="col-xs-9"><?php echo $billing_email;?></div>
             </div>
             <div class="row">
-              <div class="col-sm-3">&nbsp;</div>
-              <div class="col-sm-9"><?php echo $billing_phone_num;?></div>
+              <div class="col-xs-3">&nbsp;</div>
+              <div class="col-xs-9"><?php echo $billing_phone_num;?></div>
             </div>
           </div>
           <div class="col-sm-6">
                         <div class="row">
-              <div class="col-sm-3"><b>Invoice number:</b></div>
-              <div class="col-sm-9"><?php echo $invoice_id; ?></div>
+              <div class="col-xs-3"><b>Invoice number:</b></div>
+              <div class="col-xs-9"><?php echo $invoice_id; ?></div>
             </div>
             <?php if($invoice_date!=''){?>
             <div class="row">
-              <div class="col-sm-3"><b>Invoice Date:</b></div>
-              <div class="col-sm-9"><?php echo $invoice_date;?></div>
+              <div class="col-xs-3"><b>Invoice Date:</b></div>
+              <div class="col-xs-9"><?php echo $invoice_date;?></div>
             </div>
             <?php } ?>
             <div class="row">
-              <div class="col-sm-3"><b>Due Date:</b></div>
-              <div class="col-sm-9">Due Upon Receipt</div>
+              <div class="col-xs-3"><b>Due Date:</b></div>
+              <div class="col-xs-9">Due Upon Receipt</div>
             </div>
             <br/>
             <div class="row">
-              <div class="col-sm-3"><b>Deliver to:</b></div>
-              <div class="col-sm-9">Exhibit Space Onsite</div>
+              <div class="col-xs-3"><b>Deliver to:</b></div>
+              <div class="col-xs-9">Exhibit Space Onsite</div>
             </div>
             <div class="row">
-              <div class="col-sm-3"><b>Sponsor:</b></div>
-              <div class="col-sm-9"><?php echo $sponsorName;?></div>
+              <div class="col-xs-3"><b>Sponsor:</b></div>
+              <div class="col-xs-9"><?php echo $sponsorName;?></div>
             </div>
           </div>
         </div>
@@ -227,7 +227,7 @@ get_header(); ?>
             Invoice Number: ".$invoice_id."%0D%0A
             Invoice: ".$invoiceLink;
         ?>
-        <a href="mailto:ar@makermedia.com,sponsorrelations@makermedia.com?subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
+        <a class="invoice-special-bil" href="mailto:ar@makermedia.com,sponsorrelations@makermedia.com?subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
         <br/><br/>
       </div><!-- /invoice -->
 		</div><!--Content-->
