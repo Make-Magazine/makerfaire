@@ -25,3 +25,27 @@
     display: none;
   }
 }
+
+@media print {
+  header, footer {
+    display: none;
+  }
+  .invoice {
+    .btn, .gform_footer {
+      display: none;
+    }
+    .invoice-header {
+      .col-xs-10,
+      .col-xs-12 {
+        width: 49%;
+        float: left;
+      }
+    }
+    .invoice-billing {
+      .col-sm-6 {
+        width: 49%;
+        float: left;
+      }
+    }
+  }
+}

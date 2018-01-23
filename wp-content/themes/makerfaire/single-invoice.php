@@ -101,7 +101,7 @@ get_header(); ?>
     <br/><br/>
 		<div class="content col-md-12">
 			<div class="invoice">
-        <div class="row">
+        <div class="row invoice-header">
           <div class="col-xs-10 col-sm-6">
             <img src="http://makerfaire.com/wp-content/uploads/2016/01/mf_logo.jpg" width="300px"/>
           </div>
@@ -114,7 +114,7 @@ get_header(); ?>
         </div>
 
         <br/><br/>
-        <div class="row">
+        <div class="row invoice-billing">
           <div class="col-sm-6">
             <div class="row">
               <div class="col-sm-3"><b>Bill to:</b></div>
