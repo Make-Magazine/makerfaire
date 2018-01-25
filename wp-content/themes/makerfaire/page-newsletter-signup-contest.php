@@ -31,11 +31,10 @@ get_header(); ?>
 
           <div class="col-sm-8 col-md-6 col-lg-4 col-sm-offset-2 col-md-offset-3 col-lg-offset-4">
 
-            <form id="nlp-form" class="nlp-form" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
-              <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
-              <input type="hidden" name="custom_list_makerfaire" value="yes" />
-              <input type="hidden" name="custom_list_makermedia" value="yes" />
+            <form id="nlp-contest" class="nlp-form" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
+              <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire -->
               <input type="hidden" name="cmd" value="subscribe" />
+              <div id="recapcha-contest" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
               <input type="hidden" id="email" name="email" value="" />
               <input type="hidden" id="format_mime" name="format" value="mime" />
               <input type="hidden" name="goto" value="" />
@@ -47,41 +46,6 @@ get_header(); ?>
               <input class="btn-cyan" type="submit" value="Submit" />
               <div class="clearfix"></div>
             </form>
-            <script>
-            jQuery(document).ready(function(){
-              jQuery(".fancybox-nl-contest").fancybox({
-                autoSize : false,
-                width  : 400,
-                autoHeight : true,
-                padding : 0,
-                afterLoad   : function() {
-                    this.content = this.content.html();
-                }
-              });
-              jQuery(document).on('submit', '#nlp-form', function (e) {
-                e.preventDefault();
-                // Now get the email into the form and send
-                var nlpEmail = jQuery('#nlp-input').val();
-                jQuery('#nlp-form #email').val(nlpEmail);
-                if (jQuery('#nlp-form #email').val() == '') {
-                  jQuery('#nlp-input').tooltip()
-                  jQuery('#nlp-input').tooltip('show')
-                  return false;
-                }
-                else {
-                  jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('#nlp-form').serialize());
-                  jQuery('.fancybox-nl-contest').trigger('click');
-                  jQuery('#nlp-input').val('');
-                }
-              });
-              jQuery('#nlp-input').keypress(function (e) {
-                if (e.keyCode ==13 || e.which == 13) {
-                  jQuery('#nlp-form .btn-cyan').submit();
-                  return false;
-                }
-              });
-            });
-            </script>
 
           </div>
 

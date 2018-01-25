@@ -57,9 +57,7 @@
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
           <form class="sub-form whatcounts-signup1" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
-            <input type="hidden" name="custom_list_makerfaire" value="yes" />
-            <input type="hidden" name="custom_list_makermedia" value="yes" />
+            <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire -->
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
@@ -68,6 +66,7 @@
             <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $server; ?>" />
             <input type="hidden" name="errors_to" value="" />
+            <div id="recapcha-footer-desktop" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
             <div class="mz-form-horizontal">
               <input id="wc-email" name="email" placeholder="Enter your Email" required type="text"><br>
               <input value="GO" class="btn-cyan" type="submit">
@@ -100,9 +99,7 @@
           <h4>Sign Up</h4>
           <p>Stay inspired and get fresh updates</p>
           <form class="sub-form whatcounts-signup1m" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
-            <input type="hidden" name="custom_list_makerfaire" value="yes" />
-            <input type="hidden" name="custom_list_makermedia" value="yes" />
+            <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire -->
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
@@ -111,6 +108,7 @@
             <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $server; ?>" />
             <input type="hidden" name="errors_to" value="" />
+            <div id="recapcha-footer-mobile" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
             <div class="mz-form-horizontal">
               <input id="wc-email-m" name="email" placeholder="Enter your Email" required type="email"><br>
               <input value="GO" class="btn-cyan" type="submit">
@@ -215,14 +213,14 @@
     jQuery('#featuredMakers').carousel({
       interval: 5000
     });
-         jQuery('#mf-featured-slider').carousel({
-             interval: 8000
-         });
+    jQuery('#mf-featured-slider').carousel({
+      interval: 8000
+    });
     jQuery( ".carousel" ).each( function() {
-          jQuery(this).carousel({
+      jQuery(this).carousel({
         interval: 4000
       });
-      });
+    });
   });
 </script>
 <div id="fb-root"></div>
@@ -417,5 +415,6 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(pa, s);
   })();
 </script>
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
 </body>
 </html>

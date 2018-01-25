@@ -35,8 +35,7 @@ get_header('version-2'); ?>
           <div class="col-sm-8 col-md-6 col-lg-4 col-sm-offset-2 col-md-offset-3 col-lg-offset-4">
 
             <form id="nlp-form" class="nlp-form form-inline" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
-              <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
-              <input type="hidden" name="custom_list_makerfaire" value="yes" />
+              <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire -->
               <input type="hidden" name="cmd" value="subscribe" />
               <input type="hidden" id="email" name="email" value="" />
               <input type="hidden" id="format_mime" name="format" value="mime" />
@@ -368,42 +367,11 @@ get_header('version-2'); ?>
 
               <hr />
 
+              <div id="recapcha-join" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+
               <input class="btn-cyan" type="submit" value="Submit" />
               <div class="clearfix"></div>
             </form>
-            <script>
-              jQuery(document).on('submit', '#nlp-form', function (e) {
-                e.preventDefault();
-                // First check if any checkboxes are checked
-                var anyBoxesChecked = false;
-                jQuery('#nlp-form input[type="checkbox"]').each(function() {
-                  if (jQuery(this).is(":checked")) {
-                    anyBoxesChecked = true;
-                  }
-                });
-                if (anyBoxesChecked == false) {
-                  jQuery('.pull-right[data-toggle="tooltip"]').tooltip();
-                  jQuery('.pull-right[data-toggle="tooltip"]').tooltip('show');
-                  return false;
-                }
-                // Now get the email into the form and send
-                else {
-                  var nlpEmail = jQuery('#nlp-input').val();
-                  jQuery('#nlp-form #email').val(nlpEmail);
-                  if (jQuery('#nlp-form #email').val() == '') {
-                    jQuery('#nlp-input').tooltip();
-                    jQuery('#nlp-input').tooltip('show');
-                    return false;
-                  }
-                  else {
-                    jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('#nlp-form').serialize());
-                    jQuery('.fancybox-thx').trigger('click');
-                    jQuery('.nl-modal-email-address').text(nlpEmail);
-                    jQuery('#whatcounts-signup2 #email').val(nlpEmail);
-                  }
-                }
-              });
-            </script>
 
           </div>
 
