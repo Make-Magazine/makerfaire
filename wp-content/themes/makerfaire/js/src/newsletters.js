@@ -1,12 +1,8 @@
 jQuery(document).ready(function(){
 
   var recaptchaKey = '6Lffo0EUAAAAABhGRLPk751JrmCLqR5bvUR9RYZJ';
-  var recaptchaFootDesk;
-  var recaptchaFootMob;
-  var recaptchaContest;
-  var recaptchaOverlay;
-  var recaptchaJoin;
-  var onloadCallback = function() {
+  var recaptchaFootDesk, recaptchaFootMob, recaptchaContest, recaptchaOverlay, recaptchaJoin;
+  onloadCallback = function() {
     if ( jQuery('#recapcha-footer-desktop').length ) {
       recaptchaFootDesk = grecaptcha.render('recapcha-footer-desktop', {
         'sitekey' : recaptchaKey
