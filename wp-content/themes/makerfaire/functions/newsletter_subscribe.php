@@ -19,9 +19,7 @@ function subscribe_return_path_overlay() { ?>
             <h2>Sign Up for the Maker Faire Newsletter</h2>
             <p>Keep informed, stay inspired.</p>
             <form class="sub-form whatcounts-signup1o" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
-              <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
-              <input type="hidden" name="custom_list_makerfaire" value="yes" />
-              <input type="hidden" name="custom_list_makermedia" value="yes" />
+              <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- maker faire -->
               <input type="hidden" name="cmd" value="subscribe"/>
               <input type="hidden" name="custom_source" value="Subscribe return path overlay"/>
               <input type="hidden" name="custom_incentive" value="none"/>
@@ -30,7 +28,8 @@ function subscribe_return_path_overlay() { ?>
               <input type="hidden" name="goto" value="//makerfaire.com/thanks-for-signing-up"/>
               <input type="hidden" name="custom_host" value="makerfaire.com" />
               <input type="hidden" name="errors_to" value=""/>
-              <input name="email" id="wc-email-o" class="overlay-input" placeholder="Enter your email" required type="email"><br>
+              <div id="recapcha-overlay" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+              <input name="email" id="wc-email-o" class="overlay-input" placeholder="Enter your email" required type="email">
               <input value="GO" class="black-overlay-btn" type="submit">
             </form>
           </div>
@@ -78,7 +77,6 @@ function display_thank_you_modal_if_signed_up() { ?>
             ?>
           <h4>You might also like these newsletters:</h4>
           <form class="whatcounts-signup2" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
-            <input type="hidden" name="slid" value="6B5869DC547D3D4690C43FE9E066FBC6" /><!-- Confirmation -->
             <input type="hidden" name="cmd" value="subscribe" />
             <input type="hidden" id="email" name="email" value="" />
             <input type="hidden" id="format_mime" name="format" value="mime" />
@@ -115,6 +113,7 @@ function display_thank_you_modal_if_signed_up() { ?>
       </div>
     </div>
   </div>
+  
   <div class="nl-modal-cont nl-thx-p2" style="display:none;">
     <div class="col-sm-4 hidden-xs nl-modal">
       <span class="fa-stack fa-4x">
@@ -128,64 +127,17 @@ function display_thank_you_modal_if_signed_up() { ?>
     </div>
     <div class="clearfix"></div>
   </div>
+
+  <div class="nl-modal-error" style="display:none;">
+    <div class="col-xs-12 nl-modal padtop">
+      <p class="lead">The reCAPTCHA box was not checked. Please try again.</p>
+    </div>
+    <div class="clearfix"></div>
+  </div>
   <script>
-  // Footer newsletter sign up form and modal
-  jQuery(document).ready(function(){
-    jQuery(".fancybox-thx").fancybox({
-      autoSize : false,
-      width  : 400,
-      autoHeight : true,
-      padding : 0,
-      afterLoad   : function() {
-          this.content = this.content.html();
-      }
-    });
-    jQuery(".nl-thx-p2").fancybox({
-      autoSize : false,
-      width  : 400,
-      autoHeight : true,
-      padding : 0,
-      afterLoad   : function() {
-          this.content = this.content.html();
-      }
-    });
-    // Desktop
-    jQuery(document).on('submit', '.whatcounts-signup1', function (e) {
-      e.preventDefault();
-      var bla = jQuery('#wc-email').val();
-      jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1').serialize());
-      jQuery('.fancybox-thx').trigger('click');
-      jQuery('.nl-modal-email-address').text(bla);
-      jQuery('.whatcounts-signup2 #email').val(bla);
-    });
-    // Mobile
-    jQuery(document).on('submit', '.whatcounts-signup1m', function (e) {
-      e.preventDefault();
-      var bla = jQuery('#wc-email-m').val();
-      jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1m').serialize());
-      jQuery('.fancybox-thx').trigger('click');
-      jQuery('.nl-modal-email-address').text(bla);
-      jQuery('.whatcounts-signup2 #email').val(bla);
-    });
-    // Header Overlay
-    jQuery(document).on('submit', '.whatcounts-signup1o', function (e) {
-      e.preventDefault();
-      var bla = jQuery('#wc-email-o').val();
-      jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1o').serialize());
-      jQuery('.fancybox-thx').trigger('click');
-      jQuery('.nl-modal-email-address').text(bla);
-      jQuery('.whatcounts-signup2 #email').val(bla);
-    });
-    jQuery(document).on('submit', '.whatcounts-signup2', function (e) {
-      e.preventDefault();
-      jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup2').serialize());
-      jQuery('.fancybox-thx').hide();
-      jQuery('.nl-thx-p2').trigger('click');
-    });
     jQuery('input[type="checkbox"]').click(function(e){
       e.stopPropagation();
     });
-  });
   </script>
 <?php }
 
