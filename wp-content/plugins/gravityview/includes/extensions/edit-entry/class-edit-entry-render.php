@@ -203,7 +203,7 @@ class GravityView_Edit_Entry_Render {
     //MF custom code to force GV to use the MAT form ID instead of the view form id
     $this->form_id = $this->entry['form_id'];
     $this->form = GFAPI::get_form($this->form_id);
-    $this->original_form = $this->form;
+    //$this->original_form = $this->form;
     self::$original_form = $this->form;
 
 		$this->view_id = $gravityview_view->getViewId();

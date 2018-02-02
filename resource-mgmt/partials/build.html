@@ -1,3 +1,10 @@
+<div ng-init="retrieveData('faires')">
+  <h3>Select a Faire</h3>
+  <select ng-model="reports.selFaire" ng-change="reports.showbuild = true" name="faireSelect">
+    <option value="">Please select a Faire</option>
+    <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
+  </select>
+</div>
 <div class="container" ng-if="reports.showbuild">
     <div id="entry_filters"></div>
     <div class="row">
@@ -76,7 +83,7 @@
     <button type="button" class="btn btn-success" ng-click="generateReport()">Generate Report</button>
     <br/><br/>
   </div>
-  
+
   <!-- grid to hold report data -->
   <div ng-if="reports.showGrid && !reports.showbuild" class="reportsView animated fadeInUp">
     <div ng-if="reports.subRoute=='drill'">

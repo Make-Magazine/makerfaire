@@ -123,7 +123,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     .finally(function () {
       $scope.reports.loading = false;
     });
-  }
+  };
+
 //default
   var tablename = 'wp_rmt_entry_resources';
 

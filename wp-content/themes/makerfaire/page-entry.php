@@ -23,6 +23,19 @@ if(isset($entry->errors)){
   $form_id = $entry['form_id'];
   $form = GFAPI::get_form($form_id);
   $formType = $form['form_type'];
+  //build an array of field information
+  foreach($form['fields'] as $field){
+    $fieldID = $field->id;
+    $fieldData[$fieldID] = $field;
+  }
+
+  //if the form was submitted
+  $submit = filter_input(INPUT_POST, 'edit_entry_page');
+  if($submit != ''){
+    entryPageSubmit($entryId);
+    $entry         = GFAPI::get_entry($entryId);
+  }
+
   $faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
   if($form_id!=''){
     $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide "
@@ -103,7 +116,6 @@ if($editEntry=='edit'){
 
   //instantiate the model
   $maker   = new maker($current_user->user_email);
-
   if($maker->check_entry_access($entry)){
     $makerEdit =  true;
   }
@@ -152,20 +164,15 @@ foreach($entry as $key=>$field ) {
 
 // Website button
 $website = '';
-//$project_website = str_replace( 'http://', 'https://', $project_website );
 
-if($makerEdit){
-  $website =  '<div><b>Website:</b> <span id="website" class="mfEdit">'. $project_website.'</span></div>';
-}else{
-  if (!empty($project_website)) {
-    $website =  '<a href="' . $project_website . '" class="btn btn-cyan" target="_blank">Project Website</a>';
-  }
+
+if (!empty($project_website)) {
+  $website =  '<a href="' . $project_website . '" class="btn btn-cyan" target="_blank">Project Website</a>';
 }
 
 
 // Project Inline video
 $video = '';
-//$project_video = str_replace( 'http://', 'https://', $project_video );
 
 if (!empty($project_video)) {
   $dispVideo = str_replace('//vimeo.com','//player.vimeo.com/video',$project_video);
@@ -181,10 +188,6 @@ if (!empty($project_video)) {
             </div>';
 }
 
-if($makerEdit) {
-  $video = '<b>Video:</b> <span id="video" class="mfEdit">'. $project_video.'</span>';
-}
-
 //decide if display maker info
 $dispMakerInfo = true;
 if($formType=='Sponsor' || $formType == 'Startup Sponsor'){
@@ -194,20 +197,7 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor'){
 
 //build the html for the page
 /* JS used only if the person visiting this page can edit the information on it */
-
-if($makerEdit) {
-  ?>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.js"></script>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.autogrow.js"></script>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/jeditable/jquery.jeditable.ajaxupload.js"></script>
-
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.autogrow.js"></script>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jquery.ajaxfileupload.js"></script>
-  <script type="text/javascript" src="/wp-content/themes/makerfaire/MAT/js/jeditable-main.js"></script>
-  <?php
-}
-  ?>
-
+?>
 <div class="clear"></div>
 
 <div class="container entry-page">
@@ -215,121 +205,30 @@ if($makerEdit) {
     <div class="content col-xs-12 entry-page-mobie-flex">
       <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
       <?php
-      if($makerEdit){?>
+      if($makerEdit){ ?>
         <div class="makerEditHead">
           <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
-          <a target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>/">
+          <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>/">
             <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
           </a>
-          <br/>
-          To modify your public information, click on the section you'd like to change below.
+          <button class="pull-right" type="button" onClick="showEdit()">Edit Public information</button>
         </div>
       <?php
       }
       if($validEntry) {
-        //display schedule/location information if there is any (do not display schedule if maker edit)
-        if (!$makerEdit && !empty(display_entry_schedule($entryId))) {
-          display_entry_schedule($entryId);
+        //display the normal entry public information page
+        include TEMPLATEPATH.'/pages/page-entry-view.php';
+        if($makerEdit) {
+          //use the edit entry public info page
+          include TEMPLATEPATH.'/pages/page-entry-edit.php';
         }
-        ?>
-        <!-- Project Title and ribbons -->
-        <div class="page-header">
-          <h1>
-            <span id="project_title" class="<?php echo ($makerEdit?'mfEdit':'')?>"><?php echo $project_title; ?></span>
-
-            <?php echo $ribbons;?>
-          </h1>
-        </div>
-
-        <!-- Project Image -->
-        <p class="<?php echo ($makerEdit?'mfEditUpload':'')?>" id="proj_img" title="Click to upload...">
-          <img class="img-responsive dispPhoto" src="<?php echo $project_photo; ?>" />
-        </p>
-
-        <!-- Project Short Description -->
-        <p id="project_short" class="lead <?php echo ($makerEdit?' mfEdit_area':'')?>"><?php echo nl2br(make_clickable($project_short)); ?></p>
-
-        <?php
-        echo $website;  //project Website
-        echo $video;    //project Video
-        ?>
-
-        <!-- Maker Info -->
-        <div class="entry-page-maker-info">
-        <?php
-          if($dispMakerInfo) { ?>
-            <div class="page-header">
-              <h2><?php echo ($isGroup ? 'Group' : $isList ? 'Makers':'Maker');?></h2>
-            </div>
-
-            <?php
-            if ($isGroup) {
-              echo '<div class="row padbottom">
-                <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="groupphoto" title="Click to upload...">
-                  <div class="entry-page-maker-img" style="background: url(' .
-                    (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
-                  </div>
-                </div>
-                <div class="col-sm-9 col-lg-7">
-                  <h3 class="text-capitalize '. ($makerEdit?'mfEdit ':'').'" id="groupname">' . $groupname . '</h3>
-                  <p class="'. ($makerEdit?'mfEdit_area':'').'" id="groupbio">' . make_clickable($groupbio) . '</p>
-                </div>
-              </div>';
-          } else {
-            $makerCount = 0;
-            foreach($makers as $key=>$maker) {
-              if($maker['firstname'] !=''){
-                echo
-                  '<div class="row padbottom">
-                    <div class="col-sm-3 '. ($makerEdit?'mfEditUpload':'').'" id="maker'.$key.'img" title="Click to upload...">
-                      <div class="entry-page-maker-img" style="background: url(' .
-                        (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'],400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ) . ') no-repeat center center;">
-                      </div>
-                    </div>
-                    <div class="col-sm-9 col-lg-7">
-                      <h3>
-                        <span class="text-capitalize '. ($makerEdit?'mfEdit':'').'" id="maker'.$key.'fname">'.$maker['firstname'] . '</span>
-                        <span class="text-capitalize '. ($makerEdit?'mfEdit':'').'" id="maker'.$key.'lname">'.$maker['lastname'] . '</span>
-                      </h3>
-                      <p class="'. ($makerEdit?'mfEdit_area':'').'" id="maker'.$key.'bio">' . make_clickable($maker['bio']) . '</p>
-                    </div>
-                  </div>';
-                $makerCount++;
-              }
-            }
-
-
-            /*
-            if($makerCount<7){
-              echo
-              '<div><input type="checkbox" onclick="" value="Add an Additional Maker?" id="choice_111_273_1" tabindex="180">
-               <label>Add an Additional Maker?</label></div>';
-
-              $newKey = $makerCount++;
-              echo '<div><h3>Name</h3></div>';
-              echo
-               '<div class="row padbottom">
-                  <div class="col-lg-3">First<br/><input type="text" id="firstName"></div>
-                  <div class="col-lg-3">Last<br/><input type="text" id="lastName"></div>
-                  <div class="col-lg-3">Image<br/><input type="file" id="upload" name="value"></div>
-                  <div class="col-lg-3">Bio<br/><input type="textarea" id="bio"></div>
-                </div>';
-            }*/
-          }
-        }
-        echo '</div>';
-
-        echo display_groupEntries($entryId);
       } else { //entry is not active
         echo '<h2>Invalid entry</h2>';
       }
       ?>
-
     </div><!--col-xs-12-->
   </div><!--row-->
 </div><!--container-->
-
-
 
  <?php get_footer();
 
@@ -438,7 +337,6 @@ function display_entry_schedule($entry_id) {
               $faire_start = strtotime($faire_start);
               $faire_end   = strtotime($faire_end);
               $dateRange   = progDateRange($faire_start, $faire_end);
-              //var_dump($dateRange);
 
               //tbd change this to be dynamically populated
               echo '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
@@ -535,6 +433,7 @@ function progDateRange($faire_start, $faire_end) {
     }
     return $dates;
 }
+
 function natural_language_join(array $list, $conjunction = 'and') {
   $last = array_pop($list);
   if ($list) {
@@ -542,4 +441,72 @@ function natural_language_join(array $list, $conjunction = 'and') {
   }
   return $last;
 }
-?>
+
+function entryPageSubmit($entryId) {
+  //get submitted data
+  $form_id  = filter_input(INPUT_POST, 'form_id',FILTER_SANITIZE_NUMBER_INT);
+  $form     = GFAPI::get_form($form_id);
+
+  foreach($_POST as $inputField=>$value){
+    $pos = strpos($inputField, 'input_');
+    if ($pos !== false) {
+      $fieldID = str_replace ( 'input_', '' , $inputField);
+      $fieldID = str_replace ( '_', '.' , $fieldID);
+
+      updateFieldValue($fieldID,$value,$entryId);
+    }
+  }
+
+  //update maker table information
+  GFRMTHELPER::updateMakerTables($entryId);
+
+}
+
+function updateFieldValue($fieldID,$newValue,$entryId) {
+  global $fieldData; global $entry; global $form;
+  $fieldInfo = $fieldData[(int) $fieldID];
+
+  $fieldLabel = $fieldInfo['label'];
+
+  //set who is updating the record
+  $current_user = wp_get_current_user();
+  $user = $current_user->ID;
+
+  $form_id = $entry['form_id'];
+  $chgRPTins = array();
+
+  $entry_id = $entry['id'];
+
+  if($fieldInfo->type=='fileupload'){
+    $field = GFFormsModel::get_field( $form, $fieldNum );
+    $input_name = 'input_' . str_replace( '.', '_', $fieldID );
+
+    //validate uploaded file
+    $field->validate( $_FILES[$input_name], $form);
+    if($field->failed_validation){
+      echo $field->validation_message;
+      echo 'failed';
+      return;
+    }
+    $newValue = $field->upload_file($form_id, $_FILES[$input_name]);
+
+    //trigger cron job to correct image orientation if needed
+    triggerCronImg($entry, $form) ;
+
+    //trigger update
+    gf_do_action( array( 'gform_after_update_entry', $form_id), $form, $entry_id, $entry );
+
+    //for security reason, we force to remove all uploaded file
+    //@unlink($_FILES['value']);
+  }else{
+    $fieldValue = (isset($entry[$fieldID])?$entry[$fieldID]:'');
+  }
+
+  //update field and change report if needed
+  if($fieldValue != $newValue){
+    GFAPI::update_entry_field( $entry_id, $fieldID, $newValue);
+    $chgRPTins[] = RMTchangeArray($user, $entryId, $form_id, $fieldID, $fieldValue, $newValue, $fieldLabel);
+    updateChangeRPT($chgRPTins);
+    $entry[$fieldID] = $newValue;
+  }
+}
