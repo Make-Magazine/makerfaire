@@ -88,13 +88,10 @@ class WP_Auth0_InitialSetup_Consent {
 
 	public function consent_callback( $name ) {
 
-		$domain = $this->a0_options->get( 'domain' );
 		$app_token = $this->a0_options->get( 'auth0_app_token' );
-		$client_id = trim( $this->a0_options->get( 'client_id' ) );
+		$domain = $this->a0_options->get( 'domain' );
 
-		/*
-		 * Create Client
-		 */
+		$client_id = trim( $this->a0_options->get( 'client_id' ) );
 
 		$should_create_and_update_connection = false;
 
@@ -113,10 +110,6 @@ class WP_Auth0_InitialSetup_Consent {
 
 			$client_id = $client_response->client_id;
 		}
-
-		/*
-		 * Create Connection
-		 */
 
 		$db_connection_name = 'DB-' . get_auth0_curatedBlogName();
 		$connection_exists = false;
@@ -149,7 +142,7 @@ class WP_Auth0_InitialSetup_Consent {
 
 			if ( $connection_exists === false ) {
 
-				$secret = $this->a0_options->get_client_secret_as_key(true);
+				$secret = $this->a0_options->get_client_secret_as_key();
 				$token_id = uniqid();
 				$migration_token = JWT::encode( array( 'scope' => 'migration_ws', 'jti' => $token_id ), $secret );
 				$migration_token_id = $token_id;
@@ -173,18 +166,9 @@ class WP_Auth0_InitialSetup_Consent {
 
 		}
 
-		/*
-		 * Create Client Grant
-		 */
-
-		$grant_response = WP_Auth0_Api_Client::create_client_grant( $app_token, $client_id );
-
-		if ( FALSE === $grant_response ) {
-			wp_redirect( admin_url( 'admin.php?page=wpa0&error=cant_create_client_grant' ) );
-			exit;
-		}
-
 		wp_redirect( admin_url( 'admin.php?page=wpa0-setup&step=2&profile=' . $this->state ) );
 		exit();
+
 	}
+
 }

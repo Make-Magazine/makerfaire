@@ -26,7 +26,7 @@ class WP_Auth0_LoginManager {
     add_action( 'wp_login', array( $this, 'end_session' ) );
     add_action( 'login_init', array( $this, 'login_auto' ) );
     add_action( 'template_redirect', array( $this, 'init_auth0' ), 1 );
-    //add_action( 'wp_footer', array( $this, 'auth0_sso_footer' ) );
+    add_action( 'wp_footer', array( $this, 'auth0_sso_footer' ) );
     add_action( 'wp_footer', array( $this, 'auth0_singlelogout_footer' ) );
     add_filter( 'login_message', array( $this, 'auth0_sso_footer' ) );
   }
@@ -73,7 +73,6 @@ class WP_Auth0_LoginManager {
       return;
     }
 
-    $lock_options = new WP_Auth0_Lock10_Options();
     $cdn = $this->a0_options->get('auth0js-cdn');
     $client_id = $this->a0_options->get( 'client_id' );
     $domain = $this->a0_options->get( 'domain' );
@@ -91,12 +90,14 @@ class WP_Auth0_LoginManager {
     $auto_login = absint( $this->a0_options->get( 'auto_login' ) );
 
     if ( $slo && isset( $_REQUEST['SLO'] ) ) {
-      wp_redirect( $_REQUEST['redirect_to'] );
+      $redirect_to = $_REQUEST['redirect_to'];
+      wp_redirect( $redirect_to );
       die();
     }
 
     if ( $sso ) {
-      wp_redirect( 'https://' . $this->a0_options->get( 'domain' ) . '/v2/logout?federated&returnTo=' . urlencode( home_url() ) . '&client_id='.$client_id.'&auth0Client=' . base64_encode( json_encode( WP_Auth0_Api_Client::get_info_headers() ) ) );
+      $redirect_to = home_url();
+      wp_redirect( 'https://' . $this->a0_options->get( 'domain' ) . '/v2/logout?federated&returnTo=' . urlencode( $redirect_to ) . '&client_id='.$client_id.'&auth0Client=' . base64_encode( json_encode( WP_Auth0_Api_Client::get_info_headers() ) ) );
       die();
     }
 
@@ -170,7 +171,7 @@ class WP_Auth0_LoginManager {
       }
     } catch (WP_Auth0_LoginFlowValidationException $e) {
 
-      $msg = __( 'There was a problem with your log in. ', 'wp-auth0' );
+      $msg = __( 'There was a problem with your log in', 'wp-auth0' );
       $msg .= ' '. $e->getMessage();
       $msg .= '<br/><br/>';
       $msg .= '<a href="' . wp_login_url() . '">' . __( '← Login', 'wp-auth0' ) . '</a>';
@@ -178,7 +179,7 @@ class WP_Auth0_LoginManager {
 
     } catch (WP_Auth0_BeforeLoginException $e) {
 
-      $msg = __( 'You have logged in successfully, but there is a problem accessing this site. ', 'wp-auth0' );
+      $msg = __( 'You have logged in successfully, but there is a problem accessing this site', 'wp-auth0' );
       $msg .= ' '. $e->getMessage();
       $msg .= '<br/><br/>';
       $msg .= '<a href="' . wp_logout_url() . '">' . __( '← Logout', 'wp-auth0' ) . '</a>';
@@ -241,19 +242,27 @@ class WP_Auth0_LoginManager {
     $data = json_decode( $response['body'] );
 
     if ( isset( $data->access_token ) || isset( $data->id_token ) ) {
+      // Get the user information
 
-	    $decoded_token = JWT::decode(
-		    $data->id_token,
-		    $this->a0_options->get_client_secret_as_key(),
-		    array( $this->a0_options->get_client_signing_algorithm() )
-	    );
+      if ( !isset( $data->id_token ) ) {
+        $data->id_token = null;
+        $response = WP_Auth0_Api_Client::get_user_info( $domain, $data->access_token );
+      } else {
+        try {
+          // grab the user ID from the id_token to call get_user
+          $decodedToken = JWT::decode( $data->id_token, $this->a0_options->get_client_secret_as_key(), array( 'HS256' ) );
+        } catch (Exception $e) {
+          WP_Auth0_ErrorManager::insert_auth0_error('redirect_login/decode', $e->getMessage());
+          throw new WP_Auth0_LoginFlowValidationException(__('Error: There was an issue decoding the token, please review the Auth0 Plugin Error Log.', 'wp-auth0'));
+        }
 
-	    $data->id_token = null;
-	    $response = WP_Auth0_Api_Client::get_user(
-		    $this->a0_options->get( 'domain' ),
-		    WP_Auth0_Api_Client::get_client_token(),
-		    $decoded_token->sub
-	    );
+        // validate that this JWT was made for us
+        if ( $this->a0_options->get( 'client_id' ) !== $decodedToken->aud ) {
+          throw new Exception( 'This token is not intended for us.' );
+        }
+
+        $response = WP_Auth0_Api_Client::get_user( $domain, $data->id_token, $decodedToken->sub );
+      }
 
       if ( $response instanceof WP_Error ) {
         WP_Auth0_ErrorManager::insert_auth0_error( 'init_auth0_userinfo', $response );
@@ -304,6 +313,7 @@ class WP_Auth0_LoginManager {
       }
       // Login failed!
       wp_redirect( home_url() . '?message=' . $data->error_description );
+      //echo "Error logging in! Description received was:<br/>" . $data->error_description;
     }
     exit();
   }
@@ -317,7 +327,7 @@ class WP_Auth0_LoginManager {
 
     try {
       // Decode the user
-      $decodedToken = JWT::decode( $token, $secret, array(  $this->a0_options->get_client_signing_algorithm() ) );
+      $decodedToken = JWT::decode( $token, $secret, array( 'HS256' ) );
 
       // validate that this JWT was made for us
       if ( $this->a0_options->get( 'client_id' ) !== $decodedToken->aud ) {
@@ -414,7 +424,7 @@ class WP_Auth0_LoginManager {
       }
 
       if ( ! $userinfo->email_verified ) {
-        WP_Auth0_Email_Verification::render_die( $userinfo );
+        $this->dieWithVerifyEmail( $userinfo, $id_token );
       }
 
     }
@@ -428,7 +438,7 @@ class WP_Auth0_LoginManager {
         }
       }
     } else {
-      $user = $this->users_repo->find_auth0_user( $userinfo->sub );
+      $user = $this->users_repo->find_auth0_user( $userinfo->user_id );
     }
 
     $user = apply_filters( 'auth0_get_wp_user', $user, $userinfo );
@@ -486,7 +496,7 @@ class WP_Auth0_LoginManager {
 
         throw new WP_Auth0_LoginFlowValidationException( $msg );
       } catch ( WP_Auth0_EmailNotVerifiedException $e ) {
-        WP_Auth0_Email_Verification::render_die( $e->userinfo );
+        $this->dieWithVerifyEmail( $e->userinfo, $e->id_token );
       }
       // catch ( Exception $e ) {
       //  echo $e;exit;
@@ -494,6 +504,12 @@ class WP_Auth0_LoginManager {
 
       return true;
     }
+  }
+
+  private function dieWithVerifyEmail( $userinfo, $id_token ) {
+
+    $html = apply_filters( 'auth0_verify_email_page' , '', $userinfo, $id_token );
+    wp_die( $html );
   }
 
   public function login_with_credentials( $username, $password, $connection="Username-Password-Authentication" ) {
@@ -507,7 +523,7 @@ class WP_Auth0_LoginManager {
 
     try {
       // Decode the user
-      $decodedToken = JWT::decode( $response->id_token, $secret, array(  $this->a0_options->get_client_signing_algorithm() ) );
+      $decodedToken = JWT::decode( $response->id_token, $secret, array( 'HS256' ) );
 
       // validate that this JWT was made for us
       if ( $this->a0_options->get( 'client_id' ) !== $decodedToken->aud ) {
@@ -537,14 +553,4 @@ class WP_Auth0_LoginManager {
     return null;
   }
 
-	/**
-	 * DEPRECATED 3.5.0
-	 *
-	 * @param $userinfo
-	 * @param $id_token
-	 */
-	private function dieWithVerifyEmail( $userinfo, $id_token = '' ) {
-		trigger_error( __( 'Method dieWithVerifyEmail is deprecated.', 'wp-auth0' ), E_USER_DEPRECATED);
-		WP_Auth0_Email_Verification::render_die( $userinfo );
-	}
 }

@@ -66,6 +66,8 @@ document.addEventListener("DOMContentLoaded", function() {
     var options = <?php echo $options; ?>;
 
     options.additionalSignUpFields = <?php echo $lock_options->get_custom_signup_fields(); ?>;
+
+
     <?php if ( $lock_options->get_auth0_implicit_workflow() ) { ?>
 
         if (window.location.hash !== '' && window.location.hash.indexOf('id_token') !== -1) {
@@ -80,11 +82,18 @@ document.addEventListener("DOMContentLoaded", function() {
             return p;
           }, {});
 
-          post('<?php echo site_url( 'index.php?auth0=implicit' ); ?>', {
+          post('<?php echo home_url( '/index.php?auth0=implicit' ); ?>', {
             token:data.id_token,
             state:data.state
           }, 'POST');
         }
+
+        // lock.on("authenticated", function(authResult) {
+        //   post('<?php echo home_url( '/index.php?auth0=implicit' ); ?>', {
+        //     token:authResult.idToken,
+        //     state:authResult.state
+        //   }, 'POST');
+        // });
 
         function post(path, params, method) {
             method = method || "post"; // Set method to post by default if not specified.
@@ -116,7 +125,10 @@ document.addEventListener("DOMContentLoaded", function() {
             document.body.appendChild(form);
             form.submit();
         }
-    
+
+        // function a0ShowLoginModal() {
+        //     lock.<?php echo $lock_options->get_lock_show_method(); ?>();
+        // }
     <?php } ?>
 
     if (!ignore_sso) {
@@ -137,6 +149,12 @@ document.addEventListener("DOMContentLoaded", function() {
       <?php } else { ?>
           jQuery('#a0LoginButton').click(a0ShowLoginModal);
       <?php } ?>
+
+      if (lock.on) {
+          lock.on('error shown', function(){
+              jQuery(".a0-footer").parent().css('margin-bottom', '50px');
+          });
+      }
     }
 
 });

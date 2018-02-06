@@ -9,10 +9,6 @@ Demo: <http://auth0wp.azurewebsites.net>
 
 Documentation: <https://auth0.com/docs/cms>
 
-## Important note on 3.5
-
-This is a major update that requires changes to your Auth0 Dashboard to be completed. You can save a new [API token](https://auth0.com/docs/api/management/v2/tokens#get-a-token-manually) in your Basic settings in wp-admin before upgrading and the changes will be made automatically during the update. Otherwise, please review your [Client Advanced Settings](https://auth0.com/docs/cms/wordpress/configuration#client-setup), specifically your Grant Types, and [authorize your Client for the Management API](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-client-for-the-management-api). 
-
 ## Contributions
 
 All PR should be done towards the `dev` branch.
@@ -186,6 +182,7 @@ And can be customized by adding the following parameters:
 * social_big_buttons: boolean
 * gravatar: boolean
 * username_style: string, "email" or "username"
+* remember_last_login: boolean
 * icon_url: string (valid url)
 * extra_conf: string, valid json
 * show_as_modal: boolean

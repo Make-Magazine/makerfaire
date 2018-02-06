@@ -14,7 +14,6 @@ class WP_Auth0_Routes {
 
 	public function setup_rewrites( $force_ws =false ) {
 		add_rewrite_tag( '%auth0%', '([^&]+)' );
-		add_rewrite_tag( '%auth0fallback%', '([^&]+)' );
 		add_rewrite_tag( '%code%', '([^&]+)' );
 		add_rewrite_tag( '%state%', '([^&]+)' );
 		add_rewrite_tag( '%auth0_error%', '([^&]+)' );
@@ -32,10 +31,6 @@ class WP_Auth0_Routes {
 	public function custom_requests( $wp ) {
 		$page = null;
 
-		if ( isset( $wp->query_vars['auth0fallback'] ) ) {
-			$page = 'coo-fallback';
-		}
-
 		if ( isset( $wp->query_vars['a0_action'] ) ) {
 			$page = $wp->query_vars['a0_action'];
 		}
@@ -49,33 +44,8 @@ class WP_Auth0_Routes {
 			case 'oauth2-config': $this->oauth2_config(); exit;
 			case 'migration-ws-login': $this->migration_ws_login(); exit;
 			case 'migration-ws-get-user': $this->migration_ws_get_user(); exit;
-			case 'coo-fallback': $this->coo_fallback(); exit;
 			}
 		}
-	}
-
-	protected function coo_fallback() {
-		$cdn = $this->a0_options->get( 'auth0js-cdn' );
-		$client_id = $this->a0_options->get( 'client_id' );
-		$domain = $this->a0_options->get( 'domain' );
-		$redirect_uri = site_url( 'index.php?auth0=1', $this->a0_options->get( 'force_https_callback' ) );
-		echo <<<EOT
-		<!DOCTYPE html>
-		<html>
-		<head>
-		<script src="$cdn"></script>
-		<script type="text/javascript">
-		  var auth0 = new auth0.WebAuth({
-			clientID: '$client_id',
-			domain: '$domain',
-			redirectUri: '$redirect_uri'
-		  });
-		  auth0.crossOriginAuthenticationCallback();
-		</script>
-		</head>
-		<body></body>
-		</html>	  
-EOT;
 	}
 
 	protected function getAuthorizationHeader() {
@@ -114,7 +84,7 @@ EOT;
 		$authorization = $this->getAuthorizationHeader();
 		$authorization = trim( str_replace( 'Bearer ', '', $authorization ) );
 
-		$secret = $this->a0_options->get_client_secret_as_key(true);
+		$secret = $this->a0_options->get_client_secret_as_key();
 		$token_id = $this->a0_options->get( 'migration_token_id' );
 
 		$user = null;
@@ -175,7 +145,7 @@ EOT;
 		$authorization = $this->getAuthorizationHeader();
 		$authorization = trim(str_replace('Bearer ', '', $authorization));
 
-		$secret = $this->a0_options->get_client_secret_as_key(true);
+		$secret = $this->a0_options->get_client_secret_as_key();
 		$token_id = $this->a0_options->get( 'migration_token_id' );
 
 		$user = null;
@@ -185,7 +155,7 @@ EOT;
 				throw new Exception('Unauthorized: missing authorization header');
 			}
 
-			$token = JWT::decode( $authorization, $secret, array( 'HS256' ) );
+			$token = JWT::decode($authorization, $secret, array('HS256'));
 
 			if ($token->jti != $token_id) {
 				throw new Exception('Invalid token id');
