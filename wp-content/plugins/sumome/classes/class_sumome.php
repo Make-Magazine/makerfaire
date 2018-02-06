@@ -135,6 +135,7 @@ class WP_Plugin_SumoMe {
 
         $sumomeScriptTag[]='<script src="//load.sumome.com/" data-sumo-site-id="' . esc_attr($manuallyInsertedScriptTagSiteID) . '" async="async"></script>';
         $sumomeScriptTag[]='<script src="//load.sumo.com/" data-sumo-site-id="' . esc_attr($manuallyInsertedScriptTagSiteID) . '" async="async"></script>';
+        $sumomeScriptTag[]="<script async>(function(s,u,m,o,j,v){j=u.createElement(m);v=u.getElementsByTagName(m)[0];j.async=1;j.src=o;j.dataset.sumoSiteId='".esc_attr($manuallyInsertedScriptTagSiteID)."';j.dataset.sumoPlatform='".$this->dataSumoPlatform."';v.parentNode.insertBefore(j,v)})(window,document,'script','//load.sumo.com/');</script>";
         $modified_header = str_replace($sumomeScriptTag,"",$header_contents);
 
         //make backup of header.php just in case
@@ -153,8 +154,7 @@ class WP_Plugin_SumoMe {
     $site_id = get_option('sumome_site_id');
 
     if ($site_id) {
-
-      echo('<script data-cfasync="false" src="//load.sumome.com/" data-sumo-platform="'.$this->dataSumoPlatform.'" data-sumo-site-id="' . esc_attr($site_id) . '" async></script>');
+      echo("<script async>(function(s,u,m,o,j,v){j=u.createElement(m);v=u.getElementsByTagName(m)[0];j.async=1;j.src=o;j.dataset.sumoSiteId='".esc_attr($site_id)."';j.dataset.sumoPlatform='".$this->dataSumoPlatform."';v.parentNode.insertBefore(j,v)})(window,document,'script','//load.sumo.com/');</script>");
     }
   }
 
@@ -168,8 +168,7 @@ class WP_Plugin_SumoMe {
 
     if ($site_id) {
       include(SUMOME__PLUGIN_DIR.'/js/preload.php');
-      echo('<script data-cfasync="false" src="//load.sumome.com/" data-sumo-platform="'.$this->dataSumoPlatform.'" data-sumo-mode="admin" data-sumo-site-id="' . esc_attr($site_id) . '" async></script>');
-
+      echo("<script async>(function(s,u,m,o,j,v){j=u.createElement(m);v=u.getElementsByTagName(m)[0];j.async=1;j.src=o;j.dataset.sumoSiteId='".esc_attr($site_id)."';j.dataset.sumoPlatform='".$this->dataSumoPlatform."';j.dataset.sumoMode='admin';v.parentNode.insertBefore(j,v)})(window,document,'script','//load.sumo.com/');</script>");
     }
   }
 
