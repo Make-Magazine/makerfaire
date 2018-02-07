@@ -83,24 +83,24 @@ function display_thank_you_modal_if_signed_up() { ?>
             <input type="hidden" name="custom_source" value="footer" />
             <input type="hidden" name="custom_incentive" value="none" />
             <input type="hidden" name="custom_url" value="<?php echo $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]; ?>" />
-            <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $_SERVER["HTTP_HOST"]; ?>" />
+            <input type="hidden" name="multiadd" value="1" />
             <label class="list-radio pull-right">
-              <input type="checkbox" id="list_6B5869DC547D3D46B52F3516A785F101_yes" name="custom_list_makenewsletter" value="yes" />
+              <input type="checkbox" id="list_6B5869DC547D3D46B52F3516A785F101_yes" name="slid_1" value="6B5869DC547D3D46B52F3516A785F101" />
               <span for="list_6B5869DC547D3D46B52F3516A785F101_yes" class="newcheckbox"></span>
             </label>
             <h4>Make: Weekly Digest</h4>
             <p>The best stuff each week from Make: magazine</p>
             <hr />
             <label class="list-radio pull-right">
-              <input type="checkbox" id="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" name="custom_list_makeeducation" value="yes" />
+              <input type="checkbox" id="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" name="slid_2" value="6B5869DC547D3D4637EA6E33C6C8170D" />
               <span for="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" class="newcheckbox"></span>
             </label>
             <h4>Make: Education</h4>
             <p>How making is transforming learning</p>
             <hr />
             <label class="list-radio pull-right">
-              <input type="checkbox" id="list_6B5869DC547D3D467B33E192ADD9BE4B_yes" name="custom_list_makerpro" value="yes" />
+              <input type="checkbox" id="list_6B5869DC547D3D467B33E192ADD9BE4B_yes" name="slid_3" value="6B5869DC547D3D467B33E192ADD9BE4B" />
               <span for="list_6B5869DC547D3D467B33E192ADD9BE4B_yes" class="newcheckbox"></span>
             </label>
             <h4>Maker Pro</h4>

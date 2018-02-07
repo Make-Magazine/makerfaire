@@ -35,21 +35,20 @@ get_header('version-2'); ?>
           <div class="col-sm-8 col-md-6 col-lg-4 col-sm-offset-2 col-md-offset-3 col-lg-offset-4">
 
             <form id="nlp-form" class="nlp-form form-inline" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
-              <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire -->
+              <input type="hidden" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire -->
               <input type="hidden" name="cmd" value="subscribe" />
               <input type="hidden" id="email" name="email" value="" />
               <input type="hidden" id="format_mime" name="format" value="mime" />
-              <input type="hidden" name="goto" value="" />
               <input type="hidden" name="custom_source" value="landing-page_signup" />
               <input type="hidden" name="custom_incentive" value="none" />
-              <input type="hidden" name="custom_url" value="makezine.com/join" />
+              <input type="hidden" name="custom_url" value="makerfaire.com/join" />
               <input type="hidden" id="format_mime" name="format" value="mime" />
-              <input type="hidden" name="custom_host" value="makezine.com" />
-
+              <input type="hidden" name="custom_host" value="makerfaire.com" />
+              <input type="hidden" name="multiadd" value="1" />
               <div class="form-group">
                 <label class="list-radio">
                   <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D46B52F3516A785F101_yes" name="custom_list_makermedia" value="yes" />
+                    <input type="checkbox" id="list_6B5869DC547D3D46B52F3516A785F101_yes" name="slid_2" value="6B5869DC547D3D46B52F3516A785F101" />
                     <span for="list_6B5869DC547D3D46B52F3516A785F101_yes" class="newcheckbox"></span>
                   </div>
                   <h4>Make: Community</h4><p>News and information from and about makers</p>
@@ -62,7 +61,7 @@ get_header('version-2'); ?>
               <div class="form-group">
                 <label class="list-radio">
                   <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D4679B07245D96C075A_yes" name="custom_list_flagshipfaires_chi" value="yes" />
+                    <input type="checkbox" id="list_6B5869DC547D3D4679B07245D96C075A_yes" name="slid_3" value="6B5869DC547D3D4679B07245D96C075A" />
                     <span for="list_6B5869DC547D3D4679B07245D96C075A_yes" class="newcheckbox"></span>
                   </div>
                   <h5>Chicago</h5>
@@ -72,7 +71,7 @@ get_header('version-2'); ?>
               <div class="form-group">
                 <label class="list-radio">
                   <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D461285274DDB064BAC_yes" name="custom_list_flagshipfaires_ba" value="yes" />
+                    <input type="checkbox" id="list_6B5869DC547D3D461285274DDB064BAC_yes" name="slid_4" value="6B5869DC547D3D461285274DDB064BAC" />
                     <span for="list_6B5869DC547D3D461285274DDB064BAC_yes" class="newcheckbox"></span>
                   </div>
                   <h5>Bay Area</h5>
@@ -82,7 +81,7 @@ get_header('version-2'); ?>
               <div class="form-group">
                 <label class="list-radio">
                   <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D4641ADFD288D8C7739_yes" name="custom_list_flagshipfaires_ny" value="yes" />
+                    <input type="checkbox" id="list_6B5869DC547D3D4641ADFD288D8C7739_yes" name="slid_5" value="6B5869DC547D3D4641ADFD288D8C7739" />
                     <span for="list_6B5869DC547D3D4641ADFD288D8C7739_yes" class="newcheckbox"></span>
                   </div>
                   <h5>New York</h5>
@@ -94,7 +93,7 @@ get_header('version-2'); ?>
               <div class="form-group">
                 <label class="list-radio">
                   <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" name="custom_list_makerfaire" value="yes" />
+                    <input type="checkbox" id="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" name="slid_6" value="6B5869DC547D3D4637EA6E33C6C8170D" />
                     <span for="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" class="newcheckbox"></span>
                   </div>
                   <h4>Local Maker Faires</h4><p>Find out about faires near you</p>
