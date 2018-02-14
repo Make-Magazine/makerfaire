@@ -28,7 +28,7 @@ function subscribe_return_path_overlay() { ?>
               <input type="hidden" name="goto" value="//makerfaire.com/thanks-for-signing-up"/>
               <input type="hidden" name="custom_host" value="makerfaire.com" />
               <input type="hidden" name="errors_to" value=""/>
-              <div id="recapcha-overlay" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+              <div id="recapcha-overlay" class="g-recaptcha" data-size="invisible"></div>
               <input name="email" id="wc-email-o" class="overlay-input" placeholder="Enter your email" required type="email">
               <input value="GO" class="black-overlay-btn" type="submit">
             </form>

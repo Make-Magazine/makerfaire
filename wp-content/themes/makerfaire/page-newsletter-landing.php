@@ -366,7 +366,7 @@ get_header('version-2'); ?>
 
               <hr />
 
-              <div id="recapcha-join" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+              <div id="recapcha-join" class="g-recaptcha" data-size="invisible"></div>
 
               <input class="btn-cyan" type="submit" value="Submit" />
               <div class="clearfix"></div>

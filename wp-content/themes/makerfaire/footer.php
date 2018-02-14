@@ -66,7 +66,7 @@
             <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $server; ?>" />
             <input type="hidden" name="errors_to" value="" />
-            <div id="recapcha-footer-desktop" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+            <div id="recapcha-footer-desktop" class="g-recaptcha" data-size="invisible"></div>
             <div class="mz-form-horizontal">
               <input id="wc-email" name="email" placeholder="Enter your Email" required type="text"><br>
               <input value="GO" class="btn-cyan" type="submit">
@@ -108,7 +108,7 @@
             <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $server; ?>" />
             <input type="hidden" name="errors_to" value="" />
-            <div id="recapcha-footer-mobile" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+            <div id="recapcha-footer-mobile" class="g-recaptcha" data-size="invisible"></div>
             <div class="mz-form-horizontal">
               <input id="wc-email-m" name="email" placeholder="Enter your Email" required type="email"><br>
               <input value="GO" class="btn-cyan" type="submit">
