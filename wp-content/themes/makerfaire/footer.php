@@ -8,7 +8,7 @@
           <li><a href="/map">Find a Faire Near You</a></li>
           <li><a href="/be-a-maker">Be a Maker</a></li>
           <li><a href="//help.makermedia.com/hc/en-us/categories/200333245-Maker-Faire" target="_blank">Maker Faire FAQs</a></li>
-          <li><a href="//help.makermedia.com/hc/en-us/sections/201008995-Maker-Faire-Support" target="_blank">Contact Us</a></li>
+          <li><a href="//help.makermedia.com/hc/en-us/articles/204829825-Maker-Faire-Contact-Information" target="_blank">Contact Us</a></li>
         </ul>
       </div>
       <div class="col-sm-12 col-sm-6 col-md-3 social-foot-col" >
@@ -130,7 +130,7 @@
                 <li><a href="/map">Find a Faire Near You</a></li>
                 <li><a href="/be-a-maker">Be a Maker</a></li>
                 <li><a href="//help.makermedia.com/hc/en-us/categories/200333245-Maker-Faire" target="_blank">Maker Faire FAQs</a></li>
-                <li><a href="//help.makermedia.com/hc/en-us/sections/201008995-Maker-Faire-Support" target="_blank">Contact Us</a></li>
+                <li><a href="//help.makermedia.com/hc/en-us/articles/204829825-Maker-Faire-Contact-Information" target="_blank">Contact Us</a></li>
               </ul>
             </div>
           </div>
