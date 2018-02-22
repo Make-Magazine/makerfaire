@@ -57,21 +57,11 @@ get_header('version-2'); ?>
               <hr />
 
               <h4>Flagship Maker Faires</h4><p>Event-specific updates from our annual flagship Faires</p>
-
-              <div class="form-group">
-                <label class="list-radio">
-                  <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D4679B07245D96C075A_yes" name="slid_3" value="6B5869DC547D3D4679B07245D96C075A" />
-                    <span for="list_6B5869DC547D3D4679B07245D96C075A_yes" class="newcheckbox"></span>
-                  </div>
-                  <h5>Chicago</h5>
-                </label>
-              </div>
                 
               <div class="form-group">
                 <label class="list-radio">
                   <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D461285274DDB064BAC_yes" name="slid_4" value="6B5869DC547D3D461285274DDB064BAC" />
+                    <input type="checkbox" id="list_6B5869DC547D3D461285274DDB064BAC_yes" name="slid_3" value="6B5869DC547D3D461285274DDB064BAC" />
                     <span for="list_6B5869DC547D3D461285274DDB064BAC_yes" class="newcheckbox"></span>
                   </div>
                   <h5>Bay Area</h5>
@@ -81,7 +71,7 @@ get_header('version-2'); ?>
               <div class="form-group">
                 <label class="list-radio">
                   <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D4641ADFD288D8C7739_yes" name="slid_5" value="6B5869DC547D3D4641ADFD288D8C7739" />
+                    <input type="checkbox" id="list_6B5869DC547D3D4641ADFD288D8C7739_yes" name="slid_4" value="6B5869DC547D3D4641ADFD288D8C7739" />
                     <span for="list_6B5869DC547D3D4641ADFD288D8C7739_yes" class="newcheckbox"></span>
                   </div>
                   <h5>New York</h5>
@@ -93,7 +83,7 @@ get_header('version-2'); ?>
               <div class="form-group">
                 <label class="list-radio">
                   <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Please choose at least one checkbox">
-                    <input type="checkbox" id="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" name="slid_6" value="6B5869DC547D3D4637EA6E33C6C8170D" />
+                    <input type="checkbox" id="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" name="slid_5" value="6B5869DC547D3D4637EA6E33C6C8170D" />
                     <span for="list_6B5869DC547D3D4637EA6E33C6C8170D_yes" class="newcheckbox"></span>
                   </div>
                   <h4>Local Maker Faires</h4><p>Find out about faires near you</p>
