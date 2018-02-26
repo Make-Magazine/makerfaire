@@ -3,7 +3,9 @@ jQuery(document).ready(function($) {
   $('a').not('[href*="mailto:"]').each(function() {
     var a = new RegExp('/' + window.location.host + '/');
     var href = this.href;
-    if (!a.test(href)) {
+    
+    //exclude non links
+    if (href !== 'javascript:void(0);' && !a.test(href)) {
       $(this).attr('target', '_blank');
     }
   });
