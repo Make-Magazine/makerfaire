@@ -75,7 +75,7 @@ $entries   = $tableData['data'];
     /* First, determine who has access to edit an entry */
     $disp_edit = false;
 
-    if($entryData['maker-edit'] == 'yes'){
+    if(strtolower($entryData['maker-edit']) == 'yes'){
       //all makers, creator and contact can edit
       $disp_edit = true;
     }elseif($entryData['maker_type'] == 'contact'){
