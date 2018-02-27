@@ -605,14 +605,14 @@ function hiddenTicket(accessCode) {
     }
 
     jQuery.post(ajaxurl, data, function(r) {
-      if(r.result=='updated'){
+      if(r.result === 'updated'){
         //after update - set meta field status to success
         jQuery("span."+action+'Msg').html('<i style="color:green" class="fa fa-check"></i>');
       }else{
         //after update - set meta field status to failed
         jQuery("span."+action+'Msg').html('<i style="color:red" class="fa fa-times"></i>');
       }
-      if(r.rebuild!='' && r.rebuildHTML!=''){
+      if(r.rebuild !== '' && r.rebuildHTML !== ''){
         jQuery("."+r.rebuild).replaceWith(r.rebuildHTML);
         //reset the date time picker fields
         jQuery('#datetimepicker').datetimepicker({value:'2015/04/15 05:03',step:10});
@@ -628,8 +628,13 @@ function hiddenTicket(accessCode) {
         });
       }
 
-      if(action == 'duplicate_entry_id' && r.entryID!=''){
+      if(action === 'duplicate_entry_id' && r.entryID !== ''){
         jQuery("span.duplicate_entry_idMsg").after(r.entryID);
       }
+
+      if(action === 'change_form_id' && r.entryID !== ''){
+        jQuery("span.change_form_idMsg").after(r.entryID);
+      }
+
     });
   }
