@@ -1,6 +1,9 @@
 NextGEN Gallery
 by Imagely
 
+= V2.2.33 - 12.24.2017
+* Fixed:   Certain image attributes were not being validated correctly
+
 = V2.2.30 - 12.13.2017
 * Fixed:   Segfaults on PHP 7.2, 7.1.12, and 7.0.26.
 

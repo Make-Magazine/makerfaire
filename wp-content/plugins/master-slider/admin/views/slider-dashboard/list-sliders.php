@@ -185,10 +185,10 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
 
 <?php
     if( isset( $_GET['dismiss_mspp_notice'] ) && $_GET['dismiss_mspp_notice'] == 1 ){
-        msp_set_transient( 'masterslider_display_popup_notice', 1000, 3 * DAY_IN_SECONDS );
+        msp_update_option( 'masterslider_display_popup_notice', 0 );
     }
-    if( false === msp_get_transient( 'masterslider_display_popup_notice' ) || ! empty( $_GET['msad'] ) ) {
-        msp_set_transient( 'masterslider_display_popup_notice', 1000, 5 * YEAR_IN_SECONDS );
+    if( 1 == msp_get_option( 'masterslider_display_popup_notice' ) || ! empty( $_GET['msad'] ) ) {
+        msp_update_option( 'masterslider_display_popup_notice', 0 );
 
         $info = msp_get_ad_info();
 ?>

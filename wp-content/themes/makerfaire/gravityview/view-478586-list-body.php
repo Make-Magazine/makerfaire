@@ -69,44 +69,79 @@ $entries   = $tableData['data'];
     $statusBlock  = ($entryData['status'] == 'Accepted' ? 'greenStatus':'greyStatus');
     $dispCancel   = ($entryData['status'] != 'Cancelled' && $entryData['status']!='Rejected' && $entryData['maker_type'] == 'contact' ?true:false);
     $dispDelete   = ($entryData['status'] == 'Proposed' || $entryData['status'] == 'In Progress'?true:false);
-    $disp_edit    = ($entryData['status'] != 'Cancelled' && $entryData['maker_type'] == 'contact' ? true : false); //Should we display a edit Entry Link?
 
-    //determine what link is used for Edit Entry and if it is displayed
+    /* Editing the Entry */
+
+    /* First, determine who has access to edit an entry */
+    $disp_edit = false;
+
+    if(strtolower($entryData['maker-edit']) == 'yes'){
+      //all makers, creator and contact can edit
+      $disp_edit = true;
+    }elseif($entryData['maker_type'] == 'contact'){
+      //only creator and contact can edit
+      $disp_edit = true;
+    }
+
+    /* Next determine what edit links are displayed */
+
+    /*
+     * There are two edit entry links on the page for each entry.
+     * Note: $disp_edit must be true for either of these links to appear
+     *
+     *  1) View/Edit Public Information
+     *      Displayed if status is accepted
+     *  2) Edit Entry
+     *      In the edit form settings of each form, producers have the option to display the
+     *      setup/resources assigned to an entry and supply them a link to an edit form that
+     *      allows the makers to only edit specific setup/resource information about their
+     *      exhibit. This 'lock down' on information restricts the maker from making changes
+     *      to pertinant information after a certain date before a faire.
+     *    If the status is Accepted and the display setup/resources is set to true
+     *      use the URL supplied in the form settings to edit resoures.
+     *    If the status is Accepted or Proposed and the display setup/resources is set to false
+     *      use the gravityview edit entry link that allows full edit of the entry information
+     */
     $dispRMTeditLink = false;
     $dispGVeditLink  = false;
-    if($entryData['maker_type'] == 'contact') {
+    $dispEditPub     = false;
+
+    if($disp_edit){
       if($entryData['mat_disp_res_link'] == 'yes' && $entryData['status'] == 'Accepted'){
         $dispRMTeditLink = true;  //display resource edit only link
       }else{
         if($entryData['status'] == 'Accepted' || $entryData['status'] == 'Proposed')
           $dispGVeditLink = true; //display full form edit thru gravity forms
       }
+
+      //display the 'view/edit public information' link is the status is accepted
+      $dispEditPub = ($entryData['status'] == 'Accepted' ? true : false);
+
+      //set edit links
+
+      //Public facing profile page edit link 'View/Edit Public Information'
+      $viewEditLink = "/maker/entry/" . $entryData['lead_id']."/edit/";
+
+      //GV Edit Link
+      $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
+      $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
+
+      //RMT edit link
+      $RMTeditLink = '<span class="editLink">
+                        <button type="button" class="btn btn-default btn-no-border edit-button toggle-popover" data-toggle="popover">
+                          <i class="fa fa-eye" aria-hidden="true"></i>View/Edit Setup
+                        </button>
+                        <div class="popover-content hidden">'.
+                          $entryData['mat_res_modal_layout'].'
+                          <div class="clear">';
+                            if($entryData['mat_edit_res_url'] != '') {
+                              $RMTeditLink .= '<a href="'.$entryData['mat_edit_res_url'].'">Edit</a>';
+                            }
+      $RMTeditLink .= '   </div>
+                        </div>
+                      </span>';
+
     }
-
-    // Should we display the View/Edit Public Information link
-    $dispEditPub  = ($entryData['status'] == 'Accepted' && $entryData['maker_type'] == 'contact' ? true : false);
-
-    //Public facing profile page edit link 'View/Edit Public Information'
-    $viewEditLink = "/maker/entry/" . $entryData['lead_id']."/edit/";
-
-    //GV Edit Link
-    $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-    $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
-
-    //RMT edit link
-    $RMTeditLink = '<span class="editLink">
-                      <button type="button" class="btn btn-default btn-no-border edit-button toggle-popover" data-toggle="popover">
-                        <i class="fa fa-eye" aria-hidden="true"></i>View/Edit Setup
-                      </button>
-                      <div class="popover-content hidden">'.
-                        $entryData['mat_res_modal_layout'].'
-                        <div class="clear">';
-                          if($entryData['mat_edit_res_url'] != '') {
-                            $RMTeditLink .= '<a href="'.$entryData['mat_edit_res_url'].'">Edit</a>';
-                          }
-    $RMTeditLink .= '   </div>
-                      </div>
-                    </span>';
 
     ?>
     <div class="maker-admin-list-wrp">
@@ -255,24 +290,12 @@ $entries   = $tableData['data'];
                     ?><a href="<?php echo $url;?>">View Entry</a><?php
 
                     if($dispEditPub) { ?>
-                        <a href="<?php echo $viewEditLink;?>">
-                          View/Edit Public Information
-                        </a>
+                      <a href="<?php echo $viewEditLink;?>">
+                        View/Edit Public Information
+                      </a>
                     <?php
                     }
 
-                    //edit section
-                    /*if($disp_edit){
-                      if(!$dispRMTeditLink && $dispGVeditLink){
-                        echo '<a href="'. $GVeditLink .'">Edit Entry</a>';
-                      }
-                    }else{
-                      if($entryData['maker_type'] != 'contact') {
-                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only the main contact can edit">Edit Entry</div>';
-                      }else{
-                        echo  '<div class="disabled" data-placement="left"  data-toggle="tooltip" title="Only active entries can be edited">Edit Entry</div>';
-                      }
-                    }*/
                     if($dispRMTeditLink) {
                       echo $RMTeditLink;
                     }elseif($dispGVeditLink){

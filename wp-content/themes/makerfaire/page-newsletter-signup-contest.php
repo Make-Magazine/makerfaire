@@ -34,7 +34,7 @@ get_header(); ?>
             <form id="nlp-contest" class="nlp-form" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
               <input type="hidden" name="slid" value="6B5869DC547D3D46E66DEF1987C64E7A" /><!-- Maker Faire -->
               <input type="hidden" name="cmd" value="subscribe" />
-              <div id="recapcha-contest" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+              <div id="recapcha-contest" class="g-recaptcha" data-size="invisible"></div>
               <input type="hidden" id="email" name="email" value="" />
               <input type="hidden" id="format_mime" name="format" value="mime" />
               <input type="hidden" name="goto" value="" />

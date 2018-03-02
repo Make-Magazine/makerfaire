@@ -150,7 +150,7 @@ class maker {
           //get tasks
           $data['tasks'] = $this->get_tasks_by_entry($row['lead_id']);
         }
-
+        $data['maker-edit'] = (isset($entry['802'])?$entry['802']:'yes');
       }else{
         $data['date_created'] = '';
         $data['ticketing']    = '';

@@ -716,7 +716,7 @@ tbody .latest-updates {
 }
 
 .msp-ad-btns-container {
-    display: inline-block;
+    display: table;
     width: 100%;
     text-align: center;
     position: relative;

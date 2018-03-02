@@ -230,7 +230,7 @@ function mf_admin_MFupdate_entry(){
         delete_entry_schedule($lead,$form);
         break;
       case 'change_form_id' :
-        set_form_id($lead,$form);
+        $response['entryID'] = set_form_id($lead,$form);
         break;
       case 'duplicate_entry_id' :
         $response['entryID'] = duplicate_entry_id($lead,$form);
@@ -449,19 +449,23 @@ function set_form_id($lead,$form){
 	error_log('$entry_id='.$entry_id);
 	$entry=GFAPI:: get_entry($entry_id);
 
-	$is_form_id_changed = (strcmp($entry['form_id'], $form_change) != 0);
+  $is_form_id_changed = (strcmp($entry['form_id'], $form_change) !== 0);
 
 	if (!empty($entry_id)){
 		if (!empty($is_form_id_changed)){
 			//Update Field for Acceptance Status
-			$result = update_entry_form_id($entry,$form_change);
+			$result = update_entry_form_id($entry_id,$form_change);
 			error_log('UPDATE RESULTS = '.print_r($result,true));
 
       //add note about form change
       $newForm = RGFormsModel::get_form_meta($form_change);
       mf_add_note( $entry_id, 'Entry changed from '.$form['title'].' to '.$newForm['title']);
-		}
+      $return = 'Entry '.$entry_id.' updated to Form '.$form_change;
+		}else{
+      $return = 'No change made to entry '.$entry_id.'. Selected form same as current form (form ID '.$form_change.')';
+    }
 	}
+  return $return;
 }
 
 /**

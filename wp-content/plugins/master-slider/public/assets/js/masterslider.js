@@ -5352,6 +5352,15 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 /**
  * Addon file, it will be appended to master slider front-end main js file.
  */
-;( function ($) { 
+;( function ($) {
+
+    $(window).on('vc_reload', function() {
+        if ( window.MSReady ) {
+            for ( var i = 0, l = MSReady.length; i !== l; i++ ) {
+                MSReady[i].call( null, $ );
+            }
+        }
+    });
+
 	window.msCli = function(f){f=f||'pause';var m=masterslider_instances;for(var i in m){m[i].api[f]();}}
 })(jQuery);

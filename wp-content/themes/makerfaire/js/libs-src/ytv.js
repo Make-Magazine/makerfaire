@@ -433,9 +433,12 @@
 }).call(this, window, document);
 
 jQuery( document ).ready( function() {
-    jQuery('.small-youtube').ytv({
+  //only run this function if the .small-youtube element exists
+  if(jQuery( ".small-youtube" ).length){
+    jQuery('.small-youtube').YTV({
         user: 'makemagazine',
         playlist: 'PLwhkA66li5vDEuZtgSeshEn3AAzJKxam3'
         }
     );
+  }
 });

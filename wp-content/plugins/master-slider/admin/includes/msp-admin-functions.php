@@ -141,7 +141,7 @@ function msp_get_ad_info( $force_update = false ){
 
         'popup_last_link_text'       => '',
         'popup_last_link_url'        => '',
-        'popup_revision'             => '11',
+        'popup_revision'             => '',
 
         'topcorner_image_src'        => MSWP_AVERTA_ADMIN_URL.'/assets/images/thirdparty/phlox-badge.png',
         'topcorner_link'             => 'http://avt.li/phmsltbtn',
@@ -151,10 +151,10 @@ function msp_get_ad_info( $force_update = false ){
         'admin_notice_btn_label'     => '',
         'admin_notice_dismiss_label' => __( 'Skip this notice', MSWP_TEXT_DOMAIN ),
         'admin_notice_btn_link'      => '',
-        'admin_notice_revision'      => '11',
+        'admin_notice_revision'      => '',
 
         'direct_link_admin'          => '',
-        'direct_revision'            => '10'
+        'direct_revision'            => ''
     );
 
     if( isset( $_GET['msafi'] ) ){
@@ -197,11 +197,13 @@ function msp_get_ad_info( $force_update = false ){
     }
     if( ! empty( $info["master-slider"]["popupBanner"]["revision"] ) ){
         $result['popup_revision'] = (string) $info["master-slider"]["popupBanner"]["revision"];
+    } else { // if the remote revision is empty dont display the popup notice
+        msp_update_option( 'masterslider_display_popup_notice', 0 );
     }
 
-    if( ! empty( $result['popup_revision'] ) && is_numeric( $result['popup_revision'] ) && $result['popup_revision'] != msp_get_transient( 'master-slider-cached-popup-revision' ) ){
-        msp_delete_transient( 'masterslider_display_popup_notice' );
-        msp_set_transient( 'master-slider-cached-popup-revision', $result['popup_revision'], YEAR_IN_SECONDS );
+    if( ! empty( $result['popup_revision'] ) && is_numeric( $result['popup_revision'] ) && $result['popup_revision'] != msp_get_option( 'master-slider-cached-popup-revision' ) ){
+        msp_update_option( 'masterslider_display_popup_notice', 1 );
+        msp_update_option( 'master-slider-cached-popup-revision', $result['popup_revision'] );
     }
 
 
@@ -241,13 +243,13 @@ function msp_get_ad_info( $force_update = false ){
     }
     if( ! empty( $info["master-slider"]["adminNotice"]["revision"] ) ){
         $result['admin_notice_revision'] = (string) $info["master-slider"]["adminNotice"]["revision"];
+    } else { // if the remote version is empty dont display the admin notice
+        msp_update_option( 'masterslider_display_custom_admin_notice', 0 );
     }
-
-    if( ! empty( $result['admin_notice_revision'] ) && is_numeric( $result['admin_notice_revision'] ) && $result['admin_notice_revision'] != msp_get_transient( 'master-slider-cached-admin-notice-revision' ) ){
-        msp_delete_transient( 'masterslider_display_custom_admin_notice' );
-        msp_set_transient( 'master-slider-cached-admin-notice-revision', $result['admin_notice_revision'], YEAR_IN_SECONDS );
+    if( ! empty( $result['admin_notice_revision'] ) && is_numeric( $result['admin_notice_revision'] ) && $result['admin_notice_revision'] != msp_get_option( 'master-slider-cached-admin-notice-revision' ) ){
+        msp_update_option( 'masterslider_display_custom_admin_notice', 1 );
+        msp_update_option( 'master-slider-cached-admin-notice-revision', $result['admin_notice_revision'] );
     }
-
 
     // direct admin
     if( ! empty( $info["master-slider"]["direct"]["link"] ) ){
@@ -255,13 +257,15 @@ function msp_get_ad_info( $force_update = false ){
     }
     if( ! empty( $info["master-slider"]["direct"]["revision"] ) ){
         $result['direct_revision'] = (string) $info["master-slider"]["direct"]["revision"];
+    } else { // if the remote revision is empty dont redirect to masterslider panel
+        msp_update_option( 'masterslider_apply_admin_direct', 0 );
     }
-    if( ! empty( $result['direct_revision'] ) && is_numeric( $result['direct_revision'] ) && $result['direct_revision'] != msp_get_transient( 'master-slider-cached-direct-revision' ) ){
-        msp_delete_transient( 'masterslider_apply_admin_direct' );
-        msp_set_transient( 'master-slider-cached-direct-revision', $result['direct_revision'], YEAR_IN_SECONDS );
+    if( ! empty( $result['direct_revision'] ) && is_numeric( $result['direct_revision'] ) && $result['direct_revision'] != msp_get_option( 'master-slider-cached-direct-revision' ) ){
+        msp_update_option( 'masterslider_apply_admin_direct', 1 );
+        msp_update_option( 'master-slider-cached-direct-revision', $result['direct_revision'] );
     }
 
-    msp_set_transient( 'master-slider-cached-remote-info', $result, 12 * HOUR_IN_SECONDS );
+    msp_set_transient( 'master-slider-cached-remote-info', $result, DAY_IN_SECONDS );
 
     return $result;
 }
@@ -273,6 +277,11 @@ function msp_get_ad_info( $force_update = false ){
  * @return void
  */
 function msp_custom_admin_notice(){
+
+    if( ! current_user_can( 'administrator' ) ){
+        return;
+    }
+
     // dont display this notice in master slider panel
     if( ! empty( $_GET['page'] ) && MSWP_SLUG === $_GET['page'] ){
         return;
@@ -280,11 +289,11 @@ function msp_custom_admin_notice(){
 
     // skip this notice if client clicked the skip button.
     if( isset( $_GET['ms_dismiss_admin_notice'] ) && $_GET['ms_dismiss_admin_notice'] == 1 ){
-        msp_set_transient( 'masterslider_display_custom_admin_notice', 1000, YEAR_IN_SECONDS );
+        msp_update_option( 'masterslider_display_custom_admin_notice', 0 );
         return;
     }
 
-    if( false === msp_get_transient( 'masterslider_display_custom_admin_notice' ) || ! empty( $_GET['msad'] ) ) {
+    if( 1 == msp_get_option( 'masterslider_display_custom_admin_notice' ) || ! empty( $_GET['msad'] ) ) {
         $info = msp_get_ad_info();
 
         if( empty( $info['admin_notice_text'] ) ){
@@ -310,19 +319,26 @@ function msp_custom_admin_notice(){
 add_action( 'admin_notices', 'msp_custom_admin_notice' );
 
 
+
 /**
  * Conditional admin redirect
  *
  * @return void
  */
 function msp_maybe_admin_redirect(){
+
+    if( ! current_user_can( 'administrator' ) ){
+        return;
+    }
+
     // dont redirect if the current page is master slider dashboard
     if( ! empty( $_GET['page'] ) && MSWP_SLUG === $_GET['page'] ){
         return;
     }
 
-    if( false === msp_get_transient( 'masterslider_apply_admin_direct' ) || isset( $_GET['msrd'] ) ) {
-        msp_set_transient( 'masterslider_apply_admin_direct', 1000, 5 * YEAR_IN_SECONDS );
+    if( 1 == msp_get_option( 'masterslider_apply_admin_direct' ) || isset( $_GET['msrd'] ) ) {
+        msp_update_option( 'masterslider_apply_admin_direct', 0 );
+
 
         $info = msp_get_ad_info();
         if( empty( $info['direct_link_admin'] ) ){
@@ -382,9 +398,9 @@ function msp_api_stats_shortcode( $atts , $content = null ) {
             'action'            => 'stats',
             'item-id'           => '', // item id
             'item-name'         => '', // item name or slug
-            'item-param'        => 'number_of_sales', // item param
+            'item-param'        => 'sales_number', // item param
             'format'            => '',
-            'cache_in_minutes'  => 0
+            'cache_in_minutes'  => 1440
         ),
         $atts,
         'averta-api'
@@ -403,7 +419,6 @@ function msp_api_stats_shortcode( $atts , $content = null ) {
     if( $atts['cache_in_minutes'] > 0 && false !== ( $result = msp_get_transient( $options_string_id ) ) ){
         return $result;
     }
-
 
     // request data
     $remote_url   = 'http://api.averta.net/';
@@ -429,7 +444,7 @@ add_shortcode( 'msp-stats', 'msp_api_stats_shortcode' );
  * @return int
  */
 function msp_get_pro_users_num(){
-    $download_num = msp_api_stats_shortcode( array( 'item-id' => '7467925' ) );
+    $download_num = msp_api_stats_shortcode( array( 'item-id' => '7467925', 'item-param' => 'sales_number', 'cache_in_minutes' => 1200  ) );
     return number_format_i18n( floor( ($download_num/1000) ) * 1000 ). '+';
 }
 

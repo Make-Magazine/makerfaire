@@ -8,7 +8,7 @@
           <li><a href="/map">Find a Faire Near You</a></li>
           <li><a href="/be-a-maker">Be a Maker</a></li>
           <li><a href="//help.makermedia.com/hc/en-us/categories/200333245-Maker-Faire" target="_blank">Maker Faire FAQs</a></li>
-          <li><a href="//help.makermedia.com/hc/en-us/sections/201008995-Maker-Faire-Support" target="_blank">Contact Us</a></li>
+          <li><a href="//help.makermedia.com/hc/en-us/articles/204829825-Maker-Faire-Contact-Information" target="_blank">Contact Us</a></li>
         </ul>
       </div>
       <div class="col-sm-12 col-sm-6 col-md-3 social-foot-col" >
@@ -66,7 +66,7 @@
             <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $server; ?>" />
             <input type="hidden" name="errors_to" value="" />
-            <div id="recapcha-footer-desktop" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+            <div id="recapcha-footer-desktop" class="g-recaptcha" data-size="invisible"></div>
             <div class="mz-form-horizontal">
               <input id="wc-email" name="email" placeholder="Enter your Email" required type="text"><br>
               <input value="GO" class="btn-cyan" type="submit">
@@ -108,7 +108,7 @@
             <input type="hidden" name="goto" value="" />
             <input type="hidden" name="custom_host" value="<?php echo $server; ?>" />
             <input type="hidden" name="errors_to" value="" />
-            <div id="recapcha-footer-mobile" class="g-recaptcha" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;margin-bottom:-8px;"></div>
+            <div id="recapcha-footer-mobile" class="g-recaptcha" data-size="invisible"></div>
             <div class="mz-form-horizontal">
               <input id="wc-email-m" name="email" placeholder="Enter your Email" required type="email"><br>
               <input value="GO" class="btn-cyan" type="submit">
@@ -130,7 +130,7 @@
                 <li><a href="/map">Find a Faire Near You</a></li>
                 <li><a href="/be-a-maker">Be a Maker</a></li>
                 <li><a href="//help.makermedia.com/hc/en-us/categories/200333245-Maker-Faire" target="_blank">Maker Faire FAQs</a></li>
-                <li><a href="//help.makermedia.com/hc/en-us/sections/201008995-Maker-Faire-Support" target="_blank">Contact Us</a></li>
+                <li><a href="//help.makermedia.com/hc/en-us/articles/204829825-Maker-Faire-Contact-Information" target="_blank">Contact Us</a></li>
               </ul>
             </div>
           </div>

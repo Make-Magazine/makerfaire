@@ -165,7 +165,7 @@ class Blimply {
 		if ( 1 == get_post_meta( $post_id, 'blimply_push_sent', true ) )
 			return;
 
-		if ( 1 == $_POST['blimply_push'] ) {
+		if ( isset($_POST['blimply_push']) && 1 == $_POST['blimply_push'] ) {
 			$alert = !empty( $_POST['blimply_push_alert'] ) ? sanitize_text_field( $_POST['blimply_push_alert'] ) : sanitize_text_field( $_POST['post_title'] );
 			$this->_send_broadcast_or_push( $alert, $_POST['blimply_push_tag'], get_permalink( $post_id ) );
 			update_post_meta( $post_id, 'blimply_push_sent', true );
