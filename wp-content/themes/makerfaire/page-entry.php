@@ -211,8 +211,16 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor'){
           <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId?>/<?php echo $faireShort;?>/">
             <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
           </a>
-          <button class="pull-right" type="button" onClick="showEdit()">Edit Public information</button>
+
+          <?php
+          $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="636844" entry_id="'.$entryId.'"]');
+          $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
+          ?>
+          <span class="editLink pull-right">
+            <a href="<?php echo $GVeditLink;?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit Public information</a>
+          </span>
         </div>
+      <br/>
       <?php
       }
       if($validEntry) {

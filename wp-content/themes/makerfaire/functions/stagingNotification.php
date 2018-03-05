@@ -23,10 +23,10 @@ function change_email_to($notification, $form, $entry) {
   if(class_exists('Jetpack')){
   if (Jetpack::is_staging_site()) {
     $notification['toType'] = 'email';
-    $notification['to'] = 'kate@makermedia.com,alicia@makermedia.com';
-    $notification['from'] = 'staging@makermedia.com';
+    $notification['to']     = 'sianabrook@gmail.com, alicia@makermedia.com';
+    $notification['from']   = 'staging@makermedia.com';
     if (isset($notification['bcc']))
-    $notification['bcc'] = '';
+      $notification['bcc'] = '';
   }elseif (Jetpack::is_development_mode()) {
     if(defined('MF_OVERRITE_EMAIL')){
       $notification['toType'] = 'email';
