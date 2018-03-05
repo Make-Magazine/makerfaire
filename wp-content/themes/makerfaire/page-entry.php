@@ -213,7 +213,7 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor'){
           </a>
 
           <?php
-          $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="636844" entry_id="'.$entryId.'"]');
+          $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="636924" entry_id="'.$entryId.'"]');
           $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
           ?>
           <span class="editLink pull-right">
