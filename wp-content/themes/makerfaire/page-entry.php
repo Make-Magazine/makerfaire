@@ -219,6 +219,7 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor'){
           <span class="editLink pull-right">
             <a href="<?php echo $GVeditLink;?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit Public information</a>
           </span>
+          <div class="clear"></div>
         </div>
       <br/>
       <?php
