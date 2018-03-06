@@ -356,7 +356,7 @@ if (!class_exists('GFCPTAddonBase')) {
 						$counter++;
 					}
 
-					$id = floatval( $field['id'] . '.' . $counter );
+					$id = $field['id'] . '.' . $counter;
 					$inputs[] = array( 'label' => $choice['text'], 'id' => $id );
 				}
 
