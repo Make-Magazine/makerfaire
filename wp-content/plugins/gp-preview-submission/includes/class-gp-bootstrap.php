@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @version 1.2
+ */
 if( ! class_exists( 'GP_Bootstrap' ) ) {
 
 	class GP_Bootstrap {
@@ -33,14 +35,15 @@ if( ! class_exists( 'GP_Bootstrap' ) ) {
 			if( $is_activated || $is_network_activated ): ?>
 
 				<style type="text/css" scoped>
-					<?php printf( '#%1$s td, #%1$s th', sanitize_title( $plugin_data['Name'] ) ); ?> { border-bottom: 0; box-shadow: none; -webkit-box-shadow: none; }
+					<?php printf( '#%1$s td, #%1$s th', sanitize_title( $plugin_data['Name'] ) ); ?>,
+					<?php printf( 'tr[data-slug="%1$s"] td, tr[data-slug="%1$s"] th', sanitize_title( $plugin_data['Name'] ) ); ?> { border-bottom: 0; box-shadow: none !important; -webkit-box-shadow: none !important; }
 					.gwp-plugin-notice td { padding: 0 !important; }
-					.gwp-plugin-notice .update-message:before { content: '\f534' !important; }
+					.gwp-plugin-notice .update-message p:before { content: '\f534'; font-size: 18px; }
 				</style>
 
 				<tr class="plugin-update-tr active gwp-plugin-notice">
 					<td colspan="3" class="colspanchange">
-						<div class="update-message"><?php printf( __( 'This plugin requires Gravity Perks. Activate it now or %1$spurchase it today!%2$s', 'gravityperks' ), '<a href="http://gravityperks.com">', '</a>' ); ?></div>
+						<div class="update-message notice inline notice-error notice-alt"><p><?php printf( __( 'This plugin requires Gravity Perks. Activate it now or %1$spurchase it today!%2$s', 'gravityperks' ), '<a href="http://gravityperks.com">', '</a>' ); ?></p></div>
 					</td>
 				</tr>
 
