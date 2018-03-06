@@ -33,6 +33,10 @@
       <path value="$PROJECT_DIR$/../gravityview-calendar" />
       <path value="$PROJECT_DIR$/../gravityview-diy" />
       <path value="$PROJECT_DIR$/../gravity-forms-business-hours" />
+      <path value="$PROJECT_DIR$/../gravityformsquiz" />
+      <path value="$PROJECT_DIR$/../gravityformspolls" />
+      <path value="$PROJECT_DIR$/../gravityview-entry-revisions" />
+      <path value="$PROJECT_DIR$/../gravityformsdropbox" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">

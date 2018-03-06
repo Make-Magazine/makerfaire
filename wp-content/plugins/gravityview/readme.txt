@@ -20,6 +20,36 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 
 == Changelog ==
 
+= 1.22.5 on January 25, 2018 =
+
+* Improves support for [DIY Layout](https://gravityview.co/extensions/diy-layout/), a layout for designers & developers to take full advantage of GravityView
+* Tweak: Show "Embed Shortcode" helper if a View has widgets configured but not Fields
+* Fixed: Add Note support for Gravity Forms 2.3 (it's coming soon)
+* Fixed: `tabindex` not properly set for Update/Cancel/Delete buttons in Edit Entry
+* Fixed: Hide Yoast SEO Content & SEO Analysis functionality when editing a View
+* Fixed: Line breaks were being added to Custom Content fields and widgets, even when "Automatically add paragraphs to content" wasn't checked
+
+__Developer Updates:__
+
+* Add `$nl2br`, `$format`, `$aux_data` parameters to `GravityView_API::replace_variables()` to be consistent with `GFCommon::replace_variables()`
+
+= 1.22.4? =
+
+Yes, we skipped a minor release (1.22.4 exists only in our hearts). Thanks for noticing!
+
+= 1.22.3 on December 21, 2017 =
+
+* Added: Support for displaying files uploaded using the Gravity Forms Dropbox Addon (thanks, @mgratch and @ViewFromTheBox!)
+* Added: Merge Tags now are replaced when in `[gvlogic]` shortcodes not in a View
+* Fixed: Filtering by date in Advanced Filters prevented single entries from being visible
+* Fixed: `gravityview/capabilities/allow_logged_out` filter wasn't living up to its name (allowing logged-out visitors to edit entries)
+
+__Developer Updates:__
+
+* Modified: We're reverting changes made to Advanced Custom Field plugin compatibility
+* Added: `gravityview/fields/fileupload/file_path` filter in `class-gravityview-field-fileupload.php`
+* Modified: Removed `!important` from the CSS height rule for the `.gv-notes .gv-note-add textarea` rule
+
 = 1.22.2 on December 7, 2017 =
 
 * Fixed: Fatal error when running Ultimate Member 2.0 beta

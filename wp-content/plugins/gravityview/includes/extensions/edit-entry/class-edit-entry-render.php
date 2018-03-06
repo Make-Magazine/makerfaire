@@ -319,7 +319,7 @@ class GravityView_Edit_Entry_Render {
 
 			// Delete the values for hidden inputs
 			$this->unset_hidden_field_values();
-
+			
 			$this->entry['date_created'] = $date_created;
 
 			// Process calculation fields
@@ -581,7 +581,7 @@ class GravityView_Edit_Entry_Render {
 	 *
 	 * @uses GFFormsModel::media_handle_upload
 	 * @uses set_post_thumbnail
-	 *
+	 * 
 	 * @param array $form GF Form array
 	 * @param GF_Field $field GF Field
 	 * @param string $field_id Numeric ID of the field
@@ -1206,7 +1206,7 @@ class GravityView_Edit_Entry_Render {
 			foreach ( (array)$field->inputs as $input ) {
 
 				$input_id = strval( $input['id'] );
-
+				
 				if ( isset( $this->entry[ $input_id ] ) && ! gv_empty( $this->entry[ $input_id ], false, false ) ) {
 					$field_value[ $input_id ] =  'post_category' === $field->type ? GFCommon::format_post_category( $this->entry[ $input_id ], true ) : $this->entry[ $input_id ];
 					$allow_pre_populated = false;
