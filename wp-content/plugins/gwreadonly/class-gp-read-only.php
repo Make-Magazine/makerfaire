@@ -3,11 +3,11 @@
 class GP_Read_Only extends GWPerk {
 
 	public $version = GP_READ_ONLY_VERSION;
-	protected $min_gravity_perks_version = '1.0.beta3';
+	protected $min_gravity_perks_version = '1.0-beta-3';
 	protected $min_gravity_forms_version = '1.6.11';
 	protected $min_wp_version = '3.0';
 
-  private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
+	private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
 	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'workflow_user', 'workflow_role', 'workflow_assignee_select' );
 
 	public function init() {
@@ -292,7 +292,7 @@ class GP_Read_Only extends GWPerk {
 				if( rgar( $choice, 'isSelected' ) ) {
 					$full_input_id = sprintf( '%d.%d', $field['id'], $index );
 					$price         = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
-					$choice_value  = $field['type'] == 'product' ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
+					$choice_value  = in_array( $field['type'], array( 'product', 'option' ) )  ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
 					$values[ $full_input_id ] = $choice_value;
 				}
 
