@@ -43,10 +43,90 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 		return $defaults[$key];
 	}
 
-	public function get_client_secret_as_key() {
-		$secret = $this->get('client_secret', '');
-    $isEncoded = $this->get('client_secret_b64_encoded', false);
-		return $isEncoded ? JWT::urlsafeB64Decode($secret) : $secret;
+	public function get_client_signing_algorithm() {
+			$client_signing_algorithm = $this->get('client_signing_algorithm', WP_Auth0_Api_Client::DEFAULT_CLIENT_ALG);
+			return $client_signing_algorithm;
+	}
+
+	/**
+	 * Get the currently-stored client ID as a JWT key
+	 *
+	 * @param bool $legacy - legacy installs did not provide RS256, forces HS256
+	 *
+	 * @return bool|string
+	 */
+	public function get_client_secret_as_key( $legacy = false ) {
+		return $this->convert_client_secret_to_key(
+			$this->get('client_secret', ''),
+			$this->get('client_secret_b64_encoded', false),
+			( $legacy ? false : $this->get_client_signing_algorithm() === 'RS256' ),
+			$this->get( 'domain' )
+		);
+	}
+
+	/**
+	 * Convert a client_secret value into a JWT key
+	 *
+	 * @param string $secret - client_secret value
+	 * @param bool $is_encoded - is the client_secret base64 encoded?
+	 * @param bool $is_RS256 - if true, use RS256; if false, use HS256
+	 * @param string $domain - tenant domain
+	 *
+	 * @return array|bool|mixed|string
+	 */
+	public function convert_client_secret_to_key( $secret, $is_encoded, $is_RS256, $domain ) {
+		if ( $is_RS256 ) {
+			return WP_Auth0_Api_Client::JWKfetch( $domain );
+		} else {
+			return $is_encoded ? JWT::urlsafeB64Decode( $secret ) : $secret;
+		}
+	}
+
+	/**
+	 * Get web_origin settings for new Clients
+	 *
+	 * @return array
+	 */
+	public function get_web_origins() {
+		$home_url_parsed = parse_url( home_url() );
+		$home_url_origin = str_replace( $home_url_parsed[ 'path' ], '', home_url() );
+
+		$site_url_parsed = parse_url( site_url() );
+		$site_url_origin = str_replace( $site_url_parsed[ 'path' ], '', site_url() );
+
+		return $home_url_origin === $site_url_origin
+			? array( $home_url_origin )
+			: array( $home_url_origin, $site_url_origin );
+	}
+
+	/**
+	 * Get the main site URL for Auth0 processing
+	 *
+	 * @param string|null $protocol - forced URL protocol, use default if empty
+	 *
+	 * @return string
+	 */
+	public function get_wp_auth0_url( $protocol = null ) {
+		$site_url = site_url( 'index.php', $protocol );
+		return add_query_arg( 'auth0', '1', $site_url );
+	}
+
+	/**
+	 * Get get_cross_origin_loc URL for new Clients
+	 *
+	 * @return string
+	 */
+	public function get_cross_origin_loc() {
+		return add_query_arg( 'auth0fallback', '1', site_url( 'index.php', 'https' ) );
+	}
+
+	/**
+	 * Get the main site logout URL, minus a nonce
+	 *
+	 * @return string
+	 */
+	public function get_logout_url() {
+		return add_query_arg( 'action', 'logout', site_url( 'wp-login.php', 'login' ) );
 	}
 
 	protected function defaults() {
@@ -58,6 +138,8 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 			'auto_login_method' => '',
 			'client_id' => '',
 			'client_secret' => '',
+			'client_signing_algorithm' => WP_Auth0_Api_Client::DEFAULT_CLIENT_ALG,
+			'cache_expiration' => 1440,
 			'client_secret_b64_encoded' => null,
 			'domain' => '',
 			'form_title' => '',
@@ -68,8 +150,8 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 			'passwordless_enabled' => false,
 			'passwordless_method' => 'magiclink',
 			'passwordless_cdn_url' => '//cdn.auth0.com/js/lock-passwordless-2.2.min.js',
-			'use_lock_10' => null,
-			'cdn_url' => '//cdn.auth0.com/js/lock/10.7/lock.min.js',
+			'use_lock_10' => true,
+			'cdn_url' => '//cdn.auth0.com/js/lock/11.1/lock.min.js',
 			'cdn_url_legacy' => '//cdn.auth0.com/js/lock-9.2.min.js',
 			'requires_verified_email' => true,
 			'wordpress_login_enabled' => true,
@@ -83,7 +165,6 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 			'social_big_buttons' => false,
 			'username_style' => '',
 			'extra_conf' => '',
-			'remember_last_login' => true,
 			'custom_css' => '',
 			'custom_js' => '',
 			'auth0_implicit_workflow' => false,
@@ -92,6 +173,7 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 			'gravatar' => true,
 			'jwt_auth_integration' => false,
 			'auth0_app_token' => null,
+			'api_audience' => null,
 			'mfa' => null,
 			'fullcontact' => null,
 			'fullcontact_rule' => null,
@@ -121,10 +203,9 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 
 			'auto_provisioning' => false,
 			'default_login_redirection' => home_url(),
-
-      'auth0_server_domain' => 'auth0.auth0.com',
-
-			'auth0js-cdn' => '//cdn.auth0.com/js/auth0/8.2.0/auth0.min.js',
+			
+			'auth0_server_domain' => 'auth0.auth0.com',
+			'auth0js-cdn' => '//cdn.auth0.com/js/auth0/9.1/auth0.min.js',
 
 			//DASHBOARD
 			'chart_idp_type' => 'donut',

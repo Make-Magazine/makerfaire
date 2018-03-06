@@ -1,5 +1,75 @@
 # Change Log
 
+## [3.5.2](https://github.com/auth0/wp-auth0/tree/3.5.2) (2018-02-22)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.5.1...3.5.2)
+
+**Closed issues**
+- [Security] [URGENT] XSS injection error page [\#381](https://github.com/auth0/wp-auth0/issues/381)
+- Non-static method WP_Auth0_Api_Client::convertCertToPem() should not be called statically [\#380](https://github.com/auth0/wp-auth0/issues/380)
+- Notices in /lib/admin/WP_Auth0_Admin_Advanced.php [\#374](https://github.com/auth0/wp-auth0/issues/374)
+- SSO login failing when not using implicit flow [\#363](https://github.com/auth0/wp-auth0/issues/363)
+- "Override WordPress avatars" option doesn't appear to work with comments [\#355](https://github.com/auth0/wp-auth0/issues/355)
+- Change log is missing from readme.txt, the separate changelog file is not updated [\#346](https://github.com/auth0/wp-auth0/issues/346)
+- Uninstall doesn't remove all Auth0 database plugin entries [\#322](https://github.com/auth0/wp-auth0/issues/322)
+- Unable to save migration IPs whitelist [\#320](https://github.com/auth0/wp-auth0/issues/320)
+- 3.2.16 throws errors if Error Log is empty [\#285](https://github.com/auth0/wp-auth0/issues/285)
+- Login plugin form name incorrect [\#269](https://github.com/auth0/wp-auth0/issues/269)
+
+**Changed**
+- Readme updates [\#392](https://github.com/auth0/wp-auth0/pull/392) ([joshcanhelp](https://github.com/joshcanhelp))
+- Changed error handling [\#384](https://github.com/auth0/wp-auth0/pull/384) ([joshcanhelp](https://github.com/joshcanhelp))
+
+**Fixed**
+- Changing boolval() and array shorthand to PHP 5.3-compatable [\#402](https://github.com/auth0/wp-auth0/pull/402) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixed SSO auto-login in Lock [\#394](https://github.com/auth0/wp-auth0/pull/394) ([joshcanhelp](https://github.com/joshcanhelp))
+- Renaming un-deprecated function [\#393](https://github.com/auth0/wp-auth0/pull/393) ([joshcanhelp](https://github.com/joshcanhelp))
+- Cleanup PR for 3.5.2 [\#391](https://github.com/auth0/wp-auth0/pull/391) ([joshcanhelp](https://github.com/joshcanhelp))
+- Improved setup wizard client create process [\#389](https://github.com/auth0/wp-auth0/pull/389) ([joshcanhelp](https://github.com/joshcanhelp))
+- Deleting all added options and transients on uninstall [\#387](https://github.com/auth0/wp-auth0/pull/387) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixed wrong title and icon for login widget [\#385](https://github.com/auth0/wp-auth0/pull/385) ([joshcanhelp](https://github.com/joshcanhelp))
+- XSS in error query vars [\#383](https://github.com/auth0/wp-auth0/pull/383) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixed migration IPs being saved [\#382](https://github.com/auth0/wp-auth0/pull/382) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixed get_avatar hooked function to account for other user identifiers [\#376](https://github.com/auth0/wp-auth0/pull/376) ([joshcanhelp](https://github.com/joshcanhelp))
+
+## [3.5.1](https://github.com/auth0/wp-auth0/tree/3.5.1) (2018-01-26)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.5.0...3.5.1)
+
+**Please see note from 3.5.0 below if upgrading from 3.4.0 or earlier**
+
+**Fixed**
+- Fixed Client Grant Types during update [\#377](https://github.com/auth0/wp-auth0/pull/377) ([joshcanhelp](https://github.com/joshcanhelp))
+
+## [3.5.0](https://github.com/auth0/wp-auth0/tree/3.5.0) (2018-01-25)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.4.0...3.5.0)
+
+**Please note:** This is a major update that requires changes to your Auth0 Dashboard to be completed. You can save a new [API token](https://auth0.com/docs/api/management/v2/tokens#get-a-token-manually) in your Basic settings in wp-admin before upgrading and the changes will be made automatically during the update. Otherwise, after upgrading, please review your [Client Advanced Settings](https://auth0.com/docs/cms/wordpress/configuration#client-setup), specifically your Grant Types, and [authorize your Client for the Management API](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-client-for-the-management-api). 
+
+**Changed**
+- updating CDN URLs for Lock and Auth.js [\#365](https://github.com/auth0/wp-auth0/pull/365) ([joshcanhelp](https://github.com/joshcanhelp))
+- Changing home_url() to site_url(), wp_login_url(), and wp_logout_url()  [\#360](https://github.com/auth0/wp-auth0/pull/360) ([joshcanhelp](https://github.com/joshcanhelp))
+
+**Fixed**
+- Changing algorithm for migration tokens [\#372](https://github.com/auth0/wp-auth0/pull/372) ([joshcanhelp](https://github.com/joshcanhelp))
+- Migration tokens only use HS256 [\#371](https://github.com/auth0/wp-auth0/pull/371) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixed automatic setup process for public sites [\#370](https://github.com/auth0/wp-auth0/pull/370) ([joshcanhelp](https://github.com/joshcanhelp))
+- Added use Management API for user data [\#368](https://github.com/auth0/wp-auth0/pull/368) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixing DB version upgrade [\#367](https://github.com/auth0/wp-auth0/pull/367) ([joshcanhelp](https://github.com/joshcanhelp))
+- Creating client_grant for management API [\#366](https://github.com/auth0/wp-auth0/pull/366) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixed login flow for new tenants, refactored verification email resend [\#364](https://github.com/auth0/wp-auth0/pull/364) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixed shortcode warning [\#362](https://github.com/auth0/wp-auth0/pull/362) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fixing "Algorithm not allowed" error during user migration [\#361](https://github.com/auth0/wp-auth0/pull/361) ([joshcanhelp](https://github.com/joshcanhelp))
+- When activating using wp-cli the plugin should not redirect [\#344](https://github.com/auth0/wp-auth0/pull/344) ([AubreyHewes](https://github.com/AubreyHewes))
+
+## [3.4.0](https://github.com/auth0/wp-auth0/tree/3.4.0) (2018-01-08)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.3.2...3.4.0)
+
+**Added**
+- Added Lock 11 / Auth0 9.0, Updated SSO, JWT Algorithm Upgrade Fixes [\#350](https://github.com/auth0/wp-auth0/pull/350) ([cocojoe](https://github.com/cocojoe))
+- Add RS256 support [\#331](https://github.com/auth0/wp-auth0/pull/331) ([renrizzolo](https://github.com/renrizzolo))
+
+**Fixed**
+- Switching wizard admin user creation to use /dbconnections/signup  [\#356](https://github.com/auth0/wp-auth0/pull/356) ([joshcanhelp](https://github.com/joshcanhelp))
+
 ## [3.3.2](https://github.com/auth0/wp-auth0/tree/3.3.2) (2017-10-05)
 [Full Changelog](https://github.com/auth0/wp-auth0/compare/3.3.2...3.2.24)
 
