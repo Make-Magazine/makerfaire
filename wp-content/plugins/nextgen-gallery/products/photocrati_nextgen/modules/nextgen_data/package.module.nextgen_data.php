@@ -245,7 +245,7 @@ class C_Exif_Writer_Wrapper
             return;
         }
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'pel-0.9.6' . DIRECTORY_SEPARATOR . 'class.exif_writer.php';
-        C_Exif_Writer::copy_metadata($old_file, $new_file);
+        @C_Exif_Writer::copy_metadata($old_file, $new_file);
     }
 }
 class Mixin_NextGen_Gallery_Validation
@@ -282,6 +282,20 @@ class Mixin_NextGen_Gallery_Validation
             $this->object->path = M_NextGen_Data::strip_html($this->object->path);
             $this->object->path = str_replace(array('"', "''", ">", "<"), array('', '', '', ''), $this->object->path);
         }
+        // Ensure that the gallery path is restriected to $fs->get_document_root('galleries')
+        $fs = C_Fs::get_instance();
+        $root = $fs->get_document_root('galleries');
+        $gallery_abspath = $fs->get_absolute_path($fs->join_paths($root, $this->object->path));
+        if ($gallery_abspath[0] != DIRECTORY_SEPARATOR) {
+            $gallery_abspath = DIRECTORY_SEPARATOR . $gallery_abspath;
+        }
+        if (strpos($gallery_abspath, $root) === FALSE) {
+            $this->object->add_error(sprintf(__("Gallery path must be located in %s", 'nggallery'), $root), 'gallerypath');
+            $storage = C_Gallery_Storage::get_instance();
+            $this->object->path = $storage->get_upload_relpath($this->object);
+            unset($storage);
+        }
+        $this->object->path = trailingslashit($this->object->path);
         $this->object->validates_presence_of('title');
         $this->object->validates_presence_of('name');
         $this->object->validates_uniqueness_of('slug');
@@ -1224,6 +1238,13 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
                 $fp = fopen($abs_filename, 'wb');
                 fwrite($fp, $this->maybe_base64_decode($data));
                 fclose($fp);
+                // Ensure that we're not vulerable to CVE-2017-2416 exploit
+                if (($dimensions = getimagesize($abs_filename)) !== FALSE) {
+                    if (isset($dimensions[0]) && intval($dimensions[0]) > 30000 || isset($dimensions[1]) && intval($dimensions[1]) > 30000) {
+                        unlink($abs_filename);
+                        throw new E_UploadException(__('Image file too large. Maximum image dimensions supported are 30k x 30k.'));
+                    }
+                }
                 // Save the image
                 $image_id = $this->object->_image_mapper->save($image);
                 if (!$image_id) {
@@ -1258,6 +1279,8 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
                 delete_transient('dirsize_cache');
                 // Seems redundant to above hook. Maintaining for legacy purposes
                 do_action('ngg_after_new_images_added', $gallery_id, array($image->{$image_key}));
+            } catch (E_UploadException $ex) {
+                throw $ex;
             } catch (E_No_Image_Library_Exception $ex) {
                 throw $ex;
             } catch (E_Clean_Exit $ex) {
@@ -1437,8 +1460,8 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
             if ($clone_extension != null) {
                 $clone_extension_str = '.' . $clone_extension;
             }
-            $image_basename = M_I18n::mb_basename($image_path, $image_extension_str);
-            $clone_basename = M_I18n::mb_basename($clone_path, $clone_extension_str);
+            $image_basename = M_I18n::mb_basename($image_path);
+            $clone_basename = M_I18n::mb_basename($clone_path);
             // We use a default suffix as passing in null as the suffix will make WordPress use a default
             $clone_suffix = null;
             $format_list = $this->object->get_image_format_list();
@@ -1796,7 +1819,7 @@ class Mixin_GalleryStorage_Driver_Base extends Mixin
                 }
                 $thumbnail = apply_filters('ngg_before_save_thumbnail', $thumbnail);
                 $thumbnail->save($destpath, $quality);
-                C_Exif_Writer_Wrapper::copy_metadata($image_path, $destpath);
+                @C_Exif_Writer_Wrapper::copy_metadata($image_path, $destpath);
             }
         }
         return $thumbnail;
@@ -2706,7 +2729,7 @@ class C_NextGen_Metadata extends C_Component
         }
         // on request sanitize the output
         if ($this->sanitize == true) {
-            array_walk($meta, create_function('&$value', '$value = esc_html($value);'));
+            array_walk($meta, 'esc_html');
         }
         return $meta;
     }
@@ -2802,7 +2825,7 @@ class C_NextGen_Metadata extends C_Component
         }
         // on request sanitize the output
         if ($this->sanitize == true) {
-            array_walk($this->exif_array, create_function('&$value', '$value = esc_html($value);'));
+            array_walk($this->exif_array, 'esc_html');
         }
         return $this->exif_array;
     }
@@ -2854,7 +2877,7 @@ class C_NextGen_Metadata extends C_Component
         }
         // on request sanitize the output
         if ($this->sanitize == true) {
-            array_walk($this->iptc_array, create_function('&$value', '$value = esc_html($value);'));
+            array_walk($this->iptc_array, 'esc_html');
         }
         return $this->iptc_array;
     }
@@ -2981,7 +3004,7 @@ class C_NextGen_Metadata extends C_Component
         }
         // on request sanitize the output
         if ($this->sanitize == true) {
-            array_walk($this->xmp_array, create_function('&$value', '$value = esc_html($value);'));
+            array_walk($this->xmp_array, 'esc_html');
         }
         return $this->xmp_array;
     }
@@ -2994,6 +3017,7 @@ class C_NextGen_Metadata extends C_Component
         } else {
             $array = $value;
         }
+        return $array;
     }
     /**
      * nggMeta::get_META() - return a meta value form the available list
@@ -3062,7 +3086,7 @@ class C_NextGen_Metadata extends C_Component
      * Reason : GD manipulation removes that options
      *
      * @since V1.4.0
-     * @return void
+     * @return array|false
      */
     function get_common_meta()
     {
@@ -4061,6 +4085,7 @@ class C_NggLegacy_Thumbnail
         }
         //if there are no errors, determine the file format
         if ($this->error == false) {
+            //	        set_time_limit(30);
             @ini_set('memory_limit', -1);
             $data = @getimagesize($this->fileName);
             if (isset($data) && is_array($data)) {

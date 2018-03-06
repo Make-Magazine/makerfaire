@@ -39,7 +39,7 @@ class M_Gallery_Display extends C_Base_Module
 	function _register_utilities()
 	{
         // Register frontend-only components
-        if (apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
+        if (!is_admin() && apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
         {
             // This utility provides a controller to render the settings form
             // for a display type, or render the front-end of a display type
@@ -95,7 +95,7 @@ class M_Gallery_Display extends C_Base_Module
         }
 
         // Frontend-only components
-        if (apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
+        if (!is_admin() && apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
         {
             $this->get_registry()->add_adapter('I_MVC_View', 'A_Gallery_Display_View');
             $this->get_registry()->add_adapter('I_MVC_View', 'A_Displayed_Gallery_Trigger_Element');
@@ -108,7 +108,7 @@ class M_Gallery_Display extends C_Base_Module
 	 */
 	function _register_hooks()
 	{
-        if (apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
+        if (!is_admin() && apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
         {
             C_NextGen_Shortcode_Manager::add('ngg_images', array(&$this, 'display_images'));
             add_action('wp_enqueue_scripts', array(&$this, 'no_resources_mode'), PHP_INT_MAX-1);
@@ -249,7 +249,7 @@ class M_Gallery_Display extends C_Base_Module
 	/**
 	 * Gets the src url for the registered fontawesome handler
 	 * @param bool $ngg_provided_only
-	 * @return null|string|void
+	 * @return null|string
 	 */
 	static function get_fontawesome_url($ngg_provided_only=FALSE)
 	{
@@ -322,7 +322,7 @@ class M_Gallery_Display extends C_Base_Module
       $taglist = implode(',', $sluglist);
 
       if ($taglist === 'uncategorized' || empty($taglist))
-          return;
+          return '';
 
       $renderer = C_Displayed_Gallery_Renderer::get_instance();
       $view     = C_Component_Factory::get_instance()->create('mvc_view', '');
@@ -411,7 +411,7 @@ class M_Gallery_Display extends C_Base_Module
 	        NGG_SCRIPT_VERSION
         );
 
-        if (apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
+        if (!is_admin() && apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
         {
             wp_register_style(
                 'nextgen_gallery_related_images',

@@ -11,9 +11,10 @@ class C_Ajax_Controller extends C_MVC_Controller
         parent::define($context);
         $this->implement('I_Ajax_Controller');
     }
-    function index_action()
+    function index_action($return = FALSE)
     {
         $retval = NULL;
+        define('DOING_AJAX', TRUE);
         // Inform the MVC framework what type of content we're returning
         $this->set_content_type('json');
         // Start an output buffer to avoid displaying any PHP warnings/errors
