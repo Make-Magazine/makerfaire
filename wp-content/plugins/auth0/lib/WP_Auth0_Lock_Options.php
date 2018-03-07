@@ -33,12 +33,13 @@ class WP_Auth0_Lock_Options {
 	}
 
 	public function get_code_callback_url() {
-		$protocol = $this->_get_boolean( $this->wp_options->get( 'force_https_callback' ) ) ? 'https' : null;
-		return $this->wp_options->get_wp_auth0_url( $protocol );
+    $protocol = $this->_get_boolean( $this->wp_options->get( 'force_https_callback' ) ) ? 'https' : null;
+
+    return home_url( '/index.php?auth0=1', $protocol );
   }
 
 	public function get_implicit_callback_url() {
-		return wp_login_url();
+		return home_url( '/wp-login.php' );
 	}
 
 	public function get_sso() {
@@ -154,6 +155,9 @@ class WP_Auth0_Lock_Options {
 		if ( $this->_is_valid( $settings, 'username_style' ) ) {
 			$options_obj['usernameStyle'] = $settings['username_style'];
 		}
+		if ( $this->_is_valid( $settings, 'remember_last_login' ) ) {
+			$options_obj['rememberLastLogin'] = $this->_get_boolean( $settings['remember_last_login'] );
+		}
 		if ( $this->_is_valid( $settings, 'sso' ) ) {
 			$options_obj['sso'] = $this->_get_boolean( $settings['sso'] );
 		}
@@ -176,7 +180,7 @@ class WP_Auth0_Lock_Options {
 	public function get_sso_options() {
 		$options = $this->get_lock_options();
 
-		$options["scope"] = "openid email identities ";
+		$options["scope"] = "openid ";
 
 		if ( $this->get_auth0_implicit_workflow() ) {
 			$options["callbackOnLocationHash"] = true;
@@ -229,7 +233,8 @@ class WP_Auth0_Lock_Options {
 			$extraOptions["callbackURL"] = $this->get_code_callback_url();
 		}
 
-		$options_obj = array_merge( $extraOptions, $options_obj, $extended_settings );
+		$options_obj = array_merge( $extraOptions, $options_obj  );
+		$options_obj = array_merge( $options_obj , $extended_settings );
 
 		if ( ! $this->show_as_modal() ) {
 			$options_obj['container'] = 'auth0-login-form';

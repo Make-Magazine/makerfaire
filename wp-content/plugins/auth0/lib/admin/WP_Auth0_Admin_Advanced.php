@@ -28,6 +28,7 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
       array( 'id' => 'wpa0_passwordless_method', 'name' => 'Use passwordless login', 'function' => 'render_passwordless_method' ),
 
       array( 'id' => 'wpa0_force_https_callback', 'name' => 'Force HTTPS callback', 'function' => 'render_force_https_callback' ),
+      array( 'id' => 'wpa0_use_lock_10', 'name' => 'Use Lock 10', 'function' => 'render_use_lock_10' ),
 
       array( 'id' => 'wpa0_cdn_url', 'name' => 'Widget URL', 'function' => 'render_cdn_url' ),
 
@@ -43,8 +44,7 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
       array( 'id' => 'wpa0_social_facebook_secret', 'name' => 'Facebook app secret', 'function' => 'render_social_facebook_secret' ),
 
       array( 'id' => 'wpa0_migration_ws', 'name' => 'Users Migration', 'function' => 'render_migration_ws' ),
-      array( 'id' => 'wpa0_migration_ws_ips_filter', 'name' => 'Migration IPs Whitelist', 'function' => 'render_migration_ws_ips_filter' ),
-      array( 'id' => 'wpa0_migration_ws_ips', 'name' => '', 'function' => 'render_migration_ws_ips' ),
+      array( 'id' => 'wpa0_migration_ws_ips_filter', 'name' => 'Migration IPs whitelist', 'function' => 'render_migration_ws_ips_filter' ),
       array( 'id' => 'wpa0_auth0_implicit_workflow', 'name' => 'Auth0 Implicit flow', 'function' => 'render_auth0_implicit_workflow' ),
       array( 'id' => 'wpa0_default_login_redirection', 'name' => 'Login redirection URL', 'function' => 'render_default_login_redirection' ),
       array( 'id' => 'wpa0_verified_email', 'name' => 'Requires verified email', 'function' => 'render_verified_email' ),
@@ -215,6 +215,18 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
     <?php
   }
 
+  public function render_use_lock_10() {
+    $v = $this->options->get( 'use_lock_10' );
+
+    echo $this->render_a0_switch( "wpa0_use_lock_10", "use_lock_10", 1, 1 == $v );
+?>
+
+      <div class="subelement">
+        <span class="description"><?php echo __( 'This option will use the latest version of lock. The lock API has changed on this version and can produce some incompatibilities with CSS or JS customizations you might made.', 'wp-auth0' ); ?></span>
+      </div>
+    <?php
+  }
+
   public function render_remember_users_session() {
     $v = $this->options->get( 'remember_users_session' );
 
@@ -254,20 +266,17 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 
   public function render_migration_ws_ips_filter() {
     $v = $this->options->get( 'migration_ips_filter' );
-    $this->render_a0_switch( "wpa0_auth0_migration_ips_filter", "migration_ips_filter", 1, 1 == $v );
-  }
+    $list = $this->options->get( 'migration_ips' );
 
-  public function render_migration_ws_ips() {
-	  $list = $this->options->get( 'migration_ips' );
-	  ?>
-	  <div class="subelement">
-		  <textarea name="<?php echo $this->options->get_options_name(); ?>[migration_ips]" id="wpa0_auth0_migration_ips"><?php echo $list; ?></textarea>
-		  <span class="description">
-	        <?php echo __( 'Only requests from this IPs will be allowed to the migration WS.', 'wp-auth0' ); ?>
-	        <?php echo __( 'Separate multiple IPs with commas.', 'wp-auth0' ); ?>
-        </span>
-	  </div>
-	  <?php
+    echo $this->render_a0_switch( "wpa0_auth0_migration_ips_filter", "migration_ips_filter", 1, 1 == $v );
+
+?>
+      <div class="subelement">
+        <textarea name="migration_ips_filter"><?php echo $list; ?></textarea>
+        <span class="description"><?php echo __( 'Only requests from this IPs will be allowed to the migration WS.', 'wp-auth0' ); ?></span>
+      </div>
+    <?php
+
   }
 
   public function render_auth0_implicit_workflow() {
@@ -435,6 +444,7 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
     $input['jwt_auth_integration'] = ( isset( $input['jwt_auth_integration'] ) ? $input['jwt_auth_integration'] : 0 );
     $input['auth0_implicit_workflow'] = ( isset( $input['auth0_implicit_workflow'] ) ? $input['auth0_implicit_workflow'] : 0 );
     $input['metrics'] = ( isset( $input['metrics'] ) ? $input['metrics'] : 0 );
+    $input['use_lock_10'] = ( isset( $input['use_lock_10'] ) ? $input['use_lock_10'] : 0 );
     $input['force_https_callback'] = ( isset( $input['force_https_callback'] ) ? $input['force_https_callback'] : 0 );
     $input['default_login_redirection'] = esc_url_raw( $input['default_login_redirection'] );
 
@@ -445,8 +455,8 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
       if ( isset( $input['connections']['social_facebook_secret'] ) ) $input['connections']['social_facebook_secret'] = sanitize_text_field( $input['connections']['social_facebook_secret'] );
     }
 
-    $input['migration_ips_filter'] =  ( ! empty( $input['migration_ips_filter'] ) ? 1 : 0 );
-    $input['migration_ips'] = sanitize_text_field( $input['migration_ips'] );
+    $input['migration_ips_filter'] =  ( isset( $input['migration_ips_filter'] ) ? $input['migration_ips_filter'] : 0 );
+    $input['migration_ips'] = sanitize_text_field( $old_options['migration_ips'] );
 
     $input['valid_proxy_ip'] = ( isset( $input['valid_proxy_ip'] ) ? $input['valid_proxy_ip'] : null );
 
@@ -474,21 +484,16 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
     if ( $old_options['migration_ws'] != $input['migration_ws'] ) {
 
       if ( 1 == $input['migration_ws'] ) {
-
-	      $token_id = uniqid();
-	      $secret = $input['client_secret'];
-	      if ( $input['client_secret_b64_encoded'] ) {
-		      $secret = JWT::urlsafeB64Decode( $secret );
-	      }
-
+        $secret = $input['client_secret_b64_encoded'] ? JWT::urlsafeB64Decode( $secret) : $input['client_secret'];
+        $token_id = uniqid();
         $input['migration_token'] = JWT::encode( array( 'scope' => 'migration_ws', 'jti' => $token_id ), $secret );
         $input['migration_token_id'] = $token_id;
 
-	      $this->add_validation_error(
-		      __( 'User Migration needs to be configured manually. ', 'wp-auth0' )
-		      . __( 'Please see Advanced > Users Migration below for your token, instructions are ', 'wp-auth0' )
-		      . '<a href="https://auth0.com/docs/users/migrations/automatic">HERE</a>.'
-	      );
+        // if ($response === false) {
+        $error = __( 'There was an error enabling your custom database. Check how to do it manually ', 'wp-auth0' );
+        $error .= '<a href="https://manage.auth0.com/#/connections/database">HERE</a>.';
+        $this->add_validation_error( $error );
+        // }
 
       } else {
         $input['migration_token'] = null;

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Login by Auth0
  * Description: Login by Auth0 provides improved Username/password login, Passwordless login, Social login and Single Sign On for all your sites.
- * Version: 3.5.2
+ * Version: 3.3.2
  * Author: Auth0
  * Author URI: https://auth0.com
  */
@@ -10,9 +10,8 @@ define( 'WPA0_PLUGIN_FILE', __FILE__ );
 define( 'WPA0_PLUGIN_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'WPA0_PLUGIN_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
 define( 'WPA0_LANG', 'wp-auth0' ); // deprecated; do not use for translations
-define( 'AUTH0_DB_VERSION', 17 );
-define( 'WPA0_VERSION', '3.5.2' );
-define( 'WPA0_CACHE_GROUP', 'wp_auth0' );
+define( 'AUTH0_DB_VERSION', 14 );
+define( 'WPA0_VERSION', '3.3.2' );
 
 /**
  * Main plugin class
@@ -23,7 +22,6 @@ class WP_Auth0 {
 	protected $a0_options;
 	protected $social_amplificator;
 	protected $router;
-	protected $basename;
 
 	/**
 	 * Initialize the plugin and its modules setting all the hooks
@@ -31,8 +29,6 @@ class WP_Auth0 {
 	public function init() {
 
 		spl_autoload_register( array( $this, 'autoloader' ) );
-
-		$this->basename = plugin_basename( __FILE__ );
 
 		$ip_checker = new WP_Auth0_Ip_Check();
 		$ip_checker->init();
@@ -51,13 +47,15 @@ class WP_Auth0 {
 
 		add_action( 'activated_plugin', array( $this, 'on_activate_redirect' ) );
 
-		add_filter( 'get_avatar' , array( $this, 'filter_get_avatar') , 1 , 5 );
+		add_filter( 'get_avatar' , array( $this, 'my_custom_avatar') , 1 , 5 );
 
 		// Add an action to append a stylesheet for the login page.
 		add_action( 'login_enqueue_scripts', array( $this, 'render_auth0_login_css' ) );
 
 		// Add a hook to add Auth0 code on the login page.
 		add_filter( 'login_message', array( $this, 'render_form'), 5);
+
+		add_filter( 'auth0_verify_email_page', array( $this, 'render_verify_email_page' ), 0, 3 );
 
 		add_shortcode( 'auth0', array( $this, 'shortcode' ) );
 
@@ -67,7 +65,8 @@ class WP_Auth0 {
 
 		add_filter( 'query_vars', array( $this, 'a0_register_query_vars' ) );
 
-		add_filter( 'plugin_action_links_' . $this->basename, array( $this, 'wp_add_plugin_settings_link' ) );
+		$plugin = plugin_basename( __FILE__ );
+		add_filter( "plugin_action_links_$plugin", array( $this, 'wp_add_plugin_settings_link' ) );
 
 		if ( isset( $_GET['message'] ) ) {
 			add_action( 'wp_footer', array( $this, 'a0_render_message' ) );
@@ -119,8 +118,6 @@ class WP_Auth0 {
 		$edit_profile->init();
 
 		$this->check_signup_status();
-
-		WP_Auth0_Email_Verification::init();
 	}
 
 	/**
@@ -159,64 +156,22 @@ class WP_Auth0 {
 		}
 	}
 
-	/**
-	 * Filter the avatar to use the Auth0 profile image
-	 *
-	 * @param string $avatar - avatar HTML
-	 * @param int|string|WP_User|WP_Comment|WP_Post $id_or_email - user identifier
-	 * @param int $size - width and height of avatar
-	 * @param string $default - what to do if nothing
-	 * @param string $alt - alt text for the <img> tag
-	 *
-	 * @return string
-	 */
-	function filter_get_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
-		if ( ! $this->a0_options->get( 'override_wp_avatars' ) ) {
-			return $avatar;
-		}
+	function my_custom_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
+		$auth0Profile = get_auth0userinfo($id_or_email);
 
-		$user_id = null;
-
-		if ( $id_or_email instanceof WP_User ) {
-			$user_id = $id_or_email->ID;
-		} elseif ( $id_or_email instanceof WP_Comment ) {
-			$user_id = $id_or_email->user_id;
-		} elseif ( $id_or_email instanceof WP_Post ) {
-			$user_id = $id_or_email->post_author;
-		} elseif ( is_email( $id_or_email ) ) {
-			$maybe_user = get_user_by( 'email', $id_or_email );
-
-			if ( $maybe_user instanceof WP_User ) {
-				$user_id = $maybe_user->ID;
+		if ($this->a0_options->get('override_wp_avatars')) {
+			if ($auth0Profile && isset($auth0Profile->picture)) {
+				$avatar_url = $auth0Profile->picture;
+				$avatar = "<img alt='{$alt}' src='{$avatar_url}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
 			}
-		} elseif ( is_numeric( $id_or_email ) ) {
-			$user_id = absint( $id_or_email );
 		}
 
-
-		if ( ! $user_id ) {
-			return $avatar;
-		}
-
-		$auth0Profile = get_auth0userinfo( $user_id );
-
-		if ( ! $auth0Profile || empty( $auth0Profile->picture ) ) {
-			return $avatar;
-		}
-
-		return sprintf(
-			'<img alt="%s" src="%s" class="avatar avatar-%d photo avatar-auth0" width="%d" height="%d"/>',
-			esc_attr( $alt ),
-			esc_url( $auth0Profile->picture ),
-			absint( $size ),
-			absint( $size ),
-			absint( $size )
-		);
+		return $avatar;
 	}
 
 	function on_activate_redirect( $plugin ) {
 
-		if ( !defined( 'WP_CLI' ) && $plugin == $this->basename ) {
+		if ( $plugin == plugin_basename( __FILE__ ) ) {
 
 			$this->router->setup_rewrites();
 			flush_rewrite_rules();
@@ -303,28 +258,24 @@ class WP_Auth0 {
 
 		wp_enqueue_style( 'auth0-widget', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'assets/css/main.css' );
 	}
-	
+
 	public function shortcode( $atts ) {
 		wp_enqueue_script( 'jquery' );
-		
+
 		if ( WP_Auth0_Options::Instance()->get('passwordless_enabled') ) {
 			wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('passwordless_cdn_url'), 'jquery' );
 		} else {
 			wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('cdn_url'), 'jquery' );
 		}
-		
-		if (empty($atts)) {
-			$atts = array();
+
+		if (!isset($atts['redirect_to'])) {
+			$atts['redirect_to'] = home_url($_SERVER["REQUEST_URI"]);
 		}
-		
-		if (empty($atts['redirect_to'])) {
-			$atts['redirect_to'] = home_url($_SERVER['REQUEST_URI']);
-		}
-		
+
 		ob_start();
 		require_once WPA0_PLUGIN_DIR . 'templates/login-form.php';
 		renderAuth0Form( false, $atts );
-		
+
 		$html = ob_get_clean();
 		return $html;
 	}
@@ -344,6 +295,18 @@ class WP_Auth0 {
 ?>
 		<link rel='stylesheet' href='<?php echo plugins_url( 'assets/css/login.css', __FILE__ ); ?>' type='text/css' />
 	<?php
+	}
+
+	public function render_verify_email_page($html, $userinfo, $id_token) {
+		ob_start();
+		$domain = $this->a0_options->get( 'domain' );
+		$token = $id_token;
+		$email = $userinfo->email;
+		$connection = $userinfo->identities[0]->connection;
+		$userId = $userinfo->user_id;
+		include WPA0_PLUGIN_DIR . 'templates/verify-email.php';
+
+		return ob_get_clean();
 	}
 
 	public function render_form( $html ) {
@@ -393,20 +356,7 @@ class WP_Auth0 {
 	public static function uninstall() {
 		$a0_options = WP_Auth0_Options::Instance();
 		$a0_options->delete();
-
     delete_option( 'auth0_db_version' );
-    delete_option( 'auth0_error_log' );
-
-    delete_option( 'widget_wp_auth0_popup_widget' );
-    delete_option( 'widget_wp_auth0_widget' );
-    delete_option( 'widget_wp_auth0_social_amplification_widget' );
-
-    delete_option( 'wp_auth0_client_grant_failed' );
-    delete_option( 'wp_auth0_client_grant_success' );
-    delete_option( 'wp_auth0_grant_types_failed' );
-    delete_option( 'wp_auth0_grant_types_success' );
-
-		delete_transient('WP_Auth0_JWKS_cache');
 	}
 
 	private function autoloader( $class ) {
@@ -489,15 +439,6 @@ if ( ! function_exists( 'get_auth0_curatedBlogName' ) ) {
 	function get_auth0_curatedBlogName() {
 
     $name = get_bloginfo( 'name' );
-
-    // WordPress can have a blank site title, which will cause initial client creation to fail
-    if ( empty( $name ) ) {
-	    $name = parse_url( home_url(), PHP_URL_HOST );
-
-	    if ( $port = parse_url( home_url(), PHP_URL_PORT ) ) {
-		    $name .= ':' . $port;
-	    }
-    }
 
     $name = preg_replace("/[^A-Za-z0-9 ]/", '', $name);
     $name = preg_replace("/\s+/", ' ', $name);
