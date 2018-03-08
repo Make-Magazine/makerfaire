@@ -4,45 +4,8 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
   $scope.reports.loading   = true;
   $scope.reports.showGrid  = false;
   $scope.reports.showbuild = false;
-  $scope.reports.selFaire  = '';
-  $scope.data     = [];
   $scope.reports.selectedFields = {};
-  $scope.reports.selFaire  = '';
 
-  //faire dropdown
-  $scope.retrieveData = function(type) {
-    var vars = jQuery.param({ 'type' :  type});
-    var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
-
-    //get grid data
-    $http({
-      method: 'post',
-      url: '/resource-mgmt/ajax/ajax.php',
-      data: vars,
-      headers: head2pass
-    })
-    .then(function(response){
-      if("error" in response.data) {
-        alert(response.data.error);
-      }else{
-        $scope.data[type] = response.data[type];
-      }
-    }).finally(function () {
-      faires = $scope.data.faires;
-      angular.forEach(faires, function(value,key){
-        if(value.faire==$scope.subRoute){
-          $scope.reports.selFaire = key;
-        }
-      });
-    });
-  };
-
-
-  if(reports.showbuild) {
-    //retrieve list of forms
-
-    //show buildReport
-  }
   //set location based on url parameters
   if("location" in $routeParams){
     if($routeParams.location==='true'){
@@ -96,9 +59,9 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
   $scope.generateReport = function() {
     var formSelect     = $scope.reports.formSelect;
     var selectedFields = $scope.reports.selectedFields;
-    var rmtData        = {};
-    var aggregated     = false;
-    if($scope.reports.rmt.comment === true){
+    var rmtData            = {};
+    var aggregated = false;
+    if($scope.reports.rmt.comment==true){
       var aggregated = true;
     }
 
@@ -109,21 +72,21 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
           field.aggregated = aggregated;
           build.push(field);
         }
-      });
+      })
       rmtData[key] = build;
     });
-    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'rmtData' : rmtData, 'type' : 'customRpt', 'location' : $scope.reports.location};
+    var vars = { 'formSelect' : formSelect , 'selectedFields' : selectedFields, 'rmtData' : rmtData, 'type' : 'customRpt', 'location' : $scope.reports.location}
     $scope.reports.callAJAX(vars);
-  };
+  }
   /*end build your own report */
 
   //set report column grouping
   $scope.reports.changeGrouping = function(groupBy) {
     $scope.gridApi.grouping.clearGrouping();
-    if(groupBy==='item'){
+    if(groupBy=='item'){
       $scope.gridApi.grouping.groupColumn('item');
       $scope.gridApi.grouping.groupColumn('resource_id');
-    }else if(groupBy==='faire'){
+    }else if(groupBy=='faire'){
       $scope.gridApi.grouping.groupColumn('faire');
       $scope.gridApi.grouping.groupColumn('area');
       $scope.gridApi.grouping.groupColumn('subarea');
@@ -161,7 +124,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
     .finally(function () {
       $scope.reports.loading = false;
     });
-  };
+  }
 
   //set up gridOptions for predefined reports
   $scope.gridOptions = {enableFiltering: true,
@@ -196,7 +159,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
   };
 
   //default
-  //$scope.reports.showbuild = true;
+  $scope.reports.showbuild = true;
   jQuery('#pageTitle').html('Reports');
   jQuery('#subTitle').html('Build Your Own Report');
   $scope.reports.tableName = 'formData';
@@ -221,18 +184,18 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
   $http({
     method: 'post',
     url: url,
-    data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : type,'viewOnly':true, faire: $scope.reports.selFaire }),
+    data: JSON.stringify({ 'table' : $scope.reports.tableName , 'type' : type,'viewOnly':true }),
     headers: {'Content-Type': 'application/json'}
   })
   .then(function(response){
       angular.forEach(response.data.columnDefs, function(value, key) {
-        if(value.name==='faire' && $scope.reports.selFaire!==''){
+        if(value.name=='faire' && $scope.reports.selFaire!=''){
           angular.forEach(value.filter.selectOptions, function(selValue, selKey) {
-            if(selValue.label===$scope.reports.selFaire){
+            if(selValue.label==$scope.reports.selFaire){
               selTerm= selValue.value;
             }
           });
-          if(selTerm!==''){
+          if(selTerm!=''){
             response.data.columnDefs[key].filter.term=selTerm;
           }
         }
@@ -246,6 +209,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
       });
 
       $scope.gridOptions.columnDefs = response.data.columnDefs;
+
       $scope.gridOptions.data       = response.data.data;
 
       //set up build your own data
@@ -257,7 +221,6 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
         }
         $scope.reports.forms = response.data.forms;
       }
-
       if(("fields" in response.data)){
         $scope.fieldSelect.data = response.data.fields;
         var selfields = [];
@@ -271,7 +234,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
         if($scope.fieldSelect.gridApi.selection.selectRow){
           //var selfields = $routeParams.fields.split(',');
           angular.forEach($scope.fieldSelect.data, function(value, key) {
-            if(selfields.indexOf(String(value.id)) !== -1){
+            if(selfields.indexOf(String(value.id)) != -1){
               // $interval whilst we wait for the grid to digest the data we just gave it
               $interval( function() {$scope.fieldSelect.gridApi.selection.selectRow($scope.fieldSelect.data[key]);}, 0, 1);
             }
@@ -285,7 +248,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
         if("resource" in $routeParams){
           var selResources = $routeParams.resource.split(',');
           angular.forEach($scope.reports.rmt.resource, function(value, key) {
-            if(selResources.indexOf(String(value.value)) !== -1){
+            if(selResources.indexOf(String(value.value)) != -1){
               $scope.reports.rmt.resource[key].checked=true;
 
             }
@@ -295,7 +258,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
         if("attribute" in $routeParams){
           var selAttributes = $routeParams.attribute.split(',');
           angular.forEach($scope.reports.rmt.attribute, function(value, key) {
-            if(selAttributes.indexOf(String(value.value)) !== -1){
+            if(selAttributes.indexOf(String(value.value)) != -1){
               $scope.reports.rmt.attribute[key].checked=true;
             }
           });
@@ -304,7 +267,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
         if("attention" in $routeParams){
           var selAttentions = $routeParams.attention.split(',');
           angular.forEach($scope.reports.rmt.attention, function(value, key) {
-            if(selAttentions.indexOf(String(value.value)) !== -1){
+            if(selAttentions.indexOf(String(value.value)) != -1){
               $scope.reports.rmt.attention[key].checked=true;
             }
           });
@@ -313,7 +276,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
         if("other" in $routeParams){
           var selMeta = $routeParams.other.split(',');
           angular.forEach($scope.reports.rmt.meta, function(value, key) {
-            if(selMeta.indexOf(String(value.value)) !== -1){
+            if(selMeta.indexOf(String(value.value)) != -1){
               $scope.reports.rmt.meta[key].checked=true;
             }
           });
@@ -340,7 +303,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
 
       if (!input){
         return '';
-      } else if (result === optionsHash[input]) {
+      } else if (result = optionsHash[input]) {
         return result;
       } else if ( ( match = input.match(/(.+)( \(\d+\))/) ) && ( result = optionsHash[match[1]] ) ) {
         return result + match[2];
