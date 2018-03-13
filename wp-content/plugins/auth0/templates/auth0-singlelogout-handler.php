@@ -13,12 +13,16 @@
       domain:'<?php echo $domain; ?>'
     });
 
-    webAuth.client.getSSOData(function(err, data) {
-      if (!err && ( !data.sso || uuids != data.lastUsedUserID)) {
-        window.location = '<?php echo html_entity_decode( $logout_url ); ?>';
+    var options = <?php echo json_encode( $lock_options->get_sso_options() ); ?>;
+    options.responseType = 'token id_token';
+    webAuth.checkSession(options, function (err, authResult) {
+      if (err !== null) {
+        if(err.error ==='login_required') {
+          window.location = '<?php echo html_entity_decode( $logout_url ); ?>';
+        }
       }
     });
-  });
 
+  });
 })();
 </script>
