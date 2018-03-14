@@ -307,7 +307,17 @@
 				group = group.filter( ':checked' );
 			}
 
-			return group;
+			/**
+			 * Add/remove inputs from the field group.
+			 *
+			 * @since 1.4.22
+			 *
+			 * @param array  $group    A jQuery object with all field inputs that belong to this group.
+			 * @param array  $trigger  An array of data that represents the triggering field and which field to copy to which field.
+			 * @param string groupType The type of group; either "source" or "target".
+			 * @param array  $field    The jQuery field object for the current group.
+			 */
+			return gform.applyFilters( 'gpcc_field_group', group, field, groupType, $field );
 		};
 
 		self.getGroupValues = function( group, type, args ) {

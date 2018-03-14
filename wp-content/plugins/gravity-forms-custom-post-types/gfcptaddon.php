@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms + Custom Post Types
 Plugin URI: http://gravitywiz.com/
 Description: Map your Gravity-Forms-generated posts to a custom post type and/or custom taxonomies.
-Version: 3.1.11
+Version: 3.1.12
 Author: spivurno
 Author URI: http://gravitywiz.com/
 License: GPL2

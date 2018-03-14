@@ -105,7 +105,6 @@ function cannedRpt(){
   $fieldSQL       = ''; //sql to pull field_numbers
   $fieldIDarr     = array(); //unique array of field ID's
   $fieldArr       = array(); //array of field data keyed by field id
-  $fieldIDarr     = array();
   $fieldIDArr[376] = (object)  array("id"=>376,"label"=>"CM Ind","choices"=>"all","type"=>"radio", "order"=> $CMOrder);
   $combineFields  = array();
   $fieldQuery     = array(" field_number like '376' ");
@@ -118,9 +117,10 @@ function cannedRpt(){
   }
 
   $exactCriteria = array();
+
   //loop thru selected fields and build sql for entry details and array of requested fields
   foreach($selectedFields as $selFields){
-    $selFieldsID = $selFields->id;
+    $selFieldsID = (string) $selFields->id;
     //build wp_rg_lead_detail query
     if($selFields->type=='name'){
       //for name field
@@ -134,7 +134,6 @@ function cannedRpt(){
       //return all selected options
       $fieldQuery[] = " field_number like '".$selFieldsID.".%' ";
     } elseif($selFields->type=='radio' || $selFields->type == 'select' || $selFields->type == 'checkbox'){
-
       if($selFields->choices == 'all' && $selFields->type == 'checkbox'){
         $fieldQuery[] = " field_number like '".$selFieldsID.".%' ";
         $fieldIDArr[$selFieldsID] = $selFields; //search for all values
@@ -149,15 +148,19 @@ function cannedRpt(){
     }
 
     if($selFieldsID=='151'&& !isset($selFields->order)) $selFields->order=25;
-
     //add requested field to columns
     if(isset($selFields->hide)&&$selFields->hide==true){
       //don't add this field to display
-      $data['columnDefs'][$selFieldsID] = array('field'=> 'field_'.str_replace('.','_',$selFieldsID), 'displayName'=>$selFields->label, 'type'=>'string','visible'=> false,
-                                                    'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
+      $data['columnDefs'][$selFieldsID] = array('field'         => 'field_'.str_replace('.','_',$selFieldsID),
+                                                'displayName'   => $selFields->label,
+                                                'type'          => 'string',
+                                                'visible'       => false,
+                                                'displayOrder'  => (isset($selFields->order)?$selFields->order:9999));
     }else{
-      $data['columnDefs'][$selFieldsID] = array('field'=> 'field_'.str_replace('.','_',$selFieldsID), 'displayName'=>$selFields->label, 'type'=>'string',
-                                                    'displayOrder' => (isset($selFields->order)?$selFields->order:9999));
+      $data['columnDefs'][$selFieldsID] = array('field'         => 'field_'.str_replace('.','_',$selFieldsID),
+                                                'displayName'   => $selFields->label,
+                                                'type'          => 'string',
+                                                'displayOrder'  => (isset($selFields->order)?$selFields->order:9999));
     }
 
     if(isset($selFields->exact) && $selFields->exact){
@@ -167,10 +170,11 @@ function cannedRpt(){
 
   $fieldSQL  = implode(" or ",$fieldQuery);
 
-  //form type is not set on entries prior to BA16
+  // After setting up requested field information, Pull entries based on specified criteria
+  /* Note: form type is not set on entries prior to BA16 */
   $sql = "SELECT  wp_rg_lead.id as lead_id, wp_rg_lead.form_id
           FROM    wp_rg_lead  "
-          . (!empty($faire)?'JOIN  wp_mf_faire on wp_mf_faire.ID  ='.$faire:'')
+          . (!empty($faire)?' JOIN  wp_mf_faire on wp_mf_faire.ID  ='.$faire:'')
       . " where wp_rg_lead.status = 'active'"
           . (!empty($faire)     ? " AND FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0" : '')
           . (!empty($forms)     ? " AND wp_rg_lead.form_id in(".$forms.")" : '');
@@ -213,22 +217,23 @@ function cannedRpt(){
         //check if we pulled by specific field id or if this was a request for all values
         $fieldID = $detail['field_number'];
 
+        //remove everything after the period
+        $basefieldID  = (strpos($fieldID, ".") ? substr($fieldID, 0, strpos($fieldID, ".")) : $fieldID);
+
         if(isset($fieldIDArr[$fieldID])){
           $fieldCritArr = $fieldIDArr[$fieldID];
         }else{//let's look for the base id
-          //remove everything after the period
-          $fieldID      = (strpos($fieldID, ".") ? substr($fieldID, 0, strpos($fieldID, ".")) : $fieldID);
-          $fieldCritArr = (isset($fieldIDArr[$fieldID])?$fieldIDArr[$fieldID]:'');
+          $fieldCritArr = (isset($fieldIDArr[$basefieldID]) ? $fieldIDArr[$basefieldID]:'');
         }
 
         // radio and select options
         if(is_array($fieldCritArr)){
           //radio and select boxes must match one of the passed values
           foreach($fieldCritArr as $fieldCriteria){
-            if($fieldCriteria->type == 'radio' || $fieldCriteria->type=='select'){ //check value
+            if($fieldCriteria->type === 'radio' || $fieldCriteria->type==='select' ){ //check value
               //default to failing criteria
               $passCriteria = false;
-              if($fieldCriteria->choices=='all') {
+              if($fieldCriteria->choices === 'all') {
                 $passCriteria = true;
                 break;
               }elseif($fieldCriteria->choices == $value){
@@ -236,6 +241,13 @@ function cannedRpt(){
                 break;
               }
             }
+          }
+        }else{
+
+         // var_dump($fieldCritArr);
+          if($fieldCritArr->type==='checkbox' && $fieldCritArr->choices==='all'){
+            $fieldID = $basefieldID;
+           // echo 'field key is '.$fieldKey;
           }
         }
         if(!$passCriteria){
@@ -246,7 +258,7 @@ function cannedRpt(){
         $fieldKey             = 'field_'.str_replace('.','_',$fieldID);
         $fieldData[$fieldKey] = (isset($fieldData[$fieldKey]) ? $fieldData[$fieldKey]." \r":'') . $value;
       }
-
+//var_dump($fieldData);
       if(!empty($exactCriteria)){
         //exclude exact fields if they do not match
         //  (doing this outside of the details loop as the requested field may not be set
@@ -339,6 +351,11 @@ function cannedRpt(){
       }
     }
   }
+
+  /*
+   * after we have pulled data from database
+   *   compare against selected criteria
+   */
 
   //return data
   $data['data'] = array_values($entryData);

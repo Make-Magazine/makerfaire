@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.22
+
+	- Added "gpcc_field_group" filter to allow including non-GF inputs in the Copy Cat field group.
+
 ## 1.4.21
 
 	- Added support for targeting Credit Card field expiration date.

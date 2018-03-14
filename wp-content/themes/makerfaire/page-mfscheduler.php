@@ -6,7 +6,7 @@
 // Check that all required fields are passed before running anything and assign them to variables
  http_response_code (200);
 
-get_header('admin');  
+get_header('admin');
 global $wp_query;
 $faire_id = ( ! empty( $wp_query->query_vars['faire_id'] ) ? sanitize_text_field( $wp_query->query_vars['faire_id'] ) : null );
 $current_user = wp_get_current_user();
@@ -52,7 +52,7 @@ echo $scheduler->render();
  <div class="mf-entry-template" style="background-color:#: StatusColor #">
  # if(entries){ #
    <a target="_blank" title="#: title #" href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid=#: entries[0] #">#: entries[0] #</a>
-   
+
 # } #
 <p>#: title #</p></div>
 </script>
@@ -156,8 +156,8 @@ function get_default_locations($faire_id) {
 
 	if ($result) {
 		while ( $row = $result->fetch_row () ) {
-			$default_locations = $row [0];	
-      
+			$default_locations = $row [0];
+
 		}
 	}
 	// Create Update button for sidebar entry management
@@ -260,7 +260,7 @@ function status_to_color($entry_status) {
 }
 
 function create_makerfaire_scheduler($faire_id) {
-  
+
   $mysqli = new mysqli ( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
 	if ($mysqli->connect_errno) {
 		echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
@@ -274,11 +274,10 @@ function create_makerfaire_scheduler($faire_id) {
 		while ( $row = $result->fetch_row () ) {
 			 $start_dt = DateTime::createFromFormat('Y-m-d H:i:s', $row [0]); // your original DTO
       //DEBUG: Interval looks like it is no longer needed.
-      //$start_dt->add(new DateInterval('P7D'));
-   
+       //Why do we need to add 7 days to make this work???
+      $start_dt->add(new DateInterval('P7D'));
+
      $start_dt = $start_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
-    
-			
 		}
 	}
 	$transport = new \Kendo\Data\DataSourceTransport ();
@@ -324,13 +323,13 @@ function create_makerfaire_scheduler($faire_id) {
 
 	$subareaIdField = new \Kendo\Data\DataSourceSchemaModelField ( 'subareaId' );
 	$subareaIdField->from ( 'SubareaID' )->nullable ( true );
-  
-  
+
+
   $statusColorField = new \Kendo\Data\DataSourceSchemaModelField ( 'StatusColor' );
 	$statusColorField->from ( 'StatusColor' )->nullable ( true );
- 
-  
-  
+
+
+
   $presentationTypeField = new \Kendo\Data\DataSourceSchemaModelField ( 'presentationType' );
 	$presentationTypeField->from ( 'PresentationType' )->nullable ( true );
 
@@ -353,8 +352,8 @@ function create_makerfaire_scheduler($faire_id) {
 
 	$dataSource = new \Kendo\Data\DataSource ();
 	$dataSource->transport ( $transport )->schema ( $schema )->batch ( false );
-  
-  
+
+
   $typesResource = new \Kendo\UI\SchedulerResource ();
 	$types_array = get_entry_presentationTypes ();
 	$typesResource->field ( 'presentationType' )->title ( 'Type' )->name ( 'Types' )->dataSource ( $types_array );
@@ -404,12 +403,10 @@ function create_makerfaire_scheduler($faire_id) {
 	return $scheduler;
 }
 function debug_to_console($data) {
-	if (is_array ( $data ))
+	if (is_array ( $data )) {
 		$output = "<script>console.log( 'Debug Objects: " . implode ( ',', $data ) . "' );</script>";
-	else
+  } else {
 		$output = "<script>console.log( 'Debug Objects: " . $data . "' );</script>";
-
-		echo $output;
+  }
+	echo $output;
 }
-?>
-

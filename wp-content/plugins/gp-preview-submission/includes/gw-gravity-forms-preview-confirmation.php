@@ -190,103 +190,106 @@ class GWPreviewConfirmation {
 
     }
 
-    /**
-    * Adds special support for file upload, post image and multi input merge tags.
-    */
-    public static function preview_special_merge_tags( $value, $input_id, $modifier, $field ) {
+	/**
+	 * Adds special support for file upload, post image and multi input merge tags.
+	 */
+	public static function preview_special_merge_tags( $value, $input_id, $modifiers, $field ) {
 
-        $input_type             = GFFormsModel::get_input_type($field);
-        $is_upload_field        = in_array( $input_type, array( 'post_image', 'fileupload' ) );
-        $is_multi_upload_field  = $is_upload_field && rgar( $field, 'multipleFiles' );
+		$input_type             = GFFormsModel::get_input_type($field);
+		$is_upload_field        = in_array( $input_type, array( 'post_image', 'fileupload' ) );
+		$is_multi_upload_field  = $is_upload_field && rgar( $field, 'multipleFiles' );
 
-        $excluded_field_types   = array( 'survey' );
-        $is_excluded_field_type = in_array( $field->type, $excluded_field_types ) || in_array( $input_type, $excluded_field_types );
+		$excluded_field_types   = array( 'survey' );
+		$is_excluded_field_type = in_array( $field->type, $excluded_field_types ) || in_array( $input_type, $excluded_field_types );
 
-        if( $is_excluded_field_type ) {
-	        return $value;
-        }
+		if( $is_excluded_field_type ) {
+			return $value;
+		}
 
-        // add support for Gravity Forms Slider add-on by WP Gurus
-        if( $input_type == 'slider' && defined( 'GF_SLIDER_FIELD_ADDON_VERSION' ) ) {
-        	// pulled straight of the GF Slider add-on code
-	        if( ! empty($field->strValue) && (!empty($field->stri_value_setting) && $field->stri_value_setting==1)){
-		        $strings = explode(',',$field->strValue);
-		        $value = $strings[ $_POST['input_'.$field->id] - 1 ];
-		        return $value;
-	        }
-        }
+		// add support for Gravity Forms Slider add-on by WP Gurus
+		if( $input_type == 'slider' && defined( 'GF_SLIDER_FIELD_ADDON_VERSION' ) ) {
+			// pulled straight of the GF Slider add-on code
+			if( ! empty($field->strValue) && (!empty($field->stri_value_setting) && $field->stri_value_setting==1)){
+				$strings = explode(',',$field->strValue);
+				$value = $strings[ $_POST['input_'.$field->id] - 1 ];
+				return $value;
+			}
+		}
 
-        // added to prevent overriding :noadmin filter (and other filters that remove fields)
-        // added exception for multi upload file fields which have an empty $value at this stage
-        if( ! $value && ! $is_multi_upload_field ) {
-            return $value;
-        }
+		// added to prevent overriding :noadmin filter (and other filters that remove fields)
+		// added exception for multi upload file fields which have an empty $value at this stage
+		if( ! $value && ! $is_multi_upload_field ) {
+			return $value;
+		}
 
-        $is_multi_input = is_array( rgar($field, 'inputs') );
-        $is_input       = intval( $input_id ) != $input_id;
-        
-        if( ! $is_upload_field && ! $is_multi_input ) {
-            return $value;
-        }
+		$is_multi_input = is_array( rgar($field, 'inputs') );
+		$is_input       = intval( $input_id ) != $input_id;
 
-        // if is individual input of multi-input field, return just that input value
-        if( $is_input ) {
-            return $value;
-        }
+		if( ! $is_upload_field && ! $is_multi_input ) {
+			return $value;
+		}
 
-        $form     = GFFormsModel::get_form_meta( $field['formId'] );
-        $entry    = self::create_lead($form);
-        $currency = GFCommon::get_currency();
+		// if is individual input of multi-input field, return just that input value
+		if( $is_input ) {
+			return $value;
+		}
 
-        if( is_array( rgar( $field, 'inputs' ) ) ) {
-            $value = GFFormsModel::get_lead_field_value( $entry, $field );
-            $value = GFCommon::get_lead_field_display( $field, $value, $currency, $modifier != 'value' );
-        } else {
+		$form = GFFormsModel::get_form_meta( $field['formId'] );
+		$currency = GFCommon::get_currency();
 
-            switch( $input_type ) {
-                case 'fileupload':
+		// Support entry modifier to allow fetching values from specific entry (used by GPNF when rendering child
+		// entries via the Nested Form field merge tag and {all_fields}).
+		$_modifiers = self::parse_modifiers( $modifiers );
+		$entry_id = rgar( $_modifiers, 'entry' );
+		$entry = $entry_id ? GFAPI::get_entry( $entry_id ) : self::create_lead( $form );
 
-                    $value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
+		if( is_array( rgar( $field, 'inputs' ) ) ) {
+			$value = GFFormsModel::get_lead_field_value( $entry, $field );
+			$value = GFCommon::get_lead_field_display( $field, $value, $currency, ! rgar( $_modifiers, 'value' ) );
+		} else {
 
-                    if( $is_multi_upload_field ) {
+			switch( $input_type ) {
+				case 'fileupload':
 
-                        if( is_a( $field, 'GF_Field' ) ) {
-                            $value = $field->get_value_entry_detail( json_encode( array_filter( (array) $value ) ) );
-                        } else {
-                            $value = GFCommon::get_lead_field_display( $field, json_encode( $value ) );
-                        }
+					$value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
 
-                        $input_name = "input_" . str_replace('.', '_', $field['id']);
-                        $file_info  = self::get_uploaded_file_info( $form['id'], $input_name, $field );
+					if( $is_multi_upload_field ) {
 
-                        if( $file_info ) {
-                            foreach ( $file_info as $file ) {
-                                $value = str_replace( '>' . $file['temp_filename'], '>' . $file['uploaded_filename'], $value );
-                            }
-                        }
+						if( is_a( $field, 'GF_Field' ) ) {
+							$value = $field->get_value_entry_detail( json_encode( array_filter( (array) $value ) ) );
+						} else {
+							$value = GFCommon::get_lead_field_display( $field, json_encode( $value ) );
+						}
 
-                    } else {
-                        $value = $input_id == 'all_fields' || $modifier == 'link' ? self::preview_image_display( $field, $form, $value ) : $value;
-                    }
-                    break;
-                default:
-                    $value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
-                    $value = GFCommon::get_lead_field_display( $field, $value, $currency );
-                    break;
-            }
+						$input_name = "input_" . str_replace('.', '_', $field['id']);
+						$file_info  = self::get_uploaded_file_info( $form['id'], $input_name, $field );
 
-        }
+						if( $file_info ) {
+							foreach ( $file_info as $file ) {
+								$value = str_replace( '>' . $file['temp_filename'], '>' . $file['uploaded_filename'], $value );
+							}
+						}
 
+					} else {
+						$value = $input_id == 'all_fields' || rgar( $_modifiers, 'link' ) ? self::preview_image_display( $field, $form, $value ) : $value;
+					}
+					break;
+				default:
+					$value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
+					$value = GFCommon::get_lead_field_display( $field, $value, $currency );
+					break;
+			}
 
+		}
 
-        $value = apply_filters( 'gpps_special_merge_tags_value',                                             $value, $field, $input_id, $modifier, $form, $entry );
-        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $form['id'] ),                  $value, $field, $input_id, $modifier, $form, $entry );
-        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s_%s', $form['id'], $field['id'] ), $value, $field, $input_id, $modifier, $form, $entry );
-        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $input_type ),                  $value, $field, $input_id, $modifier, $form, $entry );
-        $value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s_%s', $form['id'], $input_type ),  $value, $field, $input_id, $modifier, $form, $entry );
+		$value = apply_filters( 'gpps_special_merge_tags_value',                                             $value, $field, $input_id, $modifiers, $form, $entry );
+		$value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $form['id'] ),                  $value, $field, $input_id, $modifiers, $form, $entry );
+		$value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s_%s', $form['id'], $field['id'] ), $value, $field, $input_id, $modifiers, $form, $entry );
+		$value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s', $input_type ),                  $value, $field, $input_id, $modifiers, $form, $entry );
+		$value = apply_filters( sprintf( 'gpps_special_merge_tags_value_%s_%s', $form['id'], $input_type ),  $value, $field, $input_id, $modifiers, $form, $entry );
 
-        return $value;
-    }
+		return $value;
+	}
 
     public static function preview_image_value( $input_name, $field, $form, $entry ) {
 
@@ -338,6 +341,30 @@ class GWPreviewConfirmation {
 
         return $value;
     }
+
+	public static function parse_modifiers( $modifiers_str ) {
+
+		preg_match_all( '/([a-z]+)(?:(?:\[(.+?)\])|,?)/i', $modifiers_str, $modifiers, PREG_SET_ORDER );
+		$parsed  = array();
+
+		foreach( $modifiers as $modifier ) {
+
+			list( $match, $modifier, $value ) = array_pad( $modifier, 3, null );
+			if( $value === null ) {
+				$value = $modifier;
+			}
+
+			// Split '1,2,3' into array( 1, 2, 3 ).
+			if( strpos( $value, ',' ) !== false ) {
+				$value = array_map( 'trim', explode( ',', $value ) );
+			}
+
+			$parsed[ $modifier ] = $value;
+
+		}
+
+		return $parsed;
+	}
 
     /**
     * Retrieves $entry object from class if it has already been created; otherwise creates a new $entry object.
@@ -397,7 +424,7 @@ class GWPreviewConfirmation {
 			        }
 		        } else {
 			        $value = rgar( self::$entry, (string) $field->id );
-			        if ( GFFormsModel::is_encrypted_field( self::$entry['id'], $field->id ) ) {
+			        if ( self::is_encrypted_field( rgar( self::$entry, 'id' ), $field->id ) ) {
 				        $value = GFCommon::decrypt( $value );
 			        }
 			        self::$entry[ $field->id ] = gf_apply_filters( array( 'gform_get_input_value', $form['id'], $field->id ), $value, self::$entry, $field, '' );
@@ -436,7 +463,7 @@ class GWPreviewConfirmation {
             
         foreach( $form['fields'] as &$field ) {
             //if( GFFormsModel::get_input_type( $field ) == 'total' )
-            GFCache::delete( 'GFFormsModel::get_lead_field_value__' . $field['id'] );
+	        GFCache::delete( 'GFFormsModel::get_lead_field_value__' . $field->id );
         }
         
     }
@@ -527,6 +554,58 @@ class GWPreviewConfirmation {
 
 	public static function is_save_and_continue() {
 		return rgget( 'gf_token' );
+	}
+
+	/**
+	 * Checks whether the given field was encrypted using GFCommon::encrpyt() and registered using GFCommon::set_encrypted_fields()
+	 *
+	 * @deprecated In GF 2.3; this is a copy of that method until 3rd-party dependence no longer exists.
+	 *
+	 * @since unknown
+	 *
+	 * @param $entry_id
+	 * @param $field_id
+	 *
+	 * @return bool|mixed
+	 */
+	public static function is_encrypted_field( $entry_id, $field_id ) {
+
+		/**
+		 * Determines if an entry field is stored encrypted. Use this hook to change the default behavior of decrypting fields that have been encrypted or to completely disable the
+		 * process if checking for encrypted fields.
+		 *
+		 * @param int $entry_id The current Entry ID
+		 * @param int $field_id The current Field ID.
+		 */
+		$is_encrypted = apply_filters('gform_is_encrypted_field', '', $entry_id, $field_id );
+		if (  $is_encrypted !== '' ){
+			return $is_encrypted;
+		}
+
+		$encrypted_fields = self::get_encrypted_fields( $entry_id );
+
+		return in_array( $field_id, $encrypted_fields );
+	}
+
+	/**
+	 * Returns an array of field IDs that have been encrypted using GFCommon::encrypt()
+	 *
+	 * @deprecated In GF 2.3; this is a copy of that method until 3rd-party dependence no longer exists.
+	 *
+	 * @since unknown
+	 *
+	 * @param $entry_id
+	 *
+	 * @return array|bool|mixed
+	 */
+	public static function get_encrypted_fields( $entry_id ) {
+
+		$encrypted_fields = gform_get_meta( $entry_id, '_encrypted_fields' );
+		if ( empty( $encrypted_fields ) ) {
+			$encrypted_fields = array();
+		}
+
+		return $encrypted_fields;
 	}
 
 }

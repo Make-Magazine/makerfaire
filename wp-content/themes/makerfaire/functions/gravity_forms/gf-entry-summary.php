@@ -171,18 +171,16 @@ $return = '
 			<td>
         <label >Email Note To:</label><br />';
 
-				$emailto1 = array("Caleb Kraft"             => "caleb@makermedia.com",
+				$emailto1 = array("Caleb Kraft"     => "caleb@makermedia.com",
                           "Dale Dougherty"          => "dale@makermedia.com",
                           "Jay Kravitz"             => "jay@thecrucible.org",
                           "Jess Hobbs"              => "jess@makermedia.com",
                           "Jonathan Maginn"         => "jonathan.maginn@sbcglobal.net",
                           "DC Denison"              => "dcdenison@mac.com",
-                          "Jonathon Christian"      => "jonathan.a.christian@gmail.com",
                           "Siana Alcorn"            => "siana@makermedia.com",
                           "Tami Jo Benson"          => "tj@tamijo.com");
         $emailto2 = array("Kerry Moore"             => "kmoore@makermedia.com",
                           "Kim Dow"                 => "dow@dowhouse.com",
-                          "Louise Glasgow"          => "lglasgow@makermedia.com",
                           "Matt Stultz"             => "mstultz@makermedia.com",
                           "Rob Bullington"          => "rbullington@makermedia.com",
                           "Sabrina Merlo"           => "smerlo@makermedia.com",
