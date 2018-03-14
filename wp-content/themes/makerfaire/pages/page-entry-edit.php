@@ -48,6 +48,12 @@ GFFormDisplay::enqueue_form_scripts( $form, false );
       </div>
       <div class="page-header">
         <?php
+        $field = $fieldData[802];
+        displayField($entry, $field, $form);
+        ?>
+      </div>
+      <div class="page-header">
+        <?php
         $field = $fieldData[105];
         displayField($entry, $field, $form);
         ?>
