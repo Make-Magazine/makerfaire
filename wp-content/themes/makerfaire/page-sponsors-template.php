@@ -231,7 +231,7 @@ get_header(); ?>
   <div class="row">
     <div class="col-xs-12 text-center">
       <a class="sponsors-btn-bottom" href="/sponsors">BECOME A SPONSOR</a>
-      <p>
+      <br><br>
         <strong>Nintendo Labo is a trademark of Nintendo.</strong>
     </div>
   </div>
