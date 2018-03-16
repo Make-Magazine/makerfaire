@@ -201,4 +201,7 @@ jQuery(function() {
   })
 });
 </script>
+<!-- Nintendo Disclaimer-->
+<br>
+<strong>Nintendo Labo is a trademark of Nintendo.</strong>
 <?php get_footer(); ?>
