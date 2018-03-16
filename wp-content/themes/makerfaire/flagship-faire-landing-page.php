@@ -203,5 +203,5 @@ jQuery(function() {
 </script>
 <!-- Nintendo Disclaimer-->
 <br>
-<strong>Nintendo Labo is a trademark of Nintendo.</strong>
+<p style="text-indent: 5em;"><strong>Nintendo Labo is a trademark of Nintendo.</strong></p>
 <?php get_footer(); ?>
