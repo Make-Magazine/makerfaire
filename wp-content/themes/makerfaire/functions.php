@@ -54,7 +54,7 @@ include_once TEMPLATEPATH . '/classes/gf-rmt-helper.php';
 include_once TEMPLATEPATH . '/classes/mf-sharing-cards.php';
 include_once TEMPLATEPATH . '/classes/ICS.php';
 if (!defined('LOCAL_DEV_ENVIRONMENT') || !LOCAL_DEV_ENVIRONMENT) {
-  //include_once TEMPLATEPATH . '/classes/mf-login.php';
+  include_once TEMPLATEPATH . '/classes/mf-login.php';
 }
 
 // Legacy Helper Functions replacing VIP Wordpress.com calls

@@ -89,8 +89,8 @@ if ($mode == "reset")
             if (isset($_GET['wle']))
                 wp_login_form();
             else
-                //renderAuth0Form(true, array( "mode" => $mode));
-                echo do_shortcode("[auth0]");
+                renderAuth0Form(true, array( "mode" => $mode));
+
             ?>
         </div>
         <div class="col-md-offset-2 hidden-xs">
@@ -110,7 +110,6 @@ if ($mode == "reset")
 
 
 /* Page specific functions */
-/*
 function renderAuth0Form($canShowLegacyLogin = true, $specialSettings = array())
 {
 
@@ -121,4 +120,5 @@ function renderAuth0Form($canShowLegacyLogin = true, $specialSettings = array())
     }else{
         wp_login_form();
     }
-}*/
+}
+?>
