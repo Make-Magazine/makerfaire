@@ -27,7 +27,8 @@ $custom_js = trim( $lock_options->get_custom_js() );
 if ( empty( $title ) ) {
 	$title = "Sign In";
 }
-
+//$lock_options->rememberLastLogin = false;
+$lock_options->extended_settings['show_as_modal'] = false;
 $options = json_encode( $lock_options->get_lock_options() );
 
 ?>
