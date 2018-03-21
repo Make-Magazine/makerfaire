@@ -115,7 +115,7 @@ function renderAuth0Form($canShowLegacyLogin = true, $specialSettings = array())
 
     if (!$canShowLegacyLogin || !isset($_GET['wle'])) {
         //Require auth0
-        require_once( ABSPATH . 'wp-content/plugins/auth0/templates/auth0-login-form-lock10.php');
+        require_once( ABSPATH . 'wp-content/plugins/auth0/templates/auth0-login-form.php');
 
     }else{
         wp_login_form();
