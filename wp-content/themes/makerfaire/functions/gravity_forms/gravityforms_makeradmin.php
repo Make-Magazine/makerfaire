@@ -54,8 +54,22 @@ function gv_faire_name($display_value, $field, $entry, $form){
  * Change the returned success message, including the link
  */
 function gv_my_update_message( $message, $view_id, $entry, $back_link ) {
-    $link = str_replace( 'entry/'.$entry['id'].'/', '', $back_link );
-    return 'Entry Updated. <a href="'.esc_url($link).'">Return to your entry list</a>';
+
+    // view/edit public information link, send user back to
+    $findme   = 'edit-public-information/';
+    $pos = strpos($back_link, $findme);
+
+    if ($pos === false) {
+      //when edit full entry from MFP
+      $link = str_replace( 'entry/'.$entry['id'].'/', '', $back_link );
+      return 'Entry Updated. <a href="'.esc_url($link).'">Return to your entry list</a>';
+    }else{
+      //when edit entry from public entry page
+      $link = str_replace('edit-public-information','maker',$back_link);
+      $return = 'Entry Updated. <a href="'.$link.'/edit">Return to your entry public page</a>';
+    }
+
+    return $return;
 }
 add_filter( 'gravityview/edit_entry/success', 'gv_my_update_message', 10, 4 );
 
