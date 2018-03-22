@@ -260,7 +260,6 @@ class maker {
                     on wp_mf_entity.lead_id = entity_id
               WHERE maker_id ='".$this->maker_id."'
               AND   wp_mf_maker_to_entity.entity_id = ".$entry['id']."
-              AND   wp_mf_maker_to_entity.maker_type = 'contact'
               AND   status != 'trash'";
     $count = $wpdb->get_var($query);
     if($count > 0) return true;
