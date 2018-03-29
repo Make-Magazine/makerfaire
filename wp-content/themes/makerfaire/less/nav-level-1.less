@@ -1,0 +1,183 @@
+header.universal-nav {
+  position: relative;
+  background: #fff;
+}
+.nav-level-1 {
+  height: 75px;
+  position: relative;
+  @media screen and (max-width: 767px) {
+    height: 55px;
+	background: #fff;
+	position: fixed;
+	width: 100%;
+	z-index: 11;
+	top: 0px;
+	box-shadow: 1px 1px 10px #666;
+  }
+  nav.container, .nav-level-1-nav, .nav-level-1-auth, li {
+    height: 100%;
+  }
+
+  .nav-level-1-nav {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 170px;
+    padding: 0;
+    list-style: none;
+    display: inline-block;
+    @media screen and (min-width: 992px) and (max-width: 1199px) {
+      margin-left: 98px;
+    }
+    @media screen and (min-width: 768px) and (max-width: 991px) {
+      margin-left: 100px;
+    }
+    @media screen and (max-width: 767px) {
+      display: none;
+    }
+    li {
+      font-size: 16px;
+      display: inline;
+      float: left;
+      position: relative;
+      &:nth-child(4) {
+        margin-left: 180px;
+        @media screen and (min-width: 992px) and (max-width: 1199px) {
+          margin-left: 170px;
+        }
+        @media screen and (min-width: 768px) and (max-width: 991px) {
+          margin-left: 134px;
+        }
+      }
+      a {
+        padding: 0 23px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: stretch;
+        span {
+          color: #333;
+          opacity: .6;
+          line-height: 1em;
+          padding-top: 1px;
+        }
+        &:hover, &:active {
+          text-decoration: none;
+          span {
+            opacity: 1;
+            text-decoration: none;
+          }
+        }
+        span::after {
+          display: block;
+          content: attr(title);
+          height: 1px;
+          color: transparent;
+          overflow: hidden;
+          visibility: hidden;
+        }
+        @media screen and (min-width: 992px) and (max-width: 1199px) {
+          padding: 0 19px;
+        }
+        @media screen and (min-width: 768px) and (max-width: 991px) {
+          padding: 0 7px;
+          font-size: 14px;
+        }
+      }
+      .nav-level-2-arrow {
+        opacity: 0;
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #005E9A;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+        transition: opacity 0.1s ease-in-out;;
+      }
+      &.active-site {
+        a span{
+          opacity: 1;
+        }
+        .nav-level-2-arrow {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  
+  .navbar-brand {
+    width: 134px;
+    height: 100%;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    @media screen and (min-width: 768px) and (max-width: 991px) {
+      width: 120px;
+    }
+    @media screen and (max-width: 767px) {
+      width: 90px;
+    }
+  }
+}
+.nav-level-1-auth {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+  display: inline-block;
+  position: relative;
+  left: 45px;
+  @media screen and (max-width: 1200px) {
+    right: 4%;
+  }
+  @media screen and (max-width: 767px) {
+    left: 25px; 
+  }
+  @media screen and (max-width: 576px) {
+    display: none;
+  }
+  li {
+    display: inline-block;
+    float: left;
+    a, span {
+      color: #333;
+      opacity: .6;
+      padding: 0 5px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: stretch;
+      font-size: 14px;
+      @media screen and (min-width: 768px) and (max-width: 991px) {
+        font-size: 14px;
+      }
+      &:hover, &:active {
+        opacity: 1;
+        text-decoration: none;
+      }
+    }
+    span {
+      padding: 0;
+    }
+  }
+}
+
+
+
+@media screen and (max-width: 767px) {
+    #page-content .front-page.container{
+        margin-top: 55px;
+    }
+}

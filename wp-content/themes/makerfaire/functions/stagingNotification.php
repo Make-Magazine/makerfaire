@@ -4,9 +4,9 @@ function determine_staging() {
   // Display a message if on staging or development
   if(class_exists('Jetpack')){
     if (Jetpack::is_development_mode()) {
-      echo '<div class="stagingMsg" style="display: block; text-align: center; background: red; font-size: large;color: white;">Development Site</div>';
+      echo '<div class="stagingMsg" style="position: fixed;top: 0px; right: 0px;z-index: 9999;display: block; text-align: center; background: red; font-size: large;color: white;">Development Site</div>';
     } else if (Jetpack::is_staging_site()) {
-      echo '<div class="stagingMsg" style="display: block; text-align: center; background: red; font-size: large;color: white;">Staging Site</div>';
+      echo '<div class="stagingMsg" style="position: fixed;top: 0px; right: 0px;z-index: 9999;display: block; text-align: center; background: red; font-size: large;color: white;">Staging Site</div>';
     }
   }
 }

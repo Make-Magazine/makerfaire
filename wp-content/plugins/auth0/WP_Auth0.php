@@ -120,7 +120,7 @@ class WP_Auth0 {
 
 		$this->check_signup_status();
 
-		WP_Auth0_Email_Verification::init();
+		//WP_Auth0_Email_Verification::init();
 	}
 
 	/**
