@@ -26,6 +26,7 @@ wp-content/themes/makerfaire/signs/*
 .smushit-status
 .gitattributes
 .htaccess
+last-mod
 _wpeprivate
 wp-content/object-cache.php
 wp-content/mu-plugins/*
@@ -64,6 +65,7 @@ wp-content/mysql.sql
 /wp-content/themes/twentyten
 /wp-content/themes/index.php
 /wp-content/plugins/index.php
+/wp-content/debug.log
 
 # large/disallowed file types
 # a CDN should be used for these
@@ -100,5 +102,6 @@ wp-content/mysql.sql
 *.wmv
 *.avi
 *.csv
+*.ics
 .netbeans.xml
 FixFor Users.sql
