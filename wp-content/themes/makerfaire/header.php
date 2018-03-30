@@ -108,7 +108,7 @@
   <!-- End Google Tag Manager -->
   <script type="text/javascript">document.body.className = document.body.className.replace('no-js','js');</script>
 <!-- ====== Topbar ====== -->
-<!-- TOP BRAND BAR 
+<!-- TOP BRAND BAR
 <div class="hidden-xs top-header-bar-brand">
   <div class="container">
     <div class="row">
@@ -130,7 +130,7 @@
 </div> -->
 
 <header id="universal-nav" class="universal-nav">
-  
+
   <div class="nav-level-1">
     <nav class="container">
 
@@ -177,13 +177,12 @@
         <img src="<?php echo get_stylesheet_directory_uri(); ?>/img/Make_logo.svg" class="img-responsive" alt="Make: brand logo" />
       </a>
 
-      <ul class="nav-level-1-auth hidden-xs">
-        <li><a href="#">Login</a></li>
-        <li><span>|</span></li>
-        <li><a href="#">Signup</a></li>
+      <ul class="nav-level-1-auth">
+        <li>
+          <span id=""><?php echo do_shortcode( '[auth0 show_as_modal="true" modal_trigger_name="Login | Signup"]' );?></span>
+        </li>
       </ul>
-        
-        
+
     </nav>
   </div><!-- .nav-level-1 -->
   <div id="nav-level-2" class="nav-level-2">
@@ -215,12 +214,12 @@
         </li>
     </ul>
   </div>-->
- 
+
 
   <div id="nav-flyout">
 
     <?php get_template_part('mega-menu-remove-this-when-made-external'); ?>
-  
+
   </div>
 
   <div id="nav-hamburger" class="nav-hamburger">
