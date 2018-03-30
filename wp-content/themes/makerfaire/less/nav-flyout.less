@@ -1,0 +1,465 @@
+#nav-flyout {
+  display: none;
+  position: fixed;
+  padding-top: 17px;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 560px;
+  background-color: #fff;
+  z-index: 999;
+  box-shadow:0px 5px 10px #000;
+  @media screen and (max-width: 576px) {
+    width: 360px;
+    padding-top: 10px;
+    height: 100vh;
+    overflow: scroll;
+  }
+  .container {
+    position: relative;
+  }
+  .nav-flyout-logo {
+    display: flex;
+  }
+  .navbar-brand {
+    width: 134px;
+    height: auto;
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    @media screen and (max-width: 576px) {
+      width: 100px;
+    }
+    h2 {
+      font-family: 'Roboto', serif;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #4a4a4a;
+      margin-top: 0;
+      margin-bottom: 0;
+      @media screen and (max-width: 576px) {
+        display: none;
+      }
+    }
+  }
+    
+  .nav-flyout-columns {
+    display: flex;
+    margin-top: 15px;
+    justify-content: space-between;
+    @media screen and (max-width: 576px) {
+      flex-direction: column;
+      margin-top: 0;
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+  }
+
+  .nav-flyout-column {
+    padding-right: 15px;
+    @media screen and (min-width: 768px) and (max-width: 991px) {
+      padding-right: 10px;
+    }
+    @media screen and (min-width: 576px) and (max-width: 767px) {
+      padding-right: 7px;
+    }
+    @media screen and (max-width: 576px) {
+      padding-right: 0;
+    }
+
+    a.expanding-underline {
+      display: block;
+      position: relative;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      line-height: .8em;
+      h3 {
+        color: #333;
+        padding-bottom: 2px;
+        margin-top: 0;
+        margin-bottom: 0;
+        opacity: .85;
+        font-size: 20px;
+        font-weight: 500;
+        font-family: 'Roboto', serif;
+        transition: font-weight .1s ease-in-out;
+        line-height: 1em;
+        display: inline;
+        position: relative;
+        overflow: hidden;
+        &:after {
+          content: "";
+          position: absolute;
+          z-index: -1;
+          left: 0;
+          right: 50%;
+          bottom: -5px;
+          background: #ED1C24;
+          height: 4px;
+          transition-property: left right;
+          transition-duration: 0.3s;
+          transition-timing-function: ease-out;
+        }
+        @media screen and (min-width: 768px) and (max-width: 991px) {
+          font-size: 18px;
+        }
+        @media screen and (min-width: 576px) and (max-width: 767px) {
+          font-size: 16px;
+        }
+        @media screen and (max-width: 576px) {
+          margin-top: 35px;
+          display: block;
+          overflow: visible;
+        }
+      }
+      .nav-close-icon {
+        display: none;
+      }
+      &:hover, &:active, &:focus {
+        text-decoration: none;
+      }
+      &:hover, &.underline-open {
+        h3 {
+          opacity: 1;
+          transition: font-weight .1s ease-in-out;
+          &:after{
+            right: 0;
+          }
+        }
+      }
+      &.underline-open .nav-close-icon {
+        @media screen and (max-width: 576px) {
+          opacity: .85;
+          display: inline-block;
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 20px;
+          height: 20px;
+            &:hover, &:active, &:focus {
+                opacity: 1;
+            }
+        }
+      }
+    }
+  }
+
+  .nav-flyout-ul {
+    margin-left: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+    display: inline-block;
+    @media screen and (max-width: 576px) {
+      display: none;
+    }
+    li {
+      &:nth-child(5) {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 7px;
+        margin-bottom: 7px;
+        @media screen and (max-width: 576px) {
+          border-bottom: none;
+          padding-bottom: 0;
+          margin-bottom: 0;
+        }
+      }
+    }
+    a {
+      padding: 7px 0;
+      margin-bottom: 2px;
+      text-decoration: none;
+      display: block;
+      span {
+        line-height: 1.2em;
+        color: #333;
+        opacity: .6;
+      }
+      &:hover, &:active {
+        text-decoration: none;
+        //transform: scale(1.015);
+        //margin-left: .25px;
+        span {
+          opacity: 1;
+          text-decoration: none;
+        }
+      }
+      span::after {
+        display: block;
+        content: attr(title);
+        font-weight: 700;
+        height: 1px;
+        color: transparent;
+        overflow: hidden;
+        visibility: hidden;
+      }
+      @media screen and (min-width: 768px) and (max-width: 991px) {
+        font-size: 13px;
+      }
+      @media screen and (min-width: 576px) and (max-width: 767px) {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .nav-level-1-auth {
+    display: none;
+    @media screen and (max-width: 576px) {
+      display: block;
+      float: none;
+      margin-top: 30px;
+      margin-left: -5px;
+    }
+  }
+
+  // SOCIAL MEDIA
+  .social-network-container {
+    position: absolute;
+    top: 86px;
+    right: -20px;
+    @media screen and (max-width: 767px) {
+      top: 100%;
+      right: 0;
+      left: 0;
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+  }
+  ul.social-network {
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style: none;
+    padding: 0;
+    @media screen and (max-width: 576px) {
+      padding: 0 50px;
+      display: flex;
+      justify-content: space-between;
+    }
+    li {
+      display: block;
+      margin: 0 0 8px 0;
+      @media screen and (max-width: 767px) {
+        display: inline-block;
+        margin: 0 8px 0 0;
+      }
+      a {
+        display: inline-block;
+        position: relative;
+        margin: 0 auto 0 auto;
+        text-align: center;
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+        background-color: transparent;
+        i {
+          color: #555;
+          opacity: .6;
+          margin: 0;
+          line-height: 30px;
+          text-align: center;
+          -webkit-transition: all 0.2s;
+          -moz-transition: all 0.2s;
+          -o-transition: all 0.2s;
+          -ms-transition: all 0.2s;
+          transition: all 0.2s;
+        }
+      }
+      a:hover {
+        background-color: transparent;
+        i {
+          &.fa-twitter {
+            color: #33ccff;
+          }
+          &.fa-facebook {
+            color: #3B5998;
+          }
+          &.fa-instagram {
+            color: #3f729b;
+          }
+          &.fa-youtube-play {
+            color: #ff0000;
+          }
+          &.fa-pinterest {
+            color: #cc2127;
+          }
+          opacity: 1;
+          -webkit-transition: all 0.2s;
+          -moz-transition: all 0.2s;
+          -o-transition: all 0.2s;
+          -ms-transition: all 0.2s;
+          transition: all 0.2s;
+        }
+      }
+    }
+  }
+
+
+}
+
+.nav-hamburger {
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 75px;
+  pointer-events : none;
+  display: flex;
+  align-items: center;
+  @media screen and (max-width: 767px) {
+    height: 55px;
+    position: fixed;
+  }
+  .container {
+    @media screen and (max-width: 767px) {
+      margin-right: 0;
+      margin-left: 0;
+    }
+  }
+  #hamburger-click-event {
+    display: flex;
+    align-items: center;
+  }
+  #hamburger-icon {
+    width: 33px;
+    height: 22px;
+    display: inline-block;
+    position: relative;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
+    cursor: pointer;
+    pointer-events: auto;
+    span {
+      display: block;
+      position: absolute;
+      height: 3px;
+      width: 100%;
+      background: #ED1C24;
+      border-radius: 9px;
+      opacity: 1;
+      left: 0;
+      -webkit-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+      -webkit-transition: .25s ease-in-out;
+      -moz-transition: .25s ease-in-out;
+      -o-transition: .25s ease-in-out;
+      transition: .25s ease-in-out;
+    }
+  }
+  #hamburger-icon span:nth-child(1) {
+    top: 0px;
+  }
+  #hamburger-icon span:nth-child(2),#hamburger-icon span:nth-child(3) {
+    top: 9px;
+  }
+  #hamburger-icon span:nth-child(4) {
+    top: 18px;
+  }
+  #hamburger-icon.open span:nth-child(1) {
+    top: 9px;
+    width: 0%;
+    left: 50%;
+  }
+  #hamburger-icon.open span:nth-child(2) {
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  #hamburger-icon.open span:nth-child(3) {
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
+  #hamburger-icon.open span:nth-child(4) {
+    top: 9px;
+    width: 0%;
+    left: 50%;
+  }
+  img {
+    width: 32px;
+    margin-left: 10px;
+    cursor: pointer;
+    pointer-events: auto;
+    vertical-align: top;
+  }
+}
+.nav-flyout-underlay {
+  display: none;
+  background-color: rgba(0,0,0,0.5);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 9;
+}
+.nav-open-no-scroll {
+  overflow: hidden;
+}
+#universal-nav.main-nav-scrolled #nav-flyout {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 999;
+  .admin-bar & {
+    top: 32px;
+  }
+}
+.ham-menu-animate {
+  position:absolute;
+  top:0;
+  z-index: 999;
+  height: 55px;
+  @media screen and (max-width: 767px) {
+    position: fixed;
+    height: 55px;
+  }
+  animation: easeDown .5s 0.1s ease-out forwards;
+  #hamburger-icon span {
+    background: #fff;
+  }
+  #hamburger-icon.open span {
+    background: #ED1C24;
+  }
+  .admin-bar & {
+    top: 32px;
+    @media screen and (min-width: 767px) {
+        animation: easeDownMore .5s 0.1s ease-out forwards;
+    }
+  }
+} 
+@keyframes easeDown {
+  from {
+    position: absolute;
+      top:-55px;
+  }
+  to {
+    position: fixed;
+    top:0px;
+  }
+}
+@keyframes easeDownMore {
+  from {
+    position: absolute;
+      top:-55px;
+  }
+  to {
+    position: fixed;
+    top:32px;
+  }
+}

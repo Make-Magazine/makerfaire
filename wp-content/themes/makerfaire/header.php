@@ -108,96 +108,134 @@
   <!-- End Google Tag Manager -->
   <script type="text/javascript">document.body.className = document.body.className.replace('no-js','js');</script>
 <!-- ====== Topbar ====== -->
-<!-- TOP BRAND BAR -->
+<!-- TOP BRAND BAR 
 <div class="hidden-xs top-header-bar-brand">
   <div class="container">
     <div class="row">
       <div class="col-sm-3">
       </div>
       <div class="col-sm-6 text-center">
-        <p class="header-make-img"><a href="//makezine.com?utm_source=makerfaire.com&utm_medium=brand+bar&utm_campaign=explore+all+of+make" target="_blank">Explore all of <img src="<?php echo get_stylesheet_directory_uri(); ?>/img/make_logo.png" alt="Make: Makezine Logo" /></a></p>
+        <p class="header-make-img"><a href="//makezine.com?utm_source=makerfaire.com&utm_medium=brand+bar&utm_campaign=explore+all+of+make" target="_blank">Explore all of <img src="<?php //echo get_stylesheet_directory_uri(); ?>/img/make_logo.png" alt="Make: Makezine Logo" /></a></p>
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
-<header id="header" class="quora">
-  <!-- Mobile Nav -->
-  <nav class="navbar navbar-default navbar-fixed-top visible-xs-block">
+<!-- div id="search-modal"> SEARCH FEATURE TO BE CONTINUED
+  <form role="search" method="get" class="search-form" action="/">
+      <label class="sb-search-label" for="search">Search</label>
+        <input class="sb-search-input search-field" placeholder="What are you searching for?" value="" name="s" id="search" title="" type="text">
+        <input class="sb-search-submit" name="submit" value="Search" type="submit">
+  </form>
+</div> -->
+
+<header id="universal-nav" class="universal-nav">
+  
+  <div class="nav-level-1">
+    <nav class="container">
+
+      <ul class="nav-level-1-nav">
+        <li class="nav-zine">
+          <a href="https://makezine.com/">
+            <span title="Latest">Latest</span>
+          </a>
+          <div class="nav-level-2-arrow"></div>
+        </li>
+        <li class="nav-make">
+          <a href="http://www.make.co/">
+            <span title="Membership">Membership</span>
+          </a>
+          <div class="nav-level-2-arrow"></div>
+        </li>
+        <li class="nav-shed">
+          <a href="https://www.makershed.com/">
+            <span title="Shop">Shop</span>
+          </a>
+          <div class="nav-level-2-arrow"></div>
+        </li>
+        <li class="nav-share">
+          <a href="https://makershare.com/learning/">
+            <span title="Learn">Learn</span>
+          </a>
+          <div class="nav-level-2-arrow"></div>
+        </li>
+        <li class="nav-share-p">
+          <a href="https://makershare.com/makers">
+            <span title="Portfolios">Portfolios</span>
+          </a>
+          <div class="nav-level-2-arrow"></div>
+        </li>
+        <li class="nav-faire">
+          <a href="https://makerfaire.com/">
+            <span title="Events">Events</span>
+          </a>
+          <div class="nav-level-2-arrow"></div>
+        </li>
+      </ul>
+
+      <a href="https://makerfaire.com/" class="navbar-brand">
+        <img src="<?php echo get_stylesheet_directory_uri(); ?>/img/Make_logo.svg" class="img-responsive" alt="Make: brand logo" />
+      </a>
+
+      <ul class="nav-level-1-auth hidden-xs">
+        <li><a href="#">Login</a></li>
+        <li><span>|</span></li>
+        <li><a href="#">Signup</a></li>
+      </ul>
+        
+        
+    </nav>
+  </div><!-- .nav-level-1 -->
+  <div id="nav-level-2" class="nav-level-2">
     <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="<?php bloginfo('url'); ?>">
-          <img src="/wp-content/uploads/2016/01/mf_logo.jpg" height="43" width="183" alt="maker faire">
-        </a>
-        <button type="button" class="navbar-toggle collapsed pull-right" data-toggle="collapse" data-target="#navbar-mobile-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-      </div>
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="navbar-mobile-collapse">
-        <ul class="nav navbar-nav">
-          <?php
-            wp_nav_menu( array(
-              'theme_location' => '_no_default_fallback',
-              'menu'            => 'Main Navigation Version 3 Mobile',
-              'menu_class' => 'menu-main-navigation-version-3-mobile nav navbar-nav'
-            ) );
-          ?>
-        </ul>
-
-        <div class="mobile-subscribe-link hidden-md hidden-lg">
-          <a href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M7GMFE">SUBSCRIBE to Make: and save</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-  <!-- Desktop Nav -->
-  <nav class="navbar hidden-xs desktop-nav">
-    <div class="container">
-
-      <div class="navbar-header">
-        <a class="navbar-brand" href="<?php bloginfo('url'); ?>">
-          <img src="/wp-content/uploads/2016/01/mf_logo.jpg" height="43" width="183" alt="maker faire">
-        </a>
-      </div>
-
-      <div class="collapse navbar-collapse">
+        <div class="nav-2-banner">
         <?php
           wp_nav_menu( array(
-            'theme_location' => '_no_default_fallback',
-            'menu'            => 'Main Navigation Version 3',
-            'container' => false,
-            'menu_class' => 'nav navbar-nav'
-          ) );
+              'menu'              => 'secondary_universal_menu',
+              'theme_location'    => 'secondary_universal_menu',
+              'depth'             => 1,
+              'container'         => '',
+              'container_class'   => '',
+              'link_before'       => '<span>',
+              'link_after'        => '</span>',
+              'menu_class'        => 'nav navbar-nav',
+              'fallback_cb'       => 'wp_bootstrap_navwalker::fallback',
+              'walker'            => new wp_bootstrap_navwalker())
+          );
         ?>
-      </div>
-
-      <!-- New Header Subscribe stuff -->
-      <div id="mz-header-subscribe" class="hidden-xs">
-        <div>
-          <a id="trigger-overlay" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M7GMFE" target="_blank">
-            <img src="<?php echo get_template_directory_uri() . '/img/Make-magazine-cover-55.png'; ?>" alt="Make: magazine cover, subscribe here" />
-          </a>
-          <a class="subscribe-red-btn" href="https://readerservices.makezine.com/mk/default.aspx?pc=MK&pk=M7GMFE" target="_blank">SUBSCRIBE</a>
         </div>
-      </div>
+    </div>
+  </div><!-- .nav-level-2 -->
+  <!--<div class="container search-container">
+    <ul class="search-button">
+        <li>
+          <div id="sb-search" class="sb-search">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </div>
+        </li>
+    </ul>
+  </div>-->
+ 
 
-    </div>
-  </nav>
-  <!-- Desktop Subnav bar -->
-  <nav class="navbar desktop-nav hidden-xs subnav">
+  <div id="nav-flyout">
+
+    <?php get_template_part('mega-menu-remove-this-when-made-external'); ?>
+  
+  </div>
+
+  <div id="nav-hamburger" class="nav-hamburger">
     <div class="container">
-      <?php
-        wp_nav_menu( array(
-          'theme_location' => '_no_default_fallback',
-          'menu'            => 'Main Navigation Version 3 Subnav',
-          'container' => false,
-          'menu_class' => 'nav navbar-nav'
-        ) );
-      ?>
+      <div id="hamburger-click-event">
+        <div id="hamburger-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <img id="hamburger-makey" src="<?php echo get_stylesheet_directory_uri(); ?>/img/makey_outlined.svg" alt="Makey roboto logo" />
+      </div>
     </div>
-  </nav>
+  </div><!-- .nav-hamburger -->
+
 </header>
+<div class="nav-flyout-underlay"></div>
