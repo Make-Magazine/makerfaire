@@ -30,10 +30,6 @@ include_once TEMPLATEPATH . '/plugins/public-pages/sponsor.php';
 // Sponsor Carousel
 include_once TEMPLATEPATH . '/plugins/instagram/instagram.php';
 
-// Register Custom Navigation Walker include custom menu widget to use walkerclass
-
-include_once TEMPLATEPATH . '/lib/wp_bootstrap_navwalker.php';
-
 // Post Locker
 //include_once dirname( __FILE__ ) . '/plugins/hide-post-locker/hide-post-locker.php';
 // Blue Ribbons
