@@ -1,3 +1,4 @@
+// used by old nav... left here in case there are legacy pages with the old header
 jQuery(function() {
   jQuery('.desktop-nav .sub-menu').wrapInner('<div class=\'container\'></div>');
 });
@@ -5,7 +6,6 @@ jQuery(function() {
 /*
  *  
  *  Custom jQuery for the mobile navigation
- *  Added by Dave B
  *
  */
 jQuery(function() {
@@ -95,7 +95,6 @@ jQuery(function() {
             jQuery('#search-modal').unbind('click', false);
         }
   });
-
   jQuery(".fa-search").click(function(e){
        jQuery("#search-modal").trigger('click');
   });*/
@@ -131,9 +130,9 @@ jQuery(function() {
         break;  
     case "maker-faire":
     case "makerfaire":
-    case "https://makerfaire.wpengine.com":
-    case "https://makerfaire.staging.wpengine.com":
-    case "https://makerfaire.com":
+    case "makerfaire.wpengine.com":
+    case "makerfaire.staging.wpengine.com":
+    case "makerfaire.com":
         universalNavActive("faire")
         break;
     default:
