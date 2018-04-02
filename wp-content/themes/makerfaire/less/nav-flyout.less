@@ -425,22 +425,24 @@
   top:0;
   z-index: 999;
   height: 55px;
+  .admin-bar & {
+    top: 32px;
+  }
   @media screen and (max-width: 767px) {
     position: fixed;
     height: 55px;
   }
-  animation: easeDown .5s 0.1s ease-out forwards;
-  #hamburger-icon span {
-    background: #fff;
-  }
-  #hamburger-icon.open span {
-    background: #ED1C24;
-  }
-  .admin-bar & {
-    top: 32px;
-    @media screen and (min-width: 767px) {
+  @media screen and (min-width: 767px) {
+      animation: easeDown .5s 0.1s ease-out forwards;
+      #hamburger-icon span {
+        background: #fff;
+      }
+      #hamburger-icon.open span {
+        background: #ED1C24;
+      }
+      .admin-bar & {
         animation: easeDownMore .5s 0.1s ease-out forwards;
-    }
+      }
   }
 } 
 @keyframes easeDown {

@@ -139,27 +139,27 @@ header.universal-nav {
   display: inline-block;
   position: relative;
   left: 45px;
-  @media screen and (max-width: 1200px) {
-    right: 4%;
-  }
+  right: 4%;
   @media screen and (max-width: 767px) {
-    left: 25px; 
-  }
-  @media screen and (max-width: 576px) {
-    display: none;
+    float: right;
+    margin-right: 40px;
   }
   li {
     display: inline-block;
     float: left;
-    a, span {
+    span {
       color: #333;
       opacity: .6;
-      padding: 0 5px;
+      padding: 0;
       height: 100%;
       display: flex;
       align-items: center;
       justify-content: stretch;
       font-size: 14px;
+      button {
+        border: 0px;
+        background: none;
+      }
       @media screen and (min-width: 768px) and (max-width: 991px) {
         font-size: 14px;
       }
@@ -167,9 +167,6 @@ header.universal-nav {
         opacity: 1;
         text-decoration: none;
       }
-    }
-    span {
-      padding: 0;
     }
   }
 }
