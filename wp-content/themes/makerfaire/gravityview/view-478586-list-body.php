@@ -48,8 +48,8 @@ $entries   = $tableData['data'];
       </button>
       <div class="popover-content hidden">
         <div class="manage-entry-popover">
-          <a href="/login/?mode=reset">Change Password</a>
-          <a href="/login/?action=logout">Log Out</a>
+          <!--<a href="/login/?mode=reset">Change Password</a>-->
+          <a href="/wp-login.php?action=logout">Log Out</a>
           <h6 class="popover-head">Questions?</h6>
           <a target="_blank" href="http://makerfaire.com/all-toolkits/">Visit your Toolkit</a>
         </div>

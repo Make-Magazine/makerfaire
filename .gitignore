@@ -14,7 +14,6 @@ wp-content/upgrade/*
 wp-content/backup-db/*
 wp-content/advanced-cache.php
 wp-content/wp-cache-config.php
-wp-content/debug.log
 wp-content/cache/*
 wp-content/cache/supercache/*
 wp-content/gallery/*
@@ -66,6 +65,7 @@ wp-content/mysql.sql
 /wp-content/themes/twentyten
 /wp-content/themes/index.php
 /wp-content/plugins/index.php
+/wp-content/debug.log
 
 # large/disallowed file types
 # a CDN should be used for these
