@@ -302,6 +302,10 @@
     jQuery('table.schedule').slideDown('slow');
   });
 </script>
+
+<!-- Media Math Tracking Pixel -->
+<script language='JavaScript1.1' async src='//pixel.mathtag.com/event/js?mt_id=1311192&mt_adid=208330&mt_exem=&mt_excl=&v1=&v2=&v3=&s1=&s2=&s3='></script>
+
 <!-- Crazy Egg tracking
   <?php ?>
   <script type="text/javascript">
