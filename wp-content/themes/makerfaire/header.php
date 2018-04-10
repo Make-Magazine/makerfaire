@@ -179,7 +179,18 @@
 
       <ul class="nav-level-1-auth">
         <li>
-          <span id=""><?php echo do_shortcode( '[auth0 show_as_modal="true" modal_trigger_name="Login | Signup"]' );?></span>
+          <span id="">
+            <?php
+            $redirectLink = filter_input(INPUT_SERVER, "REQUEST_URI");
+
+            if( is_user_logged_in() ) {
+              ?><a href="<?php echo wp_logout_url( $redirectLink ); ?>">Logout</a><?php
+            } else {
+              ?><a href="<?php echo esc_url( wp_login_url( $redirectLink ) ); ?>" alt="Login | Signup">Login | Signup</a><?php
+            }
+
+            ?>
+          </span>
         </li>
       </ul>
 
