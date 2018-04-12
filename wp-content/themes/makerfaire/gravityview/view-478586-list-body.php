@@ -116,6 +116,9 @@ $entries   = $tableData['data'];
 
       //display the 'view/edit public information' link is the status is accepted
       $dispEditPub = ($entryData['status'] == 'Accepted' ? true : false);
+      //if form type = sponsor or startup do not display
+      if($entryData['form_type']=='Sponsor'||$entryData['form_type']=='Startup Sponsor')
+        $dispEditPub = false;
 
       //set edit links
 
