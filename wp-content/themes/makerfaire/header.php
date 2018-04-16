@@ -23,8 +23,11 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
+  <script type="text/javascript">
+    var templateUrl = '<?= get_site_url(); ?>';
+  </script>
   <!-- Le styles -->
-  <?php wp_head(); ?>
+    <?php wp_head(); ?>
   <!-- Remarketing pixel -->
   <script type="text/javascript">
     adroll_adv_id = "QZ72KCGOPBGLLLPAE3SDSI";
@@ -179,31 +182,20 @@
 
       <ul class="nav-level-1-auth">
         <li>
-          <span id="">
-            <?php
-            $redirectLink = filter_input(INPUT_SERVER, "REQUEST_URI");
+          <button id="qsLoginBtn">Login | Signup</button>
+          <div id="profile-view" class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img class="avatar" style="width:38px" alt="avatar">
+            </a>
 
-            if( is_user_logged_in() ) {
-              ?>
-              <div id="profile-view" class="dropdown">
-              <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <?php echo get_avatar( get_the_author_meta( 'ID' ), 38 );?>
-              </a>
-
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="https://ww.makershare.com">MakerShare Profile</a>
-                <a class="dropdown-item" href="https://www.makerfaire.com/manage-entries">MakerFaire Portfolio</a>
-                <a class="dropdown-item" href="https://www.makeco.wpengine.com">My Membership Account</a>
-                <span class="dropdown-item" id="qsLogoutBtn"><a href="<?php echo wp_logout_url( $redirectLink ); ?>">Logout</a></span>
-              </div>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="https://ww.makershare.com">MakerShare Profile</a>
+              <a class="dropdown-item" href="https://www.makerfaire.com/manage-entries">MakerFaire Portfolio</a>
+              <a class="dropdown-item" href="https://www.makeco.wpengine.com">My Membership Account</a>
+              <span class="dropdown-item" id="qsLogoutBtn">Log Out</span>
             </div>
-<?php
-            } else {
-              ?><a href="<?php echo esc_url( wp_login_url( $redirectLink ) ); ?>" alt="Login | Signup">Login | Signup</a><?php
-            }
+          </div>
 
-            ?>
-          </span>
         </li>
       </ul>
 
