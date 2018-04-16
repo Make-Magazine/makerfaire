@@ -852,7 +852,7 @@ function entryTicketing($lead,$format='admin'){
       $return = array();
       foreach($results as $result){
         if($result->hidden==0){
-          $return[] = array('title'=>$result->title,'subtitle'=>$result->subtitle,'link'=>'https://www.eventbrite.com/e/'.$result->event_id.'?access='.$result->access_code);
+          $return[] = array('title'=>$result->title,'subtitle'=>$result->subtitle,'link'=>'https://www.eventbrite.com/e/'.$result->event_id.'?discount='.$result->access_code);
         }
       }
     }else{
