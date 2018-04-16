@@ -4,6 +4,8 @@ global $wpdb;
 error_reporting(E_ALL); ini_set('display_errors', '1');
 //form id passed in url
 $form_id = (isset($_GET['form_id'])?$_GET['form_id']:0);
+
+//no form passed? Errir
 if($form_id==0){
   echo 'Please sumbit form_id variable';
 }else{
@@ -14,7 +16,7 @@ if($form_id==0){
   $form = GFAPI::get_form($form_id);
   $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
 
-  //get eventid for this form
+  //get eventID for this form
   $sql = "select wp_mf_faire.ID, eb_event.ID as event_id, EB_event_id as eib "
           . " from wp_mf_faire, eb_event "
           . " where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0"
@@ -23,6 +25,7 @@ if($form_id==0){
   if($wpdb->num_rows > 0){
     $eidArr = array();
     $EIBarr = array();
+    //a faire can be set up with multiple events
     foreach($faire as $row){
       $eidArr[]               = $row->event_id;
       $EIBarr[$row->event_id] = $row->eib;
@@ -40,10 +43,14 @@ if($form_id==0){
         . " WHERE wp_rg_lead.status = 'active' and wp_rg_lead.form_id = ".$form_id." and value='Accepted'";
   $results = $wpdb->get_results($sql);
   $accCount = 0;
+  $entCount = 0;
+
+  //loop thru the forms accepted records
   foreach($results as $row){
-    $accCount++;
-    $entryID = $row->lead_id;
+    $entCount++;
+    $entryID  = $row->lead_id;
     $entry_ip = $row->ip;
+
     //for each entry, find the entry or sponsor level
     $entry    = GFAPI::get_entry( $entryID );
 
@@ -74,7 +81,8 @@ if($form_id==0){
             . "  and ticketID is not null and entry_id is NULL";
     $tck_results = $wpdb->get_results($tktSQL);
     foreach($tck_results as $tck_row){
-      //TBD only do 100 eventbrite requests at a time, then kill task
+      //only do 100 eventbrite requests at a time, then kill task
+      $accCount++;
       //generate access code for each ticket type
       $hidden     = $tck_row->hidden;
       $accessCode = $tck_row->ticket_type.$entryID.$rand;
@@ -96,9 +104,9 @@ if($form_id==0){
               ' qty '.$tck_row->qty .
               ' access code '.$accessCode.
               ' hidden '.$tck_row->hidden .
-              ' entry level '.$tck->$entLevel.
-              '<br/>';
-/*
+              ' entry level '.$entLevel.
+              '. Generating:<br/>';
+
         //call eventbrite to create access code
         $access_codes = $eventbrite->events($args);
         if(isset($access_codes->status_code) && $access_codes->status_code==400){
@@ -113,9 +121,10 @@ if($form_id==0){
                 . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$tck_row->ticketID.')'
                 . ' on duplicate key update access_code = "'.$accessCode.'"';
 
-        $wpdb->get_results($dbSQL);*/
-
+        $wpdb->get_results($dbSQL);
+      if($accCount>100) exit;
     }
+    if($accCount>100) exit;
   }
   echo 'Updated '.$accCount.' accepted records in form '.$form_id.'<br/>';
 }
