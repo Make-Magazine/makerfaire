@@ -147,7 +147,6 @@ header.universal-nav {
     display: inline-block;
     float: left;
     span {
-      opacity: .6;
       padding: 0;
       height: 100%;
       display: flex;
@@ -161,24 +160,94 @@ header.universal-nav {
         text-decoration: none;
       }
       &:hover, &:active {
-        opacity: 1;
         text-decoration: none;
       }
     }
   }
   #profile-view {
-      margin-top: 10px;
+      #dropdownMenuLink {
+          position: relative;
+          z-index: 1002;
+          &:active {
+              box-shadow: none;
+              -webkit-box-shadow: none;
+          }
+      }
       .avatar:hover {
           opacity: .8;
       }
       .dropdown-menu {
-          padding: 10px;
+          padding: 90px 25px 20px;
           font-family: 'Roboto', serif;
-          h3{ margin-top: 0px; }
-          a {
-              color: #ED1C24;
+          margin-left: -125px;
+          margin-top: -70px;
+          width: 660px;
+          border-radius: none;
+          &:after {
+            font-family: 'Linearicons-Free';
+            content: "\e870";
+            color: #ED1C24;
+            font-size: 36px;
+            position: absolute;
+            top: 35px;
+            left: 30%;
+            border: none;
+            @media screen and (max-width: 767px) {
+                display: none;
+            }
+          }
+          h3 { 
+              margin-top: 0px; 
+              margin-bottom: 20px;
               display: block;
-              margin-bottom: 5px;
+              position: relative;
+              line-height: .8em;
+              color: #333;
+              padding-bottom: 2px;
+              opacity: .85;
+              font-size: 20px;
+              font-weight: 500;
+              font-family: 'Roboto', serif;
+              transition: font-weight .1s ease-in-out;
+              line-height: 1em;
+              display: inline;
+              position: relative;
+              overflow: hidden;
+              &:after {
+                  content: "";
+                  position: absolute;
+                  z-index: -1;
+                  left: 0;
+                  right: 50%;
+                  bottom: -5px;
+                  background: #ED1C24;
+                  height: 4px;
+                  transition-property: left right;
+                  transition-duration: 0.3s;
+                  transition-timing-function: ease-out;
+                }
+                @media screen and (min-width: 768px) and (max-width: 991px) {
+                    font-size: 18px;
+                }
+                @media screen and (min-width: 576px) and (max-width: 767px) {
+                    font-size: 16px;
+                }
+                @media screen and (max-width: 576px) {
+                    margin-top: 35px;
+                    display: block;
+                    overflow: visible;
+                }
+          }
+          a {
+              color: #333;
+              display: block;
+              margin-bottom: 15px;
+              margin-top: 20px;
+              opacity: .6;
+              font-size: 16px;
+              &:hover {
+                  opacity: 1;
+              }
           }
       }
   }
