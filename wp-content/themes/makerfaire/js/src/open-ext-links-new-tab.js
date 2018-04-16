@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
     var href = this.href;
     
     //exclude non links
-    if (href !== 'javascript:void(0);' && !a.test(href)) {
+    if (href !== 'javascript:void(0);' && !a.test(href) && $(this).attr("target") != "_self") {
       $(this).attr('target', '_blank');
     }
   });
