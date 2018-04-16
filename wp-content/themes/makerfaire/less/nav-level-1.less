@@ -165,7 +165,6 @@ header.universal-nav {
       }
   }
   #profile-view {
-      margin-top: 5px;
       #dropdownMenuLink {
           position: relative;
           z-index: 1002;
@@ -178,12 +177,15 @@ header.universal-nav {
           opacity: .8;
       }
       .dropdown-menu {
-          padding: 90px 25px 20px;
+          padding: 90px 25px 25px;
           font-family: 'Roboto', serif;
           margin-left: -125px;
           margin-top: -70px;
           width: 660px;
           border-radius: none;
+          @media screen and (max-width: 767px) {
+              margin-left: -175px;
+          }
           &:after {
             font-family: 'Linearicons-Free';
             content: "\e870";
@@ -200,7 +202,7 @@ header.universal-nav {
           h3 { 
               margin-top: 0px; 
               margin-bottom: 20px;
-              display: block;
+              display: inline;
               position: relative;
               line-height: .8em;
               color: #333;
