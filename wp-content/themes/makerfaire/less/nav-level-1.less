@@ -17,7 +17,6 @@ header.universal-nav {
   nav.container, .nav-level-1-nav, .nav-level-1-auth, li {
     height: 100%;
   }
-
   .nav-level-1-nav {
     margin-top: 0;
     margin-bottom: 0;
@@ -166,10 +165,23 @@ header.universal-nav {
       }
     }
   }
+  #profile-view {
+      margin-top: 10px;
+      .avatar:hover {
+          opacity: .8;
+      }
+      .dropdown-menu {
+          padding: 10px;
+          font-family: 'Roboto', serif;
+          h3{ margin-top: 0px; }
+          a {
+              color: #ED1C24;
+              display: block;
+              margin-bottom: 5px;
+          }
+      }
+  }
 }
-
-
-
 @media screen and (max-width: 767px) {
     #page-content .front-page.container{
         margin-top: 55px;

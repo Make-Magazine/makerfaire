@@ -136,37 +136,37 @@
 
       <ul class="nav-level-1-nav">
         <li class="nav-zine">
-          <a href="https://makezine.com/">
+          <a href="https://makezine.com/" target="_self">
             <span title="Latest">Latest</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-make">
-          <a href="http://www.make.co/">
+          <a href="http://www.make.co/" target="_self">
             <span title="Membership">Membership</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-shed">
-          <a href="https://www.makershed.com/">
+          <a href="https://www.makershed.com/" target="_self">
             <span title="Shop">Shop</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-share">
-          <a href="https://makershare.com/learning/">
+          <a href="https://makershare.com/learning/" target="_self">
             <span title="Learn">Learn</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-share-p">
-          <a href="https://makershare.com/makers">
+          <a href="https://makershare.com/makers" target="_self">
             <span title="Portfolios">Portfolios</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-faire">
-          <a href="https://makerfaire.com/">
+          <a href="https://makerfaire.com/" target="_self">
             <span title="Events">Events</span>
           </a>
           <div class="nav-level-2-arrow"></div>
