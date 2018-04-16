@@ -191,7 +191,7 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <h3 class="expanding-underline">My Account</h3>
               <a class="dropdown-item" href="https://ww.makershare.com">MakerShare Profile</a>
-              <a class="dropdown-item" href="https://www.makerfaire.com/manage-entries">MakerFaire Portfolio</a>
+              <a class="dropdown-item" href="https://www.makerfaire.com/manage-entries">MakerFaire Portal</a>
               <a class="dropdown-item" href="https://www.makeco.wpengine.com">My Membership Account</a>
               <span class="dropdown-item" id="qsLogoutBtn">Log Out</span>
             </div>
