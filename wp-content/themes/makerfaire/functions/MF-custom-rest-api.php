@@ -266,7 +266,7 @@ function getMTMentries($formIDs) {
     $data['schedule'] = array();
     $formIDarr = array_map('intval', explode("-", $formIDs));
     $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
-              lead_detail.form_id, area.area, subarea.subarea, subarea.nicename,
+              lead_detail.form_id, area.area, subarea.subarea, subarea.nicename, subarea.sort_order,
               lead_detail.value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
               location.latitude, location.longitude,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '22')  as photo,
@@ -282,7 +282,7 @@ function getMTMentries($formIDs) {
                    schedule.entry_id = lead_detail.lead_id and field_number = 303
                where lead.status = 'active' and lead_detail.value='Accepted' "
             . " and lead_detail.form_id in(".implode(",",$formIDarr).") order by subarea.sort_order";
-/* code to hide scheduled items as they occur
+    /* code to hide scheduled items as they occur
                . " and lead_detail.form_id in(".implode(",",$formIDarr).") "
             . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  "
             . "order by subarea.sort_order";*/
@@ -336,6 +336,7 @@ function getMTMentries($formIDs) {
             'thumb_img_url' => $fitPhoto,
             'maker_list'    => $makerList,
             'nicename'      => $stage,
+            'stageOrder'    => ($row->sort_order != '' ? $row->sort_order: 0),
             'category'      => $catList,
             'latitude'      => $row->latitude,
             'longitude'     => $row->longitude,

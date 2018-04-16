@@ -105,17 +105,17 @@
     };
     $scope.setTypeFilter = function (type) {
       $scope.schedType = type;
-    }
+    };
     $scope.setDateFilter = function (date) {
       var filterdow = $filter('date')(date, "EEEE");
       $scope.dateFilter = filterdow;
-    }
+    };
     $scope.setStage = function(stage){
       $scope.schedStage = stage;
-    }
+    };
     $scope.setTagFilter = function (tag) {
       $scope.schedTopic = tag;
-    }
+    };
     $scope.sortBy = function(propertyName) {
       $scope.reverse = ($scope.propertyName === propertyName) ? !$scope.reverse : false;
       $scope.propertyName = propertyName;
