@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Authenticated
+ * Template Name: Authenticated Redirect page
  */
 ?>
 <?php get_header(); ?>
