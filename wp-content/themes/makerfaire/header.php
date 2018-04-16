@@ -179,7 +179,31 @@
 
       <ul class="nav-level-1-auth">
         <li>
-          <span id=""><?php echo do_shortcode( '[auth0 show_as_modal="true" modal_trigger_name="Login | Signup"]' );?></span>
+          <span id="">
+            <?php
+            $redirectLink = filter_input(INPUT_SERVER, "REQUEST_URI");
+
+            if( is_user_logged_in() ) {
+              ?>
+              <div id="profile-view" class="dropdown">
+              <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <?php echo get_avatar( get_the_author_meta( 'ID' ), 38 );?>
+              </a>
+
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="https://ww.makershare.com">MakerShare Profile</a>
+                <a class="dropdown-item" href="https://www.makerfaire.com/manage-entries">MakerFaire Portfolio</a>
+                <a class="dropdown-item" href="https://www.makeco.wpengine.com">My Membership Account</a>
+                <span class="dropdown-item" id="qsLogoutBtn"><a href="<?php echo wp_logout_url( $redirectLink ); ?>">Logout</a></span>
+              </div>
+            </div>
+<?php
+            } else {
+              ?><a href="<?php echo esc_url( wp_login_url( $redirectLink ) ); ?>" alt="Login | Signup">Login | Signup</a><?php
+            }
+
+            ?>
+          </span>
         </li>
       </ul>
 
