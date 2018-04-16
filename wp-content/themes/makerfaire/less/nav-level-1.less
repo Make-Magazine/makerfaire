@@ -144,9 +144,8 @@ header.universal-nav {
     margin-right: 40px;
   }
   li {
-    display: inline-block;
-    float: left;
-    span {
+      display: inline-block;
+      float: left;
       padding: 0;
       height: 100%;
       display: flex;
@@ -162,9 +161,12 @@ header.universal-nav {
       &:hover, &:active {
         text-decoration: none;
       }
-    }
   }
   #profile-view {
+      margin-top: 20px;
+      @media screen and (max-width: 767px) {
+          margin-top: 5px;
+      }
       #dropdownMenuLink {
           position: relative;
           z-index: 1002;
