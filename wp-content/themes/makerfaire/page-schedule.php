@@ -101,7 +101,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                   <li>
                     <a ng-click="setStage('')"><?php _e('All','MiniMakerFaire');?></a>
                   </li>
-                  <li ng-repeat="(key,daySched) in schedule | typeFilter: schedType | stageFilter: schedStage | catFilter:schedTopic | filter:filterData |  orderBy:propertyName | unique: 'nicename'" ng-repeat="(daySched,schedule) in schedules">
+                  <li ng-repeat="(key,daySched) in schedule | typeFilter: schedType | stageFilter: schedStage | catFilter:schedTopic | filter:filterData |  orderBy: 'stageOrder' | unique: 'nicename'" ng-repeat="(daySched,schedule) in schedules">
                     <a  ng-click="setStage(daySched.nicename)">{{daySched.nicename}}</a>
                   </li>
                 </ul>
