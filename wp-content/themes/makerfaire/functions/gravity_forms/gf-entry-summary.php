@@ -866,7 +866,7 @@ function entryTicketing($lead,$format='admin'){
 
       foreach($results as $result){
         $return .=  '<tr>';
-        $return .=  '<td><a target="_blank" href="https://www.eventbrite.com/e/'.$result->event_id.'?access='.$result->access_code.'">'.$result->access_code.'</a></td>';
+        $return .=  '<td><a target="_blank" href="https://www.eventbrite.com/e/'.$result->event_id.'?discount='.$result->access_code.'">'.$result->access_code.'</a></td>';
         $return .=  '<td><h4>' . $result->title . '</h4>' .$result->subtitle.'</td>';
         $return .=  '<td><p class="'.($result->hidden==0?'checked':'').'" id="HT'.$result->access_code.'" onclick="hiddenTicket(\''.$result->access_code.'\')">';
         $return .=  '<i class="fa fa-'.($result->hidden==0?'check-':'').'square-o" aria-hidden="true"></i>';
