@@ -237,11 +237,7 @@
         </ul>
       </div>
 
-      <ul class="nav-level-1-auth">
-        <li><a href="#">Login</a></li>
-        <li>|</li>
-        <li><a href="#">Signup</a></li>
-      </ul>
+      <div class="auth-target"></div>
     </div>
 
     <div class="social-network-container text-center"> 

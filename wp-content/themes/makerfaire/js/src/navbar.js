@@ -26,13 +26,21 @@ jQuery(function() {
   var y_pos = jQuery(".nav-level-2").offset().top;
   var nextItemUnderNav = jQuery("#main");
 
+  if (jQuery(window).width() < 578) {
+          jQuery(".auth-target").append(jQuery(".nav-level-1-auth"));
+  }
   jQuery(window).on('resize', function(){
-      if (jQuery(window).width() < 748) {
+      if (jQuery(window).width() < 767) {
           y_pos = 0;
           nextItemUnderNav.css("margin-top", "55px");
       }else{
           y_pos = 75;
           nextItemUnderNav.css("margin-top", "0px");
+      }
+      if (jQuery(window).width() < 578) {
+          jQuery(".auth-target").append(jQuery(".nav-level-1-auth"));
+      }else{
+          jQuery("nav.container").append(jQuery(".nav-level-1-auth"));
       }
   });
   jQuery(document).scroll(function() {
@@ -128,11 +136,11 @@ jQuery(function() {
     case "makershare.com/learning":
         universalNavActive("share")
         break;
-    case "maker-share/makers":
-    case "makershare/makers":
-    case "makeshare.wpengine.com/makers":
-    case "makershare.staging.wpengine.com/makers":
-    case "makershare.com/makers":
+    case "maker-share/":
+    case "makershare/":
+    case "makeshare.wpengine.com/":
+    case "makershare.staging.wpengine.com/":
+    case "makershare.com/":
         universalNavActive("share-p")
         break;
     default:
