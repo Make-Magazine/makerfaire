@@ -296,10 +296,13 @@ function getMTMentries($formIDs) {
       $catArr = explode(", ", $row->category);
       $catArr = array_unique($catArr);
       $catList = implode(", ",$catArr);
-      //find out if there is an override image for this page
-      //$overrideImg = findOverride($entry['id'],'mtm');
-      //$projPhoto = ($row->photo=='' ? $entry['22']: $overrideImg);
+
       $projPhoto = $row->photo;
+      //find out if there is an override image for this page
+      $overrideImg = findOverride($row->entry_id,'schedule');
+      if ($overrideImg != '')
+        $projPhoto = $overrideImg;
+
       $fitPhoto  = legacy_get_resized_remote_image_url($projPhoto,200,200);
       if($fitPhoto==NULL) $fitPhoto = $row->photo;
 
