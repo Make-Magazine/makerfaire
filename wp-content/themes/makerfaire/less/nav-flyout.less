@@ -410,9 +410,6 @@
   left: 0;
   z-index: 9;
 }
-.nav-open-no-scroll {
-  overflow: hidden;
-}
 #universal-nav.main-nav-scrolled #nav-flyout {
   position: fixed;
   width: 100%;
@@ -466,4 +463,15 @@
     position: fixed;
     top:32px;
   }
+}
+
+.safari-mac {
+    .ham-menu-animate {
+        position: fixed;
+        animation: none;
+    }
+}
+
+.nav-open-no-scroll {
+  overflow: hidden;
 }

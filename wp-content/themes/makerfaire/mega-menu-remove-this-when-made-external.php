@@ -156,7 +156,7 @@
             </a>
           </li>
           <li>
-            <a href="https://makershare.com/groups">
+            <a href="https://makershare.com/groups-overview">
               <span title="Maker Groups">Maker Groups</span>
             </a>
           </li>

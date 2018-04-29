@@ -10,6 +10,7 @@ jQuery(function() {
     jQuery('#hamburger-makey').animate({opacity: 'toggle'})
     jQuery('#nav-flyout').animate({opacity: 'toggle'});
     jQuery('body').toggleClass('nav-open-no-scroll');
+    jQuery('html').toggleClass('nav-open-no-scroll');
     jQuery('.nav-flyout-underlay').animate({opacity: 'toggle'});
   });
 
@@ -145,5 +146,11 @@ jQuery(function() {
         break;
     default:
           break;
+  }
+  // console.log(navigator.userAgent);
+    /* Adjustments for Safari on Mac */
+  if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Mac') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
+        // console.log('Safari on Mac detected, applying class...');
+        $('html').addClass('safari-mac'); // provide a class for the safari-mac specific css to filter with
   }
 });
