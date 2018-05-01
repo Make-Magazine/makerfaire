@@ -173,5 +173,4 @@ get_header();
   </div>
 
 </main>
-<img height="1" src="https://www.facebook.com/tr?id=399923000199419&ev=PageView&noscript=1" style="display:none" width="1">
 <?php get_footer(); ?>
