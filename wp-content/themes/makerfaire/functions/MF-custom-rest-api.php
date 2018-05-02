@@ -339,7 +339,7 @@ function getMTMentries($formIDs) {
             'thumb_img_url' => $fitPhoto,
             'maker_list'    => $makerList,
             'nicename'      => $stage,
-            'stageOrder'    => ($row->sort_order != '' ? $row->sort_order: 0),
+            'stageOrder'    => (int) ($row->sort_order != '' ? $row->sort_order: 0),
             'category'      => $catList,
             'latitude'      => $row->latitude,
             'longitude'     => $row->longitude,
