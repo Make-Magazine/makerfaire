@@ -270,6 +270,7 @@ function getMTMentries($formIDs) {
               lead_detail.value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
               location.latitude, location.longitude,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '22')  as photo,
+              (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '217')  as mkr1_photo,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '151') as name,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '16')  as short_desc,
               (select group_concat( value separator ', ') as cat   from wp_rg_lead_detail where lead_id = schedule.entry_id AND (field_number like '%320%' OR field_number like '%321%')) as category
@@ -289,6 +290,9 @@ function getMTMentries($formIDs) {
 
     //retrieve project name, img (22), maker list, topics
     foreach($wpdb->get_results($query) as $row){
+      $form = GFAPI::get_form( $row->form_id );
+      $form_type = $form['form_type'];
+
       $makerList = getMakerList($row->entry_id);
       $makerArr = array();
 
@@ -297,7 +301,11 @@ function getMTMentries($formIDs) {
       $catArr = array_unique($catArr);
       $catList = implode(", ",$catArr);
 
-      $projPhoto = $row->photo;
+      if($form_type == 'Presentation') {
+        $projPhoto = ($row->mkr1_photo !=''?$row->mkr1_photo:$row->photo);
+      }else{
+        $projPhoto = $row->photo;
+      }
       //find out if there is an override image for this page
       $overrideImg = findOverride($row->entry_id,'schedule');
       if ($overrideImg != '')
@@ -314,10 +322,8 @@ function getMTMentries($formIDs) {
       $endDate = date_create($row->time_end);
       $endDate = date_format($endDate,'Y-m-d').'T'.date_format($endDate,'H:i:s');
 
-      //set default values for type if not set
+      //set default values for schedule type if not set
       if($row->type ==''){
-        $form = GFAPI::get_form( $row->form_id );
-        $form_type = $form['form_type'];
         //demo, performance, talk, workshop
         if($form_type == 'Performance') {
           $type = 'performance';
