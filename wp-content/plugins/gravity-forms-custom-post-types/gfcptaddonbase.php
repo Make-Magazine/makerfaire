@@ -371,7 +371,7 @@ if (!class_exists('GFCPTAddonBase')) {
 		function load_taxonomy_choices($taxonomy, $type, $first_choice = '', $field ) {
 			$choices = array();
 
-			if ( in_array( $field->get_input_type(), array( 'select', 'multiselect' ) ) ) {
+			if ( in_array( $field->get_input_type(), gf_apply_filters( array( 'gfcpt_hierarchical_display', $field->formId, $field->fieldId ), array( 'select', 'multiselect' ) ) ) ) {
 
 				$terms = $this->load_taxonomy_hierarchical( $taxonomy, $field );
 
