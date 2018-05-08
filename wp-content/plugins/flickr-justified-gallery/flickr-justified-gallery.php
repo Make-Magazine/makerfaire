@@ -3,7 +3,7 @@
 Plugin Name: Flickr Justified Gallery
 Plugin URI: http://miromannino.it/projects/flickr-justified-gallery/
 Description: Shows the Flickr photostream, sets and galleries, with an high quality justified gallery.
-Version: 3.4.2
+Version: 3.5
 Author: Miro Mannino
 Author URI: http://miromannino.com/about-me/
 
@@ -80,20 +80,16 @@ function fjgwpp_addCSSandJS() {
 	wp_register_style('flickrJustifiedGalleryWPPlugin', plugins_url('css/flickrJustifiedGalleryWPPlugin.css', __FILE__), NULL, 'v3.6');
 
 	//Register scripts
-	wp_register_script('justifiedGallery', plugins_url('js/jquery.justifiedGallery.min.js', __FILE__), 
-		array('jquery'), 'v3.6', true);
-	wp_register_script('flickrJustifiedGalleryWPPlugin', plugins_url('js/flickrJustifiedGalleryWPPlugin.js', __FILE__), 
-		array('jquery', 'justifiedGallery'), 'v3.4.0', true);
+	wp_register_script('justifiedGallery', plugins_url('js/jquery.justifiedGallery.min.js', __FILE__), array('jquery'), '', true);
+	wp_register_script('flickrJustifiedGalleryWPPlugin', plugins_url('js/flickrJustifiedGalleryWPPlugin.js', __FILE__), array('jquery', 'justifiedGallery'), '', true);
 
 	if (fjgwpp_getOption('provideColorbox')) {
 		wp_register_style('colorbox', plugins_url('lightboxes/colorbox/colorbox.css', __FILE__));
-		wp_register_script('colorbox', plugins_url('lightboxes/colorbox/jquery.colorbox-min.js', __FILE__),
-			array('jquery'), 'v1.6.4', true);
+		wp_register_script('colorbox', plugins_url('lightboxes/colorbox/jquery.colorbox-min.js', __FILE__), array('jquery'), '', true);
 	}
 	if (fjgwpp_getOption('provideSwipebox')) {
 		wp_register_style('swipebox', plugins_url('lightboxes/swipebox/css/swipebox.min.css', __FILE__));
-		wp_register_script('swipebox', plugins_url('lightboxes/swipebox/js/jquery.swipebox.min.js', __FILE__),
-			array('jquery'), 'v1.4.4', true);
+		wp_register_script('swipebox', plugins_url('lightboxes/swipebox/js/jquery.swipebox.min.js', __FILE__), array('jquery'), '', true);
 	}
 
 	//Enqueue styles
@@ -104,10 +100,10 @@ function fjgwpp_addCSSandJS() {
 
 	//Enqueue scripts
 	wp_enqueue_script('jquery');
-	wp_enqueue_script('justifiedGallery');
-	wp_enqueue_script('flickrJustifiedGalleryWPPlugin');
 	if (fjgwpp_getOption('provideColorbox')) wp_enqueue_script('colorbox');
 	if (fjgwpp_getOption('provideSwipebox')) wp_enqueue_script('swipebox');
+	wp_enqueue_script('justifiedGallery');
+	wp_enqueue_script('flickrJustifiedGalleryWPPlugin');
 }
 
 function fjgwpp_formatError($errorMsg) {
@@ -344,33 +340,34 @@ function fjgwpp_createGallery($action, $atts) {
 		$ris .= '</a>'; //end link
 	}
 
-	$ris .= '</div>'
-		 .	'<script type="text/javascript">';
+	$ris .= '</div>';
 
-	$ris .= 'function fjgwppInit_' . $flickrGalID . '() { 
+
+
+	$act_script = 'function fjgwppInit_' . $flickrGalID . '() { 
 				jQuery("#' . $flickrGalID . '")';
 
 	if ($lightbox === 'colorbox') {
-		$ris .= '.on(\'jg.rowflush jg.complete\', function() {
+		$act_script .= '.on(\'jg.rowflush jg.complete\', function() {
 					jQuery(this).find("> a").colorbox({
 						maxWidth : "85%",
 						maxHeight : "85%",
 						current : "",';
 
 		if ($block_contextmenu) {
-			$ris .= 	'onComplete: function() {
+			$act_script .= 	'onComplete: function() {
 							fjgwppDisableContextMenu(jQuery("#colorbox .cboxPhoto"));
 						}';
 		}
 
-		$ris .=		'});
+		$act_script .=		'});
 				})';
 	} else if ($lightbox === 'swipebox') {
-		$ris .= '.on(\'jg.complete\', function() {
+		$act_script .= '.on(\'jg.complete\', function() {
 					jQuery("#' . $flickrGalID . '").find("> a").swipebox(';
 
 		if ($block_contextmenu) {
-			$ris .= '{
+			$act_script .= '{
 						afterOpen : function () { 
 							setTimeout(function() {
 								fjgwppDisableContextMenu(jQuery("#swipebox-overlay .slide img"));
@@ -379,11 +376,11 @@ function fjgwpp_createGallery($action, $atts) {
 					}';
 		}
 
-		$ris .=		');
+		$act_script .=		');
 				})';
 	}
 
-	$ris .= '.justifiedGallery({'
+	$act_script .= '.justifiedGallery({'
 			 .	'\'lastRow\': \'' . $last_row . '\', '
 			 .	'\'rowHeight\':' . $images_height . ', '
 			 .	'\'fixedHeight\':' . ($fixed_height ? 'true' : 'false') . ', '		 
@@ -397,13 +394,12 @@ function fjgwpp_createGallery($action, $atts) {
 			 .  '}});';
 	
 	if ($block_contextmenu) {
-		$ris .= 'fjgwppDisableContextMenu(jQuery("#' . $flickrGalID . '").find("> a"));';
+		$act_script .= 'fjgwppDisableContextMenu(jQuery("#' . $flickrGalID . '").find("> a"));';
 	}
 	
-	$ris .= '}'
+	$act_script .= '}'
 		.	'if (typeof fjgwpp_galleriesInit_functions === "undefined") fjgwpp_galleriesInit_functions = [];'
-		.	'fjgwpp_galleriesInit_functions.push(fjgwppInit_' . $flickrGalID . ');'
-		.	'</script>';
+		.	'fjgwpp_galleriesInit_functions.push(fjgwppInit_' . $flickrGalID . ');';
 
 	//Navigation---------------------
 	if($pagination !== 'none') {
@@ -471,6 +467,8 @@ function fjgwpp_createGallery($action, $atts) {
 			}
 		}
 	}
+
+	wp_add_inline_script('flickrJustifiedGalleryWPPlugin', $act_script, 'before');
 
 	$shortcode_unique_id++;
 	return($ris);

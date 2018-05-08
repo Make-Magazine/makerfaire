@@ -1,7 +1,7 @@
 <?php
 /* 
 Flickr Justified Gallery
-Version: 3.4.2
+Version: 3.5
 Author: Miro Mannino
 Author URI: http://miromannino.it
 
