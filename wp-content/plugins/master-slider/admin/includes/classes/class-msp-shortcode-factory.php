@@ -94,7 +94,8 @@ class MSP_Shortcode_Factory {
 				// if "insert thumb" option was enabled append the thumbnail tag
 				if( 'true' == $this->parsed_slider_data['setting']['thumbs_in_tab'] ) {
 					$thumb_height  = $this->parsed_slider_data['setting']['thumbs_height'];
-					$tab_content = sprintf( '{{thumb%s}}', $thumb_height ) . $tab_content;
+                    //$tab_content = sprintf( '{{thumb%s}}', $thumb_height ) . $tab_content;
+					$tab_content = $tab_content;
 				}
 				$attrs .= sprintf( '%s="%s" ', $attr, esc_attr( $tab_content ) );
 

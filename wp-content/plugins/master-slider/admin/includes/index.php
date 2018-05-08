@@ -13,7 +13,8 @@ include_once( 'classes/class-msp-screen-help.php'   );
 include_once( 'classes/class-msp-admin-assets.php'  );
 include_once( 'classes/class-msp-admin-editor.php'  );
 // include_once( 'classes/class-msp-pointers.php'      );
-include_once( 'classes/class-msp-importer.php' 		);
+include_once( 'classes/class-msp-importer.php'      );
+include_once( 'classes/class-msp-notices.php' 		);
 
 
 if( isset( $_REQUEST['action'] ) && 'preview' ==  $_REQUEST['action'] ) {

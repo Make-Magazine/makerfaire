@@ -19,6 +19,8 @@
     <img src="<?php echo MSWP_AVERTA_ADMIN_URL . '/views/slider-panel'; ?>/images/loading.gif">
     <?php _e('Loading data...', MSWP_TEXT_DOMAIN); ?>
 </div>
+<?php echo MSP_Notices::get_instance()->get_notice( 'ms-notice-info-panel' ); ?>
+
 <div id="msp-root" class="msp-container"> </div>
 <div id="mspHiddenEditor" style="display:none">
     <?php wp_editor( '', 'msp-hidden' , array( 'textarea_rows' => 8 ) );  ?>
