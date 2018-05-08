@@ -1,5 +1,7 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\Admin
  */
 
@@ -66,7 +68,6 @@ class WPSEO_Admin {
 		add_filter( 'set-screen-option', array( $this, 'save_bulk_edit_options' ), 10, 3 );
 
 		add_action( 'admin_init', array( 'WPSEO_Plugin_Conflict', 'hook_check_for_plugin_conflicts' ), 10, 1 );
-		add_action( 'admin_init', array( $this, 'import_plugin_hooks' ) );
 
 		add_action( 'admin_init', array( $this, 'map_manage_options_cap' ) );
 
@@ -88,6 +89,8 @@ class WPSEO_Admin {
 		$this->check_php_version();
 		$this->initialize_cornerstone_content();
 
+		new Yoast_Modal();
+
 		$integrations[] = new WPSEO_Yoast_Columns();
 		$integrations[] = new WPSEO_License_Page_Manager();
 		$integrations[] = new WPSEO_Statistic_Integration();
@@ -100,18 +103,6 @@ class WPSEO_Admin {
 			$integration->register_hooks();
 		}
 
-	}
-
-	/**
-	 * Setting the hooks for importing data from other plugins.
-	 */
-	public function import_plugin_hooks() {
-		if ( current_user_can( $this->get_manage_options_cap() ) ) {
-			$plugin_imports = array(
-				'wpSEO'       => new WPSEO_Import_WPSEO_Hooks(),
-				'aioseo'      => new WPSEO_Import_AIOSEO_Hooks(),
-			);
-		}
 	}
 
 	/**
@@ -323,9 +314,31 @@ class WPSEO_Admin {
 
 	/**
 	 * Initializes Whip to show a notice for outdated PHP versions.
+	 *
+	 * @todo Deprecate this method when WordPress 5.1 is our currently minimal supported version.
+	 *
+	 * @return void
 	 */
 	protected function check_php_version() {
+		// If the user isn't an admin, don't display anything.
 		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// Check if the user is running PHP 5.2.
+		if ( WPSEO_Admin_Utils::is_supported_php_version_installed() === false ) {
+			$this->show_unsupported_php_message();
+
+			return;
+		}
+
+		/*
+		 * The Whip message shouldn't be shown from WordPress 4.9.5 and higher because
+		 * that version introduces Serve Happy which is almost similar to Whip.
+		 */
+		$minimal_wp_version = '4.9.5';
+
+		if ( version_compare( $GLOBALS['wp_version'], $minimal_wp_version, '>=' ) ) {
 			return;
 		}
 
@@ -336,6 +349,21 @@ class WPSEO_Admin {
 		whip_wp_check_versions( array(
 			'php' => '>=5.4',
 		) );
+	}
+
+	/**
+	 * Creates a new message to display regarding the usage of PHP 5.2 (or lower).
+	 *
+	 * @return void
+	 */
+	protected function show_unsupported_php_message() {
+		$presenter = new Whip_WPMessagePresenter(
+			new WPSEO_Unsupported_PHP_Message(),
+			new Whip_MessageDismisser( time(), ( WEEK_IN_SECONDS * 4 ), new Whip_WPDismissOption() ),
+			__( 'Remind me again in 4 weeks.', 'wordpress-seo' )
+		);
+
+		$presenter->register_hooks();
 	}
 
 	/**

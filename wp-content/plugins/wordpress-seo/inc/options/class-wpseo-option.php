@@ -1,5 +1,7 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\Internals\Options
  */
 
@@ -147,6 +149,9 @@ abstract class WPSEO_Option {
 		*/
 		add_filter( 'sanitize_option_' . $this->option_name, array( $this, 'validate' ) );
 
+		// Flushes the rewrite rules when option is updated.
+		add_action( 'update_option_' . $this->option_name, array( 'WPSEO_Utils', 'clear_rewrites' ) );
+
 		/* Register our option for the admin pages */
 		add_action( 'admin_init', array( $this, 'register_setting' ) );
 
@@ -237,6 +242,11 @@ abstract class WPSEO_Option {
 				$service = '';
 
 				switch ( $key ) {
+					case 'baiduverify':
+						$regex   = '`^[A-Za-z0-9_-]+$`';
+						$service = 'Baidu Webmaster tools';
+						break;
+
 					case 'googleverify':
 						$regex   = '`^[A-Za-z0-9_-]+$`';
 						$service = 'Google Webmaster tools';
