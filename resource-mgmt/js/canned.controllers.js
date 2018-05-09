@@ -174,7 +174,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":442,"label":"Fee Management","choices":"all","type":"checkbox", "order":400},
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
-                {"id":434,"label":"Fee Ind","choices":"Yes","type":"radio","exact":true, "order":600},
+                {"id":434,"label":"Fee Ind","choices":"Yes","type":"radio","order":600},
                 {"id":55, "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox", "order":700},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
               ],
