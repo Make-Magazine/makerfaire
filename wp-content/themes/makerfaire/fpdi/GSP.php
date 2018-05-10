@@ -63,11 +63,15 @@ $pdf->SetMargins(15,15,15);
 $form_id = (isset($_GET['form']) && $_GET['form']!=''?$_GET['form']:'102');
 $form = GFAPI::get_form( $form_id );
 $fieldData = array();
+
 //put fieldData in a usable array
 foreach($form['fields'] as $field){
     $fieldData[$field['id']] = $field;
 }
-$entries = GFAPI::get_entries( $form_id );
+$search_criteria = array( 'status' => 'active' );
+$paging = array( 'offset' => 0, 'page_size' => 9999 );
+$entries = GFAPI::get_entries( $form_id, $search_criteria, null,$paging);
+
 
 foreach($entries as $entry){
     output_data($pdf,$entry,$form,$fieldData);
