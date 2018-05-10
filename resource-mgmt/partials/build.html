@@ -10,7 +10,8 @@
       <div class="col-md-6 checkbox">
          <h3>Schedule</h3>
         <label>
-          <input type="checkbox" ng-model="reports.location">Include Location Information
+          <input type="checkbox" ng-model="reports.location">Include Location Information<br/>
+          <input type="checkbox" ng-model="reports.tickets">Include Ticket Information
         </label>
       </div>
     </div>
@@ -63,12 +64,17 @@
         <h4>Original Form Fields</h4>
         <div style="text-indent:10px" ng-repeat="fields in reports.selectedFields">{{fields.id}} - {{fields.label}} - {{fields.choices}}</div>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <h4>RMT:</h4>
         <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.resource"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
         <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.attribute"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
         <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.attention"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
         <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.meta"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
+      </div>
+      <div class="col-md-1">
+        <h4>Other:</h4>
+        <span ng-if="reports.location">Location</span>
+        <span ng-if="reports.tickets">Tickets</span>
       </div>
     </div>
 
@@ -76,7 +82,7 @@
     <button type="button" class="btn btn-success" ng-click="generateReport()">Generate Report</button>
     <br/><br/>
   </div>
-  
+
   <!-- grid to hold report data -->
   <div ng-if="reports.showGrid && !reports.showbuild" class="reportsView animated fadeInUp">
     <div ng-if="reports.subRoute=='drill'">

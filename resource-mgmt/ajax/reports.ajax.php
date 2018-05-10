@@ -49,24 +49,26 @@ if($type != ''){
 /* Build your own report function */
 function cannedRpt(){
   global $wpdb; global $obj;
-  $useFormSC      = (isset($obj->useFormSC)   ? $obj->useFormSC:false);
-  $formSelect     = (isset($obj->formSelect)  ? $obj->formSelect:array());
-  $formTypeArr    = (isset($obj->formType)    ? $obj->formType:array());
-  $faire          = (isset($obj->faire)       ? $obj->faire:'');
+  $useFormSC      = (isset($obj->useFormSC)      ? $obj->useFormSC:false);
+  $formSelect     = (isset($obj->formSelect)     ? $obj->formSelect:array());
+  $formTypeArr    = (isset($obj->formType)       ? $obj->formType:array());
+  $faire          = (isset($obj->faire)          ? $obj->faire:'');
 
-  $dispFormID     = (isset($obj->dispFormID)  ? $obj->dispFormID:false);
-  $formTypeLabel  = (isset($obj->formTypeLabel) ? $obj->formTypeLabel: ($useFormSC ? "TYPE" : 'Form Type'));
-  $entryIDLabel   = (isset($obj->entryIDLabel) ? $obj->entryIDLabel: ($useFormSC?'ENTRY ID':'Entry Id'));
+  $dispFormID     = (isset($obj->dispFormID)     ? $obj->dispFormID:false);
+  $formTypeLabel  = (isset($obj->formTypeLabel)  ? $obj->formTypeLabel: ($useFormSC ? "TYPE" : 'Form Type'));
+  $entryIDLabel   = (isset($obj->entryIDLabel)   ? $obj->entryIDLabel: ($useFormSC?'ENTRY ID':'Entry Id'));
 
-  $orderBy        = (isset($obj->orderBy)     ? $obj->orderBy:'');
-  $selectedFields = (isset($obj->selectedFields)  ? $obj->selectedFields:array());
-  $rmtData        = (isset($obj->rmtData)     ? $obj->rmtData:array());
-  $location       = (isset($obj->location)    ? $obj->location:false);
-  $payment        = (isset($obj->payments)    ? $obj->payments:false);
+  $orderBy        = (isset($obj->orderBy)        ? $obj->orderBy:'');
+  $selectedFields = (isset($obj->selectedFields) ? $obj->selectedFields:array());
+  $rmtData        = (isset($obj->rmtData)        ? $obj->rmtData:array());
+  $location       = (isset($obj->location)       ? $obj->location:false);
+  $tickets        = (isset($obj->tickets)        ? $obj->tickets:false);
+  $payment        = (isset($obj->payments)       ? $obj->payments:false);
 
   $entryIDorder   = (isset($obj->entryIDorder)   ? $obj->entryIDorder:10);
   $formIDorder    = (isset($obj->formIDorder)    ? $obj->formIDorder:20);
   $locationOrder  = (isset($obj->locationOrder)  ? $obj->locationOrder:30);
+  $ticketsOrder   = (isset($obj->ticketsOrder)   ? $obj->ticketsOrder:70);
   $formTypeorder  = (isset($obj->formTypeorder)  ? $obj->formTypeorder:40);
   $paymentOrder   = (isset($obj->paymentOrder)   ? $obj->paymentOrder:50);
   $CMOrder        = (isset($obj->CMOrder)        ? $obj->CMOrder:60);
@@ -336,6 +338,11 @@ function cannedRpt(){
           $fieldData =  array_merge($fieldData,$locRetData['data']);
           $colDefs   =  array_merge($colDefs,$locRetData['colDefs']);
         }
+        if($tickets) {
+          $tickRetData = pullTickData($lead_id,$useFormSC,$ticketsOrder);
+          $fieldData =  array_merge($fieldData,$tickRetData['data']);
+          $colDefs   =  array_merge($colDefs,$tickRetData['colDefs']);
+        }
         if($payment) {
           $PayRetData = pullPayData($lead_id,$paymentOrder);
           $fieldData =  array_merge($fieldData,$PayRetData['data']);
@@ -600,27 +607,77 @@ function pullLocData($entryID, $useFormSC=false, $locationOrder=30) {
 
     $results = $wpdb->get_results($sql);
     if($wpdb->num_rows > 0){
+      $locArr = array();
       foreach($results as $row){
+        //create an array of assigned locations in case there is more than one (due to exhibts being scheduled on stages)
         $subarea = ($row->nicename!=''&&$row->nicename!=''?$row->nicename:$row->subarea);
 
-        $return['colDefs']['area']=   array('field'=> 'area','displayName'=>($useFormSC?'A':'Area'), 'displayOrder'=>$locationOrder);
         $area = $row->area;
         if($useFormSC){
           $area = str_replace(' ','',$area);
           $area = str_replace('Zone','Z',$area);
           $area = str_replace('Out','O',$area);
         }
-        $return['data']['area'] = $area;
-        $return['colDefs']['subarea']=   array('field'=> 'subarea', 'displayName'=>($useFormSC?'SUBAREA':'Subarea'), 'displayOrder'=>$locationOrder+1);
-        $return['data']['subarea'] = $row->subarea;
-        $return['colDefs']['location']=   array('field'=> 'location','displayName'=>($useFormSC?'LOC':'Location'), 'displayOrder'=>$locationOrder+2);
-        $return['data']['location'] = $row->location;
+        $locArr['area'][]     = $area;
+        $locArr['subarea'][]  = $subarea;
+        $locArr['location'][] = $row->location;
       }
+      //remove any duplicates
+      $locArr['area']     = array_unique($locArr['area']);
+      $locArr['subarea']  = array_unique($locArr['subarea']);
+      $locArr['location'] = array_unique($locArr['location']);
+
+      //concatenate array values into strings separated by ' and '
+      $area     = implode(' and ', $locArr['area']);
+      $subarea  = implode(' and ', $locArr['subarea']);
+      $location = implode(' and ', $locArr['location']);
+
+      //populate return data
+      $return['colDefs']['area']=   array('field'=> 'area','displayName'=>($useFormSC?'A':'Area'), 'displayOrder'=>$locationOrder);
+      $return['data']['area'] = $area;
+      $return['colDefs']['subarea']=   array('field'=> 'subarea', 'displayName'=>($useFormSC?'SUBAREA':'Subarea'), 'displayOrder'=>$locationOrder+1);
+      $return['data']['subarea'] = $subarea;
+      $return['colDefs']['location']=   array('field'=> 'location','displayName'=>($useFormSC?'LOC':'Location'), 'displayOrder'=>$locationOrder+2);
+      $return['data']['location'] = $location;
     }
   }
   return $return;
 }
+/* Pull Location information */
+function pullTickData($entryID, $useFormSC=false, $ticketsOrder=70) {
+  global $wpdb;
+  //global $useFormSC;
+  $return = array();
+  $return['data'] = array();
+  $return['colDefs'] = array();
 
+  //schedule information
+  if($entryID!=''){
+    //get Ticket information for this lead
+    $sql = "SELECT  access_code
+            FROM    eb_entry_access_code
+            where   entry_id   = $entryID";
+
+    $results = $wpdb->get_results($sql);
+    if($wpdb->num_rows > 0){
+      $ticketArr = array();
+      foreach($results as $row){
+        $ticketArr['access_code'][]  = $row->access_code;
+      }
+      //remove any duplicates
+      $ticketArr['access_code'] = array_unique($ticketArr['access_code']);
+
+      //concatenate array values into strings separated by '    ' (4 spaces)
+      $access_code = implode('    ', $ticketArr['access_code']);
+
+      //populate return data
+      $return['colDefs']['access_code']=   array('field'=> 'access_code','displayName'=>'Access Codes', 'displayOrder'=>$ticketsOrder);
+      $return['data']['access_code'] = $access_code;
+
+    }
+  }
+  return $return;
+}
 function pullPayData($entryID, $paymentOrder=50) {
   global $wpdb;
   $return = array();
