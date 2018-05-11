@@ -192,7 +192,7 @@ if (!empty($project_video)) {
 
 //decide if display maker info
 $dispMakerInfo = true;
-if($formType=='Sponsor' || $formType == 'Startup Sponsor' || $displayMakers){
+if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
   $dispMakerInfo = false;
 }
 
