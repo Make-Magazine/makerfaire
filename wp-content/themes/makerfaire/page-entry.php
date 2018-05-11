@@ -155,10 +155,12 @@ if(is_array($entry) &&
 }
 
 //check flags
+$displayMakers = true;
 foreach($entry as $key=>$field ) {
   $pos = strpos($key, '304.');
   if ($pos !== false) {
-    if($field=='no-public-view')  $validEntry = false;
+    if($field=='no-public-view')    $validEntry    = false;
+    if($field=='no-maker-display')  $displayMakers = false;
   }
 }
 
@@ -190,7 +192,7 @@ if (!empty($project_video)) {
 
 //decide if display maker info
 $dispMakerInfo = true;
-if($formType=='Sponsor' || $formType == 'Startup Sponsor'){
+if($formType=='Sponsor' || $formType == 'Startup Sponsor' || $displayMakers){
   $dispMakerInfo = false;
 }
 
