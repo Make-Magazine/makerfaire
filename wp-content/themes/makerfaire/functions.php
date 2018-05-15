@@ -200,7 +200,7 @@ add_filter('user_can_richedit', create_function('', 'return false;'), 50);
 
 //This function is used to enqueue the angularJS!!!!
 function angular_scripts() {
-  if (is_page('ribbons') || is_page_template('page-schedule.php')) {
+  if (is_page('ribbons') || is_page_template('page-schedule.php') || is_page_template('page-meet-the-makers.php')) {
     $my_theme = wp_get_theme();
     $my_version = $my_theme->get('Version');
 
@@ -216,6 +216,13 @@ function angular_scripts() {
 
       //angular ui-bootstrap style
       wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
+    }elseif(is_page_template('page-meet-the-makers.php')) {
+      wp_enqueue_script('angular-scripts',get_stylesheet_directory_uri() . '/js/angular/meet-the-makers.js',array( 'angularjs'),$my_version);
+
+      //angular ui-bootstrap style
+      wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
+      wp_enqueue_style( 'owl-carousel', get_template_directory_uri() . '/css/owl.carousel.css', array(), null, 'all' );
+      wp_enqueue_script('carousel',      get_stylesheet_directory_uri() . '/js/scripts/owl.carousel.min.js', array(),false,true);
     }
   }
 }

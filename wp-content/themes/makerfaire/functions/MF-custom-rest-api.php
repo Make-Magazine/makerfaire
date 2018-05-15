@@ -187,7 +187,7 @@ function getMTMentries($formIDs) {
   foreach($entries as $entry){
     $leadCategory = array();
     $flag = '';
-    if($entry['303']=='Accepted'){
+    if(isset($entry['303']) && $entry['303']==='Accepted'){
       //build category array
       foreach($entry as $leadKey=>$leadValue){
         $pos = strpos($leadKey, '321'); //4 additional categories
@@ -227,7 +227,7 @@ function getMTMentries($formIDs) {
           'large_img_url'     => $fitPhoto,
           'featured_img'      => $featImg,
           'category_id_refs'  => array_unique($leadCategory),
-          'description'       => $entry['16'],
+          'description'       => (isset($entry['16'])?$entry['16']:''),
           'flag'              => $flag, //only set if flag is set to 'Featured Maker'
           'makerList'         => $makerList
           );
@@ -389,7 +389,7 @@ function getMTMentries($formIDs) {
       if($isGroup) {
         $makerList = $fieldData[109];
       }elseif($isOneMaker){
-        $makerList = $fieldData['160.3']. (isset($fieldData['160.6'])?' ' .$fieldData['160.6']:'');
+        $makerList = (isset($fieldData['160.3'])?$fieldData['160.3']:''). (isset($fieldData['160.6'])?' ' .$fieldData['160.6']:'');
       }else{
         $makerArr = array();
         if(isset($fieldData['160.3']))  $makerArr[] = (isset($fieldData['160.3'])?$fieldData['160.3']. ' ':'') .(isset($fieldData['160.6'])?$fieldData['160.6']:'');

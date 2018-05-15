@@ -177,23 +177,20 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                       <span data-ng-repeat="catName in daySched.category">{{catName}}<font ng-show="!$last">, </font></span>
                     </div>
                   </div>
-                <div class="col-xs-10 col-xs-offset-2 sched-more-info">
-                  <div class="panel-heading">
-                    <span ng-click="daySched.isCollapsed = !daySched.isCollapsed" ng-init="daySched.isCollapsed=true"><?php _e('quick view','MiniMakerFaire');?>
-                      <i class="fa fa-lg" ng-class="{'fa-angle-down': daySched.isCollapsed, 'fa-angle-up': !daySched.isCollapsed}"></i>
-                    </span>
-                  </div>
-                  <div collapse="daySched.isCollapsed">
-                    <div ng-show="!daySched.isCollapsed" class="panel-body">
-                      <p>{{daySched.desc}}</p>
-                      <a href="/maker/entry/{{daySched.id}}"><?php _e('full details','MiniMakerFaire');?></a>
+                  <div class="col-xs-10 col-xs-offset-2 sched-more-info">
+                    <div class="panel-heading">
+                      <span ng-click="daySched.isCollapsed = !daySched.isCollapsed" ng-init="daySched.isCollapsed=true"><?php _e('quick view','MiniMakerFaire');?>
+                        <i class="fa fa-lg" ng-class="{'fa-angle-down': daySched.isCollapsed, 'fa-angle-up': !daySched.isCollapsed}"></i>
+                      </span>
+                    </div>
+                    <div collapse="daySched.isCollapsed">
+                      <div ng-show="!daySched.isCollapsed" class="panel-body">
+                        <p>{{daySched.desc}}</p>
+                        <a href="/maker/entry/{{daySched.id}}"><?php _e('full details','MiniMakerFaire');?></a>
+                      </div>
                     </div>
                   </div>
                 </div>
-                </div>
-
-
-
               </div>
             </div>
           </div>
