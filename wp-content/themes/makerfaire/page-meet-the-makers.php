@@ -86,10 +86,12 @@ if($noMakerText =='') $noMakerText = 'No makers found';
 
       <!-- List View -->
       <div ng-show="layout == 'list'" class="mtm-results-cont container">
-        <span class="filterAlpha" ng-repeat="searchLetter in alphabet.split('') track by $index">
-          <a href=""  class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter }}</a>
-        </span>
-        <a href=""  class="pointer-on-hover" ng-click="setLetter('')">Reset</a>
+        <div class="filter-alpha-wrapper">
+          <span class="filterAlpha" ng-repeat="searchLetter in alphabet.split('') track by $index">
+            <a href=""  class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter }}</a>
+          </span>
+          <span class="filterAlpha" ><a href=""  class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
+        </div>
         <div ng-repeat="maker in makers | filter : makerSearch | byCategory:category | orderBy: 'name' | startsWithLetter:letter">
           <a href="/maker/entry/{{maker.id}}">
             <article class="mtm-maker" style="background-image: url('{{ maker.large_img_url }}')">
