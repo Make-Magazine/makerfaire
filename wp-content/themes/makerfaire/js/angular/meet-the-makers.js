@@ -4,6 +4,8 @@ app.controller('mtmMakers', function($scope, $http) {
   $scope.layout = 'grid';
   $scope.category = '';
   $scope.tags = [];
+  $scope.letter = '';
+  $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   catJson = [];
   var noMakerText = jQuery('#noMakerText').val();
   var formIDs = jQuery('#forms2use').val();
@@ -76,7 +78,10 @@ app.controller('mtmMakers', function($scope, $http) {
     });
   $scope.setTagFilter = function (tag) {
     $scope.category = tag;
-  }
+  };
+  $scope.setLetter = function (startsWith) {
+    $scope.letter = startsWith;
+  };
   // Clear category filter on All button click
   $scope.clearFilter = function() {
     $scope.category = '';
@@ -101,6 +106,20 @@ app.filter('byCategory', function(){
     });
     return filtered;
   };
+});
+
+app.filter('startsWithLetter', function () {
+    return function (items, letter) {
+        var filtered = [];
+        var letterMatch = new RegExp(letter, 'i');
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            if (letterMatch.test(item.name.substring(0, 1))) {
+                filtered.push(item);
+            }
+        }
+        return filtered;
+    };
 });
 
 function replaceAll(str, find, replace) {
