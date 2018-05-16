@@ -222,7 +222,7 @@ function angular_scripts() {
       //angular ui-bootstrap style
       wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
       wp_enqueue_style( 'owl-carousel', get_template_directory_uri() . '/css/owl.carousel.css', array(), null, 'all' );
-      wp_enqueue_script('carousel',      get_stylesheet_directory_uri() . '/js/scripts/owl.carousel.min.js', array(),false,true);
+      wp_enqueue_script('carousel',      get_stylesheet_directory_uri() . '/js/scripts/owl.carousel.js', array(),false,true);
     }
   }
 }
