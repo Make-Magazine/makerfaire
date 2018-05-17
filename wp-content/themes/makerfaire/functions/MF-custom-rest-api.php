@@ -187,7 +187,15 @@ function getMTMentries($formIDs) {
   foreach($entries as $entry){
     $leadCategory = array();
     $flag = '';
-    if(isset($entry['304.5']) && $entry['304.5']==='no-public-view'){
+
+    $displayMaker = true;
+    foreach($entry as $key=>$field ) {
+      $pos = strpos($key, '304.');
+      if ($pos !== false) {
+        if($field=='no-public-view')    $displayMaker    = false;
+      }
+    }
+    if(!$displayMaker){
       //skip entry
       continue;
     }
