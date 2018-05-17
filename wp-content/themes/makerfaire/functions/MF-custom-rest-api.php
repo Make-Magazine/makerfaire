@@ -187,6 +187,10 @@ function getMTMentries($formIDs) {
   foreach($entries as $entry){
     $leadCategory = array();
     $flag = '';
+    if(isset($entry['304.5']) && $entry['304.5']==='no-public-view'){
+      //skip entry
+      continue;
+    }
     if(isset($entry['303']) && $entry['303']==='Accepted'){
       //build category array
       foreach($entry as $leadKey=>$leadValue){
