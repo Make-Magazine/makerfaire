@@ -294,10 +294,9 @@ function getMTMentries($formIDs) {
                left outer join wp_rg_lead_detail as lead_detail on
                    schedule.entry_id = lead_detail.lead_id and field_number = 303
                where lead.status = 'active' and lead_detail.value='Accepted' "
-            . " and lead_detail.form_id in(".implode(",",$formIDarr).") "//order by subarea.sort_order";
-    /* code to hide scheduled items as they occur*/
-               . " and lead_detail.form_id in(".implode(",",$formIDarr).") "
-            . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  "
+            . " and lead_detail.form_id in(".implode(",",$formIDarr).") "
+    /* code to hide scheduled items as they occur
+            . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  "*/
             . "order by subarea.sort_order";
 
     //retrieve project name, img (22), maker list, topics
