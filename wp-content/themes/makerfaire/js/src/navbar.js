@@ -147,8 +147,8 @@ jQuery(function() {
     default:
           break;
   }
-  // console.log(navigator.userAgent);
-    /* Adjustments for Safari on Mac */
+  $("#dropdownMenuLink .avatar").css("display","block");
+/* Adjustments for Safari on Mac */
   if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Mac') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
         // console.log('Safari on Mac detected, applying class...');
         $('html').addClass('safari-mac'); // provide a class for the safari-mac specific css to filter with

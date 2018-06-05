@@ -186,6 +186,7 @@ header.universal-nav {
       #dropdownMenuLink {
           position: relative;
           z-index: 1002;
+          opacity: 1;
           &:active {
               box-shadow: none;
               -webkit-box-shadow: none;
@@ -270,16 +271,12 @@ header.universal-nav {
                     overflow: visible;
                 }
           }
-          a {
+          a, #qsLogoutBtn {
               color: #333;
               display: block;
               margin-bottom: 15px;
               margin-top: 20px;
-              opacity: .6;
               font-size: 16px;
-              &:hover {
-                  opacity: 1;
-              }
           }
       }
   }
