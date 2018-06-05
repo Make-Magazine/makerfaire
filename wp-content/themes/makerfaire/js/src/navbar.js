@@ -3,7 +3,11 @@ jQuery(function() {
   jQuery('.desktop-nav .sub-menu').wrapInner('<div class=\'container\'></div>');
 });
 
-jQuery(function() {
+(function($) {
+   // don't display avatar until login's gone
+   $(window).bind("load", function() {
+    $(".nav-level-1-auth #profile-view .avatar").css("display","block");
+  });
   jQuery('#hamburger-icon, #hamburger-makey, .nav-flyout-underlay').click(function() {
     jQuery('.stagingMsg').toggleClass('gone');
     jQuery('#hamburger-icon').toggleClass('open');
@@ -147,10 +151,11 @@ jQuery(function() {
     default:
           break;
   }
-  $("#dropdownMenuLink .avatar").css("display","block");
 /* Adjustments for Safari on Mac */
   if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Mac') != -1 && navigator.userAgent.indexOf('Chrome') == -1) {
         // console.log('Safari on Mac detected, applying class...');
         $('html').addClass('safari-mac'); // provide a class for the safari-mac specific css to filter with
   }
-});
+})(jQuery);
+
+
