@@ -182,18 +182,21 @@
 
       <ul class="nav-level-1-auth">
         <li>
-          <button id="qsLoginBtn">Login | Signup</button>
+          <!--<a id="qsLoginBtn" href="<?php echo wp_login_url( get_permalink() ); ?>" title="Login">Login | Signup</a>-->
+          <a id="newLoginBtn" href="#" title="Login">Login | Signup</a>
+
           <div id="profile-view" class="dropdown">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img class="avatar" style="width:38px" alt="avatar">
             </a>
-              
+
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <h3 class="expanding-underline">My Account</h3>
               <a class="dropdown-item" href="https://www.makershare.com/portfolio">Maker Share Profile</a>
               <a class="dropdown-item" href="https://www.makerfaire.com/manage-entries">Maker Faire Portal</a>
-              <a class="dropdown-item" href="https://make.co/myaccount">My Member Account</a>
-              <span class="dropdown-item" id="qsLogoutBtn">Log Out</span>
+              <a class="dropdown-item" href="/myaccount">My Member Account</a>
+
+              <a id="newLogoutBtn" href="#" title="Logout">Logout</a>
             </div>
           </div>
 
@@ -236,7 +239,7 @@
   <div id="nav-flyout">
 
     <?php
-      echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html');    
+      echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html');
     ?>
 
   </div>

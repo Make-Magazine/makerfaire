@@ -135,6 +135,13 @@ function load_scripts() {
   $my_version = $my_theme->get('Version');
   // Libraries concatenated by the grunt concat task (in Gruntfile.js):
   wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'),$my_version);
+  wp_localize_script('built-libs', 'ajax_object',
+        array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'home_url' => get_home_url(),
+            'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
+        )
+      );
   // Other libraries:
   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
   wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
