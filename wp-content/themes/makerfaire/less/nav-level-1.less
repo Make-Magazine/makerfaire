@@ -52,8 +52,11 @@ header.universal-nav {
         padding: 0 23px;
         height: 100%;
         display: flex;
-        align-items: center;
+        display: -webkit-flex;
         justify-content: stretch;
+        -webkit-justify-content: stretch;
+        align-items: center;
+        -webkit-align-items: center;
         span {
           color: #333;
           opacity: .6;
@@ -122,7 +125,9 @@ header.universal-nav {
     margin-left: auto;
     margin-right: auto;
     display: flex;
+    display: -webkit-flex;
     align-items: center;
+    -webkit-align-items: center;
     @media screen and (min-width: 768px) and (max-width: 991px) {
       width: 120px;
     }
@@ -150,22 +155,34 @@ header.universal-nav {
       padding: 0;
       height: 100%;
       display: flex;
+      display: -webkit-flex;
       align-items: center;
+      -webkit-align-items: center;
       justify-content: stretch;
-      button, a {
+      -webkit-justify-content: stretch;
+      button, a, #qsLogoutBtn {
         border: 0px;
         background: none;
         color: #333;
         font-size: 14px;
         text-decoration: none;
         opacity: .6;
+        display: flex;
+        display: -webkit-flex;
+        justify-content: stretch;
+        -webkit-justify-content: stretch;
+        align-items: center;
+        -webkit-align-items: center;
       }
       &:hover, &:active {
         text-decoration: none;
         opacity: 1;
       }
+      #btn-logout { display: none; }
   }
+  #qsLoginBtn { display: none; }
   #profile-view {
+      display: none;
       #dropdownMenuLink {
           position: relative;
           z-index: 1002;
@@ -175,8 +192,10 @@ header.universal-nav {
           }
       }
       .avatar {
+        display: none;
+        opacity: .9;
         &:hover {
-          opacity: .8;
+          opacity: .6;
         }
       }
       .dropdown-menu {
