@@ -171,10 +171,10 @@ window.addEventListener('load', function() {
     var data = {
       'action': 'mm_wplogout'
     };
-    if ( $( '#wpadminbar' ).length ) {
-        $( 'body' ).removeClass( 'adminBar' ).removeClass( 'logged-in' );
-        $( '#wpadminbar' ).remove();
-        $( '#mm-preview-settings-bar' ).remove();
+    if ( jQuery( '#wpadminbar' ).length ) {
+        jQuery( 'body' ).removeClass( 'adminBar' ).removeClass( 'logged-in' );
+        jQuery( '#wpadminbar' ).remove();
+        jQuery( '#mm-preview-settings-bar' ).remove();
     }
 
     jQuery.post(ajax_object.ajax_url, data, function(response) {
