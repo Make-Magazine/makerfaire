@@ -1,10 +1,10 @@
 window.addEventListener('load', function() {
   // buttons and event listeners
-  var loginBtn    = document.getElementById('qsLoginBtn');
-  var logoutBtn   = document.getElementById('qsLogoutBtn');
+  var loginBtn    = document.getElementById('newLoginBtn');
+  var logoutBtn   = document.getElementById('newLogoutBtn');
   var profileView = document.getElementById('profile-view');
   var tokenRenewalTimeout;
-  
+
   //default profile view to hidden
   loginBtn.style.display    = 'none';
   profileView.style.display = 'none';
@@ -19,11 +19,12 @@ window.addEventListener('load', function() {
     scope: 'openid profile',
     leeway: 60
   });
+  localStorage.setItem('redirect_to',AUTH0_REDIRECT_URL);
 
   loginBtn.addEventListener('click', function(e) {
     e.preventDefault();
     localStorage.setItem('redirect_to',AUTH0_REDIRECT_URL);
-    webAuth.authorize();
+    webAuth.authorize(); //login to auth0
   });
 
   logoutBtn.addEventListener('click', logout);
@@ -50,12 +51,19 @@ window.addEventListener('load', function() {
   }
 
   function logout() {
-    // Remove tokens and expiry time from localStorage
+    // Remove tokens and expiry time from localStorage for auth0
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
-    displayButtons();
     clearTimeout(tokenRenewalTimeout);
+
+    //logout of auth0
+    localStorage.setItem('redirect_to' ,AUTH0_REDIRECT_URL);
+    webAuth.logout({
+      returnTo: AUTH0_REDIRECT_URL
+    });
+    displayButtons();
+
   }
 
   function isAuthenticated() {
@@ -70,30 +78,32 @@ window.addEventListener('load', function() {
       if (authResult && authResult.accessToken && authResult.idToken) {
         window.location.hash = '';
         setSession(authResult);
-        loginBtn.style.display = 'none';
 
         //after login redirect to previous page (after 5 second delay)
         var redirect_url = localStorage.getItem('redirect_to');
-        setTimeout(function(){location.href=redirect_url;} , 3000);
-
+        setTimeout(function(){location.href=redirect_url;} , 2500);
       } else if (err) {
         console.log(err);
         alert(
           'Error: ' + err.error + '. Check the console for further details.'
         );
       }
-      displayButtons();
+     setTimeout(function(){displayButtons();}, 1500); // hold off on displaying the buttons until we know we're logged in
     });
   }
 
   function displayButtons() {
     if (isAuthenticated()) {
       loginBtn.style.display = 'none';
-      getProfile();
       profileView.style.display = 'flex';
+      getProfile();
+      //login to wordpress if not already
+      WPlogin();//login to wordpress
     } else {
       loginBtn.style.display = 'flex';
       profileView.style.display = 'none';
+      //logout of wordpress if not already
+      WPlogout();//login to wordpress
     }
   }
 
@@ -118,7 +128,7 @@ window.addEventListener('load', function() {
 
   function displayProfile() {
     // display the avatar
-    document.querySelector('#profile-view img').src = userProfile.picture;
+      document.querySelector('#profile-view img').src = userProfile.picture;
   }
 
   function renewToken() {
@@ -133,6 +143,45 @@ window.addEventListener('load', function() {
       }
     );
   }
+
+  function WPlogin(){
+    if (isAuthenticated()) {
+      getProfile();
+      if (typeof userProfile !== 'undefined') {
+        var user_id = userProfile.sub;
+        var access_token = localStorage.getItem('access_token');
+        var id_token     = localStorage.getItem('id_token');
+
+        //login to wordpress
+        var data = {
+          'action'              : 'mm_wplogin',
+          'auth0_userProfile'   : userProfile,
+          'auth0_access_token'  : access_token,
+          'auth0_id_token'      : id_token
+        };
+        jQuery.post(ajax_object.ajax_url, data, function(response) {
+          //alert('Got this from the server: ' + response);
+        });
+      }
+    }
+  }
+
+  function WPlogout(){
+    //logout of wordpress
+    var data = {
+      'action': 'mm_wplogout'
+    };
+    if ( $( '#wpadminbar' ).length ) {
+        $( 'body' ).removeClass( 'adminBar' ).removeClass( 'logged-in' );
+        $( '#wpadminbar' ).remove();
+        $( '#mm-preview-settings-bar' ).remove();
+    }
+
+    jQuery.post(ajax_object.ajax_url, data, function(response) {
+      //alert('Got this from the server: ' + response);
+    });
+  }
+
   //check if logged in another place
   webAuth.checkSession({},
     function(err, result) {
