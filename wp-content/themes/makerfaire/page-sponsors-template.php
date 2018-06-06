@@ -23,7 +23,7 @@ get_header(); ?>
           while( have_rows('presenting_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('image'); //Photo
             $sub_field_2 = get_sub_field('url'); //URL
-            
+
             echo '<div class="sponsors-box-xl">';
             if( get_sub_field('url') ):
               echo '<a href="' . $sub_field_2 . '" target="_blank">';
@@ -50,7 +50,7 @@ get_header(); ?>
           while( have_rows('platinum_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('image'); //Photo
             $sub_field_2 = get_sub_field('url'); //URL
-            
+
             echo '<div class="sponsors-box-xl">';
             if( get_sub_field('url') ):
               echo '<a href="' . $sub_field_2 . '" target="_blank">';
@@ -153,7 +153,7 @@ get_header(); ?>
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">MEDIA SPONSORS</h3>
         <div class="faire-sponsors-box">
-    
+
         <?php
           while( have_rows('media_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('image'); //Photo
@@ -180,7 +180,7 @@ get_header(); ?>
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">BLACKSMITH SPONSORS</h3>
         <div class="sponsors-text-box">
-    
+
         <?php
           while( have_rows('blacksmith_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('name'); //Name
@@ -207,7 +207,7 @@ get_header(); ?>
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">STARTUP SPONSORS</h3>
         <div class="sponsors-text-box">
-    
+
         <?php
           while( have_rows('startup_sponsors') ): the_row();
             $sub_field_1 = get_sub_field('name'); //Name
@@ -231,8 +231,6 @@ get_header(); ?>
   <div class="row">
     <div class="col-xs-12 text-center">
       <a class="sponsors-btn-bottom" href="/sponsors">BECOME A SPONSOR</a>
-      <br><br>
-        <strong>Nintendo Labo is a trademark of Nintendo.</strong>
     </div>
   </div>
 
