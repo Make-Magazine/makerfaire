@@ -1,5 +1,7 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\Admin
  */
 
@@ -20,6 +22,7 @@ final class WPSEO_Admin_Asset_Dev_Server_Location implements WPSEO_Admin_Asset_L
 		'wp-seo-metabox',
 		'wp-seo-post-scraper',
 		'wp-seo-term-scraper',
+		'wp-seo-modal',
 	);
 
 	/**

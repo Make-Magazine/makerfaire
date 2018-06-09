@@ -30,7 +30,7 @@ class Jetpack_Search_Helpers {
 	 * @return string The search URL.
 	 */
 	static function get_search_url() {
-		$query_args = $_GET;
+		$query_args = stripslashes_deep( $_GET );
 
 		// Handle the case where a permastruct is being used, such as /search/{$query}
 		if ( ! isset( $query_args['s'] ) ) {
@@ -625,6 +625,29 @@ class Jetpack_Search_Helpers {
 		}
 
 		return $modified;
+	}
+
+	/**
+	 * Wraps a WordPress filter called "jetpack_search_disable_widget_filters" that allows
+	 * developers to disable filters supplied by the search widget. Useful if filters are
+	 * being defined at the code level.
+	 *
+	 * @since 5.8.0
+	 *
+	 * @return bool
+	 */
+	public static function are_filters_by_widget_disabled() {
+		/**
+		 * Allows developers to disable filters being set by widget, in favor of manually
+		 * setting filters via `Jetpack_Search::set_filters()`.
+		 *
+		 * @module search
+		 *
+		 * @since  5.7.0
+		 *
+		 * @param bool false
+		 */
+		return apply_filters( 'jetpack_search_disable_widget_filters', false );
 	}
 
 	/**

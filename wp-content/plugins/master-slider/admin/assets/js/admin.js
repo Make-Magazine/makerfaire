@@ -6,7 +6,7 @@
 	$(function () {
 
 		var $add_new_slider = $('#msp-add-slider');
-		if( ! $add_new_slider.length ) return;	
+		if( ! $add_new_slider.length ) return;
 
 
 		// get markup for slider types
@@ -27,9 +27,9 @@
 					$slider_types_markup.dialog('close');
 				});
 			},
-			position: { 
-				my: "center", 
-				at: "center" 
+			position: {
+				my: "center",
+				at: "center"
 			}
 		});
 
@@ -60,7 +60,7 @@
 
 		// if the template is disabled and disabled_msg is set, display the text on click
 		var $slider_types_disabled = $('#msp-slider-type-select .msp-template-figure.is-unavailable');
-		
+
 		$slider_types_disabled.on('click', function(event){
 			var disabled_alert_text = $(this).data('disabled-msg');
 			if( disabled_alert_text )
@@ -73,7 +73,7 @@
 		$create_slider_btn.on('click', function(event){
 			event.preventDefault();
 			var $create_btn = $(this);
-			
+
 
 			var $selected_item = $('#msp-slider-type-select .msp-template-figure.selected').eq(0);
 
@@ -94,7 +94,7 @@
 						slider_type		: slider_type
 					},
 					function(res){
-						
+
 						if( res.success === true ){
 							$create_btn.text( __MSP_GEN_LAN.genl_003 );
 							window.location.href = res.redirect;
@@ -113,7 +113,7 @@
 		});
 
 	});
-	
+
 
 
 	// Live preview
@@ -148,12 +148,12 @@
 						$preview_wrapper.dialog('close');
 					});
 				},
-				position: { 
-					my: "center", 
-					at: "center" 
+				position: {
+					my: "center",
+					at: "center"
 				}
 			});
-			
+
 			$preview_wrapper.prop( 'src', __MS.msp_plugin_url + '/admin/views/slider-dashboard/get-preview.html?cn=' + Math.random() ).dialog('open');
 
 			window.onbeforeunload = function(){
@@ -168,7 +168,6 @@
 
 			$(window).bind('resize', { the_frame:$preview_wrapper } , onPreviewDialogResize );
 		};
-
 
 
 		window.lunchMastersliderPreviewBySliderID = function( slider_id ){
@@ -199,16 +198,16 @@
 						$preview_wrapper.dialog('close');
 					});
 				},
-				position: { 
-					my: "center", 
-					at: "center" 
+				position: {
+					my: "center",
+					at: "center"
 				}
 			});
 
 			$preview_wrapper.load(function(){
 				console.log('preview loaded compeletely.');
 			});
-			
+
 			$preview_wrapper.prop( 'src', __MS.msp_menu_page + '&action=preview&strip_wp&slider_id=' + slider_id ).dialog('open');
 
 			window.onbeforeunload = function(){
@@ -244,16 +243,16 @@
 				show: 'fade',
 				dialogClass: 'msp-container msp-dialog msp-import-export-dialog',
 				close: function( event, ui ) {
-					
+
 				},
 				open: function(){
 					$('.ui-widget-overlay').bind('click',function(){
 						$import_export_wrapper.dialog('close');
 					});
 				},
-				position: { 
-					my: "center", 
-					at: "center" 
+				position: {
+					my: "center",
+					at: "center"
 				}
 			});
 
@@ -270,7 +269,6 @@
 
 		// check all btn in export dialog
 		$('.export-check-all').bind( 'click', function(){
-			
 			var $this = $(this);
 			var isChecked = $this.prop('checked');
 			$('.msp-export-sliders-table .export-slider-cb').prop( 'checked', isChecked );
@@ -284,14 +282,39 @@
 			}
 		});
 
-		// help button position 
+		// help button position
 		if( $('#msp-header').length ){
 			var help_btn_top_offset = $('#msp-header')[0].getBoundingClientRect().top - 6;
 			$('#contextual-help-link-wrap').css( 'top', help_btn_top_offset );
 		}
-		
+
+        $('.ms-close-notice').on('click', function(event){
+            event.preventDefault();
+            var $this  = $(this),
+                _id    = $this.data('id');
+
+            jQuery.post(
+                ajaxurl,
+                {
+                    action    : 'msp_dismiss_notice', // the handler
+                    msnonce   : __MS_GLOBAL.dismiss_nonce,
+                    _id       : _id
+                },
+                function(res){
+                    if( ! res.success ){
+                        alert( res.data.message );
+                    } else {
+                        $this.closest('.msp-notice-wrapper').hide();
+                    }
+                }
+            );
+
+        });
+
 	});
-	
+
 
 
 }(jQuery));
+
+

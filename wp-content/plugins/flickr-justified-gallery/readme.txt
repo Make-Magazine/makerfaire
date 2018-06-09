@@ -1,9 +1,9 @@
 === Flickr Justified Gallery ===
 Contributors: miro.mannino
-Donate link: http://miromannino.com/projects/flickr-justified-gallery/#helptheproject
+Donate link: http://miromannino.com/
 Tags: photography, gallery, photo, flickr, photostream, set, justified, grid
 Requires at least: 3.0
-Tested up to: 4.6.1
+Tested up to: 4.9.4
 Stable tag: trunk
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.txt
@@ -114,6 +114,10 @@ If you have installed WP Slimstat, you need to exclude the images of the gallery
 
 
 == Changelog ==
+
+= 3.5 =
+
+* Changed the way scripts are added to the page using the standard Wordpress functions wp_enqueue_style and wp_add_inline_script. This solves errors in case jquery is added at the footer, unless another plugin (or the theme) adds it again in a wrong way. 
 
 = 3.4.2 = 
 

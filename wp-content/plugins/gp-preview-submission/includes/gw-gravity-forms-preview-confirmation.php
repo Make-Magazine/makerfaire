@@ -370,7 +370,17 @@ class GWPreviewConfirmation {
     * Retrieves $entry object from class if it has already been created; otherwise creates a new $entry object.
     */
     public static function create_lead( $form ) {
-        
+
+	    /**
+	     * Filter the entry to be used to replace merge tags - before - it has been generated.
+	     *
+	     * @since 1.2.9
+	     *
+	     * @param object|bool $entry Entry object or null if this if the first time the function has been called.
+	     * @param object      $form  The current form object.
+	     */
+	    self::$entry = gf_apply_filters( array( 'gpps_entry_pre_create', $form['id'] ), self::$entry, $form );
+
         if( empty( self::$entry ) ) {
 
             // flush runtime cache so we have a clean slate (fixes issue with WC GF Product Add-ons plugin)
@@ -433,6 +443,16 @@ class GWPreviewConfirmation {
 
 
         }
+
+	    /**
+	     * Filter the entry to be used to replace merge tags - after - it has been generated.
+	     *
+	     * @since 1.2.9
+	     *
+	     * @param object|bool $entry Entry object or null if this if the first time the function has been called.
+	     * @param object      $form  The current form object.
+	     */
+	    self::$entry = gf_apply_filters( array( 'gpps_entry_post_create', $form['id'] ), self::$entry, $form );
         
         return self::$entry;
     }
@@ -440,7 +460,7 @@ class GWPreviewConfirmation {
     public static function preview_replace_variables( $content, $form, $entry = null ) {
 
         if ( $entry == null ) {
-            $entry = self::create_lead($form);  
+            $entry = self::create_lead( $form );
         }
           
         // add filter that will handle getting temporary URLs for file uploads and post image fields (removed below)

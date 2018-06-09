@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.9
+
+	- Added 'gpps_entry_pre_create' and 'gpps_entry_post_create' filters for modifying entry to be used for replacing merge tags.
+
 ## 1.2.8
 
 	- Added support for integrating with GF Nested Forms.

@@ -37,7 +37,15 @@
   <?php
     if($dispMakerInfo) { ?>
       <div class="page-header">
-        <h2><?php echo ($isGroup ? 'Group' : $isList ? 'Makers':'Maker');?></h2>
+        <h2><?php
+        if($isGroup) {
+          echo 'Group';
+        }elseif($isList){
+          echo 'Makers';
+        }else{
+          echo 'Maker';
+        }?>
+        </h2>
       </div>
 
       <?php

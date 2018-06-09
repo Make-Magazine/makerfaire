@@ -155,10 +155,12 @@ if(is_array($entry) &&
 }
 
 //check flags
+$displayMakers = true;
 foreach($entry as $key=>$field ) {
   $pos = strpos($key, '304.');
   if ($pos !== false) {
-    if($field=='no-public-view')  $validEntry = false;
+    if($field=='no-public-view')    $validEntry    = false;
+    if($field=='no-maker-display')  $displayMakers = false;
   }
 }
 
@@ -190,7 +192,7 @@ if (!empty($project_video)) {
 
 //decide if display maker info
 $dispMakerInfo = true;
-if($formType=='Sponsor' || $formType == 'Startup Sponsor'){
+if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
   $dispMakerInfo = false;
 }
 
@@ -366,7 +368,12 @@ function display_groupEntries($entryID){
   global $wpdb;global $faireID; global $faire;
   $return = '';
 
-  $sql = "select * from wp_rg_lead_rel where parentID=".$entryID." or childID=".$entryID;
+  //look for all associated entries but exclude trashed entries
+  $sql = "select wp_rg_lead_rel.*
+          from wp_rg_lead_rel
+          left outer join wp_rg_lead child on wp_rg_lead_rel.childID = child.id
+          left outer join wp_rg_lead parent on wp_rg_lead_rel.parentID = parent.id
+          where (parentID=".$entryID." or childID=".$entryID.") and child.status != 'trash' and parent.status != 'trash'";
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     if($results[0]->parentID==$entryID){

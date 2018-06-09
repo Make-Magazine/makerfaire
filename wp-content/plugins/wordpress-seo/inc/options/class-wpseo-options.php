@@ -1,5 +1,7 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\Internals\Options
  */
 
@@ -30,10 +32,17 @@ class WPSEO_Options {
 	 */
 	protected static $instance;
 
+	/** @var WPSEO_Options_Backfill Backfill instance. */
+	protected static $backfill;
+
 	/**
 	 * Instantiate all the WPSEO option management classes.
 	 */
 	protected function __construct() {
+		// Backfill option values after transferring them to another base.
+		self::$backfill = new WPSEO_Options_Backfill();
+		self::$backfill->register_hooks();
+
 		$is_multisite = is_multisite();
 
 		foreach ( self::$options as $option_name => $option_class ) {
@@ -107,9 +116,8 @@ class WPSEO_Options {
 		if ( is_network_admin() && isset( self::$option_instances[ $option_name ] ) ) {
 			return self::$option_instances[ $option_name ]->update_site_option( $value );
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	/**
@@ -217,7 +225,12 @@ class WPSEO_Options {
 	 * @return mixed|null Returns value if found, $default if not.
 	 */
 	public static function get( $key, $default = null ) {
+		self::$backfill->remove_hooks();
+
 		$option = self::get_all();
+
+		self::$backfill->register_hooks();
+
 		if ( isset( $option[ $key ] ) ) {
 			return $option[ $key ];
 		}
@@ -447,12 +460,17 @@ class WPSEO_Options {
 	 */
 	private static function get_lookup_table() {
 		$lookup_table = array();
+
+		self::$backfill->remove_hooks();
+
 		foreach ( array_keys( self::$options ) as $option_name ) {
 			$full_option = self::get_option( $option_name );
 			foreach ( $full_option as $key => $value ) {
 				$lookup_table[ $key ] = $option_name;
 			}
 		}
+
+		self::$backfill->register_hooks();
 
 		return $lookup_table;
 	}

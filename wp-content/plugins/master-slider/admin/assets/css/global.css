@@ -19,3 +19,32 @@
 /** visual composer element **/
 .icon-vc-msslider-el ,
 .wpb_masterslider_pb .wpb_element_wrapper { background-image: url( ../images/thirdparty/master-slider-32x32.png ) !important; }
+
+.msp-banner-wrapper.updated {
+    margin-left:0;
+    border:none;
+    padding:0;
+    clear:both;
+    position:relative;
+}
+.msp-banner-wrapper.updated > p {
+    padding:15px;
+}
+.msp-banner-wrapper .msp-banner-media {
+    display:block;
+    text-align:center;
+    width:100%;
+}
+.msp-banner-wrapper .msp-banner-media > * {
+    margin-left:auto;
+    margin-right:auto;
+}
+.msp-banner-wrapper.updated .notice-dismiss{
+    padding:7px;
+    top:7px;
+}
+.msp-banner-wrapper > pre {
+    outline: 1px solid #e2e2e2;
+    padding: 15px;
+    margin: 0;
+}

@@ -172,82 +172,83 @@ class MSP_Parser {
           'facebook_size'   => isset( $setting['imgSize'] ) ? (string) $setting['imgSize'] : 'orginal',
           'facebook_thumb_size' => isset( $setting['thumbSize'] ) ? (string) $setting['thumbSize'] : '320',
 
-          'arrows'           => 'false',   // display arrows?
-          'arrows_autohide'  => 'true',   // auto hide arrows?
-          'arrows_overvideo' => 'true',   // visible over slide video while playing?
-          'arrows_hideunder' => '',
+          'arrows'                => 'false',   // display arrows?
+          'arrows_autohide'       => 'true',   // auto hide arrows?
+          'arrows_overvideo'      => 'true',   // visible over slide video while playing?
+          'arrows_hideunder'      => '',
 
-          'bullets'          => 'false',  // display bullets?
-          'bullets_autohide' => 'true',   // auto hide bullets?
-          'bullets_overvideo'=> 'true',   // visible over slide video while playing?
-          'bullets_align'    => 'bottom',
-          'bullets_margin'   => '',
-          'bullets_hideunder'=> '',
+          'bullets'               => 'false',  // display bullets?
+          'bullets_autohide'      => 'true',   // auto hide bullets?
+          'bullets_overvideo'     => 'true',   // visible over slide video while playing?
+          'bullets_align'         => 'bottom',
+          'bullets_margin'        => '',
+          'bullets_hideunder'     => '',
 
-          'thumbs'           => 'false',  // display thumbnails?
-          'thumbs_autohide'  => 'true',   // auto hide thumbs?
-          'thumbs_overvideo' => 'true',   // visible over slide video while playing?
-          'thumbs_type'      => 'thumbs', // thumb or tabs
-          'thumbs_speed'     => 17,       // scrolling speed. It accepts float values between 0 and 100
-          'thumbs_inset'     => 'true', // insert thumbs inside slider
-          'thumbs_align'     => 'bottom',
-          'thumbs_margin'    => 0,
-          'thumbs_width'     => 100,
-          'thumbs_height'    => 80,
-          'thumbs_space'     => 5,
-          'thumbs_hideunder' => '',
-          'thumbs_arrows'    => 'false',
-          'thumbs_in_tab'    => 'false',
-         'thumbs_hoverchange'=> 'false',
+          'thumbs'                => 'false',  // display thumbnails?
+          'thumbs_autohide'       => 'true',   // auto hide thumbs?
+          'thumbs_overvideo'      => 'true',   // visible over slide video while playing?
+          'thumbs_type'           => 'thumbs', // thumb or tabs
+          'thumbs_speed'          => 17,       // scrolling speed. It accepts float values between 0 and 100
+          'thumbs_inset'          => 'true', // insert thumbs inside slider
+          'thumbs_align'          => 'bottom',
+          'thumbs_margin'         => 0,
+          'thumbs_width'          => 100,
+          'thumbs_height'         => 80,
+          'thumbs_space'          => 5,
+          'thumbs_hideunder'      => '',
+          'thumbs_arrows'         => 'false',
+          'thumbs_in_tab'         => 'false',
+          'thumbs_hoverchange'    => 'false',
 
-          'scroll'           => 'false',  // display scrollbar?
-          'scroll_autohide'  => 'true',   // auto hide scroll?
-          'scroll_overvideo' => 'true',   // visible over slide video while playing?
-          'scroll_align'     => 'top',
-          'scroll_inset'     => 'true',
-          'scroll_margin'    => '',
-          'scroll_hideunder' => '',
-          'scroll_color'     => '#3D3D3D',
-          'scroll_width'     => '',
-
-
-          'circletimer'          => 'false',  // display circletimer?
-          'circletimer_autohide' => 'true',   // auto hide circletimer?
-          'circletimer_overvideo'=> 'true',   // visible over slide video while playing?
-          'circletimer_color'    => '#A2A2A2',// color of circle timer
-          'circletimer_radius'   => 4,        // radius of circle timer in pixels
-          'circletimer_stroke'   => 10,       // the stroke of circle timer in pixels
-          'circletimer_margin'   => '',
-          'circletimer_hideunder'=> '',
-
-          'timebar'          => 'false',   // display timebar?
-          'timebar_autohide' => 'true',   // auto hide timebar?
-          'timebar_overvideo'=> 'true',   // visible over slide video while playing?
-          'timebar_align'    => 'bottom',
-          'timebar_hideunder'=> '',
-          'timebar_color'    => '#FFFFFF',
-          'timebar_width'    => '',
+          'scroll'                => 'false',  // display scrollbar?
+          'scroll_autohide'       => 'true',   // auto hide scroll?
+          'scroll_overvideo'      => 'true',   // visible over slide video while playing?
+          'scroll_align'          => 'top',
+          'scroll_inset'          => 'true',
+          'scroll_margin'         => '',
+          'scroll_hideunder'      => '',
+          'scroll_color'          => '#3D3D3D',
+          'scroll_width'          => '',
 
 
-          'slideinfo'          => 'false',   // display timebar?
-          'slideinfo_autohide' => 'true',   // auto hide timebar?
-          'slideinfo_overvideo'=> 'true',   // visible over slide video while playing?
-          'slideinfo_align'    => 'bottom',
-          'slideinfo_inset'    => 'false',
-          'slideinfo_margin'   => '',
-          'slideinfo_hideunder'=> '',
-          'slideinfo_width'  => '',
-          'slideinfo_height'   => '',
+          'circletimer'           => 'false',  // display circletimer?
+          'circletimer_autohide'  => 'true',   // auto hide circletimer?
+          'circletimer_overvideo' => 'true',   // visible over slide video while playing?
+          'circletimer_color'     => '#A2A2A2',// color of circle timer
+          'circletimer_radius'    => 4,        // radius of circle timer in pixels
+          'circletimer_stroke'    => 10,       // the stroke of circle timer in pixels
+          'circletimer_margin'    => '',
+          'circletimer_hideunder' => '',
 
-          'on_change_start'    => '',
-          'on_change_end'    => '',
-          'on_waiting'     => '',
-          'on_resize'      => '',
-          'on_video_play'    => '',
-          'on_video_close'   => '',
-          'on_swipe_start'   => '',
-          'on_swipe_move'    => '',
-          'on_swipe_end'     => ''
+          'timebar'               => 'false',   // display timebar?
+          'timebar_autohide'      => 'true',   // auto hide timebar?
+          'timebar_overvideo'     => 'true',   // visible over slide video while playing?
+          'timebar_align'         => 'bottom',
+          'timebar_hideunder'     => '',
+          'timebar_color'         => '#FFFFFF',
+          'timebar_width'         => '',
+
+
+          'slideinfo'             => 'false',   // display timebar?
+          'slideinfo_autohide'    => 'true',   // auto hide timebar?
+          'slideinfo_overvideo'   => 'true',   // visible over slide video while playing?
+          'slideinfo_align'       => 'bottom',
+          'slideinfo_inset'       => 'false',
+          'slideinfo_margin'      => '',
+          'slideinfo_hideunder'   => '',
+          'slideinfo_width'       => '',
+          'slideinfo_height'      => '',
+
+          'on_init'               => '',
+          'on_change_start'       => '',
+          'on_change_end'         => '',
+          'on_waiting'            => '',
+          'on_resize'             => '',
+          'on_video_play'         => '',
+          'on_video_close'        => '',
+          'on_swipe_start'        => '',
+          'on_swipe_move'         => '',
+          'on_swipe_end'          => ''
       );
 
 
@@ -506,34 +507,36 @@ class MSP_Parser {
   }
 
 
-  public function get_callback_params( $callback ) {
+    public function get_callback_params( $callback ) {
 
-    $name = isset( $callback['name'] ) ? (string) $callback['name'] : '';
+        $name = isset( $callback['name'] ) ? (string) $callback['name'] : '';
 
-    switch ( $name ) {
-      case 'CHANGE_START':
-        return array( 'on_change_start' => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      case 'CHANGE_END':
-        return array( 'on_change_end'   => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      case 'WAITING':
-        return array( 'on_waiting'      => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      case 'RESIZE':
-        return array( 'on_resize'     => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      case 'VIDEO_PLAY':
-        return array( 'on_video_play'   => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      case 'VIDEO_CLOSE':
-        return array( 'on_video_close'  => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      case 'SWIPE_START':
-        return array( 'on_swipe_start'  => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      case 'SWIPE_MOVE':
-        return array( 'on_swipe_move'   => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      case 'SWIPE_END':
-        return array( 'on_swipe_end'    => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
-      default:
-        return array();
+        switch ( $name ) {
+            case 'INIT':
+                return array( 'on_init' => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'CHANGE_START':
+                return array( 'on_change_start' => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'CHANGE_END':
+                return array( 'on_change_end'   => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'WAITING':
+                return array( 'on_waiting'      => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'RESIZE':
+                return array( 'on_resize'       => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'VIDEO_PLAY':
+                return array( 'on_video_play'   => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'VIDEO_CLOSE':
+                return array( 'on_video_close'  => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'SWIPE_START':
+                return array( 'on_swipe_start'  => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'SWIPE_MOVE':
+                return array( 'on_swipe_move'   => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            case 'SWIPE_END':
+                return array( 'on_swipe_end'    => isset( $callback['content'] ) ? base64_encode( $callback['content'] ) : '' );
+            default:
+                return array();
+        }
+
     }
-
-  }
 
 
 

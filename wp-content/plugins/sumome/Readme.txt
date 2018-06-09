@@ -3,7 +3,7 @@ Contributors: SumoMe
 Tags: analytics, campaign monitor, click to tweet, contact form, content analytics, convertkit, drip, email form, ExactTarget, exit-intent, Facebook, facebook share, FeedBlitz, floating social buttons, growth, heat map, heatmaps, Hubspot, image sharing, inbound marketing, Inbox First, infusionsoft, landing page, lightbox, links, mailchimp, mailerlite, mailing list, mailjet, MyEmma, MyNewsletterBuilder, newsletter, Ontraport, pardot, popup, sailthru, scroll box, share, share buttons, share image, sharebar, sharing, site traffic, sms, social, social bookmarking, social media buttons, social plugin, social sharing, subscribers, subscription, traffic growth, tweet button, twitter, twitter share, vero, vertical response, welcome mat, WhatCounts, widget, zapier
 Requires at least: 3.0.1
 Tested up to: 4.9.3
-Stable tag: 1.28
+Stable tag: 1.29
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -262,6 +262,9 @@ Why you should encourage Twitter sharing
 = 1.28 =
 * Updated Sumo script tag. Tested up to the newest Wordpress version.
 
+= 1.29 =
+* Moved Sumo script tag to the footer.
+
 == Upgrade Notice ==
 
 = 1.04 =
@@ -346,3 +349,6 @@ Why you should encourage Twitter sharing
 
 = 1.28 =
 * Updated Sumo script tag. Tested up to the newest Wordpress version.
+
+= 1.29 =
+* Moved Sumo script tag to the footer.

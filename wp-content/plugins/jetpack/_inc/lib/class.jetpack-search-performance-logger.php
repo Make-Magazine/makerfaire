@@ -36,7 +36,9 @@ class Jetpack_Search_Performance_Logger {
 	public function log_mysql_query( $found_posts, $query ) {
 		if ( $this->current_query === $query ) {
 			$duration = microtime( true ) - $this->query_started;
-			$this->record_query_time( $duration, false );
+			if ( $duration < 60 ) { // eliminate outliers, likely tracking errors
+				$this->record_query_time( $duration, false );
+			}
 			$this->reset_query_state();
 		}
 
@@ -45,7 +47,9 @@ class Jetpack_Search_Performance_Logger {
 
 	public function log_jetpack_search_query() {
 		$duration = microtime( true ) - $this->query_started;
-		$this->record_query_time( $duration, true );
+		if ( $duration < 60 ) { // eliminate outliers, likely tracking errors
+			$this->record_query_time( $duration, true );
+		}
 		$this->reset_query_state();
 	}
 
@@ -73,7 +77,7 @@ class Jetpack_Search_Performance_Logger {
 			$encoded_json = '{%22beacons%22:[' . implode(',', $beacons ) . ']}';
 			$encoded_site_url = urlencode( site_url() );
 			$url = "https://pixel.wp.com/boom.gif?v=0.9&u={$encoded_site_url}&json={$encoded_json}";
-			echo '<img src="' . $url . '" width="1" height="1" style="display:none;" />';
+			echo '<img src="' . $url . '" width="1" height="1" style="display:none;" alt=":)"/>';
 		}
 	}
 }

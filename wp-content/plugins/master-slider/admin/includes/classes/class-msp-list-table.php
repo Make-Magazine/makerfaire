@@ -217,7 +217,7 @@ class MSP_List_Table extends Axiom_List_Table {
     global $mspdb;
 
     $all_items = $this->get_records( 0 );
-    return count( $all_items );
+    return ! empty( $all_items ) && is_array( $all_items ) ? count( $all_items ) : 0;
   }
 
 

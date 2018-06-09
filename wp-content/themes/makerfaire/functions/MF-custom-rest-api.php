@@ -187,7 +187,19 @@ function getMTMentries($formIDs) {
   foreach($entries as $entry){
     $leadCategory = array();
     $flag = '';
-    if($entry['303']=='Accepted'){
+
+    $displayMaker = true;
+    foreach($entry as $key=>$field ) {
+      $pos = strpos($key, '304.');
+      if ($pos !== false) {
+        if($field=='no-public-view')    $displayMaker    = false;
+      }
+    }
+    if(!$displayMaker){
+      //skip entry
+      continue;
+    }
+    if(isset($entry['303']) && $entry['303']==='Accepted'){
       //build category array
       foreach($entry as $leadKey=>$leadValue){
         $pos = strpos($leadKey, '321'); //4 additional categories
@@ -227,7 +239,7 @@ function getMTMentries($formIDs) {
           'large_img_url'     => $fitPhoto,
           'featured_img'      => $featImg,
           'category_id_refs'  => array_unique($leadCategory),
-          'description'       => $entry['16'],
+          'description'       => (isset($entry['16'])?$entry['16']:''),
           'flag'              => $flag, //only set if flag is set to 'Featured Maker'
           'makerList'         => $makerList
           );
@@ -270,6 +282,7 @@ function getMTMentries($formIDs) {
               lead_detail.value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
               location.latitude, location.longitude,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '22')  as photo,
+              (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '217')  as mkr1_photo,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '151') as name,
               (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '16')  as short_desc,
               (select group_concat( value separator ', ') as cat   from wp_rg_lead_detail where lead_id = schedule.entry_id AND (field_number like '%320%' OR field_number like '%321%')) as category
@@ -281,14 +294,16 @@ function getMTMentries($formIDs) {
                left outer join wp_rg_lead_detail as lead_detail on
                    schedule.entry_id = lead_detail.lead_id and field_number = 303
                where lead.status = 'active' and lead_detail.value='Accepted' "
-            . " and lead_detail.form_id in(".implode(",",$formIDarr).") order by subarea.sort_order";
+            . " and lead_detail.form_id in(".implode(",",$formIDarr).") "
     /* code to hide scheduled items as they occur
-               . " and lead_detail.form_id in(".implode(",",$formIDarr).") "
-            . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  "
-            . "order by subarea.sort_order";*/
+            . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  "*/
+            . "order by subarea.sort_order";
 
     //retrieve project name, img (22), maker list, topics
     foreach($wpdb->get_results($query) as $row){
+      $form = GFAPI::get_form( $row->form_id );
+      $form_type = $form['form_type'];
+
       $makerList = getMakerList($row->entry_id);
       $makerArr = array();
 
@@ -296,10 +311,17 @@ function getMTMentries($formIDs) {
       $catArr = explode(", ", $row->category);
       $catArr = array_unique($catArr);
       $catList = implode(", ",$catArr);
+
+      if($form_type == 'Presentation') {
+        $projPhoto = ($row->mkr1_photo !=''?$row->mkr1_photo:$row->photo);
+      }else{
+        $projPhoto = $row->photo;
+      }
       //find out if there is an override image for this page
-      //$overrideImg = findOverride($entry['id'],'mtm');
-      //$projPhoto = ($row->photo=='' ? $entry['22']: $overrideImg);
-      $projPhoto = $row->photo;
+      $overrideImg = findOverride($row->entry_id,'schedule');
+      if ($overrideImg != '')
+        $projPhoto = $overrideImg;
+
       $fitPhoto  = legacy_get_resized_remote_image_url($projPhoto,200,200);
       if($fitPhoto==NULL) $fitPhoto = $row->photo;
 
@@ -311,10 +333,8 @@ function getMTMentries($formIDs) {
       $endDate = date_create($row->time_end);
       $endDate = date_format($endDate,'Y-m-d').'T'.date_format($endDate,'H:i:s');
 
-      //set default values for type if not set
+      //set default values for schedule type if not set
       if($row->type ==''){
-        $form = GFAPI::get_form( $row->form_id );
-        $form_type = $form['form_type'];
         //demo, performance, talk, workshop
         if($form_type == 'Performance') {
           $type = 'performance';
@@ -336,7 +356,7 @@ function getMTMentries($formIDs) {
             'thumb_img_url' => $fitPhoto,
             'maker_list'    => $makerList,
             'nicename'      => $stage,
-            'stageOrder'    => ($row->sort_order != '' ? $row->sort_order: 0),
+            'stageOrder'    => (int) ($row->sort_order != '' ? $row->sort_order: 0),
             'category'      => $catList,
             'latitude'      => $row->latitude,
             'longitude'     => $row->longitude,
@@ -380,7 +400,7 @@ function getMTMentries($formIDs) {
       if($isGroup) {
         $makerList = $fieldData[109];
       }elseif($isOneMaker){
-        $makerList = $fieldData['160.3']. (isset($fieldData['160.6'])?' ' .$fieldData['160.6']:'');
+        $makerList = (isset($fieldData['160.3'])?$fieldData['160.3']:''). (isset($fieldData['160.6'])?' ' .$fieldData['160.6']:'');
       }else{
         $makerArr = array();
         if(isset($fieldData['160.3']))  $makerArr[] = (isset($fieldData['160.3'])?$fieldData['160.3']. ' ':'') .(isset($fieldData['160.6'])?$fieldData['160.6']:'');

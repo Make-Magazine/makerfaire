@@ -52,7 +52,7 @@ class WordAds_Sidebar_Widget extends WP_Widget {
 
 			$snippet = $wordads->get_house_ad( $unit );
 		} else {
-			$snippet = $wordads->get_ad_snippet( $section_id, $height, $width );
+			$snippet = $wordads->get_ad_snippet( $section_id, $height, $width, 'widget' );
 		}
 
 		echo <<< HTML
@@ -108,10 +108,8 @@ HTML;
 	}
 }
 
-add_action(
-	'widgets_init',
-	create_function(
-		'',
-		'return register_widget( "WordAds_Sidebar_Widget" );'
-	)
-);
+function jetpack_wordads_widgets_init_callback() {
+	return register_widget( 'WordAds_Sidebar_Widget' );
+}
+
+add_action( 'widgets_init', 'jetpack_wordads_widgets_init_callback' );

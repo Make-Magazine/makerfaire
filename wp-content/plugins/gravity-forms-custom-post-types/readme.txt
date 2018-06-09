@@ -77,6 +77,10 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 
 == Changelog ==
 
+= 3.1.13 =
+
+* Added 'gfcpt_hierarchical_display' filter to allow filtering whether to display choices hierarchically.
+
 = 3.1.12 =
 
 * Fixed issue with GF 2.3 where taxonomies were not correctly saved on submission.

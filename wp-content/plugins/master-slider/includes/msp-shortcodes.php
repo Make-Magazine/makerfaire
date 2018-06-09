@@ -230,15 +230,16 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 					'slideinfo_width'	 => '',
 					'slideinfo_height'   => '',
 
-					'on_change_start' 	 => '',
-					'on_change_end'		 => '',
-					'on_waiting' 		 => '',
-					'on_resize' 		 => '',
-					'on_video_play' 	 => '',
-					'on_video_close' 	 => '',
-					'on_swipe_start' 	 => '',
-					'on_swipe_move' 	 => '',
-					'on_swipe_end' 		 => ''
+                    'on_init'            => '',
+                    'on_change_start'    => '',
+                    'on_change_end'      => '',
+                    'on_waiting'         => '',
+                    'on_resize'          => '',
+                    'on_video_play'      => '',
+                    'on_video_close'     => '',
+                    'on_swipe_start'     => '',
+                    'on_swipe_move'      => '',
+                    'on_swipe_end'       => ''
 				)
 				, $atts , 'ms_slider'
 	 );
@@ -551,6 +552,8 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 				});
 
 				<?php
+                if( ! empty( $on_init ) )
+                    printf( "$instance_name.api.addEventListener(MSSliderEvent.INIT, %s );\n"        , msp_maybe_base64_decode( $on_init ) ) ;
 
 				if( ! empty( $on_change_start ) )
 					printf( "$instance_name.api.addEventListener(MSSliderEvent.CHANGE_START, %s );\n"		  , msp_maybe_base64_decode( $on_change_start ) ) ;
@@ -572,22 +575,22 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 
 				if( $on_swipe_start || $on_swipe_move || $on_swipe_end ){
 
-					echo "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.INIT, function(){\n";
+                    echo "\t\t\t$instance_name.api.addEventListener(MSSliderEvent.INIT, function(){\n";
 
-					if( ! empty( $on_swipe_start ) ){
-						printf( "\t\t\t\t\t$instance_name.api.view.addEventListener(MSSliderEvent.SWIPE_START, %s );\n" , msp_maybe_base64_decode( $on_swipe_start ) ) ;
-					}
+                    if( ! empty( $on_swipe_start ) ){
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_START, %s );\n" , msp_maybe_base64_decode( $on_swipe_start ) ) ;
+                    }
 
-					if( ! empty( $on_swipe_move ) ){
-						printf( "\t\t\t\t\t$instance_name.api.view.addEventListener(MSSliderEvent.SWIPE_MOVE, %s );\n"  , msp_maybe_base64_decode( $on_swipe_move ) ) ;
-					}
+                    if( ! empty( $on_swipe_move ) ){
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_MOVE, %s );\n"  , msp_maybe_base64_decode( $on_swipe_move ) ) ;
+                    }
 
-					if( ! empty( $on_swipe_end ) ){
-						printf( "\t\t\t\t\t$instance_name.api.view.addEventListener(MSSliderEvent.SWIPE_END, %s );\n"   , msp_maybe_base64_decode( $on_swipe_end ) ) ;
-					}
+                    if( ! empty( $on_swipe_end ) ){
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_END, %s );\n"   , msp_maybe_base64_decode( $on_swipe_end ) ) ;
+                    }
 
-					echo "\t\t\t\t});\n";
-				}
+                    echo "\t\t\t});\n";
+                }
 
 				if ( 'image-gallery' == $template ) {
 					printf( "new MSGallery( '%s' , %s).setup();", $puid, $instance_name );

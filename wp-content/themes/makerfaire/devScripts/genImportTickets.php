@@ -2,13 +2,15 @@
 include 'db_connect.php';
 error_reporting(E_ALL); ini_set('display_errors', '1');
 
-//process entries 64121-64181, 64184-64187
-//$entryArr = array(64121, 64122, 64123, 64124, 64125, 64126, 64127, 64128, 64129, 64130, 64181);
-//$entryArr = array(64131, 64132, 64133, 64134, 64135, 64136, 64137, 64138, 64139, 64140, 64184);
-//$entryArr = array(64141, 64142, 64143, 64144, 64145, 64146, 64147, 64148, 64149, 64150, 64185);
-//$entryArr = array(64151, 64152, 64153, 64154, 64155, 64156, 64157, 64158, 64159, 64160, 64186);
-//$entryArr = array(64161, 64162, 64163, 64164, 64165, 64166, 64167, 64168, 64169, 64170, 64187);
-$entryArr = array(64171, 64172, 64173, 64174, 64175, 64176, 64177, 64178, 64179, 64180);
+//process entries 66667 to 66745
+//$entryArr = array(66667, 66668, 66669, 66670, 66671, 66672, 66673, 66674, 66675, 66676, 66677);
+//$entryArr = array(66678, 66679, 66680, 66681, 66682, 66683, 66684, 66685, 66686, 66687, 66688);
+//$entryArr = array(66689, 66690, 66691, 66692, 66693, 66694, 66695, 66696, 66697, 66698, 66699);
+//$entryArr = array(66700, 66701, 66702, 66703, 66704, 66705, 66706, 66707, 66708, 66709, 66710);
+//$entryArr = array(66711, 66712, 66713, 66714, 66715, 66716, 66717, 66718, 66719, 66720, 66721);
+//$entryArr = array(66722, 66723, 66724, 66725, 66726, 66727, 66728, 66729, 66730, 66731, 66732);
+//$entryArr = array(66733, 66734, 66735, 66736, 66737, 66738, 66739, 66740, 66741, 66742, 66743);
+//$entryArr = array(66744, 66745);
 
 foreach($entryArr as $entryID){
   echo 'processing '.$entryID.'<br/>';
@@ -28,33 +30,47 @@ function prcNewEntry($entryID){
 
   //generate eventbrite tickets
   //1 = hidden
-  /* Bust Craftacular
-    ME (Maker Entry Pass)   = 2
-    SC (Complimentary)      = 2
-    SD (Saturday Discount)  = 2 */
+  /* SF Bazaar
+   * Entries associated with 65230
+
+      66667 to 66745
+
+      2 Maker Entry Passes, ME
+      6 Discount Tickets, SD and FD
+    ME (Maker Entry Pass)   = 2 43630850047	82114030
+    SD (Complimentary)      = 6 42720091945	80480133
+    FD (Saturday Discount)  = 6 42720091945	80480132
+   */
 
   $tickets = array();
+
+  /*  ME (Maker Entry Pass) = 2   43630850047	82114030 */
   $tickets[] =  array(
-      'eventID'     => 35774636902,
+      'eventID'     => 43630850047,
       'ticket_type' => 'ME',
-      'ticket_id'   => '68772917',
-      'hidden'      => 0,
+      'ticket_id'   => '82114030',
+      'hidden'      => 1,
       'qty'         => 2
       );
+
+  /*  SD (Complimentary) = 6    42720091945	80480133  */
   $tickets[] =  array(
-      'eventID'     => 35712361635,
-      'ticket_type' => 'SC',
-      'ticket_id'   =>'68660989',
-      'hidden'      => 0,
-      'qty'         => 2
-      );
-  $tickets[] =  array(
-      'eventID'     => 35712361635,
+      'eventID'     => 42720091945,
       'ticket_type' => 'SD',
-      'ticket_id'   => '68660990',
-      'hidden'      => 0,
-      'qty'         => 2
+      'ticket_id'   =>'80480133',
+      'hidden'      => 1,
+      'qty'         => 6
       );
+
+  /*  FD (Saturday Discount) = 6  42720091945	80480132 */
+  $tickets[] =  array(
+      'eventID'     => 42720091945,
+      'ticket_type' => 'FD',
+      'ticket_id'   => '80480132',
+      'hidden'      => 1,
+      'qty'         => 6
+      );
+
   //generate access code for each ticket type
   $digits = 3;
   $charIP = $entry['ip'];
