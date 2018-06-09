@@ -176,7 +176,7 @@
         </li>
       </ul>
 
-      <a href="https://makerfaire.com/" class="navbar-brand">
+      <a href="https://makezine.com/" class="navbar-brand">
         <img src="<?php echo get_stylesheet_directory_uri(); ?>/img/Make_logo.svg" class="img-responsive" alt="Make: brand logo" />
       </a>
 
