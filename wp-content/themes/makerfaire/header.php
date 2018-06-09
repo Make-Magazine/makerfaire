@@ -193,7 +193,7 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <a class="dropdown-item" href="https://www.makershare.com/portfolio">Maker Share Profile</a>
               <a class="dropdown-item" href="https://www.makerfaire.com/manage-entries">Maker Faire Portal</a>
-              <a class="dropdown-item" href="/myaccount">My Member Account</a>
+              <a class="dropdown-item" href="https://www.make.co/myaccount">My Member Account</a>
 
               <a id="newLogoutBtn" href="#" title="Logout">Logout</a>
             </div>
