@@ -1,0 +1,8 @@
+ul#field_columns div#list_choice_dropdown_options .choice_with_value li input.field-choice-input-dropdown,
+.choices_setting_single input.field-choice-value {
+	width: auto !important;
+}
+
+.choices_setting_single input.field-choice-value {
+    display: none;
+}

@@ -1,0 +1,77 @@
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.9
+	- Fixed an issue where the wrong choice could be selected when the field is redisplayed post paging.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.8
+	- Added support for honoring isSelected field on chained select choices (can only be set programmatically).
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.7
+	- Updated file import filter feature to not cache empty files (preserving existing choices).
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.6
+	- Added GPL to plugin header
+	- Updated Plugin URI and Author URI to use https
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.5
+	- Fixed a PHP fatal error which could occur when conditional logic evaluation is triggered by GravityView.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.4
+	- Adds "gform_chainedselects_column_unique_values_limit" filter to bring the "gravityformschainedselects_column_unique_values_limit" filter inline with RG naming conventions.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.3
+	- Fixed an issue where choice values of 0 were not imported resulting in some choices appearing in the wrong drop downs.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.2
+	- Fixed issue with chunking file uploads (introduced in GF 2.3).
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.1
+	- Fixed issue where choice values were not properly sanitized when populating the next select's choices.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0
+	- Updated output of field value in entry detail and all fields merge tag.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0-beta-1.2
+    - Fixed conditional logic support; miscellaneous bugs.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0-beta1.1
+    - Added support for Chained Selects conditional logic on Notifications and Confirmations.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0-alpha-1
+	- Fixed issue with poorly formatted import file.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.dev4
+    - Fixed a timing issue with the inclusion of the GF_Chained_Field_Select class.
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.dev3
+	- Fixed issue where unsaved changes warning showed even after clicking update
+	- Updated choice UI to include left and right facing arrows to better indicate navigational direction between drop downs
+	- Update drop down preview to be clickable; navigates to the select drop down edit view
+	- Added warning if deleting choice with children
+	- Updated "Choices" field setting label to match new styling in GF2.0
+
+------------------------------------------------------------------------------------------------------------------
+Version 1.0.dev2
+	- Added confirmation prompt if modal is closed with unsaved changes
+	- Added "Update" button in Manage Choices modal; data is only saved when Update button is clicked.
+	- Added support for resizing vertically-aligned chained selects based on largest select
+	- Updated "Add Choices" label to "Manage Choices"
+	- Updated modal styles and resizing behavior when new choices and drop downs are added
+	- Fixed issue where chained selects with "Hide Inactive Drop Downs" setting disabled would still hide inactive drop downs after first selection
+
+-----------------------------------------------------------
+Version 1.0dev1
+	- Everything is awesome!
