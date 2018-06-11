@@ -398,7 +398,7 @@ function getMTMentries($formIDs) {
       $isOneMaker = (strpos($whoListed, 'one') !== false);
 
       if($isGroup) {
-        $makerList = $fieldData[109];
+        $makerList = (isset($fieldData[109])?$fieldData[109]:'');
       }elseif($isOneMaker){
         $makerList = (isset($fieldData['160.3'])?$fieldData['160.3']:''). (isset($fieldData['160.6'])?' ' .$fieldData['160.6']:'');
       }else{
