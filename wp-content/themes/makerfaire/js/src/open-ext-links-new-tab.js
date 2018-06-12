@@ -1,12 +1,8 @@
-// Open external links in new tab
+// Open external links in new tab, unless it's a make site, or targeted self, or an email link
 jQuery(document).ready(function($) {
-  $('a').not('[href*="mailto:"]').each(function() {
-    var a = new RegExp('/' + window.location.host + '/');
-    var href = this.href;
-    
-    //exclude non links
-    if (href !== 'javascript:void(0);' && !a.test(href) && $(this).attr("target") != "_self") {
-      $(this).attr('target', '_blank');
-    }
-  });
+ $(document.links).filter(function() {
+   if($(this).attr("target") != "_self" && $(this).not('[href*="mailto:"]') && $(this).not('[href*="javascript:void(0);"]')){
+       return this.hostname.indexOf("make") == -1;
+   }
+ }).attr('target', '_blank');
 });

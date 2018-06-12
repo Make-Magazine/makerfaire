@@ -139,37 +139,37 @@
 
       <ul class="nav-level-1-nav">
         <li class="nav-zine">
-          <a href="https://makezine.com/" target="_self">
+          <a href="https://makezine.com/">
             <span title="Latest">Latest</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-make">
-          <a href="http://www.make.co/" target="_self">
+          <a href="http://make.co/">
             <span title="Membership">Membership</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-shed">
-          <a target="_blank" href="https://www.makershed.com/" target="_self">
+          <a href="https://www.makershed.com/" target="_blank"> 
             <span title="Shop">Shop</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-share">
-          <a href="https://makershare.com/learning/" target="_self">
+          <a href="https://makershare.com/learning/">
             <span title="Learn">Learn</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-share-p">
-          <a href="https://makershare.com/makers" target="_self">
+          <a href="https://makershare.com/makers">
             <span title="Portfolios">Portfolios</span>
           </a>
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-faire">
-          <a href="https://makerfaire.com/" target="_self">
+          <a href="https://makerfaire.com/">
             <span title="Events">Events</span>
           </a>
           <div class="nav-level-2-arrow"></div>
@@ -191,9 +191,9 @@
             </a>
 
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item" href="https://www.makershare.com/portfolio">Maker Share Profile</a>
-              <a class="dropdown-item" href="https://www.makerfaire.com/manage-entries">Maker Faire Portal</a>
-              <a class="dropdown-item" href="https://www.make.co/myaccount">My Member Account</a>
+              <a class="dropdown-item" href="https://makershare.com/portfolio">Maker Share Profile</a>
+              <a class="dropdown-item" href="https://makerfaire.com/manage-entries">Maker Faire Portal</a>
+              <a class="dropdown-item" href="https://make.co/myaccount">My Member Account</a>
 
               <a id="newLogoutBtn" href="#" title="Logout">Logout</a>
             </div>
