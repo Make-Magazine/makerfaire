@@ -184,7 +184,7 @@ header.universal-nav {
       display: none;
       #dropdownMenuLink {
           position: relative;
-          z-index: 1002;
+          z-index: 999;
           opacity: 1;
           &:active {
               box-shadow: none;
@@ -199,6 +199,7 @@ header.universal-nav {
         }
       }
       .dropdown-menu {
+          z-index: 998;
           padding: 80px 25px 25px;
           font-family: 'Roboto', serif;
           margin-left: -125px;
