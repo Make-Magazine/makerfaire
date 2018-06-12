@@ -151,7 +151,7 @@
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-shed">
-          <a href="https://www.makershed.com/" target="_self">
+          <a target="_blank" href="https://www.makershed.com/" target="_self">
             <span title="Shop">Shop</span>
           </a>
           <div class="nav-level-2-arrow"></div>
