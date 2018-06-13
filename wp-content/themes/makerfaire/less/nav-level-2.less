@@ -16,9 +16,9 @@
       li.second-nav-banner {
         display: none;
       }
-    }
-    li:nth-child(3) span {
+      li:nth-child(3) {
         border-right: 1px solid #999 !important;
+      }
     }
     li.tickets-button {
         min-width: 56px;
@@ -37,7 +37,6 @@
         top: 32px;
     }
 }
-
 .nav-level-2 {
   height: 55px;
   background-color: #333;
@@ -90,9 +89,12 @@
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
-    li, a {
+    li {
       font-size: 16px;
-      height: 100%;
+      border-right: 1px solid #999;
+    }
+    li:last-child, li:nth-child(3) {
+      border-right: none;
     }
     a {
       color: #fff;
@@ -140,7 +142,6 @@
     span {
       height: 35px;
       width: 85px;
-      border-right: 1px solid #999;
       padding: 0 23px;
       text-align: center;
       display: flex;
@@ -154,9 +155,6 @@
         padding: 0 7px;
         font-size: 14px;
       }
-    }
-    li:last-child span, li:nth-child(3) span {
-      border-right: none;
     }
     li:last-child span {
       width: 120px
