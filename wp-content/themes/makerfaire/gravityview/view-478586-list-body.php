@@ -41,21 +41,25 @@ $entries   = $tableData['data'];
     });
   });
   </script>
-  <div class="clearfix">
-    <div class="settings-pop-btn pull-right">
-      <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
-        Settings &amp; Help<div class="toggle-popover fa fa-cog" data-toggle="popover"></div>
-      </button>
-      <div class="popover-content hidden">
-        <div class="manage-entry-popover">
-          <!--<a href="/login/?mode=reset">Change Password</a>-->
-          <a href="/wp-login.php?action=logout">Log Out</a>
-          <h6 class="popover-head">Questions?</h6>
-          <a target="_blank" href="http://makerfaire.com/all-toolkits/">Visit your Toolkit</a>
-        </div>
-      </div> <!-- / .popover-content -->
-    </div> <!-- / .settings-pop-btn -->
+  <?php if( get_option( 'call_for_makers_checkbox' ) ) { ?>
+    <div class="clearfix text-center call-for-makers">
+        <strong>Call For Makers: <?php echo(get_option('call_for_makers_start_date')); ?> - <?php echo(get_option('call_for_makers_end_date')); ?></strong>
+        <br />
+        <button class="btn btn-red"><a href="/i-dont-know-where-to-go">Apply</a></button>
+    </div>        
+  <?php } ?>
+  <div class="clearfix button-row text-center">
+    <div class="col-sm-4 col-xs-12">
+      <button class="btn btn-blue"><a href="/i-dont-know-where-to-go">Apply</a></button>
+    </div>
+    <div class="col-sm-4 col-xs-12 text-center">
+      <button class="btn btn-blue"><a href="/i-dont-know-where-to-go">Apply</a></button>
+    </div>
+    <div class="col-sm-4 col-xs-12 text-center">
+      <button class="btn btn-blue"><a href="/i-dont-know-where-to-go">Apply</a></button>
+    </div>
   </div>
+    
   <div class="clearfix">
     <h2 class="title-head pull-left">Manage your Maker Faire Entries</h2>
   </div>
