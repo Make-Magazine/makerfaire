@@ -81,8 +81,7 @@ window.addEventListener('load', function() {
         );
         */
       }
-      //setTimeout(function(){displayButtons();}, 1500); // hold off on displaying the buttons until we know we're logged in
-      displayButtons();
+      setTimeout(function(){displayButtons();}, 1500); // hold off on displaying the buttons until we know we're logged in
     });
   }
 
