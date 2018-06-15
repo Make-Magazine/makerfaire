@@ -3,7 +3,6 @@ window.addEventListener('load', function() {
   var loginBtn    = document.getElementById('newLoginBtn');
   var logoutBtn   = document.getElementById('newLogoutBtn');
   var profileView = document.getElementById('profile-view');
-  var tokenRenewalTimeout;
 
   //default profile view to hidden
   loginBtn.style.display    = 'none';
@@ -19,25 +18,14 @@ window.addEventListener('load', function() {
     scope: 'openid profile',
     leeway: 60
   });
-  localStorage.setItem('redirect_to',AUTH0_REDIRECT_URL);
 
   loginBtn.addEventListener('click', function(e) {
     e.preventDefault();
-    localStorage.setItem('redirect_to',AUTH0_REDIRECT_URL);
+    localStorage.setItem('redirect_to',location.href);
     webAuth.authorize(); //login to auth0
   });
 
   logoutBtn.addEventListener('click', logout);
-
-  function scheduleRenewal() {
-    var expiresAt = JSON.parse(localStorage.getItem('expires_at'));
-    var delay = expiresAt - Date.now();
-    if (delay > 0) {
-      tokenRenewalTimeout = setTimeout(function() {
-        renewToken();
-      }, delay);
-    }
-  }
 
   function setSession(authResult) {
     // Set the time that the access token will expire at
@@ -47,30 +35,33 @@ window.addEventListener('load', function() {
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
-    scheduleRenewal();
   }
 
   function logout() {
-    // Remove tokens and expiry time from localStorage for auth0
+    // Remove tokens and expiry time from localStorage
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
-    clearTimeout(tokenRenewalTimeout);
 
-    //logout of auth0
-    localStorage.setItem('redirect_to' ,AUTH0_REDIRECT_URL);
+    window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
+/*
+    //logout of auth0 - return to home page of site when logout
     webAuth.logout({
-      returnTo: AUTH0_REDIRECT_URL
+      returnTo: templateUrl
     });
-    displayButtons();
 
+    displayButtons();*/
   }
 
   function isAuthenticated() {
     // Check whether the current time is past the
     // access token's expiry time
-    var expiresAt = JSON.parse(localStorage.getItem('expires_at'));
-    return new Date().getTime() < expiresAt;
+    if(localStorage.getItem('expires_at')){
+      var expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+      return new Date().getTime() < expiresAt;
+    }else{
+      return false;
+    }
   }
 
   function handleAuthentication() {
@@ -79,16 +70,19 @@ window.addEventListener('load', function() {
         window.location.hash = '';
         setSession(authResult);
 
-        //after login redirect to previous page (after 5 second delay)
+        //after login redirect to previous page (after 2 second delay)
         var redirect_url = localStorage.getItem('redirect_to');
-        setTimeout(function(){location.href=redirect_url;} , 2500);
+        setTimeout(function(){location.href=redirect_url;} , 2000);
       } else if (err) {
         console.log(err);
+        /* Do not display error message
         alert(
           'Error: ' + err.error + '. Check the console for further details.'
         );
+        */
       }
-     setTimeout(function(){displayButtons();}, 1500); // hold off on displaying the buttons until we know we're logged in
+      //setTimeout(function(){displayButtons();}, 1500); // hold off on displaying the buttons until we know we're logged in
+      displayButtons();
     });
   }
 
@@ -128,20 +122,8 @@ window.addEventListener('load', function() {
 
   function displayProfile() {
     // display the avatar
-      document.querySelector('#profile-view img').src = userProfile.picture;
-  }
-
-  function renewToken() {
-    webAuth.checkSession({},
-      function(err, result) {
-        if (err) {
-          console.log(err);
-        } else {
-          setSession(result);
-          displayButtons();
-        }
-      }
-    );
+    document.querySelector('#profile-view img').src = userProfile.picture;
+    document.querySelector('#profile-view img').style.display = "block";
   }
 
   function WPlogin(){
@@ -186,7 +168,13 @@ window.addEventListener('load', function() {
   webAuth.checkSession({},
     function(err, result) {
       if (err) {
-        console.log(err);
+        // Remove tokens and expiry time from localStorage
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('id_token');
+        localStorage.removeItem('expires_at');
+        if(err.error!=='login_required'){
+          console.log(err);
+        }
       } else {
         setSession(result);
         displayButtons();
@@ -196,5 +184,4 @@ window.addEventListener('load', function() {
 
   //handle authentication
   handleAuthentication();
-  scheduleRenewal();
 });

@@ -101,6 +101,7 @@
 
 <body id="makerfaire" <?php body_class('no-js'); ?>>
   <!-- Google Tag Manager MakerFaire -->
+
   <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -151,7 +152,7 @@
           <div class="nav-level-2-arrow"></div>
         </li>
         <li class="nav-shed">
-          <a href="https://www.makershed.com/" target="_blank"> 
+          <a href="https://www.makershed.com/" target="_blank">
             <span title="Shop">Shop</span>
           </a>
           <div class="nav-level-2-arrow"></div>
@@ -182,10 +183,10 @@
 
       <ul class="nav-level-1-auth">
         <li>
-          <!--<a id="qsLoginBtn" href="<?php echo wp_login_url( get_permalink() ); ?>" title="Login">Login | Signup</a>-->
-          <a id="newLoginBtn" href="#" title="Login">Login | Signup</a>
+          <!--<a id="qsLoginBtn" href="<?php //echo wp_login_url( get_permalink() ); ?>" title="Login">Login | Signup</a>-->
+          <a style="display:none" id="newLoginBtn" href="#" title="Login">Login | Signup</a>
 
-          <div id="profile-view" class="dropdown">
+          <div style="display:none" id="profile-view" class="dropdown">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img class="avatar" style="width:38px" alt="avatar">
             </a>
