@@ -41,29 +41,38 @@ $entries   = $tableData['data'];
     });
   });
   </script>
-  <?php if( get_option( 'call_for_makers_checkbox' ) ) { ?>
+  <?php //if( get_option( 'call_for_makers_checkbox' ) ) { ?>
     <div class="clearfix text-center call-for-makers">
-        <strong>Call For Makers: <?php echo(get_option('call_for_makers_start_date')); ?> - <?php echo(get_option('call_for_makers_end_date')); ?></strong>
+        <strong>Call For Makers: 
+            <?php echo(get_option('call_for_makers_start_date')); ?> 
+            8/20 - 8/30
+            <?php echo(get_option('call_for_makers_end_date')); ?>
+        </strong>
         <br />
         <button class="btn btn-red"><a href="/i-dont-know-where-to-go">Apply</a></button>
     </div>        
-  <?php } ?>
+  <?php //} ?>
+    
+  <div class="clearfix">
+    <h1 class="title-head">Maker Faire Portal</h1>
+    <p><strong>Username:</strong> <?php echo $current_user->user_email;?></p>
+  </div>
+    
   <div class="clearfix button-row text-center">
     <div class="col-sm-4 col-xs-12">
-      <button class="btn btn-blue"><a href="/i-dont-know-where-to-go">Apply</a></button>
+      <button class="btn btn-blue"><a href="/map/">Faires Around the World</a></button>
     </div>
     <div class="col-sm-4 col-xs-12 text-center">
-      <button class="btn btn-blue"><a href="/i-dont-know-where-to-go">Apply</a></button>
+      <button class="btn btn-blue"><a href="/makerfairehistory/">Learn More</a></button>
     </div>
     <div class="col-sm-4 col-xs-12 text-center">
-      <button class="btn btn-blue"><a href="/i-dont-know-where-to-go">Apply</a></button>
+      <button class="btn btn-blue"><a href="https://help.makermedia.com/hc/en-us/categories/200333245-Maker-Faire">FAQs</a></button>
     </div>
   </div>
     
   <div class="clearfix">
     <h2 class="title-head pull-left">Manage your Maker Faire Entries</h2>
   </div>
-  User <?php echo $current_user->user_email;?><br/>
   <hr class="header-break">
   <?php
   foreach($entries as $entryData) {
