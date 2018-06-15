@@ -16,9 +16,9 @@
       li.second-nav-banner {
         display: none;
       }
-    }
-    li:nth-child(3) span {
+      li:nth-child(3) {
         border-right: 1px solid #999 !important;
+      }
     }
     li.tickets-button {
         min-width: 56px;
@@ -37,7 +37,6 @@
         top: 32px;
     }
 }
-
 .nav-level-2 {
   height: 55px;
   background-color: #333;
@@ -90,9 +89,12 @@
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
-    li, a {
+    li {
       font-size: 16px;
-      height: 100%;
+      border-right: 1px solid #999;
+    }
+    .tickets-button, li:last-child, li:nth-child(3) {
+      border-right: none;
     }
     a {
       color: #fff;
@@ -117,14 +119,18 @@
     li.second-nav-banner {
         min-width: 225px;
         height: 55px;
-        background: url("/wp-content/themes/makerfaire/img/maker-faire-banner-logo.png") no-repeat;
+        background: url("/wp-content/themes/makerfaire/img/maker-faire-banner-logo.jpg") no-repeat;
         background-size: contain;
         background-position: center;
         transition: .5s ease-in-out;
+        border-right: none;
         @media screen and (max-width: 1199px) {
             min-width: 115px;
         }
-        span { display:none; }
+        span { 
+            visibility: hidden; 
+            height: 55px;
+        }
     }
     li.tickets-button {
         min-width: 86px;
@@ -140,7 +146,6 @@
     span {
       height: 35px;
       width: 85px;
-      border-right: 1px solid #999;
       padding: 0 23px;
       text-align: center;
       display: flex;
@@ -154,9 +159,6 @@
         padding: 0 7px;
         font-size: 14px;
       }
-    }
-    li:last-child span, li:nth-child(3) span {
-      border-right: none;
     }
     li:last-child span {
       width: 120px

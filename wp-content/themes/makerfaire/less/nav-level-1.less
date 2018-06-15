@@ -65,6 +65,7 @@ header.universal-nav {
         }
         &:hover, &:active, &:focus {
           text-decoration: none;
+          outline: 0;
           span {
             opacity: 1;
             text-decoration: none;
@@ -142,8 +143,7 @@ header.universal-nav {
   list-style: none;
   display: inline-block;
   position: relative;
-  left: 45px;
-  right: 4%;
+  float: right;
   @media screen and (max-width: 767px) {
     float: right;
     margin-right: 40px;
@@ -179,6 +179,7 @@ header.universal-nav {
       }
       #btn-logout { display: none; }
   }
+    
   #qsLoginBtn { display: none; }
   #profile-view {
       display: none;
@@ -202,7 +203,7 @@ header.universal-nav {
           z-index: 998;
           padding: 80px 25px 25px;
           font-family: 'Roboto', serif;
-          margin-left: -125px;
+          margin-left: -160px;
           margin-top: -70px;
           width: 660px;
           border-radius: none;
@@ -223,7 +224,7 @@ header.universal-nav {
             font-size: 36px;
             position: absolute;
             top: 35px;
-            left: 30%;
+            left: 33%;
             border: none;
             @media screen and (max-width: 767px) {
                 display: none;
