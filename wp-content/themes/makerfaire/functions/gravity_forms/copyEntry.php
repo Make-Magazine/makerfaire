@@ -2,7 +2,7 @@
 /*
  * Used to ask the logged in maker if they want to copy entries from previous faires
  */
-//add_filter( 'gform_pre_render', 'maybe_copyEntry',999 );
+add_filter( 'gform_pre_render', 'maybe_copyEntry',999 );
 function maybe_copyEntry( $form ) {
   if(!isset($form['form_type'])){
     return $form;
@@ -43,6 +43,8 @@ function maybe_copyEntry( $form ) {
       }
     }else{
       if($entry2Copy!='none'){
+        // field do not copy list
+        $dontCopyField = array('22', '37','38','39','40', '41', '45', '55', '87', '130', '320', '321', '117');
         //copy previous entry data
         echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
 
@@ -52,69 +54,71 @@ function maybe_copyEntry( $form ) {
         foreach($form['fields'] as &$field){
           $fieldID = (string) $field['id'];
           $fieldType = $field['type'];
-          switch ($fieldType) {
-            case 'textarea':
-            case 'text':
-            case 'website':
-            case 'number':
-            case 'phone':
-            case 'email':
-            case 'select':
-              if(isset($entry[$fieldID])) {
-                $field['defaultValue'] = $entry[$fieldID];
-              }
-              break;
-            case 'checkbox':
-              $fieldChoices = $field['choices'];
-              foreach($field['inputs'] as $key => $input){
-                $fieldChoiceID = (string) $input['id'];
-                //if this field is checked on the entry we need to update the associated array for choices
-                if(isset($entry[$fieldChoiceID]) && $entry[$fieldChoiceID]!='') {
-                  $fieldChoices[$key]['isSelected'] = true;
+          if(!in_array($fieldID, $dontCopyField)){
+            switch ($fieldType) {
+              case 'textarea':
+              case 'text':
+              case 'website':
+              case 'number':
+              case 'phone':
+              case 'email':
+              case 'select':
+                if(isset($entry[$fieldID])) {
+                  $field['defaultValue'] = $entry[$fieldID];
                 }
-              }
-              $field['choices'] = $fieldChoices;
-              break;
-
-            case 'radio':
-              if(isset($entry[$fieldID]) && $entry[$fieldID]!=''){
+                break;
+              case 'checkbox':
                 $fieldChoices = $field['choices'];
-                foreach($field['choices'] as $key=>$choice){
-                  $value = ($choice['value'] != ''? $choice['value']:$choice['text']);
-
-                  if((string) $value == (string)$entry[$fieldID]){
+                foreach($field['inputs'] as $key => $input){
+                  $fieldChoiceID = (string) $input['id'];
+                  //if this field is checked on the entry we need to update the associated array for choices
+                  if(isset($entry[$fieldChoiceID]) && $entry[$fieldChoiceID]!='') {
                     $fieldChoices[$key]['isSelected'] = true;
                   }
                 }
                 $field['choices'] = $fieldChoices;
-              }
-              break;
+                break;
 
-            case 'name':
-            case 'address':
-              $fieldInputs = $field['inputs'];
-              foreach($field['inputs'] as $key=>$input){
-                $fieldID = (string) $input['id'];
+              case 'radio':
+                if(isset($entry[$fieldID]) && $entry[$fieldID]!=''){
+                  $fieldChoices = $field['choices'];
+                  foreach($field['choices'] as $key=>$choice){
+                    $value = ($choice['value'] != ''? $choice['value']:$choice['text']);
 
-                //if this field is set on the entry we need to update the default value
-                if(isset($entry[$fieldID]) && $entry[$fieldID]!='') {
-                  $fieldInputs[$key]['defaultValue'] = $entry[$fieldID];
+                    if((string) $value == (string)$entry[$fieldID]){
+                      $fieldChoices[$key]['isSelected'] = true;
+                    }
+                  }
+                  $field['choices'] = $fieldChoices;
                 }
-              }
-              $field['inputs'] = $fieldInputs;
-              break;
+                break;
 
-            case 'list':
-            case 'section':
-            case 'html':
-            case 'page':
-            case 'date':
-            case 'fileupload':
-              //do nothing
-              break;
-            default:
-              //echo 'field id '.$fieldID.' type is '.$fieldType.'<br/>';
-              break;
+              case 'name':
+              case 'address':
+                $fieldInputs = $field['inputs'];
+                foreach($field['inputs'] as $key=>$input){
+                  $fieldID = (string) $input['id'];
+
+                  //if this field is set on the entry we need to update the default value
+                  if(isset($entry[$fieldID]) && $entry[$fieldID]!='') {
+                    $fieldInputs[$key]['defaultValue'] = $entry[$fieldID];
+                  }
+                }
+                $field['inputs'] = $fieldInputs;
+                break;
+
+              case 'list':
+              case 'section':
+              case 'html':
+              case 'page':
+              case 'date':
+              case 'fileupload':
+                //do nothing
+                break;
+              default:
+                //echo 'field id '.$fieldID.' type is '.$fieldType.'<br/>';
+                break;
+            }
           }
         }
       }
