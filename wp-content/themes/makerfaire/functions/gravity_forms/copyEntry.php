@@ -45,7 +45,7 @@ function maybe_copyEntry( $form ) {
       if($entry2Copy!='none'){
         // field do not copy list
         $dontCopyField = array('22', '37','38','39','40', '41', '45', '55', '87', '130', '320', '321', '117');
-        
+
         //copy previous entry data
         echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
 
@@ -176,8 +176,8 @@ function getModalData($tableData){
 
   $return .= '</div>
         </div> <!-- close .modal-body-->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default"><a href="'.$currentURL.'?copyEntry=none">Start from Scratch</a></button>
+        <div class="modal-footer" id="modal-footer">
+          <button type="button" class="btn btn-default"><a id="startScratch" href="'.$currentURL.'?copyEntry=none">Start from Scratch</a></button>
         </div>
       </div>
 
@@ -185,6 +185,12 @@ function getModalData($tableData){
   </div>
   <script>
     jQuery("#copyModal").modal("show");
+    //replace Start from scratch button with a spinner on click
+    jQuery("#startScratch").click(function() {
+      jQuery("div#modal-footer").html("<i class=\'fa fa-spinner fa-spin  fa-2x\'></i>");
+    });
+
+
   </script>';
   return $return;
 }
