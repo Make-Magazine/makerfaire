@@ -45,6 +45,7 @@ function maybe_copyEntry( $form ) {
       if($entry2Copy!='none'){
         // field do not copy list
         $dontCopyField = array('22', '37','38','39','40', '41', '45', '55', '87', '130', '320', '321', '117');
+        
         //copy previous entry data
         echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
 
