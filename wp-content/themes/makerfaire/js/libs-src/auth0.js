@@ -111,6 +111,7 @@ window.addEventListener('load', function() {
       loginBtn.style.display = 'none';
       profileView.style.display = 'flex';
       getProfile();
+      
       //login to wordpress if not already
       WPlogin();//login to wordpress
     } else {
@@ -147,8 +148,8 @@ window.addEventListener('load', function() {
   }
 
   function WPlogin(){
-    if (isAuthenticated()) {
-      getProfile();
+    //if (isAuthenticated()) {
+    //  getProfile();
       if (typeof userProfile !== 'undefined') {
         var user_id = userProfile.sub;
         var access_token = localStorage.getItem('access_token');
@@ -165,7 +166,7 @@ window.addEventListener('load', function() {
           //alert('Got this from the server: ' + response);
         });
       }
-    }
+    //}
   }
 
   function WPlogout(){

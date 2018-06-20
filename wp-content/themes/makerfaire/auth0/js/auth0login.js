@@ -6,6 +6,7 @@ var baseurl = window.location.origin;
 var AUTH0_CLIENT_ID    = 'Ya3K0wmP182DRTexd1NdoeLolgXOlqO1';
 var AUTH0_DOMAIN       = 'makermedia.auth0.com';
 var AUTH0_CALLBACK_URL = baseurl+"/authenticate-redirect/";
+var AUTH0_REDIRECT_URL = baseurl;
 
 var webAuth = new auth0.WebAuth({
   domain: AUTH0_DOMAIN,
