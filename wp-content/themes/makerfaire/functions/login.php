@@ -9,7 +9,7 @@ function custom_login_url( $login_url='', $redirect='') {
 
   $state = base64_encode('makersABC123');
   $login_url = 'https://makermedia.auth0.com/authorize?
-  response_type=id_token&
+  response_type=token&
   client_id=Ya3K0wmP182DRTexd1NdoeLolgXOlqO1&
   state='.$state.'&
   redirect_uri='.get_site_url().'/authenticate-redirect/&nonce=1234';
