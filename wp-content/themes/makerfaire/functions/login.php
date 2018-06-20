@@ -1,17 +1,21 @@
 <?php
-
+/* redirect wp-login.php to the auth0 login page */
 add_filter( 'login_url', 'custom_login_url', 10, 2 );
 
 function custom_login_url( $login_url='', $redirect='') {
-  if ( ! empty( $redirect ) ) {
-		$login_url = remove_query_arg( 'redirect_to', $login_url );
-		$redirect = add_query_arg( 'logged_in', 1, $redirect );
-		$redirect = urlencode( $redirect );
-		$login_url = add_query_arg( 'redirect_to', $redirect, $login_url );
-	}
+  if (empty( $redirect ) ) {
+    $redirect =get_site_url();
+  }
 
+  $state = base64_encode('makersABC123');
+  $login_url = 'https://makermedia.auth0.com/authorize?
+  response_type=id_token&
+  client_id=Ya3K0wmP182DRTexd1NdoeLolgXOlqO1&
+  state='.$state.'&
+  redirect_uri='.get_site_url().'/authenticate-redirect/&nonce=1234';
   return $login_url;
 }
+
 /** Set up the Ajax Logout */
 add_action( 'wp_ajax_mm_wplogout',        'MM_wordpress_logout' );
 add_action( 'wp_ajax_nopriv_mm_wplogout', 'MM_wordpress_logout' );
