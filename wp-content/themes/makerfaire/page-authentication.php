@@ -7,7 +7,7 @@
 <div class="container page-content">
   <div class="row">
     <div class="col-sm-3 col-xs-12">
-      <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png" />
+      <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png"  class="img-responsive" />
     </div>
     <div class="col-sm-9 col-xs-12">
       <h2 class="text-center">You are Now Logged In</h2>
