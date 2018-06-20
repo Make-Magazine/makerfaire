@@ -129,7 +129,7 @@ function load_scripts() {
   wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true);
   // jquery from Wordpress core (with no-conflict mode flag enabled):
   //auth0
-  wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.3.1/auth0.min.js', array(), false, true );
+  wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true );
 
   $my_theme = wp_get_theme();
   $my_version = $my_theme->get('Version');

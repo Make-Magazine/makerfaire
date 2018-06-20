@@ -1,28 +1,12 @@
 <?php
 /* redirect wp-login.php to the auth0 login page */
-add_filter( 'login_url', 'custom_login_url', 10, 2 );
-
-function custom_login_url( $login_url='', $redirect='') {
-  if (empty( $redirect ) ) {
-    $redirect =get_site_url();
-  }
-
-  $stateObj = array( 'interim' => false, 'uuid' => uniqid() );
-  if ( !empty($redirect) ) {
-    $stateObj['redirect_to'] = $redirect;
-  }
-  $state = base64_encode( json_encode( $stateObj ) );
-
-
-  $login_url = 'https://makermedia.auth0.com/authorize?'.
-          'response_type=token'.
-          '&client_id=Ya3K0wmP182DRTexd1NdoeLolgXOlqO1'.
-          '&redirect_uri='.get_site_url().'/authenticate-redirect/'.
-          '&state='.urlencode( $state ).
-          '&nonce=nonce';
-
-  return $login_url;
+function load_auth0_js() {
+  //auth0
+  wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false );
+  wp_enqueue_script('auth0Login', get_stylesheet_directory_uri() . '/auth0/js/auth0login.js', array(), false);
 }
+
+add_action( 'login_enqueue_scripts', 'load_auth0_js',10 );
 
 /** Set up the Ajax Logout */
 add_action( 'wp_ajax_mm_wplogout',        'MM_wordpress_logout' );

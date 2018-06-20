@@ -40,11 +40,6 @@ window.addEventListener('load', function() {
     leeway: 60
   });
 
-  if ( jQuery('#forceAuthLogin').length ) {
-    localStorage.setItem("redirect_to",getUrlVars()['redirect_to']);
-    webAuth.authorize(); //login to auth0;
-  }
-
   loginBtn.addEventListener('click', function(e) {
     e.preventDefault();
     localStorage.setItem('redirect_to',location.href);
@@ -92,7 +87,6 @@ window.addEventListener('load', function() {
 
   function handleAuthentication() {
     webAuth.parseHash(function(err, authResult) {
-      console.log(authResult);
       if (authResult && authResult.accessToken && authResult.idToken) {
         window.location.hash = '';
         setSession(authResult);
