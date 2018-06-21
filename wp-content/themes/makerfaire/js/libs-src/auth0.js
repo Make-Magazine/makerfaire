@@ -46,7 +46,17 @@ window.addEventListener('load', function() {
     webAuth.authorize(); //login to auth0
   });
 
-  logoutBtn.addEventListener('click', logout);
+  logoutBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Remove tokens and expiry time from localStorage
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('id_token');
+    localStorage.removeItem('expires_at');
+
+    //hide logged in button and logout of wp and auth0
+    displayButtons();
+  });;
 
   function setSession(authResult) {
     // Set the time that the access token will expire at
@@ -56,16 +66,6 @@ window.addEventListener('load', function() {
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
-  }
-
-  function logout() {
-    // Remove tokens and expiry time from localStorage
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('expires_at');
-    localStorage.removeItem('wp_loggedin');
-    displayButtons();
-    window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
   }
 
   function isAuthenticated() {
@@ -78,36 +78,23 @@ window.addEventListener('load', function() {
     }
   }
 
-  function handleAuthentication() {
-    webAuth.parseHash(function(err, authResult) {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        setSession(authResult);
-
-      } else if (err) {
-        console.log(err);
-        /* Do not display error message
-        alert(
-          'Error: ' + err.error + '. Check the console for further details.'
-        );
-        */
-      }
-      setTimeout(function(){displayButtons();}, 1500); // hold off on displaying the buttons until we know we're logged in
-    });
-  }
-
   function displayButtons() {
     if (isAuthenticated()) {
       loginBtn.style.display = 'none';
+
+      //get user profile from auth0
       profileView.style.display = 'flex';
       getProfile();
 
       //login to wordpress if not already
       if(!localStorage.getItem('wp_loggedin')){
-        WPlogin();//login to wordpress
+        //wait .5 second for auth0 data to be returned from getProfile
+        setTimeout(function(){WPlogin();}, 0500); //login to wordpress
       }
     } else {
       loginBtn.style.display = 'flex';
       profileView.style.display = 'none';
+
       if(localStorage.getItem('wp_loggedin')){
         //logout of wordpress if not already
         WPlogout();//login to wordpress
@@ -116,22 +103,19 @@ window.addEventListener('load', function() {
   }
 
   function getProfile() {
-    if (!userProfile) {
-      var accessToken = localStorage.getItem('access_token');
+    var accessToken = localStorage.getItem('access_token');
 
-      if (!accessToken) {
-        console.log('Access token must exist to fetch profile');
-      }
-
-      webAuth.client.userInfo(accessToken, function(err, profile) {
-        if (profile) {
-          userProfile = profile;
-          displayProfile();
-        }
-      });
-    } else {
-      displayProfile();
+    if (!accessToken) {
+      console.log('Access token must exist to fetch profile');
     }
+
+    webAuth.client.userInfo(accessToken, function(err, profile) {
+      if (profile) {
+        userProfile = profile;
+        displayProfile();
+      }
+    });
+
   }
 
   function displayProfile() {
@@ -142,7 +126,7 @@ window.addEventListener('load', function() {
 
   function WPlogin(){
     if (typeof userProfile !== 'undefined') {
-      var user_id = userProfile.sub;
+      var user_id      = userProfile.sub;
       var access_token = localStorage.getItem('access_token');
       var id_token     = localStorage.getItem('id_token');
 
@@ -153,12 +137,15 @@ window.addEventListener('load', function() {
         'auth0_access_token'  : access_token,
         'auth0_id_token'      : id_token
       };
+
       jQuery.post(ajax_object.ajax_url, data, function(response) {
         //set wplogged in localStorage item
         localStorage.setItem('wp_loggedin', 'true');
-        var redirect_url = localStorage.getItem('redirect_to');
-
-        location.href=redirect_url;
+        if(localStorage.getItem('redirect_to')){
+          var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
+          localStorage.removeItem('redirect_to'); //unset after retrieved
+          location.href=redirect_url;
+        }
       });
     }
   }
@@ -175,7 +162,8 @@ window.addEventListener('load', function() {
     }
 
     jQuery.post(ajax_object.ajax_url, data, function(response) {
-      //alert('Got this from the server: ' + response);
+      localStorage.removeItem('wp_loggedin');
+      window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
     });
   }
 
@@ -193,11 +181,9 @@ window.addEventListener('load', function() {
         }
       } else {
         setSession(result);
-        displayButtons();
       }
+      displayButtons();
     }
   );
 
-  //handle authentication
-  handleAuthentication();
 });

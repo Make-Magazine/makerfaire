@@ -11,10 +11,11 @@ add_action( 'login_enqueue_scripts', 'load_auth0_js',10 );
 /** Set up the Ajax Logout */
 add_action( 'wp_ajax_mm_wplogout',        'MM_wordpress_logout' );
 add_action( 'wp_ajax_nopriv_mm_wplogout', 'MM_wordpress_logout' );
+
 function MM_wordpress_logout(){
     //check_ajax_referer( 'ajax-logout-nonce', 'ajaxsecurity' );
     wp_logout();
-    //ob_clean(); // probably overkill for this, but good habit
+    ob_clean(); // probably overkill for this, but good habit
     wp_send_json_success();
 }
 
