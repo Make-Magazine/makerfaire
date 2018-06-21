@@ -63,20 +63,13 @@ window.addEventListener('load', function() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
-
+    localStorage.removeItem('wp_loggedin');
+    displayButtons();
     window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
-/*
-    //logout of auth0 - return to home page of site when logout
-    webAuth.logout({
-      returnTo: templateUrl
-    });
-
-    displayButtons();*/
   }
 
   function isAuthenticated() {
-    // Check whether the current time is past the
-    // access token's expiry time
+    // Check whether the current time is past the access token's expiry time
     if(localStorage.getItem('expires_at')){
       var expiresAt = JSON.parse(localStorage.getItem('expires_at'));
       return new Date().getTime() < expiresAt;
@@ -88,12 +81,8 @@ window.addEventListener('load', function() {
   function handleAuthentication() {
     webAuth.parseHash(function(err, authResult) {
       if (authResult && authResult.accessToken && authResult.idToken) {
-        window.location.hash = '';
         setSession(authResult);
 
-        //after login redirect to previous page (after 2 second delay)
-        var redirect_url = localStorage.getItem('redirect_to');
-        setTimeout(function(){location.href=redirect_url;} , 2000);
       } else if (err) {
         console.log(err);
         /* Do not display error message
@@ -111,14 +100,18 @@ window.addEventListener('load', function() {
       loginBtn.style.display = 'none';
       profileView.style.display = 'flex';
       getProfile();
-      
+
       //login to wordpress if not already
-      WPlogin();//login to wordpress
+      if(!localStorage.getItem('wp_loggedin')){
+        WPlogin();//login to wordpress
+      }
     } else {
       loginBtn.style.display = 'flex';
       profileView.style.display = 'none';
-      //logout of wordpress if not already
-      WPlogout();//login to wordpress
+      if(localStorage.getItem('wp_loggedin')){
+        //logout of wordpress if not already
+        WPlogout();//login to wordpress
+      }
     }
   }
 
@@ -148,25 +141,26 @@ window.addEventListener('load', function() {
   }
 
   function WPlogin(){
-    //if (isAuthenticated()) {
-    //  getProfile();
-      if (typeof userProfile !== 'undefined') {
-        var user_id = userProfile.sub;
-        var access_token = localStorage.getItem('access_token');
-        var id_token     = localStorage.getItem('id_token');
+    if (typeof userProfile !== 'undefined') {
+      var user_id = userProfile.sub;
+      var access_token = localStorage.getItem('access_token');
+      var id_token     = localStorage.getItem('id_token');
 
-        //login to wordpress
-        var data = {
-          'action'              : 'mm_wplogin',
-          'auth0_userProfile'   : userProfile,
-          'auth0_access_token'  : access_token,
-          'auth0_id_token'      : id_token
-        };
-        jQuery.post(ajax_object.ajax_url, data, function(response) {
-          //alert('Got this from the server: ' + response);
-        });
-      }
-    //}
+      //login to wordpress
+      var data = {
+        'action'              : 'mm_wplogin',
+        'auth0_userProfile'   : userProfile,
+        'auth0_access_token'  : access_token,
+        'auth0_id_token'      : id_token
+      };
+      jQuery.post(ajax_object.ajax_url, data, function(response) {
+        //set wplogged in localStorage item
+        localStorage.setItem('wp_loggedin', 'true');
+        var redirect_url = localStorage.getItem('redirect_to');
+
+        location.href=redirect_url;
+      });
+    }
   }
 
   function WPlogout(){
@@ -193,6 +187,7 @@ window.addEventListener('load', function() {
         localStorage.removeItem('access_token');
         localStorage.removeItem('id_token');
         localStorage.removeItem('expires_at');
+        localStorage.removeItem('wp_loggedin');
         if(err.error!=='login_required'){
           console.log(err);
         }
