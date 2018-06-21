@@ -48,7 +48,7 @@ window.addEventListener('load', function() {
 
   logoutBtn.addEventListener('click', function(e) {
     e.preventDefault();
-    
+
     // Remove tokens and expiry time from localStorage
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
@@ -112,16 +112,12 @@ window.addEventListener('load', function() {
     webAuth.client.userInfo(accessToken, function(err, profile) {
       if (profile) {
         userProfile = profile;
-        displayProfile();
+        // display the avatar
+        document.querySelector('#profile-view img').src = userProfile.picture;
+        document.querySelector('#profile-view img').style.display = "block";
       }
     });
 
-  }
-
-  function displayProfile() {
-    // display the avatar
-    document.querySelector('#profile-view img').src = userProfile.picture;
-    document.querySelector('#profile-view img').style.display = "block";
   }
 
   function WPlogin(){
