@@ -24,7 +24,7 @@ header('Expires: 0');
 
 $mysqli->query("SET NAMES 'utf8'");
 //get form data
-$sql = 'select display_meta from wp_rg_form_meta where form_id='.$form;
+$sql = 'select display_meta from wp_gf_form_meta where form_id='.$form;
 $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
   $json = json_decode($row['display_meta']);

@@ -918,7 +918,7 @@ function getBuildRptData(){
 
   //field list (from form 9)
   $fieldReturn = array();
-  $sql = 'select display_meta from wp_rg_form_meta where form_id=9';
+  $sql = 'select display_meta from wp_gf_form_meta where form_id=9';
   $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
   while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
     $json = json_decode($row['display_meta']);
@@ -1383,13 +1383,13 @@ function paymentRpt($table,$faire) {
         161=>'Contact Email',
         666=>'Order Total'
         );
-    $sql = 'SELECT wp_gf_entry.id as entry_id,wp_rg_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
+    $sql = 'SELECT wp_gf_entry.id as entry_id,wp_gf_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
             . '(select value from wp_rg_lead_detail where field_number = 151 and lead_id=meta_value limit 1) as field_151, '
             . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=meta_value limit 1) as field_303, '
             . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=wp_gf_entry.id limit 1) as status_payentry '
-            . 'FROM wp_rg_form_meta '
-            . 'left outer join wp_mf_faire on find_in_set (wp_rg_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
-            . 'left outer join wp_gf_entry on wp_gf_entry.form_id = wp_rg_form_meta.form_id '
+            . 'FROM wp_gf_form_meta '
+            . 'left outer join wp_mf_faire on find_in_set (wp_gf_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
+            . 'left outer join wp_gf_entry on wp_gf_entry.form_id = wp_gf_form_meta.form_id '
             . 'left outer join wp_rg_lead_meta on wp_rg_lead_meta.lead_id = wp_gf_entry.id and meta_key = "entry_id"'
             . 'left outer join wp_gf_entry origLead on origLead.id = meta_value '
             . 'WHERE  display_meta like \'%"form_type":"Payment"%\' and '
