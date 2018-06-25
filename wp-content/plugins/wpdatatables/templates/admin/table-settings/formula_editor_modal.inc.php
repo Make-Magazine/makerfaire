@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php
 /**
@@ -46,29 +46,14 @@
                         <button class="btn btn-icon waves-effect waves-circle waves-float formula_plus">+</button>
                         <button class="btn btn-icon waves-effect waves-circle waves-float formula_minus">-</button>
                         <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult">*</button>
-                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_div">/
-                        </button>
-                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_brackets">
-                            ()
-                        </button>
-                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_sin">
-                            sin()
-                        </button>
-                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_cos">
-                            cos()
-                        </button>
-                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_tan">
-                            tan()
-                        </button>
-                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_tan">
-                            cot()
-                        </button>
-                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_sec">
-                            sec()
-                        </button>
-                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_csc">
-                            csc()
-                        </button>
+                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_div">/</button>
+                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_brackets">()</button>
+                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_sin">sin()</button>
+                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_cos">cos()</button>
+                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_tan">tan()</button>
+                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_tan">cot()</button>
+                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_sec">sec()</button>
+                        <button class="btn btn-icon waves-effect waves-circle waves-float formula_mult formula_csc">csc()</button>
                     </div>
                 </div>
                 <!--/.row-->

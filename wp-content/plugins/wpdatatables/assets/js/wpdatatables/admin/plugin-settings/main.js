@@ -144,6 +144,13 @@
         });
 
         /**
+         * Set Include Bootstrap on back-end
+         */
+        $('#wdt-include-bootstrap-back-end').change(function(e){
+            wpdatatable_plugin_config.setIncludeBootstrapBackEnd( $(this).is(':checked') ? 1 : 0 );
+        });
+
+        /**
          * Set SUM functions label
          */
         $('#wdt-sum-function-label').change(function(e){
@@ -215,6 +222,19 @@
         });
 
         /**
+         * Remove borders from table
+         */
+        $('#wdt-remove-borders').change(function(e){
+            wpdatatable_plugin_config.setBorderRemoval( $(this).is(':checked') ? 1 : 0 );
+        });
+
+        /**
+         * Remove borders from header
+         */
+        $('#wdt-remove-borders-header').change(function(e){
+            wpdatatable_plugin_config.setBorderRemovalHeader( $(this).is(':checked') ? 1 : 0 );
+        });
+        /**
          * Set Custom Js - "Custom wpDataTables JS"
          */
         $('#wdt-custom-js').change(function(e){
@@ -258,6 +278,7 @@
         wpdatatable_plugin_config.setMobileWidth        ( wdt_current_config.wdtMobileWidth );
         wpdatatable_plugin_config.setPurchaseCode       ( wdt_current_config.wdtPurchaseCode );
         wpdatatable_plugin_config.setIncludeBootstrap   ( wdt_current_config.wdtIncludeBootstrap == 1 ? 1 : 0 );
+        wpdatatable_plugin_config.setIncludeBootstrapBackEnd   ( wdt_current_config.wdtIncludeBootstrapBackEnd == 1 ? 1 : 0 );
         wpdatatable_plugin_config.setParseShortcodes    ( wdt_current_config.wdtParseShortcodes == 1 ? 1 : 0 );
         wpdatatable_plugin_config.setAlignNumber        ( wdt_current_config.wdtNumbersAlign == 1 ? 1 : 0  );
         wpdatatable_plugin_config.setCustomCss          ( wdt_current_config.wdtCustomCss );
@@ -267,6 +288,8 @@
         wpdatatable_plugin_config.setAvgFunctionsLabel  ( wdt_current_config.wdtAvgFunctionsLabel );
         wpdatatable_plugin_config.setMinFunctionsLabel  ( wdt_current_config.wdtMinFunctionsLabel );
         wpdatatable_plugin_config.setMaxFunctionsLabel  ( wdt_current_config.wdtMaxFunctionsLabel );
+        wpdatatable_plugin_config.setBorderRemoval      ( wdt_current_config.wdtBorderRemoval == 1 ? 1 : 0  );
+        wpdatatable_plugin_config.setBorderRemovalHeader ( wdt_current_config.wdtBorderRemovalHeader == 1 ? 1 : 0  );
 
         for (var value in wdt_current_config.wdtFontColorSettings) {
             wpdatatable_plugin_config.setColorFontSetting ( value , wdt_current_config.wdtFontColorSettings[value] );

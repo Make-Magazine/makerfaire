@@ -20,6 +20,15 @@ var duplicate_table_id = '';
         });
 
         /**
+         * Search tables and charts in backend by enter
+         */
+        $("input#search_id-search-input").on("keydown",function (e) {
+            if(e.keyCode == 13) {
+                $("button#search-submit").click();
+            }
+        });
+
+        /**
          * Bulk action alert
          */
         $('#doaction, #doaction2').click( function(e) {
@@ -82,6 +91,49 @@ var duplicate_table_id = '';
                     table_id: duplicate_table_id,
                     new_table_name: new_table_name,
                     manual_duplicate_input: manual_duplicate_input,
+                    wdtNonce: wdtNonce
+                },
+                success: function() {
+                    window.location.reload();
+                }
+            });
+
+            $('#wdt-duplicate-table-modal').modal('hide');
+
+        });
+
+        /**
+         * Display a duplicate chart modal
+         */
+        $('.wdt-duplicate-chart').click(function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            duplicate_chart_id = $(this).data('chart_id');
+
+            $('input.wdt-duplicate-chart-name').val($(this).data('chart_name')+ '_' + wpdatatablesStrings.copy.toLowerCase());
+
+            $('#wdt-duplicate-chart-modal').modal('show');
+        });
+
+        /**
+         * A duplicate chart action
+         */
+        $(document).on('click','button.duplicate-chart-button',function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            $('#wdt-preload-layer').show();
+            var new_chart_name = $(this).closest('.modal-content').find('input.wdt-duplicate-chart-name').val();
+            var wdtNonce = $('#wdt-duplicate-chart-modal #wdtNonce').val();
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'wpdatatables_duplicate_chart',
+                    chart_id: duplicate_chart_id,
+                    new_chart_name: new_chart_name,
                     wdtNonce: wdtNonce
                 },
                 success: function() {

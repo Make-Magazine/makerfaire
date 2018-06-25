@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 
 class WDTTools {
 
@@ -34,17 +34,17 @@ class WDTTools {
      * @param $header
      * @return mixed
      */
-    public static function sanitizeHeader($header) {
-        return
-            str_replace(
-                range('0', '9'),
-                range('a', 'j'),
-                str_replace(
-                    array('$', '_', '&', ' '),
-                    '',
-                    $header
-                )
-            );
+    public static function sanitizeHeaders($headersInFormula) {
+
+	    $headers = array();
+		foreach ($headersInFormula as $key=>$header ) {
+			 $headers[$header] = str_replace(
+				range('0', '9'),
+				range('a', 'j'),
+				"wpdatacolumn".$key
+			);
+		}
+	    return $headers;
     }
 
     /**
@@ -89,10 +89,11 @@ class WDTTools {
                 $currentPostIdPlaceholder = $_POST['currentPostIdPlaceholder'];
             }
 
-            $post = get_post();
+	        $url     = wp_get_referer();
+	        $postID = url_to_postid( $url );
 
-            $wdtCurPostId = isset($currentPostIdPlaceholder) ?
-                $currentPostIdPlaceholder : (!empty($post) ? $post->ID : false);
+	        $wdtCurPostId = isset($currentPostIdPlaceholder) ?
+                $currentPostIdPlaceholder : (!empty($postID) ? $postID : false);
 
             $string = str_replace('%CURRENT_POST_ID%', $wdtCurPostId, $string);
         }
@@ -164,13 +165,92 @@ class WDTTools {
     }
 
     /**
+     * Helper function to find CSV delimiter
+     * @param $csv_url
+     * @return string
+     */
+    public static function detectCSVDelimiter ($csv_url) {
+
+        if (!file_exists($csv_url) || !is_readable($csv_url)) {
+            throw new WDTException('Could not open ' . $csv_url . ' for reading! File does not exist.');
+        }
+        $fileResurce = fopen($csv_url, 'r');
+
+        $delimiterList = [',', ';', "\t", '|'];
+        $counts = [];
+        foreach ($delimiterList as $delimiter) {
+            $counts[$delimiter] = [];
+        }
+
+        $lineNumber = 0;
+        while (($line = fgets($fileResurce)) !== false && (++$lineNumber < 1000)) {
+            $lineCount = [];
+            for ($i = strlen($line) - 1; $i >= 0; --$i) {
+                $character = $line[$i];
+                if (isset($counts[$character])) {
+                    if (!isset($lineCount[$character])) {
+                        $lineCount[$character] = 0;
+                    }
+                    ++$lineCount[$character];
+                }
+            }
+            foreach ($delimiterList as $delimiter) {
+                $counts[$delimiter][] = isset($lineCount[$delimiter])
+                    ? $lineCount[$delimiter]
+                    : 0;
+            }
+        }
+
+        $RMSD = [];
+        $middleIdx = floor(($lineNumber - 1) / 2);
+
+        foreach ($delimiterList as $delimiter) {
+            $series = $counts[$delimiter];
+            sort($series);
+
+            $median = ($lineNumber % 2)
+                ? $series[$middleIdx]
+                : ($series[$middleIdx] + $series[$middleIdx + 1]) / 2;
+
+            if ($median === 0) {
+                continue;
+            }
+
+            $RMSD[$delimiter] = array_reduce(
+                    $series,
+                    function ($sum, $value) use ($median) {
+                        return $sum + pow($value - $median, 2);
+                    }
+                ) / count($series);
+        }
+
+        $min = INF;
+        foreach ($delimiterList as $delimiter) {
+            if (!isset($RMSD[$delimiter])) {
+                continue;
+            }
+
+            if ($RMSD[$delimiter] < $min) {
+                $min = $RMSD[$delimiter];
+                $finalDelimiter = $delimiter;
+            }
+        }
+
+        if ($delimiter === null) {
+            $finalDelimiter = reset($delimiterList);
+        }
+
+        return $finalDelimiter;
+    }
+
+    /**
      * Helper function that convert CSV file to Array
      * @param $csv
      * @return array
      */
     public static function csvToArray($csv) {
         $arr = array();
-        $lines = explode("\n", $csv);
+        $lines = explode("\r\n", $csv);
         foreach ($lines as $row) {
             $arr[] = str_getcsv($row, ",");
         }
@@ -178,8 +258,9 @@ class WDTTools {
         $labels = array_shift($arr);
         $keys = array();
         foreach ($labels as $label) {
-            $keys[] = $label;
+            $keys[] = trim(preg_replace('/\s\s+/', ' ', str_replace("\n", " ", $label)));
         }
+	    $keys = array_map('trim', $keys);
         $returnArray = array();
         for ($j = 0; $j < $count; $j++) {
             $d = array_combine($keys, $arr[$j]);
@@ -253,6 +334,7 @@ class WDTTools {
             'lengthMenu' => __('Show _MENU_ entries', 'wpdatatables'),
             'merge' => __('Merge', 'wpdatatables'),
             'newColumnName' => __('New column', 'wpdatatables'),
+            'nothingSelected' => __('Nothing selected', 'wpdatatables'),
             'oAria' => array(
                 'sSortAscending' => __(': activate to sort column ascending', 'wpdatatables'),
                 'sSortDescending' => __(': activate to sort column descending', 'wpdatatables')
@@ -264,6 +346,7 @@ class WDTTools {
                 'sNext' => __('Next', 'wpdatatables'),
                 'sPrevious' => __('Previous', 'wpdatatables')
             ),
+            'previousFilter' => __('Choose an option in previous filters', 'wpdatatables'),
             'replace' => __('Replace', 'wpdatatables'),
             'rowDeleted' => __('Row has been deleted!', 'wpdatatables'),
             'select_upload_file' => __('Select a file to use in table', 'wpdatatables'),
@@ -281,6 +364,7 @@ class WDTTools {
             'sProcessing' => __('Processing...', 'wpdatatables'),
             'sqlError' => __('SQL error', 'wpdatatables'),
             'sSearch' => __('Search: ', 'wpdatatables'),
+            'search' => __('Search...', 'wpdatatables'),
             'success' => __('Success!', 'wpdatatables'),
             'sZeroRecords' => __('No matching records found', 'wpdatatables'),
             'tableSaved' => __('Table saved successfully!', 'wpdatatables'),
@@ -410,28 +494,34 @@ class WDTTools {
      * @return string
      */
     private static function wdtDetectColumnType($values) {
-        if (self::_detect($values, 'self::wdtIsInteger')) {
-            return 'int';
+        $array = array_filter($values);
+        if (empty($array)) {
+            return 'string';
+        } else {
+
+            if (self::_detect($values, 'self::wdtIsInteger')) {
+                return 'int';
+            }
+            if (self::_detect($values, 'preg_match', WDT_TIME_12H_REGEX) || self::_detect($values, 'preg_match', WDT_TIME_24H_REGEX)) {
+                return 'time';
+            }
+            if (self::_detect($values, 'self::wdtIsDateTime')) {
+                return 'datetime';
+            }
+            if (self::_detect($values, 'self::wdtIsDate')) {
+                return 'date';
+            }
+            if (self::_detect($values, 'preg_match', WDT_CURRENCY_REGEX) || self::wdtIsFloat($values)) {
+                return 'float';
+            }
+            if (self::_detect($values, 'preg_match', WDT_EMAIL_REGEX)) {
+                return 'email';
+            }
+            if (self::_detect($values, 'preg_match', WDT_URL_REGEX)) {
+                return 'link';
+            }
+            return 'string';
         }
-        if (self::_detect($values, 'preg_match', WDT_TIME_12H_REGEX) || self::_detect($values, 'preg_match', WDT_TIME_24H_REGEX)) {
-            return 'time';
-        }
-        if (self::_detect($values, 'self::wdtIsDateTime')) {
-            return 'datetime';
-        }
-        if (self::_detect($values, 'self::wdtIsDate')) {
-            return 'date';
-        }
-        if (self::_detect($values, 'preg_match', WDT_CURRENCY_REGEX) || self::wdtIsFloat($values)) {
-            return 'float';
-        }
-        if (self::_detect($values, 'preg_match', WDT_EMAIL_REGEX)) {
-            return 'email';
-        }
-        if (self::_detect($values, 'preg_match', WDT_URL_REGEX)) {
-            return 'link';
-        }
-        return 'string';
     }
 
 
@@ -604,6 +694,10 @@ class WDTTools {
      * Helper method to wrap values in quotes for DB
      */
     public static function wrapQuotes($value) {
+	   if(strpos($value, "'")!== false){
+	   	$value = stripslashes($value);
+	   }
+	    $value = get_option('wdtUseSeparateCon') ? addslashes($value) : $value;
         $valueQuote = get_option('wdtUseSeparateCon') ? "'" : '';
         return $valueQuote . $value . $valueQuote;
     }
@@ -617,7 +711,7 @@ class WDTTools {
     public static function getColHeadersInFormula($formula, $headers) {
         $headersInFormula = array();
         foreach ($headers as $header) {
-            if (strpos($formula, $header) !== false) {
+            if (strpos($formula, (string)$header) !== false) {
                 $headersInFormula[] = $header;
             }
         }
@@ -751,49 +845,34 @@ class WDTTools {
      * Enqueue JS and CSS UI Kit files
      */
     public static function wdtUIKitEnqueue() {
-        wp_enqueue_style('wdt-bootstrap', WDT_CSS_PATH . 'bootstrap/wpdatatables-bootstrap.css');
+        wp_enqueue_style('wdt-bootstrap', WDT_CSS_PATH . 'bootstrap/wpdatatables-bootstrap.min.css');
         wp_enqueue_style('wdt-bootstrap-select', WDT_CSS_PATH . 'bootstrap/bootstrap-select/bootstrap-select.min.css');
         wp_enqueue_style('wdt-bootstrap-tagsinput', WDT_CSS_PATH . 'bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.css');
         wp_enqueue_style('wdt-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css');
-        wp_enqueue_style('wdt-wp-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/wdt-bootstrap-datetimepicker.css');
+        wp_enqueue_style('wdt-wp-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/wdt-bootstrap-datetimepicker.min.css');
         wp_enqueue_style('wdt-bootstrap-colorpicker', WDT_CSS_PATH . 'bootstrap/bootstrap-colorpicker/bootstrap-colorpicker.min.css');
         wp_enqueue_style('wdt-animate', WDT_CSS_PATH . 'animate/animate.min.css');
         wp_enqueue_style('wdt-uikit', WDT_CSS_PATH . 'uikit/uikit.css');
         wp_enqueue_style('wdt-waves', WDT_CSS_PATH . 'waves/waves.min.css');
         wp_enqueue_style('wdt-iconic-font', WDT_CSS_PATH . 'material-design-iconic-font/css/material-design-iconic-font.min.css');
 
-        if (is_admin() || get_option('wdtIncludeBootstrap') == 1) {
-            self::enqueueBootstrapJS();
+
+        if (!is_admin() && get_option('wdtIncludeBootstrap') == 1) {
+	        wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), false, true);
+        }else if (is_admin() && get_option('wdtIncludeBootstrapBackEnd') == 1){
+            wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), false, true);
+        }else{
+            wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/noconf.bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), false, true);
         }
 
-        wp_enqueue_script('wdt-bootstrap-select', WDT_JS_PATH . 'bootstrap/bootstrap-select/bootstrap-select.min.js', array(), false, true);
+	    wp_enqueue_script('wdt-bootstrap-select', WDT_JS_PATH . 'bootstrap/bootstrap-select/bootstrap-select.min.js', array(), false, true);
+	    wp_enqueue_script('wdt-bootstrap-ajax-select', WDT_JS_PATH . 'bootstrap/bootstrap-select/ajax-bootstrap-select.min.js', array(), false, true);
         wp_enqueue_script('wdt-bootstrap-tagsinput', WDT_JS_PATH . 'bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.js', array(), false, true);
         wp_enqueue_script('wdt-moment', WDT_JS_PATH . 'moment/moment.js', array(), false, true);
         wp_enqueue_script('wdt-bootstrap-datetimepicker', WDT_JS_PATH . 'bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js', array(), false, true);
         wp_enqueue_script('wdt-bootstrap-colorpicker', WDT_JS_PATH . 'bootstrap/bootstrap-colorpicker/bootstrap-colorpicker.min.js', array(), false, true);
         wp_enqueue_script('wdt-bootstrap-growl', WDT_JS_PATH . 'bootstrap/bootstrap-growl/bootstrap-growl.min.js', array(), false, true);
         wp_enqueue_script('wdt-waves', WDT_JS_PATH . 'waves/waves.min.js', array(), false, true);
-    }
-
-    /**
-     * Check if bootstrap.js is already enqueued
-     * and enqueue it if it's not enqueued
-     */
-    public static function enqueueBootstrapJS() {
-        global $wp_scripts;
-        $bootstrapEnqueued = false;
-        foreach ($wp_scripts->registered as $script) {
-            if ((stristr($script->src, 'bootstrap.min.js') !== false ||
-                    stristr($script->src, 'bootstrap.js') != false) &&
-                wp_script_is($script->handle, 'enqueued')
-            ) {
-                $bootstrapEnqueued = true;
-                break;
-            }
-        }
-        if (!$bootstrapEnqueued) {
-            wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/bootstrap.min.js', array(), false, true);
-        }
     }
 
     /**
@@ -912,3 +991,4 @@ class WDTTools {
 }
 
 add_action('admin_footer', array('WDTTools', 'printJSVars'), 100);
+add_action('wp_footer', array('WDTTools', 'printJSVars'), 100);

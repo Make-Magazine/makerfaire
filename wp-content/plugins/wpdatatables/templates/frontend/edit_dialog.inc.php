@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php /** @var WPDataTable $this */ ?>
 <div id="<?php echo $this->getId() ?>_edit_dialog" style="display: none">
@@ -39,16 +39,18 @@
         <!--/ .control-label -->
 
         <?php
-        $possibleValues = $dataColumn->getJSFilterDefinition();
-        $possibleValues = $possibleValues->values;
+        if ($dataColumn->getPossibleValuesAjax() === -1) {
+            $possibleValues = $dataColumn->getJSFilterDefinition();
+            $possibleValues = $possibleValues->values;
+        }
         ?>
 
         <!-- .col-sm-9 -->
         <div class="col-sm-9">
             <div class="fg-line">
                 <?php
-                if ($dataColumn->getInputType() == 'textarea' ||
-                    $dataColumn->getInputType() == 'mce-editor'
+                if ($dataColumn->getInputType() === 'textarea' ||
+                    $dataColumn->getInputType() === 'mce-editor'
                 ) { ?>
                     <textarea data-input_type="<?php echo $dataColumn->getInputType(); ?>"
                               class="form-control editDialogInput <?php if ($dataColumn->isNotNull()) { ?>mandatory<?php } ?> <?php if ($dataColumn->getInputType() == 'mce-editor') { ?>wpdt-tiny-mce<?php } ?>"
@@ -56,28 +58,30 @@
                               data-key="<?php echo $dataColumn_key ?>" rows="5"
                               data-column_header="<?php echo $dataColumn->getTitle(); ?>"></textarea>
                     <?php
-                } elseif (($dataColumn->getInputType() == 'selectbox') ||
-                    ($dataColumn->getInputType() == 'multi-selectbox')
+                } elseif (($dataColumn->getInputType() === 'selectbox') ||
+                    ($dataColumn->getInputType() === 'multi-selectbox')
                 ) { ?>
                     <select id="<?php echo $this->getId() ?>_<?php echo $dataColumn_key ?>"
                             data-input_type="<?php echo $dataColumn->getInputType(); ?>"
                             data-key="<?php echo $dataColumn_key ?>"
-                            class="form-control editDialogInput selectpicker <?php if ($dataColumn->isNotNull()) { ?>mandatory <?php };
-                            if ($dataColumn->getForeignKeyRule() != null) { ?>wdt-foreign-key-select<?php }; ?>"
-                            <?php if ($dataColumn->getInputType() == 'multi-selectbox') { ?>multiple="multiple"<?php } ?>
+                            class="form-control editDialogInput selectpicker <?php if ($dataColumn->isNotNull()) { ?>mandatory <?php }
+                            if ($dataColumn->getForeignKeyRule() != null) { ?>wdt-foreign-key-select <?php };
+                            if ($dataColumn->getPossibleValuesAjax() !== -1) { ?>wdt-possible-values-ajax<?php }; ?>"
+                            <?php if ($dataColumn->getInputType() === 'multi-selectbox') { ?>multiple="multiple"<?php } ?>
+                            <?php if ($dataColumn->getPossibleValuesAjax() !== -1) { ?>data-live-search="true" data-live-search-placeholder="Search..."<?php } ?>
                             data-column_header="<?php echo $dataColumn->getTitle(); ?>">
-                        <?php if ($dataColumn->getInputType() == 'selectbox') { ?>
-                            <option value=""></option><?php } ?>
-                        <?php foreach ($possibleValues as $possibleValue) {
-                            if ($possibleValue != 'possibleValuesAddEmpty') {
-                                if ($dataColumn->getForeignKeyRule() == null) { ?>
-                                    <option value="<?php echo $possibleValue ?>"><?php echo $possibleValue ?></option>
-                                <?php } else { ?>
+                        <?php
+                        if ($dataColumn->getPossibleValuesAjax() === -1) {
+                            if ($dataColumn->getInputType() === 'selectbox') { ?>
+                                <option value=""></option><?php } ?>
+                            <?php foreach ($possibleValues as $possibleValue) {
+                                if ($possibleValue['value'] !== 'possibleValuesAddEmpty') { ?>
                                     <option value="<?php echo $possibleValue['value'] ?>"
                                             data-label="<?php echo $possibleValue['label'] ?>"><?php echo $possibleValue['label'] ?></option>
-                                <?php }
-                            }
-                        } ?>
+
+                                <?php } ?>
+                            <?php } ?>
+                        <?php } ?>
                     </select>
                     <?php
                 } elseif ($dataColumn->getInputType() == 'attachment') { ?>

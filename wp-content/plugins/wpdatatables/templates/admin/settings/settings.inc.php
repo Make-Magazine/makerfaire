@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <div class="wrap wdt-datatables-admin-wrap">
     <?php do_action('wpdatatables_admin_before_settings'); ?>

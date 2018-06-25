@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <div class="col-sm-12 p-0 wdt-constructor-step wdt-constructor-query-data-step hidden" data-step="1-3">
 

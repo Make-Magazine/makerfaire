@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 
 use PHPSQLParser\PHPSQLCreator;
 use PHPSQLParser\PHPSQLParser;
@@ -431,9 +431,8 @@ class WPDataTable {
             throw new WDTException('Incorrect column index');
         }
 
-        if (!is_numeric($key)) {
-            $key = array_search($key, array_keys($this->_wdtNamedColumns));
-        }
+        $key = array_search($key, array_keys($this->_wdtNamedColumns));
+
         $this->_defaultSortColumn = $key;
     }
 
@@ -478,7 +477,7 @@ class WPDataTable {
     }
 
     public function setDisplayLength($length) {
-        if (!in_array($length, array(5, 10, 20, 25, 30, 50, 100, 200, -1))) {
+        if (!in_array($length, array(1, 5, 10, 20, 25, 30, 50, 100, 200, -1))) {
             return false;
         }
         $this->_lengthDisplay = $length;
@@ -582,7 +581,7 @@ class WPDataTable {
                 if (!isset($this->_wdtNamedColumns[$key])) {
                     continue;
                 }
-                $possibleValues = $this->_wdtNamedColumns[$key]->getPossibleValues();
+                $possibleValues = $this->_wdtNamedColumns[$key]->getPossibleValuesList();
                 if (empty($possibleValues)) {
                     $this->_wdtNamedColumns[$key]->setPossibleValues($value);
                 }
@@ -785,20 +784,26 @@ class WPDataTable {
 
     public function createColumnsFromArr($headerArr, $wdtParameters, $wdtColumnTypes) {
         foreach ($headerArr as $key) {
-            $dataColumnProperties = array();
-            $dataColumnProperties['title'] = isset($wdtParameters['columnTitles'][$key]) ? $wdtParameters['columnTitles'][$key] : $key;
-            $dataColumnProperties['width'] = !empty($wdtParameters['columnWidths'][$key]) ? $wdtParameters['columnWidths'][$key] : '';
-            $dataColumnProperties['sorting'] = isset($wdtParameters['sorting'][$key]) ? $wdtParameters['sorting'][$key] : true;
-            $dataColumnProperties['decimalPlaces'] = isset($wdtParameters['decimalPlaces'][$key]) ? $wdtParameters['decimalPlaces'][$key] : get_option('wdtDecimalPlaces');
-            $dataColumnProperties['orig_header'] = $key;
-            $dataColumnProperties['exactFiltering'] = !empty($wdtParameters['exactFiltering'][$key]) ? $wdtParameters['exactFiltering'][$key] : false;
-            $dataColumnProperties['filterLabel'] = isset($wdtParameters['filterLabel'][$key]) ? $wdtParameters['filterLabel'][$key] : null;
-            $dataColumnProperties['filterDefaultValue'] = isset($wdtParameters['filterDefaultValue'][$key]) ? $wdtParameters['filterDefaultValue'][$key] : null;
-            $dataColumnProperties['possibleValuesType'] = !empty($wdtParameters['possibleValuesType'][$key]) ? $wdtParameters['possibleValuesType'][$key] : 'read';
-            $dataColumnProperties['possibleValuesAddEmpty'] = !empty($wdtParameters['possibleValuesAddEmpty'][$key]) ? $wdtParameters['possibleValuesAddEmpty'][$key] : false;
-            $dataColumnProperties['foreignKeyRule'] = isset($wdtParameters['foreignKeyRule'][$key]) ? $wdtParameters['foreignKeyRule'][$key] : '';
-            $dataColumnProperties['editingDefaultValue'] = isset($wdtParameters['editingDefaultValue'][$key]) ? $wdtParameters['editingDefaultValue'][$key] : '';
-            $dataColumnProperties['parentTable'] = $this;
+            $dataColumnProperties =                             array();
+            $dataColumnProperties['title'] =                    isset($wdtParameters['columnTitles'][$key]) ? $wdtParameters['columnTitles'][$key] : $key;
+            $dataColumnProperties['width'] =                    !empty($wdtParameters['columnWidths'][$key]) ? $wdtParameters['columnWidths'][$key] : '';
+            $dataColumnProperties['sorting'] =                  isset($wdtParameters['sorting'][$key]) ? $wdtParameters['sorting'][$key] : true;
+            $dataColumnProperties['decimalPlaces'] =            isset($wdtParameters['decimalPlaces'][$key]) ? $wdtParameters['decimalPlaces'][$key] : get_option('wdtDecimalPlaces');
+            $dataColumnProperties['orig_header'] =              $key;
+            $dataColumnProperties['exactFiltering'] =           !empty($wdtParameters['exactFiltering'][$key]) ? $wdtParameters['exactFiltering'][$key] : false;
+            $dataColumnProperties['filterLabel'] =              isset($wdtParameters['filterLabel'][$key]) ? $wdtParameters['filterLabel'][$key] : null;
+            $dataColumnProperties['checkboxesInModal'] =        isset($wdtParameters['checkboxesInModal'][$key]) ? $wdtParameters['checkboxesInModal'][$key] : null;
+            $dataColumnProperties['filterDefaultValue'] =       isset($wdtParameters['filterDefaultValue'][$key]) ? $wdtParameters['filterDefaultValue'][$key] : null;
+            $dataColumnProperties['possibleValuesType'] =       !empty($wdtParameters['possibleValuesType'][$key]) ? $wdtParameters['possibleValuesType'][$key] : 'read';
+            $dataColumnProperties['possibleValuesAddEmpty'] =   !empty($wdtParameters['possibleValuesAddEmpty'][$key]) ? $wdtParameters['possibleValuesAddEmpty'][$key] : false;
+            $dataColumnProperties['possibleValuesAjax'] =       !empty($wdtParameters['possibleValuesAjax'][$key]) ? $wdtParameters['possibleValuesAjax'][$key] : 10;
+            $dataColumnProperties['foreignKeyRule'] =           isset($wdtParameters['foreignKeyRule'][$key]) ? $wdtParameters['foreignKeyRule'][$key] : '';
+            $dataColumnProperties['editingDefaultValue'] =      isset($wdtParameters['editingDefaultValue'][$key]) ? $wdtParameters['editingDefaultValue'][$key] : '';
+            $dataColumnProperties['linkTargetAttribute'] =      isset($wdtParameters['linkTargetAttribute'][$key]) ? $wdtParameters['linkTargetAttribute'][$key] : '';
+            $dataColumnProperties['linkButtonAttribute'] =      isset($wdtParameters['linkButtonAttribute'][$key]) ? $wdtParameters['linkButtonAttribute'][$key] : false;
+            $dataColumnProperties['linkButtonLabel'] =          isset($wdtParameters['linkButtonLabel'][$key]) ? $wdtParameters['linkButtonLabel'][$key] : '';
+            $dataColumnProperties['linkButtonClass'] =          isset($wdtParameters['linkButtonClass'][$key]) ? $wdtParameters['linkButtonClass'][$key] : '';
+            $dataColumnProperties['parentTable'] =              $this;
 
             /** @var WDTColumn $tableColumnClass */
             $tableColumnClass = static::$_columnClass;
@@ -845,7 +850,7 @@ class WPDataTable {
     public function getColumnDefinitions() {
         $defs = array();
         foreach ($this->_wdtIndexedColumns as $key => &$dataColumn) {
-            $def = $dataColumn->getColumnJSON();
+            $def = $dataColumn->getColumnJSON($key);
             $def->aTargets = array($key);
             $defs[] = json_encode($def);
         }
@@ -1023,10 +1028,7 @@ class WPDataTable {
 
             $formula = $this->getColumn($column_key)->getFormula();
             $headersInFormula = $this->detectHeadersInFormula($formula);
-            foreach ($headersInFormula as $header) {
-                $headers[$header] = WDTTools::sanitizeHeader($header);
-            }
-
+	        $headers = WDTTools::sanitizeHeaders($headersInFormula);
             foreach ($this->_dataRows as &$row) {
                 try {
                     $row[$column_key] =
@@ -1320,7 +1322,7 @@ class WPDataTable {
                 if (isset($_POST['order'])) {
                     $orderBy = "ORDER BY  ";
                     for ($i = 0; $i < count($_POST['order']); $i++) {
-                        if (!is_null($wdtParameters['foreignKeyRule'][$_POST['columns'][$_POST['order'][$i]['column']]['name']])) {
+                        if (isset($wdtParameters['foreignKeyRule'][$_POST['columns'][$_POST['order'][$i]['column']]['name']])) {
                             $foreignKeyRule = $wdtParameters['foreignKeyRule'][$_POST['columns'][$_POST['order'][$i]['column']]['name']];
                             $columnName = $_POST['columns'][$_POST['order'][$i]['column']]['name'];
                             $joinedTable = WPDataTable::loadWpDataTable($foreignKeyRule->tableId);
@@ -1335,7 +1337,7 @@ class WPDataTable {
                                 usort($sortedForeignRows, function ($a, $b, $displayColumn) {
                                     return $a[$displayColumn['orig_header']] > $b[$displayColumn['orig_header']];
                                 });
-                                $sortedForeignRows = implode(array_column($sortedForeignRows, $storeColumn['orig_header']), ', ');
+                                $sortedForeignRows = implode(array_map($sortedForeignRows, $storeColumn['orig_header']), ', ');
                                 $orderBy .= 'FIELD (' . $columnName . ', ' . $sortedForeignRows . ') ' . addslashes($_POST['order'][$i]['dir']) . ', ';
                             }
                         } else {
@@ -1386,131 +1388,155 @@ class WPDataTable {
 
                 // Individual column filtering
                 for ($i = 0; $i < count($aColumns); $i++) {
-                    if (($_POST['columns'][$i]['searchable'] == "true")
-                        && ($_POST['columns'][$i]['search']['value'] != '')
-                        && ($_POST['columns'][$i]['search']['value'] != '~')
-                    ) {
+
+	                $columnSearchFromTable = false;
+	                $columnSearchFromDefaultValue = false;
+
+                	if (isset($_POST['columns'][$i]['search']) &&
+	                    $_POST['columns'][$i]['search']['value'] != '' &&
+	                    $_POST['columns'][$i]['search']['value'] != '|') {
+                		$columnSearchFromTable = true;
+	                }
+	                if (($_POST['draw'] == 1 || $columnSearchFromTable == true) &&
+                        (isset($wdtParameters['filterDefaultValue'][$i]) &&
+	                    $wdtParameters['filterDefaultValue'][$i] !== '' &&
+	                    $wdtParameters['filterDefaultValue'][$i] !== '|' )) {
+                		$columnSearchFromDefaultValue = true;
+	                }
+                    if ($_POST['columns'][$i]['searchable'] == true && ($columnSearchFromTable || $columnSearchFromDefaultValue)) {
+
+                        //Apply placeholders when they are set in filter ​predefined value
+                        $wdtParameters['filterDefaultValue'][$i]=  WDTTools::applyPlaceholders($wdtParameters['filterDefaultValue'][$i]);
+
+                    	$columnSearch = $columnSearchFromTable ? $_POST['columns'][$i]['search'][value] : $wdtParameters['filterDefaultValue'][$i];
                         if (!empty($search)) {
                             $search .= ' AND ';
                         }
-                        switch ($wdtParameters['filter_types'][$aColumns[$i]]) {
-                            case 'number-range':
-                                list($left, $right) = explode('~', $_POST['columns'][$i]['search']['value']);
-                                if ($left !== '') {
-                                    $left = (float)$left;
-                                    $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` >= $left ";
-                                }
-                                if ($right !== '') {
-                                    $right = (float)$right;
-                                    if (!empty($search) && $left !== '') {
-                                        $search .= ' AND ';
+                        if (isset($wdtParameters['filterTypes'][$aColumns[$i]])) {
+                            switch ($wdtParameters['filterTypes'][$aColumns[$i]]) {
+                                case 'number-range':
+                                    list($left, $right) = explode('|', $columnSearch);
+                                    if ($left !== '') {
+                                        $left = (float)$left;
+                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` >= $left ";
                                     }
-                                    $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` <= $right ";
-                                }
-                                break;
-                            case 'date-range':
-                            case 'time-range':
-                            case 'datetime-range':
-                                list($left, $right) = explode('~', $_POST['columns'][$i]['search']['value']);
-                                $date_format = '';
-                                if ($wdtParameters['filter_types'][$aColumns[$i]] != 'time-range') {
-                                    $date_format = str_replace('m', '%m', get_option('wdtDateFormat'));
-                                    $date_format = str_replace('M', '%M', $date_format);
-                                    $date_format = str_replace('Y', '%Y', $date_format);
-                                    $date_format = str_replace('y', '%y', $date_format);
-                                    $date_format = str_replace('d', '%d', $date_format);
-                                }
-                                if ($wdtParameters['filter_types'][$aColumns[$i]] == 'datetime-range'
-                                    || $wdtParameters['filter_types'][$aColumns[$i]] == 'time-range'
-                                ) {
-                                    $date_format .= ' ' . get_option('wdtTimeFormat');
-                                    $date_format = str_replace('H', '%H', $date_format);
-                                    $date_format = str_replace('h', '%h', $date_format);
-                                    $date_format = str_replace('i', '%i', $date_format);
-                                    $date_format = str_replace('A', '%p', $date_format);
-                                }
-                                if ($left && $right) {
-                                    $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` BETWEEN STR_TO_DATE('$left', '$date_format') AND STR_TO_DATE('$right', '$date_format') ";
-                                } elseif ($left) {
-                                    $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` >= STR_TO_DATE('$left', '$date_format') ";
-                                } elseif ($right) {
-                                    $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` <= STR_TO_DATE('$right', '$date_format') ";
-                                }
-                                break;
-                            case 'select':
-                                if ($_POST['columns'][$i]['search']['value'] == 'possibleValuesAddEmpty') {
-                                    $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '' OR `" . $aColumns[$i] . "` IS NULL";
-                                } else {
-                                    if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
-                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '" . addslashes($_POST['columns'][$i]['search']['value']) . "' ";
+                                    if ($right !== '') {
+                                        $right = (float)$right;
+                                        if (!empty($search) && $left !== '') {
+                                            $search .= ' AND ';
+                                        }
+                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` <= $right ";
+                                    }
+                                    break;
+                                case 'date-range':
+                                case 'time-range':
+                                case 'datetime-range':
+                                    list($left, $right) = explode('|', $columnSearch);
+                                    $date_format = '';
+                                    if ($wdtParameters['filterTypes'][$aColumns[$i]] != 'time-range') {
+                                        $date_format = str_replace('m', '%m', get_option('wdtDateFormat'));
+                                        $date_format = str_replace('M', '%M', $date_format);
+                                        $date_format = str_replace('Y', '%Y', $date_format);
+                                        $date_format = str_replace('y', '%y', $date_format);
+                                        $date_format = str_replace('d', '%d', $date_format);
+                                    }
+                                    if ($wdtParameters['filterTypes'][$aColumns[$i]] == 'datetime-range'
+                                        || $wdtParameters['filterTypes'][$aColumns[$i]] == 'time-range'
+                                    ) {
+                                        $date_format .= ' ' . get_option('wdtTimeFormat');
+                                        $date_format = str_replace('H', '%H', $date_format);
+                                        $date_format = str_replace('h', '%h', $date_format);
+                                        $date_format = str_replace('i', '%i', $date_format);
+                                        $date_format = str_replace('A', '%p', $date_format);
+                                    }
+                                    if ($left && $right) {
+                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` BETWEEN STR_TO_DATE('$left', '$date_format') AND STR_TO_DATE('$right', '$date_format') ";
+                                    } elseif ($left) {
+                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` >= STR_TO_DATE('$left', '$date_format') ";
+                                    } elseif ($right) {
+                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` <= STR_TO_DATE('$right', '$date_format') ";
+                                    }
+                                    break;
+                                case 'select':
+                                    if ($columnSearch == 'possibleValuesAddEmpty') {
+                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '' OR `" . $aColumns[$i] . "` IS NULL";
                                     } else {
-                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '%" . addslashes($_POST['columns'][$i]['search']['value']) . "%' ";
-                                    }
-                                }
-                                break;
-                            case 'checkbox':
-                                if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
-                                    $checkboxSearches = explode('$|^', $_POST['columns'][$i]['search']['value']);
-                                    // Trim regex parts for first and last one
-                                    $checkboxSearches[0] = substr($checkboxSearches[0], 1);
-                                    if (count($checkboxSearches) > 1) {
-                                        $checkboxSearches[count($checkboxSearches) - 1] = substr($checkboxSearches[count($checkboxSearches) - 1], 0, -1);
-                                    } else {
-                                        $checkboxSearches[0] = substr($checkboxSearches[0], 0, -1);
-                                    }
-                                } else {
-                                    $checkboxSearches = explode('|', $_POST['columns'][$i]['search']['value']);
-                                }
-                                $j = 0;
-                                $search .= " (";
-                                foreach ($checkboxSearches as $checkboxSearch) {
-                                    if ($j > 0) {
-                                        $search .= " OR ";
-                                    }
-
-                                    if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
-                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '" . addslashes($checkboxSearch) . "' ";
-                                    } else {
-                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '%" . addslashes($checkboxSearch) . "%' ";
-                                    }
-
-                                    $j++;
-                                }
-                                $search .= ") ";
-                                break;
-                            case 'text':
-                            case 'number':
-                                if (is_null($wdtParameters['foreignKeyRule'][$_POST['columns'][$i]['name']])) {
-                                    if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
-                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '" . addslashes($_POST['columns'][$i]['search']['value']) . "' ";
-                                    } else {
-                                        if ($wdtParameters['filter_types'][$aColumns[$i]] == 'number') {
-                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '" . addslashes($_POST['columns'][$i]['search']['value']) . "%' ";
+                                        if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
+                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '" . $columnSearch . "' ";
                                         } else {
-                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '%" . addslashes($_POST['columns'][$i]['search']['value']) . "%' ";
+                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '%" . $columnSearch . "%' ";
                                         }
                                     }
-                                } else {
-                                    $foreignKeyRule = $wdtParameters['foreignKeyRule'][$_POST['columns'][$i]['name']];
-                                    $joinedTable = WPDataTable::loadWpDataTable($foreignKeyRule->tableId);
-                                    $distinctValues = $joinedTable->getDistinctValuesForColumns($foreignKeyRule);
-                                    $distinctValues = array_map('strtolower', $distinctValues);
-
+                                    break;
+                                case 'checkbox':
+                                case 'multiselect':
                                     if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
-                                        $filteredValues = preg_grep('~^' . preg_quote(strtolower($_POST['columns'][$i]['search']['value']), null) . '$~', $distinctValues);
+                                        // Trim regex parts for first and last one
+                                        if (strpos($columnSearch, '$') !== false) {
+                                            $checkboxSearches = explode('$|^', $columnSearch);
+                                            $checkboxSearches[0] = substr($checkboxSearches[0], 1);
+                                            if (count($checkboxSearches) > 1) {
+                                                $checkboxSearches[count($checkboxSearches) - 1] = substr($checkboxSearches[count($checkboxSearches) - 1], 0, -1);
+                                            } else {
+                                                $checkboxSearches[0] = substr($checkboxSearches[0], 0, -1);
+                                            }
+                                        } else {
+                                            $checkboxSearches = explode('|', $columnSearch);
+                                        }
                                     } else {
-                                        $filteredValues = preg_grep('~' . preg_quote(strtolower($_POST['columns'][$i]['search']['value']), '~') . '~', $distinctValues);
+                                        $checkboxSearches = explode('|', $columnSearch);
                                     }
+                                    $j = 0;
+                                    $search .= " (";
+                                    foreach ($checkboxSearches as $checkboxSearch) {
+                                        if ($j > 0) {
+                                            $search .= " OR ";
+                                        }
 
-                                    if (!empty($filteredValues)) {
-                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` IN (" . implode(', ', array_keys($filteredValues)) . ")";
-                                    } else {
-                                        $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '" . addslashes($_POST['columns'][$i]['search']['value']) . "' ";
+                                        if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
+                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '" . $checkboxSearch . "' ";
+                                        } else {
+                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '%" . $checkboxSearch . "%' ";
+                                        }
+
+                                        $j++;
                                     }
-                                }
-                                break;
-                            default:
-                                $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '%" . addslashes($_POST['columns'][$i]['search']['value']) . "%' ";
+                                    $search .= ") ";
+                                    break;
+                                case 'text':
+                                case 'number':
+                                    if (is_null($wdtParameters['foreignKeyRule'][$_POST['columns'][$i]['name']])) {
+                                        if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
+                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '" . $columnSearch . "' ";
+                                        } else {
+                                            if ($wdtParameters['filterTypes'][$aColumns[$i]] == 'number') {
+                                                $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '" . $columnSearch . "%' ";
+                                            } else {
+                                                $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '%" . $columnSearch . "%' ";
+                                            }
+                                        }
+                                    } else {
+                                        $foreignKeyRule = $wdtParameters['foreignKeyRule'][$_POST['columns'][$i]['name']];
+                                        $joinedTable = WPDataTable::loadWpDataTable($foreignKeyRule->tableId);
+                                        $distinctValues = $joinedTable->getDistinctValuesForColumns($foreignKeyRule);
+                                        $distinctValues = array_map('strtolower', $distinctValues);
+
+                                        if ($wdtParameters['exactFiltering'][$aColumns[$i]] == 1) {
+                                            $filteredValues = preg_grep('~^' . preg_quote(strtolower($columnSearch), null) . '$~', $distinctValues);
+                                        } else {
+                                            $filteredValues = preg_grep('~' . preg_quote(strtolower($columnSearch), '~') . '~', $distinctValues);
+                                        }
+
+                                        if (!empty($filteredValues)) {
+                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` IN (" . implode(', ', array_keys($filteredValues)) . ")";
+                                        } else {
+                                            $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` = '" . $columnSearch . "' ";
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    $search .= '`' . $tableName . '`.`' . $aColumns[$i] . "` LIKE '%" . $columnSearch . "%' ";
+                            }
                         }
                     }
                 }
@@ -1651,65 +1677,11 @@ class WPDataTable {
                 "data" => array()
             );
 
-            // create the supplementary array of column objects
-            // which we will use for formatting
-            $colObjs = array();
-            foreach ($wdtParameters['data_types'] as $dataColumn_key => $dataColumn_type) {
-                $tableColumnClass = static::$_columnClass;
-                $colObjs[$dataColumn_key] = $tableColumnClass::generateColumn($dataColumn_type, array('title' => $wdtParameters['columnTitles'][$dataColumn_key], 'decimalPlaces' => $wdtParameters['decimalPlaces'][$dataColumn_key]));
-                $colObjs[$dataColumn_key]->setInputType($wdtParameters['input_types'][$dataColumn_key]);
-                $colObjs[$dataColumn_key]->setParentTable($this);
-                if ($dataColumn_type == 'int') {
-                    if (in_array($dataColumn_key, $wdtParameters['skip_thousands']) || ($dataColumn_key == $wdtParameters['idColumn'])) {
-                        $colObjs[$dataColumn_key]->setShowThousandsSeparator(false);
-                        $this->addColumnsThousandsSeparator($dataColumn_key, 0);
-                    } else {
-                        $this->addColumnsThousandsSeparator($dataColumn_key, 1);
-                    }
-                }
-            }
+            // Create the supplementary array of column objects
+            $colObjs = $this->prepareColumns($wdtParameters, $colObjs);
+
             // reformat output array and reorder as user wanted
-            if (!empty($main_res_dataRows)) {
-                foreach ($wdtParameters['foreignKeyRule'] as $columnKey => $foreignKeyRule) {
-                    if ($foreignKeyRule != null) {
-                        $foreignKeyData = $this->joinWithForeignWpDataTable($columnKey, $foreignKeyRule, $main_res_dataRows);
-                        $main_res_dataRows = $foreignKeyData['dataRows'];
-                    }
-                }
-
-                foreach ($main_res_dataRows as $res_row) {
-                    $row = array();
-                    foreach ($wdtParameters['columnOrder'] as $dataColumn_key) {
-                        if ($wdtParameters['data_types'][$dataColumn_key] == 'formula') {
-                            try {
-                                $headers = array();
-                                $headersInFormula = $this->detectHeadersInFormula($wdtParameters['columnFormulas'][$dataColumn_key], array_keys($wdtParameters['data_types']));
-                                foreach ($headersInFormula as $header) {
-                                    $headers[$header] = WDTTools::sanitizeHeader($header);
-                                }
-
-                                $formulaVal =
-                                    self::solveFormula(
-                                        $wdtParameters['columnFormulas'][$dataColumn_key],
-                                        $headers,
-                                        $res_row
-                                    );
-                                $row[$dataColumn_key] = apply_filters(
-                                    'wpdatatables_filter_cell_output',
-                                    $colObjs[$dataColumn_key]->returnCellValue($formulaVal),
-                                    $this->_wpId,
-                                    $dataColumn_key
-                                );
-                            } catch (Exception $e) {
-                                $row[$dataColumn_key] = 0;
-                            }
-                        } else {
-                            $row[$dataColumn_key] = apply_filters('wpdatatables_filter_cell_output', $colObjs[$dataColumn_key]->returnCellValue($res_row[$dataColumn_key]), $this->_wpId, $dataColumn_key);
-                        }
-                    }
-                    $output['data'][] = $this->formatAjaxQueryResultRow($row);
-                }
-            }
+            $output['data'] = $this->prepareOutputData($main_res_dataRows, $wdtParameters, $colObjs);
 
             // If aggregate functions are requested
             $sumColumns = $this->getSumColumns();
@@ -1888,6 +1860,91 @@ class WPDataTable {
     }
 
     /**
+     * Create the supplementary array of column objects
+     * which we will use for formatting
+     * @param $wdtParameters
+     * @return array
+     */
+    public function prepareColumns($wdtParameters) {
+        $colObjs = array();
+        foreach ($wdtParameters['data_types'] as $dataColumn_key => $dataColumn_type) {
+            $tableColumnClass = static::$_columnClass;
+            $colObjs[$dataColumn_key] = $tableColumnClass::generateColumn($dataColumn_type,
+                array(
+                    'title' => $wdtParameters['columnTitles'][$dataColumn_key],
+                    'decimalPlaces' => $wdtParameters['decimalPlaces'][$dataColumn_key],
+                    'linkTargetAttribute' => $wdtParameters['linkTargetAttribute'][$dataColumn_key],
+                    'linkButtonAttribute' => $wdtParameters['linkButtonAttribute'][$dataColumn_key],
+                    'linkButtonLabel' => $wdtParameters['linkButtonLabel'][$dataColumn_key],
+                    'linkButtonClass' => $wdtParameters['linkButtonClass'][$dataColumn_key]
+                )
+            );
+            $colObjs[$dataColumn_key]->setInputType($wdtParameters['input_types'][$dataColumn_key]);
+            $colObjs[$dataColumn_key]->setParentTable($this);
+            if ($dataColumn_type == 'int') {
+                if (in_array($dataColumn_key, $wdtParameters['skip_thousands']) || ($dataColumn_key == $wdtParameters['idColumn'])) {
+                    $colObjs[$dataColumn_key]->setShowThousandsSeparator(false);
+                    $this->addColumnsThousandsSeparator($dataColumn_key, 0);
+                } else {
+                    $this->addColumnsThousandsSeparator($dataColumn_key, 1);
+                }
+            }
+        }
+        return $colObjs;
+    }
+
+    /**
+     * Reformat output array and reorder as user wanted
+     * @param $main_res_dataRows
+     * @param $wdtParameters
+     * @param $colObjs
+     * @return mixed
+     */
+    public function prepareOutputData($main_res_dataRows, $wdtParameters, $colObjs) {
+        $output = [];
+        if (!empty($main_res_dataRows)) {
+            foreach ($wdtParameters['foreignKeyRule'] as $columnKey => $foreignKeyRule) {
+                if ($foreignKeyRule != null) {
+                    $foreignKeyData = $this->joinWithForeignWpDataTable($columnKey, $foreignKeyRule, $main_res_dataRows);
+                    $main_res_dataRows = $foreignKeyData['dataRows'];
+                }
+            }
+
+            foreach ($main_res_dataRows as $res_row) {
+                $row = array();
+                foreach ($wdtParameters['columnOrder'] as $dataColumn_key) {
+                    if ($wdtParameters['data_types'][$dataColumn_key] == 'formula') {
+                        try {
+                            $headers = array();
+                            $headersInFormula = $this->detectHeadersInFormula($wdtParameters['columnFormulas'][$dataColumn_key], array_keys($wdtParameters['data_types']));
+                            $headers = WDTTools::sanitizeHeaders($headersInFormula);
+                            $formulaVal =
+                                self::solveFormula(
+                                    $wdtParameters['columnFormulas'][$dataColumn_key],
+                                    $headers,
+                                    $res_row
+                                );
+                            $row[$dataColumn_key] = apply_filters(
+                                'wpdatatables_filter_cell_output',
+                                $colObjs[$dataColumn_key]->returnCellValue($formulaVal),
+                                $this->_wpId,
+                                $dataColumn_key
+                            );
+                        } catch (Exception $e) {
+                            $row[$dataColumn_key] = 0;
+                        }
+                    } else {
+                        $row[$dataColumn_key] = apply_filters('wpdatatables_filter_cell_output', $colObjs[$dataColumn_key]->returnCellValue($res_row[$dataColumn_key]), $this->_wpId, $dataColumn_key);
+                    }
+                }
+                $output[] = $this->formatAjaxQueryResultRow($row);
+            }
+        }
+        return $output;
+    }
+
+
+    /**
      * Formatting row data structure for ajax display table
      * @param $row - key => value pairs as column name and cell value of a row
      * @return array
@@ -1943,6 +2000,8 @@ class WPDataTable {
         } elseif (strpos(strtolower($xls_url), '.csv')) {
             $format = 'csv';
             $objReader = new PHPExcel_Reader_CSV();
+            $csvDelimiter = WDTTools::detectCSVDelimiter($xls_url);
+            $objReader->setDelimiter($csvDelimiter);
         } else {
             throw new WDTException('File format not supported!');
         }
@@ -1953,27 +2012,29 @@ class WPDataTable {
         $highestColumn = $objWorksheet->getHighestDataColumn();
 
         $headingsArray = $objWorksheet->rangeToArray('A1:' . $highestColumn . '1', null, true, true, true);
-        $headingsArray = $headingsArray[1];
+        $headingsArray = array_map('trim', $headingsArray[1]);
 
         $r = -1;
         $namedDataArray = array();
+
+        $dataRows = $objWorksheet->rangeToArray('A2:' . $highestColumn . $highestRow, null, true, true, true);
         for ($row = 2; $row <= $highestRow; ++$row) {
-            $dataRow = $objWorksheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, null, true, true, true);
-            if (max($dataRow[$row]) !== null) {
+            if (max($dataRows[$row]) !== null) {
                 ++$r;
                 foreach ($headingsArray as $dataColumnIndex => $dataColumnHeading) {
-                    $namedDataArray[$r][$dataColumnHeading] = $dataRow[$row][$dataColumnIndex];
+                    $dataColumnHeading = trim(preg_replace('/\s\s+/', ' ', str_replace("\n", " ", $dataColumnHeading)));
+                    $namedDataArray[$r][$dataColumnHeading] = $dataRows[$row][$dataColumnIndex];
                     $currentDateFormat = isset($wdtParameters['dateInputFormat'][$dataColumnHeading]) ? $wdtParameters['dateInputFormat'][$dataColumnHeading] : null;
                     if (!empty($wdtParameters['data_types'][$dataColumnHeading]) && in_array($wdtParameters['data_types'][$dataColumnHeading], array('date', 'datetime', 'time'))) {
                         if ($format === 'xls') {
                             $cell = $objPHPExcel->getActiveSheet()->getCell($dataColumnIndex . '' . $row);
-                            if (PHPExcel_Shared_Date::isDateTime($cell)) {
+                            if (PHPExcel_Shared_Date::isDateTime($cell) && $cell->getValue() !== null) {
                                 $namedDataArray[$r][$dataColumnHeading] = PHPExcel_Shared_Date::ExcelToPHP($cell->getValue());
                             } else {
-                                $namedDataArray[$r][$dataColumnHeading] = WDTTools::wdtConvertStringToUnixTimestamp($dataRow[$row][$dataColumnIndex], $currentDateFormat);
+                                $namedDataArray[$r][$dataColumnHeading] = WDTTools::wdtConvertStringToUnixTimestamp($dataRows[$row][$dataColumnIndex], $currentDateFormat);
                             }
                         } elseif ($format === 'csv') {
-                            $namedDataArray[$r][$dataColumnHeading] = WDTTools::wdtConvertStringToUnixTimestamp($dataRow[$row][$dataColumnIndex], $currentDateFormat);
+                            $namedDataArray[$r][$dataColumnHeading] = WDTTools::wdtConvertStringToUnixTimestamp($dataRows[$row][$dataColumnIndex], $currentDateFormat);
                         }
                     }
                 }
@@ -2032,6 +2093,13 @@ class WPDataTable {
         if (get_option('wdtNumbersAlign')) {
             $returnData .= "table.wpDataTable td.numdata { text-align: right !important; }\n";
         }
+
+        if (get_option('wdtBorderRemoval')) {
+            $returnData .= ".wpDataTablesWrapper table.wpDataTable > tbody > tr > td{ border: none !important; }\n";
+        }
+        if (get_option('wdtBorderRemovalHeader')) {
+            $returnData .= ".wpDataTablesWrapper table.wpDataTable > thead > tr > th{ border: none !important; }\n";
+        }
         $returnData .= "</style>\n";
 
         $returnData .= wdtRenderScriptStyleBlock();
@@ -2080,6 +2148,7 @@ class WPDataTable {
             wp_enqueue_style('wdt-wpdatatables', WDT_CSS_PATH . 'wdt.frontend.min.css');
 
             wp_enqueue_script('wdt-wpdatatables', WDT_JS_PATH . 'wpdatatables/wdt.frontend.min.js', array('wdt-common'), false, true);
+            wp_localize_script('wdt-wpdatatables', 'ajax_object', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ));
         } else {
             wp_enqueue_style('wdt-wpdatatables', WDT_CSS_PATH . 'wpdatatables.min.css');
             wp_enqueue_style('wdt-table-tools', WDT_CSS_PATH . 'TableTools.css');
@@ -2089,7 +2158,8 @@ class WPDataTable {
                 wp_enqueue_script('wdt-datatables', WDT_JS_PATH . 'jquery-datatables/jquery.dataTables.min.js', array(), false, true);
             }
             if ($this->filterEnabled()) {
-                wp_enqueue_script('wdt-advanced-filter', WDT_JS_PATH . 'jquery-datatables/jquery.dataTables.columnFilter.js', array(), false, true);
+                wp_enqueue_script('wdt-advanced-filter', WDT_JS_PATH . 'wpdatatables/wdt.columnFilter.js', array(), false, true);
+                wp_localize_script('wdt-advanced-filter', 'ajax_object', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ));
             }
             if ($this->groupingEnabled()) {
                 wp_enqueue_script('wdt-row-grouping', WDT_JS_PATH . 'jquery-datatables/jquery.dataTables.rowGrouping.js', array('jquery', 'wdt-datatables'), false, true);
@@ -2145,6 +2215,8 @@ class WPDataTable {
             wp_enqueue_media();
         }
 
+        do_action('wdt_enqueue_on_frontend', $this);
+
         wp_localize_script('wdt-common', 'wpdatatables_edit_strings', WDTTools::getTranslationStrings());
         wp_localize_script('wdt-wpdatatables', 'wpdatatables_settings', WDTTools::getDateTimeSettings());
         wp_localize_script('wdt-wpdatatables', 'wpdatatables_frontend_strings', WDTTools::getTranslationStrings());
@@ -2170,12 +2242,19 @@ class WPDataTable {
             'exactFiltering' => array(),
             'filterDefaultValue' => array(),
             'filterLabel' => array(),
+            'checkboxesInModal' => array(),
+            'filterTypes' => array(),
             'foreignKeyRule' => array(),
             'possibleValues' => array(),
             'possibleValuesAddEmpty' => array(),
+            'possibleValuesAjax' => array(),
             'possibleValuesType' => array(),
             'sorting' => array(),
             'userIdColumnHeader' => NULL,
+            'linkTargetAttribute' => array(),
+            'linkButtonAttribute' => array(),
+            'linkButtonLabel' => array(),
+            'linkButtonClass' => array()
         );
 
         if ($tableData) {
@@ -2187,10 +2266,10 @@ class WPDataTable {
                 if ($column->width) {
                     $returnArray['columnWidths'][$column->orig_header] = $column->width;
                 }
-                if ($column->type != 'autodetect') {
+                if ($column->type !== 'autodetect') {
                     $returnArray['columnTypes'][$column->orig_header] = $column->type;
                 }
-                if ($column->type == 'formula') {
+                if ($column->type === 'formula') {
                     $returnArray['columnFormulas'][$column->orig_header] = $column->formula;
                 }
                 if ($tableData->edit_only_own_rows && $tableData->userid_column_id == $column->id) {
@@ -2205,11 +2284,17 @@ class WPDataTable {
                 $returnArray['editingDefaultValue'][$column->orig_header] = isset($column->editingDefaultValue) ? $column->editingDefaultValue : null;
                 $returnArray['exactFiltering'][$column->orig_header] = isset($column->exactFiltering) ? $column->exactFiltering : null;
                 $returnArray['filterLabel'][$column->orig_header] = isset($column->filterLabel) ? $column->filterLabel : null;
+                $returnArray['checkboxesInModal'][$column->orig_header] = isset($column->checkboxesInModal) ? $column->checkboxesInModal : null;
                 $returnArray['foreignKeyRule'][$column->orig_header] = isset($column->foreignKeyRule) ? $column->foreignKeyRule : null;
                 $returnArray['possibleValues'][$column->orig_header] = isset($column->valuesList) ? $column->valuesList : null;
                 $returnArray['possibleValuesAddEmpty'][$column->orig_header] = isset($column->possibleValuesAddEmpty) ? $column->possibleValuesAddEmpty : null;
+                $returnArray['possibleValuesAjax'][$column->orig_header] = isset($column->possibleValuesAjax) ? $column->possibleValuesAjax : null;
                 $returnArray['possibleValuesType'][$column->orig_header] = isset($column->possibleValuesType) ? $column->possibleValuesType : null;
                 $returnArray['sorting'][$column->orig_header] = isset($column->sorting) ? $column->sorting : null;
+                $returnArray['linkTargetAttribute'][$column->orig_header]= isset($column->linkTargetAttribute) ? $column->linkTargetAttribute : null;
+                $returnArray['linkButtonAttribute'][$column->orig_header]= isset($column->linkButtonAttribute) ? $column->linkButtonAttribute : null;
+                $returnArray['linkButtonLabel'][$column->orig_header]= isset($column->linkButtonLabel) ? $column->linkButtonLabel : null;
+                $returnArray['linkButtonClass'][$column->orig_header]= isset($column->linkButtonClass) ? $column->linkButtonClass : null;
             }
         }
         return $returnArray;
@@ -2260,9 +2345,7 @@ class WPDataTable {
     public function calcFormulaPreview($formula) {
         $headers = array();
         $headersInFormula = $this->detectHeadersInFormula($formula);
-        foreach ($headersInFormula as $header) {
-            $headers[$header] = WDTTools::sanitizeHeader($header);
-        }
+	    $headers = WDTTools::sanitizeHeaders($headersInFormula);
 
         $count = count($this->_dataRows) > 5 ? 5 : count($this->_dataRows);
         $result = __('Unable to calculate', 'wpdatatables');
@@ -2286,6 +2369,7 @@ class WPDataTable {
      *
      * @param $tableData
      * @param $columnData
+     * @throws WDTException
      */
     public function fillFromData($tableData, $columnData) {
         if (empty($tableData->table_type)) {
@@ -2330,11 +2414,17 @@ class WPDataTable {
         if (isset($columnData['filterLabel'])) {
             $params['filterLabel'] = $columnData['filterLabel'];
         }
+        if (isset($columnData['checkboxesInModal'])) {
+            $params['checkboxesInModal'] = $columnData['checkboxesInModal'];
+        }
         if (isset($columnData['possibleValuesType'])) {
             $params['possibleValuesType'] = $columnData['possibleValuesType'];
         }
         if (isset($columnData['possibleValuesAddEmpty'])) {
             $params['possibleValuesAddEmpty'] = $columnData['possibleValuesAddEmpty'];
+        }
+        if (isset($columnData['possibleValuesAjax'])) {
+            $params['possibleValuesAjax'] = $columnData['possibleValuesAjax'];
         }
         if (isset($columnData['foreignKeyRule'])) {
             $params['foreignKeyRule'] = $columnData['foreignKeyRule'];
@@ -2345,6 +2435,19 @@ class WPDataTable {
         if (isset($columnData['dateInputFormat'])) {
             $params['dateInputFormat'] = $columnData['dateInputFormat'];
         }
+        if (isset($columnData['linkTargetAttribute'])){
+            $params['linkTargetAttribute'] = $columnData['linkTargetAttribute'];
+        }
+        if (isset($columnData['linkButtonAttribute'])){
+            $params['linkButtonAttribute'] = $columnData['linkButtonAttribute'];
+        }
+        if (isset($columnData['linkButtonLabel'])){
+            $params['linkButtonLabel'] = $columnData['linkButtonLabel'];
+        }
+        if (isset($columnData['linkButtonClass'])){
+            $params['linkButtonClass'] = $columnData['linkButtonClass'];
+        }
+
 
         switch ($tableData->table_type) {
             //[<-- Full version -->]//
@@ -2424,6 +2527,21 @@ class WPDataTable {
             default:
                 // Solution for addons
                 if (has_action('wpdatatables_generate_' . $tableData->table_type)) {
+                    //Check if Server-side processing is integrated in Add-on
+                    if (isset(json_decode($tableData->advanced_settings, true)[$tableData->table_type]['hasServerSideIntegration'])) {
+                        if (!empty($tableData->server_side)) {
+                            $this->enableServerProcessing();
+                            if (!empty($tableData->auto_refresh)) {
+                                $this->setAutoRefresh((int)$tableData->auto_refresh);
+                            }
+                        }
+                        if (!empty($tableData->editable)) {
+                            $editor_roles = isset($tableData->editor_roles) ? $tableData->editor_roles : '';
+                            if (wdtCurrentUserCanEdit($editor_roles, $this->getWpId())) {
+                                $this->enableEditing();
+                            }
+                        }
+                    }
                     do_action(
                         'wpdatatables_generate_' . $tableData->table_type,
                         $this,
@@ -2519,6 +2637,8 @@ class WPDataTable {
             $this->prepareRenderingRules($tableData->columns);
         }
 
+        do_action('wdt_extend_wpdatatable_object', $this, $tableData);
+
     }
 
     /**
@@ -2533,7 +2653,9 @@ class WPDataTable {
         }
 
         // Define all column-dependent rendering rules
-        foreach ($columnData as $column) {
+        foreach ($columnData as $key=>$column) {
+
+	        $this->column_id = $key;
             // Set filter types
             $this->getColumn($column->orig_header)->setFilterType($column->filter_type);
             // Set CSS class
@@ -2619,7 +2741,11 @@ class WPDataTable {
                 ->setNotNull((bool)$column->input_mandatory);
 
             // Get display before/after and color
-            $cssColumnHeader = 'column-' . sanitize_html_class(strtolower(str_replace(' ', '-', $column->orig_header)));
+	        if (sanitize_html_class(strtolower(str_replace(' ', '-', $column->orig_header))) === '') {
+		        $cssColumnHeader = 'column-' . $this->column_id;
+	        } else {
+		        $cssColumnHeader = 'column-' . sanitize_html_class( strtolower( str_replace( ' ', '-', $column->orig_header ) ) );
+	        }
             if ($column->text_before != '') {
                 $this->_columnsCSS .= "\n#{$this->getId()} > tbody > tr > td.{$cssColumnHeader}:not(:empty):before,
                                        \n#{$this->getId()} > tbody > tr.row-detail ul li.{$cssColumnHeader} span.columnValue:before
@@ -2661,6 +2787,7 @@ class WPDataTable {
 
         $obj = new stdClass();
         $obj->tableId = $this->getId();
+        $obj->tableType = $this->getTableType();
         $obj->selector = '#' . $this->getId();
         //[<-- Full version -->]//
         $obj->responsive = $this->isResponsive();
@@ -2702,7 +2829,7 @@ class WPDataTable {
         //[<--/ Full version -->]//
         if ($this->paginationEnabled()) {
             $obj->dataTableParams->bPaginate = true;
-            $obj->dataTableParams->aLengthMenu = json_decode('[[10,25,50,100,-1],[10,25,50,100,"All"]]');
+            $obj->dataTableParams->aLengthMenu = json_decode('[[1,5,10,25,50,100,-1],[1,5,10,25,50,100,"All"]]');
             $obj->dataTableParams->iDisplayLength = (int)$this->getDisplayLength();
         } else {
             $obj->dataTableParams->bPaginate = false;
@@ -2757,9 +2884,9 @@ class WPDataTable {
                 $obj->advancedFilterOptions['sPlaceHolder'] = "head:before";
             }
             if ($this->getFilteringForm()) {
-                $obj->externalFilter = true;
+                $obj->filterInForm = true;
             } else {
-                $obj->externalFilter = false;
+                $obj->filterInForm = false;
                 if ($this->isClearFilters()) {
                     (!isset($obj->dataTableParams->buttons)) ? $obj->dataTableParams->buttons = array() : '';
                     $obj->dataTableParams->buttons[] =
@@ -2783,6 +2910,7 @@ class WPDataTable {
                         'extend' => 'colvis',
                         'className' => 'DTTT_button DTTT_button_colvis',
                         'text' => __('Columns', 'wpdatatables')
+
                     );
             }
             if (!empty($this->_tableToolsConfig['print'])) {
@@ -2887,6 +3015,11 @@ class WPDataTable {
             if (isset($wdtVar3) && $wdtVar3 !== '') {
                 $obj->dataTableParams->ajax['url'] .= '&wdt_var3=' . urlencode($wdtVar3);
             }
+            if (isset($_GET['wdt_column_filter']) && $_GET['wdt_column_filter'] !== '') {
+                foreach ($_GET['wdt_column_filter'] as $fltColKey => $fltDefVal) {
+                    $obj->dataTableParams->ajax['url'] .= '&wdt_column_filter['. urlencode($fltColKey) .']=' . urlencode($fltDefVal);
+                }
+            }
             $obj->fnServerData = true;
         } else {
             $obj->serverSide = false;
@@ -2939,7 +3072,7 @@ class WPDataTable {
 
         $obj->dataTableParams->oSearch = array('bSmart' => false, 'bRegex' => false, 'sSearch' => $this->getDefaultSearchValue());
 
-        $obj = apply_filters('wpdatatables_filter_table_description', $obj, $this->getWpId());
+        $obj = apply_filters('wpdatatables_filter_table_description', $obj, $this->getWpId(), $this);
 
         return json_encode($obj, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG);
     }
@@ -2950,9 +3083,11 @@ class WPDataTable {
      * @param $foreignKeyRule
      * @param $dataRows
      * @return mixed
+     * @throws Exception
+     * @throws WDTException
      */
     public function joinWithForeignWpDataTable($columnKey, $foreignKeyRule, $dataRows) {
-        $joinedTable = WPDataTable::loadWpDataTable($foreignKeyRule->tableId);
+        $joinedTable = self::loadWpDataTable($foreignKeyRule->tableId);
         $distinctValues = $joinedTable->getDistinctValuesForColumns($foreignKeyRule);
         foreach ($dataRows as &$dataRow) {
             $dataRow[$columnKey] = isset($distinctValues[$dataRow[$columnKey]]) ? $distinctValues[$dataRow[$columnKey]] : $dataRow[$columnKey];
@@ -2973,13 +3108,16 @@ class WPDataTable {
      * @return array
      */
     public function getDistinctValuesForColumns($foreignKeyRule) {
+	    global $wdtVar1, $wdtVar2, $wdtVar3, $wpdb;
+
         $distinctValues = array();
         $storeColumnName = $foreignKeyRule->storeColumnName;
         $displayColumnName = $foreignKeyRule->displayColumnName;
         $tableType = $this->getTableType();
 
-        if ($tableType == 'mysql' || $tableType == 'manual') {
+        if ($tableType === 'mysql' || $tableType === 'manual') {
             $tableContent = $this->getTableContent();
+	        $tableContent = WDTTools::applyPlaceholders($tableContent);
 
             $distValuesQuery = "SELECT(`$storeColumnName`) AS `$storeColumnName`, (`$displayColumnName`) AS `$displayColumnName` FROM ($tableContent) tbl GROUP BY $storeColumnName ORDER BY $displayColumnName";
 
@@ -3012,6 +3150,7 @@ class WPDataTable {
      * Delete table by ID
      * @param $tableId
      * @return bool
+     * @throws Exception
      */
     public static function deleteTable($tableId) {
         global $wpdb;
@@ -3062,6 +3201,8 @@ class WPDataTable {
      * @param null $tableView
      * @param bool $disableLimit
      * @return WPDataTable|WPExcelDataTable|bool
+     * @throws Exception
+     * @throws WDTException
      */
     public static function loadWpDataTable($tableId, $tableView = null, $disableLimit = false) {
         $tableData = WDTConfigController::loadTableFromDB($tableId);
@@ -3070,7 +3211,7 @@ class WPDataTable {
             $tableData->disable_limit = $disableLimit;
         }
 
-        $wpDataTable = $tableView == 'excel' ? new WPExcelDataTable() : new self();
+        $wpDataTable = $tableView === 'excel' ? new WPExcelDataTable() : new self();
         $wpDataTable->setWpId($tableId);
 
         $columnDataPrepared = $wpDataTable->prepareColumnData($tableData);

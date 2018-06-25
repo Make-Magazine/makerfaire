@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php
 /**
@@ -140,7 +140,9 @@
                             <!-- /input URL or path -->
                         </div>
 
-                        <div class="col-sm-6 mysql-settings-block hidden">
+                        <?php do_action('wdt_add_data_source_elements'); ?>
+
+                        <div class="col-sm-6 hidden wdt-server-side-processing">
                             <!-- Server side processing toggle -->
                             <h4 class="c-black m-b-20">
                                 <?php _e('Server-side processing', 'wpdatatables'); ?>
@@ -150,13 +152,12 @@
                             <div class="toggle-switch" data-ts-color="blue">
                                 <label for="wdt-server-side"
                                        class="ts-label"><?php _e('Enable server-side processing', 'wpdatatables'); ?></label>
-                                <input id="wdt-server-side" type="checkbox" hidden="hidden" checked="checked">
+                                <input id="wdt-server-side" class="wdt-server-side" type="checkbox" hidden="hidden" checked="checked">
                                 <label for="wdt-server-side" class="ts-helper"></label>
                             </div>
                             <!-- /Server side processing toggle -->
                         </div>
 
-                        <?php do_action('wdt_add_data_source_elements'); ?>
 
                     </div>
                     <!-- /.row -->
@@ -309,6 +310,8 @@
                                 <div class="fg-line">
                                     <div class="select">
                                         <select class="form-control selectpicker" id="wdt-rows-per-page">
+                                            <option value="1">1</option>
+                                            <option value="5">5</option>
                                             <option value="10">10</option>
                                             <option value="25">25</option>
                                             <option value="50">50</option>
@@ -357,7 +360,7 @@
                         <div class="col-sm-4 m-b-20 wdt-scrollable-block">
 
                             <h4 class="c-black m-b-20">
-                                Scrollable
+                                <?php _e('Scrollable', 'wpdatatables'); ?>
                                 <i class="zmdi zmdi-help-outline" data-popover-content="#scrollable-hint"
                                    data-toggle="html-popover" data-trigger="hover" data-placement="right"></i>
                             </h4>
@@ -575,8 +578,7 @@
                             <!-- Hidden popover with image hint -->
                             <div class="hidden" id="global-search-hint">
                                 <div class="popover-heading">
-                                    <?php _e('Global sear
-                                                ch', 'wpdatatables'); ?>
+                                    <?php _e('Global search', 'wpdatatables'); ?>
                                 </div>
 
                                 <div class="popover-body">
@@ -634,7 +636,7 @@
 
                         </div>
 
-                        <div class="col-sm-4 m-b-20 wdt-clear-filters-block">
+                        <div class="col-sm-4 m-b-20 wdt-clear-filters-block filtering-form-block">
 
                             <h4 class="c-black m-b-20">
                                 <?php _e('Clear filters button', 'wpdatatables'); ?>
@@ -672,9 +674,10 @@
 
                         </div>
 
+                        <?php do_action('wdt_add_sorting_and_filtering_element'); ?>
+
                     </div>
                     <!-- /.row -->
-
 
                 </div>
                 <!-- /Table sorting and filtering settings -->
@@ -830,11 +833,10 @@
                             <div class="select">
                                 <select class="form-control selectpicker" multiple="multiple"
                                         title="<?php _e('Everyone', 'wpdatatables'); ?>" id="wdt-editor-roles">
-                                    <option value="Administrator"><?php _e('Administrators', 'wpdatatables'); ?></option>
-                                    <option value="Editor"><?php _e('Editors', 'wpdatatables'); ?></option>
-                                    <option value="Author"><?php _e('Authors', 'wpdatatables'); ?></option>
-                                    <option value="Contributor"><?php _e('Contributors', 'wpdatatables'); ?></option>
-                                    <option value="Subscriber"><?php _e('Subscribers', 'wpdatatables'); ?></option>
+                                    <?php foreach ($wdtUserRoles as $wdtUserRole) {
+                                        /** @noinspection $wdtUserRoles */ ?>
+                                        <option value="<?php echo $wdtUserRole['name'] ?>"><?php echo $wdtUserRole['name'] ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
 
@@ -970,7 +972,7 @@
 
                     <div class="row">
                         <div class="col-md-12 m-b-20">
-                            <small><?php _e('Placeholders can be understood as predefined ‘search and replace‘ templates; that will be replaced with some actual values at the execution time; usually this is used for MySQL queries.', 'wpdatatables'); ?></small>
+                            <small><?php _e('Placeholders can be understood as predefined ‘search and replace‘ templates; that will be replaced with some actual values at the execution time; usually this is used for MySQL queries, but you can use it for XMl,JSON and PHP serialized array. ', 'wpdatatables'); ?></small>
                         </div>
                     </div>
 

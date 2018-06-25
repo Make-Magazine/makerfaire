@@ -144,10 +144,11 @@
 .wpDataTablesWrapper .dataTables_paginate {
     float: right;
     text-align: right;
+    background-color: transparent;
 }
 
 .wpDataTablesWrapper .paging_full_numbers {
-    height: 22px;
+    height: 35px;
     line-height: 22px;
 }
 
@@ -186,8 +187,9 @@
 .wpDataTablesWrapper .dataTables_paginate {
     float: right;
     text-align: right;
-    margin-top: 10px;
+    margin-top: 5px;
 }
+
 .wpDataTablesWrapper .dataTables_paginate a {
     display: inline-block;
     height: auto;
@@ -195,6 +197,7 @@
     padding: 2px 7px;
     vertical-align: middle;
 }
+
 .wpDataTablesWrapper .paginate_button:before {
     font-size: 14px;
     line-height: 1em;
@@ -240,7 +243,7 @@
     vertical-align: middle;
 }
 
-.wpDataTablesWrapper .checkbox-filter.btn:before {
+.wpDataTablesWrapper .wdt-checkbox-filter.btn:before {
     content: "\e00a";
 }
 
@@ -294,11 +297,10 @@
     content:"\e817"
 }
 
-button.wdt-clear-filters-button:before, button.wdt-clear-all-filters-button:before {
+button.wdt-clear-filters-button:before, button.wdt-clear-filters-widget-button:before {
     font-family: WPDataTablesIcons;
     content: "\e817";
 }
-
 
 /*  Table Length and Search  */
 .wpDataTablesWrapper .dataTables_length {
@@ -335,7 +337,7 @@ div.wpDataTablesFilter span.filter_column .time-range-filter:first-child,
 div.wpDataTablesFilter span.filter_column .number-range-filter:first-child {
     margin-right: 8px;
 }
-.wpDataTablesWrapper .wdtCheckboxModalWrap,
+.wpDataTablesWrapper .wdt-checkbox-modal-wrap,
 .wpDataTablesWrapper .wpDataTablesFilter {
     overflow: hidden;
     display: initial;
@@ -353,7 +355,7 @@ div.wpDataTablesFilter span.filter_column .number-range-filter:first-child {
 .wpDataTables textarea.wpdt-tiny-mce {
     display: none !important;
 }
-.wpDataTables .checkbox-filter.btn,
+.wpDataTables .wdt-checkbox-filter.btn,
 .wpDataTables select,
 .wpDataTables textarea {
     font-size: inherit!important;
@@ -366,14 +368,14 @@ div.wpDataTablesFilter span.filter_column .number-range-filter:first-child {
     text-transform: inherit;
 }
 
-.wpDataTables .checkbox-filter.btn,
+.wpDataTables .wdt-checkbox-filter.btn,
 .wpDataTables input[type=text],
 .wpDataTables select,
 .wpdt-c .wpDataTablesWrapper .filter_column button {
     height: 30px!important;
 }
 
-.wpDataTables .checkbox-filter.btn {
+.wpDataTables .wdt-checkbox-filter.btn {
     width: 100%;
     white-space: nowrap;
     overflow: hidden !important;
@@ -385,22 +387,33 @@ div.wpDataTablesFilter span.filter_column .number-range-filter:first-child {
     float: left;
     padding: 15px;
 }
-.wpDataTablesFilter .wpDataTableFilterSection {
+.wpDataTableFilterBox .wpDataTableFilterSection div:first-child{
+    margin-top: 5px;
+}
+.wpDataTablesFilter .wpDataTableFilterSection:not(#wdt-clear-filters-button-block):not(#wdt-cf-search-filters-button-block) {
     float: left;
     margin-bottom: 10px;
     margin-right: 15px;
-    min-width: 230px;
+    width: 230px;
     min-height: 115px;
 }
+
+.sidebar .wpDataTablesFilter .wpDataTableFilterSection:not(#wdt-clear-filters-button-block):not(#wdt-cf-search-filters-button-block) {
+    min-height: 50px;
+}
 .wpDataTablesFilter .wpDataTableFilterSection input.form-control{
-    min-height: 31px;
+    height: 30px;
 }
 .wpDataTablesFilter .wpDataTableFilterSection#wdt-clear-filters-button-block {
+    display: inline-block;
     margin-bottom: 0px;
-    padding-top: 35px;
+    padding-top: 42px;
+}
+.wpDataTablesFilter .wpDataTableFilterSection span.filter_column.filter_checkbox .wdt_checkbox_option{
+    width: 100%;
 }
 
-span.filter_column.filter_number_range {
+span.filter_column.wdt-filter-number-range {
     white-space: normal;
 }
 .wpDataTablesFilter .number_range_filter:first-child {
@@ -408,15 +421,15 @@ span.filter_column.filter_number_range {
 }
 
 
-.wdtCheckboxModalWrap {
+.wdt-checkbox-modal-wrap {
     margin-bottom: 15px;
 }
-.wdtCheckboxModalWrap:after,
-.wdtCheckboxModalWrap:before {
+.wdt-checkbox-modal-wrap:after,
+.wdt-checkbox-modal-wrap:before {
     content: " ";
     display: table;
 }
-.wdtCheckboxModalWrap:after {
+.wdt-checkbox-modal-wrap:after {
     clear: both;
 }
 @media(max-width:979px) {
@@ -550,22 +563,22 @@ div.dt-button-collection a.dt-button.active:not(.disabled) {
     }
 }
 
-div.wdtCheckboxModalWrap div.wdt_checkbox_option {
+div.wdt-checkbox-modal-wrap div.wdt-checkbox-option {
     width: 33%;
     float: left;
 }
 
-div.wdtCheckboxModalWrap div.wdt_checkbox_option {
+div.wdt-checkbox-modal-wrap div.wdt-checkbox-option {
     width: 33%;
     float: left;
     position: relative;
 }
 
-div.wdtCheckboxModalWrap > div > div {
+div.wdt-checkbox-modal-wrap > div > div {
     width: 100%
 }
 
-div.wdtCheckboxModalWrap div.wdt_checkbox_option label {
+div.wdt-checkbox-modal-wrap div.wdt-checkbox-option label {
     white-space: nowrap;
     width: 85%;
     overflow: hidden;
@@ -697,7 +710,7 @@ div.wdtCheckboxModalWrap div.wdt_checkbox_option label {
     clear: both;
 }
 
-.wpdt-c button.checkbox-filter:hover:after,
+.wpdt-c button.wdt-checkbox-filter:hover:after,
 .wpdt-c button.dropdown-toggle:hover:after {
     width: 0;
 }
@@ -713,4 +726,41 @@ div.wdtCheckboxModalWrap div.wdt_checkbox_option label {
     font-weight: normal;
     color: #000;
     font-size: 19.5px;
+}
+
+/* Theme fixes */
+
+.wpdt-c .btn-group.bootstrap-select .inner .text {
+    margin-top: inherit;
+    position: inherit;
+    top: inherit;
+    text-align: center;
+    width: inherit;
+}
+
+.wpdt-c .modal {
+    width: inherit;
+    margin-left: inherit;
+    background-color: inherit;
+    border: inherit;
+    -webkit-border-radius: inherit;
+    -moz-border-radius: inherit;
+    border-radius: inherit;
+    -webkit-box-shadow: inherit;
+    -moz-box-shadow: inherit;
+    box-shadow: inherit;
+    -webkit-background-clip: inherit;
+    -moz-background-clip: inherit;
+    background-clip: inherit;
+}
+
+.wpdt-c .bootstrap-select .status {
+    background: #F7F7F7;
+    clear: both;
+    color: #999;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: -5px;
+    padding: 13px 20px;
 }

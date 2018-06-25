@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 
 /**
  * Settings file for the wpDataTables plugin
@@ -9,7 +9,7 @@ defined('ABSPATH') or die("Cannot access pages directly.");
 
 // Current version
 //[<-- Full version -->]//
-define('WDT_CURRENT_VERSION', '2.0.2');
+define('WDT_CURRENT_VERSION', '2.2.1');
 //[<--/ Full version -->]//
 //[<-- Full version insertion #15 -->]//
 

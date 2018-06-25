@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <div class="row">
 
@@ -146,7 +146,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <input type="number" name="border-width" id="border-width"
-                                               class="form-control input-sm" value=""/>
+                                               class="form-control input-sm" value="0"/>
                                     </div>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <input type="number" name="border-radius" id="border-radius"
-                                               class="form-control input-sm" value=""/>
+                                               class="form-control input-sm" value="0"/>
                                     </div>
                                 </div>
                             </div>
@@ -506,9 +506,9 @@
                                    title="<?php _e('Configure a vertical crosshair that follows either the mouse pointer or the hovered point lines', 'wpdatatables'); ?>"></i>
                             </h4>
                             <div class="toggle-switch p-b-20 p-t-5" data-ts-color="blue">
-                                <label for="vertical-axis-crosshair"><?php _e('Do you want to show grid on the chart', 'wpdatatables'); ?></label>
+                                <label for="vertical-axis-crosshair"><?php _e('Show y-Axis crosshair', 'wpdatatables'); ?></label>
                                 <input id="vertical-axis-crosshair" type="checkbox" hidden="hidden">
-                                <label for=" vertical-axis-crosshair" class="ts-helper"></label>
+                                <label for="vertical-axis-crosshair" class="ts-helper"></label>
                             </div>
                         </div>
                         <div class="google" id="vertical-axis-direction-row">

@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <select name="action<?php echo $two ?>" class="form-group fg-line wpdt-bulk-select selectpicker" tabindex="-98"
         id="bulk-action-selector-<?php echo esc_attr($which) ?>">

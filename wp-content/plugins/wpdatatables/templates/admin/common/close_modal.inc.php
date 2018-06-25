@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <!-- #wdt-backend-close-modal -->
 <div class="modal fade" id="wdt-backend-close-modal" data-backdrop="static" data-keyboard="false" tabindex="-1"

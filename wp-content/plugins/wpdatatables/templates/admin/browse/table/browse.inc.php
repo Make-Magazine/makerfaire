@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <!-- .wdt-datatables-admin-wrap -->
 <div class="wrap wdt-datatables-admin-wrap">
@@ -55,7 +55,7 @@
     <!-- /Delete modal -->
 
     <!-- Duplicate table modal -->
-    <?php include WDT_TEMPLATE_PATH . 'admin/browse/table/duplicate_modal.inc.php'; ?>
+    <?php include WDT_TEMPLATE_PATH . 'admin/browse/table/duplicate_table_modal.inc.php'; ?>
     <!-- /Duplicate table modal -->
 
 </div>

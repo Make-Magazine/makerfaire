@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <!-- .wdt-datatables-admin-wrap -->
 <div class="wrap wdt-datatables-admin-wrap">
@@ -49,6 +49,10 @@
 
     </div>
     <!-- .container -->
+
+    <!-- Duplicate chart modal -->
+	<?php include WDT_TEMPLATE_PATH . 'admin/browse/chart/duplicate_chart_modal.inc.php'; ?>
+    <!-- /Duplicate chart modal -->
 
     <!-- Delete modal -->
     <?php include WDT_TEMPLATE_PATH . 'common/delete_modal.inc.php'; ?>
