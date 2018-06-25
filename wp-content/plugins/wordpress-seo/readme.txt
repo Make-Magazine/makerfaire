@@ -5,8 +5,8 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: SEO, XML sitemap, Google Search Console, Content analysis, Readability
 Requires at least: 4.8
-Tested up to: 4.9.5
-Stable tag: 7.4.2
+Tested up to: 4.9.6
+Stable tag: 7.6.1
 Requires PHP: 5.2.4
 
 Improve your WordPress SEO: Write better content and have a fully optimized WordPress site using the Yoast SEO plugin.
@@ -106,71 +106,57 @@ You'll find answers to many of your questions on [kb.yoast.com](https://yoa.st/1
 
 == Changelog ==
 
-= 7.4.2 =
-Release Date: May 3rd, 2018
+= 7.6.1 =
+Release Date: June 7th, 2018
 
 Bugfixes:
-* Fixes automatic image size detection for OpenGraph images. When an image was used that was too large, we wouldn't output the `og:image` tag. That is now fixed.
-* Fixes a bug where portrait images where not allowed for the OpenGraph image.
+* Fixes a bug where a JavaScript error was thrown on the post-edit page when certain plugins are active.
+* Fixes a bug where stylesheet definitions would impact form fields of metaboxes on the post-edit pages. The definitions have been contained in a Yoast-selector.
 
-= 7.4.1 =
-Release Date: May 2nd, 2018
-
-Bugfixes:
-* Re-adds `wpseo_opengraph_image_size` filter. This will completely override any automatic size determination our code does. This filter now also applies to all ways an `og:image` can be determined: In the content, as a featured image or as set in our Facebook image setting.
-* Fixes an unintended backwards incompatible change which caused "Warning: Illegal string offset ‘url’ in".
-* Fixes an unintended change which caused SVGs to be included in consideration for the `og:image` tag. SVG images are not allowed by Facebook, so these should never be used in the `og:image` tag.
-
-= 7.4.0 =
-Release Date: May 1st, 2018
+= 7.6.0 =
+Release Date: June 5th, 2018
 
 Enhancements:
-* Adds OpenGraph image dimension-meta tags for more images.
-* Excludes images from being used in OpenGraph meta tags, if the image is larger than 2MB.
-* Adds caching for images found in a post to reduce load.
-* Adds image alt tag to the OpenGraph output, using the meta tag `og:image:alt`.
-* Adds the `is_post_type_viewable` WordPress function to improve support for the `wpseo_accessible_post_types` filters.
+* Adds Flesch Reading Ease for Russian.
+* Adds Catalan transition words.
+* Adds a tab to the Help Center on posts, pages, terms and custom post types which explains which template variables can be used in the Snippet Preview.
 
 Bugfixes:
-* Fixes a bug where a non-array value causes a fatal error when `cron_schedules` filter has been executed.
-* Fixes a bug where not all database tables were removed when a subsite was deleted in a multisite environment.
-* Fixes a bug where deleting multiple posts might cause performance issues. Props to [Moeini](https://github.com/abolfazl-moeini).
+* Fixes a bug where sequences of symbols which do not contain a single letter or digit were considered as valid keywords.
+* Fixes a bug where Flesch Reading Ease translation strings were not fully translated.
+* Fixes a bug where numbers-only keywords caused the analysis to fail.
+* Fixes a bug where the active keyword in the state wasn't updated whenever changes were made in the keyword field.
+* Fixes a bug where replacevars based on custom fields would throw an error due to a missing ID.
 
 Other:
-* Introduces a message, warning about dropping of PHP 5.2 support in an upcoming version.
-* Alters the configuration service text in the Configuration Wizard when a user is already running Yoast SEO Premium. Previously the text contained a reference to getting a bundled copy of Premium, even if the user was already running Premium.
+* Changes the maximum meta description length from 320 to 156 characters.
+* Fixes typo in $field_defs parameter description for wpseo_metabox_entries filter.
+* Restores the warning for using unsupported replacement variables on the search appearance settings page.
 
-= 7.3.0 =
-Release Date: April 17th, 2018
+= 7.5.3 =
+Release Date: May 30th, 2018
+
+* Added hooks and filters to allow our new [search index purge](https://wordpress.org/plugins/yoast-seo-search-index-purge/) plugin to work. You’re encouraged to read [this post about an attachment URL problem](https://yoa.st/2r8) for more info.
+
+= 7.5.1 =
+Release Date: May 16th, 2018
+
+Bugfixes:
+* Fixes a bug where the auto-generating of the slug did not work as expected due to persisting of the post name too agressively.
+
+= 7.5.0 =
+Release Date: May 15th, 2018
 
 Enhancements:
-* Removes the `intl` polyfill and shows a message on browsers that don't support this feature.
-* Adds Baidu Webmaster Tools verification support.
-* Adds import functionality for [Premium SEO Pack](https://wordpress.org/plugins/premium-seo-pack/).
-* Adds import functionality for [Smartcrawl SEO](https://wordpress.org/plugins/smartcrawl-seo/).
-* Adds import functionality for [Squirrly SEO](https://wordpress.org/plugins/squirrly-seo/).
-* Adds import functionality for [Platinum SEO Pack](https://wordpress.org/plugins/platinum-seo-pack/).
-* Adds import functionality for [SEO Framework](https://wordpress.org/plugins/autodescription/).
-* Adds import functionality for [Greg's High Performance SEO](https://wordpress.org/plugins/gregs-high-performance-seo/).
-* Adds import functionality for [WP Meta SEO](https://wordpress.org/plugins/wp-meta-seo/).
-* Improves the social data import for the wpSEO.de plugin.
-* Removes the debug data from the admin pages, which were only showing when WordPress is in DEBUG mode.
-* Applies Select2 to all select boxes on breadcrumbs page.
-* Attempts to reset `opcode` cache during the upgrade routine.
-* Changes the wording for the Ryte indexability check on the features tab.
+* Adds readability analysis for Russian.
+* Improves accessibility.
 
 Bugfixes:
-* Prevents hard casting to array in the `WPSEO_Link_Columns::add_post_columns` method signature.
-* Fixes a bug where an error is thrown when MySQL has the `sql-mode` set to `ANSI_QUOTES`.
-* Fixes a bug where the pagination overlaps the cornerstone information message, on post overview pages in combination with low resolutions.
-* Fixed a bug where the keyword filter doesn't work on the post overview page.
-* Removes HTML entities from the HTML comment that appears for admins when there's no meta description on a post or page.
-* Changes JSON+LD organization output to always point to `#organization` on the homepage instead of the current page.
-* Fixes a bug where non-public taxonomies were shown in the breadcrumbs.
-
-Other:
-* Minor internationalization improvements.
-* Security hardening.
+* Fixes a bug where images with specific aspect ratios where removed from OpenGraph consideration. This was causing unexpected results with Facebook sharing. The aspect ratio check has been removed completely.
+* Fixes a bug where sentences ending in multiple sentence marks, exclamation marks or ellipses were treated as multiple sentences.
+* Fixes a bug where attempting to get Yoast SEO options in multi-site, would result in wrong values being returned.
+* Fixes a bug where the sitemap styling could not be loaded when the Site domain differs from the Admin domain.
+* Fixes a bug where the admin bar still used old copy: Dashboard has been renamed to General.
 
 = Earlier versions =
 

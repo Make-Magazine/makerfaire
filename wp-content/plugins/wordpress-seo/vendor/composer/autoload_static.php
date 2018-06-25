@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8d3a545ad41415d26b40c72611f9788d
+class ComposerStaticInite65e71171c1a5e9e7f808031e878a5e0
 {
     public static $files = array (
         '995b589e693a50f54393aa31ee1c3763' => __DIR__ . '/..' . '/yoast/whip/src/facades/wordpress.php',
@@ -130,6 +130,7 @@ class ComposerStaticInit8d3a545ad41415d26b40c72611f9788d
         'WPSEO_Admin_Asset_Location' => __DIR__ . '/../..' . '/admin/class-admin-asset-location.php',
         'WPSEO_Admin_Asset_Manager' => __DIR__ . '/../..' . '/admin/class-admin-asset-manager.php',
         'WPSEO_Admin_Asset_SEO_Location' => __DIR__ . '/../..' . '/admin/class-admin-asset-seo-location.php',
+        'WPSEO_Admin_Asset_Yoast_Components_l10n' => __DIR__ . '/../..' . '/admin/class-admin-asset-yoast-components-l10n.php',
         'WPSEO_Admin_Banner' => __DIR__ . '/../..' . '/admin/banner/class-admin-banner.php',
         'WPSEO_Admin_Banner_Renderer' => __DIR__ . '/../..' . '/admin/banner/class-admin-banner-renderer.php',
         'WPSEO_Admin_Banner_Sidebar' => __DIR__ . '/../..' . '/admin/banner/class-admin-banner-sidebar.php',
@@ -138,6 +139,7 @@ class ComposerStaticInit8d3a545ad41415d26b40c72611f9788d
         'WPSEO_Admin_Banner_Spot_Renderer' => __DIR__ . '/../..' . '/admin/banner/class-admin-banner-spot-renderer.php',
         'WPSEO_Admin_Help_Panel' => __DIR__ . '/../..' . '/admin/class-admin-help-panel.php',
         'WPSEO_Admin_Init' => __DIR__ . '/../..' . '/admin/class-admin-init.php',
+        'WPSEO_Admin_Media_Purge_Notification' => __DIR__ . '/../..' . '/admin/class-admin-media-purge-notification.php',
         'WPSEO_Admin_Menu' => __DIR__ . '/../..' . '/admin/menu/class-admin-menu.php',
         'WPSEO_Admin_Pages' => __DIR__ . '/../..' . '/admin/class-config.php',
         'WPSEO_Admin_User_Profile' => __DIR__ . '/../..' . '/admin/class-admin-user-profile.php',
@@ -148,6 +150,8 @@ class ComposerStaticInit8d3a545ad41415d26b40c72611f9788d
         'WPSEO_Bulk_Description_List_Table' => __DIR__ . '/../..' . '/admin/class-bulk-description-editor-list-table.php',
         'WPSEO_Bulk_List_Table' => __DIR__ . '/../..' . '/admin/class-bulk-editor-list-table.php',
         'WPSEO_Bulk_Title_Editor_List_Table' => __DIR__ . '/../..' . '/admin/class-bulk-title-editor-list-table.php',
+        'WPSEO_CLI_Redirect_Upsell_Command_Namespace' => __DIR__ . '/../..' . '/cli/class-cli-redirect-upsell-command-namespace.php',
+        'WPSEO_CLI_Yoast_Command_Namespace' => __DIR__ . '/../..' . '/cli/class-cli-yoast-command-namespace.php',
         'WPSEO_Capability_Manager' => __DIR__ . '/../..' . '/admin/capabilities/class-capability-manager.php',
         'WPSEO_Capability_Manager_Factory' => __DIR__ . '/../..' . '/admin/capabilities/class-capability-manager-factory.php',
         'WPSEO_Capability_Manager_Integration' => __DIR__ . '/../..' . '/admin/capabilities/class-capability-manager-integration.php',
@@ -209,8 +213,10 @@ class ComposerStaticInit8d3a545ad41415d26b40c72611f9788d
         'WPSEO_Customizer' => __DIR__ . '/../..' . '/admin/class-customizer.php',
         'WPSEO_Database_Proxy' => __DIR__ . '/../..' . '/admin/class-database-proxy.php',
         'WPSEO_Endpoint' => __DIR__ . '/../..' . '/admin/endpoints/class-endpoint.php',
+        'WPSEO_Endpoint_Indexable' => __DIR__ . '/../..' . '/admin/endpoints/class-endpoint-indexable.php',
         'WPSEO_Endpoint_Ryte' => __DIR__ . '/../..' . '/admin/endpoints/class-endpoint-ryte.php',
         'WPSEO_Endpoint_Statistics' => __DIR__ . '/../..' . '/admin/endpoints/class-endpoint-statistics.php',
+        'WPSEO_Endpoint_Storable' => __DIR__ . '/../..' . '/admin/endpoints/interface-endpoint-storable.php',
         'WPSEO_Export' => __DIR__ . '/../..' . '/admin/class-export.php',
         'WPSEO_Extension' => __DIR__ . '/../..' . '/admin/class-extension.php',
         'WPSEO_Extension_Manager' => __DIR__ . '/../..' . '/admin/class-extension-manager.php',
@@ -236,6 +242,7 @@ class ComposerStaticInit8d3a545ad41415d26b40c72611f9788d
         'WPSEO_GSC_Table' => __DIR__ . '/../..' . '/admin/google_search_console/class-gsc-table.php',
         'WPSEO_Help_Center' => __DIR__ . '/../..' . '/admin/class-help-center.php',
         'WPSEO_Help_Center_Item' => __DIR__ . '/../..' . '/admin/class-help-center-item.php',
+        'WPSEO_Help_Center_Template_Variables_Tab' => __DIR__ . '/../..' . '/admin/help_center/class-template-variables-tab.php',
         'WPSEO_Image_Utils' => __DIR__ . '/../..' . '/inc/class-wpseo-image-utils.php',
         'WPSEO_Import_AIOSEO' => __DIR__ . '/../..' . '/admin/import/plugins/class-import-aioseo.php',
         'WPSEO_Import_Greg_SEO' => __DIR__ . '/../..' . '/admin/import/plugins/class-import-greg-high-performance-seo.php',
@@ -255,6 +262,10 @@ class ComposerStaticInit8d3a545ad41415d26b40c72611f9788d
         'WPSEO_Import_WPSEO' => __DIR__ . '/../..' . '/admin/import/plugins/class-import-wpseo.php',
         'WPSEO_Import_WP_Meta_SEO' => __DIR__ . '/../..' . '/admin/import/plugins/class-import-wp-meta-seo.php',
         'WPSEO_Import_WooThemes_SEO' => __DIR__ . '/../..' . '/admin/import/plugins/class-import-woothemes-seo.php',
+        'WPSEO_Indexable_Service' => __DIR__ . '/../..' . '/admin/services/class-indexable.php',
+        'WPSEO_Indexable_Service_Post_Provider' => __DIR__ . '/../..' . '/admin/services/class-indexable-post-provider.php',
+        'WPSEO_Indexable_Service_Provider' => __DIR__ . '/../..' . '/admin/services/interface-indexable-provider.php',
+        'WPSEO_Indexable_Service_Term_Provider' => __DIR__ . '/../..' . '/admin/services/class-indexable-term-provider.php',
         'WPSEO_Installable' => __DIR__ . '/../..' . '/admin/interface-installable.php',
         'WPSEO_Installation' => __DIR__ . '/../..' . '/inc/class-wpseo-installation.php',
         'WPSEO_JSON_LD' => __DIR__ . '/../..' . '/frontend/class-json-ld.php',
@@ -454,10 +465,10 @@ class ComposerStaticInit8d3a545ad41415d26b40c72611f9788d
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit8d3a545ad41415d26b40c72611f9788d::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit8d3a545ad41415d26b40c72611f9788d::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit8d3a545ad41415d26b40c72611f9788d::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit8d3a545ad41415d26b40c72611f9788d::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite65e71171c1a5e9e7f808031e878a5e0::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite65e71171c1a5e9e7f808031e878a5e0::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInite65e71171c1a5e9e7f808031e878a5e0::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInite65e71171c1a5e9e7f808031e878a5e0::$classMap;
 
         }, null, ClassLoader::class);
     }
