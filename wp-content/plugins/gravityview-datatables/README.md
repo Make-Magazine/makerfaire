@@ -1,9 +1,9 @@
 # GravityView - DataTables Extension #
 **Tags:** gravityview  
-**Requires at least:** 3.3  
-**Tested up to:** 4.7.3  
+**Requires at least:** 4.4  
+**Tested up to:** 4.9.6  
 **Stable tag:** trunk  
-**Contributors:** katzwebservices, luistinygod  
+**Contributors:** katzwebservices, luistinygod, soulseekah  
 **License:** GPL 3 or higher  
 
 Display entries in a dynamic table powered by DataTables & GravityView.
@@ -16,6 +16,55 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 ## Changelog ##
 
+### 2.2.2 on May 29, 2018 ###
+
+* Fixed: Respect parameters passed to a DataTables View using the shortcode
+
+__Developer Updates:__
+
+* Modified: When entries are loaded, remove the `.gv-container-no-results` and `.gv-widgets-no-results` CSS classes from View and GravityView Widget containers
+
+### 2.2.1.3 on May 16, 2018 ###
+
+* Modified: When Search Bar is configured, disable DataTables built-in search; otherwise, enable DataTables search
+* Fixed: "Hide View data until search is performed" not working
+* Fixed: Notice about DataTables requiring update
+
+### 2.2.1.1 on May 16, 2018 ###
+
+* Fixed: `[gv_entry_link]` links pointing to the wrong URL when a View is embedded
+
+### 2.2.1 on May 11, 2018 ###
+
+* Fixed: Edit Entry and Delete Entry links were going to the wrong URL
+* Fixed: Rows were full-height when "Scroller" option was enabled
+* Fixed: Restore ability for developers to define custom "Row Height"
+* Fixed: Only load scripts and styles for DataTables features if they are active
+
+### 2.2 on May 8, 2018 ###
+
+* Now requires GravityView 2.0
+* Entries load much faster than before (thanks to GravityView 2.0)
+* Updated DataTables scripts
+
+### 2.1.3 on April 28, 2018 ###
+
+* Getting ready for GravityView 2.0
+
+### 2.1.2 on November 27, 2017 ###
+
+* Fixed: DataTables now pre-fills `?gv_search` search parameters
+* Updated scripts ([see script changelogs](https://cdn.datatables.net/))
+    - DataTables from 1.10.13 to 1.10.16
+    - Responsive from 2.1.1 to 2.2.0
+    - Buttons from 1.2.4 to 1.4.2
+    - FixedColumns from 3.2.2 to 3.2.3
+    - FixedHeader from 3.1.2 to 3.1.3
+    - Scroller from 1.4.2 to 1.4.3
+* Fixed: Not loading when using "Direct Access" mode
+* Fixed: Undefined index PHP notice
+* Now requires WordPress 4.0 (we do hope you are not still running 4.0!)
+
 ### 2.1.1 on April 13, 2017 ###
 
 * Fixed: Incorrect paging counts
@@ -23,7 +72,7 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 ### 2.1 on February 7, 2017 ###
 
-* Updated scripts  ([see script changelogs](https://cdn.datatables.net/))
+* Updated scripts ([see script changelogs](https://cdn.datatables.net/))
     - DataTables core updated from 1.10.11 to 1.10.13
     - Buttons updated from 1.1.2 to 1.2.4
     - Responsive updated from 2.0.2 to 2.1.1

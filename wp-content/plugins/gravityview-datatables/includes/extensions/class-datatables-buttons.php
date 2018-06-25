@@ -97,14 +97,9 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 	 */
 	function add_scripts( $dt_configs, $views, $post ) {
 
-		$script = false;
-
-		foreach ( $views as $key => $view_data ) {
-			if( !$this->is_datatables( $view_data ) || !$this->is_enabled( $view_data['id'] ) ) { continue; }
-			$script = true;
+		if( ! $add_scripts = parent::add_scripts( $dt_configs, $views, $post ) ) {
+			return;
 		}
-
-		if( !$script ) { return; }
 
 		$path = plugins_url( 'assets/datatables-buttons/', GV_DT_FILE );
 
@@ -177,7 +172,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 
 		}
 
-		do_action( 'gravityview_log_debug', __METHOD__ .': Inserting Buttons config. Data: ', $dt_config );
+		gravityview()->log->debug(  __METHOD__ .': Inserting Buttons config. Data: ', array( 'data' => $dt_config ) );
 
 		return $dt_config;
 	}

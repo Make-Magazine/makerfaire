@@ -30,14 +30,25 @@ var gvDataTables = {
 
 		$('.gv-datatables').each( function( i, e ) {
 
-			var options = gvDTglobals[ i ];
+			var options = window.gvDTglobals[ i ];
 
 			options.buttons = gvDataTables.setButtons( options );
 
 			var table = $(this).DataTable( options );
 
+			table.on( 'draw.dt', function ( e, settings ) {
+				var api = new $.fn.dataTable.Api( settings );
+				if ( api.column( 0 ).data().length ) {
+					$( e.target )
+						.parents('.gv-container-no-results')
+							.removeClass('gv-container-no-results')
+						.siblings('.gv-widgets-no-results')
+							.removeClass('gv-widgets-no-results');
+				}
+			} );
+
 			// tweak the Responsive Extension
-			if( i < gvDTResponsive.length && gvDTResponsive[ i ].responsive.toString() === '1' ) {
+			if( i < gvDTResponsive.length && gvDTResponsive.hasOwnProperty( i ) && gvDTResponsive[ i ].responsive.toString() === '1' ) {
 
 				var responsiveConfig = {};
 
@@ -55,17 +66,18 @@ var gvDataTables = {
 
 			}
 
-
-
 			// init FixedHeader
-			if( i < gvDTFixedHeaderColumns.length && gvDTFixedHeaderColumns[ i ].fixedheader.toString() === '1' ) {
-				new $.fn.dataTable.FixedHeader( table );
-			}
-			// init FixedColumns
-			if(  i < gvDTFixedHeaderColumns.length && gvDTFixedHeaderColumns[ i ].fixedcolumns.toString() === '1' ) {
-				new $.fn.dataTable.FixedColumns( table );
-			}
+			if( i < gvDTFixedHeaderColumns.length && gvDTFixedHeaderColumns.hasOwnProperty( i ) ) {
 
+				if ( gvDTFixedHeaderColumns[ i ].fixedheader.toString() === '1' ) {
+					new $.fn.dataTable.FixedHeader( table );
+				}
+
+				// init FixedColumns
+				if( gvDTFixedHeaderColumns[ i ].fixedcolumns.toString() === '1' ) {
+					new $.fn.dataTable.FixedColumns( table );
+				}
+			}
 
 		});
 

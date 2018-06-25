@@ -1,4 +1,4 @@
-# Copyright (C) 2017 GravityView
+# Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
 # dbalage <balazs@magonc.org>, 2015
@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2017-01-11 00:20+0000\n"
-"Last-Translator: Zachary Katz <zack@katz.co>\n"
+"PO-Revision-Date: 2018-05-18 02:51+0000\n"
+"Last-Translator: dbalage <balazs@magonc.org>\n"
 "Language-Team: Hungarian (Hungary) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/hu_HU/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,11 +28,11 @@ msgstr ""
 msgid "DataTables"
 msgstr ""
 
-#: includes/class-datatables-data.php:720
+#: includes/class-datatables-data.php:689
 msgid "Loading data&hellip;"
 msgstr "Adatok betöltése&hellip;"
 
-#: includes/class-datatables-data.php:721
+#: includes/class-datatables-data.php:690
 msgid "No entries match your request."
 msgstr "Nincs egyező találat."
 
@@ -74,70 +74,82 @@ msgstr "Másolás"
 msgid "Print"
 msgstr "Nyomtatás"
 
-#: includes/extensions/class-datatables-fixedheader.php:21
+#: includes/extensions/class-datatables-fixedheader.php:27
 msgid "Keep headers or columns in place and visible while scrolling a table."
 msgstr "A táblázat görgetése esetén is helyén tartja a címsort vagy az első oszlopot."
 
-#: includes/extensions/class-datatables-fixedheader.php:27
+#: includes/extensions/class-datatables-fixedheader.php:33
 msgid "Enable FixedHeader"
 msgstr "Rögzített címsor bekapcsolása"
 
-#: includes/extensions/class-datatables-fixedheader.php:39
+#: includes/extensions/class-datatables-fixedheader.php:45
 msgid "Enable FixedColumns"
 msgstr "Rögzített oszlopok bekapcsolása"
 
-#: includes/extensions/class-datatables-fixedheader.php:59
+#: includes/extensions/class-datatables-fixedheader.php:65
 msgid "FixedColumns"
 msgstr "Rögzített oszlopok"
 
-#: includes/extensions/class-datatables-fixedheader.php:60
+#: includes/extensions/class-datatables-fixedheader.php:66
 msgid ""
 "Fix the first column in place while horizontally scrolling a table. The "
 "first column and its contents will remain visible at all times."
 msgstr "Rögzíti az első oszlopot, amikor oldalra görgetünk a táblázatban. Így az első oszlop tartalma mindig látható marad."
 
-#: includes/extensions/class-datatables-fixedheader.php:64
+#: includes/extensions/class-datatables-fixedheader.php:70
 msgid "FixedHeader"
 msgstr "Rögzített címsor"
 
-#: includes/extensions/class-datatables-fixedheader.php:65
+#: includes/extensions/class-datatables-fixedheader.php:71
 msgid ""
 "Float the column headers above the table to keep the column titles visible "
 "at all times."
 msgstr "Az oszlopok címsorát mindig a táblázat tetején tartja, így a címek mindig láthatóak lesznek"
 
-#: includes/extensions/class-datatables-responsive.php:35
+#: includes/extensions/class-datatables-responsive.php:41
 msgid "Responsive Tables"
 msgstr "Reszponzív táblázatok"
 
-#: includes/extensions/class-datatables-responsive.php:36
+#: includes/extensions/class-datatables-responsive.php:42
 msgid ""
 "Optimize table layout for different screen sizes through the dynamic "
 "insertion and removal of columns from the table."
 msgstr "Különböző méretű képernyőhöz optimalizálja a megjelenést az oszlopok dinamikus hozzáadásával és eltávolításával."
 
-#: includes/extensions/class-datatables-responsive.php:62
+#: includes/extensions/class-datatables-responsive.php:68
 msgid "Enable Responsive Tables"
 msgstr "Reszponzív táblázatok bekapcsolása"
 
-#: includes/extensions/class-datatables-scroller.php:29
+#: includes/extensions/class-datatables-scroller.php:35
 msgid "Scroller"
 msgstr "Görgetés"
 
-#: includes/extensions/class-datatables-scroller.php:30
+#: includes/extensions/class-datatables-scroller.php:36
 msgid ""
 "Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.\n"
 "\n"
 "\t\t\t\tNote: Scroller will not work well if your View has columns of varying height."
 msgstr "Lehetővé teszi nagy adatállományok görgetés közbeni folyamatos megjelenítését egy oldalon. Így a sok adatot tartalmazó táblázatok is gyorsan feldolgozásra és megjelenítésre kerülhetnek.\n\n                Megjegyzés: A görgetés nem fog jól működni, ha a Nézetben különböző magasságú oszlopok vannak. "
 
-#: includes/extensions/class-datatables-scroller.php:46
+#: includes/extensions/class-datatables-scroller.php:52
 msgid "Enable Scroller"
 msgstr "Görgetés bekapcsolása"
 
-#: includes/extensions/class-datatables-scroller.php:56
+#: includes/extensions/class-datatables-scroller.php:62
 msgid "Table Height"
 msgstr "Táblázat magassága"
+
+#: includes/extensions/class-datatables-search.php:31
+msgid "Search"
+msgstr "Keresés"
+
+#: includes/extensions/class-datatables-search.php:32
+msgid "Ineffective if a search widget is already present in this View."
+msgstr ""
+
+#: includes/extensions/class-datatables-search.php:38
+msgid "Enable Search"
+msgstr ""
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
@@ -158,25 +170,31 @@ msgstr "Nincs jogosultságod a bővítmények frissítéséhez"
 msgid "Error"
 msgstr "Hiba"
 
-#: lib/class-gravityview-extension.php:349
+#: lib/class-gravityview-extension.php:360
 msgid "Could not activate the %s Extension; GravityView is not active."
 msgstr "Nem lehet aktiválni a %s Bővítményt; a GravityView nem aktív."
 
-#: lib/class-gravityview-extension.php:353
+#: lib/class-gravityview-extension.php:364
 msgid "The %s Extension requires GravityView Version %s or newer."
 msgstr "A %s bővítménynek szüksége van a GravitView %s vagy újabb verziójára."
 
-#: lib/class-gravityview-extension.php:357
+#: lib/class-gravityview-extension.php:368
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:372
+msgid ""
+"The %s Extension is not compatible with this version of GravityView. Please "
+"update the Extension to the latest version."
 msgstr ""
 
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/datatables/"
 msgstr ""
 
-#: includes/class-datatables-data.php:654
+#: includes/class-datatables-data.php:623
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr "Mind"
