@@ -51,10 +51,10 @@ $entries   = $tableData['data'];
         <div class="dropdown show" style="float:right">
           <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Apply to Participate
-            <div class="fa fa-sort-down"></div>"
+            <!--<div class="fa fa-sort-down"></div>-->
           </a>
-          <div class="dropdown-menu bulletless" aria-labelledby="dropdownMenuLink">
-            <ul>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <ul class="bulletless">
               <li><a class="dropdown-item" href="/new-york/call-for-makers/">World Maker Faire New York</a></li>
               <li><a class="dropdown-item" href="/bay-area/call-for-makers/">Maker Faire Bay Area</a></li>
             </ul>

@@ -10,12 +10,18 @@
   .clear {
     clear: both;
   }
+  .dropdown.open {
+      #dropdownMenuLink {
+          &::after {
+              content: "\f0de";
+          }
+      }
+  }
   .dropdown {
     margin-top: 25px;
     width: 250px;
     a { 
-      color: #333;
-      &:hover {
+      &:hover, &:active, &:focus {
         text-decoration: none;
       }
     }
@@ -23,15 +29,25 @@
         display: block;
         border: 1px solid rgba(0,0,0,0.15);;
         padding: 10px 20px;
+        a { color: #333; }
+        &::after {
+            font-family: FontAwesome;
+            content: "\f0dd";
+            display: block;
+            float: right;
+        }
         .fa-sort-down {
             float: right;
         }
     }
     .dropdown-menu {
         width: 250px;
-        margin-top: -1px;
+        margin-top: 0px;
         box-shadow: none;
         -webkit-box-shadow: none;
+        border-radius: 0px;
+        border-top: none;
+        ul { padding-left: 20px; }
         .dropdown-item {
             padding: 10px 0px;
         }
