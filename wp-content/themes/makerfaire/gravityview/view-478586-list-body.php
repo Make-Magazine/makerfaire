@@ -47,11 +47,10 @@ $entries   = $tableData['data'];
       <div>
         <h2 style="float:left">Welcome to the Maker Faire Portal</h2>
         <div class="clearfix"></div>
-        <h3 class="title-head pull-left">Manage your Maker Faire Entries</h3>
-        <div class="clearfix">
-           User <?php echo $current_user->user_email;?>
-        </div>
-        <div class="dropdown show" style="float:right">
+        <h3 class="title-head pull-left" style="margin-top:0px;">Manage your Maker Faire Entries</h3>
+        <div class="clearfix"></div>
+        User <?php echo $current_user->user_email;?>
+        <div class="dropdown show">
           <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Apply to Participate
           </a>

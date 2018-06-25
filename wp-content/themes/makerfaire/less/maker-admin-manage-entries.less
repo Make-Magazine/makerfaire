@@ -20,8 +20,13 @@
   }
   .dropdown {
     width: 250px;
-    @media screen and (min-width: 988px) {
-        margin-top: -50px;
+    float: right;
+    @media screen and (min-width: 986px) {
+        margin-top: -90px;
+    }
+    @media screen and (min-width: 516px) {
+        float: left;
+        margin-top: 15px;
     }
     a { 
       &:hover, &:active, &:focus {
