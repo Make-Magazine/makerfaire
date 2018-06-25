@@ -1,5 +1,6 @@
 /* maker admin e.g. makerfaire.com/manage-entries */
 .maker-admin-manage-faire-entries-mobile {
+  margin-bottom: 100px;
   .maker-admin-list-wrp {
     padding: 15px 0;
   }
@@ -8,6 +9,33 @@
   }
   .clear {
     clear: both;
+  }
+  .dropdown {
+    margin-top: 25px;
+    width: 250px;
+    a { 
+      color: #333;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+    #dropdownMenuLink {
+        display: block;
+        border: 1px solid rgba(0,0,0,0.15);;
+        padding: 10px 20px;
+        .fa-sort-down {
+            float: right;
+        }
+    }
+    .dropdown-menu {
+        width: 250px;
+        margin-top: -1px;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        .dropdown-item {
+            padding: 10px 0px;
+        }
+    }
   }
   .gv-list-view-title-maker-entry {
     @media (max-width: 1199px) {
@@ -98,10 +126,10 @@
         clear: both;
         float: left;
         margin-bottom: 10px;
-        font-size: 1.93em;
+        font-size: 2em;
         min-height: 2.2em;
         @media screen and (max-width: 1199px) {
-          font-size: 1.3em;
+          font-size: 2em;
         }
       }
     }

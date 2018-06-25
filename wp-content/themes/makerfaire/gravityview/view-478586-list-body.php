@@ -51,11 +51,12 @@ $entries   = $tableData['data'];
         <div class="dropdown show" style="float:right">
           <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Apply to Participate
+            <div class="fa fa-sort-down"></div>"
           </a>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          <div class="dropdown-menu bulletless" aria-labelledby="dropdownMenuLink">
             <ul>
-              <li><a class="dropdown-item" href="http://makerfaire:8888/new-york/call-for-makers/">World Maker Faire New York</a></li>
-              <li><a class="dropdown-item" href="http://makerfaire:8888/bay-area/call-for-makers/">Maker Faire Bay Area</a></li>
+              <li><a class="dropdown-item" href="/new-york/call-for-makers/">World Maker Faire New York</a></li>
+              <li><a class="dropdown-item" href="/bay-area/call-for-makers/">Maker Faire Bay Area</a></li>
             </ul>
           </div>
         </div>
@@ -172,7 +173,7 @@ $entries   = $tableData['data'];
           <div class="entry-main-content">
             <?php if($entryData['mat_message'] !='') { ?>
             <!-- MAT messaging -->
-            <div class="hidden-xs mat_message" style="background-color:#F4D03F; padding:10px">
+            <div class="hidden-xs mat_message" style="background-color:#f4d03e; padding:10px">
                 <?php echo $entryData['mat_message'];?>
             </div>
             <div class="clear"></div>
@@ -345,9 +346,9 @@ $entries   = $tableData['data'];
     ?>
     <h2>Welcome to the Maker Faire Portal!</h2>
     <h3>Maker Faire Bay Area and World Maker Faire New York Participants</h3>
-    <h4>This is where participants can manage their Maker Faire entries for World Maker Faire New York and Bay Area Maker Faire.
-    You are logged in as <?php echo $current_user->user_email;?>, but you do not seem to have applied yet. There are many ways to participate:</h4>
-    <ul class="text-center ui-grid-group-list">
+    <p>This is where participants can manage their Maker Faire entries for World Maker Faire New York and Bay Area Maker Faire.
+    You are logged in as <b><?php echo $current_user->user_email;?></b>, but you do not seem to have applied yet. There are many ways to participate:</p>
+    <ul class="text-center bulletless">
       <li class="font-weight-bold">Maker Exhibitors</li>
       <li>Performers</li>
       <li>Presenters</li>
