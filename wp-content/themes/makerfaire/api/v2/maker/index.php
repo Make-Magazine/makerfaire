@@ -25,16 +25,16 @@ if ( $type == 'maker' ) {
 	}
 	$select_query = sprintf("select * from
     (SELECT wp_mf_entity.lead_id, wp_mf_maker_to_entity.maker_type, `wp_mf_maker`.`First Name` as first_name, `wp_mf_maker`.`Last Name` as last_name,
-           `wp_mf_maker`.`Bio`, `wp_mf_maker`.`Photo`, `wp_mf_maker`.`Email`, `wp_mf_maker`.`TWITTER`, `wp_rg_lead`.`form_id`, `wp_mf_maker`.`maker_id`, wp_mf_entity.category
-      FROM `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity, wp_mf_faire,wp_rg_lead
+           `wp_mf_maker`.`Bio`, `wp_mf_maker`.`Photo`, `wp_mf_maker`.`Email`, `wp_mf_maker`.`TWITTER`, `wp_gf_entry`.`form_id`, `wp_mf_maker`.`maker_id`, wp_mf_entity.category
+      FROM `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity, wp_mf_faire,wp_gf_entry
       where wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id
       and   wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id
       AND   wp_mf_entity.status = 'Accepted'
       AND   wp_mf_maker_to_entity.maker_type != 'contact'
       and   LOWER(wp_mf_faire.faire) = '".$faire."'
-      AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0
-      and   wp_rg_lead.id = `wp_mf_maker_to_entity`.`entity_id`
-      and   wp_rg_lead.status = 'active'
+      AND   FIND_IN_SET (`wp_gf_entry`.`form_id`,wp_mf_faire.form_ids)> 0
+      and   wp_gf_entry.id = `wp_mf_maker_to_entity`.`entity_id`
+      and   wp_gf_entry.status = 'active'
       ORDER BY `wp_mf_maker`.`maker_id` ASC, wp_mf_maker_to_entity.maker_type ASC)
     AS tmp_table GROUP by `maker_id`
   ");
@@ -80,12 +80,12 @@ if ( $type == 'maker' ) {
     $formType = $form['form_type'];
 
     //If the form is a sponsor set to null otherwise use 222.  See Manual categories in /category/index.php
-    if ((strpos($formType, 'Sponsor') === false)) 
+    if ((strpos($formType, 'Sponsor') === false))
     {
       $maker['category_id_refs'][] =  '222';
-      array_push( $makers, $maker );  
+      array_push( $makers, $maker );
     }
-    
+
 		// No longer have these
 		// Maker Thumbnail and Large Images
 		//$maker_image = isset($entry['217']) ? $entry['217']  : null;

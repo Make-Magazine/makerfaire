@@ -20,9 +20,9 @@ function update_mfTables($form,$limit=0,$start){
 
   global $wpdb;
   $sql = "Select id
-            from wp_rg_lead
+            from wp_gf_entry
            where form_id  = $form "
-       . " ORDER BY `wp_rg_lead`.`id` ASC "
+       . " ORDER BY `wp_gf_entry`.`id` ASC "
           ;
   if($limit!="0"){
     $sql .= " limit ".$start.', '.$limit;

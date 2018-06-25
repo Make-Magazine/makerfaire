@@ -208,7 +208,7 @@ function correct_currententry_formid( $form ) {
       $current_entryid = $_GET['lid'];
       // Different form is in URL than in the form itself.
       global $wpdb;
-      $result = $wpdb->get_results( $wpdb->prepare( "SELECT id,form_id from wp_rg_lead WHERE id=%d", $current_entryid) );
+      $result = $wpdb->get_results( $wpdb->prepare( "SELECT id,form_id from wp_gf_entry WHERE id=%d", $current_entryid) );
       if ($result[0]) {
         if ($current_formid != $result[0]->form_id)
         {

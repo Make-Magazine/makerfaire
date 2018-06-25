@@ -27,7 +27,7 @@ $tableFields['wp_rmt_entry_resources']['colDefs'][] = array('fieldName' => 'summ
 $tableFields['wp_rmt_entry_resources']['colDefs'][] = array('fieldName' => 'status',   'filterType'   => 'dropdown', 'fieldLabel' => 'Status',
     'options' => array('Proposed'=>'Proposed','Accepted'=>'Accepted','Rejected'=>'Rejected', 'Wait List'=>'Wait List','Cancelled'=>'Cancelled'));
 $tableFields['wp_rmt_entry_resources']['query'] =
-        'select entry_id, qty, resource_id, wp_rg_lead.form_id, wp_mf_faire.faire,'
+        'select entry_id, qty, resource_id, wp_gf_entry.form_id, wp_mf_faire.faire,'
         . '(SELECT value FROM `wp_rg_lead_detail` where field_number = 303 and lead_id =entry_id ) as status, '
         . '(SELECT value FROM `wp_rg_lead_detail` where field_number = 16 and lead_id =entry_id  limit 1) as summary ,'
         . '(SELECT value FROM `wp_rg_lead_detail` where field_number = 99 and lead_id =entry_id  limit 1) as contact_phone, '
@@ -37,9 +37,9 @@ $tableFields['wp_rmt_entry_resources']['query'] =
         . '(SELECT location from wp_mf_location where wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as location, '
         . '(SELECT subarea from   wp_mf_faire_subarea,wp_mf_location where  wp_mf_location.subarea_id=wp_mf_faire_subarea.ID and wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as subarea, '
         . '(SELECT area from   wp_mf_faire_area,wp_mf_faire_subarea,wp_mf_location where  wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID and wp_mf_location.subarea_id=wp_mf_faire_subarea.ID and wp_mf_location.entry_id = wp_rmt_entry_resources.entry_id limit 1) as area '
-        . 'from wp_rmt_entry_resources, wp_rg_lead, wp_mf_faire '
-        . 'where wp_rg_lead.id = entry_id '
-        . 'and   find_in_set (wp_rg_lead.form_id,wp_mf_faire.form_ids) > 0 '
+        . 'from wp_rmt_entry_resources, wp_gf_entry, wp_mf_faire '
+        . 'where wp_gf_entry.id = entry_id '
+        . 'and   find_in_set (wp_gf_entry.form_id,wp_mf_faire.form_ids) > 0 '
         . 'and   wp_mf_faire.id = '. $faire;
 //faire
 $cellToolTipTemplate = '<div class="ui-grid-cell-contents wrap" title="{{COL_FIELD}}" data-toggle="tooltip" >{{ COL_FIELD }}</div>';
@@ -62,12 +62,12 @@ $tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 's
     'options'     => array('Proposed'=>'Proposed','Accepted'=>'Accepted','Rejected'=>'Rejected','Wait List'=>'Wait List','Cancelled'=>'Cancelled'));
 $tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'form_id', 'filterType' => 'text', 'visible' => false);
 $tableFields['wp_rg_lead_detail_changes']['query'] =
-          'SELECT lead_id, DATE_FORMAT(date_updated,"%Y-%m-%dT%TZ") as date_updated, field_id, fieldLabel, field_before, field_after, status_at_update, wp_rg_lead.form_id, '
+          'SELECT lead_id, DATE_FORMAT(date_updated,"%Y-%m-%dT%TZ") as date_updated, field_id, fieldLabel, field_before, field_after, status_at_update, wp_gf_entry.form_id, '
         . '     (SELECT value FROM `wp_rg_lead_detail` where field_number=303 and wp_rg_lead_detail.lead_id =wp_rg_lead_detail_changes.lead_id ) as status, '
         . '     (SELECT user_email FROM `wp_users` where wp_users.ID =user_id ) as user_email '
         . 'FROM wp_rg_lead_detail_changes '
-        . 'left outer join wp_rg_lead on wp_rg_lead.id = lead_id '
-        . 'left outer join  wp_mf_faire on find_in_set (wp_rg_lead.form_id,wp_mf_faire.form_ids) > 0 '
+        . 'left outer join wp_gf_entry on wp_gf_entry.id = lead_id '
+        . 'left outer join  wp_mf_faire on find_in_set (wp_gf_entry.form_id,wp_mf_faire.form_ids) > 0 '
         . 'where  wp_mf_faire.ID = '.$faire
         . '  ORDER BY `date_updated` DESC';
 
@@ -89,11 +89,11 @@ $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'form_id', 'f
 $tableFields['wp_mf_location']['query'] =
           'SELECT wp_mf_location.location,wp_mf_location.entry_id, wp_mf_location.subarea_id, '
                 . 'wp_mf_faire_subarea.subarea, wp_mf_faire_subarea.nicename, wp_mf_faire_subarea.area_id, '
-                . 'wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_mf_schedule.type as schedType, wp_rg_lead.form_id, '
+                . 'wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_mf_schedule.type as schedType, wp_gf_entry.form_id, '
         . '(SELECT value FROM `wp_rg_lead_detail` where field_number = "151" and lead_id = wp_mf_location.entry_id  limit 1) as exName '
         . 'FROM    wp_mf_location '
         . 'left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.ID '
         . 'left outer join  wp_mf_faire_area    on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
         . 'left outer join  wp_mf_schedule      on wp_mf_schedule.location_id = wp_mf_location.ID '
-        . 'left outer join  wp_rg_lead          on wp_rg_lead.ID = wp_mf_location.entry_id '
-        . 'left outer join wp_mf_faire     on find_in_set (form_id,wp_mf_faire.form_ids) > 0  where  wp_mf_faire.ID = '.$faire;
+        . 'left outer join  wp_gf_entry         on wp_gf_entry.ID = wp_mf_location.entry_id '
+        . 'left outer join wp_mf_faire          on find_in_set (form_id,wp_mf_faire.form_ids) > 0  where  wp_mf_faire.ID = '.$faire;

@@ -319,8 +319,8 @@ function gf_collapsible_sections($form, $lead){
                                               WHERE detail2.lead_id = wp_rg_lead_detail.lead_id
                                                 AND field_number = 303 ) as status,
                                             (SELECT status
-                                               FROM wp_rg_lead
-                                              WHERE wp_rg_lead.id = wp_rg_lead_detail.lead_id) as lead_status
+                                               FROM wp_gf_entry
+                                              WHERE wp_gf_entry.id = wp_rg_lead_detail.lead_id) as lead_status
                                       FROM wp_rg_lead_detail
                                       JOIN wp_rg_form on wp_rg_form.id = wp_rg_lead_detail.form_id
                                      WHERE value = "'.$key.'"' .

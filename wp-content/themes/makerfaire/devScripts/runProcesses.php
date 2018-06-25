@@ -36,11 +36,11 @@ if(isset($_GET['init'])){
  // $wpdb->get_results($sql);
 }
 
-  $sql = "Select wp_rg_lead.id, wp_rg_lead.form_id"
-          . " from wp_rg_lead"
-          . " where wp_rg_lead.status = 'active'"
-          ."  and wp_rg_lead.form_id = $form_id"
-          . " ORDER BY `wp_rg_lead`.`ID` ASC";
+  $sql = "Select wp_gf_entry.id, wp_gf_entry.form_id"
+          . " from wp_gf_entry"
+          . " where wp_gf_entry.status = 'active'"
+          ."  and wp_gf_entry.form_id = $form_id"
+          . " ORDER BY `wp_gf_entry`.`ID` ASC";
 if(isset($_GET['page'])){
   $page = $_GET['page'];
   $limit =500;

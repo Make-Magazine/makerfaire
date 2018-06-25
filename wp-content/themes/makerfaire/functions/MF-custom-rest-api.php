@@ -161,7 +161,7 @@ function getMTMentries($formIDs) {
   //find all active entries for selected forms
   $query = "select lead_detail.lead_id, lead_detail.field_number, lead_detail.value
             from    wp_rg_lead_detail lead_detail
-            left outer join wp_rg_lead as lead on lead_detail.lead_id = lead.id
+            left outer join wp_gf_entry as lead on lead_detail.lead_id = lead.id
             where lead.status = 'active'
               and lead_detail.form_id in(".implode(",",$formIDarr).")
               and (field_number like '22' OR
@@ -290,7 +290,7 @@ function getMTMentries($formIDs) {
                left outer join wp_mf_location as location on location_id = location.id
                left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
                left outer join wp_mf_faire_area area on area.id = subarea.area_id
-               left outer join wp_rg_lead as lead on schedule.entry_id = lead.id
+               left outer join wp_gf_entry as lead on schedule.entry_id = lead.id
                left outer join wp_rg_lead_detail as lead_detail on
                    schedule.entry_id = lead_detail.lead_id and field_number = 303
                where lead.status = 'active' and lead_detail.value='Accepted' "

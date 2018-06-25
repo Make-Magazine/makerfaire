@@ -52,18 +52,18 @@ if ($type == 'project') {
             (select value from wp_rg_lead_detail where field_number = 105 and wp_rg_lead_detail.lead_id=entity.lead_id limit 1) as projType,
             entity.faire,
             (select faire_name from wp_mf_faire where wp_mf_faire.faire=entity.faire) as faire_name,
-             wp_rg_lead.date_created,
+             wp_gf_entry.date_created,
             `entity`.`project_video`,
             `entity`.`inspiration`,
              entity.mobile_app_discover,
             (SELECT sum(numRibbons)FROM `wp_mf_ribbons` where ribbonType = 1 and entry_id=entity.lead_id group by entry_id) as redRibbonCnt,
             (SELECT sum(numRibbons)FROM `wp_mf_ribbons` where ribbonType = 0 and entry_id=entity.lead_id group by entry_id) as blueRibbonCnt,
-             wp_rg_lead.form_id,
-             wp_rg_lead.status
+             wp_gf_entry.form_id,
+             wp_gf_entry.status
 
     FROM  `wp_mf_entity` entity
-    JOIN  wp_rg_lead on wp_rg_lead.id = entity.lead_id
-    WHERE wp_rg_lead.status = 'active' "
+    JOIN  wp_gf_entry on wp_gf_entry.id = entity.lead_id
+    WHERE wp_gf_entry.status = 'active' "
     .($status  != "'all'" ? " AND entity.status in($status)":'')
     .($faire   != '' ? " AND LOWER(entity.faire)='".$faire."' " : '')
     .($lchange != '' ? " AND entity.last_change_date >= STR_TO_DATE('".$lchange." 235959', '%m%d%Y %H%i%s')" : '');

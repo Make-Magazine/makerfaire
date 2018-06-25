@@ -102,15 +102,15 @@ function return_MF_navigation(){
     //loop thru form ids
     foreach($formids as $formID){
       $formSQL = "SELECT form.title, value as entry_status, count(*) as count
-                  FROM  wp_rg_lead
+                  FROM  wp_gf_entry
                   JOIN  wp_rg_lead_detail
-                          ON  wp_rg_lead.id = wp_rg_lead_detail.lead_id AND
+                          ON  wp_gf_entry.id = wp_rg_lead_detail.lead_id AND
                               wp_rg_lead_detail.field_number = 303
                   JOIN  wp_rg_form form
-                          ON  wp_rg_lead.form_id = form.id AND
+                          ON  wp_gf_entry.form_id = form.id AND
                               is_trash != 1
-                  WHERE wp_rg_lead.status = 'active' AND
-                        wp_rg_lead.form_id= $formID
+                  WHERE wp_gf_entry.status = 'active' AND
+                        wp_gf_entry.form_id= $formID
                   group by entry_status";
       $formCount = 0;
       foreach($wpdb->get_results($formSQL) as $formRow){

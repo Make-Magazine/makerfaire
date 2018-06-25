@@ -174,12 +174,12 @@ function cannedRpt(){
 
   // After setting up requested field information, Pull entries based on specified criteria
   /* Note: form type is not set on entries prior to BA16 */
-  $sql = "SELECT  wp_rg_lead.id as lead_id, wp_rg_lead.form_id
-          FROM    wp_rg_lead  "
+  $sql = "SELECT  wp_gf_entry.id as lead_id, wp_gf_entry.form_id
+          FROM    wp_gf_entry  "
           . (!empty($faire)?' JOIN  wp_mf_faire on wp_mf_faire.ID  ='.$faire:'')
-      . " where wp_rg_lead.status = 'active'"
-          . (!empty($faire)     ? " AND FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.form_ids)> 0" : '')
-          . (!empty($forms)     ? " AND wp_rg_lead.form_id in(".$forms.")" : '');
+      . " where wp_gf_entry.status = 'active'"
+          . (!empty($faire)     ? " AND FIND_IN_SET (`wp_gf_entry`.`form_id`,wp_mf_faire.form_ids)> 0" : '')
+          . (!empty($forms)     ? " AND wp_gf_entry.form_id in(".$forms.")" : '');
 
   $entries = $wpdb->get_results($sql,ARRAY_A);
   $entryData = array();
@@ -1007,23 +1007,23 @@ function ent2resource($table, $faire, $type){
   $columnDefs = array();
 
   //find all non trashed entries for selected faires
-    $sql = "select wp_rg_lead.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire,
-              (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=303) as status,
-              (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_rg_lead.id and field_number=151) as proj_name,
+    $sql = "select wp_gf_entry.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire,
+              (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_gf_entry.id and field_number=303) as status,
+              (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_gf_entry.id and field_number=151) as proj_name,
               (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
               wp_mf_faire_subarea.subarea,
               wp_mf_faire_area.area,
               wp_mf_location.location, wp_mf_location.id as location_id
-            from wp_rg_lead
-              left outer join wp_mf_faire          on find_in_set (wp_rg_lead.form_id,wp_mf_faire.form_ids) > 0
-              left outer join wp_mf_location       on wp_mf_location.entry_id = wp_rg_lead.id
+            from wp_gf_entry
+              left outer join wp_mf_faire          on find_in_set (wp_gf_entry.form_id,wp_mf_faire.form_ids) > 0
+              left outer join wp_mf_location       on wp_mf_location.entry_id = wp_gf_entry.id
               left outer join wp_mf_faire_subarea  on wp_mf_location.subarea_id = wp_mf_faire_subarea.id
               left outer join wp_mf_faire_area     on wp_mf_faire_subarea.area_id = wp_mf_faire_area.id
             where status = 'active' and
                   faire is not NULL and
                   form_id!=1 and form_id!=9 and
                   wp_mf_faire.ID=".$faire.
-          " order by wp_rg_lead.id asc";
+          " order by wp_gf_entry.id asc";
 
   //loop thru entry data and build array
   $entries = $wpdb->get_results($sql,ARRAY_A);
@@ -1211,11 +1211,11 @@ function pullEntityTasks($formSelect) {
   $project_link = "/wp-admin/admin.php?page=gf_entries&view=entry&id=111&lid=59591&order=ASC&filter&paged=1&pos=0&field_id&operator";
   //pull data
   $sql = "SELECT    tasks.lead_id, tasks.created, tasks.completed, tasks.description, tasks.required, meta.meta_value,meta.lead_id as other_entry,
-    wp_rg_lead.form_id,
+    wp_gf_entry.form_id,
     (select value from wp_rg_lead_detail where field_number = 151 and lead_id = tasks.lead_id) as project_name,
-    (select form_id from wp_rg_lead where id = tasks.lead_id) as form_id
+    (select form_id from wp_gf_entry where id = tasks.lead_id) as form_id
           FROM      wp_mf_entity_tasks AS tasks
-          join      wp_rg_lead on tasks.lead_id= wp_rg_lead.id
+          join      wp_gf_entry on tasks.lead_id= wp_gf_entry.id
           LEFT JOIN wp_rg_lead_meta AS meta
                  ON meta.`form_id` = $formSelect
                 AND meta.meta_key = 'entry_id'
@@ -1224,7 +1224,7 @@ function pullEntityTasks($formSelect) {
           UNION ALL
           SELECT    NULL, NULL, NULL, NULL, NULL, meta_value,lead_id as other_entry, form_id,
           (select value from wp_rg_lead_detail where field_number = 151 and lead_id = meta_value) as project_name,
-          (select form_id from wp_rg_lead where id = meta_value) as form_id
+          (select form_id from wp_gf_entry where id = meta_value) as form_id
           FROM      wp_rg_lead_meta
           WHERE     meta_value NOT IN
                     (SELECT  lead_id FROM    wp_mf_entity_tasks)
@@ -1383,19 +1383,19 @@ function paymentRpt($table,$faire) {
         161=>'Contact Email',
         666=>'Order Total'
         );
-    $sql = 'SELECT wp_rg_lead.id as entry_id,wp_rg_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
+    $sql = 'SELECT wp_gf_entry.id as entry_id,wp_rg_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
             . '(select value from wp_rg_lead_detail where field_number = 151 and lead_id=meta_value limit 1) as field_151, '
             . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=meta_value limit 1) as field_303, '
-            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=wp_rg_lead.id limit 1) as status_payentry '
+            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=wp_gf_entry.id limit 1) as status_payentry '
             . 'FROM wp_rg_form_meta '
             . 'left outer join wp_mf_faire on find_in_set (wp_rg_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
-            . 'left outer join wp_rg_lead on wp_rg_lead.form_id = wp_rg_form_meta.form_id '
-            . 'left outer join wp_rg_lead_meta on wp_rg_lead_meta.lead_id = wp_rg_lead.id and meta_key = "entry_id"'
-            . 'left outer join wp_rg_lead origLead on origLead.id = meta_value '
+            . 'left outer join wp_gf_entry on wp_gf_entry.form_id = wp_rg_form_meta.form_id '
+            . 'left outer join wp_rg_lead_meta on wp_rg_lead_meta.lead_id = wp_gf_entry.id and meta_key = "entry_id"'
+            . 'left outer join wp_gf_entry origLead on origLead.id = meta_value '
             . 'WHERE  display_meta like \'%"form_type":"Payment"%\' and '
             . '       display_meta like \'%"create_invoice":"yes"%\' and '
             . '       wp_mf_faire.id='.$faire.' and '
-            . '       wp_rg_lead.status="active" ';
+            . '       wp_gf_entry.status="active" ';
 
     $result = $wpdb->get_results($sql);
     $colDefs = array();

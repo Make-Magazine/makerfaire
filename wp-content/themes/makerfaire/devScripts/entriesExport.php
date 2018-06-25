@@ -62,13 +62,13 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
 
 //entry data
 $sql = "SELECT wp_rg_lead_detail.*,wp_rg_lead_detail_long.value as 'long value'
-        FROM wp_rg_lead
+        FROM wp_gf_entry
           left outer join wp_rg_lead_detail
-            on wp_rg_lead_detail.lead_id = wp_rg_lead.id
+            on wp_rg_lead_detail.lead_id = wp_gf_entry.id
           left OUTER join wp_rg_lead_detail_long
             ON wp_rg_lead_detail.id = wp_rg_lead_detail_long.lead_detail_id
-        where wp_rg_lead.form_id = $form
-        and wp_rg_lead.status='active'
+        where wp_gf_entry.form_id = $form
+        and wp_gf_entry.status='active'
         ORDER BY lead_id asc, field_number asc";
 //loop thru entry data
 $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");

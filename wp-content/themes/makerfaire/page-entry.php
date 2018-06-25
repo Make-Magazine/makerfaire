@@ -371,8 +371,8 @@ function display_groupEntries($entryID){
   //look for all associated entries but exclude trashed entries
   $sql = "select wp_rg_lead_rel.*
           from wp_rg_lead_rel
-          left outer join wp_rg_lead child on wp_rg_lead_rel.childID = child.id
-          left outer join wp_rg_lead parent on wp_rg_lead_rel.parentID = parent.id
+          left outer join wp_gf_entry child on wp_rg_lead_rel.childID = child.id
+          left outer join wp_gf_entry parent on wp_rg_lead_rel.parentID = parent.id
           where (parentID=".$entryID." or childID=".$entryID.") and child.status != 'trash' and parent.status != 'trash'";
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){

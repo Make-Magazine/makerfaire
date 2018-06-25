@@ -232,14 +232,14 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
   //build faire drop downs
   global $wpdb;
 
-  $sql = (isset($faire_id)) ? "select *, count(*) as count from wp_mf_faire, wp_rg_lead
-                where FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0 and
-                        wp_rg_lead.status = 'active' and faire='$faire_id'
+  $sql = (isset($faire_id)) ? "select *, count(*) as count from wp_mf_faire, wp_gf_entry
+                where FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0 and
+                        wp_gf_entry.status = 'active' and faire='$faire_id'
                 group by wp_mf_faire.faire
                 ORDER BY `wp_mf_faire`.`start_dt` DESC" :
-          "select *, count(*) as count from wp_mf_faire, wp_rg_lead
-                where FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0 and
-                        wp_rg_lead.status = 'active'
+          "select *, count(*) as count from wp_mf_faire, wp_gf_entry
+                where FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0 and
+                        wp_gf_entry.status = 'active'
                 group by wp_mf_faire.faire
                 ORDER BY `wp_mf_faire`.`faire_location` ASC, start_dt desc";
 
@@ -277,7 +277,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
       //Level 3 - Faire Form names
       $formSQL = "
             SELECT form_id,form.title,count(*) as count
-                    FROM `wp_rg_lead` join wp_rg_form form
+                    FROM `wp_gf_entry` join wp_rg_form form
                     WHERE form.id = form_id and `form_id` IN (" . $faireInfo['form_ids'] . ") and status = 'active'
                     group by form_id
                     ORDER BY FIELD(form_id, " . $faireInfo['form_ids'] . ")";
@@ -292,8 +292,8 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
             'parent' => 'mf_admin_parent_' . $faire));
 
         //Level 4 - entry status
-        $statusSql = "SELECT wp_rg_lead_detail.id,value,count(*)as count FROM `wp_rg_lead_detail` join wp_rg_lead on wp_rg_lead.id = lead_id "
-                . " WHERE wp_rg_lead.form_id = " . $formRow->form_id . "    AND wp_rg_lead_detail.field_number = 303 and status = 'active' group by value";
+        $statusSql = "SELECT wp_rg_lead_detail.id,value,count(*)as count FROM `wp_rg_lead_detail` join wp_gf_entry on wp_gf_entry.id = lead_id "
+                . " WHERE wp_gf_entry.form_id = " . $formRow->form_id . "    AND wp_rg_lead_detail.field_number = 303 and status = 'active' group by value";
 
         foreach ($wpdb->get_results($statusSql) as $statusRow) {
           array_push($args,array(

@@ -113,18 +113,18 @@ function createMFSignZip($area) {
 
 
     //create array of subareas
-    $sql = "SELECT wp_rg_lead.ID as entry_id, wp_rg_lead.form_id,
-          (select value from wp_rg_lead_detail where field_number=303 and wp_rg_lead_detail.lead_id = wp_rg_lead.ID) as entry_status,
+    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
+          (select value from wp_rg_lead_detail where field_number=303 and wp_rg_lead_detail.lead_id = wp_gf_entry.ID) as entry_status,
           wp_mf_faire_subarea.area_id, wp_mf_faire_area.area, wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea,wp_mf_location.location
-          FROM wp_mf_faire, wp_rg_lead
-          left outer join wp_mf_location on wp_rg_lead.ID  = wp_mf_location.entry_id
+          FROM wp_mf_faire, wp_gf_entry
+          left outer join wp_mf_location on wp_gf_entry.ID  = wp_mf_location.entry_id
           left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id  = wp_mf_faire_subarea.id
           left outer join wp_mf_faire_area    on wp_mf_faire_subarea.area_id  = wp_mf_faire_area.id
           where faire = '$faire'
-          and wp_rg_lead.status  != 'trash'
+          and wp_gf_entry.status  != 'trash'
           and wp_mf_faire_area.area = '$area'
-          and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0
-          and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.non_public_forms)<= 0";
+          and FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0
+          and FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.non_public_forms)<= 0";
 
     $results = $wpdb->get_results($sql);
     $entries = array();
@@ -217,7 +217,7 @@ function cronRmtData($formID,$limit=0,$start=0) {
   echo 'Updating RMT for form '. $formID.'<br/>';
 
   global $wpdb;
-  $sql = "Select id from wp_rg_lead where form_id  = $formID  ORDER BY `wp_rg_lead`.`id` ASC ";
+  $sql = "Select id from wp_gf_entry where form_id  = $formID  ORDER BY `wp_gf_entry`.`id` ASC ";
   if($limit!="0"){
     $sql .= " limit ".$start.', '.$limit;
   }
