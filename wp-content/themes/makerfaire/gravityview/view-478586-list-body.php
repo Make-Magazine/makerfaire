@@ -48,6 +48,7 @@ $entries   = $tableData['data'];
         <h2 style="float:left">Welcome to the Maker Faire Portal</h2>
         <div class="clearfix"></div>
         <h3 class="title-head pull-left">Manage your Maker Faire Entries</h3>
+        User <?php echo $current_user->user_email;?><br/>
         <div class="dropdown show" style="float:right">
           <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Apply to Participate
@@ -60,9 +61,8 @@ $entries   = $tableData['data'];
           </div>
         </div>
       </div>
-
     </div>
-    User <?php echo $current_user->user_email;?><br/>
+
     <hr class="header-break">
     <?php
 
@@ -346,16 +346,16 @@ $entries   = $tableData['data'];
     <h3>Maker Faire Bay Area and World Maker Faire New York Participants</h3>
     <p>This is where participants can manage their Maker Faire entries for World Maker Faire New York and Bay Area Maker Faire.
     You are logged in as <b><?php echo $current_user->user_email;?></b>, but you do not seem to have applied yet. There are many ways to participate:</p>
-    <ul class="text-center bulletless">
-      <li class="font-weight-bold">Maker Exhibitors</li>
+    <ul class="text-center bulletless" style="font-size:24px;margin-bottom:10px">
+      <li>Maker Exhibitors</li>
       <li>Performers</li>
       <li>Presenters</li>
       <li>Startup Sponsors</li>
       <li>Event Sponsors</li>
     </ul>
     <div class="row text-center">
-      <div class="col-md-6"><a href="/new-york/call-for-makers/" class="btn btn-alert btn-info">World Maker Faire New York</a></div>
-      <div class="col-md-6"><a href="/bay-area/call-for-makers/" class="btn btn-alert btn-info">Maker Faire Bay Area</a></div>
+      <div class="col-sm-6"><a href="/new-york/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">World Maker Faire New York</a></div>
+      <div class="col-sm-6"><a href="/bay-area/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">Maker Faire Bay Area</a></div>
     </div>
     <h3 class="text-center">Join us in co-creating the next Maker Faire!</h3>
     <?php
