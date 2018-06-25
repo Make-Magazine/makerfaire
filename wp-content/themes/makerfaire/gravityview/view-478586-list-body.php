@@ -31,7 +31,6 @@ $entries   = $tableData['data'];
         },
         title: ''
     });
-
     jQuery('body').on('click', function (e) {
       //did not click a popover toggle or popover
       if (jQuery(e.target).data('toggle') !== 'popover'
@@ -47,11 +46,11 @@ $entries   = $tableData['data'];
     <div class="clearfix">
       <div>
         <h2 style="float:left">Welcome to the Maker Faire Portal</h2>
-
+        <div class="clearfix"></div>
+        <h3 class="title-head pull-left">Manage your Maker Faire Entries</h3>
         <div class="dropdown show" style="float:right">
           <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Apply to Participate
-            <!--<div class="fa fa-sort-down"></div>-->
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             <ul class="bulletless">
@@ -61,8 +60,7 @@ $entries   = $tableData['data'];
           </div>
         </div>
       </div>
-      <div class="clearfix"></div>
-      <h3 class="title-head pull-left">Manage your Maker Faire Entries</h3>
+
     </div>
     User <?php echo $current_user->user_email;?><br/>
     <hr class="header-break">
