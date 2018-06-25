@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Katz Web Services, Inc.
+# Copyright (C) 2018 GravityView
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 # Translators:
 # Md Akter Hosen <tareqhi@gmail.com>, 2014
@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2016-01-21 18:11+0000\n"
+"PO-Revision-Date: 2018-05-03 04:01+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Bengali (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/bn/)\n"
 "MIME-Version: 1.0\n"
@@ -24,64 +24,49 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:360 partials/metabox.php:2
+#: advanced-filter.php:413 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr "উন্নততর ফিল্টার"
 
-#: advanced-filter.php:362
+#: advanced-filter.php:415
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr "আপনার এন্ট্রি ভ্যালু অনুসারে কোন এন্ট্রিগুলো দেখানো হবে তা সীমিত করুন। এন্ট্রিগুলো দেখানোর পূর্বে ফিল্টার করা হয়। যখন একজন ব্যবহারকারী একটি সার্চ করেন তখন ফলাফল এই সেটিংস দিয়ে ফিল্টার করা হবে।"
 
-#: advanced-filter.php:363
+#: advanced-filter.php:416
 msgid "Limit to Logged-in User Entries"
 msgstr "লগ-ইন করা ব্যবহারকারীর নিকট সীমিত করুন"
 
-#: advanced-filter.php:364
-msgid ""
-"To limit entries to those created by the current user, select \"Created "
-"By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
-msgstr "ব্যবহারকারীর নিকট হতে এন্ট্রি সীমিত করার লক্ষ্যে \"প্রস্তুতকারী\" বাছাই করুন, &amp; \"লগ-ইন করা ব্যবহারকারী\" ড্রপ-ডাউন মেনুতে পাবেন।"
-
-#: advanced-filter.php:365
-msgid ""
-"If you want to limit entries to those created by the current user, but allow"
-" the administrators to view all the entries, select \"Logged-in User "
-"(disabled for admins)\" from the drop-down menu."
-msgstr ""
-
-#: advanced-filter.php:623
+#: advanced-filter.php:417 advanced-filter.php:676
 msgid "Created By"
 msgstr "প্রস্তুতকারী"
 
-#: advanced-filter.php:627
-msgid "Logged-in User (disabled for Admins)"
+#: advanced-filter.php:417 advanced-filter.php:684
+msgid "Currently Logged-in User"
 msgstr ""
 
-#: advanced-filter.php:631
-msgid "Logged-in User"
-msgstr "লগ-ইন করা ব্যবহারকারী"
+#: advanced-filter.php:418 advanced-filter.php:680
+msgid "Currently Logged-in User (Disabled for Administrators)"
+msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:181
+#: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
-msgstr "একটি নতুন ভার্সন %1$s প্রাপ্ত হয়েছেন। <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\"> ভার্সনের বিস্তারিত দেখুন %3$s </a>।"
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
+msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:188
+#: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
-"href=\"%4$s\">update now</a>."
-msgstr "একটি নতুন ভার্সন %1$s প্রাপ্ত হয়েছেন। <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\"> ভার্সনের বিস্তারিত দেখুন %3$s </a> অথবা <a href=\"%4$s\">আপডেট করুন</a>।"
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
+msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:332
+#: lib/EDD_SL_Plugin_Updater.php:396
 msgid "You do not have permission to install plugin updates"
 msgstr "প্লাগইন আপডেট করার অনুমতি আপনার নেই"
 
-#: lib/EDD_SL_Plugin_Updater.php:332
+#: lib/EDD_SL_Plugin_Updater.php:396
 msgid "Error"
 msgstr "ভুল"
 
@@ -106,3 +91,22 @@ msgstr "অতিরিক্ত ফিল্টার কনফিগার ক
 #: partials/metabox.php:5
 msgid "Advanced Filtering requires Javascript to be enabled."
 msgstr "অতিরিক্ত ফিল্টার চালানোর জন্য জাভাস্ক্রীপ্ট সক্রিয় করতে হবে।"
+
+#: advanced-filter.php:417
+msgctxt ""
+"First placeholder is \"Created By\" and second is \"Currently Logged-in "
+"User\""
+msgid ""
+"To limit entries to those created by the current user, select \"%s\", \"is\""
+" &amp; \"%s\" from the drop-down menus."
+msgstr ""
+
+#: advanced-filter.php:418
+msgctxt ""
+"The placeholder is \"Currently Logged-in User (Disabled for "
+"Administrators)\""
+msgid ""
+"If you want to limit entries to those created by the current user, but allow"
+" the administrators to view all the entries, select \"%s\" from the drop-"
+"down menu."
+msgstr ""

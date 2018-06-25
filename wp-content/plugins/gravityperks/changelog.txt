@@ -1,9 +1,19 @@
 
 # Changelog
 
+## 2.0.8
+
+	- Fixed notice that could occur when Gravity Forms was deactivated.
+	- Improved Perk installation experience by reducing the number of calls to GravityWiz.com
+	- Updated API to use HTTPS
+
+## 2.0.7
+
+	- Fixed fatal error that occurred when fetching announcements when Gravity Forms was not loaded and announcements were not cached.
+
 ## 2.0.6
 
-   	- Fixed fatal error that occurred when attempting to log when Gravity Forms was not loaded.
+	- Fixed fatal error that occurred when attempting to log when Gravity Forms was not loaded.
 
 ## 2.0.5
 

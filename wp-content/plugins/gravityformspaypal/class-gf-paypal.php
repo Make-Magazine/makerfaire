@@ -145,23 +145,15 @@ class GFPayPal extends GFPaymentAddOn {
 		$default_settings            = $this->replace_field( 'transactionType', $transaction_type, $default_settings );
 		//-------------------------------------------------------------------------------------------------
 
-		//--add Page Style, Continue Button Label, Cancel URL
+		//--add Image URL, Cancel URL
 		$fields = array(
 			array(
-				'name'     => 'pageStyle',
-				'label'    => esc_html__( 'Page Style', 'gravityformspaypal' ),
+				'name'     => 'imageURL',
+				'label'    => esc_html__( 'Image URL', 'gravityformspaypal' ),
 				'type'     => 'text',
 				'class'    => 'medium',
 				'required' => false,
-				'tooltip'  => '<h6>' . esc_html__( 'Page Style', 'gravityformspaypal' ) . '</h6>' . esc_html__( 'This option allows you to select which PayPal page style should be used if you have set up a custom payment page style with PayPal.', 'gravityformspaypal' )
-			),
-			array(
-				'name'     => 'continueText',
-				'label'    => esc_html__( 'Continue Button Label', 'gravityformspaypal' ),
-				'type'     => 'text',
-				'class'    => 'medium',
-				'required' => false,
-				'tooltip'  => '<h6>' . esc_html__( 'Continue Button Label', 'gravityformspaypal' ) . '</h6>' . esc_html__( 'Enter the text that should appear on the continue button once payment has been completed via PayPal.', 'gravityformspaypal' )
+				'tooltip'  => '<h6>' . esc_html__( 'Image URL', 'gravityformspaypal' ) . '</h6>' . esc_html__( 'This option allows you to enter the URL of the 150x50-pixel image displayed as your logo in the upper left corner of the PayPal checkout pages. Default is your business name, if you have a PayPal Business account or your email address, if you have PayPal Premier or Personal account.', 'gravityformspaypal' )
 			),
 			array(
 				'name'     => 'cancelUrl',
@@ -587,11 +579,8 @@ class GFPayPal extends GFPaymentAddOn {
 		//Customer fields
 		$customer_fields = $this->customer_query_string( $feed, $entry );
 
-		//Page style
-		$page_style = ! empty( $feed['meta']['pageStyle'] ) ? '&page_style=' . urlencode( $feed['meta']['pageStyle'] ) : '';
-
-		//Continue link text
-		$continue_text = ! empty( $feed['meta']['continueText'] ) ? '&cbt=' . urlencode( $feed['meta']['continueText'] ) : '&cbt=' . __( 'Click here to continue', 'gravityformspaypal' );
+		//Image URL 
+		$image_url = ! empty( $feed['meta']['imageURL'] ) ? '&image_url=' . urlencode( $feed['meta']['imageURL'] ) : '';
 
 		//Set return mode to 2 (PayPal will post info back to page). rm=1 seems to create lots of problems with the redirect back to the site. Defaulting it to 2.
 		$return_mode = '2';
@@ -613,7 +602,7 @@ class GFPayPal extends GFPaymentAddOn {
 		$business_email = urlencode( trim( $feed['meta']['paypalEmail'] ) );
 		$custom_field   = $entry['id'] . '|' . wp_hash( $entry['id'] );
 
-		$url .= "?notify_url={$ipn_url}&charset=UTF-8&currency_code={$currency}&business={$business_email}&custom={$custom_field}{$invoice}{$customer_fields}{$page_style}{$continue_text}{$cancel_url}{$disable_note}{$disable_shipping}{$return_url}";
+		$url .= "?notify_url={$ipn_url}&charset=UTF-8&currency_code={$currency}&business={$business_email}&custom={$custom_field}{$invoice}{$customer_fields}{$image_url}{$cancel_url}{$disable_note}{$disable_shipping}{$return_url}";
 		$query_string = '';
 
 		switch ( $feed['meta']['transactionType'] ) {
@@ -1641,6 +1630,10 @@ class GFPayPal extends GFPaymentAddOn {
 
 		//checking if webserver is compatible with PayPal SSL certificate
 		add_action( 'admin_notices', array( $this, 'check_ipn_request' ) );
+
+		if ( ! self::is_tls_1_2() ) {
+			GFCommon::add_error_message( '<strong>WARNING: You may no longer be able to accept PayPal payments after June 2018! </strong><br/>It looks like your server does not support TLS 1.2. As of June 2018, PayPal is dropping support for TLS 1.1 and your payments may no longer function properly. It is critically important that you upgrade your server to support TLS 1.2 as soon as possible. For more information, contact your web hosting provider and ask them to support TLS 1.2. More information is available in <a href=“https://www.paypal.com/au/webapps/mpp/tls-http-upgrade” target=“_blank”>PayPal’s TLS 1.2 and HTTP/1.1 Upgrade Documentation</a>.' );
+		}
 	}
 
 	/**
@@ -2026,6 +2019,11 @@ class GFPayPal extends GFPaymentAddOn {
 		return $db_version;
 	}
 
+	public static function is_tls_1_2() {
+		$response = wp_remote_get( 'https://tlstest.paypal.com/' );
+		return ! is_wp_error( $response ) && $response['body'] == 'PayPal_Connection_OK' ? true : false;
+	}
+
 	//------ FOR BACKWARDS COMPATIBILITY ----------------------//
 
 	public function update_feed_id( $old_feed_id, $new_feed_id ) {
@@ -2103,8 +2101,6 @@ class GFPayPal extends GFPaymentAddOn {
 					'mode'                         => rgar( $old_feed['meta'], 'mode' ),
 					'transactionType'              => rgar( $old_feed['meta'], 'type' ),
 					'type'                         => rgar( $old_feed['meta'], 'type' ), //For backwards compatibility of the delayed payment feature
-					'pageStyle'                    => rgar( $old_feed['meta'], 'style' ),
-					'continueText'                 => rgar( $old_feed['meta'], 'continue_text' ),
 					'cancelUrl'                    => rgar( $old_feed['meta'], 'cancel_url' ),
 					'disableNote'                  => rgar( $old_feed['meta'], 'disable_note' ),
 					'disableShipping'              => rgar( $old_feed['meta'], 'disable_shipping' ),

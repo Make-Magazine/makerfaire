@@ -19,10 +19,41 @@ var gvAdvancedFilters = {
 
 		$('body').on( 'gravityview_form_change', gvAdvancedFilters.formChange );
 
-		$('#entry_filters').removeClass('hide-if-js').gfFilterUI( gvAdvFilterVar.gformFieldFilters, gvAdvFilterVar.gformInitFilter, true );
+		gvAdvancedFilters.filters = $('#entry_filters')
+			.removeClass('hide-if-js')
+			.gfFilterUI( gvAdvFilterVar.gformFieldFilters, gvAdvFilterVar.gformInitFilter, true )
+			.on( 'change init', gvAdvancedFilters.lockCreatedBy )
+			.on( 'click', '.gform-add,.gform-remove', gvAdvancedFilters.lockCreatedBy )
+			.trigger( 'init' );
 
 		gform.addFilter( 'gform_datepicker_options_pre_init', gvAdvancedFilters.fixConstrainInput );
 
+	},
+
+	/**
+	 * Locks the search mode to "All" if "Created By" includes a value not an user ID (added by GV)
+	 *
+	 * @since 1.2
+	 */
+	lockCreatedBy: function( e ) {
+
+		var $mode = $('[name="mode"]', gvAdvancedFilters.filters );
+
+		$mode.attr( 'disabled', null );
+
+		$( '.gform-field-filter', gvAdvancedFilters.filters ).each( function ( index ) {
+
+			var filter_field = $( '.gform-filter-field', $( this ) ).val(),
+				filter_value = $( '.gform-filter-value', $( this ) ).val();
+
+			if (
+				filter_field.length && filter_field.match( /created_by/ ) &&
+				filter_value.length && ! filter_value.match( /^[0-9]+?$/ )
+			) {
+				$mode.val('all').attr('disabled', 'disabled');
+				return false;
+			}
+		});
 	},
 
 	/**

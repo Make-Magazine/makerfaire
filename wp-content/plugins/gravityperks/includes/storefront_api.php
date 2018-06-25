@@ -147,6 +147,11 @@ class GWAPI {
 	 */
 	public function pre_set_site_transient_update_plugins_filter( $_transient_data ) {
 
+		/* Reduce number of requests when installing plugin. */
+		if ( rgar( $_GET, 'action' ) === 'install-plugin' ) {
+			return $_transient_data;
+		}
+
 		GravityPerks::log_debug( 'pre_set_site_transient_update_plugins_filter() start. Retrieves download package for individual perk auto-updates.' );
 
 		if( empty( $_transient_data->response ) )
