@@ -48,7 +48,9 @@ $entries   = $tableData['data'];
         <h2 style="float:left">Welcome to the Maker Faire Portal</h2>
         <div class="clearfix"></div>
         <h3 class="title-head pull-left">Manage your Maker Faire Entries</h3>
-        User <?php echo $current_user->user_email;?><br/>
+        <div class="clearfix">
+           User <?php echo $current_user->user_email;?>
+        </div>
         <div class="dropdown show" style="float:right">
           <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Apply to Participate
@@ -346,7 +348,7 @@ $entries   = $tableData['data'];
     <h3>Maker Faire Bay Area and World Maker Faire New York Participants</h3>
     <p>This is where participants can manage their Maker Faire entries for World Maker Faire New York and Bay Area Maker Faire.
     You are logged in as <b><?php echo $current_user->user_email;?></b>, but you do not seem to have applied yet. There are many ways to participate:</p>
-    <ul class="text-center bulletless" style="font-size:24px;margin-bottom:10px">
+    <ul class="text-center bulletless" style="font-size:24px;margin:30px">
       <li>Maker Exhibitors</li>
       <li>Performers</li>
       <li>Presenters</li>
