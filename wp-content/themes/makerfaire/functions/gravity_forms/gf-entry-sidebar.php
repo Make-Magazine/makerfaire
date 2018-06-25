@@ -15,7 +15,7 @@ function add_sidebar_sections($form, $lead) {
     $sidebar .= display_sched_loc_box($form, $lead);
     //get list of forms
     global $wpdb;
-    $results = $wpdb->get_results("SELECT * FROM `wp_rg_form` where is_active = 1 and is_trash = 0");
+    $results = $wpdb->get_results("SELECT * FROM `wp_gf_form` where is_active = 1 and is_trash = 0");
     $formList = array();
     foreach($results as $form){
       $formList[] = array('id'=>$form->id,'title'=>$form->title);

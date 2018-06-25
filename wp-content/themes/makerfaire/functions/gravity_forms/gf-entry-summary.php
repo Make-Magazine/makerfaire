@@ -322,7 +322,7 @@ function gf_collapsible_sections($form, $lead){
                                                FROM wp_gf_entry
                                               WHERE wp_gf_entry.id = wp_rg_lead_detail.lead_id) as lead_status
                                       FROM wp_rg_lead_detail
-                                      JOIN wp_rg_form on wp_rg_form.id = wp_rg_lead_detail.form_id
+                                      JOIN wp_gf_form on wp_gf_form.id = wp_rg_lead_detail.form_id
                                      WHERE value = "'.$key.'"' .
                                      ' AND lead_id != '.$entry_id.'
                                   GROUP BY lead_id

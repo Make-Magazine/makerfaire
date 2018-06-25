@@ -106,7 +106,7 @@ function return_MF_navigation(){
                   JOIN  wp_rg_lead_detail
                           ON  wp_gf_entry.id = wp_rg_lead_detail.lead_id AND
                               wp_rg_lead_detail.field_number = 303
-                  JOIN  wp_rg_form form
+                  JOIN  wp_gf_form form
                           ON  wp_gf_entry.form_id = form.id AND
                               is_trash != 1
                   WHERE wp_gf_entry.status = 'active' AND

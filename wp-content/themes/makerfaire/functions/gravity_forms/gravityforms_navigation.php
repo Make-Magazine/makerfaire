@@ -277,7 +277,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
       //Level 3 - Faire Form names
       $formSQL = "
             SELECT form_id,form.title,count(*) as count
-                    FROM `wp_gf_entry` join wp_rg_form form
+                    FROM `wp_gf_entry` join wp_gf_form form
                     WHERE form.id = form_id and `form_id` IN (" . $faireInfo['form_ids'] . ") and status = 'active'
                     group by form_id
                     ORDER BY FIELD(form_id, " . $faireInfo['form_ids'] . ")";
