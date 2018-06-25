@@ -18,7 +18,7 @@
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="import">
 
-          <form action="options.php" method="post" onsubmit="return presubmit_import();" enctype="multipart/form-data">
+          <form action="options.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="action" value="wpauth0_import_settings" />
 
             <div id="upload-file">
@@ -39,7 +39,7 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="export">
 
-          <form action="options.php" method="post" onsubmit="return presubmit_export();">
+          <form action="options.php" method="post">
             <input type="hidden" name="action" value="wpauth0_export_settings" />
 
             <p class="a0-step-text top-margin">Download the entire plugin configuration.</p>
@@ -72,13 +72,4 @@
     e.preventDefault()
     jQuery(this).tab('show')
   })
-
-  function presubmit_import() {
-    metricsTrack('import:settings');
-    return true;
-  }
-  function presubmit_export() {
-    metricsTrack('settings:settings');
-    return true;
-  }
 </script>

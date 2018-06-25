@@ -22,7 +22,7 @@ class WP_Auth0_DBManager {
 	}
 
 	public function check_update() {
-		if ( $this->current_db_version !== AUTH0_DB_VERSION ) {
+		if ( $this->current_db_version && $this->current_db_version !== AUTH0_DB_VERSION ) {
 			$this->install_db();
 		}
 	}
@@ -43,13 +43,6 @@ class WP_Auth0_DBManager {
 		$client_secret = $options->get( 'client_secret' );
 		$domain = $options->get( 'domain' );
 		$sso = $options->get( 'sso' );
-
-		if ($this->current_db_version === 0) {
-			$options->set('auth0_table', false);
-		} elseif($options->get('auth0_table') === null) {
-			$options->set('auth0_table', true);
-		}
-
 		$cdn_url = $options->get( 'cdn_url' );
 
 		if ( $this->current_db_version <= 7 ) {
@@ -75,17 +68,6 @@ class WP_Auth0_DBManager {
 		}
 
 		if ( $this->current_db_version < 10 ) {
-
-			if ($options->get('use_lock_10') === null) {
-
-				if ( strpos( $cdn_url, '10.' ) === false ) {
-					$options->set('use_lock_10', false);
-				} else {
-					$options->set('use_lock_10', true);
-				}
-
-			}
-
 			$dict = $options->get('dict');
 
 			if (!empty($dict))
@@ -100,16 +82,6 @@ class WP_Auth0_DBManager {
 					$options->set('language_dictionary', $dict);
 				}
 
-			}
-
-		}
-
-		if ( $this->current_db_version < 12 ) {
-
-			if ( strpos( $cdn_url, '10.' ) === false ) {
-				$options->set('use_lock_10', false);
-			} else {
-				$options->set('use_lock_10', true);
 			}
 
 		}
@@ -136,20 +108,12 @@ class WP_Auth0_DBManager {
 		// 3.4.0
 
 		if ( $this->current_db_version < 15 || 15 === $version_to_install  ) {
-
-			$options->set('use_lock_10', true);
-			$options->set('cdn_url', '//cdn.auth0.com/js/lock/11.1/lock.min.js');
-			$options->set('auth0js-cdn', '//cdn.auth0.com/js/auth0/9.1/auth0.min.js');
+			$options->set('cdn_url', WPA0_LOCK_CDN_URL);
+			$options->set('auth0js-cdn', WPA0_AUTH0_JS_CDN_URL);
 			$options->set('cache_expiration', 1440);
 
 			// Update Client
-			if (!empty($client_id) && !empty($domain)) {
-				$payload = array(
-					'cross_origin_auth' => true,
-					'cross_origin_loc' => $options->get_cross_origin_loc(),
-					'web_origins' => $options->get_web_origins(),
-				);
-				WP_Auth0_Api_Client::update_client($domain, $app_token, $client_id, $sso, $payload);
+			if (WP_Auth0::ready()) {
 				$options->set('client_signing_algorithm', 'HS256');
 			}
 		}
@@ -180,16 +144,12 @@ class WP_Auth0_DBManager {
 			// Update Lock and Auth versions
 
 			if ( '//cdn.auth0.com/js/lock/11.0.0/lock.min.js' === $options->get( 'cdn_url' ) ) {
-				$options->set( 'cdn_url', '//cdn.auth0.com/js/lock/11.1/lock.min.js' );
+				$options->set( 'cdn_url', WPA0_LOCK_CDN_URL );
 			}
 
 			if ( '//cdn.auth0.com/js/auth0/9.0.0/auth0.min.js' === $options->get( 'auth0js-cdn' ) ) {
-				$options->set( 'auth0js-cdn', '//cdn.auth0.com/js/auth0/9.1/auth0.min.js' );
+				$options->set( 'auth0js-cdn', WPA0_AUTH0_JS_CDN_URL );
 			}
-
-			// Add API audience
-
-			$options->set( 'api_audience', 'https://' . $options->get( 'domain' ) . '/api/v2/' );
 
 			// Update app type and client grant
 
@@ -198,15 +158,6 @@ class WP_Auth0_DBManager {
 
 				$payload = array(
 					'app_type' => 'regular_web',
-					'callbacks' => array(
-						$options->get_wp_auth0_url(),
-						wp_login_url()
-					),
-
-					// Duplicate of DB version 15 upgrade to account for site_url() changes
-					'cross_origin_auth' => true,
-					'cross_origin_loc' => $options->get_cross_origin_loc(),
-					'web_origins' => $options->get_web_origins(),
 				);
 
 				// Update the WP-created client
@@ -222,17 +173,16 @@ class WP_Auth0_DBManager {
 				delete_option( 'wp_auth0_client_grant_failed' );
 				update_option( 'wp_auth0_client_grant_success', 1 );
 
-				if ( 409 !== $client_grant_created[ 'statusCode' ] ) {
+				if ( 409 !== $client_grant_created->statusCode ) {
 					WP_Auth0_ErrorManager::insert_auth0_error(
 						__METHOD__,
 						'Client Grant has been successfully created!'
 					);
 				}
-
 			} else {
 				WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, sprintf(
 					__( 'Unable to automatically create Client Grant. Please go to your Auth0 Dashboard '
-					    . 'and authorize your Client %s for management API scopes %s.',
+					    . 'and authorize your Application %s for management API scopes %s.',
 						'wp-auth0' ),
 					$options->get( 'client_id' ),
 					implode( ', ', WP_Auth0_Api_Client::get_required_scopes() )
@@ -286,12 +236,60 @@ class WP_Auth0_DBManager {
 			} else {
 				WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, sprintf(
 					__( 'Unable to automatically update Client Grant Type. Please go to your Auth0 Dashboard '
-					    . 'and add Client Credentials to your Client settings > Advanced > Grant Types for ID %s ',
+					    . 'and add Client Credentials to your Application settings > Advanced > Grant Types for ID %s ',
 						'wp-auth0' ),
 					$options->get( 'client_id' )
 				) );
 				update_option( 'wp_auth0_grant_types_failed', 1 );
 			}
+		}
+
+		// 3.6.0
+
+		if ( ( $this->current_db_version < 18 && 0 !== $this->current_db_version ) || 18 === $version_to_install ) {
+
+			// Migrate passwordless_method
+			if ( $options->get( 'passwordless_enabled', FALSE ) ) {
+				$pwl_method = $options->get( 'passwordless_method' );
+				switch ( $pwl_method ) {
+
+					// SMS passwordless just needs 'sms' as a connection
+					case 'sms' :
+						$options->set( 'lock_connections', 'sms' );
+						break;
+
+					// Social + SMS means there are existing social connections we want to keep
+					case 'socialOrSms' :
+						$options->add_lock_connection( 'sms' );
+						break;
+
+					// Email link passwordless just needs 'email' as a connection
+					case 'emailcode' :
+					case 'magiclink' :
+						$options->set( 'lock_connections', 'email' );
+						break;
+
+					// Social + Email means there are social connections be want to keep
+					case 'socialOrMagiclink' :
+					case 'socialOrEmailcode' :
+						$options->add_lock_connection( 'email' );
+						break;
+				}
+
+				// Need to set a special passwordlessMethod flag if using email code
+				$lock_json = trim( $options->get( 'extra_conf' ) );
+				$lock_json_decoded = ! empty( $lock_json ) ? json_decode( $lock_json, TRUE ) : array();
+				$lock_json_decoded[ 'passwordlessMethod' ] = strpos( $pwl_method, 'code' ) ? 'code' : 'link';
+				$options->set( 'extra_conf', json_encode( $lock_json_decoded ) );
+			}
+
+			// Set passwordless_cdn_url to latest Lock
+			$options->set( 'passwordless_cdn_url', WPA0_LOCK_CDN_URL );
+
+			// Force passwordless_method to delete
+			$update_options = $options->get_options();
+			unset( $update_options[ 'passwordless_method' ] );
+			update_option( $options->get_options_name(), $update_options );
 		}
 
 		$this->current_db_version = AUTH0_DB_VERSION;
@@ -332,9 +330,9 @@ class WP_Auth0_DBManager {
 					<p><strong>2.</strong>
 						<a href="https://auth0.com/docs/cms/wordpress/configuration#client-setup"
 						   target="_blank"><?php
-							_e( 'Review your Client advanced settings', 'wp-auth0' ) ?></a>,
+							_e( 'Review your Application advanced settings', 'wp-auth0' ) ?></a>,
 						<?php _e( 'specifically the Grant Types, and ', 'wp-auth0' ) ?>
-						<a href="https://auth0.com/docs/cms/wordpress/configuration#authorize-the-client-for-the-management-api"
+						<a href="https://auth0.com/docs/cms/wordpress/configuration#authorize-the-application-for-the-management-api"
 						   target="_blank"><?php
 							_e( 'authorize your client for the Management API', 'wp-auth0' ) ?></a>
 						<?php _e( 'to manually complete the setup.', 'wp-auth0' ) ?>

@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Class WP_Auth0_Dashboard_Widgets
+ *
+ * @deprecated 3.6.0 - The plugin no longer supports the dashboard widgets functionality.
+ */
 class WP_Auth0_Dashboard_Widgets {
 
 	protected $db_manager;
@@ -7,7 +11,17 @@ class WP_Auth0_Dashboard_Widgets {
 
 	const UNKNOWN_KEY = 'unknown';
 
+	/**
+	 * WP_Auth0_Dashboard_Widgets constructor.
+	 *
+	 * @deprecated 3.6.0 - The plugin no longer supports the dashboard widgets functionality.
+	 *
+	 * @param WP_Auth0_Options $a0_options
+	 * @param WP_Auth0_DBManager $db_manager
+	 */
 	public function __construct( WP_Auth0_Options $a0_options, WP_Auth0_DBManager $db_manager ) {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Class %s is deprecated.', 'wp-auth0' ), __CLASS__ ), E_USER_DEPRECATED );
 		$this->db_manager = $db_manager;
 		$this->a0_options = $a0_options;
 	}
@@ -184,15 +198,15 @@ class WP_Auth0_Dashboard_Widgets {
 			return;
 		}
 
-		wp_enqueue_style( 'auth0-dashboard-c3-css', trailingslashit( plugin_dir_url( WPA0_PLUGIN_FILE ) ) . 'assets/lib/c3/c3.min.css' );
-		wp_enqueue_style( 'auth0-dashboard-css', trailingslashit( plugin_dir_url( WPA0_PLUGIN_FILE ) ) . 'assets/css/dashboard.css' );
+		wp_enqueue_style( 'auth0-dashboard-c3-css', WPA0_PLUGIN_LIB_URL . 'c3/c3.min.css' );
+		wp_enqueue_style( 'auth0-dashboard-css', WPA0_PLUGIN_CSS_URL . 'dashboard.css' );
 
-		wp_enqueue_script( 'auth0-dashboard-d3', trailingslashit( plugin_dir_url( WPA0_PLUGIN_FILE ) ) . 'assets/lib/d3/d3.min.js' );
-		wp_enqueue_script( 'auth0-dashboard-c3-js', trailingslashit( plugin_dir_url( WPA0_PLUGIN_FILE ) ) . 'assets/lib/c3/c3.min.js' );
-		wp_enqueue_script( 'auth0-lodash', trailingslashit( plugin_dir_url( WPA0_PLUGIN_FILE ) ) . 'assets/lib/lodash.min.js' );
+		wp_enqueue_script( 'auth0-dashboard-d3', WPA0_PLUGIN_LIB_URL . 'd3/d3.min.js' );
+		wp_enqueue_script( 'auth0-dashboard-c3-js', WPA0_PLUGIN_LIB_URL . 'c3/c3.min.js' );
+		wp_enqueue_script( 'auth0-lodash', WPA0_PLUGIN_LIB_URL . 'lodash.min.js' );
 
-		wp_enqueue_script( 'auth0-parallelcoordinates', trailingslashit( plugin_dir_url( WPA0_PLUGIN_FILE ) ) . 'assets/lib/parallelcoordinates.js' );
-		wp_enqueue_script( 'auth0-dualdimentionbars', trailingslashit( plugin_dir_url( WPA0_PLUGIN_FILE ) ) . 'assets/lib/dualdimentionbars.js' );
+		wp_enqueue_script( 'auth0-parallelcoordinates', WPA0_PLUGIN_LIB_URL . 'parallelcoordinates.js' );
+		wp_enqueue_script( 'auth0-dualdimentionbars', WPA0_PLUGIN_LIB_URL . 'dualdimentionbars.js' );
 
 
 		$widgets = array(
