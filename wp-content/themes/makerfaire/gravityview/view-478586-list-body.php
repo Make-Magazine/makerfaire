@@ -348,11 +348,11 @@ $entries   = $tableData['data'];
     <p>This is where participants can manage their Maker Faire entries for World Maker Faire New York and Bay Area Maker Faire.
     You are logged in as <b><?php echo $current_user->user_email;?></b>, but you do not seem to have applied yet. There are many ways to participate:</p>
     <ul class="text-center bulletless" style="font-size:24px;margin:30px">
-      <li>Maker Exhibitors</li>
-      <li>Performers</li>
-      <li>Presenters</li>
-      <li>Startup Sponsors</li>
-      <li>Event Sponsors</li>
+      <li><b>Maker Exhibitors</b></li>
+      <li><b>Performers</b></li>
+      <li><b>Presenters</b></li>
+      <li><b>Startup Sponsors</b></li>
+      <li><b>Event Sponsors</b></li>
     </ul>
     <div class="row text-center">
       <div class="col-sm-6"><a href="/new-york/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">World Maker Faire New York</a></div>
