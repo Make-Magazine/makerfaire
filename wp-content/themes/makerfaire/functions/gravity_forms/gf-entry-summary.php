@@ -621,7 +621,7 @@ function getmetaData($entry_id,$type=''){
 // meta key set to a certain meta value
 function mf_get_form_meta( $meta_key,$meta_value ) {
 	global $wpdb;
-	$table_name = RGFormsModel::get_lead_meta_table_name();
+	$table_name ='wp_gf_entry_meta';
   $entry = GFAPI::get_entry( $meta_value );
 
   //retrieve the most current records for each additional form/entry id/form_id combination

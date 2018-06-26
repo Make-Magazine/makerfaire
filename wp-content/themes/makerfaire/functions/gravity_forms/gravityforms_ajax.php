@@ -481,9 +481,9 @@ function set_form_id($lead,$form){
  function update_entry_form_id( $entry_id, $form_id ) {
 	global $wpdb;
 
-	$lead_table        = GFFormsModel::get_lead_table_name();
-	$lead_detail_table = GFFormsModel::get_lead_details_table_name();
-	$lead_meta_table   = GFFormsModel::get_lead_meta_table_name();
+	$lead_table        = 'wp_gf_entry';
+	$lead_detail_table = 'wp_gf_entry_meta';
+	$lead_meta_table   = 'wp_gf_entry_meta';
 	$result     = $wpdb->query(
 			$wpdb->prepare( "UPDATE $lead_table SET form_id={$form_id} WHERE id=%d ", $entry_id)
 	);
@@ -521,9 +521,9 @@ function duplicate_entry_data($form_change,$current_entry_id ){
   global $wpdb;
   global $current_user;
 
-  $lead_table        = GFFormsModel::get_lead_table_name();
-  $lead_detail_table = GFFormsModel::get_lead_details_table_name();
-  $lead_meta_table   = GFFormsModel::get_lead_meta_table_name();
+  $lead_table        = 'wp_gf_entry';
+  $lead_detail_table = 'wp_gf_entry_meta';
+  $lead_meta_table   = 'wp_gf_entry_meta';
 
   //pull existing entries information
   $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table          WHERE      id=%d", $current_entry_id));

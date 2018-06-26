@@ -187,8 +187,8 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	if ( ! is_numeric( $sort_field_number ) || ! is_numeric( $offset ) || ! is_numeric( $page_size ) ) {
 		return '';
 	}
-	$lead_detail_table_name = GFFormsModel::get_lead_details_table_name();
-	$lead_table_name        = GFFormsModel::get_lead_table_name();
+	$lead_detail_table_name = 'wp_gf_entry_meta';
+	$lead_table_name        = 'wp_gf_entry';
 
 	$field_number_min = $sort_field_number - 0.0001;
 	$field_number_max = $sort_field_number + 0.0001;
@@ -238,8 +238,8 @@ function sort_by_field_count( $form_id, $searching ) {
 	global $wpdb;
 	$search_value       = isset( $searching['value'] ) ? $searching['value'] : '';
 
-	$lead_detail_table_name = GFFormsModel::get_lead_details_table_name();
-	$lead_table_name        = GFFormsModel::get_lead_table_name();
+	$lead_detail_table_name = 'wp_gf_entry_meta';
+	$lead_table_name        = 'wp_gf_entry';
 
 	$search_160 = "(field_number BETWEEN '159.9999' AND '160.9999' AND value like ( '%$search_value%' ))";
 	$search_158 = "(field_number BETWEEN '157.9999' AND '158.9999' AND value like ( '%$search_value%' ))";

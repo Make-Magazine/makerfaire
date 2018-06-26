@@ -36,7 +36,7 @@ function get_makers_from_app($app_id = 0) {
 
 function get_makerfaire_status_counts( $form_id ) {
 	global $wpdb;
-	$lead_details_table_name = RGFormsModel::get_lead_details_table_name();
+	$lead_details_table_name = 'wp_gf_entry_meta';
 	$sql             = $wpdb->prepare(
 			"SELECT count(0) as entries,value as label FROM $lead_details_table_name
 			      join wp_gf_entry lead
