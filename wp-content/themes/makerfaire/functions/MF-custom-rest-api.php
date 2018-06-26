@@ -179,7 +179,7 @@ function getMTMentries($formIDs) {
   $entries = array();
   foreach($results as $result){
     $entries[$result->entry_id]['id'] = $result->entry_id;
-    $entries[$result->entry_id][$result->field_number] = $result->value;
+    $entries[$result->entry_id][$result->meta_key] = $result->value;
   }
 
   shuffle ($entries);

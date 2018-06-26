@@ -47,7 +47,7 @@ function findOverride($entry_id, $type){
     if($entry_id!=''){
         $sql = "select * from wp_gf_entry_meta as detail join "
                 . "             (SELECT entry_id, meta_key FROM `wp_gf_entry_meta` "
-                . "                 WHERE `entry_id` = $entry_id AND `meta_key` BETWEEN 334.0 and 338.9 AND `meta_value` = '$type' "
+                . "                 WHERE `entry_id` = $entry_id AND `meta_key` BETWEEN '334.0' and '338.9' AND `meta_value` = '$type' "
                 . "                 ORDER BY `wp_gf_entry_meta`.`meta_key` ASC limit 1) "
                 . "             as override on detail.entry_id = override.lead_id "
                 . "         where   (detail.meta_key = '331' and override.meta_key between '335.0' and '335.9999') or "
