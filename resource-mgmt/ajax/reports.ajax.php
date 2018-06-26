@@ -104,12 +104,12 @@ function cannedRpt(){
   //question: does wp_mf_entity have the information i need for all forms?? non exhibits missing information?
 
   //build array of requested fields
-  $fieldSQL       = ''; //sql to pull field_numbers
+  $fieldSQL       = ''; //sql to pull field_numbers (called meta_key)
   $fieldIDarr     = array(); //unique array of field ID's
   $fieldArr       = array(); //array of field data keyed by field id
   $fieldIDArr["376"] = (object)  array("id"=>"376","label"=>"CM Ind","choices"=>"all","type"=>"radio", "order"=> $CMOrder);
   $combineFields  = array();
-  $fieldQuery     = array(" field_number like '376' ");
+  $fieldQuery     = array(" meta_key like '376' ");
   $acceptedOnly   = true;
 
   //build list of categories
@@ -134,17 +134,17 @@ function cannedRpt(){
       }
 
       //return all selected options
-      $fieldQuery[] = " field_number like '".$selFieldsID.".%' ";
+      $fieldQuery[] = " meta_key like '".$selFieldsID.".%' ";
     } elseif($selFields->type=='radio' || $selFields->type == 'select' || $selFields->type == 'checkbox'){
       if($selFields->choices == 'all' && $selFields->type == 'checkbox'){
-        $fieldQuery[] = " field_number like '".$selFieldsID.".%' ";
+        $fieldQuery[] = " meta_key like '".$selFieldsID.".%' ";
         $fieldIDArr[$selFieldsID] = $selFields; //search for all values
       }else{
-        $fieldQuery[] = " field_number like '".$selFieldsID."' ";
+        $fieldQuery[] = " meta_key like '".$selFieldsID."' ";
         $fieldIDArr[$selFieldsID][] = $selFields; //search for specific values
       }
     }else{ //text/textarea
-      $fieldQuery[] = " field_number like '".$selFieldsID."' ";
+      $fieldQuery[] = " meta_key like '".$selFieldsID."' ";
       //set criteria for this field id
       $fieldIDArr[$selFieldsID] = $selFields;
     }
@@ -193,7 +193,7 @@ function cannedRpt(){
     //Are specific detail fields requested?
     if(!empty($fieldSQL)){
       //pull entry specifc detail based on requested fields
-      $detailSQL = "SELECT detail.entry_id as lead_id, detail.form_id, detail.meta_key as field_number, detail.meta_value as value,
+      $detailSQL = "SELECT detail.entry_id as lead_id, detail.form_id, detail.meta_key, detail.meta_value as value,
                            detail_long.value as 'long value'
                       FROM wp_gf_entry_meta detail"
             . " where detail.entry_id = $lead_id "
@@ -204,19 +204,19 @@ function cannedRpt(){
       $cmInd = '';
       foreach($details as $detail){
         $passCriteria = true;
-        if($detail['field_number'] === "376"){
+        if($detail['meta_key'] === "376"){
           $cmInd = $detail['value'];
         }
 
         //field 320 snd 302 is stored as category number, use cross reference to find text value
         $value = $detail['value'];
-        if($detail['field_number'] === "320" || strpos($detail['field_number'], '321.')!== false || strpos($detail['field_number'], '302.')!== false){
+        if($detail['meta_key'] === "320" || strpos($detail['meta_key'], '321.')!== false || strpos($detail['meta_key'], '302.')!== false){
           $value = get_CPT_name($value);
         }
         $value = stripslashes(convert_smart_quotes(htmlspecialchars_decode ($value)));
 
         //check if we pulled by specific field id or if this was a request for all values
-        $fieldID = $detail['field_number'];
+        $fieldID = $detail['meta_key'];
 
         //remove everything after the period
         $basefieldID  = (strpos($fieldID, ".") ? substr($fieldID, 0, strpos($fieldID, ".")) : $fieldID);
@@ -767,12 +767,12 @@ function pullFieldData($entryID, $reqFields) {
   if($entryID!='' && is_array($reqIDArr)){
     $reqIDs = implode(",", $reqIDArr);
     /* $reqFields = array of id's to pull and labels for report */
-    $sql = "select meta_value as value, meta_key as field_number from wp_gf_entry_meta where meta_key in($reqIDs) and entry_id=$entryID";
+    $sql = "select meta_value as value, meta_key from wp_gf_entry_meta where meta_key in($reqIDs) and entry_id=$entryID";
     $results = $wpdb->get_results($sql);
     if($wpdb->num_rows > 0){
       foreach($results as $row){
-        $return['data']['field_'.$row->field_number] = $row->value;
-        $return['colDefs']['field_'.$row->field_number]=   array('field'=> 'field_'.$row->field_number, 'displayName'=>$reqFields[$row->field_number]);
+        $return['data']['field_'.$row->meta_key] = $row->value;
+        $return['colDefs']['field_'.$row->meta_key]=   array('field'=> 'field_'.$row->meta_key, 'displayName'=>$reqFields[$row->meta_key]);
       }
     }
   }

@@ -50,11 +50,11 @@ function findOverride($entry_id, $type){
                 . "                 WHERE `entry_id` = $entry_id AND `meta_key` BETWEEN 334.0 and 338.9 AND `meta_value` = '$type' "
                 . "                 ORDER BY `wp_gf_entry_meta`.`meta_key` ASC limit 1) "
                 . "             as override on detail.entry_id = override.lead_id "
-                . "         where   (detail.meta_key = '331' and override.field_number between 335.0 and 335.9999) or "
-                . "                 (detail.meta_key = '332' and override.field_number between 336.0 and 336.9999) or "
-                . "                 (detail.meta_key = '333' and override.field_number between 337.0 and 337.9999) or "
-                . "                 (detail.meta_key = '330' and override.field_number between 338.0 and 338.9999) or "
-                . "                 (detail.meta_key = '329' and override.field_number between 334.0 and 334.9999)";
+                . "         where   (detail.meta_key = '331' and override.meta_key between '335.0' and '335.9999') or "
+                . "                 (detail.meta_key = '332' and override.meta_key between '336.0' and '336.9999') or "
+                . "                 (detail.meta_key = '333' and override.meta_key between '337.0' and '337.9999') or "
+                . "                 (detail.meta_key = '330' and override.meta_key between '338.0' and '338.9999') or "
+                . "                 (detail.meta_key = '329' and override.meta_key between '334.0' and '334.9999')";
         $results = $wpdb->get_results($sql);
         if($wpdb->num_rows > 0){
 

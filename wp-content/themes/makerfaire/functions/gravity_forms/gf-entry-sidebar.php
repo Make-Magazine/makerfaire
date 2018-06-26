@@ -132,7 +132,7 @@ function display_entry_rating_box($form, $lead) {
   // Retrieve any ratings
   $entry_id       = $lead['id'];
   $sql            = "SELECT user_id, rating, ratingDate FROM `wp_mf_lead_rating` where entry_id = ".$entry_id;
-  $sql="";
+  
   $ratingTotal    = 0;
   $ratingNum      = 0;
   $ratingResults  = '';

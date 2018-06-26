@@ -159,18 +159,18 @@ function getMTMentries($formIDs) {
 
   global $wpdb;
   //find all active entries for selected forms
-  $query = "select lead_detail.entry_id, lead_detail.meta_key as field_number, lead_detail.meta_value as value
+  $query = "select lead_detail.entry_id, lead_detail.meta_key, lead_detail.meta_value as value
             from    wp_gf_entry_meta lead_detail
             left outer join wp_gf_entry as lead on lead_detail.entry_id = lead.id
             where lead.status = 'active'
               and lead_detail.form_id in(".implode(",",$formIDarr).")
-              and (lead_detail.meta_key like '22' OR
-                   lead_detail.meta_key like '16' OR
-                   lead_detail.meta_key like '151' OR
-                   lead_detail.meta_key like '303' OR
-                   lead_detail.meta_key like '320' OR
-                   lead_detail.meta_key.meta_key like '32.1%' OR
-                   field_number like '304.%')
+              and (lead_detail.meta_key like '22'    OR
+                   lead_detail.meta_key like '16'    OR
+                   lead_detail.meta_key like '151'   OR
+                   lead_detail.meta_key like '303'   OR
+                   lead_detail.meta_key like '320'   OR
+                   lead_detail.meta_key like '32.1%' OR
+                   lead_detail.meta_key like '304.%')
             ORDER BY `lead_detail`.`entry_id`  ASC";
 
   $results = $wpdb->get_results($query);

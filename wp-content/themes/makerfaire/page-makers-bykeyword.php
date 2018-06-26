@@ -195,24 +195,24 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 
 	$searchfield_number_min = $search_key - 0.0001;
 	$searchfield_number_max = $search_key + 0.9999;
-	$search_160 = "(field_number BETWEEN '159.9999' AND '160.9999' AND value like ( '%$search_value%' ))";
-	$search_158 = "(field_number BETWEEN '157.9999' AND '158.9999' AND value like ( '%$search_value%' ))";
-	$search_155 = "(field_number BETWEEN '154.9999' AND '155.9999' AND value like ( '%$search_value%' ))";
-	$search_166 = "(field_number BETWEEN '165.9999' AND '166.9999' AND value like ( '%$search_value%' ))";
-	$search_157 = "(field_number BETWEEN '156.9999' AND '157.9999' AND value like ( '%$search_value%' ))";
-	$search_159 = "(field_number BETWEEN '158.9999' AND '159.9999' AND value like ( '%$search_value%' ))";
-	$search_154 = "(field_number BETWEEN '153.9999' AND '154.9999' AND value like ( '%$search_value%' ))";
-	$search_109 = "(field_number BETWEEN '108.9999' AND '109.9999' AND value like ( '%$search_value%' ))";
-	$search_151 = "(field_number BETWEEN '150.9999' AND '151.9999' AND value like ( '%$search_value%' ))";
-	$search_16 = "(field_number BETWEEN '15.9999' AND '16.9999' AND value like ( '%$search_value%' ))";
-	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
+	$search_160 = "(meta_key BETWEEN '159.9999' AND '160.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_158 = "(meta_key BETWEEN '157.9999' AND '158.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_155 = "(meta_key BETWEEN '154.9999' AND '155.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_166 = "(meta_key BETWEEN '165.9999' AND '166.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_157 = "(meta_key BETWEEN '156.9999' AND '157.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_159 = "(meta_key BETWEEN '158.9999' AND '159.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_154 = "(meta_key BETWEEN '153.9999' AND '154.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_109 = "(meta_key BETWEEN '108.9999' AND '109.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_151 = "(meta_key BETWEEN '150.9999' AND '151.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_16  = "(meta_key BETWEEN '15.9999'  AND '16.9999'  AND meta_value like ( '%$search_value%' ))";
+	$accepted_criteria = "(meta_key BETWEEN '302.9999' AND '303.9999' AND meta_value = 'Accepted' )";
 
 
 	$sql = "
-        SELECT sorted.sort,sorted.value, detail.*, d.field_number, d.value
+        SELECT sorted.sort,sorted.value, detail.*, d.meta_key, d.meta_value
           FROM $lead_table_name l
     INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-    INNER JOIN (SELECT @rownum:=@rownum+1 as sort, l.lead_id as id, l.value
+    INNER JOIN (SELECT @rownum:=@rownum+1 as sort, l.lead_id as id, l.meta_value
                   FROM (Select @rownum:=0) r, wp_gf_entry_meta detail
             INNER JOIN (SELECT lead_id as id
                           FROM $lead_detail_table_name
@@ -224,14 +224,12 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
                          WHERE $accepted_criteria
                            AND form_id in ($form_id)
                         ) accepted on l.lead_id=accepted.id
-				WHERE field_number  between $field_number_min AND $field_number_max AND l.form_id in ($form_id)
-		ORDER BY l.value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
+				WHERE meta_key  between '$field_number_min' AND '$field_number_max' AND l.form_id in ($form_id)
+		ORDER BY l.meta_value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
         order by sorted.sort
 	";
 
 	return $sql;
-
-
 }
 
 function sort_by_field_count( $form_id, $searching ) {
@@ -241,17 +239,17 @@ function sort_by_field_count( $form_id, $searching ) {
 	$lead_detail_table_name = 'wp_gf_entry_meta';
 	$lead_table_name        = 'wp_gf_entry';
 
-	$search_160 = "(field_number BETWEEN '159.9999' AND '160.9999' AND value like ( '%$search_value%' ))";
-	$search_158 = "(field_number BETWEEN '157.9999' AND '158.9999' AND value like ( '%$search_value%' ))";
-	$search_155 = "(field_number BETWEEN '154.9999' AND '155.9999' AND value like ( '%$search_value%' ))";
-	$search_166 = "(field_number BETWEEN '165.9999' AND '166.9999' AND value like ( '%$search_value%' ))";
-	$search_157 = "(field_number BETWEEN '156.9999' AND '157.9999' AND value like ( '%$search_value%' ))";
-	$search_159 = "(field_number BETWEEN '158.9999' AND '159.9999' AND value like ( '%$search_value%' ))";
-	$search_154 = "(field_number BETWEEN '153.9999' AND '154.9999' AND value like ( '%$search_value%' ))";
-	$search_109 = "(field_number BETWEEN '108.9999' AND '109.9999' AND value like ( '%$search_value%' ))";
-	$search_151 = "(field_number BETWEEN '150.9999' AND '151.9999' AND value like ( '%$search_value%' ))";
-	$search_16 = "(field_number BETWEEN '15.9999' AND '16.9999' AND value like ( '%$search_value%' ))";
-	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
+	$search_160 = "(meta_key BETWEEN '159.9999' AND '160.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_158 = "(meta_key BETWEEN '157.9999' AND '158.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_155 = "(meta_key BETWEEN '154.9999' AND '155.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_166 = "(meta_key BETWEEN '165.9999' AND '166.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_157 = "(meta_key BETWEEN '156.9999' AND '157.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_159 = "(meta_key BETWEEN '158.9999' AND '159.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_154 = "(meta_key BETWEEN '153.9999' AND '154.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_109 = "(meta_key BETWEEN '108.9999' AND '109.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_151 = "(meta_key BETWEEN '150.9999' AND '151.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_16  = "(meta_key BETWEEN '15.9999'  AND '16.9999'  AND meta_value like ( '%$search_value%' ))";
+	$accepted_criteria = "(meta_key BETWEEN '302.9999' AND '303.9999' AND meta_value = 'Accepted' )";
 
 
 	$sql = "SELECT
