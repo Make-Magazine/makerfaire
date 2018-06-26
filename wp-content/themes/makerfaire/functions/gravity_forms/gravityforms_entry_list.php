@@ -101,7 +101,7 @@ function return_MF_navigation(){
     $faireCount = 0;
     //loop thru form ids
     foreach($formids as $formID){
-      $formSQL = "SELECT form.title, value as entry_status, count(*) as count
+      $formSQL = "SELECT form.title,  meta_value as entry_status, count(*) as count
                   FROM  wp_gf_entry
                   JOIN  wp_gf_entry_meta
                     ON  wp_gf_entry.id = wp_gf_entry_meta.entry_id AND
@@ -143,11 +143,11 @@ function return_MF_navigation(){
       $nav .= '<ul>';
       foreach($locations as $faireKey=>$faire) {
         $nav .= '<li><span>'.$faire['faire-name'].' ('.$faire['count'].')</span>';
-        if(is_array($faire['forms'])){  //break this down by Form
+        if(isset($faire['forms']) && is_array($faire['forms'])){  //break this down by Form
           $nav .= '<ul>';
           foreach($faire['forms'] as $formID=>$form) {
             $nav .= '<li><a href="'.$form['data']['url'].'">'.$form['data']['formName'].' ('.$form['data']['count'].')</a>';
-            if(is_array($form['status'])){  //break this down by status
+            if(isset($form['status']) && is_array($form['status'])){  //break this down by status
               $nav .= '<ul>';
               foreach($form['status'] as $formstatus){
                 $nav .= '<li><a href="'.$formstatus['url'].'">'.$formstatus['status'].' ('.$formstatus['count'].')</a></li>';

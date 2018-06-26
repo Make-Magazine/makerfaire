@@ -195,9 +195,7 @@ function cannedRpt(){
       //pull entry specifc detail based on requested fields
       $detailSQL = "SELECT detail.entry_id as lead_id, detail.form_id, detail.meta_key as field_number, detail.meta_value as value,
                            detail_long.value as 'long value'
-                      FROM wp_gf_entry_meta detail
-                    left OUTER join wp_rg_lead_detail_long detail_long
-                            ON detail.id = detail_long.lead_detail_id"
+                      FROM wp_gf_entry_meta detail"
             . " where detail.entry_id = $lead_id "
             . " and ($fieldSQL) "
             . " ORDER BY detail.entry_id asc, detail.meta_key asc";
@@ -211,7 +209,7 @@ function cannedRpt(){
         }
 
         //field 320 snd 302 is stored as category number, use cross reference to find text value
-        $value = (isset($detail['long_value']) && $detail['long_value']!=''?$detail['long_value']:$detail['value']);
+        $value = $detail['value'];
         if($detail['field_number'] === "320" || strpos($detail['field_number'], '321.')!== false || strpos($detail['field_number'], '302.')!== false){
           $value = get_CPT_name($value);
         }
@@ -1008,7 +1006,7 @@ function ent2resource($table, $faire, $type){
   $columnDefs = array();
 
   //find all non trashed entries for selected faires
-    $sql = "select wp_gf_entry.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire,
+    $sql = "select wp_gf_entry.id as 'entry_id', wp_gf_entry.form_id, wp_mf_faire.faire,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key='303') as status,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key='151') as proj_name,
               (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,

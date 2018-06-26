@@ -61,16 +61,14 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
 }
 
 //entry data
-$sql = "SELECT wp_gf_entry_meta.meta_key as field_number, wp_gf_entry_meta.meta_value as value,
-               wp_rg_lead_detail_long.value as 'long value'
+$sql = "SELECT wp_gf_entry_meta.meta_key as field_number, wp_gf_entry_meta.meta_value as value
         FROM wp_gf_entry
           left outer join wp_gf_entry_meta
             on wp_gf_entry_meta.entry_id = wp_gf_entry.id
-          left OUTER join wp_rg_lead_detail_long
-            ON wp_gf_entry_meta.id = wp_rg_lead_detail_long.lead_detail_id
         where wp_gf_entry.form_id = $form
         and wp_gf_entry.status='active'
         ORDER BY gf_entry_meta.entry_id asc, gf_entry_meta.meta_value asc";
+
 //loop thru entry data
 $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 $entryData = array();
@@ -81,7 +79,7 @@ foreach($entries as $entry){
   if($fieldNum=='320' || strpos($fieldNum, '321.')!== false || strpos($fieldNum, '302.')!== false){
     $value = get_CPT_name($entry['value']);
   }else{
-    $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
+    $value = $entry['value'];
   }
   $value = htmlspecialchars_decode ($value);
   $entryData[$entry['entry_id']][$fieldNum]=$value;

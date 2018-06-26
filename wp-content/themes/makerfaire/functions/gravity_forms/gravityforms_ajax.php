@@ -527,7 +527,9 @@ function duplicate_entry_data($form_change,$current_entry_id ){
 
   //pull existing entries information
   $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table          WHERE      id=%d", $current_entry_id));
-  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value, wp_rg_lead_detail_long.value as long_detail FROM $lead_detail_table left outer join wp_rg_lead_detail_long on  wp_rg_lead_detail_long.lead_detail_id = wp_gf_entry_meta.id WHERE entry_id=%d", $current_entry_id));
+  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value, "
+                                                    . "  FROM $lead_detail_table "
+                                                    . " WHERE entry_id=%d", $current_entry_id));
 
   // new lead
   $user_id    = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
@@ -546,15 +548,6 @@ function duplicate_entry_data($form_change,$current_entry_id ){
 
     $wpdb->query($wpdb->prepare("INSERT INTO $lead_detail_table(entry_id, form_id, meta_key, meta_value) VALUES(%d, %s, %s, %s)",
             $lead_id, $form_change, $row->meta_key, $fieldValue));
-
-    //if detail long is set, add row for new record
-
-    if($row->long_detail != 'NULL'){
-      $lead_detail_id = $wpdb->insert_id;
-
-      $wpdb->query($wpdb->prepare("INSERT INTO wp_rg_lead_detail_long(lead_detail_id, value) VALUES(%d, %s)",
-            $lead_detail_id, $row->long_detail));
-    }
   }
 
   //update/insert into maker tables
