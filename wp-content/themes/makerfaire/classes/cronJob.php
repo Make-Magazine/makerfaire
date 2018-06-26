@@ -45,14 +45,14 @@ add_action('cron_eb_ticketing', 'cron_genEBtickets');
 function cron_genEBtickets(){
   global $wpdb;
   $sql =  "SELECT lead_id "
-        . "FROM   wp_mf_faire, wp_rg_lead_detail "
-        . "       left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
-        . "WHERE  field_number=303 and value='Accepted' "
+        . "FROM   wp_mf_faire, wp_gf_entry_meta "
+        . "       left outer join eb_entry_access_code on wp_gf_entry_meta.entry_id =eb_entry_access_code.entry_id "
+        . "WHERE  wp_gf_entry_meta.meta_key ='303' and wp_gf_entry_meta.meta_value='Accepted' "
           . " and end_dt > now() "
-          . " and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
+          . " and FIND_IN_SET (wp_gf_entry_meta.form_id,wp_mf_faire.form_ids)> 0 "
           . " and eb_entry_access_code.EBticket_id is NULL "
           . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL"
-          . " and wp_rg_lead_detail.form_id != 120 ";
+          . " and wp_gf_entry_meta.form_id != 120 ";
 
 $results = $wpdb->get_results($sql);
   foreach($results as $entry){

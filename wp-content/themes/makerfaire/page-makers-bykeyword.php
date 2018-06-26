@@ -209,28 +209,21 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 
 
 	$sql = "
-
-	SELECT sorted.sort,sorted.value, l.*, d.field_number, d.value
-            FROM $lead_table_name l
-            INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-			INNER JOIN (
-            SELECT @rownum:=@rownum+1 as sort, l.lead_id as id, l.value
-			FROM (Select @rownum:=0) r, wp_rg_lead_detail l
-				INNER JOIN (
-						SELECT
-						lead_id as id
-						from $lead_detail_table_name
-						WHERE ( $search_160 OR $search_158 OR $search_155 OR $search_166 OR $search_157 OR $search_159 OR $search_154 OR $search_109 OR $search_151 OR $search_16)
-						AND form_id in ($form_id)
-					) filtered on l.lead_id=filtered.id
-					INNER JOIN
-				    (
-				    SELECT
-						lead_id as id
-						from $lead_detail_table_name
-						WHERE $accepted_criteria
-						AND form_id in ($form_id)
-						) accepted on l.lead_id=accepted.id
+        SELECT sorted.sort,sorted.value, detail.*, d.field_number, d.value
+          FROM $lead_table_name l
+    INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
+    INNER JOIN (SELECT @rownum:=@rownum+1 as sort, l.lead_id as id, l.value
+                  FROM (Select @rownum:=0) r, wp_gf_entry_meta detail
+            INNER JOIN (SELECT lead_id as id
+                          FROM $lead_detail_table_name
+                         WHERE ( $search_160 OR $search_158 OR $search_155 OR $search_166 OR $search_157 OR $search_159 OR $search_154 OR $search_109 OR $search_151 OR $search_16)
+                           AND form_id in ($form_id)
+                        ) filtered on l.lead_id=filtered.id
+            INNER JOIN (SELECT lead_id as id
+                          FROM $lead_detail_table_name
+                         WHERE $accepted_criteria
+                           AND form_id in ($form_id)
+                        ) accepted on l.lead_id=accepted.id
 				WHERE field_number  between $field_number_min AND $field_number_max AND l.form_id in ($form_id)
 		ORDER BY l.value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
         order by sorted.sort

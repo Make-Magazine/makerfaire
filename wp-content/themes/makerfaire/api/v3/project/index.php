@@ -49,7 +49,7 @@ if ($type == 'project') {
             `entity`.`desc_short` as Description,
             `entity`.`form_type`,
             entity.status as entity_status,
-            (select value from wp_rg_lead_detail where field_number = 105 and wp_rg_lead_detail.lead_id=entity.lead_id limit 1) as projType,
+            (select meta_value as value from wp_gf_entry_meta where meta_key = '105' and wp_gf_entry_meta.entry_id = entity.lead_id limit 1) as projType,
             entity.faire,
             (select faire_name from wp_mf_faire where wp_mf_faire.faire=entity.faire) as faire_name,
              wp_gf_entry.date_created,

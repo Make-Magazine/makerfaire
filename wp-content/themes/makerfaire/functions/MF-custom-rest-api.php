@@ -159,27 +159,27 @@ function getMTMentries($formIDs) {
 
   global $wpdb;
   //find all active entries for selected forms
-  $query = "select lead_detail.lead_id, lead_detail.field_number, lead_detail.value
-            from    wp_rg_lead_detail lead_detail
-            left outer join wp_gf_entry as lead on lead_detail.lead_id = lead.id
+  $query = "select lead_detail.entry_id, lead_detail.meta_key as field_number, lead_detail.meta_value as value
+            from    wp_gf_entry_meta lead_detail
+            left outer join wp_gf_entry as lead on lead_detail.entry_id = lead.id
             where lead.status = 'active'
               and lead_detail.form_id in(".implode(",",$formIDarr).")
-              and (field_number like '22' OR
-                   field_number like '16' OR
-                   field_number like '151' OR
-                   field_number like '303' OR
-                   field_number like '320' OR
-                   field_number like '32.1%' OR
+              and (lead_detail.meta_key like '22' OR
+                   lead_detail.meta_key like '16' OR
+                   lead_detail.meta_key like '151' OR
+                   lead_detail.meta_key like '303' OR
+                   lead_detail.meta_key like '320' OR
+                   lead_detail.meta_key.meta_key like '32.1%' OR
                    field_number like '304.%')
-            ORDER BY `lead_detail`.`lead_id`  ASC";
+            ORDER BY `lead_detail`.`entry_id`  ASC";
 
   $results = $wpdb->get_results($query);
 
   //build entry array
   $entries = array();
   foreach($results as $result){
-    $entries[$result->lead_id]['id'] = $result->lead_id;
-    $entries[$result->lead_id][$result->field_number] = $result->value;
+    $entries[$result->entry_id]['id'] = $result->entry_id;
+    $entries[$result->entry_id][$result->field_number] = $result->value;
   }
 
   shuffle ($entries);
@@ -281,19 +281,19 @@ function getMTMentries($formIDs) {
               lead_detail.form_id, area.area, subarea.subarea, subarea.nicename, subarea.sort_order,
               lead_detail.value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
               location.latitude, location.longitude,
-              (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '22')  as photo,
-              (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '217')  as mkr1_photo,
-              (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '151') as name,
-              (select value from wp_rg_lead_detail where lead_id = schedule.entry_id AND field_number like '16')  as short_desc,
-              (select group_concat( value separator ', ') as cat   from wp_rg_lead_detail where lead_id = schedule.entry_id AND (field_number like '%320%' OR field_number like '%321%')) as category
+              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '22')  as photo,
+              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '217') as mkr1_photo,
+              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '151') as name,
+              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '16')  as short_desc,
+              (select group_concat( value separator ', ') as cat   from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_value like '%320%' OR wp_gf_entry_meta.meta_key like '%321%')) as category
                FROM wp_mf_schedule as schedule
                left outer join wp_mf_location as location on location_id = location.id
                left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
                left outer join wp_mf_faire_area area on area.id = subarea.area_id
                left outer join wp_gf_entry as lead on schedule.entry_id = lead.id
-               left outer join wp_rg_lead_detail as lead_detail on
-                   schedule.entry_id = lead_detail.lead_id and field_number = 303
-               where lead.status = 'active' and lead_detail.value='Accepted' "
+               left outer join wp_gf_entry_meta as lead_detail on
+                   schedule.entry_id = lead_detail.entry_id and gf_entry_meta.meta_key = '303'
+               where lead.status = 'active' and lead_detail.meta_value='Accepted' "
             . " and lead_detail.form_id in(".implode(",",$formIDarr).") "
     /* code to hide scheduled items as they occur
             . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  "*/
@@ -374,9 +374,9 @@ function getMTMentries($formIDs) {
     $makerList = '';
     $data = array(); global $wpdb;
     $query = "SELECT *
-              FROM wp_rg_lead_detail as lead_detail
-              where lead_detail.lead_id = $entryID "
-           . "and cast(field_number as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
+              FROM wp_gf_entry_meta as lead_detail
+              where lead_detail.entry_id = $entryID "
+           . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
            . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
 
     $entryData = $wpdb->get_results($query);
@@ -387,10 +387,10 @@ function getMTMentries($formIDs) {
      */
     $fieldData = array();
     foreach($entryData as $field){
-      $fieldData[$field->field_number] = $field->value;
+      $fieldData[$field->meta_key] = $field->meta_value;
     }
 
-    if(isset($fieldData[105])){
+    if(isset($fieldData['105'])){
       $whoListed = strtolower($fieldData['105']);
       $isGroup =false;
       $isGroup    = (strpos($whoListed, 'group') !== false);
@@ -398,7 +398,7 @@ function getMTMentries($formIDs) {
       $isOneMaker = (strpos($whoListed, 'one') !== false);
 
       if($isGroup) {
-        $makerList = (isset($fieldData[109])?$fieldData[109]:'');
+        $makerList = (isset($fieldData['109'])?$fieldData['109']:'');
       }elseif($isOneMaker){
         $makerList = (isset($fieldData['160.3'])?$fieldData['160.3']:''). (isset($fieldData['160.6'])?' ' .$fieldData['160.6']:'');
       }else{

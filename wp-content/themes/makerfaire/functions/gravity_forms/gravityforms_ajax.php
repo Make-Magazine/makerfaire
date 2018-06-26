@@ -383,7 +383,7 @@ function set_entry_status($lead,$form){
 
 	$field = GFFormsModel::get_field( $form, $input_id );
 
-	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id=%d AND  CAST(field_number AS CHAR) ='%s' order by id DESC limit 1", $entry_id, $input_id ) );
+	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}gf_entry_meta WHERE entry_id=%d AND  CAST(meta_key AS CHAR) ='%s' order by id DESC limit 1", $entry_id, $input_id ) );
 
 	$result = true;
   $result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
@@ -527,7 +527,7 @@ function duplicate_entry_data($form_change,$current_entry_id ){
 
   //pull existing entries information
   $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table          WHERE      id=%d", $current_entry_id));
-  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_rg_lead_detail.field_number, wp_rg_lead_detail.value, wp_rg_lead_detail_long.value as long_detail FROM $lead_detail_table left outer join wp_rg_lead_detail_long on  wp_rg_lead_detail_long.lead_detail_id = wp_rg_lead_detail.id WHERE lead_id=%d", $current_entry_id));
+  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value, wp_rg_lead_detail_long.value as long_detail FROM $lead_detail_table left outer join wp_rg_lead_detail_long on  wp_rg_lead_detail_long.lead_detail_id = wp_gf_entry_meta.id WHERE entry_id=%d", $current_entry_id));
 
   // new lead
   $user_id    = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
@@ -542,10 +542,10 @@ function duplicate_entry_data($form_change,$current_entry_id ){
   $results=mf_add_note( $lead_id, 'Copied Entry ID:'.$current_entry_id.' into form '.$form_change.'. New Entry ID ='.$lead_id);
 
   foreach($current_fields as $row){
-    $fieldValue = ($row->field_number != 303? $row->value: 'Proposed');
+    $fieldValue = ($row->meta_key != '303'? $row->meta_value: 'Proposed');
 
-    $wpdb->query($wpdb->prepare("INSERT INTO $lead_detail_table(lead_id, form_id, field_number, value) VALUES(%d, %s, %s, %s)",
-            $lead_id, $form_change, $row->field_number, $fieldValue));
+    $wpdb->query($wpdb->prepare("INSERT INTO $lead_detail_table(entry_id, form_id, meta_key, meta_value) VALUES(%d, %s, %s, %s)",
+            $lead_id, $form_change, $row->meta_key, $fieldValue));
 
     //if detail long is set, add row for new record
 

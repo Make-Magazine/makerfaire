@@ -61,15 +61,16 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
 }
 
 //entry data
-$sql = "SELECT wp_rg_lead_detail.*,wp_rg_lead_detail_long.value as 'long value'
+$sql = "SELECT wp_gf_entry_meta.meta_key as field_number, wp_gf_entry_meta.meta_value as value,
+               wp_rg_lead_detail_long.value as 'long value'
         FROM wp_gf_entry
-          left outer join wp_rg_lead_detail
-            on wp_rg_lead_detail.lead_id = wp_gf_entry.id
+          left outer join wp_gf_entry_meta
+            on wp_gf_entry_meta.entry_id = wp_gf_entry.id
           left OUTER join wp_rg_lead_detail_long
-            ON wp_rg_lead_detail.id = wp_rg_lead_detail_long.lead_detail_id
+            ON wp_gf_entry_meta.id = wp_rg_lead_detail_long.lead_detail_id
         where wp_gf_entry.form_id = $form
         and wp_gf_entry.status='active'
-        ORDER BY lead_id asc, field_number asc";
+        ORDER BY gf_entry_meta.entry_id asc, gf_entry_meta.meta_value asc";
 //loop thru entry data
 $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 $entryData = array();
@@ -83,7 +84,7 @@ foreach($entries as $entry){
     $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
   }
   $value = htmlspecialchars_decode ($value);
-  $entryData[$entry['lead_id']][$fieldNum]=$value;
+  $entryData[$entry['entry_id']][$fieldNum]=$value;
 }
 
 // create a file pointer connected to the output stream

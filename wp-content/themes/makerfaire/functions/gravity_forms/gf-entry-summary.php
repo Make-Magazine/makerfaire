@@ -310,23 +310,23 @@ function gf_collapsible_sections($form, $lead){
   $addEntriesCnt=0;
   foreach($emailArray as $key=>$email){
     $results = $wpdb->get_results( 'SELECT  *,
-                                            (SELECT value
-                                               FROM wp_rg_lead_detail detail2
-                                              WHERE detail2.lead_id = wp_rg_lead_detail.lead_id
-                                                AND field_number = 151 ) as projectName,
-                                            (SELECT value
-                                               FROM wp_rg_lead_detail detail2
-                                              WHERE detail2.lead_id = wp_rg_lead_detail.lead_id
-                                                AND field_number = 303 ) as status,
+                                            (SELECT detail2.meta_value
+                                               FROM wp_gf_entry_meta detail2
+                                              WHERE detail2.entry_id = wp_gf_entry_meta.entry_id
+                                                AND detail2.meta_key = "151" ) as projectName,
+                                            (SELECT detail2.meta_value
+                                               FROM wp_gf_entry_meta detail2
+                                              WHERE detail2.entry_id = wp_gf_entry_meta.entry_id
+                                                AND detail2.meta_value = "303" ) as status,
                                             (SELECT status
                                                FROM wp_gf_entry
-                                              WHERE wp_gf_entry.id = wp_rg_lead_detail.lead_id) as lead_status
-                                      FROM wp_rg_lead_detail
-                                      JOIN wp_gf_form on wp_gf_form.id = wp_rg_lead_detail.form_id
-                                     WHERE value = "'.$key.'"' .
-                                     ' AND lead_id != '.$entry_id.'
-                                  GROUP BY lead_id
-                                  ORDER BY lead_id');
+                                              WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
+                                      FROM wp_gf_entry_meta
+                                      JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
+                                     WHERE meta_value = "'.$key.'"' .
+                                     ' AND entry_id != '.$entry_id.'
+                                  GROUP BY entry_id
+                                  ORDER BY entry_id');
 
     foreach($results as $addData){
       $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=entry&id=".$addData->form_id . '&lid='.$addData->lead_id;

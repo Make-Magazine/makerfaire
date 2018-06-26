@@ -292,14 +292,17 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
             'parent' => 'mf_admin_parent_' . $faire));
 
         //Level 4 - entry status
-        $statusSql = "SELECT wp_rg_lead_detail.id,value,count(*)as count FROM `wp_rg_lead_detail` join wp_gf_entry on wp_gf_entry.id = lead_id "
-                . " WHERE wp_gf_entry.form_id = " . $formRow->form_id . "    AND wp_rg_lead_detail.field_number = 303 and status = 'active' group by value";
+        $statusSql = "SELECT wp_gf_entry_meta.id, meta_value, count(*) as count "
+                    . " FROM `wp_gf_entry_meta` "
+                    . " JOIN wp_gf_entry on wp_gf_entry.id = wp_gf_entry_meta.entry_id "
+                    . "WHERE wp_gf_entry.form_id = " . $formRow->form_id
+                    . "  AND wp_gf_entry_meta.meta_key = '303' and status = 'active' group by meta_value";
 
         foreach ($wpdb->get_results($statusSql) as $statusRow) {
           array_push($args,array(
               'id'      => 'mf_admin_subchild_' . $statusRow->id,
-              'title'   => $statusRow->value . ' (' . $statusRow->count . ')',
-              'href'    => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->value),
+              'title'   => $statusRow->meta_value . ' (' . $statusRow->count . ')',
+              'href'    => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->meta_value),
               'meta'    => array('class' => 'my-toolbar-page'),
               'parent' => 'mf_admin_child_' . $formRow->form_id));
         }

@@ -114,7 +114,7 @@ function createMFSignZip($area) {
 
     //create array of subareas
     $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
-          (select value from wp_rg_lead_detail where field_number=303 and wp_rg_lead_detail.lead_id = wp_gf_entry.ID) as entry_status,
+          (select meta_value as value from wp_gf_entry_meta where meta_key='303' and wp_gf_entry_meta.entry_id = wp_gf_entry.ID) as entry_status,
           wp_mf_faire_subarea.area_id, wp_mf_faire_area.area, wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea,wp_mf_location.location
           FROM wp_mf_faire, wp_gf_entry
           left outer join wp_mf_location on wp_gf_entry.ID  = wp_mf_location.entry_id
@@ -187,27 +187,21 @@ function createMFSignZip($area) {
 }
 function mancron_genEBtickets(){
   global $wpdb;
-  $sql =  "SELECT lead_id "
-        . "FROM   wp_mf_faire, wp_rg_lead_detail "
-        . "       left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
-        . "WHERE  field_number=303 and value='Accepted' "
+  $sql =  "SELECT entry_id "
+        . "FROM   wp_mf_faire, wp_gf_entry_meta "
+        . "       left outer join eb_entry_access_code on wp_gf_entry_meta.entry_id =eb_entry_access_code.entry_id "
+        . "WHERE  meta_key='303' and meta_value='Accepted' "
           . " and end_dt > now() "
-          . " and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
+          . " and FIND_IN_SET (wp_gf_entry_meta.form_id,wp_mf_faire.form_ids)> 0 "
           . " and eb_entry_access_code.EBticket_id is NULL "
           . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL"
-          . " and wp_rg_lead_detail.form_id != 120 "
+          . " and wp_gf_entry_meta.form_id != 120 "
           . " limit 20";
-  /*$sql = "select lead_id, EBticket_id "
-          . "from wp_mf_faire, wp_rg_lead_detail "
-          . "left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
-          . "where field_number=303 and value='Accepted' "
-          . "and end_dt > now() "
-          . "and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
-          . "and eb_entry_access_code.EBticket_id is NULL ORDER BY `wp_rg_lead_detail`.`lead_id` ASC";*/
+
   $results = $wpdb->get_results($sql);
   foreach($results as $entry){
-    echo 'Creating ticket codes for '.$entry->lead_id.'<br/>';
-    $response = genEBtickets($entry->lead_id);
+    echo 'Creating ticket codes for '.$entry->entry_id.'<br/>';
+    $response = genEBtickets($entry->entry_id);
     if(isset($response['msg']))
       echo 'Ticket Response - '.$response['msg'].'<br/>';
   }

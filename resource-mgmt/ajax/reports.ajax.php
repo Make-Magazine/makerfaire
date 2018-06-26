@@ -107,7 +107,7 @@ function cannedRpt(){
   $fieldSQL       = ''; //sql to pull field_numbers
   $fieldIDarr     = array(); //unique array of field ID's
   $fieldArr       = array(); //array of field data keyed by field id
-  $fieldIDArr[376] = (object)  array("id"=>376,"label"=>"CM Ind","choices"=>"all","type"=>"radio", "order"=> $CMOrder);
+  $fieldIDArr["376"] = (object)  array("id"=>"376","label"=>"CM Ind","choices"=>"all","type"=>"radio", "order"=> $CMOrder);
   $combineFields  = array();
   $fieldQuery     = array(" field_number like '376' ");
   $acceptedOnly   = true;
@@ -123,7 +123,7 @@ function cannedRpt(){
   //loop thru selected fields and build sql for entry details and array of requested fields
   foreach($selectedFields as $selFields){
     $selFieldsID = (string) $selFields->id;
-    //build wp_rg_lead_detail query
+    //build wp_gf_entry_meta query
     if($selFields->type=='name'){
       //for name field
       foreach($selFields->inputs as $choice){
@@ -193,25 +193,26 @@ function cannedRpt(){
     //Are specific detail fields requested?
     if(!empty($fieldSQL)){
       //pull entry specifc detail based on requested fields
-      $detailSQL = "SELECT detail.*, detail_long.value as 'long value'
-                      FROM wp_rg_lead_detail detail
+      $detailSQL = "SELECT detail.entry_id as lead_id, detail.form_id, detail.meta_key as field_number, detail.meta_value as value,
+                           detail_long.value as 'long value'
+                      FROM wp_gf_entry_meta detail
                     left OUTER join wp_rg_lead_detail_long detail_long
-                        ON detail.id = detail_long.lead_detail_id"
-            . " where detail.lead_id = $lead_id "
+                            ON detail.id = detail_long.lead_detail_id"
+            . " where detail.entry_id = $lead_id "
             . " and ($fieldSQL) "
-            . " ORDER BY lead_id asc, field_number asc";
+            . " ORDER BY detail.entry_id asc, detail.meta_key asc";
 
       $details = $wpdb->get_results($detailSQL,ARRAY_A);
       $cmInd = '';
       foreach($details as $detail){
         $passCriteria = true;
-        if($detail['field_number'] == 376){
+        if($detail['field_number'] === "376"){
           $cmInd = $detail['value'];
         }
 
         //field 320 snd 302 is stored as category number, use cross reference to find text value
         $value = (isset($detail['long_value']) && $detail['long_value']!=''?$detail['long_value']:$detail['value']);
-        if($detail['field_number'] == 320 || strpos($detail['field_number'], '321.')!== false || strpos($detail['field_number'], '302.')!== false){
+        if($detail['field_number'] === "320" || strpos($detail['field_number'], '321.')!== false || strpos($detail['field_number'], '302.')!== false){
           $value = get_CPT_name($value);
         }
         $value = stripslashes(convert_smart_quotes(htmlspecialchars_decode ($value)));
@@ -768,7 +769,7 @@ function pullFieldData($entryID, $reqFields) {
   if($entryID!='' && is_array($reqIDArr)){
     $reqIDs = implode(",", $reqIDArr);
     /* $reqFields = array of id's to pull and labels for report */
-    $sql = "select value,field_number from wp_rg_lead_detail where field_number in($reqIDs) and lead_id=$entryID";
+    $sql = "select meta_value as value, meta_key as field_number from wp_gf_entry_meta where meta_key in($reqIDs) and entry_id=$entryID";
     $results = $wpdb->get_results($sql);
     if($wpdb->num_rows > 0){
       foreach($results as $row){
@@ -1008,8 +1009,8 @@ function ent2resource($table, $faire, $type){
 
   //find all non trashed entries for selected faires
     $sql = "select wp_gf_entry.id as 'entry_id', wp_rg_lead.form_id, wp_mf_faire.faire,
-              (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_gf_entry.id and field_number=303) as status,
-              (select value from wp_rg_lead_detail where wp_rg_lead_detail.lead_id = wp_gf_entry.id and field_number=151) as proj_name,
+              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key='303') as status,
+              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key='151') as proj_name,
               (select area from wp_mf_faire_area, wp_mf_faire_subarea where wp_mf_faire_subarea.id = subarea_id and wp_mf_faire_subarea.area_id = wp_mf_faire_area.id) as area,
               wp_mf_faire_subarea.subarea,
               wp_mf_faire_area.area,
@@ -1212,7 +1213,7 @@ function pullEntityTasks($formSelect) {
   //pull data
   $sql = "SELECT    tasks.lead_id, tasks.created, tasks.completed, tasks.description, tasks.required, meta.meta_value,meta.entry_id as other_entry,
     wp_gf_entry.form_id,
-    (select value from wp_rg_lead_detail where field_number = 151 and lead_id = tasks.lead_id) as project_name,
+    (select meta_value as value from wp_gf_entry_meta where meta_key = '151' and entry_id = tasks.lead_id) as project_name,
     (select form_id from wp_gf_entry where id = tasks.lead_id) as form_id
           FROM      wp_mf_entity_tasks AS tasks
           join      wp_gf_entry on tasks.lead_id= wp_gf_entry.id
@@ -1223,7 +1224,7 @@ function pullEntityTasks($formSelect) {
           WHERE     tasks.`form_id` = $formSelect
           UNION ALL
           SELECT    NULL, NULL, NULL, NULL, NULL, meta_value,lead_id as other_entry, form_id,
-          (select value from wp_rg_lead_detail where field_number = 151 and lead_id = meta_value) as project_name,
+          (select meta_value as value from wp_gf_entry_meta where meta_key = '151' and entry_id = meta_value) as project_name,
           (select form_id from wp_gf_entry where id = meta_value) as form_id
           FROM      wp_gf_lead_meta
           WHERE     meta_value NOT IN
@@ -1384,9 +1385,9 @@ function paymentRpt($table,$faire) {
         666=>'Order Total'
         );
     $sql = 'SELECT wp_gf_entry.id as entry_id,wp_gf_form_meta.form_id,meta_value as "origEntry_id",origLead.form_id as origForm_id, '
-            . '(select value from wp_rg_lead_detail where field_number = 151 and lead_id=meta_value limit 1) as field_151, '
-            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=meta_value limit 1) as field_303, '
-            . '(select value from wp_rg_lead_detail where field_number = 303 and lead_id=wp_gf_entry.id limit 1) as status_payentry '
+            . '(select meta_value as value from wp_gf_entry_meta where meta_key = "151" and entry_id=wp_gf_form_meta.meta_value limit 1) as field_151, '
+            . '(select meta_value as value from wp_gf_entry_meta where meta_key = "303" and entry_id=wp_gf_form_meta.meta_value limit 1) as field_303, '
+            . '(select meta_value as value from wp_gf_entry_meta where meta_key = "303" and entry_id=wp_gf_entry.id limit 1) as status_payentry '
             . 'FROM wp_gf_form_meta '
             . 'left outer join wp_mf_faire on find_in_set (wp_gf_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
             . 'left outer join wp_gf_entry on wp_gf_entry.form_id = wp_gf_form_meta.form_id '
