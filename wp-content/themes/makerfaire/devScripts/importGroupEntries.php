@@ -4,7 +4,7 @@
  * Script to do faire imports
  * - this import is used for grouped entries
  */
-//TBD on future imports, they include space size and we lock it 
+//TBD on future imports, they include space size and we lock it
 include 'db_connect.php';
 
 ini_set("auto_detect_line_endings", "1");
@@ -120,8 +120,8 @@ if ( isset($_POST["submit"]) ) {
     //process new entry
     prcNewEntry($value['childID']);
   }
-  // add to the wp_rg_lead_rel table
-  $sql = "INSERT INTO wp_rg_lead_rel (`parentID`, `childID`, `faire`, `form`) values " .$insertRel.";";
+  // add to the wp_mf_lead_rel table
+  $sql = "INSERT INTO wp_mf_lead_rel (`parentID`, `childID`, `faire`, `form`) values " .$insertRel.";";
   $result=mysqli_query($mysqli,$sql) or die("error in SQL ".mysqli_error($mysqli).' '.$sql);
 }else{
   ?>

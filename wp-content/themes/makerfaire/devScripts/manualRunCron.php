@@ -257,7 +257,7 @@ function genManTickets($entryID=0, $parentID=0){
   }elseif($parentID!=0){
     echo 'Processing parent id '.$parentID.'<br/>';
     //process group entry tickets
-    $sql = "SELECT childID FROM `wp_rg_lead_rel` where parentID = ".$parentID;
+    $sql = "SELECT childID FROM `wp_mf_lead_rel` where parentID = ".$parentID;
 
     $results = $wpdb->get_results($sql);
     foreach($results as $row){

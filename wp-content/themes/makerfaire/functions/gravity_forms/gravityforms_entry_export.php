@@ -600,8 +600,8 @@ function mf_custom_import_entries() {
     //link to another entry id
     if(isset($rowData['link_entry_id']) && is_numeric($rowData['link_entry_id'])){
       //link_entry_id
-      $sql = "INSERT INTO wp_rg_lead_rel (`parentID`, `childID`, `form`) values (".$rowData['link_entry_id'].", ".$entryID.", '".$entry['form_id']."')";
-      $wpdb->insert('wp_rg_lead_rel',array('parentID'=>$rowData['link_entry_id'],'childID'=>$entryID,'form'=>$entry['form_id']),array('%d','%d', '%d'));
+      $sql = "INSERT INTO wp_mf_lead_rel (`parentID`, `childID`, `form`) values (".$rowData['link_entry_id'].", ".$entryID.", '".$entry['form_id']."')";
+      $wpdb->insert('wp_mf_lead_rel',array('parentID'=>$rowData['link_entry_id'],'childID'=>$entryID,'form'=>$entry['form_id']),array('%d','%d', '%d'));
     }
 
     //add tickets

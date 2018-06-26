@@ -11,14 +11,14 @@ function myajax_update_entry_rating() {
 
   //if there is already a record for this user, update it.
   //else add it.
-  $sql = "Insert into wp_rg_lead_rating (entry_id, user_id, rating) "
+  $sql = "Insert into wp_mf_lead_rating (entry_id, user_id, rating) "
        . " values (".$entry_id.','.$user.','.$rating.")"
        . " on duplicate key update rating=".$rating.", ratingDate=now()";
 
   $wpdb->get_results($sql);
 
   //update the meta with the average rating
-  $sql = "SELECT avg(rating) as rating FROM `wp_rg_lead_rating` where entry_id = ".$entry_id;
+  $sql = "SELECT avg(rating) as rating FROM `wp_mf_lead_rating` where entry_id = ".$entry_id;
   $results = $wpdb->get_results($sql);
   $rating = round($results[0]->rating);
 
