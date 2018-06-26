@@ -1,5 +1,6 @@
 /* maker admin e.g. makerfaire.com/manage-entries */
 .maker-admin-manage-faire-entries-mobile {
+  margin-bottom: 100px;
   .maker-admin-list-wrp {
     padding: 15px 0;
   }
@@ -8,6 +9,57 @@
   }
   .clear {
     clear: both;
+  }
+  .dropdown.open {
+      #dropdownMenuLink {
+          &::after {
+              content: "\f0de";
+              margin-top: 4px;
+          }
+      }
+  }
+  .dropdown {
+    width: 250px;
+    float: right;
+    @media screen and (min-width: 988px) {
+        margin-top: -90px;
+    }
+    @media screen and (max-width: 516px) {
+        float: left;
+        margin-top: 15px;
+    }
+    a { 
+      &:hover, &:active, &:focus {
+        text-decoration: none;
+      }
+    }
+    #dropdownMenuLink {
+        display: block;
+        border: 1px solid rgba(0,0,0,0.15);;
+        padding: 10px 20px;
+        color: #333;
+        &::after {
+            font-family: FontAwesome;
+            content: "\f0dd";
+            display: block;
+            float: right;
+            font-size: 18px;
+            margin-top: -4px;
+        }
+    }
+    .dropdown-menu {
+        width: 250px;
+        margin-top: 0px;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        border-radius: 0px;
+        border-top: none;
+        padding: 0 20px;
+        ul { margin: 5px 0px; }
+        .dropdown-item {
+            line-height: 40px;
+        }
+    }
   }
   .gv-list-view-title-maker-entry {
     @media (max-width: 1199px) {
@@ -98,10 +150,10 @@
         clear: both;
         float: left;
         margin-bottom: 10px;
-        font-size: 1.93em;
+        font-size: 2em;
         min-height: 2.2em;
         @media screen and (max-width: 1199px) {
-          font-size: 1.3em;
+          font-size: 2em;
         }
       }
     }

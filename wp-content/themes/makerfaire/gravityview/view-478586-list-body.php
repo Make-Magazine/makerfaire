@@ -31,7 +31,6 @@ $entries   = $tableData['data'];
         },
         title: ''
     });
-
     jQuery('body').on('click', function (e) {
       //did not click a popover toggle or popover
       if (jQuery(e.target).data('toggle') !== 'popover'
@@ -47,23 +46,24 @@ $entries   = $tableData['data'];
     <div class="clearfix">
       <div>
         <h2 style="float:left">Welcome to the Maker Faire Portal</h2>
-
-        <div class="dropdown show" style="float:right">
+        <div class="clearfix"></div>
+        <h3 class="title-head pull-left" style="margin-top:0px;">Manage your Maker Faire Entries</h3>
+        <div class="clearfix"></div>
+        User <?php echo $current_user->user_email;?>
+        <div class="dropdown show">
           <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Apply to Participate
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <ul>
-              <li><a class="dropdown-item" href="http://makerfaire:8888/new-york/call-for-makers/">World Maker Faire New York</a></li>
-              <li><a class="dropdown-item" href="http://makerfaire:8888/bay-area/call-for-makers/">Maker Faire Bay Area</a></li>
+            <ul class="bulletless">
+              <li><a class="dropdown-item" href="/new-york/call-for-makers/">World Maker Faire New York</a></li>
+              <li><a class="dropdown-item" href="/bay-area/call-for-makers/">Maker Faire Bay Area</a></li>
             </ul>
           </div>
         </div>
       </div>
-      <div class="clearfix"></div>
-      <h3 class="title-head pull-left">Manage your Maker Faire Entries</h3>
     </div>
-    User <?php echo $current_user->user_email;?><br/>
+
     <hr class="header-break">
     <?php
 
@@ -172,7 +172,7 @@ $entries   = $tableData['data'];
           <div class="entry-main-content">
             <?php if($entryData['mat_message'] !='') { ?>
             <!-- MAT messaging -->
-            <div class="hidden-xs mat_message" style="background-color:#F4D03F; padding:10px">
+            <div class="hidden-xs mat_message" style="background-color:#f4d03e; padding:10px">
                 <?php echo $entryData['mat_message'];?>
             </div>
             <div class="clear"></div>
@@ -345,18 +345,18 @@ $entries   = $tableData['data'];
     ?>
     <h2>Welcome to the Maker Faire Portal!</h2>
     <h3>Maker Faire Bay Area and World Maker Faire New York Participants</h3>
-    <h4>This is where participants can manage their Maker Faire entries for World Maker Faire New York and Bay Area Maker Faire.
-    You are logged in as <?php echo $current_user->user_email;?>, but you do not seem to have applied yet. There are many ways to participate:</h4>
-    <ul class="text-center ui-grid-group-list">
-      <li class="font-weight-bold">Maker Exhibitors</li>
-      <li>Performers</li>
-      <li>Presenters</li>
-      <li>Startup Sponsors</li>
-      <li>Event Sponsors</li>
+    <p>This is where participants can manage their Maker Faire entries for World Maker Faire New York and Bay Area Maker Faire.
+    You are logged in as <b><?php echo $current_user->user_email;?></b>, but you do not seem to have applied yet. There are many ways to participate:</p>
+    <ul class="text-center bulletless" style="font-size:24px;margin:30px">
+      <li><b>Maker Exhibitors</b></li>
+      <li><b>Performers</b></li>
+      <li><b>Presenters</b></li>
+      <li><b>Startup Sponsors</b></li>
+      <li><b>Event Sponsors</b></li>
     </ul>
     <div class="row text-center">
-      <div class="col-md-6"><a href="/new-york/call-for-makers/" class="btn btn-alert btn-info">World Maker Faire New York</a></div>
-      <div class="col-md-6"><a href="/bay-area/call-for-makers/" class="btn btn-alert btn-info">Maker Faire Bay Area</a></div>
+      <div class="col-sm-6"><a href="/new-york/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">World Maker Faire New York</a></div>
+      <div class="col-sm-6"><a href="/bay-area/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">Maker Faire Bay Area</a></div>
     </div>
     <h3 class="text-center">Join us in co-creating the next Maker Faire!</h3>
     <?php
