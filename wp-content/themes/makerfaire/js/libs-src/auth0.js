@@ -90,6 +90,17 @@ window.addEventListener('load', function() {
       if(!localStorage.getItem('wp_loggedin')){
         //wait .5 second for auth0 data to be returned from getProfile
         setTimeout(function(){WPlogin();}, 0500); //login to wordpress
+      }else{
+        //if we are on the authentication page, redirect
+        if ( jQuery( '#authenticated-redirect' ).length ) {
+          var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
+          localStorage.removeItem('redirect_to'); //unset after retrieved
+          if(redirect_url===''){
+            location.href=templateUrl; //if redirect url not set, go to the home page
+          }else{
+            location.href=redirect_url; //redirect to the previous page
+          }
+        }
       }
     } else {
       loginBtn.style.display = 'flex';
