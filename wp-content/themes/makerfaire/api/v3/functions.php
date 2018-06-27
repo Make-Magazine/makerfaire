@@ -40,7 +40,7 @@ function get_makerfaire_status_counts( $form_id ) {
 	$sql             = $wpdb->prepare(
 			"SELECT count(0) as entries, meta_value as label "
     . "  FROM $lead_details_table_name
-			   JOIN wp_gf_entry lead on lead.id = $lead_details_table_name.lead_id AND
+			   JOIN wp_gf_entry lead on lead.id = $lead_details_table_name.entry_id AND
                                   lead.status = 'active'
         WHERE meta_key = '303' AND
               $lead_details_table_name.form_id=%d

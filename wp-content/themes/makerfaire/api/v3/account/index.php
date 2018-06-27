@@ -44,16 +44,16 @@ if ( $type == 'account' ) {
 
 
   if($faire == ''){
-      $select_query = "select maker_id, `First Name` as first_name, `Last Name` as last_name,
+      $select_query = "SELECT maker_id, `First Name` as first_name, `Last Name` as last_name,
                               Bio, Email, Photo, TWITTER, website, age_range,
                               city, state, country, zipcode, last_change_date,
-                              (select faire
-                                from  wp_mf_entity, wp_mf_maker_to_entity
-                                where lead_id = wp_mf_maker_to_entity.entity_id
-                                AND   wp_mf_maker_to_entity.maker_id=wp_mf_maker.maker_id) as faire
-                      FROM  wp_mf_maker "
-                    .(!empty($where)?' where '. implode(' AND ',$where):'')
-                    ." order by maker_id ASC";
+                              (SELECT faire
+                                 FROM wp_mf_entity, wp_mf_maker_to_entity
+                                WHERE lead_id = wp_mf_maker_to_entity.entity_id AND
+                                      wp_mf_maker_to_entity.maker_id=wp_mf_maker.maker_id) as faire
+                        FROM  wp_mf_maker "
+                    .(!empty($where)?' WHERE '. implode(' AND ',$where):'')
+                    ." ORDER BY maker_id ASC";
   }else{
     //if faire is set, only pull makers associated with that faire
     //Pull Accepted records and exclude contacts as they do not have an age range set for makershare

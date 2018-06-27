@@ -26,16 +26,16 @@ if ( $type == 'maker' ) {
 	$select_query = sprintf("select * from
     (SELECT wp_mf_entity.lead_id, wp_mf_maker_to_entity.maker_type, `wp_mf_maker`.`First Name` as first_name, `wp_mf_maker`.`Last Name` as last_name,
            `wp_mf_maker`.`Bio`, `wp_mf_maker`.`Photo`, `wp_mf_maker`.`Email`, `wp_mf_maker`.`TWITTER`, `wp_gf_entry`.`form_id`, `wp_mf_maker`.`maker_id`, wp_mf_entity.category
-      FROM `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity, wp_mf_faire,wp_gf_entry
-      where wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id
-      and   wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id
-      AND   wp_mf_entity.status = 'Accepted'
-      AND   wp_mf_maker_to_entity.maker_type != 'contact'
-      and   LOWER(wp_mf_faire.faire) = '".$faire."'
-      AND   FIND_IN_SET (`wp_gf_entry`.`form_id`,wp_mf_faire.form_ids)> 0
-      and   wp_gf_entry.id = `wp_mf_maker_to_entity`.`entity_id`
-      and   wp_gf_entry.status = 'active'
-      ORDER BY `wp_mf_maker`.`maker_id` ASC, wp_mf_maker_to_entity.maker_type ASC)
+      FROM `wp_mf_maker`, wp_mf_maker_to_entity, wp_mf_entity, wp_mf_faire, wp_gf_entry
+     WHERE  wp_mf_maker_to_entity.maker_id = wp_mf_maker.maker_id         AND
+            wp_mf_maker_to_entity.entity_id = wp_mf_entity.lead_id        AND
+            wp_mf_entity.status = 'Accepted'                              AND
+            wp_mf_maker_to_entity.maker_type != 'contact'                 AND
+            LOWER(wp_mf_faire.faire) = '".$faire."'                       AND
+            FIND_IN_SET (`wp_gf_entry`.`form_id`,wp_mf_faire.form_ids)> 0 AND
+            wp_gf_entry.id = `wp_mf_maker_to_entity`.`entity_id`          AND
+            wp_gf_entry.status = 'active'
+  ORDER BY `wp_mf_maker`.`maker_id` ASC, wp_mf_maker_to_entity.maker_type ASC)
     AS tmp_table GROUP by `maker_id`
   ");
 	$mysqli->query("SET NAMES 'utf8'");
