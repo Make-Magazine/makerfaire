@@ -87,10 +87,10 @@ window.addEventListener('load', function() {
       getProfile();
 
       //login to wordpress if not already
-      if(!localStorage.getItem('wp_loggedin')){
+      //if(!localStorage.getItem('wp_loggedin')){
         //wait .5 second for auth0 data to be returned from getProfile
         setTimeout(function(){WPlogin();}, 0500); //login to wordpress
-      }else{
+      /*}else{
         //if we are on the authentication page, redirect
         if ( jQuery( '#authenticated-redirect' ).length ) {
           var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
@@ -101,7 +101,7 @@ window.addEventListener('load', function() {
             location.href=redirect_url; //redirect to the previous page
           }
         }
-      }
+      }*/
     } else {
       loginBtn.style.display = 'flex';
       profileView.style.display = 'none';
