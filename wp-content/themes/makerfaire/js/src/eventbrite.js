@@ -1,5 +1,5 @@
-if (window.location.href.indexOf("buy-tickets") > -1){
-    window.addEventListener('load', function() {
+window.addEventListener('load', function() {
+  if (window.location.href.indexOf("buy-tickets") > -1){
         // Set this to your UA number to use a specific tracker Client ID. Defaults to
         // first tracker registered, which is fine for 99.9% of users.
         var targetTrackingId = '';
@@ -95,5 +95,5 @@ if (window.location.href.indexOf("buy-tickets") > -1){
             el.addEventListener(evt, handler);
           }
         }
-    });
-}
+    }
+});
