@@ -4,7 +4,7 @@
  */
 ?>
 <?php get_header(); ?>
-<div class="container page-content">
+<div id="authenticated-redirect" class="container page-content">
   <div class="row">
     <div class="col-sm-3 col-xs-12">
       <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png"  class="img-responsive" />

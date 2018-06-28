@@ -87,10 +87,10 @@ window.addEventListener('load', function() {
       getProfile();
 
       //login to wordpress if not already
-      if(!localStorage.getItem('wp_loggedin')){
+      //if(!localStorage.getItem('wp_loggedin')){
         //wait .5 second for auth0 data to be returned from getProfile
-        setTimeout(function(){WPlogin();}, 0500); //login to wordpress
-      }
+        setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
+      //}
     } else {
       loginBtn.style.display = 'flex';
       profileView.style.display = 'none';
@@ -122,6 +122,7 @@ window.addEventListener('load', function() {
 
   function WPlogin(){
     if (typeof userProfile !== 'undefined') {
+      console.log('defined');
       var user_id      = userProfile.sub;
       var access_token = localStorage.getItem('access_token');
       var id_token     = localStorage.getItem('id_token');
@@ -137,12 +138,21 @@ window.addEventListener('load', function() {
       jQuery.post(ajax_object.ajax_url, data, function(response) {
         //set wplogged in localStorage item
         localStorage.setItem('wp_loggedin', 'true');
-        if(localStorage.getItem('redirect_to')){
-          var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
-          localStorage.removeItem('redirect_to'); //unset after retrieved
-          location.href=redirect_url;
+        if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
+            //redirect
+          if(localStorage.getItem('redirect_to')){
+            var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
+            localStorage.removeItem('redirect_to'); //unset after retrieved
+            location.href=redirect_url;
+          }else{  //redirect to home page
+            location.href=templateUrl;
+          }
+
         }
+
       });
+    }else{
+      console.log('undefined');
     }
   }
 

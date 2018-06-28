@@ -56,8 +56,8 @@ $entries   = $tableData['data'];
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             <ul class="bulletless">
-              <li><a class="dropdown-item" href="/new-york/call-for-makers/">World Maker Faire New York</a></li>
-              <li><a class="dropdown-item" href="/bay-area/call-for-makers/">Maker Faire Bay Area</a></li>
+              <li><a class="dropdown-item" href="/new-york/call-for-makers/" target="_blank">World Maker Faire New York</a></li>
+              <li><a class="dropdown-item" href="/bay-area/call-for-makers/" target="_blank">Maker Faire Bay Area</a></li>
             </ul>
           </div>
         </div>
@@ -354,9 +354,9 @@ $entries   = $tableData['data'];
       <li><b>Startup Sponsors</b></li>
       <li><b>Event Sponsors</b></li>
     </ul>
-    <div class="row text-center">
-      <div class="col-sm-6"><a href="/new-york/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">World Maker Faire New York</a></div>
-      <div class="col-sm-6"><a href="/bay-area/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">Maker Faire Bay Area</a></div>
+    <div class="row text-center faire-btns">
+      <div class="right col-sm-6 col-xs-12"><a href="/new-york/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">World Maker Faire New York</a></div>
+      <div class="left col-sm-6 col-xs-12"><a href="/bay-area/call-for-makers/" class="btn btn-alert btn-info" style="margin-bottom: 10px;">Maker Faire Bay Area</a></div>
     </div>
     <h3 class="text-center">Join us in co-creating the next Maker Faire!</h3>
     <?php
