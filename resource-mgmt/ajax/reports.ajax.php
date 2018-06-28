@@ -193,8 +193,7 @@ function cannedRpt(){
     //Are specific detail fields requested?
     if(!empty($fieldSQL)){
       //pull entry specifc detail based on requested fields
-      $detailSQL = "SELECT detail.entry_id as lead_id, detail.form_id, detail.meta_key, detail.meta_value as value,
-                           detail_long.value as 'long value'
+      $detailSQL = "SELECT detail.entry_id as lead_id, detail.form_id, detail.meta_key, detail.meta_value as value
                       FROM wp_gf_entry_meta detail"
             . " where detail.entry_id = $lead_id "
             . " and ($fieldSQL) "
@@ -561,7 +560,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC){
     $reqIDs = implode("', '", $reqArr);
     if(!empty($reqIDs)) $reqIDs = "'".$reqIDs."'";
 
-    $sql = "SELECT meta_key,meta_value FROM `wp_gf_lead_meta` where meta_key in(".$reqIDs.") and entry_id = ".$entryID;
+    $sql = "SELECT meta_key,meta_value FROM `wp_gf_entry_meta` where meta_key in(".$reqIDs.") and entry_id = ".$entryID;
 
     //loop thru data
     $metas = $wpdb->get_results($sql,ARRAY_A);
@@ -686,16 +685,16 @@ function pullPayData($entryID, $paymentOrder=50) {
   //add payment information
   if($entryID!=''){
     //get scheduling information for this lead
-    $paysql =  "select  wp_gf_lead_meta.entry_id as pymt_entry,
+    $paysql =  "select  wp_gf_entry_meta.entry_id as pymt_entry,
                         wp_gf_addon_payment_transaction.transaction_type,
                         wp_gf_addon_payment_transaction.transaction_id,
                         wp_gf_addon_payment_transaction.amount,
                         wp_gf_addon_payment_transaction.date_created
-                  from  wp_gf_lead_meta
+                  from  wp_gf_entry_meta
                   left  outer join wp_gf_addon_payment_transaction
-                        on wp_gf_lead_meta.entry_id = wp_gf_addon_payment_transaction.lead_id
+                        on wp_gf_entry_meta.entry_id = wp_gf_addon_payment_transaction.lead_id
                  where  meta_value = $entryID "
-            . "    and wp_gf_lead_meta.meta_key like 'entry_id' "
+            . "    and wp_gf_entry_meta.meta_key like 'entry_id' "
             . "    and wp_gf_addon_payment_transaction.transaction_type='payment'";
 
     $payresults = $wpdb->get_results($paysql);
@@ -1215,7 +1214,7 @@ function pullEntityTasks($formSelect) {
     (select form_id from wp_gf_entry where id = tasks.lead_id) as form_id
           FROM      wp_mf_entity_tasks AS tasks
           join      wp_gf_entry on tasks.lead_id= wp_gf_entry.id
-          LEFT JOIN wp_gf_lead_meta AS meta
+          LEFT JOIN wp_gf_entry_meta AS meta
                  ON meta.`form_id` = $formSelect
                 AND meta.meta_key = 'entry_id'
                 AND tasks.lead_id = meta.meta_value
@@ -1224,7 +1223,7 @@ function pullEntityTasks($formSelect) {
           SELECT    NULL, NULL, NULL, NULL, NULL, meta_value,lead_id as other_entry, form_id,
           (select meta_value as value from wp_gf_entry_meta where meta_key = '151' and entry_id = meta_value) as project_name,
           (select form_id from wp_gf_entry where id = meta_value) as form_id
-          FROM      wp_gf_lead_meta
+          FROM      wp_gf_entry_meta
           WHERE     meta_value NOT IN
                     (SELECT  lead_id FROM    wp_mf_entity_tasks)
                 AND `form_id` = $formSelect
@@ -1389,7 +1388,7 @@ function paymentRpt($table,$faire) {
             . 'FROM wp_gf_form_meta '
             . 'left outer join wp_mf_faire on find_in_set (wp_gf_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
             . 'left outer join wp_gf_entry on wp_gf_entry.form_id = wp_gf_form_meta.form_id '
-            . 'left outer join wp_gf_lead_meta on wp_gf_lead_meta.entry_id = wp_gf_entry.id and meta_key = "entry_id"'
+            . 'left outer join wp_gf_entry_meta on wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key = "entry_id"'
             . 'left outer join wp_gf_entry origLead on origLead.id = meta_value '
             . 'WHERE  display_meta like \'%"form_type":"Payment"%\' and '
             . '       display_meta like \'%"create_invoice":"yes"%\' and '

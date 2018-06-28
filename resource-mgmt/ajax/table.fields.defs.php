@@ -48,24 +48,24 @@ $dateCellTemplate    =
 
 /*
  *      change report
- *   wp_rg_lead_detail_changes
+ *   wp_mf_lead_detail_changes
  */
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'lead_id', 'filterType'   => 'entrylink', 'width'  => 75,);
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'user_email','filterType' => 'text', 'fieldLabel' => 'User Email','cellTemplate'=> $cellToolTipTemplate);
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'date_updated', 'filterType'  => 'text', 'fieldLabel'  => 'Date Updated', 'width' => 150, 'cellTemplate'=> '<div class="ui-grid-cell-contents">{{COL_FIELD | date:"M-d-yy h:mm a"}}</div>');
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'field_id',     'filterType' => 'text', 'width' => 80);
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'fieldLabel',   'filterType'  => 'text','fieldLabel'  => 'Field Label','cellTemplate'=> $cellToolTipTemplate);
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'field_before', 'filterType'  => 'text', 'fieldLabel'  => 'Value Before', 'width' => 250, 'cellTemplate'=> $cellToolTipTemplate);
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'field_after',  'filterType'  => 'text', 'fieldLabel'  => 'Value After', 'width' => 250, 'cellTemplate'=> $cellToolTipTemplate);
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'status_at_update', 'filterType'  => 'text', 'visible' => false);
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'status',       'filterType'  => 'dropdown', 'fieldLabel'  => 'Current Status', 'visible'=>false,
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'lead_id', 'filterType'   => 'entrylink', 'width'  => 75,);
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'user_email','filterType' => 'text', 'fieldLabel' => 'User Email','cellTemplate'=> $cellToolTipTemplate);
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'date_updated', 'filterType'  => 'text', 'fieldLabel'  => 'Date Updated', 'width' => 150, 'cellTemplate'=> '<div class="ui-grid-cell-contents">{{COL_FIELD | date:"M-d-yy h:mm a"}}</div>');
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'field_id',     'filterType' => 'text', 'width' => 80);
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'fieldLabel',   'filterType'  => 'text','fieldLabel'  => 'Field Label','cellTemplate'=> $cellToolTipTemplate);
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'field_before', 'filterType'  => 'text', 'fieldLabel'  => 'Value Before', 'width' => 250, 'cellTemplate'=> $cellToolTipTemplate);
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'field_after',  'filterType'  => 'text', 'fieldLabel'  => 'Value After', 'width' => 250, 'cellTemplate'=> $cellToolTipTemplate);
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'status_at_update', 'filterType'  => 'text', 'visible' => false);
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'status',       'filterType'  => 'dropdown', 'fieldLabel'  => 'Current Status', 'visible'=>false,
     'options'     => array('Proposed'=>'Proposed','Accepted'=>'Accepted','Rejected'=>'Rejected','Wait List'=>'Wait List','Cancelled'=>'Cancelled'));
-$tableFields['wp_rg_lead_detail_changes']['colDefs'][] = array('fieldName' => 'form_id', 'filterType' => 'text', 'visible' => false);
-$tableFields['wp_rg_lead_detail_changes']['query'] =
+$tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'form_id', 'filterType' => 'text', 'visible' => false);
+$tableFields['wp_mf_lead_detail_changes']['query'] =
           'SELECT lead_id, DATE_FORMAT(date_updated,"%Y-%m-%dT%TZ") as date_updated, field_id, fieldLabel, field_before, field_after, status_at_update, wp_gf_entry.form_id, '
-        . '     (SELECT meta_value as value FROM `wp_gf_entry_meta` where meta_key="303" and wp_gf_entry_meta.entry_id =wp_rg_lead_detail_changes.lead_id ) as status, '
+        . '     (SELECT meta_value as value FROM `wp_gf_entry_meta` where meta_key="303" and wp_gf_entry_meta.entry_id =wp_mf_lead_detail_changes.lead_id ) as status, '
         . '     (SELECT user_email FROM `wp_users` where wp_users.ID =user_id ) as user_email '
-        . 'FROM wp_rg_lead_detail_changes '
+        . 'FROM wp_mf_lead_detail_changes '
         . 'left outer join wp_gf_entry on wp_gf_entry.id = lead_id '
         . 'left outer join  wp_mf_faire on find_in_set (wp_gf_entry.form_id,wp_mf_faire.form_ids) > 0 '
         . 'where  wp_mf_faire.ID = '.$faire
