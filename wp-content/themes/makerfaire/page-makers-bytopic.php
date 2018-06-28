@@ -210,11 +210,11 @@ function sort_by_field_count( $form_id, $searching ) {
 						INNER JOIN
 				    (
 				    SELECT
-						lead_id as id
+						entry_id as id
 						from $lead_detail_table_name
 						WHERE $accepted_criteria
 						AND form_id in ($form_id)
-						) accepted on $lead_detail_table_name.lead_id=accepted.id
+						) accepted on $lead_detail_table_name.entry_id=accepted.id
 						WHERE (meta_key BETWEEN '$searchfield_number_min' AND '$searchfield_number_max' AND meta_value IN ( '$search_value' ))
 						AND form_id in ($form_id)
 	";

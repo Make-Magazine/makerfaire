@@ -488,10 +488,10 @@ function set_form_id($lead,$form){
 			$wpdb->prepare( "UPDATE $lead_table SET form_id={$form_id} WHERE id=%d ", $entry_id)
 	);
 	$wpdb->query(
-		$wpdb->prepare( "UPDATE $lead_detail_table SET form_id={$form_id} WHERE lead_id=%d ", $entry_id)
+		$wpdb->prepare( "UPDATE $lead_detail_table SET form_id={$form_id} WHERE entry_id=%d ", $entry_id)
 	);
 	$wpdb->query(
-			$wpdb->prepare( "UPDATE $lead_meta_table SET form_id={$form_id} WHERE lead_id=%d ", $entry_id)
+			$wpdb->prepare( "UPDATE $lead_meta_table SET form_id={$form_id} WHERE entry_id=%d ", $entry_id)
 	);
 
 	return $result;

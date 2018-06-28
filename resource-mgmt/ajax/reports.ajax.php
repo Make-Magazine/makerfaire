@@ -1220,12 +1220,11 @@ function pullEntityTasks($formSelect) {
                 AND tasks.lead_id = meta.meta_value
           WHERE     tasks.`form_id` = $formSelect
           UNION ALL
-          SELECT    NULL, NULL, NULL, NULL, NULL, meta_value,lead_id as other_entry, form_id,
+          SELECT    NULL, NULL, NULL, NULL, NULL, meta_value,entry_id as other_entry, form_id,
           (select meta_value as value from wp_gf_entry_meta where meta_key = '151' and entry_id = meta_value) as project_name,
           (select form_id from wp_gf_entry where id = meta_value) as form_id
           FROM      wp_gf_entry_meta
-          WHERE     meta_value NOT IN
-                    (SELECT  lead_id FROM    wp_mf_entity_tasks)
+          WHERE     meta_value NOT IN (SELECT lead_id FROM wp_mf_entity_tasks)
                 AND `form_id` = $formSelect
                 AND meta_key = 'entry_id'";
 
