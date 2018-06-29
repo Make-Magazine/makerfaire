@@ -100,8 +100,17 @@
 </head>
 
 <body id="makerfaire" <?php body_class('no-js'); ?>>
+     
+  <script>
+    if (window.location.href.indexOf("buy-tickets") > -1) {
+      dataLayer = [{
+        'pageCategory': 'ecommerce',
+        'visitorType': 'high-value'
+      }];
+    }
+  </script>
+    
   <!-- Google Tag Manager MakerFaire -->
-
   <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
