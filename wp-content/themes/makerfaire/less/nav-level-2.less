@@ -39,7 +39,7 @@
 }
 .nav-level-2 {
   height: 55px;
-  background-color: #333;
+  background-color: #005E9A;
   position: relative;
   @media screen and (max-width: 767px) {
     display: none;
@@ -55,7 +55,7 @@
         @media screen and (max-width: 995px) {
             width: 100%;
         }
-        &:before {
+        /*&:before {
             content: "";
             width: 0; 
             height: 0; 
@@ -75,7 +75,7 @@
             position: absolute;
             right: 0;
             top: 0;
-        }
+        }*/
         .subnav-banner {
             margin: 0 auto;
         }
@@ -84,11 +84,14 @@
   #menu-secondary_universal_menu {
     height: 100%;
     width: 100%;
-    padding-left: 40px;
+    padding-left: 55px;
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
+    @media screen and (max-width: 1199px) {
+       padding-left: 45px; 
+    }
     li {
       font-size: 16px;
       border-right: 1px solid #999;
@@ -117,9 +120,9 @@
         }
     }
     li.second-nav-banner {
-        min-width: 225px;
-        height: 55px;
-        background: url("/wp-content/themes/makerfaire/img/maker-faire-banner-logo.jpg") no-repeat;
+        min-width: 180px;
+        height: 40px;
+        background: url("/wp-content/themes/makerfaire/img/Maker_Faire_Logo.svg") no-repeat;
         background-size: contain;
         background-position: center;
         transition: .5s ease-in-out;
