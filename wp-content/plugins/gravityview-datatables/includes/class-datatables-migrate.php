@@ -80,7 +80,7 @@ class GV_Extension_DataTables_Migrate {
 			// update datatables settings on the view
 			update_post_meta( $view->ID, '_gravityview_datatables_settings', $new_settings );
 
-			do_action( 'gravityview_log_debug', __METHOD__ . ': updating view #' . $view->ID . ' settings:', $new_settings );
+			gravityview()->log->debug(  __METHOD__ . ': updating view #' . $view->ID . ' settings:', array( 'data' => $new_settings ) );
 
 		} // foreach Views
 
@@ -89,7 +89,7 @@ class GV_Extension_DataTables_Migrate {
 		// all done! enjoy the new DataTables!
 		update_option( 'gv_migrate_dt_tabletools', GV_Extension_DataTables::version );
 
-		do_action( 'gravityview_log_debug', __METHOD__ . ': All done! enjoy DataTables!' );
+		gravityview()->log->debug( __METHOD__ . ': All done! enjoy DataTables!' );
 	}
 
 } // end class

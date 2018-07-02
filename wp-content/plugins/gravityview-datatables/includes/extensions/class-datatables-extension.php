@@ -120,17 +120,31 @@ abstract class GV_DataTables_Extension {
 
 	/**
 	 * Inject Scripts and Styles if needed
+	 *
+	 * @return bool True: Add scripts for the DT extension; False: do not add scripts
 	 */
 	function add_scripts( $dt_configs, $views, $post ) {
 
+		if ( ! class_exists( '\GV\View_Collection' ) ) {
+			return false;
+		}
+
 		$script = false;
 
-		foreach ( $views as $key => $view_data ) {
-			if( !$this->is_datatables( $view_data ) || !$this->is_enabled( $view_data['id'] ) ) { continue; }
+		$views = \GV\View_Collection::from_post( $post );
+
+		foreach ( $views->all() as $view ) {
+
+			$view_data = $view->as_data();
+
+			if ( ! $this->is_datatables( $view_data ) || ! $this->is_enabled( $view->ID ) ) {
+				continue;
+			}
+
 			$script = true;
 		}
 
-		if( !$script ) { return; }
+		return $script;
 
 	}
 

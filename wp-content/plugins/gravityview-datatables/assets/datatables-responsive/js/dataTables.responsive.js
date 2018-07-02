@@ -1,15 +1,15 @@
-/*! Responsive 2.1.1
- * 2014-2016 SpryMedia Ltd - datatables.net/license
+/*! Responsive 2.2.1
+ * 2014-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     Responsive
  * @description Responsive tables plug-in for DataTables
- * @version     2.1.1
+ * @version     2.2.1
  * @file        dataTables.responsive.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2014-2016 SpryMedia Ltd.
+ * @copyright   Copyright 2014-2017 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -97,8 +97,8 @@ var DataTable = $.fn.dataTable;
  */
 var Responsive = function ( settings, opts ) {
 	// Sanity check that we are using DataTables 1.10 or newer
-	if ( ! DataTable.versionCheck || ! DataTable.versionCheck( '1.10.3' ) ) {
-		throw 'DataTables Responsive requires DataTables 1.10.3 or newer';
+	if ( ! DataTable.versionCheck || ! DataTable.versionCheck( '1.10.10' ) ) {
+		throw 'DataTables Responsive requires DataTables 1.10.10 or newer';
 	}
 
 	this.s = {
@@ -208,10 +208,12 @@ $.extend( Responsive.prototype, {
 
 			// DataTables will trigger this event on every column it shows and
 			// hides individually
-			dt.on( 'column-visibility.dtr', function (e, ctx, col, vis) {
-				that._classLogic();
-				that._resizeAuto();
-				that._resize();
+			dt.on( 'column-visibility.dtr', function (e, ctx, col, vis, recalc) {
+				if ( recalc ) {
+					that._classLogic();
+					that._resizeAuto();
+					that._resize();
+				}
 			} );
 
 			// Redraw the details box on each draw which will happen if the data
@@ -247,6 +249,9 @@ $.extend( Responsive.prototype, {
 			} );
 
 			dt.one( 'draw.dtr', function () {
+				that._resizeAuto();
+				that._resize();
+
 				dt.rows( rowIds ).every( function () {
 					that._detailsDisplay( this, false );
 				} );
@@ -762,8 +767,13 @@ $.extend( Responsive.prototype, {
 		$( dt.table().node() ).toggleClass( 'collapsed', collapsedClass );
 
 		var changed = false;
+		var visible = 0;
 
 		dt.columns().eq(0).each( function ( colIdx, i ) {
+			if ( columnsVis[i] === true ) {
+				visible++;
+			}
+
 			if ( columnsVis[i] !== oldVis[i] ) {
 				changed = true;
 				that._setColumnVis( colIdx, columnsVis[i] );
@@ -775,6 +785,11 @@ $.extend( Responsive.prototype, {
 
 			// Inform listeners of the change
 			$(dt.table().node()).trigger( 'responsive-resize.dt', [dt, this.s.current] );
+
+			// If no records, update the "No records" display element
+			if ( dt.page.info().recordsDisplay === 0 ) {
+				$('td', dt.table().body()).eq(0).attr('colspan', visible);
+			}
 		}
 	},
 
@@ -803,6 +818,15 @@ $.extend( Responsive.prototype, {
 			return;
 		}
 
+		// Need to restore all children. They will be reinstated by a re-render
+		if ( ! $.isEmptyObject( _childNodeStore ) ) {
+			$.each( _childNodeStore, function ( key ) {
+				var idx = key.split('-');
+
+				_childNodesRestore( dt, idx[0]*1, idx[1]*1 );
+			} );
+		}
+
 		// Clone the table with the current data in it
 		var tableWidth   = dt.table().node().offsetWidth;
 		var columnWidths = dt.columns;
@@ -818,7 +842,8 @@ $.extend( Responsive.prototype, {
 			} )
 			.to$()
 			.clone( false )
-			.css( 'display', 'table-cell' );
+			.css( 'display', 'table-cell' )
+			.css( 'min-width', 0 );
 
 		// Body rows - we don't need to take account of DataTables' column
 		// visibility since we implement our own here (hence the `display` set)
@@ -864,7 +889,8 @@ $.extend( Responsive.prototype, {
 			.css( {
 				width: 1,
 				height: 1,
-				overflow: 'hidden'
+				overflow: 'hidden',
+				clear: 'both'
 			} )
 			.append( clonedTable );
 
@@ -899,6 +925,13 @@ $.extend( Responsive.prototype, {
 		$( dt.column( col ).header() ).css( 'display', display );
 		$( dt.column( col ).footer() ).css( 'display', display );
 		dt.column( col ).nodes().to$().css( 'display', display );
+
+		// If the are child nodes stored, we might need to reinsert them
+		if ( ! $.isEmptyObject( _childNodeStore ) ) {
+			dt.cells( null, col ).indexes().each( function (idx) {
+				_childNodesRestore( dt, idx.row, idx.column );
+			} );
+		}
 	},
 
 
@@ -1060,6 +1093,52 @@ Responsive.display = {
 };
 
 
+var _childNodeStore = {};
+
+function _childNodes( dt, row, col ) {
+	var name = row+'-'+col;
+
+	if ( _childNodeStore[ name ] ) {
+		return _childNodeStore[ name ];
+	}
+
+	// https://jsperf.com/childnodes-array-slice-vs-loop
+	var nodes = [];
+	var children = dt.cell( row, col ).node().childNodes;
+	for ( var i=0, ien=children.length ; i<ien ; i++ ) {
+		nodes.push( children[i] );
+	}
+
+	_childNodeStore[ name ] = nodes;
+
+	return nodes;
+}
+
+function _childNodesRestore( dt, row, col ) {
+	var name = row+'-'+col;
+
+	if ( ! _childNodeStore[ name ] ) {
+		return;
+	}
+
+	var node = dt.cell( row, col ).node();
+	var store = _childNodeStore[ name ];
+	var parent = store[0].parentNode;
+	var parentChildren = parent.childNodes;
+	var a = [];
+
+	for ( var i=0, ien=parentChildren.length ; i<ien ; i++ ) {
+		a.push( parentChildren[i] );
+	}
+
+	for ( var j=0, jen=a.length ; j<jen ; j++ ) {
+		node.appendChild( a[j] );
+	}
+
+	_childNodeStore[ name ] = undefined;
+}
+
+
 /**
  * Display methods - functions which define how the hidden data should be shown
  * in the table.
@@ -1069,6 +1148,33 @@ Responsive.display = {
  * @static
  */
 Responsive.renderer = {
+	listHiddenNodes: function () {
+		return function ( api, rowIdx, columns ) {
+			var ul = $('<ul data-dtr-index="'+rowIdx+'" class="dtr-details"/>');
+			var found = false;
+
+			var data = $.each( columns, function ( i, col ) {
+				if ( col.hidden ) {
+					$(
+						'<li data-dtr-index="'+col.columnIndex+'" data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+							'<span class="dtr-title">'+
+								col.title+
+							'</span> '+
+						'</li>'
+					)
+						.append( $('<span class="dtr-data"/>').append( _childNodes( api, col.rowIndex, col.columnIndex ) ) )// api.cell( col.rowIndex, col.columnIndex ).node().childNodes ) )
+						.appendTo( ul );
+
+					found = true;
+				}
+			} );
+
+			return found ?
+				ul :
+				false;
+		};
+	},
+
 	listHidden: function () {
 		return function ( api, rowIdx, columns ) {
 			var data = $.map( columns, function ( col ) {
@@ -1217,6 +1323,14 @@ Api.register( 'responsive.hasHidden()', function () {
 		false;
 } );
 
+Api.registerPlural( 'columns().responsiveHidden()', 'column().responsiveHidden()', function () {
+	return this.iterator( 'column', function ( settings, column ) {
+		return settings._responsive ?
+			settings._responsive.s.current[ column ] :
+			false;
+	}, 1 );
+} );
+
 
 /**
  * Version information
@@ -1224,7 +1338,7 @@ Api.register( 'responsive.hasHidden()', function () {
  * @name Responsive.version
  * @static
  */
-Responsive.version = '2.1.1';
+Responsive.version = '2.2.1';
 
 
 $.fn.dataTable.Responsive = Responsive;

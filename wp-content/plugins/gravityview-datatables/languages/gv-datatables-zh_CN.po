@@ -1,4 +1,4 @@
-# Copyright (C) 2017 GravityView
+# Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
 # michael edi <michaeledi@163.com>, 2016
@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2017-01-11 00:20+0000\n"
+"PO-Revision-Date: 2018-05-18 02:51+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -29,11 +29,11 @@ msgstr ""
 msgid "DataTables"
 msgstr "DataTables "
 
-#: includes/class-datatables-data.php:720
+#: includes/class-datatables-data.php:689
 msgid "Loading data&hellip;"
 msgstr "加载数据中&hellip;"
 
-#: includes/class-datatables-data.php:721
+#: includes/class-datatables-data.php:690
 msgid "No entries match your request."
 msgstr "没有条目符合您的要求。"
 
@@ -75,70 +75,82 @@ msgstr "复制"
 msgid "Print"
 msgstr "打印"
 
-#: includes/extensions/class-datatables-fixedheader.php:21
+#: includes/extensions/class-datatables-fixedheader.php:27
 msgid "Keep headers or columns in place and visible while scrolling a table."
 msgstr "在滚动时，固定表头或者指定列。"
 
-#: includes/extensions/class-datatables-fixedheader.php:27
+#: includes/extensions/class-datatables-fixedheader.php:33
 msgid "Enable FixedHeader"
 msgstr "启用固定表头"
 
-#: includes/extensions/class-datatables-fixedheader.php:39
+#: includes/extensions/class-datatables-fixedheader.php:45
 msgid "Enable FixedColumns"
 msgstr "启用固定列"
 
-#: includes/extensions/class-datatables-fixedheader.php:59
+#: includes/extensions/class-datatables-fixedheader.php:65
 msgid "FixedColumns"
 msgstr "固定的列"
 
-#: includes/extensions/class-datatables-fixedheader.php:60
+#: includes/extensions/class-datatables-fixedheader.php:66
 msgid ""
 "Fix the first column in place while horizontally scrolling a table. The "
 "first column and its contents will remain visible at all times."
 msgstr "固定在水平滚动表时的第一列。第一列和其内容将持续可见。"
 
-#: includes/extensions/class-datatables-fixedheader.php:64
+#: includes/extensions/class-datatables-fixedheader.php:70
 msgid "FixedHeader"
 msgstr "固定表头"
 
-#: includes/extensions/class-datatables-fixedheader.php:65
+#: includes/extensions/class-datatables-fixedheader.php:71
 msgid ""
 "Float the column headers above the table to keep the column titles visible "
 "at all times."
 msgstr "浮上面要时刻保持可见的列标题的表的列标题。"
 
-#: includes/extensions/class-datatables-responsive.php:35
+#: includes/extensions/class-datatables-responsive.php:41
 msgid "Responsive Tables"
 msgstr "自适应表格"
 
-#: includes/extensions/class-datatables-responsive.php:36
+#: includes/extensions/class-datatables-responsive.php:42
 msgid ""
 "Optimize table layout for different screen sizes through the dynamic "
 "insertion and removal of columns from the table."
 msgstr "通过动态增加或减少列数，来优化不同屏幕显示时的表格布局。"
 
-#: includes/extensions/class-datatables-responsive.php:62
+#: includes/extensions/class-datatables-responsive.php:68
 msgid "Enable Responsive Tables"
 msgstr "启用自适应表格布局"
 
-#: includes/extensions/class-datatables-scroller.php:29
+#: includes/extensions/class-datatables-scroller.php:35
 msgid "Scroller"
 msgstr "滚动条"
 
-#: includes/extensions/class-datatables-scroller.php:30
+#: includes/extensions/class-datatables-scroller.php:36
 msgid ""
 "Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.\n"
 "\n"
 "\t\t\t\tNote: Scroller will not work well if your View has columns of varying height."
 msgstr "允许条目很多的数据列表在同一个页面上连续显示。数据表的滚动条可以让大型数据集平滑显示 fast.\n\n\t\t\t\t注意︰ 如果你的视图有不同高度的列，滚动条将失效。"
 
-#: includes/extensions/class-datatables-scroller.php:46
+#: includes/extensions/class-datatables-scroller.php:52
 msgid "Enable Scroller"
 msgstr "启用滚动"
 
-#: includes/extensions/class-datatables-scroller.php:56
+#: includes/extensions/class-datatables-scroller.php:62
 msgid "Table Height"
 msgstr "表格高度"
+
+#: includes/extensions/class-datatables-search.php:31
+msgid "Search"
+msgstr "搜索"
+
+#: includes/extensions/class-datatables-search.php:32
+msgid "Ineffective if a search widget is already present in this View."
+msgstr ""
+
+#: includes/extensions/class-datatables-search.php:38
+msgid "Enable Search"
+msgstr ""
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
@@ -159,25 +171,31 @@ msgstr "你无权安装插件更新"
 msgid "Error"
 msgstr "错误"
 
-#: lib/class-gravityview-extension.php:349
+#: lib/class-gravityview-extension.php:360
 msgid "Could not activate the %s Extension; GravityView is not active."
 msgstr "不能激活 %s 扩展；GravityView未启用。"
 
-#: lib/class-gravityview-extension.php:353
+#: lib/class-gravityview-extension.php:364
 msgid "The %s Extension requires GravityView Version %s or newer."
 msgstr "%s 扩展需要GravityView版本 %s 或更高。"
 
-#: lib/class-gravityview-extension.php:357
+#: lib/class-gravityview-extension.php:368
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
 msgstr "%s 扩展需要PHP版本 %s 或更新的。请访问您的主机升级服务器的 PHP。"
 
+#: lib/class-gravityview-extension.php:372
+msgid ""
+"The %s Extension is not compatible with this version of GravityView. Please "
+"update the Extension to the latest version."
+msgstr ""
+
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/datatables/"
 msgstr "https://gravityview.co/extensions/datatables/"
 
-#: includes/class-datatables-data.php:654
+#: includes/class-datatables-data.php:623
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr "全部"
