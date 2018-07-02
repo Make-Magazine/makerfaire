@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Katz Web Services, Inc.
+# Copyright (C) 2018 GravityView
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 # Translators:
 msgid ""
@@ -6,14 +6,14 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2016-01-21 18:11+0000\n"
+"PO-Revision-Date: 2018-05-03 04:01+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Filipino (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/fil/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fil\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n == 1 || n==2 || n==3) || (n % 10 != 4 || n % 10 != 6 || n % 10 != 9);\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-Bookmarks: \n"
@@ -23,64 +23,49 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:360 partials/metabox.php:2
+#: advanced-filter.php:413 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr ""
 
-#: advanced-filter.php:362
+#: advanced-filter.php:415
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr ""
 
-#: advanced-filter.php:363
+#: advanced-filter.php:416
 msgid "Limit to Logged-in User Entries"
 msgstr ""
 
-#: advanced-filter.php:364
-msgid ""
-"To limit entries to those created by the current user, select \"Created "
-"By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
-msgstr ""
-
-#: advanced-filter.php:365
-msgid ""
-"If you want to limit entries to those created by the current user, but allow"
-" the administrators to view all the entries, select \"Logged-in User "
-"(disabled for admins)\" from the drop-down menu."
-msgstr ""
-
-#: advanced-filter.php:623
+#: advanced-filter.php:417 advanced-filter.php:676
 msgid "Created By"
 msgstr ""
 
-#: advanced-filter.php:627
-msgid "Logged-in User (disabled for Admins)"
+#: advanced-filter.php:417 advanced-filter.php:684
+msgid "Currently Logged-in User"
 msgstr ""
 
-#: advanced-filter.php:631
-msgid "Logged-in User"
+#: advanced-filter.php:418 advanced-filter.php:680
+msgid "Currently Logged-in User (Disabled for Administrators)"
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:181
+#: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:188
+#: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
-"href=\"%4$s\">update now</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:332
+#: lib/EDD_SL_Plugin_Updater.php:396
 msgid "You do not have permission to install plugin updates"
 msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:332
+#: lib/EDD_SL_Plugin_Updater.php:396
 msgid "Error"
 msgstr ""
 
@@ -104,4 +89,23 @@ msgstr ""
 
 #: partials/metabox.php:5
 msgid "Advanced Filtering requires Javascript to be enabled."
+msgstr ""
+
+#: advanced-filter.php:417
+msgctxt ""
+"First placeholder is \"Created By\" and second is \"Currently Logged-in "
+"User\""
+msgid ""
+"To limit entries to those created by the current user, select \"%s\", \"is\""
+" &amp; \"%s\" from the drop-down menus."
+msgstr ""
+
+#: advanced-filter.php:418
+msgctxt ""
+"The placeholder is \"Currently Logged-in User (Disabled for "
+"Administrators)\""
+msgid ""
+"If you want to limit entries to those created by the current user, but allow"
+" the administrators to view all the entries, select \"%s\" from the drop-"
+"down menu."
 msgstr ""
