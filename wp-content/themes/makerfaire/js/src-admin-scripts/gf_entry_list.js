@@ -13,7 +13,7 @@ jQuery(window).load(function() {
   var topFields = ['entry_id','302','304','303','320','321'];
   var newOptions = '';
   jQuery(".forms_page_gf_entries  #entry_filters .gform-filter-field > option").each(function() {
-    if(jQuery.inArray(this.value, topFields)!=-1){
+    if(jQuery.inArray(this.value, topFields) !== -1){
       newOptions += '<option value="'+this.value+'">'+this.text+'</option>';
       jQuery(this).remove();
     }
