@@ -9,7 +9,8 @@ jQuery( document ).ready(function() {
 });
 
 jQuery(window).load(function() {
-  var topFields = ['entry_id','302','304','303'];
+  //move certain fields to the top of the drop down for field filtering on entry list page
+  var topFields = ['entry_id','302','304','303','320','321'];
   var newOptions = '';
   jQuery(".forms_page_gf_entries  #entry_filters .gform-filter-field > option").each(function() {
     if(jQuery.inArray(this.value, topFields)!=-1){
@@ -39,7 +40,7 @@ jQuery(window).load(function() {
     var href = jQuery(this).attr('href');
     jQuery(this).attr('href', href + oldFilters);
   });
-  
+
   jQuery( "a[title^='View this entry']" ).each(function() {
     var filterParam = getAllUrlParams().filterField;
 
