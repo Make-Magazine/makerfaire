@@ -11,14 +11,12 @@ function shuffle(array) {
 }
     
 function billboard(element, options) {
-    alert("testing?");
     var defaults = {
             messages: [],
             interval: 3000
         },
         plugin = this,
         currentIndex = 0,
-        $element = jQuery(element);
     plugin.settings = {};
     var displayNext = function () {
         clearTimeout(plugin.timerId);
@@ -33,17 +31,8 @@ function billboard(element, options) {
         jQuery(element).fadeIn("fast");
         plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
     };
-    var start = function () {
-        plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
-    };
-    plugin.init = function () {
-        plugin.settings = jQuery.extend({}, defaults, options);
-        $element.on('click', function(){
-            displayNext();
-        });
-        start();
-    };
-    plugin.init();
+    plugin.settings = jQuery.extend({}, defaults, options);
+    plugin.timerId = setTimeout(displayNext, 0);
 };
 
 jQuery.fn.billboard = function (options) {
@@ -75,7 +64,6 @@ var brief_messages = [
     ];
 
 jQuery('.billboard').ready(function(){
-    alert("is this thing on?");
     jQuery('.billboard').billboard({
         messages: shuffle(brief_messages),
     });
