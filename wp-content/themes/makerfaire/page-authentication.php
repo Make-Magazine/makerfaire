@@ -15,6 +15,7 @@
     </div>
   </div>
 </div><!-- end .page-content -->
+
 <script type="text/javascript">
     
 function shuffle(array) {
@@ -54,8 +55,8 @@ var brief_messages = [
       'I\'m still working on it.'
     ];
     
- jQuery('.billboard').billboard({
-    messages: shuffle(brief_messages);
+jQuery('.billboard').billboard({
+    messages: shuffle(brief_messages),
 });
 </script>
 
