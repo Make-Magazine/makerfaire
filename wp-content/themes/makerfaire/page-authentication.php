@@ -73,14 +73,14 @@ function billboard(element, options) {
 };
 
 jQuery.fn.billboard = function (options) {
-    alert("something telss me this";)
+    alert("something telss me this");
     return this.each(function () {
         if (undefined == jQuery(this).data('billboard')) {
             var plugin = new billboard(this, options);
             jQuery(this).data('billboard', plugin);
         }
     });
-    alert("or this";)
+    alert("or this");
 };
 
     
