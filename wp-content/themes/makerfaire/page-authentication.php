@@ -3,7 +3,6 @@
  * Template Name: Authenticated Redirect page
  */
 ?>
-<?php get_header(); ?>
 
 <script type="text/javascript">
     
@@ -25,7 +24,7 @@ function shuffle(array) {
     return array;
 }
     
-var billboard = function (element, options) {
+jQuery.billboard = function (element, options) {
     var defaults = {
             messages: [],
             interval: 3000
@@ -69,16 +68,15 @@ var billboard = function (element, options) {
     plugin.init();
 };
 
-var fn.billboard = function (options) {
+jQuery.fn.billboard = function (options) {
     return this.each(function () {
         if (undefined == jQuery(this).data('billboard')) {
-            var plugin = new billboard(this, options);
+            var plugin = new jQuery.billboard(this, options);
             jQuery(this).data('billboard', plugin);
         }
     });
 };
 
-    
 var brief_messages = [
       'Looking for Makey.',
       'Plugging in the router.',
@@ -104,6 +102,7 @@ jQuery('.billboard').billboard({
 </script>
 
 
+<?php get_header(); ?>
 <div id="authenticated-redirect" class="container page-content">
   <div class="row">
     <div class="col-sm-3 col-xs-12">
@@ -115,7 +114,6 @@ jQuery('.billboard').billboard({
     </div>
   </div>
 </div><!-- end .page-content -->
-
 
 <div class="container">
     <div class="row">
