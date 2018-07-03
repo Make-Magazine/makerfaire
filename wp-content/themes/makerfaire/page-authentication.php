@@ -18,8 +18,6 @@
 
 <script type="text/javascript">
     
-alert("how long between this");
-    
 function shuffle(array) {
     let counter = array.length;
     // While there are elements in the array
