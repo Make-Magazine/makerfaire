@@ -4,17 +4,6 @@
  */
 ?>
 <?php get_header(); ?>
-<div id="authenticated-redirect" class="container page-content">
-  <div class="row">
-    <div class="col-sm-3 col-xs-12">
-      <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png"  class="img-responsive" />
-    </div>
-    <div class="col-sm-9 col-xs-12">
-      <h2 class="text-center">You are Now Logged In</h2>
-      <h3 class="text-center billboard">Please wait while we get you back to the right place.</h3>
-    </div>
-  </div>
-</div><!-- end .page-content -->
 
 <script type="text/javascript">
     
@@ -35,6 +24,60 @@ function shuffle(array) {
     }
     return array;
 }
+    
+var billboard = function (element, options) {
+    var defaults = {
+            messages: [],
+            interval: 3000
+        },
+        plugin = this,
+        currentIndex = 0,
+        $element = jQuery(element);
+    plugin.settings = {};
+
+    var displayNext = function () {
+        clearTimeout(plugin.timerId);
+        if (currentIndex >= plugin.settings.messages.length - 1) {
+            currentIndex = 0;
+        } else {
+            currentIndex++;
+        }
+        jQuery(element).fadeOut("fast", function () {
+            jQuery(element).text(plugin.settings.messages[currentIndex]);
+        });
+        jQuery(element).fadeIn("fast");
+        plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
+    };
+
+    var stop = function () {
+        $element.stop().removeAttr('style');
+        clearTimeout(plugin.timerId);
+    };
+
+    var start = function () {
+        plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
+    };
+
+    plugin.init = function () {
+        plugin.settings = jQuery.extend({}, defaults, options);
+        $element.on('click', function(){
+            displayNext();
+        });
+        $element.hover(stop,start);
+        start();
+    };
+    plugin.init();
+};
+
+var fn.billboard = function (options) {
+    return this.each(function () {
+        if (undefined == jQuery(this).data('billboard')) {
+            var plugin = new billboard(this, options);
+            jQuery(this).data('billboard', plugin);
+        }
+    });
+};
+
     
 var brief_messages = [
       'Looking for Makey.',
@@ -59,6 +102,20 @@ jQuery('.billboard').billboard({
     messages: shuffle(brief_messages),
 });
 </script>
+
+
+<div id="authenticated-redirect" class="container page-content">
+  <div class="row">
+    <div class="col-sm-3 col-xs-12">
+      <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png"  class="img-responsive" />
+    </div>
+    <div class="col-sm-9 col-xs-12">
+      <h2 class="text-center">You are Now Logged In</h2>
+      <h3 class="text-center billboard">Please wait while we get you back to the right place.</h3>
+    </div>
+  </div>
+</div><!-- end .page-content -->
+
 
 <div class="container">
     <div class="row">
