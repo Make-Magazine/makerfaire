@@ -16,25 +16,46 @@
   </div>
 </div><!-- end .page-content -->
 <script type="text/javascript">
- jQuery('.billboard').billboard({
-    messages: [
+    
+function shuffle(array) {
+    let counter = array.length;
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        let index = Math.floor(Math.random() * counter);
+
+        // Decrease counter by 1
+        counter--;
+
+        // And swap the last element with it
+        let temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+    return array;
+}
+    
+var brief_messages = [
       'Looking for Makey.',
       'Plugging in the router.',
       'Someone tripped over the power cord.',
       'Searching for the cookies.',
-      'Is it faire time yet?.',
+      'Is it Faire time yet?',
       'Updating the countdown clock.',
       'Looking for the lost drones.',
-      'adding neon to the tubes.',
+      'Adding neon to the tubes.',
       'Greeting our speakers.',
       'Checking the mics.',
       'Thanking our sponsors.',
-      'Looking at projects on MakerShare.',
+      'Looking at projects on Maker Share.',
       'Reading Make: magazine.',
       'Thanking our Make: members.',
-      'Are we there yet?.',
+      'Are we there yet?',
       'I\'m still working on it.'
-    ]
+    ];
+    
+ jQuery('.billboard').billboard({
+    messages: shuffle(brief_messages);
 });
 </script>
 

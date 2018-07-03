@@ -5,4 +5,55 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-(function(e,t,n){"use strict";e.billboard=function(t,n){var r={messages:[],interval:5e3},i=this,s=0,o=e(t);i.settings={};var u=function(){clearTimeout(i.timerId);if(s>=i.settings.messages.length-1){s=0}else{s++}e(t).fadeOut("slow",function(){e(t).text(i.settings.messages[s])});e(t).fadeIn("slow");i.timerId=setTimeout(u,i.settings.interval)};var a=function(){o.stop().removeAttr("style");clearTimeout(i.timerId)};var f=function(){i.timerId=setTimeout(u,i.settings.interval)};i.init=function(){i.settings=e.extend({},r,n);o.on("click",function(){u()});o.hover(a,f);f()};i.init()};e.fn.billboard=function(t){return this.each(function(){if(n==e(this).data("billboard")){var r=new e.billboard(this,t);e(this).data("billboard",r)}})}})(jQuery,window)
+jQuery.billboard = function (element, options) {
+    var defaults = {
+            messages: [],
+            interval: 3000
+        },
+        plugin = this,
+        currentIndex = 0,
+        $element = jQuery(element);
+    plugin.settings = {};
+
+    var displayNext = function () {
+        clearTimeout(plugin.timerId);
+        if (currentIndex >= plugin.settings.messages.length - 1) {
+            currentIndex = 0;
+        } else {
+            currentIndex++;
+        }
+        jQuery(element).fadeOut("slow", function () {
+            $(element).text(plugin.settings.messages[currentIndex]);
+        });
+        jQuery(element).fadeIn("slow");
+        plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
+    };
+
+    var stop = function () {
+        $element.stop().removeAttr('style');
+        clearTimeout(plugin.timerId);
+    };
+
+    var start = function () {
+        plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
+    };
+
+    plugin.init = function () {
+        plugin.settings = jQuery.extend({}, defaults, options);
+        $element.on('click', function(){
+            displayNext();
+        });
+        $element.hover(stop,start);
+        start();
+    };
+    plugin.init();
+};
+
+jQuery.fn.billboard = function (options) {
+    return this.each(function () {
+        if (undefined == jQuery(this).data('billboard')) {
+            var plugin = new $.billboard(this, options);
+            jQuery(this).data('billboard', plugin);
+        }
+    });
+};
