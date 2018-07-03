@@ -17,7 +17,9 @@
 </div><!-- end .page-content -->
 
 <script type="text/javascript">
-alert("test");
+    
+alert("how long between this");
+    
 function shuffle(array) {
     let counter = array.length;
     // While there are elements in the array
@@ -36,7 +38,8 @@ function shuffle(array) {
     return array;
 }
     
-jQuery.billboard = function (element, options) {
+function billboard(element, options) {
+    alert("and this");
     var defaults = {
             messages: [],
             interval: 3000
@@ -70,6 +73,7 @@ jQuery.billboard = function (element, options) {
     };
 
     plugin.init = function () {
+        alert("and maybe this");
         plugin.settings = jQuery.extend({}, defaults, options);
         $element.on('click', function(){
             displayNext();
@@ -83,7 +87,7 @@ jQuery.billboard = function (element, options) {
 jQuery.fn.billboard = function (options) {
     return this.each(function () {
         if (undefined == jQuery(this).data('billboard')) {
-            var plugin = new jQuery.billboard(this, options);
+            var plugin = new billboard(this, options);
             jQuery(this).data('billboard', plugin);
         }
     });
