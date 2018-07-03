@@ -25,7 +25,7 @@ function shuffle(array) {
     return array;
 }
     
-jQuery.billboard = function (element, options) {
+var billboard = function (element, options) {
     var defaults = {
             messages: [],
             interval: 3000
@@ -69,16 +69,9 @@ jQuery.billboard = function (element, options) {
     plugin.init();
 };
 
-jQuery.fn.billboard = function (options) {
-    return this.each(function () {
-        if (undefined == jQuery(this).data('billboard')) {
-            var plugin = new jQuery.billboard(this, options);
-            jQuery(this).data('billboard', plugin);
-        }
-    });
-};
 
 jQuery(".billboard").load(function() {
+    alert("tset");
     var brief_messages = [
           'Looking for Makey.',
           'Plugging in the router.',
