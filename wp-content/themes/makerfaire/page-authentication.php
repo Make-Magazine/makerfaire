@@ -20,15 +20,9 @@
     
 function shuffle(array) {
     let counter = array.length;
-    // While there are elements in the array
     while (counter > 0) {
-        // Pick a random index
         let index = Math.floor(Math.random() * counter);
-
-        // Decrease counter by 1
         counter--;
-
-        // And swap the last element with it
         let temp = array[counter];
         array[counter] = array[index];
         array[index] = temp;
@@ -37,6 +31,7 @@ function shuffle(array) {
 }
     
 function billboard(element, options) {
+    alert("tset");
     var defaults = {
             messages: [],
             interval: 3000
@@ -69,15 +64,6 @@ function billboard(element, options) {
         start();
     };
     plugin.init();
-};
-
-jQuery.fn.billboard = function (options) {
-    return this.each(function () {
-        if (undefined == jQuery(this).data('billboard')) {
-            var plugin = new billboard(this, options);
-            jQuery(this).data('billboard', plugin);
-        }
-    });
 };
     
 var brief_messages = [
