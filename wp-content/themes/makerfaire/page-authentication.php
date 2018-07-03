@@ -4,6 +4,17 @@
  */
 ?>
 <?php get_header(); ?>
+<div id="authenticated-redirect" class="container page-content">
+  <div class="row">
+    <div class="col-sm-3 col-xs-12">
+      <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png"  class="img-responsive" />
+    </div>
+    <div class="col-sm-9 col-xs-12">
+      <h2 class="text-center">You are Now Logged In</h2>
+      <h3 class="text-center billboard">Please wait while we get you back to the right place.</h3>
+    </div>
+  </div>
+</div><!-- end .page-content -->
 
 <script type="text/javascript">
     
@@ -25,7 +36,7 @@ function shuffle(array) {
     return array;
 }
     
-var billboard = function (element, options) {
+function billboard(element, options) {
     var defaults = {
             messages: [],
             interval: 3000
@@ -68,47 +79,31 @@ var billboard = function (element, options) {
     };
     plugin.init();
 };
-
-
-jQuery(".billboard").load(function() {
-    alert("tset");
-    var brief_messages = [
-          'Looking for Makey.',
-          'Plugging in the router.',
-          'Someone tripped over the power cord.',
-          'Searching for the cookies.',
-          'Is it Faire time yet?',
-          'Updating the countdown clock.',
-          'Looking for the lost drones.',
-          'Adding neon to the tubes.',
-          'Greeting our speakers.',
-          'Checking the mics.',
-          'Thanking our sponsors.',
-          'Looking at projects on Maker Share.',
-          'Reading Make: magazine.',
-          'Thanking our Make: members.',
-          'Are we there yet?',
-          'I\'m still working on it.'
-        ];
-
-    jQuery('.billboard').billboard({
-        messages: shuffle(brief_messages),
-    });
+    
+var brief_messages = [
+      'Looking for Makey.',
+      'Plugging in the router.',
+      'Someone tripped over the power cord.',
+      'Searching for the cookies.',
+      'Is it Faire time yet?',
+      'Updating the countdown clock.',
+      'Looking for the lost drones.',
+      'Adding neon to the tubes.',
+      'Greeting our speakers.',
+      'Checking the mics.',
+      'Thanking our sponsors.',
+      'Looking at projects on Maker Share.',
+      'Reading Make: magazine.',
+      'Thanking our Make: members.',
+      'Are we there yet?',
+      'I\'m still working on it.'
+    ];
+    
+jQuery('.billboard').billboard({
+    messages: shuffle(brief_messages),
 });
     
 </script>
-
-<div id="authenticated-redirect" class="container page-content">
-  <div class="row">
-    <div class="col-sm-3 col-xs-12">
-      <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png"  class="img-responsive" />
-    </div>
-    <div class="col-sm-9 col-xs-12">
-      <h2 class="text-center">You are Now Logged In</h2>
-      <h3 class="text-center billboard">Please wait while we get you back to the right place.</h3>
-    </div>
-  </div>
-</div><!-- end .page-content -->
 
 <div class="container">
     <div class="row">
