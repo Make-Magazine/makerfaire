@@ -11,6 +11,7 @@ function shuffle(array) {
 }
     
 function billboard(element, options) {
+    alert("testing?");
     var defaults = {
             messages: [],
             interval: 3000
@@ -72,7 +73,9 @@ var brief_messages = [
       'Are we there yet?',
       'I\'m still working on it.'
     ];
-jQuery('.billboard').load(function(){
+
+jQuery(document).ready(function(){
+    alert("is this thing on?");
     jQuery('.billboard').billboard({
         messages: shuffle(brief_messages),
     });
