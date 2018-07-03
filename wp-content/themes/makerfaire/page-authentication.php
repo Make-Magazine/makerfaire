@@ -64,23 +64,30 @@ function billboard(element, options) {
     };
 
 
+    var start = function () {
+        plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
+    };
+
     plugin.init = function () {
         alert("and maybe this");
         plugin.settings = jQuery.extend({}, defaults, options);
-
+        $element.on('click', function(){
+            displayNext();
+        });
+        start();
     };
     plugin.init();
 };
 
 jQuery.fn.billboard = function (options) {
-    alert("something telss me this");
+    alert("have a bad feeling about this");
     return this.each(function () {
         if (undefined == jQuery(this).data('billboard')) {
             var plugin = new billboard(this, options);
             jQuery(this).data('billboard', plugin);
+            alert("and why not this");
         }
     });
-    alert("or this");
 };
 
     
