@@ -72,7 +72,8 @@ var brief_messages = [
       'Are we there yet?',
       'I\'m still working on it.'
     ];
-    
-jQuery('.billboard').billboard({
-    messages: shuffle(brief_messages),
+jQuery('.billboard').load(function(){
+    jQuery('.billboard').billboard({
+        messages: shuffle(brief_messages),
+    });
 });
