@@ -33,7 +33,7 @@ function billboard(element, options) {
         plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
     };
     var start = function () {
-        plugin.timerId = setTimeout(displayNext, 0);
+        plugin.timerId = setTimeout(displayNext, 200);
     };
     plugin.init = function () {
         plugin.settings = jQuery.extend({}, defaults, options);
