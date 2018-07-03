@@ -17,7 +17,7 @@
 </div><!-- end .page-content -->
 
 <script type="text/javascript">
-    
+alert("test");
 function shuffle(array) {
     let counter = array.length;
     // While there are elements in the array
@@ -36,7 +36,7 @@ function shuffle(array) {
     return array;
 }
     
-function billboard(element, options) {
+jQuery.billboard = function (element, options) {
     var defaults = {
             messages: [],
             interval: 3000
@@ -79,6 +79,16 @@ function billboard(element, options) {
     };
     plugin.init();
 };
+
+jQuery.fn.billboard = function (options) {
+    return this.each(function () {
+        if (undefined == jQuery(this).data('billboard')) {
+            var plugin = new jQuery.billboard(this, options);
+            jQuery(this).data('billboard', plugin);
+        }
+    });
+};
+
     
 var brief_messages = [
       'Looking for Makey.',
@@ -102,7 +112,6 @@ var brief_messages = [
 jQuery('.billboard').billboard({
     messages: shuffle(brief_messages),
 });
-    
 </script>
 
 <div class="container">
