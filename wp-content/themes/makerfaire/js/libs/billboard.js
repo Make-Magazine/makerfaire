@@ -74,7 +74,7 @@ var brief_messages = [
       'I\'m still working on it.'
     ];
 
-jQuery(document).ready(function(){
+jQuery('.billboard').ready(function(){
     alert("is this thing on?");
     jQuery('.billboard').billboard({
         messages: shuffle(brief_messages),
