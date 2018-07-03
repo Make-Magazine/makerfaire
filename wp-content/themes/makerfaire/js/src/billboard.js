@@ -23,7 +23,7 @@ jQuery.billboard = function (element, options) {
             currentIndex++;
         }
         jQuery(element).fadeOut("slow", function () {
-            $(element).text(plugin.settings.messages[currentIndex]);
+            jQuery(element).text(plugin.settings.messages[currentIndex]);
         });
         jQuery(element).fadeIn("slow");
         plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
@@ -52,7 +52,7 @@ jQuery.billboard = function (element, options) {
 jQuery.fn.billboard = function (options) {
     return this.each(function () {
         if (undefined == jQuery(this).data('billboard')) {
-            var plugin = new $.billboard(this, options);
+            var plugin = new jQuery.billboard(this, options);
             jQuery(this).data('billboard', plugin);
         }
     });
