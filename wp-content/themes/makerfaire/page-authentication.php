@@ -3,6 +3,7 @@
  * Template Name: Authenticated Redirect page
  */
 ?>
+<?php get_header(); ?>
 
 <script type="text/javascript">
     
@@ -101,8 +102,6 @@ jQuery('.billboard').billboard({
 });
 </script>
 
-
-<?php get_header(); ?>
 <div id="authenticated-redirect" class="container page-content">
   <div class="row">
     <div class="col-sm-3 col-xs-12">
