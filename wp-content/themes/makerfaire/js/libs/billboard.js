@@ -31,8 +31,14 @@ function billboard(element, options) {
         jQuery(element).fadeIn("fast");
         plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
     };
-    plugin.settings = jQuery.extend({}, defaults, options);
-    plugin.timerId = setTimeout(displayNext, 0);
+    var start = function () {
+        plugin.timerId = setTimeout(displayNext, 50);
+    };
+    plugin.init = function () {
+        plugin.settings = jQuery.extend({}, defaults, options);
+        start();
+    };
+    plugin.init();
 };
 
 jQuery.fn.billboard = function (options) {
@@ -64,6 +70,7 @@ var brief_messages = [
     ];
 
 jQuery('.billboard').ready(function(){
+    alert("is this thing on?");
     jQuery('.billboard').billboard({
         messages: shuffle(brief_messages),
     });
