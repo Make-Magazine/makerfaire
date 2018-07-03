@@ -16,7 +16,7 @@
   </div>
 </div><!-- end .page-content -->
 <script type="text/javascript">
- $('.billboard').billboard({
+ jQuery('.billboard').billboard({
     messages: [
       'Looking for Makey.',
       'Plugging in the router.',
