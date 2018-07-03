@@ -78,28 +78,31 @@ jQuery.fn.billboard = function (options) {
     });
 };
 
-var brief_messages = [
-      'Looking for Makey.',
-      'Plugging in the router.',
-      'Someone tripped over the power cord.',
-      'Searching for the cookies.',
-      'Is it Faire time yet?',
-      'Updating the countdown clock.',
-      'Looking for the lost drones.',
-      'Adding neon to the tubes.',
-      'Greeting our speakers.',
-      'Checking the mics.',
-      'Thanking our sponsors.',
-      'Looking at projects on Maker Share.',
-      'Reading Make: magazine.',
-      'Thanking our Make: members.',
-      'Are we there yet?',
-      'I\'m still working on it.'
-    ];
-    
-jQuery('.billboard').billboard({
-    messages: shuffle(brief_messages),
+jQuery(".billboard").load(function() {
+    var brief_messages = [
+          'Looking for Makey.',
+          'Plugging in the router.',
+          'Someone tripped over the power cord.',
+          'Searching for the cookies.',
+          'Is it Faire time yet?',
+          'Updating the countdown clock.',
+          'Looking for the lost drones.',
+          'Adding neon to the tubes.',
+          'Greeting our speakers.',
+          'Checking the mics.',
+          'Thanking our sponsors.',
+          'Looking at projects on Maker Share.',
+          'Reading Make: magazine.',
+          'Thanking our Make: members.',
+          'Are we there yet?',
+          'I\'m still working on it.'
+        ];
+
+    jQuery('.billboard').billboard({
+        messages: shuffle(brief_messages),
+    });
 });
+    
 </script>
 
 <div id="authenticated-redirect" class="container page-content">
