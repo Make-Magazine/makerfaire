@@ -43,7 +43,6 @@ function billboard(element, options) {
 };
 
 jQuery.fn.billboard = function (options) {
-    console.log("Test")
     return this.each(function () {
         if (undefined == jQuery(this).data('billboard')) {
             var plugin = new billboard(this, options);
@@ -72,7 +71,6 @@ var brief_messages = [
     ];
 
 jQuery('.billboard').ready(function(){
-    alert("is this thing on?");
     jQuery('.billboard').billboard({
         messages: shuffle(brief_messages),
     });
