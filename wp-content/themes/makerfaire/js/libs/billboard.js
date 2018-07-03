@@ -17,6 +17,7 @@ function billboard(element, options) {
         },
         plugin = this,
         currentIndex = 0,
+        $element = jQuery(element);
     plugin.settings = {};
     var displayNext = function () {
         clearTimeout(plugin.timerId);
@@ -32,7 +33,7 @@ function billboard(element, options) {
         plugin.timerId = setTimeout(displayNext, plugin.settings.interval);
     };
     var start = function () {
-        plugin.timerId = setTimeout(displayNext, 50);
+        plugin.timerId = setTimeout(displayNext, 0);
     };
     plugin.init = function () {
         plugin.settings = jQuery.extend({}, defaults, options);
@@ -42,6 +43,7 @@ function billboard(element, options) {
 };
 
 jQuery.fn.billboard = function (options) {
+    console.log("Test")
     return this.each(function () {
         if (undefined == jQuery(this).data('billboard')) {
             var plugin = new billboard(this, options);
