@@ -39,6 +39,7 @@ jQuery(window).load(function() {
 
     var href = jQuery(this).attr('href');
     jQuery(this).attr('href', href + oldFilters);
+    jQuery(this).attr('target','_blank');
   });
 
   jQuery( "a[title^='View this entry']" ).each(function() {
@@ -59,6 +60,7 @@ jQuery(window).load(function() {
 
     var href = jQuery(this).attr('href');
     jQuery(this).attr('href', href + oldFilters);
+    jQuery(this).attr('target','_blank');
   });
 
   //overwrite the 'Search' gravity form JSfunction
