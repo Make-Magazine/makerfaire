@@ -238,13 +238,18 @@
 
   <div id="nav-flyout">
     <?php 
-      echo("foobar " . strpos($_SERVER['SERVER_NAME'], 'staging'));
-      $enviro = "https://make.co";
-      if(strpos($_SERVER['HTTP_HOST'] , "staging") !== false) {
-          $enviro = "https://makeco.staging.wpengine.com";
-          echo("putty" . $enviro);
-      }
-      echo file_get_contents($enviro . '/wp-content/themes/memberships/universal-nav/universal-megamenu.html'); 
+        $username = 'makeco';
+        $password = 'memberships';
+        $context = stream_context_create(array(
+            'http' => array(
+                'header'  => "Authorization: Basic " . base64_encode("$username:$password")
+            )
+        ));
+        if(strpos($_SERVER['HTTP_HOST'] , "staging") !== false) {
+          echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context); 
+        }else{
+          echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html'); 
+        }
     ?>
   </div>
 
