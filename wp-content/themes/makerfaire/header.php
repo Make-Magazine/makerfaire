@@ -238,9 +238,9 @@
 
   <div id="nav-flyout">
     <?php 
-      echo("foobar " . strpos($_SERVER['REQUEST_URI'], 'staging'));
+      echo("foobar " . strpos($_SERVER['SERVER_NAME'], 'staging'));
       $enviro = "https://make.co";
-      if(strpos($_SERVER['REQUEST_URI'], "staging") !== false) {
+      if(strpos($_SERVER['HTTP_HOST'] , "staging") !== false) {
           $enviro = "https://makeco.staging.wpengine.com";
           echo("putty" . $enviro);
       }
