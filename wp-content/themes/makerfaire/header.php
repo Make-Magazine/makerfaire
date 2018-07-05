@@ -245,11 +245,12 @@
                 'header'  => "Authorization: Basic " . base64_encode("$username:$password")
             )
         ));
-        echo(explode('.', $_SERVER['HTTP_HOST'])[1]);
         if(explode('.', $_SERVER['HTTP_HOST'])[1] == "staging") {
           echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context); 
+          echo("test this out " . explode('.', $_SERVER['HTTP_HOST'])[1]);
         }else{
           echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html'); 
+          echo("or this " . explode('.', $_SERVER['HTTP_HOST'])[1]);
         }
     ?>
   </div>
