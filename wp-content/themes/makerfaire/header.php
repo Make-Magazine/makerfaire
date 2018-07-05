@@ -226,7 +226,7 @@
     </div>
   </div><!-- .nav-level-2 -->
   <!--<div class="container search-container">
-    <ul class="search-button">
+    <ul class="search-button"> 
         <li>
           <div id="sb-search" class="sb-search">
             <i class="fa fa-search" aria-hidden="true"></i>
@@ -247,10 +247,8 @@
         ));
         if(explode('.', $_SERVER['HTTP_HOST'])[1] == "staging") {
           echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context); 
-          echo("test this out " . explode('.', $_SERVER['HTTP_HOST'])[1]);
         }else{
           echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html'); 
-          echo("or this " . explode('.', $_SERVER['HTTP_HOST'])[1]);
         }
     ?>
   </div>
