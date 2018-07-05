@@ -237,11 +237,15 @@
 
 
   <div id="nav-flyout">
-
-    <?php
-      echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html');
+    <?php 
+      echo("foobar " . strpos($_SERVER['SERVER_NAME'], 'staging'));
+      $enviro = "https://make.co";
+      if(strpos($_SERVER['HTTP_HOST'] , "staging") !== false) {
+          $enviro = "https://makeco.staging.wpengine.com";
+          echo("putty" . $enviro);
+      }
+      echo file_get_contents($enviro . '/wp-content/themes/memberships/universal-nav/universal-megamenu.html'); 
     ?>
-
   </div>
 
   <div id="nav-hamburger" class="nav-hamburger">

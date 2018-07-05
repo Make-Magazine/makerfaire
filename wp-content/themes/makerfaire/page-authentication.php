@@ -10,8 +10,9 @@
       <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png"  class="img-responsive" />
     </div>
     <div class="col-sm-9 col-xs-12">
-      <h2 class="text-center">You are Now Logged In</h2>
+      <h2 class="text-center">Please wait while we complete the login process. You will be redirected to the page you were trying to access shortly</h2>
       <h3 class="text-center billboard">Please wait while we get you back to the right place.</h3>
+      <p>** This site utilizes cookies to log you in. Please ensure you have cookies enabled. **</p>
     </div>
   </div>
 </div><!-- end .page-content -->
