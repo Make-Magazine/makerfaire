@@ -245,6 +245,8 @@
                 'header'  => "Authorization: Basic " . base64_encode("$username:$password")
             )
         ));
+        echo($_SERVER['HTTP_HOST'] . "<hr />");
+        echo(explode('.', $_SERVER['HTTP_HOST'])[0]);
         if(strpos($_SERVER['HTTP_HOST'] , "staging") !== false) {
           echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context); 
         }else{
