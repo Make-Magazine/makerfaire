@@ -96,7 +96,7 @@ class GravityView_Edit_Entry_Render {
 	 * ID of the current post. May also be ID of the current View.
      *
      * @since 2.0.13
-     * 
+     *
      * @var int
 	 */
 	public $post_id;
@@ -206,14 +206,19 @@ class GravityView_Edit_Entry_Render {
 
 		$gravityview_view = GravityView_View::getInstance();
 
-
 		$entries = $gravityview_view->getEntries();
-	    self::$original_entry = $entries[0];
-	    $this->entry = $entries[0];
+    self::$original_entry = $entries[0];
+    $this->entry = $entries[0];
 
-		self::$original_form = $gravityview_view->getForm();
-		$this->form = $gravityview_view->getForm();
-		$this->form_id = $gravityview_view->getFormId();
+    //    MF custom code - This override allows the form to be set based on the selected entry instead of the form that is setup in the view.
+		//self::$original_form = $gravityview_view->getForm();
+		//$this->form = $gravityview_view->getForm();
+		//$this->form_id = $gravityview_view->getFormId();
+
+    $this->form_id = $this->entry['form_id'];
+    $this->form = GFAPI::get_form($this->form_id);
+    self::$original_form = $this->form;
+
 		$this->view_id = $gravityview_view->getViewId();
 		$this->post_id = \GV\Utils::get( $post, 'ID', null );
 
@@ -333,7 +338,7 @@ class GravityView_Edit_Entry_Render {
 
 	        // Delete the values for hidden inputs
 	        $this->unset_hidden_field_values();
-			
+
 			$this->entry['date_created'] = $date_created;
 
 			// Process calculation fields
@@ -578,7 +583,7 @@ class GravityView_Edit_Entry_Render {
 	 *
 	 * @uses GFFormsModel::media_handle_upload
 	 * @uses set_post_thumbnail
-	 * 
+	 *
 	 * @param array $form GF Form array
 	 * @param GF_Field $field GF Field
 	 * @param string $field_id Numeric ID of the field
@@ -1011,7 +1016,9 @@ class GravityView_Edit_Entry_Render {
 
 		ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
+    //    MF override - This override is to remove the merge tags that aren’t being set in gravity view
 		$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
+    $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
 
 		ob_get_clean();
 
@@ -1202,7 +1209,7 @@ class GravityView_Edit_Entry_Render {
 			foreach ( (array)$field->inputs as $input ) {
 
 				$input_id = strval( $input['id'] );
-				
+
 				if ( isset( $this->entry[ $input_id ] ) && ! gv_empty( $this->entry[ $input_id ], false, false ) ) {
 				    $field_value[ $input_id ] =  'post_category' === $field->type ? GFCommon::format_post_category( $this->entry[ $input_id ], true ) : $this->entry[ $input_id ];
 				    $allow_pre_populated = false;
@@ -1587,8 +1594,8 @@ class GravityView_Edit_Entry_Render {
 		// Hide fields depending on admin settings
 		$fields = $this->filter_fields( $form['fields'], $edit_fields );
 
-	    // If Edit Entry fields are configured, remove adminOnly field settings. Otherwise, don't.
-	    $fields = $this->filter_admin_only_fields( $fields, $edit_fields, $form, $view_id );
+    // If Edit Entry fields are configured, remove adminOnly field settings. Otherwise, don't.
+    $fields = $this->filter_admin_only_fields( $fields, $edit_fields, $form, $view_id );
 
 		/**
 		 * @filter `gravityview/edit_entry/form_fields` Modify the fields displayed in Edit Entry form
@@ -1719,14 +1726,14 @@ class GravityView_Edit_Entry_Render {
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
 
-	    if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
+	    //if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
 			foreach( $fields as $k => $field ) {
 				if( $field->adminOnly ) {
 				    unset( $fields[ $k ] );
 				}
 			}
 			return $fields;
-		}
+		//}
 
 	    foreach( $fields as &$field ) {
 		    $field->adminOnly = false;

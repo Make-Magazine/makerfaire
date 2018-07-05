@@ -42,3 +42,6 @@ function makersign_rewrite_rules() {
 
 //hide the Approve/Reject Entry column in entry list
 add_filter('gravityview/approve_entries/hide-if-no-connections', '__return_true');
+
+//bypass the nonce verification on grvity view edit entry
+add_filter('gravityview/edit_entry/verify_nonce', '__return_true');
