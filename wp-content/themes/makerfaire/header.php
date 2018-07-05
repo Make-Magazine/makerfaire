@@ -238,9 +238,11 @@
 
   <div id="nav-flyout">
     <?php 
+      echo("foobar " . strpos($_SERVER['REQUEST_URI'], 'staging'));
       $enviro = "https://make.co";
       if(strpos($_SERVER['REQUEST_URI'], "staging") !== false) {
           $enviro = "https://makeco.staging.wpengine.com";
+          echo("putty" . $enviro);
       }
       echo file_get_contents($enviro . '/wp-content/themes/memberships/universal-nav/universal-megamenu.html'); 
     ?>
