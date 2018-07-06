@@ -99,7 +99,7 @@ if(isset($authRes->access_token)){
     string(56) "90020180706201805635973136342917534877417428372661731442"
     ["isMobile"]=>
     bool(false)*/
-  }
+
 }
 
 function curlCall($service_url,$curl_post_data,$token=''){
