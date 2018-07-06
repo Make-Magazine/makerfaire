@@ -137,6 +137,7 @@ function getModalData($tableData){
   }
   $currentURL = 'https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
+  $dispModal = false;
   $prevEntries = $tableData['data'];
   $return = '
   <!-- Modal -->
@@ -163,7 +164,9 @@ function getModalData($tableData){
               .   '<div class="col-sm-3 col-md-2"></div>'
               . '</div>';
   foreach ($prevEntries as $prevEntry){
-    if($prevEntry['maker_type']=='contact'){ //contact or entry creator
+    if($prevEntry['maker_type'] === 'contact'){ //contact or entry creator
+      $dispModal=true;
+
       $return .=  '<div class="row striped">'
               .   '<div class="col-sm-2 col-md-3">'.$prevEntry['faire_name'].'</div>'
               .   '<div class="col-sm-2">'.$prevEntry['form_type'].'</div>'
@@ -192,5 +195,10 @@ function getModalData($tableData){
 
 
   </script>';
-  return $return;
+  if($dispModal){
+    return $return;
+  }else{
+    return '';
+  }
+
 }
