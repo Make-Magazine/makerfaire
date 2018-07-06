@@ -152,6 +152,8 @@ window.addEventListener('load', function() {
 
         }
 
+      }).fail(function() {
+        alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
       });
     }else{
       console.log('undefined');
