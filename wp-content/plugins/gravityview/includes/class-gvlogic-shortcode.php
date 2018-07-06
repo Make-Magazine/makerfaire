@@ -64,11 +64,9 @@ class GVLogic_Shortcode {
 
 	/**
 	 * The comparison operator
-	 * @since 1.21.5
-	 * @since 2.0 Changed default from "is" to "isnot"
 	 * @var string
 	 */
-	var $operation = 'isnot';
+	var $operation = 'is';
 
 	/**
 	 * Does the comparison pass?
@@ -138,12 +136,16 @@ class GVLogic_Shortcode {
 	 *
 	 * @return bool True: it's an allowed operation type and was added. False: invalid operation type
 	 */
-	private function set_operation( $operation = 'isnot' ) {
+	private function set_operation( $operation = '' ) {
+
+		if( empty( $operation ) ) {
+			return false;
+		}
 
 		$operators = $this->get_operators( false );
 
 		if( !in_array( $operation, $operators ) ) {
-			gravityview()->log->debug( ' Attempted to add invalid operation type. {operation}', array( 'operation' => $operation ) );
+			do_action( 'gravityview_log_debug', __METHOD__ .' Attempted to add invalid operation type.', $operation );
 			return false;
 		}
 
@@ -163,16 +165,12 @@ class GVLogic_Shortcode {
 	 */
 	private function setup_operation_and_comparison() {
 
-		if ( empty( $this->atts ) ) {
-			return true;
-		}
+		foreach( $this->atts as $key => $value ) {
 
-		foreach ( $this->atts as $key => $value ) {
+			$valid = $this->set_operation( $key );
 
-			$valid = $this->set_operation( $key == 'else' ? 'isnot' : $key );
-
-			if ( $valid ) {
-				$this->comparison = $key == 'else' ? '' : $value;
+			if( $valid ) {
+				$this->comparison = $value;
 				return true;
 			}
 		}
@@ -190,12 +188,15 @@ class GVLogic_Shortcode {
 	public function shortcode( $atts = array(), $content = NULL, $shortcode_tag = '' ) {
 
 		// Don't process except on frontend
-		if ( gravityview()->request->is_admin() ) {
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) && gravityview()->request->is_admin() ) {
+			return null;
+			/** Deprecated in favor of gravityview()->request->is_admin(). */
+		} else if ( GravityView_Plugin::is_admin() ) {
 			return null;
 		}
 
 		if( empty( $atts ) ) {
-			gravityview()->log->error( '$atts are empty.', array( 'data' => $atts ) );
+			do_action( 'gravityview_log_error', __METHOD__.' $atts are empty.', $atts );
 			return null;
 		}
 
@@ -210,7 +211,7 @@ class GVLogic_Shortcode {
 
 		// We need an "if"
 		if( false === $this->if ) {
-			gravityview()->log->error( '$atts->if is empty.', array( 'data' => $this->passed_atts ) );
+			do_action( 'gravityview_log_error', __METHOD__.' $atts->if is empty.', $this->passed_atts );
 			return null;
 		}
 
@@ -218,7 +219,7 @@ class GVLogic_Shortcode {
 
 		// We need an operation and comparison value
 		if( ! $setup ) {
-			gravityview()->log->error( 'No valid operators were passed.', array( 'data' => $this->atts ) );
+			do_action( 'gravityview_log_error', __METHOD__.' No valid operators were passed.', $this->atts );
 			return null;
 		}
 
@@ -231,23 +232,7 @@ class GVLogic_Shortcode {
 		// Return the value!
 		$output = $this->get_output();
 
-		$this->reset();
-
 		return $output;
-	}
-
-	/**
-	 * Restore the original settings for the shortcode
-	 *
-	 * @since 2.0 Needed because $atts can now be empty
-	 *
-	 * @return void
-	 */
-	private function reset() {
-		$this->operation = 'isnot';
-		$this->comparison = '';
-		$this->passed_atts = array();
-		$this->passed_content = '';
 	}
 
 	/**
@@ -277,7 +262,7 @@ class GVLogic_Shortcode {
 		$output = do_shortcode( $output );
 
 		if ( class_exists( 'GFCommon' ) ) {
-			$output = GFCommon::replace_variables( $output, array(), array(), false, true, false );
+			$output = GFCommon::replace_variables( $output, array(), array() );
 		}
 
 		/**
@@ -287,7 +272,7 @@ class GVLogic_Shortcode {
 		 */
 		$output = apply_filters('gravityview/gvlogic/output', $output, $this );
 
-		gravityview()->log->debug( 'Output: ', array( 'data' => $output ) );
+		do_action( 'gravityview_log_debug', __METHOD__ .' Output: ', $output );
 
 		return $output;
 	}
@@ -389,7 +374,7 @@ class GVLogic_Shortcode {
 		$this->atts = shortcode_atts( $supported_args, $this->passed_atts, $this->shortcode );
 
 		// Only keep the passed attributes after making sure that they're valid pairs
-		$this->atts = array_intersect_key( $this->passed_atts, $this->atts );
+		$this->atts = function_exists( 'array_intersect_key' ) ? array_intersect_key( $this->passed_atts, $this->atts ) : $this->atts;
 
 		// Strip whitespace if it's not default false
 		$this->if = ( isset( $this->atts['if'] ) && is_string( $this->atts['if'] ) ) ? trim( $this->atts['if'] ) : false;

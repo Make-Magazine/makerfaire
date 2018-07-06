@@ -27,16 +27,10 @@ class WP_Action_Logger extends Logger {
 	 */
 	protected function log( $level, $message, $context ) {
 
-		$php_version = ( ! empty( $GLOBALS['GRAVITYVIEW_TESTS_PHP_VERSION_OVERRIDE'] ) ) ?
-			$GLOBALS['GRAVITYVIEW_TESTS_PHP_VERSION_OVERRIDE'] : phpversion();
+		$backtrace = debug_backtrace();
+		$location = $this->interpolate( "{class}{type}{function}", $backtrace[2] );
 
-		if ( version_compare( $php_version, '5.4', '>=' ) ) {
-			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
-			$location = $this->interpolate( "{class}{type}{function}", $backtrace[2] );
-			$message = $this->interpolate( "[$level, $location] $message", $context );
-		} else {
-			$message = "[$level] $message";
-		}
+		$message = $this->interpolate( "[$level, $location] $message", $context );
 
 		switch ( $level ):
 			case LogLevel::EMERGENCY:

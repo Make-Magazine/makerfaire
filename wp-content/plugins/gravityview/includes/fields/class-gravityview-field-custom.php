@@ -46,11 +46,10 @@ class GravityView_Field_Custom extends GravityView_Field {
 			'content' => array(
 				'type' => 'textarea',
 				'label' => __( 'Custom Content', 'gravityview' ),
-				'desc' => sprintf( __( 'Enter text or HTML. Also supports shortcodes. You can show or hide data using the %s shortcode (%slearn more%s).', 'gravityview' ), '<code>[gvlogic]</code>', '<a href="https://docs.gravityview.co/article/252-gvlogic-shortcode">', '</a>' ),
+				'desc' => sprintf( __( 'Enter text or HTML. Also supports shortcodes. You can show or hide data using the %s shortcode (%slearn more%s).', 'gravityview' ), '<code>[gvlogic]</code>', '<a href="http://docs.gravityview.co/article/252-gvlogic-shortcode">', '</a>' ),
 				'value' => '',
 				'class'	=> 'code',
 				'merge_tags' => 'force',
-				'rows' => 15,
 				'show_all_fields' => true, // Show the `{all_fields}` and `{pricing_fields}` merge tags
 			),
 			'wpautop' => array(
@@ -59,16 +58,10 @@ class GravityView_Field_Custom extends GravityView_Field {
 				'tooltip' => __( 'Wrap each block of text in an HTML paragraph tag (recommended for text).', 'gravityview' ),
 				'value' => '',
 			),
-			'oembed' => array(
-				'type' => 'checkbox',
-				'label' => __( 'Render oEmbeds', 'gravityview' ),
-				'desc' => sprintf( _x( 'Automatically convert oEmbed URLs into embedded content (%slearn more%s).', 'HTML link pointing to WordPress article on oEmbed', 'gravityview' ), '<a href="https://codex.wordpress.org/Embeds" rel="external noopener noreferrer">', '</a>' ),
-				'value' => '',
-			),
 		);
 
-		if ( 'edit' === $context ) {
-			unset( $field_options['custom_label'], $field_options['show_label'], $field_options['allow_edit_cap'], $new_fields['wpautop'], $new_fields['oembed'] );
+		if( 'edit' === $context ) {
+			unset( $field_options['custom_label'], $field_options['show_label'], $field_options['allow_edit_cap'], $new_fields['wpautop'] );
 		}
 
 		return $new_fields + $field_options;
@@ -88,7 +81,7 @@ class GravityView_Field_Custom extends GravityView_Field {
 	 *
 	 * @return GF_Field[] If Custom Content field exists, returns fields array with the fields inserted. Otherwise, returns unmodified fields array.
 	 */
-	public function show_field_in_edit_entry( $fields, $edit_fields = null, $form, $view_id = 0 ) {
+	public function show_field_in_edit_entry( $fields, $edit_fields = null, $form, $view_id ) {
 
 		// Not configured; show all fields.
 		if ( is_null( $edit_fields ) ) {
@@ -98,26 +91,26 @@ class GravityView_Field_Custom extends GravityView_Field {
 		$new_fields = array();
 		$i = 0;
 
-		$entry = gravityview()->request->is_edit_entry();
+		$entry = GravityView_View::getInstance()->getCurrentEntry();
 
 		// Loop through the configured Edit Entry fields and add Custom Content fields if there are any
 		// TODO: Make this available to other custom GV field types
 		foreach ( (array) $edit_fields as $edit_field ) {
 
-			if( 'custom' === \GV\Utils::get( $edit_field, 'id') ) {
+			if( 'custom' === rgar( $edit_field, 'id') ) {
 
 				$field_data = array(
-					'label' => \GV\Utils::get( $edit_field, 'custom_label' ),
-					'customLabel' => \GV\Utils::get( $edit_field, 'custom_label' ),
-				    'content' => \GV\Utils::get( $edit_field, 'content' ),
+					'label' => rgar( $edit_field, 'custom_label' ),
+					'customLabel' => rgar( $edit_field, 'custom_label' ),
+				    'content' => rgar( $edit_field, 'content' ),
 				);
 
 				// Replace merge tags in the content
 				foreach ( $field_data as $key => $field_datum ) {
-					$field_data[ $key ] = GravityView_Merge_Tags::replace_variables( $field_datum, $form, $entry->as_entry(), false, false );
+					$field_data[ $key ] = GravityView_Merge_Tags::replace_variables( $field_datum, $form, $entry, false, false );
 				}
 
-				$field_data['cssClass'] = \GV\Utils::get( $edit_field, 'custom_class' );
+				$field_data['cssClass'] = rgar( $edit_field, 'custom_class' );
 
 				$new_fields[] = new GF_Field_HTML( $field_data );
 

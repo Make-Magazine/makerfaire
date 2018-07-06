@@ -25,12 +25,12 @@ class Entry_Collection extends Collection {
 	/**
 	 * @var \GV\Entry_Filter[] Filtering criteria.
 	 */
-	public $filters = array();
+	private $filters = array();
 
 	/**
 	 * @var \GV\Entry_Sort[] Sorting criteria.
 	 */
-	public $sorts = array();
+	private $sorts = array();
 
 	/**
 	 * @var int The offset.
@@ -58,17 +58,15 @@ class Entry_Collection extends Collection {
 	 * @param \GV\Entry $entry The entry to add to the internal array.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 * @return void
 	 */
 	public function add( $entry ) {
 		if ( ! $entry instanceof Entry ) {
-			$this->fetched = max( 0, $this->fetched );
 			gravityview()->log->error( 'Entry_Collections can only contain objects of type \GV\Entry.' );
 			return;
 		}
 		parent::add( $entry );
-		$this->fetched = max( 1, $this->fetched + 1 );
 	}
 
 	/**
@@ -78,7 +76,7 @@ class Entry_Collection extends Collection {
 	 * @param string $backend The form backend identifier, allows for multiple form backends in the future. Unused until then.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Entry|null The \GV\entry with the $entry_id as the ID, or null if not found.
 	 */
@@ -95,7 +93,7 @@ class Entry_Collection extends Collection {
 	 * Count the total number of \GV\Entry objects that are possible to get.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return int The total number of entries that are fetchable.
 	 */
@@ -111,10 +109,6 @@ class Entry_Collection extends Collection {
 			$total += $callback[1]( $this->filters );
 		}
 
-		if ( ! $total ) {
-			$total = parent::count();
-		}
-
 		return $total - $this->offset;
 	}
 
@@ -122,7 +116,7 @@ class Entry_Collection extends Collection {
 	 * Get the entries as an array.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Entry[] The entries as an array.
 	 */
@@ -137,7 +131,7 @@ class Entry_Collection extends Collection {
 	 * Get the last \GV\Entry in this collection.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Entry|null The last entry or null.
 	 */
@@ -149,33 +143,14 @@ class Entry_Collection extends Collection {
 	}
 
 	/**
-	 * Get the first \GV\Entry in this collection.
-	 *
-	 * @api
-	 * @since 2.0
-	 *
-	 * @return \GV\Entry|null The first entry or null.
-	 */
-	public function first() {
-		if ( $this->fetched >= 0 || parent::count() ) {
-			return parent::first();
-		}
-		return $this->fetch()->first();
-	}
-
-	/**
 	 * Hydrate this collection now.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Entry_Collection This collection, now hydrated.
 	 */
 	public function fetch() {
-		if ( $this->fetched >= 0 ) {
-			return $this;
-		}
-
 		$this->clear();
 
 		/** Calculate the offsets. */
@@ -205,7 +180,7 @@ class Entry_Collection extends Collection {
 	 * @param \GV\Entry_Filter $filter The filter to be applied.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Entry_Collection A copy of the this collection with the filter applied.
 	 */
@@ -224,7 +199,7 @@ class Entry_Collection extends Collection {
 	 * @param \GV\Entry_Sort $sort The sort to apply to this collection.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Entry_Collection A copy of the this collection with the sort applied.
 	 */
@@ -243,7 +218,7 @@ class Entry_Collection extends Collection {
 	 * @param int $limit The limit.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Entry_Collection A copy of the this collection with the limit applied.
 	 */
@@ -264,7 +239,7 @@ class Entry_Collection extends Collection {
 	 * @param int $offset The number of entries to skip in the database.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Entry_Collection A copy of the this collection with the offset applied.
 	 */
@@ -305,7 +280,7 @@ class Entry_Collection extends Collection {
 	 * @param callable $callback The callback to call when needed.
 	 *
 	 * @internal
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return void
 	 */
@@ -325,7 +300,7 @@ class Entry_Collection extends Collection {
 	 * @param callable $callback The callback to call when needed.
 	 *
 	 * @internal
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return void
 	 */

@@ -23,7 +23,7 @@ final class Core {
 	 * @var \GV\Plugin The WordPress plugin context.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 */
 	public $plugin;
 
@@ -31,15 +31,15 @@ final class Core {
 	 * @var \GV\Request The global request.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 */
 	public $request;
 
 	/**
-	 * @var \GV\Logger
+	 * @var \GV\Logger;
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 */
 	public $log;
 
@@ -87,89 +87,39 @@ final class Core {
 
 		/** Enable logging. */
 		require_once $this->plugin->dir( 'future/includes/class-gv-logger.php' );
-		/**
-		 * @filter `gravityview/logger` Filter the logger instance being used for logging.
-		 * @param \GV\Logger $logger The logger instance.
-		 */
-		$this->log = apply_filters( 'gravityview/logger', new WP_Action_Logger() );
+		$this->log = new WP_Action_Logger();
 
 		/**
-		 * Utilities.
+		 * Stop all further functionality from loading if the WordPress
+		 * plugin is incompatible with the current environment.
 		 */
-		require_once $this->plugin->dir( 'future/includes/class-gv-utils.php' );
+		if ( ! $this->plugin->is_compatible() ) {
+			return;
+		}
+
+		/** Templating. */
+		require_once $this->plugin->dir( 'future/includes/class-gv-template.php' );
+		require_once $this->plugin->dir( 'future/includes/class-gv-template-view.php' );
+
+		/** Register the gravityview post type upon WordPress core init. */
+		require_once $this->plugin->dir( 'future/includes/class-gv-view.php' );
+		add_action( 'init', array( '\GV\View', 'register_post_type' ) );
+
+		/** The Contexts. */
+		require_once $this->plugin->dir( 'future/includes/class-gv-context.php' );
 
 		/** The Settings. */
 		require_once $this->plugin->dir( 'future/includes/class-gv-settings.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-settings-view.php' );
 
-		/** Request. */
-		require_once $this->plugin->dir( 'future/includes/class-gv-request.php' );
-
-		if ( Request::is_admin() ) {
-			$this->request = new Admin_Request();
-		} else {
-			$this->request = new Frontend_Request();
-		}
-
-		/** Require critical legacy core files. @todo Deprecate */
-		require_once $this->plugin->dir( 'includes/helper-functions.php' );
-		require_once $this->plugin->dir( 'includes/class-common.php');
-		require_once $this->plugin->dir( 'includes/connector-functions.php');
-		require_once $this->plugin->dir( 'includes/class-gravityview-compatibility.php' );
-		require_once $this->plugin->dir( 'includes/class-gravityview-roles-capabilities.php' );
-		require_once $this->plugin->dir( 'includes/class-gravityview-admin-notices.php' );
-		require_once $this->plugin->dir( 'includes/class-admin.php' );
-		require_once $this->plugin->dir( 'includes/class-post-types.php');
-		require_once $this->plugin->dir( 'includes/class-cache.php');
-
-		/**
-		 * GravityView extensions and widgets.
-		 */
-		require_once $this->plugin->dir( 'future/includes/class-gv-extension.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-widget.php' );
-
-		/** More legacy core. @todo Deprecate */
-		$this->plugin->include_legacy_core();
-
-		/**
-		 * Stop all further functionality from loading if the WordPress
-		 * plugin is incompatible with the current environment.
-		 *
-		 * Saves some time and memory.
-		 */
-		if ( ! $this->plugin->is_compatible() ) {
-			$this->log->error( 'GravityView 2.0 is not compatible with this environment. Stopped loading.' );
-			return;
-		}
-
-		/** Register the gravityview post type upon WordPress core init. */
-		require_once $this->plugin->dir( 'future/includes/class-gv-view.php' );
-		add_action( 'init', array( '\GV\View', 'register_post_type' ) );
-		add_action( 'the_content', array( '\GV\View', 'content' ) );
-
 		/** Add rewrite endpoint for single-entry URLs. */
 		require_once $this->plugin->dir( 'future/includes/class-gv-entry.php' );
 		add_action( 'init', array( '\GV\Entry', 'add_rewrite_endpoint' ) );
 
-		/** REST API */
-		require_once $this->plugin->dir( 'future/includes/rest/class-gv-rest-core.php' );
-		add_action( 'rest_api_init', array( '\GV\REST\Core', 'init' ) );
-
-		/** Generate custom slugs on entry save. @todo Deprecate. */
-		add_action( 'gform_entry_created', array( '\GravityView_API', 'entry_create_custom_slug' ), 10, 2 );
-
 		/** Shortcodes */
 		require_once $this->plugin->dir( 'future/includes/class-gv-shortcode.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-shortcode-gravityview.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-shortcode-gventry.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-shortcode-gvfield.php' );
-		add_action( 'init', array( '\GV\Shortcodes\gravityview', 'add' ) );
-		add_action( 'init', array( '\GV\Shortcodes\gventry', 'add' ) );
-		add_action( 'init', array( '\GV\Shortcodes\gvfield', 'add' ) );
-		
-		/** oEmbed */
-		require_once $this->plugin->dir( 'future/includes/class-gv-oembed.php' );
-		add_action( 'init', array( '\GV\oEmbed', 'init' ), 11 );
+		// add_action( 'init', array( '\GV\Shortcodes\gravityview', 'add' ) ); // @todo uncomment when original is stubbed
 
 		/** Our Source generic and beloved source and form backend implementations. */
 		require_once $this->plugin->dir( 'future/includes/class-gv-source.php' );
@@ -177,28 +127,18 @@ final class Core {
 		require_once $this->plugin->dir( 'future/includes/class-gv-form.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-form-gravityforms.php' );
 
-		/** Joins */
-		require_once $this->plugin->dir( 'future/includes/class-gv-form-join.php' );
-
 		/** Our Entry generic and beloved entry backend implementations. */
+		require_once $this->plugin->dir( 'future/includes/class-gv-entry.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-entry-gravityforms.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-entry-multi.php' );
 
-		/** Context is everything. */
-		require_once $this->plugin->dir( 'future/includes/class-gv-context.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-context-template.php' );
-
-		/** Our Field generic and implementations. */
+		/** Our Field generic. */
 		require_once $this->plugin->dir( 'future/includes/class-gv-field.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-field-gravityforms.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-field-internal.php' );
 
 		/** Get the collections ready. */
 		require_once $this->plugin->dir( 'future/includes/class-gv-collection.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-collection-form.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-collection-field.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-collection-entry.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-collection-widget.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-collection-view.php' );
 
 		/** The sorting, filtering and paging classes. */
@@ -206,56 +146,51 @@ final class Core {
 		require_once $this->plugin->dir( 'future/includes/class-gv-collection-entry-sort.php' );
 		require_once $this->plugin->dir( 'future/includes/class-gv-collection-entry-offset.php' );
 
-		/** The Renderers. */
-		require_once $this->plugin->dir( 'future/includes/class-gv-renderer.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-renderer-view.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-renderer-entry.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-renderer-entry-edit.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-renderer-field.php' );
-
-		/** Templating. */
-		require_once $this->plugin->dir( 'future/includes/class-gv-template.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-template-view.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-template-entry.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-template-field.php' );
-		require_once $this->plugin->dir( 'future/includes/class-gv-template-legacy-override.php' );
-
-		/** Magic. */
-		require_once $this->plugin->dir( 'future/includes/class-gv-wrappers.php' );
-
-		/** Cache busting. */
-		add_action( 'clean_post_cache', '\GV\View::_flush_cache' );
+		/** Initialize the current request. For now we assume a default WordPress frontent context. */
+		require_once $this->plugin->dir( 'future/includes/class-gv-request.php' );
 
 		/**
-		 * @action `gravityview/loaded` The core has been loaded.
+		 * Use this for global state tracking in the old code.
 		 *
-		 * Note: this is a very early load hook, not all of WordPress core has been loaded here.
-		 *  `init` hasn't been called yet.
+		 * We're in a tricky situation now, where we're putting our
+		 *  Frontend_Request to work. But the old code is relying on
+		 *  it to keep track of views state and whatnot. Ugh.
+		 *
+		 * More importantly GravityView_View_Data is resetting it every
+		 *  time the class instantiates! This conflicts with adding filters,
+		 *  actions, and other global initialization for the real request.
+		 *
+		 * Let's give them a Dummy_Request to work with. They're using it
+		 *  as a container for views either way. And for the is_admin()
+		 *  function, which will be available once GravityView_View_Data
+		 *  is removed.
 		 */
-		do_action( 'gravityview/loaded' );
+		$this->request = new Dummy_Request();
+
+		if ( ! $this->request->is_admin() ) {
+			/** The main frontend request. */
+			new Frontend_Request();
+		}
+
+		define( 'GRAVITYVIEW_FUTURE_CORE_LOADED', true );
 	}
 
 	private function __clone() { }
 
 	private function __wakeup() { }
 
-	/**
-	 * Wrapper magic.
-	 *
-	 * Making developers happy, since 2017.
-	 */
 	public function __get( $key ) {
-		static $views;
-
 		switch ( $key ) {
 			case 'views':
-				if ( is_null( $views ) ) {
-					$views = new \GV\Wrappers\views();
-				}
-				return $views;
+				return $this->request->views;
 		}
 	}
 
 	public function __set( $key, $value ) {
+		switch ( $key ) {
+			case 'views':
+				gravityview()->log->error( __CLASS__ . '::$views is an immutable reference to ' . __CLASS__ . '::$request::$views.' );
+				return;
+		}
 	}
 }

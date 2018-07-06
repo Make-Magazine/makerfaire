@@ -156,7 +156,7 @@ class GravityView_Metabox_Tab {
 			if( file_exists( $path ) ) {
 				include $path;
 			} else {
-				gravityview()->log->error( 'Metabox template file not found', array( 'data' => $this ) );
+				do_action( 'gravityview_log_error', 'Metabox template file not found', $this );
 			}
 
 		} else if( !empty( $this->callback ) ) {
@@ -167,11 +167,11 @@ class GravityView_Metabox_Tab {
 				call_user_func( $this->callback, $post, (array) $this );
 
 			} else {
-				gravityview()->log->error( 'Metabox callback was not callable', array( 'data' => $this ) );
+				do_action( 'gravityview_log_error', 'Metabox callback was not callable', $this );
 			}
 
 		} else {
-			gravityview()->log->error( 'Metabox file and callback were not found', array( 'data' => $this ) );
+			do_action( 'gravityview_log_error', 'Metabox file and callback were not found', $this );
 		}
 	}
 

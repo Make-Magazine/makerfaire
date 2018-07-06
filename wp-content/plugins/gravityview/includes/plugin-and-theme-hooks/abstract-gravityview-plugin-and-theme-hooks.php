@@ -40,24 +40,15 @@ abstract class GravityView_Plugin_and_Theme_Hooks {
 	protected $constant_name = false;
 
 	/**
-	 * Define the keys to be parsed by the `gravityview/view_collection/from_post/meta_keys` hook
-	 * @see View_Collection::from_post
-	 * @since 2.0
+	 * Define the keys to be parsed by the `gravityview/data/parse/meta_keys` hook
+	 * @see GravityView_View_Data::parse_post_meta
+	 * @since 1.15.2
 	 * @type array
 	 */
 	protected $content_meta_keys = array();
 
 	/**
-	 * Define the keys to be parsed by the `gravityview/data/parse/meta_keys` hook
-	 * @see GravityView_View_Data::parse_post_meta
-	 * @deprecated 2.0
-	 * @since 1.15.2
-	 * @type array
-	 */
-	protected $meta_keys = array();
-
-	/**
-	 * Define script handles used by the theme or plugin to be added to allowed no-conflict scripts
+	 * Define script handles used by the theme or plugin to be parsed by the `gravityview/data/parse/meta_keys` hook
 	 * @see GravityView_Admin::remove_conflicts
 	 * @since 1.15.2
 	 * @type array
@@ -65,7 +56,7 @@ abstract class GravityView_Plugin_and_Theme_Hooks {
 	protected $script_handles = array();
 
 	/**
-	 * Define style handles used by the theme or plugin to be added to allowed no-conflict styles
+	 * Define style handles used by the theme or plugin to be parsed by the `gravityview/data/parse/meta_keys` hook
 	 * @see GravityView_Admin::remove_conflicts
 	 * @since 1.15.2
 	 * @type array
@@ -123,13 +114,8 @@ abstract class GravityView_Plugin_and_Theme_Hooks {
 	 * @return void
 	 */
 	protected function add_hooks() {
-
-		if( $this->meta_keys ) {
-			add_filter( 'gravityview/data/parse/meta_keys', array( $this, 'merge_meta_keys' ), 10, 2 );
-		}
-
 		if( $this->content_meta_keys ) {
-			add_filter( 'gravityview/view_collection/from_post/meta_keys', array( $this, 'merge_content_meta_keys' ), 10, 3 );
+			add_filter( 'gravityview/data/parse/meta_keys', array( $this, 'merge_content_meta_keys' ), 10, 2 );
 		}
 
 		if( $this->script_handles ) {
@@ -193,28 +179,12 @@ abstract class GravityView_Plugin_and_Theme_Hooks {
 	 *
 	 * @since 1.15.2
 	 *
-	 * @deprecated 2.0.7
-	 *
 	 * @param array $handles Array of meta keys to check for existence of shortcodes
 	 * @param int $post_id The ID being checked by GravityView
 	 *
 	 * @return array Meta key array, merged with existing meta keys
 	 */
-	public function merge_meta_keys( $meta_keys = array(), $post_id = 0 ) {
-		return array_merge( $this->meta_keys, $meta_keys );
-	}
-
-	/**
-	 * Merge plugin or theme meta keys that store shortcode data with existing keys to check
-	 *
-	 * @since 2.0.7
-	 *
-	 * @param array $handles Array of meta keys to check for existence of shortcodes
-	 * @param \WP_Post $post The ID being checked by GravityView
-	 *
-	 * @return array Meta key array, merged with existing meta keys
-	 */
-	public function merge_content_meta_keys( $meta_keys = array(), $post = null, & $views = null ) {
+	public function merge_content_meta_keys( $meta_keys = array(), $post_id = 0 ) {
 		return array_merge( $this->content_meta_keys, $meta_keys );
 	}
 

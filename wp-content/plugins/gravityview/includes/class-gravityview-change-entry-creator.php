@@ -71,7 +71,7 @@ class GravityView_Change_Entry_Creator {
 
     	$note = sprintf( _x('%s: Assigned User ID #%d as the entry creator.', 'First parameter: Success or error of the action. Second: User ID number', 'gravityview'), $status, $user_id );
 
-    	gravityview()->log->debug( 'GravityView_Change_Entry_Creator[assign_new_user_to_lead] - {note}', array( 'note', $note ) );
+    	do_action( 'gravityview_log_debug', 'GravityView_Change_Entry_Creator[assign_new_user_to_lead] - '.$note );
 
 	    /**
 	     * @filter `gravityview_disable_change_entry_creator_note` Disable adding a note when changing the entry creator
@@ -149,7 +149,7 @@ class GravityView_Change_Entry_Creator {
     function set_screen_mode() {
 
     	// If $_GET['screen_mode'] is set to edit, set $_POST value
-        if( \GV\Utils::_GET( 'screen_mode' ) === 'edit' ) {
+        if( rgget('screen_mode') === 'edit' ) {
             $_POST["screen_mode"] = 'edit';
         }
 
@@ -165,12 +165,12 @@ class GravityView_Change_Entry_Creator {
             global $current_user;
 
         // Update the entry
-        $created_by = absint( \GV\Utils::_POST( 'created_by') );
+        $created_by = absint( rgpost('created_by') );
 
         RGFormsModel::update_lead_property( $entry_id, 'created_by', $created_by );
 
         // If the creator has changed, let's add a note about who it used to be.
-        $originally_created_by = \GV\Utils::_POST( 'originally_created_by' );
+        $originally_created_by = rgpost('originally_created_by');
 
         // If there's no owner and there didn't used to be, keep going
         if( empty( $originally_created_by ) && empty( $created_by ) ) {
@@ -209,14 +209,13 @@ class GravityView_Change_Entry_Creator {
      */
     function add_select($form_id, $entry ) {
 
-        if( \GV\Utils::_POST( 'screen_mode' ) !== 'edit' ) {
+        if( rgpost('screen_mode') !== 'edit' ) {
             return;
         }
 
-        $created_by_id = \GV\Utils::get( $entry, 'created_by' );
+        $created_by_id = rgar( $entry, 'created_by' );
 
-        //    MF custom code to Change to add user email in the change entry creator dropdown
-        //$users = GVCommon::get_users( 'change_entry_creator' );
+        //MF custom code
         $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email'), 'number' => 100000));
 
         $is_created_by_in_users = wp_list_filter( $users, array( 'ID' => $created_by_id ) );
@@ -243,9 +242,8 @@ class GravityView_Change_Entry_Creator {
 	    $output .= '<select name="created_by" id="change_created_by" class="widefat">';
         $output .= '<option value="' . selected( $entry['created_by'], '0', false ) . '"> &mdash; '.esc_attr_x( 'No User', 'No user assigned to the entry', 'gravityview').' &mdash; </option>';
         foreach($users as $user) {
-          //    MF custom code - Change to add user email in the change entry creator dropdown
-          //$output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
-          $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_email.')' ).'</option>';
+            //output email instead of user nicename - MF custom code
+            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_email.')' ).'</option>';
         }
         $output .= '</select>';
         $output .= '<input name="originally_created_by" value="'.esc_attr( $entry['created_by'] ).'" type="hidden" />';

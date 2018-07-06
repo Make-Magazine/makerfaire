@@ -27,7 +27,6 @@ class GravityView_Field_Payment_Amount extends GravityView_Field {
 		$this->label = esc_html__( 'Payment Amount', 'gravityview' );
 
 		add_filter( 'gravityview_field_entry_value_' . $this->name . '_pre_link', array( $this, 'get_content' ), 10, 4 );
-		add_filter( 'gravityview/field/payment_amount/value', array( $this, 'get_value' ), 10, 6 );
 
 		parent::__construct();
 	}
@@ -51,28 +50,10 @@ class GravityView_Field_Payment_Amount extends GravityView_Field {
 		/** Overridden by a template. */
 		if( ! empty( $field['field_path'] ) ) { return $output; }
 
-		$amount = \GV\Utils::get( $entry, 'payment_amount' );
-		$return = GFCommon::to_money( $amount, \GV\Utils::get( $entry, 'currency' ) );
+		$amount = rgar( $entry, 'payment_amount' );
+		$return = GFCommon::to_money( $amount, rgar( $entry, 'currency' ) );
 
 		return $return;
-	}
-
-	/**
-	 * Filter the value of the field, future.
-	 *
-	 * @since 2.0
-	 *
-	 * @param mixed			$value	The value of the field.
-	 * @param \GV\Field		$field	The field as seen by future.
-	 * @param \GV\View		$view	The view requested in.
-	 * @param \GV\Source	$source The data source (form).
-	 * @param \GV\Entry		$entry	The entry.
-	 * @param \GV\Request	$request The request context.
-	 *
-	 * @return mixed $value The filtered value.
-	 */
-	public function get_value( $value, $field, $view, $source, $entry, $request ) {
-		return $this->get_content( $value, $entry->as_entry(), $field->as_configuration() );
 	}
 
 	/**
@@ -97,9 +78,9 @@ class GravityView_Field_Payment_Amount extends GravityView_Field {
 			$full_tag = $match[0];
 			$modifier = isset( $match[1] ) ? $match[1] : false;
 
-			$amount = \GV\Utils::get( $entry, 'payment_amount' );
+			$amount = rgar( $entry, 'payment_amount' );
 
-			$formatted_amount = ( 'raw' === $modifier ) ? $amount : GFCommon::to_money( $amount, \GV\Utils::get( $entry, 'currency' ) );
+			$formatted_amount = ( 'raw' === $modifier ) ? $amount : GFCommon::to_money( $amount, rgar( $entry, 'currency' ) );
 
 			$return = str_replace( $full_tag, $formatted_amount, $return );
 		}

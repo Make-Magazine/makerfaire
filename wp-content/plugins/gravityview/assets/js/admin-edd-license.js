@@ -9,7 +9,6 @@
 		activate_button : $( '[data-edd_action=activate_license]' ),
 		deactivate_button: $( '[data-edd_action=deactivate_license]' ),
 		check_button: $( '[data-edd_action=check_license]' ),
-		admin_notices: $( '#message.notice.updated' ),
 
 		init: function() {
 
@@ -204,9 +203,6 @@
 				.fadeOut( 'medium', function () {
 					GV_EDD.activate_button.removeClass( 'button-disabled' );
 					GV_EDD.deactivate_button.fadeIn().css( "display", "inline-block" );
-					GV_EDD.admin_notices.fadeOut(function () {
-						$( this ).remove();
-					});
 				} );
 		},
 

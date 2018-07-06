@@ -21,8 +21,8 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 	 */
 	function __construct() {
 
-		$this->widget_id = 'poll';
 		$this->widget_description = __('Displays the results of Poll Fields that exist in the form.', 'gravityview' );
+
 		$this->widget_subtitle = sprintf( _x('Note: this will display poll results for %sall form entries%s, not only the entries displayed in the View.', 'The string placeholders are for emphasis HTML', 'gravityview' ), '<em>', '</em>' );
 
 		$default_values = array(
@@ -57,12 +57,11 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 			)
 		);
 
-		if ( ! $this->is_registered() ) {
-			// frontend - add template path
-			add_filter( 'gravityview_template_paths', array( $this, 'add_template_path' ) );
-		}
+		parent::__construct( __( 'Poll Results', 'gravityview' ) , 'poll', $default_values, $settings );
 
-		parent::__construct( __( 'Poll Results', 'gravityview' ) , null, $default_values, $settings );
+		// frontend - add template path
+		add_filter( 'gravityview_template_paths', array( $this, 'add_template_path' ) );
+
 	}
 
 	/**
@@ -107,7 +106,7 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 
 			$return = false;
 
-			gravityview()->log->error( 'Poll Widget not displayed; the Poll Addon is not loaded' );
+			do_action( 'gravityview_log_error', 'Poll Widget not displayed; the Poll Addon is not loaded' );
 
 		} else {
 
@@ -116,7 +115,7 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 			$poll_fields = GFCommon::get_fields_by_type( GravityView_View::getInstance()->getForm(), array( 'poll' ) );
 
 			if ( empty ( $poll_fields ) ) {
-				gravityview()->log->error( 'Poll Widget not displayed; there are no poll fields for the form' );
+				do_action( 'gravityview_log_error', 'Poll Widget not displayed; there are no poll fields for the form' );
 				$return = false;
 			}
 		}

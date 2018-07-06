@@ -10,25 +10,13 @@ if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
  * A collection of \GV\Field objects.
  */
 class Field_Collection extends Collection {
-
-	/**
-	 * Returns all the objects in this collection as an an array. Here for docBlock purposes only.
-	 *
-	 * @since 2.0.13.1
-	 *
-	 * @return \GV\Field[]
-	 */
-	public function all() {
-		return parent::all();
-	}
-
 	/**
 	 * Add a \GV\Field to this collection.
 	 *
 	 * @param \GV\Field $field The field to add to the internal array.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 * @return void
 	 */
 	public function add( $field ) {
@@ -45,7 +33,7 @@ class Field_Collection extends Collection {
 	 * @param int $field_uid The UID of the field in the field to get.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Field|null The \GV\Field with the $field_uid as the UID, or null if not found.
 	 */
@@ -62,7 +50,6 @@ class Field_Collection extends Collection {
 	 * Get a copy of this \GV\Field_Collection filtered by position.
 	 *
 	 * @param string $position The position to get the fields for.
-	 *  Can be a wildcard *
 	 *
 	 * @api
 	 * @since
@@ -71,11 +58,8 @@ class Field_Collection extends Collection {
 	 */
 	public function by_position( $position ) {
 		$fields = new self();
-
-		$search = implode( '.*', array_map( 'preg_quote', explode( '*', $position ) ) );
-
 		foreach ( $this->all() as $field ) {
-			if ( preg_match( "#^{$search}$#", $field->position ) ) {
+			if ( $field->position == $position ) {
 				$fields->add( $field );
 			}
 		}
@@ -93,9 +77,8 @@ class Field_Collection extends Collection {
 	public function by_visible() {
 		$fields = new self();
 
-		/** @var \GV\Field $field */
 		foreach ( $this->all() as $field ) {
-			if ( $field->is_visible() ) {
+			if ( ! $field->cap || \GVCommon::has_cap( $field->cap ) ) {
 				$fields->add( $field );
 			}
 		}
@@ -135,10 +118,11 @@ class Field_Collection extends Collection {
 				continue;
 			}
 
-			foreach ( $_fields as $uid => $_configuration ) {
-				$field = Field::from_configuration( $_configuration );
+			foreach ( $_fields as $uid => $_field ) {
+				$field = new \GV\Field();
 				$field->UID = $uid;
 				$field->position = $position;
+				$field->from_configuration( $_field );
 
 				$fields->add( $field );
 			}

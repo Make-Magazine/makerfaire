@@ -42,9 +42,16 @@ class GravityView_Admin_Bar {
 			return;
 		}
 
-		$view_data = GravityView_View_Data::getInstance()->get_views();
-		if ( empty( $view_data ) ) {
-			return;
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			if ( ! gravityview()->views->count() ) {
+				return;
+			}
+		} else {
+			/** Deprecated. Do not use GravityView_View_Data any more. See the `gravityview()->request` object instead. */
+			$view_data = GravityView_View_Data::getInstance()->get_views();
+			if ( empty( $view_data ) ) {
+				return;
+			}
 		}
 
 		$wp_admin_bar->add_menu( array(
@@ -123,8 +130,13 @@ class GravityView_Admin_Bar {
 
 		if( GVCommon::has_cap( array( 'edit_gravityviews', 'edit_gravityview', 'gravityforms_edit_forms' ) ) ) {
 
-			$view_data = GravityView_View_Data::getInstance();
-			$views = $view_data->get_views();
+			if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+				$views = gravityview()->views->all();
+			} else {
+				/** Deprecated. Use no more, please. See: `gravityview()->views`*/
+				$view_data = GravityView_View_Data::getInstance();
+				$views = $view_data->get_views();
+			}
 
 			// If there is a View embed, show Edit View link.
 			if ( ! empty( $views ) ) {
@@ -133,9 +145,16 @@ class GravityView_Admin_Bar {
 				$added_views = array();
 
 				foreach ( $views as $view ) {
-					$view = \GV\View::by_id( $view['id'] );
-					$view_id = $view->ID;
-					$form_id = $view->form ? $view->form->ID : null;
+
+					if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+						/** `$view` is now a \GV\View object, not an array. */
+						$view_id = $view->ID;
+						$form_id = $view->form ? $view->form->ID : null;
+					} else {
+						/** Deprecated. */
+						$view_id = $view['id'];
+						$form_id = $view['form_id'];
+					}
 
 					$edit_view_title = __( 'Edit View', 'gravityview' );
 					$edit_form_title = __( 'Edit Form', 'gravityview' );

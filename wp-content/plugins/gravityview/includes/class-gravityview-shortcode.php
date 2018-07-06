@@ -15,8 +15,6 @@
  * Handle the [gravityview] shortcode
  *
  * @since 1.13
- * @deprecated since 2.0.3
- * @see \GV\Shortcodes\gravityview
  */
 class GravityView_Shortcode {
 
@@ -25,6 +23,9 @@ class GravityView_Shortcode {
 	}
 
 	private function add_hooks() {
+
+		// Shortcode to render view (directory)
+		add_shortcode( 'gravityview', array( $this, 'shortcode' ) );
 	}
 
 	/**
@@ -45,7 +46,7 @@ class GravityView_Shortcode {
 			return null;
 		}
 
-		gravityview()->log->debug( '$passed_atts: ', array( 'data' => $passed_atts ) );
+		do_action( 'gravityview_log_debug', __FUNCTION__ . ' $passed_atts: ', $passed_atts );
 
 		// Get details about the current View
 		if( !empty( $passed_atts['detail'] ) ) {
@@ -77,7 +78,7 @@ class GravityView_Shortcode {
 	 */
 	private function parse_and_sanitize_atts( $passed_atts ) {
 
-		$defaults = \GV\View_Settings::defaults( true );
+		$defaults = defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ? \GV\View_Settings::defaults( true ) : GravityView_View_Data::get_default_args( true );
 
 		$supported_atts = array_fill_keys( array_keys( $defaults ), '' );
 
@@ -85,7 +86,7 @@ class GravityView_Shortcode {
 		$filtered_atts = shortcode_atts( $supported_atts, $passed_atts, 'gravityview' );
 
 		// Only keep the passed attributes after making sure that they're valid pairs
-		$filtered_atts = array_intersect_key( (array) $passed_atts, $filtered_atts );
+		$filtered_atts = function_exists( 'array_intersect_key' ) ? array_intersect_key( (array) $passed_atts, $filtered_atts ) : $filtered_atts;
 
 		$atts = array();
 
@@ -153,15 +154,15 @@ class GravityView_Shortcode {
 				break;
 			case 'first_entry':
 				$paging = $gravityview_view->getPaginationCounts();
-				$return = empty( $paging ) ? '' : number_format_i18n( \GV\Utils::get( $paging, 'first', 0 ) );
+				$return = empty( $paging ) ? '' : number_format_i18n( rgar( $paging, 'first', 0 ) );
 				break;
 			case 'last_entry':
 				$paging = $gravityview_view->getPaginationCounts();
-				$return = empty( $paging ) ? '' : number_format_i18n( \GV\Utils::get( $paging, 'last', 0 ) );
+				$return = empty( $paging ) ? '' : number_format_i18n( rgar( $paging, 'last', 0 ) );
 				break;
 			case 'page_size':
 				$paging = $gravityview_view->getPaging();
-				$return = number_format_i18n( \GV\Utils::get( $paging, 'page_size', 0 ) );
+				$return = number_format_i18n( rgar( $paging, 'page_size', 0 ) );
 				break;
 		}
 

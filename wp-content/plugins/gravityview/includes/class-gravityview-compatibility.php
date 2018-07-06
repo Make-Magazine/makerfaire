@@ -91,7 +91,11 @@ class GravityView_Compatibility {
 	 * @return bool
 	 */
 	public static function is_valid() {
-		return gravityview()->plugin->is_compatible();
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			return gravityview()->plugin->is_compatible();
+		}
+
+		return ( self::is_valid_gravity_forms() && self::is_valid_wordpress() && self::is_valid_php() );
 	}
 
 	/**
@@ -102,7 +106,11 @@ class GravityView_Compatibility {
 	 * @see \GV\Plugin::is_compatible_wordpress() accessible via gravityview()->plugin->is_compatible_wordpress()
 	 */
 	private static function is_valid_wordpress() {
-		return gravityview()->plugin->is_compatible_wordpress();
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			return gravityview()->plugin->is_compatible_wordpress();
+		}
+
+		return self::$valid_wordpress;
 	}
 
 	/**
@@ -114,7 +122,11 @@ class GravityView_Compatibility {
 	 * @return bool
 	 */
 	private static function is_valid_gravity_forms() {
-		return gravityview()->plugin->is_compatible_gravityforms();
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			return gravityview()->plugin->is_compatible_gravityforms();
+		}
+
+		return self::$valid_gravity_forms;
 	}
 
 	/**
@@ -126,7 +138,11 @@ class GravityView_Compatibility {
 	 * @return bool
 	 */
 	private static function is_valid_php() {
-		return gravityview()->plugin->is_compatible_php();
+		if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+			return gravityview()->plugin->is_compatible_php();
+		}
+
+		return self::$valid_php;
 	}
 
 	/**
@@ -193,7 +209,10 @@ class GravityView_Compatibility {
 	 */
 	public static function check_php() {
 
-		if ( ! gravityview()->plugin->is_compatible_php() ) {
+		if (
+			( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) && ! gravityview()->plugin->is_compatible_php() )
+			|| ( false === version_compare( phpversion(), GV_MIN_PHP_VERSION , '>=' ) )
+		) {
 
 			self::$notices['php_version'] = array(
 				'class' => 'error',
@@ -205,7 +224,7 @@ class GravityView_Compatibility {
 			return false;
 		}
 
-		if ( ! gravityview()->plugin->is_compatible_future_php() ) {
+		if( false === version_compare( phpversion(), GV_FUTURE_MIN_PHP_VERSION , '>=' ) ) {
 
 			// Show the notice on every update. Yes, annoying, but not as annoying as a plugin breaking.
 			$key = sprintf('php_%s_%s', GV_FUTURE_MIN_PHP_VERSION, GravityView_Plugin::version );
@@ -231,7 +250,10 @@ class GravityView_Compatibility {
 	public static function check_wordpress() {
 		global $wp_version;
 
-		if ( ! gravityview()->plugin->is_compatible_wordpress() ) {
+		if (
+			( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) && ! gravityview()->plugin->is_compatible_wordpress() )
+			|| ( false === version_compare( $wp_version, GV_MIN_WP_VERSION, '>=' ) )
+		) {
 
 			self::$notices['wp_version'] = array(
 				'class' => 'error',
@@ -266,35 +288,20 @@ class GravityView_Compatibility {
 			}
 
 			// Does it meet minimum requirements?
-			$meets_minimum = gravityview()->plugin->is_compatible_gravityforms();
-
-			if( $meets_minimum ) {
-				/* translators: first placeholder is the future required version of Gravity Forms. The second placeholder is the current version of Gravity Forms. */
-				$title = __( 'In the future, GravityView will require Gravity Forms Version %s or newer.', 'gravityview' );
-				$version = GV_FUTURE_MIN_GF_VERSION;
-				$class = 'notice-warning';
+			if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+				$meets_minimum = gravityview()->plugin->is_compatible_gravityforms();
 			} else {
-				/* translators: the placeholder is the required version of Gravity Forms. */
-				$title = __( 'GravityView requires Gravity Forms Version %s or newer.', 'gravityview' );
-				$version = GV_MIN_GF_VERSION;
-				$class = 'error';
+				$meets_minimum = ( true === version_compare( GFCommon::$version, GV_MIN_GF_VERSION, ">=" ) );
 			}
 
-			$message = '<h3>' . esc_html( sprintf( $title, $version ) ) . '</h3>';
-
-			/* translators: the placeholder is the current version of Gravity Forms. */
-			$message .= '<p>' . sprintf( esc_html__( "You're using Version %s. Please update your Gravity Forms or purchase a license.", 'gravityview' ), '<span style="font-family: Consolas, Courier, monospace;">'.GFCommon::$version.'</span>' ) . '</p>';
-
-			/* translators: In this context, "get" means purchase */
-			$message .= '<p><a href="https://gravityview.co/gravityforms/" class="button button-secondary button-large button-hero">' . esc_html__( 'Get the Latest Gravity Forms', 'gravityview' ) . '</a></p>';
-
+			$class = $meets_minimum ? 'notice-warning' : 'error';
 
 			// Show the notice even if the future version requirements aren't met
 			self::$notices['gf_version'] = array(
 				'class' => $class,
-				'message' => $message,
+				'message' => sprintf( __( "%sGravityView requires Gravity Forms Version %s or newer.%s \n\nYou're using Version %s. Please update your Gravity Forms or purchase a license. %sGet Gravity Forms%s - starting at $39%s%s", 'gravityview' ), '<h3>', GV_FUTURE_MIN_GF_VERSION, "</h3>\n\n", '<span style="font-family: Consolas, Courier, monospace;">'.GFCommon::$version.'</span>', "\n\n".'<a href="https://gravityview.co/gravityforms/" class="button button-secondary button-large button-hero">' , '<em>', '</em>', '</a>'),
 				'cap' => 'update_plugins',
-				'dismiss' => 'gf_version_' . $version,
+				'dismiss' => 'gf_version_' . GV_FUTURE_MIN_GF_VERSION,
 			);
 
 			// Return false if the plugin is not compatible, true if meets minimum
@@ -343,7 +350,7 @@ class GravityView_Compatibility {
 			default:
 				self::$notices['gf_installed'] = array(
 					'class' => 'error',
-					'message' => sprintf( __( '%sGravityView requires Gravity Forms to be installed in order to run properly. %sGet Gravity Forms%s - starting at $59%s%s', 'gravityview' ), '<h3>', "</h3>\n\n".'<a href="https://gravityview.co/gravityforms/" class="button button-secondary button-large button-hero">' , '<em>', '</em>', '</a>'),
+					'message' => sprintf( __( '%sGravityView requires Gravity Forms to be installed in order to run properly. %sGet Gravity Forms%s - starting at $39%s%s', 'gravityview' ), '<h3>', "</h3>\n\n".'<a href="http://katz.si/gravityforms" class="button button-secondary button-large button-hero">' , '<em>', '</em>', '</a>'),
 					'cap' => 'install_plugins',
 					'dismiss' => 'gf_installed',
 				);

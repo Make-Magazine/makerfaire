@@ -5,7 +5,7 @@
  *
  * @extends GravityView_Widget
  */
-class GravityView_Widget_Page_Links extends \GV\Widget {
+class GravityView_Widget_Page_Links extends GravityView_Widget {
 
 	protected $show_on_single = false;
 
@@ -32,10 +32,10 @@ class GravityView_Widget_Page_Links extends \GV\Widget {
 		}
 
 		$atts = shortcode_atts( array(
-			'page_size' => \GV\Utils::get( $gravityview_view->paging, 'page_size' ),
+			'page_size' => rgar( $gravityview_view->paging, 'page_size' ),
 			'total' => $gravityview_view->total_entries,
 			'show_all' => !empty( $this->settings['show_all']['default'] ),
-			'current' => (int) \GV\Utils::_GET( 'pagenum', 1 ),
+			'current' => (int) rgar( $_GET, 'pagenum', 1 ),
 		), $widget_args, 'gravityview_widget_page_links' );
 		
 		$page_link_args = array(
@@ -66,7 +66,7 @@ class GravityView_Widget_Page_Links extends \GV\Widget {
 			$class = gravityview_sanitize_html_class( 'gv-widget-page-links ' . $class );
 			echo '<div class="'.$class.'">'. $page_links .'</div>';
 		} else {
-			gravityview()->log->debug( 'No page links; paginate_links() returned empty response.' );
+			do_action( 'gravityview_log_debug', 'GravityView_Widget_Page_Links[render_frontend] No page links; paginate_links() returned empty response.' );
 		}
 
 	}

@@ -31,7 +31,7 @@ class GVCommon {
 		}
 
 		// Only get_form_meta is cached. ::facepalm::
-		if ( class_exists( 'GFFormsModel' ) ) {
+		if ( class_exists( 'RGFormsModel' ) ) {
 			return GFFormsModel::get_form_meta( $form_id );
 		}
 
@@ -86,11 +86,12 @@ class GVCommon {
 	/**
 	 * Get all existing Views
 	 *
-	 * @since 1.5.4 Added $args array
+	 * @since  1.5.4
+	 * @since  TODO Added $args array
 	 *
 	 * @param array $args Pass custom array of args, formatted as if for `get_posts()`
 	 *
-	 * @return WP_Post[] Array of Views as `WP_Post`. Empty array if none found.
+	 * @return array Array of Views as `WP_Post`. Empty array if none found.
 	 */
 	public static function get_all_views( $args = array() ) {
 
@@ -190,7 +191,7 @@ class GVCommon {
 
 		foreach ( $payment_meta as $meta ) {
 
-			$has_transaction_data = \GV\Utils::get( $entry, $meta, false );
+			$has_transaction_data = rgar( $entry, $meta, false );
 
 			if( ! empty( $has_transaction_data ) ) {
 				break;
@@ -289,11 +290,11 @@ class GVCommon {
 			foreach ( $form['fields'] as $field ) {
 				if ( $include_parent_field || empty( $field['inputs'] ) ) {
 					$fields["{$field['id']}"] = array(
-						'label' => \GV\Utils::get( $field, 'label' ),
+						'label' => rgar( $field, 'label' ),
 						'parent' => null,
-						'type' => \GV\Utils::get( $field, 'type' ),
-						'adminLabel' => \GV\Utils::get( $field, 'adminLabel' ),
-						'adminOnly' => \GV\Utils::get( $field, 'adminOnly' ),
+						'type' => rgar( $field, 'type' ),
+						'adminLabel' => rgar( $field, 'adminLabel' ),
+						'adminOnly' => rgar( $field, 'adminOnly' ),
 					);
 				}
 
@@ -312,12 +313,12 @@ class GVCommon {
                             continue;
                         }
 						$fields["{$input['id']}"] = array(
-							'label' => \GV\Utils::get( $input, 'label' ),
-							'customLabel' => \GV\Utils::get( $input, 'customLabel' ),
+							'label' => rgar( $input, 'label' ),
+							'customLabel' => rgar( $input, 'customLabel' ),
 							'parent' => $field,
-							'type' => \GV\Utils::get( $field, 'type' ),
-							'adminLabel' => \GV\Utils::get( $field, 'adminLabel' ),
-							'adminOnly' => \GV\Utils::get( $field, 'adminOnly' ),
+							'type' => rgar( $field, 'type' ),
+							'adminLabel' => rgar( $field, 'adminLabel' ),
+							'adminOnly' => rgar( $field, 'adminOnly' ),
 						);
 					}
 				}
@@ -429,7 +430,6 @@ class GVCommon {
 			'sorting' => null,
 			'paging' => null,
 			'cache' => (isset( $passed_criteria['cache'] ) ? (bool) $passed_criteria['cache'] : true),
-			'context_view_id' => null,
 		);
 
 		$criteria = wp_parse_args( $passed_criteria, $search_criteria_defaults );
@@ -476,7 +476,7 @@ class GVCommon {
 					// Gravity Forms wants dates in the `Y-m-d H:i:s` format.
 					$criteria['search_criteria'][ $key ] = $date->format( 'Y-m-d H:i:s' );
 				} else {
-					gravityview()->log->error( '{key} Date format not valid:', array( 'key' => $key, $criteria['search_criteria'][ $key ] ) );
+					do_action( 'gravityview_log_error', '[filter_get_entries_criteria] '.$key.' Date format not valid:', $criteria['search_criteria'][ $key ] );
 
 					// If it's an invalid date, unset it. Gravity Forms freaks out otherwise.
 					unset( $criteria['search_criteria'][ $key ] );
@@ -484,15 +484,28 @@ class GVCommon {
 			}
 		}
 
-		if ( empty( $criteria['context_view_id'] ) ) {
-			// Calculate the context view id and send it to the advanced filter
-			if ( GravityView_frontend::getInstance()->getSingleEntry() ) {
-				$criteria['context_view_id'] = GravityView_frontend::getInstance()->get_context_view_id();
-			} else if ( class_exists( 'GravityView_View_Data' ) && GravityView_View_Data::getInstance() && GravityView_View_Data::getInstance()->has_multiple_views() ) {
-				$criteria['context_view_id'] = GravityView_frontend::getInstance()->get_context_view_id();
-			} else if ( 'delete' === GFForms::get( 'action' ) ) {
-				$criteria['context_view_id'] = isset( $_GET['view_id'] ) ? intval( $_GET['view_id'] ) : null;
+		if ( ! GravityView_frontend::getInstance()->getSingleEntry() ) {
+			/** GravityView_View_Data::getInstance() has a side-effect :( and not one, so we can't let it run under some circumstances. */
+			if ( defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ) {
+				$multiple_original = gravityview()->views->count() > 1;
+				GravityView_View_Data::getInstance(); /** Yes, those side-effects have to kick in. */
+				/** This weird state only happens in tests, when we play around and reset the $instance... */
+			} else {
+				/** Deprecated, do not use has_multiple_views() anymore. Thanks. */
+				$multiple_original = class_exists( 'GravityView_View_Data' ) && GravityView_View_Data::getInstance() && GravityView_View_Data::getInstance()->has_multiple_views();
 			}
+		}
+
+		// Calculate the context view id and send it to the advanced filter
+		if ( GravityView_frontend::getInstance()->getSingleEntry() ) {
+			$criteria['context_view_id'] = GravityView_frontend::getInstance()->get_context_view_id();
+		} elseif ( $multiple_original ) {
+			$criteria['context_view_id'] = GravityView_frontend::getInstance()->get_context_view_id();
+		} elseif ( 'delete' === GFForms::get( 'action' ) ) {
+			$criteria['context_view_id'] = isset( $_GET['view_id'] ) ? intval( $_GET['view_id'] ) : null;
+		} elseif( !isset( $criteria['context_view_id'] ) ) {
+            // Prevent overriding the Context View ID: Some widgets could set the context_view_id (e.g. Recent Entries widget)
+			$criteria['context_view_id'] = null;
 		}
 
 		/**
@@ -523,7 +536,7 @@ class GVCommon {
 		// Filter the criteria before query (includes Adv Filter)
 		$criteria = self::calculate_get_entries_criteria( $passed_criteria, $form_ids );
 
-		gravityview()->log->debug( '[gravityview_get_entries] Final Parameters', array( 'data' => $criteria ) );
+		do_action( 'gravityview_log_debug', '[gravityview_get_entries] Final Parameters', $criteria );
 
 		// Return value
 		$return = null;
@@ -565,7 +578,7 @@ class GVCommon {
 				$entries = GFAPI::get_entries( $form_ids, $criteria['search_criteria'], $criteria['sorting'], $criteria['paging'], $total );
 
 				if ( is_wp_error( $entries ) ) {
-					gravityview()->log->error( '{error}', array( 'error' => $entries->get_error_message(), 'data' => $entries ) );
+					do_action( 'gravityview_log_error', $entries->get_error_message(), $entries );
 
 					/** Remove filter added above */
 					remove_filter( 'gform_is_encrypted_field', '__return_false' );
@@ -602,7 +615,7 @@ class GVCommon {
 	/**
 	 * Get the entry ID from a string that may be the Entry ID or the Entry Slug
 	 *
-	 * @since 1.18
+	 * @since TODO
 	 *
 	 * @param string $entry_id_or_slug The ID or slug of an entry.
 	 * @param bool $force_allow_ids Whether to force allowing getting the ID of an entry, even if custom slugs are enabled
@@ -659,38 +672,39 @@ class GVCommon {
 	 */
 	public static function get_entry( $entry_slug, $force_allow_ids = false, $check_entry_display = true ) {
 
-		if ( ! class_exists( 'GFAPI' ) || empty( $entry_slug ) ) {
-			return false;
+		if ( class_exists( 'GFAPI' ) && ! empty( $entry_slug ) ) {
+
+			$entry_id = self::get_entry_id( $entry_slug, $force_allow_ids );
+
+			if ( empty( $entry_id ) ) {
+				return false;
+			}
+
+			// fetch the entry
+			$entry = GFAPI::get_entry( $entry_id );
+
+			/**
+			 * @filter `gravityview/common/get_entry/check_entry_display` Override whether to check entry display rules against filters
+			 * @since 1.16.2
+			 * @param bool $check_entry_display Check whether the entry is visible for the current View configuration. Default: true.
+			 * @param array $entry Gravity Forms entry array
+			 */
+			$check_entry_display = apply_filters( 'gravityview/common/get_entry/check_entry_display', $check_entry_display, $entry );
+
+			if( $check_entry_display ) {
+				// Is the entry allowed
+				$entry = self::check_entry_display( $entry );
+			}
+
+			if( is_wp_error( $entry ) ) {
+				do_action( 'gravityview_log_error', __METHOD__ . ': ' . $entry->get_error_message() );
+				return false;
+			}
+
+			return $entry;
 		}
 
-		$entry_id = self::get_entry_id( $entry_slug, $force_allow_ids );
-
-		if ( empty( $entry_id ) ) {
-			return false;
-		}
-
-		// fetch the entry
-		$entry = GFAPI::get_entry( $entry_id );
-
-		/**
-		 * @filter `gravityview/common/get_entry/check_entry_display` Override whether to check entry display rules against filters
-		 * @since 1.16.2
-		 * @param bool $check_entry_display Check whether the entry is visible for the current View configuration. Default: true.
-		 * @param array $entry Gravity Forms entry array
-		 */
-		$check_entry_display = apply_filters( 'gravityview/common/get_entry/check_entry_display', $check_entry_display, $entry );
-
-		if( $check_entry_display ) {
-			// Is the entry allowed
-			$entry = self::check_entry_display( $entry );
-		}
-
-		if( is_wp_error( $entry ) ) {
-			gravityview()->log->error( '{error}', array( 'error' => $entry->get_error_message() ) );
-			return false;
-		}
-
-		return $entry;
+		return false;
 	}
 
 	/**
@@ -701,7 +715,7 @@ class GVCommon {
 	 * @since 1.13 You can define context, which displays/hides based on what's being displayed (single, multiple, edit)
 	 * @since 1.22.1 Added 'in' and 'not_in' for JSON-encoded array values, serialized non-strings
 	 *
-	 * @see https://docs.gravityview.co/article/252-gvlogic-shortcode
+	 * @see http://docs.gravityview.co/article/252-gvlogic-shortcode
 	 * @uses GFFormsModel::matches_operation
 	 * @since 1.7.5
 	 *
@@ -838,7 +852,7 @@ class GVCommon {
 		$criteria = self::calculate_get_entries_criteria();
 
 		if ( empty( $criteria['search_criteria'] ) || ! is_array( $criteria['search_criteria'] ) ) {
-			gravityview()->log->debug( '[apply_filters_to_entry] Entry approved! No search criteria found:', array( 'data' => $criteria ) );
+			do_action( 'gravityview_log_debug', '[apply_filters_to_entry] Entry approved! No search criteria found:', $criteria );
 			return $entry;
 		}
 
@@ -863,7 +877,7 @@ class GVCommon {
 
 		// field_filters
 		if ( empty( $search_criteria['field_filters'] ) || ! is_array( $search_criteria['field_filters'] ) ) {
-			gravityview()->log->debug( '[apply_filters_to_entry] Entry approved! No field filters criteria found:', array( 'data' => $search_criteria ) );
+			do_action( 'gravityview_log_debug', '[apply_filters_to_entry] Entry approved! No field filters criteria found:', $search_criteria );
 			return $entry;
 		}
 
@@ -879,7 +893,7 @@ class GVCommon {
 		foreach ( $filters as $filter ) {
 
 			if ( ! isset( $filter['key'] ) ) {
-				gravityview()->log->debug( '[apply_filters_to_entry] Filter key not set: {filter}', array( 'filter' => $filter ) );
+				do_action( 'gravityview_log_debug', '[apply_filters_to_entry] Filter key not set', $filter );
 				continue;
 			}
 
@@ -893,7 +907,7 @@ class GVCommon {
 			} else {
 				$field_value  = GFFormsModel::get_lead_field_value( $entry, $field );
 				 // If it's a complex field, then fetch the input's value, if exists at the current key. Otherwise, let GF handle it
-				$field_value = ( is_array( $field_value ) && isset( $field_value[ $k ] ) ) ? \GV\Utils::get( $field_value, $k ) : $field_value;
+				$field_value = ( is_array( $field_value ) && isset( $field_value[ $k ] ) ) ? rgar( $field_value, $k ) : $field_value;
 			}
 
 			$operator = isset( $filter['operator'] ) ? strtolower( $filter['operator'] ) : 'is';
@@ -914,7 +928,7 @@ class GVCommon {
 		// at this point, if in ALL mode, then entry is approved - all conditions were met.
 		// Or, for ANY mode, means none of the conditions were satisfied, so entry is not approved
 		if ( 'all' === $mode ) {
-			gravityview()->log->debug( '[apply_filters_to_entry] Entry approved: all conditions were met' );
+			do_action( 'gravityview_log_debug', '[apply_filters_to_entry] Entry approved: all conditions were met' );
 			return $entry;
 		} else {
 			return new WP_Error('failed_any_criteria', '[apply_filters_to_entry] Entry cannot be displayed. Failed all the criteria for ANY mode', $filters );
@@ -961,7 +975,7 @@ class GVCommon {
 		$date_gmt_time   = mysql2date( 'G', $date_string );
 		$date_local_timestamp = GFCommon::get_local_timestamp( $date_gmt_time );
 
-		$format  = \GV\Utils::get( $atts, 'format' );
+		$format  = rgar( $atts, 'format' );
 		$is_human  = ! empty( $atts['human'] );
 		$is_diff  = ! empty( $atts['diff'] );
 		$is_raw = ! empty( $atts['raw'] );
@@ -1009,7 +1023,7 @@ class GVCommon {
 
 		$field = self::get_field( $form, $field_id );
 
-		$label = \GV\Utils::get( $field, 'label' );
+		$label = rgar( $field, 'label' );
 
 		if( floor( $field_id ) !== floatval( $field_id ) ) {
 			$label = GFFormsModel::get_choice_text( $field, $field_value, $field_id );
@@ -1124,43 +1138,16 @@ class GVCommon {
 	 */
 	public static function get_connected_views( $form_id, $args = array() ) {
 
-		global $wpdb;
-
 		$defaults = array(
-			'post_type'      => 'gravityview',
+			'post_type' => 'gravityview',
 			'posts_per_page' => 100,
-			'meta_key'       => '_gravityview_form_id',
-			'meta_value'     => (int) $form_id,
+			'meta_key' => '_gravityview_form_id',
+			'meta_value' => (int)$form_id,
 		);
-		$args     = wp_parse_args( $args, $defaults );
-		$views    = get_posts( $args );
 
-		$views_with_joins = $wpdb->get_results( "SELECT `post_id`, `meta_value` FROM $wpdb->postmeta WHERE `meta_key` = '_gravityview_form_joins'" );
+		$args = wp_parse_args( $args, $defaults );
 
-		$joined_forms = array();
-		foreach ( $views_with_joins as $view ) {
-
-			$data = unserialize( $view->meta_value );
-
-			if( ! $data || ! is_array( $data ) ) {
-				continue;
-			}
-
-			foreach ( $data as $datum ) {
-				if ( ! empty( $datum[2] ) && (int) $datum[2] === (int) $form_id ) {
-					$joined_forms[] = $view->post_id;
-				}
-			}
-		}
-
-		if ( $joined_forms ) {
-			$joined_args  = array(
-				'post_type'      => 'gravityview',
-				'posts_per_page' => $args['posts_per_page'],
-				'post__in'       => $joined_forms,
-			);
-			$views = array_merge( $views, get_posts( $joined_args ) );
-		}
+		$views = get_posts( $args );
 
 		return $views;
 	}
@@ -1201,9 +1188,11 @@ class GVCommon {
 
 		$settings = get_post_meta( $post_id, '_gravityview_template_settings', true );
 
-		if ( class_exists( '\GV\View_Settings' ) ) {
+		if ( class_exists( 'GravityView_View_Data' ) ) {
 
-			return wp_parse_args( (array)$settings, \GV\View_Settings::defaults() );
+			$defaults = defined( 'GRAVITYVIEW_FUTURE_CORE_LOADED' ) ? \GV\View_Settings::defaults() : GravityView_View_Data::get_default_args();
+
+			return wp_parse_args( (array)$settings, $defaults );
 
 		}
 
@@ -1267,7 +1256,7 @@ class GVCommon {
 	public static function get_directory_fields( $post_id, $apply_filter = true ) {
 		$fields = get_post_meta( $post_id, '_gravityview_directory_fields', true );
 
-		if ( $apply_filter ) {
+		if( $apply_filter ) {
 			/**
 			 * @filter `gravityview/configuration/fields` Filter the View fields' configuration array
 			 * @since 1.6.5
@@ -1276,47 +1265,9 @@ class GVCommon {
 			 * @param $post_id int Post ID
 			 */
 			$fields = apply_filters( 'gravityview/configuration/fields', $fields, $post_id );
-
-			/**
-			 * @filter `gravityview/view/configuration/fields` Filter the View fields' configuration array.
-			 * @since 2.0
-			 *
-			 * @param array $fields Multi-array of fields with first level being the field zones.
-			 * @param \GV\View $view The View the fields are being pulled for.
-			 */
-			$fields = apply_filters( 'gravityview/view/configuration/fields', $fields, \GV\View::by_id( $post_id ) );
 		}
 
 		return $fields;
-	}
-
-	/**
-	 * Get the widget configuration for a View
-	 *
-	 * @param int $view_id View ID
-	 * @param bool $json_decode Whether to JSON-decode the widget values. Default: `false`
-	 *
-	 * @return array Multi-array of widgets, with the slug of each widget "zone" being the key ("header_top"), and each widget having their own "id"
-	 */
-	public static function get_directory_widgets( $view_id, $json_decode = false ) {
-
-		$view_widgets = get_post_meta( $view_id, '_gravityview_directory_widgets', true );
-
-		$defaults = array(
-			'header_top' => array(),
-			'header_left' => array(),
-			'header_right' => array(),
-			'footer_left' => array(),
-			'footer_right' => array(),
-		);
-
-		$directory_widgets = wp_parse_args( $view_widgets, $defaults );
-
-		if( $json_decode ) {
-			$directory_widgets = gv_map_deep( $directory_widgets, 'gv_maybe_json_decode' );
-		}
-
-		return $directory_widgets;
 	}
 
 
@@ -1606,8 +1557,8 @@ class GVCommon {
 		 * Fix potential security issue with target=_blank
 		 * @see https://dev.to/ben/the-targetblank-vulnerability-by-example
 		 */
-		if( '_blank' === \GV\Utils::get( $final_atts, 'target' ) ) {
-			$final_atts['rel'] = trim( \GV\Utils::get( $final_atts, 'rel', '' ) . ' noopener noreferrer' );
+		if( '_blank' === rgar( $final_atts, 'target' ) ) {
+			$final_atts['rel'] = trim( rgar( $final_atts, 'rel', '' ) . ' noopener noreferrer' );
 		}
 
 		// Sort the attributes alphabetically, to help testing

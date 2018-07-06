@@ -16,7 +16,7 @@ class Form_Collection extends Collection {
 	 * @param \GV\Form $form The form to add to the internal array.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 * @return void
 	 */
 	public function add( $form ) {
@@ -34,7 +34,7 @@ class Form_Collection extends Collection {
 	 * @param string $backend The form backend identifier, allows for multiple form backends in the future. Unused until then.
 	 *
 	 * @api
-	 * @since 2.0
+	 * @since future
 	 *
 	 * @return \GV\Form|null The \GV\Form with the $form_id as the ID, or null if not found.
 	 */

@@ -16,11 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-if( ! class_exists( '\GV\Gamajo_Template_Loader' ) ) {
+if( ! class_exists( 'Gamajo_Template_Loader' ) ) {
 	require( GRAVITYVIEW_DIR . 'includes/lib/class-gamajo-template-loader.php' );
 }
 
-class GravityView_View extends \GV\Gamajo_Template_Loader {
+class GravityView_View extends Gamajo_Template_Loader {
 
 	/**
 	 * Prefix for filter names.
@@ -168,9 +168,10 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		// Add granular overrides
 		add_filter( $this->filter_prefix . '_get_template_part', array( $this, 'add_id_specific_templates' ), 10, 3 );
 
+
 		// widget logic
-		add_action( 'gravityview/template/before', array( $this, 'render_widget_hooks' ) );
-		add_action( 'gravityview/template/after', array( $this, 'render_widget_hooks' ) );
+		add_action( 'gravityview_before', array( $this, 'render_widget_hooks' ) );
+		add_action( 'gravityview_after', array( $this, 'render_widget_hooks' ) );
 
 		/**
 		 * Clear the current entry after the loop is done
@@ -482,7 +483,7 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		$total = $this->getTotalEntries();
 
 		if ( empty( $total ) ) {
-			gravityview()->log->debug( 'No entries. Returning empty array.' );
+			do_action( 'gravityview_log_debug', __METHOD__ . ': No entries. Returning empty array.' );
 
 			return array();
 		}
@@ -524,20 +525,15 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 	}
 
 	/**
-	 * @param boolean $do_replace Perform merge tag and shortcode processing on the label. Default: true.
-	 * @since 2.0
-	 *
-	 * @deprecated Use $template->get_back_label();
-	 *
 	 * @return string
 	 */
-	public function getBackLinkLabel( $do_replace = true ) {
-		if ( $do_replace ) {
-			$back_link_label = GravityView_API::replace_variables( $this->back_link_label, $this->getForm(), $this->getCurrentEntry() );
-			return do_shortcode( $back_link_label );
-		}
+	public function getBackLinkLabel() {
 
-		return $this->back_link_label;
+		$back_link_label = GravityView_API::replace_variables( $this->back_link_label, $this->getForm(), $this->getCurrentEntry() );
+
+		$back_link_label = do_shortcode( $back_link_label );
+
+		return $back_link_label;
 	}
 
 	/**
@@ -637,14 +633,12 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 	 * @param array $atts
 	 * @param bool $echo Whether to print the output
 	 *
-	 * @deprecated This will never get called in new templates.
-	 *
 	 * @return string|null
 	 */
 	public function renderZone( $zone = '', $atts = array(), $echo = true ) {
 
-		if ( empty( $zone ) ) {
-			gravityview()->log->error( 'No zone defined.');
+		if( empty( $zone ) ) {
+			do_action('gravityview_log_error', 'GravityView_View[renderZone] No zone defined.');
 			return NULL;
 		}
 
@@ -665,19 +659,18 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		$fields = $this->getField( $final_atts['zone_id'] );
 
 		// Backward compatibility
-		if ( 'table' === $this->getTemplatePartSlug() ) {
+		if( 'table' === $this->getTemplatePartSlug() ) {
 			/**
 			 * @filter `gravityview_table_cells` Modify the fields displayed in a table
 			 * @param array $fields
-			 * @param \GravityView_View $this
-			 * @deprecated Use `gravityview/template/table/fields`
+			 * @param GravityView_View $this
 			 */
 			$fields = apply_filters("gravityview_table_cells", $fields, $this );
 		}
 
-		if ( empty( $fields ) ) {
+		if( empty( $fields ) ) {
 
-			gravityview()->log->error( 'Empty zone configuration for {zone_id}.', array( 'zone_id' => $final_atts['zone_id'] ) );
+			do_action('gravityview_log_error', 'GravityView_View[renderZone] Empty View configuration for this context.', $fields );
 
 			return NULL;
 		}
@@ -694,10 +687,8 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		 * False by default to keep backward compatibility
 		 * @since 1.7.6
 		 * @param boolean $hide_empty_zone Default: false
-		 * @since 2.0
-		 * @param \GV\Template_Context $context The context. Null here. Since this path is deprecated.
 		 */
-		if ( empty( $field_output ) && apply_filters( 'gravityview/render/hide-empty-zone', false, null ) ) {
+		if( empty( $field_output ) && apply_filters( 'gravityview/render/hide-empty-zone', false ) ) {
 			return NULL;
 		}
 
@@ -787,10 +778,8 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		// form-19-table-body.php
 		$additional[] = sprintf( 'form-%d-%s-%s.php', $this->getFormId(), $slug, $name );
 
-		if( $view_id = $this->getViewId() ) {
-			// view-3-table-body.php
-			$additional[] = sprintf( 'view-%d-%s-%s.php', $view_id, $slug, $name );
-		}
+		// view-3-table-body.php
+		$additional[] = sprintf( 'view-%d-%s-%s.php', $this->getViewId(), $slug, $name );
 
 		if( $this->getPostId() ) {
 
@@ -801,7 +790,7 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		// Combine with existing table-body.php and table.php
 		$templates = array_merge( $additional, $templates );
 
-		gravityview()->log->debug( 'List of Template Files', array( 'data' => $templates ) );
+		do_action( 'gravityview_log_debug', '[add_id_specific_templates] List of Template Files', $templates );
 
 		return $templates;
 	}
@@ -815,7 +804,7 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		
 		$template_file = $this->get_template_part( $slug, $name, false );
 
-		gravityview()->log->debug( 'Rendering Template File: {path}', array( 'path' => $template_file ) );
+		do_action( 'gravityview_log_debug', '[render] Rendering Template File', $template_file );
 
 		if( !empty( $template_file) ) {
 
@@ -829,81 +818,65 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 	}
 
 	/**
-	 * Output the widgets on before/after hooks.
 	 *
-	 * @param int|\GV\Template_Context $view_id_or_context The View ID or the context.
-	 *
-	 * @return void
+	 * @param $view_id
 	 */
-	public function render_widget_hooks( $view_id_or_context ) {
+	public function render_widget_hooks( $view_id ) {
 
-	    /**
-		 * @deprecated Numeric argument is deprecated. Pass a \GV\Template_Context instead.
-		 */
-		if ( is_numeric( $view_id_or_context ) ) {
-			$view = \GV\View::by_id( $view_id_or_context );
-			$is_single = gravityview_get_context() == 'single';
-			$total_entries = GravityView_View::getInstance()->getTotalEntries();
-
-			/**
-			 * Fake new context for legacy template code.
-			 */
-			$view_id_or_context = \GV\Template_Context::from_template( array(
-				'view' => $view,
-			) );
-
-		} else if ( $view_id_or_context instanceof \GV\Template_Context ) {
-			$view = $view_id_or_context->view;
-			$is_single = (boolean)$view_id_or_context->request->is_entry();
-			$total_entries = $view_id_or_context->entries ? $view_id_or_context->entries->count() : 0;
-
-		} else {
-			gravityview()->log->error( 'No View ID or template context provided to render_widget_hooks' );
+		if( empty( $view_id ) || 'single' == gravityview_get_context() ) {
+			do_action( 'gravityview_log_debug', __METHOD__ . ' - Not rendering widgets; single entry' );
 			return;
 		}
 
-		if ( $is_single ) {
-			gravityview()->log->debug( 'Not rendering widgets; single entry' );
-			return;
-		}
+		$view_data = gravityview_get_current_view_data( $view_id );
 
-		switch ( current_filter() ) {
+		// get View widget configuration
+		$widgets = (array)$view_data['widgets'];
+
+		switch( current_filter() ) {
 			default:
-			case 'gravityview/template/before':
 			case 'gravityview_before':
 				$zone = 'header';
 				break;
-			case 'gravityview/template/after':
 			case 'gravityview_after':
 				$zone = 'footer';
 				break;
 		}
 
-		$widgets = $view->widgets->by_position( "$zone*" );
+		/**
+		 * Filter widgets not in the current zone
+		 * @since 1.16
+		 */
+		foreach( $widgets as $key => $widget ) {
+			// The widget isn't in the current zone
+			if( false === strpos( $key, $zone ) ) {
+				unset( $widgets[ $key ] );
+			}
+		}
 
 		/**
 		 * Prevent output if no widgets to show.
 		 * @since 1.16
 		 */
-		if ( ! $widgets->count() ) {
-			gravityview()->log->debug( 'No widgets for View #{view_id} in zone {zone}', array( 'view_id' => $view->ID, 'zone' => $zone ) );
+		if ( empty( $widgets ) ) {
+			do_action( 'gravityview_log_debug', sprintf( 'No widgets for View #%s', $view_id ) );
 			return;
 		}
 
 		// Prevent being called twice
-		if ( did_action( "gravityview/widgets/$zone/{$view->ID}/rendered" ) ) {
-			gravityview()->log->debug( 'Not rendering {zone}; already rendered', array( 'zone' => $zone.'_'.$view->ID.'_widgets' ) );
+		if( did_action( $zone.'_'.$view_id.'_widgets' ) ) {
+			do_action( 'gravityview_log_debug', sprintf( '%s - Not rendering %s; already rendered', __METHOD__ , $zone.'_'.$view_id.'_widgets' ) );
 			return;
 		}
 
-		$rows = \GV\Widget::get_default_widget_areas();
+		$rows = GravityView_Plugin::get_default_widget_areas();
 
 		// TODO: Move to sep. method, use an action instead
 		wp_enqueue_style( 'gravityview_default_style' );
 
 		$default_css_class = 'gv-grid gv-widgets-' . $zone;
 
-		if ( ! $total_entries ) {
+		if( 0 === GravityView_View::getInstance()->getTotalEntries() ) {
 			$default_css_class .= ' gv-widgets-no-results';
 		}
 
@@ -914,7 +887,7 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		 * @param string $zone Current widget zone, either `header` or `footer`
 		 * @param array $widgets Array of widget configurations for the current zone, as set by `gravityview_get_current_view_data()['widgets']`
 		 */
-		$css_class = apply_filters('gravityview/widgets/wrapper_css_class', $default_css_class, $zone, $widgets->as_configuration() );
+		$css_class = apply_filters('gravityview/widgets/wrapper_css_class', $default_css_class, $zone, $widgets );
 
 		$css_class = gravityview_sanitize_html_class( $css_class );
 
@@ -924,14 +897,16 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 			<?php
 			foreach( $rows as $row ) {
 				foreach( $row as $col => $areas ) {
-					$column = ( $col == '2-2' ) ? '1-2 gv-right' : "$col gv-left";
+					$column = ($col == '2-2') ? '1-2 gv-right' : $col.' gv-left';
 				?>
 					<div class="gv-grid-col-<?php echo esc_attr( $column ); ?>">
 						<?php
-						if ( ! empty( $areas ) ) {
-							foreach ( $areas as $area ) {
-								foreach ( $widgets->by_position( $zone . '_' . $area['areaid'] )->all() as $widget ) {
-									do_action( sprintf( 'gravityview/widgets/%s/render', $widget->get_widget_id() ), $widget->configuration->all(), null, $view_id_or_context );
+						if( !empty( $areas ) ) {
+							foreach( $areas as $area ) {
+								if( !empty( $widgets[ $zone .'_'. $area['areaid'] ] ) ) {
+									foreach( $widgets[ $zone .'_'. $area['areaid'] ] as $widget ) {
+										do_action( "gravityview_render_widget_{$widget['id']}", $widget );
+									}
 								}
 							}
 						} ?>
@@ -946,21 +921,8 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		 * Prevent widgets from being called twice.
 		 * Checking for loop_start prevents themes and plugins that pre-process shortcodes from triggering the action before displaying. Like, ahem, the Divi theme and WordPress SEO plugin
 		 */
-		if ( did_action( 'wp_head' ) ) {
-			do_action( "gravityview/widgets/$zone/{$view->ID}/rendered" );
-		}
-	}
-
-	/**
-	 * Include a file inside this context.
-	 *
-	 * @param string $path A path to the legacy template to include.
-	 *
-	 * @return void
-	 */
-	public function _include( $path ) {
-		if ( file_exists( $path ) ) {
-			include $path;
+		if( did_action( 'wp_head' ) ) {
+			do_action( $zone.'_'.$view_id.'_widgets' );
 		}
 	}
 

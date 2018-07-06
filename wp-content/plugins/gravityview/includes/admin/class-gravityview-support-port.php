@@ -50,7 +50,7 @@ class GravityView_Support_Port {
 		$display_support_port = apply_filters( 'gravityview/support_port/display', self::show_for_user() );
 
 		if ( empty( $display_support_port ) ) {
-			gravityview()->log->debug( 'Not showing Support Port' );
+			do_action( 'gravityview_log_debug', __METHOD__ . ' - Not showing Support Port' );
 
 			return;
 		}
@@ -91,7 +91,7 @@ class GravityView_Support_Port {
 			'contactSuccessDescription' => __( 'Thanks for reaching out! Someone from the GravityView team will get back to you soon.', 'gravityview' ),
 		);
 
-		$response = gravityview()->plugin->settings->get( 'license_key_response' );
+		$response = GravityView_Settings::getSetting( 'license_key_response' );
 
 		$response = wp_parse_args( $response, array(
 			'license'          => '',
@@ -104,36 +104,33 @@ class GravityView_Support_Port {
 			'payment_id'       => '',
 			'customer_name'    => '',
 			'customer_email'   => '',
-            'price_id'         => '0',
 		) );
 
 		// This is just HTML we don't need.
 		unset( $response['message'] );
 
-		switch ( intval( $response['price_id'] ) ) {
-			default:
+		switch ( intval( $response['license_limit'] ) ) {
 			case 1:
 				$package = 'Sol';
 				break;
-			case 2:
-				$package = 'Interstellar';
-				break;
-			case 3:
+			case 100:
 				$package = 'Galactic';
 				break;
-            case 4:
-                $package = 'Lifetime';
-                break;
+			case 3:
+				$package = 'Interstellar';
+				break;
+			default:
+				$package = sprintf( '%d-Site License', $response['license_limit'] );
 		}
 
 		$data = array(
-			'email'                 => gravityview()->plugin->settings->get( 'support-email' ),
+			'email'                 => GravityView_Settings::getSetting( 'support-email' ),
 			'name'                  => $response['customer_name'],
 			'Valid License?'        => ucwords( $response['license'] ),
 			'License Key'           => $response['license_key'],
 			'License Level'         => $package,
 			'Site Admin Email'      => get_bloginfo( 'admin_email' ),
-			'Support Email'         => gravityview()->plugin->settings->get( 'support-email' ),
+			'Support Email'         => GravityView_Settings::getSetting( 'support-email' ),
 			'License Limit'         => $response['license_limit'],
 			'Site Count'            => $response['site_count'],
 			'License Expires'       => $response['expires'],
@@ -143,29 +140,16 @@ class GravityView_Support_Port {
 			'Payment Email'         => $response['customer_email'],
 			'WordPress Version'     => get_bloginfo( 'version', 'display' ),
 			'PHP Version'           => phpversion(),
-			'GravityView Version'   => \GV\Plugin::$version,
+			'GravityView Version'   => GravityView_Plugin::version,
 			'Gravity Forms Version' => GFForms::$version,
-			'Plugins & Extensions'  => \GV\License_Handler::get_related_plugins_and_extensions(),
+			'Plugins & Extensions'  => GV_License_Handler::get_related_plugins_and_extensions(),
 		);
 
 		$localization_data = array(
 			'contactEnabled' => (int)GVCommon::has_cap( 'gravityview_contact_support' ),
 			'data' => $data,
 			'translation' => $translation,
-            'suggest' => array(),
 		);
-
-		/**
-         * @filter `gravityview/support_port/localization_data` Filter data passed to the Support Port, before localize_script is run
-		 * @since 2.0
-         * @param array $localization_data {
-         *   @type int $contactEnabled Can the user contact support?
-         *   @type array $data Support/license info
-         *   @type array $translation i18n strings
-         *   @type array $suggest Article IDs to recommend to the user (per page in the admin
-         * }
-		 */
-		$localization_data = apply_filters( 'gravityview/support_port/localization_data', $localization_data );
 
 		wp_localize_script( 'gravityview-support', 'gvSupport', $localization_data );
 
@@ -193,7 +177,7 @@ class GravityView_Support_Port {
 			return false;
 		}
 
-		$global_setting = gravityview()->plugin->settings->get( 'support_port' );
+		$global_setting = GravityView_Settings::getSetting( 'support_port' );
 
 		if ( empty( $global_setting ) ) {
             return false;
@@ -240,7 +224,7 @@ class GravityView_Support_Port {
 	 */
 	public function user_field( $user ) {
 
-		$global_setting = gravityview()->plugin->settings->get( 'support_port' );
+		$global_setting = GravityView_Settings::getSetting( 'support_port' );
 
 		if ( empty( $global_setting ) ) {
             return;
@@ -248,11 +232,13 @@ class GravityView_Support_Port {
 
 		/**
 		 * @filter `gravityview/support_port/show_profile_setting` Should the "GravityView Support Port" setting be shown on user profiles?
+		 * @todo use GVCommon::has_cap() after merge
 		 * @since 1.15
+		 *
 		 * @param boolean $allow_profile_setting Default: `true`, if the user has the `gravityview_support_port` capability, which defaults to true for Contributors and higher
 		 * @param WP_User $user Current user object
 		 */
-		$allow_profile_setting = apply_filters( 'gravityview/support_port/show_profile_setting', GVCommon::has_cap( 'gravityview_support_port' ), $user );
+		$allow_profile_setting = apply_filters( 'gravityview/support_port/show_profile_setting', current_user_can( 'gravityview_support_port' ), $user );
 
 		if ( $allow_profile_setting && current_user_can( 'edit_user', $user->ID ) ) {
 			?>
