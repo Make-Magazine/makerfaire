@@ -2,10 +2,9 @@
 
 ob_start();
 
-//change this to your path
-$path = '/Users/zackkatz/Sites/wordpress-develop/tests/phpunit/includes/bootstrap.php';
+$path = getenv( 'GV_TESTS_BOOTSTRAP' ) ? : '../GravityView/tests/bootstrap.php';
 
-if (file_exists($path)) {
+if ( file_exists( $path ) ) {
     $GLOBALS['wp_tests_options'] = array(
         'active_plugins' => array(
         	'gravityforms/gravityforms.php',
@@ -16,9 +15,20 @@ if (file_exists($path)) {
 
     require_once $path;
 } else {
-    exit("Couldn't find wordpress-tests/bootstrap.php\n");
+    exit( "Couldn't find wordpress-tests/bootstrap.php\n" );
 }
 
-require_once dirname( __FILE__ ) . '/../../gravityview/gravityview.php';
+/** Bootstrap GravityView. Bootstraps Gravity Forms inside. */
+require_once dirname( __FILE__ ) . '/../../GravityView/gravityview.php';
+
+/** Bootstrap the DataTables extension. */
 require_once dirname( __FILE__ ) . '/../datatables.php';
-require_once dirname( __FILE__ ) . '/../../gravityforms/gravityforms.php';
+
+gv_extension_datatables_load();
+$datatables = new GV_Extension_DataTables();
+
+$datatables->backend_actions();
+$datatables->core_actions();
+$datatables->register_templates();
+
+ob_end_clean();

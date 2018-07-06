@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Katz Web Services, Inc.
+# Copyright (C) 2018 GravityView
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 # Translators:
 # Jorge Pelaez <jorgepelaez@gmail.com>, 2014
@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2017-01-10 00:44+0000\n"
+"PO-Revision-Date: 2018-05-03 04:01+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Spanish (Mexico) (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/es_MX/)\n"
 "MIME-Version: 1.0\n"
@@ -24,64 +24,49 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:360 partials/metabox.php:2
+#: advanced-filter.php:413 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr "Filtro Avanzado"
 
-#: advanced-filter.php:362
+#: advanced-filter.php:415
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr "Limitar lo que las entradas sean visibles basadas en valores de entrada . Las entradas se filtran antes de que aparezca la vista . Cuando los usuarios realizan una búsqueda, los resultados primero se filtrarán por estos parámetros."
 
-#: advanced-filter.php:363
+#: advanced-filter.php:416
 msgid "Limit to Logged-in User Entries"
 msgstr "Limitado a Entradas de Usuarios Registrados"
 
-#: advanced-filter.php:364
-msgid ""
-"To limit entries to those created by the current user, select \"Created "
-"By\", \"is\" &amp; \"Logged-in User\" from the drop-down menus."
-msgstr "Para limitar las entradas a los creadas por el usuario actual , seleccione \"Creado por\" ,  es\" &amp; \"Usuario registrado\" en los menús desplegables."
-
-#: advanced-filter.php:365
-msgid ""
-"If you want to limit entries to those created by the current user, but allow"
-" the administrators to view all the entries, select \"Logged-in User "
-"(disabled for admins)\" from the drop-down menu."
-msgstr ""
-
-#: advanced-filter.php:623
+#: advanced-filter.php:417 advanced-filter.php:676
 msgid "Created By"
 msgstr "Creado por"
 
-#: advanced-filter.php:627
-msgid "Logged-in User (disabled for Admins)"
+#: advanced-filter.php:417 advanced-filter.php:684
+msgid "Currently Logged-in User"
 msgstr ""
 
-#: advanced-filter.php:631
-msgid "Logged-in User"
-msgstr "Usuario conectado"
+#: advanced-filter.php:418 advanced-filter.php:680
+msgid "Currently Logged-in User (Disabled for Administrators)"
+msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:181
+#: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
-msgstr "Hay una nueva versión de %1$s disponible. <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">Vista versión %3$s detalles<a/>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
+msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:188
+#: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
-"There is a new version of %1$s available. <a target=\"_blank\" "
-"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
-"href=\"%4$s\">update now</a>."
-msgstr "Hay una nueva versión de %1$s disponible. <a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">Vista versión %3$s detalles<a/> o <a href=\"%4$s\">actualizar ahora</a>."
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
+msgstr ""
 
-#: lib/EDD_SL_Plugin_Updater.php:332
+#: lib/EDD_SL_Plugin_Updater.php:396
 msgid "You do not have permission to install plugin updates"
 msgstr "No tienes permiso para instalar actualizaciones del plugin"
 
-#: lib/EDD_SL_Plugin_Updater.php:332
+#: lib/EDD_SL_Plugin_Updater.php:396
 msgid "Error"
 msgstr "Error"
 
@@ -106,3 +91,22 @@ msgstr "Debe guardar la vista antes de poder configurar filtros avanzados ."
 #: partials/metabox.php:5
 msgid "Advanced Filtering requires Javascript to be enabled."
 msgstr "Filtrado avanzado requiere que Javascript esté habilitado ."
+
+#: advanced-filter.php:417
+msgctxt ""
+"First placeholder is \"Created By\" and second is \"Currently Logged-in "
+"User\""
+msgid ""
+"To limit entries to those created by the current user, select \"%s\", \"is\""
+" &amp; \"%s\" from the drop-down menus."
+msgstr ""
+
+#: advanced-filter.php:418
+msgctxt ""
+"The placeholder is \"Currently Logged-in User (Disabled for "
+"Administrators)\""
+msgid ""
+"If you want to limit entries to those created by the current user, but allow"
+" the administrators to view all the entries, select \"%s\" from the drop-"
+"down menu."
+msgstr ""

@@ -1,5 +1,5 @@
 {
-  "name": "gravityview",
+  "name": "gravityview-datatables",
   "version": "1.0.0",
   "devDependencies": {
     "grunt": "^0.4.5",
@@ -11,7 +11,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-exec": "^0.4.6",
     "grunt-potomo": "^3.1.0",
-    "grunt-sass": "^1.0.0",
+    "grunt-contrib-sass": "^1.0.0",
     "grunt-wp-i18n": "^0.5.1",
     "grunt-wp-readme-to-markdown": "^0.8.0",
     "load-grunt-tasks": "^3.2.0"

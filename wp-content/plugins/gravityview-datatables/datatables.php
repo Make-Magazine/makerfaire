@@ -7,14 +7,14 @@
  * @package   GravityView-DataTables-Ext
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      https://gravityview.co
  * @copyright Copyright 2017, Katz Web Services, Inc.
  *
  * @wordpress-plugin
  * Plugin Name:       	GravityView - DataTables Extension
  * Plugin URI:        	https://gravityview.co/extensions/datatables/
  * Description:       	Display entries in a dynamic table powered by DataTables & GravityView.
- * Version:          	2.1.1
+ * Version:          	2.3
  * Author:            	GravityView
  * Author URI:        	https://gravityview.co
  * Text Domain:       	gv-datatables
@@ -26,6 +26,8 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
+
+define( 'GV_DT_VERSION', '2.3' );
 
 /** @define "GV_DT_FILE" "./" */
 define( 'GV_DT_FILE', __FILE__ );
@@ -42,25 +44,18 @@ add_action( 'plugins_loaded', 'gv_extension_datatables_load' );
  * @return void
  */
 function gv_extension_datatables_load() {
-
-	if( !class_exists( 'GravityView_Extension' ) ) {
-
-		if( class_exists('GravityView_Plugin') && is_callable(array('GravityView_Plugin', 'include_extension_framework')) ) {
-			GravityView_Plugin::include_extension_framework();
-		} else {
-			// We prefer to use the one bundled with GravityView, but if it doesn't exist, go here.
-			include_once GV_DT_DIR . 'lib/class-gravityview-extension.php';
-		}
+	if ( ! class_exists( 'GravityView_Extension' ) && ! class_exists( '\GV\Core' ) ) {
+		// We prefer to use the one bundled with GravityView, but if it doesn't exist, go here.
+		include_once GV_DT_DIR . 'lib/class-gravityview-extension.php';
 	}
-
 
 	class GV_Extension_DataTables extends GravityView_Extension {
 
 		protected $_title = 'DataTables';
 
-		protected $_version = '2.1.1';
+		protected $_version = GV_DT_VERSION;
 
-		const version = '2.1.1';
+		const version = GV_DT_VERSION;
 
 		/**
 		 * @var int The download ID on gravityview.co
@@ -70,7 +65,7 @@ function gv_extension_datatables_load() {
 
 		protected $_text_domain = 'gv-datatables';
 
-		protected $_min_gravityview_version = '1.1.7';
+		protected $_min_gravityview_version = '2.0-dev';
 
 		protected $_path = __FILE__;
 
@@ -88,22 +83,25 @@ function gv_extension_datatables_load() {
 		}
 
 		function backend_actions() {
-			include_once( GV_DT_DIR . 'includes/class-admin-datatables.php' );
-			include_once( GV_DT_DIR . 'includes/class-datatables-migrate.php' );
+			include_once GV_DT_DIR . 'includes/class-admin-datatables.php';
+			include_once GV_DT_DIR . 'includes/class-datatables-migrate.php';
 		}
 
 		function core_actions() {
-			include_once ( GV_DT_DIR . 'includes/class-datatables-data.php' );
+			include_once GV_DT_DIR . 'includes/class-datatables-data.php';
 
-			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-extension.php' );
-			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-buttons.php' );
-			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-scroller.php' );
-			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-fixedheader.php' );
-			include_once ( GV_DT_DIR . 'includes/extensions/class-datatables-responsive.php' );
+			include_once GV_DT_DIR . 'includes/extensions/class-datatables-extension.php';
+			include_once GV_DT_DIR . 'includes/extensions/class-datatables-search.php';
+			include_once GV_DT_DIR . 'includes/extensions/class-datatables-buttons.php';
+			include_once GV_DT_DIR . 'includes/extensions/class-datatables-scroller.php';
+			include_once GV_DT_DIR . 'includes/extensions/class-datatables-fixedheader.php';
+			include_once GV_DT_DIR . 'includes/extensions/class-datatables-responsive.php';
 		}
 
 		function register_templates() {
-			include_once( GV_DT_DIR . 'includes/class-datatables-template.php' );
+			include_once GV_DT_DIR . 'includes/class-datatables-template.php';
+			include_once GV_DT_DIR . 'includes/class-gv-template-view-datatable.php';
+			include_once GV_DT_DIR . 'includes/class-gv-template-entry-datatable.php';
 		}
 	}
 

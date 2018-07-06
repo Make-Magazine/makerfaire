@@ -16,12 +16,12 @@
   ],
   "homepage": "https://datatables.net",
   "license": "MIT",
-  "version": "2.1.1",
-  "_release": "2.1.1",
+  "version": "2.2.3",
+  "_release": "2.2.3",
   "_resolution": {
     "type": "version",
-    "tag": "2.1.1",
-    "commit": "476e6eaf4bfec77fd0cefcb29d77aa7c6dba9322"
+    "tag": "2.2.3",
+    "commit": "92886a41efbafbc7ef169c39013d7b84fe72b2b2"
   },
   "_source": "https://github.com/DataTables/Responsive.git",
   "_target": ">=1.0.2",

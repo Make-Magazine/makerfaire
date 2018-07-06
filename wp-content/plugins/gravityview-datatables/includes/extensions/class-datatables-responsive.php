@@ -8,6 +8,12 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 
 	protected $settings_key = 'responsive';
 
+	function __construct() {
+		parent::__construct();
+
+		add_action( 'gravityview/template/after', array( $this, 'output_config' ) );
+	}
+
 	/**
 	 * Add the `responsive` class to the table to enable the functionality
 	 * @param string $classes Existing class attributes
@@ -77,24 +83,9 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 	 */
 	function add_scripts( $dt_configs, $views, $post ) {
 
-		$script = false;
-		$responsive_configs = array();
-
-		foreach ( $views as $key => $view_data ) {
-
-			if( !$this->is_datatables( $view_data ) ) { continue; }
-
-			// we need to process all the DT views to be consistent with other DT configurations
-			if( $this->is_enabled( $view_data['id'] ) ) {
-				$responsive_configs[] = array( 'responsive' => 1, 'hide_empty' => $view_data['atts']['hide_empty'] );
-				$script = true;
-			} else {
-				$responsive_configs[] = array( 'responsive' => 0 );
-			}
-
-		}
-
-		if( !$script ) { return; }
+		if( ! $add_scripts = parent::add_scripts( $dt_configs, $views, $post ) ) {
+		    return;
+        }
 
 		$path = plugins_url( 'assets/datatables-responsive/', GV_DT_FILE );
 		$script_debug = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
@@ -110,15 +101,36 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 		 */
 		wp_enqueue_style( 'gv-dt_responsive_style', apply_filters( 'gravityview_dt_responsive_style_src', $path.'css/responsive.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version );
 
-		/**
-		 * We need to init the DT responsive extension after DataTables so we could tweak the child render row
-		 * @since 1.3.2
-		 */
-		wp_localize_script( 'gv-dt-responsive', 'gvDTResponsive', $responsive_configs );
-
 	}
 
+	/**
+	 * Output the responsive configuration.
+	 *
+	 * @param object $gravityview The template $gravityview object.
+	 *
+	 * @return void
+	 */
+	function output_config( $gravityview ) {
+		if ( ! $this->is_datatables( $gravityview->view->as_data() ) ) {
+			return;
+		}
 
+		if ( $this->is_enabled( $gravityview->view->ID ) ) {
+			$responsive_config = array( 'responsive' => 1, 'hide_empty' => $gravityview->view->settings->get( 'hide_empty' ) );
+		} else {
+			$responsive_config = array( 'responsive' => 0 );
+		}
+
+		?>
+			<script type="text/javascript">
+				if (!window.gvDTResponsive) {
+					window.gvDTResponsive = [];
+				}
+
+				window.gvDTResponsive.push(<?php echo json_encode( $responsive_config ); ?>);
+			</script>
+		<?php
+	}
 }
 
 new GV_Extension_DataTables_Responsive;
