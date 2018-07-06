@@ -237,11 +237,20 @@
 
 
   <div id="nav-flyout">
-
-    <?php
-      echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html');
+    <?php 
+        $username = 'makeco';
+        $password = 'memberships';
+        $context = stream_context_create(array(
+            'http' => array(
+                'header'  => "Authorization: Basic " . base64_encode("$username:$password")
+            )
+        ));
+        if(explode('.', $_SERVER['HTTP_HOST'])[1] == "staging") {
+          echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context); 
+        }else{
+          echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html'); 
+        }
     ?>
-
   </div>
 
   <div id="nav-hamburger" class="nav-hamburger">

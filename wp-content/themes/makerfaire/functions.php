@@ -133,6 +133,9 @@ function load_scripts() {
 
   $my_theme = wp_get_theme();
   $my_version = $my_theme->get('Version');
+  if (strpos($_SERVER['REQUEST_URI'], "authenticate-redirect") !== false){
+    wp_enqueue_script('billboard', get_stylesheet_directory_uri() . '/js/libs/billboard.js', array('jquery'), $my_version);
+  }
   // Libraries concatenated by the grunt concat task (in Gruntfile.js):
   wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'),$my_version);
   wp_localize_script('built-libs', 'ajax_object',
