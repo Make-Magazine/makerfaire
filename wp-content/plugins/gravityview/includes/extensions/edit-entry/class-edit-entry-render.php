@@ -1409,6 +1409,7 @@ class GravityView_Edit_Entry_Render {
 		// Hide fields depending on Edit Entry settings
 		$this->form['fields'] = $this->get_configured_edit_fields( $this->form, $this->view_id );
 
+    
 		$this->is_valid = GFFormDisplay::validate( $this->form, $field_values, 1, $failed_validation_page );
 
 		remove_filter( 'gform_validation_'. $this->form_id, array( $this, 'custom_validation' ), 10 );
