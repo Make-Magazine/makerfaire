@@ -203,7 +203,7 @@ class GravityView_Edit_Entry_Render {
     //MF custom code to force GV to use the MAT form ID instead of the view form id
     $this->form_id = $this->entry['form_id'];
     $this->form = GFAPI::get_form($this->form_id);
-    
+
     self::$original_form = $this->form;
 
 		$this->view_id = $gravityview_view->getViewId();
@@ -1957,12 +1957,13 @@ class GravityView_Edit_Entry_Render {
 			 * If the Entry is embedded, there may be two entries on the same page.
 			 * If that's the case, and one is being edited, the other should fail gracefully and not display an error.
 			 */
-			if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
+			/*
+      if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
 				$error = true;
 			} else {
 				$error = __( 'The link to edit this entry is not valid; it may have expired.', 'gravityview');
 			}
-
+      */
 		}
 
 		if( ! GravityView_Edit_Entry::check_user_cap_edit_entry( $this->entry ) ) {
