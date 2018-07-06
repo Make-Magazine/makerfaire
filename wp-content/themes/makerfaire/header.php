@@ -226,7 +226,7 @@
     </div>
   </div><!-- .nav-level-2 -->
   <!--<div class="container search-container">
-    <ul class="search-button"> 
+    <ul class="search-button">
         <li>
           <div id="sb-search" class="sb-search">
             <i class="fa fa-search" aria-hidden="true"></i>
@@ -237,7 +237,7 @@
 
 
   <div id="nav-flyout">
-    <?php 
+    <?php
         $username = 'makeco';
         $password = 'memberships';
         $context = stream_context_create(array(
@@ -245,10 +245,10 @@
                 'header'  => "Authorization: Basic " . base64_encode("$username:$password")
             )
         ));
-        if(explode('.', $_SERVER['HTTP_HOST'])[1] == "staging") {
-          echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context); 
+        if(class_exists('Jetpack') && Jetpack::is_staging_site()) {
+          echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context);
         }else{
-          echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html'); 
+          echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-megamenu.html');
         }
     ?>
   </div>
