@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: gravityview
 Requires at least: 3.3
-Tested up to: 4.9.6
+Tested up to: 4.7.2
 Stable tag: trunk
 Contributors: katzwebservices
 License: GPL 3 or higher
@@ -15,21 +15,6 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
-
-= 1.2 on May 23, 2018 =
-
-**Important update - please update as soon as possible.**
-
-Fixed: With Gravity Forms 2.3, when using "Created By" filters, the search mode was allowed to be "Any". For Views with the "Any" setting, searches were able to be performed without filters applied.
-
-= 1.1 on May 2, 2018 =
-
-* Fixed: Filtering by Entry ID not working in Gravity Forms 2.3
-* Fixed: Filtering by relative date `today` was showing yesterday's entries on GMT websites
-* Changed option names:
-    - From "Logged-in User" to "Currently Logged-in User"
-    - From "Logged-in User" to "Currently Logged-in User (Disabled for Administrators)"
-* Updated Dutch translations—thank you, Erik van Beek!
 
 = 1.0.20 on February 28, 2017 =
 

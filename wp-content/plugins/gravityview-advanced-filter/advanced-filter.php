@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 1.2
+Version: 1.0.20
 Author: GravityView
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
@@ -35,7 +35,7 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '1.2';
+		protected $_version = '1.0.20';
 
 		protected $_min_gravityview_version = '1.15';
 
@@ -46,8 +46,6 @@ function gv_extension_advanced_filtering_load() {
 		protected $_item_id = 30;
 
 		protected $_path = __FILE__;
-
-		protected $_text_domain = 'gravityview-advanced-filter';
 
 		function add_hooks() {
 
@@ -205,15 +203,7 @@ function gv_extension_advanced_filtering_load() {
 			return ( $formatted_date && $formatted_date->format( $expected_format ) === $datetime );
 		}
 
-		/**
-         * @since 1.1
-		 * @param $filter
-		 * @param null $date_format
-		 * @param bool $use_gmt Whether the value is stored in GMT or not (GF-generated is GMT; datepicker is not)
-		 *
-		 * @return mixed
-		 */
-		static function get_date_filter_value( $filter, $date_format = null, $use_gmt = false ) {
+		static function get_date_filter_value( $filter, $date_format = null ) {
 
 			// Not a relative date; use the perceived time (local)
 			if( self::is_valid_datetime( $filter['value'] ) ) {
@@ -228,11 +218,7 @@ function gv_extension_advanced_filtering_load() {
 				$date_format = isset( $date_format ) ? $date_format : 'Y-m-d H:i:s';
 			}
 
-			if ( $use_gmt ) {
-				$filter['value'] = gmdate( $date_format, $date );
-			} else {
-			    $filter['value'] = date( $date_format, $date );
-            }
+			$filter['value'] = gmdate( $date_format, $date );
 
 			if( ! $date ) {
 				do_action('gravityview_log_error', __METHOD__.' - Date formatting passed to Advanced Filter is invalid', $filter['value'] );
@@ -284,18 +270,11 @@ function gv_extension_advanced_filtering_load() {
 
 				/** @since 1.0.12 */
 				case 'date_created':
-					$filter = self::get_date_filter_value( $filter, null, true );
+					$filter = self::get_date_filter_value( $filter );
 					break;
-
-                /** @since 1.1 */
-                case 'entry_id':
-	                $filter['key'] = 'id';
-                    break;
 
 				case 'date':
-					$filter = self::get_date_filter_value( $filter, 'Y-m-d', false );
-					break;
-
+					$filter = self::get_date_filter_value( $filter, 'Y-m-d' );
 					break;
 
 				/**
@@ -414,8 +393,8 @@ function gv_extension_advanced_filtering_load() {
 				'value'	=>	wpautop(
 					__( 'Limit what entries are visible based on entry values. The entries are filtered before the View is displayed. When users perform a search, results will first be filtered by these settings.', 'gravityview-advanced-filter' )
 					. '<h6>'. __( 'Limit to Logged-in User Entries', 'gravityview-advanced-filter').'</h6>'
-					. sprintf( _x( 'To limit entries to those created by the current user, select "%s", "is" &amp; "%s" from the drop-down menus.', 'First placeholder is "Created By" and second is "Currently Logged-in User"', 'gravityview-advanced-filter' ), __( 'Created By', 'gravityview-advanced-filter' ), __( 'Currently Logged-in User', 'gravityview-advanced-filter' ) ) . ' '
-					. sprintf( _x( 'If you want to limit entries to those created by the current user, but allow the administrators to view all the entries, select "%s" from the drop-down menu.',  'The placeholder is "Currently Logged-in User (Disabled for Administrators)"', 'gravityview-advanced-filter' ), __( 'Currently Logged-in User (Disabled for Administrators)', 'gravityview-advanced-filter' ) )
+					. __( 'To limit entries to those created by the current user, select "Created By", "is" &amp; "Logged-in User" from the drop-down menus.', 'gravityview-advanced-filter' ) .' '
+					. __( 'If you want to limit entries to those created by the current user, but allow the administrators to view all the entries, select "Logged-in User (disabled for admins)" from the drop-down menu.', 'gravityview-advanced-filter' )
 				),
 			);
 
@@ -460,7 +439,7 @@ function gv_extension_advanced_filtering_load() {
 					$filter['field'] = $filter['key'];
 				}
 			}
-
+			
 			foreach ( $init_filter_vars as $k => &$filter ) {
 
 				// Not a filter
@@ -478,7 +457,7 @@ function gv_extension_advanced_filtering_load() {
 				 * @since 1.0.12
 				 */
 				if( 'date_created' === $filter['key'] ) {
-					$filter = self::get_date_filter_value( $filter, null, true );
+					$filter = self::get_date_filter_value( $filter );
 				}
 
 				// Only show listings created by the current user.
@@ -489,10 +468,6 @@ function gv_extension_advanced_filtering_load() {
 						'created_by_or_admin'
 					) )
 				) {
-
-				    // Force "all" when filtering by "created by"
-					$init_filter_vars['mode'] = 'all';
-
 					/**
 					 * Customise the capabilities that define an Administrator able to view entries in frontend when filtered by Created_by
 					 *
@@ -681,11 +656,11 @@ function gv_extension_advanced_filtering_load() {
 
 					$current_user_filters = array(
 						array(
-							'text' => __( 'Currently Logged-in User (Disabled for Administrators)', 'gravityview-advanced-filter' ),
+							'text' => __( 'Logged-in User (disabled for Admins)', 'gravityview-advanced-filter' ),
 							'value' => 'created_by_or_admin',
 						),
 						array(
-							'text' => __( 'Currently Logged-in User', 'gravityview-advanced-filter' ),
+							'text' => __( 'Logged-in User', 'gravityview-advanced-filter' ),
 							'value' => 'created_by',
 						),
 					);
