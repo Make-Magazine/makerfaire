@@ -3,7 +3,7 @@
 
 div.DTS {
 	// Don't have transparent rows
-	tbody tr {
+	tbody tr.even {
 		background-color: white;
 	}
 }

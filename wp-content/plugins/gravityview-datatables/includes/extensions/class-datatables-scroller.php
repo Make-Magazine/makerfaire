@@ -10,12 +10,6 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 
 	protected $settings_key = 'scroller';
 
-	function __construct() {
-		parent::__construct();
-
-		add_action( 'gravityview/template/after', array( $this, 'output_config' ) );
-	}
-
 	function defaults( $settings ) {
 
 		$settings['scroller'] = false;
@@ -35,7 +29,7 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 			'title' => __('Scroller', 'gv-datatables'),
 			'value' => __('Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.
 
-				Note: Scroller will not work well if your View has columns of varying height.', 'gv-datatables'),
+				Note: Scroller will not work well if your View has columns of varying height.', 'gv-datatables')
 		);
 
 		return $tooltips;
@@ -74,9 +68,14 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 	 */
 	function add_scripts( $dt_configs, $views, $post ) {
 
-		if( ! $add_scripts = parent::add_scripts( $dt_configs, $views, $post ) ) {
-		    return;
-        }
+		$script = false;
+
+		foreach ( $views as $key => $view_data ) {
+			if( !$this->is_datatables( $view_data ) || !$this->is_enabled( $view_data['id'] ) ) { continue; }
+			$script = true;
+		}
+
+		if( !$script ) { return; }
 
 		$script_debug = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
@@ -92,6 +91,8 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 		 * Use your own Scroller stylesheet by using the `gravityview_dt_scroller_style_src` filter
 		 */
 		wp_enqueue_style( 'gv-dt_scroller_style', apply_filters( 'gravityview_dt_scroller_style_src', $path.'css/scroller.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
+
+		$this->maybe_add_row_height_style( $dt_configs );
 	}
 
 	/**
@@ -99,36 +100,30 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 	 *
 	 * @since 2.0
 	 *
-	 * @param \GV\Template_Context $gravityview
+	 * @param array $dt_configs DataTables configuration
 	 *
 	 * @return void
 	 */
-	function output_config( $gravityview ) {
-	    global $post;
+	function maybe_add_row_height_style( $dt_configs ) {
 
-	    // Scroller not enabled
-		if ( ! $this->get_setting( $gravityview->view->ID, 'scroller', false ) ) {
-		    return;
+		$heights = array();
+
+		// Get array of row heights with keys of the View ID
+		foreach ( $dt_configs as $key => $config ) {
+			if( $height = rgars( $config, 'scroller/rowHeight') ) {
+				$view_id = rgars( $config, 'ajax/data/view_id' );
+				$heights[ $view_id ] = $height;
+			}
 		}
 
-		if ( ! class_exists( 'GV_Extension_DataTables_Data' ) ) {
-            return;
+		// If there are heights, add very targeted CSS to set the row heights
+		if ( ! empty( $heights ) ) {
+			echo '<style>';
+			foreach ( $heights as $view_id => $height ) {
+				printf( '.gv-container-%d table.gv-datatables.dataTable tbody tr { height: %spx!important; }', $view_id, str_replace( array( 'px', 'px;' ), '', $height ) );
+			}
+			echo '</style>';
 		}
-
-        $Data = new GV_Extension_DataTables_Data;
-
-		$config = $Data->get_datatables_script_configuration( $post, $gravityview->view );
-
-		$height = rgars( $config, 'scroller/rowHeight');
-
-		if ( empty( $height ) ) {
-            return;
-		}
-
-        echo '<style>';
-        printf( '.gv-container-%d table.gv-datatables.dataTable tbody { height: %spx!important; }', $gravityview->view->ID, str_replace( array( 'px', 'px;' ), '', $height ) );
-        echo '</style>';
-
 	}
 
 	/**
@@ -155,10 +150,11 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 		// Finally set the scrollY parameter
 		$dt_config['scrollY'] = $scrolly.'px';
 
-		gravityview()->log->debug( '[scroller_add_config] Inserting Scroller config. Data:', array( 'data' => $dt_config ) );
+		do_action( 'gravityview_log_debug', '[scroller_add_config] Inserting Scroller config. Data:', $dt_config );
 
 		return $dt_config;
 	}
+
 }
 
 new GV_Extension_DataTables_Scroller;

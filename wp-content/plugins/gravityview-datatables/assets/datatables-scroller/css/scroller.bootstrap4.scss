@@ -1,7 +1,9 @@
 
 @import 'scroller.dataTables.scss';
 
-div.DTS div.dataTables_scrollBody table {
+div.DTS {
 	// Don't have transparent rows
-	background-color: white;
+	tbody tr.even {
+		background-color: white;
+	}
 }

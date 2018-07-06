@@ -1,8 +1,9 @@
 {
-  "name": "gravityview-datatables",
+  "name": "GravityView DataTables Extension",
   "homepage": "https://github.com/katzwebservices/GravityView-DataTables-Extension",
   "authors": [
-    "Zack Katz <zack@gravityview.co>"
+    "Zack Katz <zack@katzwebservices.com>",
+    "Luis Godinho <luis@tinygod.pt"
   ],
   "description": "Display entries in a dynamic table powered by DataTables & GravityView.",
   "license": "GPLv2",

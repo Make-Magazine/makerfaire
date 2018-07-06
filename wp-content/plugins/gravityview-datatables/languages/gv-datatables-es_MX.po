@@ -1,4 +1,4 @@
-# Copyright (C) 2018 GravityView
+# Copyright (C) 2017 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
 # Jorge Pelaez <jorgepelaez@gmail.com>, 2014
@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2018-05-18 02:51+0000\n"
-"Last-Translator: Luis Diaz Venero <luisdiazvenero@gmail.com>\n"
+"PO-Revision-Date: 2017-01-11 00:20+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Spanish (Mexico) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/es_MX/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,11 +29,11 @@ msgstr ""
 msgid "DataTables"
 msgstr "DataTables"
 
-#: includes/class-datatables-data.php:689
+#: includes/class-datatables-data.php:720
 msgid "Loading data&hellip;"
 msgstr "Cargando datos&hellip;"
 
-#: includes/class-datatables-data.php:690
+#: includes/class-datatables-data.php:721
 msgid "No entries match your request."
 msgstr "No hay entradas que correspondan a su solicitud."
 
@@ -75,82 +75,70 @@ msgstr "Copiar"
 msgid "Print"
 msgstr "Imprimir"
 
-#: includes/extensions/class-datatables-fixedheader.php:27
+#: includes/extensions/class-datatables-fixedheader.php:21
 msgid "Keep headers or columns in place and visible while scrolling a table."
 msgstr ""
 
-#: includes/extensions/class-datatables-fixedheader.php:33
+#: includes/extensions/class-datatables-fixedheader.php:27
 msgid "Enable FixedHeader"
 msgstr "Activar Cabecera Fija"
 
-#: includes/extensions/class-datatables-fixedheader.php:45
+#: includes/extensions/class-datatables-fixedheader.php:39
 msgid "Enable FixedColumns"
 msgstr "Activar Columnas Flexibles"
 
-#: includes/extensions/class-datatables-fixedheader.php:65
+#: includes/extensions/class-datatables-fixedheader.php:59
 msgid "FixedColumns"
 msgstr ""
 
-#: includes/extensions/class-datatables-fixedheader.php:66
+#: includes/extensions/class-datatables-fixedheader.php:60
 msgid ""
 "Fix the first column in place while horizontally scrolling a table. The "
 "first column and its contents will remain visible at all times."
 msgstr ""
 
-#: includes/extensions/class-datatables-fixedheader.php:70
+#: includes/extensions/class-datatables-fixedheader.php:64
 msgid "FixedHeader"
 msgstr ""
 
-#: includes/extensions/class-datatables-fixedheader.php:71
+#: includes/extensions/class-datatables-fixedheader.php:65
 msgid ""
 "Float the column headers above the table to keep the column titles visible "
 "at all times."
 msgstr ""
 
-#: includes/extensions/class-datatables-responsive.php:41
+#: includes/extensions/class-datatables-responsive.php:35
 msgid "Responsive Tables"
 msgstr ""
 
-#: includes/extensions/class-datatables-responsive.php:42
+#: includes/extensions/class-datatables-responsive.php:36
 msgid ""
 "Optimize table layout for different screen sizes through the dynamic "
 "insertion and removal of columns from the table."
 msgstr ""
 
-#: includes/extensions/class-datatables-responsive.php:68
+#: includes/extensions/class-datatables-responsive.php:62
 msgid "Enable Responsive Tables"
 msgstr ""
 
-#: includes/extensions/class-datatables-scroller.php:35
+#: includes/extensions/class-datatables-scroller.php:29
 msgid "Scroller"
 msgstr ""
 
-#: includes/extensions/class-datatables-scroller.php:36
+#: includes/extensions/class-datatables-scroller.php:30
 msgid ""
 "Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.\n"
 "\n"
 "\t\t\t\tNote: Scroller will not work well if your View has columns of varying height."
 msgstr ""
 
-#: includes/extensions/class-datatables-scroller.php:52
+#: includes/extensions/class-datatables-scroller.php:46
 msgid "Enable Scroller"
 msgstr "Activar Desplazador"
 
-#: includes/extensions/class-datatables-scroller.php:62
+#: includes/extensions/class-datatables-scroller.php:56
 msgid "Table Height"
 msgstr "Altura de la Tabla"
-
-#: includes/extensions/class-datatables-search.php:31
-msgid "Search"
-msgstr "Buscar"
-
-#: includes/extensions/class-datatables-search.php:32
-msgid "Ineffective if a search widget is already present in this View."
-msgstr ""
-
-#: includes/extensions/class-datatables-search.php:38
-msgid "Enable Search"
-msgstr ""
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
@@ -171,31 +159,25 @@ msgstr "No tienes permiso para instalar actualizaciones del plugin"
 msgid "Error"
 msgstr "Error"
 
-#: lib/class-gravityview-extension.php:360
+#: lib/class-gravityview-extension.php:349
 msgid "Could not activate the %s Extension; GravityView is not active."
 msgstr "La extensión %s no pudo ser activada; GravityView no está activo."
 
-#: lib/class-gravityview-extension.php:364
+#: lib/class-gravityview-extension.php:353
 msgid "The %s Extension requires GravityView Version %s or newer."
 msgstr "La %s extensión requiere GravityView versión %s o más reciente."
 
-#: lib/class-gravityview-extension.php:368
+#: lib/class-gravityview-extension.php:357
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
 msgstr "La Extensión %s requiere la versión de PHP %s o más reciente. Por favor, pídale a su anfitrión que actualice el PHP de su servidor."
 
-#: lib/class-gravityview-extension.php:372
-msgid ""
-"The %s Extension is not compatible with this version of GravityView. Please "
-"update the Extension to the latest version."
-msgstr ""
-
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/datatables/"
 msgstr ""
 
-#: includes/class-datatables-data.php:623
+#: includes/class-datatables-data.php:654
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr "Todos"

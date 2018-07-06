@@ -229,6 +229,35 @@ DataTable.fileSave = _saveAs;
  */
 
 /**
+ * Get the file name for an exported file.
+ *
+ * @param {object}	config Button configuration
+ * @param {boolean} incExtension Include the file name extension
+ */
+var _filename = function ( config, incExtension )
+{
+	// Backwards compatibility
+	var filename = config.filename === '*' && config.title !== '*' && config.title !== undefined ?
+		config.title :
+		config.filename;
+
+	if ( typeof filename === 'function' ) {
+		filename = filename();
+	}
+
+	if ( filename.indexOf( '*' ) !== -1 ) {
+		filename = $.trim( filename.replace( '*', $('title').text() ) );
+	}
+
+	// Strip characters which the OS will object to
+	filename = filename.replace(/[^a-zA-Z0-9_\u00A1-\uFFFF\.,\-_ !\(\)]/g, "");
+
+	return incExtension === undefined || incExtension === true ?
+		filename+config.extension :
+		filename;
+};
+
+/**
  * Get the sheet name for Excel exports.
  *
  * @param {object}	config Button configuration
@@ -241,7 +270,25 @@ var _sheetname = function ( config )
 		sheetName = config.sheetName.replace(/[\[\]\*\/\\\?\:]/g, '');
 	}
 
-	return sheetName;
+return sheetName;
+};
+
+/**
+ * Get the title for an exported file.
+ *
+ * @param {object} config	Button configuration
+ */
+var _title = function ( config )
+{
+	var title = config.title;
+
+	if ( typeof title === 'function' ) {
+		title = title();
+	}
+
+	return title.indexOf( '*' ) !== -1 ?
+		title.replace( '*', $('title').text() || 'Exported data' ) :
+		title;
 };
 
 /**
@@ -426,7 +473,7 @@ function _addToZip( zip, obj ) {
 
 			// Safari, IE and Edge will put empty name space attributes onto
 			// various elements making them useless. This strips them out
-			str = str.replace( /<([^<>]*?) xmlns=""([^<>]*?)>/g, '<$1 $2>' );
+			str = str.replace( /<(.*?) xmlns=""(.*?)>/g, '<$1 $2>' );
 
 			zip.file( name, str );
 		}
@@ -451,13 +498,13 @@ function _createNode( doc, nodeName, opts ) {
 			$(tempNode).attr( opts.attr );
 		}
 
-		if ( opts.children ) {
+		if( opts.children ) {
 			$.each( opts.children, function ( key, value ) {
 				tempNode.appendChild( value );
-			} );
+			});
 		}
 
-		if ( opts.text !== null && opts.text !== undefined ) {
+		if( opts.text ) {
 			tempNode.appendChild( doc.createTextNode( opts.text ) );
 		}
 	}
@@ -480,10 +527,7 @@ function _excelColWidth( data, col ) {
 	}
 
 	for ( var i=0, ien=data.body.length ; i<ien ; i++ ) {
-		var point = data.body[i][col];
-		str = point !== null && point !== undefined ?
-			point.toString() :
-			'';
+		str = data.body[i][col].toString();
 
 		// If there is a newline character, workout the width of the column
 		// based on the longest line in the string
@@ -505,7 +549,7 @@ function _excelColWidth( data, col ) {
 
 		// Max width rather than having potentially massive column widths
 		if ( max > 40 ) {
-			return 52; // 40 * 1.3
+			break;
 		}
 	}
 
@@ -558,7 +602,6 @@ var excelStrings = {
 		'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
 		'<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac">'+
 			'<sheetData/>'+
-			'<mergeCells count="0"/>'+
 		'</worksheet>',
 
 	"xl/styles.xml":
@@ -602,9 +645,7 @@ var excelStrings = {
 				'<fill>'+
 					'<patternFill patternType="none" />'+
 				'</fill>'+
-				'<fill>'+ // Excel appears to use this as a dotted background regardless of values but
-					'<patternFill patternType="none" />'+ // to be valid to the schema, use a patternFill
-				'</fill>'+
+				'<fill/>'+ // Excel appears to use this as a dotted background regardless of values
 				'<fill>'+
 					'<patternFill patternType="solid">'+
 						'<fgColor rgb="FFD9D9D9" />'+
@@ -668,11 +709,11 @@ var excelStrings = {
 				'<xf numFmtId="0" fontId="2" fillId="2" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="3" fillId="2" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="4" fillId="2" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="0" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="1" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="2" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="3" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="4" fillId="3" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="0" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="1" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="2" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="3" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="4" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="0" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="1" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="2" fillId="4" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
@@ -783,12 +824,7 @@ DataTable.ext.buttons.copyHtml5 = {
 	},
 
 	action: function ( e, dt, button, config ) {
-		this.processing( true );
-
-		var that = this;
 		var exportData = _exportData( dt, config );
-		var info = dt.buttons.exportInfo( config );
-		var newline = _newLine(config);
 		var output = exportData.str;
 		var hiddenDiv = $('<div/>')
 			.css( {
@@ -799,18 +835,6 @@ DataTable.ext.buttons.copyHtml5 = {
 				top: 0,
 				left: 0
 			} );
-
-		if ( info.title ) {
-			output = info.title + newline + newline + output;
-		}
-
-		if ( info.messageTop ) {
-			output = info.messageTop + newline + newline + output;
-		}
-
-		if ( info.messageBottom ) {
-			output = output + newline + newline + info.messageBottom;
-		}
 
 		if ( config.customize ) {
 			output = config.customize( output, config );
@@ -839,8 +863,6 @@ DataTable.ext.buttons.copyHtml5 = {
 						}, exportData.rows ),
 						2000
 					);
-
-					this.processing( false );
 					return;
 				}
 			}
@@ -874,12 +896,10 @@ DataTable.ext.buttons.copyHtml5 = {
 			.on( 'keydown.buttons-copy', function (e) {
 				if ( e.keyCode === 27 ) { // esc
 					close();
-					that.processing( false );
 				}
 			} )
 			.on( 'copy.buttons-copy cut.buttons-copy', function () {
 				close();
-				that.processing( false );
 			} );
 	},
 
@@ -891,13 +911,7 @@ DataTable.ext.buttons.copyHtml5 = {
 
 	header: true,
 
-	footer: false,
-
-	title: '*',
-
-	messageTop: '*',
-
-	messageBottom: '*'
+	footer: false
 };
 
 //
@@ -917,11 +931,8 @@ DataTable.ext.buttons.csvHtml5 = {
 	},
 
 	action: function ( e, dt, button, config ) {
-		this.processing( true );
-
 		// Set the text
 		var output = _exportData( dt, config ).str;
-		var info = dt.buttons.exportInfo(config);
 		var charset = config.charset;
 
 		if ( config.customize ) {
@@ -947,11 +958,9 @@ DataTable.ext.buttons.csvHtml5 = {
 
 		_saveAs(
 			new Blob( [output], {type: 'text/csv'+charset} ),
-			info.filename,
+			_filename( config ),
 			true
 		);
-
-		this.processing( false );
 	},
 
 	filename: '*',
@@ -988,9 +997,6 @@ DataTable.ext.buttons.excelHtml5 = {
 	},
 
 	action: function ( e, dt, button, config ) {
-		this.processing( true );
-
-		var that = this;
 		var rowPos = 0;
 		var getXml = function ( type ) {
 			var str = excelStrings[ type ];
@@ -1033,12 +1039,7 @@ DataTable.ext.buttons.excelHtml5 = {
 
 				// For null, undefined of blank cell, continue so it doesn't create the _createNode
 				if ( row[i] === null || row[i] === undefined || row[i] === '' ) {
-					if ( config.createEmptyCells === true ) {
-						row[i] = '';
-					}
-					else {
-						continue;
-					}
+					continue;
 				}
 
 				row[i] = $.trim( row[i] );
@@ -1047,10 +1048,7 @@ DataTable.ext.buttons.excelHtml5 = {
 				for ( var j=0, jen=_excelSpecials.length ; j<jen ; j++ ) {
 					var special = _excelSpecials[j];
 
-					// TODO Need to provide the ability for the specials to say
-					// if they are returning a string, since at the moment it is
-					// assumed to be a number
-					if ( row[i].match && ! row[i].match(/^0\d+/) && row[i].match( special.match ) ) {
+					if ( row[i].match && row[i].match( special.match ) ) {
 						var val = row[i].replace(/[^\d\.\-]/g, '');
 
 						if ( special.fmt ) {
@@ -1126,34 +1124,9 @@ DataTable.ext.buttons.excelHtml5 = {
 			config.customizeData( data );
 		}
 
-		var mergeCells = function ( row, colspan ) {
-			var mergeCells = $('mergeCells', rels);
-
-			mergeCells[0].appendChild( _createNode( rels, 'mergeCell', {
-				attr: {
-					ref: 'A'+row+':'+createCellPos(colspan)+row
-				}
-			} ) );
-			mergeCells.attr( 'count', parseFloat(mergeCells.attr( 'count' ))+1 );
-			$('row:eq('+(row-1)+') c', rels).attr( 's', '51' ); // centre
-		};
-
-		// Title and top messages
-		var exportInfo = dt.buttons.exportInfo( config );
-		if ( exportInfo.title ) {
-			addRow( [exportInfo.title], rowPos );
-			mergeCells( rowPos, data.header.length-1 );
-		}
-
-		if ( exportInfo.messageTop ) {
-			addRow( [exportInfo.messageTop], rowPos );
-			mergeCells( rowPos, data.header.length-1 );
-		}
-
-		// Table itself
 		if ( config.header ) {
 			addRow( data.header, rowPos );
-			$('row:last c', rels).attr( 's', '2' ); // bold
+			$('row c', rels).attr( 's', '2' ); // bold
 		}
 
 		for ( var n=0, ie=data.body.length ; n<ie ; n++ ) {
@@ -1163,12 +1136,6 @@ DataTable.ext.buttons.excelHtml5 = {
 		if ( config.footer && data.footer ) {
 			addRow( data.footer, rowPos);
 			$('row:last c', rels).attr( 's', '2' ); // bold
-		}
-
-		// Below the table
-		if ( exportInfo.messageBottom ) {
-			addRow( [exportInfo.messageBottom], rowPos );
-			mergeCells( rowPos, data.header.length-1 );
 		}
 
 		// Set column widths
@@ -1191,11 +1158,6 @@ DataTable.ext.buttons.excelHtml5 = {
 			config.customize( xlsx );
 		}
 
-		// Excel doesn't like an empty mergeCells tag
-		if ( $('mergeCells', rels).children().length === 0 ) {
-			$('mergeCells', rels).remove();
-		}
-
 		var jszip = _jsZip();
 		var zip = new jszip();
 		var zipConfig = {
@@ -1210,17 +1172,15 @@ DataTable.ext.buttons.excelHtml5 = {
 			zip
 				.generateAsync( zipConfig )
 				.then( function ( blob ) {
-					_saveAs( blob, exportInfo.filename );
-					that.processing( false );
+					_saveAs( blob, _filename( config ) );
 				} );
 		}
 		else {
 			// JSZip 2.5
 			_saveAs(
 				zip.generate( zipConfig ),
-				exportInfo.filename
+				_filename( config )
 			);
-			this.processing( false );
 		}
 	},
 
@@ -1232,15 +1192,7 @@ DataTable.ext.buttons.excelHtml5 = {
 
 	header: true,
 
-	footer: false,
-
-	title: '*',
-
-	messageTop: '*',
-
-	messageBottom: '*',
-
-	createEmptyCells: false
+	footer: false
 };
 
 //
@@ -1258,11 +1210,8 @@ DataTable.ext.buttons.pdfHtml5 = {
 	},
 
 	action: function ( e, dt, button, config ) {
-		this.processing( true );
-
-		var that = this;
+		var newLine = _newLine( config );
 		var data = dt.buttons.exportData( config.exportOptions );
-		var info = dt.buttons.exportInfo( config );
 		var rows = [];
 
 		if ( config.header ) {
@@ -1333,25 +1282,17 @@ DataTable.ext.buttons.pdfHtml5 = {
 			}
 		};
 
-		if ( info.messageTop ) {
-			doc.content.unshift( {
-				text: info.messageTop,
-				style: 'message',
-				margin: [ 0, 0, 0, 12 ]
-			} );
+		if ( config.message ) {
+      doc.content.unshift( {
+        text: typeof config.message == 'function' ? config.message(dt, button, config) : config.message,
+        style: 'message',
+        margin: [ 0, 0, 0, 12 ]
+      } );
 		}
 
-		if ( info.messageBottom ) {
-			doc.content.push( {
-				text: info.messageBottom,
-				style: 'message',
-				margin: [ 0, 0, 0, 12 ]
-			} );
-		}
-
-		if ( info.title ) {
+		if ( config.title ) {
 			doc.content.unshift( {
-				text: info.title,
+				text: _title( config, false ),
 				style: 'title',
 				margin: [ 0, 0, 0, 12 ]
 			} );
@@ -1367,10 +1308,12 @@ DataTable.ext.buttons.pdfHtml5 = {
 			pdf.open();
 		}
 		else {
-			pdf.download( info.filename );
-		}
+			pdf.getBuffer( function (buffer) {
+				var blob = new Blob( [buffer], {type:'application/pdf'} );
 
-		this.processing( false );
+				_saveAs( blob, _filename( config ) );
+			} );
+		}
 	},
 
 	title: '*',
@@ -1389,9 +1332,7 @@ DataTable.ext.buttons.pdfHtml5 = {
 
 	footer: false,
 
-	messageTop: '*',
-
-	messageBottom: '*',
+	message: null,
 
 	customize: null,
 

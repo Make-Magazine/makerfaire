@@ -9,13 +9,11 @@ a.dt-button {
 	display: inline-block;
 	box-sizing: border-box;
 	margin-right: 0.333em;
-	margin-bottom: 0.333em;
 	padding: 0.5em 1em;
 	border: 1px solid #999;
 	border-radius: 2px;
 	cursor: pointer;
 	font-size: 0.88em;
-	line-height: 1.6em;
 	color: black;
 	//box-shadow: 1px 1px 3px #ccc;
 	white-space: nowrap;
@@ -101,7 +99,6 @@ div.dt-button-collection {
 		position: relative;
 		left: 0;
 		right: 0;
-		width: 100%;
 
 		display: block;
 		float: none;
@@ -137,8 +134,4 @@ div.dt-button-background {
 	}
 }
 
-button.dt-button.processing,
-div.dt-button.processing,
-a.dt-button.processing {
-	@include dtb-processing();
-}
+

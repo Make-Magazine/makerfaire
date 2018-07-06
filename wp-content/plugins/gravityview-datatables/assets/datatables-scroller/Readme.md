@@ -29,8 +29,7 @@ Scroller is initialised using the `scroller` option in the DataTables constructo
 ```js
 $(document).ready( function () {
 	$('#example').DataTable( {
-		scroller: true,
-		scrollY: 600
+		scroller: true
 	} );
 } );
 ```

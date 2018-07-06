@@ -1,16 +1,16 @@
-/*! FixedHeader 3.1.3
- * ©2009-2017 SpryMedia Ltd - datatables.net/license
+/*! FixedHeader 3.1.2
+ * ©2009-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     FixedHeader
  * @description Fix a table's header or footer, so it is always visible while
  *              scrolling
- * @version     3.1.3
+ * @version     3.1.2
  * @file        dataTables.fixedHeader.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2009-2017 SpryMedia Ltd.
+ * @copyright   Copyright 2009-2016 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -285,11 +285,7 @@ $.extend( FixedHeader.prototype, {
 				.appendTo( 'body' );
 
 			// Insert a fake thead/tfoot into the DataTable to stop it jumping around
-			itemDom.placeholder = itemElement.clone( false )
-			itemDom.placeholder
-				.find( '*[id]' )
-				.removeAttr( 'id' );
-
+			itemDom.placeholder = itemElement.clone( false );
 			itemDom.host.prepend( itemDom.placeholder );
 
 			// Clone widths
@@ -575,7 +571,7 @@ $.extend( FixedHeader.prototype, {
  * @type {String}
  * @static
  */
-FixedHeader.version = "3.1.3";
+FixedHeader.version = "3.1.2";
 
 /**
  * Defaults
@@ -635,9 +631,8 @@ DataTable.Api.register( 'fixedHeader.enable()', function ( flag ) {
 	return this.iterator( 'table', function ( ctx ) {
 		var fh = ctx._fixedHeader;
 
-		flag = ( flag !== undefined ? flag : true );
-		if ( fh && flag !== fh.s.enable ) {
-			fh.enable( flag );
+		if ( fh ) {
+			fh.enable( flag !== undefined ? flag : true );
 		}
 	} );
 } );
@@ -646,7 +641,7 @@ DataTable.Api.register( 'fixedHeader.disable()', function ( ) {
 	return this.iterator( 'table', function ( ctx ) {
 		var fh = ctx._fixedHeader;
 
-		if ( fh && fh.s.enable ) {
+		if ( fh ) {
 			fh.enable( false );
 		}
 	} );

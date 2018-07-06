@@ -76,8 +76,7 @@ module.exports = function(grunt) {
 
 		sass: {
 			options: {
-				style: 'compressed',
-				sourcemap: 'none'
+				outputStyle: 'compressed'
 			},
 			dist: {
 				files: [{
@@ -193,16 +192,14 @@ module.exports = function(grunt) {
 
 			// Create a ZIP file
 			zip: {
-				cmd: function( version = '' ) {
-
-					var filename = ( version === '' ) ? 'gravityview-datatables' : 'gravityview-datatables-' + version;
+				cmd: function( filename = 'gravityview-datatables' ) {
 
 					// First, create the full archive
 					var command = 'git-archive-all gravityview-datatables.zip &&';
 
 					command += 'unzip -o gravityview-datatables.zip &&';
 
-					command += 'zip -r ../' + filename + '.zip "gravityview-datatables" &&';
+					command += 'zip -r ../' + filename + '.zip gravityview-datatables &&';
 
 					command += 'rm -rf gravityview-datatables/ && rm -f gravityview-datatables.zip';
 
@@ -284,7 +281,7 @@ module.exports = function(grunt) {
 	});
 
 	// First, bower updates all packages, installs datatables-src (needed for SASS compilation), then bower_rm_src removes the src, since it's not needed.
-	grunt.registerTask( 'default', [ 'exec:bower', 'sass', 'jshint', 'uglify', 'copy', 'wp_readme_to_markdown', 'translate', 'watch' ] );
+	grunt.registerTask( 'default', [ 'exec:bower', 'sass', 'jshint', 'uglify', 'exec:transifex','potomo','copy','watch' ] );
 
 	// Translation stuff
 	grunt.registerTask( 'translate', [ 'exec:transifex', 'potomo', 'addtextdomain', 'makepot' ] );
