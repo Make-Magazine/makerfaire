@@ -24,6 +24,8 @@ window.addEventListener('load', function() {
     var profileView    = document.getElementById('profile-view');
   }
 
+  //remove old storage item as it is causing issues if set
+  localStorage.removeItem('wp_loggedin');
 
   //default profile view to hidden
   loginBtn.style.display    = 'none';

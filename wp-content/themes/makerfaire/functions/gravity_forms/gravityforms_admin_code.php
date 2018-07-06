@@ -184,7 +184,6 @@ function entry_field_standout( $value, $field, $lead, $form ) {
 
 add_filter( 'gform_entries_column_filter', 'change_column_data', 10, 5 );
 function change_column_data( $value, $form_id, $field_id, $entry, $query_string ) {
-  //only change the data when form id is 1 and field id is 2
   if ( $form_id != 9) {
     return $value;
   }
