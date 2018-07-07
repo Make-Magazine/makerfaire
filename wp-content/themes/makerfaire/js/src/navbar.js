@@ -2,7 +2,6 @@
 jQuery(function() {
   jQuery('.desktop-nav .sub-menu').wrapInner('<div class=\'container\'></div>');
 });
-
 (function($) {
    // keep these from happening before any oangular or login scripts
    $(window).bind("load", function() {
