@@ -191,9 +191,3 @@ window.addEventListener('load', function() {
   );
 
 });
-
-//Gets the cookie value
-function getcookie(name){
-    value = document.cookie.match('(?:^|;)\\s*'+name+'=([^;]*)');
-    return value ? unescape(value[1]) : false;
-};
