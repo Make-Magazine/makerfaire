@@ -151,7 +151,7 @@ window.addEventListener('load', function() {
       }).fail(function() {
         alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
         if ( jQuery( '#authenticated-redirect' ).length ) { 
-            jQuery( "redirect-message" ).text("I'm sorry. We had an issue logging you into our system. Please try the login again.");
+            jQuery( ".redirect-message" ).text("I'm sorry. We had an issue logging you into our system. Please try the login again.");
             location.href=templateUrl;
         }
       });
