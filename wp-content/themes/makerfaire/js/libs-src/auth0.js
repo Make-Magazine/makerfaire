@@ -140,9 +140,11 @@ window.addEventListener('load', function() {
             //redirect
           if(localStorage.getItem('redirect_to')){
             var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
+            console.log("Your problem is that this url doesn't exist yet: " + redirect_url);
             localStorage.removeItem('redirect_to'); //unset after retrieved
             location.href=redirect_url;
           }else{  //redirect to home page
+            console.log("Or maybe this is happening");
             location.href=templateUrl;
           }
         }
