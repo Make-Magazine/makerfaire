@@ -140,7 +140,6 @@ window.addEventListener('load', function() {
             //redirect
           if(localStorage.getItem('redirect_to')){
             var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
-            alert(redirect_url);
             localStorage.removeItem('redirect_to'); //unset after retrieved
             location.href=redirect_url;
           }else{  //redirect to home page
