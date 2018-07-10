@@ -2,7 +2,7 @@
  * This JS is used on the WP login page to force the user to the auth0 login page
  */
 function GetURLParameter(sParam) {
-    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+    var sPageURL = window.location.search.substring(1),
         sURLVariables = sPageURL.split('&'),
         sParameterName,
         i;
@@ -33,10 +33,9 @@ var webAuth = new auth0.WebAuth({
   leeway: 60
 });
 
-var redirect_to = GetURLParameter('redirect_to');
+var redirect_to = decodeURIComponent(GetURLParameter('redirect_to'));
 if(redirect_to ==='') redirect_to = baseurl;
 localStorage.setItem('redirect_to', redirect_to);
 console.log(redirect_to);
 
 webAuth.authorize(); //login to auth0
-
