@@ -64,7 +64,9 @@ window.addEventListener('load', function() {
             localStorage.removeItem( 'redirect_to' ); //unset after retrieved
             location.href = redirect_url;
           }else{ 
-            setTimeout(loginRedirect, 250);
+            // this is what's sometimes when the page redirects to the homepage instead of to the url i needs
+            alert(localStorage.getItem( 'redirect_to' ) + "redirect_to is not being found in time");
+            location.href = templateUrl;
           }
       }
   }
