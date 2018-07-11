@@ -65,8 +65,9 @@ window.addEventListener('load', function() {
             location.href = redirect_url;
           }else{ 
             // this is what's sometimes when the page redirects to the homepage instead of to the url i needs
-            alert(localStorage.getItem( 'redirect_to' ) + "redirect_to is not being found in time");
-            location.href = templateUrl;
+            alert(localStorage.getItem( 'redirect_to' ) + " redirect_to is not being found in time");
+            setTimeout(function(){ loginRedirect(); }, 250);
+            //location.href = templateUrl;
           }
       }
   }
@@ -154,7 +155,7 @@ window.addEventListener('load', function() {
           
         loginRedirect();
 
-      }).fail(function() { // this actually isn't failing, there's something else happening
+      }).fail(function() {
         alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
         if ( jQuery( '#authenticated-redirect' ).length ) { 
             jQuery( ".redirect-message" ).text("I'm sorry. We had an issue logging you into our system. Please try the login again.");

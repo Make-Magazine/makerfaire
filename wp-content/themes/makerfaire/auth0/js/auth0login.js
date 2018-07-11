@@ -42,7 +42,7 @@ function setRedirect() {
         alert("not set yet: " + redirect_to);
         redirect_to = decodeURIComponent(GetURLParameter('redirect_to'));
         if(redirect_to === '') redirect_to = baseurl;
-        setTimeout(setRedirect, 250);
+        setTimeout(function(){ setRedirect(); }, 250);
     }
 }
 setRedirect();
