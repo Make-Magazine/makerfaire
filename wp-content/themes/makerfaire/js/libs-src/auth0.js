@@ -64,9 +64,7 @@ window.addEventListener('load', function() {
             localStorage.removeItem( 'redirect_to' ); //unset after retrieved
             location.href = redirect_url;
           }else{ 
-            // this is what's sometimes when the page redirects to the homepage instead of to the url i needs
-            console.log(localStorage.getItem( 'redirect_to' ) + " redirect_to is not being found in time");
-            location.href = templateUrl;
+            setTimeout(loginRedirect, 250);
           }
       }
   }
@@ -105,8 +103,7 @@ window.addEventListener('load', function() {
         //wait .5 second for auth0 data to be returned from getProfile
         setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
       } else {
-          console.log('is it this one?');
-          setTimeout(function(){ loginRedirect(); }, 1000);
+          loginRedirect();
       }
     } else {
       loginBtn.style.display = 'flex';
@@ -152,10 +149,10 @@ window.addEventListener('load', function() {
       };
 
       jQuery.post(ajax_object.ajax_url, data, function(response) {
-        console.log("or this one?");
-        setTimeout(function(){ loginRedirect(); }, 1000);
+          
+        loginRedirect();
 
-      }).fail(function() {
+      }).fail(function() { // this actually isn't failing, there's something else happening
         alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
         if ( jQuery( '#authenticated-redirect' ).length ) { 
             jQuery( ".redirect-message" ).text("I'm sorry. We had an issue logging you into our system. Please try the login again.");
