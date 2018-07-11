@@ -60,14 +60,12 @@ window.addEventListener('load', function() {
   function loginRedirect() {
       if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
           if( localStorage.getItem( 'redirect_to' ) ){
+            jQuery('.redirect-message').text("You will be redirected to the page you were trying to access shortly.");
             var redirect_url = localStorage.getItem( 'redirect_to' ); //retrieve redirect URL
-            //localStorage.removeItem( 'redirect_to' ); //unset after retrieved
+            localStorage.removeItem( 'redirect_to' ); //unset after retrieved
             location.href = redirect_url;
           }else{ 
             // this is what's sometimes when the page redirects to the homepage instead of to the url
-            console.log(localStorage.getItem( 'redirect_to' ) + " redirect_to is not being found in time");
-            alert("We're having problems getting you to the right place, please try accessing that page again");
-            jQuery('.redirect-message').text("We're having problems getting you to the right place, please try accessing that page again");
             location.href = templateUrl;
           }
       }
