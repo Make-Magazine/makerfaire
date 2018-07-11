@@ -236,7 +236,6 @@ function getMTMentries($formIDs) {
       $data['entity'][] = array(
           'id'                => $entry['id'],
           'name'              => $entry['151'],
-          'img_url'           => $projPhoto,
           'large_img_url'     => $fitPhoto,
           'featured_img'      => $featImg,
           'category_id_refs'  => array_unique($leadCategory),

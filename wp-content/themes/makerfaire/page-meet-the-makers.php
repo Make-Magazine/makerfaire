@@ -76,7 +76,7 @@ if($noMakerText =='') $noMakerText = 'No makers found';
       <div ng-show="layout == 'grid'" class="mtm-results-cont">
         <div ng-repeat="maker in makers | filter : makerSearch | byCategory:category">
           <a href="/maker/entry/{{maker.id}}">
-            <article class="mtm-maker" style="background-image: url('{{ maker.img_url }}')">
+            <article class="mtm-maker" style="background-image: url('{{ maker.large_img_url }}')">
               <h3>{{ maker.name }}</h3>
             </article>
           </a>
@@ -94,7 +94,7 @@ if($noMakerText =='') $noMakerText = 'No makers found';
         </div>
         <div ng-repeat="maker in makers | filter : makerSearch | byCategory:category | orderBy: 'name' | startsWithLetter:letter">
           <a href="/maker/entry/{{maker.id}}">
-            <article class="mtm-maker" style="background-image: url('{{ maker.img_url }}')">
+            <article class="mtm-maker" style="background-image: url('{{ maker.large_img_url }}')">
               <h3>{{ maker.name }}</h3>
               <h6 style="font-weight: lighter;padding-left: 21px;">{{maker.makerList}}</h6>
             </article>
