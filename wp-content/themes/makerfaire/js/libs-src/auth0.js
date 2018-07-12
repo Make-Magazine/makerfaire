@@ -114,7 +114,9 @@ window.addEventListener('load', function() {
       if ( jQuery( '.logged-in' ).length ) { // is the user logged in?
         //logout of wordpress if not already
         WPlogout();//login to wordpress
-      } 
+      } else {
+          loginRedirect();
+      }
     }
   }
 
