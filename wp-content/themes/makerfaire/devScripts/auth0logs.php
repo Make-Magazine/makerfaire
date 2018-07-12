@@ -24,8 +24,45 @@ if(isset($authRes->access_token)){
   //get auth0 logs
   $url = "https://makermedia.auth0.com/api/v2/logs";
   $post_data = '';
-  $authRes = curlCall($url, $post_data, $token);
+  $authRes  = curlCall($url, $post_data, $token);
   echo 'Log request result<br/>';
+
+  $outCSV   = array();
+  $keyArr   = array('date');
+
+  $output   = fopen('files/auth0log-'.date('m-d-Y_hia').'.csv', 'w');
+
+  foreach($authRes as $k=>$authLog){
+    $result = [];
+    $authLog = json_decode(json_encode($authLog), true);  //translate multi dimensional onject to array
+
+    //flatten multi dimensional array
+    array_walk_recursive($authLog, function($item, $key) use (&$result) {
+      $result[$key] = $item;
+    });
+    $arr = array_keys($result);
+    foreach($arr as $keys){
+      if(!in_array ($keys,$keyArr)){
+        $keyArr[]=$keys;
+      }
+    }
+    $outCSV[] = $result;
+  }
+  //var_dump($keyArr);
+  fputcsv($output, $keyArr);  //write keydata to CSV
+
+  foreach($outCSV as $csv){
+    foreach($keyArr as $key){
+      if(isset($csv[$key])){
+        $outData[$key] = $csv[$key];
+      }else{
+        $outData[$key] = '';
+      }
+    }
+
+    fputcsv($output, $outData);  //write to CSV
+  }
+  fclose($output);
   /*
    *
   ["date"]=>
@@ -42,32 +79,23 @@ if(isset($authRes->access_token)){
     string(13) "73.41.175.108"
     ["user_agent"]=>
     string(35) "Chrome 67.0.3396 / Mac OS X 10.13.5"
-    ["details"]=>
-    object(stdClass)#2544 (4) {
-      ["body"]=>
-      object(stdClass)#2543 (0) {
-      }
-      ["qs"]=>
-      object(stdClass)#2545 (10) {
-        ["client_id"]=>
-        string(32) "0sR3MQz8ihaSnLstc1dABgENHS5PQR8d"
-        ["response_type"]=>
-        string(14) "token id_token"
-        ["redirect_uri"]=>
+    details->qs->client_id=>"0sR3MQz8ihaSnLstc1dABgENHS5PQR8d"
+    details->qs->response_type=>"token id_token"
+    details->qs->redirect_uri"]=>
         string(35) "https://makezine.com/authenticated/"
-        ["scope"]=>
+    details->qs->scope"]=>
         string(14) "openid profile"
-        ["audience"]=>
+    details->qs->audience"]=>
         string(37) "https://makermedia.auth0.com/userinfo"
-        ["state"]=>
+    details->qs->state"]=>
         string(32) "d~wjzbFqiqCA8Qn2eLIqaTV18dDfCJ-e"
-        ["nonce"]=>
+    details->qs->nonce"]=>
         string(32) "DtnFaHJ14mxs95ohGcAfBnVAAzN1YAFT"
-        ["response_mode"]=>
+    details->qs->response_mode"]=>
         string(11) "web_message"
-        ["prompt"]=>
+    details->qs->prompt"]=>
         string(4) "none"
-        ["auth0Client"]=>
+    details->qs->auth0Client"]=>
         string(52) "eyJuYW1lIjoiYXV0aDAuanMiLCJ2ZXJzaW9uIjoiOS4zLjEifQ=="
       }
       ["connection"]=>
