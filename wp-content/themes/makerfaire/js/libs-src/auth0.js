@@ -154,7 +154,7 @@ jQuery(document).ready(function() {
 
       jQuery.post(ajax_object.ajax_url, data, function(response) {
           
-        loginRedirect();
+      loginRedirect();
 
       }).fail(function() {
         alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
@@ -165,6 +165,7 @@ jQuery(document).ready(function() {
       });
     }else{
       console.log('undefined');
+      loginRedirect();
     }
   }
 
