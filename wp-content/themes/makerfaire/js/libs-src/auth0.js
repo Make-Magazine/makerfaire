@@ -55,7 +55,21 @@ window.addEventListener('load', function() {
 
     //hide logged in button and logout of wp and auth0
     displayButtons();
-  });;
+  });
+    
+  function loginRedirect() {
+      if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
+          if( localStorage.getItem( 'redirect_to' ) ){
+            jQuery('.redirect-message').text("You will be redirected to the page you were trying to access shortly.");
+            var redirect_url = localStorage.getItem( 'redirect_to' ); //retrieve redirect URL
+            localStorage.removeItem( 'redirect_to' ); //unset after retrieved
+            location.href = redirect_url;
+          }else{ 
+            // this is what's sometimes when the page redirects to the homepage instead of to the url
+            location.href = templateUrl;
+          }
+      }
+  }
 
   function setSession(authResult) {
     // Set the time that the access token will expire at
@@ -90,6 +104,8 @@ window.addEventListener('load', function() {
       if ( !jQuery( '.logged-in' ).length ) { // is the user logged in?
         //wait .5 second for auth0 data to be returned from getProfile
         setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
+      } else {
+          loginRedirect();
       }
     } else {
       loginBtn.style.display = 'flex';
@@ -98,6 +114,8 @@ window.addEventListener('load', function() {
       if ( jQuery( '.logged-in' ).length ) { // is the user logged in?
         //logout of wordpress if not already
         WPlogout();//login to wordpress
+      } else {
+          loginRedirect();
       }
     }
   }
@@ -135,17 +153,8 @@ window.addEventListener('load', function() {
       };
 
       jQuery.post(ajax_object.ajax_url, data, function(response) {
-        //set wplogged in localStorage item
-        if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
-            //redirect
-          if(localStorage.getItem('redirect_to')){
-            var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
-            localStorage.removeItem('redirect_to'); //unset after retrieved
-            location.href=redirect_url;
-          }else{  //redirect to home page
-            location.href=templateUrl;
-          }
-        }
+          
+        loginRedirect();
 
       }).fail(function() {
         alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
