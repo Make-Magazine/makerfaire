@@ -31,3 +31,5 @@
     </div>
 </div>
 <?php get_footer();
+sleep(5);
+header("Location: https://{$_SERVER['SERVER_NAME']}/");
