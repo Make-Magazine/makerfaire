@@ -164,8 +164,10 @@ jQuery(document).ready(function() {
         }
       });
     }else{
-      console.log('undefined');
-      alert("Login Error #8. We've run into issues logging you in. Please try again and we'll try harder.");
+      if ( jQuery( '#authenticated-redirect' ).length ) {
+        console.log('undefined');
+        alert("Login Error #8. We've run into issues logging you in. Please try again and we'll try harder.");
+      }
     }
   }
 
