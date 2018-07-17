@@ -60,7 +60,7 @@ jQuery(document).ready(function() {
   function loginRedirect() {
       if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
           if( localStorage.getItem( 'redirect_to' ) ){
-            jQuery('.redirect-message').text("You will be redirected to the page you were trying to access shortly.");
+            jQuery( '.redirect-message' ).text( "You will be redirected to the page you were trying to access shortly." );
             var redirect_url = localStorage.getItem( 'redirect_to' ); //retrieve redirect URL
             localStorage.removeItem( 'redirect_to' ); //unset after retrieved
             location.href = redirect_url;
@@ -165,7 +165,7 @@ jQuery(document).ready(function() {
       });
     }else{
       console.log('undefined');
-      loginRedirect();
+      alert("Login Error #8. We've run into issues logging you in. Please try again and we'll try harder.");
     }
   }
 
