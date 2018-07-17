@@ -1,4 +1,4 @@
-jQuery(document).ready(function() {
+window.addEventListener('load', function() {
   // buttons and event listeners
   /*    If the login button, logout button or profile view elements do not exist
    *    (such as on the admin and login pages) default to a 'fake' element
