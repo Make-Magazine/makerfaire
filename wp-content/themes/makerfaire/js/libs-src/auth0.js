@@ -60,7 +60,7 @@ window.addEventListener('load', function() {
   function loginRedirect() {
       if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
           if( localStorage.getItem( 'redirect_to' ) ){
-            jQuery('.redirect-message').text("You will be redirected to the page you were trying to access shortly.");
+            jQuery( '.redirect-message' ).text( "You will be redirected to the page you were trying to access shortly." );
             var redirect_url = localStorage.getItem( 'redirect_to' ); //retrieve redirect URL
             localStorage.removeItem( 'redirect_to' ); //unset after retrieved
             location.href = redirect_url;
@@ -154,7 +154,7 @@ window.addEventListener('load', function() {
 
       jQuery.post(ajax_object.ajax_url, data, function(response) {
           
-        loginRedirect();
+      loginRedirect();
 
       }).fail(function() {
         alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
@@ -164,7 +164,10 @@ window.addEventListener('load', function() {
         }
       });
     }else{
-      console.log('undefined');
+      if ( jQuery( '#authenticated-redirect' ).length ) {
+        console.log('undefined');
+        alert("Login Error #8. We've run into issues logging you in. Please refresh the page and we'll try harder.");
+      }
     }
   }
 

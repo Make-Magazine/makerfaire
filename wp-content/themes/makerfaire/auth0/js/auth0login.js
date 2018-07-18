@@ -36,6 +36,5 @@ var webAuth = new auth0.WebAuth({
 var redirect_to = decodeURIComponent(GetURLParameter('redirect_to'));
 if(redirect_to ==='') redirect_to = baseurl;
 localStorage.setItem('redirect_to', redirect_to);
-console.log(redirect_to);
 
 webAuth.authorize(); //login to auth0
