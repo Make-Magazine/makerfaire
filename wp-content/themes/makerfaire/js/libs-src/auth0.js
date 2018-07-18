@@ -166,7 +166,7 @@ window.addEventListener('load', function() {
     }else{
       if ( jQuery( '#authenticated-redirect' ).length ) {
         console.log('undefined');
-        alert("Login Error #8. We've run into issues logging you in. Please try again and we'll try harder.");
+        alert("Login Error #8. We've run into issues logging you in. Please refresh the page and we'll try harder.");
       }
     }
   }
