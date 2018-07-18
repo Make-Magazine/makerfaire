@@ -167,7 +167,7 @@ window.addEventListener('load', function() {
        if ( jQuery( '#authenticated-redirect' ).length ) {
           console.log('undefined');
           alert("We're having trouble logging you in and ran out of time. Refresh the page and we'll try harder.");
-		    jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Reload page</a>'");
+		    jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Reload page</a>");
       }
     }
   }
