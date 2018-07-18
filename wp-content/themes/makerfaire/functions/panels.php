@@ -479,22 +479,22 @@ function getCTApanel() {
    $cta_title = get_sub_field('text');
    $cta_url = get_sub_field('url');
    $background_color = get_sub_field('background_color');
-
+   $return .= '<a href="' . $cta_url . '">';
    $return .= '<section class="cta-panel' . ($background_color == "Red" ? ' red-ribbon' : '') . '">';
-   $return .= ' <div class="arrow-left"></div>'
-      . ' <div class="arrow-right"></div>';
+   $return .= '   <div class="arrow-left"></div>'
+           .  '   <div class="arrow-right"></div>';
    $return .= '   <div class="container">
-                  <div class="row text-center">
-                    <div class="col-xs-12">
-                      <h3>
-                        <i class="fa fa-star"></i>
-                        <a href="' . $cta_url . '">' . $cta_title . '</a>
-                        <i class="fa fa-star"></i>
-                      </h3>
-                    </div>
+                     <div class="row text-center">
+                        <div class="col-xs-12">
+                           <h3>
+                              <i class="fa fa-star"></i>
+                              <span>' . $cta_title . '</span>
+                              <i class="fa fa-star"></i>
+                           </h3>
+                        </div>
+                     </div>
                   </div>
-                </div>
-              </section>';
+               </section></a>';
    return $return;
 }
 
