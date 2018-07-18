@@ -18,7 +18,7 @@ function dispLayout($row_layout) {
         $return = getFeatMkPanel($row_layout);
       }
       break;
-    case '3_column_photo_and_text_panel': // 3 COLUMN LAYOUT
+    case '3_column': // 3 COLUMN LAYOUT
       $activeinactive = get_sub_field('activeinactive');
       if( $activeinactive == 'Active') {
         $return = get3ColLayout();
@@ -325,31 +325,65 @@ function getFeatEvPanel($row_layout) {
 /******************************************************/
 function get3ColLayout() {
   $return = '';
-  $column_1 = get_sub_field('column_1');
-  $column_2 = get_sub_field('column_2');
-  $column_3 = get_sub_field('column_3');
-  $cta_button = get_sub_field('cta_button');
-  $cta_button_url = get_sub_field('cta_button_url');
+
   $return .=  '<section class="content-panel">
                 <div class="flag-banner"></div>
                 <div class="container">';
 
-  if(get_sub_field('title')) {
+  $panelTitle = get_sub_field('panel_title');
+  if($panelTitle) {
     $return .=  ' <div class="row">
                     <div class="col-xs-12 text-center padbottom">
-                      <h2 class="yellow-underline">' . get_sub_field('title') . '</h2>
+                      <h2 class="yellow-underline">' . $panelTitle . '</h2>
                     </div>
                   </div>';
   }
 
-  $return .=  '   <div class="row">
-                    <div class="col-sm-4">' . $column_1 . '</div>
-                    <div class="col-sm-4">' . $column_2 . '</div>
-                    <div class="col-sm-4">' . $column_3 . '</div>
-                  </div>';
+  $return .=  '   <div class="row">'; //start row
+
+  //get requested data for each column
+  $columns    = get_sub_field('column');
+  foreach($columns as $column){
+    $return .=  '   <div class="col-sm-4">'; //start column
+    $data = $column['data'];
+    $columnInfo = '';
+    switch ($column['column_type']){
+      case 'image':     // Image with optional link
+        $image    = '<img class="img-responsive" src="'.$data['column_image_field'].'" />';
+        $cta_link = $data['image_cta'];
+        $ctaText  = $data['image_cta_text'];
+        if(!empty($cta_link)){
+          $columnInfo  = '<a href="'.$cta_link.'">'.$image.'</a>';
+          $columnInfo .= (!empty($ctaText) ? '<br/><a href="'.$cta_link.'">'.$ctaText.'</a>':'');
+        }else{
+          $columnInfo = $image;
+        }
+        break;
+      case 'paragraph': // Paragraph text
+        $columnInfo = $data['column_paragraph'];
+        break;
+      case 'list':      // List of items with optional links
+        if(!empty($data['list_title'])){
+          $columnInfo .= '<h4>'.$data['list_title'].'</h4>';
+        }
+        $columnInfo .= '<ul>';
+        $alignment  = $data['column_list_alignment'];
+        foreach($data['column_list_fields'] as $list_fields){
+          $list_text = $list_fields['list_text'];
+          $list_link = $list_fields['list_link'];
+          $columnInfo .= '<li>'.(!empty($list_link)?'<a href="'.$list_link.'">'.$list_text.'</a>':$list_text).'</li>';
+        }
+        $columnInfo .= '</ul>';
+        break;
+    }
+    $return .=  $columnInfo;
+    $return .=  '</div>'; //end column
+  }
+
+  $return .=  '</div>'; //end row
 
   $return .=  ' </div>
-              </section>';
+              </section>'; // end div.container and section.content-panel
   return $return;
 }
 
