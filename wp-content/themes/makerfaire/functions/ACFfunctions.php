@@ -280,7 +280,7 @@ if (function_exists('acf_add_local_field_group')) {
                            ),
                            array(
                               'default_value' => '',
-                              'maxlength' => 100,
+                              'maxlength' => 300,
                               'placeholder' => '',
                               'prepend' => '',
                               'append' => '',
@@ -288,7 +288,7 @@ if (function_exists('acf_add_local_field_group')) {
                               'label' => 'Maker Short Description',
                               'name' => 'maker_short_description',
                               'type' => 'text',
-                              'instructions' => 'Optional field. 100 character limit.',
+                              'instructions' => 'Optional field. 300 character limit.',
                               'required' => 0,
                               'conditional_logic' => 0,
                               'wrapper' => array(

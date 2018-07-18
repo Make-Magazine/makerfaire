@@ -357,7 +357,7 @@ function get3ColLayout() {
             $ctaText = $data['image_cta_text'];
             if (!empty($cta_link)) {
                $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
-               $columnInfo .= (!empty($ctaText) ? '<br/><p  class="text-'.$alignment.'"> <a href="' . $cta_link . '">' . $ctaText . '</a></p>' : '');
+               $columnInfo .= (!empty($ctaText) ? '<br/><p  class="text-'.$alignment.'"><h4><a href="' . $cta_link . '">' . $ctaText . '</a></h4></p>' : '');
             } else {
                $columnInfo = $image;
             }
