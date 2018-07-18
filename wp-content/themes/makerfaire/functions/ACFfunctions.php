@@ -1418,6 +1418,39 @@ if (function_exists('acf_add_local_field_group')) {
                                     'maxlength' => '',
                                  ),
                                  array(
+                                    'key' => 'field_5b4e66a4c7f90',
+                                    'label' => 'Alignment',
+                                    'name' => 'column_list_alignment',
+                                    'type' => 'radio',
+                                    'instructions' => '',
+                                    'required' => 0,
+                                    'conditional_logic' => array(
+                                       array(
+                                          array(
+                                             'field' => 'field_5b4e5177fec84',
+                                             'operator' => '==',
+                                             'value' => 'image',
+                                          ),
+                                       ),
+                                    ),
+                                    'wrapper' => array(
+                                       'width' => '100',
+                                       'class' => '',
+                                       'id' => '',
+                                    ),
+                                    'choices' => array(
+                                       'left' => 'Left',
+                                       'center' => 'Center',
+                                       'right' => 'Right',
+                                    ),
+                                    'allow_null' => 0,
+                                    'other_choice' => 0,
+                                    'save_other_choice' => 0,
+                                    'default_value' => 'left',
+                                    'layout' => 'vertical',
+                                    'return_format' => 'value',
+                                 ),
+                                 array(
                                     'key' => 'field_5b4e54fdfec86',
                                     'label' => 'Paragraph',
                                     'name' => 'column_paragraph',

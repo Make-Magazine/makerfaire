@@ -351,29 +351,30 @@ function get3ColLayout() {
       $columnInfo = '';
       switch ($column['column_type']) {
          case 'image':     // Image with optional link
+            $alignment = $data['column_list_alignment'];
             $image = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
             $cta_link = $data['image_cta'];
             $ctaText = $data['image_cta_text'];
             if (!empty($cta_link)) {
                $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
-               $columnInfo .= (!empty($ctaText) ? '<br/><a href="' . $cta_link . '">' . $ctaText . '</a>' : '');
+               $columnInfo .= (!empty($ctaText) ? '<br/><p  class="text-'.$alignment.'"> <a href="' . $cta_link . '">' . $ctaText . '</a></p>' : '');
             } else {
                $columnInfo = $image;
             }
             break;
          case 'paragraph': // Paragraph text
-            $columnInfo = $data['column_paragraph'];
+            $columnInfo = '<h4>'.$data['column_paragraph'].'</h4>';
             break;
          case 'list':      // List of items with optional links
-            if (!empty($data['list_title'])) {
-               $columnInfo .= '<h4>' . $data['list_title'] . '</h4>';
-            }
-            $columnInfo .= '<ul>';
             $alignment = $data['column_list_alignment'];
+            if (!empty($data['list_title'])) {
+               $columnInfo .= '<h4 class="title text-'.$alignment.'">' . $data['list_title'] . '</h4>';
+            }
+            $columnInfo .= '<ul class="text-'.$alignment.'">';
             foreach ($data['column_list_fields'] as $list_fields) {
                $list_text = $list_fields['list_text'];
                $list_link = $list_fields['list_link'];
-               $columnInfo .= '<li>' . (!empty($list_link) ? '<a href="' . $list_link . '">' . $list_text . '</a>' : $list_text) . '</li>';
+               $columnInfo .= '<li><h4>' . (!empty($list_link) ? '<a href="' . $list_link . '">' . $list_text . '</a>' : $list_text) . '</h4></li>';
             }
             $columnInfo .= '</ul>';
             break;
