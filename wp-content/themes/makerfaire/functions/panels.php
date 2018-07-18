@@ -351,13 +351,16 @@ function get3ColLayout() {
       $columnInfo = '';
       switch ($column['column_type']) {
          case 'image':     // Image with optional link
-            $alignment = $data['column_list_alignment'];
-            $image = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
-            $cta_link = $data['image_cta'];
-            $ctaText = $data['image_cta_text'];
+            $alignment  = $data['column_list_alignment'];
+            $image      = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
+            $cta_link   = $data['image_cta'];
+            $ctaText    = $data['image_cta_text'];
+
             if (!empty($cta_link)) {
                $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
-               $columnInfo .= (!empty($ctaText) ? '<br/><p  class="text-'.$alignment.'"><h4><a href="' . $cta_link . '">' . $ctaText . '</a></h4></p>' : '');
+               if(!empty($ctaText)){
+                  $columnInfo .= '<br/><p class="text-'.$alignment.'"><a href="'.$cta_link.'" target="_blank">'.$ctaText.'</a></p>';
+               }
             } else {
                $columnInfo = $image;
             }
