@@ -398,13 +398,15 @@ function get3ColLayout() {
 /* * *************************************************** */
 
 function get1ColLayout() {
-   $return = '';
-   $hero_image = get_sub_field('hero_image');
-   $hero_text = get_sub_field('column_title');
-   $cta_button = get_sub_field('cta_button');
+   //get data submitted on admin page
+   $hero_image     = get_sub_field('hero_image');
+   $hero_text      = get_sub_field('column_title');
+   $cta_button     = get_sub_field('cta_button');
    $cta_button_url = get_sub_field('cta_button_url');
+
+   //build output
+   $return = '';
    $return .= '<section class="hero-panel">';    // create content-panel section
-   $return .= ' <div class="flag-banner"></div>';   // add section banner
 
    $return .= '   <div class="row">
                     <div class="col-xs-12">' .
