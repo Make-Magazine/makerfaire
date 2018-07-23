@@ -1,7 +1,7 @@
 <?php
-/**************************************************/
+/* * *********************************************** */
 /* Determine correct layout                       */
-/**************************************************/
+/* * *********************************************** */
 
 function dispLayout($row_layout) {
    $return = '';
@@ -61,7 +61,7 @@ function dispLayout($row_layout) {
          break;
       case 'sponsors_panel':   // SPONSOR PANEL
          $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
+         if ($activeinactive === 'Active') {
             $return = getSponsorPanel();
          }
          break;
@@ -351,29 +351,29 @@ function get3ColLayout() {
       $columnInfo = '';
       switch ($column['column_type']) {
          case 'image':     // Image with optional link
-            $alignment  = $data['column_list_alignment'];
-            $image      = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
-            $cta_link   = $data['image_cta'];
-            $ctaText    = $data['image_cta_text'];
+            $alignment = $data['column_list_alignment'];
+            $image = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
+            $cta_link = $data['image_cta'];
+            $ctaText = $data['image_cta_text'];
 
             if (!empty($cta_link)) {
                $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
-               if(!empty($ctaText)){
-                  $columnInfo .= '<br/><p class="text-'.$alignment.'"><a href="'.$cta_link.'" target="_blank">'.$ctaText.'</a></p>';
+               if (!empty($ctaText)) {
+                  $columnInfo .= '<br/><p class="text-' . $alignment . '"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
                }
             } else {
                $columnInfo = $image;
             }
             break;
          case 'paragraph': // Paragraph text
-            $columnInfo = '<h4>'.$data['column_paragraph'].'</h4>';
+            $columnInfo = '<h4>' . $data['column_paragraph'] . '</h4>';
             break;
          case 'list':      // List of items with optional links
             $alignment = $data['column_list_alignment'];
             if (!empty($data['list_title'])) {
-               $columnInfo .= '<h4 class="title text-'.$alignment.'">' . $data['list_title'] . '</h4>';
+               $columnInfo .= '<h4 class="title text-' . $alignment . '">' . $data['list_title'] . '</h4>';
             }
-            $columnInfo .= '<ul class="text-'.$alignment.'">';
+            $columnInfo .= '<ul class="text-' . $alignment . '">';
             foreach ($data['column_list_fields'] as $list_fields) {
                $list_text = $list_fields['list_text'];
                $list_link = $list_fields['list_link'];
@@ -399,9 +399,9 @@ function get3ColLayout() {
 
 function get1ColLayout() {
    //get data submitted on admin page
-   $hero_image     = get_sub_field('hero_image');
-   $hero_text      = get_sub_field('column_title');
-   $cta_button     = get_sub_field('cta_button');
+   $hero_image = get_sub_field('hero_image');
+   $hero_text = get_sub_field('column_title');
+   $cta_button = get_sub_field('cta_button');
    $cta_button_url = get_sub_field('cta_button_url');
 
    //build output
@@ -484,7 +484,7 @@ function getCTApanel() {
    $return .= '<a href="' . $cta_url . '">';
    $return .= '<section class="cta-panel' . ($background_color == "Red" ? ' red-ribbon' : '') . '">';
    $return .= '   <div class="arrow-left"></div>'
-           .  '   <div class="arrow-right"></div>';
+      . '   <div class="arrow-right"></div>';
    $return .= '   <div class="container">
                      <div class="row text-center">
                         <div class="col-xs-12">
@@ -739,111 +739,92 @@ function getNewsletterPanel() {
 
 function getSponsorPanel() {
    $return = '';
-   $sponsor_ID = 0;
-   // Get the sponsors template page ID
-   $sponsor_pages = get_pages(array(
-      'meta_key' => '_wp_page_template',
-      'meta_value' => 'page-sponsors.php'
-   ));
-   foreach ($sponsor_pages as $sponsor_page) {
-      $sponsor_ID = $sponsor_page->ID;
-   }
+   $url  = get_sub_field('sponsors_page_url');
+   $year = get_sub_field('sponsors_page_year');
+   $id = url_to_postid($url);
 
-   $sponsor_panel_field_1 = get_sub_field('title_sponsor_panel');
-   $sponsor_panel_field_3 = get_sub_field('become_a_sponsor_button');
-
-   // check if the nested repeater field has rows of data
-   if (have_rows('sponsors', $sponsor_ID)) {
+   // IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
+   if (have_rows('goldsmith_sponsors', $id) || have_rows('silversmith_sponsors', $id) || have_rows('coppersmith_sponsors', $id) || have_rows('media_sponsors', $id)) {
       $return .= '
-    <section class="sponsor-slide">
+   <div class="sponsor-slide">
       <div class="container">
-        <div class="row sponsor_panel_title">
-          <div class="col-xs-12 text-center">
-            <div class="title-w-border-r">
-              <h2 class="sponsor-slide-title">' . $sponsor_panel_field_1 . '</h2>
+         <div class="row">
+            <div class="col-sm-7">
+               <h4 class="sponsor-slide-title">' . ($year ? $year . ' ' : '') . 'Maker Faire Sponsors: <span class="sponsor-slide-cat"></span></h4>
             </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <div id="carousel-sponsors-slider" class="carousel slide" data-ride="carousel">
-              <!-- Wrapper for slides -->
-              <div class="carousel-inner" role="listbox">';
-      // loop through the rows of data
-      while (have_rows('sponsors', $sponsor_ID)) {
-         the_row();
-         $sponsor_group_title = get_sub_field('sponsor_group_title'); //Sponsor group title
-
-         if (get_row_layout() == 'sponsors_with_image') {
-            $sub_field_3 = get_sub_field('sponsors_image_size'); //size option
-            // check if the nested repeater field has rows of data
-            if (have_rows('sponsors_with_image')) {
-               $return .= '
-                      <div class="item">
+            <div class="col-sm-5">
+               <h5><a href="/sponsors">Become a sponsor</a></h5>
+               <h5><a href="' . $url . '">All sponsors</a></h5>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-xs-12">
+               <div id="carousel-sponsors-slider" class="carousel slide" data-ride="carousel">
+                  <!-- Wrapper for slides -->
+                  <div class="carousel-inner" role="listbox">';
+                     $sponsorArray = array(
+                        array('goldsmith_sponsors', 'GOLDSMITH'),
+                        array('silversmith_sponsors', 'SILVERSMITH'),
+                        array('coppersmith_sponsors', 'COPPERSMITH'),
+                        array('media_sponsors', 'MEDIA'),
+                     );
+      foreach ($sponsorArray as $sponsor) {
+         if (have_rows($sponsor[0], $id)) {
+            $return .= '
+                     <div class="item">
                         <div class="row spnosors-row">
-                          <div class="col-xs-12">';
-               if (!empty($sponsor_group_title)) {
-                  $return .= '<h5 class="text-center sponsors-type">' . $sponsor_group_title . '</h5>';
+                           <div class="col-xs-12">
+                              <h3 class="sponsors-type text-center">' . $sponsor[1] . '</h3>
+                              <div class="faire-sponsors-box">';
+
+            while (have_rows($sponsor[0], $id)) {
+               the_row();
+               $sub_field_1 = get_sub_field('image'); //Photo
+               $sub_field_2 = get_sub_field('url'); //URL
+
+               $return .= '      <div class="sponsors-box-md">';
+               if (get_sub_field('url')) {
+                  $return .= '      <a href="' . $sub_field_2 . '" target="_blank">';
                }
-               $return .= '
-                            <div class="faire-sponsors-box">';
-
-               // loop through the rows of data
-               while (have_rows('sponsors_with_image')) {
-                  the_row();
-
-                  $sub_field_1 = get_sub_field('image'); //Photo
-                  $sub_field_2 = get_sub_field('url'); //URL
-                  $args = array(
-                     'w' => '300',
-                     'quality' => '80',
-                     'strip' => 'all',
-                  );
-                  $photon = jetpack_photon_url($sub_field_1['url'], $args);
-
-                  $return .= '<div class="' . $sub_field_3 . '">';
-                  if ($sub_field_2) {
-                     $return .= '<a href="' . $sub_field_2 . '" target="_blank">';
-                  }
-                  $return .= '<img src="' . $photon . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
-                  if ($sub_field_2) {
-                     $return .= '</a>';
-                  }
-                  $return .= '</div>';
+               $return .= '            <img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+               if (get_sub_field('url')) {
+                  $return .= '      </a>';
                }
-               $return .= '
-                            </div>
-                          </div>
-                        </div>
-                      </div>';
-            } // end if image
-         } // end row layout
+               $return .= '      </div><!-- close .sponsors-box-md -->';
+            }
+            $return .= '
+                              </div> <!-- close .faire-sponsors-box -->
+                           </div> <!-- close .col-xs-12 -->
+                        </div> <!-- close .row spnosors-row -->
+                     </div> <!-- close .item -->';
+         }
       }
+
       $return .= '
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row sponsor_panel_bottom">
-          <div class="col-xs-12 text-center">
-            <p>';
-      if (!empty($sponsor_panel_field_3)) {
-         $return .= '<a href="' . $sponsor_panel_field_3 . '">' . __('Become a Sponsor', 'MiniMakerFaire') . '</a><span>&bull;</span>';
-      }
-      $return .= '
-              <a href="/sponsors">' . __('All Sponsors', 'MiniMakerFaire') . '</a>
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <script>
-      jQuery(".sponsor-slide .carousel-inner .item:first-child").addClass("active");
-      jQuery(function() {
-        var title = jQuery(".item.active .sponsors-type").html();
-      });
-    </script>';
+                  </div> <!-- close .carousel-inner-->
+               </div> <!-- close #carousel-sponsors-slider -->
+            </div> <!-- close .col-xs-12 -->
+         </div> <!-- close .row -->
+      </div> <!-- close .container -->
+   </div> <!-- close .sponsor-slide -->';
+
+      $return .= '<script>
+                     // Update the sponsor slide title each time the slide changes
+                     jQuery(".carousel-inner .item:first-child").addClass("active");
+                     jQuery(function() {
+                       var title = jQuery(".item.active .sponsors-type").html();
+                       jQuery(".sponsor-slide-cat").text(title);
+                       jQuery("#carousel-sponsors-slider").on("slid.bs.carousel", function () {
+                         var title = jQuery(".item.active .sponsors-type").html();
+                         jQuery(".sponsor-slide-cat").text(title);
+                       });
+                       if (jQuery(window).width() < 767) {
+                         jQuery( ".maker-slider-btn" ).html("Learn More");
+                       }
+                     });
+                     </script>';
    }
+
    return $return;
 }
 
