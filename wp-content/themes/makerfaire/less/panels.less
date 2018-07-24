@@ -487,6 +487,20 @@
          @media (max-width:1199px) {
             margin-top: 18px;
          }
+			.row-eq-height {
+				@media (max-width:767px) {
+					display: block;
+					.align-middle:first {
+						margin-bottom: 60px;
+					}
+				}
+				@media (max-width:600px) {
+					.align-middle:first {
+						margin-top: -40px;
+						margin-bottom: 160px;
+					}
+				}
+			}
          .nl-panel-input {
             width: 80%;
             margin-right: 15px;
@@ -529,9 +543,11 @@
       }
       input[type=submit], input[type=submit]:hover{
          border: thin white solid;
-         padding: 10px;
+         height: 30px;
          width: 58px;
-         height: min-content;
+			@media (max-width:1199px) {
+				margin: 5px 30%;
+			}
       }
       /* Hide the browser's default checkbox */
       .sel-container input[type=checkbox] {
