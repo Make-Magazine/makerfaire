@@ -72,7 +72,7 @@ function dispLayout($row_layout) {
          }
          break;
    }
-   return $return;
+   return '<div class="customPanels">'.$return.'</div>';
 }
 
 /* * *********************************************** */
@@ -412,7 +412,7 @@ function get1ColLayout() {
    $return .= '   <div class="row">
                     <div class="col-xs-12">' .
       ($hero_text ? '<div class="panel_title"><div class="container">' . $hero_text . '</div></div>' : '') .
-      '<img class="img-responsive" src="' . $hero_image . '" alt="Flagship Page Hero" />' .
+      '        <div class="hero-img" style="background-image: url('.$hero_image.')"></div>'.
       '     </div>' .
       '   </div>';
 
