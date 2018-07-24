@@ -72,7 +72,7 @@ function dispLayout($row_layout) {
          }
          break;
    }
-   return '<div class="customPanels">'.$return.'</div>';
+   return $return;
 }
 
 /* * *********************************************** */
