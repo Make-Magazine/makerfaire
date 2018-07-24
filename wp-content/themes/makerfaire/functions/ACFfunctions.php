@@ -337,7 +337,7 @@ if (function_exists('acf_add_local_field_group')) {
                      ),
                      array(
                         'default_value' => '',
-                        'maxlength' => 50,
+                        'maxlength' => 30,
                         'placeholder' => '',
                         'prepend' => '',
                         'append' => '',
@@ -345,7 +345,7 @@ if (function_exists('acf_add_local_field_group')) {
                         'label' => 'Text',
                         'name' => 'cta_text',
                         'type' => 'text',
-                        'instructions' => 'Type the CTA link text here. 50 character limit.',
+                        'instructions' => 'Type the CTA link text here. 30 character limit.',
                         'required' => 0,
                         'conditional_logic' => 0,
                         'wrapper' => array(
@@ -1148,7 +1148,7 @@ if (function_exists('acf_add_local_field_group')) {
                   'min' => '',
                   'max' => '',
                ),
-               // Panel: Hero Image w/text
+               // Panel:  Image w/text
                array(
                   'key' => '572bad2b2d757',
                   'name' => '1_column',
@@ -1513,7 +1513,7 @@ if (function_exists('acf_add_local_field_group')) {
                                     'label' => 'List fields',
                                     'name' => 'column_list_fields',
                                     'type' => 'repeater',
-                                    'instructions' => 'Enter in your list items and (if appropriate) their urls (maximum of 6)',
+                                    'instructions' => 'Enter in your list items and (if appropriate) their urls (maximum of 5)',
                                     'required' => 0,
                                     'conditional_logic' => array(
                                        array(
@@ -1531,7 +1531,7 @@ if (function_exists('acf_add_local_field_group')) {
                                     ),
                                     'collapsed' => 'field_5b4e561bfec88',
                                     'min' => 1,
-                                    'max' => 6,
+                                    'max' => 5,
                                     'layout' => 'table',
                                     'button_label' => '',
                                     'sub_fields' => array(
