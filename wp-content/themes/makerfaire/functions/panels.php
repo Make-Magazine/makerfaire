@@ -369,17 +369,18 @@ function get3ColLayout() {
             $columnInfo = '<h4>' . $data['column_paragraph'] . '</h4>';
             break;
          case 'list':      // List of items with optional links
-            $alignment = $data['column_list_alignment'];
+            $columnInfo = '<div class="flagship-faire-wrp">';
             if (!empty($data['list_title'])) {
-               $columnInfo .= '<h4 class="title text-' . $alignment . '">' . $data['list_title'] . '</h4>';
+               $columnInfo .= '<h3 class="line-item">' . $data['list_title'] . '</h4>';
             }
-            $columnInfo .= '<ul class="text-' . $alignment . '">';
+            //$columnInfo .= '  <ul>';
             foreach ($data['column_list_fields'] as $list_fields) {
                $list_text = $list_fields['list_text'];
                $list_link = $list_fields['list_link'];
-               $columnInfo .= '<li><h4>' . (!empty($list_link) ? '<a href="' . $list_link . '">' . $list_text . '</a>' : $list_text) . '</h4></li>';
+               $columnInfo .= (!empty($list_link) ? '<a class="line-item" href="' . $list_link . '">' . $list_text . '</a>' : $list_text);
             }
-            $columnInfo .= '</ul>';
+            //$columnInfo .= '  </ul>';
+            $columnInfo .= '</div>';
             break;
       }
       $return .= $columnInfo;

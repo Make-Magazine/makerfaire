@@ -1509,39 +1509,6 @@ if (function_exists('acf_add_local_field_group')) {
                                     'maxlength' => 30,
                                  ),
                                  array(
-                                    'key' => 'field_5b4e58aa3ea7a',
-                                    'label' => 'Alignment',
-                                    'name' => 'column_list_alignment',
-                                    'type' => 'radio',
-                                    'instructions' => '',
-                                    'required' => 0,
-                                    'conditional_logic' => array(
-                                       array(
-                                          array(
-                                             'field' => 'field_5b4e5177fec84',
-                                             'operator' => '==',
-                                             'value' => 'list',
-                                          ),
-                                       ),
-                                    ),
-                                    'wrapper' => array(
-                                       'width' => '100',
-                                       'class' => '',
-                                       'id' => '',
-                                    ),
-                                    'choices' => array(
-                                       'left' => 'Left',
-                                       'center' => 'Center',
-                                       'right' => 'Right',
-                                    ),
-                                    'allow_null' => 0,
-                                    'other_choice' => 0,
-                                    'save_other_choice' => 0,
-                                    'default_value' => 'left',
-                                    'layout' => 'vertical',
-                                    'return_format' => 'value',
-                                 ),
-                                 array(
                                     'key' => 'field_5b4e55f4fec87',
                                     'label' => 'List fields',
                                     'name' => 'column_list_fields',
