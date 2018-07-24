@@ -1,4 +1,5 @@
 .customPanels {
+   font-family: "Roboto-Light";
    .slideshow-panel {
       position: relative;
       .header-logo-div {
@@ -430,7 +431,7 @@
       max-height: 78px;
       &:hover {
          h3 span {
-               text-decoration: underline;
+            text-decoration: underline;
          }
       }
       h3 {
@@ -471,13 +472,15 @@
    }
 
    .newsletter-panel {
+      background-image: url(/wp-content/themes/makerfaire/img/makey_outlined.svg);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 75px;
       padding: 30px 0;
-      background-color: #00597E;
-      p {
-         color: #fff;
-         font-size: 20px;
-         line-height: 26px;
-         margin-bottom: 0;
+      background-color: #005E9A;
+      color: #fff;
+      h5 {
+         display: inline-block;
       }
       form {
          margin-top: 7px;
@@ -485,8 +488,7 @@
             margin-top: 18px;
          }
          .nl-panel-input {
-            width: 70%;
-            max-width: 350px;
+            width: 80%;
             margin-right: 15px;
             @media (max-width:767px) {
                width: 100%;
@@ -494,11 +496,85 @@
                max-width: none;
                margin-bottom: 15px;
             }
+
          }
          .btn-w-ghost {
 
          }
       }
+      /* Custom checkboxes */
+      /* Customize the label (the container) */
+      .sel-container {
+         display: block;
+         position: relative;
+         padding-left: 30px;
+         margin-bottom: 12px;
+         cursor: pointer;
+         font-size: 22px;
+         -webkit-user-select: none;
+         -moz-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+      }
+
+      /* Stylize the email input */
+      input[type=email], input[type=email]:hover,
+      input[type=submit], input[type=submit]:hover{
+         background-color: #005E9A;
+         box-shadow: none;
+         border: none;
+         border-bottom: thin white solid;
+         color: #fff;
+         border-radius: 0px;
+      }
+      input[type=submit], input[type=submit]:hover{
+         border: thin white solid;
+         padding: 10px;
+         width: 58px;
+         height: min-content;
+      }
+      /* Hide the browser's default checkbox */
+      .sel-container input[type=checkbox] {
+         position: absolute;
+         opacity: 0;
+         cursor: pointer;
+      }
+      /* Create a custom checkbox */
+      .checkmark {
+         position: absolute;
+         top: 0;
+         left: 0;
+         height: 20px;
+         width: 20px;
+         margin-top: 11px;
+         border: thin solid white;
+      }
+
+      /* Create the checkmark/indicator (hidden when not checked) */
+      .checkmark:after {
+         content: "";
+         position: absolute;
+         display: none;
+      }
+
+      /* Show the checkmark when checked */
+      .sel-container input:checked ~ .checkmark:after {
+         display: block;
+      }
+
+      /* Style the checkmark/indicator */
+      .sel-container .checkmark:after {
+         left: 7px;
+         top: 3px;
+         width: 5px;
+         height: 10px;
+         border: solid white;
+         border-width: 0 1px 1px 0;
+         -webkit-transform: rotate(45deg);
+         -ms-transform: rotate(45deg);
+         transform: rotate(45deg);
+      }
+
    }
 
    .rectangle-image-carousel {
@@ -810,4 +886,21 @@
       transition: all .2s ease;
       transition: opacity 0s;
    }
+}
+
+/*
+ * Row with equal height columns
+ * --------------------------------------------------
+ */
+.row.row-eq-height {
+   /* display: -webkit-box; */
+   display: -webkit-flex;
+   display: -ms-flexbox;
+   display:         flex;
+}
+
+.align-middle {
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
 }

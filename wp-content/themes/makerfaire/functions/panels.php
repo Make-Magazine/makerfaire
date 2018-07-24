@@ -647,29 +647,57 @@ function getImgCarouselSquare() {
 
 function getNewsletterPanel() {
    $return = '
-    <section class="newsletter-panel">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12 col-sm-6">
-            <p>' . get_sub_field('newsletter_panel_text') . '</p>
-          </div>
-          <div class="col-xs-12 col-sm-6">
+      <section class="newsletter-panel">
+         <div class="container">
+
+
             <form class="form-inline sub-form whatcounts-signup1" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
-              <input type="hidden" name="slid" value="6B5869DC547D3D4641ADFD288D8C7739" /><!-- MakerFaire -->
-              <input type="hidden" name="cmd" value="subscribe" />
-              <input type="hidden" name="custom_source" value="Panel" />
-              <input type="hidden" name="custom_incentive" value="none" />
-              <input type="hidden" name="custom_url" value="' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '" />
-              <input type="hidden" id="format_mime" name="format" value="mime" />
-              <input type="hidden" name="custom_host" value="' . $_SERVER["HTTP_HOST"] . '" />
-              <div id="recapcha-panel" class="g-recaptcha" data-size="invisible"></div>
-              <input id="wc-email" class="form-control nl-panel-input" name="email" placeholder="' . __('Enter your Email', 'MiniMakerFaire') . '" required type="email">
-              <input class="form-control btn-w-ghost" value="' . __('GO', 'MiniMakerFaire') . '" type="submit">
+               <input type="hidden" name="cmd" value="subscribe" />
+               <input type="hidden" name="custom_source" value="Panel" />
+               <input type="hidden" name="custom_incentive" value="none" />
+               <input type="hidden" name="custom_url" value="' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '" />
+               <input type="hidden" id="format_mime" name="format" value="mime" />
+               <input type="hidden" name="custom_host" value="' . $_SERVER["HTTP_HOST"] . '" />
+               <div id="recapcha-panel" class="g-recaptcha" data-size="invisible"></div>
+               <input type="hidden" name="multiadd" value="1" />
+
+               <div class="row row-eq-height">
+                  <div class="col-xs-12 col-sm-6 align-middle">
+                     <h3>' . get_sub_field('newsletter_panel_text') . '</h3>
+                      <div class="row" style="width:100%">
+                        <div class="col-xs-12 col-sm-5  align-middle">
+                           <label class="sel-container">
+                              <h5>Maker Faire Bay Area</h5>
+                              <input type="checkbox" id="list_6B5869DC547D3D461285274DDB064BAC_yes" name="slid_1" value="6B5869DC547D3D461285274DDB064BAC" />
+                              <span class="checkmark"></span>
+                           </label>
+                        </div>
+                        <div class="col-xs-12 col-sm-7 align-middle">
+                           <label class="sel-container">
+                              <h5>World Maker Faire New York</h5>
+                              <input type="checkbox" id="list_6B5869DC547D3D4641ADFD288D8C7739_yes" name="slid_2" value="6B5869DC547D3D4641ADFD288D8C7739" />
+                              <span class="checkmark"></span>
+                           </label>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="col-xs-12 col-sm-6 align-middle">
+                     <div class="row row-eq-height" style="width:100%">
+                        <div class="col-xs-12 col-sm-2 align-middle">
+                   <!--        <img class="img-responsive" src="/wp-content/themes/makerfaire/img/makey_outlined.svg" />-->
+                        </div>
+                        <div class="col-xs-12 col-sm-10 align-middle">
+                           <input id="wc-email" class="form-control nl-panel-input" name="email" placeholder="' . __('Enter your Email', 'MiniMakerFaire') . '" required type="email">
+                           <input class="form-control btn-w-ghost" value="' . __('GO', 'MiniMakerFaire') . '" type="submit">
+                        </div>
+                     </div>
+                  </div>
+               </div>
             </form>
-          </div>
-        </div>
-      </div>
-    </section>
+
+         </div>
+      </section>
 
     <div class="fancybox-thx" style="display:none;">
       <div class="col-sm-4 hidden-xs nl-modal">
