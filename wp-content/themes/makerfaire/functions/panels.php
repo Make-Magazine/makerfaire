@@ -329,7 +329,7 @@ function getFeatEvPanel($row_layout) {
 function get3ColLayout() {
    $return = '';
 
-   $return .= '<section class="content-panel">
+   $return .= '<section class="content-panel 3-column">
                 <div class="flag-banner"></div>
                 <div class="container">';
 
@@ -366,12 +366,12 @@ function get3ColLayout() {
             }
             break;
          case 'paragraph': // Paragraph text
-            $columnInfo = '<h4>' . $data['column_paragraph'] . '</h4>';
+            $columnInfo = '<p>' . $data['column_paragraph'] . '</p>';
             break;
          case 'list':      // List of items with optional links
             $columnInfo = '<div class="flagship-faire-wrp">';
             if (!empty($data['list_title'])) {
-               $columnInfo .= '<h3 class="line-item">' . $data['list_title'] . '</h4>';
+               $columnInfo .= '<p class="line-item list-title">' . $data['list_title'] . '</p>';
             }
             //$columnInfo .= '  <ul>';
             foreach ($data['column_list_fields'] as $list_fields) {
@@ -410,9 +410,15 @@ function get1ColLayout() {
    $return .= '<section class="hero-panel">';    // create content-panel section
 
    $return .= '   <div class="row">
-                    <div class="col-xs-12">' .
-      ($hero_text ? '<div class="panel_title"><div class="container">' . $hero_text . '</div></div>' : '') .
-      '        <div class="hero-img" style="background-image: url('.$hero_image.')"></div>'.
+                    <div class="col-xs-12">';
+   if($hero_text) {
+      $return .= '<div class="top_left"></div>'
+               . '<div class="panel_title">'
+               . '   <div class="container">' . $hero_text . '</div>'
+               . '</div>'
+               .'<div class="bottom_right"></div>';
+   }
+   $return .=    '        <div class="hero-img" style="background-image: url('.$hero_image.')"></div>'.
       '     </div>' .
       '   </div>';
 
