@@ -4,7 +4,6 @@
 		top: 65px;
 	}
 }
-
 .customPanels {
    font-family: "Roboto-Light";
    .slideshow-panel {
@@ -848,7 +847,7 @@
       .container {
          padding-top: 40px;
          padding-bottom: 40px;
-			@media (max-width:480px) { 
+			@media (max-width:480px) {
 				 padding-top: 20px
 			}
       }
@@ -909,13 +908,6 @@
       background-size: auto;
    }
 
-   .panel_title {
-      width: 100%;
-      position: absolute;
-      background:rgba(255,255,255, 0.7);
-      bottom: 0;
-   }
-
    .yellow-underline {
       display: inline-block;
       margin-left: auto;
@@ -927,8 +919,8 @@
       padding-right: 50px;
 		line-height: 1.4em;
 		padding-bottom: 10px;
-		@media (max-width:480px) { 
-			font-size: 30px; 
+		@media (max-width:480px) {
+			font-size: 30px;
 			h2{ font-size: 30px; }
 		}
    }
@@ -936,17 +928,59 @@
    .featured-faire {
       font-family: "Roboto-Light";
    }
-
-   .hero-img {
-      width: 100%;
-      height: 320px;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center center;
-      float: left;
-      position: relative;
-      transition: all .2s ease;
-      transition: opacity 0s;
+   .hero-panel {
+      .panel_title {
+         width: 100%;
+         position: absolute;
+         height: 100%;
+         top: 0;
+         z-index: 99;
+      }
+      .hero-img {
+         width: 100%;
+         height: 320px;
+         background-size: cover;
+         background-repeat: no-repeat;
+         background-position: center center;
+         float: left;
+         position: relative;
+         transition: all .2s ease;
+         transition: opacity 0s;
+      }
+      .white-back {
+         background:rgba(255,255,255, 0.7);
+         width: 250px;
+      }
+      .panel_text {
+         position: absolute;
+         bottom: 0;
+         left: 0;
+      }
+      .blueFlag {
+         color: #fff;
+         background-image: url(../img/blueflag.png);
+         width: 250px;
+         background-size: 250px 85px;
+         background-repeat: no-repeat;
+         margin-bottom: 0px;
+         height: 85px;
+      }
+      .top_left img {
+         height: 50px;
+      }
+      .bottom_right img {
+         height: 75px;
+      }
+      .top_left {
+         position: absolute;
+         top: 0;
+         left: 0;
+      }
+      .bottom_right {
+         position: absolute;
+         bottom: 0;
+         right: 0;
+      }
    }
 }
 

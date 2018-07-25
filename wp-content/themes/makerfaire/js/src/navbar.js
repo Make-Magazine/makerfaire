@@ -63,7 +63,6 @@ jQuery(function() {
               }
           }
       });
-
       /* Bring back if we need search for any reason
       jQuery("#search-modal").fancybox({
             wrapCSS : 'search-modal-wrapper',
