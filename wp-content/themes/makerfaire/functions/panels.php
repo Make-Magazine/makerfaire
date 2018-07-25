@@ -658,6 +658,8 @@ function getNewsletterPanel() {
 
 
             <form class="form-inline sub-form whatcounts-signup1" action="https://secure.whatcounts.com/bin/listctrl" method="POST">
+               <!-- List ID 28-->
+               <input type="hidden" id="list_6B5869DC547D3D46E66DEF1987C64E7A_yes" name="slid_1" value="6B5869DC547D3D46E66DEF1987C64E7A" />
                <input type="hidden" name="cmd" value="subscribe" />
                <input type="hidden" name="custom_source" value="Panel" />
                <input type="hidden" name="custom_incentive" value="none" />
@@ -670,18 +672,21 @@ function getNewsletterPanel() {
                <div class="row row-eq-height">
                   <div class="col-xs-12 col-sm-6 align-middle">
                      <h3>' . get_sub_field('newsletter_panel_text') . '</h3>
-                      <div class="row" style="width:100%">
+                     <h5>Also get details on</h5>
+                     <div class="row" style="width:100%">
                         <div class="col-xs-12 col-sm-5  align-middle">
                            <label class="sel-container">
                               <h5>Maker Faire Bay Area</h5>
-                              <input type="checkbox" id="list_6B5869DC547D3D461285274DDB064BAC_yes" name="slid_1" value="6B5869DC547D3D461285274DDB064BAC" />
+                              <!-- List ID 65 -->
+                              <input type="checkbox" id="list_6B5869DC547D3D461285274DDB064BAC_yes" name="slid_2" value="6B5869DC547D3D461285274DDB064BAC" />
                               <span class="checkmark"></span>
                            </label>
                         </div>
                         <div class="col-xs-12 col-sm-7 align-middle">
                            <label class="sel-container">
                               <h5>World Maker Faire New York</h5>
-                              <input type="checkbox" id="list_6B5869DC547D3D4641ADFD288D8C7739_yes" name="slid_2" value="6B5869DC547D3D4641ADFD288D8C7739" />
+                              <!-- List ID 64 -->
+                              <input type="checkbox" id="list_6B5869DC547D3D4641ADFD288D8C7739_yes" name="slid_3" value="6B5869DC547D3D4641ADFD288D8C7739" />
                               <span class="checkmark"></span>
                            </label>
                         </div>
