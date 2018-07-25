@@ -539,6 +539,9 @@
          .nl-panel-input {
             width: 80%;
             margin-right: 15px;
+				&::placeholder {
+					color: #fff;
+				}
             @media (max-width: 767px) {
                margin-right: 0;
                max-width: none;
@@ -569,6 +572,7 @@
       /* Stylize the email input */
       input[type=email], input[type=email]:hover,
       input[type=submit], input[type=submit]:hover{
+			padding-left: 0px;
          background-color: #005E9A;
          box-shadow: none;
          border: none;
