@@ -1,3 +1,9 @@
+.scrolled .customPanels {
+	.floatBuyTix {
+		position: fixed;
+		top: 75px;
+	}
+}
 .customPanels {
    font-family: "Roboto-Light";
    .slideshow-panel {
@@ -269,15 +275,18 @@
       width: 284px;
       padding-top: 15px;
       padding-left: 60px;
-      z-index: 99;
-      position: fixed;
+      z-index: 999;
+      position: absolute;
       right: 0;
-      top: 200px;
+      top: 150px;
       font-size: 22px;
       color: #fff;
       &:hover {
          text-decoration: underline;
       }
+		@media (max-width:480px) {
+			font-family: 'Roboto Condensed';
+		}
    }
    .featured-maker-panel {
       background-color: #00597E;
