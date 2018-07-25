@@ -1,9 +1,13 @@
 .scrolled .customPanels {
 	.floatBuyTix {
 		position: fixed;
-		top: 75px;
+		top: 135px;
+		@media screen and (min-width: 768px) and (max-width: 860px) {
+			top: 195px;
+		}
 	}
 }
+
 .customPanels {
    font-family: "Roboto-Light";
    .slideshow-panel {
@@ -285,8 +289,18 @@
       &:hover {
          text-decoration: underline;
       }
-		@media (max-width:480px) {
+		@media (max-width: 767px) {
+			position: fixed;
+			top: 70px;
 			font-family: 'Roboto Condensed';
+			height: 45px;
+			width: 236px;
+			padding-top: 6px;
+			padding-left: 50px;
+			background-size: 236px 45px;
+		}
+		@media screen and (min-width: 768px) and (max-width: 860px) {
+			top: 270px;
 		}
    }
    .featured-maker-panel {
@@ -531,6 +545,9 @@
          .nl-panel-input {
             width: 80%;
             margin-right: 15px;
+				&::placeholder {
+					color: #fff;
+				}
             @media (max-width: 767px) {
                margin-right: 0;
                max-width: none;
@@ -561,6 +578,7 @@
       /* Stylize the email input */
       input[type=email], input[type=email]:hover,
       input[type=submit], input[type=submit]:hover{
+			padding-left: 0px;
          background-color: #005E9A;
          box-shadow: none;
          border: none;
