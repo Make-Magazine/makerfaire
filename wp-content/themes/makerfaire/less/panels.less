@@ -1,7 +1,7 @@
 .scrolled .customPanels {
 	.floatBuyTix {
 		position: fixed;
-		top: 75px;
+		top: 135px;
 	}
 }
 .customPanels {
@@ -278,14 +278,21 @@
       z-index: 999;
       position: absolute;
       right: 0;
-      top: 150px;
+      top: 210px;
       font-size: 22px;
       color: #fff;
       &:hover {
          text-decoration: underline;
       }
-		@media (max-width:480px) {
+		@media (max-width: 767px) {
+			position: fixed;
+			top: 70px;
 			font-family: 'Roboto Condensed';
+			height: 45px;
+			width: 236px;
+			padding-top: 9px;
+			padding-left: 50px;
+			background-size: 245px 45px;
 		}
    }
    .featured-maker-panel {
