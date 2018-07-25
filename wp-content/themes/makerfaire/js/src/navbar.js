@@ -50,10 +50,12 @@ jQuery(function() {
       jQuery(document).scroll(function() {
           var scrollTop = jQuery(this).scrollTop();
           if(scrollTop > y_pos && jQuery(window).width() > 748){
+				  jQuery('body').addClass('scrolled');
               e.addClass("main-nav-scrolled"); 
               hamburger.addClass("ham-menu-animate");
               nextItemUnderNav.css("margin-top", "55px");
           }else if(scrollTop <= y_pos){
+				  jQuery('body').removeClass('scrolled');
               e.removeClass("main-nav-scrolled"); 
               hamburger.removeClass("ham-menu-animate");
               if (jQuery(window).width() > 767) {
