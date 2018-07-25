@@ -989,11 +989,28 @@
          font-family: "Roboto Condensed";
          color: #fff;
          background-image: url(../img/blueflag.png);
-         width: 250px;
-         background-size: 250px 85px;
+         width: 278px;
+         background-size: 278px 90px;
          background-repeat: no-repeat;
          margin-bottom: 0px;
-         height: 85px;
+         height: 90px;
+			h2 {
+				margin: 0;
+				margin-top: 10px;
+				font-weight: bold;
+				font-size: 38px;
+			}
+			h5 {
+				margin: 0;
+				font-size: 20px;
+			}
+			@media screen and (max-width: 767px) {
+				width: 225px;
+				height: 68px;
+            background-size: 225px 68px;
+				h2 { font-size: 26px; }
+				h5 { font-size: 16px; }
+			}
       }
       .top_left img {
          height: 50px;
