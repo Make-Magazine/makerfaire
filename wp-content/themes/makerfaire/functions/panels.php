@@ -672,7 +672,7 @@ function getNewsletterPanel() {
                <div class="row row-eq-height">
                   <div class="col-xs-12 col-sm-6 align-middle">
                      <h3>' . get_sub_field('newsletter_panel_text') . '</h3>
-                     <h5>Also get details on</h5>
+                     <p class="more-details">Also get details on:</p>
                      <div class="row" style="width:100%">
                         <div class="col-xs-12 col-sm-5  align-middle">
                            <label class="sel-container">
@@ -700,7 +700,7 @@ function getNewsletterPanel() {
                         </div>
                         <div class="col-xs-12 col-sm-10 align-middle">
                            <input id="wc-email" class="form-control nl-panel-input" name="email" placeholder="' . __('Enter your Email', 'MiniMakerFaire') . '" required type="email">
-                           <input class="form-control btn-w-ghost" value="' . __('GO', 'MiniMakerFaire') . '" type="submit">
+                           <input class="form-control btn-w-ghost" value="' . __('Go', 'MiniMakerFaire') . '" type="submit">
                         </div>
                      </div>
                   </div>
