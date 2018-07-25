@@ -427,9 +427,11 @@
 
    .cta-panel {
       position: relative;
-      padding: 25px 0;
       background-color: #00597E;
-      max-height: 78px;
+      height: 78px;
+		display: flex;
+      align-items: center;
+      justify-content: center;
       &:hover {
          h3 span {
             text-decoration: underline;
@@ -442,7 +444,8 @@
          span {
             padding: 0 50px;
 				@media (max-width: 550px) {
-					padding: 0px;
+					padding: 0px 20px;
+					display: block;
 				}
          }
       }
@@ -513,11 +516,13 @@
          .nl-panel-input {
             width: 80%;
             margin-right: 15px;
-            @media (max-width:767px) {
+            @media (max-width: 767px) {
                margin-right: 0;
                max-width: none;
             }
-
+				@media (max-width: 380px) {
+					width: 70%;
+				}
          }
          .btn-w-ghost {
 
