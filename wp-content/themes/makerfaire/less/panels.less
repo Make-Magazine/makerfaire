@@ -545,6 +545,11 @@
 				&::placeholder {
 					color: #fff;
 				}
+				// for chrome autocomplete treatement
+				&:-webkit-autofill {
+    				-webkit-box-shadow: 0 0 0 30px #005E94 inset;
+					-webkit-text-fill-color: white;
+				}
             @media (max-width: 767px) {
                margin-right: 0;
                max-width: none;
