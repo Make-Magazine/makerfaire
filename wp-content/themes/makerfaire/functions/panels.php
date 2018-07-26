@@ -437,7 +437,7 @@ function get1ColLayout() {
 /* * *************************************************** */
 
 function getBuyTixPanel() {
-   return '<a href="' . get_sub_field('buy_ticket_url') . '" target="_blank"><div class="floatBuyTix">'.get_sub_field('get_ticket_text').'</div></a>';
+   return '<a href="' . get_sub_field('buy_ticket_url') . '" target="_blank"><div class="floatBuyTix">'.get_sub_field('buy_ticket_text').'</div></a>';
 }
 
 /* * *************************************************** */
