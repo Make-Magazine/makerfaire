@@ -1125,6 +1125,7 @@ if (function_exists('acf_add_local_field_group')) {
                         'choices' => array(
                            'Blue' => 'Blue',
                            'Red' => 'Red',
+                           'Orange' => 'Orange',
                         ),
                         'default_value' => 'Blue',
                         'other_choice' => 0,
@@ -1135,7 +1136,7 @@ if (function_exists('acf_add_local_field_group')) {
                         'label' => 'Background Color',
                         'name' => 'background_color',
                         'type' => 'radio',
-                        'instructions' => 'Background color of this panel. Choose blue or red.',
+                        'instructions' => 'Background color of this panel. Choose blue, red or orange.',
                         'required' => 0,
                         'conditional_logic' => 0,
                         'wrapper' => array(

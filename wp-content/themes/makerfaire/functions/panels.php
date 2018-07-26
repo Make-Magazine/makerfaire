@@ -489,7 +489,7 @@ function getCTApanel() {
    $cta_url = get_sub_field('url');
    $background_color = get_sub_field('background_color');
    $return .= '<a href="' . $cta_url . '">';
-   $return .= '<section class="cta-panel' . ($background_color == "Red" ? ' red-ribbon' : '') . '">';
+   $return .= '<section class="cta-panel' . ($background_color == "Red" ? ' red-ribbon' : ($background_color == "Orange" ? ' orange-ribbon': '')) . '">';
    $return .= '   <div class="arrow-left"></div>'
       . '   <div class="arrow-right"></div>';
    $return .= '   <div class="container">
