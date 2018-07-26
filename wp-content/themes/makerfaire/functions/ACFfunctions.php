@@ -1481,7 +1481,7 @@ if (function_exists('acf_add_local_field_group')) {
                                     'label' => 'Paragraph',
                                     'name' => 'column_paragraph',
                                     'type' => 'textarea',
-                                    'instructions' => 'Character limit is 200',
+                                    'instructions' => 'Character limit is 350',
                                     'required' => 1,
                                     'conditional_logic' => array(
                                        array(
@@ -1499,7 +1499,7 @@ if (function_exists('acf_add_local_field_group')) {
                                     ),
                                     'default_value' => '',
                                     'placeholder' => '',
-                                    'maxlength' => 200,
+                                    'maxlength' => 350,
                                     'rows' => '',
                                     'new_lines' => '',
                                  ),
