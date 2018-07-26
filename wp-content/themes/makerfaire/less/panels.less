@@ -548,6 +548,13 @@
 				&::placeholder {
 					color: #fff;
 				}
+				// for chrome autocomplete treatement
+				&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active {
+    				-webkit-box-shadow: 0 0 0 30px #005E94 inset !important;
+					-webkit-text-fill-color: white;
+					-webkit-transition:none;
+					caret-color: white; 
+				}
             @media (max-width: 767px) {
                margin-right: 0;
                max-width: none;
@@ -869,7 +876,6 @@
       }
    }
 
-
    // Common elements
    .content-panel {
       .container {
@@ -989,8 +995,8 @@
          font-family: "Roboto Condensed";
          color: #fff;
          background-image: url(../img/blueflag.png);
-         width: 278px;
-         background-size: 278px 90px;
+         width: 325px;
+         background-size: 325px 90px;
          background-repeat: no-repeat;
          margin-bottom: 0px;
          height: 90px;
@@ -1036,7 +1042,7 @@
       .bottom_right {
          position: absolute;
          bottom: 0;
-         right: 0;
+         right: 30px;
       }
    }
 }
