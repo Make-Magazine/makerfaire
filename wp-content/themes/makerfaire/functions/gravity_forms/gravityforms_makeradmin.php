@@ -65,8 +65,7 @@ function gv_my_update_message( $message, $view_id, $entry, $back_link ) {
       return 'Entry Updated. <a href="'.esc_url($link).'">Return to your entry list</a>';
     }else{
       //when edit entry from public entry page
-      $link = str_replace('edit-public-information','maker',$back_link);
-      $return = 'Entry Updated. <a href="'.$link.'/edit">Return to your entry public page</a>';
+      $return = 'Entry Updated. <a href="/maker/entry/'.$entry['id'].'/edit">Return to your entry public page</a>';
     }
 
     return $return;
