@@ -1,6 +1,6 @@
 <?php
 /*
-* Template name: Featured Faire Landing Page w/Panels
+* Template name: Flagship Faire Landing Page w/Panels
 */
 get_header(); ?>
 
