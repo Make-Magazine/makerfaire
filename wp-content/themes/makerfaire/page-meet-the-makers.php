@@ -110,14 +110,15 @@ if($noMakerText =='') $noMakerText = 'No makers found';
 </div>
 
 <script>
-  jQuery(document).ready(function(){
-    // Carousel left right
-    jQuery( "#right-trigger" ).click(function() {
-      jQuery( ".owl-next" ).click();
-    });
-    jQuery( "#left-trigger" ).click(function() {
-      jQuery( ".owl-prev" ).click();
-    });
+  jQuery( document ).ready( function() {
+	  var slider = jQuery( '#carouselImgs' );
+     // Carousel left right
+     jQuery( "#right-trigger" ).click( function() {
+		  slider.trigger( 'next.owl.carousel' );
+     });
+     jQuery( "#left-trigger" ).click( function() {
+		  slider.trigger( 'prev.owl.carousel' );
+     });
   });
 </script>
 
