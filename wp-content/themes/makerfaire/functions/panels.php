@@ -852,7 +852,7 @@ function getSponsorPanel() {
          </div> <!-- close .row -->
          <div class="row">
             <div class="col-xs-12 text-center">
-               <a class="btn more-makers-link">Meet The Sponsors</a>
+               <a class="btn more-makers-link" href="/new-york-2018/sponsors/">Meet The Sponsors</a>
             </div>
          </div>
       </div> <!-- close .container -->
