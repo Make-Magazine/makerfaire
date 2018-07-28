@@ -789,6 +789,11 @@ function getSponsorPanel() {
    <div class="sponsor-slide">
       <div class="container">
          <div class="row">
+            <div class="col-xs-12 text-center padbottom">
+               <h2 class="title yellow-underline">Thank You To Our Sponsors!</h2>
+            </div>
+         </div>
+         <div class="row">
             <div class="col-sm-7">
                <h4 class="sponsor-slide-title">' . ($year ? $year . ' ' : '') . 'Maker Faire Sponsors: <span class="sponsor-slide-cat"></span></h4>
             </div>
@@ -845,6 +850,11 @@ function getSponsorPanel() {
                </div> <!-- close #carousel-sponsors-slider -->
             </div> <!-- close .col-xs-12 -->
          </div> <!-- close .row -->
+         <div class="row">
+            <div class="col-xs-12 text-center">
+               <a class="btn more-makers-link">Meet The Sponsors</a>
+            </div>
+         </div>
       </div> <!-- close .container -->
    </div> <!-- close .sponsor-slide -->';
 
