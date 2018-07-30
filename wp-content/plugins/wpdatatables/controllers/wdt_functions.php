@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 
 /**
  * Main wpDataTables functions
@@ -58,7 +58,7 @@ function wdtActivationCreateTables() {
 						table_id int(11) NOT NULL,
 						orig_header varchar(255) NOT NULL,
 						display_header varchar(255) NOT NULL,
-						filter_type enum('none','null_str','text','number','number-range','date-range','datetime-range','time-range','select','checkbox') NOT NULL,
+						filter_type enum('none','null_str','text','number','number-range','date-range','datetime-range','time-range','select','multiselect','checkbox') NOT NULL,
 						column_type enum('autodetect','string','int','float','date','link','email','image','formula','datetime','time') NOT NULL,
 						input_type enum('none','text','textarea','mce-editor','date','datetime','time','link','email','selectbox','multi-selectbox','attachment') NOT NULL default 'text',
 						input_mandatory tinyint(1) NOT NULL default '0',
@@ -158,6 +158,12 @@ function wdtActivationCreateTables() {
     if (!get_option('wdtNumbersAlign')) {
         update_option('wdtNumbersAlign', true);
     }
+    if (get_option('wdtBorderRemoval') === false) {
+        update_option('wdtBorderRemoval', 0);
+    }
+    if (get_option('wdtBorderRemovalHeader') === false) {
+        update_option('wdtBorderRemovalHeader', 0);
+    }
     if (!get_option('wdtFontColorSettings')) {
         update_option('wdtFontColorSettings', '');
     }
@@ -167,8 +173,8 @@ function wdtActivationCreateTables() {
     if (!get_option('wdtCustomCss')) {
         update_option('wdtCustomCss', '');
     }
-    if (!get_option('wdtMinifiedJs')) {
-        update_option('wdtMinifiedJs', true);
+    if (get_option('wdtMinifiedJs') === false) {
+        update_option('wdtMinifiedJs', 1);
     }
     if (!get_option('wdtTabletWidth')) {
         update_option('wdtTabletWidth', 1024);
@@ -181,6 +187,9 @@ function wdtActivationCreateTables() {
     }
     if (!get_option('wdtIncludeBootstrap')) {
         update_option('wdtIncludeBootstrap', true);
+    }
+    if (!get_option('wdtIncludeBootstrapBackEnd')) {
+        update_option('wdtIncludeBootstrapBackEnd', true);
     }
 }
 
@@ -204,8 +213,11 @@ function wdtUninstallDelete() {
     delete_option('wdtRenderCharts');
     delete_option('wdtPurchaseCode');
     delete_option('wdtIncludeBootstrap');
+    delete_option('wdtIncludeBootstrapBackEnd');
     delete_option('wdtParseShortcodes');
     delete_option('wdtNumbersAlign');
+    delete_option('wdtBorderRemoval');
+    delete_option('wdtBorderRemovalHeader');
     delete_option('wdtNumberFormat');
     delete_option('wdtMySqlUser');
     delete_option('wdtMySqlPwd');
@@ -424,7 +436,7 @@ function wdtWpDataTableShortcodeHandler($atts, $content = null) {
 
         $output = '';
         if ($tableData->show_title && $tableData->title) {
-            $output .= apply_filters('wpdatatables_filter_table_title', (empty($tableData->title) ? '' : '<h2>' . $tableData->title . '</h2>'), $id);
+            $output .= apply_filters('wpdatatables_filter_table_title', (empty($tableData->title) ? '' : '<h2 class="wpdt-c" id="wdt-table-title-'. $id .'">' . $tableData->title . '</h2>'), $id);
         }
         $output .= $wpDataTable->generateTable();
     } catch (Exception $e) {

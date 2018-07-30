@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 
 /**
  * Test the MySQL connection settings
@@ -218,6 +218,47 @@ function wdtDuplicateTable() {
 }
 
 add_action('wp_ajax_wpdatatables_duplicate_table', 'wdtDuplicateTable');
+
+/**
+ * Duplicate the chart
+ */
+
+function wdtDuplicateChart () {
+	global $wpdb;
+
+	if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtDuplicateChartNonce')) {
+		exit();
+	}
+
+	$chartId = (int)$_POST['chart_id'];
+	if (empty($chartId)) {
+		return false;
+	}
+	$newChartName = sanitize_text_field($_POST['new_chart_name']);
+
+	$chartQuery = $wpdb->prepare(
+		'SELECT * FROM ' . $wpdb->prefix . 'wpdatacharts WHERE id = %d',
+		$chartId
+	);
+
+	$wpDataChart = $wpdb->get_row($chartQuery);
+
+	// Creating new table
+	$wpdb->insert(
+		$wpdb->prefix . "wpdatacharts",
+		array(
+			'wpdatatable_id'    => $wpDataChart->wpdatatable_id,
+			'title'             => $newChartName,
+			'engine'            => $wpDataChart->engine,
+			'type'              => $wpDataChart->type,
+			'json_render_data'  => $wpDataChart->json_render_data
+		)
+	);
+
+	exit();
+}
+
+add_action('wp_ajax_wpdatatables_duplicate_chart', 'wdtDuplicateChart');
 
 /**
  * Create a manually built table and open in Edit Page
@@ -537,6 +578,10 @@ add_action('wp_ajax_wpdatatable_list_all_charts', 'wdtListAllCharts');
 /**
  * Read Distinct Values from the table for column
  * Used to populate possible values list for Server Side tables
+ *
+ * @throws Exception
+ * @throws WDTException
+ * @throws Exception
  */
 function wdtReadDistinctValuesFromTable() {
     $tableId = (int)$_POST['tableId'];
@@ -548,7 +593,7 @@ function wdtReadDistinctValuesFromTable() {
     $columnData = WDTConfigController::loadSingleColumnFromDB($columnId);
     $column = $wpDataTable->getColumn($columnData['orig_header']);
 
-    $distValues = WDTColumn::getColumnDistinctValues($column, $tableData);
+    $distValues = WDTColumn::getPossibleValuesRead($column, $tableData, false);
 
     echo json_encode($distValues);
     exit();
@@ -558,6 +603,8 @@ add_action('wp_ajax_wpdatatable_get_column_distinct_values', 'wdtReadDistinctVal
 
 /**
  * Get the preview for formula column
+ *
+ * @throws WDTException
  */
 function wdtPreviewFormulaResult() {
     $tableId = (int)$_POST['table_id'];

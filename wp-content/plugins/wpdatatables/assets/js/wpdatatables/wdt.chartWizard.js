@@ -99,6 +99,9 @@ var wdtChartColumnsData = {};
                             $('#title-floating-row').hide();
                             $('.series').hide();
                             break;
+                        case 'google_bubble_chart':
+                            $('.legend').hide();
+                            break;
                         case 'google_donut_chart':
                             $('#plot_background_color_row').hide();
                             $('#plot-border-width-row').hide();
@@ -153,7 +156,9 @@ var wdtChartColumnsData = {};
                         constructedChartData.chart_type == 'highcharts_pie_with_gradient_chart' ||
                         constructedChartData.chart_type == 'highcharts_3d_pie_chart' ||
                         constructedChartData.chart_type == 'highcharts_donut_chart' ||
-                        constructedChartData.chart_type == 'highcharts_3d_donut_chart'
+                        constructedChartData.chart_type == 'highcharts_3d_donut_chart'||
+                        constructedChartData.chart_type == 'highcharts_treemap_chart' ||
+                        constructedChartData.chart_type == 'highcharts_treemap_level_chart'
                     ) {
                         $('#border_width_row').hide();
                         $('#border_color_row').hide();
@@ -231,10 +236,12 @@ var wdtChartColumnsData = {};
                         var columnChartBlockHtml = columnChartTemplate.render({columns: columns});
                         $('div.wdt-chart-column-picker-container div.wdt-chart-wizart-existing-columns-container').html(columnChartBlockHtml);
 
-                        if (( typeof constructedChartData.selected_columns == 'undefined' )
-                            && ( typeof editing_chart_data !== 'undefined' )) {
-                            for (var i in editing_chart_data.selected_columns) {
-                                $('div.wdt-chart-column-picker-container div.wdt-chart-wizart-existing-columns-container div.chart-column-block[data-orig_header="' + editing_chart_data.selected_columns[i] + '"]')
+                        if (( typeof constructedChartData.selected_columns !== 'undefined' )
+                            || ( typeof editing_chart_data !== 'undefined' )) {
+                            var columns = (typeof editing_chart_data !== 'undefined') ? editing_chart_data.selected_columns : constructedChartData.selected_columns;
+                            $('div.wdt-chart-column-picker-container div.wdt-chart-wizard-chosen-columns-container .chart-column-block').remove();
+                            for (var i in columns) {
+                                $('div.wdt-chart-column-picker-container div.wdt-chart-wizart-existing-columns-container div.chart-column-block[data-orig_header="' + columns[i] + '"]')
                                     .appendTo('div.wdt-chart-column-picker-container div.wdt-chart-wizard-chosen-columns-container');
                             }
                         }
@@ -265,9 +272,20 @@ var wdtChartColumnsData = {};
                         .prependTo('div.wdt-chart-wizard-chosen-columns-container')
                 }
 
+                constructedChartData.selected_columns = {};
+                constructedChartData.series_data = {};
                 $('div.wdt-chart-wizard-chosen-columns-container div.chart-column-block').each(function () {
                     constructedChartData.selected_columns[parseInt($(this).index())] = $(this).data('orig_header');
                 });
+
+                if (typeof editing_chart_data !== 'undefined') {
+                    if (!_.isEqual(constructedChartData.selected_columns, editing_chart_data.selected_columns)) {
+                        editing_chart_data.render_data.series = editing_chart_data.render_data.series.filter(function (editColumns) {
+                            return Object.values(constructedChartData.selected_columns).indexOf(editColumns.orig_header) !== -1;
+                        });
+                    }
+                }
+
 
                 // Set initial width for preview
                 if (constructedChartData.width == null) {
@@ -281,6 +299,8 @@ var wdtChartColumnsData = {};
                 }
 
                 $('#wdt-chart-row-range-type').change();
+
+                $('#series-settings-container').empty();
 
                 getInputData();
 
@@ -303,40 +323,55 @@ var wdtChartColumnsData = {};
 
                         if (constructedChartData.engine == 'google') {
                             if (typeof editing_chart_data != 'undefined') {
-                                for (var i = 0; i < editing_chart_data.render_data.series.length; i++) {
-                                    data.columns[i + 1].label = editing_chart_data.render_data.series[i].label;
+                                for (i = 0; i < data.series.length; i++) {
+                                    for(j = 0; j < editing_chart_data.render_data.series.length; j++) {
+                                        if (data.series[i].orig_header === editing_chart_data.render_data.series[j].orig_header) {
+                                            data.series[i].label = data.columns[i + 1].label = editing_chart_data.render_data.series[j].label;
+                                        }
+                                    }
                                 }
-                                var seriesBlockTemplateHtml = seriesBlockTemplate.render({series: editing_chart_data.render_data.series});
-                            } else {
-                                seriesBlockTemplateHtml = seriesBlockTemplate.render({series: data.series});
                             }
+                            seriesBlockTemplateHtml = seriesBlockTemplate.render({series: data.series});
+
                         } else if (constructedChartData.engine == 'highcharts') {
-                            if (typeof editing_chart_data != 'undefined' && editing_chart_data.highcharts_render_data != null) {
-                                for (i = 0; i < editing_chart_data.highcharts_render_data.options.series.length; i++) {
-                                    data.options.series[i].name = editing_chart_data.highcharts_render_data.options.series[i].label;
+                            if (typeof editing_chart_data != 'undefined' && editing_chart_data.highcharts_render_data != null &&
+                                constructedChartData.chart_type != 'highcharts_treemap_chart' && constructedChartData.chart_type != 'highcharts_treemap_level_chart_') {
+                                for (i = 0; i < data.options.series.length; i++) {
+                                    for(j = 0; j < editing_chart_data.highcharts_render_data.options.series.length; j++) {
+                                        if (data.options.series[i].orig_header === editing_chart_data.highcharts_render_data.options.series[j].orig_header) {
+                                            data.options.series[i].label = editing_chart_data.highcharts_render_data.options.series[j].label;
+                                        }
+                                    }
                                 }
-                                seriesBlockTemplateHtml = seriesBlockTemplate.render({series: editing_chart_data.highcharts_render_data.options.series});
-                            } else {
-                                seriesBlockTemplateHtml = seriesBlockTemplate.render({series: data.options.series});
                             }
+                            seriesBlockTemplateHtml = seriesBlockTemplate.render({series: data.options.series});
+
                         } else if (constructedChartData.engine == 'chartjs') {
                             if (typeof editing_chart_data != 'undefined' && editing_chart_data.chartjs_render_data != null) {
-                                for (i = 0; i < editing_chart_data.chartjs_render_data.options.data.datasets.length; i++) {
-                                    data.options.data.datasets[i].label = editing_chart_data.chartjs_render_data.options.data.datasets[i].label;
+                                for (i = 0; i < data.options.data.datasets.length; i++) {
+                                    for(j = 0; j < editing_chart_data.chartjs_render_data.options.data.datasets.length; j++) {
+                                        if (data.options.data.datasets[i].orig_header === editing_chart_data.chartjs_render_data.options.data.datasets[j].orig_header) {
+                                            data.options.data.datasets[i].label = editing_chart_data.chartjs_render_data.options.data.datasets[j].label;
+                                        }
+                                    }
                                 }
-                                seriesBlockTemplateHtml = seriesBlockTemplate.render({series: editing_chart_data.chartjs_render_data.options.data.datasets});
-                            } else {
-                                seriesBlockTemplateHtml = seriesBlockTemplate.render({series: data.options.data.datasets});
                             }
+                            seriesBlockTemplateHtml = seriesBlockTemplate.render({series: data.options.data.datasets});
                         }
 
                         $('#series-settings-container').html(seriesBlockTemplateHtml);
+
                         if (constructedChartData.engine == 'google') {
                             if (typeof editing_chart_data != 'undefined') {
-                                for (i in editing_chart_data.render_data.options.series) {
-                                    $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-color input').val(editing_chart_data.render_data.options.series[i].color);
-                                    data.options.series[i] = {
-                                        color: editing_chart_data.render_data.options.series[i].color
+                                for (i in data.series) {
+                                    for (j in editing_chart_data.render_data.series) {
+                                        if (data.series[i].orig_header === editing_chart_data.render_data.series[j].orig_header &&
+                                            typeof(editing_chart_data.render_data.options.series[j]) !== 'undefined') {
+                                            $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-color input').val(editing_chart_data.render_data.options.series[j].color);
+                                            data.options.series[i] = {
+                                                color: editing_chart_data.render_data.options.series[j].color
+                                            }
+                                        }
                                     }
                                 }
                             } else {
@@ -345,22 +380,46 @@ var wdtChartColumnsData = {};
                                 }
                             }
                         } else if (constructedChartData.engine == 'highcharts') {
-                            if (typeof editing_chart_data != 'undefined' && editing_chart_data.highcharts_render_data != null) {
-                                for (i in editing_chart_data.highcharts_render_data.options.series) {
-                                    $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-color input').val(editing_chart_data.highcharts_render_data.options.series[i].color);
-                                    data.options.series[i].color = editing_chart_data.highcharts_render_data.options.series[i].color
+                            if (typeof editing_chart_data != 'undefined' && editing_chart_data.highcharts_render_data != null &&
+                                constructedChartData.chart_type != 'highcharts_treemap_chart' && constructedChartData.chart_type != 'highcharts_treemap_level_chart_') {
+                                for (i in data.options.series) {
+                                    for (j in editing_chart_data.highcharts_render_data.options.series) {
+                                        if (data.options.series[i].orig_header === editing_chart_data.highcharts_render_data.options.series[j].orig_header) {
+                                            if (constructedChartData.chart_type == 'highcharts_spline_chart' ||
+                                                constructedChartData.chart_type == 'highcharts_line_chart' ||
+                                                constructedChartData.chart_type == 'highcharts_basic_column_chart' ||
+                                                constructedChartData.chart_type == 'highcharts_basic_area_chart' ||
+                                                constructedChartData.chart_type == 'highcharts_basic_bar_chart') {
+                                                $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-color input').val(editing_chart_data.highcharts_render_data.options.series[j].color);
+                                                data.options.series[i].color = editing_chart_data.highcharts_render_data.options.series[j].color;
+                                                $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-type select').val(editing_chart_data.highcharts_render_data.options.series[j].type);
+                                                data.options.series[i].type = editing_chart_data.highcharts_render_data.options.series[j].type;
+                                                $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-show-yaxis input').val(editing_chart_data.highcharts_render_data.options.series[j].yAxis);
+                                                data.options.series[i].yAxis = editing_chart_data.highcharts_render_data.options.series[j].yAxis
+                                            } else {
+                                                $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-color input').val(editing_chart_data.highcharts_render_data.options.series[j].color);
+                                                data.options.series[i].color = editing_chart_data.highcharts_render_data.options.series[j].color;
+                                            }
+                                        }
+                                    }
                                 }
                             } else {
                                 for (i in data.options.series) {
                                     $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-color input').val(data.options.series[i].color);
+                                    $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-type select').val(data.options.series[i].type);
+                                    $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-show-yaxis input').val(data.options.series[i].yAxis);
                                 }
                             }
                         } else if (constructedChartData.engine == 'chartjs') {
                             if (typeof editing_chart_data != 'undefined' && editing_chart_data.chartjs_render_data != null) {
-                                for (i in editing_chart_data.chartjs_render_data.options.data.datasets) {
-                                    $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-color input').val(editing_chart_data.chartjs_render_data.options.data.datasets[i].borderColor);
-                                    data.options.data.datasets[i].borderColor = editing_chart_data.chartjs_render_data.options.data.datasets[i].borderColor;
-                                    data.options.data.datasets[i].backgroundColor = editing_chart_data.chartjs_render_data.options.data.datasets[i].backgroundColor;
+                                for (i in data.options.data.datasets) {
+                                    for(j in editing_chart_data.chartjs_render_data.options.data.datasets) {
+                                        if (data.options.data.datasets[i].orig_header === editing_chart_data.chartjs_render_data.options.data.datasets[j].orig_header) {
+                                            $('#series-settings-container div.chart-series-block:eq(' + i + ')').find('div.chart-series-color input').val(editing_chart_data.chartjs_render_data.options.data.datasets[j].borderColor);
+                                            data.options.data.datasets[i].borderColor = editing_chart_data.chartjs_render_data.options.data.datasets[j].borderColor;
+                                            data.options.data.datasets[i].backgroundColor = editing_chart_data.chartjs_render_data.options.data.datasets[j].backgroundColor;
+                                        }
+                                    }
                                 }
                             } else {
                                 for (i in data.options.data.datasets) {
@@ -385,12 +444,16 @@ var wdtChartColumnsData = {};
                         } else if (constructedChartData.engine == 'highcharts') {
                             wdtChart = new wpDataTablesHighchart();
                             wdtChart.setOptions(data.options);
+                            wdtChart.setMultiplyYaxis(data);
                             wdtChart.setType(data.type);
                             wdtChart.setWidth(data.width);
                             wdtChart.setHeight(data.height);
                             wdtChart.setColumnIndexes(data.column_indexes);
                             wdtChart.setContainer('#google-chart-container');
                         } else if (constructedChartData.engine == 'chartjs') {
+                            if (wdtChart !== null) {
+                                wdtChart.chart.destroy();
+                            }
                             wdtChart = new wpDataTablesChartJS();
                             var container = document.getElementById("chart-js-container");
                             var canvas = document.getElementById("chart-js-canvas");
@@ -403,6 +466,32 @@ var wdtChartColumnsData = {};
                             wdtChart.setContainerOptions(data.configurations);
                         }
                         wdtChart.render();
+                        if (constructedChartData.chart_type == 'google_bubble_chart') {
+                            $('.chart-series-color').hide();
+                        }
+                        $('.selectpicker').selectpicker('refresh');
+
+                        if (constructedChartData.engine == 'google' || constructedChartData.engine == 'chartjs'
+                            || constructedChartData.chart_type == 'highcharts_stacked_area_chart'
+                            || constructedChartData.chart_type == 'highcharts_scatter_plot'
+                            || constructedChartData.chart_type == 'highcharts_stacked_bar_chart'
+                            || constructedChartData.chart_type == 'highcharts_3d_column_chart'
+                            || constructedChartData.chart_type == 'highcharts_stacked_column_chart'
+                            || constructedChartData.chart_type == 'highcharts_gauge_chart'
+                        ) {
+                            $('div.chart-series-type').hide();
+                            $('div.chart-show-yaxis').hide();
+                        } else {
+                            for (var i in  data.options.series) {
+                                if (data.options.series[i].yAxis) {
+                                    $('#show-yaxis-' + i).prop('checked', 'checked');
+                                } else {
+                                    $('#show-yaxis-' + i).prop('checked', '');
+                                }
+                            }
+                            wdtChart.render();
+
+                        }
 
                         var eTop = $('.chart-preview-container').offset().top;
                         var eWidth = $('.chart-preview-container').width();
@@ -503,6 +592,7 @@ var wdtChartColumnsData = {};
                     } else if (constructedChartData.engine == 'highcharts') {
                         wdtChart = new wpDataTablesHighchart();
                         wdtChart.setOptions(data.options);
+                        wdtChart.setMultiplyYaxis(data);
                         wdtChart.setType(data.type);
                         wdtChart.setWidth(data.width);
                         wdtChart.setHeight(data.height);
@@ -544,9 +634,9 @@ var wdtChartColumnsData = {};
         constructedChartData.height = parseInt($('#chart-height').val());
         constructedChartData.group_chart = $('#group-chart').is(':checked') ? 1 : 0;
         constructedChartData.background_color = $('input.background-color').val();
-        constructedChartData.border_width = parseInt($('#border-width').val());
+        constructedChartData.border_width = parseInt($('#border-width').val() ? $('#border-width').val() : 0);
         constructedChartData.border_color = $('input.border_color').val();
-        constructedChartData.border_radius = $('#border-radius').val();
+        constructedChartData.border_radius = parseInt($('#border-radius').val() ? $('#border-radius').val(): 0);
         constructedChartData.zoom_type = $('#zoom-type').val();
         constructedChartData.panning = $('#panning').is(':checked') ? 1 : 0;
         constructedChartData.pan_key = $('#pan-key').val();
@@ -563,12 +653,31 @@ var wdtChartColumnsData = {};
         if (typeof constructedChartData.series_data == 'undefined') {
             constructedChartData.series_data = {};
         }
-        $('div.chart-series-block').each(function (e) {
-            constructedChartData.series_data[$(this).data('orig_header')] = {
-                label: $(this).find('input.series-label').val(),
-                color: $(this).find('input.series-color').val()
-            }
-        });
+        if (constructedChartData.engine == 'google' || constructedChartData.engine == 'chartjs'
+            || constructedChartData.chart_type == 'highcharts_stacked_area_chart'
+            || constructedChartData.chart_type == 'highcharts_scatter_plot'
+            || constructedChartData.chart_type == 'highcharts_stacked_bar_chart'
+            || constructedChartData.chart_type == 'highcharts_3d_column_chart'
+            || constructedChartData.chart_type == 'highcharts_stacked_column_chart'
+            || constructedChartData.chart_type == 'highcharts_gauge_chart'
+        ) {
+            $('div.chart-series-block').each(function (e) {
+                constructedChartData.series_data[$(this).data('orig_header')] = {
+                    label: $(this).find('input.series-label').val(),
+                    color: $(this).find('input.series-color').val()
+                }
+            });
+        } else {
+            $('div.chart-series-block').each(function (e) {
+                constructedChartData.series_data[$(this).data('orig_header')] = {
+                    label: $(this).find('input.series-label').val(),
+                    color: $(this).find('input.series-color').val(),
+                    type: $(this).find('select#series-type').val(),
+                    yAxis:$('input#show-yaxis-'+ e).is(':checked') ? 1 : 0
+                }
+            });
+        }
+
         constructedChartData.curve_type = $('#curve-type').is(':checked') ? 1 : 0;
         // Axes
         constructedChartData.show_grid = $('#show-grid').is(':checked') ? 1 : 0;
@@ -590,7 +699,7 @@ var wdtChartColumnsData = {};
         constructedChartData.title_font_size = $('#title_font_size').val();
         constructedChartData.title_font_name = $('#title-font-name').val();
         constructedChartData.title_font_style = $('#title-font-style').val();
-        constructedChartData.title_font_color = $('input.title-font-color').val();
+        constructedChartData.title_font_color = $('input#title-font-color').val();
         constructedChartData.subtitle = $('#subtitle').val();
         constructedChartData.subtitle_align = $('#subtitle-align').val();
         // Tooltip
@@ -1370,19 +1479,33 @@ var wdtChartColumnsData = {};
                     }
 
                     // Axes
-                    $('#highcharts-line-dash-style').val(editing_chart_data.highcharts_render_data.options.yAxis.gridLineDashStyle);
+                    if (Array.isArray(editing_chart_data.highcharts_render_data.options.yAxis)) {
+                        $('#highcharts-line-dash-style').val(editing_chart_data.highcharts_render_data.options.yAxis[0].gridLineDashStyle);
+                    }else{
+                        $('#highcharts-line-dash-style').val(editing_chart_data.highcharts_render_data.options.yAxis.gridLineDashStyle);
+                    }
                     if (editing_chart_data.highcharts_render_data.options.xAxis.crosshair) {
                         $('#horizontal-axis-crosshair').prop('checked', 'checked');
                     } else {
                         $('#horizontal-axis-crosshair').prop('checked', '');
                     }
-                    if (editing_chart_data.highcharts_render_data.options.yAxis.crosshair) {
-                        $('#vertical-axis-crosshair').prop('checked', 'checked');
-                    } else {
-                        $('#vertical-axis-crosshair').prop('checked', '');
+                    if (Array.isArray(editing_chart_data.highcharts_render_data.options.yAxis)){
+                        if (editing_chart_data.highcharts_render_data.options.yAxis[0].crosshair) {
+                            $('#vertical-axis-crosshair').prop('checked', 'checked');
+                        } else {
+                            $('#vertical-axis-crosshair').prop('checked', '');
+                        }
+                        $('#vertical-axis-min').val(editing_chart_data.highcharts_render_data.options.yAxis[0].min);
+                        $('#vertical-axis-max').val(editing_chart_data.highcharts_render_data.options.yAxis[0].max);
+                    }else{
+                        if (editing_chart_data.highcharts_render_data.options.yAxis.crosshair) {
+                            $('#vertical-axis-crosshair').prop('checked', 'checked');
+                        } else {
+                            $('#vertical-axis-crosshair').prop('checked', '');
+                        }
+                        $('#vertical-axis-min').val(editing_chart_data.highcharts_render_data.options.yAxis.min);
+                        $('#vertical-axis-max').val(editing_chart_data.highcharts_render_data.options.yAxis.max);
                     }
-                    $('#vertical-axis-min').val(editing_chart_data.highcharts_render_data.options.yAxis.min);
-                    $('#vertical-axis-max').val(editing_chart_data.highcharts_render_data.options.yAxis.max);
                     if (editing_chart_data.highcharts_render_data.options.chart.inverted) {
                         $('#inverted').prop('checked', 'checked');
                     } else {
@@ -1494,7 +1617,8 @@ var wdtChartColumnsData = {};
                 // Axes
                 $('#horizontal-axis-label').val(editing_chart_data.chartjs_render_data.options.options.scales.xAxes[0].scaleLabel.labelString);
                 $('#vertical-axis-label').val(editing_chart_data.chartjs_render_data.options.options.scales.yAxes[0].scaleLabel.labelString);
-                $('#vertical-axis-min').val(editing_chart_data.chartjs_render_data.options.options.scales.yAxes[0].ticks.min);
+                editing_chart_data.chartjs_render_data.options.options.scales.yAxes[0].ticks.beginAtZero ?
+                    $('#vertical-axis-min').val(0) : $('#vertical-axis-min').val(editing_chart_data.chartjs_render_data.options.options.scales.yAxes[0].ticks.min);
                 $('#vertical-axis-max').val(editing_chart_data.chartjs_render_data.options.options.scales.yAxes[0].ticks.max);
 
                 // Title

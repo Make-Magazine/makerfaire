@@ -219,8 +219,10 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
             textareaCell: function () {
                 // Parse a link if there exists
                 obj.parseLink();
-                // Replace 'br' tag to "\n"
-                if (obj.params.value.indexOf('<br/>') != -1) {
+                // Replace null to '' and 'br' tag to "\n"
+                if (obj.params.value == null) {
+                    obj.params.value = '';
+                } else if (obj.params.value.indexOf('<br/>') != -1) {
                     obj.params.value = (obj.params.value).replace(/<br\/>/g, "\n");
                 }
                 // Create an input for a selected cell editing
@@ -270,6 +272,12 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
             linkCell: function () {
                 // Parse a link if there exists
                 obj.parseLink();
+
+                // Replace null value from input for a selected cell editing to ''
+                if (obj.params.value == null) {
+                    obj.params.value = '';
+                }
+
                 // Create an input for a selected cell editing
                 obj.params.code = '<input type="text" data-input_type="' + obj.params.inputType + '" id="' + obj.params.editInputId + '" value="' + obj.params.value + '" />';
 
@@ -349,30 +357,93 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 obj.params.currentCell.empty().append(obj.params.code.attr('id', obj.params.editInputId).removeClass('selecter-element'));
 
                 // Set a selected options for a cloned selectbox
-                if (obj.params.value !== null) {
-                    $.each(obj.params.value.split(", "), function (i, e) {
-                        $(obj.params.editSelector + ' option[value="' + e + '"]').prop("selected", true);
-                    });
+                if (obj.params.possibleValuesAjax === -1) {
+                    if (obj.params.value !== null) {
+                        $.each(obj.params.value.split(", "), function (i, e) {
+                            $(obj.params.editSelector + ' option[value="' + e + '"]').prop("selected", true);
+                        });
+                    }
                 }
 
                 // Initialize and open selectpicker
                 $(obj.params.editSelector).selectpicker();
-                $(obj.params.editSelector).selectpicker('toggle');
+
+                // Add AJAX to selectbox
+                if (obj.params.possibleValuesAjax !== -1) {
+
+                    $(obj.params.editSelector).html('');
+
+                    $(obj.params.editSelector).selectpicker('refresh').ajaxSelectPicker({
+                        ajax: {
+                            url: tableDescription.adminAjaxBaseUrl,
+                            method: 'POST',
+                            data: {
+                                wdtNonce: $('#wdtNonce').val(),
+                                action: 'wpdatatables_get_column_possible_values',
+                                tableId: tableDescription.tableWpId,
+                                originalHeader: obj.params.columnHeader
+                            }
+                        },
+                        cache: false,
+                        preprocessData: function (data) {
+                            if (obj.params.inputType === 'selectbox') {
+                                data.unshift({value: ''});
+                            }
+                            return data
+                        },
+                        preserveSelected: true,
+                        emptyRequest: true,
+                        preserveSelectedPosition: 'before',
+                        locale: {
+                            emptyTitle: wpdatatables_frontend_strings.nothingSelected,
+                            statusSearching: wpdatatables_frontend_strings.sLoadingRecords
+                        }
+                    });
+
+                    // Load possible values on modal open
+                    $(obj.params.editSelector).on('show.bs.select', function (e) {
+                        setTimeout(function () {
+                            $(obj.params.editSelector).trigger('change').data('AjaxBootstrapSelect').list.cache = {};
+                            $(obj.params.editSelector).closest('.bootstrap-select').find('.bs-searchbox .form-control').val('').trigger('keyup');
+                        }, 500);
+
+                        // If value is set, append options to selectbox HTML
+                        if (obj.params.value !== null) {
+                            if (obj.params.inputType === 'multi-selectbox') {
+                                var selectedValues = !Array.isArray(obj.params.value) ? obj.params.value.split(', ') : obj.params.value;
+
+                                $.each(selectedValues, function (index, value) {
+                                    if (value) {
+                                        $(obj.params.editSelector).append('<option selected value="' + value + '">' + value + '</option>');
+                                    }
+                                });
+                            } else {
+                                $(obj.params.editSelector).append('<option selected value="' + obj.params.value + '">' + obj.params.value + '</option>');
+                            }
+
+                            $(obj.params.editSelector).selectpicker('refresh');
+                        }
+                    });
+                }
+
                 obj.params.currentCell.css({'overflow': 'initial'});
+                $(obj.params.editSelector).selectpicker('toggle');
 
                 // Saving event
-                if (obj.params.inputType == 'selectbox') {
-                    $(obj.params.editSelector).on('changed.bs.select', function () {
+                if (obj.params.possibleValuesAjax === -1) {
+                    if (obj.params.inputType === 'selectbox') {
+                        $(obj.params.editSelector).on('changed.bs.select', function () {
 
-                        $(obj.params.editSelector).data('changed', true);
+                            $(obj.params.editSelector).data('changed', true);
 
-                        obj.params.value = $(this).val();
-                        if ($.type(obj.params.value) === 'array') {
-                            obj.params.value = obj.params.value.join(', ');
-                        }
+                            obj.params.value = $(this).val();
+                            if ($.type(obj.params.value) === 'array') {
+                                obj.params.value = obj.params.value.join(', ');
+                            }
 
-                        obj.validateAndSave($(this));
-                    });
+                            obj.validateAndSave($(this));
+                        });
+                    }
                 }
 
                 $(obj.params.editSelector).on('hidden.bs.select', function () {
@@ -410,15 +481,15 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                     'id="row_edit_' + tableDescription.tableId + '_sets_button" ' +
                     'data-column_type="icon" ' +
                     'data-rel_input="row_edit_' + tableDescription.tableId + '_sets">' +
-                        '<span class="fileinput-new">Select file</span>' +
-                        '<span class="fileinput-exists">Change</span>' +
-                        '<input type="hidden" ' +
-                        'id="row_edit_' + tableDescription.tableId + '_sets" ' +
-                        'data-key="sets" ' +
-                        'data-input_type="attachment" ' +
-                        'value="' + src + '" ' +
-                        'class="editDialogInput" ' +
-                        '/>' +
+                    '<span class="fileinput-new">Select file</span>' +
+                    '<span class="fileinput-exists">Change</span>' +
+                    '<input type="hidden" ' +
+                    'id="row_edit_' + tableDescription.tableId + '_sets" ' +
+                    'data-key="sets" ' +
+                    'data-input_type="attachment" ' +
+                    'value="' + src + '" ' +
+                    'class="editDialogInput" ' +
+                    '/>' +
                     '</span>' +
                     '<button class="btn btn-primary waves-effect fileinput-save m-r-10">Save</button>' +
                     '<button class="btn btn-danger fileinput-exists wdt-detach-attachment-file-inline m-r-10" data-dismiss="fileinput">Remove</button>' +
@@ -486,11 +557,11 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                             $relInput.parent().parent().parent().removeClass('fileinput-new').addClass('fileinput-exists');
                             $relInput.parent().parent().removeClass('fileinput-new').addClass('fileinput-exists');
 
-                            if( attachment.sizes.thumbnail ) {
+                            if (attachment.sizes.thumbnail) {
                                 val = attachment.sizes.thumbnail.url + '||' + val;
                             }
 
-                            $relInput.val( val );
+                            $relInput.val(val);
                         });
                     } else {
                         // For columns that are not image column type, grab the URL and set it as the text field's value
@@ -509,7 +580,7 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 /**
                  * Detached the chosen attachment
                  */
-                $('.wdt-detach-attachment-file-inline').click( function (e) {
+                $('.wdt-detach-attachment-file-inline').click(function (e) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                     if ($(this).parent().find('span.fileupload-' + tableDescription.tableId).data('column_type') == 'icon') {
@@ -561,6 +632,7 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 obj.params.notNull = dataTableOptions.aoColumnDefs[obj.params.columnId]['notNull'];
                 obj.params.value = obj.params.cellData;
                 obj.params.currentCell = $(this);
+                obj.params.possibleValuesAjax = tableDescription.advancedEditingOptions.aoColumns[obj.params.columnId]['possibleValuesAjax'];
 
                 // If a coulumn is resposive than record an expand button to variable
                 if ($(this).children('.responsiveExpander') != '') {

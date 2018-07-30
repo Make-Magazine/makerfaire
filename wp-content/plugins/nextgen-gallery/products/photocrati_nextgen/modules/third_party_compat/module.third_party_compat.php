@@ -16,7 +16,7 @@ class M_Third_Party_Compat extends C_Base_Module
             'photocrati-third_party_compat',
             'Third Party Compatibility',
             "Adds Third party compatibility hacks, adjustments, and modifications",
-            '0.6',
+            '3.0.0',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -123,6 +123,7 @@ class M_Third_Party_Compat extends C_Base_Module
         add_filter('ngg_atp_show_display_type', array($this, 'atp_check_pro_albums'), 10, 2);
         add_filter('run_ngg_resource_manager', array($this, 'run_ngg_resource_manager'));
         add_filter('wpseo_sitemap_urlimages', array($this, 'add_wpseo_xml_sitemap_images'), 10, 2);
+        add_filter('ngg_pre_delete_unused_term_id', array($this, 'dont_auto_purge_wpml_terms'));
 
         if ($this->is_ngg_page()) add_action('admin_enqueue_scripts', array(&$this, 'dequeue_spider_calendar_resources'));
 
@@ -296,6 +297,23 @@ class M_Third_Party_Compat extends C_Base_Module
     {
         M_WordPress_Routing::$_use_canonical_redirect = FALSE;
         M_WordPress_Routing::$_use_old_slugs = FALSE;
+    }
+
+    /**
+     * NGG automatically purges unused terms when managing a gallery, but this also ensnares WPML translations
+     * @param $term_id
+     * @return bool
+     */
+    public function dont_auto_purge_wpml_terms($term_id)
+    {
+        $args = array('element_id' => $term_id,
+                      'element_type' => 'ngg_tag');
+        $term_language_code = apply_filters('wpml_element_language_code', null, $args);
+
+        if (!empty($term_language_code))
+            return FALSE;
+        else
+            return $term_id;
     }
 
     /**

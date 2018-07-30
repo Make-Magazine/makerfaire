@@ -1,14 +1,14 @@
 <?php
 /**
  * @package wpDataTables
- * @version 2.0.2
+ * @version 2.2.1
  */
 /*
 Plugin Name: wpDataTables
 Plugin URI: http://tms-plugins.com
 Description: Add interactive tables easily from any input source
 //[<-- Full version -->]//
-Version: 2.0.2
+Version: 2.2.1
 //[<--/ Full version -->]//
 //[<-- Full version insertion #27 -->]//
 Author: TMS-Plugins
@@ -19,7 +19,7 @@ Domain Path: /languages
 ?>
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied');
 
 /******************************
  * Includes and configuration *

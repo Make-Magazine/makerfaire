@@ -2,17 +2,30 @@
 /**
  * Plugin Name: Login by Auth0
  * Description: Login by Auth0 provides improved Username/password login, Passwordless login, Social login and Single Sign On for all your sites.
- * Version: 3.5.2
+ * Version: 3.6.2
  * Author: Auth0
  * Author URI: https://auth0.com
  */
+define( 'WPA0_VERSION', '3.6.2' );
+define( 'AUTH0_DB_VERSION', 18 );
+
 define( 'WPA0_PLUGIN_FILE', __FILE__ );
-define( 'WPA0_PLUGIN_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
-define( 'WPA0_PLUGIN_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
-define( 'WPA0_LANG', 'wp-auth0' ); // deprecated; do not use for translations
-define( 'AUTH0_DB_VERSION', 17 );
-define( 'WPA0_VERSION', '3.5.2' );
+define( 'WPA0_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'WPA0_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'WPA0_PLUGIN_JS_URL', WPA0_PLUGIN_URL . 'assets/js/' );
+define( 'WPA0_PLUGIN_CSS_URL', WPA0_PLUGIN_URL . 'assets/css/' );
+define( 'WPA0_PLUGIN_IMG_URL', WPA0_PLUGIN_URL . 'assets/img/' );
+define( 'WPA0_PLUGIN_LIB_URL', WPA0_PLUGIN_URL . 'assets/lib/' );
+define( 'WPA0_PLUGIN_BS_URL', WPA0_PLUGIN_URL . 'assets/bootstrap/' );
+
+define( 'WPA0_LOCK_CDN_URL', 'https://cdn.auth0.com/js/lock/11.5/lock.min.js' );
+define( 'WPA0_AUTH0_JS_CDN_URL', 'https://cdn.auth0.com/js/auth0/9.4/auth0.min.js' );
+
+define( 'WPA0_AUTH0_LOGIN_FORM_ID', 'auth0-login-form' );
 define( 'WPA0_CACHE_GROUP', 'wp_auth0' );
+define( 'WPA0_JWKS_CACHE_TRANSIENT_NAME', 'WP_Auth0_JWKS_cache' );
+
+define( 'WPA0_LANG', 'wp-auth0' ); // deprecated; do not use for translations
 
 /**
  * Main plugin class
@@ -85,20 +98,13 @@ class WP_Auth0 {
 		$this->router = new WP_Auth0_Routes( $this->a0_options );
 		$this->router->init();
 
-		$metrics = new WP_Auth0_Metrics( $this->a0_options );
-		$metrics->init();
-
 		$auth0_admin = new WP_Auth0_Admin( $this->a0_options, $this->router );
 		$auth0_admin->init();
 
 		$error_log = new WP_Auth0_ErrorLog();
-		$error_log->init();
 
 		$configure_jwt_auth = new WP_Auth0_Configure_JWTAUTH( $this->a0_options );
 		$configure_jwt_auth->init();
-
-		$dashboard_widgets = new WP_Auth0_Dashboard_Widgets( $this->a0_options, $this->db_manager );
-		$dashboard_widgets->init();
 
 		$woocommerce_override = new WP_Auth0_WooCommerceOverrides( $this );
 		$woocommerce_override->init();
@@ -122,6 +128,19 @@ class WP_Auth0 {
 
 		WP_Auth0_Email_Verification::init();
 	}
+
+  /**
+   * Is the Auth0 plugin ready to process logins?
+   *
+   * @return bool
+   */
+  public static function ready() {
+    $options = WP_Auth0_Options::Instance();
+    if ( ! $options->get( 'domain' ) || ! $options->get( 'client_id' ) || ! $options->get( 'client_secret' ) ) {
+      return FALSE;
+    }
+    return TRUE;
+  }
 
 	/**
 	 * Checks it it should update the database connection no enable or disable signups and create or delete
@@ -235,15 +254,25 @@ class WP_Auth0 {
 		}
 	}
 
+	/**
+	 * @deprecated 3.6.0 - Use WPA0_PLUGIN_URL constant
+	 *
+	 * @return string
+	 */
 	public static function get_plugin_dir_url() {
-		return plugin_dir_url( __FILE__ );
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return WPA0_PLUGIN_URL;
 	}
 
 	public function a0_register_query_vars( $qvars ) {
+		$qvars[] = 'error';
 		$qvars[] = 'error_description';
 		$qvars[] = 'a0_action';
 		$qvars[] = 'auth0';
+		$qvars[] = 'state';
 		$qvars[] = 'code';
+		$qvars[] = 'state';
 		return $qvars;
 	}
 
@@ -301,18 +330,10 @@ class WP_Auth0 {
 			wp_enqueue_script( 'jquery' );
 		}
 
-		wp_enqueue_style( 'auth0-widget', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'assets/css/main.css' );
+		wp_enqueue_style( 'auth0-widget', WPA0_PLUGIN_CSS_URL . 'main.css' );
 	}
 	
 	public function shortcode( $atts ) {
-		wp_enqueue_script( 'jquery' );
-		
-		if ( WP_Auth0_Options::Instance()->get('passwordless_enabled') ) {
-			wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('passwordless_cdn_url'), 'jquery' );
-		} else {
-			wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('cdn_url'), 'jquery' );
-		}
-		
 		if (empty($atts)) {
 			$atts = array();
 		}
@@ -325,8 +346,7 @@ class WP_Auth0 {
 		require_once WPA0_PLUGIN_DIR . 'templates/login-form.php';
 		renderAuth0Form( false, $atts );
 		
-		$html = ob_get_clean();
-		return $html;
+		return ob_get_clean();
 	}
 
 	public static function render_back_to_auth0() {
@@ -335,43 +355,50 @@ class WP_Auth0 {
 
 	}
 
+	/**
+	 * Enqueue styles and scripts on the wp-login.php page if the plugin has been configured
+	 */
 	public function render_auth0_login_css() {
-		$client_id = WP_Auth0_Options::Instance()->get( 'client_id' );
-
-		if ( trim( $client_id ) === '' ) {
+		if ( ! WP_Auth0::ready() ) {
 			return;
 		}
-?>
-		<link rel='stylesheet' href='<?php echo plugins_url( 'assets/css/login.css', __FILE__ ); ?>' type='text/css' />
-	<?php
+
+		wp_enqueue_style( 'auth0', WPA0_PLUGIN_CSS_URL . 'login.css', FALSE, WPA0_VERSION );
+
+		if ( $this->a0_options->get( 'auth0_implicit_workflow' ) && ! empty( $_GET[ 'auth0' ] ) ) {
+			wp_enqueue_script( 'auth0-implicit', WPA0_PLUGIN_JS_URL . 'implicit-login.js', FALSE, WPA0_VERSION );
+			wp_localize_script( 'auth0-implicit', 'wpAuth0ImplicitGlobal', array(
+				'postUrl' => add_query_arg( 'auth0', 'implicit', site_url( 'index.php' ) ),
+			) );
+		}
 	}
 
+	/**
+	 * Output the Auth0 form on wp-login.php
+	 *
+	 * @hook filter:login_message
+	 *
+	 * @param $html
+	 *
+	 * @return string
+	 */
 	public function render_form( $html ) {
-		if ( isset( $_GET['action'] ) && $_GET['action'] == 'lostpassword' ) {
+		// Do not show Auth0 form when ...
+		if (
+			// .. processing lost password
+			( isset( $_GET['action'] ) && $_GET['action'] == 'lostpassword' )
+			// ... handling an Auth0 callback
+			|| ! empty( $_GET[ 'auth0' ] )
+			// ... plugin is not configured
+			|| ! self::ready()
+		) {
 			return $html;
-		}
-
-		$client_id = WP_Auth0_Options::Instance()->get( 'client_id' );
-
-		if ( trim( $client_id ) === '' ) {
-			return;
-		}
-
-		wp_enqueue_script( 'jquery' );
-
-		if ( WP_Auth0_Options::Instance()->get('passwordless_enabled') ) {
-			wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('passwordless_cdn_url'), 'jquery' );
-		} else {
-			wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get('cdn_url'), 'jquery' );
 		}
 
 		ob_start();
 		require_once WPA0_PLUGIN_DIR . 'templates/login-form.php';
 		renderAuth0Form();
-
-		$html = ob_get_clean();
-
-		return $html;
+		return ob_get_clean();
 	}
 
 	public function wp_init() {
@@ -406,31 +433,53 @@ class WP_Auth0 {
     delete_option( 'wp_auth0_grant_types_failed' );
     delete_option( 'wp_auth0_grant_types_success' );
 
-		delete_transient('WP_Auth0_JWKS_cache');
+		delete_transient( WPA0_JWKS_CACHE_TRANSIENT_NAME );
 	}
 
+	/**
+	 * Look for a class within a specific set of paths.
+	 *
+	 * @param string $class - Class name to look for.
+	 *
+	 * @return bool
+	 */
 	private function autoloader( $class ) {
-		$path = WPA0_PLUGIN_DIR;
-		$paths = array();
-		$exts = array( '.php', '.class.php' );
+		$source_dir = WPA0_PLUGIN_DIR . 'lib/';
 
-		$paths[] = $path.'lib/';
-		$paths[] = $path.'lib/admin/';
-		$paths[] = $path.'lib/exceptions/';
-		$paths[] = $path.'lib/wizard/';
-		$paths[] = $path.'lib/initial-setup/';
-		$paths[] = $path.'lib/dashboard-widgets/';
-		$paths[] = $path.'lib/twitter-api-php/';
-		$paths[] = $path.'lib/php-jwt/Exceptions/';
-		$paths[] = $path.'lib/php-jwt/Authentication/';
-		$paths[] = $path;
+		// Catch non-name-spaced classes that still need auto-loading.
+		switch ( $class ) {
+			case 'TwitterAPIExchange':
+				require_once $source_dir . 'twitter-api-php/' . $class . '.php';
+				return true;
 
-		foreach ( $paths as $p ) {
-			foreach ( $exts as $ext ) {
-				if ( file_exists( $p.$class.$ext ) ) {
-					require_once $p.$class.$ext;
-					return true;
-				}
+			case 'JWT':
+				require_once $source_dir . 'php-jwt/Authentication/' . $class . '.php';
+				return true;
+
+			case 'BeforeValidException':
+			case 'ExpiredException':
+			case 'SignatureInvalidException':
+				require_once $source_dir . 'php-jwt/Exceptions/'  . $class . '.php';
+				return true;
+		}
+
+		// Anything that's not part of the above and not name-spaced can be skipped.
+		if ( 0 !== strpos( $class, 'WP_Auth0' ) ) {
+			return false;
+		}
+
+		$paths = array(
+			$source_dir,
+			$source_dir . 'admin/',
+			$source_dir . 'exceptions/',
+			$source_dir . 'wizard/',
+			$source_dir . 'initial-setup/',
+		);
+
+		foreach ( $paths as $path ) {
+			if ( file_exists( $path . $class . '.php' ) ) {
+				require_once $path . $class . '.php';
+				return true;
 			}
 		}
 
@@ -492,9 +541,9 @@ if ( ! function_exists( 'get_auth0_curatedBlogName' ) ) {
 
     // WordPress can have a blank site title, which will cause initial client creation to fail
     if ( empty( $name ) ) {
-	    $name = parse_url( home_url(), PHP_URL_HOST );
+	    $name = wp_parse_url( home_url(), PHP_URL_HOST );
 
-	    if ( $port = parse_url( home_url(), PHP_URL_PORT ) ) {
+	    if ( $port = wp_parse_url( home_url(), PHP_URL_PORT ) ) {
 		    $name .= ':' . $port;
 	    }
     }
@@ -509,3 +558,11 @@ if ( ! function_exists( 'get_auth0_curatedBlogName' ) ) {
 
 $a0_plugin = new WP_Auth0();
 $a0_plugin->init();
+
+/*
+ * Beta plugin deactivation
+ */
+
+// Passwordless beta testing - https://github.com/auth0/wp-auth0/issues/400
+remove_filter( 'login_message', 'wp_auth0_pwl_plugin_login_message_before', 5 );
+remove_filter( 'login_message', 'wp_auth0_pwl_plugin_login_message_after', 6 );

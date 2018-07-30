@@ -26,8 +26,43 @@ class WPSEO_Image_Utils {
 			// @codeCoverageIgnoreEnd -- The rest we _can_ test.
 		}
 
+		return self::attachment_url_to_postid( $url );
+	}
+
+	/**
+	 * Implements the attachment_url_to_postid with use of WP Cache.
+	 *
+	 * @param string $url The attachment URL for which we want to know the Post ID.
+	 *
+	 * @return int The Post ID belonging to the attachment, 0 if not found.
+	 */
+	protected static function attachment_url_to_postid( $url ) {
+		$cache_key = sprintf( 'yoast_attachment_url_post_id_%s', md5( $url ) );
+
+		// Set the ID based on the hashed url in the cache.
+		$id = wp_cache_get( $cache_key );
+
+		if ( $id === 'not_found' ) {
+			return 0;
+		}
+
+		// ID is found in cache, return.
+		if ( $id !== false ) {
+			return $id;
+		}
+
 		// phpcs:ignore WordPress.VIP.RestrictedFunctions -- We use the WP COM version if we can, see above.
-		return (int) attachment_url_to_postid( $url );
+		$id = attachment_url_to_postid( $url );
+
+		if ( empty( $id ) ) {
+			wp_cache_set( $cache_key, 'not_found', '', ( 12 * HOUR_IN_SECONDS + mt_rand( 0, ( 4 * HOUR_IN_SECONDS ) ) ) );
+			return 0;
+		}
+
+		// We have the Post ID, but it's not in the cache yet. We do that here and return.
+		wp_cache_set( $cache_key, $id, '', ( 24 * HOUR_IN_SECONDS + mt_rand( 0, ( 12 * HOUR_IN_SECONDS ) ) ) );
+		return $id;
+
 	}
 
 	/**
@@ -36,7 +71,7 @@ class WPSEO_Image_Utils {
 	 * @param array $image         Image array with URL and metadata.
 	 * @param int   $attachment_id Attachment ID.
 	 *
-	 * @return array $image {
+	 * @return false|array $image {
 	 *     Array of image data
 	 *
 	 *     @type string $alt    Image's alt text.
@@ -48,16 +83,25 @@ class WPSEO_Image_Utils {
 	 * }
 	 */
 	public static function get_data( $image, $attachment_id ) {
+		if ( ! is_array( $image ) ) {
+			return false;
+		}
+
+		// Deals with non-set keys and values being null or false.
+		if ( empty( $image['width'] ) || empty( $image['height'] ) ) {
+			return false;
+		}
+
 		$image['id']     = $attachment_id;
 		$image['alt']    = self::get_alt_tag( $attachment_id );
-		$image['pixels'] = ( $image['width'] * $image['height'] );
+		$image['pixels'] = ( (int) $image['width'] * (int) $image['height'] );
 
 		if ( ! isset( $image['type'] ) ) {
 			$image['type'] = get_post_mime_type( $attachment_id );
 		}
+
 		// Keep only the keys we need, and nothing else.
-		$image = array_intersect_key( $image, array_flip( array( 'id', 'alt', 'path', 'width', 'height', 'pixels', 'type', 'size', 'url' ) ) );
-		return $image;
+		return array_intersect_key( $image, array_flip( array( 'id', 'alt', 'path', 'width', 'height', 'pixels', 'type', 'size', 'url' ) ) );
 	}
 
 	/**
@@ -96,23 +140,43 @@ class WPSEO_Image_Utils {
 	 * @return array|false Returns an array with image data on success, false on failure.
 	 */
 	public static function get_image( $attachment_id, $size ) {
+		$image = false;
 		if ( $size === 'full' ) {
-			$image         = wp_get_attachment_metadata( $attachment_id );
-			$image['url']  = wp_get_attachment_image_url( $attachment_id, 'full' );
-			$image['path'] = get_attached_file( $attachment_id );
+			$image = self::get_full_size_image_data( $attachment_id );
 		}
 
-		if ( ! isset( $image ) ) {
-			$image = image_get_intermediate_size( $attachment_id, $size );
+		if ( ! $image ) {
+			$image         = image_get_intermediate_size( $attachment_id, $size );
+			$image['size'] = $size;
 		}
 
 		if ( ! $image ) {
 			return false;
 		}
 
-		$image['size'] = $size;
 		return self::get_data( $image, $attachment_id );
 	}
+
+	/**
+	 * Returns the image data for the full size image.
+	 *
+	 * @param int $attachment_id Attachment ID.
+	 *
+	 * @return array|false Array when there is a full size image. False if not.
+	 */
+	protected static function get_full_size_image_data( $attachment_id ) {
+		$image = wp_get_attachment_metadata( $attachment_id );
+		if ( ! is_array( $image ) ) {
+			return false;
+		}
+
+		$image['url']  = wp_get_attachment_image_url( $attachment_id, 'full' );
+		$image['path'] = get_attached_file( $attachment_id );
+		$image['size'] = 'full';
+
+		return $image;
+	}
+
 
 	/**
 	 * Finds the full file path for a given image file.
@@ -128,8 +192,9 @@ class WPSEO_Image_Utils {
 			$uploads = wp_get_upload_dir();
 		}
 
-		if ( empty( $uploads['error'] ) ) {
-			return $uploads['basedir'] . "/$path";
+		// Add the uploads basedir if the path does not start with it.
+		if ( empty( $uploads['error'] ) && strpos( $path, $uploads['basedir'] . DIRECTORY_SEPARATOR ) !== 0 ) {
+			return $uploads['basedir'] . DIRECTORY_SEPARATOR . ltrim( $path, DIRECTORY_SEPARATOR );
 		}
 
 		return $path;
@@ -207,8 +272,6 @@ class WPSEO_Image_Utils {
 	 *    @type int    $max_width     Maximum width of image.
 	 *    @type int    $min_height    Minimum height of image.
 	 *    @type int    $max_height    Maximum height of image.
-	 *    @type int    $min_ratio     Minimum aspect ratio of image.
-	 *    @type int    $max_ratio     Maximum aspect ratio of image.
 	 * }
 	 * @param array $variations The variations that should be considered.
 	 *
@@ -219,8 +282,6 @@ class WPSEO_Image_Utils {
 
 		foreach ( $variations as $variation ) {
 			$dimensions = $variation;
-
-			$dimensions['ratio'] = ( $dimensions['width'] / $dimensions['height'] );
 
 			if ( self::has_usable_dimensions( $dimensions, $usable_dimensions ) ) {
 				$filtered[] = $variation;
@@ -282,11 +343,11 @@ class WPSEO_Image_Utils {
 	 * @return bool True if the image has usable measurements, false if not.
 	 */
 	private static function has_usable_dimensions( $dimensions, $usable_dimensions ) {
-		foreach ( array( 'width', 'height', 'ratio' ) as $param ) {
+		foreach ( array( 'width', 'height' ) as $param ) {
 			$minimum = $usable_dimensions[ 'min_' . $param ];
 			$maximum = $usable_dimensions[ 'max_' . $param ];
-			$current = $dimensions[ $param ];
 
+			$current = $dimensions[ $param ];
 			if ( ( $current < $minimum ) || ( $current > $maximum ) ) {
 				return false;
 			}

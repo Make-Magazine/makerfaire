@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php
 /**
@@ -226,6 +226,30 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-3 wdt-remove-borders">
+                            <h5 class="c-black m-b-20">
+                                <?php _e('Table borders', 'wpdatatables'); ?>
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('When this is checked, borders in table will be removed ', 'wpdatatables'); ?>"></i>
+                            </h5>
+                            <div class="toggle-switch" data-ts-color="blue">
+                                <label for="wdt-remove-borders" class="ts-label">Remove borders in table</label>
+                                <input type="checkbox" name="wdt-remove-borders" id="wdt-remove-borders"/>
+                                <label for="wdt-remove-borders" class="ts-helper"></label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 wdt-remove-borders-header">
+                            <h5 class="c-black m-b-20">
+                                <?php _e('Header border', 'wpdatatables'); ?>
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('When this is checked,borders in header will be removed  ', 'wpdatatables'); ?>"></i>
+                            </h5>
+                            <div class="toggle-switch" data-ts-color="blue">
+                                <label for="wdt-remove-borders-table" class="ts-label">Remove borders in header</label>
+                                <input type="checkbox" name="wdt-remove-borders-header" id="wdt-remove-borders-header"/>
+                                <label for="wdt-remove-borders-header" class="ts-helper"></label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -386,7 +410,7 @@
                 <div class="panel-heading" role="tab" id="heading-six">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse-six" aria-expanded="false"
-                           aria-controls="collapse-six" class="collapsed">Buttons color</a>
+                           aria-controls="collapse-six" class="collapsed">Buttons color in modals</a>
                     </h4>
                 </div>
                 <div id="collapse-six" class="collapse" role="tabpanel" aria-labelledby="heading-six">
@@ -596,6 +620,140 @@
                                              class="input-group colorpicker-component colorpicker-element color-picker wpcolorpicker">
                                             <input type="text" id="wdt-overlay-color" data-name="wdtOverlayColor"
                                                    class="form-control cp-value" value=""/>
+                                            <span class="input-group-addon wpcolorpicker-icon"><i></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="panel-group col-sm-12" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-collapse">
+                <div class="panel-heading" role="tab" id="heading-eight">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-eight" aria-expanded="true"
+                           aria-controls="collapse-eight">Pagination</a>
+                    </h4>
+                </div>
+                <div id="collapse-eight" class="collapse" role="tabpanel" aria-labelledby="heading-eight">
+                    <div class="panel-body">
+                        <div class="col-sm-3">
+                            <h5 class="c-black m-b-20">
+                                <?php _e('Background color', 'wpdatatables'); ?>
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('This color is used for the background of the pagination', 'wpdatatables'); ?>"></i>
+                            </h5>
+                            <div class="cp-container">
+                                <div class="form-group">
+                                    <div class="fg-line dropdown">
+                                        <div id="cp"
+                                             class="input-group colorpicker-component colorpicker-element color-picker wpcolorpicker">
+                                            <input type="text" id="wdt-pagination-background-color"
+                                                   data-name="wdtPaginationBackgroundColor" class="form-control cp-value"
+                                                   value=""/>
+                                            <span class="input-group-addon wpcolorpicker-icon"><i></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5 class="c-black m-b-20">
+                                <?php _e('Color', 'wpdatatables'); ?>
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('This color is used for the color of the links in the pagination.', 'wpdatatables'); ?>"></i>
+                            </h5>
+                            <div class="cp-container">
+                                <div class="form-group">
+                                    <div class="fg-line dropdown">
+                                        <div id="cp"
+                                             class="input-group colorpicker-component colorpicker-element color-picker wpcolorpicker">
+                                            <input type="text" id="wdt-pagination--color"
+                                                   data-name="wdtPaginationColor" class="form-control cp-value"
+                                                   value=""/>
+                                            <span class="input-group-addon wpcolorpicker-icon"><i></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5 class="c-black m-b-20">
+                                <?php _e('Current page background color', 'wpdatatables'); ?>
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('The color is used for background of the current page', 'wpdatatables'); ?>"></i>
+                            </h5>
+                            <div class="cp-container">
+                                <div class="form-group">
+                                    <div class="fg-line dropdown">
+                                        <div id="cp"
+                                             class="input-group colorpicker-component colorpicker-element color-picker wpcolorpicker">
+                                            <input type="text" id="wdt-pagination-current-background-color" data-name="wdtPaginationCurrentBackgroundColor"
+                                                   class="form-control cp-value" value=""/>
+                                            <span class="input-group-addon wpcolorpicker-icon"><i></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5 class="c-black m-b-20">
+                                <?php _e('Current page color', 'wpdatatables'); ?>
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('This color is used for the color of the current page.', 'wpdatatables'); ?>"></i>
+                            </h5>
+                            <div class="cp-container">
+                                <div class="form-group">
+                                    <div class="fg-line dropdown">
+                                        <div id="cp"
+                                             class="input-group colorpicker-component colorpicker-element color-picker wpcolorpicker">
+                                            <input type="text" id="wdt-pagination-current-color"
+                                                   data-name="wdtPaginationCurrentColor" class="form-control cp-value"
+                                                   value=""/>
+                                            <span class="input-group-addon wpcolorpicker-icon"><i></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5 class="c-black m-b-20">
+                                <?php _e('Other pages hover background color', 'wpdatatables'); ?>
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('This background color is used when you hover the mouse above the other pages', 'wpdatatables'); ?>"></i>
+                            </h5>
+                            <div class="cp-container">
+                                <div class="form-group">
+                                    <div class="fg-line dropdown">
+                                        <div id="cp"
+                                             class="input-group colorpicker-component colorpicker-element color-picker wpcolorpicker">
+                                            <input type="text" id="wdt-pagination-hover-background-color" data-name="wdtPaginationHoverBackgroundColor"
+                                                   class="form-control cp-value" value=""/>
+                                            <span class="input-group-addon wpcolorpicker-icon"><i></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <h5 class="c-black m-b-20">
+                                <?php _e('Other pages hover color', 'wpdatatables'); ?>
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('This color is used when you hover the mouse above the other pages.', 'wpdatatables'); ?>"></i>
+                            </h5>
+                            <div class="cp-container">
+                                <div class="form-group">
+                                    <div class="fg-line dropdown">
+                                        <div id="cp"
+                                             class="input-group colorpicker-component colorpicker-element color-picker wpcolorpicker">
+                                            <input type="text" id="wdt-pagination-hover-color"
+                                                   data-name="wdtPaginationHoverColor" class="form-control cp-value"
+                                                   value=""/>
                                             <span class="input-group-addon wpcolorpicker-icon"><i></i></span>
                                         </div>
                                     </div>

@@ -1,7 +1,7 @@
 jQuery(document).ready(function ($) {
 
-    var wdtDateFormat = wpdatatables_settings.wdtDateFormat.replace('d', 'DD').replace('M', 'MMM').replace('m', 'MM').replace('y', 'YY');
-    var wdtTimeFormat = wpdatatables_settings.wdtTimeFormat.replace('H', 'H').replace('i', 'mm');
+    var wdtDateFormat = getMomentWdtDateFormat();
+    var wdtTimeFormat = getMomentWdtTimeFormat();
 
     /**
      * Hide preloader on document ready
@@ -23,7 +23,6 @@ jQuery(document).ready(function ($) {
         $.fn.DataTable.defaults.oLanguage.oPaginate = wpdatatables_frontend_strings.oPaginate;
         $.fn.DataTable.defaults.oLanguage.oAria = wpdatatables_frontend_strings.oAria;
     }
-
 
 
     if (typeof ($.fn.dataTableExt) !== 'undefined') {
@@ -149,13 +148,15 @@ jQuery(document).ready(function ($) {
         $(this).datetimepicker(
             {
                 format: wdtDateFormat,
-                showClear: true
+                showClear: true,
+                keepOpen: true,
+                useCurrent: false
             }
         )
             .off('dp.show')
             .on('dp.show', function () {
                 $(this).parent().find('div.bootstrap-datetimepicker-widget').addClass('wdt-datetimepicker-modal');
-                wdtAddTodayPlaceholder($(this));
+                wdtAddDatePlaceholders($(this));
             });
     });
 
@@ -164,7 +165,9 @@ jQuery(document).ready(function ($) {
         $(this).datetimepicker(
             {
                 format: wdtTimeFormat,
-                showClear: true
+                showClear: true,
+                keepOpen: true,
+                useCurrent: false
             }
         )
             .off('dp.show')
@@ -178,13 +181,15 @@ jQuery(document).ready(function ($) {
         $(this).datetimepicker(
             {
                 format: wdtDateFormat + ' ' + wdtTimeFormat,
-                showClear: true
+                showClear: true,
+                keepOpen: true,
+                useCurrent: false
             }
         )
             .off('dp.show')
             .on('dp.show', function () {
                 $(this).parent().find('div.bootstrap-datetimepicker-widget').addClass('wdt-datetimepicker-modal');
-                wdtAddTodayPlaceholder($(this));
+                wdtAddDatePlaceholders($(this));
             });
     });
 
@@ -365,23 +370,93 @@ function wdtFillPossibleValuesList(distValues) {
 }
 
 /**
- * Add today button to date/datetime picker for conditional formatting
+ * Add date buttons to date/datetime picker for conditional formatting
  */
-function wdtAddTodayPlaceholder(input) {
-    // Add %TODAY% to datepicker
+function wdtAddDatePlaceholders(input) {
+    // Add date placeholders
     if (input.hasClass("formatting-rule-cell-value")) {
-        var todayPlaceholder =
+        var datePlaceholders =
             '<div class="col-sm-12 text-center p-b-15">' +
-            '<button class="btn btn-primary p-5 btn-xs today-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %TODAY% placeholder, cell value will be compared with today\'s date.">%TODAY%</button>' +
+            '<button class="btn btn-primary p-5 btn-xs wdt-date-placeholder wdt-today-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %TODAY% placeholder, cell value will be compared with today\'s date.">%TODAY%</button> ' +
+            '<button class="btn btn-primary p-5 btn-xs wdt-date-placeholder wdt-last-week-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %LAST_WEEK% placeholder, cell value will be compared with last week\'s date.">%LAST_WEEK%</button> ' +
+            '<button class="btn btn-primary p-5 btn-xs wdt-date-placeholder wdt-this-week-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %THIS_WEEK% placeholder, cell value will be compared with this week\'s date.">%THIS_WEEK%</button> ' +
+            '<button class="btn btn-primary p-5 btn-xs wdt-date-placeholder wdt-next-week-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %NEXT_WEEK% placeholder, cell value will be compared with next week\'s date.">%NEXT_WEEK%</button> ' +
+            '<button class="btn btn-primary p-5 btn-xs wdt-date-placeholder wdt-last-30-days-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %LAST_30_DAYS% placeholder, cell value will be compared with last 30 days.">%LAST_30_DAYS%</button> ' +
+            '<button class="btn btn-primary p-5 btn-xs wdt-date-placeholder wdt-last-month-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %LAST_MONTH% placeholder, cell value will be compared with last month.">%LAST_MONTH%</button> ' +
+            '<button class="btn btn-primary p-5 btn-xs wdt-date-placeholder wdt-this-month-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %THIS_MONTH% placeholder, cell value will be compared with this month.">%THIS_MONTH%</button> ' +
+            '<button class="btn btn-primary p-5 btn-xs wdt-date-placeholder wdt-next-month-placeholder" data-toggle="tooltip" data-placement="top" title="By settings %NEXT_MONTH% placeholder, cell value will be compared with next month.">%NEXT_MONTH%</button> ' +
             '</div>';
 
-        jQuery('.datepicker').closest("ul.list-unstyled").append(todayPlaceholder);
-        jQuery('.today-placeholder').tooltip();
+        jQuery('.datepicker').closest("ul.list-unstyled").append(datePlaceholders);
+        jQuery('.wdt-date-placeholder').tooltip();
 
         // Set %TODAY% as conditional formatting rule value
-        jQuery('.today-placeholder').click(function () {
-            jQuery('.formatting-rule-cell-value').val('%TODAY%');
-            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').data("DateTimePicker").hide();
+        jQuery('.wdt-today-placeholder').click(function () {
+            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').val('%TODAY%').data("DateTimePicker").hide();
+        })
+
+        // Set %LAST_WEEK% as conditional formatting rule value
+        jQuery('.wdt-last-week-placeholder').click(function () {
+            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').val('%LAST_WEEK%').data("DateTimePicker").hide();
+        })
+
+        // Set %THIS_WEEK% as conditional formatting rule value
+        jQuery('.wdt-this-week-placeholder').click(function () {
+            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').val('%THIS_WEEK%').data("DateTimePicker").hide();
+        })
+
+        // Set %NEXT_WEEK% as conditional formatting rule value
+        jQuery('.wdt-next-week-placeholder').click(function () {
+            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').val('%NEXT_WEEK%').data("DateTimePicker").hide();
+        })
+
+        // Set %LAST_30_DAYS% as conditional formatting rule value
+        jQuery('.wdt-last-30-days-placeholder').click(function () {
+            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').val('%LAST_30_DAYS%').data("DateTimePicker").hide();
+        })
+
+        // Set %LAST_MONTH% as conditional formatting rule value
+        jQuery('.wdt-last-month-placeholder').click(function () {
+            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').val('%LAST_MONTH%').data("DateTimePicker").hide();
+        })
+
+        // Set %THIS_MONTH% as conditional formatting rule value
+        jQuery('.wdt-this-month-placeholder').click(function () {
+            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').val('%THIS_MONTH%').data("DateTimePicker").hide();
         });
+
+        // Set %NEXT_MONTH% as conditional formatting rule value
+        jQuery('.wdt-next-month-placeholder').click(function () {
+            jQuery(this).closest('.form-group').find('.formatting-rule-cell-value').val('%NEXT_MONTH%').data("DateTimePicker").hide();
+        })
+
+
+
+        jQuery('.formatting-rule-cell-value.wdt-datepicker').on('dp.hide', function (e) {
+            e.stopImmediatePropagation();
+            if(jQuery.inArray(jQuery(this).closest('.wdt-conditional-formatting-rule').find('.formatting-rule-cell-value').val(), ['%LAST_WEEK%','%THIS_WEEK%','%NEXT_WEEK%','%LAST_30_DAYS%','%LAST_MONTH%','%NEXT_MONTH%','%THIS_MONTH%']) === -1) {
+                jQuery(this).closest('.wdt-conditional-formatting-rule').find('.formatting-rule-if-clause').prop('disabled', false).selectpicker('val', 'lt');
+            } else {
+                jQuery(this).closest('.wdt-conditional-formatting-rule').find('.formatting-rule-if-clause').prop('disabled', true).selectpicker('val', '');
+            }
+        });
+
+        jQuery('.formatting-rule-cell-value.wdt-datetimepicker').on('dp.hide', function (e) {
+            e.stopImmediatePropagation();
+            if(jQuery.inArray(jQuery(this).closest('.wdt-conditional-formatting-rule').find('.formatting-rule-cell-value').val(), ['%LAST_WEEK%','%THIS_WEEK%','%NEXT_WEEK%','%LAST_30_DAYS%','%LAST_MONTH%','%NEXT_MONTH%','%THIS_MONTH%']) === -1) {
+                jQuery(this).closest('.wdt-conditional-formatting-rule').find('.formatting-rule-if-clause').prop('disabled', false).selectpicker('val', 'lt');
+            } else {
+                jQuery(this).closest('.wdt-conditional-formatting-rule').find('.formatting-rule-if-clause').prop('disabled', true).selectpicker('val', '');
+            }
+        });
+
     }
+}
+
+function getMomentWdtDateFormat () {
+    return wpdatatables_settings.wdtDateFormat.replace('d', 'DD').replace('M', 'MMM').replace('m', 'MM').replace('y', 'YY');
+}
+
+function getMomentWdtTimeFormat () {
+    return wpdatatables_settings.wdtTimeFormat.replace('H', 'HH').replace('i', 'mm');
 }

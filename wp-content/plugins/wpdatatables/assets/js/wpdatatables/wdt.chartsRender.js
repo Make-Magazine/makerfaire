@@ -21,6 +21,7 @@
             } else if ( wpDataCharts[chart_id].engine == 'highcharts' ) {
                 var wdtChart = new wpDataTablesHighchart();
                 wdtChart.setOptions( wpDataCharts[chart_id].render_data.options );
+                wdtChart.setMultiplyYaxis( wpDataCharts[chart_id].render_data );
                 wdtChart.setType( wpDataCharts[chart_id].render_data.type );
                 wdtChart.setWidth( wpDataCharts[chart_id].render_data.width );
                 wdtChart.setHeight( wpDataCharts[chart_id].render_data.height );

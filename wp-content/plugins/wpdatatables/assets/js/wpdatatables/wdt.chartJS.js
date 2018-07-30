@@ -175,7 +175,7 @@ var wpDataTablesChartJS = function(){
             chartConfig.font_size ? this.globalOptions.defaultFontSize = chartConfig.font_size : null;
             chartConfig.font_name ? this.globalOptions.defaultFontFamily = chartConfig.font_name : null;
             chartConfig.font_style ? this.globalOptions.defaultFontStyle = chartConfig.font_style : null;
-            this.globalOptions.defaultFontColor = chartConfig.font_color;
+            chartConfig.font_color ? this.globalOptions.defaultFontColor = chartConfig.font_color :  '#666';
             // Series
             if ( this.pieCharts.indexOf(chartConfig.chart_type) == -1 && chartConfig.chart_type != 'chartjs_bubble_chart') {
                 var j = 0;
@@ -205,8 +205,8 @@ var wpDataTablesChartJS = function(){
             }
             chartConfig.horizontal_axis_label ? this.options.options.scales.xAxes[0].scaleLabel.labelString = chartConfig.horizontal_axis_label : null;
             chartConfig.vertical_axis_label ? this.options.options.scales.yAxes[0].scaleLabel.labelString = chartConfig.vertical_axis_label : null;
-            chartConfig.vertical_axis_min ? this.options.options.scales.yAxes[0].ticks.min = parseInt(chartConfig.vertical_axis_min) : this.options.options.scales.yAxes[0].ticks.beginAtZero = true;
-            chartConfig.vertical_axis_max ? this.options.options.scales.yAxes[0].ticks.max = parseInt(chartConfig.vertical_axis_max) : null;
+            chartConfig.vertical_axis_min != '' ? this.options.options.scales.yAxes[0].ticks.min = parseInt(chartConfig.vertical_axis_min) : this.options.options.scales.yAxes[0].ticks.beginAtZero = delete this.options.options.scales.yAxes[0].ticks.min;
+            chartConfig.vertical_axis_max != '' ? this.options.options.scales.yAxes[0].ticks.max = parseInt(chartConfig.vertical_axis_max) : delete this.options.options.scales.yAxes[0].ticks.max;
             // Title
             if (chartConfig.show_title == 1) {
                 this.options.options.title.display = true;

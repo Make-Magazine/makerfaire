@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class WP_Auth0_Lock_Options.
+ *
+ * @deprecated 3.6.0 - Outdated, use WP_Auth0_Lock10_Options
+ */
 class WP_Auth0_Lock_Options {
 
 	protected $wp_options;
@@ -7,7 +12,16 @@ class WP_Auth0_Lock_Options {
 
 	protected $signup_mode = false;
 
+	/**
+	 * WP_Auth0_Lock_Options constructor.
+	 *
+	 * @deprecated 3.6.0 - Outdated, use WP_Auth0_Lock10_Options
+	 *
+	 * @param array $extended_settings
+	 */
 	public function __construct( $extended_settings = array() ) {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Class %s is deprecated.', 'wp-auth0' ), __CLASS__ ), E_USER_DEPRECATED );
 		$this->wp_options = WP_Auth0_Options::Instance();
 		$this->extended_settings = $extended_settings;
 	}
@@ -25,11 +39,7 @@ class WP_Auth0_Lock_Options {
 	}
 
 	public function get_lock_show_method() {
-		if ( $this->_get_boolean( $this->wp_options->get( 'passwordless_enabled' ) ) ) {
-			return $this->wp_options->get( 'passwordless_method' );
-		} else {
-			return 'show';
-		}
+		return 'show';
 	}
 
 	public function get_code_callback_url() {
@@ -98,12 +108,10 @@ class WP_Auth0_Lock_Options {
 	}
 
 	public function get_state_obj( $redirect_to = null ) {
-		if ( isset( $_GET['interim-login'] ) && $_GET['interim-login'] == 1 ) {
-			$interim_login = true;
-		} else {
-			$interim_login = false;
-		}
-		$stateObj = array( "interim" => $interim_login, "uuid" =>uniqid() );
+		$stateObj = array(
+			'interim' => ( isset( $_GET['interim-login'] ) && $_GET['interim-login'] == 1 ),
+			'nonce' => WP_Auth0_State_Handler::get_instance()->get_unique()
+		);
 		if ( !empty( $redirect_to ) ) {
 			$stateObj["redirect_to"] = addslashes( $redirect_to );
 		}
@@ -161,7 +169,7 @@ class WP_Auth0_Lock_Options {
 			$options_obj['icon'] = $settings['icon_url'];
 		}
 		if ( $this->_is_valid( $settings, 'lock_connections' ) ) {
-			$options_obj['connections'] = explode( ",", $settings['lock_connections'] );
+			$options_obj['connections'] = $this->wp_options->get_lock_connections();
 		}
 		if ( isset( $settings['extra_conf'] ) && trim( $settings['extra_conf'] ) !== '' ) {
 			$extra_conf_arr = json_decode( $settings['extra_conf'], true );
@@ -232,7 +240,7 @@ class WP_Auth0_Lock_Options {
 		$options_obj = array_merge( $extraOptions, $options_obj, $extended_settings );
 
 		if ( ! $this->show_as_modal() ) {
-			$options_obj['container'] = 'auth0-login-form';
+			$options_obj['container'] = WPA0_AUTH0_LOGIN_FORM_ID;
 		}
 
 		if ( ! $this->is_registration_enabled() ) {

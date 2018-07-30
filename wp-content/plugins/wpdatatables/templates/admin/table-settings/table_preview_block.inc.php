@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php
 /**
@@ -8,6 +8,9 @@
  */
 ?>
 <!-- div.column-settings -->
+
+<?php do_action('wdt_above_table_alert'); ?>
+
 <div class="card column-settings hidden">
 
     <!-- Preloader -->

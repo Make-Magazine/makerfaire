@@ -369,3 +369,7 @@ div.wdt-column-block.gu-mirror span {
 .wpdt-c .wdt-table-settings .input-path-block .fg-line {
     width: 75%;
 }
+
+.wpdt-c .wdt-table-settings .wdt-pf-cascade-filtering-logic-block .form-group {
+    margin-bottom: 0;
+}

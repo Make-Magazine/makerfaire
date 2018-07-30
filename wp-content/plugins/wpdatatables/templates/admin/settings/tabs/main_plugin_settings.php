@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php
 /**
@@ -221,7 +221,7 @@
             <h4 class="c-black m-b-20">
                 <?php _e('Align numbers', 'wpdatatables'); ?>
                 <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
-                   title="<?php _e('How "Integer" and "Float" column types will be aligned in the cell', 'wpdatatables'); ?>"></i>
+                   title="<?php _e('How Integer and Float column types will be aligned in the cell', 'wpdatatables'); ?>"></i>
             </h4>
             <div class="toggle-switch" data-ts-color="blue">
                 <label for="wdt-numbers-align" class="ts-label">Align numbers to the right</label>
@@ -316,6 +316,35 @@
 
     </div>
     <!-- /.row -->
+    <!-- Include bootstrap on front and back settings -->
+    <div class="row">
+        <div class="col-sm-4 wdt-include-bootstrap-block">
+            <h4 class="c-black m-b-20">
+                <?php _e('Include full bootstrap front-end', 'wpdatatables'); ?>
+                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                   title="<?php _e('It is recommended to uncheck this option if bootstrap.js is already included in one of the theme files. Unchecked option means that there is still bootstrap.js included just in noconflict mode which should prevent errors.', 'wpdatatables'); ?>"></i>
+            </h4>
+            <div class="toggle-switch" data-ts-color="blue">
+                <label for="wdt-include-bootstrap" class="ts-label">Include full bootstrap.js on the front-end</label>
+                <input type="checkbox" name="wdt-include-bootstrap" id="wdt-include-bootstrap" checked="checked"/>
+                <label for="wdt-include-bootstrap" class="ts-helper"></label>
+            </div>
+        </div>
+        <div class="col-sm-4 wdt-include-bootstrap-back-end-block">
+            <h4 class="c-black m-b-20">
+                <?php _e('Include full bootstrap back-end', 'wpdatatables'); ?>
+                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                   title="<?php _e('It is recommended to uncheck this option if bootstrap.js is already included in one of the theme files. Unchecked option means that there is still bootstrap.js included just in noconflict mode which should prevent errors.', 'wpdatatables'); ?>"></i>
+            </h4>
+            <div class="toggle-switch" data-ts-color="blue">
+                <label for="wdt-include-bootstrap-back-end" class="ts-label">Include full bootstrap.js on the back-end</label>
+                <input type="checkbox" name="wdt-include-bootstrap-back-end" id="wdt-include-bootstrap-back-end" checked="checked"/>
+                <label for="wdt-include-bootstrap-back-end" class="ts-helper"></label>
+            </div>
+        </div>
+    </div>
+    <!-- /.row -->
+    <!-- Purchase code settings -->
     <div class="row">
         <div class="col-sm-4 purchase-code">
             <h4 class="c-black m-b-20">
@@ -334,17 +363,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-4 wdt-include-bootstrap-block">
-            <h4 class="c-black m-b-20">
-                <?php _e('Include bootstrap', 'wpdatatables'); ?>
-                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
-                   title="<?php _e('If bootstrap.js is already included in one of the theme files it is recommended to uncheck this option', 'wpdatatables'); ?>"></i>
-            </h4>
-            <div class="toggle-switch" data-ts-color="blue">
-                <label for="wdt-include-bootstrap" class="ts-label">Include bootstrap.js on the front-end</label>
-                <input type="checkbox" name="wdt-include-bootstrap" id="wdt-include-bootstrap" checked="checked"/>
-                <label for="wdt-include-bootstrap" class="ts-helper"></label>
-            </div>
-        </div>
     </div>
+    <!-- /.row -->
 </div>

@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <div class="row">
 
@@ -201,6 +201,31 @@
             </div>
             <div class="card-body">
                 <h4 class="f-14"><?php _e('3D donut chart', 'wpdatatables'); ?></h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="wdt-chart-wizard-chart-selecter-block col-sm-2">
+        <div class="card" data-type="highcharts_treemap_chart" data-min_columns="2" data-max_columns="2">
+            <div class="card-header">
+                <div class="wdt-chart-wizard-overlay"></div>
+                <img class="img-responsive"
+                     src="<?php echo WDT_ASSETS_PATH ?>img/chart-thumbs/highcharts_treemap_chart.jpg">
+            </div>
+            <div class="card-body">
+                <h4 class="f-14"><?php _e('Treemap chart', 'wpdatatables'); ?></h4>
+            </div>
+        </div>
+    </div>
+    <div class="wdt-chart-wizard-chart-selecter-block col-sm-2">
+        <div class="card" data-type="highcharts_treemap_level_chart" data-min_columns="3" data-max_columns="0">
+            <div class="card-header">
+                <div class="wdt-chart-wizard-overlay"></div>
+                <img class="img-responsive"
+                     src="<?php echo WDT_ASSETS_PATH ?>img/chart-thumbs/highcharts_treemap_level_chart.jpg">
+            </div>
+            <div class="card-body">
+                <h4 class="f-14"><?php _e('Treemap level chart', 'wpdatatables'); ?></h4>
             </div>
         </div>
     </div>
