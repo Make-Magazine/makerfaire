@@ -13,13 +13,6 @@ function sumomeActive() {
 
 (function($) {
 	
-   $.event.special.destroyed = {
-      remove: function(o) {
-         if (o.handler) {
-           o.handler()
-         }
-      }
-   }
    // keep these from happening before any oangular or login scripts
    $(window).bind("load", function() {
       $(".nav-level-1-auth #profile-view .avatar").css("display","block");
@@ -42,9 +35,7 @@ function sumomeActive() {
           jQuery(this).next('.nav-flyout-ul').slideToggle();
         }
       });
-		jQuery('.sumome-react-wysiwyg-popup-container').bind('destroyed', function() {
-			sumomeActive();
-		});
+
       // fix nav to top on scrolldown, stay fixed for transition from mobile to desktop
       var e = jQuery(".universal-nav");
       var hamburger = jQuery(".nav-hamburger");
