@@ -43,7 +43,6 @@ function sumomeActive() {
         }
       });
 		jQuery('.sumome-react-wysiwyg-popup-container').bind('destroyed', function() {
-			alert("new Test");
 			sumomeActive();
 		});
       // fix nav to top on scrolldown, stay fixed for transition from mobile to desktop
