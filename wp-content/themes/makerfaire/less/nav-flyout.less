@@ -305,8 +305,6 @@
       }
     }
   }
-
-
 }
 
 .nav-hamburger {
@@ -435,9 +433,14 @@
   }
 }
 
-.sumome-active #universal-nav #nav-flyout {
-   padding-top: 75px;
-	height: 600px;
+.sumome-active {
+	#universal-nav {
+      #nav-flyout {
+			padding-top: 75px;
+			height: 600px;
+      }
+		.ham-menu-animate { margin-top: 65px; }
+   }
 }
 
 .ham-menu-animate {
@@ -445,6 +448,9 @@
   top:0;
   z-index: 999;
   height: 55px;
+	#hamburger-text {
+	   color: #fff;
+   }
   .admin-bar & {
     top: 32px;
   }
