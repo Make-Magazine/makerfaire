@@ -35,7 +35,11 @@ function sumomeActive() {
           jQuery(this).next('.nav-flyout-ul').slideToggle();
         }
       });
-
+		
+		jQuery('.sumome-react-wysiwyg-popup-container').on('DOMNodeRemoved', function(e) {
+			sumomeActive();
+		});
+		
       // fix nav to top on scrolldown, stay fixed for transition from mobile to desktop
       var e = jQuery(".universal-nav");
       var hamburger = jQuery(".nav-hamburger");
