@@ -7,14 +7,19 @@ jQuery(function() {
    $(window).bind("load", function() {
       $(".nav-level-1-auth #profile-view .avatar").css("display","block");
 
-      jQuery('#hamburger-icon, #hamburger-makey, .nav-flyout-underlay').click(function() {
+      jQuery('#hamburger-icon, #hamburger-text, .nav-flyout-underlay').click(function() {
         jQuery('.stagingMsg').toggleClass('gone');
         jQuery('#hamburger-icon').toggleClass('open');
-        jQuery('#hamburger-makey').animate({opacity: 'toggle'})
+        jQuery('#hamburger-text').animate({opacity: 'toggle'})
         jQuery('#nav-flyout').animate({opacity: 'toggle'});
         jQuery('body').toggleClass('nav-open-no-scroll');
         jQuery('html').toggleClass('nav-open-no-scroll');
         jQuery('.nav-flyout-underlay').animate({opacity: 'toggle'});
+		  if ( document.querySelector(".sumome-react-wysiwyg-popup-container") != null ) {
+			  jQuery('body').addClass('sumome-active');
+		  } else {
+			  jQuery('body').removeClass('sumome-active');
+		  }
       });
 
       jQuery('.nav-flyout-column').on('click', '.expanding-underline', function(event) {

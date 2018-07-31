@@ -310,33 +310,38 @@
 }
 
 .nav-hamburger {
-  position: absolute;
-  z-index: 999;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 75px;
-  pointer-events : none;
-  display: flex;
-  display: -webkit-flex; 
-  align-items: center;
-  -webkit-align-items: center;
-  @media screen and (max-width: 767px) {
-    height: 55px;
-    position: fixed;
-  }
-  .container {
-    @media screen and (max-width: 767px) {
-      margin-right: 0;
-      margin-left: 0;
-    }
-  }
-  #hamburger-click-event {
-    display: flex;
-    display: -webkit-flex; 
-    align-items: center;
-    -webkit-align-items: center;
-  }
+	position: absolute;
+	z-index: 999;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 75px;
+	pointer-events : none;
+	display: flex;
+	display: -webkit-flex; 
+	align-items: center;
+	-webkit-align-items: center;
+	@media screen and (max-width: 767px) {
+   	height: 55px;
+   	position: fixed;
+   }
+   .container {
+   	@media screen and (max-width: 767px) {
+      	margin-right: 0;
+      	margin-left: 0;
+    	}
+  	}
+  	#hamburger-click-event {
+    	display: flex;
+    	display: -webkit-flex; 
+    	align-items: center;
+    	-webkit-align-items: center;
+  	}
+   #hamburger-text {
+		padding-left: 10px;
+	   color: #ED1C24;
+  		font-weight: 400;
+   }
   #hamburger-icon {
     width: 33px;
     height: 22px;
@@ -429,6 +434,12 @@
     top: 32px;
   }
 }
+
+.sumome-active #universal-nav #nav-flyout {
+   padding-top: 75px;
+	height: 600px;
+}
+
 .ham-menu-animate {
   position:absolute;
   top:0;
