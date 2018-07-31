@@ -262,7 +262,7 @@
           <span></span>
           <span></span>
         </div>
-		  <span id="hamburger-text">Menu</span>
+		  <span id="hamburger-text">More</span>
       </div>
     </div>
   </div><!-- .nav-hamburger -->
