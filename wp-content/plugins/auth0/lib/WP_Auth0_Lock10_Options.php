@@ -2,34 +2,20 @@
 
 class WP_Auth0_Lock10_Options {
 
+  const LOCK_GLOBAL_JS_VAR_NAME = 'wpAuth0LockGlobal';
+
   protected $wp_options;
   protected $extended_settings;
-
   protected $signup_mode = false;
 
+  /**
+   * WP_Auth0_Lock10_Options constructor.
+   *
+   * @param array $extended_settings - argument in renderAuth0Form(), used by shortcode and widget
+   */
   public function __construct( $extended_settings = array() ) {
     $this->wp_options = WP_Auth0_Options::Instance();
     $this->extended_settings = $extended_settings;
-  }
-
-  public function get_lock_classname() {
-    if ( $this->_get_boolean( $this->wp_options->get( 'passwordless_enabled' ) ) ) {
-      return 'Auth0LockPasswordless';
-    } else {
-      return 'Auth0Lock';
-    }
-  }
-
-  public function isPasswordlessEnable() {
-    return $this->_get_boolean( $this->wp_options->get( 'passwordless_enabled' ) );
-  }
-
-  public function get_lock_show_method() {
-    if ( $this->_get_boolean( $this->wp_options->get( 'passwordless_enabled' ) ) ) {
-      return $this->wp_options->get( 'passwordless_method' );
-    } else {
-      return 'show';
-    }
   }
 
   public function get_code_callback_url() {
@@ -45,18 +31,6 @@ class WP_Auth0_Lock10_Options {
     return $this->_get_boolean( $this->wp_options->get( 'sso' ) );
   }
 
-  public function get_custom_css() {
-    return $this->wp_options->get( 'custom_css' );
-  }
-
-  public function get_custom_js() {
-    return $this->wp_options->get( 'custom_js' );
-  }
-
-  public function can_show() {
-    return trim( $this->get_client_id() ) !== '' && trim( $this->get_domain() ) !== '';
-  }
-
   public function get_client_id() {
     return $this->wp_options->get( 'client_id' );
   }
@@ -65,20 +39,8 @@ class WP_Auth0_Lock10_Options {
     return $this->wp_options->get( 'domain' );
   }
 
-  public function get_cdn_url() {
-    return $this->wp_options->get( 'cdn_url' );
-  }
-
-  public function get_wordpress_login_enabled() {
-    return $this->_get_boolean( $this->wp_options->get( 'wordpress_login_enabled' ) );
-  }
-
   public function get_auth0_implicit_workflow() {
     return $this->_get_boolean( $this->wp_options->get( 'auth0_implicit_workflow' ) );
-  }
-
-  public function set_signup_mode( $enabled ) {
-    $this->signup_mode = $enabled;
   }
 
   public function is_registration_enabled() {
@@ -89,31 +51,19 @@ class WP_Auth0_Lock10_Options {
     return isset( $this->extended_settings['show_as_modal'] ) && $this->extended_settings['show_as_modal'];
   }
 
-  public function modal_button_name() {
-    $name = 'Login';
-    if ( isset( $this->extended_settings['modal_trigger_name'] ) && $this->extended_settings['modal_trigger_name'] != '' ) {
-      $name = $this->extended_settings['modal_trigger_name'];
-    }
-    return $name;
-  }
-
   public function get_state_obj( $redirect_to = null ) {
 
-    if ( isset( $_GET['interim-login'] ) && $_GET['interim-login'] == 1 ) {
-      $interim_login = true;
-    } else {
-      $interim_login = false;
-    }
+    $stateObj = array(
+      'interim' => ( isset( $_GET['interim-login'] ) && $_GET['interim-login'] == 1 ),
+      'nonce' => WP_Auth0_State_Handler::get_instance()->get_unique()
+    );
 
-    $stateObj = array( "interim" => $interim_login, "uuid" =>uniqid() );
     if ( !empty( $redirect_to ) ) {
       $stateObj["redirect_to"] = addslashes( $redirect_to );
     }
     elseif ( isset( $_GET['redirect_to'] ) ) {
       $stateObj["redirect_to"] = addslashes( $_GET['redirect_to'] );
     }
-
-    $stateObj["state"] = 'nonce';
 
     return base64_encode( json_encode( $stateObj ) );
   }
@@ -149,8 +99,8 @@ class WP_Auth0_Lock10_Options {
     if ( $this->_is_valid( $settings, 'social_big_buttons' ) ) {
       $options_obj['socialButtonStyle'] = $settings['social_big_buttons'] ? 'big' : 'small';
     }
-    if ( isset( $settings['gravatar'] ) && $settings['gravatar'] == '0' ) {
-      $options_obj['gravatar'] = null;
+    if ( isset( $settings['gravatar'] ) && empty( $settings['gravatar'] ) ) {
+      $options_obj['avatar'] = null;
     }
     if ( $this->_is_valid( $settings, 'username_style' ) ) {
       $options_obj['usernameStyle'] = $settings['username_style'];
@@ -169,7 +119,7 @@ class WP_Auth0_Lock10_Options {
       }
     }
     if ( $this->_is_valid( $settings, 'lock_connections' ) ) {
-      $options_obj['allowedConnections'] = explode( ",", $settings['lock_connections'] );
+      $options_obj['allowedConnections'] = $this->wp_options->get_lock_connections();
     }
     if ( isset( $settings['extra_conf'] ) && trim( $settings['extra_conf'] ) !== '' ) {
       $extra_conf_arr = json_decode( $settings['extra_conf'], true );
@@ -177,32 +127,19 @@ class WP_Auth0_Lock10_Options {
     }
     if ( $this->signup_mode ) {
       $options_obj["allowLogin"] = false;
+    } else if ( isset( $_GET['action'] ) && $_GET['action'] == 'register' ) {
+      $options_obj["allowLogin"] = true;
     }
     return $options_obj;
   }
 
-  public function get_custom_signup_fields() {
-    $fields = $this->wp_options->get('custom_signup_fields');
-
-    if (trim($fields) === '') {
-      return "[]";
-    }
-
-    return $fields;
-  }
-  public function has_custom_signup_fields() {
-    return $this->wp_options->get('custom_signup_fields');
-  }
-
   public function get_sso_options() {
-    $options["scope"] = "openid email identities ";
+    $options["scope"] = WP_Auth0_LoginManager::get_userinfo_scope( 'sso' );
 
+    $options["responseType"] = 'token id_token';
     if ( $this->get_auth0_implicit_workflow() ) {
-      $options["responseType"] = 'id_token';
       $options["redirectUri"] = $this->get_implicit_callback_url();
-      $options["scope"] .= "name email picture nickname email_verified";
     } else {
-      $options["responseType"] = 'code';
       $options["redirectUri"] = $this->get_code_callback_url();
     }
 
@@ -216,7 +153,7 @@ class WP_Auth0_Lock10_Options {
 
     unset( $options["authParams"] );
     $options["state"] = $this->get_state_obj( $redirect_to );
-    $options["nonce"] = 'nonce';
+    $options["nonce"] = WP_Auth0_Nonce_Handler::get_instance()->get_unique();
 
     return $options;
   }
@@ -230,39 +167,193 @@ class WP_Auth0_Lock10_Options {
     if ( isset( $this->extended_settings['redirect_to'] ) ) {
       $redirect_to = $this->extended_settings['redirect_to'];
     }
-    $state = $this->get_state_obj( $redirect_to );
-
-    $options_obj = $this->build_settings( $this->wp_options->get_options() );
-    $extended_settings = $this->build_settings( $extended_settings );
 
     $extraOptions = array(
       "auth"    => array(
-        "params" => array("state" => $state ),
+        "params" => array(
+          "state" => $this->get_state_obj( $redirect_to ),
+          "scope" => WP_Auth0_LoginManager::get_userinfo_scope( 'lock' ),
+        ),
       ),
     );
 
-    $extraOptions["auth"]["params"]["scope"] = "openid ";
-
     if ( $this->get_auth0_implicit_workflow() ) {
-      $extraOptions["auth"]["params"]["scope"] .= "name email picture nickname email_verified";
-      $extraOptions["auth"]["responseType"] = 'token';
+      $extraOptions["auth"]["responseType"] = 'id_token';
       $extraOptions["auth"]["redirectUrl"] = $this->get_implicit_callback_url();
       $extraOptions["autoParseHash"] = false;
+      $extraOptions["auth"]["params"]["nonce"] = WP_Auth0_Nonce_Handler::get_instance()->get_unique();
     } else {
       $extraOptions["auth"]["responseType"] = 'code';
       $extraOptions["auth"]["redirectUrl"] = $this->get_code_callback_url();
     }
 
+    $options_obj = $this->build_settings( $this->wp_options->get_options() );
+    $extended_settings = $this->build_settings( $extended_settings );
+
     $options_obj = array_replace_recursive( $extraOptions, $options_obj, $extended_settings );
 
+    if ( ! $this->wp_options->is_wp_registration_enabled() && ! isset( $options_obj["allowSignUp"] )) {
+      $options_obj["allowSignUp"] = false;
+    }
+
     if ( ! $this->show_as_modal() ) {
-      $options_obj['container'] = 'auth0-login-form';
+      $options_obj['container'] = WPA0_AUTH0_LOGIN_FORM_ID;
     }
 
     if ( ! $this->is_registration_enabled() ) {
       $options_obj['disableSignupAction'] = true;
     }
 
+    if ( function_exists( 'login_header' ) && isset( $_GET['action'] ) && 'register' === $_GET['action'] ) {
+      $options_obj['initialScreen'] = 'signUp';
+    }
+
     return $options_obj;
   }
+
+	/**
+	 * @deprecated 3.6.0 - Not used, determined in wp-content/plugins/auth0/assets/js/lock-init.js.
+	 *
+	 * @return string
+	 */
+	public function get_lock_classname() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		if ( $this->_get_boolean( $this->wp_options->get( 'passwordless_enabled' ) ) ) {
+			return 'Auth0LockPasswordless';
+		} else {
+			return 'Auth0Lock';
+		}
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Replaced with WP_Auth0_Options::Instance()->get( 'passwordless_enabled' ).
+	 *
+	 * @return bool
+	 */
+	public function isPasswordlessEnable() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return $this->_get_boolean( $this->wp_options->get( 'passwordless_enabled' ) );
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, invalid way to display Passwordless in Lock 11.2.
+	 *
+	 * @return string
+	 */
+	public function get_lock_show_method() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return 'show';
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, use WP_Auth0_Options::Instance->get( 'custom_css' ) instead.
+	 *
+	 * @return string
+	 */
+	public function get_custom_css() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return $this->wp_options->get( 'custom_css' );
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, use WP_Auth0_Options::Instance->get( 'custom_js' ) instead.
+	 *
+	 * @return string
+	 */
+	public function get_custom_js() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return $this->wp_options->get( 'custom_js' );
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, call WP_Auth0::ready() instead.
+	 *
+	 * @return string
+	 */
+	public function can_show() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return WP_Auth0::ready();
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, use WP_Auth0_Options::Instance->get( 'cdn_url' ) instead.
+	 *
+	 * @return string
+	 */
+	public function get_cdn_url() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return $this->wp_options->get( 'cdn_url' );
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, use (bool) WP_Auth0_Options::Instance->get( 'wordpress_login_enabled' ) instead.
+	 *
+	 * @return string
+	 */
+	public function get_wordpress_login_enabled() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return $this->_get_boolean( $this->wp_options->get( 'wordpress_login_enabled' ) );
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, $this->signup_mode is never changed.
+	 *
+	 * @param bool $enabled - disallow logins?
+	 */
+	public function set_signup_mode( $enabled ) {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		$this->signup_mode = $enabled;
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, value and default are passed to wp_localize_script() in templates/login-form.php.
+	 *
+	 * @return mixed|string
+	 */
+	public function modal_button_name() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		$name = 'Login';
+		if ( isset( $this->extended_settings['modal_trigger_name'] ) && $this->extended_settings['modal_trigger_name'] != '' ) {
+			$name = $this->extended_settings['modal_trigger_name'];
+		}
+		return $name;
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, use WP_Auth0_Options::Instance()->get('custom_signup_fields') instead.
+	 *
+	 * @return mixed|string
+	 */
+	public function get_custom_signup_fields() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		$fields = $this->wp_options->get('custom_signup_fields');
+
+		if (trim($fields) === '') {
+			return "[]";
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Not used, use WP_Auth0_Options::Instance()->get('custom_signup_fields') instead.
+	 *
+	 * @return mixed|string
+	 */
+	public function has_custom_signup_fields() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return $this->wp_options->get('custom_signup_fields');
+	}
 }

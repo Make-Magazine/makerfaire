@@ -1,9 +1,23 @@
 <?php
-
+/**
+ * Class WP_Auth0_Dashboard_Plugins_Income
+ *
+ * @deprecated 3.6.0 - The plugin no longer supports the dashboard widgets functionality.
+ */
 class WP_Auth0_Dashboard_Plugins_Income extends WP_Auth0_Dashboard_Plugins_Generic {
 
 	protected $id = 'auth0_dashboard_widget_income';
 	protected $name = 'Auth0 - Users Income';
+
+	/**
+	 * WP_Auth0_Dashboard_Plugins_Income constructor.
+	 *
+	 * @deprecated 3.6.0 - The plugin no longer supports the dashboard widgets functionality.
+	 */
+	public function __construct() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Class %s is deprecated.', 'wp-auth0' ), __CLASS__ ), E_USER_DEPRECATED );
+	}
 
 	public function render() {
 ?>

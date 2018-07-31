@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 
 /**
  * Created by PhpStorm.
@@ -10,19 +10,19 @@ defined('ABSPATH') or die("Cannot access pages directly.");
  */
 class WDTSettingsController {
 
-	public static function sanitizeSettings( $settings ){
-		foreach( $settings as $key=>&$setting ){
-			if( is_array( $setting )){
-				foreach( $setting as &$childSetting ){
-					$childSetting = sanitize_text_field( $childSetting );
+	public static function sanitizeSettings($settings) {
+		foreach ($settings as $key=>&$setting) {
+			if (is_array($setting)) {
+				foreach ($setting as &$childSetting) {
+					$childSetting = sanitize_text_field($childSetting);
 				}
-			}else{
-				$setting = sanitize_text_field( $setting );
-			}
+			} elseif (function_exists(sanitize_textarea_field) && ($key === "wdtCustomJs" || $key === "wdtCustomCss") ){
+				$setting = sanitize_textarea_field($setting);
+			} else {
+                $setting = sanitize_text_field($setting);
+            }
 		}
-
 		return $settings;
-
 	}
 
 	public static function saveSettings( $settings ){
@@ -49,8 +49,11 @@ class WDTSettingsController {
 			'wdtMobileWidth'            => get_option('wdtMobileWidth'),
 			'wdtPurchaseCode'           => get_option('wdtPurchaseCode'),
 			'wdtIncludeBootstrap'       => get_option('wdtIncludeBootstrap'),
+            'wdtIncludeBootstrapBackEnd'=> get_option('wdtIncludeBootstrapBackEnd'),
 			'wdtParseShortcodes'        => get_option('wdtParseShortcodes'),
 			'wdtNumbersAlign'           => get_option('wdtNumbersAlign'),
+            'wdtBorderRemoval'          => get_option('wdtBorderRemoval'),
+            'wdtBorderRemovalHeader'    => get_option('wdtBorderRemovalHeader'),
 			'wdtUseSeparateCon'         => get_option('wdtUseSeparateCon'),
 			'wdtMySQLHost'              => get_option('wdtMySqlHost'),
 			'wdtMySqlDB'                => get_option('wdtMySqlDB'),

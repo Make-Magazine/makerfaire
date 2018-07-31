@@ -172,6 +172,12 @@ var wpdatatable_plugin_config = {
             jQuery('#wdt-include-bootstrap').prop( 'checked', includeBootstrap );
         }
     },
+    setIncludeBootstrapBackEnd: function (includeBootstrapBackEnd) {
+        wdt_current_config.wdtIncludeBootstrapBackEnd = includeBootstrapBackEnd;
+        if( jQuery('#wdt-include-bootstrap-back-end').val() != includeBootstrapBackEnd ){
+            jQuery('#wdt-include-bootstrap-back-end').prop( 'checked', includeBootstrapBackEnd );
+        }
+    },
 
     setParseShortcodes: function ( wdtParseShortcodes ) {
         wdt_current_config.wdtParseShortcodes = wdtParseShortcodes;
@@ -208,6 +214,20 @@ var wpdatatable_plugin_config = {
                 default:
                     jQuery('input[data-name=' + settingName + ']').closest('.color-picker').colorpicker('setValue', settingValue);
             }
+        }
+    },
+
+    setBorderRemoval: function ( borderRemoval ) {
+        wdt_current_config.wdtBorderRemoval = borderRemoval;
+        if( jQuery('#wdt-remove-borders').val() != borderRemoval ){
+            jQuery('#wdt-remove-borders').prop( 'checked', borderRemoval );
+        }
+    },
+
+    setBorderRemovalHeader: function ( borderRemoval ) {
+        wdt_current_config.wdtBorderRemovalHeader = borderRemoval;
+        if( jQuery('#wdt-remove-borders-header').val() != borderRemoval ){
+            jQuery('#wdt-remove-borders-header').prop( 'checked', borderRemoval );
         }
     },
 

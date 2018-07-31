@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <!-- #wdtColumnsListModal -->
 <div class="modal fade" id="wdt-columns-list-modal" data-backdrop="static" data-keyboard="false"

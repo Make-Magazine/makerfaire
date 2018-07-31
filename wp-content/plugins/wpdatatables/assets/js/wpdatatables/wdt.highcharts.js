@@ -309,6 +309,12 @@ var wpDataTablesHighchart = function(){
                 case 'highcharts_gauge_chart':
                     this.options.chart.type = 'gauge';
                     break;
+                case 'highcharts_treemap_chart':
+                    this.options.chart.type = 'treemap';
+                    break;
+                case 'highcharts_treemap_level_chart_':
+                    this.options.chart.type = 'treemap';
+                    break;
                 case 'highcharts_spline_chart':
                     this.options.chart.type = 'spline';
                     break;
@@ -324,6 +330,40 @@ var wpDataTablesHighchart = function(){
         setColumnIndexes: function( columnIndexes ){
             this.columnIndexes = columnIndexes;
         },
+        setMultiplyYaxis: function( chartConfig ){
+            if (chartConfig.type == 'highcharts_spline_chart' ||
+                chartConfig.type == 'highcharts_line_chart' ||
+                chartConfig.type == 'highcharts_basic_column_chart' ||
+                chartConfig.type == 'highcharts_basic_area_chart' ||
+                chartConfig.type == 'highcharts_basic_bar_chart') {
+                var j = 0;
+
+                    Array.isArray(this.options.yAxis) ? this.options.yAxis.splice(1) : '';
+                    for (var i in chartConfig.options.series) {
+                        this.options.series[j].name = chartConfig.options.series[i].label;
+                        this.options.series[j].color = chartConfig.options.series[i].color;
+                        if (chartConfig.options.series[i].type)
+                            this.options.series[j].type = chartConfig.options.series[i].type;
+                            if (Array.isArray(this.options.yAxis)) {
+                                if (chartConfig.options.series[i].yAxis) {
+                                    this.options.yAxis.push({
+                                        title: {
+                                            text: chartConfig.options.series[i].label
+                                        },
+                                        opposite: true
+                                    });
+                                    this.options.series[j].yAxis = this.options.yAxis.length - 1;
+                                } else {
+                                    if (this.options.series[j].yAxis !== 'undefined')
+                                        delete this.options.series[j].yAxis
+                                }
+
+                                j++;
+                            }
+
+                    }
+            }
+        },
         setChartConfig: function( chartConfig ){
             // Chart
             this.setWidth(chartConfig.width);
@@ -336,17 +376,36 @@ var wpDataTablesHighchart = function(){
             chartConfig.panning ?  this.options.chart.panning = chartConfig.panning : null;
             chartConfig.pan_key ?  this.options.chart.panKey = chartConfig.pan_key : null;
             this.options.chart.plotBackgroundColor = chartConfig.plot_background_color;
-            chartConfig.plot_background_image ?  this.options.chart.plotBackgroundImage = chartConfig.plot_background_image : null;
+            this.options.chart.plotBackgroundImage = chartConfig.plot_background_image;
             chartConfig.plot_border_width ?  this.options.chart.plotBorderWidth = chartConfig.plot_border_width : null;
             this.options.chart.plotBorderColor = chartConfig.plot_border_color;
             // Series
-            if( this.options.chart.type != 'pie' ) {
+            if ( this.options.chart.type != 'pie' ) {
                 var j = 0;
-                for (var i in chartConfig.series_data) {
-                    this.options.series[j].name = chartConfig.series_data[i].label;
-                    this.options.series[j].color = chartConfig.series_data[i].color;
-                    j++;
-                }
+
+                  Array.isArray(this.options.yAxis) ? this.options.yAxis.splice(1) : '';
+                  for (var i in chartConfig.series_data) {
+                      this.options.series[j].name = chartConfig.series_data[i].label;
+                      this.options.series[j].color = chartConfig.series_data[i].color;
+                      if (chartConfig.series_data[i].type)
+                          this.options.series[j].type = chartConfig.series_data[i].type;
+                      if (Array.isArray(this.options.yAxis)) {
+                          if (chartConfig.series_data[i].yAxis) {
+                              this.options.yAxis.push({
+                                  title: {
+                                      text: chartConfig.series_data[i].label
+                                  },
+                                  opposite: true
+                              });
+                              this.options.series[j].yAxis = this.options.yAxis.length - 1;
+                          } else {
+                              if (this.options.series[j].yAxis !== 'undefined')
+                                  delete this.options.series[j].yAxis
+                          }
+                      }
+
+                      j++;
+                  }
             }
             // Axes
             if (chartConfig.show_grid == 0) {
@@ -355,44 +414,76 @@ var wpDataTablesHighchart = function(){
                 this.options.xAxis.lineColor = 'transparent';
                 this.options.xAxis.minorTickLength = 0;
                 this.options.xAxis.tickLength = 0;
-                this.options.yAxis.lineWidth = 0;
-                this.options.yAxis.gridLineWidth = 0;
-                this.options.yAxis.minorGridLineWidth = 0;
-                this.options.yAxis.lineColor = 'transparent';
-                this.options.yAxis.labels = {
-                    enabled: false
-                };
-                this.options.yAxis.minorTickLength = 0;
-                this.options.yAxis.tickLength = 0;
+                if (Array.isArray(this.options.yAxis)) {
+                    this.options.yAxis[0].lineWidth = 0;
+                    this.options.yAxis[0].gridLineWidth = 0;
+                    this.options.yAxis[0].minorGridLineWidth = 0;
+                    this.options.yAxis[0].lineColor = 'transparent';
+                    this.options.yAxis[0].labels = {
+                        enabled: false
+                    };
+                    this.options.yAxis[0].minorTickLength = 0;
+                    this.options.yAxis[0].tickLength = 0;
+                } else {
+                    this.options.yAxis.lineWidth = 0;
+                    this.options.yAxis.gridLineWidth = 0;
+                    this.options.yAxis.minorGridLineWidth = 0;
+                    this.options.yAxis.lineColor = 'transparent';
+                    this.options.yAxis.labels = {
+                        enabled: false
+                    };
+                    this.options.yAxis.minorTickLength = 0;
+                    this.options.yAxis.tickLength = 0;
+                }
             } else {
                 delete this.options.xAxis.lineWidth;
                 delete this.options.xAxis.minorGridLineWidth;
                 delete this.options.xAxis.lineColor;
                 delete this.options.xAxis.minorTickLength;
                 delete this.options.xAxis.tickLength;
-                delete this.options.yAxis.lineWidth;
-                delete this.options.yAxis.gridLineWidth;
-                delete this.options.yAxis.minorGridLineWidth;
-                delete this.options.yAxis.lineColor;
-                this.options.yAxis.labels = {
-                    enabled: true
-                };
-                this.options.yAxis.minorTickLength = 0;
-                this.options.yAxis.tickLength = 0;
+                if (Array.isArray(this.options.yAxis)) {
+                    delete this.options.yAxis[0].lineWidth;
+                    delete this.options.yAxis[0].gridLineWidth;
+                    delete this.options.yAxis[0].minorGridLineWidth;
+                    delete this.options.yAxis[0].lineColor;
+                    this.options.yAxis[0].labels = {
+                        enabled: true
+                    };
+                    this.options.yAxis[0].minorTickLength = 0;
+                    this.options.yAxis[0].tickLength = 0;
+                } else {
+                    delete this.options.yAxis.lineWidth;
+                    delete this.options.yAxis.gridLineWidth;
+                    delete this.options.yAxis.minorGridLineWidth;
+                    delete this.options.yAxis.lineColor;
+                    this.options.yAxis.labels = {
+                        enabled: true
+                    };
+                    this.options.yAxis.minorTickLength = 0;
+                    this.options.yAxis.tickLength = 0;
+                }
             }
-            chartConfig.highcharts_line_dash_style ? this.options.yAxis.gridLineDashStyle = chartConfig.highcharts_line_dash_style : null;
+            if (Array.isArray(this.options.yAxis)) {
+                chartConfig.highcharts_line_dash_style ? this.options.yAxis[0].gridLineDashStyle = chartConfig.highcharts_line_dash_style : null;
+                chartConfig.vertical_axis_crosshair == 1 ? this.options.yAxis[0].crosshair = true : this.options.yAxis[0].crosshair = false;
+                chartConfig.horizontal_axis_label ? this.options.yAxis[0].title = { text: chartConfig.vertical_axis_label } : null;
+                chartConfig.vertical_axis_min ? this.options.yAxis[0].min = chartConfig.vertical_axis_min : this.options.yAxis[0].min = undefined;
+                chartConfig.vertical_axis_max ? this.options.yAxis[0].max = chartConfig.vertical_axis_max : this.options.yAxis[0].max = undefined;
+            } else {
+                chartConfig.highcharts_line_dash_style ? this.options.yAxis.gridLineDashStyle = chartConfig.highcharts_line_dash_style : null;
+                chartConfig.vertical_axis_crosshair == 1 ? this.options.yAxis.crosshair = true : this.options.yAxis.crosshair = false;
+                chartConfig.horizontal_axis_label ? this.options.yAxis.title = { text: chartConfig.vertical_axis_label } : null;
+                chartConfig.vertical_axis_min ? this.options.yAxis.min = chartConfig.vertical_axis_min : this.options.yAxis.min = undefined;
+                chartConfig.vertical_axis_max ? this.options.yAxis.max = chartConfig.vertical_axis_max : this.options.yAxis.max = undefined;
+            }
             chartConfig.vertical_axis_label ? this.options.xAxis.title = { text: chartConfig.horizontal_axis_label } : null;
-            chartConfig.vertical_axis_crosshair == 1 ? this.options.xAxis.crosshair = true : this.options.xAxis.crosshair = false;
-            chartConfig.horizontal_axis_label ? this.options.yAxis.title = { text: chartConfig.vertical_axis_label } : null;
-            chartConfig.horizontal_axis_crosshair == 1 ? this.options.yAxis.crosshair = true : this.options.yAxis.crosshair = false;
-            chartConfig.vertical_axis_min ? this.options.yAxis.min = chartConfig.vertical_axis_min : this.options.yAxis.min = undefined;
-            chartConfig.vertical_axis_max ? this.options.yAxis.max = chartConfig.vertical_axis_max : this.options.yAxis.max = undefined;
+            chartConfig.horizontal_axis_crosshair == 1 ? this.options.xAxis.crosshair = true : this.options.xAxis.crosshair = false;
             chartConfig.inverted == 1 ? this.options.chart.inverted = true : this.options.chart.inverted = false;
             // Title
             chartConfig.show_title == 1 ? this.options.title.text = chartConfig.chart_title : this.options.title.text = '';
             chartConfig.title_floating == 1 ? this.options.title.floating = true : this.options.title.floating = false;
             chartConfig.title_align ? this.options.title.align = chartConfig.title_align : null;
-            chartConfig.subtitle ? this.options.subtitle.text = chartConfig.subtitle : null;
+            chartConfig.subtitle ? this.options.subtitle.text = chartConfig.subtitle : this.options.subtitle.text = null;
             chartConfig.subtitle_align ? this.options.subtitle.align = chartConfig.subtitle_align : null;
             // Tooltip
             chartConfig.tooltip_enabled == 1 ? this.options.tooltip.enabled = true : this.options.tooltip.enabled = false;
@@ -401,18 +492,20 @@ var wpDataTablesHighchart = function(){
             this.options.tooltip.borderColor = chartConfig.tooltip_border_color;
             chartConfig.tooltip_border_radius ? this.options.tooltip.borderRadius = chartConfig.tooltip_border_radius : null;
             chartConfig.tooltip_shared == 1 ? this.options.tooltip.shared = true : this.options.tooltip.shared = false;
-            chartConfig.tooltip_value_prefix  ? this.options.tooltip.valuePrefix = chartConfig.tooltip_value_prefix : null;
-            chartConfig.tooltip_value_suffix  ? this.options.tooltip.valueSuffix = chartConfig.tooltip_value_suffix : null;
+            this.options.tooltip.valuePrefix = chartConfig.tooltip_value_prefix;
+            this.options.tooltip.valueSuffix = chartConfig.tooltip_value_suffix;
             // Legend
-            chartConfig.show_legend == 1 ? this.options.legend.enabled = true : this.options.legend.enabled = false;
-            this.options.legend.backgroundColor = chartConfig.legend_background_color;
-            chartConfig.legend_title ? this.options.legend.title.text = chartConfig.legend_title : null;
-            chartConfig.legend_layout ? this.options.legend.layout = chartConfig.legend_layout : null;
-            chartConfig.legend_align ? this.options.legend.align = chartConfig.legend_align : null;
-            chartConfig.legend_vertical_align ? this.options.legend.verticalAlign = chartConfig.legend_vertical_align : null;
-            chartConfig.legend_border_width ? this.options.legend.borderWidth = chartConfig.legend_border_width : null;
-            this.options.legend.borderColor = chartConfig.legend_border_color;
-            chartConfig.legend_border_radius ? this.options.legend.borderRadius = chartConfig.legend_border_radius : null;
+            if (!(chartConfig.chart_type == 'highcharts_treemap_level_chart')) {
+                chartConfig.show_legend == 1 ? this.options.legend.enabled = true : this.options.legend.enabled = false;
+                this.options.legend.backgroundColor = chartConfig.legend_background_color;
+                chartConfig.legend_title ? this.options.legend.title.text = chartConfig.legend_title : null;
+                chartConfig.legend_layout ? this.options.legend.layout = chartConfig.legend_layout : null;
+                chartConfig.legend_align ? this.options.legend.align = chartConfig.legend_align : null;
+                chartConfig.legend_vertical_align ? this.options.legend.verticalAlign = chartConfig.legend_vertical_align : null;
+                chartConfig.legend_border_width ? this.options.legend.borderWidth = chartConfig.legend_border_width : null;
+                this.options.legend.borderColor = chartConfig.legend_border_color;
+                chartConfig.legend_border_radius ? this.options.legend.borderRadius = chartConfig.legend_border_radius : null;
+            }
             // Exporting
             chartConfig.exporting == 1 ? this.options.exporting.enabled = true : this.options.exporting.enabled = false;
             chartConfig.exporting_data_labels == 1 ? this.options.exporting.chartOptions.plotOptions.series.dataLabels.enabled = true : this.options.exporting.chartOptions.plotOptions.series.dataLabels.enabled = false;
@@ -477,6 +570,20 @@ var wpDataTablesHighchart = function(){
                                         seriesDataEntry.push({
                                             name: obj.options.xAxis.categories[i],
                                             y: parseFloat( wdtUnformatNumber(entry, ',', '.', true) )
+                                        });
+                                    }
+                                }else if (obj.options.chart.type == 'treemap'){
+                                    if (obj.numberFormat == 1) {
+                                        seriesDataEntry.push({
+                                            colorValue: parseFloat(wdtUnformatNumber(entry, '.', ',', true)),
+                                            name: obj.options.xAxis.categories[i],
+                                            value: parseFloat(wdtUnformatNumber(entry, '.', ',', true))
+                                        });
+                                    }else{
+                                        seriesDataEntry.push({
+                                            colorValue: parseFloat(wdtUnformatNumber(entry, ',', '.', true)),
+                                            name: obj.options.xAxis.categories[i],
+                                            value: parseFloat(wdtUnformatNumber(entry, ',', '.', true))
                                         });
                                     }
                                 }else{

@@ -17,7 +17,7 @@
         /**
          * Attach waves to buttons
          */
-        Waves.attach(".btn:not(.btn-icon):not(.btn-float):not(.dropdown-toggle):not(.checkbox-filter)");
+        Waves.attach(".btn:not(.btn-icon):not(.btn-float):not(.dropdown-toggle):not(.wdt-checkbox-filter)");
         Waves.attach(".btn-icon, .btn-float", ["waves-circle", "waves-float"]);
         Waves.init();
 

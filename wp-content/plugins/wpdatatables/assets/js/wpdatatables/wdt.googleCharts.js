@@ -284,8 +284,8 @@ var wpDataTablesGoogleChart = function(){
             chartConfig.horizontal_axis_direction ? this.options.hAxis.direction = chartConfig.horizontal_axis_direction : null;
             chartConfig.vertical_axis_label ? this.options.vAxis.title = chartConfig.vertical_axis_label : null;
             chartConfig.vertical_axis_direction ? this.options.vAxis.direction = chartConfig.vertical_axis_direction : null;
-            chartConfig.vertical_axis_min ? this.options.vAxis.viewWindow.min = chartConfig.vertical_axis_min : null;
-            chartConfig.vertical_axis_max ? this.options.vAxis.viewWindow.max= chartConfig.vertical_axis_max : null;
+            this.options.vAxis.viewWindow.min = chartConfig.vertical_axis_min;
+            this.options.vAxis.viewWindow.max= chartConfig.vertical_axis_max;
             chartConfig.inverted == 1 ? this.options.orientation = 'vertical' : this.options.orientation = 'horizontal';
             // Title
             chartConfig.show_title == 1 ? this.options.title = chartConfig.chart_title : this.options.title = '';

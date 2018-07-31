@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php
 /**
@@ -22,7 +22,7 @@ if ($this->getFilteringForm()) {
     <input type="hidden" id="<?php echo $this->getId() ?>_desc" value='<?php echo $this->getJsonDescription(); ?>'/>
 
     <table id="<?php echo $this->getId() ?>"
-           class="<?php if ($this->isScrollable()) { ?>scroll<?php } ?> <?php if ($this->isResponsive()) { ?>responsive<?php } ?> display nowrap <?php echo $this->getCSSClasses() ?> wpDataTable"
+           class="<?php if ($this->isScrollable()) { ?>scroll<?php } ?> <?php if ($this->isResponsive()) { ?>responsive<?php } ?> display nowrap <?php echo $this->getCSSClasses() ?> <?php echo apply_filters('wdt_add_class_to_table_html_element', $this->getCSSClasses(), $this->getWpId()) ?> wpDataTable"
            style="<?php echo $this->getCSSStyle() ?>"
            data-described-by='<?php echo $this->getId() ?>_desc'
            data-wpdatatable_id="<?php echo $this->getWpId(); ?>

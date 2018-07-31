@@ -5,8 +5,8 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: SEO, XML sitemap, Google Search Console, Content analysis, Readability
 Requires at least: 4.8
-Tested up to: 4.9.5
-Stable tag: 7.4.2
+Tested up to: 4.9.7
+Stable tag: 7.9
 Requires PHP: 5.2.4
 
 Improve your WordPress SEO: Write better content and have a fully optimized WordPress site using the Yoast SEO plugin.
@@ -106,71 +106,54 @@ You'll find answers to many of your questions on [kb.yoast.com](https://yoa.st/1
 
 == Changelog ==
 
-= 7.4.2 =
-Release Date: May 3rd, 2018
-
-Bugfixes:
-* Fixes automatic image size detection for OpenGraph images. When an image was used that was too large, we wouldn't output the `og:image` tag. That is now fixed.
-* Fixes a bug where portrait images where not allowed for the OpenGraph image.
-
-= 7.4.1 =
-Release Date: May 2nd, 2018
-
-Bugfixes:
-* Re-adds `wpseo_opengraph_image_size` filter. This will completely override any automatic size determination our code does. This filter now also applies to all ways an `og:image` can be determined: In the content, as a featured image or as set in our Facebook image setting.
-* Fixes an unintended backwards incompatible change which caused "Warning: Illegal string offset ‘url’ in".
-* Fixes an unintended change which caused SVGs to be included in consideration for the `og:image` tag. SVG images are not allowed by Facebook, so these should never be used in the `og:image` tag.
-
-= 7.4.0 =
-Release Date: May 1st, 2018
+= 7.9.0 =
+Release Date: July 24th, 2018
 
 Enhancements:
-* Adds OpenGraph image dimension-meta tags for more images.
-* Excludes images from being used in OpenGraph meta tags, if the image is larger than 2MB.
-* Adds caching for images found in a post to reduce load.
-* Adds image alt tag to the OpenGraph output, using the meta tag `og:image:alt`.
-* Adds the `is_post_type_viewable` WordPress function to improve support for the `wpseo_accessible_post_types` filters.
+* Introduces the collapsible sections to all the tabs in Search Appearance.
+* Improves accessibility of the collapsible sections in Search Appearance.
 
 Bugfixes:
-* Fixes a bug where a non-array value causes a fatal error when `cron_schedules` filter has been executed.
-* Fixes a bug where not all database tables were removed when a subsite was deleted in a multisite environment.
-* Fixes a bug where deleting multiple posts might cause performance issues. Props to [Moeini](https://github.com/abolfazl-moeini).
+* Fixes a bug where archive settings for post types aren't shown on the search appearance page when the `has_archive` for that post type contains an archive slug. Props to [schurig](https://github.com/schurig).
+* Fixes a bug where a notice ("Notice: Trying to get property of non-object") is given when the `$term->taxonomy` isn't set before it is used. Props to [nesinervink](https://github.com/nesinervink), [bainternet](https://github.com/bainternet).
+* Fixes a bug where an uppercased encode URI isn't redirected to the category. Props to [dawnbirth](https://github.com/dawnbirth).
+* Fixes a bug where HTML entities were not always decoded in the Snippet Variables.
+* Fixes a bug where custom field labels would be separated by spaces in the classic editor, but in Gutenberg they would be separated by underscores instead.
+* Fixes a bug where the conversion of `&#039;`, which is PHP's HTML entity for the apostrophy, did not happen.
+* Fixes a bug where the same notification is shown multiple times when trashing multiple posts.
+* Fixes a bug where a possibly non-existent key would be retrieved when generating the `article:section` OpenGraph tag. Props to [mikeschinkel](https://github.com/mikeschinkel).
+* Fixes a bug in the UI that happend when `do_shortcode` was run on category descriptions in the admin list. Additionally, fixes rendering of shortcodes in category descriptions on the frontend.
+* Fixes a bug where saved templates in Search Appearance would be saved incorrectly into the database, resulting in them never being loaded when editing a post, page, etc. This meant that the default template would always be used.
+* Fixes a bug where the "Tagline" / `%%sitedesc%%` snippet editor variable was not selectable in the Search Appearance settings.
+* Fixes a bug where the newsletter signup in the configuration wizard would not work.
 
 Other:
-* Introduces a message, warning about dropping of PHP 5.2 support in an upcoming version.
-* Alters the configuration service text in the Configuration Wizard when a user is already running Yoast SEO Premium. Previously the text contained a reference to getting a bundled copy of Premium, even if the user was already running Premium.
+* Moves some snippet variables to only appear within specific editors. Adds a filter `wpseo_editor_specific_replace_vars` to make this pluggable.
+* Adds the white background to the template of media on the Search Appearance page.
+* Changes feedback in the keyword density assessment to make it more explicit that synonyms are not taken into consideration when calculating the score.
+* Shows a notification with the message that you should check your post type archive settings when these are possibly reset to their defaults in 7.7 or 7.8.
 
-= 7.3.0 =
-Release Date: April 17th, 2018
+= 7.8.0 =
+Release Date: July 10th, 2018
 
 Enhancements:
-* Removes the `intl` polyfill and shows a message on browsers that don't support this feature.
-* Adds Baidu Webmaster Tools verification support.
-* Adds import functionality for [Premium SEO Pack](https://wordpress.org/plugins/premium-seo-pack/).
-* Adds import functionality for [Smartcrawl SEO](https://wordpress.org/plugins/smartcrawl-seo/).
-* Adds import functionality for [Squirrly SEO](https://wordpress.org/plugins/squirrly-seo/).
-* Adds import functionality for [Platinum SEO Pack](https://wordpress.org/plugins/platinum-seo-pack/).
-* Adds import functionality for [SEO Framework](https://wordpress.org/plugins/autodescription/).
-* Adds import functionality for [Greg's High Performance SEO](https://wordpress.org/plugins/gregs-high-performance-seo/).
-* Adds import functionality for [WP Meta SEO](https://wordpress.org/plugins/wp-meta-seo/).
-* Improves the social data import for the wpSEO.de plugin.
-* Removes the debug data from the admin pages, which were only showing when WordPress is in DEBUG mode.
-* Applies Select2 to all select boxes on breadcrumbs page.
-* Attempts to reset `opcode` cache during the upgrade routine.
-* Changes the wording for the Ryte indexability check on the features tab.
+* Improves the way that the OpenGraph is determined for front pages, especially in the case of static front pages.
+* Adds links to relevant articles to all SEO assessments.
+* Adds Flesch Reading Ease assessment for French.
+* Adds Flesch Reading Ease assessment for Spanish.
+* Adds passive voice assessment for Italian.
 
 Bugfixes:
-* Prevents hard casting to array in the `WPSEO_Link_Columns::add_post_columns` method signature.
-* Fixes a bug where an error is thrown when MySQL has the `sql-mode` set to `ANSI_QUOTES`.
-* Fixes a bug where the pagination overlaps the cornerstone information message, on post overview pages in combination with low resolutions.
-* Fixed a bug where the keyword filter doesn't work on the post overview page.
-* Removes HTML entities from the HTML comment that appears for admins when there's no meta description on a post or page.
-* Changes JSON+LD organization output to always point to `#organization` on the homepage instead of the current page.
-* Fixes a bug where non-public taxonomies were shown in the breadcrumbs.
+* Fixes a bug where images from password protected posts could potentially end up in OpenGraph image tags.
+* Fixes a bug where very old notifications could not be be dismissed or restored.
+* Fixes a bug where the `Insert snippet variable` button alignment was incorrect.
+* Fixes a bug where the snippet variables had a different label in the Search Appearance settings compared to the snippet variables when writing a post, pages and taxonomies.
+* Fixes a bug where instances of the same keyword with different kinds of apostrophes (e.g., brain’s and brain's) were not recognized as the same. This affects the following assessments: keyword in meta description, keyword in subheading, keyword in first paragraph, keyword in title and keyword in URL.
+* Fixes a bug where the custom set breadcrumb title for the WooCommerce Shop page wasn't used.
 
 Other:
-* Minor internationalization improvements.
-* Security hardening.
+* Adds a reminder message to create a redirect if a user deletes a category or tag.
+* Removes a banner spot in the admin.
 
 = Earlier versions =
 

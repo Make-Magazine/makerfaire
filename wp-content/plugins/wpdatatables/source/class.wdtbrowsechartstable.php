@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 /**
  * Browse charts for the admin panel
  */
@@ -65,6 +65,14 @@ class WDTBrowseChartsTable extends WP_List_Table {
 
         $query = "SELECT COUNT(*) FROM {$wpdb->prefix}wpdatacharts";
 
+        if (isset($_REQUEST['s'])) {
+            if (is_numeric($_REQUEST['s'])){
+                $query .= " WHERE id LIKE '" . sanitize_text_field($_POST['s']) . "'";
+            }else{
+                $query .= " WHERE title LIKE '%" . sanitize_text_field($_POST['s']) . "%'";
+            }
+        }
+
         $count = $wpdb->get_var($query);
 
         return $count;
@@ -81,7 +89,11 @@ class WDTBrowseChartsTable extends WP_List_Table {
                     FROM {$wpdb->prefix}wpdatacharts ";
 
         if (isset($_REQUEST['s'])) {
-            $query .= " WHERE title LIKE '%" . sanitize_text_field($_POST['s']) . "%' ";
+            if (is_numeric($_REQUEST['s'])){
+                $query .= " WHERE id LIKE '" . sanitize_text_field($_POST['s']) . "'";
+            }else{
+                $query .= " WHERE title LIKE '%" . sanitize_text_field($_POST['s']) . "%'";
+            }
         }
 
         if (isset($_REQUEST['orderby'])) {
@@ -134,8 +146,24 @@ class WDTBrowseChartsTable extends WP_List_Table {
                 break;
             case 'functions':
             case 'table_type':
-                $return_string = ' <a type="button" class="wdt-configure" data-table_id="' . $item['id'] . '" data-table_name="' . $item['title'] . '" data-toggle="tooltip" title="' . __('Configure', 'wpdatatables') . '" href="admin.php?page=wpdatatables-chart-wizard&chart_id=' . $item['id'] . '"><i class="zmdi zmdi-settings"></i></a>';
-                $return_string .= ' <a type="button" class="wdt-submit-delete" data-table_id="' . $item['id'] . '" data-table_name="' . $item['title'] . '" data-toggle="tooltip" title="' . __('Delete', 'wpdatatables') . '" href="'. wp_nonce_url('admin.php?page=wpdatatables-charts&action=delete&chart_id=' . $item['id'] . '', 'wdtDeleteChartNonce', 'wdtNonce' ) .'"><i class="zmdi zmdi-delete"></i></a>';
+	            $return_string =    ' <a type="button" 
+	                                     class="wdt-duplicate-chart" 
+	                                     data-chart_id="' . $item['id'] . '" 
+	                                     data-chart_name="' . $item['title'] . '"
+	                                     data-toggle="tooltip" title="' . __('Duplicate', 'wpdatatables') . '" 
+	                                     href="#"></a>';
+                $return_string .=   ' <a type="button" 
+                                         class="wdt-configure" 
+                                         data-table_id="' . $item['id'] . '" 
+                                         data-table_name="' . $item['title'] . '" 
+                                         data-toggle="tooltip" title="' . __('Configure', 'wpdatatables') . '" 
+                                         href="admin.php?page=wpdatatables-chart-wizard&chart_id=' . $item['id'] . '"><i class="zmdi zmdi-settings"></i></a>';
+                $return_string .=   ' <a type="button" 
+                                         class="wdt-submit-delete" 
+                                         data-table_id="' . $item['id'] . '" 
+                                         data-table_name="' . $item['title'] . '" 
+                                         data-toggle="tooltip" title="' . __('Delete', 'wpdatatables') . '" 
+                                         href="'. wp_nonce_url('admin.php?page=wpdatatables-charts&action=delete&chart_id=' . $item['id'] . '', 'wdtDeleteChartNonce', 'wdtNonce' ) .'"><i class="zmdi zmdi-delete"></i></a>';
                 return $return_string;
                 break;
             case 'id':
@@ -261,6 +289,12 @@ class WDTBrowseChartsTable extends WP_List_Table {
                 break;
             case 'highcharts_3d_donut_chart':
                 return '<span class="wdt-chart-type bgm-gray">' . __('3D Donut Chart', 'wpdatatables') . '</span>';
+                break;
+            case 'highcharts_treemap_chart':
+                return '<span class="wdt-chart-type bgm-gray">' . __('Treemap Chart', 'wpdatatables') . '</span>';
+                break;
+            case 'highcharts_treemap_level_chart':
+                return '<span class="wdt-chart-type bgm-gray">' . __('Treemap level Chart', 'wpdatatables') . '</span>';
                 break;
             case 'chartjs_line_chart':
                 return '<span class="wdt-chart-type bgm-gray">' . __('Line Chart', 'wpdatatables') . '</span>';

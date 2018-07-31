@@ -7,6 +7,10 @@ class LinkWDTColumn extends WDTColumn
 
     protected $_jsDataType = 'string';
     protected $_dataType = 'string';
+    protected $_linkTargetAttribute = '_self';
+    protected $_linkButtonAttribute = 0;
+    protected $_linkButtonLabel = '';
+    protected $_linkButtonClass = '';
 
     /**
      * LinkWDTColumn constructor.
@@ -16,6 +20,12 @@ class LinkWDTColumn extends WDTColumn
     {
         parent::__construct($properties);
         $this->_dataType = 'link';
+        $this->setLinkTargetAttribute(WDTTools::defineDefaultValue($properties, 'linkTargetAttribute', '_self'));
+        $this->setLinkButtonAttribute(WDTTools::defineDefaultValue($properties, 'linkButtonAttribute', 0));
+        $this->setLinkButtonLabel(WDTTools::defineDefaultValue($properties, 'linkButtonLabel', ''));
+        $this->setLinkButtonClass(WDTTools::defineDefaultValue($properties, 'linkButtonClass', ''));
+
+
     }
 
     /**
@@ -24,22 +34,117 @@ class LinkWDTColumn extends WDTColumn
      */
     public function prepareCellOutput($content)
     {
+        $targetAttribute = $this->getLinkTargetAttribute();
+        $buttonClass = $this->getLinkButtonClass();
+
         if (strpos($content, '||') !== false) {
             list($link, $content) = explode('||', $content);
-            $formattedValue = "<a data-content='{$content}' href='{$link}' target='_blank'>{$content}</a>";
+            $buttonLabel = $this->getLinkButtonLabel() !== '' ? $this->getLinkButtonLabel() : $content;
+
+            if ($this->getLinkButtonAttribute() == 1 && $content !== '') {
+                $formattedValue = "<a data-content='{$content}' href='{$link}' target='{$targetAttribute}'><button class='{$buttonClass}'>{$buttonLabel}</button></a>";
+            } else {
+                $formattedValue = "<a data-content='{$content}' href='{$link}' target='{$targetAttribute}'>{$content}</a>";
+            }
         } else {
             if ($this->_inputType == 'attachment') {
+                $buttonLabel = $this->getLinkButtonLabel() !== '' ? $this->getLinkButtonLabel() : $content;
                 if (!empty($content)) {
-                    $formattedValue = "<a href='{$content}' target='_blank'>{$this->_title}</a>";
+                    if($this->getLinkButtonAttribute() == 1 ){
+                        if( $this->getLinkButtonLabel() !==''){
+                            $formattedValue = "<a href='{$content}' target='{$targetAttribute}'><button class='{$buttonClass}'>{$buttonLabel}</button></a>";
+                        }else{
+                            $formattedValue = "<a href='{$content}' target='{$targetAttribute}'><button class='{$buttonClass}'>{$this->_title}</button></a>";
+                        }
+                    }else{
+                        $formattedValue = "<a href='{$content}' target='{$targetAttribute}'>{$this->_title}</a>";
+                    }
                 } else {
                     $formattedValue = '';
                 }
             } else {
-                $formattedValue = "<a href='{$content}' target='_blank'>{$content}</a>";
+                if($this->getLinkButtonAttribute() == 1 && $content === null ){
+                    $formattedValue = "<a href='{$content}' target='{$targetAttribute}'>{$content}</a>";
+                }else {
+                    if ($this->getLinkButtonAttribute() == 1 && $content !== '') {
+                        $buttonLabel = $this->getLinkButtonLabel() !== '' ? $this->getLinkButtonLabel() : $content;
+                        $formattedValue = "<a href='{$content}' target='{$targetAttribute}'><button class='{$buttonClass}'>{$buttonLabel}</button></a>";
+                    } else {
+                        if ($content == '') {
+                            return null;
+                        } else {
+                            $formattedValue = "<a href='{$content}' target='{$targetAttribute}'>{$content}</a>";
+                        }
+                    }
+                }
             }
         }
         $formattedValue = apply_filters('wpdatatables_filter_link_cell', $formattedValue, $this->getParentTable()->getWpId());
         return $formattedValue;
     }
 
+    /**
+     * @return string
+     */
+    public function getLinkTargetAttribute()
+    {
+        return $this->_linkTargetAttribute;
+    }
+
+    /**
+     * @param string $linkTargetAttribute
+     */
+    public function setLinkTargetAttribute($linkTargetAttribute)
+    {
+        $this->_linkTargetAttribute = $linkTargetAttribute;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLinkButtonAttribute()
+    {
+        return $this->_linkButtonAttribute;
+    }
+
+    /**
+     * @param int $linkButtonAttribute
+     */
+    public function setLinkButtonAttribute($linkButtonAttribute)
+    {
+        $this->_linkButtonAttribute = $linkButtonAttribute;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLinkButtonLabel()
+    {
+        return $this->_linkButtonLabel;
+    }
+
+    /**
+     * @param string $linkButtonLabel
+     */
+    public function setLinkButtonLabel($linkButtonLabel)
+    {
+        $this->_linkButtonLabel = $linkButtonLabel;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getLinkButtonClass()
+    {
+        return $this->_linkButtonClass;
+    }
+
+    /**
+     * @param string $linkButtonClass
+     */
+    public function setLinkButtonClass($linkButtonClass)
+    {
+        $this->_linkButtonClass = $linkButtonClass;
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 
 /**
  * Add submenus and menu options
@@ -159,7 +159,7 @@ function wdtEditEnqueue() {
     wp_enqueue_style('wdt-skin', $renderSkin);
 
     wp_enqueue_script('wdt-datatables', WDT_JS_PATH . 'jquery-datatables/jquery.dataTables.min.js', array(), false, true);
-    wp_enqueue_script('wdt-advanced-filter', WDT_JS_PATH . 'jquery-datatables/jquery.dataTables.columnFilter.js', array(), false, true);
+    wp_enqueue_script('wdt-advanced-filter', WDT_JS_PATH . 'wpdatatables/wdt.columnFilter.js', array(), false, true);
     wp_enqueue_script('wdt-row-grouping', WDT_JS_PATH . 'jquery-datatables/jquery.dataTables.rowGrouping.js', array('jquery', 'wdt-datatables'), false, true);
     wp_enqueue_script('wdt-buttons', WDT_JS_PATH . 'export-tools/dataTables.buttons.min.js', array('jquery', 'wdt-datatables'), false, true);
     wp_enqueue_script('wdt-buttons-html5', WDT_JS_PATH . 'export-tools/buttons.html5.min.js', array('jquery', 'wdt-datatables'), false, true);
@@ -183,7 +183,7 @@ function wdtEditEnqueue() {
     wp_enqueue_script('wdt-dragula');
     wp_enqueue_script('wdt-ace');
     wp_enqueue_script('wdt-doc-js');
-
+    wp_localize_script('wdt-advanced-filter', 'ajax_object', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ));
     wp_localize_script('wdt-add-remove-column', 'wdtFrontendStrings', WDTTools::getTranslationStrings());
     wp_localize_script('wdt-wpdatatables', 'wpdatatables_frontend_strings', WDTTools::getTranslationStrings());
     wp_localize_script('wdt-advanced-filter', 'wpdatatables_frontend_strings', WDTTools::getTranslationStrings());
@@ -224,7 +224,7 @@ function wdtBrowseChartsEnqueue() {
     wp_enqueue_script('wdt-browse-js', WDT_JS_PATH . 'wpdatatables/admin/browse/wdt.browse.js', array(), false, true);
     wp_enqueue_script('wdt-doc-js');
 
-    wp_localize_script('wdt-browse-js', 'wpdatatablesEditStrings', WDTTools::getTranslationStrings());
+	wp_localize_script('wdt-browse-js', 'wpdatatablesStrings', WDTTools::getTranslationStrings());
 }
 
 /**
@@ -241,6 +241,8 @@ function wdtChartWizardEnqueue() {
     wp_enqueue_script('wdt-google-charts', '//www.gstatic.com/charts/loader.js', array(), false, true);
     wp_enqueue_script('wdt-highcharts', '//code.highcharts.com/highcharts.js', array(), false, true);
     wp_enqueue_script('wdt-highcharts-3d', '//code.highcharts.com/highcharts-3d.js', array(), false, true);
+    wp_enqueue_script('wdt-heatmap', '//code.highcharts.com/modules/heatmap.js', array(), false, true);
+    wp_enqueue_script('wdt-treemap', '//code.highcharts.com/modules/treemap.js', array(), false, true);
     wp_enqueue_script('wdt-exporting', '//code.highcharts.com/modules/exporting.js', array(), false, true);
     wp_enqueue_script('wdt-chart-js', WDT_JS_PATH . 'chartjs/Chart.js', array(), false, true);
     wp_enqueue_script('wdt-common');
@@ -351,6 +353,9 @@ function wdtEdit() {
         }
         WDTTools::exportJSVar('wpdatatable_init_config', $tableData->table);
     }
+
+    /** @noinspection PhpUnusedLocalVariableInspection */
+    $wdtUserRoles = get_editable_roles();
 
     ob_start();
     include WDT_ROOT_PATH . 'templates/admin/table-settings/edit_table.inc.php';

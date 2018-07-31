@@ -51,12 +51,8 @@ class WP_Auth0_Api_Client {
 				'client_secret_encoded' => $a0_options->get( 'client_secret_b64_encoded' ),
 				'connection' => $a0_options->get( 'db_connection_name' ),
 				'app_token' => $a0_options->get( 'auth0_app_token' ),
-				'audience' => $a0_options->get( 'api_audience' ),
+				'audience' => self::get_endpoint( 'api/v2/' ),
 			);
-
-			if ( empty( self::$connect_info[ 'audience' ] ) ) {
-				self::$connect_info[ 'audience' ] = self::get_endpoint( 'api/v2/' );
-			}
 		}
 
 		if ( empty( $opt ) ) {
@@ -66,7 +62,27 @@ class WP_Auth0_Api_Client {
 		}
 	}
 
+	/**
+	 * Deprecated to conform to OIDC standards
+	 *
+	 * @see https://auth0.com/docs/api-auth/intro#other-authentication-api-endpoints
+	 *
+	 * @deprecated 3.6.0
+	 *
+	 * @param $domain
+	 * @param $client_id
+	 * @param $username
+	 * @param $password
+	 * @param $connection
+	 * @param $scope
+	 *
+	 * @return array|bool|mixed|object
+	 */
 	public static function ro( $domain, $client_id, $username, $password, $connection, $scope ) {
+
+		$deprecation_msg = sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ );
+		trigger_error( $deprecation_msg, E_USER_DEPRECATED );
+		WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, $deprecation_msg );
 
 		$endpoint = "https://$domain/";
 
@@ -131,25 +147,21 @@ class WP_Auth0_Api_Client {
 		return true;
 	}
 
+	/**
+	 * Get required telemetry header
+	 *
+	 * @return array
+	 */
 	public static function get_info_headers() {
-		global $wp_version;
-
-		$a0_options = WP_Auth0_Options::Instance();
-
-		if ( $a0_options->get( 'metrics' ) != 1 ) {
-			return array();
-		}
-
-		return array(
-			'Auth0-Client' => base64_encode( wp_json_encode( array(
-						'name' => 'wp-auth0',
-						'version' => WPA0_VERSION,
-						'environment' => array(
-							'PHP' => phpversion(),
-							'WordPress' => $wp_version,
-						)
-					) ) )
+		$header_value = array(
+			'name' => 'wp-auth0',
+			'version' => WPA0_VERSION,
+			'environment' => array(
+				'PHP' => phpversion(),
+				'WordPress' => get_bloginfo('version'),
+			),
 		);
+		return array( 'Auth0-Client' => base64_encode( wp_json_encode( $header_value ) ) );
 	}
 
 	/**
@@ -244,17 +256,17 @@ class WP_Auth0_Api_Client {
 		return ! empty( $response->access_token ) ? $response->access_token : '';
 	}
 
+	/**
+	 * @param string $domain - tenant domain
+	 * @param string $access_token - access token with at least `openid` scope
+	 *
+	 * @return array|WP_Error
+	 */
 	public static function get_user_info( $domain, $access_token ) {
-
-		$endpoint = "https://$domain/";
-
-		$headers = self::get_info_headers();
-		$headers['Authorization'] = "Bearer $access_token";
-
-		return wp_remote_get( $endpoint . 'userinfo/' , array(
-				'headers' => $headers,
-			) );
-
+		return wp_remote_get(
+			self::get_endpoint( 'userinfo', $domain ),
+			array( 'headers' => self::get_headers( $access_token ) )
+		);
 	}
 
 	public static function search_users( $domain, $jwt, $q = "", $page = 0, $per_page = 100, $include_totals = false, $sort = "user_id:1" ) {
@@ -1060,9 +1072,7 @@ class WP_Auth0_Api_Client {
 
 	$endpoint = "https://$domain/.well-known/jwks.json";
 
-    $cache_expiration = $a0_options->get('cache_expiration');
-
-	if ( false === ($secret = get_transient('WP_Auth0_JWKS_cache') ) ) {
+	if ( false === ($secret = get_transient(WPA0_JWKS_CACHE_TRANSIENT_NAME) ) ) {
 
 		$secret = array();
 
@@ -1088,8 +1098,8 @@ class WP_Auth0_Api_Client {
 			$secret[$key['kid']] = self::convertCertToPem($key['x5c'][0]);
 		}
 
-		if ($cache_expiration !== 0) {
-			set_transient( 'WP_Auth0_JWKS_cache', $secret, $cache_expiration * MINUTE_IN_SECONDS );
+		if ( $cache_expiration = $a0_options->get('cache_expiration') ) {
+			set_transient( WPA0_JWKS_CACHE_TRANSIENT_NAME, $secret, $cache_expiration * MINUTE_IN_SECONDS );
 		}
 
 	}

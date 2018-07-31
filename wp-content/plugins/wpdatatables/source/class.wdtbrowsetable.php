@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 /**
  * Browse table for the admin panel
  */
@@ -64,6 +64,13 @@ class WDTBrowseTable extends WP_List_Table {
     function getTableCount() {
         global $wpdb;
         $query = "SELECT COUNT(*) FROM {$wpdb->prefix}wpdatatables";
+        if (isset($_REQUEST['s'])) {
+            if (is_numeric($_REQUEST['s'])){
+                $query .= " WHERE id LIKE '" . sanitize_text_field($_POST['s']) . "'";
+            }else{
+                $query .= " WHERE title LIKE '%" . sanitize_text_field($_POST['s']) . "%'";
+            }
+        }
         $count = $wpdb->get_var($query);
         return $count;
     }
@@ -79,7 +86,11 @@ class WDTBrowseTable extends WP_List_Table {
         $query = "SELECT id, title, table_type, editable FROM {$wpdb->prefix}wpdatatables ";
 
         if (isset($_REQUEST['s'])) {
-            $query .= " WHERE title LIKE '%" . sanitize_text_field($_POST['s']) . "%'";
+            if (is_numeric($_REQUEST['s'])){
+                $query .= " WHERE id LIKE '" . sanitize_text_field($_POST['s']) . "'";
+            }else{
+                $query .= " WHERE title LIKE '%" . sanitize_text_field($_POST['s']) . "%'";
+            }
         }
 
         if (isset($_REQUEST['orderby'])) {
@@ -149,16 +160,41 @@ class WDTBrowseTable extends WP_List_Table {
             case 'functions':
                 $return_string = '';
                 if (in_array($item['table_type'], WPDataTable::$allowedTableTypes)) {
-                    $return_string = '<a type="button" class="wdt-duplicate-table" data-table_id="' . $item['id'] . '" data-table_name="' . $item['title'] . '" data-table_type="' . $item['table_type'] . '" data-toggle="tooltip" title="' . __('Duplicate', 'wpdatatables') . '" href="#"></a>';
+                    $return_string = '<a type="button" 
+                                         class="wdt-duplicate-table" 
+                                         data-table_id="' . $item['id'] . '" 
+                                         data-table_name="' . $item['title'] . '" 
+                                         data-table_type="' . $item['table_type'] . '" 
+                                         data-toggle="tooltip" title="' . __('Duplicate', 'wpdatatables') . '" href="#"></a>';
                     if ($item['editable'] == 1) {
-                        $return_string .= ' <a type="button" class="wdt-manual-edit" data-table_id="' . $item['id'] . '" data-table_name="' . $item['title'] . '"  data-toggle="tooltip" title="' . __('Edit data', 'wpdatatables') . '" href="admin.php?page=wpdatatables-constructor&source&table_id=' . $item['id'] . '&collapsed"><i class="zmdi zmdi-edit"></i></a>';
+                        $return_string .= '<a type="button" 
+                                              class="wdt-manual-edit" 
+                                              data-table_id="' . $item['id'] . '" 
+                                              data-table_name="' . $item['title'] . '"  
+                                              data-toggle="tooltip" title="' . __('Edit data', 'wpdatatables') . '" 
+                                              href="admin.php?page=wpdatatables-constructor&source&table_id=' . $item['id'] . '&collapsed"><i class="zmdi zmdi-edit"></i></a>';
 
-                        $return_string .= ' <a type="button" class="wdt-manual-excel-edit" data-table_id="' . $item['id'] . '" data-table_name="' . $item['title'] . '" data-toggle="tooltip" title="' . __('Edit in Excel-like editor', 'wpdatatables') . '" href="admin.php?page=wpdatatables-constructor&source&table_view=excel&table_id=' . $item['id'] . '&collapsed"></a>';
+                        $return_string .= '<a type="button" 
+                                              class="wdt-manual-excel-edit" 
+                                              data-table_id="' . $item['id'] . '" 
+                                              data-table_name="' . $item['title'] . '" 
+                                              data-toggle="tooltip" title="' . __('Edit in Excel-like editor', 'wpdatatables') . '" 
+                                              href="admin.php?page=wpdatatables-constructor&source&table_view=excel&table_id=' . $item['id'] . '&collapsed"></a>';
                     }
 
-                    $return_string .= ' <a type="button" class="wdt-configure" data-table_id="' . $item['id'] . '" data-table_name="' . $item['title'] . '" data-toggle="tooltip" title="' . __('Configure', 'wpdatatables') . '" href="admin.php?page=wpdatatables-constructor&source&table_id=' . $item['id'] . '" ><i class="zmdi zmdi-settings"></i></a>';
+                    $return_string .= ' <a type="button" 
+                                            class="wdt-configure" 
+                                            data-table_id="' . $item['id'] . '" 
+                                            data-table_name="' . $item['title'] . '" 
+                                            data-toggle="tooltip" title="' . __('Configure', 'wpdatatables') . '" 
+                                            href="admin.php?page=wpdatatables-constructor&source&table_id=' . $item['id'] . '" ><i class="zmdi zmdi-settings"></i></a>';
                 }
-                $return_string .= ' <a type="button" class="wdt-submit-delete" data-table_id="' . $item['id'] . '" data-table_name="' . $item['title'] . '" data-toggle="tooltip" title="' . __('Delete', 'wpdatatables') . '" href="' . wp_nonce_url('admin.php?page=wpdatatables-administration&action=delete&table_id=' . $item['id'] . '', 'wdtDeleteTableNonce', 'wdtNonce') . '" rel="' . $item['id'] . '"><i class="zmdi zmdi-delete"></i></a>';
+                $return_string .= ' <a type="button" 
+                                       class="wdt-submit-delete" 
+                                       data-table_id="' . $item['id'] . '" 
+                                       data-table_name="' . $item['title'] . '" 
+                                       data-toggle="tooltip" title="' . __('Delete', 'wpdatatables') . '" 
+                                       href="' . wp_nonce_url('admin.php?page=wpdatatables-administration&action=delete&table_id=' . $item['id'] . '', 'wdtDeleteTableNonce', 'wdtNonce') . '" rel="' . $item['id'] . '"><i class="zmdi zmdi-delete"></i></a>';
                 return $return_string;
                 break;
             case 'id':
