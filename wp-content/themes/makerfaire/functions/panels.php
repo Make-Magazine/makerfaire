@@ -413,9 +413,9 @@ function get1ColLayout() {
                     <div class="col-xs-12">';
    if($hero_text) {
       $return .= '<div class="panel_title">'
-              .  '   <div class="top_left"><img src="http://makerfaire:8888/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
+              .  '   <div class="top_left"><img src="/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
               .  '   <div class="panel_text">' . $hero_text . '</div>'
-              .  '   <div class="bottom_right"><img src="http://makerfaire:8888/wp-content/themes/makerfaire/img/BottomRightCorner.png"></div>'
+              .  '   <div class="bottom_right"><img src="/wp-content/themes/makerfaire/img/BottomRightCorner.png"></div>'
               .  '</div>';
    }
    $return .=    '        <div class="hero-img" style="background-image: url('.$hero_image.')"></div>'.
@@ -789,6 +789,11 @@ function getSponsorPanel() {
    <div class="sponsor-slide">
       <div class="container">
          <div class="row">
+            <div class="col-xs-12 text-center padbottom">
+               <h2 class="title yellow-underline">Thank You To Our Sponsors!</h2>
+            </div>
+         </div>
+         <div class="row">
             <div class="col-sm-7">
                <h4 class="sponsor-slide-title">' . ($year ? $year . ' ' : '') . 'Maker Faire Sponsors: <span class="sponsor-slide-cat"></span></h4>
             </div>
@@ -845,6 +850,11 @@ function getSponsorPanel() {
                </div> <!-- close #carousel-sponsors-slider -->
             </div> <!-- close .col-xs-12 -->
          </div> <!-- close .row -->
+         <div class="row">
+            <div class="col-xs-12 text-center">
+               <a class="btn more-makers-link" href="/new-york-2018/sponsors/">Meet The Sponsors</a>
+            </div>
+         </div>
       </div> <!-- close .container -->
    </div> <!-- close .sponsor-slide -->';
 

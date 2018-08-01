@@ -2,19 +2,30 @@
 jQuery(function() {
   jQuery('.desktop-nav .sub-menu').wrapInner('<div class=\'container\'></div>');
 });
+
+function sumomeActive() {
+	if ( document.querySelector(".sumome-react-wysiwyg-popup-container") != null ) {
+		jQuery('body').addClass('sumome-active');
+	} else {
+		jQuery('body').removeClass('sumome-active');
+	}
+}
+
 (function($) {
+	
    // keep these from happening before any oangular or login scripts
    $(window).bind("load", function() {
       $(".nav-level-1-auth #profile-view .avatar").css("display","block");
 
-      jQuery('#hamburger-icon, #hamburger-makey, .nav-flyout-underlay').click(function() {
+      jQuery('#hamburger-icon, #hamburger-text, .nav-flyout-underlay').click(function() {
         jQuery('.stagingMsg').toggleClass('gone');
         jQuery('#hamburger-icon').toggleClass('open');
-        jQuery('#hamburger-makey').animate({opacity: 'toggle'})
+        jQuery('#hamburger-text').animate({opacity: 'toggle'})
         jQuery('#nav-flyout').animate({opacity: 'toggle'});
         jQuery('body').toggleClass('nav-open-no-scroll');
         jQuery('html').toggleClass('nav-open-no-scroll');
         jQuery('.nav-flyout-underlay').animate({opacity: 'toggle'});
+		  sumomeActive();
       });
 
       jQuery('.nav-flyout-column').on('click', '.expanding-underline', function(event) {
@@ -24,6 +35,11 @@ jQuery(function() {
           jQuery(this).next('.nav-flyout-ul').slideToggle();
         }
       });
+		
+		jQuery('.sumome-react-wysiwyg-popup-container').on('DOMNodeRemoved', function(e) {
+			sumomeActive();
+		});
+		
       // fix nav to top on scrolldown, stay fixed for transition from mobile to desktop
       var e = jQuery(".universal-nav");
       var hamburger = jQuery(".nav-hamburger");
@@ -62,6 +78,7 @@ jQuery(function() {
                 nextItemUnderNav.css("margin-top", "0px");
               }
           }
+          sumomeActive();
       });
       /* Bring back if we need search for any reason
       jQuery("#search-modal").fancybox({
