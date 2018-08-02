@@ -14,10 +14,12 @@ function sumomeActive() {
 (function($) {
    // keep these from happening before any oangular or login scripts
    $(window).bind("load", function() {
+		
 		var firstPath = location.pathname.split("/")[1];
-		if ( firstPath == "new-york" || firstPath == "bay-area" || firstPath == "") {
-			jQuery('body').addClass('no-usersnap');
+		if ( firstPath != "new-york" && firstPath != "bay-area" && firstPath != "") {
+			jQuery('body').addClass('usersnap');
 		}
+		
       $(".nav-level-1-auth #profile-view .avatar").css("display","block");
 
       jQuery('#hamburger-icon, #hamburger-text, .nav-flyout-underlay').click(function() {
