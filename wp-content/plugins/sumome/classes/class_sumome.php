@@ -11,6 +11,20 @@ class WP_Plugin_SumoMe {
     add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
     add_action('wp_dashboard_setup', array($this, 'dashboard_setup'));
 
+    //add to front end footer
+    add_action('wp_footer', array($this, 'woocommerce_cart_scripts'));
+    //add to backend footer
+    add_action('admin_footer', array($this, 'woocommerce_cart_scripts'));
+
+    // WooCommerce helpers
+    add_action('wp_ajax_nopriv_sumo_get_woocommerce_cart_subtotal', array($this, 'ajax_sumo_get_woocommerce_cart_subtotal'));
+    add_action('wp_ajax_nopriv_sumo_add_woocommerce_coupon', array($this, 'ajax_sumo_add_woocommerce_coupon'));
+    add_action('wp_ajax_nopriv_sumo_remove_woocommerce_coupon', array($this, 'ajax_sumo_remove_woocommerce_coupon'));
+
+    add_action('wp_ajax_sumo_get_woocommerce_cart_subtotal', array($this, 'ajax_sumo_get_woocommerce_cart_subtotal'));
+    add_action('wp_ajax_sumo_add_woocommerce_coupon', array($this, 'ajax_sumo_add_woocommerce_coupon'));
+    add_action('wp_ajax_sumo_remove_woocommerce_coupon', array($this, 'ajax_sumo_remove_woocommerce_coupon'));
+
     $this->dataSumoPlatform="wordpress";
     if (get_option('endurance_user')==1)  $this->dataSumoPlatform="wordpress-endurance";
   }
@@ -304,6 +318,62 @@ class WP_Plugin_SumoMe {
         jQuery('.sumome-wp-dash-logged-out').removeClass('status-logged-in');
       }
       </script>
+    <?php
+  }
+
+  public function ajax_sumo_add_woocommerce_coupon() {
+    $code = $_POST['code'];
+    WC()->cart->apply_coupon($code);
+    wp_die();
+  }
+
+  public function ajax_sumo_remove_woocommerce_coupon() {
+    $code = $_POST['code'];
+    WC()->cart->remove_coupon($code);
+    wp_die();
+  }
+
+  public function ajax_sumo_get_woocommerce_cart_subtotal() {
+    echo WC()->cart->subtotal;
+    wp_die();
+  }
+
+  public function woocommerce_cart_scripts() {
+    ?>
+    <script type="application/javascript">
+      var ajaxurl = "<?php echo admin_url('admin-ajax.php'); ?>";
+
+      function sumo_add_woocommerce_coupon(code) {
+        jQuery.post(ajaxurl, {
+          action: 'sumo_add_woocommerce_coupon',
+          code: code,
+        });
+      }
+
+      function sumo_remove_woocommerce_coupon(code) {
+        jQuery.post(ajaxurl, {
+          action: 'sumo_remove_woocommerce_coupon',
+          code: code,
+        });
+      }
+
+      function sumo_get_woocommerce_cart_subtotal(callback) {
+        jQuery.ajax({
+          method: 'POST',
+          url: ajaxurl,
+          dataType: 'html',
+          data: {
+            action: 'sumo_get_woocommerce_cart_subtotal',
+          },
+          success: function(subtotal) {
+            return callback(null, subtotal);
+          },
+          error: function(err) {
+            return callback(err, 0);
+          }
+        });
+      }
+    </script>
     <?php
   }
 

@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <div class="row">
 
@@ -92,7 +92,7 @@
     </div>
 
     <div class="wdt-chart-wizard-chart-selecter-block col-sm-2">
-        <div class="card" data-type="google_bubble_chart" data-min_columns="2" data-max_columns="0">
+        <div class="card" data-type="google_bubble_chart" data-min_columns="3" data-max_columns="0">
             <div class="card-header">
                 <div class="wdt-chart-wizard-overlay"></div>
                 <img class="img-responsive" src="<?php echo WDT_ASSETS_PATH ?>img/chart-thumbs/google_bubble_chart.jpg">

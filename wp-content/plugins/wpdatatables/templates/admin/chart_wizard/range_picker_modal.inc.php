@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <!-- .add-column-modal -->
 <div class="modal fade" id="wdt-range-picker" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"

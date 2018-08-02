@@ -625,7 +625,10 @@ ResponsiveDatatablesHelper.prototype.setState = function () {
                 lastBreakpoint: this.lastBreakpoint              // string
             };
 
-            localStorage.setItem(this.cookieName, JSON.stringify(value));
+            var isSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
+            if (!isSafari) {
+                localStorage.setItem(this.cookieName, JSON.stringify(value));
+            }
             this.lastColumnsHiddenIndexes = this.columnsHiddenIndexes.slice(0);
         }
     } else {

@@ -1,6 +1,6 @@
 <?php
 
-defined('ABSPATH') or die("Cannot access pages directly.");
+defined('ABSPATH') or die('Access denied.');
 
 /**
  * Class wdtFilterWidget is used to create filtering widget for wpDataTables

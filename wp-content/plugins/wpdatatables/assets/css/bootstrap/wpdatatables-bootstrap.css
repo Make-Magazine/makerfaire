@@ -3178,14 +3178,15 @@
 .wpdt-c .radio, .wpdt-c .checkbox {
     position: relative;
     display: block;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    float: left;
+    width: 33%;
+    margin-bottom: 5px;
 }
 
 .wpdt-c .radio label, .wpdt-c .checkbox label {
     min-height: 18px;
     padding-left: 20px;
-    margin-bottom: 0;
+    margin-bottom: 5px;
     font-weight: normal;
     cursor: pointer;
 }
@@ -3197,7 +3198,7 @@
 }
 
 .wpdt-c .radio + .radio, .wpdt-c .checkbox + .checkbox {
-    margin-top: -5px;
+    /*margin-top: -5px;*/
 }
 
 .wpdt-c .radio-inline, .wpdt-c .checkbox-inline {
@@ -6844,7 +6845,8 @@ select.input-group-lg > .input-group-btn > .btn {
     outline: 0;
 }
 
-.wpdt-c .modal-backdrop {
+.wpdt-c .modal-backdrop,
+.modal-backdrop {
     position: fixed;
     top: 0;
     right: 0;
@@ -6854,12 +6856,14 @@ select.input-group-lg > .input-group-btn > .btn {
     background-color: #000;
 }
 
-.wpdt-c .modal-backdrop.fade {
+.wpdt-c .modal-backdrop.fade,
+.modal-backdrop.fade {
     opacity: 0;
     filter: alpha(opacity=0);
 }
 
-.wpdt-c .modal-backdrop.in {
+.wpdt-c .modal-backdrop.in,
+.modal-backdrop.in {
     opacity: 0.4;
     filter: alpha(opacity=50);
 }
@@ -6887,6 +6891,7 @@ select.input-group-lg > .input-group-btn > .btn {
     padding: 15px;
     text-align: right;
     border-top: 1px solid transparent;
+    clear: both;
 }
 
 .wpdt-c .modal-footer .btn + .btn {
@@ -12023,8 +12028,11 @@ input:focus {
 }
 
 .wpdt-c .checkbox label, .wpdt-c .radio label {
-    display: block;
-    padding-left: 30px;
+    display: inline-block;
+    padding-left: 25px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .wpdt-c .checkbox input, .wpdt-c .radio input {
@@ -13948,4 +13956,34 @@ input:focus {
 
 .wpdt-c .checkbox .input-helper:after {
     font-size: 14px;
+}
+#series-settings-container div.chart-series-block:first-child .chart-show-yaxis{
+    display: none;
+}
+#series-settings-container div.chart-series-block {
+
+    border:2px solid #E5E5E5 !important;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+#series-settings-container div.chart-series-block h4.title{
+    margin:0;
+    padding:15px;
+    background-color:#E5E5E5;
+}
+
+#series-settings-container div.chart-series-block .chart-series-label,
+#series-settings-container div.chart-series-block .chart-series-color,
+#series-settings-container div.chart-series-block .chart-series-type,
+#series-settings-container div.chart-series-block .chart-show-yaxis{
+    padding: 0 15px !important;
+}
+
+.wdt-include-bootstrap-block,.wdt-include-bootstrap-back-end-block{
+    margin-bottom: 25px;
+}
+
+.wpdt-c .wdt-datetimepicker-modal .datepicker{
+    width:100% !important;
 }

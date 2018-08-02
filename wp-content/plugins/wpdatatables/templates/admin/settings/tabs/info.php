@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php
 /**
@@ -63,7 +63,7 @@
                     </td>
                     <td>
                         <div class="p-5 alert alert-danger m-0"
-                             role="alert"><?php esc_html_e('Minimum PHP version required to run wpDataTables is MySQL 5. Please update your MySQL', 'wpdatatables'); ?></div>
+                             role="alert"><?php esc_html_e('Minimum MySQL version required to run wpDataTables is MySQL 5. Please update your MySQL', 'wpdatatables'); ?></div>
                         <?php } ?>
                     </td>
                 </tr>
@@ -102,8 +102,12 @@
                         <div class="p-5" role="alert"><?php esc_html_e('Curl extension ', 'wpdatatables'); ?></div>
                     </td>
                     <td class="">
-                        <label class="p-5"><?php $values = curl_version();
-                            echo($values["version"]); ?></label>
+                        <?php
+                        if (function_exists('curl_version')) {
+                            ?>
+                            <label class="p-5"><?php $values = curl_version();
+                                echo($values["version"]); ?></label>
+                        <?php } ?>
                     </td>
                     <?php
                     if (extension_loaded('curl')) {

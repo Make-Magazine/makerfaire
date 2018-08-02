@@ -104,7 +104,8 @@
     color: #cdcdcd
 }
 
-.wdt-datatables-admin-wrap .card.wdt-browse-table table .column-functions a.wdt-duplicate-table:before {
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .column-functions a.wdt-duplicate-table:before,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .column-functions a.wdt-duplicate-chart:before {
     font-family: WPDataTablesIcons;
     content:"\e900";
     font-size: 16px;
@@ -130,6 +131,7 @@
 }
 
 .wdt-datatables-admin-wrap .card.wdt-browse-table table tr:hover > .column-functions a.wdt-duplicate-table,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tr:hover > .column-functions a.wdt-duplicate-chart,
 .wdt-datatables-admin-wrap .card.wdt-browse-table table tr:hover > .column-functions a.wdt-manual-edit,
 .wdt-datatables-admin-wrap .card.wdt-browse-table table tr:hover > .column-functions a.wdt-manual-excel-edit {
     color: #2196f3;

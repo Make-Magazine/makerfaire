@@ -1,10 +1,20 @@
 @import 'partials/_fonts';
 @import 'partials/_colors';
-@import 'partials/_logos';
 
 #lock-wrapper {
   width: 300px;
   margin: 30px auto;
+}
+
+.modal-open {
+
+  .modal{
+    background: rgba(0,0,0,0.5)
+  }
+
+  .modal-backdrop{
+    display: none
+  }
 }
 
 #wpwrap {
@@ -115,7 +125,8 @@
     .modal-dialog {
       input[type=text],input[type=password], textarea {
         border:1px solid settingsInputBorder;
-        line-height: 40px;
+        line-height: 1em;
+        height: 40px;
         padding: 0 10px;
         border-radius: 3px 3px 3px 3px;
         width: 100%;
@@ -183,6 +194,10 @@
 
   .a0-step-text {
     margin:30px 0 0;
+  }
+
+  .a0-settings-form[data-tab-showing="help"] #submit {
+    display: none;
   }
   
   .a0-button, #wpa0_choose_icon {
@@ -415,7 +430,7 @@
       p {
         font-size: 14px;
         margin: 20px 10px;
-        height: 125px;
+        min-height: 6em;
       }
         
       img {
@@ -716,7 +731,7 @@
       width:100%;
       border:1px solid adminFormBorder;
       height: 50px;
-      line-height: 40px;
+      line-height: 1em;
       padding: 10px;
       
       &#admin-email {
@@ -820,7 +835,8 @@
     }
     
     input[type=text],input[type=password] {
-      line-height: 40px;
+      line-height: 1em;
+      height: 40px;
     }
     
     #wpa0_icon_url {

@@ -15,11 +15,11 @@ class WP_Auth0_Embed_Widget extends WP_Widget {
 	}
 
 	protected function getWidgetName() {
-		return 'Auth0 Lock Embed';
+		return __( 'Auth0 Login', 'wp-auth0' );
 	}
 
 	protected function getWidgetDescription() {
-		return 'Shows Auth0 Lock Embed in your sidebar';
+		return __( 'Shows Auth0 login form in your sidebar', 'wp-auth0' );
 	}
 
 	protected function showAsModal() {
@@ -27,43 +27,32 @@ class WP_Auth0_Embed_Widget extends WP_Widget {
 	}
 
 	public function form( $instance ) {
-
 		wp_enqueue_media();
-		wp_enqueue_script( 'wpa0_admin', WPA0_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery' ) );
+		wp_enqueue_script( 'wpa0_admin' );
 		wp_enqueue_style( 'media' );
-		wp_localize_script( 'wpa0_admin', 'wpa0', array(
-				'media_title' => __( 'Choose your icon', 'wp-auth0' ),
-				'media_button' => __( 'Choose icon', 'wp-auth0' ),
-			) );
 		require WPA0_PLUGIN_DIR . 'templates/a0-widget-setup-form.php';
 	}
 
 	public function widget( $args, $instance ) {
 
-		$options = WP_Auth0_Options::Instance();
-		$client_id = $options->get( 'client_id' );
-
-		if ( trim( $client_id ) !== '' ) {
-
-			if ( WP_Auth0_Options::Instance()->get( 'passwordless_enabled' ) ) {
-				wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get( 'passwordless_cdn_url' ), 'jquery' );
-			} else {
-				wp_enqueue_script( 'wpa0_lock', WP_Auth0_Options::Instance()->get( 'cdn_url' ), 'jquery' );
-			}
-
-			echo $args['before_widget'];
+		if ( WP_Auth0::ready() ) {
 
 			$instance['show_as_modal'] = $this->showAsModal();
-			$instance['modal_trigger_name'] = isset( $instance['modal_trigger_name'] ) ? $instance['modal_trigger_name'] : 'Login';
+			$instance['modal_trigger_name'] = isset( $instance['modal_trigger_name'] )
+				? $instance['modal_trigger_name']
+				: __( 'Login', 'wp-auth0' );
 
 			if ( !isset( $instance['redirect_to'] ) || empty($instance['redirect_to']) ) {
 				$instance['redirect_to'] = home_url( $_SERVER["REQUEST_URI"] );
 			}
-			
+
+			echo $args['before_widget'];
 			require_once WPA0_PLUGIN_DIR . 'templates/login-form.php';
 			renderAuth0Form( false, $instance );
-
 			echo $args['after_widget'];
+
+		} else {
+			_e( 'Please check your Auth0 configuration', 'wp-auth0' );
 		}
 	}
 

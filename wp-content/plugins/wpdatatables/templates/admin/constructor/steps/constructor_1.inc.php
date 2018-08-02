@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <div class="row wdt-constructor-step" data-step="1">
     <h4 class="m-b-20 p-l-15 f-15">
@@ -15,8 +15,7 @@
                          src="<?php echo WDT_ASSETS_PATH ?>img/constructor/add-from-data-source.png">
                 </div>
                 <div class="card-body">
-                    <h4 class="f-14"><?php _e('Create a table linked to an existing data source', 'wpdatatables'); ?>
-                        .</h4>
+                    <h4 class="f-14"><?php _e('Create a table linked to an existing data source', 'wpdatatables'); ?>.</h4>
                     <span><?php _e('(Excel, CSV, Google Spreadsheet, MySQL query, XML, JSON, serialized PHP array). Data will be read from the source every time on page load. Only MySQL-based tables can be made editable.', 'wpdatatables'); ?></span>
                 </div>
             </div>
@@ -43,8 +42,7 @@
                          src="<?php echo WDT_ASSETS_PATH ?>img/constructor/import-data-from-data-source.png">
                 </div>
                 <div class="card-body">
-                    <h4 class="f-14"><?php _e('Create a table by importing data from data source', 'wpdatatables'); ?>
-                        .</h4>
+                    <h4 class="f-14"><?php _e('Create a table by importing data from data source', 'wpdatatables'); ?>.</h4>
                     <span><?php _e('(Excel, CSV, Google Spreadsheet). Data will be imported to MySQL, the table can be edited in WP admin, or made front-end editable.', 'wpdatatables'); ?></span>
                 </div>
             </div>

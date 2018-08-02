@@ -342,6 +342,7 @@
             columns: columns,
             start: 0,
             length: -1,
+            wdtNonce: $('#wdtNonceFrontendEdit').val()
             //search: search_param
         };
 

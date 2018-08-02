@@ -2,25 +2,18 @@
 
 class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 
-	protected static $instance = null;
-	public static function Instance() {
-		if ( self::$instance === null ) {
-			self::$instance = new WP_Auth0_Options;
-		}
-		return self::$instance;
-	}
+	protected static $_instance = null;
+	protected $_options_name = 'wp_auth0_settings';
 
-	protected $options_name = 'wp_auth0_settings';
+	public static function Instance() {
+		if ( null=== self::$_instance ) {
+			self::$_instance = new WP_Auth0_Options;
+		}
+		return self::$_instance;
+	}
 
 	public function is_wp_registration_enabled() {
-		if ( is_multisite() ) {
-			return users_can_register_signup_filter();
-		}
-		return get_site_option( 'users_can_register', 0 ) == 1;
-	}
-
-	public function get_enabled_connections() {
-		return array( 'facebook', 'twitter', 'google-oauth2' );
+		return is_multisite() ? users_can_register_signup_filter() : get_site_option( 'users_can_register' );
 	}
 
 	public function set_connection( $key, $value ) {
@@ -43,9 +36,13 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 		return $defaults[$key];
 	}
 
+	/**
+	 * Get the stored token signing algorithm
+	 *
+	 * @return string
+	 */
 	public function get_client_signing_algorithm() {
-			$client_signing_algorithm = $this->get('client_signing_algorithm', WP_Auth0_Api_Client::DEFAULT_CLIENT_ALG);
-			return $client_signing_algorithm;
+		return $this->get( 'client_signing_algorithm', WP_Auth0_Api_Client::DEFAULT_CLIENT_ALG );
 	}
 
 	/**
@@ -88,11 +85,15 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 	 * @return array
 	 */
 	public function get_web_origins() {
-		$home_url_parsed = parse_url( home_url() );
-		$home_url_origin = str_replace( $home_url_parsed[ 'path' ], '', home_url() );
+		$home_url_parsed = wp_parse_url( home_url() );
+		$home_url_origin = ! empty( $home_url_parsed[ 'path' ] )
+			? str_replace( $home_url_parsed[ 'path' ], '', home_url() )
+			: home_url();
 
-		$site_url_parsed = parse_url( site_url() );
-		$site_url_origin = str_replace( $site_url_parsed[ 'path' ], '', site_url() );
+		$site_url_parsed = wp_parse_url( site_url() );
+		$site_url_origin = ! empty( $site_url_parsed[ 'path' ] )
+			? str_replace( $site_url_parsed[ 'path' ], '', site_url() )
+			: site_url();
 
 		return $home_url_origin === $site_url_origin
 			? array( $home_url_origin )
@@ -103,12 +104,13 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 	 * Get the main site URL for Auth0 processing
 	 *
 	 * @param string|null $protocol - forced URL protocol, use default if empty
+	 * @param bool $implicit - use the implicit flow in the callback
 	 *
 	 * @return string
 	 */
-	public function get_wp_auth0_url( $protocol = null ) {
+	public function get_wp_auth0_url( $protocol = null, $implicit = false ) {
 		$site_url = site_url( 'index.php', $protocol );
-		return add_query_arg( 'auth0', '1', $site_url );
+		return add_query_arg( 'auth0', ( $implicit ? 'implicit' : '1' ), $site_url );
 	}
 
 	/**
@@ -129,92 +131,130 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 		return add_query_arg( 'action', 'logout', site_url( 'wp-login.php', 'login' ) );
 	}
 
+	/**
+	 * Get lock_connections as an array of strings
+	 *
+	 * @return array
+	 */
+	public function get_lock_connections() {
+		$connections = $this->get( 'lock_connections' );
+		$connections = empty( $connections ) ? array() : explode( ',', $connections );
+		return array_map( 'trim', $connections );
+	}
+
+	/**
+	 * Add a new connection to the lock_connections setting
+	 *
+	 * @param string $connection - connection name to add
+	 */
+	public function add_lock_connection( $connection ) {
+		$connections = $this->get_lock_connections();
+
+		// Add if it doesn't exist already
+		if ( ! array_key_exists( $connection, $connections ) ) {
+			$connections[] = $connection;
+			$connections = implode( ',', $connections );
+			$this->set( 'lock_connections', $connections );
+		}
+	}
+
+	/**
+	 * Default settings when plugin is installed or reset
+	 *
+	 * @return array
+	 */
 	protected function defaults() {
 		return array(
+
+			// System
 			'version' => 1,
-			'metrics' => 1,
 			'last_step' => 1,
-			'auto_login' => 0,
-			'auto_login_method' => '',
+			'migration_token_id' => null,
+			'jwt_auth_integration' => false,
+			'connections' => array(),
+			'auth0js-cdn' => WPA0_AUTH0_JS_CDN_URL,
+
+			// Basic
+			'domain' => '',
 			'client_id' => '',
 			'client_secret' => '',
+			'client_secret_b64_encoded' => null,
 			'client_signing_algorithm' => WP_Auth0_Api_Client::DEFAULT_CLIENT_ALG,
 			'cache_expiration' => 1440,
-			'client_secret_b64_encoded' => null,
-			'domain' => '',
-			'form_title' => '',
-			'icon_url' => '',
-			'ip_range_check' => 0,
-			'ip_ranges' => '',
-			'lock_connections' => '',
-			'passwordless_enabled' => false,
-			'passwordless_method' => 'magiclink',
-			'passwordless_cdn_url' => '//cdn.auth0.com/js/lock-passwordless-2.2.min.js',
-			'use_lock_10' => true,
-			'cdn_url' => '//cdn.auth0.com/js/lock/11.1/lock.min.js',
-			'cdn_url_legacy' => '//cdn.auth0.com/js/lock-9.2.min.js',
-			'requires_verified_email' => true,
+			'auth0_app_token' => null,
 			'wordpress_login_enabled' => true,
-			'primary_color' => '',
 
-			'language' => '',
-			'language_dictionary' => '',
-
-			'custom_signup_fields' => '',
-
-			'social_big_buttons' => false,
-			'username_style' => '',
-			'extra_conf' => '',
-			'custom_css' => '',
-			'custom_js' => '',
-			'auth0_implicit_workflow' => false,
+			// Features
+			'password_policy' => 'fair',
 			'sso' => false,
 			'singlelogout' => false,
-			'gravatar' => true,
-			'jwt_auth_integration' => false,
-			'auth0_app_token' => null,
-			'api_audience' => null,
 			'mfa' => null,
 			'fullcontact' => null,
-			'fullcontact_rule' => null,
 			'fullcontact_apikey' => null,
 			'geo_rule' => null,
 			'income_rule' => null,
-			'link_auth0_users' => null,
-			'remember_users_session' => false,
-
 			'override_wp_avatars' => true,
 
+			// Appearance
+			'icon_url' => '',
+			'form_title' => '',
+			'social_big_buttons' => false,
+			'gravatar' => true,
+			'custom_css' => '',
+			'custom_js' => '',
+			'username_style' => '',
+			'primary_color' => '',
+			'language' => '',
+			'language_dictionary' => '',
+
+			// Advanced
+			'requires_verified_email' => true,
+			'remember_users_session' => false,
+			'default_login_redirection' => home_url(),
+			'passwordless_enabled' => false,
+			'force_https_callback' => false,
+			'cdn_url' => WPA0_LOCK_CDN_URL,
+			'cdn_url_legacy' => 'https://cdn.auth0.com/js/lock-9.2.min.js',
+			'passwordless_cdn_url' => WPA0_LOCK_CDN_URL,
+			'lock_connections' => '',
+			'link_auth0_users' => null,
+			'auto_provisioning' => false,
 			'migration_ws' => false,
 			'migration_token' => null,
-			'migration_token_id' => null,
 			'migration_ips_filter' => false,
 			'migration_ips' => null,
+			'auto_login' => 0,
+			'auto_login_method' => '',
+			'auth0_implicit_workflow' => false,
+			'ip_range_check' => 0,
+			'ip_ranges' => '',
 			'valid_proxy_ip' => null,
-
-			'amplificator_title' => '',
-			'amplificator_subtitle' => '',
-
-			'connections' => array(),
-
-			'password_policy' => 'fair',
-
-			'force_https_callback' => false,
-
-			'auto_provisioning' => false,
-			'default_login_redirection' => home_url(),
-			
+			'custom_signup_fields' => '',
+			'extra_conf' => '',
+			'social_twitter_key' => '',
+			'social_twitter_secret' => '',
+			'social_facebook_key' => '',
+			'social_facebook_secret' => '',
 			'auth0_server_domain' => 'auth0.auth0.com',
-			'auth0js-cdn' => '//cdn.auth0.com/js/auth0/9.1/auth0.min.js',
 
-			//DASHBOARD
+			// Dashboard
 			'chart_idp_type' => 'donut',
 			'chart_gender_type' => 'donut',
 			'chart_age_type' => 'donut',
-
 			'chart_age_from' => '10',
 			'chart_age_to' => '70',
 			'chart_age_step' => '5',
 		);
+	}
+
+	/**
+	 * @deprecated 3.6.0 - Social connections are no longer set during initial setup so this data is no longer needed. 
+	 *
+	 * @return array
+	 */
+	public function get_enabled_connections() {
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		return array( 'facebook', 'twitter', 'google-oauth2' );
 	}
 }

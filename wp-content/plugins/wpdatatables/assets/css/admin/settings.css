@@ -22,3 +22,8 @@
 .wpdt-c .wdt-datatables-admin-wrap .tab-content #info table .alert {
     text-align: center;
 }
+
+/*  Theme fixes  */
+.wpdt-c .panel-title {
+    float: none;
+}

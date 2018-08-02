@@ -26,7 +26,6 @@ class WP_Auth0_InitialSetup {
 
 	public function init() {
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ) );
 		add_action( 'init', array( $this, 'init_setup' ), 1 );
 
 		add_action( 'admin_action_wpauth0_callback_step1', array( $this->connection_profile, 'callback' ) );
@@ -35,15 +34,6 @@ class WP_Auth0_InitialSetup {
 		if ( isset( $_REQUEST['page'] ) && 'wpa0-setup' === $_REQUEST['page'] ) {
 			if ( isset( $_REQUEST['error'] ) ) {
 				add_action( 'admin_notices', array( $this, 'notify_error' ) );
-			}
-		}
-		if ( ! isset( $_REQUEST['page'] ) || 'wpa0-setup' !== $_REQUEST['page'] ) {
-			$client_id = $this->a0_options->get( 'client_id' );
-			$client_secret = $this->a0_options->get( 'client_secret' );
-			$domain = $this->a0_options->get( 'domain' );
-
-			if ( ( ! $client_id ) || ( ! $client_secret ) || ( ! $domain ) ) {
-				add_action( 'admin_notices', array( $this, 'notify_setup' ) );
 			}
 		}
 
@@ -69,38 +59,24 @@ class WP_Auth0_InitialSetup {
 
 	}
 
+	/**
+	 * @deprecated 3.6.0 - Not needed, handled in WP_Auth0_Admin::admin_enqueue()
+	 */
 	public function admin_enqueue() {
-		if ( ! isset( $_REQUEST['page'] ) || 'wpa0-setup' !== $_REQUEST['page'] ) {
-			return;
-		}
-
-		wp_enqueue_media();
-		wp_enqueue_style( 'wpa0_bootstrap', WPA0_PLUGIN_URL . 'assets/bootstrap/css/bootstrap.min.css' );
-		wp_enqueue_script( 'wpa0_bootstrap', WPA0_PLUGIN_URL . 'assets/bootstrap/js/bootstrap.min.js' );
-		wp_enqueue_style( 'wpa0_admin_initial_settup', WPA0_PLUGIN_URL . 'assets/css/initial-setup.css' );
-
-		if ( isset( $_REQUEST['signup'] ) ) {
-			$cdn_url = $this->a0_options->get( 'cdn_url' );
-			wp_enqueue_script( 'wpa0_lock', $cdn_url, 'jquery' );
-		}
-
-		wp_enqueue_style( 'media' );
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
 	}
 
+	/**
+	 * @deprecated 3.6.0 - Duplicate functionality, replaced by WP_Auth0_Admin::create_account_message()
+	 */
 	public function notify_setup() {
-?>
-  		<div class="update-nag">
-        Auth0 for WordPress is not yet configured. Click <a href="<?php echo admin_url( 'admin.php?page=wpa0-setup' ); ?>">HERE</a> to configure the Auth0 for WordPress plugin using the Quick Setup Wizard.
-  		</div>
-  		<?php
+		// phpcs:ignore
+		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
 	}
 
 	public function notify_error() {
-?>
-  		<div class="error">
-        <?php echo $_REQUEST['error']; ?>
-  		</div>
-  		<?php
+		printf( '<div class="notice notice-error">%s</div>', strip_tags( $_REQUEST['error'] ) );
 	}
 
 	public function render_setup_page() {
@@ -199,7 +175,6 @@ class WP_Auth0_InitialSetup {
 	}
 
 	public function rejected_message() {
-		$domain = $this->a0_options->get( 'domain' );
 ?>
       <div id="message" class="error">
         <p>
@@ -210,10 +185,10 @@ class WP_Auth0_InitialSetup {
       </div>
       <?php
 	}
+
 	public function access_denied() {
-		$domain = $this->a0_options->get( 'domain' );
 ?>
-  		<div id="message" class="error">
+  		<div class="notice notice-error">
   			<p>
   				<strong>
   					<?php echo __( 'Please create your Auth0 account first at ', 'wp-auth0' ); ?>

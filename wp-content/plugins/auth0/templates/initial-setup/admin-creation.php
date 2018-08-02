@@ -22,19 +22,19 @@
       <?php } ?>
 
 
-      <form action="options.php" method="POST" onsubmit="onNext()">
+      <form action="options.php" method="POST">
 
         <div class="row">
           <div class="a0-admin-creation col-sm-6 col-xs-10">
-            <input type="text" id="admin-email" value="<?php echo $current_user->user_email; ?>" disabled />
-            <input type="password" id="admin-password" name="admin-password" placeholder="Password" value="" />
+            <input type="text" id="admin-email" value="<?php echo $current_user->user_email; ?>" disabled>
+            <input type="password" id="admin-password" name="admin-password" placeholder="Password" value="" required>
           </div>
         </div>
 
         <div class="a0-buttons">
           <input type="hidden" name="action" value="wpauth0_callback_step3_social" />
           <input type="submit" class="a0-button primary" value="Submit" />
-          <a onclick="onSkip()" href="<?php echo admin_url( 'admin.php?page=wpa0-setup&step=4&profile=social' ); ?>"class="a0-button link"><?php _e( "Skip this step", "wp-auth0" ); ?></a>
+          <a href="<?php echo admin_url( 'admin.php?page=wpa0-setup&step=4&profile=social' ); ?>"class="a0-button link"><?php _e( "Skip this step", "wp-auth0" ); ?></a>
         </div>
 
       </form>
@@ -42,20 +42,3 @@
     </div>
   </div>
 </div>
-<script type="text/javascript">
-
-document.addEventListener("DOMContentLoaded", function() {
-
-  metricsTrack('initial-setup:step3:open');
-
-});
-
-function onNext() {
-  metricsTrack('initial-setup:step3:create-admin');
-}
-
-function onSkip() {
-  metricsTrack('initial-setup:step3:skip');
-}
-
-</script>

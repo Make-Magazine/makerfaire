@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php if (isset($chartObj)) { ?>
     <script type='text/javascript'>var editing_chart_data = {
@@ -134,6 +134,9 @@
 <script id="wdt-chart-series-setting-block" type="text/x-jsrender">
     {{for series}}
         <div class="chart-series-block" data-orig_header="{{>orig_header}}">
+            <h4 class="c-black m-b-20 title">
+                    <?php _e('Serie', 'wpdatatables'); ?>: {{>label}}
+            </h4>
             <div class="chart-series-label">
                 <h4 class="c-black m-b-20">
                     <?php _e('Label', 'wpdatatables'); ?>
@@ -162,6 +165,37 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="chart-series-type" id="chart-series-type">
+                 <h4 class="c-black m-b-20">
+                    <?php _e('Type', 'wpdatatables'); ?>
+                </h4>
+                <div class="cp-container">
+                    <div class="form-group">
+                         <div class="fg-line">
+                              <div class="select">
+                                  <select class="selectpicker" name="series-type" id="series-type">
+                                      <option selected="selected" value=""></option>
+                                      <option value="line">Line</option>
+                                      <option value="spline">Spline</option>
+                                      <option value="column">Column</option>
+                                      <option value="bar">Bar</option>
+                                      <option value="area">Area</option>
+                                  </select>
+                              </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-show-yaxis">
+                 <h4 class="c-black m-b-20">
+                    <?php _e('Vertical axis', 'wpdatatables'); ?>
+                 </h4>
+                  <div class="toggle-switch p-b-20 p-t-5" data-ts-color="blue">
+                      <label for="show-yaxis-{{:#index}}"><?php _e('Show vertical axis', 'wpdatatables'); ?></label>
+                      <input class="show-yaxis" id="show-yaxis-{{:#index}}" type="checkbox" hidden="hidden">
+                      <label for="show-yaxis-{{:#index}}" class="ts-helper"></label>
+                  </div>
             </div>
         </div>
     {{/for}}

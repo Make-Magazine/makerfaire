@@ -1,6 +1,7 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php foreach ($headingsArray as $header) { ?>
+    <?php $header = trim(preg_replace('/\s\s+/', ' ', str_replace("\n", " ", $header))); ?>
     <?php if ($header !== null) { ?>
         <div class="wdt-constructor-column-block wdt-constructor-column-block-file col-sm-3">
 

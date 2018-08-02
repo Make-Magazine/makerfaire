@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <div class="m-b-20">
     <label class="m-b-10"><?php _e('Paste this shortcode to render this chart', 'wpdatatables'); ?></label>

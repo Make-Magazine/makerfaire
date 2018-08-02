@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <!-- #wdt-possible-values-merge-list-modal -->
 <div class="modal fade" id="wdt-possible-values-merge-list-modal" data-backdrop="static" data-keyboard="false"

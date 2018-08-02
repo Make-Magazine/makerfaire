@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <?php
 /**
@@ -463,6 +463,7 @@
                                 </div>
                             </div>
 
+
                         </div>
                         <!-- /.row -->
 
@@ -503,10 +504,10 @@
                                 <div class="col-sm-6 wdt-foreign-rule-display p-r-0">
                                     <div class="form-group">
                                         <div class="well">
-                                            <strong>Table:</strong> <span id="wdt-connected-table-name"> -</span>,
-                                            <strong>Show column:</strong> <span
+                                            <strong><?php _e('Table', 'wpdatatables'); ?>:</strong> <span id="wdt-connected-table-name"> -</span>,
+                                            <strong><?php _e('Show column', 'wpdatatables'); ?>:</strong> <span
                                                     id="wdt-connected-table-show-column"> -</span>,
-                                            <strong>Value from column:</strong> <span
+                                            <strong><?php _e('Value from column', 'wpdatatables'); ?>:</strong> <span
                                                     id="wdt-connected-table-value-column"> -</span>
                                         </div>
                                     </div>
@@ -528,6 +529,29 @@
                                         <label for="wdt-column-values-add-empty" class="ts-helper"></label>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <h4 class="c-black m-b-20">
+                                    <?php _e('Number of possible values to load', 'wpdatatables'); ?>
+                                    <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                       title="<?php _e('Define here how many possible values per page will be loaded in selectbox filters and editor inputs. It is recommended not to be set to All if you have more than 50 possible values for this column. This option is not working when Cascade Filtering option from Powerful Filters add-on is enabled.', 'wpdatatables'); ?>"></i>
+                                </h4>
+
+                                <div class="form-group">
+                                    <div class="fg-line">
+                                        <div class="select">
+                                            <select class="selectpicker" id="wdt-possible-values-ajax">
+                                                <option value="10">10</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                                <option value="-1"><?php _e('All', 'wpdatatables'); ?></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
 
                         </div>
@@ -623,6 +647,72 @@
                                                 title="<?php _e('Click to copy this shortcode. By placing this shortcode anywhere in your posts or pages you can see the maximum for this column.', 'wpdatatables'); ?>">
 
                                         </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.row -->
+
+                        <div class="row wdt-link-column-block">
+
+                            <div class="col-sm-6 wdt-link-target-attribute-block">
+                                <h4 class="c-black m-b-20">
+                                    <?php _e('URL target attribute', 'wpdatatables'); ?>
+                                    <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                       title="<?php _e('Set how to open URL Target', 'wpdatatables'); ?>"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="toggle-switch" data-ts-color="blue">
+                                        <label for="wdt-link-target-attribute"
+                                               class="ts-label"><?php _e('Open link in the new tab', 'wpdatatables'); ?></label>
+                                        <input id="wdt-link-target-attribute" type="checkbox" hidden="hidden">
+                                        <label for="wdt-link-target-attribute" class="ts-helper"></label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-sm-6 wdt-link-button-attribute-block">
+                                <h4 class="c-black m-b-20">
+                                    <?php _e('Show link as a button', 'wpdatatables'); ?>
+                                    <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                       title="<?php _e('The link will be shown as a button ', 'wpdatatables'); ?>"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="toggle-switch" data-ts-color="blue">
+                                        <label for="wdt-link-button-attribute"
+                                               class="ts-label"><?php _e('Set the link to appear as a button', 'wpdatatables'); ?></label>
+                                        <input id="wdt-link-button-attribute" type="checkbox" hidden="hidden">
+                                        <label for="wdt-link-button-attribute" class="ts-helper"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 wdt-link-button-label-block" >
+                                <h4 class="c-black m-b-20">
+                                    <?php _e('Button text', 'wpdatatables'); ?>
+                                    <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                       title="You can set the button display text"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="fg-line">
+                                        <input type="text" class="form-control input-sm" value=""
+                                               id="wdt-link-button-label">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 wdt-link-button-class-block">
+                                <h4 class="c-black m-b-20">
+                                    <?php _e('Button class', 'wpdatatables'); ?>
+                                    <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                       title="You can set the button class"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="fg-line">
+                                        <input type="text" class="form-control input-sm" value=""
+                                               id="wdt-link-button-class">
                                     </div>
                                 </div>
                             </div>
@@ -751,6 +841,7 @@
                                                 <option value="datetime-range"><?php _e('DateTime range', 'wpdatatables'); ?></option>
                                                 <option value="time-range"><?php _e('Time range', 'wpdatatables'); ?></option>
                                                 <option value="select"><?php _e('Selectbox', 'wpdatatables'); ?></option>
+                                                <option value="multiselect"><?php _e('Multiselectbox', 'wpdatatables'); ?></option>
                                                 <option value="checkbox"><?php _e('Checkbox', 'wpdatatables'); ?></option>
                                             </select>
                                         </div>
@@ -845,10 +936,26 @@
                                 <div class="form-group wdt-filter-default-value-selectpicker-block" hidden="hidden">
                                     <div class="fg-line">
                                         <div class="select">
-                                            <select class="selectpicker" id="wdt-filter-default-value-selectpicker">
+                                            <select class="selectpicker" id="wdt-filter-default-value-selectpicker" data-live-search="true">
 
                                             </select>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 wdt-filtering-enabled-block wdt-checkboxes-in-modal-block">
+                                <h4 class="c-black m-b-20">
+                                    <?php _e('Render in modal', 'wpdatatables'); ?>
+                                    <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                       title="<?php _e('Render checkboxes in modal.', 'wpdatatables'); ?>"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="toggle-switch" data-ts-color="blue">
+                                        <label for="wdt-checkboxes-in-modal"
+                                               class="ts-label"><?php _e('Render checkboxes in modal', 'wpdatatables'); ?></label>
+                                        <input id="wdt-checkboxes-in-modal" type="checkbox" hidden="hidden">
+                                        <label for="wdt-checkboxes-in-modal" class="ts-helper"></label>
                                     </div>
                                 </div>
                             </div>
@@ -931,7 +1038,7 @@
                                 <div class="form-group wdt-editing-default-value-selectpicker-block" hidden="hidden">
                                     <div class="fg-line">
                                         <div class="select">
-                                            <select class="selectpicker" id="wdt-editing-default-value-selectpicker">
+                                            <select class="selectpicker" id="wdt-editing-default-value-selectpicker" data-live-search="true">
 
                                             </select>
                                         </div>

@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') or die("Cannot access pages directly."); ?>
+<?php defined('ABSPATH') or die('Access denied.'); ?>
 
 <script id="wdt-constructor-column-block-template" type="text/x-jsrender">
     <div class="wdt-constructor-column-block col-sm-3">
