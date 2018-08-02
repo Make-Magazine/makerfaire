@@ -160,17 +160,6 @@ function load_scripts() {
   wp_localize_script('built', 'object_name', $translation_array);
 }
 
-add_action( 'wp_print_scripts', 'my_deregister_javascript', 100 );
-function my_deregister_javascript() {
-	$firstSeven = substr($_SERVER['REQUEST_URI'],1,8);
-	echo($firstSeven);
-	if ( $firstSeven == "new-york" || $firstSeven == "bay-area") {
-		echo("test");
-		wp_deregister_script( 'jquery-datetimepicker' );
-		wp_deregister_script( 'usersnap' );
-	}
-}
-
 add_action('wp_enqueue_scripts', 'load_scripts');
 
 //Load custom gravity forms js for barnes and noble forms
