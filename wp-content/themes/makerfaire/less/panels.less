@@ -1,16 +1,16 @@
 .scrolled .customPanels {
-	.floatBuyTix {
-		position: fixed;
-		top: 135px;
-		@media screen and (min-width: 768px) and (max-width: 860px) {
-			top: 195px;
-		}
-	}
+   .floatBuyTix {
+      position: fixed;
+      top: 135px;
+      @media screen and (min-width: 768px) and (max-width: 860px) {
+         top: 195px;
+      }
+   }
 }
 
 .customPanels {
    font-family: "Roboto-Light";
-	overflow-x: hidden;
+   overflow-x: hidden;
    .slideshow-panel {
       position: relative;
       .header-logo-div {
@@ -292,13 +292,13 @@
       &:hover {
          text-decoration: underline;
       }
-		@media (max-width: 767px) {
-			position: fixed;
-			top: 70px;
-		}
-		@media screen and (min-width: 768px) and (max-width: 860px) {
-			top: 270px;
-		}
+      @media (max-width: 767px) {
+         position: fixed;
+         top: 70px;
+      }
+      @media screen and (min-width: 768px) and (max-width: 860px) {
+         top: 270px;
+      }
    }
    .featured-maker-panel {
       background-color: #00597E;
@@ -317,7 +317,7 @@
          }
       }
       #performers .thumbnail {
-			margin: 0 auto 30px;
+         margin: 0 auto 30px;
          background-color: #000;
          width: 350px;
          height: 304px;
@@ -450,7 +450,7 @@
       position: relative;
       background-color: #00597E;
       height: 78px;
-		display: flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       &:hover {
@@ -464,36 +464,16 @@
          margin: 0;
          span {
             padding: 0 50px;
-				@media (max-width: 550px) {
-					padding: 0px 20px;
-				}
+            @media (max-width: 550px) {
+               padding: 0px 20px;
+            }
          }
       }
       .fa-star {
          color: #fff;
-			@media (max-width:470px) {
-				display: none;
-			}
-      }
-      .arrow-left {
-         position: absolute;
-         left: 0;
-         top: 0;
-         width: 0px;
-         height: 0px;
-         border-top: 39px solid transparent;
-         border-bottom: 39px solid transparent;
-         border-left: 39px solid white;
-      }
-      .arrow-right {
-         position: absolute;
-         right: 0;
-         top: 0;
-         width: 0px;
-         height: 0px;
-         border-top: 39px solid transparent;
-         border-bottom: 39px solid transparent;
-         border-right: 39px solid white;
+         @media (max-width:470px) {
+            display: none;
+         }
       }
    }
    .red-ribbon {
@@ -507,9 +487,9 @@
       background-repeat: no-repeat;
       background-position: center;
       background-size: 92px;
-		@media (max-width:600px) {
-			background-image: none;
-		}
+      @media (max-width:600px) {
+         background-image: none;
+      }
       padding: 0;
       background-color: #005E9A;
       color: #fff;
@@ -530,39 +510,39 @@
             font-size: 18px;
             margin-bottom: 0;
          }
-			.row-eq-height {
-				@media (max-width:767px) {
-					display: block;
-					.col-sm-6.align-middle:first-of-type {
+         .row-eq-height {
+            @media (max-width:767px) {
+               display: block;
+               .col-sm-6.align-middle:first-of-type {
 
-					}
-				}
-				@media (max-width:600px) {
-					.col-sm-6.align-middle:first-of-type {
+               }
+            }
+            @media (max-width:600px) {
+               .col-sm-6.align-middle:first-of-type {
 
-					}
-				}
-			}
+               }
+            }
+         }
          .nl-panel-input {
             width: 80%;
             margin-right: 15px;
-				&::placeholder {
-					color: #fff;
-				}
-				// for chrome autocomplete treatement
-				&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active {
-    				-webkit-box-shadow: 0 0 0 30px #005E94 inset !important;
-					-webkit-text-fill-color: white;
-					-webkit-transition:none;
-					caret-color: white;
-				}
+            &::placeholder {
+               color: #fff;
+            }
+            // for chrome autocomplete treatement
+            &:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active {
+               -webkit-box-shadow: 0 0 0 30px #005E94 inset !important;
+               -webkit-text-fill-color: white;
+               -webkit-transition:none;
+               caret-color: white;
+            }
             @media (max-width: 767px) {
                margin-right: 0;
                max-width: none;
             }
-				@media (max-width: 380px) {
-					width: 70%;
-				}
+            @media (max-width: 380px) {
+               width: 70%;
+            }
          }
          .btn-w-ghost {
 
@@ -585,8 +565,8 @@
 
       /* Stylize the email input */
       input[type=email], input[type=email]:hover,
-      input[type=submit], input[type=submit]:hover{
-			padding-left: 0px;
+         input[type=submit], input[type=submit]:hover{
+         padding-left: 0px;
          background-color: #005E9A;
          box-shadow: none;
          border: none;
@@ -603,12 +583,12 @@
          text-align: center;
          padding-right: 0px;
          padding-left: 0px;
-			@media (max-width:1199px) {
-				margin: 5px 30%;
-			}
-			@media (max-width:767px) {
-				margin: 15px auto;
-			}
+         @media (max-width:1199px) {
+            margin: 5px 30%;
+         }
+         @media (max-width:767px) {
+            margin: 15px auto;
+         }
       }
       /* Hide the browser's default checkbox */
       .sel-container input[type=checkbox] {
@@ -882,9 +862,9 @@
       .container {
          padding-top: 40px;
          padding-bottom: 40px;
-			@media (max-width:480px) {
-				 padding-top: 20px
-			}
+         @media (max-width:480px) {
+            padding-top: 20px
+         }
       }
       .yellow-underline {
          margin-top: 0px;
@@ -952,12 +932,12 @@
       border-bottom: 2px solid #F5A623;
       padding-left: 50px;
       padding-right: 50px;
-		line-height: 1.4em;
-		padding-bottom: 10px;
-		@media (max-width:480px) {
-			font-size: 30px;
-			h2{ font-size: 30px; }
-		}
+      line-height: 1.4em;
+      padding-bottom: 10px;
+      @media (max-width:480px) {
+         font-size: 30px;
+         h2{ font-size: 30px; }
+      }
    }
 
    .featured-faire {
@@ -985,7 +965,7 @@
       .white-back {
          background:rgba(255,255,255, 0.7);
          padding: 15px;
-			margin-bottom: 0px;
+         margin-bottom: 0px;
       }
       .panel_text {
          position: absolute;
@@ -995,29 +975,35 @@
       .blueFlag {
          font-family: "Roboto Condensed";
          color: #fff;
-         background-image: url(../img/blueflag.png);
-         width: 325px;
-         background-size: 325px 90px;
-         background-repeat: no-repeat;
+         background-color: #00AEEF;                  
          margin-bottom: 0px;
-         height: 90px;
-			h2 {
-				margin: 0;
-				margin-top: 10px;
-				font-weight: bold;
-				font-size: 38px;
-			}
-			h5 {
-				margin: 0;
-				font-size: 20px;
-			}
-			@media screen and (max-width: 767px) {
-				width: 225px;
-				height: 68px;
-            background-size: 225px 68px;
-				h2 { font-size: 26px; }
-				h5 { font-size: 16px; }
-			}
+         height: 78px;         
+         .container {
+            width: auto;
+            margin-right: 39px;
+         }
+         h2 {
+            margin: 0;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 38px;
+         }
+         h5 {
+            margin: 0;
+            font-size: 20px;
+         }
+         @media screen and (max-width: 767px) {            
+            height: 60px;            
+            h2 { font-size: 20px; }
+            h5 { font-size: 16px; }
+         }
+         .arrow-right {
+            @media screen and (max-width: 767px) {                
+               border-top: 30px solid transparent;
+               border-bottom: 30px solid transparent;
+               border-right: 30px solid white;
+            }
+         }         
       }
       .top_left img {
          height: 54px;
@@ -1046,14 +1032,34 @@
          right: 30px;
       }
    }
+   .arrow-left {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0px;
+      height: 0px;
+      border-top: 39px solid transparent;
+      border-bottom: 39px solid transparent;
+      border-left: 39px solid white;
+   }
+   .arrow-right {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 0px;
+      height: 0px;
+      border-top: 39px solid transparent;
+      border-bottom: 39px solid transparent;
+      border-right: 39px solid white;
+   }
 }
 .sponsor-slide .container .row {
-	a.more-makers-link {
-		color: #1987C7;
-		border: thin solid #1987C7;
-		margin-bottom: 20px;
-		padding: 10px 30px;
-	}
+   a.more-makers-link {
+      color: #1987C7;
+      border: thin solid #1987C7;
+      margin-bottom: 20px;
+      padding: 10px 30px;
+   }
 }
 
 /*

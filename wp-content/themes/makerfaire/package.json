@@ -8,11 +8,11 @@
     "bootstrap": "3.3.7",
     "bootstrap-dialog": "1.34.6",
     "fancybox": "3.0.1",
-    "grunt": "1.0.1",
+    "grunt": "^1.0.1",
     "grunt-contrib-concat": "1.0.1",
-    "grunt-contrib-less": "2.0.0",
-    "grunt-contrib-uglify": "3.3.0",
-    "grunt-contrib-watch": "1.1.0",
+    "grunt-contrib-less": "^2.0.0",
+    "grunt-contrib-uglify": "^3.3.0",
+    "grunt-contrib-watch": "^1.1.0",
     "grunt-text-replace": "0.4.0",
     "hammerjs": "2.0.8",
     "jquery": "2.2.4",
@@ -31,4 +31,3 @@
     "angular-utils-pagination": "0.11.1"
   }
 }
-
