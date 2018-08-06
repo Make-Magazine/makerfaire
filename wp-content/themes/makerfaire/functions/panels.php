@@ -164,7 +164,7 @@ function getFeatMkPanel($row_layout) {
 
    //loop thru maker data and build the table
    foreach ($makerArr as $maker) {
-      $return .= '<div class="col-lg-4 col-md-12">'
+      $return .= '<div class="col-lg-4 col-md-6 col-sm-12">'
          . ' <div class="thumbnail">';
       if (!empty($maker['desc'])) {
          $return .= '<div class="caption" style="display: none;">
