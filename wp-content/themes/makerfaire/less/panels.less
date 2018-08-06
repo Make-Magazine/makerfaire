@@ -973,13 +973,14 @@
       }
       .blueFlag {
          font-family: "Roboto Condensed";
-         color: #fff;
-         background-color: #00AEEF;                  
+         color: #fff;                     
          margin-bottom: 0px;
-         height: 78px;         
+                  
          .container {
             width: auto;
             margin-right: 39px;
+            background-color: #00AEEF;
+            height: 78px;
          }
          h2 {
             margin: 0;
@@ -990,18 +991,25 @@
          h5 {
             margin: 0;
             font-size: 20px;
-         }
-         @media screen and (max-width: 767px) {            
-            height: 60px;            
-            h2 { font-size: 20px; }
-            h5 { font-size: 16px; }
+            margin-bottom: 10px;
          }
          .arrow-right {
-            @media screen and (max-width: 767px) {                
-               border-top: 30px solid transparent;
-               border-bottom: 30px solid transparent;
-               border-right: 30px solid white;
+            border-top: 39px solid #00AEEF;
+            border-bottom: 39px solid #00AEEF;
+            border-right: 39px solid transparent;
+         }         
+         @media screen and (max-width: 767px) {            
+            .arrow-right {            
+               border-top: 30px solid #00AEEF;
+               border-bottom: 30px solid #00AEEF;
+               border-right: 30px solid transparent;
+            }         
+            .container {
+               height: 60px; 
+               margin-right: 30px;
             }
+            h2 { font-size: 20px; }
+            h5 { font-size: 16px; }
          }         
       }
       .top_left img {
