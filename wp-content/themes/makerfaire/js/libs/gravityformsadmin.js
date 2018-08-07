@@ -591,6 +591,9 @@ function hiddenTicket(accessCode) {
         // push all checked locations to array
         gentry_email_notes_to_sidebar.push(jQuery(this).val());
       });
+      if(jQuery("[name=otherEmail]").val() !== ''){
+         gentry_email_notes_to_sidebar.push(jQuery("[name=otherEmail]").val());
+      }
       data.gentry_email_notes_to_sidebar = gentry_email_notes_to_sidebar;
     } else if(action=='update_fee_mgmt') {
       //set processing icon on the screen

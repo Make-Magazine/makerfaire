@@ -175,29 +175,30 @@ function gf_summary_metabox($form, $lead) {
         <label >Email Note To:</label><br />';
 
    $emailto1 = array("Caleb Kraft" => "caleb@makermedia.com",
-       "Dale Dougherty" => "dale@makermedia.com",
-       "Jay Kravitz" => "jay@thecrucible.org",
-       "Jess Hobbs" => "jess@makermedia.com",
-       "Jonathan Maginn" => "jonathan.maginn@sbcglobal.net",
-       "DC Denison" => "dcdenison@mac.com",
-       "Siana Alcorn" => "siana@makermedia.com",
-       "Tami Jo Benson" => "tj@tamijo.com");
+                     "Dale Dougherty" => "dale@makermedia.com",
+                     "Jay Kravitz" => "jay@thecrucible.org",
+                     "Jess Hobbs" => "jess@makermedia.com",
+                     "Jonathan Maginn" => "jonathan.maginn@sbcglobal.net",
+                     "DC Denison" => "dcdenison@mac.com",
+                     "Siana Alcorn" => "siana@makermedia.com",
+                     "Tami Jo Benson" => "tj@tamijo.com");
    $emailto2 = array("Kerry Moore" => "kmoore@makermedia.com",
-       "Kim Dow" => "dow@dowhouse.com",
-       "Matt Stultz" => "mstultz@makermedia.com",
-       "Rob Bullington" => "rbullington@makermedia.com",
-       "Sabrina Merlo" => "smerlo@makermedia.com",
-       "Sherry Huss" => "sherry@makermedia.com");
+                     "Kim Dow" => "dow@dowhouse.com",
+                     "Matt Stultz" => "mstultz@makermedia.com",
+                     "Rob Bullington" => "rbullington@makermedia.com",
+                     "Sabrina Merlo" => "smerlo@makermedia.com",
+                     "Ralf" => "ralf@muehlen.com");
    $emailtoaliases = array("Dev" => "dev@makermedia.com",
-       "3D Printing" => "3dprinting@makermedia.com",
-       "Editors" => "editor@makezine.com",
-       "Maker Relations" => "makers@makerfaire.com",
-       "PR" => "pr@makerfaire.com",
-       "Education" => "education@makermedia.com",
-       "Sales" => "sales@makerfaire.com",
-       "Sustainability" => "sustainability@makerfaire.com",
-       "Speakers" => "speakers@makerfaire.com",
-       "MakerShare" => "admin@makershare.com"
+                           "3D Printing" => "3dprinting@makermedia.com",
+                           "Editors" => "editor@makezine.com",
+                           "Maker Relations" => "makers@makerfaire.com",
+                           "PR" => "pr@makerfaire.com",
+                           "Education" => "education@makermedia.com",
+                           "Sales" => "sales@makerfaire.com",
+                           "Sustainability" => "sustainability@makerfaire.com",
+                           "Speakers" => "speakers@makerfaire.com",
+                           "MakerShare" => "admin@makershare.com",
+                           "Sponsor Relations" => "sponsorrelations@makermedia.com"
    );
 
    if (in_array($form['id'], array(64, 65, 67, 68))) {
@@ -216,7 +217,7 @@ function gf_summary_metabox($form, $lead) {
               . '<span title="' . $email . '">' . $name . '</span><br />';
    }
    $return .= '
-				</div>
+				</div>            
 			  <div style="float:left">';
    foreach ($emailto2 as $name => $email) {
       $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
@@ -224,9 +225,10 @@ function gf_summary_metabox($form, $lead) {
    }
    $return .= '
 				</div>
+            <div class="clear"></div>Enter Email: <input type="email" placeholder="example@makermedia.com" name="otherEmail" size="40" />
 			</td>
 			<td style="vertical-align: top; padding: 10px;">
-        <textarea	name="new_note_sidebar"	style="width: 90%; height: 140px;" cols=""	rows=""></textarea>';
+        <textarea	name="new_note_sidebar"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>';
    $note_button = '<input type="button" name="add_note_sidebar" value="' . __('Add Note', 'gravityforms') . '" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\');"/>';
    $return .= apply_filters('gform_addnote_button', $note_button);
    $return .= '<span class="updMsg add_note_sidebarMsg"></span>
@@ -302,7 +304,7 @@ function gf_collapsible_sections($form, $lead) {
 
    $data = array('content' => array(11, 16, 320, 321, 66, 67, 293),
        'logistics' => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76),
-       'additional' => array(123, 130, 287, 134,37,38,41),
+       'additional' => array(123, 130, 287, 134, 37, 38, 41),
        'images' => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219),
        'imagesOver' => array(324, 334, 326, 338, 333, 337, 332, 336, 331, 335)
    );
@@ -470,7 +472,7 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
             //display images in a grid
             if ($value != '') {
                $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
-               $supported_image = array('gif','jpg','jpeg','png');
+               $supported_image = array('gif', 'jpg', 'jpeg', 'png');
                if (in_array($ext, $supported_image)) {
                   $display = '<img width="100px" src="' . legacy_get_resized_remote_image_url($value, 100, 100) . '" alt="" />';
                } else {
