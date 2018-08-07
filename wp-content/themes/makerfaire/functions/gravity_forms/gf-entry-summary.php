@@ -187,13 +187,13 @@ function gf_summary_metabox($form, $lead) {
                      "Matt Stultz" => "mstultz@makermedia.com",
                      "Rob Bullington" => "rbullington@makermedia.com",
                      "Sabrina Merlo" => "smerlo@makermedia.com",
-                     "Ralf" => "ralf@muehlen.com");
+                     "Ralf" => "ralf@muehlen.com",       
+                     "Tyler Winegarner" => "tyler@makermedia.com",
+                     "Keith Hammond"   => "khammond@makermedia.com");
    $emailtoaliases = array("Dev" => "dev@makermedia.com",
-                           "3D Printing" => "3dprinting@makermedia.com",
                            "Editors" => "editor@makezine.com",
                            "Maker Relations" => "makers@makerfaire.com",
                            "PR" => "pr@makerfaire.com",
-                           "Education" => "education@makermedia.com",
                            "Sales" => "sales@makerfaire.com",
                            "Sustainability" => "sustainability@makerfaire.com",
                            "Speakers" => "speakers@makerfaire.com",
