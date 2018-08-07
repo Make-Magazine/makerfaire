@@ -115,7 +115,8 @@ $entries   = $tableData['data'];
         if($entryData['mat_disp_res_link'] == 'yes' && $entryData['status'] == 'Accepted'){
           $dispRMTeditLink = true;  //display resource edit only link
         }else{
-          if($entryData['status'] == 'Accepted' || $entryData['status'] == 'Proposed')
+          if($entryData['status'] == 'Accepted'   || $entryData['status'] == 'Proposed' || 
+             $entryData['status'] == 'Wait List'  || $entryData['status'] == 'Pending')
             $dispGVeditLink = true; //display full form edit thru gravity forms
         }
 
