@@ -21,6 +21,7 @@
   "author": "Maker Media",
   "license": "UNLICENSED",
   "dependencies": {
+    "@fancyapps/fancybox": "^3.3.5",
     "angular": "1.7.2",
     "angular-animate": "1.7.2",
     "angular-filter": "0.5.17",
