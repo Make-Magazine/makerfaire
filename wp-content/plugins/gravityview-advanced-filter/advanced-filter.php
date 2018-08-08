@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 1.2
+Version: 1.3
 Author: GravityView
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
@@ -35,9 +35,9 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '1.2';
+		protected $_version = '1.3';
 
-		protected $_min_gravityview_version = '1.15';
+		protected $_min_gravityview_version = '1.22.1';
 
 		/**
 		 * @since 1.0.11
@@ -64,6 +64,7 @@ function gv_extension_advanced_filtering_load() {
 			add_filter( 'gravityview_noconflict_scripts', array( $this, 'no_conflict_filter') );
 
 			add_filter( 'gform_filters_get_users', array( $this, 'created_by_get_users_args' ) );
+
 		}
 
 		/**
@@ -160,8 +161,9 @@ function gv_extension_advanced_filtering_load() {
 
 					foreach( $view_filters as $k => $filter ) {
 						if( $k !== 'mode' ) {
-							$filter = self::parse_advanced_filters( $filter, $view_id );
-							$criteria['search_criteria']['field_filters'][] = $filter;
+
+						   $criteria['search_criteria']['field_filters'][] = ( 'created_by' == $filter['key'] && is_array( $filter['value'] ) ) ? $filter : self::parse_advanced_filters( $filter, $view_id );
+
 						} else {
 							$criteria['search_criteria']['field_filters']['mode'] = $filter;
 						}
@@ -321,7 +323,7 @@ function gv_extension_advanced_filtering_load() {
 			return array(
 				'key' => 'created_by',
 				'operator' => 'is',
-				'value' => 'Advanced Filter Force Zero Results Filter'
+				'value' => 'Advanced Filter - This is the "force zero results" filter, designed to not match anything.'
 			);
 		}
 
@@ -461,6 +463,8 @@ function gv_extension_advanced_filtering_load() {
 				}
 			}
 
+			$role_filters = array();
+
 			foreach ( $init_filter_vars as $k => &$filter ) {
 
 				// Not a filter
@@ -480,6 +484,10 @@ function gv_extension_advanced_filtering_load() {
 				if( 'date_created' === $filter['key'] ) {
 					$filter = self::get_date_filter_value( $filter, null, true );
 				}
+
+				if ( 'created_by' === $filter['key'] ) {
+					$created_by_index = $k;
+                }
 
 				// Only show listings created by the current user.
 				// This will return no entries if the user is logged out.
@@ -505,9 +513,94 @@ function gv_extension_advanced_filtering_load() {
 
 					if ( $filter['value'] === 'created_by_or_admin' && GVCommon::has_cap( $view_all_entries_caps ) ) {
 						unset( $init_filter_vars[ $k ] );
+						unset( $created_by_index );
+
 					} else {
 						$filter['value'] = get_current_user_id();
 					}
+
+				}
+
+				if ( 'created_by_user_role' === $filter['key'] ) {
+
+					$role_filters[] = $filter;
+
+					unset( $init_filter_vars[ $k ] );
+				}
+
+			}
+
+			/**
+			 * When filtering by created_by role, only if a specific user search has not already been set
+             *
+             * Searching for a specific user should take priority over searching for a user role
+			 *
+			 * @since 1.2
+			 */
+			if ( ( ! empty( $role_filters ) ) && ( ! isset( $created_by_index ) ) ) {
+
+				// Force "all" when filtering by "created by"
+				$init_filter_vars['mode'] = 'all';
+
+				static $users_for_role = array();
+
+				foreach ( $role_filters as $role_filter ) {
+
+					$roles = array( $role_filter['value'] );
+
+				    if( 'current_user' === $role_filter['value'] ) {
+				        $current_user = wp_get_current_user();
+
+				        $roles = $current_user->roles;
+                    }
+                    
+                    $user_ids = array();
+
+					foreach ( $roles as $role ) {
+
+						// Only fetch each role once, as needed
+						if ( ! isset( $users_for_role[ $role ] ) ) {
+							$users_for_role[ $role ] = get_users( array(
+								'role'   => $role,
+								'fields' => 'ID',
+							) );
+						}
+
+						$user_ids = array_merge( $user_ids, $users_for_role[ $role ] );
+                    }
+
+					$user_ids = array_filter( array_unique( $user_ids ) );
+
+					// No users with this role
+					if ( empty( $user_ids ) ) {
+
+					    // We can be sure an user is not in an empty list of users. No need to check.
+					    if( 'isnot' === $role_filter['operator'] ) {
+						    continue;
+					    }
+
+					    // If wanting user with a role that has no users, that is always a no-go.
+						$init_filter_vars[] = self::get_lock_filter();
+					    continue;
+					}
+
+					$operator = $role_filter['operator'];
+
+					if( 1 === sizeof( $user_ids ) ) {
+	                    $user_ids = implode( '', $user_ids ); // Convert to a string
+                    } else {
+                        if( 'is' === $role_filter['operator'] ) {
+	                        $operator = 'in';
+                        } else {
+	                        $operator = 'NOT IN';
+                        }
+                    }
+
+					$init_filter_vars[] = array(
+						'key' => 'created_by',
+						'operator' => $operator,
+						'value' => $user_ids,
+					);
 				}
 			}
 
@@ -515,59 +608,35 @@ function gv_extension_advanced_filtering_load() {
 		}
 
 		/**
-		 * Clone of gravityview_get_terms_choices() in GravityView 1.15.3, until that's widely available.
+		 * Get user role choices formatted in a way used by GravityView and Gravity Forms input choices
 		 *
-		 * Get categories formatted in a way used by GravityView and Gravity Forms input choices
+		 * @since 1.2
 		 *
-		 * @since 1.0.12
-		 *
-		 * @see gravityview_get_terms_choices()
-		 * @see get_terms()
-		 *
-		 * @param array $args Arguments array as used by the get_terms() function. Filtered using `gravityview_get_terms_choices_args` filter. Defaults: { \n
-		 *   @type string $fields Default: 'id=>name' to only fetch term ID and Name \n
-		 *   @type int $number  Limit the total number of terms to fetch. Default: 1000 \n
-		 * }
-		 *
-		 * @return array Multidimensional array with `text` (Category Name) and `value` (Category ID) keys.
+		 * @return array Multidimensional array with `text` (Role Name) and `value` (Role ID) keys.
 		 */
-		public static function get_terms_choices( $args = array() ) {
+		protected static function get_user_role_choices(){
 
-			$defaults = array(
-				'type'         => 'post',
-				'child_of'     => 0,
-				'number'       => 1000, // Set a reasonable max limit
-				'orderby'      => 'name',
-				'order'        => 'ASC',
-				'hide_empty'   => 0,
-				'hierarchical' => 1,
-				'taxonomy'     => 'category',
-				'fields'       => 'id=>name',
-			);
+			$user_role_choices = array();
 
-			$args = wp_parse_args( $args, $defaults );
 
-			/**
-			 * @filter `gravityview_get_terms_choices_args` Modify the arguments passed to `get_terms()`
-			 * @see get_terms()
-			 * @since 1.15.3
-			 */
-			$args = apply_filters( 'gravityview_get_terms_choices_args', $args );
+			$editable_roles = get_editable_roles();
 
-			$terms = get_terms( $args['taxonomy'], $args );
+			$editable_roles['current_user'] = array(
+                'name' => esc_html__( 'Any Role of Current User', 'gravityview-advanced-filter' ),
+            );
 
-			$choices = array();
+			$editable_roles = array_reverse( $editable_roles );
 
-			if ( is_array( $terms ) ) {
-				foreach ( $terms as $term_id => $term_name ) {
-					$choices[] = array(
-						'text'  => $term_name,
-						'value' => $term_id
-					);
-				}
+			foreach ( $editable_roles as $role => $details ) {
+
+				$user_role_choices[] = array(
+					'text'  => translate_user_role( $details['name'] ),
+					'value' => esc_attr( $role )
+				);
+
 			}
 
-			return $choices;
+			return $user_role_choices;
 		}
 
 		/**
@@ -589,10 +658,12 @@ function gv_extension_advanced_filtering_load() {
 
 			$field_filters = GFCommon::get_field_filter_settings( $form );
 
-			/*foreach( $form['fields'] as $field ) {
-				$input_type = GFFormsModel::get_input_type( $field );
-
-			}*/
+			$field_filters[] = array(
+                'key' => 'created_by_user_role',
+                'text'      => esc_html__( 'Created By User Role', 'gravityview-advanced-filter' ),
+                'operators' => array( 'is' ),
+                'values'    => self::get_user_role_choices(),
+			);
 
 			if( $approved_column = GravityView_Admin_ApproveEntries::get_approved_column( $form ) ) {
 				$approved_column = intval( floor( $approved_column ) );
@@ -618,7 +689,7 @@ function gv_extension_advanced_filtering_load() {
 				/**
 				 * @since 1.0.12
 				 */
-				$post_category_choices = function_exists('gravityview_get_terms_choices') ? gravityview_get_terms_choices() : self::get_terms_choices();
+				$post_category_choices = gravityview_get_terms_choices();
 			}
 
 			// 1.0.14
@@ -698,6 +769,8 @@ function gv_extension_advanced_filtering_load() {
 
 			}
 
+			$field_filters = self::add_approval_status_filter( $field_filters );
+
 			$init_field_id       = 0;
 			$init_field_operator = "contains";
 			$default_init_filter_vars = array(
@@ -727,6 +800,40 @@ function gv_extension_advanced_filtering_load() {
 				'init_filter_vars' => $init_filter_vars
 			);
 
+		}
+
+		/**
+         * Add Entry Approval Status filter option
+         *
+         * @since 1.3
+         *
+		 * @return array
+		 */
+		private static function add_approval_status_filter( array $filters ) {
+
+			if ( ! class_exists( 'GravityView_Entry_Approval_Status' ) ) {
+				return $filters;
+			}
+
+			$approval_choices = GravityView_Entry_Approval_Status::get_all();
+
+			$approval_values = array();
+
+			foreach ( $approval_choices as & $choice ) {
+				$approval_values[] = array(
+					'text'  => $choice['label'],
+					'value' => $choice['value']
+				);
+			}
+
+			$filters[] = array(
+				'text'      => __( 'Entry Approval Status', 'gravityview-advanced-filter' ),
+				'key'       => 'is_approved',
+				'operators' => array( 'is', 'isnot' ),
+				'values'    => $approval_values,
+			);
+
+			return $filters;
 		}
 
 		/**

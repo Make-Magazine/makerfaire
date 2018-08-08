@@ -124,7 +124,9 @@ module.exports = function(grunt) {
 
 			// Create a ZIP file
 			zip: {
-				cmd: function( filename = 'gravityview-advanced-filter' ) {
+				cmd: function( version = '' ) {
+
+					var filename = ( version === '' ) ? 'gravityview-advanced-filter' : 'gravityview-advanced-filter-' + version;
 
 					// First, create the full archive
 					var command = 'git-archive-all gravityview-advanced-filter.zip &&';
@@ -152,5 +154,6 @@ module.exports = function(grunt) {
 
 
 	grunt.registerTask( 'default', ['uglify','exec:transifex','potomo', 'addtextdomain', 'makepot', 'watch'] );
+	grunt.registerTask( 'translate', ['exec:transifex','potomo', 'addtextdomain', 'makepot' ] );
 
 };

@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2018-05-03 04:01+0000\n"
+"PO-Revision-Date: 2018-07-11 22:29+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: English (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/en/)\n"
 "MIME-Version: 1.0\n"
@@ -23,32 +23,44 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:413 partials/metabox.php:2
+#: advanced-filter.php:415 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr "Advanced Filter"
 
-#: advanced-filter.php:415
+#: advanced-filter.php:417
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr "Limit what entries are visible based on entry values. The entries are filtered before the View is displayed. When users perform a search, results will first be filtered by these settings."
 
-#: advanced-filter.php:416
+#: advanced-filter.php:418
 msgid "Limit to Logged-in User Entries"
 msgstr "Limit to Logged-in User Entries"
 
-#: advanced-filter.php:417 advanced-filter.php:676
+#: advanced-filter.php:419 advanced-filter.php:751
 msgid "Created By"
 msgstr "Created By"
 
-#: advanced-filter.php:417 advanced-filter.php:684
+#: advanced-filter.php:419 advanced-filter.php:759
 msgid "Currently Logged-in User"
 msgstr "Currently Logged-in User"
 
-#: advanced-filter.php:418 advanced-filter.php:680
+#: advanced-filter.php:420 advanced-filter.php:755
 msgid "Currently Logged-in User (Disabled for Administrators)"
 msgstr "Currently Logged-in User (Disabled for Administrators)"
+
+#: advanced-filter.php:625
+msgid "Any Role of Current User"
+msgstr "Any Role of Current User"
+
+#: advanced-filter.php:663
+msgid "Created By User Role"
+msgstr "Created By User Role"
+
+#: advanced-filter.php:830
+msgid "Entry Approval Status"
+msgstr "Entry Approval Status"
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
@@ -91,7 +103,7 @@ msgstr "You must save the View before you can configure Advanced Filters."
 msgid "Advanced Filtering requires Javascript to be enabled."
 msgstr "Advanced Filtering requires Javascript to be enabled."
 
-#: advanced-filter.php:417
+#: advanced-filter.php:419
 msgctxt ""
 "First placeholder is \"Created By\" and second is \"Currently Logged-in "
 "User\""
@@ -100,7 +112,7 @@ msgid ""
 " &amp; \"%s\" from the drop-down menus."
 msgstr "To limit entries to those created by the current user, select \"%s\", \"is\" &amp; \"%s\" from the drop-down menus."
 
-#: advanced-filter.php:418
+#: advanced-filter.php:420
 msgctxt ""
 "The placeholder is \"Currently Logged-in User (Disabled for "
 "Administrators)\""
