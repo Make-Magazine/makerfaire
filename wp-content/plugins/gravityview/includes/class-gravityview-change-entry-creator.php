@@ -214,8 +214,7 @@ class GravityView_Change_Entry_Creator {
         }
 
         $created_by_id = \GV\Utils::get( $entry, 'created_by' );
-
-        //    MF custom code to Change to add user email in the change entry creator dropdown
+        //MF custom code - Change to add user email in the change entry creator dropdown
         //$users = GVCommon::get_users( 'change_entry_creator' );
         $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email'), 'number' => 100000));
 
@@ -243,9 +242,9 @@ class GravityView_Change_Entry_Creator {
 	    $output .= '<select name="created_by" id="change_created_by" class="widefat">';
         $output .= '<option value="' . selected( $entry['created_by'], '0', false ) . '"> &mdash; '.esc_attr_x( 'No User', 'No user assigned to the entry', 'gravityview').' &mdash; </option>';
         foreach($users as $user) {
-          //    MF custom code - Change to add user email in the change entry creator dropdown
-          //$output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
-          $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_email.')' ).'</option>';
+            //MF custom code - Change to add user email in the change entry creator dropdown
+            //$output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
+            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_email.')' ).'</option>';
         }
         $output .= '</select>';
         $output .= '<input name="originally_created_by" value="'.esc_attr( $entry['created_by'] ).'" type="hidden" />';

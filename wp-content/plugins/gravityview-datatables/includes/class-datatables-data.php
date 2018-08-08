@@ -111,8 +111,11 @@ class GV_Extension_DataTables_Data {
 			add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_and_styles' ) );
 		}
 
-		// Tack on DataTables configurations as needed
-		add_action( 'gravityview/template/after', array( $this, 'output_dt_config' ) );
+		// Extend DataTables view as needed
+		add_action( 'gravityview/template/after', array( $this, 'extend_view' ) );
+
+		add_filter( 'gravityview-inline-edit/js-settings', array ( $this, 'maybe_modify_inline_edit_settings' ), 10, 2 );
+
 	}
 
 	/**
@@ -293,7 +296,9 @@ class GV_Extension_DataTables_Data {
 
 		$atts = $view->settings->as_atts();
 
-		$atts = array_map( array( '\GravityView_Merge_Tags', 'replace_variables' ), $atts, array( ( $view->form ? $view->form->form : null ), array(), false, false, false ) );
+		foreach ( $atts as $key => $att ) {
+			$atts[ $key ] = \GravityView_Merge_Tags::replace_variables( $att, ( $view->form ? $view->form->form : null ), array(), false, false, false );
+		}
 
 		gravityview()->log->debug( 'DataTables final $atts', $atts );
 
@@ -317,6 +322,10 @@ class GV_Extension_DataTables_Data {
 
 			// cache depends on offset
 			$atts['offset'] = $offset;
+
+			// cache depends on offset
+            // TODO: Verify the $_GET variables are related to valid field searches
+			$atts['getData'] = $_GET;
 
 			$Cache = new GravityView_Cache( $form_id, $atts );
 
@@ -359,6 +368,14 @@ class GV_Extension_DataTables_Data {
 			'recordsFiltered' => $entries->total(),
 			'data' => $this->get_output_data( $entries, $view, $post ),
 		);
+
+		/**
+		 * @filter `gravityview/datatables/output` Filter the output returned from the AJAX request
+		 * @since 2.3
+		 * @param array $output
+		 * @param \GV\View $view
+		 */
+		$output = apply_filters( 'gravityview/datatables/output', $output, $view );
 
 		wp_reset_postdata();
 
@@ -820,6 +837,8 @@ class GV_Extension_DataTables_Data {
 			'post_id' => $post->ID,
 			'nonce' => wp_create_nonce( 'gravityview_datatables_data' ),
 			'getData' => json_encode( (array)$_GET ), // Pass URL args to $_POST request
+			'hideUntilSearched' => $view->settings->get( 'hide_until_searched' ),
+            'setUrlOnSearch' => apply_filters('gravityview/search/method', 'get') === 'get',
 		);
 
 		// Prepare DataTables init config
@@ -946,16 +965,40 @@ class GV_Extension_DataTables_Data {
 	} // end add_scripts_and_styles
 
 	/**
-	 * Output the necessary DataTables configuration scripts inline.
+     * @deprecated 2.3
+	 * @internal
+	 */
+    public function output_dt_config() {
+	    _deprecated_function( 'GV_Extension_DataTables_Data::output_dt_config', '2.3', 'This method was not intended to be called.');
+    }
+
+	/**
+	 * Extend DT view by outputting additional configuration, enqueuing scripts, etc.
 	 *
-	 * @param object $gravityview The template $gravityview object.
+	 * @param \GV\Template_Context $gravityview The template $gravityview object.
+     *
+     * @internal
+     * @since 2.3 Renamed from output_dt_config() to extend_view()
 	 *
 	 * @return void
 	 */
-	public function output_dt_config( $gravityview ) {
-		// Not a DataTables View; don't generate configuration
+	public function extend_view( $gravityview ) {
+
 		if ( 'datatables_table' != $gravityview->view->settings->get( 'template' ) ) {
-			return array();
+			return;
+		}
+
+
+		// enqueue scripts for registered/visible fields
+		$fields = $gravityview->view->fields->by_position( 'directory_table-columns' );
+
+		foreach ( $fields->by_visible()->all() as $field ) {
+
+			wp_enqueue_script( 'gv-inline-edit-' . $field->type );
+
+		    if ( 'notes' === $field->type ) {
+			    do_action( 'gravityview/field/notes/scripts', $gravityview );
+            }
 		}
 
 		global $post;
@@ -969,6 +1012,41 @@ class GV_Extension_DataTables_Data {
 				window.gvDTglobals.push(<?php echo json_encode( $this->get_datatables_script_configuration( $post, $gravityview->view ) ); ?>);
 			</script>
 		<?php
+	}
+
+	/**
+	 * Modify Inline Edit settings
+	 *
+	 * @param array $settings
+     * @param array $item_id Array with `form_id` or `view_id` set
+	 *
+	 * @since 2.3
+	 *
+	 * @return array Array with Inline Edit settings
+	 */
+	function maybe_modify_inline_edit_settings( $settings, $item_id = array() ) {
+
+		if ( ! class_exists( '\GV\View' ) ) {
+            return $settings;
+		}
+
+		$view_id = \GV\Utils::get( $item_id, 'view_id', false );
+
+		if ( empty( $view_id ) ) {
+            return $settings;
+		}
+
+	    if( ! $view = \GV\View::by_id( $view_id ) ) {
+	        return $settings;
+        }
+
+		if ( 'datatables_table' !== $view->settings->get( 'template' ) ) {
+			return $settings;
+		}
+
+		$settings['disableInitOnLoad'] = true;
+
+		return $settings;
 	}
 
 } // end class

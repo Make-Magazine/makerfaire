@@ -350,12 +350,6 @@ class M_NextGen_Admin extends C_Base_Module
             $router->get_url('/wp-admin/js/color-picker.js', FALSE, TRUE),
             array('iris')
         );
-        wp_localize_script('wp-color-picker', 'wpColorPickerL10n', array(
-            'clear' => __('Clear', 'nggallery'),
-            'defaultString' => __('Default', 'nggallery'),
-            'pick' => __('Select Color', 'nggallery'),
-            'current' => __('Current Color', 'nggallery'),
-        ));
 
         wp_register_style(
             'nextgen_admin_css', 

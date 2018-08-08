@@ -166,6 +166,7 @@ function getModalData($tableData){
   foreach ($prevEntries as $prevEntry){
     if($prevEntry['maker_type'] === 'contact'){ //contact or entry creator
       $dispModal=true;
+
       $return .=  '<div class="row striped">'
               .   '<div class="col-sm-2 col-md-3">'.$prevEntry['faire_name'].'</div>'
               .   '<div class="col-sm-2">'.$prevEntry['form_type'].'</div>'
@@ -199,4 +200,5 @@ function getModalData($tableData){
   }else{
     return '';
   }
+
 }

@@ -3,19 +3,35 @@ jQuery(function() {
   jQuery('.desktop-nav .sub-menu').wrapInner('<div class=\'container\'></div>');
 });
 
+function sumomeActive() {
+	if ( document.querySelector(".sumome-react-wysiwyg-popup-container") != null ) {
+		jQuery('body').addClass('sumome-active');
+	} else {
+		jQuery('body').removeClass('sumome-active');
+	}
+}
+
 (function($) {
    // keep these from happening before any oangular or login scripts
    $(window).bind("load", function() {
+		
+		var firstPath = location.pathname.split("/")[1];
+		if ( firstPath != "new-york" && firstPath != "bay-area" && firstPath != "") {
+			jQuery("#us_report_button").text("Website Help");
+			jQuery('body').addClass('usersnap');
+		} 
+		
       $(".nav-level-1-auth #profile-view .avatar").css("display","block");
 
-      jQuery('#hamburger-icon, #hamburger-makey, .nav-flyout-underlay').click(function() {
+      jQuery('#hamburger-icon, #hamburger-text, .nav-flyout-underlay').click(function() {
         jQuery('.stagingMsg').toggleClass('gone');
         jQuery('#hamburger-icon').toggleClass('open');
-        jQuery('#hamburger-makey').animate({opacity: 'toggle'})
+        jQuery('#hamburger-text').animate({opacity: 'toggle'})
         jQuery('#nav-flyout').animate({opacity: 'toggle'});
         jQuery('body').toggleClass('nav-open-no-scroll');
         jQuery('html').toggleClass('nav-open-no-scroll');
         jQuery('.nav-flyout-underlay').animate({opacity: 'toggle'});
+		  sumomeActive();
       });
 
       jQuery('.nav-flyout-column').on('click', '.expanding-underline', function(event) {
@@ -25,6 +41,11 @@ jQuery(function() {
           jQuery(this).next('.nav-flyout-ul').slideToggle();
         }
       });
+		
+		jQuery('.sumome-react-wysiwyg-popup-container').on('DOMNodeRemoved', function(e) {
+			sumomeActive();
+		});
+		
       // fix nav to top on scrolldown, stay fixed for transition from mobile to desktop
       var e = jQuery(".universal-nav");
       var hamburger = jQuery(".nav-hamburger");
@@ -51,18 +72,20 @@ jQuery(function() {
       jQuery(document).scroll(function() {
           var scrollTop = jQuery(this).scrollTop();
           if(scrollTop > y_pos && jQuery(window).width() > 748){
+				  jQuery('body').addClass('scrolled');
               e.addClass("main-nav-scrolled"); 
               hamburger.addClass("ham-menu-animate");
               nextItemUnderNav.css("margin-top", "55px");
           }else if(scrollTop <= y_pos){
+				  jQuery('body').removeClass('scrolled');
               e.removeClass("main-nav-scrolled"); 
               hamburger.removeClass("ham-menu-animate");
               if (jQuery(window).width() > 767) {
                 nextItemUnderNav.css("margin-top", "0px");
               }
           }
+          sumomeActive();
       });
-
       /* Bring back if we need search for any reason
       jQuery("#search-modal").fancybox({
             wrapCSS : 'search-modal-wrapper',

@@ -3,7 +3,7 @@
 Plugin Name: SumoMe
 Plugin URI: https://sumo.com
 Description: Free Tools to automate your site growth from Sumo.com
-Version: 1.29
+Version: 1.30
 Author: SumoMe
 Author URI: https://www.Sumo.com
 */

@@ -8,13 +8,14 @@
     "jquery": ">=1.7.0",
     "datatables": ">=1.8.0"
   },
+  "license": "MIT",
   "homepage": "https://github.com/DataTables/FixedColumns",
-  "version": "3.2.4",
-  "_release": "3.2.4",
+  "version": "3.2.6",
+  "_release": "3.2.6",
   "_resolution": {
     "type": "version",
-    "tag": "3.2.4",
-    "commit": "69c3242bb07c1517a6b571c74f6958042c5f0ec0"
+    "tag": "3.2.6",
+    "commit": "341c76d06b6543c3ec4598c507b2962bbc8198cd"
   },
   "_source": "https://github.com/DataTables/FixedColumns.git",
   "_target": ">=3.0.2",

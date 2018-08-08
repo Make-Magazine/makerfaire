@@ -305,41 +305,47 @@
       }
     }
   }
-
-
 }
 
 .nav-hamburger {
-  position: absolute;
-  z-index: 999;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 75px;
-  pointer-events : none;
-  display: flex;
-  display: -webkit-flex; 
-  align-items: center;
-  -webkit-align-items: center;
-  @media screen and (max-width: 767px) {
-    height: 55px;
-    position: fixed;
-  }
-  .container {
-    @media screen and (max-width: 767px) {
-      margin-right: 0;
-      margin-left: 0;
-    }
-  }
-  #hamburger-click-event {
-    display: flex;
-    display: -webkit-flex; 
-    align-items: center;
-    -webkit-align-items: center;
-  }
+	position: absolute;
+	z-index: 999;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 75px;
+	pointer-events : none;
+	display: flex;
+	display: -webkit-flex; 
+	align-items: center;
+	-webkit-align-items: center;
+	@media screen and (max-width: 767px) {
+   	height: 55px;
+   	position: fixed;
+   }
+   .container {
+   	@media screen and (max-width: 767px) {
+      	margin-right: 0;
+      	margin-left: 0;
+    	}
+  	}
+  	#hamburger-click-event {
+    	display: flex;
+    	display: -webkit-flex; 
+    	align-items: center;
+    	-webkit-align-items: center;
+  	}
+   #hamburger-text {
+		padding-left: 10px;
+	   color: #ED1C24;
+  		font-weight: 400;
+		pointer-events: auto;
+		cursor: pointer;
+   }
   #hamburger-icon {
-    width: 33px;
-    height: 22px;
+    width: 21px;
+    height: 15px;
+	 margin-top: -2px;
     display: inline-block;
     position: relative;
     -webkit-transform: rotate(0deg);
@@ -355,7 +361,7 @@
     span {
       display: block;
       position: absolute;
-      height: 3px;
+      height: 2px;
       width: 100%;
       background: #ED1C24;
       border-radius: 9px;
@@ -375,13 +381,13 @@
     top: 0px;
   }
   #hamburger-icon span:nth-child(2),#hamburger-icon span:nth-child(3) {
-    top: 9px;
+    top: 7px;
   }
   #hamburger-icon span:nth-child(4) {
-    top: 18px;
+    top: 14px;
   }
   #hamburger-icon.open span:nth-child(1) {
-    top: 9px;
+    top: 7px;
     width: 0%;
     left: 50%;
   }
@@ -429,11 +435,25 @@
     top: 32px;
   }
 }
+
+.sumome-active {
+	#universal-nav {
+      #nav-flyout {
+			padding-top: 75px;
+			height: 600px;
+      }
+		.ham-menu-animate { margin-top: 63px; }
+   }
+}
+
 .ham-menu-animate {
   position:absolute;
   top:0;
   z-index: 999;
   height: 55px;
+	#hamburger-text {
+	   color: #fff;
+   }
   .admin-bar & {
     top: 32px;
   }

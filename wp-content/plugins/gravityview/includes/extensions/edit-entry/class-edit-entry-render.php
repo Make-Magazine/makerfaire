@@ -206,15 +206,15 @@ class GravityView_Edit_Entry_Render {
 
 		$gravityview_view = GravityView_View::getInstance();
 
-		$entries = $gravityview_view->getEntries();
-    self::$original_entry = $entries[0];
-    $this->entry = $entries[0];
 
-    //    MF custom code - This override allows the form to be set based on the selected entry instead of the form that is setup in the view.
+		$entries = $gravityview_view->getEntries();
+	    self::$original_entry = $entries[0];
+	    $this->entry = $entries[0];
+
+    //mf custom code - This override allows the form to be set based on the selected entry instead of the form that is setup in the view.
 		//self::$original_form = $gravityview_view->getForm();
 		//$this->form = $gravityview_view->getForm();
 		//$this->form_id = $gravityview_view->getFormId();
-
     $this->form_id = $this->entry['form_id'];
     $this->form = GFAPI::get_form($this->form_id);
     self::$original_form = $this->form;
@@ -1016,8 +1016,8 @@ class GravityView_Edit_Entry_Render {
 
 		ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
-    //    MF override - This override is to remove the merge tags that aren’t being set in gravity view
 		$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
+    //MF override - This override is to remove the merge tags that aren’t being set in gravity view
     $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
 
 		ob_get_clean();
@@ -1594,8 +1594,8 @@ class GravityView_Edit_Entry_Render {
 		// Hide fields depending on admin settings
 		$fields = $this->filter_fields( $form['fields'], $edit_fields );
 
-    // If Edit Entry fields are configured, remove adminOnly field settings. Otherwise, don't.
-    $fields = $this->filter_admin_only_fields( $fields, $edit_fields, $form, $view_id );
+	    // If Edit Entry fields are configured, remove adminOnly field settings. Otherwise, don't.
+	    $fields = $this->filter_admin_only_fields( $fields, $edit_fields, $form, $view_id );
 
 		/**
 		 * @filter `gravityview/edit_entry/form_fields` Modify the fields displayed in Edit Entry form
@@ -1726,7 +1726,7 @@ class GravityView_Edit_Entry_Render {
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
 
-	    //if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
+	  //if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
 			foreach( $fields as $k => $field ) {
 				if( $field->adminOnly ) {
 				    unset( $fields[ $k ] );
@@ -1899,6 +1899,7 @@ class GravityView_Edit_Entry_Render {
 			 * If the Entry is embedded, there may be two entries on the same page.
 			 * If that's the case, and one is being edited, the other should fail gracefully and not display an error.
 			 */
+
 			if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
 				$error = true;
 			} else {

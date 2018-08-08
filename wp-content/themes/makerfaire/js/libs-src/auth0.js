@@ -24,9 +24,6 @@ window.addEventListener('load', function() {
     var profileView    = document.getElementById('profile-view');
   }
 
-  //remove old storage item as it is causing issues if set
-  localStorage.removeItem('wp_loggedin');
-
   //default profile view to hidden
   loginBtn.style.display    = 'none';
   profileView.style.display = 'none';
@@ -58,7 +55,21 @@ window.addEventListener('load', function() {
 
     //hide logged in button and logout of wp and auth0
     displayButtons();
-  });;
+  });
+    
+  function loginRedirect() {
+      if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
+          if( localStorage.getItem( 'redirect_to' ) ){
+            jQuery( '.redirect-message' ).text( "You will be redirected to the page you were trying to access shortly." );
+            var redirect_url = localStorage.getItem( 'redirect_to' ); //retrieve redirect URL
+            localStorage.removeItem( 'redirect_to' ); //unset after retrieved
+            location.href = redirect_url;
+          }else{ 
+            // this is what's sometimes when the page redirects to the homepage instead of to the url
+            location.href = templateUrl;
+          }
+      }
+  }
 
   function setSession(authResult) {
     // Set the time that the access token will expire at
@@ -89,17 +100,22 @@ window.addEventListener('load', function() {
       getProfile();
 
       //login to wordpress if not already
-      //if(!localStorage.getItem('wp_loggedin')){
+      //check for wordpress cookie
+      if ( !jQuery( '.logged-in' ).length ) { // is the user logged in?
         //wait .5 second for auth0 data to be returned from getProfile
         setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
-      //}
+      } else {
+          loginRedirect();
+      }
     } else {
       loginBtn.style.display = 'flex';
       profileView.style.display = 'none';
 
-      if(localStorage.getItem('wp_loggedin')){
+      if ( jQuery( '.logged-in' ).length ) { // is the user logged in?
         //logout of wordpress if not already
         WPlogout();//login to wordpress
+      } else {
+          loginRedirect();
       }
     }
   }
@@ -124,7 +140,6 @@ window.addEventListener('load', function() {
 
   function WPlogin(){
     if (typeof userProfile !== 'undefined') {
-      console.log('defined');
       var user_id      = userProfile.sub;
       var access_token = localStorage.getItem('access_token');
       var id_token     = localStorage.getItem('id_token');
@@ -138,23 +153,22 @@ window.addEventListener('load', function() {
       };
 
       jQuery.post(ajax_object.ajax_url, data, function(response) {
-        //set wplogged in localStorage item
-        localStorage.setItem('wp_loggedin', 'true');
-        if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
-            //redirect
-          if(localStorage.getItem('redirect_to')){
-            var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
-            localStorage.removeItem('redirect_to'); //unset after retrieved
-            location.href=redirect_url;
-          }else{  //redirect to home page
+          
+      loginRedirect();
+
+      }).fail(function() {
+        alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
+        if ( jQuery( '#authenticated-redirect' ).length ) { 
+            jQuery( ".redirect-message" ).text("I'm sorry. We had an issue logging you into our system. Please try the login again.");
             location.href=templateUrl;
-          }
-
         }
-
       });
     }else{
-      console.log('undefined');
+       if ( jQuery( '#authenticated-redirect' ).length ) {
+          console.log('undefined');
+          alert("We're having trouble logging you in and ran out of time. Refresh the page and we'll try harder.");
+		    jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Reload page</a>");
+      }
     }
   }
 
@@ -170,7 +184,6 @@ window.addEventListener('load', function() {
     }
 
     jQuery.post(ajax_object.ajax_url, data, function(response) {
-      localStorage.removeItem('wp_loggedin');
       window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
     });
   }
@@ -183,7 +196,6 @@ window.addEventListener('load', function() {
         localStorage.removeItem('access_token');
         localStorage.removeItem('id_token');
         localStorage.removeItem('expires_at');
-        localStorage.removeItem('wp_loggedin');
         if(err.error!=='login_required'){
           console.log(err);
         }

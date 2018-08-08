@@ -62,7 +62,6 @@ class C_NextGen_Settings_Installer
 		$this->_local_settings = array(
 			'gallerypath'	 => 'wp-content'.DIRECTORY_SEPARATOR.'gallery'.DIRECTORY_SEPARATOR,
 			'deleteImg'      => TRUE,              // delete Images
-			'swfUpload'      => TRUE,              // activate the batch upload
 			'usePermalinks'  => FALSE,             // use permalinks for parameters
 			'permalinkSlug'  => 'nggallery',       // the default slug for permalinks
 			'graphicLibrary' => 'gd',              // default graphic library

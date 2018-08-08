@@ -2,11 +2,11 @@
 /**
  * Plugin Name: Login by Auth0
  * Description: Login by Auth0 provides improved Username/password login, Passwordless login, Social login and Single Sign On for all your sites.
- * Version: 3.6.1
+ * Version: 3.6.2
  * Author: Auth0
  * Author URI: https://auth0.com
  */
-define( 'WPA0_VERSION', '3.6.1' );
+define( 'WPA0_VERSION', '3.6.2' );
 define( 'AUTH0_DB_VERSION', 18 );
 
 define( 'WPA0_PLUGIN_FILE', __FILE__ );

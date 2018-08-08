@@ -671,13 +671,13 @@ function add_note_sidebar($lead, $form){
 	$user_data = get_userdata( $current_user->ID );
 	$project_name = $lead['151'];
 	$email_to     = $_POST['gentry_email_notes_to_sidebar'];
-
+   
 	$email_note_info = '';
 
 	//emailing notes if configured
 	if ( !empty($email_to) ) {
 		GFCommon::log_debug( 'GFEntryDetail::lead_detail_page(): Preparing to email entry notes.' );
-		$email_to      = $_POST['gentry_email_notes_to_sidebar'];
+		//$email_to      = $_POST['gentry_email_notes_to_sidebar'];
 		$email_from    = $current_user->user_email;
 		$email_subject = stripslashes( 'Response Required Maker Application: '.$lead['id'].' '.$project_name);
 		$entry_url = get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=gf_entries&view=entry&id=' . $form['id'] . '&lid=' . rgar( $lead, 'id' );

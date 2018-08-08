@@ -65,8 +65,7 @@ function gv_my_update_message( $message, $view_id, $entry, $back_link ) {
       return 'Entry Updated. <a href="'.esc_url($link).'">Return to your entry list</a>';
     }else{
       //when edit entry from public entry page
-      $link = str_replace('edit-public-information','maker',$back_link);
-      $return = 'Entry Updated. <a href="'.$link.'/edit">Return to your entry public page</a>';
+      $return = 'Entry Updated. <a href="/maker/entry/'.$entry['id'].'/edit">Return to your entry public page</a>';
     }
 
     return $return;
@@ -77,22 +76,21 @@ add_filter( 'gravityview/edit_entry/success', 'gv_my_update_message', 10, 4 );
  * Customise the cancel(back) button link
  */
 function gv_my_edit_cancel_link( $back_link, $form, $entry, $view_id ) {
+  // view/edit public information link, send user back to
+  $findme   = 'edit-public-information/';
+  $pos = strpos($back_link, $findme);
 
-    // view/edit public information link, send user back to
-    $findme   = 'edit-public-information/';
-    $pos = strpos($back_link, $findme);
+  if ($pos === false) {
+    //when edit full entry from MFP
+    return str_replace( 'entry/'.$entry['id'].'/', '', $back_link );
+  }else{
+    //when edit entry from public entry page
+    $link = str_replace('edit-public-information','maker',$back_link);
+    //https://makerfaire.staging.wpengine.com/edit-public-information/entry/58985/?edit=1849218c64&gvid=636924
+    return '/maker/entry/'.$entry['id'].'/edit/';
+  }
 
-    if ($pos === false) {
-      //when edit full entry from MFP
-      return str_replace( 'entry/'.$entry['id'].'/', '', $back_link );
-    }else{
-      //when edit entry from public entry page
-      $link = str_replace('edit-public-information','maker',$back_link);
-      //https://makerfaire.staging.wpengine.com/edit-public-information/entry/58985/?edit=1849218c64&gvid=636924
-      return '/maker/entry/'.$entry['id'].'/edit/';
-    }
-
-    return $return;
+  return $return;   return str_replace( 'entry/'.$entry['id'].'/', '', $back_link );
 }
 add_filter( 'gravityview/edit_entry/cancel_link', 'gv_my_edit_cancel_link', 10, 4 );
 

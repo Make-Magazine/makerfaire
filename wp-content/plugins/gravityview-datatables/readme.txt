@@ -16,6 +16,25 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 2.3 on July 3, 2018 =
+
+This is a big update, bringing some great new functionality to DataTables!
+
+* Added: Searching with the Search Bar now refreshes results live—no refresh needed!
+* Added: Support for [GravityView Inline Edit](https://gravityview.co/extension/inline-edit/) (requires Inline Edit 1.3 or newer)
+* Fixed: Results being cached during search
+* Fixed: "Hide empty fields" setting not working in "Single Entry" context
+* Fixed: Entry Notes not working in DataTables (requires GravityView 2.0.13)
+
+__Developer Updates:__
+
+* Added: New `gravityview/datatables/output` filter to modify the output right before being returned from the AJAX request
+* Added: New setting accessible via the `gravityview_datatables_js_options` filter, in `$settings[ajax][data][setUrlOnSearch]`. The setting affects whether to update the URL with `window.history.pushState` when searching with the Search Bar (default: true)
+* Modified: Added `data-viewid` attribute to `templates/views/datatable/datatable-header.php` to support no-refresh searching
+* Updated: `Entry_DataTable_Template` class to inherit from `Entry_Table_Template` for rendering
+* Updated: DataTables scripts
+* Removed: `gravityview/entry/cell/attributes` filter introduced in 2.2
+
 = 2.2.2.1 on June 1, 2018 =
 
 * Fixed: PHP warning "Undefined Index: 'type'"

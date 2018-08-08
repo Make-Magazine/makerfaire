@@ -368,14 +368,14 @@ class M_Attach_To_Post extends C_Base_Module
 			wp_enqueue_style(
 				'ngg_attach_to_post_dialog',
 				$router->get_static_url('photocrati-attach_to_post#attach_to_post_dialog.css'),
-				FALSE,
+				array('gritter'),
 				NGG_SCRIPT_VERSION
 			);
 
 			wp_enqueue_script(
 				'ngg-igw',
 				$router->get_static_url('photocrati-attach_to_post#igw.js'),
-				array('jquery', 'Base64'),
+				array('jquery', 'Base64', 'gritter'),
 				NGG_PLUGIN_VERSION
 			);
 			wp_localize_script('ngg-igw', 'ngg_igw_i18n', array(
