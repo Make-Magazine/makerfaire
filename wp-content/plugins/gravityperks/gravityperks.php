@@ -3,7 +3,7 @@
  * Plugin Name: Gravity Perks
  * Plugin URI: http://gravitywiz.com/
  * Description: Effortlessly install and manage small functionality enhancements (aka "perks") for Gravity Forms.
- * Version: 2.0.8
+ * Version: 2.0.11
  * Author: Gravity Wiz
  * Author URI: http://gravitywiz.com/
  * License: GPL2
@@ -11,7 +11,7 @@
  * Domain Path: /languages
  */
 
-define( 'GRAVITY_PERKS_VERSION', '2.0.8' );
+define( 'GRAVITY_PERKS_VERSION', '2.0.11' );
 
 /**
  * Include the perk model as early as possible to when Perk plugins are loaded, they can safely extend
@@ -1938,7 +1938,8 @@ class GP_Late_Static_Binding {
 		$this->args = wp_parse_args( $args, array(
 			'form_id' => 0,
 			'message' => '',
-			'class' => ''
+			'class' => '',
+			'value' => ''
 		) );
 	}
 
@@ -1953,6 +1954,10 @@ class GP_Late_Static_Binding {
 	public function Perk_array_push( $array ) {
 		$array[] = $this->args['value'];
 		return $array;
+	}
+
+	public function Perk_value_pass_through( $return ) {
+		return $this->args['value'];
 	}
 
 }
