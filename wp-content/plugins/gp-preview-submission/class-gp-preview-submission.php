@@ -3,7 +3,7 @@
 class GP_Preview_Submission extends GWPerk {
 
     public $version = GP_PREVIEW_SUBMISSION_VERSION;
-    public $min_gravity_perks_version = '1.2';
+    public $min_gravity_perks_version = '2.0.11';
     public $min_gravity_forms_version = '1.8';
     public $min_wp_version = '3.7';
 
@@ -27,10 +27,13 @@ class GP_Preview_Submission extends GWPerk {
 
         if( class_exists( 'GWPreviewConfirmation' ) ) {
             if( is_user_logged_in() ) {
-                $message = 'You are including the <a href="http://gravitywiz.com/better-pre-submission-confirmation/">GWPreviewConfirmation snippet</a>.
-                            The <b>GP Preview Submission</b> perk loads the latest version of this snippet. Please remove your copy of this snippet.';
-                $message_function = create_function( '', 'GWPerks::display_admin_message(\'<p>' . $message . '</p>\', \'error\');' );
-                add_action( 'admin_notices', $message_function );
+                add_action( 'admin_notices', array(
+	                new GP_Late_Static_Binding( array(
+						'message' => '<p>You are including the <a href="http://gravitywiz.com/better-pre-submission-confirmation/">GWPreviewConfirmation snippet</a>. The <b>GP Preview Submission</b> perk loads the latest version of this snippet. Please remove your copy of this snippet.</p>',
+						'class' => 'error'
+					) ),
+	                'GravityPerks_display_admin_message'
+                ) );
             }
         } else {
             require_once( 'includes/gw-gravity-forms-preview-confirmation.php' );

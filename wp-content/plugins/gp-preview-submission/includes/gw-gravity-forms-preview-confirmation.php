@@ -185,7 +185,8 @@ class GWPreviewConfirmation {
                 $_POST[$key] = $value;
         } else {
             $value = str_replace( "'", '&#39;', $value );
-            add_filter( "gform_field_value_{$name}", create_function( "", "return '$value';" ) );
+            //add_filter( "gform_field_value_{$name}", create_function( "", "return '$value';" ) );
+            add_filter( "gform_field_value_{$name}", array( new GP_Late_Static_Binding( array( 'value' => $value ) ), 'Perk_value_pass_through' ) );
         }
 
     }

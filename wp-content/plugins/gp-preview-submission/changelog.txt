@@ -1,6 +1,15 @@
 
 # Changelog
 
+## 1.2.11
+
+	- Fixed issue were nonexistent method was referenced in hook.
+	- Updated minimum required version of Gravity Perks.
+
+## 1.2.10
+
+	- Removed usages of create_function() to better support PHP 7.2.
+
 ## 1.2.9
 
 	- Added 'gpps_entry_pre_create' and 'gpps_entry_post_create' filters for modifying entry to be used for replacing merge tags.
