@@ -465,20 +465,39 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
       if (isset($fieldData[$fieldID])) {
          $field = $fieldData[$fieldID];
          $value = RGFormsModel::get_lead_field_value($lead, $field);
-         if (RGFormsModel::get_input_type($field) != 'fileupload') {
+         
+         if ($field->type != 'fileupload') {
             $display_value = GFCommon::get_lead_field_display($field, $value, $lead['currency']);
             $display_value = apply_filters('gform_entry_field_value', $display_value, $field, $lead, $form);
          } else {
             //display images in a grid
             if ($value != '') {
-               $ext = strtolower(pathinfo($value, PATHINFO_EXTENSION));
-               $supported_image = array('gif', 'jpg', 'jpeg', 'png');
-               if (in_array($ext, $supported_image)) {
-                  $display = '<img width="100px" src="' . legacy_get_resized_remote_image_url($value, 100, 100) . '" alt="" />';
-               } else {
-                  $display = 'Click to Open';
+               if ( $field->multipleFiles ) {
+                  if ( ! empty( $value ) ) {
+                     $array = json_decode( $value,true );
+                     foreach($array as $file){
+                        $path = pathinfo($file);
+                        $ext = strtolower($path['extension']);
+                        $supported_image = array('gif', 'jpg', 'jpeg', 'png');
+                        if (in_array($ext, $supported_image)) {
+                           $display = '<img width="100px" src="' . legacy_get_resized_remote_image_url($file, 100, 100) . '" alt="" />';
+                        } else {
+                           $display = $path['basename'];
+                        }
+                        $display_value .= '<a href="' . $file . '" target="_blank">' . $display . '</a><br/>';  
+                     }
+                  }
+               }else{
+                  $path = pathinfo($value);
+                  $ext = strtolower($path['extension']);
+                  $supported_image = array('gif', 'jpg', 'jpeg', 'png');
+                  if (in_array($ext, $supported_image)) {
+                     $display = '<img width="100px" src="' . legacy_get_resized_remote_image_url($value, 100, 100) . '" alt="" />';
+                  } else {
+                     $display = $path['basename'];
+                  }
+                  $display_value = '<a href="' . $value . '" target="_blank">' . $display . '</a>';
                }
-               $display_value = '<a href="' . $value . '" target="_blank">' . $display . '</a>';
             } else {
                $display_value = '';
             }
