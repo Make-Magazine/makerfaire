@@ -302,11 +302,11 @@ function gf_collapsible_sections($form, $lead) {
       $fieldData[$field['id']] = $field;
    }
 
-   $data = array('content' => array(11, 16, 320, 321, 66, 67, 293),
-       'logistics' => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76),
-       'additional' => array(123, 130, 287, 134, 37, 38, 41),
-       'images' => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219),
-       'imagesOver' => array(324, 334, 326, 338, 333, 337, 332, 336, 331, 335)
+   $data =  array('content'      => array(11, 16, 320, 321, 66, 67, 293),
+                  'logistics'    => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76),                  
+                  'additional'   => array(123, 130, 287, 134, 37, 38, 41),
+                  'images'       => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219),
+                  'imagesOver'   => array(324, 334, 326, 338, 333, 337, 332, 336, 331, 335)
    );
    //additional Entries
    $addEntries = '<table width="100%">
@@ -386,7 +386,8 @@ function gf_collapsible_sections($form, $lead) {
         ' . displayContent($data['content'], $lead, $fieldData) . '
       </div>
       <div role="tabpanel" class="tab-pane" id="tabs-2">
-        ' . displayContent($data['logistics'], $lead, $fieldData) . '
+        ' . displayContent($data['logistics'], $lead, $fieldData) . 
+        '
       </div>
       <div role="tabpanel" class="tab-pane" id="additional">
         ' . displayContent($data['additional'], $lead, $fieldData) . '
@@ -406,8 +407,8 @@ function gf_collapsible_sections($form, $lead) {
         ' . $addEntries . '
       </div>
       <div role="tabpanel" class="tab-pane"  id="images">
-        ' . displayContent($data['images'], $lead, $fieldData, 'grid') . '
-        ' . displayContent($data['imagesOver'], $lead, $fieldData, 'grid') . '
+        ' . displayContent($data['images'], $lead, $fieldData) . '
+        ' . displayContent($data['imagesOver'], $lead, $fieldData) . '
       </div>
 
       <div role="tabpanel" class="tab-pane"  id="resources">
@@ -458,7 +459,7 @@ function gf_collapsible_sections($form, $lead) {
 function displayContent($content, $lead, $fieldData, $display = 'table') {
    global $display_empty_fields;
    $return = '';
-   if ($display == 'table')
+   if ($display === 'table')
       $return .= '<table>';
    $form = GFAPI::get_form($lead['form_id']);
 
@@ -481,11 +482,11 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
                         $ext = strtolower($path['extension']);
                         $supported_image = array('gif', 'jpg', 'jpeg', 'png');
                         if (in_array($ext, $supported_image)) {
-                           $display = '<img width="100px" src="' . legacy_get_resized_remote_image_url($file, 100, 100) . '" alt="" />';
+                           $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($file, 100, 100) . '" alt="" />';
                         } else {
-                           $display = $path['basename'];
+                           $displayItem = $path['basename'];
                         }
-                        $display_value .= '<a href="' . $file . '" target="_blank">' . $display . '</a><br/>';  
+                        $display_value .= '<a href="' . $file . '" target="_blank">' . $displayItem . '</a><br/>';  
                      }
                   }
                }else{
@@ -493,11 +494,11 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
                   $ext = strtolower($path['extension']);
                   $supported_image = array('gif', 'jpg', 'jpeg', 'png');
                   if (in_array($ext, $supported_image)) {
-                     $display = '<img width="100px" src="' . legacy_get_resized_remote_image_url($value, 100, 100) . '" alt="" />';
+                     $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($value, 100, 100) . '" alt="" />';
                   } else {
-                     $display = $path['basename'];
+                     $displayItem = $path['basename'];
                   }
-                  $display_value = '<a href="' . $value . '" target="_blank">' . $display . '</a>';
+                  $display_value = '<a href="' . $value . '" target="_blank">' . $displayItem . '</a>';
                }
             } else {
                $display_value = '';
@@ -507,26 +508,27 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
 
          if ($display_empty_fields || !empty($display_value) || $display_value === '0') {
             $display_value = empty($display_value) && $display_value !== '0' ? '&nbsp;' : $display_value;
-            if ($display == 'table') {
+            if ($display === 'table') {
                $content = '
-                <tr>
-                <td colspan="2" class="entry-view-field-name">' . esc_html(GFCommon::get_label($field)) . '</td>
-                </tr>
-                <tr>
-                <td colspan="2" class="entry-view-field-value">' . $display_value . '</td>
-                </tr>';
+                  <tr>
+                     <td colspan="2" class="entry-view-field-name">' . esc_html(GFCommon::get_label($field)) . '</td>
+                  </tr>
+                  <tr>
+                     <td colspan="2" class="entry-view-field-value">' . $display_value . '</td>
+                  </tr>';
             } else {
-               $content = '<div style="' . ($field['cssClass'] == '' ? 'float:left;' : '') . 'padding:5px;margin:10px" class="' . $field['cssClass'] . '">' . esc_html(GFCommon::get_label($field)) . '<br/>' . $display_value . '</div>';
+               $content = '<div style="' . ($field->cssClass === '' ? 'float:left;' : '') . 'padding:5px;margin:10px" class="' . $field['cssClass'] . '">' . esc_html(GFCommon::get_label($field)) . '<br/>' . $display_value . '</div>';
             }
             $content = apply_filters('gform_field_content', $content, $field, $value, $lead['id'], $form['id']);
             $return .= $content;
          }
       }
    }
-   if ($display == 'table')
+   if ($display === 'table')
       $return .= '</table>';
-   if ($display == 'grid')
+   if ($display === 'grid')
       $return .= '<div class="clear"></div>';
+   
    return $return;
 }
 
