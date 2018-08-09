@@ -1,7 +1,7 @@
 <?php
   class eventbrite {
     var $endpoint = 'https://www.eventbriteapi.com/v3/';
-    var $token    = 'RA7GMY66GFHXIXT2AQYD'; //oauth token
+    var $token    = 'DGP75OB7ME3EQO3OIL'; //oauth token
 
 
 
