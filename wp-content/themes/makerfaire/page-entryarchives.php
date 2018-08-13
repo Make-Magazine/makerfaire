@@ -80,6 +80,7 @@ if(!empty($my_posts)){
         $json =  stripslashes(urldecode( $my_posts[0]->post_content )) ;
         $json = json_decode($json);
         //print_r($json);
+        if(isset($json->form_type)){
          switch ($json->form_type) {
               case 'exhibit':
                       $project_faire = $json->maker_faire;
@@ -121,6 +122,7 @@ if(!empty($my_posts)){
                                               'photo'=>$json->presenter_photo[0]);
                         break;
             }
+         }
     }
   $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 }else{
