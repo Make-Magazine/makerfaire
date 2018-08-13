@@ -4,7 +4,7 @@
       <div class="col-md-6">
         <h3>Forms</h3>
         Search Forms: <input type="text" ng-model="formSearch">
-        <select name="formSelect" ng-model="reports.formSelect" multiple>
+        <select name="formSelect" ng-model="reports.formSelect" multiple style="max-width: -webkit-fill-available;">
           <option ng-repeat="form in reports.forms | filter:formSearch" value="{{form.id}}">{{form.id}} - {{form.name}}</option>
         </select>
       </div>
