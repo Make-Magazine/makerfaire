@@ -62,7 +62,7 @@ $tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 's
     'options'     => array('Proposed'=>'Proposed','Accepted'=>'Accepted','Rejected'=>'Rejected','Wait List'=>'Wait List','Cancelled'=>'Cancelled'));
 $tableFields['wp_mf_lead_detail_changes']['colDefs'][] = array('fieldName' => 'form_id', 'filterType' => 'text', 'visible' => false);
 $tableFields['wp_mf_lead_detail_changes']['query'] =
-          'SELECT lead_id, DATE_FORMAT(date_updated,"%Y-%m-%dT%TZ") as date_updated, field_id, fieldLabel, field_before, field_after, status_at_update, wp_gf_entry.form_id, '
+          'SELECT lead_id, DATE_FORMAT(wp_mf_lead_detail_changes.date_updated,"%Y-%m-%dT%TZ") as date_updated, field_id, fieldLabel, field_before, field_after, status_at_update, wp_gf_entry.form_id, '
         . '     (SELECT meta_value as value FROM `wp_gf_entry_meta` where meta_key="303" and wp_gf_entry_meta.entry_id =wp_mf_lead_detail_changes.lead_id ) as status, '
         . '     (SELECT user_email FROM `wp_users` where wp_users.ID =user_id ) as user_email '
         . 'FROM wp_mf_lead_detail_changes '
@@ -96,4 +96,4 @@ $tableFields['wp_mf_location']['query'] =
         . 'left outer join  wp_mf_faire_area    on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
         . 'left outer join  wp_mf_schedule      on wp_mf_schedule.location_id = wp_mf_location.ID '
         . 'left outer join  wp_gf_entry         on wp_gf_entry.ID = wp_mf_location.entry_id '
-        . 'left outer join  wp_mf_faire         on find_in_set (form_id,wp_mf_faire.form_ids) > 0  where  wp_mf_faire.ID = '.$faire;
+        . 'left outer join  wp_mf_faire         on find_in_set (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0  where  wp_mf_faire.ID = '.$faire;
