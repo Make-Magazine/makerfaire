@@ -4,11 +4,11 @@
 add_action('admin_menu', 'national_remove_admin_submenus', 999);
 
 function national_remove_admin_submenus() {
-  $user = wp_get_current_user();
-  $is_national = ( in_array('national', (array) $user->roles) );
-  if ($is_national) {
-    remove_menu_page('gf_edit_forms');
-  }
+   $user = wp_get_current_user();
+   $is_national = ( in_array('national', (array) $user->roles) );
+   if ($is_national) {
+      remove_menu_page('gf_edit_forms');
+   }
 }
 
 //Remove edit forms

@@ -279,20 +279,19 @@ function getMTMentries($formIDs) {
     $formIDarr = array_map('intval', explode("-", $formIDs));
     $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
               lead_detail.form_id, area.area, subarea.subarea, subarea.nicename, subarea.sort_order,
-              lead_detail.value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
+              lead_detail.meta_value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
               location.latitude, location.longitude,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '22')  as photo,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '217') as mkr1_photo,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '151') as name,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '16')  as short_desc,
-              (select group_concat( value separator ', ') as cat   from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_value like '%320%' OR wp_gf_entry_meta.meta_key like '%321%')) as category
+              (select group_concat( meta_value separator ', ') as cat   from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_value like '%320%' OR wp_gf_entry_meta.meta_key like '%321%')) as category
                FROM wp_mf_schedule as schedule
                left outer join wp_mf_location as location on location_id = location.id
                left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
                left outer join wp_mf_faire_area area on area.id = subarea.area_id
                left outer join wp_gf_entry as lead on schedule.entry_id = lead.id
-               left outer join wp_gf_entry_meta as lead_detail on
-                   schedule.entry_id = lead_detail.entry_id and gf_entry_meta.meta_key = '303'
+               left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id and lead_detail.meta_key = '303'
                where lead.status = 'active' and lead_detail.meta_value='Accepted' "
             . " and lead_detail.form_id in(".implode(",",$formIDarr).") "
     /* code to hide scheduled items as they occur

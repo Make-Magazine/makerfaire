@@ -5,7 +5,7 @@ error_reporting(E_ALL); ini_set('display_errors', '1');
 //form id passed in url
 $form_id = (isset($_GET['form_id'])?$_GET['form_id']:0);
 
-//no form passed? Errir
+//no form passed? Error
 if($form_id==0){
   echo 'Please sumbit form_id variable';
 }else{

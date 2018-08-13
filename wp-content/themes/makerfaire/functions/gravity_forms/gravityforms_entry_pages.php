@@ -1,5 +1,5 @@
 <?php
-/* This function is used by the individual entry pages to display if this entry one any ribbons */
+/* This function is used by the individual entry pages to display if this entry won any ribbons */
 function checkForRibbons($postID=0,$entryID=0){
     global $wpdb;
     if($postID != 0){
@@ -58,7 +58,7 @@ function findOverride($entry_id, $type){
         $results = $wpdb->get_results($sql);
         if($wpdb->num_rows > 0){
 
-            return $results[0]->value;
+            return $results[0]->meta_value;
         }
     }
     return '';
