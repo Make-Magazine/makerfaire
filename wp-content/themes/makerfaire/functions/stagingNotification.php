@@ -24,7 +24,7 @@ function change_email_to($notification, $form, $entry) {
     
   if (Jetpack::is_staging_site()) {
     $notification['toType'] = 'email';
-    $notification['to']     = 'sianabrook@gmail.com';
+    $notification['to']     = 'alicia@makermedia.com,sianabrook@gmail.com,nofeno@makermedia.com';
     $notification['from']   = 'staging@makermedia.com';
     if (isset($notification['bcc']))
       $notification['bcc'] = '';
@@ -46,7 +46,7 @@ function change_email_for_wp($notification) {
   if(class_exists('Jetpack')){
   if (Jetpack::is_staging_site()) {
     $notification = array(
-      'to'          => 'alicia@makermedia.com',
+      'to'          => 'alicia@makermedia.com,sianabrook@gmail.com,nofeno@makermedia.com',
       'bcc'         => '',
       'from'        => 'staging@makermedia.com',
       'subject'     => $notification['subject'],
