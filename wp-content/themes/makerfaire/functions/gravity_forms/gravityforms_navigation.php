@@ -325,7 +325,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
     $args[] = array(
         'id' => 'mf_admin_parent_rmt',
         'title' => 'RMT',
-        'href' => 'https://makerfaire.com/resource-mgmt/',
+        'href' => '/resource-mgmt/',
         'meta' => array('class' => 'my-toolbar-page'),
         'target' => '_blank',
         'parent' => 'mf_admin_parent'
