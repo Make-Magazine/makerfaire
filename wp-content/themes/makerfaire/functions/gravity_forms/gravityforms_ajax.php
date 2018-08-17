@@ -526,8 +526,8 @@ function duplicate_entry_data($form_change,$current_entry_id ){
   $lead_meta_table   = 'wp_gf_entry_meta';
 
   //pull existing entries information
-  $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table          WHERE      id=%d", $current_entry_id));
-  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value, "
+  $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table WHERE id=%d", $current_entry_id));
+  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value "
                                                     . "  FROM $lead_detail_table "
                                                     . " WHERE entry_id=%d", $current_entry_id));
 
