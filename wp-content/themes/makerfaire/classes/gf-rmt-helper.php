@@ -36,7 +36,10 @@ class GFRMTHELPER {
     $user = (isset($current_user->ID) ? $current_user->ID:NULL);
 
     //set faire_location for this entry
-    $faire_location= $wpdb->get_var("select faire_location from wp_mf_faire where FIND_IN_SET (".$form['id'] . ",wp_mf_faire.non_public_forms)> 0");
+    $faire_location= $wpdb->get_var("SELECT faire_location "
+                                 . "   FROM wp_mf_faire "
+                                 . "   WHERE FIND_IN_SET (".$form['id'] . ",wp_mf_faire.non_public_forms)> 0 OR "
+                                 . "         FIND_IN_SET (".$form['id'] . ",wp_mf_faire.form_ids)> 0");
 
     /* RMT logic is stored in wp_rmt_rules and wp_rmt_rules_logic */
 
