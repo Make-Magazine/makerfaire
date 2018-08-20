@@ -536,9 +536,10 @@ function getmetaData($entry_id, $type = '') {
    $return = '';
    $metaData = mf_get_form_meta('entry_id', $entry_id);
 
+   
    $formCount = 0;
    foreach ($metaData as $data) {
-      $entry = GFAPI::get_entry($data->lead_id);
+      $entry = GFAPI::get_entry($data->entry_id);
       //check if entry-id is valid
       if (is_array($entry)) {  //display entry data
          $formPull = GFAPI::get_form($data->form_id);
