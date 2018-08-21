@@ -400,7 +400,20 @@ function get3ColLayout() {
 
 function get1ColLayout() {
    //get data submitted on admin page
-   $hero_image = get_sub_field('hero_image');
+         
+   //loop thru and randomly select an image.
+   $hero_array = array();
+   if (have_rows('hero_image_repeater')) {
+      // loop through the rows of data
+      
+      while (have_rows('hero_image_repeater')) {
+         the_row();
+         $hero_image_random = get_sub_field('hero_image_random');
+         $hero_array[] = $hero_image_random['url'];
+      }
+      $randKey = array_rand($hero_array,1);      
+      $hero_image = $hero_array[$randKey];              
+   }
    $hero_text = get_sub_field('column_title');
    $cta_button = get_sub_field('cta_button');
    $cta_button_url = get_sub_field('cta_button_url');
