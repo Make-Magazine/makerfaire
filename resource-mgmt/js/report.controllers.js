@@ -197,7 +197,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
     var subTitle  = '';
 
     if(subRoute==='change') {
-      tablename = 'wp_rg_lead_detail_changes';
+      tablename = 'wp_mf_lead_detail_changes';
       subTitle  = 'Entry Change Report';
     } else if(subRoute==='drill') {
       tablename = 'wp_rmt_entry_resources';

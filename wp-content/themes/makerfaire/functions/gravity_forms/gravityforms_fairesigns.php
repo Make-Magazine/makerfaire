@@ -94,11 +94,11 @@ function genTableTags($faire) {
 
     $form = GFAPI::get_form($formId);
     if($form['form_type']=='Exhibit' || $form['form_type']=='Sponsor' || $form['form_type']=='Startup Sponsor'){
-      $sql = "SELECT wp_rg_lead.id as lead_id, wp_rg_lead_detail.value as lead_status "
-          . " FROM `wp_rg_lead`, wp_rg_lead_detail"
-          . " where status='active' and field_number=303 and lead_id = wp_rg_lead.id"
-          . "   and wp_rg_lead_detail.value!='Rejected' and wp_rg_lead_detail.value!='Cancelled'"
-          . "   and wp_rg_lead.form_id=".$formId;
+      $sql = "SELECT wp_gf_entry.id as lead_id, wp_gf_entry_meta.meta_value as lead_status "
+          . " FROM `wp_gf_entry`, wp_gf_entry_meta"
+          . " where status='active' and meta_key='303' and lead_id = wp_gf_entry.id"
+          . "   and wp_gf_entry_meta.meta_value!='Rejected' and wp_gf_entry_meta.meta_value!='Cancelled'"
+          . "   and wp_gf_entry.form_id=".$formId;
       $results = $wpdb->get_results($sql);
 
       echo 'Form - '.$formId;
@@ -133,17 +133,17 @@ function createSignZip(){
 
 
     //create array of subareas
-    $sql = "SELECT wp_rg_lead.ID as entry_id, wp_rg_lead.form_id,
-          (select value from wp_rg_lead_detail where field_number=303 and wp_rg_lead_detail.lead_id = wp_rg_lead.ID) as entry_status,
+    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
+          (select meta_value as value from wp_gf_entry_meta where meta_key='303' and wp_gf_entry_meta.entry_id = wp_gf_entry.ID) as entry_status,
           wp_mf_faire_subarea.area_id, wp_mf_faire_area.area, wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea,wp_mf_location.location
-          FROM wp_mf_faire, wp_rg_lead
-          left outer join wp_mf_location on wp_rg_lead.ID  = wp_mf_location.entry_id
+          FROM wp_mf_faire, wp_gf_entry
+          left outer join wp_mf_location on wp_gf_entry.ID  = wp_mf_location.entry_id
           left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id  = wp_mf_faire_subarea.id
           left outer join wp_mf_faire_area    on wp_mf_faire_subarea.area_id  = wp_mf_faire_area.id
           where faire = '$faire'
-          and wp_rg_lead.status  != 'trash'
-          and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0
-          and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.non_public_forms)<= 0";
+          and wp_gf_entry.status  != 'trash'
+          and FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0
+          and FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.non_public_forms)<= 0";
     $results = $wpdb->get_results($sql);
     $entries = array();
 
@@ -225,11 +225,11 @@ function createEntList() {
     foreach($forms as $formId){
       $form = GFAPI::get_form($formId);
       if($form['form_type']=='Exhibit' || $form['form_type']=='Sponsor' || $form['form_type']=='Startup Sponsor'){
-        $sql = "SELECT wp_rg_lead.id as lead_id, wp_rg_lead_detail.value as lead_status "
-            . " FROM `wp_rg_lead`, wp_rg_lead_detail"
-            . " where status='active' and field_number=303 and lead_id = wp_rg_lead.id"
-            . "   and wp_rg_lead_detail.value!='Rejected' and wp_rg_lead_detail.value!='Cancelled'"
-            . "   and wp_rg_lead.form_id=".$formId;
+        $sql = "SELECT wp_gf_entry.id as lead_id, wp_gf_entry_meta.meta_value as lead_status "
+            . " FROM `wp_gf_entry`, wp_gf_entry_meta"
+            . " where status='active' and meta_key=303 and wp_gf_entry_meta.entry_id = wp_gf_entry.id"
+            . "   and wp_gf_entry_meta.meta_value!='Rejected' and wp_gf_entry_meta.meta_value!='Cancelled'"
+            . "   and wp_gf_entry.form_id=".$formId;
         $results = $wpdb->get_results($sql);
 
         $entList.= 'Form - '.$formId;

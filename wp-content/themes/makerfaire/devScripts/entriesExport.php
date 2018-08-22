@@ -24,7 +24,7 @@ header('Expires: 0');
 
 $mysqli->query("SET NAMES 'utf8'");
 //get form data
-$sql = 'select display_meta from wp_rg_form_meta where form_id='.$form;
+$sql = 'select display_meta from wp_gf_form_meta where form_id='.$form;
 $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
   $json = json_decode($row['display_meta']);
@@ -61,29 +61,28 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
 }
 
 //entry data
-$sql = "SELECT wp_rg_lead_detail.*,wp_rg_lead_detail_long.value as 'long value'
-        FROM wp_rg_lead
-          left outer join wp_rg_lead_detail
-            on wp_rg_lead_detail.lead_id = wp_rg_lead.id
-          left OUTER join wp_rg_lead_detail_long
-            ON wp_rg_lead_detail.id = wp_rg_lead_detail_long.lead_detail_id
-        where wp_rg_lead.form_id = $form
-        and wp_rg_lead.status='active'
-        ORDER BY lead_id asc, field_number asc";
+$sql = "SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value as value
+        FROM wp_gf_entry
+          left outer join wp_gf_entry_meta
+            on wp_gf_entry_meta.entry_id = wp_gf_entry.id
+        where wp_gf_entry.form_id = $form
+        and wp_gf_entry.status='active'
+        ORDER BY gf_entry_meta.entry_id asc, gf_entry_meta.meta_value asc";
+
 //loop thru entry data
 $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 $entryData = array();
 
 foreach($entries as $entry){
-  $fieldNum = (string) $entry['field_number'];
+  $fieldNum = (string) $entry['meta_key'];
   //field 302 and 320 is stored as category number, use cross reference to find text value
   if($fieldNum=='320' || strpos($fieldNum, '321.')!== false || strpos($fieldNum, '302.')!== false){
     $value = get_CPT_name($entry['value']);
   }else{
-    $value = (isset($entry['long_value']) && $entry['long_value']!=''?$entry['long_value']:$entry['value']);
+    $value = $entry['value'];
   }
   $value = htmlspecialchars_decode ($value);
-  $entryData[$entry['lead_id']][$fieldNum]=$value;
+  $entryData[$entry['entry_id']][$fieldNum]=$value;
 }
 
 // create a file pointer connected to the output stream

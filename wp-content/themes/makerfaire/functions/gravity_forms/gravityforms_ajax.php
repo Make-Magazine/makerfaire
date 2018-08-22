@@ -383,7 +383,7 @@ function set_entry_status($lead,$form){
 
 	$field = GFFormsModel::get_field( $form, $input_id );
 
-	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id=%d AND  CAST(field_number AS CHAR) ='%s' order by id DESC limit 1", $entry_id, $input_id ) );
+	$lead_detail_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}gf_entry_meta WHERE entry_id=%d AND  CAST(meta_key AS CHAR) ='%s' order by id DESC limit 1", $entry_id, $input_id ) );
 
 	$result = true;
   $result = GFFormsModel::update_lead_field_value( $form, $entry, $field, $lead_detail_id, $input_id, $value );
@@ -481,17 +481,17 @@ function set_form_id($lead,$form){
  function update_entry_form_id( $entry_id, $form_id ) {
 	global $wpdb;
 
-	$lead_table        = GFFormsModel::get_lead_table_name();
-	$lead_detail_table = GFFormsModel::get_lead_details_table_name();
-	$lead_meta_table   = GFFormsModel::get_lead_meta_table_name();
+	$lead_table        = 'wp_gf_entry';
+	$lead_detail_table = 'wp_gf_entry_meta';
+	$lead_meta_table   = 'wp_gf_entry_meta';
 	$result     = $wpdb->query(
 			$wpdb->prepare( "UPDATE $lead_table SET form_id={$form_id} WHERE id=%d ", $entry_id)
 	);
 	$wpdb->query(
-		$wpdb->prepare( "UPDATE $lead_detail_table SET form_id={$form_id} WHERE lead_id=%d ", $entry_id)
+		$wpdb->prepare( "UPDATE $lead_detail_table SET form_id={$form_id} WHERE entry_id=%d ", $entry_id)
 	);
 	$wpdb->query(
-			$wpdb->prepare( "UPDATE $lead_meta_table SET form_id={$form_id} WHERE lead_id=%d ", $entry_id)
+			$wpdb->prepare( "UPDATE $lead_meta_table SET form_id={$form_id} WHERE entry_id=%d ", $entry_id)
 	);
 
 	return $result;
@@ -521,13 +521,15 @@ function duplicate_entry_data($form_change,$current_entry_id ){
   global $wpdb;
   global $current_user;
 
-  $lead_table        = GFFormsModel::get_lead_table_name();
-  $lead_detail_table = GFFormsModel::get_lead_details_table_name();
-  $lead_meta_table   = GFFormsModel::get_lead_meta_table_name();
+  $lead_table        = 'wp_gf_entry';
+  $lead_detail_table = 'wp_gf_entry_meta';
+  $lead_meta_table   = 'wp_gf_entry_meta';
 
   //pull existing entries information
-  $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table          WHERE      id=%d", $current_entry_id));
-  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_rg_lead_detail.field_number, wp_rg_lead_detail.value, wp_rg_lead_detail_long.value as long_detail FROM $lead_detail_table left outer join wp_rg_lead_detail_long on  wp_rg_lead_detail_long.lead_detail_id = wp_rg_lead_detail.id WHERE lead_id=%d", $current_entry_id));
+  $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table WHERE id=%d", $current_entry_id));
+  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value "
+                                                    . "  FROM $lead_detail_table "
+                                                    . " WHERE entry_id=%d", $current_entry_id));
 
   // new lead
   $user_id    = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
@@ -542,19 +544,10 @@ function duplicate_entry_data($form_change,$current_entry_id ){
   $results=mf_add_note( $lead_id, 'Copied Entry ID:'.$current_entry_id.' into form '.$form_change.'. New Entry ID ='.$lead_id);
 
   foreach($current_fields as $row){
-    $fieldValue = ($row->field_number != 303? $row->value: 'Proposed');
+    $fieldValue = ($row->meta_key != '303'? $row->meta_value: 'Proposed');
 
-    $wpdb->query($wpdb->prepare("INSERT INTO $lead_detail_table(lead_id, form_id, field_number, value) VALUES(%d, %s, %s, %s)",
-            $lead_id, $form_change, $row->field_number, $fieldValue));
-
-    //if detail long is set, add row for new record
-
-    if($row->long_detail != 'NULL'){
-      $lead_detail_id = $wpdb->insert_id;
-
-      $wpdb->query($wpdb->prepare("INSERT INTO wp_rg_lead_detail_long(lead_detail_id, value) VALUES(%d, %s)",
-            $lead_detail_id, $row->long_detail));
-    }
+    $wpdb->query($wpdb->prepare("INSERT INTO $lead_detail_table(entry_id, form_id, meta_key, meta_value) VALUES(%d, %s, %s, %s)",
+            $lead_id, $form_change, $row->meta_key, $fieldValue));
   }
 
   //update/insert into maker tables
@@ -678,13 +671,13 @@ function add_note_sidebar($lead, $form){
 	$user_data = get_userdata( $current_user->ID );
 	$project_name = $lead['151'];
 	$email_to     = $_POST['gentry_email_notes_to_sidebar'];
-
+   
 	$email_note_info = '';
 
 	//emailing notes if configured
 	if ( !empty($email_to) ) {
 		GFCommon::log_debug( 'GFEntryDetail::lead_detail_page(): Preparing to email entry notes.' );
-		$email_to      = $_POST['gentry_email_notes_to_sidebar'];
+		//$email_to      = $_POST['gentry_email_notes_to_sidebar'];
 		$email_from    = $current_user->user_email;
 		$email_subject = stripslashes( 'Response Required Maker Application: '.$lead['id'].' '.$project_name);
 		$entry_url = get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=gf_entries&view=entry&id=' . $form['id'] . '&lid=' . rgar( $lead, 'id' );

@@ -26,6 +26,8 @@ var gvAdvancedFilters = {
 			.on( 'click', '.gform-add,.gform-remove', gvAdvancedFilters.lockCreatedBy )
 			.trigger( 'init' );
 
+		$( '<input type="hidden" name="mode" value="all" />' ).prependTo( gvAdvancedFilters.filters );
+
 		gform.addFilter( 'gform_datepicker_options_pre_init', gvAdvancedFilters.fixConstrainInput );
 
 	},
@@ -37,7 +39,7 @@ var gvAdvancedFilters = {
 	 */
 	lockCreatedBy: function( e ) {
 
-		var $mode = $('[name="mode"]', gvAdvancedFilters.filters );
+		var $mode = $('select[name="mode"]', gvAdvancedFilters.filters );
 
 		$mode.attr( 'disabled', null );
 

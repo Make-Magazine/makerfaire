@@ -2,7 +2,7 @@
 /*
 Plugin Name: Save and Continue Link Recovery for Gravity Forms
 Description: If a Gravity Forms form submitter loses their "Save and Continue" Link, this will help you recover it.
-Version: 1.0.0
+Version: 2.0
 Author: Leland Fiegel
 Author URI: https://leland.me/
 Text Domain: save-and-continue-link-recovery
@@ -50,7 +50,7 @@ function lelandf_save_and_continue_link_recovery_admin() {
 	global $wpdb;
 
 	// Make sure we're using the right database prefix
-	$table_name = $wpdb->prefix . 'rg_incomplete_submissions';
+	$table_name = $wpdb->prefix . 'gf_draft_submissions';
 
 	// Grab incomplete submissions
 	$incomplete_submissions = $wpdb->get_results(

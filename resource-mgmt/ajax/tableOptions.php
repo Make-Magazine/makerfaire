@@ -61,5 +61,5 @@ $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
 
 //Ribbons
 $tableOptions['wp_mf_ribbons']['addlFields']['form_id'] = array('fieldName' => 'form_id', 'fieldLabel' => 'Form ID',
-    'dataSql' =>'(SELECT form_id from wp_rg_lead where wp_rg_lead.ID = entry_id) as form_id'
+    'dataSql' =>'(SELECT form_id from wp_gf_entry where wp_gf_entry.ID = entry_id) as form_id'
     );

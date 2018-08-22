@@ -187,91 +187,82 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	if ( ! is_numeric( $sort_field_number ) || ! is_numeric( $offset ) || ! is_numeric( $page_size ) ) {
 		return '';
 	}
-	$lead_detail_table_name = GFFormsModel::get_lead_details_table_name();
-	$lead_table_name        = GFFormsModel::get_lead_table_name();
+	$lead_detail_table_name = 'wp_gf_entry_meta';
+	$lead_table_name        = 'wp_gf_entry';
 
 	$field_number_min = $sort_field_number - 0.0001;
 	$field_number_max = $sort_field_number + 0.0001;
 
 	$searchfield_number_min = $search_key - 0.0001;
 	$searchfield_number_max = $search_key + 0.9999;
-	$search_160 = "(field_number BETWEEN '159.9999' AND '160.9999' AND value like ( '%$search_value%' ))";
-	$search_158 = "(field_number BETWEEN '157.9999' AND '158.9999' AND value like ( '%$search_value%' ))";
-	$search_155 = "(field_number BETWEEN '154.9999' AND '155.9999' AND value like ( '%$search_value%' ))";
-	$search_166 = "(field_number BETWEEN '165.9999' AND '166.9999' AND value like ( '%$search_value%' ))";
-	$search_157 = "(field_number BETWEEN '156.9999' AND '157.9999' AND value like ( '%$search_value%' ))";
-	$search_159 = "(field_number BETWEEN '158.9999' AND '159.9999' AND value like ( '%$search_value%' ))";
-	$search_154 = "(field_number BETWEEN '153.9999' AND '154.9999' AND value like ( '%$search_value%' ))";
-	$search_109 = "(field_number BETWEEN '108.9999' AND '109.9999' AND value like ( '%$search_value%' ))";
-	$search_151 = "(field_number BETWEEN '150.9999' AND '151.9999' AND value like ( '%$search_value%' ))";
-	$search_16 = "(field_number BETWEEN '15.9999' AND '16.9999' AND value like ( '%$search_value%' ))";
-	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
+	$search_160 = "(meta_key BETWEEN '159.9999' AND '160.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_158 = "(meta_key BETWEEN '157.9999' AND '158.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_155 = "(meta_key BETWEEN '154.9999' AND '155.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_166 = "(meta_key BETWEEN '165.9999' AND '166.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_157 = "(meta_key BETWEEN '156.9999' AND '157.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_159 = "(meta_key BETWEEN '158.9999' AND '159.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_154 = "(meta_key BETWEEN '153.9999' AND '154.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_109 = "(meta_key BETWEEN '108.9999' AND '109.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_151 = "(meta_key BETWEEN '150.9999' AND '151.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_16  = "(meta_key BETWEEN '15.9999'  AND '16.9999'  AND meta_value like ( '%$search_value%' ))";
+	$accepted_criteria = "(meta_key BETWEEN '302.9999' AND '303.9999' AND meta_value = 'Accepted' )";
 
 
 	$sql = "
-
-	SELECT sorted.sort,sorted.value, l.*, d.field_number, d.value
-            FROM $lead_table_name l
-            INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-			INNER JOIN (
-            SELECT @rownum:=@rownum+1 as sort, l.lead_id as id, l.value
-			FROM (Select @rownum:=0) r, wp_rg_lead_detail l
-				INNER JOIN (
-						SELECT
-						lead_id as id
-						from $lead_detail_table_name
-						WHERE ( $search_160 OR $search_158 OR $search_155 OR $search_166 OR $search_157 OR $search_159 OR $search_154 OR $search_109 OR $search_151 OR $search_16)
-						AND form_id in ($form_id)
-					) filtered on l.lead_id=filtered.id
-					INNER JOIN
-				    (
-				    SELECT
-						lead_id as id
-						from $lead_detail_table_name
-						WHERE $accepted_criteria
-						AND form_id in ($form_id)
-						) accepted on l.lead_id=accepted.id
-				WHERE field_number  between $field_number_min AND $field_number_max AND l.form_id in ($form_id)
-		ORDER BY l.value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
+        SELECT sorted.sort,sorted.value, detail.*, d.meta_key, d.meta_value
+          FROM $lead_table_name l
+    INNER JOIN $lead_detail_table_name d ON d.entry_id = l.id
+    INNER JOIN (SELECT @rownum:=@rownum+1 as sort, l.entry_id as id, l.meta_value
+                  FROM (Select @rownum:=0) r, wp_gf_entry_meta detail
+            INNER JOIN (SELECT entry_id as id
+                          FROM $lead_detail_table_name
+                         WHERE ( $search_160 OR $search_158 OR $search_155 OR $search_166 OR $search_157 OR $search_159 OR $search_154 OR $search_109 OR $search_151 OR $search_16)
+                           AND form_id in ($form_id)
+                        ) filtered on l.entry_id=filtered.id
+            INNER JOIN (SELECT entry_id as id
+                          FROM $lead_detail_table_name
+                         WHERE $accepted_criteria
+                           AND form_id in ($form_id)
+                        ) accepted on l.entry_id=accepted.id
+				WHERE meta_key  between '$field_number_min' AND '$field_number_max' AND l.form_id in ($form_id)
+		ORDER BY l.meta_value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
         order by sorted.sort
 	";
 
 	return $sql;
-
-
 }
 
 function sort_by_field_count( $form_id, $searching ) {
 	global $wpdb;
 	$search_value       = isset( $searching['value'] ) ? $searching['value'] : '';
 
-	$lead_detail_table_name = GFFormsModel::get_lead_details_table_name();
-	$lead_table_name        = GFFormsModel::get_lead_table_name();
+	$lead_detail_table_name = 'wp_gf_entry_meta';
+	$lead_table_name        = 'wp_gf_entry';
 
-	$search_160 = "(field_number BETWEEN '159.9999' AND '160.9999' AND value like ( '%$search_value%' ))";
-	$search_158 = "(field_number BETWEEN '157.9999' AND '158.9999' AND value like ( '%$search_value%' ))";
-	$search_155 = "(field_number BETWEEN '154.9999' AND '155.9999' AND value like ( '%$search_value%' ))";
-	$search_166 = "(field_number BETWEEN '165.9999' AND '166.9999' AND value like ( '%$search_value%' ))";
-	$search_157 = "(field_number BETWEEN '156.9999' AND '157.9999' AND value like ( '%$search_value%' ))";
-	$search_159 = "(field_number BETWEEN '158.9999' AND '159.9999' AND value like ( '%$search_value%' ))";
-	$search_154 = "(field_number BETWEEN '153.9999' AND '154.9999' AND value like ( '%$search_value%' ))";
-	$search_109 = "(field_number BETWEEN '108.9999' AND '109.9999' AND value like ( '%$search_value%' ))";
-	$search_151 = "(field_number BETWEEN '150.9999' AND '151.9999' AND value like ( '%$search_value%' ))";
-	$search_16 = "(field_number BETWEEN '15.9999' AND '16.9999' AND value like ( '%$search_value%' ))";
-	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
+	$search_160 = "(meta_key BETWEEN '159.9999' AND '160.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_158 = "(meta_key BETWEEN '157.9999' AND '158.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_155 = "(meta_key BETWEEN '154.9999' AND '155.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_166 = "(meta_key BETWEEN '165.9999' AND '166.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_157 = "(meta_key BETWEEN '156.9999' AND '157.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_159 = "(meta_key BETWEEN '158.9999' AND '159.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_154 = "(meta_key BETWEEN '153.9999' AND '154.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_109 = "(meta_key BETWEEN '108.9999' AND '109.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_151 = "(meta_key BETWEEN '150.9999' AND '151.9999' AND meta_value like ( '%$search_value%' ))";
+	$search_16  = "(meta_key BETWEEN '15.9999'  AND '16.9999'  AND meta_value like ( '%$search_value%' ))";
+	$accepted_criteria = "(meta_key BETWEEN '302.9999' AND '303.9999' AND meta_value = 'Accepted' )";
 
 
 	$sql = "SELECT
-	count(distinct l.lead_id) as total_count
+	count(distinct l.entry_id) as total_count
 	from $lead_detail_table_name as l
 	INNER JOIN
 				    (
 				    SELECT
-						lead_id as id
+						entry_id as id
 						from $lead_detail_table_name
 						WHERE $accepted_criteria
 						AND form_id in ($form_id)
-						) accepted on l.lead_id=accepted.id
+						) accepted on l.entry_id=accepted.id
 	WHERE ( $search_160 OR $search_158 OR $search_155 OR $search_166 OR $search_157 OR $search_159 OR $search_154 OR $search_109 OR $search_151 OR $search_16)
 	AND form_id in ($form_id)
 	";

@@ -20,9 +20,9 @@ function update_mfTables($form,$limit=0,$start){
 
   global $wpdb;
   $sql = "Select id
-            from wp_rg_lead
+            from wp_gf_entry
            where form_id  = $form "
-       . " ORDER BY `wp_rg_lead`.`id` ASC "
+       . " ORDER BY `wp_gf_entry`.`id` ASC "
           ;
   if($limit!="0"){
     $sql .= " limit ".$start.', '.$limit;
@@ -44,20 +44,20 @@ add_action('cron_eb_ticketing', 'cron_genEBtickets');
 
 function cron_genEBtickets(){
   global $wpdb;
-  $sql =  "SELECT lead_id "
-        . "FROM   wp_mf_faire, wp_rg_lead_detail "
-        . "       left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
-        . "WHERE  field_number=303 and value='Accepted' "
-          . " and end_dt > now() "
-          . " and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
-          . " and eb_entry_access_code.EBticket_id is NULL "
-          . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL"
-          . " and wp_rg_lead_detail.form_id != 120 ";
+  $sql =  "SELECT           entry_id "
+        . "FROM             wp_mf_faire, wp_gf_entry_meta "
+        . "LEFT OUTER JOIN  eb_entry_access_code ON wp_gf_entry_meta.entry_id = eb_entry_access_code.entry_id "
+        . "WHERE  wp_gf_entry_meta.meta_key ='303' and wp_gf_entry_meta.meta_value='Accepted' "
+        . "  AND end_dt > now() "
+        . "  AND FIND_IN_SET (wp_gf_entry_meta.form_id,wp_mf_faire.form_ids)> 0 "
+        . "  AND eb_entry_access_code.EBticket_id is NULL "
+        . "  AND (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL"
+        . "  AND wp_gf_entry_meta.form_id != 120 ";
 
 $results = $wpdb->get_results($sql);
   foreach($results as $entry){
-    echo 'Creating ticket codes for '.$entry->lead_id.'<br/>';
-    $response = genEBtickets($entry->lead_id);
+    echo 'Creating ticket codes for '.$entry->entry_id.'<br/>';
+    $response = genEBtickets($entry->entry_id);
     if(isset($response['msg']))
       echo 'Ticket Response - '.$response['msg'].'<br/>';
   }

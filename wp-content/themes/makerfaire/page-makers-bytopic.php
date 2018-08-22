@@ -151,42 +151,41 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	if ( ! is_numeric( $sort_field_number ) || ! is_numeric( $offset ) || ! is_numeric( $page_size ) ) {
 		return '';
 	}
-	$lead_detail_table_name = GFFormsModel::get_lead_details_table_name();
-	$lead_table_name        = GFFormsModel::get_lead_table_name();
+	$lead_detail_table_name = 'wp_gf_entry_meta';
+	$lead_table_name        = 'wp_gf_entry';
 
 	$field_number_min = $sort_field_number - 0.0001;
 	$field_number_max = $sort_field_number + 0.0001;
 
 	$searchfield_number_min = $search_key - 0.0001;
 	$searchfield_number_max = $search_key + 0.9999;
-	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
+	$accepted_criteria = "(meta_key BETWEEN '302.9999' AND '303.9999' AND meta_value = 'Accepted' )";
 
 
 	$sql = "
-
-	SELECT sorted.sort,sorted.value, l.*, d.field_number, d.value
+	SELECT sorted.sort,sorted.value, l.*, d.meta_key, d.meta_value
             FROM $lead_table_name l
-            INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
+            INNER JOIN $lead_detail_table_name d ON d.entry_id = l.id
 			INNER JOIN (
-            SELECT @rownum:=@rownum+1 as sort, l.lead_id as id, l.value
-			FROM (Select @rownum:=0) r, wp_rg_lead_detail l
+            SELECT @rownum:=@rownum+1 as sort, l.entry_id as id, l.meta_value
+			FROM (Select @rownum:=0) r, wp_gf_entry_meta l
 				INNER JOIN (
 						SELECT
-						lead_id as id
+						entry_id as id
 						from $lead_detail_table_name
-						WHERE (field_number BETWEEN '$searchfield_number_min' AND '$searchfield_number_max' AND value IN ( '$search_value' ))
+						WHERE (meta_key BETWEEN '$searchfield_number_min' AND '$searchfield_number_max' AND value IN ( '$search_value' ))
 						AND form_id in ($form_id)
-					) filtered on l.lead_id=filtered.id
+					) filtered on l.entry_id=filtered.id
 				INNER JOIN
 				    (
 				    SELECT
-						lead_id as id
+						entry_id as id
 						from $lead_detail_table_name
 						WHERE $accepted_criteria
 						AND form_id in ($form_id)
-						) accepted on l.lead_id=accepted.id
-				WHERE field_number  between $field_number_min AND $field_number_max AND l.form_id in ($form_id)
-		ORDER BY l.value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
+						) accepted on l.entry_id=accepted.id
+				WHERE meta_key  between '$field_number_min' AND '$field_number_max' AND l.form_id in ($form_id)
+		ORDER BY l.meta_value ASC LIMIT $offset,$page_size ) sorted on sorted.id=l.id
         order by sorted.sort
 	";
 
@@ -200,10 +199,10 @@ function sort_by_field_count( $form_id, $searching ) {
 	$searchfield_number_min = $search_key - 0.0001;
 	$searchfield_number_max = $search_key + 0.9999;
 
-	$lead_detail_table_name = GFFormsModel::get_lead_details_table_name();
-	$lead_table_name        = GFFormsModel::get_lead_table_name();
+	$lead_detail_table_name = 'wp_gf_entry_meta';
+	$lead_table_name        = 'wp_gf_entry';
 
-	$accepted_criteria = "(field_number BETWEEN '302.9999' AND '303.9999' AND value = 'Accepted' )";
+	$accepted_criteria = "(meta_key BETWEEN '302.9999' AND '303.9999' AND meta_value = 'Accepted' )";
 
 
 	$sql = "SELECT count( distinct accepted.id ) as total_count
@@ -211,12 +210,12 @@ function sort_by_field_count( $form_id, $searching ) {
 						INNER JOIN
 				    (
 				    SELECT
-						lead_id as id
+						entry_id as id
 						from $lead_detail_table_name
 						WHERE $accepted_criteria
 						AND form_id in ($form_id)
-						) accepted on $lead_detail_table_name.lead_id=accepted.id
-						WHERE (field_number BETWEEN '$searchfield_number_min' AND '$searchfield_number_max' AND value IN ( '$search_value' ))
+						) accepted on $lead_detail_table_name.entry_id=accepted.id
+						WHERE (meta_key BETWEEN '$searchfield_number_min' AND '$searchfield_number_max' AND meta_value IN ( '$search_value' ))
 						AND form_id in ($form_id)
 	";
 

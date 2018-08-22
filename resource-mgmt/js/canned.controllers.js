@@ -218,7 +218,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":1700},
                 {"id":96, "label":"MAKER NAME", "choices":"", "type":"name",
-                 "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""},], "order":700
+                 "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""}], 
+                 "order":700
                 },
                 {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":800},
                 {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":900},

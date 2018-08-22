@@ -794,13 +794,9 @@ function getSponsorPanel() {
             </div>
          </div>
          <div class="row">
-            <div class="col-sm-7">
+            <div class="col-sm-12">
                <h4 class="sponsor-slide-title">' . ($year ? $year . ' ' : '') . 'Maker Faire Sponsors: <span class="sponsor-slide-cat"></span></h4>
-            </div>
-            <div class="col-sm-5">
-               <h5><a href="/sponsors">Become a sponsor</a></h5>
-               <h5><a href="' . $url . '">All sponsors</a></h5>
-            </div>
+            </div>            
          </div>
          <div class="row">
             <div class="col-xs-12">

@@ -47,20 +47,15 @@ if ($type == 'entity') {
   }
 
   $select_query = sprintf("
-     SELECT  entity.lead_id,
-            `entity`.`presentation_title`,
-            `entity`.`desc_short` as Description,
-            `entity`.`category` as `Categories`,
-            `entity`.`project_photo`,
-            entity.mobile_app_discover,
+    SELECT  entity.lead_id, `entity`.`presentation_title`, `entity`.`desc_short` as Description,
+            `entity`.`category` as `Categories`, `entity`.`project_photo`, entity.mobile_app_discover,
             (select group_concat( distinct maker_id separator ',') as Makers
              from wp_mf_maker_to_entity maker_to_entity
              where entity.lead_id               = maker_to_entity.entity_id AND
                    maker_to_entity.maker_type  != 'Contact'
              group by maker_to_entity.entity_id
             ) as exhibit_makers,
-            wp_rg_lead.form_id,
-            wp_rg_lead.status,
+            wp_gf_entry.form_id, wp_gf_entry.status,
             (select wp_mf_location.subarea_id
              from   wp_mf_location
              where  wp_mf_location.entry_id = entity.lead_id limit 1
@@ -71,14 +66,14 @@ if ($type == 'entity') {
              where  z.entry_id = entity.lead_id limit 1),null)
             as pin_venue
 
-    FROM    `wp_mf_entity` entity
-    JOIN wp_rg_lead on wp_rg_lead.id = entity.lead_id
-    JOIN wp_mf_faire on wp_mf_faire.faire  ='$faire'
-    LEFT JOIN wp_mf_onsitecheckin ON wp_rg_lead.id = wp_mf_onsitecheckin.entry_id
-    WHERE   entity.status = 'Accepted'
-    AND 	LOWER(entity.faire)='$faire'
-    AND   FIND_IN_SET (`wp_rg_lead`.`form_id`,wp_mf_faire.non_public_forms)<= 0
-    and 	wp_rg_lead.status = 'active'
+         FROM   `wp_mf_entity` entity
+         JOIN   wp_gf_entry on wp_gf_entry.id = entity.lead_id
+         JOIN   wp_mf_faire on wp_mf_faire.faire  ='$faire'
+    LEFT JOIN   wp_mf_onsitecheckin ON wp_gf_entry.id = wp_mf_onsitecheckin.entry_id
+        WHERE   entity.status = 'Accepted'
+          AND 	LOWER(entity.faire)='$faire'
+          AND   FIND_IN_SET (`wp_gf_entry`.`form_id`,wp_mf_faire.non_public_forms)<= 0
+          AND 	wp_gf_entry.status = 'active'
     ");
   //echo $select_query;
   $mysqli->query("SET NAMES 'utf8'");

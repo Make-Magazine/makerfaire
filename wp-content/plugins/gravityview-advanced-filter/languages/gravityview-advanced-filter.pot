@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 msgid ""
 msgstr ""
-"Project-Id-Version: GravityView - Advanced Filter Extension 1.1\n"
+"Project-Id-Version: GravityView - Advanced Filter Extension 1.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
 "MIME-Version: 1.0\n"
@@ -24,31 +24,43 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:413 partials/metabox.php:2
+#: advanced-filter.php:415 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr ""
 
-#: advanced-filter.php:415
+#: advanced-filter.php:417
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr ""
 
-#: advanced-filter.php:416
+#: advanced-filter.php:418
 msgid "Limit to Logged-in User Entries"
 msgstr ""
 
-#: advanced-filter.php:417 advanced-filter.php:680
+#: advanced-filter.php:419 advanced-filter.php:751
 msgid "Created By"
 msgstr ""
 
-#: advanced-filter.php:417 advanced-filter.php:688
+#: advanced-filter.php:419 advanced-filter.php:759
 msgid "Currently Logged-in User"
 msgstr ""
 
-#: advanced-filter.php:418 advanced-filter.php:684
+#: advanced-filter.php:420 advanced-filter.php:755
 msgid "Currently Logged-in User (Disabled for Administrators)"
+msgstr ""
+
+#: advanced-filter.php:625
+msgid "Any Role of Current User"
+msgstr ""
+
+#: advanced-filter.php:663
+msgid "Created By User Role"
+msgstr ""
+
+#: advanced-filter.php:830
+msgid "Entry Approval Status"
 msgstr ""
 
 #: lib/EDD_SL_Plugin_Updater.php:201
@@ -91,7 +103,7 @@ msgstr ""
 msgid "Advanced Filtering requires Javascript to be enabled."
 msgstr ""
 
-#: advanced-filter.php:417
+#: advanced-filter.php:419
 msgctxt ""
 "First placeholder is \"Created By\" and second is \"Currently Logged-in "
 "User\""
@@ -100,7 +112,7 @@ msgid ""
 "\"is\" &amp; \"%s\" from the drop-down menus."
 msgstr ""
 
-#: advanced-filter.php:418
+#: advanced-filter.php:420
 msgctxt "The placeholder is \"Currently Logged-in User (Disabled for Administrators)\""
 msgid ""
 "If you want to limit entries to those created by the current user, but "

@@ -169,7 +169,7 @@ function updateChangeRPT($updates){
   global $wpdb;
   $inserts = array();
 
-  $sql = "insert into wp_rg_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel,status_at_update) values ";
+  $sql = "insert into wp_mf_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel,status_at_update) values ";
   foreach($updates as $update){
     //fields 320 and 302 are set as category id's. look up the category name and save this as the before and after field
     if($update['field_id']==320 || strpos($update['field_id'], '302.')!== false){

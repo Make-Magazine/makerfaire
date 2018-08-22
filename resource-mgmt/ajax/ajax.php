@@ -34,11 +34,11 @@ if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
     case "forms":
       if(isset($_POST['faire'])){
         $sql = 'SELECT * '
-             . '  FROM wp_rg_form, wp_mf_faire '
-             . ' WHERE  find_in_set (wp_rg_form.id,wp_mf_faire.non_public_forms) > 0 '
+             . '  FROM wp_gf_form, wp_mf_faire '
+             . ' WHERE  find_in_set (wp_gf_form.id,wp_mf_faire.non_public_forms) > 0 '
              . '   AND wp_mf_faire.id ='. $_POST['faire'] .' order by title';
       }else{
-        $sql = 'SELECT * FROM wp_rg_form order by title';
+        $sql = 'SELECT * FROM wp_gf_form order by title';
       }
 
       $data[$type] = $wpdb->get_results($sql);
@@ -421,7 +421,7 @@ function getDataByFaire($mysqli, $table, $selfaire) {
     //build data
     $query = 'SELECT  wp_mf_schedule.*,'
             . '(SELECT nicename FROM `wp_mf_location`, wp_mf_faire_subarea WHERE wp_mf_location.ID = 6319 and wp_mf_location.subarea_id = wp_mf_faire_subarea.id) as subarea, '
-            . '(SELECT value FROM `wp_rg_lead_detail` where field_number = "151" and lead_id = wp_mf_schedule.entry_id limit 1) as exName '
+            . '(SELECT meta_value  as value FROM `wp_gf_entry_meta` where meta_key = "151" and wp_gf_entry_meta.entry_id = wp_mf_schedule.entry_id limit 1) as exName '
             . ' from wp_mf_schedule, wp_mf_faire where wp_mf_faire.faire = wp_mf_schedule.faire and wp_mf_faire.id='.$selfaire;
 
     $result = $mysqli->query( $query );

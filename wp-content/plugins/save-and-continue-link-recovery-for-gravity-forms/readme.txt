@@ -1,9 +1,9 @@
 === Save and Continue Link Recovery for Gravity Forms ===
 Contributors: lelandf
-Tags: spam
+Tags: gravityforms
 Requires at least: 4.7
-Tested up to: 4.7.4
-Stable tag: 1.0.0
+Tested up to: 4.9.6
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: LICENSE
 
@@ -58,5 +58,8 @@ If I ever come across a similar need for another form plugin, I’ll make a new 
 
 == Changelog ==
 
-= 1.0.0 =
+= 2.0 =
+* Works with Gravity Forms 2.3.x which changed the database table name for incomplete submissions. Will no longer work with older versions of Gravity Forms.
+
+= 1.0 =
 * Initial release

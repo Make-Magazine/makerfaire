@@ -5,7 +5,7 @@ error_reporting(E_ALL); ini_set('display_errors', '1');
 //form id passed in url
 $form_id = (isset($_GET['form_id'])?$_GET['form_id']:0);
 
-//no form passed? Errir
+//no form passed? Error
 if($form_id==0){
   echo 'Please sumbit form_id variable';
 }else{
@@ -37,10 +37,10 @@ if($form_id==0){
   }
 
   //find all accepted entries in this form
-  $sql =  "SELECT wp_rg_lead.id as lead_id, wp_rg_lead.ip "
-        . "  FROM wp_rg_lead "
-        . "left outer join wp_rg_lead_detail on lead_id =wp_rg_lead.id and field_number=303 "
-        . " WHERE wp_rg_lead.status = 'active' and wp_rg_lead.form_id = ".$form_id." and value='Accepted'";
+  $sql =  "SELECT wp_gf_entry.id as lead_id, wp_gf_entry.ip "
+        . "  FROM wp_gf_entry "
+        . "left outer join wp_gf_entry_meta on wp_gf_entry_meta.entry_id =wp_gf_entry.id and wp_gf_entry_meta.meta_key=303 "
+        . " WHERE wp_gf_entry.status = 'active' and wp_gf_entry.form_id = ".$form_id." and wp_gf_entry_meta.meta_value='Accepted'";
   $results = $wpdb->get_results($sql);
   $accCount = 0;
   $entCount = 0;

@@ -36,15 +36,15 @@ function get_makers_from_app($app_id = 0) {
 
 function get_makerfaire_status_counts( $form_id ) {
 	global $wpdb;
-	$lead_details_table_name = RGFormsModel::get_lead_details_table_name();
+	$lead_details_table_name = 'wp_gf_entry_meta';
 	$sql             = $wpdb->prepare(
-			"SELECT count(0) as entries,value as label FROM $lead_details_table_name
-			      join wp_rg_lead lead 
-                                    on  lead.id = $lead_details_table_name.lead_id and 
-                                        lead.status = 'active'
-                        where field_number='303'
-			and $lead_details_table_name.form_id=%d
-			group by value",
+			"SELECT count(0) as entries, meta_value as label "
+    . "  FROM $lead_details_table_name
+			   JOIN wp_gf_entry lead on  lead.id = $lead_details_table_name.entry_id AND
+                                   lead.status = 'active'
+        WHERE meta_key = '303' AND
+              $lead_details_table_name.form_id=%d
+		GROUP BY meta_value",
 			$form_id
 	);
 

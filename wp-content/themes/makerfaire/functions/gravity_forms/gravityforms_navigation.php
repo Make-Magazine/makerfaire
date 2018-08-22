@@ -4,11 +4,11 @@
 add_action('admin_menu', 'national_remove_admin_submenus', 999);
 
 function national_remove_admin_submenus() {
-  $user = wp_get_current_user();
-  $is_national = ( in_array('national', (array) $user->roles) );
-  if ($is_national) {
-    remove_menu_page('gf_edit_forms');
-  }
+   $user = wp_get_current_user();
+   $is_national = ( in_array('national', (array) $user->roles) );
+   if ($is_national) {
+      remove_menu_page('gf_edit_forms');
+   }
 }
 
 //Remove edit forms
@@ -232,14 +232,14 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
   //build faire drop downs
   global $wpdb;
 
-  $sql = (isset($faire_id)) ? "select *, count(*) as count from wp_mf_faire, wp_rg_lead
-                where FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0 and
-                        wp_rg_lead.status = 'active' and faire='$faire_id'
+  $sql = (isset($faire_id)) ? "select *, count(*) as count from wp_mf_faire, wp_gf_entry
+                where FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0 and
+                        wp_gf_entry.status = 'active' and faire='$faire_id'
                 group by wp_mf_faire.faire
                 ORDER BY `wp_mf_faire`.`start_dt` DESC" :
-          "select *, count(*) as count from wp_mf_faire, wp_rg_lead
-                where FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0 and
-                        wp_rg_lead.status = 'active'
+          "select *, count(*) as count from wp_mf_faire, wp_gf_entry
+                where FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0 and
+                        wp_gf_entry.status = 'active'
                 group by wp_mf_faire.faire
                 ORDER BY `wp_mf_faire`.`faire_location` ASC, start_dt desc";
 
@@ -277,7 +277,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
       //Level 3 - Faire Form names
       $formSQL = "
             SELECT form_id,form.title,count(*) as count
-                    FROM `wp_rg_lead` join wp_rg_form form
+                    FROM `wp_gf_entry` join wp_gf_form form
                     WHERE form.id = form_id and `form_id` IN (" . $faireInfo['form_ids'] . ") and status = 'active'
                     group by form_id
                     ORDER BY FIELD(form_id, " . $faireInfo['form_ids'] . ")";
@@ -292,14 +292,17 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
             'parent' => 'mf_admin_parent_' . $faire));
 
         //Level 4 - entry status
-        $statusSql = "SELECT wp_rg_lead_detail.id,value,count(*)as count FROM `wp_rg_lead_detail` join wp_rg_lead on wp_rg_lead.id = lead_id "
-                . " WHERE wp_rg_lead.form_id = " . $formRow->form_id . "    AND wp_rg_lead_detail.field_number = 303 and status = 'active' group by value";
+        $statusSql = "SELECT wp_gf_entry_meta.id, meta_value, count(*) as count "
+                    . " FROM `wp_gf_entry_meta` "
+                    . " JOIN wp_gf_entry on wp_gf_entry.id = wp_gf_entry_meta.entry_id "
+                    . "WHERE wp_gf_entry.form_id = " . $formRow->form_id
+                    . "  AND wp_gf_entry_meta.meta_key = '303' and status = 'active' group by meta_value";
 
         foreach ($wpdb->get_results($statusSql) as $statusRow) {
           array_push($args,array(
               'id'      => 'mf_admin_subchild_' . $statusRow->id,
-              'title'   => $statusRow->value . ' (' . $statusRow->count . ')',
-              'href'    => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->value),
+              'title'   => $statusRow->meta_value . ' (' . $statusRow->count . ')',
+              'href'    => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->meta_value),
               'meta'    => array('class' => 'my-toolbar-page'),
               'parent' => 'mf_admin_child_' . $formRow->form_id));
         }
@@ -322,7 +325,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
     $args[] = array(
         'id' => 'mf_admin_parent_rmt',
         'title' => 'RMT',
-        'href' => 'https://makerfaire.com/resource-mgmt/',
+        'href' => '/resource-mgmt/',
         'meta' => array('class' => 'my-toolbar-page'),
         'target' => '_blank',
         'parent' => 'mf_admin_parent'

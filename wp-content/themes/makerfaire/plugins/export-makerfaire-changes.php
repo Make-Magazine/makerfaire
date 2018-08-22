@@ -577,10 +577,9 @@ class GFExport {
 		$go_to_next_page = true;
 
 		while ( $go_to_next_page ) {
-			$sql = "SELECT d.field_number as field_id, ifnull(l.value, d.value) as value
-                    FROM {$wpdb->prefix}rg_lead_detail d
-                    LEFT OUTER JOIN {$wpdb->prefix}rg_lead_detail_long l ON d.id = l.lead_detail_id
-                    WHERE d.form_id={$form['id']} AND cast(d.field_number as decimal) IN ({$field_ids})
+			$sql = "SELECT d.meta_key as field_id, meta_value as value
+                    FROM {$wpdb->prefix}gf_entry_meta d
+                    WHERE d.form_id={$form['id']} AND cast(d.meta_key as decimal) IN ({$field_ids})
                     LIMIT {$offset}, {$page_size}";
 
 			$results = $wpdb->get_results( $sql, ARRAY_A );

@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: gravityview
 Requires at least: 3.3
-Tested up to: 4.9.6
+Tested up to: 4.9.7
 Stable tag: trunk
 Contributors: katzwebservices
 License: GPL 3 or higher
@@ -15,6 +15,12 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 1.3 on July 11, 2018 =
+
+* Added: Filter entries by the role of the entry creator - big thanks to [Naomi C. Bush from gravity+](https://gravityplus.pro)!
+* Added: Filter by the roles of the currently logged-in user
+* Added: Filter by entry Approval Status without needing the Approval form field - [Learn how to filter by approval status](https://docs.gravityview.co/article/470-filtering-by-entry-approval-status)
 
 = 1.2 on May 23, 2018 =
 

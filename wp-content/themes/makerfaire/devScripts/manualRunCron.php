@@ -113,18 +113,18 @@ function createMFSignZip($area) {
 
 
     //create array of subareas
-    $sql = "SELECT wp_rg_lead.ID as entry_id, wp_rg_lead.form_id,
-          (select value from wp_rg_lead_detail where field_number=303 and wp_rg_lead_detail.lead_id = wp_rg_lead.ID) as entry_status,
+    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
+          (select meta_value as value from wp_gf_entry_meta where meta_key='303' and wp_gf_entry_meta.entry_id = wp_gf_entry.ID) as entry_status,
           wp_mf_faire_subarea.area_id, wp_mf_faire_area.area, wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea,wp_mf_location.location
-          FROM wp_mf_faire, wp_rg_lead
-          left outer join wp_mf_location on wp_rg_lead.ID  = wp_mf_location.entry_id
+          FROM wp_mf_faire, wp_gf_entry
+          left outer join wp_mf_location on wp_gf_entry.ID  = wp_mf_location.entry_id
           left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id  = wp_mf_faire_subarea.id
           left outer join wp_mf_faire_area    on wp_mf_faire_subarea.area_id  = wp_mf_faire_area.id
           where faire = '$faire'
-          and wp_rg_lead.status  != 'trash'
+          and wp_gf_entry.status  != 'trash'
           and wp_mf_faire_area.area = '$area'
-          and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.form_ids)> 0
-          and FIND_IN_SET (wp_rg_lead.form_id,wp_mf_faire.non_public_forms)<= 0";
+          and FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0
+          and FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.non_public_forms)<= 0";
 
     $results = $wpdb->get_results($sql);
     $entries = array();
@@ -187,27 +187,21 @@ function createMFSignZip($area) {
 }
 function mancron_genEBtickets(){
   global $wpdb;
-  $sql =  "SELECT lead_id "
-        . "FROM   wp_mf_faire, wp_rg_lead_detail "
-        . "       left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
-        . "WHERE  field_number=303 and value='Accepted' "
+  $sql =  "SELECT entry_id "
+        . "FROM   wp_mf_faire, wp_gf_entry_meta "
+        . "       left outer join eb_entry_access_code on wp_gf_entry_meta.entry_id =eb_entry_access_code.entry_id "
+        . "WHERE  meta_key='303' and meta_value='Accepted' "
           . " and end_dt > now() "
-          . " and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
+          . " and FIND_IN_SET (wp_gf_entry_meta.form_id,wp_mf_faire.form_ids)> 0 "
           . " and eb_entry_access_code.EBticket_id is NULL "
           . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL"
-          . " and wp_rg_lead_detail.form_id != 120 "
+          . " and wp_gf_entry_meta.form_id != 120 "
           . " limit 20";
-  /*$sql = "select lead_id, EBticket_id "
-          . "from wp_mf_faire, wp_rg_lead_detail "
-          . "left outer join eb_entry_access_code on wp_rg_lead_detail.lead_id =eb_entry_access_code.entry_id "
-          . "where field_number=303 and value='Accepted' "
-          . "and end_dt > now() "
-          . "and FIND_IN_SET (wp_rg_lead_detail.form_id,wp_mf_faire.form_ids)> 0 "
-          . "and eb_entry_access_code.EBticket_id is NULL ORDER BY `wp_rg_lead_detail`.`lead_id` ASC";*/
+
   $results = $wpdb->get_results($sql);
   foreach($results as $entry){
-    echo 'Creating ticket codes for '.$entry->lead_id.'<br/>';
-    $response = genEBtickets($entry->lead_id);
+    echo 'Creating ticket codes for '.$entry->entry_id.'<br/>';
+    $response = genEBtickets($entry->entry_id);
     if(isset($response['msg']))
       echo 'Ticket Response - '.$response['msg'].'<br/>';
   }
@@ -217,7 +211,7 @@ function cronRmtData($formID,$limit=0,$start=0) {
   echo 'Updating RMT for form '. $formID.'<br/>';
 
   global $wpdb;
-  $sql = "Select id from wp_rg_lead where form_id  = $formID  ORDER BY `wp_rg_lead`.`id` ASC ";
+  $sql = "Select id from wp_gf_entry where form_id  = $formID  ORDER BY `wp_gf_entry`.`id` ASC ";
   if($limit!="0"){
     $sql .= " limit ".$start.', '.$limit;
   }
@@ -263,7 +257,7 @@ function genManTickets($entryID=0, $parentID=0){
   }elseif($parentID!=0){
     echo 'Processing parent id '.$parentID.'<br/>';
     //process group entry tickets
-    $sql = "SELECT childID FROM `wp_rg_lead_rel` where parentID = ".$parentID;
+    $sql = "SELECT childID FROM `wp_mf_lead_rel` where parentID = ".$parentID;
 
     $results = $wpdb->get_results($sql);
     foreach($results as $row){
