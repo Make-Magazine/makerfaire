@@ -191,9 +191,9 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
           <div class="sched-col-1"></div>
         <!-- what is preventing all the days from displaying is that they are being displayed as tabs -->
 <!-- adding this to filters causes the code under dayFilter to go off but it prevents anything from showing up: | dayFilter: schedDay -->
-        <div class="tab-content sched-body">
-          <div ng-repeat="(schedDay,schedule) in schedules" id="Sched{{schedDay | date: 'EEEE'}}" class="tab-pane" ng-class="{'active':'{{schedDay | date: 'EEEE'}}' == dateFilter}">
-            <div ng-repeat="(key,daySched) in schedule | typeFilter: schedType | stageFilter: schedStage | catFilter:schedTopic | filter:filterData | orderBy:propertyName">
+        <div class="sched-body">
+          <div ng-repeat="(schedDay,schedule) in schedules">
+            <div ng-repeat="(key,daySched) in schedule | typeFilter: schedType | dateFilter: schedDay | stageFilter: schedStage | catFilter:schedTopic | filter:filterData | orderBy:propertyName track by $index">
               <div class="row sched-row">
                 <div class="sched-col-1">
                   <a href="/maker/entry/{{daySched.id}}">
