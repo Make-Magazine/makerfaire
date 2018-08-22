@@ -1,4 +1,4 @@
-  var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap','angular.filter']);
+  var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap','angular.filter', 'ngSanitize']);
   var weekday = new Array(7);
       weekday[1] = "Sunday";
       weekday[2] = "Monday";
@@ -9,6 +9,7 @@
       weekday[7] = "Saturday";
 
   scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
+
     $scope.showType = false;
     $scope.showSchedules = false;
     $scope.propertyName = 'time_start';
@@ -75,6 +76,8 @@
               }
             });
             schedule.category = categories;
+				// create a variable to enter into ng-bind-html so we can process links
+				$scope.eventDescription = schedule.desc;
           });
         });
 
@@ -128,7 +131,7 @@
       // Using the angular.forEach method, go through the array of data and perform the operation of figuring out if the language is statically or dynamically typed.
       angular.forEach(input, function(schedule) {
         var schedDOW = $filter('date')(schedule.time_start, "EEEE");
-        var schedDOW = weekday.indexOf(schedDOW)
+        var schedDOW = weekday.indexOf(schedDOW);
 
         if(schedDOW==dayOfWeek){
           out.push(schedule);
