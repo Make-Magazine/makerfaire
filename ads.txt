@@ -1,0 +1,45 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red11\green86\blue1;}
+\margl1440\margr1440\vieww17700\viewh13400\viewkind0
+\deftab720
+\pard\pardeftab720
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 # Ads.txt file for makerfaire.com:\
+\pard\pardeftab720
+
+\fs28 \cf3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \
+adtech.com, 11208, RESELLER\
+aolcloud.net, 11208, RESELLER\
+appnexus.com, 3703, RESELLER, f5ab79cb980f11d1\
+appnexus.com, 3911, RESELLER, f5ab79cb980f11d1\
+audienciad, 10296, DIRECT\
+contextweb.com, 560288, RESELLER, 89ff185a4c4e857c\
+coxmt.com, 2000068000102, RESELLER\
+districtm.io, 101080, RESELLER\
+google.com, pub-0000000000000000, RESELLER,\'a0f08c47fec0942fa0\
+google.com, pub-1711976718738240, DIRECT,\'a0f08c47fec0942fa0\
+google.com, pub-2544690397925674, RESELLER\
+google.com, pub-4207323757133151, RESELLER\
+google.com, pub-5231479214411897, RESELLER\
+indexexchange.com, 181630, RESELLER\
+indexexchange.com, 186669, RESELLER\
+lkqd.com, 252, RESELLER, 59c49fa9598a0117\
+lkqd.net, 252, RESELLER, 59c49fa9598a0117\
+openx.com, 537104839, RESELLER, 6a698e2ec38604c6\
+openx.com, 537139680, RESELLER, 6a698e2ec38604c6\
+openx.com, 537149888, RESELLER, 6a698e2ec38604c6\
+openx.com, 540119109, RESELLER, 6a698e2ec38604c54 \
+pubmatic.com, 154037, RESELLER\
+pubmatic.com, 156344, RESELLER, 5d62403b186f2ace\
+pubmatic.com, 156439, RESELLER\
+pubmatic.com, 6846, RESELLER, 5d62403b186f2ace\
+rubiconproject.com, 13344, RESELLER, 0bfd66d529a55807\
+rubiconproject.com, 16114, RESELLER, 0bfd66d529a55807\
+rubiconproject.com, 18034, RESELLER, 0bfd66d529a55807\
+smartadserver.com, 2995, RESELLER\
+sovrn.com, 257611, RESELLER, fafdf38b16bf6b2b\
+springserve.com, 105, RESELLER, a24eb641fc82e93d\
+synacor.com, 81465, RESELLER}
