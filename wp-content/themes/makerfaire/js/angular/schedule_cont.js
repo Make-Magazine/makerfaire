@@ -7,8 +7,13 @@
       weekday[5] = "Thursday";
       weekday[6] = "Friday";
       weekday[7] = "Saturday";
-  var filterdow = "All";
-
+  var filterdow = "All Days";
+  var dayParam =		getUrlParam("day");
+  var stageParam =	getUrlParam("stage");
+  var typeParam =		getUrlParam("type");
+  if(dayParam != undefined && dayParam != ""){
+	  filterdow = dayParam;
+  }
   scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
 
     $scope.showType = false;
@@ -28,6 +33,9 @@
         });
 
         $scope.schedStage = '';
+		  if(stageParam != undefined){
+			  $scope.schedStage = stageParam;
+		  }
         $scope.schedTopic = '';
         var unorderedSched = response.data.schedule;
         var schedules = {};
@@ -49,7 +57,7 @@
         angular.forEach($scope.schedules, function(scheduleDay, scheduleKey){
 
           $scope.days.push(scheduleKey);
-          if(defDOW=='All') {
+          if(defDOW=='All Days') {
             defDOW = $filter('date')(scheduleKey, "EEEE");
           }
           angular.forEach(scheduleDay, function(schedule){
@@ -99,7 +107,11 @@
       }).finally( function (){
        $scope.showSchedules = true;
        //after data is loaded set default schedule type and day of week
-       $scope.schedType = defType;
+		 if(typeParam != undefined && typeParam != ""){
+			  $scope.schedType = typeParam;
+		 }else{
+			  $scope.schedType = defType;
+		 }
        $scope.dateFilter = defDOW;
       });
     $scope.predicate = 'time_start';
@@ -114,9 +126,8 @@
     $scope.setDateFilter = function (date) {
       filterdow = $filter('date')(date, "EEEE");
 		if(filterdow == "" || filterdow == undefined) {
-			filterdow = 'All';
+			filterdow = 'All Days';
 		}
-      $scope.dateFilter = filterdow;
     };
     $scope.setStage = function(stage){
       $scope.schedStage = stage;
@@ -131,7 +142,8 @@
   }]).filter('dateFilter', function($filter) {
     // Create the return function and set the required parameter name to **input**
     return function(schedules,dayOfWeek) {
-		if(filterdow!='All'){
+		jQuery(".day-filter .btn-link span").html(filterdow);
+		if(filterdow!='All Days'){
 			var out = [];
 			// Using the angular.forEach method, go through the array of data and perform the operation of figuring out if the language is statically or dynamically typed.
 			angular.forEach(schedules, function(schedule) {
@@ -148,7 +160,8 @@
   }).filter('typeFilter', function() {
     // Create the return function and set the required parameter name to **input**
     return function(schedules,schedType) {
-      if(schedType!='All'){
+		jQuery(".type-filter .btn-link span").html(schedType);
+      if(schedType!='All Types'){
         var out = [];
         // Using the angular.forEach method, go through the array of data and perform the operation of figuring out if the language is statically or dynamically typed.
         angular.forEach(schedules, function(schedule) {
@@ -174,8 +187,10 @@
           }
         })
       }else{//return all
+		  stage = "All Stages";
         var out = schedules;
       }
+		jQuery(".stage-filter .btn-link span").html(stage);
       return out;
     }
 
