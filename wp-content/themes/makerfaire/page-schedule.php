@@ -224,7 +224,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
 
                   <div class="sched-col-4">{{daySched.nicename}}</div>
 
-                  <div class="sched-col-5 sched-type">
+                  <?php /* <div class="sched-col-5 sched-type">
                     <img ng-if="daySched.type == 'Demo'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Demo-icon.svg" alt="Maker Exhibit Demo Topic Icon" class="img-responsive" />
                     <img ng-if="daySched.type == 'Talk'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Talk-icon.svg" alt="Maker Exhibit Talk Topic Icon" class="img-responsive" />
                     <img ng-if="daySched.type == 'Workshop'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Workshop-icon.svg" alt="Maker Exhibit Workshop Topic Icon" class="img-responsive" />
@@ -235,7 +235,8 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                     <div class="overflow-ellipsis-text">
                       <span data-ng-repeat="catName in daySched.category">{{catName}}<font ng-show="!$last">, </font></span>
                     </div>
-                  </div>
+                  </div> */ ?>
+						 
                   <div class="col-xs-10 col-xs-offset-2 sched-more-info">
                     <div class="panel-heading">
                       <span ng-click="daySched.isCollapsed = !daySched.isCollapsed" ng-init="daySched.isCollapsed=true"><?php _e('quick view','MiniMakerFaire');?>
