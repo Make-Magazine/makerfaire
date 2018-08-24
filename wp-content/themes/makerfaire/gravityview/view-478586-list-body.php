@@ -364,7 +364,7 @@ $entries   = $tableData['data'];
   }//end check !empty?>
 
   <!-- Modal to cancel entry -->
-<div class="modal" id="cancelEntry">
+  <div class="modal" id="cancelEntry">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -409,6 +409,8 @@ $entries   = $tableData['data'];
       </div>
     </div>
   </div>
+	
 </div> <!-- / .maker-admin-manage-faire-entries-mobile -->
 <?php if(!empty($entries))  echo $maker->createPageLinks( 'pagination pagination-sm' );?>
-<?php get_footer();
+
+</div>
