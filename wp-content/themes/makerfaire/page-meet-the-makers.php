@@ -47,34 +47,41 @@ if($noMakerText =='') $noMakerText = 'No makers found';
             </ul>            
          </div>
          <div class="col-md-4">
-            <div class="dropdown">
-               <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                 <?php _e("Filter by Topics:",'makerfaire')?> {{category}}
-                 <i class="fa fa-chevron-down" aria-hidden="true"></i>
-               </button>
+            <div class="row">
+               <div class="col-md-12 col-md-6">
+                  <div class="dropdown">
+                     <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                       <?php _e("Filter by Topics:",'makerfaire')?> {{category}}
+                       <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                     </button>
 
-               <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
-                 <li>
-                   <a class="pointer-on-hover" ng-click="clearFilter()"><?php _e("All",'makerfaire')?></a>
-                 </li>
-                 <li ng-repeat="tag in tags | orderBy: tag">                     
-                   <a class="pointer-on-hover" ng-click="setTagFilter(tag)">{{ tag }}</a>
-                 </li>
-               </ul>
-            </div>
-            <div class="dropdown">
-               <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                 <?php _e("Filter by Location:",'makerfaire')?> {{location}}
-                 <i class="fa fa-chevron-down" aria-hidden="true"></i>
-               </button>
-               <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
-                  <li>
-                     <a class="pointer-on-hover" ng-click="setLocFilter('')"><?php _e("All",'makerfaire')?></a>
-                  </li>                  
-                  <li ng-repeat="location in locations | orderBy: location">                     
-                   <a class="pointer-on-hover" ng-click="setLocFilter(location)">{{ location }}</a>
-                 </li>
-                </ul>                              
+                     <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                       <li>
+                         <a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All",'makerfaire')?></a>
+                       </li>
+                       <li ng-repeat="tag in tags | orderBy: tag">                     
+                         <a class="pointer-on-hover" ng-click="makerSearch.categories = tag">{{ tag }}</a>
+                       </li>
+                     </ul>
+                  </div>
+               </div>
+               <div class="col-md-12 col-md-6">
+                  <div class="dropdown">
+                     <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                       <?php _e("Filter by Location:",'makerfaire')?> {{makerSearch.location}}
+                       <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                     </button>
+
+                     <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
+                        <li>
+                           <a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All",'makerfaire')?></a>
+                        </li>                  
+                        <li ng-repeat="location in locations | orderBy: location">                     
+                         <a class="pointer-on-hover" ng-click="makerSearch.location = location">{{ location }}</a>
+                       </li>
+                      </ul>                              
+                  </div>
+               </div>
             </div>
          </div>
       </div>     

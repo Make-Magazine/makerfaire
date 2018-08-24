@@ -13,8 +13,7 @@ app.controller('mtmMakers', function ($scope, $http) {
    var noMakerText = jQuery('#noMakerText').val();
    var formIDs = jQuery('#forms2use').val();
    formIDs = replaceAll(formIDs, ",", "-");
-   //formIDs = formIDs.replace(",","-");
-   //to be added - replace commas with - in form ids
+      
    //call to MF custom rest API
    $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs)
    .then(function successCallback(response) {
@@ -22,15 +21,9 @@ app.controller('mtmMakers', function ($scope, $http) {
          jQuery('.mtm .loading').html(noMakerText);
       }
       $scope.makers = response.data.entity;
-      
-      //build array of categories
-      angular.forEach(response.data.category, function (catArr) {
-         catJson[catArr.id] = catArr.name.trim();
-      });
+           
       var catList = [];
-      var locList = [];
-      //Owl carousel does not like to work with a ng-repeat so the images must be build and loaded
-      var carouselImgs = '';
+      var locList = [];            
       angular.forEach($scope.makers, function (maker) {
          var location = maker.location;
          if(location != null){
@@ -40,27 +33,16 @@ app.controller('mtmMakers', function ($scope, $http) {
                   locList.push(loc);
             });
          }
-         var categories = [];
-         /* input categories are in an array
-          This will compare them to the catJson to get the category name,
-          and add to the category list if it's not there  */
-         angular.forEach(maker.category_id_refs, function (catID) {
-            catID = catID.trim();
-            if (catID != '') {
-               var addCat = catID;
-               //look up cat id in the category json file to find the matching category name
-               if (catID in catJson) {
-                  addCat = catJson[catID];
-               }
-               categories.push(addCat);
-               //create a unique list of category names for a filter drop down
-               if (catList.indexOf(addCat) == -1)
-                  catList.push(addCat);
-            }
-         });
-         //reset the category ids to the category names
-         maker.category_id_refs = categories;
+         var categories = maker.categories;
+         if(categories != null){
+            var catArray = categories.split(",");
+            angular.forEach(catArray, function(cat){
+               if (catList.indexOf(cat) == -1)
+                  catList.push(cat);
+            });
+         }
       });
+      
       $scope.tags = catList;
       $scope.locations = locList;
    }, 
@@ -101,9 +83,9 @@ app.filter('byCategory', function () {
       if (!maker || !items.length) {
          return items;
       }
+      
       items.forEach(function (itemElement, itemIndex) {
          itemElement.category_id_refs.forEach(function (categoryElement, categoryIndex) {
-
             if (categoryElement === maker) {
                filtered.push(itemElement);
                return false;
@@ -125,7 +107,7 @@ app.filter('startsWithLetter', function () {
          }
       }
       return filtered;
-   };
+   };       
 });
 
 function replaceAll(str, find, replace) {

@@ -131,9 +131,7 @@ function mf_fairedata(WP_REST_Request $request) {
       $data = array();
       switch ($type) {
          case 'mtm':
-            $entity = getMTMentries($formIDs);
-            $category = getCategories($formIDs);
-            $data = array_merge($entity, $category);
+            $data = getMTMentries($formIDs);            
             break;
          case 'categories':
             $data = getCategories($formIDs);
@@ -227,9 +225,15 @@ function getMTMentries($formIDs) {
             $featImg = $projPhoto;
                   
          $makerList = getMakerList($result->entry_id);        
-         $leadCategory = explode(',',$result->second_cat);
-         $leadCategory[] = $result->prime_cat;
          
+         //get array of categories. set name based on category id
+         $category = array();
+         $leadCategory = explode(',',$result->second_cat);
+         foreach($leadCategory as $leadCat){
+            $category[] = htmlspecialchars_decode(get_CPT_name($leadCat));
+         }
+         $category[] = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
+         $categories = implode(',',$category);
          //don'r return location information if the show location isn't set
          
          $data['entity'][] = array(
@@ -237,7 +241,7 @@ function getMTMentries($formIDs) {
                'name'   => $result->proj_name,
                'large_img_url' => $fitPhoto,
                'featured_img' => $featImg,
-               'category_id_refs' => array_unique($leadCategory),
+               'categories' => $categories,
                'description' => $result->short_desc,
                'flag' => $flag, //only set if flag is set to 'Featured Maker'
                'makerList' => $makerList,
