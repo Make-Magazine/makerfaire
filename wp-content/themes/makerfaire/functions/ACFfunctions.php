@@ -1200,8 +1200,8 @@ if (function_exists('acf_add_local_field_group')) {
                            'class' => 'activeinactive',
                            'id' => '',
                         ),
-                     ),                     
-                      array(
+                     ),
+                     array(
 			'key' => 'field_572bad2b2d751',
 			'label' => 'Hero image Repeater',
 			'name' => 'hero_image_repeater',

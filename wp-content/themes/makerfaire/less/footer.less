@@ -1,3 +1,35 @@
+// for some reason parts of the fotoer are acting different on makerfaire
+.universal-footer { 
+	.link-footer {
+		.container {
+			.footer-branding {
+				margin-top: 76px;
+			}
+			.footer-social .footer-social-section {
+				min-height: 115px;
+			}
+		}
+	}
+	.newsletter-footer {
+		.row.row-eq-height {
+			flex-wrap: wrap;
+		}
+		.align-left {
+			display: flex;
+		}
+		.align-middle {
+			flex-wrap: nowrap;
+		}
+		@media (max-width: 767px) {
+			.sel-container {
+				margin-left: 40px;
+			}
+		}
+	}
+}
+
+
+// the rest of this can probably take a dip
 #footer {
     overflow: hidden;
     width: 100%;

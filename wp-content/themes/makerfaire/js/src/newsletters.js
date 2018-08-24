@@ -42,18 +42,7 @@ jQuery(document).ready(function(){
 });
 
 
-// Footer Desktop
-var onSubmitFooterDesk = function(token) {
-  var bla = jQuery('#wc-email').val();
-  jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup1').serialize());
-  jQuery('.fancybox-thx').trigger('click');
-  jQuery('.nl-modal-email-address').text(bla);
-  jQuery('.whatcounts-signup2 #email').val(bla);
-}
-jQuery(document).on('submit', '.whatcounts-signup1', function (e) {
-  e.preventDefault();
-  onSubmitFooterDesk();
-});
+
 // Footer Mobile
 var onSubmitFooterMob = function(token) {
   var bla = jQuery('#wc-email-m').val();
@@ -80,8 +69,9 @@ jQuery(document).on('submit', '.whatcounts-signup1o', function (e) {
 });
 // Thank you modal
 jQuery(document).on('submit', '.whatcounts-signup2', function (e) {
-  e.preventDefault();
   jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('.whatcounts-signup2').serialize());
+  e.preventDefault();
+  jQuery('.nl-thx-p2').trigger('click');
   jQuery('.fancybox-thx').hide();
   jQuery('.nl-thx-p2').trigger('click');
 });
@@ -115,6 +105,8 @@ jQuery(document).on('submit', '#nlp-form', function (e) {
     }
   }
 });
+
+
 var onSubmitJoin = function(token) {
   jQuery.post('https://secure.whatcounts.com/bin/listctrl', jQuery('#nlp-form').serialize());
   jQuery('.fancybox-thx').trigger('click');

@@ -400,7 +400,7 @@ function get3ColLayout() {
 
 function get1ColLayout() {
    //get data submitted on admin page
-         
+            
    //loop thru and randomly select an image.
    $hero_array = array();
    if (have_rows('hero_image_repeater')) {
@@ -414,6 +414,7 @@ function get1ColLayout() {
       $randKey = array_rand($hero_array,1);      
       $hero_image = $hero_array[$randKey];              
    }
+
    $hero_text = get_sub_field('column_title');
    $cta_button = get_sub_field('cta_button');
    $cta_button_url = get_sub_field('cta_button_url');
