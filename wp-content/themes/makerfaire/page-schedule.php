@@ -36,7 +36,63 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
   <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp">
     <!--<a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>-->
     <div ng-cloak>
-      <div class="topic-nav" ng-if="showType">
+      <div class="schedule-filters container" ng-if="showType">
+		
+		  <div class="sched-col-4 col-md-2 col-sm-3 col-xs-4">
+			  <span class="dropdown">
+				 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					<?php _e('All Types','MiniMakerFaire');?>
+					<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
+				 </button>
+				 <ul ng-class="{ 'activeTopic': type==schedType }" class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+					<li>
+					  <a ng-click="setTypeFilter('All')"><?php _e('All Types','makerfaire');?></a>
+					</li>
+					<li ng-repeat="type in types"> 
+					  <a ng-click="setTypeFilter(type)">{{type}}</a>
+					</li>
+				 </ul>
+			  </span>
+        </div>
+			
+		  <div class="sched-col-4 col-md-2 col-sm-3 col-xs-4">
+			  <span class="dropdown">
+				 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					<?php _e('All Days','MiniMakerFaire');?>
+					<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
+				 </button>
+				 <ul ng-class="{'active':'{{schedDay | date: 'EEEE'}}' == dateFilter}" class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+					<li>
+					  <a ng-click="setDateFilter('')"><?php _e('All Days','MiniMakerFaire');?></a>
+					</li>
+					<li ng-repeat="(schedDay,schedule) in schedules"> 
+					  <a ng-click="setDateFilter(schedDay)">{{schedDay | date: "EEEE"}}</a>
+					</li>
+				 </ul>
+			  </span>
+        </div>
+			
+		  <div class="sched-col-4 col-md-2 col-sm-3 col-xs-4">
+			  <span class="dropdown">
+				 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					<?php _e('All Stages','MiniMakerFaire');?>
+					<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
+				 </button>
+				 <ul ng-repeat="(schedDay,schedule) in schedules" ng-show="'{{schedDay | date: 'EEEE'}}' == dateFilter" class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+					<li>
+					  <a ng-click="setStage('')"><?php _e('All Stages','MiniMakerFaire');?></a>
+					</li>
+					<li ng-repeat="(key,daySched) in schedule | typeFilter: schedType | stageFilter: schedStage | catFilter:schedTopic | filter:filterData |  orderBy: 'stageOrder' | unique: 'nicename'" ng-repeat="(daySched,schedule) in schedules">
+					  <a  ng-click="setStage(daySched.nicename)">{{daySched.nicename}}</a>
+					</li>
+				 </ul>
+			  </span>
+        </div>
+	   </div>
+	 </div>
+
+			
+		<?php /*
         <div class="btn-group">
           <button type="button" class="btn btn-b-ghost dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <?php _e('Category','MiniMakerFaire');?> <span class="caret"></span>
@@ -50,7 +106,6 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                 <div class="active-topic-arrow"></div>
               </a>
             </li>
-
             <li class="topic-nav-item-inner" ng-repeat="type in types" ng-class="{ 'activeTopic': type==schedType }">
               <a href="#" ng-click="setTypeFilter(type)">
                 <div class="topic-nav-item">
@@ -74,7 +129,6 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
           </a>
         </li>
       </ul>
-
       <div class="sched-table">
         <div class="row sched-header">
           <div class="sched-col-1"></div>
@@ -131,10 +185,15 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
             </div>
           </div>
         </div>
-
-        <div class="tab-content sched-body">
-          <div ng-repeat="(schedDay,schedule) in schedules" id="Sched{{schedDay | date: 'EEEE'}}" class="tab-pane" ng-class="{'active':'{{schedDay | date: 'EEEE'}}' == dateFilter}">
-            <div ng-repeat="(key,daySched) in schedule | typeFilter: schedType | stageFilter: schedStage | catFilter:schedTopic | filter:filterData |  orderBy:propertyName">
+		  */ ?>
+      <div class="sched-table">
+        <div class="row sched-header">
+          <div class="sched-col-1"></div>
+        <!-- what is preventing all the days from displaying is that they are being displayed as tabs -->
+<!-- adding this to filters causes the code under dayFilter to go off but it prevents anything from showing up: | dayFilter: schedDay -->
+        <div class="sched-body">
+          <div ng-repeat="(schedDay,schedule) in schedules">
+            <div ng-repeat="(key,daySched) in schedule | typeFilter: schedType | dateFilter: schedDay | stageFilter: schedStage | catFilter:schedTopic | filter:filterData | orderBy:propertyName track by $index">
               <div class="row sched-row">
                 <div class="sched-col-1">
                   <a href="/maker/entry/{{daySched.id}}">
@@ -165,7 +224,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
 
                   <div class="sched-col-4">{{daySched.nicename}}</div>
 
-                  <div class="sched-col-5 sched-type">
+                  <?php /* <div class="sched-col-5 sched-type">
                     <img ng-if="daySched.type == 'Demo'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Demo-icon.svg" alt="Maker Exhibit Demo Topic Icon" class="img-responsive" />
                     <img ng-if="daySched.type == 'Talk'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Talk-icon.svg" alt="Maker Exhibit Talk Topic Icon" class="img-responsive" />
                     <img ng-if="daySched.type == 'Workshop'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Workshop-icon.svg" alt="Maker Exhibit Workshop Topic Icon" class="img-responsive" />
@@ -176,7 +235,8 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                     <div class="overflow-ellipsis-text">
                       <span data-ng-repeat="catName in daySched.category">{{catName}}<font ng-show="!$last">, </font></span>
                     </div>
-                  </div>
+                  </div> */ ?>
+						 
                   <div class="col-xs-10 col-xs-offset-2 sched-more-info">
                     <div class="panel-heading">
                       <span ng-click="daySched.isCollapsed = !daySched.isCollapsed" ng-init="daySched.isCollapsed=true"><?php _e('quick view','MiniMakerFaire');?>
@@ -185,7 +245,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                     </div>
                     <div collapse="daySched.isCollapsed">
                       <div ng-show="!daySched.isCollapsed" class="panel-body">
-                        <p>{{daySched.desc}}</p>
+                        <p ng-bind-html="eventDescription"></p>
                         <a href="/maker/entry/{{daySched.id}}"><?php _e('full details','MiniMakerFaire');?></a>
                       </div>
                     </div>

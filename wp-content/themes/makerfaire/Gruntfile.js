@@ -72,7 +72,8 @@ module.exports = function(grunt) {
             'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
             'node_modules/angular-utils-pagination/dirPagination.js',
             'node_modules/angular-animate/angular-animate.js',
-            'node_modules/angular-filter/dist/angular-filter.min.js'
+				'node_modules/angular-sanitize/angular-sanitize.js',
+            'node_modules/angular-filter/dist/angular-filter.js'
           ],
           'js/built-angular-reporting.js': [
             'node_modules/angular-sanitize/angular-sanitize.js',

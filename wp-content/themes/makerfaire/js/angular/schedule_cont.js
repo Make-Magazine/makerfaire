@@ -1,4 +1,4 @@
-  var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap','angular.filter']);
+  var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap','angular.filter', 'ngSanitize']);
   var weekday = new Array(7);
       weekday[1] = "Sunday";
       weekday[2] = "Monday";
@@ -7,14 +7,17 @@
       weekday[5] = "Thursday";
       weekday[6] = "Friday";
       weekday[7] = "Saturday";
+  var filterdow = "All";
 
   scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
+
     $scope.showType = false;
     $scope.showSchedules = false;
     $scope.propertyName = 'time_start';
     var formIDs = jQuery('#forms2use').val();
     var defType = jQuery('#schedType').val();
     var defDOW  = jQuery('#schedDOW').val();
+	  
     if(formIDs=='') alert ('error!  Please set the form to pull from on the admin page.')
     $http.get('/wp-json/makerfaire/v2/fairedata/schedule/'+formIDs)
       .then(function successCallback(response) {
@@ -75,6 +78,8 @@
               }
             });
             schedule.category = categories;
+				// create a variable to enter into ng-bind-html so we can process links
+				$scope.eventDescription = schedule.desc;
           });
         });
 
@@ -107,7 +112,10 @@
       $scope.schedType = type;
     };
     $scope.setDateFilter = function (date) {
-      var filterdow = $filter('date')(date, "EEEE");
+      filterdow = $filter('date')(date, "EEEE");
+		if(filterdow == "" || filterdow == undefined) {
+			filterdow = 'All';
+		}
       $scope.dateFilter = filterdow;
     };
     $scope.setStage = function(stage){
@@ -120,20 +128,20 @@
       $scope.reverse = ($scope.propertyName === propertyName) ? !$scope.reverse : false;
       $scope.propertyName = propertyName;
     };
-  }]).filter('dayFilter', function($filter) {
+  }]).filter('dateFilter', function($filter) {
     // Create the return function and set the required parameter name to **input**
-    return function(input,dayOfWeek) {
-      var out = [];
-
-      // Using the angular.forEach method, go through the array of data and perform the operation of figuring out if the language is statically or dynamically typed.
-      angular.forEach(input, function(schedule) {
-        var schedDOW = $filter('date')(schedule.time_start, "EEEE");
-        var schedDOW = weekday.indexOf(schedDOW)
-
-        if(schedDOW==dayOfWeek){
-          out.push(schedule);
-        }
-      })
+    return function(schedules,dayOfWeek) {
+		if(filterdow!='All'){
+			var out = [];
+			// Using the angular.forEach method, go through the array of data and perform the operation of figuring out if the language is statically or dynamically typed.
+			angular.forEach(schedules, function(schedule) {
+			  if(filterdow==$filter('date')(dayOfWeek, "EEEE")){
+				 out.push(schedule);
+			  }
+			});
+		}else{
+			var out = schedules;
+		}
       return out;
     }
 
@@ -187,7 +195,6 @@
       return output;
    };
 });
-
 scheduleApp.filter('catFilter', function(){
   return function(items, catName) {
     var filtered = [];
