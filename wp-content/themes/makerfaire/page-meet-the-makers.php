@@ -20,9 +20,8 @@ if($noMakerText =='') $noMakerText = 'No makers found';
 
     <div class="mtm-search">
       <form class="form-inline">
-        <label for="mtm-search-input"><?php _e("Search by category, keyword, project, sponsor or maker name",'makerfaire')?></label>
-        <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search",'makerfaire')?>" type="text">
-        <!--input class="form-control btn-w-ghost" value="GO" type="submit"-->
+        <label for="mtm-search-input"><?php _e("Search by category, keyword, project, sponsor or maker name",'makerfaire')?></label><br/>
+        <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search",'makerfaire')?>" type="text">        
       </form>
     </div>
 
@@ -62,6 +61,20 @@ if($noMakerText =='') $noMakerText = 'No makers found';
                    <a class="pointer-on-hover" ng-click="setTagFilter(tag)">{{ tag }}</a>
                  </li>
                </ul>
+            </div>
+            <div class="dropdown">
+               <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                 <?php _e("Filter by Location:",'makerfaire')?> {{location}}
+                 <i class="fa fa-chevron-down" aria-hidden="true"></i>
+               </button>
+               <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
+                  <li>
+                     <a class="pointer-on-hover" ng-click="setLocFilter('')"><?php _e("All",'makerfaire')?></a>
+                  </li>                  
+                  <li ng-repeat="location in locations | orderBy: location">                     
+                   <a class="pointer-on-hover" ng-click="setLocFilter(location)">{{ location }}</a>
+                 </li>
+                </ul>                              
             </div>
          </div>
       </div>     

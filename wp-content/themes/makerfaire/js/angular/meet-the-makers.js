@@ -3,8 +3,10 @@ var app = angular.module('mtm', []);
 app.controller('mtmMakers', function ($scope, $http) {
    $scope.layout = 'grid';
    $scope.category = '';
+   $scope.location = '';
    $scope.flag = '';
    $scope.tags = [];
+   $scope.locations = [];
    $scope.letter = '';
    $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
    catJson = [];
@@ -26,10 +28,18 @@ app.controller('mtmMakers', function ($scope, $http) {
          catJson[catArr.id] = catArr.name.trim();
       });
       var catList = [];
-      
+      var locList = [];
       //Owl carousel does not like to work with a ng-repeat so the images must be build and loaded
       var carouselImgs = '';
       angular.forEach($scope.makers, function (maker) {
+         var location = maker.location;
+         if(location != null){
+            var locArray = location.split(",");
+            angular.forEach(locArray, function(loc){
+               if (locList.indexOf(loc) == -1)
+                  locList.push(loc);
+            });
+         }
          var categories = [];
          /* input categories are in an array
           This will compare them to the catJson to get the category name,
@@ -52,7 +62,7 @@ app.controller('mtmMakers', function ($scope, $http) {
          maker.category_id_refs = categories;
       });
       $scope.tags = catList;
-
+      $scope.locations = locList;
    }, 
       function errorCallback(error) {
          console.log(error);
@@ -61,10 +71,13 @@ app.controller('mtmMakers', function ($scope, $http) {
    .finally(function () {
 
    });
+
+   $scope.setLocFilter = function (location) {
+      $scope.makerSearch.location = location; 
+   };   
    
    $scope.setFlagFilter = function (flag) {
-      $scope.flag = flag;
-      
+      $scope.flag = flag;      
    };
    
    $scope.setTagFilter = function (tag) {
