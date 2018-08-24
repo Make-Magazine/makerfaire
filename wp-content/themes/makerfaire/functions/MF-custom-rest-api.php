@@ -150,7 +150,7 @@ function mf_fairedata(WP_REST_Request $request) {
    exit;
 }
 
-function getMTMentries($formIDs) {
+function getMTMentries($formIDs) {   
    $data['entity'] = array();
    $formIDarr = array_map('intval', explode("-", $formIDs));
 
@@ -199,7 +199,7 @@ function getMTMentries($formIDs) {
                       left outer join wp_mf_faire_area on wp_mf_faire_subarea.area_id = wp_mf_faire_area.id 
                       WHERE wp_mf_location.entry_id = lead.id
                       GROUP  BY entry_id) AS subarea 
-              FROM   wp_gf_entry AS LEAD 
+              FROM   wp_gf_entry AS lead 
               WHERE  lead.status = 'active' 
                      AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
    

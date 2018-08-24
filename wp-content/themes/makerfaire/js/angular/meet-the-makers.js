@@ -1,6 +1,14 @@
 var app = angular.module('mtm', []);
 
 app.controller('mtmMakers', function ($scope, $http) {
+   //infinite scroll
+   $scope.limit = 20;
+   var counter = 0;
+   $scope.loadMore = function() {
+      alert('adding more!');
+      $scope.limit += 5;
+   };
+     
    $scope.layout = 'grid';
    $scope.category = '';
    $scope.location = '';
@@ -75,7 +83,13 @@ app.controller('mtmMakers', function ($scope, $http) {
       $scope.category = '';
    };
 });
-
+app.directive("scroll", function ($window) {
+  return function(scope, element, attrs) {
+      element.on('scroll', function (e) {
+        alert('you scrolled me');
+      });
+    }
+  });
 app.filter('byCategory', function () {
    return function (items, maker) {
       var filtered = [];
@@ -100,15 +114,32 @@ app.filter('startsWithLetter', function () {
    return function (items, letter) {
       var filtered = [];
       var letterMatch = new RegExp(letter, 'i');
-      for (var i = 0; i < items.length; i++) {
-         var item = items[i];
-         if (letterMatch.test(item.name.substring(0, 1))) {
-            filtered.push(item);
+      if(jQuery(items).length){
+         for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            if (letterMatch.test(item.name.substring(0, 1))) {
+               filtered.push(item);
+            }
          }
       }
       return filtered;
    };       
 });
+
+/*
+app.directive("directiveWhenScrolled", function() {
+   alert ('i am here');  
+   return function(scope, elm, attr) {
+    var raw = elm[0];
+
+    elm.bind('scroll', function() {
+      alert (raw.scrollTop+'+'+raw.offsetHeight+'>='+raw.scrollHeight);
+      if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
+        scope.$apply(attr.directiveWhenScrolled);
+      }
+    });
+  };
+});*/
 
 function replaceAll(str, find, replace) {
    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);

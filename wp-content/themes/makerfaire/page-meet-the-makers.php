@@ -51,7 +51,8 @@ if($noMakerText =='') $noMakerText = 'No makers found';
                <div class="col-md-12 col-md-6">
                   <div class="dropdown">
                      <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                       <?php _e("Filter by Topics:",'makerfaire')?> {{category}}
+                       <span ng-show="category != ''">{{category}}</span>
+                       <span ng-show="category == ''">All Topics</span>
                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
                      </button>
 
@@ -67,8 +68,9 @@ if($noMakerText =='') $noMakerText = 'No makers found';
                </div>
                <div class="col-md-12 col-md-6">
                   <div class="dropdown">
-                     <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                       <?php _e("Filter by Location:",'makerfaire')?> {{makerSearch.location}}
+                     <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                       
+                       <span ng-show="location != ''">{{location}}</span>
+                       <span ng-show="location == ''">All Locations</span>
                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
                      </button>
 
@@ -87,14 +89,15 @@ if($noMakerText =='') $noMakerText = 'No makers found';
       </div>     
     </div>
 
-    <div class="mtm-results">
+    <div class="mtm-results" scroll>
       <div ng-show="!makers.length" class="container loading">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
         <span class="sr-only"><?php _e("Loading",'makerfaire')?>...</span>
       </div>
       <!-- Grid View -->
       <div ng-show="layout == 'grid'" class="mtm-results-cont">
-        <div ng-repeat="maker in makers | filter : makerSearch | byCategory:category | limitTo:50">
+        limit is: {{limit}}
+        <div ng-repeat="maker in makers | filter : makerSearch | byCategory:category | limitTo: limit">
           <a target="none" href="/maker/entry/{{maker.id}}">
             <article class="mtm-maker" style="background-image: url('{{ maker.large_img_url }}')">
               <h3>{{ maker.name }}</h3>
