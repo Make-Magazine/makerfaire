@@ -68,7 +68,7 @@ if ($noMakerText == '')
                         </ul>
                      </div>
                   </div>
-                  <div class="col-md-12 col-md-6">
+                  <div class="col-md-12 col-md-6">                     
                      <div class="dropdown" ng-if="locations.length > 0">
                         <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                       
                            <span ng-show="makerSearch.location != ''">{{makerSearch.location}}</span>
