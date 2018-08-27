@@ -3,6 +3,10 @@
 /* adds a custom REST API endpoint of makerfaire */
 add_action('rest_api_init', function () {
    //get faire data such as Meet the Makers and Schedule information based on form id(s)
+   register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)', array(
+       'methods' => 'GET',
+       'callback' => 'mf_fairedata'
+   ));
    register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)/(?P<faireid>[a-z0-9\-]+)', array(
        'methods' => 'GET',
        'callback' => 'mf_fairedata'
