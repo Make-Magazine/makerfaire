@@ -12,6 +12,7 @@ if ($noMakerText == '')
 <div class="mtm" ng-app="mtm">
    <div ng-controller="mtmMakers"  ng-cloak="">
       <input type="hidden" id="forms2use" value="<?php echo get_field('faire-forms'); ?>" />
+      <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
       <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
       <div class="container">
          <h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
@@ -38,7 +39,7 @@ if ($noMakerText == '')
                </div>
             </div>
             <div class="col-md-4">
-               <ul class="nav nav-tabs">
+               <ul class="nav nav-pills">
                   <li class="nav-item">
                      <button ng-class="{active: makerSearch.flag == 'Featured Maker'}" type="button" ng-click="makerSearch.flag = 'Featured Maker'" class="btn btn-default">Featured</button>
                   </li>
@@ -52,14 +53,14 @@ if ($noMakerText == '')
                   <div class="col-md-12 col-md-6">
                      <div class="dropdown">
                         <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                           <span ng-show="category != ''">{{category}}</span>
-                           <span ng-show="category == ''">All Topics</span>
+                           <span ng-show="makerSearch.categories != ''">{{makerSearch.categories}}</span>
+                           <span ng-show="makerSearch.categories == ''">All Topics</span>
                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
 
                         <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
                            <li>
-                              <a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All", 'makerfaire') ?></a>
+                              <a class="pointer-on-hover" ng-click="makerSearch.categories = ''"><?php _e("All", 'makerfaire') ?></a>
                            </li>
                            <li ng-repeat="tag in tags| orderBy: tag">                     
                               <a class="pointer-on-hover" ng-click="makerSearch.categories = tag">{{ tag}}</a>
@@ -68,10 +69,10 @@ if ($noMakerText == '')
                      </div>
                   </div>
                   <div class="col-md-12 col-md-6">
-                     <div class="dropdown">
+                     <div class="dropdown" ng-if="locations.length > 0">
                         <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                       
-                           <span ng-show="location != ''">{{location}}</span>
-                           <span ng-show="location == ''">All Locations</span>
+                           <span ng-show="makerSearch.location != ''">{{makerSearch.location}}</span>
+                           <span ng-show="makerSearch.location == ''">All Locations</span>
                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
 

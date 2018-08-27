@@ -16,14 +16,19 @@ app.controller('mtmMakers', function ($scope, $http) {
    $scope.tags = [];
    $scope.locations = [];
    $scope.letter = '';
+   $scope.makerSearch = [];
+   $scope.makerSearch.flag = '';
+   $scope.makerSearch.categories = '';
+   $scope.makerSearch.location = '';
    $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
    catJson = [];
    var noMakerText = jQuery('#noMakerText').val();
    var formIDs = jQuery('#forms2use').val();
+   var faireID = jQuery('#mtm-faire').val();
    formIDs = replaceAll(formIDs, ",", "-");
       
    //call to MF custom rest API
-   $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs)
+   $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs+'/'+faireID)
    .then(function successCallback(response) {
       if (response.data.entity.length <= 0) {
          jQuery('.mtm .loading').html(noMakerText);
