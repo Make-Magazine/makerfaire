@@ -42,7 +42,7 @@ app.controller('mtmMakers', function ($scope, $http) {
          if(location != null){
             var locArray = location.split(",");
             angular.forEach(locArray, function(loc){
-               if (locList.indexOf(loc) == -1)
+               if (locList.indexOf(loc) === -1 && loc!=='')
                   locList.push(loc);
             });
          }
@@ -57,7 +57,8 @@ app.controller('mtmMakers', function ($scope, $http) {
       });
       
       $scope.tags = catList;
-      $scope.locations = locList;
+      if(locList.length > 0)
+         $scope.locations = locList;
    }, 
       function errorCallback(error) {
          console.log(error);
