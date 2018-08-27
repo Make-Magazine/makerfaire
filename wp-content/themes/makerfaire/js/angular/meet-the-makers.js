@@ -83,13 +83,7 @@ app.controller('mtmMakers', function ($scope, $http) {
       $scope.category = '';
    };
 });
-app.directive("scroll", function ($window) {
-  return function(scope, element, attrs) {
-      element.on('scroll', function (e) {
-        alert('you scrolled me');
-      });
-    }
-  });
+
 app.filter('byCategory', function () {
    return function (items, maker) {
       var filtered = [];
@@ -126,20 +120,19 @@ app.filter('startsWithLetter', function () {
    };       
 });
 
-/*
-app.directive("directiveWhenScrolled", function() {
-   alert ('i am here');  
-   return function(scope, elm, attr) {
-    var raw = elm[0];
 
-    elm.bind('scroll', function() {
-      alert (raw.scrollTop+'+'+raw.offsetHeight+'>='+raw.scrollHeight);
-      if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
-        scope.$apply(attr.directiveWhenScrolled);
-      }
-    });
-  };
-});*/
+app.directive("mtm-scroll", function() {   
+   return function(scope, elm, attr) {
+      var raw = elm[0];
+      alert ('i am here');  
+      elm.bind('scroll', function() {
+         alert (raw.scrollTop+'+'+raw.offsetHeight+'>='+raw.scrollHeight);
+         if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
+            scope.$apply(attr.directiveWhenScrolled);
+         }
+      });
+   };
+});
 
 function replaceAll(str, find, replace) {
    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
