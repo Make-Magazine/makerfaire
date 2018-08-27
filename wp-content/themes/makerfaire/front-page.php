@@ -151,7 +151,7 @@ get_header();
 
   <div class="container mf-sumome">
     <h2>Share Your Maker Faire Experience</h2>
-    <h4>#mfba18 and #makerfaire  on
+    <h4>#mfny18 and #makerfaire  on
       <a href="https://twitter.com/makerfaire"><i aria-hidden="true" class="fa fa-twitter"></i></a>
       <a href="https://www.instagram.com/makerfaire/"><i aria-hidden="true" class="fa fa-instagram"></i></a>
       <a href="https://www.facebook.com/makerfaire"><i class="fa fa-facebook" aria-hidden="true"></i></a></h4>

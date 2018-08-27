@@ -12,17 +12,9 @@ $schedule_ids = get_field('schedule_ids');
 if ( have_posts() ){
   ?>
   <div class="container">
-    <div class="row">
-      <div class="content col-md-12">
-        <?php
-        while ( have_posts() ){
-          the_post(); ?>
-          <article <?php post_class(); ?>>
-            <?php the_content(); ?>
-          </article><?php
-        }
-        ?>
-      </div>
+    <div class="row schedule-wrapper">
+       <h1><?php echo get_the_title(); ?></h1>
+		 <hr>
     </div>
   </div><?php
 }
@@ -34,30 +26,29 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
   <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
   <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp">
+	 <div class="schedule-wrapper">
     <!--<a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>-->
     <div ng-cloak>
       <div class="schedule-filters container" ng-if="showType">
 			
-		  <div class="sched-col-4 col-md-2 col-sm-3 col-xs-4">
-			  <span class="dropdown day-filter">
+			<div class="sched-col-4">
+			  <span class="dropdown type-filter">
 				 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-					<!-- <span ng-show="dateFilter != 'All Days'">{{schedDay | date: 'EEEE'}}</span>
-               <span ng-show="dateFilter == ''">All Days</span> -->
-					<span><?php _e('All Days','MiniMakerFaire');?></span>
+					<span><?php _e('All Types','MiniMakerFaire');?></span>
 					<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
 				 </button>
-				 <ul ng-class="{'active':'{{schedDay | date: 'EEEE'}}' == dateFilter}" class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+				 <ul ng-class="{ 'activeTopic': type==schedType }" class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
 					<li>
-					  <a ng-click="setDateFilter('')"><?php _e('All Days','MiniMakerFaire');?></a>
+					  <a ng-click="setTypeFilter('All Types')"><?php _e('All Types','makerfaire');?></a>
 					</li>
-					<li ng-repeat="(schedDay,schedule) in schedules"> 
-					  <a ng-click="setDateFilter(schedDay)">{{schedDay | date: "EEEE"}}</a>
+					<li ng-repeat="type in types"> 
+					  <a ng-click="setTypeFilter(type)">{{type}}</a>
 					</li>
 				 </ul>
 			  </span>
         </div>
 			
-		  <div class="sched-col-4 col-md-2 col-sm-3 col-xs-4">
+		  <div class="sched-col-4">
 			  <span class="dropdown stage-filter">
 				 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 					<span><?php _e('All Stages','MiniMakerFaire');?></span>
@@ -74,18 +65,20 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
 			  </span>
         </div>
 			
-		  <div class="sched-col-4 col-md-2 col-sm-3 col-xs-4">
-			  <span class="dropdown type-filter">
+			<div class="sched-col-4">
+			  <span class="dropdown day-filter">
 				 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-					<span><?php _e('All Types','MiniMakerFaire');?></span>
+					<!-- <span ng-show="dateFilter != 'All Days'">{{schedDay | date: 'EEEE'}}</span>
+               <span ng-show="dateFilter == ''">All Days</span> -->
+					<span><?php _e('All Days','MiniMakerFaire');?></span>
 					<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
 				 </button>
-				 <ul ng-class="{ 'activeTopic': type==schedType }" class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+				 <ul ng-class="{'active':'{{schedDay | date: 'EEEE'}}' == dateFilter}" class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
 					<li>
-					  <a ng-click="setTypeFilter('All Types')"><?php _e('All Types','makerfaire');?></a>
+					  <a ng-click="setDateFilter('')"><?php _e('All Days','MiniMakerFaire');?></a>
 					</li>
-					<li ng-repeat="type in types"> 
-					  <a ng-click="setTypeFilter(type)">{{type}}</a>
+					<li ng-repeat="(schedDay,schedule) in schedules"> 
+					  <a ng-click="setDateFilter(schedDay)">{{schedDay | date: "EEEE"}}</a>
 					</li>
 				 </ul>
 			  </span>
@@ -226,14 +219,15 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
                   </div>
 
                   <div class="sched-col-4">{{daySched.nicename}}</div>
-
-                   <div class="sched-col-5 sched-type">
+						 
+                  <?php /*
+                  <div class="sched-col-5 sched-type">
                     <img ng-if="daySched.type == 'Demo'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Demo-icon.svg" alt="Maker Exhibit Demo Topic Icon" class="img-responsive" />
                     <img ng-if="daySched.type == 'Talk'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Talk-icon.svg" alt="Maker Exhibit Talk Topic Icon" class="img-responsive" />
                     <img ng-if="daySched.type == 'Workshop'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Workshop-icon.svg" alt="Maker Exhibit Workshop Topic Icon" class="img-responsive" />
                     <img ng-if="daySched.type == 'Performance'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Performance-icon.svg" alt="Maker Exhibit Performance Topic Icon" class="img-responsive" />
                   </div>
-<?php /*
+
                   <div class="sched-col-6">
                     <div class="overflow-ellipsis-text">
                       <span data-ng-repeat="catName in daySched.category">{{catName}}<font ng-show="!$last">, </font></span>
@@ -261,6 +255,7 @@ if($schedule_ids&&$schedule_ids!=''){ //display the new schedule page
       </div>
     </div>
   </div>
+</div>
   <?php
 }else{ //display what is in content
   ?>

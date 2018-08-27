@@ -120,12 +120,28 @@
 	}
 }*/
 
+.schedule-wrapper { 
+	width: 90%; 
+	margin: 0 auto; 
+	@media (max-width: 992px) {
+		width: 100%;
+	}
+	.content {
+		padding: 0px;
+		h1 small, h3, p{
+		  display: none;
+		}
+	}
+	hr {
+		margin: 0px;
+	}
+}
+
 #page-schedule {
-  @media (min-width:768px) {
-    padding-top: 30px;
-  }
+  padding-top: 5px;
   padding-bottom: 30px;
   color: #666;
+
   .sortorder:after {
     content: '\25b2';
   }
@@ -135,31 +151,42 @@
 	.schedule-filters {
 		margin-bottom: 15px;
 		padding: 0px;
+		width: 100%;
 	   .sched-col-4 {
 			padding: 0px;
+			float: right;
+			@media (max-width: 661px) {
+				width:100%;
+				margin-bottom: 10px;
+			}
+
 			#mtm-dropdownMenu {
-				border: solid 1px #bcbcbc;
-				width: 90%;
 				text-align: left;
-				margin-right: 20px;
-				color: #4a4a4a;
-				box-shadow: 2px 2px 5px rgba(0,0,0,0.2); 
-				-webkit-box-shadow: 2px 2px 5px rgba(0,0,0,0.2); 
-				-moz-box-shadow: 2px 2px 5px rgba(0,0,0,0.2); 
-				&:hover {
-					width: 92%;
-					height: 32px;
-					margin-top: -2px;
-				}
+				float: right;
+				margin-left: 20px;
+				font-size: 14px;
+				font-weight: 500;
+				color: #555;
 				.fa-angle-down {
-					color: #00aeef;
 					float: right;
 					margin-top: -18px;
+					font-weight: 900;
+					margin-left: 10px;
 				}
+				@media (max-width: 661px) {
+					margin-left: 0px;
+					width: 100%;
+				}
+		
 			}
 			.dropdown-menu {
-				width: 90%;
-				top: 120%;
+				top: 220%;
+				margin-left: 20px;
+				@media (max-width: 661px) {
+					position: relative;
+					width: 100%;
+					margin-top: 0px;
+				}
 				li a {
 					padding: 3px 10px;
 					white-space: pre-wrap;
@@ -174,9 +201,7 @@
     display: flex;
     @media (max-width:767px) {
       margin-bottom: 10px;
-
       height: auto;
-
       border-radius: 5px;
       overflow: hidden;
     }
@@ -262,26 +287,26 @@
       }
     }
     .sched-col-2 {
-      width: 40%;
+      width: 60%;
       @media (max-width:767px) {
         width: 100%;
       }
     }
     .sched-col-3 {
-      width: 15%;
+      width: 20%;
       @media (max-width:767px) {
         width: 100%;
         margin-bottom: 0;
       }
     }
     .sched-col-4 {
-      width: 15%;
+      width: 20%;
       @media (max-width:767px) {
         width: 100%;
       }
     }
     .sched-col-5 {
-      width: 15%;
+      width: 25%;
       @media (max-width:767px) {
         width: 30px;
         position: absolute;
@@ -332,11 +357,7 @@
           margin-top: 10px;
         }
       }
-      .sched-flex-row {
-        @media (max-width:767px) {
-          display: none;
-        }
-      }
+
     }
 
     .sched-body {
