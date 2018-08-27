@@ -3,7 +3,7 @@
 /* adds a custom REST API endpoint of makerfaire */
 add_action('rest_api_init', function () {
    //get faire data such as Meet the Makers and Schedule information based on form id(s)
-   register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)', array(
+   register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)/(?P<faireid>[a-z0-9\-]+)', array(
        'methods' => 'GET',
        'callback' => 'mf_fairedata'
    ));
@@ -124,14 +124,16 @@ function mf_updateEntry(WP_REST_Request $request) {
    }
 }
 
-function mf_fairedata(WP_REST_Request $request) {
-   $type = $request['type'];
+function mf_fairedata(WP_REST_Request $request) {   
+   $type    = $request['type'];
    $formIDs = $request['formids'];
+   $faireID = $request['faireid'];
+   
    if ($type != '' && $formIDs != '') {
       $data = array();
       switch ($type) {
          case 'mtm':
-            $data = getMTMentries($formIDs);            
+            $data = getMTMentries($formIDs,$faireID);            
             break;
          case 'categories':
             $data = getCategories($formIDs);
@@ -150,11 +152,20 @@ function mf_fairedata(WP_REST_Request $request) {
    exit;
 }
 
-function getMTMentries($formIDs) {   
+function getMTMentries($formIDs,$faireID) {   
    $data['entity'] = array();
    $formIDarr = array_map('intval', explode("-", $formIDs));
 
    global $wpdb;
+   
+   //find if the show location switch is turned on
+   $showLoc = false;
+   $query = "select show_sched from wp_mf_faire where faire = '".$faireID."'";
+   
+   $result = $wpdb->get_row($query);
+   //var_dump($result);
+   if($result->show_sched==="1") $showLoc=true;         
+   
    //find all active entries for selected forms
    $query = "SELECT  lead.id                         AS entry_id, 
                      (SELECT meta_value 
@@ -234,8 +245,8 @@ function getMTMentries($formIDs) {
          }
          $category[] = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
          $categories = implode(',',$category);
-         //don'r return location information if the show location isn't set
-         
+         //don't return location information if the show location isn't set
+         $location = ($showLoc?$result->area:'');
          $data['entity'][] = array(
                'id'     => $result->entry_id,
                'name'   => $result->proj_name,
@@ -245,7 +256,7 @@ function getMTMentries($formIDs) {
                'description' => $result->short_desc,
                'flag' => $flag, //only set if flag is set to 'Featured Maker'
                'makerList' => $makerList,
-               'location' => $result->area
+               'location' => $location
          );
       }
    }
