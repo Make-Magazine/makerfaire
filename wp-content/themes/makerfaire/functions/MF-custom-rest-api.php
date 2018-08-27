@@ -310,7 +310,7 @@ function getSchedule($formIDs) {
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '217') as mkr1_photo,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '151') as name,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '16')  as short_desc,
-              (select group_concat( meta_value separator ', ') as cat   from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_key like '%320%' OR wp_gf_entry_meta.meta_key like '%321%')) as category
+              (select group_concat( meta_value separator ',') as cat   from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_key like '%320%' OR wp_gf_entry_meta.meta_key like '%321%')) as category
                FROM wp_mf_schedule as schedule
                left outer join wp_mf_location as location on location_id = location.id
                left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
@@ -331,11 +331,15 @@ function getSchedule($formIDs) {
       $makerList = getMakerList($row->entry_id);
       $makerArr = array();
 
-      //remove duplicates
-      $catArr = explode(", ", $row->category);
-      $catArr = array_unique($catArr);
-      $catList = implode(", ", $catArr);
-
+      //get array of categories. set name based on category id
+      $category = array();
+      $leadCategory = explode(',',$row->category);
+      foreach($leadCategory as $leadCat){
+         $category[] = htmlspecialchars_decode(get_CPT_name($leadCat));
+      }
+      
+      $catList = implode(',',$category);
+      
       if ($form_type == 'Presentation') {
          $projPhoto = ($row->mkr1_photo != '' ? $row->mkr1_photo : $row->photo);
       } else {
@@ -351,9 +355,9 @@ function getSchedule($formIDs) {
          $fitPhoto = $row->photo;
 
       //format start and end date
-      $startDay = date_create($row->time_start);
+      $startDay  = date_create($row->time_start);
       $startDate = date_format($startDay, 'Y-m-d') . 'T' . date_format($startDay, 'H:i:s');
-      $keyDate = date_format($startDay, 'Y-m-d');
+      $keyDate   = date_format($startDay, 'Y-m-d');
 
       $endDate = date_create($row->time_end);
       $endDate = date_format($endDate, 'Y-m-d') . 'T' . date_format($endDate, 'H:i:s');
@@ -373,7 +377,7 @@ function getSchedule($formIDs) {
       //set stage name
       $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
       //"2016-05-21T11:55:00-07:00"
-      $data['schedule'][$keyDate][] = array(
+      $data['schedule'][] = array(
           'id' => $row->entry_id,
           'time_start' => $startDate,
           'time_end' => $endDate,
