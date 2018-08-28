@@ -91,7 +91,7 @@ if ($noMakerText == '')
          </div>     
       </div>
 
-      <div class="mtm-results" mtmScroll="loadMore()">
+      <div class="mtm-results" mtm-scroll="loadMore()">
          <div ng-show="!makers.length" class="container loading">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
