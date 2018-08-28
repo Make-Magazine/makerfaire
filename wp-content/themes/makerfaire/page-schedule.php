@@ -14,7 +14,6 @@ if (have_posts()) {
    <div class="container">
       <div class="row schedule-wrapper">
          <h1><?php echo get_the_title(); ?></h1>
-         <hr>
       </div>
    </div><?php
 }
@@ -167,7 +166,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                      </div>
 
                   </div>
-               </div><!-- .sched-body --?
+               </div><!-- .sched-body -->
             </div>
          </div>
       </div>

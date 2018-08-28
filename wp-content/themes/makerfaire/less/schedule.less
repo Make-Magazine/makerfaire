@@ -123,6 +123,7 @@
 .schedule-wrapper { 
 	width: 90%; 
 	margin: 0 auto; 
+	text-align: center;
 	@media (max-width: 992px) {
 		width: 100%;
 	}
@@ -130,12 +131,30 @@
 		font-size: 36px;
 		color: #4A4A4A;
 		font-family: "Roboto-Light";
-		margin-bottom: 2px;
+		margin-bottom: 10px;
+		
 	}
-	hr {
-		margin: 0px;
-		border-top: 2px #ccc solid;
-	}
+	.mtm-search {
+		position: relative;
+		width: 100vw;
+		margin-left: calc(-50vw + 50%);
+		position: relative;
+		height: 100px;
+		margin-bottom: 15px;
+   	background-color: #00597E;
+   	display: flex;
+   	justify-content: center;
+		label {
+		   color: #fff;
+			margin-top: 17px;
+			margin-bottom: 16px;
+			font-weight: normal;
+			font-size: 14px;
+		}
+		#mtm-search-input { 
+			width: 100%;
+		}
+   }
 }
 #page-schedule {
   padding-top: 5px;
