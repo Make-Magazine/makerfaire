@@ -127,14 +127,14 @@ app.filter('startsWithLetter', function () {
 });
 
 
-app.directive("mtm-scroll", function() {   
+app.directive("mtmScroll", function() {   
    return function(scope, elm, attr) {
       var raw = elm[0];
       alert ('i am here');  
       elm.bind('scroll', function() {
          alert (raw.scrollTop+'+'+raw.offsetHeight+'>='+raw.scrollHeight);
          if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
-            scope.$apply(attr.directiveWhenScrolled);
+            scope.$apply(attr.mtmScroll);
          }
       });
    };

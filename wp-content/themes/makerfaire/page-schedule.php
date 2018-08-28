@@ -15,6 +15,7 @@ if (have_posts()) {
       <div class="row schedule-wrapper">
          <h1><?php echo get_the_title(); ?></h1>
       </div>
+		
    </div><?php
 }
 if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
@@ -25,6 +26,10 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
    <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
    <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
+		<div ng-show="!schedules.length" class="container loading">
+			<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+			<span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
+		</div>
       <div class="schedule-wrapper">
          <!--<a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>-->
          <div ng-cloak>
@@ -99,7 +104,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                </div>
             </div>
          </div>
-        
+
          <div class="sched-table">
             <div class="row sched-header">
                <div class="sched-col-1"></div>               
