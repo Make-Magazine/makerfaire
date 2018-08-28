@@ -1,19 +1,9 @@
 var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap', 'angular.filter', 'ngSanitize']);
-var weekday = new Array(7);
-weekday[1] = "Sunday";
-weekday[2] = "Monday";
-weekday[3] = "Tuesday";
-weekday[4] = "Wednesday";
-weekday[5] = "Thursday";
-weekday[6] = "Friday";
-weekday[7] = "Saturday";
-var filterdow = "All Days";
+
 var dayParam = getUrlParam("day");
 var stageParam = getUrlParam("stage");
 var typeParam = getUrlParam("type");
-if (dayParam != undefined && dayParam != "") {
-   filterdow = dayParam;
-}
+
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {   
    $scope.showSchedules = false;
    $scope.schedSearch = [];
@@ -29,7 +19,14 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
       $scope.schedSearch.type = typeParam;
    }
    
-   $scope.propertyName = 'time_start';
+   //if day of the week URL parameter is passed, default the day to this
+   $scope.filterdow = "";
+   filterdow = "";
+   if (dayParam != undefined && dayParam != "") {
+      $scope.filterdow = dayParam;
+      filterdow  = dayParam;
+   }   
+   
    var formIDs = jQuery('#forms2use').val();
    var defType = jQuery('#schedType').val();
    var defDOW  = jQuery('#schedDOW').val();
@@ -38,11 +35,44 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
       alert('error!  Please set the form to pull from on the admin page.')
    $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs)
       .then(function successCallback(response) {                         
-         $scope.schedules = response.data.schedule;        
+         $scope.schedules = response.data.schedule;   
+         var dateList = [];            
+         angular.forEach($scope.schedules, function (schedule) {
+            defDOW = $filter('date')(schedule.time_start, "EEEE");
+
+            if (dateList.indexOf(defDOW) == -1)
+               dateList.push(defDOW);
+         });
+         $scope.dates = dateList.sort();
       }, function errorCallback(error) {
          console.log(error);
       }).finally(function () {
          $scope.showSchedules = true;
-      });     
+      });  
+   
+   $scope.setDateFilter = function (date) {
+      $scope.filterdow = $filter('date')(date, "EEEE");
+      filterdow = $filter('date')(date, "EEEE");
+   };   
 }]);
+
+scheduleApp.filter('dateFilter', function($filter) {
+   // Create the return function and set the required parameter name to **input**
+   return function(schedules,dayOfWeek) {      
+      if(filterdow!=''){
+         var out = [];
+         // Loop thru the schedule and return only items that meet the selected date         
+         angular.forEach(schedules, function(schedule) {            
+            if(filterdow===$filter('date')(schedule.time_start, "EEEE")){
+               out.push(schedule);
+            }
+         });
+      }else{
+         var out = schedules;
+      }
+      return out;
+   }
+ });
+
+;
      
