@@ -177,8 +177,11 @@
         </li>
       </ul>
 
-      <a href="https://makezine.com/" class="navbar-brand">
+      <a href="https://makezine.com/" class="navbar-brand hidden-xs">
         <img src="<?php echo get_stylesheet_directory_uri(); ?>/img/Make_logo.svg" class="img-responsive" alt="Make: brand logo" />
+      </a>
+		<a href="/" class="navbar-brand hidden-md hidden-lg hidden-sm">
+        <img src="<?php echo get_stylesheet_directory_uri(); ?>/img/Maker_Faire_Logo.svg" class="img-responsive" alt="Make: brand logo" />
       </a>
 
       <ul class="nav-level-1-auth">

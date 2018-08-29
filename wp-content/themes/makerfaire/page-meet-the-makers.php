@@ -15,10 +15,16 @@ if ($noMakerText == '')
       <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
       <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
       <div class="container">
-         <?php
+			<div class="col-md-4 col-sm-12">
+           <?php
             echo get_faire_backlink();      
-         ?>
-         <h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
+           ?>
+			</div>
+			<div class="col-md-4 col-sm-12">
+         	<h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
+			</div>
+			<div class="col-md-4 col-sm-12">
+			</div>
       </div>
 
       <div class="flag-banner"></div>
@@ -33,7 +39,7 @@ if ($noMakerText == '')
 
       <div class="mtm-filter container">
          <div class="row">
-            <div class="col-md-4">
+            <div class="col-sm-4">
                <div class="mtm-filter-view">
                   <span class="mtm-view-by"><?php _e("View by:", 'makerfaire') ?></span>
                   <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="fa fa-picture-o" aria-hidden="true"></i> <?php _e("GALLERY", 'makerfaire') ?></a>
@@ -41,7 +47,7 @@ if ($noMakerText == '')
                   <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" ><i class="fa fa-th-list" aria-hidden="true"></i> <?php _e("LIST", 'makerfaire') ?></a>
                </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-sm-4">
                <ul class="nav nav-pills">
                   <li class="nav-item">
                      <button ng-class="{active: makerSearch.flag == 'Featured Maker'}" type="button" ng-click="makerSearch.flag = 'Featured Maker'" class="btn btn-default">Featured</button>
@@ -51,9 +57,9 @@ if ($noMakerText == '')
                   </li>   
                </ul>            
             </div>
-            <div class="col-md-4">
+            <div class="col-sm-4">
                <div class="row">
-                  <div class="col-md-12 col-md-6">
+                  <div class="col-sm-12 col-md-6">
                      <div class="dropdown">
                         <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                            <span ng-show="makerSearch.categories != ''">{{makerSearch.categories}}</span>
@@ -71,7 +77,7 @@ if ($noMakerText == '')
                         </ul>
                      </div>
                   </div>
-                  <div class="col-md-12 col-md-6">                     
+                  <div class="col-sm-12 col-md-6">                     
                      <div class="dropdown" ng-if="locations.length > 0">
                         <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                       
                            <span ng-show="makerSearch.location != ''">{{makerSearch.location}}</span>

@@ -30,4 +30,14 @@
       </div>
     </div>
 </div>
-<?php get_footer();
+
+<?php get_footer(); ?>
+<script type="text/javascript">
+jQuery("a").click(function() {
+	 jQuery( "#dialog" ).dialog();
+    return false;
+});
+</script>
+<div id="dialog" title="You are still logging in." style="display:none;">
+  <p>Are you sure you want to navigate away from this page? Doing so may cause issues.</p>
+</div>
