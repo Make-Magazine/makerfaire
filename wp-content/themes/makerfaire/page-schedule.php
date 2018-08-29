@@ -12,19 +12,8 @@ $schedule_ids = get_field('schedule_ids');
 if (have_posts()) {
    ?>
    <div class="container">
-      <?php 
-      $back_link = get_field('back_link');
-      $back_link_url  = $back_link['back_link_url'];
-      $back_link_text = $back_link['back_link_text'];
-      
-      if($back_link_url!=''){
-         ?>
-         <div class="faire-backlink">
-            <i class="far fa-chevron-left"></i>
-            <a href='<?php echo $back_link_url;?>'><?php echo $back_link_text;?></a>
-         </div>
-         <?php
-      }
+      <?php
+      echo get_faire_backlink();      
       ?>
       <div class="row schedule-wrapper">
          <h1><?php echo get_the_title(); ?></h1>

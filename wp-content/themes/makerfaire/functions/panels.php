@@ -967,3 +967,18 @@ function getSocialPanel() {
    }
    return $return;
 }
+
+function get_faire_backlink() {
+   $back_link = get_field('back_link');
+   $back_link_url  = $back_link['back_link_url'];
+   $back_link_text = $back_link['back_link_text'];
+   $back_link_html = '';
+   if($back_link_url!='' && $back_link_text!=''){
+      $back_link_html =
+      '<div class="faire-backlink">
+         <i class="far fa-chevron-left"></i>
+         <a href="'. $back_link_url.'">'. $back_link_text.'</a>
+      </div>';      
+   }
+   return $back_link_html;
+}
