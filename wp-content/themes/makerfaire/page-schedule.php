@@ -9,6 +9,22 @@ $sched_dow = (isset($wp_query->query_vars['sched_dow']) ? ucfirst(urldecode($wp_
 $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($wp_query->query_vars['sched_type'])) : 'All Types');
 
 $schedule_ids = get_field('schedule_ids');
+if (have_posts()) {
+   ?>
+   <div class="container schedule-header">
+      <div class="col-md-3 col-sm-12 col-xs-12">
+           <?php
+            echo get_faire_backlink();      
+           ?>
+			</div>
+			<div class="col-md-6 col-sm-12 col-xs-12">
+         	<h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
+			</div>
+			<div class="col-md-3 col-sm-12">
+		</div>
+		
+   </div><?php
+}
 if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
    //create_calendar(get_field('schedule_ids'));
    ?>
@@ -17,22 +33,6 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
    <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
    <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
-		if (have_posts()) {
-			?>
-			<div class="container">
-				<div class="col-md-3 col-sm-12 col-xs-12">
-					  <?php
-						echo get_faire_backlink();      
-					  ?>
-					</div>
-					<div class="col-md-6 col-sm-12 col-xs-12">
-						<h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
-					</div>
-					<div class="col-md-3 col-sm-12">
-				</div>
-
-			</div><?php
-		}
 		<div ng-show="!schedules.length" class="container loading">
 			<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
 			<span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
