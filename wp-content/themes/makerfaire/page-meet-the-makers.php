@@ -98,7 +98,6 @@ if ($noMakerText == '')
          </div>
          <!-- Grid View -->
          <div ng-show="layout == 'grid'" class="mtm-results-cont">
-            limit is: {{limit}}
             <div ng-repeat="maker in makers| filter : makerSearch | byCategory:category | limitTo: limit">
                <a target="none" href="/maker/entry/{{maker.id}}">
                   <article class="mtm-maker" style="background-image: url('{{ maker.large_img_url}}')">

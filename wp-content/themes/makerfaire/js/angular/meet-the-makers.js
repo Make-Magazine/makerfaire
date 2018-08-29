@@ -134,13 +134,17 @@ function mtmScroll($window) {
 		  console.log(raw);
         $window = angular.element($window);
         handler = function() {
-			 var top_of_element = jQuery(".magazine-footer").offset().top;
-			 var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
-			 if (bottom_of_screen > top_of_element) {
-			    scope.$apply(attrs.mtmScroll);
+			 if(jQuery(".loading").hasClass("ng-hide")){ // don't start adding to the limit until the loading is done
+				 var top_of_element = jQuery(".magazine-footer").offset().top;
+				 if(jQuery(window).width() < 768) {
+					top_of_element = jQuery(".newsletter-footer").offset().top;
+				 }
+				 var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
+				 if (bottom_of_screen > top_of_element) {
+					 scope.$apply(attrs.mtmScroll);
+				 }
 			 }
         };
-
         $window.on('scroll', handler);
       }
     };
