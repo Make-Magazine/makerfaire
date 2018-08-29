@@ -5,7 +5,6 @@ app.controller('mtmMakers', function ($scope, $http) {
    $scope.limit = 20;
    var counter = 0;
    $scope.loadMore = function() {
-      alert('adding more!');
       $scope.limit += 5;
    };
      
@@ -126,19 +125,28 @@ app.filter('startsWithLetter', function () {
    };       
 });
 
+app.directive('mtmScroll', ['$window', mtmScroll])  
+function mtmScroll($window) {
+    return {
+      link: function (scope, element, attrs) {
+        var handler;
+		  var raw = element[0]; 
+		  console.log(raw);
+        $window = angular.element($window);
+        handler = function() {
+			 var top_of_element = jQuery(".magazine-footer").offset().top;
+			 var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
+			 if (bottom_of_screen > top_of_element) {
+			    scope.$apply(attrs.mtmScroll);
+			 }
+        };
 
-app.directive("mtm-scroll", function() {   
-   return function(scope, elm, attr) {
-      var raw = elm[0];
-      alert ('i am here');  
-      elm.bind('scroll', function() {
-         alert (raw.scrollTop+'+'+raw.offsetHeight+'>='+raw.scrollHeight);
-         if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
-            scope.$apply(attr.directiveWhenScrolled);
-         }
-      });
-   };
-});
+        $window.on('scroll', handler);
+      }
+    };
+
+};
+
 
 function replaceAll(str, find, replace) {
    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);

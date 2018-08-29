@@ -21,7 +21,7 @@ if ($noMakerText == '')
       <div class="flag-banner"></div>
 
       <div class="mtm-search">
-         <form class="form-inline container">
+         <form class="form-inline">
             <label for="mtm-search-input"><?php _e("Search by category, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
             <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
          </form>
@@ -91,7 +91,7 @@ if ($noMakerText == '')
          </div>     
       </div>
 
-      <div class="mtm-results" mtm-scroll="">
+      <div class="mtm-results" mtm-scroll="loadMore()">
          <div ng-show="!makers.length" class="container loading">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
