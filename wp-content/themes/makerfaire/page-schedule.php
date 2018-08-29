@@ -12,12 +12,16 @@ $schedule_ids = get_field('schedule_ids');
 if (have_posts()) {
    ?>
    <div class="container">
-      <?php
-      echo get_faire_backlink();      
-      ?>
-      <div class="row schedule-wrapper">
-         <h1><?php echo get_the_title(); ?></h1>
-      </div>
+      <div class="col-md-3 col-sm-12 col-xs-12">
+           <?php
+            echo get_faire_backlink();      
+           ?>
+			</div>
+			<div class="col-md-6 col-sm-12 col-xs-12">
+         	<h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
+			</div>
+			<div class="col-md-3 col-sm-12">
+		</div>
 		
    </div><?php
 }

@@ -38,6 +38,6 @@ jQuery("a").click(function() {
     return false;
 });
 </script>
-<div id="dialog" title="You are still logging in." style="display:none;">
-  <p>Are you sure you want to navigate away from this page? Doing so may cause issues.</p>
+<div id="dialog" title="We’re still logging you in." style="display:none;">
+  <p>Clicking around right now might cause a short circuit. We’ll redirect you as soon as this process finishes.</p>
 </div>
