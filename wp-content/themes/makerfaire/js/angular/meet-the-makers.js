@@ -125,7 +125,7 @@ app.filter('startsWithLetter', function () {
    };       
 });
 
-app.directive('mtmScroll', ['$window', mtmScroll])  
+app.directive('mtmScroll', ['$window', mtmScroll]);  
 function mtmScroll($window) {
     return {
       link: function (scope, element, attrs) {

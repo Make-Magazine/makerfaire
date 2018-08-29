@@ -115,11 +115,11 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
             </div>
          </div>
 
-         <div class="sched-table">
+         <div class="sched-table"  sched-scroll="loadMore()">            
             <div class="row sched-header">
                <div class="sched-col-1"></div>               
                <div class="sched-body">
-                  <div ng-repeat="schedule in schedules | filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start','time_end']">                     
+                  <div ng-repeat="schedule in schedules | filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start','time_end'] | limitTo: limit">                     
                      <div class="row sched-row">
                         <div class="sched-col-1">
                            <a href="/maker/entry/{{schedule.id}}">

@@ -5,6 +5,13 @@ var stageParam = getUrlParam("stage");
 var typeParam = getUrlParam("type");
 
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {   
+   //infinite scroll
+   $scope.limit = 5;
+   var counter = 0;
+   $scope.loadMore = function() {
+      $scope.limit += 5;
+   };
+   
    $scope.showSchedules = false;
    $scope.schedSearch = [];
    $scope.schedSearch.nicename = '';
@@ -72,7 +79,31 @@ scheduleApp.filter('dateFilter', function($filter) {
       }
       return out;
    }
- });
+});
 
-;
+scheduleApp.directive('schedScroll', ['$window', schedScroll]);  
+function schedScroll($window) {
+    return {
+      link: function (scope, element, attrs) {
+        var handler;
+		  var raw = element[0]; 
+		  console.log(raw);
+        $window = angular.element($window);
+        handler = function() {
+			 if(jQuery(".loading").hasClass("ng-hide")){ // don't start adding to the limit until the loading is done
+				 var top_of_element = jQuery(".magazine-footer").offset().top;
+				 if(jQuery(window).width() < 768) {
+					top_of_element = jQuery(".newsletter-footer").offset().top;
+				 }
+				 var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
+				 if (bottom_of_screen > top_of_element) {
+					 scope.$apply(attrs.schedScroll);
+				 }
+			 }
+        };
+        $window.on('scroll', handler);
+      }
+    };
+
+};
      
