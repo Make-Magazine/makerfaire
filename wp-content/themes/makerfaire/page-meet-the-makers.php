@@ -15,12 +15,12 @@ if ($noMakerText == '')
       <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
       <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
       <div class="container">
-			<div class="col-md-4 col-sm-12">
+			<div class="col-md-4 col-sm-12 col-xs-12">
            <?php
             echo get_faire_backlink();      
            ?>
 			</div>
-			<div class="col-md-4 col-sm-12">
+			<div class="col-md-4 col-sm-12 col-xs-12">
          	<h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
 			</div>
 			<div class="col-md-4 col-sm-12">
