@@ -238,7 +238,12 @@ function getMTMentries($formIDs,$faireID) {
             $fitPhoto = $projPhoto;
          if ($featImg == NULL)
             $featImg = $projPhoto;
-                  
+          
+         //find out if there is an override image for this page
+         $overrideImg = findOverride($result->entry_id, 'mtm');
+         if ($overrideImg != '')
+            $fitPhoto = $overrideImg;
+         
          $makerList = getMakerList($result->entry_id);        
          
          //get array of categories. set name based on category id
