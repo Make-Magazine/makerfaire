@@ -12,6 +12,20 @@ $schedule_ids = get_field('schedule_ids');
 if (have_posts()) {
    ?>
    <div class="container">
+      <?php 
+      $back_link = get_field('back_link');
+      $back_link_url  = $back_link['back_link_url'];
+      $back_link_text = $back_link['back_link_text'];
+      
+      if($back_link_url!=''){
+         ?>
+         <div class="faire-backlink">
+            <i class="far fa-chevron-left"></i>
+            <a href='<?php echo $back_link_url;?>'><?php echo $back_link_text;?></a>
+         </div>
+         <?php
+      }
+      ?>
       <div class="row schedule-wrapper">
          <h1><?php echo get_the_title(); ?></h1>
       </div>
@@ -71,7 +85,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
 
                      <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
                         <li>
-                           <a class="pointer-on-hover" ng-click="schedSearch.nicename = ''"><?php _e("All", 'makerfaire') ?></a>
+                           <a class="pointer-on-hover" ng-click="schedSearch.nicename = ''"><?php _e("All Stages", 'makerfaire') ?></a>
                         </li>
                         <li ng-repeat="stage in stages">                     
                            <a class="pointer-on-hover" ng-click="schedSearch.nicename = stage">{{ stage}}</a>
@@ -100,11 +114,12 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                            <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
                         </li>
                      </ul>
+                     <!--
                      <ul>
                         <li ng-repeat="schedule in schedules | filter : schedSearch | orderBy: 'time_start' | unique:{time_start| date: 'EEEE'}">
                            <a class="pointer-on-hover">{{schedule.time_start| date: "EEEE"}}</a>
                         </li>
-                     </ul>
+                     </ul>-->
                   </div>  
                              
                </div>
