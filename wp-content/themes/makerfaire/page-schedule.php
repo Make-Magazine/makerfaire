@@ -39,6 +39,26 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                <div class="sched-col-4">
                   <div class="dropdown">
                      <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span ng-show="schedSearch.type != ''">{{schedSearch.type}}</span>
+                        <span ng-show="schedSearch.type == ''">All Types</span>
+                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                     </button>
+
+                     <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                        <li>
+                           <a class="pointer-on-hover" ng-click="schedSearch.type = ''"><?php _e("All Types", 'makerfaire') ?></a>
+                        </li>
+                        
+                        <li ng-repeat="schedule in schedules | filter:schedSearch | dateFilter: filterdow |  orderBy: 'type' | unique: 'type'">
+                           <a class="pointer-on-hover" ng-click="schedSearch.type = schedule.type">{{ schedule.type}}</a>
+                        </li>
+                     </ul>
+                  </div>                  
+               </div>
+               
+               <div class="sched-col-4">
+                  <div class="dropdown">
+                     <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <span ng-show="schedSearch.nicename != ''">{{schedSearch.nicename}}</span>
                         <span ng-show="schedSearch.nicename == ''">All Stages</span>
                         <i class="fa fa-chevron-down" aria-hidden="true"></i>
@@ -57,25 +77,6 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                      </ul>
                   </div>
                </div>
-               <div class="sched-col-4">
-                  <div class="dropdown">
-                     <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span ng-show="schedSearch.type != ''">{{schedSearch.type}}</span>
-                        <span ng-show="schedSearch.type == ''">All Types</span>
-                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                     </button>
-
-                     <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
-                        <li>
-                           <a class="pointer-on-hover" ng-click="schedSearch.type = ''"><?php _e("All Types", 'makerfaire') ?></a>
-                        </li>
-                        
-                        <li ng-repeat="schedule in schedules | filter:schedSearch | dateFilter: filterdow |  orderBy: 'type' | unique: 'type'">
-                           <a class="pointer-on-hover" ng-click="schedSearch.type = schedule.type">{{ schedule.type}}</a>
-                        </li>
-                     </ul>
-                  </div>                  
-               </div>
 
                <div class="sched-col-4">
                   <div class="dropdown">
@@ -92,6 +93,11 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                         
                         <li ng-repeat="dayOfWeek in dates">
                            <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
+                        </li>
+                     </ul>
+                     <ul>
+                        <li ng-repeat="schedule in schedules | filter : schedSearch | orderBy: 'time_start' | unique:{time_start| date: 'EEEE'}">
+                           <a class="pointer-on-hover">{{schedule.time_start| date: "EEEE"}}</a>
                         </li>
                      </ul>
                   </div>  
