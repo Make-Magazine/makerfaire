@@ -250,7 +250,7 @@ function getMTMentries($formIDs,$faireID) {
          $category[] = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
          $categories = implode(',',$category);
          //don't return location information if the show location isn't set
-         $location = ($showLoc?$result->area:'');
+         $location = ($showLoc?($result->area==NULL?'':$result->area):'');
          $data['entity'][] = array(
                'id'     => $result->entry_id,
                'name'   => $result->proj_name,

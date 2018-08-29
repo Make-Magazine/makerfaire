@@ -31,7 +31,7 @@ if ($noMakerText == '')
 
       <div class="mtm-search">
          <form class="form-inline">
-            <label for="mtm-search-input"><?php _e("Search by category, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
+            <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
             <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
          </form>
       </div>
