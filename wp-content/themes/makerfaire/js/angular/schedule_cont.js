@@ -87,7 +87,6 @@ function schedScroll($window) {
       link: function (scope, element, attrs) {
         var handler;
 		  var raw = element[0]; 
-		  console.log(raw);
         $window = angular.element($window);
         handler = function() {
 			 if(jQuery(".loading").hasClass("ng-hide")){ // don't start adding to the limit until the loading is done
