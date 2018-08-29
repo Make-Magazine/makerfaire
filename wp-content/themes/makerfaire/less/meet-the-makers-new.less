@@ -78,6 +78,7 @@
       }
       form {
          align-self: center;
+			text-align: center;
          label {
             color: #fff;            
             align-self: center;
@@ -98,8 +99,15 @@
    .mtm-filter {
       padding-top: 20px;
       padding-bottom: 20px;
+		text-align: center;
       .mtm-filter-view {
          display: inline-block;
+			@media (min-width:768px) and (max-width:991px) {
+				margin-right: -10px;
+			}
+			@media (max-width:768px) {
+				margin-top: -15px;
+			}
          a {
             color: #555;
             font-size: 14px;
@@ -109,7 +117,7 @@
             }
          }
          .mtm-view-by {
-            margin-right: 50px;
+            margin-right: 10px;
             font-size: 14px;
             font-weight: 500;
             color: #555;
@@ -124,6 +132,9 @@
 		.nav-pills {
 			display:inline-block;
 			box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);
+			@media (max-width:768px) {
+				margin-top: 15px;
+			}
 			li {
 				button{
 					border: none;
@@ -131,6 +142,7 @@
 					min-width: 80px;
     				padding: 3px 0px 2px;
 					border: solid 1px #BCBCBC;
+					font-size: 14px;
 					&.active {
 						background: #6A6A6A;
 						color: #fff;
@@ -154,8 +166,9 @@
          display: inline-block;
          margin-right: 30%;
          float: right;
-         @media (max-width:767px) {
-            float: left;
+         @media (max-width: 768px) {
+            float: none;
+				margin-right: auto;
             .dropdown-toggle {
                padding-left: 0;
                margin-top: 10px;
