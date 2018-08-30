@@ -152,7 +152,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "locationOrder": 400,
               "selectedFields":[
                 {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
+                {"id":303,"label":"Status","choices":"all","type":"radio","order":800,"hide":true}
               ],
               "location":true,
               "rmtData":{"resource":[],"attribute":[],"attention":[],
