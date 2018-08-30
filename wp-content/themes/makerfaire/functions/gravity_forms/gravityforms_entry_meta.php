@@ -144,10 +144,3 @@ function remove_gf_meta_box($meta_boxes, $entry, $form) {
   unset($meta_boxes['submitdiv']);
   return $meta_boxes;
 }
-
-add_filter( 'gform_form_post_get_meta', 'add_sched_loc_info' );
-function add_sched_loc_info( $form ) {
-   //add area, subarea, location to the filter
-   //array_push( $form['fields'], array( 'id' => 'sched-area', 'label' => __( 'Area', 'gravityforms' ) ) );
-   return $form;
-}
