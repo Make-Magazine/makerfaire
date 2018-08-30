@@ -119,6 +119,14 @@
 		}
 	}
 }*/
+.schedule-header {
+	h1 {
+		font-size: 36px;
+		color: #4A4A4A;
+		font-family: "Roboto-Light";
+		margin-bottom: 10px;
+	}
+}
 
 .schedule-wrapper { 
 	width: 90%; 
@@ -126,13 +134,6 @@
 	text-align: center;
 	@media (max-width: 992px) {
 		width: 100%;
-	}
-	h1 {
-		font-size: 36px;
-		color: #4A4A4A;
-		font-family: "Roboto-Light";
-		margin-bottom: 10px;
-		
 	}
 	.mtm-search {
 		position: relative;
@@ -144,6 +145,10 @@
    	background-color: #00597E;
    	display: flex;
    	justify-content: center;
+		@media screen and (max-width: 368px) {
+			height: 125px;
+			padding: 5px;
+		}
 		label {
 		   color: #fff;
 			margin-top: 17px;
@@ -179,11 +184,11 @@
 	   .sched-col-4 {
 			padding: 0px;
 			float: right;
-			@media (max-width: 661px) {
+			@media (max-width: 768px) {
 				width:100%;
 				margin-bottom: 10px;
+				text-align: center;
 			}
-
 			#mtm-dropdownMenu {
 				text-align: left;
 				float: right;
@@ -196,9 +201,10 @@
 					font-weight: 900;
 					margin-left: 10px;
 				}
-				@media (max-width: 661px) {
+				@media (max-width: 768px) {
 					margin-left: 0px;
 					width: 100%;
+					text-align: center;
 				}
 		
 			}
