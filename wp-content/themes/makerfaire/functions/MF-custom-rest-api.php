@@ -232,12 +232,10 @@ function getMTMentries($formIDs,$faireID) {
          
          //project photo
          $projPhoto = $result->proj_photo;
-         $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 230, 181);
-         $featImg = legacy_get_resized_remote_image_url($projPhoto, 800, 500);
+         $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 350, 350);
+         
          if ($fitPhoto == NULL)
             $fitPhoto = $projPhoto;
-         if ($featImg == NULL)
-            $featImg = $projPhoto;
           
          //find out if there is an override image for this page
          $overrideImg = findOverride($result->entry_id, 'mtm');
@@ -259,8 +257,7 @@ function getMTMentries($formIDs,$faireID) {
          $data['entity'][] = array(
                'id'     => $result->entry_id,
                'name'   => $result->proj_name,
-               'large_img_url' => $fitPhoto,
-               'featured_img' => $featImg,
+               'large_img_url' => $fitPhoto,               
                'categories' => $categories,
                'description' => $result->short_desc,
                'flag' => $flag, //only set if flag is set to 'Featured Maker'
