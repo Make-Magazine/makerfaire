@@ -12,9 +12,12 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
       $scope.limit += 5;
    };
    
+   $scope.category = '';
    $scope.showSchedules = false;
    $scope.schedSearch = [];
    $scope.schedSearch.nicename = '';
+   $scope.schedSearch.category = '';
+   $scope.schedSearch.type = '';
    //if stage URL parameter is passed, default the stage to this
    if(stageParam != undefined){
       $scope.schedSearch.nicename = stageParam;
@@ -43,13 +46,24 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
    $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs)
       .then(function successCallback(response) {                         
          $scope.schedules = response.data.schedule;   
-         var dateList = [];            
+         var dateList = []; 
+         var catList = [];
          angular.forEach($scope.schedules, function (schedule) {
             defDOW = $filter('date')(schedule.time_start, "EEEE");
 
             if (dateList.indexOf(defDOW) == -1)
                dateList.push(defDOW);
+            
+            var categories = schedule.category;
+            if(categories != null){
+               var catArray = categories.split(",");
+               angular.forEach(catArray, function(cat){
+                  if (catList.indexOf(cat) == -1)
+                     catList.push(cat);
+               });
+            }
          });
+         $scope.tags  = catList;
          $scope.dates = dateList.sort();
       }, function errorCallback(error) {
          console.log(error);

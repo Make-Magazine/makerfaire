@@ -51,6 +51,24 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                <div class="sched-col-4">
                   <div class="dropdown">
                      <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span ng-show="schedSearch.category != ''">{{schedSearch.category}}</span>
+                        <span ng-show="schedSearch.category == ''">All Topics</span>
+                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                     </button>
+
+                     <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                        <li>
+                           <a class="pointer-on-hover" ng-click="schedSearch.category = ''"><?php _e("All Topics", 'makerfaire') ?></a>
+                        </li>
+                        <li ng-repeat="tag in tags| orderBy: tag">                     
+                           <a class="pointer-on-hover" ng-click="schedSearch.category = tag">{{ tag}}</a>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+               <div class="sched-col-4">
+                  <div class="dropdown">
+                     <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <span ng-show="schedSearch.type != ''">{{schedSearch.type}}</span>
                         <span ng-show="schedSearch.type == ''">All Types</span>
                         <i class="fa fa-chevron-down" aria-hidden="true"></i>
@@ -107,14 +125,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                            <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
                         </li>
                      </ul>
-                     <!--
-                     <ul>
-                        <li ng-repeat="schedule in schedules | filter : schedSearch | orderBy: 'time_start' | unique:{time_start| date: 'EEEE'}">
-                           <a class="pointer-on-hover">{{schedule.time_start| date: "EEEE"}}</a>
-                        </li>
-                     </ul>-->
-                  </div>  
-                             
+                  </div>                               
                </div>
             </div>
          </div>
@@ -153,21 +164,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                            </div>
 
                            <div class="sched-col-4">{{schedule.nicename}}</div>
-
-                           <?php /*
-                             <div class="sched-col-5 sched-type">
-                             <img ng-if="schedule.type == 'Demo'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Demo-icon.svg" alt="Maker Exhibit Demo Topic Icon" class="img-responsive" />
-                             <img ng-if="schedule.type == 'Talk'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Talk-icon.svg" alt="Maker Exhibit Talk Topic Icon" class="img-responsive" />
-                             <img ng-if="schedule.type == 'Workshop'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Workshop-icon.svg" alt="Maker Exhibit Workshop Topic Icon" class="img-responsive" />
-                             <img ng-if="schedule.type == 'Performance'" src="<?php echo get_bloginfo('template_directory'); ?>/img/Performance-icon.svg" alt="Maker Exhibit Performance Topic Icon" class="img-responsive" />
-                             </div>
-
-                             <div class="sched-col-6">
-                             <div class="overflow-ellipsis-text">
-                             <span data-ng-repeat="catName in schedule.category">{{catName}}<font ng-show="!$last">, </font></span>
-                             </div>
-                             </div> */ ?>
-
+                           
                            <div class="col-xs-10 col-xs-offset-2 sched-more-info">
                               <div class="panel-heading">
                                  <span ng-click="schedule.isCollapsed = !schedule.isCollapsed" ng-init="schedule.isCollapsed = true"><?php _e('quick view', 'MiniMakerFaire'); ?>
