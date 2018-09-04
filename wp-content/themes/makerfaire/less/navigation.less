@@ -242,39 +242,77 @@ li.hidelink a:visited {
   }
 }
 
+.sumome-share-client-wrapper {
+	display: none !important;
+}
+
 // Left Hand Navigation
 .left-hand-nav {
-   ul {
-      list-style: none;
-   }
-   li {
-      color: #4A4A4A;
-      font-family: 'Roboto';
-      line-height: 1.2em;
-   }
-   .nav-title {
-      font-size: 20px;
-      font-family: "Roboto Light";
-      line-height: 1.2em;
-      color: #1987c7;
-   }
-   .nav-flag {
-      width: auto;
-      margin-right: 39px;
-      background-color: #00AEEF;
-      height: 78px;      
-   }
-   .nav-flag a {
-      color: #FFFFFF;      
-   }
-   .nav-flag.date {
-      font-size: 16px;
-      font-family: 'Roboto Condensed';
-      font-weight: bold;
-   }
-   .nav-flag.location {
-      font-size: 12px;
-      font-family: 'Roboto-Light';
-      line-height: 1.2em;
-   }
+	#menu-ny-left-hand-nav {
+		margin-top: 30px;
+		position: relative;
+		li {
+			color: #4A4A4A;
+			font-family: 'Roboto';
+			line-height: 1.2em;
+			list-style: none;
+
+				padding: 10px 0;
+				width: 125%;
+				margin-left: -25%;
+				padding-left: 25%;
+				&:hover {
+					background: #ccc;
+				}
+		   }
+
+		.nav-title {
+			font-family: Roboto-Light;
+			letter-spacing: 0.26px;
+			line-height: 1.2em;
+			color: #4A4A4A;
+			margin-bottom: 30px;
+			padding: 0px;
+			margin-left: 0px;
+			width: auto;
+			&:hover { background: transparent; }
+			a {
+				font-size: 28px;
+			}
+		}
+		.nav-flag {
+			width: auto;
+			margin-right: 39px;
+			background: #00AEEF;
+			height: 78px;      
+			width: 125%;
+			margin-left: -25%;
+			padding-left: 25%;
+			padding-top: 20px;
+			&:hover { background: #00AEEF; }
+			a { 
+				color: #fff;
+				font-size: 16px;
+				font-family: "Roboto Condensed";
+				.date { 
+					font-family: "Roboto Condensed Bold";
+				}
+			}		
+			&:after {
+				content: "";
+				border-top: 38px solid transparent;
+				border-bottom: 38px solid transparent;
+				border-right: 25px solid #fff;
+				position: absolute;
+				right: 0;
+				margin-top: -37px;
+			}
+		}
+		a {
+			text-decoration: none;
+			color: #4A4A4A;
+			font-size: 14px;
+		}
+
+	}
 }
