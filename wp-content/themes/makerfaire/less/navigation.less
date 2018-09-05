@@ -277,10 +277,15 @@ li.hidelink a:visited {
 			font-family: 'Roboto';
 			line-height: 1.2em;
 			list-style: none;
-			padding: 10px 0;
 			width: 125%;
 			margin-left: -25%;
 			padding-left: 25%;
+			cursor: pointer;
+			position: relative;
+			a{ 
+				padding: 10px 0px;
+				display: block;
+			}
 			&:hover {
 				background: #ccc;
 			}
@@ -289,31 +294,33 @@ li.hidelink a:visited {
 				ul {
 					display:none;
 				}
-				&:after {
-					content: '+';
-					float: right;
-					padding-right: 30px;
-				}
 				&.expanded-lnav {
 					position: relative;
 					&:hover {
-						background: linear-gradient(180deg, #ccc 14%, #ffffff 0%);
-					}
-					&:after {
-						content: '-';
-						position: absolute;
-						top: 10px;
-						right: 0px;
-						font-weight: 600;
+						background: linear-gradient(180deg, #ccc 37px, #ffffff 0%);
 					}
 					ul {
 						display: block;
 					}
 			   }
 			}
-			&.menu-item-has-children.expanded-lnav > a {
+			&.menu-item-has-children > a {
 				display: block;
-				margin-bottom: 10px;
+				height: 37px;
+				pointer-events: none;
+				&:after {
+					content: '+';
+					position: absolute;
+					top: 10px;
+					right: 0px;
+					padding-right: 30px;
+				}
+			}
+			&.menu-item-has-children.expanded-lnav > a {
+				&:after {
+						content: '-';
+						font-weight: 600;
+				}
 			}
 		}
 		.nav-title {
@@ -338,7 +345,7 @@ li.hidelink a:visited {
 			width: 125%;
 			margin-left: -25%;
 			padding-left: 25%;
-			padding-top: 20px;
+			padding-top: 12px;
 			&:hover { background: #00AEEF; }
 			a { 
 				color: #fff;
@@ -355,7 +362,7 @@ li.hidelink a:visited {
 				border-right: 25px solid #fff;
 				position: absolute;
 				right: 0;
-				margin-top: -37px;
+				top: 0px;
 			}
 		}
 		a {
