@@ -821,7 +821,7 @@ function getSponsorPanel() {
                         array('goldsmith_sponsors', 'GOLDSMITH'),
                         array('silversmith_sponsors', 'SILVERSMITH'),
                         array('coppersmith_sponsors', 'COPPERSMITH'),
-                        array('media_sponsors', 'MEDIA'),
+                        array('media_sponsors', 'MEDIA AND COMMUNITY'),
                      );
       foreach ($sponsorArray as $sponsor) {
          if (have_rows($sponsor[0], $id)) {

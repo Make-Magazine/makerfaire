@@ -369,7 +369,7 @@ function createSponsSlide($atts) {
       array('type'=>'goldsmith_sponsors', 'name'=>'Goldsmith Sponsors'),
       array('type'=>'silversmith_sponsors', 'name'=>'Silversmith Sponsors'),
       array('type'=>'coppersmith_sponsors', 'name'=>'Coppersmith Sponsors'),
-      array('type'=>'media_sponsors', 'name'=>'Media Sponsors'),
+      array('type'=>'media_sponsors', 'name'=>'Media and Community Sponsors'),
   );
   //IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
   if( have_rows('goldsmith_sponsors', $postid) || have_rows('silversmith_sponsors', $postid) || have_rows('coppersmith_sponsors', $postid) || have_rows('media_sponsors', $postid) ) {

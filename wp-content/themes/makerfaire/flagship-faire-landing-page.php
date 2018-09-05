@@ -148,7 +148,7 @@ if(get_field('sponsors_page_url'))
               <div class="item">
                 <div class="row spnosors-row">
                   <div class="col-xs-12">
-                    <h3 class="sponsors-type text-center">MEDIA</h3>
+                    <h3 class="sponsors-type text-center">MEDIA AND COMMUNITY</h3>
                       <div class="faire-sponsors-box">
                       <?php
                         while( have_rows('media_sponsors', $id) ): the_row();
