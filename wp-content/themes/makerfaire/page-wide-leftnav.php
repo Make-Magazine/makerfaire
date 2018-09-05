@@ -8,10 +8,10 @@ get_header(); ?>
 <div class="post-thumbnail">
 		<?php the_post_thumbnail(); ?>
 </div><!-- .post-thumbnail -->
-<div class="">
+<div class="page-leftnav">
 
 	<div class="row">
-      <div class="content col-md-3 left-hand-nav">
+      <div class="left-hand-nav col-md-3">
          <?php           
             $displayNav = get_field('display_left_nav');
             

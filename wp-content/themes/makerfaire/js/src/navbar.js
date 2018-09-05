@@ -42,6 +42,11 @@ function sumomeActive() {
         }
       });
 		
+		jQuery('.left-hand-nav').on('click', '.menu-item-has-children', function(event) {
+			 event.preventDefault();
+          jQuery(this).toggleClass('expanded-lnav');
+		});
+		
 		jQuery('.sumome-react-wysiwyg-popup-container').on('DOMNodeRemoved', function(e) {
 			sumomeActive();
 		});
