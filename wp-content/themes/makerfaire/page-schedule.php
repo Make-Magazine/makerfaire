@@ -20,7 +20,7 @@ if (have_posts()) {
    <div class="container schedule-header">
       <div class="col-md-3 col-sm-12 col-xs-12">
            <?php
-            echo get_faire_backlink();      
+            //echo get_faire_backlink();      
            ?>
 			</div>
 			<div class="col-md-6 col-sm-12 col-xs-12">
