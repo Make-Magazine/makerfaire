@@ -9,6 +9,7 @@ $sched_dow = (isset($wp_query->query_vars['sched_dow']) ? ucfirst(urldecode($wp_
 $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($wp_query->query_vars['sched_type'])) : 'All Types');
 
 $schedule_ids = get_field('schedule_ids');
+
 if (have_posts()) {
    ?>
    <div class="container schedule-header">
