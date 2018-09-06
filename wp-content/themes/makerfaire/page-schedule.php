@@ -10,6 +10,11 @@ $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($w
 
 $schedule_ids = get_field('schedule_ids');
 
+$displayNav = get_field('display_left_nav');
+?>
+
+
+<?php 
 if (have_posts()) {
    ?>
    <div class="container schedule-header">
@@ -33,21 +38,38 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
    <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
    <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
-   <div id="page-schedule" class="container schedule-table" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
-		<div ng-show="!schedules.length" class="container loading">
-			<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-			<span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
-		</div>
+   <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
       <div class="schedule-wrapper">
          <!--<a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>-->
          <div ng-cloak>
-            <div class="schedule-filters container" ng-if="showSchedules">
-               <div class="mtm-search">
+				<div class="mtm-search">
                   <form class="form-inline">
                      <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
                      <input ng-model="schedSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
                   </form>
-               </div>
+            </div>
+           
+         </div>
+			
+			<?php           
+				if($displayNav){
+			?>
+			<div class="page-leftnav">
+				<div class="row">
+					<div class="left-hand-nav col-md-3">
+						<?php
+								$template_to_display = get_field('template_to_display');               
+								wp_nav_menu( array( 'theme_location' => $template_to_display ) );
+						?>
+					</div>
+					<div class="content col-md-9">
+			<?php } ?>
+			<div ng-show="!schedules.length" class="container loading">
+				<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+				<span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
+			</div>
+         <div class="sched-table"  sched-scroll="loadMore()">     
+				<div class="schedule-filters container" ng-if="showSchedules">
                
                <div class="sched-col-4">
                   <div class="dropdown">
@@ -86,7 +108,6 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                      </ul>
                   </div>                  
                </div>
-               
                <div class="sched-col-4">
                   <div class="dropdown">
                      <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -108,7 +129,6 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                      </ul>
                   </div>
                </div>
-
                <div class="sched-col-4">
                   <div class="dropdown">
                      <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                        
@@ -128,10 +148,8 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                      </ul>
                   </div>                               
                </div>
+					
             </div>
-         </div>
-
-         <div class="sched-table"  sched-scroll="loadMore()">            
             <div class="row sched-header">
                <div class="sched-col-1"></div>               
                <div class="sched-body">
@@ -186,8 +204,19 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                </div><!-- .sched-body -->
             </div>
          </div>
+							<!--LeftNav Containers-->
+<?php           
+	$displayNav = get_field('display_left_nav');
+
+	if($displayNav){
+?>
+  </div>
+ </div>
+</div>
+<?php } ?>
       </div>
    </div>
+
    <?php
 } else { //display what is in content
    ?>
@@ -221,6 +250,8 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
          </div><!--Content-->
       </div>
    </div><!--Container-->
+			
+
    <?php
 }
 ?>
