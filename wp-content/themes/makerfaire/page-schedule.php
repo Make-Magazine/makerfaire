@@ -10,14 +10,25 @@ $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($w
 
 $schedule_ids = get_field('schedule_ids');
 
-$displayNav = get_field('display_left_nav');
+$displayNav = get_field('display_left_nav');          
+if($displayNav){
 ?>
+<div class="page-leftnav">
+	<div class="row">
+		<div class="left-hand-nav col-md-3">
+			<?php
+					$template_to_display = get_field('template_to_display');               
+					wp_nav_menu( array( 'theme_location' => $template_to_display ) );
+			?>
+		</div>
+		<div class="content col-md-9">
+<?php } ?>
 
 
 <?php 
 if (have_posts()) {
    ?>
-   <div class="container schedule-header">
+   <div class="schedule-header">
       <div class="col-md-3 col-sm-12 col-xs-12">
            <?php
             //echo get_faire_backlink();      
@@ -44,26 +55,14 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
          <div ng-cloak>
 				<div class="mtm-search">
                   <form class="form-inline">
-                     <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
+                     <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or presenter name", 'makerfaire') ?></label><br/>
                      <input ng-model="schedSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
                   </form>
             </div>
            
          </div>
 			
-			<?php           
-				if($displayNav){
-			?>
-			<div class="page-leftnav">
-				<div class="row">
-					<div class="left-hand-nav col-md-3">
-						<?php
-								$template_to_display = get_field('template_to_display');               
-								wp_nav_menu( array( 'theme_location' => $template_to_display ) );
-						?>
-					</div>
-					<div class="content col-md-9">
-			<?php } ?>
+
 			<div ng-show="!schedules.length" class="container loading">
 				<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
 				<span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
@@ -204,18 +203,17 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                </div><!-- .sched-body -->
             </div>
          </div>
-							<!--LeftNav Containers-->
-<?php           
-	$displayNav = get_field('display_left_nav');
 
+      </div>
+   </div>
+<!--LeftNav Containers-->
+<?php           
 	if($displayNav){
 ?>
   </div>
  </div>
 </div>
 <?php } ?>
-      </div>
-   </div>
 
    <?php
 } else { //display what is in content
