@@ -169,11 +169,17 @@ header.universal-nav {
         -webkit-justify-content: stretch;
         align-items: center;
         -webkit-align-items: center;
+        &:hover, &:active, &:focus {
+          text-decoration: none;
+          opacity: 1;
+        }
       }
-      &:hover, &:active {
-        text-decoration: none;
-        opacity: 1;
+      a#newLoginBtn {
+        color: red;
+        font-weight: 700;
+        font-size: 16px;
       }
+
       #btn-logout { display: none; }
   }
     
