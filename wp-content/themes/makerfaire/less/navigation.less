@@ -287,7 +287,7 @@ li.hidelink a:visited {
 			a{ 
 				padding: 7px 0px;
 				display: block;
-				&:focus, &:active {
+				&:active {
 					text-decoration: underline;
 				}
 			}
@@ -339,13 +339,13 @@ li.hidelink a:visited {
 			text-transform: uppercase;
 			&:hover { background: transparent; }
 			a {
-				font-size: 20px;
-				line-height: 1.8em;
+				font-size: 38px;
+				line-height: 1.2em;
 				margin-left: -25%;
 				padding-left: 25%;
 				color: #00aeef;
-				@media(max-width:992px) {
-					font-size: 20px;
+				@media(max-width:1100px) {
+					font-size: 30px;
 				}
 				&:hover {
 					background: #F0F0F0;
@@ -366,22 +366,28 @@ li.hidelink a:visited {
 			&:hover { background: #00AEEF; }
 			a { 
 				color: #fff;
-				font-family: "Roboto Light";
-				font-size: 16px;
-				line-height: 20px;
+				font-family: 'Roboto Condensed';
+				font-size: 20px;
+				line-height: 24px;
 				text-transform: uppercase;
 				pointer-events: none;
+				cursor: default;
 				max-width: 90%;
-				@media(max-width:992px) {
-					font-size: 22px;
-					line-height: 24px;
+				.date {
+					font-size: 34px;
+					@media(min-width:992px) and (max-width:1300px) {
+						font-size: 26px;
+					}
+				}
+				@media(min-width:992px) and (max-width:1300px) {
+					font-size: 15px;
 				}
 			}		
 			&:after {
 				content: "";
-				border-top: 38px solid transparent;
-				border-bottom: 38px solid transparent;
-				border-right: 25px solid #fff;
+				border-top: 40px solid transparent;
+				border-bottom: 40px solid transparent;
+				border-right: 30px solid #fff;
 				position: absolute;
 				right: 0;
 				top: 0px;
