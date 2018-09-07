@@ -28,17 +28,9 @@ if($displayNav){
 <?php 
 if (have_posts()) {
    ?>
-   <div class="schedule-header">
-      <div class="col-md-3 col-sm-12 col-xs-12">
-           <?php
-            //echo get_faire_backlink();      
-           ?>
-			</div>
-			<div class="col-md-6 col-sm-12 col-xs-12">
-         	<h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
-			</div>
-			<div class="col-md-3 col-sm-12">
-		</div>
+   <div class="schedule-header container">
+      
+       <h1 class="page-title"><?php echo get_the_title(); ?></h1>
 		
    </div><?php
 }
