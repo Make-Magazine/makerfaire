@@ -52,32 +52,32 @@ if ($type != '') {
 function cannedRpt() {
    global $wpdb;
    global $obj;
-   $useFormSC = (isset($obj->useFormSC) ? $obj->useFormSC : false);
-   $formSelect = (isset($obj->formSelect) ? $obj->formSelect : array());
+   $useFormSC   = (isset($obj->useFormSC) ? $obj->useFormSC : false);
+   $formSelect  = (isset($obj->formSelect) ? $obj->formSelect : array());
    $formTypeArr = (isset($obj->formType) ? $obj->formType : array());
-   $faire = (isset($obj->faire) ? $obj->faire : '');
+   $faire       = (isset($obj->faire) ? $obj->faire : '');
 
-   $dispFormID = (isset($obj->dispFormID) ? $obj->dispFormID : false);
+   $dispFormID    = (isset($obj->dispFormID) ? $obj->dispFormID : false);
    $formTypeLabel = (isset($obj->formTypeLabel) ? $obj->formTypeLabel : ($useFormSC ? "TYPE" : 'Form Type'));
-   $entryIDLabel = (isset($obj->entryIDLabel) ? $obj->entryIDLabel : ($useFormSC ? 'ENTRY ID' : 'Entry Id'));
+   $entryIDLabel  = (isset($obj->entryIDLabel) ? $obj->entryIDLabel : ($useFormSC ? 'ENTRY ID' : 'Entry Id'));
 
-   $orderBy = (isset($obj->orderBy) ? $obj->orderBy : '');
-   $selectedFields = (isset($obj->selectedFields) ? $obj->selectedFields : array());
-   $rmtData = (isset($obj->rmtData) ? $obj->rmtData : array());
-   $location = (isset($obj->location) ? $obj->location : false);
-   $tickets = (isset($obj->tickets) ? $obj->tickets : false);
-   $payment = (isset($obj->payments) ? $obj->payments : false);
+   $orderBy          = (isset($obj->orderBy) ? $obj->orderBy : '');
+   $selectedFields   = (isset($obj->selectedFields) ? $obj->selectedFields : array());
+   $rmtData          = (isset($obj->rmtData) ? $obj->rmtData : array());
+   $location         = (isset($obj->location) ? $obj->location : false);
+   $tickets          = (isset($obj->tickets) ? $obj->tickets : false);
+   $payment          = (isset($obj->payments) ? $obj->payments : false);
 
-   $entryIDorder = (isset($obj->entryIDorder) ? $obj->entryIDorder : 10);
-   $formIDorder = (isset($obj->formIDorder) ? $obj->formIDorder : 20);
+   $entryIDorder  = (isset($obj->entryIDorder) ? $obj->entryIDorder : 10);
+   $formIDorder   = (isset($obj->formIDorder) ? $obj->formIDorder : 20);
    $locationOrder = (isset($obj->locationOrder) ? $obj->locationOrder : 30);
-   $ticketsOrder = (isset($obj->ticketsOrder) ? $obj->ticketsOrder : 70);
+   $ticketsOrder  = (isset($obj->ticketsOrder) ? $obj->ticketsOrder : 70);
    $formTypeorder = (isset($obj->formTypeorder) ? $obj->formTypeorder : 40);
-   $paymentOrder = (isset($obj->paymentOrder) ? $obj->paymentOrder : 50);
-   $CMOrder = (isset($obj->CMOrder) ? $obj->CMOrder : 60);
+   $paymentOrder  = (isset($obj->paymentOrder) ? $obj->paymentOrder : 50);
+   $CMOrder       = (isset($obj->CMOrder) ? $obj->CMOrder : 60);
 
-   $forms = implode(",", $formSelect);
-   $formTypes = implode("', '", $formTypeArr);
+   $forms      = implode(",", $formSelect);
+   $formTypes  = implode("', '", $formTypeArr);
    if (!empty($formTypes))
       $formTypes = "'" . $formTypes . "'";
 
@@ -693,22 +693,25 @@ function pullPayData($entryID, $paymentOrder = 50) {
                         wp_gf_addon_payment_transaction.transaction_type,
                         wp_gf_addon_payment_transaction.transaction_id,
                         wp_gf_addon_payment_transaction.amount,
-                        wp_gf_addon_payment_transaction.date_created
+                        wp_gf_addon_payment_transaction.date_created,
+                        (SELECT meta_value FROM `wp_gf_entry_meta` WHERE `entry_id` = pymt_entry and meta_key=797 limit 1) as invoice_id
                   from  wp_gf_entry_meta
                   left  outer join wp_gf_addon_payment_transaction
                         on wp_gf_entry_meta.entry_id = wp_gf_addon_payment_transaction.lead_id
                  where  meta_value = $entryID "
-              . "    and wp_gf_entry_meta.meta_key like 'entry_id' "
-              . "    and wp_gf_addon_payment_transaction.transaction_type='payment'";
+              . "    and wp_gf_entry_meta.meta_key like 'entry_id'";
 
       $payresults = $wpdb->get_results($paysql);
       if ($wpdb->num_rows > 0) {
          //add payment data to report
-         $pay_det = '';
+         $pay_det    = "";
+         $order_id   = "";               
+         $invoice_id = "";
+         
          $transaction_id = array();
          $amount = 0;
-         $date_created = array();
-
+         $date_created = array();           
+               
          foreach ($payresults as $payrow) {
             $transaction_id[] = $payrow->transaction_id;   //payment transaction ID (from paypal)
             $amount = $amount + $payrow->amount; //payment amt
@@ -734,7 +737,22 @@ function pullPayData($entryID, $paymentOrder = 50) {
                   }
                }
             }
+            
+            if($payrow->invoice_id !== '' && $payrow->invoice_id !== NULL){
+               //order id
+               $order_id .= $payrow->pymt_entry . "\r";               
+               $invoice_id .=$payrow->invoice_id ."\r";               
+            }    
          }
+              
+         $return['colDefs']['order_id'] = array('field' => 'order_id', 'displayName' => 'Order ID', 'displayOrder' => $paymentOrder);
+         $return['data']['order_id'] = $order_id;
+
+         //Invoice ID
+         $return['colDefs']['invoice_id'] = array('field' => 'invoice_id', 'displayName' => 'Invoice ID', 'displayOrder' => $paymentOrder);         
+         $return['data']['invoice_id'] = $invoice_id;
+         $paymentOrder = $paymentOrder+2;
+         
          //payment transaction ID (from paypal)
          $return['colDefs']['trx_id'] = array('field' => 'trx_id', 'displayName' => 'Pay trxID', 'displayOrder' => $paymentOrder);
          $return['data']['trx_id'] = implode("\r", $transaction_id);
