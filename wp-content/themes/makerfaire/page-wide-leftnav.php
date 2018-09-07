@@ -8,10 +8,10 @@ get_header(); ?>
 <div class="post-thumbnail">
 		<?php the_post_thumbnail(); ?>
 </div><!-- .post-thumbnail -->
-<div class="">
+<div class="page-leftnav">
 
 	<div class="row">
-      <div class="content col-md-2 left-hand-nav">
+      <div class="left-hand-nav col-md-3">
          <?php           
             $displayNav = get_field('display_left_nav');
             
@@ -21,7 +21,7 @@ get_header(); ?>
             }
          ?>
       </div>
-		<div class="content col-md-10">
+		<div class="content col-md-9">
 
 			<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 

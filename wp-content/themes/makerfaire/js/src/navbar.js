@@ -12,9 +12,24 @@ function sumomeActive() {
 }
 
 (function($) {
-   // keep these from happening before any oangular or login scripts
+	
+   // keep these from happening before any angular or login scripts
+	
+	
    $(window).bind("load", function() {
 		
+		// Left hand nav script
+		if(jQuery('.left-hand-nav').length > 0){
+			jQuery('.left-hand-nav .menu-item-has-children > a').css("pointer-events", "all");
+			jQuery('.left-hand-nav .menu-item-has-children > a').click(function(event){
+				jQuery(this).parent().toggleClass('expanded-lnav');
+				event.preventDefault();
+			});
+			// expand current page category
+			jQuery('.left-hand-nav .current-menu-item').parent().parent().toggleClass('expanded-lnav');
+		}
+		
+		// USERSNAP
 		var firstPath = location.pathname.split("/")[1];
 		if ( firstPath != "new-york" && firstPath != "bay-area" && firstPath != "") {
 			jQuery("#us_report_button").text("Website Help");
@@ -41,6 +56,7 @@ function sumomeActive() {
           jQuery(this).next('.nav-flyout-ul').slideToggle();
         }
       });
+
 		
 		jQuery('.sumome-react-wysiwyg-popup-container').on('DOMNodeRemoved', function(e) {
 			sumomeActive();

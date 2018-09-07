@@ -128,23 +128,35 @@
 	}
 }
 
+.left-nav-active {
+	.schedule-wrapper {
+		width: 100%;
+		@media (min-width: 992px) {
+			.sched-table {
+				margin-right: 40px;
+			}
+		}
+	}
+}
+
 .schedule-wrapper { 
 	width: 90%; 
 	margin: 0 auto; 
-	text-align: center;
 	@media (max-width: 992px) {
 		width: 100%;
 	}
 	.mtm-search {
 		position: relative;
-		width: 100vw;
-		margin-left: calc(-50vw + 50%);
+		width: 100%;
 		position: relative;
 		height: 100px;
 		margin-bottom: 15px;
-   	background-color: #00597E;
-   	display: flex;
-   	justify-content: center;
+   	background-color: #005E9A;
+   	clear: both;
+		@media screen and (max-width: 992px) {
+			width: 100vw;
+			margin-left: calc(-50vw + 50%);
+		}
 		@media screen and (max-width: 368px) {
 			height: 125px;
 			padding: 5px;
@@ -159,70 +171,104 @@
 		#mtm-search-input { 
 			width: 100%;
 		}
+		@media (max-width: 1228px) {
+			height: 140px;
+		}
+		@media (max-width: 500px) {
+			height: 240px;
+		}
+		.search-wrapper {
+			width: 45%;
+			float: left;
+			@media (max-width: 1228px) {
+			  width: 100%;
+			}
+			padding: 0px 15px;
+		}
+		.filter-wrapper {
+			height: 100%;
+			width: 55%;
+			display: table;
+			padding-bottom: 10px;
+			@media (max-width: 1228px) {
+			  width: 100%;
+			  height: 40%;
+			}
+			padding: 0px 15px;
+		}
+		.schedule-filters {
+			margin-bottom: 15px;
+			padding-bottom: 10px;
+			display: table-cell;
+			vertical-align: bottom;
+			.sched-col-4 {
+				padding: 0px;
+				float: right;
+				color:#fff;
+				font-weight: 500;
+				font-size: 14px;
+				&:first-of-type { 
+					.dropdown-menu { margin-left: -150%; }
+				}
+				&:last-of-type {  //filter by
+					padding-top: 4px; padding-right: 10px;
+					@media (max-width: 500px) { display: none; }
+				}
+				@media (max-width: 500px) {
+					width:100%;
+					margin-top: 10px;
+					text-align: center;
+				}
+				#mtm-dropdownMenu {
+					text-align: left;
+					float: right;
+					font-size: 14px;
+					font-weight: 500;
+					color: #fff;
+					.fa-angle-down {
+						margin-top: 2px;
+						font-weight: 900;
+						margin-left: 10px;
+					}
+					@media (max-width: 768px) {
+						margin-left: 0px;
+						width: 100%;
+						text-align: center;
+					}
+
+				}
+				.dropdown-menu {
+					margin-top: 30px;
+					margin-left: 20px;
+					@media (max-width: 768px) {
+						position: absolute;
+						margin-top: 30px;
+						margin-left: 0px;
+					}
+					li a {
+						padding: 3px 10px;
+					}
+				}
+			}
+		}
    }
 }
 #page-schedule {
-  padding-top: 5px;
-  padding-bottom: 30px;
-  color: #666;
+	padding-top: 5px;
+	padding-bottom: 30px;
+	color: #666;
 	.loading {
 		text-align: center;
 		margin: 25px 0px;
 		margin-left: -15px;
 	}
-
-  .sortorder:after {
-    content: '\25b2';
-  }
-  .sortorder.reverse:after {
-    content: '\25bc';
-  }
-	.schedule-filters {
-		margin-bottom: 15px;
-		padding: 0px;
-		width: 100%;
-	   .sched-col-4 {
-			padding: 0px;
-			float: right;
-			@media (max-width: 768px) {
-				width:100%;
-				margin-bottom: 10px;
-				text-align: center;
-			}
-			#mtm-dropdownMenu {
-				text-align: left;
-				float: right;
-				margin-left: 20px;
-				font-size: 14px;
-				font-weight: 500;
-				color: #555;
-				.fa-angle-down {
-					margin-top: 2px;
-					font-weight: 900;
-					margin-left: 10px;
-				}
-				@media (max-width: 768px) {
-					margin-left: 0px;
-					width: 100%;
-					text-align: center;
-				}
-		
-			}
-			.dropdown-menu {
-				margin-top: 30px;
-				margin-left: 20px;
-				@media (max-width: 768px) {
-					position: relative;
-					width: 100%;
-					margin-top: 0px;
-					margin-left: 0px;
-				}
-				li a {
-					padding: 3px 10px;
-				}
-			}
-		}
+	.sortorder:after {
+	 content: '\25b2';
 	}
+	.sortorder.reverse:after {
+	 content: '\25bc';
+	}
+
   .day-nav {
     width: 100%;
     height: 70px;
