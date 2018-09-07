@@ -147,11 +147,11 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Sponsor"],
               "faire": faire,
               "payments":true,
-              "paymentOrder": 100,
-              "entryIDorder": 200,
+              "paymentOrder": 300,
+              "entryIDorder": 100,
               "locationOrder": 400,
               "selectedFields":[
-                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
+                {"id":151,"label":"Sponsor Name","choices":"","type":"text","inputs":"", "order":200},
                 {"id":303,"label":"Status","choices":"all","type":"radio","order":800,"hide":true}
               ],
               "location":true,
