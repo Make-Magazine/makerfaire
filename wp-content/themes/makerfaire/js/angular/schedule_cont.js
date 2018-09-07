@@ -104,6 +104,8 @@ function schedScroll($window) {
         $window = angular.element($window);
         handler = function() {
 			 if(jQuery(".loading").hasClass("ng-hide")){ // don't start adding to the limit until the loading is done
+				 
+				 // this convoluted logic down here is basically all about identifying the div directly under the schedule scroll
 				 var top_of_element = jQuery(".magazine-footer").offset().top;
 				 if(jQuery(window).width() < 992 && jQuery("#page-schedule").hasClass("left-nav-active")) {
 					 top_of_element = jQuery(".left-hand-nav").offset().top;
