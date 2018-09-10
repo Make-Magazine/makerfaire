@@ -3,273 +3,6 @@
     "title": "Home Page",
     "fields": [
         {
-            "key": "field_58b608928b66d",
-            "label": "Events section under the image slider",
-            "name": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 1
-        },
-        {
-            "key": "field_58b605d7dd3ee",
-            "label": "1 or 2 events can be added here. All fields are optional, fields will be hidden if not filled in.",
-            "name": "event_info",
-            "type": "repeater",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "collapsed": "",
-            "min": 0,
-            "max": 2,
-            "layout": "table",
-            "button_label": "Add Event",
-            "sub_fields": [
-                {
-                    "key": "field_58b6066cdd3ef",
-                    "label": "Image",
-                    "name": "image",
-                    "type": "image",
-                    "instructions": "Add a 250px by 250ps image or similar size.",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "return_format": "url",
-                    "preview_size": "thumbnail",
-                    "library": "all",
-                    "min_width": "",
-                    "min_height": "",
-                    "min_size": "",
-                    "max_width": "",
-                    "max_height": "",
-                    "max_size": "",
-                    "mime_types": ""
-                },
-                {
-                    "key": "field_58b606dbdd3f0",
-                    "label": "Small top text",
-                    "name": "small_top_text",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_58b60706dd3f1",
-                    "label": "Large center text",
-                    "name": "large_center_text",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_58b60711dd3f2",
-                    "label": "Small bottom text",
-                    "name": "small_bottom_text",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_58b6074ddd3f3",
-                    "label": "Event URL",
-                    "name": "event_url",
-                    "type": "text",
-                    "instructions": "The image and all the text will link to this URL.",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_58f0d7296921e",
-                    "label": "Button 1 text",
-                    "name": "button_1_text",
-                    "type": "text",
-                    "instructions": "Text for the first button",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_58b607e260f74",
-                    "label": "Button 1 URL",
-                    "name": "button_1_url",
-                    "type": "text",
-                    "instructions": "Enter a URL here for the first button",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_58f0d76c6921f",
-                    "label": "Button 2 text",
-                    "name": "button_2_text",
-                    "type": "text",
-                    "instructions": "Text for the second button",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_58b6077edd3f4",
-                    "label": "Button 2 URL",
-                    "name": "button_2_url",
-                    "type": "text",
-                    "instructions": "Enter a URL here for the second button",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                }
-            ]
-        },
-        {
-            "key": "field_58b608d08b66e",
-            "label": "Meet the Makers",
-            "name": "",
-            "type": "tab",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "placement": "top",
-            "endpoint": 1
-        },
-        {
-            "key": "field_58b6091b8b66f",
-            "label": "Title",
-            "name": "mtm_title",
-            "type": "textarea",
-            "instructions": "e.g. Meet the Maker Faire New York 2016 Makers: &lt;a href=&quot;\/new-york-2016\/meet-the-makers\/&quot;&gt;See all&lt;\/a&gt;",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "placeholder": "",
-            "maxlength": "",
-            "rows": 2,
-            "new_lines": ""
-        },
-        {
-            "key": "field_58b60b0028767",
-            "label": "Shortcode",
-            "name": "mtm_shortcode",
-            "type": "text",
-            "instructions": "e.g. [mmakers faire=NY16]",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
             "key": "field_58b609bf8b670",
             "label": "Maker Faire News",
             "name": "",
@@ -303,6 +36,41 @@
             "maxlength": "",
             "rows": 2,
             "new_lines": ""
+        },
+        {
+            "key": "field_5b96dc77f5da3",
+            "label": "Social Tint Feed",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5b96dc8df5da4",
+            "label": "Social hashtags",
+            "name": "social_hashtags",
+            "type": "text",
+            "instructions": "Insert the hashtags displayed on the home page for the current faire.\r\nFor example: #wmfny18 and #makerfaire\r\n\r\nNote: This does not change what is set on Tint.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
         }
     ],
     "location": [
@@ -326,5 +94,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1492179415
+    "modified": 1536613734
 }

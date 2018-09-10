@@ -5,72 +5,45 @@
 
 function dispLayout($row_layout) {
    $return = '';
-   switch ($row_layout) {
-      case 'buy_tickets_float': //floating buy tickets banner
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive === 'Active') {
-            $return = getBuyTixPanel($row_layout);
-         }
-         break;
-      case 'featured_makers_panel':                // FEATURED MAKERS (SQUARE)
-      case 'featured_makers_panel_dynamic':        // FEATURED MAKERS (SQUARE) - dynamic
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
-            $return = getFeatMkPanel($row_layout);
-         }
-         break;
-      case '3_column': // 3 COLUMN LAYOUT
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
-            $return = get3ColLayout();
-         }
-         break;
-      case '1_column': // 1 COLUMN LAYOUT
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
-            $return = get1ColLayout();
-         }
-         break;
-      case 'what_is_maker_faire':   // WHAT IS MAKER FAIRE PANEL
-         $return = getWhatisMF();
-         break;
-      case 'call_to_action_panel':  // CTA PANEL
-      case 'call_to_action':  // CTA PANEL
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
-            $return = getCTApanel();
-         }
-         break;
-      case 'static_or_carousel': // IMAGE CAROUSEL (RECTANGLE)
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
-            $return = getImgCarousel();
-         }
-         break;
-      case 'square_image_carousel': // IMAGE CAROUSEL (SQUARE)
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
-            $return = getImgCarouselSquare();
-         }
-         break;
-      case 'newsletter_panel':  // NEWSLETTER PANEL
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
-            $return = getNewsletterPanel();
-         }
-         break;
-      case 'sponsors_panel':   // SPONSOR PANEL
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive === 'Active') {
-            $return = getSponsorPanel();
-         }
-         break;
-      case 'social_media': //social media panel
-         $activeinactive = get_sub_field('activeinactive');
-         if ($activeinactive == 'Active') {
-            $return = getSocialPanel();
-         }
-         break;
+   $activeinactive = get_sub_field('activeinactive');
+   if ($activeinactive == 'Active') {
+      switch ($row_layout) {
+         case 'buy_tickets_float': //floating buy tickets banner
+            $return = getBuyTixPanel($row_layout);            
+            break;
+         case 'featured_makers_panel':                // FEATURED MAKERS (SQUARE)
+         case 'featured_makers_panel_dynamic':        // FEATURED MAKERS (SQUARE) - dynamic
+            $return = getFeatMkPanel($row_layout);            
+            break;
+         case '3_column': // 3 COLUMN LAYOUT
+            $return = get3ColLayout();            
+            break;
+         case '1_column': // 1 COLUMN LAYOUT
+            $return = get1ColLayout();            
+            break;
+         case 'call_to_action_panel':  // CTA PANEL
+         case 'call_to_action':  // CTA PANEL
+            $return = getCTApanel();            
+            break;
+         case 'static_or_carousel': // IMAGE CAROUSEL (RECTANGLE)
+            $return = getImgCarousel();            
+            break;
+         case 'square_image_carousel': // IMAGE CAROUSEL (SQUARE)
+            $return = getImgCarouselSquare();            
+            break;
+         case 'newsletter_panel':  // NEWSLETTER PANEL
+            $return = getNewsletterPanel();            
+            break;
+         case 'sponsors_panel':   // SPONSOR PANEL
+            $return = getSponsorPanel();            
+            break;
+         case 'featured_faires_panel':   // FEATURED FAIRES PANEL
+            $return = getFeatFairePanel();            
+            break;   
+         case 'social_media': //social media panel
+            $return = getSocialPanel();            
+            break;
+      }
    }
    return $return;
 }
@@ -394,9 +367,9 @@ function get3ColLayout() {
    return $return;
 }
 
-/* * *************************************************** */
-/*  Function to return 1_column_photo_and_text_panel  */
-/* * *************************************************** */
+/***************************************************** */
+/*   Function to return 1_column_photo_and_text_panel  */
+/***************************************************** */
 
 function get1ColLayout() {
    //get data submitted on admin page
@@ -452,45 +425,6 @@ function get1ColLayout() {
 
 function getBuyTixPanel() {
    return '<a href="' . get_sub_field('buy_ticket_url') . '" target="_blank"><div class="floatBuyTix">'.get_sub_field('buy_ticket_text').'</div></a>';
-}
-
-/* * *************************************************** */
-/*  Function to return WHAT IS MAKER FAIRE PANEL      */
-/* * *************************************************** */
-
-function getWhatisMF() {
-   $return = '';
-   $widget_radio = get_sub_field('show_what_is_maker_faire');
-   if ($widget_radio == 'show') {
-      $return .= '<section class="what-is-maker-faire">
-            <div class="container">
-              <div class="row text-center">
-                <div class="title-w-border-y">
-                  <h2>' . __('What is Maker Faire?', 'MiniMakerFaire') . '</h2>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-10 col-md-offset-1">
-                  <p class="text-center">' .
-         __('Maker Faire is a gathering of fascinating, curious people who enjoy learning and who love sharing what they can do. From engineers to artists to scientists to crafters, Maker Faire is a venue for these "makers" to show hobbies, experiments, projects.', 'MiniMakerFaire') .
-         '</p>' .
-         '<p class="text-center">' .
-         __('We call it the Greatest Show (& Tell) on Earth - a family-friendly showcase of invention, creativity, and resourcefulness.', 'MiniMakerFaire') .
-         '</p>' .
-         '<p class="text-center">' .
-         __('Glimpse the future and get inspired!', 'MiniMakerFaire') .
-         '</p>' .
-         //.get_site_option( 'what-is-makerfaire' ).
-         '</div>
-              </div>
-            </div>
-            <div class="wimf-border">
-              <div class="wimf-triangle"></div>
-            </div>
-            <img src="' . get_bloginfo('template_directory') . '/img/makey.png" alt="Maker Faire information Makey icon" />
-          </section>';
-   }
-   return $return;
 }
 
 /* * ****************************************** */
@@ -888,9 +822,75 @@ function getSponsorPanel() {
    return $return;
 }
 
-/* * ************************************************ */
-/*  Function to return Social Media Panel          */
-/* * ************************************************ */
+/************************************************** */
+/*  Returns a list of featured faires based on data */
+/*  entered in another page                         */
+/************************************************** */
+function getFeatFairePanel(){   
+   $return = '';         
+   $return .= '<section class="featured-faire-panel"> ';
+
+   //build the container div
+   $return .= '<div class="container">';
+   
+   // Display the panel title
+   $title = (get_sub_field('featured_faires_title') ? get_sub_field('featured_faires_title') : '');   
+   $return .= '<div class="row text-center">
+                  <div class="title-w-border-y yellow-underline">
+                    <h2>' . $title . '</h2>
+                  </div>
+                </div>';
+   
+   //get featured faires data
+   $url  = get_sub_field('featured_faires_page_url');
+   
+   //pull featured faire information based on entered url
+   $id = url_to_postid($url);
+   $faires_to_show = (int) get_sub_field('faires_to_show');
+   
+   $faires_shown = 0;
+   // If the linked page has featured faires, then display data
+   if (have_rows('featured_faires', $id)) {      
+      $return .= ' <div class="row featured-faire-landing">';
+      while( have_rows('featured_faires', $id) && $faires_shown < $faires_to_show ){          
+         the_row();
+
+         //don't display events that have passed
+         if(!get_sub_field('past_event')){
+            $faires_shown++;  
+            
+            $faire_title = get_sub_field('faire_title'); //Title            
+            $faire_url   = get_sub_field('faire_url'); //URL
+            $faire_photo = get_sub_field('faire_photo'); //Photo
+            $faire_date  = get_sub_field('faire_date'); //Date
+            
+            $return .= '<div class="col-xs-12 col-sm-6 col-md-4">';
+            $return .= '   <div class="featured-faire-box">';
+            if($faire_url !=''){
+              $return .= '<a href="' . $faire_url . '">';
+            }
+            $return .=   '<img src="' . $faire_photo['url'] . '" alt="Featured Maker Faire Image" class="img-responsive" />';
+            $return .=   '<p class="featured-faire-above-title">Maker Faire</p>';
+            $return .=   '<h4 class="featured-faire-date">' . $faire_date . '</h4>';
+            $return .=   '<h3 class="featured-faire-title clear">' . $faire_title . '</h3>';
+            $return .=   '<div class="clearfix"></div>';
+            if($faire_url !=''){
+              $return .= '</a>';
+            }
+            $return .=   '   </div>';
+            $return .=   '</div>';            
+         }            
+      }
+      $return .= '   </div>';
+   }
+   $return .= '   </div>'  //close .container div
+           .  '</section>';
+   return $return;
+}   
+
+/************************************************** */
+/*  Function to return Social Media Panel           */
+/************************************************** */
 
 function getSocialPanel() {
    $return = '';
