@@ -4,7 +4,7 @@
  */
 get_header();
 ?>
-<main id="main" class="quora front-page" role="main">
+<main id="main" class="front-page" role="main">
    <!-- Custom Panels -->
    <div class="page-content featured-faire customPanels">
    <?php 
