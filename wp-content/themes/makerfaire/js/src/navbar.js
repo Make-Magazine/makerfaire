@@ -11,6 +11,25 @@ function sumomeActive() {
 	}
 }
 
+$.fn.isOnScreen = function(){
+    
+    var win = $(window);
+    
+    var viewport = {
+        top : win.scrollTop(),
+        left : win.scrollLeft()
+    };
+    viewport.right = viewport.left + win.width();
+    viewport.bottom = viewport.top + win.height();
+    
+    var bounds = this.offset();
+    bounds.right = bounds.left + this.outerWidth();
+    bounds.bottom = bounds.top + this.outerHeight();
+    
+    return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
+    
+};
+
 (function($) {
 	
    // keep these from happening before any angular or login scripts
@@ -101,6 +120,11 @@ function sumomeActive() {
               }
           }
           sumomeActive();
+			 if(jQuery(".carousel-inner").isOnScreen() == false) {
+				 jQuery(".carousel-inner").removeClass("gallery-js-ready");
+			 }else{
+				 jQuery(".carousel-inner").addClass("gallery-js-ready");
+			 }
       });
       /* Bring back if we need search for any reason
       jQuery("#search-modal").fancybox({
