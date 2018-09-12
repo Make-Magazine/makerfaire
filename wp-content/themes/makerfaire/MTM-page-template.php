@@ -194,7 +194,7 @@ if(get_field('sponsors_page_url')) {
               <!-- GOLDSMITH SPONSORS -->
               <?php if( have_rows('goldsmith_sponsors', $id) ): ?>
               <div class="item">
-                <div class="row sponsors-row">
+                <div class="row spnosors-row">
                   <div class="col-xs-12">
                     <h3 class="sponsors-type text-center">GOLDSMITH</h3>
                       <div class="faire-sponsors-box">
@@ -222,7 +222,7 @@ if(get_field('sponsors_page_url')) {
               <!-- SILVERSMITH SPONSORS -->
               <?php if( have_rows('silversmith_sponsors', $id) ): ?>
               <div class="item">
-                <div class="row sponsors-row">
+                <div class="row spnosors-row">
                   <div class="col-xs-12">
                     <h3 class="sponsors-type text-center">SILVERSMITH</h3>
                       <div class="faire-sponsors-box">
@@ -250,7 +250,7 @@ if(get_field('sponsors_page_url')) {
               <!-- COPPERSMITH SPONSORS -->
               <?php if( have_rows('coppersmith_sponsors', $id) ): ?>
               <div class="item">
-                <div class="row sponsors-row">
+                <div class="row spnosors-row">
                   <div class="col-xs-12">
                     <h3 class="sponsors-type text-center">COPPERSMITH</h3>
                       <div class="faire-sponsors-box">
@@ -278,7 +278,7 @@ if(get_field('sponsors_page_url')) {
               <!-- MEDIA SPONSORS -->
               <?php if( have_rows('media_sponsors', $id) ): ?>
               <div class="item">
-                <div class="row sponsors-row">
+                <div class="row spnosors-row">
                   <div class="col-xs-12">
                     <h3 class="sponsors-type text-center">MEDIA</h3>
                       <div class="faire-sponsors-box">

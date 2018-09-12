@@ -827,7 +827,7 @@ function getSponsorPanel() {
          if (have_rows($sponsor[0], $id)) {
             $return .= '
                      <div class="item">
-                        <div class="row sponsors-row">
+                        <div class="row spnosors-row">
                            <div class="col-xs-12">
                               <h3 class="sponsors-type text-center">' . $sponsor[1] . '</h3>
                               <div class="faire-sponsors-box">';
@@ -850,7 +850,7 @@ function getSponsorPanel() {
             $return .= '
                               </div> <!-- close .faire-sponsors-box -->
                            </div> <!-- close .col-xs-12 -->
-                        </div> <!-- close .row sponsors-row -->
+                        </div> <!-- close .row spnosors-row -->
                      </div> <!-- close .item -->';
          }
       }

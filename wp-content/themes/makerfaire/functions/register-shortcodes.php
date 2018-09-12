@@ -391,7 +391,7 @@ function createSponsSlide($atts) {
                           foreach($sponsorTypes as $sponsor) {
                             if( have_rows($sponsor['type'], $postid) ){
                               $return.= '<div class="item">
-                                  <div class="row sponsors-row">
+                                  <div class="row spnosors-row">
                                     <div class="col-xs-12">
                                       <h3 class="sponsors-type text-center">'.$sponsor['name'].'</h3>
                                       <div class="faire-sponsors-box">';
@@ -412,7 +412,7 @@ function createSponsSlide($atts) {
                                         }
                                     $return.= '</div> <!-- end faire-sponsors-box-->
                                     </div> <!-- end col-xs-12 -->
-                                  </div> <!-- end sponsors-row -->
+                                  </div> <!-- end spnosors-row -->
                                 </div> <!-- end item-->';
                             }
                           }
