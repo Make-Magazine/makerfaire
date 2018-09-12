@@ -11,9 +11,9 @@ function sumomeActive() {
 	}
 }
 
-$.fn.isOnScreen = function(){
+jQuery.fn.isOnScreen = function(){
     
-    var win = $(window);
+    var win = jQuery(window);
     
     var viewport = {
         top : win.scrollTop(),
