@@ -35,7 +35,7 @@ window.addEventListener('load', function() {
     redirectUri: AUTH0_CALLBACK_URL,
     audience: 'https://' + AUTH0_DOMAIN + '/userinfo',
     responseType: 'token id_token',
-    scope: 'openid profile',
+    scope: 'openid profile email',
     leeway: 60
   });
 
@@ -133,6 +133,7 @@ window.addEventListener('load', function() {
         // display the avatar
         document.querySelector('#profile-view img').src = userProfile.picture;
         document.querySelector('#profile-view img').style.display = "block";
+		  document.querySelector('#profile-view .profile-email').innerHTML = userProfile.email; 
       }
     });
 
