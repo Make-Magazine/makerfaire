@@ -18,6 +18,9 @@ function dispLayout($row_layout) {
          case '3_column': // 3 COLUMN LAYOUT
             $return = get3ColLayout();            
             break;
+         case '1_column_wysiwyg': // 1 column wysiwyg
+            $return = get1ColWYSIWYG();            
+            break;
          case '1_column': // 1 COLUMN LAYOUT
             $return = get1ColLayout();            
             break;
@@ -367,10 +370,42 @@ function get3ColLayout() {
    return $return;
 }
 
+/* Function to return one column wysiwyg */
+function get1ColWYSIWYG() {
+  $return = '';
+  $column_1 = get_sub_field('column_1');
+  $cta_button = get_sub_field('cta_button');
+  $cta_button_url = get_sub_field('cta_button_url');
+  $return .=  '<section class="content-panel">
+          <div class="container">';
+
+  if(get_sub_field('title')) {
+    $return .=  '  <div class="row">
+              <div class="col-xs-12 text-center padbottom">
+                <h2>' . get_sub_field('title') . '</h2>
+              </div>
+            </div>';
+  }
+
+  $return .=  '    <div class="row">
+              <div class="col-xs-12">' . $column_1 . '</div>
+            </div>';
+
+  if(get_sub_field('cta_button')) {
+    $return .=  '  <div class="row text-center padtop">
+              <a class="btn btn-b-ghost" href="' . $cta_button_url . '">' . $cta_button . '</a>
+            </div>';
+  }
+
+  $return .=  '  </div>
+          <div class="flag-banner"></div>
+        </section>';
+  return $return;
+}
+
 /***************************************************** */
 /*   Function to return 1_column_photo_and_text_panel  */
 /***************************************************** */
-
 function get1ColLayout() {
    //get data submitted on admin page
             
