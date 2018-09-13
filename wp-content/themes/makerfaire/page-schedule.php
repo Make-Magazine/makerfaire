@@ -44,7 +44,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
    <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
       <div class="schedule-wrapper">
          <!--<a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>-->
-         <div>
+         <div ng-cloak>
 				<div class="mtm-search">
 					<div class="search-wrapper">
                   <form class="form-inline">

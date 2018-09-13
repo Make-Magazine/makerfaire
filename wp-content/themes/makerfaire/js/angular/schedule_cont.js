@@ -42,7 +42,8 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
    var defDOW  = jQuery('#schedDOW').val();
 
    if (formIDs == '')
-      alert('error!  Please set the form to pull from on the admin page.')
+      alert('error!  Please set the form to pull from on the admin page.');
+   $http.defaults.cache = false;
    $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs+'?ver=123')
       .then(function successCallback(response) {
          $scope.schedules = response.data.schedule;   
