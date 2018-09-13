@@ -197,14 +197,3 @@ function sumomeActive() {
       }
    });
 })(jQuery);
-
-
-
-jQuery(window).load(function() {
-	jQuery(".sched-registration").hover(function(){
-		alert("tst");
-	});
-	jQuery(".sched-registration").click(function(){
-		alert("tst");
-	});
-});
