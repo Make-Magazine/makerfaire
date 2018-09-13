@@ -2,9 +2,22 @@
 /*
 * Template name: Sponsors Landing Page
 */
-get_header(); ?>
+get_header(); 
+$displayNav = get_field('display_left_nav');          
+if($displayNav){
+?>
+<div class="page-leftnav">
+  <div class="row">
+    <div class="left-hand-nav col-md-3">
+      <?php
+          $template_to_display = get_field('template_to_display');               
+          wp_nav_menu( array( 'theme_location' => $template_to_display ) );
+      ?>
+    </div>
+    <div class="content col-md-9">
+<?php } ?>
 
-<div class="container sponsors-landing">
+<div class="sponsors-landing">
   <div class="row padbottom">
     <div class="col-xs-12">
       <h2 class="pull-left"><?php echo get_the_title(); ?> </h2>
@@ -235,5 +248,14 @@ get_header(); ?>
   </div>
 
 </div>
+
+<!--LeftNav Containers-->
+<?php           
+  if($displayNav){
+?>
+  </div>
+ </div>
+</div>
+<?php } ?>
 
 <?php get_footer(); ?>
