@@ -197,5 +197,3 @@ function sumomeActive() {
       }
    });
 })(jQuery);
-
-

@@ -44,7 +44,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
    if (formIDs == '')
       alert('error!  Please set the form to pull from on the admin page.')
    $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs)
-      .then(function successCallback(response) {                         
+      .then(function successCallback(response) {
          $scope.schedules = response.data.schedule;   
          var dateList = []; 
          var catList = [];
@@ -126,6 +126,4 @@ function schedScroll($window) {
         $window.on('scroll', handler);
       }
     };
-
-};
-     
+}; 

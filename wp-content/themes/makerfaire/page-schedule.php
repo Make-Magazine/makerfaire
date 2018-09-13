@@ -104,7 +104,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
 											<a class="pointer-on-hover" ng-click="schedSearch.nicename = ''"><?php _e("All Stages", 'makerfaire') ?></a>
 										</li>
 										<li ng-repeat="stage in stages">                     
-											<a class="pointer-on-hover" ng-click="schedSearch.nicename = stage">{{ stage}}</a>
+											<a class="pointer-on-hover" ng-click="schedSearch.nicename = stage">{{stage}}</a>
 										</li>
 										<li ng-repeat="schedule in schedules | filter:schedSearch | dateFilter: filterdow |  orderBy: 'stageOrder' | unique: 'nicename'">
 											<a ng-click="schedSearch.nicename = schedule.nicename">{{schedule.nicename}}</a>
@@ -162,7 +162,13 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                                  <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a>
                               </h3>
                               <p class="sched-description">{{schedule.maker_list}}</p>
+										
+										<div class="sched-registration" ng-show="schedule.flags === 'Registration Required'">
+											<hr />
+											<div ng-mouseover="schedule.isCollapsed = false" ng-mouseleave="schedule.isCollapsed = true">Requires Add-On ticket</div>
+										</div>
                            </div>
+									
 
                            <div class="sched-col-3">
                               <div class="row">
