@@ -67,6 +67,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
          $scope.tags  = catList;
          $scope.dates = dateList.sort();
       }, function errorCallback(error) {
+         alert(error);
          console.log(error);
       }).finally(function () {
          $scope.showSchedules = true;
