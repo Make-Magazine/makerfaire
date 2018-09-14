@@ -43,7 +43,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
 
    if (formIDs == '')
       alert('error!  Please set the form to pull from on the admin page.');
-   
+   alert('before the call');
    $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs+'?ver=123')
       .success(function successCallback(response) {
          alert('success');
