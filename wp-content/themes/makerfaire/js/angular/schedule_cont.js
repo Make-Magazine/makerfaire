@@ -46,6 +46,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
    
    $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs+'?ver=123')
       .success(function successCallback(response) {
+         alert('success');
          $scope.schedules = response.data.schedule;   
          var dateList = []; 
          var catList = [];
@@ -67,9 +68,11 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
          $scope.tags  = catList;
          $scope.dates = dateList.sort();
       }, function errorCallback(error) {
+         alert('error');
          alert(error);
          console.log(error);
       }).finally(function () {
+         alert('finally');
          $scope.showSchedules = true;
       });  
    
