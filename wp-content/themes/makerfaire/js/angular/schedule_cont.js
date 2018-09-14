@@ -3,7 +3,7 @@ var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap', 'a
 var dayParam = getUrlParam("day");
 var stageParam = getUrlParam("stage");
 var typeParam = getUrlParam("type");
-
+alert('let it begin');
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {   
    //infinite scroll
    $scope.limit = 5;
@@ -45,7 +45,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
       alert('error!  Please set the form to pull from on the admin page.');
    alert('before the call');
    $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs+'?ver=123')
-      .success(function successCallback(response) {
+      .then(function successCallback(response) {
          alert('success');
          $scope.schedules = response.data.schedule;   
          var dateList = []; 
