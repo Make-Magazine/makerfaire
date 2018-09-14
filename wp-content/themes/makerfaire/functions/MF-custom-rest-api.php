@@ -143,9 +143,7 @@ function mf_fairedata(WP_REST_Request $request) {
             $data = getCategories($formIDs);
             break;
          case 'schedule':
-            $schedule = getSchedule($formIDs);
-            $category = getCategories($formIDs);
-            $data = array_merge($schedule, $category);
+            $data = getSchedule($formIDs);            
             break;
       }
    } else {
