@@ -52616,6 +52616,7 @@ var stageParam = getUrlParam("stage");
 var typeParam = getUrlParam("type");
 var topicParam = getUrlParam("topic");
 //alert('let it begin');
+
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {   
    //infinite scroll
    $scope.limit = 5;
@@ -52623,7 +52624,6 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
    $scope.loadMore = function() {
       $scope.limit += 5;
    };
-   
    $scope.category = '';
    $scope.showSchedules = false;
    $scope.schedSearch = [];
