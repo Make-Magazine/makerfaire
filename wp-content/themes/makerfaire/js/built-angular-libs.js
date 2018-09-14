@@ -52614,7 +52614,7 @@ var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap', 'a
 var dayParam = getUrlParam("day");
 var stageParam = getUrlParam("stage");
 var typeParam = getUrlParam("type");
-alert('let it begin');
+//alert('let it begin');
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {   
    //infinite scroll
    $scope.limit = 5;
