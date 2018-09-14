@@ -43,10 +43,12 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
 
    if (formIDs == '')
       alert('error!  Please set the form to pull from on the admin page.');
-   
-   $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs+'?ver=123')
-      .then(function successCallback(response) {
-         $scope.schedules = response.data.schedule;   
+   jQuery.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs+'?ver=123')
+   //$http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs+'?ver=123')
+      .done(function (response) {
+         alert( "done" );
+         console.log($scope.schedules);
+         $scope.schedules = response.schedule;   
          var dateList = []; 
          var catList = [];
          angular.forEach($scope.schedules, function (schedule) {
@@ -66,11 +68,14 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
          });
          $scope.tags  = catList;
          $scope.dates = dateList.sort();
-      }, function errorCallback(error) {
+         $scope.showSchedules = true;
+      })
+      .fail(function (error) {
          alert(error);
          console.log(error);
-      }).finally(function () {
-         $scope.showSchedules = true;
+      })
+      .always(function() {
+         alert( "finished" );
       });  
    
    $scope.setDateFilter = function (date) {
