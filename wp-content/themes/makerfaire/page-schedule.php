@@ -168,7 +168,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
 											<div ng-mouseover="schedule.isCollapsed = false" ng-mouseleave="schedule.isCollapsed = true">Requires Add-On Ticket</div>
 										</div>
                            </div>
-									
+
 
                            <div class="sched-col-3">
                               <div class="row">
