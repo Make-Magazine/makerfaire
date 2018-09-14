@@ -866,7 +866,7 @@ function getFeatFairePanel(){
    $return .= '<section class="featured-faire-panel"> ';
 
    //build the container div
-   $return .= '<div class="container">';
+   $return .= '<div class="container featured-faire-landing">';
    
    // Display the panel title
    $title = (get_sub_field('featured_faires_title') ? get_sub_field('featured_faires_title') : '');   
@@ -886,7 +886,7 @@ function getFeatFairePanel(){
    $faires_shown = 0;
    // If the linked page has featured faires, then display data
    if (have_rows('featured_faires', $id)) {      
-      $return .= ' <div class="row featured-faire-landing">';
+      $return .= ' <div class="row">';
       while( have_rows('featured_faires', $id) && $faires_shown < $faires_to_show ){          
          the_row();
 
