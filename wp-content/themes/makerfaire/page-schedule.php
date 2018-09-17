@@ -163,7 +163,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
                               </h3>
                               <p class="sched-description">{{schedule.maker_list}}</p>
 										
-										<div class="sched-registration" ng-show="schedule.flags === 'Registration Required'">
+										<div class="sched-registration" ng-show="schedule.flags!=NULL && schedule.flags.indexOf('Registration Required')!=-1">
 											<hr />
 											<div ng-mouseover="schedule.isCollapsed = false" ng-mouseleave="schedule.isCollapsed = true">Requires Add-On Ticket</div>
 										</div>
