@@ -165,7 +165,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
 										
 										<div class="sched-registration" ng-show="schedule.flags!=NULL && schedule.flags.indexOf('Registration Required')!=-1">
 											<hr />
-											<div ng-click="schedule.isCollapsed = !schedule.isCollapsed">Requires Add-On Ticket</div>
+											<div ng-click="schedule.isCollapsed = !schedule.isCollapsed">Register Here</div>
 										</div>
                            </div>
 
