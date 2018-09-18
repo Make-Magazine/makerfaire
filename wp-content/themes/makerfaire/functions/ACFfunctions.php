@@ -757,6 +757,8 @@ if (function_exists('acf_add_local_field_group')) {
                            'class' => '',
                            'id' => '',
                         ),
+                        'readonly' => 0,
+                        'disabled' => 0,
                      ),
                      array(
                         'default_value' => '',
@@ -764,7 +766,7 @@ if (function_exists('acf_add_local_field_group')) {
                         'placeholder' => '',
                         'prepend' => '',
                         'append' => '',
-                        'key' => 'field_571518b722bb00',
+                        'key' => 'field_571518b722bb0f',
                         'label' => 'More Faires text',
                         'name' => 'more_faires_text',
                         'type' => 'text',
@@ -782,7 +784,7 @@ if (function_exists('acf_add_local_field_group')) {
                      array(
                         'default_value' => '',
                         'placeholder' => '',
-                        'key' => 'field_571518b722bb02',
+                        'key' => 'field_571518b722bb0g',
                         'label' => 'More Faires Link',
                         'name' => 'more_faires_url',
                         'type' => 'url',

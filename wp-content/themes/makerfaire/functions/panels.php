@@ -863,7 +863,7 @@ function getSponsorPanel() {
 /************************************************** */
 function getFeatFairePanel(){   
    $return = '';         
-   $return .= '<section class="featured-faire-panel"> ';
+   $return .= '<section class="featured-maker-panel white-back"> ';
 
    //build the container div
    $return .= '<div class="container featured-faire-landing">';
@@ -878,6 +878,8 @@ function getFeatFairePanel(){
    
    //get featured faires data
    $url  = get_sub_field('featured_faires_page_url');
+   $cta_url = get_sub_field('more_faires_url');
+   $cta_text = (get_sub_field('more_faires_text') !== '' ? get_sub_field('more_faires_text') : 'More Faires');
    
    //pull featured faire information based on entered url
    $id = url_to_postid($url);
@@ -916,7 +918,16 @@ function getFeatFairePanel(){
             $return .=   '</div>';            
          }            
       }
-      $return .= '   </div>';
+      $return .= '   </div>';     
+   }
+   
+   //add cta section
+   if ($cta_url!='') {      
+      $return .= '<div class="row padbottom">
+                     <div class="col-xs-12 padbottom text-center">
+                       <a class="btn more-makers-link" href="' . $cta_url . '">' . $cta_text . '</a>
+                     </div>
+                   </div>';
    }
    $return .= '   </div>'  //close .container div
            .  '</section>';
