@@ -863,7 +863,7 @@ function getSponsorPanel() {
 /************************************************** */
 function getFeatFairePanel(){   
    $return = '';         
-   $return .= '<section class="featured-maker-panel white-back"> ';
+   $return .= '<section class="featured-panel white-back"> ';
 
    //build the container div
    $return .= '<div class="container featured-faire-landing">';
