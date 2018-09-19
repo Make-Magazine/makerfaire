@@ -436,7 +436,7 @@ function get1ColLayout() {
    if($hero_text) {
       $return .= '<div class="panel_title">'
               .  '   <div class="top_left"><img src="/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
-              .  '   <div class="panel_text white-back">' . $hero_text . '</div>'
+              .  '   <div class="panel_text">' . $hero_text . '</div>'
               .  '   <div class="bottom_right"><img src="/wp-content/themes/makerfaire/img/BottomRightCorner.png"></div>'
               .  '</div>';
    }
