@@ -105,9 +105,15 @@
 	color: #fff;
 }
 
-#toolKit div#searchbar-sticky-wrapper.sticky-wrapper , #toolKit div#searchbar-sticky-wrapper.sticky-wrapper.is-sticky {
+#toolKit div#searchbar-sticky-wrapper.sticky-wrapper, #toolKit div#searchbar-sticky-wrapper.sticky-wrapper.is-sticky {
   height: 48px;
-  width: 400px;
+  //width: 400px;
   z-index: 1000;
-
+}
+#toolKit div#searchbar-sticky-wrapper.sticky-wrapper.is-sticky {
+	.toolkit-searchbar {
+		background-color: #fff;
+		box-shadow: 5px 3px 11px 1px rgba(0,0,0,0.3);
+		padding: 6px;
+	}
 }
