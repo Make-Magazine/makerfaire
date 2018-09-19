@@ -335,7 +335,7 @@ function get3ColLayout() {
             if (!empty($cta_link)) {
                $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
                if (!empty($ctaText)) {
-                  $columnInfo .= '<br/><p class="text-' . $alignment . '"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
+                  $columnInfo .= '<p class="text-' . $alignment . ' sub-caption-dark"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
                }
             } else {
                $columnInfo = $image;
@@ -436,7 +436,7 @@ function get1ColLayout() {
    if($hero_text) {
       $return .= '<div class="panel_title">'
               .  '   <div class="top_left"><img src="/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
-              .  '   <div class="panel_text">' . $hero_text . '</div>'
+              .  '   <div class="panel_text white-back">' . $hero_text . '</div>'
               .  '   <div class="bottom_right"><img src="/wp-content/themes/makerfaire/img/BottomRightCorner.png"></div>'
               .  '</div>';
    }
@@ -925,7 +925,7 @@ function getFeatFairePanel(){
    if ($cta_url!='') {      
       $return .= '<div class="row padbottom">
                      <div class="col-xs-12 padbottom text-center">
-                       <a class="btn more-makers-link" href="' . $cta_url . '">' . $cta_text . '</a>
+                       <a class="btn btn-blue-universal" href="' . $cta_url . '">' . $cta_text . '</a>
                      </div>
                    </div>';
    }
