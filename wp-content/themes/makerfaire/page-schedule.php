@@ -284,5 +284,5 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
 }
 ?>
 
-<iframe src="/stage-schedule/?faire=NY18&orderBy=time" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
+<iframe src="/stage-schedule/?faire=NY18&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 <?php get_footer(); ?>

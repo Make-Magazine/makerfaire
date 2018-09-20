@@ -34,10 +34,19 @@ if ( ! empty( $location ) )
 			a { text-decoration:none; color:#000; }
 			h1, h2, h3, h4 { margin:5px 0 0; }
 			.sumome-react-wysiwyg-popup-container { display: none !important; } 
+			.qr-code-print {
+				position:fixed;
+				z-index:999;
+				bottom:0px;
+				right:0px;
+				display:block;
+				width:100px;
+			}
 		</style>
 	</head>
 	<body>
 		<?php echo get_schedule_list( $location, $short_description, $day, $faire ); ?>
+		<?php if(isset($_GET['qr'])){ ?> <img src="/wp-content/themes/makerfaire/img/qrcode-schedule.png" class="qr-code-print" /> <?php } ?>
 	</body>
 </html>
 <?php
@@ -123,7 +132,7 @@ function get_schedule_list( $location, $short_description = false, $day_set = ''
                }
             }
 
-            $output .= '<table style="width:100%;">';
+            $output .= '<table style="width:94%;">';
 
             $output .= '<tr>';
             $output .= '<td width="25%" style="padding:15px 0;" valign="top">';
