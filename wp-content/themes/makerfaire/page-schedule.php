@@ -52,7 +52,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
    <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
       <div class="schedule-wrapper">
 
-         <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics">
+         <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics" onClick="ga('send', 'CalendarDownload', 'Schedule', 'Download', 'Schedule', 'FaireCalendar.ics', '{NonInteraction: 1}');">
             <span class="fa-stack fa-sm">
                <i class="fa fa-circle fa-stack-2x"></i>
                <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
