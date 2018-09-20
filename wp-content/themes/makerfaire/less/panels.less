@@ -870,9 +870,7 @@
 
    // Common elements
    .content-panel {
-		.sub-caption-dark {
-			margin-bottom: -75px;
-		}
+
       .container {
          padding-top: 40px;
          padding-bottom: 40px;
@@ -1102,7 +1100,16 @@
       }
    }
 }
-
+.customPanels > .content-panel {
+	.sub-caption-dark {
+		margin-bottom: -75px;
+	}
+}
+.customPanels > .content-panel ~ .content-panel {
+	.sub-caption-dark {
+		margin-bottom: 0px;
+	}
+}
 /*
  * Row with equal height columns
  * --------------------------------------------------
