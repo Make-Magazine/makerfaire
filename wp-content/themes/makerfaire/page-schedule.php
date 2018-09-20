@@ -50,12 +50,12 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
             </span>
             Download calendar
          </a>
-			<a class="calendar" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();event.preventDefault();">
-			   <span class="fa-stack fa-sm" style="cursor:pointer;">
+			<a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();event.preventDefault();">
+			   <span class="fa-stack fa-sm">
                <i class="fa fa-circle fa-stack-2x"></i>
                <i class="fa fa-print fa-stack-1x fa-inverse"></i>
             </span>
-            Print
+            Print full schedule
 			</a>
 			
          <div ng-cloak>
