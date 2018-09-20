@@ -51,7 +51,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
             Download calendar
          </a>
 			<a class="calendar" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();event.preventDefault();">
-			   <span class="fa-stack fa-sm">
+			   <span class="fa-stack fa-sm" style="cursor:pointer;">
                <i class="fa fa-circle fa-stack-2x"></i>
                <i class="fa fa-print fa-stack-1x fa-inverse"></i>
             </span>
