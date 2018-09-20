@@ -24,7 +24,6 @@ if($displayNav){
 		<div class="content col-md-9">
 <?php } ?>
 
-
 <?php 
 if (have_posts()) {
    ?>
@@ -44,6 +43,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
    <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
       <div class="schedule-wrapper">
          <a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>
+			<a class="fa fa-print" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();event.preventDefault();"></a>
          <div ng-cloak>
 				<div class="mtm-search">
 					<div class="search-wrapper">
@@ -250,9 +250,10 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
          </div><!--Content-->
       </div>
    </div><!--Container-->
-			
 
    <?php
 }
 ?>
+
+<iframe src="/stage-schedule/?faire=NY18&orderBy=time" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 <?php get_footer(); ?>
