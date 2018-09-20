@@ -24,7 +24,6 @@ if($displayNav){
 		<div class="content col-md-9">
 <?php } ?>
 
-
 <?php 
 if (have_posts()) {
    ?>
@@ -43,6 +42,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
 
    <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
       <div class="schedule-wrapper">
+
          <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics">
             <span class="fa-stack fa-sm">
                <i class="fa fa-circle fa-stack-2x"></i>
@@ -50,6 +50,14 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
             </span>
             Download calendar
          </a>
+			<a class="calendar" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();event.preventDefault();">
+			   <span class="fa-stack fa-sm">
+               <i class="fa fa-circle fa-stack-2x"></i>
+               <i class="fa fa-print fa-stack-1x fa-inverse"></i>
+            </span>
+            Print
+			</a>
+			
          <div ng-cloak>
 				<div class="mtm-search">
 					<div class="search-wrapper">
@@ -256,9 +264,10 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
          </div><!--Content-->
       </div>
    </div><!--Container-->
-			
 
    <?php
 }
 ?>
+
+<iframe src="/stage-schedule/?faire=NY18&orderBy=time" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 <?php get_footer(); ?>
