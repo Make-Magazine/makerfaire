@@ -35,7 +35,7 @@ if (have_posts()) {
    </div><?php
 }
 if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
-   //create_calendar(get_field('schedule_ids'));
+   create_calendar($schedule_ids);
    ?>
    <input type="hidden" id="forms2use" value="<?php echo get_field('schedule_ids'); ?>" />
    <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
@@ -43,7 +43,13 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
 
    <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
       <div class="schedule-wrapper">
-         <a href="/wp-content/themes/makerfaire/FaireSchedule.ics">Download iCal</a>
+         <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics">
+            <span class="fa-stack fa-sm">
+               <i class="fa fa-circle fa-stack-2x"></i>
+               <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
+            </span>
+            Download calendar
+         </a>
          <div ng-cloak>
 				<div class="mtm-search">
 					<div class="search-wrapper">
