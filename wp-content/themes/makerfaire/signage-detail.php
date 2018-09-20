@@ -31,9 +31,8 @@ if ( ! empty( $location ) )
 		<meta name="viewport" content="width=device-width">
 		<style>
 			body { font-family: 'Benton Sans', Helvetica, sans-serif; }
-			a {
-        text-decoration:none; color:#00
-
+			a { text-decoration:none; color:#000; }
+			.sumome-react-wysiwyg-popup-container { display: none !important; }
       }
       page {-webkit-transform: rotate(-90deg);
      -moz-transform:rotate(-90deg);
