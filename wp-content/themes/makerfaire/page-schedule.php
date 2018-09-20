@@ -23,6 +23,15 @@ if($displayNav){
 		</div>
 		<div class="content col-md-9">
 <?php } ?>
+			
+<script type="text/javascript">
+printScheduleEvent = function() {
+	 var dataObject = {
+		'event': 'printSchedule',
+	 };
+	 dataLayer.push(dataObject);
+};
+</script>
 
 <?php 
 if (have_posts()) {
@@ -50,7 +59,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
             </span>
             Download calendar
          </a>
-			<a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();event.preventDefault();">
+			<a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
 			   <span class="fa-stack fa-sm">
                <i class="fa fa-circle fa-stack-2x"></i>
                <i class="fa fa-print fa-stack-1x fa-inverse"></i>
