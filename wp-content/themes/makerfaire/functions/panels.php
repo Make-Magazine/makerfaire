@@ -382,7 +382,7 @@ function get1ColWYSIWYG() {
   if(get_sub_field('title')) {
     $return .=  '  <div class="row">
               <div class="col-xs-12 text-center padbottom">
-                <h2>' . get_sub_field('title') . '</h2>
+                <h2 class="title yellow-underline">' . get_sub_field('title') . '</h2>
               </div>
             </div>';
   }
