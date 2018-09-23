@@ -35,7 +35,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
    
    //if day of the week URL parameter is passed, default the day to this
    $scope.filterdow = "";
-   filterdow = "";
+   filterdow = "Sunday";
    if (dayParam != undefined && dayParam != "") {
       $scope.filterdow = dayParam;
       filterdow  = dayParam;
