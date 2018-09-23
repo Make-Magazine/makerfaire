@@ -398,7 +398,7 @@ function get1ColWYSIWYG() {
   }
 
   $return .=  '  </div>
-          <div class="flag-banner"></div>
+          
         </section>';
   return $return;
 }
