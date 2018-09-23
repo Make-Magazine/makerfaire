@@ -305,7 +305,7 @@ function getFeatEvPanel($row_layout) {
 function get3ColLayout() {
    $return = '';
 
-   $return .= '<section class="content-panel 3-column">
+   $return .= '<section class="content-panel three-column">
                 <div class="flag-banner"></div>
                 <div class="container">';
 
