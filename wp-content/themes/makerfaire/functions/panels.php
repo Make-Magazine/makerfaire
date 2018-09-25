@@ -925,7 +925,7 @@ function getFeatFairePanel(){
    if ($cta_url!='') {      
       $return .= '<div class="row padbottom">
                      <div class="col-xs-12 padbottom text-center">
-                       <a class="btn btn-blue-universal" href="' . $cta_url . '">' . $cta_text . '</a>
+                       <a class="btn btn-blue-universal cta-btn" href="' . $cta_url . '">' . $cta_text . '</a>
                      </div>
                    </div>';
    }
