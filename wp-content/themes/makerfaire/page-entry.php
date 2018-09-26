@@ -350,7 +350,9 @@ function display_entry_schedule($entry_id) {
               $dateRange   = progDateRange($faire_start, $faire_end);
 
               //tbd change this to be dynamically populated
-              echo '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+				  if($dateRange != "" && $dateRange != null) {
+              		echo '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+				  }
               echo '<p><small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</p>';
               echo '</div>';
           }
