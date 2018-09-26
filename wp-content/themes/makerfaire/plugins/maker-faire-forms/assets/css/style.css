@@ -10,6 +10,8 @@
 
 .mf-form{}
 
+#stagingModal.hide { display: block !important; }
+
 /*-  GENERIC STYLES
 ----------------------------------------------------------------------*/
 
