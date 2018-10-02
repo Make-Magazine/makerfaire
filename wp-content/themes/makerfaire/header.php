@@ -185,13 +185,6 @@
 
   <div id="nav-flyout">
     <?php
-        $username = 'makeco';
-        $password = 'memberships';
-        $context = stream_context_create(array(
-            'http' => array(
-                'header'  => "Authorization: Basic " . base64_encode("$username:$password")
-            )
-        ));
         if(class_exists('Jetpack') && Jetpack::is_staging_site()) {
           echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context);
         }else{
@@ -199,20 +192,6 @@
         }
     ?>
   </div>
-
-  <div id="nav-hamburger" class="nav-hamburger">
-    <div class="container">
-      <div id="hamburger-click-event">
-        <div id="hamburger-icon">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-		  <span id="hamburger-text">More</span>
-      </div>
-    </div>
-  </div><!-- .nav-hamburger -->
 
 </header>
 <div class="nav-flyout-underlay"></div>
