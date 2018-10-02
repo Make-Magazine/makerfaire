@@ -21,7 +21,8 @@ function mobileCheckMF(){
 	
    // keep these from happening before any angular or login scripts
 	if(mobileCheckMF() == true) {
-		jQuery('body').addClass("mobile");
+		alert("test");
+		jQuery('html').addClass("mobile");
 		jQuery('.newsletter-footer').css('display','none');
 	}
 	
