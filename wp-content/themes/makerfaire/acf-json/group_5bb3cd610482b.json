@@ -1,0 +1,568 @@
+{
+    "key": "group_5bb3cd610482b",
+    "title": "Press Pages Content",
+    "fields": [
+        {
+            "key": "field_5bb3ce08f6598",
+            "label": "Layout Type",
+            "name": "layout_type",
+            "type": "select",
+            "instructions": "Choose the type of layout for this page",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "wysiwyg": "WYSIWYG",
+                "brand_assets": "Brand Assets",
+                "photo_video": "Photos & Videos",
+                "press_releases": "Press Releases"
+            },
+            "default_value": [
+                "wysiwyg"
+            ],
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
+            "key": "field_5bb3cf3ff6c9e",
+            "label": "Freeform Content (What We Do\/Media Registration)",
+            "name": "freeform_content",
+            "type": "wysiwyg",
+            "instructions": "Enter your HTML content here",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "wysiwyg"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "text",
+            "media_upload": 1,
+            "toolbar": "full",
+            "delay": 0
+        },
+        {
+            "key": "field_5bb3cfd1f6c9f",
+            "label": "Header Image (Assets - Photos\/Videos)",
+            "name": "header_image",
+            "type": "image",
+            "instructions": "Select an image that will appear at the top of the page",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "preview_size": "full",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_5bb3d35eaed52",
+            "label": "Page Subheader (Assets)",
+            "name": "page_subheader",
+            "type": "text",
+            "instructions": "Provide an optional Subheader for the page",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bb3d3eaaed53",
+            "label": "Intro Text (Assets)",
+            "name": "intro_text",
+            "type": "wysiwyg",
+            "instructions": "Add optional introductory text",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
+        },
+        {
+            "key": "field_5bb3d446aed54",
+            "label": "Download Buttons (Assets)",
+            "name": "download_buttons",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "field_5bb3d531aed56",
+            "min": 0,
+            "max": 0,
+            "layout": "row",
+            "button_label": "Add Downloadable Asset",
+            "sub_fields": [
+                {
+                    "key": "field_5bb3d487aed55",
+                    "label": "Downloadable File",
+                    "name": "downloadable_file",
+                    "type": "file",
+                    "instructions": "Select the downloadable file associated with this button",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "library": "all",
+                    "min_size": "",
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5bb3d531aed56",
+                    "label": "Button Text",
+                    "name": "button_text",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5bb3d6cb88302",
+            "label": "Example Images (Assets)",
+            "name": "example_images",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "field_5bb3d70d88303",
+            "min": 0,
+            "max": 0,
+            "layout": "row",
+            "button_label": "Add Example Image",
+            "sub_fields": [
+                {
+                    "key": "field_5bb3d70d88303",
+                    "label": "Image Instance",
+                    "name": "image_instance",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5bb3d7ea3e363",
+            "label": "Photo Collection (Photos\/Videos)",
+            "name": "photo_collection",
+            "type": "repeater",
+            "instructions": "Attach up to 6 photos in the page",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 6,
+            "layout": "row",
+            "button_label": "Add Photo",
+            "sub_fields": [
+                {
+                    "key": "field_5bb3d8423e364",
+                    "label": "Photo Instance",
+                    "name": "photo_instance",
+                    "type": "image",
+                    "instructions": "Download the \"Medium (640 × 427)\" version of this image on Flickr and upload here to produce the thumbnail in the Photos page",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5bb3d89a3e366",
+                    "label": "Photo Alt Text",
+                    "name": "photo_alt_text",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bb3d8713e365",
+                    "label": "External Link",
+                    "name": "external_link",
+                    "type": "url",
+                    "instructions": "Link to the Flickr photo for download",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5bb3d8cb3e367",
+            "label": "Video Collection (Photos\/Videos)",
+            "name": "video_collection",
+            "type": "repeater",
+            "instructions": "Attach up to 6 videos in the page",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 6,
+            "layout": "row",
+            "button_label": "Add Video",
+            "sub_fields": [
+                {
+                    "key": "field_5bb3d96fdefef",
+                    "label": "Video Instance",
+                    "name": "video_instance",
+                    "type": "url",
+                    "instructions": "Copy the YouTube \"Share\" URL here. <br\/>\r\nExample: https:\/\/youtu.be\/0P9qVVDRvto",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5bb3dde8f3963",
+            "label": "Press Release Collection (Press Releases)",
+            "name": "press_release_collection",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "press_releases"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "Add Press Release Collection Group",
+            "sub_fields": [
+                {
+                    "key": "field_5bb3de12f3964",
+                    "label": "Press Release Collection Group Header",
+                    "name": "press_release_collection_group_header",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bb3de46f3965",
+                    "label": "Press Release Collection Group",
+                    "name": "press_release_collection_group",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "collapsed": "",
+                    "min": 0,
+                    "max": 0,
+                    "layout": "table",
+                    "button_label": "Add Press Release",
+                    "sub_fields": [
+                        {
+                            "key": "field_5bb3deadf3966",
+                            "label": "Release Date",
+                            "name": "release_date",
+                            "type": "date_picker",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "display_format": "F j, Y",
+                            "return_format": "F j, Y",
+                            "first_day": 1
+                        },
+                        {
+                            "key": "field_5bb4eb25cfdf7",
+                            "label": "Release Link Text",
+                            "name": "release_link_text",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        },
+                        {
+                            "key": "field_5bb3def5f3967",
+                            "label": "Release Link",
+                            "name": "release_link",
+                            "type": "url",
+                            "instructions": "",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_5bb3df14f3968",
+                            "label": "Release Source",
+                            "name": "release_source",
+                            "type": "text",
+                            "instructions": "Optionally enter the source of the press release (e.g. New York Times)",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-press-center-leftnav.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [
+        "the_content"
+    ],
+    "active": 1,
+    "description": "",
+    "modified": 1538599284
+}

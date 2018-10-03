@@ -1,0 +1,120 @@
+
+.page-template-page-press-center-leftnav {
+   // See also styles for left nav inversion in navigation.less (involves .top-bar etc.)
+   .top-bar {
+      border-bottom: 1px solid #979797;
+   }
+   .page-header {
+      border-bottom: none;
+      margin: 0;
+      padding: 0;
+      h1 {
+         font-family: "Roboto Light", sans-serif;
+         font-size: 36px;
+         float: left;
+      }
+      .email-links {
+         margin-top: 20px;
+         float: right;
+         p {
+            font-family: "Roboto Light", sans-serif;
+            margin: 0;
+            padding: 0;
+         }
+      }
+   }
+   .content {
+      padding-bottom: 60px;
+      h2 {
+         font-family: "Roboto Light", sans-serif;
+         font-size: 26px;
+      }
+      .press-release-instance {
+         margin: 12px 0;
+      }
+      .page-header-image {
+         margin-top: 24px;
+      }
+      .download-button-container {
+         margin-bottom: 24px;
+         a.btn {
+            min-width: 150px;
+            color: #1989C7;
+            border-color: #1989C7;
+            .fa {
+               float: right;
+               position: relative;
+               top: 3px;
+            }
+         }
+      }
+      &.photo-video {
+         .row > [class^='col-'] {
+            margin-bottom: 24px;
+         }
+         .photo-square a {
+            //width: 300px;
+            //height: 240px;
+            max-width: 100%;
+            min-height: 240px;
+            max-height: 240px;
+            background-color: #111;
+            display: flex;
+            flex-direction: column;
+            // justify-content: space-evenly;
+            // align-items: center;
+            // align-content: center;
+            overflow: hidden;
+            img {
+               align-self: center;
+               max-height: 240px;
+            }
+         }
+         .video-square {
+            max-width: 100%;
+            min-height: 240px;
+            max-height: 240px;
+            background-color: #111;
+            iframe {
+               width: 768px;
+               max-width: 100%;
+            }
+         }
+      }
+   }
+
+   @media screen and (max-width: 1024px) {
+      .page-header {
+         h1 {
+            font-size: 26px;
+         }
+         .email-links {
+            margin-top: 16px;
+            p {
+               font-size: 12px;
+            }
+         }
+      }
+   }
+
+   @media screen and (max-width: 620px) {
+      .page-header {
+         h1 {
+            float: none;
+         }
+         .email-links {
+            float: none;
+            margin-top: 2px;
+            p {
+               display: inline;
+               &:first-child::after {
+                  content: "  |  ";
+               }
+            }
+         }
+      }
+   }
+
+}
+
+
