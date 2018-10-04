@@ -75,15 +75,9 @@ elseif($layout_type === 'photo_video') {
    if($photo_collection) {
       // NOTE (ts): no photos for Make: in design, so no need for header unless there's actually photos to show (especially since there's no Flickr Gallery for this either... see below)
       echo '<div class="row"><div class="col-md-12"><h2>Photos</h2></div></div>';
-      //var_dump($photo_collection);
-      $count = 0;
       echo '<div class="row">';
       foreach($photo_collection as $photo) {
          echo '<div class="col-md-4 col-sm-6"><div class="photo-square"><a href="'.$photo['external_link'].'" title="View this image on Flickr to download a larger version" target="_blank"><img src="'.$photo['photo_instance'].'" alt="'.$photo['photo_alt_text'].'" /></a></div></div>';
-         $count++;
-         if($count % 3 === 0) {
-            echo '</div><div class="row">';
-         }
       }
       echo '</div>';
    }
@@ -96,8 +90,6 @@ elseif($layout_type === 'photo_video') {
  
    $video_collection = get_field('video_collection');
    if($video_collection) {
-      //var_dump($video_collection);
-      $count = 0;
       echo '<div class="row">';
       foreach($video_collection as $video) {
          $video_id_match = preg_match('/(?:https\:\/\/youtu\.be\/)([A-Za-z0-9\-\_]{11,12})/i',$video["video_instance"],$video_id);
@@ -106,10 +98,6 @@ elseif($layout_type === 'photo_video') {
          // TBD add some validation in the authoring side to prevent any issues here?
          if($video_id_match && $video_id[1]) {
             echo '<div class="col-md-4 col-sm-6"><div class="video-square"><iframe width="262" height="240" src="https://www.youtube.com/embed/'.$video_id[1].'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div></div>';
-            $count++;
-         }
-         if($count % 3 === 0) {
-            echo '</div><div class="row">';
          }
       }
       echo '</div>';
@@ -120,8 +108,6 @@ elseif($layout_type === 'photo_video') {
    elseif($current_slug === 'press-center/make-photos-videos') {
       echo '<div class="pull-right"><a href="https://www.youtube.com/user/makemagazine" title="View Make: Magazine&rsquo;s Channel on YouTube" target="_blank">View Make: Magazine&rsquo;s Channel on YouTube  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
-   
-
 }
 
 
@@ -152,19 +138,19 @@ elseif($layout_type === 'brand_assets') {
    $example_images = get_field('example_images');
    if($example_images) {
       foreach($example_images as $image) {
-         $image_markup = '<div><img src="'.$image['image_instance'].'" />';
+         $image_markup = '<div><img src="'.$image['image_instance'].'" /></div>';
          echo $image_markup;
       }
    }
 
-   echo '</div></div>';
+   echo '</div></div>'; // end brand-assets-container
 
 }
 ?>
-         </div><!--Content-->
+         </div> <!-- end content -->
       </div> <!-- end row -->
    </div> <!-- end container -->
 
-</div><!--end page-leftnav-->
+</div><!-- end page-leftnav -->
 
 <?php get_footer(); ?>

@@ -102,6 +102,23 @@
       }
    }
 
+
+   @media screen and (max-width: 767px) {
+      .content {
+         &.photo-video {
+            .photo-square a {
+               min-height:100%;
+               img {
+                  width: 100%;
+                  max-width: 640px;
+                  max-height: 100%;
+               }
+            }
+
+         }
+      }
+   }
+
    @media screen and (max-width: 620px) {
       .page-header {
          h1 {
