@@ -139,7 +139,7 @@ elseif($layout_type === 'brand_assets') {
       echo $intro_text;
    }
    $download_buttons = get_field('download_buttons');
-   echo '<div class="row"><div class="col-sm-6">';
+   echo '<div class="row brand-assets-container"><div class="col-sm-6">';
 
    if($download_buttons) {
       foreach($download_buttons as $button) {
