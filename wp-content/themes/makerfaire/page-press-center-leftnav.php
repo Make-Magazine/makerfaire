@@ -21,7 +21,7 @@ $current_slug = add_query_arg( array(), $wp->request );
          <div class="row">
             <div class="col-lg-offset-3 col-lg-9">
                <header class="page-header">
-                  <h1><?php echo substr( get_the_title(), 0, -16); ?></h1>
+                  <h1><?php echo get_the_title(); ?></h1>
                   <span class="email-links">
                      <p>Maker Faire : <a href="mailto:pr@makerfaire.com">pr@makerfaire.com</a></p>
                      <p>Make : <a href="mailto:pr@makerfaire.com">pr@makerfaire.com</a></p>
