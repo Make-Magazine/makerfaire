@@ -88,7 +88,7 @@ elseif($layout_type === 'photo_video') {
       echo '</div>';
    }
    if($current_slug === 'press-center/photos-videos') {
-      echo '<div class="pull-right"><a href="https://www.flickr.com/photos/146635418@N02/albums/with/72157677029830411">View our Flickr Galleries <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
+      echo '<div class="pull-right"><a href="https://www.flickr.com/photos/146635418@N02/albums/with/72157677029830411" title="View our Flickr Galleries" target="_blank">View our Flickr Galleries <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    } // TBD (ts): no link yet for Make: photos, but when there is add here in an else/elseif
 
    // NOTE (ts): Because we show the footer YouTube link for either page here, we show the header too
@@ -115,10 +115,10 @@ elseif($layout_type === 'photo_video') {
       echo '</div>';
    }
    if($current_slug === 'press-center/photos-videos') {
-      echo '<div class="pull-right"><a href="https://www.youtube.com/channel/UCN3c64s76jBT3yPO_o1BZtA">View Maker Faire\'s Channel on YouTube  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
+      echo '<div class="pull-right"><a href="https://www.youtube.com/channel/UCN3c64s76jBT3yPO_o1BZtA" title="View Maker Faire&rsquo;s Channel on YouTube" target="_blank">View Maker Faire&rsquo;s Channel on YouTube  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
    elseif($current_slug === 'press-center/make-photos-videos') {
-      echo '<div class="pull-right"><a href="https://www.youtube.com/user/makemagazine">View Make: Magazine\'s Channel on YouTube  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
+      echo '<div class="pull-right"><a href="https://www.youtube.com/user/makemagazine" title="View Make: Magazine&rsquo;s Channel on YouTube" target="_blank">View Make: Magazine&rsquo;s Channel on YouTube  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
    
 
@@ -143,7 +143,7 @@ elseif($layout_type === 'brand_assets') {
 
    if($download_buttons) {
       foreach($download_buttons as $button) {
-         $button_markup = '<div class="download-button-container"><a class="btn btn-default" href="'.$button['downloadable_file'].'">'.$button['button_text'].' <i class="fa fa-download" aria-hidden="true"></i></a></div>';
+         $button_markup = '<div class="download-button-container"><a class="btn btn-default" href="'.$button['downloadable_file'].'" title="Download '.$button['button_text'].'" target="_blank">'.$button['button_text'].' <i class="fa fa-download" aria-hidden="true"></i></a></div>';
          echo $button_markup;
       }
    }
