@@ -23,8 +23,7 @@ $current_slug = add_query_arg( array(), $wp->request );
                <header class="page-header">
                   <h1><?php echo get_the_title(); ?></h1>
                   <span class="email-links">
-                     <p>Maker Faire : <a href="mailto:pr@makerfaire.com">pr@makerfaire.com</a></p>
-                     <p>Make : <a href="mailto:pr@makerfaire.com">pr@makerfaire.com</a></p>
+                     <p>Press inquiries: <a href="mailto:pr@makerfaire.com">pr@makerfaire.com</a></p>
                   </span>
                </header>
             </div>
