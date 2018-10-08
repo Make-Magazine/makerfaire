@@ -44,8 +44,7 @@
             },
             "choices": {
                 "NY-left-hand-nav": "New York",
-                "BA-left-hand-nav": "Bay Area",
-                "press-center-left-hand-nav": "Press Center Left Hand Page Navigation"
+                "BA-left-hand-nav": "Bay Area"
             },
             "allow_null": 0,
             "other_choice": 0,
@@ -69,16 +68,9 @@
                 "operator": "==",
                 "value": "page-schedule.php"
             }
-        ],
-        [
-            {
-                "param": "post_template",
-                "operator": "==",
-                "value": "page-press-center-leftnav.php"
-            }
         ]
     ],
-    "menu_order": 1,
+    "menu_order": 0,
     "position": "normal",
     "style": "default",
     "label_placement": "top",
@@ -86,5 +78,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1539029529
+    "modified": 1539031523
 }

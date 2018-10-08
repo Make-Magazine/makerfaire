@@ -35,12 +35,8 @@ $current_slug = add_query_arg( array(), $wp->request );
    <div class="container">
       <div class="row">
          <div class="left-hand-nav press-nav col-sm-3">
-            <?php           
-               $displayNav = get_field('display_left_nav');
-               if($displayNav){
-                  $template_to_display = get_field('template_to_display');               
-                  wp_nav_menu( array( 'theme_location' => $template_to_display ) );
-               }
+            <?php
+               wp_nav_menu(array( 'theme_location' => 'press-center-left-hand-nav' ));
             ?>
          </div>
          <div class="<?php echo $content_class; ?>">
