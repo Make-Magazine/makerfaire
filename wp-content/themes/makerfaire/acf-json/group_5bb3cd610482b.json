@@ -60,7 +60,7 @@
         },
         {
             "key": "field_5bb3cfd1f6c9f",
-            "label": "Header Image (Assets - Photos\/Videos)",
+            "label": "Header Image (Photos\/Videos)",
             "name": "header_image",
             "type": "image",
             "instructions": "Select an image that will appear at the top of the page",
@@ -71,13 +71,6 @@
                         "field": "field_5bb3ce08f6598",
                         "operator": "==",
                         "value": "photo_video"
-                    }
-                ],
-                [
-                    {
-                        "field": "field_5bb3ce08f6598",
-                        "operator": "==",
-                        "value": "brand_assets"
                     }
                 ]
             ],
@@ -179,13 +172,43 @@
             "button_label": "Add Downloadable Asset",
             "sub_fields": [
                 {
+                    "key": "field_5bbbe660c2b0d",
+                    "label": "Button Type",
+                    "name": "button_type",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "download": "Download",
+                        "link": "Link"
+                    },
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
                     "key": "field_5bb3d487aed55",
                     "label": "Downloadable File",
                     "name": "downloadable_file",
                     "type": "file",
                     "instructions": "Select the downloadable file associated with this button",
                     "required": 1,
-                    "conditional_logic": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bbbe660c2b0d",
+                                "operator": "==",
+                                "value": "download"
+                            }
+                        ]
+                    ],
                     "wrapper": {
                         "width": "",
                         "class": "",
@@ -196,6 +219,30 @@
                     "min_size": "",
                     "max_size": "",
                     "mime_types": ""
+                },
+                {
+                    "key": "field_5bbbe6dfc2b0f",
+                    "label": "External Link",
+                    "name": "external_link",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bbbe660c2b0d",
+                                "operator": "==",
+                                "value": "link"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
                 },
                 {
                     "key": "field_5bb3d531aed56",
@@ -215,42 +262,32 @@
                     "prepend": "",
                     "append": "",
                     "maxlength": ""
-                }
-            ]
-        },
-        {
-            "key": "field_5bb3d6cb88302",
-            "label": "Example Images (Assets)",
-            "name": "example_images",
-            "type": "repeater",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_5bb3ce08f6598",
-                        "operator": "==",
-                        "value": "brand_assets"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "collapsed": "field_5bb3d70d88303",
-            "min": 0,
-            "max": 0,
-            "layout": "row",
-            "button_label": "Add Example Image",
-            "sub_fields": [
+                },
                 {
-                    "key": "field_5bb3d70d88303",
-                    "label": "Image Instance",
-                    "name": "image_instance",
-                    "type": "image",
+                    "key": "field_5bbbe1c5e4292",
+                    "label": "Download Caption",
+                    "name": "download_caption",
+                    "type": "wysiwyg",
                     "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "full",
+                    "media_upload": 1,
+                    "delay": 0
+                },
+                {
+                    "key": "field_5bbbe0407366e",
+                    "label": "Image Sample",
+                    "name": "image_sample",
+                    "type": "image",
+                    "instructions": "Optional. Provide a sample of the downloadable image",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -270,6 +307,60 @@
                     "mime_types": ""
                 }
             ]
+        },
+        {
+            "key": "field_5bbbd3854eb54",
+            "label": "Photo Collection Header",
+            "name": "photo_collection_header",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bbbd3e54eb55",
+            "label": "Photo Collection Description",
+            "name": "photo_collection_description",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
         },
         {
             "key": "field_5bb3d7ea3e363",
@@ -360,6 +451,115 @@
             ]
         },
         {
+            "key": "field_5bbbd49f4eb59",
+            "label": "Photo Collection \"View More\" Link URL",
+            "name": "photo_collection_view_more_link_url",
+            "type": "url",
+            "instructions": "Optional; Provide a link to Flickr or other web photo gallery.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5bbbd46e4eb58",
+            "label": "Photo Collection \"View More\" Link Text",
+            "name": "photo_collection_view_more_link_text",
+            "type": "text",
+            "instructions": "Enter the text that should appear for the View More link. Defaults to 'View More'",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    },
+                    {
+                        "field": "field_5bbbd49f4eb59",
+                        "operator": "!=empty"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bbbd4134eb56",
+            "label": "Video Collection Header",
+            "name": "video_collection_header",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bbbd43f4eb57",
+            "label": "Video Collection Description",
+            "name": "video_collection_description",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
+        },
+        {
             "key": "field_5bb3d8cb3e367",
             "label": "Video Collection (Photos\/Videos)",
             "name": "video_collection",
@@ -403,6 +603,61 @@
                     "placeholder": ""
                 }
             ]
+        },
+        {
+            "key": "field_5bbbd4f74eb5b",
+            "label": "Video Collection \"View More\" Link URL",
+            "name": "video_collection_view_more_link_url",
+            "type": "url",
+            "instructions": "Optional; Provide a link to Flickr or other web photo gallery.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5bbbd4cd4eb5a",
+            "label": "Video Collection \"View More\" Link Text",
+            "name": "video_collection_view_more_link_text",
+            "type": "text",
+            "instructions": "Enter the text that should appear for the View More link. Defaults to 'View More'",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    },
+                    {
+                        "field": "field_5bbbd4f74eb5b",
+                        "operator": "!=empty"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
         },
         {
             "key": "field_5bb3dde8f3963",
@@ -564,5 +819,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1538599284
+    "modified": 1539041044
 }

@@ -65,23 +65,42 @@ elseif($layout_type === 'photo_video') {
    if($header_image) {
       echo '<img class="page-header-image" src="'.$header_image.'" />';
    }
+   $photo_collection_header = get_field('photo_collection_header');
+   if($photo_collection_header) {
+      echo '<div class="row"><div class="col-md-12"><h2>'.$photo_collection_header.'</h2></div></div>';
+   }
+   $photo_collection_description = get_field('photo_collection_description');
+   if($photo_collection_description) {
+      echo '<div class="row"><div class="col-md-12">'.$photo_collection_description.'</div></div>';
+   }
 
    $photo_collection = get_field('photo_collection');
    if($photo_collection) {
       // NOTE (ts): no photos for Make: in design, so no need for header unless there's actually photos to show (especially since there's no Flickr Gallery for this either... see below)
-      echo '<div class="row"><div class="col-md-12"><h2>Photos</h2></div></div>';
+      
       echo '<div class="row">';
       foreach($photo_collection as $photo) {
          echo '<div class="col-md-4 col-sm-6"><div class="photo-square"><a href="'.$photo['external_link'].'" title="View this image on Flickr to download a larger version" target="_blank"><img src="'.$photo['photo_instance'].'" alt="'.$photo['photo_alt_text'].'" /></a></div></div>';
       }
       echo '</div>';
    }
-   if($current_slug === 'press-center/photos-videos') {
-      echo '<div class="pull-right"><a href="https://www.flickr.com/photos/146635418@N02/albums/with/72157677029830411" title="View our Flickr Galleries" target="_blank">View our Flickr Galleries <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
+
+   $photo_collection_view_more_link_text = get_field('photo_collection_view_more_link_text') ? get_field('photo_collection_view_more_link_text') : 'View More';
+   $photo_collection_view_more_link_url = get_field('photo_collection_view_more_link_url');
+   if($current_slug === 'press-center/photos-videos' && $photo_collection_view_more_link_url) {
+      echo '<div class="pull-right"><a href="'.$photo_collection_view_more_link_url.'" title="'.$photo_collection_view_more_link_text.'" target="_blank">'.$photo_collection_view_more_link_text.' <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    } // TBD (ts): no link yet for Make: photos, but when there is add here in an else/elseif
 
-   // NOTE (ts): Because we show the footer YouTube link for either page here, we show the header too
-   echo '<div class="row"><div class="col-md-12"><h2>Videos</h2></div></div>';
+
+
+   $video_collection_header = get_field('video_collection_header');
+   if($video_collection_header) {
+      echo '<div class="row"><div class="col-md-12"><h2>'.$video_collection_header.'</h2></div></div>';
+   }
+   $video_collection_description = get_field('video_collection_description');
+   if($video_collection_description) {
+      echo '<div class="row"><div class="col-md-12">'.$video_collection_description.'</div></div>';
+   }
  
    $video_collection = get_field('video_collection');
    if($video_collection) {
@@ -97,20 +116,18 @@ elseif($layout_type === 'photo_video') {
       }
       echo '</div>';
    }
+   $video_collection_view_more_link_text = get_field('video_collection_view_more_link_text') ? get_field('video_collection_view_more_link_text') : 'View More';
+   $video_collection_view_more_link_url = get_field('video_collection_view_more_link_url');
    if($current_slug === 'press-center/photos-videos') {
-      echo '<div class="pull-right"><a href="https://www.youtube.com/channel/UCN3c64s76jBT3yPO_o1BZtA" title="View Maker Faire&rsquo;s Channel on YouTube" target="_blank">View Maker Faire&rsquo;s Channel on YouTube  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
+      echo '<div class="pull-right"><a href="'.$video_collection_view_more_link_url.'" title="'.$video_collection_view_more_link_text.'" target="_blank">'.$video_collection_view_more_link_text.'  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
    elseif($current_slug === 'press-center/make-photos-videos') {
-      echo '<div class="pull-right"><a href="https://www.youtube.com/user/makemagazine" title="View Make: Magazine&rsquo;s Channel on YouTube" target="_blank">View Make: Magazine&rsquo;s Channel on YouTube  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
+      echo '<div class="pull-right"><a href="'.$video_collection_view_more_link_url.'" title="'.$video_collection_view_more_link_text.'" target="_blank">'.$video_collection_view_more_link_text.'  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
 }
 
 
 elseif($layout_type === 'brand_assets') {
-   $header_image = get_field('header_image');
-   if($header_image) {
-      echo '<img class="page-header-image" src="'.$header_image.'" />';
-   }
    $page_subheader = get_field('page_subheader');
    if($page_subheader) {
       echo '<h2>'.$page_subheader.'</h2>';
@@ -120,24 +137,29 @@ elseif($layout_type === 'brand_assets') {
       echo $intro_text;
    }
    $download_buttons = get_field('download_buttons');
-   echo '<div class="row brand-assets-container"><div class="col-sm-6">';
+   echo '<div class="row brand-assets-container"><div class="col-sm-12">';
 
    if($download_buttons) {
       foreach($download_buttons as $button) {
-         $button_markup = '<div class="download-button-container"><a class="btn btn-default" href="'.$button['downloadable_file'].'" title="Download '.$button['button_text'].'" target="_blank">'.$button['button_text'].' <i class="fa fa-download" aria-hidden="true"></i></a></div>';
+         if($button['button_type'] === 'download') {
+            $button_action = $button['downloadable_file'];
+            $icon = 'fa-download';
+         } else {
+            $button_action = $button['external_link'];
+            $icon = 'fa-external-link';
+         }
+         $button_markup = '<div class="download-button-container">';
+         $button_markup .= '<div><a class="btn btn-default" href="'.$button_action.'" title="Download '.$button['button_text'].'" target="_blank">'.$button['button_text'].' <i class="fa '.$icon.'" aria-hidden="true"></i></a></div>';
+         if($button['image_sample']) {
+            $button_markup .= '<div class="sample-image"><img src="'.$button['image_sample'].'" /></div>';
+         }
+         if($button['download_caption']) {
+            $button_markup .= '<div class="download-caption">'.$button['download_caption'].'</div>';
+         }
+         $button_markup .= '</div>';
          echo $button_markup;
       }
    }
-   echo '</div><div class="col-sm-6">';
-
-   $example_images = get_field('example_images');
-   if($example_images) {
-      foreach($example_images as $image) {
-         $image_markup = '<div><img src="'.$image['image_instance'].'" /></div>';
-         echo $image_markup;
-      }
-   }
-
    echo '</div></div>'; // end brand-assets-container
 
 }

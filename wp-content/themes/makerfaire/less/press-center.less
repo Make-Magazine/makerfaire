@@ -42,15 +42,21 @@
       }
       .download-button-container {
          margin-bottom: 24px;
+         display: flex;
+         flex-direction: row;
          a.btn {
             min-width: 150px;
             color: #1989C7;
             border-color: #1989C7;
+            margin-right: 16px;
             .fa {
                float: right;
                position: relative;
                top: 3px;
             }
+         }
+         .download-caption {
+            padding: 0 16px;
          }
       }
       &.photo-video {
@@ -122,6 +128,18 @@
             margin-top: 0;
             p {
                margin-top: -12px
+            }
+         }
+      }
+      .content {
+         .download-button-container {
+            display: block;
+            border-bottom: 1px solid;
+            &> div {
+               margin-bottom: 12px;
+            }
+            .download-caption {
+               padding: 0;
             }
          }
       }
