@@ -147,11 +147,10 @@ elseif($layout_type === 'photo_video') {
    }
 
    $asset_card = get_field('asset_card');
-   //var_dump($asset_card);
-
    if($asset_card) {
       echo '<div class="row brand-assets-container"><div class="col-sm-12">';
       foreach($asset_card as $asset) {
+         $button_link = $asset['asset_card_button_action'] === 'external' ? $asset['asset_card_button_url'] : $asset['asset_card_button_file'];
          $asset_markup = '<div class="asset-card-container">';
          if($asset['asset_card_image']) {
             $asset_markup .= '<div class="sample-image"><img src="'.$asset['asset_card_image'].'" /></div>';
@@ -160,7 +159,7 @@ elseif($layout_type === 'photo_video') {
             $asset_markup .= '<div class="download-caption">'.$asset['asset_card_caption'].'</div>';
          }
          $asset_markup .= '</div>';
-         $asset_markup .= '<a class="asset-button" href="'.$asset['asset_card_button_url'].'" title="Download '.$asset['asset_card_button_text'].'" target="_blank">'.$asset['asset_card_button_text'].' <i class="fa '.$icon.'" aria-hidden="true"></i></a>';
+         $asset_markup .= '<a class="asset-button" href="'.$button_link.'" title="Download '.$asset['asset_card_button_text'].'" target="_blank">'.$asset['asset_card_button_text'].'</a>';
          echo $asset_markup;
       }
    }
@@ -177,12 +176,12 @@ elseif($layout_type === 'brand_assets') {
    if($intro_text) {
       echo $intro_text;
    }
+   
    $asset_card = get_field('asset_card');
-   //var_dump($asset_card);
-
    if($asset_card) {
       echo '<div class="row brand-assets-container"><div class="col-sm-12">';
       foreach($asset_card as $asset) {
+         $button_link = $asset['asset_card_button_action'] === 'external' ? $asset['asset_card_button_url'] : $asset['asset_card_button_file'];
          $asset_markup = '<div class="asset-card-container">';
          if($asset['asset_card_image']) {
             $asset_markup .= '<div class="sample-image"><img src="'.$asset['asset_card_image'].'" /></div>';
@@ -191,7 +190,7 @@ elseif($layout_type === 'brand_assets') {
             $asset_markup .= '<div class="download-caption">'.$asset['asset_card_caption'].'</div>';
          }
          $asset_markup .= '</div>';
-         $asset_markup .= '<a class="asset-button" href="'.$asset['asset_card_button_url'].'" title="Download '.$asset['asset_card_button_text'].'" target="_blank">'.$asset['asset_card_button_text'].' <i class="fa '.$icon.'" aria-hidden="true"></i></a>';
+         $asset_markup .= '<a class="asset-button" href="'.$button_link.'" title="Download '.$asset['asset_card_button_text'].'" target="_blank">'.$asset['asset_card_button_text'].'</a>';
          echo $asset_markup;
       }
    }

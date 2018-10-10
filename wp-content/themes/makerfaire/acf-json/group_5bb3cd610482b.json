@@ -63,7 +63,7 @@
             "label": "Page Subheader (Assets)",
             "name": "page_subheader",
             "type": "text",
-            "instructions": "Provide an optional Subheader for the page",
+            "instructions": "Optional. Add a subheader for the page",
             "required": 0,
             "conditional_logic": [
                 [
@@ -90,7 +90,7 @@
             "label": "Intro Text (Assets)",
             "name": "intro_text",
             "type": "wysiwyg",
-            "instructions": "Add optional introductory text",
+            "instructions": "Optional. Add some introductory text to e.g. appropriate use of assets",
             "required": 0,
             "conditional_logic": [
                 [
@@ -117,7 +117,7 @@
             "label": "Photo Collection Header",
             "name": "photo_collection_header",
             "type": "text",
-            "instructions": "",
+            "instructions": "Optional. Provide a header, e.g. \"Approved Photos\"",
             "required": 0,
             "conditional_logic": [
                 [
@@ -144,7 +144,7 @@
             "label": "Photo Collection Description",
             "name": "photo_collection_description",
             "type": "wysiwyg",
-            "instructions": "",
+            "instructions": "Optional. Provide a description of the photo collection(s).",
             "required": 0,
             "conditional_logic": [
                 [
@@ -222,7 +222,7 @@
                     "label": "Photo Alt Text",
                     "name": "photo_alt_text",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Provide alternative text for the photo. This will be used by visually impaired folks to understand what the photos represents.",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -241,7 +241,7 @@
                     "label": "External Link",
                     "name": "external_link",
                     "type": "url",
-                    "instructions": "Link to the Flickr photo for download",
+                    "instructions": "Link to the Flickr photo for download; on Flickr, either copy the URL of the photo from the browser address bar, or use the \"Share\" link found in the bottom right-hand corner of the image.",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -349,7 +349,7 @@
             "label": "Video Collection Header",
             "name": "video_collection_header",
             "type": "text",
-            "instructions": "",
+            "instructions": "Optional. Provide a header, e.g. \"Approved Videos\"",
             "required": 0,
             "conditional_logic": [
                 [
@@ -376,7 +376,7 @@
             "label": "Video Collection Description",
             "name": "video_collection_description",
             "type": "wysiwyg",
-            "instructions": "",
+            "instructions": "Optional. Provide a description of the video collection(s).",
             "required": 0,
             "conditional_logic": [
                 [
@@ -465,7 +465,7 @@
                     "label": "Video Caption\/Link URL",
                     "name": "video_caption_link_url",
                     "type": "url",
-                    "instructions": "Optional. Provide a URL for the photo caption to link to.",
+                    "instructions": "Optional. Provide a URL for the video caption to link to.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -483,7 +483,7 @@
             "label": "Video Collection \"View More\" Link URL",
             "name": "video_collection_view_more_link_url",
             "type": "url",
-            "instructions": "Optional; Provide a link to Flickr or other web photo gallery.",
+            "instructions": "Optional; Provide a link to Youtube channel or other video gallery.",
             "required": 0,
             "conditional_logic": [
                 [
@@ -538,7 +538,7 @@
             "label": "Asset Card (Assets, Photos\/Videos)",
             "name": "asset_card",
             "type": "repeater",
-            "instructions": "",
+            "instructions": "Include one or more \"Cards\" to represent a download of asset or assets",
             "required": 0,
             "conditional_logic": [
                 [
@@ -572,7 +572,7 @@
                     "label": "Card Image",
                     "name": "asset_card_image",
                     "type": "image",
-                    "instructions": "",
+                    "instructions": "Choose or upload an image example of the asset or assets",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -596,7 +596,7 @@
                     "label": "Card Caption",
                     "name": "asset_card_caption",
                     "type": "wysiwyg",
-                    "instructions": "",
+                    "instructions": "Optional. Provide a caption for the asset, e.g. \"255x75px Maker Faire Logo\"",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -605,9 +605,9 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "tabs": "all",
+                    "tabs": "text",
+                    "media_upload": 0,
                     "toolbar": "full",
-                    "media_upload": 1,
                     "delay": 0
                 },
                 {
@@ -615,7 +615,7 @@
                     "label": "Card Button Text",
                     "name": "asset_card_button_text",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Provide text for the button",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -630,11 +630,11 @@
                     "maxlength": ""
                 },
                 {
-                    "key": "field_5bbcf688644d1",
-                    "label": "Card Button URL",
-                    "name": "asset_card_button_url",
-                    "type": "url",
-                    "instructions": "",
+                    "key": "field_5bbe18e9e6fe4",
+                    "label": "Card Button Action",
+                    "name": "asset_card_button_action",
+                    "type": "button_group",
+                    "instructions": "Choose whether this button links to an external site, or a file uploaded to Word Press",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -642,8 +642,65 @@
                         "class": "",
                         "id": ""
                     },
+                    "choices": {
+                        "external": "External Link",
+                        "upload": "Upload Link"
+                    },
+                    "allow_null": 0,
+                    "default_value": "external",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5bbcf688644d1",
+                    "label": "Card Button URL",
+                    "name": "asset_card_button_url",
+                    "type": "url",
+                    "instructions": "Enter in the full URL of the external link",
+                    "required": 1,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bbe18e9e6fe4",
+                                "operator": "==",
+                                "value": "external"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
                     "default_value": "",
                     "placeholder": ""
+                },
+                {
+                    "key": "field_5bbe19a7e6fe5",
+                    "label": "Card Button File",
+                    "name": "asset_card_button_file",
+                    "type": "file",
+                    "instructions": "Choose or upload a file to associate with the button",
+                    "required": 1,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bbe18e9e6fe4",
+                                "operator": "==",
+                                "value": "upload"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "library": "all",
+                    "min_size": "",
+                    "max_size": "",
+                    "mime_types": ""
                 }
             ]
         },
@@ -652,7 +709,7 @@
             "label": "Press Release Collection (Press Releases)",
             "name": "press_release_collection",
             "type": "repeater",
-            "instructions": "",
+            "instructions": "Provide a collection of Press Releases (or Latest News)",
             "required": 0,
             "conditional_logic": [
                 [
@@ -679,7 +736,7 @@
                     "label": "Press Release Collection Group Header",
                     "name": "press_release_collection_group_header",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Optional, but recommended. Provide a header for this collection of releases, e.g. \"Maker Faire New York 2018\"",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -698,7 +755,7 @@
                     "label": "Press Release Collection Group",
                     "name": "press_release_collection_group",
                     "type": "repeater",
-                    "instructions": "",
+                    "instructions": "Enter one or more Press Releases with optional dates and sources",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -717,7 +774,7 @@
                             "label": "Release Date",
                             "name": "release_date",
                             "type": "date_picker",
-                            "instructions": "",
+                            "instructions": "Optional. Enter the date of the press release",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -734,7 +791,7 @@
                             "label": "Release Link Text",
                             "name": "release_link_text",
                             "type": "text",
-                            "instructions": "",
+                            "instructions": "Enter the text that will appear as a link to the press release",
                             "required": 1,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -753,7 +810,7 @@
                             "label": "Release Link",
                             "name": "release_link",
                             "type": "url",
-                            "instructions": "",
+                            "instructions": "Enter the full URL to the press release or page, e.g. http:\/\/example.com\/press-release-2018.htm",
                             "required": 1,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -769,7 +826,7 @@
                             "label": "Release Source",
                             "name": "release_source",
                             "type": "text",
-                            "instructions": "Optionally enter the source of the press release (e.g. New York Times)",
+                            "instructions": "Optional. Enter the source of the press release, e.g. New York Times",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -807,5 +864,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1539113638
+    "modified": 1539187883
 }

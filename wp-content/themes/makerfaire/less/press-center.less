@@ -43,13 +43,14 @@
       .asset-card-container {
          width: 273px;
          min-height: 152px;
+         margin-top: 24px;
          border: 1px solid #d5d5d5;
          display: flex;
          flex-direction: column;
          justify-content: space-evenly;
          align-items: center;
          .sample-image {
-            
+            padding: 6px;
          }
          .download-caption {
             text-align: center;
@@ -85,6 +86,9 @@
          }
       }
       &.photo-video {
+         .col-sm-4 {
+            max-width: 269px;
+         }
          .row > [class^='col-'] {
             margin-bottom: 24px;
          }
@@ -151,6 +155,9 @@
    @media screen and (max-width: 767px) {
       .content {
          &.photo-video {
+            .col-sm-4 {
+               max-width: 100%;
+            }
             .photo-square {
                padding-bottom: 56.25%;
                a {
