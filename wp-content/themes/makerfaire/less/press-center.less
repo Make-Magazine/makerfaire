@@ -40,10 +40,20 @@
       .brand-assets-container {
          margin-top: 24px;
       }
-      .download-button-container {
-         margin-bottom: 24px;
+      .asset-card-container {
+         width: 273px;
+         min-height: 152px;
+         border: 1px solid #d5d5d5;
          display: flex;
-         flex-direction: row;
+         flex-direction: column;
+         justify-content: space-evenly;
+         align-items: center;
+         .sample-image {
+            
+         }
+         .download-caption {
+            text-align: center;
+         }
          a.btn {
             min-width: 150px;
             color: #1989C7;
@@ -59,31 +69,66 @@
             padding: 0 16px;
          }
       }
+      a.asset-button {
+         display: block;
+         text-align: center;
+         text-decoration: none; 
+         padding: 12px 0;
+         width: 273px;
+         border: 1px solid #d5d5d5;
+         border-top: none;
+         font-size: 13px;
+         font-family: 'Roboto Light';
+         text-transform: uppercase;
+         &:hover {
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.15);
+         }
+      }
       &.photo-video {
          .row > [class^='col-'] {
             margin-bottom: 24px;
          }
-         .photo-square a {
-            max-width: 100%;
-            min-height: 240px;
-            max-height: 240px;
-            background-color: #111;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            img {
-               align-self: center;
-               max-height: 240px;
+         .photo-square {
+            height: 0;
+            padding-bottom: 100%;
+            position: relative;
+            a {
+               position: absolute;
+               top: 0;
+               left: 0;
+               width: 100%;
+               height: 100%;
+               background-color: #111;
+               display: block;
+               overflow: hidden;
+               img {
+                  max-width: 200%;
+                  height: 100%;
+                  position: relative;
+                  left: -45%;
+               }
             }
          }
+         .photo-caption,
+         .video-caption {
+            text-align: center;
+            margin-top: 12px;
+         }
          .video-square {
-            max-width: 100%;
-            min-height: 240px;
-            max-height: 240px;
+            height: 0;
+            padding-bottom: 100%;
+            position: relative;
             background-color: #111;
-            iframe {
-               width: 768px;
-               max-width: 100%;
+            .iframe-container {
+               position: absolute;
+               top: 0;
+               left: 0;
+               width: 100%;
+               height: 100%;
+               iframe {
+                  max-width: 100%;
+                  max-height: 100%;
+               }
             }
          }
       }
@@ -106,12 +151,25 @@
    @media screen and (max-width: 767px) {
       .content {
          &.photo-video {
-            .photo-square a {
-               min-height:100%;
-               img {
-                  width: 100%;
-                  max-width: 640px;
-                  max-height: 100%;
+            .photo-square {
+               padding-bottom: 56.25%;
+               a {
+                  img {
+                     width: 767px;
+                     max-width: 100%;
+                     height: auto;
+                     left: 0;
+                  }
+               }
+            }
+            .video-square {
+               height: 280px;
+               width: 767px;
+               max-height: 100%;
+               max-width: 100%;
+               padding-bottom: 0;
+               iframe {
+                  width: 767px;
                }
             }
          }

@@ -61,10 +61,7 @@ elseif($layout_type === 'press_releases') {
 } 
 
 elseif($layout_type === 'photo_video') {
-   $header_image = get_field('header_image');
-   if($header_image) {
-      echo '<img class="page-header-image" src="'.$header_image.'" />';
-   }
+
    $photo_collection_header = get_field('photo_collection_header');
    if($photo_collection_header) {
       echo '<div class="row"><div class="col-md-12"><h2>'.$photo_collection_header.'</h2></div></div>';
@@ -80,7 +77,19 @@ elseif($layout_type === 'photo_video') {
       
       echo '<div class="row">';
       foreach($photo_collection as $photo) {
-         echo '<div class="col-md-4 col-sm-6"><div class="photo-square"><a href="'.$photo['external_link'].'" title="View this image on Flickr to download a larger version" target="_blank"><img src="'.$photo['photo_instance'].'" alt="'.$photo['photo_alt_text'].'" /></a></div></div>';
+         $caption_link_text = $photo['photo_caption_link_text'] ? $photo['photo_caption_link_text'] : '';
+         $caption_markup = '';
+         if($caption_link_text) {
+            $caption_markup = '<div class="photo-caption">';
+            $caption_link_url = $photo['photo_caption_link_url'] ? $photo['photo_caption_link_url'] : '';
+            if($caption_link_url) {
+               $caption_markup .= '<p><a href="'.$caption_link_url.'" target="_blank" title="'.$caption_link_text.'">'.$caption_link_text.'</a></p>';
+            } else {
+               $caption_markup .= '<p>'.$caption_link_text.'</p>';
+            }
+            $caption_markup .= '</div>';
+         }
+         echo '<div class="col-sm-4"><div class="photo-square"><a href="'.$photo['external_link'].'" title="View this image on Flickr to download a larger version" target="_blank"><img src="'.$photo['photo_instance'].'" alt="'.$photo['photo_alt_text'].'" /></a></div>'.$caption_markup.'</div>';
       }
       echo '</div>';
    }
@@ -106,24 +115,56 @@ elseif($layout_type === 'photo_video') {
    if($video_collection) {
       echo '<div class="row">';
       foreach($video_collection as $video) {
+         $caption_link_text = $video['video_caption_link_text'] ? $video['video_caption_link_text'] : '';
+         $caption_markup = '';
+         if($caption_link_text) {
+            $caption_markup = '<div class="video-caption">';
+            $caption_link_url = $video['video_caption_link_url'] ? $video['video_caption_link_url'] : '';
+            if($caption_link_url) {
+               $caption_markup .= '<p><a href="'.$caption_link_url.'" target="_blank" title="'.$caption_link_text.'">'.$caption_link_text.'</a></p>';
+            } else {
+               $caption_markup .= '<p>'.$caption_link_text.'</p>';
+            }
+            $caption_markup .= '</div>';
+         }
          $video_id_match = preg_match('/(?:https\:\/\/youtu\.be\/)([A-Za-z0-9\-\_]{11,12})/i',$video["video_instance"],$video_id);
          // $video_id[1] (second array element) will be first paranthesized match, i.e. the video ID
          // This regex will work for the time being, see https://webapps.stackexchange.com/questions/54443/format-for-id-of-youtube-video
          // TBD add some validation in the authoring side to prevent any issues here?
          if($video_id_match && $video_id[1]) {
-            echo '<div class="col-md-4 col-sm-6"><div class="video-square"><iframe width="262" height="240" src="https://www.youtube.com/embed/'.$video_id[1].'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div></div>';
+            echo '<div class="col-sm-4"><div class="video-square"><div class="iframe-container"><iframe width="640" height="360" src="https://www.youtube.com/embed/'.$video_id[1].'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div></div>'.$caption_markup.'</div>';
          }
       }
       echo '</div>';
    }
    $video_collection_view_more_link_text = get_field('video_collection_view_more_link_text') ? get_field('video_collection_view_more_link_text') : 'View More';
    $video_collection_view_more_link_url = get_field('video_collection_view_more_link_url');
-   if($current_slug === 'press-center/photos-videos') {
+   if($current_slug === 'press-center/photos-videos' && $video_collection_view_more_link_url) {
       echo '<div class="pull-right"><a href="'.$video_collection_view_more_link_url.'" title="'.$video_collection_view_more_link_text.'" target="_blank">'.$video_collection_view_more_link_text.'  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
-   elseif($current_slug === 'press-center/make-photos-videos') {
+   elseif($current_slug === 'press-center/make-photos-videos' && $video_collection_view_more_link_url) {
       echo '<div class="pull-right"><a href="'.$video_collection_view_more_link_url.'" title="'.$video_collection_view_more_link_text.'" target="_blank">'.$video_collection_view_more_link_text.'  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
+
+   $asset_card = get_field('asset_card');
+   //var_dump($asset_card);
+
+   if($asset_card) {
+      echo '<div class="row brand-assets-container"><div class="col-sm-12">';
+      foreach($asset_card as $asset) {
+         $asset_markup = '<div class="asset-card-container">';
+         if($asset['asset_card_image']) {
+            $asset_markup .= '<div class="sample-image"><img src="'.$asset['asset_card_image'].'" /></div>';
+         }
+         if($asset['asset_card_caption']) {
+            $asset_markup .= '<div class="download-caption">'.$asset['asset_card_caption'].'</div>';
+         }
+         $asset_markup .= '</div>';
+         $asset_markup .= '<a class="asset-button" href="'.$asset['asset_card_button_url'].'" title="Download '.$asset['asset_card_button_text'].'" target="_blank">'.$asset['asset_card_button_text'].' <i class="fa '.$icon.'" aria-hidden="true"></i></a>';
+         echo $asset_markup;
+      }
+   }
+   echo '</div></div>'; // end brand-assets-container
 }
 
 
@@ -136,28 +177,22 @@ elseif($layout_type === 'brand_assets') {
    if($intro_text) {
       echo $intro_text;
    }
-   $download_buttons = get_field('download_buttons');
-   echo '<div class="row brand-assets-container"><div class="col-sm-12">';
+   $asset_card = get_field('asset_card');
+   //var_dump($asset_card);
 
-   if($download_buttons) {
-      foreach($download_buttons as $button) {
-         if($button['button_type'] === 'download') {
-            $button_action = $button['downloadable_file'];
-            $icon = 'fa-download';
-         } else {
-            $button_action = $button['external_link'];
-            $icon = 'fa-external-link';
+   if($asset_card) {
+      echo '<div class="row brand-assets-container"><div class="col-sm-12">';
+      foreach($asset_card as $asset) {
+         $asset_markup = '<div class="asset-card-container">';
+         if($asset['asset_card_image']) {
+            $asset_markup .= '<div class="sample-image"><img src="'.$asset['asset_card_image'].'" /></div>';
          }
-         $button_markup = '<div class="download-button-container">';
-         $button_markup .= '<div><a class="btn btn-default" href="'.$button_action.'" title="Download '.$button['button_text'].'" target="_blank">'.$button['button_text'].' <i class="fa '.$icon.'" aria-hidden="true"></i></a></div>';
-         if($button['image_sample']) {
-            $button_markup .= '<div class="sample-image"><img src="'.$button['image_sample'].'" /></div>';
+         if($asset['asset_card_caption']) {
+            $asset_markup .= '<div class="download-caption">'.$asset['asset_card_caption'].'</div>';
          }
-         if($button['download_caption']) {
-            $button_markup .= '<div class="download-caption">'.$button['download_caption'].'</div>';
-         }
-         $button_markup .= '</div>';
-         echo $button_markup;
+         $asset_markup .= '</div>';
+         $asset_markup .= '<a class="asset-button" href="'.$asset['asset_card_button_url'].'" title="Download '.$asset['asset_card_button_text'].'" target="_blank">'.$asset['asset_card_button_text'].' <i class="fa '.$icon.'" aria-hidden="true"></i></a>';
+         echo $asset_markup;
       }
    }
    echo '</div></div>'; // end brand-assets-container

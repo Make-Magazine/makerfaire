@@ -59,38 +59,6 @@
             "delay": 0
         },
         {
-            "key": "field_5bb3cfd1f6c9f",
-            "label": "Header Image (Photos\/Videos)",
-            "name": "header_image",
-            "type": "image",
-            "instructions": "Select an image that will appear at the top of the page",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_5bb3ce08f6598",
-                        "operator": "==",
-                        "value": "photo_video"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "url",
-            "preview_size": "full",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": ""
-        },
-        {
             "key": "field_5bb3d35eaed52",
             "label": "Page Subheader (Assets)",
             "name": "page_subheader",
@@ -143,170 +111,6 @@
             "toolbar": "full",
             "media_upload": 1,
             "delay": 0
-        },
-        {
-            "key": "field_5bb3d446aed54",
-            "label": "Download Buttons (Assets)",
-            "name": "download_buttons",
-            "type": "repeater",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_5bb3ce08f6598",
-                        "operator": "==",
-                        "value": "brand_assets"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "collapsed": "field_5bb3d531aed56",
-            "min": 0,
-            "max": 0,
-            "layout": "row",
-            "button_label": "Add Downloadable Asset",
-            "sub_fields": [
-                {
-                    "key": "field_5bbbe660c2b0d",
-                    "label": "Button Type",
-                    "name": "button_type",
-                    "type": "button_group",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "choices": {
-                        "download": "Download",
-                        "link": "Link"
-                    },
-                    "allow_null": 0,
-                    "default_value": "",
-                    "layout": "horizontal",
-                    "return_format": "value"
-                },
-                {
-                    "key": "field_5bb3d487aed55",
-                    "label": "Downloadable File",
-                    "name": "downloadable_file",
-                    "type": "file",
-                    "instructions": "Select the downloadable file associated with this button",
-                    "required": 1,
-                    "conditional_logic": [
-                        [
-                            {
-                                "field": "field_5bbbe660c2b0d",
-                                "operator": "==",
-                                "value": "download"
-                            }
-                        ]
-                    ],
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "return_format": "url",
-                    "library": "all",
-                    "min_size": "",
-                    "max_size": "",
-                    "mime_types": ""
-                },
-                {
-                    "key": "field_5bbbe6dfc2b0f",
-                    "label": "External Link",
-                    "name": "external_link",
-                    "type": "url",
-                    "instructions": "",
-                    "required": 1,
-                    "conditional_logic": [
-                        [
-                            {
-                                "field": "field_5bbbe660c2b0d",
-                                "operator": "==",
-                                "value": "link"
-                            }
-                        ]
-                    ],
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": ""
-                },
-                {
-                    "key": "field_5bb3d531aed56",
-                    "label": "Button Text",
-                    "name": "button_text",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 1,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
-                },
-                {
-                    "key": "field_5bbbe1c5e4292",
-                    "label": "Download Caption",
-                    "name": "download_caption",
-                    "type": "wysiwyg",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "tabs": "all",
-                    "toolbar": "full",
-                    "media_upload": 1,
-                    "delay": 0
-                },
-                {
-                    "key": "field_5bbbe0407366e",
-                    "label": "Image Sample",
-                    "name": "image_sample",
-                    "type": "image",
-                    "instructions": "Optional. Provide a sample of the downloadable image",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "return_format": "url",
-                    "preview_size": "thumbnail",
-                    "library": "all",
-                    "min_width": "",
-                    "min_height": "",
-                    "min_size": "",
-                    "max_width": "",
-                    "max_height": "",
-                    "max_size": "",
-                    "mime_types": ""
-                }
-            ]
         },
         {
             "key": "field_5bbbd3854eb54",
@@ -439,6 +243,41 @@
                     "type": "url",
                     "instructions": "Link to the Flickr photo for download",
                     "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_5bbcd675e678c",
+                    "label": "Photo Caption\/Link Text",
+                    "name": "photo_caption_link_text",
+                    "type": "text",
+                    "instructions": "Optional. Add a caption below the photo, and optionally have the caption be a link.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bbcd6bce678d",
+                    "label": "Photo Caption\/Link URL",
+                    "name": "photo_caption_link_url",
+                    "type": "url",
+                    "instructions": "Optional. Provide a URL for the photo caption to link to.",
+                    "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
                         "width": "",
@@ -601,6 +440,41 @@
                     },
                     "default_value": "",
                     "placeholder": ""
+                },
+                {
+                    "key": "field_5bbcddfffae99",
+                    "label": "Video Caption\/Link Text",
+                    "name": "video_caption_link_text",
+                    "type": "text",
+                    "instructions": "Optional. Add a caption below the video, and optionally have the caption be a link.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bbcde2efae9a",
+                    "label": "Video Caption\/Link URL",
+                    "name": "video_caption_link_url",
+                    "type": "url",
+                    "instructions": "Optional. Provide a URL for the photo caption to link to.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
                 }
             ]
         },
@@ -658,6 +532,120 @@
             "prepend": "",
             "append": "",
             "maxlength": ""
+        },
+        {
+            "key": "field_5bbcf0f9644cc",
+            "label": "Asset Card (Assets, Photos\/Videos)",
+            "name": "asset_card",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "Add Card",
+            "sub_fields": [
+                {
+                    "key": "field_5bbcf197644ce",
+                    "label": "Card Image",
+                    "name": "asset_card_image",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5bbcf1d2644cf",
+                    "label": "Card Caption",
+                    "name": "asset_card_caption",
+                    "type": "wysiwyg",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "full",
+                    "media_upload": 1,
+                    "delay": 0
+                },
+                {
+                    "key": "field_5bbcf67b644d0",
+                    "label": "Card Button Text",
+                    "name": "asset_card_button_text",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bbcf688644d1",
+                    "label": "Card Button URL",
+                    "name": "asset_card_button_url",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
         },
         {
             "key": "field_5bb3dde8f3963",
@@ -819,5 +807,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1539041044
+    "modified": 1539113638
 }
