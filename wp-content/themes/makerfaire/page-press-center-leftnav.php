@@ -48,15 +48,17 @@ if($layout_type === 'wysiwyg') {
 elseif($layout_type === 'press_releases') {
    $release_collection = get_field('press_release_collection');
    if($release_collection) {
+      $press_releases_markup = '';
       foreach($release_collection as $group) {
-         echo '<h2>' . $group["press_release_collection_group_header"] . '</h2>';
+         $press_releases_markup .= '<h2>' . $group["press_release_collection_group_header"] . '</h2>';
          foreach($group["press_release_collection_group"] as $release) {
             $release_text = $release['release_date'] ? $release['release_date'] . ' &mdash; ' : '';
             $release_text .= '<a href="'.$release['release_link'].'">' . $release['release_link_text'] . '</a>';
             $release_text .= $release['release_source'] ? ' - ' . $release['release_source'] : '';
-            echo '<div class="press-release-instance">'.$release_text.'</div>';
+            $press_releases_markup .=  '<div class="press-release-instance">'.$release_text.'</div>';
          }
       }
+      echo $press_releases_markup;
    }
 } 
 
@@ -74,8 +76,7 @@ elseif($layout_type === 'photo_video') {
    $photo_collection = get_field('photo_collection');
    if($photo_collection) {
       // NOTE (ts): no photos for Make: in design, so no need for header unless there's actually photos to show (especially since there's no Flickr Gallery for this either... see below)
-      
-      echo '<div class="row">';
+      $photo_collection_markup = '<div class="row">';
       foreach($photo_collection as $photo) {
          $caption_link_text = $photo['photo_caption_link_text'] ? $photo['photo_caption_link_text'] : '';
          $caption_markup = '';
@@ -89,9 +90,10 @@ elseif($layout_type === 'photo_video') {
             }
             $caption_markup .= '</div>';
          }
-         echo '<div class="col-sm-4"><div class="photo-square"><a href="'.$photo['external_link'].'" title="View this image on Flickr to download a larger version" target="_blank"><img src="'.$photo['photo_instance'].'" alt="'.$photo['photo_alt_text'].'" /></a></div>'.$caption_markup.'</div>';
+         $photo_collection_markup .= '<div class="col-sm-4"><div class="photo-square"><a href="'.$photo['external_link'].'" title="View this image on Flickr to download a larger version" target="_blank"><img src="'.$photo['photo_instance'].'" alt="'.$photo['photo_alt_text'].'" /></a></div>'.$caption_markup.'</div>';
       }
-      echo '</div>';
+      $photo_collection_markup .= '</div>';
+      echo $photo_collection_markup;
    }
 
    $photo_collection_view_more_link_text = get_field('photo_collection_view_more_link_text') ? get_field('photo_collection_view_more_link_text') : 'View More';
@@ -113,7 +115,7 @@ elseif($layout_type === 'photo_video') {
  
    $video_collection = get_field('video_collection');
    if($video_collection) {
-      echo '<div class="row">';
+      $video_collection_markup = '<div class="row">';
       foreach($video_collection as $video) {
          $caption_link_text = $video['video_caption_link_text'] ? $video['video_caption_link_text'] : '';
          $caption_markup = '';
@@ -132,10 +134,11 @@ elseif($layout_type === 'photo_video') {
          // This regex will work for the time being, see https://webapps.stackexchange.com/questions/54443/format-for-id-of-youtube-video
          // TBD add some validation in the authoring side to prevent any issues here?
          if($video_id_match && $video_id[1]) {
-            echo '<div class="col-sm-4"><div class="video-square"><div class="iframe-container"><iframe width="640" height="360" src="https://www.youtube.com/embed/'.$video_id[1].'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div></div>'.$caption_markup.'</div>';
+            $video_collection_markup .= '<div class="col-sm-4"><div class="video-square"><div class="iframe-container"><iframe width="640" height="360" src="https://www.youtube.com/embed/'.$video_id[1].'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe></div></div>'.$caption_markup.'</div>';
          }
       }
-      echo '</div>';
+      $video_collection_markup .= '</div>';
+      echo $video_collection_markup;
    }
    $video_collection_view_more_link_text = get_field('video_collection_view_more_link_text') ? get_field('video_collection_view_more_link_text') : 'View More';
    $video_collection_view_more_link_url = get_field('video_collection_view_more_link_url');
@@ -146,9 +149,10 @@ elseif($layout_type === 'photo_video') {
       echo '<div class="pull-right"><a href="'.$video_collection_view_more_link_url.'" title="'.$video_collection_view_more_link_text.'" target="_blank">'.$video_collection_view_more_link_text.'  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
 
+   
    $asset_card = get_field('asset_card');
    if($asset_card) {
-      echo '<div class="row brand-assets-container"><div class="col-sm-12">';
+      $asset_cards_markup = '<div class="row brand-assets-container"><div class="col-sm-12">';
       foreach($asset_card as $asset) {
          $button_link = $asset['asset_card_button_action'] === 'external' ? $asset['asset_card_button_url'] : $asset['asset_card_button_file'];
          $asset_markup = '<div class="asset-card-container">';
@@ -160,10 +164,11 @@ elseif($layout_type === 'photo_video') {
          }
          $asset_markup .= '</div>';
          $asset_markup .= '<a class="asset-button" href="'.$button_link.'" title="Download '.$asset['asset_card_button_text'].'" target="_blank">'.$asset['asset_card_button_text'].'</a>';
-         echo $asset_markup;
+         $asset_cards_markup .= $asset_markup;
       }
+      $asset_cards_markup .= '</div></div>'; // end brand-assets-container
+      echo $asset_cards_markup;
    }
-   echo '</div></div>'; // end brand-assets-container
 }
 
 
@@ -179,7 +184,7 @@ elseif($layout_type === 'brand_assets') {
    
    $asset_card = get_field('asset_card');
    if($asset_card) {
-      echo '<div class="row brand-assets-container"><div class="col-sm-12">';
+      $asset_cards_markup = '<div class="row brand-assets-container"><div class="col-sm-12">';
       foreach($asset_card as $asset) {
          $button_link = $asset['asset_card_button_action'] === 'external' ? $asset['asset_card_button_url'] : $asset['asset_card_button_file'];
          $asset_markup = '<div class="asset-card-container">';
@@ -191,10 +196,11 @@ elseif($layout_type === 'brand_assets') {
          }
          $asset_markup .= '</div>';
          $asset_markup .= '<a class="asset-button" href="'.$button_link.'" title="Download '.$asset['asset_card_button_text'].'" target="_blank">'.$asset['asset_card_button_text'].'</a>';
-         echo $asset_markup;
+         $asset_cards_markup .= $asset_markup;
       }
+      $asset_cards_markup .= '</div></div>'; // end brand-assets-container
+      echo $asset_cards_markup;
    }
-   echo '</div></div>'; // end brand-assets-container
 
 }
 ?>
