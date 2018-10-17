@@ -6,10 +6,7 @@
 <?php get_header(); ?>
 <div id="authenticated-redirect" class="container page-content">
   <div class="row">
-    <div class="col-sm-3 col-xs-12">
-      <img src="/wp-content/themes/makerfaire/img/makey-stickers-slanted.png"  class="img-responsive" />
-    </div>
-    <div class="col-sm-9 col-xs-12">
+    <div class="col-xs-12">
       <h2 class="text-center">Please wait while we complete the login process.</h2>
       <h3 class="text-center redirect-message">You will be redirected shortly.</h3>
       <h3 class="text-center billboard">Please wait while we get you back to the right place.</h3>
