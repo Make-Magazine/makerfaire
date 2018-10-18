@@ -39,7 +39,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "<h3>Calling all Makers!<\/h3>\r\n<p>Join us for Maker Week\u2014the week leading up to Maker Faire Bay Area 2015. Here you\u2019ll find a full run-down of all the activities in which Makers can participate during Maker Week.<\/p> \r\n<p>Check back often to see what other exciting events and activities have been added to the schedule.<\/p>",
+            "default_value": "<h3>Calling all Makers!<\/h3>\r\n<p>Join us for Maker Week—the week leading up to Maker Faire Bay Area 2015. Here you’ll find a full run-down of all the activities in which Makers can participate during Maker Week.<\/p> \r\n<p>Check back often to see what other exciting events and activities have been added to the schedule.<\/p>",
             "placeholder": "",
             "maxlength": "",
             "rows": "",
@@ -60,7 +60,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "<p>Have an event, meetup, activity, party, launch, or other exciting offering for Maker Week?<\/p>\r\n<p>Let us know, we\u2019d love to add it here!<\/p>\r\n<a class=\"btn btn-primary\" href=\"#\">SEND US YOUR EVENT!<\/a>",
+            "default_value": "<p>Have an event, meetup, activity, party, launch, or other exciting offering for Maker Week?<\/p>\r\n<p>Let us know, we’d love to add it here!<\/p>\r\n<a class=\"btn btn-primary\" href=\"#\">SEND US YOUR EVENT!<\/a>",
             "placeholder": "",
             "maxlength": "",
             "rows": "",
@@ -82,8 +82,8 @@
                 "id": ""
             },
             "collapsed": "",
-            "min": "",
-            "max": "",
+            "min": 0,
+            "max": 0,
             "layout": "row",
             "button_label": "Add Row",
             "sub_fields": [
@@ -189,7 +189,10 @@
                         "id": ""
                     },
                     "message": "",
-                    "default_value": 0
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
                 },
                 {
                     "key": "field_56fdbefce570e",
@@ -205,8 +208,8 @@
                         "id": ""
                     },
                     "collapsed": "",
-                    "min": "",
-                    "max": "",
+                    "min": 0,
+                    "max": 0,
                     "layout": "block",
                     "button_label": "Add Row",
                     "sub_fields": [
@@ -257,7 +260,7 @@
                             "label": "invite only?",
                             "name": "invite_only",
                             "type": "true_false",
-                            "instructions": "Checkbox to chow the INVITE ONLY button.",
+                            "instructions": "Checkbox to show the INVITE ONLY button.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -266,7 +269,10 @@
                                 "id": ""
                             },
                             "message": "",
-                            "default_value": 0
+                            "default_value": 0,
+                            "ui": 0,
+                            "ui_on_text": "",
+                            "ui_off_text": ""
                         },
                         {
                             "key": "field_56fdbfaae5711",
@@ -284,7 +290,8 @@
                             "default_value": "",
                             "tabs": "all",
                             "toolbar": "full",
-                            "media_upload": 1
+                            "media_upload": 1,
+                            "delay": 0
                         }
                     ]
                 }
@@ -315,5 +322,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1473797276
+    "modified": 1539873562
 }

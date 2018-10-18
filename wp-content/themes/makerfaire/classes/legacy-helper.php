@@ -83,7 +83,8 @@ function legacy_get_fit_remote_image_url( $url, $width, $height, $escape = true 
 
 	return ( $escape ) ? esc_url( $thumburl ) : $thumburl;
   else:
-  return $url; 
+  return get_the_post_thumbnail($url,'medium');
+  //$url; 
 	endif;
 }
 
