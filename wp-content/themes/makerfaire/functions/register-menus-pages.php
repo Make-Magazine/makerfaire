@@ -18,7 +18,8 @@ function isc_register_menus() {
       'mf-admin-barnesandnoble-register-menu' => __( 'MF Barnes And Noble Admin Bar' ),
       'mobile-nav' => __( 'Mobile Navigation' ),
       'NY-left-hand-nav' => __( 'NY Left Hand Page Navigation' ),
-      'BA-left-hand-nav' => __( 'BA Left Hand Page Navigation' ))
+      'BA-left-hand-nav' => __( 'BA Left Hand Page Navigation' ),
+      'press-center-left-hand-nav' => __( 'Press Center Left Hand Page Navigation' ))
    );
 }
 

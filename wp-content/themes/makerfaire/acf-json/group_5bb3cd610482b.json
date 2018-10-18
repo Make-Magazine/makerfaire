@@ -1,0 +1,868 @@
+{
+    "key": "group_5bb3cd610482b",
+    "title": "Press Pages Content",
+    "fields": [
+        {
+            "key": "field_5bb3ce08f6598",
+            "label": "Layout Type",
+            "name": "layout_type",
+            "type": "select",
+            "instructions": "Choose the type of layout for this page",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "wysiwyg": "WYSIWYG",
+                "brand_assets": "Brand Assets",
+                "photo_video": "Photos & Videos",
+                "press_releases": "Press Releases"
+            },
+            "default_value": [
+                "wysiwyg"
+            ],
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
+            "key": "field_5bb3cf3ff6c9e",
+            "label": "Freeform Content (What We Do\/Media Registration)",
+            "name": "freeform_content",
+            "type": "wysiwyg",
+            "instructions": "Enter your HTML content here",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "wysiwyg"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "text",
+            "media_upload": 1,
+            "toolbar": "full",
+            "delay": 0
+        },
+        {
+            "key": "field_5bb3d35eaed52",
+            "label": "Page Subheader (Assets)",
+            "name": "page_subheader",
+            "type": "text",
+            "instructions": "Optional. Add a subheader for the page",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bb3d3eaaed53",
+            "label": "Intro Text (Assets)",
+            "name": "intro_text",
+            "type": "wysiwyg",
+            "instructions": "Optional. Add some introductory text to e.g. appropriate use of assets",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
+        },
+        {
+            "key": "field_5bbbd3854eb54",
+            "label": "Photo Collection Header",
+            "name": "photo_collection_header",
+            "type": "text",
+            "instructions": "Optional. Provide a header, e.g. \"Approved Photos\"",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bbbd3e54eb55",
+            "label": "Photo Collection Description",
+            "name": "photo_collection_description",
+            "type": "wysiwyg",
+            "instructions": "Optional. Provide a description of the photo collection(s).",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
+        },
+        {
+            "key": "field_5bb3d7ea3e363",
+            "label": "Photo Collection (Photos\/Videos)",
+            "name": "photo_collection",
+            "type": "repeater",
+            "instructions": "Attach up to 6 photos in the page",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 6,
+            "layout": "row",
+            "button_label": "Add Photo",
+            "sub_fields": [
+                {
+                    "key": "field_5bb3d8423e364",
+                    "label": "Photo Instance",
+                    "name": "photo_instance",
+                    "type": "image",
+                    "instructions": "Download the \"Medium (640 × 427)\" version of this image on Flickr and upload here to produce the thumbnail in the Photos page",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5bb3d89a3e366",
+                    "label": "Photo Alt Text",
+                    "name": "photo_alt_text",
+                    "type": "text",
+                    "instructions": "Provide alternative text for the photo. This will be used by visually impaired folks to understand what the photos represents.",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bb3d8713e365",
+                    "label": "External Link",
+                    "name": "external_link",
+                    "type": "url",
+                    "instructions": "Link to the Flickr photo for download; on Flickr, either copy the URL of the photo from the browser address bar, or use the \"Share\" link found in the bottom right-hand corner of the image.",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_5bbcd675e678c",
+                    "label": "Photo Caption\/Link Text",
+                    "name": "photo_caption_link_text",
+                    "type": "text",
+                    "instructions": "Optional. Add a caption below the photo, and optionally have the caption be a link.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bbcd6bce678d",
+                    "label": "Photo Caption\/Link URL",
+                    "name": "photo_caption_link_url",
+                    "type": "url",
+                    "instructions": "Optional. Provide a URL for the photo caption to link to.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5bbbd49f4eb59",
+            "label": "Photo Collection \"View More\" Link URL",
+            "name": "photo_collection_view_more_link_url",
+            "type": "url",
+            "instructions": "Optional; Provide a link to Flickr or other web photo gallery.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5bbbd46e4eb58",
+            "label": "Photo Collection \"View More\" Link Text",
+            "name": "photo_collection_view_more_link_text",
+            "type": "text",
+            "instructions": "Enter the text that should appear for the View More link. Defaults to 'View More'",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    },
+                    {
+                        "field": "field_5bbbd49f4eb59",
+                        "operator": "!=empty"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bbbd4134eb56",
+            "label": "Video Collection Header",
+            "name": "video_collection_header",
+            "type": "text",
+            "instructions": "Optional. Provide a header, e.g. \"Approved Videos\"",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bbbd43f4eb57",
+            "label": "Video Collection Description",
+            "name": "video_collection_description",
+            "type": "wysiwyg",
+            "instructions": "Optional. Provide a description of the video collection(s).",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
+        },
+        {
+            "key": "field_5bb3d8cb3e367",
+            "label": "Video Collection (Photos\/Videos)",
+            "name": "video_collection",
+            "type": "repeater",
+            "instructions": "Attach up to 6 videos in the page",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 6,
+            "layout": "row",
+            "button_label": "Add Video",
+            "sub_fields": [
+                {
+                    "key": "field_5bb3d96fdefef",
+                    "label": "Video Instance",
+                    "name": "video_instance",
+                    "type": "url",
+                    "instructions": "Copy the YouTube \"Share\" URL here. <br\/>\r\nExample: https:\/\/youtu.be\/0P9qVVDRvto",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_5bbcddfffae99",
+                    "label": "Video Caption\/Link Text",
+                    "name": "video_caption_link_text",
+                    "type": "text",
+                    "instructions": "Optional. Add a caption below the video, and optionally have the caption be a link.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bbcde2efae9a",
+                    "label": "Video Caption\/Link URL",
+                    "name": "video_caption_link_url",
+                    "type": "url",
+                    "instructions": "Optional. Provide a URL for the video caption to link to.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5bbbd4f74eb5b",
+            "label": "Video Collection \"View More\" Link URL",
+            "name": "video_collection_view_more_link_url",
+            "type": "url",
+            "instructions": "Optional; Provide a link to Youtube channel or other video gallery.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5bbbd4cd4eb5a",
+            "label": "Video Collection \"View More\" Link Text",
+            "name": "video_collection_view_more_link_text",
+            "type": "text",
+            "instructions": "Enter the text that should appear for the View More link. Defaults to 'View More'",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    },
+                    {
+                        "field": "field_5bbbd4f74eb5b",
+                        "operator": "!=empty"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5bbcf0f9644cc",
+            "label": "Asset Card (Assets, Photos\/Videos)",
+            "name": "asset_card",
+            "type": "repeater",
+            "instructions": "Include one or more \"Cards\" to represent a download of asset or assets",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "brand_assets"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "photo_video"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "Add Card",
+            "sub_fields": [
+                {
+                    "key": "field_5bbcf197644ce",
+                    "label": "Card Image",
+                    "name": "asset_card_image",
+                    "type": "image",
+                    "instructions": "Choose or upload an image example of the asset or assets",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5bbcf1d2644cf",
+                    "label": "Card Caption",
+                    "name": "asset_card_caption",
+                    "type": "wysiwyg",
+                    "instructions": "Optional. Provide a caption for the asset, e.g. \"255x75px Maker Faire Logo\"",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "text",
+                    "media_upload": 0,
+                    "toolbar": "full",
+                    "delay": 0
+                },
+                {
+                    "key": "field_5bbcf67b644d0",
+                    "label": "Card Button Text",
+                    "name": "asset_card_button_text",
+                    "type": "text",
+                    "instructions": "Provide text for the button",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bbe18e9e6fe4",
+                    "label": "Card Button Action",
+                    "name": "asset_card_button_action",
+                    "type": "button_group",
+                    "instructions": "Choose whether this button links to an external site, or a file uploaded to Word Press",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "external": "External Link",
+                        "upload": "Upload Link"
+                    },
+                    "allow_null": 0,
+                    "default_value": "external",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_5bbcf688644d1",
+                    "label": "Card Button URL",
+                    "name": "asset_card_button_url",
+                    "type": "url",
+                    "instructions": "Enter in the full URL of the external link",
+                    "required": 1,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bbe18e9e6fe4",
+                                "operator": "==",
+                                "value": "external"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_5bbe19a7e6fe5",
+                    "label": "Card Button File",
+                    "name": "asset_card_button_file",
+                    "type": "file",
+                    "instructions": "Choose or upload a file to associate with the button",
+                    "required": 1,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5bbe18e9e6fe4",
+                                "operator": "==",
+                                "value": "upload"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "library": "all",
+                    "min_size": "",
+                    "max_size": "",
+                    "mime_types": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5bb3dde8f3963",
+            "label": "Press Release Collection (Press Releases)",
+            "name": "press_release_collection",
+            "type": "repeater",
+            "instructions": "Provide a collection of Press Releases (or Latest News)",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5bb3ce08f6598",
+                        "operator": "==",
+                        "value": "press_releases"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "Add Press Release Collection Group",
+            "sub_fields": [
+                {
+                    "key": "field_5bb3de12f3964",
+                    "label": "Press Release Collection Group Header",
+                    "name": "press_release_collection_group_header",
+                    "type": "text",
+                    "instructions": "Optional, but recommended. Provide a header for this collection of releases, e.g. \"Maker Faire New York 2018\"",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5bb3de46f3965",
+                    "label": "Press Release Collection Group",
+                    "name": "press_release_collection_group",
+                    "type": "repeater",
+                    "instructions": "Enter one or more Press Releases with optional dates and sources",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "collapsed": "",
+                    "min": 0,
+                    "max": 0,
+                    "layout": "table",
+                    "button_label": "Add Press Release",
+                    "sub_fields": [
+                        {
+                            "key": "field_5bb3deadf3966",
+                            "label": "Release Date",
+                            "name": "release_date",
+                            "type": "date_picker",
+                            "instructions": "Optional. Enter the date of the press release",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "display_format": "F j, Y",
+                            "return_format": "F j, Y",
+                            "first_day": 1
+                        },
+                        {
+                            "key": "field_5bb4eb25cfdf7",
+                            "label": "Release Link Text",
+                            "name": "release_link_text",
+                            "type": "text",
+                            "instructions": "Enter the text that will appear as a link to the press release",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        },
+                        {
+                            "key": "field_5bb3def5f3967",
+                            "label": "Release Link",
+                            "name": "release_link",
+                            "type": "url",
+                            "instructions": "Enter the full URL to the press release or page, e.g. http:\/\/example.com\/press-release-2018.htm",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_5bb3df14f3968",
+                            "label": "Release Source",
+                            "name": "release_source",
+                            "type": "text",
+                            "instructions": "Optional. Enter the source of the press release, e.g. New York Times",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-press-center-leftnav.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [
+        "the_content"
+    ],
+    "active": 1,
+    "description": "",
+    "modified": 1539187883
+}

@@ -1,0 +1,105 @@
+<div class="press-page">
+ <ul class="nav nav-pills">
+    <li>
+    <a href="http://blog.makezine.com/press-center">Press Center</a>
+    </li>
+    <li><a href="http://blog.makezine.com/contacts-bios">Contacts/Bios</a></li>
+    <li class="active"><a style="text-shadow:none;">Press Releases</a></li>
+    <li><a href="http://blog.makezine.com/fact-sheet">Fact Sheet</a></li>
+    <li><a href="http://blog.makezine.com/logos-banners">Logos/Banners</a></li>
+    </ul>
+
+<div class="">
+<h4><a href="http://www.marketwire.com/press-release/make-ultimate-guide-to-3d-printing-timed-for-holiday-shopping-1726970.htm" target="_blank">Make: Ultimate Guide to 3D Printing Timed for Holiday Shopping</a></h4>
+<p>
+  SEBASTOPOL, CA--(Marketwire - Nov 15, 2012) - Will the 3D printer be this generation's &quot;family PC,&quot; found under the trees of early adopters this holiday season? Is this the &quot;must have&quot; gift this year for your favorite tinkerer or high-tech enthusiast? MAKE magazine... <a href="http://www.marketwire.com/press-release/make-ultimate-guide-to-3d-printing-timed-for-holiday-shopping-1726970.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/world-maker-faire-2012-major-success-planning-fourth-annual-diy-festival-innovation-1713497.htm" target="_blank">World Maker Faire 2012 a Major Success; Planning for the Fourth Annual DIY Festival of Innovation and Creativity Is Already Underway; Save the Date: World Maker Faire 2013 Planned for September 21st &amp; 22nd, 2013</a></h4>
+   <p>
+  NEW YORK, NY--(Marketwire - Oct 15, 2012) - World Maker Faire, the Greatest Show (and Tell) on Earth, and New York Hall of Science are thrilled to announce dates for the 2013 event.&nbsp;On September 21 and 22, 2013, the fourth annual Faire will return for another weekend fill... <a href="http://www.marketwire.com/press-release/world-maker-faire-2012-major-success-planning-fourth-annual-diy-festival-innovation-1713497.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/mayor-bloomberg-designates-september-24-30-maker-week-in-new-york-1706040.htm" target="_blank">Mayor Bloomberg Designates September 24-30 &quot;Maker Week&quot; in New York</a></h4>
+   <p>
+  NEW YORK, NY--(Marketwire - Sep 26, 2012) - World Maker Faire, the Greatest Show (and Tell) on Earth, and New York Hall of Science are proud to announce that Mayor Michael Bloomberg and the New York City Economic Development Corporation have proclaimed that the week of... <a href="http://www.marketwire.com/press-release/mayor-bloomberg-designates-september-24-30-maker-week-in-new-york-1706040.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/world-maker-faire-largest-showcase-for-3d-printing-1705987.htm" target="_blank">World Maker Faire, Largest Showcase for 3D Printing</a></h4>
+   <p>
+  NEW YORK, NY--(Marketwire - Sep 26, 2012) - &nbsp;Attendees at World Maker Faire, at the New York Hall of Science (NYSCI) in Queens, N.Y. on Saturday, Sept. 29, and Sunday, Sept. 30, will get a chance in indulge their passion for 3D printing at two venues this year: the 3D... <a href="http://www.marketwire.com/press-release/world-maker-faire-largest-showcase-for-3d-printing-1705987.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+  <h4><a href="http://www.marketwire.com/press-release/world-maker-faire-2012-greenest-faire-yet-shines-spotlight-on-sustainability-with-new-1705617.htm" target="_blank">World Maker Faire 2012, Greenest Faire Yet; Shines Spotlight on Sustainability With New and Enhanced On-Site Practices and Makers Specializing in DIY Green, Local, and Upcycled Goods and Skills</a></h4>
+  <p>
+  QUEENS, NY--(Marketwire - Sep 25, 2012) - World Maker Faire will be showcasing its sustainability practices and the latest in DIY green skills, projects, goods and more, at its upcoming event on Saturday, Sept. 29 and Sunday, Sept. 30, at the New York Hall of Science ... <a href="http://www.marketwire.com/press-release/world-maker-faire-2012-greenest-faire-yet-shines-spotlight-on-sustainability-with-new-1705617.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+  <h4> <a href="http://www.marketwire.com/press-release/world-maker-faire-2012-announces-hands-on-workshops-diy-presentations-opportunities-1703543.htm" target="_blank">World Maker Faire 2012 Announces Hands-On Workshops, DIY Presentations, and Opportunities to Learn About How to Be a Maker</a></h4>
+  <p>
+  QUEENS, NY--(Marketwire - Sep 19, 2012) - World Maker Faire, at the New York Hall of Science (NYSCI) in Queens, N.Y., on Saturday, Sept. 29 and Sunday, Sept. 30, will be brimming with hands-on workshops, how-to presentations, talks from DIY experts and industry leaders,... <a href="http://www.marketwire.com/press-release/world-maker-faire-2012-announces-hands-on-workshops-diy-presentations-opportunities-1703543.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+  <h4> <a href="http://www.marketwire.com/press-release/world-maker-faire-2012-showcases-projects-from-young-makers-future-maker-movement-nasdaq-ctsh-1700992.htm" target="_blank">World Maker Faire 2012 Showcases Projects From Young Makers, the Future of the Maker Movement</a></h4>
+  <p>
+  NEW YORK, NY--(Marketwire - Sep 13, 2012) - World Maker Faire, at the New York Hall of Science (NYSCI) in Queens, N.Y., on Saturday, Sept. 29 and Sunday, Sept. 30, is excited to announce a special pavilion focused on Young Makers. Whether a clever creation or a product... <a href="http://www.marketwire.com/press-release/world-maker-faire-2012-showcases-projects-from-young-makers-future-maker-movement-nasdaq-ctsh-1700992.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/world-maker-faire-announces-exciting-speaker-lineup-featuring-leading-thinkers-from-1697971.htm" target="_blank">World Maker Faire Announces Exciting Speaker Lineup Featuring Leading Thinkers From the Maker Movement</a></h4>
+   <p>
+  NEW YORK, NY--(Marketwire - Sep 5, 2012) - World Maker Faire, at the New York Hall of Science (NYSCI) in Queens, N.Y., on Saturday, Sept. 29 and Sunday, Sept. 30, will showcase presentations and how-to workshops from the leaders in the maker movement. Speaking about scien... <a href="http://www.marketwire.com/press-release/world-maker-faire-announces-exciting-speaker-lineup-featuring-leading-thinkers-from-1697971.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+  <h4> <a href="http://www.marketwire.com/press-release/world-maker-faire-returns-new-york-september-29-30-2012-celebrate-innovation-inventions-1692523.htm" target="_blank">World Maker Faire Returns to New York, September 29 &amp; 30, 2012 to Celebrate Innovation, Inventions, and DIY Fun</a></h4>
+  <p>
+  QUEENS, NY--(Marketwire - Aug 20, 2012) - World Maker Faire returns to New York Hall of Science (NYSCI) in Queens, NYC, on Saturday, September 29 from 10am to 7pm, and Sunday, September 30 from 10am to 6pm to showcase the world's most extraordinary gathering of DIY talent... <a href="http://www.marketwire.com/press-release/world-maker-faire-returns-new-york-september-29-30-2012-celebrate-innovation-inventions-1692523.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/make-launches-first-maker-camp-for-teens-on-google-1678559.htm" target="_blank">MAKE Launches First Maker Camp for Teens on Google+</a></h4>
+   <p>
+  SEBASTOPOL, CA--(Marketwire - Jul 10, 2012) - MAKE magazine wants the experience of summer camp to be available to every teen, no matter where they live or their financial circumstances. On July 16, MAKE will launch Maker Camp on Google+, the first of its kind. This free... <a href="http://www.marketwire.com/press-release/make-launches-first-maker-camp-for-teens-on-google-1678559.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+<h4><a href="http://www.marketwire.com/press-release/make-kicks-off-a-summer-of-making-with-its-3d-schools-out-special-issue-1666841.htm" target="_blank">MAKE Kicks Off &quot;A Summer of Making&quot; With Its 3D &quot;School's Out!&quot; Special Issue</a></h4>
+<p>
+  SEBASTOPOL, CA--(Marketwire - Jun 7, 2012) - MAKE magazine's special &quot;Schools Out!&quot; issue is hitting newsstands this week, featuring over 50 projects to make and photographed in 3D with glasses bound inside. It's MAKE's first issue devoted entirely to projects for kids an... <a href="http://www.marketwire.com/press-release/make-kicks-off-a-summer-of-making-with-its-3d-schools-out-special-issue-1666841.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/san-mateo-county-board-supervisors-proclaimed-its-makers-weekend-san-mateo-ca-may-19-1658960.htm" target="_blank">San Mateo County Board of Supervisors Proclaimed It's &quot;Maker's Weekend&quot; in San Mateo, CA, May 19 &amp; 20</a></h4>
+   <p>
+  SEBASTOPOL, CA--(Marketwire - May 17, 2012) - Maker Faire, the Greatest Show (and Tell) on Earth, is proud to announce that the San Mateo County Board of Supervisors has proclaimed that May 19 and 20 is &quot;Maker's Weekend.&quot; Maker Faire will be held at the San Mateo County... <a href="http://www.marketwire.com/press-release/san-mateo-county-board-supervisors-proclaimed-its-makers-weekend-san-mateo-ca-may-19-1658960.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+  <h4><a href="http://www.marketwire.com/press-release/media-alert-getting-to-maker-faire-bay-area-2012-plan-ahead-1656895.htm">Media Alert: Getting to Maker Faire Bay Area 2012 -- Plan Ahead</a></h4> <p>
+  SEBASTOPOL, CA--(Marketwire - May 14, 2012) - Maker Faire, the Greatest Show (and Tell) on Earth, held on May 19 and 20 at the San Mateo County Event Center, will be well-attended and attendees are encouraged to make an advance plan to get to the event to avoid traffic... <a href="http://www.marketwire.com/press-release/media-alert-getting-to-maker-faire-bay-area-2012-plan-ahead-1656895.htm">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/maker-faire-bay-area-2012-highlights-including-speakers-attractions-and-more-1656281.htm">Maker Faire Bay Area 2012 Highlights Including Speakers, Attractions, and More</a></h4> <p>
+  SEBASTOPOL, CA--(Marketwire - May 11, 2012) - Maker Faire, the Greatest Show (and Tell) on Earth, held on May 19 and 20 at the San Mateo County Event Center, promises a memorable weekend of creativity, learning, inspiration, and making. From learning about Arduino and 3D... <a href="http://www.marketwire.com/press-release/maker-faire-bay-area-2012-highlights-including-speakers-attractions-and-more-1656281.htm">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/education-day-maker-faire-bay-area-2012-showcases-innovation-maker-movement-local-students-1652013.htm">Education Day at Maker Faire Bay Area 2012 Showcases Innovation and the Maker Movement to Local Students and Teachers</a></h4> <p>
+  SEBASTOPOL, CA--(Marketwire - May 2, 2012) - Maker Faire, the Greatest Show (and Tell) on Earth, will be hosting its fifth annual Education Day, sponsored by Intel, on Thursday, May 17, at the San Mateo County Event Center. Education Day is a unique field trip experience... <a href="http://www.marketwire.com/press-release/education-day-maker-faire-bay-area-2012-showcases-innovation-maker-movement-local-students-1652013.htm">Read more »</a>
+</p>
+<hr />
+<h4><a href="http://www.marketwire.com/press-release/adafruits-limor-fried-phillip-torrone-featured-keynotes-for-make-conference-1649479.htm">Adafruit's Limor Fried, Phillip Torrone Featured Keynotes for MAKE Conference</a></h4> <p>
+  SEBASTOPOL, CA--(Marketwire - Apr 26, 2012) - MAKE, the media brand devoted to the growing community of makers who create, build, design, tinker, hack, and invent, announced that Adafruit Industries' founder Limor Fried and creative director Phillip Torrone will kick-off... <a href="http://www.marketwire.com/press-release/adafruits-limor-fried-phillip-torrone-featured-keynotes-for-make-conference-1649479.htm">Read more »</a>
+</p>
+<hr />
+  <h4><a href="http://www.marketwire.com/press-release/maker-faire-greatest-show-tell-on-earth-returns-7th-annual-bay-area-faire-may-19-20-1648203.htm">Maker Faire, the Greatest Show (and Tell) on Earth, Returns for the 7th Annual Bay Area Faire, May 19-20</a></h4> <p>
+  SEBASTOPOL, CA--(Marketwire - Apr 24, 2012) - Maker Faire, the Greatest Show (and Tell) on Earth, will be held at the San Mateo County Event Center in San Mateo, CA, on Saturday, May 19 from 10am to 8pm, and Sunday, May 20 from 10am to 6pm. Over 600 makers will... <a href="http://www.marketwire.com/press-release/maker-faire-greatest-show-tell-on-earth-returns-7th-annual-bay-area-faire-may-19-20-1648203.htm">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/make-presents-hardware-innovation-at-silicon-valley-workshop-1643461.htm">MAKE Presents Hardware Innovation at Silicon Valley Workshop</a></h4> <p>
+  SEBASTOPOL, CA--(Marketwire - Apr 12, 2012) - MAKE, the media brand and magazine devoted to the growing community of makers who create, build, design, tinker, hack, and invent, will host a workshop May 15-16, 2012 to explore the defining characteristics of the maker... <a href="http://www.marketwire.com/press-release/make-presents-hardware-innovation-at-silicon-valley-workshop-1643461.htm">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/joy-making-something-kauffman-foundations-latest-animated-sketchbook-celebrates-maker-1619099.htm" target="_blank">The Joy of Making Something: Kauffman Foundation's Latest Animated Sketchbook Celebrates the 'Maker' Spirit That Drives Innovation and Entrepreneurship</a></h4> <p>
+  KANSAS CITY, MO--(Marketwire - Feb 13, 2012) - In a new Kauffman Foundation sketchbook video titled &quot;Make It Happen,&quot; Tim O'Reilly, founder and CEO of O'Reilly Media, recalls the launch of Make Magazine and Maker Faire, and says that hobbyists playing with new technologie... <a href="http://www.marketwire.com/press-release/joy-making-something-kauffman-foundations-latest-animated-sketchbook-celebrates-maker-1619099.htm" target="_blank">Read more »</a>
+</p>
+<hr />
+   <h4><a href="http://www.marketwire.com/press-release/kit-a-day-giveaway-a-celebration-of-the-make-ultimate-kit-guide-1590683.htm" target="_blank">Kit-A-Day Giveaway - A Celebration of the Make: Ultimate Kit Guide</a></h4> <p>
+  SEBASTOPOL, CA--(Marketwire - Nov 23, 2011) - Every day between Thanksgiving and Christmas, tune into Makezine.com for spectacular kits giveaways. We'll be giving away some of the coolest kits from the &quot;Make: Ultimate Kit Guide 2012,&quot; including FIVE MakerBot 3D printers... <a href="http://www.marketwire.com/press-release/kit-a-day-giveaway-a-celebration-of-the-make-ultimate-kit-guide-1590683.htm" target="_blank">Read more »</a>
+</p>
+</div>
+</div>

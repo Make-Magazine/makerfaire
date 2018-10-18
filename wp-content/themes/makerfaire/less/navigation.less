@@ -401,5 +401,90 @@ li.hidelink a:visited {
 				font-size: 20px;
 			}
 		}
-	}
+  }
+
+  // ============   Press Center Left Nav
+  &.press-nav {
+    ul {
+      list-style-type: none;
+      margin: 0;
+      margin-top: 24px;
+      margin-bottom: 40px;
+      padding: 0;
+      li {
+        margin: 0 0 6px 0;
+      }
+      a {
+        display: block;
+        padding: 4px 12px 8px;
+        max-width: 157px;
+        color: #333;
+        text-decoration: none;
+        &:hover {
+          background-color: #F0F0F0;
+          color: #333;
+        }
+      }
+      .current-menu-item a {
+        background-color: #F0F0F0;
+        color: #333;
+      }
+    }
+    .pc-nav-header {
+      text-indent: -20000px;
+      
+      margin-top: 12px;
+      a {
+        padding: 0;
+        &:hover {
+          background-color: transparent;
+          cursor: default;
+        }
+      }
+      &.pc-nav-mf {
+        background-image: url('../img/maker-faire-banner-logo.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+        height: 34px;
+      }
+      &.pc-nav-mc {
+        background-image: url('../img/make_logo.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+        height: 24px;
+      }
+    }
+  }
+
+
+
+}
+.page-template-page-press-center-leftnav .page-leftnav {
+
+  @media screen and (max-width: 767px) {
+    .container {
+      -webkit-transform: scaleY(-1);
+      transform: scaleY(-1);
+      margin-bottom: 24px;
+    }
+    .top-bar {
+      -webkit-transform: scaleY(-1);
+      transform: scaleY(-1);
+      border-top: 1px solid #979797;
+      border-bottom: none;
+    }
+    .content {
+      -webkit-transform: scaleY(-1);
+      transform: scaleY(-1);
+    }
+    .left-hand-nav {
+      -webkit-transform: scaleY(-1);
+      transform: scaleY(-1);
+      &.press-nav a {
+        font-size: 18px;
+        max-width: 100%;
+      }
+    }
+  }
+
 }

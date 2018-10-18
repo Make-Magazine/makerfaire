@@ -1,0 +1,214 @@
+
+.page-template-page-press-center-leftnav {
+   // See also styles for left nav inversion in navigation.less (involves .top-bar etc.)
+   .top-bar {
+      border-bottom: 1px solid #979797;
+   }
+   .page-header {
+      border-bottom: none;
+      margin: 0;
+      padding: 0;
+      h1 {
+         font-family: "Roboto Light", sans-serif;
+         font-size: 36px;
+         float: left;
+      }
+      .email-links {
+         margin-top: 36px;
+         float: right;
+         p {
+            font-family: "Roboto Light", sans-serif;
+            margin: 0;
+            padding: 0;
+         }
+      }
+   }
+   .content {
+      margin-top: 30px;
+      padding-bottom: 60px;
+      h2, p, ul, ol {
+         font-family: "Roboto Light", sans-serif;
+      }
+      h2 {
+         font-size: 26px;
+      }
+      .press-release-instance {
+         margin: 12px 0;
+      }
+      .page-header-image {
+         margin: 24px 0;
+      }
+      .brand-assets-container {
+         margin-top: 24px;
+      }
+      .asset-card-container {
+         width: 273px;
+         min-height: 152px;
+         margin-top: 24px;
+         border: 1px solid #d5d5d5;
+         display: flex;
+         flex-direction: column;
+         justify-content: space-evenly;
+         align-items: center;
+         .sample-image {
+            padding: 6px;
+         }
+         .download-caption {
+            text-align: center;
+         }
+         a.btn {
+            min-width: 150px;
+            color: #1989C7;
+            border-color: #1989C7;
+            margin-right: 16px;
+            .fa {
+               float: right;
+               position: relative;
+               top: 3px;
+            }
+         }
+         .download-caption {
+            padding: 0 16px;
+         }
+      }
+      a.asset-button {
+         display: block;
+         text-align: center;
+         text-decoration: none; 
+         padding: 12px 0;
+         width: 273px;
+         border: 1px solid #d5d5d5;
+         border-top: none;
+         font-size: 13px;
+         font-family: 'Roboto Light';
+         text-transform: uppercase;
+         &:hover {
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.15);
+         }
+      }
+      &.photo-video {
+         .col-sm-4 {
+            max-width: 269px;
+         }
+         .row > [class^='col-'] {
+            margin-bottom: 24px;
+         }
+         .photo-square {
+            height: 0;
+            padding-bottom: 100%;
+            position: relative;
+            a {
+               position: absolute;
+               top: 0;
+               left: 0;
+               width: 100%;
+               height: 100%;
+               background-color: #111;
+               display: block;
+               overflow: hidden;
+               img {
+                  max-width: 200%;
+                  height: 100%;
+                  position: relative;
+                  left: -45%;
+               }
+            }
+         }
+         .photo-caption,
+         .video-caption {
+            text-align: center;
+            margin-top: 12px;
+         }
+         .video-square {
+            height: 0;
+            padding-bottom: 100%;
+            position: relative;
+            background-color: #111;
+            .iframe-container {
+               position: absolute;
+               top: 0;
+               left: 0;
+               width: 100%;
+               height: 100%;
+               iframe {
+                  max-width: 100%;
+                  max-height: 100%;
+               }
+            }
+         }
+      }
+   }
+
+   @media screen and (max-width: 1024px) {
+      .page-header {
+         h1 {
+            font-size: 26px;
+         }
+         .email-links {
+            margin-top: 30px;
+            p {
+               font-size: 14px;
+            }
+         }
+      }
+   }
+
+   @media screen and (max-width: 767px) {
+      .content {
+         &.photo-video {
+            .col-sm-4 {
+               max-width: 100%;
+            }
+            .photo-square {
+               padding-bottom: 56.25%;
+               a {
+                  img {
+                     width: 767px;
+                     max-width: 100%;
+                     height: auto;
+                     left: 0;
+                  }
+               }
+            }
+            .video-square {
+               height: 280px;
+               width: 767px;
+               max-height: 100%;
+               max-width: 100%;
+               padding-bottom: 0;
+               iframe {
+                  width: 767px;
+               }
+            }
+         }
+      }
+   }
+
+   @media screen and (max-width: 620px) {
+      .page-header {
+         h1 {
+            float: none;
+         }
+         .email-links {
+            float: none;
+            margin-top: 0;
+            p {
+               margin-top: -12px
+            }
+         }
+      }
+      .content {
+         .download-button-container {
+            display: block;
+            border-bottom: 1px solid;
+            &> div {
+               margin-bottom: 12px;
+            }
+            .download-caption {
+               padding: 0;
+            }
+         }
+      }
+   }
+
+}
