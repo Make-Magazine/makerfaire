@@ -123,6 +123,7 @@ function createOutput($entry_id, $pdf) {
    $groupname = (isset($entry['109']) ? filterText($entry['109']) : '');
    $groupbio = (isset($entry['110']) ? filterText($entry['110']) : '');
    
+   // Field from Gravity form which is the image
    $project_photo = (isset($entry['22']) ? $entry['22'] : '');
    $project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
    $project_title = (isset($entry['151']) ? filterText((string) $entry['151']) : '');
@@ -175,11 +176,22 @@ function createOutput($entry_id, $pdf) {
       $photo_extension = exif_imagetype($project_photo);
       if ($photo_extension) {
          // DEBUG:
-         $project_photo = legacy_get_fit_remote_image_url($project_photo, 450, 450, 0);
-         if (! empty($img_url)) {
+         $width = 450;
+         $height = 450;
+         $project_photo = legacy_get_fit_remote_image_url($project_photo, $width, $height, 0);
+         if (! empty($project_photo)) {
+            error_log("Unable to find image for $project_photo");
             $resizeImage = 0;
+         } else {
+            list ($imageWidth, $imageHeight, $type, $attr) = getimagesize($project_photo);
+            if ($imageWidth > $width && $imageHeight > $height) {
+               error_log("Unable to resize image for $project_photo : Width = $imageWidth Heigth = $imageHeight Type =$type Attr = $attr");
+               $resizeImage = 0;
+            } else {
+               // Good Image
+               $pdf->Image($project_photo, 12, 135, 450, 450, image_type_to_extension($project_photo, false));
+            }
          }
-         $pdf->Image($project_photo, 12, 135, null, null, image_type_to_extension($photo_extension, false));
       }
    }
    // print white box to overlay long descriptions or photos

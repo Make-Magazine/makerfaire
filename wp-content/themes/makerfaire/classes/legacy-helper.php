@@ -81,7 +81,6 @@ function legacy_get_fit_remote_image_url($url, $width, $height, $escape = true) 
       
       // Photon doesn't support redirects, so help it out by doing http://foobar.wordpress.com/files/ to http://foobar.files.wordpress.com/
       if (function_exists('new_file_urls')) $url = new_file_urls($url);
-      
       $thumburl = jetpack_photon_url($url, array(
          'fit' => array(
             $width,
@@ -92,8 +91,7 @@ function legacy_get_fit_remote_image_url($url, $width, $height, $escape = true) 
       
       return ($escape) ? esc_url($thumburl) : $thumburl;
    else :
-      // return get_the_post_thumbnail($url,'medium');
-      $url;
+       $url;
    endif;
    
 }
