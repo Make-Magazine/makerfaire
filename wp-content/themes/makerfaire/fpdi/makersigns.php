@@ -189,7 +189,7 @@ function createOutput($entry_id, $pdf) {
                $resizeImage = 0;
             } else {
                // Good Image
-               $pdf->Image($project_photo, 12, 135, 450, 450, image_type_to_extension($project_photo, false));
+               $pdf->Image($project_photo, 12, 135, null, null, image_type_to_extension($project_photo, false));
             }
          }
       }
