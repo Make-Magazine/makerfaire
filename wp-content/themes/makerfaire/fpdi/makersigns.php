@@ -179,7 +179,7 @@ function createOutput($entry_id, $pdf) {
          $width = 450;
          $height = 450;
          $project_photo = legacy_get_fit_remote_image_url($project_photo, $width, $height, 0);
-         if (! empty($project_photo)) {
+         if (empty($project_photo)) {
             error_log("Unable to find image for $project_photo");
             $resizeImage = 0;
          } else {
