@@ -183,14 +183,7 @@ function createOutput($entry_id, $pdf) {
             error_log("Unable to find image for $project_photo");
             $resizeImage = 0;
          } else {
-            list ($imageWidth, $imageHeight, $type, $attr) = getimagesize($project_photo);
-            if ($imageWidth > $width && $imageHeight > $height) {
-               error_log("Unable to resize image for $project_photo : Width = $imageWidth Heigth = $imageHeight Type =$type Attr = $attr");
-               $resizeImage = 0;
-            } else {
-               // Good Image
-               $pdf->Image($project_photo, 12, 135, null, null, image_type_to_extension($project_photo, false));
-            }
+            $pdf->Image($project_photo, 12, 135, null, null, image_type_to_extension($project_photo, false));
          }
       }
    }
