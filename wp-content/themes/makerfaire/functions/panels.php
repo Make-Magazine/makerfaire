@@ -450,7 +450,8 @@ function get1ColLayout() {
                   </div>';
    }
 
-   $return .= '</section>';
+   // Because of the aggressive caching on prod, it makes more sense to shuffle the array in javascript
+   $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").css("background-image","url("+heroArray[0]+")");});</script>';
    return $return;
 }
 
