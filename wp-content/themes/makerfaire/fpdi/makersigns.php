@@ -183,7 +183,8 @@ function createOutput($entry_id, $pdf) {
             error_log("Unable to find image for $project_photo");
             $resizeImage = 0;
          } else {
-            $pdf->Image($project_photo, 12, 135, null, null, image_type_to_extension($photo_extension, false));
+            $image_type =  image_type_to_extension($photo_extension, false);
+            $pdf->Image($project_photo, 12, 135, null, null, $image_type);
          }
       }
    }
