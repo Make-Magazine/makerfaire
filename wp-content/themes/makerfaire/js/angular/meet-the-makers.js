@@ -135,10 +135,7 @@ function mtmScroll($window) {
         $window = angular.element($window);
         handler = function() {
 			 if(jQuery(".loading").hasClass("ng-hide")){ // don't start adding to the limit until the loading is done
-				 var top_of_element = jQuery(".magazine-footer").offset().top;
-				 if(jQuery(window).width() < 768) {
-					top_of_element = jQuery(".newsletter-footer").offset().top;
-				 }
+				 var top_of_element = jQuery(".load-trigger").offset().top;
 				 var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
 				 if (bottom_of_screen > top_of_element) {
 					 scope.$apply(attrs.mtmScroll);
