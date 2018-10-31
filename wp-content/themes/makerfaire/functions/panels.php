@@ -1,8 +1,8 @@
 <?php
-/* * *********************************************** */
-/* Determine correct layout                       */
-/* * *********************************************** */
 
+/* **************************************************** */
+/* Determine correct layout                             */
+/* **************************************************** */
 function dispLayout($row_layout) {
    $return = '';
    $activeinactive = get_sub_field('activeinactive');
@@ -174,7 +174,7 @@ function getFeatMkPanel($row_layout) {
 }
 
 /* * *********************************************** */
-/*   Function to build the featured event panel   */
+/*   Function to build the featured event panel      */
 /* * *********************************************** */
 
 function getFeatEvPanel($row_layout) {
@@ -198,17 +198,18 @@ function getFeatEvPanel($row_layout) {
    if ($dynamic) {
       $formid = get_sub_field('enter_formid_here');
       $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
-              lead_detail.value as entry_status, DAYNAME(schedule.start_dt) as day,location.location,
-              (select value from {$wpdb->prefix}rg_lead_detail where lead_id = schedule.entry_id AND field_number like '304.3' and value like 'Featured Maker')  as flag,
-              (select value from {$wpdb->prefix}rg_lead_detail where lead_id = schedule.entry_id AND field_number like '22')  as photo,
-              (select value from {$wpdb->prefix}rg_lead_detail where lead_id = schedule.entry_id AND field_number like '151') as name,
-              (select value from {$wpdb->prefix}rg_lead_detail where lead_id = schedule.entry_id AND field_number like '16')  as short_desc
-               FROM {$wpdb->prefix}mf_schedule as schedule
-               left outer join {$wpdb->prefix}mf_location as location on location_id = location.id
-               left outer join {$wpdb->prefix}rg_lead as lead on schedule.entry_id = lead.id
-               left outer join {$wpdb->prefix}rg_lead_detail as lead_detail on
-                   schedule.entry_id = lead_detail.lead_id and field_number = 303
-               where lead.status = 'active' and lead_detail.value='Accepted'";
+                       lead_detail.value as entry_status, DAYNAME(schedule.start_dt) as day,location.location,
+                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '304.3' 
+                           AND value like 'Featured Maker')  as flag,
+                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '22')  as photo,
+                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '151') as name,
+                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '16')  as short_desc
+                  FROM {$wpdb->prefix}mf_schedule as schedule
+                       left outer join {$wpdb->prefix}mf_location as location on location_id = location.id
+                       left outer join {$wpdb->prefix}rg_lead as lead on schedule.entry_id = lead.id
+                       left outer join {$wpdb->prefix}rg_lead_detail as lead_detail on
+                       schedule.entry_id = lead_detail.lead_id AND field_number = 303
+                 WHERE lead.status = 'active' AND lead_detail.value='Accepted'";
 
       foreach ($wpdb->get_results($query) as $row) {
          //only write schedule for featured events
@@ -299,9 +300,8 @@ function getFeatEvPanel($row_layout) {
 }
 
 /* * *************************************************** */
-/*  Function to return 3_column_photo_and_text_panel  */
+/*  Function to return 3_column_photo_and_text_panel     */
 /* * *************************************************** */
-
 function get3ColLayout() {
    $return = '';
 
@@ -455,18 +455,16 @@ function get1ColLayout() {
    return $return;
 }
 
-/* * *************************************************** */
-/*  Function to return Buy Tickets Floating Banner    */
-/* * *************************************************** */
-
+/* **************************************************** */
+/* Function to return Buy Tickets Floating Banner       */
+/* **************************************************** */
 function getBuyTixPanel() {
    return '<a href="' . get_sub_field('buy_ticket_url') . '" target="_blank"><div class="floatBuyTix">'.get_sub_field('buy_ticket_text').'</div></a>';
 }
 
-/* * ****************************************** */
-/*  Function to return Call to Action panel  */
-/* * ****************************************** */
-
+/* **************************************************** */
+/* Function to return Call to Action panel              */
+/* **************************************************** */
 function getCTApanel() {
    $return = '';
    $cta_title = get_sub_field('text');
@@ -491,10 +489,9 @@ function getCTApanel() {
    return $return;
 }
 
-/* * ************************************************ */
-/*  Function to return IMAGE CAROUSEL (RECTANGLE)  */
-/* * ************************************************ */
-
+/* **************************************************** */
+/* Function to return IMAGE CAROUSEL (RECTANGLE)        */
+/* **************************************************** */
 function getImgCarousel() {
    $return = '';
    // IMAGE CAROUSEL (RECTANGLE)
@@ -568,10 +565,9 @@ function getImgCarousel() {
    return $return;
 }
 
-/* * ************************************************ */
-/*  Function to return IMAGE CAROUSEL (SQUARE)     */
-/* * ************************************************ */
-
+/* **************************************************** */
+/* Function to return IMAGE CAROUSEL (SQUARE)           */
+/* **************************************************** */
 function getImgCarouselSquare() {
    $return = '';
    // IMAGE CAROUSEL (SQUARE)
@@ -635,6 +631,9 @@ function getImgCarouselSquare() {
    return $return;
 }
 
+/* **************************************************** */
+/* Function to return News Letter Panel                 */
+/* **************************************************** */
 function getNewsletterPanel() {
    $return = '
       <section class="newsletter-panel">
@@ -761,6 +760,9 @@ function getNewsletterPanel() {
    return $return;
 }
 
+/* **************************************************** */
+/* Function to return Sponser Panel                     */
+/* **************************************************** */
 function getSponsorPanel() {
    $return = '';
    $url  = get_sub_field('sponsors_page_url');
@@ -938,7 +940,6 @@ function getFeatFairePanel(){
 /************************************************** */
 /*  Function to return Social Media Panel           */
 /************************************************** */
-
 function getSocialPanel() {
    $return = '';
    $panel_title = get_sub_field('panel_title');
@@ -1015,6 +1016,9 @@ function getSocialPanel() {
    return $return;
 }
 
+/* **************************************************** */
+/* Function to get Faire backlink                       */
+/* **************************************************** */
 function get_faire_backlink() {
    $back_link = get_field('back_link');
    $back_link_url  = $back_link['back_link_url'];
