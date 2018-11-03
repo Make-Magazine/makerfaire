@@ -13,10 +13,10 @@ $type   = '';
   <div class="panel-group" id="accordion">
     <?php
     //get list of faires -
-    $sql = "SELECT faire, faire_name FROM wp_mf_faire order by start_dt DESC";
+    $sql = "SELECT faire, faire_name, form_ids FROM wp_mf_faire order by start_dt DESC";
     $results = $wpdb->get_results($sql);
     $first=true;
-    foreach($results as $row){
+    foreach($results as $row) {
       ?>
       <div class="panel panel-default">
         <div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion" data-target="#collapse<?php echo $row->faire;?>">
@@ -30,7 +30,7 @@ $type   = '';
                 <?php
                 $signDir = get_template_directory().'/signs/'.$row->faire.'/maker/zip/';
                 $files = glob($signDir."*.zip");
-                if(is_array($files) && !empty($files)){
+                if(is_array($files) && !empty($files)) {
                   //Find all Zip files for this faire
                   foreach ($files as $filename) {
                     ?>
@@ -67,6 +67,25 @@ $type   = '';
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accepted" checked> Accepted Only<br>
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="accAndProp"> Accepted and Proposed<br>
                     <input type="radio" name="<?php echo $row->faire;?>selstatus" value="all"> All Status
+                  </div>
+                  <div class="col-sm-4">
+                 	   <b>Filter:</b><br>
+                 	   Form: <select name="<?php echo $row->faire;?>filterform" multiple>
+                 	   <?php 
+                     ## Get the form information
+                     $forms = preg_split('/,/', $row->form_ids);
+                     foreach($forms as $formId) {
+                        $queryForm = "SELECT title FROM wp_gf_form where id = $formId and is_active = 1 and is_trash = 0 order by title DESC";
+                        $formResult = $wpdb->get_results($queryForm);
+                        foreach($formResult as $formRow) {
+                           $descr = $formRow->title;
+                           ## Add the Form and title to the options
+                           echo "<option value=\"$formId\">$descr</option>";
+                        }
+                     }
+                     ?>
+                 	   </select><br>
+                 	   <input type="checkbox" name="<?php echo $row->faire;?>filtererror" value="error"> In Error<br>
                   </div>
                 </div>
                 <br/>

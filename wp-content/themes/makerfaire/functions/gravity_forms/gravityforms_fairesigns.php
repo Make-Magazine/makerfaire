@@ -130,20 +130,23 @@ function createSignZip(){
   $type         = (isset($_POST['seltype'])?$_POST['seltype']:'');
   $faire        = (isset($_POST['faire'])?$_POST['faire']:0);
   $signType     = (isset($_POST['type'])?$_POST['type']:'signs');
-
+  $signError = (isset($_POST['filtererror'])) ? $_POST['filtererror'] : '';
+  $signForm = (isset($_POST['form'])) ? $_POST['form'] : '';
 
     //create array of subareas
-    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
-          (select meta_value as value from wp_gf_entry_meta where meta_key='303' and wp_gf_entry_meta.entry_id = wp_gf_entry.ID) as entry_status,
-          wp_mf_faire_subarea.area_id, wp_mf_faire_area.area, wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea,wp_mf_location.location
-          FROM wp_mf_faire, wp_gf_entry
-          left outer join wp_mf_location on wp_gf_entry.ID  = wp_mf_location.entry_id
-          left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id  = wp_mf_faire_subarea.id
-          left outer join wp_mf_faire_area    on wp_mf_faire_subarea.area_id  = wp_mf_faire_area.id
-          where faire = '$faire'
-          and wp_gf_entry.status  != 'trash'
-          and FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0
-          and FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.non_public_forms)<= 0";
+  $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
+                  (select meta_value as value FROM wp_gf_entry_meta
+                    WHERE meta_key='303' AND wp_gf_entry_meta.entry_id = wp_gf_entry.ID) as entry_status,
+                  wp_mf_faire_subarea.area_id, wp_mf_faire_area.area,
+                  wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea, wp_mf_location.location
+             FROM wp_mf_faire, wp_gf_entry
+                  left outer join wp_mf_location      on wp_gf_entry.ID               = wp_mf_location.entry_id
+                  left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id    = wp_mf_faire_subarea.id
+                  left outer join wp_mf_faire_area    on wp_mf_faire_subarea.area_id  = wp_mf_faire_area.id
+            WHERE faire = '$faire'
+              AND wp_gf_entry.status  != 'trash'
+              AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0
+              AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.non_public_forms) <= 0";
     $results = $wpdb->get_results($sql);
     $entries = array();
 
@@ -156,18 +159,41 @@ function createSignZip(){
       $area    = ($row->area    != NULL ? $row->area:'No-Area');
       $subarea = ($row->subarea != NULL ? $row->subarea:'No-subArea');
 
-      //create friendly names for file creation
-      $area = str_replace(' ','_',$area);
-      $subarea = str_replace(' ','_',$subarea);
-      //build array output based on selected type
-      if($type=='area') {
-        $entries[$area][$row->entry_status][] = $row->entry_id;
+      // Add fields if not filtered by forms
+      if (empty($signForm)) {
+         // create friendly names for file creation
+         $area = str_replace(' ', '_', $area);
+         $subarea = str_replace(' ', '_', $subarea);
+         // build array output based on selected type
+         if ($type == 'area') {
+            $entries[$area][$row->entry_status][] = $row->entry_id;
+         }
+         if ($type == 'subarea') {
+            $entries[$area . '-' . $subarea][$row->entry_status][] = $row->entry_id;
+         }
+         if ($type == 'faire') {
+            $entries['faire'][$row->entry_status][] = $row->entry_id;
+         }
       }
-      if($type=='subarea') {
-        $entries[$area.'-'.$subarea][$row->entry_status][] = $row->entry_id;
-      }
-      if($type=='faire') {
-        $entries['faire'][$row->entry_status][] = $row->entry_id;
+      // If filtered by form only add the ones with the correct form id
+      foreach ($signForm as $form) {
+         $formname = str_replace(' ', '_', $form);
+         if ($form == $row->form_id) {
+            $entries[$formname][$row->entry_status][] = $row->entry_id;
+            // create friendly names for file creation
+            $area = str_replace(' ', '_', $area);
+            $subarea = str_replace(' ', '_', $subarea);
+            // build array output based on selected type
+            if ($type == 'area') {
+               $entries[$area][$row->entry_status][] = $row->entry_id;
+            }
+            if ($type == 'subarea') {
+               $entries[$area . '-' . $subarea][$row->entry_status][] = $row->entry_id;
+            }
+            if ($type == 'faire') {
+               $entries['faire'][$row->entry_status][] = $row->entry_id;
+            }
+         }
       }
     } //end looping thru sql results
 
@@ -206,6 +232,7 @@ function createSignZip(){
 
   exit;
 }
+
 add_action('wp_ajax_createSignZip', 'createSignZip');
 
 function createEntList() {

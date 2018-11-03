@@ -36,16 +36,19 @@
   }
 
   function createZip(faire,type) {
+	alert("Got to create Zip.");
     var data = {
       'action': 'createSignZip',
       'faire': faire,
       'type': type,
       'seltype': jQuery('input[name='+faire+'seltype]:checked').val(),
       'selstatus': jQuery('input[name='+faire+'selstatus]:checked').val()
+      'error': jQuery('input[name='+faire+'filtererror]:checked').val()
+      'form' : jQuery('input[name='+faire+'filterform]').val();
     };
-
+    alert("Before Call jquery updateMsg.");
     jQuery.post(ajaxurl, data, function(response) {
-      if(response.msg!=''){
+      if(response.msg != ''){
         //alert(response.msg);
       }
     });
@@ -53,13 +56,14 @@
   }
 
   function createPDF(faire, type) {
+	alert("Got to create PDF.");
     jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html('Generating List.  Please Wait.');
     var data = {
       'action': 'createEntList',
       'faire': faire,
       'type': type
     };
-
+    alert("Before Call jquery pdfEntList.");
     jQuery.post(ajaxurl, data, function(response) {
       if(response.entList!=''){
         jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html(response.entList);
