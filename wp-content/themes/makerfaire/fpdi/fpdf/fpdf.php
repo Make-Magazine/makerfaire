@@ -11,115 +11,170 @@ define('FPDF_VERSION', '1.81');
 class FPDF {
 
    protected $page;
- // current page number
+
+   // current page number
    protected $n;
- // current object number
+
+   // current object number
    protected $offsets;
- // array of object offsets
+
+   // array of object offsets
    protected $buffer;
- // buffer holding in-memory PDF
+
+   // buffer holding in-memory PDF
    protected $pages;
- // array containing pages
+
+   // array containing pages
    protected $state;
- // current document state
+
+   // current document state
    protected $compress;
- // compression flag
+
+   // compression flag
    protected $k;
- // scale factor (number of points in user unit)
+
+   // scale factor (number of points in user unit)
    protected $DefOrientation;
- // default orientation
+
+   // default orientation
    protected $CurOrientation;
- // current orientation
+
+   // current orientation
    protected $StdPageSizes;
- // standard page sizes
+
+   // standard page sizes
    protected $DefPageSize;
- // default page size
+
+   // default page size
    protected $CurPageSize;
- // current page size
+
+   // current page size
    protected $CurRotation;
- // current page rotation
+
+   // current page rotation
    protected $PageInfo;
- // page-related data
+
+   // page-related data
    protected $wPt, $hPt;
- // dimensions of current page in points
+
+   // dimensions of current page in points
    protected $w, $h;
- // dimensions of current page in user unit
+
+   // dimensions of current page in user unit
    protected $lMargin;
- // left margin
+
+   // left margin
    protected $tMargin;
- // top margin
+
+   // top margin
    protected $rMargin;
- // right margin
+
+   // right margin
    protected $bMargin;
- // page break margin
+
+   // page break margin
    protected $cMargin;
- // cell margin
+
+   // cell margin
    protected $x, $y;
- // current position in user unit
+
+   // current position in user unit
    protected $lasth;
- // height of last printed cell
+
+   // height of last printed cell
    protected $LineWidth;
- // line width in user unit
+
+   // line width in user unit
    protected $fontpath;
- // path containing fonts
+
+   // path containing fonts
    protected $CoreFonts;
- // array of core font names
+
+   // array of core font names
    protected $fonts;
- // array of used fonts
+
+   // array of used fonts
    protected $FontFiles;
- // array of font files
+
+   // array of font files
    protected $encodings;
- // array of encodings
+
+   // array of encodings
    protected $cmaps;
- // array of ToUnicode CMaps
+
+   // array of ToUnicode CMaps
    protected $FontFamily;
- // current font family
+
+   // current font family
    protected $FontStyle;
- // current font style
+
+   // current font style
    protected $underline;
- // underlining flag
+
+   // underlining flag
    protected $CurrentFont;
- // current font info
+
+   // current font info
    protected $FontSizePt;
- // current font size in points
+
+   // current font size in points
    protected $FontSize;
- // current font size in user unit
+
+   // current font size in user unit
    protected $DrawColor;
- // commands for drawing color
+
+   // commands for drawing color
    protected $FillColor;
- // commands for filling color
+
+   // commands for filling color
    protected $TextColor;
- // commands for text color
+
+   // commands for text color
    protected $ColorFlag;
- // indicates whether fill and text colors are different
+
+   // indicates whether fill and text colors are different
    protected $WithAlpha;
- // indicates whether alpha channel is used
+
+   // indicates whether alpha channel is used
    protected $ws;
- // word spacing
+
+   // word spacing
    protected $images;
- // array of used images
+
+   // array of used images
    protected $PageLinks;
- // array of links in pages
+
+   // array of links in pages
    protected $links;
- // array of internal links
+
+   // array of internal links
    protected $AutoPageBreak;
- // automatic page breaking
+
+   // automatic page breaking
    protected $PageBreakTrigger;
- // threshold used to trigger page breaks
+
+   // threshold used to trigger page breaks
    protected $InHeader;
- // flag set when processing header
+
+   // flag set when processing header
    protected $InFooter;
- // flag set when processing footer
+
+   // flag set when processing footer
    protected $AliasNbPages;
- // alias for total number of pages
+
+   // alias for total number of pages
    protected $ZoomMode;
- // zoom display mode
+
+   // zoom display mode
    protected $LayoutMode;
- // layout display mode
+
+   // layout display mode
    protected $metadata;
- // document properties
+
+   // document properties
    protected $PDFVersion;
- // PDF version number
+
+   // PDF version number
    
    /**
     * *****************************************************************************
@@ -1093,7 +1148,9 @@ class FPDF {
    }
 
    protected function _endpage() {
-      $this->state = 1;
+      if (! empty($this)) {
+         $this->state = 1;
+      }
       
    }
 
@@ -1193,6 +1250,10 @@ class FPDF {
 
    protected function _parsejpg($file) {
       // Extract info from a JPEG file
+      if (empty($file) && !file_exists($file)) {
+         error_log("Unable to find image: $file");
+         return ;
+      }
       $a = getimagesize($file);
       if (! $a) $this->Error('Missing or incorrect image file: ' . $file);
       if ($a[2] != 2) $this->Error('Not a JPEG file: ' . $file);

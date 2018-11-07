@@ -39,7 +39,9 @@ class PDF extends FPDF {
       
       $image = $root . '/wp-content/themes/makerfaire/images/' . $faire . '-maker_sign.jpg';
       // Logo
-      $this->Image($image, 0, 0, $this->w, $this->h);
+      if (file_exists($image)) {
+         $this->Image($image, 0, 0, $this->w, $this->h);
+      }
       // Arial bold 15
       $this->SetFont('Benton Sans', 'B', 15);
       
@@ -48,60 +50,69 @@ class PDF extends FPDF {
 }
 
 // Instanciation of inherited class
-$pdf = new PDF();
-$pdf->AddFont('Benton Sans', 'B', 'bentonsans-bold-webfont.php');
-$pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
-$pdf->AddPage('P', array(
-   279.4,
-   431.8
-));
-$pdf->SetFont('Benton Sans', '', 12);
-$pdf->SetFillColor(255, 255, 255);
-
-// get the entry-id, if one isn't set return an error
-$eid = '';
-if (isset($wp_query->query_vars['eid'])) {
-   $eid = $wp_query->query_vars['eid'];
-} else if (isset($_GET['eid']) && $_GET['eid'] != '') {
-   $eid = $_GET['eid'];
-}
-
-if (isset($eid) && $eid != '') {
-   $faire = '';
-   if (isset($wp_query->query_vars['faire'])) {
-      $faire = $wp_query->query_vars['faire'];
-   } else if (isset($_GET['faire']) && $_GET['faire'] != '') {
-      $faire = $_GET['faire'];
-   }
-   $entryid = sanitize_text_field($eid);
-   $resizeImage = createOutput($entryid, $pdf);
-   if (isset($_GET['type']) && $_GET['type'] == 'download') {
-      if (ob_get_contents()) ob_clean();
-      $pdf->Output($entryid . '.pdf', 'D');
-   } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
-      if ($resizeImage) {
-         $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
-      } else {
-         $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
-      }
-      $dirname = dirname($filename);
-      if (! is_dir($dirname)) {
-         mkdir($dirname, 0755, true);
-      }
-      if (ob_get_contents()) ob_clean();
-      $pdf->Output($filename, 'F');
-      // needed for faire signs mass creation
-      echo $entryid;
-      
-      exit();
-   } else {
-      if (ob_get_contents()) ob_clean();
-      $pdf->Output($entryid . '.pdf', 'I');
+try {
+   $pdf = new PDF();
+   $pdf->AddFont('Benton Sans', 'B', 'bentonsans-bold-webfont.php');
+   $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
+   $pdf->AddPage('P', array(
+      279.4,
+      431.8
+   ));
+   $pdf->SetFont('Benton Sans', '', 12);
+   $pdf->SetFillColor(255, 255, 255);
+   
+   // get the entry-id, if one isn't set return an error
+   $eid = '';
+   if (isset($wp_query->query_vars['eid'])) {
+      $eid = $wp_query->query_vars['eid'];
+      error_log("EID Query Vars: ".$wp_query->query_vars['eid']);
+   } else if (isset($_GET['eid']) && $_GET['eid'] != '') {
+      $eid = $_GET['eid'];
+      error_log("EID: ".$_GET['eid']);
    }
    
-   // error_log('after writing pdf '.date('h:i:s'),0);
-} else {
-   echo 'No Entry ID submitted';
+   if (isset($eid) && $eid != '') {
+      $faire = '';
+      if (isset($wp_query->query_vars['faire'])) {
+         $faire = $wp_query->query_vars['faire'];
+      } else if (isset($_GET['faire']) && $_GET['faire'] != '') {
+         $faire = $_GET['faire'];
+      }
+      $entryid = sanitize_text_field($eid);
+      error_log("Entry Id: $entryid EID: $eid");
+      $resizeImage = createOutput($entryid, $pdf);
+      error_log("Resize Image: $resizeImage");
+      if (isset($_GET['type']) && $_GET['type'] == 'download') {
+         if (ob_get_contents()) ob_clean();
+         $pdf->Output($entryid . '.pdf', 'D');
+      } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
+         error_log("Filename: $filename");
+         if ($resizeImage) {
+            $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
+         } else {
+            $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
+         }
+         $dirname = dirname($filename);
+         if (! is_dir($dirname)) {
+            mkdir($dirname, 0755, true);
+         }
+         if (ob_get_contents()) ob_clean();
+         $pdf->Output($filename, 'F');
+         // needed for faire signs mass creation
+         echo $entryid;
+         
+         exit();
+      } else {
+         if (ob_get_contents()) ob_clean();
+         $pdf->Output($entryid . '.pdf', 'I');
+      }
+      
+      // error_log('after writing pdf '.date('h:i:s'),0);
+   } else {
+      echo 'No Entry ID submitted';
+   }
+} catch (Exception $e) {
+   error_log("Unable to create PDF due to: ". $e);
 }
 
 function createOutput($entry_id, $pdf) {
@@ -179,11 +190,11 @@ function createOutput($entry_id, $pdf) {
          $width = 450;
          $height = 450;
          $project_photo = legacy_get_fit_remote_image_url($project_photo, $width, $height, 0);
-         if (empty($project_photo)) {
+         if (! file_exists($project_photo)) {
             error_log("Unable to find image for $project_photo");
             $resizeImage = 0;
          } else {
-            $image_type =  image_type_to_extension($photo_extension, false);
+            $image_type = image_type_to_extension($photo_extension, false);
             $pdf->Image($project_photo, 12, 135, null, null, $image_type);
          }
       }
@@ -261,7 +272,13 @@ function createOutput($entry_id, $pdf) {
 }
 
 function filterText($text) {
-   $string = iconv('UTF-8', 'windows-1252', $text);
+   try {
+      $string = iconv('UTF-8', 'windows-1252', $text);
+   } catch (Exception $e) {
+      error_log("Unable to convert $text due to: " + $e);
+      ini_set('mbstring.substitute_character', "none");
+      $string = mb_convert_encoding($text, 'UTF-8', 'windows-1252');
+   }
    
    // now translate any unicode stuff...
    $conv = array(

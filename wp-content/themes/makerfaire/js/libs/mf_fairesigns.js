@@ -36,20 +36,18 @@
   }
 
   function createZip(faire,type) {
-	alert("Got to create Zip.");
     var data = {
       'action': 'createSignZip',
       'faire': faire,
       'type': type,
       'seltype': jQuery('input[name='+faire+'seltype]:checked').val(),
-      'selstatus': jQuery('input[name='+faire+'selstatus]:checked').val()
-      'error': jQuery('input[name='+faire+'filtererror]:checked').val()
-      'form' : jQuery('input[name='+faire+'filterform]').val();
+      'selstatus': jQuery('input[name='+faire+'selstatus]:checked').val(),
+      'error': jQuery('input[name='+faire+'filtererror]:checked').val(),
+      'filform' :  jQuery('select[name='+faire+'filterform]').val()
     };
-    alert("Before Call jquery updateMsg.");
     jQuery.post(ajaxurl, data, function(response) {
       if(response.msg != ''){
-        //alert(response.msg);
+        // alert(response.msg);
       }
     });
     jQuery('#collapse'+faire+' .'+type+'.updateMsg').html('A batch process has been triggered to update the zip file.  Please check back in a few minutes.');
