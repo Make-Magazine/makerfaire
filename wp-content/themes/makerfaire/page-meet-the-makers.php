@@ -137,9 +137,7 @@ if ($noMakerText == '')
          </div>
       </div>
    </div>
-
-
-
+   <div class="load-trigger"></div>
 </div>
 
 <script>

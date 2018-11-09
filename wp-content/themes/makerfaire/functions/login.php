@@ -39,7 +39,6 @@ function MM_WPlogin(){
   //get the user information passed from auth0
   $userinput     = filter_input_array(INPUT_POST);
   $userinfo      = (object) $userinput['auth0_userProfile'];
-  $userinfo->email = $userinfo->name;
   $userinfo->email_verified = true;
   $access_token = filter_input(INPUT_POST, 'auth0_access_token', FILTER_SANITIZE_STRING);
   $id_token     = filter_input(INPUT_POST, 'auth0_id_token', FILTER_SANITIZE_STRING);

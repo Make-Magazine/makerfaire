@@ -98,11 +98,9 @@ elseif($layout_type === 'photo_video') {
 
    $photo_collection_view_more_link_text = get_field('photo_collection_view_more_link_text') ? get_field('photo_collection_view_more_link_text') : 'View More';
    $photo_collection_view_more_link_url = get_field('photo_collection_view_more_link_url');
-   if($current_slug === 'press-center/photos-videos' && $photo_collection_view_more_link_url) {
+   if( ($current_slug === 'press-center/photos-videos' || $current_slug === 'press-center/make-photos-videos') && $photo_collection_view_more_link_url) {
       echo '<div class="pull-right"><a href="'.$photo_collection_view_more_link_url.'" title="'.$photo_collection_view_more_link_text.'" target="_blank">'.$photo_collection_view_more_link_text.' <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
-   } // TBD (ts): no link yet for Make: photos, but when there is add here in an else/elseif
-
-
+   }
 
    $video_collection_header = get_field('video_collection_header');
    if($video_collection_header) {
@@ -142,13 +140,9 @@ elseif($layout_type === 'photo_video') {
    }
    $video_collection_view_more_link_text = get_field('video_collection_view_more_link_text') ? get_field('video_collection_view_more_link_text') : 'View More';
    $video_collection_view_more_link_url = get_field('video_collection_view_more_link_url');
-   if($current_slug === 'press-center/photos-videos' && $video_collection_view_more_link_url) {
+   if( ($current_slug === 'press-center/photos-videos' || $current_slug === 'press-center/make-photos-videos') && $video_collection_view_more_link_url) {
       echo '<div class="pull-right"><a href="'.$video_collection_view_more_link_url.'" title="'.$video_collection_view_more_link_text.'" target="_blank">'.$video_collection_view_more_link_text.'  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
    }
-   elseif($current_slug === 'press-center/make-photos-videos' && $video_collection_view_more_link_url) {
-      echo '<div class="pull-right"><a href="'.$video_collection_view_more_link_url.'" title="'.$video_collection_view_more_link_text.'" target="_blank">'.$video_collection_view_more_link_text.'  <i class="fa fa-external-link" aria-hidden="true"></i></a></div>';
-   }
-
    
    $asset_card = get_field('asset_card');
    if($asset_card) {

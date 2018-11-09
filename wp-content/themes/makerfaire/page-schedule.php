@@ -232,6 +232,7 @@ if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
 
                   </div>
                </div><!-- .sched-body -->
+					<div class="load-trigger"></div>
             </div>
          </div>
 

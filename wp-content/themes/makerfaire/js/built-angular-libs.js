@@ -52726,17 +52726,7 @@ function schedScroll($window) {
 			 if(jQuery(".loading").hasClass("ng-hide")){ // don't start adding to the limit until the loading is done
 				 
 				 // this convoluted logic down here is basically all about identifying the div directly under the schedule scroll
-				 var top_of_element = jQuery(".magazine-footer").offset().top;
-				 if(jQuery(window).width() < 992 && jQuery("#page-schedule").hasClass("left-nav-active")) {
-					 top_of_element = jQuery(".left-hand-nav").offset().top;
-				 }
-				 if(jQuery(window).width() < 768) {
-					if(jQuery("#page-schedule").hasClass("left-nav-active")) {
-						top_of_element = jQuery(".left-hand-nav").offset().top;
-					} else {
-						top_of_element = jQuery(".newsletter-footer").offset().top;
-					}
-				 }
+				 var top_of_element = jQuery(".load-trigger").offset().top;
 				 var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
 				 if (bottom_of_screen > top_of_element) {
 					 scope.$apply(attrs.schedScroll);
