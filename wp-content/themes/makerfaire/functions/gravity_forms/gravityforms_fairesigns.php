@@ -145,6 +145,17 @@ function createSignZip() {
       $filterError = (isset($_POST['error'])) ? $_POST['error'] : '';
       $filterFormId = (isset($_POST['filform'])) ? $_POST['filform'] : '';
       
+      // due to adding the formid we need to add this into the naming convention
+      if (! empty($filterFormId)) {
+         if (is_array($filterFormId)) {
+            foreach ($filterFormId as $formid) {
+               $signType .= '_' . trim($formid);
+            }
+         } else {
+            $signType .= '_' . trim($filterFormId);
+         }
+      }
+      
       // create array of subareas
       $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
                   (select meta_value as value FROM wp_gf_entry_meta
@@ -219,7 +230,7 @@ function createSignZip() {
          // close zip file
          if (! $zip->status == ZIPARCHIVE::ER_OK) echo "Failed to write files to zip\n";
          $return = $zip->close();
-         echo "Closed with: " . ($ret ? "true" : "false") . "\n";
+         error_log("Closed with: " . ($return ? "true" : "false") . "\n");
       } // end looping thru entry array
    } catch (Exception $e) {
       error_log("An exception occurred while creating the zip file: " . $e);
@@ -278,7 +289,7 @@ function setGrouping($row, array &$entries, $area, $subarea, $type) {
  *           the string type
  */
 function filterByForm($form, $row, array &$entries, $area, $subarea, $type) {
-   $formname = str_replace(' ', '_', $form);
+   $form = str_replace(' ', '_', $form);
    if ($form == $row->form_id) {
       setGrouping($row, $entries, $area, $subarea, $type);
       // error_log("Adding an entries of: ". $area);
