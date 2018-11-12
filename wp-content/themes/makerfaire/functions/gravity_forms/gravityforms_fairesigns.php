@@ -136,32 +136,32 @@ add_action('gen_table_tags', 'genTableTags', 10, 1);
 // create zip files of maker signs
 function createSignZip() {
    global $wpdb;
-   try {
-      $response = array();
-      $statusFilter = (isset($_POST['selstatus']) ? $_POST['selstatus'] : '');
-      $type = (isset($_POST['seltype']) ? $_POST['seltype'] : '');
-      $faire = (isset($_POST['faire']) ? $_POST['faire'] : 0);
-      $signType = (isset($_POST['type']) ? $_POST['type'] : 'signs');
-      $filterError = (isset($_POST['error'])) ? $_POST['error'] : '';
-      $filterFormId = (isset($_POST['filform'])) ? $_POST['filform'] : '';
-      
-      // due to adding the formid we need to add this into the naming convention
-      if (! empty($filterFormId)) {
-         if (is_array($filterFormId)) {
-            foreach ($filterFormId as $formid) {
-               $signType .= '_' . trim($formid);
-            }
-         } else {
-            $signType .= '_' . trim($filterFormId);
+   
+   $response = array();
+   $statusFilter = (isset($_POST['selstatus']) ? $_POST['selstatus'] : '');
+   $type = (isset($_POST['seltype']) ? $_POST['seltype'] : '');
+   $faire = (isset($_POST['faire']) ? $_POST['faire'] : 0);
+   $signType = (isset($_POST['type']) ? $_POST['type'] : 'signs');
+   $filterError = (isset($_POST['error'])) ? $_POST['error'] : '';
+   $filterFormId = (isset($_POST['filform'])) ? $_POST['filform'] : '';
+   
+   // due to adding the formid we need to add this into the naming convention
+   if (! empty($filterFormId)) {
+      if (is_array($filterFormId)) {
+         foreach ($filterFormId as $formid) {
+            $signType .= '_' . trim($formid);
          }
+      } else {
+         $signType .= '_' . trim($filterFormId);
       }
-      
-      // create array of subareas
-      $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
-                  (select meta_value as value FROM wp_gf_entry_meta
-                    WHERE meta_key='303' AND wp_gf_entry_meta.entry_id = wp_gf_entry.ID) as entry_status,
-                  wp_mf_faire_subarea.area_id, wp_mf_faire_area.area,
-                  wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea, wp_mf_location.location
+   }
+   
+   // create array of subareas
+   $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
+                     (select meta_value as value FROM wp_gf_entry_meta
+                       WHERE meta_key='303' AND wp_gf_entry_meta.entry_id = wp_gf_entry.ID) as entry_status,
+                     wp_mf_faire_subarea.area_id, wp_mf_faire_area.area,
+                     wp_mf_location.subarea_id, wp_mf_faire_subarea.subarea, wp_mf_location.location
              FROM wp_mf_faire, wp_gf_entry
                   left outer join wp_mf_location      on wp_gf_entry.ID               = wp_mf_location.entry_id
                   left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id    = wp_mf_faire_subarea.id
@@ -170,71 +170,65 @@ function createSignZip() {
               AND wp_gf_entry.status  != 'trash'
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.non_public_forms) <= 0";
-      $results = $wpdb->get_results($sql);
-      $entries = array();
+   $results = $wpdb->get_results($sql);
+   $entries = array();
+   
+   foreach ($results as $row) {
       
-      foreach ($results as $row) {
-         // exclude records based on status filter
-         if ($statusFilter == 'accepted' && $row->entry_status != 'Accepted') continue;
-         if ($statusFilter == 'accAndProp' && ($row->entry_status != 'Accepted' && $row->entry_status != 'Proposed')) {
-            continue;
-         }
-         $area = ($row->area != NULL ? $row->area : 'No-Area');
-         $subarea = ($row->subarea != NULL ? $row->subarea : 'No-subArea');
-         
-         // Add fields if not filtered by forms
-         if (empty($filterFormId)) {
-            setGrouping($row, $entries, $area, $subarea, $type);
-         }
-         // If filtered by form only add the ones with the correct form id
-         if (is_array($filterFormId)) {
-            foreach ($filterFormId as $formId) {
-               filterByForm($formId, $row, $entries, $area, $subarea, $type);
-            }
-         } else {
-            filterByForm($filterFormId, $row, $entries, $area, $subarea, $type);
-         }
-      } // end looping thru sql results
+      // exclude records based on status filter
+      if ($statusFilter == 'accepted' && $row->entry_status != 'Accepted') continue;
+      if ($statusFilter == 'accAndProp' && ($row->entry_status != 'Accepted' && $row->entry_status != 'Proposed')) {
+         continue;
+      }
+      $area = ($row->area != NULL ? $row->area : 'No-Area');
+      $subarea = ($row->subarea != NULL ? $row->subarea : 'No-subArea');
       
-      $count = count($entries);
-      error_log("Number of entries added = " . $count);
-      error_log("Building zip files based on type...");
-      
-      $error = '';
-      // build zip files based on selected type
-      foreach ($entries as $typeKey => $entType) {
-         // create zip file
-         $zip = new ZipArchive();
-         
-         $filepath = get_template_directory() . "/signs/" . $faire . '/' . $signType . '/';
-         if (! file_exists($filepath . 'zip')) {
-            error_log("Creating Directory of $filepath");
-            mkdir($filepath . 'zip', 0777, true);
+      // Add fields if not filtered by forms
+      if (empty($filterFormId)) {
+         setGrouping($row, $entries, $area, $subarea, $type);
+      }
+      // If filtered by form only add the ones with the correct form id
+      if (is_array($filterFormId)) {
+         foreach ($filterFormId as $formId) {
+            filterByForm($formId, $row, $entries, $area, $subarea, $type);
          }
-         $filename = $faire . "-" . $typeKey . "-faire" . $signType . ".zip";
-         
-         error_log("Creating zip file of " . $filepath . 'zip/' . $filename);
-         $zip->open($filepath . 'zip/' . $filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-         foreach ($entType as $statusKey => $status) {
-            $subPath = $typeKey . '/' . $statusKey . '/';
-            foreach ($status as $entryID) {
-               // write zip file
-               $file = $entryID . '.pdf';
-               if (file_exists($filepath . $file)) {
-                  $zip->addFile($filepath . $file, $file);
-               } else {
-                  $error .= 'Missing PDF for ' . $entryID . '<br/>';
-               }
+      } else {
+         filterByForm($filterFormId, $row, $entries, $area, $subarea, $type);
+      }
+   } // end looping thru sql results
+   
+   $count = count($entries);
+   
+   $error = '';
+   // build zip files based on selected type
+   foreach ($entries as $typeKey => $entType) {
+      // create zip file
+      $zip = new ZipArchive();
+      
+      $filepath = get_template_directory() . "/signs/" . $faire . '/' . $signType . '/';
+      if (! file_exists($filepath . 'zip')) {
+         mkdir($filepath . 'zip', 0777, true);
+      }
+      $filename = $faire . "-" . $typeKey . "-faire" . $signType . ".zip";
+      
+      $zip->open($filepath . 'zip/' . $filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+      foreach ($entType as $statusKey => $status) {
+         $subPath = $typeKey . '/' . $statusKey . '/';
+         foreach ($status as $entryID) {
+            // write zip file
+            $file = $entryID . '.pdf';
+            if (file_exists($filepath . $file)) {
+               $zip->addFile($filepath . $file, $file);
+            } else {
+               $error .= 'Missing PDF for ' . $entryID . '<br/>';
             }
          }
-         // close zip file
-         if (! $zip->status == ZIPARCHIVE::ER_OK) echo "Failed to write files to zip\n";
-         $return = $zip->close();
-         error_log("Closed with: " . ($return ? "true" : "false") . "\n");
-      } // end looping thru entry array
-   } catch (Exception $e) {
-      error_log("An exception occurred while creating the zip file: " . $e);
-   }
+      }
+      // close zip file
+      if (! $zip->status == ZIPARCHIVE::ER_OK) echo "Failed to write files to zip\n";
+      $return = $zip->close();
+   } // end looping thru entry array
+   
    exit();
    
 }
