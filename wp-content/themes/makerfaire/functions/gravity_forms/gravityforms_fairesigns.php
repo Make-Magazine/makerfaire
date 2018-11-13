@@ -148,6 +148,7 @@ function createSignZip() {
    $filterError = (isset($_POST['error'])) ? $_POST['error'] : '';
    $filterFormId = (isset($_POST['filform'])) ? $_POST['filform'] : '';
    
+   $entries = array();
    // create array of subareas
    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
                      (select meta_value as value FROM wp_gf_entry_meta
@@ -163,10 +164,7 @@ function createSignZip() {
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.non_public_forms) <= 0";
    $results = $wpdb->get_results($sql);
-   $entries = array();
-   
-   foreach ($results as $row) {
-      
+   foreach ($results as $row) {  
       // exclude records based on status filter
       if ($statusFilter == 'accepted' && $row->entry_status != 'Accepted') continue;
       if ($statusFilter == 'accAndProp' && ($row->entry_status != 'Accepted' && $row->entry_status != 'Proposed')) {
@@ -211,7 +209,7 @@ function createSignZip() {
             if (file_exists($filepath . $file)) {
                $zip->addFile($filepath . $file, $file);
             } else {
-               error_log('Missing PDF for ' . $entryID);
+               error_log('Missing PDF for entry Id ' . $entryID);
             }
          }
       }
@@ -239,22 +237,18 @@ function createSignZip() {
  *           the string type
  */
 function setGrouping($row, array &$entries, $area, $subarea, $type) {
-   $area = str_replace(' ', '_', $area);
-   $subarea = str_replace(' ', '_', $subarea);
    // build array output based on selected type
    if ($type == 'area') {
-      // error_log("Adding an entries of: ". $area);
+      $area = str_replace(' ', '_', $area);
       $entries[$area][$row->entry_status][] = $row->entry_id;
    }
    if ($type == 'subarea') {
-      // error_log("Adding an entries of: ". $area . '-' . $subarea);
+      $subarea = str_replace(' ', '_', $subarea);
       $entries[$area . '-' . $subarea][$row->entry_status][] = $row->entry_id;
    }
    if ($type == 'faire') {
-      // error_log("Adding an entries of: faire");
       $entries['faire'][$row->entry_status][] = $row->entry_id;
    }
-   
 }
 
 /**
@@ -274,13 +268,12 @@ function setGrouping($row, array &$entries, $area, $subarea, $type) {
  *           the string type
  */
 function filterByForm($form, $row, array &$entries, $area, $subarea, $type) {
-   $form = str_replace(' ', '_', $form);
    if ($form == $row->form_id) {
       setGrouping($row, $entries, $area, $subarea, $type);
-      // error_log("Adding an entries of: ". $area);
+      $form = str_replace(' ', '_', $form);
+      // error_log("DEBUG:: Adding an entries of: ". $area);
       $entries[$form][$row->entry_status][] = $row->entry_id;
    }
-   
 }
 
 add_action('wp_ajax_createSignZip', 'createSignZip');
