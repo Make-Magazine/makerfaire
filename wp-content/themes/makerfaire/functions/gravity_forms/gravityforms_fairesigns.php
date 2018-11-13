@@ -1,5 +1,8 @@
 <?php
 
+// If you run this locally uncomment this line to increase the execution time, but make sure it's commented out before you commit it to the repo!
+// ini_set('max_execution_time', 300);
+
 /* Displays faire sign code */
 function build_faire_signs() {
    require_once (TEMPLATEPATH . '/adminPages/faire_signs.php');
@@ -145,17 +148,6 @@ function createSignZip() {
    $filterError = (isset($_POST['error'])) ? $_POST['error'] : '';
    $filterFormId = (isset($_POST['filform'])) ? $_POST['filform'] : '';
    
-   // due to adding the formid we need to add this into the naming convention
-   if (! empty($filterFormId)) {
-      if (is_array($filterFormId)) {
-         foreach ($filterFormId as $formid) {
-            $signType .= '_' . trim($formid);
-         }
-      } else {
-         $signType .= '_' . trim($filterFormId);
-      }
-   }
-   
    // create array of subareas
    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
                      (select meta_value as value FROM wp_gf_entry_meta
@@ -199,7 +191,6 @@ function createSignZip() {
    
    $count = count($entries);
    
-   $error = '';
    // build zip files based on selected type
    foreach ($entries as $typeKey => $entType) {
       // create zip file
@@ -220,17 +211,17 @@ function createSignZip() {
             if (file_exists($filepath . $file)) {
                $zip->addFile($filepath . $file, $file);
             } else {
-               $error .= 'Missing PDF for ' . $entryID . '<br/>';
+               error_log('Missing PDF for ' . $entryID);
             }
          }
       }
       // close zip file
-      if (! $zip->status == ZIPARCHIVE::ER_OK) echo "Failed to write files to zip\n";
+      if (! $zip->status == ZIPARCHIVE::ER_OK) error_log("Failed to write files to zip\n");
       $return = $zip->close();
+      if ($return == 0) error_log("Return of the zip failed.");
    } // end looping thru entry array
    
    exit();
-   
 }
 
 /**
