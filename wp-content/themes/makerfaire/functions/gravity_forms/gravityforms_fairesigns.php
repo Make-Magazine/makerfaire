@@ -1,7 +1,7 @@
 <?php
 
 // If you run this locally uncomment this line to increase the execution time, but make sure it's commented out before you commit it to the repo!
-// ini_set('max_execution_time', 300);
+//ini_set('max_execution_time', 300);
 
 /* Displays faire sign code */
 function build_faire_signs() {
@@ -148,6 +148,17 @@ function createSignZip() {
    $filterError = (isset($_POST['error'])) ? $_POST['error'] : '';
    $filterFormId = (isset($_POST['filform'])) ? $_POST['filform'] : '';
    
+   // If filter by formid append to filename
+   $appendFormId = "";
+   if (! empty($filterFormId)) {
+      if (is_array($filterFormId)) {
+         foreach ($filterFormId as $formId) {
+            $appendFormId .= '_' . $formId;
+         }
+      } else {
+         $appendFormId = '_' . $formId;
+      }
+   }
    $entries = array();
    // create array of subareas
    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
@@ -164,7 +175,7 @@ function createSignZip() {
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.non_public_forms) <= 0";
    $results = $wpdb->get_results($sql);
-   foreach ($results as $row) {  
+   foreach ($results as $row) {
       // exclude records based on status filter
       if ($statusFilter == 'accepted' && $row->entry_status != 'Accepted') continue;
       if ($statusFilter == 'accAndProp' && ($row->entry_status != 'Accepted' && $row->entry_status != 'Proposed')) {
@@ -198,7 +209,7 @@ function createSignZip() {
       if (! file_exists($filepath . 'zip')) {
          mkdir($filepath . 'zip', 0777, true);
       }
-      $filename = $faire . "-" . $typeKey . "-faire" . $signType . ".zip";
+      $filename = $faire . "-" . $typeKey . "-faire" . $signType . $appendFormId . ".zip";
       
       $zip->open($filepath . 'zip/' . $filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
       foreach ($entType as $statusKey => $status) {
@@ -215,13 +226,14 @@ function createSignZip() {
       }
       // close zip file
       if (! $zip->status == ZIPARCHIVE::ER_OK) error_log("Failed to write files to zip\n");
-      $return = $zip->close();
-      if ($return == 0) { 
-         error_log("Return of the zip failed. Due to: ".  ZipArchive::getStatusString);
+      $close = $zip->close();
+      if ($close) {
+         error_log("Return of the zip failed. Due to: " . ZipArchive::getStatusString);
       }
    } // end looping thru entry array
    
    exit();
+   
 }
 
 /**
@@ -251,6 +263,7 @@ function setGrouping($row, array &$entries, $area, $subarea, $type) {
    if ($type == 'faire') {
       $entries['faire'][$row->entry_status][] = $row->entry_id;
    }
+   
 }
 
 /**
@@ -270,12 +283,14 @@ function setGrouping($row, array &$entries, $area, $subarea, $type) {
  *           the string type
  */
 function filterByForm($form, $row, array &$entries, $area, $subarea, $type) {
+   // error_log("DEBUG:: Comparing form of: ". $form . " to " . $row->form_id);
    if ($form == $row->form_id) {
       setGrouping($row, $entries, $area, $subarea, $type);
       $form = str_replace(' ', '_', $form);
-      // error_log("DEBUG:: Adding an entries of: ". $area);
+      // error_log("DEBUG:: Adding a form of: ". $form);
       $entries[$form][$row->entry_status][] = $row->entry_id;
    }
+   
 }
 
 add_action('wp_ajax_createSignZip', 'createSignZip');
