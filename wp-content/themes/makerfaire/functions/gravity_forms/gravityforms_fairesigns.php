@@ -1,7 +1,7 @@
 <?php
 
 // If you run this locally uncomment this line to increase the execution time, but make sure it's commented out before you commit it to the repo!
-//ini_set('max_execution_time', 300);
+// ini_set('max_execution_time', 300);
 
 /* Displays faire sign code */
 function build_faire_signs() {
@@ -209,7 +209,7 @@ function createSignZip() {
       if (! file_exists($filepath . 'zip')) {
          mkdir($filepath . 'zip', 0777, true);
       }
-      $filename = $faire . "-" . $typeKey . "-faire" . $signType . $appendFormId . ".zip";
+      $filename = $faire . "-" . $typeKey . $appendFormId . "-faire" . $signType . ".zip";
       
       $zip->open($filepath . 'zip/' . $filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
       foreach ($entType as $statusKey => $status) {
