@@ -216,7 +216,9 @@ function createSignZip() {
       // close zip file
       if (! $zip->status == ZIPARCHIVE::ER_OK) error_log("Failed to write files to zip\n");
       $return = $zip->close();
-      if ($return == 0) error_log("Return of the zip failed.");
+      if ($return == 0) { 
+         error_log("Return of the zip failed. Due to: ".  ZipArchive::getStatusString);
+      }
    } // end looping thru entry array
    
    exit();
