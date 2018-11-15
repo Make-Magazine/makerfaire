@@ -1,12 +1,8 @@
 <?php
 
-// If you run this locally uncomment this line to increase the execution time, but make sure it's commented out before you commit it to the repo!
-// ini_set('max_execution_time', 300);
-
 /* Displays faire sign code */
 function build_faire_signs() {
    require_once (TEMPLATEPATH . '/adminPages/faire_signs.php');
-   
 }
 
 /* This is for the Export all Fields button in the Entry Summary */
@@ -159,6 +155,7 @@ function createSignZip() {
          $appendFormId = '_' . $formId;
       }
    }
+   
    $entries = array();
    // create array of subareas
    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
@@ -186,15 +183,14 @@ function createSignZip() {
       
       // Add fields if not filtered by forms
       if (empty($filterFormId)) {
-         setGrouping($row, $entries, $area, $subarea, $type);
-      }
-      // If filtered by form only add the ones with the correct form id
-      if (is_array($filterFormId)) {
+         setGrouping($row, $entries, $area, $subarea, $type, $filterError);
+      } elseif (is_array($filterFormId)) {
+         // If filtered by form only add the ones with the correct form id
          foreach ($filterFormId as $formId) {
-            filterByForm($formId, $row, $entries, $area, $subarea, $type);
+            filterByForm($formId, $row, $entries, $area, $subarea, $type, $filterError);
          }
       } else {
-         filterByForm($filterFormId, $row, $entries, $area, $subarea, $type);
+         filterByForm($filterFormId, $row, $entries, $area, $subarea, $type, $filterError);
       }
    } // end looping thru sql results
    
@@ -205,7 +201,12 @@ function createSignZip() {
       // create zip file
       $zip = new ZipArchive();
       
-      $filepath = get_template_directory() . "/signs/" . $faire . '/' . $signType . '/';
+      if ($typeKey === 'error') {
+         // Error Path
+         get_template_directory() . "/signs/" . $faire . '/error/' . $signType . '/';
+      } else {
+         $filepath = get_template_directory() . "/signs/" . $faire . '/' . $signType . '/';
+      }
       if (! file_exists($filepath . 'zip')) {
          mkdir($filepath . 'zip', 0777, true);
       }
@@ -220,7 +221,9 @@ function createSignZip() {
             if (file_exists($filepath . $file)) {
                $zip->addFile($filepath . $file, $file);
             } else {
-               error_log('Missing PDF for entry Id ' . $entryID);
+               if ($typeKey != 'error') {
+                  error_log('Missing PDF for entry Id ' . $entryID);
+               }
             }
          }
       }
@@ -249,19 +252,21 @@ function createSignZip() {
  *           the string sub area
  * @param string $type
  *           the string type
+ * @param string $filterError
+ *           if this is populated only the error pdf's are in the ZipArchive
  */
-function setGrouping($row, array &$entries, $area, $subarea, $type) {
+function setGrouping($row, array &$entries, $area, $subarea, $type, $filterError) {
    // build array output based on selected type
-   if ($type == 'area') {
+   if ($type === 'area') {
       $area = str_replace(' ', '_', $area);
       $entries[$area][$row->entry_status][] = $row->entry_id;
-   }
-   if ($type == 'subarea') {
+   } elseif ($type === 'subarea') {
       $subarea = str_replace(' ', '_', $subarea);
       $entries[$area . '-' . $subarea][$row->entry_status][] = $row->entry_id;
-   }
-   if ($type == 'faire') {
+   } elseif ($type === 'faire') {
       $entries['faire'][$row->entry_status][] = $row->entry_id;
+   } elseif ($filterError == 'error') {
+      $entries['error'][$row->entry_status][] = $row->entry_id;
    }
    
 }
@@ -281,11 +286,13 @@ function setGrouping($row, array &$entries, $area, $subarea, $type) {
  *           the string sub area
  * @param string $type
  *           the string type
+ * @param string $filterError
+ *           if this is populated only the error pdf's are in the ZipArchive
  */
-function filterByForm($form, $row, array &$entries, $area, $subarea, $type) {
+function filterByForm($form, $row, array &$entries, $area, $subarea, $type, $filterError) {
    // error_log("DEBUG:: Comparing form of: ". $form . " to " . $row->form_id);
-   if ($form == $row->form_id) {
-      setGrouping($row, $entries, $area, $subarea, $type);
+   if ($form === $row->form_id) {
+      setGrouping($row, $entries, $area, $subarea, $type, $filterError);
       $form = str_replace(' ', '_', $form);
       // error_log("DEBUG:: Adding a form of: ". $form);
       $entries[$form][$row->entry_status][] = $row->entry_id;
