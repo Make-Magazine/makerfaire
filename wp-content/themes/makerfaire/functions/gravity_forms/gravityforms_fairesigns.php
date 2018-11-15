@@ -154,6 +154,9 @@ function createSignZip() {
       } else {
          $appendFormId = '_' . $formId;
       }
+   } 
+   if(!empty($filterError)) {
+      $appendFormId = '_'.$filterError;
    }
    
    $entries = array();
