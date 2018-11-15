@@ -189,7 +189,7 @@ function createOutput($entry_id, $pdf) {
       if ($photo_extension) {
          // Insure that the file exits before resizing the image
          if (! file_exists($project_photo)) {
-            error_log("Unable to find image for $project_photo");
+            error_log("Unable to find the image for entry $entry_id for $project_photo");
             $resizeImage = 0;
          } else {
             $width = 450;
