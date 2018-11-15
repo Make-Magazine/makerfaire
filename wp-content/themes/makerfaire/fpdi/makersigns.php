@@ -65,7 +65,7 @@ try {
    $eid = '';
    if (isset($wp_query->query_vars['eid'])) {
       $eid = $wp_query->query_vars['eid'];
-      error_log("EID Query Vars: ".$wp_query->query_vars['eid']);
+      error_log("EID Query Vars: " . $wp_query->query_vars['eid']);
    } else if (isset($_GET['eid']) && $_GET['eid'] != '') {
       $eid = $_GET['eid'];
       // error_log("EID: ".$_GET['eid']);
@@ -80,17 +80,17 @@ try {
       }
       $entryid = sanitize_text_field($eid);
       $resizeImage = createOutput($entryid, $pdf);
-      //error_log("Resize Image: $resizeImage for Entry Id: $entryid");
+      // error_log("Resize Image: $resizeImage for Entry Id: $entryid");
       if (isset($_GET['type']) && $_GET['type'] == 'download') {
          if (ob_get_contents()) ob_clean();
          $pdf->Output($entryid . '.pdf', 'D');
       } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
          if ($resizeImage) {
             $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
-            //error_log("Filename: $filename");
+            // error_log("Filename: $filename");
          } else {
             $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
-            //error_log("Error Filename: $filename");
+            // error_log("Error Filename: $filename");
          }
          
          $dirname = dirname($filename);
@@ -113,7 +113,7 @@ try {
       echo 'No Entry ID submitted';
    }
 } catch (Exception $e) {
-   error_log("Unable to create PDF due to: ". $e);
+   error_log("Unable to create PDF due to: " . $e);
 }
 
 function createOutput($entry_id, $pdf) {
@@ -185,13 +185,13 @@ function createOutput($entry_id, $pdf) {
    $pdf->MultiCell(125, $lineHeight, $project_short, 0, 'L');
    // field 22 - project photo
    if ($project_photo != '') {
-      $photo_extension = exif_imagetype($project_photo);
-      if ($photo_extension) {
-         // Insure that the file exits before resizing the image
-         if (! file_exists($project_photo)) {
-            error_log("Unable to find the image for entry $entry_id for $project_photo");
-            $resizeImage = 0;
-         } else {
+      // Insure that the file exits
+      if (! file_exists($project_photo)) {
+         error_log("Unable to find the image for entry $entry_id for $project_photo");
+         $resizeImage = 0;
+      } else {
+         $photo_extension = exif_imagetype($project_photo);
+         if ($photo_extension) {
             $width = 450;
             $height = 450;
             $project_photo = legacy_get_fit_remote_image_url($project_photo, $width, $height, 0);
