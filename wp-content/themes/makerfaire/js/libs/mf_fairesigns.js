@@ -54,14 +54,12 @@
   }
 
   function createPDF(faire, type) {
-	alert("Got to create PDF.");
     jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html('Generating List.  Please Wait.');
     var data = {
       'action': 'createEntList',
       'faire': faire,
       'type': type
     };
-    alert("Before Call jquery pdfEntList.");
     jQuery.post(ajaxurl, data, function(response) {
       if(response.entList!=''){
         jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html(response.entList);
