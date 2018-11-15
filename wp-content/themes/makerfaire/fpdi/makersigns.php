@@ -68,7 +68,7 @@ try {
       error_log("EID Query Vars: ".$wp_query->query_vars['eid']);
    } else if (isset($_GET['eid']) && $_GET['eid'] != '') {
       $eid = $_GET['eid'];
-      error_log("EID: ".$_GET['eid']);
+      // error_log("EID: ".$_GET['eid']);
    }
    
    if (isset($eid) && $eid != '') {
@@ -79,19 +79,20 @@ try {
          $faire = $_GET['faire'];
       }
       $entryid = sanitize_text_field($eid);
-      error_log("Entry Id: $entryid EID: $eid");
       $resizeImage = createOutput($entryid, $pdf);
-      error_log("Resize Image: $resizeImage");
+      //error_log("Resize Image: $resizeImage for Entry Id: $entryid");
       if (isset($_GET['type']) && $_GET['type'] == 'download') {
          if (ob_get_contents()) ob_clean();
          $pdf->Output($entryid . '.pdf', 'D');
       } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
-         error_log("Filename: $filename");
          if ($resizeImage) {
             $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
+            //error_log("Filename: $filename");
          } else {
             $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
+            //error_log("Error Filename: $filename");
          }
+         
          $dirname = dirname($filename);
          if (! is_dir($dirname)) {
             mkdir($dirname, 0755, true);
@@ -186,14 +187,14 @@ function createOutput($entry_id, $pdf) {
    if ($project_photo != '') {
       $photo_extension = exif_imagetype($project_photo);
       if ($photo_extension) {
-         // DEBUG:
-         $width = 450;
-         $height = 450;
-         $project_photo = legacy_get_fit_remote_image_url($project_photo, $width, $height, 0);
+         // Insure that the file exits before resizing the image
          if (! file_exists($project_photo)) {
             error_log("Unable to find image for $project_photo");
             $resizeImage = 0;
          } else {
+            $width = 450;
+            $height = 450;
+            $project_photo = legacy_get_fit_remote_image_url($project_photo, $width, $height, 0);
             $image_type = image_type_to_extension($photo_extension, false);
             $pdf->Image($project_photo, 12, 135, null, null, $image_type);
          }
