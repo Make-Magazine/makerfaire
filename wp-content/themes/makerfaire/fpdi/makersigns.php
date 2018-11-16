@@ -192,11 +192,11 @@ function createOutput($entry_id, $pdf) {
    $pdf->MultiCell(125, $lineHeight, $project_short, 0, 'L');   
    //field 22 - project photo
    if ($project_photo != '') {
-      $photo_extension = substr(strrchr($project_photo,'.'),1);
-      
-      if ($photo_extension) {       
+      $photo_extension = exif_imagetype($project_photo);
+      if ($photo_extension) {
+         //DEBUG:
          $project_photo = legacy_get_fit_remote_image_url($project_photo, 450, 450, 0);
-         $pdf->Image($project_photo, 12, 135, null, null, $photo_extension);
+         $pdf->Image($project_photo, 12, 135, null, null, image_type_to_extension($photo_extension, false));
       }else{
          error_log("Unable to find the image for entry $entry_id for $project_photo");
          $resizeImage = 0;
