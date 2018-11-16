@@ -88,14 +88,14 @@ try {
          if ($resizeImage) {
             $filename = $validFile;            
             // If the file exists in the error log - delete it            
-            if (!is_dir($errorFile)) {
+            if (is_dir($errorFile)) {
                unlink(realpath($errorFile));            
             }
             
          } else {
             $filename = $errorFile;
             // If the file exists in the regular path - delete it    
-            if (!is_dir($validFile)) {
+            if (is_dir($validFile)) {
                unlink(realpath($validFile));
             }                    
          }
