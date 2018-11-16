@@ -54,10 +54,7 @@ try {
    $pdf = new PDF();
    $pdf->AddFont('Benton Sans', 'B', 'bentonsans-bold-webfont.php');
    $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
-   $pdf->AddPage('P', array(
-      279.4,
-      431.8
-   ));
+   $pdf->AddPage('P', array(279.4, 431.8));
    $pdf->SetFont('Benton Sans', '', 12);
    $pdf->SetFillColor(255, 255, 255);
    
@@ -65,7 +62,7 @@ try {
    $eid = '';
    if (isset($wp_query->query_vars['eid'])) {
       $eid = $wp_query->query_vars['eid'];
-      error_log("EID Query Vars: " . $wp_query->query_vars['eid']);
+      //error_log("EID Query Vars: " . $wp_query->query_vars['eid']);
    } else if (isset($_GET['eid']) && $_GET['eid'] != '') {
       $eid = $_GET['eid'];
       // error_log("EID: ".$_GET['eid']);
@@ -85,12 +82,22 @@ try {
          if (ob_get_contents()) ob_clean();
          $pdf->Output($entryid . '.pdf', 'D');
       } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
+         $validFile = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
+         $errorFile = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
+
          if ($resizeImage) {
-            $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
-            // error_log("Filename: $filename");
+            $filename = $validFile;            
+            // If the file exists in the error log - delete it            
+            if (!is_dir($errorFile)) {
+               unlink(realpath($errorFile));            
+            }
+            
          } else {
-            $filename = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
-            // error_log("Error Filename: $filename");
+            $filename = $errorFile;
+            // If the file exists in the regular path - delete it    
+            if (!is_dir($validFile)) {
+               unlink(realpath($validFile));
+            }                    
          }
          
          $dirname = dirname($filename);
@@ -182,24 +189,20 @@ function createOutput($entry_id, $pdf) {
    
    $lineHeight = $sx * 0.2645833333333 * 1.3;
    
-   $pdf->MultiCell(125, $lineHeight, $project_short, 0, 'L');
-   // field 22 - project photo
+   $pdf->MultiCell(125, $lineHeight, $project_short, 0, 'L');   
+   //field 22 - project photo
    if ($project_photo != '') {
-      // Insure that the file exits
-      if (! file_exists($project_photo)) {
+      $photo_extension = substr(strrchr($project_photo,'.'),1);
+      
+      if ($photo_extension) {       
+         $project_photo = legacy_get_fit_remote_image_url($project_photo, 450, 450, 0);
+         $pdf->Image($project_photo, 12, 135, null, null, $photo_extension);
+      }else{
          error_log("Unable to find the image for entry $entry_id for $project_photo");
          $resizeImage = 0;
-      } else {
-         $photo_extension = exif_imagetype($project_photo);
-         if ($photo_extension) {
-            $width = 450;
-            $height = 450;
-            $project_photo = legacy_get_fit_remote_image_url($project_photo, $width, $height, 0);
-            $image_type = image_type_to_extension($photo_extension, false);
-            $pdf->Image($project_photo, 12, 135, null, null, $image_type);
-         }
       }
-   }
+   }   
+   
    // print white box to overlay long descriptions or photos
    /*
     * $pdf->SetXY(10, 255);
