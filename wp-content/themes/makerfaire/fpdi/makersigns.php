@@ -87,15 +87,15 @@ try {
 
          if ($resizeImage) {
             $filename = $validFile;            
-            // If the file exists in the error log - delete it            
-            if (is_dir($errorFile)) {
+            // If the file exists in the error log - delete it  
+            if (file_exists($errorFile)) {
                unlink(realpath($errorFile));            
             }
             
          } else {
             $filename = $errorFile;
             // If the file exists in the regular path - delete it    
-            if (is_dir($validFile)) {
+            if (file_exists($validFile)) {
                unlink(realpath($validFile));
             }                    
          }
@@ -191,12 +191,12 @@ function createOutput($entry_id, $pdf) {
    
    $pdf->MultiCell(125, $lineHeight, $project_short, 0, 'L');   
    //field 22 - project photo
-   if ($project_photo != '') {
-      $photo_extension = exif_imagetype($project_photo);
+   if ($project_photo != '') {      
+      $photo_extension = pathinfo($project_photo,PATHINFO_EXTENSION);      
       if ($photo_extension) {
          //DEBUG:
          $project_photo = legacy_get_fit_remote_image_url($project_photo, 450, 450, 0);
-         $pdf->Image($project_photo, 12, 135, null, null, image_type_to_extension($photo_extension, false));
+         $pdf->Image($project_photo, 12, 135, null, null, $photo_extension);
       }else{
          error_log("Unable to find the image for entry $entry_id for $project_photo");
          $resizeImage = 0;
