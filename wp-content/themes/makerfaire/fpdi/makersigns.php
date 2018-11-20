@@ -201,7 +201,10 @@ function createOutput($entry_id, $pdf) {
          error_log("Unable to find the image for entry $entry_id for $project_photo");
          $resizeImage = 0;
       }
-   }   
+   } else {
+      error_log("Missing image for $entry_id");
+      $resizeImage = 0;
+   }
    
    // print white box to overlay long descriptions or photos
    /*
