@@ -81,8 +81,6 @@ function getFeatMkPanel($row_layout) {
             </div>
           </div>';
 
-
-
    //build makers array
    $makerArr = array();
    if ($dynamic) {
@@ -98,6 +96,11 @@ function getFeatMkPanel($row_layout) {
       shuffle($entries);
       foreach ($entries as $entry) {
          $url = $entry['22'];
+         
+         $overrideImg = findOverride($result->entry_id, 'makerPanel');
+         if ($overrideImg != '')
+            $url = $overrideImg;
+         
          $args = array(
             'resize' => '300,300',
             'quality' => '80',
