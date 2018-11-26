@@ -428,9 +428,6 @@ function get1ColLayout() {
          
          if (!empty($cta_link)) {
             $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
-            if (!empty($ctaText)) {
-               $columnInfo .= '<a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a>';
-            }
          } else {
             $columnInfo = $image;
          }
@@ -451,13 +448,13 @@ function get1ColLayout() {
    $return .= '   <div class="row">
                     <div class="col-xs-12">';
    if($hero_text) {
-      $return .= '<div class="panel_title">'
-              .  '   <div class="top_left"><img src="/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
+      $return .= '<div class="top_left"><img src="/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
+			     .  '<div class="panel_title">'
               .  '   <div class="panel_text">' . $hero_text . '</div>'
               .  '   <div class="bottom_right"><img src="/wp-content/themes/makerfaire/img/BottomRightCorner.png"></div>'
               .  '</div>';
    }
-   $return .=    '        '.$hero_image.'</div>'.
+   $return .=    '        '.$hero_image .
       '     </div>' .
       '   </div>';
 
