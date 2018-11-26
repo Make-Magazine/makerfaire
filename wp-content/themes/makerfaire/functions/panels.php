@@ -421,7 +421,9 @@ function get1ColLayout() {
          the_row();
          // TODO add the URL wrapper
          $hero_image_random = get_sub_field('hero_image_random');
-         $image = '<img class="img-responsive" src="' . $hero_image_random['url'] . '" />';
+			$hero_image_url = $hero_image_random["url"];
+
+         $image = '<div class="hero-img" style="background-image: url(\'' . $hero_image_url. '\');"></div>';
          $cta_link = get_sub_field('image_cta');
          
          if (!empty($cta_link)) {
