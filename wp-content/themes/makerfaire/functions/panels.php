@@ -419,8 +419,20 @@ function get1ColLayout() {
       
       while (have_rows('hero_image_repeater')) {
          the_row();
+         // TODO add the URL wrapper
          $hero_image_random = get_sub_field('hero_image_random');
-         $hero_array[] = $hero_image_random['url'];
+         $image = '<img class="img-responsive" src="' . $hero_image_random['url'] . '" />';
+         $cta_link = get_sub_field('image_cta');
+         
+         if (!empty($cta_link)) {
+            $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
+            if (!empty($ctaText)) {
+               $columnInfo .= '<a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a>';
+            }
+         } else {
+            $columnInfo = $image;
+         }
+         $hero_array[] = $columnInfo;
       }
       $randKey = array_rand($hero_array,1);      
       $hero_image = $hero_array[$randKey];              
@@ -443,7 +455,7 @@ function get1ColLayout() {
               .  '   <div class="bottom_right"><img src="/wp-content/themes/makerfaire/img/BottomRightCorner.png"></div>'
               .  '</div>';
    }
-   $return .=    '        <div class="hero-img" style="background-image: url('.$hero_image.')"></div>'.
+   $return .=    '        '.$hero_image.'</div>'.
       '     </div>' .
       '   </div>';
 
