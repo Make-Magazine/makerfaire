@@ -250,6 +250,6 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(pa, s);
   })();
 </script>
-<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+
 </body>
 </html>
