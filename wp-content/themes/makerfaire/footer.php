@@ -6,7 +6,7 @@
      echo "ameka acontext";
    $context = stream_context_create(array(
          'http' => array(
-            'header'  => "Authorization: Basic " . base64_encode($UNIVERSAL_ASSET_USER.':'.$UNIVERSAL_ASSET_PASS)
+            'header'  => "Authorization: Basic " . base64_encode(UNIVERSAL_ASSET_USER.':'.UNIVERSAL_ASSET_PASS)
          )
    ));
   }
