@@ -6,11 +6,11 @@
 			 'header'  => "Authorization: Basic " . base64_encode("$username:$password")
 		)
   ));
-  if(strpos($_SERVER['SERVER_NAME'], 'staging') !== false || $_SERVER['SERVER_PORT'] == "8888"){
-	 echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
-  }else{
-	 echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-footer.html');
-  }
+  //if(strpos($_SERVER['SERVER_NAME'], 'staging') !== false || $_SERVER['SERVER_PORT'] == "8888"){
+	 echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
+  //}else{
+	// echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-footer.html');
+  //}
 ?>
 
 <script>
