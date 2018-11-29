@@ -114,22 +114,33 @@ add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
 $universal_asset_env = 'make.co';
 $universal_asset_proto = 'https://';
+$universal_asset_user = false;
+$universal_asset_pass = false;
 $host = $_SERVER['HTTP_HOST'];
 //var_dump($host);
 if(strpos($host, 'dev') === 0) {
    $universal_asset_env = 'dev.make.co';
+   $universal_asset_user = 'makecodev';
+   $universal_asset_pass = '8f86ba87';
 }
 else if(strpos($host, 'stage') === 0) {
    $universal_asset_env = 'stage.make.co';
+   $universal_asset_user = 'makecstage';
+   $universal_asset_pass = 'c2792563';
 }
 else if(strpos($host, 'staging') > -1) {
    $universal_asset_env = 'makeco.staging.wpengine.com';
+   $universal_asset_user = 'makeco';
+   $universal_asset_pass = 'memberships';
 } else {
    $universal_asset_env = 'makeco:8888';
    $universal_asset_proto = 'http://';
 }
+
 //$universal_asset_url_prefix = $universal_asset_proto . $universal_asset_env;
 define('UNIVERSAL_ASSET_URL_PREFIX', $universal_asset_proto . $universal_asset_env);
+define('UNIVERSAL_ASSET_USER', $universal_asset_user);
+define('UNIVERSAL_ASSET_PASS', $universal_asset_pass);
 
 
 function load_scripts() {

@@ -1,11 +1,15 @@
 <?php
   $username = 'makeco';
   $password = 'memberships';
-  $context = stream_context_create(array(
-		'http' => array(
-			 'header'  => "Authorization: Basic " . base64_encode("$username:$password")
-		)
-  ));
+  $context = null;
+  if(UNIVERSAL_ASSET_USER && UNIVERSAL_ASSET_PASS) {
+     echo "ameka acontext";
+   $context = stream_context_create(array(
+         'http' => array(
+            'header'  => "Authorization: Basic " . base64_encode($UNIVERSAL_ASSET_USER.':'.$UNIVERSAL_ASSET_PASS)
+         )
+   ));
+  }
   //if(strpos($_SERVER['SERVER_NAME'], 'staging') !== false || $_SERVER['SERVER_PORT'] == "8888"){
 	 echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
   //}else{
