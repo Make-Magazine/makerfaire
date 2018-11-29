@@ -1,17 +1,13 @@
 <?php
-  $context = null;
-  if(UNIVERSAL_ASSET_USER && UNIVERSAL_ASSET_PASS) {
+   $context = null;
+   if(UNIVERSAL_ASSET_USER && UNIVERSAL_ASSET_PASS) {
       $context = stream_context_create(array(
             'http' => array(
                'header'  => "Authorization: Basic " . base64_encode(UNIVERSAL_ASSET_USER.':'.UNIVERSAL_ASSET_PASS)
             )
       ));
-  }
-  //if(strpos($_SERVER['SERVER_NAME'], 'staging') !== false || $_SERVER['SERVER_PORT'] == "8888"){
-	 echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
-  //}else{
-	// echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-footer.html');
-  //}
+   }
+   echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
 ?>
 
 <script>
