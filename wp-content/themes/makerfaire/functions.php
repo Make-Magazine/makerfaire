@@ -114,41 +114,44 @@ add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
 /*
    Set some CONST for universal assets (nav and footer)
+   enclosed in a function for safety
 */
-// Assume that we're in prod; only change if we are definitively in another
-$universal_asset_env = 'make.co';
-$universal_asset_proto = 'https://';
-$universal_asset_user = false;
-$universal_asset_pass = false;
-$host = $_SERVER['HTTP_HOST'];
-// dev environments
-if(strpos($host, 'dev.') === 0) {
-   $universal_asset_env = 'dev.make.co';
-   $universal_asset_user = 'makecodev';
-   $universal_asset_pass = '8f86ba87';
+function set_universal_asset_constants() {
+   // Assume that we're in prod; only change if we are definitively in another
+   $universal_asset_env = 'make.co';
+   $universal_asset_proto = 'https://';
+   $universal_asset_user = false;
+   $universal_asset_pass = false;
+   $host = $_SERVER['HTTP_HOST'];
+   // dev environments
+   if(strpos($host, 'dev.') === 0) {
+      $universal_asset_env = 'dev.make.co';
+      $universal_asset_user = 'makecodev';
+      $universal_asset_pass = '8f86ba87';
+   }
+   // stage environments
+   else if(strpos($host, 'stage.') === 0) {
+      $universal_asset_env = 'stage.make.co';
+      $universal_asset_user = 'makecstage';
+      $universal_asset_pass = 'c2792563';
+   }
+   // legacy staging environments
+   else if(strpos($host, '.staging.wpengine.com') > -1) {
+      $universal_asset_env = 'makeco.staging.wpengine.com';
+      $universal_asset_user = 'makeco';
+      $universal_asset_pass = 'memberships';
+   }
+   // local environments
+   else if(strpos($host, ':8888') > -1) {
+      $universal_asset_env = 'makeco:8888'; // this will require that we use `makeco` as our local
+      $universal_asset_proto = 'http://';
+   }
+   // Set the important bits as CONSTANTS that can easily be used elsewhere
+   define('UNIVERSAL_ASSET_URL_PREFIX', $universal_asset_proto . $universal_asset_env);
+   define('UNIVERSAL_ASSET_USER', $universal_asset_user);
+   define('UNIVERSAL_ASSET_PASS', $universal_asset_pass);
 }
-// stage environments
-else if(strpos($host, 'stage.') === 0) {
-   $universal_asset_env = 'stage.make.co';
-   $universal_asset_user = 'makecstage';
-   $universal_asset_pass = 'c2792563';
-}
-// legacy staging environments
-else if(strpos($host, '.staging.wpengine.com') > -1) {
-   $universal_asset_env = 'makeco.staging.wpengine.com';
-   $universal_asset_user = 'makeco';
-   $universal_asset_pass = 'memberships';
-}
-// local environments
-else if(strpos($host, ':8888') > -1) {
-   $universal_asset_env = 'makeco:8888'; // this will require that we use `makeco` as our local
-   $universal_asset_proto = 'http://';
-}
-// Set the important bits as CONSTANTS that can easily be used elsewhere
-define('UNIVERSAL_ASSET_URL_PREFIX', $universal_asset_proto . $universal_asset_env);
-define('UNIVERSAL_ASSET_USER', $universal_asset_user);
-define('UNIVERSAL_ASSET_PASS', $universal_asset_pass);
-
+set_universal_asset_constants();
 
 function load_scripts() {
 
