@@ -115,6 +115,7 @@ add_filter('jetpack_enable_opengraph', '__return_false', 99);
 /*
    Set some CONST for universal assets (nav and footer)
    enclosed in a function for safety
+   this needs to appear before the scripts/styles are enqueued 
 */
 function set_universal_asset_constants() {
    // Assume that we're in prod; only change if we are definitively in another
