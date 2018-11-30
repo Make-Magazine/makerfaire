@@ -1,16 +1,13 @@
 <?php
-  $username = 'makeco';
-  $password = 'memberships';
-  $context = stream_context_create(array(
-		'http' => array(
-			 'header'  => "Authorization: Basic " . base64_encode("$username:$password")
-		)
-  ));
-  if(strpos($_SERVER['SERVER_NAME'], 'staging') !== false || $_SERVER['SERVER_PORT'] == "8888"){
-	 echo file_get_contents('https://makeco.staging.wpengine.com/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
-  }else{
-	 echo file_get_contents('https://make.co/wp-content/themes/memberships/universal-nav/universal-footer.html');
-  }
+   $context = null;
+   if(UNIVERSAL_ASSET_USER && UNIVERSAL_ASSET_PASS) {
+      $context = stream_context_create(array(
+            'http' => array(
+               'header'  => "Authorization: Basic " . base64_encode(UNIVERSAL_ASSET_USER.':'.UNIVERSAL_ASSET_PASS)
+            )
+      ));
+   }
+   echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
 ?>
 
 <script>
@@ -250,6 +247,6 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(pa, s);
   })();
 </script>
-<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+
 </body>
 </html>

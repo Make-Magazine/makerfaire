@@ -112,7 +112,50 @@ add_action("wp_default_styles", "my_wp_default_styles");
 /* Disable Conflicting Code using Filters */
 add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
+/*
+   Set some CONST for universal assets (nav and footer)
+   enclosed in a function for safety
+   this needs to appear before the scripts/styles are enqueued 
+*/
+function set_universal_asset_constants() {
+   // Assume that we're in prod; only change if we are definitively in another
+   $universal_asset_env = 'make.co';
+   $universal_asset_proto = 'https://';
+   $universal_asset_user = false;
+   $universal_asset_pass = false;
+   $host = $_SERVER['HTTP_HOST'];
+   // dev environments
+   if(strpos($host, 'dev.') === 0) {
+      $universal_asset_env = 'dev.make.co';
+      $universal_asset_user = 'makecodev';
+      $universal_asset_pass = '8f86ba87';
+   }
+   // stage environments
+   else if(strpos($host, 'stage.') === 0) {
+      $universal_asset_env = 'stage.make.co';
+      $universal_asset_user = 'makecstage';
+      $universal_asset_pass = 'c2792563';
+   }
+   // legacy staging environments
+   else if(strpos($host, '.staging.wpengine.com') > -1) {
+      $universal_asset_env = 'makeco.staging.wpengine.com';
+      $universal_asset_user = 'makeco';
+      $universal_asset_pass = 'memberships';
+   }
+   // local environments
+   else if(strpos($host, ':8888') > -1) {
+      $universal_asset_env = 'makeco:8888'; // this will require that we use `makeco` as our local
+      $universal_asset_proto = 'http://';
+   }
+   // Set the important bits as CONSTANTS that can easily be used elsewhere
+   define('UNIVERSAL_ASSET_URL_PREFIX', $universal_asset_proto . $universal_asset_env);
+   define('UNIVERSAL_ASSET_USER', $universal_asset_user);
+   define('UNIVERSAL_ASSET_PASS', $universal_asset_pass);
+}
+set_universal_asset_constants();
+
 function load_scripts() {
+
    // Styles
    wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
    wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
@@ -127,7 +170,7 @@ function load_scripts() {
    wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css');
    wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true);
 	wp_enqueue_style('jquery-ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css');
-   wp_enqueue_style('universal.css', 'https://make.co/wp-content/themes/memberships/universal-nav/css/universal.css');
+   wp_enqueue_style('universal.css', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/css/universal.css');
 	
    // jquery from Wordpress core (with no-conflict mode flag enabled):
    //auth0
@@ -151,8 +194,8 @@ function load_scripts() {
    wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
    wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js');
 	wp_enqueue_script('jquery-ui', get_stylesheet_directory_uri() . '/js/libs/jquery-ui.min.js');
-	wp_enqueue_script('universal', 'https://make.co/wp-content/themes/memberships/universal-nav/js/min/universal.min.js');
-	
+	wp_enqueue_script('universal', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/js/min/universal.min.js', array(), $my_version, true);
+
 
    wp_enqueue_script('thickbox', null);
 
