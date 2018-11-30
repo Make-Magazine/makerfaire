@@ -97,7 +97,7 @@ function getFeatMkPanel($row_layout) {
       foreach ($entries as $entry) {
          $url = $entry['22'];
          
-         $overrideImg = findOverride($result->entry_id, 'makerPanel');
+         $overrideImg = findOverride($entry['id'], 'makerPanel');
          if ($overrideImg != '')
             $url = $overrideImg;
          
