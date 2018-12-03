@@ -5,8 +5,8 @@
 if ( class_exists( 'GFForms' ) ) {
 	GFForms::include_addon_framework();
 	class GFListFieldDropDown extends GFAddOn {
-		protected $_version = '1.8.0';
-		protected $_min_gravityforms_version = '1.7.9999';
+		protected $_version = '1.8.1';
+		protected $_min_gravityforms_version = '2';
 		protected $_slug = 'GFListFieldDropDown';
 		protected $_full_path = __FILE__;
 		protected $_title = 'Drop Down List Field for Gravity Forms';

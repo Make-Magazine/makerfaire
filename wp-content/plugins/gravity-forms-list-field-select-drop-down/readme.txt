@@ -1,10 +1,10 @@
 === Drop Down Options in List Fields for Gravity Forms ===
 Contributors: ovann86
-Donate link: http://www.itsupportguides.com/
+Donate link: https://www.itsupportguides.com/donate/
 Tags: Gravity Forms, forms, online forms, wcag, drop down, select, list
 Requires at least: 4.8
-Tested up to: 4.9
-Stable tag: 1.8.0
+Tested up to: 5.0
+Stable tag: 1.8.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Gives the ability to add drop down (select) fields inside of a list field column
 
 == Description ==
 
-> This plugin is an add-on for the <a href="https://rocketgenius.pxf.io/c/1210785/445235/7938" target="_blank">Gravity Forms</a> (affiliate link) plugin. If you don't yet own a license for Gravity Forms - <a href="https://rocketgenius.pxf.io/c/1210785/445235/7938" target="_blank">buy one now</a>! (affiliate link)
+> This plugin is an add-on for the Gravity Forms plugin. If you don't yet own a license for Gravity Forms - <a href="https://rocketgenius.pxf.io/c/1210785/445235/7938" target="_blank">buy one now</a>! (affiliate link)
 
 **What does this plugin do?**
 
@@ -140,6 +140,10 @@ function my_gform_pre_render( $form ) {
 2. Shows a list field that has drop down fields added to two columns - Title and Option.
 
 == Changelog ==
+
+= 1.8.1 =
+* Maintenance: move from depreciated filter 'gform_get_field_value' to 'gform_get_input_value'
+* Fix: resolve 'Invalid argument supplied for foreach()' error when submitting form
 
 = 1.8.0 =
 * Feature: add post custom field support.
