@@ -113,7 +113,11 @@ class WeDevs_Settings_API {
 
             if ( isset($section['desc']) && !empty($section['desc']) ) {
                 $section['desc'] = '<div class="inside">'.$section['desc'].'</div>';
-                $callback = create_function('', 'echo "'.str_replace('"', '\"', $section['desc']).'<br />";');
+                $callback = function() use ( $section ) {
+                    echo str_replace( '"', '\"', $section['desc'] );
+                };
+            } elseif ( isset( $section['callback'] ) ) {
+                $callback = $section['callback'];
             } else {
                 $callback = '__return_false';
             }
@@ -462,7 +466,7 @@ class WeDevs_Settings_API {
 
                     <div style="padding-left: 10px; padding-top:15px;">
                         <?php // get_submit_button returns a submit button, with provided text and appropriate class
-                            $button_markup = get_submit_button(); 
+                            $button_markup = get_submit_button();
                             $button_markup = apply_filters( 'axiom_wedev_setting_section_submit_button', $button_markup, $form );
                             echo $button_markup;
                         ?>
