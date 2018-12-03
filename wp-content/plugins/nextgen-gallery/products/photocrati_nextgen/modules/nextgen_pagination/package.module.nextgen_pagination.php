@@ -10,6 +10,7 @@ class Mixin_NextGen_Basic_Pagination extends Mixin
      * @param mixed $page
      * @param int $totalElement
      * @param int $maxElement
+     * @param string|null $current_url (optional)
      * @return array Of data holding prev & next url locations and a formatted HTML string
      */
     public function create_pagination($page, $totalElement, $maxElement = 0, $current_url = NULL)

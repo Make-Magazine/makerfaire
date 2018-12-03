@@ -54,10 +54,21 @@
     max-width: 100%;
 }
 
-.nextgen_settings_colorpicker {
+.nextgen_settings_field_colorpicker {
     width: 85px !important;
     text-align: center;
     margin-left: 50px;
+}
+
+/* These three rules are to prevent 'WP Social Widget' from breaking our use of the WP Color Picker */
+#ngg_page_content .wp-picker-container {
+    position: initial !important;
+}
+#ngg_page_content .wp-picker-holder {
+    position: initial !important;
+}
+#ngg_page_content .wp-picker-input-wrap {
+    position: initial !important;
 }
 
 #nextgen_settings_wmXpos,
@@ -345,9 +356,10 @@ table.nextgen_settings_position {
    color: #fff;
    content: '\f0c9';
    display: block;
-   font: normal 20px/1 'FontAwesome';
+   font: normal 20px/1 'Font Awesome 5 Free';
    margin: 0 auto;
    text-align: center;
+   font-weight: 900;
 }
 
 #ngg_page_content .ngg_page_content_menu .ngg_page_content_menu_active, 
@@ -365,9 +377,8 @@ table.nextgen_settings_position {
 }
 
 #ngg_page_content .ngg_page_content_menu a:before {
-    content: "\f107";
     float: left;
-    font: normal 16px/1 'FontAwesome';
+    font: normal 16px/1 'Font Awesome 5 Free';
     height: 16px;
     right: 0;
     margin-top: 3px;
@@ -375,6 +386,7 @@ table.nextgen_settings_position {
     z-index: 9999;
     padding-right: 10px;
     content: "\f1de";
+    font-weight: 900;
 }
 
 #ngg_page_content .ngg_page_content_menu .ngg_page_content_menu_active:after, 
@@ -447,6 +459,10 @@ table.nextgen_settings_position {
     box-shadow: none;
     width: 200px;
     box-shadow: inset 0 0 2px 1px rgba(100,100,100,.05);
+}
+
+#ngg_page_content .ngg_page_content_main select {
+    font-size: 13px;
 }
 
 #ngg_page_content .ngg_page_content_main .select2-container {
@@ -658,6 +674,11 @@ table.nextgen_settings_position {
 
 .gallery_page_ngg_other_options #ngg_page_content .ngg_page_content_main tbody tr td.ngg_options_promo {
     width: 100% !important;
+}
+
+#tr_photocrati-nextgen_basic_imagebrowser_ngg_triggers_display,
+#tr_photocrati-nextgen_basic_slideshow_ngg_triggers_display {
+    display:none;
 }
 
 /***** 6) NGG Admin CSS: NextGEN Pro Custom Post Types *****/

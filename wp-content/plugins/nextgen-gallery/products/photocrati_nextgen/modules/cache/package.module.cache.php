@@ -13,6 +13,10 @@ class C_Cache extends C_Component
         $this->add_mixin('Mixin_Cache');
         $this->implement('I_Cache');
     }
+    /**
+     * @param bool|string $context
+     * @return C_Cache
+     */
     public static function get_instance($context = False)
     {
         if (!isset(self::$_instances[$context])) {

@@ -58,11 +58,12 @@
 			 * Listen for click events to our placeholder
 			 */
             editor.on('mouseup touchend', function(e) {
+
 				tinymce.extend(self, {
 					editor: editor,
 					plugin: editor.plugins.NextGEN_AttachToPost
 				});
-
+				
 				// Support for IGW placeholder images. NGG <= 2.1.50
 				if (e.target.tagName == 'IMG') {
 					if (self.get_class_name(e.target).indexOf('ngg_displayed_gallery') >= 0) {
@@ -75,87 +76,99 @@
 						});
 					}
 				}
+
 				// Support for IGW Visual Shortcodes. NGG >= 2.1.50.1
 				else {
+
 					var $target = $(e.target);
-					if ($target.parents('.nggPlaceholderButton')) {
-						$target = $target.parents('.nggPlaceholderButton');
-					}
+
 					if ($target.hasClass('nggPlaceholderButton')) {
 
 						// Remove button
 						if ($target.hasClass('nggIgwRemove')) {
-							$target.parents('.nggPlaceholder').remove();
+							var $placeholder = $target.parents('.nggPlaceholder')
+							var shortcode = $placeholder[0].getAttribute('data-shortcode')
+							editor.fire('ngg-removed', {shortcode: shortcode})
+							$placeholder.remove();
 						}
-
+						
 						// Edit button
 						else {
-							window.igw_shortcode=  $(e.target).parents('.nggPlaceholder').data('shortcode');
+							// Do not use jQuery's .data() here: it will use cached data
+							window.igw_shortcode = $(e.target).parents('.nggPlaceholder')[0].getAttribute('data-shortcode');
+
 							self.render_attach_to_post_interface({
 								key: 'shortcode',
 								val: Base64.encode(window.igw_shortcode),
 								ref: $(e.target).parents('.nggPlaceholder').attr('id')
 							});
 						}
+
 					}
+
 				}
+
 			});
 
 			/**
 			 * Find each shortcode and replace it with the placeholder, rendered using an underscore template
 			 * in templates/tinymce_placeholder.php
 			 */
-			editor.on('BeforeSetContent', function(event){
-				var shortcode_opening_tag = '[ngg_images ';
-				while (event.content.indexOf(shortcode_opening_tag)>=0) {
-					var start_of_shortcode = event.content.indexOf(shortcode_opening_tag);
-					var index = start_of_shortcode+shortcode_opening_tag.length;
-					var found_attribute_assignment = false;
-					var current_attribute_enclosure = null;
-					var last_found_char = false;
-					var content_length = event.content.length;
-					while (true) {
-						var char = event.content[index];
-						if (char == '"' || char == "'" && last_found_char == '=') {
-							// Is this the closing quote for an already found attribute assignment?
-							if (found_attribute_assignment && current_attribute_enclosure == char) {
-								found_attribute_assignment = false;
-								current_attribute_enclosure = null;
-							}
-							else {
-								found_attribute_assignment = true;
-								current_attribute_enclosure = char;
-							}
-						}
-						else if (char == ']') {
-							// we've found a shortcode closing tag. But, we need to ensure
-							// that this ] isn't within the value of a shortcode attribute
-							if (!found_attribute_assignment) {
-								break; //exit loop - we've found the shortcode
-							}
-						}
+			editor.on('BeforeSetContent', function(event) {
+				function handle_shortcode(shortcode_opening_tag) {
+                    while (event.content.indexOf(shortcode_opening_tag) >= 0) {
+                        var start_of_shortcode = event.content.indexOf(shortcode_opening_tag);
+                        var index = start_of_shortcode + shortcode_opening_tag.length;
+                        var found_attribute_assignment = false;
+                        var current_attribute_enclosure = null;
+                        var last_found_char = false;
+                        var content_length = event.content.length;
+                        while (true) {
+                            var char = event.content[index];
+                            if (char == '"' || char == "'" && last_found_char == '=') {
+                                // Is this the closing quote for an already found attribute assignment?
+                                if (found_attribute_assignment && current_attribute_enclosure == char) {
+                                    found_attribute_assignment = false;
+                                    current_attribute_enclosure = null;
+                                }
+                                else {
+                                    found_attribute_assignment = true;
+                                    current_attribute_enclosure = char;
+                                }
+                            }
+                            else if (char == ']') {
+                                // we've found a shortcode closing tag. But, we need to ensure
+                                // that this ] isn't within the value of a shortcode attribute
+                                if (!found_attribute_assignment) {
+                                    break; //exit loop - we've found the shortcode
+                                }
+                            }
 
-						last_found_char = char;
+                            last_found_char = char;
 
-						if (index == content_length) {
-							break;
-						}
+                            if (index == content_length) {
+                                break;
+                            }
 
-						index++;
-					}
+                            index++;
+                        }
 
-					// Replace the shortcode with a placeholder
-					var match = event.content.substring(start_of_shortcode, ++index);
-					var shortcode = match.substring(1, match.length-1);
-					shortcode = shortcode.replace('[', '&#91;');
-					shortcode = shortcode.replace(']', '&#93;');
+                        // Replace the shortcode with a placeholder
+                        var match = event.content.substring(start_of_shortcode, ++index);
+                        var shortcode = match.substring(1, match.length-1);
+                        shortcode = shortcode.replace('[', '&#91;');
+                        shortcode = shortcode.replace(']', '&#93;');
 
-					var template = _.template($('#ngg-igw-placeholder').html());
-					event.content = event.content.replace(match, template($.extend(ngg_igw_i18n, {
-						shortcode: shortcode,
-						ref: _.now()
-					})));
+                        var template = _.template($('#ngg-igw-placeholder').html());
+                        event.content = event.content.replace(match, template($.extend(ngg_igw_i18n, {
+                            shortcode: shortcode,
+                            ref: _.now()
+                        })));
+                    }
 				}
+
+				handle_shortcode('[ngg_images ');
+				handle_shortcode('[ngg ');
 			});
 
             /**
@@ -202,7 +215,8 @@
 				if (typeof(params['ref']) != 'undefined') {
 					attach_to_post_url += '&ref='+encodeURIComponent(params.ref);
 				}
-            }
+			}
+			attach_to_post_url += "&editor="+this.editor.id;
 
 			var win = window;
 			while (win.parent != null && win.parent != win) {

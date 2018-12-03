@@ -39,7 +39,7 @@ class C_Component_Registry
 
     /**
      * Returns a singleton
-     * @return C_Component_Registry()
+     * @return C_Component_Registry
      */
     static function &get_instance()
     {
@@ -128,7 +128,7 @@ class C_Component_Registry
     /**
      * Retrieves the module path
      * @param string $module_id
-     * @return string
+     * @return null|string
      */
     function get_module_path($module_id)
     {
@@ -147,7 +147,7 @@ class C_Component_Registry
     /**
      * Retrieves the module installation directory
      * @param string $module_id
-     * @return string
+     * @return null|string
      */
     function get_module_dir($module_id)
     {
@@ -169,6 +169,7 @@ class C_Component_Registry
     /**
      * Loads a module's code according to its dependency list
      * @param string $module_id
+     * @return bool
      */
     function load_module($module_id)
     {
@@ -203,6 +204,7 @@ class C_Component_Registry
     /**
      * Initializes a previously loaded module
      * @param string $module_id
+     * @return bool
      */
     function initialize_module($module_id)
     {
@@ -286,7 +288,7 @@ class C_Component_Registry
     /**
      * Retrieves the instance of the registered module. Note: it's the instance of the module object, so the module needs to be loaded or this function won't return anything. For module info returned by scanning (with add_module_path), look at get_module_meta
      * @param string $module_id
-     * @return C_Base_Module
+     * @return null|C_Base_Module
      */
     function get_module($module_id)
     {
@@ -319,7 +321,7 @@ class C_Component_Registry
 
     /**
      * Retrieves a list of instantiated module ids, in their "loaded" order as defined by a product
-     *
+     * @param string|bool $for_product_id (optional)
      * @return array
      */
 	function get_module_list($for_product_id=FALSE)
@@ -475,7 +477,7 @@ class C_Component_Registry
     /**
      * Retrieves the instance of the registered product
      * @param string $product_id
-     * @return C_Base_Module
+     * @return null|C_Base_Module
      */
     function get_product($product_id)
     {
@@ -510,7 +512,7 @@ class C_Component_Registry
     /**
      * Retrieves the module installation path for a specific product (Note: this is just the generic root container path for modules of this product)
      * @param string $product_id
-     * @return string
+     * @return null|string
      */
     function get_product_module_path($product_id)
     {
@@ -582,7 +584,7 @@ class C_Component_Registry
      * Registers an adapter for an interface with specific contexts
      * @param string $interface
      * @param string $class
-     * @param array $contexts
+     * @param array|bool $contexts (optional)
      */
     function add_adapter($interface, $class, $contexts=FALSE)
     {
@@ -610,7 +612,7 @@ class C_Component_Registry
      * contexts to remove the adapter from, leaving the rest intact
      * @param string $interface
      * @param string $class
-     * @param array $contexts
+     * @param array|bool $contexts (optional)
      */
     function del_adapter($interface, $class, $contexts=FALSE)
     {
@@ -671,7 +673,7 @@ class C_Component_Registry
      * Adds a utility for an interface, to be used in particular contexts
      * @param string $interface
      * @param string $class
-     * @param array $contexts
+     * @param array|bool $contexts (optional)
      */
     function add_utility($interface, $class, $contexts=FALSE)
     {
@@ -694,7 +696,7 @@ class C_Component_Registry
     /**
      * Deletes a registered utility for a particular interface.
      * @param string $interface
-     * @param array $contexts
+     * @param array|bool $contexts (optional)
      */
     function del_utility($interface, $contexts=FALSE)
     {
@@ -712,7 +714,7 @@ class C_Component_Registry
     /**
      * Gets the class name of the component providing a utility implementation
      * @param string $interface
-     * @param string|array $context
+     * @param string|array|bool $context (optional)
      * @return string
      */
     function get_utility_class_name($interface, $context=FALSE)
@@ -725,7 +727,7 @@ class C_Component_Registry
      * Retrieves an instantiates the registered utility for the provided instance.
      * The instance is a singleton and must provide the get_instance() method
      * @param string $interface
-     * @param string $context
+     * @param string|bool $context (optional)
      * @return C_Component
      */
     function get_utility($interface, $context=FALSE)
@@ -865,6 +867,7 @@ class C_Component_Registry
     }
     /**
      * Autoloads any classes, interfaces, or adapters needed by this module
+     * @param string $name
      */
     function _module_autoload($name)
     {

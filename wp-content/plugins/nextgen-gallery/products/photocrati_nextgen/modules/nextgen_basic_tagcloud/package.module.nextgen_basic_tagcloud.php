@@ -28,7 +28,9 @@ class A_NextGen_Basic_Tagcloud_Controller extends Mixin
     /**
      * Displays the 'tagcloud' display type
      *
-     * @param stdClass|C_Displayed_Gallery|C_DataMapper_Model $displayed_gallery
+     * @param C_Displayed_Gallery $displayed_gallery
+     * @param bool $return (optional)
+     * @return string
      */
     function index_action($displayed_gallery, $return = FALSE)
     {
@@ -54,7 +56,6 @@ class A_NextGen_Basic_Tagcloud_Controller extends Mixin
         }
         $params = $display_settings;
         $params['inner_content'] = $displayed_gallery->inner_content;
-        $params['storage'] =& $storage;
         $params['tagcloud'] = wp_generate_tag_cloud($tags, $args);
         $params['displayed_gallery_id'] = $displayed_gallery->id();
         $params = $this->object->prepare_display_parameters($displayed_gallery, $params);
@@ -68,7 +69,7 @@ class A_NextGen_Basic_Tagcloud_Controller extends Mixin
     function enqueue_frontend_resources($displayed_gallery)
     {
         $this->call_parent('enqueue_frontend_resources', $displayed_gallery);
-        wp_enqueue_style('photocrati-nextgen_basic_tagcloud-style', $this->get_static_url('photocrati-nextgen_basic_tagcloud#nextgen_basic_tagcloud.css'), FALSE, NGG_SCRIPT_VERSION);
+        wp_enqueue_style('photocrati-nextgen_basic_tagcloud-style', $this->get_static_url('photocrati-nextgen_basic_tagcloud#nextgen_basic_tagcloud.css'), array(), NGG_SCRIPT_VERSION);
         $this->enqueue_ngg_styles();
     }
 }
@@ -196,7 +197,7 @@ class C_Taxonomy_Controller extends C_MVC_Controller
     /**
      * Returns an instance of this class
      *
-     * @param string $context
+     * @param string|bool $context
      * @return C_Taxonomy_Controller
      */
     static function get_instance($context = FALSE)
@@ -218,12 +219,13 @@ class C_Taxonomy_Controller extends C_MVC_Controller
         // Respect the global display type setting
         $display_type = $mapper->find_by_name(NGG_BASIC_TAGCLOUD, TRUE);
         $display_type = !empty($display_type->settings['gallery_display_type']) ? $display_type->settings['gallery_display_type'] : NGG_BASIC_THUMBNAILS;
-        return "[ngg_images source='tags' container_ids='{$tag}' slug='{$tag}' display_type='{$display_type}']";
+        return "[ngg source='tags' container_ids='{$tag}' slug='{$tag}' display_type='{$display_type}']";
     }
     /**
      * Determines if the current page is /ngg_tag/{*}
      *
      * @param $posts Wordpress post objects
+     * @param WP_Query $wp_query_local
      * @return array Wordpress post objects
      */
     function detect_ngg_tag($posts, $wp_query_local)

@@ -103,7 +103,7 @@ class C_Dynamic_Thumbnails_Controller extends C_MVC_Controller
     /**
      * Returns an instance of this class
      *
-     * @param string $context
+     * @param string|bool $context
      * @return C_Dynamic_Thumbnails_Controller
      */
     static function get_instance($context = FALSE)
@@ -504,6 +504,10 @@ class C_Dynamic_Thumbnails_Manager extends C_Component
         $this->implement('I_Dynamic_Thumbnails_Manager');
         $this->add_mixin('Mixin_Dynamic_Thumbnails_Manager');
     }
+    /**
+     * @param bool|string $context
+     * @return C_Dynamic_Thumbnails_Manager
+     */
     static function get_instance($context = False)
     {
         if (!isset(self::$_instances[$context])) {

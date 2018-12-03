@@ -24,7 +24,7 @@ class M_NextGen_Basic_Singlepic extends C_Base_Module
             NGG_BASIC_SINGLEPIC,
             'NextGen Basic Singlepic',
             'Provides a singlepic gallery for NextGEN Gallery',
-            '3.0.0',
+            '3.1.0',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -90,7 +90,7 @@ class M_NextGen_Basic_Singlepic extends C_Base_Module
 
 	function is_rest_request()
 	{
-		return strpos($_SERVER['REQUEST_URI'], 'wp-json') !== FALSE;
+		return defined('REST_REQUEST') || strpos($_SERVER['REQUEST_URI'], 'wp-json') !== FALSE;
 	}
 
     /**
@@ -106,7 +106,7 @@ class M_NextGen_Basic_Singlepic extends C_Base_Module
             wp_enqueue_style(
                 'nextgen_basic_singlepic_style',
                 $router->get_static_url(NGG_BASIC_SINGLEPIC . '#nextgen_basic_singlepic.css'),
-                FALSE,
+                array(),
                 NGG_SCRIPT_VERSION
             );
         }

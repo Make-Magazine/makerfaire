@@ -122,7 +122,7 @@ function media_upload_nextgen_form($errors) {
 
 	// Get the images
 	if ( $galleryID != 0 )
-		$picarray = $wpdb->get_col("SELECT pid FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY {$ngg->options['galSort']} {$ngg->options['galSortDir']} LIMIT $start, 10 ");	
+		$picarray = $wpdb->get_col("SELECT DISTINCT pid FROM $wpdb->nggpictures WHERE galleryid = '$galleryID' AND exclude != 1 ORDER BY {$ngg->options['galSort']},`pid` {$ngg->options['galSortDir']} LIMIT $start, 10 ");
 
 	// WP-Core code for Post-thumbnail
 	$calling_post_id = 0;

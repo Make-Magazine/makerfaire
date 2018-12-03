@@ -27,6 +27,9 @@ class A_NextGen_Basic_ImageBrowser_Controller extends Mixin
      */
     function index_action($displayed_gallery, $return = FALSE)
     {
+        // We now hide option for triggers on this display type.
+        // This ensures they do not show based on past settings.
+        $displayed_gallery->display_settings['ngg_triggers_display'] = 'never';
         $picture_list = array();
         foreach ($displayed_gallery->get_included_entities() as $image) {
             $picture_list[$image->{$image->id_field}] = $image;
@@ -46,7 +49,7 @@ class A_NextGen_Basic_ImageBrowser_Controller extends Mixin
     /**
      * Returns the rendered template of an image browser display
      *
-     * @param C_Displayed_Gallery
+     * @param C_Displayed_Gallery $displayed_gallery
      * @param array $picture_list
      * @return string Rendered HTML (probably)
      */
@@ -153,7 +156,7 @@ class A_NextGen_Basic_ImageBrowser_Controller extends Mixin
     function enqueue_frontend_resources($displayed_gallery)
     {
         $this->call_parent('enqueue_frontend_resources', $displayed_gallery);
-        wp_enqueue_style('nextgen_basic_imagebrowser_style', $this->get_static_url('photocrati-nextgen_basic_imagebrowser#style.css'), FALSE, NGG_SCRIPT_VERSION);
+        wp_enqueue_style('nextgen_basic_imagebrowser_style', $this->get_static_url('photocrati-nextgen_basic_imagebrowser#style.css'), array(), NGG_SCRIPT_VERSION);
         $this->enqueue_ngg_styles();
     }
 }
@@ -173,7 +176,7 @@ class A_NextGen_Basic_ImageBrowser_Form extends Mixin_Display_Type_Form
      */
     function _get_field_names()
     {
-        return array('ajax_pagination', 'nextgen_basic_templates_template');
+        return array('ajax_pagination', 'display_view', 'nextgen_basic_templates_template');
     }
 }
 /**
@@ -187,7 +190,10 @@ class A_NextGen_Basic_ImageBrowser_Mapper extends Mixin
     {
         $this->call_parent('set_defaults', $entity);
         if (isset($entity->name) && $entity->name == NGG_BASIC_IMAGEBROWSER) {
+            $default_template = isset($entity->settings["template"]) ? 'default' : 'default-view.php';
+            $this->object->_set_default_value($entity, 'settings', 'display_view', $default_template);
             $this->object->_set_default_value($entity, 'settings', 'template', '');
+            $this->object->_set_default_value($entity, 'settings', 'ajax_pagination', '1');
             // Part of the pro-modules
             $this->object->_set_default_value($entity, 'settings', 'ngg_triggers_display', 'never');
         }

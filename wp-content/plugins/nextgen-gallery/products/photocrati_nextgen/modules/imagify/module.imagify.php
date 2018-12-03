@@ -27,7 +27,7 @@ class M_Imagify extends C_Base_Module
             'photocrati-imagify',
             'NextGEN Imagify Integration',
             'NextGen Gallery / Imagify Integration',
-            '3.0.0',
+            '3.1.0',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -48,10 +48,10 @@ class M_Imagify extends C_Base_Module
         // TODO: check for PHP 5.2
         if (is_admin())
         {
-            $this->get_registry()
-                 ->add_adapter('I_Page_Manager', 'A_Imagify_Admin_Page');
-            $this->get_registry()
-                 ->add_adapter('I_NextGen_Admin_Page', 'A_Imagify_Admin_Page_Controller', 'ngg_imagify');
+//            $this->get_registry()
+//                 ->add_adapter('I_Page_Manager', 'A_Imagify_Admin_Page');
+//            $this->get_registry()
+//                 ->add_adapter('I_NextGen_Admin_Page', 'A_Imagify_Admin_Page_Controller', 'ngg_imagify');
         }
     }
 

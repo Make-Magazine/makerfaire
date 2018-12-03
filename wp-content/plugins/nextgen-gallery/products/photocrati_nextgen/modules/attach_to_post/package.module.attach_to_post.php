@@ -21,7 +21,7 @@ class A_Attach_To_Post_Ajax extends Mixin
     }
     /**
      * Returns a list of image sources for the Attach to Post interface
-     * @return type
+     * @return array
      */
     function get_attach_to_post_sources_action()
     {
@@ -250,11 +250,11 @@ class C_Attach_Controller extends C_NextGen_Admin_Page_Controller
     {
         parent::initialize();
         $this->_load_displayed_gallery();
-        if (!has_action('wp_print_scripts', array(&$this, 'filter_scripts'))) {
-            add_action('wp_print_scripts', array(&$this, 'filter_scripts'));
+        if (!has_action('wp_print_scripts', array($this, 'filter_scripts'))) {
+            add_action('wp_print_scripts', array($this, 'filter_scripts'));
         }
-        if (!has_action('wp_print_scripts', array(&$this, 'filter_styles'))) {
-            add_action('wp_print_scripts', array(&$this, 'filter_styles'));
+        if (!has_action('wp_print_scripts', array($this, 'filter_styles'))) {
+            add_action('wp_print_scripts', array($this, 'filter_styles'));
         }
     }
 }
@@ -269,6 +269,7 @@ class Mixin_Attach_To_Post extends Mixin
         } else {
             if (isset($_REQUEST['shortcode'])) {
                 $params = str_replace('ngg_images', '', base64_decode($_REQUEST['shortcode']));
+                $params = str_replace('ngg', '', base64_decode($_REQUEST['shortcode']));
                 $params = stripslashes($params);
                 $params = str_replace(array('[', ']'), array('&#91;', '&#93;'), $params);
                 $params = shortcode_parse_atts($params);
@@ -471,7 +472,7 @@ class Mixin_Attach_To_Post extends Mixin
         usort($display_types, array($this->object, '_display_type_list_sort'));
         wp_enqueue_script('ngg_display_tab', $this->get_static_url('photocrati-attach_to_post#display_tab.js'), array('jquery', 'backbone', 'underscore.string', 'photocrati_ajax'), NGG_SCRIPT_VERSION);
         $this->object->mark_script('ngg_display_tab');
-        wp_localize_script('ngg_display_tab', 'igw_data', array('displayed_gallery_preview_url' => $settings->gallery_preview_url, 'displayed_gallery' => $this->object->_displayed_gallery->get_entity(), 'sources' => $sources->get_all(), 'gallery_primary_key' => $gallery_mapper->get_primary_key_column(), 'galleries' => $gallery_mapper->find_all(), 'albums' => $album_mapper->find_all(), 'tags' => $tags, 'display_types' => $display_types, 'sec_token' => $security->get_request_token('nextgen_edit_displayed_gallery')->get_json(), 'image_primary_key' => $image_mapper->get_primary_key_column(), 'display_type_priority_base' => NGG_DISPLAY_PRIORITY_BASE, 'display_type_priority_step' => NGG_DISPLAY_PRIORITY_STEP, 'shortcode_ref' => isset($_REQUEST['ref']) ? floatval($_REQUEST['ref']) : null, 'i18n' => array('sources' => __('Are you inserting a Gallery (default), an Album, or images based on Tags?', 'nggallery'), 'optional' => __('(optional)', 'nggallery'), 'slug_tooltip' => __('Sets an SEO-friendly name to this gallery for URLs. Currently only in use by the Pro Lightbox', 'nggallery'), 'slug_label' => __('Slug', 'nggallery'), 'no_entities' => __('No entities to display for this source', 'nggallery'), 'exclude_question' => __('Exclude?', 'nggallery'), 'select_gallery' => __('Select a Gallery', 'nggallery'), 'galleries' => __('Select one or more galleries (click in box to see available galleries).', 'nggallery'), 'albums' => __('Select one album (click in box to see available albums).', 'nggallery'))));
+        wp_localize_script('ngg_display_tab', 'igw_data', array('displayed_gallery_preview_url' => $settings->gallery_preview_url, 'displayed_gallery' => $this->object->_displayed_gallery->get_entity(), 'sources' => $sources->get_all(), 'gallery_primary_key' => $gallery_mapper->get_primary_key_column(), 'galleries' => $gallery_mapper->find_all(), 'albums' => $album_mapper->find_all(), 'tags' => $tags, 'display_types' => $display_types, 'sec_token' => $security->get_request_token('nextgen_edit_displayed_gallery')->get_json(), 'image_primary_key' => $image_mapper->get_primary_key_column(), 'display_type_priority_base' => NGG_DISPLAY_PRIORITY_BASE, 'display_type_priority_step' => NGG_DISPLAY_PRIORITY_STEP, 'shortcode_ref' => isset($_REQUEST['ref']) ? floatval($_REQUEST['ref']) : null, 'shortcode_defaults' => array('order_by' => $settings->galSort, 'order_direction' => $settings->galSortDir, 'returns' => 'included', 'maximum_entity_count' => $settings->maximum_entity_count), 'shortcode_attr_replacements' => array('source' => 'src', 'container_ids' => 'ids', 'display_type' => 'display'), 'i18n' => array('sources' => __('Are you inserting a Gallery (default), an Album, or images based on Tags?', 'nggallery'), 'optional' => __('(optional)', 'nggallery'), 'slug_tooltip' => __('Sets an SEO-friendly name to this gallery for URLs. Currently only in use by the Pro Lightbox', 'nggallery'), 'slug_label' => __('Slug', 'nggallery'), 'no_entities' => __('No entities to display for this source', 'nggallery'), 'exclude_question' => __('Exclude?', 'nggallery'), 'select_gallery' => __('Select a Gallery', 'nggallery'), 'galleries' => __('Select one or more galleries (click in box to see available galleries).', 'nggallery'), 'albums' => __('Select one album (click in box to see available albums).', 'nggallery'))));
     }
     function start_resource_monitoring()
     {
@@ -505,8 +506,8 @@ class Mixin_Attach_To_Post extends Mixin
         // Ensure that the Photocrati AJAX library is loaded
         wp_enqueue_script('photocrati_ajax');
         // Enqueue logic for the Attach to Post interface as a whole
-        wp_enqueue_script('ngg_attach_to_post_js', $this->get_static_url('photocrati-attach_to_post#attach_to_post.js'), FALSE, NGG_SCRIPT_VERSION);
-        wp_enqueue_style('ngg_attach_to_post', $this->get_static_url('photocrati-attach_to_post#attach_to_post.css'), FALSE, NGG_SCRIPT_VERSION);
+        wp_enqueue_script('ngg_attach_to_post_js', $this->get_static_url('photocrati-attach_to_post#attach_to_post.js'), array(), NGG_SCRIPT_VERSION);
+        wp_enqueue_style('ngg_attach_to_post', $this->get_static_url('photocrati-attach_to_post#attach_to_post.css'), array(), NGG_SCRIPT_VERSION);
         wp_dequeue_script('debug-bar-js');
         wp_dequeue_style('debug-bar-css');
         $this->enqueue_display_tab_js();
@@ -516,6 +517,8 @@ class Mixin_Attach_To_Post extends Mixin
     }
     /**
      * Renders the interface
+     * @param bool $return
+     * @return string
      */
     function index_action($return = FALSE)
     {
@@ -567,6 +570,8 @@ class Mixin_Attach_To_Post extends Mixin
     }
     /**
      * Filter for ngg_before_save_thumbnail
+     * @param stdClass $thumbnail
+     * @return stdClass
      */
     function set_igw_placeholder_text($thumbnail)
     {
@@ -596,7 +601,7 @@ class Mixin_Attach_To_Post extends Mixin
     }
     /**
      * Returns the main tabs displayed on the Attach to Post interface
-     * @returns array
+     * @return array
      */
     function _get_main_tabs()
     {
@@ -627,6 +632,7 @@ class Mixin_Attach_To_Post extends Mixin
      * Renders a NextGen Gallery page in an iframe, suited for the attach to post
      * interface
      * @param string $page
+     * @param null|int $tab_id (optional)
      * @return string
      */
     function _render_ngg_page_in_frame($page, $tab_id = null)
@@ -639,9 +645,8 @@ class Mixin_Attach_To_Post extends Mixin
         return "<iframe name='{$page}' frameBorder='0'{$tab_id} class='ngg-attach-to-post ngg-iframe-page-{$page}' scrolling='yes' src='{$frame_url}'></iframe>";
     }
     /**
-     * Renders the display tab for adjusting how images/galleries will be
-     * displayed
-     * @return type
+     * Renders the display tab for adjusting how images/galleries will be displayed
+     * @return string
      */
     function _render_display_tab()
     {
@@ -649,7 +654,7 @@ class Mixin_Attach_To_Post extends Mixin
     }
     /**
      * Renders the tab used primarily for Gallery and Image creation
-     * @return type
+     * @return string
      */
     function _render_create_tab()
     {
@@ -740,7 +745,7 @@ class Mixin_Attach_To_Post_Display_Tab extends Mixin
     }
     /**
      * Renders the display settings tab for the Attach to Post interface
-     * @return type
+     * @return array
      */
     function _render_display_settings_tab()
     {
@@ -791,6 +796,7 @@ class Mixin_Attach_To_Post_Display_Tab extends Mixin
             $model = $form->get_model();
             $current = $this->object->is_displayed_gallery_using_display_type($model->name);
             $css_class = $current ? 'display_settings_form' : 'display_settings_form hidden';
+            $defaults = $model->settings;
             // If this form is used to provide the display settings for the current
             // displayed gallery, then we need to override the forms settings
             // with the displayed gallery settings
@@ -799,7 +805,7 @@ class Mixin_Attach_To_Post_Display_Tab extends Mixin
                 $model->settings = $settings;
             }
             // Output the display settings form
-            $retval[] = $this->object->render_partial('photocrati-attach_to_post#display_settings_form', array('settings' => $form->render(), 'display_type_name' => $model->name, 'css_class' => $css_class), TRUE);
+            $retval[] = $this->object->render_partial('photocrati-attach_to_post#display_settings_form', array('settings' => $form->render(), 'display_type_name' => $model->name, 'css_class' => $css_class, 'defaults' => $defaults), TRUE);
         }
         // In addition, we'll render a form that will be displayed when no
         // display type has been selected in the Attach to Post interface
@@ -811,7 +817,7 @@ class Mixin_Attach_To_Post_Display_Tab extends Mixin
     }
     /**
      * Renders the tab used to preview included images
-     * @return string
+     * @return array
      */
     function _render_preview_tab()
     {

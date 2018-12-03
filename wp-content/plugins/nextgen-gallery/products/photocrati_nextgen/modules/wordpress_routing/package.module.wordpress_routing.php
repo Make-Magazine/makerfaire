@@ -206,6 +206,13 @@ class A_WordPress_Routing_App extends Mixin
         $base_parts = parse_url($router->get_base_url('root'));
         $new_request_uri = $router->join_paths(!empty($base_parts['path']) ? $base_parts['path'] : '', $this->object->strip_param_segments($router->get_request_uri()));
         $new_request_uri = str_replace('index.php/index.php', 'index.php', $new_request_uri);
+        // Handle possible incompatibility with 3rd party plugins manipulating the query as well: WPML in particular
+        // can lead to our $new_request_uri here becoming index.php/en/index.php: remove this double index.php
+        $uri_array = explode('/', $new_request_uri);
+        if (!empty($uri_array) && count($uri_array) >= 2 && reset($uri_array) == 'index.php' && end($uri_array) == 'index.php') {
+            array_shift($uri_array);
+            $new_request_uri = implode('/', $uri_array);
+        }
         $_SERVER['UNENCODED_URL'] = $_SERVER['HTTP_X_ORIGINAL_URL'] = $_SERVER['REQUEST_URI'] = '/' . trailingslashit($new_request_uri);
         if (isset($_SERVER['PATH_INFO'])) {
             $_SERVER['ORIG_PATH_INFO'] = $_SERVER['PATH_INFO'];

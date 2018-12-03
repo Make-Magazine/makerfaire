@@ -724,13 +724,14 @@ class ngg_Thumbnail {
 	/**
 	 * Rotate an image clockwise or counter clockwise
 	 *
-	 * @param string $direction could be CW or CCW
+	 * @param string $dir Either CW or CCW
 	 */
-	function rotateImage( $dir = 'CW' ) {
-
+	function rotateImage($dir = 'CW')
+    {
 		$angle = ($dir == 'CW') ? 90 : -90;
 
-		if ( function_exists('imagerotate') ) {
+		if (function_exists('imagerotate'))
+		{
 	        $this->workingImage = imagerotate($this->oldImage, 360 - $angle, 0); // imagerotate() rotates CCW
 	        $this->currentDimensions['width']  = imagesx($this->workingImage);
 	    	$this->currentDimensions['height'] = imagesy($this->workingImage);

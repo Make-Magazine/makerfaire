@@ -72,6 +72,8 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 				this.enable = function() {
 				  el.removeClass('ngg-wizard-disabled');
 				};
+				this.setup = function() {
+				};
 				this.reset = function() {
 				  el.removeClass('ngg-wizard-has-selection');
 				  el.find(this.itemSelector).removeClass('ngg-wizard-selected');
@@ -103,16 +105,17 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 				
 				el.click(function (e) {
 					// here we only trigger done() if anchor is page-local (i.e. JS button) because for normal anchors this step is only "done" when reaching the new page
-					if (!el.is('a') || (el.attr("href").startsWith("#") || el.hasClass("thickbox"))) {
+					if (!el.is('a') || (el.attr("href").startsWith("#") || el.attr("href").startsWith("javascript:") || el.hasClass("thickbox"))) {
 						self.done(el);
 					}
 				});
 				
-				this.reset = function() {
+				this.setup = function() {
 					if (!el.is('a'))
 						return;
 					
 					var href = el.attr("href");
+					this.originalHref = href;
 					
 					if (!href.startsWith("#")) {
 						if (href.indexOf("?") == -1)
@@ -123,6 +126,14 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 						href = href + "ngg_wizard=" + this.currentWizard + "&ngg_wizard_step=" + this.currentStep;
 				
 						el.attr("href", href);
+					}
+				};
+				
+				this.reset = function() {
+					if (this.originalHref) {
+						if (el.is('a')) {
+							el.attr('href', this.originalHref);
+						}
 					}
 				};
 			}
@@ -138,7 +149,7 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 						self.done(el);
 				});
 				
-				this.reset = function() {
+				this.setup = function() {
 					// in here we can support wizards steps after a post is submitted by editing the form's URL
 				};
 			}
@@ -154,7 +165,7 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 						self.done(el);
 				});
 				
-				this.reset = function() {
+				this.setup = function() {
 					// in here we can support wizards steps after a post is submitted by editing the form's URL
 				};
 			}
@@ -190,7 +201,7 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 			view = {
 				handler : TextView,
 				name : "TextView",
-				selector : "input[type='text']"
+				selector : "input[type='text'], input[type='search'], input[type='email'], input[type='tel'], input[type='number'], input[type='username'], input[type='password'], textarea"
 			};
 			this.views.push(view);
 			
@@ -212,7 +223,7 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
     	Tourist.Tip.Base.prototype.nextButtonTemplate = '<a class="button-primary pull-right tour-next">Next step →</a>';
     	Tourist.Tip.Base.prototype.finalButtonTemplate = '<button class="button-primary pull-right tour-next">Finish up</button>';
 			// override close button template
-			Tourist.Tip.Base.prototype.closeButtonTemplate = '<a class="btn btn-close tour-close" href="#"><i class="icon icon-remove fa fa-close"></i></a>';
+			Tourist.Tip.Base.prototype.closeButtonTemplate = '<a class="btn btn-close tour-close" href="#"><i class="icon icon-remove far fa-window-close"></i></a>';
 			
 			// override Tourist's BootstrapTip logic to retrieve target bounds
 		  Tourist.Tip.BootstrapTip.prototype._getTargetBounds = function(target) {
@@ -501,7 +512,7 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 			}
 			
 			stepOb.highlightTarget = isTargeted;
-			stepOb.nextButton = !isTargeted;
+			stepOb.nextButton = !isTargeted || step['optional'];
 			stepOb.target = jTarget;
 			stepOb.ngg_view = viewOb;
 				
@@ -748,7 +759,7 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 					if (view != null) {
 					  view.currentWizard = tour.ngg_wizard_id;
 					  view.currentStep = this.ngg_step_id;
-					  view.reset();
+					  view.setup();
 					  view.bind('done', this.onDone);
 					  view.enable();
 					}
@@ -763,6 +774,7 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 					if (view != null) {
 					  view.disable();
 					  view.unbind('done', this.onDone);
+					  view.reset();
 					}
 			  };
 				

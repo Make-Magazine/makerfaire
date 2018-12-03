@@ -26,7 +26,7 @@ class M_NextGen_Basic_ImageBrowser extends C_Base_Module
 			'photocrati-nextgen_basic_imagebrowser',
 			'NextGEN Basic ImageBrowser',
 			'Provides the NextGEN Basic ImageBrowser Display Type',
-            '3.0.0',
+            '3.0.0.4',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -144,8 +144,9 @@ class M_NextGen_Basic_ImageBrowser extends C_Base_Module
 
 /**
  * Show an image browser. Ngglegacy function
- * @param $galleryID
+ * @param int $galleryID
  * @param string $template
+ * @return string
  */
 function nggShowImageBrowser($galleryID, $template = '')
 {
@@ -161,8 +162,9 @@ function nggShowImageBrowser($galleryID, $template = '')
 
 /**
  * Create an image browser from a list of image objects. Ngglegacy function
- * @param $picturelist
- * @param string $template
+ * @param array $picturelist
+ * @param string $template (optional)
+ * @return string
  */
 function nggCreateImageBrowser($picturelist, $template = '')
 {

@@ -51,7 +51,8 @@ margin-top: -25px;
 }
 
 .tourist-popover {
-z-index: 100100 !important;
+z-index: 1000100 !important;
+min-width: 230px;
 }
 .tourist-popover .arrow {
 margin-left: 0;

@@ -48,7 +48,7 @@ class C_Ajax_Controller extends C_MVC_Controller
     }
     /**
      * Returns an instance of this class
-     * @param string $context
+     * @param string|bool $context
      * @return C_Ajax_Controller
      */
     static function get_instance($context = FALSE)

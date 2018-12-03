@@ -15,6 +15,7 @@ class C_Component extends ExtensibleObject
 
 	/**
 	 * Many components will execute parent::define()
+     * @param bool|string $context (optional)
 	 */
 	function define($context=FALSE)
 	{
@@ -61,7 +62,7 @@ class C_Component extends ExtensibleObject
 
 	/**
 	 * Assigns a particular context to the component
-	 * @param type $context
+	 * @param string $context
 	 */
 	function add_context($context)
 	{
@@ -75,7 +76,7 @@ class C_Component extends ExtensibleObject
 
 	/**
 	 * Assigns one or more contexts to the component
-	 * @param type $context
+	 * @param string $context
 	 */
 	function assign_context($context)
 	{
@@ -84,7 +85,7 @@ class C_Component extends ExtensibleObject
 
 	/**
 	 * Un-assigns one or more contexts from the component
-	 * @param type $context
+	 * @param string $context
 	 */
 	function remove_context($context)
 	{
@@ -99,7 +100,7 @@ class C_Component extends ExtensibleObject
 
 	/**
 	 * Assigns one or more contexts to the component
-	 * @param type $context
+	 * @param string $context
 	 */
 	function unassign_context($context)
 	{

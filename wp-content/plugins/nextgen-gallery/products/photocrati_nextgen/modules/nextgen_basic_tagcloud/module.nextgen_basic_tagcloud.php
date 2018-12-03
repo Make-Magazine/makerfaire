@@ -24,7 +24,7 @@ class M_NextGen_Basic_Tagcloud extends C_Base_Module
 			NGG_BASIC_TAGCLOUD,
             'NextGen Basic Tagcloud',
             'Provides a tagcloud for NextGEN Gallery',
-            '3.0.0',
+            '3.0.0.1',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -167,6 +167,7 @@ class C_NextGen_Basic_Tagcloud_Installer extends C_Gallery_Display_Installer
 {
 	/**
 	 * Installs the display type for NextGEN Basic Tagcloud
+     * @param bool $reset (optional) Unused
 	 */
 	function install($reset = FALSE)
 	{

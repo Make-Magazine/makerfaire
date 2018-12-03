@@ -111,6 +111,15 @@ iframe {
 	background: transparent;
 }
 
+.chrome_70_hack_frames {
+    z-index: 100000000 !important;
+}
+
+.chrome_70_hack_noframes {
+    z-index: 0 !important;
+}
+
+
 .clear {
 	clear: both;
 	float: none;
@@ -177,7 +186,7 @@ table {
     background: transparent;
     padding: 0;
     margin-top: 90px;
-    list-style: ordered;
+    list-style: none;
 }
 
 #attach_to_post_tabs .ui-tabs-nav li {
@@ -209,11 +218,11 @@ table {
 /* The next couple of rules are all a workaround to disable the "Insert Into Page" tab just for iOS */
 /* TODO: consolidate when plupload is upgraded */
 #attach_to_post_tabs ul.ui-tabs-nav li:nth-of-type(1) {
-    list-style: ordered;
+    list-style: none;
     border-top: 1px solid #344a59;
 }
 #attach_to_post_tabs:not(.ngg_atp_ios_detected) ul.ui-tabs-nav li:nth-of-type(2) {
-    list-style: ordered;
+    list-style: none;
 }
 
 #attach_to_post_tabs:not(.ngg_atp_ios_detected) ul.ui-tabs-nav li:nth-of-type(1) a {
@@ -546,6 +555,10 @@ table {
     line-height: 50px!important;
     padding: 0 30px!important;
     font-size: 13px;
+}
+
+#save_displayed_gallery:disabled {
+	background: gray !important;
 }
 
 /* 3b. Display Tab: "Customize Display Settings" Subtab */

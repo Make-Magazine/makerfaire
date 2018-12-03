@@ -96,7 +96,7 @@ class A_NextGen_AddGallery_Ajax extends Mixin
         $error = FALSE;
         if ($this->validate_ajax_request('nextgen_upload_image', TRUE)) {
             if (!class_exists('DOMDocument')) {
-                $retval['error'] = __("Please ask your hosting provider or system administrator to enable the PHP XML module, which is required for NextGEN Gallery", 'nggallery');
+                $retval['error'] = __("Please ask your hosting provider or system administrator to enable the PHP XML module which is required for image uploads", 'nggallery');
             } else {
                 // We need to create a gallery
                 if ($gallery_id == 0) {

@@ -118,9 +118,9 @@ class A_Image_Options_Form extends Mixin
         return array(__('Categories', 'nggallery') => 'category', __('Tags', 'nggallery') => 'tags');
     }
     /**
-     * Tries to create the gallery storage directory if it doesn't exist
-     * already
-     * @return string
+     * Tries to create the gallery storage directory if it doesn't exist already
+     * @param null|string $gallerypath (optional)
+     * @return bool|string
      */
     function _create_gallery_storage_dir($gallerypath = NULL)
     {
@@ -136,7 +136,7 @@ class A_Image_Options_Form extends Mixin
         }
         return $retval;
     }
-    /*
+    /**
      * Renders the form
      */
     function render()
@@ -168,6 +168,28 @@ class A_Image_Options_Form extends Mixin
                 }
             } elseif (isset($image_options['gallerypath'])) {
                 unset($image_options['gallerypath']);
+            }
+            // Sanitize input
+            foreach ($image_options as $key => &$value) {
+                switch ($key) {
+                    case 'imgAutoResize':
+                    case 'deleteImg':
+                    case 'imgWidth':
+                    case 'imgHeight':
+                    case 'imgBackup':
+                    case 'imgQuality':
+                    case 'activateTags':
+                    case 'maxImages':
+                        $value = intval($value);
+                        break;
+                    case 'galSort':
+                    case 'galSortDir':
+                        $value = esc_html($value);
+                        break;
+                    case 'relatedHeading':
+                        $value = M_NextGen_Data::strip_html($value, TRUE);
+                        break;
+                }
             }
             // Update image options
             if ($save) {
@@ -319,8 +341,9 @@ class A_Miscellaneous_Form extends Mixin
         if ($settings = $this->object->param('misc_settings')) {
             // The Media RSS setting is actually a local setting, not a global one
             $local_settings = C_NextGen_Settings::get_instance();
-            $local_settings->set('useMediaRSS', $settings['useMediaRSS']);
+            $local_settings->set('useMediaRSS', intval($settings['useMediaRSS']));
             unset($settings['useMediaRSS']);
+            $settings['galleries_in_feeds'] = intval($settings['galleries_in_feeds']);
             // It's important the router_param_slug never be empty
             if (empty($settings['router_param_slug'])) {
                 $settings['router_param_slug'] = 'nggallery';
@@ -330,7 +353,8 @@ class A_Miscellaneous_Form extends Mixin
                 C_Photocrati_Transient_Manager::flush('displayed_gallery_rendering');
             }
             // Do not allow this field to ever be unset
-            if (empty($settings['maximum_entity_count']) || (int) $settings['maximum_entity_count'] <= 0) {
+            $settings['maximum_entity_count'] = intval($settings['maximum_entity_count']);
+            if ($settings['maximum_entity_count'] <= 0) {
                 $settings['maximum_entity_count'] = 500;
             }
             // Save both setting groups
@@ -350,7 +374,7 @@ class A_Other_Options_Controller extends Mixin
     {
         $this->call_parent('enqueue_backend_resources');
         wp_enqueue_script('nextgen_settings_page', $this->get_static_url('photocrati-nextgen_other_options#nextgen_settings_page.js'), array('jquery-ui-accordion', 'jquery-ui-tooltip', 'wp-color-picker', 'jquery.nextgen_radio_toggle'), NGG_SCRIPT_VERSION);
-        wp_enqueue_style('nextgen_settings_page', $this->get_static_url('photocrati-nextgen_other_options#nextgen_settings_page.css'), FALSE, NGG_SCRIPT_VERSION);
+        wp_enqueue_style('nextgen_settings_page', $this->get_static_url('photocrati-nextgen_other_options#nextgen_settings_page.css'), array(), NGG_SCRIPT_VERSION);
     }
     function get_page_title()
     {
@@ -470,6 +494,7 @@ class A_Styles_Form extends Mixin
     {
         // Ensure that we have
         if ($settings = $this->object->param('style_settings')) {
+            $settings['activateCSS'] = intval($settings['activateCSS']);
             $valid = TRUE;
             // the desired file, but users shouldn't use this to write files that don't end in .css anyway
             $file_info = pathinfo($settings['CSSfile']);
@@ -557,6 +582,10 @@ class A_Thumbnail_Options_Form extends Mixin
     function save_action()
     {
         if ($settings = $this->object->param('thumbnail_settings')) {
+            // Sanitize
+            foreach ($settings as $key => &$value) {
+                $value = intval($value);
+            }
             $this->object->get_model()->set($settings)->save();
         }
     }
@@ -585,11 +614,9 @@ class A_Watermarking_Ajax_Actions extends Mixin
             $sizeinfo = array('quality' => 100, 'height' => 250, 'crop' => FALSE, 'watermark' => TRUE);
             $size = $imagegen->get_size_name($sizeinfo);
             $thumbnail_url = $storage->get_image_url($image, $size);
-            // Temporarily update the watermark options. Generate a new image based
-            // on these settings
+            // Temporarily update the watermark options. Generate a new image based on these settings
             if ($watermark_options = $this->param('watermark_options')) {
-                $watermark_options['wmFont'] = trim($watermark_options['wmFont']);
-                $settings->set($watermark_options);
+                $settings->set('wmFont', trim($watermark_options['wmFont']));
                 $storage->generate_image_size($image, $size);
                 $thumbnail_url = $storage->get_image_url($image, $size);
                 $settings->load();
@@ -643,7 +670,7 @@ class A_Watermarks_Form extends Mixin
     }
     /**
      * Renders the fields for a watermark source (image, text)
-     * @return string
+     * @return array
      */
     function _get_watermark_source_fields()
     {
@@ -699,6 +726,28 @@ class A_Watermarks_Form extends Mixin
     function save_action()
     {
         if ($settings = $this->object->param('watermark_options')) {
+            // Sanitize
+            foreach ($settings as $key => &$value) {
+                switch ($key) {
+                    case 'wmType':
+                        if (!in_array($value, array('', 'text', 'image'))) {
+                            $value = '';
+                        }
+                        break;
+                    case 'wmPos':
+                        if (!in_array($value, array('topLeft', 'topCenter', 'topRight', 'midLeft', 'midCenter', 'midRight', 'botLeft', 'botCenter', 'botRight'))) {
+                            $value = 'midCenter';
+                        }
+                        break;
+                    case 'wmXpos':
+                    case 'wmYpos':
+                        $value = intval($value);
+                        break;
+                    case 'wmText':
+                        $value = M_NextGen_Data::strip_html($value);
+                        break;
+                }
+            }
             $this->object->get_model()->set($settings)->save();
             $image = $this->object->_get_preview_image();
             if (is_file($image['abspath'])) {
@@ -718,6 +767,10 @@ class C_Settings_Model extends C_Component
      */
     var $wrapper = NULL;
     static $_instances = array();
+    /**
+     * @param bool|string $context
+     * @return C_Settings_Model
+     */
     static function get_instance($context = FALSE)
     {
         if (!isset(self::$_instances[$context])) {
