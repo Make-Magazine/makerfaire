@@ -17,7 +17,8 @@
 
 			var $formWrapper = $( '#gform_wrapper_{0}'.format( self.formId ) );
 
-			$formWrapper.on( 'click.gpcopycat', '.gwcopy input[type="checkbox"]', function() {
+			//$formWrapper.on( 'click.gpcopycat', '.gwcopy input[type="checkbox"]', function() {
+         jQuery('.gwcopy input[type="checkbox"]').on( 'click', function() {   
 				if( $( this ).is( ':checked' ) ) {
 					self.copyValues( this );
 				} else {
