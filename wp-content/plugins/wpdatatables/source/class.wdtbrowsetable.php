@@ -30,6 +30,7 @@ class WDTBrowseTable extends WP_List_Table {
             'id' => 'ID',
             'title' => 'Title',
             'table_type' => 'Type',
+            'connection' => 'Connection',
             'shortcode' => 'Shortcode',
             'functions' => 'Functions'
         );
@@ -52,7 +53,8 @@ class WDTBrowseTable extends WP_List_Table {
         return array(
             'id' => array('id', true),
             'title' => array('title', false),
-            'table_type' => array('table_type', false)
+            'table_type' => array('table_type', false),
+            'connection' => array('connection', false)
         );
     }
 
@@ -83,7 +85,7 @@ class WDTBrowseTable extends WP_List_Table {
     function getAllTables() {
         global $wpdb;
 
-        $query = "SELECT id, title, table_type, editable FROM {$wpdb->prefix}wpdatatables ";
+        $query = "SELECT id, title, table_type, connection, editable FROM {$wpdb->prefix}wpdatatables ";
 
         if (isset($_REQUEST['s'])) {
             if (is_numeric($_REQUEST['s'])){
@@ -117,6 +119,10 @@ class WDTBrowseTable extends WP_List_Table {
         $allTables = $wpdb->get_results($query, ARRAY_A);
         $allTables = apply_filters('wpdatatables_filter_browse_tables', $allTables);
 
+        foreach($allTables as &$table) {
+            $table['connection'] = Connection::getName($table['connection']);
+        }
+
         return $allTables;
     }
 
@@ -132,7 +138,7 @@ class WDTBrowseTable extends WP_List_Table {
         $per_page = get_option('wdtTablesPerPage') ? get_option('wdtTablesPerPage') : 10;
 
         $columns = $this->get_columns();
-        $hidden = array();
+        $hidden = Connection::enabledSeparate() ? array() : array('connection');
         $sortable = $this->get_sortable_columns();
         $this->_column_headers = array($columns, $hidden, $sortable);
 
@@ -231,7 +237,13 @@ class WDTBrowseTable extends WP_List_Table {
     function column_table_type($item) {
         switch ($item['table_type']) {
             case 'mysql':
-                return '<span class="wpdt-type-column bgm-gray">' . __('MySQL', 'wpdatatables') . '</span>';
+                return '<span class="wpdt-type-column bgm-gray">' . __('SQL', 'wpdatatables') . '</span>';
+                break;
+            case 'mssql':
+                return '<span class="wpdt-type-column bgm-gray">' . __('SQL', 'wpdatatables') . '</span>';
+                break;
+            case 'postgresql':
+                return '<span class="wpdt-type-column bgm-gray">' . __('SQL', 'wpdatatables') . '</span>';
                 break;
             case 'manual':
                 return '<span class="wpdt-type-column bgm-gray">' . __('Manual', 'wpdatatables') . '</span>';
@@ -262,6 +274,15 @@ class WDTBrowseTable extends WP_List_Table {
                 return '<span class="wpdt-type-column bgm-gray">' . __('Unknown', 'wpdatatables') . '</span>';
                 break;
         }
+    }
+
+    /**
+     * Set column connection
+     * @param $item
+     * @return string
+     */
+    function column_connection($item) {
+        return $item['connection'] ? '<span class="wpdt-type-column bgm-gray">' . $item['connection'] . '</span>' : '';
     }
 
     /**

@@ -19,7 +19,7 @@
                     <td>
                         <label class="p-5"><?php echo phpversion(); ?></label>
                     </td>
-                    <?php if (version_compare('phpversion()', '5.4.0', '>')) { ?>
+                    <?php if (version_compare('phpversion()', '5.6.0', '>')) { ?>
                     <td>
                         <div>
                             <i class="zmdi zmdi-check p-t-5"></i>
@@ -34,7 +34,7 @@
                     </td>
                     <td>
                         <div class="p-5 alert alert-danger m-0"
-                             role="alert"><?php esc_html_e('Minimum PHP version required to run wpDataTables is PHP 5.4. Please update your PHP.', 'wpdatatables'); ?></div>
+                             role="alert"><?php esc_html_e('Minimum PHP version required to run wpDataTables is PHP 5.6. Please update your PHP.', 'wpdatatables'); ?></div>
                         <?php } ?>
                     </td>
                 </tr>

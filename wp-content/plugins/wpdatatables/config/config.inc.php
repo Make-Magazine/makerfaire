@@ -9,7 +9,7 @@ defined('ABSPATH') or die('Access denied.');
 
 // Current version
 //[<-- Full version -->]//
-define('WDT_CURRENT_VERSION', '2.2.1');
+define('WDT_CURRENT_VERSION', '2.3.2');
 //[<--/ Full version -->]//
 //[<-- Full version insertion #15 -->]//
 
@@ -45,13 +45,6 @@ define('WDT_INCLUDE_DATATABLES_CORE', true); // Whether to include link to jQuer
  * MySQL settings for query-based tables
  */
 define('WDT_ENABLE_MYSQL', true); // Whether to use MySQL in wpDataTables. Disable if you are not going to access MySQL directly from wpDataTables.
-if (get_option('wdtUseSeparateCon')) {
-    define('WDT_MYSQL_HOST', get_option('wdtMySqlHost')); // Name or address of MySQL host
-    define('WDT_MYSQL_DB', get_option('wdtMySqlDB')); // Name of MySQL database to use
-    define('WDT_MYSQL_USER', get_option('wdtMySqlUser')); // Name of MySQL user
-    define('WDT_MYSQL_PASSWORD', get_option('wdtMySqlPwd')); // Password to use in MySQL
-    define('WDT_MYSQL_PORT', get_option('wdtMySqlPort')); // Password to use in MySQL
-}
 
 global $wdtAllowTypes;
 $wdtAllowTypes = array(
@@ -67,5 +60,12 @@ $wdtAllowTypes = array(
     'datetime',
     'time'
 );
+
+global $wdtMsSqlDriver;
+$wdtMsSqlDriver = [
+    'sqlsrv' => ['active' => false],
+    'dblib'  => ['active' => true,  'version' => '7.0'],
+    'odbc'   => ['active' => false, 'driver'  => '{ODBC Driver 17 for SQL Server}'],
+];
 
 ?>

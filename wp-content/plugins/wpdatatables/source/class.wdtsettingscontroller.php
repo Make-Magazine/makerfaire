@@ -16,7 +16,7 @@ class WDTSettingsController {
 				foreach ($setting as &$childSetting) {
 					$childSetting = sanitize_text_field($childSetting);
 				}
-			} elseif (function_exists(sanitize_textarea_field) && ($key === "wdtCustomJs" || $key === "wdtCustomCss") ){
+			} elseif (function_exists('sanitize_textarea_field') && ($key === "wdtCustomJs" || $key === "wdtCustomCss") ){
 				$setting = sanitize_textarea_field($setting);
 			} else {
                 $setting = sanitize_text_field($setting);
@@ -45,6 +45,7 @@ class WDTSettingsController {
 			'wdtNumberFormat'           => get_option('wdtNumberFormat'),
 			'wdtRenderFilter'           => get_option('wdtRenderFilter'),
 			'wdtDecimalPlaces'          => get_option('wdtDecimalPlaces'),
+            'wdtCSVDelimiter'           => get_option('wdtCSVDelimiter'),
 			'wdtTabletWidth'            => get_option('wdtTabletWidth'),
 			'wdtMobileWidth'            => get_option('wdtMobileWidth'),
 			'wdtPurchaseCode'           => get_option('wdtPurchaseCode'),
@@ -55,11 +56,7 @@ class WDTSettingsController {
             'wdtBorderRemoval'          => get_option('wdtBorderRemoval'),
             'wdtBorderRemovalHeader'    => get_option('wdtBorderRemovalHeader'),
 			'wdtUseSeparateCon'         => get_option('wdtUseSeparateCon'),
-			'wdtMySQLHost'              => get_option('wdtMySqlHost'),
-			'wdtMySqlDB'                => get_option('wdtMySqlDB'),
-			'wdtMySqlUser'              => get_option('wdtMySqlUser'),
-			'wdtMySqlPwd'               => get_option('wdtMySqlPwd'),
-			'wdtMySqlPort'              => get_option('wdtMySqlPort'),
+            'wdtSeparateCon'            => get_option('wdtSeparateCon'),
 			'wdtCustomCss'              => get_option('wdtCustomCss'),
 			'wdtCustomJs'               => get_option('wdtCustomJs'),
 			'wdtMinifiedJs'             => get_option('wdtMinifiedJs'),
@@ -92,7 +89,7 @@ class WDTSettingsController {
 	/**
 	 * Returns system fonts
 	 */
-	function wdtGetSystemFonts() {
+    public static function wdtGetSystemFonts() {
 		$systemFonts = array(
 			'Georgia, serif',
 			'Palatino Linotype, Book Antiqua, Palatino, serif',

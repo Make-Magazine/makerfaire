@@ -492,6 +492,8 @@ var singleClick = false;
                     data.currentUserId = $('#wdt-user-id-placeholder').val();
                     data.currentUserLogin = $('#wdt-user-login-placeholder').val();
                     data.currentPostIdPlaceholder = $('#wdt-post-id-placeholder').val();
+                    data.currentUserFirstName = $('#wdt-user-first-name-placeholder').val();
+                    data.currentUserLasttName = $('#wdt-user-last-name-placeholder').val();
                     data.wpdbPlaceholder = $('#wdt-wpdb-placeholder').val();
                     data.wdtNonce = $('#wdtNonceFrontendEdit').val();
                 };
@@ -534,18 +536,22 @@ var singleClick = false;
                 }
             });
 
-            /**
-             * Enable auto-refresh if defined
-             */
-            if (tableDescription.serverSide) {
-                if (parseInt(tableDescription.autoRefreshInterval) > 0) {
-                    setInterval(function () {
-                            wpDataTables[tableDescription.tableId].fnDraw(false)
-                        },
-                        parseInt(tableDescription.autoRefreshInterval) * 1000
+          /**
+           * Enable auto-refresh if defined
+           */
+               if (tableDescription.serverSide) {
+                   if (parseInt(tableDescription.autoRefreshInterval) > 0) {
+                        autoRefresh = setInterval(function () {
+                        wpDataTables[tableDescription.tableId].fnDraw(false)
+                    },
+                parseInt(tableDescription.autoRefreshInterval) * 1000
                     );
-                }
-            }
+                    } else {
+                        if (typeof autoRefresh !== "undefined") {
+                        clearInterval(autoRefresh);
+                        }
+                    }
+                 }
             //[<--/ Full version -->]//
 
             /**

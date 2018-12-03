@@ -1,14 +1,14 @@
 <?php
 /**
  * @package wpDataTables
- * @version 2.2.1
+ * @version 2.3.2
  */
 /*
 Plugin Name: wpDataTables
 Plugin URI: http://tms-plugins.com
 Description: Add interactive tables easily from any input source
 //[<-- Full version -->]//
-Version: 2.2.1
+Version: 2.3.2
 //[<--/ Full version -->]//
 //[<-- Full version insertion #27 -->]//
 Author: TMS-Plugins
@@ -27,6 +27,9 @@ defined('ABSPATH') or die('Access denied');
 
 define('WDT_ROOT_PATH', plugin_dir_path(__FILE__)); // full path to the wpDataTables root directory
 define('WDT_ROOT_URL', plugin_dir_url(__FILE__)); // URL of wpDataTables plugin
+if (!defined('WDT_BASENAME')) {
+    define('WDT_BASENAME', plugin_basename(__FILE__)); // Base name for wpDataTables plugin
+}
 
 // Config file
 require_once(WDT_ROOT_PATH . '/config/config.inc.php');
@@ -38,6 +41,9 @@ require_once(WDT_ROOT_PATH . 'controllers/wdt_ajax_actions.php');
 
 // Plugin functions
 require_once(WDT_ROOT_PATH . 'controllers/wdt_functions.php');
+
+
+require_once WDT_ROOT_PATH . '/lib/autoload.php';
 
 function wpdatatables_load() {
     if (is_admin()) {
@@ -54,7 +60,9 @@ function wpdatatables_load() {
     require_once(WDT_ROOT_PATH . 'source/class.wdtconfigcontroller.php');
     require_once(WDT_ROOT_PATH . 'source/class.wdtsettingscontroller.php');
     require_once(WDT_ROOT_PATH . 'source/class.wdtexception.php');
+    require_once(WDT_ROOT_PATH . 'source/class.connection.php');
     require_once(WDT_ROOT_PATH . 'source/class.sql.php');
+    require_once(WDT_ROOT_PATH . 'source/class.sql.pdo.php');
     require_once(WDT_ROOT_PATH . 'source/class.wpdatatable.php');
     require_once(WDT_ROOT_PATH . 'source/class.wpdatacolumn.php');
     //[<-- Full version -->]//
@@ -67,6 +75,21 @@ function wpdatatables_load() {
     require_once(WDT_ROOT_PATH . 'source/class.wdtbrowsechartstable.php');
 
     add_action('plugins_loaded', 'wdtLoadTextdomain');
+
+    if (is_admin()) {
+        if (get_option('wdtSeparateCon') === false) {
+            add_action('plugins_loaded', 'wdtEnableMultipleConnections', 1, __FILE__);
+        }
+
+        if (WDT_CURRENT_VERSION !== get_option('wdtVersion')) {
+            if (!function_exists('is_plugin_active_for_network')) {
+                include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+            }
+
+            wdtActivation(is_plugin_active_for_network(__FILE__));
+            update_option('wdtVersion', WDT_CURRENT_VERSION);
+        }
+    }
 }
 
 //[<-- Full version -->]//

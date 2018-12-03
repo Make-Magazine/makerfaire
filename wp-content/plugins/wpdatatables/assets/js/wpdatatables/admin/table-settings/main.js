@@ -271,6 +271,19 @@
         });
 
         /**
+         * Set Placeholder Current User First Name
+         */
+        $('#wdt-user-first-name-placeholder').change(function (e) {
+            wpdatatable_config.setPlaceholderCurrentUserFirstName($(this).val());
+        });
+
+        /**
+         * Set Placeholder Current User Last Name
+         */
+        $('#wdt-user-last-name-placeholder').change(function (e) {
+            wpdatatable_config.setPlaceholderCurrentUserLastName($(this).val());
+        });
+        /**
          * Remove decimal place if value is negative or 0 for int
          * and if value is negative for formula
          */
@@ -354,12 +367,17 @@
             $('select#wdt-column-editor-input-type').find('option')
                 .prop('disabled', false);
 
+            $('#wdt-possible-values-ajax')
+                .prop('disabled', false);
+
             if ($(this).val() === 'read') {
                 $('div.wdt-manual-list-enter-block').hide();
                 $('div.wdt-foreign-key-block').hide();
+                $('.wdt-possible-values-ajax-block').show();
             } else if ($(this).val() === 'list') {
                 $('div.wdt-manual-list-enter-block').show();
                 $('div.wdt-foreign-key-block').hide();
+                $('.wdt-possible-values-ajax-block').show();
             } else if ($(this).val() === 'foreignkey') {
                 if ($.inArray(wpdatatable_config.currentOpenColumn.filter_type, ['select', 'checkbox']) !== -1) {
                     $('#wdt-column-exact-filtering').prop('checked', 1).change();
@@ -367,6 +385,8 @@
                 $('div.wdt-manual-list-enter-block').hide();
                 $('div.wdt-foreign-key-block').show();
                 $('div.wdt-foreign-rule-display').show();
+                $('.wdt-possible-values-ajax-block').hide();
+
                 $('select#wdt-column-editor-input-type').find('option')
                     .not('[value=selectbox]')
                     .not('[value=none]')
@@ -901,6 +921,14 @@
          * Apply all changes on "Apply" click
          */
         $('button.wdt-apply').click(function (e) {
+
+            // Validation for valid URL link of Google spreadsheet
+            if (wpdatatable_config.table_type == 'google_spreadsheet' && wpdatatable_config.content.indexOf("2PACX") != -1) {
+                $('#wdt-error-modal .modal-body').html('URL from Google spreadsheet publish modal(popup) is not valid for wpDataTables. Please provide a valid URL link that you get from the browser address bar. More info in our documentation on this <a href="https://wpdatatables.com/documentation/creating-wpdatatables/creating-wpdatatables-from-google-spreadsheets/" target="_blank">link</a>.');
+                $('#wdt-error-modal').modal('show');
+                return;
+            }
+
             if (wpdatatable_config.editable) {
                 if ($('#wdt-mysql-table-name').val() == '') {
                     $('#wdt-error-modal .modal-body').html('MySQL table name for front-end editing is not set!');
@@ -917,9 +945,15 @@
                         wpdatatable_config.columns[i].calculateMin = 0;
                         wpdatatable_config.columns[i].calculateMax = 0;
                     }
+                    if (wpdatatable_config.columns[i].possibleValuesType == 'foreignkey') {
+                        wpdatatable_config.columns[i].possibleValuesAjax = -1;
+                    }
                 }
             }
             $('.wdt-preload-layer').animateFadeIn();
+
+            wpdatatable_config.connection = $('#wdt-table-connection').val();
+
             $.ajax({
                 url: ajaxurl,
                 method: 'POST',
@@ -1021,7 +1055,7 @@
                 displayColumnId: $('#wdt-foreign-column-display-value').val(),
                 displayColumnName: $('#wdt-foreign-column-display-value option:selected').data('orignal_header'),
                 storeColumnId: $('#wdt-foreign-column-store-value').val(),
-                storeColumnName: $('#wdt-foreign-column-store-value option:selected').html()
+                storeColumnName: $('#wdt-foreign-column-store-value option:selected').data('orignal_header')
             };
             if (wpdatatable_config.currentOpenColumn.foreignKeyRule.tableId != 0) {
                 $('.wdt-foreign-rule-display #wdt-connected-table-name').text($('#wdt-column-foreign-table option:selected').html());

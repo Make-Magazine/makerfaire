@@ -22,51 +22,6 @@ var wpdatatable_plugin_config = {
         }
     },
 
-    setMysqlHost: function ( host ) {
-        if( wdt_current_config.wdtMySqlHost != host ){
-            wdt_current_config.wdtMySqlHost = host;
-        }
-        if( jQuery('#wdt-my-sql-host').val() != host ){
-            jQuery('#wdt-my-sql-host').val( host );
-        }
-    },
-
-    setMysqlDb: function ( db ) {
-        if( wdt_current_config.wdtMySqlDB != db ){
-            wdt_current_config.wdtMySqlDB = db;
-        }
-        if( jQuery('#wdt-my-sql-db').val() != db ){
-            jQuery('#wdt-my-sql-db').val( db );
-        }
-    },
-
-    setMysqlUser: function ( user ) {
-        if( wdt_current_config.wdtMySqlUser != user ){
-            wdt_current_config.wdtMySqlUser = user;
-        }
-        if( jQuery('#wdt-my-sql-user').val() != user ){
-            jQuery('#wdt-my-sql-user').val( user );
-        }
-    },
-
-    setMysqlPass: function ( pass ) {
-        if( wdt_current_config.wdtMySqlPwd != pass ){
-            wdt_current_config.wdtMySqlPwd = pass;
-        }
-        if( jQuery('#wdtMySqlPwd').val() != pass ){
-            jQuery('#wdtMySqlPwd').val( pass );
-        }
-    },
-
-    setMysqlPort: function ( port ) {
-        if( wdt_current_config.wdtMySqlPort != port ){
-            wdt_current_config.wdtMySqlPort = port;
-        }
-        if( jQuery('#wdt-my-sql-port').val() != port ){
-            jQuery('#wdt-my-sql-port').val( port );
-        }
-    },
-
     setLanguage: function( language ){
         if( wdt_current_config.wdtInterfaceLanguage != language ){
             wdt_current_config.wdtInterfaceLanguage = language;
@@ -118,6 +73,15 @@ var wpdatatable_plugin_config = {
         }
         if( jQuery('#wdt-number-format').val() != numberFormat ){
             jQuery('#wdt-number-format').selectpicker( 'val', numberFormat );
+        }
+    },
+
+    setCSVDelimiter: function ( wdtCSVDelimiter ) {
+        if( wdt_current_config.wdtCSVDelimiter != wdtCSVDelimiter ){
+            wdt_current_config.wdtCSVDelimiter = wdtCSVDelimiter;
+        }
+        if( jQuery('#wdt-csv-delimiter').val() != wdtCSVDelimiter ){
+            jQuery('#wdt-csv-delimiter').selectpicker( 'val', wdtCSVDelimiter );
         }
     },
 

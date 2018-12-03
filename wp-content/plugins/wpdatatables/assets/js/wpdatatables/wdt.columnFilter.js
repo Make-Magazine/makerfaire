@@ -208,15 +208,20 @@ function wdtCreateInput(oTable, aoColumn, columnIndex, sColumnLabel, th, serverS
     }
 
     if (aoColumn.defaultValue) {
-        var defaultValue = jQuery.isArray(aoColumn.defaultValue) ?
-            aoColumn.defaultValue[0] : aoColumn.defaultValue;
+        var defaultValue = '';
+        if (typeof aoColumn.defaultValue === 'object') {
+            defaultValue = aoColumn.defaultValue['value'];
+        } else if (jQuery.isArray(aoColumn.defaultValue)) {
+            defaultValue = aoColumn.defaultValue[0];
+        } else {
+            defaultValue = aoColumn.defaultValue;
+        }
         jQuery(input).val(defaultValue);
         oTable.api().column(columnIndex).search(defaultValue, bIsNumber, false);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(input).trigger('keyup');
             });
-            oTable.fnFilter(defaultValue, columnIndex);
         }
     }
 
@@ -300,7 +305,6 @@ function wdtCreateNumberRangeInput(oTable, aoColumn, columnIndex, sColumnLabel, 
 
     if (fromDefaultValue) {
         jQuery(from).val(fromDefaultValue);
-        oTable.api().column(columnIndex).search(fromDefaultValue);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(from).keyup();
@@ -310,7 +314,6 @@ function wdtCreateNumberRangeInput(oTable, aoColumn, columnIndex, sColumnLabel, 
 
     if (toDefaultValue) {
         jQuery(to).val(toDefaultValue);
-        oTable.api().column(columnIndex).search(toDefaultValue);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(to).keyup();
@@ -408,7 +411,6 @@ function wdtCreateDateRangeInput(oTable, aoColumn, columnIndex, sColumnLabel, th
 
     if (fromDefaultValue) {
         jQuery(from).val(fromDefaultValue);
-        oTable.api().column(columnIndex).search(fromDefaultValue);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(from).trigger('blur');
@@ -418,7 +420,6 @@ function wdtCreateDateRangeInput(oTable, aoColumn, columnIndex, sColumnLabel, th
 
     if (toDefaultValue) {
         jQuery(to).val(toDefaultValue);
-        oTable.api().column(columnIndex).search(toDefaultValue);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(to).trigger('blur');
@@ -505,7 +506,6 @@ function wdtCreateDateTimeRangeInput(oTable, aoColumn, columnIndex, sColumnLabel
 
     if (fromDefaultValue) {
         jQuery(from).val(fromDefaultValue);
-        oTable.api().column(columnIndex).search(fromDefaultValue);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(to).trigger('blur');
@@ -515,7 +515,6 @@ function wdtCreateDateTimeRangeInput(oTable, aoColumn, columnIndex, sColumnLabel
 
     if (toDefaultValue) {
         jQuery(to).val(toDefaultValue);
-        oTable.api().column(columnIndex).search(toDefaultValue);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(to).trigger('blur');
@@ -600,7 +599,6 @@ function wdtCreateTimeRangeInput(oTable, aoColumn, columnIndex, sColumnLabel, th
 
     if (fromDefaultValue) {
         jQuery(from).val(fromDefaultValue);
-        oTable.api().column(columnIndex).search(fromDefaultValue);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(to).trigger('blur');
@@ -610,7 +608,6 @@ function wdtCreateTimeRangeInput(oTable, aoColumn, columnIndex, sColumnLabel, th
 
     if (toDefaultValue) {
         jQuery(to).val(toDefaultValue);
-        oTable.api().column(columnIndex).search(toDefaultValue);
         if (!serverSide) {
             jQuery(document).ready(function () {
                 jQuery(to).trigger('blur');
@@ -670,7 +667,7 @@ function wdtCreateSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th, ser
         select += '<option value="">' + ' ' + '</option>';
 
         // Length of the possible values
-        var iLen = aoColumn.values.length;
+        var iLen = aoColumn.values ? aoColumn.values.length: 0;
 
         // Create option for each value from possible values
         for (var j = 0; j < iLen; j++) {
@@ -717,7 +714,7 @@ function wdtCreateSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th, ser
         select.selectpicker('refresh')
             .ajaxSelectPicker({
                 ajax: {
-                    url: ajax_object.ajaxurl,
+                    url: wdt_ajax_object.ajaxurl,
                     method: 'POST',
                     data: {
                         wdtNonce: jQuery('#wdtNonce').val(),
@@ -826,7 +823,7 @@ function wdtCreateMultiSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th
         }
     } else {
         // Length of the possible values
-        var iLen = aoColumn.values.length;
+        var iLen = aoColumn.values ? aoColumn.values.length: 0;
 
         var search = '';
 
@@ -869,7 +866,7 @@ function wdtCreateMultiSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th
         // Add AJAX to selectbox
         select.selectpicker('refresh').ajaxSelectPicker({
             ajax: {
-                url: ajax_object.ajaxurl,
+                url: wdt_ajax_object.ajaxurl,
                 method: 'POST',
                 data: {
                     wdtNonce: jQuery('#wdtNonce').val(),
@@ -960,7 +957,7 @@ function wdtCreateCheckbox(oTable, aoColumn, columnIndex, sColumnLabel, th, serv
     if (aoColumn.values === null)
         aoColumn.values = getColumnDistinctValues(tableId, columnIndex, false);
 
-    var r = '', j, iLen = aoColumn.values.length, dialogRender = true;
+    var r = '', j, iLen = aoColumn.values ? aoColumn.values.length: 0, dialogRender = true;
 
     if (typeof aoColumn.sSelector !== 'undefined') {
         dialogRender = aoColumn.checkboxesInModal;
@@ -1158,7 +1155,7 @@ function buildSearchStringForMultiFilters(value, exactFiltering) {
     if (exactFiltering) {
         search = search + '^' + value.replace(/\+/g, '\\+') + '$' + or;
     } else {
-        search = search + value.replace(/\+/g, '\\+').replace('%7C%7C', '%7C') + or;
+        search = search + value.replace(/\+/g, '\\+') + or;
     }
 
     return decodeURIComponent(search);

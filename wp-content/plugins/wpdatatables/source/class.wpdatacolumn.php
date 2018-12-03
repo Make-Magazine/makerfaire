@@ -303,14 +303,24 @@ class WDTColumn {
                 $value = [];
                 if (is_array($valueCopy)) {
                     foreach ($valueCopy as $copy) {
+                        $copy = $this->applyPlaceholders($copy);
+
                         $value[] = [
                             'value' => $copy,
                             'text' => $distinctValues[$copy]
                         ];
                     }
                 } else {
+                    $valueCopy = $this->applyPlaceholders($valueCopy);
+
                     $value['value'] = $valueCopy;
-                    $value['text'] = $distinctValues[$valueCopy];
+                    
+                    if ($this->getFilterType() == "text") {
+                        $key = array_search($valueCopy, $distinctValues);
+                        $value['text'] = $distinctValues[$key];
+                    }else {
+                        $value['text'] = $distinctValues[$valueCopy];
+                    }
                 }
             } else {
                 if (is_array($value)) {
@@ -679,6 +689,12 @@ class WDTColumn {
             }// Current post id
             if (strpos($value, '%CURRENT_POST_ID%') !== false) {
                 $value = str_replace('%CURRENT_POST_ID%', get_post()->ID, $value);
+            }// Current user first name
+            if (strpos($value, '%CURRENT_USER_FIRST_NAME%') !== false) {
+                $value = str_replace('%CURRENT_USER_FIRST_NAME%', wp_get_current_user()->first_name, $value);
+            }// Current user last name
+            if (strpos($value, '%CURRENT_USER_LAST_NAME%') !== false) {
+                $value = str_replace('%CURRENT_USER_LAST_NAME%', wp_get_current_user()->last_name, $value);
             }// Shortcode VAR1
             if (strpos($value, '%VAR1%') !== false) {
                 $value = str_replace('%VAR1%', $wdtVar1, $value);
@@ -891,8 +907,18 @@ class WDTColumn {
         /** @var WPDataTable $parentTable */
         $parentTable = $column->getParentTable();
         $columnOrigHeader = $column->getOriginalHeader();
+
+        $vendor = Connection::getVendor($parentTable->connection);
+
+        $leftSysIdentifier = Connection::getLeftColumnQuote($vendor);
+        $rightSysIdentifier = Connection::getRightColumnQuote($vendor);
+
+        $isMySql = $vendor === Connection::$MYSQL;
+        $isMSSql = $vendor === Connection::$MSSQL;
+        $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
         $where = 'WHERE 1=1';
-        $where .= isset($_POST['q']) ? " AND (`{$columnOrigHeader}`) LIKE '%{$_POST['q']}%'" : '';
+        $where .= isset($_POST['q']) ? " AND ({$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier}) LIKE '%{$_POST['q']}%'" : '';
 
         $wdtVar1 = $wdtVar1 === '' && isset($tableData->var1) ? $tableData->var1 : $wdtVar1;
         $wdtVar2 = $wdtVar2 === '' && isset($tableData->var2) ? $tableData->var2 : $wdtVar2;
@@ -901,19 +927,32 @@ class WDTColumn {
         $tableContent = WDTTools::applyPlaceholders($parentTable->getTableContent());
 
         if ($filterByUserId && $parentTable->getOnlyOwnRows() === true) {
-            $where .= ' AND `' . $parentTable->getUserIdColumn() . '` = ' . get_current_user_id();
+            $where .= " AND {$leftSysIdentifier}" . $parentTable->getUserIdColumn() . "{$rightSysIdentifier} = " . get_current_user_id();
         }
-        $limit = $column->getPossibleValuesAjax() !== -1 ? 'LIMIT ' . $column->getPossibleValuesAjax() : '';
-        $distValuesQuery = "SELECT DISTINCT(`$columnOrigHeader`) AS `$columnOrigHeader` FROM ( $tableContent ) tbl $where ORDER BY (`$columnOrigHeader`) $limit";
 
-        if (!get_option('wdtUseSeparateCon')) {
+        if ($isMySql) {
+            $limit = $column->getPossibleValuesAjax() !== -1 ? 'LIMIT ' . $column->getPossibleValuesAjax() : '';
+            $distValuesQuery = "SELECT DISTINCT({$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier}) AS {$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier} FROM ( $tableContent ) tbl $where ORDER BY ({$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier}) $limit";
+        }
+
+        if ($isMSSql) {
+            $limit = $column->getPossibleValuesAjax() !== -1 ? " OFFSET 0 ROWS FETCH NEXT {$column->getPossibleValuesAjax()} ROWS ONLY" : '';
+            $distValuesQuery = "SELECT DISTINCT({$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier}) AS {$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier} FROM ( $tableContent ) tbl $where ORDER BY ({$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier}) $limit";
+        }
+
+        if ($isPostgreSql) {
+            $limit = $column->getPossibleValuesAjax() !== -1 ? 'LIMIT ' . $column->getPossibleValuesAjax() : '';
+            $distValuesQuery = "SELECT DISTINCT({$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier}) AS {$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier} FROM ( $tableContent ) tbl $where ORDER BY ({$leftSysIdentifier}{$columnOrigHeader}{$rightSysIdentifier}) $limit";
+        }
+
+        if (!(Connection::isSeparate($parentTable->connection))) {
             global $wpdb;
             $distValues = $wpdb->get_col($distValuesQuery);
             if ($wpdb->last_error) {
                 return false;
             }
         } else {
-            $sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+            $sql = Connection::create($parentTable->connection);
             $rows = $sql->getArray($distValuesQuery);
 
             if (!empty($rows)) {

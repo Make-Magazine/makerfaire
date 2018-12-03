@@ -2115,7 +2115,12 @@ class WPDataChart {
             '#a6cee3',
             '#6a3d9a',
             '#b15928',
-            '#fb9a99'
+            '#fb9a99',
+            '#0476e8',
+            '#49C172',
+            '#EA5E57',
+            '#FFF458',
+            '#BFEB54',
         );
 
         if ($this->_render_data['series']) {
@@ -2194,11 +2199,7 @@ class WPDataChart {
                 }
             } else if ($this->_type = 'chartjs_bubble_chart') {
                 // Series and Categories
-                for ($i = 0; $i < count($this->_render_data['columns']); $i++) {
-                    $this->_chartjs_render_data['options']['data']['datasets'][$i]['label'] = $this->_render_data['columns'][$i]['label'];
-                    $this->_chartjs_render_data['options']['data']['datasets'][$i]['backgroundColor'] = $colors[$i % 10];
-                    $this->_chartjs_render_data['options']['data']['datasets'][$i]['hoverBackgroundColor'] = $colors[$i % 10];
-
+                for ($i = 0; $i < 2; $i++) {
                     foreach ($this->_render_data['rows'] as $key => $row) {
                         if ($i == 0) {
                             $this->_chartjs_render_data['options']['data']['datasets'][$key]['label'] = $row[$i];
@@ -2207,6 +2208,8 @@ class WPDataChart {
                             $seriesEntry = array(
                                 'data' => array()
                             );
+                            $seriesEntry['backgroundColor'] = $colors[$key  % 10];
+                            $seriesEntry['hoverBackgroundColor'] = $colors[$key % 10];
                             $seriesEntry['data'][0]['x'] = $row[$i];
                             $seriesEntry['data'][0]['y'] = $row[$i + 1];
                             $seriesEntry['data'][0]['r'] = $row[$i + 2];
@@ -2649,30 +2652,30 @@ class WPDataChart {
         $this->shiftStringColumnUp();
 
         $js_ext = $minified_js ? '.min.js' : '.js';
-        wp_enqueue_script('wpdatatables-render-chart', WDT_JS_PATH . 'wpdatatables/wdt.chartsRender' . $js_ext);
+        wp_enqueue_script('wpdatatables-render-chart', WDT_JS_PATH . 'wpdatatables/wdt.chartsRender' . $js_ext, array(), WDT_CURRENT_VERSION);
 
         if ($this->_engine == 'google') {
             // Google Chart JS
-            wp_enqueue_script('wdt_google_charts', '//www.gstatic.com/charts/loader.js');
-            wp_enqueue_script('wpdatatables-google-chart', WDT_JS_PATH . 'wpdatatables/wdt.googleCharts' . $js_ext);
+            wp_enqueue_script('wdt_google_charts', '//www.gstatic.com/charts/loader.js', array(), WDT_CURRENT_VERSION);
+            wp_enqueue_script('wpdatatables-google-chart', WDT_JS_PATH . 'wpdatatables/wdt.googleCharts' . $js_ext, array(), WDT_CURRENT_VERSION);
             $json_chart_render_data = json_encode($this->_render_data);
         } else if ($this->_engine == 'highcharts') {
             $this->prepareHighchartsRender();
             // Highchart JS
-            wp_enqueue_script('wdt_highcharts', '//code.highcharts.com/highcharts.js');
-            wp_enqueue_script('wdt_highcharts3d', '//code.highcharts.com/highcharts-3d.js');
-            wp_enqueue_script('wdt-heatmap', '//code.highcharts.com/modules/heatmap.js');
-            wp_enqueue_script('wdt-treemap', '//code.highcharts.com/modules/treemap.js');
-            wp_enqueue_script('wdt_exporting', '//code.highcharts.com/modules/exporting.js');
+            wp_enqueue_script('wdt_highcharts', '//code.highcharts.com/highcharts.js', array(), WDT_CURRENT_VERSION);
+            wp_enqueue_script('wdt_highcharts3d', '//code.highcharts.com/highcharts-3d.js', array(), WDT_CURRENT_VERSION);
+            wp_enqueue_script('wdt-heatmap', '//code.highcharts.com/modules/heatmap.js', array(), WDT_CURRENT_VERSION);
+            wp_enqueue_script('wdt-treemap', '//code.highcharts.com/modules/treemap.js', array(), WDT_CURRENT_VERSION);
+            wp_enqueue_script('wdt_exporting', '//code.highcharts.com/modules/exporting.js', array(), WDT_CURRENT_VERSION);
             // Highchart wpDataTable JS library
-            wp_enqueue_script('wpdatatables-highcharts', WDT_JS_PATH . 'wpdatatables/wdt.highcharts' . $js_ext);
+            wp_enqueue_script('wpdatatables-highcharts', WDT_JS_PATH . 'wpdatatables/wdt.highcharts' . $js_ext, array(), WDT_CURRENT_VERSION);
             $json_chart_render_data = json_encode($this->_highcharts_render_data);
         } else if ($this->_engine == 'chartjs') {
             $this->prepareChartJSRender();
             // ChartJS
-            wp_enqueue_script('wdt_chartjs', WDT_JS_PATH . 'chartjs/Chart.js');
+            wp_enqueue_script('wdt_chartjs', WDT_JS_PATH . 'chartjs/Chart.js', array(), WDT_CURRENT_VERSION);
             // ChartJS wpDataTable JS library
-            wp_enqueue_script('wpdatatables-chartjs', WDT_JS_PATH . 'wpdatatables/wdt.chartJS' . $js_ext);
+            wp_enqueue_script('wpdatatables-chartjs', WDT_JS_PATH . 'wpdatatables/wdt.chartJS' . $js_ext, array(), WDT_CURRENT_VERSION);
             $json_chart_render_data = json_encode($this->_chartjs_render_data);
         }
 

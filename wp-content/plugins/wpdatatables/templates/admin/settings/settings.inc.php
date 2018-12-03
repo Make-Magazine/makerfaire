@@ -10,11 +10,7 @@
         <div class="row">
 
             <div class="card plugin-settings">
-
-                <!-- Preloader -->
-                <?php include WDT_TEMPLATE_PATH . 'admin/common/preloader.inc.php'; ?>
-                <!-- /Preloader -->
-
+                
                 <div class="card-header wdt-admin-card-header ch-alt">
                     <img id="wpdt-inline-logo" style="width: 60px;height: 50px;"
                          src="<?php echo WDT_ROOT_URL; ?>assets/img/logo-large.png"/>
@@ -45,10 +41,10 @@
                                 <a href="#main-plugin-settings" aria-controls="main-plugin-settings" role="tab"
                                    data-toggle="tab"><?php _e('Main settings', 'wpdatatables'); ?></a>
                             </li>
-                            <li class="main-plugin-settings-tab">
-                                <a href="#separate-mysql-connection" aria-controls="separate-mysql-connection"
+                            <li class="separate-connection-tab">
+                                <a href="#separate-connection" aria-controls="separate-connection"
                                    role="tab"
-                                   data-toggle="tab"><?php _e('Separate MySQL connection', 'wpdatatables'); ?></a>
+                                   data-toggle="tab"><?php _e('Separate DB connection', 'wpdatatables'); ?></a>
                             </li>
                             <li class="color-and-font-settings-tab">
                                 <a href="#color-and-font-settings" aria-controls="color-and-font-settings"
@@ -71,7 +67,7 @@
                             <!-- /Main plugin settings tab -->
 
                             <!-- Separate MySQL connection settings tab -->
-                            <?php include 'tabs/separate_mysql_connection.php' ?>
+                            <?php include 'tabs/separate_connection.php' ?>
                             <!-- /Separate MySQL connection settings tab -->
 
                             <!-- Color and font settings tab-->

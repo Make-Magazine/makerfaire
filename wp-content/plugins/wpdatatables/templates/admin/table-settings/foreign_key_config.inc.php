@@ -25,11 +25,13 @@
                                 <div class="select">
                                     <select class="selectpicker" id="wdt-column-foreign-table" data-live-search="true">
                                         <option value=0><?php _e('Pick a table...', 'wpdatatables'); ?></option>
-                                        <?php foreach (WPDataTable::getAllTables() as $wdt) { ?>
+                                        <?php foreach (WPDataTable::getAllTables() as $wdt) {
+                                            if ($connection === $wdt['connection']) {?>
                                             <option value="<?php echo $wdt['id']; ?>"><?php echo $wdt['title']; ?>
                                                 (id: <?php echo $wdt['id']; ?>)
                                             </option>
-                                        <?php } ?>
+                                        <?php }
+                                            } ?>
                                     </select>
                                 </div>
                             </div>

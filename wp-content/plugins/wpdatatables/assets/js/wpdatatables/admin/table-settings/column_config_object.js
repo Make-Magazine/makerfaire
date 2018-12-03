@@ -1005,6 +1005,7 @@ WDTColumn.prototype.fillInputs = function () {
 
     jQuery('#wdt-column-values').selectpicker('val', this.possibleValuesType).change();
     jQuery('#wdt-column-values-list').tagsinput('removeAll');
+    jQuery('#wdt-possible-values-ajax').selectpicker('val', this.possibleValuesAjax).change();
     if (this.possibleValuesType == 'list') {
         jQuery('#wdt-column-values-list').tagsinput('add', this.valuesList);
     } else if (this.possibleValuesType == 'foreignkey') {
@@ -1012,9 +1013,9 @@ WDTColumn.prototype.fillInputs = function () {
         jQuery('#wdt-connected-table-show-column').html(this.foreignKeyRule.displayColumnName);
         jQuery('#wdt-connected-table-value-column').html(this.foreignKeyRule.storeColumnName);
         jQuery('div.wdt-foreign-rule-display').show();
+        jQuery('.wdt-possible-values-ajax-block').hide();
     }
     jQuery('#wdt-column-values-add-empty').prop('checked', this.possibleValuesAddEmpty);
-    jQuery('#wdt-possible-values-ajax').selectpicker('val', this.possibleValuesAjax).change();
 
     jQuery('#wdt-column-calc-total').prop('checked', this.calculateTotal);
     jQuery('div.wdt-column-calc-total-block #wdt-column-calc-total-shortcode button')
@@ -1061,7 +1062,11 @@ WDTColumn.prototype.fillInputs = function () {
 
             if (this.filterDefaultValue) {
                 if (jQuery.inArray(this.filter_type, ['text', 'number']) != -1) {
-                    jQuery('#wdt-filter-default-value').val(this.filterDefaultValue);
+                    if (typeof this.filterDefaultValue === 'object') {
+                        jQuery('#wdt-filter-default-value').val(this.filterDefaultValue.value);
+                    } else {
+                        jQuery('#wdt-filter-default-value').val(this.filterDefaultValue);
+                    }
                 } else if (jQuery.inArray(this.filter_type, ['number-range', 'date-range', 'datetime-range', 'time-range']) != -1) {
                     var filterDefaultValues = this.filterDefaultValue.split('|');
                     jQuery('#wdt-filter-default-value-from').val(filterDefaultValues[0]);

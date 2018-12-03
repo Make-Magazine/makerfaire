@@ -27,7 +27,7 @@ var browsePageLinks = {
 
 var settingsPageLinks = {
     'main-plugin-settings': '#main-settings',
-    'separate-mysql-connection': '#mysql-connection',
+    'separate-connection': '#separate-connection',
     'color-and-font-settings': '#color-font-settings',
     'custom-js-and-css': '#custom-js-css',
     'info': '#info'

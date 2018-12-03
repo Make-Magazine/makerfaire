@@ -148,7 +148,7 @@
 
 <div id="<?php echo $this->getId() ?>_edit_dialog_buttons" class="wdt-edit-dialog-button-block"
      style="display: none">
-    <button class="btn btn-danger btn-icon-text waves-effect" data-toggle="modal" data-target="#wdt-frontend-modal">
+    <button class="btn btn-danger btn-icon-text waves-effect" data-dismiss="modal">
         <i class="zmdi zmdi-close"></i>
         <?php _e('Cancel', 'wpdatatables'); ?>
     </button>

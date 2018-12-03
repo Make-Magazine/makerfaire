@@ -2,6 +2,12 @@
 
 defined('ABSPATH') or die('Access denied.');
 
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use PhpOffice\PhpSpreadsheet\Reader\Ods;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+
 /**
  * Class Constructor contains methods and properties for constructing the tables
  * in wpDataTables WordPress plugin
@@ -38,11 +44,13 @@ class wpDataTableConstructor
 
     /**
      * The constructor
+     *
+     * @param String $connection
      */
-    public function __construct()
+    public function __construct($connection = null)
     {
-        if (WDT_ENABLE_MYSQL && get_option('wdtUseSeparateCon')) {
-            $this->_db = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+        if (WDT_ENABLE_MYSQL && (Connection::isSeparate($connection))) {
+            $this->_db = Connection::create($connection);
         }
     }
 
@@ -66,8 +74,10 @@ class wpDataTableConstructor
 
     /**
      * Generate the new unique table name (For MySQL)
+     *
+     * @param String $connection
      */
-    public function generateTableName()
+    public function generateTableName($connection)
     {
 
         $this->_index = (int)get_option('wdtGeneratedTablesCount', 0);
@@ -75,7 +85,7 @@ class wpDataTableConstructor
 
         $this->_name = 'wpdatatable_' . $this->_index;
 
-        if (!get_option('wdtUseSeparateCon')) {
+        if (!(Connection::isSeparate($connection))) {
             global $wpdb;
             $this->_name = $wpdb->prefix . $this->_name;
         }
@@ -90,10 +100,45 @@ class wpDataTableConstructor
      *
      * @param $column_header
      * @param $column
+     * @param String $connection
+     *
      * @return array
      */
-    private static function defineColumnProperties($column_header, $column)
+    private static function defineColumnProperties($column_header, $column, $connection = null)
     {
+        $vendor = Connection::getVendor($connection);
+        $isMySql = $vendor === Connection::$MYSQL;
+        $isMSSql = $vendor === Connection::$MSSQL;
+        $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
+        $columnQuoteStart = Connection::getLeftColumnQuote($vendor);
+        $columnQuoteEnd = Connection::getRightColumnQuote($vendor);
+
+        if ($isMySql) {
+            $columnCollate = '';
+            $columnTextType = 'TEXT';
+            $columnIntType = 'INT(11)';
+            $columnDateTimeType = 'DATETIME';
+            $nullable = '';
+        }
+
+        if ($isMSSql) {
+            $columnCollate = 'COLLATE Latin1_General_CS_AI';
+            $columnTextType = 'VARCHAR(8000)';
+            $columnIntType = 'INT';
+            $columnDateTimeType = 'DATETIME';
+            $nullable = 'NULL';
+        }
+
+        if ($isPostgreSql) {
+            $columnCollate = '';
+            $columnTextType = 'TEXT';
+            $columnIntType = 'INT';
+            $columnDateTimeType = 'TIMESTAMP';
+            $nullable = '';
+        }
+
+        $column_header = $columnQuoteStart . $column_header. $columnQuoteEnd;
 
         switch ($column['type']) {
             case 'input':
@@ -101,7 +146,7 @@ class wpDataTableConstructor
                     'editor_type' => 'text',
                     'column_type' => 'string',
                     'filter_type' => 'text',
-                    'create_block' => "`{$column_header}` VARCHAR(255) "
+                    'create_block' => "{$column_header} VARCHAR(255) $columnCollate "
                 );
                 break;
             case 'int':
@@ -109,7 +154,7 @@ class wpDataTableConstructor
                     'editor_type' => 'text',
                     'column_type' => 'int',
                     'filter_type' => 'number',
-                    'create_block' => "`{$column_header}` INT(11) "
+                    'create_block' => "{$column_header} $columnIntType "
                 );
                 break;
             case 'float':
@@ -117,7 +162,7 @@ class wpDataTableConstructor
                     'editor_type' => 'text',
                     'column_type' => 'float',
                     'filter_type' => 'number',
-                    'create_block' => "`{$column_header}` DECIMAL(16,4) "
+                    'create_block' => "{$column_header} DECIMAL(16,4) "
                 );
                 break;
             case 'memo':
@@ -125,7 +170,7 @@ class wpDataTableConstructor
                     'editor_type' => 'textarea',
                     'column_type' => 'string',
                     'filter_type' => 'text',
-                    'create_block' => "`{$column_header}` TEXT "
+                    'create_block' => "{$column_header} $columnTextType $columnCollate "
                 );
                 break;
             case 'select':
@@ -133,7 +178,7 @@ class wpDataTableConstructor
                     'editor_type' => 'selectbox',
                     'column_type' => 'string',
                     'filter_type' => 'select',
-                    'create_block' => "`{$column_header}` VARCHAR(2000) "
+                    'create_block' => "{$column_header} VARCHAR(2000) $columnCollate "
                 );
                 break;
             case 'multiselect':
@@ -141,7 +186,7 @@ class wpDataTableConstructor
                     'editor_type' => 'multi-selectbox',
                     'column_type' => 'string',
                     'filter_type' => 'multiselect',
-                    'create_block' => "`{$column_header}` VARCHAR(2000) "
+                    'create_block' => "{$column_header} VARCHAR(2000) $columnCollate "
                 );
                 break;
             case 'date':
@@ -149,7 +194,7 @@ class wpDataTableConstructor
                     'editor_type' => 'date',
                     'column_type' => 'date',
                     'filter_type' => 'date-range',
-                    'create_block' => "`{$column_header}` DATE "
+                    'create_block' => "{$column_header} DATE "
                 );
                 break;
             case 'datetime':
@@ -157,7 +202,7 @@ class wpDataTableConstructor
                     'editor_type' => 'datetime',
                     'column_type' => 'datetime',
                     'filter_type' => 'datetime-range',
-                    'create_block' => "`{$column_header}` DATETIME "
+                    'create_block' => "{$column_header} $columnDateTimeType "
                 );
                 break;
             case 'time':
@@ -165,7 +210,7 @@ class wpDataTableConstructor
                     'editor_type' => 'time',
                     'column_type' => 'time',
                     'filter_type' => 'time-range',
-                    'create_block' => "`{$column_header}` TIME "
+                    'create_block' => "{$column_header} TIME "
                 );
                 break;
             case 'email':
@@ -173,7 +218,7 @@ class wpDataTableConstructor
                     'editor_type' => 'email',
                     'column_type' => 'email',
                     'filter_type' => 'text',
-                    'create_block' => "`{$column_header}` VARCHAR(2000) "
+                    'create_block' => "{$column_header} VARCHAR(2000) $columnCollate "
                 );
                 break;
             case 'link':
@@ -181,7 +226,7 @@ class wpDataTableConstructor
                     'editor_type' => 'link',
                     'column_type' => 'link',
                     'filter_type' => 'text',
-                    'create_block' => "`{$column_header}` VARCHAR(2000) "
+                    'create_block' => "{$column_header} VARCHAR(2000) $columnCollate "
                 );
                 break;
             case 'file':
@@ -189,7 +234,7 @@ class wpDataTableConstructor
                     'editor_type' => 'attachment',
                     'column_type' => 'link',
                     'filter_type' => 'none',
-                    'create_block' => "`{$column_header}` VARCHAR(2000) "
+                    'create_block' => "{$column_header} VARCHAR(2000) $columnCollate "
                 );
                 break;
             case 'image':
@@ -197,7 +242,7 @@ class wpDataTableConstructor
                     'editor_type' => 'attachment',
                     'column_type' => 'image',
                     'filter_type' => 'none',
-                    'create_block' => "`{$column_header}` VARCHAR(2000) "
+                    'create_block' => "{$column_header} VARCHAR(2000) $columnCollate "
                 );
                 break;
             default:
@@ -205,7 +250,7 @@ class wpDataTableConstructor
                     'editor_type' => 'text',
                     'column_type' => 'string',
                     'filter_type' => 'text',
-                    'create_block' => "`{$column_header}` VARCHAR(2000) "
+                    'create_block' => "{$column_header} VARCHAR(2000) $columnCollate "
                 );
                 break;
         }
@@ -217,6 +262,8 @@ class wpDataTableConstructor
             'editingDefaultValue' => $column['type'] === 'multiselect' ? sanitize_text_field(implode('|', $column['default_value'])) : sanitize_text_field($column['default_value']),
             'possibleValuesAjax' => $columnProperties['column_type'] === 'string' ? 10 : -1,
         );
+
+        $columnProperties['create_block'] = $columnProperties['create_block'] . ' ' . $nullable;
 
         if (!empty($column['possible_values'])) {
             $columnProperties['advanced_settings']['possibleValuesType'] = 'list';
@@ -235,8 +282,11 @@ class wpDataTableConstructor
 
         $this->_table_data = apply_filters('wdt_before_generate_manual_table', $tableData);
 
+        // Selected Database Connection Name
+        $connection = $tableData['connection'];
+
         // Generate the MySQL table name
-        $this->generateTableName();
+        $this->generateTableName($connection);
 
         // Create the wpDataTable metadata
         $wpdb->insert(
@@ -244,6 +294,7 @@ class wpDataTableConstructor
             array(
                 'title' => sanitize_text_field($this->_table_data['name']),
                 'table_type' => 'manual',
+                'connection' => $connection,
                 'content' => 'SELECT 
                               * FROM ' . $this->_name,
                 'server_side' => 1,
@@ -261,9 +312,30 @@ class wpDataTableConstructor
         // Store the new table metadata ID
         $wpdatatable_id = $wpdb->insert_id;
 
+        $vendor = Connection::getVendor($connection);
+        $isMySql = $vendor === Connection::$MYSQL;
+        $isMSSql = $vendor === Connection::$MSSQL;
+        $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
+        $origHeader = 'wdt_ID';
+
         // Prepare the create statement for the table itself
-        $create_statement = "CREATE TABLE " . $this->_name . " (
+        if ($isMySql) {
+            $create_statement = "CREATE TABLE " . $this->_name . " (
  	 							wdt_ID INT( 11 ) NOT NULL AUTO_INCREMENT,";
+        }
+
+        if ($isMSSql) {
+            $create_statement = "CREATE TABLE " . $this->_name . " (
+ 	 							wdt_ID INT NOT NULL IDENTITY(1,1),";
+        }
+
+        if ($isPostgreSql) {
+            $create_statement = "CREATE TABLE " . $this->_name . " (
+ 	 							wdt_ID SERIAL,";
+            $origHeader = 'wdt_id';
+        }
+
 
         $column_headers = array();
 
@@ -274,8 +346,8 @@ class wpDataTableConstructor
             $wpdb->prefix . "wpdatatables_columns",
             array(
                 'table_id' => $wpdatatable_id,
-                'orig_header' => 'wdt_ID',
-                'display_header' => 'wdt_ID',
+                'orig_header' => $origHeader,
+                'display_header' => $origHeader,
                 'filter_type' => 'none',
                 'column_type' => 'int',
                 'visible' => 0,
@@ -302,7 +374,7 @@ class wpDataTableConstructor
             }
             $this->_column_headers[$column['orig_header']] = $column_header;
 
-            $columnProperties = self::defineColumnProperties($column_header, $column);
+            $columnProperties = self::defineColumnProperties($column_header, $column, $connection);
 
             // Create the column metadata in WPDB
             $wpdb->insert(
@@ -326,10 +398,22 @@ class wpDataTableConstructor
         }
 
         // Add the ID unique key
-        $create_statement .= " UNIQUE KEY wdt_ID (wdt_ID)) CHARACTER SET=utf8 COLLATE utf8_general_ci";
+        if ($isMySql) {
+            $create_statement .= " UNIQUE KEY wdt_ID (wdt_ID)) CHARACTER SET=utf8 COLLATE utf8_general_ci";
+        }
+
+        if ($isMSSql) {
+            $create_statement .= " CONSTRAINT UC_{$this->_name}_wdt_ID UNIQUE (wdt_ID))";
+        }
+
+        if ($isPostgreSql) {
+            $create_statement .= " UNIQUE (wdt_ID))";
+        }
+
+
 
         // Call the create statement on WPDB or on external DB if it is defined
-        if (get_option('wdtUseSeparateCon')) {
+        if (Connection::isSeparate($connection)) {
             // External DB
             $this->_db->doQuery($create_statement, array());
             if ($this->_db->getLastError() != '') {
@@ -375,20 +459,25 @@ class wpDataTableConstructor
             $tableData['mySqlColumns'] = array();
         }
 
+        $vendor = Connection::getVendor($tableData['connection']);
+
+        $columnQuoteStart = Connection::getLeftColumnQuote($vendor);
+        $columnQuoteEnd = Connection::getRightColumnQuote($vendor);
+
         // Initializing structure for the SELECT part of query
         $this->_prepareMySQLSelectBlock();
 
         // Initializing structure for the WHERE part of query
-        $this->_prepareMySQLWhereBlock();
+        $this->_prepareMySQLWhereBlock($columnQuoteStart, $columnQuoteEnd);
 
         // Prepare the GROUP BY block
-        $this->_prepareMySQLGroupByBlock();
+        $this->_prepareMySQLGroupByBlock($columnQuoteStart, $columnQuoteEnd);
 
         // Prepare the join rules
-        $this->_prepareMySQLJoinedQueryStructure();
+        $this->_prepareMySQLJoinedQueryStructure($columnQuoteStart, $columnQuoteEnd);
 
         // Prepare the query itself
-        $this->_query = $this->_buildMySQLQuery();
+        $this->_query = $this->_buildMySQLQuery($columnQuoteStart, $columnQuoteEnd);
     }
 
 
@@ -717,7 +806,7 @@ class wpDataTableConstructor
 
     }
 
-    private function _prepareMySQLWhereBlock()
+    private function _prepareMySQLWhereBlock($columnQuoteStart, $columnQuoteEnd)
     {
 
         if (empty($this->_table_data['whereConditions'])) {
@@ -733,7 +822,7 @@ class wpDataTableConstructor
             }
 
             $this->_where_arr[$where_column_arr[0]][] = self::buildWhereCondition(
-                $where_condition['column'],
+                $this->_quouteColumnNames([$where_condition['column']], $columnQuoteStart, $columnQuoteEnd)[0],
                 $where_condition['operator'],
                 $where_condition['value']
             );
@@ -883,7 +972,7 @@ class wpDataTableConstructor
     /**
      * Prepares the structure of the JOIN rules for MySQL based tables
      */
-    private function _prepareMySQLJoinedQueryStructure()
+    private function _prepareMySQLJoinedQueryStructure($columnQuoteStart, $columnQuoteEnd)
     {
         if (!isset($this->_table_data['joinRules'])) {
             return;
@@ -915,27 +1004,36 @@ class wpDataTableConstructor
                 }
             }
 
+
+
             $this->_where_arr[$connected_column_arr[0]][] = self::buildWhereCondition(
-                $join_rule['initiatorTable'] . '.' . $join_rule['initiatorColumn'],
+                $join_rule['initiatorTable'] . '.' . $columnQuoteStart . $join_rule['initiatorColumn'] . $columnQuoteEnd,
                 'eq',
-                $join_rule['connectedColumn'],
+                $this->_quouteColumnNames([$join_rule['connectedColumn']], $columnQuoteStart, $columnQuoteEnd)[0],
                 false
             );
         }
 
     }
 
+    private function _quouteColumnNames($columnNames, $columnQuoteStart, $columnQuoteEnd) {
+        return array_map(function ($value) use ($columnQuoteStart, $columnQuoteEnd) {
+            $parts = explode('.', $value);
+            return ($parts[0] . ".$columnQuoteStart" . $parts[1] . "$columnQuoteEnd");
+        }, $columnNames);
+    }
+
     /**
      * Prepares the query text for MySQL based table
      */
-    private function _buildMySQLQuery()
+    private function _buildMySQLQuery($columnQuoteStart, $columnQuoteEnd)
     {
 
         // Build the final output
         $query = "SELECT ";
         $i = 0;
         foreach ($this->_select_arr as $table_alias => $select_block) {
-            $query .= implode(",\n       ", $select_block);
+            $query .= implode(",\n       ", $this->_quouteColumnNames($select_block, $columnQuoteStart, $columnQuoteEnd));
             $i++;
             if ($i < count($this->_select_arr)) {
                 $query .= ",\n       ";
@@ -1146,7 +1244,7 @@ class wpDataTableConstructor
     /**
      * Prepare a GROUP BY block for MySQL based wpDataTables
      */
-    private function _prepareMySQLGroupByBlock()
+    private function _prepareMySQLGroupByBlock($columnQuoteStart, $columnQuoteEnd)
     {
         if (!$this->_has_groups) {
             return;
@@ -1156,7 +1254,7 @@ class wpDataTableConstructor
             if (empty($grouping_rule)) {
                 continue;
             }
-            $this->_group_arr[] = $grouping_rule;
+            $this->_group_arr[] = $this->_quouteColumnNames([$grouping_rule], $columnQuoteStart, $columnQuoteEnd)[0];
         }
 
     }
@@ -1210,12 +1308,30 @@ class wpDataTableConstructor
         return $this->_query;
     }
 
-    public function getQueryPreview()
+    public function getQueryPreview($connection = null)
     {
 
-        if (get_option('wdtUseSeparateCon')) {
-            $sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
-            $result = $sql->getAssoc($this->_query . ' LIMIT 5', array());
+        if (Connection::isSeparate($connection)) {
+            $sql = Connection::create($connection);
+
+            $vendor = Connection::getVendor($connection);
+            $isMySql = $vendor === Connection::$MYSQL;
+            $isMSSql = $vendor === Connection::$MSSQL;
+            $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
+            if ($isMySql) {
+                $query = $this->_query . " LIMIT 5";
+            }
+
+            if ($isMSSql) {
+                $query = $this->_query . " ORDER BY(SELECT NULL) OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY";
+            }
+
+            if ($isPostgreSql) {
+                $query = $this->_query . " LIMIT 5";
+            }
+
+            $result = $sql->getAssoc($query, array());
         } else {
             global $wpdb;
             $wpdb->hide_errors();
@@ -1230,7 +1346,7 @@ class wpDataTableConstructor
             ob_end_clean();
         } else {
             $ret_val = __('<div class="alert alert-danger m-15">No results found. Please check if this query is correct! Table Constructor needs a query that returns data to build a wpDataTable.', 'wpdatatables');
-            if (!get_option('wdtUseSeparateCon') && !empty($wpdb->last_error)) {
+            if (!(Connection::isSeparate($connection)) && !empty($wpdb->last_error)) {
                 $ret_val .= '<br>Error: ' . $wpdb->last_error . '</div>';
             }
         }
@@ -1259,6 +1375,7 @@ class wpDataTableConstructor
         $table_array = array(
             'title' => '',
             'table_type' => 'mysql',
+            'connection' => $tableData['connection'],
             'content' => '',
             'filtering' => 1,
             'filtering_form' => 0,
@@ -1285,7 +1402,7 @@ class wpDataTableConstructor
 
         $table_array['content'] = $tableData['query'];
 
-        $res = WDTConfigController::tryCreateTable('mysql', $table_array['content']);
+        $res = WDTConfigController::tryCreateTable('mysql', $table_array['content'], $tableData['connection']);
 
         if (empty($res->error)) {
             // get the newly generated table ID
@@ -1307,18 +1424,36 @@ class wpDataTableConstructor
      *
      * @return array
      */
-    public static function listMySQLTables()
+    public static function listMySQLTables($connection)
     {
 
         $tables = array();
 
-        if (get_option('wdtUseSeparateCon')) {
+        if (Connection::isSeparate($connection)) {
             try {
-                $sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+                $sql = Connection::create($connection);
             } catch (Exception $ex) {
                 return $tables;
             }
-            $result = $sql->getArray('SHOW TABLES', array());
+
+            $vendor = Connection::getVendor($connection);
+            $isMySql = $vendor === Connection::$MYSQL;
+            $isMSSql = $vendor === Connection::$MSSQL;
+            $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
+            if ($isMySql) {
+                $query = 'SHOW TABLES';
+            }
+
+            if ($isMSSql) {
+                $query = 'SELECT table_name FROM INFORMATION_SCHEMA.TABLES';
+            }
+
+            if ($isPostgreSql) {
+                $query = "SELECT tablename FROM pg_catalog.pg_tables where schemaname = 'public'";
+            }
+
+            $result = $sql->getArray($query, array());
             if (empty($result)) {
                 return $tables;
             }
@@ -1338,23 +1473,53 @@ class wpDataTableConstructor
     /**
      * Return a list of columns for the selected tables
      */
-    public static function listMySQLColumns($tables)
+    public static function listMySQLColumns($tables, $connection)
     {
         $columns = array('allColumns' => array(), 'sortedColumns' => array());
         if (!empty($tables)) {
-            if (get_option('wdtUseSeparateCon')) {
+            if (Connection::isSeparate($connection)) {
                 try {
-                    $sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+                    $sql = Connection::create($connection);
                 } catch (Exception $ex) {
                     return $columns;
                 }
                 foreach ($tables as $table) {
                     $columns['sortedColumns'][$table] = array();
-                    $columns_query = "SHOW COLUMNS FROM {$table}";
+
+                    $vendor = Connection::getVendor($connection);
+                    $isMySql = $vendor === Connection::$MYSQL;
+                    $isMSSql = $vendor === Connection::$MSSQL;
+                    $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
+                    if ($isMySql) {
+                        $columns_query = "SHOW COLUMNS FROM {$table}";
+                    }
+
+                    if ($isMSSql) {
+                        $columns_query = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{$table}'";
+                    }
+
+                    if ($isPostgreSql) {
+                        $columns_query = "SELECT * FROM information_schema.columns WHERE table_schema = 'public' AND table_name   = '{$table}'";
+                    }
+
+
                     $table_columns = $sql->getAssoc($columns_query);
                     foreach ($table_columns as $table_column) {
-                        $columns['sortedColumns'][$table][] = "{$table}.{$table_column['Field']}";
-                        $columns['allColumns'][] = "{$table}.{$table_column['Field']}";
+                        if ($isMySql) {
+                            $columns['sortedColumns'][$table][] = "{$table}.{$table_column['Field']}";
+                            $columns['allColumns'][] = "{$table}.{$table_column['Field']}";
+                        }
+
+                        if ($isMSSql) {
+                            $columns['sortedColumns'][$table][] = "{$table}.{$table_column['COLUMN_NAME']}";
+                            $columns['allColumns'][] = "{$table}.{$table_column['COLUMN_NAME']}";
+                        }
+
+                        if ($isPostgreSql) {
+                            $columns['sortedColumns'][$table][] = "{$table}.{$table_column['column_name']}";
+                            $columns['allColumns'][] = "{$table}.{$table_column['column_name']}";
+                        }
                     }
                 }
             } else {
@@ -1410,17 +1575,15 @@ class wpDataTableConstructor
                 );
             }
         } else {
-            require_once(WDT_ROOT_PATH . '/lib/phpExcel/PHPExcel.php');
-            $objPHPExcel = new PHPExcel();
             if (strpos(strtolower($xls_url), '.xlsx')) {
-                $objReader = new PHPExcel_Reader_Excel2007();
+                $objReader = new Xlsx();
             } elseif (strpos(strtolower($xls_url), '.xls')) {
-                $objReader = new PHPExcel_Reader_Excel5();
+                $objReader = new Xls();
             } elseif (strpos(strtolower($xls_url), '.ods')) {
-                $objReader = new PHPExcel_Reader_OOCalc();
+                $objReader = new Ods();
             } elseif (strpos(strtolower($xls_url), '.csv')) {
-                $objReader = new PHPExcel_Reader_CSV();
-                $csvDelimiter = WDTTools::detectCSVDelimiter($xls_url);
+                $objReader = new Csv();
+                $csvDelimiter = get_option('wdtCSVDelimiter') ? get_option('wdtCSVDelimiter') : WDTTools::detectCSVDelimiter($xls_url);
                 $objReader->setDelimiter($csvDelimiter);
             } else {
                 return array('result' => 'error', 'message' => __('Could not read input file!', 'wpdatatables'));
@@ -1509,17 +1672,15 @@ class wpDataTableConstructor
             $highestRow = count($namedDataArray) - 1;
         } else {
             $table_type = 'excel';
-            require_once(WDT_ROOT_PATH . '/lib/phpExcel/PHPExcel.php');
-            $objPHPExcel = new PHPExcel();
             if (strpos(strtolower($xls_url), '.xlsx')) {
-                $objReader = new PHPExcel_Reader_Excel2007();
+                $objReader = new Xlsx();
             } elseif (strpos(strtolower($xls_url), '.xls')) {
-                $objReader = new PHPExcel_Reader_Excel5();
+                $objReader = new Xls();
             } elseif (strpos(strtolower($xls_url), '.ods')) {
-                $objReader = new PHPExcel_Reader_OOCalc();
+                $objReader = new Ods();
             } elseif (strpos(strtolower($xls_url), '.csv')) {
-                $objReader = new PHPExcel_Reader_CSV();
-                $csvDelimiter = WDTTools::detectCSVDelimiter($xls_url);
+                $objReader = new Csv();
+                $csvDelimiter = get_option('wdtCSVDelimiter') ? get_option('wdtCSVDelimiter') : WDTTools::detectCSVDelimiter($xls_url);
                 $objReader->setDelimiter($csvDelimiter);
             } else {
                 return _('File format not supported!', 'wpdatatables');
@@ -1539,14 +1700,19 @@ class wpDataTableConstructor
 
         $this->_column_headers = apply_filters('wpdt_insert_additional_column_header', $this->_column_headers);
 
+        $vendor = Connection::getVendor($tableData['connection']);
+
+        $columnQuoteStart = Connection::getLeftColumnQuote($vendor);
+        $columnQuoteEnd = Connection::getRightColumnQuote($vendor);
+
         // Insert statement default beginning
         $insert_statement_beginning = "INSERT INTO "
             . $this->_name . " ("
             . implode(
                 ', ',
                 array_map(
-                    function ($header) {
-                        return "`{$header}`";
+                    function ($header) use ($columnQuoteStart, $columnQuoteEnd) {
+                        return "{$columnQuoteStart}{$header}{$columnQuoteEnd}";
                     },
                     array_values($this->_column_headers)
                 )
@@ -1628,8 +1794,8 @@ class wpDataTableConstructor
                                     $date = null;
                                 } else {
                                     $cell = $objPHPExcel->getActiveSheet()->getCell($dataColumnIndex . '' . $row);
-                                    if (PHPExcel_Shared_Date::isDateTime($cell)) {
-                                        $date = PHPExcel_Shared_Date::ExcelToPHP($cell->getValue());
+                                    if (Date::isDateTime($cell)) {
+                                        $date = Date::excelToTimestamp($cell->getValue());
                                     } else {
                                         $date = WDTTools::wdtConvertStringToUnixTimestamp($dataRows[$row][$dataColumnIndex], $columnDateInputFormat[$dataColumnHeading]);
                                     }
@@ -1674,13 +1840,13 @@ class wpDataTableConstructor
             }
 
             if ($row % 100 == 0) {
-                $this->insertRowsChunk($insert_statement_beginning, $insert_blocks);
+                $this->insertRowsChunk($insert_statement_beginning, $insert_blocks, $tableData['connection']);
                 $insert_blocks = array();
             }
 
         }
 
-        $this->insertRowsChunk($insert_statement_beginning, $insert_blocks);
+        $this->insertRowsChunk($insert_statement_beginning, $insert_blocks, $tableData['connection']);
 
     }
 
@@ -1690,13 +1856,13 @@ class wpDataTableConstructor
      * @param $insert_statement_beginning
      * @param $insert_blocks
      */
-    private function insertRowsChunk($insert_statement_beginning, $insert_blocks)
+    private function insertRowsChunk($insert_statement_beginning, $insert_blocks, $connection = null)
     {
         global $wpdb;
 
         if (count($insert_blocks) > 0) {
             $insert_statement = $insert_statement_beginning . " VALUES " . implode(', ', $insert_blocks);
-            if (get_option('wdtUseSeparateCon')) {
+            if (Connection::isSeparate($connection)) {
                 // External DB
                 $this->_db->doQuery($insert_statement, array());
             } else {
@@ -1732,9 +1898,9 @@ class wpDataTableConstructor
         $drop_statement = "ALTER TABLE {$tableData->mysql_table_name} DROP COLUMN {$columnName}";
 
         // First delete the column from the MySQL table
-        if (get_option('wdtUseSeparateCon')) {
+        if (Connection::isSeparate($tableData->connection)) {
             // External DB
-            $Sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+            $Sql = Connection::create($tableData->connection);
             $Sql->doQuery($drop_statement, array());
         } else {
             $wpdb->query($drop_statement);
@@ -1780,21 +1946,41 @@ class wpDataTableConstructor
         }
 
         $new_column_mysql_name = WDTTools::generateMySQLColumnName($column_data['name'], $existing_headers);
-        $columnProperties = self::defineColumnProperties($new_column_mysql_name, $column_data);
+        $columnProperties = self::defineColumnProperties($new_column_mysql_name, $column_data, $tableData->connection);
+
+        $vendor = Connection::getVendor($tableData->connection);
+        $leftColumnQuote = Connection::getLeftColumnQuote($vendor);
+        $rightColumnQuote = Connection::getRightColumnQuote($vendor);
+        $isMySql = $vendor === Connection::$MYSQL;
+        $isMSSql = $vendor === Connection::$MSSQL;
+        $isPostgreSql = $vendor === Connection::$POSTGRESQL;
 
         // Add the column to MySQL table
-        $alter_table_statement = "ALTER TABLE {$tableData->mysql_table_name} 
+        if ($isMySql) {
+            $alter_table_statement = "ALTER TABLE {$tableData->mysql_table_name} 
                                         ADD COLUMN {$columnProperties['create_block']} ";
-        if ($column_data['insert_after'] == '%%beginning%%') {
-            $alter_table_statement .= " FIRST";
-        } else if ($column_data['insert_after'] != '%%end%%') {
-            $alter_table_statement .= " AFTER `{$column_data['insert_after']}`";
+
+            if ($column_data['insert_after'] == '%%beginning%%') {
+                $alter_table_statement .= " FIRST";
+            } else if ($column_data['insert_after'] != '%%end%%') {
+                $alter_table_statement .= " AFTER {$leftColumnQuote}{$column_data['insert_after']}{$rightColumnQuote}";
+            }
+        }
+
+        if ($isMSSql) {
+            $alter_table_statement = "ALTER TABLE {$tableData->mysql_table_name} 
+                                        ADD {$columnProperties['create_block']} ";
+        }
+
+        if ($isPostgreSql) {
+            $alter_table_statement = "ALTER TABLE {$tableData->mysql_table_name} 
+                                        ADD COLUMN {$columnProperties['create_block']} ";
         }
 
         // Call the create statement on WPDB or on external DB if it is defined
-        if (get_option('wdtUseSeparateCon')) {
+        if (Connection::isSeparate($tableData->connection)) {
             // External DB
-            $Sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+            $Sql = Connection::create($tableData->connection);
             $Sql->doQuery($alter_table_statement, array());
         } else {
             $wpdb->query($alter_table_statement);
@@ -1803,6 +1989,8 @@ class wpDataTableConstructor
         // Fill in with default value if requested
         $column_data['default_value'] = $column_data['type'] === 'multiselect' ? sanitize_text_field(implode(", ", $column_data['default_value'])) : sanitize_text_field($column_data['default_value']);
         if ($column_data['fill_default'] == 1 && $column_data['default_value']) {
+
+            $valueQuoute = "'";
 
             if ($column_data['type'] == 'date') {
                 $column_data['default_value'] =
@@ -1822,12 +2010,31 @@ class wpDataTableConstructor
                         $timeFormat,
                         $column_data['default_value']
                     )->format('H:i:s');
+            } else if ($column_data['type'] == 'int' || $column_data['type'] == 'float') {
+                if ($isMSSql || $isPostgreSql) {
+                    $valueQuoute = '';
+                }
+            }
+
+            $where = '';
+
+
+            if ($isMySql) {
+                $where = 'WHERE 1';
+            }
+
+            if ($isMSSql) {
+                $where = '';
+            }
+
+            if ($isPostgreSql) {
+                $where = '';
             }
 
             $update_fill_default = "UPDATE {$tableData->mysql_table_name} 
-                                            SET `{$new_column_mysql_name}` = '{$column_data['default_value']}' 
-                                            WHERE 1";
-            if (get_option('wdtUseSeparateCon')) {
+                                            SET {$leftColumnQuote}{$new_column_mysql_name}{$rightColumnQuote} = {$valueQuoute}{$column_data['default_value']}{$valueQuoute} 
+                                            {$where}";
+            if (Connection::isSeparate($tableData->connection)) {
                 // External DB
                 $Sql->doQuery($update_fill_default, array());
             } else {
