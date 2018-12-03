@@ -20,6 +20,7 @@ wp-content/gallery/*
 wp-content/exports/*
 wp-content/themes/makerfaire/partials/data/*
 wp-content/themes/makerfaire/signs/*
+wp-content/themes/twenty*
 
 # wpengine specific
 .smushit-status

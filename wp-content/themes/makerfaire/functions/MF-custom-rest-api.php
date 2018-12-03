@@ -230,15 +230,17 @@ function getMTMentries($formIDs,$faireID) {
          
          //project photo
          $projPhoto = $result->proj_photo;
-         $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 350, 350);
          
-         if ($fitPhoto == NULL)
-            $fitPhoto = $projPhoto;
-          
          //find out if there is an override image for this page
          $overrideImg = findOverride($result->entry_id, 'mtm');
          if ($overrideImg != '')
-            $fitPhoto = $overrideImg;
+            $projPhoto = $overrideImg;
+         
+         $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 350, 350);
+         
+         // Check to see if the fit photo returned an image
+         if ($fitPhoto == NULL)
+            $fitPhoto = $projPhoto;
          
          $makerList = getMakerList($result->entry_id);        
          
