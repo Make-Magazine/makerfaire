@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.23
+
+	- Added support for copying simple value to their equivalent value in a choice-based Pricing field.
+
 ## 1.4.22
 
 	- Added "gpcc_field_group" filter to allow including non-GF inputs in the Copy Cat field group.
