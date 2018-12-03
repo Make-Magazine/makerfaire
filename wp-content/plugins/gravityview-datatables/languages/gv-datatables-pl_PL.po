@@ -1,21 +1,20 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
-# Süha Karalar <suhakaralar@gmail.com>, 2014,2016,2018
-# Zachary Katz <zack@katz.co>, 2016
+# Dariusz Zielonka <info@dariusz-zielonka.pl>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2018-08-14 10:43+0000\n"
-"Last-Translator: Süha Karalar <suhakaralar@gmail.com>\n"
-"Language-Team: Turkish (Turkey) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/tr_TR/)\n"
+"PO-Revision-Date: 2018-09-18 23:45+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>\n"
+"Language-Team: Polish (Poland) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/pl_PL/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: tr_TR\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-Bookmarks: \n"
@@ -31,165 +30,165 @@ msgstr "DataTables"
 
 #: includes/class-datatables-data.php:689
 msgid "Loading data&hellip;"
-msgstr "data&hellip; yükleniyor"
+msgstr "Ładowanie&hellip;"
 
 #: includes/class-datatables-data.php:690
 msgid "No entries match your request."
-msgstr "Talebinize uyan kayıt bulunamadı."
+msgstr "Żadne pozycje nie pasują do Twojego żądania."
 
 #: includes/class-datatables-template.php:31
 msgid "DataTables Table"
-msgstr "DataTables Tablosu"
+msgstr "Tabela DataTables"
 
 #: includes/class-datatables-template.php:32
 msgid "Display items in a dynamic table powered by DataTables."
-msgstr "Kayıtları DataTables dinamik tablo oluşturucu ile görüntüleyin."
+msgstr "Wyświetlaj elementy w tabeli dynamicznej obsługiwanej przez DataTables."
 
 #: includes/class-datatables-template.php:50
 msgid "Link to single entry"
-msgstr "Tekil kayıt bağlantısı"
+msgstr "Link do pojedynczej pozycji"
 
 #: includes/class-datatables-template.php:61
 msgid "Visible Table Columns"
-msgstr "Görünür Tablo Sütunları"
+msgstr "Widoczne kolumny tabeli"
 
 #: includes/extensions/class-datatables-buttons.php:29
 #: includes/extensions/class-datatables-buttons.php:57
 msgid "Export Buttons"
-msgstr "Dışa Aktarım Düğmeleri"
+msgstr "Przyciski eksportu"
 
 #: includes/extensions/class-datatables-buttons.php:30
 msgid ""
 "Display buttons that allow users to print or export the current results."
-msgstr "Kullanıcıların mevcut sonuçları dışa aktarabileceği yada çıktı alabileceği seçenekleri göster."
+msgstr "Wyświetlaj przyciski, które pozwalają użytkownikom drukować lub eksportować bieżące wyniki."
 
 #: includes/extensions/class-datatables-buttons.php:47
 msgid "Enable Buttons"
-msgstr "Düğmeleri Etkinleştir"
+msgstr "Włącz przyciski"
 
 #: includes/extensions/class-datatables-buttons.php:87
 msgid "Copy"
-msgstr "Kopyala"
+msgstr "Kopiuj"
 
 #: includes/extensions/class-datatables-buttons.php:91
 msgid "Print"
-msgstr "Yazdır"
+msgstr "Drukuj"
 
 #: includes/extensions/class-datatables-fixedheader.php:27
 msgid "Keep headers or columns in place and visible while scrolling a table."
-msgstr "Tabloyu kaydırırken başlıkları ve sütunları görünür yap."
+msgstr "Zachowaj nagłówki lub kolumny, tak aby były widoczne podczas przewijania tabeli."
 
 #: includes/extensions/class-datatables-fixedheader.php:33
 msgid "Enable FixedHeader"
-msgstr "Sabit Başlık görünümünü etkinleştir"
+msgstr "Włącz stały nagłówek"
 
 #: includes/extensions/class-datatables-fixedheader.php:45
 msgid "Enable FixedColumns"
-msgstr "Sabit Sütun görünümünü etkinleştir."
+msgstr "Włącz stałe kolumny"
 
 #: includes/extensions/class-datatables-fixedheader.php:65
 msgid "FixedColumns"
-msgstr "Sabit Sütunlar"
+msgstr "Stałe kolumny"
 
 #: includes/extensions/class-datatables-fixedheader.php:66
 msgid ""
 "Fix the first column in place while horizontally scrolling a table. The "
 "first column and its contents will remain visible at all times."
-msgstr "Tabloyu dikey olarak kaydırırken ilk sütunu sabit yap. Bu sayede ilk sütun ve içeriği her zaman görünür olacaktır."
+msgstr "Unieruchom pierwszą kolumnę podczas przewijania w tabeli w pionie. Pierwsza kolumna i jej zawartość pozostaną widoczne przez cały czas."
 
 #: includes/extensions/class-datatables-fixedheader.php:70
 msgid "FixedHeader"
-msgstr "Sabit Başlık"
+msgstr "Stały nagłówek"
 
 #: includes/extensions/class-datatables-fixedheader.php:71
 msgid ""
 "Float the column headers above the table to keep the column titles visible "
 "at all times."
-msgstr "Sütun başlıklarını sürekli görünür yapmak için tablonun üzerine sabitle."
+msgstr "Umieść nagłówki kolumn ponad tabelą tak aby tytuły kolumn były widoczne cały czas."
 
 #: includes/extensions/class-datatables-responsive.php:41
 msgid "Responsive Tables"
-msgstr "Duyarlı Tablolar"
+msgstr "Responsywne tabele"
 
 #: includes/extensions/class-datatables-responsive.php:42
 msgid ""
 "Optimize table layout for different screen sizes through the dynamic "
 "insertion and removal of columns from the table."
-msgstr "Tablo arayüzünü farklı ekran ölçülerine uyarlamak için dinamik olarak sütunların eklenip çıkarılabilmesine izin ver."
+msgstr "Zoptymalizuj układ tabeli dla różnych rozmiarów ekranu poprzez dynamiczne wstawianie i usuwanie kolumn z tabeli."
 
 #: includes/extensions/class-datatables-responsive.php:68
 msgid "Enable Responsive Tables"
-msgstr "Duyarlı Tabloyu Etkinleştir"
+msgstr "Włącz responsywne tabele"
 
 #: includes/extensions/class-datatables-scroller.php:35
 msgid "Scroller"
-msgstr "Kaydırıcı"
+msgstr "Scroller"
 
 #: includes/extensions/class-datatables-scroller.php:36
 msgid ""
 "Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.\n"
 "\n"
 "\t\t\t\tNote: Scroller will not work well if your View has columns of varying height."
-msgstr "Büyük veri öbeklerinin sonsuz kayan sayfa olarak tek ekrana basılmasına izin ver. Kaydırıcının DataTables eklentisine en büyük katkısı büyük verileri daha hızlı görüntülemesini sağlamaktır.\n\n    Not: Eğer Görünüm'ünüz farklı yükseklikte sütunlar içeriyorsa Kaydırıcı sağlıklı çalışmayabilir."
+msgstr "Pozwól, aby duże zbiory danych były tworzone na ekranie na jednej ciągły sposób. Celem funkcji Scroller dla DataTables jest szybkie renderowanie dużych zbiorów danych.\n\n\t\t\t\tUwaga: Scroller nie będzie działał prawidłowo, jeśli Twój Widok ma kolumny o różnej wysokości."
 
 #: includes/extensions/class-datatables-scroller.php:52
 msgid "Enable Scroller"
-msgstr "Kaydıracı Etkinleştir"
+msgstr "Włącz Scroller"
 
 #: includes/extensions/class-datatables-scroller.php:62
 msgid "Table Height"
-msgstr "Tablo Yüksekliği"
+msgstr "Wysokość tabeli"
 
 #: includes/extensions/class-datatables-search.php:31
 msgid "Search"
-msgstr "Ara"
+msgstr "Wyszukiwanie"
 
 #: includes/extensions/class-datatables-search.php:32
 msgid "Ineffective if a search widget is already present in this View."
-msgstr "Bu görünümde zaten arama bileşeni varsa etkisizdir."
+msgstr "Nieskuteczne, jeśli widżet wyszukiwania jest już obecny w tym Widoku."
 
 #: includes/extensions/class-datatables-search.php:38
 msgid "Enable Search"
-msgstr "Aramayı Etkinleştir"
+msgstr "Włącz wyszukiwanie"
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
 "There is a new version of %1$s available. %2$sView version %3$s details%4$s."
-msgstr "Yeni bir  %1$s sürümü mevcut. %2$sSürümü ayrıntılarını %3$s görüntüle%4$s."
+msgstr "Jest dostępna nowa wersja %1$s. %2$sZobacz szczegóły wersji%3$s %4$s."
 
 #: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
 "There is a new version of %1$s available. %2$sView version %3$s details%4$s "
 "or %5$supdate now%6$s."
-msgstr "Yeni bir %1$s sürümü mevcut. %2$sSürüm ayrıntılarını %3$s görüntüleyin%4$s yada %5$shemen güncelleyin%6$s."
+msgstr "Jest dostępna nowa wersja %1$s. %1$s. %2$sZobacz szczegóły wersji%3$s %4$s lub %5$saktualizuj teraz%6$s."
 
 #: lib/EDD_SL_Plugin_Updater.php:369
 msgid "You do not have permission to install plugin updates"
-msgstr "Eklenti güncellemelerini yükleme yetkiniz yok"
+msgstr "Nie masz uprawnień do instalowania aktualizacji wtyczek"
 
 #: lib/EDD_SL_Plugin_Updater.php:369
 msgid "Error"
-msgstr "Hata"
+msgstr "Błąd"
 
 #: lib/class-gravityview-extension.php:360
 msgid "Could not activate the %s Extension; GravityView is not active."
-msgstr "%s eklentisi etkinleştirilemiyor; GravityView etkin değil."
+msgstr "Nie można aktywować wtyczki %s, GravityView nie jest aktywny."
 
 #: lib/class-gravityview-extension.php:364
 msgid "The %s Extension requires GravityView Version %s or newer."
-msgstr "%s eklentisi en az GravityView %s sürümü yada daha yenisini gerektirmektedir."
+msgstr "Wtyczka %s wymaga GravityView w wersji %s lub nowszej."
 
 #: lib/class-gravityview-extension.php:368
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
-msgstr "Bu eklenti PHP %s ve üzeri sürümleri gerektirir. Lütfen hosting firmanızla iletişime geçerek güncelleme talep ediniz."
+msgstr "Wtyczka %s wymaga PHP w wersji %s lub nowszej. Proszę zwrócić się do dostawcy hostingu o aktualizację wersji PHP serwera."
 
 #: lib/class-gravityview-extension.php:372
 msgid ""
 "The %s Extension is not compatible with this version of GravityView. Please "
 "update the Extension to the latest version."
-msgstr "%s eklentisi GravityView bu sürümü ile uyumlu değil. Lütfen eklentiyi en son sürüme güncelleyiniz."
+msgstr "Rozszerzenie %s nie jest zgodne z tą wersją GravityView. Proszę zaktualizować Rozszerzenie do najnowszej wersji."
 
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/datatables/"
@@ -198,4 +197,4 @@ msgstr "https://gravityview.co/extensions/datatables/"
 #: includes/class-datatables-data.php:623
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
-msgstr "Hepsi"
+msgstr "Wszystkie"

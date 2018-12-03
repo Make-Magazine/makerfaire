@@ -132,8 +132,9 @@ class GV_Extension_DataTables_Admin {
 	 * @param  mixed $hook
 	 */
 	function add_scripts_and_styles( $hook ) {
+
 		// Don't process any scripts below here if it's not a GravityView page.
-		if( !gravityview_is_admin_page( $hook ) ) { return; }
+		if( ! gravityview()->request->is_admin( $hook ) ) { return; }
 
 		$script_debug = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 		wp_enqueue_script( 'gravityview_datatables_admin', plugins_url( 'assets/js/datatables-admin-views'.$script_debug.'.js', GV_DT_FILE ), array( 'jquery' ), GV_Extension_DataTables::version );

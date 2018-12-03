@@ -42,8 +42,8 @@ class View_DataTable_Template extends View_Template {
 
 			$column_label = apply_filters( 'gravityview/template/field_label', $field->get_label( $this->view, $form ), $field->as_configuration(), $form->form ? $form->form : null, null );
 
-			printf( '<th id="gv-field-%d-%s" class="gv-field-%d-%s"%s scope="col"><span class="gv-field-label">%s</span></th>',
-				esc_attr( $form->ID ), esc_attr( $field->ID ), esc_attr( $form->ID ), esc_attr( $field->ID ),
+			printf( '<th id="gv-field-%d-%s" class="gv-field-%d-%s %s"%s scope="col"><span class="gv-field-label">%s</span></th>',
+				esc_attr( $form->ID ), esc_attr( $field->ID ), esc_attr( $form->ID ), esc_attr( $field->ID ), gravityview_sanitize_html_class( $field->custom_class ),
 				$field->width ? sprintf( ' style="width: %d%%"', $field->width ) : '', $column_label
 			);
 		}

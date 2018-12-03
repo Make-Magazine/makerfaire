@@ -33,6 +33,10 @@ class GV_Extension_DataTables_Data {
 	 * @since 1.3
 	 */
 	private function trigger_ajax() {
+
+		// Reduce query load for DT calls
+		add_action( 'admin_init', array( $this, 'reduce_query_load' ) );
+
 		// enable ajax
 		add_action( 'wp_ajax_gv_datatables_data', array( $this, 'get_datatables_data' ) );
 		add_action( 'wp_ajax_nopriv_gv_datatables_data', array( $this, 'get_datatables_data' ) );
@@ -130,6 +134,26 @@ class GV_Extension_DataTables_Data {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Removes the queries caused by `widgets_init` for AJAX calls (and for generating the data)
+	 *
+	 * @since 2.3.1
+	 *
+	 * @return void
+	 */
+	public function reduce_query_load() {
+
+		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+			return;
+		}
+
+		if( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'gravityview_datatables_data' ) ) {
+		    return;
+        }
+
+		remove_all_actions( 'widgets_init' );
 	}
 
 	/**
@@ -350,7 +374,7 @@ class GV_Extension_DataTables_Data {
 
 		$page = ( ( $offset - ( $view->settings->get( 'offset', 0 ) ? : 0 ) ) / ( $view->settings->get( 'page_size', 20 ) ? : 20 ) ) + 1;
 
-		if ( gravityview()->plugin->supports( \GV\Plugin::FEATURE_JOINS ) ) {
+		if ( gravityview()->plugin->supports( \GV\Plugin::FEATURE_GFQUERY ) ) {
 			add_action( 'gravityview/view/query', $callback = function( $query ) use ( $page ) {
 				$query->page( $page );
 			} );
@@ -498,7 +522,7 @@ class GV_Extension_DataTables_Data {
 		$data = array();
 		if ( $entries->total() ) {
 
-			$fields = $view->fields->by_position( 'directory_table-columns' )->all();
+			$fields = $view->fields->by_position( 'directory_table-columns' )->by_visible()->all();
 			$internal_source = new \GV\Internal_Source();
 			$renderer = new \GV\Field_Renderer();
 
@@ -516,15 +540,24 @@ class GV_Extension_DataTables_Data {
 
 				\GV\Mocks\Legacy_Context::pop();
 
+				/**
+                 * @filter `gravityview/datatables/output/entry` Modify the entry output before the request is returned
+                 * @since 2.3.1
+                 * @param array $temp Array of values for the entry, one item per field being rendered by \GV\Field_Renderer()
+                 * @param \GV\View $view Current View being processed
+                 * @param array $entry Current Gravity Forms entry array
+				 */
+				$temp = apply_filters( 'gravityview/datatables/output/entry', $temp, $view, $entry );
+
 				// Then add the item to the output dataset
 				$data[] = $temp;
+
 			}
 
 		}
 
 		return $data;
 	}
-
 	/**
 	 * Get column width as a % from the field setting
 	 *
