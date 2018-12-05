@@ -268,10 +268,10 @@ function angular_scripts() {
       $my_theme = wp_get_theme();
       $my_version = $my_theme->get('Version');
 
-      wp_enqueue_script('angularjs', get_stylesheet_directory_uri() . '/js/built-angular-libs.js', array('built-libs'), $my_version);
+      wp_enqueue_script('angularjs', get_stylesheet_directory_uri() . '/js/built-angular-libs.js', array('built-libs'), $my_version, true);
 
       if (is_page('ribbons')) {
-         wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/ribbonApp.js', array('angularjs'), $my_version);
+         wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/ribbonApp.js', array('angularjs'), $my_version, true);
          //localize
          wp_localize_script('angular-scripts', 'MyAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
          wp_localize_script('angular-scripts', 'angularLocalized', array('partials' => trailingslashit(get_template_directory_uri()) . 'partials/'));
@@ -281,7 +281,7 @@ function angular_scripts() {
          //angular ui-bootstrap style
          wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
       } elseif (is_page_template('page-meet-the-makers.php')) {
-         wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/meet-the-makers.js', array('angularjs'), $my_version);
+         wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/meet-the-makers.js', array('angularjs'), $my_version, true);
 
          //angular ui-bootstrap style
          wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
