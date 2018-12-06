@@ -33,7 +33,7 @@ class WDTConfigController {
             sanitize_text_field($tableData->var3) : '';
 
         // trying to generate/validate the WPDataTable config
-        $res = self::tryCreateTable($tableData->table_type, $tableData->content);
+        $res = self::tryCreateTable($tableData->table_type, $tableData->content, $tableData->connection);
 
         if (empty($res->error)) {
             // If the table can be created by wpDataTables performing the save to DB
@@ -60,7 +60,7 @@ class WDTConfigController {
 
                     // Return Filter and Editing Default value when Foreign key is set
                     foreach ($tableData->columns as $column) {
-                        if (!empty($column->foreignKeyRule)) {
+                        if (!empty($column->foreignKeyRule) && !($column->filter_type == 'text')) {
                             $column->filterDefaultValue = $wpDataTable->getColumn($column->orig_header)->getFilterDefaultValue();
                             $column->editingDefaultValue = $wpDataTable->getColumn($column->orig_header)->getEditingDefaultValue();
                         }
@@ -68,7 +68,7 @@ class WDTConfigController {
 
                     $res->table = $tableData;
                     $res->wdtJsonConfig = json_decode($wpDataTable->getJsonDescription());
-                    $res->wdtHtml = $wpDataTable->generateTable();
+                    $res->wdtHtml = $wpDataTable->generateTable($tableData->connection);
 
                 } catch (Exception $e) {
                     $res->error = $e->getMessage();
@@ -115,7 +115,7 @@ class WDTConfigController {
 
             $res->table = $tableData;
             $res->wdtJsonConfig = json_decode($wpDataTable->getJsonDescription());
-            $res->wdtHtml = $wpDataTable->generateTable();
+            $res->wdtHtml = $wpDataTable->generateTable($tableData->connection);
         } catch (Exception $e) {
             $res->error = $e->getMessage();
         }
@@ -164,6 +164,7 @@ class WDTConfigController {
             $table->global_search = (isset($advancedSettings->global_search)) ? $advancedSettings->global_search : 1;
             $table->showRowsPerPage = (isset($advancedSettings->showRowsPerPage)) ? $advancedSettings->showRowsPerPage : 1;
             $table->clearFilters = (isset($advancedSettings->clearFilters)) ? $advancedSettings->clearFilters : 0;
+            $table->connection = (isset($table->connection)) ? $table->connection : null;
 
             $table = self::sanitizeTableConfig($table);
 
@@ -250,6 +251,7 @@ class WDTConfigController {
             'title' => $table->title,
             'show_title' => $table->show_title,
             'table_type' => $table->table_type,
+            'connection' => $table->connection,
             'content' => $table->content,
             'sorting' => $table->sorting,
             'fixed_layout' => $table->fixed_layout,
@@ -454,11 +456,11 @@ class WDTConfigController {
      * @param $content - Content for creating the table (path to source or a MySQL query)
      * @return stdClass Object which has an 'error' property in case there were problems, or a 'table' on success
      */
-    public static function tryCreateTable($type, $content) {
+    public static function tryCreateTable($type, $content, $connection = null) {
 
         global $wdtVar1, $wdtVar2, $wdtVar3;
 
-        $tbl = new WPDataTable();
+        $tbl = new WPDataTable($connection);
         WPDataTable::$wdt_internal_idcount = 0;
         $result = new stdClass();
 
@@ -544,9 +546,29 @@ class WDTConfigController {
             // Change column type in database structure, if column type is changes on the frontend
             if ($table->getTableType() == 'manual' && $columnsTypesArray[$column->getOriginalHeader()] != $columnConfig['column_type']) {
 
+                $vendor = Connection::getVendor($table->connection);
+                $isMySql = $vendor === Connection::$MYSQL;
+                $isMSSql = $vendor === Connection::$MSSQL;
+                $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
+                if ($isMySql) {
+                    $columnIntType = 'INT(11)';
+                    $columnDateTimeType = 'DATETIME';
+                }
+
+                if ($isMSSql) {
+                    $columnIntType = 'INT';
+                    $columnDateTimeType = 'DATETIME';
+                }
+
+                if ($isPostgreSql) {
+                    $columnIntType = 'INT';
+                    $columnDateTimeType = 'TIMESTAMP';
+                }
+
                 switch ($columnConfig['column_type']) {
                     case 'int':
-                        $newType = 'INT(11)';
+                        $newType = $columnIntType;
                         break;
                     case 'float':
                         $newType = 'DECIMAL(16,4)';
@@ -555,7 +577,7 @@ class WDTConfigController {
                         $newType = 'date';
                         break;
                     case 'datetime':
-                        $newType = 'datetime';
+                        $newType = $columnDateTimeType;
                         break;
                     case 'time':
                         $newType = 'time';
@@ -565,7 +587,7 @@ class WDTConfigController {
                 }
 
                 $table_config = wdtConfigController::loadTableFromDB($tableId);
-                $table_config-> $mysql_table_name;
+                $mysql_table_name = $table_config->mysql_table_name;
                 $alterQuery = "ALTER TABLE {$mysql_table_name} MODIFY COLUMN {$columnConfig['orig_header']} {$newType}";
                 $alterQueryNull = '';
                 if (in_array($newType ,['date','datetime','time'])
@@ -573,13 +595,25 @@ class WDTConfigController {
                     $alterQueryNull= "UPDATE {$mysql_table_name} SET {$columnConfig['orig_header']} = null";
                 }
 
-                if (!get_option('wdtUseSeparateCon')) {
+                if ($isMySql) {
+                    $alterQuery = "ALTER TABLE {$mysql_table_name} MODIFY COLUMN {$columnConfig['orig_header']} {$newType}";
+                }
+
+                if ($isMSSql) {
+                    $alterQuery = "ALTER TABLE {$mysql_table_name} MODIFY COLUMN {$columnConfig['orig_header']} {$newType}";
+                }
+
+                if ($isPostgreSql) {
+                    $alterQuery = "ALTER TABLE {$mysql_table_name} ALTER COLUMN {$columnConfig['orig_header']} SET DATA TYPE {$newType}";
+                }
+
+                if (!Connection::isSeparate($table->connection)) {
                     $wpdb->query($alterQuery);
                     if (!empty($alterQueryNull)) {
                         $wpdb->query($alterQueryNull);
                     }
                 } else {
-                    $sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+                    $sql = Connection::create($table->connection);
                     $sql->doQuery($alterQuery);
                     if ($alterQueryNull) {
                         $sql->doQuery($alterQueryNull);

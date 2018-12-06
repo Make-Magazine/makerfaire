@@ -43,6 +43,8 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI_Command', FALSE)) {
     {
         /**
          * Flushes NextGen Gallery caches
+         * @param array $args
+         * @param array $assoc_args
          */
         function flush_cache($args, $assoc_args)
         {
@@ -52,7 +54,8 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI_Command', FALSE)) {
 
         /**
          * Create a new gallery
-         *
+         * @param array $args
+         * @param array $assoc_args
          * @synopsis <gallery-name> --author=<user_login>
          */
         function create_gallery($args, $assoc_args)
@@ -75,7 +78,8 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI_Command', FALSE)) {
 
         /**
          * Import an image from the filesystem into NextGen
-         *
+         * @param array $args
+         * @param array $assoc_args
          * @synopsis --filename=<absolute-path> --gallery=<gallery-id>
          */
         function import_image($args, $assoc_args)
@@ -105,7 +109,8 @@ if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI_Command', FALSE)) {
 
         /**
          * Clear all dismissed notifications handled by C_Admin_Notification_Manager
-         *
+         * @param array $args
+         * @param array $assoc_args
          * @synopsis
          */
         function clear_dismissed_notifications($args, $assoc_args)

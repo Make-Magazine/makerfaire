@@ -4,6 +4,9 @@ WP_CLI::add_command( 'jetpack', 'Jetpack_CLI' );
 
 /**
  * Control your local Jetpack installation.
+ *
+ * Minimum PHP requirement for WP-CLI is PHP 5.3, so ignore PHP 5.2 compatibility issues.
+ * @phpcs:disable PHPCompatibility.PHP.NewLanguageConstructs.t_ns_separatorFound
  */
 class Jetpack_CLI extends WP_CLI_Command {
 	// Aesthetics
@@ -384,7 +387,7 @@ class Jetpack_CLI extends WP_CLI_Command {
 							: __( 'Inactive', 'jetpack' ),
 					);
 				}
-				WP_CLI\Utils\format_items( $assoc_args['format'], $modules_list, array( 'slug', 'status' ) ); // phpcs:ignore PHPCompatibility
+				WP_CLI\Utils\format_items( $assoc_args['format'], $modules_list, array( 'slug', 'status' ) );
 				break;
 			case 'activate':
 				$module = Jetpack::get_module( $module_slug );
@@ -689,7 +692,7 @@ class Jetpack_CLI extends WP_CLI_Command {
 					);
 				}
 
-				WP_CLI\Utils\format_items( 'table', $collection, array( 'option', 'value' ) ); // phpcs:ignore PHPCompatibility
+				WP_CLI\Utils\format_items( 'table', $collection, array( 'option', 'value' ) );
 				break;
 			case 'start':
 				// Get the original settings so that we can restore them later
@@ -830,7 +833,7 @@ class Jetpack_CLI extends WP_CLI_Command {
 							'importing'       => (string) $item[4],
 						);
 					}
-					WP_CLI\Utils\format_items( // phpcs:ignore PHPCompatibility
+					WP_CLI\Utils\format_items(
 						'table',
 						$collection,
 						array(
@@ -889,7 +892,7 @@ class Jetpack_CLI extends WP_CLI_Command {
 		$request = array(
 			'headers' => array(
 				'Authorization' => "Bearer " . $token->access_token,
-				'Host'          => defined( 'JETPACK__WPCOM_JSON_API_HOST_HEADER' ) ? JETPACK__WPCOM_JSON_API_HOST_HEADER : 'public-api.wordpress.com',
+				'Host'          => 'public-api.wordpress.com',
 			),
 			'timeout' => 60,
 			'method'  => 'POST',
@@ -1033,12 +1036,10 @@ class Jetpack_CLI extends WP_CLI_Command {
 			WP_CLI::error( __( 'A non-empty token argument must be passed.', 'jetpack' ) );
 		}
 
-		$token = sanitize_text_field( $named_args['token'] );
-
 		$is_master_user  = ! Jetpack::is_active();
 		$current_user_id = get_current_user_id();
 
-		Jetpack::update_user_token( $current_user_id, sprintf( '%s.%d', $token, $current_user_id ), $is_master_user );
+		Jetpack::update_user_token( $current_user_id, sprintf( '%s.%d', $named_args['token'], $current_user_id ), $is_master_user );
 
 		WP_CLI::log( wp_json_encode( $named_args ) );
 
@@ -1148,7 +1149,7 @@ class Jetpack_CLI extends WP_CLI_Command {
 		if ( isset( $named_args['pretty'] ) ) {
 			$decoded_output = json_decode( $output );
 			if ( $decoded_output ) {
-				$output = wp_json_encode( $decoded_output, JSON_PRETTY_PRINT ); // phpcs:ignore PHPCompatibility
+				$output = wp_json_encode( $decoded_output, JSON_PRETTY_PRINT );
 			}
 		}
 
@@ -1229,7 +1230,7 @@ class Jetpack_CLI extends WP_CLI_Command {
 		);
 	}
 
-	/*
+	/**
 	 * Allows management of publicize connections.
 	 *
 	 * ## OPTIONS
@@ -1238,8 +1239,8 @@ class Jetpack_CLI extends WP_CLI_Command {
 	 * : The action to perform.
 	 * ---
 	 * options:
-	 *  - list
-	 *  - disconnect
+	 *   - list
+	 *   - disconnect
 	 * ---
 	 *
 	 * [<identifier>]
@@ -1250,28 +1251,63 @@ class Jetpack_CLI extends WP_CLI_Command {
 	 * ---
 	 * default: table
 	 * options:
-	 *  - table
-	 *  - json
-	 *  - csv
-	 *  - yaml
-	 *  - ids
-	 *  - count
+	 *   - table
+	 *   - json
+	 *   - csv
+	 *   - yaml
+	 *   - ids
+	 *   - count
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 * wp jetpack publicize list
-	 * wp jetpack publicize list twitter
-	 * wp --user=1 jetpack publicize list
-	 * wp --user=1 jetpack publicize list twitter
-	 * wp jetpack publicize list 123456
-	 * wp jetpack publicize disconnect 123456
-	 * wp jetpack publicize disconnect all
-	 * wp jetpack publicize disconnect twitter
+	 *     # List all publicize connections.
+	 *     $ wp jetpack publicize list
+	 *
+	 *     # List publicize connections for a given service.
+	 *     $ wp jetpack publicize list twitter
+	 *
+	 *     # List all publicize connections for a given user.
+	 *     $ wp --user=1 jetpack publicize list
+	 *
+	 *     # List all publicize connections for a given user and service.
+	 *     $ wp --user=1 jetpack publicize list twitter
+	 *
+	 *     # Display details for a given connection.
+	 *     $ wp jetpack publicize list 123456
+	 *
+	 *     # Diconnection a given connection.
+	 *     $ wp jetpack publicize disconnect 123456
+	 *
+	 *     # Disconnect all connections.
+	 *     $ wp jetpack publicize disconnect all
+	 *
+	 *     # Disconnect all connections for a given service.
+	 *     $ wp jetpack publicize disconnect twitter
 	 */
 	public function publicize( $args, $named_args ) {
 		if ( ! Jetpack::is_active() ) {
 			WP_CLI::error( __( 'Jetpack is not currently connected to WordPress.com', 'jetpack' ) );
+		}
+
+		if ( ! Jetpack::is_module_active( 'publicize' ) ) {
+			WP_CLI::error( __( 'The publicize module is not active.', 'jetpack' ) );
+		}
+
+		if ( Jetpack::is_development_mode() ) {
+			if (
+				! defined( 'JETPACK_DEV_DEBUG' ) &&
+				! has_filter( 'jetpack_development_mode' ) &&
+				false === strpos( site_url(), '.' )
+			) {
+				WP_CLI::error( __( "Jetpack is current in development mode because the site url does not contain a '.', which often occurs when dynamically setting the WP_SITEURL constant. While in development mode, the publicize module will not load.", 'jetpack' ) );
+			}
+
+			WP_CLI::error( __( 'Jetpack is currently in development mode, so the publicize module will not load.', 'jetpack' ) );
+		}
+
+		if ( ! class_exists( 'Publicize' ) ) {
+			WP_CLI::error( __( 'The publicize module is not loaded.', 'jetpack' ) );
 		}
 
 		$action        = $args[0];
@@ -1313,10 +1349,6 @@ class Jetpack_CLI extends WP_CLI_Command {
 					$connections_to_return = wp_list_filter( $connections_to_return, array( 'id' => $identifier ) );
 				}
 
-				if ( empty( $connections_to_return ) ) {
-					return false;
-				}
-
 				$expected_keys = array(
 					'id',
 					'service',
@@ -1331,7 +1363,25 @@ class Jetpack_CLI extends WP_CLI_Command {
 					'connection_data',
 				);
 
-				WP_CLI\Utils\format_items( $named_args['format'], $connections_to_return, $expected_keys ); // phpcs:ignore PHPCompatibility
+				// Somehow, a test site ended up in a state where $connections_to_return looked like:
+				// array( array( array( 'id' => 0, 'service' => 0 ) ) ) // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+				// This caused the CLI command to error when running WP_CLI\Utils\format_items() below. So
+				// to minimize future issues, this nested loop will remove any connections that don't contain
+				// any keys that we expect.
+				foreach ( (array) $connections_to_return as $connection_key => $connection ) {
+					foreach ( $expected_keys as $expected_key ) {
+						if ( ! isset( $connection[ $expected_key ] ) ) {
+							unset( $connections_to_return[ $connection_key ] );
+							continue;
+						}
+					}
+				}
+
+				if ( empty( $connections_to_return ) ) {
+					return false;
+				}
+
+				WP_CLI\Utils\format_items( $named_args['format'], $connections_to_return, $expected_keys );
 				break; // list.
 			case 'disconnect':
 				if ( ! $identifier ) {
@@ -1369,7 +1419,7 @@ class Jetpack_CLI extends WP_CLI_Command {
 
 					if ( ! empty( $connections ) ) {
 						$count    = count( $connections );
-						$progress = \WP_CLI\Utils\make_progress_bar( // phpcs:ignore PHPCompatibility
+						$progress = \WP_CLI\Utils\make_progress_bar(
 							/* translators: %s is a lowercase string for a social network. */
 							sprintf( __( 'Disconnecting all connections to %s.', 'jetpack' ), $service ),
 							$count

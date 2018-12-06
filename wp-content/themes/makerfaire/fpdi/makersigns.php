@@ -144,6 +144,11 @@ function createOutput($entry_id, $pdf) {
    
    // Field from Gravity form which is the image
    $project_photo = (isset($entry['22']) ? $entry['22'] : '');
+   //Check for image override
+   $overrideImg = findOverride($result->entry_id, 'signs');
+   if ($overrideImg != '')
+      $project_photo = $overrideImg;
+   
    $project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
    $project_title = (isset($entry['151']) ? filterText((string) $entry['151']) : '');
    

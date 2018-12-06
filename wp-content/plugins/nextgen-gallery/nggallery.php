@@ -3,8 +3,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 /**
  * Plugin Name: NextGEN Gallery
- * Description: The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 22 million downloads.
- * Version: 3.0.6
+ * Description: The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 23 million downloads.
+ * Version: 3.1.1
  * Author: Imagely
  * Plugin URI: https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/
  * Author URI: https://www.imagely.com
@@ -81,7 +81,7 @@ class C_NextGEN_Bootstrap
 	var $_pope_loaded = FALSE;
 	static $debug = FALSE;
 	var $minimum_ngg_pro_version = '2.0.5';
-    	var $minimum_ngg_plus_version = '1.0.1';
+    var $minimum_ngg_plus_version = '1.0.1';
 
 	static function shutdown($exception=NULL)
 	{
@@ -396,8 +396,8 @@ class C_NextGEN_Bootstrap
 		add_filter('simpletest_suites', array(&$this, 'add_testsuite'));
 
 		// Ensure that settings manager is saved as an array
-		add_filter('pre_update_option_'.$this->_settings_option_name, array(&$this, 'persist_settings'));
-		add_filter('pre_update_site_option_'.$this->_settings_option_name, array(&$this, 'persist_settings'));
+		add_filter('pre_update_option_' . $this->_settings_option_name, array($this, 'persist_settings'));
+		add_filter('pre_update_site_option_' . $this->_settings_option_name, array($this, 'persist_settings'));
 
 		// This plugin uses jQuery extensively
 		if (NGG_FIX_JQUERY) {
@@ -525,10 +525,10 @@ class C_NextGEN_Bootstrap
 
 	/**
 	 * Ensure that C_Photocrati_Settings_Manager gets persisted as an array
-	 * @param $settings
+	 * @param C_Photocrati_Settings_Manager_Base|array $settings
 	 * @return array
 	 */
-	function persist_settings($settings)
+	function persist_settings($settings = array())
 	{
 		if (is_object($settings) && $settings instanceof C_Photocrati_Settings_Manager_Base) {
 			$settings = $settings->to_array();
@@ -618,13 +618,24 @@ class C_NextGEN_Bootstrap
 		$router = C_Router::get_instance();
 
 		// Set context to path if subdirectory install
-		$parts = parse_url($router->get_base_url(FALSE));
-		if (isset($parts['path'])) {
-			$parts = explode('/index.php', $parts['path']);
-			$router->context = array_shift($parts);
-		}
+		$parts     = parse_url($router->get_base_url(FALSE));
+		$siteparts = parse_url(get_option('siteurl'));
 
-		// Provide a means for modules/third-parties to configure routes
+        if (isset($parts['path']) && isset($siteparts['path']))
+        {
+            if (strpos($parts['path'], '/index.php') === FALSE)
+            {
+                $router->context = $siteparts['path'];
+            }
+            else {
+                $new_parts = explode('/index.php', $parts['path']);
+                if (!empty($new_parts[0]) && $new_parts[0] == $siteparts['path']) {
+                    $router->context = array_shift($new_parts);
+                }
+            }
+        }
+
+        // Provide a means for modules/third-parties to configure routes
 		do_action_ref_array('ngg_routes', array(&$router));
 
 		// Serve the routes
@@ -663,7 +674,7 @@ class C_NextGEN_Bootstrap
 		define('NGG_PRODUCT_URL', path_join(str_replace("\\", '/', NGG_PLUGIN_URL), 'products'));
 		define('NGG_MODULE_URL', path_join(str_replace("\\", '/', NGG_PRODUCT_URL), 'photocrati_nextgen/modules'));
 		define('NGG_PLUGIN_STARTED_AT', microtime());
-		define('NGG_PLUGIN_VERSION', '3.0.7');
+		define('NGG_PLUGIN_VERSION', '3.1.1');
 
 		if (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG)
 			define('NGG_SCRIPT_VERSION', (string)mt_rand(0, mt_getrandmax()));
@@ -759,31 +770,29 @@ class C_NextGEN_Bootstrap
 
 	/**
 	 * Returns the path to a file within the plugin root folder
-	 * @param type $file_name
-	 * @return type
+     *
+	 * @param string $file_name
+	 * @return string
 	 */
 	function file_path($file_name=NULL)
 	{
 		$path = dirname(__FILE__);
-
 		if ($file_name != null)
-		{
 			$path .= '/' . $file_name;
-		}
 
 		return str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
 	}
 
-
 	/**
 	 * Gets the directory path used by the plugin
+     *
+     * @param string|null $dir (optional)
 	 * @return string
 	 */
 	function directory_path($dir=NULL)
 	{
 		return $this->file_path($dir);
 	}
-
 
 	/**
 	 * Determines the location of the plugin - within a theme or plugin
@@ -920,7 +929,7 @@ function ngg_fs_custom_connect_message(
 	$freemius_link
 ) {
 	return sprintf(
-		__fs( 'hey-x' ) . '<br>' .
+		__( 'Hey %s, ', 'nggallery' ) . '<br>' .
 		__( 'Allow %6$s to collect some usage data with %5$s to make the plugin even more awesome. If you skip this, that\'s okay! %2$s will still work just fine.', 'nggallery' ),
 		$user_first_name,
 		'<b>' . __('NextGEN Gallery', 'nggallery') . '</b>',
@@ -961,7 +970,7 @@ function fs_track_new_gallery() {
  *
  * @param bool $activate_for_all If true, activate Freemius for all users. Was added for testing.
  *
- * @return \Freemius
+ * @return bool|\Freemius
  */
 function ngg_fs( $activate_for_all = false ) {
 	global $ngg_fs;

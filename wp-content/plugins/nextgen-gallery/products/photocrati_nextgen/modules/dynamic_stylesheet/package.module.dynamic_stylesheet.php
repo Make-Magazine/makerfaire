@@ -63,7 +63,7 @@ class Mixin_Dynamic_Stylesheet_Instance_Methods extends Mixin
     /**
      * Loads a template, along with the dynamic variables to be interpolated
      * @param string $name
-     * @param array $vars
+     * @param array $data (optional)
      */
     function enqueue($name, $data = array())
     {
@@ -73,11 +73,11 @@ class Mixin_Dynamic_Stylesheet_Instance_Methods extends Mixin
             }
             if (defined('NGG_INLINE_DYNAMIC_CSS') && NGG_INLINE_DYNAMIC_CSS) {
                 $css = $this->render_view($this->object->get_css_template($index), $data, TRUE);
-                wp_enqueue_style('ngg_dyncss', $this->get_static_url('photocrati-dynamic_stylesheet#blank.css'), FALSE, NGG_SCRIPT_VERSION);
+                wp_enqueue_style('ngg_dyncss', $this->get_static_url('photocrati-dynamic_stylesheet#blank.css'), array(), NGG_SCRIPT_VERSION);
                 wp_add_inline_style('ngg_dyncss', $css);
             } else {
                 $data = $this->object->encode($data);
-                wp_enqueue_style('dyncss-' . $index . $data . '@dynamic', $this->object->get_router()->get_url("/{$this->object->_app}", FALSE) . "?index={$index}&data={$data}", FALSE, NGG_SCRIPT_VERSION);
+                wp_enqueue_style('dyncss-' . $index . $data . '@dynamic', $this->object->get_router()->get_url("/{$this->object->_app}", array()) . "?index={$index}&data={$data}", FALSE, NGG_SCRIPT_VERSION);
             }
         }
     }

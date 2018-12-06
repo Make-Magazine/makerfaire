@@ -18,41 +18,6 @@
         });
 
         /**
-         * Change MySQL host - "MySQL host"
-         */
-        $('#wdt-my-sql-host').change(function (e) {
-            wpdatatable_plugin_config.setMysqlHost( $(this).val() );
-        });
-
-        /**
-         * Change MySQL DB - "MySQL database"
-         */
-        $('#wdt-my-sql-db').change(function (e) {
-            wpdatatable_plugin_config.setMysqlDb( $(this).val() );
-        });
-
-        /**
-         * Change MySQL User - "MySQL user"
-         */
-        $('#wdt-my-sql-user').change(function (e) {
-            wpdatatable_plugin_config.setMysqlUser( $(this).val() );
-        });
-
-        /**
-         * Change MySQL Password - "MySQL password"
-         */
-        $('#wdtMySqlPwd').change(function (e) {
-            wpdatatable_plugin_config.setMysqlPass( $(this).val() );
-        });
-
-        /**
-         * Change MySQL port - "MySQL port"
-         */
-        $('#wdt-my-sql-port').change(function (e) {
-            wpdatatable_plugin_config.setMysqlPort( $(this).val() );
-        });
-
-        /**
          * Change language on select change - "Interface language"
          */
         $('#wdt-interface-language').change(function(e){
@@ -92,6 +57,13 @@
          */
         $('#wdt-number-format').change(function(e){
             wpdatatable_plugin_config.setNumberFormat( $(this).val() );
+        });
+
+        /**
+         * Change CSV delimiter - "CSV delimiter"
+         */
+        $('#wdt-csv-delimiter').change(function(e){
+            wpdatatable_plugin_config.setCSVDelimiter( $(this).val() );
         });
 
         /**
@@ -260,36 +232,32 @@
         /**
          * Load current config on load
          */
-        wpdatatable_plugin_config.setSeparateConnection ( wdt_current_config.wdtUseSeparateCon == 1 ? 1 : 0 );
-        wpdatatable_plugin_config.setMysqlHost          ( wdt_current_config.wdtMySQLHost );
-        wpdatatable_plugin_config.setMysqlDb            ( wdt_current_config.wdtMySqlDB );
-        wpdatatable_plugin_config.setMysqlUser          ( wdt_current_config.wdtMySqlUser );
-        wpdatatable_plugin_config.setMysqlPass          ( wdt_current_config.wdtMySqlPwd );
-        wpdatatable_plugin_config.setMysqlPort          ( wdt_current_config.wdtMySqlPort );
-        wpdatatable_plugin_config.setLanguage           ( wdt_current_config.wdtInterfaceLanguage );
-        wpdatatable_plugin_config.setDateFormat         ( wdt_current_config.wdtDateFormat );
-        wpdatatable_plugin_config.setTablesAdmin        ( wdt_current_config.wdtTablesPerPage );
-        wpdatatable_plugin_config.setTimeFormat         ( wdt_current_config.wdtTimeFormat );
-        wpdatatable_plugin_config.setBaseSkin           ( wdt_current_config.wdtBaseSkin );
-        wpdatatable_plugin_config.setNumberFormat       ( wdt_current_config.wdtNumberFormat );
-        wpdatatable_plugin_config.setRenderPosition     ( wdt_current_config.wdtRenderFilter );
-        wpdatatable_plugin_config.setDecimalPlaces      ( wdt_current_config.wdtDecimalPlaces );
-        wpdatatable_plugin_config.setTabletWidth        ( wdt_current_config.wdtTabletWidth );
-        wpdatatable_plugin_config.setMobileWidth        ( wdt_current_config.wdtMobileWidth );
-        wpdatatable_plugin_config.setPurchaseCode       ( wdt_current_config.wdtPurchaseCode );
-        wpdatatable_plugin_config.setIncludeBootstrap   ( wdt_current_config.wdtIncludeBootstrap == 1 ? 1 : 0 );
-        wpdatatable_plugin_config.setIncludeBootstrapBackEnd   ( wdt_current_config.wdtIncludeBootstrapBackEnd == 1 ? 1 : 0 );
-        wpdatatable_plugin_config.setParseShortcodes    ( wdt_current_config.wdtParseShortcodes == 1 ? 1 : 0 );
-        wpdatatable_plugin_config.setAlignNumber        ( wdt_current_config.wdtNumbersAlign == 1 ? 1 : 0  );
-        wpdatatable_plugin_config.setCustomCss          ( wdt_current_config.wdtCustomCss );
-        wpdatatable_plugin_config.setCustomJs           ( wdt_current_config.wdtCustomJs );
-        wpdatatable_plugin_config.setMinifiedJs         ( wdt_current_config.wdtMinifiedJs == 1 ? 1 : 0  );
-        wpdatatable_plugin_config.setSumFunctionsLabel  ( wdt_current_config.wdtSumFunctionsLabel );
-        wpdatatable_plugin_config.setAvgFunctionsLabel  ( wdt_current_config.wdtAvgFunctionsLabel );
-        wpdatatable_plugin_config.setMinFunctionsLabel  ( wdt_current_config.wdtMinFunctionsLabel );
-        wpdatatable_plugin_config.setMaxFunctionsLabel  ( wdt_current_config.wdtMaxFunctionsLabel );
-        wpdatatable_plugin_config.setBorderRemoval      ( wdt_current_config.wdtBorderRemoval == 1 ? 1 : 0  );
-        wpdatatable_plugin_config.setBorderRemovalHeader ( wdt_current_config.wdtBorderRemovalHeader == 1 ? 1 : 0  );
+        wpdatatable_plugin_config.setSeparateConnection         ( wdt_current_config.wdtUseSeparateCon == 1 ? 1 : 0 );
+        wpdatatable_plugin_config.setLanguage                   ( wdt_current_config.wdtInterfaceLanguage );
+        wpdatatable_plugin_config.setDateFormat                 ( wdt_current_config.wdtDateFormat );
+        wpdatatable_plugin_config.setTablesAdmin                ( wdt_current_config.wdtTablesPerPage );
+        wpdatatable_plugin_config.setTimeFormat                 ( wdt_current_config.wdtTimeFormat );
+        wpdatatable_plugin_config.setBaseSkin                   ( wdt_current_config.wdtBaseSkin );
+        wpdatatable_plugin_config.setNumberFormat               ( wdt_current_config.wdtNumberFormat );
+        wpdatatable_plugin_config.setCSVDelimiter               ( wdt_current_config.wdtCSVDelimiter );
+        wpdatatable_plugin_config.setRenderPosition             ( wdt_current_config.wdtRenderFilter );
+        wpdatatable_plugin_config.setDecimalPlaces              ( wdt_current_config.wdtDecimalPlaces );
+        wpdatatable_plugin_config.setTabletWidth                ( wdt_current_config.wdtTabletWidth );
+        wpdatatable_plugin_config.setMobileWidth                ( wdt_current_config.wdtMobileWidth );
+        wpdatatable_plugin_config.setPurchaseCode               ( wdt_current_config.wdtPurchaseCode );
+        wpdatatable_plugin_config.setIncludeBootstrap           ( wdt_current_config.wdtIncludeBootstrap == 1 ? 1 : 0 );
+        wpdatatable_plugin_config.setIncludeBootstrapBackEnd    ( wdt_current_config.wdtIncludeBootstrapBackEnd == 1 ? 1 : 0 );
+        wpdatatable_plugin_config.setParseShortcodes            ( wdt_current_config.wdtParseShortcodes == 1 ? 1 : 0 );
+        wpdatatable_plugin_config.setAlignNumber                ( wdt_current_config.wdtNumbersAlign == 1 ? 1 : 0  );
+        wpdatatable_plugin_config.setCustomCss                  ( wdt_current_config.wdtCustomCss );
+        wpdatatable_plugin_config.setCustomJs                   ( wdt_current_config.wdtCustomJs );
+        wpdatatable_plugin_config.setMinifiedJs                 ( wdt_current_config.wdtMinifiedJs == 1 ? 1 : 0  );
+        wpdatatable_plugin_config.setSumFunctionsLabel          ( wdt_current_config.wdtSumFunctionsLabel );
+        wpdatatable_plugin_config.setAvgFunctionsLabel          ( wdt_current_config.wdtAvgFunctionsLabel );
+        wpdatatable_plugin_config.setMinFunctionsLabel          ( wdt_current_config.wdtMinFunctionsLabel );
+        wpdatatable_plugin_config.setMaxFunctionsLabel          ( wdt_current_config.wdtMaxFunctionsLabel );
+        wpdatatable_plugin_config.setBorderRemoval              ( wdt_current_config.wdtBorderRemoval == 1 ? 1 : 0  );
+        wpdatatable_plugin_config.setBorderRemovalHeader        ( wdt_current_config.wdtBorderRemovalHeader == 1 ? 1 : 0  );
 
         for (var value in wdt_current_config.wdtFontColorSettings) {
             wpdatatable_plugin_config.setColorFontSetting ( value , wdt_current_config.wdtFontColorSettings[value] );
@@ -323,10 +291,14 @@
         });
 
         /**
-         * Test MySQL settings
+         * Test Separate connection settings
          */
-        $('#wp-my-sql-test').click(function () {
-            testMySQL(false);
+        $('#separate-connection').find(".wdt-my-sql-test").click(function () {
+            testConnections([
+                getConnectionData(
+                    $(this).closest(".tab-pane")
+                )
+            ], null);
         });
 
         /**
@@ -335,65 +307,325 @@
         $('button.wdt-apply').click(function(e){
 
             $('.wdt-preload-layer').animateFadeIn();
-            //Test if MySQL credentials works
-            testMySQL(true);
+
+            if (wdt_current_config.wdtUseSeparateCon) {
+                var connections = getAllConnectionData();
+
+                if (!areConnectionsValid(connections)) {
+                    return;
+                }
+
+                testConnections(connections, function () {
+                    savePluginSettings(connections);
+                });
+            } else {
+                savePluginSettings(null);
+            }
         });
 
-        function testMySQL(trigerSave) {
-            if (wdt_current_config.wdtUseSeparateCon == 1) {
-                var mysql_settings = {
-                    host: $('#wdt-my-sql-host').val(),
-                    db: $('#wdt-my-sql-db').val(),
-                    user: $('#wdt-my-sql-user').val(),
-                    password: $('#wdtMySqlPwd').val(),
-                    port: $('#wdt-my-sql-port').val()
-                };
-                $('.wdt-preload-layer').animateFadeIn();
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'wpdatatables_test_mysql_settings',
-                        mysql_settings: mysql_settings
-                    },
-                    success: function (data) {
-                        $('.wdt-preload-layer').animateFadeOut();
-                        if (data.errors.length > 0) {
-                            var errorMessage = '';
-                            for (var i in data.errors) {
-                                errorMessage += data.errors[i] + '<br/>';
-                            }
-                            // Show error if returned
-                            $('#wdt-error-modal .modal-body').html(errorMessage);
-                            $('#wdt-error-modal').modal('show');
-                            return;
+        /**
+         * Add Connection
+         */
+        $('#wp-my-sql-add').click(function () {
+            addNewConnection();
+        });
 
-                        } else if (data.success.length > 0) {
-                            var successMessage = '';
-                            for (var i in data.success) {
-                                successMessage += data.success[i] + '<br/>';
-                            }
-                            if (trigerSave) {
-                                savePluginSettings();
-                            }
-                            // Show success message
-                            wdtNotify(
-                                wpdatatables_edit_strings.success,
-                                successMessage,
-                                'success'
-                            );
-                        }
-                    }
-                })
-            } else {
-                if (trigerSave) {
-                    savePluginSettings();
-                }
+      /**
+       * Change connection default status
+       */
+        function changeDefaultConnection (element) {
+            var checked = $(element).is(':checked') ? 1 : 0;
+
+            if (checked) {
+                $(".wdt-my-sql-default-checkbox").prop('checked', false);
             }
+
+            $(element).prop( 'checked', checked );
         }
 
-        function savePluginSettings() {
+        $(".wdt-my-sql-default-checkbox").change(function (e) {
+            changeDefaultConnection(this);
+        });
+
+        /**
+         * Name the connection
+         */
+        $("#separate-connection").find("input[name='wdt-my-sql-name']").on('input', function (e) {
+            changeConnectionName(this.value);
+        });
+
+        /**
+         * Delete the connection
+         */
+        $(".wdt-my-sql-delete").click(function (e) {
+            deleteConnection(this);
+        });
+
+        /**
+         * Change connection name
+         */
+        function changeConnectionName(value) {
+            if (value.match(/[^a-zA-Z0-9 ]/g)) {
+                value = value.replace(/[^a-zA-Z0-9 ]/g, '');
+            }
+
+            $("#separate-connection").find(".tab-nav .active").find("a").text(value ? value : 'New Connection');
+        }
+
+      /**
+       * Add new connection
+       */
+        function addNewConnection() {
+            var element = $("#separate-connection");
+
+            var count = parseInt(element.attr("data-count") ? element.attr("data-count") : "0");
+            element.attr("data-count", count + 1);
+
+            // Navigation
+            var navigation = element.find(".tab-nav");
+            navigation.find("a").parent().removeClass("active");
+
+            var newConnectionNav = $('<li class="active"><a href="#connection' + count + '" aria-controls="connection-' + count + '" role="tab" data-toggle="tab" style="text-transform: none;">New Connection</a></li>');
+            navigation.append(newConnectionNav);
+
+            // Content
+            element.find(".tab-content").children().removeClass("active");
+            var content = $("#separate-connection-form").find(".tab-pane");
+
+            var newConnectionContent = content.clone(false);
+
+            newConnectionContent.attr("id", "connection" + count);
+            newConnectionContent.find("input").attr("value", "");
+            newConnectionContent.addClass("active");
+
+            newConnectionContent.find(".select").html('<select class="selectpicker wdt-my-sql-vendor" name="wdt-my-sql-vendor">' +
+                  '<option value="" disabled selected></option>' +
+                  '<option value="mysql">MySQL</option>' +
+                  '<option value="mssql">MSSQL</option>' +
+                  '<option value="postgresql">PostgreSQL</option>' +
+                  '</select>');
+
+            newConnectionContent.find(".select").find("select").selectpicker();
+
+            newConnectionContent.find("select option[value='']").prop("selected", true);
+            newConnectionContent.find(".wdt-my-sql-default-checkbox").attr("id", "wdt-my-sql-default-" + count);
+            newConnectionContent.find(".wdt-my-sql-default-checkbox").prop('checked', false);
+            newConnectionContent.find(".wdt-my-sql-default-checkbox").change(function (e) {
+                changeDefaultConnection(this);
+            });
+
+            newConnectionContent.find(".wdt-my-sql-default-label").attr("for", "wdt-my-sql-default-" + count);
+            newConnectionContent.find(".wdt-my-sql-test").click(function () {
+                  testConnections([
+                        getConnectionData(
+                            $(this).closest(".tab-pane")
+                        )
+                  ], null);
+            });
+            newConnectionContent.find(".wdt-my-sql-delete").click(function () {
+                deleteConnection(this);
+            });
+            newConnectionContent.find("input[name='wdt-my-sql-name']").on('input', function (e) {
+                changeConnectionName(this.value);
+            });
+
+            var connections = getAllConnectionData();
+            var connectionIds = []
+
+            for (var i = 0; i < connections.length; i++) {
+                  connectionIds.push(connections[i].id)
+            }
+
+            while ((id = Math.random().toString(36).substr(2, 16)) && !(connectionIds.indexOf(id) === -1)) {
+                id = Math.random().toString(36).substr(2, 16);
+            }
+
+            newConnectionContent.find("input[name='wdt-my-sql-id']").val(id);
+
+            element.find(".tab-content").append(newConnectionContent);
+
+            changeConnectionVendor(newConnectionContent)
+        }
+
+        function changeConnectionVendor(element) {
+            var selectVendorElement = $(element).find('.wdt-my-sql-vendor');
+
+            selectVendorElement.change(function (e) {
+                var vendor = selectVendorElement.find(":selected").val();
+                var defaultPort = '';
+
+                if (vendor === "mysql")
+                    defaultPort = '3306';
+                else if (vendor === "mssql")
+                    defaultPort = '1433';
+                else if (vendor === "postgresql")
+                    defaultPort = '5432';
+
+                $(element).find("input[name='wdt-my-sql-port']").val(defaultPort);
+
+                $(element).find('.zmdi-help-outline.connection-port').attr('title', 'Port for the connection' + (defaultPort ? ' (default: ' + defaultPort + ')' : '')).tooltip('fixTitle');
+
+                setTimeout(function () {
+                    $(element).tooltip({
+                        selector: '[data-toggle="tooltip"]'
+                    });
+                }, 500);
+            });
+        }
+
+        $(".separate-connection").each(function (index, connectionContent) {
+            changeConnectionVendor(connectionContent)
+        })
+
+        function deleteConnection(element) {
+            $('#wdt-delete-modal').modal('show');
+
+            var confirmButton = $('#wdt-delete-modal').find('#wdt-browse-delete-button');
+
+            confirmButton.unbind("click");
+            confirmButton.click(function () {
+                $("#separate-connection").find(".tab-nav .active").remove();
+
+                $(element).closest(".tab-pane").remove();
+
+                $('#wdt-delete-modal').modal('hide');
+
+                savePluginSettings(getAllConnectionData());
+            });
+        }
+
+        function getConnectionData(tab) {
+            return {
+                host: tab.find("input[name='wdt-my-sql-host']").val(),
+                database: tab.find("input[name='wdt-my-sql-db']").val(),
+                user: tab.find("input[name='wdt-my-sql-user']").val(),
+                password: tab.find("input[name='wdtMySqlPwd']").val(),
+                port: tab.find("input[name='wdt-my-sql-port']").val(),
+                vendor: tab.find("select[name='wdt-my-sql-vendor'] option:selected").val(),
+                name: tab.find("input[name='wdt-my-sql-name']").val(),
+                id: tab.find("input[name='wdt-my-sql-id']").val(),
+                default: tab.find(".wdt-my-sql-default-checkbox").is(':checked') ? 1 : 0
+            };
+        }
+
+        function getAllConnectionData() {
+            var connections = [];
+
+            $("#separate-connection").find(".tab-pane").each(function (index) {
+                connections.push(getConnectionData(
+                    $(this).closest(".tab-pane"))
+                );
+            });
+
+            return connections;
+        }
+
+        function testConnections(connections, callback) {
+            $('.wdt-preload-layer').animateFadeIn();
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'wpdatatables_test_separate_connection_settings',
+                    wdtSeparateCon: connections
+                },
+                success: function (data) {
+                    $('.wdt-preload-layer').animateFadeOut();
+                    if (data.errors.length > 0) {
+                        var errorMessage = '';
+                        for (var i in data.errors) {
+                            errorMessage += data.errors[i] + '<br/>';
+                        }
+                        // Show error if returned
+                        $('#wdt-error-modal .modal-body').html(errorMessage);
+                        $('#wdt-error-modal').modal('show');
+                        return;
+
+                    } else if (data.success.length > 0) {
+                        var successMessage = '';
+                        for (var i in data.success) {
+                            successMessage += data.success[i] + '<br/>';
+                        }
+                        if (callback !== null) {
+                            callback();
+                        }
+                        // Show success message
+                        wdtNotify(
+                            wpdatatables_edit_strings.success,
+                            successMessage,
+                            'success'
+                        );
+                    }
+                }
+            });
+        }
+
+        function areConnectionsValid(connections) {
+            // check if connections have duplicate names
+            var connectionsNames = [];
+
+            for (var i = 0; i < connections.length; i++) {
+                connectionsNames.push(connections[i]['name'].toLowerCase());
+            }
+
+            connectionsNames = connectionsNames.sort();
+
+            for (var i = 0; i < connectionsNames.length - 1; i++) {
+                if (connectionsNames[i + 1] === connectionsNames[i]) {
+                    $('#wdt-error-modal .modal-body').html("Connections can't have same names!");
+                    $('#wdt-error-modal').modal('show');
+                    $('.wdt-preload-layer').animateFadeOut();
+                    return false;
+                }
+            }
+
+            // check if connections have all parameters
+            for (var i = 0; i < connections.length; i++) {
+            if (connections[i]['name'].trim() === '' ||
+                connections[i]['database'].trim() === '' ||
+                connections[i]['host'].trim() === '' ||
+                connections[i]['port'].trim() === '' ||
+                connections[i]['user'].trim() === '' ||
+                connections[i]['password'].trim() === '' ||
+                connections[i]['vendor'].trim() === ''
+            ) {
+                $("#separate-connection").find(".tab-pane").each(function (index) {
+                    var tab = $(this).closest(".tab-pane");
+
+                    if (tab.find("input[name='wdt-my-sql-name']").val() === connections[i]['name']) {
+                        var connectionTab = $('a[href$="' + tab.attr('id') + '"]:first');
+
+                        $(connectionTab).parent().parent().children().removeClass('active');
+                        $(connectionTab).parent().addClass('active');
+
+                        $(".separate-connection-tab").parent().children().removeClass('active');
+                        $(".separate-connection-tab").addClass('active');
+
+                        $('.tab-pane').each(function (index) {
+                            $(this).removeClass('active');
+                        });
+
+                        $("#" + tab.attr('id')).addClass('active');
+                        $("#separate-connection").addClass('active');
+                    }
+                });
+
+                $('#wdt-error-modal .modal-body').html("Please insert connection parameters!");
+                $('#wdt-error-modal').modal('show');
+                $('.wdt-preload-layer').animateFadeOut();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function savePluginSettings(connections) {
+            if (connections !== null) {
+                wdt_current_config.wdtSeparateCon = JSON.stringify(connections);
+            }
+
             $.ajax({
                 url: ajaxurl,
                 dataType: 'json',
@@ -405,12 +637,13 @@
                 success: function () {
                     $('.wdt-preload-layer').animateFadeOut();
                     wdtNotify(
-                        wpdatatables_edit_strings.success,
-                        wpdatatables_edit_strings.settings_saved_successful,
-                        'success'
+                    wpdatatables_edit_strings.success,
+                    wpdatatables_edit_strings.settings_saved_successful,
+                    'success'
                     );
                 }
-            })
+            });
         }
     });
 })(jQuery);
+

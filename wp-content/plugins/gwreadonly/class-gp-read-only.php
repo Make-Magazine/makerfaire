@@ -212,7 +212,7 @@ class GP_Read_Only extends GWPerk {
 			$value = rgar( $value, (string) $input_id );
 		}
 
-		return sprintf( '<input type="hidden" id="%s" name="%s" value="%s" />', $hc_input_id, $hc_input_id, $value );
+		return sprintf( '<input type="hidden" id="%s" name="%s" value="%s" class="gf-default-disabled" />', $hc_input_id, $hc_input_id, $value );
 	}
 
 	public function process_hidden_captures( $form ) {

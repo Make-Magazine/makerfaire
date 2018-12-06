@@ -2,9 +2,9 @@
 /*
 Plugin Name: Drop Down List Field for Gravity Forms
 Description: Gives the option of adding a drop down (select) list to a list field column
-Version: 1.8.0
+Version: 1.8.1
 Author: Adrian Gordon
-Author URI: http://www.itsupportguides.com
+Author URI: https://www.itsupportguides.com
 License: GPL2
 Text Domain: gravity-forms-list-field-select-drop-down
 
@@ -72,11 +72,11 @@ if ( !class_exists('ITSG_GF_List_Field_Drop_Down') ) {
 			add_filter( 'gform_admin_pre_render', array( $this, 'add_user_option' ), 10, 1 );
 			add_filter( 'gform_pre_submission_filter', array( $this, 'add_user_option' ), 10, 1 );
 
-			add_filter( 'gform_get_field_value', array( $this, 'display_dropdown_value' ), 10, 3 );
+			add_filter( 'gform_get_input_value', array( $this, 'display_dropdown_value' ), 10, 4 );
 		}
 
 		// ensures that the drop down LABEL is displayed - the VALUE is passed in the POST and stored by GF so we do a lookup to get the LABEL from the VALUE
-		function display_dropdown_value( $value, $entry, $field ) {
+		function display_dropdown_value( $value, $entry, $field, $input_id ) {
 			if ( $value ) {
 				$is_entry_detail = GFCommon::is_entry_detail();
 				if ( !( $is_entry_detail && 'edit' == rgpost( 'screen_mode' ) ) && is_object( $field ) && 'list' == $field->get_input_type() ) {
@@ -110,7 +110,7 @@ if ( !class_exists('ITSG_GF_List_Field_Drop_Down') ) {
 								$isDropDown = $field->itsg_list_field_drop_down;
 								$isDropDownEnableChoiceValue = $field->isDropDownEnableChoiceValue;
 								$choices = $field->isDropDownChoices;
-								if ( $isDropDown && $isDropDownEnableChoiceValue ) {
+								if ( $isDropDown && $isDropDownEnableChoiceValue && $choices ) {
 									foreach ( $choices as $ch ) { // get each row
 										if ( $value == $ch['value'] ) {
 											$list_values[ $key ] = $ch['text'];

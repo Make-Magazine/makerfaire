@@ -1,7 +1,7 @@
 # GravityView - DataTables Extension #
 **Tags:** gravityview  
 **Requires at least:** 4.4  
-**Tested up to:** 4.9.6  
+**Tested up to:** 4.9.8  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices, luistinygod, soulseekah  
 **License:** GPL 3 or higher  
@@ -15,6 +15,28 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 ## Changelog ##
+
+### 2.3.3 on November 1, 2018 ###
+
+* Fixed: Date Range searches
+* Fixed: FixedHeaders functionality not working when using FixedColumns and Responsive settings
+
+### 2.3.2 on October 29, 2018 ###
+
+* Fixed: The field setting "Make visible only to logged-in users" hides the content, but not hide the table headers; this can cause visible table column headers to be improperly labeled
+* Updated: DataTables Buttons script to latest version (For developers: [see version diff here](https://github.com/DataTables/Buttons/compare/1.5.3...1.5.4))
+* Updated: Chinese translation (Thanks, Edi Weigh!)
+
+### 2.3.1 on September 23, 2018 ###
+
+* Added: Clear search results without a page refresh
+* Updated: Polish, Russian, and Turkish (Thank you, [@dariusz.zielonka](https://www.transifex.com/user/profile/dariusz.zielonka/), [@awsswa59](https://www.transifex.com/user/profile/awsswa59/), and [@suhakaralar](https://www.transifex.com/accounts/profile/suhakaralar/)!)
+
+__Developer Updates:__
+
+* Added: `gravityview/datatables/output/entry` filter to modify entry values before being rendered by DataTables
+* Fixed: The CSS classes defined in "Custom CSS" field settings were not being added to the table headers
+* Modified: Improve the speed of requests by removing WordPress widget actions during DataTables AJAX requests
 
 ### 2.3 on July 3, 2018 ###
 

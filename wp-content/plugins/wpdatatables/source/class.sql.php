@@ -46,7 +46,7 @@ class PDTSql {
     function sqlConnect() {
         $this->link = @mysqli_connect( $this->dbhost, $this->dbuser, $this->dbpass, $this->dbname, $this->dbport );
         if (!$this->link) {
-            throw new Exception( mysqli_connect_error() );
+            throw new Exception('There was a problem with your SQL connection - '.((is_admin()) ? mysqli_connect_error() : 'Please contact the administrator') );
         } else {
             $result = mysqli_select_db($this->link, $this->dbname);
             mysqli_query($this->link, 'SET character_set_client="utf8",character_set_connection="utf8",character_set_results="utf8"; ');

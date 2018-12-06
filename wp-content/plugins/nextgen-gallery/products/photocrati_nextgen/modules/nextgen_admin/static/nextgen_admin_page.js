@@ -94,4 +94,15 @@ jQuery(function($){
 
     $('input.nextgen_settings_field_colorpicker').wpColorPicker();
     $('#ngg_page_content').css('visibility', 'visible');
+
+    // Handle the "recover" and "delete" links in Manage Gallery > each image row
+    $('#ngg-listimages .row-actions .confirmrecover, #ngg-listimages .row-actions.submitdelete.delete').on(
+        'click',
+        function(event) {
+            var target = event.target;
+            if (!confirm(target.getAttribute('data-question') + ' "' + target.getAttribute('data-text') + '"')) {
+                event.preventDefault();
+            }
+        }
+    );
 });

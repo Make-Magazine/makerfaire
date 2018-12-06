@@ -40,6 +40,16 @@ class M_NextGen_AddGallery_Page extends C_Base_Module
             $forms->add_form(NGG_ADD_GALLERY_SLUG, 'import_folder');
         }
     }
+
+    public function check_upload_dir_permissions_requirement()
+    {
+        return wp_is_writable(C_Gallery_Storage::get_instance()->get_upload_abspath());
+    }
+
+    public function check_domdocument_requirement()
+    {
+        return class_exists('DOMDocument');
+    }
     
     function get_type_list()
     {
@@ -72,17 +82,28 @@ class M_NextGen_AddGallery_Page extends C_Base_Module
 
     function _register_hooks()
     {
-        add_action('admin_init', array(&$this, 'register_scripts'));
+        add_action('admin_init', array($this, 'register_requirements'));
+        add_action('admin_init', array($this, 'register_scripts'));
+
         add_filter('ngg_non_minified_files', array($this, 'do_not_minify'), 10, 2);
     }
 
-    // plupload i18n JS should not be minified
-    function do_not_minify($path, $module)
+    public function register_requirements()
     {
-        $retval = FALSE;
-        if ($module == 'photocrati-nextgen_addgallery_page' && strpos($path, '/i18n/') !== FALSE)
-            $retval = TRUE;
-        return $retval;
+        C_Admin_Requirements_Manager::get_instance()->add(
+            'nextgen_addgallery_xmlcheck',
+            'phpext',
+            array($this, 'check_domdocument_requirement'),
+            array('message' => __('XML is strongly encouraged for safely uploading images', 'nggallery'))
+        );
+
+        $directory = C_Gallery_Storage::get_instance()->get_upload_abspath();
+        C_Admin_Requirements_Manager::get_instance()->add(
+            'add_gallery_upload_dir_permission',
+            'dirperms',
+            array($this, 'check_upload_dir_permissions_requirement'),
+            array('message' => sprintf(__('Cannot write to %s: new galleries cannot be created', 'nggallery'), $directory))
+        );
     }
 
     function register_scripts()
@@ -93,13 +114,13 @@ class M_NextGen_AddGallery_Page extends C_Base_Module
             wp_register_script(
                 'browserplus',
                 $router->get_static_url('photocrati-nextgen_addgallery_page#browserplus-2.4.21.min.js'),
-                FALSE,
+                array(),
                 NGG_SCRIPT_VERSION
             );
             wp_register_script(
                 'ngg.plupload.moxie',
                 $router->get_static_url('photocrati-nextgen_addgallery_page#plupload-2.1.1/moxie.min.js'),
-                FALSE,
+                array(),
                 NGG_SCRIPT_VERSION
             );
             wp_register_script(
@@ -117,13 +138,13 @@ class M_NextGen_AddGallery_Page extends C_Base_Module
             wp_register_style(
                 'ngg.plupload.queue',
                 $router->get_static_url('photocrati-nextgen_addgallery_page#plupload-2.1.1/jquery.plupload.queue/css/jquery.plupload.queue.css'),
-                FALSE,
+                array(),
                 NGG_SCRIPT_VERSION
             );
             wp_register_style(
                 'nextgen_addgallery_page',
                 $router->get_static_url('photocrati-nextgen_addgallery_page#styles.css'),
-                FALSE,
+                array(),
                 NGG_SCRIPT_VERSION
             );
             wp_register_script(
@@ -135,7 +156,7 @@ class M_NextGen_AddGallery_Page extends C_Base_Module
             wp_register_style(
                 'jquery.filetree',
                 $router->get_static_url('photocrati-nextgen_addgallery_page#jquery.filetree/jquery.filetree.css'),
-                FALSE,
+                array(),
                 NGG_SCRIPT_VERSION
             );
             wp_register_script(
@@ -147,10 +168,19 @@ class M_NextGen_AddGallery_Page extends C_Base_Module
             wp_register_style(
                 'nextgen_media_library_import-css',
                 $router->get_static_url('photocrati-nextgen_addgallery_page#media-library-import.css'),
-                FALSE,
+                array(),
                 NGG_SCRIPT_VERSION
             );
         }
+    }
+
+    // plupload i18n JS should not be minified
+    function do_not_minify($path, $module)
+    {
+        $retval = FALSE;
+        if ($module == 'photocrati-nextgen_addgallery_page' && strpos($path, '/i18n/') !== FALSE)
+            $retval = TRUE;
+        return $retval;
     }
 }
 new M_NextGen_AddGallery_Page();

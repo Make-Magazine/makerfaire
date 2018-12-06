@@ -16,265 +16,281 @@ window.gvDTButtons = window.gvDTButtons || {};
 
 ( function ( $ ) {
 
-  /**
-   * Handle DataTables alert errors (possible values: alert, throw, none)
-   * @link https://datatables.net/reference/option/%24.fn.dataTable.ext.errMode
-   * @since 2.0
-   */
-  $.fn.dataTable.ext.errMode = 'throw';
+	/**
+	 * Handle DataTables alert errors (possible values: alert, throw, none)
+	 * @link https://datatables.net/reference/option/%24.fn.dataTable.ext.errMode
+	 * @since 2.0
+	 */
+	$.fn.dataTable.ext.errMode = 'throw';
 
-  var gvDataTables = {
+	var gvDataTables = {
 
-    tablesData: {} ,
+		tablesData: {},
 
-    init: function () {
+		init: function () {
 
-      $( '.gv-datatables' ).each( function ( i , e ) {
+			$( '.gv-datatables' ).each( function ( i, e ) {
 
-        var options = window.gvDTglobals[ i ];
-        var viewId = $( this ).attr( 'data-viewid' );
+				var options = window.gvDTglobals[ i ];
+				var viewId = $( this ).attr( 'data-viewid' );
 
-        // assign ajax data to the global object
-        gvDataTables.tablesData[ viewId ] = options.ajax.data;
+				// assign ajax data to the global object
+				gvDataTables.tablesData[ viewId ] = options.ajax.data;
 
-        options.buttons = gvDataTables.setButtons( options );
+				options.buttons = gvDataTables.setButtons( options );
 
-        options.drawCallback = function( data ) {
+				options.drawCallback = function ( data ) {
 
-          if ( window.gvEntryNotes ) {
-            window.gvEntryNotes.init();
-          }
+					if ( window.gvEntryNotes ) {
+						window.gvEntryNotes.init();
+					}
 
-          if ( data.json.inlineEditTemplatesData ) {
-            $( window ).trigger( 'gravityview-inline-edit/extend-template-data' , data.json.inlineEditTemplatesData );
-          }
-          $( window ).trigger( 'gravityview-inline-edit/init' );
-        };
+					if ( data.json.inlineEditTemplatesData ) {
+						$( window ).trigger( 'gravityview-inline-edit/extend-template-data', data.json.inlineEditTemplatesData );
+					}
+					$( window ).trigger( 'gravityview-inline-edit/init' );
+				};
 
-        // convert ajax data object to method that return values from the global object
-        options.ajax.data = function ( e ) {
-          return $.extend( {} , e , gvDataTables.tablesData[ viewId ] );
-        };
+				// convert ajax data object to method that return values from the global object
+				options.ajax.data = function ( e ) {
+					return $.extend( {}, e, gvDataTables.tablesData[ viewId ] );
+				};
 
-        var table = $( this ).DataTable( options );
+				// init FixedHeader and FixedColumns extensions
+				if ( i < gvDTFixedHeaderColumns.length && gvDTFixedHeaderColumns.hasOwnProperty( i ) ) {
 
-        table.on( 'draw.dt' , function ( e , settings ) {
-          var api = new $.fn.dataTable.Api( settings );
-          if ( api.column( 0 ).data().length ) {
-            $( e.target )
-              .parents( '.gv-container-no-results' )
-              .removeClass( 'gv-container-no-results' )
-              .siblings( '.gv-widgets-no-results' )
-              .removeClass( 'gv-widgets-no-results' );
-          }
-        } );
+					if ( gvDTFixedHeaderColumns[ i ].fixedheader.toString() === '1' ) {
+						options.fixedHeader = true;
+					}
 
-        // tweak the Responsive Extension
-        if ( i < gvDTResponsive.length && gvDTResponsive.hasOwnProperty( i ) && gvDTResponsive[ i ].responsive.toString() === '1' ) {
+					if ( gvDTFixedHeaderColumns[ i ].fixedcolumns.toString() === '1' ) {
+						options.fixedColumns = true;
+					}
+				}
 
-          var responsiveConfig = {};
+				// init Responsive extension
+				if ( i < gvDTResponsive.length && gvDTResponsive.hasOwnProperty( i ) && gvDTResponsive[ i ].responsive.toString() === '1' ) {
+					if ( '1' === gvDTResponsive[ i ].hide_empty.toString() ) {
+						// use the modified row renderer to remove empty fields
+						options.responsive = { details: { renderer: gvDataTables.customResponsiveRowRenderer } };
+					} else {
+						options.responsive = true;
+					}
+				}
 
-          if ( gvDTResponsive[ i ].hide_empty.toString() === '1' ) {
-            // use the modified row renderer to remove empty fields
-            responsiveConfig = {
-              details: {
-                renderer: gvDataTables.customResponsiveRowRenderer
-              }
-            };
-          }
+				var table = $( this ).DataTable( options );
 
-          // init responsive
-          new $.fn.dataTable.Responsive( table , responsiveConfig );
+				table.on( 'draw.dt', function ( e, settings ) {
+					var api = new $.fn.dataTable.Api( settings );
+					if ( api.column( 0 ).data().length ) {
+						$( e.target )
+							.parents( '.gv-container-no-results' )
+							.removeClass( 'gv-container-no-results' )
+							.siblings( '.gv-widgets-no-results' )
+							.removeClass( 'gv-widgets-no-results' );
+					}
+				} );
+			} );
 
-        }
+		}, // end of init
 
-        // init FixedHeader
-        if ( i < gvDTFixedHeaderColumns.length && gvDTFixedHeaderColumns.hasOwnProperty( i ) ) {
+		/**
+		 * Set button options for DataTables
+		 *
+		 * @param {object} options Options for the DT instance
+		 * @returns {Array} button settings
+		 */
+		setButtons: function ( options ) {
 
-          if ( gvDTFixedHeaderColumns[ i ].fixedheader.toString() === '1' ) {
-            new $.fn.dataTable.FixedHeader( table );
-          }
+			var buttons = [];
 
-          // init FixedColumns
-          if ( gvDTFixedHeaderColumns[ i ].fixedcolumns.toString() === '1' ) {
-            new $.fn.dataTable.FixedColumns( table );
-          }
-        }
+			// extend the buttons export format
+			if ( options && options.buttons && options.buttons.length > 0 ) {
+				options.buttons.forEach( function ( button, i ) {
+					if ( button.extend === 'print' ) {
+						buttons[ i ] = $.extend( true, {}, gvDataTables.buttonCommon, gvDataTables.buttonCustomizePrint, button );
+					} else {
+						buttons[ i ] = $.extend( true, {}, gvDataTables.buttonCommon, button );
+					}
+				} );
 
-      } );
+				$.fn.dataTable.Buttons.swfPath = gvDTButtons.swf || '';
+			}
 
-    } , // end of init
+			return buttons;
+		},
 
-    /**
-     * Set button options for DataTables
-     *
-     * @param {object} options Options for the DT instance
-     * @returns {Array} button settings
-     */
-    setButtons: function ( options ) {
+		/**
+		 * Extend the buttons exportData format
+		 * @since 2.0
+		 * @link http://datatables.net/extensions/buttons/examples/html5/outputFormat-function.html
+		 */
+		buttonCommon: {
+			exportOptions: {
+				format: {
+					body: function ( data, column, row ) {
 
-      var buttons = [];
+						var newValue = data;
 
-      // extend the buttons export format
-      if ( options && options.buttons && options.buttons.length > 0 ) {
-        options.buttons.forEach( function ( button , i ) {
-          if ( button.extend === 'print' ) {
-            buttons[ i ] = $.extend( true , {} , gvDataTables.buttonCommon , gvDataTables.buttonCustomizePrint , button );
-          } else {
-            buttons[ i ] = $.extend( true , {} , gvDataTables.buttonCommon , button );
-          }
-        } );
+						// Don't process if empty
+						if ( newValue.length === 0 ) {
+							return newValue;
+						}
 
-        $.fn.dataTable.Buttons.swfPath = gvDTButtons.swf || '';
-      }
+						newValue = newValue.replace( /\n/g, " " ); // Replace new lines with spaces
 
-      return buttons;
-    } ,
+						/**
+						 * Changed to jQuery in 1.2.2 to make it more consistent. Regex not always to be trusted!
+						 */
+						newValue = $( '<span>' + newValue + '</span>' ) // Wrap in span to allow for $() closure
+							.find( 'li' ).after( '; ' ).end() // Separate <li></li> with ;
+							.find( 'img' ).replaceWith( function () {
+								return $( this ).attr( 'alt' ); // Replace <img> tags with the image's alt tag
+							} ).end()
+							.find( 'br' ).replaceWith( ' ' ).end() // Replace <br> with space
+							.find( '.map-it-link' ).remove().end() // Remove "Map It" link
+							.text(); // Strip all tags
 
-    /**
-     * Extend the buttons exportData format
-     * @since 2.0
-     * @link http://datatables.net/extensions/buttons/examples/html5/outputFormat-function.html
-     */
-    buttonCommon: {
-      exportOptions: {
-        format: {
-          body: function ( data , column , row ) {
+						return newValue;
+					}
+				}
+			}
+		},
 
-            var newValue = data;
-
-            // Don't process if empty
-            if ( newValue.length === 0 ) {
-              return newValue;
-            }
-
-            newValue = newValue.replace( /\n/g , " " ); // Replace new lines with spaces
-
-            /**
-             * Changed to jQuery in 1.2.2 to make it more consistent. Regex not always to be trusted!
-             */
-            newValue = $( '<span>' + newValue + '</span>' ) // Wrap in span to allow for $() closure
-              .find( 'li' ).after( '; ' ).end() // Separate <li></li> with ;
-              .find( 'img' ).replaceWith( function () {
-                return $( this ).attr( 'alt' ); // Replace <img> tags with the image's alt tag
-              } ).end()
-              .find( 'br' ).replaceWith( ' ' ).end() // Replace <br> with space
-              .find( '.map-it-link' ).remove().end() // Remove "Map It" link
-              .text(); // Strip all tags
-
-            return newValue;
-          }
-        }
-      }
-    } ,
-
-    buttonCustomizePrint: {
-      customize: function ( win ) {
-        $( win.document.body ).find( 'table' )
-          .addClass( 'compact' )
-          .css( 'font-size' , 'inherit' )
-          .css( 'table-layout' , 'auto' );
-      }
-    } ,
+		buttonCustomizePrint: {
+			customize: function ( win ) {
+				$( win.document.body ).find( 'table' )
+					.addClass( 'compact' )
+					.css( 'font-size', 'inherit' )
+					.css( 'table-layout', 'auto' );
+			}
+		},
 
 
-    /**
-     * Responsive Extension: Function that is called for display of the child row data, when view setting "Hide Empty" is enabled.
-     * @see assets/datatables-responsive/js/dataTables.responsive.js Responsive.defaults.details.renderer method
-     */
-    customResponsiveRowRenderer: function ( api , rowIdx ) {
-      var data = api.cells( rowIdx , ':hidden' ).eq( 0 ).map( function ( cell ) {
-        var header = $( api.column( cell.column ).header() );
+		/**
+		 * Responsive Extension: Function that is called for display of the child row data, when view setting "Hide Empty" is enabled.
+		 * @see assets/datatables-responsive/js/dataTables.responsive.js Responsive.defaults.details.renderer method
+		 */
+		customResponsiveRowRenderer: function ( api, rowIdx ) {
+			var data = api.cells( rowIdx, ':hidden' ).eq( 0 ).map( function ( cell ) {
+				var header = $( api.column( cell.column ).header() );
 
-        if ( header.hasClass( 'control' ) || header.hasClass( 'never' ) ) {
-          return '';
-        }
+				if ( header.hasClass( 'control' ) || header.hasClass( 'never' ) ) {
+					return '';
+				}
 
-        var idx = api.cell( cell ).index();
+				var idx = api.cell( cell ).index();
 
-        // GV custom part: if field value is empty
-        if ( api.cell( cell ).data().length === 0 ) {
-          return '';
-        }
+				// GV custom part: if field value is empty
+				if ( api.cell( cell ).data().length === 0 ) {
+					return '';
+				}
 
-        // Use a non-public DT API method to render the data for display
-        // This needs to be updated when DT adds a suitable method for
-        // this type of data retrieval
-        var dtPrivate = api.settings()[ 0 ];
-        var cellData = dtPrivate.oApi._fnGetCellData(
-          dtPrivate , idx.row , idx.column , 'display'
-        );
+				// Use a non-public DT API method to render the data for display
+				// This needs to be updated when DT adds a suitable method for
+				// this type of data retrieval
+				var dtPrivate = api.settings()[ 0 ];
+				var cellData = dtPrivate.oApi._fnGetCellData( dtPrivate, idx.row, idx.column, 'display' );
 
-        return '<li data-dtr-index="' + idx.column + '">' +
-          '<span class="dtr-title">' +
-          header.text() + ':' +
-          '</span> ' +
-          '<span class="dtr-data">' +
-          cellData +
-          '</span>' +
-          '</li>';
-      } ).toArray().join( '' );
+				return '<li data-dtr-index="' + idx.column + '">' + '<span class="dtr-title">' + header.text() + ':' + '</span> ' + '<span class="dtr-data">' + cellData + '</span>' + '</li>';
+			} ).toArray().join( '' );
 
-      return data ?
-        $( '<ul data-dtr-index="' + rowIdx + '"/>' ).append( data ) :
-        false;
-    }
-  };
+			return data ? $( '<ul data-dtr-index="' + rowIdx + '"/>' ).append( data ) : false;
+		}
+	};
 
-  $( document ).ready( function () {
+	$( document ).ready( function () {
 
-    gvDataTables.init();
+		gvDataTables.init();
 
-    // prevent search submit
-    $( '.gv-widget-search' ).on( 'submit' , function ( e ) {
-      e.preventDefault();
+		// reset search results
+		$( '.gv-search-clear' ).off().on( 'click', function ( e ) {
+			e.stopImmediatePropagation();
+			e.preventDefault();
 
-      var getData    = {} ,
-          viewId     = $( this ).attr( 'data-viewid' ) ,
-          $container = $( '#gv-datatables-' + viewId ) ,
-          $table     = $container.find( '.gv-datatables' ).DataTable() ,
-          tableData  = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null ,
-          inputs     = $( this ).serializeArray().filter( function ( k ) {
-            return $.trim( k.value ) !== '';
-          } );
+			var $form = $( this ).parents( 'form' ), viewId = $form.attr( 'data-viewid' ),
+				$container = $( '#gv-datatables-' + viewId ),
+				$table = $container.find( '.gv-datatables' ).DataTable(),
+				tableData = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null;
 
-      // submit form if table data is not set
-      if ( !tableData ) {
-        this.submit();
-        return;
-      }
+			// clear form fields. because default input values are set, form.reset() does not work.
+			// instea, a more comprehensive solution is required: https://stackoverflow.com/questions/680241/resetting-a-multi-stage-form-with-jquery/24496012#24496012
+			$form
+				.find( 'input' )
+				.filter( ':text, :password, :file' ).not( ':hidden' ).val( '' ).end()
+				.filter( ':checkbox, :radio' ).removeAttr( 'checked' ).end()
+				.end()
+				.find( 'textarea' ).val( '' ).end()
+				.find( 'select' ).prop( 'selectedIndex', -1 )
+				.find( 'option:selected' ).removeAttr( 'selected' );
 
-      if ( tableData.hideUntilSearched * 1 ) {
-        $table.on( 'draw.dt' , function () {
-          $container.toggleClass( 'hidden' , inputs.length <= 1 );
-        } );
-      }
+			// assign new data to the global object
+			tableData.getData = false;
+			gvDataTables.tablesData[ viewId ] = tableData;
+			window.history.pushState( null, null, window.location.pathname );
 
-      // assemble getData object with filter name/value pairs
-      inputs.forEach( function ( input ) {
-        getData[ input.name ] = input.value;
-      } );
+			// reload table
+			$table.ajax.reload();
+			$( this ).hide( 100 );
+		} );
 
-      // reset cached search values
-      tableData.search = { 'value': '' };
-      tableData.getData = ( Object.keys( getData ).length > 1 ) ? JSON.stringify( getData ) : false;
+		// prevent search submit
+		$( '.gv-widget-search' ).on( 'submit', function ( e ) {
+			e.preventDefault();
 
-      // set or clear URL with search query
-      if ( tableData.setUrlOnSearch ) {
-        window.history.pushState( null , null , ( tableData.getData ) ?
-          '?' + $( this ).serialize() :
-          window.location.pathname
-        );
-      }
+			var getData = {}, viewId = $( this ).attr( 'data-viewid' ),
+				$container = $( '#gv-datatables-' + viewId ),
+				$table = $container.find( '.gv-datatables' ).DataTable(),
+				tableData = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null,
+				inputs = $( this ).serializeArray().filter( function ( k ) {
+					return $.trim( k.value ) !== '';
+				} );
 
-      // assign new data to the global object
-      gvDataTables.tablesData[ viewId ] = tableData;
+			// submit form if table data is not set
+			if ( !tableData ) {
+				this.submit();
+				return;
+			}
 
-      // reload table
-      $table.ajax.reload();
+			if ( tableData.hideUntilSearched * 1 ) {
+				$table.on( 'draw.dt', function () {
+					$container.toggleClass( 'hidden', inputs.length <= 1 );
+				} );
+			}
 
-      return;
-    } );
-  } );
+			// assemble getData object with filter name/value pairs
+			for ( var i = 0; i < inputs.length; i++ ) {
+				var name = inputs[ i ].name;
+				var value = inputs[ i ].value;
+
+				// convert multidimensional form values (e.g., {"foo[bar]": "xyz"}) to JSON object (e.g., {"foo":{"bar": "xyz"}})
+				var matches = name.match( /(.*?)\[(.*)\]/ );
+				if ( matches ) {
+					if ( ! getData[ matches[ 1 ] ] ) {
+						getData[ matches[ 1 ] ] = {};
+					}
+
+					getData[ matches[ 1 ] ][ matches[ 2 ] ] = value;
+				} else {
+					getData[ name ] = value;
+				}
+			}
+
+			// reset cached search values
+			tableData.search = { 'value': '' };
+			tableData.getData = ( Object.keys( getData ).length > 1 ) ? JSON.stringify( getData ) : false;
+
+			// set or clear URL with search query
+			if ( tableData.setUrlOnSearch ) {
+				window.history.pushState( null, null, ( tableData.getData ) ? '?' + $( this ).serialize() : window.location.pathname );
+			}
+
+			// assign new data to the global object
+			gvDataTables.tablesData[ viewId ] = tableData;
+
+			// reload table
+			$table.ajax.reload();
+		} );
+	} );
 
 }( jQuery ) );

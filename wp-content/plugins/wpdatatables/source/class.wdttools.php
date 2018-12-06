@@ -13,19 +13,19 @@ class WDTTools {
      */
     public static function getPossibleColumnTypes() {
         return array(
-            'input' => __('One line string', 'wpdatatables'),
-            'memo' => __('Multi-line string', 'wpdatatables'),
-            'select' => __('One-line selectbox', 'wpdatatables'),
-            'multiselect' => __('Multi-line selectbox', 'wpdatatables'),
-            'int' => __('Integer', 'wpdatatables'),
-            'float' => __('Float', 'wpdatatables'),
-            'date' => __('Date', 'wpdatatables'),
-            'datetime' => __('Datetime', 'wpdatatables'),
-            'time' => __('Time', 'wpdatatables'),
-            'link' => __('URL Link', 'wpdatatables'),
-            'email' => __('E-mail', 'wpdatatables'),
-            'image' => __('Image', 'wpdatatables'),
-            'file' => __('Attachment', 'wpdatatables')
+            'input'         => __('One line string', 'wpdatatables'),
+            'memo'          => __('Multi-line string', 'wpdatatables'),
+            'select'        => __('One-line selectbox', 'wpdatatables'),
+            'multiselect'   => __('Multi-line selectbox', 'wpdatatables'),
+            'int'           => __('Integer', 'wpdatatables'),
+            'float'         => __('Float', 'wpdatatables'),
+            'date'          => __('Date', 'wpdatatables'),
+            'datetime'      => __('Datetime', 'wpdatatables'),
+            'time'          => __('Time', 'wpdatatables'),
+            'link'          => __('URL Link', 'wpdatatables'),
+            'email'         => __('E-mail', 'wpdatatables'),
+            'image'         => __('Image', 'wpdatatables'),
+            'file'          => __('Attachment', 'wpdatatables')
         );
     }
 
@@ -97,6 +97,30 @@ class WDTTools {
 
             $string = str_replace('%CURRENT_POST_ID%', $wdtCurPostId, $string);
         }
+        if (strpos($string, '%CURRENT_USER_FIRST_NAME%') !== false) {
+            if (isset($table->currentUserFirstNamePlaceholder)) {
+                $currentUserFirstNamePlaceholder = $table->currentUserFirstNamePlaceholder;
+            } elseif (isset($_POST['currentUserFirstName'])) {
+                $currentUserFirstNamePlaceholder = $_POST['currentUserFirstName'];
+            }
+
+            $wdtCurUserFirstName = isset($currentUserFirstNamePlaceholder) ?
+                $currentUserFirstNamePlaceholder : wp_get_current_user()->user_firstname;
+
+            $string = str_replace('%CURRENT_USER_FIRST_NAME%', "{$wdtCurUserFirstName}", $string);
+        }
+        if (strpos($string, '%CURRENT_USER_LAST_NAME%') !== false) {
+            if (isset($table->currentUserLastNamePlaceholder)) {
+                $currentUserLastNamePlaceholder = $table->currentUserLastNamePlaceholder;
+            } elseif (isset($_POST['currentUserLastName'])) {
+                $currentUserLastNamePlaceholder = $_POST['currentUserLastName'];
+            }
+
+            $wdtCurUserLastName = isset($currentUserLastNamePlaceholder) ?
+                $currentUserLastNamePlaceholder : wp_get_current_user()->user_lastname;
+
+            $string = str_replace('%CURRENT_USER_LAST_NAME%', "{$wdtCurUserLastName}", $string);
+        }
         if (strpos($string, '%WPDB%') !== false) {
             if (isset($table->wpdbPlaceholder)) {
                 $wpdbPlaceholder = $table->wpdbPlaceholder;
@@ -109,20 +133,19 @@ class WDTTools {
 
             $string = str_replace('%WPDB%', $wpdbPrefix, $string);
         }
-
         // Shortcode VAR1
         if (strpos($string, '%VAR1%') !== false) {
-            $string = str_replace('%VAR1%', $wdtVar1, $string);
+            $string = str_replace('%VAR1%', addslashes($wdtVar1), $string);
         }
 
         // Shortcode VAR2
         if (strpos($string, '%VAR2%') !== false) {
-            $string = str_replace('%VAR2%', $wdtVar2, $string);
+            $string = str_replace('%VAR2%', addslashes($wdtVar2), $string);
         }
 
         // Shortcode VAR3
         if (strpos($string, '%VAR3%') !== false) {
-            $string = str_replace('%VAR3%', $wdtVar3, $string);
+            $string = str_replace('%VAR3%', addslashes($wdtVar3), $string);
         }
 
         return $string;
@@ -176,7 +199,7 @@ class WDTTools {
         }
         $fileResurce = fopen($csv_url, 'r');
 
-        $delimiterList = [',', ';', "\t", '|'];
+        $delimiterList = [',', ':', ';', "\t", '|'];
         $counts = [];
         foreach ($delimiterList as $delimiter) {
             $counts[$delimiter] = [];
@@ -225,6 +248,7 @@ class WDTTools {
         }
 
         $min = INF;
+        $finalDelimiter = '';
         foreach ($delimiterList as $delimiter) {
             if (!isset($RMSD[$delimiter])) {
                 continue;
@@ -309,66 +333,66 @@ class WDTTools {
      */
     public static function getTranslationStrings() {
         return array(
-            'back_to_date' => __('Back to date', 'wpdatatables'),
-            'browse_file' => __('Browse', 'wpdatatables'),
-            'cancel' => __('Cancel', 'wpdatatables'),
-            'cannot_be_empty' => __(' field cannot be empty!', 'wpdatatables'),
-            'choose_file' => __('Use selected file', 'wpdatatables'),
-            'chooseFile' => __('Choose file', 'wpdatatables'),
-            'close' => __('Close', 'wpdatatables'),
-            'columnAdded' => __('Column has been added!', 'wpdatatables'),
-            'columnHeaderEmpty' => __('Column header cannot be empty!', 'wpdatatables'),
-            'columnRemoveConfirm' => __('Please confirm column deletion!', 'wpdatatables'),
-            'columnRemoved' => __('Column has been removed!', 'wpdatatables'),
-            'columnsEmpty' => __('Please select columns that you want to use in table', 'wpdatatables'),
-            'copy' => __('Copy', 'wpdatatables'),
-            'databaseInsertError' => __('There was an error trying to insert a new row!', 'wpdatatables'),
-            'dataSaved' => __('Data has been saved!', 'wpdatatables'),
-            'detach_file' => __('detach', 'wpdatatables'),
-            'error' => __('Error!', 'wpdatatables'),
-            'fileUploadEmptyFile' => __('Please upload or choose a file from Media Library!', 'wpdatatables'),
-            'from' => __('From', 'wpdatatables'),
-            'invalid_email' => __('Please provide a valid e-mail address for field', 'wpdatatables'),
-            'invalid_link' => __('Please provide a valid URL link for field', 'wpdatatables'),
-            'invalid_value' => __('You have entered invalid value. Press ESC to cancel.', 'wpdatatables'),
-            'lengthMenu' => __('Show _MENU_ entries', 'wpdatatables'),
-            'merge' => __('Merge', 'wpdatatables'),
-            'newColumnName' => __('New column', 'wpdatatables'),
-            'nothingSelected' => __('Nothing selected', 'wpdatatables'),
-            'oAria' => array(
-                'sSortAscending' => __(': activate to sort column ascending', 'wpdatatables'),
-                'sSortDescending' => __(': activate to sort column descending', 'wpdatatables')
+            'back_to_date'              => __('Back to date', 'wpdatatables'),
+            'browse_file'               => __('Browse', 'wpdatatables'),
+            'cancel'                    => __('Cancel', 'wpdatatables'),
+            'cannot_be_empty'           => __(' field cannot be empty!', 'wpdatatables'),
+            'choose_file'               => __('Use selected file', 'wpdatatables'),
+            'chooseFile'                => __('Choose file', 'wpdatatables'),
+            'close'                     => __('Close', 'wpdatatables'),
+            'columnAdded'               => __('Column has been added!', 'wpdatatables'),
+            'columnHeaderEmpty'         => __('Column header cannot be empty!', 'wpdatatables'),
+            'columnRemoveConfirm'       => __('Please confirm column deletion!', 'wpdatatables'),
+            'columnRemoved'             => __('Column has been removed!', 'wpdatatables'),
+            'columnsEmpty'              => __('Please select columns that you want to use in table', 'wpdatatables'),
+            'copy'                      => __('Copy', 'wpdatatables'),
+            'databaseInsertError'       => __('There was an error trying to insert a new row!', 'wpdatatables'),
+            'dataSaved'                 => __('Data has been saved!', 'wpdatatables'),
+            'detach_file'               => __('detach', 'wpdatatables'),
+            'error'                     => __('Error!', 'wpdatatables'),
+            'fileUploadEmptyFile'       => __('Please upload or choose a file from Media Library!', 'wpdatatables'),
+            'from'                      => __('From', 'wpdatatables'),
+            'invalid_email'             => __('Please provide a valid e-mail address for field', 'wpdatatables'),
+            'invalid_link'              => __('Please provide a valid URL link for field', 'wpdatatables'),
+            'invalid_value'             => __('You have entered invalid value. Press ESC to cancel.', 'wpdatatables'),
+            'lengthMenu'                => __('Show _MENU_ entries', 'wpdatatables'),
+            'merge'                     => __('Merge', 'wpdatatables'),
+            'newColumnName'             => __('New column', 'wpdatatables'),
+            'nothingSelected'           => __('Nothing selected', 'wpdatatables'),
+            'oAria'         => array(
+                'sSortAscending'        => __(': activate to sort column ascending', 'wpdatatables'),
+                'sSortDescending'       => __(': activate to sort column descending', 'wpdatatables')
             ),
-            'ok' => __('Ok', 'wpdatatables'),
-            'oPaginate' => array(
-                'sFirst' => __('First', 'wpdatatables'),
-                'sLast' => __('Last', 'wpdatatables'),
-                'sNext' => __('Next', 'wpdatatables'),
-                'sPrevious' => __('Previous', 'wpdatatables')
+            'ok'                        => __('Ok', 'wpdatatables'),
+            'oPaginate'     => array(
+                'sFirst'                => __('First', 'wpdatatables'),
+                'sLast'                 => __('Last', 'wpdatatables'),
+                'sNext'                 => __('Next', 'wpdatatables'),
+                'sPrevious'             => __('Previous', 'wpdatatables')
             ),
-            'previousFilter' => __('Choose an option in previous filters', 'wpdatatables'),
-            'replace' => __('Replace', 'wpdatatables'),
-            'rowDeleted' => __('Row has been deleted!', 'wpdatatables'),
-            'select_upload_file' => __('Select a file to use in table', 'wpdatatables'),
-            'selectExcelCsv' => __('Select an Excel or CSV file', 'wpdatatables'),
-            'sEmptyTable' => __('No data available in table', 'wpdatatables'),
+            'previousFilter'            => __('Choose an option in previous filters', 'wpdatatables'),
+            'replace'                   => __('Replace', 'wpdatatables'),
+            'rowDeleted'                => __('Row has been deleted!', 'wpdatatables'),
+            'select_upload_file'        => __('Select a file to use in table', 'wpdatatables'),
+            'selectExcelCsv'            => __('Select an Excel or CSV file', 'wpdatatables'),
+            'sEmptyTable'               => __('No data available in table', 'wpdatatables'),
             'settings_saved_successful' => __('Plugin settings saved successfully', 'wpdatatables'),
-            'shortcodeSaved' => __('Shortcode has been copied to the clipboard.', 'wpdatatables'),
-            'sInfo' => __('Showing _START_ to _END_ of _TOTAL_ entries', 'wpdatatables'),
-            'sInfoEmpty' => __('Showing 0 to 0 of 0 entries', 'wpdatatables'),
-            'sInfoFiltered' => __('(filtered from _MAX_ total entries)', 'wpdatatables'),
-            'sInfoPostFix' => '',
-            'sInfoThousands' => __(',', 'wpdatatables'),
-            'sLengthMenu' => __('Show _MENU_ entries', 'wpdatatables'),
-            'sLoadingRecords' => __('Loading...', 'wpdatatables'),
-            'sProcessing' => __('Processing...', 'wpdatatables'),
-            'sqlError' => __('SQL error', 'wpdatatables'),
-            'sSearch' => __('Search: ', 'wpdatatables'),
-            'search' => __('Search...', 'wpdatatables'),
-            'success' => __('Success!', 'wpdatatables'),
-            'sZeroRecords' => __('No matching records found', 'wpdatatables'),
-            'tableSaved' => __('Table saved successfully!', 'wpdatatables'),
-            'to' => __('To', 'wpdatatables')
+            'shortcodeSaved'            => __('Shortcode has been copied to the clipboard.', 'wpdatatables'),
+            'sInfo'                     => __('Showing _START_ to _END_ of _TOTAL_ entries', 'wpdatatables'),
+            'sInfoEmpty'                => __('Showing 0 to 0 of 0 entries', 'wpdatatables'),
+            'sInfoFiltered'             => __('(filtered from _MAX_ total entries)', 'wpdatatables'),
+            'sInfoPostFix'              => '',
+            'sInfoThousands'            => __(',', 'wpdatatables'),
+            'sLengthMenu'               => __('Show _MENU_ entries', 'wpdatatables'),
+            'sLoadingRecords'           => __('Loading...', 'wpdatatables'),
+            'sProcessing'               => __('Processing...', 'wpdatatables'),
+            'sqlError'                  => __('SQL error', 'wpdatatables'),
+            'sSearch'                   => __('Search: ', 'wpdatatables'),
+            'search'                    => __('Search...', 'wpdatatables'),
+            'success'                   => __('Success!', 'wpdatatables'),
+            'sZeroRecords'              => __('No matching records found', 'wpdatatables'),
+            'tableSaved'                => __('Table saved successfully!', 'wpdatatables'),
+            'to'                        => __('To', 'wpdatatables')
         );
     }
 
@@ -693,12 +717,8 @@ class WDTTools {
     /**
      * Helper method to wrap values in quotes for DB
      */
-    public static function wrapQuotes($value) {
-	   if(strpos($value, "'")!== false){
-	   	$value = stripslashes($value);
-	   }
-	    $value = get_option('wdtUseSeparateCon') ? addslashes($value) : $value;
-        $valueQuote = get_option('wdtUseSeparateCon') ? "'" : '';
+    public static function wrapQuotes($value, $connection) {
+        $valueQuote = $connection ? "'" : '';
         return $valueQuote . $value . $valueQuote;
     }
 
@@ -796,15 +816,35 @@ class WDTTools {
     /**
      * Sanitizes the cell string and wraps it with quotes
      * @param $string
+     * @param $connection
      *
      * @return string
      */
-    public static function prepareStringCell($string) {
-
+    public static function prepareStringCell($string, $connection) {
+        global $wpdb;
         if (self::isHtml($string)) {
             $string = self::stripJsAttributes($string);
         }
-        $string = self::wrapQuotes($string);
+
+        if ($connection) {
+            $string = stripslashes($string);
+            $vendor = Connection::getVendor($connection);
+            $isMySql = $vendor === Connection::$MYSQL;
+            $isMSSql = $vendor === Connection::$MSSQL;
+            $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
+            if ($isPostgreSql) {
+                $string = pg_escape_string($string);
+                $string = stripslashes($string);
+            }
+            if ($isMSSql) {
+                $string = str_replace("'", "''", $string);
+            }
+            if ($isMySql) {
+                $string = $wpdb->_real_escape($string);
+            }
+        }
+        $string = self::wrapQuotes($string, $connection);
         return $string;
     }
 
@@ -845,34 +885,34 @@ class WDTTools {
      * Enqueue JS and CSS UI Kit files
      */
     public static function wdtUIKitEnqueue() {
-        wp_enqueue_style('wdt-bootstrap', WDT_CSS_PATH . 'bootstrap/wpdatatables-bootstrap.min.css');
-        wp_enqueue_style('wdt-bootstrap-select', WDT_CSS_PATH . 'bootstrap/bootstrap-select/bootstrap-select.min.css');
-        wp_enqueue_style('wdt-bootstrap-tagsinput', WDT_CSS_PATH . 'bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.css');
-        wp_enqueue_style('wdt-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css');
-        wp_enqueue_style('wdt-wp-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/wdt-bootstrap-datetimepicker.min.css');
-        wp_enqueue_style('wdt-bootstrap-colorpicker', WDT_CSS_PATH . 'bootstrap/bootstrap-colorpicker/bootstrap-colorpicker.min.css');
-        wp_enqueue_style('wdt-animate', WDT_CSS_PATH . 'animate/animate.min.css');
-        wp_enqueue_style('wdt-uikit', WDT_CSS_PATH . 'uikit/uikit.css');
-        wp_enqueue_style('wdt-waves', WDT_CSS_PATH . 'waves/waves.min.css');
-        wp_enqueue_style('wdt-iconic-font', WDT_CSS_PATH . 'material-design-iconic-font/css/material-design-iconic-font.min.css');
+        wp_enqueue_style('wdt-bootstrap', WDT_CSS_PATH . 'bootstrap/wpdatatables-bootstrap.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-bootstrap-select', WDT_CSS_PATH . 'bootstrap/bootstrap-select/bootstrap-select.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-bootstrap-tagsinput', WDT_CSS_PATH . 'bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-wp-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/wdt-bootstrap-datetimepicker.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-bootstrap-colorpicker', WDT_CSS_PATH . 'bootstrap/bootstrap-colorpicker/bootstrap-colorpicker.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-animate', WDT_CSS_PATH . 'animate/animate.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-uikit', WDT_CSS_PATH . 'uikit/uikit.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-waves', WDT_CSS_PATH . 'waves/waves.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-iconic-font', WDT_CSS_PATH . 'material-design-iconic-font/css/material-design-iconic-font.min.css', array(), WDT_CURRENT_VERSION);
 
 
         if (!is_admin() && get_option('wdtIncludeBootstrap') == 1) {
-	        wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), false, true);
+	        wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), WDT_CURRENT_VERSION, true);
         }else if (is_admin() && get_option('wdtIncludeBootstrapBackEnd') == 1){
-            wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), false, true);
+            wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), WDT_CURRENT_VERSION, true);
         }else{
-            wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/noconf.bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), false, true);
+            wp_enqueue_script('wdt-bootstrap', WDT_JS_PATH . 'bootstrap/noconf.bootstrap.min.js', array('jquery', 'wdt-bootstrap-select'), WDT_CURRENT_VERSION, true);
         }
 
-	    wp_enqueue_script('wdt-bootstrap-select', WDT_JS_PATH . 'bootstrap/bootstrap-select/bootstrap-select.min.js', array(), false, true);
-	    wp_enqueue_script('wdt-bootstrap-ajax-select', WDT_JS_PATH . 'bootstrap/bootstrap-select/ajax-bootstrap-select.min.js', array(), false, true);
-        wp_enqueue_script('wdt-bootstrap-tagsinput', WDT_JS_PATH . 'bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.js', array(), false, true);
-        wp_enqueue_script('wdt-moment', WDT_JS_PATH . 'moment/moment.js', array(), false, true);
-        wp_enqueue_script('wdt-bootstrap-datetimepicker', WDT_JS_PATH . 'bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js', array(), false, true);
-        wp_enqueue_script('wdt-bootstrap-colorpicker', WDT_JS_PATH . 'bootstrap/bootstrap-colorpicker/bootstrap-colorpicker.min.js', array(), false, true);
-        wp_enqueue_script('wdt-bootstrap-growl', WDT_JS_PATH . 'bootstrap/bootstrap-growl/bootstrap-growl.min.js', array(), false, true);
-        wp_enqueue_script('wdt-waves', WDT_JS_PATH . 'waves/waves.min.js', array(), false, true);
+	    wp_enqueue_script('wdt-bootstrap-select', WDT_JS_PATH . 'bootstrap/bootstrap-select/bootstrap-select.min.js', array(), WDT_CURRENT_VERSION, true);
+	    wp_enqueue_script('wdt-bootstrap-ajax-select', WDT_JS_PATH . 'bootstrap/bootstrap-select/ajax-bootstrap-select.min.js', array(), WDT_CURRENT_VERSION, true);
+        wp_enqueue_script('wdt-bootstrap-tagsinput', WDT_JS_PATH . 'bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.js', array(), WDT_CURRENT_VERSION, true);
+        wp_enqueue_script('wdt-moment', WDT_JS_PATH . 'moment/moment.js', array(), WDT_CURRENT_VERSION, true);
+        wp_enqueue_script('wdt-bootstrap-datetimepicker', WDT_JS_PATH . 'bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js', array(), WDT_CURRENT_VERSION, true);
+        wp_enqueue_script('wdt-bootstrap-colorpicker', WDT_JS_PATH . 'bootstrap/bootstrap-colorpicker/bootstrap-colorpicker.min.js', array(), WDT_CURRENT_VERSION, true);
+        wp_enqueue_script('wdt-bootstrap-growl', WDT_JS_PATH . 'bootstrap/bootstrap-growl/bootstrap-growl.min.js', array(), WDT_CURRENT_VERSION, true);
+        wp_enqueue_script('wdt-waves', WDT_JS_PATH . 'waves/waves.min.js', array(), WDT_CURRENT_VERSION, true);
     }
 
     /**

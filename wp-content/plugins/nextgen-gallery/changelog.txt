@@ -1,6 +1,55 @@
 NextGEN Gallery
 by Imagely
 
+= V3.1.1 - 11.29.2018 =
+* Fixed:   Don't enqueue block editor assets on frontend.
+* Fixed:   Broken styling for column blocks
+
+= V3.1.0 - 11.28.2018 =
+* NEW:     Gutengerg block for NextGEN Gallery
+* Secured: Other options page
+* Updated: Freemius SDK
+* Fixed:   Getting started wizard compatible with Gutenberg
+* Fixed:   WPML redirects
+* Fixed:   Missing descriptions and tags when re-importing image metadata
+
+= V3.0.16 - 10.24.2018 =
+* Fixed    Fontawesome 4 compatibility
+
+= v3.0.15 - 10.23.2018 =
+* NEW:     Added requirements notification manager
+* Changed: Basic Thumbnails default setting from "[Show slideshow]" to "Show slideshow"
+* Changed: Fixed order_by=rand and 'variations' system not working by storing random results in a transient for 24h
+* Changed: How gallery directories are removed
+* Changed: Improved memory use during thumbnail generation
+* Changed: Manage Albums page now uses GET for editing navigation
+* Changed: Upgrading FontAwesome to 5.0.13
+* Fixed:   Attribute 'target=_blank' not working in lightbox effects
+* Fixed:   Conflict with WP Social Widget
+* Fixed:   Corrected numerous phpdoc problems found by Phan
+* Fixed:   Editing of image attributes from search-galleries page
+* Fixed:   Gritter messages with long texts overlapped their close-notification icon
+* Fixed:   IGW gallery selections not persisting between edits
+* Fixed:   Orphaned entries being created and/or left in wp_postmeta
+* Fixed:   Repeated and missing images in featured images list
+
+= V3.0.13 - 10.11.2018 =
+* Changed: Added settings for basic slideshow
+
+= V3.0.9 - 09.25.2018 =
+* NEW:     Added 2.0 template mechanism for basic galleries
+* NEW:     Simple Lightbox is the new default Lightbox
+* Changed: Changed Javascript library and styling for basic slideshow
+* Changed: New default template and styling for thumbnail galleries
+* Changed: New default template and styling for imagebrowser galleries
+* Changed: New default template and styling for compact albums
+* Changed: New default template and styling for extended albums
+* Changed: Changed implementation of "Number of Columns" setting
+* Changed: Significantly simplified NextGEN default shortcodes
+
+= V3.0.8 - 09.05.2018 =
+* Fixed:   IGW broken with Chrome 69+
+
 = V3.0.6 - 07.24.2018 =
 * NEW:     Added 'ngg_gallery_title_select_field' filter
 * NEW:     Danish translations

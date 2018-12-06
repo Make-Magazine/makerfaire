@@ -221,7 +221,7 @@ class A_NextGen_Album_Child_Entities extends Mixin
      * Register each gallery belonging to the album that has just been rendered, so that when the MVC controller
      * system 'catches up' and runs $this->render_object() that method knows what galleries to inline as JS.
      *
-     * @param array $gallery
+     * @param array $galleries
      * @param $displayed_gallery
      * @return array mixed
      */
@@ -415,8 +415,9 @@ class A_NextGen_Basic_Album_Controller extends Mixin_NextGen_Basic_Pagination
     /**
      * Renders the front-end for the NextGen Basic Album display type
      *
-     * @param $displayed_gallery
+     * @param C_Displayed_Gallery $displayed_gallery
      * @param bool $return
+     * @return string
      */
     function index_action($displayed_gallery, $return = FALSE)
     {
@@ -537,7 +538,7 @@ class A_NextGen_Basic_Album_Controller extends Mixin_NextGen_Basic_Pagination
      *
      * @param $gallery
      * @param $display_settings
-     * @return $gallery
+     * @return C_Displayed_Gallery
      */
     function make_child_displayed_gallery($gallery, $display_settings)
     {
@@ -578,7 +579,7 @@ class A_NextGen_Basic_Album_Controller extends Mixin_NextGen_Basic_Pagination
     /**
      * Gets the parent album for the entity being displayed
      * @param int $entity_id
-     * @return stdClass (album)
+     * @return null|object Album object
      */
     function get_parent_album_for($entity_id)
     {
@@ -690,12 +691,12 @@ class A_NextGen_Basic_Album_Controller extends Mixin_NextGen_Basic_Pagination
     function enqueue_frontend_resources($displayed_gallery)
     {
         $this->call_parent('enqueue_frontend_resources', $displayed_gallery);
-        wp_enqueue_style('nextgen_basic_album_style', $this->object->get_static_url('photocrati-nextgen_basic_album#nextgen_basic_album.css'), FALSE, NGG_SCRIPT_VERSION);
-        wp_enqueue_style('nextgen_pagination_style', $this->get_static_url('photocrati-nextgen_pagination#style.css'), FALSE, NGG_SCRIPT_VERSION);
+        wp_enqueue_style('nextgen_basic_album_style', $this->object->get_static_url('photocrati-nextgen_basic_album#nextgen_basic_album.css'), array(), NGG_SCRIPT_VERSION);
+        wp_enqueue_style('nextgen_pagination_style', $this->get_static_url('photocrati-nextgen_pagination#style.css'), array(), NGG_SCRIPT_VERSION);
         wp_enqueue_script('jquery.dotdotdot', $this->object->get_static_url('photocrati-nextgen_basic_album#jquery.dotdotdot-1.5.7-packed.js'), array('jquery'), NGG_SCRIPT_VERSION);
         $ds = $displayed_gallery->display_settings;
         if (!empty($ds['enable_breadcrumbs']) && $ds['enable_breadcrumbs'] || !empty($ds['original_settings']['enable_breadcrumbs']) && $ds['original_settings']['enable_breadcrumbs']) {
-            wp_enqueue_style('nextgen_basic_album_breadcrumbs_style', $this->object->get_static_url('photocrati-nextgen_basic_album#breadcrumbs.css'), FALSE, NGG_SCRIPT_VERSION);
+            wp_enqueue_style('nextgen_basic_album_breadcrumbs_style', $this->object->get_static_url('photocrati-nextgen_basic_album#breadcrumbs.css'), array(), NGG_SCRIPT_VERSION);
         }
         $this->enqueue_ngg_styles();
     }
@@ -713,20 +714,27 @@ class A_NextGen_Basic_Album_Mapper extends Mixin
         if (isset($entity->name) && in_array($entity->name, array(NGG_BASIC_COMPACT_ALBUM, NGG_BASIC_EXTENDED_ALBUM))) {
             // Set defaults for both display (album) types
             $settings = C_NextGen_Settings::get_instance();
+            $default_template = isset($entity->settings["template"]) ? 'default' : 'default-view.php';
+            $this->object->_set_default_value($entity, 'settings', 'display_view', $default_template);
             $this->object->_set_default_value($entity, 'settings', 'galleries_per_page', $settings->galPagedGalleries);
             $this->object->_set_default_value($entity, 'settings', 'enable_breadcrumbs', 1);
             $this->object->_set_default_value($entity, 'settings', 'disable_pagination', 0);
             $this->object->_set_default_value($entity, 'settings', 'enable_descriptions', 0);
             $this->object->_set_default_value($entity, 'settings', 'template', '');
             $this->object->_set_default_value($entity, 'settings', 'open_gallery_in_lightbox', 0);
+            $this->_set_default_value($entity, 'settings', 'override_thumbnail_settings', 1);
+            $this->_set_default_value($entity, 'settings', 'thumbnail_quality', $settings->thumbquality);
+            $this->_set_default_value($entity, 'settings', 'thumbnail_crop', 1);
+            $this->_set_default_value($entity, 'settings', 'thumbnail_watermark', 0);
+            // Thumbnail dimensions -- only used by extended albums
+            if ($entity->name == NGG_BASIC_COMPACT_ALBUM) {
+                $this->_set_default_value($entity, 'settings', 'thumbnail_width', 240);
+                $this->_set_default_value($entity, 'settings', 'thumbnail_height', 160);
+            }
             // Thumbnail dimensions -- only used by extended albums
             if ($entity->name == NGG_BASIC_EXTENDED_ALBUM) {
-                $this->_set_default_value($entity, 'settings', 'override_thumbnail_settings', 0);
-                $this->_set_default_value($entity, 'settings', 'thumbnail_width', $settings->thumbwidth);
-                $this->_set_default_value($entity, 'settings', 'thumbnail_height', $settings->thumbheight);
-                $this->_set_default_value($entity, 'settings', 'thumbnail_quality', $settings->thumbquality);
-                $this->_set_default_value($entity, 'settings', 'thumbnail_crop', $settings->thumbfix);
-                $this->_set_default_value($entity, 'settings', 'thumbnail_watermark', 0);
+                $this->_set_default_value($entity, 'settings', 'thumbnail_width', 300);
+                $this->_set_default_value($entity, 'settings', 'thumbnail_height', 200);
             }
             if (defined('NGG_BASIC_THUMBNAILS')) {
                 $this->object->_set_default_value($entity, 'settings', 'gallery_display_type', NGG_BASIC_THUMBNAILS);
@@ -824,11 +832,12 @@ class Mixin_NextGen_Basic_Album_Form extends Mixin_Display_Type_Form
 {
     function _get_field_names()
     {
-        return array('nextgen_basic_album_gallery_display_type', 'nextgen_basic_album_galleries_per_page', 'nextgen_basic_album_enable_breadcrumbs', 'nextgen_basic_templates_template', 'nextgen_basic_album_enable_descriptions');
+        return array('nextgen_basic_album_gallery_display_type', 'nextgen_basic_album_galleries_per_page', 'nextgen_basic_album_enable_breadcrumbs', 'display_view', 'nextgen_basic_templates_template', 'nextgen_basic_album_enable_descriptions');
     }
     /**
      * Renders the Gallery Display Type field
      * @param C_Display_Type $display_type
+     * @return string
      */
     function _render_nextgen_basic_album_gallery_display_type_field($display_type)
     {
@@ -845,6 +854,7 @@ class Mixin_NextGen_Basic_Album_Form extends Mixin_Display_Type_Form
     /**
      * Renders the Galleries Per Page field
      * @param C_Display_Type $display_type
+     * @return string
      */
     function _render_nextgen_basic_album_galleries_per_page_field($display_type)
     {

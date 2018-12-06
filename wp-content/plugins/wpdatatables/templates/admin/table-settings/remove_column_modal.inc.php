@@ -38,7 +38,7 @@
                                     <div class="select">
                                         <select id="wdtDeleteColumnSelect" class="selectpicker">
                                             <?php foreach ($tableData->table->columns as $column) { ?>
-                                                <?php if ($column->orig_header == 'wdt_ID') {
+                                                <?php if ($column->orig_header == 'wdt_ID' || $column->orig_header == 'wdt_id') {
                                                     continue;
                                                 } ?>
                                                 <option value="<?php echo $column->orig_header; ?>"><?php echo $column->display_header; ?></option>

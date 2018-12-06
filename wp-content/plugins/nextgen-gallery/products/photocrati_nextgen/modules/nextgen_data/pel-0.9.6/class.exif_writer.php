@@ -19,9 +19,17 @@ use lsolesen\pel\PelIfd;
 
 class C_Exif_Writer
 {
-    static public function copy_metadata($old_file, $new_file)
+    /**
+     * @param string $filename
+     * @return array|void
+     * @throws \lsolesen\pel\PelIfdException
+     * @throws \lsolesen\pel\PelInvalidArgumentException
+     * @throws \lsolesen\pel\PelInvalidDataException
+     * @throws \lsolesen\pel\PelJpegInvalidMarkerException
+     */
+    static public function read_metadata($filename)
     {
-        $data = new PelDataWindow(@file_get_contents($old_file));
+        $data = new PelDataWindow(@file_get_contents($filename));
         $exif = new PelExif();
 
         if (PelJpeg::isValid($data))
@@ -57,55 +65,114 @@ class C_Exif_Writer
             $ifd0 = new PelIfd(PelIfd::IFD0);
             $tiff->setIfd($ifd0);
         }
-
-        // Copy EXIF data to the new image and write it
-        $new_image = new PelJpeg($new_file);
         $tiff->setIfd($ifd0);
         $exif->setTiff($tiff);
-        $new_image->setExif($exif);
-        $new_image->saveFile($new_file);
 
-        // IF the original contained IPTC metadata we should copy it
-        getimagesize($old_file, $iptc);
-        if (isset($iptc['APP13']) && function_exists('iptcembed'))
+        $retval = array(
+            'exif' => $exif,
+            'iptc' => NULL
+        );
+
+        @getimagesize($filename, $iptc);
+        if (!empty($iptc['APP13']))
+            $retval['iptc'] = $iptc['APP13'];
+
+        return $retval;
+    }
+
+    /**
+     * @param string $origin_file
+     * @param string $destination_file
+     * @throws \lsolesen\pel\PelIfdException
+     * @throws \lsolesen\pel\PelInvalidArgumentException
+     * @throws \lsolesen\pel\PelInvalidDataException
+     * @throws \lsolesen\pel\PelJpegInvalidMarkerException
+     */
+    static public function copy_metadata($origin_file, $destination_file)
+    {
+        // Read existing data from the source file
+        $metadata = self::read_metadata($origin_file);
+        self::write_metadata($destination_file, $metadata);
+    }
+
+    /**
+     * @param string $filename
+     * @param array $metadata
+     * @throws \lsolesen\pel\PelInvalidArgumentException
+     */
+    static public function write_metadata($filename, $metadata)
+    {
+        // Copy EXIF data to the new image and write it
+        $new_image = new PelJpeg($filename);
+        $new_image->setExif($metadata['exif']);
+        $new_image->saveFile($filename);
+
+        // Copy IPTC / APP13 to the new image and write it
+        if ($metadata['iptc'])
         {
-            $parsed = iptcparse($iptc['APP13']);
-            $newiptc = '';
-            foreach ($parsed as $key => $value) {
-                $tag = str_replace("2#", '', $key);
-                $newiptc .= self::build_iptc_tag($tag, $value[0]);
-            }
-
-            $metadata = iptcembed($newiptc, $new_file);
-            $fp = fopen($new_file, 'wb');
-            fwrite($fp, $metadata);
-            fclose($fp);
+            self::write_IPTC($filename, $metadata['iptc']);
         }
     }
 
-    public static function build_iptc_tag($tag, $value)
+    /**
+     * @param string $filename
+     * @param array $info
+     * @return bool|int
+     */
+    public static function write_IPTC($filename, $data)
     {
-        $length = strlen($value);
-        if ($length >= 0x8000)
-        {
-            return chr(0x1c)
-                   . chr(2)
-                   . chr($tag)
-                   . chr(0x80)
-                   . chr(0x04)
-                   . chr(($length >> 24) & 0xff)
-                   . chr(($length >> 16) & 0xff)
-                   . chr(($length >> 8 ) & 0xff)
-                   . chr(($length ) & 0xff)
-                   . $value;
+        $length = strlen($data) + 2;
+
+        // Avoid invalid APP13 regions
+        if ($length > 0xFFFF)
+            return FALSE;
+
+        // Wrap existing data in segment container we can embed new content in
+        $data = chr(0xFF) . chr(0xED) . chr(($length >> 8) & 0xFF) . chr($length & 0xFF) . $data;
+
+        $new_file_contents = @file_get_contents($filename);
+
+        if (!$new_file_contents || strlen($new_file_contents) <= 0)
+            return FALSE;
+
+        $new_file_contents = substr($new_file_contents, 2);
+
+        // Create new image container wrapper
+        $new_iptc = chr(0xFF) . chr(0xD8);
+
+        // Track whether content was modified
+        $new_fields_added = !$data;
+
+        // Loop through each JPEG segment in search of region 13
+        while ((substr($new_file_contents, 0, 2) & 0xFFF0) === 0xFFE0) {
+
+            $segment_length = (substr($new_file_contents, 2, 2) & 0xFFFF);
+            $segment_number = (substr($new_file_contents, 1, 1) & 0x0F);
+
+            // Not a segment we're interested in
+            if ($segment_length <= 2)
+                return FALSE;
+
+            $current_segment = substr($new_file_contents, 0, $segment_length + 2);
+
+            if ((13 <= $segment_number) && (!$new_fields_added))
+            {
+                $new_iptc .= $data;
+                $new_fields_added = TRUE;
+                if (13 === $segment_number)
+                    $current_segment = '';
+            }
+
+            $new_iptc .= $current_segment;
+            $new_file_contents = substr($new_file_contents, $segment_length + 2);
         }
-        else {
-            return chr(0x1c)
-                   . chr(2)
-                   . chr($tag)
-                   . chr($length >> 8)
-                   . chr($length & 0xff)
-                   . $value;
-        }
+
+        if (!$new_fields_added)
+            $new_iptc .= $data;
+
+        if ($file = @fopen($filename, 'wb'))
+            return @fwrite($file, $new_iptc . $new_file_contents);
+        else
+            return FALSE;
     }
 }

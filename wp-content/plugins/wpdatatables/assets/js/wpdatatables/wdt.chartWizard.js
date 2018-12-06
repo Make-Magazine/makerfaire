@@ -347,7 +347,7 @@ var wdtChartColumnsData = {};
                             seriesBlockTemplateHtml = seriesBlockTemplate.render({series: data.options.series});
 
                         } else if (constructedChartData.engine == 'chartjs') {
-                            if (typeof editing_chart_data != 'undefined' && editing_chart_data.chartjs_render_data != null) {
+                            if (typeof editing_chart_data != 'undefined' && editing_chart_data.chartjs_render_data != null && constructedChartData.chart_type !== 'chartjs_bubble_chart') {
                                 for (i = 0; i < data.options.data.datasets.length; i++) {
                                     for(j = 0; j < editing_chart_data.chartjs_render_data.options.data.datasets.length; j++) {
                                         if (data.options.data.datasets[i].orig_header === editing_chart_data.chartjs_render_data.options.data.datasets[j].orig_header) {
@@ -411,7 +411,7 @@ var wdtChartColumnsData = {};
                                 }
                             }
                         } else if (constructedChartData.engine == 'chartjs') {
-                            if (typeof editing_chart_data != 'undefined' && editing_chart_data.chartjs_render_data != null) {
+                            if (typeof editing_chart_data != 'undefined' && editing_chart_data.chartjs_render_data != null && constructedChartData.chart_type !== 'chartjs_bubble_chart') {
                                 for (i in data.options.data.datasets) {
                                     for(j in editing_chart_data.chartjs_render_data.options.data.datasets) {
                                         if (data.options.data.datasets[i].orig_header === editing_chart_data.chartjs_render_data.options.data.datasets[j].orig_header) {
@@ -1211,6 +1211,7 @@ var wdtChartColumnsData = {};
             // Chart
             if (typeof editing_chart_data.render_data.options.width !== 'undefined') {
                 $('#chart-width').val(editing_chart_data.render_data.options.width);
+                $('#chart-responsive-width').prop('checked', '');
             } else {
                 $('#chart-responsive-width').prop('checked', 'checked');
                 $('#chart-width').val(0);
@@ -1608,7 +1609,7 @@ var wdtChartColumnsData = {};
                 }
 
                 // Series
-                if (editing_chart_data.chartjs_render_data.options.data.datasets[0].lineTension == 0.4) {
+                if (editing_chart_data.type !== 'chartjs_bubble_chart' && editing_chart_data.chartjs_render_data.options.data.datasets[0].lineTension == 0.4) {
                     $('#curve-type').prop('checked', 'checked');
                 } else {
                     $('#curve-type').prop('checked', '');

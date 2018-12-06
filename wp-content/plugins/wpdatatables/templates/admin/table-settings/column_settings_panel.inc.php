@@ -450,13 +450,22 @@
                                         <div class="select">
                                             <select class="selectpicker" id="wdt-date-input-format">
                                                 <option value=""></option>
-                                                <option value="d/m/Y">15/07/2005 (d/m/Y)</option>
-                                                <option value="m/d/Y">07/15/2005 (m/d/Y)</option>
-                                                <option value="d.m.Y">15.07.2005 (d.m.Y)</option>
-                                                <option value="m.d.Y">07.15.2005 (m.d.Y)</option>
-                                                <option value="d-m-Y">15-07-2005 (d-m-Y)</option>
-                                                <option value="m-d-Y">07-15-2005 (m-d-Y)</option>
-                                                <option value="d M Y">15 July 2005 (d Mon Y)</option>
+                                                <option value="d/m/Y"> 15/07/2005 (d/m/Y)</option>
+                                                <option value="m/d/Y"> 07/15/2005 (m/d/Y)</option>
+                                                <option value="Y/m/d"> 2005/15/07 (Y/m/d)</option>
+                                                <option value="d.m.Y"> 15.07.2005 (d.m.Y)</option>
+                                                <option value="m.d.Y"> 07.15.2005 (m.d.Y)</option>
+                                                <option value="d-m-Y"> 15-07-2005 (d-m-Y)</option>
+                                                <option value="m-d-Y"> 07-15-2005 (m-d-Y)</option>
+                                                <option value="Y-m-d"> 2005-07-15 (Y-m-d)</option>
+                                                <option value="d.m.y"> 15.07.05 (d.m.y)</option>
+                                                <option value="m.d.y"> 07.15.05 (m.d.y)</option>
+                                                <option value="d-m-y"> 15-07-05 (d-m-y)</option>
+                                                <option value="m-d-y"> 07-15-05 (m-d-y)</option>
+                                                <option value="d M Y"> 15 July 2005 (d Mon Y)</option>
+                                                <option value="m/Y"> 07/2005 (m/Y)</option>
+                                                <option value="M Y"> July 2005 (Mon Y)</option>
+                                                <option value="Y">2005 (Y)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -531,7 +540,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-6">
+                            <div class="col-sm-6 wdt-possible-values-ajax-block">
                                 <h4 class="c-black m-b-20">
                                     <?php _e('Number of possible values to load', 'wpdatatables'); ?>
                                     <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"

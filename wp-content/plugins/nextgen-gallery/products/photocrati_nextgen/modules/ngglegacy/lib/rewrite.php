@@ -243,14 +243,14 @@ class nggRewrite {
 	 * See : http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html
 	 *
 	 * @deprecated
-	 * @return string $meta
+	 * @return void
 	 */
 	function add_canonical_meta()
     {
-            // create the meta link
- 			$meta  = "\n<link rel='canonical' href='" . get_permalink() ."' />";
- 			// add a filter for SEO plugins, so they can remove it
- 			echo apply_filters('ngg_add_canonical_meta', $meta);
+        // create the meta link
+        $meta  = "\n<link rel='canonical' href='" . get_permalink() ."' />";
+        // add a filter for SEO plugins, so they can remove it
+        echo apply_filters('ngg_add_canonical_meta', $meta);
 
         return;
     }

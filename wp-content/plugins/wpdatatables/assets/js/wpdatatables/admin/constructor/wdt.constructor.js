@@ -2,7 +2,8 @@ var constructedTableData = {
     name: '',
     method: '',
     columnCount: 0,
-    columns: []
+    columns: [],
+    connection: ''
 };
 
 var defaultPostColumns = [
@@ -42,6 +43,8 @@ var aceEditor = null;
     var customUploader;
     var nextStepButton = $('#wdt-constructor-next-step');
     var previousStepButton = $('#wdt-constructor-previous-step');
+
+    constructedTableData.connection = $('#wdt-constructor-table-connection').length !== 0 ? $('#wdt-constructor-table-connection').val() : '';
 
     /**
      * Default column data
@@ -152,7 +155,8 @@ var aceEditor = null;
                 constructedTableData.method = inputMethod;
                 switch (inputMethod) {
                     case 'source':
-                        window.location.replace(window.location.pathname + '?page=wpdatatables-constructor&source');
+                        var connection = (constructedTableData.connection !== '') ? '&connection=' + constructedTableData.connection : '&connection';
+                        window.location.replace(window.location.pathname + '?page=wpdatatables-constructor&source' + connection);
                         break;
                     case 'manual':
                         $('div.wdt-constructor-step[data-step="1-1"]').animateFadeIn();
@@ -167,6 +171,23 @@ var aceEditor = null;
                         $('div.wdt-constructor-step[data-step="1-2"]').animateFadeIn();
                         break;
                     case 'wp':
+
+                        $('#wdt-constructor-table-connection').find("option:selected").each(function() {
+                          // remove data for selected 'wp' option if connection is not WP
+                          if ($(this).attr("data-vendor")) {
+                            // remove data for selected 'mysql' option
+                            $('#wdt-constructor-post-types-selected-table').find('tr').each(function(index, element) {
+                              $(element).addClass('selected');
+                            });
+
+                            $('.wdt-constructor-remove-post-type').trigger('click');
+
+                            $('#wdt-constructor-post-types-all-table').children().hide();
+                          } else {
+                            $('#wdt-constructor-post-types-all-table').children().show();
+                          }
+                        });
+
                         $('div.wdt-constructor-step[data-step="1-3"]').animateFadeIn();
                         wdtApplyPostTypesDragging();
                         wdtApplyPostColumnsDragging();
@@ -185,6 +206,15 @@ var aceEditor = null;
                     return;
                 }
                 constructedTableData.file = $('#wdt-constructor-input-url').val();
+
+                // Validation for valid URL link of Google spreadsheet
+                if (constructedTableData.file.indexOf("docs.google.com") != -1 && constructedTableData.file.indexOf("2PACX") != -1 ) {
+                    $('#wdt-error-modal .modal-body').html('URL from Google spreadsheet publish modal(popup) is not valid for wpDataTables. Please provide a valid URL link that you get from the browser address bar. More info in our documentation on this <a href="https://wpdatatables.com/documentation/creating-wpdatatables/creating-wpdatatables-from-google-spreadsheets/" target="_blank">link</a>. ');
+                    $('#wdt-error-modal').modal('show');
+                    $('.wdt-preload-layer').animateFadeOut();
+                    $('div.wdt-constructor-step[data-step="1-2"]').animateFadeIn();
+                    return;
+                }
                 $curStepBlock.hide();
                 wdtGenerateAndPreviewFileTable();
                 break;
@@ -292,6 +322,74 @@ var aceEditor = null;
     $('#wdt-constructor-manual-table-name').change(function (e) {
         e.preventDefault();
         constructedTableData.name = $(this).val();
+    });
+
+    function disableGroupingOptions (select) {
+      $(select).find("option:selected").each(function() {
+        if ($(this).attr("data-vendor") === 'mssql' || $(this).attr("data-vendor") === 'postgresql') {
+          $('.wdt-constructor-mysql-grouping-rules-block').css('visibility', 'hidden');
+        } else {
+          $('.wdt-constructor-mysql-grouping-rules-block').css('visibility', 'visible');
+        }
+      });
+    }
+
+    disableGroupingOptions('#wdt-constructor-table-connection');
+
+    /**
+     * Change connection
+     */
+    $('#wdt-constructor-table-connection').change(function (e) {
+        e.preventDefault();
+
+        // remove data for selected 'mysql' option
+        $('#wdt-constructor-mysql-tables-selected-table').find('tr').each(function(index, element) {
+          $(element).addClass('selected');
+        });
+
+        $('.wdt-constructor-remove-mysql-table').trigger('click');
+
+        // disable GROUP BY for selected 'mysql' option
+        disableGroupingOptions(this);
+
+        constructedTableData.connection = $(this).val();
+
+        var inputMethod = $('.wdt-constructor-type-selecter-block .card.selected').data('value');
+
+        if (typeof inputMethod !== 'undefined') {
+          $('#wdt-constructor-next-step').prop('disabled', true);
+        }
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'wpdatatables_get_connection_tables',
+                connection: constructedTableData.connection
+            },
+            success: function (result) {
+                var tables = JSON.parse(result);
+
+                $('#wdt-constructor-mysql-tables-all-table').html('');
+
+                for (var i = 0; i < tables.length; i++) {
+                  $('#wdt-constructor-mysql-tables-all-table').append($('<tr>').append($('<td>').text(tables[i])));
+                }
+
+                if (typeof inputMethod !== 'undefined') {
+                  $('#wdt-constructor-next-step').prop('disabled', false);
+                }
+            },
+            error: function (data) {
+                $('#wdt-error-modal .modal-body').html('There was an error while trying to get connection tables! ' + data.statusText + ' ' + data.responseText);
+                $('#wdt-error-modal').modal('show');
+                $('.wdt-preload-layer').animateFadeOut();
+
+                if (typeof inputMethod !== 'undefined') {
+                  $('#wdt-constructor-next-step').prop('disabled', false);
+                }
+            }
+        })
     });
 
     /**
@@ -1122,7 +1220,8 @@ var aceEditor = null;
             data: {
                 action: 'wpdatatables_constructor_get_mysql_table_columns',
                 tables: tables,
-                wdtNonce: wdtNonce
+                wdtNonce: wdtNonce,
+                connection: constructedTableData.connection
             },
             type: 'post',
             dataType: 'json',
@@ -1312,12 +1411,16 @@ var aceEditor = null;
 
     $('.wdt-constructor-refresh-wp-query').click(function (e) {
         e.preventDefault();
+
+        var inputMethod = $('.wdt-constructor-type-selecter-block .card.selected').data('value');
+
         $('.wdt-preload-layer').animateFadeIn();
         $.ajax({
             url: ajaxurl,
             data: {
                 action: 'wpdatatables_refresh_wp_query_preview',
                 query: aceEditor.getValue(),
+                connection: inputMethod === 'wp' ? null : constructedTableData.connection,
                 wdtNonce: wdtNonce
             },
             type: 'post',

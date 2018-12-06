@@ -17,12 +17,16 @@ global $wp_version;
  */
 function wdtActivationCreateTables() {
     global $wpdb;
+
+    $connection = Connection::enabledSeparate() ? 'abcdefghijk' : '';
+
     $tablesTableName = $wpdb->prefix . 'wpdatatables';
     $tablesSql = "CREATE TABLE {$tablesTableName} (
 						id INT( 11 ) NOT NULL AUTO_INCREMENT,
 						title varchar(255) NOT NULL,
                         show_title tinyint(1) NOT NULL default '1',
 						table_type varchar(55) NOT NULL,
+						connection varchar(55) NOT NULL DEFAULT '$connection',
 						content text NOT NULL,
 						filtering tinyint(1) NOT NULL default '1',
 						filtering_form tinyint(1) NOT NULL default '0',
@@ -101,20 +105,8 @@ function wdtActivationCreateTables() {
     if (!get_option('wdtUseSeparateCon')) {
         update_option('wdtUseSeparateCon', false);
     }
-    if (!get_option('wdtMySqlHost')) {
-        update_option('wdtMySqlHost', '');
-    }
-    if (!get_option('wdtMySqlDB')) {
-        update_option('wdtMySqlDB', '');
-    }
-    if (!get_option('wdtMySqlUser')) {
-        update_option('wdtMySqlUser', '');
-    }
-    if (!get_option('wdtMySqlPwd')) {
-        update_option('wdtMySqlPwd', '');
-    }
-    if (!get_option('wdtMySqlPort')) {
-        update_option('wdtMySqlPort', '3306');
+    if (!get_option('wdtSeparateCon')) {
+        update_option('wdtSeparateCon', false);
     }
     if (!get_option('wdtRenderCharts')) {
         update_option('wdtRenderCharts', 'below');
@@ -149,13 +141,16 @@ function wdtActivationCreateTables() {
     if (!get_option('wdtDecimalPlaces')) {
         update_option('wdtDecimalPlaces', 2);
     }
+    if (!get_option('wdtCSVDelimiter')) {
+        update_option('wdtCSVDelimiter', ',');
+    }
     if (!get_option('wdtDateFormat')) {
         update_option('wdtDateFormat', 'd/m/Y');
     }
-    if (!get_option('wdtParseShortcodes')) {
+    if (get_option('wdtParseShortcodes') === false) {
         update_option('wdtParseShortcodes', false);
     }
-    if (!get_option('wdtNumbersAlign')) {
+    if (get_option('wdtNumbersAlign') === false) {
         update_option('wdtNumbersAlign', true);
     }
     if (get_option('wdtBorderRemoval') === false) {
@@ -185,10 +180,10 @@ function wdtActivationCreateTables() {
     if (!get_option('wdtPurchaseCode')) {
         update_option('wdtPurchaseCode', '');
     }
-    if (!get_option('wdtIncludeBootstrap')) {
+    if (get_option('wdtIncludeBootstrap') === false) {
         update_option('wdtIncludeBootstrap', true);
     }
-    if (!get_option('wdtIncludeBootstrapBackEnd')) {
+    if (get_option('wdtIncludeBootstrapBackEnd')  === false) {
         update_option('wdtIncludeBootstrapBackEnd', true);
     }
 }
@@ -204,6 +199,7 @@ function wdtUninstallDelete() {
     global $wpdb;
 
     delete_option('wdtUseSeparateCon');
+    delete_option('wdtSeparateCon');
     delete_option('wdtTimepickerRange');
     delete_option('wdtTimeFormat');
     delete_option('wdtTabletWidth');
@@ -219,11 +215,6 @@ function wdtUninstallDelete() {
     delete_option('wdtBorderRemoval');
     delete_option('wdtBorderRemovalHeader');
     delete_option('wdtNumberFormat');
-    delete_option('wdtMySqlUser');
-    delete_option('wdtMySqlPwd');
-    delete_option('wdtMySqlPort');
-    delete_option('wdtMySqlHost');
-    delete_option('wdtMySqlDB');
     delete_option('wdtMobileWidth');
     delete_option('wdtMinifiedJs');
     delete_option('wdtMinFunctionsLabel');
@@ -234,6 +225,7 @@ function wdtUninstallDelete() {
     delete_option('wdtGeneratedTablesCount');
     delete_option('wdtFontColorSettings');
     delete_option('wdtDecimalPlaces');
+    delete_option('wdtCSVDelimiter');
     delete_option('wdtDateFormat');
     delete_option('wdtCustomJs');
     delete_option('wdtCustomCss');
@@ -251,6 +243,16 @@ function wdtUninstallDelete() {
  */
 function wdtActivation($networkWide) {
     global $wpdb;
+
+    // Check PHP version
+    if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50600) {
+        deactivate_plugins(WDT_BASENAME);
+        wp_die(
+            '<p>The <strong>wpDataTables</strong> plugin requires PHP version 5.6 or greater.</p>',
+            'Plugin Activation Error',
+            array('response' => 200, 'back_link' => TRUE)
+        );
+    }
 
     if (function_exists('is_multisite') && is_multisite()) {
         //check if it is network activation if so run the activation function for each id
@@ -417,14 +419,20 @@ function wdtWpDataTableShortcodeHandler($atts, $content = null) {
     /** @var mixed $export_file_name */
     $wdtExportFileName = $export_file_name !== '%%no_val%%' ? $export_file_name : '';
 
-    /** @var mixed $table_view */
-    if ($table_view == 'excel') {
-        /** @var WPExcelDataTable $wpDataTable */
-        $wpDataTable = new WPExcelDataTable();
-    } else {
-        /** @var WPDataTable $wpDataTable */
-        $wpDataTable = new WPDataTable();
+    try{
+        /** @var mixed $table_view */
+        if ($table_view == 'excel') {
+            /** @var WPExcelDataTable $wpDataTable */
+            $wpDataTable = new WPExcelDataTable($tableData->connection);
+        } else {
+            /** @var WPDataTable $wpDataTable */
+            $wpDataTable = new WPDataTable($tableData->connection);
+        }
+    } catch (Exception $e) {
+        echo WDTTools::wdtShowError($e->getMessage());
+        return;
     }
+
 
     $wpDataTable->setWpId($id);
 
@@ -438,7 +446,7 @@ function wdtWpDataTableShortcodeHandler($atts, $content = null) {
         if ($tableData->show_title && $tableData->title) {
             $output .= apply_filters('wpdatatables_filter_table_title', (empty($tableData->title) ? '' : '<h2 class="wpdt-c" id="wdt-table-title-'. $id .'">' . $tableData->title . '</h2>'), $id);
         }
-        $output .= $wpDataTable->generateTable();
+        $output .= $wpDataTable->generateTable($tableData->connection);
     } catch (Exception $e) {
         $output = WDTTools::wdtShowError($e->getMessage());
     }
@@ -520,11 +528,11 @@ function wdtFuncsShortcodeHandler($atts, $content = null, $shortcode = null) {
 
 }
 
-function wdtRenderScriptStyleBlock() {
+function wdtRenderScriptStyleBlock($connection) {
     $customJs = get_option('wdtCustomJs');
     $scriptBlockHtml = '';
     $styleBlockHtml = '';
-    $wpDataTable = new WPDataTable();
+    $wpDataTable = new WPDataTable($connection);
 
     if ($customJs) {
         $scriptBlockHtml .= '<script type="text/javascript">' . stripslashes_deep($customJs) . '</script>';
@@ -633,6 +641,31 @@ function wdtRegisterButtons($buttons) {
  */
 function wdtLoadTextdomain() {
     load_plugin_textdomain('wpdatatables', false, dirname(plugin_basename(dirname(__FILE__))) . '/languages/' . get_locale() . '/');
+}
+
+/**
+ * Enable Multiple connection
+ */
+function wdtEnableMultipleConnections() {
+    update_option('wdtSeparateCon', json_encode(array(
+        array(
+            "id"       => 'abcdefghijk',
+            "host"     => get_option('wdtMySqlHost') ?: '',
+            "database" => get_option('wdtMySqlDB') ?: '',
+            "user"     => get_option('wdtMySqlUser') ?: '',
+            "password" => get_option('wdtMySqlPwd') ?: '',
+            "port"     => get_option('wdtMySqlPort') ?: '',
+            "vendor"   => 'mysql',
+            "name"     => "MYSQL",
+            "default"  => get_option('wdtUseSeparateCon') ?: ''
+        )
+    )));
+
+    delete_option('wdtMySqlHost');
+    delete_option('wdtMySqlDB');
+    delete_option('wdtMySqlUser');
+    delete_option('wdtMySqlPwd');
+    delete_option('wdtMySqlPort');
 }
 
 /**

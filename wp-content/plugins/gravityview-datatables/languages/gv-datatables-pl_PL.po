@@ -1,0 +1,200 @@
+# Copyright (C) 2018 GravityView
+# This file is distributed under the GPLv2 or later.
+# Translators:
+# Dariusz Zielonka <info@dariusz-zielonka.pl>, 2018
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView DataTables\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
+"PO-Revision-Date: 2018-09-18 23:45+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>\n"
+"Language-Team: Polish (Poland) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/pl_PL/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Textdomain-Support: yes\n"
+
+#: includes/class-admin-datatables.php:41
+msgid "DataTables"
+msgstr "DataTables"
+
+#: includes/class-datatables-data.php:689
+msgid "Loading data&hellip;"
+msgstr "Ładowanie&hellip;"
+
+#: includes/class-datatables-data.php:690
+msgid "No entries match your request."
+msgstr "Żadne pozycje nie pasują do Twojego żądania."
+
+#: includes/class-datatables-template.php:31
+msgid "DataTables Table"
+msgstr "Tabela DataTables"
+
+#: includes/class-datatables-template.php:32
+msgid "Display items in a dynamic table powered by DataTables."
+msgstr "Wyświetlaj elementy w tabeli dynamicznej obsługiwanej przez DataTables."
+
+#: includes/class-datatables-template.php:50
+msgid "Link to single entry"
+msgstr "Link do pojedynczej pozycji"
+
+#: includes/class-datatables-template.php:61
+msgid "Visible Table Columns"
+msgstr "Widoczne kolumny tabeli"
+
+#: includes/extensions/class-datatables-buttons.php:29
+#: includes/extensions/class-datatables-buttons.php:57
+msgid "Export Buttons"
+msgstr "Przyciski eksportu"
+
+#: includes/extensions/class-datatables-buttons.php:30
+msgid ""
+"Display buttons that allow users to print or export the current results."
+msgstr "Wyświetlaj przyciski, które pozwalają użytkownikom drukować lub eksportować bieżące wyniki."
+
+#: includes/extensions/class-datatables-buttons.php:47
+msgid "Enable Buttons"
+msgstr "Włącz przyciski"
+
+#: includes/extensions/class-datatables-buttons.php:87
+msgid "Copy"
+msgstr "Kopiuj"
+
+#: includes/extensions/class-datatables-buttons.php:91
+msgid "Print"
+msgstr "Drukuj"
+
+#: includes/extensions/class-datatables-fixedheader.php:27
+msgid "Keep headers or columns in place and visible while scrolling a table."
+msgstr "Zachowaj nagłówki lub kolumny, tak aby były widoczne podczas przewijania tabeli."
+
+#: includes/extensions/class-datatables-fixedheader.php:33
+msgid "Enable FixedHeader"
+msgstr "Włącz stały nagłówek"
+
+#: includes/extensions/class-datatables-fixedheader.php:45
+msgid "Enable FixedColumns"
+msgstr "Włącz stałe kolumny"
+
+#: includes/extensions/class-datatables-fixedheader.php:65
+msgid "FixedColumns"
+msgstr "Stałe kolumny"
+
+#: includes/extensions/class-datatables-fixedheader.php:66
+msgid ""
+"Fix the first column in place while horizontally scrolling a table. The "
+"first column and its contents will remain visible at all times."
+msgstr "Unieruchom pierwszą kolumnę podczas przewijania w tabeli w pionie. Pierwsza kolumna i jej zawartość pozostaną widoczne przez cały czas."
+
+#: includes/extensions/class-datatables-fixedheader.php:70
+msgid "FixedHeader"
+msgstr "Stały nagłówek"
+
+#: includes/extensions/class-datatables-fixedheader.php:71
+msgid ""
+"Float the column headers above the table to keep the column titles visible "
+"at all times."
+msgstr "Umieść nagłówki kolumn ponad tabelą tak aby tytuły kolumn były widoczne cały czas."
+
+#: includes/extensions/class-datatables-responsive.php:41
+msgid "Responsive Tables"
+msgstr "Responsywne tabele"
+
+#: includes/extensions/class-datatables-responsive.php:42
+msgid ""
+"Optimize table layout for different screen sizes through the dynamic "
+"insertion and removal of columns from the table."
+msgstr "Zoptymalizuj układ tabeli dla różnych rozmiarów ekranu poprzez dynamiczne wstawianie i usuwanie kolumn z tabeli."
+
+#: includes/extensions/class-datatables-responsive.php:68
+msgid "Enable Responsive Tables"
+msgstr "Włącz responsywne tabele"
+
+#: includes/extensions/class-datatables-scroller.php:35
+msgid "Scroller"
+msgstr "Scroller"
+
+#: includes/extensions/class-datatables-scroller.php:36
+msgid ""
+"Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.\n"
+"\n"
+"\t\t\t\tNote: Scroller will not work well if your View has columns of varying height."
+msgstr "Pozwól, aby duże zbiory danych były tworzone na ekranie na jednej ciągły sposób. Celem funkcji Scroller dla DataTables jest szybkie renderowanie dużych zbiorów danych.\n\n\t\t\t\tUwaga: Scroller nie będzie działał prawidłowo, jeśli Twój Widok ma kolumny o różnej wysokości."
+
+#: includes/extensions/class-datatables-scroller.php:52
+msgid "Enable Scroller"
+msgstr "Włącz Scroller"
+
+#: includes/extensions/class-datatables-scroller.php:62
+msgid "Table Height"
+msgstr "Wysokość tabeli"
+
+#: includes/extensions/class-datatables-search.php:31
+msgid "Search"
+msgstr "Wyszukiwanie"
+
+#: includes/extensions/class-datatables-search.php:32
+msgid "Ineffective if a search widget is already present in this View."
+msgstr "Nieskuteczne, jeśli widżet wyszukiwania jest już obecny w tym Widoku."
+
+#: includes/extensions/class-datatables-search.php:38
+msgid "Enable Search"
+msgstr "Włącz wyszukiwanie"
+
+#: lib/EDD_SL_Plugin_Updater.php:201
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
+msgstr "Jest dostępna nowa wersja %1$s. %2$sZobacz szczegóły wersji%3$s %4$s."
+
+#: lib/EDD_SL_Plugin_Updater.php:209
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
+msgstr "Jest dostępna nowa wersja %1$s. %1$s. %2$sZobacz szczegóły wersji%3$s %4$s lub %5$saktualizuj teraz%6$s."
+
+#: lib/EDD_SL_Plugin_Updater.php:369
+msgid "You do not have permission to install plugin updates"
+msgstr "Nie masz uprawnień do instalowania aktualizacji wtyczek"
+
+#: lib/EDD_SL_Plugin_Updater.php:369
+msgid "Error"
+msgstr "Błąd"
+
+#: lib/class-gravityview-extension.php:360
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr "Nie można aktywować wtyczki %s, GravityView nie jest aktywny."
+
+#: lib/class-gravityview-extension.php:364
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr "Wtyczka %s wymaga GravityView w wersji %s lub nowszej."
+
+#: lib/class-gravityview-extension.php:368
+msgid ""
+"The %s Extension requires PHP Version %s or newer. Please ask your host to "
+"upgrade your server's PHP."
+msgstr "Wtyczka %s wymaga PHP w wersji %s lub nowszej. Proszę zwrócić się do dostawcy hostingu o aktualizację wersji PHP serwera."
+
+#: lib/class-gravityview-extension.php:372
+msgid ""
+"The %s Extension is not compatible with this version of GravityView. Please "
+"update the Extension to the latest version."
+msgstr "Rozszerzenie %s nie jest zgodne z tą wersją GravityView. Proszę zaktualizować Rozszerzenie do najnowszej wersji."
+
+#. Plugin URI of the plugin/theme
+msgid "https://gravityview.co/extensions/datatables/"
+msgstr "https://gravityview.co/extensions/datatables/"
+
+#: includes/class-datatables-data.php:623
+msgctxt "Menu label to show all results in DataTables template."
+msgid "All"
+msgstr "Wszystkie"

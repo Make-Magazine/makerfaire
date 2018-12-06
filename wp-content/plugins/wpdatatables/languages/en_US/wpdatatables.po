@@ -2248,7 +2248,7 @@ msgid "Group by "
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:8
-msgid "Please choose the MySQL data which will be used to create a table."
+msgid "Please choose the SQL data which will be used to create a table."
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:9
@@ -2260,7 +2260,7 @@ msgid ""
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:19
-msgid "All MySQL tables"
+msgid "All SQL tables"
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:21
@@ -2268,11 +2268,11 @@ msgid "Add or drag MySQL tables."
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:53
-msgid "Selected MySQL tables"
+msgid "Selected SQL tables"
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:72
-msgid "All MySQL columns"
+msgid "All SQL columns"
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:74
@@ -2280,11 +2280,11 @@ msgid "Add or drag MySQL columns."
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:102
-msgid "Selected MySQL columns"
+msgid "Selected SQL columns"
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_1_4.inc.php:122
-msgid "Define MySQL tables relations"
+msgid "Define SQL tables relations"
 msgstr ""
 
 #: templates/admin/constructor/steps/constructor_2_2.inc.php:8

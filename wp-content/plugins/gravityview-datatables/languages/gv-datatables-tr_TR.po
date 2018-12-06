@@ -1,14 +1,14 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
-# Süha Karalar <suhakaralar@gmail.com>, 2014,2016
+# Süha Karalar <suhakaralar@gmail.com>, 2014,2016,2018
 # Zachary Katz <zack@katz.co>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2018-05-18 02:51+0000\n"
+"PO-Revision-Date: 2018-08-14 10:43+0000\n"
 "Last-Translator: Süha Karalar <suhakaralar@gmail.com>\n"
 "Language-Team: Turkish (Turkey) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/tr_TR/)\n"
 "MIME-Version: 1.0\n"
@@ -146,11 +146,11 @@ msgstr "Ara"
 
 #: includes/extensions/class-datatables-search.php:32
 msgid "Ineffective if a search widget is already present in this View."
-msgstr ""
+msgstr "Bu görünümde zaten arama bileşeni varsa etkisizdir."
 
 #: includes/extensions/class-datatables-search.php:38
 msgid "Enable Search"
-msgstr ""
+msgstr "Aramayı Etkinleştir"
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""

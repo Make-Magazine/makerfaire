@@ -156,7 +156,9 @@ jQuery(document).ready(function ($) {
             .off('dp.show')
             .on('dp.show', function () {
                 $(this).parent().find('div.bootstrap-datetimepicker-widget').addClass('wdt-datetimepicker-modal');
-                wdtAddDatePlaceholders($(this));
+                if (!_.contains(['MM/Y','MMM Y','Y'], wdtDateFormat)) {
+                    wdtAddDatePlaceholders($(this));
+                }
             });
     });
 
@@ -189,7 +191,9 @@ jQuery(document).ready(function ($) {
             .off('dp.show')
             .on('dp.show', function () {
                 $(this).parent().find('div.bootstrap-datetimepicker-widget').addClass('wdt-datetimepicker-modal');
+              if (!_.contains(['MM/Y','MMM Y','Y'], wdtDateFormat)) {
                 wdtAddDatePlaceholders($(this));
+              }
             });
     });
 

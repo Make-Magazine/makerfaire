@@ -16,10 +16,10 @@ class nggAdmin{
      * create a new gallery & folder
      *
      * @class nggAdmin
-     * @param string $name of the gallery
+     * @param string $title Name of the gallery
      * @param string $defaultpath
      * @param bool $output if the function should show an error messsage or not
-     * @return
+     * @return bool|int
      */
     static function create_gallery($title, $defaultpath, $output = true) {
 
@@ -161,7 +161,7 @@ class nggAdmin{
      * nggAdmin::createThumbnail() - function to create or recreate a thumbnail
      *
      * @class nggAdmin
-     * @param object | int $image contain all information about the image or the id
+     * @param object|int $image Contain all information about the image or the id
      * @return string result code
      * @since v1.0.0
      */
@@ -195,7 +195,7 @@ class nggAdmin{
      * nggAdmin::resize_image() - create a new image, based on the height /width
      *
      * @class nggAdmin
-     * @param object | int $image contain all information about the image or the id
+     * @param object|int $image Contain all information about the image or the id
      * @param integer $width optional
      * @param integer $height optional
      * @return string result code
@@ -248,8 +248,8 @@ class nggAdmin{
      * Rotated/Flip an image based on the orientation flag or a definded angle
      *
      * @param int|object $image
-     * @param string (optional) $dir, CW (clockwise)or CCW (counter clockwise), if set to false, the exif flag will be used
-     * @param string (optional)  $flip, could be either false | V (flip vertical) | H (flip horizontal)
+     * @param string|bool $dir (optional) CW (clockwise)or CCW (counter clockwise), if set to false, the exif flag will be used
+     * @param string|bool $flip (optional) Either false | V (flip vertical) | H (flip horizontal)
      * @return string result code
      */
     static function rotate_image($image, $dir = false, $flip = false)
@@ -330,7 +330,7 @@ class nggAdmin{
      * nggAdmin::set_watermark() - set the watermark for the image
      *
      * @class nggAdmin
-     * @param object | int $image contain all information about the image or the id
+     * @param object|int $image Contain all information about the image or the id
      * @return string result code
      */
     static function set_watermark($image) {
@@ -365,12 +365,11 @@ class nggAdmin{
      *
      * @class nggAdmin
      * @since 1.5.0
-     * @param object | int $image contain all information about the image or the id
+     * @param object|int $image Contain all information about the image or the id
      * @return string result code
      */
-
-    static function recover_image($image) {
-
+    static function recover_image($image)
+    {
         return C_Gallery_Storage::get_instance()->recover_image($image);
     }
 
@@ -516,7 +515,7 @@ class nggAdmin{
      *
      * @class nggAdmin
      * @require NextGEN Meta class
-     * @param int $id image ID
+     * @param int|object $image_or_id
      * @return array metadata
      */
     static function get_MetaData($image_or_id) {
@@ -545,11 +544,11 @@ class nggAdmin{
      * and if based on compat reason (pre V1.4.0) we save then some meta datas to the database
      *
      * @since V1.4.0
-     * @param int $id
-     * @return result
+     * @param int|object $image_or_id
+     * @return bool
      */
-    function maybe_import_meta( $image_or_id ) {
-
+    function maybe_import_meta( $image_or_id )
+    {
         require_once(NGGALLERY_ABSPATH . '/lib/meta.php');
 		$id = is_int($image_or_id) ? $image_or_id : $image_or_id->{$image_or_id->id_field};
         $meta_obj = new nggMeta( $image_or_id );
@@ -563,7 +562,6 @@ class nggAdmin{
             return false;
 
         return $result;
-
     }
 
     /**
@@ -766,7 +764,7 @@ class nggAdmin{
      *
      * @class nggAdmin
      * @param int $galleryID
-     * @return arry (JSON)
+     * @return string|int (JSON)
      */
     static function get_image_ids( $galleryID ) {
 

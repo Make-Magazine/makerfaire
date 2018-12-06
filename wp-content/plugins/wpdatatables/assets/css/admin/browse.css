@@ -78,6 +78,7 @@
 }
 
 .wdt-datatables-admin-wrap .card.wdt-browse-table table td.table_type,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.connection,
 .wdt-datatables-admin-wrap .card.wdt-browse-table table td.shortcode,
 .wdt-datatables-admin-wrap .card.wdt-browse-table table td.engine,
 .wdt-datatables-admin-wrap .card.wdt-browse-table table td.type {
@@ -85,6 +86,7 @@
 }
 
 .wdt-datatables-admin-wrap .card.wdt-browse-table table td.table_type span.wpdt-type-column,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.connection span.wpdt-type-column,
 .wdt-datatables-admin-wrap .card.wdt-browse-table table td.shortcode span.wdt-shortcode,
 .wdt-datatables-admin-wrap .card.wdt-browse-table table td.engine span.wdt-render-engine,
 .wdt-datatables-admin-wrap .card.wdt-browse-table table td.type span.wdt-chart-type {

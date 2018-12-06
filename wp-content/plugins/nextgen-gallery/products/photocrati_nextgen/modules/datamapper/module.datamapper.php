@@ -177,8 +177,8 @@ class M_DataMapper extends C_Base_Module
 
 	/**
 	 * Adds post_name to the where clause
-	 * @param type $where
-	 * @param type $wp_query
+	 * @param string $where
+	 * @param WP_Query $wp_query
 	 */
 	function add_post_name_where_clauses(&$where, &$wp_query)
 	{

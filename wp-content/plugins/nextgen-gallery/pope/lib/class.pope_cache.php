@@ -154,7 +154,7 @@ class C_Pope_Cache_MultiFile implements I_Pope_Cache_Driver
                 $file = self::join_paths($dir, $file);
                 if (is_dir($file) && self::$use_cache_subdir)
                 {
-                    self::flush($dir);
+                    self::flush();
                 }
                 else {
                     if (!self::$use_cache_subdir && strpos(basename($file), implode('_', C_Pope_Cache::$key_prefix) . '_') === 0)

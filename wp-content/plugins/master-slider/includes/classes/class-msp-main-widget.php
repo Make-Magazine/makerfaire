@@ -90,6 +90,14 @@ class MSP_Main_Widget extends MSP_Widget {
 
 endif;
 
+/**
+ * Register the main widget
+ *
+ * @return void
+ */
+function msf_register_main_widget(){
+    register_widget("MSP_Main_Widget");
+}
 
 // init the widget
-add_action( 'widgets_init', create_function( '', 'register_widget("MSP_Main_Widget");' ) );
+add_action( 'widgets_init', 'msf_register_main_widget' );

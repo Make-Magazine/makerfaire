@@ -3,35 +3,72 @@
 defined('ABSPATH') or die('Access denied.');
 
 /**
- * Test the MySQL connection settings
+ * Test the Separate connection settings
  */
-function wdtTestMySqlSettings() {
+function wdtTestSeparateConnectionSettings() {
 
     $returnArray = array('success' => array(), 'errors' => array());
 
-    $mysqlConnectionSettings = $_POST['mysql_settings'];
+    $connections = Connection::getAll();
 
-    try {
-        $Sql = new PDTSql(
-            $mysqlConnectionSettings['host'],
-            $mysqlConnectionSettings['db'],
-            $mysqlConnectionSettings['user'],
-            $mysqlConnectionSettings['password'],
-            $mysqlConnectionSettings['port']
-        );
-        if ($Sql->isConnected()) {
-            $returnArray['success'][] = __('Successfully connected to the MySQL server.', 'wpdatatables');
-        } else {
-            $returnArray['errors'][] = __('wpDataTables could not connect to MySQL server.', 'wpdatatables');
+    foreach ($_POST['wdtSeparateCon'] as $separateConnection) {
+        try {
+            $Sql = Connection::create(
+                '',
+                $separateConnection['host'],
+                $separateConnection['database'],
+                $separateConnection['user'],
+                $separateConnection['password'],
+                $separateConnection['port'],
+                $separateConnection['vendor']
+            );
+            if ($Sql->isConnected()) {
+                $returnArray['success'][] = __("Successfully connected to the {$separateConnection['vendor']} server.", 'wpdatatables');
+
+                $isNewConnection = true;
+
+                foreach ($connections as &$connection) {
+                    if ($connection['id'] === $separateConnection['id']) {
+                        $isNewConnection = false;
+
+                        $connection = $separateConnection;
+                    }
+                }
+
+                if ($isNewConnection) {
+                    $connections[] = $separateConnection;
+                }
+            } else {
+                $returnArray['errors'][] = __("wpDataTables could not connect to {$separateConnection['vendor']} server.", 'wpdatatables');
+            }
+        } catch (Exception $e) {
+            $returnArray['errors'][] = __("wpDataTables could not connect to {$separateConnection['vendor']} server. {$separateConnection['vendor']} said: ", 'wpdatatables') . $e->getMessage();
         }
-    } catch (Exception $e) {
-        $returnArray['errors'][] = __('wpDataTables could not connect to MySQL server. MySQL said: ', 'wpdatatables') . $e->getMessage();
     }
+
+    if (!$returnArray['errors']) {
+        Connection::saveAll(json_encode($connections));
+    }
+
     echo json_encode($returnArray);
     exit();
 }
 
-add_action('wp_ajax_wpdatatables_test_mysql_settings', 'wdtTestMySqlSettings');
+add_action('wp_ajax_wpdatatables_test_separate_connection_settings', 'wdtTestSeparateConnectionSettings');
+
+/**
+ * Get connection tables settings
+ */
+function wdtGetConnectionTables() {
+    $connection = $_POST['connection'];
+
+    $tables = wpDataTableConstructor::listMySQLTables($connection);
+
+    echo json_encode($tables);
+    exit();
+}
+
+add_action('wp_ajax_wpdatatables_get_connection_tables', 'wdtGetConnectionTables');
 
 /**
  * Method to save the config for the table and columns
@@ -98,10 +135,10 @@ function wdtDuplicateTable() {
         while (!$newNameGenerated) {
             $newName = $tableData->mysql_table_name . '_' . $cnt;
             $checkTableQuery = "SHOW TABLES LIKE '{$newName}'";
-            if (!get_option('wdtUseSeparateCon')) {
+            if (!(Connection::isSeparate($tableData->connection))) {
                 $res = $wpdb->get_results($checkTableQuery);
             } else {
-                $sql = new PDTSql(WDT_MYSQL_HOST, WDT_MYSQL_DB, WDT_MYSQL_USER, WDT_MYSQL_PASSWORD, WDT_MYSQL_PORT);
+                $sql = Connection::create($tableData->connection);
                 $res = $sql->getRow($checkTableQuery);
             }
             if (!empty($res)) {
@@ -112,15 +149,30 @@ function wdtDuplicateTable() {
         }
 
         // Input table queries
-        $query1 = "CREATE TABLE {$newName} LIKE {$tableData->mysql_table_name};";
-        $query2 = "INSERT INTO {$newName} SELECT * FROM {$tableData->mysql_table_name};";
 
-        if (!get_option('wdtUseSeparateCon')) {
+        $vendor = Connection::getVendor($tableData->connection);
+        $isMySql = $vendor === Connection::$MYSQL;
+        $isMSSql = $vendor === Connection::$MSSQL;
+        $isPostgreSql = $vendor === Connection::$POSTGRESQL;
+
+        if ($isMySql) {
+            $query1 = "CREATE TABLE {$newName} LIKE {$tableData->mysql_table_name};";
+            $query2 = "INSERT INTO {$newName} SELECT * FROM {$tableData->mysql_table_name};";
+        }
+
+        if ($isMSSql || $isPostgreSql) {
+            $query1 = "SELECT * INTO {$newName} FROM {$tableData->mysql_table_name};";
+        }
+
+        if (!(Connection::isSeparate($tableData->connection))) {
             $wpdb->query($query1);
             $wpdb->query($query2);
         } else {
             $sql->doQuery($query1);
-            $sql->doQuery($query2);
+
+            if ($query2) {
+                $sql->doQuery($query2);
+            }
         }
         $mySqlTableName = $newName;
         $content = str_replace($tableData->mysql_table_name, $newName, $tableData->content);
@@ -133,6 +185,7 @@ function wdtDuplicateTable() {
             'title' => $newTableName,
             'show_title' => $tableData->show_title,
             'table_type' => $tableData->table_type,
+            'connection' => $tableData->connection,
             'content' => $content,
             'filtering' => $tableData->filtering,
             'filtering_form' => $tableData->filtering_form,
@@ -273,7 +326,7 @@ function wdtCreateManualTable() {
     $tableData = apply_filters('wpdatatables_before_create_manual_table', $tableData);
 
     // Create a new Constructor object
-    $constructor = new wpDataTableConstructor();
+    $constructor = new wpDataTableConstructor($tableData['connection']);
 
     // Generate and return a new 'Manual' type table
     $newTableId = $constructor->generateManualTable($tableData);
@@ -320,10 +373,10 @@ function wdtRefreshWPQueryPreview() {
 
     $query = sanitize_text_field($_POST['query']);
 
-    $constructor = new wpDataTableConstructor();
+    $constructor = new wpDataTableConstructor($_POST['connection']);
     $constructor->setQuery($query);
 
-    echo $constructor->getQueryPreview();
+    echo $constructor->getQueryPreview($_POST['connection']);
     exit();
 }
 
@@ -339,7 +392,7 @@ function wdtConstructorGenerateWDT() {
 
     $tableData = $_POST['table_data'];
 
-    $constructor = new wpDataTableConstructor();
+    $constructor = new wpDataTableConstructor($tableData['connection']);
     $res = $constructor->generateWdtBasedOnQuery($tableData);
     if (empty($res->error)) {
         $res->link = get_admin_url() . "admin.php?page=wpdatatables-constructor&source&table_id={$res->table_id}";
@@ -360,7 +413,7 @@ function wdtConstructorGetMySqlTableColumns() {
     }
 
     $tables = array_map('sanitize_text_field', $_POST['tables']);
-    $columns = wpDataTableConstructor::listMySQLColumns($tables);
+    $columns = wpDataTableConstructor::listMySQLColumns($tables, $_POST['connection']);
 
     echo json_encode($columns);
     exit();
@@ -379,11 +432,11 @@ function wdtGenerateMySqlBasedQuery() {
     $tableData = $_POST['tableData'];
     $tableData = apply_filters('wpdatatables_before_generate_mysql_based_query', $tableData);
 
-    $constructor = new wpDataTableConstructor();
+    $constructor = new wpDataTableConstructor($tableData['connection']);
     $constructor->generateMySQLBasedQuery($tableData);
     $result = array(
         'query' => $constructor->getQuery(),
-        'preview' => $constructor->getQueryPreview()
+        'preview' => $constructor->getQueryPreview($tableData['connection'])
     );
 
     echo json_encode($result);
@@ -403,7 +456,7 @@ function wdtConstructorPreviewFileTable() {
     $tableData = $_POST['tableData'];
     $tableData = apply_filters('wpdatatables_before_preview_file_table', $tableData);
 
-    $constructor = new wpDataTableConstructor();
+    $constructor = new wpDataTableConstructor($tableData['connection']);
     $result = $constructor->previewFileTable($tableData);
 
     echo json_encode($result);
@@ -424,7 +477,7 @@ function wdtConstructorReadFileData() {
     $tableData = $_POST['tableData'];
     $tableData = apply_filters('wpdatatables_before_read_file_data', $tableData);
 
-    $constructor = new wpDataTableConstructor();
+    $constructor = new wpDataTableConstructor($tableData['connection']);
 
     try {
         $constructor->readFileData($tableData);
@@ -525,7 +578,7 @@ function wdtShowChartFromData() {
     $chartData = $_POST['chart_data'];
     $wpDataChart = WPDataChart::factory($chartData, false);
 
-    echo json_encode($wpDataChart->returnData(), JSON_NUMERIC_CHECK);
+    echo json_encode($wpDataChart->returnData());
     exit();
 }
 

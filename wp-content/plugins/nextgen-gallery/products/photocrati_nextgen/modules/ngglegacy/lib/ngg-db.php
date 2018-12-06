@@ -73,7 +73,7 @@ class nggdb
      *
      *
      * @param int|string $id or $slug
-     * @return A nggGallery object (null if not found)
+     * @return object nggGallery object (null if not found)
      * @deprecated Use the C_Gallery_Mapper class instead
      */
     static function find_gallery( $id )
@@ -121,7 +121,7 @@ class nggdb
      *
      * @deprecated
      * @param string $filename
-     * @param int (optional) $galleryID
+     * @param int|bool $galleryID (optional)
      * @return Array Result of the request
      */
     function search_for_file($filename, $galleryID = false)
@@ -143,9 +143,9 @@ class nggdb
      * Get random images from one or more gallery
      *
      * @deprecated
-     * @param integer $number of images
-     * @param integer $galleryID optional a Gallery
-     * @return A nggImage object representing the image (null if not found)
+     * @param int $number Number of images
+     * @param int $gallery_id (optional) Gallery ID
+     * @return array Array holding C_Image_Wrapper objects
      */
     function get_random_images($number = 1, $gallery_id = 0)
     {
@@ -174,7 +174,7 @@ class nggdb
      * @param int $limit number of paged galleries, 0 shows all galleries
      * @param int $start the start index for paged galleries
      * @param bool $json remove the key for associative array in json request
-     * @return An array containing the nggImage objects representing the images in the gallery.
+     * @return array An array containing the C_Image_Wrapper objects representing the images in the gallery.
      */
     static function get_gallery($id, $order_by = 'sortorder', $order_dir = 'ASC', $exclude = true, $limit = 0, $start = 0, $json = false)
     {
@@ -203,13 +203,14 @@ class nggdb
     /**
      * This function return all information about the gallery and the images inside
      *
-     * @param int|string $id or $name
-     * @param string $orderby
-     * @param string $order (ASC |DESC)
+     * @param int|string $id Or $name
+     * @param string $order_by
+     * @param string $order_dir (ASC|DESC)
      * @param bool $exclude
-     * @return An array containing the nggImage objects representing the images in the gallery.
+     * @return array An array containing the nggImage objects representing the images in the gallery.
      */
-    static function get_ids_from_gallery($id, $order_by = 'sortorder', $order_dir = 'ASC', $exclude = true) {
+    static function get_ids_from_gallery($id, $order_by = 'sortorder', $order_dir = 'ASC', $exclude = true)
+    {
 
         global $wpdb;
 
@@ -247,7 +248,7 @@ class nggdb
      * Get an album given its ID
      *
      * @id The album ID or name
-     * @return A nggGallery object (false if not found)
+     * @return object|bool A nggGallery object (false if not found)
      */
     function find_album( $id ) {
         global $wpdb;
@@ -306,7 +307,7 @@ class nggdb
     /**
      * Insert an image in the database
      *
-     * @return the ID of the inserted image
+     * @return int ID of the inserted image
      */
     function insert_image($gid, $filename, $alttext, $desc, $exclude) {
         global $wpdb;
@@ -323,14 +324,14 @@ class nggdb
     /**
      * nggdb::update_image() - Update an image in the database
      *
-     * @param int $pid   id of the image
-     * @param (optional) string|int $galleryid
-     * @param (optional) string $filename
-     * @param (optional) string $description
-     * @param (optional) string $alttext
-     * @param (optional) int $exclude (0 or 1)
-     * @param (optional) int $sortorder
-     * @return bool result of update query
+     * @param int $pid ID of the image
+     * @param string|int $galleryid (optional)
+     * @param string $filename (optional)
+     * @param string $description (optional)
+     * @param string $alttext (optional)
+     * @param int $exclude (0 or 1) (optional)
+     * @param int $sortorder (optional)
+     * @return null|bool Result of update query
      */
     function update_image($pid, $galleryid = false, $filename = false, $description = false, $alttext = false, $exclude = false, $sortorder = false) {
 
@@ -368,17 +369,18 @@ class nggdb
     }
 
      /**
-     * nggdb::update_gallery() - Update an gallery in the database
-     *
-     * @since V1.7.0
-     * @param int $id   id of the gallery
-     * @param (optional) string $title or name of the gallery
-     * @param (optional) string $path
-     * @param (optional) string $description
-     * @param (optional) int $pageid
-     * @param (optional) int $previewpic
-     * @param (optional) int $author
-     * @return bool result of update query
+      * nggdb::update_gallery() - Update an gallery in the database
+      *
+      * @since V1.7.0
+      * @param int $id ID of the gallery
+      * @param string|bool $name (optional) Name or title of the gallery
+      * @param string|bool $path (optional)
+      * @param string|bool $title (optional)
+      * @param string|bool $description (optional)
+      * @param int|bool $pageid (optional)
+      * @param int|bool $previewpic (optional)
+      * @param int|bool $author (optional)
+      * @return null|bool Result of update query
      */
     function update_gallery($id, $name = false, $path = false, $title = false, $description = false, $pageid = false, $previewpic = false, $author = false) {
 
@@ -420,13 +422,13 @@ class nggdb
      * nggdb::update_album() - Update an album in the database
      *
      * @since V1.7.0
-     * @param int $ id   id of the album
-     * @param (optional) string $title
-     * @param (optional) int $previewpic
-     * @param (optional) string $description
-     * @param (optional) serialized array $sortorder
-     * @param (optional) int $pageid
-     * @return bool result of update query
+     * @param int $id ID of the album
+     * @param string $title (optional)
+     * @param int $previewpic (optional)
+     * @param string $description (optional)
+     * @param array $sortorder (optional)
+     * @param int $pageid (optional)
+     * @return null|bool result of update query
      */
     function update_album($id, $name = false, $previewpic = false, $description = false, $sortorder = false, $pageid = false ) {
 
@@ -465,10 +467,11 @@ class nggdb
     /**
      * Get an image given its ID
      *
-     * @param  int|string The image ID or Slug
-     * @return object A nggImage object representing the image (false if not found)
+     * @param int|string $id The image ID or Slug
+     * @return bool|object A nggImage object representing the image (false if not found)
      */
-    static function find_image( $id ) {
+    static function find_image($id)
+    {
         global $wpdb;
 
         if( is_numeric($id) ) {
@@ -493,7 +496,7 @@ class nggdb
      * Get images given a list of IDs
      *
      * @param $pids array of picture_ids
-     * @return An array of nggImage objects representing the images
+     * @return array An array of nggImage objects representing the images
      */
     static function find_images_in_list( $pids, $exclude = false, $order = 'ASC' ) {
         global $wpdb;
@@ -525,19 +528,19 @@ class nggdb
     * Add an image to the database
     *
 	* @since V1.4.0
-	* @param int $pid   id of the gallery
-    * @param (optional) string|int $galleryid
-    * @param (optional) string $filename
-    * @param (optional) string $description
-    * @param (optional) string $alttext
-    * @param (optional) array $meta data
-    * @param (optional) int $post_id (required for sync with WP media lib)
-    * @param (optional) string $imagedate
-    * @param (optional) int $exclude (0 or 1)
-    * @param (optional) int $sortorder
-    * @return bool result of the ID of the inserted image
+	* @param int $id ID of the gallery
+    * @param string $filename (optional)
+    * @param string $description (optional)
+    * @param string $alttext (optional)
+    * @param array $meta data (optional)
+    * @param int $post_id (required for sync with WP media lib) (optional)
+    * @param string $imagedate (optional)
+    * @param int $exclude (0 or 1) (optional)
+    * @param int $sortorder (optional)
+    * @return int Result of the ID of the inserted image
     */
-    function add_image( $id = false, $filename = false, $description = '', $alttext = '', $meta_data = false, $post_id = 0, $imagedate = '0000-00-00 00:00:00', $exclude = 0, $sortorder = 0  ) {
+    function add_image( $id = false, $filename = false, $description = '', $alttext = '', $meta_data = false, $post_id = 0, $imagedate = '0000-00-00 00:00:00', $exclude = 0, $sortorder = 0)
+    {
         global $wpdb;
 
 		if ( is_array($meta_data) )
@@ -565,14 +568,14 @@ class nggdb
     * Add an album to the database
     *
 	* @since V1.7.0
-    * @param (optional) string $title
-    * @param (optional) int $previewpic
-    * @param (optional) string $description
-    * @param (optional) serialized array $sortorder
-    * @param (optional) int $pageid
-    * @return bool result of the ID of the inserted album
+    * @param string|bool $name (optional)
+    * @param int $previewpic (optional)
+    * @param string $description (optional)
+    * @param string $sortorder Must be in the form of a serialized array (optional)
+    * @param int $pageid (optional)
+    * @return int Result of the ID of the inserted album
     */
-    function add_album( $name = false, $previewpic = 0, $description = '', $sortorder = 0, $pageid = 0  ) {
+    function add_album( $name = false, $previewpic = 0, $description = '', $sortorder = '', $pageid = 0  ) {
         global $wpdb;
 
         // name must be unique, we use the title for that
@@ -594,13 +597,13 @@ class nggdb
     * Add an gallery to the database
     *
 	* @since V1.7.0
-    * @param (optional) string $title or name of the gallery
-    * @param (optional) string $path
-    * @param (optional) string $description
-    * @param (optional) int $pageid
-    * @param (optional) int $previewpic
-    * @param (optional) int $author
-    * @return bool result of the ID of the inserted gallery
+    * @param string $title or name of the gallery (optional)
+    * @param string $path (optional)
+    * @param string $description (optional)
+    * @param int $pageid (optional)
+    * @param int $previewpic (optional)
+    * @param int $author (optional)
+    * @return int result of the ID of the inserted gallery
     */
     static function add_gallery( $title = '', $path = '', $description = '', $pageid = 0, $previewpic = 0, $author = 0  ) {
         global $wpdb;
@@ -642,7 +645,7 @@ class nggdb
      * @param int $galleryId Only look for images with this gallery id, or in all galleries if id is 0
      * @param string $orderby is one of "id" (default, order by pid), "date" (order by exif date), sort (order by user sort order)
      * @deprecated
-     * @return
+     * @return bool|array
      */
     static function find_last_images($page = 0, $limit = 30, $exclude = true, $galleryId = 0, $orderby = "pid") {
 	    // Determine ordering
@@ -689,7 +692,7 @@ class nggdb
      * @param string $order_by
      * @param string $order_dir
      * @param bool $exclude
-     * @return An array containing the nggImage objects representing the images in the album.
+     * @return null|array An array containing the nggImage objects representing the images in the album.
      */
     function find_images_in_album($album, $order_by = 'galleryid', $order_dir = 'ASC', $exclude = true) {
         // TODO: This method is only used by the JSON API. Once it's removed, this method can be removed
@@ -726,7 +729,7 @@ class nggdb
      * @since 1.3.0
      * @param string $request
      * @param int $limit number of results, 0 shows all results
-     * @return Array Result of the request
+     * @return array|bool|null Result of the request
      */
     function search_for_images( $request, $limit = 0 ) {
         global $wpdb;
@@ -758,8 +761,9 @@ class nggdb
                 $search = " AND ({$search}) ";
 
             $limit_by  = ( $limit > 0 ) ? 'LIMIT ' . intval($limit) : '';
-        } else
+        } else {
             return false;
+        }
 
         // build the final query
         $query = "SELECT `tt`.`pid` FROM `{$wpdb->nggallery}` AS `t` INNER JOIN `{$wpdb->nggpictures}` AS `tt` ON `t`.`gid` = `tt`.`galleryid` WHERE 1=1 {$search} ORDER BY `tt`.`pid` ASC {$limit_by}";
@@ -794,7 +798,7 @@ class nggdb
      * @since 1.7.0
      * @param string $request
      * @param int $limit number of results, 0 shows all results
-     * @return Array Result of the request
+     * @return bool|array Result of the request
      */
     function search_for_galleries( $request, $limit = 0 ) {
         global $wpdb;
@@ -826,8 +830,9 @@ class nggdb
                 $search = " AND ({$search}) ";
 
             $limit  = ( $limit > 0 ) ? 'LIMIT ' . intval($limit) : '';
-        } else
+        } else {
             return false;
+        }
 
         // build the final query
         $query = "SELECT * FROM $wpdb->nggallery WHERE 1=1 $search ORDER BY title ASC $limit";
@@ -842,7 +847,7 @@ class nggdb
      * @since 1.7.0
      * @param string $request
      * @param int $limit number of results, 0 shows all results
-     * @return Array Result of the request
+     * @return bool|array Result of the request
      */
     function search_for_albums( $request, $limit = 0 ) {
         global $wpdb;
@@ -874,8 +879,9 @@ class nggdb
                 $search = " AND ({$search}) ";
 
             $limit  = ( $limit > 0 ) ? 'LIMIT ' . intval($limit) : '';
-        } else
+        } else {
             return false;
+        }
 
         // build the final query
         $query = "SELECT * FROM $wpdb->nggalbum WHERE 1=1 $search ORDER BY name ASC $limit";
@@ -890,10 +896,11 @@ class nggdb
      *
      * @since 1.4.0
      * @param int $id The image ID
-     * @param array $values An array with existing or new values
+     * @param array $new_values An array with existing or new values
      * @return bool result of query
      */
-    static function update_image_meta( $id, $new_values ) {
+    static function update_image_meta($id, $new_values)
+    {
         global $wpdb;
 
         // XXX nggdb is used statically, cannot inherit from Ngg_Serializable
@@ -920,7 +927,7 @@ class nggdb
      * @since 1.7.0
      * @param string $slug the desired slug (post_name)
      * @param string $type ('image', 'album' or 'gallery')
-     * @param int (optional) $id of the object, so that it's not checked against itself
+     * @param int $id ID of the object, so that it's not checked against itself (optional)
      * @return string unique slug for the object, based on $slug (with a -1, -2, etc. suffix)
      */
     static function get_unique_slug( $slug, $type, $id = 0 )

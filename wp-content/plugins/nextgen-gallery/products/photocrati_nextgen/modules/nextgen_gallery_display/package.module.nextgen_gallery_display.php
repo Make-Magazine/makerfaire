@@ -37,6 +37,94 @@ class A_Display_Settings_Page extends Mixin
         return $this->call_parent('setup');
     }
 }
+class A_Displayed_Gallery_Renderer_Random extends Mixin
+{
+    /**
+     * @param C_Displayed_Gallery $displayed_gallery
+     * @param bool $return
+     * @param mixed $mode
+     * @return string
+     */
+    function render($displayed_gallery, $return = FALSE, $mode = null)
+    {
+        $entity = $displayed_gallery->get_entity();
+        // Duplicated from the parent render() method but it's necessary to have for this code to work
+        if (is_null($displayed_gallery->id())) {
+            $displayed_gallery->id(md5(json_encode($entity)));
+        }
+        if (in_array($displayed_gallery->source, array('random', 'random_images')) && empty($displayed_gallery->entity_ids)) {
+            // Check if the ID selection has been cached
+            $key = C_Photocrati_Transient_Manager::create_key('random_displayed_gallery_entity_ids', $entity);
+            $image_ids = C_Photocrati_Transient_Manager::fetch($key, FALSE);
+            if (empty($image_ids)) {
+                $image_ids = $this->get_random_ids_for_cache($displayed_gallery);
+                // Store our retrieved IDs
+                C_Photocrati_Transient_Manager::update($key, json_encode($image_ids), 86400);
+            } else {
+                // Convert the stored JSON to an array
+                $image_ids = json_decode($image_ids, TRUE);
+            }
+            // Final step: assign the cached IDs to the $displayed_gallery and return control to the parent
+            if (is_array($image_ids)) {
+                $displayed_gallery->entity_ids = $image_ids;
+            }
+        }
+        return $this->call_parent('render', $displayed_gallery, $return, $mode);
+    }
+    public function query_random_ids_for_cache($limit = 10)
+    {
+        global $wpdb;
+        $mod = rand(3, 9);
+        return $wpdb->get_col("SELECT pictures.pid from {$wpdb->nggpictures} pictures\n                    JOIN (SELECT CEIL(MAX(pid) * RAND()) AS pid FROM {$wpdb->nggpictures}) AS x ON pictures.pid >= x.pid\n                    WHERE pictures.pid MOD {$mod} = 0\n                    LIMIT {$limit}");
+    }
+    /**
+     * @param C_Displayed_Gallery $displayed_gallery
+     * @return int[]
+     */
+    public function get_random_ids_for_cache($displayed_gallery)
+    {
+        global $wpdb;
+        $image_ids = array();
+        // Impose a reasonable hard limit
+        if ($displayed_gallery->maximum_entity_count > 500) {
+            $displayed_gallery->maximum_entity_count = 500;
+        }
+        // Some hosts and/or users prefer to not use or choose to disable mySQL's ORDER BY RAND() feature. For them
+        // we provide an alternative where we generate some random numbers and check if they exist as image ID and
+        // continue to do so until our requested cache has filled.
+        if (defined('NGG_DISABLE_ORDER_BY_RAND') && NGG_DISABLE_ORDER_BY_RAND) {
+            // Prevent infinite loops: retrieve the image count and if needed just pull in every image available
+            $total = $wpdb->get_var("SELECT COUNT(`pid`) FROM {$wpdb->nggpictures}");
+            if ($total <= $displayed_gallery->maximum_entity_count) {
+                $image_ids = $wpdb->get_col("SELECT pictures.pid from {$wpdb->nggpictures} pictures LIMIT {$total}");
+            } else {
+                // Start retrieving random ID from the DB and hope they exist; continue looping until our count is full
+                $segments = ceil($displayed_gallery->maximum_entity_count / 4);
+                while (count($image_ids) < $displayed_gallery->maximum_entity_count) {
+                    $newID = $this->query_random_ids_for_cache($segments);
+                    $image_ids = array_merge(array_unique($image_ids), $newID);
+                }
+            }
+            // Prevent overflow
+            if (count($image_ids) > $displayed_gallery->maximum_entity_count) {
+                array_splice($image_ids, $displayed_gallery->maximum_entity_count);
+            }
+            // Give things an extra shake
+            shuffle($image_ids);
+        } else {
+            // Default logic; most users will rely on this method
+            $sql = "SELECT DISTINCT `pid` FROM `{$wpdb->nggpictures}` WHERE `exclude` = 0";
+            if (!empty($displayed_gallery->exclusions)) {
+                $sql .= sprintf(" AND `pid` NOT IN (%s)", implode(',', $displayed_gallery->exclusions));
+            }
+            $sql .= " ORDER BY RAND() LIMIT {$displayed_gallery->maximum_entity_count}";
+            foreach ($wpdb->get_results($sql, ARRAY_N) as $res) {
+                $image_ids[] = reset($res);
+            }
+        }
+        return $image_ids;
+    }
+}
 /**
  * Class A_Displayed_Gallery_Trigger_Element
  * @mixin C_MVC_View
@@ -100,9 +188,9 @@ class A_Gallery_Display_Factory extends Mixin
 {
     /**
      * Instantiates a Display Type
-     * @param C_DataMapper $mapper
-     * @param array|stdClass|C_DataMapper_Model $properties
-     * @param string|array|FALSE $context
+     * @param array|stdClass|C_DataMapper_Model $properties (optional)
+     * @param C_Display_Type_Mapper $mapper (optional)
+     * @param string|array|FALSE $context (optional)
      */
     function display_type($properties = array(), $mapper = FALSE, $context = FALSE)
     {
@@ -110,9 +198,9 @@ class A_Gallery_Display_Factory extends Mixin
     }
     /**
      * Instantiates a Displayed Gallery
-     * @param C_DataMapper $mapper
-     * @param array|stdClass|C_DataMapper_Model $properties
-     * @param string|array|FALSE $context
+     * @param array|stdClass|C_DataMapper_Model $properties (optional)
+     * @param C_Displayed_Gallery_Mapper $mapper (optional)
+     * @param string|array|FALSE $context (optional)
      */
     function displayed_gallery($properties = array(), $mapper = FALSE, $context = FALSE)
     {
@@ -132,7 +220,7 @@ class A_Gallery_Display_View extends Mixin
      * @param string $template_id
      * @param C_MVC_View_Element $root_element
      * @param string $addition_type what kind of addition is being made 'layout', 'decoration', 'style', 'logic' etc.
-     * @return string|NULL
+     * @return bool|string
      */
     function _check_addition_rendering($displayed_gallery, $template_id, $root_element, $addition_type)
     {
@@ -180,8 +268,8 @@ class C_Display_Type extends C_DataMapper_Model
     }
     /**
      * Initializes a display type with properties
-     * @param FALSE|C_Display_Type_Mapper $mapper
      * @param array|stdClass|C_Display_Type $properties
+     * @param FALSE|C_Display_Type_Mapper $mapper
      * @param FALSE|string|array $context
      */
     function initialize($properties = array(), $mapper = FALSE, $context = FALSE)
@@ -246,9 +334,8 @@ class Mixin_Display_Type_Validation extends Mixin
 class Mixin_Display_Type_Instance_Methods extends Mixin
 {
     /**
-     * Determines if this display type is compatible with a displayed gallery
-     * source
-     * @param stdClass
+     * Determines if this display type is compatible with a displayed gallery source
+     * @param stdClass $source
      * @return bool
      */
     function is_compatible_with_source($source)
@@ -280,7 +367,7 @@ class C_Display_Type_Controller extends C_MVC_Controller
     }
     /**
      * Gets a singleton of the mapper
-     * @param string|array $context
+     * @param string|bool $context
      * @return C_Display_Type_Controller
      */
     public static function get_instance($context = FALSE)
@@ -299,7 +386,7 @@ class Mixin_Display_Type_Controller extends Mixin
     var $_render_mode;
     /**
      * Enqueues static resources required for lightbox effects
-     * @param type $displayed_gallery
+     * @param object $displayed_gallery
      */
     function enqueue_lightbox_resources($displayed_gallery)
     {
@@ -312,13 +399,14 @@ class Mixin_Display_Type_Controller extends Mixin
     /**
      * This method should be overwritten by other adapters/mixins, and call
      * wp_enqueue_script() / wp_enqueue_style()
+     * @param C_Displayed_Gallery $displayed_gallery
      */
     function enqueue_frontend_resources($displayed_gallery)
     {
         // This script provides common JavaScript among all display types
         wp_enqueue_script('ngg_common');
         // Enqueue the display type library
-        wp_enqueue_script($displayed_gallery->display_type, $this->object->_get_js_lib_url($displayed_gallery), FALSE, NGG_SCRIPT_VERSION);
+        wp_enqueue_script($displayed_gallery->display_type, $this->object->_get_js_lib_url($displayed_gallery), array(), NGG_SCRIPT_VERSION);
         // Add "galleries = {};"
         $this->object->_add_script_data('ngg_common', 'galleries', new stdClass(), TRUE, FALSE);
         // Add "galleries.gallery_1 = {};"
@@ -333,7 +421,7 @@ class Mixin_Display_Type_Controller extends Mixin
     {
         $settings = C_NextGen_Settings::get_instance();
         if ((!is_multisite() || is_multisite() && $settings->wpmuStyle) && $settings->activateCSS) {
-            wp_enqueue_style('nggallery', C_NextGen_Style_Manager::get_instance()->get_selected_stylesheet_url(), FALSE, NGG_SCRIPT_VERSION);
+            wp_enqueue_style('nggallery', C_NextGen_Style_Manager::get_instance()->get_selected_stylesheet_url(), array(), NGG_SCRIPT_VERSION);
         }
     }
     function get_render_mode()
@@ -362,6 +450,9 @@ class Mixin_Display_Type_Controller extends Mixin
     }
     /**
      * Renders the frontend display of the display type
+     * @param C_Displayed_Gallery $displayed_gallery
+     * @param bool $return (optional)
+     * @return string
      */
     function index_action($displayed_gallery, $return = FALSE)
     {
@@ -397,7 +488,8 @@ class Mixin_Display_Type_Controller extends Mixin
     }
     /**
      * Returns the effect HTML code for the displayed gallery
-     * @param type $displayed_gallery
+     * @param object $displayed_gallery
+     * @return string
      */
     function get_effect_code($displayed_gallery)
     {
@@ -423,6 +515,8 @@ class Mixin_Display_Type_Controller extends Mixin
      * @param string $object_name
      * @param mixed $object_value
      * @param bool $define
+     * @param bool $override
+     * @return bool
      */
     function _add_script_data($handle, $object_name, $object_value, $define = TRUE, $override = FALSE)
     {
@@ -520,11 +614,7 @@ class Mixin_Display_Type_Controller extends Mixin
     {
         if (isset($params['displayed_gallery'])) {
             if (isset($params['displayed_gallery']->display_settings)) {
-                if (isset($params['displayed_gallery']->display_settings['display_type_view'])) {
-                    if ('default' !== $params['displayed_gallery']->display_settings['display_type_view']) {
-                        $template = $this->get_display_type_view_abspath($template, $params);
-                    }
-                }
+                $template = $this->get_display_type_view_abspath($template, $params);
             }
         }
         return $this->call_parent('create_view', $template, $params, $context);
@@ -538,18 +628,51 @@ class Mixin_Display_Type_Controller extends Mixin
     function get_display_type_view_abspath($template, $params)
     {
         /* Identify display type and display_type_view */
+        $displayed_gallery = $params['displayed_gallery'];
         $display_type_name = $params['displayed_gallery']->display_type;
-        $display_type_view = $params['displayed_gallery']->display_settings['display_type_view'];
-        /* Fetch array of template directories */
-        $dirs = M_Gallery_Display::get_display_type_view_dirs($display_type_name);
-        /* Set abspath for template based on directory placeholder in display_type_view */
-        $path = pathinfo($display_type_view);
-        if ($path['dirname'] == ".") {
-            $template = $dirs['default'] . DIRECTORY_SEPARATOR . $path['basename'];
-        } else {
-            foreach ($dirs as $dir_name => $dir) {
-                if ($path['dirname'] == $dir_name) {
-                    $template = $dir . DIRECTORY_SEPARATOR . $path['basename'];
+        $display_settings = $displayed_gallery->display_settings;
+        $display_type_view = NULL;
+        if (isset($display_settings['display_type_view'])) {
+            $display_type_view = $display_settings['display_type_view'];
+        }
+        if (isset($display_settings['display_view'])) {
+            $display_type_view = $display_settings['display_view'];
+        }
+        if ($display_type_view && $display_type_view != 'default') {
+            /*
+             * A display type view or display template value looks like this:
+             *
+             * "default"
+             * "imagebrowser-dark-template.php" ("default" category is implicit)
+             * "custom/customized-template.php" ("custom" category is explicit)
+             *
+             * Templates can be found in multiple directories, and each directory is given
+             * a key, which is used to distinguish it's "category".
+             */
+            $fs = C_Fs::get_instance();
+            /* Fetch array of template directories */
+            $dirs = M_Gallery_Display::get_display_type_view_dirs($display_type_name);
+            // If the view starts with a slash, we assume that a filename has been given
+            if (strpos($display_type_view, DIRECTORY_SEPARATOR) === 0) {
+                if (@file_exists($display_type_view)) {
+                    $template = $display_type_view;
+                }
+            } else {
+                // Add the missing "default" category name prefix to the template to make it
+                // more consistent to evaluate
+                if (strpos($display_type_view, DIRECTORY_SEPARATOR) === FALSE) {
+                    $display_type_view = join(DIRECTORY_SEPARATOR, array('default', $display_type_view));
+                }
+                foreach ($dirs as $category => $dir) {
+                    $category = preg_quote($category . DIRECTORY_SEPARATOR);
+                    if (preg_match("#^{$category}(.*)\$#", $display_type_view, $match)) {
+                        $display_type_view = $match[1];
+                        $template_abspath = $fs->join_paths($dir, $display_type_view);
+                        if (@file_exists($template_abspath)) {
+                            $template = $template_abspath;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -595,7 +718,7 @@ class C_Display_Type_Mapper extends C_CustomPost_DataMapper_Driver
     }
     /**
      * Gets a singleton of the mapper
-     * @param string|array $context
+     * @param string|bool $context
      * @return C_Display_Type_Mapper
      */
     public static function get_instance($context = False)
@@ -614,6 +737,8 @@ class Mixin_Display_Type_Mapper extends Mixin
     /**
      * Locates a Display Type by names
      * @param string $name
+     * @param bool $model
+     * @return null|object
      */
     function find_by_name($name, $model = FALSE)
     {
@@ -636,6 +761,7 @@ class Mixin_Display_Type_Mapper extends Mixin
     /**
      * Finds display types used to display specific types of entities
      * @param string|array $entity_type e.g. image, gallery, album
+     * @param bool $model (optional)
      * @return array
      */
     function find_by_entity_type($entity_type, $model = FALSE)
@@ -663,6 +789,7 @@ class Mixin_Display_Type_Mapper extends Mixin
     }
     /**
      * Sets default values needed for display types
+     * @param object $entity (optional)
      */
     function set_defaults($entity)
     {
@@ -711,8 +838,8 @@ class C_Displayed_Gallery extends C_DataMapper_Model
     }
     /**
      * Initializes a display type with properties
-     * @param FALSE|C_Displayed_Gallery_Mapper $mapper
      * @param array|stdClass|C_Displayed_Gallery $properties
+     * @param FALSE|C_Displayed_Gallery_Mapper $mapper
      * @param FALSE|string|array $context
      */
     function initialize($properties = array(), $mapper = FALSE, $context = FALSE)
@@ -721,7 +848,6 @@ class C_Displayed_Gallery extends C_DataMapper_Model
             $mapper = $this->get_registry()->get_utility($this->_mapper_interface);
         }
         parent::initialize($mapper, $properties);
-        $this->select_random_variation();
     }
 }
 /**
@@ -773,24 +899,6 @@ class Mixin_Displayed_Gallery_Validation extends Mixin
 }
 class Mixin_Displayed_Gallery_Queries extends Mixin
 {
-    function select_random_variation()
-    {
-        $retval = FALSE;
-        $source_obj = $this->object->get_source();
-        if ($source_obj && $source_obj->has_variations) {
-            $max = 0;
-            if (!defined('NGG_MAX_VARIATIONS')) {
-                $settings = C_Photocrati_Global_Settings_Manager::get_instance();
-                $max = $settings->get('max_variations', 5);
-                define('NGG_MAX_VARIATIONS', $max);
-            } else {
-                $max = NGG_MAX_VARIATIONS;
-            }
-            $this->object->variation = floor(rand(1, $max));
-            $retval = $this->object->variation;
-        }
-        return $retval;
-    }
     function get_entities($limit = FALSE, $offset = FALSE, $id_only = FALSE, $returns = 'included')
     {
         $retval = array();
@@ -1153,7 +1261,7 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
     /**
      * Returns the total number of entities in this displayed gallery
      * @param string $returns
-     * @returns int
+     * @return int
      */
     function get_entity_count($returns = 'included')
     {
@@ -1408,6 +1516,7 @@ class Mixin_Displayed_Gallery_Instance_Methods extends Mixin
     /**
      * Applies the values of a transient to this object
      * @param string $transient_id
+     * @return bool
      */
     function apply_transient($transient_id = NULL)
     {
@@ -1478,7 +1587,6 @@ class C_Displayed_Gallery_Mapper extends C_CustomPost_DataMapper_Driver
     }
     /**
      * Initializes the mapper
-     * @param string|array|FALSE $context
      */
     function initialize()
     {
@@ -1486,7 +1594,7 @@ class C_Displayed_Gallery_Mapper extends C_CustomPost_DataMapper_Driver
     }
     /**
      * Gets a singleton of the mapper
-     * @param string|array $context
+     * @param string|bool $context
      * @return C_Displayed_Gallery_Mapper
      */
     public static function get_instance($context = False)
@@ -1514,7 +1622,7 @@ class Mixin_Displayed_Gallery_Defaults extends Mixin
     }
     /**
      * Sets defaults needed for the entity
-     * @param type $entity
+     * @param object $entity
      */
     function set_defaults($entity)
     {
@@ -1556,7 +1664,7 @@ class C_Displayed_Gallery_Renderer extends C_Component
     static $_instances = array();
     /**
      * Returns an instance of the class
-     * @param mixed $context
+     * @param bool|string $context
      * @return C_Displayed_Gallery_Renderer
      */
     static function get_instance($context = FALSE)
@@ -1589,7 +1697,7 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
         // Get the NextGEN settings to provide some defaults
         $settings = C_NextGen_Settings::get_instance();
         // Configure the arguments
-        $defaults = array('id' => NULL, 'source' => '', 'container_ids' => array(), 'gallery_ids' => array(), 'album_ids' => array(), 'tag_ids' => array(), 'display_type' => '', 'exclusions' => array(), 'order_by' => $settings->galSort, 'order_direction' => $settings->galSortOrder, 'image_ids' => array(), 'entity_ids' => array(), 'tagcloud' => FALSE, 'returns' => 'included', 'slug' => NULL, 'sortorder' => array());
+        $defaults = array('id' => NULL, 'ids' => NULL, 'source' => '', 'src' => '', 'container_ids' => array(), 'gallery_ids' => array(), 'album_ids' => array(), 'tag_ids' => array(), 'display_type' => '', 'display' => '', 'exclusions' => array(), 'order_by' => $settings->galSort, 'order_direction' => $settings->galSortOrder, 'image_ids' => array(), 'entity_ids' => array(), 'tagcloud' => FALSE, 'returns' => 'included', 'slug' => NULL, 'sortorder' => array());
         $args = shortcode_atts($defaults, $params);
         // Are we loading a specific displayed gallery that's persisted?
         $mapper = C_Displayed_Gallery_Mapper::get_instance();
@@ -1627,6 +1735,10 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
                 $args['source'] = 'tags';
             }
             // Convert strings to arrays
+            if (!empty($args['ids']) && !is_array($args['ids'])) {
+                $args['container_ids'] = preg_split("/,|\\|/", $args['ids']);
+                unset($args['ids']);
+            }
             if (!is_array($args['container_ids'])) {
                 $args['container_ids'] = preg_split("/,|\\|/", $args['container_ids']);
             }
@@ -1638,6 +1750,16 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
             }
             if (!is_array($args['sortorder'])) {
                 $args['sortorder'] = preg_split("/,|\\|/", $args['sortorder']);
+            }
+            // 'src' is used for legibility
+            if (!empty($args['src']) && empty($args['source'])) {
+                $args['source'] = $args['src'];
+                unset($args['src']);
+            }
+            // 'display' is used for legibility
+            if (!empty($args['display']) && empty($args['display_type'])) {
+                $args['display_type'] = $args['display'];
+                unset($args['display']);
             }
             // Get the display settings
             foreach (array_keys($defaults) as $key) {
@@ -1671,37 +1793,42 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
      * How to use:
      *
      * To retrieve images from gallery 1 & 3, but exclude images 4 & 6:
-     * [ngg_images gallery_ids="1,3" exclusions="4,6" display_type="photocrati-nextgen_basic_thumbnails"]
+     * [ngg gallery_ids="1,3" exclusions="4,6" display_type="photocrati-nextgen_basic_thumbnails"]
      *
      * To retrieve images 1 & 2 from gallery 1:
-     * [ngg_images gallery_ids="1" image_ids="1,2" display_type="photocrati-nextgen_basic_thumbnails"]
+     * [ngg gallery_ids="1" image_ids="1,2" display_type="photocrati-nextgen_basic_thumbnails"]
      *
      * To retrieve images matching tags "landscapes" and "wedding shoots":
-     * [ngg_images tag_ids="landscapes,wedding shoots" display_type="photocrati-nextgen_basic_thumbnails"]
+     * [ngg tag_ids="landscapes,wedding shoots" display_type="photocrati-nextgen_basic_thumbnails"]
      *
      * To retrieve galleries from albums 1 & #, but exclude sub-album 1:
-     * [ngg_images album_ids="1,2" exclusions="a1" display_type="photocrati-nextgen_basic_compact_album"]
+     * [ngg album_ids="1,2" exclusions="a1" display_type="photocrati-nextgen_basic_compact_album"]
      *
      * To retrieve galleries from albums 1 & 2, but exclude gallery 1:
-     * [ngg_images album_ids="1,2" exclusions="1" display_type="photocrati-nextgen_basic_compact_album"]
+     * [ngg album_ids="1,2" exclusions="1" display_type="photocrati-nextgen_basic_compact_album"]
      *
      * To retrieve image 2, 3, and 5 - independent of what container is used
-     * [ngg_images image_ids="2,3,5" display_type="photocrati-nextgen_basic_thumbnails"]
+     * [ngg image_ids="2,3,5" display_type="photocrati-nextgen_basic_thumbnails"]
      *
      * To retrieve galleries 3 & 5, custom sorted, in album view
-     * [ngg_images source="albums" gallery_ids="3,5" display_type="photocrati-nextgen_basic_compact_album"]
+     * [ngg source="albums" gallery_ids="3,5" display_type="photocrati-nextgen_basic_compact_album"]
      *
      * To retrieve recent images, sorted by alt/title text
-     * [ngg_images source="recent" order_by="alttext" display_type="photocrati-nextgen_basic_thumbnails"]
+     * [ngg source="recent" order_by="alttext" display_type="photocrati-nextgen_basic_thumbnails"]
      *
      * To retrieve random image
-     * [ngg_images source="random" display_type="photocrati-nextgen_basic_thumbnails"]
+     * [ngg source="random" display_type="photocrati-nextgen_basic_thumbnails"]
      *
      * To retrieve a single image
-     * [ngg_images image_ids='8' display_type='photocrati-nextgen_basic_singlepic']
+     * [ngg image_ids='8' display_type='photocrati-nextgen_basic_singlepic']
      *
      * To retrieve a tag cloud
-     * [ngg_images tagcloud=yes display_type='photocrati-nextgen_basic_tagcloud']
+     * [ngg tagcloud=yes display_type='photocrati-nextgen_basic_tagcloud']
+     *
+     * @param array $params
+     * @param null|string $inner_content (optional)
+     * @param bool|null $mode (optional)
+     * @return string
      */
     function display_images($params, $inner_content = NULL, $mode = NULL)
     {
@@ -1740,8 +1867,27 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
         return $retval;
     }
     /**
+     * Gets the display type version associated with the displayed gallery
+     * @param $display_type
+     *
+     * @return string
+     */
+    function get_display_type_version($display_type)
+    {
+        $retval = NGG_PLUGIN_VERSION;
+        $registry = C_Component_Registry::get_instance();
+        $module = $registry->get_module(isset($display_type->module_id) ? $display_type->module_id : $display_type->name);
+        if ($module) {
+            $retval = $module->module_version;
+        }
+        return $retval;
+    }
+    /**
      * Renders a displayed gallery on the frontend
-     * @param C_Displayed_Gallery|stdClass $displayed_gallery
+     * @param C_Displayed_Gallery $displayed_gallery
+     * @param bool $return
+     * @param string|null $mode (optional)
+     * @return string
      */
     function render($displayed_gallery, $return = FALSE, $mode = null)
     {
@@ -1755,16 +1901,8 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
         if ($mode == null) {
             $mode = 'normal';
         }
-        if (apply_filters('ngg_cache_displayed_galleries', FALSE)) {
-            // Save the displayed gallery as a transient if it hasn't already. Allows for ajax operations
-            // to add or modify the gallery without losing a retrievable ID
-            if (!$displayed_gallery->apply_transient()) {
-                $displayed_gallery->to_transient();
-            }
-        } else {
-            if (is_null($displayed_gallery->id())) {
-                $displayed_gallery->id(md5(json_encode($displayed_gallery->get_entity())));
-            }
+        if (is_null($displayed_gallery->id())) {
+            $displayed_gallery->id(md5(json_encode($displayed_gallery->get_entity())));
         }
         // Get the display type controller
         $controller = $this->get_registry()->get_utility('I_Display_Type_Controller', $displayed_gallery->display_type);
@@ -1800,7 +1938,7 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
             $retval .= $this->debug_msg("Lookup!");
             // Some settings affect display types
             $settings = C_NextGen_Settings::get_instance();
-            $key_params = apply_filters('ngg_displayed_gallery_cache_params', array($displayed_gallery->get_entity(), $url, $mode, $settings->activateTags, $settings->appendType, $settings->maxImages, $settings->thumbEffect, $settings->thumbCode, $settings->galSort, $settings->galSortDir));
+            $key_params = apply_filters('ngg_displayed_gallery_cache_params', array($displayed_gallery->get_entity(), $url, $mode, $settings->activateTags, $settings->appendType, $settings->maxImages, $settings->thumbEffect, $settings->thumbCode, $settings->galSort, $settings->galSortDir, $this->get_display_type_version($displayed_gallery->get_display_type())));
             // Any displayed gallery links on the home page will need to be regenerated if the permalink structure
             // changes
             if (is_home() or is_front_page()) {
@@ -1843,9 +1981,12 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
         }
         return $retval;
     }
+    /**
+     * @return bool
+     */
     function is_rest_request()
     {
-        return strpos($_SERVER['REQUEST_URI'], 'wp-json') !== FALSE;
+        return defined('REST_REQUEST') || strpos($_SERVER['REQUEST_URI'], 'wp-json') !== FALSE;
     }
 }
 class C_Displayed_Gallery_Source_Manager
@@ -1855,6 +1996,9 @@ class C_Displayed_Gallery_Source_Manager
     private $_registered_defaults = array();
     /* @var C_Displayed_Gallery_Source_Manager */
     static $_instance = NULL;
+    /**
+     * @return C_Displayed_Gallery_Source_Manager
+     */
     static function get_instance()
     {
         if (!isset(self::$_instance)) {
@@ -1897,7 +2041,6 @@ class C_Displayed_Gallery_Source_Manager
         $random->title = __('Random Images', 'nggallery');
         $random->aliases = array('random', 'random_image');
         $random->returns = array('image');
-        $random->has_variations = TRUE;
         $this->register($random->name, $random);
         // Recent Images
         $recent = new stdClass();
@@ -1928,9 +2071,6 @@ class C_Displayed_Gallery_Source_Manager
         }
         if (!isset($object->aliases)) {
             $object->aliases = array();
-        }
-        if (!isset($object->has_variations)) {
-            $object->has_variations = FALSE;
         }
         // Add internal reference
         $this->_sources[$name] = $object;
@@ -2052,7 +2192,7 @@ abstract class C_Displayed_Gallery_Trigger
     }
     function get_css_class()
     {
-        return 'fa fa-circle';
+        return 'far fa-circle';
     }
     function get_attributes()
     {
@@ -2352,7 +2492,7 @@ class Mixin_Display_Type_Form extends Mixin
     /**
      * Returns the name of the display type. Sub-class should override
      * @throws Exception
-     * @returns string
+     * @return string
      */
     function get_display_type_name()
     {
@@ -2372,7 +2512,7 @@ class Mixin_Display_Type_Form extends Mixin
     }
     /**
      * Returns the title of the form, which is the title of the display type
-     * @returns string
+     * @return string
      */
     function get_title()
     {
@@ -2449,6 +2589,15 @@ class Mixin_Display_Type_Form extends Mixin
         $everything = $override_field . $quality_field . $crop_field . $watermark_field;
         return $everything;
     }
+    function _render_display_view_field($display_type)
+    {
+        $display_type_views = $this->get_available_display_type_views($display_type);
+        $current_value = isset($display_type->settings['display_type_view']) ? $display_type->settings['display_type_view'] : '';
+        if (isset($display_type->settings['display_view'])) {
+            $current_value = $display_type->settings['display_view'];
+        }
+        return $this->object->_render_select_field($display_type, 'display_view', __('Select View', 'nggallery'), $display_type_views, $current_value, '', FALSE);
+    }
     /**
      * Renders a field for selecting a template
      *
@@ -2458,7 +2607,7 @@ class Mixin_Display_Type_Form extends Mixin
     function _render_display_type_view_field($display_type)
     {
         $display_type_views = $this->get_available_display_type_views($display_type);
-        return $this->object->_render_select_field($display_type, 'display_type_view', __('Select Template', 'nggallery'), $display_type_views, $display_type->settings['display_type_view'], '', FALSE);
+        return $this->object->_render_select_field($display_type, 'display_type_view', __('Select View', 'nggallery'), $display_type_views, $display_type->settings['display_type_view'], '', FALSE);
     }
     /**
      * Gets available templates
@@ -2469,7 +2618,11 @@ class Mixin_Display_Type_Form extends Mixin
     function get_available_display_type_views($display_type)
     {
         /* Set up templates array */
-        $views = array('default' => __('Default Template', 'nggallery'));
+        if (strpos($display_type->name, 'basic') !== false) {
+            $views = array('default' => __('Legacy', 'nggallery'));
+        } else {
+            $views = array('default' => __('Default', 'nggallery'));
+        }
         /* Fetch array of directories to scan */
         $dirs = M_Gallery_Display::get_display_type_view_dirs($display_type);
         /* Populate the views array by scanning each directory for relevant templates */
@@ -2480,7 +2633,7 @@ class Mixin_Display_Type_Form extends Mixin
             }
             /* Scan for template files and create array */
             $files = scandir($dir);
-            $template_files = preg_grep('/^.+\\-template.php$/i', $files);
+            $template_files = preg_grep('/^.+\\-(template|view).php$/i', $files);
             $template_files = $template_files ? array_combine($template_files, $template_files) : array();
             /* For custom templates only, append directory name placeholder */
             foreach ($template_files as $key => $value) {

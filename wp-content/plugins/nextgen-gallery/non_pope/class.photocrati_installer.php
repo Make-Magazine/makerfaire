@@ -40,6 +40,10 @@ if (!class_exists('C_Photocrati_Installer'))
 	class C_Photocrati_Installer
 	{
 		static $_instance = NULL;
+
+        /**
+         * @return C_Photocrati_Installer
+         */
 		static function get_instance()
 		{
 			if (is_null(self::$_instance)) {
@@ -48,7 +52,6 @@ if (!class_exists('C_Photocrati_Installer'))
 			}
 			return self::$_instance;
 		}
-
 
 		/**
 		 * Each product and module will register it's own handler (a class, with an install() and uninstall() method)

@@ -43,15 +43,20 @@
                         <select class="selectpicker" name="wdt-date-format" id="wdt-date-format">
                             <option value="d/m/Y"> 15/07/2005 (d/m/Y)</option>
                             <option value="m/d/Y"> 07/15/2005 (m/d/Y)</option>
+                            <option value="Y/m/d"> 2005/15/07 (Y/m/d)</option>
                             <option value="d.m.Y"> 15.07.2005 (d.m.Y)</option>
                             <option value="m.d.Y"> 07.15.2005 (m.d.Y)</option>
                             <option value="d-m-Y"> 15-07-2005 (d-m-Y)</option>
                             <option value="m-d-Y"> 07-15-2005 (m-d-Y)</option>
+                            <option value="Y-m-d"> 2005-07-15 (Y-m-d)</option>
                             <option value="d.m.y"> 15.07.05 (d.m.y)</option>
                             <option value="m.d.y"> 07.15.05 (m.d.y)</option>
                             <option value="d-m-y"> 15-07-05 (d-m-y)</option>
                             <option value="m-d-y"> 07-15-05 (m-d-y)</option>
                             <option value="d M Y"> 15 July 2005 (d Mon Y)</option>
+                            <option value="m/Y"> 07/2005 (m/Y)</option>
+                            <option value="M Y"> July 2005 (Mon Y)</option>
+                            <option value="Y">2005 (Y)</option>
                         </select>
                     </div>
                 </div>
@@ -157,6 +162,29 @@
                             <input type="number" name="wdt-decimal-places" id="wdt-decimal-places"
                                    class="form-control input-sm" min="1" value=""/>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 csv-delimiter">
+            <h4 class="c-black m-b-20">
+                <?php _e('CSV delimiter', 'wpdatatables'); ?>
+                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                   title="<?php _e('Pick the CSV delimiter', 'wpdatatables'); ?>"></i>
+            </h4>
+            <div class="form-group">
+                <div class="fg-line">
+                    <div class="select">
+                        <select class="selectpicker" id="wdt-csv-delimiter">
+                            <option value=""></option>
+                            <option value=",">,</option>
+                            <option value=":">:</option>
+                            <option value=";">;</option>
+                            <option value="|">|</option>
+                            <option value="\t">TAB</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -326,7 +354,7 @@
             </h4>
             <div class="toggle-switch" data-ts-color="blue">
                 <label for="wdt-include-bootstrap" class="ts-label">Include full bootstrap.js on the front-end</label>
-                <input type="checkbox" name="wdt-include-bootstrap" id="wdt-include-bootstrap" checked="checked"/>
+                <input type="checkbox" name="wdt-include-bootstrap" id="wdt-include-bootstrap"/>
                 <label for="wdt-include-bootstrap" class="ts-helper"></label>
             </div>
         </div>
@@ -338,7 +366,7 @@
             </h4>
             <div class="toggle-switch" data-ts-color="blue">
                 <label for="wdt-include-bootstrap-back-end" class="ts-label">Include full bootstrap.js on the back-end</label>
-                <input type="checkbox" name="wdt-include-bootstrap-back-end" id="wdt-include-bootstrap-back-end" checked="checked"/>
+                <input type="checkbox" name="wdt-include-bootstrap-back-end" id="wdt-include-bootstrap-back-end"/>
                 <label for="wdt-include-bootstrap-back-end" class="ts-helper"></label>
             </div>
         </div>

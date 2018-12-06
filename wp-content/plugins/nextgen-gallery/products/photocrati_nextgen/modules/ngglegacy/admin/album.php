@@ -176,7 +176,7 @@ class nggManageAlbum {
 				$this->currentID = $_REQUEST['act_album'] = $album->{$album->id_field};
 				$this->albums[$this->currentID] = $album;
 				do_action('ngg_add_album', $this->currentID);
-					nggGallery::show_message(__('Updated Successfully','nggallery'));
+                wp_redirect(admin_url('admin.php?page=nggallery-manage-album&act_album=' . $album->{$album->id_field}));
 			}
 			else {
 				$this->currentID = $_REQUEST['act_album'] = 0;
@@ -450,6 +450,24 @@ function showDialog() {
     jQuery('#editalbum .dialog-cancel').click(function() { jQuery( "#editalbum" ).dialog("close"); });
 }
 
+// Redirect to edit the chosen album when the ngg_select_album field changes
+function ngg_redirect_to_album(album_field) {
+    var this_page_url = '<?php print admin_url('admin.php?page=nggallery-manage-album'); ?>';
+    var value = jQuery(album_field).val();
+    if (value !== 0 && value !== '0') {
+        this_page_url += '&act_album=' + value;
+    }
+    window.location = this_page_url;
+}
+
+function ngg_confirm_delete_album(form) {
+    var check = confirm('<?php echo esc_js('Delete album ?','nggallery'); ?>');
+    if (check) {
+        jQuery(form).attr('action', '<?php print admin_url('admin.php?page=nggallery-manage-album'); ?>');
+    }
+    return check;
+}
+
 </script>
 
 <?php if (isset($action_status) && $action_status['message']!='') : ?>
@@ -460,7 +478,9 @@ function showDialog() {
 
 <div class="wrap album ngg_manage_albums" id="wrap" >
 
-    <div class="ngg_page_content_header"><img src="<?php  echo(C_Router::get_instance()->get_static_url('photocrati-nextgen_admin#imagely_icon.png')); ?>"><h3><?php esc_html_e('Manage Albums', 'nggallery') ?></h3>
+    <div class="ngg_page_content_header">
+        <img src="<?php  echo(C_Router::get_instance()->get_static_url('photocrati-nextgen_admin#imagely_icon.png')); ?>"/>
+        <h3><?php esc_html_e('Manage Albums', 'nggallery') ?></h3>
     </div>
 
     <div class='ngg_page_content_main'>
@@ -470,10 +490,11 @@ function showDialog() {
 			<div class="albumnav tablenav">
 				<div class="alignleft actions">
 					<span class="ngg_select_album"><?php esc_html_e('Select album', 'nggallery') ?></span>
-					<select id="act_album" name="act_album" onchange="this.form.submit();">
+					<select id="act_album" name="act_album" onchange="ngg_redirect_to_album(this)">
 						<option value="0" ><?php esc_html_e('No album selected', 'nggallery') ?></option>
 						<?php
-							if( is_array($this->albums) ) {
+							if (is_array($this->albums))
+							{
 								foreach($this->albums as $a) {
 									$selected = ($this->currentID == $a->id) ? 'selected="selected" ' : '';
 									echo '<option value="' . $a->id . '" ' . $selected . '>' . $a->id . ' - ' . esc_attr( $a->name ) . '</option>'."\n";
@@ -481,19 +502,30 @@ function showDialog() {
 							}
 						?>
 					</select>
-					<?php if ($album && $this->currentID){ ?>
-						<input class="button-primary" type="submit" name="update" value="<?php esc_attr_e('Update', 'nggallery'); ?>"/>
-						<?php if(nggGallery::current_user_can( 'NextGEN Edit album settings' )) { ?>
-						<input class="button-primary" type="submit" name="showThickbox" value="<?php esc_attr_e( 'Edit Album', 'nggallery'); ?>" onclick="showDialog(); return false;" />
+					<?php if ($album && $this->currentID) { ?>
+						<input class="button-primary"
+                               type="submit"
+                               name="update"
+                               value="<?php esc_attr_e('Update', 'nggallery'); ?>"/>
+						<?php if (nggGallery::current_user_can( 'NextGEN Edit album settings' )) { ?>
+                            <input class="button-primary"
+                                   type="submit"
+                                   name="showThickbox"
+                                   value="<?php esc_attr_e( 'Edit Album', 'nggallery'); ?>"
+                                   onclick="showDialog(); return false;"/>
 						<?php } ?>
-						<?php if(nggGallery::current_user_can( 'NextGEN Add/Delete album' )) { ?>
-						<input class="button-primary action "type="submit" name="delete" value="<?php esc_attr_e('Delete', 'nggallery'); ?>" onclick="javascript:check=confirm('<?php echo esc_js('Delete album ?','nggallery'); ?>');if(check==false) return false;"/>
+						<?php if (nggGallery::current_user_can( 'NextGEN Add/Delete album' )) { ?>
+                            <input class="button-primary action"
+                                   type="submit"
+                                   name="delete"
+                                   value="<?php esc_attr_e('Delete', 'nggallery'); ?>"
+                                   onclick="ngg_confirm_delete_album(this.form);"/>
 						<?php } ?>
 					<?php } else { ?>
-						<?php if(nggGallery::current_user_can( 'NextGEN Add/Delete album' )) { ?>
-						<span><?php esc_html_e('Add new album', 'nggallery'); ?>&nbsp;</span>
-						<input class="search-input" id="newalbum" name="newalbum" type="text" value="" />
-						<input class="button-primary action" type="submit" name="add" value="<?php esc_attr_e('Add', 'nggallery'); ?>"/>
+						<?php if (nggGallery::current_user_can('NextGEN Add/Delete album')) { ?>
+                            <span><?php esc_html_e('Add new album', 'nggallery'); ?>&nbsp;</span>
+                            <input class="search-input" id="newalbum" name="newalbum" type="text" value="" />
+                            <input class="button-primary action" type="submit" name="add" value="<?php esc_attr_e('Add', 'nggallery'); ?>"/>
 						<?php } ?>
 					<?php } ?>
 				</div>
@@ -669,7 +701,7 @@ function showDialog() {
 	 *
 	 * @param integer $id (the prefix 'a' indidcates that you look for a album
 	 * @param bool $used (object will be hidden)
-	 * @return string
+	 * @return null|string
 	 */
 	function get_container($id = 0, $used = false) {
 		global $wpdb, $nggdb;

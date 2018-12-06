@@ -385,7 +385,7 @@ class nggTags {
  * trim and remove empty element
  *
  * @param string $element
- * @return string
+ * @return null|string
  */
 if (!function_exists('nggtags_delete_empty_element')) {
 	function nggtags_delete_empty_element( &$element ) {

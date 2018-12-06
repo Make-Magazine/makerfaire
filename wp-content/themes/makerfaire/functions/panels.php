@@ -81,8 +81,6 @@ function getFeatMkPanel($row_layout) {
             </div>
           </div>';
 
-
-
    //build makers array
    $makerArr = array();
    if ($dynamic) {
@@ -98,6 +96,11 @@ function getFeatMkPanel($row_layout) {
       shuffle($entries);
       foreach ($entries as $entry) {
          $url = $entry['22'];
+         
+         $overrideImg = findOverride($entry['id'], 'makerPanel');
+         if ($overrideImg != '')
+            $url = $overrideImg;
+         
          $args = array(
             'resize' => '300,300',
             'quality' => '80',
@@ -416,8 +419,19 @@ function get1ColLayout() {
       
       while (have_rows('hero_image_repeater')) {
          the_row();
+         // TODO add the URL wrapper
          $hero_image_random = get_sub_field('hero_image_random');
-         $hero_array[] = $hero_image_random['url'];
+			$hero_image_url = $hero_image_random["url"];
+
+         $image = '<div class="hero-img" style="background-image: url(\'' . $hero_image_url. '\');"></div>';
+         $cta_link = get_sub_field('image_cta');
+         
+         if (!empty($cta_link)) {
+            $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
+         } else {
+            $columnInfo = $image;
+         }
+         $hero_array[] = $columnInfo;
       }
       $randKey = array_rand($hero_array,1);      
       $hero_image = $hero_array[$randKey];              
@@ -434,13 +448,13 @@ function get1ColLayout() {
    $return .= '   <div class="row">
                     <div class="col-xs-12">';
    if($hero_text) {
-      $return .= '<div class="panel_title">'
-              .  '   <div class="top_left"><img src="/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
+      $return .= '<div class="top_left"><img src="/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
+			     .  '<div class="panel_title">'
               .  '   <div class="panel_text">' . $hero_text . '</div>'
               .  '   <div class="bottom_right"><img src="/wp-content/themes/makerfaire/img/BottomRightCorner.png"></div>'
               .  '</div>';
    }
-   $return .=    '        <div class="hero-img" style="background-image: url('.$hero_image.')"></div>'.
+   $return .=    '        '.$hero_image .
       '     </div>' .
       '   </div>';
 

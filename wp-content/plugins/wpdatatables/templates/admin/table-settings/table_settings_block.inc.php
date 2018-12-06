@@ -10,6 +10,23 @@
 
 <div class="card wdt-table-settings">
 
+    <?php
+        // set connection if $connection is not set with GET parameter
+        if ($connection === null) {
+            if (Connection::enabledSeparate()) {
+                foreach (Connection::getAll() as $wdtSeparateConnection) {
+                    if ($wdtSeparateConnection['default']) {
+                        $connection = $wdtSeparateConnection['id'];
+                    }
+                }
+            } else {
+                $connection === '';
+            }
+        }
+    ?>
+
+    <input type="hidden" id="wdt-table-connection" value="<?php echo $connection; ?>" />
+
     <!-- Preloader -->
     <?php include WDT_TEMPLATE_PATH . 'admin/common/preloader.inc.php'; ?>
     <!-- /Preloader -->
@@ -104,7 +121,7 @@
                                     <div class="select">
                                         <select class="selectpicker" id="wdt-table-type">
                                             <option value=""><?php _e('Select a data source type', 'wpdatatables'); ?></option>
-                                            <option value="mysql"><?php _e('MySQL query', 'wpdatatables'); ?></option>
+                                            <option value="mysql"><?php _e('SQL query', 'wpdatatables'); ?></option>
                                             <option value="csv"><?php _e('CSV file', 'wpdatatables'); ?></option>
                                             <option value="xls"><?php _e('Excel file', 'wpdatatables'); ?></option>
                                             <option value="google_spreadsheet"><?php _e('Google Spreadsheet', 'wpdatatables'); ?></option>
@@ -166,9 +183,11 @@
                         <div class="col-sm-6 hidden mysql-settings-block">
 
                             <h4 class="c-black m-b-20">
-                                <?php _e('MySQL Query', 'wpdatatables'); ?>
+                                <?php _e('SQL Query', 'wpdatatables'); ?>
                                 <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
-                                   title="<?php _e('Enter the text of your MySQL query here - please make sure it returns actual data first. You can use a number of placeholders to make the dataset in the table flexible and be able to return different sets of data by calling it with different shortcodes.', 'wpdatatables'); ?>"></i>
+                                   title="<?php _e('Enter the text of your SQL query here - please make sure it returns actual data first. You can use a number of placeholders to make the dataset in the table flexible and be able to return different sets of data by calling it with different shortcodes.', 'wpdatatables'); ?>"></i>
+                                <div class="" data-placement="top" style="color: gray; float: right;"><?php echo Connection::enabledSeparate() ? Connection::getName($connection) : '' ?>
+                                </div>
                             </h4>
                             <pre id="wdt-mysql-query" style="width: 100%; height: 250px"></pre>
                         </div>
@@ -1097,6 +1116,40 @@
 
                             <div class="fg-line form-group">
                                 <input id="wdt-post-id-placeholder" type="text" value="" class="form-control input-sm"
+                                       placeholder="<?php _e('Default for table generation', 'wpdatatables'); ?>">
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-4 m-b-20">
+
+                            <h4 class="c-black m-b-20">
+                                %CURRENT_USER_FIRST_NAME%
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('This placeholder will be replaced with the First Name of currently logged in user. Provide a value here to be used for table generation', 'wpdatatables'); ?>"></i>
+                            </h4>
+
+                            <div class="fg-line form-group">
+                                <?php $wdt_current_user = wp_get_current_user(); ?>
+                                <input id="wdt-user-first-name-placeholder" type="text"
+                                       value="<?php echo $wdt_current_user->first_name; ?>" class="form-control input-sm"
+                                       placeholder="<?php _e('Default for table generation', 'wpdatatables'); ?>">
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-4 m-b-20">
+
+                            <h4 class="c-black m-b-20">
+                                %CURRENT_USER_LAST_NAME%
+                                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                   title="<?php _e('This placeholder will be replaced with the Last Name of currently logged in user. Provide a value here to be used for table generation', 'wpdatatables'); ?>"></i>
+                            </h4>
+
+                            <div class="fg-line form-group">
+                                <?php $wdt_current_user = wp_get_current_user(); ?>
+                                <input id="wdt-user-last-placeholder" type="text"
+                                       value="<?php echo $wdt_current_user->last_name; ?>" class="form-control input-sm"
                                        placeholder="<?php _e('Default for table generation', 'wpdatatables'); ?>">
                             </div>
 

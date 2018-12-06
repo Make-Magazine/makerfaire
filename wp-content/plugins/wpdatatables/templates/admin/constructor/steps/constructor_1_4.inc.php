@@ -5,8 +5,8 @@
     <div class="alert alert-info alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
         </button>
-        <span class="wdt-alert-title f-600"><?php _e('Please choose the MySQL data which will be used to create a table.', 'wpdatatables'); ?></span><br>
-        <span class="wdt-alert-subtitle"><?php _e('This constructor type will create a query to any MySQL database database and create a wpDataTable based on this query. This table content cannot be edited manually afterwards, but will always contain actual data from your MySQL database.', 'wpdatatables'); ?></span>
+        <span class="wdt-alert-title f-600"><?php _e('Please choose the SQL data which will be used to create a table.', 'wpdatatables'); ?></span><br>
+        <span class="wdt-alert-subtitle"><?php _e('This constructor type will create a query to any SQL database database and create a wpDataTable based on this query. This table content cannot be edited manually afterwards, but will always contain actual data from your SQL database.', 'wpdatatables'); ?></span>
     </div>
 
     <div class="row">
@@ -16,7 +16,7 @@
                 <div class="card-header col-sm-12 ch-alt p-t-15 p-b-10 p-r-0 p-l-0">
                     <div class="col-sm-12">
                         <h2>
-                            <span><?php _e('All MySQL tables', 'wpdatatables'); ?></span>
+                            <span><?php _e('All SQL tables', 'wpdatatables'); ?></span>
                             <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
                                title="<?php _e('Add or drag MySQL tables.', 'wpdatatables'); ?>"></i>
                         </h2>
@@ -25,11 +25,22 @@
                 <div class="card-body">
                     <table class="table table-inner table-vmiddle">
                         <tbody id="wdt-constructor-mysql-tables-all-table">
-                        <?php foreach (wpDataTableConstructor::listMySQLTables() as $mysqlTable) { ?>
-                            <tr>
-                                <td><?php echo $mysqlTable ?></td>
-                            </tr>
-                        <?php } ?>
+                        <?php
+                        $defaultConnection = null;
+
+                        if (Connection::enabledSeparate()) {
+                            foreach (Connection::getAll() as $wdtSeparateConnection) {
+                                if($wdtSeparateConnection['default']) {
+                                    $defaultConnection = $wdtSeparateConnection['id'];
+                                    break;
+                                }
+                            }
+                        }
+
+                        foreach (wpDataTableConstructor::listMySQLTables($defaultConnection) as $mysqlTable) {
+                            echo "<tr><td>$mysqlTable</td></tr>";
+                        }
+                        ?>
                         </tbody>
                     </table>
                 </div>
@@ -50,7 +61,7 @@
                 <div class="card-header col-sm-12 ch-alt p-t-15 p-b-10 p-r-0 p-l-0">
                     <div class="col-sm-12">
                         <h2>
-                            <span><?php _e('Selected MySQL tables', 'wpdatatables'); ?></span>
+                            <span><?php _e('Selected SQL tables', 'wpdatatables'); ?></span>
                         </h2>
                     </div>
                 </div>
@@ -69,7 +80,7 @@
                 <div class="card-header col-sm-12 ch-alt p-t-15 p-b-10 p-r-0 p-l-0">
                     <div class="col-sm-12">
                         <h2>
-                            <span><?php _e('All MySQL columns', 'wpdatatables'); ?></span>
+                            <span><?php _e('All SQL columns', 'wpdatatables'); ?></span>
                             <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
                                title="<?php _e('Add or drag MySQL columns.', 'wpdatatables'); ?>"></i>
                         </h2>
@@ -99,7 +110,7 @@
                 <div class="card-header col-sm-12 ch-alt p-t-15 p-b-10 p-r-0 p-l-0">
                     <div class="col-sm-12">
                         <h2>
-                            <span><?php _e('Selected MySQL columns', 'wpdatatables'); ?></span>
+                            <span><?php _e('Selected SQL columns', 'wpdatatables'); ?></span>
                         </h2>
                     </div>
                 </div>
@@ -119,7 +130,7 @@
     <div class="col-sm-12 wdt-constructor-mysql-tables-define-relations-block hidden">
         <div class="col-sm-12 p-0">
             <h4 class="c-black m-b-20">
-                <?php _e('Define MySQL tables relations', 'wpdatatables'); ?>
+                <?php _e('Define SQL tables relations', 'wpdatatables'); ?>
                 <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
                    title="<?php _e('Check to have an inner join, uncheck to have left join.', 'wpdatatables'); ?>"></i>
             </h4>

@@ -25,7 +25,7 @@ class A_Imagify_Admin_Page_Controller extends Mixin
     function enqueue_backend_resources()
     {
         $this->call_parent('enqueue_backend_resources');
-        wp_enqueue_style('imagify_upgrade_page', $this->get_static_url('photocrati-imagify#style.css'), FALSE, NGG_SCRIPT_VERSION);
+        wp_enqueue_style('imagify_upgrade_page', $this->get_static_url('photocrati-imagify#style.css'), array(), NGG_SCRIPT_VERSION);
     }
     function get_page_title()
     {

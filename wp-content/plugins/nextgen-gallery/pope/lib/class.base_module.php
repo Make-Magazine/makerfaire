@@ -47,6 +47,14 @@ abstract class C_Base_Module
 
     /**
      * Defines the module
+     * @param string $id
+     * @param string $name
+     * @param string $description (optional)
+     * @param string $version (optional)
+     * @param string $uri (optional)
+     * @param string $author (optional)
+     * @param string $author_uri (optional)
+     * @param string|bool $context (optional)
      */
     function define($id='pope-module', $name='Pope Module', $description='', $version='', $uri='', $author='', $author_uri='', $context=FALSE)
     {

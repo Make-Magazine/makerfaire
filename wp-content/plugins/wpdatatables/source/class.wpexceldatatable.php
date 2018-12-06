@@ -17,18 +17,18 @@ class WPExcelDataTable extends WPDataTable {
         WDTTools::wdtUIKitEnqueue();
 
         if (WDT_INCLUDE_DATATABLES_CORE) {
-            wp_register_script('handsontable', WDT_JS_PATH . 'handsontable/handsontable.full' . $jsExt, array('jquery'));
+            wp_register_script('handsontable', WDT_JS_PATH . 'handsontable/handsontable.full' . $jsExt, array('jquery'), WDT_CURRENT_VERSION);
             wp_enqueue_script('handsontable');
         }
 
-        wp_enqueue_script('wpdatatables-urijs', WDT_JS_PATH . 'urijs/URI.min.js');
+        wp_enqueue_script('wpdatatables-urijs', WDT_JS_PATH . 'urijs/URI.min.js', array(), WDT_CURRENT_VERSION);
 
-        wp_enqueue_script('moment', WDT_JS_PATH . 'moment/moment.js');
+        wp_enqueue_script('moment', WDT_JS_PATH . 'moment/moment.js', array(), WDT_CURRENT_VERSION);
 
         wp_enqueue_media();
 
-        wp_register_script('wpdatatables_excel', WDT_JS_PATH . 'wpdatatables/wdt.excel' . $jsExt, array('jquery', 'handsontable', 'wpdatatables-urijs'));
-        wp_enqueue_script('wpdatatables_excel_plugin', WDT_JS_PATH . 'wpdatatables/wdt.excelPlugin' . $jsExt, array('jquery', 'handsontable'));
+        wp_register_script('wpdatatables_excel', WDT_JS_PATH . 'wpdatatables/wdt.excel' . $jsExt, array('jquery', 'handsontable', 'wpdatatables-urijs'),WDT_CURRENT_VERSION);
+        wp_enqueue_script('wpdatatables_excel_plugin', WDT_JS_PATH . 'wpdatatables/wdt.excelPlugin' . $jsExt, array('jquery', 'handsontable'),WDT_CURRENT_VERSION);
 
         wp_enqueue_script('wpdatatables_excel');
 
@@ -46,14 +46,14 @@ class WPExcelDataTable extends WPDataTable {
         return $tableContent;
     }
 
-    public function generateTable() {
+    public function generateTable($connection) {
 
         $cssArray = array(
             'wpdatatables-handsontable-min' => WDT_CSS_PATH . 'handsontable.full.min.css',
             'wpdatatables-excel-min' => WDT_CSS_PATH . 'wpdatatables-excel.min.css'
         );
         foreach ($cssArray as $cssKey => $cssFile) {
-            wp_enqueue_style($cssKey, $cssFile);
+            wp_enqueue_style($cssKey, $cssFile,array(),WDT_CURRENT_VERSION);
         }
 
         /** @noinspection PhpUnusedLocalVariableInspection */

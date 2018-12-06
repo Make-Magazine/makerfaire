@@ -4,10 +4,10 @@ Donate link: http://averta.net/
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: slider, image slider, wordpress slider, video slider, best slider plugin, slideshow, swipe, touch slider, content slider, SEO, vertical slider, HTML5 slider, hardware accelerate, animation, mobile slider, iOS, android, youtube slider, horizontal slider, responsive slider, fullscreen slider, post slider, photo slider, online album, mobile slider, WordPress slider,wpml, ,ultisite, wistia, woocommerce, product slider, woocommerce slider, portfolio, gallery, lightweight slider
-Requires PHP: 5.3
+Requires PHP: 5.4
 Requires at least: 4.6
 Tested up to: 5.0.0
-Stable tag: 3.5.1
+Stable tag: 3.5.3
 
 Build SEO friendly sliders fast and easy with Master Slider. The most advanced responsive HTML5 WordPress slider plugin, with touch swipe navigation that works smoothly on desktop and devices.
 
@@ -23,7 +23,7 @@ Build SEO friendly sliders fast and easy with Master Slider. The most advanced r
 Master Slider is a free SEO friendly, responsive image and video slider that truly works on all major devices, and it has super smooth hardware accelerated transitions. It supports touch navigation with pure swipe gesture that you have never experienced before.
 With our 8 Starter Samples, creating slideshows has never been so fast and enjoyable!
 
->Looking for a perfect Free WP theme for Master Slider? [Get Phlox theme](http://avt.li/msphpp "Phlox theme - Free Minimal and Responsive WordPress Theme")
+>Looking for a perfect Free WordPress theme optimized for both Master Slider and Elementor? [Get Phlox theme](http://avt.li/msphpp "Phlox theme - Free Minimal and Responsive WordPress Theme")
 
 
 Master Slider is built using WordPress best practices both on the front and the back end. This results in an efficient, robust and intuitive plugin. It works with any theme, including WordPress Default Themes.
@@ -152,8 +152,8 @@ You can start translating Master Slider by our [online translation service](http
 
 = Minimum Requirements =
 
-* WordPress 3.8 or greater
-* PHP version 5.2.4 or greater
+* WordPress 4.6 or greater
+* PHP version 5.4 or greater
 * MySQL version 5.0 or greater
 
 
@@ -237,7 +237,11 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Changelog ==
 
-= 3.5.0 =
+= 3.5.3 =
+
+= Version 3.5.3/ (01.11.2018) =
+- [Fix]: Fixing an issue with deprecated functions.
+- [Fix]: Compatibility with PHP 7.2 added.
 
 = Version 3.5.1/ (06.05.2018) =
 - [Fix]: Addressed an issue with displaying some sliders in the admin panel.
@@ -465,5 +469,6 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Upgrade Notice ==
 
-= Version 3.5.1/ (06.05.2018) =
-- [Fix]: Addressed an issue with displaying some sliders in the admin panel.
+= Version 3.5.3/ (01.11.2018) =
+- [Fix]: Fixing an issue with deprecated functions.
+- [Fix]: Compatibility with PHP 7.2 added.

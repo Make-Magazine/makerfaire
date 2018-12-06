@@ -17,8 +17,8 @@
 
 			var $formWrapper = $( '#gform_wrapper_{0}'.format( self.formId ) );
 
-			$formWrapper.on( 'change', '.gwcopy input[type="checkbox"]', function() {
-
+			//$formWrapper.on( 'click.gpcopycat', '.gwcopy input[type="checkbox"]', function() {
+         jQuery('.gwcopy input[type="checkbox"]').on( 'click', function() {   
 				if( $( this ).is( ':checked' ) ) {
 					self.copyValues( this );
 				} else {
@@ -26,7 +26,7 @@
 				}
 			} );
 
-			$formWrapper.on( 'change', '.gwcopy input:not(:checkbox), .gwcopy textarea, .gwcopy select', function() {
+			$formWrapper.on( 'change.gpcopycat', '.gwcopy input:not(:checkbox), .gwcopy textarea, .gwcopy select', function() {
 				self.copyValues( this );
 			} );
 
@@ -163,7 +163,14 @@
 							return item != '';
 						} );
 						value = gform.applyFilters( 'gppc_copied_value', self.cleanValueByInputType( sourceValues.join( ' ' ), $targetElem.attr( 'type' ) ), $targetElem, field );
-						$targetElem.val( value );
+
+						// If we're targeting a choice-based Pricing field - and - the source value does not contain a
+						// pipe (value|price), find the price-excluded value match in the target.
+						if( $targetElem.parents( '.gfield_price' ).length > 0 && $targetElem.is( 'select, input[type="radio"], input[type="checkbox"]' ) && value.indexOf( '|' ) === -1 ) {
+							$targetElem.val( $targetElem.find( 'option[value^="' + value + '|"]' ).attr( 'value' ) );
+						} else {
+							$targetElem.val( value );
+						}
 					}
 
 				} );

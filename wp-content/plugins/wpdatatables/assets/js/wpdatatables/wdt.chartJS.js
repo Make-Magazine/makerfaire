@@ -237,56 +237,139 @@ var wpDataTablesChartJS = function(){
                     var labels = [];
                     var serieIndex = 0;
                     var filteredData = obj.connectedWPDataTable._('tr', {"filter": "applied"}).toArray();
-                    for( var j in obj.columnIndexes ){
-                        var seriesDataEntry = [];
-                        if( ( obj.columnIndexes.length > 0 ) && ( j == 0 ) ) {
-                            for (var i in filteredData) {
-                                obj.options.data.labels.push(filteredData[i][obj.columnIndexes[j]]);
+                    var colors = [
+                        '#ff6384',
+                        '#36a2eb',
+                        '#ffce56',
+                        '#4bc0c0',
+                        '#9966ff',
+                        '#ff9f40',
+                        '#a6cee3',
+                        '#6a3d9a',
+                        '#b15928',
+                        '#fb9a99',
+                        '#0476e8',
+                        '#49C172',
+                        '#EA5E57',
+                        '#FFF458',
+                        '#BFEB54'
+                    ];
+
+                    if (obj.options.type === 'bubble') {
+                        obj.options.data.datasets = [];
+                        for( var j in filteredData ){
+                            obj.options.data.labels.push(filteredData[j][obj.columnIndexes[0]]);
+                                labels = obj.options.data.labels;
+                                    if( obj.numberFormat == 1 ){
+                                        seriesDataEntry = {
+                                            label: labels[j],
+                                            backgroundColor :colors[j],
+                                            hoverBackgroundColor: colors[j],
+                                            data:[{
+                                                x: parseFloat(wdtUnformatNumber(filteredData[j][obj.columnIndexes[1]], '.', ',', true)),
+                                                y: parseFloat(wdtUnformatNumber(filteredData[j][obj.columnIndexes[1] + 1], '.', ',', true)),
+                                                r: parseFloat(wdtUnformatNumber(filteredData[j][obj.columnIndexes[1] + 2], '.', ',', true))
+                                            }]
+                                        };
+                                    }else{
+                                        seriesDataEntry = {
+                                            label: labels[j],
+                                            backgroundColor :colors[j],
+                                            hoverBackgroundColor: colors[j],
+                                            data:[{
+                                                x: parseFloat(wdtUnformatNumber(filteredData[j][obj.columnIndexes[1]], ',', '.', true)),
+                                                y: parseFloat(wdtUnformatNumber(filteredData[j][obj.columnIndexes[1] + 1], ',', '.', true)),
+                                                r: parseFloat(wdtUnformatNumber(filteredData[j][obj.columnIndexes[1] + 2], ',', '.', true))
+                                            }]
+                                        };
+                                    }
+
+                            obj.options.data.datasets.push(seriesDataEntry);
+
+                        }
+
+                        if ( obj.group_chart == 1 ){
+                            var output_labels = [];
+                            var output_values = [];
+                            for (var i in labels) {
+                                if (typeof output_labels !== 'undefined' && output_labels.length > 0) {
+                                    var value_key = 'none';
+                                    for(var j in output_labels){
+                                        if(value_key === 'none'){
+                                            if(output_labels[j] == labels[i]){
+                                                value_key = j;
+                                            }
+                                        }
+                                    }
+                                    if (value_key === 'none') {
+                                        output_labels.push(labels[i]);
+                                        output_values.push(obj.options.data.datasets[i]);
+                                    } else {
+                                        output_values[value_key]["data"][0]["x"] += obj.options.data.datasets[i]["data"][0]["x"];
+                                        output_values[value_key]["data"][0]["y"] += obj.options.data.datasets[i]["data"][0]["y"];
+                                        output_values[value_key]["data"][0]["r"] += obj.options.data.datasets[i]["data"][0]["r"];
+                                    }
+                                } else {
+                                    output_labels.push(labels[i]);
+                                    output_values.push(obj.options.data.datasets[i]);
+                                }
                             }
-                            labels = obj.options.data.labels;
-                        } else {
-                            for( var i in filteredData ){
-                                var entry = filteredData[i][obj.columnIndexes[j]];
+
+                            obj.options.data.labels = output_labels;
+                            obj.options.data.datasets = output_values;
+                        }
+
+                    } else {
+                        for( var j in obj.columnIndexes ){
+                            var seriesDataEntry = [];
+                            if( ( obj.columnIndexes.length > 0 ) && ( j == 0 ) ) {
+                                for (var i in filteredData) {
+                                    obj.options.data.labels.push(filteredData[i][obj.columnIndexes[j]]);
+                                }
+                                labels = obj.options.data.labels;
+                            } else {
+                                for( var i in filteredData ){
+                                    var entry = filteredData[i][obj.columnIndexes[j]];
                                     if( obj.numberFormat == 1 ){
                                         seriesDataEntry.push( parseFloat( wdtUnformatNumber(entry, '.', ',', true) ) );
                                     }else{
                                         seriesDataEntry.push(  parseFloat( wdtUnformatNumber(entry, ',', '.', true) ) );
                                     }
-                            }
-
-                            if ( obj.group_chart == 1 ){
-                                var output_labels = [];
-                                var output_values = [];
-                                for (var i in labels) {
-                                    if (typeof output_labels !== 'undefined' && output_labels.length > 0) {
-                                        var value_key = 'none';
-                                        for(var j in output_labels){
-                                            if(value_key === 'none'){
-                                                if(output_labels[j] == labels[i]){
-                                                    value_key = j;
-                                                }
-                                            }
-                                        }
-                                        if (value_key === 'none') {
-                                            output_labels.push(labels[i]);
-                                            output_values.push(seriesDataEntry[i]);
-                                        } else {
-                                            output_values[value_key] += seriesDataEntry[i];
-                                        }
-                                    } else {
-                                        output_labels.push(labels[i]);
-                                        output_values.push(seriesDataEntry[i]);
-                                    }
                                 }
 
-                                obj.options.data.labels = output_labels;
-                                seriesDataEntry = output_values;
+                                if ( obj.group_chart == 1 ){
+                                    var output_labels = [];
+                                    var output_values = [];
+                                    for (var i in labels) {
+                                        if (typeof output_labels !== 'undefined' && output_labels.length > 0) {
+                                            var value_key = 'none';
+                                            for(var j in output_labels){
+                                                if(value_key === 'none'){
+                                                    if(output_labels[j] == labels[i]){
+                                                        value_key = j;
+                                                    }
+                                                }
+                                            }
+                                            if (value_key === 'none') {
+                                                output_labels.push(labels[i]);
+                                                output_values.push(seriesDataEntry[i]);
+                                            } else {
+                                                output_values[value_key] += seriesDataEntry[i];
+                                            }
+                                        } else {
+                                            output_labels.push(labels[i]);
+                                            output_values.push(seriesDataEntry[i]);
+                                        }
+                                    }
 
+                                    obj.options.data.labels = output_labels;
+                                    seriesDataEntry = output_values;
+
+                                }
+
+                                obj.options.data.datasets[serieIndex].data = seriesDataEntry;
+                                serieIndex++;
                             }
-
-                            obj.options.data.datasets[serieIndex].data = seriesDataEntry;
-                            serieIndex++;
-
                         }
                     }
 

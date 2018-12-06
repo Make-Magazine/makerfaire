@@ -29,13 +29,16 @@ class nggWPMU{
     /**
      * Check for site admin
      * 
-     * @return
+     * @return bool
      */
     function wpmu_site_admin() {
-
-    	if ( function_exists('is_super_admin') )
-    		if ( is_super_admin() )
-    			return true;
+    	if (function_exists('is_super_admin'))
+        {
+            if (is_super_admin())
+            {
+                return true;
+            }
+        }
     			
     	return false;
     }
@@ -44,7 +47,7 @@ class nggWPMU{
      * Check for site wide options
      * 
      * @param string $value
-     * @return value
+     * @return string|bool
      */
     function wpmu_enable_function($value) {
     	if (is_multisite()) {

@@ -19,7 +19,7 @@
 
     <div class="card-header wdt-admin-card-header ch-alt">
         <div class="col-sm-8 p-l-0 p-t-5">
-            <h2><?php _e('Table preview and columns setup', 'wpdatatables'); ?></h2>
+            <h2><?php _e('Table preview and columns setup', 'wpdatatables'); ?> <?php echo Connection::enabledSeparate() ? ' (' . Connection::getName($connection) . ')' : ''; ?></h2>
         </div>
         <div class="col-sm-4 wdt-table-action-buttons">
             <button class="btn btn-primary waves-effect waves-float pull-right wdt-add-formula-column "

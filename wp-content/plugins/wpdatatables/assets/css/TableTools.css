@@ -160,12 +160,10 @@ button.DTTT_button_print:hover span { background: #f0f0f0 url(../images/print_ho
 
 button.DTTT_button_collection span {
 	padding-right: 17px;
-	background: url(../images/collection.png) no-repeat center right;
 }
 
 button.DTTT_button_collection:hover span {
 	padding-right: 17px;
-	background: #f0f0f0 url(../images/collection_hover.png) no-repeat center right;
 }
 
 
@@ -241,7 +239,6 @@ div.DTTT_collection {
 }
 
 div.DTTT_collection_background {
-	background: transparent url(../images/background.png) repeat top left;
 	z-index: 2001;
 }
 

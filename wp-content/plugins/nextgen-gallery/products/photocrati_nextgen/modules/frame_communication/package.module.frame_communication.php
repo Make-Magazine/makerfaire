@@ -21,7 +21,7 @@ class C_Frame_Event_Publisher extends C_Component
     }
     /**
      * Gets an instance of the publisher
-     * @param string $context
+     * @param string|bool $context
      * @return C_Frame_Event_Publisher
      */
     static function get_instance($context = FALSE)
@@ -55,8 +55,8 @@ class Mixin_Frame_Event_Publisher extends Mixin
     }
     /**
      * Adds a setting to the frame events
-     * @param type $data
-     * @return type
+     * @param array $data
+     * @return array
      */
     function add_event($data)
     {
