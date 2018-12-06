@@ -4,7 +4,7 @@ function bgSize($el, cb){
         .attr( 'src', $el.css( 'background-image' ).match(/^url\("?(.+?)"?\)$/)[1] );
 }
 
-jQuery( document ).ready(function(){
+jQuery( window ).load(function(){
    if( jQuery( '.hero-img' ).length ){
 		bgSize( jQuery( '.hero-img' ), function( width, height ){
 			if( height > 450 ) {
