@@ -168,13 +168,13 @@
 			},
 			Error: function ( up, err ) {
 				reset( up );
-				var message  = gformChainedSelectData.strings.errorUploadingFile + '<br>' + err.message;
+				var message = err.message;
 				if( err.code == -601 ) {
 					message = gformChainedSelectData.strings.errorFileType;
 				} else if( err.code == -600 ) {
 					message = gformChainedSelectData.strings.errorFileSize;
 				}
-				displayError( up, message );
+				displayError( up, gformChainedSelectData.strings.errorUploadingFile + '<br>Error: ' + err.code + ', Message: ' + message );
 			},
 			FileUploaded: function ( up, file, result ) {
 
@@ -185,10 +185,9 @@
 				} catch( e ) {
 					response = { status: 'error', error: { message: false } };
 				}
-
 				if( response.status == 'error' ) {
 					reset( up );
-					displayError( up, gformChainedSelectData.strings.errorProcessingFile + '<br>' + response.error.message );
+					displayError( up, gformChainedSelectData.strings.errorProcessingFile + '<br>Error: ' + response.error.code + ', Message: ' + response.error.message );
 					return;
 				}
 

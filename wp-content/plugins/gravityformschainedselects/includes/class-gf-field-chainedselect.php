@@ -66,7 +66,7 @@ class GF_Chained_Field_Select extends GF_Field {
         $import = self::import_choices( $file_path, $field );
 
 	    if( is_wp_error( $import ) ) {
-	        $status_code = $import->get_error_data( 'status_code' ) ? $import->get_error_data( 'status_code' ) : 500;
+	        $status_code = rgar( $import->get_error_data( $import->get_error_code() ), 'status_header', 500 );
 		    GFAsyncUpload::die_error( $status_code, $import->get_error_message() );
         }
 
@@ -87,7 +87,7 @@ class GF_Chained_Field_Select extends GF_Field {
     public static function import_choices( $path, $field ) {
 
 	    if( self::is_choice_limit_exceeded( $path ) ) {
-		    return new WP_Error( 'column_max_exceeded', __( 'One of your columns has exceeded the limit for unique values.', 'gravityformschainedselects' ), array( 'status_code' => 422 ) );
+		    return new WP_Error( 'column_max_exceeded', __( 'One of your columns has exceeded the limit for unique values.', 'gravityformschainedselects' ), array( 'status_header' => 422 ) );
 	    }
 
 	    $choices = array();
@@ -683,12 +683,12 @@ class GF_Chained_Field_Select extends GF_Field {
 					$this->formId,
 					$this->id,
 					$index
-				), $input_choices, $this->formId, $this, $input_id, $full_chain_value, $value );
+				), $input_choices, $this->formId, $this, $input_id, $full_chain_value, $value, $index );
 			}
 		} else {
 			foreach ( $choices as $choice ) {
 				if ( $choice['value'] == $value ) {
-					$input_choices = $this->get_input_choices( $chain_value, $input_id, $depth + 1, $choice['choices'], $full_chain_value );
+					$input_choices = $this->get_input_choices( $chain_value, $input_id, $depth + 1, ! empty( $choice['choices'] ) ? $choice['choices'] : array(), $full_chain_value );
 					break;
 				}
 			}
@@ -701,7 +701,7 @@ class GF_Chained_Field_Select extends GF_Field {
 					$this->formId,
 					$this->id,
 					$index
-				), $input_choices, $this->formId, $this, $input_id, $full_chain_value, $value );
+				), $input_choices, $this->formId, $this, $input_id, $full_chain_value, $value, $index );
 			}
 			if ( empty( $input_choices ) ) {
 				$input_choices = array(
