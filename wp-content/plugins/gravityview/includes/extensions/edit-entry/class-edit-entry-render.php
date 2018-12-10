@@ -211,10 +211,14 @@ class GravityView_Edit_Entry_Render {
 	    self::$original_entry = $entries[0];
 	    $this->entry = $entries[0];
 
-		self::$original_form = $gravityview_view->getForm();
-		$this->form = $gravityview_view->getForm();
-		$this->form_id = $gravityview_view->getFormId();
+		//self::$original_form = $gravityview_view->getForm();
+		//$this->form = $gravityview_view->getForm();
+		//$this->form_id = $gravityview_view->getFormId();
 		$this->view_id = $gravityview_view->getViewId();
+		$this->form_id = $this->entry['form_id'];
+		$this->form = GFAPI::get_form($this->form_id);
+		self::$original_form = $this->form;
+		
 		$this->post_id = \GV\Utils::get( $post, 'ID', null );
 
 		self::$nonce_key = GravityView_Edit_Entry::get_nonce_key( $this->view_id, $this->form_id, $this->entry['id'] );
@@ -1023,7 +1027,8 @@ class GravityView_Edit_Entry_Render {
 		ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
 		$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
-
+		$html = str_replace('{all_fields:nohidden,noadmin}','',$html);
+		
 		ob_get_clean();
 
 	    remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
@@ -1733,14 +1738,14 @@ class GravityView_Edit_Entry_Render {
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
 
-	    if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
+	    //if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
 			foreach( $fields as $k => $field ) {
 				if( $field->adminOnly ) {
 				    unset( $fields[ $k ] );
 				}
 			}
 			return array_values( $fields );
-		}
+		//}
 
 	    foreach( $fields as &$field ) {
 		    $field->adminOnly = false;
@@ -1936,12 +1941,12 @@ class GravityView_Edit_Entry_Render {
 			 * If the Entry is embedded, there may be two entries on the same page.
 			 * If that's the case, and one is being edited, the other should fail gracefully and not display an error.
 			 */
-			if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
+			/*if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
 				$error = true;
 			} else {
 				$error = __( 'The link to edit this entry is not valid; it may have expired.', 'gravityview');
 			}
-
+         */
 		}
 
 		if( ! GravityView_Edit_Entry::check_user_cap_edit_entry( $this->entry ) ) {
