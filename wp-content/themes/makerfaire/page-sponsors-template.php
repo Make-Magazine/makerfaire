@@ -27,7 +27,7 @@ if($displayNav){
 
   <!-- PRESENTING SPONSORS -->
   <?php if( have_rows('presenting_sponsors') ): ?>
-  <div class="row spnosors-row">
+  <div class="row sponsors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">PRESENTING SPONSORS</h3>
         <div class="faire-sponsors-box">
@@ -54,7 +54,7 @@ if($displayNav){
 
   <!-- PLATINUM SPONSORS -->
   <?php if( have_rows('platinum_sponsors') ): ?>
-  <div class="row spnosors-row">
+  <div class="row sponsors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">PLATINUM SPONSOR</h3>
         <div class="faire-sponsors-box">
@@ -81,7 +81,7 @@ if($displayNav){
 
   <!-- GOLDSMITH SPONSORS -->
   <?php if( have_rows('goldsmith_sponsors') ): ?>
-  <div class="row spnosors-row">
+  <div class="row sponsors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">GOLDSMITH SPONSORS</h3>
         <div class="faire-sponsors-box">
@@ -108,7 +108,7 @@ if($displayNav){
 
   <!-- SILVERSMITH SPONSORS -->
   <?php if( have_rows('silversmith_sponsors') ): ?>
-  <div class="row spnosors-row">
+  <div class="row sponsors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">SILVERSMITH SPONSORS</h3>
         <div class="faire-sponsors-box">
@@ -135,7 +135,7 @@ if($displayNav){
 
   <!-- COPPERSMITH SPONSORS -->
   <?php if( have_rows('coppersmith_sponsors') ): ?>
-  <div class="row spnosors-row">
+  <div class="row sponsors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">COPPERSMITH SPONSORS</h3>
         <div class="faire-sponsors-box">
@@ -162,7 +162,7 @@ if($displayNav){
 
   <!-- MEDIA SPONSORS -->
   <?php if( have_rows('media_sponsors') ): ?>
-  <div class="row spnosors-row">
+  <div class="row sponsors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">MEDIA AND COMMUNITY SPONSORS</h3>
         <div class="faire-sponsors-box">
@@ -189,7 +189,7 @@ if($displayNav){
 
   <!-- BLACKSMITH SPONSORS -->
   <?php if( have_rows('blacksmith_sponsors') ): ?>
-  <div class="row spnosors-row">
+  <div class="row sponsors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">BLACKSMITH SPONSORS</h3>
         <div class="sponsors-text-box">
@@ -216,7 +216,7 @@ if($displayNav){
 
   <!-- STARTUP SPONSORS -->
   <?php if( have_rows('startup_sponsors') ): ?>
-  <div class="row spnosors-row">
+  <div class="row sponsors-row">
     <div class="col-xs-12">
       <h3 class="sponsors-type text-center">STARTUP SPONSORS</h3>
         <div class="sponsors-text-box">

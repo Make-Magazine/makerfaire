@@ -795,7 +795,7 @@ function getSponsorPanel() {
          </div>
          <div class="row">
             <div class="col-sm-12">
-               <h4 class="sponsor-slide-title">' . ($year ? $year . ' ' : '') . 'Maker Faire Sponsors: <span class="sponsor-slide-cat"></span></h4>
+               <h4 class="sponsor-slide-title">' . ($year ? $year . ' ' : '') . 'Maker Faire Sponsors: <br /> <span class="sponsor-slide-cat"></span></h4>
             </div>            
          </div>
          <div class="row">
@@ -813,7 +813,7 @@ function getSponsorPanel() {
          if (have_rows($sponsor[0], $id)) {
             $return .= '
                      <div class="item">
-                        <div class="row spnosors-row">
+                        <div class="row sponsors-row ' . $sponsor[0] . '">
                            <div class="col-xs-12">
                               <h3 class="sponsors-type text-center">' . $sponsor[1] . '</h3>
                               <div class="faire-sponsors-box">';
@@ -827,7 +827,7 @@ function getSponsorPanel() {
                if (get_sub_field('url')) {
                   $return .= '      <a href="' . $sub_field_2 . '" target="_blank">';
                }
-               $return .= '            <img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+               $return .= '            <img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" />';
                if (get_sub_field('url')) {
                   $return .= '      </a>';
                }
@@ -836,7 +836,7 @@ function getSponsorPanel() {
             $return .= '
                               </div> <!-- close .faire-sponsors-box -->
                            </div> <!-- close .col-xs-12 -->
-                        </div> <!-- close .row spnosors-row -->
+                        </div> <!-- close .row sponsors-row -->
                      </div> <!-- close .item -->';
          }
       }
