@@ -248,5 +248,20 @@
   })();
 </script>
 
+<!-- Usersnap feedback and bug tracker -->
+<script>
+  	window.onUsersnapLoad = function(api) {
+	api.on('open', function(event) {
+       // extend
+	});
+	api.init();
+	window.Usersnap = api;
+  	}
+  	var script = document.createElement('script');
+	script.async = 1;
+	script.src = 'https://api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js?onload=onUsersnapLoad';
+	document.getElementsByTagName('head')[0].appendChild(script);
+</script>
+
 </body>
 </html>
