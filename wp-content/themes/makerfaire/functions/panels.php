@@ -811,9 +811,12 @@ function getSponsorPanel() {
                      );
       foreach ($sponsorArray as $sponsor) {
          if (have_rows($sponsor[0], $id)) {
+				
+				$sponsorCount = get_post_meta($id, $sponsor[0], true);
+
             $return .= '
                      <div class="item">
-                        <div class="row sponsors-row ' . $sponsor[0] . '">
+                        <div class="row sponsors-row sponsors-' . $sponsorCount . '">
                            <div class="col-xs-12">
                               <h3 class="sponsors-type text-center">' . $sponsor[1] . '</h3>
                               <div class="faire-sponsors-box">';
