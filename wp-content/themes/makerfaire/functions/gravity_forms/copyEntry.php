@@ -147,7 +147,7 @@ function getModalData($tableData){
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <a id="closeBtn" href="'.$currentURL.'?copyEntry=none"><button type="button" class="close">&times;</button></a>
           <h4 class="modal-title">Copy Previous Entry</h4>
         </div>
         <div class="modal-body">
@@ -180,7 +180,7 @@ function getModalData($tableData){
   $return .= '</div>
         </div> <!-- close .modal-body-->
         <div class="modal-footer" id="modal-footer">
-          <button type="button" class="btn btn-default"><a id="startScratch" href="'.$currentURL.'?copyEntry=none">Start from Scratch</a></button>
+          <a id="startScratch" href="'.$currentURL.'?copyEntry=none"><button type="button" class="btn btn-default">Start from Scratch</button></a>
         </div>
       </div>
 
