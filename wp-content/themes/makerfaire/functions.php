@@ -183,12 +183,7 @@ function load_scripts() {
    }
    // Libraries concatenated by the grunt concat task (in Gruntfile.js):
    wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'), $my_version);
-   wp_localize_script('built-libs', 'ajax_object', array(
-       'ajax_url' => admin_url('admin-ajax.php'),
-       'home_url' => get_home_url(),
-       'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
-           )
-   );
+   
    // Other libraries:
    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
    wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
@@ -205,9 +200,18 @@ function load_scripts() {
    // Localize
    $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
    wp_localize_script('built', 'object_name', $translation_array);
+	wp_localize_script('built-libs', 'ajax_object',
+        array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'home_url' => get_home_url(),
+            'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
+        )
+      );
 }
 
 add_action('wp_enqueue_scripts', 'load_scripts');
+
+
 
 //Load custom gravity forms js for barnes and noble forms
 //Change the formid below to load for barnes and noble
@@ -294,8 +298,6 @@ function angular_scripts() {
 add_action('wp_enqueue_scripts', 'angular_scripts');
 
 
-
-
 /**
  * This function will connect wp_mail to your authenticated
  * SMTP server. This improves reliability of wp_mail, and
@@ -328,3 +330,14 @@ function send_smtp_email($phpmailer) {
 }
 
 add_filter('gform_enable_field_label_visibility_settings', '__return_true');
+
+
+// Making error logs for ajax to call
+add_action( 'wp_ajax_make_error_log', 'make_error_log' );
+add_action( 'wp_ajax_nopriv_make_error_log', 'make_error_log' );
+
+// Write to the php error log by request
+function make_error_log(){
+  $error = filter_input(INPUT_POST, 'make_error', FILTER_SANITIZE_STRING);
+  error_log(print_r($error, TRUE));
+}
