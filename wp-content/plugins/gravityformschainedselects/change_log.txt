@@ -1,38 +1,16 @@
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.9
-	- Fixed an issue where the wrong choice could be selected when the field is redisplayed post paging.
-
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.8
+Version 1.1
+	- Added index parameter to gform_chained_selects_input_choices filter.
+	- Added "gform_chainedselects_column_unique_values_limit" filter to bring the "gravityformschainedselects_column_unique_values_limit" filter inline with RG naming conventions.
+	- Added support for better error messages when uploading a CSV for a Chained Selects field.
 	- Added support for honoring isSelected field on chained select choices (can only be set programmatically).
-
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.7
+	- Added GPL to plugin header.
 	- Updated file import filter feature to not cache empty files (preserving existing choices).
-
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.6
-	- Added GPL to plugin header
-	- Updated Plugin URI and Author URI to use https
-
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.5
+	- Updated Plugin URI and Author URI to use https.
+	- Fixed issue where a chained select with no choices used the first select's choices.
+	- Fixed an issue where the wrong choice could be selected when the field is redisplayed post paging.
 	- Fixed a PHP fatal error which could occur when conditional logic evaluation is triggered by GravityView.
-
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.4
-	- Adds "gform_chainedselects_column_unique_values_limit" filter to bring the "gravityformschainedselects_column_unique_values_limit" filter inline with RG naming conventions.
-
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.3
 	- Fixed an issue where choice values of 0 were not imported resulting in some choices appearing in the wrong drop downs.
-
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.2
 	- Fixed issue with chunking file uploads (introduced in GF 2.3).
-
-------------------------------------------------------------------------------------------------------------------
-Version 1.0.1
 	- Fixed issue where choice values were not properly sanitized when populating the next select's choices.
 
 ------------------------------------------------------------------------------------------------------------------
@@ -73,5 +51,5 @@ Version 1.0.dev2
 	- Fixed issue where chained selects with "Hide Inactive Drop Downs" setting disabled would still hide inactive drop downs after first selection
 
 -----------------------------------------------------------
-Version 1.0dev1
+Version 1.0.dev1
 	- Everything is awesome!
