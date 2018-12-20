@@ -10,6 +10,10 @@
    echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
 ?>
 
+
+<!-- Usersnap feedback and bug tracker -->
+<script src="//api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js" async></script>
+
 <script>
   jQuery(".magical").click(function(event){
     event.preventDefault();
@@ -246,11 +250,6 @@
     pa.src = ('https:' == document.location.protocol ? 'https:' : 'http:') + "//tag.marinsm.com/serve/558d98991eb60ba078000001.js";
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(pa, s);
   })();
-</script>
-
-<script type="text/javascript">
-(function() { var s = document.createElement("script"); s.type = "text/javascript"; s.async = true; s.src = '//api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js';
-var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
 </script>
 
 </body>
