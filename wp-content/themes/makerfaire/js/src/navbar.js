@@ -28,7 +28,8 @@ function sumomeActive() {
 			jQuery('.left-hand-nav .current-menu-item').parent().parent().toggleClass('expanded-lnav');
 		}
 		
-      jQuery(".nav-level-1-auth #profile-view .avatar").css("display","block");		
+      jQuery(".nav-level-1-auth #profile-view .avatar").css("display","block");
+		
 
    });
 })(jQuery);
