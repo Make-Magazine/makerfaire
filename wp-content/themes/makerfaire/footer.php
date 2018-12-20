@@ -10,10 +10,6 @@
    echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
 ?>
 
-
-<!-- Usersnap feedback and bug tracker -->
-<script src="//api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js" async></script>
-
 <script>
   jQuery(".magical").click(function(event){
     event.preventDefault();
