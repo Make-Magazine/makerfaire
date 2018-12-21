@@ -249,16 +249,7 @@
 </script>
 
 <!-- Usersnap feedback and bug tracker -->
-<script>
-	(function() {
-		var script = document.createElement('script');
-		script.async = 1;
-		script.src = 'https://api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js';
-		document.getElementsByTagName('html')[0].appendChild(script);
-	})();
-</script>
-
+<script src="//api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js" async defer></script>
 </body>
-
 
 </html>
