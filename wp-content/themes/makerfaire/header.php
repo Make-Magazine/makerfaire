@@ -97,6 +97,8 @@
   <script type="text/javascript">
     dataLayer = [];
   </script>
+	<!-- Usersnap feedback and bug tracker -->
+  <script src="//api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js" async defer></script>
 </head>
 
 <body id="makerfaire" <?php body_class('no-js'); ?>>
