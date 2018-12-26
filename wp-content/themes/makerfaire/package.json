@@ -4,6 +4,10 @@
    "description": "Maker Faire",
    "main": "",
    "private": true,
+   "repository": {
+      "type" : "git",
+      "url" : "https://github.com/Make-Magazine/makerfaire.git"
+   },
    "scripts": {
       "cachebust:update": "npm version patch",
       "postcachebust:update": "npm run replace:version",
