@@ -2,7 +2,7 @@
    "name": "makerfaire",
    "version": "4.33.2",
    "description": "Maker Faire",
-   "main": "Gruntfile.js",
+   "main": "",
    "private": true,
    "scripts": {
       "cachebust:update": "npm version patch",
