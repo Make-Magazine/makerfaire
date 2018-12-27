@@ -255,7 +255,7 @@ jQuery(window).bind("load", function () {
 	s.type = "text/javascript"; 
 	s.async = true; 
 	s.src = '//api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js';
-	var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); 
+	var x = document.getElementsByTagName('script')[0]; x.parentNode.appendChild(s, x); 
 });
 </script>
 
