@@ -171,7 +171,7 @@ function load_scripts() {
    wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css');
    wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true);
 	wp_enqueue_style('jquery-ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css');
-   wp_enqueue_style('universal.css', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/css/universal.css');
+   wp_enqueue_style('universal.css', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/css/universal.min.css');
 	
    // jquery from Wordpress core (with no-conflict mode flag enabled):
    //auth0
