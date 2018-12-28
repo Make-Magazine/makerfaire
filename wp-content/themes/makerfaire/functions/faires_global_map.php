@@ -5,7 +5,7 @@ function faire_maps_scripts() {
       $my_theme = wp_get_theme();
       $my_version = $my_theme->get('Version');
       wp_enqueue_script(
-              'faires-global-map-scripts', get_stylesheet_directory_uri() . '/js/angular/global-faires-map-app.js', array('angularjs', 'ordinal-filter', 'angular-utils-pagination'), $my_version
+              'faires-global-map-scripts', get_stylesheet_directory_uri() . '/js/angular/global-faires-map-app.min.js', array('angularjs', 'ordinal-filter', 'angular-utils-pagination'), $my_version
       );
       wp_enqueue_script(
               'angular-utils-pagination', get_stylesheet_directory_uri() . '/bower_components/angularUtils-pagination/dirPagination.js', array('angularjs')

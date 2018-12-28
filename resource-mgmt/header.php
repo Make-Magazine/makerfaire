@@ -13,15 +13,15 @@ $my_version = $my_theme->get('Version');
 	<!-- Bootstrap -->
 	<link href="/wp-content/themes/makerfaire/css/bootstrap.min.css" rel="stylesheet">
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
-  <link href="/wp-content/themes/makerfaire/css/angular-reporting.css" rel="stylesheet">
+  <link href="/wp-content/themes/makerfaire/css/angular-reporting.min.css" rel="stylesheet">
 
   <!-- jQuery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
   <!-- scripts built with grunt -->
-  <script src="/wp-content/themes/makerfaire/js/built-libs.js?ver=<?php echo $my_version;?>"></script>
-  <script src="/wp-content/themes/makerfaire/js/built-angular-libs.js?ver=<?php echo $my_version;?>"></script>
-  <script src="/wp-content/themes/makerfaire/js/built-angular-reporting.js?ver=<?php echo $my_version;?>"></script>
+  <script src="/wp-content/themes/makerfaire/js/built-libs.min.js?ver=<?php echo $my_version;?>"></script>
+  <script src="/wp-content/themes/makerfaire/js/built-angular-libs.min.js?ver=<?php echo $my_version;?>"></script>
+  <script src="/wp-content/themes/makerfaire/js/built-angular-reporting.min.js?ver=<?php echo $my_version;?>"></script>
 
   <!-- to export grid data -->
   <script src="/resource-mgmt/js/grunt-scripts/csv.js"></script>

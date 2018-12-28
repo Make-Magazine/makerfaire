@@ -161,9 +161,10 @@ function load_scripts() {
    wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
    wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css');
    wp_enqueue_style('wpb-google-fonts', 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Condensed:400', false);
-   wp_enqueue_style('font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', false);
+   //wp_enqueue_style('font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', false);
+   wp_enqueue_style('font-awesome', get_stylesheet_directory_uri() . '/css/libs/Font-Awesome-4.4.0/css/font-awesome.min.css', false);
 	wp_enqueue_style('linearicons', 'https://cdn.linearicons.com/free/1.0.0/icon-font.min.css', '', 'all' );
-   wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.css');
+   wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css');
    wp_enqueue_style('ytv', get_stylesheet_directory_uri() . '/css/ytv.css');
 
    wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
@@ -182,7 +183,7 @@ function load_scripts() {
       wp_enqueue_script('billboard', get_stylesheet_directory_uri() . '/js/libs/billboard.js', array('jquery'), $my_version);
    }
    // Libraries concatenated by the grunt concat task (in Gruntfile.js):
-   wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'), $my_version);
+   wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'), $my_version);
    wp_localize_script('built-libs', 'ajax_object', array(
        'ajax_url' => admin_url('admin-ajax.php'),
        'home_url' => get_home_url(),
@@ -200,7 +201,7 @@ function load_scripts() {
    wp_enqueue_script('thickbox', null);
 
    // Scripts
-   wp_enqueue_script('built', get_stylesheet_directory_uri() . '/js/built.js', array('jquery'), $my_version);
+   wp_enqueue_script('built', get_stylesheet_directory_uri() . '/js/built.min.js', array('jquery'), $my_version);
 
    // Localize
    $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
@@ -237,8 +238,8 @@ function load_admin_scripts() {
    wp_enqueue_script('make-gravityforms-admin', get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'),$my_version);
    wp_enqueue_script('make-fairesigns-admin', get_stylesheet_directory_uri() . '/js/libs/mf_fairesigns.js', array('jquery'),$my_version);
    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), null);
-   wp_enqueue_script('make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.js', array('jquery'));
-   wp_enqueue_script('admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.js', array('jquery'),$my_version);
+   wp_enqueue_script('make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'));
+   wp_enqueue_script('admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.min.js', array('jquery'),$my_version);
    wp_enqueue_script('sack');
    //custom scripts for national
    $user = wp_get_current_user();
@@ -254,7 +255,7 @@ function load_admin_scripts() {
    //styles
    wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
    wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
-   wp_enqueue_style('mf-admin-style', get_stylesheet_directory_uri() . '/css/mf-admin-style.css');
+   wp_enqueue_style('mf-admin-style', get_stylesheet_directory_uri() . '/css/mf-admin-style.min.css');
 }
 
 add_action('admin_enqueue_scripts', 'load_admin_scripts');
@@ -268,7 +269,7 @@ function angular_scripts() {
       $my_theme = wp_get_theme();
       $my_version = $my_theme->get('Version');
 
-      wp_enqueue_script('angularjs', get_stylesheet_directory_uri() . '/js/built-angular-libs.js', array('built-libs'), $my_version, true);
+      wp_enqueue_script('angularjs', get_stylesheet_directory_uri() . '/js/built-angular-libs.min.js', array('built-libs'), $my_version, true);
 
       if (is_page('ribbons')) {
          wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/ribbonApp.js', array('angularjs'), $my_version, true);
