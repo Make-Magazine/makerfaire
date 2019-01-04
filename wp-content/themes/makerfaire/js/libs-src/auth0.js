@@ -1,5 +1,5 @@
 window.addEventListener('load', function() {
-
+	
   // buttons and event listeners
   /*    If the login button, logout button or profile view elements do not exist
    *    (such as on the admin and login pages) default to a 'fake' element
@@ -156,10 +156,10 @@ window.addEventListener('load', function() {
       };
 
       jQuery.post(ajax_object.ajax_url, data, function(response) {
-          
+      
       loginRedirect();
 
-      }).fail(function() {
+      }).fail(function(xhr, status, error) {
         alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
 		  errorMsg(userProfile.email + " had an issue logging in at the WP Login phase. That error is: " + JSON.stringify(error));
         if ( jQuery( '#authenticated-redirect' ).length ) { 
@@ -169,7 +169,6 @@ window.addEventListener('load', function() {
       });
     }else{
        if ( jQuery( '#authenticated-redirect' ).length ) {
-          console.log('undefined');
           alert("We're having trouble logging you in and ran out of time. Refresh the page and we'll try harder.");
 		    jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Reload page</a>");
       }
@@ -220,5 +219,4 @@ window.addEventListener('load', function() {
      jQuery.post(ajax_object.ajax_url, data, function(response) {console.log(response)});
   }
  // trying to trigger a php log on page load
-  errorMsg("hello");
 });

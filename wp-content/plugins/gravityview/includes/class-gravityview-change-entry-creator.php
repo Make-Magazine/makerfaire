@@ -203,7 +203,7 @@ class GravityView_Change_Entry_Creator {
 
         $created_by_id = \GV\Utils::get( $entry, 'created_by' );
 
-        $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email'), 'number' => 100000));        
+        $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email'), 'number' => 100000));
 
         $is_created_by_in_users = wp_list_filter( $users, array( 'ID' => $created_by_id ) );
 

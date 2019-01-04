@@ -4,7 +4,7 @@
   h2 {
     font-weight: 300;
   }
-  .spnosors-row {
+  .sponsors-row {
     border-top: 1px solid rgba(0,173,239,0.9);
     padding-bottom: 50px;
   }
@@ -198,9 +198,71 @@
         -ms-flex-pack: end;
             justify-content: flex-end;
   }
-  .spnosors-row {
+  .sponsors-row {
     padding-bottom: 20px;
   }
+  // keep the carousel the same height
+	@media screen and (max-width: 1200px) { 
+		.sponsors-row { height: 225px; }
+		.faire-sponsors-box {
+			height: 225px;
+			align-items: center;
+		}
+		.sponsors-1, .sponsors-2, .sponsors-3, .sponsors-4 {
+			.faire-sponsors-box {
+				.sponsors-box-md  {
+					width: 300px;
+				}
+			}
+		}
+	}
+	@media screen and (max-width: 767px) { 
+		.sponsors-1, .sponsors-2 {
+			.faire-sponsors-box {
+				.sponsors-box-md  {
+					width: 200px;
+				}
+			}
+		}
+		.sponsors-3, .sponsors-4, .sponsors-5, .sponsors-6 {
+			.faire-sponsors-box {
+				.sponsors-box-md  {
+					width: 180px;
+				}
+			}
+		}
+		.faire-sponsors-box {
+			.sponsors-box-md  {
+				width: 90px;
+			}
+		}
+	}
+	@media screen and (max-width: 480px) { 
+		.sponsors-1, .sponsors-2 {
+			.faire-sponsors-box {
+				.sponsors-box-md  {
+					width: 160px;
+				}
+			}
+		}
+		.sponsors-3, .sponsors-4, .sponsors-5, .sponsors-6 {
+			.faire-sponsors-box {
+				.sponsors-box-md  {
+					width: 120px;
+				}
+			}
+		}
+		.faire-sponsors-box {
+			.sponsors-box-md  {
+				width: 70px;
+			}
+		}
+	}
+	@media screen and (max-width: 360px) { 
+		.faire-sponsors-box, .sponsors-row {
+			height: 320px;
+		}
+	}
   .faire-sponsors-box {
     display: -webkit-box;
     display: -webkit-flex;
@@ -243,6 +305,7 @@
     &:last-child {
       border-right: 1px solid #D3D3D3;
     }
+	  img { width: 100%; }
   }
   // IE fix
   .sponsors-box-xl a,

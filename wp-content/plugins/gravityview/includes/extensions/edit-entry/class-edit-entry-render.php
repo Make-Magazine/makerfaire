@@ -215,10 +215,10 @@ class GravityView_Edit_Entry_Render {
 		//$this->form = $gravityview_view->getForm();
 		//$this->form_id = $gravityview_view->getFormId();
 		$this->view_id = $gravityview_view->getViewId();
-	   $this->form_id = $this->entry['form_id'];
-	   $this->form = GFAPI::get_form($this->form_id);
-	   self::$original_form = $this->form;
-	    
+		$this->form_id = $this->entry['form_id'];
+		$this->form = GFAPI::get_form($this->form_id);
+		self::$original_form = $this->form;
+		
 		$this->post_id = \GV\Utils::get( $post, 'ID', null );
 
 		self::$nonce_key = GravityView_Edit_Entry::get_nonce_key( $this->view_id, $this->form_id, $this->entry['id'] );
@@ -396,10 +396,10 @@ class GravityView_Edit_Entry_Render {
 
 		if ( version_compare( GravityView_GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) && method_exists( 'GFFormsModel', 'get_entry_meta_table_name' ) ) {
 			$entry_meta_table = GFFormsModel::get_entry_meta_table_name();
-			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT meta_key, meta_value FROM $entry_meta_table WHERE entry_id=%d", $this->entry['id'] ) );
+			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $entry_meta_table WHERE entry_id=%d", $this->entry['id'] ) );
 		} else {
 			$lead_detail_table = GFFormsModel::get_lead_details_table_name();
-			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT id, field_number FROM $lead_detail_table WHERE lead_id=%d", $this->entry['id'] ) );
+			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $lead_detail_table WHERE lead_id=%d", $this->entry['id'] ) );
 		}
 
 	    foreach ( $this->entry as $input_id => $field_value ) {
@@ -410,8 +410,10 @@ class GravityView_Edit_Entry_Render {
 		    // Don't pass $entry as fourth parameter; force using $_POST values to calculate conditional logic
 		    if ( GFFormsModel::is_field_hidden( $this->form, $field, array(), NULL ) ) {
 
-		        // List fields are stored as empty arrays when empty
-			    $empty_value = $this->is_field_json_encoded( $field ) ? '[]' : '';
+				$empty_value = $field->get_value_save_entry(
+					is_array( $field->get_entry_inputs() ) ? array() : '',
+					$this->form, '', $this->entry['id'], $this->entry
+				);
 
 			    $lead_detail_id = GFFormsModel::get_lead_detail_id( $current_fields, $input_id );
 
@@ -752,9 +754,7 @@ class GravityView_Edit_Entry_Render {
 				            $value = $this->fill_post_template( $field->customFieldTemplate, $form, $entry_tmp, true );
 				        }
 
-	                    if ( $this->is_field_json_encoded( $field ) && ! is_string( $value ) ) {
-		                    $value = wp_json_encode( $value );
-	                    }
+						$value = $field->get_value_save_entry( $value, $form, '', $this->entry['id'], $this->entry );
 
 				        update_post_meta( $post_id, $field->postCustomFieldName, $value );
 				        break;
@@ -795,31 +795,6 @@ class GravityView_Edit_Entry_Render {
 		} else {
 			gravityview()->log->debug( 'Updating the post content for post #{post_id} succeeded', array( 'post_id' => $post_id, 'data' => $updated_post ) );
 		}
-	}
-
-	/**
-	 * Is the field stored in a JSON-encoded manner?
-	 *
-	 * @param GF_Field $field
-	 *
-	 * @return bool True: stored in DB json_encode()'d; False: not encoded
-	 */
-	private function is_field_json_encoded( $field ) {
-
-	    $json_encoded = false;
-
-		$input_type = RGFormsModel::get_input_type( $field );
-
-	    // Only certain custom field types are supported
-	    switch( $input_type ) {
-		    case 'fileupload':
-		    case 'list':
-		    case 'multiselect':
-			    $json_encoded = true;
-			    break;
-	    }
-
-	    return $json_encoded;
 	}
 
 	/**
@@ -1056,7 +1031,7 @@ class GravityView_Edit_Entry_Render {
 		
 		ob_get_clean();
 
-	   remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
+	    remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
 		remove_filter( 'gform_submit_button', array( $this, 'render_form_buttons' ) );
 		remove_filter( 'gform_disable_view_counter', '__return_true' );
 		remove_filter( 'gform_field_input', array( $this, 'verify_user_can_edit_post' ), 5 );
@@ -1970,8 +1945,8 @@ class GravityView_Edit_Entry_Render {
 				$error = true;
 			} else {
 				$error = __( 'The link to edit this entry is not valid; it may have expired.', 'gravityview');
-			}*/
-
+			}
+         */
 		}
 
 		if( ! GravityView_Edit_Entry::check_user_cap_edit_entry( $this->entry ) ) {
