@@ -1,4 +1,5 @@
 window.addEventListener('load', function() {
+	
   // buttons and event listeners
   /*    If the login button, logout button or profile view elements do not exist
    *    (such as on the admin and login pages) default to a 'fake' element
@@ -125,6 +126,7 @@ window.addEventListener('load', function() {
 
     if (!accessToken) {
       console.log('Access token must exist to fetch profile');
+		 errorMsg('Login without Access Token');
     }
 
     webAuth.client.userInfo(accessToken, function(err, profile) {
@@ -154,11 +156,12 @@ window.addEventListener('load', function() {
       };
 
       jQuery.post(ajax_object.ajax_url, data, function(response) {
-          
+      
       loginRedirect();
 
-      }).fail(function() {
+      }).fail(function(xhr, status, error) {
         alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
+		  errorMsg(userProfile.email + " had an issue logging in at the WP Login phase. That error is: " + JSON.stringify(error));
         if ( jQuery( '#authenticated-redirect' ).length ) { 
             jQuery( ".redirect-message" ).text("I'm sorry. We had an issue logging you into our system. Please try the login again.");
             location.href=templateUrl;
@@ -166,7 +169,6 @@ window.addEventListener('load', function() {
       });
     }else{
        if ( jQuery( '#authenticated-redirect' ).length ) {
-          console.log('undefined');
           alert("We're having trouble logging you in and ran out of time. Refresh the page and we'll try harder.");
 		    jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Reload page</a>");
       }
@@ -183,7 +185,6 @@ window.addEventListener('load', function() {
         jQuery( '#wpadminbar' ).remove();
         jQuery( '#mm-preview-settings-bar' ).remove();
     }
-
     jQuery.post(ajax_object.ajax_url, data, function(response) {
       window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
     });
@@ -199,6 +200,7 @@ window.addEventListener('load', function() {
         localStorage.removeItem('expires_at');
         if(err.error!=='login_required'){
           console.log(err);
+			 errorMsg(userProfile.email + " had an issue logging in at the checkSession phase. That error was: " + JSON.stringify(err));
         }
       } else {
         setSession(result);
@@ -206,5 +208,15 @@ window.addEventListener('load', function() {
       displayButtons();
     }
   );
-
+	
+  // send an error message to be recorded in the php error logs
+  function errorMsg(message) {
+	   var data = {
+       'action'       : 'make_error_log',
+       'make_error'   : message
+     };
+  // logging the response and it’s sending back 0
+     jQuery.post(ajax_object.ajax_url, data, function(response) {console.log(response)});
+  }
+ // trying to trigger a php log on page load
 });
