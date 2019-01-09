@@ -1,12 +1,12 @@
 {
    "name": "makerfaire",
-   "version": "4.33.2",
+   "version": "4.33.3",
    "description": "Maker Faire",
    "main": "",
    "private": true,
    "repository": {
-      "type" : "git",
-      "url" : "https://github.com/Make-Magazine/makerfaire.git"
+      "type": "git",
+      "url": "https://github.com/Make-Magazine/makerfaire.git"
    },
    "scripts": {
       "cachebust:update": "npm version patch",
