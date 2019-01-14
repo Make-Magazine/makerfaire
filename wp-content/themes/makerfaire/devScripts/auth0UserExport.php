@@ -23,32 +23,35 @@ if (isset($authRes->access_token)) {
    echo 'Authenticated<br/>';
    $token = $authRes->access_token;   
    //echo 'returned token is ' . $token;
-   /*
-   //get connections   
-   echo '<hr>';
-   echo 'Get Connections result<br/>';
-   $post_data = '';
-   $url = "https://makermedia.auth0.com/api/v2/connections";
-   $authRes = curlCall($url, $post_data, $token);        
-   foreach($authRes as $result){
-      if($result->name==="Username-Password-Authentication"){
-         $connection = $result->id;
+   $jobID = (isset($_GET['jobID'])?$_GET['jobID']:'');
+   if($jobID==''){
+      //get connections   
+      echo '<hr>';
+      echo 'Get Connections result<br/>';
+      $post_data = '';
+      $url = "https://makermedia.auth0.com/api/v2/connections";
+      $authRes = curlCall($url, $post_data, $token);        
+      foreach($authRes as $result){
+         if($result->name==="Username-Password-Authentication"){
+            $connection = $result->id;
+         }
       }
+      echo '$connection is '.$connection;
+
+      // submit a job to get all auth0 users
+      $url = "https://makermedia.auth0.com/api/v2/jobs/users-exports";
+      $post_data = "{\"connection_id\": \"$connection\", \"format\": \"csv\", \"fields\": [{\"name\": \"user_id\"}, {\"name\": \"name\"}, {\"name\": \"email\"}, {\"name\": \"email_verified\"},{ \"name\": \"identities[0].connection\", \"export_as\": \"provider\" }]}";
+
+      $authRes = curlCall($url, $post_data, $token);
+
+      $jobID = $authRes->id;
+
    }
-   echo '$connection is '.$connection;
-      
-   // submit a job to get all auth0 users
-   $url = "https://makermedia.auth0.com/api/v2/jobs/users-exports";
-   $post_data = "{\"connection_id\": \"$connection\", \"format\": \"csv\", \"fields\": [{\"name\": \"user_id\"}, {\"name\": \"name\"}, {\"name\": \"email\"}, { \"name\": \"identities[0].connection\", \"export_as\": \"provider\" }]}";
    
-   $authRes = curlCall($url, $post_data, $token);
-   
-   $jobID = $authRes->id;
    echo '<hr>';
    echo 'Submitted Job ID '.$jobID.'<br/>';
-   */
-   //Check the status of the job   
-   $jobID = "job_Qbmuu0FlElU00RjH";
+   
+   //Check the status of the job         
    $url = "https://makermedia.auth0.com/api/v2/jobs/".$jobID;
    $post_data = "";
    $authRes = curlCall($url, $post_data, $token);        

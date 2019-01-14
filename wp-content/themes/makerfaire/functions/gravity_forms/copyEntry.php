@@ -44,7 +44,7 @@ function maybe_copyEntry( $form ) {
     }else{
       if($entry2Copy!='none'){
         // field do not copy list
-        $dontCopyField = array('22', '37','38','39','40', '41', '45', '55', '87', '130', '320', '321', '117');
+        $dontCopyField = array('11','16','22', '37','38','39','40', '41', '45', '55', '87', '130', '320', '321', '117');
 
         //copy previous entry data
         echo 'Copying data from entry '.$_GET['copyEntry'].'<br/>';
@@ -153,7 +153,7 @@ function getModalData($tableData){
         <div class="modal-body">
           <p>Hello '.$name.',</p><br/>'
           . '<p>We noticed you\'ve applied before. Would you like to copy data from a previous entry into this application?'
-          . '<br/><small><i>If you copy an entry, you will have the chance to make edits and upload new images before submitting your new application.</i></small></p>'
+          . '<br/><small><i>If you copy an entry, please note that we request new project description and photos. Applications that appear to the same as in years prior may have a lower chance of being selected.</i></small></p>'
           . '<hr/>'
           . '<div class="pre-scrollable">';
   $return .=  '<div class="row header hidden-xs ">'
