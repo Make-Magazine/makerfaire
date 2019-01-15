@@ -9,6 +9,8 @@ $sched_dow = (isset($wp_query->query_vars['sched_dow']) ? ucfirst(urldecode($wp_
 $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($wp_query->query_vars['sched_type'])) : 'All Types');
 
 $schedule_ids = get_field('schedule_ids');
+$schedule_ids_trimmed = preg_replace('/\s+/', '', $schedule_ids);
+echo '<!-- Orig: ' . $schedule_ids . ' - Trimmed: ' . $schedule_ids_trimmed . ' -->';
 
 $displayNav = get_field('display_left_nav');          
 if($displayNav){
@@ -48,10 +50,10 @@ if (have_posts()) {
 		
    </div><?php
 }
-if ($schedule_ids && $schedule_ids != '') { //display the new schedule page
-   create_calendar($schedule_ids);
+if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new schedule page
+   create_calendar($schedule_ids_trimmed);
    ?>
-   <input type="hidden" id="forms2use" value="<?php echo get_field('schedule_ids'); ?>" />
+   <input type="hidden" id="forms2use" value="<?php echo $schedule_ids_trimmed; ?>" />
    <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
    <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
