@@ -36,7 +36,9 @@
 
   $faireArray  = $faireName = '';
   $faire_forms = get_post_meta($post->ID, 'faire-forms', true);
-  $faireArray  = explode(',',$faire_forms);
+  $faire_forms_trimmed = preg_replace('/\s+/', '', $faire_forms);
+  echo '<!-- Orig: ' . $faire_forms . ' - Trimmed: ' . $faire_forms_trimmed .' -->';
+  $faireArray  = explode(',',$faire_forms_trimmed);
 
   $faire     = get_post_meta($post->ID, 'faire', true);
   $results = $wpdb->get_results('SELECT * FROM wp_mf_faire where faire= "'.strtoupper($faire).'"');
