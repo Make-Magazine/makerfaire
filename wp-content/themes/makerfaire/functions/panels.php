@@ -485,6 +485,7 @@ function getCTApanel() {
    $cta_url = get_sub_field('url');
    $background_color = get_sub_field('background_color');
    $bg_color_class_map = array(
+      "Blue" => '',
       "Light Blue" => ' light-blue-ribbon',
       "Red" => ' red-ribbon',
       "Orange" => ' orange-ribbon'
