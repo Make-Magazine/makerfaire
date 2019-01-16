@@ -10,7 +10,6 @@ $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($w
 
 $schedule_ids = get_field('schedule_ids');
 $schedule_ids_trimmed = preg_replace('/\s+/', '', $schedule_ids);
-echo '<!-- Orig: ' . $schedule_ids . ' - Trimmed: ' . $schedule_ids_trimmed . ' -->';
 
 $displayNav = get_field('display_left_nav');          
 if($displayNav){

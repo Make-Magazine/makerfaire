@@ -4,6 +4,9 @@
  */
 get_header();
 
+$faire_forms = get_field('faire-forms');
+$faire_forms_trimmed = preg_replace('/\s+/', '', $faire_forms);
+
 $noMakerText = get_field('no_makers_found_text');
 if ($noMakerText == '')
    $noMakerText = 'No makers found';
@@ -11,7 +14,7 @@ if ($noMakerText == '')
 
 <div class="mtm" ng-app="mtm">
    <div ng-controller="mtmMakers"  ng-cloak="">
-      <input type="hidden" id="forms2use" value="<?php echo get_field('faire-forms'); ?>" />
+      <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
       <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
       <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
       <div class="container">

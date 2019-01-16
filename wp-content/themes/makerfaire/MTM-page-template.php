@@ -37,7 +37,6 @@
   $faireArray  = $faireName = '';
   $faire_forms = get_post_meta($post->ID, 'faire-forms', true);
   $faire_forms_trimmed = preg_replace('/\s+/', '', $faire_forms);
-  echo '<!-- Orig: ' . $faire_forms . ' - Trimmed: ' . $faire_forms_trimmed .' -->';
   $faireArray  = explode(',',$faire_forms_trimmed);
 
   $faire     = get_post_meta($post->ID, 'faire', true);
