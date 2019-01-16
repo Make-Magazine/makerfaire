@@ -153,7 +153,7 @@ function getModalData($tableData){
         <div class="modal-body">
           <p>Hello '.$name.',</p><br/>'
           . '<p>We noticed you\'ve applied before. Would you like to copy data from a previous entry into this application?'
-          . '<br/><small><i>If you copy an entry, please note that we request new project description and photos. Applications that appear to the same as in years prior may have a lower chance of being selected.</i></small></p>'
+          . '<br/><small><i>If you copy an entry, please note that we request new project description and photos. Applications that appear to be the same as in years prior may have a lower chance of being selected.</i></small></p>'
           . '<hr/>'
           . '<div class="pre-scrollable">';
   $return .=  '<div class="row header hidden-xs ">'
