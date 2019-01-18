@@ -36,7 +36,7 @@ window.addEventListener('load', function() {
     redirectUri: AUTH0_CALLBACK_URL,
     audience: 'https://' + AUTH0_DOMAIN + '/userinfo',
     responseType: 'token id_token',
-    scope: 'openid profile email',
+    scope: 'openid profile email user_metadata',
     leeway: 60
   });
 
