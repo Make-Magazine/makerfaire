@@ -465,7 +465,7 @@ function get1ColLayout() {
    }
 
    // Because of the aggressive caching on prod, it makes more sense to shuffle the array in javascript
-   $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").css("background-image","url("+heroArray[0]+")");});</script>';
+   $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").css("background-image","url("+heroArray[0]+")");bgSize( jQuery( ".hero-img" ), function( width, height ){if( height > 450 ) {jQuery(".hero-img").css( "height", "450px" );} else if( height > 320 ){jQuery( ".hero-img" ).css( "height", height + "px" );}});});</script>'; 
    return $return;
 }
 
