@@ -1,0 +1,81 @@
+{
+    "key": "group_5c4a2ddea1b42",
+    "title": "Meet the Makers Page",
+    "fields": [
+        {
+            "key": "field_5c4a2e3308952",
+            "label": "No Makers Found Text",
+            "name": "no_makers_found_text",
+            "type": "text",
+            "instructions": "This text is displayed on the page when no makers are found matching the forms entered or search results entered.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "No makers found",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c4a2e9108953",
+            "label": "Faire Forms",
+            "name": "faire-forms",
+            "type": "text",
+            "instructions": "Comma separated list of form id's to pull accepted makers from to display on the page",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5c4a2ebf08954",
+            "label": "Faire",
+            "name": "faire",
+            "type": "text",
+            "instructions": "4 character ID representing the faire (ie BA19)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 4
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-meet-the-makers.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1548366073
+}
