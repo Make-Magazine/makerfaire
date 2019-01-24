@@ -12,6 +12,13 @@ $entry     = GFAPI::get_entry($entryId);
 
 $sharing_cards = new mf_sharing_cards();
 
+// give admin, editor and reviewer user roles special ability to see all entries
+$user = wp_get_current_user();
+$adminView = false;
+if(array_intersect( array('administrator', 'editor', 'reviewer'), $user->roles )){
+	$adminView = true;
+}
+
 //entry not found
 if(isset($entry->errors)){
   $form_id = '';
@@ -83,7 +90,7 @@ if(isset($entry->errors)){
 }
 
 //set sharing card data
-if(is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted'){
+if( (is_array($entry) && isset($entry['status']) && $entry['status']=='active' && isset($entry[303]) && $entry[303]=='Accepted') || $adminView == true){
   $sharing_cards->project_short = $project_short;
   $sharing_cards->project_photo = $project_photo;
   $sharing_cards->project_title = $project_title;
@@ -146,11 +153,21 @@ if($faire!=''){
   }
 }
 
+// give admin and editor users special ability to see all entries
+$user = wp_get_current_user();
+$adminView = false;
+if(array_intersect( array('administrator', 'editor'), $user->roles )){
+	$adminView = true;
+}
+
 //decide if we should display this entry
 $validEntry = false;
-if(is_array($entry) &&
-    isset($entry['status']) && $entry['status']=='active' &&
-    isset($entry[303]) && $entry[303]=='Accepted'){
+if( (is_array($entry) &&
+  isset($entry['status']) && $entry['status']=='active' &&
+  isset($entry[303]) && $entry[303]=='Accepted') || 
+  // if user is an administrator or editor they can see it all
+  $adminView == true
+){
   $validEntry = true; //display the entry
 }
 
@@ -158,9 +175,9 @@ if(is_array($entry) &&
 $displayMakers = true;
 foreach($entry as $key=>$field ) {
   $pos = strpos($key, '304.');
-  if ($pos !== false) {
-    if($field=='no-public-view')    $validEntry    = false;
-    if($field=='no-maker-display')  $displayMakers = false;
+  if ($pos !== false ) {
+    if($field=='no-public-view' )    $validEntry    = false;
+    if($field=='no-maker-display' )  $displayMakers = false;
   }
 }
 
