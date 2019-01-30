@@ -4,7 +4,7 @@
  */
 get_header();
 ?>
-<main id="main" class="front-page" role="main">
+<div id="main" class="front-page" role="main">
    <!-- Custom Panels -->
    <div class="page-content featured-faire customPanels">
       <?php 
@@ -68,5 +68,5 @@ get_header();
       </div>
    </div>
 
-</main>
+</div>
 <?php get_footer(); ?>

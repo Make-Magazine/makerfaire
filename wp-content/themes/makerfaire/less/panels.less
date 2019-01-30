@@ -479,16 +479,20 @@
          font-size: 26px;
          color: #fff;
          margin: 0;
-         span {
-            padding: 0 50px;
-            @media (max-width: 550px) {
-               padding: 0px 20px;
-            }
-         }
+         padding: 0px 30px;
+			@media (max-width:700px) {
+				font-size: 22px;
+			}
+			span { 
+				padding: 0px 10px;
+				@media (max-width:614px) {
+					padding: 0px;
+				}
+			}
       }
       .fa-star {
          color: #fff;
-         @media (max-width:470px) {
+         @media (max-width:614px) {
             display: none;
          }
       }
@@ -818,9 +822,6 @@
                font-size: 20px;
                margin-bottom: 0;
                margin-top: 0;
-               span {
-
-               }
             }
             hr {
                margin-top: 15px;
