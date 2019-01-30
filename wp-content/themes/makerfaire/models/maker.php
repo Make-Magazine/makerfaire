@@ -151,27 +151,27 @@ class maker {
           $data['tasks'] = $this->get_tasks_by_entry($row['lead_id']);
         }
         $data['maker-edit'] = (isset($entry['802'])?$entry['802']:'yes');
+			//get form_type
+			$form_id  = $entry['form_id'];
+			$form     = GFAPI::get_form($form_id);
+			if(isset($form['form_type']) &&
+				 ($form['form_type']=='Sponsor' ||
+				  $form['form_type']=='Startup Sponsor')){
+			  $this->isSponsor = TRUE;
+			}
+			if(isset($form['form_type']) &&
+				 ($form['form_type']=='Exhibit' ||
+				  $form['form_type']=='Performer'||
+				  $form['form_type']=='Presentation')){
+			  $this->isMaker = TRUE;
+			}
+			$data['form_type'] = $form['form_type'];
       }else{
         $data['date_created'] = '';
         $data['ticketing']    = '';
         $data['tasks']        = '';
+		  $form['form_type'] = '';
       }
-
-      //get form_type
-      $form_id  = $entry['form_id'];
-      $form     = GFAPI::get_form($form_id);
-      if(isset($form['form_type']) &&
-          ($form['form_type']=='Sponsor' ||
-           $form['form_type']=='Startup Sponsor')){
-        $this->isSponsor = TRUE;
-      }
-      if(isset($form['form_type']) &&
-          ($form['form_type']=='Exhibit' ||
-           $form['form_type']=='Performer'||
-           $form['form_type']=='Presentation')){
-        $this->isMaker = TRUE;
-      }
-      $data['form_type'] = $form['form_type'];
 
       //do not return if form type
       if($form['form_type'] != 'Other'           && $form['form_type'] != 'Payment' &&
