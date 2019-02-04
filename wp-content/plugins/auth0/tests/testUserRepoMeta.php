@@ -39,23 +39,23 @@ class TestUserRepoMeta extends TestCase {
 	 * Update and get user meta.
 	 */
 	public function testThatUpdateMetaIsReturnedProperly() {
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'auth0_id' ) );
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'auth0_obj' ) );
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'last_update' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'auth0_id' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'auth0_obj' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'last_update' ) );
 
 		$userinfo = $this->getUserinfo();
 		self::$users_repo->update_auth0_object( 1, $userinfo );
 
-		$this->assertEquals( $userinfo->sub, self::$users_repo::get_meta( 1, 'auth0_id' ) );
+		$this->assertEquals( $userinfo->sub, self::$users_repo->get_meta( 1, 'auth0_id' ) );
 
-		$saved_update = self::$users_repo::get_meta( 1, 'last_update' );
+		$saved_update = self::$users_repo->get_meta( 1, 'last_update' );
 		$saved_update = explode( 'T', $saved_update );
 
 		$this->assertCount( 2, $saved_update );
 		$this->assertEquals( explode( 'T', date( 'c' ) )[0], $saved_update[0] );
 
 		// Make sure all the various ways we can get the user profile come back correctly.
-		$saved_userinfo = self::$users_repo::get_meta( 1, 'auth0_obj' );
+		$saved_userinfo = self::$users_repo->get_meta( 1, 'auth0_obj' );
 		$this->assertEquals( WP_Auth0_Serializer::serialize( $userinfo ), $saved_userinfo );
 
 		$saved_userinfo = WP_Auth0_Serializer::unserialize( $saved_userinfo );
@@ -103,21 +103,22 @@ class TestUserRepoMeta extends TestCase {
 	 * Make sure meta values are deleted properly.
 	 */
 	public function testThatDeleteMetaDeletesData() {
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'auth0_id' ) );
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'auth0_obj' ) );
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'last_update' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'auth0_id' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'auth0_obj' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'last_update' ) );
 
 		$this->storeAuth0Data( 1 );
 
-		$this->assertNotEmpty( self::$users_repo::get_meta( 1, 'auth0_id' ) );
-		$this->assertNotEmpty( self::$users_repo::get_meta( 1, 'auth0_obj' ) );
-		$this->assertNotEmpty( self::$users_repo::get_meta( 1, 'last_update' ) );
+		$this->assertNotEmpty( self::$users_repo->get_meta( 1, 'auth0_id' ) );
+		$this->assertNotEmpty( self::$users_repo->get_meta( 1, 'auth0_obj' ) );
+		$this->assertNotEmpty( self::$users_repo->get_meta( 1, 'last_update' ) );
+		$this->assertNotEmpty( self::$users_repo->get_meta( 1, 'last_update' ) );
 
 		self::$users_repo->delete_auth0_object( 1 );
 
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'auth0_id' ) );
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'auth0_obj' ) );
-		$this->assertEmpty( self::$users_repo::get_meta( 1, 'last_update' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'auth0_id' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'auth0_obj' ) );
+		$this->assertEmpty( self::$users_repo->get_meta( 1, 'last_update' ) );
 	}
 
 	/**
