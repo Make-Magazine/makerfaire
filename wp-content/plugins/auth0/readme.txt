@@ -1,14 +1,14 @@
 === Login by Auth0 ===
 Tags: login, oauth, authentication, single sign on, ldap, active directory, saml, windows azure ad, google apps, two factor, two-factor, facebook, google, twitter, baidu, renren, linkedin, github, paypal, yahoo, amazon, vkontakte, salesforce, box, dwolla, yammer, passwordless, sms, magiclink, totp, social
-Tested up to: 4.9.8
+Tested up to: 5.0.2
 Requires at least: 3.8
 Requires PHP: 5.3
-License: MIT
-License URI: https://github.com/auth0/wp-auth0/blob/master/LICENSE.md
+License: GPLv2
+License URI: https://github.com/auth0/wp-auth0/blob/master/LICENSE
 Stable tag: trunk
 Contributors: auth0, glena, rrauch, auth0josh
 
-Login by Auth0 provides improved Username/password login, Passwordless login, Social login and Single Sign On for all your sites.
+Login by Auth0 provides improved username/password login, Passwordless login, Social login and Single Sign On for all your sites.
 
 == Description ==
 
@@ -135,4 +135,14 @@ All is not lost!
 
 == Changelog ==
 
-[Complete CHANGELOG.md maintained on Github](https://github.com/auth0/wp-auth0/blob/master/CHANGELOG.md)
+**v3.9.0**
+
+- Added a complete Spanish translation!
+- Email changes for WordPress users now work properly and are rejected clearly if Auth0 rejects the change. This does not affect the email verification process in WordPress; the email is changed only after the verification happens. A current API token is not required but your Application does need to allow for a Client Credentials grant with the Management API (this configured for you by default, [more information here](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-application-for-the-management-api)).
+- Sibling sub-domains are now allowed for the Login Redirect URL. Anything within the same domain name as the site URL can now be saved.
+- Default Auth0 IP addresses are now allowed by default on the user migration endpoints. Adding or changing the IP addresses for the "Migration IPs Whitelist" field will not affect default IPs.
+- User migration endpoints were improved to provide better errors when requests are rejected and more clear custom database scripts that can be used as an example when setting up the migration manually. Switching this setting on or off does not make any changes in the Auth0 dashboard or to the existing token, it only makes the endpoints available or not.
+- The Social Amplificator functionality has been removed.
+- And more!
+
+[Complete list of changes for this and other releases](https://github.com/auth0/wp-auth0/blob/master/CHANGELOG.md#390-2019-01-11)

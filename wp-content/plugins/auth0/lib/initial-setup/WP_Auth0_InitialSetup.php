@@ -3,10 +3,8 @@
 class WP_Auth0_InitialSetup {
 
 	protected $a0_options;
-
 	protected $connection_profile;
 	protected $enterprise_connection_step;
-
 	protected $consent_step;
 	protected $adminuser_step;
 	protected $connections_step;
@@ -21,7 +19,6 @@ class WP_Auth0_InitialSetup {
 		$this->adminuser_step             = new WP_Auth0_InitialSetup_AdminUser( $this->a0_options );
 		$this->connections_step           = new WP_Auth0_InitialSetup_Connections( $this->a0_options );
 		$this->end_step                   = new WP_Auth0_InitialSetup_End( $this->a0_options );
-		$this->signup                     = new WP_Auth0_InitialSetup_Signup( $this->a0_options );
 	}
 
 	public function init() {
@@ -65,7 +62,7 @@ class WP_Auth0_InitialSetup {
 	 */
 	public function admin_enqueue() {
 		// phpcs:ignore
-		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
 	}
 
 	/**
@@ -74,7 +71,7 @@ class WP_Auth0_InitialSetup {
 	 */
 	public function notify_setup() {
 		// phpcs:ignore
-		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
 	}
 
 	public function notify_error() {
@@ -85,11 +82,6 @@ class WP_Auth0_InitialSetup {
 
 		$step    = ( isset( $_REQUEST['step'] ) ? $_REQUEST['step'] : 1 );
 		$profile = ( isset( $_REQUEST['profile'] ) ? $_REQUEST['profile'] : null );
-
-		if ( isset( $_REQUEST['signup'] ) ) {
-			$this->signup->render();
-			return;
-		}
 
 		if ( is_numeric( $step ) && $step >= 1 && $step <= 6 ) {
 
@@ -136,7 +128,7 @@ class WP_Auth0_InitialSetup {
 					  <a target="_blank" href="<?php echo admin_url( 'admin.php?page=wpa0-errors' ); ?>"><?php echo __( 'Error log', 'wp-auth0' ); ?></a>
 					<?php echo __( ' for more information. If the problem persists, please create it manually in the ', 'wp-auth0' ); ?>
 					  <a target="_blank" href="https://manage.auth0.com/#/applications"><?php echo __( 'Auth0 Dashboard', 'wp-auth0' ); ?></a>
-					<?php echo __( ' and copy the client_id and secret.', 'wp-auth0' ); ?>
+					<?php echo __( ' and copy the Client ID and Client Secret.', 'wp-auth0' ); ?>
 				  </strong>
 			  </p>
 		  </div>
@@ -152,7 +144,8 @@ class WP_Auth0_InitialSetup {
 					<?php
 					echo __(
 						'Go to your Auth0 dashboard > APIs > Auth0 Management API > Non-Interactive Clients'
-								   . ' tab and authorize the client for this site. ', 'wp-auth0'
+								   . ' tab and authorize the client for this site. ',
+						'wp-auth0'
 					);
 					?>
 					<?php echo __( 'Make sure to add the following scopes: ', 'wp-auth0' ); ?>
@@ -171,9 +164,9 @@ class WP_Auth0_InitialSetup {
 		  <div id="message" class="error">
 			  <p>
 				  <strong>
-					<?php echo __( 'There was an error retrieving your auth0 credentials. Check the ', 'wp-auth0' ); ?>
+					<?php echo __( 'There was an error retrieving your Auth0 credentials. Check the ', 'wp-auth0' ); ?>
 					  <a target="_blank" href="<?php echo admin_url( 'admin.php?page=wpa0-errors' ); ?>"><?php echo __( 'Error log', 'wp-auth0' ); ?></a>
-					<?php echo __( ' for more information. Please check that your sever has internet access and can reach "https://' . $domain . '/" ', 'wp-auth0' ); ?>
+					<?php echo __( ' for more information. Please check that your server has internet access and can reach "https://' . $domain . '/" ', 'wp-auth0' ); ?>
 				  </strong>
 			  </p>
 		  </div>

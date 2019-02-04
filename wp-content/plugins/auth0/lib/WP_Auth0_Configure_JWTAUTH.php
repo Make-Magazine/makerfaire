@@ -28,19 +28,20 @@ class WP_Auth0_Configure_JWTAUTH {
 		<div class="update-nag">
 			<?php _e( 'JWT Auth installed. ', 'wp-auth0' ); ?>
 			<a href="<?php echo admin_url( 'admin.php?page=wpa0-jwt-auth' ); ?>">
-				<?php _e( 'To configure it to work the Auth0 plugin, click here.', 'wp-auth0' ); ?>
+				<?php _e( 'To configure it to work with the Auth0 plugin, click here.', 'wp-auth0' ); ?>
 			</a>
 		</div>
 		<?php
 	}
 
 	/**
+	 * @deprecated - 3.6.0, not needed, handled in WP_Auth0_Admin::admin_enqueue()
 	 *
-	 * @deprecated 3.6.0 - Not needed, handled in WP_Auth0_Admin::admin_enqueue()
+	 * @codeCoverageIgnore - Deprecated
 	 */
 	public function admin_enqueue() {
 		// phpcs:ignore
-		trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
+		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
 	}
 
 	public function render_settings_page() {

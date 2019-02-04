@@ -5,6 +5,8 @@
  *
  * PHP version 5.3.10
  *
+ * @deprecated - 3.9.0, functionality removed
+ *
  * @category Awesomeness
  * @package  Twitter-API-PHP
  * @author   James Mallison <me@j7mbo.co.uk>
@@ -320,7 +322,8 @@ class TwitterAPIExchange {
 
 		foreach ( $oauth as $key => $value ) {
 			if ( in_array(
-				$key, array(
+				$key,
+				array(
 					'oauth_consumer_key',
 					'oauth_nonce',
 					'oauth_signature',
