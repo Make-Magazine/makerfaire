@@ -19,12 +19,6 @@
   });
 </script>
 
-<!-- Subscribe return path overlay -->
-<?php echo subscribe_return_path_overlay(); ?>
-
-<!-- Email newsletter subscribe modal -->
-<?php echo display_thank_you_modal_if_signed_up(); ?>
-
 <!-- Clear the WP admin bar when in mobile fixed header -->
 <script>
   jQuery(document).ready(function(){
