@@ -391,7 +391,7 @@ function my_acf_flexible_content_layout_title( $title, $field, $layout, $i ) {
       $newTitle .= ' ' . $featureFairesTitle . ' ';
    }
 
-   $newTitle .= '<div style="font-size: 10px; margin-right: 2em;">' . $title . '</div>';
+   $newTitle .= '<div style="font-size: 12px; margin-right: 2em;">' . $title . '</div>';
 
 	return $newTitle;
 	
