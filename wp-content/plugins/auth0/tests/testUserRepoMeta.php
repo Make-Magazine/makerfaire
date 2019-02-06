@@ -91,7 +91,7 @@ class TestUserRepoMeta extends TestCase {
 
 		self::$users_repo->update_auth0_object( 1, $userinfo );
 
-		$saved_userinfo = self::$users_repo->get_meta( 1, 'auth0_obj' );
+		$saved_userinfo = self::$users_repo::get_meta( 1, 'auth0_obj' );
 		$saved_userinfo = WP_Auth0_Serializer::unserialize( $saved_userinfo );
 		$this->assertEquals( $userinfo, $saved_userinfo );
 
