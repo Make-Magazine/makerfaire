@@ -185,10 +185,10 @@ function load_scripts() {
    // Libraries concatenated by the grunt concat task (in Gruntfile.js):
    wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'), $my_version);
    wp_localize_script('built-libs', 'ajax_object', array(
-       'ajax_url' => admin_url('admin-ajax.php'),
-       'home_url' => get_home_url(),
-       'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
-           )
+      'ajax_url' => admin_url('admin-ajax.php'),
+      'home_url' => get_home_url(),
+      'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
+     )
    );
    // Other libraries:
    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
@@ -211,6 +211,7 @@ function load_scripts() {
             'ajax_url' => admin_url('admin-ajax.php'),
             'home_url' => get_home_url(),
             'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
+			   'wp_user_email' => wp_get_current_user()->user_email,
         )
       );
 }
