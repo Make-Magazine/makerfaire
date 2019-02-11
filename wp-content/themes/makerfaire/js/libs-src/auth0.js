@@ -139,7 +139,6 @@ window.addEventListener('load', function() {
 
 	function getProfile() {
 		var accessToken = localStorage.getItem('access_token');
-
 		if (!accessToken) {
 			console.log('Access token must exist to fetch profile');
 			errorMsg('Login without Access Token');
@@ -222,7 +221,6 @@ window.addEventListener('load', function() {
 			jQuery( '#wpadminbar' ).remove();
 			jQuery( '#mm-preview-settings-bar' ).remove();
 		}
-		
 		jQuery.post(ajax_object.ajax_url, data, function(response) {
 			if(wp_only != "wp_only"){
 				window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
