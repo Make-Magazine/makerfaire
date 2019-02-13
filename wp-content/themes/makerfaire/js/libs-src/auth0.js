@@ -204,9 +204,9 @@ window.addEventListener('load', function() {
 
 		}else{
 			if ( jQuery( '#authenticated-redirect' ).length ) {
-				errorMsg("Login failed for undefined user: " + userProfile.email + ". Timeout.");
 				alert("We're having trouble logging you in and ran out of time. Refresh the page and we'll try harder.");
 				jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Reload page</a>");
+				errorMsg("Login failed for undefined user. Timeout.");
 			}
 		}
 	}
