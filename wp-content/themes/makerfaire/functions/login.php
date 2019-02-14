@@ -1,4 +1,21 @@
 <?php
+function cookie_login_warning() { ?>
+    <style type="text/css">
+		 .wp-core-ui #login { width: 80%; }
+		 #login::before {
+			 content: "We are unable to process your login as we have detected that you have cookies blocked. Please make sure cookies are enabled in your browser and try again.";
+			 text-align: center;
+			 font-size:42px;
+			 line-height: 46px;
+		 }
+		 #form-signin-wrapper {
+			 display: none;
+		 }
+    </style>
+<?php }
+
+add_action( 'login_enqueue_scripts', 'cookie_login_warning' );
+
 /* redirect wp-login.php to the auth0 login page */
 function load_auth0_js() {
   //auth0
