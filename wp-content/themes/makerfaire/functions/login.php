@@ -46,6 +46,8 @@ function MM_WPlogin(){
   if($login_manager->login_user( $userinfo, $id_token, $access_token)) {
     wp_send_json_success();
   }else{
+    error_log('Failed login');
+    error_log(print_r($userinput, TRUE));
     wp_send_json_error();
   }
 }
