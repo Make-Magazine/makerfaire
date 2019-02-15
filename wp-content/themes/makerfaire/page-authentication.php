@@ -10,6 +10,11 @@
       <h2 class="text-center">Please wait while we complete the login process.</h2>
       <h3 class="text-center redirect-message">You will be redirected shortly.</h3>
       <h3 class="text-center billboard">Please wait while we get you back to the right place.</h3>
+		<iframe
+         src="https://makermedia.com/third-party-check.html"
+         height="200px"
+         width="100%" style="border:none;">
+      </iframe>
 		<div class="container">
 			<div class="row">
 				<div class="col-md-3 hidden-sm hidden-xs"></div>
