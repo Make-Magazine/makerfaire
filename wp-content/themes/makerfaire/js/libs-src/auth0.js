@@ -53,7 +53,11 @@ window.addEventListener('load', function() {
 
 	loginBtn.addEventListener('click', function(e) {
 		e.preventDefault();
-		localStorage.setItem('redirect_to',location.href);
+		if(location.href.indexOf('authenticate-redirect') >= 0){
+			localStorage.setItem('redirect_to', templateUrl);
+		}else{
+			localStorage.setItem('redirect_to',location.href);
+		}
 		webAuth.authorize(); //login to auth0
 	});
 
