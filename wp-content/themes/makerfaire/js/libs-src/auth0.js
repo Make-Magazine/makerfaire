@@ -132,7 +132,7 @@ window.addEventListener('load', function() {
 				//logout of wordpress if not already
 				WPlogout();//login to wordpress
 			} else {
-				jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Reload page</a>");
+				jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Try your login again</a>");
 			}
 		}
 	}
