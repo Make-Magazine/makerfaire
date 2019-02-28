@@ -22,7 +22,7 @@ function get_acf_content() {
                $return .= '<div class="grid-image" style="background-image: url('.$image_url.');"></div>';
                //$return .= '<p>' . get_sub_field('image_name') . '</p>';
                $return .= '<p>' . $imageArr['width'] .' x ' .$imageArr['height']. '</p>';
-               $return .= '<button class="btn universal-btn btn-info" onclick="copyMe(\'img_'.$imageArr['id'].'\')">COPY</button>';
+               $return .= '<button class="btn universal-btn btn-info" onclick="copyMe(\'img_'.$imageArr['id'].'\')">COPY HTML</button>';
                $return .= '<div class="copyDiv" id="img_'.$imageArr['id'].'">&lt;a href="https://makerfaire.com/bay-area/"&gt;&lt;img src="'.$imageArr['url'].'" alt="'.$imageArr['title'].'" width="'.$imageArr['width'].'" height="'.$imageArr['height'].'" border=0" /&gt;&lt;/a&gt;</div>';
                $return .= '</div>';
             }
@@ -39,6 +39,10 @@ function get_acf_content() {
       }
       .grid-padding {
       padding: 20px;
+      text-align: center;
+      }
+      .grid-padding .btn {
+       width: 150px;
       }
       .grid-image {
     width: 150px;
@@ -50,14 +54,12 @@ function get_acf_content() {
       }
       </style>
       <script>
-function copyMe(elmnt) {
-  
+function copyMe(elmnt) {  
   var n = jQuery("#"+elmnt).text();
   n = jQuery.trim(n);
   //alert("copying "+ elmnt+" "+n);
   jQuery(".copied").attr("value", n).select();
-  document.execCommand("copy");  
-  
+  document.execCommand("copy");    
 }
 </script>';
    echo $return;
