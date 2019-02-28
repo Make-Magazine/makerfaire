@@ -40,7 +40,7 @@ if (isset($authRes->access_token)) {
 
       // submit a job to get all auth0 users
       $url = "https://makermedia.auth0.com/api/v2/jobs/users-exports";
-      $post_data = "{\"connection_id\": \"$connection\", \"format\": \"csv\", \"fields\": [{\"name\": \"user_id\"}, {\"name\": \"name\"}, {\"name\": \"email\"}, {\"name\": \"email_verified\"},{ \"name\": \"identities[0].connection\", \"export_as\": \"provider\" }]}";
+      $post_data = "{\"connection_id\": \"$connection\", \"format\": \"csv\", \"fields\": [{\"name\": \"user_id\"}, {\"name\": \"name\"}, {\"name\": \"email\"}, {\"name\": \"created_at\"}, {\"name\": \"last_login\"}, {\"name\": \"email_verified\"}, {\"name\": \"loginsCount\"},{ \"name\": \"identities[0].connection\", \"export_as\": \"provider\" }]}";
 
       $authRes = curlCall($url, $post_data, $token);
 
