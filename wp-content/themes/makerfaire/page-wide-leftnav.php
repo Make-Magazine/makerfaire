@@ -8,8 +8,7 @@ get_header(); ?>
 <div class="post-thumbnail">
 		<?php the_post_thumbnail(); ?>
 </div><!-- .post-thumbnail -->
-<div class="page-leftnav">
-
+<div class="page-leftnav container-fluid">
 	<div class="row">
       <div class="left-hand-nav col-md-3">
          <?php    
