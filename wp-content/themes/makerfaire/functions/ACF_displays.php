@@ -7,7 +7,7 @@ function get_acf_content() {
       // loop through the rows of data
       while (have_rows('image_grid')) {
          the_row();
-         $return .= '<div>';
+         $return .= '<div class="image_grid">';
          $return .= '<h2>' . get_sub_field('title') . '</h2>';
          //get list of images
          if (have_rows('image_section')) {
@@ -31,36 +31,6 @@ function get_acf_content() {
          $return .= '</div>';      
       }
    }
-   $return .=
-           '
-      <style type="text/css">
-      .copyDiv {
-      opacity: 0; position: absolute; z-index: -1;
-      }
-      .grid-padding {
-      padding: 20px;
-      text-align: center;
-      }
-      .grid-padding .btn {
-       width: 150px;
-      }
-      .grid-image {
-    width: 150px;
-    height: 150px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-color: black;
-    background-position: center;
-      }
-      </style>
-      <script>
-function copyMe(elmnt) {  
-  var n = jQuery("#"+elmnt).text();
-  n = jQuery.trim(n);
-  //alert("copying "+ elmnt+" "+n);
-  jQuery(".copied").attr("value", n).select();
-  document.execCommand("copy");    
-}
-</script>';
+   
    echo $return;
 }
