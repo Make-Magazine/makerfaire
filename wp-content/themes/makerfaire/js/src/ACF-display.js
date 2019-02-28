@@ -6,7 +6,8 @@
 function copyMe(elmnt) {  
   var n = jQuery("#"+elmnt).text();
   n = jQuery.trim(n);
-  //alert("copying "+ elmnt+" "+n);
+  
   jQuery(".copied").attr("value", n).select();
   document.execCommand("copy");    
+  alert("HTML has been copied to your clipboard.");
 }
