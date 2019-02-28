@@ -1,7 +1,8 @@
 <?php
 
 function get_acf_content() {   
-   $return = '<input type="hidden" class="copied"/>';
+   $return = '';
+   
    // Image Grid
    if (have_rows('image_grid')) {
       // loop through the rows of data
@@ -19,11 +20,12 @@ function get_acf_content() {
                $imageArr = get_sub_field('grid_image');               
                
                $image_url = $imageArr['url'];
-               $return .= '<div class="grid-image" style="background-image: url('.$image_url.');"></div>';
-               //$return .= '<p>' . get_sub_field('image_name') . '</p>';
+               $return .= '<a target="_blank" href="'.$image_url.'"><div class="grid-image" style="background-image: url('.$image_url.');"></div></a>';
+               
                $return .= '<p>' . $imageArr['width'] .' x ' .$imageArr['height']. '</p>';
                $return .= '<button class="btn universal-btn btn-info" onclick="copyMe(\'img_'.$imageArr['id'].'\')">COPY HTML</button>';
-               $return .= '<div class="copyDiv" id="img_'.$imageArr['id'].'">&lt;a href="https://makerfaire.com/bay-area/"&gt;&lt;img src="'.$imageArr['url'].'" alt="'.$imageArr['title'].'" width="'.$imageArr['width'].'" height="'.$imageArr['height'].'" border=0" /&gt;&lt;/a&gt;</div>';
+               $return .= '<div class="copyDiv" id="img_'.$imageArr['id'].'"><a href="https://makerfaire.com/bay-area/"><img src="'.$imageArr['url'].'" alt="'.$imageArr['title'].'" width="'.$imageArr['width'].'" height="'.$imageArr['height'].'" border="0" /></a></div>';
+               
                $return .= '</div>';
             }
             $return .= '</div>';

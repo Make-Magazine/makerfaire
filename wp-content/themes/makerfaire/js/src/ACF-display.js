@@ -3,11 +3,13 @@
  */
 
 
-function copyMe(elmnt) {  
-  var n = jQuery("#"+elmnt).text();
-  n = jQuery.trim(n);
+function copyMe(element) {  
+
+  var $temp = jQuery("<input>");
+ jQuery("body").append($temp);
+ $temp.val(jQuery('#'+element).html()).select();
+ document.execCommand("copy");
+ alert('Image HTML copied to clipboard.');
+ $temp.remove();
   
-  jQuery(".copied").attr("value", n).select();
-  document.execCommand("copy");    
-  alert("HTML has been copied to your clipboard.");
 }
