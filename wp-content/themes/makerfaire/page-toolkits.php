@@ -5,6 +5,7 @@ Template name: Toolkits
 get_header(); ?>
 <div class="clear"></div>
 <div class="main-content" id="main">
+
   <div class="toolkit-header container-fluid">
 	<div class="row">
 		<div class="toolkit-header-title col-md-3 col-sm-4 col-xs-12">
@@ -71,6 +72,11 @@ get_header(); ?>
 				<?php get_404_template(); ?>
 			<?php endif; ?>
 		</div><!--Content-->
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center back-to-top">
+			<a href="#topofpage">BACK TO TOP</a>
+		</div>
 	</div>
   </div><!--Container-->
 </div>
