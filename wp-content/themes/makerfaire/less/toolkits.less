@@ -1,0 +1,86 @@
+.page-template-page-toolkits {
+	h1 {
+		font-weight: 400;
+		font-size: 28px;
+		margin-top: 18px;
+	}
+	h2 {
+		font-size: 24px;
+	}
+	h3 {
+		font-size: 20px;
+	}
+	.toolkit-header {
+		border-bottom: solid 1px #ccc;
+		.row {
+			.toolkit-header-title {
+				padding-left: 25px;
+				img { 
+					float: left;
+					margin: 10px 25px 0 10px;
+				}
+			}
+			.toolkit-tabs {
+				.nav-tabs {
+					border-bottom: none;
+					margin-top: 12px;
+				}
+				.nav > li > a {
+					color: #333;
+					opacity: .6;
+					font-size: 16px;
+					border: none;
+					border-radius: 0px;
+					padding: 11px 25px;
+					&:hover, &:active, &:focus {
+						opacity: .9;
+						border: none;
+						-webkit-box-shadow: 0px 3px 0px 0px rgba(234,0,42,1);
+						-moz-box-shadow: 0px 3px 0px 0px rgba(234,0,42,1);
+						box-shadow: 0px 3px 0px 0px rgba(234,0,42,1);
+					}
+				}
+			}
+		}
+	}
+	.left-hand-nav {
+		#menu-toolkit-left-hand-nav {
+			margin-top: 15px;
+			@media screen and (min-width: 1200px) {
+				padding-left: 90px;
+			}
+			li {
+				a {
+					color: #37afed;
+					&:hover {
+						color: #4a4a4a;
+					}
+				}
+			}
+			li.section-header {
+				&:hover {
+					background: none;
+				}
+				a {
+					color: #4a4a4a;
+					font-size: 16px;
+					line-height: 24px;
+					text-transform: uppercase;
+					pointer-events: none;
+					cursor: pointer
+				}
+		  }
+		}
+	}
+	.toolkit-section-wrapper {
+		margin-top: 45px;
+		.toolkit-section {
+			a.toolkit-anchor { // all the fixed nav bars and sumos require the anchor to need a little more space
+			  display: block;
+			  position: relative;
+			  top: -160px; 
+			  visibility: hidden;
+			}
+		}
+	}
+}

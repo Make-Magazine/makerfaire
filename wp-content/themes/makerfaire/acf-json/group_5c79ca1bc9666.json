@@ -136,6 +136,25 @@
                             },
                             "default_value": "",
                             "placeholder": ""
+                        },
+                        {
+                            "key": "field_5c7d8970cac3a",
+                            "label": "Section Body",
+                            "name": "section_body",
+                            "type": "wysiwyg",
+                            "instructions": "All the content for this section can go here. It will be linkable from the lefthand nav by name",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "tabs": "all",
+                            "toolbar": "full",
+                            "media_upload": 1,
+                            "delay": 0
                         }
                     ],
                     "min": "",
@@ -164,5 +183,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1551486372
+    "modified": 1551731118
 }
