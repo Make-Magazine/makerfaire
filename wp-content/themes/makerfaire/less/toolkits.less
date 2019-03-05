@@ -11,6 +11,7 @@
 	h3 {
 		font-size: 20px;
 	}
+	.image_grid:last-child { padding-bottom: 0px; }
 	.toolkit-header {
 		border-bottom: solid 1px #ccc;
 		@media screen and (max-width: 982px) {
@@ -55,6 +56,11 @@
 			margin-top: 15px;
 			@media screen and (min-width: 1200px) {
 				padding-left: 90px;
+			}
+			@media screen and (min-width: 982px) {
+				width: 25%;
+				position: fixed;
+				z-index: -99;
 			}
 			li {
 				a {
