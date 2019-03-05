@@ -60,7 +60,6 @@
 			@media screen and (min-width: 982px) {
 				width: 25%;
 				position: fixed;
-				z-index: -99;
 				padding-right: 20px;
 			}
 			li {
@@ -84,6 +83,12 @@
 					cursor: pointer
 				}
 		  }
+			&.no-scroll {
+				position: absolute;
+				top: 200px;
+				-webkit-transition: wtop 2s; /* Safari */
+  				transition: top 2s;
+			}
 		}
 	}
 	.toolkit-section-wrapper {
@@ -92,7 +97,7 @@
 			a.toolkit-anchor { // all the fixed nav bars and sumos require the anchor to need a little more space
 			  display: block;
 			  position: relative;
-			  top: -160px; 
+			  top: -140px; 
 			  visibility: hidden;
 			}
 		}
