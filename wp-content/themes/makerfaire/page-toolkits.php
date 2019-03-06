@@ -9,7 +9,7 @@ get_header(); ?>
 $path = $_SERVER['REQUEST_URI'];
 $urlArray = explode('/', $path);
 $location = $urlArray[1];
-$pagegroup = $urlArray[2];
+$pagegroup = $urlArray[2]; // This is the parent, i.e. Maker Toolkit
 $pagegroupPretty = ucwords(str_replace("-"," ", $pagegroup));
 
 
@@ -23,11 +23,12 @@ $query = new WP_Query( array(
 ) );
 
 if ( $query->have_posts() ) {
-    while ( $query->have_posts() ) : $query->the_post(); // WP loop
+    while ( $query->have_posts() ) : $query->the_post();
+	     // if a page of this template contains the same page group as this page, those are the tabs we're going to want to display
 	     if(strpos(get_the_permalink(), $pagegroup) !== false){
         	  array_push($tabArray, get_the_title());
 		  }
-    endwhile; // end of the loop.
+    endwhile; 
 }
 
 wp_reset_query();
@@ -48,7 +49,7 @@ wp_reset_query();
 			<ul class="nav nav-tabs">
 				<?php 
 					foreach($tabArray as $value) {
-						echo('<li><a href="' . strtolower(str_replace(" ","-", $value)) . '" ' . ($value == get_the_title() ? ' class="active"' : '') . '>' . $value . '</a></li>');
+						echo('<li><a href="/' . $location . '/' . $pagegroup . '/' . strtolower(str_replace(" ","-", $value)) . '" ' . ($value == get_the_title() ? ' class="active"' : '') . '>' . $value . '</a></li>');
 					}
 				?>
 			</ul>
