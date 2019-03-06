@@ -3,6 +3,35 @@
 Template name: Toolkits
 */
 get_header(); ?>
+
+<?php 
+
+$path = $_SERVER['REQUEST_URI'];
+$urlArray = explode('/', $path);
+$location = $urlArray[1];
+$pagegroup = ucwords(str_replace("-"," ", $urlArray[2]));
+
+
+$tabArray = [];
+$query = new WP_Query( array(
+    'post_type'  => 'any',
+	 'orderby'   => 'meta_value',
+    'order' => 'DESC',
+    'meta_key'   => '_wp_page_template',
+    'meta_value' => 'page-toolkits.php'
+) );
+
+if ( $query->have_posts() ) {
+    while ( $query->have_posts() ) : $query->the_post(); // WP loop
+        array_push($tabArray, get_the_title());
+    endwhile; // end of the loop.
+}
+
+wp_reset_query();
+
+?>
+
+
 <div class="clear"></div>
 <div class="main-content" id="main">
 
@@ -10,9 +39,18 @@ get_header(); ?>
 	<div class="row">
 		<div class="toolkit-header-title col-md-3 col-sm-4 col-xs-12">
 			<img src="/wp-content/themes/makerfaire/images/toolkit-icon.png" width="40px" height="40px" />
-			<?php the_title( '<h1>', '</h1>' ); ?>
+			<h1><?php echo($pagegroup); ?></h1>
 		</div>
-		<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+		<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12">
+			<ul class="nav nav-tabs">
+				<?php 
+					foreach($tabArray as $value) {
+						echo('<li><a href="' . strtolower(str_replace(" ","-", $value)) . '" ' . ($value == get_the_title() ? ' class="active"' : '') . '>' . $value . '</a></li>');
+					}
+				?>
+			</ul>
+		</div>
+		<?php /*<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 		<?php	
 				if (have_rows('top_tabs')) { 
 					echo('<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12"><ul class="nav nav-tabs">');
@@ -24,7 +62,7 @@ get_header(); ?>
 				}
 		?>
 		<?php endwhile; ?>			
-		<?php endif; ?>
+		<?php endif; ?> */ ?>
 	</div>
   </div>
   <div class="page-leftnav container-fluid">
