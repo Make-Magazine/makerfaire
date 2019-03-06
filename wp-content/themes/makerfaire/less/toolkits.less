@@ -1,4 +1,7 @@
 .page-template-page-toolkits {
+	@media screen and (min-width: 982px) {
+		overflow: initial !important;
+	}
 	h1 {
 		font-weight: 400;
 		font-size: 28px;
@@ -12,7 +15,8 @@
 		font-size: 20px;
 	}
 	footer {
-		
+		position: relative;
+		z-index: 999;
 	}
 	.image_grid:last-child { padding-bottom: 0px; }
 	.toolkit-header {
@@ -55,14 +59,20 @@
 		}
 	}
 	.left-hand-nav {
+		@media screen and (min-width: 982px) {
+				position: -webkit-sticky;
+  				position: sticky;
+				top: 200px;
+		}
 		#menu-toolkit-left-hand-nav {
 			margin-top: 15px;
 			@media screen and (min-width: 1200px) {
 				padding-left: 90px;
 			}
 			@media screen and (min-width: 982px) {
-				width: 25%;
-				position: fixed;
+				position: -webkit-sticky;
+  				position: sticky;
+				top: 4rem;
 				padding-right: 20px;
 			}
 			li {
@@ -86,12 +96,6 @@
 					cursor: pointer
 				}
 		  }
-			&.no-scroll {
-				position: absolute;
-				top: 200px;
-				-webkit-transition: wtop 2s; /* Safari */
-  				transition: top 2s;
-			}
 		}
 	}
 	.toolkit-section-wrapper {
