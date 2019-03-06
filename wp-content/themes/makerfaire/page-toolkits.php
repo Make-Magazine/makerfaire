@@ -49,7 +49,11 @@ wp_reset_query();
 			<ul class="nav nav-tabs">
 				<?php 
 					foreach($tabArray as $value) {
-						echo('<li><a href="/' . $location . '/' . $pagegroup . '/' . strtolower(str_replace(" ","-", $value)) . '" ' . ($value == get_the_title() ? ' class="active"' : '') . '>' . $value . '</a></li>');
+						// allow ampersands in titles but strip them from urls
+	               $strippedValue = str_replace("  ", " ", str_replace("&#038;", "", $value));
+						$tabUrl = '/' . $location . '/' . $pagegroup . '/' . strtolower(str_replace(" ","-", $strippedValue));
+						
+						echo('<li><a href="' . $tabUrl . '" ' . ($value == get_the_title() ? ' class="active"' : '') . '>' . $value . '</a></li>');
 					}
 				?>
 			</ul>
