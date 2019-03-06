@@ -9,7 +9,8 @@ get_header(); ?>
 $path = $_SERVER['REQUEST_URI'];
 $urlArray = explode('/', $path);
 $location = $urlArray[1];
-$pagegroup = ucwords(str_replace("-"," ", $urlArray[2]));
+$pagegroup = $urlArray[2];
+$pagegroupPretty = ucwords(str_replace("-"," ", $pagegroup));
 
 
 $tabArray = [];
@@ -23,7 +24,9 @@ $query = new WP_Query( array(
 
 if ( $query->have_posts() ) {
     while ( $query->have_posts() ) : $query->the_post(); // WP loop
-        array_push($tabArray, get_the_title());
+	     if(strpos(get_the_permalink(), $pagegroup) !== false){
+        	  array_push($tabArray, get_the_title());
+		  }
     endwhile; // end of the loop.
 }
 
@@ -39,7 +42,7 @@ wp_reset_query();
 	<div class="row">
 		<div class="toolkit-header-title col-md-3 col-sm-4 col-xs-12">
 			<img src="/wp-content/themes/makerfaire/images/toolkit-icon.png" width="40px" height="40px" />
-			<h1><?php echo($pagegroup); ?></h1>
+			<h1><?php echo($pagegroupPretty); ?></h1>
 		</div>
 		<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12">
 			<ul class="nav nav-tabs">
