@@ -145,22 +145,6 @@
                             "maxlength": ""
                         },
                         {
-                            "key": "field_5c79ccf5c3a49",
-                            "label": "Header Link",
-                            "name": "header_link",
-                            "type": "url",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": ""
-                        },
-                        {
                             "key": "field_5c7d8970cac3a",
                             "label": "Section Body",
                             "name": "section_body",
@@ -206,5 +190,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1551899680
+    "modified": 1551910986
 }
