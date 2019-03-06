@@ -343,6 +343,7 @@ function getSchedule($formIDs) {
       
       $catList = implode(',',$category);
       
+    // NOTE (ts): For 'Workshop' update... this may be the spot where the image is set... TBD
       if ($form_type == 'Presentation') {
          $projPhoto = ($row->mkr1_photo != '' ? $row->mkr1_photo : $row->photo);
       } else {

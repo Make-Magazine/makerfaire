@@ -258,9 +258,8 @@ function field_display($lead,$form,$field_id,$fieldName) {
   //is this a valid field in the form
   if($field!=NULL){
     $value   = RGFormsModel::get_lead_field_value( $lead, $field );
-    $return  = mf_checkbox_display($field, $value, $form_id, $fieldName);
+    $return  = mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id);
   }
-
   return $return;
 }
 
@@ -561,15 +560,28 @@ function display_schedule($form_id,$lead,$section='sidebar'){
   }
 }
 
-function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
+function sortFlagsByLabel($a,$b) {
+   return strnatcmp($a['text'],$b['text']);
+};
+
+function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id) {
   $choices = '';
   $is_entry_detail = $field->is_entry_detail();
   $is_form_editor  = $field->is_form_editor();
   $output = '';
+
   //echo 'value is <br/>';
   //var_dump ($value);
   //echo '<br/><br/>';
   if ( is_array( $field->choices ) ) {
+
+   if($field_id === "304") {
+      //var_dump($field->choices);
+      usort($field->choices, sortFlagsByLabel);
+      //echo '<hr />';
+      //var_dump($field->choices);
+   }
+
     $choice_number = 1;
     foreach ( $field->choices as $choice ) {
       //echo 'choice is<br/>';

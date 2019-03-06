@@ -138,7 +138,7 @@ if ($type == 'project') {
     //add makershare data
     if($dest=='makershare'){
       //only return exhibit, presentation and performance
-      if($row['form_type'] == 'Exhibit' || $row['form_type'] == 'Presentation' || $row['form_type'] == 'Performance') {
+      if($row['form_type'] == 'Exhibit' || $row['form_type'] == 'Presentation' || $row['form_type'] == 'Workshop' || $row['form_type'] == 'Performance') {
         $app['form_type']     = $row['form_type'];
         $app['faire_name']    = $row['faire_name'];
         $app['faire']         = $row['faire'];
