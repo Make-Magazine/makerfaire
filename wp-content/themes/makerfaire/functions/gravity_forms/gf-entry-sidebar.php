@@ -570,38 +570,74 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id) {
   $is_form_editor  = $field->is_form_editor();
   $output = '';
 
+  $choices = $field->choices;
+  $inputs = $field->inputs;
+  $mergedChoicesAndInputs = [];
+  $useMerged = false;
+
+//   echo "<h4>Choices</h4>";
+//    echo "<pre>";
+//    var_dump($choices);
+//    echo "</pre>";
+//    echo "<br><br>";
+//    echo "<h4>Inputs</h4>";
+//    echo "<pre>";
+//    var_dump($inputs);
+//    echo "</pre>";
+
+  $choicesArray = $field->choices;
 
   if ( is_array( $field->choices ) ) {
-
+   //echo $field_id . "<br />";
    if($field_id === "304") {
+      $useMerged = true;
+         // var_dump($field->inputs); // label
+      
+      foreach($choices as $chItem) {
+         $found = false;
+         foreach($inputs as $inItem) {
+            // echo $chItem["text"] . "<br />";
+            // var_dump($inItem);
+            // echo "<br />";
+            if(in_array($chItem["text"], $inItem)) {
+               //echo "<h4>YES!!! ".$chItem["text"]."  ".$inItem['id']."</h4>";
+               $chItem["id"] = $inItem['id'];
+               $mergedChoicesAndInputs[] = $chItem;
+               $found = true;
+            } else {
+               //echo "<h4>Nope, not there...</h4>";
+               //throw new Exception("Choice ".$chItem["text"]." was not found in inputs");
+            }
+         }
+      }
 
+      // echo "<pre>";
+      // var_dump($mergedChoicesAndInputs);
+      // echo "</pre>";
+      usort($mergedChoicesAndInputs, sortFlagsByLabel);
+      $choicesArray = $mergedChoicesAndInputs;
 
-      // echo '<pre>';
-      // var_dump($field);
-      // var_dump($value);
-      // var_dump($form_id);
-      // var_dump($fieldName);
-      // var_dump($field_id);
-      // echo '</pre>';
-
-      // echo '<pre>';
-      // var_dump($field->choices);
-      // echo '</pre>';
-      //usort($field->choices, sortFlagsByLabel);
-      //echo '<hr />';
-      //var_dump($field->choices);
    }
 
+
+   // echo '</pre>';
+   // var_dump($mergedChoicesAndInputs);
+   // echo '<pre>';
+
     $choice_number = 1;
-    foreach ( $field->choices as $choice ) {
-      //echo 'choice is<br/>';
-      //var_dump($choice);
-      //echo '<br/>';
+    //foreach ( $field->choices as $choice ) {
+    foreach ( $choicesArray as $choice ) {
+
       if ( $choice_number % 10 == 0 ) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
         $choice_number ++;
       }
 
-      $input_id = $field->id . '.' . $choice_number;
+      if($useMerged) {
+         $input_id = $choice["id"];
+      } else {
+         $input_id = $field->id . '.' . $choice_number;
+      }
+      
 
       if ( $is_entry_detail || $is_form_editor || $form_id == 0 ){
         $id = $field->id . '_' . $choice_number ++;
