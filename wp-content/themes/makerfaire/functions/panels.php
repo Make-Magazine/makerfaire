@@ -18,6 +18,9 @@ function dispLayout($row_layout) {
          case '3_column': // 3 COLUMN LAYOUT
             $return = get3ColLayout();            
             break;
+         case '6_column': // 6 column navigation panel
+            $return = get6ColLayout();            
+            break;
          case '1_column_wysiwyg': // 1 column wysiwyg
             $return = get1ColWYSIWYG();            
             break;
@@ -331,7 +334,9 @@ function get3ColLayout() {
       switch ($column['column_type']) {
          case 'image':     // Image with optional link
             $alignment = $data['column_list_alignment'];
-            $image = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
+            $imageArr = $data['column_image_field'];                  
+            $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+            
             $cta_link = $data['image_cta'];
             $ctaText = $data['image_cta_text'];
 
@@ -370,6 +375,58 @@ function get3ColLayout() {
 
    $return .= ' </div>
               </section>'; // end div.container and section.content-panel
+   return $return;
+}
+
+/* * *************************************************** */
+/*  Function to return 6_column_photo_and_text_panel     */
+/* * *************************************************** */
+function get6ColLayout() {
+   $return = '';
+
+   $return .= '<section class="content-panel six-column">';
+
+   $panelTitle = get_sub_field('panel_title');
+   if ($panelTitle) {
+      $return .= ' <div class="row">
+                    <div class="col-xs-12 text-center padbottom">
+                      <h2 class="title yellow-underline">' . $panelTitle . '</h2>
+                    </div>
+                  </div>';
+   }
+
+   $return .= '   <div class="row">'; //start row
+   //get requested data for each column
+   $columns = get_sub_field('column');
+   //print_r($columns);
+   foreach ($columns as $column) {
+      $return .= '   <div class="col-sm-2">'; //start column
+      $data = $column['data'];
+      
+      $imageArr = $data['column_image_field'];
+            
+      $columnInfo = '';                     
+      $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+      
+      $cta_link = $data['image_cta'];
+      $ctaText = $data['image_cta_text'];
+
+      if (!empty($cta_link)) {
+         $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
+         if (!empty($ctaText)) {
+            $columnInfo .= '<p class="text-center sub-caption-bottom"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
+         }
+      } else {
+         $columnInfo = $image;
+      }            
+                        
+      $return .= $columnInfo;
+      $return .= '</div>'; //end column
+   }
+
+   $return .= '</div>'; //end row
+
+   $return .= ' </section>'; // end div.container and section.content-panel
    return $return;
 }
 
