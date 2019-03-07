@@ -10,13 +10,12 @@ get_header(); ?>
   if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
     <div class="container">
-      <?php the_content(); ?>
+      <?php //the_content(); ?>
     </div>
     <?php
 
     // check if the flexible content field has rows of data
     if( have_rows('content_panels')) {
-
       // loop through the rows of data
       while ( have_rows('content_panels') ) {
         the_row();
