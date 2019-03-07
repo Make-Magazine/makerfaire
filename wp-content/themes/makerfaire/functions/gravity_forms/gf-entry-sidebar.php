@@ -584,7 +584,7 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id) {
       // echo '<pre>';
       // var_dump($field->choices);
       // echo '</pre>';
-      //usort($field->choices, sortFlagsByLabel);
+      usort($field->choices, sortFlagsByLabel);
       //echo '<hr />';
       //var_dump($field->choices);
    }
