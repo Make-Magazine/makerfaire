@@ -7,20 +7,6 @@ get_header();
 <div id="main" class="front-page" role="main">
    <!-- Custom Panels -->
    <div class="page-content featured-faire customPanels">
-      <div class="mf-full-hero">
-         <div class="mf-left-text">
-            <div class="mf-title-text">
-               <h1>Maker Faire Bay Area 2019 <span>May 17-19</span></h1>
-            </div>
-            <div class="mf-notched-banner-outer">
-               <div class="mf-notched-banner-inner">
-                  <h2>Join us Friday Saturday and Sunday</h2>
-                  <h3>San Mateo County Event Center</h3>
-               </div>
-            </div>
-         </div>
-         <img class="mf-right-hero-img" src="wp-content/themes/makerfaire/images/hero_image_2019.png" alt="">
-      </div>
       <?php 
 
       // Are there custom panels to display?
