@@ -18,7 +18,7 @@ get_header(); ?>
                </div>
                <div class="mf-notched-banner-outer">
                   <div class="mf-notched-banner-inner">
-                     <h2>Join us Friday Saturday and Sunday</h2>
+                     <h2>Join Us Friday Saturday &amp; Sunday</h2>
                      <h3>San Mateo County Event Center</h3>
                   </div>
                </div>
