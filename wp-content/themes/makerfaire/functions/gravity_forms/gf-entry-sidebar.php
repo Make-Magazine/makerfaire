@@ -571,16 +571,19 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id) {
   $output = '';
 
 
-  echo '<pre>';
-  var_dump($field);
-  var_dump($value);
-  var_dump($form_id);
-  var_dump($fieldName);
-  var_dump($field_id);
-  echo '</pre>';
   if ( is_array( $field->choices ) ) {
 
    if($field_id === "304") {
+
+
+      echo '<pre>';
+      var_dump($field);
+      var_dump($value);
+      var_dump($form_id);
+      var_dump($fieldName);
+      var_dump($field_id);
+      echo '</pre>';
+
       // echo '<pre>';
       // var_dump($field->choices);
       // echo '</pre>';
