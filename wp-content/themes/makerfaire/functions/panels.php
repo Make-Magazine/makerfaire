@@ -334,7 +334,9 @@ function get3ColLayout() {
       switch ($column['column_type']) {
          case 'image':     // Image with optional link
             $alignment = $data['column_list_alignment'];
-            $image = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
+            $imageArr = $data['column_image_field'];                  
+            $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+            
             $cta_link = $data['image_cta'];
             $ctaText = $data['image_cta_text'];
 
@@ -382,9 +384,7 @@ function get3ColLayout() {
 function get6ColLayout() {
    $return = '';
 
-   $return .= '<section class="content-panel three-column">
-                <div class="flag-banner"></div>
-                <div class="container">';
+   $return .= '<section class="content-panel six-column">';
 
    $panelTitle = get_sub_field('panel_title');
    if ($panelTitle) {
@@ -398,19 +398,23 @@ function get6ColLayout() {
    $return .= '   <div class="row">'; //start row
    //get requested data for each column
    $columns = get_sub_field('column');
+   //print_r($columns);
    foreach ($columns as $column) {
       $return .= '   <div class="col-sm-2">'; //start column
       $data = $column['data'];
-      $columnInfo = '';
-                     
-      $image = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
+      
+      $imageArr = $data['column_image_field'];
+            
+      $columnInfo = '';                     
+      $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+      
       $cta_link = $data['image_cta'];
       $ctaText = $data['image_cta_text'];
 
       if (!empty($cta_link)) {
          $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
          if (!empty($ctaText)) {
-            $columnInfo .= '<p class="text-center sub-caption-dark"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
+            $columnInfo .= '<p class="text-center sub-caption-bottom"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
          }
       } else {
          $columnInfo = $image;
@@ -422,8 +426,7 @@ function get6ColLayout() {
 
    $return .= '</div>'; //end row
 
-   $return .= ' </div>
-              </section>'; // end div.container and section.content-panel
+   $return .= ' </section>'; // end div.container and section.content-panel
    return $return;
 }
 
