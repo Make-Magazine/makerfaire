@@ -5,4 +5,17 @@ jQuery(document).ready(function(){
 		  }, 500);
 		  return false;
 	});
+	
+	jQuery(".toolkit-section").mouseenter(function(){
+		var section = ".toolkit-nav ." +  jQuery(this).attr('id');
+		jQuery(".toolkit-nav li").removeClass("active");
+		jQuery(section).addClass("active");
+	});
+	
+	jQuery(".sub-section-header a").click(function(){
+		console.log("Tst");
+		jQuery(".toolkit-nav li").removeClass("active");
+		jQuery(this).parent().addClass("active");
+	});
+	
 });

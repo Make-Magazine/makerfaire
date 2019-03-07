@@ -31,6 +31,10 @@ if ( $query->have_posts() ) {
     endwhile; 
 }
 
+function urlify($string) {
+	return strtolower(str_replace(" ","-",$string));
+}
+
 wp_reset_query();
 
 ?>
@@ -51,7 +55,7 @@ wp_reset_query();
 					foreach($tabArray as $value) {
 						// allow ampersands in titles but strip them from urls
 	               $strippedValue = str_replace("  ", " ", str_replace("&#038;", "", $value));
-						$tabUrl = '/' . $location . '/' . $pagegroup . '/' . strtolower(str_replace(" ","-", $strippedValue));
+						$tabUrl = '/' . $location . '/' . $pagegroup . '/' . urlify($strippedValue);
 						
 						echo('<li><a href="' . $tabUrl . '" ' . ($value == get_the_title() ? ' class="active"' : '') . '>' . $value . '</a></li>');
 					}
@@ -87,7 +91,7 @@ wp_reset_query();
 							}else{
 								 $leftLinkClass = "sub-section-header";
 							}
-							echo('<li class="' . $leftLinkClass . '"><a href="#' .  strtolower(str_replace(" ","-",get_sub_field('header_text'))) . '">' . get_sub_field('header_text') . '</a></li>');
+							echo('<li class="' . $leftLinkClass . ' ' . urlify(get_sub_field('header_text')) . '"><a href="#' .  urlify(get_sub_field('header_text')) . '">' . get_sub_field('header_text') . '</a></li>');
 						}
 			      echo('</ul>');
 				}
@@ -103,9 +107,9 @@ wp_reset_query();
 						while (have_rows('sections')) {
 							the_row();
 							if(get_sub_field('section_type')) {
-								echo('<div class="toolkit-section image_grid">'); //image grid is here for the list styles until it's made universal
-									 echo('<a class="toolkit-anchor" name="' . strtolower(str_replace(" ","-",get_sub_field('header_text'))) . '"></a>');
-									 echo('<h2>' .  get_sub_field('header_text') . '</h2>');
+								echo('<div class="toolkit-section image_grid" id="' . urlify(get_sub_field('header_text')) .'">'); //image grid is here for the list styles until it's made universal
+									 echo('<a class="toolkit-anchor" name="' . urlify(get_sub_field('header_text')) . '"></a>');
+									 echo('<h2>' . get_sub_field('header_text') . '</h2>');
 									 echo(get_sub_field('section_body'));
 								echo('</div>');
 							}
