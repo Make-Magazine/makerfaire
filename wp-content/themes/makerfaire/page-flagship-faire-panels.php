@@ -9,9 +9,25 @@ get_header(); ?>
   <?php // theloop
   if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
-    <div class="container">
+    <!-- <div class="container"> -->
+
+      <div class="mf-full-hero">
+            <div class="mf-left-text">
+               <div class="mf-title-text">
+                  <h1>Maker Faire Bay Area 2019 <span>May 17-19</span></h1>
+               </div>
+               <div class="mf-notched-banner-outer">
+                  <div class="mf-notched-banner-inner">
+                     <h2>Join us Friday Saturday and Sunday</h2>
+                     <h3>San Mateo County Event Center</h3>
+                  </div>
+               </div>
+            </div>
+            <img class="mf-right-hero-img" src="../wp-content/themes/makerfaire/images/hero_image_2019.png" alt="">
+         </div>
+
       <?php //the_content(); ?>
-    </div>
+    <!-- </div> -->
     <?php
 
     // check if the flexible content field has rows of data
