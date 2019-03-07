@@ -576,7 +576,9 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id) {
   if ( is_array( $field->choices ) ) {
 
    if($field_id === "304") {
-      //var_dump($field->choices);
+      echo '<pre>';
+      var_dump($field->choices);
+      echo '</pre>';
       usort($field->choices, sortFlagsByLabel);
       //echo '<hr />';
       //var_dump($field->choices);
