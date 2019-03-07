@@ -6,6 +6,7 @@ jQuery(document).ready(function(){
 		  return false;
 	});
 	
+	// highlight the left nav based on what area of the page a user is mousing over or clicking on.
 	jQuery(".toolkit-section").mouseenter(function(){
 		var section = ".toolkit-nav ." +  jQuery(this).attr('id');
 		jQuery(".toolkit-nav li").removeClass("active");
@@ -13,7 +14,6 @@ jQuery(document).ready(function(){
 	});
 	
 	jQuery(".sub-section-header a").click(function(){
-		console.log("Tst");
 		jQuery(".toolkit-nav li").removeClass("active");
 		jQuery(this).parent().addClass("active");
 	});
