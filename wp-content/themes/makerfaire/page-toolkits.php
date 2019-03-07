@@ -32,7 +32,7 @@ if ( $query->have_posts() ) {
 }
 
 function urlify($string) {
-	return strtolower(str_replace(" ","-",$string));
+	return strtolower(str_replace(" ","-",preg_replace("/[^\s{a-zA-Z0-9}]/", '', $string)));
 }
 
 wp_reset_query();
