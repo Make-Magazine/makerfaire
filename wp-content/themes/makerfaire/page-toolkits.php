@@ -46,7 +46,7 @@ wp_reset_query();
   <div class="toolkit-header container-fluid">
 	<div class="row">
 		<div class="toolkit-header-title col-md-3 col-sm-4 col-xs-12">
-			<img src="/wp-content/themes/makerfaire/images/toolkit-icon.png" width="40px" height="40px" />
+			<img src="/wp-content/themes/makerfaire/images/toolkit-icon.png" width="25px" height="25px" />
 			<h1><?php echo($pagegroupPretty); ?></h1>
 		</div>
 		<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12">

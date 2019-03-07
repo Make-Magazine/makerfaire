@@ -6,6 +6,8 @@ jQuery(document).ready(function(){
 		  return false;
 	});
 	
+	// highlight the first one on load
+	jQuery("#menu-toolkit-left-hand-nav li").first().addClass("active");
 	// highlight the left nav based on what area of the page a user is mousing over or clicking on.
 	jQuery(".toolkit-section").mouseenter(function(){
 		var section = ".toolkit-nav ." +  jQuery(this).attr('id');
