@@ -40,9 +40,7 @@
 				.nav-tabs {
 					border-bottom: none;
 					margin-top: 17px;
-					@media screen and (max-width: 982px) {
-						margin-bottom: 3px;
-					}
+					margin-bottom: 3px;
 				}
 				.nav > li > a {
 					color: #333;
@@ -51,6 +49,10 @@
 					border: none;
 					border-radius: 0px;
 					padding: 11px 25px;
+					margin-top: 10px;
+					@media screen and (min-width: 767px) and (max-width: 900px) {
+						padding: 11px 12px;
+					}
 					&:hover, &:active, &:focus, &.active {
 						opacity: .9;
 						border: none;
