@@ -281,6 +281,13 @@
             display: block;
             color: #eb002b;
             margin-top: 4px;
+            @media screen and (max-width: 991px) {
+               display: inline;
+               &:before {
+                  content: ' - ';
+                  color: #333;
+               }
+            }
          }
       }
    }
@@ -290,6 +297,11 @@
       border: 47px solid #00aeef;
       border-right-color: transparent;
       position: relative;
+
+      @media screen and (max-width: 991px) {
+         background-color: #00aeef;// #00aeef;
+         border: none;
+      }
       h2, h3 {
          margin: 0;
          padding: 0;
@@ -298,16 +310,34 @@
       }
       h2 {
          font-size: 18px;
+         span {
+            display: block;
+            margin-top: 6px;
+            font-size: 21px;
+            @media screen and (max-width: 991px) {
+               display: inline;
+               font-size: 18px;
+               &:before {
+                  content: ' - ';
+               }
+            }
+         }
       }
-      h3 {
-         margin-top: 6px;
-         font-size: 21px;
-      }
+      // h3 {
+      //    margin-top: 6px;
+      //    font-size: 21px;
+      // }
       .mf-notched-banner-inner {
          position: absolute;
          top: -24px;
          left: -24px;
          //background-color: #00aeef;
+         @media screen and (max-width: 991px) {
+            position: relative;
+            top: auto;
+            left: auto;
+            padding: 12px 18px;
+         }
       }
    }
    .mf-right-hero-img {
