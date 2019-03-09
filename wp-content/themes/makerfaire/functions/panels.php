@@ -75,9 +75,10 @@ function getFeatMkPanel($row_layout) {
 
    //build the container div
    $return .= '<div class="container">';
+   //do not return yellow underline whenbackground is white
 
    $return .= '<div class="row text-center">
-            <div class="title-w-border-y yellow-underline">
+            <div class="panel-title title-w-border-y '.($background_color === "White" ? ' yellow-underline' : '') .'">
               <h2>' . $title . '</h2>
             </div>
           </div>';
@@ -316,7 +317,7 @@ function get3ColLayout() {
    if ($panelTitle) {
       $return .= ' <div class="row">
                     <div class="col-xs-12 text-center padbottom">
-                      <h2 class="title yellow-underline">' . $panelTitle . '</h2>
+                      <h2 class="panel-title yellow-underline">' . $panelTitle . '</h2>
                     </div>
                   </div>';
    }
@@ -387,7 +388,7 @@ function get6ColLayout() {
    if ($panelTitle) {
       $return .= ' <div class="row">
                     <div class="col-xs-12 text-center padbottom">
-                      <h2 class="title yellow-underline">' . $panelTitle . '</h2>
+                      <h2 class="panel-title yellow-underline">' . $panelTitle . '</h2>
                     </div>
                   </div>';
    }
@@ -440,7 +441,7 @@ function get1ColWYSIWYG() {
   if(get_sub_field('title')) {
     $return .=  '  <div class="row">
               <div class="col-xs-12 text-center padbottom">
-                <h2 class="title yellow-underline">' . get_sub_field('title') . '</h2>
+                <h2 class="panel-title yellow-underline">' . get_sub_field('title') . '</h2>
               </div>
             </div>';
   }
@@ -552,10 +553,8 @@ function getCTApanel() {
    $return .= '   <div class="container">
                      <div class="row text-center">
                         <div class="col-xs-12">
-                           <h3>
-                              <i class="fa fa-star"></i>
-                              <span>' . $cta_title . '</span>
-                              <i class="fa fa-star"></i>
+                           <h3>                              
+                              <span>' . $cta_title . '</span>                              
                            </h3>
                         </div>
                      </div>
@@ -851,7 +850,7 @@ function getSponsorPanel() {
       <div class="container">
          <div class="row">
             <div class="col-xs-12 text-center padbottom">
-               <h2 class="title yellow-underline">Thank You To Our Sponsors!</h2>
+               <h2 class="panel-title yellow-underline">Thank You To Our Sponsors!</h2>
             </div>
          </div>
          <div class="row">
@@ -952,7 +951,7 @@ function getFeatFairePanel(){
    // Display the panel title
    $title = (get_sub_field('featured_faires_title') ? get_sub_field('featured_faires_title') : '');   
    $return .= '<div class="row text-center">
-                  <div class="title-w-border-y yellow-underline">
+                  <div class="panel-title title-w-border-y yellow-underline">
                     <h2>' . $title . '</h2>
                   </div>
                 </div>';
