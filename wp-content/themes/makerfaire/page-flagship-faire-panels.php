@@ -10,7 +10,7 @@ get_header(); ?>
   if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
     <!-- <div class="container"> -->
-
+   
       <div class="mf-full-hero">
             <div class="mf-left-text">
                <div class="mf-title-text">
