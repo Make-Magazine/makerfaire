@@ -552,10 +552,8 @@ function getCTApanel() {
    $return .= '   <div class="container">
                      <div class="row text-center">
                         <div class="col-xs-12">
-                           <h3>
-                              <i class="fa fa-star"></i>
-                              <span>' . $cta_title . '</span>
-                              <i class="fa fa-star"></i>
+                           <h3>                              
+                              <span>' . $cta_title . '</span>                              
                            </h3>
                         </div>
                      </div>
