@@ -894,7 +894,26 @@
    
    // Common elements
 	.content-panel.six-column {
-		margin: 20px;
+      //margin: 20px;
+      .image-grid-row {
+         display: flex;
+         margin: 10px -10px;
+         padding: 0 20px;
+         @media screen and (max-width: 991px) {
+            flex-wrap: wrap;
+         }
+         .image-grid-col {
+            padding: 10px;
+            @media screen and (max-width: 991px) {
+               width: 33.3333333333%;
+               max-width: 320px;
+            }
+            @media screen and (max-width: 560px) {
+               width: 50%;
+               max-width: 320px;
+            }
+         }
+      }
 	}
    .sub-caption-bottom {
       background: #005E9A;

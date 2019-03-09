@@ -18,12 +18,11 @@ get_header(); ?>
                </div>
                <div class="mf-notched-banner-outer">
                   <div class="mf-notched-banner-inner">
-                     <h2>Join Us Friday Saturday &amp; Sunday</h2>
-                     <h3>San Mateo County Event Center</h3>
+                     <h2>Join Us Friday Saturday &amp; Sunday <span>San Mateo County Event Center</span></h2>
                   </div>
                </div>
             </div>
-            <img class="mf-right-hero-img" src="../wp-content/themes/makerfaire/images/hero_image_2019.png" alt="">
+            <img class="mf-right-hero-img" src="../wp-content/themes/makerfaire/images/hero_image_2019_test.png" alt="">
          </div>
 
       <?php //the_content(); ?>

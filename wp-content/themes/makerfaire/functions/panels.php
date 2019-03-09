@@ -395,12 +395,13 @@ function get6ColLayout() {
                   </div>';
    }
 
-   $return .= '   <div class="row">'; //start row
+   $return .= '   <div class="image-grid-row">'; //start row
    //get requested data for each column
    $columns = get_sub_field('column');
+   //$columnsCount = count($columns);
    //print_r($columns);
    foreach ($columns as $column) {
-      $return .= '   <div class="col-sm-2">'; //start column
+      $return .= '   <div class="image-grid-col">'; //start column
       $data = $column['data'];
       
       $imageArr = $data['column_image_field'];
