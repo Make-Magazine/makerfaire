@@ -49,6 +49,9 @@ function dispLayout($row_layout) {
          case 'social_media': //social media panel
             $return = getSocialPanel();            
             break;
+         case 'flag_banner_panel': //flag banner separator
+            $return = getFlagBannerPanel();
+            break;
       }
    }
    return $return;
@@ -69,11 +72,6 @@ function getFeatMkPanel($row_layout) {
 
    // Check if the background color selected was white
    $return .= '<section class="featured-maker-panel' . ($background_color === "White" ? ' white-back' : '') . '"> ';
-
-   //add the flag banner to the top of this panel only if the background color selected is white
-   if ($background_color === 'White') {
-      $return .= '<div class="flag-banner"></div>';
-   }
 
    //build the container div
    $return .= '<div class="container">';
@@ -301,7 +299,7 @@ function getFeatEvPanel($row_layout) {
           </div>';
    }
    $return .= '</div>'; //end div.container
-   $return .= '<div class="flag-banner"></div></section>';
+   $return .= '</section>';
    return $return;
 }
 
@@ -311,8 +309,7 @@ function getFeatEvPanel($row_layout) {
 function get3ColLayout() {
    $return = '';
 
-   $return .= '<section class="content-panel three-column">
-                <div class="flag-banner"></div>
+   $return .= '<section class="content-panel three-column">                
                 <div class="container">';
 
    $panelTitle = get_sub_field('panel_title');
@@ -1112,4 +1109,11 @@ function get_faire_backlink() {
       </div>';      
    }
    return $back_link_html;
+}
+
+/* **************************************************** */
+/* Function to return flag banner panel                 */
+/* **************************************************** */
+function getFlagBannerPanel() {
+ return '<div class="flag-banner"></div>';  
 }

@@ -85,7 +85,62 @@ if (function_exists('acf_add_local_field_group')) {
                      'min' => '',
                      'max' => 1
                   ),
-                  
+                  // Panel: flag separator banner
+                  array(
+                     'key' => '572d8358ky7e1',
+                     'name' => 'flag_banner_panel',
+                     'label' => 'Flag Banner Separator Panel',
+                     'display' => 'row',
+                     'sub_fields' => array(
+                        array(
+                           'layout' => 'horizontal',
+                           'choices' => array(
+                              'Active' => 'Active',
+                              'Inactive' => 'Inactive'
+                           ),
+                           'default_value' => 'show',
+                           'other_choice' => 0,
+                           'save_other_choice' => 0,
+                           'allow_null' => 0,
+                           'return_format' => 'value',
+                           'key' => 'field_572d8358ky7e2',
+                           'label' => 'Active/Inactive',
+                           'name' => 'activeinactive',
+                           'type' => 'radio',
+                           'instructions' => 'This adds a flag banner that can be used to separate panels.',
+                           'required' => 0,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => 'activeinactive',
+                              'id' => ''
+                           )
+                        ),
+                        array(
+                           'default_value' => '',
+                           'maxlength' => 100,
+                           'placeholder' => '',
+                           'prepend' => '',
+                           'append' => '',
+                           'key' => 'field_572d8358fe8e3',
+                           'label' => 'Newsletter Text',
+                           'name' => 'newsletter_panel_text',
+                           'type' => 'text',
+                           'instructions' => 'Please enter the text displayed on the left side of the panel.<br/>100 character limit.',
+                           'required' => 1,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => '',
+                              'id' => ''
+                           ),
+                           'readonly' => 0,
+                           'disabled' => 0
+                        )
+                     ),
+                     'min' => '',
+                     'max' => ''
+                  ),
                   // Panel: Newsletter signup
                   array(
                      'key' => '572d8358fe8e1',
