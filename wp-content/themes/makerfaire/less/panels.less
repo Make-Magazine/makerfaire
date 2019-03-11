@@ -899,18 +899,26 @@
          display: flex;
          margin: 10px -10px;
          padding: 0 20px;
-         @media screen and (max-width: 991px) {
+         @media screen and (max-width: 1200px) {
             flex-wrap: wrap;
          }
          .image-grid-col {
             padding: 10px;
-            @media screen and (max-width: 991px) {
-               width: 33.3333333333%;
-               max-width: 320px;
+            flex: 1 1 0;
+            img {
+               max-width: 100%;
             }
-            @media screen and (max-width: 560px) {
-               width: 50%;
-               max-width: 320px;
+            .sub-caption-bottom {
+               text-transform: uppercase;
+            }
+            @media screen and (max-width: 1200px) {
+               flex: 1 1 33.3%;
+            }
+            @media screen and (max-width: 768px) {
+               flex: 1 1 50%;
+            }
+            @media screen and (max-width: 420px) {
+               flex: 1 1 100%;
             }
          }
       }

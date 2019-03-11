@@ -403,9 +403,10 @@ function get6ColLayout() {
       $data = $column['data'];
       
       $imageArr = $data['column_image_field'];
+      //var_dump($imageArr['alt']);
             
       $columnInfo = '';                     
-      $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+      $image = '<img height="" width="" alt="'.$imageArr['alt'].'" class="ximg-responsive" src="' . $imageArr['url'] . '" />';
       
       $cta_link = $data['image_cta'];
       $ctaText = $data['image_cta_text'];
