@@ -1184,6 +1184,43 @@
 		margin-bottom: 0px;
 	}
 }
+
+// NOTE (ts): quick and dirty way to get the flag/button into the nav, using jQuery, see page-flagship-faire-panels.php
+.navBuyTix {
+   text-transform: uppercase;
+   background-image: url(../images/red_flag.png);
+   background-repeat: no-repeat;
+   height: 45px;
+   width: 220px;
+   padding-top: 4px;
+   padding-left: 28px;
+   z-index: 909;
+   position: absolute;
+   right: 0;
+   top: 7px;
+   font-size: 24px;
+   color: #fff;
+   background-size: 220px 45px;
+   font-family: 'Roboto Condensed';
+   &:hover {
+      text-decoration: underline;
+   }
+   @media (max-width: 1100px) {
+      display: none;
+      // position: fixed;
+      // top: 70px;
+   }
+   @media (max-width: 767px) {
+      // position: fixed;
+      // top: 70px;
+   }
+   @media screen and (min-width: 768px) and (max-width: 860px) {
+      // top: 270px;
+   }
+}
+
+
+
 /*
  * Row with equal height columns
  * --------------------------------------------------

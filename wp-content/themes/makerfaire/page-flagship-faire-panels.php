@@ -47,4 +47,16 @@ get_header(); ?>
 
 </div>
 
+
+<script>
+// NOTE (ts): Quick and dirty way of moving the floating Buy Tix button to the subnav
+jQuery('document').ready(function() {
+   var $tixButton = jQuery('.floatBuyTix').closest('a'),
+      $subNav = jQuery('#nav-level-2 .container');
+   $tixButton.detach();
+   $tixButton.find('.floatBuyTix').removeClass('floatBuyTix').addClass('navBuyTix');
+   $subNav.append($tixButton);
+});
+</script>
+
 <?php get_footer(); ?>
