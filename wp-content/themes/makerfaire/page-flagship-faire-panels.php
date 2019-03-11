@@ -9,6 +9,7 @@ get_header(); ?>
   <?php // theloop
   if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
+      <?php the_content(); ?>
     <!-- <div class="container"> -->
    
       <div class="mf-full-hero">
@@ -25,7 +26,6 @@ get_header(); ?>
             <img class="mf-right-hero-img" src="../wp-content/themes/makerfaire/images/hero_image_2019_test.png" alt="">
          </div>
 
-      <?php the_content(); ?>
     <!-- </div> -->
     <?php
 
