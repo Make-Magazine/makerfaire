@@ -25,7 +25,7 @@ get_header(); ?>
             <img class="mf-right-hero-img" src="../wp-content/themes/makerfaire/images/hero_image_2019_test.png" alt="">
          </div>
 
-      <?php //the_content(); ?>
+      <?php the_content(); ?>
     <!-- </div> -->
     <?php
 
