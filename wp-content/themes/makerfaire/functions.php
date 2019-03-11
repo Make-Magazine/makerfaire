@@ -386,6 +386,21 @@ function my_acf_flexible_content_layout_title( $title, $field, $layout, $i ) {
    if( $featureFairesTitle = get_sub_field('featured_faires_title') ) {
       $newTitle .= ' ' . $featureFairesTitle . ' ';
    }
+	
+	// Header Text - Maker Toolkit
+   if( $headerText = get_sub_field('header_text') ) {
+      $newTitle = strip_tags( $headerText );
+		?>
+		 <script type="text/javascript">
+			  (function($){
+					$(document).ready(function(){
+						 $('.acf-flexible-content .acf-postbox').addClass('closed');
+					});
+
+			  })(jQuery);
+		 </script>
+    <?php
+   }
 
    $newTitle .= '<div style="font-size: 12px; margin-right: 2em;">' . $title . '</div>';
 

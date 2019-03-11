@@ -65,10 +65,11 @@
 		}
 	}
 	.left-hand-nav {
-		@media screen and (min-width: 982px) {
-				position: -webkit-sticky;
-  				position: sticky;
-				top: 120px;
+		position: -webkit-sticky;
+		position: sticky;
+		top: 120px;
+		@media screen and (max-width: 982px) {
+			display: none;
 		}
 		#menu-toolkit-left-hand-nav {
 			margin-top: 15px;
