@@ -402,3 +402,20 @@ function my_acf_flexible_content_layout_title( $title, $field, $layout, $i ) {
 add_filter('acf/fields/flexible_content/layout_title', 'my_acf_flexible_content_layout_title', 10, 4);
 
 
+// set the fields that should cause the flexible content fields to collapse
+function ACF_flexible_content_collapse() {
+  if( get_field('sections') ) { // Maker toolkit
+	  ?>
+	  <style id="acf-flexible-content-collapse">.acf-flexible-content .acf-fields { display: none; }</style>
+	  <script type="text/javascript"> 
+			jQuery(function($) {
+				 $('.acf-flexible-content .layout').addClass('-collapsed');
+				 $('#acf-flexible-content-collapse').detach();
+			});
+	  </script>
+	  <?php
+  }
+}
+
+add_action('acf/input/admin_head', 'ACF_flexible_content_collapse');
+

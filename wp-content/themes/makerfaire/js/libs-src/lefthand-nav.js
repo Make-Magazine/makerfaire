@@ -20,4 +20,39 @@ jQuery(document).ready(function(){
 		jQuery(this).parent().addClass("active");
 	});
 	
+	/*
+	var leftNavPos = 0;
+	var leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
+	
+	jQuery(window).scroll( function(){
+		leftNavScroll();
+		leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
+	});
+	
+	leftNavScroll();
+	
+	if(jQuery(".downArrow").length && ( leftNavBottom > 605 ) ){
+		jQuery(".downArrow").on('mousedown', function() {
+			console.log(jQuery(".downArrow").offset().top);
+			console.log("vs leftnav bottom: " + leftNavBottom);
+			leftNavPos+=50;
+			jQuery(".toolkit-nav").animate({ bottom: leftNavPos });
+			leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
+		});
+	}*/
+	
+	// if the lefthand nav is too tall, just don't have it be sticky
+	if(jQuery(".toolkit-nav").height() > jQuery(window).height()) {
+		jQuery(".left-hand-nav").css("position", "relative").css("top", "0px");
+	}
+
 });
+
+function leftNavScroll(){
+	if( jQuery(".toolkit-nav").height() > jQuery(window).height() && jQuery(".downArrow").length == 0 ) {
+		jQuery(".left-hand-nav").append("<a class='downArrow'></a>");
+	}else{
+		jQuery(".left-hand-nav").remove(".downArrow");
+	}
+	
+}

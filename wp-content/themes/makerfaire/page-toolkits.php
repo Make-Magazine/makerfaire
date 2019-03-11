@@ -106,10 +106,15 @@ wp_reset_query();
 					echo('<div class="toolkit-section-wrapper">');
 						while (have_rows('sections')) {
 							the_row();
+							if(get_sub_field('section_type') == "Header") {
+								 $leftLinkClass = "section-header";
+							}else{
+								 $leftLinkClass = "sub-section-header";
+							}
 							if(get_sub_field('section_type')) {
 								echo('<div class="toolkit-section image_grid" id="' . urlify(get_sub_field('header_text')) .'">'); //image grid is here for the list styles until it's made universal
 									 echo('<a class="toolkit-anchor" name="' . urlify(get_sub_field('header_text')) . '"></a>');
-									 echo('<h2>' . get_sub_field('header_text') . '</h2>');
+									 echo('<h2 class="' . $leftLinkClass . '">' . get_sub_field('header_text') . '</h2>');
 									 echo(get_sub_field('section_body'));
 								echo('</div>');
 							}
