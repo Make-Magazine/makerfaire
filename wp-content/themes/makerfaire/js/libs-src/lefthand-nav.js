@@ -1,3 +1,13 @@
+jQuery.fn.isInViewport = function() {
+    var elementTop = jQuery(this).offset().top;
+    var elementBottom = elementTop + jQuery(this).outerHeight();
+
+    var viewportTop = jQuery(window).scrollTop();
+    var viewportBottom = viewportTop + jQuery(window).height();
+
+    return elementBottom > viewportTop && elementTop < viewportBottom;
+};
+
 jQuery(document).ready(function(){
 	jQuery('a[href^="#"]:not(a[href="#"])').click(function(){
 		  jQuery('html, body').animate({
@@ -18,6 +28,19 @@ jQuery(document).ready(function(){
 	jQuery(".sub-section-header a").click(function(){
 		jQuery(".toolkit-nav li").removeClass("active");
 		jQuery(this).parent().addClass("active");
+	});
+	
+	// if the lefthand nav is too tall, just don't have it be sticky
+	if(jQuery(".toolkit-nav").height() > jQuery(window).height()) {
+		jQuery(".left-hand-nav").css("position", "relative").css("top", "0px");
+	}
+	
+	jQuery(window).scroll(function(){
+		if (!jQuery('#menu-toolkit-left-hand-nav').isInViewport() && jQuery('#menu-toolkit-left-hand-nav .back-to-top').length == 0) {
+			jQuery(".left-nav-back-to-top").show();
+		}else{
+			jQuery(".left-nav-back-to-top").hide();
+		}
 	});
 	
 	/*
@@ -41,10 +64,7 @@ jQuery(document).ready(function(){
 		});
 	}*/
 	
-	// if the lefthand nav is too tall, just don't have it be sticky
-	if(jQuery(".toolkit-nav").height() > jQuery(window).height()) {
-		jQuery(".left-hand-nav").css("position", "relative").css("top", "0px");
-	}
+
 
 });
 

@@ -96,6 +96,13 @@ wp_reset_query();
 			      echo('</ul>');
 				}
 			?>
+			<div class="left-nav-back-to-top" style="display:none;">
+				<div class="row">
+					<div class="col-sm-12 text-center back-to-top">
+						<a href="#topofpage">BACK TO TOP</a>
+					</div>
+				</div>
+			</div>
 			<?php endwhile; ?>			
 			<?php endif; ?>
       </div>
