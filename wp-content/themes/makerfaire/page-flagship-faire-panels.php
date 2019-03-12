@@ -12,19 +12,18 @@ get_header(); ?>
       <?php the_content(); ?>
     <!-- <div class="container"> -->
    
-      <div class="mf-full-hero">
-            <div class="mf-left-text">
-               <div class="mf-title-text">
-                  <h1>Maker Faire Bay Area 2019 <span>May 17-19</span></h1>
-               </div>
-               <div class="mf-notched-banner-outer">
-                  <div class="mf-notched-banner-inner">
-                     <h2>Join Us Friday, Saturday &amp; Sunday <span>San Mateo County Event Center</span></h2>
-                  </div>
+      <div class="mf-full-hero" style="background-image: url('../wp-content/themes/makerfaire/images/hero_image_ba2019.png');">
+         <div class="mf-left-text">
+            <div class="mf-title-text">
+               <h1>Maker Faire Bay Area 2019 <span>May 17-19</span></h1>
+            </div>
+            <div class="mf-notched-banner-outer">
+               <div class="mf-notched-banner-inner">
+                  <h2>Join Us Friday, Saturday &amp; Sunday <span>San Mateo County Event Center</span></h2>
                </div>
             </div>
-            <img class="mf-right-hero-img" src="../wp-content/themes/makerfaire/images/hero_image_2019_test.png" alt="">
          </div>
+      </div>
 
     <!-- </div> -->
     <?php

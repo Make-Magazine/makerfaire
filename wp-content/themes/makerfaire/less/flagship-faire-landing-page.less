@@ -253,14 +253,24 @@
    width: 100%;
    position: relative;
    display: flex;
+   background-repeat: no-repeat;
+   background-size: cover;
+   background-position: top -27px right;
+   min-height: 200px;
+   @media screen and (max-width:  1450px) {
+      background-position: top right;
+   }
    @media screen and (max-width: 991px) {
-      //display: block;
       flex-direction: column;
+      justify-content: flex-end;
+      background-position: top right -260px;
+      padding-top: 190px;
+   }
+   @media screen and (max-width: 420px) {
+      background-position: top right -400px;
    }
    .mf-left-text {
       flex-basis: 550px;
-      position: relative;
-      z-index: 10;
       @media screen and (max-width: 991px) {
          flex-basis: auto;
          order: 2;
@@ -274,7 +284,6 @@
          margin: 0;
          padding: 0;
          font-size: 38px;
-         //text-transform: uppercase;
          font-family: Roboto;
          @media screen and (max-width: 991px) {
             font-size: 30px;
@@ -298,13 +307,13 @@
    }
    .mf-notched-banner-outer {
       color: #fff;
-      background-color: transparent;// #00aeef;
+      background-color: transparent;
       border: 41px solid #00aeef;
       border-right-color: transparent;
       position: relative;
 
       @media screen and (max-width: 991px) {
-         background-color: #00aeef;// #00aeef;
+         background-color: #00aeef;
          border: none;
       }
       h2 {
@@ -312,8 +321,6 @@
          padding: 0;
          text-transform: uppercase;
          font-family: Roboto;
-      }
-      h2 {
          font-size: 18px;
          @media screen and (max-width: 991px) {
             font-size: 16px;
@@ -336,7 +343,6 @@
          position: absolute;
          top: -24px;
          left: -20px;
-         //background-color: #00aeef;
          @media screen and (max-width: 991px) {
             position: relative;
             top: auto;
@@ -345,24 +351,6 @@
          }
       }
    }
-   .mf-right-hero-img {
-      //float: right;
-      position: absolute;
-      right: 0;
-      top: 0;
-      @media screen and (max-width: 991px) {
-         position: relative;
-         right: auto;
-         top: auto;
-         order: 1;
-         max-width: 100%;
-      }
-   }
-   @media screen and (max-width: 991px) {
-
-   }
-
-
 }
 
    .page-id-637980 .mf-full-hero { display:none}
