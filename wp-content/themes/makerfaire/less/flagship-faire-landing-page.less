@@ -255,19 +255,35 @@
    display: flex;
    background-repeat: no-repeat;
    background-size: cover;
-   background-position: top -27px right;
-   min-height: 200px;
+   background-position: top -100px right;
+   min-height: 400px;
+   @media screen and (max-width:  2000px) {
+      background-position: top -80px right; 
+      min-height: 300px;
+   }
    @media screen and (max-width:  1450px) {
-      background-position: top right;
+      background-position: top -60px right -180px;
+      min-height: 200px;
+   }
+   @media screen and (max-width:  1250px) {
+      // background-position: top -100px right -100px;
+      // min-height: 200px;
    }
    @media screen and (max-width: 991px) {
+      min-height: 200px;
       flex-direction: column;
       justify-content: flex-end;
-      background-position: top right -260px;
-      padding-top: 190px;
+      background-position: top -34px right;
+      padding-top: 240px;
    }
-   @media screen and (max-width: 420px) {
-      background-position: top right -400px;
+   @media screen and (max-width:  768px) {
+      background-position: top -34px right  -80px;
+   }
+   @media screen and (max-width: 600px) {
+      background-position: top -34px right -236px;
+   }
+   @media screen and (max-width: 400px) {
+      background-position: top -34px right -286px;
    }
    .mf-left-text {
       flex-basis: 550px;

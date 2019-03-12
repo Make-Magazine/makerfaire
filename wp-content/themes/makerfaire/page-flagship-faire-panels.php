@@ -12,8 +12,8 @@ get_header(); ?>
     <!-- <div class="container"> -->
    
       <?php the_content(); ?>
-      
-      <div class="mf-full-hero" style="background-image: url('../wp-content/themes/makerfaire/images/hero_image_ba2019.png');">
+
+      <div class="mf-full-hero" style="background-image: url('../wp-content/themes/makerfaire/images/hero_ba2019_lg.jpg');">
          <div class="mf-left-text">
             <div class="mf-title-text">
                <h1>Maker Faire Bay Area 2019 <span>May 17-19</span></h1>
