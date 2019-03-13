@@ -31,6 +31,10 @@ if ( $query->have_posts() ) {
     endwhile; 
 }
 
+function urlify($string) {
+	return strtolower(str_replace(" ","-",preg_replace("/[^\s{a-zA-Z0-9}]/", '', $string)));
+}
+
 wp_reset_query();
 
 ?>
@@ -42,7 +46,7 @@ wp_reset_query();
   <div class="toolkit-header container-fluid">
 	<div class="row">
 		<div class="toolkit-header-title col-md-3 col-sm-4 col-xs-12">
-			<img src="/wp-content/themes/makerfaire/images/toolkit-icon.png" width="40px" height="40px" />
+			<img src="/wp-content/themes/makerfaire/images/toolkit-icon.png" width="25px" height="25px" />
 			<h1><?php echo($pagegroupPretty); ?></h1>
 		</div>
 		<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12">
@@ -51,7 +55,7 @@ wp_reset_query();
 					foreach($tabArray as $value) {
 						// allow ampersands in titles but strip them from urls
 	               $strippedValue = str_replace("  ", " ", str_replace("&#038;", "", $value));
-						$tabUrl = '/' . $location . '/' . $pagegroup . '/' . strtolower(str_replace(" ","-", $strippedValue));
+						$tabUrl = '/' . $location . '/' . $pagegroup . '/' . urlify($strippedValue);
 						
 						echo('<li><a href="' . $tabUrl . '" ' . ($value == get_the_title() ? ' class="active"' : '') . '>' . $value . '</a></li>');
 					}
@@ -87,11 +91,18 @@ wp_reset_query();
 							}else{
 								 $leftLinkClass = "sub-section-header";
 							}
-							echo('<li class="' . $leftLinkClass . '"><a href="#' .  strtolower(str_replace(" ","-",get_sub_field('header_text'))) . '">' . get_sub_field('header_text') . '</a></li>');
+							echo('<li class="' . $leftLinkClass . ' ' . urlify(get_sub_field('header_text')) . '"><a href="#' .  urlify(get_sub_field('header_text')) . '">' . get_sub_field('header_text') . '</a></li>');
 						}
 			      echo('</ul>');
 				}
 			?>
+			<div class="left-nav-back-to-top" style="display:none;">
+				<div class="row">
+					<div class="col-sm-12 text-center back-to-top">
+						<a href="#topofpage">BACK TO TOP</a>
+					</div>
+				</div>
+			</div>
 			<?php endwhile; ?>			
 			<?php endif; ?>
       </div>
@@ -102,10 +113,15 @@ wp_reset_query();
 					echo('<div class="toolkit-section-wrapper">');
 						while (have_rows('sections')) {
 							the_row();
+							if(get_sub_field('section_type') == "Header") {
+								 $leftLinkClass = "section-header";
+							}else{
+								 $leftLinkClass = "sub-section-header";
+							}
 							if(get_sub_field('section_type')) {
-								echo('<div class="toolkit-section image_grid">'); //image grid is here for the list styles until it's made universal
-									 echo('<a class="toolkit-anchor" name="' . strtolower(str_replace(" ","-",get_sub_field('header_text'))) . '"></a>');
-									 echo('<h2>' .  get_sub_field('header_text') . '</h2>');
+								echo('<div class="toolkit-section image_grid" id="' . urlify(get_sub_field('header_text')) .'">'); //image grid is here for the list styles until it's made universal
+									 echo('<a class="toolkit-anchor" name="' . urlify(get_sub_field('header_text')) . '"></a>');
+									 echo('<h2 class="' . $leftLinkClass . '">' . get_sub_field('header_text') . '</h2>');
 									 echo(get_sub_field('section_body'));
 								echo('</div>');
 							}

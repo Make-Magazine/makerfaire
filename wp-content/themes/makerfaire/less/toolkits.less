@@ -1,4 +1,8 @@
 .page-template-page-toolkits {
+	header, footer {
+		position: relative;
+		z-index: 99;
+	}
 	@media screen and (min-width: 982px) {
 		overflow: initial !important;
 		.page-leftnav > .row .content {
@@ -13,18 +17,24 @@
 	h1 {
 		font-weight: 400;
 		font-size: 28px;
-		margin-top: 18px;
+		margin-top: 20px;
 		white-space: nowrap;
 	}
 	h2 {
 		font-size: 24px;
+		&.section-header {
+			text-transform: uppercase;
+		}
 	}
 	h3 {
 		font-size: 20px;
 	}
 	.image_grid:last-child { padding-bottom: 0px; }
 	.toolkit-header {
+		background: #fff;
 		border-bottom: solid 1px #ccc;
+		position: relative;
+		z-index: 9;
 		@media screen and (max-width: 982px) {
 			margin-bottom: 30px;
 		}
@@ -33,16 +43,14 @@
 				padding-left: 35px;
 				img { 
 					float: left;
-					margin: 10px 25px 0 10px;
+					margin: 19px 15px 0 10px;
 				}
 			}
 			.toolkit-tabs {
 				.nav-tabs {
 					border-bottom: none;
 					margin-top: 17px;
-					@media screen and (max-width: 982px) {
-						margin-bottom: 3px;
-					}
+					margin-bottom: 3px;
 				}
 				.nav > li > a {
 					color: #333;
@@ -51,6 +59,10 @@
 					border: none;
 					border-radius: 0px;
 					padding: 11px 25px;
+					margin-top: 10px;
+					@media screen and (min-width: 767px) and (max-width: 900px) {
+						padding: 11px 12px;
+					}
 					&:hover, &:active, &:focus, &.active {
 						opacity: .9;
 						border: none;
@@ -63,19 +75,23 @@
 		}
 	}
 	.left-hand-nav {
-		@media screen and (min-width: 982px) {
-				position: -webkit-sticky;
-  				position: sticky;
-				top: 120px;
+		position: -webkit-sticky;
+		position: sticky;
+		top: 120px;
+		z-index: 8;
+		@media screen and (max-width: 982px) {
+			display: none;
 		}
 		#menu-toolkit-left-hand-nav {
 			margin-top: 15px;
 			@media screen and (min-width: 1200px) {
-				padding-left: 85px;
+				padding-left: 60px;
 			}
 			li {
 				a {
-					color: #37afed;
+					color: #1989C7;
+					font-size: 16px;
+					line-height: 24px;
 					&:hover {
 						color: #4a4a4a;
 					}
@@ -86,14 +102,34 @@
 					background: none;
 				}
 				a {
-					color: #4a4a4a;
-					font-size: 16px;
+					color: #333;
 					line-height: 24px;
 					text-transform: uppercase;
 					pointer-events: none;
 					cursor: pointer
 				}
-		  }
+		   }
+			li.active { // highlight the section in the leftnav
+				background: #f0f0f0;
+				a { color: #4a4a4a; }
+			}
+		}
+		.downArrow {
+			position: sticky;
+			bottom: 30px;
+			margin-left: 40%;
+			padding-top: 20px;
+			&::after {
+				font-family: "Linearicons";
+				content: '\e95f';
+				color: #37afed;
+				font-size: 36px;
+				text-shadow:
+					-0px -0px 5px #fff,  
+					 5px -5px 5px #fff,
+					 -5px 5px 5px #fff,
+					  5px 5px 5px #fff;
+			}
 		}
 	}
 	.toolkit-section-wrapper {
@@ -110,6 +146,12 @@
 
 }
 
+.left-nav-back-to-top {
+	position: fixed;
+	top: 150px;
+	width: 20%;
+}
+
 .back-to-top {
 	a{
 		padding: 25px;
@@ -122,6 +164,10 @@
 		}
 		&:hover, &:active, &:focus {
 			text-decoration: none;
+		}
+		@media screen and (max-width: 981px) {
+			transform: scaleY(-1);
+			display: none;
 		}
 	}
 }
