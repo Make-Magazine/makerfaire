@@ -85,7 +85,62 @@ if (function_exists('acf_add_local_field_group')) {
                      'min' => '',
                      'max' => 1
                   ),
-                  
+                  // Panel: flag separator banner
+                  array(
+                     'key' => '572d8358ky7e1',
+                     'name' => 'flag_banner_panel',
+                     'label' => 'Flag Banner Separator Panel',
+                     'display' => 'row',
+                     'sub_fields' => array(
+                        array(
+                           'layout' => 'horizontal',
+                           'choices' => array(
+                              'Active' => 'Active',
+                              'Inactive' => 'Inactive'
+                           ),
+                           'default_value' => 'show',
+                           'other_choice' => 0,
+                           'save_other_choice' => 0,
+                           'allow_null' => 0,
+                           'return_format' => 'value',
+                           'key' => 'field_572d8358ky7e2',
+                           'label' => 'Active/Inactive',
+                           'name' => 'activeinactive',
+                           'type' => 'radio',
+                           'instructions' => 'This adds a flag banner that can be used to separate panels.',
+                           'required' => 0,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => 'activeinactive',
+                              'id' => ''
+                           )
+                        ),
+                        array(
+                           'default_value' => '',
+                           'maxlength' => 100,
+                           'placeholder' => '',
+                           'prepend' => '',
+                           'append' => '',
+                           'key' => 'field_572d8358fe8e3',
+                           'label' => 'Newsletter Text',
+                           'name' => 'newsletter_panel_text',
+                           'type' => 'text',
+                           'instructions' => 'Please enter the text displayed on the left side of the panel.<br/>100 character limit.',
+                           'required' => 1,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => '',
+                              'id' => ''
+                           ),
+                           'readonly' => 0,
+                           'disabled' => 0
+                        )
+                     ),
+                     'min' => '',
+                     'max' => ''
+                  ),
                   // Panel: Newsletter signup
                   array(
                      'key' => '572d8358fe8e1',
@@ -1235,7 +1290,7 @@ if (function_exists('acf_add_local_field_group')) {
                                           'class' => '',
                                           'id' => ''
                                        ),
-                                       'return_format' => 'url',
+                                       'return_format' => 'array',
                                        'preview_size' => 'thumbnail',
                                        'library' => 'all',
                                        'min_width' => '',
@@ -1449,6 +1504,158 @@ if (function_exists('acf_add_local_field_group')) {
                                           )
                                        )
                                     )
+                                 )
+                              )
+                           )
+                        )
+                     ),
+                     'min' => '',
+                     'max' => ''
+                  ),
+                   
+                  // Panel: 6 column - 6 column navigation panel
+                  array(
+                     'key' => '5b4e51639cd8f',
+                     'name' => '6_column',
+                     'label' => '6 column navigation panel',
+                     'display' => 'block',
+                     'sub_fields' => array(
+                        array(             
+                           'key' => 'field_5b4e70cd5d7d8',
+                           'label' => 'Active/Inactive',
+                           'name' => 'activeinactive',
+                           'type' => 'radio',
+                           'instructions' => '',
+                           'required' => 0,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => '',
+                              'id' => ''
+                           ),
+                           'choices' => array(
+                              'Active' => 'Active',
+                              'Inactive' => 'Inactive'
+                           ),
+                           'allow_null' => 0,
+                           'other_choice' => 0,
+                           'save_other_choice' => 0,
+                           'default_value' => 'active',
+                           'layout' => 'horizontal',
+                           'return_format' => 'value'
+                        ),
+                        array(       
+                           'key' => 'field_5b4e70cd5d7d9',
+                           'label' => 'Panel Title',
+                           'name' => 'panel_title',
+                           'type' => 'text',
+                           'instructions' => 'Optional: 50 character limit.',
+                           'required' => 0,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => '',
+                              'id' => ''
+                           ),
+                           'default_value' => '',
+                           'placeholder' => '',
+                           'prepend' => '',
+                           'append' => '',
+                           'maxlength' => 50
+                        ),
+                        array(
+                           'key' => 'field_5b4e70cd5d7d0',
+                           'label' => 'Columns',
+                           'name' => 'column',
+                           'type' => 'repeater',
+                           'instructions' => '',
+                           'required' => 0,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => '',
+                              'id' => ''
+                           ),
+                           'collapsed' => '',
+                           'min' => 2,
+                           'max' => 6,
+                           'layout' => 'table',
+                           'button_label' => '',
+                           'sub_fields' => array(                              
+                              array(
+                                 'key' => 'field_5b4e70cd5d7d2',
+                                 'label' => 'Data',
+                                 'name' => 'data',
+                                 'type' => 'group',
+                                 'instructions' => '',
+                                 'required' => 0,
+                                 'conditional_logic' => 0,
+                                 'wrapper' => array(
+                                    'width' => '',
+                                    'class' => '',
+                                    'id' => ''
+                                 ),
+                                 'layout' => 'block',
+                                 // Array of Images
+                                 'sub_fields' => array(
+                                    //Image
+                                    array(
+                                       'key' => 'field_5b4e70cd5d7d3',
+                                       'label' => 'Image',
+                                       'name' => 'column_image_field',
+                                       'type' => 'image',
+                                       'instructions' => 'Upload an image',
+                                       'required' => 1,                                  
+                                       'wrapper' => array(
+                                          'width' => '',
+                                          'class' => '',
+                                          'id' => ''
+                                       ),
+                                       'return_format' => 'array',
+                                       'preview_size' => 'thumbnail',
+                                       'library' => 'all',
+                                       'min_width' => '',
+                                       'min_height' => '',
+                                       'min_size' => '',
+                                       'max_width' => '',
+                                       'max_height' => '',
+                                       'max_size' => '',
+                                       'mime_types' => ''
+                                    ),
+                                    // Image Link/URL
+                                    array(
+                                       'key' => 'field_5b4e70cd5d7d4',
+                                       'label' => 'Image Link',
+                                       'name' => 'image_cta',
+                                       'type' => 'url',
+                                       'instructions' => 'Optional - If supplied, this will make the image a clickable link.',
+                                       'required' => 0,                          
+                                       'wrapper' => array(
+                                          'width' => '',
+                                          'class' => '',
+                                          'id' => ''
+                                       ),
+                                       'default_value' => '',
+                                       'placeholder' => ''
+                                    ),
+                                    array(
+                                       'key' => 'field_5b4e70cd5d7d5',
+                                       'label' => 'Link Text',
+                                       'name' => 'image_cta_text',
+                                       'type' => 'text',
+                                       'instructions' => 'Optional - If supplied, an additional link is displayed below the image using this text.',
+                                       'required' => 0,                                      
+                                       'wrapper' => array(
+                                          'width' => '',
+                                          'class' => '',
+                                          'id' => ''
+                                       ),
+                                       'default_value' => '',
+                                       'placeholder' => '',
+                                       'prepend' => '',
+                                       'append' => '',
+                                       'maxlength' => ''
+                                    )                                                                                                          
                                  )
                               )
                            )

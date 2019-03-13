@@ -18,6 +18,9 @@ function dispLayout($row_layout) {
          case '3_column': // 3 COLUMN LAYOUT
             $return = get3ColLayout();            
             break;
+         case '6_column': // 6 column navigation panel
+            $return = get6ColLayout();            
+            break;
          case '1_column_wysiwyg': // 1 column wysiwyg
             $return = get1ColWYSIWYG();            
             break;
@@ -46,6 +49,9 @@ function dispLayout($row_layout) {
          case 'social_media': //social media panel
             $return = getSocialPanel();            
             break;
+         case 'flag_banner_panel': //flag banner separator
+            $return = getFlagBannerPanel();
+            break;
       }
    }
    return $return;
@@ -67,16 +73,12 @@ function getFeatMkPanel($row_layout) {
    // Check if the background color selected was white
    $return .= '<section class="featured-maker-panel' . ($background_color === "White" ? ' white-back' : '') . '"> ';
 
-   //add the flag banner to the top of this panel only if the background color selected is white
-   if ($background_color === 'White') {
-      $return .= '<div class="flag-banner"></div>';
-   }
-
    //build the container div
    $return .= '<div class="container">';
+   //do not return yellow underline whenbackground is white
 
    $return .= '<div class="row text-center">
-            <div class="title-w-border-y yellow-underline">
+            <div class="panel-title title-w-border-y '.($background_color === "White" ? ' yellow-underline' : '') .'">
               <h2>' . $title . '</h2>
             </div>
           </div>';
@@ -298,7 +300,7 @@ function getFeatEvPanel($row_layout) {
           </div>';
    }
    $return .= '</div>'; //end div.container
-   $return .= '<div class="flag-banner"></div></section>';
+   $return .= '</section>';
    return $return;
 }
 
@@ -308,15 +310,14 @@ function getFeatEvPanel($row_layout) {
 function get3ColLayout() {
    $return = '';
 
-   $return .= '<section class="content-panel three-column">
-                <div class="flag-banner"></div>
+   $return .= '<section class="content-panel three-column">                
                 <div class="container">';
 
    $panelTitle = get_sub_field('panel_title');
    if ($panelTitle) {
       $return .= ' <div class="row">
                     <div class="col-xs-12 text-center padbottom">
-                      <h2 class="title yellow-underline">' . $panelTitle . '</h2>
+                      <h2 class="panel-title yellow-underline">' . $panelTitle . '</h2>
                     </div>
                   </div>';
    }
@@ -331,7 +332,9 @@ function get3ColLayout() {
       switch ($column['column_type']) {
          case 'image':     // Image with optional link
             $alignment = $data['column_list_alignment'];
-            $image = '<img class="img-responsive" src="' . $data['column_image_field'] . '" />';
+            $imageArr = $data['column_image_field'];                  
+            $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+            
             $cta_link = $data['image_cta'];
             $ctaText = $data['image_cta_text'];
 
@@ -373,6 +376,59 @@ function get3ColLayout() {
    return $return;
 }
 
+/* * *************************************************** */
+/*  Function to return 6_column_photo_and_text_panel     */
+/* * *************************************************** */
+function get6ColLayout() {
+   $return = '';
+
+   $return .= '<section class="content-panel six-column">';
+
+   $panelTitle = get_sub_field('panel_title');
+   if ($panelTitle) {
+      $return .= ' <div class="row">
+                    <div class="col-xs-12 text-center padbottom">
+                      <h2 class="panel-title yellow-underline">' . $panelTitle . '</h2>
+                    </div>
+                  </div>';
+   }
+
+   $return .= '   <div class="image-grid-row">'; //start row
+   //get requested data for each column
+   $columns = get_sub_field('column');
+   //$columnsCount = count($columns);
+   //print_r($columns);
+   foreach ($columns as $column) {
+      $return .= '   <div class="image-grid-col">'; //start column
+      $data = $column['data'];
+      
+      $imageArr = $data['column_image_field'];
+            
+      $columnInfo = '';                     
+      $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+      
+      $cta_link = $data['image_cta'];
+      $ctaText = $data['image_cta_text'];
+
+      if (!empty($cta_link)) {
+         $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
+         if (!empty($ctaText)) {
+            $columnInfo .= '<p class="text-center sub-caption-bottom"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
+         }
+      } else {
+         $columnInfo = $image;
+      }            
+                        
+      $return .= $columnInfo;
+      $return .= '</div>'; //end column
+   }
+
+   $return .= '</div>'; //end row
+
+   $return .= ' </section>'; // end div.container and section.content-panel
+   return $return;
+}
+
 /* Function to return one column wysiwyg */
 function get1ColWYSIWYG() {
   $return = '';
@@ -385,7 +441,7 @@ function get1ColWYSIWYG() {
   if(get_sub_field('title')) {
     $return .=  '  <div class="row">
               <div class="col-xs-12 text-center padbottom">
-                <h2 class="title yellow-underline">' . get_sub_field('title') . '</h2>
+                <h2 class="panel-title yellow-underline">' . get_sub_field('title') . '</h2>
               </div>
             </div>';
   }
@@ -497,10 +553,8 @@ function getCTApanel() {
    $return .= '   <div class="container">
                      <div class="row text-center">
                         <div class="col-xs-12">
-                           <h3>
-                              <i class="fa fa-star"></i>
-                              <span>' . $cta_title . '</span>
-                              <i class="fa fa-star"></i>
+                           <h3>                              
+                              <span>' . $cta_title . '</span>                              
                            </h3>
                         </div>
                      </div>
@@ -796,7 +850,7 @@ function getSponsorPanel() {
       <div class="container">
          <div class="row">
             <div class="col-xs-12 text-center padbottom">
-               <h2 class="title yellow-underline">Thank You To Our Sponsors!</h2>
+               <h2 class="panel-title yellow-underline">Thank You To Our Sponsors!</h2>
             </div>
          </div>
          <div class="row">
@@ -897,7 +951,7 @@ function getFeatFairePanel(){
    // Display the panel title
    $title = (get_sub_field('featured_faires_title') ? get_sub_field('featured_faires_title') : '');   
    $return .= '<div class="row text-center">
-                  <div class="title-w-border-y yellow-underline">
+                  <div class="panel-title title-w-border-y yellow-underline">
                     <h2>' . $title . '</h2>
                   </div>
                 </div>';
@@ -1055,4 +1109,11 @@ function get_faire_backlink() {
       </div>';      
    }
    return $back_link_html;
+}
+
+/* **************************************************** */
+/* Function to return flag banner panel                 */
+/* **************************************************** */
+function getFlagBannerPanel() {
+ return '<div class="flag-banner"></div>';  
 }

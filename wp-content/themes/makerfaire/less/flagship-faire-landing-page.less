@@ -247,3 +247,117 @@
     }
   }
 }
+
+
+.mf-full-hero {
+   width: 100%;
+   position: relative;
+   display: flex;
+   @media screen and (max-width: 991px) {
+      //display: block;
+      flex-direction: column;
+   }
+   .mf-left-text {
+      flex-basis: 550px;
+      position: relative;
+      z-index: 10;
+      @media screen and (max-width: 991px) {
+         flex-basis: auto;
+         order: 2;
+      }
+   }
+   .mf-title-text {
+      background-color: #ededed;
+      padding: 16px 16px 16px 20px;
+      position: relative;
+      h1 {
+         margin: 0;
+         padding: 0;
+         font-size: 38px;
+         text-transform: uppercase;
+         font-family: Roboto;
+         span {
+            display: block;
+            color: #eb002b;
+            margin-top: 4px;
+            @media screen and (max-width: 991px) {
+               display: inline;
+               &:before {
+                  content: ' - ';
+                  color: #333;
+               }
+            }
+         }
+      }
+   }
+   .mf-notched-banner-outer {
+      color: #fff;
+      background-color: transparent;// #00aeef;
+      border: 41px solid #00aeef;
+      border-right-color: transparent;
+      position: relative;
+
+      @media screen and (max-width: 991px) {
+         background-color: #00aeef;// #00aeef;
+         border: none;
+      }
+      h2, h3 {
+         margin: 0;
+         padding: 0;
+         text-transform: uppercase;
+         font-family: Roboto;
+      }
+      h2 {
+         font-size: 18px;
+         span {
+            display: block;
+            margin-top: 6px;
+            font-size: 26px;
+            font-family: "Roboto Condensed";
+            @media screen and (max-width: 991px) {
+               display: inline;
+               font-size: 18px;
+               &:before {
+                  content: ' - ';
+               }
+            }
+         }
+      }
+      // h3 {
+      //    margin-top: 6px;
+      //    font-size: 21px;
+      // }
+      .mf-notched-banner-inner {
+         position: absolute;
+         top: -24px;
+         left: -20px;
+         //background-color: #00aeef;
+         @media screen and (max-width: 991px) {
+            position: relative;
+            top: auto;
+            left: auto;
+            padding: 12px 18px;
+         }
+      }
+   }
+   .mf-right-hero-img {
+      //float: right;
+      position: absolute;
+      right: 0;
+      top: 0;
+      @media screen and (max-width: 991px) {
+         position: relative;
+         right: auto;
+         top: auto;
+         order: 1;
+         max-width: 100%;
+      }
+   }
+   @media screen and (max-width: 991px) {
+
+   }
+
+
+}
+
+   .page-id-637980 .mf-full-hero { display:none}
