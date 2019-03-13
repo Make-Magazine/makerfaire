@@ -31,6 +31,9 @@ function dispLayout($row_layout) {
          case 'call_to_action':  // CTA PANEL
             $return = getCTApanel();            
             break;
+         case 'ribbon_separator_panel':  // CTA PANEL
+            $return = getRibbonSeparatorpanel();            
+            break;
          case 'static_or_carousel': // IMAGE CAROUSEL (RECTANGLE)
             $return = getImgCarousel();            
             break;
@@ -148,12 +151,14 @@ function getFeatMkPanel($row_layout) {
       $return .= '<div class="col-lg-4 col-md-6 col-sm-12">'
          . ' <div class="thumbnail">';
       if (!empty($maker['desc'])) {
-         $return .= '<div class="caption" style="display: none;">
+         $markup = !empty($maker['maker_url']) ? 'a' : 'div';
+         $href= !empty($maker['maker_url']) ? 'href="' . $maker['maker_url'] . '"' : '';
+         $return .= '<'.$markup.' '.$href.' class="caption" style="display: none;">
                     <p>' . $maker['desc'] . '</p>';
          if (!empty($maker['maker_url'])) {
-            $return .= '  <p style="text-align:right;"><a href="' . $maker['maker_url'] . '">Learn More</a></p>';
+            $return .= '  <p class="learn-more">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
          }
-         $return .= ' </div>'; // close .caption
+         $return .= ' </'.$markup.'>'; // close .caption
       }
       $return .= '<img class="img-responsive aligncenter size-full" src="' . $maker['image'] . '" alt="' . $maker['name'] . '" width="350" height="304" />';
       $return .= '<div class="sub-caption">
@@ -169,7 +174,7 @@ function getFeatMkPanel($row_layout) {
       $cta_text = (get_sub_field('cta_text') !== '' ? get_sub_field('cta_text') : 'More Makers');
       $return .= '<div class="row padbottom">
             <div class="col-xs-12 padbottom text-center">
-              <a class="btn more-makers-link" href="' . $cta_url . '">' . $cta_text . '</a>
+              <a class="btn btn-outlined more-makers-link" href="' . $cta_url . '">' . $cta_text . '</a>
             </div>
           </div>';
    }
@@ -355,13 +360,14 @@ function get3ColLayout() {
             if (!empty($data['list_title'])) {
                $columnInfo .= '<p class="line-item list-title">' . $data['list_title'] . '</p>';
             }
-            //$columnInfo .= '  <ul>';
+            $columnInfo .= '  <ul>';
             foreach ($data['column_list_fields'] as $list_fields) {
                $list_text = $list_fields['list_text'];
                $list_link = $list_fields['list_link'];
-               $columnInfo .= (!empty($list_link) ? '<a class="line-item" href="' . $list_link . '">' . $list_text . '</a>' : $list_text);
+               //$columnInfo .= (!empty($list_link) ? '<a class="line-item" href="' . $list_link . '">' . $list_text . '</a>' : $list_text);
+               $columnInfo .= '<li>' . (!empty($list_link) ? '<a class="" href="' . $list_link . '">' . $list_text . '</a>' : $list_text) . '</li>';
             }
-            //$columnInfo .= '  </ul>';
+            $columnInfo .= '  </ul>';
             $columnInfo .= '</div>';
             break;
       }
@@ -560,6 +566,26 @@ function getCTApanel() {
                      </div>
                   </div>
                </section></a>';
+   return $return;
+}
+
+
+/* **************************************************** */
+/* Function to return Ribbon Separator panel              */
+/* **************************************************** */
+function getRibbonSeparatorpanel() {
+   $return = '';
+   $background_color = get_sub_field('background_color');
+   $bg_color_class_map = array(
+      "Blue" => '',
+      "Light Blue" => ' light-blue-ribbon',
+      "Red" => ' red-ribbon',
+      "Orange" => ' orange-ribbon'
+   );
+   $return .= '<section class="ribbon-separator-panel' . $bg_color_class_map[$background_color] . '">';
+   $return .= '   <div class="arrow-left-sm"></div>'
+      . '   <div class="arrow-right-sm"></div>';
+   $return .= '</section>';
    return $return;
 }
 
@@ -911,7 +937,7 @@ function getSponsorPanel() {
          </div> <!-- close .row -->
          <div class="row">
             <div class="col-xs-12 text-center">
-               <a class="btn more-makers-link" href="' . $url .'">Meet The Sponsors</a>
+               <a class="btn btn-white more-makers-link" href="' . $url .'">Meet The Sponsors</a>
             </div>
          </div>
       </div> <!-- close .container -->

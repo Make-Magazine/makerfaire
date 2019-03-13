@@ -1030,6 +1030,104 @@ if (function_exists('acf_add_local_field_group')) {
                      'min' => '',
                      'max' => ''
                   ),
+                  // Panel: Ribbon Separator
+                  array(
+                     'key' => '571e8hfiHIu8f',
+                     'name' => 'ribbon_separator_panel',
+                     'label' => 'Ribbon Separator Panel',
+                     'display' => 'row',
+                     'sub_fields' => array(
+                        array(
+                           'layout' => 'horizontal',
+                           'choices' => array(
+                              'Active' => 'Active',
+                              'Inactive' => 'Inactive'
+                           ),
+                           'default_value' => 'Active',
+                           'other_choice' => 0,
+                           'save_other_choice' => 0,
+                           'allow_null' => 0,
+                           'return_format' => 'value',
+                           'key' => 'field_57f8dfh89hsndjn',
+                           'label' => 'Active/Inactive',
+                           'name' => 'activeinactive',
+                           'type' => 'radio',
+                           'instructions' => 'Activate or Inactivate this panel',
+                           'required' => 0,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => 'activeinactive',
+                              'id' => ''
+                           )
+                        ),
+                        // array(
+                        //    'default_value' => '',
+                        //    'maxlength' => 50,
+                        //    'placeholder' => '',
+                        //    'prepend' => '',
+                        //    'append' => '',
+                        //    'key' => 'field_571e8fsdfhUHIU8d',
+                        //    'label' => 'Text',
+                        //    'name' => 'text',
+                        //    'type' => 'text',
+                        //    'instructions' => 'Type the CTA message here. 50 character limit.',
+                        //    'required' => 1,
+                        //    'conditional_logic' => 0,
+                        //    'wrapper' => array(
+                        //       'width' => '',
+                        //       'class' => '',
+                        //       'id' => ''
+                        //    ),
+                        //    'readonly' => 0,
+                        //    'disabled' => 0
+                        // ),
+                        // array(
+                        //    'default_value' => '',
+                        //    'placeholder' => '',
+                        //    'key' => 'field_571e899dshIUHG988h',
+                        //    'label' => 'URL',
+                        //    'name' => 'url',
+                        //    'type' => 'url',
+                        //    'instructions' => '',
+                        //    'required' => 1,
+                        //    'conditional_logic' => 0,
+                        //    'wrapper' => array(
+                        //       'width' => '',
+                        //       'class' => '',
+                        //       'id' => ''
+                        //    )
+                        // ),
+                        array(
+                           'layout' => 'horizontal',
+                           'choices' => array(
+                              'Blue' => 'Blue',
+                              'Light Blue' => 'Light Blue',
+                              'Red' => 'Red',
+                              'Orange' => 'Orange'
+                           ),
+                           'default_value' => 'Blue',
+                           'other_choice' => 0,
+                           'save_other_choice' => 0,
+                           'allow_null' => 0,
+                           'return_format' => 'value',
+                           'key' => 'field_577sda89s8hiUHI87d',
+                           'label' => 'Background Color',
+                           'name' => 'background_color',
+                           'type' => 'radio',
+                           'instructions' => 'Background color of this panel. Choose blue, light blue, red or orange.',
+                           'required' => 0,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => '',
+                              'id' => ''
+                           )
+                        )
+                     ),
+                     'min' => '',
+                     'max' => ''
+                  ),
                   // Panel: Image w/text
                   array(
                      'key' => '572bad2b2d757',
