@@ -19,6 +19,7 @@ function maybe_copyEntry( $form ) {
       //check form type
       switch ($form['form_type']){
         case 'Exhibit':
+        case 'Workshop':
         case 'Presentation':
         case 'Performance':
         case 'Startup Sponsor':

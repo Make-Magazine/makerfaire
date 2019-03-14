@@ -160,7 +160,8 @@ class maker {
 			  $this->isSponsor = TRUE;
 			}
 			if(isset($form['form_type']) &&
-				 ($form['form_type']=='Exhibit' ||
+             ($form['form_type']=='Exhibit' ||
+              $form['form_type']=='Workshop' ||
 				  $form['form_type']=='Performer'||
 				  $form['form_type']=='Presentation')){
 			  $this->isMaker = TRUE;

@@ -387,6 +387,7 @@ class GFRMTHELPER {
     if($form_type != 'Exhibit' &&
        $form_type != 'Presentation' &&
        $form_type != 'Performance' &&
+       $form_type != 'Workshop' &&
        $form_type != 'Sponsor' &&
        $form_type != 'Startup Sponsor' ){
       return;
@@ -832,6 +833,7 @@ class GFRMTHELPER {
     //determine faire
     $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
 
+    // NOTE (ts): For 'Workshop' update... this may be the spot where the image is set... TBD
     if($form_type == 'Presentation') {
       $project_photo = $makerArray['presenter']['photo'];
     }else{

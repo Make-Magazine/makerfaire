@@ -66,7 +66,7 @@ $entries   = $tableData['data'];
 
     <hr class="header-break">
     <?php
-
+   //var_dump($entries);
     foreach($entries as $entryData) {
       $image =  (isset($entryData['project_photo']) && $entryData['project_photo'] != '' ? $entryData['project_photo']:get_template_directory_uri() .'/images/no-image.png');
 
@@ -126,9 +126,10 @@ $entries   = $tableData['data'];
         if($entryData['form_type']=='Sponsor'||$entryData['form_type']=='Startup Sponsor')
           $dispEditPub = false;
 
+         // NOTE (ts): this seems to be duplication; commenting for now, delete when done testing
         //if form type = sponsor or startup do not display
-        if($entryData['form_type']=='Sponsor'||$entryData['form_type']=='Startup Sponsor')
-          $dispEditPub = false;
+      //   if($entryData['form_type']=='Sponsor'||$entryData['form_type']=='Startup Sponsor')
+      //     $dispEditPub = false;
 
         //set edit links
 
