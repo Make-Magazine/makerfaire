@@ -1702,7 +1702,7 @@ if (function_exists('acf_add_local_field_group')) {
                                        'label' => 'Image',
                                        'name' => 'column_image_field',
                                        'type' => 'image',
-                                       'instructions' => 'Upload an image',
+                                       'instructions' => 'Upload an image; will be cropped to center',
                                        'required' => 1,                                  
                                        'wrapper' => array(
                                           'width' => '',

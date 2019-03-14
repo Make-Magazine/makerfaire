@@ -258,9 +258,8 @@ function field_display($lead,$form,$field_id,$fieldName) {
   //is this a valid field in the form
   if($field!=NULL){
     $value   = RGFormsModel::get_lead_field_value( $lead, $field );
-    $return  = mf_checkbox_display($field, $value, $form_id, $fieldName);
+    $return  = mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id);
   }
-
   return $return;
 }
 
@@ -561,52 +560,81 @@ function display_schedule($form_id,$lead,$section='sidebar'){
   }
 }
 
-function  mf_checkbox_display($field, $value, $form_id, $fieldName) {
-  $choices = '';
-  $is_entry_detail = $field->is_entry_detail();
-  $is_form_editor  = $field->is_form_editor();
-  $output = '';
-  //echo 'value is <br/>';
-  //var_dump ($value);
-  //echo '<br/><br/>';
-  if ( is_array( $field->choices ) ) {
-    $choice_number = 1;
-    foreach ( $field->choices as $choice ) {
-      //echo 'choice is<br/>';
-      //var_dump($choice);
-      //echo '<br/>';
-      if ( $choice_number % 10 == 0 ) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
-        $choice_number ++;
+function sortFlagsByLabel($a,$b) {
+   return strnatcmp($a['text'],$b['text']);
+};
+
+function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id) {
+   $choices = '';
+   $is_entry_detail = $field->is_entry_detail();
+   $is_form_editor  = $field->is_form_editor();
+   $output = '';
+
+   $choices = $field->choices;
+   $inputs = $field->inputs;
+   $mergedChoicesAndInputs = [];
+   $useMerged = false;
+
+   $choicesArray = $field->choices;
+
+   if ( is_array( $field->choices ) ) {
+      if($field_id === "304") {
+         $useMerged = true;
+         foreach($choices as $chItem) {
+            foreach($inputs as $inItem) {
+               if(in_array($chItem["text"], $inItem)) {
+                  $chItem["id"] = $inItem['id'];
+                  $mergedChoicesAndInputs[] = $chItem;
+               } else {
+                  // TBD (ts): we may need some error handling here
+               }
+            }
+         }
+         //TBD (ts): we may need to add some overall error checking here
+         usort($mergedChoicesAndInputs, sortFlagsByLabel);
+         $choicesArray = $mergedChoicesAndInputs;
       }
 
-      $input_id = $field->id . '.' . $choice_number;
+      $choice_number = 1;
+      //foreach ( $field->choices as $choice ) { // Old version of this loop, before $mergedChoicesAndInputs
+      foreach ( $choicesArray as $choice ) {
 
-      if ( $is_entry_detail || $is_form_editor || $form_id == 0 ){
-        $id = $field->id . '_' . $choice_number ++;
-      } else {
-        $id = $form_id . '_' . $field->id . '_' . $choice_number ++;
-      }
-      $choiceValue = (!empty($choice['value'])?$choice['value']:$choice['text']);
-      if ( is_array( $value )  && in_array($choiceValue,$value)){
-      //if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, stripslashes(rgget( $input_id, $value ) )) ) {
-        $checked = "checked='checked'";
-      } elseif ( ! is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, $value ) ) {
-        $checked = "checked='checked'";
-      } else {
-        $checked = '';
-      }
+         if ( $choice_number % 10 == 0 ) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
+            $choice_number ++;
+         }
 
-      $choice_value = $choice['value'];
-      if ( $field->enablePrice ) {
-        $price = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
-        $choice_value .= '|' . $price;
-      }
-      $choice_value  = esc_attr( $choice_value );
+         if($useMerged) {
+            $input_id = $choice["id"];
+         } else {
+            $input_id = $field->id . '.' . $choice_number;
+         }
 
-      $output .= '<input type="checkbox" '.$checked.' name="'.$fieldName.'[]" style="margin: 3px;" value="'.$input_id.'_'.$choice_value.'" />'.$choice['text'].' <br />';
-    }
-  }
-  return $output;
+         if ( $is_entry_detail || $is_form_editor || $form_id == 0 ){
+            $id = $field->id . '_' . $choice_number ++;
+         } else {
+            $id = $form_id . '_' . $field->id . '_' . $choice_number ++;
+         }
+         $choiceValue = (!empty($choice['value'])?$choice['value']:$choice['text']);
+         if ( is_array( $value )  && in_array($choiceValue,$value)){
+            //if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, stripslashes(rgget( $input_id, $value ) )) ) {
+            $checked = "checked='checked'";
+         } elseif ( ! is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, $value ) ) {
+            $checked = "checked='checked'";
+         } else {
+            $checked = '';
+         }
+
+         $choice_value = $choice['value'];
+         if ( $field->enablePrice ) {
+            $price = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
+            $choice_value .= '|' . $price;
+         }
+         $choice_value  = esc_attr( $choice_value );
+
+         $output .= '<input type="checkbox" '.$checked.' name="'.$fieldName.'[]" style="margin: 3px;" value="'.$input_id.'_'.$choice_value.'" />'.$choice['text'].' <br />';
+      }
+   }
+   return $output;
 }
 
 function mf_sidebar_disp_meta_field($form_id, $lead,$meta_key='') {
