@@ -403,15 +403,19 @@ function get6ColLayout() {
       $data = $column['data'];
       
       $imageArr = $data['column_image_field'];
+      //var_dump($imageArr['alt']);
             
       $columnInfo = '';                     
-      $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
-      
+      //$image = '<img height="" width="" alt="'.$imageArr['alt'].'" class="ximg-responsive" src="' . $imageArr['url'] . '" />';
+      //echo $imageArr['url'];
+
+      $imgStyle = 'style="background-image: url('.$imageArr['url'].');"';
+
       $cta_link = $data['image_cta'];
       $ctaText = $data['image_cta_text'];
 
       if (!empty($cta_link)) {
-         $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
+         $columnInfo = '<a class="six-col-img" href="' . $cta_link . '" '.$imgStyle.'></a>';
          if (!empty($ctaText)) {
             $columnInfo .= '<p class="text-center sub-caption-bottom"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
          }

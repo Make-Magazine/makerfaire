@@ -253,14 +253,40 @@
    width: 100%;
    position: relative;
    display: flex;
+   background-repeat: no-repeat;
+   background-size: cover;
+   background-position: top -100px right;
+   min-height: 400px;
+   @media screen and (max-width:  2000px) {
+      background-position: top -80px right; 
+      min-height: 300px;
+   }
+   @media screen and (max-width:  1450px) {
+      background-position: top -60px right -180px;
+      min-height: 200px;
+   }
+   @media screen and (max-width:  1250px) {
+      // background-position: top -100px right -100px;
+      // min-height: 200px;
+   }
    @media screen and (max-width: 991px) {
-      //display: block;
+      min-height: 200px;
       flex-direction: column;
+      justify-content: flex-end;
+      background-position: top -34px right;
+      padding-top: 240px;
+   }
+   @media screen and (max-width:  768px) {
+      background-position: top -34px right  -80px;
+   }
+   @media screen and (max-width: 600px) {
+      background-position: top -34px right -236px;
+   }
+   @media screen and (max-width: 400px) {
+      background-position: top -34px right -286px;
    }
    .mf-left-text {
       flex-basis: 550px;
-      position: relative;
-      z-index: 10;
       @media screen and (max-width: 991px) {
          flex-basis: auto;
          order: 2;
@@ -274,8 +300,13 @@
          margin: 0;
          padding: 0;
          font-size: 38px;
-         text-transform: uppercase;
          font-family: Roboto;
+         @media screen and (max-width: 991px) {
+            font-size: 30px;
+         }
+         @media screen and (max-width: 630px) {
+            font-size: 22px;
+         }
          span {
             display: block;
             color: #eb002b;
@@ -287,28 +318,35 @@
                   color: #333;
                }
             }
+            @media screen and (max-width: 420px) {
+               display: block;
+               &:before {
+                  content: '';
+               }
+            }
          }
       }
    }
    .mf-notched-banner-outer {
       color: #fff;
-      background-color: transparent;// #00aeef;
+      background-color: transparent;
       border: 41px solid #00aeef;
       border-right-color: transparent;
       position: relative;
 
       @media screen and (max-width: 991px) {
-         background-color: #00aeef;// #00aeef;
+         background-color: #00aeef;
          border: none;
       }
-      h2, h3 {
+      h2 {
          margin: 0;
          padding: 0;
          text-transform: uppercase;
          font-family: Roboto;
-      }
-      h2 {
          font-size: 18px;
+         @media screen and (max-width: 991px) {
+            font-size: 16px;
+         }
          span {
             display: block;
             margin-top: 6px;
@@ -316,22 +354,24 @@
             font-family: "Roboto Condensed";
             @media screen and (max-width: 991px) {
                display: inline;
-               font-size: 18px;
+               font-size: 16px;
                &:before {
                   content: ' - ';
                }
             }
+            @media screen and (max-width: 570px) {
+               display: block;
+               font-size: 16px;
+               &:before {
+                  content: '';
+               }
+            }
          }
       }
-      // h3 {
-      //    margin-top: 6px;
-      //    font-size: 21px;
-      // }
       .mf-notched-banner-inner {
          position: absolute;
          top: -24px;
          left: -20px;
-         //background-color: #00aeef;
          @media screen and (max-width: 991px) {
             position: relative;
             top: auto;
@@ -340,24 +380,12 @@
          }
       }
    }
-   .mf-right-hero-img {
-      //float: right;
-      position: absolute;
-      right: 0;
-      top: 0;
-      @media screen and (max-width: 991px) {
-         position: relative;
-         right: auto;
-         top: auto;
-         order: 1;
-         max-width: 100%;
-      }
-   }
-   @media screen and (max-width: 991px) {
-
-   }
-
-
 }
 
+   .arrow-fancy-left,
+   .arrow-fancy-right {
+      @media screen and (max-width: 991px) {
+         display: none;
+      }
+   }
    .page-id-637980 .mf-full-hero { display:none}
