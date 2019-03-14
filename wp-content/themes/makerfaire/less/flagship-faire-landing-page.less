@@ -318,6 +318,12 @@
                   color: #333;
                }
             }
+            @media screen and (max-width: 420px) {
+               display: block;
+               &:before {
+                  content: '';
+               }
+            }
          }
       }
    }
@@ -353,6 +359,13 @@
                   content: ' - ';
                }
             }
+            @media screen and (max-width: 570px) {
+               display: block;
+               font-size: 16px;
+               &:before {
+                  content: '';
+               }
+            }
          }
       }
       .mf-notched-banner-inner {
@@ -369,4 +382,10 @@
    }
 }
 
+   .arrow-fancy-left,
+   .arrow-fancy-right {
+      @media screen and (max-width: 991px) {
+         display: none;
+      }
+   }
    .page-id-637980 .mf-full-hero { display:none}
