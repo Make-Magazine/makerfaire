@@ -16,8 +16,8 @@ $pagegroupPretty = ucwords(str_replace("-"," ", $pagegroup));
 $tabArray = [];
 $query = new WP_Query( array(
     'post_type'  => 'any',
-	 'orderby'   => 'meta_value',
-    'order' => 'DESC',
+	 'orderby'   => 'menu_order',
+    'order' => 'ASC',
     'meta_key'   => '_wp_page_template',
     'meta_value' => 'page-toolkits.php'
 ) );

@@ -364,7 +364,6 @@ function get3ColLayout() {
             foreach ($data['column_list_fields'] as $list_fields) {
                $list_text = $list_fields['list_text'];
                $list_link = $list_fields['list_link'];
-               //$columnInfo .= (!empty($list_link) ? '<a class="line-item" href="' . $list_link . '">' . $list_text . '</a>' : $list_text);
                $columnInfo .= '<li>' . (!empty($list_link) ? '<a class="" href="' . $list_link . '">' . $list_text . '</a>' : $list_text) . '</li>';
             }
             $columnInfo .= '  </ul>';
