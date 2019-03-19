@@ -65,7 +65,7 @@ $slug = $par_post->post_name;
 		</div>
 	</div>
 </div>
-<div style="height:23px;background-repeat: repeat-x;background-image: url('<?php echo get_stylesheet_directory_uri(); ?>/images/bg-border.png'); " >
+<div style="height:23px;" >
 </div>
 <!-- Sponsor carusel section-->
 <div class="quora">                
