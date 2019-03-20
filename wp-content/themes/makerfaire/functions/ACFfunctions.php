@@ -1256,6 +1256,107 @@ if (function_exists('acf_add_local_field_group')) {
                      'max' => ''
                   ),
                   
+
+                  // Panel: News Block
+                  array(
+                     'key' => '571e9Gyds7ysy8g',
+                     'name' => 'news_block_panel',
+                     'label' => 'News Block Panel',
+                     'display' => 'row',
+                     'sub_fields' => array(
+                        array(
+                           'layout' => 'horizontal',
+                           'choices' => array(
+                              'Active' => 'Active',
+                              'Inactive' => 'Inactive'
+                           ),
+                           'default_value' => 'Active',
+                           'other_choice' => 0,
+                           'save_other_choice' => 0,
+                           'allow_null' => 0,
+                           'return_format' => 'value',
+                           'key' => 'field_5727sdfu6tdfyg',
+                           'label' => 'Active/Inactive',
+                           'name' => 'activeinactive',
+                           'type' => 'radio',
+                           'instructions' => 'Activate or Inactivate this panel',
+                           'required' => 0,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => 'activeinactive',
+                              'id' => ''
+                           )
+                        ),
+                        array(
+                           'default_value' => '',
+                           'maxlength' => 256,
+                           'placeholder' => '',
+                           'prepend' => '',
+                           'append' => '',
+                           'key' => 'field_571fsd78HBHJ',
+                           'label' => 'Title',
+                           'name' => 'title',
+                           'type' => 'text',
+                           'instructions' => 'Type the News Block title here, e.g. News from <em>Make:</em> <a href="http://makezine.com/tag/maker-faire/">See all</a>. 256 character limit.',
+                           'required' => 1,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => '',
+                              'id' => ''
+                           ),
+                           'readonly' => 0,
+                           'disabled' => 0
+                        ),
+                        array(
+                           'default_value' => '',
+                           'placeholder' => '',
+                           'key' => 'field_571e989hHJKHBdudyug',
+                           'label' => 'Tag',
+                           'name' => 'tag',
+                           'type' => 'text',
+                           'instructions' => '',
+                           'required' => 1,
+                           'conditional_logic' => 0,
+                           'wrapper' => array(
+                              'width' => '',
+                              'class' => '',
+                              'id' => ''
+                           )
+                        )//,
+                        // array(
+                        //    'layout' => 'horizontal',
+                        //    'choices' => array(
+                        //       'Blue' => 'Blue',
+                        //       'Light Blue' => 'Light Blue',
+                        //       'Red' => 'Red',
+                        //       'Orange' => 'Orange'
+                        //    ),
+                        //    'default_value' => 'Blue',
+                        //    'other_choice' => 0,
+                        //    'save_other_choice' => 0,
+                        //    'allow_null' => 0,
+                        //    'return_format' => 'value',
+                        //    'key' => 'field_5775sdhda7BIG77d',
+                        //    'label' => 'Background Color',
+                        //    'name' => 'background_color',
+                        //    'type' => 'radio',
+                        //    'instructions' => 'Background color of this panel. Choose blue, light blue, red or orange.',
+                        //    'required' => 0,
+                        //    'conditional_logic' => 0,
+                        //    'wrapper' => array(
+                        //       'width' => '',
+                        //       'class' => '',
+                        //       'id' => ''
+                        //    )
+                        // )
+                     ),
+                     'min' => '',
+                     'max' => ''
+                  ),
+
+
                   // Panel: 3 column - photo and text
                   array(
                      'key' => '5b4e51639ab7e',

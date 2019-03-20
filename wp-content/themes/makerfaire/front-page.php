@@ -41,7 +41,7 @@ get_header();
                <p class="see-all pull-right"><?php echo get_field("mf_news_title"); ?></p>
             </div>
          </div>
-         <?php echo do_shortcode("[mf-news]"); ?>
+         <?php echo do_shortcode("[mf-news tag=“maker-faire”]"); ?>
       </div>
    </div>
 

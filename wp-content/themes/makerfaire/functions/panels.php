@@ -31,6 +31,9 @@ function dispLayout($row_layout) {
          case 'call_to_action':  // CTA PANEL
             $return = getCTApanel();            
             break;
+         case 'news_block_panel':  // NEWS BLOCK PANEL
+            $return = getNewsBlockpanel();            
+            break;
          case 'ribbon_separator_panel':  // CTA PANEL
             $return = getRibbonSeparatorpanel();            
             break;
@@ -591,6 +594,32 @@ function getRibbonSeparatorpanel() {
    $return .= '</section>';
    return $return;
 }
+
+
+/* **************************************************** */
+/* Function to return News Block panel              */
+/* **************************************************** */
+function getNewsBlockpanel() {
+   $return = '';
+   $nb_title = get_sub_field('title');
+   $nb_tag = get_sub_field('tag');
+   require_once 'MF-News-Block.php';
+   $content = do_news_block($nb_tag);
+
+   $return .= '<div class="container">';
+   $return .= '   <div class="mf-news">';
+   $return .= '      <div class="row">';
+   $return .= '         <div class="col-xs-12">';
+   $return .= '            <p class="see-all pull-right">'.$nb_title.'</p>';
+   $return .= '         </div>';
+   $return .= '      </div>';
+   $return .= $content;
+   $return .= '   </div>';
+   $return .= '</div>';
+   
+   return $return;
+}
+
 
 /* **************************************************** */
 /* Function to return IMAGE CAROUSEL (RECTANGLE)        */
