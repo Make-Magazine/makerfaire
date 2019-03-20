@@ -376,6 +376,11 @@
                                 "class": "",
                                 "id": ""
                             },
+                            "min": 1,
+                            "max": 9,
+                            "layout": "table",
+                            "button_label": "Add New Item",
+                            "collapsed": "",
                             "sub_fields": [
                                 {
                                     "key": "field_56fc70e8dc4a4",
@@ -461,12 +466,7 @@
                                     "default_value": "",
                                     "placeholder": ""
                                 }
-                            ],
-                            "min": 1,
-                            "max": 9,
-                            "layout": "table",
-                            "button_label": "Add New Item",
-                            "collapsed": ""
+                            ]
                         },
                         {
                             "key": "field_571ab19c2e7ec",
@@ -1031,7 +1031,7 @@
                             "return_format": "value"
                         },
                         {
-                            "key": "field_577sda89s8hiUHI87d",
+                            "key": "field_577sda89s8hiuhi87d",
                             "label": "Background Color",
                             "name": "background_color",
                             "type": "radio",
@@ -1191,6 +1191,25 @@
                     "display": "row",
                     "sub_fields": [
                         {
+                            "key": "field_571fsd78hbhj",
+                            "label": "Title",
+                            "name": "title",
+                            "type": "text",
+                            "instructions": "Type the News Block title here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": 256
+                        },
+                        {
                             "key": "field_5727sdfu6tdfyg",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
@@ -1215,28 +1234,7 @@
                             "return_format": "value"
                         },
                         {
-                            "key": "field_571fsd78HBHJ",
-                            "label": "Title",
-                            "name": "title",
-                            "type": "text",
-                            "instructions": "Type the News Block title here, e.g. News from <em>Make:<\/em> <a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all<\/a>. 256 character limit.",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": 256,
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "readonly": 0,
-                            "disabled": 0
-                        },
-                        {
-                            "key": "field_571e989hHJKHBdudyug",
+                            "key": "field_571e989hhjkhbdudyug",
                             "label": "Tag",
                             "name": "tag",
                             "type": "text",
@@ -1805,5 +1803,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553123482
+    "modified": 1553126077
 }
