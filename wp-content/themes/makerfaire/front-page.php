@@ -36,17 +36,16 @@ get_header();
    <!-- standard news block -->
    <?php echo do_shortcode('[mf-news newstag="maker-faire" newstitle="Check out the latests News from <em>Make:</em>" newslink="'.htmlentities( get_field("mf_news_title") ).'"]'); ?>
 
-   <?php $social_hashtags = get_field("social_hashtags"); ?>
-   <div class="container mf-sumome">
-      <h2>Share Your Maker Faire Experience</h2>
-      <h4><?php echo $social_hashtags;?> on
-         <a href="https://twitter.com/makerfaire"><i aria-hidden="true" class="fa fa-twitter"></i></a>
-         <a href="https://www.instagram.com/makerfaire/"><i aria-hidden="true" class="fa fa-instagram"></i></a>
-         <a href="https://www.facebook.com/makerfaire"><i class="fa fa-facebook" aria-hidden="true"></i></a></h4>
-      <div class="clearfix"></div>
-      <script async src="https://d36hc0p18k1aoc.cloudfront.net/public/js/modules/tintembed.js"></script>
-      <div class="tintup" data-columns="" data-id="makerfaire" data-infinitescroll="true" data-mobilescroll="true" data-personalization-id="764268" style="height:600px;width:100%;"></div><!-- END TINT SCRIPT -->
-   </div>
+   <?php 
+      require_once 'functions/MF-Social-Block.php';
+      $social_hashtags = get_field("social_hashtags");
+      $args = [
+         'title' => '',
+         'personalization_id' => '',
+         'hashtags' => $social_hashtags
+      ];
+      echo do_social_block($args);
+   ?>
 
    <div class="question-holder">
       <div class="container">

@@ -15,8 +15,8 @@
                 "class": "",
                 "id": ""
             },
-            "layouts": [
-                {
+            "layouts": {
+                "57196b4abc501": {
                     "key": "57196b4abc501",
                     "name": "buy_tickets_float",
                     "label": "Get Tickets Floating Banner",
@@ -85,9 +85,9 @@
                         }
                     ],
                     "min": "",
-                    "max": 1
+                    "max": "1"
                 },
-                {
+                "572d8358ky7e1": {
                     "key": "572d8358ky7e1",
                     "name": "flag_banner_panel",
                     "label": "Flag Banner Separator Panel",
@@ -121,7 +121,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "572d8358fe8e1": {
                     "key": "572d8358fe8e1",
                     "name": "newsletter_panel",
                     "label": "Newsletter Sign Up",
@@ -176,7 +176,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "572bac2b2d757": {
                     "key": "572bac2b2d757",
                     "name": "1_column_wysiwyg",
                     "label": "1 Column WYSIWYG",
@@ -287,7 +287,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "56fc6f9fdc4a2": {
                     "key": "56fc6f9fdc4a2",
                     "name": "featured_makers_panel",
                     "label": "Featured Items",
@@ -533,7 +533,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "579924c93b1b9": {
                     "key": "579924c93b1b9",
                     "name": "featured_makers_panel_dynamic",
                     "label": "Featured Makers - Dynamic",
@@ -697,7 +697,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "571518b722bb0": {
                     "key": "571518b722bb0",
                     "name": "featured_faires_panel",
                     "label": "Featured Faires - Dynamic",
@@ -832,7 +832,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "571518b722ba0": {
                     "key": "571518b722ba0",
                     "name": "sponsors_panel",
                     "label": "Sponsors",
@@ -903,7 +903,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "571e869b082c2": {
                     "key": "571e869b082c2",
                     "name": "call_to_action_panel",
                     "label": "Star Ribbon Panel",
@@ -1000,7 +1000,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "571e8hfiHIu8f": {
                     "key": "571e8hfiHIu8f",
                     "name": "ribbon_separator_panel",
                     "label": "Ribbon Separator Panel",
@@ -1060,7 +1060,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "572bad2b2d757": {
                     "key": "572bad2b2d757",
                     "name": "1_column",
                     "label": "Hero Panel",
@@ -1184,7 +1184,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "571e9Gyds7ysy8g": {
                     "key": "571e9Gyds7ysy8g",
                     "name": "news_block_panel",
                     "label": "News Block Panel",
@@ -1275,7 +1275,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "5b4e51639ab7e": {
                     "key": "5b4e51639ab7e",
                     "name": "3_column",
                     "label": "3 column",
@@ -1625,7 +1625,7 @@
                     "min": "",
                     "max": ""
                 },
-                {
+                "5b4e51639cd8f": {
                     "key": "5b4e51639cd8f",
                     "name": "6_column",
                     "label": "6 column navigation panel",
@@ -1774,11 +1774,102 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_5c93e6cfaf465": {
+                    "key": "layout_5c93e6cfaf465",
+                    "name": "tint_social_block_panel",
+                    "label": "Tint Social Block Panel",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_5c93e6e4af466",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "allow_null": 0,
+                            "other_choice": 0,
+                            "default_value": "",
+                            "layout": "horizontal",
+                            "return_format": "value",
+                            "save_other_choice": 0
+                        },
+                        {
+                            "key": "field_5c93e72eaf467",
+                            "label": "Title",
+                            "name": "title",
+                            "type": "text",
+                            "instructions": "Defaults to \"Share Your Maker Faire Experience\"",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        },
+                        {
+                            "key": "field_5c93e743af468",
+                            "label": "Personalization ID",
+                            "name": "personalization_id",
+                            "type": "text",
+                            "instructions": "Defaults to \"764268\" when nothing entered.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        },
+                        {
+                            "key": "field_5c93e75baf469",
+                            "label": "Hashtags",
+                            "name": "hashtags",
+                            "type": "text",
+                            "instructions": "Add one or more comma-separated hashtags, e.g. #makerfaire - Defaults to #makerfaire",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
-            ],
+            },
+            "button_label": "Add New Panel",
             "min": "",
-            "max": "",
-            "button_label": "Add New Panel"
+            "max": ""
         }
     ],
     "location": [
@@ -1822,5 +1913,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553186795
+    "modified": 1553198004
 }

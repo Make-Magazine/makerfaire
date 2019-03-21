@@ -34,6 +34,9 @@ function dispLayout($row_layout) {
          case 'news_block_panel':  // NEWS BLOCK PANEL
             $return = getNewsBlockpanel();            
             break;
+         case 'tint_social_block_panel':  // NEWS BLOCK PANEL
+            $return = getTintSocialBlockpanel();            
+            break;
          case 'ribbon_separator_panel':  // CTA PANEL
             $return = getRibbonSeparatorpanel();            
             break;
@@ -577,7 +580,7 @@ function getCTApanel() {
 
 
 /* **************************************************** */
-/* Function to return Ribbon Separator panel              */
+/* Function to return Ribbon Separator panel            */
 /* **************************************************** */
 function getRibbonSeparatorpanel() {
    $return = '';
@@ -597,34 +600,30 @@ function getRibbonSeparatorpanel() {
 
 
 /* **************************************************** */
-/* Function to return News Block panel              */
+/* Function to return News Block panel                  */
 /* **************************************************** */
 function getNewsBlockpanel() {
-   // $return = '';
-   // $nb_title = get_sub_field('title');
-   // $nb_tag = get_sub_field('tag');
    $args = [
       'tag' => get_sub_field('tag'),
       'title' => get_sub_field('title'),
       'link' => get_sub_field('link')
    ];
    require_once 'MF-News-Block.php';
-   $content = do_news_block($args);
-
-   // $return .= '<div class="container">';
-   // $return .= '   <div class="mf-news">';
-   // $return .= '      <div class="row">';
-   // $return .= '         <div class="col-xs-12">';
-   // $return .= '            <p class="see-all pull-right">'.$nb_title.'</p>';
-   // $return .= '         </div>';
-   // $return .= '      </div>';
-   // $return .= $content;
-   // $return .= '   </div>';
-   // $return .= '</div>';
-   
-   return $content;
+   return do_news_block($args);
 }
 
+/* **************************************************** */
+/* Function to return Tint Social Block panel           */
+/* **************************************************** */
+function getTintSocialBlockpanel() {
+   $args = [
+      'personalization_id' => get_sub_field('personalization_id'),
+      'title' => get_sub_field('title'),
+      'hashtags' => get_sub_field('hashtags')
+   ];
+   require_once 'MF-Social-Block.php';
+   return do_social_block($args);
+}
 
 /* **************************************************** */
 /* Function to return IMAGE CAROUSEL (RECTANGLE)        */
