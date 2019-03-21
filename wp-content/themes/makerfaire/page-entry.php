@@ -10,6 +10,8 @@ $entryId   = $wp_query->query_vars['e_id'];
 $editEntry = $wp_query->query_vars['edit_slug'];
 $entry     = GFAPI::get_entry($entryId);
 
+error_log(print_r($entry, TRUE));
+
 $sharing_cards = new mf_sharing_cards();
 
 // give admin, editor and reviewer user roles special ability to see all entries
@@ -56,6 +58,7 @@ if(isset($entry->errors)){
       $show_sched     = $results->show_sched;
       $faire_start    = $results->start_dt;
       $faire_end      = $results->end_dt;
+		$faire_year     = substr($faire_start, 0, 4);
       $url_sub_path   = $results->url_path;
       $faire_map      = $results->faire_map;
       $program_guide  = $results->program_guide;
@@ -131,28 +134,6 @@ if($editEntry=='edit'){
  //check if this entry has won any awards
 $ribbons = checkForRibbons(0,$entryId);
 
-//set the 'backlink' text and link (only set on valid entries)
-if($faire!=''){
-  $url = parse_url(wp_get_referer()); //getting the referring URL
-  $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
-  $path = explode("/", $url['path']); // splitting the path
-  $slug = end($path); // get the value of the last element
-
-  if($slug=='schedule'){
-    $backlink = wp_get_referer();
-    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to the Schedule';
-  }else{
-    $backlink = "/".$url_sub_path."/meet-the-makers/";
-    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Look for More Makers';
-  }
-
-  //overwrite the backlink to send makers back to MAT if $makerEdit = true
-  if($makerEdit){
-    $backlink = "/manage-entries/";
-    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to Your Maker Faire Portal';
-  }
-}
-
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
 $adminView = false;
@@ -219,11 +200,11 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
 ?>
 <div class="clear"></div>
 
-<div class="container entry-page">
+<div class="container-fluid entry-page">
   <div class="row">
-    <div class="content col-xs-12 entry-page-mobie-flex">
-      <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
+    <div class="content col-xs-12">
       <?php
+		// If there is edit in the url, they get all these options
       if($makerEdit){ ?>
         <div class="makerEditHead">
           <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
@@ -294,39 +275,7 @@ function display_entry_schedule($entry_id) {
       </a>
     </span>
     <div id="entry-schedule">
-      <?php // TBD - dynamically set these links and images ?>
-      <div class="faireActions">
 
-        <?php if($faire_map!='') { ?>
-        <a class="flagship-icon-link" href="<?php echo $faire_map;?>">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-circle fa-stack-2x"></i>
-            <i class="fa fa-map-marker fa-stack-1x fa-inverse"></i>
-          </span>
-          <h4>Event Map</h4>
-        </a>
-        <?php } ?>
-
-        <a class="flagship-icon-link" href="/<?php echo $url_sub_path;?>/schedule/">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-circle fa-stack-2x"></i>
-            <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
-          </span>
-          <h4>View full schedule</h4>
-        </a>
-
-        <?php if($program_guide != '') { ?>
-        <a class="flagship-icon-link" href="<?php echo $program_guide;?>">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-circle fa-stack-2x"></i>
-            <i class="fa fa-download fa-stack-1x fa-inverse"></i>
-          </span>
-          <h4>Download the program guide</h4>
-        </a>
-        <?php } ?>
-      </div>
-
-      <div class="clearfix"></div>
       <div class="row padbottom">
         <?php
 
@@ -376,7 +325,7 @@ function display_entry_schedule($entry_id) {
         }
         ?>
           </div><!-- close final col-sm-4-->
-        </div><!-- end row-->
+
     </div><!-- End entry-schedule-->
     <?php
   }
@@ -544,4 +493,55 @@ function updateFieldValue($fieldID,$newValue,$entryId) {
     updateChangeRPT($chgRPTins);
     $entry[$fieldID] = $newValue;
   }
+}
+
+function displayEntryFooter(){
+	global $wpdb; global $faireID; global $faire; global $faire_year; global $show_sched; global $backMsg; global $url_sub_path;
+   global $faire_map; global $program_guide; 
+	
+	$faire_location = "Bay Area";
+	$faire_link = "/bay-area";
+	if(strpos($faire, 'new-york') !== false) {
+		$faire_location = "New York";
+		$faire_link = "/new-york";
+   }
+	$return = '';
+	$return .= '<div class="faireActions container">';
+	
+	//set the 'backlink' text and link (only set on valid entries)
+	if($faire!=''){
+		$url = parse_url(wp_get_referer()); //getting the referring URL
+		$url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
+		$path = explode("/", $url['path']); // splitting the path
+		$backlink = "/".$url_sub_path."/meet-the-makers/";
+		$backMsg = 'See all ' . $faire_year . ' makers';
+
+		//overwrite the backlink to send makers back to MAT if $makerEdit = true
+		if($makerEdit){
+			$backlink = "/manage-entries/";
+			$backMsg = 'Back to Your Maker Faire Portal';
+		}
+		$return .=  '<div class="faireAction-box">
+		                <a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
+					    </div>';
+	}
+   if($show_sched != 0) {
+		$return .=  '<div class="faireAction-box">
+							<a class="btn universal-btn" href="' . $url_sub_path . '/schedule/"><h4>View full schedule</h4></a>
+						 </div>';
+	}
+	
+   if($faire_map!='' && $show_sched != 0) {
+		$return .= 	'<div class="faireAction-box">
+		               <a class="btn universal-btn" href="' . $faire_map . '"><h4>Download Map</h4></a>
+						 </div>';
+   } 
+   if($program_guide != '') { 
+	   $return .=  '<div class="faireAction-box">
+		               <a class="btn universal-btn" href="' . $faire_link . '"><h4>' .  $faire_location . ' Home</h4></a>
+						 </div>';
+   } 
+   $return .=  '</div>';
+	
+	return $return;
 }

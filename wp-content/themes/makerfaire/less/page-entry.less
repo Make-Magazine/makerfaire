@@ -1,243 +1,135 @@
 .entry-page {
-  margin-bottom: 30px;
-  @media screen and (max-width: 767px) {
-	  margin-top: 70px;
+	background: #F2F2F2;
+   margin-bottom: 30px;
+	@media screen and (max-width: 767px) {
+		margin-top: 70px;
 	}
-  .backlink {
-    margin-top:10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #2D7798;
-    padding-bottom: 10px;
-    .fa-lg {
-      vertical-align: -8%;
-    }
-  }
-  .entry-page-mobie-flex {
-    @media screen and (max-width: 767px) {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-  .faireTitle {
-    margin-bottom: -57px;
-    display: block;
-	 @media screen and (max-width: 767px) {
-		 margin-bottom: 0px;
-	 }
-    .faireLabel {
-      color: #9B9B9B;
-      font-weight: bold;
-      font-size: 12px;
-    }
-    .faireName {
-      font-size: 20px;
-      line-height: 1em;
-      color: #00AEEF;
-      @media screen and (max-width: 767px) {
-        padding-bottom: 5px;
-		  font-size: 16px;
-      }
-    }
-  }
-  #entry-schedule {
-    border-bottom: 1px solid #E7ECF0;
-    margin-top: 10px;
-    padding-top: 10px;
-    overflow: hidden;
-    @media screen and (max-width: 767px) {
-      border-top: none;
-      padding-top: 0;
-    }
+	.content { padding: 0px; }
+   
+	// The Lefthand side
+	#viewEntry {
+		background: #fff;
+		border: solid 15px #F2F2F2;
+		.blueMakey {
+			position: relative;
+			left: 90%;
+			top: -8px;
+		}
+	}
+	.entry-video {
+		max-width: 600px;
+	}
+	.entry-page-maker-info {
+		.entry-page-maker-img {
+			width: 100%;
+			height: 262.5px;
+			border: 2px solid #cccccc;
+			border-radius: 3px;
+			background-size: cover !important;
+			@media screen and (min-width: 992px) and (max-width: 1199px) {
+				height: 212.5px;
+			}
+			@media screen and (min-width: 768px) and (max-width: 991px) {
+				height: 157.5px;
+			}
+			@media screen and (max-width: 767px) {
+				width: 300px;
+				height: 300px;
+			}
+		}
+		h3 {
+			margin-top: 0;
+			@media screen and (max-width: 767px) {
+				margin-top: 5px;
+				margin-bottom: 5px;
+			}
+		}
+		p { font-weight: 300; }
+	}
 
-    table {
-      width: 100%;
-      color: #4A4A4A;
-      border-top: 1px solid #E7ECF0;
-      tr {
-        border-bottom: 1px solid #E7ECF0;
-        line-height: 45px;
-      }
-      tr:last-child {
-        border-bottom: none;
-      }
-    }
-    .faireActions {
-      margin-top: 5px;
-      margin-bottom: 5px;
-      font-size: 12px;
-      color: #4A4A4A;
-      float: right;
-      .flagship-icon-link {
-        float: right;
-        &:hover {
-          text-decoration: none;
-          h4 {
-            text-decoration: underline;
-          }
-        }
-        span {
-          color: #ea002a;
-        }
-        h4 {
-          font-size: 12px;
-          margin-top: 0;
-          margin-bottom: 0;
-          display: inline-block;
-          padding: 0 15px 0 2px;
-        }
-        @media screen and (max-width: 550px) {
-          float: none;
-          display: block;
-          margin-bottom: 7px;
-        }
-      }
-      @media screen and (max-width: 767px) {
-        float: none;
-        display: block;
-      }
-    }
-    .entry-date-time {
-      margin-bottom: 15px;
-      h5 {
-        margin-top: 15px;
-        margin-bottom: 5px;
-      }
-      p {
-        margin-bottom: 0;
-        small {
-          font-size: 75%;
-        }
-      }
-
-    }
-  }
-  h1, h2 {
-    margin-bottom: 0;
-  }
-  .btn.btn-cyan {
-    margin-bottom: 25px;
-  }
-  .entry-video {
-    max-width: 600px;
-  }
-  .entry-page-maker-info {
-    .entry-page-maker-img {
-      width: 100%;
-      height: 262.5px;
-      border: 2px solid #cccccc;
-      border-radius: 3px;
-      background-size: cover !important;
-      @media screen and (min-width: 992px) and (max-width: 1199px) {
-        height: 212.5px;
-      }
-      @media screen and (min-width: 768px) and (max-width: 991px) {
-        height: 157.5px;
-      }
-      @media screen and (max-width: 767px) {
-        width: 300px;
-        height: 300px;
-      }
-    }
-    h3 {
-      margin-top: 0;
-      @media screen and (max-width: 767px) {
-        margin-top: 5px;
-        margin-bottom: 5px;
-      }
-    }
-    p {
-      font-weight: 300;
-    }
-  }
-
-  .makerEditHead {
-    padding: 10px 20px;
-    i {
-      padding-right: 10px;
-    }
-    margin-bottom: 10px;
-    border-bottom: 1px solid #2D7798;
-    padding-bottom: 10px;
-  }
-  .editSection {
-    position: relative;
-    display: block;
-    padding-right: 35px;
-    h1 {
-      margin-right: 50px;
-    }
-    .makerEdit {
-      padding-top: 7px;
-      position: absolute;
-      right: 0;
-      top: 0;
-      display: none;
-      color: #397b98;
-    }
-    .editfield {
-      display: none;
-    }
-    input.editfield {
-      width: 80%;
-    }
-    textarea.editfield {
-      width: 80%;
-      height: 6em;
-    }
-
-    .makerEdit a {
-      color: #000;
-    }
-  }
-  .editSection:hover .makerEdit {
-    display: block;
-  }
-  .page-header {
-    margin-top: 25px;
-    margin-bottom: 15px;
-    padding-bottom: 5px;
-    @media screen and (max-width: 767px) {
-      margin-top: 0;
-      margin-bottom: 0;
-      border-bottom: 0;
-      order: -2;
-    }
-    h1 {
-      @media screen and (max-width: 767px) {
-        font-size: 7vw;
-        margin-top: 0;
-      }
-      @media screen and (max-width: 449px) {
-        font-size: 9vw;
-        margin-top: 0;
-      }
-    }
-    .makerEdit {
-      padding-top: 27px;
-    }
-  }
-  #project_short {
-    @media screen and (max-width: 767px) {
-      order: -1;
-      margin-bottom: 15px;
-    }
-  }
-  .mfEdit button, .mfEdit_area button, .mfEditUpload button {
-    margin-top: 5px;
-    margin-left: 5px;
-  }
-  #proj_img {
-    @media screen and (max-width: 767px) {
-      order: -3;
-    }
-    img {
-      @media screen and (min-width: 768px) {
-        max-width: 750px;
-        max-height: 500px;
-      }
-    }
-  }
-  #editEntry {
-    display: none;
-  }
+	.makerEditHead {
+		padding: 10px 20px;
+		margin-bottom: 10px;
+		border-bottom: 1px solid #2D7798;
+		padding-bottom: 10px;
+		i { padding-right: 10px; }
+	}
+	.editSection {
+		position: relative;
+		display: block;
+		padding-right: 35px;
+		h1 { margin-right: 50px; }
+		.makerEdit {
+			padding-top: 7px;
+			position: absolute;
+			right: 0;
+			top: 0;
+			display: none;
+			color: #397b98;
+		}
+		.editfield { display: none; }
+		input.editfield { width: 80%; }
+		textarea.editfield {
+			width: 80%;
+			height: 6em;
+		}
+		.makerEdit a { color: #000; }
+	}
+	.editSection:hover .makerEdit { display: block; }
+	.mfEdit button, .mfEdit_area button, .mfEditUpload button {
+		margin-top: 5px;
+		margin-left: 5px;
+	}
+	#editEntry { display: none; }
+	
+	// the little blue footer
+	.entry-footer {
+		background: #D0EAFC;
+		height: 111px;
+		.faireActions {
+			display: flex;
+		   justify-content: center;
+			align-items: center;
+			height: 100%;
+			flex-wrap: nowrap;
+			.faireAction-box {
+				width: 25%;
+				justify-content: center;
+			   align-items: center;
+				border-left: solid 1px #979797;
+				padding: 10px 30px;
+				&:first-of-type {
+					border-left: none;
+				}
+				a {
+					width: 100%;
+					h4 {
+						font-size: 14px;
+						text-transform: capitalize;
+					}
+				}
+			}
+		}
+		@media screen and (min-width: 768px) and (max-width: 987px) {
+			.faireActions {
+				.faireAction-box {
+					padding: 10px 15px;
+					&:first-of-type { padding-left: 0px; }
+					&:last-of-type { padding-right: 0px; }
+				}
+			}
+		}
+		@media screen and (max-width: 767px) {
+			height: 100%;
+			.faireActions {
+				flex-direction: column;
+				.faireAction-box { 
+					width: 100%;
+					border: none; 
+					padding: 20px 0px 0px;
+					&:last-of-type { padding-bottom: 20px; }
+				}
+			}
+		}
+	}
 }
