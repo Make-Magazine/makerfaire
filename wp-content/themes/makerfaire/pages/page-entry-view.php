@@ -17,7 +17,7 @@
 	  </div>
 	  <?php
 				$url  = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-				echo do_shortcode( '[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,tumblr,more"  morebutton_icon="dots" morebutton="2" counters=1 counter_pos="bottom" total_counter_pos="hidden" style="icon" fullwidth="yes" template="metro-retina" url="' . $url . '" text="' . $project_title . '"]' );
+				echo do_shortcode( '[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more"  morebutton_icon="dots" morebutton="2" counters=1 counter_pos="bottom" total_counter_pos="hidden" style="icon" fullwidth="yes" template="metro-retina" url="' . $url . '" text="' . $project_title . '"]' );
 	  ?>
 
 	  <!-- Project Image -->
@@ -38,11 +38,11 @@
 		<div class="entryInfo">
 			<?php  //display schedule/location information if there is any
 			  if (!empty(display_entry_schedule($entryId))) {
-				 //display_entry_schedule($entryId); 
+				   display_entry_schedule($entryId); 
 			  }
 			  if (!empty($project_website)) {
 			?> 
-			    <a href="<?php echo $project_website; ?>" class="btn universal-btn">Project Button</a>
+			    <a href="<?php echo $project_website; ?>" class="btn universal-btn">Project Website</a>
 			<?php } ?>
 		</div>
 		
@@ -75,7 +75,7 @@
 						<h3 class="text-capitalize" id="groupname"><?php echo $groupname;?></h3>
 					 </div>
 				  </div>
-				  <div class="row paddbottom">
+				  <div class="row">
 					  	<div class="col-sm-12"><p id="groupbio"><?php echo $groupbio;?></p></div>
 				  </div>
 			  </div>
@@ -83,7 +83,6 @@
 		  } else {
 			foreach($makers as $key=>$maker) {
 			  if($maker['firstname'] !=''){
-				  error_log(print_r($maker), TRUE);
 				 ?>
 			     <div class="entry-page-maker-info">
 					 <div class="row padbottom">
@@ -101,7 +100,7 @@
 						  </div>
 						</div>
 					 </div>
-					 <div class="row padbottom">
+					 <div class="row">
 						 <div class="col-sm-12"><p><?php echo $maker['bio'];?></p></div>
 					 </div>
 			     </div>

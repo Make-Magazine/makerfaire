@@ -73,7 +73,9 @@ if(isset($entry->errors)){
   $groupname   = (isset($entry['109']) ? $entry['109']:'');
   $groupphoto  = (isset($entry['111']) ? $entry['111']:'');
   $groupbio    = (isset($entry['110']) ? $entry['110']:'');
-  $groupsocial = getSocial($entry, "group");
+  $groupsocial = (isset($entry['828']) ? $entry['828'] : '');
+  $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
+
 	
   // One maker
   // A list of makers (7 max)
@@ -262,9 +264,7 @@ function display_entry_schedule($entry_id) {
   if($wpdb->num_rows > 0){
     ?>
     <span class="faireTitle">
-      <a href="<?= $backlink ?>">
-        <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
-      </a>
+        <h3 class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></h3>
     </span>
     <div id="entry-schedule">
 
@@ -280,8 +280,14 @@ function display_entry_schedule($entry_id) {
             $current_start_dt = date("l, F j",$start_dt);
             $current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
 
+				echo '<div class="entry-date-time col-sm-12">';
+				// this is a new location
+            if ($prev_location != $current_location){
+              $prev_location = $current_location;
+              echo '<small>LOCATION: '.$current_location.'</small>';
+            }
             if($prev_start_dt==NULL){
-              echo '<div class="entry-date-time col-sm-12">';
+              
 					  echo '<h5>'.$current_start_dt.'</h5>';
 					  $prev_start_dt = $current_start_dt;
 					  $prev_location = null;
@@ -290,34 +296,28 @@ function display_entry_schedule($entry_id) {
             if ($prev_start_dt != $current_start_dt){
               //This is not the first new date
               if ($prev_start_dt != NULL){
-                echo '<div class="entry-date-time col-sm-12">';
 						  echo '<h5>'.$current_start_dt.'</h5>';
 						  $prev_location = null;
               }
 
             }
-            // this is a new location
-            if ($prev_location != $current_location){
-              $prev_location = $current_location;
-              echo '<p><small class="text-muted">LOCATION:</small> '.$current_location.'</p>';
-            }
-            echo ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
+            echo '<small>TIME:  '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</small>';
 				echo '</div>';  // end date time location block
           }else{
               global $faire_start; global $faire_end;
               echo '<div class="entry-date-time col-sm-12">';
 
-
               $faire_start = strtotime($faire_start);
               $faire_end   = strtotime($faire_end);
               $dateRange   = progDateRange($faire_start, $faire_end);
-
+				 
+ 				  echo '<small>LOCATION: '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
               //tbd change this to be dynamically populated
 				  if($dateRange != "" && $dateRange != null) {
-              		echo '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+              		echo '<h5>'.natural_language_join($dateRange).':<br />'.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
 				  }
-              echo '<p><small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</p>';
-              echo '</div>';
+				  echo '</div>'; // end date time location block
+            
           }
         }
         ?>
@@ -367,48 +367,56 @@ function display_groupEntries($entryID){
 //return makers info
 function getMakerInfo($entry) {
   $makers = array();
-  if (isset($entry['160.3']))
+  if (isset($entry['160.3']) && $entry['160.3'] != "")
     $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
-                      'bio'       => (isset($entry['234']) ? $entry['234']: ''),
-                      'photo'     => (isset($entry['217']) ? $entry['217'] : '')
+                      'bio'        => (isset($entry['234']) ? $entry['234']: ''),
+                      'photo'      => (isset($entry['217']) ? $entry['217'] : ''),
+							 'social'     => getSocial(isset($entry['821']) ? $entry['821'] : '')
                 );
-  if (isset($entry['158.3']))
+  if (isset($entry['158.3']) && $entry['158.3'] != "")
     $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
-                      'bio'       => (isset($entry['258']) ? $entry['258'] : ''),
-                      'photo'     => (isset($entry['224']) ? $entry['224'] : '')
+                      'bio'        => (isset($entry['258']) ? $entry['258'] : ''),
+                      'photo'      => (isset($entry['224']) ? $entry['224'] : ''),
+							 'social'     => getSocial(isset($entry['822']) ? $entry['822'] : '')
                 );
-  if (isset($entry['155.3']))
+  if (isset($entry['155.3']) && $entry['155.3'] != "")
       $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
-                      'bio'         => (isset($entry['259']) ? $entry['259'] : ''),
-                      'photo'       => (isset($entry['223']) ? $entry['223'] : '')
+                      'bio'          => (isset($entry['259']) ? $entry['259'] : ''),
+                      'photo'        => (isset($entry['223']) ? $entry['223'] : ''),
+							 'social'       => getSocial(isset($entry['823']) ? $entry['823'] : '')
                 );
-  if (isset($entry['156.3']))
+  if (isset($entry['156.3']) && $entry['156.3'] != "")
       $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
-                      'bio'         => (isset($entry['260']) ? $entry['260'] : ''),
-                      'photo'       => (isset($entry['222']) ? $entry['222'] : '')
+                      'bio'          => (isset($entry['260']) ? $entry['260'] : ''),
+                      'photo'        => (isset($entry['222']) ? $entry['222'] : ''),
+							 'social'       => getSocial(isset($entry['824']) ? $entry['824'] : '')
                   );
-  if (isset($entry['157.3']))
+  if (isset($entry['157.3']) && $entry['157.3'] != "")
       $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
-                      'bio'         => (isset($entry['261']) ? $entry['261'] : ''),
-                      'photo'       => (isset($entry['220']) ? $entry['220'] : '')
+                      'bio'          => (isset($entry['261']) ? $entry['261'] : ''),
+                      'photo'        => (isset($entry['220']) ? $entry['220'] : ''),
+							 'social'       => getSocial(isset($entry['825']) ? $entry['825'] : '')
                   );
-  if (isset($entry['159.3']))
+  if (isset($entry['159.3']) && $entry['159.3'] != "")
       $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
-                      'bio'         => (isset($entry['262']) ? $entry['262'] : ''),
-                      'photo'       => (isset($entry['221']) ? $entry['221'] : '')
+                      'bio'          => (isset($entry['262']) ? $entry['262'] : ''),
+                      'photo'        => (isset($entry['221']) ? $entry['221'] : ''),
+							 'social'       => getSocial(isset($entry['826']) ? $entry['826'] : '')
                   );
-  if (isset($entry['154.3']))
+  if (isset($entry['154.3']) && $entry['154.3'] != "")
       $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
-                      'bio'         => (isset($entry['263']) ? $entry['263'] : ''),
-                      'photo'       => (isset($entry['219']) ? $entry['219'] : '')
+                      'bio'          => (isset($entry['263']) ? $entry['263'] : ''),
+                      'photo'        => (isset($entry['219']) ? $entry['219'] : ''),
+							 'social'       => getSocial(isset($entry['827']) ? $entry['827'] : '')
                   );
   return $makers;
 }
 
-function getSocial($entry, $type) {
-	if($type = "group") {
-		$socialArray = json_decode($entry['828']);
-		error_log(print_r($socialArray, TRUE));
+function getSocial($entrySocial) {
+	error_log($entrySocial);
+	$socialArray = unserialize($entrySocial);
+	foreach($socialArray as $value) {
+		error_log(print_r($value, TRUE));
 	}
 }
 
