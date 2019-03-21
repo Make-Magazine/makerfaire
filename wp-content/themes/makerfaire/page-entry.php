@@ -10,9 +10,11 @@ $entryId   = $wp_query->query_vars['e_id'];
 $editEntry = $wp_query->query_vars['edit_slug'];
 $entry     = GFAPI::get_entry($entryId);
 
-error_log(print_r($entry, TRUE));
+//error_log(print_r($entry, TRUE));
 
+// The opengraph cards for sharing
 $sharing_cards = new mf_sharing_cards();
+
 
 // give admin, editor and reviewer user roles special ability to see all entries
 $user = wp_get_current_user();
@@ -68,21 +70,21 @@ if(isset($entry->errors)){
   //get makers info
   $makers = getMakerInfo($entry);
 
-  $groupname  = (isset($entry['109']) ? $entry['109']:'');
-  $groupphoto = (isset($entry['111']) ? $entry['111']:'');
-  $groupbio   = (isset($entry['110']) ? $entry['110']:'');
-
+  $groupname   = (isset($entry['109']) ? $entry['109']:'');
+  $groupphoto  = (isset($entry['111']) ? $entry['111']:'');
+  $groupbio    = (isset($entry['110']) ? $entry['110']:'');
+  $groupsocial = getSocial($entry, "group");
+	
   // One maker
   // A list of makers (7 max)
   // A group or association
   $displayType = (isset($entry['105']) ? $entry['105']:'');
 
-  $isGroup = $isList = $isSingle = false;
-  $isGroup =(strpos($displayType, 'group') !== false);
-  $isList =(strpos($displayType, 'list') !== false);
-  $isSingle =(strpos($displayType, 'One') !== false);
-
-
+  $isGroup  = $isList = $isSingle = false;
+  $isGroup  = (strpos($displayType, 'group') !== false);
+  $isList   = (strpos($displayType, 'list') !== false);
+  $isSingle = (strpos($displayType, 'One') !== false);
+	
   $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
   $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
   $project_short = (isset($entry['16']) ? $entry['16']: '');    // Description
@@ -160,14 +162,6 @@ foreach($entry as $key=>$field ) {
     if($field=='no-public-view' )    $validEntry    = false;
     if($field=='no-maker-display' )  $displayMakers = false;
   }
-}
-
-// Website button
-$website = '';
-
-
-if (!empty($project_website)) {
-  $website =  '<a href="' . $project_website . '" class="btn btn-cyan" target="_blank">Project Website</a>';
 }
 
 
@@ -268,8 +262,6 @@ function display_entry_schedule($entry_id) {
   if($wpdb->num_rows > 0){
     ?>
     <span class="faireTitle">
-      <span class="faireLabel">Live at</span>
-      <br/>
       <a href="<?= $backlink ?>">
         <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
       </a>
@@ -289,16 +281,20 @@ function display_entry_schedule($entry_id) {
             $current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
 
             if($prev_start_dt==NULL){
-              echo '<div class="entry-date-time col-sm-4">';
+              echo '<div class="entry-date-time col-sm-12">';
+					  echo '<h5>'.$current_start_dt.'</h5>';
+					  $prev_start_dt = $current_start_dt;
+					  $prev_location = null;
             }
+				// if there's another day
             if ($prev_start_dt != $current_start_dt){
               //This is not the first new date
               if ($prev_start_dt != NULL){
-                echo '</div><div class="entry-date-time col-sm-4">';
+                echo '<div class="entry-date-time col-sm-12">';
+						  echo '<h5>'.$current_start_dt.'</h5>';
+						  $prev_location = null;
               }
-              echo '<h5>'.$current_start_dt.'</h5>';
-              $prev_start_dt = $current_start_dt;
-              $prev_location = null;
+
             }
             // this is a new location
             if ($prev_location != $current_location){
@@ -306,6 +302,7 @@ function display_entry_schedule($entry_id) {
               echo '<p><small class="text-muted">LOCATION:</small> '.$current_location.'</p>';
             }
             echo ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
+				echo '</div>';  // end date time location block
           }else{
               global $faire_start; global $faire_end;
               echo '<div class="entry-date-time col-sm-12">';
@@ -406,6 +403,13 @@ function getMakerInfo($entry) {
                       'photo'       => (isset($entry['219']) ? $entry['219'] : '')
                   );
   return $makers;
+}
+
+function getSocial($entry, $type) {
+	if($type = "group") {
+		$socialArray = json_decode($entry['828']);
+		error_log(print_r($socialArray, TRUE));
+	}
 }
 
 function progDateRange($faire_start, $faire_end) {

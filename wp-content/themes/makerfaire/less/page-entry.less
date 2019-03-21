@@ -5,46 +5,85 @@
 		margin-top: 70px;
 	}
 	.content { padding: 0px; }
+	h1 { font-size: 38px; }
+	
 	// The Lefthand side
 	#viewEntry {
 		background: #fff;
-		border: solid 15px #F2F2F2;
+		border-top: solid 15px #F2F2F2;
+		border-bottom: solid 15px #F2F2F2;
 		.blueMakey {
 			position: relative;
 			left: 90%;
 			top: -8px;
 		}
+		.essb_links {
+			@media screen and (max-width: 768px) {
+				display: none;
+			}
+			.essb_item {
+				margin-right: 5px !important;
+				&:last-of-type {
+					margin-right: 0px !important;
+					width: calc(14% - 18px) !important;
+					a { background: #1052BA !important; }
+				}
+				a { 
+					height: 50px;
+					text-align: center;
+					.essb_network_name {
+						margin-top: -10px;
+						margin-bottom: 0px;
+					}
+					.essb_counter_bottom {
+						font-size: 10px;
+					}
+				}
+			}
+		}
 	}
+	
+	// The Righthand side
+	#entrySidebar {
+		padding: 0px;
+		.entryInfo, .entry-page-maker-info {
+			background: #fff;
+			padding: 15px;
+			border: solid 15px #F2F2F2;
+			@media screen and (max-width: 968px) {
+				border-right: 0px;
+				border-left: 0px;
+			}
+		}
+		.entryInfo {
+			font-size: 20px;
+		}
+		.entry-header {
+			h2 {
+				padding-left: 15px;
+				font-size: 26px;
+				margin: 0 15px;
+				text-transform: uppercase;
+			}
+		}
+		.entry-page-maker-info {
+			border-bottom: 0px;
+			h3 {
+				margin-top: 0;
+				@media screen and (max-width: 767px) {
+					margin-top: 5px;
+					margin-bottom: 5px;
+				}
+			}
+			p { font-weight: 300; }
+		}
+		.btn { width: 100%; }
+	}
+
 	.entry-video {
 		max-width: 600px;
 	}
-	.entry-page-maker-info {
-		.entry-page-maker-img {
-			width: 100%;
-			height: 262.5px;
-			border: 2px solid #cccccc;
-			border-radius: 3px;
-			background-size: cover !important;
-			@media screen and (min-width: 992px) and (max-width: 1199px) {
-				height: 212.5px;
-			}
-			@media screen and (min-width: 768px) and (max-width: 991px) {
-				height: 157.5px;
-			}
-			@media screen and (max-width: 767px) {
-				width: 300px;
-				height: 300px;
-			}
-		}
-		h3 {
-			margin-top: 0;
-			@media screen and (max-width: 767px) {
-				margin-top: 5px;
-				margin-bottom: 5px;
-			}
-		}
-		p { font-weight: 300; }
-	}
+
 
 	.makerEditHead {
 		padding: 10px 20px;

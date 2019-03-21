@@ -10,11 +10,15 @@
 	<div class="col-md-8 col-sm-12" id="viewEntry">
 	  <!-- Project Title and ribbons -->
 	  <?php echo $ribbons;?>
-	  <div class="page-header">
+	  <div class="entry-header">
 		 <h1>
 			<span id="project_title"><?php echo $project_title; ?></span>
 		 </h1>
 	  </div>
+	  <?php
+				$url  = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+				echo do_shortcode( '[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,tumblr,more"  morebutton_icon="dots" morebutton="2" counters=1 counter_pos="bottom" total_counter_pos="hidden" style="icon" fullwidth="yes" template="metro-retina" url="' . $url . '" text="' . $project_title . '"]' );
+	  ?>
 
 	  <!-- Project Image -->
 	  <p id="proj_img">
@@ -25,55 +29,82 @@
 	  <p id="project_short" class="lead"><?php echo nl2br($project_short); ?></p>
 
 	  <?php
-	  echo $website;  //project Website
 	  echo $video;    //project Video
 	  ?>
 
-	  <!-- Maker Info -->
-	  <div class="entry-page-maker-info">
-	  <?php
-		 if($dispMakerInfo) { ?>
-			<div class="page-header">
-			  <h2><?php
-			  if($isGroup) {
-				 echo 'Group';
-			  }elseif($isList){
-				 echo 'Makers';
-			  }else{
-				 echo 'Maker';
-			  }?>
-			  </h2>
-			</div>
+	</div>
 
+	<div class="col-md-4 col-sm-12" id="entrySidebar">
+		<div class="entryInfo">
+			<?php  //display schedule/location information if there is any
+			  if (!empty(display_entry_schedule($entryId))) {
+				 //display_entry_schedule($entryId); 
+			  }
+			  if (!empty($project_website)) {
+			?> 
+			    <a href="<?php echo $project_website; ?>" class="btn universal-btn">Project Button</a>
+			<?php } ?>
+		</div>
+		
+		<div class="sidebar-type"> <!-- Maker/Group/Worskhop etc -->
+		  <?php
+		  if($dispMakerInfo) { ?>
+			<div class="entry-header">
+				<h2><?php
+					if($isGroup) {
+						echo 'Group';
+						
+					}elseif($isList){
+						echo 'Makers';
+					}else{
+						echo 'Maker';
+					}?>
+				</h2>
+			</div>
 			<?php
 			if ($isGroup) {
 			  ?>
-			  <div class="row padbottom">
-				 <div class="col-sm-3" id="groupphoto">
-					<div class="entry-page-maker-img" style="background: url(<?php echo (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>) no-repeat center center;"></div>
-				 </div>
-				 <div class="col-sm-9 col-lg-7">
-					<h3 class="text-capitalize" id="groupname"><?php echo $groupname;?></h3>
-					<p id="groupbio"><?php echo $groupbio;?></p>
-				 </div>
+			   <div class="entry-page-maker-info">
+				  <div class="row padbottom">
+					 <div class="col-xs-6">
+						<div class="entry-page-maker-img">
+							<img class="img-responsive" src="<?php echo (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
+						 </div>
+					 </div>
+					 <div class="col-xs-6">
+						<h3 class="text-capitalize" id="groupname"><?php echo $groupname;?></h3>
+					 </div>
+				  </div>
+				  <div class="row paddbottom">
+					  	<div class="col-sm-12"><p id="groupbio"><?php echo $groupbio;?></p></div>
+				  </div>
 			  </div>
-		 <?php
-		 } else {
+		  <?php
+		  } else {
 			foreach($makers as $key=>$maker) {
 			  if($maker['firstname'] !=''){
+				  error_log(print_r($maker), TRUE);
 				 ?>
-				 <div class="row padbottom">
-					<div class="col-sm-3">
-					  <div class="entry-page-maker-img" style="background: url(<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'],400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>) no-repeat center center;"></div>
-					</div>
-					<div class="col-sm-9 col-lg-7">
-					  <h3>
-						 <span class="text-capitalize"><?php echo $maker['firstname'];?></span>
-						 <span class="text-capitalize"><?php echo $maker['lastname'];?></span>
-					  </h3>
-					  <p><?php echo $maker['bio'];?></p>
-					</div>
-				 </div>
+			     <div class="entry-page-maker-info">
+					 <div class="row padbottom">
+						<div class="col-xs-6">
+						  <div class="entry-page-maker-img">
+							  <img class="img-responsive" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'],400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
+							</div>
+						</div>
+						<div class="col-xs-6">
+						  <h3>
+							 <span class="text-capitalize"><?php echo $maker['firstname'];?></span>
+							 <span class="text-capitalize"><?php echo $maker['lastname'];?></span>
+						  </h3>
+						  <div class="social-links">
+						  </div>
+						</div>
+					 </div>
+					 <div class="row padbottom">
+						 <div class="col-sm-12"><p><?php echo $maker['bio'];?></p></div>
+					 </div>
+			     </div>
 				 <?php
 			  }
 			}
@@ -84,20 +115,11 @@
 	  <?php
 	  echo display_groupEntries($entryId);
 	?>
-	</div>
-
-	<div class="col-md-4 col-sm-12" id="entrySidebar">
-		<div class="entryInfo">
-			<?php  //display schedule/location information if there is any
-			  if (!empty(display_entry_schedule($entryId))) {
-				 display_entry_schedule($entryId);
-			  }
-			?>
-		</div>
-		<div class="sidebar-type">$MAKERS</div>
-	</div>
+		
+	</div>  <!-- END SIDEBAR -->
   </div>
 </div>
+
 <div class="entry-footer">
 	<?php echo displayEntryFooter(); ?>
 </div>
