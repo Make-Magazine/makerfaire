@@ -1,6 +1,6 @@
 {
     "key": "group_573b526e78706",
-    "title": "Panels: Use these to manage what content displays on this page. (Recovered)",
+    "title": "Panels: Use these to manage what content displays on this page.",
     "fields": [
         {
             "key": "field_573b53999849d",
@@ -1191,25 +1191,6 @@
                     "display": "row",
                     "sub_fields": [
                         {
-                            "key": "field_571fsd78hbhj",
-                            "label": "Title",
-                            "name": "title",
-                            "type": "text",
-                            "instructions": "Type the News Block title here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": 256
-                        },
-                        {
                             "key": "field_5727sdfu6tdfyg",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
@@ -1232,6 +1213,44 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_571fsd78hbhj",
+                            "label": "Title",
+                            "name": "title",
+                            "type": "text",
+                            "instructions": "Type the News Block title here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": 256
+                        },
+                        {
+                            "key": "field_5c93bfbbd73ec",
+                            "label": "Link",
+                            "name": "link",
+                            "type": "text",
+                            "instructions": "Add the \"Read More\" link here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
                         },
                         {
                             "key": "field_571e989hhjkhbdudyug",
@@ -1803,5 +1822,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553126077
+    "modified": 1553186795
 }

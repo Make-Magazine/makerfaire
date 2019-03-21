@@ -600,24 +600,29 @@ function getRibbonSeparatorpanel() {
 /* Function to return News Block panel              */
 /* **************************************************** */
 function getNewsBlockpanel() {
-   $return = '';
-   $nb_title = get_sub_field('title');
-   $nb_tag = get_sub_field('tag');
+   // $return = '';
+   // $nb_title = get_sub_field('title');
+   // $nb_tag = get_sub_field('tag');
+   $args = [
+      'tag' => get_sub_field('tag'),
+      'title' => get_sub_field('title'),
+      'link' => get_sub_field('link')
+   ];
    require_once 'MF-News-Block.php';
-   $content = do_news_block($nb_tag);
+   $content = do_news_block($args);
 
-   $return .= '<div class="container">';
-   $return .= '   <div class="mf-news">';
-   $return .= '      <div class="row">';
-   $return .= '         <div class="col-xs-12">';
-   $return .= '            <p class="see-all pull-right">'.$nb_title.'</p>';
-   $return .= '         </div>';
-   $return .= '      </div>';
-   $return .= $content;
-   $return .= '   </div>';
-   $return .= '</div>';
+   // $return .= '<div class="container">';
+   // $return .= '   <div class="mf-news">';
+   // $return .= '      <div class="row">';
+   // $return .= '         <div class="col-xs-12">';
+   // $return .= '            <p class="see-all pull-right">'.$nb_title.'</p>';
+   // $return .= '         </div>';
+   // $return .= '      </div>';
+   // $return .= $content;
+   // $return .= '   </div>';
+   // $return .= '</div>';
    
-   return $return;
+   return $content;
 }
 
 

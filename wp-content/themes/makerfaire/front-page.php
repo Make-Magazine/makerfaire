@@ -33,17 +33,8 @@ get_header();
       </div>
    </div>
    
-   <div class="container">
-      <!-- Makerfaire news section -->
-      <div class="mf-news">
-         <div class="row">
-            <div class="col-xs-12">
-               <p class="see-all pull-right"><?php echo get_field("mf_news_title"); ?></p>
-            </div>
-         </div>
-         <?php echo do_shortcode("[mf-news tag=“maker-faire”]"); ?>
-      </div>
-   </div>
+   <!-- standard news block -->
+   <?php echo do_shortcode('[mf-news newstag="maker-faire" newstitle="Check out the latests News from <em>Make:</em>" newslink="'.htmlentities( get_field("mf_news_title") ).'"]'); ?>
 
    <?php $social_hashtags = get_field("social_hashtags"); ?>
    <div class="container mf-sumome">
