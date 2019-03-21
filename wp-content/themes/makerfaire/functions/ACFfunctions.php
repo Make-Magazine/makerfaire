@@ -936,7 +936,7 @@ if (function_exists('acf_add_local_field_group')) {
                   array(
                      'key' => '571e869b082c2',
                      'name' => 'call_to_action_panel',
-                     'label' => 'Star Ribbon Panel',
+                     'label' => 'CTA Panel',
                      'display' => 'row',
                      'sub_fields' => array(
                         array(

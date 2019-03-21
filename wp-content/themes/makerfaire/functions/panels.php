@@ -557,8 +557,8 @@ function getCTApanel() {
    );
    $return .= '<a href="' . $cta_url . '">';
    $return .= '<section class="cta-panel' . $bg_color_class_map[$background_color] . '">';
-   $return .= '   <div class="arrow-left"></div>'
-      . '   <div class="arrow-right"></div>';
+   // $return .= '   <div class="arrow-left"></div>'
+   //    . '   <div class="arrow-right"></div>';
    $return .= '   <div class="container">
                      <div class="row text-center">
                         <div class="col-xs-12">
@@ -1016,7 +1016,7 @@ function getFeatFairePanel(){
               $return .= '<a href="' . $faire_url . '">';
             }
             $return .=   '<img src="' . $faire_photo['url'] . '" alt="Featured Maker Faire Image" class="img-responsive" />';
-            $return .=   '<p class="featured-faire-above-title">Maker Faire</p>';
+            //$return .=   '<p class="featured-faire-above-title">Maker Faire</p>';
             $return .=   '<h4 class="featured-faire-date">' . $faire_date . '</h4>';
             $return .=   '<h3 class="featured-faire-title clear">' . $faire_title . '</h3>';
             $return .=   '<div class="clearfix"></div>';
