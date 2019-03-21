@@ -21,7 +21,7 @@
       $rss_items = $rss->get_items( 0, $maxitems );
       // NOTE (ts): add a little sanity check
       if(count($rss_items) === 0) {
-         return '<p>No Items Available</p>';
+         return '<div class="container"><div class="row"><div class="col-xs-12"><p>Invalid tag, or no items available</p></div></div></div>';
       }
       $output = '<div class="container">';
       $output  .= '<!-- Makerfaire news section -->';
