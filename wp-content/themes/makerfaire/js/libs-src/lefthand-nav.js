@@ -17,7 +17,7 @@ jQuery(document).ready(function(){
 		  }, 500);
 		  return false;
 	});
-	console.log(jQuery("#menu-toolkit-left-hand-nav").length);
+
 	if (jQuery("#menu-toolkit-left-hand-nav").length) {
 		// highlight the first one on load
 		jQuery("#menu-toolkit-left-hand-nav li").first().addClass("active");
