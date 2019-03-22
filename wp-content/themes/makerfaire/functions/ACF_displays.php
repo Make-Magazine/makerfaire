@@ -1,6 +1,10 @@
 <?php
 
-function get_acf_content() {   
+
+function do_image_grid($args) {
+   echo '<pre style="display: none;">';
+   var_dump($args);
+   echo '</pre>';
    $return = '';
    
    // Image Grid
@@ -35,4 +39,55 @@ function get_acf_content() {
    }
    
    echo $return;
-}
+
+};
+
+
+function do_featured_image_grid($args) {
+   echo '<pre style="display: none;">';
+   var_dump($args);
+   echo '</pre>';
+   $content = '';
+   $content .= '<div class="xcontainer-fluid featured-image-grid">';
+   // $content .= '<div class="row">';
+   // $content .= '<div class="col-xs-12 grid-inner">';
+   foreach($args as $key => $value) {
+      $content .= '<div class="grid-item" style="background-image: url('.$value['instance_image'].')">';
+      $content .= '<h3>'.$value['instance_title'].'</h3>';
+      $content .= '</div>';
+   }
+   // $content .= '</div>'; // end col
+   // $content .= '</div>'; // end row
+   $content .= '</div>'; // end container
+
+   echo $content;
+};
+
+
+
+
+function get_acf_content() {
+   $mappings = array(
+      'image_grid' => 'do_image_grid',
+      'featured_image_grid' => 'do_featured_image_grid'
+   );
+   $all_fields = get_fields();
+   echo '<pre style="display: none;">';
+   var_dump($all_fields);
+   echo '</pre>';
+
+   foreach($all_fields as $key => $value) {
+      if(is_array($value)) {
+         echo 'handle array ' . $key . ' ' . $mappings[$key] . '<br />';
+         if(!empty($mappings[$key])) {
+            echo 'handler ' . $mappings[$key] . '<br />';
+            $mappings[$key]($value);
+         }
+      } else {
+         echo $value . '<br />';
+      }
+   };
+
+
+};
+

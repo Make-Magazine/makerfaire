@@ -1,0 +1,187 @@
+{
+    "key": "group_5c941524b8701",
+    "title": "Featured Image Grid",
+    "fields": [
+        {
+            "key": "field_5c94154ba1fe2",
+            "label": "Featured Image Grid",
+            "name": "featured_image_grid",
+            "type": "repeater",
+            "instructions": "Add one or more images with text \/ description \/ button to a grid",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "Add Image Instance",
+            "sub_fields": [
+                {
+                    "key": "field_5c941599a1fe4",
+                    "label": "Instance Image",
+                    "name": "instance_image",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": 400,
+                    "min_height": 300,
+                    "min_size": "",
+                    "max_width": 800,
+                    "max_height": 600,
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5c94157fa1fe3",
+                    "label": "Instance Title",
+                    "name": "instance_title",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 140
+                },
+                {
+                    "key": "field_5c941675a1fe7",
+                    "label": "Instance Subtitle",
+                    "name": "instance_subtitle",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 140
+                },
+                {
+                    "key": "field_5c9415cca1fe5",
+                    "label": "Instance Days \/ Dates",
+                    "name": "instance_days_dates",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c9415e9a1fe6",
+                    "label": "Instance Description",
+                    "name": "instance_description",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": 256,
+                    "rows": "",
+                    "new_lines": ""
+                },
+                {
+                    "key": "field_5c9416ada1fe8",
+                    "label": "Instance Button URL",
+                    "name": "instance_button_url",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_5c9416c7a1fe9",
+                    "label": "Instance Button Text",
+                    "name": "instance_button_text",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5c9416ada1fe8",
+                                "operator": "!=empty"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "Learn More",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-wide-image-grid-leftnav.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1553211282
+}
