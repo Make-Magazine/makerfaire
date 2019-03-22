@@ -73,7 +73,6 @@ if(isset($entry->errors)){
   $groupname   = (isset($entry['109']) ? $entry['109']:'');
   $groupphoto  = (isset($entry['111']) ? $entry['111']:'');
   $groupbio    = (isset($entry['110']) ? $entry['110']:'');
-  $groupsocial = (isset($entry['828']) ? $entry['828'] : '');
   $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
 
 	
@@ -413,11 +412,44 @@ function getMakerInfo($entry) {
 }
 
 function getSocial($entrySocial) {
-	error_log($entrySocial);
 	$socialArray = unserialize($entrySocial);
-	foreach($socialArray as $value) {
-		error_log(print_r($value, TRUE));
+	$socialBlock = '';
+	if(!empty($socialArray))  {
+		error_log(print_r($socialArray, TRUE));
+		$socialBlock .= '<div class="social-block">';
+		foreach($socialArray as $value) {
+			if($value['Plateform'] == "Facebook" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-facebook-square"></i></a>';
+			}
+			if($value['Plateform'] == "Twitter" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-twitter-square"></i></a>';
+			}
+			if($value['Plateform'] == "Instagram" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
+			}
+			if($value['Plateform'] == "YouTube" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-youtube-square"></i></a>';
+			}
+			if($value['Plateform'] == "LinkedIn" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
+			}
+			if($value['Plateform'] == "Pinterest" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-pinterest-square"></i></a>';
+			}
+			if($value['Plateform'] == "Snapchat" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat-square"></i></a>';
+			}
+			if($value['Plateform'] == "Tumblr" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-tumblr-square"></i></a>';
+			}
+			if($value['Plateform'] == "Git" ) {
+				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-git-square"></i></a>';
+			}
+		}
+		$socialBlock .= '</div>';
 	}
+	error_log($socialBlock);
+	return $socialBlock;
 }
 
 function progDateRange($faire_start, $faire_end) {

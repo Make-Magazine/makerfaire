@@ -73,6 +73,7 @@
 					 </div>
 					 <div class="col-xs-6">
 						<h3 class="text-capitalize" id="groupname"><?php echo $groupname;?></h3>
+						<?php echo $groupsocial; ?>
 					 </div>
 				  </div>
 				  <div class="row">

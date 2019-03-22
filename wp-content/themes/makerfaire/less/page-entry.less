@@ -70,13 +70,13 @@
 			h2 {
 				padding-left: 15px;
 				font-size: 26px;
-				margin: 0 15px;
+				margin: 0 15px 10px;
 				text-transform: uppercase;
 			}
 			
 		}
 		.entry-page-maker-info {
-			border-bottom: 0px;
+			border-top: 0px;
 			h3 {
 				margin-top: 0;
 				@media screen and (max-width: 767px) {
@@ -93,7 +93,7 @@
 		max-width: 600px;
 	}
 
-
+   /* Related to the editSection */
 	.makerEditHead {
 		padding: 10px 20px;
 		margin-bottom: 10px;
@@ -129,6 +129,18 @@
 	}
 	#editEntry { display: none; }
 	
+	// ye olde social blocke
+	.social-block {
+		a {
+			color: #9b9b9b;
+			font-size: 40px;
+			padding-right: 10px;
+			&:hover {
+				opacity: .6;
+			}
+		}
+	}
+	
 	// the little blue footer
 	.entry-footer {
 		background: #D0EAFC;
@@ -152,7 +164,7 @@
 					width: 100%;
 					h4 {
 						font-size: 14px;
-						text-transform: capitalize;
+						//maker/entry/67620/text-transform: capitalize;
 					}
 				}
 			}
