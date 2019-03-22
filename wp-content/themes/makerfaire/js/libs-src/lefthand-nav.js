@@ -17,8 +17,7 @@ jQuery(document).ready(function(){
 		  }, 500);
 		  return false;
 	});
-	
-	if (document.getElementById("#menu-toolkit-left-hand-nav")) {
+	if (jQuery("#menu-toolkit-left-hand-nav").length) {
 		// highlight the first one on load
 		jQuery("#menu-toolkit-left-hand-nav li").first().addClass("active");
 		// highlight the left nav based on what area of the page a user is mousing over or clicking on.
