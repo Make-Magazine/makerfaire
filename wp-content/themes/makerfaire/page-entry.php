@@ -34,6 +34,19 @@ if(isset($entry->errors)){
   $form_id = $entry['form_id'];
   $form = GFAPI::get_form($form_id);
   $formType = $form['form_type'];
+	
+	
+	
+	
+################ WHAT I WANT TO DO IS SEE IF THIS IS A HANDS ON ACTIVITY AND IF IT HAS A PRICE ################
+	
+  $activityFlag = $form['fields'][12]['choices'][2]['isSelected'];
+  if($activityFlag == TRUE) {
+	  $activityPrice = $form['fields'][12]['choices'][2]['price'];
+  }
+  error_log("Activity = " . $activityFlag);
+  error_log("Price = " . $activityPrice);
+
   //build an array of field information
   foreach($form['fields'] as $field){
     $fieldID = $field->id;
@@ -265,6 +278,11 @@ function display_entry_schedule($entry_id) {
     <span class="faireTitle">
         <h3 class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></h3>
     </span>
+	 <?php 
+	    if(display_groupEntries($entry_id)) {
+	       echo display_groupEntries($entry_id);
+		 }
+    ?>
     <div id="entry-schedule">
 
       <div class="row padbottom">
@@ -286,7 +304,6 @@ function display_entry_schedule($entry_id) {
               echo '<small>LOCATION: '.$current_location.'</small>';
             }
             if($prev_start_dt==NULL){
-              
 					  echo '<h5>'.$current_start_dt.'</h5>';
 					  $prev_start_dt = $current_start_dt;
 					  $prev_location = null;
@@ -341,24 +358,21 @@ function display_groupEntries($entryID){
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     if($results[0]->parentID==$entryID){
-        $title = 'Exhibits in this group:';
+        $title = 'Exhibits in this group: ';
         $type = 'parent';
       }else{
-        $title = 'Part of a group:';
+        $title = '';
         $type = 'child';
       }
-    $return .= $title.'<br/>';
-    $return .= '<div class="row">';
+    $return .= $title;
     foreach($results as $row){
       $link_entryID = ($type=='parent'?$row->childID:$row->parentID);
       $entry = GFAPI::get_entry($link_entryID);
       //Title
       $project_title = (string)$entry['151'];
       $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
-      $return .= '<div class="col-md-4 col-sm-6">';
-      $return .= '<a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></div>';
+      $return .= '<p><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></p>';
     }
-    $return .= '</div>';
   }
   echo $return;
 }
@@ -415,40 +429,40 @@ function getSocial($entrySocial) {
 	$socialArray = unserialize($entrySocial);
 	$socialBlock = '';
 	if(!empty($socialArray))  {
-		error_log(print_r($socialArray, TRUE));
 		$socialBlock .= '<div class="social-block">';
 		foreach($socialArray as $value) {
-			if($value['Plateform'] == "Facebook" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-facebook-square"></i></a>';
-			}
-			if($value['Plateform'] == "Twitter" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-twitter-square"></i></a>';
-			}
-			if($value['Plateform'] == "Instagram" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
-			}
-			if($value['Plateform'] == "YouTube" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-youtube-square"></i></a>';
-			}
-			if($value['Plateform'] == "LinkedIn" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
-			}
-			if($value['Plateform'] == "Pinterest" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-pinterest-square"></i></a>';
-			}
-			if($value['Plateform'] == "Snapchat" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat-square"></i></a>';
-			}
-			if($value['Plateform'] == "Tumblr" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-tumblr-square"></i></a>';
-			}
-			if($value['Plateform'] == "Git" ) {
-				$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-git-square"></i></a>';
+			if($value['Your Link'] != "") { // make sure there's a link to be had, then assign that link by plateform
+				if($value['Plateform'] == "Facebook" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-facebook-square"></i></a>';
+				}
+				if($value['Plateform'] == "Twitter" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-twitter-square"></i></a>';
+				}
+				if($value['Plateform'] == "Instagram" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
+				}
+				if($value['Plateform'] == "YouTube" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-youtube-square"></i></a>';
+				}
+				if($value['Plateform'] == "LinkedIn" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
+				}
+				if($value['Plateform'] == "Pinterest" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-pinterest-square"></i></a>';
+				}
+				if($value['Plateform'] == "Snapchat" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat-square"></i></a>';
+				}
+				if($value['Plateform'] == "Tumblr" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-tumblr-square"></i></a>';
+				}
+				if($value['Plateform'] == "Git" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-git-square"></i></a>';
+				}
 			}
 		}
 		$socialBlock .= '</div>';
 	}
-	error_log($socialBlock);
 	return $socialBlock;
 }
 

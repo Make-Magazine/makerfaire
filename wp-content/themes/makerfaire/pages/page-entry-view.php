@@ -11,6 +11,7 @@
 	  <!-- Project Title and ribbons -->
 	  <?php echo $ribbons;?>
 	  <div class="entry-header">
+		 <div class="entry-type"><?php echo $formType; ?></div>
 		 <h1>
 			<span id="project_title"><?php echo $project_title; ?></span>
 		 </h1>
@@ -97,8 +98,7 @@
 							 <span class="text-capitalize"><?php echo $maker['firstname'];?></span>
 							 <span class="text-capitalize"><?php echo $maker['lastname'];?></span>
 						  </h3>
-						  <div class="social-links">
-						  </div>
+						  <?php echo $maker['social']; ?>
 						</div>
 					 </div>
 					 <div class="row">
@@ -112,9 +112,7 @@
 	  }
 	  ?>
 	  </div>
-	  <?php
-	  echo display_groupEntries($entryId);
-	?>
+	  
 		
 	</div>  <!-- END SIDEBAR -->
   </div>
