@@ -42,18 +42,35 @@
       // Responsive Height
       height: 150px;
       padding-top: 50%;
+      -webkit-box-sizing: content-box;
       box-sizing: content-box;
 
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
+
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
       flex-direction: column;
+
+      -webkit-box-pack: end;
+      -ms-flex-pack: end;
       justify-content: flex-end;
       position: relative;
       overflow: hidden;
 
       &:hover {
          &> .grid-item-desc {
+            -webkit-transform: translateX(0);
+            -ms-transform: translateX(0);
             transform: translateX(0);
+
+            -webkit-transition: -webkit-transform 0.25s ease-in-out;
+            transition: -webkit-transform 0.25s ease-in-out;
+            -o-transition: transform 0.25s ease-in-out;
             transition: transform 0.25s ease-in-out;
+            transition: transform 0.25s ease-in-out, -webkit-transform 0.25s ease-in-out;
          }
       }
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
@@ -63,14 +80,25 @@
          margin-bottom: 24px;
          &:hover {
             &> .grid-item-desc {
-               transform: translateX(100%);
+               -webkit-transform: translateX(100%);
+                   -ms-transform: translateX(100%);
+                       transform: translateX(100%);
+               -webkit-transition: -webkit-transform 0.25s ease-in-out;
+               transition: -webkit-transform 0.25s ease-in-out;
+               -o-transition: transform 0.25s ease-in-out;
                transition: transform 0.25s ease-in-out;
+               transition: transform 0.25s ease-in-out, -webkit-transform 0.25s ease-in-out;
             }
          }
       }
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+         display: -webkit-box;
+         display: -ms-flexbox;
          display: flex;
-         flex-direction: column;
+         -webkit-box-orient: vertical;
+         -webkit-box-direction: normal;
+             -ms-flex-direction: column;
+                 flex-direction: column;
          height: 300px;
          padding-top: 0;
       }
@@ -100,7 +128,9 @@
          background-color: #333;
          position: relative;
          bottom: auto;
-         transform: translateX(100%);
+         -webkit-transform: translateX(100%);
+             -ms-transform: translateX(100%);
+                 transform: translateX(100%);
 
          h3 {
             font-size: 16px;
@@ -113,23 +143,41 @@
    }
    .grid-item-desc {
       position: absolute;
+
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      -webkit-box-align: start;
+          -ms-flex-align: start;
+              align-items: flex-start;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
       padding: 1em;
       background-color: #333;
       background-color: rgba(0,0,0,0.8);
       color: #f3f3f3;
       width: 100%;
       height: 100%;
-      transform: translateX(100%);
+      -webkit-transform: translateX(100%);
+          -ms-transform: translateX(100%);
+              transform: translateX(100%);
+      -webkit-transition: -webkit-transform 0.25s ease-in-out;
+      transition: -webkit-transform 0.25s ease-in-out;
+      -o-transition: transform 0.25s ease-in-out;
       transition: transform 0.25s ease-in-out;
+      transition: transform 0.25s ease-in-out, -webkit-transform 0.25s ease-in-out;
       overflow: hidden;
       text-decoration: none;
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
          position: absolute;
-         transform: translateX(100%);
+         -webkit-transform: translateX(100%);
+             -ms-transform: translateX(100%);
+                 transform: translateX(100%);
          top: 0;
          overflow: visible;
          display: block;
@@ -139,6 +187,8 @@
       }
       @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
          position: relative;
+         display: -webkit-box;
+         display: -ms-flexbox;
          display: flex;
          h4 {
             display: none;
@@ -157,12 +207,14 @@
          width: 100%;
          padding: 1em 0;
          justify-self: flex-end;
-         align-self: flex-end;
+         -ms-flex-item-align: end;
+             align-self: flex-end;
          &:hover {
             background-color: #fff;
          }
          @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
-            align-self: flex-end;
+            -ms-flex-item-align: end;
+                align-self: flex-end;
          }
       }
 
