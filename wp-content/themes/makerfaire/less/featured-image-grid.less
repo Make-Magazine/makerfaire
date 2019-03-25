@@ -170,6 +170,13 @@
    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
       /* IE10+ CSS styles go here */
       color: red!important;
+      box-sizing: border-box;
+      display: flex;
+      flex-wrap: wrap;
+      .grid-item {
+         width: calc(100% / 3); /* calc() method */
+         width: 33.33%; /* percentage method */
+      }
    }
 
 
