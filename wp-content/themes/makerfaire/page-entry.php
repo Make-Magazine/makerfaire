@@ -10,6 +10,7 @@ $entryId   = $wp_query->query_vars['e_id'];
 $editEntry = $wp_query->query_vars['edit_slug'];
 $entry     = GFAPI::get_entry($entryId);
 
+//error_log(print_r($entry, TRUE));
 
 // The opengraph cards for sharing
 $sharing_cards = new mf_sharing_cards();
@@ -251,7 +252,7 @@ function display_entry_schedule($entry_id) {
   }
   $backlink = "/".$url_sub_path."/meet-the-makers/";
 
-  $faire_url = "/$faire";
+  $faire_url = "/" . $faire;
 
   $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
             from  wp_mf_location location
@@ -265,11 +266,10 @@ function display_entry_schedule($entry_id) {
           . " group by area, subarea, location, schedule.start_dt"
           . " order by schedule.start_dt";
   $results = $wpdb->get_results($sql);
-
-  
+  $return = "";
+  $return .= '<span class="faireTitle"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></span>';
+	
   if($wpdb->num_rows > 0){
-    $return = "";
-    $return .= '<span class="faireTitle"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></span>';
 	 if(display_group($entry_id)) { 
 		    $return .= '<div class="group-entries">' . display_group($entry_id) . '</div>';
 	 } 
@@ -278,56 +278,57 @@ function display_entry_schedule($entry_id) {
 
 	  $prev_start_dt = NULL;
 	  $prev_location = NULL;
+	  $multipleLocations = NULL;
+	  
 	  foreach($results as $row){
 		 if(!is_null($row->start_dt)){
 			$start_dt   = strtotime( $row->start_dt);
 			$end_dt     = strtotime($row->end_dt);
 			$current_start_dt = date("l, F j",$start_dt);
 			$current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
-
-			$return .= '<div class="entry-date-time col-sm-12">';
-			// this is a new location
-			if ($prev_location != $current_location){
-			  $prev_location = $current_location;
-			  $return .= '<small>LOCATION: '.$current_location.'</small>';
-			}
 			if($prev_start_dt==NULL){
-				  $return .= '<h5>'.$current_start_dt.'</h5>';
-				  $prev_start_dt = $current_start_dt;
-				  $prev_location = null;
+			  $return .= '<div class="entry-date-time col-sm-12">';
 			}
-			// if there's another day
 			if ($prev_start_dt != $current_start_dt){
 			  //This is not the first new date
 			  if ($prev_start_dt != NULL){
-					  $return .= '<h5>'.$current_start_dt.'</h5>';
-					  $prev_location = null;
+				 $return .= '</div><div class="entry-date-time col-sm-12">';
 			  }
-
+			  $return .= '<br /><h5>'.$current_start_dt.'</h5>';
+			  $prev_start_dt = $current_start_dt;
+			  $prev_location = null;
+			  $multipleLocations = TRUE;
 			}
-			$return .= '<small>TIME:  '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</small>';
-			$return .= '</div>';  // end date time location block
+			// this is a new location
+			if ($prev_location != $current_location){
+			  $prev_location = $current_location;
+			  $return .= '<small class="text-muted">LOCATION: '.$current_location . "</small><br />";
+			}
+			$return .= '<small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</small><br />';
+
 		 }else{
 			  global $faire_start; global $faire_end;
 			  $return .= '<div class="entry-date-time col-sm-12">';
 
 			  $faire_start = strtotime($faire_start);
 			  $faire_end   = strtotime($faire_end);
+
 			  $dateRange   = progDateRange($faire_start, $faire_end);
 
-			  $return .= '<small>LOCATION: '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
 			  //tbd change this to be dynamically populated
 			  if($dateRange != "" && $dateRange != null) {
 					$return .= '<h5>'.natural_language_join($dateRange).':<br />'.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
 			  }
 			  $return .= '</div>'; // end date time location block
-
 		 }
+			
 	  }
-     $return .= '</div>'; // close final col-sm-4
-
-    $return .= '</div>'; // End entry-schedule
+     $return .= '</div>
+              </div>';
   }
+	if($multipleLocations == TRUE) {
+		$return .= "</div>";
+	}
 	return $return;
 }
 
@@ -343,7 +344,6 @@ function display_group($entryID) {
           where (parentID=".$entryID." or childID=".$entryID.") and child.status != 'trash' and parent.status != 'trash'";
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
-	  	error_log("jello");
     if($results[0]->parentID!=$entryID){
 		 $title = '';
        $type = 'child';
