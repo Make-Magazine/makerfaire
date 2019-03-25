@@ -69,7 +69,7 @@
                     "label": "Presenter Title",
                     "name": "pres_title",
                     "type": "text",
-                    "instructions": "Maximum 48 Characters",
+                    "instructions": "Maximum 51 Characters",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -81,7 +81,7 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": 48
+                    "maxlength": 51
                 },
                 {
                     "key": "field_5c9902c603989",
@@ -205,5 +205,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553544507
+    "modified": 1553544801
 }
