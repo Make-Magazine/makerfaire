@@ -15,6 +15,7 @@
 		 <h1>
 			<span id="project_title"><?php echo $project_title; ?></span>
 		 </h1>
+		
 	  </div>
 	  <?php
 				$url  = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
@@ -34,9 +35,7 @@
 	  ?>
 		
 	  <?php if(display_groupEntries($entryId)) { ?>
-		  <div class="group-entries">
-	  <?php echo display_groupEntries($entryId); ?>
-	     </div>
+		  <div class="group-entries"><?php echo display_groupEntries($entryId); ?></div>
 	  <?php } ?>
 
 	</div>

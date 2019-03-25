@@ -270,6 +270,9 @@ function display_entry_schedule($entry_id) {
   if($wpdb->num_rows > 0){
     $return = "";
     $return .= '<span class="faireTitle"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></span>';
+	 if(display_group($entry_id)) { 
+		    $return .= '<div class="group-entries">' . display_group($entry_id) . '</div>';
+	 } 
     $return .= '<div id="entry-schedule">
                    <div class="row padbottom">';
 
@@ -328,6 +331,36 @@ function display_entry_schedule($entry_id) {
 	return $return;
 }
 
+function display_group($entryID) {
+  global $wpdb;global $faireID; global $faire;
+  $return = '';
+
+  //look for all associated entries but exclude trashed entries
+  $sql = "select wp_mf_lead_rel.*
+          from wp_mf_lead_rel
+          left outer join wp_gf_entry  child on wp_mf_lead_rel.childID = child.id
+          left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id
+          where (parentID=".$entryID." or childID=".$entryID.") and child.status != 'trash' and parent.status != 'trash'";
+  $results = $wpdb->get_results($sql);
+  if($wpdb->num_rows > 0){
+	  	error_log("jello");
+    if($results[0]->parentID!=$entryID){
+		 $title = '';
+       $type = 'child';
+		 $return .= '<ul class="group-list">';
+		 foreach($results as $row){
+			$link_entryID = ($type=='parent'?$row->childID:$row->parentID);
+			$entry = GFAPI::get_entry($link_entryID);
+			//Title
+			$project_title = (string)$entry['151'];
+			$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+			$return .= '<li><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
+		 }
+	 	 return $return .= "</ul>";
+	 }
+  }
+}
+
 /* This function is used to display grouped entries and links*/
 function display_groupEntries($entryID){
   global $wpdb;global $faireID; global $faire;
@@ -342,22 +375,19 @@ function display_groupEntries($entryID){
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     if($results[0]->parentID==$entryID){
-        $title = '<h4>Exhibits in this group:</h4><ul class="group-list">';
-        $type = 'parent';
-      }else{
-        $title = '';
-        $type = 'child';
-      }
-    $return .= $title;
-    foreach($results as $row){
-      $link_entryID = ($type=='parent'?$row->childID:$row->parentID);
-      $entry = GFAPI::get_entry($link_entryID);
-      //Title
-      $project_title = (string)$entry['151'];
-      $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
-      $return .= '<li><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
-    }
-	 return $return .= "</ul>";
+       $title = '<h4>Exhibits in this group:</h4>';
+       $type = 'parent';
+		 $return .= $title . '<ul class="group-list">';
+		 foreach($results as $row){
+			$link_entryID = ($type=='parent'?$row->childID:$row->parentID);
+			$entry = GFAPI::get_entry($link_entryID);
+			//Title
+			$project_title = (string)$entry['151'];
+			$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+			$return .= '<li><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
+		 }
+	 	 return $return .= "</ul>";
+	 }
   }
 }
 
