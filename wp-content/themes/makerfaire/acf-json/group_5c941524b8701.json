@@ -1,11 +1,11 @@
 {
     "key": "group_5c941524b8701",
-    "title": "Featured Image Grid",
+    "title": "Featured Presenter Grid",
     "fields": [
         {
             "key": "field_5c94154ba1fe2",
-            "label": "Featured Image Grid",
-            "name": "featured_image_grid",
+            "label": "Featured Presenter Grid",
+            "name": "featured_presenter_grid",
             "type": "repeater",
             "instructions": "Add one or more images with text \/ description \/ button to a grid",
             "required": 0,
@@ -15,16 +15,16 @@
                 "class": "",
                 "id": ""
             },
-            "collapsed": "",
+            "collapsed": "field_5c941599a1fe4",
             "min": 0,
             "max": 0,
-            "layout": "table",
-            "button_label": "Add Image Instance",
+            "layout": "block",
+            "button_label": "Add Presenter",
             "sub_fields": [
                 {
                     "key": "field_5c941599a1fe4",
-                    "label": "Instance Image",
-                    "name": "instance_image",
+                    "label": "Presenter Image",
+                    "name": "pres_image",
                     "type": "image",
                     "instructions": "",
                     "required": 1,
@@ -47,10 +47,10 @@
                 },
                 {
                     "key": "field_5c94157fa1fe3",
-                    "label": "Instance Title",
-                    "name": "instance_title",
+                    "label": "Presenter Name",
+                    "name": "pres_name",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Maximum 35 Characters",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -62,14 +62,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": 140
+                    "maxlength": 35
                 },
                 {
                     "key": "field_5c941675a1fe7",
-                    "label": "Instance Subtitle",
-                    "name": "instance_subtitle",
+                    "label": "Presenter Title",
+                    "name": "pres_title",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Maximum 40 Characters",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -81,14 +81,71 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": 140
+                    "maxlength": 40
+                },
+                {
+                    "key": "field_5c9902c603989",
+                    "label": "Event Title",
+                    "name": "event_title",
+                    "type": "text",
+                    "instructions": "Maximum 35 Characters",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 35
                 },
                 {
                     "key": "field_5c9415cca1fe5",
-                    "label": "Instance Days \/ Dates",
-                    "name": "instance_days_dates",
+                    "label": "Event Date\/Day\/Time",
+                    "name": "event_datetime",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Maximum 35 Characters",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 35
+                },
+                {
+                    "key": "field_5c9415e9a1fe6",
+                    "label": "Event Description",
+                    "name": "event_desc",
+                    "type": "textarea",
+                    "instructions": "Maximum 340 Characters",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": 340,
+                    "rows": "",
+                    "new_lines": ""
+                },
+                {
+                    "key": "field_5c9416ada1fe8",
+                    "label": "Button URL",
+                    "name": "button_url",
+                    "type": "text",
+                    "instructions": "For links to places elsewhere in this site, omit the domain. E.g. instead of https:\/\/makerfaire.com\/entry\/123456, just use \/entry\/123456",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -103,46 +160,11 @@
                     "maxlength": ""
                 },
                 {
-                    "key": "field_5c9415e9a1fe6",
-                    "label": "Instance Description",
-                    "name": "instance_description",
-                    "type": "textarea",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": "",
-                    "maxlength": 256,
-                    "rows": "",
-                    "new_lines": ""
-                },
-                {
-                    "key": "field_5c9416ada1fe8",
-                    "label": "Instance Button URL",
-                    "name": "instance_button_url",
-                    "type": "url",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "placeholder": ""
-                },
-                {
                     "key": "field_5c9416c7a1fe9",
-                    "label": "Instance Button Text",
-                    "name": "instance_button_text",
+                    "label": "Button Text",
+                    "name": "button_text",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Maximum 24 Characters",
                     "required": 0,
                     "conditional_logic": [
                         [
@@ -161,7 +183,7 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": 24
                 }
             ]
         }
@@ -183,5 +205,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553211282
+    "modified": 1553542714
 }

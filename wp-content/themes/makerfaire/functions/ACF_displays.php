@@ -2,9 +2,9 @@
 
 
 function do_image_grid($args) {
-   echo '<pre style="display: none;">';
-   var_dump($args);
-   echo '</pre>';
+   // echo '<pre style="display: none;">';
+   // var_dump($args);
+   // echo '</pre>';
    $return = '';
    
    // Image Grid
@@ -43,17 +43,30 @@ function do_image_grid($args) {
 };
 
 
-function do_featured_image_grid($args) {
-   echo '<pre style="display: none;">';
-   var_dump($args);
-   echo '</pre>';
+function do_featured_presenter_grid($args) {
+   // echo '<pre style="display: none;">';
+   // var_dump($args);
+   // echo '</pre>';
    $content = '';
    $content .= '<div class="xcontainer-fluid featured-image-grid">';
    // $content .= '<div class="row">';
    // $content .= '<div class="col-xs-12 grid-inner">';
    foreach($args as $key => $value) {
-      $content .= '<div class="grid-item" style="background-image: url('.$value['instance_image'].')">';
-      $content .= '<h3>'.$value['instance_title'].'</h3>';
+      $content .= '<div class="grid-item" style="background-image: url('.$value['pres_image'].')">';
+      $content .= '  <div class="grid-item-title-block">';
+      $content .= '     <h3>'.$value['pres_name'].'</h3>';
+      $content .= '     <p>'.$value['pres_title'].'</p>';
+      $content .= '  </div>';
+      $content .= '  <a class="grid-item-desc" href="'.$value['button_url'].'">';
+      if($value['event_title']) {
+         $content .= '     <h4>'.$value['event_title'].'</h4>';
+      }
+      if($value['event_datetime']) {
+         $content .= '     <p class="dates">'.$value['event_datetime'].'</p>';
+      }
+      $content .= '     <p class="desc-body">'.$value['event_desc'].'</p>';
+      $content .= '     <p class="btn btn-blue read-more-link">'.$value['button_text'].'</p>';
+      $content .= '  </a>'; // end desc
       $content .= '</div>';
    }
    // $content .= '</div>'; // end col
@@ -69,22 +82,22 @@ function do_featured_image_grid($args) {
 function get_acf_content() {
    $mappings = array(
       'image_grid' => 'do_image_grid',
-      'featured_image_grid' => 'do_featured_image_grid'
+      'featured_presenter_grid' => 'do_featured_presenter_grid'
    );
    $all_fields = get_fields();
-   echo '<pre style="display: none;">';
-   var_dump($all_fields);
-   echo '</pre>';
+   // echo '<pre style="display: none;">';
+   // var_dump($all_fields);
+   // echo '</pre>';
 
    foreach($all_fields as $key => $value) {
       if(is_array($value)) {
-         echo 'handle array ' . $key . ' ' . $mappings[$key] . '<br />';
+         //echo 'handle array ' . $key . ' ' . $mappings[$key] . '<br />';
          if(!empty($mappings[$key])) {
-            echo 'handler ' . $mappings[$key] . '<br />';
+            //echo 'handler ' . $mappings[$key] . '<br />';
             $mappings[$key]($value);
          }
       } else {
-         echo $value . '<br />';
+         //echo $value . '<br />';
       }
    };
 
