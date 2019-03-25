@@ -51,7 +51,7 @@
                     "name": "pres_name",
                     "type": "text",
                     "instructions": "Maximum 36 Characters",
-                    "required": 0,
+                    "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
                         "width": "",
@@ -70,7 +70,7 @@
                     "name": "pres_title",
                     "type": "text",
                     "instructions": "Maximum 51 Characters",
-                    "required": 0,
+                    "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
                         "width": "",
@@ -205,5 +205,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553544801
+    "modified": 1553545619
 }

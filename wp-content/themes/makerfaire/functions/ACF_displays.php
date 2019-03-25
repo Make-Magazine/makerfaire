@@ -57,7 +57,11 @@ function do_featured_presenter_grid($args) {
       $content .= '     <h3>'.$value['pres_name'].'</h3>';
       $content .= '     <p>'.$value['pres_title'].'</p>';
       $content .= '  </div>';
-      $content .= '  <a class="grid-item-desc" href="'.$value['button_url'].'">';
+      if($value['button_url']) {
+         $content .= '  <a class="grid-item-desc" href="'.$value['button_url'].'">';
+      } else {
+         $content .= '   <div class="grid-item-desc">';
+      }
       if($value['event_title']) {
          $content .= '     <h4>'.$value['event_title'].'</h4>';
       }
@@ -65,8 +69,17 @@ function do_featured_presenter_grid($args) {
          $content .= '     <p class="dates">'.$value['event_datetime'].'</p>';
       }
       $content .= '     <p class="desc-body">'.$value['event_desc'].'</p>';
-      $content .= '     <p class="btn btn-blue read-more-link">'.$value['button_text'].'</p>';
-      $content .= '  </a>'; // end desc
+
+      if($value['button_url'] && $value['button_text']) {
+         $content .= '     <p class="btn btn-blue read-more-link">'.$value['button_text'].'</p>';
+      }
+      
+      if($value['button_url']) {
+         $content .= '  </a>'; // end desc
+      } else {
+         $conetnt .= '`</div>';  // end desc
+      }
+      
       $content .= '</div>';
    }
    // $content .= '</div>'; // end col
