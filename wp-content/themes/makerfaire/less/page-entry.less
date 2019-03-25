@@ -17,16 +17,13 @@
 		}
 		ul {
 			padding: 0px;
+			margin-bottom: 0px;
 			li { 
 				list-style: none;
-				font-size: 16px;
-				width: 50%;
+				font-size: 20px;
 				float: left;
 				margin-left
 				margin-bottom: 3px;
-				@media screen and (max-width: 768px) {
-					width: 100%;
-				}
 			}
 		}
 	}
@@ -81,6 +78,16 @@
 			}
 		}
 		#proj_img img { width: 100%; }
+		.group-entries { 
+			ul {
+				li {
+					width: 50%;
+					@media screen and (max-width: 768px) {
+						width: 100%;
+					}
+				}
+			}
+		}
 	}
 	
 	// The Righthand side
@@ -133,6 +140,7 @@
 				padding-bottom: 100%;
 				overflow: hidden;
 				position: relative;
+				background: #ccc;
 				img {
 					position: absolute;
 					width: auto;
