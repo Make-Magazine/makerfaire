@@ -10,7 +10,6 @@ $entryId   = $wp_query->query_vars['e_id'];
 $editEntry = $wp_query->query_vars['edit_slug'];
 $entry     = GFAPI::get_entry($entryId);
 
-//error_log(print_r($entry, TRUE));
 
 // The opengraph cards for sharing
 $sharing_cards = new mf_sharing_cards();
@@ -35,17 +34,8 @@ if(isset($entry->errors)){
   $form = GFAPI::get_form($form_id);
   $formType = $form['form_type'];
 	
-	
-	
-	
-################ WHAT I WANT TO DO IS SEE IF THIS IS A HANDS ON ACTIVITY AND IF IT HAS A PRICE ################
-	
-  $activityFlag = $form['fields'][12]['choices'][2]['isSelected'];
-  if($activityFlag == TRUE) {
-	  $activityPrice = $form['fields'][12]['choices'][2]['price'];
-  }
-  error_log("Activity = " . $activityFlag);
-  error_log("Price = " . $activityPrice);
+	//error_log($form_id);
+
 
   //build an array of field information
   foreach($form['fields'] as $field){
@@ -149,6 +139,9 @@ if($editEntry=='edit'){
 
  //check if this entry has won any awards
 $ribbons = checkForRibbons(0,$entryId);
+
+// check if activity is hands on
+$handsOn = handsOnMarker($entry);
 
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
@@ -277,9 +270,6 @@ function display_entry_schedule($entry_id) {
   if($wpdb->num_rows > 0){
     $return = "";
     $return .= '<span class="faireTitle"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></span>';
-	 if(display_groupEntries($entry_id)) {
-		 $return .= display_groupEntries($entry_id);
-	 }
     $return .= '<div id="entry-schedule">
                    <div class="row padbottom">';
 
@@ -352,7 +342,7 @@ function display_groupEntries($entryID){
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     if($results[0]->parentID==$entryID){
-        $title = 'Exhibits in this group: ';
+        $title = '<h4>Exhibits in this group:</h4><ul class="group-list">';
         $type = 'parent';
       }else{
         $title = '';
@@ -365,9 +355,9 @@ function display_groupEntries($entryID){
       //Title
       $project_title = (string)$entry['151'];
       $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
-      $return .= '<p><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></p>';
+      $return .= '<li><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
     }
-	 return $return;
+	 return $return .= "</ul>";
   }
 }
 
@@ -417,6 +407,15 @@ function getMakerInfo($entry) {
 							 'social'       => getSocial(isset($entry['827']) ? $entry['827'] : '')
                   );
   return $makers;
+}
+
+function handsOnMarker($entry) {
+	################ For form exhibits, show if exhibit is hands on ################
+  if($form_id = "208") { 
+	  if($entry[66] == "Yes") {
+		  return '<div class="hands-on"><span class="lnr lnr-checkmark-circle"></span> Hands-on Activity</div>';
+	  }
+  }
 }
 
 function getSocial($entrySocial) {

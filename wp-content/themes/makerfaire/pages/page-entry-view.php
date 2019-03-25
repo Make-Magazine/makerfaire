@@ -32,6 +32,12 @@
 	  <?php
 	  echo $video;    //project Video
 	  ?>
+		
+	  <?php if(display_groupEntries($entryId)) { ?>
+		  <div class="group-entries">
+	  <?php echo display_groupEntries($entryId); ?>
+	     </div>
+	  <?php } ?>
 
 	</div>
 
@@ -43,6 +49,9 @@
 				<?php  //display schedule/location information if there is any
 				  if (!empty(display_entry_schedule($entryId))) {
 						echo display_entry_schedule($entryId); 
+				  }
+			     if(!empty($handsOn)) {
+					   echo $handsOn;
 				  }
 				  if (!empty($project_website)) {
 				?> 
