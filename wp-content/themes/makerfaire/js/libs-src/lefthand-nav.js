@@ -11,14 +11,13 @@ jQuery.fn.isInViewport = function() {
 };
 
 jQuery(document).ready(function(){
-	jQuery('a[href^="#"]:not(a[href="#"])').click(function(){
-		  jQuery('html, body').animate({
-				scrollTop: jQuery('[name="' + jQuery.attr(this, 'href').substr(1) + '"]').offset().top
-		  }, 500);
-		  return false;
-	});
-
 	if (jQuery("#menu-toolkit-left-hand-nav").length) {
+		jQuery('a[href^="#"]:not(a[href="#"])').click(function(){
+			  jQuery('html, body').animate({
+					scrollTop: jQuery('[name="' + jQuery.attr(this, 'href').substr(1) + '"]').offset().top
+			  }, 500);
+			  return false;
+		});
 		// highlight the first one on load
 		jQuery("#menu-toolkit-left-hand-nav li").first().addClass("active");
 		// highlight the left nav based on what area of the page a user is mousing over or clicking on.
