@@ -1,23 +1,34 @@
 
+
+@feat_img_touch_lg_breakpoint: 960px;
+@feat_img_touch_sm_breakpoint: 768px;
+
+// Flexbox Approach, for older IE; overridden by the grid approach below
 // .featured-image-grid {
 //       display: flex;
 //       flex-direction: row;
 //       flex-wrap: wrap;
 //       justify-content: space-between;
 //       .grid-item {
-//          flex-basis: 33%;
-//          height: 300px;
+//          flex-basis: 23%;
+//          height: 150px;
+//          padding-top: 22%;
 //          background-repeat: no-repeat;
 //          background-position: center;
 //          background-size: cover;
-//          margin-bottom: 25px;
+//          margin: 0 15px 25px;
+//          display: flex;
+//       }
+//       .grid-item-title-block {
+
 //       }
 // }
-@feat_img_touch_lg_breakpoint: 960px;
-@feat_img_touch_sm_breakpoint: 768px;
+
 
 .featured-image-grid {
+   display:-ms-grid;
    display: grid;
+   -ms-grid-columns: repeat(auto-fill, minmax(320px, 1fr));
    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
    grid-column-gap: 24px;
    grid-row-gap: 24px;
@@ -78,7 +89,7 @@
       h3 {
          font-size: 22px;
       }
-      
+
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
          position: absolute;
          bottom: 0;
@@ -135,7 +146,6 @@
             overflow: hidden;
          }
          .desc-body {
-            //display: none;
             height: 0;
             overflow: hidden;
          }
@@ -157,7 +167,4 @@
       }
 
    }
-   // &:hover > .grid-item-desc {
-   //    width: 100%;
-   // }
 }

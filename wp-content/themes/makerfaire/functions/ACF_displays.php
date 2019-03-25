@@ -53,31 +53,33 @@ function do_featured_presenter_grid($args) {
    // $content .= '<div class="col-xs-12 grid-inner">';
    foreach($args as $key => $value) {
       $content .= '<div class="grid-item" style="background-image: url('.$value['pres_image'].')">';
+
       $content .= '  <div class="grid-item-title-block">';
       $content .= '     <h3>'.$value['pres_name'].'</h3>';
       $content .= '     <p>'.$value['pres_title'].'</p>';
       $content .= '  </div>';
-      if($value['button_url']) {
-         $content .= '  <a class="grid-item-desc" href="'.$value['button_url'].'">';
+
+      if(!empty($value['button_url'])) {
+         $content .= '<a class="grid-item-desc" href="'.$value['button_url'].'">';
       } else {
-         $content .= '   <div class="grid-item-desc">';
+         $content .= '<div class="grid-item-desc">';
       }
-      if($value['event_title']) {
+      if(!empty($value['event_title'])) {
          $content .= '     <h4>'.$value['event_title'].'</h4>';
       }
-      if($value['event_datetime']) {
+      if(!empty($value['event_datetime'])) {
          $content .= '     <p class="dates">'.$value['event_datetime'].'</p>';
       }
-      $content .= '     <p class="desc-body">'.$value['event_desc'].'</p>';
+      $content .= '        <p class="desc-body">'.$value['event_desc'].'</p>';
 
-      if($value['button_url'] && $value['button_text']) {
+      if(!empty($value['button_url']) && !empty($value['button_text'])) {
          $content .= '     <p class="btn btn-blue read-more-link">'.$value['button_text'].'</p>';
       }
       
-      if($value['button_url']) {
+      if(!empty($value['button_url'])) {
          $content .= '  </a>'; // end desc
       } else {
-         $conetnt .= '`</div>';  // end desc
+         $content .= '</div>';  // end desc
       }
       
       $content .= '</div>';
