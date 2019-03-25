@@ -36,16 +36,24 @@
 	</div>
 
 	<div class="col-md-4 col-sm-12" id="entrySidebar">
-		<div class="entryInfo">
-			<?php  //display schedule/location information if there is any
-			  if (!empty(display_entry_schedule($entryId))) {
-				   display_entry_schedule($entryId); 
-			  }
-			  if (!empty($project_website)) {
-			?> 
-			    <a href="<?php echo $project_website; ?>" class="btn universal-btn">Project Website</a>
-			<?php } ?>
-		</div>
+		<?php 
+		if (!empty(display_entry_schedule($entryId)) || !empty($project_website)) {
+	   ?>
+			<div class="entryInfo">
+				<?php  //display schedule/location information if there is any
+				  if (!empty(display_entry_schedule($entryId))) {
+						echo display_entry_schedule($entryId); 
+				  }
+				  if (!empty($project_website)) {
+				?> 
+					 <a href="<?php echo $project_website; ?>" class="btn universal-btn">Project Website</a>
+				<?php } ?>
+			</div>
+		<?php 
+		} else {
+			echo("<br />");
+		}
+		?>
 		
 		<div class="sidebar-type"> <!-- Maker/Group/Worskhop etc -->
 		  <?php

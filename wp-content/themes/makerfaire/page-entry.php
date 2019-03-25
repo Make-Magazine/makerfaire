@@ -273,75 +273,69 @@ function display_entry_schedule($entry_id) {
           . " order by schedule.start_dt";
   $results = $wpdb->get_results($sql);
 
+  
   if($wpdb->num_rows > 0){
-    ?>
-    <span class="faireTitle">
-        <h3 class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></h3>
-    </span>
-	 <?php 
-	    if(display_groupEntries($entry_id)) {
-	       echo display_groupEntries($entry_id);
-		 }
-    ?>
-    <div id="entry-schedule">
+    $return = "";
+    $return .= '<span class="faireTitle"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></span>';
+	 if(display_groupEntries($entry_id)) {
+		 $return .= display_groupEntries($entry_id);
+	 }
+    $return .= '<div id="entry-schedule">
+                   <div class="row padbottom">';
 
-      <div class="row padbottom">
-        <?php
+	  $prev_start_dt = NULL;
+	  $prev_location = NULL;
+	  foreach($results as $row){
+		 if(!is_null($row->start_dt)){
+			$start_dt   = strtotime( $row->start_dt);
+			$end_dt     = strtotime($row->end_dt);
+			$current_start_dt = date("l, F j",$start_dt);
+			$current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
 
-        $prev_start_dt = NULL;
-        $prev_location = NULL;
-        foreach($results as $row){
-          if(!is_null($row->start_dt)){
-            $start_dt   = strtotime( $row->start_dt);
-            $end_dt     = strtotime($row->end_dt);
-            $current_start_dt = date("l, F j",$start_dt);
-            $current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
-
-				echo '<div class="entry-date-time col-sm-12">';
-				// this is a new location
-            if ($prev_location != $current_location){
-              $prev_location = $current_location;
-              echo '<small>LOCATION: '.$current_location.'</small>';
-            }
-            if($prev_start_dt==NULL){
-					  echo '<h5>'.$current_start_dt.'</h5>';
-					  $prev_start_dt = $current_start_dt;
+			$return .= '<div class="entry-date-time col-sm-12">';
+			// this is a new location
+			if ($prev_location != $current_location){
+			  $prev_location = $current_location;
+			  $return .= '<small>LOCATION: '.$current_location.'</small>';
+			}
+			if($prev_start_dt==NULL){
+				  $return .= '<h5>'.$current_start_dt.'</h5>';
+				  $prev_start_dt = $current_start_dt;
+				  $prev_location = null;
+			}
+			// if there's another day
+			if ($prev_start_dt != $current_start_dt){
+			  //This is not the first new date
+			  if ($prev_start_dt != NULL){
+					  $return .= '<h5>'.$current_start_dt.'</h5>';
 					  $prev_location = null;
-            }
-				// if there's another day
-            if ($prev_start_dt != $current_start_dt){
-              //This is not the first new date
-              if ($prev_start_dt != NULL){
-						  echo '<h5>'.$current_start_dt.'</h5>';
-						  $prev_location = null;
-              }
+			  }
 
-            }
-            echo '<small>TIME:  '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</small>';
-				echo '</div>';  // end date time location block
-          }else{
-              global $faire_start; global $faire_end;
-              echo '<div class="entry-date-time col-sm-12">';
+			}
+			$return .= '<small>TIME:  '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</small>';
+			$return .= '</div>';  // end date time location block
+		 }else{
+			  global $faire_start; global $faire_end;
+			  $return .= '<div class="entry-date-time col-sm-12">';
 
-              $faire_start = strtotime($faire_start);
-              $faire_end   = strtotime($faire_end);
-              $dateRange   = progDateRange($faire_start, $faire_end);
-				 
- 				  echo '<small>LOCATION: '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
-              //tbd change this to be dynamically populated
-				  if($dateRange != "" && $dateRange != null) {
-              		echo '<h5>'.natural_language_join($dateRange).':<br />'.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
-				  }
-				  echo '</div>'; // end date time location block
-            
-          }
-        }
-        ?>
-          </div><!-- close final col-sm-4-->
+			  $faire_start = strtotime($faire_start);
+			  $faire_end   = strtotime($faire_end);
+			  $dateRange   = progDateRange($faire_start, $faire_end);
 
-    </div><!-- End entry-schedule-->
-    <?php
+			  $return .= '<small>LOCATION: '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
+			  //tbd change this to be dynamically populated
+			  if($dateRange != "" && $dateRange != null) {
+					$return .= '<h5>'.natural_language_join($dateRange).':<br />'.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+			  }
+			  $return .= '</div>'; // end date time location block
+
+		 }
+	  }
+     $return .= '</div>'; // close final col-sm-4
+
+    $return .= '</div>'; // End entry-schedule
   }
+	return $return;
 }
 
 /* This function is used to display grouped entries and links*/
@@ -373,8 +367,8 @@ function display_groupEntries($entryID){
       $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
       $return .= '<p><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></p>';
     }
+	 return $return;
   }
-  echo $return;
 }
 
 //return makers info
@@ -436,13 +430,13 @@ function getSocial($entrySocial) {
 					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-facebook-square"></i></a>';
 				}
 				if($value['Plateform'] == "Twitter" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-twitter-square"></i></a>';
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-twitter"></i></a>';
 				}
 				if($value['Plateform'] == "Instagram" ) {
 					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
 				}
 				if($value['Plateform'] == "YouTube" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-youtube-square"></i></a>';
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-youtube"></i></a>';
 				}
 				if($value['Plateform'] == "LinkedIn" ) {
 					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
@@ -451,13 +445,13 @@ function getSocial($entrySocial) {
 					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-pinterest-square"></i></a>';
 				}
 				if($value['Plateform'] == "Snapchat" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat-square"></i></a>';
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat"></i></a>';
 				}
-				if($value['Plateform'] == "Tumblr" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-tumblr-square"></i></a>';
+				if($value['Plateform'] == "Patreon" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-patreon"></i></a>';
 				}
-				if($value['Plateform'] == "Git" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-git-square"></i></a>';
+				if($value['Plateform'] == "Other" ) {
+					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-globe"></i></a>';
 				}
 			}
 		}
