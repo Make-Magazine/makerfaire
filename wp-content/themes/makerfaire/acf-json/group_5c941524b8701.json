@@ -50,7 +50,7 @@
                     "label": "Presenter Name",
                     "name": "pres_name",
                     "type": "text",
-                    "instructions": "Maximum 35 Characters",
+                    "instructions": "Maximum 36 Characters",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -62,14 +62,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": 35
+                    "maxlength": 36
                 },
                 {
                     "key": "field_5c941675a1fe7",
                     "label": "Presenter Title",
                     "name": "pres_title",
                     "type": "text",
-                    "instructions": "Maximum 40 Characters",
+                    "instructions": "Maximum 48 Characters",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -81,14 +81,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": 40
+                    "maxlength": 48
                 },
                 {
                     "key": "field_5c9902c603989",
                     "label": "Event Title",
                     "name": "event_title",
                     "type": "text",
-                    "instructions": "Maximum 35 Characters",
+                    "instructions": "Maximum 38 Characters",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -100,14 +100,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": 35
+                    "maxlength": 38
                 },
                 {
                     "key": "field_5c9415cca1fe5",
                     "label": "Event Date\/Day\/Time",
                     "name": "event_datetime",
                     "type": "text",
-                    "instructions": "Maximum 35 Characters",
+                    "instructions": "Maximum 36 Characters",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -119,7 +119,7 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": 35
+                    "maxlength": 36
                 },
                 {
                     "key": "field_5c9415e9a1fe6",
@@ -205,5 +205,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553542714
+    "modified": 1553544507
 }
