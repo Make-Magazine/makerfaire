@@ -49,9 +49,12 @@
 					echo $handsOn;
 			  }
 			  if (!empty($project_website)) {
-			?> 
+			 ?> 
 				 <a href="<?php echo $project_website; ?>" class="btn universal-btn">Project Website</a>
-			<?php } ?>
+			<?php }
+			  if(!empty($registerLink)) { ?>
+			     <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
+		<?php } ?>
 		</div>
 
 		

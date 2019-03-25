@@ -144,6 +144,9 @@ $ribbons = checkForRibbons(0,$entryId);
 // check if activity is hands on
 $handsOn = handsOnMarker($entry);
 
+// check if there's the potential to have a register field
+$registerLink = $entry[829];
+
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
 $adminView = false;
@@ -243,7 +246,7 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
 
  <?php get_footer();
 
-function display_entry_schedule($entry_id) {
+function display_entry_schedule($entry_id) { 
   global $wpdb; global $faireID; global $faire; global $show_sched; global $backMsg; global $url_sub_path;
   global $faire_map; global $program_guide;
 
@@ -326,7 +329,7 @@ function display_entry_schedule($entry_id) {
      $return .= '</div>
               </div>';
   }
-	if($multipleLocations == TRUE) {
+	if($multipleLocations == TRUE) { // this is kind of a mess to require this
 		$return .= "</div>";
 	}
 	return $return;
