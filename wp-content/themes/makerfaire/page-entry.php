@@ -275,7 +275,7 @@ function display_entry_schedule($entry_id) {
           . " order by schedule.start_dt";
   $results = $wpdb->get_results($sql);
   $return = "";
-  $return .= '<span class="faireTitle"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></span>';
+  $return .= '<div class="faireTitle padbottom"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></div>';
 	
   if($wpdb->num_rows > 0){
 	 if(display_group($entry_id)) { 
