@@ -12,7 +12,7 @@
 		font-size: 20px;
 		h4 {
 			margin-top: 5px;
-			margin-bottom: 0px;
+			margin-bottom: 10px;
 			font-weight: 300;
 		}
 		ul {
@@ -104,13 +104,20 @@
 			}
 		}
 		.entryInfo {
-			font-size: 20px;
-			h3, h5, small {
+			font-size: 16px;
+			@media screen and (max-width: 968px) {
 				font-size: 20px;
+			}
+			h3, h5, small, .group-entries li {
+				font-size: 16px;
 				color: #151515;
 				margin: 0px;
 				font-weight: 300;
+				@media screen and (max-width: 968px) {
+					font-size: 20px;
+				}
 			}
+			
 			.hands-on {
 				color: #4A4A4A;
 				padding-bottom: 15px;
@@ -119,7 +126,7 @@
 		.entry-header {
 			h2 { 
 				padding-left: 15px;
-				font-size: 26px;
+				font-size: 24px;
 				margin: 0 15px 10px;
 				text-transform: uppercase;
 			}

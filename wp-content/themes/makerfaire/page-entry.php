@@ -35,7 +35,12 @@ if(isset($entry->errors)){
   $form = GFAPI::get_form($form_id);
   $formType = $form['form_type'];
 	
-	//error_log($form_id);
+	/*
+	error_log($form_id);
+	if($form_id = 212) {
+		error_log($form);
+	}
+	*/
 
 
   //build an array of field information
@@ -321,7 +326,7 @@ function display_entry_schedule($entry_id) {
            $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
 			  //tbd change this to be dynamically populated
 			  if($dateRange != "" && $dateRange != null) {
-					$return .= '<h5>'.natural_language_join($dateRange).':<br />'.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+					$return .= '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
 			  }
 			  
 			  $return .= '</div>'; // end date time location block
