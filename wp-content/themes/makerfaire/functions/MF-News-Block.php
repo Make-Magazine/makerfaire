@@ -6,23 +6,27 @@
       }
    }
 
-   function do_news_block($args) {
+   function do_news_block($args=0) {
+      // default the argument to a value that will cause the test to fail
+      // Then return an error if the arg fails
       if(empty($args['tag'])) {
-         echo '<pre>Tag not passed to "do_news_block()"</pre>';
-         return false;
-         //throw new Error('Arguments not passed to "do_news_block()"');
+         return '<pre>Tag not passed to "do_news_block()"</pre>';
       };
       $url = 'https://makezine.com/tag/'.$args["tag"].'/feed';
       $rss = fetch_feed( $url);
       
-      // Figure out how many total items there are, but limit it to 5.
-      $maxitems = $rss->get_item_quantity( 3 );
+      // Set a value used to limit items and determine if there enough items
+      $max_value = 3;
+      // Figure out how many total items there are, but limit it to $max_value.
+      $max_items = $rss->get_item_quantity( $max_value );
       // Build an array of all the items, starting with element 0 (first element).
-      $rss_items = $rss->get_items( 0, $maxitems );
-      // NOTE (ts): add a little sanity check
-      if(count($rss_items) === 0) {
-         return '<div class="container"><div class="row"><div class="col-xs-12"><p style="color: red; font-size: 24px; padding: 1em 1em 1em 0;">Invalid news tag, or no items available</p></div></div></div>';
+      $rss_items = $rss->get_items( 0, $max_items );
+      // NOTE (ts): add a little sanity check;
+      // if there aren't exactly the right number of items, return an error visible in the client so authors can fix it
+      if(count($rss_items) !== $max_value) {
+         return '<div class="container"><div class="row"><div class="col-xs-12"><p style="color: red; font-size: 24px; padding: 1em 1em 1em 0;">Invalid news tag, or not enough items available</p></div></div></div>';
       }
+      // otherwise build out the panel...
       $output = '<div class="container">';
       $output  .= '<!-- Makerfaire news section -->';
       $output  .= '<div class="mf-news">';
