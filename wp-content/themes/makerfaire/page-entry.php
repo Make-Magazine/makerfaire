@@ -35,12 +35,10 @@ if(isset($entry->errors)){
   $form = GFAPI::get_form($form_id);
   $formType = $form['form_type'];
 	
-	/*
-	error_log($form_id);
-	if($form_id = 212) {
-		error_log($form);
+	if($formType == "Sponsor") {
+		$sponsorshipLevel = $entry["442.3"];
 	}
-	*/
+
 
 
   //build an array of field information
