@@ -174,10 +174,18 @@
       display: flex;
       flex-wrap: wrap;
       .grid-item {
-         width: calc(100% / 3); /* calc() method */
-         width: 33.33%; /* percentage method */
+         //width: calc(100% / 3); /* calc() method */
+         width: 30%; /* percentage method */
          margin-right: 24px;
+         margin-bottom: 24px;
          padding-top: 18%;
+      }
+      .grid-item-desc {
+         top: 0;
+         width: 100%;
+         .desc-body {
+            width: 100%;
+         }
       }
    }
 
