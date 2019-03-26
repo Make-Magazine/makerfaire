@@ -6,7 +6,7 @@
 	}
 	.content { padding: 0px; }
 	
-	.group-entries {
+	.group-entries, .group-entry {
 		margin-top: 0px;
 		border-top: 0px;
 		font-size: 20px;
@@ -119,7 +119,12 @@
 					font-size: 20px;
 				}
 			}
-			
+			.entry-date-time .location {
+				display: block;
+				&:last-of-type {
+					padding-top: 10px;
+				}
+			}
 			.hands-on {
 				color: #4A4A4A;
 				padding-bottom: 15px;

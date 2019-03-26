@@ -295,7 +295,7 @@ function display_entry_schedule($entry_id) {
 			}
 			// this is a new location
 			if ($prev_location != $current_location && $prev_start_dt != $current_start_dt){
-			  $return .= '<br /><small class="text-muted">LOCATION: '.$current_location . "</small><br />";
+			  $return .= '<small class="text-muted location">LOCATION: '.$current_location . "</small>";
 			}
 			 
 			if ($prev_start_dt != $current_start_dt){

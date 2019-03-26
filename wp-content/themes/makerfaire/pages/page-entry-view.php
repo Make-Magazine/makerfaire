@@ -34,9 +34,12 @@
 
 	  <?php
 	  echo $video;    //project Video
-	  ?>
 		
-	  <?php if(display_groupEntries($entryId)) { ?>
+	  if(display_group($entryId)) { ?>
+			<div class="group-entry"><?php echo display_group($entryId); ?></div>
+	  <?php
+	  }
+	  if(display_groupEntries($entryId)) { ?>
 		  <div class="group-entries"><?php echo display_groupEntries($entryId); ?></div>
 	  <?php } ?>
 
@@ -67,7 +70,6 @@
 				<h2><?php
 					if($isGroup) {
 						echo 'Group';
-						
 					}elseif($isList){
 						echo 'Makers';
 					}else{
