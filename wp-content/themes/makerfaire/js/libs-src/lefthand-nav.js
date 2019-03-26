@@ -11,13 +11,14 @@ jQuery.fn.isInViewport = function() {
 };
 
 jQuery(document).ready(function(){
-	jQuery('a[href^="#"]:not(a[href="#"])').click(function(){
-		  jQuery('html, body').animate({
-				scrollTop: jQuery('[name="' + jQuery.attr(this, 'href').substr(1) + '"]').offset().top
-		  }, 500);
-		  return false;
-	});
+
 	if (jQuery("#menu-toolkit-left-hand-nav").length) {
+		jQuery('a[href^="#"]:not(a[href="#"])').click(function(){
+			  jQuery('html, body').animate({
+					scrollTop: jQuery('[name="' + jQuery.attr(this, 'href').substr(1) + '"]').offset().top
+			  }, 500);
+			  return false;
+		});
 		// highlight the first one on load
 		jQuery("#menu-toolkit-left-hand-nav li").first().addClass("active");
 		// highlight the left nav based on what area of the page a user is mousing over or clicking on.
@@ -44,29 +45,7 @@ jQuery(document).ready(function(){
 				jQuery(".left-nav-back-to-top").hide();
 			}
 		});
-
-		/*
-		var leftNavPos = 0;
-		var leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
-
-		jQuery(window).scroll( function(){
-			leftNavScroll();
-			leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
-		});
-
-		leftNavScroll();
-
-		if(jQuery(".downArrow").length && ( leftNavBottom > 605 ) ){
-			jQuery(".downArrow").on('mousedown', function() {
-				console.log(jQuery(".downArrow").offset().top);
-				console.log("vs leftnav bottom: " + leftNavBottom);
-				leftNavPos+=50;
-				jQuery(".toolkit-nav").animate({ bottom: leftNavPos });
-				leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
-			});
-		}*/
 	}
-
 });
 
 function leftNavScroll(){
