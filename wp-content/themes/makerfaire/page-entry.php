@@ -25,81 +25,79 @@ if(array_intersect( array('administrator', 'editor', 'reviewer'), $user->roles )
 
 //entry not found
 if(isset($entry->errors)){
-  $form_id = '';
-  $formType = '';
-  $entry=array();
-  $faire = '';
+	$form_id = '';
+	$formType = '';
+	$entry=array();
+	$faire = '';
 }else{
-  //find out which faire this entry is for to set the 'look for more makers link'
-  $form_id = $entry['form_id'];
-  $form = GFAPI::get_form($form_id);
-  $formType = $form['form_type'];
+	//find out which faire this entry is for to set the 'look for more makers link'
+	$form_id = $entry['form_id'];
+	$form = GFAPI::get_form($form_id);
+	$formType = $form['form_type'];
 	
 	if($formType == "Sponsor") {
 		$sponsorshipLevel = $entry["442.3"];
 	}
 
+	//build an array of field information
+	foreach($form['fields'] as $field){
+	 $fieldID = $field->id;
+	 $fieldData[$fieldID] = $field;
+	}
+
+	//if the form was submitted
+	$submit = filter_input(INPUT_POST, 'edit_entry_page');
+	if($submit != ''){
+		entryPageSubmit($entryId);
+		$entry         = GFAPI::get_entry($entryId);
+	}
+
+	$faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
+	if($form_id!=''){
+		$formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide "
+				. " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
+
+		$results =  $wpdb->get_row( $formSQL );
+		if($wpdb->num_rows > 0){
+			$faire          = $slug = $results->faire_name;
+			$faireShort     = $results->faire;
+			$faireID        = $results->id;
+			$show_sched     = $results->show_sched;
+			$faire_start    = $results->start_dt;
+			$faire_end      = $results->end_dt;
+			$faire_year     = substr($faire_start, 0, 4);
+			$url_sub_path   = $results->url_path;
+			$faire_map      = $results->faire_map;
+			$program_guide  = $results->program_guide;
+		}
+	}
+
+	//get makers info
+	$makers = getMakerInfo($entry);
+
+	$groupname   = (isset($entry['109']) ? $entry['109']:'');
+	$groupphoto  = (isset($entry['111']) ? $entry['111']:'');
+	$groupbio    = (isset($entry['110']) ? $entry['110']:'');
+	$groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
 
 
-  //build an array of field information
-  foreach($form['fields'] as $field){
-    $fieldID = $field->id;
-    $fieldData[$fieldID] = $field;
-  }
+	// One maker
+	// A list of makers (7 max)
+	// A group or association
+	$displayType = (isset($entry['105']) ? $entry['105']:'');
 
-  //if the form was submitted
-  $submit = filter_input(INPUT_POST, 'edit_entry_page');
-  if($submit != ''){
-    entryPageSubmit($entryId);
-    $entry         = GFAPI::get_entry($entryId);
-  }
+	$isGroup  = $isList = $isSingle = false;
+	$isGroup  = (strpos($displayType, 'group') !== false);
+	$isList   = (strpos($displayType, 'list') !== false);
+	$isSingle = (strpos($displayType, 'One') !== false);
 
-  $faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
-  if($form_id!=''){
-    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide "
-            . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
-
-    $results =  $wpdb->get_row( $formSQL );
-    if($wpdb->num_rows > 0){
-      $faire          = $slug = $results->faire_name;
-      $faireShort     = $results->faire;
-      $faireID        = $results->id;
-      $show_sched     = $results->show_sched;
-      $faire_start    = $results->start_dt;
-      $faire_end      = $results->end_dt;
-		$faire_year     = substr($faire_start, 0, 4);
-      $url_sub_path   = $results->url_path;
-      $faire_map      = $results->faire_map;
-      $program_guide  = $results->program_guide;
-    }
-  }
-
-  //get makers info
-  $makers = getMakerInfo($entry);
-
-  $groupname   = (isset($entry['109']) ? $entry['109']:'');
-  $groupphoto  = (isset($entry['111']) ? $entry['111']:'');
-  $groupbio    = (isset($entry['110']) ? $entry['110']:'');
-  $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
-
-	
-  // One maker
-  // A list of makers (7 max)
-  // A group or association
-  $displayType = (isset($entry['105']) ? $entry['105']:'');
-
-  $isGroup  = $isList = $isSingle = false;
-  $isGroup  = (strpos($displayType, 'group') !== false);
-  $isList   = (strpos($displayType, 'list') !== false);
-  $isSingle = (strpos($displayType, 'One') !== false);
-	
-  $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
-  $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
-  $project_short = (isset($entry['16']) ? $entry['16']: '');    // Description
-  $project_website = (isset($entry['27']) ? $entry['27']: '');  //Website
-  $project_video = (isset($entry['32']) ? $entry['32']:'');     //Video
-  $project_title = (isset($entry['151'])?(string)$entry['151']:''); //Title
-  $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+	$project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
+	$project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
+	$project_short = (isset($entry['16']) ? $entry['16']: '');    // Description
+	$project_website = (isset($entry['27']) ? $entry['27']: '');  //Website
+	$project_video = (isset($entry['32']) ? $entry['32']:'');     //Video
+	$project_title = (isset($entry['151'])?(string)$entry['151']:''); //Title
+	$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 }
 
 //set sharing card data

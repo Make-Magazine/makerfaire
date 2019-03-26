@@ -12,12 +12,7 @@
 	  <?php echo $ribbons;?>
 	  <div class="entry-header">
 		 <div class="entry-type">
-			 <?php 
-			    echo $formType; 
-			    if($formType == "Sponsor") {
-					 echo(" - " . $sponsorshipLevel);
-				 }
-			 ?>
+			 <?php echo $formType; ?>
 		  </div>
 		 <h1>
 			<span id="project_title"><?php echo $project_title; ?></span>
