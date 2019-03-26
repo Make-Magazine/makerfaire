@@ -1,29 +1,9 @@
 
+// A couple of vars for these styles
 
 @feat_img_touch_lg_breakpoint: 960px;
 @feat_img_touch_sm_breakpoint: 768px;
-
-// Flexbox Approach, for older IE; overridden by the grid approach below
-// .featured-image-grid {
-//       display: flex;
-//       flex-direction: row;
-//       flex-wrap: wrap;
-//       justify-content: space-between;
-//       .grid-item {
-//          flex-basis: 23%;
-//          height: 150px;
-//          padding-top: 22%;
-//          background-repeat: no-repeat;
-//          background-position: center;
-//          background-size: cover;
-//          margin: 0 15px 25px;
-//          display: flex;
-//       }
-//       .grid-item-title-block {
-
-//       }
-// }
-
+@feat_img_mobile_breakpoint: 560px;
 
 .featured-image-grid {
    display: grid;
@@ -61,7 +41,7 @@
          margin-bottom: 24px;
          &:hover {
             &> .grid-item-desc {
-               transform: translateX(100%);
+               transform: translateX(110%);
                transition: transform 0.25s ease-in-out;
             }
          }
@@ -71,6 +51,33 @@
          flex-direction: column;
          height: 300px;
          padding-top: 0;
+      }
+      @media screen and (max-width: @feat_img_mobile_breakpoint) {
+         width: auto;
+         padding-top: 86%;
+         height: auto;
+         background-size: 100%;
+         background-position: top;
+         &:hover {
+            transform: none;
+            transition: none;
+            &> .grid-item-desc {
+               transform: none;
+               transition: none;
+            }
+         }
+         &> .grid-item-title-block {
+            transform: translateX(0);
+            //transition: transform 0.25s ease-in-out;
+         }
+         &> .grid-item-desc {
+            height: auto;
+            transform: translateX(0);
+            //transition: transform 0.25s ease-in-out;
+         }
+         .grid-item-title-block h3 {
+            margin-bottom: 12px;
+         }
       }
    }
    .grid-item-title-block {
@@ -83,6 +90,7 @@
       h3, p {
          margin: 0;
          padding: 0;
+         margin-bottom: 6px;
       }
       h3 {
          font-size: 22px;
@@ -121,7 +129,7 @@
       color: #f3f3f3;
       width: 100%;
       height: 100%;
-      transform: translateX(100%);
+      transform: translateX(110%);
       transition: transform 0.25s ease-in-out;
       overflow: hidden;
       text-decoration: none;
@@ -138,6 +146,7 @@
       @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
          position: relative;
          display: flex;
+         background-color: #333;
          h4 {
             display: none;
             height: 0;
