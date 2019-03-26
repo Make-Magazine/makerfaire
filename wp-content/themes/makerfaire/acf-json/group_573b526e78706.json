@@ -1234,6 +1234,25 @@
                             "maxlength": 256
                         },
                         {
+                            "key": "field_571e989hhjkhbdudyug",
+                            "label": "Tag",
+                            "name": "tag",
+                            "type": "text",
+                            "instructions": "The \"tag\" from the makezine.com site, for example \"bay-area-maker-faire\".",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        },
+                        {
                             "key": "field_5c93bfbbd73ec",
                             "label": "Link",
                             "name": "link",
@@ -1251,25 +1270,6 @@
                             "prepend": "",
                             "append": "",
                             "maxlength": ""
-                        },
-                        {
-                            "key": "field_571e989hhjkhbdudyug",
-                            "label": "Tag",
-                            "name": "tag",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "maxlength": "",
-                            "prepend": "",
-                            "append": ""
                         }
                     ],
                     "min": "",
@@ -1913,5 +1913,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553198004
+    "modified": 1553619039
 }
