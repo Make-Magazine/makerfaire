@@ -292,21 +292,22 @@ function display_entry_schedule($entry_id) {
 			if($prev_start_dt==NULL){
 			  $return .= '<div class="entry-date-time col-sm-12">';
 			}
+			// this is a new location
+			if ($prev_location != $current_location && $prev_start_dt != $current_start_dt){
+			  $return .= '<br /><small class="text-muted">LOCATION: '.$current_location . "</small><br />";
+			}
+			 
 			if ($prev_start_dt != $current_start_dt){
 			  //This is not the first new date
 			  if ($prev_start_dt != NULL){
 				 $return .= '</div><div class="entry-date-time col-sm-12">';
 			  }
-			  $return .= '<br /><h5>'.$current_start_dt.'</h5>';
+			  $return .= '<h5>'.$current_start_dt.'</h5>';
 			  $prev_start_dt = $current_start_dt;
-			  $prev_location = null;
 			  $multipleLocations = TRUE;
 			}
-			// this is a new location
-			if ($prev_location != $current_location){
-			  $prev_location = $current_location;
-			  $return .= '<small class="text-muted">LOCATION: '.$current_location . "</small><br />";
-			}
+
+			
 			$return .= '<small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</small><br />';
 
 		 }else{
@@ -317,11 +318,12 @@ function display_entry_schedule($entry_id) {
 			  $faire_end   = strtotime($faire_end);
 
 			  $dateRange   = progDateRange($faire_start, $faire_end);
-
+           $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
 			  //tbd change this to be dynamically populated
 			  if($dateRange != "" && $dateRange != null) {
 					$return .= '<h5>'.natural_language_join($dateRange).':<br />'.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
 			  }
+			  
 			  $return .= '</div>'; // end date time location block
 		 }
 			
