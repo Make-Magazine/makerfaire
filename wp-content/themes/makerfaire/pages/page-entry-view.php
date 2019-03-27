@@ -20,8 +20,8 @@
 		
 	  </div>
 	  <?php
-				$url  = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]/";
-				echo do_shortcode( '[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more"  morebutton_icon="dots" morebutton="2" counters=1 counter_pos="bottom" total_counter_pos="hidden" style="icon" fullwidth="yes" template="metro-retina" keyurl="' . $url . '" url="' . $url . '" text="' . $project_title . '"]' );
+				$url  = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+				echo do_shortcode( '[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more"  morebutton_icon="dots" morebutton="2" counters=1 counter_pos="bottom" total_counter_pos="hidden" style="icon" fullwidth="yes" template="metro-retina" postid="'.$entryId.'" url="' . $url . '" text="' . $project_title . '"]' );
 	  ?>
 
 	  <!-- Project Image -->
