@@ -238,7 +238,8 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
           include TEMPLATEPATH.'/pages/page-entry-edit.php';
         }
       } else { //entry is not active
-        echo '<h2>Invalid entry</h2>';
+        echo '<div class="container"><h2>Invalid entry</h2></div>';
+		  echo '<div class="entry-footer">' . displayEntryFooter() . '</div>';
       }
       ?>
     </div><!--col-xs-12-->
