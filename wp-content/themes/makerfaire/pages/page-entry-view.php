@@ -105,16 +105,18 @@
 				 ?>
 			     <div class="entry-page-maker-info">
 					 <div class="row padbottom">
+						<div class="col-xs-12">
+							<h3>
+							 <span class="text-capitalize"><?php echo $maker['firstname'];?></span>
+							 <span class="text-capitalize"><?php echo $maker['lastname'];?></span>
+						  </h3>
+						</div>
 						<div class="col-xs-6">
 						  <div class="entry-page-maker-img">
 							  <img class="img-responsive" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'],400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
 							</div>
 						</div>
 						<div class="col-xs-6">
-						  <h3>
-							 <span class="text-capitalize"><?php echo $maker['firstname'];?></span>
-							 <span class="text-capitalize"><?php echo $maker['lastname'];?></span>
-						  </h3>
 						  <?php echo $maker['social']; ?>
 						</div>
 					 </div>
