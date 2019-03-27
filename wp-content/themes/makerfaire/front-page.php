@@ -34,7 +34,7 @@ get_header();
    </div>
    
    <!-- standard news block -->
-   <?php echo do_shortcode('[mf-news newstag="maker-faire" newstitle="Check out the latests News from <em>Make:</em>" newslink="'.htmlentities( get_field("mf_news_title") ).'"]'); ?>
+   <?php echo do_shortcode('[mf-news newstag="maker-faire" newstitle="Check out the latest News from <em>Make:</em>" newslink="'.htmlentities( get_field("mf_news_title") ).'"]'); ?>
 
    <?php 
       require_once 'functions/MF-Social-Block.php';
