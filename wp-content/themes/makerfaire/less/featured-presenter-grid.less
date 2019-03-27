@@ -7,9 +7,10 @@
 
 .featured-image-grid {
    display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
    grid-column-gap: 24px;
    grid-row-gap: 24px;
+   margin-bottom: 24px;
    @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
       display: block;
    }
@@ -84,7 +85,7 @@
       background-color: #333;
       background-color: rgba(0,0,0,.6);
       color: #dedede;
-      padding: 0.5em 0.75em;
+      padding: 1em;
 
 
       h3, p {
@@ -93,12 +94,13 @@
          margin-bottom: 6px;
       }
       h3 {
-         font-size: 22px;
+         font-size: 20px;
       }
 
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
          position: absolute;
          bottom: 0;
+         top: -1px;
          width: 100%;
       }
 
@@ -109,13 +111,14 @@
          transform: translateX(100%);
 
          h3 {
-            font-size: 19px;
+            font-size: 20px;
          }
 
          p {
             font-size: 16px;
          }
       }
+
    }
    .grid-item-desc {
       position: absolute;
@@ -129,6 +132,7 @@
       color: #f3f3f3;
       width: 100%;
       height: 100%;
+      height: calc(100% + 1px);
       transform: translateX(110%);
       transition: transform 0.25s ease-in-out;
       overflow: hidden;
@@ -136,7 +140,7 @@
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
          position: absolute;
          transform: translateX(100%);
-         top: 0;
+         top: -2px;
          overflow: visible;
          display: block;
       }
@@ -155,6 +159,13 @@
          .desc-body {
             height: 0;
             overflow: hidden;
+         }
+      }
+      @media screen and (max-width: @feat_img_mobile_breakpoint) {
+
+         .desc-body {
+            height: auto;
+            overflow: visible;
          }
       }
       .read-more-link {
