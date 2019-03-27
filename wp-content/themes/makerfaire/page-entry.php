@@ -274,9 +274,7 @@ function display_entry_schedule($entry_id) {
   $return .= '<div class="faireTitle padbottom"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></div>';
 	
   if($wpdb->num_rows > 0){
-	 if(display_group($entry_id)) { 
-		    $return .= '<div class="group-entries">' . display_group($entry_id) . '</div>';
-	 } 
+
     $return .= '<div id="entry-schedule">
                    <div class="row padbottom">';
 
@@ -360,7 +358,7 @@ function display_group($entryID) {
 			//Title
 			$project_title = (string)$entry['151'];
 			$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
-			$return .= '<li><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
+			$return .= '<li>Part of: <a href="/maker/entry/'.$link_entryID.'">'.$project_title.' group exhibit</a></li>';
 		 }
 	 	 return $return .= "</ul>";
 	 }
