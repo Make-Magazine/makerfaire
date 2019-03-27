@@ -94,78 +94,22 @@ add_shortcode( 'mmakers', 'makerfaire_meet_the_makers_shortcode' );
 
 
 /**
- * 3 Maker Faire tagged posts from Makezine - for homepage
+ * 3 arbitrarily tagged posts from Makezine - for homepage, but also available as generic shortcode
  */
 
-function get_first_image_url($html) {
-  if (preg_match('/<img.+?src="(.+?)"/', $html, $matches)) {
-    return $matches[1];
-  }
-}
-
-function makerfaire_makezine_rss_news() {
-  $url = 'https://makezine.com/tag/maker-faire/feed/';
-  $rss = fetch_feed( $url);
-  // Figure out how many total items there are, but limit it to 5.
-  $maxitems = $rss->get_item_quantity( 3 );
-  // Build an array of all the items, starting with element 0 (first element).
-  $rss_items = $rss->get_items( 0, $maxitems );
-
-  //image #3
-  $description = $rss_items[2]->get_description();
-  $image = get_first_image_url($description);
-  $description = strip_tags($description);
-  $desc_length = iconv_strlen($description, 'UTF-8');
-  if ($desc_length > 200) {
-    $description = substr($description, 0, 200) . '...';
-  }
-  $title = esc_html( $rss_items[2]->get_title() );
-  $url = esc_url( $rss_items[2]->get_permalink());
-  $output  = '<div class="mf-news-cont">'
-          . '  <a class="mf-news-big-img" href="'.$url.'" style="background: url(' . legacy_get_resized_remote_image_url($image,622,402) . ');">'
-          . '     <div class="mf-news-text-box">'
-          . '       <h2>' . $title . '</h2>'
-          . '       <p>' . $description . '</p>'
-          . '     </div>'
-          . '  </a>';
-
-  //image #1
-  $description = $rss_items[0]->get_description();
-  $image = get_first_image_url($description);
-  $description = strip_tags($description);
-  $desc_length = iconv_strlen($description, 'UTF-8');
-  if ($desc_length > 200) {
-    $description = substr($description, 0, 200) . '...';
-  }
-  $title = esc_html( $rss_items[0]->get_title() );
-  $url = esc_url( $rss_items[0]->get_permalink());
-  $output .= '  <div class="mf-news-sm-img">'
-          . '     <a href="'.$url . '" style="background: url(' . legacy_get_resized_remote_image_url($image,622,402) . ');">'
-          . '       <div class="mf-news-text-box mf-news-text-box-sm">'
-          . '         <h2>' . $title . '</h2>'
-          . '         <p>' . $description . '</p>'
-          . '       </div>'
-          . '     </a>';
-
-  //image #2
-  $description = $rss_items[1]->get_description();
-  $image = get_first_image_url($description);
-  $description = strip_tags($description);
-  $desc_length = iconv_strlen($description, 'UTF-8');
-  if ($desc_length > 200) {
-    $description = substr($description, 0, 200) . '...';
-  }
-  $title = esc_html( $rss_items[1]->get_title() );
-  $url = esc_url( $rss_items[1]->get_permalink());
-  $output .= '    <a href="'.$url . '" style="background: url(' . legacy_get_resized_remote_image_url($image,622,402) . ');">'
-          . '       <div class="mf-news-text-box mf-news-text-box-sm">'
-          . '         <h2>' . $title . '</h2>'
-          . '         <p>' . $description . '</p>'
-          . '       </div>'
-          . '     </a>'
-          . '   </div>'
-          . '</div>';
-  RETURN $output;
+function makerfaire_makezine_rss_news($atts) {
+   extract(shortcode_atts(array(
+      "newstag" => 'maker-faire',
+      "newstitle" => '',
+      "newslink" => ''
+   ), $atts));
+   require_once 'MF-News-Block.php';
+   $args = [
+      'tag' => $newstag,
+      'title' => $newstitle,
+      'link' => $newslink
+   ];
+   return do_news_block($args);
 }
 
 add_shortcode( 'mf-news', 'makerfaire_makezine_rss_news' );
