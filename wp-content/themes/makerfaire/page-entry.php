@@ -271,7 +271,7 @@ function display_entry_schedule($entry_id) {
   $return = "";
   $return .= '<div class="faireTitle padbottom"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></div>';
   if(!$show_sched){
-    return;
+    return $return;
   }
 	
   if($wpdb->num_rows > 0){
