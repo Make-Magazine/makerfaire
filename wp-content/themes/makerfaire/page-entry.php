@@ -251,9 +251,7 @@ function display_entry_schedule($entry_id) {
   global $wpdb; global $faireID; global $faire; global $show_sched; global $backMsg; global $url_sub_path;
   global $faire_map; global $program_guide;
 
-  if(!$show_sched){
-    return;
-  }
+  
   $backlink = "/".$url_sub_path."/meet-the-makers/";
 
   $faire_url = "/" . $faire;
@@ -272,6 +270,9 @@ function display_entry_schedule($entry_id) {
   $results = $wpdb->get_results($sql);
   $return = "";
   $return .= '<div class="faireTitle padbottom"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></div>';
+  if(!$show_sched){
+    return;
+  }
 	
   if($wpdb->num_rows > 0){
 
