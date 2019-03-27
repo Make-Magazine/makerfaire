@@ -7,7 +7,7 @@
   ?>
 <div class="container">
   <div class="row">
-	<div class="col-md-8 col-sm-12" id="viewEntry">
+	<div class="col-md-8 col-sm-12 col-xs-12" id="viewEntry">
 	  <!-- Project Title and ribbons -->
 	  <?php echo $ribbons;?>
 	  <div class="entry-header">
@@ -45,7 +45,7 @@
 
 	</div>
 
-	<div class="col-md-4 col-sm-12" id="entrySidebar">
+	<div class="col-md-4 col-sm-12 col-xs-12" id="entrySidebar">
 
 		<div class="entryInfo">
 			<?php  //display schedule/location information if there is any
@@ -95,7 +95,7 @@
 					 </div>
 				  </div>
 				  <div class="row">
-					  	<div class="col-sm-12"><p id="groupbio"><?php echo $groupbio;?></p></div>
+					  	<div class="col-xs-12"><p id="groupbio"><?php echo $groupbio;?></p></div>
 				  </div>
 			  </div>
 		  <?php
@@ -121,7 +121,7 @@
 						</div>
 					 </div>
 					 <div class="row">
-						 <div class="col-sm-12"><p><?php echo $maker['bio'];?></p></div>
+						 <div class="col-xs-12"><p><?php echo $maker['bio'];?></p></div>
 					 </div>
 			     </div>
 				 <?php

@@ -292,13 +292,13 @@ function display_entry_schedule($entry_id) {
 			$current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
 			
 			if($prev_start_dt==NULL){
-			  $return .= '<div class="entry-date-time col-sm-12">';
+			  $return .= '<div class="entry-date-time col-xs-12">';
 			}
 			 
 			if ($prev_start_dt != $current_start_dt){
 			  //This is not the first new date
 			  if ($prev_start_dt != NULL){
-				 $return .= '</div><div class="entry-date-time col-sm-12">';
+				 $return .= '</div><div class="entry-date-time col-xs-12">';
 			  }
 			  $return .= '<h5>'.$current_start_dt.'</h5>';
 			  $prev_start_dt = $current_start_dt;
@@ -316,7 +316,7 @@ function display_entry_schedule($entry_id) {
 
 		 }else{
 			  global $faire_start; global $faire_end;
-			  $return .= '<div class="entry-date-time col-sm-12">';
+			  $return .= '<div class="entry-date-time col-xs-12">';
 
 			  $faire_start = strtotime($faire_start);
 			  $faire_end   = strtotime($faire_end);
