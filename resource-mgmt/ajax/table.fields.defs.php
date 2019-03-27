@@ -85,15 +85,19 @@ $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'location', '
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'start_dt', 'filterType' => 'text');
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'end_dt',   'filterType'   => 'text');
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'schedType',   'filterType'   => 'text');
+$tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'status',   'filterType'   => 'text','visible' => false);
+$tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'entity_status',   'filterType'   => 'text');
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'form_id', 'filterType' => 'text', 'fieldLabel' => 'form_id','visible' => false);
 $tableFields['wp_mf_location']['query'] =
           'SELECT wp_mf_location.location,wp_mf_location.entry_id, wp_mf_location.subarea_id, '
                 . 'wp_mf_faire_subarea.subarea, wp_mf_faire_subarea.nicename, wp_mf_faire_subarea.area_id, '
                 . 'wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_mf_schedule.type as schedType, wp_gf_entry.form_id, '
+                . ' wp_gf_entry.status as status, wp_mf_entity.status as entity_status, '
         . '(SELECT meta_value as value FROM `wp_gf_entry_meta` where meta_key = "151" and wp_gf_entry_meta.entry_id = wp_mf_location.entry_id  limit 1) as exName '
         . 'FROM    wp_mf_location '
         . 'left outer join  wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.ID '
         . 'left outer join  wp_mf_faire_area    on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
         . 'left outer join  wp_mf_schedule      on wp_mf_schedule.location_id = wp_mf_location.ID '
         . 'left outer join  wp_gf_entry         on wp_gf_entry.ID = wp_mf_location.entry_id '
+        . 'left outer join  wp_mf_entity        on wp_gf_entry.ID = wp_mf_entity.lead_id '
         . 'left outer join  wp_mf_faire         on find_in_set (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0  where  wp_mf_faire.ID = '.$faire;

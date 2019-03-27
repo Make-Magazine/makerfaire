@@ -858,6 +858,7 @@ function retrieveRptData($table, $faire) {
          default:
             break;
       }
+
       if (isset($fields['cellTooltip']))
          $vars['cellTooltip'] = $fields['cellTooltip'];
       if (isset($fields['cellTemplate']))
@@ -872,6 +873,7 @@ function retrieveRptData($table, $faire) {
       $vars['name'] = $fields['fieldName'];
       $vars['minWidth'] = 100;
       $vars['width'] = (isset($fields['width']) ? $fields['width'] : '*');
+      
       $columnDefs[] = $vars;
    }
 
@@ -886,8 +888,19 @@ function retrieveRptData($table, $faire) {
    if ($wpdb->last_error !== '') :
       $wpdb->print_error();
    endif;
+         
    //create array of table data
    foreach ($result as $row) {
+
+      if(isset($row['schedType'])&& (trim($row['schedType'])=='')){
+         //determine sched type based on form type
+         $form = GFAPI::get_form($row->form_id);
+         if ($form['form_type'] == 'Performance') {
+            $row['schedType'] = 'performance';
+         } else {
+            $row['schedType'] = 'talk';
+         }         
+      }
       $data['data'][] = $row;
    }
    echo json_encode($data);
