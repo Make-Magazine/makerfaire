@@ -290,12 +290,9 @@ function display_entry_schedule($entry_id) {
 			$end_dt     = strtotime($row->end_dt);
 			$current_start_dt = date("l, F j",$start_dt);
 			$current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
+			
 			if($prev_start_dt==NULL){
 			  $return .= '<div class="entry-date-time col-sm-12">';
-			}
-			// this is a new location
-			if ($prev_location != $current_location && $prev_start_dt != $current_start_dt){
-			  $return .= '<small class="text-muted location">LOCATION: '.$current_location . "</small>";
 			}
 			 
 			if ($prev_start_dt != $current_start_dt){
@@ -305,7 +302,13 @@ function display_entry_schedule($entry_id) {
 			  }
 			  $return .= '<h5>'.$current_start_dt.'</h5>';
 			  $prev_start_dt = $current_start_dt;
+			  $prev_location = null;
 			  $multipleLocations = TRUE;
+			}
+			// this is a new location
+			if ($prev_location != $current_location){
+			  $prev_location = $current_location;
+			  $return .= '<small class="text-muted">LOCATION: '.$current_location.'</small><br />';
 			}
 
 			
@@ -319,11 +322,12 @@ function display_entry_schedule($entry_id) {
 			  $faire_end   = strtotime($faire_end);
 
 			  $dateRange   = progDateRange($faire_start, $faire_end);
-           $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
+           
 			  //tbd change this to be dynamically populated
 			  if($dateRange != "" && $dateRange != null) {
 					$return .= '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
 			  }
+			  $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
 			  
 			  $return .= '</div>'; // end date time location block
 		 }
@@ -360,7 +364,7 @@ function display_group($entryID) {
 			//Title
 			$project_title = (string)$entry['151'];
 			$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
-			$return .= '<li>Part of: <a href="/maker/entry/'.$link_entryID.'">'.$project_title.' group exhibit</a></li>';
+			$return .= '<li>Part of: <a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
 		 }
 	 	 return $return .= "</ul>";
 	 }
@@ -462,31 +466,31 @@ function getSocial($entrySocial) {
 		foreach($socialArray as $value) {
 			if($value['Your Link'] != "") { // make sure there's a link to be had, then assign that link by plateform
 				if($value['Plateform'] == "Facebook" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-facebook-square"></i></a>';
+					$socialBlock .= '<a class="social-link facebook-share" href="' . $value['Your Link'] . '"><i class="fa fa-facebook-square"></i></a>';
 				}
 				if($value['Plateform'] == "Twitter" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-twitter"></i></a>';
+					$socialBlock .= '<a class="social-link twitter-share" href="' . $value['Your Link'] . '"><i class="fa fa-twitter"></i></a>';
 				}
 				if($value['Plateform'] == "Instagram" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
+					$socialBlock .= '<a class="social-link instagram-share" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
 				}
 				if($value['Plateform'] == "YouTube" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-youtube"></i></a>';
+					$socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fa fa-youtube"></i></a>';
 				}
 				if($value['Plateform'] == "LinkedIn" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
+					$socialBlock .= '<a class="social-link linkedin-share" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
 				}
 				if($value['Plateform'] == "Pinterest" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-pinterest-square"></i></a>';
+					$socialBlock .= '<a class="social-link pinterest-share" href="' . $value['Your Link'] . '"><i class="fa fa-pinterest-square"></i></a>';
 				}
 				if($value['Plateform'] == "Snapchat" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat"></i></a>';
+					$socialBlock .= '<a class="social-link snapchat-share" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat"></i></a>';
 				}
 				if($value['Plateform'] == "Patreon" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-patreon"></i></a>';
+					$socialBlock .= '<a class="social-link patreon-share" href="' . $value['Your Link'] . '"><i class="fa fa-patreon"></i></a>';
 				}
 				if($value['Plateform'] == "Other" ) {
-					$socialBlock .= '<a class="social-link" href="' . $value['Your Link'] . '"><i class="fa fa-globe"></i></a>';
+					$socialBlock .= '<a class="social-link other-share" href="' . $value['Your Link'] . '"><i class="fa fa-globe"></i></a>';
 				}
 			}
 		}

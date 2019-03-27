@@ -20,8 +20,8 @@
 		
 	  </div>
 	  <?php
-				$url  = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-				echo do_shortcode( '[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more"  morebutton_icon="dots" morebutton="2" counters=1 counter_pos="bottom" total_counter_pos="hidden" style="icon" fullwidth="yes" template="metro-retina" url="' . $url . '" text="' . $project_title . '"]' );
+				$url  = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]/";
+				echo do_shortcode( '[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more"  morebutton_icon="dots" morebutton="2" counters=1 counter_pos="bottom" total_counter_pos="hidden" style="icon" fullwidth="yes" template="metro-retina" keyurl="' . $url . '" url="' . $url . '" text="' . $project_title . '"]' );
 	  ?>
 
 	  <!-- Project Image -->
@@ -82,13 +82,15 @@
 			  ?>
 			   <div class="entry-page-maker-info">
 				  <div class="row padbottom">
+					 <div class="col-xs-12">
+					  <h3 class="text-capitalize" id="groupname"><?php echo $groupname;?></h3>
+					 </div>
 					 <div class="col-xs-6">
 						<div class="entry-page-maker-img">
 							<img class="img-responsive" src="<?php echo (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto,400,400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
 						 </div>
 					 </div>
 					 <div class="col-xs-6">
-						<h3 class="text-capitalize" id="groupname"><?php echo $groupname;?></h3>
 						<?php echo $groupsocial; ?>
 					 </div>
 				  </div>

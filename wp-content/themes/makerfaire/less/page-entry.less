@@ -122,10 +122,13 @@
 					font-size: 20px;
 				}
 			}
-			.entry-date-time .location {
-				display: block;
-				&:last-of-type {
-					padding-top: 10px;
+			.entry-date-time {
+				h5 {
+					font-weight: bold;
+					margin-top: 15px;
+				} 
+				&:first-of-type {
+					h5 { margin-top: 0px; }
 				}
 			}
 			.hands-on {
@@ -212,8 +215,29 @@
 			font-size: 40px;
 			line-height: 40px;
 			padding-right: 10px;
-			&:hover {
+			&.other:hover {
 				opacity: .6;
+			}
+			&.facebook-share:hover {
+				color: #3B5998;
+			}
+			&.twitter-share:hover {
+				color: #00acee;
+			}
+			&.instagram-share:hover {
+				color: #c32aa3;
+			}
+			&.youtube-share:hover {
+				color: #ff0000;
+			}
+			&.pinterest-share:hover {
+				color: #bd081c;
+			}
+			&.snapchat-share:hover {
+				color: #fffc00;
+			}
+			&.patreon-share:hover {
+				color: #f96854;
 			}
 		}
 	}
