@@ -26,7 +26,7 @@
                     "label": "Presenter Image",
                     "name": "pres_image",
                     "type": "image",
-                    "instructions": "",
+                    "instructions": "Image should be between 400x300 px and 800x600 px in width\/height",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -205,5 +205,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553545619
+    "modified": 1553702306
 }
