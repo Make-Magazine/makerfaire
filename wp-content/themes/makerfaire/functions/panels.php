@@ -31,6 +31,12 @@ function dispLayout($row_layout) {
          case 'call_to_action':  // CTA PANEL
             $return = getCTApanel();            
             break;
+         case 'news_block_panel':  // NEWS BLOCK PANEL
+            $return = getNewsBlockpanel();            
+            break;
+         case 'tint_social_block_panel':  // NEWS BLOCK PANEL
+            $return = getTintSocialBlockpanel();            
+            break;
          case 'ribbon_separator_panel':  // CTA PANEL
             $return = getRibbonSeparatorpanel();            
             break;
@@ -574,7 +580,7 @@ function getCTApanel() {
 
 
 /* **************************************************** */
-/* Function to return Ribbon Separator panel              */
+/* Function to return Ribbon Separator panel            */
 /* **************************************************** */
 function getRibbonSeparatorpanel() {
    $return = '';
@@ -590,6 +596,33 @@ function getRibbonSeparatorpanel() {
       . '   <div class="arrow-right-sm"></div>';
    $return .= '</section>';
    return $return;
+}
+
+
+/* **************************************************** */
+/* Function to return News Block panel                  */
+/* **************************************************** */
+function getNewsBlockpanel() {
+   $args = [
+      'tag' => get_sub_field('tag'),
+      'title' => get_sub_field('title'),
+      'link' => get_sub_field('link')
+   ];
+   require_once 'MF-News-Block.php';
+   return do_news_block($args);
+}
+
+/* **************************************************** */
+/* Function to return Tint Social Block panel           */
+/* **************************************************** */
+function getTintSocialBlockpanel() {
+   $args = [
+      'personalization_id' => get_sub_field('personalization_id'),
+      'title' => get_sub_field('title'),
+      'hashtags' => get_sub_field('hashtags')
+   ];
+   require_once 'MF-Social-Block.php';
+   return do_social_block($args);
 }
 
 /* **************************************************** */
