@@ -906,14 +906,13 @@
    }
 	
 	// Ye olde video panels
-	.video-panel {
+	.video-panel, .image-panel {
 		background: #333;
 		color: #fff;
 		font-size: 26px;
 		padding-bottom: 15px;
 		.row {
 			padding: 30px 15px 0px;
-
 		}
 		h4 {
 			font-size: 26px;
@@ -924,6 +923,8 @@
 		a { 
 			color: #fff;
 			text-decoration: underline;
+			display: block;
+			margin-bottom: 15px;
 			&:hover, &:active, &:focus {
 				text-decoration: none;
 			}
@@ -940,10 +941,45 @@
 			h4 { font-size: 16px; }
 			.row:nth-child(even){
 				transform: scaleY(-1);
+				padding-bottom: 30px;
 				.col-xs-12{ transform: scaleY(-1); }
 			}
 			.embed-youtube {
 				margin-top: 20px;
+			}
+		}
+	}
+	.image-panel {
+		.row {
+			&.white-bg {
+				background: #fff;
+				color: #333;
+				a { color: #0D3900; }
+			}
+			&.grey-bg {
+				background: #4A4A4A;
+			}
+			&.darkgrey-bg {
+				background: #333;
+			}
+			.image-display {
+				margin-bottom: 30px;
+				a {
+					postion: relative
+				}
+				.image-overlay-text {
+					padding: 10px 30px;
+					font-size: 18px;
+					color: #333;
+					background: rgba(255, 255, 255, 0.6);
+					position: absolute;
+					bottom: 30px;
+					text-decoration: none;
+					@media screen and (max-width: 768px) {
+						padding-left: 15px;
+						font-size: 16px;
+					}
+				}
 			}
 		}
 	}

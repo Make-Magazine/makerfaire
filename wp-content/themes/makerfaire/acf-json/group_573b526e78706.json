@@ -1877,7 +1877,7 @@
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
-                            "instructions": "",
+                            "instructions": "Activate or Inactivate this panel",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -2012,6 +2012,205 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_5c9d3b0285ad0": {
+                    "key": "layout_5c9d3b0285ad0",
+                    "name": "2_column_images",
+                    "label": "2 Column Images",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_5c9d3b2985ad1",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "Activate or Inactivate this panel",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "allow_null": 0,
+                            "other_choice": 0,
+                            "default_value": "",
+                            "layout": "vertical",
+                            "return_format": "value",
+                            "save_other_choice": 0
+                        },
+                        {
+                            "key": "field_5c9d3b9485ad2",
+                            "label": "Image Row",
+                            "name": "image_row",
+                            "type": "repeater",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "collapsed": "",
+                            "min": 0,
+                            "max": 0,
+                            "layout": "table",
+                            "button_label": "",
+                            "sub_fields": [
+                                {
+                                    "key": "field_5c9d3bb685ad4",
+                                    "label": "Image Title",
+                                    "name": "image_title",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": 50
+                                },
+                                {
+                                    "key": "field_5c9d3bcb85ad5",
+                                    "label": "Image Text",
+                                    "name": "image_text",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": 220
+                                },
+                                {
+                                    "key": "field_5c9d3bd385ad6",
+                                    "label": "Image Link Text",
+                                    "name": "image_link_text",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": 50
+                                },
+                                {
+                                    "key": "field_5c9d3be785ad7",
+                                    "label": "Image Link URL",
+                                    "name": "image_link_url",
+                                    "type": "url",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": ""
+                                },
+                                {
+                                    "key": "field_5c9d3c1085ad8",
+                                    "label": "Image",
+                                    "name": "image",
+                                    "type": "image",
+                                    "instructions": "Images MUST be at least 1240px wide, no more than 650px tall",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "return_format": "array",
+                                    "preview_size": "thumbnail",
+                                    "library": "all",
+                                    "min_width": "",
+                                    "min_height": "",
+                                    "min_size": "",
+                                    "max_width": "",
+                                    "max_height": "",
+                                    "max_size": "",
+                                    "mime_types": ""
+                                },
+                                {
+                                    "key": "field_5c9d3cd585ad9",
+                                    "label": "Image Overlay",
+                                    "name": "image_overlay",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": 50
+                                },
+                                {
+                                    "key": "field_5c9d3d1285adb",
+                                    "label": "Background Color",
+                                    "name": "background_color",
+                                    "type": "select",
+                                    "instructions": "The color of the background of this row",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "choices": {
+                                        "white-bg": "White",
+                                        "grey-bg": "Grey",
+                                        "darkgrey-bg": "Dark Grey"
+                                    },
+                                    "default_value": [
+                                        "white-bg"
+                                    ],
+                                    "allow_null": 0,
+                                    "multiple": 0,
+                                    "ui": 0,
+                                    "return_format": "value",
+                                    "ajax": 0,
+                                    "placeholder": ""
+                                }
+                            ]
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
             "button_label": "Add New Panel",
@@ -2060,5 +2259,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553728884
+    "modified": 1553813438
 }

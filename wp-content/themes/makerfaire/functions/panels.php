@@ -64,6 +64,9 @@ function dispLayout($row_layout) {
 			case '2_column_video': // Video Panels
             $return = getVideoPanel();
             break;
+			case '2_column_images': // Image Panels in the same style as the Video Panels
+            $return = getImagePanel();
+            break;
       }
    }
    return $return;
@@ -544,7 +547,7 @@ function get1ColLayout() {
 }
 
 /***************************************************** */
-/*   Function to return 2_column_video panell  */
+/*   Function to return 2_column_video panel           */
 /***************************************************** */
 function getVideoPanel() {
    //get data submitted on admin page
@@ -581,6 +584,60 @@ function getVideoPanel() {
 								 <h4>' . $video['video_title'] . '</h4>
 								 <p>' . $video['video_text'] . '</p>
 								 <a href="' . $video['video_button_link'] . '">' . $video['video_button_text'] . '</a>
+							  </div>';
+			$return .= '</div>';
+		}
+	}
+	$return .= '</section>'; // end section/container
+   return $return;
+}
+
+/***************************************************** */
+/*   Function to return 2_column_image panel           */
+/***************************************************** */
+function getImagePanel() {
+   //get data submitted on admin page
+            
+   $return = '';
+   $return .= '<section class="image-panel container-fluid">';    // create content-panel section
+
+   //get requested data for each column
+   $image_rows = get_sub_field('image_row');
+	$imageRowNum = 0;
+   foreach ($image_rows as $image) {
+		$imageRowNum += 1;
+		$imageObj = $image['image'];
+
+      if($imageRowNum % 2 != 0){ 
+			$return .= '<div class="row ' . $image['background_color'] . '">';
+			$return .= '  <div class="col-sm-4 col-xs-12">
+			                <h4>' . $image['image_title'] . '</h4>
+								 <p>' . $image['image_text'] . '</p>
+								 <a href="' . $image['image_link_url'] . '">' . $image['image_link_text'] . '</a>
+							  </div>';
+			$return .= '  <div class="col-sm-8 col-xs-12">
+			                 <div class="image-display">
+									  <a href="' . $image['image_link_url'] . '">
+										 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />
+										 <div class="image-overlay-text">' . $image['image_overlay'] . '</div>
+									  </a>
+								  </div>
+			              </div>';
+			$return .= '</div>';
+		} else {
+			$return .= '<div class="row ' . $image['background_color'] . '">';
+			$return .= '  <div class="col-sm-8 col-xs-12">
+								 <div class="image-display">
+									 <a href="' . $image['image_link_url'] . '">
+									   <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />
+										<div class="image-overlay-text">' . $image['image_overlay'] . '</div>
+									 </a>
+								 </div>
+							  </div>';
+			$return .= '  <div class="col-sm-4 col-xs-12">
+								 <h4>' . $image['image_title'] . '</h4>
+								 <p>' . $image['image_text'] . '</p>
+								 <a href="' . $image['image_link_url'] . '">' . $image['image_link_text'] . '</a>
 							  </div>';
 			$return .= '</div>';
 		}
