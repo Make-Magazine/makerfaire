@@ -913,6 +913,7 @@
 		padding-bottom: 15px;
 		.row {
 			padding: 30px 15px 0px;
+
 		}
 		h4 {
 			font-size: 26px;
@@ -937,6 +938,13 @@
 		@media screen and (max-width: 768px) {
 			font-size: 16px;
 			h4 { font-size: 16px; }
+			.row:nth-child(even){
+				transform: scaleY(-1);
+				.col-xs-12{ transform: scaleY(-1); }
+			}
+			.embed-youtube {
+				margin-top: 20px;
+			}
 		}
 	}
 
