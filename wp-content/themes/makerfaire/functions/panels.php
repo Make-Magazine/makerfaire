@@ -61,6 +61,9 @@ function dispLayout($row_layout) {
          case 'flag_banner_panel': //flag banner separator
             $return = getFlagBannerPanel();
             break;
+         case 'maker_faire_map_cta': // faire map link separator
+            $return = getMFMapCTAPanel();
+            break;
       }
    }
    return $return;
@@ -1179,3 +1182,23 @@ function get_faire_backlink() {
 function getFlagBannerPanel() {
  return '<div class="flag-banner"></div>';  
 }
+
+
+/* **************************************************** */
+/* Function to return maker faire map call-to-action    */
+/* **************************************************** */
+function getMFMapCTAPanel() {
+   $title = get_sub_field('title_link_text');
+   $URL = get_sub_field('link_url');
+   
+   $content = '<div class="location-holder">';
+   $content .= '   <div class="container">';
+   $content .= '      <div class="picture-holder">';
+   $content .= '         <img alt="image description" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
+   $content .= '      </div>';
+   $content .= '      <a href="'.$URL.'">'.$title.' <i class="icon-arrow-right"></i></a>';
+   $content .= '   </div>';
+   $content .= '</div>';
+
+   return $content;  
+  }
