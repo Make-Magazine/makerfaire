@@ -965,19 +965,25 @@
 			.image-display {
 				margin-bottom: 30px;
 				a {
-					postion: relative
-				}
-				.image-overlay-text {
-					padding: 10px 30px;
-					font-size: 18px;
-					color: #333;
-					background: rgba(255, 255, 255, 0.6);
-					position: absolute;
-					bottom: 30px;
-					text-decoration: none;
-					@media screen and (max-width: 768px) {
-						padding-left: 15px;
-						font-size: 16px;
+					position: relative;
+					.image-overlay-text {
+						padding: 10px 30px;
+						font-size: 18px;
+						color: #333;
+						background: rgba(255, 255, 255, 0.6);
+						position: absolute;
+						bottom: 0px;
+						text-decoration: none;
+						@media screen and (max-width: 768px) {
+							padding-left: 15px;
+							font-size: 16px;
+							width: 100%;
+						}
+					}
+					&:hover {
+						.image-overlay-text {
+							text-decoration: underline;
+						}
 					}
 				}
 			}
