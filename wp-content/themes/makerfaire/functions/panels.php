@@ -61,6 +61,9 @@ function dispLayout($row_layout) {
          case 'flag_banner_panel': //flag banner separator
             $return = getFlagBannerPanel();
             break;
+			case '2_column_video': // Video Panels
+            $return = getVideoPanel();
+            break;
       }
    }
    return $return;
@@ -537,6 +540,66 @@ function get1ColLayout() {
 
    // Because of the aggressive caching on prod, it makes more sense to shuffle the array in javascript
    $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").css("background-image","url("+heroArray[0]+")");bgSize( jQuery( ".hero-img" ), function( width, height ){if( height > 450 ) {jQuery(".hero-img").css( "height", "450px" );} else if( height > 320 ){jQuery( ".hero-img" ).css( "height", height + "px" );}});});</script>'; 
+   return $return;
+}
+
+/***************************************************** */
+/*   Function to return 2_column_video panell  */
+/***************************************************** */
+function getVideoPanel() {
+   //get data submitted on admin page
+            
+   $return = '';
+   $return .= '<section class="video-panel container">';    // create content-panel section
+
+   $return .= '   <div class="row">';
+   //get requested data for each column
+   $video_rows = get_sub_field('video_row');
+	$vidowRowNum = 0;
+   foreach ($video_rows as $video) {
+		$videoRowNum += 1;
+      $return .= '   <div class="col-sm-4">'; //start column
+      $data = $column['data'];
+      $columnInfo = '';
+      switch ($column['column_type']) {
+         case 'image':     // Image with optional link
+            $alignment = $data['column_list_alignment'];
+            $imageArr = $data['column_image_field'];                  
+            $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+            
+            $cta_link = $data['image_cta'];
+            $ctaText = $data['image_cta_text'];
+
+            if (!empty($cta_link)) {
+               $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
+               if (!empty($ctaText)) {
+                  $columnInfo .= '<p class="text-' . $alignment . ' sub-caption-dark"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
+               }
+            } else {
+               $columnInfo = $image;
+            }
+            break;
+         case 'paragraph': // Paragraph text
+            $columnInfo = '<p>' . $data['column_paragraph'] . '</p>';
+            break;
+         case 'list':      // List of items with optional links
+            $columnInfo = '<div class="flagship-faire-wrp">';
+            if (!empty($data['list_title'])) {
+               $columnInfo .= '<p class="line-item list-title">' . $data['list_title'] . '</p>';
+            }
+            $columnInfo .= '  <ul>';
+            foreach ($data['column_list_fields'] as $list_fields) {
+               $list_text = $list_fields['list_text'];
+               $list_link = $list_fields['list_link'];
+               $columnInfo .= '<li>' . (!empty($list_link) ? '<a class="" href="' . $list_link . '">' . $list_text . '</a>' : $list_text) . '</li>';
+            }
+            $columnInfo .= '  </ul>';
+            $columnInfo .= '</div>';
+            break;
+      }
+      $return .= $columnInfo;
+      $return .= '</div>'; //end column
+	}
    return $return;
 }
 

@@ -475,7 +475,7 @@ function getSocial($entrySocial) {
 					$socialBlock .= '<a class="social-link instagram-share" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
 				}
 				if($value['Plateform'] == "YouTube" ) {
-					$socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fa fa-youtube"></i></a>';
+					$socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fa fa-youtube-play"></i></a>';
 				}
 				if($value['Plateform'] == "LinkedIn" ) {
 					$socialBlock .= '<a class="social-link linkedin-share" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
