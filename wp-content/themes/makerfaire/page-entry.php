@@ -10,7 +10,11 @@ $entryId   = $wp_query->query_vars['e_id'];
 $editEntry = $wp_query->query_vars['edit_slug'];
 $entry     = GFAPI::get_entry($entryId);
 
+//error_log(print_r($entry, TRUE));
+
+// The opengraph cards for sharing
 $sharing_cards = new mf_sharing_cards();
+
 
 // give admin, editor and reviewer user roles special ability to see all entries
 $user = wp_get_current_user();
@@ -21,72 +25,79 @@ if(array_intersect( array('administrator', 'editor', 'reviewer'), $user->roles )
 
 //entry not found
 if(isset($entry->errors)){
-  $form_id = '';
-  $formType = '';
-  $entry=array();
-  $faire = '';
+	$form_id = '';
+	$formType = '';
+	$entry=array();
+	$faire = '';
 }else{
-  //find out which faire this entry is for to set the 'look for more makers link'
-  $form_id = $entry['form_id'];
-  $form = GFAPI::get_form($form_id);
-  $formType = $form['form_type'];
-  //build an array of field information
-  foreach($form['fields'] as $field){
-    $fieldID = $field->id;
-    $fieldData[$fieldID] = $field;
-  }
+	//find out which faire this entry is for to set the 'look for more makers link'
+	$form_id = $entry['form_id'];
+	$form = GFAPI::get_form($form_id);
+	$formType = $form['form_type'];
+	
+	if($formType == "Sponsor") {
+		$sponsorshipLevel = $entry["442.3"];
+	}
 
-  //if the form was submitted
-  $submit = filter_input(INPUT_POST, 'edit_entry_page');
-  if($submit != ''){
-    entryPageSubmit($entryId);
-    $entry         = GFAPI::get_entry($entryId);
-  }
+	//build an array of field information
+	foreach($form['fields'] as $field){
+	 $fieldID = $field->id;
+	 $fieldData[$fieldID] = $field;
+	}
 
-  $faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
-  if($form_id!=''){
-    $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide "
-            . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
+	//if the form was submitted
+	$submit = filter_input(INPUT_POST, 'edit_entry_page');
+	if($submit != ''){
+		entryPageSubmit($entryId);
+		$entry         = GFAPI::get_entry($entryId);
+	}
 
-    $results =  $wpdb->get_row( $formSQL );
-    if($wpdb->num_rows > 0){
-      $faire          = $slug = $results->faire_name;
-      $faireShort     = $results->faire;
-      $faireID        = $results->id;
-      $show_sched     = $results->show_sched;
-      $faire_start    = $results->start_dt;
-      $faire_end      = $results->end_dt;
-      $url_sub_path   = $results->url_path;
-      $faire_map      = $results->faire_map;
-      $program_guide  = $results->program_guide;
-    }
-  }
+	$faire =$slug=$faireID=$show_sched=$faireShort = $faire_end='';
+	if($form_id!=''){
+		$formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide "
+				. " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
 
-  //get makers info
-  $makers = getMakerInfo($entry);
+		$results =  $wpdb->get_row( $formSQL );
+		if($wpdb->num_rows > 0){
+			$faire          = $slug = $results->faire_name;
+			$faireShort     = $results->faire;
+			$faireID        = $results->id;
+			$show_sched     = $results->show_sched;
+			$faire_start    = $results->start_dt;
+			$faire_end      = $results->end_dt;
+			$faire_year     = substr($faire_start, 0, 4);
+			$url_sub_path   = $results->url_path;
+			$faire_map      = $results->faire_map;
+			$program_guide  = $results->program_guide;
+		}
+	}
 
-  $groupname  = (isset($entry['109']) ? $entry['109']:'');
-  $groupphoto = (isset($entry['111']) ? $entry['111']:'');
-  $groupbio   = (isset($entry['110']) ? $entry['110']:'');
+	//get makers info
+	$makers = getMakerInfo($entry);
 
-  // One maker
-  // A list of makers (7 max)
-  // A group or association
-  $displayType = (isset($entry['105']) ? $entry['105']:'');
-
-  $isGroup = $isList = $isSingle = false;
-  $isGroup =(strpos($displayType, 'group') !== false);
-  $isList =(strpos($displayType, 'list') !== false);
-  $isSingle =(strpos($displayType, 'One') !== false);
+	$groupname   = (isset($entry['109']) ? $entry['109']:'');
+	$groupphoto  = (isset($entry['111']) ? $entry['111']:'');
+	$groupbio    = (isset($entry['110']) ? $entry['110']:'');
+	$groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
 
 
-  $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
-  $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
-  $project_short = (isset($entry['16']) ? $entry['16']: '');    // Description
-  $project_website = (isset($entry['27']) ? $entry['27']: '');  //Website
-  $project_video = (isset($entry['32']) ? $entry['32']:'');     //Video
-  $project_title = (isset($entry['151'])?(string)$entry['151']:''); //Title
-  $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+	// One maker
+	// A list of makers (7 max)
+	// A group or association
+	$displayType = (isset($entry['105']) ? $entry['105']:'');
+
+	$isGroup  = $isList = $isSingle = false;
+	$isGroup  = (strpos($displayType, 'group') !== false);
+	$isList   = (strpos($displayType, 'list') !== false);
+	$isSingle = (strpos($displayType, 'One') !== false);
+
+	$project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
+	$project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'],750,500) : '');
+	$project_short = (isset($entry['16']) ? $entry['16']: '');    // Description
+	$project_website = (isset($entry['27']) ? $entry['27']: '');  //Website
+	$project_video = (isset($entry['32']) ? $entry['32']:'');     //Video
+	$project_title = (isset($entry['151'])?(string)$entry['151']:''); //Title
+	$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 }
 
 //set sharing card data
@@ -131,27 +142,11 @@ if($editEntry=='edit'){
  //check if this entry has won any awards
 $ribbons = checkForRibbons(0,$entryId);
 
-//set the 'backlink' text and link (only set on valid entries)
-if($faire!=''){
-  $url = parse_url(wp_get_referer()); //getting the referring URL
-  $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
-  $path = explode("/", $url['path']); // splitting the path
-  $slug = end($path); // get the value of the last element
+// check if activity is hands on
+$handsOn = handsOnMarker($entry);
 
-  if($slug=='schedule'){
-    $backlink = wp_get_referer();
-    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to the Schedule';
-  }else{
-    $backlink = "/".$url_sub_path."/meet-the-makers/";
-    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Look for More Makers';
-  }
-
-  //overwrite the backlink to send makers back to MAT if $makerEdit = true
-  if($makerEdit){
-    $backlink = "/manage-entries/";
-    $backMsg = '<i class="fa fa-angle-left fa-lg" aria-hidden="true"></i> Back to Your Maker Faire Portal';
-  }
-}
+// check if there's the potential to have a register field
+$registerLink = $entry[829];
 
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
@@ -179,14 +174,6 @@ foreach($entry as $key=>$field ) {
     if($field=='no-public-view' )    $validEntry    = false;
     if($field=='no-maker-display' )  $displayMakers = false;
   }
-}
-
-// Website button
-$website = '';
-
-
-if (!empty($project_website)) {
-  $website =  '<a href="' . $project_website . '" class="btn btn-cyan" target="_blank">Project Website</a>';
 }
 
 
@@ -219,11 +206,11 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
 ?>
 <div class="clear"></div>
 
-<div class="container entry-page">
+<div class="container-fluid entry-page">
   <div class="row">
-    <div class="content col-xs-12 entry-page-mobie-flex">
-      <div class="backlink"><a href="<?php echo $backlink;?>"><?php echo $backMsg;?></a></div>
+    <div class="content col-xs-12">
       <?php
+		// If there is edit in the url, they get all these options
       if($makerEdit){ ?>
         <div class="makerEditHead">
           <input type="hidden" id="entry_id" value="<?php echo $entryId;?>" />
@@ -251,7 +238,8 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
           include TEMPLATEPATH.'/pages/page-entry-edit.php';
         }
       } else { //entry is not active
-        echo '<h2>Invalid entry</h2>';
+        echo '<div class="container"><h2>Invalid entry</h2></div>';
+		  echo '<div class="entry-footer">' . displayEntryFooter() . '</div>';
       }
       ?>
     </div><!--col-xs-12-->
@@ -260,16 +248,14 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
 
  <?php get_footer();
 
-function display_entry_schedule($entry_id) {
+function display_entry_schedule($entry_id) { 
   global $wpdb; global $faireID; global $faire; global $show_sched; global $backMsg; global $url_sub_path;
   global $faire_map; global $program_guide;
 
-  if(!$show_sched){
-    return;
-  }
+  
   $backlink = "/".$url_sub_path."/meet-the-makers/";
 
-  $faire_url = "/$faire";
+  $faire_url = "/" . $faire;
 
   $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
             from  wp_mf_location location
@@ -283,102 +269,105 @@ function display_entry_schedule($entry_id) {
           . " group by area, subarea, location, schedule.start_dt"
           . " order by schedule.start_dt";
   $results = $wpdb->get_results($sql);
-
+  $return = "";
+  $return .= '<div class="faireTitle padbottom"><h3 class="faireName">' . ucwords(str_replace('-',' ', $faire)) . '</h3></div>';
+  if(!$show_sched){
+    return $return;
+  }
+	
   if($wpdb->num_rows > 0){
-    ?>
-    <span class="faireTitle">
-      <span class="faireLabel">Live at</span>
-      <br/>
-      <a href="<?= $backlink ?>">
-        <div class="faireName"><?php echo ucwords(str_replace('-',' ', $faire));?></div>
-      </a>
-    </span>
-    <div id="entry-schedule">
-      <?php // TBD - dynamically set these links and images ?>
-      <div class="faireActions">
 
-        <?php if($faire_map!='') { ?>
-        <a class="flagship-icon-link" href="<?php echo $faire_map;?>">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-circle fa-stack-2x"></i>
-            <i class="fa fa-map-marker fa-stack-1x fa-inverse"></i>
-          </span>
-          <h4>Event Map</h4>
-        </a>
-        <?php } ?>
+    $return .= '<div id="entry-schedule">
+                   <div class="row padbottom">';
 
-        <a class="flagship-icon-link" href="/<?php echo $url_sub_path;?>/schedule/">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-circle fa-stack-2x"></i>
-            <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
-          </span>
-          <h4>View full schedule</h4>
-        </a>
+	  $prev_start_dt = NULL;
+	  $prev_location = NULL;
+	  $multipleLocations = NULL;
+	  
+	  foreach($results as $row){
+		 if(!is_null($row->start_dt)){
+			$start_dt   = strtotime( $row->start_dt);
+			$end_dt     = strtotime($row->end_dt);
+			$current_start_dt = date("l, F j",$start_dt);
+			$current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
+			
+			if($prev_start_dt==NULL){
+			  $return .= '<div class="entry-date-time col-xs-12">';
+			}
+			 
+			if ($prev_start_dt != $current_start_dt){
+			  //This is not the first new date
+			  if ($prev_start_dt != NULL){
+				 $return .= '</div><div class="entry-date-time col-xs-12">';
+			  }
+			  $return .= '<h5>'.$current_start_dt.'</h5>';
+			  $prev_start_dt = $current_start_dt;
+			  $prev_location = null;
+			  $multipleLocations = TRUE;
+			}
+			// this is a new location
+			if ($prev_location != $current_location){
+			  $prev_location = $current_location;
+			  $return .= '<small class="text-muted">LOCATION: '.$current_location.'</small><br />';
+			}
 
-        <?php if($program_guide != '') { ?>
-        <a class="flagship-icon-link" href="<?php echo $program_guide;?>">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-circle fa-stack-2x"></i>
-            <i class="fa fa-download fa-stack-1x fa-inverse"></i>
-          </span>
-          <h4>Download the program guide</h4>
-        </a>
-        <?php } ?>
-      </div>
+			
+			$return .= '<small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</small><br />';
 
-      <div class="clearfix"></div>
-      <div class="row padbottom">
-        <?php
+		 }else{
+			  global $faire_start; global $faire_end;
+			  $return .= '<div class="entry-date-time col-xs-12">';
 
-        $prev_start_dt = NULL;
-        $prev_location = NULL;
-        foreach($results as $row){
-          if(!is_null($row->start_dt)){
-            $start_dt   = strtotime( $row->start_dt);
-            $end_dt     = strtotime($row->end_dt);
-            $current_start_dt = date("l, F j",$start_dt);
-            $current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
+			  $faire_start = strtotime($faire_start);
+			  $faire_end   = strtotime($faire_end);
 
-            if($prev_start_dt==NULL){
-              echo '<div class="entry-date-time col-sm-4">';
-            }
-            if ($prev_start_dt != $current_start_dt){
-              //This is not the first new date
-              if ($prev_start_dt != NULL){
-                echo '</div><div class="entry-date-time col-sm-4">';
-              }
-              echo '<h5>'.$current_start_dt.'</h5>';
-              $prev_start_dt = $current_start_dt;
-              $prev_location = null;
-            }
-            // this is a new location
-            if ($prev_location != $current_location){
-              $prev_location = $current_location;
-              echo '<p><small class="text-muted">LOCATION:</small> '.$current_location.'</p>';
-            }
-            echo ' <p><small class="text-muted">TIME:</small> '. date("g:i a",$start_dt).' - '.date("g:i a",$end_dt).'</p>';
-          }else{
-              global $faire_start; global $faire_end;
-              echo '<div class="entry-date-time col-sm-12">';
+			  $dateRange   = progDateRange($faire_start, $faire_end);
+           
+			  //tbd change this to be dynamically populated
+			  if($dateRange != "" && $dateRange != null) {
+					$return .= '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
+			  }
+			  $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
+			  
+			  $return .= '</div>'; // end date time location block
+		 }
+			
+	  }
+     $return .= '</div>
+              </div>';
+  }
+	if($multipleLocations == TRUE) { // this is kind of a mess to require this
+		$return .= "</div>";
+	}
+	return $return;
+}
 
+function display_group($entryID) {
+  global $wpdb;global $faireID; global $faire;
+  $return = '';
 
-              $faire_start = strtotime($faire_start);
-              $faire_end   = strtotime($faire_end);
-              $dateRange   = progDateRange($faire_start, $faire_end);
-
-              //tbd change this to be dynamically populated
-				  if($dateRange != "" && $dateRange != null) {
-              		echo '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
-				  }
-              echo '<p><small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</p>';
-              echo '</div>';
-          }
-        }
-        ?>
-          </div><!-- close final col-sm-4-->
-        </div><!-- end row-->
-    </div><!-- End entry-schedule-->
-    <?php
+  //look for all associated entries but exclude trashed entries
+  $sql = "select wp_mf_lead_rel.*
+          from wp_mf_lead_rel
+          left outer join wp_gf_entry  child on wp_mf_lead_rel.childID = child.id
+          left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id
+          where (parentID=".$entryID." or childID=".$entryID.") and child.status != 'trash' and parent.status != 'trash'";
+  $results = $wpdb->get_results($sql);
+  if($wpdb->num_rows > 0){
+    if($results[0]->parentID!=$entryID){
+		 $title = '';
+       $type = 'child';
+		 $return .= '<ul class="group-list">';
+		 foreach($results as $row){
+			$link_entryID = ($type=='parent'?$row->childID:$row->parentID);
+			$entry = GFAPI::get_entry($link_entryID);
+			//Title
+			$project_title = (string)$entry['151'];
+			$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+			$return .= '<li>Part of: <a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
+		 }
+	 	 return $return .= "</ul>";
+	 }
   }
 }
 
@@ -396,67 +385,118 @@ function display_groupEntries($entryID){
   $results = $wpdb->get_results($sql);
   if($wpdb->num_rows > 0){
     if($results[0]->parentID==$entryID){
-        $title = 'Exhibits in this group:';
-        $type = 'parent';
-      }else{
-        $title = 'Part of a group:';
-        $type = 'child';
-      }
-    $return .= $title.'<br/>';
-    $return .= '<div class="row">';
-    foreach($results as $row){
-      $link_entryID = ($type=='parent'?$row->childID:$row->parentID);
-      $entry = GFAPI::get_entry($link_entryID);
-      //Title
-      $project_title = (string)$entry['151'];
-      $project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
-      $return .= '<div class="col-md-4 col-sm-6">';
-      $return .= '<a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></div>';
-    }
-    $return .= '</div>';
+       $title = '<h4>Exhibits in this group:</h4>';
+       $type = 'parent';
+		 $return .= $title . '<ul class="group-list">';
+		 foreach($results as $row){
+			$link_entryID = ($type=='parent'?$row->childID:$row->parentID);
+			$entry = GFAPI::get_entry($link_entryID);
+			//Title
+			$project_title = (string)$entry['151'];
+			$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
+			$return .= '<li><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
+		 }
+	 	 return $return .= "</ul>";
+	 }
   }
-  echo $return;
 }
 
 //return makers info
 function getMakerInfo($entry) {
   $makers = array();
-  if (isset($entry['160.3']))
+  if (isset($entry['160.3']) && $entry['160.3'] != "")
     $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
-                      'bio'       => (isset($entry['234']) ? $entry['234']: ''),
-                      'photo'     => (isset($entry['217']) ? $entry['217'] : '')
+                      'bio'        => (isset($entry['234']) ? $entry['234']: ''),
+                      'photo'      => (isset($entry['217']) ? $entry['217'] : ''),
+							 'social'     => getSocial(isset($entry['821']) ? $entry['821'] : '')
                 );
-  if (isset($entry['158.3']))
+  if (isset($entry['158.3']) && $entry['158.3'] != "")
     $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
-                      'bio'       => (isset($entry['258']) ? $entry['258'] : ''),
-                      'photo'     => (isset($entry['224']) ? $entry['224'] : '')
+                      'bio'        => (isset($entry['258']) ? $entry['258'] : ''),
+                      'photo'      => (isset($entry['224']) ? $entry['224'] : ''),
+							 'social'     => getSocial(isset($entry['822']) ? $entry['822'] : '')
                 );
-  if (isset($entry['155.3']))
+  if (isset($entry['155.3']) && $entry['155.3'] != "")
       $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
-                      'bio'         => (isset($entry['259']) ? $entry['259'] : ''),
-                      'photo'       => (isset($entry['223']) ? $entry['223'] : '')
+                      'bio'          => (isset($entry['259']) ? $entry['259'] : ''),
+                      'photo'        => (isset($entry['223']) ? $entry['223'] : ''),
+							 'social'       => getSocial(isset($entry['823']) ? $entry['823'] : '')
                 );
-  if (isset($entry['156.3']))
+  if (isset($entry['156.3']) && $entry['156.3'] != "")
       $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
-                      'bio'         => (isset($entry['260']) ? $entry['260'] : ''),
-                      'photo'       => (isset($entry['222']) ? $entry['222'] : '')
+                      'bio'          => (isset($entry['260']) ? $entry['260'] : ''),
+                      'photo'        => (isset($entry['222']) ? $entry['222'] : ''),
+							 'social'       => getSocial(isset($entry['824']) ? $entry['824'] : '')
                   );
-  if (isset($entry['157.3']))
+  if (isset($entry['157.3']) && $entry['157.3'] != "")
       $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
-                      'bio'         => (isset($entry['261']) ? $entry['261'] : ''),
-                      'photo'       => (isset($entry['220']) ? $entry['220'] : '')
+                      'bio'          => (isset($entry['261']) ? $entry['261'] : ''),
+                      'photo'        => (isset($entry['220']) ? $entry['220'] : ''),
+							 'social'       => getSocial(isset($entry['825']) ? $entry['825'] : '')
                   );
-  if (isset($entry['159.3']))
+  if (isset($entry['159.3']) && $entry['159.3'] != "")
       $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
-                      'bio'         => (isset($entry['262']) ? $entry['262'] : ''),
-                      'photo'       => (isset($entry['221']) ? $entry['221'] : '')
+                      'bio'          => (isset($entry['262']) ? $entry['262'] : ''),
+                      'photo'        => (isset($entry['221']) ? $entry['221'] : ''),
+							 'social'       => getSocial(isset($entry['826']) ? $entry['826'] : '')
                   );
-  if (isset($entry['154.3']))
+  if (isset($entry['154.3']) && $entry['154.3'] != "")
       $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
-                      'bio'         => (isset($entry['263']) ? $entry['263'] : ''),
-                      'photo'       => (isset($entry['219']) ? $entry['219'] : '')
+                      'bio'          => (isset($entry['263']) ? $entry['263'] : ''),
+                      'photo'        => (isset($entry['219']) ? $entry['219'] : ''),
+							 'social'       => getSocial(isset($entry['827']) ? $entry['827'] : '')
                   );
   return $makers;
+}
+
+function handsOnMarker($entry) {
+	################ For form exhibits, show if exhibit is hands on ################
+  if($form_id = "208") { 
+	  if($entry[66] == "Yes") {
+		  return '<div class="hands-on"><span class="lnr lnr-checkmark-circle"></span> Hands-on Activity</div>';
+	  }
+  }
+}
+
+function getSocial($entrySocial) {
+	$socialArray = unserialize($entrySocial);
+	$socialBlock = '';
+	if(!empty($socialArray))  {
+		$socialBlock .= '<div class="social-block">';
+		foreach($socialArray as $value) {
+			if($value['Your Link'] != "") { // make sure there's a link to be had, then assign that link by plateform
+				if($value['Plateform'] == "Facebook" ) {
+					$socialBlock .= '<a class="social-link facebook-share" href="' . $value['Your Link'] . '"><i class="fa fa-facebook-square"></i></a>';
+				}
+				if($value['Plateform'] == "Twitter" ) {
+					$socialBlock .= '<a class="social-link twitter-share" href="' . $value['Your Link'] . '"><i class="fa fa-twitter"></i></a>';
+				}
+				if($value['Plateform'] == "Instagram" ) {
+					$socialBlock .= '<a class="social-link instagram-share" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
+				}
+				if($value['Plateform'] == "YouTube" ) {
+					$socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fa fa-youtube"></i></a>';
+				}
+				if($value['Plateform'] == "LinkedIn" ) {
+					$socialBlock .= '<a class="social-link linkedin-share" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
+				}
+				if($value['Plateform'] == "Pinterest" ) {
+					$socialBlock .= '<a class="social-link pinterest-share" href="' . $value['Your Link'] . '"><i class="fa fa-pinterest-square"></i></a>';
+				}
+				if($value['Plateform'] == "Snapchat" ) {
+					$socialBlock .= '<a class="social-link snapchat-share" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat"></i></a>';
+				}
+				if($value['Plateform'] == "Patreon" ) {
+					$socialBlock .= '<a class="social-link patreon-share" href="' . $value['Your Link'] . '"><i class="fa fa-patreon"></i></a>';
+				}
+				if($value['Plateform'] == "Other" ) {
+					$socialBlock .= '<a class="social-link other-share" href="' . $value['Your Link'] . '"><i class="fa fa-globe"></i></a>';
+				}
+			}
+		}
+		$socialBlock .= '</div>';
+	}
+	return $socialBlock;
 }
 
 function progDateRange($faire_start, $faire_end) {
@@ -544,4 +584,55 @@ function updateFieldValue($fieldID,$newValue,$entryId) {
     updateChangeRPT($chgRPTins);
     $entry[$fieldID] = $newValue;
   }
+}
+
+function displayEntryFooter(){
+	global $wpdb; global $faireID; global $faire; global $faire_year; global $show_sched; global $backMsg; global $url_sub_path;
+   global $faire_map; global $program_guide; 
+	
+	$faire_location = "Bay Area";
+	$faire_link = "/bay-area";
+	if(strpos($faire, 'new-york') !== false) {
+		$faire_location = "New York";
+		$faire_link = "/new-york";
+   }
+	$return = '';
+	$return .= '<div class="faireActions container">';
+	
+	//set the 'backlink' text and link (only set on valid entries)
+	if($faire!=''){
+		$url = parse_url(wp_get_referer()); //getting the referring URL
+		$url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
+		$path = explode("/", $url['path']); // splitting the path
+		$backlink = "/".$url_sub_path."/meet-the-makers/";
+		$backMsg = 'See all ' . $faire_year . ' makers';
+
+		//overwrite the backlink to send makers back to MAT if $makerEdit = true
+		if($makerEdit){
+			$backlink = "/manage-entries/";
+			$backMsg = 'Back to Your Maker Faire Portal';
+		}
+		$return .=  '<div class="faireAction-box">
+		                <a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
+					    </div>';
+	}
+   if($show_sched != 0) {
+		$return .=  '<div class="faireAction-box">
+							<a class="btn universal-btn" href="' . $url_sub_path . '/schedule/"><h4>View full schedule</h4></a>
+						 </div>';
+	}
+	
+   if($faire_map!='' && $show_sched != 0) {
+		$return .= 	'<div class="faireAction-box">
+		               <a class="btn universal-btn" href="' . $faire_map . '"><h4>Download Map</h4></a>
+						 </div>';
+   } 
+   if($program_guide != '') { 
+	   $return .=  '<div class="faireAction-box">
+		               <a class="btn universal-btn" href="' . $faire_link . '"><h4>' .  $faire_location . ' Home</h4></a>
+						 </div>';
+   } 
+   $return .=  '</div>';
+	
+	return $return;
 }

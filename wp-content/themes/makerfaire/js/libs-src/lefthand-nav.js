@@ -11,6 +11,7 @@ jQuery.fn.isInViewport = function() {
 };
 
 jQuery(document).ready(function(){
+
 	if (jQuery("#menu-toolkit-left-hand-nav").length) {
 		jQuery('a[href^="#"]:not(a[href="#"])').click(function(){
 			  jQuery('html, body').animate({
@@ -44,29 +45,7 @@ jQuery(document).ready(function(){
 				jQuery(".left-nav-back-to-top").hide();
 			}
 		});
-
-		/*
-		var leftNavPos = 0;
-		var leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
-
-		jQuery(window).scroll( function(){
-			leftNavScroll();
-			leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
-		});
-
-		leftNavScroll();
-
-		if(jQuery(".downArrow").length && ( leftNavBottom > 605 ) ){
-			jQuery(".downArrow").on('mousedown', function() {
-				console.log(jQuery(".downArrow").offset().top);
-				console.log("vs leftnav bottom: " + leftNavBottom);
-				leftNavPos+=50;
-				jQuery(".toolkit-nav").animate({ bottom: leftNavPos });
-				leftNavBottom = jQuery(".toolkit-nav").offset().top + jQuery(".toolkit-nav").outerHeight(true);
-			});
-		}*/
 	}
-
 });
 
 function leftNavScroll(){
