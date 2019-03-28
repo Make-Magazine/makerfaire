@@ -1190,11 +1190,11 @@ function getFlagBannerPanel() {
 function getMFMapCTAPanel() {
    $title = get_sub_field('title_link_text');
    $URL = get_sub_field('link_url');
-   
+
    $content = '<div class="location-holder">';
    $content .= '   <div class="container">';
    $content .= '      <div class="picture-holder">';
-   $content .= '         <img alt="image description" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
+   $content .= '         <img alt="Maker Robot" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
    $content .= '      </div>';
    $content .= '      <a href="'.$URL.'">'.$title.' <i class="icon-arrow-right"></i></a>';
    $content .= '   </div>';
