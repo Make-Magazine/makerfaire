@@ -550,56 +550,42 @@ function getVideoPanel() {
    //get data submitted on admin page
             
    $return = '';
-   $return .= '<section class="video-panel container">';    // create content-panel section
+   $return .= '<section class="video-panel container-fluid">';    // create content-panel section
 
-   $return .= '   <div class="row">';
    //get requested data for each column
    $video_rows = get_sub_field('video_row');
 	$vidowRowNum = 0;
    foreach ($video_rows as $video) {
 		$videoRowNum += 1;
-      $return .= '   <div class="col-sm-4">'; //start column
-      $data = $column['data'];
-      $columnInfo = '';
-      switch ($column['column_type']) {
-         case 'image':     // Image with optional link
-            $alignment = $data['column_list_alignment'];
-            $imageArr = $data['column_image_field'];                  
-            $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
-            
-            $cta_link = $data['image_cta'];
-            $ctaText = $data['image_cta_text'];
-
-            if (!empty($cta_link)) {
-               $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
-               if (!empty($ctaText)) {
-                  $columnInfo .= '<p class="text-' . $alignment . ' sub-caption-dark"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
-               }
-            } else {
-               $columnInfo = $image;
-            }
-            break;
-         case 'paragraph': // Paragraph text
-            $columnInfo = '<p>' . $data['column_paragraph'] . '</p>';
-            break;
-         case 'list':      // List of items with optional links
-            $columnInfo = '<div class="flagship-faire-wrp">';
-            if (!empty($data['list_title'])) {
-               $columnInfo .= '<p class="line-item list-title">' . $data['list_title'] . '</p>';
-            }
-            $columnInfo .= '  <ul>';
-            foreach ($data['column_list_fields'] as $list_fields) {
-               $list_text = $list_fields['list_text'];
-               $list_link = $list_fields['list_link'];
-               $columnInfo .= '<li>' . (!empty($list_link) ? '<a class="" href="' . $list_link . '">' . $list_text . '</a>' : $list_text) . '</li>';
-            }
-            $columnInfo .= '  </ul>';
-            $columnInfo .= '</div>';
-            break;
-      }
-      $return .= $columnInfo;
-      $return .= '</div>'; //end column
+      if($videoRowNum % 2 != 0){ 
+			$return .= '<div class="row">';
+			$return .= '  <div class="col-sm-4 col-xs-12">
+			                <h4>' . $video['video_title'] . '</h4>
+								 <p>' . $video['video_text'] . '</p>
+								 <a href="' . $video['video_button_link'] . '">' . $video['video_button_text'] . '</a>
+							  </div>';
+			$return .= '  <div class="col-sm-8 col-xs-12">
+			                 <div class="embed-youtube">
+									 <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+								  </div>
+			              </div>';
+			$return .= '</div>';
+		} else {
+			$return .= '<div class="row">';
+			$return .= '  <div class="col-sm-8 col-xs-12">
+								  <div class="embed-youtube">
+									 <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+								  </div>
+							  </div>';
+			$return .= '  <div class="col-sm-4 col-xs-12">
+								 <h4>' . $video['video_title'] . '</h4>
+								 <p>' . $video['video_text'] . '</p>
+								 <a href="' . $video['video_button_link'] . '">' . $video['video_button_text'] . '</a>
+							  </div>';
+			$return .= '</div>';
+		}
 	}
+	$return .= '</section>'; // end section/container
    return $return;
 }
 
