@@ -66,6 +66,7 @@ function dispLayout($row_layout) {
             break;
 			case '2_column_images': // Image Panels in the same style as the Video Panels
             $return = getImagePanel();
+				break;
          case 'maker_faire_map_cta': // faire map link separator
             $return = getMFMapCTAPanel();
             break;
