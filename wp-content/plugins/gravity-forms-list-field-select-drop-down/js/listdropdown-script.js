@@ -34,9 +34,9 @@ function itsg_gf_listdropdown_make_chosen( select, placeholder_text, no_results_
 
 function itsg_gf_listdropdown_newrow_function( self ) {
 	var new_row = jQuery( self ).parents( 'tr.gfield_list_group' ).next( 'tr.gfield_list_group' );
-	new_row.find( '.gfield_list_cell > select option:eq(0)' ).prop('selected', true);
-	new_row.find( '.chosen-container' ).remove();
-	new_row.find( 'select.chosen' ).show();
+	new_row.find( '.gfield_list_cell > select option:first-of-type' ).prop( 'selected', true ); // select the first item in the select list
+	new_row.find( '.chosen-container' ).remove(); // remove existing chosen container - ready for it to be recreated
+	new_row.find( 'select.chosen' ).show(); // make sure the select is displayed - ready for it to be hidden again when chosen runs
 
 	new_row.find( 'select.chosen:not(.other)' ).each( function(){
 		var select = jQuery( this );
