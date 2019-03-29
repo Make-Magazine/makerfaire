@@ -338,7 +338,7 @@ class GF_Field_List extends GF_Field {
 
 			default :
 				// a11y: inputs without a label must have the aria-label attribute set.
-				$input = "<input aria-label='" . $aria_label . "' type='text' name='input_{$this->id}[]' value='" . esc_attr( $value ) . "' {$tabindex} {$disabled}/>";
+				$input = "<input aria-label='" . esc_attr( $aria_label ) . "' type='text' name='input_{$this->id}[]' value='" . esc_attr( $value ) . "' {$tabindex} {$disabled}/>";
 				break;
 		}
 
@@ -763,28 +763,9 @@ class GF_Field_List extends GF_Field {
 		}
 
 		$value = rgar( $entry, $input_id );
-
 		$value = maybe_unserialize( $value );
 
-		if ( empty( $value ) ) {
-			return $value;
-		}
-
-		// Implode value if single column List; return for multiple columns.
-		if ( $is_csv && is_array( $value ) ) {
-
-			if ( ! empty( $value[0] ) && is_array( $value[0] ) ) {
-				return $value;
-			} else {
-				// Entry from a standard list field.
-				$value = implode( '|', $value );
-			}
-
-			if ( strpos( $value, '=' ) === 0 ) {
-				// Prevent Excel formulas
-				$value = "'" . $value;
-			}
-
+		if ( empty( $value ) || $is_csv ) {
 			return $value;
 		}
 
@@ -801,7 +782,7 @@ class GF_Field_List extends GF_Field {
 			return json_encode( $list_values );
 		}
 
-		return $is_csv ? GFCommon::implode_non_blank( ', ', $column_values ) : $column_values;
+		return GFCommon::implode_non_blank( ', ', $column_values );
 	}
 
 	// # FIELD FILTER UI HELPERS ---------------------------------------------------------------------------------------
