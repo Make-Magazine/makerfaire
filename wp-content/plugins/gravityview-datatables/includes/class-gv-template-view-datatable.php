@@ -121,10 +121,23 @@ class View_DataTable_Template extends View_Template {
 			$attributes = " $attributes";
 		}
 
+		$form = $this->view->form;
+		$single_entry = $entry;
+
+		if ( is_callable( array( $entry, 'is_multi' ) ) && $entry->is_multi() ) {
+
+		    if ( ! $single_entry = $entry->from_field( $field ) ) {
+				echo '<td></td>';
+				return;
+			}
+
+			$form = GF_Form::by_id( $field->form_id );
+		}
+
 		$renderer = new Field_Renderer();
-		$source = is_numeric( $field->ID ) ? $this->view->form : new Internal_Source();
+		$source   = is_numeric( $field->ID ) ? $form : new Internal_Source();
 
 		/** Output. */
-		printf( '<td%s>%s</td>', $attributes, $renderer->render( $field, $this->view, $source, $entry, $this->request ) );
+		printf( '<td%s>%s</td>', $attributes, $renderer->render( $field, $this->view, $source, $single_entry, $this->request ) );
 	}
 }

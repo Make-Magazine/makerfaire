@@ -1,7 +1,7 @@
 # GravityView - DataTables Extension #
 **Tags:** gravityview  
 **Requires at least:** 4.4  
-**Tested up to:** 4.9.8  
+**Tested up to:** 5.0.2  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices, luistinygod, soulseekah  
 **License:** GPL 3 or higher  
@@ -15,6 +15,13 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 ## Changelog ##
+
+### 2.3.4 on December 20, 2018 ###
+
+* Fixed: Error loading more than two DataTables Views on a page
+* Fixed: Error when using the Search Bar "Reset" link on non-DataTables Views
+* Fixed: Allow for multiple embeds of the same View with different settings passed using the shortcode
+* Fixed: Compatibility with the [Multiple Forms plugin](https://gravityview.co/extensions/multiple-forms/)
 
 ### 2.3.3 on November 1, 2018 ###
 

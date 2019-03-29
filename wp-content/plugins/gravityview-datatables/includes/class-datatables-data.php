@@ -534,8 +534,24 @@ class GV_Extension_DataTables_Data {
 
 				// Loop through each column and set the value of the column to the field value
 				foreach ( $fields as $field ) {
-					$source = is_numeric( $field->ID ) ? $view->form : $internal_source;
-					$temp[] = $renderer->render( $field, $view, $source, $entry, gravityview()->request );
+
+					$form         = $view->form;
+					$single_entry = $entry;
+
+					if ( is_callable( array( $entry, 'is_multi' ) ) && $entry->is_multi() ) {
+
+						$single_entry = $entry->from_field( $field );
+
+						if ( ! $single_entry ) {
+							$temp[] = '';
+							continue;
+						}
+
+						$form = \GV\GF_Form::by_id( $field->form_id );
+					}
+
+					$source = is_numeric( $field->ID ) ? $form : $internal_source;
+					$temp[] = $renderer->render( $field, $view, $source, $single_entry, gravityview()->request );
 				}
 
 				\GV\Mocks\Legacy_Context::pop();
@@ -1036,15 +1052,24 @@ class GV_Extension_DataTables_Data {
 
 		global $post;
 
+		$script_config_json = json_encode( $this->get_datatables_script_configuration( $post, $gravityview->view ) );
+
+		$hash_of_config = sha1( $script_config_json . json_encode( $gravityview->view->settings->all() ) );
+
+        if( did_action( 'datatables_print_script_' . $hash_of_config ) ) {
+            return;
+        }
 		?>
 			<script type="text/javascript">
 				if (!window.gvDTglobals) {
 					window.gvDTglobals = [];
 				}
 
-				window.gvDTglobals.push(<?php echo json_encode( $this->get_datatables_script_configuration( $post, $gravityview->view ) ); ?>);
+				window.gvDTglobals.push(<?php echo $script_config_json; ?>);
 			</script>
 		<?php
+
+		do_action( 'datatables_print_script_' . $hash_of_config );
 	}
 
 	/**
