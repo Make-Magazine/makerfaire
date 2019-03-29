@@ -66,6 +66,8 @@ function dispLayout($row_layout) {
             break;
 			case '2_column_images': // Image Panels in the same style as the Video Panels
             $return = getImagePanel();
+         case 'maker_faire_map_cta': // faire map link separator
+            $return = getMFMapCTAPanel();
             break;
       }
    }
@@ -1285,3 +1287,23 @@ function get_faire_backlink() {
 function getFlagBannerPanel() {
  return '<div class="flag-banner"></div>';  
 }
+
+
+/* **************************************************** */
+/* Function to return maker faire map call-to-action    */
+/* **************************************************** */
+function getMFMapCTAPanel() {
+   $title = get_sub_field('title_link_text');
+   $URL = get_sub_field('link_url');
+
+   $content = '<div class="location-holder">';
+   $content .= '   <div class="container">';
+   $content .= '      <div class="picture-holder">';
+   $content .= '         <img alt="Maker Robot" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
+   $content .= '      </div>';
+   $content .= '      <a href="'.$URL.'">'.$title.' <i class="icon-arrow-right"></i></a>';
+   $content .= '   </div>';
+   $content .= '</div>';
+
+   return $content;  
+  }
