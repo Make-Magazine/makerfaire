@@ -20,6 +20,8 @@ class GP_Read_Only extends GWPerk {
 
 		add_filter( 'gform_pre_process', array( $this, 'process_hidden_captures' ) );
 
+		add_filter( 'gform_rich_text_editor_options', array( $this, 'filter_rich_text_editor_options' ), 10, 2 );
+
 	}
 
 	public function field_settings_ui() {
@@ -322,6 +324,15 @@ class GP_Read_Only extends GWPerk {
 		}
 
 		return $value;
+	}
+
+	public function filter_rich_text_editor_options( $settings, $field ) {
+
+		if( $field->gwreadonly_enable ) {
+			$settings['tinymce']['init_instance_callback'] = str_replace( 'function (editor) {', 'function (editor) { editor.setMode( "readonly" );', $settings['tinymce']['init_instance_callback'] );
+		}
+
+		return $settings;
 	}
 
 	public function documentation() {

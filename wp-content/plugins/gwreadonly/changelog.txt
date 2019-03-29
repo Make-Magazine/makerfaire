@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.6
+
+	- Added support for read only when Rich Text Editor setting was enabled for Paragraph fields.
+
 ## 1.3.5
 
 	- Fixed issue with GF 2.3 where disabled entries were un-disabled when shown/hidden via conditional logic.
