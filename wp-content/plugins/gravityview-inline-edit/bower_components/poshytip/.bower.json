@@ -1,0 +1,14 @@
+{
+  "name": "poshytip",
+  "homepage": "https://github.com/vadikom/poshytip",
+  "_release": "295023fd81",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "295023fd8107a506949524492251c66ac306db2b"
+  },
+  "_source": "https://github.com/vadikom/poshytip.git",
+  "_target": "*",
+  "_originalSource": "poshytip",
+  "_direct": true
+}

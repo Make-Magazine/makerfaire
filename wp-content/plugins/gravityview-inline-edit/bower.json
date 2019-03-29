@@ -1,0 +1,33 @@
+{
+  "name": "gravityview-inline-edit",
+  "authors": [
+    "Zack Katz <zack@katzwebservices.com>"
+  ],
+  "description": "Edit GravityView data inline using X-Editable",
+  "main": "gravityview-inline-edit.php",
+  "keywords": [
+    "gravityview",
+    "gravity",
+    "forms"
+  ],
+  "license": "GPL2.0",
+  "homepage": "https://gravityview.co",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "x-editable": "^1.5.1",
+    "jquery-ui": "^1.12.1",
+    "poshytip": "*",
+    "bootstrap-sass": "^3.3.7",
+    "jquery.cookie": "jquery-cookie#^1.4.1"
+  },
+  "ignoredDependencies": [
+    "jquery"
+  ]
+}

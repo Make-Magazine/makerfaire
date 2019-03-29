@@ -1,0 +1,75 @@
+$font-family-base: inherit;
+$line-height-base: 1;
+$font-size-base: 16px;
+
+@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap/popovers";
+
+// Namespace where we can - couldn't figure out how to prepend ".gv-editable-container" to popovers
+.gv-editable-container {
+  @import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap/forms";
+}
+
+// this is all to fix WP's conflicts with revisions.css .arrow
+.wp-admin.forms_page_gf_entries {
+  .popover > .arrow {
+    &,
+    &:after {
+      overflow: visible;
+      left: 50%;
+    }
+  }
+  .popover {
+    &.top > .arrow {
+      border-top-color: $popover-arrow-outer-fallback-color; // IE8 fallback
+      border-top-color: $popover-arrow-outer-color;
+
+      &:after {
+        border-top-color: $popover-arrow-color;
+
+        // Cancel out WP's revisions.css .arrow (why no namespacing!?)
+        background: transparent;
+        -webkit-box-shadow: none;
+        top: auto;
+        box-shadow: none;
+        -webkit-transform: rotate(0);
+        -ms-transform: rotate(0);
+        transform: rotate(0);
+        // End WP revisions.css
+      }
+    }
+  }
+}
+
+// Clone x-editable bootstrap to our styles folder, too and override below
+@import "../../bower_components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable";
+
+$path-to-lib: "../../bower_components/x-editable/dist/bootstrap3-editable/";
+
+// Fix paths
+.editable-clear-x {
+  background-image: url('#{$path-to-lib}/img/clear.png');
+}
+.editableform-loading {
+  background-image: url('#{$path-to-lib}/img/loading.gif');
+}
+
+// Fix the "editable-clear-x" from overlapping Safari number toggles
+.gv-editable-container .editable-input input[type=number].input-mini {
+  padding-right: 0!important;
+}
+
+.editableform .control-group {
+  line-height: normal;
+}
+
+.editable-click.editable-disabled,
+a.editable-click.editable-disabled,
+a.editable-click.editable-disabled:hover {
+  color: inherit; // Don't override site colors
+}
+
+.wp-admin a > .editable-click.editable-disabled {
+  cursor: pointer;
+}
