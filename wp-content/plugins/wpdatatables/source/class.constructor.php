@@ -258,6 +258,7 @@ class wpDataTableConstructor
         $columnProperties['advanced_settings'] = array(
             'sorting' => 1,
             'exactFiltering' => 0,
+            'rangeSlider' => 0,
             'filterLabel' => '',
             'editingDefaultValue' => $column['type'] === 'multiselect' ? sanitize_text_field(implode('|', $column['default_value'])) : sanitize_text_field($column['default_value']),
             'possibleValuesAjax' => $columnProperties['column_type'] === 'string' ? 10 : -1,

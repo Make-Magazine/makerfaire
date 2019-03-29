@@ -813,6 +813,7 @@ class WPDataTable {
             $dataColumnProperties['linkButtonAttribute'] =      isset($wdtParameters['linkButtonAttribute'][$key]) ? $wdtParameters['linkButtonAttribute'][$key] : false;
             $dataColumnProperties['linkButtonLabel'] =          isset($wdtParameters['linkButtonLabel'][$key]) ? $wdtParameters['linkButtonLabel'][$key] : '';
             $dataColumnProperties['linkButtonClass'] =          isset($wdtParameters['linkButtonClass'][$key]) ? $wdtParameters['linkButtonClass'][$key] : '';
+            $dataColumnProperties['rangeSlider'] =              !empty($wdtParameters['rangeSlider'][$key]) ? $wdtParameters['rangeSlider'][$key] : false;
             $dataColumnProperties['parentTable'] =              $this;
 
             /** @var WDTColumn $tableColumnClass */
@@ -1609,10 +1610,20 @@ class WPDataTable {
                                 case 'number-range':
                                     list($left, $right) = explode('|', $columnSearch);
                                     if ($left !== '') {
+                                        if (get_option('wdtNumberFormat') == 1) {
+                                            $left = str_replace(',', '.', str_replace('.',  '', $left));
+                                        } else {
+                                            $left = str_replace(',',  '', $left);
+                                        }
                                         $left = (float)$left;
                                         $search .= $leftSysIdentifier . $tableName . "{$rightSysIdentifier}.{$leftSysIdentifier}" . $aColumns[$i] . "{$rightSysIdentifier} >= $left ";
                                     }
                                     if ($right !== '') {
+                                        if (get_option('wdtNumberFormat') == 1) {
+                                            $right = str_replace(',', '.', str_replace('.',  '', $right));
+                                        } else {
+                                            $right = str_replace(',',  '', $right);
+                                        }
                                         $right = (float)$right;
                                         if (!empty($search) && $left !== '') {
                                             $search .= ' AND ';
@@ -2117,7 +2128,8 @@ class WPDataTable {
                     'linkTargetAttribute' => $wdtParameters['linkTargetAttribute'][$dataColumn_key],
                     'linkButtonAttribute' => $wdtParameters['linkButtonAttribute'][$dataColumn_key],
                     'linkButtonLabel' => $wdtParameters['linkButtonLabel'][$dataColumn_key],
-                    'linkButtonClass' => $wdtParameters['linkButtonClass'][$dataColumn_key]
+                    'linkButtonClass' => $wdtParameters['linkButtonClass'][$dataColumn_key],
+                    'rangeSlider' => $wdtParameters['rangeSlider'][$dataColumn_key]
                 )
             );
             $colObjs[$dataColumn_key]->setInputType($wdtParameters['input_types'][$dataColumn_key]);
@@ -2437,6 +2449,15 @@ class WPDataTable {
             case "skin2":
                 $renderSkin = WDT_ASSETS_PATH . 'css/wdt-skins/graphite.css';
                 break;
+            case "aqua":
+                $renderSkin = WDT_ASSETS_PATH . 'css/wdt-skins/aqua.css';
+                break;
+            case "purple":
+                $renderSkin = WDT_ASSETS_PATH . 'css/wdt-skins/purple.css';
+                break;
+            case "dark":
+                $renderSkin = WDT_ASSETS_PATH . 'css/wdt-skins/dark.css';
+                break;
             default:
                 $renderSkin = WDT_ASSETS_PATH . 'css/wdt-skins/material.css';
                 break;
@@ -2492,7 +2513,8 @@ class WPDataTable {
             'linkTargetAttribute' => array(),
             'linkButtonAttribute' => array(),
             'linkButtonLabel' => array(),
-            'linkButtonClass' => array()
+            'linkButtonClass' => array(),
+            'rangeSlider' => array()
         );
 
 
@@ -2535,6 +2557,7 @@ class WPDataTable {
                 $returnArray['linkButtonAttribute'][$column->orig_header]= isset($column->linkButtonAttribute) ? $column->linkButtonAttribute : null;
                 $returnArray['linkButtonLabel'][$column->orig_header]= isset($column->linkButtonLabel) ? $column->linkButtonLabel : null;
                 $returnArray['linkButtonClass'][$column->orig_header]= isset($column->linkButtonClass) ? $column->linkButtonClass : null;
+                $returnArray['rangeSlider'][$column->orig_header] = isset($column->rangeSlider) ? $column->rangeSlider : null;
             }
         }
         return $returnArray;
@@ -2641,6 +2664,9 @@ class WPDataTable {
         }
         if (isset($columnData['exactFiltering'])) {
             $params['exactFiltering'] = $columnData['exactFiltering'];
+        }
+        if (isset($columnData['rangeSlider'])) {
+            $params['rangeSlider'] = $columnData['rangeSlider'];
         }
         if (isset($columnData['filterDefaultValue'])) {
             $params['filterDefaultValue'] = $columnData['filterDefaultValue'];
@@ -3063,7 +3089,7 @@ class WPDataTable {
         //[<--/ Full version -->]//
         if ($this->paginationEnabled()) {
             $obj->dataTableParams->bPaginate = true;
-            $obj->dataTableParams->aLengthMenu = json_decode('[[1,5,10,25,50,100,-1],[1,5,10,25,50,100,"All"]]');
+            $obj->dataTableParams->aLengthMenu = json_decode('[[1,5,10,25,50,100,-1],[1,5,10,25,50,100,"' . __('All', 'wpdatatables') . '"]]');
             $obj->dataTableParams->iDisplayLength = (int)$this->getDisplayLength();
         } else {
             $obj->dataTableParams->bPaginate = false;
@@ -3136,66 +3162,141 @@ class WPDataTable {
             $obj->advancedFilterEnabled = false;
         }
 
+        $currentSkin = get_option('wdtBaseSkin');
+        $skinsWithNewTableToolsButtons = ['aqua','purple','dark'];
+
         if ($this->TTEnabled()) {
             (!isset($obj->dataTableParams->buttons)) ? $obj->dataTableParams->buttons = array() : '';
-            if (!empty($this->_tableToolsConfig['columns'])) {
-                $obj->dataTableParams->buttons[] =
-                    array(
-                        'extend' => 'colvis',
-                        'className' => 'DTTT_button DTTT_button_colvis',
-                        'text' => __('Columns', 'wpdatatables')
+            if (in_array($currentSkin, $skinsWithNewTableToolsButtons)){
 
+                if (!empty($this->_tableToolsConfig['columns'])) {
+                    $obj->dataTableParams->buttons[] =
+                        array(
+                            'extend' => 'colvis',
+                            'className' => 'DTTT_button DTTT_button_colvis',
+                            'text' => __('Columns', 'wpdatatables')
+
+                        );
+                }
+                if (!empty($this->_tableToolsConfig['print'])) {
+                    $obj->dataTableParams->buttons[] =
+                        array(
+                            'extend' => 'print',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'className' => 'DTTT_button DTTT_button_print',
+                            'text' => __('Print', 'wpdatatables')
+                        );
+                }
+
+                if (!empty($this->_tableToolsConfig['excel'])) {
+                    $exportButtons[] =
+                        array(
+                            'extend' => 'excelHtml5',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'title' => $wdtExportFileName,
+                            'text' => __('Excel', 'wpdatatables')
+                        );
+                }
+                if (!empty($this->_tableToolsConfig['csv'])) {
+                    $exportButtons[] =
+                        array(
+                            'extend' => 'csvHtml5',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'title' => $wdtExportFileName,
+                            'text' => __('CSV', 'wpdatatables')
+                        );
+                }
+                if (!empty($this->_tableToolsConfig['copy'])) {
+                    $exportButtons[] =
+                        array(
+                            'extend' => 'copyHtml5',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'title' => $wdtExportFileName,
+                            'text' => __('Copy', 'wpdatatables')
+                        );
+                }
+                if (!empty($this->_tableToolsConfig['pdf'])) {
+                    $exportButtons[] =
+                        array(
+                            'extend' => 'pdfHtml5',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'orientation' => 'portrait',
+                            'title' => $wdtExportFileName,
+                            'text' => __('PDF', 'wpdatatables')
+                        );
+                }
+
+                if (!empty($exportButtons)) {
+                    $obj->dataTableParams->buttons[] = array(
+                        'extend' => 'collection',
+                        'className' => 'DTTT_button DTTT_button_export',
+                        'text' => __('Export', 'wpdatatables'),
+                        'buttons' => $exportButtons
                     );
-            }
-            if (!empty($this->_tableToolsConfig['print'])) {
-                $obj->dataTableParams->buttons[] =
-                    array(
-                        'extend' => 'print',
-                        'exportOptions' => array('columns' => ':visible'),
-                        'className' => 'DTTT_button DTTT_button_print',
-                        'text' => __('Print', 'wpdatatables')
-                    );
-            }
-            if (!empty($this->_tableToolsConfig['excel'])) {
-                $obj->dataTableParams->buttons[] =
-                    array(
-                        'extend' => 'excelHtml5',
-                        'exportOptions' => array('columns' => ':visible'),
-                        'className' => 'DTTT_button DTTT_button_xls',
-                        'title' => $wdtExportFileName,
-                        'text' => __('Excel', 'wpdatatables')
-                    );
-            }
-            if (!empty($this->_tableToolsConfig['csv'])) {
-                $obj->dataTableParams->buttons[] =
-                    array(
-                        'extend' => 'csvHtml5',
-                        'exportOptions' => array('columns' => ':visible'),
-                        'className' => 'DTTT_button DTTT_button_csv',
-                        'title' => $wdtExportFileName,
-                        'text' => __('CSV', 'wpdatatables')
-                    );
-            }
-            if (!empty($this->_tableToolsConfig['copy'])) {
-                $obj->dataTableParams->buttons[] =
-                    array(
-                        'extend' => 'copyHtml5',
-                        'exportOptions' => array('columns' => ':visible'),
-                        'className' => 'DTTT_button DTTT_button_copy',
-                        'title' => $wdtExportFileName,
-                        'text' => __('Copy', 'wpdatatables')
-                    );
-            }
-            if (!empty($this->_tableToolsConfig['pdf'])) {
-                $obj->dataTableParams->buttons[] =
-                    array(
-                        'extend' => 'pdfHtml5',
-                        'exportOptions' => array('columns' => ':visible'),
-                        'className' => 'DTTT_button DTTT_button_pdf',
-                        'orientation' => 'portrait',
-                        'title' => $wdtExportFileName,
-                        'text' => __('PDF', 'wpdatatables')
-                    );
+                }
+
+            } else {
+
+                if (!empty($this->_tableToolsConfig['columns'])) {
+                    $obj->dataTableParams->buttons[] =
+                        array(
+                            'extend' => 'colvis',
+                            'className' => 'DTTT_button DTTT_button_colvis',
+                            'text' => __('Columns', 'wpdatatables')
+
+                        );
+                }
+                if (!empty($this->_tableToolsConfig['print'])) {
+                    $obj->dataTableParams->buttons[] =
+                        array(
+                            'extend' => 'print',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'className' => 'DTTT_button DTTT_button_print',
+                            'text' => __('Print', 'wpdatatables')
+                        );
+                }
+
+                if (!empty($this->_tableToolsConfig['excel'])) {
+                    $obj->dataTableParams->buttons[] =
+                        array(
+                            'extend' => 'excelHtml5',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'className' => 'DTTT_button DTTT_button_xls',
+                            'title' => $wdtExportFileName,
+                            'text' => __('Excel', 'wpdatatables')
+                        );
+                }
+                if (!empty($this->_tableToolsConfig['csv'])) {
+                    $obj->dataTableParams->buttons[] =
+                        array(
+                            'extend' => 'csvHtml5',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'className' => 'DTTT_button DTTT_button_csv',
+                            'title' => $wdtExportFileName,
+                            'text' => __('CSV', 'wpdatatables')
+                        );
+                }
+                if (!empty($this->_tableToolsConfig['copy'])) {
+                    $obj->dataTableParams->buttons[] =
+                        array(
+                            'extend' => 'copyHtml5',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'className' => 'DTTT_button DTTT_button_copy',
+                            'title' => $wdtExportFileName,
+                            'text' => __('Copy', 'wpdatatables')
+                        );
+                }
+                if (!empty($this->_tableToolsConfig['pdf'])) {
+                    $obj->dataTableParams->buttons[] =
+                        array(
+                            'extend' => 'pdfHtml5',
+                            'exportOptions' => array('columns' => ':visible'),
+                            'className' => 'DTTT_button DTTT_button_pdf',
+                            'orientation' => 'portrait',
+                            'title' => $wdtExportFileName,
+                            'text' => __('PDF', 'wpdatatables')
+                        );
+                }
             }
         }
 
@@ -3205,7 +3306,7 @@ class WPDataTable {
             array_push(
                 $obj->dataTableParams->buttons,
                 array(
-                    'text' => __('New', 'wpdatatables'),
+                    'text' => __('New entry', 'wpdatatables'),
                     'className' => 'new_table_entry DTTT_button DTTT_button_new'
                 ),
                 array(
@@ -3223,6 +3324,25 @@ class WPDataTable {
             $obj->advancedEditingOptions = array();
             $obj->advancedEditingOptions['aoColumns'] = json_decode('[' . $this->getColumnEditingDefinitions() . ']');
         }
+
+        if (in_array($currentSkin, $skinsWithNewTableToolsButtons)) {
+
+            if (!isset($obj->dataTableParams->oLanguage)) {
+                $obj->dataTableParams->oLanguage = new stdClass();
+            }
+
+            $obj->dataTableParams->oLanguage->sSearch = '<span class="wdt-search-icon"></span>';
+            $obj->dataTableParams->oLanguage->sSearchPlaceholder = __('Search table', 'wpdatatables');
+            $obj->dataTableParams->oLanguage->sLengthMenu = __('Showing _MENU_ Entries', 'wpdatatables');
+
+            if ($this->isEditable() || $this->TTEnabled() || $this->isClearFilters()) {
+                $obj->dataTableParams->buttons[] = array(
+                    'buttons' => ['pageLength'],
+                    'className' => 'DTTT_button DTTT_button_spacer',
+                );
+            }
+        }
+
         //[<--/ Full version -->]//
 
         if (!isset($obj->dataTableParams->buttons)) {

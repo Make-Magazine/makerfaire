@@ -8798,7 +8798,7 @@ select.input-group-lg > .input-group-btn > .btn {
 }
 
 .wpdt-c .bgm-gray {
-    background-color: #9E9E9E !important;
+    background-color: #9E9E9E;
 }
 
 .wpdt-c .c-gray {
@@ -13543,4 +13543,22 @@ input:focus {
 
 .wpdt-c .media-modal * {
     box-sizing: content-box;
+}
+
+.wpdt-c .noUi-handle.noUi-handle-upper {
+    right: 0 !important;
+    left: 100% !important;
+    background-color: #0083c2 !important;
+}
+.wpdt-c .noUi-handle.noUi-handle-lower{
+    right: 0 !important;
+    left: 100% !important;
+    background-color: #0083c2 !important;
+}
+.wpdt-c .noUi-horizontal{
+    margin-top: 20px !important;
+    margin-right: 15px !important;
+}
+.wpdt-c .noUi-connect{
+    background: #0277bd !important ;
 }

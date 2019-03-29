@@ -83,6 +83,11 @@ var wdtChartColumnsData = {};
                             $('#horizontal-axis-crosshair-row').hide();
                             $('#vertical-axis-crosshair-row').hide();
                             break;
+                        case 'google_stacked_bar_chart':
+                            $('#horizontal-axis-crosshair-row').hide();
+                            $('#vertical-axis-crosshair-row').hide();
+                            $('#inverted-row').hide();
+                            break;
                         case 'google_line_chart':
                             $('#curve-type-row').show();
                             break;

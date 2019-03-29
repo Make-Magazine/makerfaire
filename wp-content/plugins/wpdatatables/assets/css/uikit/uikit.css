@@ -2480,6 +2480,11 @@ hr.fc-divider {
   border: 0;
   background: #d4d4d4;
   padding: 5px 10px;
+  bottom: -30px;
+}
+
+.wpdt-c table.wpDataTable thead .noUi-tooltip {
+  bottom: 25px;
 }
 
 .wpdt-c .cp-container {

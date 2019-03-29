@@ -40,7 +40,7 @@
 
         <?php
         if ($dataColumn->getPossibleValuesAjax() === -1) {
-            $possibleValues = $dataColumn->getJSFilterDefinition();
+            $possibleValues = $dataColumn->getJSEditingDefinition();
             $possibleValues = $possibleValues->values;
         }
         ?>
@@ -146,27 +146,30 @@
 <?php do_action('wpdatatables_after_editor_dialog', $this->getWpId()); ?>
 </div>
 
+<?php $currentSkin = get_option('wdtBaseSkin');
+      $skinsWithNewEditButtons = ['aqua','purple','dark']; ?>
+
 <div id="<?php echo $this->getId() ?>_edit_dialog_buttons" class="wdt-edit-dialog-button-block"
      style="display: none">
-    <button class="btn btn-danger btn-icon-text waves-effect" data-dismiss="modal">
+    <button class="btn btn-danger btn-icon-text waves-effect wdt-cancel-edit-button" data-dismiss="modal">
         <i class="zmdi zmdi-close"></i>
         <?php _e('Cancel', 'wpdatatables'); ?>
     </button>
-    <button id="<?php echo $this->getId() ?>_prev_edit_dialog" class="btn bgm-gray btn-icon-text waves-effect">
-        <i class="zmdi zmdi-skip-previous"></i>
+    <button id="<?php echo $this->getId() ?>_prev_edit_dialog" class="btn bgm-gray btn-icon-text waves-effect wdt-prev-edit-button">
+        <i class="zmdi <?php if(in_array($currentSkin, $skinsWithNewEditButtons )) { echo 'zmdi-chevron-left'; } else { echo 'zmdi-skip-previous'; }?>"></i>
         <?php _e('Prev', 'wpdatatables'); ?>
     </button>
-    <button id="<?php echo $this->getId() ?>_next_edit_dialog" class="btn bgm-gray btn-icon-text waves-effect">
+    <button id="<?php echo $this->getId() ?>_next_edit_dialog" class="btn bgm-gray btn-icon-text waves-effect wdt-next-edit-button">
         <?php _e('Next', 'wpdatatables'); ?>
-        <i class="zmdi zmdi-skip-next"></i>
+        <i class="zmdi <?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'zmdi-chevron-right'; } else { echo 'zmdi-skip-next'; }?>"></i>
     </button>
-    <button id="<?php echo $this->getId() ?>_apply_edit_dialog" class="btn btn-success btn-icon-text waves-effect">
-        <i class="zmdi zmdi-check"></i>
+    <button id="<?php echo $this->getId() ?>_apply_edit_dialog" class="btn btn-success btn-icon-text waves-effect wdt-apply-edit-button">
+        <i class="zmdi <?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'zmdi-check-circle'; } else { echo 'zmdi-check';  }?>"></i>
         <?php _e('Apply and add new', 'wpdatatables'); ?>
     </button>
-    <button id="<?php echo $this->getId() ?>_ok_edit_dialog" class="btn btn-success btn-icon-text waves-effect">
-        <i class="zmdi zmdi-check-all"></i>
-        <?php _e('OK', 'wpdatatables'); ?>
+    <button id="<?php echo $this->getId() ?>_ok_edit_dialog" class="btn btn-success btn-icon-text waves-effect wdt-ok-edit-button">
+        <i class="zmdi <?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'zmdi-check-circle'; } else { echo 'zmdi-check-all'; }?>"></i>
+        <?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { _e('Submit', 'wpdatatables');} else {_e('OK', 'wpdatatables');} ?>
     </button>
 </div>
 <script type='text/javascript' src='<?php echo site_url(); ?>/wp-includes/js/tinymce/tinymce.min.js'></script>

@@ -374,18 +374,26 @@
                 $('div.wdt-manual-list-enter-block').hide();
                 $('div.wdt-foreign-key-block').hide();
                 $('.wdt-possible-values-ajax-block').show();
+                $('.wdt-possible-values-foreign-keys-block').hide();
             } else if ($(this).val() === 'list') {
                 $('div.wdt-manual-list-enter-block').show();
                 $('div.wdt-foreign-key-block').hide();
                 $('.wdt-possible-values-ajax-block').show();
+                $('.wdt-possible-values-foreign-keys-block').hide();
             } else if ($(this).val() === 'foreignkey') {
                 if ($.inArray(wpdatatable_config.currentOpenColumn.filter_type, ['select', 'checkbox']) !== -1) {
                     $('#wdt-column-exact-filtering').prop('checked', 1).change();
+                    $('#wdt-column-range-slider').prop('checked',1).change();
                 }
                 $('div.wdt-manual-list-enter-block').hide();
                 $('div.wdt-foreign-key-block').show();
                 $('div.wdt-foreign-rule-display').show();
                 $('.wdt-possible-values-ajax-block').hide();
+                if(wpdatatable_config.edit_only_own_rows == 1) {
+                    $('.wdt-possible-values-foreign-keys-block').show();
+                } else {
+                    $('.wdt-possible-values-foreign-keys-block').hide();
+                }
 
                 $('select#wdt-column-editor-input-type').find('option')
                     .not('[value=selectbox]')
@@ -589,6 +597,7 @@
             $renderCheckboxesInModal.prop('checked', 0);
             if ($.inArray(filterType, ['text', 'number']) != -1) {
                 $('div.wdt-exact-filtering-block').show();
+                $('div.wdt-number-range-slider').hide();
                 if (filterType === 'number')
                     typeAttr = 'number';
                 $filterInput.attr('type', typeAttr);
@@ -602,6 +611,7 @@
                 $renderCheckboxesInModalBlock.hide();
             } else if ($.inArray(filterType, ['number-range', 'date-range', 'datetime-range', 'time-range']) != -1) {
                 $('div.wdt-exact-filtering-block').hide();
+                $('div.wdt-number-range-slider').hide();
                 $filterInputBlock.hide();
                 $filterInputFromBlock.show();
                 $filterInputToBlock.show();
@@ -617,8 +627,11 @@
                 if ($filterInputTo.data('DateTimePicker') != undefined)
                     $filterInputTo.data('DateTimePicker').destroy();
 
-                if (filterType == 'number-range')
-                    typeAttr = 'number';
+                if (filterType == 'number-range'){
+                  $('div.wdt-number-range-slider').show();
+                  typeAttr = 'number';
+                }
+
 
                 $filterInputFrom
                     .attr('type', typeAttr)
@@ -635,6 +648,7 @@
                 }
             } else {
                 $('div.wdt-exact-filtering-block').show();
+                $('div.wdt-number-range-slider').hide();
                 $filterInputBlock.hide();
                 $filterInputFromBlock.hide();
                 $filterInputToBlock.hide();
@@ -642,7 +656,7 @@
                 $renderCheckboxesInModalBlock.hide();
 
                 // Must recreate selectpicker block because Ajax Selectpicker
-                $filterInputSelectpickerBlock.html('<div class="fg-line"><div class="select"><select class="selectpicker" id="wdt-filter-default-value-selectpicker" data-live-search="true"></select></div></div>');
+                $filterInputSelectpickerBlock.html('<div class="fg-line"><div class="select"><select class="selectpicker" id="wdt-filter-default-value-selectpicker" data-live-search="true" title="' + wpdatatables_frontend_strings.nothingSelected + '"></select></div></div>');
                 $filterInputSelectpicker = $('#wdt-filter-default-value-selectpicker');
                 $filterInputSelectpicker.html('');
 
@@ -659,6 +673,7 @@
 
                 if (wpdatatable_config.currentOpenColumn.possibleValuesType === 'foreignkey') {
                     $('#wdt-column-exact-filtering').prop('checked', 1).change();
+                    $('#wdt-column-range-slider').prop('checked',1).change();
                 }
 
                 var options = '';
@@ -710,7 +725,14 @@
                             emptyRequest: true,
                             preserveSelectedPosition: 'before',
                             locale: {
-                                statusSearching: wpdatatables_edit_strings.sLoadingRecords
+                                emptyTitle: wpdatatables_frontend_strings.nothingSelected,
+                                statusSearching: wpdatatables_frontend_strings.sLoadingRecords,
+                                currentlySelected: wpdatatables_frontend_strings.currentlySelected,
+                                errorText: wpdatatables_frontend_strings.errorText,
+                                searchPlaceholder: wpdatatables_frontend_strings.search,
+                                statusInitialized: wpdatatables_frontend_strings.statusInitialized,
+                                statusNoResults: wpdatatables_frontend_strings.statusNoResults,
+                                statusTooShort: wpdatatables_frontend_strings.statusTooShort
                             }
                         });
 
@@ -849,7 +871,14 @@
                         emptyRequest: true,
                         preserveSelectedPosition: 'before',
                         locale: {
-                            statusSearching: wpdatatables_edit_strings.sLoadingRecords
+                            emptyTitle: wpdatatables_frontend_strings.nothingSelected,
+                            statusSearching: wpdatatables_frontend_strings.sLoadingRecords,
+                            currentlySelected: wpdatatables_frontend_strings.currentlySelected,
+                            errorText: wpdatatables_frontend_strings.errorText,
+                            searchPlaceholder: wpdatatables_frontend_strings.search,
+                            statusInitialized: wpdatatables_frontend_strings.statusInitialized,
+                            statusNoResults: wpdatatables_frontend_strings.statusNoResults,
+                            statusTooShort: wpdatatables_frontend_strings.statusTooShort
                         }
                     });
 
@@ -1055,7 +1084,8 @@
                 displayColumnId: $('#wdt-foreign-column-display-value').val(),
                 displayColumnName: $('#wdt-foreign-column-display-value option:selected').data('orignal_header'),
                 storeColumnId: $('#wdt-foreign-column-store-value').val(),
-                storeColumnName: $('#wdt-foreign-column-store-value option:selected').data('orignal_header')
+                storeColumnName: $('#wdt-foreign-column-store-value option:selected').data('orignal_header'),
+                allowAllPossibleValuesForeignKey: $('#wdt-possible-values-foreign-keys').val()
             };
             if (wpdatatable_config.currentOpenColumn.foreignKeyRule.tableId != 0) {
                 $('.wdt-foreign-rule-display #wdt-connected-table-name').text($('#wdt-column-foreign-table option:selected').html());

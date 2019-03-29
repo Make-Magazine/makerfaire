@@ -187,6 +187,12 @@ var WDTColumn = function (column, parent_table) {
     this.exactFiltering = 0;
 
     /**
+      * Toggle range slider
+      *  @type {int}
+      */
+    this.rangeSlider = 0;
+
+    /**
      * Filter label
      * @type {string}
      */
@@ -310,6 +316,7 @@ var WDTColumn = function (column, parent_table) {
         this.linkButtonAttribute = column.linkButtonAttribute || 0;
         this.linkButtonLabel = column.linkButtonLabel || null;
         this.linkButtonClass = column.linkButtonClass || null;
+        this.rangeSlider = column.rangeSlider || 0;
         this.orig_header = column.orig_header || null;
         this.parent_table = column.parent_table || null;
         this.pos = column.pos || 0;
@@ -1014,6 +1021,12 @@ WDTColumn.prototype.fillInputs = function () {
         jQuery('#wdt-connected-table-value-column').html(this.foreignKeyRule.storeColumnName);
         jQuery('div.wdt-foreign-rule-display').show();
         jQuery('.wdt-possible-values-ajax-block').hide();
+        jQuery('#wdt-possible-values-foreign-keys').prop('checked', this.foreignKeyRule.allowAllPossibleValuesForeignKey);
+        if(wpdatatable_config.edit_only_own_rows == 1) {
+            jQuery('.wdt-possible-values-foreign-keys-block').show();
+        } else {
+            jQuery('.wdt-possible-values-foreign-keys-block').hide();
+        }
     }
     jQuery('#wdt-column-values-add-empty').prop('checked', this.possibleValuesAddEmpty);
 
@@ -1050,6 +1063,7 @@ WDTColumn.prototype.fillInputs = function () {
     } else {
         jQuery('li.column-filtering-settings-tab').removeClass('active').show();
         jQuery('#wdt-column-exact-filtering').prop('checked', this.exactFiltering).change();
+        jQuery('#wdt-column-range-slider').prop('checked',this.rangeSlider).change();
         jQuery('#wdt-column-filter-label').val(this.filterLabel);
 
         if (this.filter_type != 'none') {
@@ -1245,6 +1259,9 @@ WDTColumn.prototype.applyChanges = function () {
     if (this.possibleValuesType == 'list') {
         this.valuesList = jQuery('#wdt-column-values-list').val().replace(/,/g, '|');
     }
+    if (this.possibleValuesType == 'foreignkey') {
+        this.foreignKeyRule.allowAllPossibleValuesForeignKey = jQuery('#wdt-possible-values-foreign-keys').is(':checked') ? 1 : 0;
+    }
     this.possibleValuesAddEmpty = jQuery('#wdt-column-values-add-empty').is(':checked') ? 1 : 0;
     this.possibleValuesAjax = jQuery('#wdt-possible-values-ajax').val();
     this.calculateTotal = ( jQuery('#wdt-column-calc-total').is(':checked') && ( this.type == 'int' || this.type == 'float' || this.type == 'formula') ) ? 1 : 0;
@@ -1288,6 +1305,7 @@ WDTColumn.prototype.applyChanges = function () {
 
     this.editor_type = this.type === 'formula' ? 'none' : jQuery('#wdt-column-editor-input-type').val();
     this.editingNonEmpty = jQuery('#wdt-column-not-null').is(':checked') ? 1 : 0;
+    this.rangeSlider = jQuery('#wdt-column-range-slider').is(':checked') ? 1 : 0;
 
     if (jQuery.inArray(this.editor_type, ['selectbox', 'multi-selectbox']) != -1) {
         this.editingDefaultValue = jQuery.isArray(jQuery('#wdt-editing-default-value-selectpicker').selectpicker('val')) ?
@@ -1343,6 +1361,7 @@ WDTColumn.prototype.getJSON = function () {
         possibleValuesAddEmpty: this.possibleValuesAddEmpty,
         possibleValuesType: this.possibleValuesType,
         possibleValuesAjax: this.type === 'string' ? this.possibleValuesAjax : -1,
+        rangeSlider: this.rangeSlider,
         skip_thousands_separator: this.skip_thousands_separator,
         sorting: this.sorting,
         text_after: this.text_after,
@@ -1441,6 +1460,91 @@ WDTColumn.prototype.renderSmallColumnBlock = function (columnIndex) {
             .removeClass('zmdi-smartphone-landscape');
     }
 
+    /**
+     *    Show/hide filters in List of the columns in the data source with quickaccess tools.
+     */
+
+    $columnBlock.find('i.wdt-toggle-show-filters').click(function (e) {
+        e.preventDefault();
+        if (column.filter_type == 'none') {
+            column.filter_type = 'text';
+            jQuery(this)
+                .removeClass('inactive')
+                .addClass('zmdi-filter-list')
+                .removeClass('zmdi-filter-list-lock')
+        } else {
+            column.filter_type = 'none';
+            jQuery(this)
+                .addClass('inactive')
+                .removeClass('zmdi-filter-list')
+                .addClass('zmdi-filter-list-lock');
+
+        }
+    });
+
+    if (column.filter_type == 'none') {
+        $columnBlock.find('i.wdt-toggle-show-filters')
+            .addClass('inactive')
+            .removeClass('zmdi-filter-list')
+            .addClass('zmdi-filter-list-lock');
+    }
+
+    /**
+     *   Show/hide sorting in List of the columns in the data source with quickaccess tools.
+     */
+
+    $columnBlock.find('i.wdt-toggle-show-sorting').click(function (e) {
+        e.preventDefault();
+        if (!column.sorting) {
+            column.sorting = 1;
+            jQuery(this)
+                .removeClass('inactive')
+                .addClass('zmdi-sort-asc')
+                .removeClass('zmdi-sort-asc-lock');
+        } else {
+            column.sorting = 0;
+            jQuery(this)
+                .addClass('inactive')
+                .removeClass('zmdi-sort-asc')
+                .addClass('zmdi-sort-asc-lock');
+
+        }
+    });
+
+    if (!column.sorting) {
+        $columnBlock.find('i.wdt-toggle-show-sorting')
+            .addClass('inactive')
+            .removeClass('zmdi-sort-asc')
+            .addClass('zmdi-sort-asc-lock');
+    }
+
+    /**
+     *  Enable/disable editing in List of the columns in the data source with quickaccess tools.
+     */
+
+    $columnBlock.find('i.wdt-toggle-enable-editing').click(function (e) {
+        e.preventDefault();
+        if (column.editor_type == 'none') {
+            column.editor_type = 'text';
+            jQuery(this)
+                .removeClass('inactive')
+                .addClass('zmdi-edit')
+                .removeClass('zmdi-edit-lock');
+        } else {
+            column.editor_type = 'none';
+            jQuery(this)
+                .addClass('inactive')
+                .removeClass('zmdi-edit')
+                .addClass('zmdi-edit-lock');
+        }
+    });
+
+    if (column.editor_type == 'none') {
+        $columnBlock.find('i.wdt-toggle-enable-editing')
+            .addClass('inactive')
+            .removeClass('zmdi-edit')
+            .addClass('zmdi-edit-lock');
+    }
 
     /**
      * Open column settings on wrench click

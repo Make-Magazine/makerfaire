@@ -426,6 +426,7 @@ class WDTConfigController {
                 $column->possibleValuesAddEmpty = (int)$column->possibleValuesAddEmpty;
                 $column->possibleValuesAjax = (int)$column->possibleValuesAjax;
                 $column->possibleValuesType = sanitize_text_field($column->possibleValuesType);
+                $column->rangeSlider = (int)$column->rangeSlider;
                 $column->skip_thousands_separator = (int)$column->skip_thousands_separator;
                 $column->sorting = (int)$column->sorting;
                 $column->text_after = (string)$column->text_after;
@@ -441,6 +442,7 @@ class WDTConfigController {
                     $column->foreignKeyRule->displayColumnName = sanitize_text_field($column->foreignKeyRule->displayColumnName);
                     $column->foreignKeyRule->storeColumnId = (int)$column->foreignKeyRule->storeColumnId;
                     $column->foreignKeyRule->storeColumnName = sanitize_text_field($column->foreignKeyRule->storeColumnName);
+                    $column->foreignKeyRule->allowAllPossibleValuesForeignKey = (int)$column->foreignKeyRule->allowAllPossibleValuesForeignKey;
                 }
             }
         }
@@ -783,6 +785,8 @@ class WDTConfigController {
             $feColumn ? $feColumn->linkButtonLabel : null;
         $columnConfig['advanced_settings']['linkButtonClass'] =
             $feColumn ? $feColumn->linkButtonClass : null;
+        $columnConfig['advanced_settings']['rangeSlider'] =
+            $feColumn ? $feColumn->rangeSlider : 0;
 
         // Possible values
         $columnConfig['possible_values'] = '';
@@ -953,6 +957,8 @@ class WDTConfigController {
             $advancedSettings->linkButtonLabel : null;
         $feColumn->linkButtonClass = isset($advancedSettings->linkButtonClass) ?
             $advancedSettings->linkButtonClass : null;
+        $feColumn->rangeSlider = isset($advancedSettings->rangeSlider) ?
+            $advancedSettings->rangeSlider : 0;
 
 
         if ($feColumn->possibleValuesType === 'foreignkey') {
@@ -965,6 +971,7 @@ class WDTConfigController {
             $feColumn->foreignKeyRule->displayColumnName = $advancedSettings->foreignKeyRule->displayColumnName;
             $feColumn->foreignKeyRule->storeColumnId = $advancedSettings->foreignKeyRule->storeColumnId;
             $feColumn->foreignKeyRule->storeColumnName = $advancedSettings->foreignKeyRule->storeColumnName;
+            $feColumn->foreignKeyRule->allowAllPossibleValuesForeignKey =  $advancedSettings->foreignKeyRule->allowAllPossibleValuesForeignKey;
         }
 
         return $feColumn;

@@ -336,6 +336,8 @@
 
                             </div>
 
+                            <?php do_action('wdt_add_column_display_settings_element'); ?>
+
                         </div>
                         <!-- /.row -->
 
@@ -455,6 +457,7 @@
                                                 <option value="Y/m/d"> 2005/15/07 (Y/m/d)</option>
                                                 <option value="d.m.Y"> 15.07.2005 (d.m.Y)</option>
                                                 <option value="m.d.Y"> 07.15.2005 (m.d.Y)</option>
+                                                <option value="Y.m.d"> 2005.07.15 (Y.m.d)</option>
                                                 <option value="d-m-Y"> 15-07-2005 (d-m-Y)</option>
                                                 <option value="m-d-Y"> 07-15-2005 (m-d-Y)</option>
                                                 <option value="Y-m-d"> 2005-07-15 (Y-m-d)</option>
@@ -536,6 +539,22 @@
                                                class="ts-label"><?php _e('Add an empty value to the list', 'wpdatatables'); ?></label>
                                         <input id="wdt-column-values-add-empty" type="checkbox" hidden="hidden">
                                         <label for="wdt-column-values-add-empty" class="ts-helper"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 wdt-possible-values-foreign-keys-block" >
+                                <h4 class="c-black m-b-20">
+                                    <?php _e('Possible values in edit modal for foreign key column', 'wpdatatables'); ?>
+                                    <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                       title="<?php _e('By turning this on you will show all possible values in edit modal from separate table that is connect with foreign keys when option Users can see and edit own data is enabled', 'wpdatatables'); ?>"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="toggle-switch" data-ts-color="blue">
+                                        <label for="wdt-possible-values-foreign-keys"
+                                               class="ts-label"><?php _e('Allow all possible values in edit modal', 'wpdatatables'); ?></label>
+                                        <input id="wdt-possible-values-foreign-keys" type="checkbox" hidden="hidden">
+                                        <label for="wdt-possible-values-foreign-keys" class="ts-helper"></label>
                                     </div>
                                 </div>
                             </div>
@@ -907,6 +926,21 @@
                                                class="ts-label"><?php _e('Enable exact filtering', 'wpdatatables'); ?></label>
                                         <input id="wdt-column-exact-filtering" type="checkbox" hidden="hidden">
                                         <label for="wdt-column-exact-filtering" class="ts-helper"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 wdt-filtering-enabled-block wdt-number-range-slider">
+                                <h4 class="c-black m-b-20">
+                                    <?php _e('Range slider', 'wpdatatables'); ?>
+                                    <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
+                                       title="<?php _e('Enable number range slider  for filtering', 'wpdatatables'); ?>"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="toggle-switch" data-ts-color="blue">
+                                        <label for="wdt-column-range-slider"
+                                               class="ts-label"><?php _e('Number range slider', 'wpdatatables'); ?></label>
+                                        <input id="wdt-column-range-slider" type="checkbox" hidden="hidden">
+                                        <label for="wdt-column-range-slider" class="ts-helper"></label>
                                     </div>
                                 </div>
                             </div>

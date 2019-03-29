@@ -62,6 +62,7 @@
                                         <option value="Y/m/d"> 2005/15/07 (Y/m/d)</option>
                                         <option value="d.m.Y"> 15.07.2005 (d.m.Y)</option>
                                         <option value="m.d.Y"> 07.15.2005 (m.d.Y)</option>
+                                        <option value="Y.m.d"> 2005.07.15 (Y.m.d)</option>
                                         <option value="d-m-Y"> 15-07-2005 (d-m-Y)</option>
                                         <option value="m-d-Y"> 07-15-2005 (m-d-Y)</option>
                                         <option value="Y-m-d"> 2005-07-15 (Y-m-d)</option>

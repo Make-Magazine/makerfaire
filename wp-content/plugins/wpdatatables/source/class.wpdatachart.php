@@ -1917,9 +1917,15 @@ class WPDataChart {
                 }
                 foreach ($this->_render_data['rows'] as $row) {
                     if ($i == 0) {
-                        $highchartsRender['xAxis']['categories'][] = $row[$i];
+                        if ($this->_type != 'highcharts_scatter_plot' || ($this->_type == 'highcharts_scatter_plot' && $this->_render_data['columns'][0]['type'] != 'number') ) {
+                            $highchartsRender['xAxis']['categories'][] = $row[$i];
+                        }
                     } else {
-                        $seriesEntry['data'][] = $row[$i];
+                         if ($this->_type == 'highcharts_scatter_plot' && ($this->_render_data['columns'][0]['type'] == 'number') ) {
+                             $seriesEntry['data'][] = [$row[$i-1],$row[$i]];
+                         } else {
+                             $seriesEntry['data'][] = $row[$i];
+                         }
                     }
                 }
                 if ($i != 0) {

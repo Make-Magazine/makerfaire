@@ -461,3 +461,28 @@ table.dataTable.dtr-inline.collapsed > tbody > tr.parent > th:first-child:before
     background-repeat: no-repeat;
     background-position: -24px 0;
 }
+.wpdt-c .noUi-handle.noUi-handle-upper {
+    right: 0 !important;
+    left: 100% !important;
+    margin-top: 0px !important;
+    background-color: #0083c2;
+}
+.wpdt-c .noUi-handle.noUi-handle-lower{
+    right: 0 !important;
+    left: 100% !important;
+    margin-top: 0px !important;
+    background-color: #0083c2 ;
+}
+.wpdt-c .noUi-horizontal{
+    margin-top: 20px !important;
+    margin-right: 15px !important;
+}
+.wpdt-c .noUi-connect{
+    background-color: #0083c2;
+    margin-top: 0px !important;
+}
+
+#wdt-frontend-modal .wdt_checkbox_option,
+#wdt-frontend-modal .wdt-search-filters-button-container .wdt_checkbox_option {
+    margin-top: 0;
+}

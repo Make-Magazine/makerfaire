@@ -219,7 +219,13 @@ var singleClick = false;
                                         preserveSelectedPosition: 'before',
                                         locale: {
                                             emptyTitle: wpdatatables_frontend_strings.nothingSelected,
-                                            statusSearching: wpdatatables_frontend_strings.sLoadingRecords
+                                            statusSearching: wpdatatables_frontend_strings.sLoadingRecords,
+                                            currentlySelected: wpdatatables_frontend_strings.currentlySelected,
+                                            errorText: wpdatatables_frontend_strings.errorText,
+                                            searchPlaceholder: wpdatatables_frontend_strings.search,
+                                            statusInitialized: wpdatatables_frontend_strings.statusInitialized,
+                                            statusNoResults: wpdatatables_frontend_strings.statusNoResults,
+                                            statusTooShort: wpdatatables_frontend_strings.statusTooShort
                                         }
                                     });
                             }
@@ -493,7 +499,7 @@ var singleClick = false;
                     data.currentUserLogin = $('#wdt-user-login-placeholder').val();
                     data.currentPostIdPlaceholder = $('#wdt-post-id-placeholder').val();
                     data.currentUserFirstName = $('#wdt-user-first-name-placeholder').val();
-                    data.currentUserLasttName = $('#wdt-user-last-name-placeholder').val();
+                    data.currentUserLastName = $('#wdt-user-last-name-placeholder').val();
                     data.wpdbPlaceholder = $('#wdt-wpdb-placeholder').val();
                     data.wdtNonce = $('#wdtNonceFrontendEdit').val();
                 };
@@ -1029,7 +1035,7 @@ var singleClick = false;
 
                     $('.wpDataTablesPopover.editTools').hide();
 
-                    modal.find('.modal-title').html('Edit entry');
+                    modal.find('.modal-title').html(wpdatatables_frontend_strings.edit_entry);
                     modal.find('.modal-body').html('');
                     modal.find('.modal-footer').html('');
 
@@ -1085,7 +1091,7 @@ var singleClick = false;
 
                     $('.wpDataTablesPopover.editTools').hide();
 
-                    modal.find('.modal-title').html('Add new entry');
+                    modal.find('.modal-title').html(wpdatatables_frontend_strings.add_new_entry);
                     modal.find('.modal-body').html('');
                     modal.find('.modal-footer').html('');
 
@@ -1186,7 +1192,13 @@ var singleClick = false;
                                         preserveSelectedPosition: 'before',
                                         locale: {
                                             emptyTitle: wpdatatables_frontend_strings.nothingSelected,
-                                            statusSearching: wpdatatables_frontend_strings.sLoadingRecords
+                                            statusSearching: wpdatatables_frontend_strings.sLoadingRecords,
+                                            currentlySelected: wpdatatables_frontend_strings.currentlySelected,
+                                            errorText: wpdatatables_frontend_strings.errorText,
+                                            searchPlaceholder: wpdatatables_frontend_strings.search,
+                                            statusInitialized: wpdatatables_frontend_strings.statusInitialized,
+                                            statusNoResults: wpdatatables_frontend_strings.statusNoResults,
+                                            statusTooShort: wpdatatables_frontend_strings.statusTooShort
                                         }
                                     });
                                 }

@@ -221,6 +221,9 @@ class WDTBrowseChartsTable extends WP_List_Table {
             case 'google_bar_chart':
                 return '<span class="wdt-chart-type bgm-gray">' . __('Bar Chart', 'wpdatatables') . '</span>';
                 break;
+            case 'google_stacked_bar_chart':
+                return '<span class="wdt-chart-type bgm-gray">' . __('Stacked Bar Chart', 'wpdatatables') . '</span>';
+                break;
             case 'google_area_chart':
                 return '<span class="wdt-chart-type bgm-gray">' . __('Area Chart', 'wpdatatables') . '</span>';
                 break;

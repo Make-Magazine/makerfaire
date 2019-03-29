@@ -333,10 +333,12 @@ class WDTTools {
      */
     public static function getTranslationStrings() {
         return array(
+            'add_new_entry'             => __('Add new entry', 'wpdatatables'),
             'back_to_date'              => __('Back to date', 'wpdatatables'),
             'browse_file'               => __('Browse', 'wpdatatables'),
             'cancel'                    => __('Cancel', 'wpdatatables'),
             'cannot_be_empty'           => __(' field cannot be empty!', 'wpdatatables'),
+            'cannot_be_edit'            => __('You can\'t edit this field', 'wpdatatables'),
             'choose_file'               => __('Use selected file', 'wpdatatables'),
             'chooseFile'                => __('Choose file', 'wpdatatables'),
             'close'                     => __('Close', 'wpdatatables'),
@@ -346,10 +348,13 @@ class WDTTools {
             'columnRemoved'             => __('Column has been removed!', 'wpdatatables'),
             'columnsEmpty'              => __('Please select columns that you want to use in table', 'wpdatatables'),
             'copy'                      => __('Copy', 'wpdatatables'),
+            'currentlySelected'         => __('Currently selected', 'wpdatatables'),
             'databaseInsertError'       => __('There was an error trying to insert a new row!', 'wpdatatables'),
             'dataSaved'                 => __('Data has been saved!', 'wpdatatables'),
             'detach_file'               => __('detach', 'wpdatatables'),
+            'edit_entry'                => __('Edit entry', 'wpdatatables'),
             'error'                     => __('Error!', 'wpdatatables'),
+            'errorText'                 => __('Unable to retrieve results', 'wpdatatables'),
             'fileUploadEmptyFile'       => __('Please upload or choose a file from Media Library!', 'wpdatatables'),
             'from'                      => __('From', 'wpdatatables'),
             'invalid_email'             => __('Please provide a valid e-mail address for field', 'wpdatatables'),
@@ -388,6 +393,9 @@ class WDTTools {
             'sProcessing'               => __('Processing...', 'wpdatatables'),
             'sqlError'                  => __('SQL error', 'wpdatatables'),
             'sSearch'                   => __('Search: ', 'wpdatatables'),
+            'statusInitialized'         => __('Start typing a search query', 'wpdatatables'),
+            'statusNoResults'           => __('No Results', 'wpdatatables'),
+            'statusTooShort'            => __('Please enter more characters', 'wpdatatables'),
             'search'                    => __('Search...', 'wpdatatables'),
             'success'                   => __('Success!', 'wpdatatables'),
             'sZeroRecords'              => __('No matching records found', 'wpdatatables'),
@@ -885,10 +893,11 @@ class WDTTools {
      * Enqueue JS and CSS UI Kit files
      */
     public static function wdtUIKitEnqueue() {
-        wp_enqueue_style('wdt-bootstrap', WDT_CSS_PATH . 'bootstrap/wpdatatables-bootstrap.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-bootstrap', WDT_CSS_PATH . 'bootstrap/wpdatatables-bootstrap.css', array(), WDT_CURRENT_VERSION);
         wp_enqueue_style('wdt-bootstrap-select', WDT_CSS_PATH . 'bootstrap/bootstrap-select/bootstrap-select.min.css', array(), WDT_CURRENT_VERSION);
         wp_enqueue_style('wdt-bootstrap-tagsinput', WDT_CSS_PATH . 'bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.css', array(), WDT_CURRENT_VERSION);
         wp_enqueue_style('wdt-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css', array(), WDT_CURRENT_VERSION);
+        wp_enqueue_style('wdt-bootstrap-nouislider',WDT_CSS_PATH . 'bootstrap/bootstrap-nouislider/bootstrap-nouislider.min.css', array(), WDT_CURRENT_VERSION);
         wp_enqueue_style('wdt-wp-bootstrap-datetimepicker', WDT_CSS_PATH . 'bootstrap/bootstrap-datetimepicker/wdt-bootstrap-datetimepicker.min.css', array(), WDT_CURRENT_VERSION);
         wp_enqueue_style('wdt-bootstrap-colorpicker', WDT_CSS_PATH . 'bootstrap/bootstrap-colorpicker/bootstrap-colorpicker.min.css', array(), WDT_CURRENT_VERSION);
         wp_enqueue_style('wdt-animate', WDT_CSS_PATH . 'animate/animate.min.css', array(), WDT_CURRENT_VERSION);
@@ -910,6 +919,8 @@ class WDTTools {
         wp_enqueue_script('wdt-bootstrap-tagsinput', WDT_JS_PATH . 'bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.js', array(), WDT_CURRENT_VERSION, true);
         wp_enqueue_script('wdt-moment', WDT_JS_PATH . 'moment/moment.js', array(), WDT_CURRENT_VERSION, true);
         wp_enqueue_script('wdt-bootstrap-datetimepicker', WDT_JS_PATH . 'bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js', array(), WDT_CURRENT_VERSION, true);
+        wp_enqueue_script('wdt-bootstrap-nouislider',   WDT_JS_PATH . 'bootstrap/bootstrap-nouislider/bootstrap-nouislider.min.js', array(), WDT_CURRENT_VERSION, true);
+        wp_enqueue_script('wdt-wNumb',   WDT_JS_PATH . 'bootstrap/bootstrap-nouislider/wNumb.min.js', array(), WDT_CURRENT_VERSION, true);
         wp_enqueue_script('wdt-bootstrap-colorpicker', WDT_JS_PATH . 'bootstrap/bootstrap-colorpicker/bootstrap-colorpicker.min.js', array(), WDT_CURRENT_VERSION, true);
         wp_enqueue_script('wdt-bootstrap-growl', WDT_JS_PATH . 'bootstrap/bootstrap-growl/bootstrap-growl.min.js', array(), WDT_CURRENT_VERSION, true);
         wp_enqueue_script('wdt-waves', WDT_JS_PATH . 'waves/waves.min.js', array(), WDT_CURRENT_VERSION, true);

@@ -151,6 +151,11 @@ var wpDataTablesGoogleChart = function(){
                     this.options.orientation = 'vertical';
                     this.chart = new google.visualization.BarChart( document.getElementById( this.containerId ) );
                     break;
+                case 'google_stacked_bar_chart':
+                    this.options.orientation = 'vertical';
+                    this.options.isStacked = true;
+                    this.chart = new google.visualization.BarChart( document.getElementById( this.containerId ) );
+                    break;
                 case 'google_area_chart':
                     this.chart = new google.visualization.AreaChart( document.getElementById( this.containerId ) );
                     break;
