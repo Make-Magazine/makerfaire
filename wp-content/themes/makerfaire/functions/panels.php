@@ -567,9 +567,11 @@ function getVideoPanel() {
 			$return .= '<div class="row">';
 			$return .= '  <div class="col-sm-4 col-xs-12">
 			                <h4>' . $video['video_title'] . '</h4>
-								 <p>' . $video['video_text'] . '</p>
-								 <a href="' . $video['video_button_link'] . '">' . $video['video_button_text'] . '</a>
-							  </div>';
+								 <p>' . $video['video_text'] . '</p>';
+         if ($video['video_button_link']) {          
+			  $return .= '  <a href="' . $video['video_button_link'] . '">' . $video['video_button_text'] . '</a>';
+			}
+			$return .= '  </div>';
 			$return .= '  <div class="col-sm-8 col-xs-12">
 			                 <div class="embed-youtube">
 									 <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
@@ -585,9 +587,11 @@ function getVideoPanel() {
 							  </div>';
 			$return .= '  <div class="col-sm-4 col-xs-12">
 								 <h4>' . $video['video_title'] . '</h4>
-								 <p>' . $video['video_text'] . '</p>
-								 <a href="' . $video['video_button_link'] . '">' . $video['video_button_text'] . '</a>
-							  </div>';
+								 <p>' . $video['video_text'] . '</p>';
+         if ($video['video_button_link']) {          
+			  $return .= '  <a href="' . $video['video_button_link'] . '">' . $video['video_button_text'] . '</a>';
+			}
+			$return .= '  </div>';
 			$return .= '</div>';
 		}
 	}
@@ -614,34 +618,42 @@ function getImagePanel() {
       if($imageRowNum % 2 != 0){ 
 			$return .= '<div class="row ' . $image['background_color'] . '">';
 			$return .= '  <div class="col-sm-4 col-xs-12">
-			                <h4>' . $image['image_title'] . '</h4>
-								 <p>' . $image['image_text'] . '</p>
-								 <a href="' . $image['image_link_url'] . '">' . $image['image_link_text'] . '</a>
-							  </div>';
+								 <h4>' . $image['image_title'] . '</h4>
+								 <p>' . $image['image_text'] . '</p>';
+			              if($image['image_link_url']) {
+			$return .= '  	 <a href="' . $image['image_link_url'] . '">' . $image['image_link_text'] . '</a>';
+							  }
+			$return .= '  </div>';
 			$return .= '  <div class="col-sm-8 col-xs-12">
 			                 <div class="image-display">
 									  <a href="' . $image['image_link_url'] . '">
-										 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />
-										 <div class="image-overlay-text">' . $image['image_overlay'] . '</div>
-									  </a>
+										 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
+											if ($image['image_overlay']) {          
+											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay'] . '</div>';;
+											}
+			$return .= '        </a>
 								  </div>
 			              </div>';
 			$return .= '</div>';
 		} else {
 			$return .= '<div class="row ' . $image['background_color'] . '">';
 			$return .= '  <div class="col-sm-8 col-xs-12">
-								 <div class="image-display">
-									 <a href="' . $image['image_link_url'] . '">
-									   <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />
-										<div class="image-overlay-text">' . $image['image_overlay'] . '</div>
-									 </a>
-								 </div>
-							  </div>';
+			                 <div class="image-display">
+									  <a href="' . $image['image_link_url'] . '">
+										 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
+											if ($image['image_overlay']) {          
+											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay'] . '</div>';;
+											}
+			$return .= '        </a>
+								  </div>
+			              </div>';
 			$return .= '  <div class="col-sm-4 col-xs-12">
 								 <h4>' . $image['image_title'] . '</h4>
-								 <p>' . $image['image_text'] . '</p>
-								 <a href="' . $image['image_link_url'] . '">' . $image['image_link_text'] . '</a>
-							  </div>';
+								 <p>' . $image['image_text'] . '</p>';
+			              if($image['image_link_url']) {
+			$return .= '  	 <a href="' . $image['image_link_url'] . '">' . $image['image_link_text'] . '</a>';
+							  }
+			$return .= '  </div>';
 			$return .= '</div>';
 		}
 	}
