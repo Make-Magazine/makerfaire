@@ -316,7 +316,7 @@ class GWPreviewConfirmation {
                     $file_names = wp_list_pluck( $file_info, 'temp_filename' );
                     $value = array();
                     foreach( $file_names as $file_name ) {
-                        $value[] = GFFormsModel::get_upload_url( $form['id'] ) . '/tmp/' . $file_name;
+                        $value[] = GFFormsModel::get_upload_url( $form['id'] ) . '/tmp/' . basename( $file_name );
                     }
                 } else {
                     $value = $source;
@@ -414,7 +414,7 @@ class GWPreviewConfirmation {
 	                case 'calculation':
 	                case 'number':
 	                	if( ! $field->has_calculation() ) {
-	                		continue;
+	                		break;
 		                }
 		                $is_product = $field['type'] == 'product';
 		                $input_id   = $is_product ? sprintf( '%s.%s', $field->id, 2 ) : $field->id;
