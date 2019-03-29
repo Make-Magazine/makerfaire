@@ -1183,51 +1183,57 @@ article .form_saved_message_sent span:first-child {
   padding-bottom: 0
 }
 
-#performers .thumbnail {
-  position: relative;
-  overflow: hidden;
-}
+// Note (ts): Consolidated these into a single outer bracket...
 
-#performers .caption {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: black;
-  width: 80%;
-  /*opacity: .75;*/
-  height: 100%;
-  padding: 8%;
-  display: none;
-  text-align: left;
-  color: #fff !important;
-  z-index: 2;
-  font-size: .9em;
-}
+#performers {
 
-#performers .thumbnail {
-  padding: 0;
-  margin: 0;
-  border: none;
-  border-radius: 0px;
-}
+   [class^="col-"] {
+      margin-bottom: 24px;
+   }
 
-#performers .sub-caption {
-  position: absolute;
-  bottom: 0;
-  padding: 10px 15px;
-  background-color: #323232;
-  width: 100%;
-  opacity: .8;
-  color: white;
-  font-size: .8em;
-}
+   .thumbnail {
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-radius: 0px;
+    }
 
-#performers h4 {
-  margin: 5px 0;
-}
+   .caption {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: black;
+      width: 100%;
+      /*opacity: .75;*/
+      height: 100%;
+      padding: 8%;
+      display: none;
+      text-align: left;
+      color: #fff !important;
+      z-index: 2;
+      font-size: .9em;
+    }
 
-#performers .col-md-6 {
-  padding: 1.1%
+    .sub-caption {
+      position: absolute;
+      bottom: 0;
+      padding: 16px 16px 6px;
+      background-color: #323232;
+      width: 100%;
+      opacity: .8;
+      color: white;
+      font-size: .8em;
+    }
+
+    h4 {
+      margin: 0 0 12px;
+    }
+    .col-md-6 {
+      padding: 1.1%
+    }
+
 }
 
 
@@ -1340,10 +1346,6 @@ span.icon-rocket {
   line-height: 14px;
   font-weight: 700;
   padding: 7px 0 0;
-}
-
-#performers .caption {
-  padding: 8%;
 }
 
 /*Responsive wrap for video page*/

@@ -82,8 +82,17 @@ function getFeatMkPanel($row_layout) {
    $background_color = get_sub_field('background_color');
    $title = (get_sub_field('title') ? get_sub_field('title') : '');
 
+   $bg_colors = [
+      'blue' => 'blue-back',
+      'white' => 'white-back',
+      'dark_blue' => 'dark-blue-back',
+      'dark_gray' => 'dark-gray-back'
+   ];
+
+   //var_dump($background_color);
+
    // Check if the background color selected was white
-   $return .= '<section class="featured-maker-panel' . ($background_color === "White" ? ' white-back' : '') . '"> ';
+   $return .= '<section class="featured-maker-panel ' . $bg_colors[$background_color] . '"> ';
 
    //build the container div
    $return .= '<div class="container">';
@@ -157,15 +166,23 @@ function getFeatMkPanel($row_layout) {
 
    //loop thru maker data and build the table
    foreach ($makerArr as $maker) {
+      // var_dump($maker);
+      // echo '<br />';
       $return .= '<div class="col-lg-4 col-md-6 col-sm-12">'
          . ' <div class="thumbnail">';
+         $desc = $maker['desc'];
+         if(strlen($desc) > 300) {
+            $breakpoint = strpos($desc, ' ', 290);
+            $desc = substr($desc, 0, $breakpoint) . '&hellip;';
+         }
       if (!empty($maker['desc'])) {
          $markup = !empty($maker['maker_url']) ? 'a' : 'div';
          $href= !empty($maker['maker_url']) ? 'href="' . $maker['maker_url'] . '"' : '';
          $return .= '<'.$markup.' '.$href.' class="caption" style="display: none;">
-                    <p>' . $maker['desc'] . '</p>';
+                     <h4>' . $maker['name'] . '</h4>
+                     <div class="desc-box"><p class="desc">' . $desc . '</p></div>';
          if (!empty($maker['maker_url'])) {
-            $return .= '  <p class="learn-more">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
+            $return .= '  <p class="btn btn-w-ghost learn-more">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
          }
          $return .= ' </'.$markup.'>'; // close .caption
       }
