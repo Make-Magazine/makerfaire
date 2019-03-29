@@ -21,7 +21,67 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 
 == Changelog ==
 
-== 2.2.1 on December 4, 2018 ==
+= 2.2.5 on February 4, 2019 =
+
+* Added: Support for nested dropdown selection in Search Bar
+* Fixed: State search dropdown type for custom address types
+* Fixed: Don't show Credit Card fields on the Edit Entry screen (#1219)
+* REST API and CSV fixes
+    * Fixed: Email field being output as links in CSV
+    * Fixed: CSVs could not contain more than one special field (Entry ID, Custom Content, etc.)
+    * Fixed: CSV and JSON REST API did not output duplicate headers (Entry ID, Custom Content, etc.)
+    * Fixed: JSON REST API endpoint did not render Custom Content fields
+    * Modified: In the REST API duplicate keys are now suffixed with (n), for example: id(1), id(2), instead of not showing them at all
+* Updated: Script used to provide built-in Support Port
+* Updated: Russian translation by [@awsswa59](https://www.transifex.com/user/profile/awsswa59/)
+
+__Developer Updates:__
+
+* Added: `gravityview/edit_entry/before_update` hook
+* Added: `gravityview/api/field/key` filter to customize the generated REST API entry JSON keys
+* Added: `gravityview/template/csv/field/raw` filter to allow raw output of specific fields
+* Modified: CSV REST API endpoint returns binary data instead of JSON-encoded data
+
+= 2.2.4 on January 14, 2019 =
+
+* Fixed: Other Entries field would display all entries without filtering
+* Fixed: Entry Date searches not working (broken in 2.2)
+* Fixed: CSV outputting wrong date formats for Date and Date Created fields
+* Fixed: CSV outputting empty content for Custom Content fields
+* Fixed: Changelog formatting so that the 2.2.1, 2.2.2, and 2.2.3 updates are shown
+* Fixed: The picture of Floaty was _really big_ in the Getting Started screen
+* Updated Translations for Italian and Iranian. Thanks, Farhad!
+
+= 2.2.3 on December 20, 2018 =
+
+* Fixed: Issue loading translation files on Windows IIS servers
+
+__Developer Updates:__
+
+* Added: Third argument to `gravityview_search_operator` filter (the current `\GV\View` object)
+* Added: `GravityView_Image::is_valid_extension()` to determine whether an extension is valid for an image
+* Fixed: Search operator overrides that broke in 2.2
+* Modified: SVG files are now processed as images in GravityView
+* Modified: Changed translation file loading order to remove paths that didn't work! [See this article for the updated paths](https://docs.gravityview.co/article/530-translation-string-loading-order).
+
+= 2.2.2 on December 11, 2018 =
+
+* Added: Support for the new [Multiple Forms beta](https://gravityview.co/extensions/multiple-forms/)!
+* **Minor CSS Change**: Reduced Search Bar negative margins to fix the Search Bar not aligning properly
+* Fixed: Calculation fields that were not added to the Edit Entry fields were being emptied (except the price)
+* Updated translations - thank you, translators!
+    - Turkish translated by [@suhakaralar](https://www.transifex.com/accounts/profile/suhakaralar/)
+    - Russian translated by [@awsswa59](https://www.transifex.com/user/profile/awsswa59/)
+    - Polish translated by [@dariusz.zielonka](https://www.transifex.com/user/profile/dariusz.zielonka/)
+
+__Developer Updates:__
+
+* Template Change: Updated `widget-poll.php` template to display poll results for all Multiple Forms fields
+* Added: `gravityview/query/class` filter to allow query class overrides, needed for Multiple Forms extension
+* Added: `gravityview/approve_entries/autounapprove/status` filter to change the approval status set when an entry is modified in Edit Entry
+* Added: `$unions` property to `\GV\View`, for future use with [Multiple Forms plugin](https://gravityview.co/extensions/multiple-forms/)
+
+= 2.2.1 on December 4, 2018 =
 
 * Confirmed compatibility with WordPress 5.0 and the new Gutenberg editor ([use the shortcode block to embed](https://docs.gravityview.co/article/526-does-gravityview-support-gutenberg))
 * Added: Support for upcoming [Multiple Forms plugin](https://gravityview.co/extensions/multiple-forms/)

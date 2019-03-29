@@ -128,7 +128,7 @@ class View_Table_Template extends View_Template {
 		 * @deprecated Here for back-compatibility.
 		 */
 		$column_label = apply_filters( 'gravityview_render_after_label', $field->get_label( $context->view, $form ), $field->as_configuration() );
-		$column_label = apply_filters( 'gravityview/template/field_label', $column_label, $field->as_configuration(), $form->form ? $form->form : null, null );
+		$column_label = apply_filters( 'gravityview/template/field_label', $column_label, $field->as_configuration(), ( $form && $form->form ) ? $form->form : null, null );
 
 		/**
 		 * @filter `gravityview/template/field/label` Override the field label.
@@ -217,6 +217,15 @@ class View_Table_Template extends View_Template {
                 do_action( 'gravityview_table_cells_before', \GravityView_View::getInstance() );
 
                 foreach ( $fields->all() as $field ) {
+					if ( isset( $this->view->unions[ $entry['form_id'] ] ) ) {
+						if ( isset( $this->view->unions[ $entry['form_id'] ][ $field->ID ] ) ) {
+							$field = $this->view->unions[ $entry['form_id'] ][ $field->ID ];
+						} else {
+							if ( ! $field instanceof Internal_Field ) {
+								$field = Internal_Field::from_configuration( array( 'id' => 'custom' ) );
+							}
+						}
+					}
 					$this->the_field( $field, $entry );
 				}
 
@@ -254,6 +263,7 @@ class View_Table_Template extends View_Template {
 
 		if ( $entry->is_multi() ) {
 			if ( ! $single_entry = $entry->from_field( $field ) ) {
+				echo '<td></td>';
 				return;
 			}
 			$form = GF_Form::by_id( $field->form_id );

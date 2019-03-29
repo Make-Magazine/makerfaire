@@ -213,12 +213,12 @@ class GravityView_Edit_Entry_Render {
 
 		//self::$original_form = $gravityview_view->getForm();
 		//$this->form = $gravityview_view->getForm();
-		//$this->form_id = $gravityview_view->getFormId();
+		//$this->form_id = $this->entry['form_id'];
+      $this->form_id = $this->entry['form_id'];
+      $this->form = GFAPI::get_form($this->form_id);
+      self::$original_form = $this->form;
+
 		$this->view_id = $gravityview_view->getViewId();
-		$this->form_id = $this->entry['form_id'];
-		$this->form = GFAPI::get_form($this->form_id);
-		self::$original_form = $this->form;
-		
 		$this->post_id = \GV\Utils::get( $post, 'ID', null );
 
 		self::$nonce_key = GravityView_Edit_Entry::get_nonce_key( $this->view_id, $this->form_id, $this->entry['id'] );
@@ -334,6 +334,16 @@ class GravityView_Edit_Entry_Render {
 			 * @since 1.17.2
 			 */
 			unset( $this->entry['date_created'] );
+
+			/**
+			 * @action `gravityview/edit_entry/before_update` Perform an action after the entry has been updated using Edit Entry
+			 * @since develop
+			 * @param array $form Gravity Forms form array
+			 * @param string $entry_id Numeric ID of the entry that is being updated
+			 * @param GravityView_Edit_Entry_Render $this This object
+			 * @param GravityView_View_Data $gv_data The View data
+			 */
+			do_action( 'gravityview/edit_entry/before_update', $form, $this->entry['id'], $this, $gv_data );
 
 			GFFormsModel::save_lead( $form, $this->entry );
 
@@ -563,14 +573,37 @@ class GravityView_Edit_Entry_Render {
 
 
 		if ( ! empty( $this->fields_with_calculation ) ) {
-			$update = true;
+			$allowed_fields = $this->get_configured_edit_fields( $form, $this->view_id );
+			$allowed_fields = wp_list_pluck( $allowed_fields, 'id' );
+
 			foreach ( $this->fields_with_calculation as $field ) {
 				$inputs = $field->get_entry_inputs();
 				if ( is_array( $inputs ) ) {
 				    foreach ( $inputs as $input ) {
+						list( $field_id, $input_id ) = rgexplode( '.', $input['id'], 2 );
+
+						if ( 'product' === $field->type ) {
+							$input_name = 'input_' . str_replace( '.', '_', $input['id'] );
+
+							// Only allow quantity to be set if it's allowed to be edited
+							if ( in_array( $field_id, $allowed_fields ) && $input_id == 3 ) {
+							} else { // otherwise set to what it previously was
+								$_POST[ $input_name ] = $entry[ $input['id'] ];
+							}
+						} else {
+							// Set to what it previously was if it's not editable
+							if ( ! in_array( $field_id, $allowed_fields ) ) {
+								$_POST[ $input_name ] = $entry[ $input['id'] ];
+							}
+						}
+
 						GFFormsModel::save_input( $form, $field, $entry, $current_fields, $input['id'] );
 				    }
 				} else {
+					// Set to what it previously was if it's not editable
+					if ( ! in_array( $field->id, $allowed_fields ) ) {
+						$_POST[ 'input_' . $field->id ] = $entry[ $field->id ];
+					}
 					GFFormsModel::save_input( $form, $field, $entry, $current_fields, $field->id );
 				}
 			}
@@ -1026,9 +1059,9 @@ class GravityView_Edit_Entry_Render {
 
 		ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
-		$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
-		$html = str_replace('{all_fields:nohidden,noadmin}','',$html);
-		
+		//$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
+      //This override is to remove the merge tags that aren’t being set in gravity view
+      $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
 		ob_get_clean();
 
 	    remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
@@ -1738,14 +1771,14 @@ class GravityView_Edit_Entry_Render {
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
 
-	    //if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
+	    if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
 			foreach( $fields as $k => $field ) {
 				if( $field->adminOnly ) {
 				    unset( $fields[ $k ] );
 				}
 			}
 			return array_values( $fields );
-		//}
+		}
 
 	    foreach( $fields as &$field ) {
 		    $field->adminOnly = false;
@@ -1941,12 +1974,13 @@ class GravityView_Edit_Entry_Render {
 			 * If the Entry is embedded, there may be two entries on the same page.
 			 * If that's the case, and one is being edited, the other should fail gracefully and not display an error.
 			 */
-			/*if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
+         /*
+			if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
 				$error = true;
 			} else {
 				$error = __( 'The link to edit this entry is not valid; it may have expired.', 'gravityview');
-			}
-         */
+			}*/
+
 		}
 
 		if( ! GravityView_Edit_Entry::check_user_cap_edit_entry( $this->entry ) ) {
