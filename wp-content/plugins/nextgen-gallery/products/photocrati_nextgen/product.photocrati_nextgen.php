@@ -31,10 +31,10 @@ class P_Photocrati_NextGen extends C_Base_Product
 		'photocrati-dynamic_thumbnails'         =>  'always',
 		'photocrati-nextgen_admin'              =>  'always',
 		'photocrati-nextgen_gallery_display'    =>  'always',
-		'photocrati-frame_communication'        =>  'always',
+		'photocrati-frame_communication'        =>  'backend',
 		'photocrati-attach_to_post'             =>  'always',
-		'photocrati-nextgen_addgallery_page'    =>  'always',
-		'photocrati-nextgen_other_options'      =>  'always',
+		'photocrati-nextgen_addgallery_page'    =>  'backend',
+		'photocrati-nextgen_other_options'      =>  'backend',
 		'photocrati-nextgen_pagination'         =>  'always',
 
 		// Front-end only
@@ -72,10 +72,13 @@ class P_Photocrati_NextGen extends C_Base_Product
 				case 'always':
 					$retval[] = $module_name;
 					break;
-				case 'backend':
-					if (is_admin())
-						$retval[] = $module_name;
+
+				// Hack. If this is a photocrati ajax request, is_admin() will evaluate to false. But
+				// we probably want to load the module if the ajax request is initiated from a wp-admin page
+				case ($condition == 'backend' && (is_admin() || strpos($_SERVER['REQUEST_URI'], 'ajax') !== FALSE || isset($_REQUEST['photocrati_ajax']))):
+					$retval[] = $module_name;					
 					break;
+
 				case 'frontend':
 					if (!is_admin())
 						$retval[] = $module_name;

@@ -673,6 +673,10 @@ class C_DataMapper_Driver_Base extends C_Component
             return $default;
         }
     }
+    function flush_query_cache()
+    {
+        $this->_cache = array();
+    }
 }
 /**
  * Provides instance methods for C_CustomTable_DataMapper_Driver
@@ -1211,27 +1215,29 @@ class Mixin_DataMapper_Driver_Base extends Mixin
     {
         foreach ($this->object->_serialized_columns as $column) {
             if (isset($object->{$column}) && is_string($object->{$column})) {
-                $object->{$column} = $this->unserialize($object->{$column});
+                $object->{$column} = C_NextGen_Serializable::unserialize($object->{$column});
             }
         }
     }
     /**
      * Serializes the data
+     *
      * @param mixed $value
      * @return string
      */
     function serialize($value)
     {
-        return M_DataMapper::serialize($value);
+        return C_NextGen_Serializable::serialize($value);
     }
     /**
      * Unserializes data using our proprietary format
+     *
      * @param string $value
      * @return mixed
      */
     function unserialize($value)
     {
-        return M_DataMapper::unserialize($value);
+        return C_NextGen_Serializable::unserialize($value);
     }
     /**
      * Finds a partiular entry by id

@@ -540,7 +540,7 @@ function ngg_confirm_delete_album(form) {
 			| <a href="#" title="<?php esc_attr_e('Maximize the widget content','nggallery'); ?>" id="all_max"><?php esc_html_e('Maximize', 'nggallery'); ?></a>
 			| <a href="#" title="<?php esc_attr_e('Minimize the widget content','nggallery'); ?>" id="all_min"><?php esc_html_e('Minimize', 'nggallery'); ?></a>
 			</div>
-			<?php esc_html_e('After you create and select a album, you can drag and drop a gallery or another album into your new album below','nggallery'); ?>
+			<?php esc_html_e('After you create and select an album, you can drag and drop a gallery or another album into your new album below','nggallery'); ?>
 		</div>
 
 		<br class="clear" />

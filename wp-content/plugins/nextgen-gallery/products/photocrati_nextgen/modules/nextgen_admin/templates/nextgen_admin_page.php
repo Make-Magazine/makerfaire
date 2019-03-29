@@ -21,6 +21,9 @@
         <?php if (isset($form_header)): ?>
             <?php echo $form_header."\n"; ?>
         <?php endif ?>
+        <?php if (isset($nonce)): ?>
+        <input type="hidden" name="nonce" value="<?php echo esc_attr($nonce)?>"/>
+        <?php endif ?>
         <input type="hidden" name="action"/>
          <!-- <div class="accordion" id="nextgen_admin_accordion"> -->
             <div class="ngg_page_content_menu"">

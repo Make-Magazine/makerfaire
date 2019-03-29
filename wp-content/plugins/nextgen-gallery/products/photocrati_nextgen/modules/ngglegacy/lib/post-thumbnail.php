@@ -172,10 +172,13 @@ class nggPostThumbnail {
 		// delete the image
 		if ( $thumbnail_id == '-1' ) {
 			delete_post_meta( $post_ID, '_thumbnail_id' );
-			die('0');
+			die('1');
 		}
 
-		die(strval(C_Gallery_Storage::get_instance()->set_post_thumbnail($post_ID, $thumbnail_id)));
+		if (($attachment_id = C_Gallery_Storage::get_instance()->set_post_thumbnail($post_ID, $thumbnail_id, TRUE))) {
+			die(strval($attachment_id));
+		}
+		die(strval(0));
 	}
 
 	/**

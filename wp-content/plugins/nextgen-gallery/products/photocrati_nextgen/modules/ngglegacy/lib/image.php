@@ -7,7 +7,7 @@
  * isset(). To work around this with the wrapper class (which uses overloaded properties) we make a copy of any
  * attributes set to this object.
  */
-class nggImage extends Ngg_Serializable
+class nggImage
 {
     public $_ngiw;
     public $_propogate = TRUE;
@@ -16,7 +16,7 @@ class nggImage extends Ngg_Serializable
     // TODO: Make nggImage a subclass of C_Component and use the wrapper functionality
     function __construct($image)
     {
-	    $image->meta_data = $this->unserialize($image->meta_data);
+	    $image->meta_data = C_NextGen_Serializable::unserialize($image->meta_data);
         C_Component_Registry::get_instance();
         $this->_ngiw = new C_Image_Wrapper($image, NULL, TRUE);
     }

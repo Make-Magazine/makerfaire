@@ -10,31 +10,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
  */
 function nggallery_install($installer)
 {
+   	global $wpdb;
 
-   	global $wpdb , $wp_roles, $wp_version;
-
-	// Set the capabilities for the administrator
-	$role = get_role('administrator');
-	// We need this role, no other chance
-	if ( empty($role) ) {
-		update_option( "ngg_init_check", __('Sorry, NextGEN Gallery works only with a role called administrator',"nggallery") );
-		return;
-	}
-
-	$role->add_cap('NextGEN Gallery overview');
-	$role->add_cap('NextGEN Use TinyMCE');
-	$role->add_cap('NextGEN Upload images');
-	$role->add_cap('NextGEN Manage gallery');
-	$role->add_cap('NextGEN Manage tags');
-	$role->add_cap('NextGEN Manage others gallery');
-	$role->add_cap('NextGEN Edit album');
-	$role->add_cap('NextGEN Change style');
-	$role->add_cap('NextGEN Change options');
-	$role->add_cap('NextGEN Attach Interface');
-
-   	$nggpictures					= $wpdb->prefix . 'ngg_pictures';
-	$nggallery						= $wpdb->prefix . 'ngg_gallery';
-	$nggalbum						= $wpdb->prefix . 'ngg_album';
+   	$nggpictures = $wpdb->prefix . 'ngg_pictures';
+	$nggallery   = $wpdb->prefix . 'ngg_gallery';
+	$nggalbum    = $wpdb->prefix . 'ngg_album';
 
 	// Create pictures table
 	$sql = "CREATE TABLE " . $nggpictures . " (
@@ -95,7 +75,6 @@ function nggallery_install($installer)
 
 	// if all is passed , save the DBVERSION
 	add_option("ngg_db_version", NGG_DBVERSION);
-
 }
 
 /**

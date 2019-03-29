@@ -51,7 +51,7 @@ jQuery(function($){
         }
 
         // Check if this is a proxy button for another field
-        if ($button.attr('name').indexOf('_proxy') != -1) {
+        if ($button.attr('name') && $button.attr('name').indexOf('_proxy') != -1) {
 
             // Get the value to set
             var value = $button.attr('data-proxy-value');

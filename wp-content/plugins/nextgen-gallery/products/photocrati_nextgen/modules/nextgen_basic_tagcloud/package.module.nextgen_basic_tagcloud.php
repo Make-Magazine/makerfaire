@@ -178,7 +178,7 @@ class A_NextGen_Basic_TagCloud_Urls extends Mixin
             $id = preg_quote($id, '#') . $sep;
         }
         $prefix = preg_quote($settings->router_param_prefix, '#');
-        $regex = implode('', array('#//?', $id ? "({$id})?" : "(\\w+{$sep})?", "({$prefix})?gallerytag{$sep}([\\w-_]+)/?#"));
+        $regex = implode('', array('#//?', $id ? "({$id})?" : "(\\w+{$sep})?", "({$prefix})?gallerytag{$sep}([\\w\\-_]+)/?#"));
         // Replace any page parameters with the ngglegacy equivalent
         if (preg_match($regex, $retval, $matches)) {
             $retval = rtrim(str_replace($matches[0], "/tags/{$matches[3]}/", $retval), "/");

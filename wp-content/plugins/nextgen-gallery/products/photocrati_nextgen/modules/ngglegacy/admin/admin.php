@@ -354,7 +354,7 @@ class nggAdminPanel{
 
 		switch ($_GET['page']) {
 			case NGGFOLDER :
-				wp_add_inline_style( 'nggadmin', file_get_contents(C_Fs::get_instance()->find_static_abspath('photocrati-nextgen-legacy#overview.css') ) );		
+				wp_add_inline_style('nggadmin', file_get_contents(M_Static_Assets::get_static_abspath('photocrati-nextgen-legacy#overview.css')));
 			case "nggallery-about" :
 				wp_enqueue_style( 'nggadmin' );
                 //TODO:Remove after WP 3.3 release
@@ -480,45 +480,6 @@ class nggAdminPanel{
 
 		$wp_list_table = new _NGG_Galleries_List_Table('nggallery-manage-gallery');
 	}
-
-	/**
-	 * Read an array from a remote url
-	 *
-	 * @param string $url
-	 * @return bool|array Array of content
-	 */
-	function get_remote_array($url) {
-
-        if ( function_exists('wp_remote_request') ) {
-
-            if ( false === ( $content = get_transient( 'ngg_request_' . md5($url) ) ) ) {
-
-    			$options = array();
-    			$options['headers'] = array(
-    				'User-Agent' => 'NextGEN Gallery Information Reader V' . NGGVERSION . '; (' . get_bloginfo('url') .')'
-    			 );
-
-    			$response = wp_remote_request($url, $options);
-
-    			if ( is_wp_error( $response ) )
-    				return false;
-
-    			if ( 200 != $response['response']['code'] )
-    				return false;
-
-                $content = $response['body'];
-                set_transient( 'ngg_request_' . md5($url), $content, 60*60*48 );
-            }
-
-			$content = unserialize($content);
-
-			if (is_array($content))
-				return $content;
-		}
-
-		return false;
-	}
-
 }
 
 function wpmu_site_admin() {

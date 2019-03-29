@@ -20,18 +20,13 @@ class M_Dynamic_Thumbnails extends C_Base_Module
 			'photocrati-dynamic_thumbnails',
 			'Dynamic Thumbnails',
 			'Adds support for dynamic thumbnails',
-			'3.0.0',
+			'3.1.8',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
 		);
 
 		C_Photocrati_Installer::add_handler($this->module_id, 'C_Dynamic_Thumbnails_Installer');
-	}
-
-	function _register_adapters()
-	{
-		$this->get_registry()->add_adapter('I_GalleryStorage_Driver', 'A_Dynamic_Thumbnails_Storage_Driver');
 	}
 
 	function _register_utilities()
@@ -63,10 +58,8 @@ class M_Dynamic_Thumbnails extends C_Base_Module
     function get_type_list()
     {
         return array(
-            'A_Dynamic_Thumbnails_Storage_Driver'	=> 'adapter.dynamic_thumbnails_storage_driver.php',
             'C_Dynamic_Thumbnails_Installer'		=> 'class.dynamic_thumbnails_installer.php',
-            'C_Dynamic_Thumbnails_Controller' 		=> 'class.dynamic_thumbnails_controller.php',
-            'C_Dynamic_Thumbnails_Manager' 			=> 'class.dynamic_thumbnails_manager.php'
+            'C_Dynamic_Thumbnails_Controller' 		=> 'class.dynamic_thumbnails_controller.php'
         );
     }
 }

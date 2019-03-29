@@ -27,24 +27,10 @@ $id = (int) $_GET['id'];
 $picture = nggdb::find_image($id);
 
 include_once( nggGallery::graphic_library() );
-$ngg_options = get_option('ngg_options');
-
-$thumb = new ngg_Thumbnail($picture->imagePath, TRUE);
-$thumb->resize(450,350);
-
-// we need the new dimension
-$resizedPreviewInfo = $thumb->newDimensions;
-$thumb->destruct();
 
 // Generate a url to a preview image
-$storage            = C_Gallery_Storage::get_instance();
-$thumbnail_manager  = C_Dynamic_Thumbnails_Manager::get_instance();
-$dynamic_size       = $thumbnail_manager->get_size_name(array(
-	'width'     =>  300,
-	'height'    =>  300,
-));
-//$preview_image		= trailingslashit( home_url() ) . 'index.php?callback=image&amp;pid=' . $picture->pid . '&amp;width=350&amp;height=350';
-$preview_image      = $storage->get_image_url($id, $dynamic_size);
+$storage       = C_Gallery_Storage::get_instance();
+$preview_image = $storage->get_image_url($id, 'full');
 ?>
 
 <script type='text/javascript'>
@@ -78,6 +64,7 @@ $preview_image      = $storage->get_image_url($id, $dynamic_size);
 		
 		var d = new Date();
 		newUrl = jQuery("#imageToEdit").attr("src") + "?" + d.getTime();
+
 		jQuery("#imageToEdit").attr("src" , newUrl);
 							
 	}
@@ -86,7 +73,11 @@ $preview_image      = $storage->get_image_url($id, $dynamic_size);
 <table align="center">
 	<tr>
 		<td valign="middle" align="center" id="ngg-overlay-dialog-main">
-			<img src="<?php echo nextgen_esc_url( $preview_image ); ?>" alt="" id="imageToEdit" />	
+			<img src="<?php echo nextgen_esc_url( $preview_image ); ?>"
+                 alt=""
+                 id="imageToEdit"
+                 style="max-width: 450px;
+                        max-height: 350px;"/>
 		</td>
 		<td>
 			<input type="radio" name="ra" value="cw" /><?php esc_html_e('90&deg; clockwise', 'nggallery'); ?><br />

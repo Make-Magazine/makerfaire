@@ -42,6 +42,7 @@ class A_MVC_Fs extends Mixin
      * @param bool $relative (optional)
      * @param bool $found_root (optional)
      * @return string|NULL
+     * @deprecated Use M_Static_Assets instead
      */
     function find_static_abspath($path, $module = FALSE, $relative = FALSE, &$found_root = FALSE)
     {
@@ -72,6 +73,7 @@ class A_MVC_Fs extends Mixin
             }
             // Create the absolute path to the file
             $path = $this->object->join_paths($mod_dir, C_NextGen_Settings::get_instance()->get('mvc_static_dirname'), $path);
+            $path = wp_normalize_path($path);
             if ($relative) {
                 $original_length = strlen($path);
                 $roots = array('plugins', 'plugins_mu', 'templates', 'stylesheets');
@@ -103,123 +105,6 @@ class A_MVC_Fs extends Mixin
             $key .= '|' . $wpdb->blogid;
         }
         return $key;
-    }
-    /**
-     * Gets the relative path to a static resource. If it doesn't exist, then NULL is returned
-     *
-     * @param string $path
-     * @param string|false $module (optional)
-     * @return string|NULL
-     */
-    function find_static_relpath($path, $module = FALSE)
-    {
-        return $this->object->find_static_abspath($path, $module, TRUE);
-    }
-}
-/**
- * Class A_MVC_Router
- * @mixin C_Router
- * @adapts I_Router
- */
-class A_MVC_Router extends Mixin
-{
-    static $_lookups = array();
-    function initialize()
-    {
-        register_shutdown_function(array(&$this, 'cache_lookups'));
-        self::$_lookups = C_Photocrati_Transient_Manager::fetch($this->_get_cache_key(), array());
-    }
-    function _get_cache_key()
-    {
-        return C_Photocrati_Transient_Manager::create_key('MVC', 'get_static_url');
-    }
-    function cache_lookups()
-    {
-        C_Photocrati_Transient_Manager::update($this->_get_cache_key(), self::$_lookups);
-    }
-    function _get_static_url_key($path, $module = FALSE)
-    {
-        $parts = array($path, $module, $this->object->get_base_url('plugins'), $this->object->get_base_url('plugins_mu'), $this->object->get_base_url('templates'), $this->object->get_base_url('stylesheets'));
-        return implode('|', $parts);
-    }
-    /**
-     * First tries to find the static file in the 'static' folder
-     * @param string $path
-     * @param string $module
-     * @return string
-     */
-    function get_static_url($path, $module = FALSE)
-    {
-        $retval = NULL;
-        $key = $this->object->_get_static_url_key($path, $module);
-        // Have we looked up this url before?
-        if (isset(self::$_lookups[$key])) {
-            $retval = self::$_lookups[$key];
-        }
-        $fs = C_Fs::get_instance();
-        // Check for a user-supplied override
-        if (NULL === $retval) {
-            $formatted_path = $fs->parse_formatted_path($path);
-            $abspath = $fs->join_paths($this->object->get_static_override_dir($formatted_path[1]), $formatted_path[0]);
-            if (@is_file($abspath)) {
-                $abspath = str_replace($fs->get_document_root('content'), '', $abspath);
-                $retval = self::$_lookups[$key] = $this->object->join_paths($this->object->get_base_url('content'), str_replace("\\", '/', $abspath));
-            }
-        }
-        // We'll have to calculate the url from our own modules
-        if (NULL === $retval) {
-            $path = $fs->find_static_abspath($path, $module);
-            $original_length = strlen($path);
-            $roots = array('plugins', 'plugins_mu', 'templates', 'stylesheets');
-            $found_root = FALSE;
-            foreach ($roots as $root) {
-                $path = str_replace($fs->get_document_root($root), '', $path);
-                if (strlen($path) != $original_length) {
-                    $found_root = $root;
-                    break;
-                }
-            }
-            // We found the root so we know what base url to prepend
-            if ($found_root) {
-                $retval = self::$_lookups[$key] = $this->object->join_paths($this->object->get_base_url($found_root), str_replace("\\", '/', $path));
-            } else {
-                $retval = self::$_lookups[$key] = $this->object->join_paths($this->object->get_base_url('root'), str_replace("\\", '/', $path));
-            }
-        }
-        // For the "Sage" theme and others using the "Soil" plugin "Roots" theme was re-branded to "Sage" theme
-        // 2015-02-25; see https://roots.io/new-website-sage-and-the-future/
-        if ((current_theme_supports('soil-relative-urls') || current_theme_supports('root-relative-urls')) && strpos($retval, '/') !== 0) {
-            $retval = '/' . $retval;
-        }
-        return $retval;
-    }
-    /**
-     * @param string $module_id
-     *
-     * @return string $dir
-     */
-    function get_static_override_dir($module_id = NULL)
-    {
-        $fs = C_Fs::get_instance();
-        $dir = $fs->join_paths(WP_CONTENT_DIR, 'ngg');
-        if (!@file_exists($dir)) {
-            wp_mkdir_p($dir);
-        }
-        $dir = $fs->join_paths($dir, 'modules');
-        if (!@file_exists($dir)) {
-            wp_mkdir_p($dir);
-        }
-        if ($module_id) {
-            $dir = $fs->join_paths($dir, $module_id);
-            if (!@file_exists($dir)) {
-                wp_mkdir_p($dir);
-            }
-            $dir = $fs->join_paths($dir, 'static');
-            if (!@file_exists($dir)) {
-                wp_mkdir_p($dir);
-            }
-        }
-        return $dir;
     }
 }
 if (preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
@@ -397,22 +282,11 @@ class Mixin_MVC_Controller_Instance_Methods extends Mixin
      * Gets the absolute path of a static resource
      * @param string $path
      * @param string|false $module (optional)
-     * @param boolean $relative
      * @return string
      */
-    function get_static_abspath($path, $module = FALSE, $relative = FALSE)
+    function get_static_abspath($path, $module = FALSE)
     {
-        return C_Fs::get_instance()->find_static_abspath($path, $module);
-    }
-    /**
-     * Gets the relative path of a static resource
-     * @param string $path
-     * @param string|false $module (optional)
-     * @return string
-     */
-    function get_static_relpath($path, $module = FALSE)
-    {
-        return C_Fs::get_instance()->find_static_abspath($path, $module, TRUE);
+        return M_Static_Assets::get_static_abspath($path, $module);
     }
     /**
      * @param string $path
@@ -421,7 +295,7 @@ class Mixin_MVC_Controller_Instance_Methods extends Mixin
      */
     function get_static_url($path, $module = FALSE)
     {
-        return C_Router::get_instance()->get_static_url($path, $module);
+        return M_Static_Assets::get_static_url($path, $module);
     }
     /**
      * Renders a template and outputs the response headers

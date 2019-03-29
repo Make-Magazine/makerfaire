@@ -27,7 +27,7 @@ class M_MVC extends C_Base_Module
             'photocrati-mvc',
             'MVC Framework',
             'Provides an MVC architecture for the plugin to use',
-            '3.1.0',
+            '3.1.8',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery',
             'Imagely',
             'https://www.imagely.com'
@@ -57,7 +57,6 @@ class M_MVC extends C_Base_Module
     function _register_adapters()
     {
             $this->get_registry()->add_adapter('I_Fs', 'A_MVC_Fs');
-            $this->get_registry()->add_adapter('I_Router', 'A_MVC_Router');
             $this->get_registry()->add_adapter('I_Component_Factory', 'A_MVC_Factory');
     }
 
@@ -66,7 +65,6 @@ class M_MVC extends C_Base_Module
         return array(
             'A_Mvc_Factory' => 'adapter.mvc_factory.php',
             'A_Mvc_Fs' => 'adapter.mvc_fs.php',
-            'A_Mvc_Router' => 'adapter.mvc_router.php',
             'C_Mvc_Installer' => 'class.mvc_installer.php',
             'C_Mvc_Controller' => 'class.mvc_controller.php',
             'C_Mvc_View' => 'class.mvc_view.php',

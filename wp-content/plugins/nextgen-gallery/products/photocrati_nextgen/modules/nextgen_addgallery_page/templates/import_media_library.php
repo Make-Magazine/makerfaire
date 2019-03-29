@@ -1,4 +1,3 @@
-<?php $i18n['isavalidvar'] = true; // make my editor shutup about invalid variables ?>
 <div id="ngg-importML-gallery-selection">
     <label for="ngg-importML-gallery-id"><?php _e('Gallery', 'nggallery'); ?></label>
     <select id="ngg-importML-gallery-id">

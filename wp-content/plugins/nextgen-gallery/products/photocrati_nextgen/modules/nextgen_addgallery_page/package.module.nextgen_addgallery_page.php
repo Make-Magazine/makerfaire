@@ -19,7 +19,7 @@ class A_Import_Folder_Form extends Mixin
     }
     function render()
     {
-        return $this->object->render_partial('photocrati-nextgen_addgallery_page#import_folder', array('browse_sec_token' => C_WordPress_Security_Manager::get_instance()->get_request_token('nextgen_upload_image'), 'import_sec_token' => C_WordPress_Security_Manager::get_instance()->get_request_token('nextgen_upload_image')), TRUE);
+        return $this->object->render_partial('photocrati-nextgen_addgallery_page#import_folder', array('browse_nonce' => M_Security::create_nonce('nextgen_upload_image'), 'import_nonce' => M_Security::create_nonce('nextgen_upload_image')), TRUE);
     }
 }
 /**
@@ -39,10 +39,7 @@ class A_Import_Media_Library_Form extends Mixin
         wp_enqueue_script('nextgen_media_library_import-js');
         wp_enqueue_style('nextgen_media_library_import-css');
         $url = admin_url() . 'admin.php?page=nggallery-manage-gallery&mode=edit&gid={gid}';
-        $i18n_array = array('admin_url' => admin_url(), 'title' => __('Import Images into NextGen Gallery', 'nggallery'), 'import_multiple' => __('Import %s images', 'nggallery'), 'import_singular' => __('Import 1 image', 'nggallery'), 'imported_multiple' => sprintf(__('{count} images were uploaded successfully. <a href="%s" target="_blank">Manage gallery</a>', 'nggallery'), $url), 'imported_singular' => sprintf(__('1 image was uploaded successfully. <a href="%s" target="_blank">Manage gallery</a>', 'nggallery'), $url), 'imported_none' => __('0 images were uploaded', 'nggallery'), 'progress_title' => __('Importing gallery', 'nggallery'), 'in_progress' => __('In Progress...', 'nggallery'), 'gritter_title' => __('Upload complete. Great job!', 'nggallery'), 'gritter_error' => __('Oops! Sorry, but an error occured. This may be due to a server misconfiguration. Check your PHP error log or ask your hosting provider for assistance.', 'nggallery'));
-        foreach (C_WordPress_Security_Manager::get_instance()->get_request_token('nextgen_upload_image')->get_request_list() as $name => $value) {
-            $i18n_array['sectoken'][$name] = $value;
-        }
+        $i18n_array = array('admin_url' => admin_url(), 'title' => __('Import Images into NextGen Gallery', 'nggallery'), 'import_multiple' => __('Import %s images', 'nggallery'), 'import_singular' => __('Import 1 image', 'nggallery'), 'imported_multiple' => sprintf(__('{count} images were uploaded successfully. <a href="%s" target="_blank">Manage gallery</a>', 'nggallery'), $url), 'imported_singular' => sprintf(__('1 image was uploaded successfully. <a href="%s" target="_blank">Manage gallery</a>', 'nggallery'), $url), 'imported_none' => __('0 images were uploaded', 'nggallery'), 'progress_title' => __('Importing gallery', 'nggallery'), 'in_progress' => __('In Progress...', 'nggallery'), 'gritter_title' => __('Upload complete. Great job!', 'nggallery'), 'gritter_error' => __('Oops! Sorry, but an error occured. This may be due to a server misconfiguration. Check your PHP error log or ask your hosting provider for assistance.', 'nggallery'), 'nonce' => M_Security::create_nonce('nextgen_upload_image'));
         wp_localize_script('nextgen_media_library_import-js', 'ngg_importml_i18n', $i18n_array);
     }
     function render()
@@ -52,16 +49,14 @@ class A_Import_Media_Library_Form extends Mixin
     }
     function get_galleries()
     {
-        $security = $this->get_registry()->get_utility('I_Security_Manager');
-        $sec_actor = $security->get_current_actor();
         $galleries = array();
-        if ($sec_actor->is_allowed('nextgen_edit_gallery')) {
+        if (M_Security::is_allowed('nextgen_edit_gallery')) {
             $galleries = C_Gallery_Mapper::get_instance()->find_all();
-            if (!$sec_actor->is_allowed('nextgen_edit_gallery_unowned')) {
+            if (!M_Security::is_allowed('nextgen_edit_gallery_unowned')) {
                 $galleries_all = $galleries;
                 $galleries = array();
                 foreach ($galleries_all as $gallery) {
-                    if ($sec_actor->is_user() && $sec_actor->get_entity_id() == (int) $gallery->author) {
+                    if (wp_get_current_user()->ID == (int) $gallery->author) {
                         $galleries[] = $gallery;
                     }
                 }
@@ -126,22 +121,22 @@ class A_NextGen_AddGallery_Ajax extends Mixin
                             } else {
                                 $retval['error'] = __('Failed to extract images from ZIP', 'nggallery');
                             }
-                        } elseif ($image = $storage->upload_image($gallery_id)) {
-                            $retval['image_ids'] = array($image->id());
+                        } elseif ($image_id = $storage->upload_image($gallery_id)) {
+                            $retval['image_ids'] = array($image_id);
                             $retval['image_errors'] = array();
                             // check if image was resized correctly
                             if ($settings->imgAutoResize) {
-                                $image_path = $storage->get_full_abspath($image);
+                                $image_path = $storage->get_full_abspath($image_id);
                                 $image_thumb = new C_NggLegacy_Thumbnail($image_path, true);
                                 if ($image_thumb->error) {
-                                    $retval['image_errors'][] = array('id' => $image->id(), 'error' => sprintf(__('Automatic image resizing failed [%1$s].', 'nggallery'), $image_thumb->errmsg));
+                                    $retval['image_errors'][] = array('id' => $image_id, 'error' => sprintf(__('Automatic image resizing failed [%1$s].', 'nggallery'), $image_thumb->errmsg));
                                     $image_thumb = null;
                                 }
                             }
                             // check if thumb was generated correctly
-                            $thumb_path = $storage->get_thumb_abspath($image);
+                            $thumb_path = $storage->get_thumb_abspath($image_id);
                             if (!file_exists($thumb_path)) {
-                                $retval['image_errors'][] = array('id' => $image->id(), 'error' => __('Thumbnail generation failed.', 'nggallery'));
+                                $retval['image_errors'][] = array('id' => $image_id, 'error' => __('Thumbnail generation failed.', 'nggallery'));
                             }
                         } else {
                             $retval['error'] = __('Image generation failed', 'nggallery');
@@ -161,6 +156,9 @@ class A_NextGen_AddGallery_Ajax extends Mixin
                 }
             }
         } else {
+            $action = 'nextgen_upload_image';
+            $retval['allowed'] = M_Security::is_allowed($action);
+            $retval['verified_token'] = !$_REQUEST['nonce'] || wp_verify_nonce($_REQUEST['nonce'], $action);
             $retval['error'] = __("No permissions to upload images. Try refreshing the page or ensuring that your user account has sufficient roles/privileges.", 'nggallery');
             $error = TRUE;
         }
@@ -224,7 +222,7 @@ class A_NextGen_AddGallery_Ajax extends Mixin
     function import_folder_action()
     {
         $retval = array();
-        if ($this->validate_ajax_request('nextgen_upload_image', TRUE)) {
+        if ($this->validate_ajax_request('nextgen_upload_image', $_REQUEST['nonce'])) {
             if ($folder = $this->param('folder')) {
                 $storage = C_Gallery_Storage::get_instance();
                 $fs = C_Fs::get_instance();
@@ -267,7 +265,7 @@ class A_NextGen_AddGallery_Ajax extends Mixin
         $gallery_mapper = C_Gallery_Mapper::get_instance();
         $image_mapper = C_Image_Mapper::get_instance();
         $attachment_ids = $this->param('attachment_ids');
-        if ($this->validate_ajax_request('nextgen_upload_image', TRUE)) {
+        if ($this->validate_ajax_request('nextgen_upload_image', $_REQUEST['nonce'])) {
             if (empty($attachment_ids) || !is_array($attachment_ids)) {
                 $retval['error'] = __('An unexpected error occured.', 'nggallery');
             }
@@ -297,10 +295,10 @@ class A_NextGen_AddGallery_Ajax extends Mixin
                             $retval['error'] = __('Image generation failed', 'nggallery');
                             break;
                         }
-                        $image = $storage->upload_base64_image($gallery_id, $file_data, $file_name);
+                        $image = $storage->upload_image($gallery_id, $file_name, $file_data);
                         if ($image) {
                             // Potentially import metadata from WordPress
-                            $image = $image_mapper->find($image->id());
+                            $image = $image_mapper->find($image);
                             if (!empty($attachment->post_excerpt)) {
                                 $image->alttext = $attachment->post_excerpt;
                             }
@@ -309,11 +307,11 @@ class A_NextGen_AddGallery_Ajax extends Mixin
                             }
                             $image = apply_filters('ngg_medialibrary_imported_image', $image, $attachment);
                             $image_mapper->save($image);
+                            $retval['image_ids'][] = $image->{$image->id_field};
                         } else {
                             $retval['error'] = __('Image generation failed', 'nggallery');
                             break;
                         }
-                        $retval['image_ids'][] = $image->{$image->id_field};
                     } catch (E_NggErrorException $ex) {
                         $retval['error'] = $ex->getMessage();
                         if ($created_gallery) {
@@ -406,7 +404,7 @@ class A_Upload_Images_Form extends Mixin
         $fs = C_Fs::get_instance();
         $router = C_Router::get_instance();
         $locale = get_locale();
-        $dir = $fs->find_static_abspath('photocrati-nextgen_addgallery_page#plupload-2.1.1/i18n') . DIRECTORY_SEPARATOR;
+        $dir = M_Static_Assets::get_static_abspath('photocrati-nextgen_addgallery_page#plupload-2.1.1/i18n');
         $tmp = explode('_', $locale, 2);
         $retval = FALSE;
         if (file_exists($dir . $tmp[0] . '.js')) {
@@ -417,7 +415,7 @@ class A_Upload_Images_Form extends Mixin
             }
         }
         if ($retval) {
-            $retval = $router->get_static_url('photocrati-nextgen_addgallery_page#plupload-2.1.1/i18n/' . $retval . '.js');
+            $retval = M_Static_Assets::get_static_url('photocrati-nextgen_addgallery_page#plupload-2.1.1/i18n/' . $retval . '.js');
         }
         return $retval;
     }
@@ -434,7 +432,7 @@ class A_Upload_Images_Form extends Mixin
     }
     function render()
     {
-        return $this->object->render_partial('photocrati-nextgen_addgallery_page#upload_images', array('plupload_options' => json_encode($this->object->get_plupload_options()), 'galleries' => $this->object->get_galleries(), 'sec_token' => C_WordPress_Security_Manager::get_instance()->get_request_token('nextgen_upload_image')), TRUE);
+        return $this->object->render_partial('photocrati-nextgen_addgallery_page#upload_images', array('plupload_options' => json_encode($this->object->get_plupload_options()), 'galleries' => $this->object->get_galleries(), 'nonce' => M_Security::create_nonce('nextgen_upload_image')), TRUE);
     }
     function get_plupload_options()
     {
@@ -468,17 +466,15 @@ class A_Upload_Images_Form extends Mixin
     }
     function get_galleries()
     {
-        $security = $this->get_registry()->get_utility('I_Security_Manager');
-        $sec_actor = $security->get_current_actor();
         $galleries = array();
-        if ($sec_actor->is_allowed('nextgen_edit_gallery')) {
+        if (M_Security::is_allowed('nextgen_edit_gallery')) {
             $gallery_mapper = C_Gallery_Mapper::get_instance();
             $galleries = $gallery_mapper->find_all();
-            if (!$sec_actor->is_allowed('nextgen_edit_gallery_unowned')) {
+            if (!M_Security::is_allowed('nextgen_edit_gallery_unowned')) {
                 $galleries_all = $galleries;
                 $galleries = array();
                 foreach ($galleries_all as $gallery) {
-                    if ($sec_actor->is_user() && $sec_actor->get_entity_id() == (int) $gallery->author) {
+                    if (wp_get_current_user()->ID == (int) $gallery->author) {
                         $galleries[] = $gallery;
                     }
                 }

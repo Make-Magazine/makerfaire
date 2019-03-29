@@ -23,7 +23,7 @@ class M_Lightbox extends C_Base_Module
             'photocrati-lightbox',
             'Lightbox',
             "Provides integration with several JavaScript lightbox effect libraries",
-            '3.0.0',
+            '3.1.11.1',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'

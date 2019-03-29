@@ -17,7 +17,7 @@ class M_Widget extends C_Base_Module
             'photocrati-widget',
             'Widget',
             'Handles clearing of NextGen Widgets',
-            '3.0.0',
+            '3.1.6',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'

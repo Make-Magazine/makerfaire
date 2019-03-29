@@ -70,14 +70,6 @@ class A_NextGen_Data_Factory extends Mixin
     {
         return new C_Album($properties, $mapper, $context);
     }
-    function ngglegacy_gallery_storage($context = FALSE)
-    {
-        return new C_NggLegacy_GalleryStorage_Driver($context);
-    }
-    function wordpress_gallery_storage($context = FALSE)
-    {
-        return new C_WordPress_GalleryStorage_Driver($context);
-    }
     function gallery_storage($context = FALSE)
     {
         return new C_Gallery_Storage($context);
@@ -236,6 +228,371 @@ class Mixin_Album_Mapper extends Mixin
         }
     }
 }
+class Mixin_Dynamic_Thumbnails_Manager extends Mixin
+{
+    function get_route_name()
+    {
+        return C_NextGen_Settings::get_instance()->get('dynamic_thumbnail_slug');
+    }
+    function _get_params_sanitized($params)
+    {
+        if (isset($params['rotation'])) {
+            $rotation = intval($params['rotation']);
+            if ($rotation && in_array(abs($rotation), array(90, 180, 270))) {
+                $rotation = $rotation % 360;
+                if ($rotation < 0) {
+                    $rotation = 360 - $rotation;
+                }
+                $params['rotation'] = $rotation;
+            } else {
+                unset($params['rotation']);
+            }
+        }
+        if (isset($params['flip'])) {
+            $flip = strtolower($params['flip']);
+            if (in_array($flip, array('h', 'v', 'hv'))) {
+                $params['flip'] = $flip;
+            } else {
+                unset($params['flip']);
+            }
+        }
+        return $params;
+    }
+    function get_uri_from_params($params)
+    {
+        $params = $this->object->_get_params_sanitized($params);
+        $image = isset($params['image']) ? $params['image'] : null;
+        $image_id = is_scalar($image) || is_null($image) ? (int) $image : $image->pid;
+        $image_width = isset($params['width']) ? $params['width'] : null;
+        $image_height = isset($params['height']) ? $params['height'] : null;
+        $image_quality = isset($params['quality']) ? $params['quality'] : null;
+        $image_type = isset($params['type']) ? $params['type'] : null;
+        $image_crop = isset($params['crop']) ? $params['crop'] : null;
+        $image_watermark = isset($params['watermark']) ? $params['watermark'] : null;
+        $image_rotation = isset($params['rotation']) ? $params['rotation'] : null;
+        $image_flip = isset($params['flip']) ? $params['flip'] : null;
+        $image_reflection = isset($params['reflection']) ? $params['reflection'] : null;
+        $uri = null;
+        $uri .= '/';
+        $uri .= $this->object->get_route_name() . '/';
+        $uri .= strval($image_id) . '/';
+        $uri .= strval($image_width) . 'x' . strval($image_height);
+        if ($image_quality != null) {
+            $uri .= 'x' . strval($image_quality);
+        }
+        $uri .= '/';
+        if ($image_type != null) {
+            $uri .= $image_type . '/';
+        }
+        if ($image_crop) {
+            $uri .= 'crop/';
+        }
+        if ($image_watermark) {
+            $uri .= 'watermark/';
+        }
+        if ($image_rotation) {
+            $uri .= 'rotation-' . $image_rotation . '/';
+        }
+        if ($image_flip) {
+            $uri .= 'flip-' . $image_flip . '/';
+        }
+        if ($image_reflection) {
+            $uri .= 'reflection/';
+        }
+        return $uri;
+    }
+    function get_image_uri($image, $params)
+    {
+        $params['image'] = $image;
+        $uri = $this->object->get_uri_from_params($params);
+        if (substr($uri, -1) != '/') {
+            $uri .= '/';
+        }
+        $uri .= wp_hash($uri) . '/';
+        return $uri;
+    }
+    function get_image_url($image, $params)
+    {
+        return C_Router::get_instance()->get_url($this->object->get_image_uri($image, $params), FALSE, 'root');
+    }
+    function get_params_from_uri($uri)
+    {
+        $regex = '/\\/?' . $this->object->get_route_name() . '\\/(\\d+)(?:\\/(.*))?/';
+        $match = null;
+        // XXX move this URL clean up to I_Router?
+        $uri = preg_replace('/\\/index.php\\//', '/', $uri, 1);
+        $uri = trim($uri, '/');
+        if (@preg_match($regex, $uri, $match) > 0) {
+            $image_id = $match[1];
+            $uri_args = isset($match[2]) ? explode('/', $match[2]) : array();
+            $params = array('image' => $image_id);
+            foreach ($uri_args as $uri_arg) {
+                $uri_arg_set = explode('-', $uri_arg);
+                $uri_arg_name = array_shift($uri_arg_set);
+                $uri_arg_value = $uri_arg_set ? array_shift($uri_arg_set) : null;
+                $size_match = null;
+                if ($uri_arg == 'watermark') {
+                    $params['watermark'] = true;
+                } else {
+                    if ($uri_arg_name == 'rotation') {
+                        $params['rotation'] = $uri_arg_value;
+                    } else {
+                        if ($uri_arg_name == 'flip') {
+                            $params['flip'] = $uri_arg_value;
+                        } else {
+                            if ($uri_arg == 'reflection') {
+                                $params['reflection'] = true;
+                            } else {
+                                if ($uri_arg == 'crop') {
+                                    $params['crop'] = true;
+                                } else {
+                                    if (in_array(strtolower($uri_arg), array('gif', 'jpg', 'png'))) {
+                                        $params['type'] = $uri_arg;
+                                    } else {
+                                        if (preg_match('/(\\d+)x(\\d+)(?:x(\\d+))?/i', $uri_arg, $size_match) > 0) {
+                                            $params['width'] = $size_match[1];
+                                            $params['height'] = $size_match[2];
+                                            if (isset($size_match[3])) {
+                                                $params['quality'] = $size_match[3];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return $this->object->_get_params_sanitized($params);
+        }
+        return null;
+    }
+    function _get_name_prefix_list()
+    {
+        return array('id' => 'nggid0', 'size' => 'ngg0dyn-', 'flags' => '00f0', 'flag' => array('w0' => 'watermark', 'c0' => 'crop', 'r1' => 'rotation', 'f1' => 'flip', 'r0' => 'reflection', 't0' => 'type'), 'flag_len' => 2, 'max_value_length' => 15);
+    }
+    function get_name_from_params($params, $only_size_name = false, $id_in_name = true)
+    {
+        $prefix_list = $this->object->_get_name_prefix_list();
+        $id_prefix = $prefix_list['id'];
+        $size_prefix = $prefix_list['size'];
+        $flags_prefix = $prefix_list['flags'];
+        $flags = $prefix_list['flag'];
+        $max_value_length = $prefix_list['max_value_length'];
+        $params = $this->object->_get_params_sanitized($params);
+        $image = isset($params['image']) ? $params['image'] : null;
+        $image_width = isset($params['width']) ? $params['width'] : null;
+        $image_height = isset($params['height']) ? $params['height'] : null;
+        $image_quality = isset($params['quality']) ? $params['quality'] : null;
+        $extension = null;
+        $name = null;
+        // if $only_size_name is false then we include the file name and image id for the image
+        if (!$only_size_name) {
+            if (is_int($image)) {
+                $imap = C_Image_Mapper::get_instance();
+                $image = $imap->find($image);
+            }
+            if ($image != null) {
+                // this is used to remove the extension and then add it back at the end of the name
+                $extension = M_I18n::mb_pathinfo($image->filename, PATHINFO_EXTENSION);
+                if ($extension != null) {
+                    $extension = '.' . $extension;
+                }
+                $name .= M_I18n::mb_basename($image->filename);
+                $name .= '-';
+                if ($id_in_name) {
+                    $image_id = strval($image->pid);
+                    $id_len = min($max_value_length, strlen($image_id));
+                    $id_len_hex = dechex($id_len);
+                    // sanity check, should never occurr if $max_value_length is not messed up, ensure only 1 character is used to encode length or else skip parameter
+                    if (strlen($id_len_hex) == 1) {
+                        $name .= $id_prefix . $id_len . substr($image_id, 0, $id_len);
+                        $name .= '-';
+                    }
+                }
+            }
+        }
+        $name .= $size_prefix;
+        $name .= strval($image_width) . 'x' . strval($image_height);
+        if ($image_quality != null) {
+            $name .= 'x' . $image_quality;
+        }
+        $name .= '-';
+        $name .= $flags_prefix;
+        foreach ($flags as $flag_prefix => $flag_name) {
+            $flag_value = 0;
+            if (isset($params[$flag_name])) {
+                $flag_value = $params[$flag_name];
+                if (!is_string($flag_value)) {
+                    // only strings or ints allowed, sprintf is required because intval(0) returns '' and not '0'
+                    $flag_value = intval($flag_value);
+                    $flag_value = sprintf('%d', $flag_value);
+                }
+            }
+            $flag_value = strval($flag_value);
+            $flag_len = min($max_value_length, strlen($flag_value));
+            $flag_len_hex = dechex($flag_len);
+            // sanity check, should never occurr if $max_value_length is not messed up, ensure only 1 character is used to encode length or else skip parameter
+            if (strlen($flag_len_hex) == 1) {
+                $name .= $flag_prefix . $flag_len . substr($flag_value, 0, $flag_len);
+            }
+        }
+        $name .= $extension;
+        return $name;
+    }
+    function get_size_name($params)
+    {
+        $name = $this->object->get_name_from_params($params, true);
+        return $name;
+    }
+    function get_image_name($image, $params)
+    {
+        $params['image'] = $image;
+        $name = $this->object->get_name_from_params($params);
+        return $name;
+    }
+    function get_params_from_name($name, $is_only_size_name = false)
+    {
+        $prefix_list = $this->object->_get_name_prefix_list();
+        $id_prefix = $prefix_list['id'];
+        $size_prefix = $prefix_list['size'];
+        $flags_prefix = $prefix_list['flags'];
+        $max_value_length = $prefix_list['max_value_length'];
+        $size_name = null;
+        $id_name = null;
+        $params = array();
+        if (!$is_only_size_name) {
+            $extension = M_I18n::mb_pathinfo($name, PATHINFO_EXTENSION);
+            if ($extension != null) {
+                $extension = '.' . $extension;
+            }
+            $name = M_I18n::mb_basename($name);
+        }
+        $size_index = strrpos($name, $size_prefix);
+        if ($size_index > 0 || $size_index === 0) {
+            // check if name contains dynamic size/params info by looking for prefix
+            $size_name = substr($name, $size_index);
+        }
+        if (!$is_only_size_name) {
+            // name should contain the image id, search for prefix
+            $id_index = strrpos($name, $id_prefix);
+            if ($id_index > 0 || $id_index === 0) {
+                if ($size_index > 0 && $size_index > $id_index) {
+                    $id_name = substr($name, $id_index, $size_index - $id_index);
+                } else {
+                    $id_name = substr($name, $id_index);
+                }
+            }
+        }
+        // Double check we got a correct dynamic size/params string
+        if (substr($size_name, 0, strlen($size_prefix)) == $size_prefix) {
+            $flags = $prefix_list['flag'];
+            // get the length of the flag id (the key in the $flags array) in the string (how many characters to consume)
+            $flag_id_len = $prefix_list['flag_len'];
+            $params_str = substr($size_name, strlen($size_prefix));
+            $params_parts = explode('-', $params_str);
+            // $param_part is a single param, separated by '-'
+            foreach ($params_parts as $param_part) {
+                // Parse WxHxQ - Q=quality
+                $param_size = explode('x', $param_part);
+                $param_size_count = count($param_size);
+                if (substr($param_part, 0, strlen($flags_prefix)) == $flags_prefix) {
+                    /* Set flags, using $flags keys as prefixes */
+                    // move string pointer up (after the main flags prefix)
+                    $param_flags = substr($param_part, strlen($flags_prefix));
+                    $param_flags_len = strlen($param_flags);
+                    $flags_todo = $flags;
+                    while (true) {
+                        // ensure we don't run into an infinite loop ;)
+                        if (count($flags_todo) == 0 || strlen($param_flags) == 0) {
+                            break;
+                        }
+                        // get the flag prefix (a key in the $flags array) using flag id length
+                        $flag_prefix = substr($param_flags, 0, $flag_id_len);
+                        // move string pointer up (after the single flag prefix)
+                        $param_flags = substr($param_flags, $flag_id_len);
+                        // get the length of the flag value in the string (how many characters to consume)
+                        // flag value length is stored in a single hexadecimal character next to the flag prefix
+                        $flag_value_len = min(hexdec(substr($param_flags, 0, 1)), min($max_value_length, strlen($param_flags) - 1));
+                        // get the flag value
+                        $flag_value = substr($param_flags, 1, $flag_value_len);
+                        // move string pointer up (after the entire flag)
+                        $param_flags = substr($param_flags, $flag_value_len + 1);
+                        // make sure the flag is supported
+                        if (isset($flags[$flag_prefix])) {
+                            $flag_name = $flags[$flag_prefix];
+                            if (is_numeric($flag_value)) {
+                                // convert numerical flags to integers
+                                $flag_value = intval($flag_value);
+                            }
+                            $params[$flag_name] = $flag_value;
+                            if (isset($flags_todo[$flag_prefix])) {
+                                unset($flags_todo[$flag_prefix]);
+                            }
+                        } else {
+                            // XXX unknown flag?
+                        }
+                    }
+                } else {
+                    if ($param_size_count == 2 || $param_size_count == 3) {
+                        // Set W H Q
+                        $params['width'] = intval($param_size[0]);
+                        $params['height'] = intval($param_size[1]);
+                        if (isset($param_size[2]) && intval($param_size[2]) > 0) {
+                            $params['quality'] = intval($param_size[2]);
+                        }
+                    }
+                }
+            }
+        }
+        // Double check we got a correct id string
+        if (substr($id_name, 0, strlen($id_prefix)) == $id_prefix) {
+            // move string pointer up (after the prefix)
+            $id_name = substr($id_name, strlen($id_prefix));
+            // get the length of the image id in the string (how many characters to consume)
+            $id_len = min(hexdec(substr($id_name, 0, 1)), min($max_value_length, strlen($id_name) - 1));
+            // get the id based on old position and id length
+            $image_id = intval(substr($id_name, 1, $id_len));
+            if ($image_id > 0) {
+                $params['image'] = $image_id;
+            }
+        }
+        return $this->object->_get_params_sanitized($params);
+    }
+    function is_size_dynamic($name, $is_only_size_name = false)
+    {
+        $params = $this->object->get_params_from_name($name, $is_only_size_name);
+        if (isset($params['width']) && isset($params['height'])) {
+            return true;
+        }
+        return false;
+    }
+}
+/**
+ * Class C_Dynamic_Thumbnails_Manager
+ * @mixin Mixin_Dynamic_Thumbnails_Manager
+ */
+class C_Dynamic_Thumbnails_Manager extends C_Component
+{
+    static $_instances = array();
+    function define($context = FALSE)
+    {
+        parent::define($context);
+        $this->implement('I_Dynamic_Thumbnails_Manager');
+        $this->add_mixin('Mixin_Dynamic_Thumbnails_Manager');
+    }
+    /**
+     * @param bool|string $context
+     * @return C_Dynamic_Thumbnails_Manager
+     */
+    static function get_instance($context = False)
+    {
+        if (!isset(self::$_instances[$context])) {
+            self::$_instances[$context] = new C_Dynamic_Thumbnails_Manager($context);
+        }
+        return self::$_instances[$context];
+    }
+}
 class C_Exif_Writer_Wrapper
 {
     // Because our C_Exif_Writer class relies on PEL (a library which uses namespaces) we wrap
@@ -243,19 +600,20 @@ class C_Exif_Writer_Wrapper
     /**
      * @param $old_file
      * @param $new_file
-     * @throws \lsolesen\pel\PelIfdException
-     * @throws \lsolesen\pel\PelInvalidArgumentException
-     * @throws \lsolesen\pel\PelInvalidDataException
-     * @throws \lsolesen\pel\PelJpegInvalidMarkerException
+     * @return bool|int
      */
     public static function copy_metadata($old_file, $new_file)
     {
         if (!M_NextGen_Data::check_pel_min_php_requirement()) {
-            return;
+            return FALSE;
         }
         self::load_pel();
         return @C_Exif_Writer::copy_metadata($old_file, $new_file);
     }
+    /**
+     * @param $filename
+     * @return array|null
+     */
     public static function read_metadata($filename)
     {
         if (!M_NextGen_Data::check_pel_min_php_requirement()) {
@@ -264,10 +622,27 @@ class C_Exif_Writer_Wrapper
         self::load_pel();
         return @C_Exif_Writer::read_metadata($filename);
     }
+    /**
+     * @param array $exif
+     * @return array
+     */
+    public static function reset_orientation($exif = array())
+    {
+        if (!M_NextGen_Data::check_pel_min_php_requirement()) {
+            return array();
+        }
+        self::load_pel();
+        return @C_Exif_Writer::reset_orientation($exif);
+    }
+    /**
+     * @param $filename
+     * @param $metadata
+     * @return bool|int
+     */
     public static function write_metadata($filename, $metadata)
     {
         if (!M_NextGen_Data::check_pel_min_php_requirement()) {
-            return;
+            return FALSE;
         }
         self::load_pel();
         return @C_Exif_Writer::write_metadata($filename, $metadata);
@@ -303,22 +678,15 @@ class Mixin_NextGen_Gallery_Validation
             }
         }
         // Set what will be the path to the gallery
+        $storage = C_Gallery_Storage::get_instance();
         if (!$this->object->path) {
-            $storage = C_Gallery_Storage::get_instance();
-            $this->object->path = $storage->get_upload_relpath($this->object);
-            unset($storage);
-        } else {
-            $this->object->path = M_NextGen_Data::strip_html($this->object->path);
-            $this->object->path = str_replace(array('"', "''", ">", "<"), array('', '', '', ''), $this->object->path);
+            $this->object->path = $storage->get_gallery_relpath($this->object);
         }
         // Ensure that the gallery path is restricted to $fs->get_document_root('galleries')
         $fs = C_Fs::get_instance();
         $root = $fs->get_document_root('galleries');
-        $gallery_abspath = $fs->get_absolute_path($fs->join_paths($root, $this->object->path));
-        $storage = C_Gallery_Storage::get_instance();
-        if ($gallery_abspath[0] != DIRECTORY_SEPARATOR) {
-            $gallery_abspath = DIRECTORY_SEPARATOR . $gallery_abspath;
-        }
+        $storage->flush_gallery_path_cache($this->object);
+        $gallery_abspath = $storage->get_gallery_abspath($this->object);
         if (strpos($gallery_abspath, $root) === FALSE) {
             $this->object->add_error(sprintf(__("Gallery path must be located in %s", 'nggallery'), $root), 'gallerypath');
             $this->object->path = $storage->get_upload_relpath($this->object);
@@ -332,7 +700,7 @@ class Mixin_NextGen_Gallery_Validation
         // Establish some rules on where galleries can go
         $abspath = $storage->get_gallery_abspath($this->object);
         // Galleries should at least be a sub-folder, not directly in WP_CONTENT
-        $not_directly_in = array('content' => WP_CONTENT_DIR, 'wordpress root' => $fs->get_document_root());
+        $not_directly_in = array('content' => wp_normalize_path(WP_CONTENT_DIR), 'wordpress root' => $fs->get_document_root());
         if (!empty($_SERVER['DOCUMENT_ROOT'])) {
             $not_directly_in['document root'] = $_SERVER['DOCUMENT_ROOT'];
         }
@@ -341,8 +709,9 @@ class Mixin_NextGen_Gallery_Validation
                 $this->object->add_error(sprintf(__("Gallery path must be a sub-directory under the %s directory", 'nggallery'), $label), 'gallerypath');
             }
         }
+        $ABSPATH = wp_normalize_path(ABSPATH);
         // Disallow galleries from being under these directories at all
-        $not_ever_in = array('plugins' => WP_PLUGIN_DIR, 'must use plugins' => WPMU_PLUGIN_DIR, 'wp-admin' => $fs->join_paths(ABSPATH, 'wp-admin'), 'wp-includes' => $fs->join_paths(ABSPATH, 'wp-admin'), 'themes' => get_theme_root());
+        $not_ever_in = array('plugins' => wp_normalize_path(WP_PLUGIN_DIR), 'must use plugins' => wp_normalize_path(WPMU_PLUGIN_DIR), 'wp-admin' => $fs->join_paths($ABSPATH, 'wp-admin'), 'wp-includes' => $fs->join_paths($ABSPATH, 'wp-admin'), 'themes' => get_theme_root());
         foreach ($not_ever_in as $label => $dir) {
             if (strpos($abspath, $dir) === 0) {
                 $this->object->add_error(sprintf(__("Gallery path cannot be under %s directory", 'nggallery'), $label), 'gallerypath');
@@ -450,7 +819,7 @@ class C_Gallery_Mapper extends C_CustomTable_DataMapper_Driver
      */
     public static function get_instance($context = False)
     {
-        if (is_null(self::$_instance)) {
+        if (!self::$_instance) {
             $klass = get_class();
             self::$_instance = new $klass($context);
         }
@@ -470,10 +839,10 @@ class Mixin_Gallery_Mapper extends Mixin
     }
     function _save_entity($entity)
     {
+        $storage = C_Gallery_Storage::get_instance();
         // A bug in NGG 2.1.24 allowed galleries to be created with spaces in the directory name, unreplaced by dashes
         // This causes a few problems everywhere, so we here allow users a way to fix those galleries by just re-saving
         if (FALSE !== strpos($entity->path, ' ')) {
-            $storage = C_Gallery_Storage::get_instance();
             $abspath = $storage->get_gallery_abspath($entity->{$entity->id_field});
             $pre_path = $entity->path;
             $entity->path = str_replace(' ', '-', $entity->path);
@@ -502,6 +871,7 @@ class Mixin_Gallery_Mapper extends Mixin
         }
         $retval = $this->call_parent('_save_entity', $entity);
         if ($retval) {
+            wp_mkdir_p($storage->get_gallery_abspath($entity));
             do_action('ngg_created_new_gallery', $entity->{$entity->id_field});
             C_Photocrati_Transient_Manager::flush('displayed_gallery_rendering');
         }
@@ -579,100 +949,6 @@ class Mixin_Gallery_Mapper extends Mixin
         $this->object->_set_default_value($entity, 'author', get_current_user_id());
     }
 }
-class GalleryStorageDriverNotSelectedException extends RuntimeException
-{
-    function __construct($message = '', $code = NULL, $previous = NULL)
-    {
-        if (!$message) {
-            $message = "No gallery storage driver selected.";
-        }
-        parent::__construct($message, $code, $previous);
-    }
-}
-class Mixin_GalleryStorage extends Mixin
-{
-    /**
-     * Returns the name of the class which provides the gallerystorage implementation
-     * @param string|bool $context (optional)
-     * @return string
-     */
-    function _get_driver_factory_method($context = FALSE)
-    {
-        $factory_method = '';
-        // No constant has been defined to establish a global gallerystorage driver
-        if (!defined('GALLERYSTORAGE_DRIVER')) {
-            // Get the datamapper configured in the database
-            $factory_method = C_NextGen_Settings::get_instance()->gallerystorage_driver;
-            // Define a constant and use this as the global gallerystorage driver,
-            // unless running in a SimpleTest Environment
-            if (!isset($GLOBALS['SIMPLE_TEST_RUNNING'])) {
-                define('GALLERYSTORAGE_DRIVER', $factory_method);
-            }
-        } else {
-            $factory_method = GALLERYSTORAGE_DRIVER;
-        }
-        return $factory_method;
-    }
-}
-class C_GalleryStorage_Base extends C_Component
-{
-    /**
-     * Gets the url or path of an image of a particular size
-     * @param string $method
-     * @param array $args
-     * @return mixed
-     */
-    function __call($method, $args)
-    {
-        if (preg_match("/^get_(\\w+)_(abspath|url|dimensions|html|size_params)\$/", $method, $match)) {
-            if (isset($match[1]) && isset($match[2]) && !$this->has_method($method)) {
-                $method = 'get_image_' . $match[2];
-                $args[] = $match[1];
-                // array($image, $size)
-                return parent::__call($method, $args);
-            }
-        }
-        return parent::__call($method, $args);
-    }
-}
-/**
- * Class C_Gallery_Storage
- * @mixin Mixin_GalleryStorage
- * @implements I_Gallery_Storage
- */
-class C_Gallery_Storage extends C_GalleryStorage_Base
-{
-    public static $_instances = array();
-    function define($context = FALSE)
-    {
-        parent::define($context);
-        $this->add_mixin('Mixin_GalleryStorage');
-        $this->wrap('I_GalleryStorage_Driver', array(&$this, '_get_driver'), $context);
-        $this->implement('I_Gallery_Storage');
-    }
-    /**
-     * @param bool|string $context
-     * @return C_Gallery_Storage
-     */
-    static function get_instance($context = False)
-    {
-        if (!isset(self::$_instances[$context])) {
-            self::$_instances[$context] = new C_Gallery_Storage($context);
-        }
-        return self::$_instances[$context];
-    }
-    /**
-     * Returns the implementation for the gallerystorage
-     * @param string $context
-     * @return mixed
-     */
-    function _get_driver($context)
-    {
-        $factory_method = $this->_get_driver_factory_method($context);
-        $factory = C_Component_Factory::get_instance();
-        return $factory->create($factory_method, FALSE, $context);
-    }
-}
 class E_UploadException extends E_NggErrorException
 {
     function __construct($message = '', $code = NULL, $previous = NULL)
@@ -732,1205 +1008,59 @@ class E_No_Image_Library_Exception extends E_NggErrorException
         }
     }
 }
-class Mixin_GalleryStorage_Driver_Base extends Mixin
-{
-    /**
-     * Set correct file permissions (taken from wp core). Should be called
-     * after writing any file
-     *
-     * @class nggAdmin
-     * @param string $filename
-     * @return bool $result
-     */
-    function _chmod($filename = '')
-    {
-        $stat = @stat(dirname($filename));
-        $perms = $stat['mode'] & 0666;
-        // Remove execute bits for files
-        if (@chmod($filename, $perms)) {
-            return TRUE;
-        }
-        return FALSE;
-    }
-    /**
-     * Gets the id of a gallery, regardless of whether an integer
-     * or object was passed as an argument
-     * @param mixed $gallery_obj_or_id
-     * @return null|int
-     */
-    function _get_gallery_id($gallery_obj_or_id)
-    {
-        $retval = NULL;
-        $gallery_key = $this->object->_gallery_mapper->get_primary_key_column();
-        if (is_object($gallery_obj_or_id)) {
-            if (isset($gallery_obj_or_id->{$gallery_key})) {
-                $retval = $gallery_obj_or_id->{$gallery_key};
-            }
-        } elseif (is_numeric($gallery_obj_or_id)) {
-            $retval = $gallery_obj_or_id;
-        }
-        return $retval;
-    }
-    /**
-     * Gets the id of an image, regardless of whether an integer
-     * or object was passed as an argument
-     * @param object|int $image_obj_or_id
-     * @return null|int
-     */
-    function _get_image_id($image_obj_or_id)
-    {
-        $retval = NULL;
-        $image_key = $this->object->_image_mapper->get_primary_key_column();
-        if (is_object($image_obj_or_id)) {
-            if (isset($image_obj_or_id->{$image_key})) {
-                $retval = $image_obj_or_id->{$image_key};
-            }
-        } elseif (is_numeric($image_obj_or_id)) {
-            $retval = $image_obj_or_id;
-        }
-        return $retval;
-    }
-    function convert_slashes($path)
-    {
-        $search = array('/', "\\");
-        $replace = array(DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR);
-        return str_replace($search, $replace, $path);
-    }
-    function delete_directory($abspath)
-    {
-        $retval = FALSE;
-        if (@file_exists($abspath)) {
-            $files = scandir($abspath);
-            array_shift($files);
-            array_shift($files);
-            foreach ($files as $file) {
-                $file_abspath = implode(DIRECTORY_SEPARATOR, array(rtrim($abspath, "/\\"), $file));
-                if (is_dir($file_abspath)) {
-                    $this->object->delete_directory($file_abspath);
-                } else {
-                    unlink($file_abspath);
-                }
-            }
-            rmdir($abspath);
-            $retval = @file_exists($abspath);
-        }
-        return $retval;
-    }
-    /**
-     * Backs up an image file
-     *
-     * @param int|object $image
-     * @return bool
-     */
-    function backup_image($image)
-    {
-        $retval = FALSE;
-        $image_path = $this->object->get_image_abspath($image);
-        if ($image_path && @file_exists($image_path)) {
-            $retval = copy($image_path, $this->object->get_backup_abspath($image));
-            // Store the dimensions of the image
-            if (function_exists('getimagesize')) {
-                $mapper = C_Image_Mapper::get_instance();
-                if (!is_object($image)) {
-                    $image = $mapper->find($image);
-                }
-                if ($image) {
-                    if (!property_exists($image, 'meta_data')) {
-                        $image->meta_data = array();
-                    }
-                    $dimensions = getimagesize($image_path);
-                    $image->meta_data['backup'] = array('filename' => basename($image_path), 'width' => $dimensions[0], 'height' => $dimensions[1], 'generated' => microtime());
-                    $mapper->save($image);
-                }
-            }
-        }
-        return $retval;
-    }
-    /**
-     * Copies images into another gallery
-     * @param array $images
-     * @param int|object $gallery
-     * @param boolean $db optionally only copy the image files
-     * @param boolean $move move the image instead of copying
-     * @return bool
-     */
-    function copy_images($images, $gallery, $db = TRUE, $move = FALSE)
-    {
-        $retval = FALSE;
-        // Ensure we have a valid gallery
-        if ($gallery = $this->object->_get_gallery_id($gallery)) {
-            $gallery_path = $this->object->get_gallery_abspath($gallery);
-            $image_key = $this->object->_image_mapper->get_primary_key_column();
-            $retval = TRUE;
-            $fs = C_Fs::get_instance();
-            // Iterate through each image to copy...
-            foreach ($images as $image) {
-                // Copy each image size
-                foreach ($this->object->get_image_sizes() as $size) {
-                    $image_path = $this->object->get_image_abspath($image, $size);
-                    $dst = $fs->join_paths($gallery_path, M_I18n::mb_basename($image_path));
-                    $success = $move ? move($image_path, $dst) : copy($image_path, $dst);
-                    if (!$success) {
-                        $retval = FALSE;
-                    }
-                }
-                // Copy the db entry
-                if ($db) {
-                    if (is_numeric($image)) {
-                        $this->object->_image_mapper($image);
-                    }
-                    unset($image->{$image_key});
-                    $image->galleryid = $gallery;
-                }
-            }
-        }
-        return $retval;
-    }
-    /**
-     * Empties the gallery cache directory of content
-     * @param object $gallery
-     */
-    function flush_cache($gallery)
-    {
-        $cache = C_Cache::get_instance();
-        $cache->flush_directory($this->object->get_cache_abspath($gallery));
-    }
-    /**
-     * Gets the absolute path of the backup of an original image
-     * @param string $image
-     * @return null|string
-     */
-    function get_backup_abspath($image)
-    {
-        $retval = null;
-        if ($image_path = $this->object->get_image_abspath($image)) {
-            $retval = $image_path . '_backup';
-        }
-        return $retval;
-    }
-    function get_backup_dimensions($image)
-    {
-        return $this->object->get_image_dimensions($image, 'backup');
-    }
-    function get_backup_url($image)
-    {
-        return $this->object->get_image_url($image, 'backup');
-    }
-    /**
-     * Returns the absolute path to the cache directory of a gallery.
-     *
-     * Without the gallery parameter the legacy (pre 2.0) shared directory is returned.
-     *
-     * @param int|object|false|C_Gallery $gallery (optional)
-     * @return string Absolute path to cache directory
-     */
-    function get_cache_abspath($gallery = FALSE)
-    {
-        $retval = NULL;
-        if (FALSE == $gallery) {
-            $gallerypath = C_NextGen_Settings::get_instance()->gallerypath;
-            $retval = implode(DIRECTORY_SEPARATOR, array(rtrim(C_Fs::get_instance()->get_document_root('gallery'), "/\\"), rtrim($gallerypath, "/\\"), 'cache'));
-        } else {
-            if (is_numeric($gallery)) {
-                $gallery = $this->object->_gallery_mapper->find($gallery);
-            }
-            $retval = rtrim(implode(DIRECTORY_SEPARATOR, array($this->object->get_gallery_abspath($gallery), 'dynamic')), "/\\");
-        }
-        return $retval;
-    }
-    /**
-     * Gets the absolute path where the full-sized image is stored
-     * @param int|object $image
-     * @return null|string
-     */
-    function get_full_abspath($image)
-    {
-        return $this->object->get_image_abspath($image, 'full');
-    }
-    /**
-     * Alias to get_image_dimensions()
-     * @param int|object $image
-     * @return array
-     */
-    function get_full_dimensions($image)
-    {
-        return $this->object->get_image_dimensions($image, 'full');
-    }
-    /**
-     * Alias to get_image_html()
-     * @param int|object $image
-     * @return string
-     */
-    function get_full_html($image)
-    {
-        return $this->object->get_image_html($image, 'full');
-    }
-    /**
-     * Alias for get_original_url()
-     *
-     * @param int|stdClass|C_Image $image
-     * @param bool $check_existance (optional)
-     * @return string
-     */
-    function get_full_url($image, $check_existance = FALSE)
-    {
-        return $this->object->get_image_url($image, 'full', $check_existance);
-    }
-    function get_image_checksum($image, $size = 'full')
-    {
-        $retval = NULL;
-        if ($image_abspath = $this->get_image_abspath($image, $size, TRUE)) {
-            $retval = md5_file($image_abspath);
-        }
-        return $retval;
-    }
-    /**
-     * Gets the dimensions for a particular-sized image
-     *
-     * @param int|object $image
-     * @param string $size
-     * @return null|array
-     */
-    function get_image_dimensions($image, $size = 'full')
-    {
-        $retval = NULL;
-        // If an image id was provided, get the entity
-        if (is_numeric($image)) {
-            $image = $this->object->_image_mapper->find($image);
-        }
-        // Ensure we have a valid image
-        if ($image) {
-            // Adjust size parameter
-            switch ($size) {
-                case 'original':
-                    $size = 'full';
-                    break;
-                case 'thumbnails':
-                case 'thumbnail':
-                case 'thumb':
-                case 'thumbs':
-                    $size = 'thumbnail';
-                    break;
-            }
-            // Image dimensions are stored in the $image->meta_data
-            // property for all implementations
-            if (isset($image->meta_data) && isset($image->meta_data[$size])) {
-                $retval = $image->meta_data[$size];
-            } else {
-                $abspath = $this->object->get_image_abspath($image, $size);
-                if (@file_exists($abspath)) {
-                    $dims = getimagesize($abspath);
-                    if ($dims) {
-                        $retval['width'] = $dims[0];
-                        $retval['height'] = $dims[1];
-                    }
-                } elseif ($size == 'backup') {
-                    $retval = $this->object->get_image_dimensions($image, 'full');
-                }
-            }
-        }
-        return $retval;
-    }
-    /**
-     * Gets the HTML for an image
-     * @param int|object $image
-     * @param string $size
-     * @param array $attributes (optional)
-     * @return string
-     */
-    function get_image_html($image, $size = 'full', $attributes = array())
-    {
-        $retval = "";
-        if (is_numeric($image)) {
-            $image = $this->object->_image_mapper->find($image);
-        }
-        if ($image) {
-            // Set alt text if not already specified
-            if (!isset($attributes['alttext'])) {
-                $attributes['alt'] = esc_attr($image->alttext);
-            }
-            // Set the title if not already set
-            if (!isset($attributes['title'])) {
-                $attributes['title'] = esc_attr($image->alttext);
-            }
-            // Set the dimensions if not set already
-            if (!isset($attributes['width']) or !isset($attributes['height'])) {
-                $dimensions = $this->object->get_image_dimensions($image, $size);
-                if (!isset($attributes['width'])) {
-                    $attributes['width'] = $dimensions['width'];
-                }
-                if (!isset($attributes['height'])) {
-                    $attributes['height'] = $dimensions['height'];
-                }
-            }
-            // Set the url if not already specified
-            if (!isset($attributes['src'])) {
-                $attributes['src'] = $this->object->get_image_url($image, $size);
-            }
-            // Format attributes
-            $attribs = array();
-            foreach ($attributes as $attrib => $value) {
-                $attribs[] = "{$attrib}=\"{$value}\"";
-            }
-            $attribs = implode(" ", $attribs);
-            // Return HTML string
-            $retval = "<img {$attribs} />";
-        }
-        return $retval;
-    }
-    /**
-     * An alias for get_full_abspath()
-     * @param int|object $image
-     * @param bool $check_existance
-     * @return null|string
-     */
-    function get_original_abspath($image, $check_existance = FALSE)
-    {
-        return $this->object->get_image_abspath($image, 'full', $check_existance);
-    }
-    /**
-     * Alias to get_image_dimensions()
-     * @param int|object $image
-     * @return array
-     */
-    function get_original_dimensions($image)
-    {
-        return $this->object->get_image_dimensions($image, 'full');
-    }
-    /**
-     * Alias to get_image_html()
-     * @param int|object $image
-     * @return string
-     */
-    function get_original_html($image)
-    {
-        return $this->object->get_image_html($image, 'full');
-    }
-    /**
-     * Gets the url to the original-sized image
-     * @param int|stdClass|C_Image $image
-     * @param bool $check_existance (optional)
-     * @return string
-     */
-    function get_original_url($image, $check_existance = FALSE)
-    {
-        return $this->object->get_image_url($image, 'full', $check_existance);
-    }
-    /**
-     * Gets the upload path, optionally for a particular gallery
-     * @param int|C_Gallery|object|false $gallery (optional)
-     * @return string
-     */
-    function get_upload_relpath($gallery = FALSE)
-    {
-        $fs = C_Fs::get_instance();
-        $retval = str_replace($fs->get_document_root('gallery'), '', $this->object->get_upload_abspath($gallery));
-        return DIRECTORY_SEPARATOR . ltrim($retval, "/\\");
-    }
-    /**
-     * Moves images from to another gallery
-     * @param array $images
-     * @param int|object $gallery
-     * @param boolean $db optionally only move the image files, not the db entries
-     * @return boolean
-     */
-    function move_images($images, $gallery, $db = TRUE)
-    {
-        return $this->object->copy_images($images, $gallery, $db, TRUE);
-    }
-    function is_image_file($filename = NULL)
-    {
-        $retval = FALSE;
-        if (!$filename && isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
-            $filename = $_FILES['file']['tmp_name'];
-        }
-        $valid_types = array('image/gif', 'image/jpg', 'image/jpeg', 'image/pjpeg', 'image/png');
-        // If we can, we'll verify the mime type
-        if (function_exists('exif_imagetype')) {
-            if (($image_type = @exif_imagetype($filename)) !== FALSE) {
-                $retval = in_array(image_type_to_mime_type($image_type), $valid_types);
-            }
-        } else {
-            $file_info = @getimagesize($filename);
-            if (isset($file_info[2])) {
-                $retval = in_array(image_type_to_mime_type($file_info[2]), $valid_types);
-            }
-        }
-        return $retval;
-    }
-    function is_zip()
-    {
-        $retval = FALSE;
-        if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
-            $file_info = $_FILES['file'];
-            if (isset($file_info['type'])) {
-                $type = $file_info['type'];
-                $type_parts = explode('/', $type);
-                if (strtolower($type_parts[0]) == 'application') {
-                    $spec = $type_parts[1];
-                    $spec_parts = explode('-', $spec);
-                    $spec_parts = array_map('strtolower', $spec_parts);
-                    if (in_array($spec, array('zip', 'octet-stream')) || in_array('zip', $spec_parts)) {
-                        $retval = true;
-                    }
-                }
-            }
-        }
-        return $retval;
-    }
-    function upload_zip($gallery_id)
-    {
-        $memory_limit = intval(ini_get('memory_limit'));
-        if (!extension_loaded('suhosin') && $memory_limit < 256) {
-            @ini_set('memory_limit', '256M');
-        }
-        $retval = FALSE;
-        if ($this->object->is_zip()) {
-            $fs = C_Fs::get_instance();
-            // Uses the WordPress ZIP abstraction API
-            include_once $fs->join_paths(ABSPATH, 'wp-admin', 'includes', 'file.php');
-            WP_Filesystem();
-            // Ensure that we truly have the gallery id
-            $gallery_id = $this->_get_gallery_id($gallery_id);
-            $zipfile = $_FILES['file']['tmp_name'];
-            $dest_path = implode(DIRECTORY_SEPARATOR, array(rtrim(get_temp_dir(), "/\\"), 'unpacked-' . M_I18n::mb_basename($zipfile)));
-            wp_mkdir_p($dest_path);
-            if (unzip_file($zipfile, $dest_path) === TRUE) {
-                $dest_dir = $dest_path . DIRECTORY_SEPARATOR;
-                $files = glob($dest_dir . '*');
-                $size = 0;
-                foreach ($files as $file) {
-                    if (is_file($dest_dir . $file)) {
-                        $size += filesize($dest_dir . $file);
-                    }
-                }
-                if ($size == 0) {
-                    $this->object->delete_directory($dest_path);
-                    $destination = wp_upload_dir();
-                    $destination_path = $destination['basedir'];
-                    $dest_path = implode(DIRECTORY_SEPARATOR, array(rtrim($destination_path, "/\\"), 'unpacked-' . M_I18n::mb_basename($zipfile)));
-                    wp_mkdir_p($dest_path);
-                    if (unzip_file($zipfile, $dest_path) === TRUE) {
-                        $retval = $this->object->import_gallery_from_fs($dest_path, $gallery_id);
-                    }
-                } else {
-                    $retval = $this->object->import_gallery_from_fs($dest_path, $gallery_id);
-                }
-            }
-            $this->object->delete_directory($dest_path);
-        }
-        if (!extension_loaded('suhosin')) {
-            @ini_set('memory_limit', $memory_limit . 'M');
-        }
-        return $retval;
-    }
-    function is_current_user_over_quota()
-    {
-        $retval = FALSE;
-        $settings = C_NextGen_Settings::get_instance();
-        if (is_multisite() && $settings->get('wpmuQuotaCheck')) {
-            require_once ABSPATH . 'wp-admin/includes/ms.php';
-            $retval = upload_is_user_over_quota(FALSE);
-        }
-        return $retval;
-    }
-    /**
-     * Uploads base64 file to a gallery
-     * @param int|stdClass|C_Gallery $gallery
-     * @param $data base64-encoded string of data representing the image
-     * @param string|false (optional) $filename specifies the name of the file
-     * @param int|false $image_id (optional)
-     * @param bool $override (optional)
-     * @return C_Image
-     */
-    function upload_base64_image($gallery, $data, $filename = FALSE, $image_id = FALSE, $override = FALSE)
-    {
-        $settings = C_NextGen_Settings::get_instance();
-        $memory_limit = intval(ini_get('memory_limit'));
-        if (!extension_loaded('suhosin') && $memory_limit < 256) {
-            @ini_set('memory_limit', '256M');
-        }
-        $retval = NULL;
-        if ($gallery_id = $this->object->_get_gallery_id($gallery)) {
-            if ($this->object->is_current_user_over_quota()) {
-                $message = sprintf(__('Sorry, you have used your space allocation. Please delete some files to upload more files.', 'nggallery'));
-                throw new E_NoSpaceAvailableException($message);
-            }
-            // Get path information. The use of get_upload_abspath() might
-            // not be the best for some drivers. For example, if using the
-            // WordPress Media Library for uploading, then the wp_upload_bits()
-            // function should perhaps be used
-            $upload_dir = $this->object->get_upload_abspath($gallery);
-            // Perhaps a filename was given instead of base64 data?
-            if (preg_match("#/\\\\#", $data[0]) && @file_exists($data)) {
-                if (!$filename) {
-                    $filename = M_I18n::mb_basename($data);
-                }
-                $data = file_get_contents($data);
-            }
-            // Determine filenames
-            $original_filename = $filename;
-            $filename = $filename ? sanitize_file_name($original_filename) : uniqid('nextgen-gallery');
-            if (preg_match("/\\-(png|jpg|gif|jpeg)\$/i", $filename, $match)) {
-                $filename = str_replace($match[0], '.' . $match[1], $filename);
-            }
-            $abs_filename = implode(DIRECTORY_SEPARATOR, array($upload_dir, $filename));
-            // Ensure that the filename is valid
-            if (!preg_match("/(png|jpeg|jpg|gif)\$/i", $abs_filename)) {
-                throw new E_UploadException(__('Invalid image file. Acceptable formats: JPG, GIF, and PNG.', 'nggallery'));
-            }
-            // Prevent duplicate filenames: check if the filename exists and
-            // begin appending '-i' until we find an open slot
-            if (!ini_get('safe_mode') && @file_exists($abs_filename) && !$override) {
-                $file_exists = TRUE;
-                $i = 0;
-                do {
-                    $i++;
-                    $parts = explode('.', $filename);
-                    $extension = array_pop($parts);
-                    $new_filename = implode('.', $parts) . '-' . $i . '.' . $extension;
-                    $new_abs_filename = implode(DIRECTORY_SEPARATOR, array($upload_dir, $new_filename));
-                    if (!@file_exists($new_abs_filename)) {
-                        $file_exists = FALSE;
-                        $filename = $new_filename;
-                        $abs_filename = $new_abs_filename;
-                    }
-                } while ($file_exists == TRUE);
-            }
-            // Create or retrieve the image object
-            $image = NULL;
-            if ($image_id) {
-                $image = $this->object->_image_mapper->find($image_id, TRUE);
-                if ($image) {
-                    unset($image->meta_data['saved']);
-                }
-            }
-            if (!$image) {
-                $image = $this->object->_image_mapper->create();
-            }
-            $retval = $image;
-            // Create or update the database record
-            $image->alttext = str_replace('.' . M_I18n::mb_pathinfo($original_filename, PATHINFO_EXTENSION), '', M_I18n::mb_basename($original_filename));
-            $image->galleryid = $this->object->_get_gallery_id($gallery);
-            $image->filename = $filename;
-            $image->image_slug = nggdb::get_unique_slug(sanitize_title_with_dashes($image->alttext), 'image');
-            $image_key = $this->object->_image_mapper->get_primary_key_column();
-            // If we can't write to the directory, then there's no point in continuing
-            if (!@file_exists($upload_dir)) {
-                @wp_mkdir_p($upload_dir);
-            }
-            if (!is_writable($upload_dir)) {
-                throw new E_InsufficientWriteAccessException(FALSE, $upload_dir, FALSE);
-            }
-            try {
-                // Try writing the image
-                $fp = fopen($abs_filename, 'wb');
-                fwrite($fp, $this->maybe_base64_decode($data));
-                fclose($fp);
-                // Ensure that we're not vulerable to CVE-2017-2416 exploit
-                if (($dimensions = getimagesize($abs_filename)) !== FALSE) {
-                    if (isset($dimensions[0]) && intval($dimensions[0]) > 30000 || isset($dimensions[1]) && intval($dimensions[1]) > 30000) {
-                        unlink($abs_filename);
-                        throw new E_UploadException(__('Image file too large. Maximum image dimensions supported are 30k x 30k.'));
-                    }
-                }
-                // Save the image
-                $image_id = $this->object->_image_mapper->save($image);
-                if (!$image_id) {
-                    throw new E_InvalidEntityException();
-                }
-                if ($settings->imgBackup) {
-                    $this->object->backup_image($image);
-                }
-                if ($settings->imgAutoResize) {
-                    $this->object->generate_image_clone($abs_filename, $abs_filename, $this->object->get_image_size_params($image_id, 'full'));
-                }
-                $this->object->_image_mapper->_use_cache = FALSE;
-                $image = $this->object->_image_mapper->find($image_id);
-                $this->object->_image_mapper->_use_cache = TRUE;
-                // Ensure that fullsize dimensions are added to metadata array
-                $dimensions = getimagesize($abs_filename);
-                $full_meta = array('width' => $dimensions[0], 'height' => $dimensions[1], 'md5' => $this->object->get_image_checksum($image, 'full'));
-                if (!isset($image->meta_data) or is_string($image->meta_data) && strlen($image->meta_data) == 0 or is_bool($image->meta_data)) {
-                    $image->meta_data = array();
-                }
-                $image->meta_data = array_merge($image->meta_data, $full_meta);
-                $image->meta_data['full'] = $full_meta;
-                // Don't forget to append the 'full' entry in meta_data in the db
-                $this->object->_image_mapper->save($image);
-                // Generate a thumbnail for the image
-                $this->object->generate_thumbnail($image);
-                // Set gallery preview image if missing
-                C_Gallery_Mapper::get_instance()->set_preview_image($gallery, $image_id, TRUE);
-                // Notify other plugins that an image has been added
-                do_action('ngg_added_new_image', $image);
-                // delete dirsize after adding new images
-                delete_transient('dirsize_cache');
-                // Seems redundant to above hook. Maintaining for legacy purposes
-                do_action('ngg_after_new_images_added', $gallery_id, array($image->{$image_key}));
-            } catch (E_UploadException $ex) {
-                throw $ex;
-            } catch (E_No_Image_Library_Exception $ex) {
-                throw $ex;
-            } catch (E_Clean_Exit $ex) {
-                // pass
-            } catch (Exception $ex) {
-                throw new E_InsufficientWriteAccessException(FALSE, $abs_filename, FALSE, $ex);
-            }
-        } else {
-            throw new E_EntityNotFoundException();
-        }
-        if (!extension_loaded('suhosin')) {
-            @ini_set('memory_limit', $memory_limit . 'M');
-        }
-        return $retval;
-    }
-    function maybe_base64_decode($data)
-    {
-        $decoded = base64_decode($data);
-        if ($decoded === FALSE) {
-            return $data;
-        } else {
-            if (base64_encode($decoded) == $data) {
-                return base64_decode($data);
-            }
-        }
-        return $data;
-    }
-    function import_gallery_from_fs($abspath, $gallery_id = FALSE, $create_new_gallerypath = TRUE, $gallery_title = NULL, $filenames = array())
-    {
-        $retval = FALSE;
-        if (@file_exists($abspath)) {
-            $fs = C_Fs::get_instance();
-            // Ensure that this folder has images
-            // Ensure that this folder has images
-            $i = 0;
-            $files = array();
-            foreach (scandir($abspath) as $file) {
-                if ($file == '.' || $file == '..') {
-                    continue;
-                }
-                $file_abspath = $fs->join_paths($abspath, $file);
-                // The first directory is considered valid
-                if (is_dir($file_abspath) && $i === 0) {
-                    $files[] = $file_abspath;
-                } elseif ($this->is_image_file($file_abspath)) {
-                    if ($filenames && array_search($file_abspath, $filenames) !== FALSE) {
-                        $files[] = $file_abspath;
-                    } else {
-                        if (!$filenames) {
-                            $files[] = $file_abspath;
-                        }
-                    }
-                }
-            }
-            if (!empty($files)) {
-                // Get needed utilities
-                $gallery_mapper = C_Gallery_Mapper::get_instance();
-                // Sometimes users try importing a directory, which actually has all images under another directory
-                if (is_dir($files[0])) {
-                    return $this->import_gallery_from_fs($files[0], $gallery_id, $create_new_gallerypath, $gallery_title, $filenames);
-                }
-                // If no gallery has been specified, then use the directory name as the gallery name
-                if (!$gallery_id) {
-                    // Create the gallery
-                    $gallery = $gallery_mapper->create(array('title' => $gallery_title ? $gallery_title : M_I18n::mb_basename($abspath)));
-                    if (!$create_new_gallerypath) {
-                        $gallery->path = str_ireplace(ABSPATH, '', $abspath);
-                    }
-                    // Save the gallery
-                    if ($gallery->save()) {
-                        $gallery_id = $gallery->id();
-                    }
-                }
-                // Ensure that we have a gallery id
-                if ($gallery_id) {
-                    $retval = array('gallery_id' => $gallery_id, 'image_ids' => array());
-                    foreach ($files as $file_abspath) {
-                        if (!preg_match("/\\.(jpg|jpeg|gif|png)\$/i", $file_abspath)) {
-                            continue;
-                        }
-                        $image = null;
-                        if ($create_new_gallerypath) {
-                            $image = $this->object->upload_base64_image($gallery_id, file_get_contents($file_abspath), str_replace(' ', '_', M_I18n::mb_basename($file_abspath)));
-                        } else {
-                            // Create the database record ... TODO cleanup, some duplication here from upload_base64_image
-                            $factory = C_Component_Factory::get_instance();
-                            $image = $factory->create('image');
-                            $image->alttext = sanitize_title_with_dashes(str_replace('.' . M_I18n::mb_pathinfo($file_abspath, PATHINFO_EXTENSION), '', M_I18n::mb_basename($file_abspath)));
-                            $image->galleryid = $this->object->_get_gallery_id($gallery_id);
-                            $image->filename = M_I18n::mb_basename($file_abspath);
-                            $image->image_slug = nggdb::get_unique_slug(sanitize_title_with_dashes($image->alttext), 'image');
-                            $image_key = $this->object->_image_mapper->get_primary_key_column();
-                            $abs_filename = $file_abspath;
-                            if ($image_id = $this->object->_image_mapper->save($image)) {
-                                try {
-                                    if (C_NextGen_settings::get_instance()->imgBackup) {
-                                        $this->object->backup_image($image);
-                                    }
-                                    #															if ($settings->imgAutoResize)
-                                    #															    $this->object->generate_image_clone(
-                                    #															        $abs_filename,
-                                    #															        $abs_filename,
-                                    #															        $this->object->get_image_size_params($image_id, 'full')
-                                    #															    );
-                                    // Ensure that fullsize dimensions are added to metadata array
-                                    $dimensions = getimagesize($abs_filename);
-                                    $full_meta = array('width' => $dimensions[0], 'height' => $dimensions[1]);
-                                    if (!isset($image->meta_data) || is_string($image->meta_data) && strlen($image->meta_data) === 0) {
-                                        $image->meta_data = array();
-                                    } else {
-                                        if (is_string($image->meta_data)) {
-                                            // TODO: We should probably unserialize in this circumstance
-                                        }
-                                    }
-                                    $image->meta_data = array_merge($image->meta_data, $full_meta);
-                                    $image->meta_data['full'] = $full_meta;
-                                    // Generate a thumbnail for the image
-                                    $this->object->generate_thumbnail($image);
-                                    // Set gallery preview image if missing
-                                    C_Gallery_Mapper::get_instance()->set_preview_image($gallery, $image_id, TRUE);
-                                    // Notify other plugins that an image has been added
-                                    do_action('ngg_added_new_image', $image);
-                                    // delete dirsize after adding new images
-                                    delete_transient('dirsize_cache');
-                                    // Seems redundant to above hook. Maintaining for legacy purposes
-                                    do_action('ngg_after_new_images_added', $gallery_id, array($image->{$image_key}));
-                                } catch (Exception $ex) {
-                                    throw new E_InsufficientWriteAccessException(FALSE, $abs_filename, FALSE, $ex);
-                                }
-                            } else {
-                                throw new E_InvalidEntityException();
-                            }
-                        }
-                        $retval['image_ids'][] = $image->{$image->id_field};
-                    }
-                    // Add the gallery name to the result
-                    $gallery = $gallery_mapper->find($gallery_id);
-                    $retval['gallery_name'] = $gallery->title;
-                    unset($gallery);
-                }
-            }
-        }
-        return $retval;
-    }
-    function get_image_format_list()
-    {
-        $format_list = array(IMAGETYPE_GIF => 'gif', IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png');
-        return $format_list;
-    }
-    /**
-     * Returns an array of properties of a resulting clone image if and when generated
-     * @param string $image_path
-     * @param string $clone_path
-     * @param array $params
-     * @return null|array
-     */
-    function calculate_image_clone_result($image_path, $clone_path, $params)
-    {
-        $width = isset($params['width']) ? $params['width'] : NULL;
-        $height = isset($params['height']) ? $params['height'] : NULL;
-        $quality = isset($params['quality']) ? $params['quality'] : NULL;
-        $type = isset($params['type']) ? $params['type'] : NULL;
-        $crop = isset($params['crop']) ? $params['crop'] : NULL;
-        $watermark = isset($params['watermark']) ? $params['watermark'] : NULL;
-        $rotation = isset($params['rotation']) ? $params['rotation'] : NULL;
-        $reflection = isset($params['reflection']) ? $params['reflection'] : NULL;
-        $crop_frame = isset($params['crop_frame']) ? $params['crop_frame'] : NULL;
-        $result = NULL;
-        // Ensure we have a valid image
-        if ($image_path && @file_exists($image_path)) {
-            // Ensure target directory exists, but only create 1 subdirectory
-            $image_dir = dirname($image_path);
-            $clone_dir = dirname($clone_path);
-            $image_extension = M_I18n::mb_pathinfo($image_path, PATHINFO_EXTENSION);
-            $image_extension_str = null;
-            $clone_extension = M_I18n::mb_pathinfo($clone_path, PATHINFO_EXTENSION);
-            $clone_extension_str = null;
-            if ($image_extension != null) {
-                $image_extension_str = '.' . $image_extension;
-            }
-            if ($clone_extension != null) {
-                $clone_extension_str = '.' . $clone_extension;
-            }
-            $image_basename = M_I18n::mb_basename($image_path);
-            $clone_basename = M_I18n::mb_basename($clone_path);
-            // We use a default suffix as passing in null as the suffix will make WordPress use a default
-            $clone_suffix = null;
-            $format_list = $this->object->get_image_format_list();
-            $clone_format = null;
-            // format is determined below and based on $type otherwise left to null
-            // suffix is only used to reconstruct paths for image_resize function
-            if (strpos($clone_basename, $image_basename) === 0) {
-                $clone_suffix = substr($clone_basename, strlen($image_basename));
-            }
-            if ($clone_suffix != null && $clone_suffix[0] == '-') {
-                // WordPress adds '-' on its own
-                $clone_suffix = substr($clone_suffix, 1);
-            }
-            // Get original image dimensions
-            $dimensions = getimagesize($image_path);
-            if ($width == null && $height == null) {
-                if ($dimensions != null) {
-                    if ($width == null) {
-                        $width = $dimensions[0];
-                    }
-                    if ($height == null) {
-                        $height = $dimensions[1];
-                    }
-                } else {
-                    // XXX Don't think there's any other option here but to fail miserably...use some hard-coded defaults maybe?
-                    return null;
-                }
-            }
-            if ($dimensions != null) {
-                $dimensions_ratio = $dimensions[0] / $dimensions[1];
-                if ($width == null) {
-                    $width = (int) round($height * $dimensions_ratio);
-                    if ($width == $dimensions[0] - 1) {
-                        $width = $dimensions[0];
-                    }
-                } else {
-                    if ($height == null) {
-                        $height = (int) round($width / $dimensions_ratio);
-                        if ($height == $dimensions[1] - 1) {
-                            $height = $dimensions[1];
-                        }
-                    }
-                }
-                if ($width > $dimensions[0]) {
-                    $width = $dimensions[0];
-                }
-                if ($height > $dimensions[1]) {
-                    $height = $dimensions[1];
-                }
-                $image_format = $dimensions[2];
-                if ($type != null) {
-                    if (is_string($type)) {
-                        $type = strtolower($type);
-                        // Indexes in the $format_list array correspond to IMAGETYPE_XXX values appropriately
-                        if (($index = array_search($type, $format_list)) !== false) {
-                            $type = $index;
-                            if ($type != $image_format) {
-                                // Note: this only changes the FORMAT of the image but not the extension
-                                $clone_format = $type;
-                            }
-                        }
-                    }
-                }
-            }
-            if ($width == null || $height == null) {
-                // Something went wrong...
-                return null;
-            }
-            $result['clone_path'] = $clone_path;
-            $result['clone_directory'] = $clone_dir;
-            $result['clone_suffix'] = $clone_suffix;
-            $result['clone_format'] = $clone_format;
-            $result['base_width'] = $dimensions[0];
-            $result['base_height'] = $dimensions[1];
-            // image_resize() has limitations:
-            // - no easy crop frame support
-            // - fails if the dimensions are unchanged
-            // - doesn't support filename prefix, only suffix so names like thumbs_original_name.jpg for $clone_path are not supported
-            //   also suffix cannot be null as that will make WordPress use a default suffix...we could use an object that returns empty string from __toString() but for now just fallback to ngg generator
-            if (FALSE) {
-                // disabling the WordPress method for Iteration #6
-                //			if (($crop_frame == null || !$crop) && ($dimensions[0] != $width && $dimensions[1] != $height) && $clone_suffix != null)
-                $result['method'] = 'wordpress';
-                $new_dims = image_resize_dimensions($dimensions[0], $dimensions[1], $width, $height, $crop);
-                if ($new_dims) {
-                    list($dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) = $new_dims;
-                    $width = $dst_w;
-                    $height = $dst_h;
-                } else {
-                    $result['error'] = new WP_Error('error_getting_dimensions', __('Could not calculate resized image dimensions'));
-                }
-            } else {
-                $result['method'] = 'nextgen';
-                $original_width = $dimensions[0];
-                $original_height = $dimensions[1];
-                $aspect_ratio = $width / $height;
-                $orig_ratio_x = $original_width / $width;
-                $orig_ratio_y = $original_height / $height;
-                if ($crop) {
-                    $algo = 'shrink';
-                    // either 'adapt' or 'shrink'
-                    if ($crop_frame != null) {
-                        $crop_x = (int) round($crop_frame['x']);
-                        $crop_y = (int) round($crop_frame['y']);
-                        $crop_width = (int) round($crop_frame['width']);
-                        $crop_height = (int) round($crop_frame['height']);
-                        $crop_final_width = (int) round($crop_frame['final_width']);
-                        $crop_final_height = (int) round($crop_frame['final_height']);
-                        $crop_width_orig = $crop_width;
-                        $crop_height_orig = $crop_height;
-                        $crop_factor_x = $crop_width / $crop_final_width;
-                        $crop_factor_y = $crop_height / $crop_final_height;
-                        $crop_ratio_x = $crop_width / $width;
-                        $crop_ratio_y = $crop_height / $height;
-                        if ($algo == 'adapt') {
-                            // XXX not sure about this...don't use for now
-                            #							$crop_width = (int) round($width * $crop_factor_x);
-                            #							$crop_height = (int) round($height * $crop_factor_y);
-                        } else {
-                            if ($algo == 'shrink') {
-                                if ($crop_ratio_x < $crop_ratio_y) {
-                                    $crop_width = max($crop_width, $width);
-                                    $crop_height = (int) round($crop_width / $aspect_ratio);
-                                } else {
-                                    $crop_height = max($crop_height, $height);
-                                    $crop_width = (int) round($crop_height * $aspect_ratio);
-                                }
-                                if ($crop_width == $crop_width_orig - 1) {
-                                    $crop_width = $crop_width_orig;
-                                }
-                                if ($crop_height == $crop_height_orig - 1) {
-                                    $crop_height = $crop_height_orig;
-                                }
-                            }
-                        }
-                        $crop_diff_x = (int) round(($crop_width_orig - $crop_width) / 2);
-                        $crop_diff_y = (int) round(($crop_height_orig - $crop_height) / 2);
-                        $crop_x += $crop_diff_x;
-                        $crop_y += $crop_diff_y;
-                        $crop_max_x = $crop_x + $crop_width;
-                        $crop_max_y = $crop_y + $crop_height;
-                        // Check if we're overflowing borders
-                        //
-                        if ($crop_x < 0) {
-                            $crop_x = 0;
-                        } else {
-                            if ($crop_max_x > $original_width) {
-                                $crop_x -= $crop_max_x - $original_width;
-                            }
-                        }
-                        if ($crop_y < 0) {
-                            $crop_y = 0;
-                        } else {
-                            if ($crop_max_y > $original_height) {
-                                $crop_y -= $crop_max_y - $original_height;
-                            }
-                        }
-                    } else {
-                        if ($orig_ratio_x < $orig_ratio_y) {
-                            $crop_width = $original_width;
-                            $crop_height = (int) round($height * $orig_ratio_x);
-                        } else {
-                            $crop_height = $original_height;
-                            $crop_width = (int) round($width * $orig_ratio_y);
-                        }
-                        if ($crop_width == $width - 1) {
-                            $crop_width = $width;
-                        }
-                        if ($crop_height == $height - 1) {
-                            $crop_height = $height;
-                        }
-                        $crop_x = (int) round(($original_width - $crop_width) / 2);
-                        $crop_y = (int) round(($original_height - $crop_height) / 2);
-                    }
-                    $result['crop_area'] = array('x' => $crop_x, 'y' => $crop_y, 'width' => $crop_width, 'height' => $crop_height);
-                } else {
-                    // Just constraint dimensions to ensure there's no stretching or deformations
-                    list($width, $height) = wp_constrain_dimensions($original_width, $original_height, $width, $height);
-                }
-            }
-            $result['width'] = $width;
-            $result['height'] = $height;
-            $result['quality'] = $quality;
-            $real_width = $width;
-            $real_height = $height;
-            if ($rotation && in_array(abs($rotation), array(90, 270))) {
-                $real_width = $height;
-                $real_height = $width;
-            }
-            if ($reflection) {
-                // default for nextgen was 40%, this is used in generate_image_clone as well
-                $reflection_amount = 40;
-                // Note, round() would probably be best here but using the same code that C_NggLegacy_Thumbnail uses for compatibility
-                $reflection_height = intval($real_height * ($reflection_amount / 100));
-                $real_height = $real_height + $reflection_height;
-            }
-            $result['real_width'] = $real_width;
-            $result['real_height'] = $real_height;
-        }
-        return $result;
-    }
-    /**
-     * Returns an array of dimensional properties (width, height, real_width, real_height) of a resulting clone image if and when generated
-     * @param string $image_path
-     * @param string $clone_path
-     * @param array $params
-     * @return null|array
-     */
-    function calculate_image_clone_dimensions($image_path, $clone_path, $params)
-    {
-        $retval = null;
-        $result = $this->object->calculate_image_clone_result($image_path, $clone_path, $params);
-        if ($result != null) {
-            $retval = array('width' => $result['width'], 'height' => $result['height'], 'real_width' => $result['real_width'], 'real_height' => $result['real_height']);
-        }
-        return $retval;
-    }
-    /**
-     * Generates a "clone" for an existing image, the clone can be altered using the $params array
-     * @param string $image_path
-     * @param string $clone_path
-     * @param array $params
-     * @return null|object
-     */
-    function generate_image_clone($image_path, $clone_path, $params)
-    {
-        $crop = isset($params['crop']) ? $params['crop'] : NULL;
-        $watermark = isset($params['watermark']) ? $params['watermark'] : NULL;
-        $reflection = isset($params['reflection']) ? $params['reflection'] : NULL;
-        $rotation = isset($params['rotation']) ? $params['rotation'] : NULL;
-        $flip = isset($params['flip']) ? $params['flip'] : NULL;
-        $destpath = NULL;
-        $thumbnail = NULL;
-        $result = $this->object->calculate_image_clone_result($image_path, $clone_path, $params);
-        // XXX this should maybe be removed and extra settings go into $params?
-        $settings = apply_filters('ngg_settings_during_image_generation', C_NextGen_Settings::get_instance()->to_array());
-        // Ensure we have a valid image
-        if ($image_path && @file_exists($image_path) && $result != null && !isset($result['error'])) {
-            $image_dir = dirname($image_path);
-            $clone_path = $result['clone_path'];
-            $clone_dir = $result['clone_directory'];
-            $clone_format = $result['clone_format'];
-            $format_list = $this->object->get_image_format_list();
-            // Ensure target directory exists, but only create 1 subdirectory
-            if (!@file_exists($clone_dir)) {
-                if (strtolower(realpath($image_dir)) != strtolower(realpath($clone_dir))) {
-                    if (strtolower(realpath($image_dir)) == strtolower(realpath(dirname($clone_dir)))) {
-                        wp_mkdir_p($clone_dir);
-                    }
-                }
-            }
-            $method = $result['method'];
-            $width = $result['width'];
-            $height = $result['height'];
-            $quality = $result['quality'];
-            if ($quality == null) {
-                $quality = 100;
-            }
-            if ($method == 'wordpress') {
-                $original = wp_get_image_editor($image_path);
-                $destpath = $clone_path;
-                if (!is_wp_error($original)) {
-                    $original->resize($width, $height, $crop);
-                    $original->set_quality($quality);
-                    $original->save($clone_path);
-                }
-            } else {
-                if ($method == 'nextgen') {
-                    $destpath = $clone_path;
-                    $thumbnail = new C_NggLegacy_Thumbnail($image_path, true);
-                    if (!$thumbnail->error) {
-                        if ($crop) {
-                            $crop_area = $result['crop_area'];
-                            $crop_x = $crop_area['x'];
-                            $crop_y = $crop_area['y'];
-                            $crop_width = $crop_area['width'];
-                            $crop_height = $crop_area['height'];
-                            $thumbnail->crop($crop_x, $crop_y, $crop_width, $crop_height);
-                        }
-                        $thumbnail->resize($width, $height);
-                    } else {
-                        $thumbnail = NULL;
-                    }
-                }
-            }
-            // We successfully generated the thumbnail
-            if (is_string($destpath) && (@file_exists($destpath) || $thumbnail != null)) {
-                if ($clone_format != null) {
-                    if (isset($format_list[$clone_format])) {
-                        $clone_format_extension = $format_list[$clone_format];
-                        $clone_format_extension_str = null;
-                        if ($clone_format_extension != null) {
-                            $clone_format_extension_str = '.' . $clone_format_extension;
-                        }
-                        $destpath_info = M_I18n::mb_pathinfo($destpath);
-                        $destpath_extension = $destpath_info['extension'];
-                        if (strtolower($destpath_extension) != strtolower($clone_format_extension)) {
-                            $destpath_dir = $destpath_info['dirname'];
-                            $destpath_basename = $destpath_info['filename'];
-                            $destpath_new = $destpath_dir . DIRECTORY_SEPARATOR . $destpath_basename . $clone_format_extension_str;
-                            if (@file_exists($destpath) && rename($destpath, $destpath_new) || $thumbnail != null) {
-                                $destpath = $destpath_new;
-                            }
-                        }
-                    }
-                }
-                if (is_null($thumbnail)) {
-                    $thumbnail = new C_NggLegacy_Thumbnail($destpath, true);
-                    if ($thumbnail->error) {
-                        $thumbnail = null;
-                        return null;
-                    }
-                } else {
-                    $thumbnail->fileName = $destpath;
-                }
-                // This is quite odd, when watermark equals int(0) it seems all statements below ($watermark == 'image') and ($watermark == 'text') both evaluate as true
-                // so we set it at null if it evaluates to any null-like value
-                if ($watermark == null) {
-                    $watermark = null;
-                }
-                if ($watermark == 1 || $watermark === true) {
-                    if (in_array(strval($settings['wmType']), array('image', 'text'))) {
-                        $watermark = $settings['wmType'];
-                    } else {
-                        $watermark = 'text';
-                    }
-                }
-                $watermark = strval($watermark);
-                if ($watermark == 'image') {
-                    $thumbnail->watermarkImgPath = $settings['wmPath'];
-                    $thumbnail->watermarkImage($settings['wmPos'], $settings['wmXpos'], $settings['wmYpos']);
-                } else {
-                    if ($watermark == 'text') {
-                        $thumbnail->watermarkText = $settings['wmText'];
-                        $thumbnail->watermarkCreateText($settings['wmColor'], $settings['wmFont'], $settings['wmSize'], $settings['wmOpaque']);
-                        $thumbnail->watermarkImage($settings['wmPos'], $settings['wmXpos'], $settings['wmYpos']);
-                    }
-                }
-                if ($rotation && in_array(abs($rotation), array(90, 180, 270))) {
-                    $thumbnail->rotateImageAngle($rotation);
-                }
-                $flip = strtolower($flip);
-                if ($flip && in_array($flip, array('h', 'v', 'hv'))) {
-                    $flip_h = in_array($flip, array('h', 'hv'));
-                    $flip_v = in_array($flip, array('v', 'hv'));
-                    $thumbnail->flipImage($flip_h, $flip_v);
-                }
-                if ($reflection) {
-                    $thumbnail->createReflection(40, 40, 50, FALSE, '#a4a4a4');
-                }
-                if ($clone_format != null && isset($format_list[$clone_format])) {
-                    // Force format
-                    $thumbnail->format = strtoupper($format_list[$clone_format]);
-                }
-                $thumbnail = apply_filters('ngg_before_save_thumbnail', $thumbnail);
-                $exif_iptc = @C_Exif_Writer_Wrapper::read_metadata($image_path);
-                $thumbnail->save($destpath, $quality);
-                @C_Exif_Writer_Wrapper::write_metadata($destpath, $exif_iptc);
-            }
-        }
-        return $thumbnail;
-    }
-}
 /**
- * Class C_GalleryStorage_Driver_Base
- * @mixin Mixin_GalleryStorage_Driver_Base
- * @implements I_GalleryStorage_Driver
+ * Class C_Gallery_Storage
+ * @implements I_Gallery_Storage
+ * @mixin Mixin_GalleryStorage_Base
+ * @mixin Mixin_GalleryStorage_Base_Dynamic
+ * @mixin Mixin_GalleryStorage_Base_Getters
+ * @mixin Mixin_GalleryStorage_Base_Management
+ * @mixin Mixin_GalleryStorage_Base_MediaLibrary
+ * @mixin Mixin_GalleryStorage_Base_Upload
  */
-class C_GalleryStorage_Driver_Base extends C_GalleryStorage_Base
+class C_Gallery_Storage extends C_Component
 {
     public static $_instances = array();
     function define($context = FALSE)
     {
         parent::define($context);
-        $this->add_mixin('Mixin_GalleryStorage_Driver_Base');
+        $this->add_mixin('Mixin_GalleryStorage_Base');
+        $this->add_mixin('Mixin_GalleryStorage_Base_Dynamic');
+        $this->add_mixin('Mixin_GalleryStorage_Base_Getters');
+        $this->add_mixin('Mixin_GalleryStorage_Base_Management');
+        $this->add_mixin('Mixin_GalleryStorage_Base_MediaLibrary');
+        $this->add_mixin('Mixin_GalleryStorage_Base_Upload');
+        $this->implement('I_Gallery_Storage');
         $this->implement('I_GalleryStorage_Driver');
+        // backwards compatibility
+    }
+    /**
+     * Provides some aliases to defined methods; thanks to this a call to C_Gallery_Storage->get_thumb_url() is
+     * translated to C_Gallery_Storage->get_image_url('thumb').
+     * TODO: Remove this 'magic' method so that our code is always understandable without needing deep context
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     * @throws Exception
+     */
+    function __call($method, $args)
+    {
+        if (preg_match("/^get_(\\w+)_(abspath|url|dimensions|html|size_params)\$/", $method, $match)) {
+            if (isset($match[1]) && isset($match[2]) && !$this->has_method($method)) {
+                $method = 'get_image_' . $match[2];
+                $args[] = $match[1];
+                return parent::__call($method, $args);
+            }
+        }
+        return parent::__call($method, $args);
+    }
+    /**
+     * For compatibility reasons, we include this method. This used to be used to get the underlying storage driver.
+     * Necessary for Imagify integration
+     */
+    function &get_wrapped_instance()
+    {
+        return $this;
     }
     function initialize()
     {
@@ -1940,22 +1070,14 @@ class C_GalleryStorage_Driver_Base extends C_GalleryStorage_Base
     }
     /**
      * @param bool|string $context
-     * @return C_GalleryStorage_Driver_Base
+     * @return C_Gallery_Storage
      */
-    public static function get_instance($context = False)
+    static function get_instance($context = False)
     {
         if (!isset(self::$_instances[$context])) {
-            self::$_instances[$context] = new C_GalleryStorage_Driver_Base($context);
+            self::$_instances[$context] = new C_Gallery_Storage($context);
         }
         return self::$_instances[$context];
-    }
-    /**
-     * Gets the class name of the driver used
-     * @return string
-     */
-    function get_driver_class_name()
-    {
-        return get_called_class();
     }
 }
 class Mixin_NextGen_Gallery_Image_Validation extends Mixin
@@ -1973,6 +1095,7 @@ class Mixin_NextGen_Gallery_Image_Validation extends Mixin
         $this->validates_numericality_of('galleryid');
         $this->validates_numericality_of($this->id());
         $this->validates_numericality_of('sortorder');
+        $this->validates_length_of('filename', 185, '<=', __('Image filenames may not be longer than 185 characters in length', 'nextgen-gallery'));
         return $this->object->is_valid();
     }
 }
@@ -2431,7 +1554,7 @@ class C_Image_Wrapper
                 }
                 if (!$w || !$h) {
                     if (is_string($this->_orig_image->meta_data)) {
-                        $this->_orig_image = C_Image_Mapper::get_instance()->unserialize($this->_orig_image->meta_data);
+                        $this->_orig_image = C_NextGen_Serializable::unserialize($this->_orig_image->meta_data);
                     }
                     if (!isset($this->_orig_image->meta_data['thumbnail'])) {
                         $storage = $this->get_storage();
@@ -3239,840 +2362,6 @@ class C_NextGen_Metadata extends C_Component
             utf8_encode($str);
         }
         return $str;
-    }
-}
-class Mixin_NggLegacy_GalleryStorage_Driver extends Mixin
-{
-    /**
-     * Returns the named sizes available for images
-     * @return array
-     */
-    function get_image_sizes()
-    {
-        return array('full', 'thumbnail');
-    }
-    /**
-     * @param object|bool $gallery (optional)
-     * @return string
-     */
-    function get_upload_abspath($gallery = FALSE)
-    {
-        // Base upload path
-        $retval = C_NextGen_Settings::get_instance()->gallerypath;
-        $fs = C_Fs::get_instance();
-        // If a gallery has been specified, then we'll
-        // append the slug
-        if ($gallery) {
-            $retval = $this->get_gallery_abspath($gallery);
-        }
-        // We need to make this an absolute path
-        if (strpos($retval, $fs->get_document_root('gallery')) !== 0) {
-            $retval = rtrim($fs->join_paths($fs->get_document_root('gallery'), $retval), "/\\");
-        }
-        // Convert slashes
-        return $this->object->convert_slashes($retval);
-    }
-    /**
-     * Get the gallery path persisted in the database for the gallery
-     * @param int|object|C_Gallery $gallery
-     * @return string
-     */
-    function get_gallery_abspath($gallery)
-    {
-        $retval = NULL;
-        $fs = C_Fs::get_instance();
-        // Get the gallery entity from the database
-        if ($gallery) {
-            if (is_numeric($gallery)) {
-                $gallery = $this->object->_gallery_mapper->find($gallery);
-            }
-        }
-        // It just doesn't exist
-        if (!$gallery || is_numeric($gallery)) {
-            return $retval;
-        }
-        // We we have a gallery, determine it's path
-        if ($gallery) {
-            if (isset($gallery->path)) {
-                $retval = $gallery->path;
-            } elseif (isset($gallery->slug)) {
-                $fs = C_Fs::get_instance();
-                $basepath = C_NextGen_Settings::get_instance()->gallerypath;
-                $retval = $fs->join_paths($basepath, sanitize_file_name(sanitize_title($gallery->slug)));
-            }
-        }
-        $root_type = defined('NGG_GALLERY_ROOT_TYPE') ? NGG_GALLERY_ROOT_TYPE : 'site';
-        if ($root_type == 'content') {
-            // This requires explanation: in case our content root ends with the same directory name
-            // that the gallery path begins with we remove the duplicate name from $retval. This is
-            // necessary because the default WP_CONTENT_DIR setting ends in /wp-content/ and
-            // NextGEN's default gallery path begins with /wp-content/. This also allows gallery
-            // paths to also be expressed as simply "/gallery-name/"
-            $exploded_root = explode(DIRECTORY_SEPARATOR, trim($fs->get_document_root('content'), '/\\'));
-            $exploded_gallery = explode(DIRECTORY_SEPARATOR, trim($retval, '/\\'));
-            $exploded_gallery = array_values($exploded_gallery);
-            $last_gallery_dirname = $exploded_gallery[0];
-            $last_root_dirname = end($exploded_root);
-            if ($last_root_dirname === $last_gallery_dirname) {
-                unset($exploded_gallery[0]);
-                $retval = implode(DIRECTORY_SEPARATOR, $exploded_gallery);
-            }
-        }
-        // Ensure that the path is absolute
-        if (strpos($retval, $fs->get_document_root('gallery')) !== 0) {
-            $retval = rtrim($fs->join_paths($fs->get_document_root('gallery'), $retval), "/\\");
-        }
-        return $this->object->convert_slashes(rtrim($retval, "/\\"));
-    }
-    /**
-     * Gets the absolute path where the image is stored. Can optionally return the path for a particular sized image.
-     * @param int|object $image
-     * @param string $size (optional) Default = full
-     * @param bool $check_existance (optional) Default = false
-     * @return string
-     */
-    function get_image_abspath($image, $size = 'full', $check_existance = FALSE)
-    {
-        $retval = NULL;
-        $fs = C_Fs::get_instance();
-        // Ensure that we have a size
-        if (!$size) {
-            $size = 'full';
-        }
-        // If we have the id, get the actual image entity
-        if (is_numeric($image)) {
-            $image = $this->object->_image_mapper->find($image);
-        }
-        // Ensure we have the image entity - user could have passed in an
-        // incorrect id
-        if (is_object($image)) {
-            if ($gallery_path = $this->object->get_gallery_abspath($image->galleryid)) {
-                $folder = $prefix = $size;
-                switch ($size) {
-                    # Images are stored in the associated gallery folder
-                    case 'full':
-                    case 'original':
-                    case 'image':
-                        $retval = $fs->join_paths($gallery_path, $image->filename);
-                        break;
-                    case 'backup':
-                        $retval = $fs->join_paths($gallery_path, $image->filename . '_backup');
-                        if ($check_existance && !@file_exists($retval)) {
-                            $retval = $fs->join_paths($gallery_path, $image->filename);
-                        }
-                        break;
-                    case 'thumbnails':
-                    case 'thumbnail':
-                    case 'thumb':
-                    case 'thumbs':
-                        $size = 'thumbnail';
-                        $folder = 'thumbs';
-                        $prefix = 'thumbs';
-                        // deliberately no break here
-                        // We assume any other size of image is stored in the a
-                        //subdirectory of the same name within the gallery folder
-                        // gallery folder, but with the size appended to the filename
-                    // deliberately no break here
-                    // We assume any other size of image is stored in the a
-                    //subdirectory of the same name within the gallery folder
-                    // gallery folder, but with the size appended to the filename
-                    default:
-                        $image_path = $fs->join_paths($gallery_path, $folder);
-                        // NGG 2.0 stores relative filenames in the meta data of
-                        // an image. It does this because it uses filenames
-                        // that follow conventional WordPress naming scheme.
-                        if (isset($image->meta_data) && isset($image->meta_data[$size]) && isset($image->meta_data[$size]['filename'])) {
-                            $image_path = $fs->join_paths($image_path, $image->meta_data[$size]['filename']);
-                        } else {
-                            $image_path = $fs->join_paths($image_path, "{$prefix}_{$image->filename}");
-                        }
-                        $retval = $image_path;
-                        break;
-                }
-            }
-        }
-        // Check the existance of the file
-        if ($retval && $check_existance) {
-            if (!@file_exists($retval)) {
-                $retval = NULL;
-            }
-        }
-        return $retval ? rtrim($retval, "/\\") : $retval;
-    }
-    /**
-     * Gets the url of a particular-sized image
-     * @param int|object $image
-     * @param string $size
-     * @return string
-     */
-    function get_image_url($image, $size = 'full', $check_existance = FALSE, $image_abspath = FALSE)
-    {
-        $retval = NULL;
-        $fs = C_Fs::get_instance();
-        $router = C_Router::get_instance();
-        if (!$image_abspath) {
-            $image_abspath = $this->object->get_image_abspath($image, $size, $check_existance);
-        }
-        if ($image_abspath) {
-            // Use multibyte pathinfo() in case of UTF8 gallery or file names
-            $parts = M_I18n::mb_pathinfo($image_abspath);
-            $image_abspath = $parts['dirname'] . DIRECTORY_SEPARATOR . $parts['basename'];
-            $doc_root = $fs->get_document_root('gallery');
-            if ($doc_root != null) {
-                $doc_root = rtrim($doc_root, "/\\") . DIRECTORY_SEPARATOR;
-            }
-            // if docroot is "/" we would generate urls like /wp-contentpluginsnextgen-galleryetcetc
-            if ($doc_root !== '/') {
-                $request_uri = str_replace($doc_root, '', $image_abspath);
-            } else {
-                $request_uri = $image_abspath;
-            }
-            $request_uri = '/' . ltrim(str_replace("\\", '/', $request_uri), "/");
-            // Because like%@this.jpg is a valid directory and filename
-            $request_uri = explode('/', $request_uri);
-            foreach ($request_uri as $ndx => $segment) {
-                $request_uri[$ndx] = rawurlencode($segment);
-            }
-            $request_uri = implode('/', $request_uri);
-            $retval = $router->remove_url_segment('/index.php', $router->get_url($request_uri, FALSE, 'gallery'));
-        }
-        return apply_filters('ngg_get_image_url', $retval, $image, $size);
-    }
-    /**
-     * Uploads an image for a particular gallerys
-     * @param int|object|C_Gallery $gallery
-     * @param string|bool $filename (optional) Specifies the name of the file
-     * @param string|bool $data (optional) If specified, expects base64 encoded string of data
-     * @return C_Image
-     */
-    function upload_image($gallery, $filename = FALSE, $data = FALSE)
-    {
-        $retval = NULL;
-        // Ensure that we have the data present that we require
-        if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
-            //		$_FILES = Array(
-            //		 [file]	=>	Array (
-            //            [name] => Canada_landscape4.jpg
-            //            [type] => image/jpeg
-            //            [tmp_name] => /private/var/tmp/php6KO7Dc
-            //            [error] => 0
-            //            [size] => 64975
-            //         )
-            //
-            $file = $_FILES['file'];
-            if ($this->object->is_zip()) {
-                $retval = $this->object->upload_zip($gallery);
-            } else {
-                if ($this->is_image_file()) {
-                    $retval = $this->object->upload_base64_image($gallery, file_get_contents($file['tmp_name']), $filename ? $filename : (isset($file['name']) ? $file['name'] : FALSE));
-                } else {
-                    // Remove the non-valid (and potentially insecure) file from the PHP upload directory
-                    if (isset($_FILES['file']['tmp_name'])) {
-                        $filename = $_FILES['file']['tmp_name'];
-                        @unlink($filename);
-                    }
-                    throw new E_UploadException(__('Invalid image file. Acceptable formats: JPG, GIF, and PNG.', 'nggallery'));
-                }
-            }
-        } elseif ($data) {
-            $retval = $this->object->upload_base64_image($filename, $data);
-        } else {
-            throw new E_UploadException();
-        }
-        return $retval;
-    }
-    function get_image_size_params($image, $size, $params = null, $skip_defaults = false)
-    {
-        // Get the image entity
-        if (is_numeric($image)) {
-            $image = $this->object->_image_mapper->find($image);
-        }
-        $params = apply_filters('ngg_get_image_size_params', $params, $size, $image);
-        // Ensure we have a valid image
-        if ($image) {
-            $settings = C_NextGen_Settings::get_instance();
-            if (!$skip_defaults) {
-                // Get default settings
-                if ($size == 'full') {
-                    if (!isset($params['quality'])) {
-                        $params['quality'] = $settings->imgQuality;
-                    }
-                } else {
-                    if (!isset($params['crop'])) {
-                        $params['crop'] = $settings->thumbfix;
-                    }
-                    if (!isset($params['quality'])) {
-                        $params['quality'] = $settings->thumbquality;
-                    }
-                }
-                // Not sure why this was here... commenting out for now, always require watermark parameters to be explicit
-                #				if (!isset($params['watermark'])) {
-                #					$params['watermark'] = $settings->wmType;
-                #				}
-            }
-            // width and height when omitted make generate_image_clone create a clone with original size, so try find defaults regardless of $skip_defaults
-            if (!isset($params['width']) || !isset($params['height'])) {
-                // First test if this is a "known" image size, i.e. if we store these sizes somewhere when users re-generate these sizes from the UI...this is required to be compatible with legacy
-                // try the 2 default built-in sizes, first thumbnail...
-                if ($size == 'thumbnail') {
-                    if (!isset($params['width'])) {
-                        $params['width'] = $settings->thumbwidth;
-                    }
-                    if (!isset($params['height'])) {
-                        $params['height'] = $settings->thumbheight;
-                    }
-                } else {
-                    if ($size == 'full') {
-                        if (!isset($params['width'])) {
-                            if ($settings->imgAutoResize) {
-                                $params['width'] = $settings->imgWidth;
-                            }
-                        }
-                        if (!isset($params['height'])) {
-                            if ($settings->imgAutoResize) {
-                                $params['height'] = $settings->imgHeight;
-                            }
-                        }
-                    } else {
-                        if (isset($image->meta_data) && isset($image->meta_data[$size])) {
-                            $dimensions = $image->meta_data[$size];
-                            if (!isset($params['width'])) {
-                                $params['width'] = $dimensions['width'];
-                            }
-                            if (!isset($params['height'])) {
-                                $params['height'] = $dimensions['height'];
-                            }
-                        }
-                    }
-                }
-            }
-            if (!isset($params['crop_frame'])) {
-                $crop_frame_size_name = 'thumbnail';
-                if (isset($image->meta_data[$size]['crop_frame'])) {
-                    $crop_frame_size_name = $size;
-                }
-                if (isset($image->meta_data[$crop_frame_size_name]['crop_frame'])) {
-                    $params['crop_frame'] = $image->meta_data[$crop_frame_size_name]['crop_frame'];
-                    if (!isset($params['crop_frame']['final_width'])) {
-                        $params['crop_frame']['final_width'] = $image->meta_data[$crop_frame_size_name]['width'];
-                    }
-                    if (!isset($params['crop_frame']['final_height'])) {
-                        $params['crop_frame']['final_height'] = $image->meta_data[$crop_frame_size_name]['height'];
-                    }
-                }
-            } else {
-                if (!isset($params['crop_frame']['final_width'])) {
-                    $params['crop_frame']['final_width'] = $params['width'];
-                }
-                if (!isset($params['crop_frame']['final_height'])) {
-                    $params['crop_frame']['final_height'] = $params['height'];
-                }
-            }
-        }
-        return $params;
-    }
-    /**
-     * Returns an array of dimensional properties (width, height, real_width, real_height) of a resulting clone image if and when generated
-     * @param object|int $image Image ID or an image object
-     * @param string $size
-     * @param array $params
-     * @param bool $skip_defaults
-     * @return bool|array
-     */
-    function calculate_image_size_dimensions($image, $size, $params = null, $skip_defaults = false)
-    {
-        $retval = FALSE;
-        // Get the image entity
-        if (is_numeric($image)) {
-            $image = $this->object->_image_mapper->find($image);
-        }
-        // Ensure we have a valid image
-        if ($image) {
-            $params = $this->object->get_image_size_params($image, $size, $params, $skip_defaults);
-            // Get the image filename
-            $image_path = $this->object->get_original_abspath($image, 'original');
-            $clone_path = $this->object->get_image_abspath($image, $size);
-            $retval = $this->object->calculate_image_clone_dimensions($image_path, $clone_path, $params);
-        }
-        return $retval;
-    }
-    /**
-     * Generates a specific size for an image
-     * @param int|object|C_Image $image
-     * @param string $size
-     * @param array|null $params (optional)
-     * @param bool $skip_defaults (optional)
-     * @return bool|object
-     */
-    function generate_image_size($image, $size, $params = null, $skip_defaults = false)
-    {
-        $retval = FALSE;
-        // Get the image entity
-        if (is_numeric($image)) {
-            $image = $this->object->_image_mapper->find($image);
-        }
-        // Ensure we have a valid image
-        if ($image) {
-            $params = $this->object->get_image_size_params($image, $size, $params, $skip_defaults);
-            $settings = C_NextGen_Settings::get_instance();
-            // Get the image filename
-            $filename = $this->object->get_original_abspath($image, 'original');
-            $thumbnail = null;
-            if ($size == 'full' && $settings->imgBackup == 1) {
-                // XXX change this? 'full' should be the resized path and 'original' the _backup path
-                $backup_path = $this->object->get_backup_abspath($image);
-                if (!@file_exists($backup_path)) {
-                    @copy($filename, $backup_path);
-                }
-            }
-            // Generate the thumbnail using WordPress
-            $existing_image_abpath = $this->object->get_image_abspath($image, $size);
-            $existing_image_dir = dirname($existing_image_abpath);
-            // removing the old thumbnail is actually not needed as generate_image_clone() will replace it, leaving commented in as reminder in case there are issues in the future
-            if (@file_exists($existing_image_abpath)) {
-                //unlink($existing_image_abpath);
-            }
-            wp_mkdir_p($existing_image_dir);
-            $clone_path = $existing_image_abpath;
-            $thumbnail = $this->object->generate_image_clone($filename, $clone_path, $params);
-            // We successfully generated the thumbnail
-            if ($thumbnail != null) {
-                $clone_path = $thumbnail->fileName;
-                if (function_exists('getimagesize')) {
-                    $dimensions = getimagesize($clone_path);
-                } else {
-                    $dimensions = array($params['width'], $params['height']);
-                }
-                if (!isset($image->meta_data)) {
-                    $image->meta_data = array();
-                }
-                $size_meta = array('width' => $dimensions[0], 'height' => $dimensions[1], 'filename' => M_I18n::mb_basename($clone_path), 'generated' => microtime());
-                if (isset($params['crop_frame'])) {
-                    $size_meta['crop_frame'] = $params['crop_frame'];
-                }
-                $image->meta_data[$size] = $size_meta;
-                if ($size == 'full') {
-                    $image->meta_data['width'] = $size_meta['width'];
-                    $image->meta_data['height'] = $size_meta['height'];
-                }
-                $retval = $this->object->_image_mapper->save($image);
-                do_action('ngg_generated_image', $image, $size, $params);
-                if ($retval == 0) {
-                    $retval = false;
-                }
-                if ($retval) {
-                    $retval = $thumbnail;
-                }
-            } else {
-                // Something went wrong. Thumbnail generation failed!
-            }
-        }
-        return $retval;
-    }
-    /**
-     * Generates a thumbnail for an image
-     * @param int|stdClass|C_Image $image
-     * @return bool
-     */
-    function generate_thumbnail($image, $params = null, $skip_defaults = false)
-    {
-        $sized_image = $this->object->generate_image_size($image, 'thumbnail', $params, $skip_defaults);
-        $retval = false;
-        if ($sized_image != null) {
-            $retval = true;
-            $sized_image->destruct();
-        }
-        return $retval;
-    }
-    /**
-     * Outputs/renders an image
-     * @param int|stdClass|C_Image $image
-     * @return bool
-     */
-    function render_image($image, $size = FALSE)
-    {
-        $format_list = $this->object->get_image_format_list();
-        $abspath = $this->get_image_abspath($image, $size, true);
-        if ($abspath == null) {
-            $thumbnail = $this->object->generate_image_size($image, $size);
-            if ($thumbnail != null) {
-                $abspath = $thumbnail->fileName;
-                $thumbnail->destruct();
-            }
-        }
-        if ($abspath != null) {
-            $data = @getimagesize($abspath);
-            $format = 'jpg';
-            if ($data != null && is_array($data) && isset($format_list[$data[2]])) {
-                $format = $format_list[$data[2]];
-            }
-            // Clear output
-            while (ob_get_level() > 0) {
-                ob_end_clean();
-            }
-            $format = strtolower($format);
-            // output image and headers
-            header('Content-type: image/' . $format);
-            readfile($abspath);
-            return true;
-        }
-        return false;
-    }
-    function _delete_gallery_directory($abspath)
-    {
-        // Remove all image files and purge all empty directories left over
-        $iterator = new DirectoryIterator($abspath);
-        // Only delete image files! Other files may be stored incorrectly but it's not our place to delete them
-        $removable_extensions = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif'));
-        foreach ($removable_extensions as $extension) {
-            $removable_extensions[] = $extension . '_backup';
-        }
-        foreach ($iterator as $file) {
-            if (in_array($file->getBasename(), array('.', '..'))) {
-                continue;
-            } elseif ($file->isFile() || $file->isLink()) {
-                $extension = strtolower(pathinfo($file->getPathname(), PATHINFO_EXTENSION));
-                if (in_array($extension, $removable_extensions, TRUE)) {
-                    @unlink($file->getPathname());
-                }
-            } elseif ($file->isDir()) {
-                $this->object->_delete_gallery_directory($file->getPathname());
-            }
-        }
-        // DO NOT remove directories that still have files in them. Note: '.' and '..' are included with getSize()
-        $empty = TRUE;
-        foreach ($iterator as $file) {
-            if (in_array($file->getBasename(), array('.', '..'))) {
-                continue;
-            }
-            $empty = FALSE;
-        }
-        if ($empty) {
-            @rmdir($iterator->getPath());
-        }
-    }
-    function delete_gallery($gallery)
-    {
-        $fs = C_Fs::get_instance();
-        $safe_dirs = array(DIRECTORY_SEPARATOR, $fs->get_document_root('plugins'), $fs->get_document_root('plugins_mu'), $fs->get_document_root('templates'), $fs->get_document_root('stylesheets'), $fs->get_document_root('content'), $fs->get_document_root('galleries'), $fs->get_document_root());
-        $abspath = $this->object->get_gallery_abspath($gallery);
-        if ($abspath && file_exists($abspath) && !in_array(stripslashes($abspath), $safe_dirs)) {
-            $this->object->_delete_gallery_directory($abspath);
-        }
-    }
-    function delete_image($image, $size = FALSE)
-    {
-        $retval = FALSE;
-        // Ensure that we have the image entity
-        if (is_numeric($image)) {
-            $image = $this->object->_image_mapper->find($image);
-        }
-        if ($image) {
-            $image_id = $image->{$image->id_field};
-            do_action('ngg_delete_image', $image_id, $size);
-            // Delete only a particular image size
-            if ($size) {
-                $abspath = $this->object->get_image_abspath($image, $size);
-                if ($abspath && @file_exists($abspath)) {
-                    unlink($abspath);
-                }
-                if (isset($image->meta_data) && isset($image->meta_data[$size])) {
-                    unset($image->meta_data[$size]);
-                    $this->object->_image_mapper->save($image);
-                }
-            } else {
-                // Get the paths to fullsize and thumbnail files
-                $abspaths = array($this->object->get_full_abspath($image), $this->object->get_thumb_abspath($image), $this->object->get_backup_abspath($image));
-                if (isset($image->meta_data)) {
-                    foreach (array_keys($image->meta_data) as $size) {
-                        $abspaths[] = $this->object->get_image_abspath($image, $size);
-                    }
-                }
-                // Delete each image
-                foreach ($abspaths as $abspath) {
-                    if ($abspath && @file_exists($abspath)) {
-                        unlink($abspath);
-                    }
-                }
-                // Delete the entity
-                $this->object->_image_mapper->destroy($image);
-            }
-            $retval = TRUE;
-        }
-        return $retval;
-    }
-    function set_post_thumbnail($post, $image)
-    {
-        $attachment_id = null;
-        // Get the post id
-        $post_id = $post;
-        if (is_object($post)) {
-            if (property_exists($post, 'ID')) {
-                $post_id = $post->ID;
-            } elseif (property_exists($post, 'post_id')) {
-                $post_id = $post->post_id;
-            }
-        } elseif (is_array($post)) {
-            if (isset($post['ID'])) {
-                $post_id = $post['ID'];
-            } elseif (isset($post['post_id'])) {
-                $post_id = $post['post_id'];
-            }
-        }
-        // Get the image object
-        if (is_int($image)) {
-            $image = C_Image_Mapper::get_instance()->find($image);
-        }
-        // Do we have what we need?
-        if ($image && is_int($post_id)) {
-            $args = array('post_type' => 'attachment', 'meta_key' => '_ngg_image_id', 'meta_compare' => '==', 'meta_value' => $image->{$image->id_field});
-            $upload_dir = wp_upload_dir();
-            $basedir = $upload_dir['basedir'];
-            $thumbs_dir = implode(DIRECTORY_SEPARATOR, array($basedir, 'ngg_featured'));
-            $gallery_abspath = $this->object->get_gallery_abspath($image->galleryid);
-            $image_abspath = $this->object->get_full_abspath($image);
-            $target_path = null;
-            $copy_image = TRUE;
-            // Have we previously set the post thumbnail?
-            if ($posts = get_posts($args)) {
-                $attachment_id = $posts[0]->ID;
-                $attachment_file = get_attached_file($attachment_id);
-                $target_path = $attachment_file;
-                if (filemtime($image_abspath) > filemtime($target_path)) {
-                    $copy_image = TRUE;
-                }
-            } else {
-                $url = $this->object->get_full_url($image);
-                $target_relpath = null;
-                $target_basename = M_I18n::mb_basename($image_abspath);
-                if (strpos($image_abspath, $gallery_abspath) === 0) {
-                    $target_relpath = substr($image_abspath, strlen($gallery_abspath));
-                } else {
-                    if ($image->galleryid) {
-                        $target_relpath = path_join(strval($image->galleryid), $target_basename);
-                    } else {
-                        $target_relpath = $target_basename;
-                    }
-                }
-                $target_relpath = trim($target_relpath, '\\/');
-                $target_path = path_join($thumbs_dir, $target_relpath);
-                $max_count = 100;
-                $count = 0;
-                while (@file_exists($target_path) && $count <= $max_count) {
-                    $count++;
-                    $pathinfo = M_I18n::mb_pathinfo($target_path);
-                    $dirname = $pathinfo['dirname'];
-                    $filename = $pathinfo['filename'];
-                    $extension = $pathinfo['extension'];
-                    $rand = mt_rand(1, 9999);
-                    $basename = $filename . '_' . sprintf('%04d', $rand) . '.' . $extension;
-                    $target_path = path_join($dirname, $basename);
-                }
-                if (@file_exists($target_path)) {
-                    // XXX handle very rare case in which $max_count wasn't enough?
-                }
-                $target_dir = dirname($target_path);
-                wp_mkdir_p($target_dir);
-            }
-            if ($copy_image) {
-                @copy($image_abspath, $target_path);
-                if (!$attachment_id) {
-                    $size = @getimagesize($target_path);
-                    $image_type = $size ? $size['mime'] : 'image/jpeg';
-                    $title = sanitize_file_name($image->alttext);
-                    $caption = sanitize_file_name($image->description);
-                    $attachment = array('post_title' => $title, 'post_content' => $caption, 'post_status' => 'attachment', 'post_parent' => 0, 'post_mime_type' => $image_type, 'guid' => $url);
-                    $attachment_id = wp_insert_attachment($attachment, $target_path);
-                }
-                update_post_meta($attachment_id, '_ngg_image_id', $image->{$image->id_field});
-                wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $target_path));
-            }
-        }
-        return $attachment_id;
-    }
-    /**
-     * Copies (or moves) images into another gallery
-     *
-     * @param array $images
-     * @param int|object $gallery
-     * @param boolean $db optionally only copy the image files
-     * @param boolean $move move the image instead of copying
-     * @return mixed NULL on failure, array|image-ids on success
-     */
-    function copy_images($images, $gallery, $db = TRUE, $move = FALSE)
-    {
-        $new_image_pids = array();
-        // the return value
-        // legacy requires passing just a numeric ID
-        if (is_numeric($gallery)) {
-            $gallery = $this->object->_gallery_mapper->find($gallery);
-        }
-        // move_images() is a wrapper to this function so we implement both features here
-        $func = $move ? 'rename' : 'copy';
-        // legacy allows for arrays of just the ID
-        if (!is_array($images)) {
-            $images = array($images);
-        }
-        // Ensure we have a valid gallery
-        $gallery_id = $this->object->_get_gallery_id($gallery);
-        if (!$gallery_id) {
-            return array();
-        }
-        $image_key = $this->object->_image_mapper->get_primary_key_column();
-        $gallery_abspath = $this->object->get_gallery_abspath($gallery);
-        // Check for folder permission
-        if (!is_dir($gallery_abspath) && !wp_mkdir_p($gallery_abspath)) {
-            echo sprintf(__('Unable to create directory %s.', 'nggallery'), esc_html($gallery_abspath));
-            return $new_image_pids;
-        }
-        if (!is_writable($gallery_abspath)) {
-            echo sprintf(__('Unable to write to directory %s. Is this directory writable by the server?', 'nggallery'), esc_html($gallery_abspath));
-            return $new_image_pids;
-        }
-        $old_gallery_ids = array();
-        $image_pid_map = array();
-        foreach ($images as $image) {
-            if ($this->object->is_current_user_over_quota()) {
-                throw new E_NoSpaceAvailableException(__('Sorry, you have used your space allocation. Please delete some files to upload more files.', 'nggallery'));
-            }
-            // again legacy requires that it be able to pass just a numeric ID
-            if (is_numeric($image)) {
-                $image = $this->object->_image_mapper->find($image);
-            }
-            $old_gallery_ids[] = $image->galleryid;
-            $old_pid = $image->{$image_key};
-            // update the DB if requested
-            $new_image = clone $image;
-            $new_pid = $old_pid;
-            if ($db) {
-                unset($new_image->extras_post_id);
-                $new_image->galleryid = $gallery_id;
-                if (!$move) {
-                    $new_image->image_slug = nggdb::get_unique_slug(sanitize_title_with_dashes($image->alttext), 'image');
-                    unset($new_image->{$image_key});
-                }
-                $new_pid = $this->object->_image_mapper->save($new_image);
-            }
-            if (!$new_pid) {
-                echo sprintf(__('Failed to copy database row for picture %s', 'nggallery'), $old_pid) . '<br />';
-                continue;
-            }
-            // 'backup' is not included in get_image_sizes()
-            $sizes = $this->object->get_image_sizes();
-            $sizes[] = 'backup';
-            // Copy each image size
-            foreach ($sizes as $size) {
-                // if backups are off there's no backup file to copy
-                if (!C_NextGen_Settings::get_instance()->imgBackup && $size == 'backup') {
-                    continue;
-                }
-                $orig_path = $this->object->get_image_abspath($image, $size, TRUE);
-                if (!$orig_path || !@file_exists($orig_path)) {
-                    echo sprintf(__('Failed to get image path for %s', 'nggallery'), esc_html(M_I18n::mb_basename($orig_path))) . '<br/>';
-                    continue;
-                }
-                $new_path = $this->object->get_image_abspath($new_image, $size, FALSE);
-                // Prevent duplicate filenames: check if the filename exists and begin appending '-#'
-                if (!ini_get('safe_mode') && @file_exists($new_path)) {
-                    // prevent get_image_abspath() from using the thumbnail filename in metadata
-                    unset($new_image->meta_data['thumbnail']['filename']);
-                    $file_exists = TRUE;
-                    $i = 0;
-                    do {
-                        $i++;
-                        $parts = explode('.', $image->filename);
-                        $extension = array_pop($parts);
-                        $tmp_filename = implode('.', $parts) . '-' . $i . '.' . $extension;
-                        $new_image->filename = $tmp_filename;
-                        $tmp_path = $this->object->get_image_abspath($new_image, $size, FALSE);
-                        if (!@file_exists($tmp_path)) {
-                            $file_exists = FALSE;
-                            $new_path = $tmp_path;
-                            if ($db) {
-                                $this->object->_image_mapper->save($new_image);
-                            }
-                        }
-                    } while ($file_exists == TRUE);
-                }
-                // Copy files
-                if (!@$func($orig_path, $new_path)) {
-                    echo sprintf(__('Failed to copy image %1$s to %2$s', 'nggallery'), esc_html($orig_path), esc_html($new_path)) . '<br/>';
-                    continue;
-                }
-                // disabling: this is a bit too verbose
-                // if (!empty($tmp_path))
-                //     echo sprintf(__('Image %1$s (%2$s) copied as image %3$s (%4$s) &raquo; The file already existed in the destination gallery.', 'nggallery'), $old_pid, esc_html($orig_path), $new_pid, esc_html($new_path)) . '<br />';
-                // else
-                //     echo sprintf(__('Image %1$s (%2$s) copied as image %3$s (%4$s)', 'nggallery'), $old_pid, esc_html($orig_path), $new_pid, esc_html($new_path)) . '<br />';
-                // Copy tags
-                if ($db) {
-                    $tags = wp_get_object_terms($old_pid, 'ngg_tag', 'fields=ids');
-                    $tags = array_map('intval', $tags);
-                    wp_set_object_terms($new_pid, $tags, 'ngg_tag', true);
-                }
-            }
-            $new_image_pids[] = $new_pid;
-            $image_pid_map[$old_pid] = $new_pid;
-        }
-        $old_gallery_ids = array_unique($old_gallery_ids);
-        if ($move) {
-            do_action('ngg_moved_images', $images, $old_gallery_ids, $gallery_id);
-        } else {
-            do_action('ngg_copied_images', $image_pid_map, $old_gallery_ids, $gallery_id);
-        }
-        $title = '<a href="' . admin_url() . 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=' . $gallery_id . '" >';
-        $title .= $gallery->title;
-        $title .= '</a>';
-        echo '<div class="updated fade " id="message"><p>' . sprintf(__('Copied %1$s picture(s) to gallery %2$s .', 'nggallery'), count($new_image_pids), $title) . '</p></div>';
-        // echo '<hr/>' . sprintf(__('Copied %1$s picture(s) to gallery %2$s .', 'nggallery'), count($new_image_pids), $title);
-        return $new_image_pids;
-    }
-    /**
-     * Recover image from backup copy and reprocess it
-     *
-     * @param int|stdClass|C_Image $image
-     * @return bool|string result code
-     */
-    function recover_image($image)
-    {
-        $retval = FALSE;
-        if (is_numeric($image)) {
-            $image = $this->object->_image_mapper->find($image);
-        }
-        if ($image) {
-            $full_abspath = $this->object->get_image_abspath($image);
-            $backup_abspath = $this->object->get_image_abspath($image, 'backup');
-            if ($backup_abspath != $full_abspath && @file_exists($backup_abspath)) {
-                if (is_writable($full_abspath) && is_writable(dirname($full_abspath))) {
-                    // Copy the backup
-                    if (@copy($backup_abspath, $full_abspath)) {
-                        // Re-create non-fullsize image sizes
-                        foreach ($this->object->get_image_sizes($image) as $named_size) {
-                            if ($named_size == 'full') {
-                                continue;
-                            }
-                            $this->object->generate_image_clone($backup_abspath, $this->object->get_image_abspath($image, $named_size), $this->object->get_image_size_params($image, $named_size));
-                        }
-                        do_action('ngg_recovered_image', $image);
-                        // Reimport all metadata
-                        $retval = $this->object->_image_mapper->reimport_metadata($image);
-                    }
-                }
-            }
-        }
-        return $retval;
-    }
-}
-/**
- * Class C_NggLegacy_GalleryStorage_Driver
- * @mixin Mixin_NggLegacy_GalleryStorage_Driver
- */
-class C_NggLegacy_GalleryStorage_Driver extends C_GalleryStorage_Driver_Base
-{
-    function define($context = FALSE)
-    {
-        parent::define($context);
-        $this->add_mixin('Mixin_NggLegacy_GalleryStorage_Driver');
     }
 }
 /**
@@ -5094,74 +3383,2053 @@ class C_NggLegacy_Thumbnail
         return true;
     }
 }
-class Mixin_WordPress_GalleryStorage_Driver extends Mixin
+/**
+ * Basic gallery storage methods; please consult the other available mixin.gallerystorage_base_(.*).php files before
+ * adding new methods to this class: new methods may be more appropriately defined in other mixins.
+ */
+class Mixin_GalleryStorage_Base extends Mixin
 {
     /**
-     * Returns the named sizes available for images
-     * @global array $_wp_additional_image_sizese
-     * @return array
+     * Gets the id of a gallery, regardless of whether an integer
+     * or object was passed as an argument
+     * @param mixed $gallery_obj_or_id
+     * @return null|int
      */
-    function get_image_sizes()
+    function _get_gallery_id($gallery_obj_or_id)
     {
-        global $_wp_additional_image_sizes;
-        $_wp_additional_image_sizes[] = 'full';
-        return $_wp_additional_image_sizes;
-    }
-    /**
-     * Gets the upload path for new images in this gallery
-     * This will always be the date-based directory
-     * @param bool|int|object $gallery
-     * @return bool|string
-     */
-    function get_upload_abspath($gallery = FALSE)
-    {
-        // Gallery is used for this driver, as the upload path is
-        // the same, regardless of what gallery is used
-        $retval = FALSE;
-        $dir = wp_upload_dir(time());
-        if ($dir) {
-            $retval = $dir['path'];
+        $retval = NULL;
+        $gallery_key = $this->object->_gallery_mapper->get_primary_key_column();
+        if (is_object($gallery_obj_or_id)) {
+            if (isset($gallery_obj_or_id->{$gallery_key})) {
+                $retval = $gallery_obj_or_id->{$gallery_key};
+            }
+        } elseif (is_numeric($gallery_obj_or_id)) {
+            $retval = $gallery_obj_or_id;
         }
         return $retval;
     }
     /**
-     * Will always return the same as get_upload_abspath(), as WordPress storage is not organized by gallery but by date
-     * @param int|object $gallery
-     * @return string
+     * Outputs/renders an image
+     * @param int|stdClass|C_Image $image
+     * @return bool
      */
-    function get_gallery_abspath($gallery = FALSE)
+    function render_image($image, $size = FALSE)
     {
-        return $this->object->get_upload_abspath();
+        $format_list = $this->object->get_image_format_list();
+        $abspath = $this->get_image_abspath($image, $size, true);
+        if ($abspath == null) {
+            $thumbnail = $this->object->generate_image_size($image, $size);
+            if ($thumbnail != null) {
+                $abspath = $thumbnail->fileName;
+                $thumbnail->destruct();
+            }
+        }
+        if ($abspath != null) {
+            $data = @getimagesize($abspath);
+            $format = 'jpg';
+            if ($data != null && is_array($data) && isset($format_list[$data[2]])) {
+                $format = $format_list[$data[2]];
+            }
+            // Clear output
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+            $format = strtolower($format);
+            // output image and headers
+            header('Content-type: image/' . $format);
+            readfile($abspath);
+            return true;
+        }
+        return false;
     }
     /**
-     * Gets the url of a particular sized image
+     * Sets a NGG image as a post thumbnail for the given post
+     */
+    function set_post_thumbnail($postId, $image, $only_create_attachment = FALSE)
+    {
+        $retval = FALSE;
+        // attachment_id or FALSE
+        // Get the post ID
+        if (is_object($postId)) {
+            $post = $postId;
+            $postId = isset($post->ID) ? $post->ID : $post->post_id;
+        }
+        // Get the image
+        if (is_int($image)) {
+            $imageId = $image;
+            $mapper = C_Image_Mapper::get_instance();
+            $image = $mapper->find($imageId);
+        }
+        if ($image && $postId) {
+            $attachment_id = $this->object->is_in_media_library($image->pid);
+            if ($attachment_id === FALSE) {
+                $attachment_id = $this->object->copy_to_media_library($image);
+            }
+            if ($attachment_id) {
+                if (!$only_create_attachment) {
+                    set_post_thumbnail($postId, $attachment_id);
+                }
+                $retval = $attachment_id;
+            }
+        }
+        return $retval;
+    }
+    function convert_slashes($path)
+    {
+        $search = array('/', "\\");
+        $replace = array(DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR);
+        return str_replace($search, $replace, $path);
+    }
+    /**
+     * Empties the gallery cache directory of content
+     * @param object $gallery
+     */
+    function flush_cache($gallery)
+    {
+        $cache = C_Cache::get_instance();
+        $cache->flush_directory($this->object->get_cache_abspath($gallery));
+    }
+    /**
+     * Sanitizes a directory path, replacing whitespace with dashes.
+     *
+     * Taken from WP' sanitize_file_name() and modified to not act on file extensions.
+     *
+     * Removes special characters that are illegal in filenames on certain
+     * operating systems and special characters requiring special escaping
+     * to manipulate at the command line. Replaces spaces and consecutive
+     * dashes with a single dash. Trims period, dash and underscore from beginning
+     * and end of filename. It is not guaranteed that this function will return a
+     * filename that is allowed to be uploaded.
+     * @param string $dirname The directory name to be sanitized
+     * @return string The sanitized directory name
+     */
+    public function sanitize_directory_name($dirname)
+    {
+        $dirname_raw = $dirname;
+        $special_chars = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "\$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "%", "+", chr(0));
+        $special_chars = apply_filters('sanitize_file_name_chars', $special_chars, $dirname_raw);
+        $dirname = preg_replace("#\\x{00a0}#siu", ' ', $dirname);
+        $dirname = str_replace($special_chars, '', $dirname);
+        $dirname = str_replace(array('%20', '+'), '-', $dirname);
+        $dirname = preg_replace('/[\\r\\n\\t -]+/', '-', $dirname);
+        $dirname = trim($dirname, '.-_');
+        return $dirname;
+    }
+}
+/**
+ * Provides methods to C_Gallery_Storage related to dynamic images, thumbnails, clones, etc
+ */
+class Mixin_GalleryStorage_Base_Dynamic extends Mixin
+{
+    /**
+     * Returns an array of dimensional properties (width, height, real_width, real_height) of a resulting clone image if and when generated
+     * @param object|int $image Image ID or an image object
+     * @param string $size
+     * @param array $params
+     * @param bool $skip_defaults
+     * @return bool|array
+     */
+    function calculate_image_size_dimensions($image, $size, $params = null, $skip_defaults = false)
+    {
+        $retval = FALSE;
+        // Get the image entity
+        if (is_numeric($image)) {
+            $image = $this->object->_image_mapper->find($image);
+        }
+        // Ensure we have a valid image
+        if ($image) {
+            $params = $this->object->get_image_size_params($image, $size, $params, $skip_defaults);
+            // Get the image filename
+            $image_path = $this->object->get_original_abspath($image, 'original');
+            $clone_path = $this->object->get_image_abspath($image, $size);
+            $retval = $this->object->calculate_image_clone_dimensions($image_path, $clone_path, $params);
+        }
+        return $retval;
+    }
+    /**
+     * Generates a "clone" for an existing image, the clone can be altered using the $params array
+     * @param string $image_path
+     * @param string $clone_path
+     * @param array $params
+     * @return null|object
+     */
+    function generate_image_clone($image_path, $clone_path, $params)
+    {
+        $crop = isset($params['crop']) ? $params['crop'] : NULL;
+        $watermark = isset($params['watermark']) ? $params['watermark'] : NULL;
+        $reflection = isset($params['reflection']) ? $params['reflection'] : NULL;
+        $rotation = isset($params['rotation']) ? $params['rotation'] : NULL;
+        $flip = isset($params['flip']) ? $params['flip'] : NULL;
+        $destpath = NULL;
+        $thumbnail = NULL;
+        $result = $this->object->calculate_image_clone_result($image_path, $clone_path, $params);
+        // XXX this should maybe be removed and extra settings go into $params?
+        $settings = apply_filters('ngg_settings_during_image_generation', C_NextGen_Settings::get_instance()->to_array());
+        // Ensure we have a valid image
+        if ($image_path && @file_exists($image_path) && $result != null && !isset($result['error'])) {
+            $image_dir = dirname($image_path);
+            $clone_path = $result['clone_path'];
+            $clone_dir = $result['clone_directory'];
+            $clone_format = $result['clone_format'];
+            $format_list = $this->object->get_image_format_list();
+            // Ensure target directory exists, but only create 1 subdirectory
+            if (!@file_exists($clone_dir)) {
+                if (strtolower(realpath($image_dir)) != strtolower(realpath($clone_dir))) {
+                    if (strtolower(realpath($image_dir)) == strtolower(realpath(dirname($clone_dir)))) {
+                        wp_mkdir_p($clone_dir);
+                    }
+                }
+            }
+            $method = $result['method'];
+            $width = $result['width'];
+            $height = $result['height'];
+            $quality = $result['quality'];
+            if ($quality == null) {
+                $quality = 100;
+            }
+            if ($method == 'wordpress') {
+                $original = wp_get_image_editor($image_path);
+                $destpath = $clone_path;
+                if (!is_wp_error($original)) {
+                    $original->resize($width, $height, $crop);
+                    $original->set_quality($quality);
+                    $original->save($clone_path);
+                }
+            } else {
+                if ($method == 'nextgen') {
+                    $destpath = $clone_path;
+                    $thumbnail = new C_NggLegacy_Thumbnail($image_path, true);
+                    if (!$thumbnail->error) {
+                        if ($crop) {
+                            $crop_area = $result['crop_area'];
+                            $crop_x = $crop_area['x'];
+                            $crop_y = $crop_area['y'];
+                            $crop_width = $crop_area['width'];
+                            $crop_height = $crop_area['height'];
+                            $thumbnail->crop($crop_x, $crop_y, $crop_width, $crop_height);
+                        }
+                        $thumbnail->resize($width, $height);
+                    } else {
+                        $thumbnail = NULL;
+                    }
+                }
+            }
+            // We successfully generated the thumbnail
+            if (is_string($destpath) && (@file_exists($destpath) || $thumbnail != null)) {
+                if ($clone_format != null) {
+                    if (isset($format_list[$clone_format])) {
+                        $clone_format_extension = $format_list[$clone_format];
+                        $clone_format_extension_str = null;
+                        if ($clone_format_extension != null) {
+                            $clone_format_extension_str = '.' . $clone_format_extension;
+                        }
+                        $destpath_info = M_I18n::mb_pathinfo($destpath);
+                        $destpath_extension = $destpath_info['extension'];
+                        if (strtolower($destpath_extension) != strtolower($clone_format_extension)) {
+                            $destpath_dir = $destpath_info['dirname'];
+                            $destpath_basename = $destpath_info['filename'];
+                            $destpath_new = $destpath_dir . DIRECTORY_SEPARATOR . $destpath_basename . $clone_format_extension_str;
+                            if (@file_exists($destpath) && rename($destpath, $destpath_new) || $thumbnail != null) {
+                                $destpath = $destpath_new;
+                            }
+                        }
+                    }
+                }
+                if (is_null($thumbnail)) {
+                    $thumbnail = new C_NggLegacy_Thumbnail($destpath, true);
+                    if ($thumbnail->error) {
+                        $thumbnail = null;
+                        return null;
+                    }
+                } else {
+                    $thumbnail->fileName = $destpath;
+                }
+                // This is quite odd, when watermark equals int(0) it seems all statements below ($watermark == 'image') and ($watermark == 'text') both evaluate as true
+                // so we set it at null if it evaluates to any null-like value
+                if ($watermark == null) {
+                    $watermark = null;
+                }
+                if ($watermark == 1 || $watermark === true) {
+                    $watermark_setting_keys = array('wmFont', 'wmType', 'wmPos', 'wmXpos', 'wmYpos', 'wmPath', 'wmText', 'wmOpaque', 'wmFont', 'wmSize', 'wmColor');
+                    foreach ($watermark_setting_keys as $watermark_key) {
+                        if (!isset($params[$watermark_key])) {
+                            $params[$watermark_key] = $settings[$watermark_key];
+                        }
+                    }
+                    if (in_array(strval($params['wmType']), array('image', 'text'))) {
+                        $watermark = $params['wmType'];
+                    } else {
+                        $watermark = 'text';
+                    }
+                }
+                $watermark = strval($watermark);
+                if ($watermark == 'image') {
+                    $thumbnail->watermarkImgPath = $params['wmPath'];
+                    $thumbnail->watermarkImage($params['wmPos'], $params['wmXpos'], $params['wmYpos']);
+                } else {
+                    if ($watermark == 'text') {
+                        $thumbnail->watermarkText = $params['wmText'];
+                        $thumbnail->watermarkCreateText($params['wmColor'], $params['wmFont'], $params['wmSize'], $params['wmOpaque']);
+                        $thumbnail->watermarkImage($params['wmPos'], $params['wmXpos'], $params['wmYpos']);
+                    }
+                }
+                if ($rotation && in_array(abs($rotation), array(90, 180, 270))) {
+                    $thumbnail->rotateImageAngle($rotation);
+                    $remove_orientation_exif = TRUE;
+                } else {
+                    $remove_orientation_exif = FALSE;
+                }
+                $flip = strtolower($flip);
+                if ($flip && in_array($flip, array('h', 'v', 'hv'))) {
+                    $flip_h = in_array($flip, array('h', 'hv'));
+                    $flip_v = in_array($flip, array('v', 'hv'));
+                    $thumbnail->flipImage($flip_h, $flip_v);
+                }
+                if ($reflection) {
+                    $thumbnail->createReflection(40, 40, 50, FALSE, '#a4a4a4');
+                }
+                if ($clone_format != null && isset($format_list[$clone_format])) {
+                    // Force format
+                    $thumbnail->format = strtoupper($format_list[$clone_format]);
+                }
+                $thumbnail = apply_filters('ngg_before_save_thumbnail', $thumbnail);
+                $exif_iptc = @C_Exif_Writer_Wrapper::read_metadata($image_path);
+                $thumbnail->save($destpath, $quality);
+                // We've just rotated the image however the EXIF metadata contains an Orientation tag. To prevent
+                // certain browsers from rotating our already-rotated image we reset the Orientation tag to the default.
+                if ($remove_orientation_exif && !empty($exif_iptc['exif'])) {
+                    $exif_iptc['exif'] = @C_Exif_Writer_Wrapper::reset_orientation($exif_iptc['exif']);
+                }
+                @C_Exif_Writer_Wrapper::write_metadata($destpath, $exif_iptc);
+            }
+        }
+        return $thumbnail;
+    }
+    /**
+     * Returns an array of dimensional properties (width, height, real_width, real_height) of a resulting clone image if and when generated
+     * @param string $image_path
+     * @param string $clone_path
+     * @param array $params
+     * @return null|array
+     */
+    function calculate_image_clone_dimensions($image_path, $clone_path, $params)
+    {
+        $retval = null;
+        $result = $this->object->calculate_image_clone_result($image_path, $clone_path, $params);
+        if ($result != null) {
+            $retval = array('width' => $result['width'], 'height' => $result['height'], 'real_width' => $result['real_width'], 'real_height' => $result['real_height']);
+        }
+        return $retval;
+    }
+    /**
+     * Returns an array of properties of a resulting clone image if and when generated
+     * @param string $image_path
+     * @param string $clone_path
+     * @param array $params
+     * @return null|array
+     */
+    function calculate_image_clone_result($image_path, $clone_path, $params)
+    {
+        $width = isset($params['width']) ? $params['width'] : NULL;
+        $height = isset($params['height']) ? $params['height'] : NULL;
+        $quality = isset($params['quality']) ? $params['quality'] : NULL;
+        $type = isset($params['type']) ? $params['type'] : NULL;
+        $crop = isset($params['crop']) ? $params['crop'] : NULL;
+        $watermark = isset($params['watermark']) ? $params['watermark'] : NULL;
+        $rotation = isset($params['rotation']) ? $params['rotation'] : NULL;
+        $reflection = isset($params['reflection']) ? $params['reflection'] : NULL;
+        $crop_frame = isset($params['crop_frame']) ? $params['crop_frame'] : NULL;
+        $result = NULL;
+        // Ensure we have a valid image
+        if ($image_path && @file_exists($image_path)) {
+            // Ensure target directory exists, but only create 1 subdirectory
+            $image_dir = dirname($image_path);
+            $clone_dir = dirname($clone_path);
+            $image_extension = M_I18n::mb_pathinfo($image_path, PATHINFO_EXTENSION);
+            $image_extension_str = null;
+            $clone_extension = M_I18n::mb_pathinfo($clone_path, PATHINFO_EXTENSION);
+            $clone_extension_str = null;
+            if ($image_extension != null) {
+                $image_extension_str = '.' . $image_extension;
+            }
+            if ($clone_extension != null) {
+                $clone_extension_str = '.' . $clone_extension;
+            }
+            $image_basename = M_I18n::mb_basename($image_path);
+            $clone_basename = M_I18n::mb_basename($clone_path);
+            // We use a default suffix as passing in null as the suffix will make WordPress use a default
+            $clone_suffix = null;
+            $format_list = $this->object->get_image_format_list();
+            $clone_format = null;
+            // format is determined below and based on $type otherwise left to null
+            // suffix is only used to reconstruct paths for image_resize function
+            if (strpos($clone_basename, $image_basename) === 0) {
+                $clone_suffix = substr($clone_basename, strlen($image_basename));
+            }
+            if ($clone_suffix != null && $clone_suffix[0] == '-') {
+                // WordPress adds '-' on its own
+                $clone_suffix = substr($clone_suffix, 1);
+            }
+            // Get original image dimensions
+            $dimensions = getimagesize($image_path);
+            if ($width == null && $height == null) {
+                if ($dimensions != null) {
+                    if ($width == null) {
+                        $width = $dimensions[0];
+                    }
+                    if ($height == null) {
+                        $height = $dimensions[1];
+                    }
+                } else {
+                    // XXX Don't think there's any other option here but to fail miserably...use some hard-coded defaults maybe?
+                    return null;
+                }
+            }
+            if ($dimensions != null) {
+                $dimensions_ratio = $dimensions[0] / $dimensions[1];
+                if ($width == null) {
+                    $width = (int) round($height * $dimensions_ratio);
+                    if ($width == $dimensions[0] - 1) {
+                        $width = $dimensions[0];
+                    }
+                } else {
+                    if ($height == null) {
+                        $height = (int) round($width / $dimensions_ratio);
+                        if ($height == $dimensions[1] - 1) {
+                            $height = $dimensions[1];
+                        }
+                    }
+                }
+                if ($width > $dimensions[0]) {
+                    $width = $dimensions[0];
+                }
+                if ($height > $dimensions[1]) {
+                    $height = $dimensions[1];
+                }
+                $image_format = $dimensions[2];
+                if ($type != null) {
+                    if (is_string($type)) {
+                        $type = strtolower($type);
+                        // Indexes in the $format_list array correspond to IMAGETYPE_XXX values appropriately
+                        if (($index = array_search($type, $format_list)) !== false) {
+                            $type = $index;
+                            if ($type != $image_format) {
+                                // Note: this only changes the FORMAT of the image but not the extension
+                                $clone_format = $type;
+                            }
+                        }
+                    }
+                }
+            }
+            if ($width == null || $height == null) {
+                // Something went wrong...
+                return null;
+            }
+            $result['clone_path'] = $clone_path;
+            $result['clone_directory'] = $clone_dir;
+            $result['clone_suffix'] = $clone_suffix;
+            $result['clone_format'] = $clone_format;
+            $result['base_width'] = $dimensions[0];
+            $result['base_height'] = $dimensions[1];
+            // image_resize() has limitations:
+            // - no easy crop frame support
+            // - fails if the dimensions are unchanged
+            // - doesn't support filename prefix, only suffix so names like thumbs_original_name.jpg for $clone_path are not supported
+            //   also suffix cannot be null as that will make WordPress use a default suffix...we could use an object that returns empty string from __toString() but for now just fallback to ngg generator
+            if (FALSE) {
+                // disabling the WordPress method for Iteration #6
+                //			if (($crop_frame == null || !$crop) && ($dimensions[0] != $width && $dimensions[1] != $height) && $clone_suffix != null)
+                $result['method'] = 'wordpress';
+                $new_dims = image_resize_dimensions($dimensions[0], $dimensions[1], $width, $height, $crop);
+                if ($new_dims) {
+                    list($dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) = $new_dims;
+                    $width = $dst_w;
+                    $height = $dst_h;
+                } else {
+                    $result['error'] = new WP_Error('error_getting_dimensions', __('Could not calculate resized image dimensions'));
+                }
+            } else {
+                $result['method'] = 'nextgen';
+                $original_width = $dimensions[0];
+                $original_height = $dimensions[1];
+                $aspect_ratio = $width / $height;
+                $orig_ratio_x = $original_width / $width;
+                $orig_ratio_y = $original_height / $height;
+                if ($crop) {
+                    $algo = 'shrink';
+                    // either 'adapt' or 'shrink'
+                    if ($crop_frame != null) {
+                        $crop_x = (int) round($crop_frame['x']);
+                        $crop_y = (int) round($crop_frame['y']);
+                        $crop_width = (int) round($crop_frame['width']);
+                        $crop_height = (int) round($crop_frame['height']);
+                        $crop_final_width = (int) round($crop_frame['final_width']);
+                        $crop_final_height = (int) round($crop_frame['final_height']);
+                        $crop_width_orig = $crop_width;
+                        $crop_height_orig = $crop_height;
+                        $crop_factor_x = $crop_width / $crop_final_width;
+                        $crop_factor_y = $crop_height / $crop_final_height;
+                        $crop_ratio_x = $crop_width / $width;
+                        $crop_ratio_y = $crop_height / $height;
+                        if ($algo == 'adapt') {
+                            // XXX not sure about this...don't use for now
+                            #							$crop_width = (int) round($width * $crop_factor_x);
+                            #							$crop_height = (int) round($height * $crop_factor_y);
+                        } else {
+                            if ($algo == 'shrink') {
+                                if ($crop_ratio_x < $crop_ratio_y) {
+                                    $crop_width = max($crop_width, $width);
+                                    $crop_height = (int) round($crop_width / $aspect_ratio);
+                                } else {
+                                    $crop_height = max($crop_height, $height);
+                                    $crop_width = (int) round($crop_height * $aspect_ratio);
+                                }
+                                if ($crop_width == $crop_width_orig - 1) {
+                                    $crop_width = $crop_width_orig;
+                                }
+                                if ($crop_height == $crop_height_orig - 1) {
+                                    $crop_height = $crop_height_orig;
+                                }
+                            }
+                        }
+                        $crop_diff_x = (int) round(($crop_width_orig - $crop_width) / 2);
+                        $crop_diff_y = (int) round(($crop_height_orig - $crop_height) / 2);
+                        $crop_x += $crop_diff_x;
+                        $crop_y += $crop_diff_y;
+                        $crop_max_x = $crop_x + $crop_width;
+                        $crop_max_y = $crop_y + $crop_height;
+                        // Check if we're overflowing borders
+                        //
+                        if ($crop_x < 0) {
+                            $crop_x = 0;
+                        } else {
+                            if ($crop_max_x > $original_width) {
+                                $crop_x -= $crop_max_x - $original_width;
+                            }
+                        }
+                        if ($crop_y < 0) {
+                            $crop_y = 0;
+                        } else {
+                            if ($crop_max_y > $original_height) {
+                                $crop_y -= $crop_max_y - $original_height;
+                            }
+                        }
+                    } else {
+                        if ($orig_ratio_x < $orig_ratio_y) {
+                            $crop_width = $original_width;
+                            $crop_height = (int) round($height * $orig_ratio_x);
+                        } else {
+                            $crop_height = $original_height;
+                            $crop_width = (int) round($width * $orig_ratio_y);
+                        }
+                        if ($crop_width == $width - 1) {
+                            $crop_width = $width;
+                        }
+                        if ($crop_height == $height - 1) {
+                            $crop_height = $height;
+                        }
+                        $crop_x = (int) round(($original_width - $crop_width) / 2);
+                        $crop_y = (int) round(($original_height - $crop_height) / 2);
+                    }
+                    $result['crop_area'] = array('x' => $crop_x, 'y' => $crop_y, 'width' => $crop_width, 'height' => $crop_height);
+                } else {
+                    // Just constraint dimensions to ensure there's no stretching or deformations
+                    list($width, $height) = wp_constrain_dimensions($original_width, $original_height, $width, $height);
+                }
+            }
+            $result['width'] = $width;
+            $result['height'] = $height;
+            $result['quality'] = $quality;
+            $real_width = $width;
+            $real_height = $height;
+            if ($rotation && in_array(abs($rotation), array(90, 270))) {
+                $real_width = $height;
+                $real_height = $width;
+            }
+            if ($reflection) {
+                // default for nextgen was 40%, this is used in generate_image_clone as well
+                $reflection_amount = 40;
+                // Note, round() would probably be best here but using the same code that C_NggLegacy_Thumbnail uses for compatibility
+                $reflection_height = intval($real_height * ($reflection_amount / 100));
+                $real_height = $real_height + $reflection_height;
+            }
+            $result['real_width'] = $real_width;
+            $result['real_height'] = $real_height;
+        }
+        return $result;
+    }
+    /**
+     * Generates a specific size for an image
+     * @param int|object|C_Image $image
+     * @param string $size
+     * @param array|null $params (optional)
+     * @param bool $skip_defaults (optional)
+     * @return bool|object
+     */
+    function generate_image_size($image, $size, $params = null, $skip_defaults = false)
+    {
+        $retval = FALSE;
+        // Get the image entity
+        if (is_numeric($image)) {
+            $image = $this->object->_image_mapper->find($image);
+        }
+        // Ensure we have a valid image
+        if ($image) {
+            $params = $this->object->get_image_size_params($image, $size, $params, $skip_defaults);
+            $settings = C_NextGen_Settings::get_instance();
+            // Get the image filename
+            $filename = $this->object->get_original_abspath($image, 'original');
+            $thumbnail = null;
+            if ($size == 'full' && $settings->imgBackup == 1) {
+                // XXX change this? 'full' should be the resized path and 'original' the _backup path
+                $backup_path = $this->object->get_backup_abspath($image);
+                if (!@file_exists($backup_path)) {
+                    @copy($filename, $backup_path);
+                }
+            }
+            // Generate the thumbnail using WordPress
+            $existing_image_abpath = $this->object->get_image_abspath($image, $size);
+            $existing_image_dir = dirname($existing_image_abpath);
+            wp_mkdir_p($existing_image_dir);
+            $clone_path = $existing_image_abpath;
+            $thumbnail = $this->object->generate_image_clone($filename, $clone_path, $params);
+            // We successfully generated the thumbnail
+            if ($thumbnail != null) {
+                $clone_path = $thumbnail->fileName;
+                if (function_exists('getimagesize')) {
+                    $dimensions = getimagesize($clone_path);
+                } else {
+                    $dimensions = array($params['width'], $params['height']);
+                }
+                if (!isset($image->meta_data)) {
+                    $image->meta_data = array();
+                }
+                $size_meta = array('width' => $dimensions[0], 'height' => $dimensions[1], 'filename' => M_I18n::mb_basename($clone_path), 'generated' => microtime());
+                if (isset($params['crop_frame'])) {
+                    $size_meta['crop_frame'] = $params['crop_frame'];
+                }
+                $image->meta_data[$size] = $size_meta;
+                if ($size == 'full') {
+                    $image->meta_data['width'] = $size_meta['width'];
+                    $image->meta_data['height'] = $size_meta['height'];
+                }
+                $retval = $this->object->_image_mapper->save($image);
+                do_action('ngg_generated_image', $image, $size, $params);
+                if ($retval == 0) {
+                    $retval = false;
+                }
+                if ($retval) {
+                    $retval = $thumbnail;
+                }
+            } else {
+                // Something went wrong. Thumbnail generation failed!
+            }
+        }
+        return $retval;
+    }
+    function generate_resized_image($image, $save = TRUE)
+    {
+        $image_abspath = $this->object->get_image_abspath($image, 'full');
+        $generated = $this->object->generate_image_clone($image_abspath, $image_abspath, $this->object->get_image_size_params($image, 'full'));
+        if ($generated && $save) {
+            $this->object->update_image_dimension_metadata($image, $image_abspath);
+        }
+    }
+    public function update_image_dimension_metadata($image, $image_abspath)
+    {
+        // Ensure that fullsize dimensions are added to metadata array
+        $dimensions = getimagesize($image_abspath);
+        $full_meta = array('width' => $dimensions[0], 'height' => $dimensions[1], 'md5' => $this->object->get_image_checksum($image, 'full'));
+        if (!isset($image->meta_data) or is_string($image->meta_data) && strlen($image->meta_data) == 0 or is_bool($image->meta_data)) {
+            $image->meta_data = array();
+        }
+        $image->meta_data = array_merge($image->meta_data, $full_meta);
+        $image->meta_data['full'] = $full_meta;
+        // Don't forget to append the 'full' entry in meta_data in the db
+        $this->object->_image_mapper->save($image);
+    }
+    /**
+     * Most major browsers do not honor the Orientation meta found in EXIF. To prevent display issues we inspect
+     * the EXIF data and rotate the image so that the EXIF field is not necessary to display the image correctly.
+     * Note: generate_image_clone() will handle the removal of the Orientation tag inside the image EXIF.
+     * Note: This only handles single-dimension rotation; at the time this method was written there are no known
+     * camera manufacturers that both rotate and flip images.
+     * @param $image
+     * @param bool $save
+     */
+    public function correct_exif_rotation($image, $save = TRUE)
+    {
+        $image_abspath = $this->object->get_image_abspath($image, 'full');
+        // This method is necessary
+        if (!function_exists('exif_read_data')) {
+            return;
+        }
+        // We only need to continue if the Orientation tag is set
+        $exif = @exif_read_data($image_abspath, 'exif');
+        if (empty($exif['Orientation']) || $exif['Orientation'] == 1) {
+            return;
+        }
+        $degree = 0;
+        if ($exif['Orientation'] == 3) {
+            $degree = 180;
+        }
+        if ($exif['Orientation'] == 6) {
+            $degree = 90;
+        }
+        if ($exif['Orientation'] == 8) {
+            $degree = 270;
+        }
+        $parameters = array('rotation' => $degree);
+        $generated = $this->object->generate_image_clone($image_abspath, $image_abspath, $this->object->get_image_size_params($image, 'full', $parameters), $parameters);
+        if ($generated && $save) {
+            $this->object->update_image_dimension_metadata($image, $image_abspath);
+        }
+    }
+    /**
+     * Generates a thumbnail for an image
+     * @param int|stdClass|C_Image $image
+     * @return bool
+     */
+    function generate_thumbnail($image, $params = null, $skip_defaults = false)
+    {
+        $sized_image = $this->object->generate_image_size($image, 'thumbnail', $params, $skip_defaults);
+        $retval = false;
+        if ($sized_image != null) {
+            $retval = true;
+            $sized_image->destruct();
+        }
+        return $retval;
+    }
+}
+/**
+ * Provides getter methods to C_Gallery_Storage for determining absolute paths, URL, etc
+ */
+class Mixin_GalleryStorage_Base_Getters extends Mixin
+{
+    static $gallery_abspath_cache = array();
+    static $image_abspath_cache = array();
+    static $image_url_cache = array();
+    /**
+     * Flushes the cache we use for path/url calculation for images
+     */
+    function flush_image_path_cache($image, $size)
+    {
+        $image = is_numeric($image) ? $image : $image->pid;
+        $key = strval($image) . $size;
+        unset(self::$image_abspath_cache[$key]);
+        unset(self::$image_url_cache[$key]);
+    }
+    /**
+     * Flushes the cache we use for path/url calculation for galleries
+     */
+    function flush_gallery_path_cache($gallery)
+    {
+        $gallery = is_numeric($gallery) ? $gallery : $gallery->gid;
+        unset(self::$gallery_abspath_cache[$gallery]);
+    }
+    /**
+     * Gets the id of an image, regardless of whether an integer
+     * or object was passed as an argument
+     * @param object|int $image_obj_or_id
+     * @return null|int
+     */
+    function _get_image_id($image_obj_or_id)
+    {
+        $retval = NULL;
+        $image_key = $this->object->_image_mapper->get_primary_key_column();
+        if (is_object($image_obj_or_id)) {
+            if (isset($image_obj_or_id->{$image_key})) {
+                $retval = $image_obj_or_id->{$image_key};
+            }
+        } elseif (is_numeric($image_obj_or_id)) {
+            $retval = $image_obj_or_id;
+        }
+        return $retval;
+    }
+    /**
+     * Gets the absolute path of the backup of an original image
+     * @param string $image
+     * @return null|string
+     */
+    function get_backup_abspath($image)
+    {
+        $retval = null;
+        if ($image_path = $this->object->get_image_abspath($image)) {
+            $retval = $image_path . '_backup';
+        }
+        return $retval;
+    }
+    function get_backup_dimensions($image)
+    {
+        return $this->object->get_image_dimensions($image, 'backup');
+    }
+    function get_backup_url($image)
+    {
+        return $this->object->get_image_url($image, 'backup');
+    }
+    /**
+     * Returns the absolute path to the cache directory of a gallery.
+     *
+     * Without the gallery parameter the legacy (pre 2.0) shared directory is returned.
+     *
+     * @param int|object|false|C_Gallery $gallery (optional)
+     * @return string Absolute path to cache directory
+     */
+    function get_cache_abspath($gallery = FALSE)
+    {
+        return path_join($this->object->get_gallery_abspath($gallery), 'cache');
+    }
+    /**
+     * Gets the absolute path where the full-sized image is stored
+     * @param int|object $image
+     * @return null|string
+     */
+    function get_full_abspath($image)
+    {
+        return $this->object->get_image_abspath($image, 'full');
+    }
+    /**
+     * Alias to get_image_dimensions()
+     * @param int|object $image
+     * @return array
+     */
+    function get_full_dimensions($image)
+    {
+        return $this->object->get_image_dimensions($image, 'full');
+    }
+    /**
+     * Alias to get_image_html()
+     * @param int|object $image
+     * @return string
+     */
+    function get_full_html($image)
+    {
+        return $this->object->get_image_html($image, 'full');
+    }
+    /**
+     * Alias for get_original_url()
+     *
+     * @param int|stdClass|C_Image $image
+     * @return string
+     */
+    function get_full_url($image)
+    {
+        return $this->object->get_image_url($image, 'full');
+    }
+    function get_gallery_root()
+    {
+        return wp_normalize_path(NGG_GALLERY_ROOT_TYPE == 'content' ? WP_CONTENT_DIR : ABSPATH);
+    }
+    function _get_computed_gallery_abspath($gallery)
+    {
+        $retval = NULL;
+        $gallery_root = $this->get_gallery_root();
+        // Get the gallery entity from the database
+        if ($gallery) {
+            if (is_numeric($gallery)) {
+                $gallery = $this->object->_gallery_mapper->find($gallery);
+            }
+        }
+        // It just doesn't exist
+        if (!$gallery) {
+            return $retval;
+        }
+        // We we have a gallery, determine it's path
+        if ($gallery) {
+            if (isset($gallery->path)) {
+                $retval = $gallery->path;
+            } elseif (isset($gallery->slug)) {
+                $basepath = wp_normalize_path(C_NextGen_Settings::get_instance()->gallerypath);
+                $retval = path_join($basepath, $this->object->sanitize_directory_name(sanitize_title($gallery->slug)));
+            }
+            // Normalize the gallery path. If the gallery path starts with /wp-content, and
+            // NGG_GALLERY_ROOT_TYPE is set to 'content', then we need to strip out the /wp-content
+            // from the start of the gallery path
+            if (NGG_GALLERY_ROOT_TYPE === 'content') {
+                $retval = preg_replace("#^/?wp-content#", "", $retval);
+            }
+            // Ensure that the path is absolute
+            if (strpos($retval, $gallery_root) !== 0) {
+                // path_join() behaves funny - if the second argument starts with a slash,
+                // it won't join the two paths together
+                $retval = preg_replace("#^/#", "", $retval);
+                $retval = path_join($gallery_root, $retval);
+            }
+            $retval = wp_normalize_path($retval);
+        }
+        return $retval;
+    }
+    /**
+     * Get the abspath to the gallery folder for the given gallery
+     * The gallery may or may not already be persisted
+     * @param int|object|C_Gallery $gallery
+     * @return string
+     */
+    function get_gallery_abspath($gallery)
+    {
+        $gallery_id = is_numeric($gallery) ? $gallery : (is_object($gallery) && isset($gallery->gid) ? $gallery->gid : NULL);
+        if (!$gallery_id || !isset(self::$gallery_abspath_cache[$gallery_id])) {
+            self::$gallery_abspath_cache[$gallery_id] = $this->object->_get_computed_gallery_abspath($gallery);
+        }
+        return self::$gallery_abspath_cache[$gallery_id];
+    }
+    function get_gallery_relpath($gallery)
+    {
+        return str_replace($this->object->get_gallery_root(), '', $this->get_gallery_abspath($gallery));
+    }
+    /**
+     * Gets the absolute path where the image is stored. Can optionally return the path for a particular sized image.
+     * @param int|object $image
+     * @param string $size (optional) Default = full
+     * @return string
+     */
+    function _get_computed_image_abspath($image, $size = 'full', $check_existance = FALSE)
+    {
+        $retval = NULL;
+        $fs = C_Fs::get_instance();
+        // If we have the id, get the actual image entity
+        if (is_numeric($image)) {
+            $image = $this->object->_image_mapper->find($image);
+        }
+        // Ensure we have the image entity - user could have passed in an
+        // incorrect id
+        if (is_object($image)) {
+            if ($gallery_path = $this->object->get_gallery_abspath($image->galleryid)) {
+                $folder = $prefix = $size;
+                switch ($size) {
+                    # Images are stored in the associated gallery folder
+                    case 'full':
+                        $retval = path_join($gallery_path, $image->filename);
+                        break;
+                    case 'backup':
+                        $retval = path_join($gallery_path, $image->filename . '_backup');
+                        if (!@file_exists($retval)) {
+                            $retval = path_join($gallery_path, $image->filename);
+                        }
+                        break;
+                    case 'thumbnail':
+                        $size = 'thumbnail';
+                        $folder = 'thumbs';
+                        $prefix = 'thumbs';
+                        // deliberately no break here
+                    // deliberately no break here
+                    default:
+                        // NGG 2.0 stores relative filenames in the meta data of
+                        // an image. It does this because it uses filenames
+                        // that follow conventional WordPress naming scheme.
+                        $image_path = NULL;
+                        $dynthumbs = C_Dynamic_Thumbnails_Manager::get_instance();
+                        if (isset($image->meta_data) && isset($image->meta_data[$size]) && isset($image->meta_data[$size]['filename'])) {
+                            if ($dynthumbs && $dynthumbs->is_size_dynamic($size)) {
+                                $image_path = path_join($this->object->get_cache_abspath($image->galleryid), $image->meta_data[$size]['filename']);
+                            } else {
+                                $image_path = path_join($gallery_path, $folder);
+                                $image_path = path_join($image_path, $image->meta_data[$size]['filename']);
+                            }
+                        } else {
+                            if ($dynthumbs && $dynthumbs->is_size_dynamic($size)) {
+                                $params = $dynthumbs->get_params_from_name($size, true);
+                                $image_path = path_join($this->object->get_cache_abspath($image->galleryid), $dynthumbs->get_image_name($image, $params));
+                                // Filename is not found in meta, nor dynamic
+                            } else {
+                                $image_path = path_join($gallery_path, $folder);
+                                $image_path = path_join($image_path, "{$prefix}_{$image->filename}");
+                            }
+                        }
+                        $retval = $image_path;
+                        break;
+                }
+            }
+        }
+        if ($retval && $check_existance && !@file_exists($retval)) {
+            $retval = NULL;
+        }
+        return $retval;
+    }
+    /**
+     * Gets the absolute path where the image is stored. Can optionally return the path for a particular sized image.
+     * @param int|object $image
+     * @param string $size (optional) Default = full
+     * @param bool $check_existance (optional) Default = false
+     * @return string
+     */
+    function get_image_abspath($image, $size = 'full', $check_existance = FALSE)
+    {
+        $image_id = is_numeric($image) ? $image : $image->pid;
+        $size = $this->object->normalize_image_size_name($size);
+        $key = strval($image_id) . $size;
+        if ($check_existance || !isset(self::$image_abspath_cache[$key])) {
+            $retval = $this->object->_get_computed_image_abspath($image, $size, $check_existance);
+            self::$image_abspath_cache[$key] = $retval;
+        }
+        $retval = self::$image_abspath_cache[$key];
+        return $retval;
+    }
+    function get_image_checksum($image, $size = 'full')
+    {
+        $retval = NULL;
+        if ($image_abspath = $this->get_image_abspath($image, $size, TRUE)) {
+            $retval = md5_file($image_abspath);
+        }
+        return $retval;
+    }
+    /**
+     * Gets the dimensions for a particular-sized image
+     *
+     * @param int|object $image
+     * @param string $size
+     * @return null|array
+     */
+    function get_image_dimensions($image, $size = 'full')
+    {
+        $retval = NULL;
+        // If an image id was provided, get the entity
+        if (is_numeric($image)) {
+            $image = $this->object->_image_mapper->find($image);
+        }
+        // Ensure we have a valid image
+        if ($image) {
+            $size = $this->normalize_image_size_name($size);
+            if (!$size) {
+                $size = 'full';
+            }
+            // Image dimensions are stored in the $image->meta_data
+            // property for all implementations
+            if (isset($image->meta_data) && isset($image->meta_data[$size])) {
+                $retval = $image->meta_data[$size];
+            } else {
+                $dynthumbs = C_Dynamic_Thumbnails_Manager::get_instance();
+                $abspath = $this->object->get_image_abspath($image, $size, TRUE);
+                if ($abspath) {
+                    $dims = getimagesize($abspath);
+                    if ($dims) {
+                        $retval['width'] = $dims[0];
+                        $retval['height'] = $dims[1];
+                    }
+                } elseif ($size == 'backup') {
+                    $retval = $this->object->get_image_dimensions($image, 'full');
+                } else {
+                    if ($dynthumbs && $dynthumbs->is_size_dynamic($size)) {
+                        $new_dims = $this->object->calculate_image_size_dimensions($image, $size);
+                        $retval = array('width' => $new_dims['real_width'], 'height' => $new_dims['real_height']);
+                    }
+                }
+            }
+        }
+        return $retval;
+    }
+    function get_image_format_list()
+    {
+        $format_list = array(IMAGETYPE_GIF => 'gif', IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png');
+        return $format_list;
+    }
+    /**
+     * Gets the HTML for an image
+     * @param int|object $image
+     * @param string $size
+     * @param array $attributes (optional)
+     * @return string
+     */
+    function get_image_html($image, $size = 'full', $attributes = array())
+    {
+        $retval = "";
+        if (is_numeric($image)) {
+            $image = $this->object->_image_mapper->find($image);
+        }
+        if ($image) {
+            // Set alt text if not already specified
+            if (!isset($attributes['alttext'])) {
+                $attributes['alt'] = esc_attr($image->alttext);
+            }
+            // Set the title if not already set
+            if (!isset($attributes['title'])) {
+                $attributes['title'] = esc_attr($image->alttext);
+            }
+            // Set the dimensions if not set already
+            if (!isset($attributes['width']) or !isset($attributes['height'])) {
+                $dimensions = $this->object->get_image_dimensions($image, $size);
+                if (!isset($attributes['width'])) {
+                    $attributes['width'] = $dimensions['width'];
+                }
+                if (!isset($attributes['height'])) {
+                    $attributes['height'] = $dimensions['height'];
+                }
+            }
+            // Set the url if not already specified
+            if (!isset($attributes['src'])) {
+                $attributes['src'] = $this->object->get_image_url($image, $size);
+            }
+            // Format attributes
+            $attribs = array();
+            foreach ($attributes as $attrib => $value) {
+                $attribs[] = "{$attrib}=\"{$value}\"";
+            }
+            $attribs = implode(" ", $attribs);
+            // Return HTML string
+            $retval = "<img {$attribs} />";
+        }
+        return $retval;
+    }
+    function _get_computed_image_url($image, $size = 'full')
+    {
+        $retval = NULL;
+        $dynthumbs = C_Dynamic_Thumbnails_Manager::get_instance();
+        // Get the image abspath
+        $image_abspath = $this->object->get_image_abspath($image, $size);
+        if ($dynthumbs->is_size_dynamic($size) && !file_exists($image_abspath)) {
+            $params = array('watermark' => false, 'reflection' => false, 'crop' => true);
+            $result = $this->generate_image_size($image, $size, $params);
+            if ($result) {
+                $image_abspath = $this->object->get_image_abspath($image, $size);
+            }
+        }
+        // Assuming we have an abspath, we can translate that to a url
+        if ($image_abspath) {
+            // Replace the gallery root with the proper url segment
+            $gallery_root = preg_quote($this->get_gallery_root(), '#');
+            $image_uri = preg_replace("#^{$gallery_root}#", "", $image_abspath);
+            // Url encode each uri segment
+            $segments = explode("/", $image_uri);
+            $segments = array_map('rawurlencode', $segments);
+            $image_uri = preg_replace("#^/#", "", implode("/", $segments));
+            // Join gallery root and image uri
+            $gallery_root = trailingslashit(NGG_GALLERY_ROOT_TYPE == 'site' ? site_url() : WP_CONTENT_URL);
+            $gallery_root = is_ssl() ? str_replace('http:', 'https:', $gallery_root) : $gallery_root;
+            $retval = $gallery_root . $image_uri;
+        }
+        return $retval;
+    }
+    function normalize_image_size_name($size = 'full')
+    {
+        switch ($size) {
+            case 'full':
+            case 'original':
+            case 'image':
+            case 'orig':
+            case 'resized':
+                $size = 'full';
+                break;
+            case 'thumbnails':
+            case 'thumbnail':
+            case 'thumb':
+            case 'thumbs':
+                $size = 'thumbnail';
+                break;
+        }
+        return $size;
+    }
+    /**
+     * Gets the url of a particular-sized image
      * @param int|object $image
      * @param string $size
      * @return string
      */
-    function get_image_url($image = FALSE, $size = 'full')
+    function get_image_url($image, $size = 'full')
     {
         $retval = NULL;
-        $image_key = C_Displayed_Gallery_Mapper::get_instance()->get_primary_key_column();
-        if ($image && ($image_id = $this->object->_get_image_id($image))) {
-            $parts = wp_get_attachment_image_src($image->{$image_key});
-            if ($parts) {
-                $retval = $parts['url'];
+        $image_id = is_numeric($image) ? $image : $image->pid;
+        $key = strval($image_id) . $size;
+        if (!isset(self::$image_url_cache[$key])) {
+            self::$image_url_cache[$key] = $this->object->_get_computed_image_url($image, $size);
+        }
+        $retval = self::$image_url_cache[$key];
+        return apply_filters('ngg_get_image_url', $retval, $image, $size);
+    }
+    /**
+     * Returns the named sizes available for images
+     * @return array
+     */
+    function get_image_sizes($image = FALSE)
+    {
+        $retval = array('full', 'thumbnail');
+        if (is_numeric($image)) {
+            $image = C_Image_Mapper::get_instance()->find($image);
+        }
+        if ($image) {
+            if ($image->meta_data) {
+                $meta_data = is_object($image->meta_data) ? get_object_vars($image->meta_data) : $image->meta_data;
+                foreach ($meta_data as $key => $value) {
+                    if (is_array($value) && isset($value['width'])) {
+                        $retval[] = $key;
+                    }
+                }
             }
         }
-        return apply_filters('ngg_get_image_url', $retval, $image, $size);
+        return $retval;
+    }
+    function get_image_size_params($image, $size, $params = array(), $skip_defaults = false)
+    {
+        // Get the image entity
+        if (is_numeric($image)) {
+            $image = $this->object->_image_mapper->find($image);
+        }
+        $dynthumbs = C_Dynamic_Thumbnails_Manager::get_instance();
+        if ($dynthumbs && $dynthumbs->is_size_dynamic($size)) {
+            $named_params = $dynthumbs->get_params_from_name($size, true);
+            if (!$params) {
+                $params = array();
+            }
+            $params = array_merge($params, $named_params);
+        }
+        $params = apply_filters('ngg_get_image_size_params', $params, $size, $image);
+        // Ensure we have a valid image
+        if ($image) {
+            $settings = C_NextGen_Settings::get_instance();
+            if (!$skip_defaults) {
+                // Get default settings
+                if ($size == 'full') {
+                    if (!isset($params['quality'])) {
+                        $params['quality'] = $settings->imgQuality;
+                    }
+                } else {
+                    if (!isset($params['crop'])) {
+                        $params['crop'] = $settings->thumbfix;
+                    }
+                    if (!isset($params['quality'])) {
+                        $params['quality'] = $settings->thumbquality;
+                    }
+                }
+            }
+            // width and height when omitted make generate_image_clone create a clone with original size, so try find defaults regardless of $skip_defaults
+            if (!isset($params['width']) || !isset($params['height'])) {
+                // First test if this is a "known" image size, i.e. if we store these sizes somewhere when users re-generate these sizes from the UI...this is required to be compatible with legacy
+                // try the 2 default built-in sizes, first thumbnail...
+                if ($size == 'thumbnail') {
+                    if (!isset($params['width'])) {
+                        $params['width'] = $settings->thumbwidth;
+                    }
+                    if (!isset($params['height'])) {
+                        $params['height'] = $settings->thumbheight;
+                    }
+                } else {
+                    if ($size == 'full') {
+                        if (!isset($params['width'])) {
+                            if ($settings->imgAutoResize) {
+                                $params['width'] = $settings->imgWidth;
+                            }
+                        }
+                        if (!isset($params['height'])) {
+                            if ($settings->imgAutoResize) {
+                                $params['height'] = $settings->imgHeight;
+                            }
+                        }
+                    } else {
+                        if (isset($image->meta_data) && isset($image->meta_data[$size])) {
+                            $dimensions = $image->meta_data[$size];
+                            if (!isset($params['width'])) {
+                                $params['width'] = $dimensions['width'];
+                            }
+                            if (!isset($params['height'])) {
+                                $params['height'] = $dimensions['height'];
+                            }
+                        }
+                    }
+                }
+            }
+            if (!isset($params['crop_frame'])) {
+                $crop_frame_size_name = 'thumbnail';
+                if (isset($image->meta_data[$size]['crop_frame'])) {
+                    $crop_frame_size_name = $size;
+                }
+                if (isset($image->meta_data[$crop_frame_size_name]['crop_frame'])) {
+                    $params['crop_frame'] = $image->meta_data[$crop_frame_size_name]['crop_frame'];
+                    if (!isset($params['crop_frame']['final_width'])) {
+                        $params['crop_frame']['final_width'] = $image->meta_data[$crop_frame_size_name]['width'];
+                    }
+                    if (!isset($params['crop_frame']['final_height'])) {
+                        $params['crop_frame']['final_height'] = $image->meta_data[$crop_frame_size_name]['height'];
+                    }
+                }
+            } else {
+                if (!isset($params['crop_frame']['final_width'])) {
+                    $params['crop_frame']['final_width'] = $params['width'];
+                }
+                if (!isset($params['crop_frame']['final_height'])) {
+                    $params['crop_frame']['final_height'] = $params['height'];
+                }
+            }
+        }
+        return $params;
+    }
+    /**
+     * An alias for get_full_abspath()
+     * @param int|object $image
+     * @param bool $check_existance
+     * @return null|string
+     */
+    function get_original_abspath($image, $check_existance = FALSE)
+    {
+        return $this->object->get_image_abspath($image, 'full', $check_existance);
+    }
+    /**
+     * Alias to get_image_dimensions()
+     * @param int|object $image
+     * @return array
+     */
+    function get_original_dimensions($image)
+    {
+        return $this->object->get_image_dimensions($image, 'full');
+    }
+    /**
+     * Alias to get_image_html()
+     * @param int|object $image
+     * @return string
+     */
+    function get_original_html($image)
+    {
+        return $this->object->get_image_html($image, 'full');
+    }
+    /**
+     * Gets the url to the original-sized image
+     * @param int|stdClass|C_Image $image
+     * @param bool $check_existance (optional)
+     * @return string
+     */
+    function get_original_url($image, $check_existance = FALSE)
+    {
+        return $this->object->get_image_url($image, 'full', $check_existance);
+    }
+    /**
+     * @param object|bool $gallery (optional)
+     * @return string
+     */
+    function get_upload_abspath($gallery = FALSE)
+    {
+        // Base upload path
+        $retval = C_NextGen_Settings::get_instance()->gallerypath;
+        $fs = C_Fs::get_instance();
+        // If a gallery has been specified, then we'll
+        // append the slug
+        if ($gallery) {
+            $retval = $this->get_gallery_abspath($gallery);
+        }
+        // We need to make this an absolute path
+        if (strpos($retval, $fs->get_document_root('gallery')) !== 0) {
+            $retval = rtrim($fs->join_paths($fs->get_document_root('gallery'), $retval), "/\\");
+        }
+        // Convert slashes
+        return wp_normalize_path($retval);
+    }
+    /**
+     * Gets the upload path, optionally for a particular gallery
+     * @param int|C_Gallery|object|false $gallery (optional)
+     * @return string
+     */
+    function get_upload_relpath($gallery = FALSE)
+    {
+        $fs = C_Fs::get_instance();
+        $retval = str_replace($fs->get_document_root('gallery'), '', $this->object->get_upload_abspath($gallery));
+        return '/' . wp_normalize_path(ltrim($retval, "/"));
     }
 }
 /**
- * Class C_WordPress_GalleryStorage_Driver
- * @mixin Mixin_WordPress_GalleryStorage_Driver
+ * Provides the basic methods of gallery management to C_Gallery_Storage
  */
-class C_WordPress_GalleryStorage_Driver extends C_GalleryStorage_Driver_Base
+class Mixin_GalleryStorage_Base_Management extends Mixin
 {
-    function define($context = FALSE)
+    /**
+     * Set correct file permissions (taken from wp core). Should be called
+     * after writing any file
+     *
+     * @class nggAdmin
+     * @param string $filename
+     * @return bool $result
+     */
+    function _chmod($filename = '')
     {
-        parent::define($context);
-        $this->add_mixin('Mixin_WordPress_GalleryStorage_Driver');
+        $stat = @stat(dirname($filename));
+        $perms = $stat['mode'] & 0666;
+        // Remove execute bits for files
+        if (@chmod($filename, $perms)) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    function _delete_gallery_directory($abspath)
+    {
+        // Remove all image files and purge all empty directories left over
+        $iterator = new DirectoryIterator($abspath);
+        // Only delete image files! Other files may be stored incorrectly but it's not our place to delete them
+        $removable_extensions = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif'));
+        foreach ($removable_extensions as $extension) {
+            $removable_extensions[] = $extension . '_backup';
+        }
+        foreach ($iterator as $file) {
+            if (in_array($file->getBasename(), array('.', '..'))) {
+                continue;
+            } elseif ($file->isFile() || $file->isLink()) {
+                $extension = strtolower(pathinfo($file->getPathname(), PATHINFO_EXTENSION));
+                if (in_array($extension, $removable_extensions, TRUE)) {
+                    @unlink($file->getPathname());
+                }
+            } elseif ($file->isDir()) {
+                $this->object->_delete_gallery_directory($file->getPathname());
+            }
+        }
+        // DO NOT remove directories that still have files in them. Note: '.' and '..' are included with getSize()
+        $empty = TRUE;
+        foreach ($iterator as $file) {
+            if (in_array($file->getBasename(), array('.', '..'))) {
+                continue;
+            }
+            $empty = FALSE;
+        }
+        if ($empty) {
+            @rmdir($iterator->getPath());
+        }
+    }
+    /**
+     * Backs up an image file
+     *
+     * @param int|object $image
+     * @return bool
+     */
+    function backup_image($image, $save = TRUE)
+    {
+        $retval = FALSE;
+        $image_path = $this->object->get_image_abspath($image);
+        if ($image_path && @file_exists($image_path)) {
+            $retval = copy($image_path, $this->object->get_backup_abspath($image));
+            // Store the dimensions of the image
+            if (function_exists('getimagesize')) {
+                $mapper = C_Image_Mapper::get_instance();
+                if (!is_object($image)) {
+                    $image = $mapper->find($image);
+                }
+                if ($image) {
+                    if (!property_exists($image, 'meta_data')) {
+                        $image->meta_data = array();
+                    }
+                    $dimensions = getimagesize($image_path);
+                    $image->meta_data['backup'] = array('filename' => basename($image_path), 'width' => $dimensions[0], 'height' => $dimensions[1], 'generated' => microtime());
+                    if ($save) {
+                        $mapper->save($image);
+                    }
+                }
+            }
+        }
+        return $retval;
+    }
+    function copy_images($images, $dst_gallery)
+    {
+        $retval = array();
+        // Ensure that the image ids we have are valid
+        $image_mapper = C_Image_Mapper::get_instance();
+        foreach ($images as $image) {
+            if (is_numeric($image)) {
+                $image = $image_mapper->find($image);
+            }
+            if ($image_abspath = $this->object->get_image_abspath($image)) {
+                // Import the image
+                $new_image_id = $this->object->import_image_file($dst_gallery, $image_abspath, $image->filename);
+                if ($new_image_id) {
+                    // Copy the properties of the old image
+                    foreach (get_object_vars($image) as $key => $value) {
+                        if (in_array($key, array('pid', 'galleryid', 'meta_data', 'filename', 'sortorder', 'extras_post_id'))) {
+                            continue;
+                        }
+                        $new_image = $image_mapper->find($new_image_id);
+                        $new_image->{$key} = $value;
+                        $image_mapper->save($new_image);
+                    }
+                    // Copy tags
+                    $tags = wp_get_object_terms($image->pid, 'ngg_tag', 'fields=ids');
+                    $tags = array_map('intval', $tags);
+                    wp_set_object_terms($new_image_id, $tags, 'ngg_tag', true);
+                    // Mark as done
+                    $retval[] = $new_image_id;
+                }
+            }
+        }
+        return $retval;
+    }
+    /**
+     * Moves images from to another gallery
+     * @param array $images
+     * @param int|object $gallery
+     * @param boolean $db optionally only move the image files, not the db entries
+     * @return boolean
+     */
+    function move_images($images, $gallery)
+    {
+        $retval = $this->object->copy_images($images, $gallery, TRUE);
+        if ($images) {
+            foreach ($images as $image_id) {
+                $this->object->delete_image($image_id);
+            }
+        }
+        return $retval;
+    }
+    function delete_directory($abspath)
+    {
+        $retval = FALSE;
+        if (@file_exists($abspath)) {
+            $files = scandir($abspath);
+            array_shift($files);
+            array_shift($files);
+            foreach ($files as $file) {
+                $file_abspath = implode(DIRECTORY_SEPARATOR, array(rtrim($abspath, "/\\"), $file));
+                if (is_dir($file_abspath)) {
+                    $this->object->delete_directory($file_abspath);
+                } else {
+                    unlink($file_abspath);
+                }
+            }
+            rmdir($abspath);
+            $retval = @file_exists($abspath);
+        }
+        return $retval;
+    }
+    function delete_gallery($gallery)
+    {
+        $fs = C_Fs::get_instance();
+        $safe_dirs = array(DIRECTORY_SEPARATOR, $fs->get_document_root('plugins'), $fs->get_document_root('plugins_mu'), $fs->get_document_root('templates'), $fs->get_document_root('stylesheets'), $fs->get_document_root('content'), $fs->get_document_root('galleries'), $fs->get_document_root());
+        $abspath = $this->object->get_gallery_abspath($gallery);
+        if ($abspath && file_exists($abspath) && !in_array(stripslashes($abspath), $safe_dirs)) {
+            $this->object->_delete_gallery_directory($abspath);
+        }
+    }
+    function delete_image($image, $size = FALSE)
+    {
+        $retval = FALSE;
+        // Ensure that we have the image entity
+        if (is_numeric($image)) {
+            $image = $this->object->_image_mapper->find($image);
+        }
+        if ($image) {
+            $image_id = $image->{$image->id_field};
+            do_action('ngg_delete_image', $image_id, $size);
+            // Delete only a particular image size
+            if ($size) {
+                $abspath = $this->object->get_image_abspath($image, $size);
+                if ($abspath && @file_exists($abspath)) {
+                    @unlink($abspath);
+                }
+                if (isset($image->meta_data) && isset($image->meta_data[$size])) {
+                    unset($image->meta_data[$size]);
+                    $this->object->_image_mapper->save($image);
+                }
+            } else {
+                foreach ($this->get_image_sizes($image) as $named_size) {
+                    $image_abspath = $this->object->get_image_abspath($image, $named_size);
+                    @unlink($image_abspath);
+                }
+                // Delete the entity
+                $this->object->_image_mapper->destroy($image);
+            }
+            $retval = TRUE;
+        }
+        return $retval;
+    }
+    /**
+     * Recover image from backup copy and reprocess it
+     *
+     * @param int|stdClass|C_Image $image
+     * @return bool|string result code
+     */
+    function recover_image($image)
+    {
+        $retval = FALSE;
+        if (is_numeric($image)) {
+            $image = $this->object->_image_mapper->find($image);
+        }
+        if ($image) {
+            $full_abspath = $this->object->get_image_abspath($image);
+            $backup_abspath = $this->object->get_image_abspath($image, 'backup');
+            if ($backup_abspath != $full_abspath && @file_exists($backup_abspath)) {
+                if (is_writable($full_abspath) && is_writable(dirname($full_abspath))) {
+                    // Copy the backup
+                    if (@copy($backup_abspath, $full_abspath)) {
+                        // Backup images are not altered at all; we must re-correct the EXIF/Orientation tag
+                        $this->object->correct_exif_rotation($image, TRUE);
+                        // Re-create non-fullsize image sizes
+                        foreach ($this->object->get_image_sizes($image) as $named_size) {
+                            if ($named_size == 'full') {
+                                continue;
+                            }
+                            $this->object->generate_image_clone($full_abspath, $this->object->get_image_abspath($image, $named_size), $this->object->get_image_size_params($image, $named_size));
+                        }
+                        do_action('ngg_recovered_image', $image);
+                        // Reimport all metadata
+                        $retval = $this->object->_image_mapper->reimport_metadata($image);
+                    }
+                }
+            }
+        }
+        return $retval;
+    }
+}
+/**
+ * This class contains methods C_Gallery_Storage needs to interact with (like say, importing from) the WP Media Library
+ */
+class Mixin_GalleryStorage_Base_MediaLibrary extends Mixin
+{
+    /**
+     * Copies a NGG image to the media library and returns the attachment_id
+     * @param C_Image $image
+     * @retval FALSE|int attachment_id
+     */
+    function copy_to_media_library($image)
+    {
+        $retval = FALSE;
+        // Get the image
+        if (is_int($image)) {
+            $imageId = $image;
+            $mapper = C_Image_Mapper::get_instance();
+            $image = $mapper->find($imageId);
+        }
+        if ($image) {
+            $wordpress_upload_dir = wp_upload_dir();
+            // $wordpress_upload_dir['path'] is the full server path to wp-content/uploads/2017/05, for multisite works good as well
+            // $wordpress_upload_dir['url'] the absolute URL to the same folder, actually we do not need it, just to show the link to file
+            $i = 1;
+            // number of tries when the file with the same name is already exists
+            $image_abspath = C_Gallery_Storage::get_instance()->get_image_abspath($image, "full");
+            $new_file_path = $wordpress_upload_dir['path'] . '/' . $image->filename;
+            $new_file_mime = mime_content_type($image_abspath);
+            while (file_exists($new_file_path)) {
+                $i++;
+                $new_file_path = $wordpress_upload_dir['path'] . '/' . $i . '_' . $image->filename;
+            }
+            if (@copy($image_abspath, $new_file_path)) {
+                $upload_id = wp_insert_attachment(array('guid' => $new_file_path, 'post_mime_type' => $new_file_mime, 'post_title' => preg_replace('/\\.[^.]+$/', '', $image->alttext), 'post_content' => '', 'post_status' => 'inherit'), $new_file_path);
+                update_post_meta($upload_id, '_ngg_image_id', intval($image->pid));
+                // wp_generate_attachment_metadata() won't work if you do not include this file
+                require_once ABSPATH . 'wp-admin/includes/image.php';
+                $image_meta = wp_generate_attachment_metadata($upload_id, $new_file_path);
+                // Generate and save the attachment metas into the database
+                wp_update_attachment_metadata($upload_id, $image_meta);
+                $retval = $upload_id;
+            }
+        }
+        return $retval;
+    }
+    /**
+     * Delete the given NGG image from the media library
+     */
+    function delete_from_media_library($imageId)
+    {
+        // Get the image
+        if (!is_int($imageId)) {
+            $image = $imageId;
+            $imageId = $image->pid;
+        }
+        if ($postId = $this->object->is_in_media_library($imageId)) {
+            wp_delete_post($postId);
+        }
+    }
+    /**
+     * Determines if the given NGG image id has been uploaded to the media library
+     *
+     * @param integer $imageId
+     * @retval FALSE|int attachment_id
+     */
+    function is_in_media_library($imageId)
+    {
+        $retval = FALSE;
+        // Get the image
+        if (is_object($imageId)) {
+            $image = $imageId;
+            $imageId = $image->pid;
+        }
+        // Try to find an attachment for the given image_id
+        if ($imageId) {
+            $query = new WP_Query(array('post_type' => 'attachment', 'meta_key' => '_ngg_image_id', 'meta_value_num' => $imageId));
+            foreach ($query->get_posts() as $post) {
+                $retval = $post->ID;
+            }
+        }
+        return $retval;
+    }
+}
+/**
+ * Provides upload-related methods used by C_Gallery_Storage
+ */
+class Mixin_GalleryStorage_Base_Upload extends Mixin
+{
+    /**
+     * @param string $abspath
+     * @param int $gallery_id
+     * @param bool $create_new_gallerypath
+     * @param null|string $gallery_title
+     * @param array[string] $filenames
+     * @return array|bool FALSE on failure
+     */
+    function import_gallery_from_fs($abspath, $gallery_id = NULL, $create_new_gallerypath = TRUE, $gallery_title = NULL, $filenames = array())
+    {
+        if (@(!file_exists($abspath))) {
+            return FALSE;
+        }
+        $fs = C_Fs::get_instance();
+        // Ensure that this folder has images
+        $i = 0;
+        $files = array();
+        foreach (scandir($abspath) as $file) {
+            if ($file == '.' || $file == '..') {
+                continue;
+            }
+            $file_abspath = $fs->join_paths($abspath, $file);
+            // The first directory is considered valid
+            if (is_dir($file_abspath) && $i === 0) {
+                $files[] = $file_abspath;
+            } elseif ($this->is_image_file($file_abspath)) {
+                if ($filenames && array_search($file_abspath, $filenames) !== FALSE) {
+                    $files[] = $file_abspath;
+                } else {
+                    if (!$filenames) {
+                        $files[] = $file_abspath;
+                    }
+                }
+            }
+        }
+        if (empty($files)) {
+            return FALSE;
+        }
+        // Get needed utilities
+        $gallery_mapper = C_Gallery_Mapper::get_instance();
+        // Sometimes users try importing a directory, which actually has all images under another directory
+        if (is_dir($files[0])) {
+            return $this->object->import_gallery_from_fs($files[0], $gallery_id, $create_new_gallerypath, $gallery_title, $filenames);
+        }
+        // If no gallery has been specified, then use the directory name as the gallery name
+        if (!$gallery_id) {
+            // Create the gallery
+            $gallery = $gallery_mapper->create(array('title' => $gallery_title ? $gallery_title : M_I18n::mb_basename($abspath)));
+            if (!$create_new_gallerypath) {
+                $gallery_root = $fs->get_document_root('gallery');
+                $gallery->path = str_ireplace($gallery_root, '', $abspath);
+            }
+            // Save the gallery
+            if ($gallery->save()) {
+                $gallery_id = $gallery->id();
+            }
+        }
+        // Ensure that we have a gallery id
+        if ($gallery_id) {
+            $retval = array('gallery_id' => $gallery_id, 'image_ids' => array());
+            foreach ($files as $file_abspath) {
+                $basename = pathinfo($file_abspath, PATHINFO_BASENAME);
+                if ($image_id = $this->import_image_file($gallery_id, $file_abspath, $basename, FALSE, FALSE, FALSE)) {
+                    $retval['image_ids'][] = $image_id;
+                }
+            }
+            // Add the gallery name to the result
+            if (!isset($gallery)) {
+                $gallery = $gallery_mapper->find($gallery_id);
+            }
+            $retval['gallery_name'] = $gallery->title;
+            return $retval;
+        }
+        return FALSE;
+    }
+    function is_current_user_over_quota()
+    {
+        $retval = FALSE;
+        $settings = C_NextGen_Settings::get_instance();
+        if (is_multisite() && $settings->get('wpmuQuotaCheck')) {
+            require_once ABSPATH . 'wp-admin/includes/ms.php';
+            $retval = upload_is_user_over_quota(FALSE);
+        }
+        return $retval;
+    }
+    /**
+     * @param string? $filename
+     * @return bool
+     */
+    function is_image_file($filename = NULL)
+    {
+        $retval = FALSE;
+        if (!$filename && isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
+            $filename = $_FILES['file']['tmp_name'];
+        }
+        $valid_types = array('image/gif', 'image/jpg', 'image/jpeg', 'image/pjpeg', 'image/png');
+        // If we can, we'll verify the mime type
+        if (function_exists('exif_imagetype')) {
+            if (($image_type = @exif_imagetype($filename)) !== FALSE) {
+                $retval = in_array(image_type_to_mime_type($image_type), $valid_types);
+            }
+        } else {
+            $file_info = @getimagesize($filename);
+            if (isset($file_info[2])) {
+                $retval = in_array(image_type_to_mime_type($file_info[2]), $valid_types);
+            }
+        }
+        return $retval;
+    }
+    function is_zip()
+    {
+        $retval = FALSE;
+        if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
+            $file_info = $_FILES['file'];
+            if (isset($file_info['type'])) {
+                $type = $file_info['type'];
+                $type_parts = explode('/', $type);
+                if (strtolower($type_parts[0]) == 'application') {
+                    $spec = $type_parts[1];
+                    $spec_parts = explode('-', $spec);
+                    $spec_parts = array_map('strtolower', $spec_parts);
+                    if (in_array($spec, array('zip', 'octet-stream')) || in_array('zip', $spec_parts)) {
+                        $retval = true;
+                    }
+                }
+            }
+        }
+        return $retval;
+    }
+    function maybe_base64_decode($data)
+    {
+        $decoded = base64_decode($data);
+        if ($decoded === FALSE) {
+            return $data;
+        } else {
+            if (base64_encode($decoded) == $data) {
+                return base64_decode($data);
+            }
+        }
+        return $data;
+    }
+    function get_unique_abspath($file_abspath)
+    {
+        $filename = basename($file_abspath);
+        $dir_abspath = dirname($file_abspath);
+        $num = 1;
+        $pattern = path_join($dir_abspath, "*_{$filename}");
+        if ($found = glob($pattern)) {
+            natsort($found);
+            $last = array_pop($found);
+            $last = basename($last);
+            if (preg_match("/^(\\d+)_/", $last, $match)) {
+                $num = intval($match[1]) + 1;
+            }
+        }
+        return path_join($dir_abspath, "{$num}_{$filename}");
+    }
+    function sanitize_filename_for_db($filename = NULL)
+    {
+        $filename = $filename ? $filename : uniqid('nextgen-gallery');
+        $filename = preg_replace("#^/#", "", $filename);
+        $filename = sanitize_file_name($filename);
+        if (preg_match("/\\-(png|jpg|gif|jpeg)\$/i", $filename, $match)) {
+            $filename = str_replace($match[0], '.' . $match[1], $filename);
+        }
+        return $filename;
+    }
+    function import_image_file($dst_gallery, $image_abspath, $filename = NULL, $image = FALSE, $override = FALSE, $move = FALSE)
+    {
+        $image_abspath = wp_normalize_path($image_abspath);
+        if ($this->object->is_current_user_over_quota()) {
+            $message = sprintf(__('Sorry, you have used your space allocation. Please delete some files to upload more files.', 'nggallery'));
+            throw new E_NoSpaceAvailableException($message);
+        }
+        // Do we have a gallery to import to?
+        if ($dst_gallery) {
+            // Get the gallery abspath. This is where we will put the image files
+            $gallery_abspath = $this->object->get_gallery_abspath($dst_gallery);
+            // If we can't write to the directory, then there's no point in continuing
+            if (!@file_exists($gallery_abspath)) {
+                @wp_mkdir_p($gallery_abspath);
+            }
+            if (!is_writable($gallery_abspath)) {
+                throw new E_InsufficientWriteAccessException(FALSE, $gallery_abspath, FALSE);
+            }
+            // Sanitize the filename for storing in the DB
+            $filename = $this->sanitize_filename_for_db($filename);
+            // Ensure that the filename is valid
+            if (!preg_match("/(png|jpeg|jpg|gif)\$/i", $filename)) {
+                throw new E_UploadException(__('Invalid image file. Acceptable formats: JPG, GIF, and PNG.', 'nggallery'));
+            }
+            // Compute the destination folder
+            $new_image_abspath = path_join($gallery_abspath, $filename);
+            // Are the src and dst the same? If so, we don't have to copy or move files
+            if ($image_abspath != $new_image_abspath) {
+                // If we're not to override, ensure that the filename is unique
+                if (!$override && @file_exists($new_image_abspath)) {
+                    $new_image_abspath = $this->object->get_unique_abspath($new_image_abspath);
+                    $filename = $this->sanitize_filename_for_db(basename($new_image_abspath));
+                }
+                // Try storing the file
+                $copied = copy($image_abspath, $new_image_abspath);
+                if ($copied && $move) {
+                    unlink($image_abspath);
+                }
+                // Ensure that we're not vulerable to CVE-2017-2416 exploit
+                if (($dimensions = getimagesize($new_image_abspath)) !== FALSE) {
+                    if (isset($dimensions[0]) && intval($dimensions[0]) > 30000 || isset($dimensions[1]) && intval($dimensions[1]) > 30000) {
+                        unlink($new_image_abspath);
+                        throw new E_UploadException(__('Image file too large. Maximum image dimensions supported are 30k x 30k.'));
+                    }
+                }
+            }
+            // Save the image in the DB
+            $image_mapper = C_Image_Mapper::get_instance();
+            $image_mapper->_use_cache = FALSE;
+            if ($image) {
+                if (is_numeric($image)) {
+                    $image = $image_mapper->find($image);
+                }
+            }
+            if (!$image) {
+                $image = $image_mapper->create();
+            }
+            $image->alttext = preg_replace("#\\.\\w{2,4}\$#", "", $filename);
+            $image->galleryid = is_numeric($dst_gallery) ? $dst_gallery : $dst_gallery->gid;
+            $image->filename = $filename;
+            $image->image_slug = nggdb::get_unique_slug(sanitize_title_with_dashes($image->alttext), 'image');
+            $image_id = $image_mapper->save($image);
+            if (!$image_id) {
+                $exception = '';
+                foreach ($image->get_errors() as $field => $errors) {
+                    foreach ($errors as $error) {
+                        if (!empty($exception)) {
+                            $exception .= "<br/>";
+                        }
+                        $exception .= __(sprintf("Error while uploading %s: %s", $filename, $error), 'nextgen-gallery');
+                    }
+                }
+                throw new E_UploadException($exception);
+            }
+            // Important: do not remove this line. The image mapper's save() routine imports metadata
+            // meaning we must re-acquire a new $image object after saving it above; if we do not our
+            // existing $image object will lose any metadata retrieved during said save() method.
+            $image = $image_mapper->find($image_id);
+            $image_mapper->_use_cache = TRUE;
+            $settings = C_NextGen_Settings::get_instance();
+            // Backup the image
+            if ($settings->get('imgBackup', FALSE)) {
+                $this->object->backup_image($image, TRUE);
+            }
+            // Most browsers do not honor EXIF's Orientation header: rotate the image to prevent display issues
+            $this->object->correct_exif_rotation($image, TRUE);
+            // Create resized version of image
+            if ($settings->get('imgAutoResize', FALSE)) {
+                $this->object->generate_resized_image($image, TRUE);
+            }
+            // Generate a thumbnail for the image
+            $this->object->generate_thumbnail($image);
+            // Set gallery preview image if missing
+            C_Gallery_Mapper::get_instance()->set_preview_image($dst_gallery, $image_id, TRUE);
+            // Notify other plugins that an image has been added
+            do_action('ngg_added_new_image', $image);
+            // delete dirsize after adding new images
+            delete_transient('dirsize_cache');
+            // Seems redundant to above hook. Maintaining for legacy purposes
+            do_action('ngg_after_new_images_added', is_numeric($dst_gallery) ? $dst_gallery : $dst_gallery->gid, array($image_id));
+            return $image_id;
+        } else {
+            throw new E_EntityNotFoundException();
+        }
+        return NULL;
+    }
+    /**
+     * Uploads base64 file to a gallery
+     * @param int|stdClass|C_Gallery $gallery
+     * @param $data base64-encoded string of data representing the image
+     * @param string|false (optional) $filename specifies the name of the file
+     * @param int|false $image_id (optional)
+     * @param bool $override (optional)
+     * @return C_Image
+     */
+    function upload_base64_image($gallery, $data, $filename = FALSE, $image_id = FALSE, $override = FALSE, $move = FALSE)
+    {
+        try {
+            $temp_abspath = tempnam(sys_get_temp_dir(), '');
+            // Try writing the image
+            $fp = fopen($temp_abspath, 'wb');
+            fwrite($fp, $this->maybe_base64_decode($data));
+            fclose($fp);
+        } catch (E_UploadException $ex) {
+            throw $ex;
+        }
+        return $this->object->import_image_file($gallery, $temp_abspath, $filename, $image_id, $override, $move);
+    }
+    /**
+     * Uploads an image for a particular gallery
+     * @param int|object|C_Gallery $gallery
+     * @param string|bool $filename (optional) Specifies the name of the file
+     * @param string|bool $data (optional) If specified, expects base64 encoded string of data
+     * @return C_Image
+     */
+    function upload_image($gallery, $filename = FALSE, $data = FALSE)
+    {
+        $retval = NULL;
+        // Ensure that we have the data present that we require
+        if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
+            //		$_FILES = Array(
+            //		 [file]	=>	Array (
+            //            [name] => Canada_landscape4.jpg
+            //            [type] => image/jpeg
+            //            [tmp_name] => /private/var/tmp/php6KO7Dc
+            //            [error] => 0
+            //            [size] => 64975
+            //         )
+            //
+            $file = $_FILES['file'];
+            if ($this->object->is_zip()) {
+                $retval = $this->object->upload_zip($gallery);
+            } else {
+                if ($this->is_image_file()) {
+                    $retval = $this->object->import_image_file($gallery, $file['tmp_name'], $filename ? $filename : (isset($file['name']) ? $file['name'] : FALSE), FALSE, FALSE, TRUE);
+                } else {
+                    // Remove the non-valid (and potentially insecure) file from the PHP upload directory
+                    if (isset($_FILES['file']['tmp_name'])) {
+                        $filename = $_FILES['file']['tmp_name'];
+                        @unlink($filename);
+                    }
+                    throw new E_UploadException(__('Invalid image file. Acceptable formats: JPG, GIF, and PNG.', 'nggallery'));
+                }
+            }
+        } elseif ($data) {
+            $retval = $this->object->upload_base64_image($gallery, $data, $filename);
+        } else {
+            throw new E_UploadException();
+        }
+        return $retval;
+    }
+    function upload_zip($gallery_id)
+    {
+        $memory_limit = intval(ini_get('memory_limit'));
+        if (!extension_loaded('suhosin') && $memory_limit < 256) {
+            @ini_set('memory_limit', '256M');
+        }
+        $retval = FALSE;
+        if ($this->object->is_zip()) {
+            $fs = C_Fs::get_instance();
+            // Uses the WordPress ZIP abstraction API
+            include_once $fs->join_paths(ABSPATH, 'wp-admin', 'includes', 'file.php');
+            WP_Filesystem(FALSE, get_temp_dir(), TRUE);
+            // Ensure that we truly have the gallery id
+            $gallery_id = $this->_get_gallery_id($gallery_id);
+            $zipfile = $_FILES['file']['tmp_name'];
+            $dest_path = implode(DIRECTORY_SEPARATOR, array(rtrim(get_temp_dir(), "/\\"), 'unpacked-' . M_I18n::mb_basename($zipfile)));
+            wp_mkdir_p($dest_path);
+            if (unzip_file($zipfile, $dest_path) === TRUE) {
+                $dest_dir = $dest_path . DIRECTORY_SEPARATOR;
+                $files = glob($dest_dir . '*');
+                $size = 0;
+                foreach ($files as $file) {
+                    if (is_file($dest_dir . $file)) {
+                        $size += filesize($dest_dir . $file);
+                    }
+                }
+                if ($size == 0) {
+                    $this->object->delete_directory($dest_path);
+                    $destination = wp_upload_dir();
+                    $destination_path = $destination['basedir'];
+                    $dest_path = implode(DIRECTORY_SEPARATOR, array(rtrim($destination_path, "/\\"), 'unpacked-' . M_I18n::mb_basename($zipfile)));
+                    wp_mkdir_p($dest_path);
+                    if (unzip_file($zipfile, $dest_path) === TRUE) {
+                        $retval = $this->object->import_gallery_from_fs($dest_path, $gallery_id);
+                    }
+                } else {
+                    $retval = $this->object->import_gallery_from_fs($dest_path, $gallery_id);
+                }
+            }
+            $this->object->delete_directory($dest_path);
+        }
+        if (!extension_loaded('suhosin')) {
+            @ini_set('memory_limit', $memory_limit . 'M');
+        }
+        return $retval;
     }
 }
 /**

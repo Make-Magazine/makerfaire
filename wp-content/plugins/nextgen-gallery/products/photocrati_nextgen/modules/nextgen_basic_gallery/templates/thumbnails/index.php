@@ -1,8 +1,7 @@
 <?php
-
 $this->start_element('nextgen_gallery.gallery_container', 'container', $displayed_gallery);
-
 ?>
+<!-- index.php -->
 <div
 	class="ngg-galleryoverview<?php if (!intval($ajax_pagination)) echo ' ngg-ajax-pagination-none'; ?>"
 	id="ngg-gallery-<?php echo esc_attr($displayed_gallery_id)?>-<?php echo esc_attr($current_page)?>">
