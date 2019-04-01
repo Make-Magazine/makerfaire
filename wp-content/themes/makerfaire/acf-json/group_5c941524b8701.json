@@ -126,7 +126,7 @@
                     "label": "Event Description",
                     "name": "event_desc",
                     "type": "textarea",
-                    "instructions": "Descriptions longer than 260 characters will be truncated with an ellipses...",
+                    "instructions": "Descriptions longer than 230 characters will be truncated with an ellipses when this item has a \"Learn More\" button, and longer than 300 characters will be truncated without a \"Learn More\" button",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -205,5 +205,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1554144825
+    "modified": 1554147474
 }
