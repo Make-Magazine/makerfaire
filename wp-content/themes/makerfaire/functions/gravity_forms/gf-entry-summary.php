@@ -8,6 +8,8 @@ function add_main_text_before($form, $lead) {
    $mode = empty($_POST['screen_mode']) ? 'view' : $_POST['screen_mode'];
    if ($mode != "view")
       return;
+   if (is_null($form['fields']))
+      return;
    echo gf_summary_metabox($form, $lead);
    echo gf_collapsible_sections($form, $lead);
 }
@@ -133,8 +135,10 @@ function gf_summary_metabox($form, $lead) {
 						<td style="width: 80px;" valign="top"><strong>What are your plans:</strong></td>
 						<td valign="top">';
 
-   for ($i = 0; $i < count($whatareyourplansvalues); $i++) {
-      $return .= ((!empty($lead['55.' . $i])) ? $lead['55.' . $i] . '<br />' : '');
+   if(is_array($whatareyourplansvalues)){
+      for ($i = 0; $i < count($whatareyourplansvalues); $i++) {
+         $return .= ((!empty($lead['55.' . $i])) ? $lead['55.' . $i] . '<br />' : '');
+      }
    }
    $return .= '
             </td>
@@ -175,30 +179,30 @@ function gf_summary_metabox($form, $lead) {
         <label >Email Note To:</label><br />';
 
    $emailto1 = array("Caleb Kraft" => "caleb@makermedia.com",
-                     "Dale Dougherty" => "dale@makermedia.com",
-                     "Jay Kravitz" => "jay@thecrucible.org",
-                     "Jess Hobbs" => "jess@makermedia.com",
-                     "Jonathan Maginn" => "jonathan.maginn@sbcglobal.net",
-                     "DC Denison" => "dcdenison@mac.com",
-                     "Siana Alcorn" => "siana@makermedia.com",
-                     "Tami Jo Benson" => "tj@tamijo.com");
+       "Dale Dougherty" => "dale@makermedia.com",
+       "Jay Kravitz" => "jay@thecrucible.org",
+       "Jess Hobbs" => "jess@makermedia.com",
+       "Jonathan Maginn" => "jonathan.maginn@sbcglobal.net",
+       "DC Denison" => "dcdenison@mac.com",
+       "Siana Alcorn" => "siana@makermedia.com",
+       "Tami Jo Benson" => "tj@tamijo.com");
    $emailto2 = array("Kerry Moore" => "kmoore@makermedia.com",
-                     "Kim Dow" => "dow@dowhouse.com",
-                     "Matt Stultz" => "mstultz@makermedia.com",
-                     "Rob Bullington" => "rbullington@makermedia.com",
-                     "Sabrina Merlo" => "smerlo@makermedia.com",
-                     "Ralf" => "ralf@muehlen.com",       
-                     "Tyler Winegarner" => "tyler@makermedia.com",
-                     "Keith Hammond"   => "khammond@makermedia.com");
+       "Kim Dow" => "dow@dowhouse.com",
+       "Matt Stultz" => "mstultz@makermedia.com",
+       "Rob Bullington" => "rbullington@makermedia.com",
+       "Sabrina Merlo" => "smerlo@makermedia.com",
+       "Ralf" => "ralf@muehlen.com",
+       "Tyler Winegarner" => "tyler@makermedia.com",
+       "Keith Hammond" => "khammond@makermedia.com");
    $emailtoaliases = array("Dev" => "dev@makermedia.com",
-                           "Editors" => "editor@makezine.com",
-                           "Maker Relations" => "makers@makerfaire.com",
-                           "PR" => "pr@makerfaire.com",
-                           "Sales" => "sales@makerfaire.com",
-                           "Sustainability" => "sustainability@makerfaire.com",
-                           "Speakers" => "speakers@makerfaire.com",
-                           "MakerShare" => "admin@makershare.com",
-                           "Sponsor Relations" => "sponsorrelations@makermedia.com"
+       "Editors" => "editor@makezine.com",
+       "Maker Relations" => "makers@makerfaire.com",
+       "PR" => "pr@makerfaire.com",
+       "Sales" => "sales@makerfaire.com",
+       "Sustainability" => "sustainability@makerfaire.com",
+       "Speakers" => "speakers@makerfaire.com",
+       "MakerShare" => "admin@makershare.com",
+       "Sponsor Relations" => "sponsorrelations@makermedia.com"
    );
 
    if (in_array($form['id'], array(64, 65, 67, 68))) {
@@ -302,11 +306,11 @@ function gf_collapsible_sections($form, $lead) {
       $fieldData[$field['id']] = $field;
    }
 
-   $data =  array('content'      => array(11, 16, 320, 321, 66, 67, 293),
-                  'logistics'    => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76),                  
-                  'additional'   => array(123, 130, 287, 134, 37, 38, 41),
-                  'images'       => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219),
-                  'imagesOver'   => array(324, 334, 326, 338, 333, 337, 332, 336, 331, 335)
+   $data = array('content' => array(11, 16, 320, 321, 66, 67, 293),
+       'logistics' => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76),
+       'additional' => array(123, 130, 287, 134, 37, 38, 41),
+       'images' => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219),
+       'imagesOver' => array(324, 334, 326, 338, 333, 337, 332, 336, 331, 335)
    );
    //additional Entries
    $addEntries = '<table width="100%">
@@ -320,7 +324,7 @@ function gf_collapsible_sections($form, $lead) {
               <th>Status      </th>
             </tr>
           </thead>';
-  
+
    $addEntriesCnt = 0;
    foreach ($emailArray as $key => $email) {
       $results = $wpdb->get_results('SELECT  *,
@@ -338,7 +342,7 @@ function gf_collapsible_sections($form, $lead) {
                                       FROM wp_gf_entry_meta
                                       JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
                                      WHERE meta_value = "' . $key . '"' .
-                                    '  AND entry_id != ' . $entry_id . '
+              '  AND entry_id != ' . $entry_id . '
                                   GROUP BY entry_id
                                   ORDER BY entry_id');
 
@@ -386,8 +390,8 @@ function gf_collapsible_sections($form, $lead) {
         ' . displayContent($data['content'], $lead, $fieldData) . '
       </div>
       <div role="tabpanel" class="tab-pane" id="tabs-2">
-        ' . displayContent($data['logistics'], $lead, $fieldData) . 
-        '
+        ' . displayContent($data['logistics'], $lead, $fieldData) .
+           '
       </div>
       <div role="tabpanel" class="tab-pane" id="additional">
         ' . displayContent($data['additional'], $lead, $fieldData) . '
@@ -467,17 +471,17 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
       if (isset($fieldData[$fieldID])) {
          $field = $fieldData[$fieldID];
          $value = RGFormsModel::get_lead_field_value($lead, $field);
-         
+
          if ($field->type != 'fileupload') {
             $display_value = GFCommon::get_lead_field_display($field, $value, $lead['currency']);
             $display_value = apply_filters('gform_entry_field_value', $display_value, $field, $lead, $form);
          } else {
             //display images in a grid
             if ($value != '') {
-               if ( $field->multipleFiles ) {
-                  if ( ! empty( $value ) ) {
-                     $array = json_decode( $value,true );
-                     foreach($array as $file){
+               if ($field->multipleFiles) {
+                  if (!empty($value)) {
+                     $array = json_decode($value, true);
+                     foreach ($array as $file) {
                         $path = pathinfo($file);
                         $ext = strtolower($path['extension']);
                         $supported_image = array('gif', 'jpg', 'jpeg', 'png');
@@ -486,10 +490,10 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
                         } else {
                            $displayItem = $path['basename'];
                         }
-                        $display_value .= '<a href="' . $file . '" target="_blank">' . $displayItem . '</a><br/>';  
+                        $display_value .= '<a href="' . $file . '" target="_blank">' . $displayItem . '</a><br/>';
                      }
                   }
-               }else{
+               } else {
                   $path = pathinfo($value);
                   $ext = strtolower($path['extension']);
                   $supported_image = array('gif', 'jpg', 'jpeg', 'png');
@@ -528,7 +532,7 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
       $return .= '</table>';
    if ($display === 'grid')
       $return .= '<div class="clear"></div>';
-   
+
    return $return;
 }
 
@@ -536,7 +540,7 @@ function getmetaData($entry_id, $type = '') {
    $return = '';
    $metaData = mf_get_form_meta('entry_id', $entry_id);
 
-   
+
    $formCount = 0;
    foreach ($metaData as $data) {
       $entry = GFAPI::get_entry($data->entry_id);
