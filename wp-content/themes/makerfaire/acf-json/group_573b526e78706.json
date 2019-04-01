@@ -1866,7 +1866,7 @@
                     "min": "",
                     "max": ""
                 },
-					  "layout_5c9c04e3aafde": {
+                "layout_5c9c04e3aafde": {
                     "key": "layout_5c9c04e3aafde",
                     "name": "maker_faire_map_cta",
                     "label": "Maker Faire Map CTA",
@@ -1878,7 +1878,7 @@
                             "name": "activeinactive",
                             "type": "radio",
                             "instructions": "",
-									 "required": 0,
+                            "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
                                 "width": "",
@@ -1889,14 +1889,14 @@
                                 "Active": "Active",
                                 "Inactive": "Inactive"
                             },
-									 "allow_null": 0,
+                            "allow_null": 0,
                             "other_choice": 0,
                             "default_value": "",
                             "layout": "horizontal",
                             "return_format": "value",
                             "save_other_choice": 0
-									 },
-									 {
+                        },
+                        {
                             "key": "field_5c9c0534aafe0",
                             "label": "Title \/ Link Text",
                             "name": "title_link_text",
@@ -1915,7 +1915,7 @@
                             "append": "",
                             "maxlength": ""
                         },
-							   {
+                        {
                             "key": "field_5c9c0560aafe2",
                             "label": "Link URL",
                             "name": "link_url",
@@ -1937,7 +1937,7 @@
                     ],
                     "min": "",
                     "max": ""
-					  },
+                },
                 "layout_5c9c04a425736": {
                     "key": "layout_5c9c04a425736",
                     "name": "2_column_video",
@@ -2131,7 +2131,7 @@
                             "collapsed": "",
                             "min": 0,
                             "max": 0,
-                            "layout": "table",
+                            "layout": "row",
                             "button_label": "",
                             "sub_fields": [
                                 {
@@ -2173,11 +2173,11 @@
                                     "maxlength": 220
                                 },
                                 {
-                                    "key": "field_5c9d3bd385ad6",
-                                    "label": "Image Link Text",
-                                    "name": "image_link_text",
-                                    "type": "text",
-                                    "instructions": "",
+                                    "key": "field_5ca24a628d013",
+                                    "label": "Image Links",
+                                    "name": "image_links",
+                                    "type": "repeater",
+                                    "instructions": "Optional links that will appear under the text to the side of the image",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -2185,27 +2185,48 @@
                                         "class": "",
                                         "id": ""
                                     },
-                                    "default_value": "",
-                                    "placeholder": "",
-                                    "prepend": "",
-                                    "append": "",
-                                    "maxlength": 50
-                                },
-                                {
-                                    "key": "field_5c9d3be785ad7",
-                                    "label": "Image Link URL",
-                                    "name": "image_link_url",
-                                    "type": "url",
-                                    "instructions": "",
-                                    "required": 0,
-                                    "conditional_logic": 0,
-                                    "wrapper": {
-                                        "width": "",
-                                        "class": "",
-                                        "id": ""
-                                    },
-                                    "default_value": "",
-                                    "placeholder": ""
+                                    "collapsed": "",
+                                    "min": 0,
+                                    "max": 0,
+                                    "layout": "table",
+                                    "button_label": "",
+                                    "sub_fields": [
+                                        {
+                                            "key": "field_5c9d3bd385ad6",
+                                            "label": "Image Link Text",
+                                            "name": "image_link_text",
+                                            "type": "text",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "",
+                                            "placeholder": "",
+                                            "prepend": "",
+                                            "append": "",
+                                            "maxlength": 50
+                                        },
+                                        {
+                                            "key": "field_5c9d3be785ad7",
+                                            "label": "Image Link URL",
+                                            "name": "image_link_url",
+                                            "type": "url",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "",
+                                            "placeholder": ""
+                                        }
+                                    ]
                                 },
                                 {
                                     "key": "field_5c9d3c1085ad8",
@@ -2232,11 +2253,11 @@
                                     "mime_types": ""
                                 },
                                 {
-                                    "key": "field_5c9d3cd585ad9",
+                                    "key": "field_5ca23aea630b0",
                                     "label": "Image Overlay",
                                     "name": "image_overlay",
-                                    "type": "text",
-                                    "instructions": "",
+                                    "type": "group",
+                                    "instructions": "Totally optional",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -2244,11 +2265,44 @@
                                         "class": "",
                                         "id": ""
                                     },
-                                    "default_value": "",
-                                    "placeholder": "",
-                                    "prepend": "",
-                                    "append": "",
-                                    "maxlength": 50
+                                    "layout": "block",
+                                    "sub_fields": [
+                                        {
+                                            "key": "field_5c9d3cd585ad9",
+                                            "label": "Image Overlay Text",
+                                            "name": "image_overlay_text",
+                                            "type": "text",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "50",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "",
+                                            "placeholder": "",
+                                            "prepend": "",
+                                            "append": "",
+                                            "maxlength": 50
+                                        },
+                                        {
+                                            "key": "field_5ca23ad1630af",
+                                            "label": "Image Overlay Link",
+                                            "name": "image_overlay_link",
+                                            "type": "url",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "50",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "",
+                                            "placeholder": ""
+                                        }
+                                    ]
                                 },
                                 {
                                     "key": "field_5c9d3d1285adb",
@@ -2331,5 +2385,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553813439
+    "modified": 1554141102
 }

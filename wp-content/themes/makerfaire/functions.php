@@ -419,3 +419,31 @@ function ACF_flexible_content_collapse() {
 
 add_action('acf/input/admin_head', 'ACF_flexible_content_collapse');
 
+function custom_acf_repeater_colors() {
+   echo '<style type="text/css">
+        /* nth field background */
+        .acf-repeater.-row .acf-row:nth-of-type(2n) .acf-table {
+            background:#fafafa;
+        }
+        /* left field label td */
+        .acf-repeater.-row .acf-row:nth-of-type(2n) td.acf-label {
+            background:#eee;
+            border-color:#ddd;
+        }
+        /* field td */
+        .acf-repeater.-row .acf-row:nth-of-type(2n) td.acf-input {
+            border-color:#ddd;
+        }
+        /* left and right side - order and delete td */
+        .acf-repeater.-row .acf-row:nth-of-type(2n) td.order,
+        .acf-repeater.-row .acf-row:nth-of-type(2n) td.remove {
+            background:#e3e3e3;
+        }
+        /* space between row - only border works */
+        .acf-repeater.-row > tbody > tr > td {
+            border:0;
+            border-bottom:3px solid #DFDFDF;
+        }
+         </style>';
+}
+add_action('admin_head', 'custom_acf_repeater_colors');

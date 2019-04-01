@@ -620,38 +620,50 @@ function getImagePanel() {
 			$return .= '  <div class="col-sm-4 col-xs-12">
 								 <h4>' . $image['image_title'] . '</h4>
 								 <p>' . $image['image_text'] . '</p>';
-			              if($image['image_link_url']) {
-			$return .= '  	 <a href="' . $image['image_link_url'] . '">' . $image['image_link_text'] . '</a>';
+			              if($image['image_links']) {
+								  foreach ($image['image_links'] as $image_link) {
+			$return .= '  	    <a href="' . $image_link['image_link_url'] . '">' . $image_link['image_link_text'] . '</a>';
+								  }
 							  }
 			$return .= '  </div>';
 			$return .= '  <div class="col-sm-8 col-xs-12">
-			                 <div class="image-display">
-									  <a href="' . $image['image_link_url'] . '">
-										 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
+			                 <div class="image-display">';
+								  if ($image['image_overlay']['image_overlay_link']) {   
+			$return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
+								  }
+			$return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
 											if ($image['image_overlay']) {          
-											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay'] . '</div>';;
+											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';;
 											}
-			$return .= '        </a>
-								  </div>
+			                 if ($image['image_overlay']['image_overlay_link']) { 
+			$return .= '        </a>';
+								  }
+			$return .= '		</div>
 			              </div>';
 			$return .= '</div>';
 		} else {
 			$return .= '<div class="row ' . $image['background_color'] . '">';
 			$return .= '  <div class="col-sm-8 col-xs-12">
-			                 <div class="image-display">
-									  <a href="' . $image['image_link_url'] . '">
-										 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
+			                 <div class="image-display">';
+								  if ($image['image_overlay']['image_overlay_link']) {   
+			$return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
+								  }
+			$return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
 											if ($image['image_overlay']) {          
-											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay'] . '</div>';;
+											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';;
 											}
-			$return .= '        </a>
-								  </div>
-			              </div>';
+			                 if ($image['image_overlay']['image_overlay_link']) { 
+			$return .= '        </a>';
+								  }
+			$return .= '  </div>';
+			$return .= '</div>';
 			$return .= '  <div class="col-sm-4 col-xs-12">
 								 <h4>' . $image['image_title'] . '</h4>
 								 <p>' . $image['image_text'] . '</p>';
-			              if($image['image_link_url']) {
-			$return .= '  	 <a href="' . $image['image_link_url'] . '">' . $image['image_link_text'] . '</a>';
+			              if($image['image_links']) {
+								  foreach ($image['image_links'] as $image_link) {
+			$return .= '  	    <a href="' . $image_link['image_link_url'] . '">' . $image_link['image_link_text'] . '</a>';
+								  }
 							  }
 			$return .= '  </div>';
 			$return .= '</div>';
