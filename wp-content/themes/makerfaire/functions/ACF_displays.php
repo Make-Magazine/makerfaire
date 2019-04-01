@@ -48,7 +48,7 @@ function do_featured_presenter_grid($args) {
    // var_dump($args);
    // echo '</pre>';
    $content = '';
-   $content .= '<div class="xcontainer-fluid featured-image-grid">';
+   $content .= '<div class="featured-image-grid">';
    // $content .= '<div class="row">';
    // $content .= '<div class="col-xs-12 grid-inner">';
    foreach($args as $key => $value) {
@@ -70,7 +70,15 @@ function do_featured_presenter_grid($args) {
       if(!empty($value['event_datetime'])) {
          $content .= '     <p class="dates">'.$value['event_datetime'].'</p>';
       }
-      $content .= '        <p class="desc-body">'.$value['event_desc'].'</p>';
+
+      $desc = $value['event_desc'];
+      if(strlen($desc) > 260 || !empty($value['button_url'])) {
+         $breakpoint = strpos($desc, ' ', 250);
+         if($breakpoint > 0) {
+            $desc = substr($desc, 0, $breakpoint) . '&hellip;';
+         }
+      }
+      $content .= '        <p class="desc-body">'.$desc.'</p>';
 
       if(!empty($value['button_url']) && !empty($value['button_text'])) {
          $content .= '     <p class="btn btn-blue read-more-link">'.$value['button_text'].'</p>';

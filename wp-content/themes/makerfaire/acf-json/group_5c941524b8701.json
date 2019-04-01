@@ -126,7 +126,7 @@
                     "label": "Event Description",
                     "name": "event_desc",
                     "type": "textarea",
-                    "instructions": "Maximum 260 Characters",
+                    "instructions": "Descriptions longer than 260 characters will be truncated with an ellipses...",
                     "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -136,7 +136,7 @@
                     },
                     "default_value": "",
                     "placeholder": "",
-                    "maxlength": 260,
+                    "maxlength": "",
                     "rows": "",
                     "new_lines": ""
                 },
@@ -205,5 +205,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553715829
+    "modified": 1554144825
 }
