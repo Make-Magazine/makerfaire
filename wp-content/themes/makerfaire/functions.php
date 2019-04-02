@@ -1,5 +1,11 @@
 <?php
 
+// FOR NOW, TURN OFF GUTENBURG
+// disable for posts
+add_filter('use_block_editor_for_post', '__return_false', 10);
+// disable for post types
+add_filter('use_block_editor_for_post_type', '__return_false', 10);
+
 // Set our global Faire Variable. Use the slug of the taxonomy as the value.
 define('MF_CURRENT_FAIRE', 'world-maker-faire-new-york-2014');
 
