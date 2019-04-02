@@ -869,7 +869,8 @@ function retrieveRptData($table, $faire) {
          $vars['visible'] = $fields['visible'];
       if (isset($fields['type']))
          $vars['type'] = $fields['type'];
-
+      if (isset($fields['fieldLabel'])) 
+         $vars['displayName'] = $fields['fieldLabel'];
       $vars['name'] = $fields['fieldName'];
       $vars['minWidth'] = 100;
       $vars['width'] = (isset($fields['width']) ? $fields['width'] : '*');
@@ -888,7 +889,7 @@ function retrieveRptData($table, $faire) {
    if ($wpdb->last_error !== '') :
       $wpdb->print_error();
    endif;
-         
+        
    //create array of table data
    foreach ($result as $row) {
 
