@@ -1,10 +1,10 @@
-=== Drop Down Options in List Fields for Gravity Forms ===
+﻿=== Drop Down Options in List Fields for Gravity Forms ===
 Contributors: ovann86
 Donate link: https://www.itsupportguides.com/donate/
 Tags: Gravity Forms, forms, online forms, wcag, drop down, select, list
 Requires at least: 4.8
-Tested up to: 5.0
-Stable tag: 1.8.1
+Tested up to: 5.1
+Stable tag: 1.8.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,9 @@ function my_gform_pre_render( $form ) {
 2. Shows a list field that has drop down fields added to two columns - Title and Option.
 
 == Changelog ==
+
+= 1.8.2 =
+* Fix: resolve issue with default option not being selected when new rows are created
 
 = 1.8.1 =
 * Maintenance: move from depreciated filter 'gform_get_field_value' to 'gform_get_input_value'

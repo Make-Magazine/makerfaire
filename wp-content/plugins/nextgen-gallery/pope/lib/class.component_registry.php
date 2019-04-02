@@ -81,7 +81,7 @@ class C_Component_Registry
      */
     function add_module_path($path, $recurse = false, $load_all = false)
     {
-	    if (!$recurse || (!$this->has_searched_path_before($path))) {
+	    if (!preg_match("/(lib|libs|include|includes|static|templates)$/", $path) && (!$recurse || (!$this->has_searched_path_before($path)))) {
 
 		    // If no default module path has been set, then set one now
 		    if ($this->get_default_module_path() == null)  {

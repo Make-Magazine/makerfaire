@@ -1,0 +1,264 @@
+# Copyright (C) 2018 GravityView
+# This file is distributed under the GPLv2.
+# Translators:
+# michael edi <michaeledi@163.com>, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView Inline Edit 1.2.3\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
+"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"Last-Translator: michael edi <michaeledi@163.com>, 2017\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/katzwebservices/teams/18775/zh_CN/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Textdomain-Support: yes\n"
+
+#: class-gravityview-inline-edit.php:76 class-gravityview-inline-edit.php:360
+msgid "Inline Edit by GravityView"
+msgstr "GravityView内嵌编辑"
+
+#: class-gravityview-inline-edit.php:261
+msgid "Update"
+msgstr "更新"
+
+#: class-gravityview-inline-edit.php:266
+msgid "Cancel"
+msgstr "取消"
+
+#: class-gravityview-inline-edit.php:358
+msgid "The plugin requires Gravity Forms."
+msgstr "此插件需要安装Gravity Forms。"
+
+#: includes/class-gravityview-inline-edit-ajax.php:119
+msgid "Gravity Forms is not active."
+msgstr "Gravity Forms未启用。"
+
+#: includes/class-gravityview-inline-edit-ajax.php:130
+msgid "You are not allowed to edit this entry."
+msgstr "您无权编辑此条目。"
+
+#: includes/class-gravityview-inline-edit-ajax.php:222
+msgid "This field is required."
+msgstr "此字段为必填项。"
+
+#: includes/class-gravityview-inline-edit-ajax.php:258
+msgid "Please enter a valid time."
+msgstr "请输入一个有效时间。"
+
+#: includes/class-gravityview-inline-edit-ajax.php:373
+msgid "Invalid value. Please try again."
+msgstr "无效值，请重试。"
+
+#: includes/class-gravityview-inline-edit-gravity-forms.php:58
+msgid "An Inline Edit button will be added"
+msgstr "将添加一个内部编辑按钮"
+
+#: includes/class-gravityview-inline-edit-gravity-forms.php:60
+msgid ""
+"If enabled, a button to toggle on and off inline editing will be added to "
+"the Gravity Forms Entries screen. If disabled, the button will not be added."
+msgstr "如果启用，将在Gravity Forms条目列表界面上显示一个内部编辑的开关。如果禁用，此开关将不显示。"
+
+#: includes/class-gravityview-inline-edit-gravity-forms.php:115
+#: includes/class-gravityview-inline-edit-gravityview.php:306
+#: includes/class-gravityview-inline-edit-render-abstract.php:205
+msgid "Enable Inline Edit"
+msgstr "启用内部编辑"
+
+#: includes/class-gravityview-inline-edit-gravity-forms.php:120
+msgid "Allow Inline Edit when viewing this form's entries in Gravity Forms"
+msgstr "当在Gravity Forms中查看条目时，允许内部编辑"
+
+#: includes/class-gravityview-inline-edit-gravity-forms.php:124
+#: includes/class-gravityview-inline-edit-settings.php:45
+msgid "Inline Edit"
+msgstr "内部编辑"
+
+#: includes/class-gravityview-inline-edit-gravityview.php:307
+msgid "Adds a link to toggle Inline Editing capabilities."
+msgstr "添加一个链接来控制是否启用内部编辑功能。"
+
+#: includes/class-gravityview-inline-edit-gravityview.php:390
+#: includes/class-gravityview-inline-edit-settings.php:92
+#: includes/class-gravityview-inline-edit-settings.php:443
+msgid "Popup: The edit form will appear above the content."
+msgstr "弹窗：条目编辑界面将显示在内容上方。"
+
+#: includes/class-gravityview-inline-edit-gravityview.php:394
+#: includes/class-gravityview-inline-edit-settings.php:96
+#: includes/class-gravityview-inline-edit-settings.php:451
+msgid ""
+"In-Place: The edit form for the field will show in the same place as the "
+"content."
+msgstr "原处：编辑条目界面将显示在内容的同样位置。"
+
+#: includes/class-gravityview-inline-edit-gravityview.php:426
+#: includes/class-gravityview-inline-edit-settings.php:433
+msgid "Inline Edit Mode"
+msgstr "内部编辑模式"
+
+#: includes/class-gravityview-inline-edit-gravityview.php:428
+#: includes/class-gravityview-inline-edit-settings.php:436
+msgid ""
+"Change where the Inline Edit form appears &ndash; above the content or in "
+"its place."
+msgstr "变更内部编辑表单的位置&ndash; 在内容上层或内容本层。"
+
+#: includes/class-gravityview-inline-edit-gravityview.php:428
+msgid "Hover over the ? above for examples of each mode."
+msgstr "鼠标移动到？处查看每个模式的示例。"
+
+#: includes/class-gravityview-inline-edit-gravityview.php:434
+#: includes/class-gravityview-inline-edit-settings.php:442
+msgid "Popup"
+msgstr "弹窗"
+
+#: includes/class-gravityview-inline-edit-gravityview.php:439
+#: includes/class-gravityview-inline-edit-settings.php:450
+msgid "In-Place"
+msgstr "原处"
+
+#: includes/class-gravityview-inline-edit-render-abstract.php:204
+msgid "Toggle Inline Edit"
+msgstr "切换内部编辑"
+
+#: includes/class-gravityview-inline-edit-render-abstract.php:206
+msgid "Disable Inline Edit"
+msgstr "禁用内部编辑"
+
+#: includes/class-gravityview-inline-edit-scripts.php:102
+msgid "Empty"
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:290
+msgid "Status"
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:291
+msgid "There was an error processing the request."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:292
+msgid ""
+"Could not deactivate the license. The license key you attempted to "
+"deactivate may not be active or valid."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:293
+msgid "The license key is valid, but it has not been activated for this site."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:294
+msgid "Invalid: this license has reached its activation limit."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:295
+msgid "The license has been deactivated."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:296
+msgid "The license key is valid and active."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:297
+#: includes/class-gravityview-inline-edit-settings.php:298
+msgid "The license key entered is invalid."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:299
+msgid "This license key has been revoked."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:300
+msgid ""
+"This license key has expired. %sRenew your license on the GravityView "
+"website%s"
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:301
+msgid "Verifying license&hellip;"
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:302
+msgid "Activate License"
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:303
+msgid "Deactivate License"
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:304
+msgid "Verify License"
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:422
+msgid "Support License Key"
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:423
+msgid ""
+"Enter the license key that was sent to you on purchase. This enables plugin "
+"updates &amp; support."
+msgstr ""
+
+#: includes/class-gravityview-inline-edit-settings.php:426
+msgid "Enter your license key here"
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:201
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
+msgstr "有一个新版本的%1$s可用。%2$s查看版本%3$s详情%4$s。"
+
+#: lib/EDD_SL_Plugin_Updater.php:209
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
+msgstr "有一个新版本的%1$s可用。%2$s查看版本%3$s详情%4$s或者%5$s现在升级%6$s。"
+
+#: lib/EDD_SL_Plugin_Updater.php:396
+msgid "You do not have permission to install plugin updates"
+msgstr "您无权限进行插件升级。"
+
+#: lib/EDD_SL_Plugin_Updater.php:396
+msgid "Error"
+msgstr "错误"
+
+#: lib/class-gravityview-extension.php:351
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr "无法启用%s插件；GravityView未启用。"
+
+#: lib/class-gravityview-extension.php:355
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr "%s插件需要GravityView版本在%s或以上。"
+
+#: lib/class-gravityview-extension.php:359
+msgid ""
+"The %s Extension requires PHP Version %s or newer. Please ask your host to "
+"upgrade your server's PHP."
+msgstr "%s插件需要PHP版本在%s或以上。请联系主机商升级PHP版本。"
+
+#. Plugin URI of the plugin/theme
+msgid "https://gravityview.co/extensions/inline-edit/"
+msgstr "https://gravityview.co/extensions/inline-edit/"
+
+#. Description of the plugin/theme
+msgid "Edit your fields inline in Gravity Forms and GravityView."
+msgstr ""
+
+#: class-gravityview-inline-edit.php:359
+msgctxt ""
+"1st replacement is the plugin name; 2nd replacement is the reason why"
+msgid "Could not activate %s: %s"
+msgstr "无法启用%s：%s"

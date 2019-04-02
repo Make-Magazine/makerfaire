@@ -1,14 +1,14 @@
 <?php
 /**
  * @package wpDataTables
- * @version 2.3.2
+ * @version 2.5
  */
 /*
 Plugin Name: wpDataTables
 Plugin URI: http://tms-plugins.com
 Description: Add interactive tables easily from any input source
 //[<-- Full version -->]//
-Version: 2.3.2
+Version: 2.5
 //[<--/ Full version -->]//
 //[<-- Full version insertion #27 -->]//
 Author: TMS-Plugins
@@ -42,8 +42,9 @@ require_once(WDT_ROOT_PATH . 'controllers/wdt_ajax_actions.php');
 // Plugin functions
 require_once(WDT_ROOT_PATH . 'controllers/wdt_functions.php');
 
-
-require_once WDT_ROOT_PATH . '/lib/autoload.php';
+if (defined('PHP_VERSION_ID') && PHP_VERSION_ID >= 50600) {
+    require_once WDT_ROOT_PATH . '/lib/autoload.php';
+}
 
 function wpdatatables_load() {
     if (is_admin()) {

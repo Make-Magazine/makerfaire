@@ -14,7 +14,7 @@
  * Plugin Name:       	GravityView - DataTables Extension
  * Plugin URI:        	https://gravityview.co/extensions/datatables/
  * Description:       	Display entries in a dynamic table powered by DataTables & GravityView.
- * Version:          	2.3.3
+ * Version:          	2.3.4
  * Author:            	GravityView
  * Author URI:        	https://gravityview.co
  * Text Domain:       	gv-datatables
@@ -27,7 +27,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'GV_DT_VERSION', '2.3.3' );
+define( 'GV_DT_VERSION', '2.3.4' );
 
 /** @define "GV_DT_FILE" "./" */
 define( 'GV_DT_FILE', __FILE__ );

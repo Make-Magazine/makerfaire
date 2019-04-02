@@ -34,7 +34,7 @@
 
                 <!-- .modal-footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn bgm-gray btn-icon-text waves-effect" data-dismiss="modal"><i
+                    <button type="button" class="btn bgm-gray btn-icon-text waves-effect wdt-cancel-delete-button" data-dismiss="modal"><i
                                 class="zmdi zmdi-close"></i> <?php _e('Cancel', 'wpdatatables'); ?></button>
                     <button type="button" class="btn btn-danger btn-icon-text waves-effect"
                             id="wdt-browse-delete-button"><i

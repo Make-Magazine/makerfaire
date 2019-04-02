@@ -31,13 +31,13 @@ class nggManageGallery {
             }
         }
         // Should be only called via manage galleries overview
-		if ( isset($_POST['page']) && $_POST['page'] == 'manage-galleries' )
+		if ( isset($_POST['nggpage']) && $_POST['nggpage'] == 'manage-galleries' )
 			$this->post_processor_galleries();
 		// Should be only called via a edit single gallery page
-		if ( isset($_POST['page']) && $_POST['page'] == 'manage-images' )
+		if ( isset($_POST['nggpage']) && $_POST['nggpage'] == 'manage-images' )
 			$this->post_processor_images();
 		// Should be called via a publish dialog
-		if ( isset($_POST['page']) && $_POST['page'] == 'publish-post' )
+		if ( isset($_POST['nggpage']) && $_POST['nggpage'] == 'publish-post' )
 			$this->publish_post();
 
 		//Look for other POST process
@@ -621,7 +621,6 @@ class nggManageGallery {
 					break;
 			}
 		}
-
 		if (isset ($_POST['addgallery']) && isset ($_POST['galleryname'])){
 
 			check_admin_referer('ngg_addgallery');
@@ -630,12 +629,20 @@ class nggManageGallery {
 				wp_die(__('Cheatin&#8217; uh?', 'nggallery'));
 
 			// get the default path for a new gallery
-			$defaultpath = $ngg->options['gallerypath'];
 			$newgallery = $_POST['galleryname'];
-			if ( !empty($newgallery) )
-				nggAdmin::create_gallery($newgallery, $defaultpath);
+			if (!empty($newgallery))
+			{
+				$gallery_mapper = C_Gallery_Mapper::get_instance();
+				$gallery = $gallery_mapper->create(array('title' => $newgallery));
+				if ($gallery->save() && !isset($_REQUEST['attach_to_post']))
+				{
+					$url = admin_url() . 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=' . $gallery->gid;
+					$message = sprintf(__('Gallery successfully created. <a href="%s" target="_blank">Manage gallery</a>', 'nggallery'), $url);
+					nggGallery::show_message($message, 'gallery_created_msg');
+				}
+			}
 
-            do_action( 'ngg_update_addgallery_page' );
+			do_action( 'ngg_update_addgallery_page' );
 		}
 
 		if (isset ($_POST['TB_bulkaction']) && isset ($_POST['TB_ResizeImages']))  {
@@ -949,14 +956,11 @@ class nggManageGallery {
 	function can_user_manage_gallery()
 	{
 		$retval 	= FALSE;
-		$registry	= C_Component_Registry::get_instance();
-		$security	= $registry->get_utility('I_Security_Manager');
-		$actor		= $security->get_current_actor();
 
-		if ($this->gallery && $actor->get_entity_id()== $this->gallery->author) {
+		if ($this->gallery && wp_get_current_user()->ID == $this->gallery->author) {
 			$retval = TRUE;
 		}
-		elseif($actor->is_allowed('nextgen_edit_gallery_unowned')) {
+		elseif(M_Security::is_allowed('nextgen_edit_gallery_unowned')) {
 			$retval = TRUE;
 		}
 

@@ -235,11 +235,12 @@ jQuery(function($){
         extra_data:  {},
 
         _create_request: function(limit, offset) {
-            var request = _.extend({}, igw_data.sec_token, {
+            var request = {
                 action: this.action,
                 limit: limit ? limit : this.fetch_limit,
-                offset: offset ? offset : 0
-            });
+                offset: offset ? offset : 0,
+                nonce: igw_data.nonce,
+            };
             for (var index in this.extra_data) {
                 var value = this.extra_data[index];
                 if (typeof(request[index]) === 'undefined') {
@@ -683,7 +684,11 @@ jQuery(function($){
 
             var selected = this.sources.selected();
             if (selected.length) {
-                var view_name = _.str.capitalize(selected.pop().id)+"Source";
+                function capitalizeFirstLetter(text) {
+                    text = String(text);
+                    return text.charAt(0).toUpperCase() + text.slice(1);
+                }
+                var view_name = capitalizeFirstLetter(selected.pop().id) + "Source";
                 if (typeof(Ngg.DisplayTab.Views[view_name]) != 'undefined') {
                     var selected_view = new Ngg.DisplayTab.Views[view_name];
                     this.$el.append(selected_view.render().el);
@@ -821,22 +826,8 @@ jQuery(function($){
                 // Create all elements
                 var image_container = $('<label style="display: block; cursor: pointer;"/>').addClass('image_container');
 
-                // 2.0.66 did not support plugins_url, 2.0.66.3+ does
-                var installed_at_version = this.model.get('installed_at_version');
-                var baseurl = photocrati_ajax.wp_plugins_url;
-                var preview_image_relpath = this.model.get('preview_image_relpath');
-                if (typeof installed_at_version == 'undefined') {
-                    baseurl = photocrati_ajax.wp_site_url;
-                    baseurl = baseurl.replace(/(.*)\/index\.php$/i, "$1");
-                    // those who installed 2.0.66.3 lack the 'installed_at_version' setting but have a
-                    // plugin-relative path
-                    if (preview_image_relpath.indexOf('/nextgen-gallery') == 0) {
-                        baseurl = photocrati_ajax.wp_plugins_url;
-                    }
-                }
-
                 var img = $('<img/>').attr({
-                    src: baseurl + '/' + preview_image_relpath,
+                    src: this.model.get('preview_image_url'),
                     title: this.model.get('title'),
                     alt: this.model.get('alt')
                 });

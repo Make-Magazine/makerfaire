@@ -266,7 +266,7 @@ class nggdb
             $album->name = __('Album overview','nggallery');
             $album->albumdesc  = __('Album overview','nggallery');
             $album->previewpic = 0;
-            $album->sortorder  =  serialize( $wpdb->get_col("SELECT gid FROM $wpdb->nggallery") );
+            $album->sortorder  = C_NextGen_Serializable::serialize( $wpdb->get_col("SELECT gid FROM $wpdb->nggallery") );
         } else {
             $album = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->nggalbum WHERE slug = %s", $id) );
         }
@@ -274,10 +274,8 @@ class nggdb
         // Unserialize the galleries inside the album
         if ( $album ) {
 
-	        $serializer = new Ngg_Serializable();
-
             if ( !empty( $album->sortorder ) )
-                $album->gallery_ids = $serializer->unserialize( $album->sortorder );
+                $album->gallery_ids = C_NextGen_Serializable::unserialize( $album->sortorder );
 
             // it was a bad idea to use a object, stripslashes_deep() could not used here, learn from it
             $album->albumdesc  = stripslashes($album->albumdesc);
@@ -544,7 +542,7 @@ class nggdb
         global $wpdb;
 
 		if ( is_array($meta_data) )
-			$meta_data = serialize($meta_data);
+			$meta_data = C_NextGen_Serializable::serialize($meta_data);
 
         // slug must be unique, we use the alttext for that
         $slug = nggdb::get_unique_slug( sanitize_title( $alttext ), 'image' );
@@ -903,15 +901,12 @@ class nggdb
     {
         global $wpdb;
 
-        // XXX nggdb is used statically, cannot inherit from Ngg_Serializable
-	    $serializer = new Ngg_Serializable();
-
         // Query database for existing values
         // Use cache object
         $old_values = $wpdb->get_var( $wpdb->prepare( "SELECT meta_data FROM $wpdb->nggpictures WHERE pid = %d ", $id ) );
-        $old_values = $serializer->unserialize( $old_values);
+        $old_values = C_NextGen_Serializable::unserialize( $old_values);
         $meta = array_merge( (array)$old_values, (array)$new_values );
-        $serialized_meta = $serializer->serialize($meta);
+        $serialized_meta = C_NextGen_Serializable::serialize($meta);
         $result = $wpdb->query( $wpdb->prepare("UPDATE $wpdb->nggpictures SET meta_data = %s WHERE pid = %d", $serialized_meta, $id) );
 
         do_action('ngg_updated_image_meta', $id, $meta);

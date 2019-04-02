@@ -587,3 +587,29 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:before {
 .wpDataTablesWrapper th .number-range-filter:hover {
     color: #ffffff;
 }
+
+.wpdt-c .noUi-handle.noUi-handle-upper {
+    right: 0 !important;
+    left: 100% !important;
+    margin-top: 0px !important;
+    background-color: #D3D3D3 !important;
+}
+.wpdt-c .noUi-handle.noUi-handle-lower{
+    right: 0 !important;
+    left: 100% !important;
+    margin-top: 0px !important;
+    background-color: #D3D3D3 !important;
+}
+.wpdt-c .noUi-horizontal{
+    margin-top: 20px !important;
+    margin-right: 15px !important;
+}
+.wpdt-c .noUi-connect{
+    background-color: #696969 !important ;
+    margin-top: 0px !important;
+}
+
+#wdt-frontend-modal .wdt_checkbox_option,
+#wdt-frontend-modal .wdt-search-filters-button-container .wdt_checkbox_option {
+    margin-top: 0;
+}

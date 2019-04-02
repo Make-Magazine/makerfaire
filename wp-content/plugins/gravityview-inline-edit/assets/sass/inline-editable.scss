@@ -1,0 +1,198 @@
+/**
+ * Improve how the editing <div> behaves
+ */
+div.gv-inline-editable-value {
+
+  display: inline-block; // Don't want everything to be full-width all the time
+  cursor: text; // When it's editable, show text cursor
+
+  // After editing textareas, there was an additional height that didn't look good
+  &.editable-pre-wrapped {
+    white-space: normal;
+  }
+
+  // Prevent the editable border from being pushed far away from the content
+  *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Float the toggle button to the right
+// TODO: RTF support
+.inline-edit-enable {
+  float: right;
+  margin-bottom: 1em;
+  #entry_list_form & {
+    float: none;
+    display: inline-block;
+  }
+}
+
+// Add cursor to show that clicking the header results in entire column of inputs being shown
+.gv-inline-edit-on table thead th,
+.gv-inline-edit-on table thead th * {
+  cursor: s-resize;
+}
+.gv-inline-edit-on table tfoot th,
+.gv-inline-edit-on table tfoot th * {
+  cursor: n-resize;
+}
+
+// After editing a value, the updated text value is wrapped in a <div>, which breaks the link
+// because of the inline > block element thing. This fixes that.
+span.gv-inline-editable-value {
+
+  // In the admin, show multi-selects as a CSV instead of bulleted <ul>
+  .wp-list-table.gf_entries & ul li {
+
+    padding-right: .25em; // TODO: RTF
+    display: inline;
+
+    &:after {
+      content: ",";
+      margin: 0;
+    }
+
+    &:last-child {
+      &:after {
+        content: "";
+      }
+      padding-right: 0;
+    }
+  }
+
+  > * {
+    display: inline-block;
+  }
+}
+
+// Both span and div
+.gv-inline-editable-value,
+.gv-inline-editable-value a {
+  cursor: text;
+}
+
+// Make not editable content dimmed and show the Ø cursor
+// TODO: This will need to change when using persistent enable/disable
+.gv-inline-editable-disabled.editable-disabled,
+.gv-inline-edit-on .gv-inline-edit-live,
+.gv-inline-editable-disabled.editable-disabled a {
+  opacity: .7;
+  cursor: not-allowed;
+}
+
+.gv-editable-container.editable-popup {
+  max-width: 70% !important;
+  width: auto;
+}
+
+// Place editing form above other content
+.gv-editable-container.editable-inline {
+  position: relative;
+  z-index: 999;
+
+  // Fix 16px top/bottom margin GF adds
+  &.gform_wrapper {
+    margin: 0;
+  }
+}
+
+.gv-editable-container {
+  font-weight: normal;
+}
+
+//Make inline editables take the full width of their parents in Bootstrap 3
+.gv-editable-container,
+.gv-editable-container .editable-input,
+.gv-editable-container .control-group.form-group,
+.gv-editable-container .control-group.form-group .editable-input {
+
+  width: 100%;
+
+    textarea,
+    select,
+    input:not([type=radio]):not([type=checkbox]):not([type=submit]) {
+      width: 100%;
+      height: auto;
+    }
+}
+
+.gv-editable-container .gfield_list_icons img {
+  height: 16px;
+  width: 16px;
+  max-width: none;
+  max-height: none;
+  margin-bottom: 4px;
+}
+
+// Only show on front-end
+.logged-in .gv-editable-container .editable-buttons button {
+  padding: .3em .6em;
+}
+
+.gv-container .editableform .editable-buttons button.ui-button-icon-only {
+  height: auto;
+  width: auto;
+}
+
+// Namespace and import Gravity Forms form CSS
+.gv-editable-container {
+
+  .editableform textarea,
+  .editableform input {
+    font-size: 16px;
+
+    &[type=number] {
+      padding-bottom: 6px;
+      padding-top: 6px;
+    }
+  }
+
+  .wp-admin & .datepicker {
+    width: auto!important;
+  }
+
+  // Remove vertical margin when inline editing in Entries screen
+  .wp-admin .wp-list-table &.gform_wrapper {
+    margin: 0;
+  }
+
+  @import "../../../gravityforms/css/formsmain.css";
+
+  // The list table inputs were all over the place. This fixes it.
+  &.gform_wrapper table.gfield_list td {
+    vertical-align: top;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  // Make checked inputs bold on full checkboxes field, but normal when only single-input
+  &.gform_wrapper ul.gfield_checkbox li input[type="checkbox"]+label,
+  &.gform_wrapper [data-inputnumber] ul.gfield_checkbox li input[type="checkbox"]:checked+label{
+    font-weight: normal;
+  }
+
+  &.gform_wrapper ul.gfield_checkbox li input[type="checkbox"]:checked+label {
+    font-weight: bold;
+  }
+
+  &.gform_wrapper .gfield_checkbox li input {
+    float: none;
+  }
+
+  // Fix display issues with the address field
+  & .ginput_full {
+    clear: both;
+    display: block;
+  }
+
+  // Improve how the Name fields look (it was too wide before)
+  & div.ginput_complex.ginput_container.ginput_container_name {
+    max-width: 400px;
+    span {
+      width: 100%;
+      display: inline-block;
+      margin-bottom: .5em;
+    }
+  }
+}

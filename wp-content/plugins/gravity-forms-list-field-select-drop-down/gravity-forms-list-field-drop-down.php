@@ -2,7 +2,7 @@
 /*
 Plugin Name: Drop Down List Field for Gravity Forms
 Description: Gives the option of adding a drop down (select) list to a list field column
-Version: 1.8.1
+Version: 1.8.2
 Author: Adrian Gordon
 Author URI: https://www.itsupportguides.com
 License: GPL2

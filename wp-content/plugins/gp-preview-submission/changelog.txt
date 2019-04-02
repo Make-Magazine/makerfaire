@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.12
+
+	- Fix major security issue.
+
 ## 1.2.11
 
 	- Fixed issue were nonexistent method was referenced in hook.

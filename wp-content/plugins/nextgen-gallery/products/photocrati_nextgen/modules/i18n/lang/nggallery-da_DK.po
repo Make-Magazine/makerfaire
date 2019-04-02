@@ -291,7 +291,7 @@ msgstr ""
 
 #: products/photocrati_nextgen/modules/ngglegacy/admin/album.php:485
 msgid ""
-"After you create and select a album, you can drag and drop a gallery or "
+"After you create and select an album, you can drag and drop a gallery or "
 "another album into your new album below"
 msgstr ""
 "Når du har oprettet og valgt et album, kan du trække og slippe et galleri "
@@ -1569,7 +1569,7 @@ msgid "Hide"
 msgstr "Skjul"
 
 #: products/photocrati_nextgen/modules/nextgen_other_options/package.module.nextgen_other_options.php:148
-msgid "How should related images be match?"
+msgid "How should related images be matched?"
 msgstr "Hvordan skal relaterede billeder være match?"
 
 #: products/photocrati_nextgen/modules/nextgen_other_options/package.module.nextgen_other_options.php:697
@@ -3499,10 +3499,10 @@ msgstr "Galleriet ID =%s findes ikke."
 #. Description of the plugin
 msgid ""
 "The most popular gallery plugin for WordPress and one of the most popular "
-"plugins of all time with over 23 million downloads."
+"plugins of all time with over 25 million downloads."
 msgstr ""
 "Den mest populære galleri plugin til WordPress og et af de mest populære "
-"plugins igennem tiden med over 23 millioner downloads."
+"plugins igennem tiden med over 25 millioner downloads."
 
 #: products/photocrati_nextgen/modules/ngglegacy/admin/overview.php:290
 msgid "The most powerful gallery system ever built for WordPress. "

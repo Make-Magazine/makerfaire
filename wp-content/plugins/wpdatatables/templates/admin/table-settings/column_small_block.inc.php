@@ -10,6 +10,14 @@
         <div class="pull-right wdt-column-move-arrows m-l-5">
             <span class="pull-right"><i class="zmdi zmdi-unfold-more column-control"></i></span>
         </div>
+        <?php if ($tableData->table->editable != 0) {?>
+        <span class="pull-right m-l-5" data-toggle="tooltip" title="<?php _e('Enable/disable editing'); ?>"><i
+                    class="zmdi zmdi-edit column-control wdt-toggle-enable-editing"></i></span>
+        <?php }?>
+        <span class="pull-right m-l-5" data-toggle="tooltip" title="<?php _e('Show/hide filters'); ?>"><i
+                    class="zmdi zmdi-filter-list column-control wdt-toggle-show-filters"></i></span>
+        <span class="pull-right m-l-5" data-toggle="tooltip" title="<?php _e('Show/hide sorting'); ?>"><i
+                    class="zmdi zmdi-sort-asc column-control wdt-toggle-show-sorting"></i></span>
         <span class="pull-right m-l-5" data-toggle="tooltip" title="<?php _e('Show/hide the column'); ?>"><i
                     class="zmdi zmdi-eye column-control toggle-visibility"></i></span>
         <span class="pull-right m-l-5" data-toggle="tooltip" title="<?php _e('Show/hide on mobile'); ?>"><i

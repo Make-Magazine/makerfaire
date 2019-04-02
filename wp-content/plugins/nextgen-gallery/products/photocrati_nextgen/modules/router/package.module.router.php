@@ -149,13 +149,7 @@ class Mixin_Router extends Mixin
      */
     function get_static_url($path, $module = FALSE)
     {
-        $fs = C_Fs::get_instance();
-        $path = $fs->find_abspath($path, $module);
-        $base_url = $this->object->get_base_url(TRUE);
-        $base_url = $this->object->remove_url_segment('/index.php', $base_url);
-        $path = str_replace($fs->get_document_root('plugins'), $base_url, $path);
-        // adjust for possible windows hosts
-        return str_replace("\\", '/', $path);
+        return M_Static_Assets::get_static_url($path, $module);
     }
     /**
      * Gets the routed url

@@ -23,7 +23,7 @@ class M_NggLegacy extends C_Base_Module
 			'photocrati-nextgen-legacy',
 			'NextGEN Legacy',
 			'Embeds the original version of NextGEN 1.9.3 by Alex Rabe',
-			'3.1.0',
+			'3.1.14',
 			'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
 			'Imagely',
 			'https://www.imagely.com'
@@ -93,14 +93,16 @@ class C_NggLegacy_Installer
         }
 
 		// now remove the capability
-		ngg_remove_capability("NextGEN Gallery overview");
-		ngg_remove_capability("NextGEN Use TinyMCE");
-		ngg_remove_capability("NextGEN Upload images");
-		ngg_remove_capability("NextGEN Manage gallery");
-		ngg_remove_capability("NextGEN Edit album");
-		ngg_remove_capability("NextGEN Change style");
-		ngg_remove_capability("NextGEN Change options");
-		ngg_remove_capability("NextGEN Attach Interface");
+        ngg_remove_capability("NextGEN Attach Interface");
+        ngg_remove_capability("NextGEN Change options");
+        ngg_remove_capability("NextGEN Change style");
+        ngg_remove_capability("NextGEN Edit album");
+        ngg_remove_capability("NextGEN Gallery overview");
+        ngg_remove_capability("NextGEN Manage gallery");
+        ngg_remove_capability("NextGEN Upload images");
+        ngg_remove_capability("NextGEN Use TinyMCE");
+        ngg_remove_capability('NextGEN Manage others gallery');
+        ngg_remove_capability('NextGEN Manage tags');
 
 		$this->remove_transients();
 	}

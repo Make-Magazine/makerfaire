@@ -1,7 +1,9 @@
 jQuery(function($) {
 
+    var selector = null;
+
     var nextgen_simplelightbox_init = function() {
-        var selector = nextgen_lightbox_filter_selector($, $(".ngg-simplelightbox"));
+        selector = nextgen_lightbox_filter_selector($, $(".ngg-simplelightbox"));
         selector.simpleLightbox({
             history: false,
             animationSlide: false,
@@ -9,6 +11,10 @@ jQuery(function($) {
         });
     };
 
-    $(window).bind('refreshed', nextgen_simplelightbox_init);
     nextgen_simplelightbox_init();
+
+    $(window).bind('refreshed', function() {
+        var gallery = selector.simpleLightbox();
+        gallery.refresh();
+    });
 });

@@ -142,7 +142,7 @@ if ($thumbnail_crop_frame != null)
 					
 					jQuery('#thumbMsg').html("<?php _e('Thumbnail updated', 'nggallery') ?>");
 					jQuery('#thumbMsg').css({'display':'block'});
-					setTimeout(function(){ jQuery('#thumbMsg').fadeOut('slow'); }, 1500);
+					setTimeout(function(){ jQuery('#thumbMsg').html(''); }, 1500);
 			},
 		  error: function() {
 		  			jQuery('#thumbMsg').html("<?php _e('Error updating thumbnail', 'nggallery') ?>");
@@ -158,7 +158,7 @@ if ($thumbnail_crop_frame != null)
 <table align="center">
 	<tr>
 		<td rowspan="3" valign="middle" align="center" id="ngg-overlay-dialog-main">
-			<small><?php esc_html_e('Select the area for the thumbnail from the picture on below.', 'nggallery'); ?></small>
+			<small><?php esc_html_e('Select the area for the thumbnail from the picture below.', 'nggallery'); ?></small>
 			<img src="<?php echo nextgen_esc_url( $preview_image ); ?>" alt="" id="imageToEdit" />	
 		</td>
 		<td style="display:none;">
@@ -177,8 +177,8 @@ if ($thumbnail_crop_frame != null)
 	</tr>
 </table>
 <div id="ngg-overlay-dialog-bottom">
+    <div id="thumbMsg"></div>
 	<input type="button" name="update" value="<?php esc_attr_e('Update', 'nggallery'); ?>" onclick="updateThumb()" class="button-secondary" />
-	<div id="thumbMsg" ></div>
 </div>
 
 <script type="text/javascript">

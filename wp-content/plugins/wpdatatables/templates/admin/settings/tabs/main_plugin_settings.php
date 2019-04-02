@@ -46,6 +46,7 @@
                             <option value="Y/m/d"> 2005/15/07 (Y/m/d)</option>
                             <option value="d.m.Y"> 15.07.2005 (d.m.Y)</option>
                             <option value="m.d.Y"> 07.15.2005 (m.d.Y)</option>
+                            <option value="Y.m.d"> 2005.07.15 (Y.m.d)</option>
                             <option value="d-m-Y"> 15-07-2005 (d-m-Y)</option>
                             <option value="m-d-Y"> 07-15-2005 (m-d-Y)</option>
                             <option value="Y-m-d"> 2005-07-15 (Y-m-d)</option>
@@ -108,6 +109,9 @@
                             <option value="skin0"><?php _e('Material', 'wpdatatables'); ?></option>
                             <option value="skin1"><?php _e('Light', 'wpdatatables'); ?></option>
                             <option value="skin2"><?php _e('Graphite', 'wpdatatables'); ?></option>
+                            <option value="aqua"><?php _e('Aqua', 'wpdatatables'); ?></option>
+                            <option value="purple"><?php _e('Purple', 'wpdatatables'); ?></option>
+                            <option value="dark"><?php _e('Dark', 'wpdatatables'); ?></option>
                         </select>
                     </div>
                 </div>

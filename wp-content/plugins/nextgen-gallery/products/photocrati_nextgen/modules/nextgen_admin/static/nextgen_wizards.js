@@ -105,18 +105,30 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 				
 				el.click(function (e) {
 					// here we only trigger done() if anchor is page-local (i.e. JS button) because for normal anchors this step is only "done" when reaching the new page
-					if (!el.is('a') || (el.attr("href").startsWith("#") || el.attr("href").startsWith("javascript:") || el.hasClass("thickbox"))) {
+					if (!el.is('a,button.ngg_save_settings_button,input.ngg_save_gallery_changes') || (el.attr("href").startsWith("#") || el.attr("href").startsWith("javascript:") || el.hasClass("thickbox"))) {
 						self.done(el);
 					}
 				});
 				
 				this.setup = function() {
-					if (!el.is('a'))
+					
+					if (!el.is('a,button.ngg_save_settings_button,button.ngg_save_pricelist_button,input.ngg_save_gallery_changes')) {
 						return;
+					}
 					
-					var href = el.attr("href");
-					this.originalHref = href;
-					
+					if (el.is('a')) {
+						var href = el.attr("href");
+						this.originalHref = href;
+					}
+
+					if (el.is('button.ngg_save_settings_button,button.ngg_save_pricelist_button,input.ngg_save_gallery_changes')) {
+						var href = el.parents('form').attr('action');
+						if (href.indexOf("&ngg_wizard") > -1) {
+							hrefSplit = href.split("&ngg_wizard");
+							href = hrefSplit[0];
+						} 
+					}
+		
 					if (!href.startsWith("#")) {
 						if (href.indexOf("?") == -1)
 							href = href + "?";
@@ -125,7 +137,11 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 					
 						href = href + "ngg_wizard=" + this.currentWizard + "&ngg_wizard_step=" + this.currentStep;
 				
-						el.attr("href", href);
+						if ( el.is('a') ) 
+							el.attr("href", href);
+
+						if ( el.is('button.ngg_save_settings_button,button.ngg_save_pricelist_button,input.ngg_save_gallery_changes') ) 
+							el.parents('form').attr('action', href);
 					}
 				};
 				
@@ -208,7 +224,7 @@ if (typeof(NextGEN_Wizard_Manager) === 'undefined') {
 			view = {
 				handler : ButtonView,
 				name : "ButtonView",
-				selector : "a, input[type='button'], input[type='submit']"
+				selector : "a, input[type='button'], input[type='submit'], button"
 			};
 			this.views.push(view);
 			

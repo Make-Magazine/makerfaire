@@ -350,7 +350,12 @@ class C_Admin_Notification_Manager
             }
             ob_end_clean();
             echo json_encode($retval);
-            throw new E_Clean_Exit();
+            // E_Clean_Exit causes warnings to be appended to XHR responses, potentially breaking the client JS
+            if (!defined('NGG_DISABLE_SHUTDOWN_EXCEPTION_HANDLER') || !NGG_DISABLE_SHUTDOWN_EXCEPTION_HANDLER) {
+                throw new E_Clean_Exit();
+            } else {
+                exit;
+            }
         }
     }
     function render_notice($name)
@@ -904,18 +909,16 @@ class Mixin_NextGen_Admin_Page_Instance_Methods extends Mixin
      */
     function is_authorized_request($privilege = NULL)
     {
+        $retval = TRUE;
         if (!$privilege) {
             $privilege = $this->object->get_required_permission();
         }
-        $security = $this->get_registry()->get_utility('I_Security_Manager');
-        $retval = $sec_token = $security->get_request_token(str_replace(array(' ', "\n", "\t"), '_', $privilege));
-        $sec_actor = $security->get_current_actor();
         // Ensure that the user has permission to access this page
-        if (!$sec_actor->is_allowed($privilege)) {
+        if (!M_Security::is_allowed($privilege)) {
             $retval = FALSE;
         }
         // Ensure that nonce is valid
-        if ($this->object->is_post_request() && !$sec_token->check_current_request()) {
+        if ($this->object->is_post_request() && (isset($_REQUEST['nonce']) && !M_Security::verify_nonce($_REQUEST['nonce'], $privilege))) {
             $retval = FALSE;
         }
         return $retval;
@@ -926,7 +929,7 @@ class Mixin_NextGen_Admin_Page_Instance_Methods extends Mixin
      */
     function get_required_permission()
     {
-        return $this->object->name;
+        return str_replace(array(' ', "\n", "\t"), '_', $this->object->name);
     }
     // Sets an appropriate screen for NextGEN Admin Pages
     function set_screen()
@@ -955,7 +958,6 @@ class Mixin_NextGen_Admin_Page_Instance_Methods extends Mixin
         $this->object->enqueue_jquery_ui_theme();
         wp_enqueue_script('photocrati_ajax');
         wp_enqueue_script('jquery-ui-accordion');
-        wp_enqueue_script('nextgen_display_settings_page_placeholder_stub', $this->get_static_url('photocrati-nextgen_admin#jquery.placeholder.min.js'), array('jquery'), NGG_SCRIPT_VERSION, TRUE);
         wp_enqueue_style('imagely-admin-font', 'https://fonts.googleapis.com/css?family=Lato:300,400,700,900', array(), NGG_SCRIPT_VERSION);
         if (method_exists('M_Gallery_Display', 'enqueue_fontawesome')) {
             M_Gallery_Display::enqueue_fontawesome();
@@ -1104,7 +1106,7 @@ class Mixin_NextGen_Admin_Page_Instance_Methods extends Mixin
                 }
             }
             // Render the view
-            $index_params = array('page_heading' => $this->object->get_page_heading(), 'tabs' => $tabs, 'forms' => $forms, 'errors' => $errors, 'success' => $success, 'header_message' => $this->object->get_header_message(), 'form_header' => $token->get_form_html(), 'show_save_button' => $this->object->show_save_button(), 'model' => $this->object->has_method('get_model') ? $this->get_model() : NULL, 'logo' => $this->get_router()->get_static_url('photocrati-nextgen_admin#imagely_icon.png'));
+            $index_params = array('page_heading' => $this->object->get_page_heading(), 'tabs' => $tabs, 'forms' => $forms, 'errors' => $errors, 'success' => $success, 'form_header' => FALSE, 'header_message' => $this->object->get_header_message(), 'nonce' => M_Security::create_nonce($this->object->get_required_permission()), 'show_save_button' => $this->object->show_save_button(), 'model' => $this->object->has_method('get_model') ? $this->get_model() : NULL, 'logo' => $this->get_router()->get_static_url('photocrati-nextgen_admin#imagely_icon.png'));
             $index_params = array_merge($index_params, $this->object->get_index_params());
             $this->render_partial($this->object->index_template(), $index_params);
         } else {
@@ -1307,6 +1309,56 @@ class C_Page_Manager
     static function is_requested()
     {
         return C_NextGen_Admin_Page_Manager::is_requested();
+    }
+}
+class C_NextGen_First_Run_Notification_Wizard
+{
+    protected static $wizard = NULL;
+    protected static $_instance = NULL;
+    /**
+     * @return bool
+     */
+    public function is_renderable()
+    {
+        return is_null(self::$wizard) ? FALSE : TRUE;
+    }
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        if (!self::$wizard) {
+            return '';
+        }
+        $wizard = self::$wizard;
+        return __('Thanks for installing NextGEN Gallery! Want help creating your first gallery?', 'nggallery') . ' <a data-ngg-wizard="' . $wizard->get_id() . '" class="ngg-wizard-invoker" href="' . esc_url(add_query_arg('ngg_wizard', $wizard->get_id())) . '">' . __('Launch the Gallery Wizard', 'nggallery') . '</a>. ' . __('If you close this message, you can also launch the Gallery Wizard at any time from the', 'nggallery') . ' <a href="' . esc_url(admin_url('admin.php?page=nextgen-gallery')) . '">' . __('NextGEN Overview page', 'nggallery') . '</a>.';
+    }
+    public function get_css_class()
+    {
+        return 'updated';
+    }
+    public function is_dismissable()
+    {
+        return TRUE;
+    }
+    public function dismiss($code)
+    {
+        return array('handled' => TRUE);
+    }
+    /**
+     * @return C_NextGen_First_Run_Notification_Wizard
+     */
+    public static function get_instance()
+    {
+        if (!isset(self::$_instance)) {
+            $klass = get_class();
+            self::$_instance = new $klass();
+        }
+        return self::$_instance;
+    }
+    public static function set_wizard($wizard)
+    {
+        self::$wizard = $wizard;
     }
 }
 /**

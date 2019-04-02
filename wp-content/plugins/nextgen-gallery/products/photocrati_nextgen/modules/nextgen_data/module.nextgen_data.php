@@ -22,7 +22,7 @@ class M_NextGen_Data extends C_Base_Module
 			'photocrati-nextgen-data',
 			'NextGEN Data Tier',
 			"Provides a data tier for NextGEN gallery based on the DataMapper module",
-			'3.1.0',
+			'3.1.14',
 			'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
 			'Imagely',
 			'https://www.imagely.com'
@@ -165,6 +165,9 @@ class M_NextGen_Data extends C_Base_Module
 				// Remove disallowed elements and content
 				if ($data instanceof DOMElement) {
 					foreach ($data->getElementsByTagName('script') as $deleteme) {
+						/**
+						 * @var DOMNode $deleteme
+						 */
 						$data->removeChild($deleteme);
 					}
 				}
@@ -196,7 +199,7 @@ class M_NextGen_Data extends C_Base_Module
 				}
 			}
 			else {
-				$dom = new DOMDocument();
+				$dom = new DOMDocument('1.0', 'UTF-8');
 
 				if (!empty($data))
 				{
@@ -259,18 +262,22 @@ class M_NextGen_Data extends C_Base_Module
             'C_Gallery'                         => 'class.gallery.php',
             'C_Gallery_Mapper'                  => 'class.gallery_mapper.php',
             'C_Gallery_Storage'                 => 'class.gallery_storage.php',
-            'C_Gallerystorage_Base'             => 'class.gallerystorage_base.php',
-            'C_Gallerystorage_Driver_Base'      => 'class.gallerystorage_driver_base.php',
             'C_Image'                           => 'class.image.php',
             'C_Image_Mapper'                    => 'class.image_mapper.php',
             'C_Image_Wrapper'                   => 'class.image_wrapper.php',
             'C_Image_Wrapper_Collection'        => 'class.image_wrapper_collection.php',
             'C_NextGen_Data_Installer'          => 'class.nextgen_data_installer.php',
             'C_Nextgen_Metadata'                => 'class.nextgen_metadata.php',
-            'C_Ngglegacy_Gallerystorage_Driver' => 'class.ngglegacy_gallerystorage_driver.php',
-            'C_Ngglegacy_Thumbnail'             => 'class.ngglegacy_thumbnail.php',
-            'C_Wordpress_Gallerystorage_Driver' => 'class.wordpress_gallerystorage_driver.php',
-            'Mixin_NextGen_Table_Extras'        => 'mixin.nextgen_table_extras.php'
+			'C_Ngglegacy_Thumbnail'             => 'class.ngglegacy_thumbnail.php',
+			'C_Dynamic_Thumbnails_Manager' 			=> 'class.dynamic_thumbnails_manager.php',			
+            'Mixin_NextGen_Table_Extras'        => 'mixin.nextgen_table_extras.php',
+            'Mixin_GalleryStorage_Base'              => 'mixin.gallerystorage_base.php',
+            'Mixin_GalleryStorage_Base_Dynamic'      => 'mixin.gallerystorage_base_dynamic.php',
+            'Mixin_GalleryStorage_Base_Getters'      => 'mixin.gallerystorage_base_getters.php',
+            'Mixin_GalleryStorage_Base_Management'   => 'mixin.gallerystorage_base_management.php',
+            'Mixin_GalleryStorage_Base_MediaLibrary' => 'mixin.gallerystorage_base_medialibrary.php',
+            'Mixin_GalleryStorage_Base_Upload'       => 'mixin.gallerystorage_base_upload.php'
+
         );
     }
 }

@@ -149,7 +149,8 @@ class Mixin_Validation extends Mixin
      * Validates the length of a property's value
      * @param string $property
      * @param int $length
-     * @param string $msg
+     * @param string $comparison_operator ===, !=, <, >, <=, or >=
+     * @param bool|string $msg
      */
     function validates_length_of($property, $length, $comparison_operator = '=', $msg = FALSE)
     {
@@ -160,28 +161,28 @@ class Mixin_Validation extends Mixin
             switch ($comparison_operator) {
                 case '=':
                 case '==':
-                    $valid = strlen($value) == $comparison;
+                    $valid = strlen($value) == $length;
                     $default_msg = $this->_get_default_error_message_for('validates_equals');
                     break;
                 case '!=':
                 case '!':
-                    $valid = strlen($value) != $comparison;
+                    $valid = strlen($value) != $length;
                     $default_msg = $this->_get_default_error_message_for('validates_equals');
                     break;
                 case '<':
-                    $valid = strlen($value) < $comparion;
+                    $valid = strlen($value) < $length;
                     $default_msg = $this->_get_default_error_message_for('validates_less_than');
                     break;
                 case '>':
-                    $valid = strlen($value) > $comparison;
+                    $valid = strlen($value) > $length;
                     $default_msg = $this->_get_default_error_message_for('validates_greater_than');
                     break;
                 case '<=':
-                    $valid = strlen($value) <= $comparison;
+                    $valid = strlen($value) <= $length;
                     $default_msg = $this->_get_default_error_message_for('validates_less_than');
                     break;
                 case '>=':
-                    $valid = strlen($value) >= $comparion;
+                    $valid = strlen($value) >= $length;
                     $default_msg = $this->_get_default_error_message_for('validates_greater_than');
                     break;
             }

@@ -81,4 +81,8 @@
     <?php print $slug_field; ?>
 
     <?php print $maximum_entity_count_field; ?>
+
+    <?php print $random_widget_cache_ttl_field; ?>
+
+    <?php print $alternate_random_method_field; ?>
 </table>

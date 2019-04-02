@@ -27,7 +27,7 @@
             <?php }
             if ($this->isClearFilters()) { ?>
                 <div class="wpDataTableFilterSection" id="wdt-clear-filters-button-block">
-                    <button class="button btn wdt-clear-filters-button" data-table_id = <?php echo $this->getId() ?>><?php _e(' Clear filters', 'wpdatatables'); ?></button>
+                    <button class="button btn wdt-clear-filters-button" data-table_id = <?php echo $this->getId() ?>><?php _e('Clear filters', 'wpdatatables'); ?></button>
                 </div>
             <?php } ?>
             <?php

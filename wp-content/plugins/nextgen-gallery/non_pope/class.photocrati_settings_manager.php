@@ -252,7 +252,7 @@ if (!class_exists('C_Photocrati_Global_Settings_Manager')) {
 			if (!$this->_options)
 			    $this->_options = array();
 			else if (is_string($this->_options))
-			    $this->_options = unserialize($this->_options);
+			    $this->_options = C_NextGen_Serializable::unserialize($this->_options);
 		}
 
 		function destroy()
@@ -300,15 +300,12 @@ if (!class_exists('C_Photocrati_Settings_Manager'))
 		{
 			$this->_options = get_option(self::$option_name, array());
 			if (!$this->_options) $this->_options = array();
-			else if (is_string($this->_options)) $this->_options = unserialize($this->_options);
+			else if (is_string($this->_options)) $this->_options = C_NextGen_Serializable::unserialize($this->_options);
 		}
 
 		function destroy()
 		{
 			delete_option(self::$option_name);
 		}
-
-
 	}
 }
-

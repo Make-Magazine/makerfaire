@@ -591,7 +591,7 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id) {
             }
          }
          //TBD (ts): we may need to add some overall error checking here
-         usort($mergedChoicesAndInputs, sortFlagsByLabel);
+         usort($mergedChoicesAndInputs, "sortFlagsByLabel");
          $choicesArray = $mergedChoicesAndInputs;
       }
 

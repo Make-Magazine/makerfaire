@@ -31,7 +31,7 @@ class nggAdmin{
         wp_get_current_user();
 
         //cleanup pathname
-        $name = sanitize_file_name( sanitize_title($title)  );
+        $name = $storage->sanitize_directory_name( sanitize_title($title)  );
         $name = apply_filters('ngg_gallery_name', $name);
         $txt = '';
 

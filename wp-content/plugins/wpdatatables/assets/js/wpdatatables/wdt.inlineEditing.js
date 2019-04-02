@@ -175,7 +175,7 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 obj.params.currentCell.removeClass('editing');
                 var $this = obj.params.currentCell;
                 var $value = obj.params.currentCell.html();
-                obj.params.currentCell.empty().html('You can\'t edit this field');
+                obj.params.currentCell.empty().html(wpdatatables_frontend_strings.cannot_be_edit);
 
                 $(document).click(function () {
                     $this.html($value);
@@ -396,7 +396,13 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                         preserveSelectedPosition: 'before',
                         locale: {
                             emptyTitle: wpdatatables_frontend_strings.nothingSelected,
-                            statusSearching: wpdatatables_frontend_strings.sLoadingRecords
+                            statusSearching: wpdatatables_frontend_strings.sLoadingRecords,
+                            currentlySelected: wpdatatables_frontend_strings.currentlySelected,
+                            errorText: wpdatatables_frontend_strings.errorText,
+                            searchPlaceholder: wpdatatables_frontend_strings.search,
+                            statusInitialized: wpdatatables_frontend_strings.statusInitialized,
+                            statusNoResults: wpdatatables_frontend_strings.statusNoResults,
+                            statusTooShort: wpdatatables_frontend_strings.statusTooShort
                         }
                     });
 

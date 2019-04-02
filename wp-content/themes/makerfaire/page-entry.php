@@ -618,7 +618,7 @@ function displayEntryFooter(){
 	}
    if($show_sched != 0) {
 		$return .=  '<div class="faireAction-box">
-							<a class="btn universal-btn" href="' . $url_sub_path . '/schedule/"><h4>View full schedule</h4></a>
+							<a class="btn universal-btn" href="/' . $url_sub_path . '/schedule/"><h4>View full schedule</h4></a>
 						 </div>';
 	}
 	

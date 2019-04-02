@@ -126,9 +126,9 @@ if (!class_exists('C_Photocrati_Installer'))
             $global_settings    = C_NextGen_Global_Settings::get_instance();
 
             // Somehow some installations are missing several default settings
-            // Because gallerystorage_driver is essential to know we do a 'soft' reset here
+            // Because imgWidth is essential to know we do a 'soft' reset here
             // by filling in any missing options from the default settings
-            if (is_null($local_settings->gallerystorage_driver)) {
+            if (!$local_settings->imgWidth) {
                 $settings_installer = new C_NextGen_Settings_Installer();
 
                 $local_settings->reset();
@@ -188,10 +188,9 @@ if (!class_exists('C_Photocrati_Installer'))
                     apc_clear_cache();
                 }
 
-				// We flush ALL transients
+				// Clear all of our transients
 				wp_cache_flush();
-				global $wpdb;
-				$wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient%'");
+                C_Photocrati_Transient_Manager::flush();
 
 				// Remove all NGG created cron jobs
 				self::refresh_cron();

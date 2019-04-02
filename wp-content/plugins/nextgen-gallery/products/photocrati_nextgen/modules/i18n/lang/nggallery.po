@@ -1246,7 +1246,7 @@ msgid "(Hide Customization Settings)"
 msgstr ""
 
 #: products/photocrati_nextgen/modules/nextgen_other_options/adapter.image_options_form.php:97
-msgid "How should related images be match?"
+msgid "How should related images be matched?"
 msgstr ""
 
 #: products/photocrati_nextgen/modules/nextgen_other_options/adapter.image_options_form.php:100
@@ -1725,7 +1725,7 @@ msgid "[Minimize]"
 msgstr ""
 
 #: products/photocrati_nextgen/modules/ngglegacy/admin/album.php:482
-msgid "After you create and select a album, you can drag and drop a gallery or another album into your new album below"
+msgid "After you create and select an album, you can drag and drop a gallery or another album into your new album below"
 msgstr ""
 
 #: products/photocrati_nextgen/modules/ngglegacy/admin/album.php:508
@@ -2446,7 +2446,7 @@ msgid "Server Settings"
 msgstr ""
 
 #: products/photocrati_nextgen/modules/ngglegacy/admin/overview.php:97
-msgid "NextGEN Gallery is one of the most popular WordPress plugins of all time with over 23 million downloads."
+msgid "NextGEN Gallery is one of the most popular WordPress plugins of all time with over 25 million downloads."
 msgstr ""
 
 #: products/photocrati_nextgen/modules/ngglegacy/admin/overview.php:97
@@ -3231,7 +3231,7 @@ msgid "https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/"
 msgstr ""
 
 #. Description of the plugin/theme
-msgid "The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 23 million downloads."
+msgid "The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 25 million downloads."
 msgstr ""
 
 #. Author of the plugin/theme

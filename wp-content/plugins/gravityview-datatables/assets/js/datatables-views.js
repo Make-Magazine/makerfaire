@@ -205,16 +205,19 @@ window.gvDTButtons = window.gvDTButtons || {};
 
 		// reset search results
 		$( '.gv-search-clear' ).off().on( 'click', function ( e ) {
-			e.stopImmediatePropagation();
-			e.preventDefault();
-
 			var $form = $( this ).parents( 'form' ), viewId = $form.attr( 'data-viewid' ),
 				$container = $( '#gv-datatables-' + viewId ),
 				$table = $container.find( '.gv-datatables' ).DataTable(),
 				tableData = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null;
 
+			if ( ! $table.length ) return;
+
+			// prevent event from bubbling and firing
+			e.stopImmediatePropagation();
+			e.preventDefault();
+
 			// clear form fields. because default input values are set, form.reset() does not work.
-			// instea, a more comprehensive solution is required: https://stackoverflow.com/questions/680241/resetting-a-multi-stage-form-with-jquery/24496012#24496012
+			// instead, a more comprehensive solution is required: https://stackoverflow.com/questions/680241/resetting-a-multi-stage-form-with-jquery/24496012#24496012
 			$form
 				.find( 'input' )
 				.filter( ':text, :password, :file' ).not( ':hidden' ).val( '' ).end()

@@ -6,6 +6,8 @@ function nggallery_picturelist($controller) {
 // *** show picture list
 	global $wpdb, $nggdb, $user_ID, $ngg;
 
+	$settings = C_NextGen_Settings::get_instance();
+
 	$action_status = array('message' => '', 'status' => 'ok');
 
 	// Look if its a search result
@@ -58,10 +60,11 @@ function nggallery_picturelist($controller) {
 		$total_number_of_images = count($image_mapper->select($image_mapper->get_primary_key_column())->
 			where(array("galleryid = %d", $act_gid))->run_query(FALSE, FALSE, TRUE));
 
-		$picturelist = $image_mapper->select()->
-			where(array("galleryid = %d", $act_gid))->
-			order_by($ngg->options['galSort'], $ngg->options['galSortDir'])->
-			limit($items_per_page, $start)->run_query();
+		$image_mapper->select()->where(array("galleryid = %d", $act_gid));
+		if (($galSort = $settings->get('galSort', FALSE)) && ($galSortDir = $settings->get('galSortDir', FALSE))) {
+			$image_mapper->order_by($galSort, $galSortDir);
+		}
+		$picturelist = $image_mapper->limit($items_per_page, $start)->run_query();
 
 		// get the current author
         $act_author_user = get_userdata((int)$gallery->author);
@@ -157,6 +160,11 @@ jQuery(function (){
 		var results = new RegExp('[\\?&]h=([^&#]*)').exec(this.href);
 	    var height = ( results ) ? results[1] : 500;
 		var container = window;
+
+		var screen_width = window.innerWidth - 120;
+		var screen_height = window.innerHeight - 200;
+		width = (width > screen_width) ? screen_width : width;
+		height = (height > screen_height) ? screen_height : height;
 
       if (window.parent) {
       	container = window.parent;
@@ -332,7 +340,7 @@ jQuery(document).ready( function($) {
 		<form id="updategallery" class="nggform" method="POST" action="<?php echo $ngg->manage_page->base_page . '&amp;mode=edit&amp;s=' . get_search_query(); ?>" accept-charset="utf-8">
 		
 			<?php wp_nonce_field('ngg_updategallery') ?>
-			<input type="hidden" name="page" value="manage-images" />
+			<input type="hidden" name="nggpage" value="manage-images" />
 
 		<!-- form#updategallery continues below end of if statement -->
 
@@ -348,7 +356,7 @@ jQuery(document).ready( function($) {
 		<form id="updategallery" class="nggform" method="POST" action="<?php echo $ngg->manage_page->base_page . '&amp;mode=edit&amp;gid=' . $act_gid . '&amp;paged=' . esc_attr($_GET['paged']); ?>" accept-charset="utf-8">
 		
 			<?php wp_nonce_field('ngg_updategallery') ?>
-			<input type="hidden" name="page" value="manage-images" />
+			<input type="hidden" name="nggpage" value="manage-images" />
 
 			<?php if ( nggGallery::current_user_can( 'NextGEN Edit gallery options' )) : ?>
 
@@ -370,7 +378,7 @@ jQuery(document).ready( function($) {
 								<?php if ( wpmu_enable_function('wpmuImportFolder') && nggGallery::current_user_can( 'NextGEN Import image folder' ) ) : ?>
 								<input type="submit" class="button-primary" name="scanfolder" value="<?php _e("Scan Folder for new images",'nggallery'); ?> " />
 								<?php endif; ?>
-								<input type="submit" class="button-primary action" name="updatepictures" value="<?php _e("Save Changes",'nggallery'); ?>" />
+								<input type="submit" class="button-primary action ngg_save_gallery_changes" name="updatepictures" value="<?php _e("Save Changes",'nggallery'); ?>" />
 							</div>
 
 						</div>
@@ -440,7 +448,7 @@ jQuery(document).ready( function($) {
 				</select>
 				<input class="button-primary" type="submit" name="showThickbox" value="<?php _e('Apply', 'nggallery'); ?>" onclick="if ( !checkSelected() ) return false;" />
 
-				<?php if (($ngg->options['galSort'] == "sortorder") && (!$is_search) ) { ?>
+				<?php if (($settings->galSort == "sortorder") && (!$is_search) ) { ?>
 					<input class="button-primary" type="submit" name="sortGallery" value="<?php _e('Sort gallery', 'nggallery');?>" />
 				<?php } ?>
 
@@ -465,10 +473,10 @@ jQuery(document).ready( function($) {
 
 						$thumbsize 	= '';
 						$storage = C_Gallery_Storage::get_instance();
-					    $gallery_mapper = C_Gallery_Mapper::get_instance();
+						$gallery_mapper = C_Gallery_Mapper::get_instance();
 
-						if ($ngg->options['thumbfix'])
-							$thumbsize = 'width="' . $ngg->options['thumbwidth'] . '" height="' . $ngg->options['thumbheight'] . '"';
+						if ($settings->thumbfix)
+							$thumbsize = 'width="' . $settings->thumbwidth . '" height="' . $settings->thumbheight . '"';
 
 						foreach($picturelist as $picture) {
 
@@ -516,7 +524,7 @@ jQuery(document).ready( function($) {
 		<?php wp_nonce_field('ngg_thickbox_form') ?>
 		<input type="hidden" id="entertags_imagelist" name="TB_imagelist" value="" />
 		<input type="hidden" id="entertags_bulkaction" name="TB_bulkaction" value="" />
-		<input type="hidden" name="page" value="manage-images" />
+		<input type="hidden" name="nggpage" value="manage-images" />
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 		  	<tr>
 		    	<th><?php _e("Enter the tags",'nggallery'); ?> : <input name="taglist" type="text" style="width:90%" value="" /></th>
@@ -539,7 +547,7 @@ jQuery(document).ready( function($) {
 		<?php wp_nonce_field('ngg_thickbox_form') ?>
 		<input type="hidden" id="selectgallery_imagelist" name="TB_imagelist" value="" />
 		<input type="hidden" id="selectgallery_bulkaction" name="TB_bulkaction" value="" />
-		<input type="hidden" name="page" value="manage-images" />
+		<input type="hidden" name="nggpage" value="manage-images" />
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 		  	<tr>
 		    	<th>
@@ -575,14 +583,14 @@ jQuery(document).ready( function($) {
 		<?php wp_nonce_field('ngg_thickbox_form') ?>
 		<input type="hidden" id="resize_images_imagelist" name="TB_imagelist" value="" />
 		<input type="hidden" id="resize_images_bulkaction" name="TB_bulkaction" value="" />
-		<input type="hidden" name="page" value="manage-images" />
+		<input type="hidden" name="nggpage" value="manage-images" />
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 			<tr valign="top">
 				<td>
 					<strong><?php _e('Resize Images to', 'nggallery'); ?>:</strong>
 				</td>
 				<td>
-					<input type="text" size="5" name="imgWidth" value="<?php echo $ngg->options['imgWidth']; ?>" /> x <input type="text" size="5" name="imgHeight" value="<?php echo $ngg->options['imgHeight']; ?>" />
+					<input type="text" size="5" name="imgWidth" value="<?php echo $settings->imgWidth ?>" /> x <input type="text" size="5" name="imgHeight" value="<?php echo $settings->imgHeight; ?>" />
 					<br /><small><?php _e('Width x height (in pixel). NextGEN Gallery will keep ratio size','nggallery') ?></small>
 				</td>
 			</tr>
@@ -604,7 +612,7 @@ jQuery(document).ready( function($) {
 		<?php wp_nonce_field('ngg_thickbox_form') ?>
 		<input type="hidden" id="new_thumbnail_imagelist" name="TB_imagelist" value="" />
 		<input type="hidden" id="new_thumbnail_bulkaction" name="TB_bulkaction" value="" />
-		<input type="hidden" name="page" value="manage-images" />
+		<input type="hidden" name="nggpage" value="manage-images" />
     <table width="100%" border="0" cellspacing="3" cellpadding="3" >
 			<tr valign="top">
 				<th align="left"><?php _e('Width x height (in pixel)','nggallery') ?></th>
@@ -614,7 +622,7 @@ jQuery(document).ready( function($) {
 			</tr>
 			<tr valign="top">
 				<th align="left"><?php _e('Set fix dimension','nggallery') ?></th>
-				<td><input type="checkbox" name="thumbfix" value="1" <?php checked('1', $ngg->options['thumbfix']); ?> />
+				<td><input type="checkbox" name="thumbfix" value="1" <?php checked('1', $settings->thumbfix); ?> />
 				<br /><small><?php _e('Ignore the aspect ratio, no portrait thumbnails','nggallery') ?></small></td>
 			</tr>
 		  	<tr>
@@ -631,7 +639,21 @@ jQuery(document).ready( function($) {
 
 	<script type="text/javascript">
 	/* <![CDATA[ */
-	jQuery(document).ready(function(){columns.init('nggallery-manage-images');});
+	jQuery(document).ready(function($){
+		columns.init('nggallery-manage-images');
+
+		// Ensure that thumb preview images are always up-to-date
+		$('#ngg-listimages img.thumb').each(function(){
+			var $this 		= $(this);
+			var src 		= $this.attr('src');
+			var matchData 	= src.match(/\?i=(\d+)$/)
+			if (matchData) {
+				var i 	= parseInt(matchData[1])+1
+				src		= src.replace(matchData[0], "?i="+i.toString())
+				$this.attr('src', src);
+			}
+		})
+	});
 	/* ]]> */
 	</script>
 	<?php

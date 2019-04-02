@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms
 Plugin URI: https://www.gravityforms.com
 Description: Easily create web forms and manage form entries within the WordPress admin.
-Version: 2.4.2
+Version: 2.4.6
 Author: rocketgenius
 Author URI: https://www.rocketgenius.com
 License: GPL-2.0+
@@ -11,7 +11,7 @@ Text Domain: gravityforms
 Domain Path: /languages
 
 ------------------------------------------------------------------------
-Copyright 2009-2018 Rocketgenius, Inc.
+Copyright 2009-2019 Rocketgenius, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -133,7 +133,7 @@ define( 'GF_SUPPORTED_WP_VERSION', version_compare( get_bloginfo( 'version' ), G
  *
  * @var string GF_MIN_WP_VERSION_SUPPORT_TERMS The version number
  */
-define( 'GF_MIN_WP_VERSION_SUPPORT_TERMS', '4.8' );
+define( 'GF_MIN_WP_VERSION_SUPPORT_TERMS', '4.9' );
 
 
 if ( ! defined( 'GRAVITY_MANAGER_URL' ) ) {
@@ -215,7 +215,7 @@ class GFForms {
 	 *
 	 * @var string $version The version number.
 	 */
-	public static $version = '2.4.2';
+	public static $version = '2.4.6';
 
 	/**
 	 * Handles background upgrade tasks.
@@ -448,6 +448,9 @@ class GFForms {
 
 						// Check status of upgrade
 						add_action( 'wp_ajax_gf_force_upgrade', array( 'GFForms', 'ajax_force_upgrade' ) );
+
+						// Disable logging.
+						add_action( 'wp_ajax_gf_disable_logging', array( 'GFForms', 'ajax_disable_logging' ) );
 
 					}
 
@@ -842,7 +845,7 @@ class GFForms {
 				'wp-pointer',
 				'gform_chosen',
 			),
-			'gf_edit_forms_notification' => array(
+			'gf_edit_forms_settings' => array(
 				'thickbox',
 				'editor-buttons',
 				'wp-jquery-ui-dialog',
@@ -917,7 +920,7 @@ class GFForms {
 				'wp-pointer',
 				'gform_chosen',
 			),
-			'gf_edit_forms_notification' => array(
+			'gf_edit_forms_settings' => array(
 				'editor',
 				'word-count',
 				'quicktags',
@@ -938,7 +941,16 @@ class GFForms {
 				'wp-plupload',
 				'gform_placeholder',
 				'gform_json',
+				'gform_gravityforms',
+				'gform_forms',
+				'gform_form_admin',
+				'jquery-ui-datepicker',
+				'gform_masked_input',
+				'sack',
 				'jquery-ui-autocomplete',
+				'wp-tinymce',
+				'wp-tinymce-root',
+				'wp-tinymce-lists',
 			),
 			'gf_new_form'                => array(
 				'thickbox',
@@ -1166,10 +1178,10 @@ class GFForms {
 
 		if ( ! self::has_members_plugin() ) {
 			//give full access to administrators if the members plugin is not installed
-			if ( current_user_can( 'administrator' ) || is_super_admin() ) {
+			if ( current_user_can( 'administrator' ) || ( is_multisite() && is_super_admin() ) ) {
 				$all_caps['gform_full_access'] = true;
 			}
-		} else if ( current_user_can( 'administrator' ) || is_super_admin() ) {
+		} elseif ( current_user_can( 'administrator' ) || ( is_multisite() && is_super_admin() ) ) {
 
 			//checking if user has any GF permission.
 			$has_gf_cap = false;
@@ -2736,6 +2748,36 @@ class GFForms {
 
 
 		GFCommon::dismiss_message( $key );
+	}
+
+	/**
+	 * Target for the wp_ajax_gf_disable_logging AJAX action requested from WordPress admin pages.
+	 *
+	 * @since  2.2.4.2
+	 * @access public
+	 *
+	 * @uses   GFCommon::get_base_path()
+	 * @uses   GFSettings::disable_logging()
+	 */
+	public static function ajax_disable_logging() {
+
+		// Verify nonce.
+		check_admin_referer( 'gf_disable_logging_nonce', 'nonce' );
+
+		// Load Settings class.
+		if ( ! class_exists( 'GFSettings' ) ) {
+			require_once( GFCommon::get_base_path() . '/settings.php' );
+		}
+
+		// Disable logging.
+		$disabled = GFSettings::disable_logging();
+
+		if ( $disabled ) {
+			wp_send_json_success( esc_html__( 'Logging disabled.', 'gravityforms' ) );
+		} else {
+			wp_send_json_error( esc_html__( 'Unable to disable logging.', 'gravityforms' ) );
+		}
+
 	}
 
 	/**
@@ -4942,21 +4984,48 @@ class GFForms {
 	 */
 	public static function maybe_display_logging_notice() {
 
+		$notice_disabled = defined( 'GF_LOGGING_DISABLE_NOTICE' ) && GF_LOGGING_DISABLE_NOTICE;
+		$logging_enabled = get_option( 'gform_enable_logging', false ) || is_plugin_active( 'gravityformslogging/logging.php' );
+
 		// If logging is disabled, return.
-		if ( ! ( get_option( 'gform_enable_logging', false ) || is_plugin_active( 'gravityformslogging/logging.php' ) ) || ( defined( 'GF_LOGGING_DISABLE_NOTICE' ) && GF_LOGGING_DISABLE_NOTICE ) ) {
+		if ( $notice_disabled || ! $logging_enabled || ! GFCommon::current_user_can_any( 'gravityforms_edit_settings' ) ) {
 			return;
 		}
 
 		// Prepare message.
 		$message = sprintf(
-			esc_html__( "Gravity Forms logging is currently enabled. Log files can contain sensitive information so ensure that logging is only enabled for as long as is required for troubleshooting. %sClick here to disable logging.%s %sIf you're currently receiving support, do not disable logging until the issue is resolved.%s" ),
-			'<a href="' . esc_url( admin_url( 'admin.php?page=gf_settings' ) ) . '">',
-			'</a>',
-			'<strong>',
-			'</strong>'
+			'<p>%s</p><p><strong>%s</strong></p>',
+			sprintf(
+				esc_html__( "Gravity Forms logging is currently enabled. Log files can contain sensitive information so ensure that logging is only enabled for as long as is required for troubleshooting. %sClick here to disable logging.%s", 'gravityforms' ),
+				'<a href="' . esc_url( admin_url( 'admin.php?page=gf_settings' ) ) . '">',
+				'</a>'
+			),
+			esc_html__( "If you're currently receiving support, do not disable logging until the issue is resolved.", 'gravityforms' )
 		);
 
-		printf( '<div class="notice notice-error"><p>%s</p></div>', $message );
+		// Prepare script.
+		$script = "<script type='text/javascript'>
+			jQuery( document ).on( 'click', '#gform_disable_logging_notice a', function( e ) {
+				e.preventDefault();
+				var container = jQuery( '#gform_disable_logging_notice' );
+				jQuery.ajax( {
+					url: ajaxurl,
+					dataType: 'json',
+					data: {
+						action: 'gf_disable_logging',
+						nonce:  container.data( 'nonce' )
+					},
+					success: function( response ) {
+						if ( response.success ) {
+							container.removeClass( 'notice-error' ).addClass( 'notice-success' );
+						}
+						container.html( '<p>' + response.data + '</p>' );
+					}
+				} );             	
+			} );
+		</script>";
+
+		printf( '<div class="notice notice-error" id="gform_disable_logging_notice" data-nonce="%s">%s</div>%s', wp_create_nonce( 'gf_disable_logging_nonce' ), $message, $script );
 
 	}
 

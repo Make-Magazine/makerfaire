@@ -833,7 +833,7 @@ if ( ! class_exists( 'Imagify_Partner' ) ) :
 				return IMAGIFY_FILE;
 			}
 
-			return WP_PLUGIN_DIR . '/imagify/imagify.php';
+			return wp_normalize_path(WP_PLUGIN_DIR . '/imagify/imagify.php');
 		}
 
 		/**

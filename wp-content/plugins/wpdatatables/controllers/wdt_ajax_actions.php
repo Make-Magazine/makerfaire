@@ -41,6 +41,7 @@ function wdtGetAjaxData() {
     $sumColumns = array();
     $userIdColumnHeader = '';
     $filterDefaultValue = array();
+    $rangeSlider = array();
 
     $wdtVar1 = isset($_GET['wdt_var1']) ? wdtSanitizeQuery($_GET['wdt_var1']) : $tableData->var1;
     $wdtVar2 = isset($_GET['wdt_var2']) ? wdtSanitizeQuery($_GET['wdt_var2']) : $tableData->var2;
@@ -105,6 +106,9 @@ function wdtGetAjaxData() {
             }
             $filterDefaultValue[] = $column->default_value;
         }
+        if (isset($advancedSettings->rangeSlider) && $advancedSettings->rangeSlider == 1 ) {
+            $rangeSlider[] = $column->orig_header;
+        }
 
         $decimalPlaces[$column->orig_header] = isset($advancedSettings->decimalPlaces) ? $advancedSettings->decimalPlaces : null;
         $exactFiltering[$column->orig_header] = isset($advancedSettings->exactFiltering) ? $advancedSettings->exactFiltering : null;
@@ -113,6 +117,7 @@ function wdtGetAjaxData() {
         $linkButtonLabel[$column->orig_header] = isset($advancedSettings->linkButtonLabel) ? $advancedSettings->linkButtonLabel : null;
         $linkButtonClass[$column->orig_header] = isset($advancedSettings->linkButtonClass) ? $advancedSettings->linkButtonClass : null;
         $possibleValuesAddEmpty[$column->orig_header] = isset($advancedSettings->possibleValuesAddEmpty) ? $advancedSettings->possibleValuesAddEmpty : null;
+        $rangeSlider[$column->orig_header] = isset($advancedSettings->rangeSlider) ? $advancedSettings->rangeSlider : null;
         $foreignKeyRule[$column->orig_header] = isset($advancedSettings->foreignKeyRule) ? $advancedSettings->foreignKeyRule : null;
 
     }
@@ -194,7 +199,8 @@ function wdtGetAjaxData() {
                 'linkButtonLabel'     => $linkButtonLabel,
                 'linkButtonClass'     => $linkButtonClass,
                 'skip_thousands'      => $skipThousands,
-                'filterDefaultValue'  => $filterDefaultValue
+                'filterDefaultValue'  => $filterDefaultValue,
+                'rangeSlider'         => $rangeSlider
             )
         );
         $json = apply_filters('wpdatatables_filter_server_side_data', $json, $id, $_GET);
@@ -223,6 +229,7 @@ function wdtGetAjaxData() {
                     'linkButtonLabel'     => $linkButtonLabel,
                     'linkButtonClass'     => $linkButtonClass,
                     'skip_thousands'      => $skipThousands,
+                    'rangeSlider'         => $rangeSlider,
                     'filterDefaultValue'  => $filterDefaultValue
                 )
             );

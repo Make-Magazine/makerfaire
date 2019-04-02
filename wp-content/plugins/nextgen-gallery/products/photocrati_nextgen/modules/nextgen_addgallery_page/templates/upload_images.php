@@ -47,9 +47,7 @@
                 window.set_plupload_url = function(gallery_id, gallery_name) {
                     var qs = "&action=upload_image&gallery_id="+urlencode(gallery_id);
                     qs += "&gallery_name="+urlencode(gallery_name);
-	                <?php foreach ($sec_token->get_request_list() as $name=>$value): ?>
-	                qs += "&<?php echo $name?>=<?php echo $value?>";
-	                <?php endforeach ?>
+                    qs += "&nonce="+urlencode("<?php echo $nonce; ?>");
                     return photocrati_ajax.url + qs;
                 };
 
