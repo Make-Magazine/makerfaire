@@ -892,15 +892,20 @@ function retrieveRptData($table, $faire) {
         
    //create array of table data
    foreach ($result as $row) {
-
-      if(isset($row['schedType'])&& (trim($row['schedType'])=='')){
-         //determine sched type based on form type
-         $form = GFAPI::get_form($row->form_id);
-         if ($form['form_type'] == 'Performance') {
-            $row['schedType'] = 'performance';
-         } else {
-            $row['schedType'] = 'talk';
-         }         
+      
+      if(isset($row['schedType'])) {
+         if(trim($row['schedType'])=='') {
+            //determine sched type based on form type
+            $form = GFAPI::get_form($row->form_id);
+            if ($form['form_type'] == 'Performance') {
+               $row['schedType'] = 'Performance';
+            }elseif ($form['form_type'] == 'Workshop') {
+               $row['schedType'] = 'Workshop';
+            } else {
+               $row['schedType'] = 'Talk';
+            }
+         }
+         $row['schedType'] = ucfirst($row['schedType']);
       }
       $data['data'][] = $row;
    }
