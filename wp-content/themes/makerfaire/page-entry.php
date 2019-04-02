@@ -618,16 +618,16 @@ function displayEntryFooter(){
 	}
    if($show_sched != 0) {
 		$return .=  '<div class="faireAction-box">
-							<a class="btn universal-btn" href="' . $url_sub_path . '/schedule/"><h4>View full schedule</h4></a>
+							<a class="btn universal-btn" href="/' . $url_sub_path . '/schedule/"><h4>View full schedule</h4></a>
 						 </div>';
 	}
 	
-   if($faire_map!='' && $show_sched != 0) {
+   if($faire_map != '' && $show_sched != 0) {
 		$return .= 	'<div class="faireAction-box">
 		               <a class="btn universal-btn" href="' . $faire_map . '"><h4>Download Map</h4></a>
 						 </div>';
    } 
-   if($program_guide != '') { 
+   if($faire != '') { 
 	   $return .=  '<div class="faireAction-box">
 		               <a class="btn universal-btn" href="' . $faire_link . '"><h4>' .  $faire_location . ' Home</h4></a>
 						 </div>';
