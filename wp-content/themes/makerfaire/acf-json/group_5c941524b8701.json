@@ -1,0 +1,209 @@
+{
+    "key": "group_5c941524b8701",
+    "title": "Featured Presenter Grid",
+    "fields": [
+        {
+            "key": "field_5c94154ba1fe2",
+            "label": "Featured Presenter Grid",
+            "name": "featured_presenter_grid",
+            "type": "repeater",
+            "instructions": "Add one or more images with text \/ description \/ button to a grid",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "field_5c941599a1fe4",
+            "min": 0,
+            "max": 0,
+            "layout": "block",
+            "button_label": "Add Presenter",
+            "sub_fields": [
+                {
+                    "key": "field_5c941599a1fe4",
+                    "label": "Presenter Image",
+                    "name": "pres_image",
+                    "type": "image",
+                    "instructions": "Image should be between 400x300 px and 800x600 px in width\/height",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "url",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": 400,
+                    "min_height": 300,
+                    "min_size": "",
+                    "max_width": 800,
+                    "max_height": 600,
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5c94157fa1fe3",
+                    "label": "Presenter Name",
+                    "name": "pres_name",
+                    "type": "text",
+                    "instructions": "Maximum 36 Characters",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 36
+                },
+                {
+                    "key": "field_5c941675a1fe7",
+                    "label": "Presenter Title",
+                    "name": "pres_title",
+                    "type": "text",
+                    "instructions": "Maximum 51 Characters",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 51
+                },
+                {
+                    "key": "field_5c9902c603989",
+                    "label": "Event Title",
+                    "name": "event_title",
+                    "type": "text",
+                    "instructions": "Maximum 38 Characters",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 38
+                },
+                {
+                    "key": "field_5c9415cca1fe5",
+                    "label": "Event Date\/Day\/Time",
+                    "name": "event_datetime",
+                    "type": "text",
+                    "instructions": "Maximum 36 Characters",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 36
+                },
+                {
+                    "key": "field_5c9415e9a1fe6",
+                    "label": "Event Description",
+                    "name": "event_desc",
+                    "type": "textarea",
+                    "instructions": "Descriptions longer than 230 characters will be truncated with an ellipses when this item has a \"Learn More\" button, and longer than 300 characters will be truncated without a \"Learn More\" button",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": "",
+                    "new_lines": ""
+                },
+                {
+                    "key": "field_5c9416ada1fe8",
+                    "label": "Button URL",
+                    "name": "button_url",
+                    "type": "text",
+                    "instructions": "For links to places elsewhere in this site, omit the domain. E.g. instead of https:\/\/makerfaire.com\/entry\/123456, just use \/entry\/123456",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5c9416c7a1fe9",
+                    "label": "Button Text",
+                    "name": "button_text",
+                    "type": "text",
+                    "instructions": "Maximum 24 Characters",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5c9416ada1fe8",
+                                "operator": "!=empty"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "Learn More",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 24
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-wide-image-grid-leftnav.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1554147474
+}

@@ -1,0 +1,217 @@
+
+// A couple of vars for these styles
+
+@feat_img_touch_lg_breakpoint: 960px;
+@feat_img_touch_sm_breakpoint: 768px;
+@feat_img_mobile_breakpoint: 560px;
+
+.featured-image-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+   grid-column-gap: 24px;
+   grid-row-gap: 24px;
+   margin-bottom: 24px;
+   @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+      display: block;
+   }
+   .grid-item {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      // Responsive Height
+      height: 150px;
+      padding-top: 50%;
+      box-sizing: content-box;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+
+      &:hover {
+         &> .grid-item-desc {
+            transform: translateX(0);
+            transition: transform 0.25s ease-in-out;
+         }
+      }
+      @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+         display: block;
+         width: 50%;
+         overflow: visible;
+         margin-bottom: 24px;
+         &:hover {
+            &> .grid-item-desc {
+               transform: translateX(100%);
+               transition: transform 0.25s ease-in-out;
+            }
+         }
+      }
+      @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+         display: flex;
+         flex-direction: column;
+         height: 300px;
+         padding-top: 0;
+      }
+      @media screen and (max-width: @feat_img_mobile_breakpoint) {
+         width: auto;
+         padding-top: 75%;
+         height: auto;
+         background-size: 100%;
+         background-position: top;
+         &:hover {
+            transform: none;
+            transition: none;
+            &> .grid-item-desc {
+               transform: none;
+               transition: none;
+            }
+         }
+         &> .grid-item-title-block {
+            transform: translateX(0);
+            //transition: transform 0.25s ease-in-out;
+         }
+         &> .grid-item-desc {
+            height: auto;
+            transform: translateX(0);
+            //transition: transform 0.25s ease-in-out;
+         }
+         .grid-item-title-block h3 {
+            margin-bottom: 12px;
+         }
+      }
+   }
+   .grid-item-title-block {
+      background-color: #333;
+      background-color: rgba(0,0,0,.6);
+      color: #dedede;
+      padding: 1em;
+
+
+      h3, p {
+         margin: 0;
+         padding: 0;
+         margin-bottom: 6px;
+      }
+      h3 {
+         font-size: 20px;
+      }
+
+      @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+         position: absolute;
+         bottom: 0;
+         //top: -1px;
+         width: 100%;
+      }
+
+      @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
+         background-color: #333;
+         position: relative;
+         bottom: auto;
+         transform: translateX(100%);
+
+         h3 {
+            font-size: 20px;
+         }
+
+         p {
+            font-size: 16px;
+         }
+      }
+
+   }
+   .grid-item-desc {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 1em;
+      background-color: #333;
+      background-color: rgba(0,0,0,0.8);
+      color: #f3f3f3;
+      width: 100%;
+      height: 100%;
+      //height: calc(100% + 1px);
+      transform: translateX(110%);
+      transition: transform 0.25s ease-in-out;
+      overflow: hidden;
+      text-decoration: none;
+      @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+         position: absolute;
+         transform: translateX(100%);
+         top: -1px;
+         overflow: visible;
+         display: block;
+      }
+      h4 {
+         margin: 0;
+      }
+      @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
+         position: relative;
+         display: flex;
+         background-color: #333;
+         h4 {
+            display: none;
+            height: 0;
+            overflow: hidden;
+         }
+         .desc-body {
+            height: 0;
+            overflow: hidden;
+         }
+      }
+      @media screen and (max-width: @feat_img_mobile_breakpoint) {
+
+         .desc-body {
+            height: auto;
+            overflow: visible;
+         }
+      }
+      .read-more-link {
+         bottom: 0;
+         border: 1px solid #fff;
+         background-color: #333;
+         width: 100%;
+         padding: 0.7em 0;
+         justify-self: flex-end;
+         align-self: flex-end;
+         &:hover {
+            background-color: #fff;
+         }
+         @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
+            align-self: flex-end;
+         }
+      }
+
+   }
+
+   // IE 10+ media query - see https://philipnewcomer.net/2014/04/target-internet-explorer-10-11-css/
+   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      /* IE10+ CSS styles go here */
+      color: red!important;
+      box-sizing: border-box;
+      display: flex;
+      flex-wrap: wrap;
+      .grid-item {
+         //width: calc(100% / 3); /* calc() method */
+         width: 30%; /* percentage method */
+         margin-right: 24px;
+         margin-bottom: 24px;
+         padding-top: 18%;
+      }
+      .grid-item-desc {
+         top: 0;
+         width: 100%;
+         .desc-body {
+            width: 100%;
+         }
+      }
+   }
+   @media all and (max-width: 1200px) and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      .grid-item {
+         width: 45%;
+      }
+   }
+
+}
