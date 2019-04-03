@@ -78,6 +78,10 @@ function do_featured_presenter_grid($args) {
             $desc = substr($desc, 0, $breakpoint) . '&hellip;';
          }
       }
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of aaa4f90... switch the text truncating to javascript
       else if(strlen($desc) > 300) {
          $breakpoint = strpos($desc, ' ', 290);
          if($breakpoint > 0) {
