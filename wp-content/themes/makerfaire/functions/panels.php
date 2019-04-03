@@ -649,7 +649,7 @@ function getImagePanel() {
 			$return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
 								  }
 			$return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
-											if ($image['image_overlay']) {          
+											if ($image['image_overlay']['image_overlay_text']) {          
 											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';;
 											}
 			                 if ($image['image_overlay']['image_overlay_link']) { 

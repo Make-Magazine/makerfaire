@@ -510,7 +510,7 @@
                             "label": "Background Color",
                             "name": "background_color",
                             "type": "radio",
-                            "instructions": "Background color of this panel.",
+                            "instructions": "Background color of this panel. Choose blue or white.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -518,18 +518,16 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "choices": {
-                                "blue": "Blue",
-                                "dark_blue": "Dark Blue",
-                                "dark_gray": "Dark Gray",
-                                "white": "White"
-                            },
-                            "allow_null": 0,
-                            "other_choice": 0,
-                            "default_value": "blue",
                             "layout": "horizontal",
-                            "return_format": "value",
-                            "save_other_choice": 0
+                            "choices": {
+                                "Blue": "Blue",
+                                "White": "White"
+                            },
+                            "default_value": "Blue",
+                            "other_choice": 0,
+                            "save_other_choice": 0,
+                            "allow_null": 0,
+                            "return_format": "value"
                         }
                     ],
                     "min": "",
@@ -676,7 +674,7 @@
                             "label": "Background Color",
                             "name": "background_color",
                             "type": "radio",
-                            "instructions": "Background color of this panel.",
+                            "instructions": "Background color of this panel. Choose blue or white.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -684,18 +682,16 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "choices": {
-                                "blue": "Blue",
-                                "dark_blue": "Dark Blue",
-                                "dark_gray": "Dark Gray",
-                                "white": "White"
-                            },
-                            "allow_null": 0,
-                            "other_choice": 0,
-                            "default_value": "blue",
                             "layout": "horizontal",
-                            "return_format": "value",
-                            "save_other_choice": 0
+                            "choices": {
+                                "Blue": "Blue",
+                                "White": "White"
+                            },
+                            "default_value": "Blue",
+                            "other_choice": 0,
+                            "save_other_choice": 0,
+                            "allow_null": 0,
+                            "return_format": "value"
                         }
                     ],
                     "min": "",
@@ -2261,7 +2257,7 @@
                                     "label": "Image Overlay",
                                     "name": "image_overlay",
                                     "type": "group",
-                                    "instructions": "Totally optional",
+                                    "instructions": "Totally optional, if link is provided and not text, link will be for the image itself",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -2389,5 +2385,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1553794371
+    "modified": 1554332174
 }

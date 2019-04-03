@@ -70,7 +70,6 @@ function do_featured_presenter_grid($args) {
       if(!empty($value['event_datetime'])) {
          $content .= '     <p class="dates">'.$value['event_datetime'].'</p>';
       }
-
       $desc = $value['event_desc'];
 
       if(!empty($value['button_url']) && strlen($desc) > 230 ) {
@@ -79,7 +78,6 @@ function do_featured_presenter_grid($args) {
             $desc = substr($desc, 0, $breakpoint) . '&hellip;';
          }
       }
-
       else if(strlen($desc) > 300) {
          $breakpoint = strpos($desc, ' ', 290);
          if($breakpoint > 0) {
