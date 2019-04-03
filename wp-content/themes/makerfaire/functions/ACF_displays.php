@@ -73,20 +73,6 @@ function do_featured_presenter_grid($args) {
 
       $desc = $value['event_desc'];
 
-      if(!empty($value['button_url']) && strlen($desc) > 230 ) {
-         $breakpoint = strpos($desc, ' ', 220);
-         if($breakpoint > 0) {
-            $desc = substr($desc, 0, $breakpoint) . '&hellip;';
-         }
-      }
-
-      else if(strlen($desc) > 300) {
-         $breakpoint = strpos($desc, ' ', 290);
-         if($breakpoint > 0) {
-            $desc = substr($desc, 0, $breakpoint) . '&hellip;';
-         }
-      }
-
       $content .= '        <p class="desc-body">'.$desc.'</p>';
 
       if(!empty($value['button_url']) && !empty($value['button_text'])) {
@@ -104,6 +90,14 @@ function do_featured_presenter_grid($args) {
    // $content .= '</div>'; // end col
    // $content .= '</div>'; // end row
    $content .= '</div>'; // end container
+	
+	$content .= '<script type="text/javascript">
+	                jQuery(document).ready(function(){
+							 jQuery(jQuery("p.desc-body")).each(function() {
+							    jQuery(this).text(maxLength(230));
+							 });
+						 });
+					 </script>';
 
    echo $content;
 };
