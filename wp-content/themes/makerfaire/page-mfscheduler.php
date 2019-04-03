@@ -277,7 +277,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             
             //DEBUG: Interval looks like it is no longer needed.
             //Why do we need to add 7 days to make this work???
-            //$start_dt->add(new DateInterval('P7D'));
+            $start_dt->add(new DateInterval('P7D'));
 
             $start_dt = $start_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
          }

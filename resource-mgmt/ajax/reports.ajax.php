@@ -869,7 +869,8 @@ function retrieveRptData($table, $faire) {
          $vars['visible'] = $fields['visible'];
       if (isset($fields['type']))
          $vars['type'] = $fields['type'];
-
+      if (isset($fields['fieldLabel'])) 
+         $vars['displayName'] = $fields['fieldLabel'];
       $vars['name'] = $fields['fieldName'];
       $vars['minWidth'] = 100;
       $vars['width'] = (isset($fields['width']) ? $fields['width'] : '*');
@@ -888,18 +889,23 @@ function retrieveRptData($table, $faire) {
    if ($wpdb->last_error !== '') :
       $wpdb->print_error();
    endif;
-         
+        
    //create array of table data
    foreach ($result as $row) {
-
-      if(isset($row['schedType'])&& (trim($row['schedType'])=='')){
-         //determine sched type based on form type
-         $form = GFAPI::get_form($row->form_id);
-         if ($form['form_type'] == 'Performance') {
-            $row['schedType'] = 'performance';
-         } else {
-            $row['schedType'] = 'talk';
-         }         
+      
+      if(isset($row['schedType'])) {
+         if(trim($row['schedType'])=='') {
+            //determine sched type based on form type
+            $form = GFAPI::get_form($row->form_id);
+            if ($form['form_type'] == 'Performance') {
+               $row['schedType'] = 'Performance';
+            }elseif ($form['form_type'] == 'Workshop') {
+               $row['schedType'] = 'Workshop';
+            } else {
+               $row['schedType'] = 'Talk';
+            }
+         }
+         $row['schedType'] = ucfirst($row['schedType']);
       }
       $data['data'][] = $row;
    }

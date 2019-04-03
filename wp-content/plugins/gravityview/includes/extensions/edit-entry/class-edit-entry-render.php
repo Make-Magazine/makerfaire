@@ -1059,7 +1059,7 @@ class GravityView_Edit_Entry_Render {
 
 		ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
-		//$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
+		$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
       //This override is to remove the merge tags that aren’t being set in gravity view
       $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
 		ob_get_clean();
