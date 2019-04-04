@@ -16,8 +16,6 @@ function urlify($string) {
 	return strtolower(str_replace(" ","-",preg_replace("/[^\s{a-zA-Z0-9}]/", '', $string)));
 }
 
-wp_reset_query();
-
 ?>
 
 
@@ -44,19 +42,6 @@ wp_reset_query();
 				?>
 			</ul>
 		</div>
-		<?php /*<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-		<?php	
-				if (have_rows('top_tabs')) { 
-					echo('<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12"><ul class="nav nav-tabs">');
-					while (have_rows('top_tabs')) {
-						the_row();
-						echo('<li><a href="' . get_sub_field('tab_link') . '">' . get_sub_field('tab_text') . '</a></li>');
-					}
-					echo('</ul></div>');
-				}
-		?>
-		<?php endwhile; ?>			
-		<?php endif; ?> */ ?>
 	</div>
   </div>
   <div class="page-leftnav container-fluid">
