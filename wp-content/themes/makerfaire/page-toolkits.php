@@ -12,30 +12,9 @@ $location = $urlArray[1];
 $pagegroup = $urlArray[2]; // This is the parent, i.e. Maker Toolkit
 $pagegroupPretty = ucwords(str_replace("-"," ", $pagegroup));
 
-
-$tabArray = [];
-$query = new WP_Query( array(
-    'post_type'  => 'any',
-	 'orderby'   => 'menu_order',
-    'order' => 'ASC',
-    'meta_key'   => '_wp_page_template',
-    'meta_value' => 'page-toolkits.php'
-) );
-
-if ( $query->have_posts() ) {
-    while ( $query->have_posts() ) : $query->the_post();
-	     // if a page of this template contains the same page group as this page, those are the tabs we're going to want to display
-	     if(strpos(get_the_permalink(), $pagegroup) !== false){
-        	  array_push($tabArray, get_the_title());
-		  }
-    endwhile; 
-}
-
 function urlify($string) {
 	return strtolower(str_replace(" ","-",preg_replace("/[^\s{a-zA-Z0-9}]/", '', $string)));
 }
-
-wp_reset_query();
 
 ?>
 
@@ -52,29 +31,17 @@ wp_reset_query();
 		<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12">
 			<ul class="nav nav-tabs">
 				<?php 
-					foreach($tabArray as $value) {
-						// allow ampersands in titles but strip them from urls
-	               $strippedValue = str_replace("  ", " ", str_replace("&#038;", "", $value));
-						$tabUrl = '/' . $location . '/' . $pagegroup . '/' . urlify($strippedValue);
-						
-						echo('<li><a href="' . $tabUrl . '" ' . ($value == get_the_title() ? ' class="active"' : '') . '>' . $value . '</a></li>');
-					}
+            if($post->post_parent){
+               $children = wp_list_pages('title_li=&child_of='.$post->post_parent.'&echo=0'); 
+            }else{
+               $children = wp_list_pages('title_li=&child_of='.$post->ID.'&echo=0'); 
+            }
+            if ($children) {
+               echo $children;
+            }
 				?>
 			</ul>
 		</div>
-		<?php /*<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-		<?php	
-				if (have_rows('top_tabs')) { 
-					echo('<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12"><ul class="nav nav-tabs">');
-					while (have_rows('top_tabs')) {
-						the_row();
-						echo('<li><a href="' . get_sub_field('tab_link') . '">' . get_sub_field('tab_text') . '</a></li>');
-					}
-					echo('</ul></div>');
-				}
-		?>
-		<?php endwhile; ?>			
-		<?php endif; ?> */ ?>
 	</div>
   </div>
   <div class="page-leftnav container-fluid">
