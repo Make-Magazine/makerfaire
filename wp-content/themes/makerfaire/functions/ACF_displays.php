@@ -68,7 +68,6 @@ function do_featured_presenter_grid($args) {
       }
 
       $desc = $value['event_desc'];
-		error_log($desc);
 
       $content .= '        <p class="desc-body">'.$desc.'</p>';
 
