@@ -565,11 +565,11 @@ function duplicate_entry_data($form_change,$current_entry_id ){
 
 /* Modify Set Entry Schedule */
 function set_entry_schedule($lead,$form){
-  $entry_id              = $lead['id'];
+   $entry_id              = $lead['id'];
 	$entry_schedule_start  = (isset($_POST['datetimepickerstart'])   ? $_POST['datetimepickerstart']   : '');
 	$entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
-  $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
-  $sched_type            = (isset($_POST['sched_type'])            ? $_POST['sched_type']            : '');
+   $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
+   $sched_type            = (isset($_POST['sched_type'])            ? $_POST['sched_type']            : '');
 
   //location fields
   $entry_location_subarea_change = (isset($_POST['entry_location_subarea_change']) ? $_POST['entry_location_subarea_change'] : '');

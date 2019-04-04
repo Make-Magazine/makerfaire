@@ -171,13 +171,14 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
          echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
       }
       $locations = array();
-
-      $result = $mysqli->query("SELECT 	 `wp_mf_faire_subarea`.`id`,
-			`wp_mf_faire_subarea`.`subarea`
-			FROM  wp_mf_faire_subarea, wp_mf_faire_area, wp_mf_faire
-			where faire='$faire_id'
-			and   wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID
-			and   wp_mf_faire_area.faire_id   = wp_mf_faire.ID") or trigger_error($mysqli->error);
+		
+		$result = $mysqli->query("SELECT      `wp_mf_faire_subarea`.`id`,
+           `wp_mf_faire_subarea`.`subarea`
+           FROM  wp_mf_faire_subarea, wp_mf_faire_area, wp_mf_faire
+           where faire='$faire_id'
+           and   wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID
+           and   wp_mf_faire_area.faire_id   = wp_mf_faire.ID
+			  order by sort_order ASC, subarea ASC") or trigger_error($mysqli->error);
 
       if ($result) {
          while ($row = $result->fetch_row()) {
@@ -276,7 +277,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             $start_dt = DateTime::createFromFormat('Y-m-d H:i:s', $row [0]); // your original DTO
             
             //DEBUG: Interval looks like it is no longer needed.
-            //Why do we need to add 7 days to make this work???
+            //Why do we need to add 7 days to make this work??? 
+				// see if we can add default beginning and ending time
             $start_dt->add(new DateInterval('P7D'));
 
             $start_dt = $start_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
