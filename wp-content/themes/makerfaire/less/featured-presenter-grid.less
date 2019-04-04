@@ -173,12 +173,16 @@
          padding: 0.7em 0;
          justify-self: flex-end;
          align-self: flex-end;
+			z-index: 999;
          &:hover {
             background-color: #fff;
          }
          @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
             align-self: flex-end;
          }
+			@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {  
+				/* IE10+ specific styles go here */  
+			}
       }
 
    }

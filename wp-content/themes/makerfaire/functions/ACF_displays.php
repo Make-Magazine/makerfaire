@@ -93,12 +93,7 @@ function do_featured_presenter_grid($args) {
 					</mask>';
 	
    $content .= '<script type="text/javascript">
-	               function isIE() {
-						  ua = navigator.userAgent;
-						   /* MSIE used to detect old browsers and Trident used to newer ones*/
-						   var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
-						   return is_ie; 
-						}
+
 						function fitTextToBox(){
 							jQuery(".grid-item").each(function() {
 							    var availableHeight = jQuery(this).innerHeight() - 30;
@@ -106,11 +101,7 @@ function do_featured_presenter_grid($args) {
 									 availableHeight = availableHeight - jQuery(this).find(".read-more-link").innerHeight() - 30;
 								 }
 
-								 if (isIE()){
-									 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "url(#mask)");
-								 }else{
-									 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
-								 }
+								 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
 								 
 								 if( 561 > jQuery(window).width() ) {
 								   jQuery(jQuery(this).find(".desc-body")).css("mask-image", "none");
