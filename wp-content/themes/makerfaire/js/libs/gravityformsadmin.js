@@ -552,10 +552,8 @@ function hiddenTicket(accessCode) {
       data.datetimepickerend              = jQuery("input[name=datetimepickerend]").val();
       data.entry_location_subarea_change  = jQuery("select[name=entry_location_subarea_change]").val();
       data.update_entry_location_code     = jQuery("input[name=update_entry_location_code]").val();
-      data.sched_type                     = jQuery("select[name=typeSel]").val();
-		alert("hello");
-		console.log("location = " + data.entry_location_subarea_change);
-		console.log("type = " + data.sched_type);
+      data.sched_type                     = jQuery("#typeSel").val();
+		 
     } else if(action=='delete_entry_schedule') {
       //schedule id's to delete
       var delete_schedule_id=[];
