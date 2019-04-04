@@ -391,8 +391,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
           'majorTick' => 30,
           'showWorkHours' => true,
           'workWeekEnd' => 7,
-          'workDayStart' => new DateTime('2016/5/20 15:00', new DateTimeZone('UTC')),
-          'workDayEnd' => new DateTime('2016/5/22 00:00', new DateTimeZone('UTC'))
+          'workDayStart' => new DateTime('2016/5/20 17:00', new DateTimeZone('UTC')),
+          'workDayEnd' => new DateTime('2016/5/22 02:00', new DateTimeZone('UTC'))
               ), array(
           'type' => 'workWeek',
           'majorTick' => 30,
@@ -400,8 +400,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
           'workWeekStart' => 5,
           'workWeekEnd' => 7,
           'showWorkHours' => true,
-          'workDayStart' => new DateTime('2016/5/20 15:00', new DateTimeZone('UTC')),
-          'workDayEnd' => new DateTime('2016/5/22 00:00', new DateTimeZone('UTC'))
+          'workDayStart' => new DateTime('2016/5/20 17:00', new DateTimeZone('UTC')),
+          'workDayEnd' => new DateTime('2016/5/22 02:00', new DateTimeZone('UTC'))
               ), 'agenda')->dataSource($dataSource);
 
       return $scheduler;

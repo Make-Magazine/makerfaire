@@ -571,34 +571,34 @@ function set_entry_schedule($lead,$form){
    $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
    $sched_type            = (isset($_POST['sched_type'])            ? $_POST['sched_type']            : '');
 
-  //location fields
-  $entry_location_subarea_change = (isset($_POST['entry_location_subarea_change']) ? $_POST['entry_location_subarea_change'] : '');
+   //location fields
+   $entry_location_subarea_change = (isset($_POST['entry_location_subarea_change']) ? $_POST['entry_location_subarea_change'] : '');
 
 	$form_id=$lead['form_id'];
 
-  //set the location
-  $location_id = 'NULL';
-  if($entry_location_subarea_change!='none'){
-    set_entry_location($lead,$form,$location_id);
-  }
+	//set the location
+	$location_id = 'NULL';
+	if($entry_location_subarea_change!='none'){
+		set_entry_location($lead,$form,$location_id);
+	}
 
 	if($entry_schedule_start!='' && $entry_schedule_end!=''){
-    $mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
-    if ($mysqli->connect_errno) {
-      error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
-    }
-    $insert_query = sprintf("INSERT INTO `wp_mf_schedule` (`entry_id`, location_id, `faire`, `start_dt`, `end_dt`, type)
-      SELECT $entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end', '$sched_type'
-        from wp_mf_faire where find_in_set($form_id,form_ids) > 0");
+		$mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
+		if ($mysqli->connect_errno) {
+			error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
+		}
+		$insert_query = sprintf("INSERT INTO `wp_mf_schedule` (`entry_id`, location_id, `faire`, `start_dt`, `end_dt`, type)
+		SELECT $entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end', '$sched_type'
+		  from wp_mf_faire where find_in_set($form_id,form_ids) > 0");
 
-    //MySqli Insert Query
-    $insert_row = $mysqli->query($insert_query);
-    if($insert_row){
-      //echo 'Success! <br />';
-    }else{
-      error_log('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
-    }
-  }
+		//MySqli Insert Query
+		$insert_row = $mysqli->query($insert_query);
+		if($insert_row){
+			//echo 'Success! <br />';
+		}else{
+			error_log('Error :'.$insert_query.':('. $mysqli->errno .') '. $mysqli->error);
+		}
+   }
 }
 
 /* Modify Set Entry Location */
