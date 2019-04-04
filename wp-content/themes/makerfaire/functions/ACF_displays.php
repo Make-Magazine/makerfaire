@@ -84,14 +84,34 @@ function do_featured_presenter_grid($args) {
    // $content .= '</div>'; // end row
    $content .= '</div>'; // end container
 	
+	$content .= '<mask id="mask" maskContentUnits="objectBoundingBox">
+					  <rect width="1" height="1" fill="url(#gradient)"/>
+					  <linearGradient x2="0" y2="1" id="gradient">
+						 <stop offset="25%" stop-color="white" />
+						 <stop offset="50%" stop-color="black" />
+					  </linearGradient>
+					</mask>';
+	
    $content .= '<script type="text/javascript">
+	               function isIE() {
+						  ua = navigator.userAgent;
+						   /* MSIE used to detect old browsers and Trident used to newer ones*/
+						   var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+						   return is_ie; 
+						}
 						function fitTextToBox(){
 							jQuery(".grid-item").each(function() {
 							    var availableHeight = jQuery(this).innerHeight() - 30;
 								 if(jQuery(this).find(".read-more-link").length > 0){
 									 availableHeight = availableHeight - jQuery(this).find(".read-more-link").innerHeight() - 30;
 								 }
-								 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
+
+								 if (isIE()){
+									 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "url(#mask)");
+								 }else{
+									 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
+								 }
+								 
 								 if( 561 > jQuery(window).width() ) {
 								   jQuery(jQuery(this).find(".desc-body")).css("mask-image", "none");
 									jQuery(jQuery(this).find(".desc-body")).css("height", "auto");
