@@ -59,54 +59,57 @@ function do_featured_presenter_grid($args) {
       $content .= '     <p>'.$value['pres_title'].'</p>';
       $content .= '  </div>';
 
-      if(!empty($value['button_url'])) {
-         $content .= '<a class="grid-item-desc" href="'.$value['button_url'].'">';
-      } else {
-         $content .= '<div class="grid-item-desc">';
-      }
+      $content .= '<div class="grid-item-desc">';
       if(!empty($value['event_title'])) {
          $content .= '     <h4>'.$value['event_title'].'</h4>';
       }
       if(!empty($value['event_datetime'])) {
          $content .= '     <p class="dates">'.$value['event_datetime'].'</p>';
       }
+
       $desc = $value['event_desc'];
-
-      if(!empty($value['button_url']) && strlen($desc) > 230 ) {
-         $breakpoint = strpos($desc, ' ', 220);
-         if($breakpoint > 0) {
-            $desc = substr($desc, 0, $breakpoint) . '&hellip;';
-         }
-      }
-
-      else if(strlen($desc) > 300) {
-         $breakpoint = strpos($desc, ' ', 290);
-         if($breakpoint > 0) {
-            $desc = substr($desc, 0, $breakpoint) . '&hellip;';
-         }
-      }
+		error_log($desc);
 
       $content .= '        <p class="desc-body">'.$desc.'</p>';
 
       if(!empty($value['button_url']) && !empty($value['button_text'])) {
-         $content .= '     <p class="btn btn-blue read-more-link">'.$value['button_text'].'</p>';
+         $content .= '     <a href="' . $value['button_url'] . '" class="btn btn-blue read-more-link">'.$value['button_text'].'</a>';
       }
       
-      if(!empty($value['button_url'])) {
-         $content .= '  </a>'; // end desc
-      } else {
-         $content .= '</div>';  // end desc
-      }
+      $content .= '  </div>';  // end desc
       
-      $content .= '</div>';
+      $content .= '</div>'; // end grid item
    }
    // $content .= '</div>'; // end col
    // $content .= '</div>'; // end row
    $content .= '</div>'; // end container
+	
+   $content .= '<script type="text/javascript">
+						function fitTextToBox(){
+							jQuery(".grid-item").each(function() {
+							    var availableHeight = jQuery(this).innerHeight() - 30;
+								 if(jQuery(this).find(".read-more-link").length > 0){
+									 availableHeight = availableHeight - jQuery(this).find(".read-more-link").innerHeight() - 30;
+								 }
+								 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
+								 if( 561 > jQuery(window).width() ) {
+								   jQuery(jQuery(this).find(".desc-body")).css("mask-image", "none");
+									jQuery(jQuery(this).find(".desc-body")).css("height", "auto");
+								 } else { 
+								 	jQuery(jQuery(this).find(".desc-body")).css("height", availableHeight);
+								 }
+							 });
+						}
+	                jQuery(document).ready(function(){
+						    fitTextToBox();
+						 });
+						 jQuery(window).resize(function(){
+						 	 fitTextToBox();
+						 });
+					 </script>';
 
    echo $content;
 };
-
 
 
 

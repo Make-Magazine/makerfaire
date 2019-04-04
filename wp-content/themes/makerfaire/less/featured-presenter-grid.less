@@ -36,10 +36,11 @@
          }
       }
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
-         display: block;
          width: 50%;
          overflow: visible;
          margin-bottom: 24px;
+         height: 300px;
+         padding-top: 0;
          &:hover {
             &> .grid-item-desc {
                transform: translateX(100%);
@@ -47,12 +48,7 @@
             }
          }
       }
-      @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
-         display: flex;
-         flex-direction: column;
-         height: 300px;
-         padding-top: 0;
-      }
+
       @media screen and (max-width: @feat_img_mobile_breakpoint) {
          width: auto;
          padding-top: 75%;
@@ -86,7 +82,8 @@
       background-color: rgba(0,0,0,.6);
       color: #dedede;
       padding: 1em;
-
+		max-height: 90px;
+		overflow-y: visible;
 
       h3, p {
          margin: 0;
@@ -100,7 +97,6 @@
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
          position: absolute;
          bottom: 0;
-         //top: -1px;
          width: 100%;
       }
 
@@ -140,7 +136,6 @@
       @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
          position: absolute;
          transform: translateX(100%);
-         top: -1px;
          overflow: visible;
          display: block;
       }
@@ -161,9 +156,10 @@
             overflow: hidden;
          }
       }
-		
+		@media screen and (max-width: @feat_img_touch_sm_breakpoint) and (min-width: @feat_img_mobile_breakpoint) {
+			height: 71%;
+		}
       @media screen and (max-width: @feat_img_mobile_breakpoint) {
-
          .desc-body {
             height: auto;
             overflow: visible;
