@@ -32,6 +32,9 @@ wp-content/object-cache.php
 wp-content/mu-plugins/*
 wp-content/mysql.sql
 
+# for dev use
+wp-content/plugins/filter-page-by-template
+
 # wp core (as of 3.4.1)
 /db-config.php
 /index.php
