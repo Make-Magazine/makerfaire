@@ -42,6 +42,10 @@
 	  if(display_groupEntries($entryId)) { ?>
 		  <div class="group-entries"><?php echo display_groupEntries($entryId); ?></div>
 	  <?php } ?>
+		
+	  <?php if($categoryDisplay) { ?>
+		  <div class="entry-categories"><?php echo $categoryDisplay; ?></div>
+	  <?php } ?>
 
 	</div>
 
