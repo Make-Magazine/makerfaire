@@ -1,6 +1,6 @@
 var app = angular.module('mtm', []);
 
-var initialCategory = "All";
+var initialCategory = "";
 if(getUrlParam("category")){
 	initialCategory = getUrlParam("category");
 }
