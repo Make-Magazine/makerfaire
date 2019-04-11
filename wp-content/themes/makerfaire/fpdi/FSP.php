@@ -12,12 +12,15 @@ require_once( $root . '/wp-includes/wp-db.php' );
 if (!is_user_logged_in())
    auth_redirect();
 
-// require tFPDF
+
+use \setasign\Fpdi\Fpdi;
+
 require_once('fpdf/fpdf.php');
-require_once('fpdi/fpdi.php');
+require_once('fpdi/src/autoload.php');
+
 
 // The class, that overwrites the Header() method:
-class PDF extends FPDI {
+class PDF extends Fpdi {
 
    protected $_tplIdx;
 
