@@ -255,14 +255,12 @@
    display: flex;
    background-repeat: no-repeat;
    background-size: cover;
-   background-position: top -100px right;
+   background-position-x: right;
    min-height: 400px;
    @media screen and (max-width:  2000px) {
-      background-position: top -80px right; 
       min-height: 300px;
    }
    @media screen and (max-width:  1450px) {
-      background-position: top -60px right -180px;
       min-height: 200px;
    }
    @media screen and (max-width:  1250px) {
@@ -283,7 +281,8 @@
       background-position: top -34px right -236px;
    }
    @media screen and (max-width: 400px) {
-      background-position: top -34px right -286px;
+      background-position: top 0px right -186px;
+		background-size: auto 240px;
    }
    .mf-left-text {
       flex-basis: 550px;
@@ -293,7 +292,7 @@
       }
    }
    .mf-title-text {
-      background-color: #ededed;
+      background-color: rgba(237,237,237, .9);
       padding: 16px 16px 16px 20px;
       position: relative;
       h1 {
@@ -330,7 +329,7 @@
    .mf-notched-banner-outer {
       color: #fff;
       background-color: transparent;
-      border: 41px solid #00aeef;
+      border: 41px solid rgba(0, 174, 239, .8);
       border-right-color: transparent;
       position: relative;
 
