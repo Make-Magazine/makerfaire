@@ -83,10 +83,13 @@ if(isset($entry->errors)){
 	$groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
 	
 	// build array of categories
-	$categories = array(get_term($entry['320'])->name);
+	$mainCategory = get_term($entry['320'])->name;
+	$categories = array($mainCategory);
 	foreach($entry as $key => $value){
 		if(strpos($key, '321.') !== false && $value != null) {
-			$categories[] = get_term($value)->name;
+			if(get_term($value)->name != $mainCategory) {
+				$categories[] = get_term($value)->name;
+			}
 		}
 	}
 	$categoryDisplay = display_categories($categories);
