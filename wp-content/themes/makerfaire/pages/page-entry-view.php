@@ -35,16 +35,16 @@
 	  <?php
 	  echo $video;    //project Video
 		
+	  if($categoryDisplay) { ?>
+		  <div class="entry-categories"><?php echo $categoryDisplay; ?></div>
+	  <?php } 
+		
 	  if(display_group($entryId)) { ?>
 			<div class="group-entry"><?php echo display_group($entryId); ?></div>
 	  <?php
 	  }
 	  if(display_groupEntries($entryId)) { ?>
 		  <div class="group-entries"><?php echo display_groupEntries($entryId); ?></div>
-	  <?php } ?>
-		
-	  <?php if($categoryDisplay) { ?>
-		  <div class="entry-categories"><?php echo $categoryDisplay; ?></div>
 	  <?php } ?>
 
 	</div>
