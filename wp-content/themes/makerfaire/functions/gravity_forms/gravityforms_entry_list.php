@@ -197,10 +197,9 @@ function modify_field_display_values($value, $form_id, $field_id, $lead) {
             //replace images with an actual thumbnail of the image
             if (strpos($thumb, 'icon_image.gif') !== false) {
                $file_path = esc_attr($file_path);
-
-               //custom MF code
-               //$file_path = legacy_get_resized_remote_image_url($file_path, 115, 115);
-               $value = "<a href='$file_path' target='_blank' title='" . __('Click to view', 'gravityforms') . "'><img class='thickbox' style='width: 115px;' src='$file_path'/></a>";
+      
+               $photo = legacy_get_fit_remote_image_url($file_path, 115, 115);
+               $value = "<a href='$file_path' target='_blank' title='" . __('Click to view', 'gravityforms') . "'><img class='thickbox' style='width: 115px;' src='$photo'/></a>";
             }
          }
       }
