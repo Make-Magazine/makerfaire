@@ -86,26 +86,20 @@ function getFeatMkPanel($row_layout) {
    $makers_to_show = get_sub_field('makers_to_show');
    $more_makers_button = get_sub_field('more_makers_button');
    $background_color = get_sub_field('background_color');
+	
    $title = (get_sub_field('title') ? get_sub_field('title') : '');
-
-   $bg_colors = [
-      'blue' => 'blue-back',
-      'white' => 'white-back',
-      'dark_blue' => 'dark-blue-back',
-      'dark_gray' => 'dark-gray-back'
-   ];
 
    //var_dump($background_color);
 
    // Check if the background color selected was white
-   $return .= '<section class="featured-maker-panel ' . $bg_colors[$background_color] . '"> ';
+   $return .= '<section class="featured-maker-panel ' . $background_color . '"> ';
 
    //build the container div
    $return .= '<div class="container">';
    //do not return yellow underline whenbackground is white
 
    $return .= '<div class="row text-center">
-            <div class="panel-title title-w-border-y '.($background_color === "White" ? ' yellow-underline' : '') .'">
+            <div class="panel-title title-w-border-y '.($background_color === "white-bg" ? ' yellow-underline' : '') .'">
               <h2>' . $title . '</h2>
             </div>
           </div>';
@@ -450,11 +444,15 @@ function get6ColLayout() {
 
       $cta_link = $data['image_cta'];
       $ctaText = $data['image_cta_text'];
+		
+		$bgColor = $data['button_color'];
 
       if (!empty($cta_link)) {
-         $columnInfo = '<a class="six-col-img" href="' . $cta_link . '" '.$imgStyle.'></a>';
+			if(!empty($imageArr['url'])) {
+         	$columnInfo = '<a class="six-col-img" href="' . $cta_link . '" '.$imgStyle.'></a>';
+			}
          if (!empty($ctaText)) {
-            $columnInfo .= '<p class="text-center sub-caption-bottom"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
+            $columnInfo .= '<p class="text-center sub-caption-bottom ' . $bgColor . '"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
          }
       } else {
          $columnInfo = $image;

@@ -11,6 +11,42 @@
 .customPanels {
    font-family: "Roboto-Light";
    overflow-x: hidden;
+	// color background options for all panels
+	.white-bg {
+		background: #fff;
+		color: #333;
+		a { color: #0D3900; }
+		.btn-outlined { 
+			background: #fff;
+			color: #005e9a;
+			border-color: #005e9a;
+			&:hover {
+				color: #fff;
+				background: #005e9a;
+			}
+		}
+		.panel-title, .title-w-border-y {
+         color: #333;
+      }
+	}
+	.blue-bg {
+		background: #005e9a;
+	}
+	.darkblue-bg {
+		background: #2C4956;
+	}
+	.grey-bg {
+		background: #4A4A4A;
+	}
+	.darkgrey-bg {
+		background: #333;
+	}
+	.blue-bg, .darkblue-bg, .grey-bg, .darkgrey-bg {
+		.panel-title, .title-w-border-y {
+			color: #fff;
+		}
+	}
+
    .slideshow-panel {
       position: relative;
       .header-logo-div {
@@ -303,17 +339,14 @@
    // Featured Makers Panel
 
    .featured-maker-panel {
-      background-color: #005e9a;
       
       .panel-title {
          margin-top: 15px;
-         color: #fff;
       }
 
       .title-w-border-y {
          //margin-bottom: 20px;
          margin-top: 15px;
-         color: #fff;
       }
 
       .more-makers-link {
@@ -1009,17 +1042,7 @@
 	.image-panel {
 		padding-bottom: 0px;
 		.row {
-			&.white-bg {
-				background: #fff;
-				color: #333;
-				a { color: #0D3900; }
-			}
-			&.grey-bg {
-				background: #4A4A4A;
-			}
-			&.darkgrey-bg {
-				background: #333;
-			}
+
 			.image-display {
 				margin-bottom: 30px;
 				position: relative;
@@ -1100,7 +1123,7 @@
       //margin: 20px;
       .image-grid-row {
          display: flex;
-         margin: 10px -10px;
+         margin: 20px -10px -10px;
          padding: 0 20px;
          @media screen and (max-width: 1200px) {
             flex-wrap: wrap;
@@ -1132,8 +1155,6 @@
       }
 	}
    .sub-caption-bottom {
-      background: #005E9A;
-      color: white;
       padding: 5px 10px;
       a {
          color: white;
