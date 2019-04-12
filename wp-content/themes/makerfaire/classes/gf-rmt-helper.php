@@ -39,7 +39,7 @@ class GFRMTHELPER {
     $faire_location= $wpdb->get_var("SELECT faire_location "
                                  . "   FROM wp_mf_faire "
                                  . "   WHERE FIND_IN_SET (".$form['id'] . ",wp_mf_faire.non_public_forms)> 0 OR "
-                                 . "         FIND_IN_SET (".$form['id'] . ",wp_mf_faire.form_ids)> 0");
+                                 . "         FIND_IN_SET (".$form['id'] . ",wp_mf_faire.form_ids)> 0 order by id desc limit 1");
 
     /* RMT logic is stored in wp_rmt_rules and wp_rmt_rules_logic */
 
