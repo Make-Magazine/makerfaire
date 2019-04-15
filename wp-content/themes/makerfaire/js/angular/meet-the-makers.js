@@ -1,5 +1,10 @@
 var app = angular.module('mtm', []);
 
+var initialCategory = "";
+if(getUrlParam("category")){
+	initialCategory = getUrlParam("category");
+}
+
 app.controller('mtmMakers', function ($scope, $http) {
    //infinite scroll
    $scope.limit = 20;
@@ -25,6 +30,10 @@ app.controller('mtmMakers', function ($scope, $http) {
    var formIDs = jQuery('#forms2use').val();
    var faireID = jQuery('#mtm-faire').val();
    formIDs = replaceAll(formIDs, ",", "-");
+	
+	if(initialCategory){
+      $scope.makerSearch.categories = initialCategory;
+   }
       
    //call to MF custom rest API
    $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs+'/'+faireID)
@@ -90,6 +99,10 @@ app.controller('mtmMakers', function ($scope, $http) {
 });
 
 app.filter('byCategory', function () {
+	// leaving the param in the url would look awkward once users start selecting different filters so let's get rid of it
+	if(getUrlParam("category")) {
+		window.history.replaceState({}, document.title, window.location.href.split('?')[0]);
+	}
    return function (items, maker) {
       var filtered = [];
 
@@ -105,8 +118,10 @@ app.filter('byCategory', function () {
             }
          });
       });
+		
       return filtered;
    };
+
 });
 
 app.filter('startsWithLetter', function () {

@@ -42,11 +42,6 @@ $slug = $par_post->post_name;
 							<span class="sprite"></span>
 						</div>
 					</a>
-					<a class="sprite-googleplus-32" href="//plus.google.com/share?url=http://makerfaire.com/new-york-2015/slideshow" rel="publisher" title="Google+" target="_blank">
-						<div class="social-profile-cont">
-							<span class="sprite"></span>
-						</div>
-					</a>
 				</div>
 			</div>
 		</div>

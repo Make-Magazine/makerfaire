@@ -4,12 +4,12 @@
  * This is the public facing entry page view
  *
  */
-  ?>
+?>
 <div class="container">
   <div class="row">
 	<div class="col-md-8 col-sm-12 col-xs-12" id="viewEntry">
 	  <!-- Project Title and ribbons -->
-	  <?php echo $ribbons;?>
+	  <?php echo $ribbons; ?>
 	  <div class="entry-header">
 		 <div class="entry-type">
 			 <?php echo $formType; ?>
@@ -34,6 +34,10 @@
 
 	  <?php
 	  echo $video;    //project Video
+		
+	  if($categoryDisplay) { ?>
+		  <div class="entry-categories"><?php echo $categoryDisplay; ?></div>
+	  <?php } 
 		
 	  if(display_group($entryId)) { ?>
 			<div class="group-entry"><?php echo display_group($entryId); ?></div>

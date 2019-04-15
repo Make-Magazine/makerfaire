@@ -128,27 +128,6 @@
                     "display": "row",
                     "sub_fields": [
                         {
-                            "key": "field_572d8358fe8e3",
-                            "label": "Newsletter Text",
-                            "name": "newsletter_panel_text",
-                            "type": "text",
-                            "instructions": "Please enter the text displayed on the left side of the panel.<br\/>100 character limit.",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": 100,
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "readonly": 0,
-                            "disabled": 0
-                        },
-                        {
                             "key": "field_572d8358fe8e2",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
@@ -171,6 +150,27 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_572d8358fe8e3",
+                            "label": "Newsletter Text",
+                            "name": "newsletter_panel_text",
+                            "type": "text",
+                            "instructions": "Please enter the text displayed on the left side of the panel.<br\/>100 character limit.",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": 100,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "readonly": 0,
+                            "disabled": 0
                         }
                     ],
                     "min": "",
@@ -182,30 +182,6 @@
                     "label": "1 Column WYSIWYG",
                     "display": "block",
                     "sub_fields": [
-                        {
-                            "key": "field_572bac2b2d757a",
-                            "label": "Active\/Inactive",
-                            "name": "activeinactive",
-                            "type": "radio",
-                            "instructions": "Activate or Inactivate this panel",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "activeinactive",
-                                "id": ""
-                            },
-                            "layout": "horizontal",
-                            "choices": {
-                                "Active": "Active",
-                                "Inactive": "Inactive"
-                            },
-                            "default_value": "Active",
-                            "other_choice": 0,
-                            "save_other_choice": 0,
-                            "allow_null": 0,
-                            "return_format": "value"
-                        },
                         {
                             "key": "field_572bac2b2d757b",
                             "label": "Title",
@@ -282,19 +258,9 @@
                             },
                             "default_value": "",
                             "placeholder": ""
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "56fc6f9fdc4a2": {
-                    "key": "56fc6f9fdc4a2",
-                    "name": "featured_makers_panel",
-                    "label": "Featured Items",
-                    "display": "row",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5727a9191b209",
+                            "key": "field_572bac2b2d757a",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -316,7 +282,17 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "56fc6f9fdc4a2": {
+                    "key": "56fc6f9fdc4a2",
+                    "name": "featured_makers_panel",
+                    "label": "Featured Items",
+                    "display": "row",
+                    "sub_fields": [
                         {
                             "key": "field_56fcb5958152f",
                             "label": "Panel Title",
@@ -509,8 +485,8 @@
                             "key": "field_5727eedc044ee",
                             "label": "Background Color",
                             "name": "background_color",
-                            "type": "radio",
-                            "instructions": "Background color of this panel. Choose blue or white.",
+                            "type": "select",
+                            "instructions": "Background color of this panel. Choose White, Blue, Dark Blue, Grey or Dark Grey",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -518,29 +494,25 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "layout": "horizontal",
                             "choices": {
-                                "Blue": "Blue",
-                                "White": "White"
+                                "blue-bg": "Blue",
+                                "white-bg": "White",
+                                "grey-bg": "Grey",
+                                "darkgrey-bg": "Dark Grey",
+                                "darkblue-bg": "Dark Blue"
                             },
-                            "default_value": "Blue",
-                            "other_choice": 0,
-                            "save_other_choice": 0,
+                            "default_value": [
+                                "blue-bg"
+                            ],
                             "allow_null": 0,
-                            "return_format": "value"
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "579924c93b1b9": {
-                    "key": "579924c93b1b9",
-                    "name": "featured_makers_panel_dynamic",
-                    "label": "Featured Makers - Dynamic",
-                    "display": "row",
-                    "sub_fields": [
+                            "multiple": 0,
+                            "ui": 0,
+                            "return_format": "value",
+                            "ajax": 0,
+                            "placeholder": ""
+                        },
                         {
-                            "key": "field_579924c93b1ba",
+                            "key": "field_5727a9191b209",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -562,7 +534,17 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "579924c93b1b9": {
+                    "key": "579924c93b1b9",
+                    "name": "featured_makers_panel_dynamic",
+                    "label": "Featured Makers - Dynamic",
+                    "display": "row",
+                    "sub_fields": [
                         {
                             "key": "field_579924c93b1bb",
                             "label": "Panel Title",
@@ -673,8 +655,8 @@
                             "key": "field_579924c93b1c3",
                             "label": "Background Color",
                             "name": "background_color",
-                            "type": "radio",
-                            "instructions": "Background color of this panel. Choose blue or white.",
+                            "type": "select",
+                            "instructions": "Background color of this panel. Choose White, Blue, Dark Blue, Grey or Dark Grey",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -682,29 +664,25 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "layout": "horizontal",
                             "choices": {
-                                "Blue": "Blue",
-                                "White": "White"
+                                "blue-bg": "Blue",
+                                "white-bg": "White",
+                                "grey-bg": "Grey",
+                                "darkgrey-bg": "Dark Grey",
+                                "darkblue-bg": "Dark Blue"
                             },
-                            "default_value": "Blue",
-                            "other_choice": 0,
-                            "save_other_choice": 0,
+                            "default_value": [
+                                "blue-bg"
+                            ],
                             "allow_null": 0,
-                            "return_format": "value"
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "571518b722bb0": {
-                    "key": "571518b722bb0",
-                    "name": "featured_faires_panel",
-                    "label": "Featured Faires - Dynamic",
-                    "display": "row",
-                    "sub_fields": [
+                            "multiple": 0,
+                            "ui": 0,
+                            "return_format": "value",
+                            "ajax": 0,
+                            "placeholder": ""
+                        },
                         {
-                            "key": "field_571518b722bb0b",
+                            "key": "field_579924c93b1ba",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -726,7 +704,17 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "571518b722bb0": {
+                    "key": "571518b722bb0",
+                    "name": "featured_faires_panel",
+                    "label": "Featured Faires - Dynamic",
+                    "display": "row",
+                    "sub_fields": [
                         {
                             "key": "field_571518b722bb0c",
                             "label": "Featured Faires Page URL",
@@ -827,19 +815,9 @@
                             },
                             "default_value": "",
                             "placeholder": ""
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "571518b722ba0": {
-                    "key": "571518b722ba0",
-                    "name": "sponsors_panel",
-                    "label": "Sponsors",
-                    "display": "row",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5727a9d21b20b",
+                            "key": "field_571518b722bb0b",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -861,7 +839,17 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "571518b722ba0": {
+                    "key": "571518b722ba0",
+                    "name": "sponsors_panel",
+                    "label": "Sponsors",
+                    "display": "row",
+                    "sub_fields": [
                         {
                             "key": "field_5727a9d21b20c",
                             "label": "Sponsors Page URL",
@@ -898,19 +886,9 @@
                             "append": "",
                             "readonly": 0,
                             "disabled": 0
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "571e869b082c2": {
-                    "key": "571e869b082c2",
-                    "name": "call_to_action_panel",
-                    "label": "Star Ribbon Panel",
-                    "display": "row",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5727aa011b20c",
+                            "key": "field_5727a9d21b20b",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -932,7 +910,17 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "571e869b082c2": {
+                    "key": "571e869b082c2",
+                    "name": "call_to_action_panel",
+                    "label": "Star Ribbon Panel",
+                    "display": "row",
+                    "sub_fields": [
                         {
                             "key": "field_571e86b7082c3",
                             "label": "Text",
@@ -995,19 +983,9 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "571e8hfiHIu8f": {
-                    "key": "571e8hfiHIu8f",
-                    "name": "ribbon_separator_panel",
-                    "label": "Ribbon Separator Panel",
-                    "display": "row",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_57f8dfh89hsndjn",
+                            "key": "field_5727aa011b20c",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -1029,7 +1007,17 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "571e8hfiHIu8f": {
+                    "key": "571e8hfiHIu8f",
+                    "name": "ribbon_separator_panel",
+                    "label": "Ribbon Separator Panel",
+                    "display": "row",
+                    "sub_fields": [
                         {
                             "key": "field_577sda89s8hiuhi87d",
                             "label": "Background Color",
@@ -1055,19 +1043,9 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "572bad2b2d757": {
-                    "key": "572bad2b2d757",
-                    "name": "1_column",
-                    "label": "Hero Panel",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_572bad2b2d758",
+                            "key": "field_57f8dfh89hsndjn",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -1089,7 +1067,17 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "572bad2b2d757": {
+                    "key": "572bad2b2d757",
+                    "name": "1_column",
+                    "label": "Hero Panel",
+                    "display": "block",
+                    "sub_fields": [
                         {
                             "key": "field_572bad2b2d751",
                             "label": "Hero image Repeater",
@@ -1179,19 +1167,9 @@
                             "delay": 0,
                             "readonly": 0,
                             "disabled": 0
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "571e9Gyds7ysy8g": {
-                    "key": "571e9Gyds7ysy8g",
-                    "name": "news_block_panel",
-                    "label": "News Block Panel",
-                    "display": "row",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5727sdfu6tdfyg",
+                            "key": "field_572bad2b2d758",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -1213,7 +1191,17 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "571e9Gyds7ysy8g": {
+                    "key": "571e9Gyds7ysy8g",
+                    "name": "news_block_panel",
+                    "label": "News Block Panel",
+                    "display": "row",
+                    "sub_fields": [
                         {
                             "key": "field_571fsd78hbhj",
                             "label": "Title",
@@ -1270,6 +1258,30 @@
                             "prepend": "",
                             "append": "",
                             "maxlength": ""
+                        },
+                        {
+                            "key": "field_5727sdfu6tdfyg",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "Activate or Inactivate this panel",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "activeinactive",
+                                "id": ""
+                            },
+                            "layout": "horizontal",
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "default_value": "Active",
+                            "other_choice": 0,
+                            "save_other_choice": 0,
+                            "allow_null": 0,
+                            "return_format": "value"
                         }
                     ],
                     "min": "",
@@ -1281,30 +1293,6 @@
                     "label": "3 column",
                     "display": "block",
                     "sub_fields": [
-                        {
-                            "key": "field_5b4e70db5d7d7",
-                            "label": "Active\/Inactive",
-                            "name": "activeinactive",
-                            "type": "radio",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "choices": {
-                                "Active": "Active",
-                                "Inactive": "Inactive"
-                            },
-                            "allow_null": 0,
-                            "other_choice": 0,
-                            "save_other_choice": 0,
-                            "default_value": "active",
-                            "layout": "horizontal",
-                            "return_format": "value"
-                        },
                         {
                             "key": "field_5b4e70905d7d6",
                             "label": "Panel Title",
@@ -1620,19 +1608,9 @@
                                     ]
                                 }
                             ]
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "5b4e51639cd8f": {
-                    "key": "5b4e51639cd8f",
-                    "name": "6_column",
-                    "label": "6 column navigation panel",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5b4e70cd5d7d8",
+                            "key": "field_5b4e70db5d7d7",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -1654,7 +1632,17 @@
                             "default_value": "active",
                             "layout": "horizontal",
                             "return_format": "value"
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "5b4e51639cd8f": {
+                    "key": "5b4e51639cd8f",
+                    "name": "6_column",
+                    "label": "6 column navigation panel",
+                    "display": "block",
+                    "sub_fields": [
                         {
                             "key": "field_5b4e70cd5d7d9",
                             "label": "Panel Title",
@@ -1714,7 +1702,7 @@
                                             "name": "column_image_field",
                                             "type": "image",
                                             "instructions": "Upload an image; will be cropped to center",
-                                            "required": 1,
+                                            "required": 0,
                                             "conditional_logic": 0,
                                             "wrapper": {
                                                 "width": "",
@@ -1766,27 +1754,46 @@
                                             "prepend": "",
                                             "append": "",
                                             "maxlength": ""
+                                        },
+                                        {
+                                            "key": "field_5cb0c96b6fb35",
+                                            "label": "Button Color",
+                                            "name": "button_color",
+                                            "type": "select",
+                                            "instructions": "Select the color of the button (default is blue)",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "choices": {
+                                                "blue-bg": "Blue",
+                                                "darkblue-bg": "Dark Blue",
+                                                "grey-bg": "Grey",
+                                                "darkgrey-bg": "Dark Grey"
+                                            },
+                                            "default_value": [
+                                                "Blue"
+                                            ],
+                                            "allow_null": 0,
+                                            "multiple": 0,
+                                            "ui": 0,
+                                            "return_format": "value",
+                                            "ajax": 0,
+                                            "placeholder": ""
                                         }
                                     ]
                                 }
                             ]
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_5c93e6cfaf465": {
-                    "key": "layout_5c93e6cfaf465",
-                    "name": "tint_social_block_panel",
-                    "label": "Tint Social Block Panel",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5c93e6e4af466",
+                            "key": "field_5b4e70cd5d7d8",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
-                            "instructions": "Activate or Inactivate this panel",
+                            "instructions": "",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -1800,11 +1807,21 @@
                             },
                             "allow_null": 0,
                             "other_choice": 0,
-                            "default_value": "",
+                            "save_other_choice": 0,
+                            "default_value": "active",
                             "layout": "horizontal",
-                            "return_format": "value",
-                            "save_other_choice": 0
-                        },
+                            "return_format": "value"
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_5c93e6cfaf465": {
+                    "key": "layout_5c93e6cfaf465",
+                    "name": "tint_social_block_panel",
+                    "label": "Tint Social Block Panel",
+                    "display": "block",
+                    "sub_fields": [
                         {
                             "key": "field_5c93e72eaf467",
                             "label": "Title",
@@ -1861,23 +1878,13 @@
                             "prepend": "",
                             "append": "",
                             "maxlength": ""
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_5c9c04e3aafde": {
-                    "key": "layout_5c9c04e3aafde",
-                    "name": "maker_faire_map_cta",
-                    "label": "Maker Faire Map CTA",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5c9c0500aafdf",
+                            "key": "field_5c93e6e4af466",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
-                            "instructions": "",
+                            "instructions": "Activate or Inactivate this panel",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -1895,7 +1902,17 @@
                             "layout": "horizontal",
                             "return_format": "value",
                             "save_other_choice": 0
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_5c9c04e3aafde": {
+                    "key": "layout_5c9c04e3aafde",
+                    "name": "maker_faire_map_cta",
+                    "label": "Maker Faire Map CTA",
+                    "display": "block",
+                    "sub_fields": [
                         {
                             "key": "field_5c9c0534aafe0",
                             "label": "Title \/ Link Text",
@@ -1933,23 +1950,13 @@
                             "prepend": "",
                             "append": "",
                             "maxlength": ""
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_5c9c04a425736": {
-                    "key": "layout_5c9c04a425736",
-                    "name": "2_column_video",
-                    "label": "2 Column Video",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5c9c04bb25737",
+                            "key": "field_5c9c0500aafdf",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
-                            "instructions": "Activate or Inactivate this panel",
+                            "instructions": "",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -1964,10 +1971,20 @@
                             "allow_null": 0,
                             "other_choice": 0,
                             "default_value": "",
-                            "layout": "vertical",
+                            "layout": "horizontal",
                             "return_format": "value",
                             "save_other_choice": 0
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_5c9c04a425736": {
+                    "key": "layout_5c9c04a425736",
+                    "name": "2_column_video",
+                    "label": "2 Column Video",
+                    "display": "block",
+                    "sub_fields": [
                         {
                             "key": "field_5c9c050725738",
                             "label": "Video Row",
@@ -2080,19 +2097,9 @@
                                     "maxlength": ""
                                 }
                             ]
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_5c9d3b0285ad0": {
-                    "key": "layout_5c9d3b0285ad0",
-                    "name": "2_column_images",
-                    "label": "2 Column Images",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5c9d3b2985ad1",
+                            "key": "field_5c9c04bb25737",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -2114,7 +2121,17 @@
                             "layout": "vertical",
                             "return_format": "value",
                             "save_other_choice": 0
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_5c9d3b0285ad0": {
+                    "key": "layout_5c9d3b0285ad0",
+                    "name": "2_column_images",
+                    "label": "2 Column Images",
+                    "display": "block",
+                    "sub_fields": [
                         {
                             "key": "field_5c9d3b9485ad2",
                             "label": "Image Row",
@@ -2320,7 +2337,9 @@
                                     "choices": {
                                         "white-bg": "White",
                                         "grey-bg": "Grey",
-                                        "darkgrey-bg": "Dark Grey"
+                                        "darkgrey-bg": "Dark Grey",
+                                        "blue-bg": "Blue",
+                                        "darkblue-bg": "Dark Blue"
                                     },
                                     "default_value": [
                                         "white-bg"
@@ -2333,6 +2352,30 @@
                                     "placeholder": ""
                                 }
                             ]
+                        },
+                        {
+                            "key": "field_5c9d3b2985ad1",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "Activate or Inactivate this panel",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "allow_null": 0,
+                            "other_choice": 0,
+                            "default_value": "",
+                            "layout": "vertical",
+                            "return_format": "value",
+                            "save_other_choice": 0
                         }
                     ],
                     "min": "",
@@ -2385,5 +2428,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1554332174
+    "modified": 1555095119
 }

@@ -35,14 +35,16 @@ if(isset($entry->errors)){
 	$form = GFAPI::get_form($form_id);
 	$formType = $form['form_type'];
 	
+	//error_log(print_r($form, TRUE));
+	
 	if($formType == "Sponsor") {
 		$sponsorshipLevel = $entry["442.3"];
 	}
 
 	//build an array of field information
 	foreach($form['fields'] as $field){
-	 $fieldID = $field->id;
-	 $fieldData[$fieldID] = $field;
+	   $fieldID = $field->id;
+	   $fieldData[$fieldID] = $field;
 	}
 
 	//if the form was submitted
@@ -79,7 +81,18 @@ if(isset($entry->errors)){
 	$groupphoto  = (isset($entry['111']) ? $entry['111']:'');
 	$groupbio    = (isset($entry['110']) ? $entry['110']:'');
 	$groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
-
+	
+	// build array of categories
+	$mainCategory = get_term($entry['320'])->name;
+	$categories = array($mainCategory);
+	foreach($entry as $key => $value){
+		if(strpos($key, '321.') !== false && $value != null) {
+			if(get_term($value)->name != $mainCategory) {
+				$categories[] = get_term($value)->name;
+			}
+		}
+	}
+	$categoryDisplay = display_categories($categories);
 
 	// One maker
 	// A list of makers (7 max)
@@ -399,6 +412,16 @@ function display_groupEntries($entryID){
 	 	 return $return .= "</ul>";
 	 }
   }
+}
+
+// provide a linked list of the categories
+function display_categories($catArray) {
+	global $url_sub_path;
+	$return = '<b>Categories:</b>';
+	foreach($catArray as $value) {
+		$return .= ' <a href="/' . $url_sub_path . '/meet-the-makers/?category=' . str_replace("&amp;", "%26", $value) . '">' . $value . '</a>,';
+	}
+	return rtrim($return, ',');
 }
 
 //return makers info
