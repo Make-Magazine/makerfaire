@@ -143,17 +143,4 @@ if ($noMakerText == '')
    <div class="load-trigger"></div>
 </div>
 
-<script>
-   jQuery(document).ready(function () {
-      var slider = jQuery('#carouselImgs');
-      // Carousel left right
-      jQuery("#right-trigger").click(function () {
-         slider.trigger('next.owl.carousel');
-      });
-      jQuery("#left-trigger").click(function () {
-         slider.trigger('prev.owl.carousel');
-      });
-   });
-</script>
-
 <?php get_footer(); ?>

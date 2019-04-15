@@ -70,6 +70,9 @@ function dispLayout($row_layout) {
          case 'maker_faire_map_cta': // faire map link separator
             $return = getMFMapCTAPanel();
             break;
+			case 'panel_slider': // this is gonna end up pretty similar to the image carousel, but we're going to have it as a panel
+				$return = getPanelSlider();
+				break;
       }
    }
    return $return;
@@ -913,6 +916,16 @@ function getImgCarouselSquare() {
     </script>';
    }
    return $return;
+}
+
+/* **************************************************** */
+/* Function to return slider panel                      */
+/* **************************************************** */
+
+function getSliderPanel(){
+	$return .= '<section class="slider-panel">';
+   $return .= '   <div class="slide-carousel owl-carousel">';
+	return $return;
 }
 
 /* **************************************************** */
