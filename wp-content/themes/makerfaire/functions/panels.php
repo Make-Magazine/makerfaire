@@ -70,8 +70,8 @@ function dispLayout($row_layout) {
          case 'maker_faire_map_cta': // faire map link separator
             $return = getMFMapCTAPanel();
             break;
-			case 'panel_slider': // this is gonna end up pretty similar to the image carousel, but we're going to have it as a panel
-				$return = getPanelSlider();
+			case 'image_slider': // this is gonna end up pretty similar to the image carousel, but we're going to have it as a panel
+				$return = getSliderPanel();
 				break;
       }
    }
@@ -923,8 +923,64 @@ function getImgCarouselSquare() {
 /* **************************************************** */
 
 function getSliderPanel(){
-	$return .= '<section class="slider-panel">';
-   $return .= '   <div class="slide-carousel owl-carousel">';
+	$return .= '<section class="slider-panel container-fluid">';
+   $return .= '   <div class="' . get_sub_field('slideshow_name') . '-carousel owl-carousel">';
+	//get requested data for each column
+   $slides = get_sub_field('slide');
+   foreach ($slides as $slide) {
+		$imageObj = $slide['image'];
+		if(empty($slide['slide_button_text']) && !empty($slide['slide_link'])) {
+			$return .= '<a href="'. $slide['slide_link'] .'">';
+		}
+		$return .= '     <div class="item slide" style="background-image:url(' . $imageObj['url'] . ');">';
+		if(!empty($slide['slide_title'])) {
+			$return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
+		}
+		if(!empty($slide['slide_button_text'])) {
+			if(!empty($slide['slide_link'])) {
+			  $return .= '      <a href="'. $slide['slide_link'] .'">';
+		   }
+			$return .= '          <button class="btn slide-btn ' . $slide['slide_button_color'] . '">' . $slide['slide_button_text'] . '</button>';
+			if(!empty($slide['slide_link'])) {
+			  $return .= '      </a>';
+		   }
+		}
+		$return .= '     </div>';
+		if(!empty($slide['slide_link']) && empty($slide['slide_button_text'])) {
+			$return .= '</a>';
+		}
+	}
+	$return .= '   </div>
+	            </section>
+					
+					<script type="text/javascript">
+					   jQuery(window).load(function() {
+					   	// slideshow carousel
+							jQuery(".' . get_sub_field('slideshow_name') . '-carousel.owl-carousel").owlCarousel({
+							  loop: true,
+							  margin: 10,
+							  nav: true,
+							  navText: [
+								 "<i class=\'fa fa-caret-left\'></i>",
+								 "<i class=\'fa fa-caret-right\'></i>"
+							  ],
+							  autoplay: true,
+							  autoplayHoverPause: true,
+							  responsive: {
+								 0: {
+									items: ' . get_sub_field("column_number") . '
+								 },
+								 600: {
+									items: ' . get_sub_field("column_number") . '
+								 },
+								 1000: {
+									items: ' . get_sub_field("column_number") . '
+								 }
+							  }
+							})
+						});
+					</script>
+					';
 	return $return;
 }
 
