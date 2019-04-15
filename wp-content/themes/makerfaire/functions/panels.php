@@ -123,7 +123,13 @@ function getFeatMkPanel($row_layout) {
          $overrideImg = findOverride($entry['id'], 'makerPanel');
          if ($overrideImg != '')
             $url = $overrideImg;
-         $makerArr[] = array('image' => $url,
+         $args = array(
+            'resize' => '300,300',
+            'strip' => 'all',
+         );
+         $photon = jetpack_photon_url($url, $args);
+
+         $makerArr[] = array('image' => $photon,
             'name' => $entry['151'],
             'desc' => $entry['16'],
             'maker_url' => '/maker/entry/' . $entry['id']
@@ -135,8 +141,13 @@ function getFeatMkPanel($row_layout) {
          // loop through the rows of data
          while (have_rows('featured_makers')) {
             the_row();
-            $url = get_sub_field('maker_image')['url'];
-            $makerArr[] = array('image' => $url,
+            $url = get_sub_field('maker_image');
+            $args = array(
+               'resize' => '300,300',
+               'strip' => 'all',
+            );
+            $photon = jetpack_photon_url($url['url'], $args);
+            $makerArr[] = array('image' => $photon,
                'name' => get_sub_field('maker_name'),
                'desc' => get_sub_field('maker_short_description'),
                'maker_url' => get_sub_field('more_info_url')
