@@ -12,8 +12,8 @@
       if(empty($args['tag'])) {
          return '<pre>Tag not passed to "do_news_block()"</pre>';
       };
-      $url = 'https://makezine.com/tag/'.$args["tag"].'/feed';
-      $rss = fetch_feed( $url);
+      $url = 'https://makezine.com/tag/'.ltrim($args["tag"], '#').'/feed';
+      $rss = fetch_feed( $url );
       
       // Set a value used to limit items and determine if there enough items
       $max_value = 3;
