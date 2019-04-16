@@ -123,15 +123,7 @@ function getFeatMkPanel($row_layout) {
          $overrideImg = findOverride($entry['id'], 'makerPanel');
          if ($overrideImg != '')
             $url = $overrideImg;
-         
-         $args = array(
-            'resize' => '300,300',
-            'quality' => '80',
-            'strip' => 'all',
-         );
-         $photon = jetpack_photon_url($url, $args);
-
-         $makerArr[] = array('image' => $photon,
+         $makerArr[] = array('image' => $url,
             'name' => $entry['151'],
             'desc' => $entry['16'],
             'maker_url' => '/maker/entry/' . $entry['id']
@@ -143,14 +135,8 @@ function getFeatMkPanel($row_layout) {
          // loop through the rows of data
          while (have_rows('featured_makers')) {
             the_row();
-            $url = get_sub_field('maker_image');
-            $args = array(
-               'resize' => '300,300',
-               'quality' => '80',
-               'strip' => 'all',
-            );
-            $photon = jetpack_photon_url($url['url'], $args);
-            $makerArr[] = array('image' => $photon,
+            $url = get_sub_field('maker_image')['url'];
+            $makerArr[] = array('image' => $url,
                'name' => get_sub_field('maker_name'),
                'desc' => get_sub_field('maker_short_description'),
                'maker_url' => get_sub_field('more_info_url')
@@ -169,7 +155,7 @@ function getFeatMkPanel($row_layout) {
       // var_dump($maker);
       // echo '<br />';
       $return .= '<div class="col-lg-4 col-md-6 col-sm-12">'
-         . ' <div class="thumbnail">';
+         . ' <div class="thumbnail" style="background:url(' . $maker['image'] . ');background-size:cover;">';
          $desc = $maker['desc'];
          if(strlen($desc) > 300) {
             $breakpoint = strpos($desc, ' ', 290);
@@ -186,7 +172,6 @@ function getFeatMkPanel($row_layout) {
          }
          $return .= ' </'.$markup.'>'; // close .caption
       }
-      $return .= '<img class="img-responsive aligncenter size-full" src="' . $maker['image'] . '" alt="' . $maker['name'] . '" width="350" height="304" />';
       $return .= '<div class="sub-caption">
                   <h4>' . $maker['name'] . '</h4>
                 </div>'; //close .sub-caption
