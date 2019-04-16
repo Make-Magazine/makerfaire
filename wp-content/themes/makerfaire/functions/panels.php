@@ -923,7 +923,7 @@ function getImgCarouselSquare() {
 /* **************************************************** */
 
 function getSliderPanel(){
-	$return .= '<section class="slider-panel container-fluid">';
+	$return .= '<section class="slider-panel container-fluid ' . get_sub_field('background_color') . '">';
    $return .= '   <div class="' . get_sub_field('slideshow_name') . '-carousel owl-carousel">';
 	//get requested data for each column
    $slides = get_sub_field('slide');
@@ -950,6 +950,10 @@ function getSliderPanel(){
 			$return .= '</a>';
 		}
 	}
+	$tabletSlides = 1;
+	if(get_sub_field("column_number") > 1) {
+		$tabletSlides = 2;
+	}
 	$return .= '   </div>
 	            </section>
 					
@@ -958,7 +962,7 @@ function getSliderPanel(){
 					   	// slideshow carousel
 							jQuery(".' . get_sub_field('slideshow_name') . '-carousel.owl-carousel").owlCarousel({
 							  loop: true,
-							  margin: 10,
+							  margin: 15,
 							  nav: true,
 							  navText: [
 								 "<i class=\'fa fa-caret-left\'></i>",
@@ -968,10 +972,10 @@ function getSliderPanel(){
 							  autoplayHoverPause: true,
 							  responsive: {
 								 0: {
-									items: ' . get_sub_field("column_number") . '
+									items: 1
 								 },
-								 600: {
-									items: ' . get_sub_field("column_number") . '
+								 600: { 
+								   items: ' . $tabletSlides . '
 								 },
 								 1000: {
 									items: ' . get_sub_field("column_number") . '

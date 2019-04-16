@@ -2595,6 +2595,36 @@
                                     "placeholder": ""
                                 }
                             ]
+                        },
+                        {
+                            "key": "field_5cb61f1ec1761",
+                            "label": "Background Color",
+                            "name": "background_color",
+                            "type": "select",
+                            "instructions": "Select the background color for behind the slideshow",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "white-bg": "White",
+                                "grey-bg": "Grey",
+                                "darkgrey-bg": "Dark Grey",
+                                "blue-bg": "Blue",
+                                "darkblue-bg": "Dark Blue"
+                            },
+                            "default_value": [
+                                "white-bg"
+                            ],
+                            "allow_null": 0,
+                            "multiple": 0,
+                            "ui": 0,
+                            "return_format": "value",
+                            "ajax": 0,
+                            "placeholder": ""
                         }
                     ],
                     "min": "",
@@ -2647,5 +2677,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1555368291
+    "modified": 1555439725
 }

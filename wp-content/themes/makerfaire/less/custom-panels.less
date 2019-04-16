@@ -188,13 +188,13 @@
 	
 	// new hotness 
 	.slider-panel {
-		background: #333;
+		padding: 25px 0;
 		.owl-carousel {
 			.item.slide {
 				width: 100%;
 				min-height: 400px;
-				background-position: center;
-				background-size: contain;
+				background-position: center center;
+				background-size: cover;
 				background-repeat: no-repeat;
 				position: relative;
 				display: flex;
@@ -209,12 +209,12 @@
 					padding: 15px;
 					color: #333;
 					text-decoration: none;
-					width: 40%;
+					width: 100%;
 					text-align: center;
 					font-weight: bold;
 				}
 				a {
-					bottom: 45px;
+					bottom: 15px;
 					color: #fff;
 				}
 			}
@@ -225,6 +225,7 @@
 				height: 50px;
 				color: #fff;
 				font-size: 84px;
+			   text-shadow: 1px 1px 10px #000000;
 				&:focus {outline:0;}
 			}
 			.owl-prev {
@@ -238,7 +239,8 @@
 			   align-items: center;
 			   justify-content: center;
 				position: relative;
-    			top: -25px;
+    			top: 15px;
+				text-shadow: 1px 1px 10px #000000;
 				.owl-dot {
 					border: solid 5px #fff;
 					border-radius: 5px;
