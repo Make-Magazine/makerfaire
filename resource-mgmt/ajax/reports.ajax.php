@@ -232,7 +232,7 @@ function cannedRpt() {
             if (is_array($fieldCritArr)) {
                //radio and select boxes must match one of the passed values
                foreach ($fieldCritArr as $fieldCriteria) {
-                  if ($fieldCriteria->type === 'radio' || $fieldCriteria->type === 'select') { //check value
+                  if ($fieldCriteria->type === 'radio' || $fieldCriteria->type === 'select' || $fieldCriteria->type === 'checkbox') { //check value
                      //default to failing criteria
                      $passCriteria = false;
                      if ($fieldCriteria->choices === 'all') {
@@ -242,7 +242,7 @@ function cannedRpt() {
                         $passCriteria = true;
                         break;
                      }
-                  }
+                  }             
                }
             } else {
                if (isset($fieldCritArr->type) && $fieldCritArr->type==='list') {
