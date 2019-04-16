@@ -212,6 +212,10 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http','$in
       tablename = 'sponsorOrder';
       type      = "paymentRpt";
       subTitle  = 'Sponsor Payments';
+    } else if(subRoute==='exhibitPay') {
+      tablename = 'exhibitOrder';
+      type      = "paymentRpt";
+      subTitle  = 'Sponsor Payments';
     }
 
     jQuery('#pageTitle').html(pageTitle);

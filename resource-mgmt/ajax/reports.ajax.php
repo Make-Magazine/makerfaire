@@ -1,5 +1,4 @@
 <?php
-
 /*
   ajax to populate resource management table
  */
@@ -52,32 +51,32 @@ if ($type != '') {
 function cannedRpt() {
    global $wpdb;
    global $obj;
-   $useFormSC   = (isset($obj->useFormSC) ? $obj->useFormSC : false);
-   $formSelect  = (isset($obj->formSelect) ? $obj->formSelect : array());
+   $useFormSC = (isset($obj->useFormSC) ? $obj->useFormSC : false);
+   $formSelect = (isset($obj->formSelect) ? $obj->formSelect : array());
    $formTypeArr = (isset($obj->formType) ? $obj->formType : array());
-   $faire       = (isset($obj->faire) ? $obj->faire : '');
+   $faire = (isset($obj->faire) ? $obj->faire : '');
 
-   $dispFormID    = (isset($obj->dispFormID) ? $obj->dispFormID : false);
+   $dispFormID = (isset($obj->dispFormID) ? $obj->dispFormID : false);
    $formTypeLabel = (isset($obj->formTypeLabel) ? $obj->formTypeLabel : ($useFormSC ? "TYPE" : 'Form Type'));
-   $entryIDLabel  = (isset($obj->entryIDLabel) ? $obj->entryIDLabel : ($useFormSC ? 'ENTRY ID' : 'Entry Id'));
+   $entryIDLabel = (isset($obj->entryIDLabel) ? $obj->entryIDLabel : ($useFormSC ? 'ENTRY ID' : 'Entry Id'));
 
-   $orderBy          = (isset($obj->orderBy) ? $obj->orderBy : '');
-   $selectedFields   = (isset($obj->selectedFields) ? $obj->selectedFields : array());
-   $rmtData          = (isset($obj->rmtData) ? $obj->rmtData : array());
-   $location         = (isset($obj->location) ? $obj->location : false);
-   $tickets          = (isset($obj->tickets) ? $obj->tickets : false);
-   $payment          = (isset($obj->payments) ? $obj->payments : false);
+   $orderBy = (isset($obj->orderBy) ? $obj->orderBy : '');
+   $selectedFields = (isset($obj->selectedFields) ? $obj->selectedFields : array());
+   $rmtData = (isset($obj->rmtData) ? $obj->rmtData : array());
+   $location = (isset($obj->location) ? $obj->location : false);
+   $tickets = (isset($obj->tickets) ? $obj->tickets : false);
+   $payment = (isset($obj->payments) ? $obj->payments : false);
 
-   $entryIDorder  = (isset($obj->entryIDorder) ? $obj->entryIDorder : 10);
-   $formIDorder   = (isset($obj->formIDorder) ? $obj->formIDorder : 20);
+   $entryIDorder = (isset($obj->entryIDorder) ? $obj->entryIDorder : 10);
+   $formIDorder = (isset($obj->formIDorder) ? $obj->formIDorder : 20);
    $locationOrder = (isset($obj->locationOrder) ? $obj->locationOrder : 30);
-   $ticketsOrder  = (isset($obj->ticketsOrder) ? $obj->ticketsOrder : 70);
+   $ticketsOrder = (isset($obj->ticketsOrder) ? $obj->ticketsOrder : 70);
    $formTypeorder = (isset($obj->formTypeorder) ? $obj->formTypeorder : 40);
-   $paymentOrder  = (isset($obj->paymentOrder) ? $obj->paymentOrder : 50);
-   $CMOrder       = (isset($obj->CMOrder) ? $obj->CMOrder : 60);
+   $paymentOrder = (isset($obj->paymentOrder) ? $obj->paymentOrder : 50);
+   $CMOrder = (isset($obj->CMOrder) ? $obj->CMOrder : 60);
 
-   $forms      = implode(",", $formSelect);
-   $formTypes  = implode("', '", $formTypeArr);
+   $forms = implode(",", $formSelect);
+   $formTypes = implode("', '", $formTypeArr);
    if (!empty($formTypes))
       $formTypes = "'" . $formTypes . "'";
 
@@ -247,7 +246,7 @@ function cannedRpt() {
                   }
                }
             } else {
-               if(isset($fieldCritArr->type) && isset($fieldCritArr->choices)){                                    
+               if (isset($fieldCritArr->type) && isset($fieldCritArr->choices)) {
                   if ($fieldCritArr->type === 'checkbox' && $fieldCritArr->choices === 'all') {
                      $fieldID = $basefieldID;
                      // echo 'field key is '.$fieldKey;
@@ -369,26 +368,31 @@ function cannedRpt() {
    //return data
    $data['data'] = array_values($entryData);
 
-   //sort columns by display order
-   usort(
-           $data['columnDefs'], function($a, $b) {
-      $result = 0;
-      if ($a["displayOrder"] > $b["displayOrder"]) {
-         $result = 1;
-      } else if ($a["displayOrder"] < $b["displayOrder"]) {
-         $result = -1;
-      }
-      return $result;
-   }
-   );
-   //reindex columnDefs as the grid will blow up if the indexes aren't in order
-   $data['columnDefs'] = array_values($data['columnDefs']);
+   $data['columnDefs'] = orderReturnColumns($data['columnDefs']);
 
    echo json_encode($data);
    exit;
 }
 
 //end function
+
+function orderReturnColumns($columnDefs) {
+   //sort columns by display order
+   usort(
+      $columnDefs, function($a, $b) {
+         $result = 0;
+         if ($a["displayOrder"] > $b["displayOrder"]) {
+            $result = 1;
+         } else if ($a["displayOrder"] < $b["displayOrder"]) {
+            $result = -1;
+         }
+         return $result;
+      }
+   );
+   //reindex columnDefs as the grid will blow up if the indexes aren't in order
+   $columnDefs = array_values($columnDefs);
+   return $columnDefs;
+}
 
 function pullRmtData($rmtData, $entryID, $useFormSC) {
    global $wpdb;
@@ -494,7 +498,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
          $attributes = $wpdb->get_results($sql, ARRAY_A);
          $entryValue = array();
          $entryComment = array();
-         
+
          foreach ($attributes as $attribute) {
             $value = ($useFormSC ? formSC($attribute['value']) : $attribute['value']); //find and replace certain data in the value
             //add comment to the value if aggregated and not blank
@@ -699,19 +703,19 @@ function pullPayData($entryID, $paymentOrder = 50) {
                   left  outer join wp_gf_addon_payment_transaction
                         on wp_gf_entry_meta.entry_id = wp_gf_addon_payment_transaction.lead_id
                  where  meta_value = $entryID "
-              . "    and wp_gf_entry_meta.meta_key like 'entry_id'";
+              . "    and wp_gf_entry_meta.meta_key = 'entry_id'";
 
       $payresults = $wpdb->get_results($paysql);
       if ($wpdb->num_rows > 0) {
          //add payment data to report
-         $pay_det    = "";
-         $order_id   = "";               
+         $pay_det = "";
+         $order_id = "";
          $invoice_id = "";
-         
+
          $transaction_id = array();
          $amount = 0;
-         $date_created = array();           
-               
+         $date_created = array();
+
          foreach ($payresults as $payrow) {
             $transaction_id[] = $payrow->transaction_id;   //payment transaction ID (from paypal)
             $amount = $amount + $payrow->amount; //payment amt
@@ -737,22 +741,22 @@ function pullPayData($entryID, $paymentOrder = 50) {
                   }
                }
             }
-            
-            if($payrow->invoice_id !== '' && $payrow->invoice_id !== NULL){
+
+            if ($payrow->invoice_id !== '' && $payrow->invoice_id !== NULL) {
                //order id
-               $order_id .= $payrow->pymt_entry . "\r";               
-               $invoice_id .=$payrow->invoice_id ."\r";               
-            }    
+               $order_id .= $payrow->pymt_entry . "\r";
+               $invoice_id .= $payrow->invoice_id . "\r";
+            }
          }
-              
+
          $return['colDefs']['order_id'] = array('field' => 'order_id', 'displayName' => 'Order ID', 'displayOrder' => $paymentOrder);
          $return['data']['order_id'] = $order_id;
 
          //Invoice ID
-         $return['colDefs']['invoice_id'] = array('field' => 'invoice_id', 'displayName' => 'Invoice ID', 'displayOrder' => $paymentOrder);         
+         $return['colDefs']['invoice_id'] = array('field' => 'invoice_id', 'displayName' => 'Invoice ID', 'displayOrder' => $paymentOrder);
          $return['data']['invoice_id'] = $invoice_id;
-         $paymentOrder = $paymentOrder+2;
-         
+         $paymentOrder = $paymentOrder + 2;
+
          //payment transaction ID (from paypal)
          $return['colDefs']['trx_id'] = array('field' => 'trx_id', 'displayName' => 'Pay trxID', 'displayOrder' => $paymentOrder);
          $return['data']['trx_id'] = implode("\r", $transaction_id);
@@ -785,20 +789,23 @@ function pullFieldData($entryID, $reqFields) {
    $return = array();
    $return['data'] = array();
    $return['colDefs'] = array();
-   $reqIDArr = array_keys($reqFields);
-   if ($entryID != '' && is_array($reqIDArr)) {
-      $reqIDs = implode(",", $reqIDArr);
-      /* $reqFields = array of id's to pull and labels for report */
-      $sql = "select meta_value as value, meta_key from wp_gf_entry_meta where meta_key in($reqIDs) and entry_id=$entryID";
-      $results = $wpdb->get_results($sql);
-      if ($wpdb->num_rows > 0) {
-         foreach ($results as $row) {
-            $return['data']['field_' . $row->meta_key] = $row->value;
-            $return['colDefs']['field_' . $row->meta_key] = array('field' => 'field_' . $row->meta_key, 'displayName' => $reqFields[$row->meta_key]);
+
+
+   if ($entryID != '' && is_array($reqFields)) {
+      foreach ($reqFields as $reqID => $reqLabel) {
+         $data = '';
+         /* $reqFields = array of id's to pull and labels for report */
+         $sql = "select meta_value as value, meta_key from wp_gf_entry_meta where meta_key like '%$reqID%' and entry_id=$entryID";
+         $results = $wpdb->get_results($sql);
+         if ($wpdb->num_rows > 0) {
+            foreach ($results as $row) {
+               $data .= $row->value . "\r";
+            }
          }
+         $return['data']['field_' . $reqID] = $data;
+         $return['colDefs']['field_' . $reqID] = array('field' => 'field_' . $reqID, 'displayName' => $reqLabel);
       }
    }
-
    return $return;
 }
 
@@ -869,12 +876,12 @@ function retrieveRptData($table, $faire) {
          $vars['visible'] = $fields['visible'];
       if (isset($fields['type']))
          $vars['type'] = $fields['type'];
-      if (isset($fields['fieldLabel'])) 
+      if (isset($fields['fieldLabel']))
          $vars['displayName'] = $fields['fieldLabel'];
       $vars['name'] = $fields['fieldName'];
       $vars['minWidth'] = 100;
       $vars['width'] = (isset($fields['width']) ? $fields['width'] : '*');
-      
+
       $columnDefs[] = $vars;
    }
 
@@ -889,17 +896,17 @@ function retrieveRptData($table, $faire) {
    if ($wpdb->last_error !== '') :
       $wpdb->print_error();
    endif;
-        
+
    //create array of table data
    foreach ($result as $row) {
-      
-      if(isset($row['schedType'])) {
-         if(trim($row['schedType'])=='') {
+
+      if (isset($row['schedType'])) {
+         if (trim($row['schedType']) == '') {
             //determine sched type based on form type
             $form = GFAPI::get_form($row->form_id);
             if ($form['form_type'] == 'Performance') {
                $row['schedType'] = 'Performance';
-            }elseif ($form['form_type'] == 'Workshop') {
+            } elseif ($form['form_type'] == 'Workshop') {
                $row['schedType'] = 'Workshop';
             } else {
                $row['schedType'] = 'Talk';
@@ -1411,85 +1418,136 @@ function paymentRpt($table, $faire) {
    global $wpdb;
    $data = array();
    $data['data'] = array();
-   $data['columnDefs'] = array();
 
+   //fields to return
    $data['columnDefs'] = array(
-       array("field" => "form_id", "displayName" => "Pay Form Id", "visible" => false, "displayOrder" => 20),
-       array("field" => "entry_id", "displayName" => "Pay Entry Id", "visible" => false, "displayOrder" => 30),
-       array("field" => "origEntry_id", "displayName" => "Entry Id", "displayOrder" => 35),
-       array("field" => "origForm_id", "displayName" => "FormId", "displayOrder" => 35),
+       array("field" => "form_id", "visible" => false, "displayOrder" => 20),
        array("field" => "form_type", "displayName" => "Form Type", "displayOrder" => 40),
-       array("field" => "field_151", "displayName" => "Exhibit Name", "type" => "string", "displayOrder" => 50),
-       //array("field"=>"meta_res_status","displayName"=>"Resource Status","displayOrder"=>200),
-       array("field" => "field_303", "displayName" => "Status", "type" => "string", "visible" => false, "displayOrder" => 800)
+       array("field" => "lead_id", "displayName" => "Entry Id", "displayOrder" => 200),
+       array("field" => "presentation_title", "displayName" => "Exhibit Name", "type" => "string", "displayOrder" => 300),
+       array("field" => "field_442", "displayName" => "Fee Management", "type" => "string", "displayOrder" => 400),
+       array("field" => "meta_res_status", "displayName" => "Resource Status", "displayOrder" => 401),
+       array("field" => "field_434", "displayName" => "Fee Ind", "type" => "string", "displayOrder" => 600),
+       array("field" => "field_55", "displayName" => "What are your plans at Maker Faire?", "type" => "string", "displayOrder" => 700),
+       array("field" => "status", "displayName" => "Status", "type" => "string", "visible" => false, "displayOrder" => 800),
+       //payment information
+       array("field" => "order_id", "displayName" => "Order ID", "displayOrder" => 100),
+       array("field" => "invoice_id", "displayName" => "Invoice ID", "displayOrder" => 101),
+       array("field" => "trx_id", "displayName" => "Pay trxID", "displayOrder" => 102),
+       array("field" => "pay_amt", "displayName" => "Pay amount", "cellFilter" => "currency", "displayOrder" => 103),
+       array("field" => "pay_date", "displayName" => "Pay date", "displayOrder" => 104),
+       array("field" => "pay_det", "displayName" => "Payment Details", "displayOrder" => 105),
+       array("field" => "pay_status", "displayName" => "Payment Status", "displayOrder" => 106),
+       array("field" => "area", "displayName" => "Area", "displayOrder" => 900),
+       array("field" => "subarea", "displayName" => "Subarea", "displayOrder" => 901),
+       array("field" => "location", "displayName" => "Location", "displayOrder" => 902)
    );
 
-   //find payment invoices for the selected faire
-   if ($table == 'sponsorOrder') {
-      //requested fields from the sponsor order form
-      $reqFields = array(751 => 'Invoice Number',
-          444 => 'Company Billing Name',
-          446 => 'Billing Email',
-          161 => 'Contact Email',
-          666 => 'Order Total'
+   //set requested form type based on submitted table request   
+   $form_type = ($table === 'sponsorOrder' ? 'Sponsor': 'Exhibit');
+
+   //pull basic entry information 
+   $sql = "select wp_mf_entity.lead_id, wp_mf_entity.form_id,presentation_title, status, "
+           . "(select meta_value from wp_gf_entry_meta where meta_key = '434' and entry_id=wp_mf_entity.lead_id limit 1) as field_434, "
+           . "(select meta_value from wp_gf_entry_meta where meta_key = 'res_status' and entry_id=wp_mf_entity.lead_id limit 1) as meta_res_status "
+           . "from wp_mf_entity "
+           . "left outer join wp_mf_faire on find_in_set (wp_mf_entity.form_id,wp_mf_faire.form_ids) > 0 "
+           . "where wp_mf_faire.id= " . $faire . " "
+           . "and form_type like'%$form_type%'"
+           . "and status != 'trash'";
+
+   // Pull additional fields: field 442 - 'Fee Management' and field 55  - 'What are your plans at Maker Faire   
+   $reqFields = array(442 => "Fee Management", 55 => "What are your plans at Maker Faire?");
+
+   $result = $wpdb->get_results($sql);
+   $colDefs = array();
+   foreach ($result as $row) {
+      $entryID = $row->lead_id;
+      $retformType = shortFormType($form_type); //retrieve shortned version of form type
+      //set returned data
+      $fieldData = array(
+          'lead_id' => $row->lead_id,
+          'form_id' => $row->form_id,
+          'form_type' => $retformType,
+          'presentation_title' => $row->presentation_title,
+          'meta_res_status' => $row->meta_res_status,
+          'status' => $row->status,
+          'field_434' => $row->field_434
       );
-      $sql = 'SELECT wp_gf_entry.id as entry_id,'
-              . '    wp_gf_form_meta.form_id,'
-              . '    meta_value as "origEntry_id",'
-              . '    origLead.form_id as origForm_id, '
-              . '(select meta_value as value from wp_gf_entry_meta meta2 where meta2.meta_key = "151" and entry_id=wp_gf_entry_meta.meta_value limit 1) as field_151, '
-              . '(select meta_value as value from wp_gf_entry_meta meta2 where meta2.meta_key = "303" and entry_id=wp_gf_entry_meta.meta_value limit 1) as field_303, '
-              . '(select meta_value as value from wp_gf_entry_meta meta2 where meta2.meta_key = "303" and entry_id=wp_gf_entry.id limit 1) as status_payentry '
-              . 'FROM wp_gf_form_meta '
-              . 'left outer join wp_mf_faire on find_in_set (wp_gf_form_meta.form_id,wp_mf_faire.non_public_forms) > 0 '
-              . 'left outer join wp_gf_entry on wp_gf_entry.form_id = wp_gf_form_meta.form_id '
-              . 'left outer join wp_gf_entry_meta on wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key = "entry_id"'
-              . 'left outer join wp_gf_entry origLead on origLead.id = meta_value '
-              . 'WHERE  display_meta like \'%"form_type":"Payment"%\' and '
-              . '       display_meta like \'%"create_invoice":"yes"%\' and '
-              . '       wp_mf_faire.id=' . $faire . ' and '
-              . '       wp_gf_entry.status="active" ';
 
-      $result = $wpdb->get_results($sql);
-      $colDefs = array();
-      foreach ($result as $row) {
-         //pull form data and see if it matches the requested form type
-         $formPull = GFAPI::get_form($row->origForm_id);
-         $formType = (isset($formPull['form_type']) ? $formPull['form_type'] : '');
-         $retformType = shortFormType($formType);
-         if ($row->field_303 == 'Accepted' && $row->status_payentry == 'Accepted') {
-            $oEntryID = $row->origEntry_id;
-            $fieldData = array(
-                'entry_id' => $row->entry_id,
-                'form_id' => $row->form_id,
-                'origEntry_id' => $oEntryID,
-                'origForm_id' => $row->origForm_id,
-                'form_type' => $retformType,
-                'field_151' => $row->field_151,
-                'meta_res_status' => '',
-                'field_303' => $row->field_303);
+      // Pull additional fields: field 442 - 'Fee Management' and field 55  - 'What are your plans at Maker Faire
+      $fieldRetData = pullFieldData($row->lead_id, $reqFields);
+      $fieldData = array_merge($fieldData, $fieldRetData['data']);
+      
+      //pull location information
+      $locRetData = pullLocData($entryID, FALSE, 900);
+      $fieldData = array_merge($fieldData, $locRetData['data']);      
+      
+      //pull payment information           
+      $paysql = "select wp_gf_entry_meta.entry_id as pymt_entry, wp_gf_addon_payment_transaction.transaction_type,
+                        wp_gf_addon_payment_transaction.transaction_id, wp_gf_addon_payment_transaction.amount,
+                        wp_gf_addon_payment_transaction.date_created,
+                        (SELECT meta_value FROM `wp_gf_entry_meta` WHERE `entry_id` = pymt_entry and meta_key=797 limit 1) as invoice_id,
+                        (SELECT payment_status FROM `wp_gf_entry` WHERE wp_gf_entry.id = pymt_entry limit 1) as pay_status,
+                        (SELECT form_id FROM `wp_gf_entry` WHERE wp_gf_entry.id = pymt_entry limit 1) as pay_form_id
+                  from  wp_gf_entry_meta, wp_gf_addon_payment_transaction                        
+                 where  meta_value = '$entryID'"
+              . "  and meta_key = 'entry_id'"
+              . "  and entry_id = wp_gf_addon_payment_transaction.lead_id";
 
-            //order form field data
-            $fieldRetData = pullFieldData($row->entry_id, $reqFields);
-            $fieldData = array_merge($fieldData, $fieldRetData['data']);
-            $colDefs = array_merge($colDefs, $fieldRetData['colDefs']);
+      $payresults = $wpdb->get_results($paysql);
 
-            //location data
-            $locRetData = pullLocData($oEntryID, false);
-            $fieldData = array_merge($fieldData, $locRetData['data']);
-            $colDefs = array_merge($colDefs, $locRetData['colDefs']);
+      if ($wpdb->num_rows > 0) {
+         foreach ($payresults as $row) {
+            $fieldData["order_id"] = '';
+            $fieldData["invoice_id"] = $row->invoice_id;
+            $fieldData["trx_id"] = $row->transaction_id;
+            $fieldData["pay_amt"] = $row->amount;
+            $fieldData["pay_date"] = $row->date_created;
+            $fieldData["order_id"] = $row->pymt_entry;
+            $fieldData["pay_status"] = $row->pay_status;
 
-            //Payment data
-            $PayRetData = pullPayData($oEntryID);
-            $fieldData = array_merge($fieldData, $PayRetData['data']);
-            $colDefs = array_merge($colDefs, $PayRetData['colDefs']);
+            //get payment status from entry
+            $payEntry = GFAPI::get_entry($entryID);
+            $payForm = GFAPI::get_form($row->pay_form_id);
+
+            //retrieve payment details
+            $pay_det = '';
+            foreach ($payForm['fields'] as $payFields) {
+               if ($payFields['type'] == 'product') {
+                  if ($payFields['inputType'] == 'singleproduct') {
+                     if (is_array($payFields['inputs'])) {
+                        foreach ($payFields['inputs'] as $input) {
+                           $pay_det .= $input['label'] . ': ';
+                           $pay_det .= $payEntry[$input['id']] . "\r";
+                        }
+                        $pay_det .= "\r";
+                     }
+                  } else {
+                     $pay_det .= (isset($payFields['label']) ? $payFields['label'] : '') . ': ';
+                     $pay_det .= (isset($payEntry[$payFields['id'] . '.2']) ? $payEntry[$payFields['id'] . '.2'] : '') . "\r";
+                  }
+               }
+            }
+            $fieldData["pay_det"] = $pay_det;
 
             $data['data'][] = $fieldData;
          }
+      } else {
+         $fieldData["order_id"] = '';
+         $fieldData["invoice_id"] = '';
+         $fieldData["trx_id"] = '';
+         $fieldData["pay_amt"] = '';
+         $fieldData["pay_date"] = '';
+         $fieldData["pay_det"] = '';
+         $fieldData["pay_status"] = '';
+         $data['data'][] = $fieldData;
       }
-      $data['columnDefs'] = array_merge($data['columnDefs'], $colDefs);
-      $data['columnDefs'] = array_values($data['columnDefs']);
    }
+   
+   $data['columnDefs'] = array_values($data['columnDefs']); //returns all the values from the array and indexes the array numerically
+   $data['columnDefs'] = orderReturnColumns($data['columnDefs']);
+           
    echo json_encode($data);
    exit;
 }

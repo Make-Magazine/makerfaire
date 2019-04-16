@@ -143,47 +143,19 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     var pageTitle = 'Reports';
     var subTitle  = '';
     if(subRoute=='sponsor_pymt'){
-       vars = {"formSelect":[],
-              "formType":["Sponsor"],
-              "faire": faire,
-              "payments":true,
-              "paymentOrder": 300,
-              "entryIDorder": 100,
-              "locationOrder": 400,
-              "selectedFields":[
-                {"id":151,"label":"Sponsor Name","choices":"","type":"text","inputs":"", "order":200},
-                {"id":303,"label":"Status","choices":"all","type":"radio","order":800,"hide":true}
-              ],
-              "location":true,
-              "rmtData":{"resource":[],"attribute":[],"attention":[],
-              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","checked":true}]},
-              "type":"customRpt"
+       vars = {"faire": faire,
+               "table": "sponsorOrder",
+               "type": "paymentRpt"
             };
-      var subTitle = 'Payment(s)';
+      var subTitle = 'Sponsor Payment(s)';
       $scope.reports.callAJAX(vars);
     }else
     if(subRoute=='cm_pymt'){
-       vars = {"formSelect":[],
-              "formType":["Exhibit"],
-              "faire": faire,
-              "payments":true,
-              "paymentOrder": 100,
-              "entryIDorder": 200,
-              "locationOrder": 900,
-              "CMOrder": 500,
-              "selectedFields":[
-                {"id":442,"label":"Fee Management","choices":"all","type":"checkbox", "order":400},
-                {"id":151,"label":"Exhibit Name","choices":"","type":"text","inputs":"", "order":300},
-                {"id":434,"label":"Fee Ind","choices":"all","type":"radio","order":600},
-                {"id":55, "label":"What are your plans at Maker Faire?", "choices":"all", "type":"checkbox", "order":700},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":800,"hide":true}
-              ],
-              "location":true,
-              "rmtData":{"resource":[],"attribute":[],"attention":[],
-              "meta":[{"id":"res_status","type":"meta","value":"Resource Status","checked":true}]},
-              "type":"customRpt"
+       vars = {"faire": faire,
+               "table": "exhibitOrder",
+               "type": "paymentRpt"
             };
-      var subTitle = 'Payment(s)';
+      var subTitle = 'Exhibit Payment(s)';
       $scope.reports.callAJAX(vars);
     }else
     if(subRoute=='nonprofit_pymt'){
