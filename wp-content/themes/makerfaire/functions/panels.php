@@ -94,15 +94,9 @@ function getFeatMkPanel($row_layout) {
    // Check if the background color selected was white
    $return .= '<section class="featured-maker-panel ' . $background_color . '"> ';
 
-   //build the container div
-   $return .= '<div class="container">';
-   //do not return yellow underline whenbackground is white
-
-   $return .= '<div class="row text-center">
-            <div class="panel-title title-w-border-y '.($background_color === "white-bg" ? ' yellow-underline' : '') .'">
-              <h2>' . $title . '</h2>
-            </div>
-          </div>';
+   $return .= '  <div class="panel-title title-w-border-y '.($background_color === "white-bg" ? ' yellow-underline' : '') .'">
+                   <h2>' . $title . '</h2>
+                 </div>';
 
    //build makers array
    $makerArr = array();
@@ -148,14 +142,13 @@ function getFeatMkPanel($row_layout) {
    //limit the number returned to $makers_to_show
    $makerArr = array_slice($makerArr, 0, $makers_to_show);
 
-   $return .= '<div id="performers" class="row padbottom">';
+   $return .= '<div id="performers" class="featured-image-grid">';
 
    //loop thru maker data and build the table
    foreach ($makerArr as $maker) {
       // var_dump($maker);
       // echo '<br />';
-      $return .= '<div class="col-lg-4 col-md-6 col-sm-12">'
-         . ' <div class="thumbnail" style="background-image:url(' . $maker['image'] . ');">';
+      $return .= '<div class="grid-item" style="background-image: url('.$maker['image'].')">';
          $desc = $maker['desc'];
          if(strlen($desc) > 300) {
             $breakpoint = strpos($desc, ' ', 290);
@@ -164,19 +157,20 @@ function getFeatMkPanel($row_layout) {
       if (!empty($maker['desc'])) {
          $markup = !empty($maker['maker_url']) ? 'a' : 'div';
          $href= !empty($maker['maker_url']) ? 'href="' . $maker['maker_url'] . '"' : '';
-         $return .= '<'.$markup.' '.$href.' class="caption" style="display: none;">
+         $return .= '<'.$markup.' '.$href.' class="grid-item-desc">
                      <h4>' . $maker['name'] . '</h4>
                      <div class="desc-box"><p class="desc">' . $desc . '</p></div>';
          if (!empty($maker['maker_url'])) {
-            $return .= '  <p class="btn btn-w-ghost learn-more">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
+            $return .= '  <p class="btn btn-blue read-more-link">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
          }
-         $return .= ' </'.$markup.'>'; // close .caption
+         $return .= ' </'.$markup.'>'; 
       }
-      $return .= '<div class="sub-caption">
-                  <h4>' . $maker['name'] . '</h4>
-                </div>'; //close .sub-caption
-      $return .= '  </div>'; //close .thumbnail
-      $return .= '</div>'; //close .col-sm-4
+		// the caption section
+		$return .= '  <div class="grid-item-title-block hidden-sm hidden-xs">
+		                 <h3>'.$maker['name'].'</h3>
+                    </div>';
+      $return .= '</div>'; //close .grid-item
+
    }
    $return .= '</div>';  //close #performers
    //check if we should display a more maker button
@@ -189,7 +183,6 @@ function getFeatMkPanel($row_layout) {
             </div>
           </div>';
    }
-   $return .= '</div>'; //end div.container
    $return .= '</section>';
    return $return;
 }
