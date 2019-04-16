@@ -924,6 +924,9 @@ function getImgCarouselSquare() {
 
 function getSliderPanel(){
 	$return .= '<section class="slider-panel container-fluid ' . get_sub_field('background_color') . '">';
+   if(get_sub_field('slideshow_name')){
+		$return .= '<div class="slideshow-title"><h2>' . get_sub_field('slideshow_name') . '</h2></div>';
+	}
    $return .= '   <div class="' . get_sub_field('slideshow_name') . '-carousel owl-carousel">';
 	//get requested data for each column
    $slides = get_sub_field('slide');

@@ -15,7 +15,7 @@
 	.white-bg {
 		background: #fff;
 		color: #333;
-		a { color: #0D3900 !important; }
+		a { color: #0D3900; }
 		.btn-outlined { 
 			background: #fff;
 			color: #005e9a;
@@ -65,6 +65,7 @@
 		.panel-title, .title-w-border-y {
 			color: #fff;
 		}
+		a { color: #fff; }
 	}
 
 	// old busted
@@ -188,7 +189,22 @@
 	
 	// new hotness 
 	.slider-panel {
-		padding: 25px 0;
+		padding: 25px;
+		.slideshow-title {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 15px;
+			h2 { 
+				color: #fff;
+				text-align: center;
+				padding-bottom: 10px;
+				font-size: 28px;
+			}
+		}
+		&.white-bg .slideshow-title h2 {
+			color: #333;
+			border-bottom: 2px solid #f5a623;
+		}
 		.owl-carousel {
 			.item.slide {
 				width: 100%;
@@ -1098,7 +1114,6 @@
 		}
 		p { padding: 15px 0; }
 		a { 
-			color: #fff;
 			text-decoration: underline;
 			display: block;
 			margin-bottom: 15px;
