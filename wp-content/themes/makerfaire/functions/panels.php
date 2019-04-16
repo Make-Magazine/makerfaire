@@ -155,7 +155,7 @@ function getFeatMkPanel($row_layout) {
       // var_dump($maker);
       // echo '<br />';
       $return .= '<div class="col-lg-4 col-md-6 col-sm-12">'
-         . ' <div class="thumbnail" style="background:url(' . $maker['image'] . ');background-size:cover;">';
+         . ' <div class="thumbnail" style="background-image:url(' . $maker['image'] . ');">';
          $desc = $maker['desc'];
          if(strlen($desc) > 300) {
             $breakpoint = strpos($desc, ' ', 290);
