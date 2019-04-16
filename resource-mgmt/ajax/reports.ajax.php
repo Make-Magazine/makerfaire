@@ -231,8 +231,10 @@ function cannedRpt() {
             // radio and select options
             if (is_array($fieldCritArr)) {
                //radio and select boxes must match one of the passed values
+               //checkboxes will only match the value if this is for field 321
                foreach ($fieldCritArr as $fieldCriteria) {
-                  if ($fieldCriteria->type === 'radio' || $fieldCriteria->type === 'select' || $fieldCriteria->type === 'checkbox') { //check value
+                  if ($fieldCriteria->type === 'radio' || $fieldCriteria->type === 'select' || 
+                          ($fieldCriteria->type === 'checkbox' && $basefieldID==='321')) { //check value
                      //default to failing criteria
                      $passCriteria = false;
                      if ($fieldCriteria->choices === 'all') {
