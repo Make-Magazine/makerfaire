@@ -2456,7 +2456,7 @@
                             "label": "Slideshow Name",
                             "name": "slideshow_name",
                             "type": "text",
-                            "instructions": "Unique Identifier for the slideshow",
+                            "instructions": "Unique Identifier for the slideshow (don't use any spaces)",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -2593,6 +2593,25 @@
                                     "return_format": "value",
                                     "ajax": 0,
                                     "placeholder": ""
+                                },
+                                {
+                                    "key": "field_5cb76f4871865",
+                                    "label": "Slide Text",
+                                    "name": "slide_text",
+                                    "type": "text",
+                                    "instructions": "Optional slide text to show up for one column slides",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
                                 }
                             ]
                         },
@@ -2677,5 +2696,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1555441055
+    "modified": 1555526165
 }

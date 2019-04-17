@@ -62,10 +62,10 @@
 		}
 	}
 	.blue-bg, .darkblue-bg, .grey-bg, .darkgrey-bg {
-		.panel-title, .title-w-border-y {
+		.panel-title, .title-w-border-y, a {
 			color: #fff;
 		}
-		a { color: #fff; }
+		&.btn { color: #fff; }
 	}
 
 	// old busted
@@ -201,42 +201,77 @@
 				font-size: 28px;
 			}
 		}
-		&.white-bg .slideshow-title h2 {
-			color: #333;
-			border-bottom: 2px solid #f5a623;
+		&.white-bg {
+			.slideshow-title h2 {
+				color: #333;
+				border-bottom: 2px solid #f5a623;
+			}
+			.columns-1 {
+				.slide-title, .slide-text {
+					color: #333;
+					font-size: 18px;
+				}
+				.slide-title {
+					font-size: 22px;
+					font-weight: bold;
+				}
+			}
+			.slide-btn {
+				margin-top: 30px;
+			}
 		}
 		.owl-carousel {
 			.item.slide {
-				width: 100%;
-				min-height: 400px;
-				background-position: center center;
-				background-size: cover;
-				background-repeat: no-repeat;
-				position: relative;
-				display: flex;
-			   align-items: center;
-			   justify-content: center;
-				.slide-title, a {
-					position: absolute;
-				}
-				.slide-title {
-               top: 0px;
-					left: 0px;
-					background: rgba(255, 255, 255, .9);
-					padding: 15px;
-					color: #333;
-					text-decoration: none;
+				.slide-image-section {
 					width: 100%;
-					text-align: center;
-					font-weight: bold;
+					min-height: 400px;
+					background-position: center center;
+					background-size: cover;
+					background-repeat: no-repeat;
+					position: relative;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					.slide-title, a {
+						position: absolute;
+					}
+					.slide-title {
+						top: 0px;
+						left: 0px;
+						background: rgba(255, 255, 255, .9);
+						padding: 15px;
+						color: #333;
+						text-decoration: none;
+						width: 100%;
+						text-align: center;
+						font-weight: bold;
+					}
+					a {
+						bottom: 15px;
+						color: #fff;
+						left: 50%;
+						text-transform: uppercase;
+						transform: translateX(-50%);
+						-webkit-transform: translateX(-50%);
+					}
 				}
-				a {
-					bottom: 15px;
-					color: #fff;
-					left: 50%;
-					text-transform: uppercase;
-					transform: translateX(-50%);
-					-webkit-transform: translateX(-50%);
+			}
+			&.columns-1 {
+				@media screen and (min-width: 767px) {
+					.item.slide {
+						.slide-image-section, .slide-info-section {
+							width: 50%;
+							float: left;
+						}
+						.slide-info-section {
+							padding: 30px;
+							color: #fff;
+							color: #fff;
+						}
+					}
+				}
+				@media screen and (max-width: 768px) {
+					.slide-info-section { margin-top: 15px; }
 				}
 			}
 			.owl-prev, .owl-next {
@@ -269,7 +304,6 @@
 				}
 			}
 		}
-		
 	}
 
    .what-is-maker-faire {
