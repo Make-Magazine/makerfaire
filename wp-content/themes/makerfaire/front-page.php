@@ -22,20 +22,6 @@ get_header();
       ?>
       
    </div>
-   <?php
-   // <!-- static section -->
- 
-      
-   // Note (ts): this has been converted into a panel, but left this here for reference... remove someday, but for now wrapped in PHP tags to hide from output
-   // <div class="location-holder">
-   //    <div class="container">
-   //       <div class="picture-holder">
-   //          <img alt="image description" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">
-   //       </div>
-   //       <a href="/map/">There are Maker Faires all over the world. Find one near you! <i class="icon-arrow-right"></i></a>
-   //    </div>
-   // </div>
-   ?>
    
    <!-- standard news block -->
    <?php 

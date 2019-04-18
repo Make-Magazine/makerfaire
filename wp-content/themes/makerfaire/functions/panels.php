@@ -67,8 +67,8 @@ function dispLayout($row_layout) {
 			case '2_column_images': // Image Panels in the same style as the Video Panels
             $return = getImagePanel();
 				break;
-         case 'maker_faire_map_cta': // faire map link separator
-            $return = getMFMapCTAPanel();
+         case 'makey_banner': // faire map link separator
+            $return = getMakeyBanner();
             break;
 			case 'image_slider': // this is gonna end up pretty similar to the image carousel, but we're going to have it as a panel
 				$return = getSliderPanel();
@@ -1427,13 +1427,13 @@ function getFlagBannerPanel() {
 
 
 /* **************************************************** */
-/* Function to return maker faire map call-to-action    */
+/* Function to return a banner featuring Makey          */
 /* **************************************************** */
-function getMFMapCTAPanel() {
+function getMakeyBanner() {
    $title = get_sub_field('title_link_text');
    $URL = get_sub_field('link_url');
 
-   $content = '<div class="location-holder">';
+   $content = '<div class="makey-banner ' . get_sub_field('background-color') . '">';
    $content .= '   <div class="container">';
    $content .= '      <div class="picture-holder">';
    $content .= '         <img alt="Maker Robot" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
