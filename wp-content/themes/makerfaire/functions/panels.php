@@ -152,17 +152,13 @@ function getFeatMkPanel($row_layout) {
       // var_dump($maker);
       // echo '<br />';
       $return .= '<div class="grid-item" style="background-image: url('.$maker['image'].')">';
-         $desc = $maker['desc'];
-         if(strlen($desc) > 300) {
-            $breakpoint = strpos($desc, ' ', 290);
-            $desc = substr($desc, 0, $breakpoint) . '&hellip;';
-         }
+
       if (!empty($maker['desc'])) {
          $markup = !empty($maker['maker_url']) ? 'a' : 'div';
          $href= !empty($maker['maker_url']) ? 'href="' . $maker['maker_url'] . '"' : '';
          $return .= '<'.$markup.' '.$href.' class="grid-item-desc">
-                     <h4>' . $maker['name'] . '</h4>
-                     <div class="desc-box"><p class="desc">' . $desc . '</p></div>';
+                     <div class="desc-body"><h4>' . $maker['name'] . '</h4>
+                     <p class="desc">' . $maker['desc'] . '</p></div>';
          if (!empty($maker['maker_url'])) {
             $return .= '  <p class="btn btn-blue read-more-link">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
          }
@@ -187,6 +183,31 @@ function getFeatMkPanel($row_layout) {
           </div>';
    }
    $return .= '</section>';
+	$return .= '<script type="text/javascript">
+						function fitTextToBox(){
+							jQuery(".grid-item").each(function() {
+							    var availableHeight = jQuery(this).innerHeight() - 30;
+								 if(jQuery(this).find(".read-more-link").length > 0){
+									 availableHeight = availableHeight - jQuery(this).find(".read-more-link").innerHeight() - 30;
+								 }
+
+								 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
+								 
+								 if( 561 > jQuery(window).width() ) {
+								   jQuery(jQuery(this).find(".desc-body")).css("mask-image", "none");
+									jQuery(jQuery(this).find(".desc-body")).css("height", "auto");
+								 } else { 
+								 	jQuery(jQuery(this).find(".desc-body")).css("height", availableHeight);
+								 }
+							 });
+						}
+	                jQuery(document).ready(function(){
+						    fitTextToBox();
+						 });
+						 jQuery(window).resize(function(){
+						 	 fitTextToBox();
+						 });
+					</script>';
    return $return;
 }
 
