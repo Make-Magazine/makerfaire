@@ -176,8 +176,8 @@ function getFeatMkPanel($row_layout) {
    $cta_url = get_sub_field('cta_url');
    if ($cta_url) {
       $cta_text = (get_sub_field('cta_text') !== '' ? get_sub_field('cta_text') : 'More Makers');
-      $return .= '<div class="row padbottom">
-            <div class="col-xs-12 padbottom text-center">
+      $return .= '<div class="row">
+            <div class="col-xs-12 text-center">
               <a class="btn btn-outlined more-makers-link" href="' . $cta_url . '">' . $cta_text . '</a>
             </div>
           </div>';
