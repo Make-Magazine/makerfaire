@@ -1259,10 +1259,10 @@
    
    // Common elements
 	.content-panel.six-column {
-      //margin: 20px;
+      margin: 20px 0px;
       .image-grid-row {
          display: flex;
-         margin: 20px -10px;
+         margin: 0px -10px;
          padding: 0 20px;
          @media screen and (max-width: 1200px) {
             flex-wrap: wrap;
@@ -1610,7 +1610,6 @@
 }
 
 
-
 /*
  * Row with equal height columns
  * --------------------------------------------------
@@ -1619,11 +1618,20 @@
    /* display: -webkit-box; */
    display: -webkit-flex;
    display: -ms-flexbox;
-   display:         flex;
+   display: flex;
 }
 
 .align-middle {
    display: flex;
    align-items: center;
    flex-wrap: wrap;
+}
+
+// Adjustments for the custom panels that are required by the page-wide-left-nav template
+
+.page-leftnav.customPanels {
+	.container { width: 100%; }
+	.row { margin: 0px; }
+	.content-panel.six-column .image-grid-row, .container{ padding: 0px; }
+	.featured-maker-panel #performers .thumbnail { width: auto; } // I think this won't be necessary once the featured maker panel is a grid rather than bootstrap
 }

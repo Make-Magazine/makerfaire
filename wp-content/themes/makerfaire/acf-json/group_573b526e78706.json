@@ -2686,6 +2686,18 @@
                 "operator": "==",
                 "value": "front-page.php"
             }
+        ],
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            },
+            {
+                "param": "post_template",
+                "operator": "==",
+                "value": "page-wide-leftnav.php"
+            }
         ]
     ],
     "menu_order": 0,
@@ -2696,5 +2708,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1555526165
+    "modified": 1555608835
 }
