@@ -97,15 +97,9 @@ function getFeatMkPanel($row_layout) {
    // Check if the background color selected was white
    $return .= '<section class="featured-maker-panel ' . $background_color . '"> ';
 
-   //build the container div
-   $return .= '<div class="container">';
-   //do not return yellow underline whenbackground is white
-
-   $return .= '<div class="row text-center">
-            <div class="panel-title title-w-border-y '.($background_color === "white-bg" ? ' yellow-underline' : '') .'">
-              <h2>' . $title . '</h2>
-            </div>
-          </div>';
+   $return .= '  <div class="panel-title title-w-border-y '.($background_color === "white-bg" ? ' yellow-underline' : '') .'">
+                   <h2>' . $title . '</h2>
+                 </div>';
 
    //build makers array
    $makerArr = array();
@@ -151,49 +145,69 @@ function getFeatMkPanel($row_layout) {
    //limit the number returned to $makers_to_show
    $makerArr = array_slice($makerArr, 0, $makers_to_show);
 
-   $return .= '<div id="performers" class="row padbottom">';
+   $return .= '<div id="performers" class="featured-image-grid">';
 
    //loop thru maker data and build the table
    foreach ($makerArr as $maker) {
       // var_dump($maker);
       // echo '<br />';
-      $return .= '<div class="col-lg-4 col-md-6 col-sm-12">'
-         . ' <div class="thumbnail" style="background-image:url(' . $maker['image'] . ');">';
-         $desc = $maker['desc'];
-         if(strlen($desc) > 300) {
-            $breakpoint = strpos($desc, ' ', 290);
-            $desc = substr($desc, 0, $breakpoint) . '&hellip;';
-         }
+      $return .= '<div class="grid-item" style="background-image: url('.$maker['image'].')">';
+
       if (!empty($maker['desc'])) {
          $markup = !empty($maker['maker_url']) ? 'a' : 'div';
          $href= !empty($maker['maker_url']) ? 'href="' . $maker['maker_url'] . '"' : '';
-         $return .= '<'.$markup.' '.$href.' class="caption" style="display: none;">
-                     <h4>' . $maker['name'] . '</h4>
-                     <div class="desc-box"><p class="desc">' . $desc . '</p></div>';
+         $return .= '<'.$markup.' '.$href.' class="grid-item-desc">
+                     <div class="desc-body"><h4>' . $maker['name'] . '</h4>
+                     <p class="desc">' . $maker['desc'] . '</p></div>';
          if (!empty($maker['maker_url'])) {
-            $return .= '  <p class="btn btn-w-ghost learn-more">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
+            $return .= '  <p class="btn btn-blue read-more-link">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
          }
-         $return .= ' </'.$markup.'>'; // close .caption
+         $return .= ' </'.$markup.'>'; 
       }
-      $return .= '<div class="sub-caption">
-                  <h4>' . $maker['name'] . '</h4>
-                </div>'; //close .sub-caption
-      $return .= '  </div>'; //close .thumbnail
-      $return .= '</div>'; //close .col-sm-4
+		// the caption section
+		$return .= '  <div class="grid-item-title-block hidden-sm hidden-xs">
+		                 <h3>'.$maker['name'].'</h3>
+                    </div>';
+      $return .= '</div>'; //close .grid-item
+
    }
    $return .= '</div>';  //close #performers
    //check if we should display a more maker button
    $cta_url = get_sub_field('cta_url');
    if ($cta_url) {
       $cta_text = (get_sub_field('cta_text') !== '' ? get_sub_field('cta_text') : 'More Makers');
-      $return .= '<div class="row padbottom">
-            <div class="col-xs-12 padbottom text-center">
+      $return .= '<div class="row">
+            <div class="col-xs-12 text-center">
               <a class="btn btn-outlined more-makers-link" href="' . $cta_url . '">' . $cta_text . '</a>
             </div>
           </div>';
    }
-   $return .= '</div>'; //end div.container
    $return .= '</section>';
+	$return .= '<script type="text/javascript">
+						function fitTextToBox(){
+							jQuery(".grid-item").each(function() {
+							    var availableHeight = jQuery(this).innerHeight() - 30;
+								 if(jQuery(this).find(".read-more-link").length > 0){
+									 availableHeight = availableHeight - jQuery(this).find(".read-more-link").innerHeight() - 30;
+								 }
+
+								 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
+								 
+								 if( 561 > jQuery(window).width() ) {
+								   jQuery(jQuery(this).find(".desc-body")).css("mask-image", "none");
+									jQuery(jQuery(this).find(".desc-body")).css("height", "auto");
+								 } else { 
+								 	jQuery(jQuery(this).find(".desc-body")).css("height", availableHeight);
+								 }
+							 });
+						}
+	                jQuery(document).ready(function(){
+						    fitTextToBox();
+						 });
+						 jQuery(window).resize(function(){
+						 	 fitTextToBox();
+						 });
+					</script>';
    return $return;
 }
 
