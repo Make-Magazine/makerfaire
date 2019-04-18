@@ -212,10 +212,13 @@ function createOutput($entry_id, $pdf) {
    if ($project_photo != '') {
       $photo_extension = pathinfo($project_photo, PATHINFO_EXTENSION);
       if ($photo_extension) {
-         //fit image onto pdf              
-         list($width, $height) = resizeToFit($project_photo);
+         //fit image onto pdf
+         $project_photo = legacy_get_fit_remote_image_url($project_photo, 450, 450, 0);
+         $pdf->Image($project_photo, 22, 110, null, null, $photo_extension);
+
+         //list($width, $height) = resizeToFit($project_photo);
                            
-         $pdf->Image($project_photo, 22, 110, $width, $height, $photo_extension);
+         //$pdf->Image($project_photo, 22, 110, $width, $height, $photo_extension);
       } else {
          error_log("Unable to find the image for entry $entry_id for $project_photo");
          $resizeImage = 0;
