@@ -1,4 +1,5 @@
 <?php
+
 /*
   ajax to populate resource management table
  */
@@ -157,14 +158,11 @@ function cannedRpt() {
       if (isset($selFields->hide) && $selFields->hide == true) {
          //don't add this field to display
          $data['columnDefs'][$selFieldsID] = array('field' => 'field_' . str_replace('.', '_', $selFieldsID),
-             'displayName' => $selFields->label,
-             'type' => 'string',
-             'visible' => false,
+             'displayName' => $selFields->label, 'type' => 'string', 'visible' => false, 
              'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999));
       } else {
          $data['columnDefs'][$selFieldsID] = array('field' => 'field_' . str_replace('.', '_', $selFieldsID),
-             'displayName' => $selFields->label,
-             'type' => 'string',
+             'displayName' => $selFields->label, 'type' => 'string', 
              'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999));
       }
 
@@ -215,11 +213,12 @@ function cannedRpt() {
             if ($detail['meta_key'] === "320" || strpos($detail['meta_key'], '321.') !== false || strpos($detail['meta_key'], '302.') !== false) {
                $value = get_CPT_name($value);
             }
+
             $value = stripslashes(convert_smart_quotes(htmlspecialchars_decode($value)));
 
             //check if we pulled by specific field id or if this was a request for all values
             $fieldID = $detail['meta_key'];
-
+            
             //remove everything after the period
             $basefieldID = (strpos($fieldID, ".") ? substr($fieldID, 0, strpos($fieldID, ".")) : $fieldID);
 
@@ -228,12 +227,14 @@ function cannedRpt() {
             } else {//let's look for the base id
                $fieldCritArr = (isset($fieldIDArr[$basefieldID]) ? $fieldIDArr[$basefieldID] : '');
             }
-
+            
             // radio and select options
             if (is_array($fieldCritArr)) {
                //radio and select boxes must match one of the passed values
+               //checkboxes will only match the value if this is for field 321
                foreach ($fieldCritArr as $fieldCriteria) {
-                  if ($fieldCriteria->type === 'radio' || $fieldCriteria->type === 'select') { //check value
+                  if ($fieldCriteria->type === 'radio' || $fieldCriteria->type === 'select' || 
+                          ($fieldCriteria->type === 'checkbox' && $basefieldID==='321')) { //check value
                      //default to failing criteria
                      $passCriteria = false;
                      if ($fieldCriteria->choices === 'all') {
@@ -243,9 +244,21 @@ function cannedRpt() {
                         $passCriteria = true;
                         break;
                      }
-                  }
+                  }             
                }
             } else {
+               if (isset($fieldCritArr->type) && $fieldCritArr->type==='list') {
+                  $list_data = unserialize($value);
+                  $value = '';
+                  foreach ($list_data as $list){
+                     foreach($list as $lkey=>$ldata){
+                        if($ldata!==''){
+                           $value .= $ldata.' ';
+                        }
+                     }
+                     $value .= " \r";
+                  }                  
+               }
                if (isset($fieldCritArr->type) && isset($fieldCritArr->choices)) {
                   if ($fieldCritArr->type === 'checkbox' && $fieldCritArr->choices === 'all') {
                      $fieldID = $basefieldID;
@@ -379,15 +392,15 @@ function cannedRpt() {
 function orderReturnColumns($columnDefs) {
    //sort columns by display order
    usort(
-      $columnDefs, function($a, $b) {
-         $result = 0;
-         if ($a["displayOrder"] > $b["displayOrder"]) {
-            $result = 1;
-         } else if ($a["displayOrder"] < $b["displayOrder"]) {
-            $result = -1;
-         }
-         return $result;
+           $columnDefs, function($a, $b) {
+      $result = 0;
+      if ($a["displayOrder"] > $b["displayOrder"]) {
+         $result = 1;
+      } else if ($a["displayOrder"] < $b["displayOrder"]) {
+         $result = -1;
       }
+      return $result;
+   }
    );
    //reindex columnDefs as the grid will blow up if the indexes aren't in order
    $columnDefs = array_values($columnDefs);
@@ -1444,7 +1457,7 @@ function paymentRpt($table, $faire) {
    );
 
    //set requested form type based on submitted table request   
-   $form_type = ($table === 'sponsorOrder' ? 'Sponsor': 'Exhibit');
+   $form_type = ($table === 'sponsorOrder' ? 'Sponsor' : 'Exhibit');
 
    //pull basic entry information 
    $sql = "select wp_mf_entity.lead_id, wp_mf_entity.form_id,presentation_title, status, "
@@ -1478,11 +1491,11 @@ function paymentRpt($table, $faire) {
       // Pull additional fields: field 442 - 'Fee Management' and field 55  - 'What are your plans at Maker Faire
       $fieldRetData = pullFieldData($row->lead_id, $reqFields);
       $fieldData = array_merge($fieldData, $fieldRetData['data']);
-      
+
       //pull location information
       $locRetData = pullLocData($entryID, FALSE, 900);
-      $fieldData = array_merge($fieldData, $locRetData['data']);      
-      
+      $fieldData = array_merge($fieldData, $locRetData['data']);
+
       //pull payment information           
       $paysql = "select wp_gf_entry_meta.entry_id as pymt_entry, wp_gf_addon_payment_transaction.transaction_type,
                         wp_gf_addon_payment_transaction.transaction_id, wp_gf_addon_payment_transaction.amount,
@@ -1544,10 +1557,10 @@ function paymentRpt($table, $faire) {
          $data['data'][] = $fieldData;
       }
    }
-   
+
    $data['columnDefs'] = array_values($data['columnDefs']); //returns all the values from the array and indexes the array numerically
    $data['columnDefs'] = orderReturnColumns($data['columnDefs']);
-           
+
    echo json_encode($data);
    exit;
 }

@@ -70,6 +70,9 @@ function dispLayout($row_layout) {
          case 'maker_faire_map_cta': // faire map link separator
             $return = getMFMapCTAPanel();
             break;
+			case 'image_slider': // this is gonna end up pretty similar to the image carousel, but we're going to have it as a panel
+				$return = getSliderPanel();
+				break;
       }
    }
    return $return;
@@ -891,6 +894,101 @@ function getImgCarouselSquare() {
     </script>';
    }
    return $return;
+}
+
+/* **************************************************** */
+/* Function to return slider panel                      */
+/* **************************************************** */
+
+function getSliderPanel(){
+	$return .= '<section class="slider-panel container-fluid ' . get_sub_field('background_color') . '">';
+   if(get_sub_field('slideshow_title')){
+		$return .= '<div class="slideshow-title"><h2>' . get_sub_field('slideshow_title') . '</h2></div>';
+	}
+   $return .= '   <div class="' . get_sub_field('slideshow_name') . '-carousel owl-carousel columns-' . get_sub_field("column_number") . '">';
+	//get requested data for each column
+   $slides = get_sub_field('slide');
+   foreach ($slides as $slide) {
+		$imageObj = $slide['image'];
+		if(empty($slide['slide_button_text']) && !empty($slide['slide_link'])) {
+			$return .= '<a href="'. $slide['slide_link'] .'">';
+		}
+		$return .= '     <div class="item slide">
+		                   <div class="slide-image-section" style="background-image:url(' . $imageObj['url'] . ');">';
+		if(!empty($slide['slide_title']) && get_sub_field("column_number") > 1 ) {
+			$return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
+		}
+		if(!empty($slide['slide_button_text']) && get_sub_field("column_number") > 1 ) {
+			if(!empty($slide['slide_link'])) {
+			  $return .= '      <a href="'. $slide['slide_link'] .'">';
+		   }
+			$return .= '          <button class="btn slide-btn ' . $slide['slide_button_color'] . '">' . $slide['slide_button_text'] . '</button>';
+			if(!empty($slide['slide_link'])) {
+			  $return .= '      </a>';
+		   }
+		}
+		// This section is only for one column slideshows that have description text
+		if( get_sub_field("column_number") == 1 ) {
+			$return .= '    </div>
+			                <div class="slide-info-section">';
+			if(!empty($slide['slide_title'])) {
+			   $return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
+			}
+			if(!empty($slide['slide_text'])) {
+			   $return .= '     <p class="slide-text">' . $slide['slide_text'] . '</p>';
+			}
+			if(!empty($slide['slide_button_text'])) {
+			   if(!empty($slide['slide_link'])) {
+				  $return .= '   <a href="'. $slide['slide_link'] .'">';
+				}
+				$return .= '         <button class="btn slide-btn ' . $slide['slide_button_color'] . '">' . $slide['slide_button_text'] . '</button>';
+				if(!empty($slide['slide_link'])) {
+				  $return .= '   </a>';
+				}
+			}
+		}
+		$return .= '       </div>
+		                 </div>';
+		if(!empty($slide['slide_link']) && empty($slide['slide_button_text'])) {
+			$return .= '</a>';
+		}
+	}
+	$tabletSlides = 1;
+	if(get_sub_field("column_number") > 1) {
+		$tabletSlides = 2;
+	}
+	$return .= '   </div>
+	            </section>
+					
+					<script type="text/javascript">
+					   jQuery(window).load(function() {
+					   	// slideshow carousel
+							jQuery(".' . get_sub_field('slideshow_name') . '-carousel.owl-carousel").owlCarousel({
+							  loop: true,
+							  margin: 15,
+							  nav: true,
+							  navText: [
+								 "<i class=\'fa fa-caret-left\'></i>",
+								 "<i class=\'fa fa-caret-right\'></i>"
+							  ],
+							  autoplay: true,
+							  autoplayHoverPause: true,
+							  responsive: {
+								 0: {
+									items: 1
+								 },
+								 600: { 
+								   items: ' . $tabletSlides . '
+								 },
+								 1000: {
+									items: ' . get_sub_field("column_number") . '
+								 }
+							  }
+							})
+						});
+					</script>
+					';
+	return $return;
 }
 
 /* **************************************************** */
