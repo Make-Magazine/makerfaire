@@ -181,7 +181,7 @@ function createOutput($entry_id, $pdf) {
     * auto adjust the font so the text will fit
     ***************************************************************************/
    $pdf->setTextColor(0);
-   $pdf->SetXY(20, 35);
+   $pdf->SetXY(20, 20);
 
    // auto adjust the font so the text will fit
    $x = 65; // set the starting font size
@@ -195,12 +195,12 @@ function createOutput($entry_id, $pdf) {
    $lineHeight = $x * 0.2645833333333 * 1.5;
 
    /* Output the title at the required font size */
-   $pdf->MultiCell(203, $lineHeight, $project_title, 1, 'C');
+   $pdf->MultiCell(203, $lineHeight, $project_title, 0, 'C');
     
    /***************************************************************************
     * QR code    
     ***************************************************************************/
-   $entryURL = 'https://makerfaire.com/maker/entry/'.$entry_id.'/';
+   $entryURL = ($entry['27']!==''?$entry['27']:'https://makerfaire.com/maker/entry/'.$entry_id.'/');
    $QR_Code = 'https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl='.urlencode($entryURL);
    $pdf->Image($QR_Code,230,30,null,null,image_type_to_extension(IMAGETYPE_PNG,false));
     
@@ -215,7 +215,7 @@ function createOutput($entry_id, $pdf) {
          //fit image onto pdf              
          list($width, $height) = resizeToFit($project_photo);
                            
-         $pdf->Image($project_photo, 22, 90, $width, $height, $photo_extension);
+         $pdf->Image($project_photo, 22, 110, $width, $height, $photo_extension);
       } else {
          error_log("Unable to find the image for entry $entry_id for $project_photo");
          $resizeImage = 0;
@@ -229,41 +229,41 @@ function createOutput($entry_id, $pdf) {
     * field 16 - short description
     * auto adjust the font so the text will fit
     ***************************************************************************/   
-   $pdf->SetXY(145, 90);
+   $pdf->SetXY(145, 110);
 
    // auto adjust the font so the text will fit
    $sx = 28; // set the starting font size
    $pdf->SetFont('Benton Sans', '', $sx);
 
    // Cycle thru decreasing the font size until it's width is lower than the max width
-   while ($pdf->GetStringWidth(utf8_decode($project_short)) > 1300) {
+   while ($pdf->GetStringWidth(utf8_decode($project_short)) > 1500) {
       $sx = $sx - .1; // Decrease the variable which holds the font size
       $pdf->SetFont('Benton Sans', '', $sx);
    }
 
    $lineHeight = $sx * 0.2645833333333 * 1.5;
 
-   $pdf->MultiCell(125, $lineHeight, $project_short, 1, 'L');
+   $pdf->MultiCell(125, $lineHeight, $project_short, 0, 'L');
    
    /***************************************************************************
     * maker info, use a background of white to overlay any long images or text
     ***************************************************************************/
    $pdf->setTextColor(0, 174, 239);
-   $pdf->SetFont('Benton Sans', 'B', 48);
+   $pdf->SetFont('Benton Sans', 'B', 40);
 
    $pdf->SetXY(20, 270);
    if (!empty($groupbio)) {
       // auto adjust the font so the text will fit
-      $sx = 48; // set the starting font size
+      $sx = 40; // set the starting font size
       // Cycle thru decreasing the font size until it's width is lower than the max width
-      while ($pdf->GetStringWidth(utf8_decode($groupname)) > 240) {
+      while ($pdf->GetStringWidth(utf8_decode($groupname)) > 450) {
          $sx = $sx - .1; // Decrease the variable which holds the font size
          $pdf->SetFont('Benton Sans', 'B', $sx);
       }
 
       $lineHeight = $sx * 0.2645833333333 * 1.5;
 
-      $pdf->MultiCell(0, $lineHeight, $groupname, 1, 'L', true);
+      $pdf->MultiCell(0, $lineHeight, $groupname, 0, 'L', true);
 
       $pdf->setTextColor(0);
       $pdf->SetFont('Benton Sans', '', 24);
@@ -272,26 +272,26 @@ function createOutput($entry_id, $pdf) {
       $x = 24; // set the starting font size
 
       /* Cycle thru decreasing the font size until it's width is lower than the max width */
-      while ($pdf->GetStringWidth($groupbio) > 1200) {
+      while ($pdf->GetStringWidth($groupbio) > 850) {
          $x = $x -.1; // Decrease the variable which holds the font size
          $pdf->SetFont('Benton Sans', '', $x);
       }
       $lineHeight = $x * 0.2645833333333 * 1.5;
-      $pdf->MultiCell(0, $lineHeight, $groupbio, 1, 'L', true);
+      $pdf->MultiCell(0, $lineHeight, $groupbio, 0, 'L', true);
    } else {
       $makerList = implode(', ', $makers);
-      $pdf->SetFont('Benton Sans', 'B', 45);
+      $pdf->SetFont('Benton Sans', 'B', 40);
 
       // auto adjust the font so the text will fit
       $x = 40; // set the starting font size
 
       /* Cycle thru decreasing the font size until it's width is lower than the max width */
-      while ($pdf->GetStringWidth(utf8_decode($makerList)) > 900) {
+      while ($pdf->GetStringWidth(utf8_decode($makerList)) > 450) {
          $x = $x -.1; // Decrease the variable which holds the font size
          $pdf->SetFont('Benton Sans', '', $x);
       }
       $lineHeight = $x * 0.2645833333333 * 1.5;
-      $pdf->MultiCell(0, $lineHeight, $makerList, 1, 'L', true);
+      $pdf->MultiCell(0, $lineHeight, $makerList, 0, 'L', true);
       // if size of makers is 1, then display maker bio
       if (sizeof($makers) == 1) {
          $pdf->setTextColor(0);
@@ -306,7 +306,7 @@ function createOutput($entry_id, $pdf) {
          }
 
          $lineHeight = $x * 0.2645833333333 * 1.5;
-         $pdf->MultiCell(0, $lineHeight, $bio, 1, 'L', true);
+         $pdf->MultiCell(0, $lineHeight, $bio, 0, 'L', true);
       }
    }
    return $resizeImage;
