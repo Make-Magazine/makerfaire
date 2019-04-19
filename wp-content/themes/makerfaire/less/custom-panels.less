@@ -1614,9 +1614,13 @@
 
 // Adjustments for the custom panels that are required by the page-wide-left-nav template
 .page-leftnav.customPanels {
+	&.container-fluid {
+		padding: 0px;
+	}
 	.container { width: 100%; }
 	.row { margin: 0px; }
 	.content-panel.six-column .image-grid-row, .container, .container-fluid { padding: 0px; }
 	.featured-maker-panel #performers .thumbnail { width: auto; } // I think this won't be necessary once the featured maker panel is a grid rather than bootstrap
 	.slider-panel { padding-bottom: 50px; }
+	.content { padding: 0px; }
 }
