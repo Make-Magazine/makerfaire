@@ -275,9 +275,9 @@
 			}
 			.owl-prev, .owl-next {
 				position: absolute;
-				bottom: 50%;
+				bottom: 35%;
 				width: 100px;
-				height: 50px;
+				height: 150px;
 				color: #fff;
 				font-size: 84px;
 			   text-shadow: 1px 1px 10px #000000;
@@ -657,6 +657,49 @@
       background-color: #00597E;
       height: 32px;
       margin: 2em 0;
+   }
+	
+	// MAKEY FULL WIDTH BANNER
+	.makey-banner {
+      color: #fff;
+      background: #085a7e;
+      text-align: center;
+      font-size: 26px;
+      line-height: 30px;
+      font-weight: 300;
+      padding: 61px 0 32px;
+      position: relative;
+      margin-top: 80px;
+      a {
+         color: #fff;
+         position: relative;
+         display: inline-block;
+         padding: 0px;
+      }
+      a:hover {
+         text-decoration: none;
+         opacity: .7;
+      }
+      a i {
+         position: absolute;
+         top: 2px;
+         right: 0;
+      }
+      .picture-holder {
+         background: #67bde1;
+         border-radius: 50%;
+         box-shadow: 0 0 5px 0 rgba(0, 0, 0, .64);
+         text-align: center;
+         width: 99px;
+         height: 99px;
+         padding: 10px 5px;
+         position: absolute;
+         left: 50%;
+         top: -50px;
+         -webkit-transform: translateX(-50%) translateY(0);
+         -ms-transform: translateX(-50%) translateY(0);
+         transform: translateX(-50%) translateY(0);
+      }
    }
 
    .cta-panel {
@@ -1202,10 +1245,10 @@
    
    // Common elements
 	.content-panel.six-column {
-      //margin: 20px;
+      margin: 20px 0px;
       .image-grid-row {
          display: flex;
-         margin: 20px -10px;
+         margin: 0px -10px;
          padding: 0 20px;
          @media screen and (max-width: 1200px) {
             flex-wrap: wrap;
@@ -1553,7 +1596,6 @@
 }
 
 
-
 /*
  * Row with equal height columns
  * --------------------------------------------------
@@ -1562,11 +1604,25 @@
    /* display: -webkit-box; */
    display: -webkit-flex;
    display: -ms-flexbox;
-   display:         flex;
+   display: flex;
 }
 
 .align-middle {
    display: flex;
    align-items: center;
    flex-wrap: wrap;
+}
+
+// Adjustments for the custom panels that are required by the page-wide-left-nav template
+.page-leftnav.customPanels {
+	&.container-fluid {
+		padding: 0px;
+	}
+	.container { width: 100%; }
+	.row { margin: 0px; }
+	.content-panel.six-column .image-grid-row, .container, .container-fluid { padding: 0px; }
+	.featured-maker-panel #performers .thumbnail { width: auto; } // I think this won't be necessary once the featured maker panel is a grid rather than bootstrap
+	.slider-panel { padding-bottom: 50px; }
+	.content { padding: 0px; }
+	.six-column { padding: 0px 15px; }
 }
