@@ -298,7 +298,7 @@
                             "label": "Panel Title",
                             "name": "title",
                             "type": "text",
-                            "instructions": "i.e. \"Featured Items\". 28 character limit.",
+                            "instructions": "i.e. \"Featured Items\"",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -307,12 +307,10 @@
                                 "id": ""
                             },
                             "default_value": "",
-                            "maxlength": 28,
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "readonly": 0,
-                            "disabled": 0
+                            "maxlength": ""
                         },
                         {
                             "key": "field_5719832407ae9",
@@ -550,7 +548,7 @@
                             "label": "Panel Title",
                             "name": "title",
                             "type": "text",
-                            "instructions": "i.e. \"Featured Makers\". 28 character limit.",
+                            "instructions": "i.e. \"Featured Makers\"",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -559,12 +557,10 @@
                                 "id": ""
                             },
                             "default_value": "",
-                            "maxlength": 28,
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "readonly": 0,
-                            "disabled": 0
+                            "maxlength": ""
                         },
                         {
                             "key": "field_579925463b1d9",
@@ -2738,5 +2734,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1555622434
+    "modified": 1555973875
 }
