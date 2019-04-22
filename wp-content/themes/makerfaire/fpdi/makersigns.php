@@ -1,18 +1,16 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 // set up database
 $root = $_SERVER['DOCUMENT_ROOT'];
 require_once ($root . '/wp-config.php');
 require_once ($root . '/wp-includes/wp-db.php');
-if (!is_user_logged_in())
-   auth_redirect();
 
+/*if (!is_user_logged_in())
+   auth_redirect();*/
 const DPI = 96;
 const MM_IN_INCH = 25.4;
 //image sizes
@@ -71,7 +69,7 @@ try {
       //error_log("EID Query Vars: " . $wp_query->query_vars['eid']);
    } else if (isset($_GET['eid']) && $_GET['eid'] != '') {
       $eid = $_GET['eid'];
-      // error_log("EID: ".$_GET['eid']);
+      //error_log("EID: ".$_GET['eid']);
    }
 
    if (isset($eid) && $eid != '') {
@@ -107,14 +105,13 @@ try {
          }
 
          $dirname = dirname($filename);
+         
          if (!is_dir($dirname)) {
             mkdir($dirname, 0755, true);
          }
          if (ob_get_contents())
             ob_clean();
          $pdf->Output($filename, 'F');
-         // needed for faire signs mass creation
-         echo $entryid;
 
          exit();
       } else {

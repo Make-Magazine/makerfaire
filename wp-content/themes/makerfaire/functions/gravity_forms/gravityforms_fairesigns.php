@@ -1,15 +1,16 @@
 <?php
-
 /* Displays faire sign code */
+
 function build_faire_signs() {
    require_once (TEMPLATEPATH . '/adminPages/faire_signs.php');
 }
 
 /* This is for the Export all Fields button in the Entry Summary */
+
 function createCSVfile() {
    // create CSV for individual entries come as a GET request, the mass entry list is a POST request
    $form_id = (isset($_POST['exportForm']) && $_POST['exportForm'] != '' ? $_POST['exportForm'] : '');
-   
+
    // if the form_id is not set in the post fields, let check the get fields
    if ($form_id == '') {
       $form_id = (isset($_GET['exForm']) && $_GET['exForm'] != '' ? $_GET['exForm'] : '');
@@ -17,51 +18,52 @@ function createCSVfile() {
    if ($form_id == '') {
       die('please select a form');
    }
-   
+
    $entry_id = (isset($_GET['exEntry']) && $_GET['exEntry'] != '' ? $_GET['exEntry'] : '');
-   
+
    // create CSV file
    $form = GFAPI::get_form($form_id);
    $fieldData = array();
-   
+
    // put fieldData in a usable array
    foreach ($form['fields'] as $field) {
-      if ($field->type != 'section' && $field->type != 'html' && $field->type != 'page') $fieldData[$field['id']] = $field;
+      if ($field->type != 'section' && $field->type != 'html' && $field->type != 'page')
+         $fieldData[$field['id']] = $field;
    }
    $search_criteria['status'] = 'active';
    $entries = array();
    if ($entry_id == '') {
       $entries = GFAPI::get_entries($form_id, $search_criteria, null, array(
-         'offset' => 0,
-         'page_size' => 9999
+                  'offset' => 0,
+                  'page_size' => 9999
       ));
    } else {
       // use the submitted entry
       $entries[] = GFAPI::get_entry($entry_id);
    }
-   
+
    $output = array(
-      'Entry ID',
-      'FormID'
+       'Entry ID',
+       'FormID'
    );
    $list = array();
    foreach ($fieldData as $field) {
       $output[] = $field['label'];
    }
    $list[] = $output;
-   
+
    foreach ($entries as $entry) {
       $fieldArray = array(
-         $entry['id'],
-         $form_id
+          $entry['id'],
+          $form_id
       );
       foreach ($fieldData as $field) {
          if ($field->id == 320 || $field->id == 321) {
             if (in_array($field->type, array(
-               'checkbox',
-               'select',
-               'radio'
-            ))) {
+                        'checkbox',
+                        'select',
+                        'radio'
+                    ))) {
                $currency = GFCommon::get_currency();
                $value = RGFormsModel::get_lead_field_value($entry, $field);
                array_push($fieldArray, GFCommon::get_lead_field_display($field, $value, $currency, true));
@@ -72,25 +74,25 @@ function createCSVfile() {
       }
       $list[] = $fieldArray;
    }
-   
+
    // write CSV file
    // output headers so that the file is downloaded rather than displayed
    header('Content-Type: text/csv; charset=utf-8');
    header('Content-Disposition: attachment; filename=form-' . $form_id . ($entry_id != '' ? '-' . $entry_id : '') . '.csv');
-   
+
    $file = fopen('php://output', 'w');
-   
+
    foreach ($list as $line) {
       fputcsv($file, $line);
    }
-   
+
    fclose($file);
    // wp_redirect( admin_url( 'admin.php?page=mf_export'));
    die();
-   
+
    exit();
-   
 }
+
 add_action('wp_ajax_createCSVfile', 'createCSVfile');
 add_action('admin_post_createCSVfile', 'createCSVfile');
 
@@ -105,29 +107,27 @@ function genTableTags($faire) {
    $formIds = str_replace(' ', '', $formIds);
    $forms = explode(",", $formIds);
    foreach ($forms as $formId) {
-      
+
       $form = GFAPI::get_form($formId);
       if ($form['form_type'] == 'Exhibit' || $form['form_type'] == 'Sponsor' || $form['form_type'] == 'Startup Sponsor') {
          $sql = "SELECT wp_gf_entry.id as lead_id, wp_gf_entry_meta.meta_value as lead_status " . " FROM `wp_gf_entry`, wp_gf_entry_meta" . " where status='active' and meta_key='303' and lead_id = wp_gf_entry.id" . "   and wp_gf_entry_meta.meta_value!='Rejected' and wp_gf_entry_meta.meta_value!='Cancelled'" . "   and wp_gf_entry.form_id=" . $formId;
          $results = $wpdb->get_results($sql);
-         
+
          echo 'Form - ' . $formId;
          echo '(' . $wpdb->num_rows . ' entries)';
          echo '<div class="container"><div class="row">';
          foreach ($results as $entry) {
             $entry_id = $entry->lead_id;
-            
             ?>
-<div class="col-md-2">
-	<a class="fairsign" target="_blank" id="<?php echo $entry_id;?>"
-		href="/wp-content/themes/makerfaire/fpdi/tabletag.php?eid=<?php echo $entry_id;?>&faire=<?php echo $faire;?>"><?php echo $entry_id;?></a>
-</div>
-<?php
+            <div class="col-md-2">
+               <a class="fairsign" target="_blank" id="<?php echo $entry_id; ?>"
+                  href="/wp-content/themes/makerfaire/fpdi/tabletag.php?eid=<?php echo $entry_id; ?>&faire=<?php echo $faire; ?>"><?php echo $entry_id; ?></a>
+            </div>
+            <?php
          }
          echo '</div></div>';
       }
    }
-   
 }
 
 add_action('gen_table_tags', 'genTableTags', 10, 1);
@@ -135,7 +135,7 @@ add_action('gen_table_tags', 'genTableTags', 10, 1);
 // create zip files of maker signs
 function createSignZip() {
    global $wpdb;
-   
+
    $response = array();
    $statusFilter = (isset($_POST['selstatus']) ? $_POST['selstatus'] : '');
    $type = (isset($_POST['seltype']) ? $_POST['seltype'] : '');
@@ -143,10 +143,10 @@ function createSignZip() {
    $signType = (isset($_POST['type']) ? $_POST['type'] : 'signs');
    $filterError = (isset($_POST['error'])) ? $_POST['error'] : '';
    $filterFormId = (isset($_POST['filform'])) ? $_POST['filform'] : '';
-   
+
    // If filter by formid append to filename
    $appendFormId = "";
-   if (! empty($filterFormId)) {
+   if (!empty($filterFormId)) {
       if (is_array($filterFormId)) {
          foreach ($filterFormId as $formId) {
             $appendFormId .= '_' . $formId;
@@ -154,11 +154,11 @@ function createSignZip() {
       } else {
          $appendFormId = '_' . $formId;
       }
-   } 
-   if(!empty($filterError)) {
-      $appendFormId = '_'.$filterError;
    }
-   
+   if (!empty($filterError)) {
+      $appendFormId = '_' . $filterError;
+   }
+
    $entries = array();
    // create array of subareas
    $sql = "SELECT wp_gf_entry.ID as entry_id, wp_gf_entry.form_id,
@@ -177,13 +177,14 @@ function createSignZip() {
    $results = $wpdb->get_results($sql);
    foreach ($results as $row) {
       // exclude records based on status filter
-      if ($statusFilter == 'accepted' && $row->entry_status != 'Accepted') continue;
+      if ($statusFilter == 'accepted' && $row->entry_status != 'Accepted')
+         continue;
       if ($statusFilter == 'accAndProp' && ($row->entry_status != 'Accepted' && $row->entry_status != 'Proposed')) {
          continue;
       }
       $area = ($row->area != NULL ? $row->area : 'No-Area');
       $subarea = ($row->subarea != NULL ? $row->subarea : 'No-subArea');
-      
+
       // Add fields if not filtered by forms
       if (empty($filterFormId)) {
          setGrouping($row, $entries, $area, $subarea, $type, $filterError);
@@ -196,25 +197,25 @@ function createSignZip() {
          filterByForm($filterFormId, $row, $entries, $area, $subarea, $type, $filterError);
       }
    } // end looping thru sql results
-   
+
    $count = count($entries);
-   
+
    // build zip files based on selected type
    foreach ($entries as $typeKey => $entType) {
       // create zip file
       $zip = new ZipArchive();
-      
+
       if ($typeKey === 'error') {
          // Error Path
          get_template_directory() . "/signs/" . $faire . '/error/' . $signType . '/';
       } else {
          $filepath = get_template_directory() . "/signs/" . $faire . '/' . $signType . '/';
       }
-      if (! file_exists($filepath . 'zip')) {
+      if (!file_exists($filepath . 'zip')) {
          mkdir($filepath . 'zip', 0777, true);
       }
       $filename = $faire . "-" . $typeKey . $appendFormId . "-faire" . $signType . ".zip";
-      
+
       $zip->open($filepath . 'zip/' . $filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
       foreach ($entType as $statusKey => $status) {
          $subPath = $typeKey . '/' . $statusKey . '/';
@@ -231,15 +232,15 @@ function createSignZip() {
          }
       }
       // close zip file
-      if (! $zip->status == ZIPARCHIVE::ER_OK) error_log("Failed to write files to zip\n");
+      if (!$zip->status == ZIPARCHIVE::ER_OK)
+         error_log("Failed to write files to zip\n");
       $close = $zip->close();
       if ($close) {
          error_log("Return of the zip failed. Due to: " . ZipArchive::getStatusString);
       }
    } // end looping thru entry array
-   
+
    exit();
-   
 }
 
 /**
@@ -271,7 +272,6 @@ function setGrouping($row, array &$entries, $area, $subarea, $type, $filterError
    } elseif ($filterError == 'error') {
       $entries['error'][$row->entry_status][] = $row->entry_id;
    }
-   
 }
 
 /**
@@ -300,7 +300,6 @@ function filterByForm($form, $row, array &$entries, $area, $subarea, $type, $fil
       // error_log("DEBUG:: Adding a form of: ". $form);
       $entries[$form][$row->entry_status][] = $row->entry_id;
    }
-   
 }
 
 add_action('wp_ajax_createSignZip', 'createSignZip');
@@ -309,36 +308,25 @@ function createEntList() {
    global $wpdb;
    $faire = (isset($_POST['faire']) ? $_POST['faire'] : '');
    $type = (isset($_POST['type']) ? $_POST['type'] : '');
-   $entList = '';
-   
-   $entList = 'Please wait while the PDFs are generated below<br/><br/>';
+
+   $entList = array();
    if ($type != 'presenter') {
       $sql = "select form_ids from wp_mf_faire where faire='" . $faire . "'";
       $formIds = $wpdb->get_var($sql);
       // remove any spaces
       $formIds = str_replace(' ', '', $formIds);
       $forms = explode(",", $formIds);
-      
+
       foreach ($forms as $formId) {
          $form = GFAPI::get_form($formId);
          if ($form['form_type'] == 'Exhibit' || $form['form_type'] == 'Sponsor' || $form['form_type'] == 'Startup Sponsor') {
             $sql = "SELECT wp_gf_entry.id as lead_id, wp_gf_entry_meta.meta_value as lead_status " . " FROM `wp_gf_entry`, wp_gf_entry_meta" . " where status='active' and meta_key=303 and wp_gf_entry_meta.entry_id = wp_gf_entry.id" . "   and wp_gf_entry_meta.meta_value!='Rejected' and wp_gf_entry_meta.meta_value!='Cancelled'" . "   and wp_gf_entry.form_id=" . $formId;
             $results = $wpdb->get_results($sql);
-            
-            $entList .= 'Form - ' . $formId;
-            $entList .= '(' . $wpdb->num_rows . ' entries)';
-            $entList .= '<div class="row">';
+
             foreach ($results as $entry) {
                $entry_id = $entry->lead_id;
-               $entList .= '<div class="col-sm-2 col-lg-1">';
-               if ($type == 'signs') {
-                  $entList .= '  <a class="fairsign" target="_blank" id="' . $entry_id . '" href="' . ($type == 'signs' ? '/maker-sign/' : '') . $entry_id . '/' . $faire . '">' . $entry_id . '</a>';
-               } else {
-                  $entList .= '  <a class="fairsign" target="_blank" id="' . $entry_id . '" href="/wp-content/themes/makerfaire/fpdi/tabletag.php?eid=' . $entry_id . '&faire=' . $faire . '">' . $entry_id . '</a>';
-               }
-               $entList .= '</div>';
+               $entList[] = $entry_id;
             }
-            $entList .= '</div>';
          }
       }
    } else {
@@ -349,19 +337,83 @@ function createEntList() {
                       where   schedule.entry_id       = entity.lead_id
                               AND entity.status       = 'Accepted'
                               and schedule.faire      = '" . $faire . "' " . " group BY   entity.lead_id";
-      $entList .= '<div class="row">';
+
       $results = $wpdb->get_results($select_query);
       foreach ($results as $entry) {
          $entry_id = $entry->entry_id;
-         $entList .= '<div class="col-sm-2 col-lg-1">';
-         $entList .= '  <a class="fairsign" target="_blank" id="' . $entry_id . '" href="/wp-content/themes/makerfaire/fpdi/presenterSigns.php?eid=' . $entry_id . '&faire=' . $faire . '">' . $entry_id . '</a>';
-         $entList .= '</div>';
+         $entList[] = $entry_id;
       }
-      $entList .= '</div>';
    }
-   $response['entList'] = $entList;
-   wp_send_json($response);
+   //submit curl process to start mass generating signs (
+   massGenerateSigns($entList, $type, $faire);
+   //$response['entList'] = 'Process Submitted. Please check back for an update';
+   //wp_send_json($response);
    exit();
-   
 }
+
 add_action('wp_ajax_createEntList', 'createEntList');
+
+function massGenerateSigns($entList, $type, $faire) {
+   error_log('Start mass generate signs for ' . $faire . ' - ' . $type);
+   //$response['entList'] = 'Process Submitted. Please check back for an update';
+   //wp_send_json($response);
+   $fpdiLink = ($type === 'signs' ? 'makersigns' : ($type === 'presenter' ? 'presenterSigns' : 'tabletag'));
+   
+   $result = array();
+   
+   //submit each url individually
+   foreach ($entList as $i => $entryID) {
+      // URL from which data will be fetched      
+      $fetchURL = get_template_directory_uri().'/fpdi/' . $fpdiLink . '.php?eid=' . $entryID . '&type=save&faire='.$faire;
+      //error_log('Generate sign for ' . $entryID. $fetchURL);
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $fetchURL);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      $result[] = curl_exec($ch);
+      curl_close($ch);
+      //if($i>=2) break;
+   }
+   /*
+   $multiCurl = array();// array of curl handles
+
+     $result = array();   // data to be returned
+
+     $mh = curl_multi_init();   // multi handle
+     
+     foreach ($entList as $i => $entryID) {
+        
+        //mass submit every 20
+         // URL from which data will be fetched
+         $fetchURL = get_template_directory_uri().'/fpdi/' . $fpdiLink . '.php?eid=' . $entryID . '&type=save&faire='.$faire;
+         
+         $multiCurl[$i] = curl_init();
+         curl_setopt($multiCurl[$i], CURLOPT_URL, $fetchURL);
+         curl_setopt($multiCurl[$i], CURLOPT_HEADER, 0);
+         curl_setopt($multiCurl[$i], CURLOPT_RETURNTRANSFER, 1);
+         curl_multi_add_handle($mh, $multiCurl[$i]);
+         if($i>=100) break;
+     }
+
+     $index = null;
+     do {
+     curl_multi_exec($mh, $index);
+     } while ($index > 0);
+     // get content and remove handles
+     foreach ($multiCurl as $k => $ch) {
+     $result[$k] = curl_multi_getcontent($ch);
+     curl_multi_remove_handle($mh, $ch);
+     }
+     // close
+     curl_multi_close($mh); */
+   date_default_timezone_set('America/Los_Angeles');
+   error_log('End mass generate signs for ' . $faire . ' - ' . $type.'. '.date('m-d-y  h:i:s A') );
+   //write completion file
+   $path = ($type === 'signs' ? 'maker' : ($type === 'presenter' ? 'presenter' : 'tabletags'));
+   
+   $fileName = TEMPLATEPATH . '/signs/' . $faire . '/'.$path.'/lastrun.txt';      
+   
+   $content = date('m-d-y  h:i:s A P');
+   $fp = fopen($fileName,"wb");
+   fwrite($fp,$content);
+   fclose($fp);
+}

@@ -54,17 +54,17 @@
   }
 
   function createPDF(faire, type) {
-    jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html('Generating List.  Please Wait.');
+    jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html('Process submitted, this could take a while to run depending on the number of signs to create. Please check back for an update.');
     var data = {
       'action': 'createEntList',
       'faire': faire,
       'type': type
     };
     jQuery.post(ajaxurl, data, function(response) {
-      if(response.entList!=''){
-        jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html(response.entList);
-        printSigns(type, faire);
-      }
+      //if(response.entList!=''){
+        //jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html(response.entList);
+        //printSigns(type, faire);
+      //}
     });
   }
 
