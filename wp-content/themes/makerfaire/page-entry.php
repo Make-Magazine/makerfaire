@@ -614,7 +614,7 @@ function updateFieldValue($fieldID,$newValue,$entryId) {
 
 function displayEntryFooter(){
 	global $wpdb; global $faireID; global $faire; global $faire_year; global $show_sched; global $backMsg; global $url_sub_path;
-   global $faire_map; global $program_guide, global $makerEdit; 
+   global $faire_map; global $program_guide; global $makerEdit; 
 	
 	$faire_location = "Bay Area";
 	$faire_link = "/bay-area";
