@@ -26,7 +26,10 @@ get_header(); ?>
 				<article <?php post_class(); ?>>
 					<?php the_content(); 
                      get_acf_content(); 
-						   echo get_field('second_block'); ?>
+					      if(!empty(get_field('second_block'))){
+						   	echo( '<div class="second-block">' . get_field('second_block') . '</div>' ); 
+							}
+					      ?>
 				</article>
          <?php endwhile; ?>			
 			<?php else: ?>
