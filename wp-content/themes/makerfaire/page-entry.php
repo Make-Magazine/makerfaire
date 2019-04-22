@@ -644,7 +644,7 @@ function displayEntryFooter(){
 			$backlink = "/manage-entries/";
 			$backMsg = 'Back to Your Maker Faire Portal';
 		}
-      if($mtmStatus && $mtmStatus->post_status == 'publish' || $backlink = "/manage-entries/") {
+      if($mtmStatus && $mtmStatus->post_status == 'publish' || $backlink == "/manage-entries/") {
 		   $return .=   '<div class="faireAction-box">
 		                   <a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
 					       </div>';
