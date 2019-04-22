@@ -24,8 +24,9 @@ get_header(); ?>
 		<div class="content col-md-9">			
          <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 				<article <?php post_class(); ?>>
-					<?php the_content(); ?>
-               <?php get_acf_content(); ?>
+					<?php the_content(); 
+                     get_acf_content(); 
+						   echo get_field('second_block'); ?>
 				</article>
          <?php endwhile; ?>			
 			<?php else: ?>
