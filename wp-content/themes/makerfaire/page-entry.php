@@ -161,9 +161,7 @@ $ribbons = checkForRibbons(0,$entryId);
 $handsOn = handsOnMarker($entry);
 
 // check if there's the potential to have a register field
-if(isset($entry[829])) {
-	$registerLink = $entry[829];
-}
+$registerLink = (isset($entry[829]) ? $entry[829]: '');
 
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
@@ -352,10 +350,11 @@ function display_entry_schedule($entry_id) {
 	  }
      $return .= '</div>
               </div>';
+	  if($multipleLocations == TRUE) { // this is kind of a mess to require this
+		 $return .= "</div>";
+	  }
   }
-	if($multipleLocations == TRUE) { // this is kind of a mess to require this
-		$return .= "</div>";
-	}
+
 	return $return;
 }
 
@@ -615,7 +614,7 @@ function updateFieldValue($fieldID,$newValue,$entryId) {
 
 function displayEntryFooter(){
 	global $wpdb; global $faireID; global $faire; global $faire_year; global $show_sched; global $backMsg; global $url_sub_path;
-   global $faire_map; global $program_guide; 
+   global $faire_map; global $program_guide, global $makerEdit; 
 	
 	$faire_location = "Bay Area";
 	$faire_link = "/bay-area";
@@ -644,6 +643,7 @@ function displayEntryFooter(){
 			$backlink = "/manage-entries/";
 			$backMsg = 'Back to Your Maker Faire Portal';
 		}
+		
       if($mtmStatus && $mtmStatus->post_status == 'publish' || $backlink == "/manage-entries/") {
 		   $return .=   '<div class="faireAction-box">
 		                   <a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
