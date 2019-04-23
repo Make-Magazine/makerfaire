@@ -51,7 +51,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
    <script id="presentation-template" type="text/x-kendo-template">
       <div class="mf-entry-template" style="background-color:#: StatusColor #">
       # if(entries){ #
-      <a target="_blank" title="#: title #" href="/wp-admin/admin.php?page=gf_entries&view=entry&id=9&lid=#: entries[0] #">#: entries[0] #</a>
+      <a target="_blank" title="#: title #" href="/wp-admin/admin.php?page=gf_entries&view=entry&id=#: form #&lid=#: entries[0] #">#: entries[0] #</a>
 
       # } #
       <p>#: title #</p></div>
@@ -328,11 +328,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
       $subareaIdField = new \Kendo\Data\DataSourceSchemaModelField('subareaId');
       $subareaIdField->from('SubareaID')->nullable(true);
 
-
       $statusColorField = new \Kendo\Data\DataSourceSchemaModelField('StatusColor');
       $statusColorField->from('StatusColor')->nullable(true);
-
-
 
       $presentationTypeField = new \Kendo\Data\DataSourceSchemaModelField('presentationType');
       $presentationTypeField->from('PresentationType')->nullable(true);
@@ -340,6 +337,9 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
       $entriesField = new \Kendo\Data\DataSourceSchemaModelField('entries');
       $entriesField->from('Entries')->nullable(true);
 
+      $formField = new \Kendo\Data\DataSourceSchemaModelField('form');
+      $formField->from('Form')->nullable(true);
+      
       $model->id('locationID')
               ->addField($locationIdField)
               ->addField($titleField)
@@ -348,6 +348,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
               ->addField($isAllDayField)
               ->addField($subareaIdField)
               ->addField($entriesField)
+              ->addField($formField)
               ->addField($presentationTypeField)
               ->addField($statusColorField);
 
