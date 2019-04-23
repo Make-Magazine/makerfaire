@@ -15,7 +15,6 @@ $entry     = GFAPI::get_entry($entryId);
 // The opengraph cards for sharing
 $sharing_cards = new mf_sharing_cards();
 
-
 // give admin, editor and reviewer user roles special ability to see all entries
 $user = wp_get_current_user();
 $adminView = false;
@@ -83,8 +82,12 @@ if(isset($entry->errors)){
 	$groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
 	
 	// build array of categories
-	$mainCategory = get_term($entry['320'])->name;
-	$categories = array($mainCategory);
+	$mainCategory = '';
+	$categories = array();
+	if(isset($entry['320'])) {
+		$mainCategory = get_term($entry['320'])->name;
+		$categories[] = $mainCategory;
+	}
 	foreach($entry as $key => $value){
 		if(strpos($key, '321.') !== false && $value != null) {
 			if(get_term($value)->name != $mainCategory) {
@@ -132,7 +135,6 @@ $sharing_cards->canonical_url = $canonical_url;
 $sharing_cards->set_values();
 get_header();
 
-
 /* Lets check if we are coming from the MAT tool -
  * if we are, and user is logged in and has access to this record
  *   Display edit functionality
@@ -159,7 +161,7 @@ $ribbons = checkForRibbons(0,$entryId);
 $handsOn = handsOnMarker($entry);
 
 // check if there's the potential to have a register field
-$registerLink = $entry[829];
+$registerLink = (isset($entry[829]) ? $entry[829]: '');
 
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
@@ -348,10 +350,11 @@ function display_entry_schedule($entry_id) {
 	  }
      $return .= '</div>
               </div>';
+	  if($multipleLocations == TRUE) { // this is kind of a mess to require this
+		 $return .= "</div>";
+	  }
   }
-	if($multipleLocations == TRUE) { // this is kind of a mess to require this
-		$return .= "</div>";
-	}
+
 	return $return;
 }
 
@@ -474,15 +477,18 @@ function getMakerInfo($entry) {
 
 function handsOnMarker($entry) {
 	################ For form exhibits, show if exhibit is hands on ################
-  if($form_id = "208") { 
-	  if($entry[66] == "Yes") {
+  if($form_id = "208" && isset($entry['66'])) { 
+	  if($entry['66'] == "Yes") {
 		  return '<div class="hands-on"><span class="lnr lnr-checkmark-circle"></span> Hands-on Activity</div>';
 	  }
   }
 }
 
 function getSocial($entrySocial) {
-	$socialArray = unserialize($entrySocial);
+	$socialArray = [];
+	if(isset($entrySocial)){
+		$socialArray = unserialize($entrySocial);
+	}
 	$socialBlock = '';
 	if(!empty($socialArray))  {
 		$socialBlock .= '<div class="social-block">';
@@ -611,7 +617,7 @@ function updateFieldValue($fieldID,$newValue,$entryId) {
 
 function displayEntryFooter(){
 	global $wpdb; global $faireID; global $faire; global $faire_year; global $show_sched; global $backMsg; global $url_sub_path;
-   global $faire_map; global $program_guide; 
+   global $faire_map; global $program_guide; global $makerEdit; 
 	
 	$faire_location = "Bay Area";
 	$faire_link = "/bay-area";
@@ -619,6 +625,11 @@ function displayEntryFooter(){
 		$faire_location = "New York";
 		$faire_link = "/new-york";
    }
+	
+	// we're going to check if the schedule page exists
+	$scheduleStatus = get_page_by_path('/' . $url_sub_path . '/schedule/');
+	$mtmStatus = get_page_by_path('/' . $url_sub_path . '/meet-the-makers/');
+	
 	$return = '';
 	$return .= '<div class="faireActions container">';
 	
@@ -635,11 +646,14 @@ function displayEntryFooter(){
 			$backlink = "/manage-entries/";
 			$backMsg = 'Back to Your Maker Faire Portal';
 		}
-		$return .=  '<div class="faireAction-box">
-		                <a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
-					    </div>';
+		
+      if($mtmStatus && $mtmStatus->post_status == 'publish' || $backlink == "/manage-entries/") {
+		   $return .=   '<div class="faireAction-box">
+		                   <a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
+					       </div>';
+		}
 	}
-   if($show_sched != 0) {
+   if($scheduleStatus && $scheduleStatus->post_status == 'publish') {
 		$return .=  '<div class="faireAction-box">
 							<a class="btn universal-btn" href="/' . $url_sub_path . '/schedule/"><h4>View full schedule</h4></a>
 						 </div>';
