@@ -452,9 +452,3 @@ function custom_acf_repeater_colors() {
          </style>';
 }
 add_action('admin_head', 'custom_acf_repeater_colors');
-
-// set a logout timer to test for the homepage redirect
-add_filter('auth_cookie_expiration', 'my_expiration_filter', 99, 3);
-function my_expiration_filter($seconds, $user_id, $remember){
-	return 60; //sets expiration to 60 seconds
-}
