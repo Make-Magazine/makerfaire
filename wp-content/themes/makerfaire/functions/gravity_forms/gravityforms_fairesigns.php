@@ -380,7 +380,7 @@ function massGenerateSigns($entList, $type, $faire) {
    
    $fileName = TEMPLATEPATH . '/signs/' . $faire . '/'.$path.'/lastrun.txt';      
    
-   $content = date('m-d-y  h:i:s A P');
+   $content = date('m-d-y  h:i:s A T');
    $fp = fopen($fileName,"wb");
    fwrite($fp,$content);
    fclose($fp);
