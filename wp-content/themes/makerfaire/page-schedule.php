@@ -78,7 +78,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 				<div class="mtm-search">
 					<div class="search-wrapper">
                   <form class="form-inline">
-                     <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or presenter name", 'makerfaire') ?></label><br/>
+                     <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or presenter name", 'makerfaire') ?></label>
                      <input ng-model="schedSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
                   </form>
 					</div>

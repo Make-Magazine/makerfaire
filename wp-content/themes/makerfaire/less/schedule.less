@@ -1,124 +1,3 @@
-/*
-// Application title
-.tab-content h3 {
-	line-height: 100%;
-}
-
-// Maker name
-.tab-content h4 {
-	margin:6px 0 6px;
-}
-.alert {
-	p {
-		margin: 10px 0;
-		a {
-			color: red;
-		}
-	}
-}
-#scheduleTab {
-	.nav-tabs > li > a {
-	  border: 0;
-	  background-color: transparent;
-	  text-transform: capitalize;
-	  padding: 10px;
-	}
-	.nav-tabs > li {
-	  border: thin solid #ddd;
-	  font-size: 18px;
-	  margin-right:5px;
-	}
-	.nav-tabs > li.active {
-	  background-color: #00aeef;
-	}
-	.nav-tabs > li.active a {
-	  color: #fff;
-	}
-	.dateTime {
-	  color: #085a7e;
-	}
-	table tr {
-	  background-color: #f9f9f9;
-	}
-	.thumbnail img {
-	  min-width: 90px;
-	}
-  .schedInfo {
-    height: 58px;
-    overflow: hidden;
-    margin: 0;
-  }
-  .printIcon {
-    position: relative;
-    top: -38px;
-  }
-  .schedIcon {
-    position: relative;
-    top: -43px;
-  }
-  .sponsorSec {
-    padding: 0 10px;
-    border-right: thin solid lightgrey;
-    margin-right: 10px;
-  }
-  .sponsorText{
-    color: #4A4A4A;
-    padding-right: 10px;
-    text-transform: uppercase;
-    font-size: 11px;
-  }
-  .sponsorImg {
-    height: 35px;
-    width: auto;
-  }
-}
-
-// Education Forum Page Schedule
-
-.sessions {
-	margin-top:15px;
-	padding-top:20px;
-	border-top:1px solid #eee;
-	.row {
-		margin-bottom:20px;
-	}
-	.session-detail.breaktime {
-		padding-bottom:0;
-		border-top:1px solid #eee;
-		border-bottom:1px solid #eee;
-	}
-
-	.session-time {
-		p{
-		margin-bottom:0;
-		padding-left: 0;
-		font-weight:bold;
-		}
-	}
-
-	.session-detail{
-		background-color:#f9f9f9;
-		padding-bottom:15px;
-		font-weight:300;
-		color:#023d4f;
-		p {
-		margin-bottom:3px;
-		}
-		h2 {
-		margin-top:10px;
-		font-weight:700;
-		font-size: 20px;
-		line-height: 24px;
-		color: #292f33;
-		}
-		span {
-		font-weight:bold;
-		}
-		.session-location{
-			margin-top:15px;
-		}
-	}
-}*/
 .schedule-header {
 	h1 {
 		font-size: 36px;
@@ -164,28 +43,35 @@
 		@media screen and (max-width: 368px) {
 			padding: 5px;
 		}
-		label {
-		   color: #fff;
-			margin-top: 17px;
-			margin-bottom: 16px;
-			font-weight: normal;
-			font-size: 14px;
-		}
-		#mtm-search-input { 
-			width: 100%;
-		}
-	
+		
 		.search-wrapper {
-			width: 45%;
+			width: 100%;
 			float: left;
-			@media (max-width: 1228px) {
-			  width: 100%;
+			padding: 15px 15px 0px;
+			label {
+				color: #fff;
+				margin-top: 5px;
+				margin-bottom: 16px;
+				margin-right: 20px;
+				font-weight: normal;
+				font-size: 14px;
+				float: left;
+				max-width: 54%;
+				@media screen and (max-width: 750px) {
+					max-width: 100%;
+				}
 			}
-			padding: 0px 15px;
+			#mtm-search-input { 
+				width: 40%;
+				float: left;
+				@media screen and (max-width: 750px) {
+					width: 100%;
+				}
+			}
 		}
 		.filter-wrapper {
 			height: 100%;
-			width: 55%;
+			width: 100%;
 			display: table;
 			padding-bottom: 10px;
 			@media (max-width: 1228px) {
@@ -218,8 +104,8 @@
 				}
 				// &:nth-of-type(4) { display: none; } // hide day filter
 				&:last-of-type {  //filter by
-					padding-top: 4px; padding-right: 10px;
-					@media (max-width: 500px) { display: none; }
+					padding-top: 8px; padding-right: 10px;
+					@media (max-width: 680px) { display: none; }
 				}
 				@media (max-width: 500px) {
 					width:100%;
