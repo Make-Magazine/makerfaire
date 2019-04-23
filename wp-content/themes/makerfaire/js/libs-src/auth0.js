@@ -1,5 +1,5 @@
 window.addEventListener('load', function() {
-	
+
   // buttons and event listeners
   /*    If the login button, logout button or profile view elements do not exist
    *    (such as on the admin and login pages) default to a 'fake' element
@@ -63,12 +63,8 @@ window.addEventListener('load', function() {
 
 	logoutBtn.addEventListener('click', function(e) {
 		e.preventDefault();
-
 		// Remove tokens and expiry time from localStorage
-		localStorage.removeItem('access_token');
-		localStorage.removeItem('id_token');
-		localStorage.removeItem('expires_at');
-
+		clearLocalStorage();
 		//hide logged in button and logout of wp and auth0
 		displayButtons();
 	});
@@ -86,6 +82,12 @@ window.addEventListener('load', function() {
 			 }
 		}
 	}
+	
+	function clearLocalStorage() {
+		 localStorage.removeItem('access_token');
+		 localStorage.removeItem('id_token');
+		 localStorage.removeItem('expires_at');
+  }
 
 	function setSession(authResult) {
 		if ( authResult ) {
@@ -97,9 +99,7 @@ window.addEventListener('load', function() {
 			localStorage.setItem('id_token', authResult.idToken);
 			localStorage.setItem('expires_at', expiresAt);
 		} else {
-			localStorage.removeItem('access_token');
-			localStorage.removeItem('id_token');
-			localStorage.removeItem('expires_at');
+			clearLocalStorage();
 		}
 	}
 
@@ -134,7 +134,7 @@ window.addEventListener('load', function() {
 			profileView.style.display = 'none';
 			if ( jQuery( '.logged-in' ).length ) { // is the user logged in?
 				//logout of wordpress if not already
-				WPlogout();//login to wordpress
+				WPlogout();
 			} else {
 				jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Try your login again</a>");
 			}
@@ -227,7 +227,9 @@ window.addEventListener('load', function() {
 		}
 		jQuery.post(ajax_object.ajax_url, data, function(response) {
 			if(wp_only != "wp_only"){
-				window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
+				// load this in an iframe so page itself doesn't get sent back to homepage, hopefully
+				// auth0 application only allows set urls as the returnto, with the homepage being the only one being set
+				jQuery("#auth0Logout").attr("src", 'https://makermedia.auth0.com/v2/logout?returnTo=' + templateUrl + '&client_id='+AUTH0_CLIENT_ID);
 			}else{
 				WPlogin();
 			}
@@ -238,10 +240,7 @@ window.addEventListener('load', function() {
 	webAuth.checkSession({},
 		function(err, result) {
 			if (err) {
-				// Remove tokens and expiry time from localStorage
-				localStorage.removeItem('access_token');
-				localStorage.removeItem('id_token');
-				localStorage.removeItem('expires_at');
+				clearLocalStorage();
 				if(err.error!=='login_required'){
 					errorMsg(userProfile.email + " had an issue logging in at the checkSession phase. That error was: " + JSON.stringify(err));
 				}
