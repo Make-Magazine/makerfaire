@@ -38,7 +38,11 @@ $type = '';
                            <br/>
                            <span class="signs pdfEntList"></span>
                         </div>
-                        <div class="pull-left" style="margin-left: 20px;"><p><br><br><Br>Last created on: <?php echo file_get_contents(TEMPLATEPATH . '/signs/' . $row->faire . '/maker/lastrun.txt');?></p></div>
+                        <?php
+                        $filename = TEMPLATEPATH . '/signs/' . $row->faire . '/maker/lastrun.txt';
+                        $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
+                        ?>
+                        <div class="pull-left" style="margin-left: 20px;"><p><br><br><Br>Last created on: <?php echo $lastCreated; ?></p></div>
                         <div class="clear"></div>
 
                         <div class="row is-flex">
@@ -114,7 +118,11 @@ $type = '';
                            <input style="text-align:center;width: 400px;"  name="zipCreate" value="Generate all signs" class="button button-large button-primary" onClick="createPDF('<?php echo $row->faire; ?>', 'presenter')" />                           
 
                         </div>
-                        <div class="pull-left" style="margin-left: 20px;"><p><br><br><Br>Last created on: <?php echo file_get_contents(TEMPLATEPATH . '/signs/' . $row->faire . '/presenter/lastrun.txt');?></p></div>                        
+                        <?php
+                        $filename = TEMPLATEPATH . '/signs/' . $row->faire . '/presenter/lastrun.txt';
+                        $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
+                        ?>
+                        <div class="pull-left" style="margin-left: 20px;"><p><br><br><Br>Last created on: <?php echo $lastCreated; ?></p></div>                        
                         <div class="clear"></div>                        
                         <div class="row  is-flex">
                            <div class="col-sm-7  right-border">
@@ -168,6 +176,17 @@ $type = '';
                         </div>
                      </div>
                      <div id="table<?php echo $row->faire; ?>" class="tab-pane fade">
+                        <div class="pull-left" style="margin-top: 22px;">                           
+                           <i>Click the button to generate all table tags for this faire</i><br>
+                           <input style="text-align:center;width: 400px;"  name="zipCreate" value="Generate all signs" class="button button-large button-primary" onClick="createPDF('<?php echo $row->faire; ?>', 'tabletags')" />                           
+
+                        </div>
+                        <?php
+                        $filename = TEMPLATEPATH . '/signs/' . $row->faire . '/tabletags/lastrun.txt';
+                        $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
+                        ?>
+                        <div class="pull-left" style="margin-left: 20px;"><p><br><br><Br>Last created on: <?php echo $lastCreated; ?></p></div>                        
+                        <div class="clear"></div>            
                         <div class="row  is-flex">
                            <div class="col-sm-6 right-border">
                               <h4>Create a zip file of the table tags:</h4>

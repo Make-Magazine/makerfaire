@@ -278,6 +278,8 @@ window.onload = function(){
 }
 </script>
 
+<iframe id="auth0Logout" style="display: none;" ></iframe>
+
 </body>
 
 </html>
