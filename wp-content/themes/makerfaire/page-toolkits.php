@@ -68,7 +68,7 @@ function urlify($string) {
 							}else{
 								 $leftLinkClass = "sub-section-header";
 							}
-							echo('<li class="' . $leftLinkClass . ' ' . urlify(get_sub_field('header_text')) . '"><a href="#' .  urlify(get_sub_field('header_text')) . '">' . rtrim(get_sub_field('header_text'), ': ') . '</a></li>');
+							echo('<li class="' . $leftLinkClass . ' ' . urlify(get_sub_field('header_text')) . "-" . get_row_index() . '"><a href="#' .  urlify(get_sub_field('header_text')) . "-" . get_row_index() . '">' . rtrim(get_sub_field('header_text'), ': ') . '</a></li>');
 						}
 			      echo('</ul>');
 				}
@@ -99,8 +99,8 @@ function urlify($string) {
 								 $leftLinkClass = "sub-section-header";
 							}
 							if(get_sub_field('section_type')) {
-								echo('<div class="toolkit-section image_grid" id="' . urlify(get_sub_field('header_text')) .'">'); //image grid is here for the list styles until it's made universal
-									 echo('<a class="toolkit-anchor" name="' . urlify(get_sub_field('header_text')) . '"></a>');
+								echo('<div class="toolkit-section image_grid" id="' . urlify(get_sub_field('header_text')) . "-" . get_row_index() .'">'); //image grid is here for the list styles until it's made universal
+									 echo('<a class="toolkit-anchor" name="' . urlify(get_sub_field('header_text')) . "-" . get_row_index() . '"></a>');
 									 echo('<h2 class="' . $leftLinkClass . '">' . get_sub_field('header_text') . '</h2>');
 									 echo(get_sub_field('section_body'));
 								echo('</div>');
