@@ -84,6 +84,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 					</div>
 					<div class="filter-wrapper">
 						<div class="schedule-filters" ng-if="showSchedules">
+							<div class="sched-col-4">Filter by:</div>
 							<div class="sched-col-4">
 								<div class="dropdown">
 									<button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -161,7 +162,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 									</ul>
 								</div>                               
 							</div>
-							<div class="sched-col-4">Filter by:</div>
+							
 					   </div>
 					</div>
             </div>

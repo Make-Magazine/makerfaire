@@ -212,7 +212,7 @@ function read_schedule($faire_id, $subarea_id, &$total) {
         wp_mf_entity.presentation_type,
         wp_mf_entity.desc_short,
       `wp_mf_schedule`.`type`,
-      wp_mf_entity.status
+      wp_mf_entity.status, wp_mf_entity.form_id
         
 	FROM
 	    `wp_mf_schedule`
@@ -248,6 +248,7 @@ function read_schedule($faire_id, $subarea_id, &$total) {
       $entry_ids = array(
           $row ['entry_id']
       );
+      $form = $row ['form_id'];
       $presentername = (isset($row['maker_name'])) ? $row['maker_name'] : 'TBD';
       $title = preg_replace("/[^a-z0-9 ]/i", "", $row['presentation_title']) . ' (Presenter: ' . $presentername . ') ';
       $type = $row['presentation_type'];
@@ -277,6 +278,7 @@ function read_schedule($faire_id, $subarea_id, &$total) {
           'IsAllDay' => false,
           'SubareaID' => $stage,
           'Entries' => $entry_ids,
+          'Form' => $form,
           'Event' => $maker_name,
           'Title' => $title,
           'StatusColor' => status_to_color($status),
