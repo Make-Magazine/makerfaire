@@ -10,8 +10,7 @@
 $root = $_SERVER['DOCUMENT_ROOT'];
 require_once( $root . '/wp-config.php' );
 require_once( $root . '/wp-includes/wp-db.php' );
-if (!is_user_logged_in())
-   auth_redirect();
+
 //error_log('start of makersigns.php '.date('h:i:s'),0);
 // require tFPDF
 require_once('fpdf/fpdf.php');
@@ -84,16 +83,16 @@ function createOutput($entry_id, $pdf) {
       $presenters = filterText($row->makers_list);
       $presentation_title = filterText($row->presentation_title);
    }
-   // Project ID
+   // Presenter names
    $pdf->SetFont('Benton Sans', 'B', 49);
    $x = 49;    // set the starting font size
    /* Cycle thru decreasing the font size until it's width is lower than the max width */
    while ($pdf->GetStringWidth($presenters) > 700) {
-      $x--;   // Decrease the variable which holds the font size
+      $x = $x=.1;   // Decrease the variable which holds the font size
       $pdf->SetFont('Benton Sans', 'B', $x);
    }
 
-   $lineHeight = $x * 0.2645833333333 * 1.3;
+   $lineHeight = $x * 0.2645833333333 * 1.5;
    $pdf->setTextColor(160, 0, 0);
    //$presenters = "Judy Castro, Terry & Belinda Kilby, Jillian & Jefferey Northrup, Kyrsten Mate & Jon Sarriugarte";
    $presenterHeight = $pdf->GetStringWidth($presenters);
@@ -127,10 +126,10 @@ function createOutput($entry_id, $pdf) {
 
    /* Cycle thru decreasing the font size until it's width is lower than the max width */
    while ($pdf->GetStringWidth($presentation_title) > 600) {
-      $x--;   // Decrease the variable which holds the font size
+      $x = $x-.1;   // Decrease the variable which holds the font size
       $pdf->SetFont('Benton Sans', 'B', $x);
    }
-   $lineHeight = $x * 0.2645833333333 * 1.3;
+   $lineHeight = $x * 0.2645833333333 * 1.5;
 
 
    $pdf->SetXY(38, 195);
@@ -140,8 +139,8 @@ function createOutput($entry_id, $pdf) {
    $pdf->MultiCell(355.6, $lineHeight, $presentation_title, 0, 'C');
 }
 
-function filterText($text) {
-   $text = utf8_decode($text);
+function filterText($text) {   
+   $text = html_entity_decode(utf8_encode($text));
    try {
       $string = iconv('UTF-8', 'windows-1252', $text);
    } catch (Exception $e) {
@@ -149,7 +148,7 @@ function filterText($text) {
       ini_set('mbstring.substitute_character', "none");
       $string = mb_convert_encoding($text, 'UTF-8', 'windows-1252');
    }
-
+      
    // now translate any unicode stuff...
    $conv = array(
        "&amp;" => "&",
