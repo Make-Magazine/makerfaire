@@ -41,6 +41,7 @@
 		.row {
 			.toolkit-header-title {
 				padding-left: 35px;
+				margin-top: 8px;
 				img { 
 					float: left;
 					margin: 19px 15px 0 10px;
@@ -77,6 +78,26 @@
 					-webkit-box-shadow: 0px 3px 0px 0px rgba(234,0,42,1);
 					-moz-box-shadow: 0px 3px 0px 0px rgba(234,0,42,1);
 					box-shadow: 0px 3px 0px 0px rgba(234,0,42,1);
+				}
+			}
+			.right-banner { 
+				position: absolute;
+				top: 20px;
+				right: 0;
+				background-color: transparent;
+				color: #fff;
+				border: 20px solid #ea002a;
+				border-left-color: transparent;
+				height: 30px;
+				padding: 0px 15px;
+				display: flex;
+				align-content: center;
+				justify-content: center;
+				align-items: center;
+				&:hover, &:active, &:focus {
+					border: 20px solid #FF0000;
+					border-left-color: transparent;
+					text-decoration: underline;
 				}
 			}
 		}
@@ -139,8 +160,16 @@
 			}
 		}
 	}
+	.toolkit-content {
+		margin-top: 15px;
+		font-size: 20px;
+		@media screen and (max-width: 982px) {
+			position: relative;
+			top: -15px;
+		}
+	}
 	.toolkit-section-wrapper {
-		margin-top: 45px;
+		margin-top: 30px;
 		.toolkit-section {
 			a.toolkit-anchor { // all the fixed nav bars and sumos require the anchor to need a little more space
 			  display: block;
@@ -175,6 +204,57 @@
 		@media screen and (max-width: 981px) {
 			transform: scaleY(-1);
 			display: none;
+		}
+	}
+}
+
+.subfooter-wrapper {
+	height: 111px;
+	background: #D0EAFC;
+	.subfooter-links {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		flex-wrap: nowrap;
+		padding: 0px 15px;
+		.subfooter-link {
+			width: 25%;
+			justify-content: center;
+			align-items: center;
+			border-left: solid 1px #979797;
+			padding: 10px 30px;
+			&:first-of-type {
+				border-left: none;
+			}
+			a {
+				width: 100%;
+				h4 {
+					font-size: 14px;
+					text-transform: capitalize;
+				}
+			}
+		}
+	}
+	@media screen and (min-width: 768px) and (max-width: 987px) {
+		.subfooter-links {
+			.subfooter-link {
+				padding: 10px 15px;
+				&:first-of-type { padding-left: 0px; }
+				&:last-of-type { padding-right: 0px; }
+			}
+		}
+	}
+	@media screen and (max-width: 767px) {
+		height: 100%;
+		.subfooter-links {
+			flex-direction: column;
+			.subfooter-link { 
+				width: 100%;
+				border: none; 
+				padding: 20px 0px 0px;
+				&:last-of-type { padding-bottom: 20px; }
+			}
 		}
 	}
 }
