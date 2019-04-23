@@ -370,41 +370,9 @@ function massGenerateSigns($entList, $type, $faire) {
       curl_setopt($ch, CURLOPT_URL, $fetchURL);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       $result[] = curl_exec($ch);
-      curl_close($ch);
-      //if($i>=2) break;
+      curl_close($ch);  
    }
-   /*
-   $multiCurl = array();// array of curl handles
-
-     $result = array();   // data to be returned
-
-     $mh = curl_multi_init();   // multi handle
-     
-     foreach ($entList as $i => $entryID) {
-        
-        //mass submit every 20
-         // URL from which data will be fetched
-         $fetchURL = get_template_directory_uri().'/fpdi/' . $fpdiLink . '.php?eid=' . $entryID . '&type=save&faire='.$faire;
-         
-         $multiCurl[$i] = curl_init();
-         curl_setopt($multiCurl[$i], CURLOPT_URL, $fetchURL);
-         curl_setopt($multiCurl[$i], CURLOPT_HEADER, 0);
-         curl_setopt($multiCurl[$i], CURLOPT_RETURNTRANSFER, 1);
-         curl_multi_add_handle($mh, $multiCurl[$i]);
-         if($i>=100) break;
-     }
-
-     $index = null;
-     do {
-     curl_multi_exec($mh, $index);
-     } while ($index > 0);
-     // get content and remove handles
-     foreach ($multiCurl as $k => $ch) {
-     $result[$k] = curl_multi_getcontent($ch);
-     curl_multi_remove_handle($mh, $ch);
-     }
-     // close
-     curl_multi_close($mh); */
+  
    date_default_timezone_set('America/Los_Angeles');
    error_log('End mass generate signs for ' . $faire . ' - ' . $type.'. '.date('m-d-y  h:i:s A') );
    //write completion file

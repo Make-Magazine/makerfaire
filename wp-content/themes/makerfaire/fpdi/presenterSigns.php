@@ -10,8 +10,7 @@
 $root = $_SERVER['DOCUMENT_ROOT'];
 require_once( $root . '/wp-config.php' );
 require_once( $root . '/wp-includes/wp-db.php' );
-if (!is_user_logged_in())
-   auth_redirect();
+
 //error_log('start of makersigns.php '.date('h:i:s'),0);
 // require tFPDF
 require_once('fpdf/fpdf.php');
