@@ -477,7 +477,7 @@ function getMakerInfo($entry) {
 
 function handsOnMarker($entry) {
 	################ For form exhibits, show if exhibit is hands on ################
-  if($form_id = "208" && isset($entry['66'])) { 
+  if(isset($entry['66'])) { 
 	  if($entry['66'] == "Yes") {
 		  return '<div class="hands-on"><span class="lnr lnr-checkmark-circle"></span> Hands-on Activity</div>';
 	  }
