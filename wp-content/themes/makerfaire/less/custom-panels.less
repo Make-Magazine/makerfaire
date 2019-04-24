@@ -234,7 +234,6 @@
 						position: absolute;
 					}
 					.slide-title {
-						top: 0px;
 						left: 0px;
 						background: rgba(255, 255, 255, .9);
 						padding: 15px;
@@ -243,7 +242,11 @@
 						width: 100%;
 						text-align: center;
 						font-weight: bold;
+						margin: 0;
 					}
+					.slide-title.top { top: 0px; }
+					.slide-title.bottom { bottom: 0px; }
+					.slide-title.center { bottom: 40p%; }
 					a {
 						bottom: 15px;
 						color: #fff;
