@@ -84,6 +84,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
       $scope.filterdow = $filter('date')(date, "EEEE");
       filterdow = $filter('date')(date, "EEEE");
    };   
+	// console.log("Scope is ", + $scope);
 }]);
 
 scheduleApp.filter('dateFilter', function($filter) {

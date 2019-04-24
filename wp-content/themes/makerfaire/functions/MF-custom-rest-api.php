@@ -401,6 +401,7 @@ function getSchedule($formIDs) {
           'registration' => $row->registration
       );
    }
+	//error_log(print_r($data, TRUE));
 
    return $data;
 }
