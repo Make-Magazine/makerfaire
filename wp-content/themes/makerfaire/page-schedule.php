@@ -41,14 +41,6 @@ calendarDownloadEvent = function() {
 </script>
 
 <?php 
-if (have_posts()) {
-   ?>
-   <div class="schedule-header container">
-      
-       <h1 class="page-title"><?php echo get_the_title(); ?><div ng-cloak><span ng-show="schedSearch.category != ''">- {{schedSearch.category}}</span></div></h1>
-		
-   </div><?php
-}
 if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new schedule page
    create_calendar($schedule_ids_trimmed);
    ?>
@@ -57,6 +49,15 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
    <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
    <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
+		
+		<?php 
+			if (have_posts()) {
+			?>
+			<div class="schedule-header container">
+
+				 <h1 class="page-title"><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="schedSearch.type != ''"> {{schedSearch.type}}s</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on the {{schedSearch.nicename}} stage</span></h1>
+			</div><?php
+		} ?>
       <div class="schedule-wrapper">
 
          <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics" onClick="calendarDownloadEvent();">
