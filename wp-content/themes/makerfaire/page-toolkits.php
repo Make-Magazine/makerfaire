@@ -18,7 +18,6 @@ function urlify($string) {
 
 ?>
 
-
 <div class="clear"></div>
 <div class="main-content" id="main">
 
@@ -26,7 +25,13 @@ function urlify($string) {
 	<div class="row">
 		<div class="toolkit-header-title col-md-3 col-sm-4 col-xs-12">
 			<img src="/wp-content/themes/makerfaire/images/toolkit-icon.png" width="25px" height="25px" />
-			<h1><?php echo($pagegroupPretty); ?></h1>
+			<h1><?php 
+				if($pagegroupPretty) {
+					echo($pagegroupPretty); 
+				} else {
+					echo( get_the_title() );
+				}
+			?></h1>
 		</div>
 		<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12">
 			<ul class="nav nav-tabs">
@@ -42,6 +47,11 @@ function urlify($string) {
 				?>
 			</ul>
 		</div>
+		<?php
+			if(!empty(get_field('top_button'))){
+				echo('<a class="btn right-banner" href="' . get_field('top_button')['top_button_link'] . '">' . get_field('top_button')['top_button_text'] . ' </a>');
+			}
+		?>
 	</div>
   </div>
   <div class="page-leftnav container-fluid">
@@ -58,7 +68,7 @@ function urlify($string) {
 							}else{
 								 $leftLinkClass = "sub-section-header";
 							}
-							echo('<li class="' . $leftLinkClass . ' ' . urlify(get_sub_field('header_text')) . '"><a href="#' .  urlify(get_sub_field('header_text')) . '">' . get_sub_field('header_text') . '</a></li>');
+							echo('<li class="' . $leftLinkClass . ' ' . urlify(get_sub_field('header_text')) . "-" . get_row_index() . '"><a href="#' .  urlify(get_sub_field('header_text')) . "-" . get_row_index() . '">' . rtrim(get_sub_field('header_text'), ': ') . '</a></li>');
 						}
 			      echo('</ul>');
 				}
@@ -74,8 +84,11 @@ function urlify($string) {
 			<?php endif; ?>
       </div>
 		<div class="content col-md-9">			
-         <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-			<?php	
+         <?php if( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+			   <div class="toolkit-content">
+					<?php the_content(); ?>
+			   </div>
+         <?php
 				if (have_rows('sections')) { 
 					echo('<div class="toolkit-section-wrapper">');
 						while (have_rows('sections')) {
@@ -86,8 +99,8 @@ function urlify($string) {
 								 $leftLinkClass = "sub-section-header";
 							}
 							if(get_sub_field('section_type')) {
-								echo('<div class="toolkit-section image_grid" id="' . urlify(get_sub_field('header_text')) .'">'); //image grid is here for the list styles until it's made universal
-									 echo('<a class="toolkit-anchor" name="' . urlify(get_sub_field('header_text')) . '"></a>');
+								echo('<div class="toolkit-section image_grid" id="' . urlify(get_sub_field('header_text')) . "-" . get_row_index() .'">'); //image grid is here for the list styles until it's made universal
+									 echo('<a class="toolkit-anchor" name="' . urlify(get_sub_field('header_text')) . "-" . get_row_index() . '"></a>');
 									 echo('<h2 class="' . $leftLinkClass . '">' . get_sub_field('header_text') . '</h2>');
 									 echo(get_sub_field('section_body'));
 								echo('</div>');
@@ -107,6 +120,20 @@ function urlify($string) {
 			<a href="#topofpage">BACK TO TOP</a>
 		</div>
 	</div>
+	<?php if(have_rows('bottom_buttons')) {
+	  echo('<div class="row subfooter-wrapper">
+	           <div class="subfooter-links">');
+	    while (have_rows('bottom_buttons')) {
+			 the_row();
+			 echo('<div class="subfooter-link">
+			          <a class="btn universal-btn" href="' . get_sub_field('bottom_button_link'). '">' .
+						   get_sub_field('bottom_button_text') .
+					    '</a>
+				    </div>');
+		 }
+	  echo("   </div>
+	        </div>");
+	} ?>
   </div><!--Container-->
 </div>
 <?php get_footer(); ?>

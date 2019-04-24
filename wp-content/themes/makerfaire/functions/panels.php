@@ -476,7 +476,7 @@ function get1ColWYSIWYG() {
   $column_1 = get_sub_field('column_1');
   $cta_button = get_sub_field('cta_button');
   $cta_button_url = get_sub_field('cta_button_url');
-  $return .=  '<section class="content-panel">
+  $return .=  '<section class="content-panel single-block">
           <div class="container">';
 
   if(get_sub_field('title')) {
