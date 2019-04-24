@@ -923,7 +923,7 @@ function getImgCarouselSquare() {
 
 function getSliderPanel(){
 	$return = '';
-	$return .= '<section class="slider-panel container-fluid ' . get_sub_field('background_color') . '">';
+	$return .= '<section class="slider-panel container-fluid ' . get_sub_field('background_color') . ' position-' . get_sub_field('text_position') . '">';
    if(get_sub_field('slideshow_title')){
 		$return .= '<div class="slideshow-title"><h2>' . get_sub_field('slideshow_title') . '</h2></div>';
 	}
@@ -938,7 +938,7 @@ function getSliderPanel(){
 		$return .= '     <div class="item slide">
 		                   <div class="slide-image-section" style="background-image:url(' . $imageObj['url'] . ');">';
 		if(!empty($slide['slide_title']) && get_sub_field("column_number") > 1 ) {
-			$return .= '     <p class="slide-title ' . get_sub_field('text_position') . '">' . $slide['slide_title'] . '</p>';
+			$return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
 		}
 		if(!empty($slide['slide_button_text']) && get_sub_field("column_number") > 1 ) {
 			if(!empty($slide['slide_link'])) {
