@@ -45,7 +45,7 @@ if (have_posts()) {
    ?>
    <div class="schedule-header container">
       
-       <h1 class="page-title"><?php echo get_the_title(); ?></h1>
+       <h1 class="page-title"><?php echo get_the_title(); ?><div ng-cloak><span ng-show="schedSearch.category != ''">- {{schedSearch.category}}</span></div></h1>
 		
    </div><?php
 }
@@ -73,6 +73,13 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
             </span>
             Print full schedule
 			</a>
+			
+			<?php if( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+			   <div class="schedule-description">
+					<?php the_content(); ?>
+			   </div>
+         <?php endwhile; ?>			
+			<?php endif; ?>
 			
          <div ng-cloak>
 				<div class="mtm-search">
