@@ -30,9 +30,11 @@
 		position: relative;
 		width: 100%;
 		position: relative;
-		height: 100px;
+		height: auto;
+		overflow: auto;
 		margin-bottom: 15px;
    	background-color: #005E9A;
+		padding-bottom: 10px;
    	clear: both;
 		@media screen and (max-width: 992px) {
 			width: 100vw;
@@ -95,7 +97,7 @@
 				// &:nth-of-type(4) { display: none; } // hide day filter
 				&:first-of-type {  //filter by
 					padding-top: 8px; padding-right: 10px;
-					@media (max-width: 680px) { display: none; }
+					@media (max-width: 700px) { display: none; }
 				}
 				@media (max-width: 500px) {
 					width:100%;
