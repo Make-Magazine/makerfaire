@@ -193,7 +193,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                               </h3>
                               <p class="sched-description">{{schedule.maker_list}}</p>
 										
-										<div class="sched-registration" ng-show="schedule.flags!=NULL && schedule.flags.indexOf('Registration Required')!=-1">
+										<div class="sched-registration" ng-show="schedule.flags!=NULL && schedule.flags.indexOf('Registration Required')!=-1 && schedule.registration!=NULL">
 											<hr />
 											<a href="{{schedule.registration}}" target="_blank">Register Here</a>
 										</div>
