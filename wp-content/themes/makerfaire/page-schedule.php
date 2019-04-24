@@ -181,7 +181,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 				<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
 				<span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
 			</div>
-         <div class="sched-table"  sched-scroll="loadMore()">     
+         <div class="sched-table" sched-scroll="loadMore()">     
 				
             <div class="row sched-header">
                <div class="sched-col-1"></div>               
@@ -201,12 +201,11 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                               </h3>
                               <p class="sched-description">{{schedule.maker_list}}</p>
 										
-										<div class="sched-registration" ng-show="schedule.flags!=NULL && schedule.flags.indexOf('Registration Required')!=-1">
+										<div class="sched-registration" ng-show="schedule.flags!=NULL && schedule.flags.indexOf('Registration Required')!=-1 && schedule.registration!=NULL">
 											<hr />
-											<div ng-click="schedule.isCollapsed = !schedule.isCollapsed">Register Here</div>
+											<a href="{{schedule.registration}}" target="_blank">Register Here</a>
 										</div>
                            </div>
-
 
                            <div class="sched-col-3">
                               <div class="row">
@@ -294,5 +293,5 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 }
 ?>
 
-<iframe src="/stage-schedule/?faire=NY18&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
+<iframe src="/stage-schedule/?faire=NY19&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 <?php get_footer(); ?>

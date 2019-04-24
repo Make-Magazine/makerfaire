@@ -312,6 +312,7 @@ function getSchedule($formIDs) {
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '217') as mkr1_photo,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '151') as name,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '16')  as short_desc,              
+              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '829')  as registration,              
               (select group_concat( meta_value separator ',') as cat from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '%304%') as flags,
               (select group_concat( meta_value separator ',') as cat from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_key like '%320%' OR wp_gf_entry_meta.meta_key like '%321%')) as category
              FROM wp_mf_schedule as schedule
@@ -396,9 +397,11 @@ function getSchedule($formIDs) {
           'day' => (int) $row->day,
           'desc' => htmlspecialchars_decode($row->short_desc, ENT_QUOTES),
           'type' => ucwords($type),
-          'flags' => $row->flags
+          'flags' => $row->flags,
+          'registration' => $row->registration
       );
    }
+	//error_log(print_r($data, TRUE));
 
    return $data;
 }

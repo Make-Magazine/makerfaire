@@ -13,7 +13,7 @@ function create_calendar($formIDs) {
          $dt = new DateTime($schedule['time_end']);
          $end = $dt->format('Ymd\THis');
 
-         $ics[] = array('location' => 'New York Hall of Science 47-01 111th St, Corona, NY 11368' . ' - ' . $schedule['nicename'],
+         $ics[] = array('location' => 'San Mateo Event Center 1346 Saratoga Dr, San Mateo, CA 94403' . ' - ' . $schedule['nicename'],
              'summary' => $schedule['name'],
              'dtstart' => $start,
              'dtend' => $end,
