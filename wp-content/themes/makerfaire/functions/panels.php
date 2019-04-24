@@ -577,7 +577,7 @@ function getVideoPanel() {
 
    //get requested data for each column
    $video_rows = get_sub_field('video_row');
-	$vidowRowNum = 0;
+	$videoRowNum = 0;
    foreach ($video_rows as $video) {
 		$videoRowNum += 1;
       if($videoRowNum % 2 != 0){ 
