@@ -51,7 +51,7 @@ if ($noMakerText == '')
                </div>
             </div>
             <div class="col-sm-4">
-					<label>Featured Filter </label>
+					<label>Featured </label>
                <ul class="nav nav-pills">
                   <li class="nav-item">
                      <button  ng-class="{active: makerSearch.flag == 'Featured Maker', 'ng-hide': showFeatured == true}" type="button" ng-click="makerSearch.flag = 'Featured Maker';showFeaturedAll=false;showFeatured=true;" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
@@ -61,7 +61,7 @@ if ($noMakerText == '')
                   </li>   
                </ul>   
 					&nbsp;&nbsp;&nbsp;&nbsp;
-               <label>Hands On Filter </label>
+               <label>Hands On </label>
 					<ul class="nav nav-pills">
 						<li class="nav-item">
                      <button ng-class="{active: makerSearch.handson == 'Featured HandsOn', 'ng-hide': showHandsOn == true}" type="button" ng-click="makerSearch.handson = 'Featured HandsOn';showHandsOnAll=false;showHandsOn=true;"  class="btn btn-default" ng-hide="showHandsOn">&nbsp;</button>
