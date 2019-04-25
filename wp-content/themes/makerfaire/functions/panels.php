@@ -983,7 +983,7 @@ function getSliderPanel(){
 	            </section>
 					
 					<script type="text/javascript">
-					   jQuery(window).load(function() {
+					   jQuery(document).ready(function() {
 					   	// slideshow carousel
 							jQuery(".' . get_sub_field('slideshow_name') . '-carousel.owl-carousel").owlCarousel({
 							  loop: true,

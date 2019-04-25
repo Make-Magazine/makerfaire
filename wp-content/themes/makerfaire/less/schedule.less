@@ -29,17 +29,16 @@
 	.mtm-search {
 		position: relative;
 		width: 100%;
-		position: relative;
-		height: auto;
-		//overflow: auto;
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 8px;
 		margin-bottom: 15px;
    	background-color: #005E9A;
-		padding-bottom: 10px;
    	clear: both;
-		height: 100px;
 		@media screen and (max-width: 992px) {
 			width: 100vw;
 			margin-left: calc(-50vw + 50%);
+			height: auto;
 		}
 		@media screen and (max-width: 368px) {
 			padding: 5px;
@@ -73,14 +72,11 @@
 		.filter-wrapper {
 			height: 100%;
 			width: 100%;
-			padding-bottom: 10px;
 			padding: 0px 15px;
 		}
 		.schedule-filters {
-			margin-bottom: 15px;
-			padding-bottom: 10px;
-			@media (min-width: 500px) {
-				padding-top: 15px;
+			@media (max-width: 767px) {
+				padding-top: 5px;
 			}
 			.sched-col-4 {
 				padding: 0px;
@@ -88,13 +84,6 @@
 				color:#fff;
 				font-weight: 500;
 				font-size: 14px;
-				&:nth-of-type(2) { 
-					.dropdown-menu { 
-						@media (max-width: 500px) {
-							margin: 0 auto;
-						}
-					}
-				}
 				// &:nth-of-type(4) { display: none; } // hide day filter
 				&:first-of-type {  //filter by
 					padding-top: 8px; padding-right: 10px;
@@ -132,7 +121,8 @@
 					}
 					@media (max-width: 500px) {
 						position: relative;
-						margin: 0 auto;
+						width: 100%;
+						margin-top: 0px;
 					}
 					li a {
 						padding: 3px 10px;
