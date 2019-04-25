@@ -50,8 +50,8 @@ if ($noMakerText == '')
                   <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" ><i class="fa fa-th-list" aria-hidden="true"></i> <?php _e("LIST", 'makerfaire') ?></a>
                </div>
             </div>
-            <div class="col-sm-4">
-					<label>Featured </label>
+            <div class="col-sm-4 mid-section">
+					<label>Featured Makers</label>
                <ul class="nav nav-pills">
                   <li class="nav-item">
                      <button  ng-class="{active: makerSearch.flag == 'Featured Maker', 'ng-hide': showFeatured == true}" type="button" ng-click="makerSearch.flag = 'Featured Maker';showFeaturedAll=false;showFeatured=true;" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
@@ -60,8 +60,8 @@ if ($noMakerText == '')
                      <button ng-init="showFeaturedAll=true" ng-class="{active: makerSearch.flag == ''}" type="button" ng-click="makerSearch.flag = '';showFeatured=false;showFeaturedAll=true;" class="btn btn-default" ng-hide="showFeaturedAll"><i class="fa fa-check"></i></button>
                   </li>   
                </ul>   
-					&nbsp;&nbsp;&nbsp;&nbsp;
-               <label>Hands On </label>
+					&nbsp;&nbsp;
+               <label>Hands On Activities</label>
 					<ul class="nav nav-pills">
 						<li class="nav-item">
                      <button ng-class="{active: makerSearch.handson == 'Featured HandsOn', 'ng-hide': showHandsOn == true}" type="button" ng-click="makerSearch.handson = 'Featured HandsOn';showHandsOnAll=false;showHandsOn=true;"  class="btn btn-default" ng-hide="showHandsOn">&nbsp;</button>

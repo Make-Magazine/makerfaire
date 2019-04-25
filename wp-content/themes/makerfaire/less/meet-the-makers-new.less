@@ -100,6 +100,9 @@
       padding-top: 20px;
       padding-bottom: 20px;
 		text-align: center;
+		.mid-section {
+			padding: 0px;
+		}
       .mtm-filter-view {
          display: inline-block;
 			@media (min-width:768px) and (max-width:991px) {
@@ -133,9 +136,12 @@
 			color: #555;
 			position: relative;
 			top: -4px;
-			font-weight: normal;
+			font-weight: 500;
 			font-size: 14px;
-			margin-right: 5px;
+			margin-right: 4px;
+			&:last-of-type {
+				margin-left: 5px;
+			}
 		}
 		.nav-pills {
 			display:inline-block;
