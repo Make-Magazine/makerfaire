@@ -100,9 +100,6 @@
       padding-top: 20px;
       padding-bottom: 20px;
 		text-align: center;
-		.mid-section {
-			padding: 0px;
-		}
       .mtm-filter-view {
          display: inline-block;
 			@media (min-width:768px) and (max-width:991px) {
@@ -132,6 +129,26 @@
             color: #555;
          }
       }
+		.mid-section {
+			padding: 0px;
+			display: flex;
+			justify-content: center;
+			@media (min-width:768px) and (max-width:996px) {
+				display:block;
+			}
+			.faux-checkbox {
+				float: left;
+				&:first-of-type { margin-right: 25px; }
+				@media (min-width:768px) and (max-width:996px) {
+					&:first-of-type { margin-right: auto; }
+					float: none;
+					margin: 0 auto;
+					width: 150px;
+					label { float: left; }
+					.nav-pills { float: right; margin-top: -10px; }
+				}
+			}
+		}
 		label {
 			color: #555;
 			position: relative;
@@ -139,9 +156,6 @@
 			font-weight: 500;
 			font-size: 14px;
 			margin-right: 4px;
-			&:last-of-type {
-				margin-left: 5px;
-			}
 		}
 		.nav-pills {
 			display:inline-block;
