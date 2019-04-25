@@ -40,6 +40,8 @@ if ($type != '') {
       ent2resource($table, $faire, $formType);
    } elseif ($type == 'paymentRpt') {
       paymentRpt($table, $faire);
+   } elseif ($type == 'notesRpt') {
+      notesRpt($table, $faire);   
    } else {
       invalidRequest('Invalid Request type');
    }
@@ -1556,6 +1558,54 @@ function paymentRpt($table, $faire) {
          $fieldData["pay_status"] = '';
          $data['data'][] = $fieldData;
       }
+   }
+
+   $data['columnDefs'] = array_values($data['columnDefs']); //returns all the values from the array and indexes the array numerically
+   $data['columnDefs'] = orderReturnColumns($data['columnDefs']);
+
+   echo json_encode($data);
+   exit;
+}
+
+function notesRpt($table, $faire) {
+   global $wpdb;
+   $data = array();
+   $data['data'] = array();
+
+   //fields to return
+   $data['columnDefs'] = array(
+       array("field" => "form_id", "displayOrder" => 20),       
+       array("field" => "entry_id", "displayName" => "Entry Id", "displayOrder" => 200),
+       array("field" => "user_name", "displayName" => "User Name", "type" => "string", "displayOrder" => 300),
+       array("field" => "date_created", "displayName" => "Date Added", "type" => "string", "displayOrder" => 400),
+       array("field" => "note", "displayName" => "Note", "displayOrder" => 401),
+       array("field" => "project_name", "displayName" => "Project Name", "type" => "string", "displayOrder" => 600),      
+   );
+
+   $sql = "SELECT b.form_id, a.entry_id,a.user_name, a.date_created,"
+           . "DATE_FORMAT(a.date_created,'%m/%d/%Y %l:%i %p') AS niceDate,a.value as note, "
+           . "(select wp_gf_entry_meta.meta_value "
+           . " from wp_gf_entry_meta where meta_key = 151 and wp_gf_entry_meta.entry_id=a.entry_id) as project_name "
+           . "FROM `wp_gf_entry_notes` a "
+           . "join `wp_gf_entry` b on a.entry_id=b.id "
+           . "left outer join wp_mf_faire on find_in_set (b.form_id,wp_mf_faire.form_ids) > 0 "
+           . "where wp_mf_faire.id= " . $faire;
+   
+   
+   $result = $wpdb->get_results($sql);
+   $colDefs = array();
+   foreach ($result as $row) {
+      $entryID = $row->lead_id;
+      $retformType = shortFormType($form_type); //retrieve shortned version of form type
+      //set returned data
+      $data['data'][] = array(
+          'entry_id' => $row->entry_id,
+          'form_id' => $row->form_id,
+          'user_name' => $row->user_name,
+          'date_created' => $row->date_created,
+          'note' => $row->note,
+          'project_name' => $row->project_name
+      );      
    }
 
    $data['columnDefs'] = array_values($data['columnDefs']); //returns all the values from the array and indexes the array numerically
