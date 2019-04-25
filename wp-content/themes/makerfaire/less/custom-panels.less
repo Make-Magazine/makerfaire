@@ -68,7 +68,8 @@
 		}
 		&.btn { color: #fff; }
 	}
-
+	.btn { white-space: normal; }
+	
 	// old busted
    .slideshow-panel {
       position: relative;
@@ -234,7 +235,6 @@
 						position: absolute;
 					}
 					.slide-title {
-						top: 0px;
 						left: 0px;
 						background: rgba(255, 255, 255, .9);
 						padding: 15px;
@@ -243,7 +243,13 @@
 						width: 100%;
 						text-align: center;
 						font-weight: bold;
+						margin: 0;
 					}
+					.slide-title.top { top: 0px; }
+					.slide-title.bottom { 
+						bottom: 0px; 
+					}
+					.slide-title.center { bottom: 40p%; }
 					a {
 						bottom: 15px;
 						color: #fff;
@@ -301,6 +307,17 @@
 					border-radius: 5px;
 					margin: 5px;
 				}
+			}
+		}
+		&.position-top {
+			.owl-carousel .item.slide .slide-image-section .slide-title {
+				top: 0px;
+			}
+		}
+		&.position-bottom {
+			.owl-carousel .item.slide .slide-image-section {
+				.slide-title { bottom: 0px; }
+				a { bottom: 60px; }
 			}
 		}
 	}
@@ -489,7 +506,6 @@
       }
       .title-w-border-y {
          margin-bottom: 15px;
-         margin-top: 15px;
       }
 		
 		// we're borrowing a lot from featured-presenter-grid.less, this is where it's different
@@ -1242,10 +1258,14 @@
 
       }
 	}
+	
+	.content-panel.single-block {
+		padding-top: 30px;
+	}
    
    // Common elements
 	.content-panel.six-column {
-      margin: 20px 0px;
+      margin: 30px 0px 20px;
       .image-grid-row {
          display: flex;
          margin: 0px -10px;
@@ -1287,13 +1307,11 @@
       }
    }
    .content-panel {
-
       .container {
          padding-top: 10px;
          padding-bottom: 30px;
       }
       .yellow-underline {
-         margin-top: 0px;
          padding-left: 50px;
          padding-right: 50px;
          margin-bottom: 20px;

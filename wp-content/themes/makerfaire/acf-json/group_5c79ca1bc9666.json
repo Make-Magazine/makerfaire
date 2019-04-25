@@ -3,6 +3,58 @@
     "title": "Tool Kits",
     "fields": [
         {
+            "key": "field_5cbf43af46c61",
+            "label": "Top Button",
+            "name": "top_button",
+            "type": "group",
+            "instructions": "Button to appear at the top right of the page",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "row",
+            "sub_fields": [
+                {
+                    "key": "field_5cbf43d546c62",
+                    "label": "Top Button Text",
+                    "name": "top_button_text",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5cbf43e846c63",
+                    "label": "Top Button Link",
+                    "name": "top_button_link",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
             "key": "field_5c79cac655f6f",
             "label": "Sections",
             "name": "sections",
@@ -92,6 +144,62 @@
             "button_label": "Add Row",
             "min": "",
             "max": ""
+        },
+        {
+            "key": "field_5cbf43ff46c64",
+            "label": "Bottom Buttons",
+            "name": "bottom_buttons",
+            "type": "repeater",
+            "instructions": "Buttons to show up at the bottom of the page as navigation",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 0,
+            "max": 4,
+            "layout": "table",
+            "button_label": "",
+            "sub_fields": [
+                {
+                    "key": "field_5cbf445946c65",
+                    "label": "Bottom Button Text",
+                    "name": "bottom_button_text",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5cbf446246c66",
+                    "label": "Bottom Button Link",
+                    "name": "bottom_button_link",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
         }
     ],
     "location": [
@@ -111,5 +219,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1551979277
+    "modified": 1556046225
 }
