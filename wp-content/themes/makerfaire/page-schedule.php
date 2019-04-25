@@ -55,25 +55,10 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 			?>
 			<div class="schedule-header container-fluid ng-cloak">
 
-				 <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on the {{schedSearch.nicename}} stage</span></h1>
+				 <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on {{schedSearch.nicename}}</span></h1>
 			</div><?php
 		} ?>
       <div class="schedule-wrapper">
-
-         <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics" onClick="calendarDownloadEvent();">
-            <span class="fa-stack fa-sm">
-               <i class="fa fa-circle fa-stack-2x"></i>
-               <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
-            </span>
-            Download calendar
-         </a>
-			<a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
-			   <span class="fa-stack fa-sm">
-               <i class="fa fa-circle fa-stack-2x"></i>
-               <i class="fa fa-print fa-stack-1x fa-inverse"></i>
-            </span>
-            Print full schedule
-			</a>
 			
 			<?php if( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 			   <div class="schedule-description">
@@ -173,8 +158,23 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 							
 					   </div>
 					</div>
+					<div class="calendar-wrapper">
+					   <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics" onClick="calendarDownloadEvent();">
+							<span class="fa-stack fa-sm">
+								<i class="fa fa-circle fa-stack-2x"></i>
+								<i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
+							</span>
+							Download calendar
+						</a>
+						<a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
+							<span class="fa-stack fa-sm">
+								<i class="fa fa-circle fa-stack-2x"></i>
+								<i class="fa fa-print fa-stack-1x fa-inverse"></i>
+							</span>
+							Print full schedule
+						</a>
+					</div>
             </div>
-           
          </div>
 			
 

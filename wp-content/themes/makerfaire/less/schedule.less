@@ -3,9 +3,10 @@
 		font-size: 36px;
 		color: #4A4A4A;
 		font-family: "Roboto-Light";
-		margin-bottom: 10px;
+		margin-bottom: 0px;
 	}
 	margin-left: 0px;
+	padding-left: 0px;
 }
 .left-nav-active {
 	.schedule-wrapper {
@@ -31,7 +32,7 @@
 		width: 100%;
 		display: flex;
 		flex-direction: column;
-		padding-bottom: 8px;
+		padding-bottom: 10px;
 		margin-bottom: 15px;
    	background-color: #005E9A;
    	clear: both;
@@ -51,7 +52,7 @@
 			label {
 				color: #fff;
 				margin-top: 5px;
-				margin-bottom: 16px;
+				margin-bottom: 12px;
 				margin-right: 20px;
 				font-weight: normal;
 				font-size: 14px;
@@ -135,9 +136,13 @@
       font-weight: 600;
       cursor: pointer; 
    }
+	.calendar-wrapper { padding-top: 5px; }
    .calendar {
       font-size: 14px;
       padding: 0px 15px;
+		float: left;
+		color: #fff;
+		&:first-of-type { padding-left: 10px; }
 		@media (max-width: 768px) { padding: 0px; }
       .fa-circle {
          color: #ea002a;
