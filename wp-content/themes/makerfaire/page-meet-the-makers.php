@@ -63,7 +63,7 @@ if ($noMakerText == '')
 						</ul>   
 					</div>
 					<div class="faux-checkbox">
-						<label>Hands On Activities</label>
+						<label>Hands-On Activities</label>
 						<ul class="nav nav-pills">
 							<li class="nav-item">
 								<button ng-class="{active: makerSearch.handson == 'Featured HandsOn', 'ng-hide': showHandsOn == true}" type="button" ng-click="makerSearch.handson = 'Featured HandsOn';showHandsOnAll=false;showHandsOn=true;"  class="btn btn-default" ng-hide="showHandsOn">&nbsp;</button>
