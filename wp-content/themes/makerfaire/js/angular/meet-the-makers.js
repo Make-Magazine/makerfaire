@@ -17,11 +17,13 @@ app.controller('mtmMakers', function ($scope, $http) {
    $scope.category = '';
    $scope.location = '';
    $scope.flag = '';
+	$scope.handson = '';
    $scope.tags = [];
    $scope.locations = [];
    $scope.letter = '';
    $scope.makerSearch = [];
    $scope.makerSearch.flag = '';
+	$scope.makerSearch.handson = '';
    $scope.makerSearch.categories = '';
    $scope.makerSearch.location = '';
    $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -83,6 +85,11 @@ app.controller('mtmMakers', function ($scope, $http) {
    $scope.setFlagFilter = function (flag) {
       $scope.flag = flag;      
    };
+	
+	$scope.setHandsonFilter = function (handson) {
+      $scope.handson = handson;      
+   };
+   
    
    $scope.setTagFilter = function (tag) {
       $scope.category = tag;
