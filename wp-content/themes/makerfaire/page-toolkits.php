@@ -40,7 +40,7 @@ function urlify($string) {
 				$parent = get_post($parentID); 
 				$parentSlug = $parent->post_name;
 
-            if($parentSlug != "bay-area" || $parentSlug != "new-york") {
+            if($parentSlug != "bay-area" && $parentSlug != "new-york") {
 					if($post->post_parent){
 						$children = wp_list_pages('title_li=&child_of='.$post->post_parent.'&echo=0'); 
 					}else{
