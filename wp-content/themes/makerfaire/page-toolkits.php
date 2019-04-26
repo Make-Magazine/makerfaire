@@ -36,14 +36,20 @@ function urlify($string) {
 		<div class="toolkit-tabs col-md-9 col-sm-8 col-xs-12">
 			<ul class="nav nav-tabs">
 				<?php 
-            if($post->post_parent){
-               $children = wp_list_pages('title_li=&child_of='.$post->post_parent.'&echo=0'); 
-            }else{
-               $children = wp_list_pages('title_li=&child_of='.$post->ID.'&echo=0'); 
-            }
-            if ($children) {
-               echo $children;
-            }
+				$parentID = $post->post_parent;
+				$parent = get_post($parentID); 
+				$parentSlug = $parent->post_name;
+
+            if($parentSlug != "bay-area" || $parentSlug != "new-york") {
+					if($post->post_parent){
+						$children = wp_list_pages('title_li=&child_of='.$post->post_parent.'&echo=0'); 
+					}else{
+						$children = wp_list_pages('title_li=&child_of='.$post->ID.'&echo=0'); 
+					}
+					if ($children) {
+						echo $children;
+					}
+				}
 				?>
 			</ul>
 		</div>
