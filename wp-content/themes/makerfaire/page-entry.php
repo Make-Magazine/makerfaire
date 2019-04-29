@@ -304,7 +304,7 @@ function display_entry_schedule($entry_id) {
 			$start_dt   = strtotime( $row->start_dt);
 			$end_dt     = strtotime($row->end_dt);
 			$current_start_dt = date("l, F j",$start_dt);
-			$current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
+			$current_location = $row->area.' - '.($row->nicename!=''?$row->nicename:$row->subarea);
 			
 			if($prev_start_dt==NULL){
 			  $return .= '<div class="entry-date-time col-xs-12">';
@@ -342,7 +342,7 @@ function display_entry_schedule($entry_id) {
 			  if($dateRange != "" && $dateRange != null) {
 					$return .= '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
 			  }
-			  $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
+			  $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' - '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
 			  
 			  $return .= '</div>'; // end date time location block
 		 }
