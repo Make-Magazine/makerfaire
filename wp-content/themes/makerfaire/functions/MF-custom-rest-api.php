@@ -226,7 +226,9 @@ function getMTMentries($formIDs,$faireID) {
       
       //only return Accepted entries and entries who do not have the 'no-public-view' flag set
       if($result->entry_status === 'Accepted' && !in_array('no-public-view', $flags)){
+
          $flag = (in_array('Featured Maker', $flags)?'Featured Maker':'');
+			$handson = (in_array('Featured HandsOn', $flags)?'Featured HandsOn':'');
          
          //project photo
          $projPhoto = $result->proj_photo;
@@ -261,6 +263,7 @@ function getMTMentries($formIDs,$faireID) {
                'categories' => $categories,
                'description' => $result->short_desc,
                'flag' => $flag, //only set if flag is set to 'Featured Maker'
+               'handson' => $handson, //only set if handson is set to 'Featured Handson'
                'makerList' => $makerList,
                'location' => $location
          );

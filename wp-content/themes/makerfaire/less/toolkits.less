@@ -208,11 +208,15 @@
 	}
 }
 
-.subfooter-wrapper {
+.page-leftnav > .subfooter-wrapper {
 	height: 111px;
 	background: #D0EAFC;
 	width: calc(100% + 30px);
    margin-left: -15px !important; // make sure this goes full width even if the containers don't
+	@media screen and (max-width: 982px) {
+		-webkit-transform: scaleY(1);
+		transform: scaleY(1);
+	}
 	.subfooter-links {
 		display: flex;
 		justify-content: center;

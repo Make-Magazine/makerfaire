@@ -41,14 +41,6 @@ calendarDownloadEvent = function() {
 </script>
 
 <?php 
-if (have_posts()) {
-   ?>
-   <div class="schedule-header container">
-      
-       <h1 class="page-title"><?php echo get_the_title(); ?></h1>
-		
-   </div><?php
-}
 if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new schedule page
    create_calendar($schedule_ids_trimmed);
    ?>
@@ -57,33 +49,35 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
    <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
 
    <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
-      <div class="schedule-wrapper">
+		
+		<?php 
+			if (have_posts()) {
+			?>
+			<div class="schedule-header container-fluid ng-cloak">
 
-         <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics" onClick="calendarDownloadEvent();">
-            <span class="fa-stack fa-sm">
-               <i class="fa fa-circle fa-stack-2x"></i>
-               <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
-            </span>
-            Download calendar
-         </a>
-			<a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
-			   <span class="fa-stack fa-sm">
-               <i class="fa fa-circle fa-stack-2x"></i>
-               <i class="fa fa-print fa-stack-1x fa-inverse"></i>
-            </span>
-            Print full schedule
-			</a>
+				 <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on {{schedSearch.nicename}}</span></h1>
+			</div><?php
+		} ?>
+      <div class="schedule-wrapper">
+			
+			<?php if( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+			   <div class="schedule-description">
+					<?php the_content(); ?>
+			   </div>
+         <?php endwhile; ?>			
+			<?php endif; ?>
 			
          <div ng-cloak>
 				<div class="mtm-search">
 					<div class="search-wrapper">
                   <form class="form-inline">
-                     <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or presenter name", 'makerfaire') ?></label><br/>
+                     <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or presenter name", 'makerfaire') ?></label>
                      <input ng-model="schedSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
                   </form>
 					</div>
 					<div class="filter-wrapper">
 						<div class="schedule-filters" ng-if="showSchedules">
+							<div class="sched-col-4">Filter by:</div>
 							<div class="sched-col-4">
 								<div class="dropdown">
 									<button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -161,11 +155,26 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 									</ul>
 								</div>                               
 							</div>
-							<div class="sched-col-4">Filter by:</div>
+							
 					   </div>
 					</div>
+					<div class="calendar-wrapper">
+					   <a class="calendar" title="Download Calendar" href="/wp-content/themes/makerfaire/FaireSchedule.ics" onClick="calendarDownloadEvent();">
+							<span class="fa-stack fa-sm">
+								<i class="fa fa-circle fa-stack-2x"></i>
+								<i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
+							</span>
+							Download calendar
+						</a>
+						<a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
+							<span class="fa-stack fa-sm">
+								<i class="fa fa-circle fa-stack-2x"></i>
+								<i class="fa fa-print fa-stack-1x fa-inverse"></i>
+							</span>
+							Print full schedule
+						</a>
+					</div>
             </div>
-           
          </div>
 			
 
