@@ -67,12 +67,12 @@ function generate_entries_sitemap($args) {
       $url['loc'] = site_url() . '/maker/entry/' . $entry['id'].'/';
       $url['chf'] = $chf;
       $url['pri'] = $pri;
-      $image = [];
+      /*$image = [];
       if ($entry[22]) {
          $image["src"] = [22];
          $image["title"] = $entry[151];
       }
-      $url['images'] = [$image];
+      $url['images'] = [$image];*/
       $output .= $wpseo_sitemaps->renderer->sitemap_url($url);
    }
 
