@@ -64,7 +64,7 @@ function generate_entries_sitemap($args) {
    foreach ($entries as $entry) {
       $url = array();
       $url['mod'] = $entry['date_updated'];
-      $url['loc'] = site_url() . '/maker/entry/' . $entry['id'];
+      $url['loc'] = site_url() . '/maker/entry/' . $entry['id'].'/';
       $url['chf'] = $chf;
       $url['pri'] = $pri;
       $image = [];
