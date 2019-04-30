@@ -112,7 +112,7 @@ if(isset($entry->errors)){
 	$project_short = (isset($entry['16']) ? $entry['16']: '');    // Description
 	$project_website = (isset($entry['27']) ? $entry['27']: '');  //Website
 	$project_video = (isset($entry['32']) ? $entry['32']:'');     //Video
-	$project_title = (isset($entry['151'])?(string)$entry['151']:''); //Title
+	$project_title = (isset($entry['151'])? esc_html($entry['151']):''); //Title
 	$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 }
 
@@ -172,13 +172,12 @@ if(array_intersect( array('administrator', 'editor'), $user->roles )){
 
 //decide if we should display this entry
 $validEntry = false;
-if( (is_array($entry) &&
-  isset($entry['status']) && $entry['status']=='active' &&
-  isset($entry[303]) && $entry[303]=='Accepted') || 
-  // if user is an administrator or editor they can see it all
-  $adminView == true
-){
-  $validEntry = true; //display the entry
+if(is_array($entry) && !empty($entry)){ //is this a valid entry?
+  if((isset($entry['status']) && $entry['status']==='active' &&   //is the entry not trashed
+     isset($entry[303]) && $entry[303]=='Accepted') ||            //is the entry accepted?
+     $adminView == true){                                         // OR, if user is an administrator or editor they can see it all
+      $validEntry = true; //display the entry
+  }
 }
 
 //check flags
@@ -245,6 +244,7 @@ if($formType=='Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers){
       <br/>
       <?php
       }
+      
       if($validEntry) {
         //display the normal entry public information page
         include TEMPLATEPATH.'/pages/page-entry-view.php';
@@ -304,7 +304,7 @@ function display_entry_schedule($entry_id) {
 			$start_dt   = strtotime( $row->start_dt);
 			$end_dt     = strtotime($row->end_dt);
 			$current_start_dt = date("l, F j",$start_dt);
-			$current_location = $row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea);
+			$current_location = $row->area.' - '.($row->nicename!=''?$row->nicename:$row->subarea);
 			
 			if($prev_start_dt==NULL){
 			  $return .= '<div class="entry-date-time col-xs-12">';
@@ -342,7 +342,7 @@ function display_entry_schedule($entry_id) {
 			  if($dateRange != "" && $dateRange != null) {
 					$return .= '<h5>'.natural_language_join($dateRange).': '.date("F j",$faire_start).'-' . date("j",$faire_end).'</h5>';
 			  }
-			  $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' in '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
+			  $return .= '<small class="text-muted">LOCATION:</small> '.$row->area.' - '.($row->nicename!=''?$row->nicename:$row->subarea).'</small>';
 			  
 			  $return .= '</div>'; // end date time location block
 		 }
@@ -378,7 +378,7 @@ function display_group($entryID) {
 			$link_entryID = ($type=='parent'?$row->childID:$row->parentID);
 			$entry = GFAPI::get_entry($link_entryID);
 			//Title
-			$project_title = (string)$entry['151'];
+			$project_title = esc_html($entry['151']);
 			$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 			$return .= '<li>Part of: <a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
 		 }
@@ -408,7 +408,7 @@ function display_groupEntries($entryID){
 			$link_entryID = ($type=='parent'?$row->childID:$row->parentID);
 			$entry = GFAPI::get_entry($link_entryID);
 			//Title
-			$project_title = (string)$entry['151'];
+			$project_title = esc_html($entry['151']);
 			$project_title  = preg_replace('/\v+|\\\[rn]/','<br/>',$project_title);
 			$return .= '<li><a href="/maker/entry/'.$link_entryID.'">'.$project_title.'</a></li>';
 		 }
