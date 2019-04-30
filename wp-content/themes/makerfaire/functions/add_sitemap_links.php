@@ -15,17 +15,22 @@ $search_criteria['field_filters'][] = array('key' => '303', 'value' => 'Accepted
 
 // Add custom index
 function add_entries_sitemap_to_index($smp) {
-   global $form_types;
+   global $form_types; global $search_criteria;
    
    //generate a sitemap for each exhibit form
    $forms = GFAPI::get_forms(true, false);
    
    foreach ($forms as $form) {
-      if (in_array($form['form_type'],$form_types)) {
-         $formId = $form['fields'][0]['formId'];         
-         $smp .= '<sitemap>' . PHP_EOL;
-         $smp .= '<loc>' . site_url() . "/form-$formId-entries-sitemap.xml</loc>" . PHP_EOL;   
-         $smp .= '</sitemap>' . PHP_EOL;
+      if (in_array($form['form_type'],$form_types)) {         
+         
+         $formId = $form['fields'][0]['formId'];     
+         //see if there are any entries that match search criteria
+         $entries = GFAPI::get_entries((int)$formId, $search_criteria, null, array('offset' => 0, 'page_size' => 1));
+         if(!empty($entries)){
+            $smp .= '<sitemap>' . PHP_EOL;
+            $smp .= '<loc>' . site_url() . "/form-$formId-entries-sitemap.xml</loc>" . PHP_EOL;   
+            $smp .= '</sitemap>' . PHP_EOL;
+         }
       }
    }
    
