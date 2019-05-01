@@ -31,10 +31,13 @@ $scg->activate($active_shortcode);
 			<a href="<?php echo esc_url(add_query_arg ( 'code', 'easy-total-followers', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[easy-total-followers]<br/><span class="essb-shortcode-comment">Display total followers counter (as number)</span></a>
 			<a href="<?php echo esc_url(add_query_arg ( 'code', 'easy-popular-posts', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[easy-popular-posts]<br/><span class="essb-shortcode-comment">Display popular posts</span></a>
 			<a href="<?php echo esc_url(add_query_arg ( 'code', 'easy-subscribe', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[easy-subscribe]<br/><span class="essb-shortcode-comment">Display build in subscribe form</span></a>
-			<a href="<?php echo esc_url(add_query_arg ( 'code', 'easy-tweet', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[easy-tweet]<br/><span class="essb-shortcode-comment">Sharable Quotes (a.k.a. Click to Tweet)</span></a>
+			<a href="<?php echo esc_url(add_query_arg ( 'code', 'sharable-quote', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[sharable-quote]<br/><span class="essb-shortcode-comment">Sharable Quotes (a.k.a. Click to Tweet)</span></a>
 			<a href="<?php echo esc_url(add_query_arg ( 'code', 'easy-click2chat', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[easy-click2chat]<br/><span class="essb-shortcode-comment">Content Click 2 Chat Button</span></a>
-			<a href="<?php echo esc_url(add_query_arg ( 'code', 'easy-social-share-cta', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[easy-social-share-cta]<br/><span class="essb-shortcode-comment">Share CTA Button</span></a>
+			<a href="<?php echo esc_url(add_query_arg ( 'code', 'share-action-button', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[share-action-button]<br/><span class="essb-shortcode-comment">Share Call-to-Action Button</span></a>
 			
+			<a href="<?php echo esc_url(add_query_arg ( 'code', 'social-share-display', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[social-share-display]<br/><span class="essb-shortcode-comment">Show custom share buttons display/position</span></a>
+			<a href="<?php echo esc_url(add_query_arg ( 'code', 'pinterest-image', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[pinterest-image]<br/><span class="essb-shortcode-comment">Add image with Pin button</span></a>
+			<a href="<?php echo esc_url(add_query_arg ( 'code', 'pinterest-gallery', 'admin.php?page=essb_redirect_shortcode&tab=shortcode' ));?>" class="essb-shortcode essb-shortcode-fixed">[pinterest-gallery]<br/><span class="essb-shortcode-comment">Add image gallery with Pin button over images</span></a>
 		</div>
 
 		<?php if ($active_shortcode == '') { ?>
@@ -89,9 +92,6 @@ $scg->activate($active_shortcode);
 	</div>
 			<div class="essb-options-sidebar">
 				<ul class="essb-options-group-menu">
-					<?php 
-					$scg->renderNavigation();
-					?>
 				</ul>
 			</div>
 			<div class="essb-options-container">

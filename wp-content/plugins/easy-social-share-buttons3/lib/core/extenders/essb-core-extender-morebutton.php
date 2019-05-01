@@ -7,7 +7,6 @@ if (!function_exists('essb_generate_morebutton_code')) {
 		
 		$share_bottom_networks = $social_networks;
 		
-		//print "position = ".$position. ", more button = ".$intance_morebutton_func;
 		$user_set_morebutton_func = $button_style['more_button_func'];
 		
 		$user_set_style_ofpop = essb_option_value('more_button_popstyle');
@@ -89,19 +88,6 @@ if (!function_exists('essb_generate_morebutton_code')) {
 				$more_social_networks = essb_core_helper_networks_after_more($more_social_networks);
 			}
 			
-		
-			
-			//print_r($more_social_networks_order);
-			//print_r($share_bottom_networks);
-		
-			
-			// fix for missing print code
-			/*if (in_array('print', $more_social_networks) && !essb_resource_builder()->is_activated('print')) {
-				//essb_resource_builder()->add_js(ESSBResourceBuilderSnippets::js_build_window_print_code(), true, 'essb-printing-code');
-				essb_depend_load_function('essb_rs_js_build_window_print_code', 'lib/core/resource-snippets/essb_rs_js_build_window_print_code.php');				
-				essb_resource_builder()->activate_resource('print');
-			}*/
-			
 			if (in_array('mail', $more_social_networks)) {
 				essb_resource_builder()->activate_resource('mail');
 				
@@ -167,7 +153,7 @@ if (!function_exists('essb_generate_morebutton_code')) {
 
 				$user_message_inpop .= '<div class="essb-morepopup-modern-message">';
 				$user_message_inpop .= '<div class="essb-morepopup-modern-title">'.$sharing_title.'</div>';
-				$user_message_inpop .= '<div class="essb-morepopup-modern-link"><a href="'.$sharing_url.'" target="_blank">'.$sharing_url.'</a></div>';
+				$user_message_inpop .= '<div class="essb-morepopup-modern-link"><a href="'.esc_url($sharing_url).'" target="_blank">'.$sharing_url.'</a></div>';
 				$user_message_inpop .= '</div>';
 			}
 			
@@ -208,9 +194,6 @@ if (!function_exists('essb_generate_morebutton_code')) {
 					
 				$code .= ESSBNetworks_Subscribe::draw_subscribe_form('sidebar', $more_salt, 'sharebuttons-more');
 			}
-		
-			///essb_resource_builder()->add_js(essb_print_mailer_code($post_share_details['mail_subject'], $post_share_details['mail_body'],
-			//		$more_salt, $post_share_details["post_id"], $position), true, 'essb-mailform-'.$more_salt);
 		
 		}
 		

@@ -1,83 +1,222 @@
-<?php
+<?php 
 
-$tabs = array ("essb-welcome" => "What's New", "essb-promote" => "Promote & Earn Money" );
-$active_tab = isset ( $_REQUEST ['tab'] ) ? $_REQUEST ['tab'] : "essb-welcome";
-$slug = "essb_about";
+/**
+ * The about screen that appears from the menu of the plugin. The screen also holds
+ * the system status information, how to get help and more
+ * 
+ * @since 5.8.5
+ * @package EasySocialShareButtons
+ */
 
+$tabs = array( 'about' => '<i class="ti-sharethis"></i> About', 
+		'help' => '<i class="fa fa-question"></i> Need Help?',
+		'activate' => '<i class="ti-lock"></i> Activate',
+		'status' => '<i class="ti-receipt"></i> System Status'
+		);
+$active_tab = isset($_REQUEST['about_tab']) ? $_REQUEST['about_tab'] : 'about';
 
+$current_tab = (empty ( $_GET ['tab'] )) ? $tab_1 : sanitize_text_field ( urldecode ( $_GET ['tab'] ) );
+$active_settings_page = isset ( $_REQUEST ['page'] ) ? $_REQUEST ['page'] : '';
+if (strpos ( $active_settings_page, 'essb_redirect_' ) !== false) {
+	$options_page = str_replace ( 'essb_redirect_', '', $active_settings_page );
+	if ($options_page != '') {
+		$current_tab = $options_page;
+	}
+}
+
+if ($current_tab == 'update') {
+	$active_tab = 'activate';
+}
+if ($current_tab == 'status') {
+	$active_tab = 'status';
+}
+
+// setting up the default tab if the selected is not existing in the list
+if (!isset($tabs[$active_tab])) { $active_tab = 'about'; }
 
 ?>
-<!--  sweet alerts -->
-<script src="<?php echo ESSB3_PLUGIN_URL?>/assets/admin/sweetalert.min.js"></script>
-<link rel="stylesheet" type="text/css" href="<?php echo ESSB3_PLUGIN_URL?>/assets/admin/sweetalert.css">
 
+<!-- Custom CSS styles that formats that about page -->
 <style type="text/css">
-
-/** new admin styles **/
 .essb-wrap-about .essb-settings-panel-navigation { display: none; }
 .essb-wrap-about .essb-settings-panel-options { width: 100%; }
 .essb-wrap-about .essb-settings-panel { background-color: transparent; }
 
-#mce-EMAIL { background-color: #d9d9d9; border: 0px; padding: 8px !important; }
-
-.essb-tl-right { text-align: right; }
-
-.essb-version {
-	background: rgba(0, 0, 0, 0.3);
-	display: block;
-	position: absolute;
-	padding: 10px 0px;
-	width: 100%;
-	bottom: 0;
-	left: 0;
+.essb-btn-blue2 {
+	background: #2b4b80;
 }
 
-.about-wrap { max-width: 800px; margin: 0 auto; }
-.about-wrap .wp-badge { right: 0px; }
-
-.essb-welcome { margin-top: 30px; }
-
-.about-wrap h1 { font-size: 32px; margin-top: 40px; letter-spacing: -0.5px; }
-.about-wrap img { border: 0px; }
-.about-wrap .about-text { margin: 1em 180px 1em 0; font-size: 15px; }
-.essb-dash-widget 				{	background:#fff; width:100%;  margin-bottom:30px;box-sizing: border-box;-moz-box-sizing: border-box; display: block; position: relative;}
-.essb-dash-shadow { box-shadow: 0 0 35px rgba(0,0,0,0.1); -webkit-box-shadow: 0 0 35px rgba(0,0,0,0.1); }
-.essb-dash-doublewidget 		 	{	width:980px;}
-.essb-dash-fullwidget 		 	{	width:100%; max-width: 1480px; }
-
-.essb-dash-title-wrap 		 	{	line-height:63px; border-bottom:1px solid #e5e5e5;  border-bottom:1px solid rgba(0,0,0,0.1); padding:0px 20px;}
-.essb-dash-widget-inner 			{	padding:30px 20px 20px;position: relative;width:100%;overflow: hidden; font-size:13px; font-weight: 400; line-height: 17px; position: relative;box-sizing: border-box;-moz-box-sizing: border-box; color:#444;}
-.essb-dash-doublewidget .essb-dash-widget-inner { width:488px; display: inline-block;}
-.essb-dash-bottom-wrapper	{	position: absolute;bottom:20px;left:20px;width:100%;}
-.essb-dash-title-button 	{	font-weight:600;border-radius: 4px; padding:0px 15px; line-height: 32px; color:#fff; font-size:13px; position: absolute;right:20px;top:16px;}
-.essb-dash-title 			{	font-size:19px; line-height:32px; vertical-align: middle; display: inline-block;font-weight:600;position: relative;z-index: 1;}
-
-.essb-dash-button 	{	font-weight:600;border-radius: 4px; padding:0px 15px; line-height: 32px; color:#fff; font-size:13px; display: inline-block;}
-
-.essb-dash-button-small { padding: 0px 15px; line-height: 26px;  }
-
-.essb-dash-widget-nomargin { margin: 0px; padding: 0px; }
-.essb-dash-widget-nomargin img { width: 300px; margin: 0px !important; }
-.essb-dash-button, .essb-dash-button:hover, .essb-dash-button:visited, .essb-dash-button:focus {
+.intro-header { 
+	background-color: #2b4b80;
+	padding: 2% 0 0 0;
 	color: #fff;
-	text-decoration: none;
-	outline: none;
+	background: #2b4b80 url(<?php echo ESSB3_PLUGIN_URL;?>/assets/images/about-pattern.svg);
+	background-size: 350px;
+}
+
+.essb-page-logo {
+	background: transparent;
+	background-size: 64px;
+	background-repeat: no-repeat;
 	box-shadow: none;
-	cursor: pointer;
+	padding-top: 40px;
+	float: right;
+	background-position: top;
 }
 
-.essb-dash-grey { background: #D4D4D4; }
+.essb-version { display: none; }
 
-.essb-dash-blue { background: #3498db; }
-.essb-dash-blue:hover { background: #2c8ac8; }
-
-.essb-dash-widget-scroll {
-	overflow-y: scroll;
+.intro {
+	padding: 0 50px;
+	color: #fff;
+	margin-bottom: 0;
+	display: inline-block;
+	width: calc(100% - 100px);
 }
 
-.essb-c-red {
-	color: #e74c3c;
+.intro h3 { 
+	color: #fff;
+	display: inline-block;
+	font-size: 30px;
+	font-weight: 300;
+	letter-spacing: -0.04em;
 }
+
+@media screen and (max-width: 1140px) {
+	.intro h3 { font-size: 24px; }
+}
+
+@media screen and (max-width: 970px) {
+	.intro h3 { font-size: 21px; }
+}
+	
+.tab-list {
+	padding: 0 50px;
+	color: #fff;
+	margin: 0;
+	display: inline-block;
+	width: calc(100% - 100px);
+}
+	
+.tab-list li {
+	display: inline-block;
+	margin: 0 0 0 0;
+}
+
+.tab-list li:last-child {
+	margin-right: 0;
+	padding-right: 0;
+}
+
+.tab-list li a {
+	font-size: 16px;
+	text-decoration: none;
+	padding: 20px 25px;
+	display: inline-block;
+	color: #fff;
+}	
+
+.tab-list li.current a {
+	background: #fff;
+	outline: none;
+	border: none;
+	box-shadow: none;
+	border-top-right-radius: 3px;
+	border-top-left-radius: 3px;
+	color: #2b4b80;
+}
+
+.tab-list li a i {
+	font-size: 16px;
+	margin-right: 5px;
+}
+
+.panels {
+	background: #fff;
+	padding: 25px 50px;
+	font-size: 16px;
+	line-height: 1.5em;
+}	
+
+.panels p {
+	font-size: 16px;
+	line-height: 1.5em;
+}
+
+.panels .panel {
+	display: none; 
+}
+
+.panels .panel h2, .panels .footer h2  {
+	font-size: 28px;
+	font-weight: 400;
+	line-height: 1.3em;
+	text-transform: capitalize;
+}
+
+.panels .panel.active { display: block; }
+.panels .footer { margin-top: 4%; }
+	
+/* Status */
+ mark.error {
+	color: #a00;
+	background: 0;
+ 	font-weight: bold;
+}
+
+ mark.yes {
+	color: #7ad03a;
+	background: 0;
+ 	font-weight: bold;
+}
+
+mark.message {
+	background: 0;
+	font-weight: bold;
+}
+
+mark.warning {
+	background: 0;
+	font-weight: bold;
+	color: #FD5B03;
+}
+
+.panels .sub4 {
+	font-weight: 600;
+	width: 100%;
+	padding: 15px 20px;
+	text-transform: capitalize;
+	color: #fff;
+	background-color: #2b4b80;
+}
+
+.panels .sub4 div::before {
+	font-family: 'FontAwesome';
+	  content: "\f0c9";
+	font-weight: normal;
+	margin-right: 10px;
+}
+
+.left-col {
+	display: inline-block;
+	width: 49%;
+	padding-right: 1%;
+	vertical-align: top;
+}
+
+.right-col {
+	display: inline-block;
+	width: 48%;
+	padding-left: 1%;
+	vertical-align: top;
+}
+	
+.essb-btn {
+	font-size: 14px;
+	text-transform: capitalize;
+	padding: 15px 20px;
+}
+
 .essb-bg-red {
 	background: #e74c3c;
 }
@@ -86,154 +225,324 @@ a.essb-bg-red:hover {
 	background: #d62c1a;
 }
 
-.essb-c-green {
-	color: #27ae60;
-}
 
 .essb-bg-green {
 	background: #27ae60;
 }
 
-.essb-feature-icon, .essb-feature-text {
-	display: inline-block;
-}
+.essb-c-green { color: #27ae60; }
+	
+.essb-btn i:nth-child(1) { margin-left: 5px; }
 
-.essb-feature-text b, .essb-feature-text span {
-	display: block;
-
-}
-
-.essb-feature-icon i {
-	font-size: 30px;
-	margin-right: 10px;
-}
-
+.essb-dash-title-wrap { text-align: center; }
+	
 .essb-dash-feature {
-	margin-bottom: 15px;
-}
-
-.essb-dash-feature.essb-dash-feature-extension {
-	margin-bottom: 5px;
-}
-
-.essb-free { background-color: #27AE60; color: #fff; margin-left: 5px; border-radius: 4px; padding: 2px 4px; font-size: 10px; font-weight: bold; }
-.essb-paid { background-color: #D33257; color: #fff; margin-left: 5px; border-radius: 4px; padding: 2px 4px; font-size: 10px; font-weight: bold; }
-.essb-fnew { background-color: #1abc9c; color: #fff; margin-left: 5px; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: bold; }
-.essb-fupdate { background-color: #2980b9; color: #fff; margin-left: 5px; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: bold; }
-.essb-ffix { background-color: #7f8c8d; color: #fff; margin-left: 5px; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: bold; }
-
-.essb-fnew, .essb-fupdate, .essb-ffix {
-	text-transform: uppercase;
-	margin-right: 5px;
-}
-
-.essb-free, .essb-paid {
-	padding: 2px 6px;
-	float: right;
-}
-
-.essb-bg-orange {
-	background: #FF7416;
-}
-
-.essb-dash-featureimage {
-	display: inline-block;
-	width: 300px;
-	margin-right: 30px;
-}
-
-.essb-dash-featurecol {
-	width: 450px;
-	display: inline-block;
-	margin: 0px 20px;
+    width: calc(31% - 90px);
+    display: inline-block;
+    margin: 1%;
+    background: #fff;
+    padding: 45px;
+    box-shadow: 0 0 20px 0 rgba(0,0,0,0.07);
 	vertical-align: top;
+	min-height: 180px;
+}
+	
+@media screen and (max-width: 1200px) {
+	.essb-dash-feature { width: calc(47% - 90px); }
+}
+	
+.essb-dash-feature .essb-feature-icon, .essb-feature-icon {
+    text-align: center;
+    font-size: 48px;
+    margin-bottom: 30px;
+    vertical-align: top;
+    color:#3c8fc6;
 }
 
-.essb-dash-featurecol ul, .essb-dash-featurecol li {
-	list-style: none;
-	font-weight: 600;
-}
+.essb-dash-feature .essb-feature-text, .essb-feature-text { text-align: center; }
 
-.essb-page-welcome .essb-welcome-button-container {
-	display: inline-block;
-	margin-right: 10px;
-}
-
-.essb-welcome-button-container .essb-btn {
-	font-size: 14px;
-	text-transform: capitalize;
-	font-weight: 600;
-	padding: 15px 20px;
-	letter-spacing: 0px;
-}
-
-.essb-page-welcome .essb-welcome-button-container.essb-welcome-button-container-google {
-	position: relative;
-	top: 8px;
-}
-
-.essb-welcome-button-container-twitter iframe { margin-bottom: -10px; }
-
-.essb-dash-activate .essb-dash-feature {
-	width: 49%;
-	display: inline-block;;
-	vertical-align: top;
-	margin-bottom: 35px;
-}
-
-.essb-dash-activate .essb-feature-icon, .essb-dash-activate .essb-feature-text { display: block; }
-
-.essb-dash-support .essb-dash-feature-extension {
-	width: calc(33% - 20px);
-	padding: 20px;
-	text-align: center;
-	padding: 10px;
-	display: inline-block;
-}
-
-.essb-dash-support .essb-dash-feature-extension  .essb-feature-icon i {
+.essb-dash-feature .essb-feature-text b, .essb-feature-text b {
 	display: block;
-	margin-right: 0;
-	margin-bottom: 20px;
+	font-size: 18px;
+    margin-bottom: 5px;
 }
 
-.essb-dash-support .essb-dash-feature-extension .essb-tl-right {
-	margin-top: 20px;
-	text-align: center;
+.onethird {
+	width: calc(31% - 90px);
+    display: inline-block;
+    margin: 1%;
+    background: #fff;
+    padding: 45px;
+    vertical-align: top;
+}
+@media screen and (max-width:1100px) {
+  .onethird { padding: 30px; }
+
 }
 
-.essb-dash-button-small { padding: 5px 15px; }
+@media screen and (max-width:1200px) {
+  .panel-activate .left-col, .panel-activate .right-col {
+  	width: auto;
+  	display: block;
+  }
+}	
+	
+@media screen and (max-width:1000px) {
+   .onethird { display: block; width: auto; }
+}
 
+.system-status td {
+	font-size: 14px;
+	padding: 8px 4px;
+}
+
+.faq .essb-portlet { border: 0px; border-bottom: 1px solid rgba(0,0,0,0.2); box-shadow: none; -webkit-box-shadow: none; }
+.faq .essb-portlet .essb-portlet-heading h3 { font-size: 15px; text-transform: none; }
+
+.system-status td .label {
+	font-size: 13px;
+}
 </style>
 
-<div class="wrap essb-page-welcome about-wrap">
-	<h1><?php echo sprintf( __( 'Welcome to Easy Social Share Buttons for WordPress %s', 'essb' ), preg_replace( '/^(\d+)(\.\d+)?(\.\d)?/', '$1$2', ESSB3_VERSION ) ) ?></h1>
+<style type="text/css">
+	.essb-options-header { padding-top: 20px; }
+	.essb-options-title { text-align: center; }
+	.essb-activation-wrap {
+		max-width: 900px;
+		width: 100%;	
+		margin: 0 auto;		
+	}
+	
+	.essb-activate-welcome {
+		padding: 15px;
+		background-color: #f5f6f7;
+		font-size: 13px;
+		line-height: 20px;	
+		border-radius: 4px;
+		margin-top: 30px;
+	}
+	
+	.essb-button-backtotop { 
+		display: none !important;	
+	}
+	
+	.essb-activate-localhost {
+		font-size: 14px;
+		font-style: italic;
+	}
+	
+	.color-notactivated {
+		color: #e74c3c;
+	}
+	
+	.background-notactivated {
+		background-color: #e74c3c;	
+	}
+	
+	.color-activated {
+		color: #27ae60;	
+	}
+	
+	.essb-options-hint-addonhint i {
+		color: #27ae60;	
+	}
+	
+	.background-activated {
+		background-color: #27ae60;
+	}
+	
+	.essb-activation-form {
+		margin-top: 15px;	
 
-	<div class="about-text">
-		<?php _e( 'Thank you for choosing the best social sharing plugin for WordPress. You are about to use most powerful social media plugin for WordPress ever - get ready to increase your social shares, followers and mail list subscribers. We hope you enjoy it!', 'essb' )?>
-	</div>
-	<div class="wp-badge essb-page-logo essb-logo">
-		<span class="essb-version"><?php echo sprintf( __( 'Version %s', 'essb' ), ESSB3_VERSION )?></span>
-	</div>
-	<div class="essb-page-actions">
+	}
+	
+	.essb-activation-form-title {
+		position: relative;
+}
+	
+	.essb-activation-title {
+		font-size: 19px;
+		font-weight: 600;
+		line-height: 32px;
+	}
+	
+	.essb-activation-state {
+		font-weight: 600;
+		border-radius: 4px;
+		padding: 0px 15px;
+		line-height: 32px;
+		color: #fff;
+		font-size: 13px;
+		position: absolute;
+		right: 0px;
+	}
+	
+	.essb-activation-title, .essb-activation-state {
+		display: inline-block;
+	}
+		
+	.essb-activation-form-code {
+		clear: both;
+		margin-top: 15px;
+	}
+	
+	.essb-activation-buttons {
+		clear: both;
+		position: relative;
+		margin-top: 15px;
+}
+	
+	.essb-purchase-code {
+		box-shadow: none !important;
+		background-color: #eaeaea !important;
+		border-radius: 4px !important;
+		padding: 15px;
+		font-size: 15px;
+		font-weight: 600;
+		color: #303133 !important;
+		border: 0px !important;	
+		width: 100%;
+	}
+	
+	.essb-activation-button {
+		font-weight: 600;
+		border-radius: 4px;
+		padding: 0px 25px;
+		line-height: 40px;
+		color: #fff;
+		font-size: 14px;
+		display: inline-block;
+		text-decoration: none;
+		cursor: pointer;
+	}
+	
+	.essb-activation-button-default {
+		background-color: #3498db;
+	}
+	.essb-activation-button-default:hover, .essb-activation-button-default:active, .essb-activation-button-default:focus {
+		background-color: #2c8ac8;
+		color: #fff;
+		text-decoration: none !important;
+	}
 
+		.essb-activation-button-color1 {
+		background-color: #BB3658;
+	}
+	
+	.essb-activation-button-color2 {
+		background-color: #FD5B03;
+}
+	
+	.essb-activation-button-color1:hover, .essb-activation-button-color1:active, .essb-activation-button-color1:focus {
+		background-color: #7E3661;
+		color: #fff;
+		text-decoration: none !important;
+	}
 
-		<div class="essb-welcome-button-container">
-		<a href="<?php echo admin_url('admin.php?page=essb_options');?>" class="essb-btn essb-btn-blue" style="margin-right: 10px;">Configure Plugin <i class="fa fa-cog"></i></a>
-		<a href="http://codecanyon.net/downloads" target="_blank" class="essb-btn essb-btn-orange" style="margin-right: 100px;">Rate us <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></a>
+		.essb-activation-button-color2:hover, .essb-activation-button-color2:active, .essb-activation-button-color2:focus {
+		background-color: #F04903;
+		color: #fff;
+		text-decoration: none !important;
+	}
+	
+	
+	.essb-button-right {
+		float: right;
+}
+	
+.essb-purchase-code::-webkit-input-placeholder {
+   color: #aaa;
+}
+
+.essb-purchase-code:-moz-placeholder { /* Firefox 18- */
+   color: #aaa;  
+}
+
+.essb-purchase-code::-moz-placeholder {  /* Firefox 19+ */
+   color: #aaa;  
+}
+
+.essb-purchase-code:-ms-input-placeholder {  
+   color: #aaa;  
+}
+.essb-activation-form-header strong {
+	font-size: 15px;
+}
+.essb-activation-form-header { margin-bottom: 5px; }
+#essb-manual-registration { display: none; }
+</style>
+
+<!--  notifications -->
+<script src="<?php echo ESSB3_PLUGIN_URL?>/assets/admin/jquery.toast.js"></script> 
+<link rel="stylesheet" type="text/css" href="<?php echo ESSB3_PLUGIN_URL?>/assets/admin/jquery.toast.css">
+<!-- notifications -->
+
+<div class="intro-header">
+	<div class="intro">
+		<h3>Welcome to <strong>Easy Social Share Buttons for WordPress</strong></h3>
+		<div class="wp-badge essb-page-logo essb-logo">
+			<span class="essb-version"><?php echo sprintf( __( 'Version %s', 'essb' ), ESSB3_VERSION )?></span>
 		</div>
 	</div>
+	<ul class="tab-list">
+	<?php 
+	foreach ($tabs as $key => $title) {
+		?>
+		<li data-tab="<?php echo $key; ?>" <?php echo ($key == $active_tab ? 'class="current"' : ''); ?>><a href="#"><?php echo $title; ?></a>
+		<?php 
+	}
+	?>
+	</ul>
+</div>
+<div class="panels">
+	<!-- about -->
+	<div class="panel panel-about<?php echo ($active_tab == 'about' ? ' active' : ''); ?>">
+		<div class="left-col" style="padding-top: 1%;">
+			<h2><?php echo sprintf( __( 'Welcome to Easy Social Share Buttons for WordPress %s', 'essb' ), preg_replace( '/^(\d+)(\.\d+)?(\.\d)?/', '$1$2', ESSB3_VERSION ) ) ?></h1>
 
-	<!-- new welcome screen -->
-	<div class="essb-welcome">
+			<div class="about-text">
+				<?php _e( 'Thank you for choosing the best social sharing plugin for WordPress. You are about to use most powerful social media plugin for WordPress ever - get ready to increase your social shares, followers and mail list subscribers. We hope you enjoy it!', 'essb' )?>
+			</div>
+			
+			<div class="essb-welcome-button-container" style="margin-top: 2%;">
+				<a href="<?php echo admin_url('admin.php?page=essb_options');?>" class="essb-btn essb-btn-blue" style="margin-right: 10px;margin-top: 10px;">Configure Plugin <i class="fa fa-cog"></i></a>
+				<a href="https://codecanyon.net/downloads" target="_blank" class="essb-btn essb-btn-orange" style="margin-right: 10px;margin-top: 10px;">Rate us <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></a>
+				<a href="https://socialsharingplugin.com/version-changes/" target="_blank" class="essb-btn essb-btn-green" style="margin-right: 10px;margin-top: 10px;">What's New In Version<i class="fa fa-bullhorn"></i></a>
+				</div>
+		</div>
+		<div class="right-col" style="text-align: center;">
+			<img src="<?php echo ESSB3_PLUGIN_URL;?>/assets/images/welcome-svg.svg" style="max-width: 350px;" />
+		</div>
 
 		<!-- widget activation -->
-		<div class="essb-dash-widget essb-dash-shadow essb-dash-activate">
+		<div class="essb-dash-widget essb-dash-shadow essb-dash-activate" style="background:#f5f4f6; padding: 3%; margin-top: 3%;">
 			<div class="essb-dash-title-wrap">
-				<div class="essb-dash-title <?php if (ESSBActivationManager::isActivated()) { echo "essb-c-green";} else { echo "essb-c-red"; } ?>"><i class="ti-key" style="margin-right: 10px; font-size: 24px; float: left; line-height: 32px;"></i>Plugin Activation</div>
-				<a href="<?php echo admin_url('admin.php?page=essb_redirect_update');?>" class="essb-dash-title-button essb-dash-button <?php if (ESSBActivationManager::isActivated()) { echo "essb-bg-green";} else { echo "essb-bg-red"; } ?>">
+				<div style="margin-bottom: 10px;" class="essb-dash-title"><h2 style="margin-bottom: 0;">Access to Premium Plugin Functions</h2></div>
+				<?php 
+				if (ESSBActivationManager::isActivated()) {
+					?>
+					<p>Thank you for your purchase. You have full access to all premium plugin features.</p>
+					<?php 
+				}
+				else {
+					if (ESSBActivationManager::isThemeIntegrated()) {
+						?>
+						<p>You are using a theme integrated version of plugin (bundled inside theme). The premium features are available for direct customers only. If you need access to all those features you can <a href="http://go.appscreo.com/essb" target="_blank">purchase a direct plugin license</a>.</p>
+						<?php 						
+					}
+					else {
+						?>
+						<p>The premium features are available for direct customers only. To activate those functions you need to register plugin using the purchase code you receive with your order.</p>
+						<?php 
+					}
+				}
+				?>
+				<a style="margin-bottom: 1%;" href="<?php echo admin_url('admin.php?page=essb_redirect_update');?>" class="essb-btn <?php if (ESSBActivationManager::isActivated()) { echo "essb-bg-green";} else { echo "essb-bg-red"; } ?>">
 					<i class="fa <?php if (ESSBActivationManager::isActivated()) { echo "fa-check";} else { echo "fa-ban"; } ?>"></i>
-					<?php if (ESSBActivationManager::isActivated()) { echo "Activated";} else { echo "Activate Plugin to Unlock"; } ?>
+					<?php 
+						if (ESSBActivationManager::isActivated()) { echo __("Activated", 'essb');} 
+						else if (ESSBActivationManager::isThemeIntegrated()) { echo "Activate Plugin With Purchase Code To Transform The License"; }
+						else { echo "Activate Plugin to Unlock"; } ?>
 				</a>
 
 			</div>
@@ -252,8 +561,8 @@ a.essb-bg-red:hover {
 						<i class="ti-ruler-pencil"></i>
 					</div>
 					<div class="essb-feature-text">
-						<b>Ready Made Styles</b>
-						<span>One click pre made styles to quick start easy</span>
+						<b>Demo Styles</b>
+						<span>One click pre-made styles to quick start with plugin usage</span>
 					</div>
 				</div>
 				<div class="essb-dash-feature">
@@ -267,565 +576,634 @@ a.essb-bg-red:hover {
 				</div>
 				<div class="essb-dash-feature">
 					<div class="essb-feature-icon">
-						<i class="fa fa-language"></i>
-					</div>
-					<div class="essb-feature-text">
-						<b>Multilangual Support</b>
-						<span>Use WMPL or Polylang to extend sharing of your multilangual site</span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- end: widget activate -->
-
-		<div class="essb-dash-widget essb-dash-shadow">
-			<div class="essb-dash-title-wrap">
-				<div class="essb-dash-title">What's new in version <?php echo ESSB3_VERSION; ?></div>
-				<a href="http://socialsharingplugin.com/version-changes/" target="_blank" class="essb-dash-title-button essb-dash-button essb-dash-blue">
-					Read the full changelog
-				</a>
-			</div>
-			<div class="essb-dash-widget-inner essb-dash-widget-nomargin">
-
-			</div>
-		</div>
-
-		<!-- widget support -->
-		<div class="essb-dash-widget essb-dash-shadow essb-dash-support">
-			<div class="essb-dash-title-wrap">
-				<div class="essb-dash-title"><i class="fa fa-life-ring" style="margin-right: 10px; font-size: 24px; float: left; line-height: 32px;"></i>Product Support</div>
-								<?php
-
-				if (!ESSBActivationManager::isActivated()) {
-					echo '<div class="essb-dash-title-button essb-dash-button essb-dash-grey">Activate plugin to unlock support</div>';
-				}
-
-				?>
-
-			</div>
-			<div class="essb-dash-widget-inner">
-				<div class="essb-dash-feature essb-dash-feature-extension">
-					<div class="essb-feature-icon">
-						<i class="ti-info-alt"></i>
-					</div>
-					<div class="essb-feature-text">
-						<b>Useful tips</b>
-						<span>Read our blog for useful tips on how to work with plugin</span>
-						<div class="essb-dash-feature essb-tl-right" style="margin-bottom: 0px;">
-							<div class="essb-feature-text">
-								<a href="http://appscreo.com/?utm_source=about&utm_campaign=panel&utm_medium=button" class="essb-dash-button essb-dash-blue essb-dash-button-small" target="_blank">Visit our blog</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="essb-dash-feature essb-dash-feature-extension">
-					<div class="essb-feature-icon">
 						<i class="ti-help-alt"></i>
 					</div>
 					<div class="essb-feature-text">
-						<b>Online Support</b>
-						<span>Visit our online support system for dedicated help with plugin work</span>
-						<div class="essb-dash-feature essb-tl-right"  style="margin-bottom: 0px;">
-							<div class="essb-feature-text">
-								<a href="http://support.creoworx.com/?utm_source=about&utm_campaign=panel&utm_medium=button" class="essb-dash-button essb-dash-blue essb-dash-button-small" target="_blank">Go to support system</a>
-							</div>
-						</div>
+						<b>Premium Support</b>
+						<span>Receive premium assistance from our support team for everything you need to know about plugin work.</span>
+					</div>
+				</div>				
+			</div>
+		</div>
+		<!-- end: widget activate -->
+		
+	</div>
+	<!-- status -->
+	<div class="panel panel-status<?php echo ($active_tab == 'status' ? ' active' : ''); ?>">
+		<a href="<?php echo admin_url('admin.php?page=essb_options');?>" class="essb-btn essb-btn-blue2" style="margin-right: 10px; float: right;">Return to Plugin Settings<i class="fa fa-cog"></i></a>
+		<h2><?php _e('System Status', 'essb'); ?></h2>
+		<?php include_once(ESSB3_PLUGIN_ROOT.'lib/admin/helpers/system-status.php'); ?>
+	</div>
+	<!-- help -->
+	<div class="panel panel-help<?php echo ($active_tab == 'help' ? ' active' : ''); ?>">
+		<div style="background:#f5f4f6; padding: 3%; margin-top: 3%;">		
+			<div class="left-col" style="padding-top: 1%;">
+				<a href="<?php echo admin_url('admin.php?page=essb_redirect_update');?>" class="essb-btn <?php if (ESSBActivationManager::isActivated()) { echo "essb-bg-green";} else { echo "essb-bg-red"; } ?>">
+					<i class="fa <?php if (ESSBActivationManager::isActivated()) { echo "fa-check";} else { echo "fa-ban"; } ?>"></i>
+					<?php if (ESSBActivationManager::isActivated()) { echo "Activated";} else { echo "Activate Plugin to Unlock"; } ?>
+				</a>
+				
+				<?php if (ESSBActivationManager::isActivated()) { ?>
+				<h2>Getting Support</h2>
+				
+				<p>We understand all the importance of product support for our customers. That's why we are ready to solve all your issues and answer any questions related to our plugin.</p>
+				
+				<p>
+				<h4>Before Submitting Your Ticket, Please Make Sure That:</h4>
+				<ul>
+					<li><i class="fa fa-check-circle-o essb-c-green" aria-hidden="true"></i> You are running the latest plugin version. <a href="https://socialsharingplugin.com/version-changes" target="_blank">Check which is the latest version &rarr;</a></li>
+					<li><i class="fa fa-check-circle-o essb-c-green" aria-hidden="true"></i> Ensure that there are no errors on site. <a href="https://docs.socialsharingplugin.com/knowledgebase/how-to-activate-debug-mode-in-wordpress/" target="_blank">Activating WordPress Debug Mode &rarr;</a></li>
+					<li><i class="fa fa-check-circle-o essb-c-green" aria-hidden="true"></i> Browse the knowledge base. <a href="https://docs.socialsharingplugin.com" target="_blank">Open Knowledge Base &rarr;</a></li>
+				</ul>
+				</p>
+				
+				<p>
+				<h4>Item Support Includes:</h4>
+				<ul>
+					<li><i class="fa fa-check essb-c-green" aria-hidden="true"></i> Availability of the author to answer questions</li>
+					<li><i class="fa fa-check essb-c-green" aria-hidden="true"></i> Answering technical questions about item's features</li>
+					<li><i class="fa fa-check essb-c-green" aria-hidden="true"></i> Assistance with reported bugs and issues</li>
+					<li><i class="fa fa-check essb-c-green" aria-hidden="true"></i> Lifetime plugin update</li>
+					
+					</ul>
+				<h4>Item Support Does Not Include:</h4>
+				<ul>
+					<li><i class="fa fa-times" aria-hidden="true"></i> Customization services</li>
+					<li><i class="fa fa-times" aria-hidden="true"></i> Installation services</li>
+					</ul>
+					</p>
+				
+				<?php } else { ?>
+					<h2>Support is Availabe for Direct Plugin Customers Only</h2>
+					
+					<p>Easy Social Share Buttons for WordPress comes with 6 months of premium
+        support for every <b>direct plugin license</b> you purchase. Support can be <a href="https://help.market.envato.com/hc/en-us/articles/207886473-Extending-and-Renewing-Item-Support" target="_blank">extended through subscriptions</a> via CodeCanyon.
+        All support for Easy Social Share Buttons for WordPress is handled
+        through our <a href="https://support.creoworx.com" target="_blank">support
+          center on our company site</a>. To access it, you must first setup
+        an account and verify your Easy Social Share Buttons for WordPress purchase code. If you are not sure where
+        you purchase code is located <a href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code-" target="_blank">you can read here how to find it</a>.
+   </p>
+   <p></p><p>
+     Access to our support system is limited to all direct customers of
+     plugin. If the plugin version you are using is bundled inside theme
+     you need to purchase <a href="http://go.appscreo.com/essb" target="_blank">a direct plugin license</a> to receive priority plugin support. Priority support
+     is reserved for direct customers only. You can read more about <a href="https://socialsharingplugin.com/direct-customer-benefits/" target="_blank">direct customer benefirts here</a>.
+   </p>
+				<?php } ?>				
+				
+				<div class="essb-welcome-button-container" style="margin-top: 2%;">
+					<a href="<?php echo admin_url('admin.php?page=essb_options');?>" class="essb-btn essb-btn-blue" style="margin-right: 10px;margin-top: 10px;">&larr; Back To Plugin Settings <i class="fa fa-cog"></i></a>
+					
+					<?php if (!ESSBActivationManager::isActivated()) { ?>
+					<a href="<?php echo admin_url('admin.php?page=essb_redirect_update');?>" class="essb-btn essb-btn-green" style="margin-right: 10px;margin-top: 10px;">Activate Plugin License <i class="fa fa-key"></i></a>
+					<?php } else { ?>
+					<a href="https://support.creoworx.com/forums/forum/wordpress-plugins/easy-social-share-buttons/" target="_blank" class="essb-btn essb-btn-green" style="margin-right: 10px;margin-top: 10px;">Visit Support Board <i class="fa fa-key"></i></a>
+					<?php } ?>
+					</div>
+			</div>
+			<div class="right-col" style="text-align: center;">
+				<img src="<?php echo ESSB3_PLUGIN_URL;?>/assets/images/support.svg" style="padding: 3%;" />
+			</div>	
+		</div>
+		
+		<div class="faq essb-options-container essb-dash-widget essb-dash-shadow">
+<h3>FAQ</h3>
+
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_start('How to activate plugin?', '', 'fa32 fa fa-question', array('mode' =>'toggle', 'state' => 'closed'));
+  		?>
+  		<p>Activation of plugin will give you access to <a href="https://socialsharingplugin.com/direct-customer-benefits/" target="_blank">direct customer benefits</a> including automatic updates, access to extensions libarary, access to ready made styles and many more.</p>
+  		<p>To activate plugin visit <a href="<?php echo admin_url('admin.php?page=essb_redirect_update&tab=update');?>">Activation screen</a> and fill your purchase code. You can learn how to find your purchase code <a href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code-" target="_blank">here</a>. A step by step tutorail you can find inside our knowledge base for <a href="https://docs.socialsharingplugin.com/activate-easy-social-share-buttons/" target="_blank"><b>How to activate Easy Social Share Buttons</b></a>.</p>
+  		<p>Only versions of plugin that are purchased directly can be activated. All versions that are bundled inside theme will show a theme activated message but you cannot get access to direct customer benefits unless you purchase a direct plugin copy from us.</p>
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_end();
+  		?>
+
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_start('How to activate/deactivate Ready Made Styles?', '', 'fa32 fa fa-question', array('mode' =>'toggle', 'state' => 'closed'));
+  		?>
+  		<p>Ready made styles allow to load preset configuration of plugin to a selected from you location. Activation of ready made styles will set personalized location based settings and since then global settings will not affect this location. <a href="https://docs.socialsharingplugin.com/activatedeactivate-ready-made-styles-easy-social-share-buttons/" target="_blank">Read here how to Activate/Deactivate ready made styles</a> on your site.
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_end();
+  		?>
+
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_start('How to activate debug mode of WordPress?', '', 'fa32 fa fa-question', array('mode' =>'toggle', 'state' => 'closed'));
+  		?>
+  		<p>If for some reason you get a white screen on your site to find the cause you need to activate debug mode of WordPress. Debug mode will change that white screen to a message we can understand and navigate you to solve the problem. To activate mode <a href="https://docs.socialsharingplugin.com/activate-debug-mode-wordpress/" target="_blank"> follow this steps in our knowledge base</a>.</p>
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_end();
+  		?>
+
+  				<?php
+  		echo ESSBOptionsFramework::draw_panel_start('How to make manual plugin update?', '', 'fa32 fa fa-question', array('mode' =>'toggle', 'state' => 'closed'));
+  		?>
+  		<p>If you need to manually update plugin here are the steps you need to complete:</p>.
+  		<ol>
+  			<li>Go to your Plugins screen and find current version of Easy Social Share Buttons for WordPress</li>
+  			<li>Deactivate and then Delete the existing installation</li>
+  			<li>Install the new version using WordPress plugin installer or via FTP</li>
+  		</ol>
+  		<p>All your settings will be saved and you will not loose them during manual plugin update</p>
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_end();
+  		?>
+
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_start('How to deactivate additional social share optimization tags when Yoast SEO plugin is used?', '', 'fa32 fa fa-question', array('mode' =>'toggle', 'state' => 'closed'));
+  		?>
+  		<p>To optimize and control shared information over social networks we generate and set on site social share optimization tags. It is very important to have only one instance of those tags on your site - having more than one may cause a problem in sharing or loosing control over custom share data you set. If you use Yoast SEO plugin on your site and come in such situation <a href="https://docs.socialsharingplugin.com/disable-yoast-seo-social-share-optimization-tags-generation/" target="_blank"> read here is what you need to do</a>.</p>
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_end();
+  		?>
+
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_start('How to deactivate frontend setup module?', '', 'fa32 fa fa-question', array('mode' =>'toggle', 'state' => 'closed'));
+  		?>
+  		<p>Easy Social Share Buttons for WordPress comes with active by default frontend assistant (Customize button on each instance of buttons and the blue icon at the bottom right corner). That assistant is visible for admin users only but if you wish to deactivate it please <a href="https://docs.socialsharingplugin.com/deactivate-frontend-assistant/" target="_blank"> read here</a>.</p>
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_end();
+  		?>
+
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_start('How to activate share recovery when moved from http to https?', '', 'fa32 fa fa-question', array('mode' =>'toggle', 'state' => 'closed'));
+  		?>
+  		<p>If you recently move your site from http to https you may see a sudden counter removal. That is caused because social networks count all shares using URL as unique key and switching protocol is also changing that. To restore back your shares here are the steps you need to do:</p>
+  		<ol>
+  			<li>Ensure that your counter update mode is not set to Real time. To do this go to Social Sharing -> Share Counter Setup and on the update counter field you should see anything different than real time.</li>
+  			<li>Inside Social Sharing -> Share Counter Setup activate share counter recovery and set a cause of change to be Change of protocol from http to https</li>
+  			<li>If you expereince problem with Facebook counter please try the all 3 different API update points by changing one by one from Social Sharing -> Share Counter Setup -> Single Button Counter</li>
+  		</ol>
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_end();
+  		?>
+
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_start('How to activate fake share counters?', '', 'fa32 fa fa-question', array('mode' =>'toggle', 'state' => 'closed'));
+  		?>
+  		<p>Fake share counters (internal counters) can be easy activated with a setting inside plugin. Once switched ON all social network counters will start track shares internally (by click over share button). To do this visit Plugin Functions menu and under developer tools activate Fake (internal) share counters. Once that is done you will be able to control share counter value on each post and you will also see a new menu Developer Tools which you can use to setup minimal fake counter value for all posts.</p>
+  		<p>Change of generated share counters is also available via hooks and filters. If you are developer you can <a href="https://docs.socialsharingplugin.com/create-dummy-fake-share-counters/" target="_blank">read here how to do it</a>.</p>
+  		<?php
+  		echo ESSBOptionsFramework::draw_panel_end();
+  		?>
+		
+		</div>
+	</div>
+	<!-- activate -->
+	<div class="panel panel-activate<?php echo ($active_tab == 'activate' ? ' active' : ''); ?>">
+		<div class="left-col" style="padding-top: 1%;">
+			<div class="essb-activation-form">
+				<div class="essb-activation-form-title">
+					<div class="essb-activation-title<?php if (ESSBActivationManager::isActivated()) { echo " color-activated"; } else { echo " color-notactivated"; } ?>"><?php echo __('Plugin Activation', 'essb');?></div>
+					<div class="essb-activation-state<?php if (ESSBActivationManager::isActivated()) { echo " background-activated"; } else { echo " background-notactivated"; } ?>">
+						<i class="fa fa-<?php if (ESSBActivationManager::isActivated() || ESSBActivationManager::isThemeIntegrated()) { echo "check"; } else { echo "ban"; } ?>"></i> <?php if (ESSBActivationManager::isActivated()) { echo __('Activated', 'essb'); } else { 
+							if (ESSBActivationManager::isThemeIntegrated()) {
+								echo __('Theme Integrated', 'essb');
+							}
+							else {
+								echo __('Not activated', 'essb'); 
+							}
+						} ?>			
 					</div>
 				</div>
-
-				<div class="essb-dash-feature essb-dash-feature-extension">
+				
+				<?php if (!ESSBActivationManager::isActivated() && !ESSBActivationManager::isThemeIntegrated() && ESSBActivationManager::isDevelopment()):?>
+					<div class="essb-activate-localhost" style="margin: 2% 0; padding: 3%; background: #f3f4f5;">
+						<?php _e('You are running plugin on development environment. Activation in this case is optional and it will allow you to use locked plugin features without reflecting activation on your real site.', 'essb'); ?>
+					</div>
+				<?php endif; ?>
+				
+				<div class="essb-activation-form-code">
+					<div class="essb-activation-form-header">
+						<strong><?php echo __('Purchase code', 'essb');?></strong>
+						<br/>You can learn how to find your purchase code <a href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code-" target="_blank">here</a>
+					
+					</div>
+					<input type="text" class="essb-purchase-code" id="essb-automatic-purchase-code" value="<?php echo ESSBActivationManager::getPurchaseCode(); ?>" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>			
+				</div>
+			
+			
+				<div class="essb-activation-buttons">
+					<?php if (!ESSBActivationManager::isActivated()) { ?>
+						<a href="#" id="essb-activate" class="essb-activation-button essb-activation-button-default essb-activate-plugin"><?php echo __('Register the code', 'essb'); ?></a>
+					<?php } ?>
+					<?php if (ESSBActivationManager::isActivated()) { ?>
+						<a href="#" id="essb-deactivate" class="essb-activation-button essb-activation-button-default essb-deactivate-plugin"><?php echo __('Deregister the code', 'essb'); ?></a>
+					<?php } ?>
+					<a href="http://go.appscreo.com/activate-essb" target="_blank" id="essb-manager1" class="essb-activation-button essb-activation-button-color2 essb-manage-activation-plugin essb-button-right" style="margin-right: 5px;"><?php echo __('Need help with activation?', 'essb'); ?></a>
+				</div>
+				<div class="essb-activation-manager" style="margin: 3% 0;">
+					<h4>Managing Plugin Activations</h4>
+					<p>From the license manage control panel you can check your past code activations, deactivate current plugin activations or manually activate plugin for a domain. The access to activation manager require to fill your Envato username and the purchase code.</p>
+					<a href="<?php echo ESSBActivationManager::getApiUrl('manager').'?purchase_code='.ESSBActivationManager::getPurchaseCode();?>" target="_blank" id="essb-manager" class="essb-activation-button essb-activation-button-color1 essb-manage-activation-plugin"><?php echo __('Manage my activations', 'essb'); ?></a>
+				</div>
+			</div>
+			
+			<!-- manual activation -->
+			<?php if (!ESSBActivationManager::isActivated()): ?>
+					<div class="essb-activation-form" style="margin-top:30px;">
+			<div class="essb-activation-form-title">
+				<div class="essb-activation-title<?php if (ESSBActivationManager::isActivated()) { echo " color-activated"; } else { echo " color-notactivated"; } ?>"><?php echo __('Manual Plugin Activation', 'essb');?></div>			
+			</div>
+			<div class="essb-activation-form-code">
+				If you have problem with automatic plugin registration please <a href="#" id="essb-activate-manual-registration">click here to activate it manually</a>.
+			</div>
+			
+			<div id="essb-manual-registration">
+			<div class="essb-activation-form-code">
+				<div class="essb-activation-form-header">
+					<strong><?php echo __('Purchase code', 'essb');?></strong>
+					<br/>You can learn how to find your purchase code <a href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code-" target="_blank">here</a>
+					
+				</div>
+				<input type="text" id="essb-manual-purchase-code" class="essb-purchase-code" value="<?php echo ESSBActivationManager::getPurchaseCode(); ?>" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>			
+			</div>
+			<div class="essb-activation-form-code">
+				<div class="essb-activation-form-header">
+					<strong><?php echo __('Activation code', 'essb');?></strong>
+					<br/><a href="<?php echo ESSBActivationManager::getApiUrl('activate_domain'); ?>" target="_blank">Go to our manual activation page and fill in all required details to receive your activation code</a>. In the domain field enter <b><?php echo ESSBActivationManager::domain();?></b>
+					
+				</div>
+				<input type="text" id="essb-manual-activation-code" class="essb-purchase-code" value="" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>			
+			</div>
+			
+			<div class="essb-activation-buttons">
+				<?php if (!ESSBActivationManager::isActivated()) { ?>
+				<a href="#" id="essb-manual-activate" class="essb-activation-button essb-activation-button-default essb-manual-activate-plugin"><?php echo __('Manual registration of code', 'essb'); ?></a>
+				<?php } ?>
+				
+				
+			</div>
+			</div>
+		</div>
+			
+			<?php endif; ?>
+		</div>
+		<div class="right-col">
+				<a href="<?php echo admin_url('admin.php?page=essb_options');?>" class="essb-btn essb-btn-blue2" style="margin-right: 10px;">Return to Plugin Settings<i class="fa fa-cog"></i></a>
+			<?php if (!ESSBActivationManager::isActivated()) { ?>
+			
+				<?php if (ESSBActivationManager::isThemeIntegrated()) { ?>
+					<div class="license-desc" style="background: #F04903; color: #fff; padding: 3%; margin: 2% 0; font-size: 15px;">
+					
+					<h4 style="margin: 0; margin-bottom: 20px; font-size: 18px; letter-spacing: -0.01em;">Theme Integrated License Active</h4>
+					
+					
+					You are using a theme integrated version of Easy Social Share Buttons for WordPress. The bundled inside theme versions does not require activation with purchase code. The bundled inside theme versions does not have access to direct customer benefits. If you wish to use all the direct customer benefits (including support for your best social media plugin) you need to purchase a direct plugin license and activate plugin using it.
+<ul>
+<li><i class="fa fa-check"></i> Access official customer support (opening support tickets are available only for direct license owners);</li>
+<li><i class="fa fa-check"></i> Automatic plugin updates directly inside your WordPress dashboard (no need to wait - get instant updates);</li>
+<li><i class="fa fa-check"></i> Access to Extensions Library: Download and install professional extensions to expand functionality of your social sharing plugin (updated regularly).</li>
+<li><i class="fa fa-check"></i> Access to Ready Made Styles Library with Demo Configurations - install professional designed layouts with one click</li>
+<li><i class="fa fa-check"></i> Use Easy Social Share Buttons for WordPress with any theme (not just the one that got Easy Social Share Buttons for WordPress bundled);</li>
+<li><i class="fa fa-check"></i> Support your beloved social media plugin for rapid development.</li>
+</ul>
+	<p><a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo&license=regular&open_purchase_for_item_id=6394476&purchasable=source" target="blank" class="essb-btn essb-btn-white">Purchase copy of Easy Social Share Buttons &rarr;</a></p>
+<p style="font-size: 13px; line-height: 1.3em;">Purchase of Easy Social Share Buttons for WordPress is $20 one time payment without year or month fees and including 6 months of premium support. Each license can be used on one site at same time (you can transfer the license to new site).</p>
+					</div>
+				<?php } else { ?>
+					<div class="license-desc" style="background: #e74c3c; color: #fff; padding: 3%; margin: 2% 0; font-size: 15px;">
+					
+					<h4 style="margin: 0; margin-bottom: 20px; font-size: 18px; letter-spacing: -0.01em;">Plugin Activation Required</h4>
+					
+					Activate plugin to unlock the following premium features:
+<ul>
+<li><i class="fa fa-check"></i> Automatic plugin updates directly inside your WordPress dashboard (no need to wait - get instant updates);</li>
+<li><i class="fa fa-check"></i> Access to Extensions Library: Download and install professional extensions to expand functionality of your social sharing plugin (updated regularly).</li>
+<li><i class="fa fa-check"></i> Access to Ready Made Demo Configurations - install professional designed layouts with one click</li>
+</ul>
+					</div>				
+				<?php } ?>
+			
+			<?php } else { ?>
+					<div class="license-desc" style="background: #27ae60; color: #fff; padding: 3%; margin: 2% 0; font-size: 15px;">
+					
+					<h4 style="margin: 0; margin-bottom: 20px; font-size: 18px; letter-spacing: -0.01em;">Your Plugin is Fully Activated</h4>
+					
+					
+In order to register your purchase code on another domain, deregister it first by clicking the button above or get another purchase code. You can also check and manage your activations via Manage my activations button. If you need to use plugin on multiple sites at same time than you need to have a separate license for each active domain.
+	<p><a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo&license=regular&open_purchase_for_item_id=6394476&purchasable=source" target="blank" class="essb-btn essb-btn-white">Purchase Another copy of Easy Social Share Buttons &rarr;</a></p>
+<p style="font-size: 13px; line-height: 1.3em;">Purchase of Easy Social Share Buttons for WordPress is $20 one time payment without year or month fees and including 6 months of premium support. Each license can be used on one site at same time (you can transfer the license to new site).</p>
+					</div>			
+			<?php } ?>
+		</div>
+	</div>
+	
+			<div class="footer">
+			<h2 style="text-align: center; margin-bottom: 0;">Useful Resources</h2>
+			<div class="onethird">
 					<div class="essb-feature-icon">
 						<i class="ti-book"></i>
 					</div>
 					<div class="essb-feature-text">
 						<b>Knowledge Base</b>
 						<span>Read our knowledge base to get know how to use most common functions</span>
-						<div class="essb-dash-feature essb-tl-right" style="margin-bottom: 0px;">
-							<div class="essb-feature-text">
-								<a href="https://docs.socialsharingplugin.com/?utm_source=about&utm_campaign=panel&utm_medium=button" class="essb-dash-button essb-dash-blue essb-dash-button-small" target="_blank">Visit Knowledge Base</a>
-							</div>
+						<div style="margin-top:30px;">
+						<a href="https://docs.socialsharingplugin.com/?utm_source=about&amp;utm_campaign=panel&amp;utm_medium=button" class="essb-btn essb-btn-blue2" target="_blank">Visit Knowledge Base &rarr;</a>
 						</div>
 					</div>
-				</div>
-
 			</div>
-			<div class="essb-dash-bottom-wrapper">
-
-			</div>
-		</div>
-		<!-- end: widget support -->
-
-		<?php
-		$current_list = array ();
-
-		if (class_exists ( 'ESSBAddonsHelper' )) {
-
-			$essb_addons = ESSBAddonsHelper::get_instance ();
-			$current_list = $essb_addons->get_addons ();
-		}
-
-
-		if (! isset ( $current_list )) {
-			$current_list = array ();
-		}
-
-		$count = 0;
-		$filters_offset = 0;
-		foreach ( $current_list as $addon_key => $addon_data ) {
-			if ($addon_key == "filters") {
-				$filters_offset = 1;
-				continue;
-			}
-
-			$count++;
-		}
-
-		?>
-
-		<!-- widget extensions -->
-		<div class="essb-dash-widget essb-dash-shadow">
-			<div class="essb-dash-title-wrap">
-				<div class="essb-dash-title"><i class="ti-package" style="margin-right: 10px; font-size: 24px; float: left; line-height: 32px;"></i>Extensions Library (<?php echo $count; ?>)</div>
-				<a href="<?php echo admin_url('admin.php?page=essb_redirect_extensions&tab=extensions');?>" class="essb-dash-title-button essb-dash-button essb-dash-blue">
-					<i class="fa fa-gear"></i>
-					Browse All <?php echo $count; ?> Extensions
-				</a>
-
-			</div>
-			<div class="essb-dash-widget-inner">
-
-				<?php
-
-
-
-				$count = 0;
-				$filters_offset = 0;
-				foreach ( $current_list as $addon_key => $addon_data ) {
-					if ($addon_key == "filters") {
-						$filters_offset = 1;
-						continue;
-					}
-
-					if ($count < 6) {
-						echo '<div class="essb-dash-feature essb-dash-feature-extension">';
-						echo '<div class="essb-feature-text">';
-						echo '<b>'.$addon_data ["name"];
-						print (($addon_data ['price'] == 'FREE') ? '<span class="essb-free">FREE</span>' : '<span class="essb-paid">'.$addon_data ['price'].'</span>' );
-						echo '</b>';
-						echo '</div>';
-						echo '</div>';
-					}
-					$count++;
-				}
-
-				?>
-							<div class="essb-dash-bottom-wrapper">
-				<?php
-
-				if (!ESSBActivationManager::isActivated()) {
-					echo '<div class="essb-dash-button essb-dash-grey">Activate plugin to unlock extensions library</div>';
-				}
-
-				?>
-			</div>
-
-
-			</div>
-		</div>
-		<!-- end: widget extensions -->
-
-		<!-- widget update -->
-		<div class="essb-dash-widget essb-dash-shadow" style="display: none;">
-			<div class="essb-dash-title-wrap">
-				<div class="essb-dash-title"><i class="ti-reload" style="margin-right: 10px; font-size: 24px; float: left; line-height: 32px;"></i>Plugin Updates</div>
-
-				<?php if (ESSBActivationManager::existNewVersion()) { ?>
-				<div class="essb-dash-title-button essb-dash-button essb-bg-orange">
-					<i class="fa fa-refresh"></i>
-					New Version Available
-				</div>
-				<?php } ?>
-			</div>
-			<div class="essb-dash-widget-inner">
-				<div class="essb-dash-feature">
-
-					<div class="essb-feature-text">
-						<b>Installed Version</b>
-						<span><?php echo ESSB3_VERSION; ?></span>
-					</div>
-				</div>
-				<div class="essb-dash-feature">
-					<div class="essb-feature-text">
-						<b>Latest Version</b>
-						<span>
-						<?php
-
-						$latest = ESSBActivationManager::getLatestVersion();
-						if ($latest == '') { $latest = ESSB3_VERSION; }
-
-						if (version_compare ( $latest, ESSB3_VERSION, '<' )) {
-							$latest = ESSB3_VERSION;
-						}
-
-						echo $latest;
-
-						?>
-						</span>
-					</div>
-				</div>
-				<div class="essb-dash-feature">
-					<div class="essb-feature-text">
-						<a href="#" class="essb-dash-button essb-dash-blue" id="essb-check-forupdate">Check for new version</a>
-					</div>
-				</div>
-			</div>
-			<div class="essb-dash-bottom-wrapper">
-				<?php
-
-				if (!ESSBActivationManager::isActivated()) {
-					echo '<div class="essb-dash-button essb-dash-grey">Activate plugin to unlock automatic updates</div>';
-				}
-
-				?>
-			</div>
-		</div>
-		<!-- end: widget update -->
-
-		<!-- widget newsletter -->
-		<div class="essb-dash-widget essb-dash-shadow">
-			<div class="essb-dash-title-wrap">
-				<div class="essb-dash-title"><i class="ti-email" style="margin-right: 10px; font-size: 24px; float: left; line-height: 32px;"></i>AppsCreo Newsletter</div>
-			</div>
-			<div class="essb-dash-widget-inner">
-				<div class="essb-dash-feature">
+			<div class="onethird">
 					<div class="essb-feature-icon">
-						<i class="ti-gift"></i>
+						<i class="ti-email"></i>
 					</div>
 					<div class="essb-feature-text">
-						<b>Free Goodies</b>
-						<span>Learn for our new free goodies that we reguraly release</span>
+						<b>Get Notications in Your Inbox</b>
+						<span>
+						Join the newsletter to receive emails when we release plugin or theme updates, send out free resources, announce promotions and more!						
+						</span>
+						<div style="margin-top:30px;">
+						<form action="//appscreo.us13.list-manage.com/subscribe/post?u=a1d01670c240536f6a70e7778&amp;id=c896311986" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+						<input type="email" name="EMAIL" id="mce-EMAIL" autocomplete="off" placeholder="Enter your email" style="width: 90%; border-radius: 3px; padding: 10px; display: block; margin: 0 auto; margin-bottom: 10px;" />
+						<input type="submit" name="subscribe" id="mc-embedded-subscribe" class="essb-btn essb-btn-blue2" value="Subscribe" style="box-shadow: none;">
+						</form>
+						</div>
 					</div>
-				</div>
-				<div class="essb-dash-feature">
-					<div class="essb-feature-icon" style="vertical-align: top;">
-						<i class="ti-announcement"></i>
-					</div>
-					<div class="essb-feature-text" style="max-width: 380px;">
-						<b>News</b>
-						<span>Be the first to know for what is new in social sharing or in Easy Social Share Buttons</span>
-					</div>
-				</div>
-
-				<div>
-					<?php
-
-					//if (!ESSBActivationManager::isActivated()) {
-					//	echo '<div class="essb-dash-button essb-dash-grey">Activate plugin to unlock automatic updates</div>';
-					//}
-					$code = '<div class="essb-admin-widget">';
-					$code .= '<form action="//appscreo.us13.list-manage.com/subscribe/post?u=a1d01670c240536f6a70e7778&amp;id=c896311986" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>';
-					$code .= '<div class="" id="title-wrap" style="margin-top: 5px;">';
-					//print '<label class="screen-reader-text prompt" for="mce-EMAIL" id="title-prompt-text">Enter your email</label>';
-					$code .= '<input type="email" name="EMAIL" id="mce-EMAIL" autocomplete="off" placeholder="Enter your email" style="width: 250px; border-radius: 3px; font-size: 12px; padding: 3px;" />';
-					$code .= '<input type="submit" name="subscribe" id="mc-embedded-subscribe" class="essb-btn" value="Subscribe" style="font-size:11px; box-shadow: none;">';
-					$code .= '</div>';
-					$code .= '</form>';
-					$code .= '</div>';
-					echo $code;
-
-					?>
 			</div>
+			<div class="onethird">
+					<div class="essb-feature-icon">
+						<i class="ti-info-alt"></i>
+					</div>
+					<div class="essb-feature-text">
+						<b>Social Media Blog</b>
+						<span>Read our blog for get to know the latest plugin functions and useful WordPress tips and tricks</span>
+						<div style="margin-top:30px;">
+						<a href="https://appscreo.com/?utm_source=about&amp;utm_campaign=panel&amp;utm_medium=button" class="essb-btn essb-btn-blue2" target="_blank">Visit Our Blog &rarr;</a>
+						</div>
+					</div>
+			</div>
+			<p class="essb-thank-you" style="text-align: center;">
+				Thank you for choosing <b><a href="http://go.appscreo.com/essb" target="_blank">Easy Social Share Buttons for WordPress</a></b>.
+				If you like our work please <a href="http://codecanyon.net/downloads" target="_blank">rate Easy Social Share Buttons for WordPress <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></a>
+			</p>
+		</div>
+	
 </div>
-		</div>
-		<!-- end: widget newsletter -->
 
-		<!-- widget translate -->
-		<div class="essb-dash-widget essb-dash-shadow">
-			<div class="essb-dash-title-wrap">
-				<div class="essb-dash-title"><i class="fa fa-language" style="margin-right: 10px; font-size: 24px; float: left; line-height: 32px;"></i>Translate Plugin</div>
-			</div>
-			<div class="essb-dash-widget-inner">
-				<div class="essb-dash-feature">
-					<div class="essb-feature-text">
-
-					<b>Help us make Easy Social Share Buttons speak in your language</b>
-
-					</div>
-				</div>
-
-				<div class="essb-dash-feature">
-					<div class="essb-feature-text">
-
-					<span>
-					<?php echo 'Version 4 of Easy Social Share Buttons for WordPress has fully translatable admin panel. Help up us and our customers by translating plugin in your language.'; ?>
-					</span>
-					</div>
-				</div>
-				<div class="essb-dash-feature">
-					<div class="essb-feature-text">
-
-					<b>Completed translations</b>
-					</div>
-				</div>
-				<div class="essb-dash-feature">
-					<div class="essb-feature-text">
-
-					<span><div class="essb-dash-button essb-bg-orange">EN</div> <div class="essb-dash-button essb-bg-orange">FR</div> <div class="essb-dash-button essb-bg-orange">ES</div>	</span>
-					</div>
-				</div>
-				</div>
-			<div class="essb-dash-bottom-wrapper">
-
-
-			</div>
-		</div>
-		<!-- end: widget translate -->
-
-	</div>
-
-	<p class="essb-thank-you">
-			Thank you for choosing <b>Easy Social Share Buttons for WordPress</b>.
-			If you like our work please <a href="http://codecanyon.net/downloads"
-				target="_blank">rate Easy Social Share Buttons for WordPress <i
-				class="fa fa-star"></i><i class="fa fa-star"></i><i
-				class="fa fa-star"></i><i class="fa fa-star"></i><i
-				class="fa fa-star"></i></a>
-	</p>
-
-
-	<div class="essb-page-promote changelog" style="display: none;">
-		<div class="feature-section col">
-			<div>
-				<h4>
-					Promote <b>Easy Social Share Buttons for WordPress</b> and earn
-					money from the Envato Affiliate Program.
-				</h4>
-				Send traffic to any page on Envato Market while adding your account
-				username to the end of the URL. When a new user clicks your referral
-				link, signs up for an account and purchases an item (or deposits
-				money) via any of the Envato Market sites, you will receive 30% of
-				that person's first cash deposit or purchase price. If they deposit
-				$20 into their account, you get $6. If they buy a $200 item, you get
-				$60.
-				<p>
-				<a href="http://themeforest.net/make_money/affiliate_program" target="_blank">Read more about how Envato affiliate program works on its official site.</a>
-				</p>
-			</div>
-			<p>&nbsp;</p>
-			<p>
-				Your Envato Username: <input type="text" class="input-element"
-					name="envato-user" id="envato-user" /><a href="#"
-					class="button button-primary" id="generate-my-code">Get my code</a>
-			</p>
-
-			<p id="usercode" style="display: none;">
-			Example affilaite links that you can use:<br/>
-				<textarea id="user-generated-code" class="input-element"
-					style="width: 100%; height: 300px"></textarea>
-			</p>
-		</div>
-	</div>
-	<script type="text/javascript">
-
-	jQuery(document).ready(function($){
-		$('#generate-my-code').click(function(e) {
+<script type="text/javascript">
+jQuery(document).ready(function($){
+	$('.tab-list li').each(function() {
+		$(this).click(function(e) {
 			e.preventDefault();
 
-			var envatoUsername = $('#envato-user').val();
+			$('.tab-list li').removeClass('current');
+			$(this).addClass('current');
 
-			var myCode = "";
-			myCode += "<!-- Example code 1 -->\r\n";
-			myCode += '<a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref='+envatoUsername+'" target="_blank" title="Easy Social Share Buttons for WordPress - Social sharing plugin that will amplify your social reach">Easy Social Share Buttons for WordPress - Social sharing plugin that will amplify your social reach</a>';
-			myCode += "\r\n\r\n";
+			$('.panels .panel').removeClass('active');
+			var tab = $(this).attr('data-tab') || '';
 
-			myCode += "<!-- Example code 2 -->\r\n";
-			myCode += '<a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref='+envatoUsername+'" target="_blank" title="Easy Social Share Buttons for WordPress">Easy Social Share Buttons for WordPress</a>';
-			myCode += "\r\n\r\n";
-
-			myCode += "<!-- Example code 3 -->\r\n";
-			myCode += '<a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref='+envatoUsername+'" target="_blank" title="Easy Social Share Buttons for WordPress">This site uses Easy Social Share Buttons for WordPress</a>';
-			myCode += "\r\n\r\n";
-
-			myCode += "<!-- Example code 4 -->\r\n";
-			myCode += '<a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref='+envatoUsername+'" target="_blank" title="Social Sharing Plugin for WordPress">Social Sharing Plugin for WordPress that will help increase your social presentation</a>';
-			myCode += "\r\n\r\n";
-
-
-			$('#user-generated-code').val(myCode);
-
-			$('#usercode').show();
+			$('.panels .panel-' + tab).addClass('active');
 		});
+	});
+});
+</script>
+
+<!-- plugin activations screen -->
+	<script type="text/javascript">
+
+	var essb_api_activate_domain = "<?php echo ESSBActivationManager::domain(); ?>";
+	var essb_api_activate_url = "<?php echo ESSBActivationManager::getSiteURL(); ?>";
+	var essb_api_url = "<?php echo ESSBActivationManager::getApiUrl('api'); ?>";
+	var essb_ajax_url = "<?php echo admin_url ('admin-ajax.php'); ?>";
+
+	var essb_used_purchasecode = "<?php echo ESSBActivationManager::getPurchaseCode(); ?>";
+	var essb_used_activationcode = "<?php echo ESSBActivationManager::getActivationCode(); ?>";
+	
+	jQuery(document).ready(function($){
+
+		if ($('#essb-activate-manual-registration').length) {
+			$('#essb-activate-manual-registration').click(function(e) {
+				e.preventDefault();
+
+				if (!$('#essb-activate-manual-registration').hasClass('opened')) {
+					$('#essb-manual-registration').fadeIn('200');
+					$('#essb-activate-manual-registration').addClass('opened');
+				}
+				else {
+					$('#essb-manual-registration').fadeOut('200');
+					$('#essb-activate-manual-registration').removeClass('opened');
+				}
+			});
+		}
+
+		if ($('#essb-manual-activate').length) {
+			$('#essb-manual-activate').click(function(e) {
+				e.preventDefault();
+
+				var purchase_code = $('#essb-manual-purchase-code').val();
+				var activation_code = $('#essb-manual-activation-code').val();
+
+				if (purchase_code == '' || activation_code == '') {
+					$.toast({
+					    heading: 'Missing Activation Data',
+					    text: 'Please fill purchase code and activation code before processing with activation',
+					    showHideTransition: 'fade',
+					    icon: 'error',
+					    position: 'bottom-right',
+					    hideAfter: 5000
+					});
+
+					return;
+				}
+
+				$('.preloader-holder').fadeIn(100);
+
+				$.ajax({
+		            type: "POST",
+		            url: essb_ajax_url,
+		            data: { 'action': 'essb_process_activation', 'purchase_code': purchase_code, 'activation_code': activation_code, 'activation_state': 'manual', 'domain': essb_api_activate_domain},
+		            success: function (data) {
+		            	$('.preloader-holder').fadeOut(400);
+    		            console.log(data);
+    		            if (typeof(data) == "string")
+		                	data = JSON.parse(data);
+
+						var code = data['code'] || '';
+
+	                	if (code != '100') {
+	                		sweetAlert({
+			            	    title: "Activation Error",
+			            	    text: "Purchase code and activation code did not match. Please check them again and if problem exists contact us.",
+			            	    type: "error"
+			            	});
+	                	}
+	                	else {
+	                		sweetAlert({
+    		            	    title: "Activation Successful",
+    		            	    text: "Thank you for activating Easy Social Share Buttons for WordPress.",
+    		            	    type: "success"
+    		            	}).then((value) => {
+	    		            	  if (value) window.location.reload();
+	    		            	});
+	                	}
+		            }
+            	});
+			});
+		}
+		
+		if ($('#essb-activate').length) {
+			$('#essb-activate').click(function(e) {
+				e.preventDefault();
+
+				var purchase_code = $('#essb-automatic-purchase-code').val();
+
+				if (purchase_code == '') {
+					$.toast({
+					    heading: 'Missing Purchase Code',
+					    text: 'Please fill purchase code before processing with activation',
+					    showHideTransition: 'fade',
+					    icon: 'error',
+					    position: 'bottom-right',
+					    hideAfter: 5000
+					});
+
+					return;
+				}
+
+				$('.preloader-holder').fadeIn(100);
+				console.log(purchase_code + '-'+essb_api_activate_domain);
+				console.log({ 'code': purchase_code, 'domain': essb_api_activate_domain, 'url': essb_api_activate_url});
+				console.log(essb_api_url);
+				$.ajax({
+		            type: "POST",
+		            url: essb_api_url,
+		            data: { 'code': purchase_code, 'domain': essb_api_activate_domain, 'url': essb_api_activate_url},
+		            success: function (data) {
+		                $('.preloader-holder').fadeOut(400);
+		                console.log(data);
+		                if (typeof(data) == "string")
+		                	data = JSON.parse(data);
+		                
+		                var code = data['code'] || '';
+		                var activation_message = data['message'] || '';
+		                var activation_code = data['hash'] || '';
+		                
+		                console.log('code = '+ code);
+		                console.log('activation_message = '+ activation_message);
+		                console.log('activation_code = ' + activation_code);
+		                
+		                if (parseInt(code) > 0 && parseInt(code) < 10) {
+		                	$.ajax({
+		    		            type: "POST",
+		    		            url: essb_ajax_url,
+		    		            data: { 'action': 'essb_process_activation', 'purchase_code': purchase_code, 'activation_code': activation_code, 'activation_state': 'activate'},
+		    		            success: function (data) {
+			    		            console.log(data);
+		    		            	/*sweetAlert({
+		    		            	    title: "Activation Successful",
+		    		            	    text: "Thank you for activating Easy Social Share Buttons for WordPress.",
+		    		            	    type: "success"
+		    		            	},
+
+		    		            	function () {
+		    		            	    window.location.reload();
+		    		            	});*/
+
+			    		            sweetAlert({
+		    		            	    title: "Activation Successful",
+		    		            	    text: "Thank you for activating Easy Social Share Buttons for WordPress.",
+		    		            	    type: "success"
+		    		            	}).then((value) => {
+			    		            	  if (value) window.location.reload();
+			    		            	});
+		    		            }
+		                	});
+
+		                }
+		                else {
+		                	swal("Activation Error", ''+activation_message+'', "error");
+		                }
+
+		                
+		            },
+		            error: function(data) {
+		            	 $('.preloader-holder').fadeOut(400);
+		            	 $.toast({
+							    heading: 'Connection Error',
+							    text: 'Cannot connection to registration server. Please try again and if problem still exist proceed with manual activation.',
+							    showHideTransition: 'fade',
+							    icon: 'error',
+							    position: 'bottom-right',
+							    hideAfter: 5000
+							});
+		            }
+		        });
+			});
+		}
+		
+		if ($('#essb-deactivate').length) {
+			$('#essb-deactivate').click(function(e) {
+				e.preventDefault();
+
+				var purchase_code = essb_used_purchasecode;
+
+				if (purchase_code == '') {
+					$.toast({
+					    heading: 'Missing Purchase Code',
+					    text: 'Please fill purchase code before processing with activation',
+					    showHideTransition: 'fade',
+					    icon: 'error',
+					    position: 'bottom-right',
+					    hideAfter: 5000
+					});
+
+					return;
+				}
+
+				$('.preloader-holder').fadeIn(100);
+				console.log(purchase_code + '-'+essb_api_activate_domain);
+				$.ajax({
+		            type: "POST",
+		            url: essb_api_url + 'deactivate.php',
+		            data: { 'hash': essb_used_activationcode, 'code': essb_used_purchasecode },
+		            success: function (data) {
+		                $('.preloader-holder').fadeOut(400);
+		                console.log(data);
+		                if (typeof(data) == "string")
+		                	data = JSON.parse(data);
+		                
+		                var code = data['code'] || '';
+		                var activation_message = data['message'] || '';
+		                var activation_code = data['hash'] || '';
+		                
+		                console.log('code = '+ code);
+		                console.log('activation_message = '+ activation_message);
+		                console.log('activation_code = ' + activation_code);
+		                
+		                if (parseInt(code) > 0 && parseInt(code) < 10) {
+		                	$.ajax({
+		    		            type: "POST",
+		    		            url: essb_ajax_url,
+		    		            data: { 'action': 'essb_process_activation', 'activation_state': 'deactivate'},
+		    		            success: function (data) {
+		    		            	window.location.reload();
+		    		            }
+		                	});
+
+		                }
+		                else {
+		                	swal("Deactivation Error", '<b>'+activation_message+'</b>', "error");
+		                }
+
+		                
+		            },
+		            error: function(data) {
+		            	 $('.preloader-holder').fadeOut(400);
+		            	 $.toast({
+							    heading: 'Connection Error',
+							    text: 'Cannot connection to registration server. Please try again and if problem still exist proceed with manual activation.',
+							    showHideTransition: 'fade',
+							    icon: 'error',
+							    position: 'bottom-right',
+							    hideAfter: 5000
+							});
+		            }
+		        });
+			});
+		}
+		
+
 	});
 
 	</script>
-
-</div>
-
-<!-- Place this tag in your head or just before your close body tag. -->
-<script src="https://apis.google.com/js/platform.js" async defer></script>
-
-<style type="text/css">
-.preloader {
-  position: fixed;
-  width: 64px;
-  height: 64px;
-  border: 6px solid #fff;
-  border-radius: 100%;
-}
-.preloader:before,
-.preloader:after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -0.2rem 0 0 -0.2rem;
-  border-bottom: 6px solid #fff;
-  border-radius: 10px;
-  -webkit-transform-origin: 3px center;
-}
-.preloader:before {
-/* hour hand */
-  width: 30%;
-  -webkit-animation: hour 10s linear infinite;
-}
-.preloader:after {
-/* minute hand */
-  width: 40%;
-  background-color: #2085e6;
-  -webkit-animation: minute 1s linear infinite;
-}
-@-webkit-keyframes hour {
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-@-webkit-keyframes minute {
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-/* for demo purposes only � not required */
-.preloader {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
-
-.preloader-holder {
-	position: fixed;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-  top: 0;
-  left: 0;
-}
-
-.preloader-message {
-	position: fixed;
-	font-size: 32px;
-	line-height: 32px;
-	font-family: 'Open Sans', sans-serif;
-	font-weight: bold;
-	top: calc(50% + 56px);
-	bottom: 0;
-	left: 0;
-	margin: 0;
-	text-align: center;
-	margin: auto;
-	width: 400px;
-	right: 0;
-	color: #fff;
-}
-
-.preloader-holder { display: none; }
-.sweet-alert h2 {
-	letter-spacing: -0.5px;
-	color: #303133;
-	font-size: 24px;
-	font-weight: 700;
-}
-
-.sweet-alert p {
-	font-size: 14px;
-	color: #303133;
-	font-weight: 400;
-}
-
-.sweet-alert button {
-	font-size: 14px;
-	font-weight: 700;
-}
-
-.sweet-overlay {
-background-color: rgba(0, 0, 0, 0.7);
-}
-</style>
-
-<div class="preloader-holder">
-<div class="preloader"></div>
-<div class="preloader-message">Please Wait a Moment ...</div>
-</div>
-<script type="text/javascript">
-
-	// assign ajax submit on form
-jQuery(document).ready(function($){
-	if ($('#essb-check-forupdate').length) {
-		$('#essb-check-forupdate').click(function(e) {
-			e.preventDefault();
-
-			$('.preloader-holder').fadeIn(100);
-			var plugin_is_activated = <?php if (ESSBActivationManager::isActivated()) { echo 'true'; } else { echo 'false'; }?>;
-			var version_api = '<?php echo ESSBActivationManager::getApiUrl('api')?>version.php';
-			$.ajax({
-				type: "GET",
-		        url: version_api,
-		        data: {},
-		        success: function (data) {
-		        	$('.preloader-holder').fadeOut(400);
-	                console.log(data);
-	                if (typeof(data) == "string")
-	                	data = JSON.parse(data);
-
-	                var code = data['code'] || '';
-	                var version = data['version'] || '';
-
-	                if (code == '200') {
-	                	$.ajax({
-	    		            type: "POST",
-	    		            url: "<?php echo admin_url("admin-ajax.php");?>",
-	    		            data: { 'action': 'essb_process_activation', 'activation_state': 'version_check', 'version': version},
-	    		            success: function (data) {
-	    		            	console.log(data);
-	    		            	 if (typeof(data) == "string")
-	    			                	data = JSON.parse(data);
-
-	 			                var code = data['code'] || '';
-	 			                if (code != '') {
-		 			                if (plugin_is_activated) {
-		 			                	swal("New version " + code + " is available!", "Visit updates screen to proceed with plugin update", "success");
-		 			                }
-		 			                else {
-	 			                		swal("New version " + code + " is available!", "Activate plugin to unlock automatic updates", "success");
-		 			                }
-	 			                }
-	 			                else {
-	 			                	swal("", "You are running latest version of plugin!", "");
-	 			                }
-	    		            }
-	                	});
-	                }
-		        },
-		        error: function() {
-		        	$('.preloader-holder').fadeOut(400);
-		        	swal("Connection Error!", "A problem occured when connection to update server. Please try again later or check the what is new page for our latest release", "error");
-		        }
-			});
-		});
-	}
-});
-
-</script>

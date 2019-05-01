@@ -39,7 +39,7 @@ jQuery(document).ready(function($){
 		
 		$(base_element).css( { width: base_width+'px'});
 		
-		$(base_element).fadeIn(400);
+		$(base_element).slideDown(400);
 		//$(base_overlay_element).fadeIn(200);
 		
 		$(base_element).addClass('active-flyout');

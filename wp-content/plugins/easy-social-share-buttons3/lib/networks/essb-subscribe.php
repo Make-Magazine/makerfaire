@@ -44,7 +44,7 @@ class ESSBNetworks_Subscribe {
 		$output = '';
 		$popup_mode = ($position != 'top' && $position != 'bottom' && $position != 'shortcode') ? true : false;
 		
-		$output .= '<div class="essb-subscribe-form essb-subscribe-form-'.$salt.($popup_mode ? " essb-subscribe-form-popup": " essb-subscribe-form-inline").'" data-popup="'.$popup_mode.'" style="display: none;">';
+		$output .= '<div class="essb-subscribe-form essb-subscribe-form-'.$salt.($popup_mode ? " essb-subscribe-form-popup": " essb-subscribe-form-inline").'" data-popup="'.esc_attr($popup_mode).'" style="display: none;">';
 				
 		if (ESSBGlobalSettings::$subscribe_function == "form") {
 			$output .= do_shortcode(ESSBGlobalSettings::$subscribe_content);
@@ -99,7 +99,7 @@ class ESSBNetworks_Subscribe {
 		$salt = mt_rand();
 	
 		$output = '<script type="text/javascript">var after_share_easyoptin = "'.$salt.'";</script>';
-		$output .= '<div class="essb-subscribe-form essb-subscribe-form-'.$salt.' essb-subscribe-form-popup" style="display:none;" '.($two_step_inline == 'true' ? 'data-popup="0"' : 'data-popup="1"').'>';
+		$output .= '<div class="essb-subscribe-form essb-subscribe-form-'.esc_attr($salt).' essb-subscribe-form-popup" style="display:none;" '.($two_step_inline == 'true' ? 'data-popup="0"' : 'data-popup="1"').'>';
 	
 		if ($mode == "form") {
 			$output .= do_shortcode(ESSBGlobalSettings::$subscribe_content);
@@ -162,12 +162,20 @@ class ESSBNetworks_Subscribe {
 		return $output;
 	}
 	
-	public static function draw_integrated_subscribe_form($salt, $popup_mode = false, $option_design = '', $is_widget = false, $position = '') {
-		global $essb_options;
+	/**
+	 * Generate and display a subscribe form anywhere inside plugin where it is called. The form can generate a popup
+	 * or content form. The generation is hold from the optional parameter inside
+	 * 
+	 * @param unknown_type $salt
+	 * @param unknown_type $popup_mode
+	 * @param unknown_type $option_design
+	 * @param unknown_type $is_widget
+	 * @param unknown_type $position
+	 */
+	public static function draw_integrated_subscribe_form($salt, $popup_mode = false, $option_design = '', $is_widget = false, $position = '') {		
 		
-		
-		$design_inline = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_optin_design', 'design1');
-		$design_popup = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_optin_design_popup', 'design1');
+		$design_inline = essb_option_value('subscribe_optin_design');
+		$design_popup = essb_option_value('subscribe_optin_design_popup');
 		
 		$user_design = $popup_mode ? $design_popup : $design_inline;
 		
@@ -206,8 +214,16 @@ class ESSBNetworks_Subscribe {
 			return self::draw_mailchimp_subscribe9($salt, $is_widget, $position);
 		}
 		else {
-			return self::draw_mailchimp_subscribe($salt, $is_widget, $position);
+			return self::draw_user_subscribe_form($salt, $user_design, $is_widget, $position);
 		}
+	}
+	
+	public static function draw_user_subscribe_form($salt, $design = '', $is_widget = false, $position = '') {
+		if (!function_exists('essb_user_subscribe_form_design')) {
+			include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-user-subscribe-design.php');
+		}
+		
+		return essb_user_subscribe_form_design($salt, $design, $is_widget, $position);
 	}
 	
 	public static function draw_mailchimp_subscribe($salt, $is_widget = false, $position = '') {

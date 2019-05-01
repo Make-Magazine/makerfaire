@@ -46,12 +46,12 @@ class ESSBDisplayMethodPostBar {
 		
 			if ( is_a( $prev_post, 'WP_Post' ) ) {
 				$output .= '<div class="essb-postbar-prev-post">';
-				$output .= '<a href="'.get_permalink( $prev_post->ID ).'"><i class="essb_icon_prev"></i></a>';
+				$output .= '<a href="'.esc_url(get_permalink( $prev_post->ID )).'"><i class="essb_icon_prev"></i></a>';
 					
 				$output .= '<div class="essb_prev_post">';
 				$output .= '<div class="essb_prev_post_info">';
 				$output .= '<div class="essb-postbar-close-postpopup essb-postbar-close-prev">X</div>';
-				$output .= '<a href="'.get_permalink( $prev_post->ID ).'">';
+				$output .= '<a href="'.esc_url(get_permalink( $prev_post->ID )).'">';
 				$output .= '<span class="essb_title">';
 				$output .= '<span class="essb_tcategory">';
 				$post_title = substr(get_the_title( $prev_post->ID ),0,100);
@@ -102,11 +102,15 @@ class ESSBDisplayMethodPostBar {
 			$category = get_the_category($post->ID);
 		
 			$output .= '<div class="essb-postbar-category">';
-			$output .= '<a href="'.get_category_link($category[0]->cat_ID).'">'.$category[0]->cat_name.'</a>';
+			$output .= '<a href="'.esc_url(get_category_link($category[0]->cat_ID)).'">'.$category[0]->cat_name.'</a>';
 			$output .= '</div>';
 		}
 			
 		$output .= '<div class="essb-postbar-titleholder">';
+		
+		if (!$postbar_deactivate_title || $postbar_activate_author) {
+			$output .= '<div class="inner-content">';
+		}
 			
 		if (!$postbar_deactivate_title) {
 			$output .= '<h2>'.esc_attr($post->post_title).'</h2>';
@@ -118,6 +122,10 @@ class ESSBDisplayMethodPostBar {
 		
 			$output .= '<span class="essb-postbar-author">'.__('by', 'easy-social-share-buttons').' '.$author_name.'</span>';
 		
+		}
+		
+		if (!$postbar_deactivate_title || $postbar_activate_author) {
+			$output .= '</div>';
 		}
 			
 		$output .= '</div>'; // titleholder
@@ -171,13 +179,13 @@ class ESSBDisplayMethodPostBar {
 				
 			if ( is_a( $next_post, 'WP_Post' ) ) {
 				$output .= '<div class="essb-postbar-next-post">';
-				$output .= '<a href="'.get_permalink( $next_post->ID ).'"><i class="essb_icon_next"></i></a>';
+				$output .= '<a href="'.esc_url(get_permalink( $next_post->ID )).'"><i class="essb_icon_next"></i></a>';
 					
 				$output .= '<div class="essb_next_post">';
 					
 				$output .= '<div class="essb_next_post_info">';
 				$output .= '<div class="essb-postbar-close-postpopup essb-postbar-close-next">X</div>';			
-				$output .= '<a href="'.get_permalink( $next_post->ID ).'">';	
+				$output .= '<a href="'.esc_url(get_permalink( $next_post->ID )).'">';	
 				$output .= '<span class="essb_title">';
 				$output .= '<span class="essb_tcategory">';
 				$post_title = substr(get_the_title( $next_post->ID ),0,80);

@@ -4,27 +4,37 @@ if (essb_option_bool_value('deactivate_module_subscribe')) {
 	return;
 }
 
-ESSBOptionsStructureHelper::menu_item('optin', 'optin-0', __('Activate Usage', 'essb'), ' ti-widget-alt');
 ESSBOptionsStructureHelper::menu_item('optin', 'optin-1', __('Mailing List Platforms', 'essb'), ' ti-email');
 ESSBOptionsStructureHelper::menu_item('optin', 'optin-14', __('Subscribe forms below content', 'essb'), ' ti-layout-media-overlay');
 ESSBOptionsStructureHelper::menu_item('optin', 'optin-11', __('Subscribers Booster', 'essb'), ' ti-rocket');
 ESSBOptionsStructureHelper::menu_item('optin', 'optin-12', __('Subscribers Flyout', 'essb'), ' ti-layout-media-center-alt');
 
+ESSBOptionsStructureHelper::menu_item('optin', 'optin', __('Customize Form Designs', 'essb'), ' ti-ruler-pencil');
 
+$active_d1 = essb5_has_setting_values(array('subscribe_mc_title', 'subscribe_mc_text', 'subscribe_mc_name', 'subscribe_mc_email', 'subscribe_mc_button', 'subscribe_mc_footer', 'subscribe_mc_success', 'subscribe_mc_error', 'customizer_subscribe_bgcolor1', 'customizer_subscribe_textcolor1', 'customizer_subscribe_hovercolor1', 'customizer_subscribe_hovertextcolor1', 'customizer_subscribe_emailcolor1'));
+$active_d2 = essb5_has_setting_values(array('subscribe_mc_title2', 'subscribe_mc_text2', 'subscribe_mc_name2', 'subscribe_mc_email2', 'subscribe_mc_button2', 'subscribe_mc_footer2', 'subscribe_mc_success2', 'subscribe_mc_error2', 'customizer_subscribe_bgcolor2', 'customizer_subscribe_textcolor2', 'customizer_subscribe_hovercolor2', 'customizer_subscribe_hovertextcolor2', 'customizer_subscribe_emailcolor2'));
+$active_d3 = essb5_has_setting_values(array('subscribe_mc_title3', 'subscribe_mc_text3', 'subscribe_mc_name3', 'subscribe_mc_email3', 'subscribe_mc_button3', 'subscribe_mc_footer3', 'subscribe_mc_success3', 'subscribe_mc_error3', 'customizer_subscribe_bgcolor3', 'customizer_subscribe_textcolor3', 'customizer_subscribe_hovercolor3', 'customizer_subscribe_hovertextcolor3', 'customizer_subscribe_emailcolor3'));
+$active_d4 = essb5_has_setting_values(array('subscribe_mc_title4', 'subscribe_mc_text4', 'subscribe_mc_name4', 'subscribe_mc_email4', 'subscribe_mc_button4', 'subscribe_mc_footer4', 'subscribe_mc_success4', 'subscribe_mc_error4', 'customizer_subscribe_bgcolor4', 'customizer_subscribe_textcolor4', 'customizer_subscribe_hovercolor4', 'customizer_subscribe_hovertextcolor4', 'customizer_subscribe_emailcolor4'));
+$active_d5 = essb5_has_setting_values(array('subscribe_mc_title5', 'subscribe_mc_text5', 'subscribe_mc_name5', 'subscribe_mc_email5', 'subscribe_mc_button5', 'subscribe_mc_footer5', 'subscribe_mc_success5', 'subscribe_mc_error5', 'customizer_subscribe_bgcolor5', 'customizer_subscribe_textcolor5', 'customizer_subscribe_hovercolor5', 'customizer_subscribe_hovertextcolor5', 'customizer_subscribe_emailcolor5'));
+$active_d6 = essb5_has_setting_values(array('subscribe_mc_title6', 'subscribe_mc_text6', 'subscribe_mc_name6', 'subscribe_mc_email6', 'subscribe_mc_button6', 'subscribe_mc_footer6', 'subscribe_mc_success6', 'subscribe_mc_error6', 'customizer_subscribe_bgcolor6', 'customizer_subscribe_textcolor6', 'customizer_subscribe_hovercolor6', 'customizer_subscribe_hovertextcolor6', 'customizer_subscribe_emailcolor6'));
+$active_d7 = essb5_has_setting_values(array('subscribe_mc_title7', 'subscribe_mc_text7', 'subscribe_mc_name7', 'subscribe_mc_email7', 'subscribe_mc_button7', 'subscribe_mc_footer7', 'subscribe_mc_success7', 'subscribe_mc_error7', 'customizer_subscribe_bgcolor7', 'customizer_subscribe_textcolor7', 'customizer_subscribe_hovercolor7', 'customizer_subscribe_hovertextcolor7', 'customizer_subscribe_emailcolor7'));
+$active_d8 = essb5_has_setting_values(array('subscribe_mc_title8', 'subscribe_mc_text8', 'subscribe_mc_name8', 'subscribe_mc_email8', 'subscribe_mc_button8', 'subscribe_mc_footer8', 'subscribe_mc_success8', 'subscribe_mc_error8', 'customizer_subscribe_bgcolor8', 'customizer_subscribe_textcolor8', 'customizer_subscribe_hovercolor8', 'customizer_subscribe_hovertextcolor8', 'customizer_subscribe_emailcolor8'));
+$active_d9 = essb5_has_setting_values(array('subscribe_mc_title9', 'subscribe_mc_text9', 'subscribe_mc_name9', 'subscribe_mc_email9', 'subscribe_mc_button9', 'subscribe_mc_footer9', 'subscribe_mc_success9', 'subscribe_mc_error9', 'customizer_subscribe_bgcolor9', 'customizer_subscribe_textcolor9', 'customizer_subscribe_hovercolor9', 'customizer_subscribe_hovertextcolor9', 'customizer_subscribe_emailcolor9'));
 
-ESSBOptionsStructureHelper::menu_item('optin', 'optin', __('Customize Form Designs', 'essb'), ' ti-ruler-pencil', 'activate_first', 'optin-2');
-//ESSBOptionsStructureHelper::submenu_item('optin', 'optin-1', __('Connectors', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-2', __('Customize Design #1', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-3', __('Customize Design #2', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-4', __('Customize Design #3', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-5', __('Customize Design #4', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-6', __('Customize Design #5', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-7', __('Customize Design #6', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-8', __('Customize Design #7', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-9', __('Customize Design #8', 'essb'));
-ESSBOptionsStructureHelper::submenu_item('optin', 'optin-10', __('Customize Design #9', 'essb'));
+ESSBOptionsStructureHelper::field_heading('optin', 'optin', 'heading5', __('Integrated Designs', 'essb'), __('Modify the integrated inside plugin designs from #1 to #9. The save of the options will reload the screen. Do not forget to press the Update Options button in case you have unsaved changes done.', 'essb'));
 
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #1', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design1', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #1', 'essb'), ($active_d1 ? 'Customized' : ''), essb5_create_design_preview_button('design1'));
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #2', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design2', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #2', 'essb'), ($active_d2 ? 'Customized' : ''), essb5_create_design_preview_button('design2'));
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #3', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design3', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #3', 'essb'), ($active_d3 ? 'Customized' : ''), essb5_create_design_preview_button('design3'));
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #4', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design4', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #4', 'essb'), ($active_d4 ? 'Customized' : ''), essb5_create_design_preview_button('design4'));
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #5', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design5', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #5', 'essb'), ($active_d5 ? 'Customized' : ''), essb5_create_design_preview_button('design5'));
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #6', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design6', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #6', 'essb'), ($active_d6 ? 'Customized' : ''), essb5_create_design_preview_button('design6'));
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #7', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design7', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #7', 'essb'), ($active_d7 ? 'Customized' : ''), essb5_create_design_preview_button('design7'));
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #8', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design8', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #8', 'essb'), ($active_d8 ? 'Customized' : ''), essb5_create_design_preview_button('design8'));
+essb5_menu_advanced_options_small_tile('optin', 'optin', __('Customize Design #9', 'essb'), '', __('The customize function provide a set of options that you can use to change the form displayed texts. You can also change the default form colors too.', 'essb'), '', 'true', '', 'subscribe-design9', __('Start Form Customizer', 'essb'), __('Customize the texts and colors of Design #9', 'essb'), ($active_d9 ? 'Customized' : ''), essb5_create_design_preview_button('design9'));
 
+ESSBOptionsStructureHelper::field_heading('optin', 'optin', 'heading5', __('Own Designs', 'essb'), __('Add, remove or change created by user form designs. Those form designs you can use anywhere inside plugin where subscribe forms are present', 'essb'));
+ESSBOptionsStructureHelper::field_component('optin', 'optin', 'essb5_add_subscribe_design_button');
 // Easy Optin
 $optin_connectors = array("mailchimp" => "MailChimp",
 		"getresponse" => "GetResponse",
@@ -34,34 +44,12 @@ $optin_connectors = array("mailchimp" => "MailChimp",
 		"activecampaign" => "ActiveCampaign",
 		"campaignmonitor" => "CampaignMonitor",
 		"sendinblue" => "SendinBlue",
-		"madmimi" => "Mad Mimi");
+		"madmimi" => "Mad Mimi",
+		"conversio" => "Conversio");
 
 if (has_filter('essb_external_subscribe_connectors')) {
 	$optin_connectors = apply_filters('essb_external_subscribe_connectors', $optin_connectors);
 }
-
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-0', 'subscribe_widget', __('Activate subscribe widget & shortcode', 'essb'), __('Activation of this option will allow you to use subscribe widget and shortcode anywhere on your site not connected with subscribe button inside share buttons', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-0', 'subscribe_css_always', __('Always load subscribe form styles', 'essb'), __('Set this to Yes if for some reason styles for subscribe forms does not appear on your site.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-
-ESSBOptionsStructureHelper::panel_start('optin', 'optin-0', __('Subscribe Button in Share Buttons', 'essb'), __('Configure functionality of subscribe button that you can add along with your share buttons', 'essb'), 'fa21 essb_icon_subscribe', array("mode" => "toggle", 'state' => 'opened'));
-
-$listOfValues = array ("form" => "Open content box", "link" => "Open subscribe link", "mailchimp" => "Easy Optin Subscribe Form (Ready made forms with automatic service integrations)" );
-ESSBOptionsStructureHelper::field_select('optin', 'optin-0', 'subscribe_function', __('Specify subscribe button function', 'essb'), __('Specify if the subscribe button is opening a content box below the button or if the button is linked to the "subscribe url" below.', 'essb'), $listOfValues);
-
-ESSBOptionsStructureHelper::holder_start('optin', 'optin-0', '', 'essb-subscribe-link');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-0', 'subscribe_link', __('Subscribe URL', 'essb'), __('Link the Subscribe button to this URL. This can be the url to your subscribe page, facebook fanpage, RSS feed etc. e.g. http://yoursite.com/subscribe', 'essb'));
-ESSBOptionsStructureHelper::holder_end('optin', 'optin-0');
-
-ESSBOptionsStructureHelper::holder_start('optin', 'optin-0', '', 'essb-subscribe-content');
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-0', 'subscribe_content', __('Subscribe content box', 'essb'), __('Define the content of the opening toggle subscribe window here. Use formulars, like button, links or any other text. Shortcodes are supported, e.g.: [contact-form-7]. Note that if you use subscribe button outside content display positions content will open as popup', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::holder_end('optin', 'optin-0');
-
-ESSBOptionsStructureHelper::holder_start('optin', 'optin-0', '', 'essb-subscribe-form');
-$listOfValues = essb_optin_designs();
-ESSBOptionsStructureHelper::field_select('optin', 'optin-0', 'subscribe_optin_design', __('Specify subscribe button Easy Optin design for content', 'essb'), __('Choose default design that you will use with Easy Optin for content display methods', 'essb'), $listOfValues);
-ESSBOptionsStructureHelper::field_select('optin', 'optin-0', 'subscribe_optin_design_popup', __('Specify subscribe button Easy Optin design for popup', 'essb'), __('Choose default design that you will use with Easy Optin for content display methods', 'essb'), $listOfValues);
-ESSBOptionsStructureHelper::panel_end('optin', 'optin-0');
-ESSBOptionsStructureHelper::holder_end('optin', 'optin-0');
 
 ESSBOptionsStructureHelper::panel_start('optin', 'optin-14', __('Automatically add opt-in form below content', 'essb'), __('Activate of this option will allow to include forms on posts or pages to get more subscribers.', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'optin_content_activate', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
 
@@ -87,7 +75,7 @@ ESSBOptionsStructureHelper::panel_end('optin', 'optin-11');
 	ESSBOptionsStructureHelper::field_switch_panel('optin', 'optin-11', 'essb3_ofob|ofob_single', __('Appear once for user', 'easy-optin-booster'), __('Activate this option if you wish to make event appear only once for user in the next 14 days. ', 'easy-optin-booster'), '', __('Yes', 'easy-optin-booster'), __('No', 'easy-optin-booster'));
 	ESSBOptionsStructureHelper::field_textbox_panel('optin', 'optin-11', 'essb3_ofob|ofob_single_time', __('Custom appear once period (days)', 'easy-optin-booster'), __('If the option to show once is set the default period is 14 days. Fill here a custom days value (numeric)', 'easy-optin-booster'), '');
 	ESSBOptionsStructureHelper::field_textbox_panel('optin', 'optin-11', 'essb3_ofob|ofob_exclude', __('Exclude display on', 'essb'), __('Exclude buttons on posts/pages with these IDs. Comma separated: "11, 15, 125". This will deactivate automated display of buttons on selected posts/pages but you are able to use shortcode on them.', 'essb'), '');
-	
+
 	ESSBOptionsStructureHelper::panel_start('optin', 'optin-11', __('Display after amount of seconds', 'easy-optin-booster'), __('Automatically display selected opt-in form after amount of seconds. If you wish to trigger immediately after load then you can use 1 as value', 'easy-optin-booster'), 'fa21 fa fa-cogs', array("mode" => "toggle", 'switch_id' => '', 'switch_on' => __('Yes', 'easy-optin-booster'), 'switch_off' => __('No', 'easy-optin-booster')));
 	ESSBOptionsStructureHelper::field_switch('optin', 'optin-11', 'essb3_ofob|ofob_time', __('Activate', 'easy-optin-booster'), __('Set this option to Yes to use this event', 'easy-optin-booster'), '', __('Yes', 'easy-optin-booster'), __('No', 'easy-optin-booster'));
 	ESSBOptionsStructureHelper::field_section_start_panels('optin', 'optin-11', '', '');
@@ -129,10 +117,9 @@ ESSBOptionsStructureHelper::panel_end('optin', 'optin-11');
 	ESSBOptionsStructureHelper::field_section_end_panels('optin', 'optin-11', '', '');
 	ESSBOptionsStructureHelper::panel_end('optin', 'optin-11');
 
-
 	ESSBOptionsStructureHelper::field_switch('optin', 'optin-11', 'essb3_ofob|ofob_creditlink', __('Include credit link', 'easy-optin-booster'), __('Include tiny credit link below your comments box to allow others know what you are using to generate Facebook Comments. Activate this option to show your appreciation for our efforts.', 'easy-optin-booster'), '', __('Yes', 'easy-optin-booster'), __('No', 'easy-optin-booster'));
 	ESSBOptionsStructureHelper::field_textbox('optin', 'optin-11', 'essb3_ofob|ofob_creditlink_user', __('Your Envato username', 'easy-optin-booster'), __('Include credit link and earn 30% of users first purchase via Envato Affiliate Program. Learn more <a href="https://themeforest.net/affiliate_program" target="_blank">here</a> for Envato affiliate program.', 'easy-optin-booster'), '');
-	
+
 
 
 ESSBOptionsStructureHelper::panel_end('optin', 'optin-11');
@@ -148,7 +135,7 @@ ESSBOptionsStructureHelper::panel_end('optin', 'optin-12');
 	ESSBOptionsStructureHelper::field_switch('optin', 'optin-12', 'essb3_ofof|ofof_single', __('Appear once for user', 'easy-optin-flyout'), __('Activate this option if you wish to make event appear only once for user in the next 14 days. ', 'easy-optin-flyout'), '', __('Yes', 'easy-optin-flyout'), __('No', 'easy-optin-flyout'));
 	ESSBOptionsStructureHelper::field_select('optin', 'optin-12', 'essb3_ofof|ofof_position', __('Appear at', 'easy-optin-flyout'), __('Choose position where the fly out will appear', 'easy-optin-flyout'), array("bottom-right" => __('Bottom Right', 'easy-optin-flyout'), "bottom-left" => __('Bottom Left', 'easy-optin-flyout'), "top-right" => __('Top Right', 'easy-optin-flyout'), "top-left" => __('Top Left', 'easy-optin-flyout')));
 	ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-12', 'essb3_ofof|ofof_exclude', __('Exclude display on', 'essb'), __('Exclude buttons on posts/pages with these IDs. Comma separated: "11, 15, 125". This will deactivate automated display of buttons on selected posts/pages but you are able to use shortcode on them.', 'essb'), '');
-	
+
 	ESSBOptionsStructureHelper::panel_start('optin', 'optin-12', __('Display after amount of seconds', 'easy-optin-flyout'), __('Automatically display selected opt-in form after amount of seconds. If you wish to trigger immediately after load then you can use 1 as value', 'easy-optin-flyout'), 'fa21 fa fa-cogs', array("mode" => "toggle", 'switch_id' => '', 'switch_on' => __('Yes', 'easy-optin-flyout'), 'switch_off' => __('No', 'easy-optin-flyout')));
 	ESSBOptionsStructureHelper::field_switch('optin', 'optin-12', 'essb3_ofof|ofof_time', __('Activate', 'easy-optin-flyout'), __('Set this option to Yes to use this event', 'easy-optin-flyout'), '', __('Yes', 'easy-optin-flyout'), __('No', 'easy-optin-flyout'));
 	ESSBOptionsStructureHelper::field_section_start_panels('optin', 'optin-12', '', '');
@@ -190,13 +177,20 @@ ESSBOptionsStructureHelper::panel_end('optin', 'optin-12');
 	ESSBOptionsStructureHelper::field_section_end_panels('optin', 'optin-12', '', '');
 	ESSBOptionsStructureHelper::panel_end('optin', 'optin-12');
 
-	
+
 	ESSBOptionsStructureHelper::field_switch('optin', 'optin-12', 'essb3_ofof|ofof_creditlink', __('Include credit link', 'easy-optin-flyout'), __('Include tiny credit link below your comments box to allow others know what you are using to generate Facebook Comments. Activate this option to show your appreciation for our efforts.', 'easy-optin-flyout'), '', __('Yes', 'easy-optin-flyout'), __('No', 'easy-optin-flyout'));
 	ESSBOptionsStructureHelper::field_textbox('optin', 'optin-12', 'essb3_ofof|ofof_creditlink_user', __('Your Envato username', 'easy-optin-flyout'), __('Include credit link and earn 30% of users first purchase via Envato Affiliate Program. Learn more <a href="https://themeforest.net/affiliate_program" target="_blank">here</a> for Envato affiliate program.', 'easy-optin-flyout'), '');
 
 	ESSBOptionsStructureHelper::panel_end('optin', 'optin-12');
 
-ESSBOptionsStructureHelper::field_select('optin', 'optin-1', 'subscribe_connector', __('Choose your service', 'essb'), __('Select service that you wish to integrate with Easy Optin forms. Please note that for correct work you need to fill all required authorizations details for it below', 'essb'), $optin_connectors);
+ESSBOptionsStructureHelper::field_select_panel('optin', 'optin-1', 'subscribe_connector', __('Choose your service', 'essb'), __('Select service that you wish to integrate with Easy Optin forms. Please note that for correct work you need to fill all required authorizations details for it below', 'essb'), $optin_connectors);
+ESSBOptionsStructureHelper::field_switch_panel('optin', 'optin-1', 'subscribe_widget', __('Activate subscribe widget & shortcode', 'essb'), __('Activation of this option will allow you to use subscribe widget and shortcode anywhere on your site not connected with subscribe button inside share buttons', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('optin', 'optin-1', 'subscribe_css_always', __('Always load subscribe form styles', 'essb'), __('Set this to Yes if for some reason styles for subscribe forms does not appear on your site.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+
+if (!essb_option_bool_value('deactivate_module_conversions')) {
+	ESSBOptionsStructureHelper::field_switch_panel('optin', 'optin-1', 'conversions_subscribe_lite_run', __('Track Subscribe Forms Conversion', 'essb'), __('Subscribe forms conversion is an easy way to manage and optimize display of subscribe forms on your site. Once active plugin will collect data for each displayed position and subscribes. You have also access to past 7 days historical data. <a href="https://socialsharingplugin.com/subscribe-conversions-lite/" target="_blank">Learn more for subscribe conversions lite</a>.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+}
+
 
 ESSBOptionsStructureHelper::panel_start('optin', 'optin-1', __('Redirect on successful subscribe', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', 'subscribe_success', __('Redirect to page on successful subscribe', 'essb'), __('If you wish to redirect users to page (example: Thank you page) fill its URL here. If field is blank plugin will not redirect. The URL should be filled in full - example: https://socialsharingplugin.com/thank-you/', 'essb'));
@@ -215,7 +209,7 @@ ESSBOptionsStructureHelper::structure_row_end('optin', 'optin-1');
 ESSBOptionsStructureHelper::panel_end('optin', 'optin-1');
 
 
-ESSBOptionsStructureHelper::panel_start('optin', 'optin-1', __('Include agree to terms confirmation (GDPR Recommended', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::panel_start('optin', 'optin-1', __('Include agree to terms confirmation (GDPR Recommended)', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch('optin', 'optin-1', 'subscribe_terms', __('Include I agree to terms confirmation', 'essb'), __('Set this option to Yes to add in form a checkbox that will require users to confirm that they agree with terms before submitting. (Recommended for usage in EU).', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', 'subscribe_terms_text', __('Custom terms confirmation text', 'essb'), __('Set a custom text that will appear in the confirmation check before submission', 'essb'));
 ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', 'subscribe_terms_error', __('Custom not checked confirmation error', 'essb'), __('Set your own error message when confirmation box is not set.', 'essb'));
@@ -231,6 +225,11 @@ ESSBOptionsStructureHelper::field_section_start_full_panels('optin', 'optin-1');
 ESSBOptionsStructureHelper::field_switch_panel('optin', 'optin-1', 'subscribe_mc_welcome', __('Send welcome message:', 'essb'), __('Allow Mailchimp send welcome mssage upon subscribe.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('optin', 'optin-1', 'subscribe_mc_double', __('Use double opt in:', 'essb'), __('The MailChimp double opt-in process is a two-step process, where a subscriber fills out your signup form and receives an email with a link to confirm their subscription. MailChimp also includes some additional thank you and confirmation pages you can customize with your brand and messaging.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 //ESSBOptionsStructureHelper::field_switch_panel('optin', 'optin-1', 'subscribe_mc_namefield', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+ESSBOptionsStructureHelper::field_section_end_full_panels('optin', 'optin-1');
+ESSBOptionsStructureHelper::field_section_start_full_panels('optin', 'optin-1');
+ESSBOptionsStructureHelper::field_textbox_panel('optin', 'optin-1', 'subscribe_mc_custompos', __('Position Custom Field', 'essb'), __('If you wish to have the position where user fill the subscribe form inside your list use this field. You need to create a text field assigned to your list in MailChimp at first and than enter its ID here. <a href="https://mailchimp.com/help/manage-list-and-signup-form-fields/" target="_blank">Learn more for custom fields.</a>', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('optin', 'optin-1', 'subscribe_mc_customdes', __('Design Custom Field', 'essb'), __('If you wish to have the design used in the form user fill to subscribe inside your list use this field. You need to create a text field assigned to your list in MailChimp at first and than enter its ID here. <a href="https://mailchimp.com/help/manage-list-and-signup-form-fields/" target="_blank">Learn more for custom fields.</a>', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('optin', 'optin-1', 'subscribe_mc_customtitle', __('Post/Page Title Custom Field', 'essb'), __('If you need the page/post where used fill the form use this field. You need to create a text field assigned to your list in MailChimp at first and than enter its ID here. <a href="https://mailchimp.com/help/manage-list-and-signup-form-fields/" target="_blank">Learn more for custom fields.</a>', 'essb'));
 ESSBOptionsStructureHelper::field_section_end_full_panels('optin', 'optin-1');
 ESSBOptionsStructureHelper::panel_end('optin', 'optin-1');
 ESSBOptionsStructureHelper::holder_end('optin', 'optin-1');
@@ -307,7 +306,7 @@ try {
 	}
 }
 catch (Exception $e) {
-	
+
 }
 
 ESSBOptionsStructureHelper::field_select('optin', 'optin-1', 'subscribe_mp_list', __('MailPoet List', 'essb'), __('Select your list. Please ensure that MailPoet plugin is installed.', 'essb'), $listOfOptions);
@@ -330,6 +329,14 @@ ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', 'subscri
 ESSBOptionsStructureHelper::panel_end('optin', 'optin-1');
 ESSBOptionsStructureHelper::holder_end('optin', 'optin-1');
 
+ESSBOptionsStructureHelper::holder_start('optin', 'optin-1', 'essb-subscribe-connector', 'essb-subscribe-connector-conversio');
+ESSBOptionsStructureHelper::panel_start('optin', 'optin-1', __('Conversio', 'essb'), __('Configure mailing list service access details', 'essb'), 'fa21 fa fa-cogs', array("mode" => "toggle"));
+ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', 'subscribe_conv_api', __('Conversio API key', 'essb'), __('Enter your API access key', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', 'subscribe_conv_list', __('Conversio List ID', 'essb'), __('Enter your list ID (not list name but the unique ID of the list)', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', 'subscribe_conv_text', __('Optional opt-in text', 'essb'), __('What opt-in text was shown to the subscriber. This is required for GDPR compliance.', 'essb'));
+ESSBOptionsStructureHelper::field_component('optin', 'optin-1', 'essb5_conversio_lists_locate', 'true');
+ESSBOptionsStructureHelper::panel_end('optin', 'optin-1');
+ESSBOptionsStructureHelper::holder_end('optin', 'optin-1');
 
 $custom_connectors = array();
 $custom_connectors_options = array();
@@ -345,235 +352,125 @@ foreach ($custom_connectors as $connector => $service_name) {
 	if (isset($custom_connectors_options[$connector])) {
 		ESSBOptionsStructureHelper::holder_start('optin', 'optin-1', 'essb-subscribe-connector', 'essb-subscribe-connector-'.$connector);
 		ESSBOptionsStructureHelper::panel_start('optin', 'optin-1', $service_name, __('Configure mailing list service access details', 'essb'), 'fa21 fa fa-cogs', array("mode" => "toggle"));
-		
+
 		foreach ($custom_connectors_options[$connector] as $field => $settings) {
 			$type = isset($settings['type']) ? $settings['type'] : 'text';
 			$title = isset($settings['title']) ? $settings['title'] : '';
 			$desc = isset($settings['desc']) ? $settings['desc'] : '';
 			$values = isset($settings['values']) ? $settings['values'] : array();
-			
+
 			if ($type == 'text') {
-				ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', $field, $title, $desc);				
+				ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-1', $field, $title, $desc);
 			}
 			if ($type == 'switch') {
-				ESSBOptionsStructureHelper::field_switch('optin', 'optin-1', $field, $title, $desc, '', __('Yes', 'essb'), __('No', 'essb'));				
+				ESSBOptionsStructureHelper::field_switch('optin', 'optin-1', $field, $title, $desc, '', __('Yes', 'essb'), __('No', 'essb'));
 			}
-			
+
 			if ($type == 'select') {
 				ESSBOptionsStructureHelper::field_select('optin', 'optin-1', $field, $title, $desc, $values);
 			}
 		}
-		
+
 		ESSBOptionsStructureHelper::panel_end('optin', 'optin-1');
 		ESSBOptionsStructureHelper::holder_end('optin', 'optin-1');
-		
+
 	}
 }
 
+function essb5_create_design_preview_button($design = '') {
+	$preview_url = add_query_arg(array('subscribe-preview' => 'true', 'design' => $design ), trailingslashit(home_url()));
+	$custom_buttons = '<a href="'.esc_url($preview_url).'" target="_blank" class="essb-btn tile-orange ao-form-preview"><i class="fa fa-eye"></i>'.__('Preview', 'essb').'</a>';
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-2', 'heading5', __('Customize Design #1', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-2', 'subscribe_mc_namefield', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-2', 'subscribe_mc_title', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-2', 'subscribe_mc_text', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-2', 'subscribe_mc_name', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-2', 'subscribe_mc_email', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-2', 'subscribe_mc_button', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-2', 'subscribe_mc_footer', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-2', 'subscribe_mc_success', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-2', 'subscribe_mc_error', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
+	return $custom_buttons;
+}
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-2', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-2', 'activate_mailchimp_customizer', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-2', 'customizer_subscribe_bgcolor1', __('Background color', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-2', 'customizer_subscribe_textcolor1', __('Text color', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-2', 'customizer_subscribe_hovercolor1', __('Accent color', 'essb'), __('Replace form accent color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-2', 'customizer_subscribe_hovertextcolor1', __('Accent text color', 'essb'), __('Replace form accent text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-2', 'customizer_subscribe_emailcolor1', __('Email field background color', 'essb'), __('Replace email field background color', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-2', 'customizer_subscribe_noborder1', __('Remove top border of form', 'essb'), __('Activate this option if you wish to remove the tiny top border from the top of form.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+function essb5_add_subscribe_design_button() {
+	echo '<div class="row" style="padding: 10px;">';
+	echo '<a href="#" class="ao-new-subscribe-design ao-form-userdesign" data-design="new" data-title="Create new form design"><span class="essb_icon fa fa-plus-square"></span><span>'.__('Add new subscribe form design', 'essb').'</span></a>';
+	echo '</div>';
 
+	$all_designs = essb5_get_form_designs();
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-3', 'heading5', __('Customize Design #2', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-3', 'subscribe_mc_namefield2', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-3', 'subscribe_mc_title2', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-3', 'subscribe_mc_text2', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-3', 'subscribe_mc_name2', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-3', 'subscribe_mc_email2', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-3', 'subscribe_mc_button2', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-3', 'subscribe_mc_footer2', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-3', 'subscribe_mc_success2', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-3', 'subscribe_mc_error2', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
+	$count = 0;
+	foreach ($all_designs as $design) {
+		$name = isset($design['name']) ? $design['name'] : 'Untitled Form';
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-3', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-3', 'activate_mailchimp_customizer2', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-3', 'customizer_subscribe_bgcolor2', __('Background color', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-3', 'customizer_subscribe_textcolor2', __('Text color', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-3', 'customizer_subscribe_hovercolor2', __('Accent color', 'essb'), __('Replace form accent color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-3', 'customizer_subscribe_hovertextcolor2', __('Accent text color', 'essb'), __('Replace form accent text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-3', 'customizer_subscribe_emailcolor2', __('Email field background color', 'essb'), __('Replace email field background color', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-3', 'customizer_subscribe_noborder2', __('Remove border of form', 'essb'), __('Activate this option if you wish to remove the tiny border from the form.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+		$preview_url = add_query_arg(array('subscribe-preview' => 'true', 'design' => 'userdesign-'.$count ), trailingslashit(home_url()));
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-4', 'heading5', __('Customize Design #3', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-4', 'subscribe_mc_namefield3', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_file('optin', 'optin-4', 'subscribe_mc_image3', __('Choose image', 'essb'), __('Image parameter is optional but if you choose such it will appear in the top part of form on the left or right side of content.', 'essb'));
-$optin_connectors = array("left" => __("Left side", "essb"), "right" => __("Right side", "essb"));
-ESSBOptionsStructureHelper::field_select('optin', 'optin-4', 'subscribe_mc_imagealign3', __('Image will appear on:', 'essb'), __('Choose where image will appear according to your top content', 'essb'), $optin_connectors);
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-4', 'subscribe_mc_title3', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-4', 'subscribe_mc_text3', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-4', 'subscribe_mc_name3', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-4', 'subscribe_mc_email3', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-4', 'subscribe_mc_button3', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-4', 'subscribe_mc_footer3', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-4', 'subscribe_mc_success3', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-4', 'subscribe_mc_error3', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
+		$custom_buttons = '<a href="#" class="essb-btn tile-config ao-form-userdesign" data-design="design-'.$count.'" data-title="Manage Existing Design"><i class="fa fa-cog"></i>'.__('Edit', 'essb').'</a>';
+		$custom_buttons .= '<a href="#" class="essb-btn tile-deactivate ao-form-removeuserdesign" data-design="design-'.$count.'" data-title="Manage Existing Design"><i class="fa fa-close"></i>'.__('Remove', 'essb').'</a>';
+		$custom_buttons .= '<a href="'.esc_url($preview_url).'" target="_blank" class="essb-btn tile-orange ao-form-preview" data-design="userdesign-'.$count.'" data-title="Manage Existing Design"><i class="fa fa-eye"></i>'.__('Preview', 'essb').'</a>';
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-4', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-4', 'activate_mailchimp_customizer3', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-4', 'customizer_subscribe_bgcolor3', __('Background color top area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-4', 'customizer_subscribe_textcolor3', __('Text color top area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-4', 'customizer_subscribe_bgcolor3_bottom', __('Background color bottom area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-4', 'customizer_subscribe_textcolor3_bottom', __('Text color bottom area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-4', 'customizer_subscribe_hovercolor3', __('Accent color', 'essb'), __('Replace form accent color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-4', 'customizer_subscribe_hovertextcolor3', __('Accent text color', 'essb'), __('Replace form accent text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-4', 'customizer_subscribe_emailcolor3', __('Email field background color', 'essb'), __('Replace email field background color', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-4', 'customizer_subscribe_noborder3', __('Remove border of form', 'essb'), __('Activate this option if you wish to remove the tiny border from the form.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+		$options_load = array();
+		$options_load['title'] = $name;
+		$options_load['description'] = 'The form unique class is <code><b>.essb-custom-userdesign-'.$count.'</b></code>. You can use this class to write additional custom form styles.';
+		$options_load['button_center'] = 'true';
+		$options_load['tag'] = 'user';
+		$options_load['custom_buttons'] = $custom_buttons;
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-5', 'heading5', __('Customize Design #4', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-5', 'subscribe_mc_namefield4', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_file('optin', 'optin-5', 'subscribe_mc_image4', __('Choose image', 'essb'), __('Image parameter is optional but if you choose such it will appear in the top part of form on the left or right side of content.', 'essb'));
-$optin_connectors = array("left" => __("Left side", "essb"), "right" => __("Right side", "essb"));
-ESSBOptionsStructureHelper::field_select('optin', 'optin-5', 'subscribe_mc_imagealign4', __('Image will appear on:', 'essb'), __('Choose where image will appear according to your top content', 'essb'), $optin_connectors);
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-5', 'subscribe_mc_title4', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-5', 'subscribe_mc_text4', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-5', 'subscribe_mc_name4', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-5', 'subscribe_mc_email4', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-5', 'subscribe_mc_button4', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-5', 'subscribe_mc_footer4', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-5', 'subscribe_mc_success4', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-5', 'subscribe_mc_error4', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
+		essb5_advanced_options_small_settings_tile(array('element_options' => $options_load));
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-5', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-5', 'activate_mailchimp_customizer4', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-5', 'customizer_subscribe_bgcolor4', __('Background color of content area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-5', 'customizer_subscribe_textcolor4', __('Text color of content area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-5', 'customizer_subscribe_bgcolor4_bottom', __('Background color subscribe area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-5', 'customizer_subscribe_textcolor4_bottom', __('Text color subscribe area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-5', 'customizer_subscribe_hovercolor4', __('Accent color', 'essb'), __('Replace form accent color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-5', 'customizer_subscribe_hovertextcolor4', __('Accent text color', 'essb'), __('Replace form accent text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-5', 'customizer_subscribe_emailcolor4', __('Email field background color', 'essb'), __('Replace email field background color', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-5', 'customizer_subscribe_noborder4', __('Remove border of form', 'essb'), __('Activate this option if you wish to remove the tiny border from the form.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+		$count++;
+	}
+}
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-6', 'heading5', __('Customize Design #5', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-6', 'subscribe_mc_namefield5', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-6', 'subscribe_mc_title5', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-6', 'subscribe_mc_text5', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-6', 'subscribe_mc_name5', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-6', 'subscribe_mc_email5', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-6', 'subscribe_mc_button5', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-6', 'subscribe_mc_footer5', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-6', 'subscribe_mc_success5', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-6', 'subscribe_mc_error5', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
+function essb5_conversio_lists_locate() {
+	echo '<a href="#" class="ao-options-btn get-conversio-lists"><span class="essb_icon fa fa-refresh"></span><span>'.__('Choose List', 'essb').'</span></a>';
+	// Conversio API docs: http://api-docs.conversio.com/#get-customer-lists
+	// test API Key: 3f138995c963057676278e1148ce94794263c389
+	?>
+<script type="text/javascript">
+jQuery(document).ready(function($){
+	$('.get-conversio-lists').click(function(e) {
+		e.preventDefault();
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-6', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-6', 'activate_mailchimp_customizer5', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-6', 'customizer_subscribe_bgcolor5', __('Background color of content area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-6', 'customizer_subscribe_textcolor5', __('Text color of content area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-6', 'customizer_subscribe_bgcolor5_bottom', __('Background color subscribe area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-6', 'customizer_subscribe_textcolor5_bottom', __('Text color subscribe area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-6', 'customizer_subscribe_hovercolor5', __('Accent color', 'essb'), __('Replace form accent color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-6', 'customizer_subscribe_hovertextcolor5', __('Accent text color', 'essb'), __('Replace form accent text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-6', 'customizer_subscribe_emailcolor5', __('Email field background color', 'essb'), __('Replace email field background color', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-6', 'customizer_subscribe_noborder5', __('Remove border of form', 'essb'), __('Activate this option if you wish to remove the tiny border from the form.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+		var apiKey = $('#essb_options_subscribe_conv_api').val(),
+				callbackToken = $('#essb_advancedoptions_token').val();
+		if (apiKey == '') {
+			$.toast({
+			    heading: 'API key is not provided',
+			    text: '',
+			    showHideTransition: 'fade',
+			    icon: 'error',
+			    position: 'bottom-right',
+			    hideAfter: 5000
+			});
 
+			return;
+		}
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-7', 'heading5', __('Customize Design #6', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-7', 'subscribe_mc_namefield6', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_file('optin', 'optin-7', 'subscribe_mc_image6', __('Choose image', 'essb'), __('Image parameter is optional but if you choose such it will appear in the top part of form on the left or right side of content.', 'essb'));
-$optin_connectors = array("left" => __("Left side", "essb"), "right" => __("Right side", "essb"));
-ESSBOptionsStructureHelper::field_select('optin', 'optin-7', 'subscribe_mc_imagealign6', __('Image will appear on:', 'essb'), __('Choose where image will appear according to your top content', 'essb'), $optin_connectors);
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-7', 'subscribe_mc_title6', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-7', 'subscribe_mc_text6', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-7', 'subscribe_mc_name6', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-7', 'subscribe_mc_email6', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-7', 'subscribe_mc_button6', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-7', 'subscribe_mc_footer6', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-7', 'subscribe_mc_success6', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-7', 'subscribe_mc_error6', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
+		$.ajax({
+            url: essb_advancedopts_ajaxurl  + '?action=essb_advanced_options&essb_advancedoptions_token='+callbackToken+'&cmd=conversio_lists&api='+apiKey,
+            type: 'GET',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+               if (result) {
+								 result = JSON.parse(result);
+								 var output = [];
+								 output.push('<select id="essb_options_subscribe_conv_list" type="text" name="essb_options[subscribe_conv_list]" class="input-element stretched ">');
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-7', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-7', 'activate_mailchimp_customizer6', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-7', 'customizer_subscribe_bgcolor6', __('Background color of content area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-7', 'customizer_subscribe_textcolor6', __('Text color of content area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-7', 'customizer_subscribe_bgcolor6_bottom', __('Background color subscribe area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-7', 'customizer_subscribe_textcolor6_bottom', __('Text color subscribe area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-7', 'customizer_subscribe_hovercolor6', __('Accent color', 'essb'), __('Replace form accent color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-7', 'customizer_subscribe_hovertextcolor6', __('Accent text color', 'essb'), __('Replace form accent text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-7', 'customizer_subscribe_emailcolor6', __('Email field background color', 'essb'), __('Replace email field background color', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-7', 'customizer_subscribe_noborder6', __('Remove border of form', 'essb'), __('Activate this option if you wish to remove the tiny border from the form.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+								 for (var i=0;i<result.length;i++) {
+									 output.push('<option value="'+result[i].id+'">'+result[i].title+'</option>');
+								 }
 
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-8', 'heading5', __('Customize Design #7', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-8', 'subscribe_mc_namefield7', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_file('optin', 'optin-8', 'subscribe_mc_image7', __('Choose image', 'essb'), __('Image parameter is optional but if you choose such it will appear in the top part of form on the left or right side of content.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-8', 'subscribe_mc_title7', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-8', 'subscribe_mc_text7', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-8', 'subscribe_mc_name7', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-8', 'subscribe_mc_email7', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-8', 'subscribe_mc_button7', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-8', 'subscribe_mc_footer7', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-8', 'subscribe_mc_success7', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-8', 'subscribe_mc_error7', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
-
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-8', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-8', 'activate_mailchimp_customizer7', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-8', 'customizer_subscribe_bgcolor7', __('Background color of content area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-8', 'customizer_subscribe_textcolor7', __('Text color of content area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-8', 'customizer_subscribe_bgcolor7_bottom', __('Background color subscribe area', 'essb'), __('Replace form background color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-8', 'customizer_subscribe_textcolor7_bottom', __('Text color subscribe area', 'essb'), __('Replace form text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-8', 'customizer_subscribe_hovercolor7', __('Accent color', 'essb'), __('Replace form accent color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-8', 'customizer_subscribe_hovertextcolor7', __('Accent text color', 'essb'), __('Replace form accent text color', 'essb'));
-ESSBOptionsStructureHelper::field_color('optin', 'optin-8', 'customizer_subscribe_emailcolor7', __('Email field background color', 'essb'), __('Replace email field background color', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-8', 'customizer_subscribe_noborder7', __('Remove border of form', 'essb'), __('Activate this option if you wish to remove the tiny border from the form.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-
-
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-9', 'heading5', __('Customize Design #8', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-9', 'subscribe_mc_namefield8', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-9', 'subscribe_mc_title8', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-9', 'subscribe_mc_text8', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-9', 'subscribe_mc_name8', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-9', 'subscribe_mc_email8', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-9', 'subscribe_mc_button8', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-9', 'subscribe_mc_footer8', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-9', 'subscribe_mc_success8', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-9', 'subscribe_mc_error8', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
-
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-9', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-9', 'activate_mailchimp_customizer8', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_section_start_full_panels('optin', 'optin-9');
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-9', 'customizer_subscribe_bgcolor8', __('Background Color #1', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-9', 'customizer_subscribe_bgcolor28', __('Background Color #2', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-9', 'customizer_subscribe_textcolor8', __('Text color of content area', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-9', 'customizer_subscribe_bgcolor8_bottom', __('Email/Name Fields Background Overlay', 'essb'), __('', 'essb'), '', 'true');
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-9', 'customizer_subscribe_textcolor8_bottom', __('Text color of Email/Name fields', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-9', 'customizer_subscribe_buttoncolor8', __('Subscribe button background', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-9', 'customizer_subscribe_buttontextcolor8', __('Subscribe button text color', 'essb'), __('', 'essb'));
-//ESSBOptionsStructureHelper::field_color('optin', 'optin-9', 'customizer_subscribe_emailcolor8', __('Email field background color', 'essb'), __('Replace email field background color', 'essb'));
-ESSBOptionsStructureHelper::field_section_end_full_panels('optin', 'optin-9');
-
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-10', 'heading5', __('Customize Design #9', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-10', 'subscribe_mc_namefield9', __('Display name field:', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-10', 'subscribe_mc_title9', __('Title', 'essb'), __('Customize default title: Join our list', 'essb'));
-ESSBOptionsStructureHelper::field_editor('optin', 'optin-10', 'subscribe_mc_text9', __('Text', 'essb'), __('Customize default text: Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'), 'htmlmixed');
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-10', 'subscribe_mc_name9', __('Name placeholder text', 'essb'), __('Customize default name placeholder text: Enter your name here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-10', 'subscribe_mc_email9', __('Email placeholder text', 'essb'), __('Customize default email placeholder text: Enter your email here', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-10', 'subscribe_mc_button9', __('Subscribe button text', 'essb'), __('Customize default button text: Sign Up Now', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-10', 'subscribe_mc_footer9', __('Footer text', 'essb'), __('Customize default footer text: We respect your privacy and take protecting it seriously', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-10', 'subscribe_mc_success9', __('Success messsage', 'essb'), __('Customize Success Message: Thank you for subscribing.', 'essb'));
-ESSBOptionsStructureHelper::field_textbox_stretched('optin', 'optin-10', 'subscribe_mc_error9', __('Error message', 'essb'), __('Customize Error Message: Something went wrong.', 'essb'));
-
-ESSBOptionsStructureHelper::field_heading('optin', 'optin-10', 'heading4', __('Style Customization', 'essb'));
-ESSBOptionsStructureHelper::field_switch('optin', 'optin-10', 'activate_mailchimp_customizer9', __('Activate color customizer', 'essb'), __('Color customizations will not be included unless you activate this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_section_start_full_panels('optin', 'optin-10');
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-10', 'customizer_subscribe_bgcolor9', __('Background Color', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-10', 'customizer_subscribe_textcolor9', __('Text color of content area', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-10', 'customizer_subscribe_accent9', __('Accent color', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_color_panel('optin', 'optin-10', 'customizer_subscribe_button9', __('Button text color', 'essb'), __('', 'essb'));
-ESSBOptionsStructureHelper::field_section_end_full_panels('optin', 'optin-10');
+								 output.push('</select>');
+								 $('#essb_options_subscribe_conv_list').parent().html(output.join(''));
+							 }
+            },
+            error: function (error) {
+							$.toast({
+									heading: 'Cannot get Conversio lists. Please verify the filled in API access key',
+									text: '',
+									showHideTransition: 'fade',
+									icon: 'error',
+									position: 'bottom-right',
+									hideAfter: 5000
+							});
+            }
+        });
+	});
+});
+</script>
+	<?php
+}

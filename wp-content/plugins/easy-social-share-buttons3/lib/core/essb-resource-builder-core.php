@@ -371,8 +371,14 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 		if (essb_option_bool_value('cache_counter_facebook_async')) {
 			$code_options['facebook_client'] = true;
 		}
+				
 		if (essb_option_bool_value('cache_counter_pinterest_async')) {
 			$code_options['pinterest_client'] = true;
+		}
+		
+		if (essb_option_bool_value('deactivate_homepage') && (is_home() || is_front_page())) {
+			$code_options['facebook_client'] = false;
+			$code_options['pinterest_client'] = false;
 		}
 		
 		$code_options['facebook_post_url'] = get_permalink(get_the_ID());
@@ -418,6 +424,31 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 			
 			$output .= 'var essb_buttons_exist = !!document.getElementsByClassName("essb_links"); if(essb_buttons_exist == true) { document.addEventListener("DOMContentLoaded", function(event) { var ESSB_CACHE_URL = "'.$update_url.'"; if(ESSB_CACHE_URL.indexOf("?") > -1) { ESSB_CACHE_URL += "&essb_counter_cache=rebuild"; } else { ESSB_CACHE_URL += "?essb_counter_cache=rebuild"; }; var xhr = new XMLHttpRequest(); xhr.open("GET",ESSB_CACHE_URL,true); xhr.send(); });}';
 		}
+	}
+	
+	if (essb_option_bool_value('pinterest_images')) {
+		$pin_options = array();
+		$pin_options['template'] = essb_template_folder(essb_option_value('pinterest_template'));
+		$pin_options['button_style'] = essb_option_value('pinterest_button_style');
+		$pin_options['button_size'] = essb_option_value('pinterest_button_size');
+		$pin_options['animation'] = essb_option_value('pinterest_css_animations');
+		$pin_options['text'] = essb_option_value('pinterest_text');
+		$pin_options['min_width'] = essb_option_value('pinterest_minwidth');
+		$pin_options['min_height'] = essb_option_value('pinterest_minheight');
+		$pin_options['nolinks'] = essb_option_bool_value('pinterest_nolinks');
+		$pin_options['lazyload'] = essb_option_bool_value('pinterest_lazyload');
+		$pin_options['active'] = true;
+		$pin_options['position'] = essb_option_value('pinterest_position');
+		$pin_options['hideon'] = essb_option_value('pinterest_hideon');
+		$pin_options['reposition'] = essb_option_bool_value('pinterest_reposition');
+		$pin_options['selector'] = essb_option_value('pinterest_selector');
+		
+		if (essb_option_bool_value('pinterest_alwayscustom') && essb_option_bool_value('pinterest_images')) {
+			$pin_options['custompin'] = get_post_meta( get_the_ID(), 'essb_post_pin_desc', true);
+			$pin_options['force_custompin'] = true;
+		}
+		
+		$output .= 'var essbPinImages = '.json_encode($pin_options).';';
 	}
 
 	return $buffer.$output;

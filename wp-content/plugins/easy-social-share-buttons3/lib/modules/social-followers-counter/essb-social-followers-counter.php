@@ -21,11 +21,16 @@ class ESSBSocialFollowersCounter {
 		add_shortcode( 'easy-total-fans' , array ( $this , 'register_plugin_shortcode_totalfans' ) );
 		add_shortcode( 'easy-total-followers' , array ( $this , 'register_plugin_shortcode_totalfans' ) );
 		add_shortcode( 'easy-followers-layout' , array ( $this , 'register_plugin_shortcodes_layout' ) );
+		add_shortcode( 'followme-bar', array($this, 'register_shortcode_followme_bar'));
 		
 		add_action( 'wp_enqueue_scripts' , array ( $this , 'register_front_assets' ), 1);
 		
 		if (essb_option_bool_value('fanscounter_sidebar')) {
 			add_action( 'wp_footer', array ($this, 'draw_followers_sidebar'), 99);
+		}
+		
+		if (essb_option_bool_value('fanscounter_postbar')) {
+			add_filter( 'the_content', array ($this, 'draw_followers_postbar'), 99);
 		}
 		
 	}
@@ -37,6 +42,35 @@ class ESSBSocialFollowersCounter {
 		
 		essb_resource_builder()->add_static_resource(ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/essb-followers-counter.min.css', 'essb-social-followers-counter', 'css');
 		
+	}
+	
+	/**
+	 * Automatically assign follow me bar below post content
+	 * 
+	 * @param unknown_type $content
+	 */
+	public function draw_followers_postbar($content = '') {
+		if (essb_is_plugin_deactivated_on() || essb_is_module_deactivated_on('fanscounter')) {
+			return $content;
+		}
+		
+		
+		if (!is_singular()) {
+			return $content;
+		}
+		
+		$profile_bar = ESSBSocialFollowersCounterDraw::draw_followers_bar();
+		
+		return $content.$profile_bar;
+	}
+	
+	/**
+	 * Generate and draw the shortcode [followme-bar]
+	 * 
+	 * @param unknown_type $atts
+	 */
+	public function register_shortcode_followme_bar($atts = array()) {
+		return ESSBSocialFollowersCounterDraw::draw_followers_bar();
 	}
 	
 	public function register_plugin_shortcodes($attrs) {
@@ -526,7 +560,15 @@ class ESSBSocialFollowersCounter {
 				
 				if ($channel_url_type != '' && $account_type == 'channel') { $account_type = $channel_url_type; }
 				
-				return 'https://www.youtube.com/' . $account_type . '/' . ESSBSocialFollowersCounterHelper::get_option ( $social . '_id' );
+				$url = 'https://www.youtube.com/' . $account_type . '/' . ESSBSocialFollowersCounterHelper::get_option ( $social . '_id' );
+				
+				// added support for custom URLs
+				$custom_url = ESSBSocialFollowersCounterHelper::get_option ( $social . '_url' );
+				if (!empty($custom_url)) {
+					$url = $custom_url;
+				}
+				
+				return $url;
 				break;
 			case 'envato' :
 				$ref = '';

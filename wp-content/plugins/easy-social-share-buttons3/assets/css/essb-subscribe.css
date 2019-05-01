@@ -71,7 +71,7 @@ outline: none;
 	border-top: 3px solid #f05a28;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design1 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design1 .essb-subscribe-form-content-title {
 	font-size: 16px;
 	line-height: 1;
 	margin: 0px;
@@ -245,7 +245,7 @@ font-weight: 400;
 	border: 2px solid #ededed;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design2 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design2 .essb-subscribe-form-content-title {
 	font-size: 21px;
 	line-height: 1;
 	margin: 0px;
@@ -435,7 +435,7 @@ font-weight: 400;
 
 .essb-subscribe-form-content.essb-subscribe-from-design3 {
 	clear: both;
-	
+
 	color: #ffffff;
 	line-height: 1;
 }
@@ -484,7 +484,7 @@ font-weight: 400;
 	padding: 15px;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design3 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design3 .essb-subscribe-form-content-title {
 	font-size: 21px;
 	line-height: 1;
 	margin: 0px;
@@ -563,7 +563,7 @@ font-weight: 400;
 .essb-subscribe-form-content.essb-subscribe-from-design3 .essb-subscribe-form-content-email-field:focus,
 .essb-subscribe-form-content.essb-subscribe-from-design3 .essb-subscribe-form-content-name-field:focus
 	{
-	
+
 	outline: none;
 }
 
@@ -720,7 +720,7 @@ font-weight: 400;
 	margin-bottom: 10px;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design4.essb-subscribe-form-inwidget .essb-subscribe-form-content-contentholder h4,
+.essb-subscribe-form-content.essb-subscribe-from-design4.essb-subscribe-form-inwidget .essb-subscribe-form-content-contentholder .essb-subscribe-form-content-title,
 .essb-subscribe-form-content.essb-subscribe-from-design4.essb-subscribe-form-inwidget .essb-subscribe-form-content-contentholder p {
 	padding: 0px 10px;
 }
@@ -733,7 +733,7 @@ font-weight: 400;
 	padding: 10px !important;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design4 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design4 .essb-subscribe-form-content-title {
 	font-size: 21px;
 	line-height: 1;
 	margin: 0px;
@@ -795,7 +795,7 @@ font-weight: 400;
 .essb-subscribe-form-content.essb-subscribe-from-design4 .essb-subscribe-form-content-email-field:focus,
 .essb-subscribe-form-content.essb-subscribe-from-design4 .essb-subscribe-form-content-name-field:focus
 	{
-	
+
 	outline: none;
 }
 
@@ -917,7 +917,7 @@ font-weight: 400;
 	padding: 10px 20px;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design5 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design5 .essb-subscribe-form-content-title {
 	font-size: 28px;
 	line-height: 1;
 	margin: 0px;
@@ -998,7 +998,7 @@ font-weight: 400;
 	{
 	border-bottom: 3px solid #b0b0b0;
 	outline: none;
-	
+
 }
 
 .essb-subscribe-form-content.essb-subscribe-from-design5 input.essb-subscribe-form-content-email-field,
@@ -1106,7 +1106,7 @@ font-weight: 400;
 /** Design 6 **/
 
 .essb-subscribe-form-content.essb-subscribe-from-design6 {
-	clear: both;	
+	clear: both;
 	background-color: #fff;
 	color: #303133;
 	line-height: 1;
@@ -1166,7 +1166,7 @@ font-weight: 400;
 	padding: 15px;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design6 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design6 .essb-subscribe-form-content-title {
 	font-size: 21px;
 	line-height: 1;
 	margin: 0px;
@@ -1246,7 +1246,7 @@ font-weight: 400;
 .essb-subscribe-form-content.essb-subscribe-from-design6 .essb-subscribe-form-content-email-field:focus,
 .essb-subscribe-form-content.essb-subscribe-from-design6 .essb-subscribe-form-content-name-field:focus
 	{
-	
+
 	outline: none;
 }
 
@@ -1356,7 +1356,7 @@ font-weight: 400;
 /** Design 7 **/
 
 .essb-subscribe-form-content.essb-subscribe-from-design7 {
-	clear: both;	
+	clear: both;
 	background-color: #fff;
 	color: #303133;
 	line-height: 1;
@@ -1394,10 +1394,10 @@ font-weight: 400;
 
 
 .essb-subscribe-form-content.essb-subscribe-from-design7 .essb-subscribe-form-content-bottom {
-	padding: 15px;	
+	padding: 15px;
 	background-color: #ffca4f;
 	border-radius:5px;
-	
+
 	display: block;
 }
 
@@ -1406,7 +1406,7 @@ font-weight: 400;
 	padding: 15px;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design7 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design7 .essb-subscribe-form-content-title {
 	font-size: 21px;
 	line-height: 1;
 	margin: 0px;
@@ -1486,7 +1486,7 @@ font-weight: 400;
 .essb-subscribe-form-content.essb-subscribe-from-design7 .essb-subscribe-form-content-email-field:focus,
 .essb-subscribe-form-content.essb-subscribe-from-design7 .essb-subscribe-form-content-name-field:focus
 	{
-	
+
 	outline: none;
 }
 
@@ -1596,7 +1596,7 @@ font-weight: 400;
 /** Design 8 **/
 
 .essb-subscribe-form-content.essb-subscribe-from-design8 {
-	clear: both;	
+	clear: both;
 	color: #fff;
 	line-height: 1;
 	background-size: cover;
@@ -1623,7 +1623,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c91a78', end
 
 
 .essb-subscribe-form-content.essb-subscribe-from-design8 .essb-subscribe-form-content-bottom {
-	padding: 15px 50px;	
+	padding: 15px 50px;
 	display: block;
 }
 
@@ -1632,7 +1632,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c91a78', end
 	padding: 15px;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design8 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design8 .essb-subscribe-form-content-title {
 	font-size: 24px;
 	line-height: 1;
 	margin: 0px;
@@ -1709,7 +1709,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c91a78', end
 .essb-subscribe-form-content.essb-subscribe-from-design8 .essb-subscribe-form-content-email-field:focus,
 .essb-subscribe-form-content.essb-subscribe-from-design8 .essb-subscribe-form-content-name-field:focus
 	{
-	
+
 	outline: none;
 }
 
@@ -1814,7 +1814,7 @@ font-weight: 400;
 */
 
 .essb-subscribe-form-content.essb-subscribe-from-design9 {
-	clear: both;	
+	clear: both;
 	color: #222;
 	line-height: 1;
 	background-color: #fff;
@@ -1838,7 +1838,7 @@ font-weight: 400;
 
 
 .essb-subscribe-form-content.essb-subscribe-from-design9 .essb-subscribe-form-content-bottom {
-	padding: 15px 50px;	
+	padding: 15px 50px;
 	display: block;
 }
 
@@ -1847,7 +1847,7 @@ font-weight: 400;
 	padding: 0 25px 25px 25px;
 }
 
-.essb-subscribe-form-content.essb-subscribe-from-design9 h4 {
+.essb-subscribe-form-content.essb-subscribe-from-design9 .essb-subscribe-form-content-title {
 	font-size: 24px;
 	line-height: 1;
 	margin: 0px;
@@ -1923,7 +1923,7 @@ font-weight: 400;
 .essb-subscribe-form-content.essb-subscribe-from-design9 .essb-subscribe-form-content-email-field:focus,
 .essb-subscribe-form-content.essb-subscribe-from-design9 .essb-subscribe-form-content-name-field:focus
 	{
-	
+
 	outline: none;
 }
 
@@ -2049,7 +2049,7 @@ font-weight: 400;
 .essb-optinflyout.essb-optinflyout-bottom-left {
 	right: auto;
 	left: 5px;
-} 
+}
 
 .essb-optinflyout.essb-optinflyout-top-left {
 	right: auto;
@@ -2061,7 +2061,7 @@ font-weight: 400;
 .essb-optinflyout.essb-optinflyout-top-right {
 	bottom: auto;
 	top: 5px;
-} 
+}
 
 .essb-optinflyout .essb-subscribe-form-inline {
 	margin-bottom: 0px;
@@ -2161,4 +2161,131 @@ font-weight: 400;
 .essb-subscribe-form-content .essb-subscribe-confirm {
 	margin: 10px 0;
 	font-size: 13px;
+}
+
+/** Adding Userbased Core Styles */
+.essb-userform .essb-subscribe-form-result-message { display: none; }
+.essb-userform .essb-subscribe-form-content-footer { font-size: 0.8em; }
+
+.essb-userform .essb-subscribe-loader {
+  margin: 0 0 2em;
+  height: 35px;
+  width: 20%;
+  text-align: center;
+  padding: 1em;
+  margin: 0 auto 1em;
+  display: none;
+  vertical-align: top;
+}
+
+.essb-userform .essb-subscribe-loader svg path,
+.essb-userform .essb-subscribe-loader svg rect {
+  fill: #fff;
+}
+
+.essb-userform .essb-subscribe-form-content-title,
+.essb-userform .essb-subscribe-form-content-text {
+	margin: 0 0 1em 0;
+}
+
+.essb-userform .essb-userform-field, .essb-userform .essb-userform-button {
+	width: 100%;
+	margin: 0 0 10px 0;
+	padding: 8px;
+	font-size: 1em;
+}
+
+.essb-userform .essb-subscribe-form-content-footer {
+	margin: 1em 0 0 0;
+}
+
+.essb-userform .essb-userform-imagearea { text-align: center; vertical-align: middle; }
+.essb-userform.essb-subscribe-image-left .essb-userform-imagearea { margin-right: 1%; }
+.essb-userform.essb-subscribe-image-right .essb-userform-imagearea { margin-left: 1%; }
+
+.essb-userform.essb-subscribe-image-left,
+.essb-userform.essb-subscribe-image-right { display: flex; }
+
+.essb-userform.essb-subscribe-image-left.essb-imagearea-30 .essb-userform-imagearea,
+.essb-userform.essb-subscribe-image-right.essb-imagearea-30 .essb-userform-imagearea {
+	width: 30%;
+	display: inline-block;
+	margin: 0;
+}
+
+.essb-userform.essb-subscribe-image-left.essb-imagearea-30 .essb-userform-contentarea,
+.essb-userform.essb-subscribe-image-right.essb-imagearea-30 .essb-userform-contentarea {
+	width: 69%;
+	display: inline-block;
+	margin: 0;
+}
+
+.essb-userform.essb-subscribe-image-left.essb-imagearea-25 .essb-userform-imagearea,
+.essb-userform.essb-subscribe-image-right.essb-imagearea-25 .essb-userform-imagearea {
+	width: 25%;
+	display: inline-block;
+	margin: 0;
+}
+
+.essb-userform.essb-subscribe-image-left.essb-imagearea-25 .essb-userform-contentarea,
+.essb-userform.essb-subscribe-image-right.essb-imagearea-25 .essb-userform-contentarea {
+	width: 74%;
+	display: inline-block;
+	margin: 0;
+}
+
+.essb-userform.essb-subscribe-image-left.essb-imagearea-40 .essb-userform-imagearea,
+.essb-userform.essb-subscribe-image-right.essb-imagearea-40 .essb-userform-imagearea {
+	width: 40%;
+	display: inline-block;
+	margin: 0;
+}
+
+.essb-userform.essb-subscribe-image-left.essb-imagearea-40 .essb-userform-contentarea,
+.essb-userform.essb-subscribe-image-right.essb-imagearea-40 .essb-userform-contentarea {
+	width: 59%;
+	display: inline-block;
+	margin: 0;
+}
+
+.essb-userform.essb-subscribe-image-left.essb-imagearea-50 .essb-userform-imagearea,
+.essb-userform.essb-subscribe-image-right.essb-imagearea-50 .essb-userform-imagearea {
+	width: 49%;
+	display: inline-block;
+	margin: 0;
+}
+
+.essb-userform.essb-subscribe-image-left.essb-imagearea-50 .essb-userform-contentarea,
+.essb-userform.essb-subscribe-image-right.essb-imagearea-50 .essb-userform-contentarea {
+	width: 50%;
+	display: inline-block;
+	margin: 0;
+}
+
+.essb-userform .essb-subscribe-form-content-bottom { margin-top: 10px; }
+
+@media screen and (max-width: 1024px) {
+	.essb-userform.essb-subscribe-image-left,
+	.essb-userform.essb-subscribe-image-right { display: block; }
+
+	.essb-userform.essb-subscribe-image-left.essb-imagearea-30 .essb-userform-imagearea,
+	.essb-userform.essb-subscribe-image-right.essb-imagearea-30 .essb-userform-imagearea,
+	.essb-userform.essb-subscribe-image-left.essb-imagearea-30 .essb-userform-contentarea,
+	.essb-userform.essb-subscribe-image-right.essb-imagearea-30 .essb-userform-contentarea,
+	.essb-userform.essb-subscribe-image-left.essb-imagearea-25 .essb-userform-imagearea,
+	.essb-userform.essb-subscribe-image-right.essb-imagearea-25 .essb-userform-imagearea,
+	.essb-userform.essb-subscribe-image-left.essb-imagearea-25 .essb-userform-contentarea,
+	.essb-userform.essb-subscribe-image-right.essb-imagearea-25 .essb-userform-contentarea,
+	.essb-userform.essb-subscribe-image-left.essb-imagearea-40 .essb-userform-imagearea,
+	.essb-userform.essb-subscribe-image-right.essb-imagearea-40 .essb-userform-imagearea,
+	.essb-userform.essb-subscribe-image-left.essb-imagearea-40 .essb-userform-contentarea,
+	.essb-userform.essb-subscribe-image-right.essb-imagearea-40 .essb-userform-contentarea,
+	.essb-userform.essb-subscribe-image-left.essb-imagearea-50 .essb-userform-imagearea,
+	.essb-userform.essb-subscribe-image-right.essb-imagearea-50 .essb-userform-imagearea,
+	.essb-userform.essb-subscribe-image-left.essb-imagearea-50 .essb-userform-contentarea,
+	.essb-userform.essb-subscribe-image-right.essb-imagearea-50 .essb-userform-contentarea {
+		width: 100%;
+		display: block;
+	}
+
 }

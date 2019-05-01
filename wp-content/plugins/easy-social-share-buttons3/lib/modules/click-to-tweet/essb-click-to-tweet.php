@@ -187,7 +187,7 @@ function essb_ctt_shortcode($atts) {
 	
 	if (! is_feed ()) {
 		
-		return "<div class='essb-click-to-tweet".$template."' onclick=\"window.open('https://twitter.com/intent/tweet?text=" . urlencode ( $link_short ) . $handle_code . $bcttURL . "', 'essb_share_window', 'height=300,width=500,resizable=1,scrollbars=yes');\">
+		return "<div class='essb-click-to-tweet".esc_attr($template)."' onclick=\"window.open('https://twitter.com/intent/tweet?text=" . urlencode ( $link_short ) . $handle_code . $bcttURL . "', 'essb_share_window', 'height=300,width=500,resizable=1,scrollbars=yes');\">
 			<span class='essb-click-to-tweet-quote'>
 			" . $short . "
 			</span>
@@ -198,13 +198,12 @@ function essb_ctt_shortcode($atts) {
 
 add_shortcode ( 'easy-ctt', 'essb_ctt_shortcode' );
 add_shortcode ( 'easy-tweet', 'essb_ctt_shortcode' );
-
+add_shortcode ( 'sharable-quote', 'essb_ctt_shortcode' );
 
 function essb_ctt_scripts() {
 	
 		if (!essb_is_plugin_deactivated_on() && !essb_is_module_deactivated_on('ctt')) {
-		    //essb_resource_builder()->add_static_resource(plugins_url ( 'assets/css/styles.css', __FILE__ ), 'essb-cct-style', 'css');
-		    essb_resource_builder()->add_static_resource_footer(ESSB3_PLUGIN_URL . '/lib/modules/click-to-tweet/assets/css/styles.css', 'essb-cct-style', 'css');
+		    essb_resource_builder()->add_static_resource_footer(ESSB3_PLUGIN_URL . '/lib/modules/click-to-tweet/assets/css/styles.min.css', 'essb-cct-style', 'css');
 		    
 		}
 }

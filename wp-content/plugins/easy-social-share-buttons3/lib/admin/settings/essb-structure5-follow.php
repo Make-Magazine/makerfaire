@@ -4,7 +4,8 @@ if (!essb_option_bool_value('deactivate_module_followers')) {
 	ESSBOptionsStructureHelper::menu_item('display', 'follow', __('Social Followers Counter', 'essb'), ' ti-heart', 'activate_first', 'follow-1');
 	ESSBOptionsStructureHelper::submenu_item('display', 'follow-1', __('Settings', 'essb'));
 	ESSBOptionsStructureHelper::submenu_item('display', 'follow-2', __('Social Networks', 'essb'));
-	ESSBOptionsStructureHelper::submenu_item('display', 'follow-3', __('Followers Sidebar', 'essb'));
+	ESSBOptionsStructureHelper::submenu_item('display', 'follow-3', __('Follow Me Sidebar', 'essb'));
+	ESSBOptionsStructureHelper::submenu_item('display', 'follow-5', __('Follow Me Content Bar', 'essb'));
 	ESSBOptionsStructureHelper::submenu_item('display', 'follow-4', __('Custom Layout Builder', 'essb'));
 }
 
@@ -12,6 +13,8 @@ if (!essb_option_bool_value('deactivate_module_profiles')) {
 	ESSBOptionsStructureHelper::menu_item('display', 'profiles', __('Social Profiles', 'essb'), ' ti-user', 'activate_first', 'profiles-1');
 	ESSBOptionsStructureHelper::submenu_item('display', 'profiles-1', __('Settings', 'essb'));
 	ESSBOptionsStructureHelper::submenu_item('display', 'profiles-2', __('Social Networks', 'essb'));
+	ESSBOptionsStructureHelper::submenu_item('display', 'profiles-3', __('Profile Links as Sidebar', 'essb'));
+	ESSBOptionsStructureHelper::submenu_item('display', 'profiles-4', __('Profile Links Below Content', 'essb'));
 }
 
 if (!essb_option_bool_value('deactivate_module_natives')) {
@@ -23,16 +26,7 @@ if (!essb_option_bool_value('deactivate_module_natives')) {
 
 if (!essb_option_bool_value('deactivate_module_clicktochat')) {
 	ESSBOptionsStructureHelper::menu_item('display', 'clicktochat', __('Click To Chat: WhatsApp, Viber', 'essb'), 'ti-facebook');
-	//
-	if (!ESSBActivationManager::isActivated()) {
-		if (!ESSBActivationManager::isThemeIntegrated()) {
-			ESSBOptionsStructureHelper::hint('display', 'clicktochat', __('Activate Plugin To Use This Feature', 'essb'), 'Hello! Please <a href="admin.php?page=essb_redirect_update&tab=update">activate your copy</a> of Easy Social Share Buttons for WordPress to unlock and use this feature.', 'fa24 fa fa-lock', 'glow');
-		}
-		else {
-			ESSBOptionsStructureHelper::hint('display', 'clicktochat', __('Direct Customer Benefit ', 'essb'), sprintf(__('Access to one click ready made styles install is benefit for direct plugin customers. <a href="%s" target="_blank"><b>See all direct customer benefits</b></a>', 'essb'), ESSBActivationManager::getBenefitURL()), 'fa24 fa fa-lock', 'glow');
-		}	
-	}
-	else {
+
 		ESSBOptionsStructureHelper::field_switch('display', 'clicktochat', 'click2chat_activate', __('Activate Click To Chat Usage', 'essb'), __('Set this option to Yes if you wish to use the Click to Chat module on your site', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 		ESSBOptionsStructureHelper::field_textbox_stretched('display', 'clicktochat', 'click2chat_text', __('Chat Button Text', 'essb'), __('Enter your own custom text that will appear on chat start button', 'essb'));
 		ESSBOptionsStructureHelper::field_color('display', 'clicktochat', 'click2chat_bgcolor', __('Button Background Color', 'essb'), __('Customize the background color of chat button.', 'essb'));
@@ -94,8 +88,7 @@ if (!essb_option_bool_value('deactivate_module_clicktochat')) {
 		ESSBOptionsStructureHelper::field_image('display', 'clicktochat', 'click2chat_operator4_image', __('Profile Image', 'essb'), __('Image that will be displayed as profile picture', 'essb'), '', 'vertical1');
 		ESSBOptionsStructureHelper::field_textbox_stretched('display', 'clicktochat', 'click2chat_operator4_text', __('Auto Text', 'essb'), __('This text will pre-poluate the chat field. You can use [title] and [url] to as variables to set the current page title or URL. (WhatsApp Only)', 'essb'), '');
 		ESSBOptionsStructureHelper::panel_end('display', 'clicktochat');
-		
-	}
+
 }
 
 if (!essb_option_bool_value('deactivate_module_facebookchat')) {
@@ -315,28 +308,64 @@ if (!essb_option_bool_value('deactivate_module_followers')) {
 	
 	ESSBOptionsStructureHelper::panel_end('display', 'follow-4');
 	
+	// Follow me bar
+	ESSBOptionsStructureHelper::panel_start('display', 'follow-5', __('Automatically Add Social Profile Links Below Post Content (Follow Me Post Bar)', 'essb'), __('Activate this option to automatically generate profile links below content of all posts (custom post types are not supported). You can use it for example as an author bio. Even if not activated from this option you can still show it with shortcode anywhere inside your content. You can place anywhere in content [followme-bar]. The options configured in the panel will be used for the display (no matter if the option is set to No).', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'fanscounter_postbar', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
+	ESSBOptionsStructureHelper::panel_start('display', 'follow-5', __('Custom Cover Box Content Above Buttons', 'essb'), __('Use the fields if you need to fill custom content above your follow buttons. The fields you can use to make the buttons be like a profile button for example.', 'essb'), '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+	ESSBOptionsStructureHelper::field_switch_panel('display', 'follow-5', 'essb3fans_profile_c_show', __('Display cover box above networks', 'essb'), __('Set Yes to display the configured cover box.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_select_panel('display', 'follow-5', 'essb3fans_profile_c_style', __('Main style', 'essb'), __('Main style choose the accent color that will be used to draw texts', 'essb'), array('' => 'Light', 'dark' => 'Dark'));
+	ESSBOptionsStructureHelper::field_select_panel('display', 'follow-5', 'essb3fans_profile_c_align', __('Align', 'essb'), __('Choose text and image alignment inside the cover box', 'essb'), array('' => 'Center (default)', 'left' => 'Left', 'right' => 'Right'));
+	ESSBOptionsStructureHelper::field_color_panel('display', 'follow-5', 'essb3fans_profile_c_bg', __('Custom background color', 'essb'), __('Setup custom background color that will appear in the cover box.', 'essb'), '', 'true');
+	ESSBOptionsStructureHelper::field_image('display', 'follow-5', 'essb3fans_profile_c_profile', __('Profile image', 'essb'), __('Optional you can set a custom profile image that will appear', 'essb'), '', 'vertical1');
+	ESSBOptionsStructureHelper::field_textbox_stretched('display', 'follow-5', 'essb3fans_profile_c_title', __('Title', 'essb'), __('Set own personalized title (shortcodes supported). Use [easy-total-followers] if you wish to display total number of followers in text', 'essb'));
+	ESSBOptionsStructureHelper::field_textarea('display', 'follow-5', 'essb3fans_profile_c_desc', __('Description text', 'essb'), __('Appearing in smaller text below title (shortcodes supported). Use [easy-total-followers] if you wish to display total number of followers in text', 'essb'));
+	ESSBOptionsStructureHelper::panel_end('display', 'follow-5');
+	
+	ESSBOptionsStructureHelper::field_select_panel('display', 'follow-5', 'essb3fans_profile_cols', __('Columns', 'essb'), __('Choose the number of columns that will be used for custom layout.', 'essb'), array('' => 'Automatic', '2' => '2 Columns', '3' => '3 Columns', '4' => '4 Columns', '5' => '5 Columns', '6' => '6 Columns'));
+	ESSBOptionsStructureHelper::field_select_panel('display', 'follow-5', 'essb3fans_profile_template', __('Template', 'essb'), __('Choose template that you will use on followers sidebar', 'essb'), $followers_default_options['template']['values']);
+	ESSBOptionsStructureHelper::field_select_panel('display', 'follow-5', 'essb3fans_profile_animation', __('Apply animation', 'essb'), __('Animation is a great way to grab visitors attention', 'essb'), $followers_default_options['animation']['values']);
+	ESSBOptionsStructureHelper::field_switch_panel('display', 'follow-5', 'essb3fans_profile_nospace', __('Without space between buttons', 'essb'), __('Activate this option to connect follower buttons and remove tiny space between them.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_switch_panel('display', 'follow-5', 'essb3fans_profile_notext', __('Without Follow Text', 'essb'), __('Set to Yes in case you need to remove the followers text below numbers.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_switch_panel('display', 'follow-5', 'essb3fans_profile_nonumber', __('Without Follow Values', 'essb'), __('Set to Yes if you need to remove the number of followers (for example use it just as profile buttons).', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	
+	ESSBOptionsStructureHelper::panel_end('display', 'follow-5');
 }
 
 // Profiles
 //ESSBOptionsStructureHelper::field_heading('display', 'profiles-1', 'heading5', __('Social Profile Settings', 'essb'));
 if (!essb_option_bool_value('deactivate_module_profiles')) {
 	ESSBOptionsStructureHelper::field_switch('display', 'profiles-1', 'profiles_widget', __('Activate social profiles widget and shortcode', 'essb'), __('Activate this option to install and use social profiles widget.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-	
-	ESSBOptionsStructureHelper::panel_start('display', 'profiles-1', __('Automatically generate and assing social profiles as sidebar', 'essb'), __('Activate this option to automatically generate sidebar with your social profile links', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'profiles_display', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
-	$listOfOptions = array("left" => __("Left", "essb"), "right" => __("Right", "essb"), "topleft" => __("Top left", "essb"), "topright" => __("Top right", "essb"), "bottomleft" => __("Bottom left", "essb"), "bottomright" => __("Bottom right", "essb"));
-	ESSBOptionsStructureHelper::field_select('display', 'profiles-1', 'profiles_display_position', __('Position of social profiles', 'essb'), __('Choose your social profiles position', 'essb'), $listOfOptions);
-	ESSBOptionsStructureHelper::field_switch('display', 'profiles-1', 'profiles_mobile_deactivate', __('Deactivate social profiles on mobile', 'essb'), __('Activate this option to turn off display on mobile devices.', 'essb'), 'recommended', __('Yes', 'essb'), __('No', 'essb'));
-	ESSBOptionsStructureHelper::field_switch('display', 'profiles-1', 'profiles_nospace', __('Remove spacing between buttons', 'essb'), __('Activate this option to remove default space between share buttons.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-	ESSBOptionsStructureHelper::field_select('display', 'profiles-1', 'profiles_template', __('Choose template that you will use for sidebar', 'essb'), __('Template assigned here will be used for sidebar and also for default template for widget and shortcodes if you use such. Each widget or shortcode includes options to personalize it.', 'essb'), ESSBSocialProfilesHelper::available_templates());
-	ESSBOptionsStructureHelper::field_select('display', 'profiles-1', 'profiles_animation', __('Choose animation that you will use for sidebar', 'essb'), __('Animation assigned here will be used for sidebar and also for default template for widget and shortcodes if you use such. Each widget or shortcode includes options to personalize it.', 'essb'), ESSBSocialProfilesHelper::available_animations());
-	ESSBOptionsStructureHelper::panel_end('display', 'profiles-1');
-	
-	
-	ESSBOptionsStructureHelper::field_heading('display', 'profiles-1', 'heading5', __('Change the order of social profiles', 'essb'));
-	ESSBOptionsStructureHelper::title('display', 'profiles-1', __('Customize order of social profile networks', 'essb'), '', 'inner-row');
-	ESSBOptionsStructureHelper::field_checkbox_list_sortable('display', 'profiles-1', 'profile_networks', __('Social Networks', 'essb'), __('Order and activate networks you wish to use in widget and shortcodes'), ESSBSocialProfilesHelper::available_social_networks());
+		
+	ESSBOptionsStructureHelper::field_heading('display', 'profiles-1', 'heading5', __('Change Order & Active Networks', 'essb'));
+	ESSBOptionsStructureHelper::field_checkbox_list_sortable('display', 'profiles-1', 'profile_networks', __('Order & Active Social Networks', 'essb'), __('The order of social networks will be used anywhere inside plugin (including shortcodes and widgets). The active networks you will select will appear in the profiles sidebar & profile bar. The shortcodes and widgets can have a different list of active networks and links. Do not forget to setup the profile links too in the networks submenu.', 'essb'), ESSBSocialProfilesHelper::available_social_networks());
 	
 	essb_prepare_social_profiles_fields('display', 'profiles-2');
+	
+	ESSBOptionsStructureHelper::panel_start('display', 'profiles-3', __('Automatically generate and assing social profiles as sidebar', 'essb'), __('Activate this option to automatically generate sidebar with your social profile links', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'profiles_display', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
+	$listOfOptions = array("left" => __("Left", "essb"), "right" => __("Right", "essb"), "topleft" => __("Top left", "essb"), "topright" => __("Top right", "essb"), "bottomleft" => __("Bottom left", "essb"), "bottomright" => __("Bottom right", "essb"));
+	ESSBOptionsStructureHelper::field_select('display', 'profiles-3', 'profiles_display_position', __('Position of social profiles', 'essb'), __('Choose your social profiles position', 'essb'), $listOfOptions);
+	ESSBOptionsStructureHelper::field_switch('display', 'profiles-3', 'profiles_mobile_deactivate', __('Deactivate social profiles on mobile', 'essb'), __('Activate this option to turn off display on mobile devices.', 'essb'), 'recommended', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_switch('display', 'profiles-3', 'profiles_nospace', __('Remove spacing between buttons', 'essb'), __('Activate this option to remove default space between share buttons.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_select('display', 'profiles-3', 'profiles_template', __('Choose template that you will use for sidebar', 'essb'), __('Template assigned here will be used for sidebar and also for default template for widget and shortcodes if you use such. Each widget or shortcode includes options to personalize it.', 'essb'), ESSBSocialProfilesHelper::available_templates());
+	ESSBOptionsStructureHelper::field_select('display', 'profiles-3', 'profiles_size', __('Apply Size', 'essb'), __('Set custom size of the profile buttons in sidebar', 'essb'), ESSBSocialProfilesHelper::available_sizes());
+	ESSBOptionsStructureHelper::field_select('display', 'profiles-3', 'profiles_animation', __('Choose animation that you will use for sidebar', 'essb'), __('Animation assigned here will be used for sidebar and also for default template for widget and shortcodes if you use such. Each widget or shortcode includes options to personalize it.', 'essb'), ESSBSocialProfilesHelper::available_animations());
+	ESSBOptionsStructureHelper::panel_end('display', 'profiles-3');
+	
+	ESSBOptionsStructureHelper::panel_start('display', 'profiles-4', __('Automatically add Social Profile links below post content (Profile Post Bar)', 'essb'), __('Activate this option to automatically generate profile links below content of all posts (custom post types are not supported). You can use it for example as an author bio. Even if not activated from this option you can still show it with shortcode anywhere inside your content. You can place anywhere in content <strong>[profile-bar]</strong>. The options configured in the panel will be used for the display (no matter if the option is set to No).', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'profiles_post_display', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
+	$listOfOptions = array("left" => __("Left", "essb"), "right" => __("Right", "essb"), "center" => __("Center", "essb"));
+	ESSBOptionsStructureHelper::field_select_panel('display', 'profiles-4', 'profiles_post_align', __('Align content and profile buttons', 'essb'), __('Choose how the profile buttons and custom content (if used) will be aligned.', 'essb'), $listOfOptions);
+	$listOfOptions = array("above" => __("Above Profile Buttons", "essb"), "left" => __("Along With Profile Buttons (on the same line)", "essb"));
+	ESSBOptionsStructureHelper::field_select_panel('display', 'profiles-4', 'profiles_post_content_pos', __('Custom content position', 'essb'), __('Choose where the custom content will appear.', 'essb'), $listOfOptions);
+	ESSBOptionsStructureHelper::field_wpeditor('display', 'profiles-4', 'profiles_post_content', __('Custom content', 'essb'), __('Set custom content appearing above profile buttons. If you does not wish such content simply leave it blank', 'essb'), 'htmlmixed');
+	
+	$listOfOptions = array("" => __("Default", "essb"), "full" => __("Fluid Full Width", "essb"));
+	ESSBOptionsStructureHelper::field_select_panel('display', 'profiles-4', 'profiles_post_width', __('Profile buttons width', 'essb'), __('The fluid full width is not recommended if you are using a large amount of share buttons. There may not be enough space to show all buttons at same time.', 'essb'), $listOfOptions);
+	ESSBOptionsStructureHelper::field_switch_panel('display', 'profiles-4', 'profiles_post_show_text', __('Show CTA texts', 'essb'), __('Set to Yes to make the buttons has icon and text filled inside settings', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_switch_panel('display', 'profiles-4', 'profiles_post_nospace', __('Remove spacing between buttons', 'essb'), __('Activate this option to remove default space between share buttons.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_select_panel('display', 'profiles-4', 'profiles_post_template', __('Choose template that you will use for sidebar', 'essb'), __('Template assigned here will be used for sidebar and also for default template for widget and shortcodes if you use such. Each widget or shortcode includes options to personalize it.', 'essb'), ESSBSocialProfilesHelper::available_templates());
+	ESSBOptionsStructureHelper::field_select_panel('display', 'profiles-4', 'profiles_post_animation', __('Choose animation that you will use for sidebar', 'essb'), __('Animation assigned here will be used for sidebar and also for default template for widget and shortcodes if you use such. Each widget or shortcode includes options to personalize it.', 'essb'), ESSBSocialProfilesHelper::available_animations());
+	$listOfOptions = array("" => __("Default", "essb"), "small" => __("Small", "essb"), "medium" => __("Medium", "essb"), "large" => __("Large", "essb"), "xlarge" => __("Extra Large", "essb"));
+	ESSBOptionsStructureHelper::field_select_panel('display', 'profiles-4', 'profiles_post_size', __('Profile buttons size', 'essb'), '', $listOfOptions);
+	ESSBOptionsStructureHelper::panel_end('display', 'profiles-4');
 }
 
 function essb3_draw_fanscounter_settings($tab_id, $menu_id) {

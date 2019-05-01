@@ -146,6 +146,12 @@ if (!function_exists('essb_wpml_translatable_fields')) {
 		$result['menu3'] = array('type' => 'menu', 'title' => __('Social Networks', 'essb'));
 		$result['networks'] = array('type' => 'networks', 'group' => 'menu3');
 		
+		$result['menu8'] = array('type' => 'menu', 'title' => __('Homepage Social Share Optimization', 'essb'));
+		$result['sso_frontpage_title'] = array('type' => 'field', 'group' => 'menu8', 'tab_id' => 'social', 'menu_id' => 'optimize');
+		$result['sso_frontpage_description'] = array('type' => 'field', 'group' => 'menu8', 'tab_id' => 'social', 'menu_id' => 'optimize');
+		$result['sso_frontpage_image'] = array('type' => 'field', 'group' => 'menu8', 'tab_id' => 'social', 'menu_id' => 'optimize');
+		
+		
 		$result['menu2'] = array('type' => 'menu', 'title' => __('E-mail Message', 'essb'));
 		$result['heading1'] = array('type' => 'heading', 'group' => 'menu2', 'title' => __('Email message customization'));
 		$result['mail_captcha'] = array('type' => 'field', 'group' => 'menu2', 'tab_id' => 'social', 'menu_id' => 'share-1');
@@ -184,76 +190,18 @@ if (!function_exists('essb_wpml_translatable_fields')) {
 		$result['menu5'] = array('type' => 'menu', 'title' => __('Subscribe Forms', 'essb'));
 		$result['heading51'] = array('type' => 'heading', 'group' => 'menu5', 'title' => __('Customize MailChimp List'));
 		$result['subscribe_mc_list'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-1');
-		$result['heading5'] = array('type' => 'heading', 'group' => 'menu5', 'title' => __('Easy Opt-in Design #1'));
-		$result['subscribe_mc_title'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-2');
-		$result['subscribe_mc_text'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-2');
-		$result['subscribe_mc_name'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-2');
-		$result['subscribe_mc_email'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-2');
-		$result['subscribe_mc_button'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-2');
-		$result['subscribe_mc_footer'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-2');
-		$result['subscribe_mc_success'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-2');
-		$result['subscribe_mc_error'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-2');
-
-		$result['heading6'] = array('type' => 'heading', 'group' => 'menu5', 'title' => __('Easy Opt-in Design #2'));
-		$result['subscribe_mc_title2'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-3');
-		$result['subscribe_mc_text2'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-3');
-		$result['subscribe_mc_name2'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-3');
-		$result['subscribe_mc_email2'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-3');
-		$result['subscribe_mc_button2'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-3');
-		$result['subscribe_mc_footer2'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-3');
-		$result['subscribe_mc_success2'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-3');
-		$result['subscribe_mc_error2'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-3');
-
-		$result['heading7'] = array('type' => 'heading', 'group' => 'menu5', 'title' => __('Easy Opt-in Design #3'));
-		$result['subscribe_mc_title3'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-4');
-		$result['subscribe_mc_text3'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-4');
-		$result['subscribe_mc_name3'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-4');
-		$result['subscribe_mc_email3'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-4');
-		$result['subscribe_mc_button3'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-4');
-		$result['subscribe_mc_footer3'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-4');
-		$result['subscribe_mc_success3'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-4');
-		$result['subscribe_mc_error3'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-4');
-
-		$result['heading8'] = array('type' => 'heading', 'group' => 'menu5', 'title' => __('Easy Opt-in Design #4'));
-		$result['subscribe_mc_title4'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-5');
-		$result['subscribe_mc_text4'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-5');
-		$result['subscribe_mc_name4'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-5');
-		$result['subscribe_mc_email4'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-5');
-		$result['subscribe_mc_button4'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-5');
-		$result['subscribe_mc_footer4'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-5');
-		$result['subscribe_mc_success4'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-5');
-		$result['subscribe_mc_error4'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-5');
-
-		$result['heading9'] = array('type' => 'heading', 'group' => 'menu5', 'title' => __('Easy Opt-in Design #5'));
-		$result['subscribe_mc_title5'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-6');
-		$result['subscribe_mc_text5'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-6');
-		$result['subscribe_mc_name5'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-6');
-		$result['subscribe_mc_email5'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-6');
-		$result['subscribe_mc_button5'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-6');
-		$result['subscribe_mc_footer5'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-6');
-		$result['subscribe_mc_success5'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-6');
-		$result['subscribe_mc_error5'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-6');
-
-		$result['heading10'] = array('type' => 'heading', 'group' => 'menu5', 'title' => __('Easy Opt-in Design #6'));
-		$result['subscribe_mc_title6'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-7');
-		$result['subscribe_mc_text6'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-7');
-		$result['subscribe_mc_name6'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-7');
-		$result['subscribe_mc_email6'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-7');
-		$result['subscribe_mc_button6'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-7');
-		$result['subscribe_mc_footer6'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-7');
-		$result['subscribe_mc_success6'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-7');
-		$result['subscribe_mc_error6'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-7');
-
-		$result['heading11'] = array('type' => 'heading', 'group' => 'menu5', 'title' => __('Easy Opt-in Design #7'));
-		$result['subscribe_mc_title7'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-8');
-		$result['subscribe_mc_text7'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-8');
-		$result['subscribe_mc_name7'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-8');
-		$result['subscribe_mc_email7'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-8');
-		$result['subscribe_mc_button7'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-8');
-		$result['subscribe_mc_footer7'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-8');
-		$result['subscribe_mc_success7'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-8');
-		$result['subscribe_mc_error7'] = array('type' => 'field', 'group' => 'menu5', 'tab_id' => 'display', 'menu_id' => 'optin-8');
 		
+		$result = essb_wpml_subscribe_forms_translate('', 'menu5', __('Design #1', 'essb'), $result);
+		$result = essb_wpml_subscribe_forms_translate('2', 'menu5', __('Design #2', 'essb'), $result);
+		$result = essb_wpml_subscribe_forms_translate('3', 'menu5', __('Design #3', 'essb'), $result);
+		$result = essb_wpml_subscribe_forms_translate('4', 'menu5', __('Design #4', 'essb'), $result);
+		$result = essb_wpml_subscribe_forms_translate('5', 'menu5', __('Design #5', 'essb'), $result);
+		$result = essb_wpml_subscribe_forms_translate('6', 'menu5', __('Design #6', 'essb'), $result);
+		$result = essb_wpml_subscribe_forms_translate('7', 'menu5', __('Design #7', 'essb'), $result);
+		$result = essb_wpml_subscribe_forms_translate('8', 'menu5', __('Design #8', 'essb'), $result);
+		$result = essb_wpml_subscribe_forms_translate('9', 'menu5', __('Design #9', 'essb'), $result);
+		
+				
 		$result['menu6'] = array('type' => 'menu', 'title' => __('Display Methods', 'essb'));
 		$result['heading12'] = array('type' => 'heading', 'group' => 'menu6', 'title' => __('Pop-up'));
 		$result['popup_window_title'] = array('type' => 'field', 'group' => 'menu6', 'tab_id' => 'where', 'menu_id' => 'display-11');
@@ -279,6 +227,22 @@ if (!function_exists('essb_wpml_translatable_fields')) {
 		
 		return $result;
 	}
+	
+	function essb_wpml_subscribe_forms_translate($field_index, $group, $title = '', $result) {
+		$result['subscribe_heading_'.$field_index] = array('type' => 'heading', 'group' => $group, 'title' => $title);
+
+		$result['subscribe_mc_title'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => __('Title', 'essb'));
+		$result['subscribe_mc_text'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => __('Text below title', 'essb'));
+		$result['subscribe_mc_name'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => __('Name field text', 'essb'));
+		$result['subscribe_mc_email'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => __('Email field text', 'essb'));
+		$result['subscribe_mc_button'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => __('Subscribe button text', 'essb'));
+		$result['subscribe_mc_footer'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => __('Footer text', 'essb'));
+		$result['subscribe_mc_success'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => __('Success message', 'essb'));
+		$result['subscribe_mc_error'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => __('Error message', 'essb'));
+		
+		
+		return $result;
+	}
 }
 
 
@@ -290,7 +254,7 @@ if (!function_exists('essb4_options_multilanguage_load')) {
 		$translatable_options = essb_wpml_translatable_fields();
 		foreach ($translatable_options as $key => $data) {
 			$type = isset($data['type']) ? $data['type'] : '';
-			if ($type == 'field') {
+			if ($type == 'field' || $type == 'input') {
 				
 				$is_followers = isset($data['followers']) ? $data['followers'] : '';
 				if ($is_followers == 'true') { 

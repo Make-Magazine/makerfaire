@@ -54,8 +54,8 @@ class ESSBSocialImageShare {
 		if (!$this->can_run()) { return $content; }
 		
 		$attributes = ' data-essbisPostContainer=""';
-		$attributes.= ' data-essbisPostUrl="' . get_permalink() . '"';
-		$attributes.= ' data-essbisPostTitle="' . wp_strip_all_tags( get_the_title(), true ) . '"';
+		$attributes.= ' data-essbisPostUrl="' . esc_url(get_permalink()) . '"';
+		$attributes.= ' data-essbisPostTitle="' . esc_attr(wp_strip_all_tags( get_the_title(), true )) . '"';
 		$attributes.= ' data-essbisHoverContainer=""';
 		
 		$post_container = '<input type="hidden" value=""' . $attributes . '>';

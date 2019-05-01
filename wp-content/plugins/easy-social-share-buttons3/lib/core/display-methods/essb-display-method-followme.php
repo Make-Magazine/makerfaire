@@ -22,7 +22,7 @@ if (!function_exists('essb5_generate_followme_bar')) {
 		$followme_noleftmargin = essb_option_bool_value('followme_noleftmargin');
 		$followme_hide = essb_option_bool_value('followme_hide');
 		
-		$output .= '<div class="essb-followme '.($followme_pos == 'top' ? 'essb-followme-top' : 'essb-followme-bottom').($followme_full ? ' essb-followme-full' : '').($followme_nomargin ? ' essb-followme-nospace' : '').'" data-full="'.$followme_full.'" data-top="'.$followme_top.'" data-background="'.$followme_bg.'" data-position="'.$followme_pos.'" data-avoid-left="'.($followme_noleftmargin ? 'true': 'false').'" data-hide="'.$followme_hide.'">';
+		$output .= '<div class="essb-followme '.($followme_pos == 'top' ? 'essb-followme-top' : 'essb-followme-bottom').($followme_full ? ' essb-followme-full' : '').($followme_nomargin ? ' essb-followme-nospace' : '').'" data-full="'.esc_attr($followme_full).'" data-top="'.esc_attr($followme_top).'" data-background="'.esc_attr($followme_bg).'" data-position="'.esc_attr($followme_pos).'" data-avoid-left="'.($followme_noleftmargin ? 'true': 'false').'" data-hide="'.esc_attr($followme_hide).'">';
 		$output .= $share_buttons;
 		$output .= '</div>';
 		

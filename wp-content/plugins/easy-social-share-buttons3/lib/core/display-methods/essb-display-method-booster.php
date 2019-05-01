@@ -47,11 +47,11 @@ if (!function_exists('essb5_generate_booster')) {
 		$custom_styles = "";
 		
 		if ($booster_window_bg != '') {
-			$custom_styles .= 'background-color:'.$booster_window_bg.';';
+			$custom_styles .= 'background-color:'.esc_attr($booster_window_bg).';';
 		}
 		
 		if ($booster_window_color != '') {
-			$custom_styles .= 'color:'.$booster_window_color.';';
+			$custom_styles .= 'color:'.esc_attr($booster_window_color).';';
 		}
 		if ($booster_bg_image != '') {
 			$custom_styles .= 'background-image: url('.esc_url($booster_bg_image).');background-size: cover; background-position: center;';
@@ -61,9 +61,21 @@ if (!function_exists('essb5_generate_booster')) {
 			$custom_styles = ' style="'.$custom_styles.'"';
 		}
 		
-		$output .= '<div class="essb-sharebooster" data-trigger="'.$booster_trigger.'" data-trigger-time="'.$booster_time.
-			'" data-trigger-scroll="'.$booster_scroll.'" data-donotshow="'.$booster_donotshow.'" data-donotshowon="'.$booster_donotshow_on.
-			'" data-autoclose="'.$booster_autoclose.'"'.$custom_styles.'>';
+		$responsive_class = '';
+		
+		if (essb_option_bool_value('booster_mobile_deactivate')) {
+			$responsive_class .= ' essb_mobile_hidden';
+		}
+		if (essb_option_bool_value('booster_tablet_deactivate')) {
+			$responsive_class .= ' essb_tablet_hidden';
+		}
+		if (essb_option_bool_value('booster_desktop_deactivate')) {
+			$responsive_class .= ' essb_desktop_hidden';
+		}
+		
+		$output .= '<div class="essb-sharebooster'.esc_attr($responsive_class).'" data-trigger="'.esc_attr($booster_trigger).'" data-trigger-time="'.esc_attr($booster_time).
+			'" data-trigger-scroll="'.esc_attr($booster_scroll).'" data-donotshow="'.esc_attr($booster_donotshow).'" data-donotshowon="'.esc_attr($booster_donotshow_on).
+			'" data-autoclose="'.esc_attr($booster_autoclose).'"'.$custom_styles.'>';
 		
 		if ($booster_title != '') {
 			$output .= '<h3 class="essb-sharebooster-title">'.$booster_title.'</h3>';
@@ -85,7 +97,7 @@ if (!function_exists('essb5_generate_booster')) {
 		
 		$output .= '</div>';
 		
-		$output .= '<div class="essb-sharebooster-overlay" '.($booster_bg != '' ? 'style="background-color: '.$booster_bg.';"' : '').'></div>';
+		$output .= '<div class="essb-sharebooster-overlay" '.($booster_bg != '' ? 'style="background-color: '.esc_attr($booster_bg).';"' : '').'></div>';
 		
 		return $output;
 	}

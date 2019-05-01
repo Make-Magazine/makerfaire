@@ -10,7 +10,7 @@ if (has_filter('essb4_options_extender')) {
 	$essb_options = apply_filters('essb4_options_extender', $essb_options);
 }
 
-// @since 4.0 
+// @since 4.0
 // support for A/B split test of social setup
 if (has_filter('essb4_options_ab')) {
 	$essb_options = apply_filters('essb4_options_ab', $essb_options);
@@ -45,10 +45,10 @@ $disable_admin_menu = ESSBOptionValuesHelper::options_bool_value($essb_options, 
 if (!$disable_admin_menu) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-adminbar-menu.php');
 	add_action ( 'init', 'ESSBAdminMenuInit3' );
-	
+
 	function ESSBAdminMenuInit3() {
 		global $essb_adminmenu;
-		
+
 		if (is_admin_bar_showing()) {
 			$essb_adminmenu = new ESSBAdminBarMenu3();
 		}
@@ -89,12 +89,13 @@ if (!defined('ESSB3_LIGHTMODE')) {
 }
 // including additional plugin modules
 if (essb_options_bool_value('opengraph_tags') || essb_options_bool_value('twitter_card')) {
-	//include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/essb-social-share-optimization-frontend.php');
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-metadetails.php');
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-taxonomy.php');
+
 	if (essb_options_bool_value('opengraph_tags')) {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-opengraph.php');
-		
-		if (class_exists('WooCommerce', false)) {
+
+		if (class_exists('WooCommerce', false) && !essb_option_bool_value('sso_deactivate_woocommerce')) {
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-woocommerce.php');
 		}
 	}
@@ -130,7 +131,7 @@ else{
 		if ($is_active_option != '') {
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/after-share-close/essb-after-share-close.php');
 			define('ESSB3_AFTERSHARE_ACTIVE', true);
-			
+
 		}
 	}
 }
@@ -141,7 +142,7 @@ if (ESSBOptionValuesHelper::is_active_module('imageshare')) {
 }
 
 if (!defined('ESSB3_LIGHTMODE')) {
-	if (essb_options_bool_value('profiles_display')) {
+	if (essb_options_bool_value('profiles_display') || essb_options_bool_value('profiles_post_display')) {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles.php');
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles-helper.php');
 		define('ESSB3_SOCIALPROFILES_ACTIVE', 'true');
@@ -154,29 +155,29 @@ if (!defined('ESSB3_LIGHTMODE')) {
 
 if (essb_options_bool_value('fanscounter_active')) {
 	define('ESSB3_SOCIALFANS_ACTIVE', 'true');
-	
+
 	global $essb_socialfans_options;
 	$essb_socialfans_options = get_option(ESSB3_OPTIONS_NAME_FANSCOUNTER);
-	
+
 	if (has_filter('essb4_followeroptions_extender')) {
 		$essb_socialfans_options = apply_filters('essb4_followeroptions_extender', $essb_socialfans_options);
 	}
-	
-	
+
+
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-helper.php');
-	
+
 	// if options does not exist we intialize the default settings
-	if (!is_array($essb_socialfans_options)) { 
+	if (!is_array($essb_socialfans_options)) {
 		$essb_socialfans_options = array();
 		$essb_socialfans_options['expire'] = 1400;
 		$essb_socialfans_options['format'] = 'short';
-		
+
 		// apply default values from structure helper
 		$essb_socialfans_options = ESSBSocialFollowersCounterHelper::create_default_options_from_structure($essb_socialfans_options);
 	}
-	
+
 		// include widget class
-		
+
 	if (!essb_option_bool_value('fanscounter_widget_deactivate')) {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-widget.php');
 	}
@@ -188,26 +189,26 @@ if (!defined('ESSB3_LIGHTMODE')) {
 		if (!defined('ESSB3_ESML_ACTIVE')) {
 			define('ESSB3_ESML_ACTIVE', 'true');
 		}
-		
+
 		if (is_admin()) {
 			include_once(ESSB3_PLUGIN_ROOT . 'lib/modules/social-metrics/class-socialmetrics.php');
 		}
 		include_once(ESSB3_PLUGIN_ROOT . 'lib/modules/social-metrics/socialmetrics-functions.php');
 	}
-	
+
 	if (essb_options_bool_value('esml_top_posts_widget')) {
 		define('ESSB3_ESML_TOPPOSTS_ACTIVE', 'true');
-		include_once(ESSB3_PLUGIN_ROOT . 'lib/modules/top-posts-widget/essb-top-posts-widget.php');	
+		include_once(ESSB3_PLUGIN_ROOT . 'lib/modules/top-posts-widget/essb-top-posts-widget.php');
 	}
 }
 
 if (ESSBOptionValuesHelper::is_active_module('cachedcounters')) {
 	define('ESSB3_CACHED_COUNTERS', true);
-	include_once(ESSB3_PLUGIN_ROOT . 'lib/core/share-counters/essb-cached-counters.php');	
-	
+	include_once(ESSB3_PLUGIN_ROOT . 'lib/core/share-counters/essb-cached-counters.php');
+
 	if (essb_options_bool_value('counter_recover_active')) {
 		define('ESSB3_SHARED_COUNTER_RECOVERY', true);
-		include_once(ESSB3_PLUGIN_ROOT . 'lib/core/share-counters/essb-sharecounter-recovery.php');	
+		include_once(ESSB3_PLUGIN_ROOT . 'lib/core/share-counters/essb-sharecounter-recovery.php');
 	}
 }
 
@@ -255,6 +256,8 @@ if (essb_installed_wpml() || essb_installed_polylang()) {
 			$essb_options = apply_filters('essb4_options_multilanguage', $essb_options);
 		}
 		
+		
+
 		if (defined('ESSB3_SOCIALFANS_ACTIVE')) {
 			if (has_filter('essb4_followeroptions_multilanguage')) {
 				$essb_socialfans_options = apply_filters('essb4_followeroptions_multilanguage', $essb_socialfans_options);
@@ -264,11 +267,11 @@ if (essb_installed_wpml() || essb_installed_polylang()) {
 }
 
 if (essb_option_bool_value('amp_positions')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/amp-sharing/essb-amp-sharebuttons.php');	
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/amp-sharing/essb-amp-sharebuttons.php');
 }
 
 if (essb_option_value('functions_mode_mobile') == 'auto') {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/extenders/essb-core-extender-automatic-mobile.php');	
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/extenders/essb-core-extender-automatic-mobile.php');
 }
 
 if (essb_option_bool_value('activate_networks_manage')) {
@@ -289,7 +292,7 @@ if (essb_option_bool_value('activate_hooks')) {
 }
 
 if (essb_option_bool_value('conversions_lite_run')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-lite/class-conversions-lite.php');	
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-lite/class-conversions-lite.php');
 }
 
 if (essb_option_bool_value('conversions_subscribe_lite_run')) {
@@ -303,6 +306,22 @@ if (class_exists('REALLY_SIMPLE_SSL')) {
 if (essb_option_bool_value('activate_sw_bridge')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/integrations/warfare.php');
 }
+
+if (!essb_option_bool_value('deactivate_custompositions')) {
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/options/custompositions-helper.php');
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/integrations/wpbackery-custompositions.php');
+
+	if (!essb_option_bool_value('remove_elementor_widgets')) {
+		include_once (ESSB3_PLUGIN_ROOT . 'lib/core/integrations/elementor-custompositions.php');
+	}
+}
+
+// inclduing elementor bridget
+if (defined('ELEMENTOR_PATH') && !essb_option_bool_value('remove_elementor_widgets')) {
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/elementor/class-elementor-loader.php');
+}
+
+include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/template-builder/essb-templatebuilder-bridge.php');
 
 if (has_filter('essb4_options_extender_after_load')) {
 	$essb_options = apply_filters('essb4_options_extender_after_load', $essb_options);

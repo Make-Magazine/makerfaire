@@ -24,10 +24,10 @@ if (!function_exists('essb5_generate_corner_bar')) {
 
 		$custom_styles = '';
 		if ($cornerbar_bg != '') {
-			$custom_styles .= 'background-color:'.$cornerbar_bg.';';
+			$custom_styles .= 'background-color:'.esc_attr($cornerbar_bg).';';
 		}
 		if ($cornerbar_width != '') {
-			$custom_styles .= 'max-width:'.$cornerbar_width.';';
+			$custom_styles .= 'max-width:'.esc_attr($cornerbar_width).';';
 		}
 		
 		if ($cornerbar_pos == '') {
@@ -38,7 +38,19 @@ if (!function_exists('essb5_generate_corner_bar')) {
 			$cornerbar_style = 'transparent';
 		}
 		
-		$output .= '<div class="essb-cornerbar essb-cornerbar-'.$cornerbar_pos.' essb-cornerbar-'.$cornerbar_style.($cornerbar_show != '' ? ' essb-cornerbar-hidden' : '').'" data-show="'.$cornerbar_show.'" data-hide="'.$cornerbar_hide.'" '.($custom_styles != '' ? 'style="'.$custom_styles.'"': '').'>';
+		$responsive_class = '';
+		
+		if (essb_option_bool_value('cornerbar_mobile_deactivate')) {
+			$responsive_class .= ' essb_mobile_hidden';
+		}
+		if (essb_option_bool_value('cornerbar_tablet_deactivate')) {
+			$responsive_class .= ' essb_tablet_hidden';
+		}
+		if (essb_option_bool_value('cornerbar_desktop_deactivate')) {
+			$responsive_class .= ' essb_desktop_hidden';
+		}
+		
+		$output .= '<div class="essb-cornerbar essb-cornerbar-'.esc_attr($cornerbar_pos).' essb-cornerbar-'.esc_attr($cornerbar_style).($cornerbar_show != '' ? ' essb-cornerbar-hidden' : '').esc_attr($responsive_class).'" data-show="'.esc_attr($cornerbar_show).'" data-hide="'.esc_attr($cornerbar_hide).'" '.($custom_styles != '' ? 'style="'.$custom_styles.'"': '').'>';
 		$output .= $share_buttons;
 		$output .= '</div>';
 		

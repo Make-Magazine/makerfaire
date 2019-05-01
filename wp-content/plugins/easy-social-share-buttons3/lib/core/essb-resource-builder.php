@@ -521,13 +521,20 @@ class ESSBResourceBuilder {
 	
 	}
 	
-	
+	/**
+	 * Generate a pre-compiled static plugin resources inside a file. The compile action
+	 * will execute only if the cache is not present or not existing.
+	 */
 	function generate_custom_css_precompiled() {
 		if (essb_is_plugin_deactivated_on()) {
 			return;
 		}
 		
 		$cache_key = 'essb-precompiled'.(essb_is_mobile() ? '-mobile': '');
+		
+		if (essb_option_bool_value('precompiled_unique')) {
+			$cache_key .= ESSBPrecompiledResources::get_unique_identifier();
+		}
 		
 		$cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
 			
@@ -536,18 +543,9 @@ class ESSBResourceBuilder {
 			return;
 		}
 		
-		// generation of all styles
-		//$this->add_css(ESSBResourceBuilderSnippets::css_build_customizer(), 'essb-customcss-header');
-		//$this->add_css(ESSBResourceBuilderSnippets::css_build_footer_css(), 'essb-footer-css', 'footer');
-		
 		$static_content = array();
 		
 		$styles = array();
-		/*if (count($this->css_head) > 0) {
-			$css_code = implode(" ", $this->css_head);
-			$css_code = trim(preg_replace('/\s+/', ' ', $css_code));
-			$styles[] = $css_code;
-		}*/
 		$css_code = '';
 		foreach ( $this->css_head as $single ) {
 			$css_code .= $single;
@@ -599,11 +597,6 @@ class ESSBResourceBuilder {
 			$static_content[$key] = $file;
 		}
 
-		/*if (count($this->css_footer) > 0) {
-			$css_code = implode(" ", $this->css_footer);
-			$css_code = trim(preg_replace('/\s+/', ' ', $css_code));
-			$styles[] = $css_code;
-		}*/
 		$css_code = '';
 		foreach ( $this->css_footer as $single ) {
 			$css_code .= $single;
@@ -663,6 +656,9 @@ class ESSBResourceBuilder {
 		
 		// loading in precompiled cache mode
 		$cache_key = "essb-precompiled".(essb_is_mobile() ? "-mobile": "");
+		if (essb_option_bool_value('precompiled_unique')) {
+			$cache_key .= ESSBPrecompiledResources::get_unique_identifier();
+		}
 		
 		$cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'js');
 			

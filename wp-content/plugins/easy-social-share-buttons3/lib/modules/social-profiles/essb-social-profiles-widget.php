@@ -241,6 +241,7 @@ foreach (ESSBSocialProfilesHelper::available_animations() as $key => $text) {
 				'size' => $sc_size,
 				'align' => $sc_align
 		);
+
 		
 		echo ESSBSocialProfiles::draw_social_profiles($options);
 		

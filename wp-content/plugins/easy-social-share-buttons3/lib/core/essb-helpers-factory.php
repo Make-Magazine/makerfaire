@@ -271,27 +271,6 @@ if (!function_exists('essb_installed_polylang')) {
 	}
 }
 
-if (!function_exists('essb_show_welcome')) {
-	function essb_show_welcome() {
-		if (!ESSB3_WELCOME_TAB) {
-			return false;
-		}
-		else if (defined('ESSB3_SETTING5')) {
-			return false;
-		}
-		else {
-			$user_disable_welcome = essb_option_bool_value('disable_welcome');			
-			
-			if (!$user_disable_welcome) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-	}
-}
-
 if (!function_exists('essb_live_customizer_can_run')) {
 	function essb_live_customizer_can_run() {
 		$can_run = false;
@@ -316,6 +295,10 @@ if (!function_exists('essb_is_amp_page')) {
 		// Defined in https://wordpress.org/plugins/amp/ is_amp_endpoint()
 	
 		if (  function_exists('is_amp_endpoint') && is_amp_endpoint()){
+			return true;
+		}
+		
+		if ( function_exists( 'ampforwp_is_amp_endpoint' ) && ampforwp_is_amp_endpoint() ) {
 			return true;
 		}
 		return false;

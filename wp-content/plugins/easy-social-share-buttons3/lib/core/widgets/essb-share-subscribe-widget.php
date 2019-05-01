@@ -85,6 +85,8 @@ class ESSBSubscribeButtonWidget extends WP_Widget {
 		$design     = isset( $instance['design'] ) ? esc_attr( $instance['design'] ) : '';
 		$mode     = isset( $instance['mode'] ) ? esc_attr( $instance['mode'] ) : '';
 		
+		$existing_forms = essb_optin_designs();
+		
 ?>
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
@@ -97,16 +99,16 @@ class ESSBSubscribeButtonWidget extends WP_Widget {
 
 		<p><label for="<?php echo $this->get_field_id( 'design' ); ?>"><?php _e( 'Design:' ); ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'design' ); ?>" name="<?php echo $this->get_field_name( 'design' ); ?>">
-			<option value="design1" <?php if ($design == "design1") echo 'selected="selected"'; ?>>Design #1</option>
-			<option value="design2" <?php if ($design == "design2") echo 'selected="selected"'; ?>>Design #2</option>
-			<option value="design3" <?php if ($design == "design3") echo 'selected="selected"'; ?>>Design #3</option>
-			<option value="design4" <?php if ($design == "design4") echo 'selected="selected"'; ?>>Design #4</option>
-			<option value="design5" <?php if ($design == "design5") echo 'selected="selected"'; ?>>Design #5</option>
-			<option value="design6" <?php if ($design == "design6") echo 'selected="selected"'; ?>>Design #6</option>
-			<option value="design7" <?php if ($design == "design7") echo 'selected="selected"'; ?>>Design #7</option>
-			<option value="design8" <?php if ($design == "design8") echo 'selected="selected"'; ?>>Design #8</option>
-			<option value="design9" <?php if ($design == "design9") echo 'selected="selected"'; ?>>Design #9</option>
+		
+			<?php 
+			foreach ($existing_forms as $key => $name) {
+				?>
+				<option value="<?php echo $key; ?>" <?php if ($design == $key) echo 'selected="selected"'; ?>><?php echo $name; ?></option>
+				<?php 
+			}
 			
+			?>
+		
 		</select></p>
 		
 <?php

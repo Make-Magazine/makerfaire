@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * The core class that will generate the shortcode display and options. The class will be reworked
+ * after version 6.0 to get a more flexible display and support all popular builders
+ * 
+ * @author appscreo
+ * @package EasySocialShareButtons
+ *
+ */
 class ESSBShortcodeGenerator5 {
 	
 	public $shortcode_cache_option = 'essb-shortcodes';
@@ -9,6 +17,7 @@ class ESSBShortcodeGenerator5 {
 	public $shortcodeTitle = "";
 	public $stored_shortcode_values = array();
 	public $stored_values_loaded = false;
+	public $nosave_codes = array('easy-tweet', 'sharable-quote', 'social-share-display', 'pinterest-image', 'pinterest-gallery', 'easy-click2chat', 'easy-social-share-cta', 'share-action-button');
 	
 	public $optionsGroup = "shortcode";
 	private $counterPositions;
@@ -73,7 +82,6 @@ class ESSBShortcodeGenerator5 {
 		
 		delete_option($this->shortcode_cache_option);
 		update_option($this->shortcode_cache_option, $saved_codes, 'no', 'no');
-		//update_option($this->shortcode_cache_option, $saved_codes);
 	}
 	
 	public function generated_stored_shortcodes() {
@@ -86,24 +94,14 @@ class ESSBShortcodeGenerator5 {
 		foreach ($saved_codes as $key => $data) {
 			
 			echo '<div class="essb-stored-sc">';
-			echo '<a href="'.admin_url('admin.php?page=essb_redirect_shortcode&tab=shortcode').'&code='.$data['shortcode'].'&ukey='.$key.'">';
+			echo '<a href="'.esc_url(admin_url('admin.php?page=essb_redirect_shortcode&tab=shortcode')).'&code='.$data['shortcode'].'&ukey='.$key.'">';
 			echo $data['name'];
 			echo '</a>';
-			echo '<span class="shortcode" contenteditable="true"><code>[' .$data['shortcode']. ' ukey="'.$key.'"]</code></span><span class="generated">'.date(DATE_RFC822, $key).'</span><a href="'.admin_url('admin.php?page=essb_redirect_shortcode&tab=shortcode').'&rukey='.$key.'" class="remove">Remove</a>';
+			echo '<span class="shortcode" contenteditable="true"><code>[' .esc_html($data['shortcode']). ' ukey="'.esc_attr($key).'"]</code></span><span class="generated">'.date(DATE_RFC822, $key).'</span><a href="'.admin_url('admin.php?page=essb_redirect_shortcode&tab=shortcode').'&rukey='.$key.'" class="remove">Remove</a>';
 			echo '</div>';
 		}
 	}
 	
-	/*
-	 * @$param : the shortcode param
-	 * @$options : shortcode param options to be provided in following structure
-	 *    array("type" => "",
-	 *          "text" => "",
-	 *          "comment" => "",
-	 *          "value" => "",
-	 *          "sourceOptions" => "",
-	 *          "fullwidth" => ""
-	 */
 	function register($param, $options) {
 		$this->shortcodeOptions[$param] = $options;
 	}
@@ -114,24 +112,6 @@ class ESSBShortcodeGenerator5 {
 		}
 		else {
 			return  '';
-		}
-	}
-	
-	function renderNavigation() {
-		echo '<li id="essb-menu-1" class="essb-menu-item"><a href="#"
-						onclick="return false;">'.$this->shortcodeTitle.'</a></li>';
-		
-		$sectionCount = 1;
-		
-		foreach ($this->shortcodeOptions as $param => $settings) {
-			$type = isset($settings['type']) ? $settings['type'] : 'textbox';
-			
-			if ($type == "section") {
-				$text = isset($settings['text']) ? $settings['text'] : '';
-				echo '<li id="essb-menu-1-'.$sectionCount.'" class="essb-submenu-item"><a href="#"
-						onclick="essb_submenu_execute(\''.$sectionCount.'\'); return false;">'.$text.'</a></li>';
-				$sectionCount++;
-			}
 		}
 	}
 	
@@ -172,6 +152,12 @@ class ESSBShortcodeGenerator5 {
 				case "textbox" :
 					$this->renderTextbox($param, $settings, $cnt);
 					break;
+				case "file" :
+					$this->renderFilepicker($param, $settings, $cnt);
+					break;					
+				case "textarea":
+					$this->renderTextarea($param, $settings, $cnt);
+					break;
 				case "checkbox":
 					$this->renderCheckbox($param, $settings, $cnt);
 					break; 
@@ -204,7 +190,7 @@ class ESSBShortcodeGenerator5 {
 		
 		echo '<tr class="table-border-bottom">';
 		
-		echo '<td class="sub4" colspan="2" id="essb-submenu-'.$cnt.'"><div>'.$text.'</div></td>';
+		echo '<td class="sub4" colspan="2" id="essb-submenu-'.esc_attr($cnt).'"><div>'.esc_html($text).'</div></td>';
 		
 		echo '</tr>';
 	}
@@ -214,8 +200,48 @@ class ESSBShortcodeGenerator5 {
 	
 		echo '<tr class="table-border-bottom">';
 	
-		echo '<td class="sub5" colspan="2"><div>'.$text.'</div></td>';
+		echo '<td class="sub5" colspan="2"><div>'.esc_html($text).'</div></td>';
 	
+		echo '</tr>';
+	}
+	
+	function renderTextarea($param, $settings, $cnt) {
+		$text = isset($settings['text']) ? $settings['text'] : '';
+		$comment = isset($settings['comment']) ? $settings['comment'] : '';
+		$default_value = isset($settings['value']) ? $settings['value'] : '';
+		
+		$cssClass = ($cnt % 2 == 0) ? "even" : "odd";
+		
+		if ($this->stored_values_loaded) {
+			$default_value = isset($this->stored_shortcode_values[$param]) ? $this->stored_shortcode_values[$param] : '';
+		}
+		
+		echo '<tr class="'.esc_attr($cssClass).' table-border-bottom">';
+		echo '<td class="bold" valign="top">'.$text.'<br/><span class="label">'.esc_html($comment).'</span></td>';
+		echo '<td class="essb_general_options">';
+		echo '<textarea id="'.esc_attr($param).'" name="'.esc_attr($this->optionsGroup).'['.esc_attr($param).']" style="width:100%; height: 100px;" >'.esc_textarea($default_value).'</textarea>';
+		echo '</td>';
+		echo '</tr>';
+	}
+	
+	function renderFilepicker($param, $settings, $cnt) {
+		$text = isset($settings['text']) ? $settings['text'] : '';
+		$comment = isset($settings['comment']) ? $settings['comment'] : '';
+		$default_value = isset($settings['value']) ? $settings['value'] : '';
+		$multiple = isset($settings["multiple"]) ? $settings["multiple"] : "";
+	
+		$cssClass = ($cnt % 2 == 0) ? "even" : "odd";
+	
+		if ($this->stored_values_loaded) {
+			$default_value = isset($this->stored_shortcode_values[$param]) ? $this->stored_shortcode_values[$param] : '';
+		}
+	
+		echo '<tr class="'.$cssClass.' table-border-bottom">';
+		echo '<td class="bold" valign="top">'.$text.'<br/><span class="label">'.$comment.'</span></td>';
+		echo '<td class="essb_general_options">';
+		echo '<input id="'.$param.'" type="text" name="'.$this->optionsGroup.'['.$param.']" value="' . $default_value . '" class="input-element stretched" style="width: 90%;" />&nbsp;';
+		echo '<button id="picker-'.$param.'" class="button button-primary essb-btn" onclick="essbShortcodeImageSelector(\''.$param.'\', \''.$multiple.'\'); return false;">Select</button>';
+		echo '</td>';
 		echo '</tr>';
 	}
 	
@@ -713,7 +739,7 @@ jQuery(document).ready(function(){
 	public function activate($shortcode = 'easy-social-share') {
 		$this->shortcodeOptions = array();
 		
-		if ($shortcode != 'easy-tweet' && $shortcode != 'easy-click2chat' && $shortcode != 'easy-social-share-cta') {
+		if (!in_array($shortcode, $this->nosave_codes)) {
 			$this->register("shortcode_name", array("type" => "textbox", "text" => "Store my shortcode", "comment" => "Enter custom settings name to store your generated shortcode. This will make possible to use the code with generated key and manage options easy without replacing all shortcodes", "value" => "", "fullwidth" => "true"));
 		}
 		
@@ -744,9 +770,8 @@ jQuery(document).ready(function(){
 		}
 		
 		if ($shortcode == 'easy-followers-layout') {
-			$this->includeOptionsForEasyFans('easy-followers-layout', 'Shortcode to display followers counter with custom layout');
+			$this->includeOptionsForEasyFans('easy-followers-layout', 'Shortcode to display followers counter with custom layout', true);
 		}
-		
 		
 		// @since 3.4
 		if ($shortcode == 'easy-total-fans' || $shortcode == 'easy-total-followers') {
@@ -760,7 +785,7 @@ jQuery(document).ready(function(){
 			$this->includeSubscribe();
 		}
 		
-		if ($shortcode == 'easy-tweet') {
+		if ($shortcode == 'easy-tweet' || $shortcode == 'sharable-quote') {
 			$this->includeSharableQuotes();
 		}
 		
@@ -768,14 +793,62 @@ jQuery(document).ready(function(){
 			$this->includeClick2Chat();
 		}
 		
-		if ($shortcode == 'easy-social-share-cta') {
+		if ($shortcode == 'share-action-button') {
 			$this->includeShareCTA();
+		}
+		
+		if ($shortcode == 'social-share-display') {
+			$this->includeShareDisplay();
+		}
+		
+		if ($shortcode == 'pinterest-image') {
+			$this->includePinterestImage();
+		}
+		
+		if ($shortcode == 'pinterest-gallery') {
+			$this->includePinterestGallery();
 		}
 	}
 	
+	private function includePinterestGallery() {
+		$this->shortcode = 'pinterest-gallery';
+	
+		$columns_types = array('1' => '1 Column', '2' => '2 Columns', '3' => '3 Columns', '4' => '4 Columns');
+	
+		$this->register("message", array("type" => "textarea", "text" => "Custom Pin Message", "comment" => "", "value" => "", "fullwidth" => "true"));
+		$this->register("columns", array("type" => "dropdown", "text" => "Columns", "comment" => "", "sourceOptions" => $columns_types));
+		$this->register("images", array("type" => "file", "multiple" => "true", "text" => "Images", "comment" => "Choose the images that will take part of the gallery. Those images can be manually filled too with image media ID.", "value" => "", "fullwidth" => "true"));
+		$this->register("custom_classes", array("type" => "textbox", "text" => "Custom Classes", "comment" => "", "value" => "", "fullwidth" => "true"));
+		$this->register("spacing", array("type" => "textbox", "text" => "Add Space Between Images", "comment" => "Fill a numeric value in case you need to add spacing between images", "value" => "", "fullwidth" => "true"));
+		$this->register("adjust", array("type" => "checkbox", "text" => "Equal Image Height?", "comment" => "", "value" => "yes"));
+		
+	}
+	
+	private function includePinterestImage() {
+		$this->shortcode = 'pinterest-image';
+
+		$pin_types = array('' => 'Custom Selected Image', 'post' => 'Pin Post Custom Pinterest Data');
+		$align_types = array('' => 'Default', 'left' => 'Left', 'center' => 'Center', 'right' => 'Right');
+		
+		$this->register("message", array("type" => "textarea", "text" => "Custom Pin Message", "comment" => "", "value" => "", "fullwidth" => "true"));
+		$this->register("type", array("type" => "dropdown", "text" => "Type", "comment" => "If you select post type mode the plugin will generate a Pin with the customized data from your post details", "sourceOptions" => $pin_types));
+		$this->register("align", array("type" => "dropdown", "text" => "Image Align", "comment" => "", "sourceOptions" => $align_types));
+		$this->register("image", array("type" => "file", "text" => "Image URL", "comment" => "This is the image that will appear inside content. If no custom image is selected this will be the image that button will Pin. You can also prepare a Pinterest optimized image and set it inside Custom Image field", "value" => "", "fullwidth" => "true"));
+		$this->register("custom_image", array("type" => "file", "text" => "Custom Pin Image URL", "comment" => "", "value" => "", "fullwidth" => "true"));
+		$this->register("custom_classes", array("type" => "textbox", "text" => "Custom Classes", "comment" => "", "value" => "", "fullwidth" => "true"));
+		
+	}
+	
+	private function includeShareDisplay() {
+		$this->shortcode = 'social-share-display';
+		
+		$this->register("design", array("type" => "dropdown", "text" => "Position/Design", "comment" => "", "sourceOptions" => essb5_get_custom_positions()));
+		$this->register("force", array("type" => "checkbox", "text" => "Always Show", "comment" => "Tick this if you wish to show the share display no matter it is active or not inside positions", "value" => "yes"));
+	}
+	
 	private function includeShareCTA() {
-		$this->shortcode = 'easy-social-share-cta';
-		$this->shortcodeTitle = '[easy-social-share-cta] Call To Action Share Button';
+		$this->shortcode = 'share-action-button';
+		$this->shortcodeTitle = '[share-action-button] Call To Action Share Button';
 		$this->register("text", array("type" => "textbox", "text" => "Custom button text", "comment" => "", "value" => "", "fullwidth" => "true"));
 		$this->register("background", array("type" => "textbox", "text" => "Background color", "comment" => "", "value" => "", "fullwidth" => "false"));
 		$this->register("color", array("type" => "textbox", "text" => "Text color", "comment" => "", "value" => "", "fullwidth" => "false"));
@@ -809,8 +882,8 @@ jQuery(document).ready(function(){
 	}
 	
 	private function includeSharableQuotes() {
-		$this->shortcode = 'easy-tweet';
-		$this->shortcodeTitle = '[easy-tweet] Sharable Quotes';
+		$this->shortcode = 'sharable-quote';
+		$this->shortcodeTitle = '[sharable-quote] Sharable Quotes';
 		$this->register("tweet", array("type" => "textbox", "text" => "Customized Tweet", "comment" => "", "value" => "", "fullwidth" => "true"));
 		$this->register("user", array("type" => "textbox", "text" => "via Twitter Username", "comment" => "", "value" => "", "fullwidth" => "false"));
 		$this->register("hashtags", array("type" => "textbox", "text" => "Hashtags", "comment" => "", "value" => "", "fullwidth" => "true"));
@@ -828,7 +901,11 @@ jQuery(document).ready(function(){
 
 		$listOfTypes = array("" => "Subscribe form with service integration (MailChimp, GetReponse, myMail, MailPoet)", "form" => "Custom code subscribe form");
 		$this->register("mode", array("type" => "dropdown", "text" => "Form type", "comment" => "Choose form generation type", "sourceOptions" => $listOfTypes));
-		$listOfTypes = array("" => "Default subscribe button design", "design1" => "Design #1", "design2" => "Design #2", "design3" => "Design #3", "design4" => "Design #4", "design5" => "Design #5", "design6" => "Design #6", "design7" => "Design #7", "design8" => "Design #8", "design9" => "Design #9");
+		$listOfTypes = array("" => "Default subscribe button design");
+		$all_designs = essb_optin_designs();
+		foreach ($all_designs as $key => $value) {
+			$listOfTypes[$key] = $value;
+		}
 		$this->register("design", array("type" => "dropdown", "text" => "Design", "comment" => "Choose your form design style", "sourceOptions" => $listOfTypes));
 		$this->register("twostep", array("type" => "checkbox", "text" => "Two step optin form", "comment" => "Two step optin forms will open form when you click on link (text or image)", "value" => "true"));
 		$this->register("twostep_text", array("type" => "textbox", "text" => "Two step link content", "comment" => "Put here your two step content open link", "value" => "", "fullwidth" => "true"));
@@ -855,7 +932,7 @@ jQuery(document).ready(function(){
 		
 	}
 	
-	private function includeOptionsForEasyFans($shortcode, $description = '') {
+	private function includeOptionsForEasyFans($shortcode, $description = '', $hide_advanced = false) {
 		$this->shortcode = $shortcode;
 		$this->shortcodeTitle = '['.$shortcode.'] '.$description;
 
@@ -867,9 +944,11 @@ jQuery(document).ready(function(){
 		$shortcode_settings = ESSBSocialFollowersCounterHelper::default_options_structure(true, $default_shortcode_setup);
 		foreach ($shortcode_settings as $field => $options) {
 			
-			$field_hide_advanced = isset($options['hide_advanced']) ? $options['hide_advanced'] : '';
-			if ($field_hide_advanced == 'true') {
-				continue;
+			if ($hide_advanced) {
+				$field_hide_advanced = isset($options['hide_advanced']) ? $options['hide_advanced'] : '';
+				if ($field_hide_advanced == 'true') {
+					continue;
+				}
 			}
 			
 			$description = isset($options['description']) ? $options['description'] : '';

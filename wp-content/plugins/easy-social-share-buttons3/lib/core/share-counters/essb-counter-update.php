@@ -128,6 +128,9 @@ function essb_counter_update_simple($post_id, $url, $full_url, $networks = array
 			case 'yummly' :
 				$cached_counters [$k] = essb_get_yummly_count($url);
 				break;
+			case 'addthis' :
+				$cached_counters [$k] = essb_get_addthis_count($url);
+				break;				
 			default:
 				if (!$recover_mode) {
 					$cached_counters [$k] = essb_get_internal_count($post_id, $k);
@@ -419,10 +422,9 @@ function essb_get_reddit_count($url) {
 }
 
 function essb_get_facebook_count($url) {
-	
-	$api3 = false;
+	$api3 = true;
 	$api2 = false;
-	$parse_url = 'https://graph.facebook.com/?id='.$url;
+	$parse_url = 'https://graph.facebook.com/?id='.$url.'&fields=og_object{engagement}';
 
 	$facebook_token = essb_option_value('facebook_counter_token');
 	
@@ -431,55 +433,45 @@ function essb_get_facebook_count($url) {
 	}
 	
 	if ($facebook_token != '') {
-		$parse_url = 'https://graph.facebook.com/?id='.$url.'&access_token=' . sanitize_text_field($facebook_token);
+		$parse_url = 'https://graph.facebook.com/?id='.$url.'&fields=og_object{engagement}&access_token=' . sanitize_text_field($facebook_token);
 	}
 	
-	if (essb_option_value('facebook_counter_api') == 'api2') {
-		$parse_url = 'https://graph.facebook.com/?fields=og_object%7Blikes.summary(true).limit(0)%7D,share&id='.$url;
+	// Applying method API #2 only if token is also provided. Otherwise the method will not return any data
+	if (essb_option_value('facebook_counter_api') == 'api2' && $facebook_token != '') {
+		//$parse_url = 'https://graph.facebook.com/?fields=og_object%7Blikes.summary(true).limit(0)%7D,share&id='.$url;
+		$parse_url = 'https://graph.facebook.com/v3.0/?fields=engagement&id='.$url.'&access_token='.sanitize_text_field($facebook_token);
 		$api2 = true;
+		$api3 = false;
 	}
-	
-	if (essb_option_value('facebook_counter_api') == 'api3') {
-		$parse_url = 'https://graph.facebook.com/?id='.$url.'&fields=og_object{engagement}';
-		$api3 = true;
-		
-		if ($facebook_token != '') {
-			$parse_url .= '&access_token=' . sanitize_text_field($facebook_token);
-		}
-	}
+
 		
 	$content = essb_counter_request ( $parse_url );
-	
-	//print " facebook output = ".$content;
 	$result = 0;
 	$result_comments = 0;
 
 	if ($content != '') {
 		$content = json_decode ( $content, true );
-
 		$data_parsers = $content;
 		if ($api3) {
 			$result = isset( $data_parsers['og_object']['engagement']['count']) ? intval ( $data_parsers['og_object']['engagement']['count'] ) : 0;
 		}
 		else if ($api2) {
-			if( !empty( $data_parsers['og_object'] ) ) {
-				$likes = $data_parsers['og_object']['likes']['summary']['total_count'];
-			} else {
-				$likes = 0;
-			}
-			
-			if( !empty( $data_parsers['share'] ) ){
-				$comments = $data_parsers['share']['comment_count'];
-				$shares = $data_parsers['share']['share_count'];
+			if( !empty( $data_parsers['engagement'] ) ){
+				$likes = $data_parsers['engagement']['reaction_count'];
+				$comments = $data_parsers['engagement']['comment_count'];
+				$shares = $data_parsers['engagement']['share_count'];
+				$comments_plugin = $data_parsers['engagement']['comment_plugin_count'];
 			} else {
 				$comments = 0;
 				$shares = 0;
+				$likes = 0;
+				$comments_plugin = 0;
 			}
 			
-			$result = $likes + $comments + $shares;
+			$result = $likes + $comments + $shares + $comments_plugin;
 		}
 		else {
-			$result = isset ( $data_parsers ['share'] ['share_count'] ) ? intval ( $data_parsers ['share'] ['share_count'] ) : 0;
+			$result = isset( $data_parsers['og_object']['engagement']['count']) ? intval ( $data_parsers['og_object']['engagement']['count'] ) : 0;
 		}
 	}
 
@@ -560,6 +552,18 @@ function essb_get_yummly_count($url) {
 	if (!empty($return_data)) {
 		$json = json_decode($return_data, true);
 		$result = isset($json['count']) ? intval($json['count']) : 0;
+	}
+
+	return $result;
+}
+
+function essb_get_addthis_count($url) {
+	$return_data = essb_counter_request('https://api-public.addthis.com/url/shares.json?url='.$url);
+
+	$result = 0;
+	if (!empty($return_data)) {
+		$json = json_decode($return_data, true);
+		$result = isset($json['shares']) ? intval($json['shares']) : 0;
 	}
 
 	return $result;

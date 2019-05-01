@@ -65,7 +65,6 @@ if (!function_exists('essb_love_logclick')) {
 		$love_count = intval($love_count);
 		$love_count++;
 		update_post_meta($post_id, '_essb_love', $love_count);
-		//setcookie('essb_love_'. $post_id, $post_id . " - ". $love_count, time()*60*60*24, '/');
 		$cookie_information = 'essb_love_'. $post_id.' = '.$love_count;
 		setcookie('essb_love_'. $post_id, $cookie_information, time()+(3600 * 24), "/", "",  0);
 
@@ -112,6 +111,8 @@ function essb_process_additional_ajax_requests() {
 			foreach ($networks as $key => $data) {
 				delete_post_meta(get_the_ID(), 'essb_c_'.$key);
 			} 
+			
+			delete_post_meta(get_the_ID(), 'essb_c_total');
 		}
 	}
 
@@ -133,21 +134,10 @@ function essb_process_additional_ajax_requests() {
 		exit;
 	}
 	
-	$sharing_thankyou = isset($_REQUEST['sharing-thankyou']) ? $_REQUEST['sharing-thankyou'] : '';
 	
-	if ($sharing_thankyou == 'yes') {
-		send_nosniff_header();
-		header('Cache-Control: no-cache');
-		header('Pragma: no-cache');
-		echo '
-		<!DOCTYPE html><html><head>    <meta name="viewport" content="width=device-width, initial-scale=1" />    
-		<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>    
-		<title>Sharing Success!</title>    
-		<style>        .thank-you-msg {            text-align: center;        }    </style></head>
-		<body>    <h1 class="thank-you-msg">        Thank you for sharing!    </h1>    
-		<script>        try {            self.close();            window.close();        }        catch(e) { }    </script>    
-		<script></script></body></html>';
-		
+	$design_preview = isset($_REQUEST['subscribe-preview']) ? $_REQUEST['subscribe-preview'] : '';
+	if ($design_preview == 'true') {
+		include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-subscribe-preview.php');
 		die();
 	}
 }
@@ -155,6 +145,9 @@ function essb_process_additional_ajax_requests() {
 function essb_actions_update_facebook_count() {
 	$post_id = $_POST['post_id'];
 	$count = $_POST['count'];
+	
+	$post_id = sanitize_text_field($post_id);
+	$count = sanitize_text_field($count);
 	
 	$past_shares = intval(get_post_meta($post_id, 'essb_c_facebook', true));
 	
@@ -171,6 +164,9 @@ function essb_actions_update_facebook_count() {
 function essb_actions_update_pinterest_count() {
 	$post_id = $_POST['post_id'];
 	$count = $_POST['count'];
+	
+	$post_id = sanitize_text_field($post_id);
+	$count = sanitize_text_field($count);
 
 	$past_shares = intval(get_post_meta($post_id, 'essb_c_pinterest', true));
 
@@ -343,15 +339,24 @@ if (!function_exists('essb_actions_sendmail')) {
 			
 			$post = get_post($post_id);
 			$url = get_permalink($post_id);
-
+			
+			if (has_filter('essb_mailshare_url')) {
+				$url = apply_filters('essb_mailshare_url', $url);
+			}
+			
+			
 			$base_post_url = $url;
 			
 			$site_url = get_site_url();
 			
+			if (has_filter('essb_mailshare_siteurl')) {
+				$site_url = apply_filters('essb_mailshare_siteurl', $site_url);
+			}
+			
 			$base_site_url = $site_url;
 			
-			$site_url = '<a href="'.$site_url.'">'.$site_url.'</a>';
-			$url = '<a href="'.$url.'">'.$url.'</a>';
+			$site_url = '<a href="'.esc_url($site_url).'">'.$site_url.'</a>';
+			$url = '<a href="'.esc_url($url).'">'.$url.'</a>';
 			
 			$title = $post->post_title;
 			$image = essb_core_get_post_featured_image($post->ID);
@@ -368,7 +373,7 @@ if (!function_exists('essb_actions_sendmail')) {
 			$message_body = preg_replace(array('#%%title%%#', '#%%siteurl%%#', '#%%permalink%%#', '#%%image%%#'), array($title, $site_url, $url, $image), $message_body);
 			
 			if ($cu != '') {
-				$message_body .= $cu;
+				$message_body = $cu . $message_body;
 			}
 			
 			$copy_address = essb_option_value('mail_copyaddress');
@@ -379,7 +384,8 @@ if (!function_exists('essb_actions_sendmail')) {
 			$headers[] = "Content-type: text/html; charset=utf-8";
 			$headers[] = "Reply-to: ".$from;
 			//$headers[] = "From: ".$from." <no-reply@".$parsed_address['host'].'>';//admin_email
-			$headers[] = "From: ".$from.' <'.get_bloginfo('admin_email').'>';//admin_email
+			//$headers[] = "From: ".$from.' <'.get_bloginfo('admin_email').'>';//admin_email
+			$headers[] = "From: ".get_bloginfo('name').' <'.get_bloginfo('admin_email').'>';//admin_email
 			if ($copy_address != '') {
 				$headers[] = 'Bcc: '. $copy_address;
 			}

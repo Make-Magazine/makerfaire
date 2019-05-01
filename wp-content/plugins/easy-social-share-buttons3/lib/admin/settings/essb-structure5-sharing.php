@@ -1,13 +1,13 @@
 <?php
-//ESSBOptionsStructureHelper::menu_item('social', 'share', __('Share Buttons', 'essb'), ' ti-sharethis', 'activate_first', 'share-1');
-//ESSBOptionsStructureHelper::submenu_item('social', 'share-1', __('Networks', 'essb'));
-//ESSBOptionsStructureHelper::submenu_item('social', 'share-2', __('Template & Style', 'essb'));
-
 ESSBOptionsStructureHelper::menu_item('social', 'share-1', __('Networks', 'essb'), ' ti-sharethis');
 ESSBOptionsStructureHelper::menu_item('social', 'share-2', __('Template & Style', 'essb'), ' ti-sharethis');
 
 
 ESSBOptionsStructureHelper::menu_item('social', 'sharecnt', __('Share Counters Setup', 'essb'), ' ti-stats-up');
+if (!essb_option_bool_value('deactivate_module_pinterestpro')) {
+	ESSBOptionsStructureHelper::menu_item('social', 'pinpro', __('Pinterest Pro', 'essb'), ' ti-new-window');
+}
+
 if (!essb_option_bool_value('deactivate_module_shareoptimize')) {
 	ESSBOptionsStructureHelper::menu_item('social', 'optimize', __('Sharing Optimization', 'essb'), ' ti-new-window');
 }
@@ -24,13 +24,13 @@ if (!essb_option_bool_value('deactivate_module_shorturl')) {
 	ESSBOptionsStructureHelper::menu_item('social', 'shorturl', __('Short URL', 'essb'), ' ti-new-window');
 }
 
-if (!essb_option_bool_value('deactivate_module_analytics')) {
+if (!essb_option_bool_value('deactivate_module_analytics') && !essb_option_bool_value('deactivate_module_metrics') && !essb_option_bool_value('deactivate_module_conversions')) {
 	ESSBOptionsStructureHelper::menu_item('social', 'analytics', __('Analytics', 'essb'), ' ti-stats-up');
 }
 
-if (!essb_option_bool_value('deactivate_module_metrics')) {
-	ESSBOptionsStructureHelper::menu_item('social', 'social-metrics', __('Social Metrics', 'essb'), ' ti-new-window');
-}
+//if (!essb_option_bool_value('deactivate_module_metrics')) {
+//	ESSBOptionsStructureHelper::menu_item('social', 'social-metrics', __('Social Metrics', 'essb'), ' ti-new-window');
+//}
 
 
 if (!essb_option_bool_value('deactivate_module_affiliate')) {
@@ -46,8 +46,13 @@ if (!essb_option_bool_value('deactivate_module_message')) {
 }
 
 if (!essb_option_bool_value('deactivate_module_conversions')) {
-	ESSBOptionsStructureHelper::menu_item('conversions', 'share', __('Share Buttons', 'essb'), ' ti-new-window');
-	ESSBOptionsStructureHelper::menu_item('conversions', 'subscribe', __('Subscribe Forms', 'essb'), ' ti-new-window');
+	if (essb_option_bool_value('conversions_lite_run')) {
+		ESSBOptionsStructureHelper::menu_item('conversions', 'share', __('Share Buttons', 'essb'), ' ti-new-window');
+	}
+	
+	if (essb_option_bool_value('conversions_subscribe_lite_run')) {
+		ESSBOptionsStructureHelper::menu_item('conversions', 'subscribe', __('Subscribe Forms', 'essb'), ' ti-new-window');
+	}
 	
 }
 
@@ -61,6 +66,7 @@ ESSBOptionsStructureHelper::field_func('social', 'share-1', 'essb5_custom_positi
 ESSBOptionsStructureHelper::field_func('social', 'share-1', 'essb5_main_network_selection', '', '');
 $network_sort_order = array("" => __("User provided order", "essb"), "shares" => __("Sort dynamically by number of shares", "essb"));
 ESSBOptionsStructureHelper::field_select('social', 'share-1', 'user_sort', __('Share buttons ordering', 'essb'), __('If you decide to use dinamically order please note that it will not work with real time share counters.', 'essb'), $network_sort_order);
+
 
 ESSBOptionsStructureHelper::tab_end('social', 'share-1');
 
@@ -267,6 +273,7 @@ ESSBOptionsStructureHelper::tabs_end('social', 'share-1');
 
 // share-2 button styles
 ESSBOptionsStructureHelper::help('social', 'share-2', '', __('The style settings will make the look of your share buttons. You can setup global styles for entire site and you also have the chance to personalize for each location too.', 'essb'), array('Help with Style Settings' => 'https://docs.socialsharingplugin.com/knowledgebase/social-sharing-share-buttons-style/'));
+essb5_stylemanager_include_menu('social', 'share-2', 'site', 'true');
 
 ESSBOptionsStructureHelper::field_func('social', 'share-2', 'essb5_custom_position_settings', '', '');
 
@@ -352,7 +359,14 @@ ESSBOptionsStructureHelper::field_select_panel('social', 'share-2', 'fullwidth_s
 ESSBOptionsStructureHelper::field_section_end_panels('social', 'share-2');
 ESSBOptionsStructureHelper::holder_end('social', 'share-2');
 
-
+ESSBOptionsStructureHelper::holder_start('social', 'share-2', 'essb-flex-width', 'essb-flex-width');
+ESSBOptionsStructureHelper::title('social', 'share-2', __('Customize Flex Buttons', 'essb'), __('In flexible width mode buttons will always take the full width of content area. You can customize the alignment or preserve space for the total area.', 'essb'), 'inner-row');
+ESSBOptionsStructureHelper::field_section_start_panels('social', 'share-2', '', __('Customize the flex width options', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('social', 'share-2', 'flex_width_value', __('Preserve Space For Total Counter', 'essb'), __('Use this field to setup custom width for the total counter area (numeric value only as a percent)', 'essb'), '', 'input60', 'fa-arrows-h', 'right');
+ESSBOptionsStructureHelper::field_textbox_panel('social', 'share-2', 'flex_button_value', __('Assign a Specific Button Width (%)', 'essb'), __('Use this field to setup custom width for the network button (numeric value only as a percent)', 'essb'), '', 'input60', 'fa-arrows-h', 'right');
+ESSBOptionsStructureHelper::field_select_panel('social', 'share-2', 'flex_width_align', __('Choose alignment of network name', 'essb'), __('Provide different alignment of network name, when this button width is activated. When counter position is Inside or Inside name, that alignment will be applied for the counter. Default value is center.', 'essb'), array("" => "Left", "center" => "Center", "right" => "Right"));
+ESSBOptionsStructureHelper::field_section_end_panels('social', 'share-2');
+ESSBOptionsStructureHelper::holder_end('social', 'share-2');
 
 ESSBOptionsStructureHelper::structure_section_end('social', 'share-2');
 ESSBOptionsStructureHelper::structure_row_end('social', 'share-2');
@@ -371,10 +385,12 @@ ESSBOptionsStructureHelper::tab_start('social', 'sharecnt', 'counter-tabs-0', 't
 
 ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'counter_mode', __('Counter update interval', 'essb'), __('Choose how your counters will update. Real-time share counter will update on each page load and usage on production site can produce extreme load over admin-ajax WordPress component - use it with caution. We strongly recommend using updated on interval counters. They will update once on chosen interval and ensure your site will work fast and smooth (if you use cache plugin and they do not update frequently you can activate in advanced options cache compatible update mode).', 'essb'), essb_cached_counters_update(), '', '8');
 
+
 ESSBOptionsStructureHelper::panel_start('social', 'sharecnt', __('Avoid social negative proof', 'essb'), __('Avoid social negative proof allows you to hide button counters or total counter till a defined value of shares is reached', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'social_proof_enable', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
 ESSBOptionsStructureHelper::field_textbox('social', 'sharecnt', 'button_counter_hidden_till', __('Display button counter after this value of shares is reached', 'essb'), __('You can hide your button counter until amount of shares is reached. This option is active only when you enter value in this field - if blank button counter is always displayed. (Example: 10 - this will make button counter appear when at least 10 shares are made).', 'essb'));
 ESSBOptionsStructureHelper::field_textbox('social', 'sharecnt', 'total_counter_hidden_till', __('Display total counter after this value of shares is reached', 'essb'), __('You can hide your total counter until amount of shares is reached. This option is active only when you enter value in this field - if blank total counter is always displayed.', 'essb'));
 ESSBOptionsStructureHelper::panel_end('social', 'sharecnt');
+
 
 ESSBOptionsStructureHelper::panel_start('social', 'sharecnt', __('Advanced counter update options', 'essb'), __('Configure different advanced counter update functions of plugin when you use non real time counters', 'essb'), 'fa21 fa fa-refresh', array("mode" => "toggle", 'state' => 'opened'));
 
@@ -405,14 +421,16 @@ ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_fa
 ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
 
 ESSBOptionsStructureHelper::structure_section_start('social', 'sharecnt', 'c6');
-ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_pinterest_async', __('Client side Pinterest counter update', 'essb'), __('TPinterest apply restrictions when you are using few hosts that avoid Pinterest counter extraction. In such case please activate this option to avoid missing Pinterest counters. Due to Pinterest rate limitations this option cannot work with share recovery.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '8');
+ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_narrow', __('Narrow Down Number of Share Counter Updates', 'essb'), __('This option will add an additional check to updated posts to ensure that popular posts will not update so frequently. This will allow to update less popular posts by reserving additional ticks for them.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '8');
 ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
+
 
 ESSBOptionsStructureHelper::structure_row_end('social', 'sharecnt');
 
-
-
 ESSBOptionsStructureHelper::panel_end('social', 'sharecnt');
+
+//ESSBOptionsStructureHelper::field_component('social', 'sharecnt', 'essb5_add_counter_features');
+
 
 // recovery
 ESSBOptionsStructureHelper::panel_start('social', 'sharecnt', __('Recover my shares', 'essb'), __('Share counter recovery allows you restore back shares once you make a permalink change (including installing a SSL certificate). Share recovery will show back shares only if they are present for both versions of URL (before and after change).', 'essb'), 'fa21 fa fa-magic', array("mode" => "switch", 'switch_id' => 'counter_recover_active', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
@@ -429,7 +447,8 @@ $recover_type = array(
 				'month_and_name' 	=> __( 'Month and Name' , 'essb' ),
 				'numeric' 			=> __( 'Numeric' , 'essb' ),
 				'post_name' 		=> __( 'Post Name' , 'essb' ),
-				'custom'			=> __( 'Custom' , 'essb' )
+				'custom'			=> __( 'Custom' , 'essb' ),
+				'current'           => __( 'Standard URLs', 'essb')
 			);
 
 ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'counter_recover_mode', __('Previous url format', 'essb'), __('Choose how your site address is changed. If you choose custom use the field below to setup your URL structure', 'essb'), $recover_type);
@@ -456,8 +475,22 @@ ESSBOptionsStructureHelper::panel_end('social', 'sharecnt');
 ESSBOptionsStructureHelper::tab_end('social', 'sharecnt');
 
 ESSBOptionsStructureHelper::tab_start('social', 'sharecnt', 'counter-tabs-1');
-ESSBOptionsStructureHelper::field_heading('social', 'sharecnt', 'heading5', __('Button Counters', 'essb'));
+ESSBOptionsStructureHelper::field_heading('social', 'sharecnt', 'heading5', __('Counter Value & Animation', 'essb'));
+$counter_value_mode = array("" => __('Automatically shorten values above 1000', 'essb'), 'full' => __('Always display full value (default server settings)', 'essb'), 'fulldot' => __('Always display full value - dot thousand separator (example 5.000)', 'essb'), 'fullcomma' => __('Always display full value - comma thousand separator (example 5,000)', 'essb'), 'fullspace' => __('Always display full value - space thousand separator (example 5 000)', 'essb'));
+ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'counter_format', __('Share counter format', 'essb'), __('Choose how you wish to present your share counter value - short number of full number. This option will not work if you use real time share counters - in this mode you will always see short number format.', 'essb'), $counter_value_mode, '', '6');
+ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'animate_single_counter', __('Animate Numbers', 'essb'), __('Enable this option to apply nice animation of counters on appear.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '6');
+ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'active_internal_counters', __('Activate internal counters for all networks that do not support API count', 'essb'), __('Activate internal
+		counters for all networks that does not have access to API
+		counter functions. If this option is active counters are stored
+		in each post/page options and may be different from actual', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '6');
+
+ESSBOptionsStructureHelper::field_heading('social', 'sharecnt', 'heading5', __('Network Specific Counter Update Options', 'essb'));
 ESSBOptionsStructureHelper::panel_start('social', 'sharecnt', __('Additional social network counter settings that you need to pay attention', 'essb'), __('Depends on networks that are set on site you may need to configure additional fields in this section like Twitter counter function, usage of internal counters, number format or Facebook Token for consistent Facebook counter update', 'essb'), 'fa21 fa fa-cogs', array("mode" => "toggle", 'state' => 'opened'));
+
+$listOfOptions = array ("" => "API Endpoint #1", "api2" => "API Endpoint #2");
+ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'facebook_counter_api', __('Facebook counter update API', 'essb'), __('Facebook have right now several active API endpoints that you can use to get share counter. Facebook API Endpoint #2 uses Facebook API 3.0 and require access token to read the share values.', 'essb'), $listOfOptions, '', '6');
+
+ESSBOptionsStructureHelper::field_textbox_stretched('social', 'sharecnt', 'facebook_counter_token', __('Facebook access token key', 'essb'), __('To generate your access token key please visit <a href="http://tools.creoworx.com/facebook/" target="_blank">http://tools.creoworx.com/facebook/</a> and follow instructions to generate application based token', 'essb'), '', '', '', '', '6');
 
 ESSBOptionsStructureHelper::structure_row_start('social', 'sharecnt');
 $listOfOptions = array ("self" => "Self-hosted counter (internally counted by click on buttons)", "twitcount" => "Using twitcount.com",  "newsc" => "Using NewShareCounts.com", "opensc" => "Using OpenShareCount.com", "no" => "No counter for Twitter button" );
@@ -465,10 +498,6 @@ $counter_redirect = "";
 $twitter_counters = ESSBOptionValuesHelper::options_value($essb_options, 'twitter_counters');
 ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'twitter_counters', __('Twitter share counter', 'essb'), __('Choose your Twitter counter working mode. If you select usage of NewShareCounts.com or OpenShareCount.com to make it work you need to visit their site and fill your site address and click sign in button using your Twitter account. Visit <a href="http://newsharecounts.com/" target="_blank">http://newsharecounts.com/</a> or <a href="http://opensharecount.com/" target="_blank">http://opensharecount.com/</a>'.$counter_redirect, 'essb'), $listOfOptions, '', '6');
 ESSBOptionsStructureHelper::structure_row_end('social', 'sharecnt');
-
-ESSBOptionsStructureHelper::field_textbox_stretched('social', 'sharecnt', 'facebook_counter_token', __('Facebook access token key', 'essb'), __('To avoid missing Facebook share counter due to rate limits we recommend to fill access token key. Access token generation of counter can work only when you do not use real time counters. To generate your access token key please visit <a href="http://tools.creoworx.com/facebook/" target="_blank">http://tools.creoworx.com/facebook/</a> and follow instructions to generate application based token', 'essb'), '', '', '', '', '6');
-$listOfOptions = array ("" => "API Endpoint #1", "api2" => "API Endpoint #2", "api3" => "API Endpoint #3");
-ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'facebook_counter_api', __('Facebook counter update API', 'essb'), __('Facebook have right now several active API endpoints that you can use to get share counter. The default is API Endpoint #1 but if you experience issue with counters try also API Endpoint #2', 'essb'), $listOfOptions, '', '6');
 
 
 //$listOfOptions = array ("" => "LinkedIn Official Counter (till it is available)", "self" => "Self-hosted counter (internally counted by click on buttons)", "no" => "Without share counter");
@@ -482,26 +511,13 @@ ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'google_counter_t
 
 //ESSBOptionsStructureHelper::field_textbox_stretched('social', 'sharecnt', 'google_counter_token', __('Google+ API key', 'essb'), __('Very rear Google+ may not show out counter because of too many connections to their API. In this case you will need to build access key and paste it here inside Google Developer Console', 'essb'), '', '', '', '', '6');
 
-ESSBOptionsStructureHelper::structure_row_start('social', 'sharecnt');
-ESSBOptionsStructureHelper::structure_section_start('social', 'sharecnt', 'c6');
-ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'active_internal_counters', __('Activate internal counters for all networks that do not support API count', 'essb'), __('Activate internal
-		counters for all networks that does not have access to API
-		counter functions. If this option is active counters are stored
-		in each post/page options and may be different from actual', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '9');
-ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
-
-ESSBOptionsStructureHelper::structure_section_start('social', 'sharecnt', 'c6');
+ESSBOptionsStructureHelper::structure_section_start('social', 'sharecnt');
+ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_pinterest_async', __('Client side Pinterest counter update', 'essb'), __('TPinterest apply restrictions when you are using few hosts that avoid Pinterest counter extraction. In such case please activate this option to avoid missing Pinterest counters. Due to Pinterest rate limitations this option cannot work with share recovery.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '9');
+ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_addthis', __('AddThis Internal Counter Support', 'essb'), __('Set this option to Yes if you have a used AddThis. The option will call the AddThis API to display the total number internal shares. As there is no network based split the value will be added only to the total counter. Due to AddThis restrictions the import will not work if you set to Yes the option "Speed Up Process Of Counters Update"', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '9');
 ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'deactive_internal_counters_mail', __('Deactivate counters for Mail & Print', 'essb'), __('Enable this option if you wish to deactivate internal counters for mail & print buttons. That buttons are in the list of default social networks that support counters. Deactivating them will lower down request to internal WordPress AJAX event.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '9');
-ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
-
-ESSBOptionsStructureHelper::structure_row_end('social', 'sharecnt');
-
 ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'deactivate_postcount', __('Fully deactivate internal share counter tracking', 'essb'), __('Even when you do not display share counters on site at this moment plugin tracks internal counter with each button click. This is made to provide a share counter value when you decide to show or use share counters. Activation of this option will completely remove the execution and work of code for all internal tracked share counters - if you have any existing internal counter values they will stop increase and for all others it will not add a value. Hint: Rember that major networks like LinkedIn and Google+ removed share counters and there is no alternative of counter value at this time rather than internal counter.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '9');
 
-
-$counter_value_mode = array("" => __('Automatically shorten values above 1000', 'essb'), 'full' => __('Always display full value (default server settings)', 'essb'), 'fulldot' => __('Always display full value - dot thousand separator (example 5.000)', 'essb'), 'fullcomma' => __('Always display full value - comma thousand separator (example 5,000)', 'essb'), 'fullspace' => __('Always display full value - space thousand separator (example 5 000)', 'essb'));
-ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'counter_format', __('Share counter format', 'essb'), __('Choose how you wish to present your share counter value - short number of full number. This option will not work if you use real time share counters - in this mode you will always see short number format.', 'essb'), $counter_value_mode, '', '6');
-ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'animate_single_counter', __('Animate Numbers', 'essb'), __('Enable this option to apply nice animation of counters on appear.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '6');
+ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
 
 ESSBOptionsStructureHelper::panel_end('social', 'sharecnt');
 
@@ -548,9 +564,7 @@ ESSBOptionsStructureHelper::panel_end('social', 'sharecnt');
 
 ESSBOptionsStructureHelper::tab_end('social', 'sharecnt');
 
-
 ESSBOptionsStructureHelper::tab_start('social', 'sharecnt', 'counter-tabs-3');
-
 ESSBOptionsStructureHelper::panel_start('social', 'sharecnt', __('Advanced counter update options', 'essb'), __('Configure different advanced counter update functions of plugin when you use real time or cached counters', 'essb'), 'fa21 fa fa-refresh', array("mode" => "toggle", 'state' => 'opened'));
 ESSBOptionsStructureHelper::field_heading('social', 'sharecnt', 'heading5', __('Real time counters', 'essb'));
 ESSBOptionsStructureHelper::field_section_start('social', 'sharecnt', __('Counter update options for all networks that does not provide direct access to counter API or does not have share counter and uses internal counters', 'essb'), __('', 'essb'), '');
@@ -559,12 +573,10 @@ $listOfOptions = array("wp" => "Build in WordPress ajax handler", "light" => "Li
 ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'force_counters_admin_type', __('AJAX load method', 'essb'), __('Choose the default ajax method from build in WordPress or light handler', 'essb'), $listOfOptions);
 ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'force_counters_admin_single', __('Use single request of counter load for all social networks that uses the ajax handler', 'essb'), __('This method will make single call to AJAX handler to get all counters instead of signle call for each network. The pros of this option is that you will make less calls to selected AJAX handler. We suggest to use this option in combination with counters cache.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_section_end('social', 'sharecnt');
-
 ESSBOptionsStructureHelper::field_section_start('social', 'sharecnt', __('Counter cache for AJAX load method', 'essb'), __('This will reduce load because counters will be updated when cache expires', 'essb'), '');
 ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'admin_ajax_cache', __('Activate', 'essb'), __('', 'essb'), 'yes', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_textbox('social', 'sharecnt', 'admin_ajax_cache_time', __('Cache expiration time', 'essb'), __('Amount of seconds for cache (default is 600 if nothing is provided)', 'essb'));
 ESSBOptionsStructureHelper::field_section_end('social', 'sharecnt');
-
 ESSBOptionsStructureHelper::panel_end('social', 'sharecnt');
 
 ESSBOptionsStructureHelper::tab_end('social', 'sharecnt');
@@ -574,35 +586,146 @@ ESSBOptionsStructureHelper::tabs_end('social', 'sharecnt');
 
 /** Analytics **/
 if (!essb_option_bool_value('deactivate_module_analytics')) {
-	ESSBOptionsStructureHelper::field_heading('social', 'analytics', 'heading5', __('Activate build-in analytics', 'essb'));
+	ESSBOptionsStructureHelper::field_heading('social', 'analytics', 'heading5', __('Plugin Analytics', 'essb'));
 	ESSBOptionsStructureHelper::help('social', 'analytics', '', __('The plugin analytics, if activated, collects anonymous data for click over share buttons. Based on that data you can select the networks and positions that works best on your site. As the data is logged with each button click. That makes it usually to be different from the official share counter.', 'essb'), array('Learn more for data in analytics' => 'https://docs.socialsharingplugin.com/knowledgebase/how-built-in-analytics-works-and-what-data-is-collected/'));
-	ESSBOptionsStructureHelper::field_switch('social', 'analytics', 'stats_active', __('Activate analytics and collect data for click over buttons', 'essb'), __('Build-in analytics is exteremly powerful tool which will let you to track how your visitors interact with share buttons. Get reports by positions, device type, social networks, for periods or for content', 'essb'), 'recommended', __('Yes', 'essb'), __('No', 'essb'));
-	
-	ESSBOptionsStructureHelper::field_heading('social', 'analytics', 'heading5', __('Google Analytics Tracking', 'essb'));
-	ESSBOptionsStructureHelper::field_switch('social', 'analytics', 'activate_ga_tracking', __('Activate Google Analytics Tracking', 'essb'), __('Activate tracking of social share buttons click using Google Analytics (requires Google Analytics to be active on this site).', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-	$listOfOptions = array ("simple" => "Simple", "extended" => "Extended" );
-	ESSBOptionsStructureHelper::field_select('social', 'analytics', 'ga_tracking_mode', __('Google Analytics Tracking Method', 'essb'), __('Choose your tracking method: Simple - track clicks by social networks, Extended - track clicks on separate social networks by button display position.', 'essb'), $listOfOptions);
-	ESSBOptionsStructureHelper::field_switch('social', 'analytics', 'activate_ga_layers', __('Use Google Tag Manager Data Layer Event Tracking', 'essb'), __('Activate this option if you use Google Tag Manager to add analytics code and you did not setup automatic event tracking.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'analytics', 'activate_ga_campaign_tracking', __('Add Custom Campaign parameters to your URLs', 'essb'), __('Paste your custom campaign parameters in this field and they will be automatically added to shared addresses on social networks. Please note as social networks count shares via URL as unique key this option is not compatible with active social share counters as it will make the start from zero.', 'essb'));
-	ESSBOptionsStructureHelper::hint('social', 'analytics', '', essb3_text_analytics());
+	ESSBOptionsStructureHelper::field_switch('social', 'analytics', 'stats_active', __('Activate analytics and collect data for click over buttons', 'essb'), __('Build-in analytics is exteremly powerful tool which will let you to track how your visitors interact with share buttons. Get reports by positions, device type, social networks, for periods or for content', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '10');
+}
+
+/** Conversions **/
+if (!essb_option_bool_value('deactivate_module_conversions')) {
+	ESSBOptionsStructureHelper::field_heading('social', 'analytics', 'heading5', __('Conversion Tracking', 'essb'));
+	ESSBOptionsStructureHelper::field_switch('social', 'analytics', 'conversions_lite_run', __('Track Social Share Buttons Conversion', 'essb'), __('Share buttons conversion is an easy way to manage and optimize display of share buttons on your site. Once active plugin will collect data for each displayed position and social networks along with click on each. All that data you will see in easy to understand dashboard. With such information you can easy make a decision of what you really need on your site. You have also access to past 7 days historical data. <a href="https://socialsharingplugin.com/share-conversions-lite/" target="_blank">Learn more for social share conversions lite</a>.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '10', 'true');
 }
 
 /** Metrics **/
 if (!essb_option_bool_value('deactivate_module_metrics')) {
-	ESSBOptionsStructureHelper::hint('social', 'social-metrics', '', __('Social Metrics data collection require to have share counters active on your site. All data will be updated and stored inside metrics dashboard on each share counter update. Metrics data cannot be collected if you use real time share counters.', 'essb'), 'fa24 ti-widget', 'glow');
-	ESSBOptionsStructureHelper::field_switch('social', 'social-metrics', 'esml_active', __('Activate social metrics data collection', 'essb'), __('Switch this option to yes to start collecting data for your shares. Data collection requires to have share counters active on your site with mode different than real time. All data will be updated with each counter update request.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
-
+	ESSBOptionsStructureHelper::field_heading('social', 'analytics', 'heading5', __('Social Metrics Lite', 'essb'));
+	ESSBOptionsStructureHelper::help('social', 'analytics', '', __('Social Metrics data collection require to have share counters active on your site. All data will be updated and stored inside metrics dashboard on each share counter update. Metrics data cannot be collected if you use real time share counters.', 'essb'));
+	ESSBOptionsStructureHelper::field_switch_panel('social', 'analytics', 'esml_active', __('Activate social metrics data collection', 'essb'), __('Switch this option to yes to start collecting data for your shares. Data collection requires to have share counters active on your site with mode different than real time. All data will be updated with each counter update request.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 	$data_history = array();
 	$data_history['1'] = __('1 day', 'essb');
 	$data_history['7'] = __('1 week', 'essb');
 	$data_history['14'] = __('2 weeks', 'essb');
 	$data_history['30'] = __('1 month', 'essb');
-
-	ESSBOptionsStructureHelper::field_select('social', 'social-metrics', 'esml_history', __('Keep history for', 'essb'), __('Choose how long plugin to store history data inside cache. All data that is collected will be saved inside post meta fields and choosing a greater period will generate a bigger record.', 'essb'), $data_history);
-
-
+	ESSBOptionsStructureHelper::field_select_panel('social', 'analytics', 'esml_history', __('Keep history for', 'essb'), __('Choose how long plugin to store history data inside cache. All data that is collected will be saved inside post meta fields and choosing a greater period will generate a bigger record.', 'essb'), $data_history);
 	$listOfOptions = array("manage_options" => "Administrator", "delete_pages" => "Editor", "publish_posts" => "Author", "edit_posts" => "Contributor");
-	ESSBOptionsStructureHelper::field_select('social', 'social-metrics', 'esml_access', __('Metrics report access', 'essb'), __('Access role will limit which type of users can see the metrics data inside WordPress admin panel. If you are not sure what to choose leave Administrator selected.', 'essb'), $listOfOptions);
+	ESSBOptionsStructureHelper::field_select_panel('social', 'analytics', 'esml_access', __('Metrics report access', 'essb'), __('Access role will limit which type of users can see the metrics data inside WordPress admin panel. If you are not sure what to choose leave Administrator selected.', 'essb'), $listOfOptions);
+}
+
+/** Analytics Google Tracking **/
+if (!essb_option_bool_value('deactivate_module_analytics')) {
+	ESSBOptionsStructureHelper::field_heading('social', 'analytics', 'heading5', __('Google Analytics Tracking', 'essb'));
+	ESSBOptionsStructureHelper::field_switch_panel('social', 'analytics', 'activate_ga_tracking', __('Activate Google Analytics Tracking', 'essb'), __('Activate tracking of social share buttons click using Google Analytics (requires Google Analytics to be active on this site).', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	$listOfOptions = array ("simple" => "Simple", "extended" => "Extended" );
+	ESSBOptionsStructureHelper::field_select_panel('social', 'analytics', 'ga_tracking_mode', __('Google Analytics Tracking Method', 'essb'), __('Choose your tracking method: Simple - track clicks by social networks, Extended - track clicks on separate social networks by button display position.', 'essb'), $listOfOptions);
+	ESSBOptionsStructureHelper::field_switch_panel('social', 'analytics', 'activate_ga_layers', __('Use Google Tag Manager Data Layer Event Tracking', 'essb'), __('Activate this option if you use Google Tag Manager to add analytics code and you did not setup automatic event tracking.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'analytics', 'activate_ga_campaign_tracking', __('Add Custom Campaign parameters to your URLs', 'essb'), __('Paste your custom campaign parameters in this field and they will be automatically added to shared addresses on social networks. Please note as social networks count shares via URL as unique key this option is not compatible with active social share counters as it will make the start from zero.', 'essb'));
+	ESSBOptionsStructureHelper::hint('social', 'analytics', '', essb3_text_analytics());
+}
+
+/** Pinterest Pro **/
+if (!essb_option_bool_value('deactivate_module_pinterestpro')) {
+
+		ESSBOptionsStructureHelper::panel_start('social', 'pinpro', __('Image Pin Button on Hover', 'essb'), __('Set to Yes if you wish to have Pin button for your content images.', 'essb'), 'fa32 fa fa-pinterest', array("mode" => "switch", 'switch_id' => 'pinterest_images', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
+		$location = 'pinterest';
+		ESSBOptionsStructureHelper::structure_row_start('social', 'pinpro');
+		ESSBOptionsStructureHelper::structure_section_start('social', 'pinpro', 'c6');
+		ESSBOptionsStructureHelper::title('social', 'pinpro', __('Template', 'essb'), '', 'inner-row');
+		ESSBOptionsStructureHelper::field_template_select('social', 'pinpro', $location.'_template', $location, 'pinterest');
+		
+		ESSBOptionsStructureHelper::title('social', 'pinpro', __('Buttons style', 'essb'), '', 'inner-row');
+		ESSBOptionsStructureHelper::field_buttonstyle_select('social', 'pinpro', $location.'_button_style', $location, true);
+		
+		$select_values = array('' => array('title' => 'Default', 'content' => 'Default'),
+				'xs' => array('title' => 'Extra Small', 'content' => 'XS'),
+				's' => array('title' => 'Small', 'content' => 'S'),
+				'm' => array('title' => 'Medium', 'content' => 'M'),
+				'l' => array('title' => 'Large', 'content' => 'L'),
+				'xl' => array('title' => 'Extra Large', 'content' => 'XL'),
+				'xxl' => array('title' => 'Extra Extra Large', 'content' => 'XXL')
+		);
+		ESSBOptionsStructureHelper::field_toggle_panel('social', 'pinpro', $location.'_button_size', __('Button Size', 'essb'), __('Change size of exisiting template. May not work properly for all templates.', 'essb'), $select_values, '', '', 'button_size');
+		
+		
+		//essb5_main_animation_selection
+		ESSBOptionsStructureHelper::title('social', 'pinpro', __('Animate share buttons', 'essb'), '', 'inner-row');
+		ESSBOptionsStructureHelper::field_animation_select('social', 'pinpro', $location.'_css_animations', $location);
+		$list_of_positions =  array(
+				'top-left'      => __( 'Top left', 'essb' ),
+				'top-middle'    => __( 'Top middle', 'essb' ),
+				'top-right'     => __( 'Top right', 'essb' ),
+				'middle-left'   => __( 'Middle left', 'essb' ),
+				'middle-middle' => __( 'Middle', 'essb' ),
+				'middle-right'  => __( 'Middle right', 'essb' ),
+				'bottom-left'   => __( 'Bottom left', 'essb' ),
+				'bottom-middle' => __( 'Bottom middle', 'essb' ),
+				'bottom-right'  => __( 'Bottom right', 'essb' ));
+		
+		ESSBOptionsStructureHelper::field_select('social', 'pinpro', 'pinterest_position', __('Position Over Image', 'essb'), __('Choose the location of the button over the selected image', 'essb'), $list_of_positions, '', '6');
+		ESSBOptionsStructureHelper::field_textbox('social', 'pinpro', 'pinterest_hideon', __('Don\'t Show On', 'essb'), __('In case you need to hide button on specific images you can write a relative path here.', 'essb'), '', '' ,'', '', '6');
+		ESSBOptionsStructureHelper::field_textbox('social', 'pinpro', 'pinterest_selector', __('Custom Image Selector', 'essb'), __('Use only if you need to change the place where images are located. In all other situations leave it blank to work with default setup.', 'essb'), '', '' ,'', '', '6');
+		
+		ESSBOptionsStructureHelper::structure_section_end('social', 'pinpro');
+		ESSBOptionsStructureHelper::structure_section_start('social', 'pinpro', 'c6');
+		ESSBOptionsStructureHelper::field_textbox('social', 'pinpro', 'pinterest_text', __('Pin Action Text', 'essb'), __('Set a custom call to action text for Pinterest images button. The text will be visible when style of button is button, text or icon with text on hover. If nothing is provided than the default text "Pin" will be used.', 'essb'), '', '' ,'', '', '6');
+		ESSBOptionsStructureHelper::field_textbox('social', 'pinpro', 'pinterest_minwidth', __('Min Image Width', 'essb'), __('Control the min image width of Pinable images. If nothing is set the default value of 300 will be used.', 'essb'), '', '' ,'', '', '6');
+		ESSBOptionsStructureHelper::field_textbox('social', 'pinpro', 'pinterest_minheight', __('Min Image Height', 'essb'), __('Control the min height of Pinable images. If nothing is set the default value of 300 will be used.', 'essb'), '', '' ,'', '', '6');
+		ESSBOptionsStructureHelper::field_switch('social', 'pinpro', 'pinterest_nolinks', __('Don\'t Show on Images With Links', 'essb'), __('Set to Yes if you wish the images that are wrapped inside links to avoid showing the Pin button', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '8');
+		ESSBOptionsStructureHelper::field_switch('social', 'pinpro', 'pinterest_lazyload', __('My Images Have Lazy Loading', 'essb'), __('Set to Yes if the images on site uses lazy loading technology to appear. Without that option plugin may not be able to detect the images that are appearing below the fold.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '8');
+		ESSBOptionsStructureHelper::field_switch('social', 'pinpro', 'pinterest_alwayscustom', __('Always Use Custom Pinterest Description', 'essb'), __('Set to Yes if you need to avoid automated message generation based on image data (title or alternative text).', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '8');
+		ESSBOptionsStructureHelper::field_switch('social', 'pinpro', 'pinterest_reposition', __('Correct button position', 'essb'), __('Set to Yes if your Pin button appear outside the image (on images with smaller width than the content area).', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '8');
+		
+		ESSBOptionsStructureHelper::structure_section_end('social', 'pinpro');
+		ESSBOptionsStructureHelper::structure_row_end('social', 'pinpro');
+		ESSBOptionsStructureHelper::panel_end('social', 'pinpro');
+		
+		//-- shortcode styles
+		$location = 'pinsc';
+		ESSBOptionsStructureHelper::panel_start('social', 'pinpro', __('Pinterest Pro Shortcodes: Image & Gallery Pin Button Style', 'essb'), __('Change the design and visual style of the Pin button that is used for special Pinterest images or galleries added from plugin shortcodes', 'essb'), 'fa21 fa fa-pinterest', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+		ESSBOptionsStructureHelper::structure_row_start('social', 'pinpro');
+		ESSBOptionsStructureHelper::structure_section_start('social', 'pinpro', 'c6');
+		ESSBOptionsStructureHelper::title('social', 'pinpro', __('Template', 'essb'), '', 'inner-row');
+		ESSBOptionsStructureHelper::field_template_select('social', 'pinpro', $location.'_template', $location, 'pinterest');
+		
+		ESSBOptionsStructureHelper::title('social', 'pinpro', __('Buttons style', 'essb'), '', 'inner-row');
+		ESSBOptionsStructureHelper::field_buttonstyle_select('social', 'pinpro', $location.'_button_style', $location, true);
+		
+		$select_values = array('' => array('title' => 'Default', 'content' => 'Default'),
+				'xs' => array('title' => 'Extra Small', 'content' => 'XS'),
+				's' => array('title' => 'Small', 'content' => 'S'),
+				'm' => array('title' => 'Medium', 'content' => 'M'),
+				'l' => array('title' => 'Large', 'content' => 'L'),
+				'xl' => array('title' => 'Extra Large', 'content' => 'XL'),
+				'xxl' => array('title' => 'Extra Extra Large', 'content' => 'XXL')
+		);
+		ESSBOptionsStructureHelper::field_toggle_panel('social', 'pinpro', $location.'_button_size', __('Button Size', 'essb'), __('Change size of exisiting template. May not work properly for all templates.', 'essb'), $select_values, '', '', 'button_size');
+		
+		
+		//essb5_main_animation_selection
+		ESSBOptionsStructureHelper::title('social', 'pinpro', __('Animate share buttons', 'essb'), '', 'inner-row');
+		ESSBOptionsStructureHelper::field_animation_select('social', 'pinpro', $location.'_css_animations', $location);
+			
+		ESSBOptionsStructureHelper::structure_section_end('social', 'pinpro');
+		ESSBOptionsStructureHelper::structure_section_start('social', 'pinpro', 'c6');
+		$list_of_positions =  array(
+				'top-left'      => __( 'Top left', 'essb' ),
+				'top-middle'    => __( 'Top middle', 'essb' ),
+				'top-right'     => __( 'Top right', 'essb' ),
+				'middle-left'   => __( 'Middle left', 'essb' ),
+				'middle-middle' => __( 'Middle', 'essb' ),
+				'middle-right'  => __( 'Middle right', 'essb' ),
+				'bottom-left'   => __( 'Bottom left', 'essb' ),
+				'bottom-middle' => __( 'Bottom middle', 'essb' ),
+				'bottom-right'  => __( 'Bottom right', 'essb' ));
+		
+		ESSBOptionsStructureHelper::field_select('social', 'pinpro', $location.'_position', __('Position Over Image', 'essb'), __('Choose the location of the button over the selected image', 'essb'), $list_of_positions, '', '6');
+		ESSBOptionsStructureHelper::field_textbox('social', 'pinpro', $location.'_text', __('Pin Action Text', 'essb'), __('Set a custom call to action text for Pinterest images button. The text will be visible when style of button is button, text or icon with text on hover. If nothing is provided than the default text "Pin" will be used.', 'essb'), '', '' ,'', '', '6');
+		ESSBOptionsStructureHelper::field_switch('social', 'pinpro', $location.'_alwayscustom', __('Always Use Custom Pinterest Description', 'essb'), __('Set to Yes if the images on site uses lazy loading technology to appear. Without that option plugin may not be able to detect the images that are appearing down in the content.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '8');
+		
+		ESSBOptionsStructureHelper::structure_section_end('social', 'pinpro');
+		ESSBOptionsStructureHelper::structure_row_end('social', 'pinpro');
+		
+		ESSBOptionsStructureHelper::panel_end('social', 'pinpro');
 }
 
 
@@ -612,7 +735,7 @@ if (!essb_option_bool_value('deactivate_module_shareoptimize')) {
 	
 	ESSBOptionsStructureHelper::panel_start('social', 'optimize', __('Set Optimized Share Message for Homepage', 'essb'), __('You need to use those fields when your site has a dynamic home page (example: list of posts). In this case there is no existing page where you can do the changes.', 'essb'), 'fa21 fa fa-home', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
 	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'optimize', 'sso_frontpage_title', __('Title', 'essb'), __('Title that will be displayed on frontpage.', 'essb'));
-	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'optimize', 'sso_frontpage_description', __('Description', 'essb'), __('Description that will be displayed on frontpage', 'essb'));
+	ESSBOptionsStructureHelper::field_textarea('social', 'optimize', 'sso_frontpage_description', __('Description', 'essb'), __('Description that will be displayed on frontpage', 'essb'));
 	ESSBOptionsStructureHelper::field_image('social', 'optimize', 'sso_frontpage_image', __('Image', 'essb'), __('Image that will be displayed on frontpage', 'essb'), '', 'vertical1');
 	ESSBOptionsStructureHelper::panel_end('social', 'optimize');
 	
@@ -622,7 +745,9 @@ if (!essb_option_bool_value('deactivate_module_shareoptimize')) {
 	ESSBOptionsStructureHelper::field_switch_panel('social', 'optimize', 'sso_imagesize', __('Generate image size tags', 'essb'), __('Image size tags are not required - they are optional but in some cases without them Facebook may not recongnize the correct image. In case this happens to you try activating this option.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 	ESSBOptionsStructureHelper::field_switch_panel('social', 'optimize', 'sso_gifimages', __('GIF images support', 'essb'), __('Set this to Yes if your site uses GIF images as featured or optimized for sharing and you wish to see that appearing inside Facebook sharing', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 	ESSBOptionsStructureHelper::field_switch_panel('social', 'optimize', 'sso_deactivate_woogallery', __('Deactivate WooCommerce Gallery Integration', 'essb'), __('Set this option to Yes if you wish to avoid generation of all gallery images into social share optimization tags.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_switch_panel('social', 'optimize', 'sso_deactivate_woocommerce', __('Deactivate WooCommerce Product Tags', 'essb'), __('Set this option to Yes if you need to deactivate the generation of product social share optimization tags. Those tags contains deataials about pricing, stock available and etc.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 	ESSBOptionsStructureHelper::field_switch_panel('social', 'optimize', 'sso_multipleimages', __('Allow more than one share image', 'essb'), __('This option will allow to choose up to 5 additional images on each post that will appear in social share optimization tags.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+	ESSBOptionsStructureHelper::field_switch_panel('social', 'optimize', 'sso_deactivate_analyzer', __('Stop the Social Media Assistant', 'essb'), __('Set to Yes if you wish to stop the assistant from analyzing your content and provide feedback for improvements. Setting this option to Yes will not reflect the work of social share optimization tags.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 	ESSBOptionsStructureHelper::field_section_end_full_panels('social', 'optimize');
 	
 	
@@ -630,7 +755,7 @@ if (!essb_option_bool_value('deactivate_module_shareoptimize')) {
 	ESSBOptionsStructureHelper::field_textbox('social', 'optimize', 'opengraph_tags_fbadmins', __('Facebook Admins', 'essb'), __('Enter IDs of Facebook Users that are admins of current page.', 'essb'));
 	ESSBOptionsStructureHelper::field_textbox('social', 'optimize', 'opengraph_tags_fbapp', __('Facebook Application ID', 'essb'), __('Enter ID of Facebook Application to be able to use Facebook Insights', 'essb'));
 	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'optimize', 'opengraph_tags_fbauthor', __('Facebook Author Profile', 'essb'), __('Add link to Facebook profile page of article author if you wish it to appear in shared information.', 'essb'));
-	ESSBOptionsStructureHelper::field_file('social', 'optimize', 'sso_default_image', __('Default share image', 'essb'), __('Default share image will be used when page or post doesn\'t have featured image or custom setting for share image.', 'essb'));
+	ESSBOptionsStructureHelper::field_image('social', 'optimize', 'sso_default_image', __('Default share image', 'essb'), __('The default share image is the one that will be used on entire site when there is no post or page featured image added (or personal social media optimization image)', 'essb'), '', 'vertical1');
 	ESSBOptionsStructureHelper::field_switch('social', 'optimize', 'sso_httpshttp', __('Use http version of page in social tags', 'essb'), __('If you recently move from http to https and realize that shares are gone please activate this option and check are they back. In case this does not help contact us in support system <a href="http://support.creoworx.com" target="_blank">http://support.creoworx.com</a> for addtional instructions', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 	ESSBOptionsStructureHelper::field_switch('social', 'optimize', 'sso_apply_the_content', __('Extract full content when generating description', 'essb'), __('If you see shortcodes in your description activate this option to extract as full rendered content. <br/><b>Warning! Activation of this option may affect work of other plugins or may lead to missing share buttons. If you notice something that is not OK with site immediately deactivate it.</b>', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 	ESSBOptionsStructureHelper::panel_end('social', 'optimize');
@@ -650,7 +775,7 @@ if (!essb_option_bool_value('deactivate_module_shorturl')) {
 	
 	$listOfOptions = array("wp" => "Build in WordPress function wp_get_shortlink()", "goo.gl" => "goo.gl", "bit.ly" => "bit.ly", 'rebrand.ly' => 'Rebrandly', 'po.st' => 'po.st');
 	if (defined('ESSB3_SSU_VERSION')) {
-		$listOfOptions['ssu'] = "Self-Short URL Add-on for Easy Social Share Buttons";
+		$listOfOptions['ssu'] = __('Social Media Short URLs add-on for Easy Social Share Buttons for WordPress', 'essb');
 	}
 	
 	ESSBOptionsStructureHelper::field_select('social', 'shorturl', 'shorturl_type', __('Choose short url type', 'essb'), __('Please note that usage of bit.ly requires to fill additional fields below or short urls will not be generated. If you choose goo.gl as provider we also recommend to generate API key due to public quota limit provided by Google.'), $listOfOptions);
@@ -790,19 +915,7 @@ if (!essb_option_bool_value('deactivate_module_message')) {
 }
 
 if (!essb_option_bool_value('deactivate_module_conversions')) {
-	ESSBOptionsStructureHelper::field_section_start_full_panels('conversions', 'share');
-	ESSBOptionsStructureHelper::field_switch('conversions', 'share', 'conversions_lite_run', __('Track Social Share Buttons Conversion', 'essb'), __('Share buttons conversion is an easy way to manage and optimize display of share buttons on your site. Once active plugin will collect data for each displayed position and social networks along with click on each. All that data you will see in easy to understand dashboard. With such information you can easy make a decision of what you really need on your site. You have also access to past 7 days historical data. <a href="https://socialsharingplugin.com/share-conversions-lite/" target="_blank">Learn more for social share conversions lite</a>.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '10', 'true');
-	ESSBOptionsStructureHelper::field_section_end_full_panels('conversions', 'share');
-	
-	if (!ESSBActivationManager::isActivated()) {
-		if (!ESSBActivationManager::isThemeIntegrated()) {
-			ESSBOptionsStructureHelper::hint('conversions', 'share', __('Activate Plugin to Get Access to Conversions Lite Reports', 'essb'), __('Thank you for choosing Easy Social Share Buttons for WordPress. To unlock view of conversions lite reports dashboard please activate plugin by filling your purchase code in Activation Page. <a href="admin.php?page=essb_redirect_update">Click here to visit Activation Page</a>', 'essb'), 'fa fa-lock fa21', 'glow');
-		}
-		else {
-			ESSBOptionsStructureHelper::hint('conversions', 'share',__('Direct Customer Benefit ', 'essb'), sprintf(__('Access to Conversions Lite report dashboard is benefit for direct plugin customers. You can activate collection of data at any time but to view report you need to purchase a separate plugin license. <a href="%s" target="_blank">See all direct customer benefits</a>', 'essb'), ESSBActivationManager::getBenefitURL()), 'fa fa-lock fa21', 'glow');
-		}
-	}
-	else {
+
 		if (essb_option_bool_value('conversions_lite_run')) {
 			//ESSBOptionsStructureHelper::field_heading('social', 'conversions', 'heading5', __('Conversions Result', 'essb'));
 			
@@ -812,21 +925,12 @@ if (!essb_option_bool_value('deactivate_module_conversions')) {
 			
 			ESSBOptionsStructureHelper::field_func('conversions', 'share', 'essb_conversions_dashboard_report', '', '');
 		}
-	}
 
 	ESSBOptionsStructureHelper::field_section_start_full_panels('conversions', 'subscribe');
 	ESSBOptionsStructureHelper::field_switch('conversions', 'subscribe', 'conversions_subscribe_lite_run', __('Track Subscribe Forms Conversion', 'essb'), __('Subscribe forms conversion is an easy way to manage and optimize display of subscribe forms on your site. Once active plugin will collect data for each displayed position and subscribes. You have also access to past 7 days historical data. <a href="https://socialsharingplugin.com/subscribe-conversions-lite/" target="_blank">Learn more for subscribe conversions lite</a>.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'), '', '10', 'true');
 	ESSBOptionsStructureHelper::field_section_end_full_panels('conversions', 'subscribe');
 	
-	if (!ESSBActivationManager::isActivated()) {
-		if (!ESSBActivationManager::isThemeIntegrated()) {
-			ESSBOptionsStructureHelper::hint('conversions', 'subscribe', __('Activate Plugin to Get Access to Conversions Lite Reports', 'essb'), __('Thank you for choosing Easy Social Share Buttons for WordPress. To unlock view of conversions lite reports dashboard please activate plugin by filling your purchase code in Activation Page. <a href="admin.php?page=essb_redirect_update">Click here to visit Activation Page</a>', 'essb'), 'fa fa-lock fa21', 'glow');
-		}
-		else {
-			ESSBOptionsStructureHelper::hint('conversions', 'subscribe',__('Direct Customer Benefit ', 'essb'), sprintf(__('Access to Conversions Lite report dashboard is benefit for direct plugin customers. You can activate collection of data at any time but to view report you need to purchase a separate plugin license. <a href="%s" target="_blank">See all direct customer benefits</a>', 'essb'), ESSBActivationManager::getBenefitURL()), 'fa fa-lock fa21', 'glow');
-		}
-	}
-	else {
+
 		if (essb_option_bool_value('conversions_subscribe_lite_run')) {
 				
 			if (!function_exists('essb_subscribe_conversions_dashboard_report')) {
@@ -835,7 +939,6 @@ if (!essb_option_bool_value('deactivate_module_conversions')) {
 				
 			ESSBOptionsStructureHelper::field_func('conversions', 'subscribe', 'essb_subscribe_conversions_dashboard_report', '', '');
 		}
-	}
 	
 }
 
@@ -1045,7 +1148,10 @@ function essb5_live_preview() {
 			'full_button': 'essb_options_fullwidth_share_buttons_correction',
 			'full_align': 'essb_options_fullwidth_align',
 			'full_first': 'essb_options_fullwidth_first_button',
-			'full_second': 'essb_options_fullwidth_second_button'				
+			'full_second': 'essb_options_fullwidth_second_button',
+			'flex_align': 'essb_options_flex_width_align',
+			'flex_width': 'essb_options_flex_width_value',
+			'flex_button': 'essb_options_flex_button_value'				
 	};
 	
 	</script>";
@@ -1100,3 +1206,62 @@ $essb5_options_translate['essb5_main_buttonstyle_selection'] = 'button_style';
 $essb5_options_translate['essb5_main_animation_selection'] = 'css_animations';
 $essb5_options_translate['essb5_main_singlecounter_selection'] = 'counter_pos';
 $essb5_options_translate['essb5_main_totalcoutner_selection'] = 'total_counter_pos';
+
+function essb5_add_counter_features() {
+	
+	$inactive_text = __('Inactive', 'essb');
+	$active_text = __('Active', 'essb');
+	
+	//social_proof_enable
+	?>
+<div class="advanced-grid col2" style="padding-right: 15px; padding-bottom: 15px;">
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advancedoptions-tile-head">
+		<div class="advancedoptions-tile-head-title">
+			<h3></h3>
+		</div>	
+		<div class="advancedoptions-tile-head-tools">
+			<span class="status <?php echo essb_option_bool_value('social_proof_enable') ? 'running' : 'notrunning'; ?>"><?php echo essb_option_bool_value('social_proof_enable') ? $active_text : $inactive_text; ?></span>
+		</div>	
+	</div>
+	<div class="advnacedoptions-tile-icon">
+		<i class="ti-star"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php _e('Avoid Negative Social Proof', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php _e('Avoid social negative proof allows you to hide button counters or total counter till a defined value of shares is reached', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-config ao-option-callback" data-option="avoid-negative" data-window-title="<?php _e('Configure the avoid negative proof feature', 'essb'); ?>"><i class="fa fa-cog"></i><?php _e('Configure', 'essb'); ?></a>
+	</div>
+</div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advancedoptions-tile-head">
+		<div class="advancedoptions-tile-head-title">
+			<h3></h3>
+		</div>	
+		<div class="advancedoptions-tile-head-tools">
+			<span class="status <?php echo essb_option_bool_value('counter_recover_active') ? 'running' : 'notrunning'; ?>"><?php echo essb_option_bool_value('counter_recover_active') ? $active_text : $inactive_text; ?></span>
+		</div>	
+	</div>
+	<div class="advnacedoptions-tile-icon">
+		<i class="ti-reload"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php _e('Recover My Shares', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php _e('Share counter recovery allows you restore back shares once you make a permalink change (including installing a SSL certificate). Share recovery will show back shares only if they are present for both versions of URL (before and after change).', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-config ao-option-callback" data-option="share-recovery" data-window-title="<?php _e('Configure recovery of shares on URL change', 'essb'); ?>"><i class="fa fa-cog"></i><?php _e('Configure', 'essb'); ?></a>
+	</div>
+</div>
+
+</div>
+
+	<?php 
+}

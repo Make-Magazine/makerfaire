@@ -100,7 +100,7 @@ function essb_register_settings_metabox_optimize() {
 		if (essb_options_bool_value('opengraph_tags') || essb_options_bool_value('twitter_card')) {
 			$sidebar_options[] = array(
 					'field_id' => 'opengraph',
-					'title' => __('Sharing Optimization', 'essb'),
+					'title' => __('Social Media Message', 'essb'),
 					'icon' => 'share-alt',
 					'type' => 'menu_item',
 					'action' => 'default',
@@ -110,14 +110,14 @@ function essb_register_settings_metabox_optimize() {
 		
 		$sidebar_options[] = array(
 				'field_id' => 'twittertag',
-				'title' => __('Customize Tweet', 'essb'),
+				'title' => __('Custom Tweet', 'essb').(essb_options_bool_value('twitter_card') ? ' & Card Data' : ''),
 				'icon' => 'twitter',
 				'type' => 'menu_item',
 				'action' => 'default',
 				'default_child' => ''
 		);
 		
-		if (essb_option_bool_value('pinterest_sniff_disable')) {
+		//if (essb_option_bool_value('pinterest_sniff_disable')) {
 			$sidebar_options[] = array(
 					'field_id' => 'pinterest',
 					'title' => __('Pinterest Image', 'essb'),
@@ -126,7 +126,7 @@ function essb_register_settings_metabox_optimize() {
 					'action' => 'default',
 					'default_child' => ''
 			);
-		}
+		//}
 		
 		$sidebar_options[] = array(
 				'field_id' => 'share',
@@ -136,15 +136,17 @@ function essb_register_settings_metabox_optimize() {
 				'action' => 'default',
 				'default_child' => ''
 		);
-				
-		$sidebar_options[] = array(
-				'field_id' => 'ga',
-				'title' => __('GA Campaign Tracking Options', 'essb'),
-				'icon' => 'pie-chart',
-				'type' => 'menu_item',
-				'action' => 'default',
-				'default_child' => ''
-		);
+
+		if (essb_option_bool_value('activate_ga_tracking')) {
+			$sidebar_options[] = array(
+					'field_id' => 'ga',
+					'title' => __('GA Campaign Tracking Options', 'essb'),
+					'icon' => 'pie-chart',
+					'type' => 'menu_item',
+					'action' => 'default',
+					'default_child' => ''
+			);
+		}
 		
 		if (defined('ESSB3_SHARED_COUNTER_RECOVERY')) {
 			$sidebar_options[] = array(
@@ -190,89 +192,11 @@ function essb_register_settings_metabox_optimize() {
 			ESSBMetaboxInterface::draw_content_section_start('opengraph');
 	
 			if (essb_options_bool_value('opengraph_tags')) {
-				ESSBOptionsFramework::draw_panel_start(__('SOCIAL MEDIA MESSAGE', 'essb'), __('Customize default generate social sharing message that is filled from post data to grab your social media audience', 'essb'), 'fa21 ti-sharethis', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"), 'essb_metabox');
 				
-				ESSBOptionsFramework::draw_title(__('Social Media Image', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks. We recommend 1200px by 628px', 'essb'), 'inner-row');
-				ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-				ESSBOptionsFramework::draw_fileselect_image_field('essb_post_og_image', 'essb_metabox', $essb_post_og_image);
-				ESSBOptionsFramework::draw_options_row_end();
+				essb_depend_load_function('essb_sso_metabox_interface_facebook', 'lib/admin/metabox/sso-tags.php');
+				essb_sso_metabox_interface_facebook($post->ID);
 				
-				ESSBOptionsFramework::draw_title(__('Social Media Title', 'essb'), __('Add a title that will populate the open graph meta tag which will be used when users share your content onto most social networks. If nothing is provided here, we will use the post title as a backup. We recommend usage of titles that does not exceed 60 characters', 'essb'), 'inner-row');
-				ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-				ESSBOptionsFramework::draw_input_field('essb_post_og_title', true, 'essb_metabox', $essb_post_og_title);
-				ESSBOptionsFramework::draw_options_row_end();
-				
-		
-				ESSBOptionsFramework::draw_title(__('Social Media Description', 'essb'), __('Add a description that will populate the open graph meta tag which will be used when users share your content onto most social networks.<span class="essb-inner-recommend">We recommend usage of description that does not exceed 160 characters</span>', 'essb'), 'inner-row');
-				ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-				ESSBOptionsFramework::draw_textarea_field('essb_post_og_desc', 'essb_metabox', $essb_post_og_desc);
-				ESSBOptionsFramework::draw_options_row_end();
-				
-				//$essb_post_og_url
-				
-				ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-				//ESSBOptionsFramework::draw_hint(__('Did you know that Facebook has share data cache?', 'essb'), __('All changes that you made on site will not appear immediately unless you clear cache and make Facebook bot revisit your site. The quick way to do this is to use Easy Social Share Buttons top menu in WordPress bar where in Validation you will find link to test and update Facebook information. You can read more about this tool in this article <a href="http://appscreo.com/facebook-debugger-tool/" target="_blank">http://appscreo.com/facebook-debugger-tool/</a> in our blog. ', 'essb'), 'fa21 ti-info-alt');
-				ESSBOptionsFramework::draw_help(__('Optimize your social share message on all social networks', 'essb'), __('Social Sharing Optimization is important for each site. Without using it you have no control over shared information on social networks. We highly recommend to activate it (Facebook sharing tags are used on almost all social networks so they are the minimal required).', 'essb'), '', array('buttons' => array('How to customize shared information' => 'https://docs.socialsharingplugin.com/knowledgebase/how-to-customize-personalize-shared-information-on-social-networks/', 'I see wrong share information' => 'https://docs.socialsharingplugin.com/knowledgebase/facebook-is-showing-the-wrong-image-title-or-description/', 'Test & Fix Facebook Showing Wrong Information' => 'https://docs.socialsharingplugin.com/knowledgebase/how-to-test-and-fix-facebook-sharing-wrong-information-using-facebook-open-graph-debugger/')));
-				ESSBOptionsFramework::draw_options_row_end();
-
-				ESSBOptionsFramework::draw_title(__('Customize Open Graph URL', 'essb'), __('Important! This field is needed only if you made a change in your URL structure and you need to customize og:url tag to preserve shares you have. Do not fill here anything unless you are completely sure you need it - not proper usage will lead to loose of your current social shares and comments.', 'essb'), 'inner-row');
-				ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-				ESSBOptionsFramework::draw_input_field('essb_post_og_url', true, 'essb_metabox', $essb_post_og_url);
-				ESSBOptionsFramework::draw_options_row_end();
-				
-				
-				
-				if (essb_option_bool_value('sso_multipleimages')) {
-					ESSBOptionsFramework::draw_heading(__('Additional Facebook Images', 'essb'), '5');
-					
-					ESSBOptionsFramework::draw_title(__('Additional Social Media Image #1', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
-					ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-					ESSBOptionsFramework::draw_fileselect_field('essb_post_og_image1', 'essb_metabox', $essb_post_og_image1);
-					ESSBOptionsFramework::draw_options_row_end();
-	
-					ESSBOptionsFramework::draw_title(__('Additional Social Media Image #2', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
-					ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-					ESSBOptionsFramework::draw_fileselect_field('essb_post_og_image2', 'essb_metabox', $essb_post_og_image2);
-					ESSBOptionsFramework::draw_options_row_end();
-					
-					ESSBOptionsFramework::draw_title(__('Additional Social Media Image #3', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
-					ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-					ESSBOptionsFramework::draw_fileselect_field('essb_post_og_image3', 'essb_metabox', $essb_post_og_image3);
-					ESSBOptionsFramework::draw_options_row_end();
-					
-					ESSBOptionsFramework::draw_title(__('Additional Social Media Image #4', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
-					ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-					ESSBOptionsFramework::draw_fileselect_field('essb_post_og_image4', 'essb_metabox', $essb_post_og_image4);
-					ESSBOptionsFramework::draw_options_row_end();
-				}
-				
-				ESSBOptionsFramework::draw_title(__('Article Author Profile', 'essb'), __('Add link to Facebook profile page of article author if you wish it to appear in shared information. Example: https://facebook.com/author', 'essb'), 'inner-row');
-				ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-				ESSBOptionsFramework::draw_input_field('essb_post_og_author', true, 'essb_metabox', $essb_post_og_author);
-				ESSBOptionsFramework::draw_options_row_end();
-				
-				
-				ESSBOptionsFramework::draw_panel_end();
 			}
-			
-			if (essb_options_bool_value('twitter_card')) {
-				
-				ESSBOptionsFramework::draw_panel_start(__('Personalize Twitter card data', 'essb'), __('Twitter card data will be filled with default social share message or with data from Social Share Optimization tags. Use this box in case you need special customizations that will work only for Twitter', 'essb'), 'fa21 ti-twitter', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"), 'essb_metabox');
-
-				ESSBOptionsFramework::draw_options_row_start(__('Image', 'essb'), __('If an image is provided it will be used in share data', 'essb'));
-				ESSBOptionsFramework::draw_fileselect_image_field('essb_post_twitter_image', 'essb_metabox', $essb_post_twitter_image);
-				ESSBOptionsFramework::draw_options_row_end();
-				
-				ESSBOptionsFramework::draw_options_row_start(__('Title', 'essb'), __('Add a custom title for your post. This will be used to post on an user\'s wall when they like/share your post.', 'essb'));
-				ESSBOptionsFramework::draw_input_field('essb_post_twitter_title', true, 'essb_metabox', $essb_post_twitter_title);
-				ESSBOptionsFramework::draw_options_row_end();
-				
-				ESSBOptionsFramework::draw_options_row_start(__('Description', 'essb'), __('Add a custom description for your post. This will be used to post on an user\'s wall when they like/share your post.', 'essb'));
-				ESSBOptionsFramework::draw_textarea_field('essb_post_twitter_desc', 'essb_metabox', $essb_post_twitter_desc);
-				ESSBOptionsFramework::draw_options_row_end();
-				ESSBOptionsFramework::draw_panel_end();
-			}
-			
 			
 			ESSBMetaboxInterface::draw_content_section_end();
 		}
@@ -281,32 +205,65 @@ function essb_register_settings_metabox_optimize() {
 		ESSBOptionsFramework::reset_row_status();
 		ESSBOptionsFramework::draw_heading(__('Customize Tweet Message for this post', 'essb'), '5');
 		
+		ESSBOptionsFramework::draw_holder_start(array('class'=> 'essb-tweet-preview', 'user_id' => 'essb-tweet-preview'));
+		ESSBOptionsFramework::draw_holder_end();
+		
+		ESSBOptionsFramework::draw_options_row_start(__('Tweet', 'essb'), __('Default Tweet is generated from post title. In this field you can easy define own personalized Tweet for better social network reach.', 'essb'));
+		ESSBOptionsFramework::draw_textarea_field('essb_post_twitter_tweet', 'essb_metabox', $essb_post_twitter_tweet, $post->post_title);
+		ESSBOptionsFramework::draw_options_row_end();
+		
 		ESSBOptionsFramework::draw_options_row_start(__('Hashtags', 'essb'), __('Set custom own tags for post or leave blank to use site defined', 'essb'));
-		ESSBOptionsFramework::draw_input_field('essb_post_twitter_hashtags', true, 'essb_metabox', $essb_post_twitter_hashtags);
+		ESSBOptionsFramework::draw_input_field('essb_post_twitter_hashtags', true, 'essb_metabox', $essb_post_twitter_hashtags, '', '', '', essb_option_value('twitterhashtags'));
 		ESSBOptionsFramework::draw_options_row_end();
 		
 		ESSBOptionsFramework::draw_options_row_start(__('Username', 'essb'), __('Change default user that will be mentioned into Tweet.', 'essb'));
-		ESSBOptionsFramework::draw_input_field('essb_post_twitter_username', true, 'essb_metabox', $essb_post_twitter_username);
+		ESSBOptionsFramework::draw_input_field('essb_post_twitter_username', true, 'essb_metabox', $essb_post_twitter_username, '', '', '', essb_option_value('twitteruser'));
 		ESSBOptionsFramework::draw_options_row_end();
 		
-		ESSBOptionsFramework::draw_options_row_start(__('Tweet', 'essb'), __('Default Tweet is generated from post title. In this field you can easy define own personalized Tweet for better social network reach.', 'essb'));
-		ESSBOptionsFramework::draw_textarea_field('essb_post_twitter_tweet', 'essb_metabox', $essb_post_twitter_tweet);
-		ESSBOptionsFramework::draw_options_row_end();
+		$short_url = wp_get_shortlink($post->ID);
+		echo '<input type="hidden" id="essb_twitter_shorturl" value="'.$short_url.'"/>';
+
+		
+		if (essb_options_bool_value('twitter_card')) {
+			essb_depend_load_function('essb_sso_metabox_interface_facebook', 'lib/admin/metabox/sso-tags.php');
+			essb_sso_metabox_interface_twitter($post->ID);
+		}
 		
 		ESSBMetaboxInterface::draw_content_section_end();
 		
+		$pin_mode_title = '';
+		$pin_mode_desc = '';
+		ESSBMetaboxInterface::draw_content_section_start('pinterest');
 		if (essb_option_bool_value('pinterest_sniff_disable')) {
-			ESSBMetaboxInterface::draw_content_section_start('pinterest');
+			$pin_mode_title = __('Your Pinterest Mode: Post Custom/Featured Image', 'essb');
+			$pin_mode_desc = __('In this mode the Pin button will generate a custom share message with the post featured or custom image and description from the post title or custom you fill. Using this mode you have a deeper control over the work of button. You can combine it with the on media sharing or the additional Pin any image function if you need to Pin any existing image inside content.', 'essb');
+		}
+		else {
+			$pin_mode_title = __('Your Pinterest Mode: Pin Any Image from Post/Page', 'essb');
+			$pin_mode_desc = __('In this mode the button will show a dialog to choose any of content images for Pin. Using the Pinterest any image mode you cannot control the shared information - it is comming from the image optimizations you have inside WordPress. If you need to have a deeper image control you can change the mode of Pinterest button from Social Sharing -> Networks -> Additional Network Options ', 'essb');
+		}
+
+		ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
+		ESSBOptionsFramework::draw_help($pin_mode_title, $pin_mode_desc);
+		ESSBOptionsFramework::draw_options_row_end();
+		
+		if (essb_option_bool_value('pinterest_sniff_disable')) {			
 			ESSBOptionsFramework::reset_row_status();
+
 			ESSBOptionsFramework::draw_options_row_start(__('Change default Pinterest image', 'essb'), __('Choose personalized image that will be used to when you press Pinterest share button <span class="essb-inner-recommend">We recommend using an image that is formatted in a 2:3 aspect ratio like 735 x 1102.</span>', 'essb'));
 			ESSBOptionsFramework::draw_fileselect_image_field('essb_post_pin_image', 'essb_metabox', $essb_post_pin_image);
 			ESSBOptionsFramework::draw_options_row_end();
 			
-			ESSBOptionsFramework::draw_options_row_start(__('Description', 'essb'), __('Add a custom description to your Pin.', 'essb'));
+			ESSBOptionsFramework::draw_options_row_start(__('Pinterest Message', 'essb'), __('Add a custom description to your Pin.', 'essb'));
 			ESSBOptionsFramework::draw_textarea_field('essb_post_pin_desc', 'essb_metabox', $essb_post_pin_desc);
 			ESSBOptionsFramework::draw_options_row_end();
-			ESSBMetaboxInterface::draw_content_section_end();
 		}
+		else if (essb_option_bool_value('pinterest_alwayscustom') && essb_option_bool_value('pinterest_images')) {
+			ESSBOptionsFramework::draw_options_row_start(__('Custom Pinterest Message', 'essb'), __('Add a custom Pinterest message that will automatically appear over your images added via the plugin shortcode or those via the Pin Over Images function', 'essb'));
+			ESSBOptionsFramework::draw_textarea_field('essb_post_pin_desc', 'essb_metabox', $essb_post_pin_desc);
+			ESSBOptionsFramework::draw_options_row_end();
+		}
+		ESSBMetaboxInterface::draw_content_section_end();
 		
 		ESSBMetaboxInterface::draw_content_section_start('share');
 		
@@ -333,21 +290,23 @@ function essb_register_settings_metabox_optimize() {
 		ESSBMetaboxInterface::draw_content_section_end();
 			
 		
-		ESSBMetaboxInterface::draw_content_section_start('ga');
-		
-		ESSBOptionsFramework::reset_row_status();
-		ESSBOptionsFramework::draw_heading(__('Customize Google Analytics Campaign Tracking Options', 'essb'), '5');
-		
-		ESSBOptionsFramework::draw_options_row_start(__('Add Custom Google Analytics Campaign parameters to your URLs', 'essb'), __('Paste your custom campaign parameters in this field and they will be automatically added to shared addresses on social networks. Please note as social networks count shares via URL as unique key this option is not compatible with active social share counters as it will make the start from zero.', 'essb'));
-		ESSBOptionsFramework::draw_input_field('essb_activate_ga_campaign_tracking', true, 'essb_metabox', $essb_activate_ga_campaign_tracking);
-		ESSBOptionsFramework::draw_options_row_end();
-		
-		ESSBOptionsFramework::draw_options_row_start(__('', 'essb'), __('', 'essb'), '', '2', false);
-		print "<span style='font-weight: 400;'>You can visit <a href='https://support.google.com/analytics/answer/1033867?hl=en' target='_blank'>this page</a> for more information on how to use and generate these parameters.
-		To include the social network into parameters use the following code <b>{network}</b>. When that code is reached it will be replaced with the network name (example: facebook). An example campaign trakcing code include network will look like this utm_source=essb_settings&utm_medium=needhelp&utm_campaign={network} - in this configuration when you press Facebook button {network} will be replaced with facebook, if you press Twitter button it will be replaced with twitter.</span>";
-		ESSBOptionsFramework::draw_options_row_end();
-		
-		ESSBMetaboxInterface::draw_content_section_end();
+		if (essb_option_bool_value('activate_ga_tracking')) {
+			ESSBMetaboxInterface::draw_content_section_start('ga');
+			
+			ESSBOptionsFramework::reset_row_status();
+			ESSBOptionsFramework::draw_heading(__('Customize Google Analytics Campaign Tracking Options', 'essb'), '5');
+			
+			ESSBOptionsFramework::draw_options_row_start(__('Add Custom Google Analytics Campaign parameters to your URLs', 'essb'), __('Paste your custom campaign parameters in this field and they will be automatically added to shared addresses on social networks. Please note as social networks count shares via URL as unique key this option is not compatible with active social share counters as it will make the start from zero.', 'essb'));
+			ESSBOptionsFramework::draw_input_field('essb_activate_ga_campaign_tracking', true, 'essb_metabox', $essb_activate_ga_campaign_tracking);
+			ESSBOptionsFramework::draw_options_row_end();
+			
+			ESSBOptionsFramework::draw_options_row_start(__('', 'essb'), __('', 'essb'), '', '2', false);
+			print "<span style='font-weight: 400;'>You can visit <a href='https://support.google.com/analytics/answer/1033867?hl=en' target='_blank'>this page</a> for more information on how to use and generate these parameters.
+			To include the social network into parameters use the following code <b>{network}</b>. When that code is reached it will be replaced with the network name (example: facebook). An example campaign trakcing code include network will look like this utm_source=essb_settings&utm_medium=needhelp&utm_campaign={network} - in this configuration when you press Facebook button {network} will be replaced with facebook, if you press Twitter button it will be replaced with twitter.</span>";
+			ESSBOptionsFramework::draw_options_row_end();
+			
+			ESSBMetaboxInterface::draw_content_section_end();
+		}
 			
 		if (defined('ESSB3_SHARED_COUNTER_RECOVERY')) {
 			ESSBMetaboxInterface::draw_content_section_start('sharerecover');

@@ -96,7 +96,7 @@ class ESSBOptinFlyout {
 	
 	public function load_assets() {
 		if (function_exists ( 'essb_resource_builder' )) {
-			essb_resource_builder ()->add_static_resource_footer ( ESSB3_OFOF_PLUGIN_URL . '/assets/essb-optin-flyout.js', 'essb-optin-flyout', 'js' );
+			essb_resource_builder ()->add_static_resource_footer ( ESSB3_OFOF_PLUGIN_URL . '/assets/essb-optin-flyout.min.js', 'essb-optin-flyout', 'js' );
 		}
 	}
 	
@@ -222,15 +222,15 @@ class ESSBOptinFlyout {
 			$close_text = __ ( "No thanks. I don't want.", 'easy-optin-flyout' );
 		}
 		
-		$output .= '<div class="essb-optinflyout essb-optinflyout-' . $position . ' essb-optinflyout-' . $event . '" ' . $event_fire . ' ' . ($overlay_color != '' ? ' style="background-color:' . $overlay_color . '!important;"' : '') . '>';
+		$output .= '<div class="essb-optinflyout essb-optinflyout-' . esc_attr($position) . ' essb-optinflyout-' . esc_attr($event) . '" ' . $event_fire . ' ' . ($overlay_color != '' ? ' style="background-color:' . esc_attr($overlay_color) . '!important;"' : '') . '>';
 		
 		if ($close_type == 'icon') {
-			$output .= '<div class="essb-optinflyout-close essb-optinflyout-closeicon" ' . $css_color . '><i class="essb_icon_close"></i></div>';
+			$output .= '<div class="essb-optinflyout-close essb-optinflyout-closeicon" ' . esc_attr($css_color) . '><i class="essb_icon_close"></i></div>';
 		}
 		
 		$output .= do_shortcode ( '[easy-subscribe design="' . $design . '" mode="mailchimp" conversion="flyout-'.$event.'"]' );
 		if ($close_type != 'icon') {
-			$output .= '<div class="essb-optinflyout-close essb-optinflyout-closetext" ' . $css_color . '>' . $close_text . '</div>';
+			$output .= '<div class="essb-optinflyout-close essb-optinflyout-closetext" ' . esc_attr($css_color) . '>' . $close_text . '</div>';
 		}
 		if ($credit_link) {
 			$output .= '<div class="promo">Powered by <a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=' . $affiliate_user . '" target="_blank">Best Social Sharing Plugin for WordPress</a> Easy Social Share Buttons</div>';

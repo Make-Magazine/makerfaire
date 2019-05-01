@@ -33,8 +33,17 @@ if (! class_exists ( 'ESSB_CTT_TinyMCE' )) {
 		 * @return [type] [description]
 		 */
 		public function tinymce_loader() {
-			add_filter ( 'mce_external_plugins', array (__class__, 'essb_ctt_tinymce_core' ) );
-			add_filter ( 'mce_buttons', array (__class__, 'essb_ctt_tinymce_buttons' ) );
+			
+			$can_use = true;
+			
+			if (essb_option_bool_value('limit_editor_fields') && function_exists('essb_editor_capability_can')) {
+				$can_use = essb_editor_capability_can();
+			}
+			
+			if ($can_use) {
+				add_filter ( 'mce_external_plugins', array (__class__, 'essb_ctt_tinymce_core' ) );
+				add_filter ( 'mce_buttons', array (__class__, 'essb_ctt_tinymce_buttons' ) );
+			}
 		}
 		
 		/**
