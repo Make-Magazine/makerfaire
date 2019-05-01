@@ -294,5 +294,5 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 }
 ?>
 
-<iframe src="/stage-schedule/?faire=NY19&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
+<iframe src="/stage-schedule/?faire=BA19&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 <?php get_footer(); ?>

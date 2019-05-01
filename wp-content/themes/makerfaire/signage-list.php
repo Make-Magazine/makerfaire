@@ -33,7 +33,7 @@ if ( ! empty( $location ) )
 			body { font-family: 'Benton Sans', Helvetica, sans-serif; }
 			a { text-decoration:none; color:#000; }
 			h1, h2, h3, h4 { margin:5px 0 0; }
-			.sumome-react-wysiwyg-popup-container { display: none !important; } 
+			.sumome-react-wysiwyg-popup-container, #wpadminbar { display: none !important; } 
 			.qr-code-print {
 				position:fixed;
 				z-index:999;
