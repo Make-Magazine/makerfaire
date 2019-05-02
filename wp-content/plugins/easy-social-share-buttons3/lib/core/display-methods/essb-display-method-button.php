@@ -112,16 +112,16 @@ if (!function_exists('essb5_generate_share_button')) {
 				
 				if ($button_style == 'button' || $button_style == 'modern') {
 					if ($button_bg != '') {
-						$output .= ' .essb-share-button.essb-bs-'.$button_style.' { background-color: '.$button_bg.'; }';
+						$output .= ' .essb-share-button.essb-bs-'.esc_attr($button_style).' { background-color: '.esc_attr($button_bg).'; }';
 					}
 					if ($button_color != '') {
-						$output .= ' .essb-share-button.essb-bs-'.$button_style.' { color: '.$button_color.'; }';
+						$output .= ' .essb-share-button.essb-bs-'.esc_attr($button_style).' { color: '.esc_attr($button_color).'; }';
 					}
 				}
 				
 				if ($button_style == 'outline') {
 					if ($button_color != '') {
-						$output .= ' .essb-share-button.essb-bs-'.$button_style.' { color: '.$button_color.'; }';
+						$output .= ' .essb-share-button.essb-bs-'.esc_attr($button_style).' { color: '.esc_attr($button_color).'; }';
 					}
 				}
 				
@@ -132,7 +132,7 @@ if (!function_exists('essb5_generate_share_button')) {
 				$output .= '<div class="essb-share-button-inline">';
 			}
 			
-			$output .= '<div class="essb-share-button essb-bl-'.$button_position.' essb-bs-'.$button_style.' essb-cs-'.$salt.'" onclick="essb.sharebutton(\''.$salt.'\');"><i class="essb_icon_'.$button_icon.'"></i><span>'.$button_text.'</span>'.$total_counter_code.'</div>';
+			$output .= '<div class="essb-share-button essb-bl-'.esc_attr($button_position).' essb-bs-'.esc_attr($button_style).' essb-cs-'.esc_attr($salt).'" onclick="essb.sharebutton(\''.$salt.'\');"><i class="essb_icon_'.$button_icon.'"></i><span>'.$button_text.'</span>'.$total_counter_code.'</div>';
 
 			if ($button_position == 'inline' || $button_position == 'inline-full') {
 				$output .= '</div>';
@@ -140,7 +140,7 @@ if (!function_exists('essb5_generate_share_button')) {
 		}
 		
 				
-		$output .= '<div class="essb-share-button-window essb-windowcs-'.$salt.' essb-bl-'.$button_position.'">';
+		$output .= '<div class="essb-share-button-window essb-windowcs-'.$salt.' essb-bl-'.esc_attr($button_position).'">';
 		$output .= '<a href="#" class="essb-share-button-close" onclick="essb.sharebutton_close(\''.$salt.'\'); return false;"></a>';
 		$output .= '<div class="inner-content">';
 		

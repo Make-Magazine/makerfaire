@@ -43,13 +43,25 @@ class ESSBDisplayMethodBottomBar {
 			$bottombar_usercontent = essb_post_details_to_content($bottombar_usercontent);
 		}
 				
-		$ssbuttons = $share_buttons;		
+		$ssbuttons = $share_buttons;	
+
+		$responsive_class = '';
 		
-		$output .= '<div class="essb_bottombar">';
+		if (essb_option_bool_value('bottombar_mobile_deactivate')) {
+			$responsive_class .= ' essb_mobile_hidden';
+		}
+		if (essb_option_bool_value('bottombar_tablet_deactivate')) {
+			$responsive_class .= ' essb_tablet_hidden';
+		}
+		if (essb_option_bool_value('bottombar_desktop_deactivate')) {
+			$responsive_class .= ' essb_desktop_hidden';
+		}
+		
+		$output .= '<div class="essb_bottombar'.esc_attr($responsive_class).'">';
 		$output .= '<div class="essb_bottombar_inner">';
 		
 		if (!$bottombar_content_area) {
-			$output .= sprintf('<div class="essb_bottombar_inner_buttons essb_bar_withoutcontent essb_bottombar_align_%1$s">', $bottombar_buttons_align);
+			$output .= sprintf('<div class="essb_bottombar_inner_buttons essb_bar_withoutcontent essb_bottombar_align_%1$s">', esc_attr($bottombar_buttons_align));
 			$output .= $ssbuttons;
 			$output .= '</div>';
 		}
@@ -58,12 +70,12 @@ class ESSBDisplayMethodBottomBar {
 				$output .= '<div class="essb_bottombar_inner_content">';
 				$output .= stripslashes($bottombar_usercontent);
 				$output .= '</div>';
-				$output .= sprintf('<div class="essb_bottombar_inner_buttons essb_bottombar_align_%1$s">', $bottombar_buttons_align);
+				$output .= sprintf('<div class="essb_bottombar_inner_buttons essb_bottombar_align_%1$s">', esc_attr($bottombar_buttons_align));
 				$output .= $ssbuttons;
 				$output .= '</div>';
 			}
 			else {
-				$output .= sprintf('<div class="essb_bottombar_inner_buttons essb_bottombar_align_%1$s">', $bottombar_buttons_align);
+				$output .= sprintf('<div class="essb_bottombar_inner_buttons essb_bottombar_align_%1$s">', esc_attr($bottombar_buttons_align));
 				$output .= $ssbuttons;
 				$output .= '</div>';
 				$output .= '<div class="essb_bottombar_inner_content">';

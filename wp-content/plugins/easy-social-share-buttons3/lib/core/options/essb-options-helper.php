@@ -124,7 +124,12 @@ function essb_apply_position_style_settings($postion, $basic_style) {
 
 		$basic_style['fullwidth_align'] = essb_option_value( $postion.'_fullwidth_align');
 		$basic_style['fullwidth_share_buttons_columns_align'] = essb_option_value( $postion.'_fullwidth_share_buttons_columns_align');
-			
+
+		// flex width applying
+		$basic_style['flex_width_value'] = essb_option_value( $postion.'_flex_width_value');
+		$basic_style['flex_width_align'] = essb_option_value( $postion.'_flex_width_align');
+		$basic_style['flex_button_value'] = essb_option_value( $postion.'_flex_button_value');
+		
 		// @since 3.0.3
 		$more_button_icon = essb_option_value($postion.'_more_button_icon');
 		if ($more_button_icon != '') {

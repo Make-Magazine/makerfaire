@@ -179,22 +179,6 @@ if (!function_exists('essb_available_buttons_width')) {
 	}
 }
 
-if (! function_exists ( 'essb_optin_designs' )) {
-	function essb_optin_designs() {
-		$periods = array ();
-		$periods ['design1'] = 'Design #1';
-		$periods ['design2'] = 'Design #2';
-		$periods ['design3'] = 'Design #3';
-		$periods ['design4'] = 'Design #4';
-		$periods ['design5'] = 'Design #5';
-		$periods ['design6'] = 'Design #6';
-		$periods ['design7'] = 'Design #7';
-		$periods ['design8'] = 'Design #8';
-		$periods ['design9'] = 'Design #9';
- 		return $periods;
-	}
-}
-
 if (!function_exists('essb_device_select')) {
 	function essb_device_select() {
 		$devices = array();

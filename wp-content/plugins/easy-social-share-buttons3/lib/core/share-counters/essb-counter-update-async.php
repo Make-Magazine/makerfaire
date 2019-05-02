@@ -176,24 +176,15 @@ class ESSBAsyncShareCounters {
 		
 		switch ($service) {
 			case 'facebook' :
-				$callback_url = 'https://graph.facebook.com/?id=' . $url;
+				$callback_url = 'https://graph.facebook.com/?id='.$url.'&fields=og_object{engagement}';
 				
 				$facebook_token = essb_option_value ( 'facebook_counter_token' );
 				if ($facebook_token != '') {
 					$callback_url = 'https://graph.facebook.com/?id=' . $url . '&access_token=' . sanitize_text_field ( $facebook_token );
 				}
-				if (essb_option_value('facebook_counter_api') == 'api2') {
-					$callback_url = 'https://graph.facebook.com/?fields=og_object%7Blikes.summary(true).limit(0)%7D,share&id='.$url;
+				if (essb_option_value('facebook_counter_api') == 'api2' && $facebook_token != '') {
+					$callback_url = 'https://graph.facebook.com/v3.0/?fields=engagement&id='.$url.'&access_token='.sanitize_text_field($facebook_token);
 				}
-				
-				if (essb_option_value('facebook_counter_api') == 'api3') {
-					$callback_url = 'https://graph.facebook.com/?id='.$url.'&fields=og_object{engagement}';
-				
-					if ($facebook_token != '') {
-						$callback_url .= '&access_token=' . sanitize_text_field($facebook_token);
-					}
-				}
-				
 				break;
 			case 'twitter' :
 				$callback_url = 'https://public.newsharecounts.com/count.json?url=' . $url;
@@ -358,28 +349,23 @@ class ESSBAsyncShareCounters {
 					$content = json_decode ( $data, true );
 					
 					$data_parsers = $content;
-					if (essb_option_value('facebook_counter_api') == 'api3') {
-						$result = isset( $data_parsers['og_object']['engagement']['count']) ? intval ( $data_parsers['og_object']['engagement']['count'] ) : 0;						
-					}
-					else if (essb_option_value('facebook_counter_api') == 'api2') {
-						if( !empty( $data_parsers['og_object'] ) ) {
-							$likes = $data_parsers['og_object']['likes']['summary']['total_count'];
-						} else {
-							$likes = 0;
-						}
-							
-						if( !empty( $data_parsers['share'] ) ){
-							$comments = $data_parsers['share']['comment_count'];
-							$shares = $data_parsers['share']['share_count'];
+					if (essb_option_value('facebook_counter_api') == 'api2') {
+						if( !empty( $data_parsers['engagement'] ) ){
+							$likes = $data_parsers['engagement']['reaction_count'];
+							$comments = $data_parsers['engagement']['comment_count'];
+							$shares = $data_parsers['engagement']['share_count'];
+							$comments_plugin = $data_parsers['engagement']['comment_plugin_count'];
 						} else {
 							$comments = 0;
 							$shares = 0;
+							$likes = 0;
+							$comments_plugin = 0;
 						}
-							
-						$result = $likes + $comments + $shares;
+					
+						$result = $likes + $comments + $shares + $comments_plugin;						
 					}
 					else {
-						$result = isset ( $data_parsers ['share'] ['share_count'] ) ? intval ( $data_parsers ['share'] ['share_count'] ) : 0;
+						$result = isset( $data_parsers['og_object']['engagement']['count']) ? intval ( $data_parsers['og_object']['engagement']['count'] ) : 0;
 					}
 					break;
 				case 'twitter':

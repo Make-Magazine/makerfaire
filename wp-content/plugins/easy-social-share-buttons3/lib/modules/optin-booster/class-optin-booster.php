@@ -44,7 +44,7 @@ class ESSBOptinBooster {
 	}
 	
 	function is_deactivated_on() {
-		global $essb3ofof_options;
+		global $essb3ofob_options;
 	
 		if (is_admin ()) {
 			return true;
@@ -55,7 +55,7 @@ class ESSBOptinBooster {
 		}
 	
 		$is_deactivated = false;
-		$exclude_from = isset ( $essb3ofof_options ['ofob_exclude'] ) ? $essb3ofof_options ['ofob_exclude'] : '';
+		$exclude_from = isset ( $essb3ofob_options ['ofob_exclude'] ) ? $essb3ofob_options ['ofob_exclude'] : '';
 		if (! empty ( $exclude_from )) {
 			$excule_from = explode ( ',', $exclude_from );
 				
@@ -87,7 +87,7 @@ class ESSBOptinBooster {
 	
 	public function load_assets() {
 		if (function_exists('essb_resource_builder')) {
-			essb_resource_builder()->add_static_resource_footer(ESSB3_OFOB_PLUGIN_URL . '/assets/essb-optin-booster.js', 'essb-optin-booster', 'js');
+			essb_resource_builder()->add_static_resource_footer(ESSB3_OFOB_PLUGIN_URL . '/assets/essb-optin-booster.min.js', 'essb-optin-booster', 'js');
 		}
 	}
 	
@@ -155,7 +155,7 @@ class ESSBOptinBooster {
 		}
 		
 		$ofob_single = $this->option_bool_value('ofob_single');
-		$ofob_single_time = $this->option_bool_value('ofob_single_time');
+		$ofob_single_time = $this->option_value('ofob_single_time');
 		$ofob_creditlink = $this->option_bool_value('ofob_creditlink');
 		
 		if ($this->option_bool_value('ofob_time')) {
@@ -229,19 +229,19 @@ class ESSBOptinBooster {
 			$close_text = __("No thanks. I don't want.");
 		}
 		
-		$output .= '<div class="essb-optinbooster essb-optinbooster-'.$event.'" '.$event_fire.'>';
+		$output .= '<div class="essb-optinbooster essb-optinbooster-'.esc_attr($event).'" '.$event_fire.'>';
 		
 		if ($close_type == 'icon') {
-			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closeicon" '.$css_color.'><i class="essb_icon_close"></i></div>';
+			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closeicon" '.esc_attr($css_color).'><i class="essb_icon_close"></i></div>';
 		}
 		
-		$output .= do_shortcode('[easy-subscribe design="'.$design.'" mode="mailchimp" conversion="booster-'.$event.'"]');
+		$output .= do_shortcode('[easy-subscribe design="'.$design.'" mode="mailchimp" conversion="booster-'.esc_attr($event).'"]');
 		if ($close_type != 'icon') {
-			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closetext" '.$css_color.'>'.$close_text.'</div>';
+			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closetext" '.esc_attr($css_color).'>'.$close_text.'</div>';
 		}
 		
 		$output .= '</div>';
-		$output .= '<div class="essb-optinbooster-overlay essb-optinbooster-overlay-'.$event.'"'.($overlay_color != '' ? ' style="background-color:'.$overlay_color.'!important;"' : '').'>';
+		$output .= '<div class="essb-optinbooster-overlay essb-optinbooster-overlay-'.esc_attr($event).'"'.($overlay_color != '' ? ' style="background-color:'.esc_attr($overlay_color).'!important;"' : '').'>';
 		if ($credit_link) {
 			$output .= '<div class="promo">Powered by <a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref='.$affiliate_user.'" target="_blank">Best Social Sharing Plugin for WordPress</a> Easy Social Share Buttons</div>';
 		}
@@ -251,6 +251,8 @@ class ESSBOptinBooster {
 		echo $output;
 	}
 }
+
+
 
 /**
  * main code *

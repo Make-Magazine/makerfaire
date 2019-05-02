@@ -57,6 +57,11 @@ class ESSB_OpenGraph {
 			}
 			
 			$deactivate_trigger = false;
+			
+			if (essb_is_module_deactivated_on('sso') || essb_is_plugin_deactivated_on()) {
+				$deactivate_trigger = true;
+			}
+			
 			$deactivate_trigger = apply_filters('essb_deactivate_opengraph', $deactivate_trigger);
 
 			if (!$deactivate_trigger) {
@@ -411,16 +416,24 @@ class ESSB_OpenGraph {
 		return false;
 	}
 	
+	/**
+	 * The generation of the author is allowed for taxonomies too. The check for 
+	 * post optimizations will happen only for singular posts/pages
+	 * 
+	 */
 	public function article_author_facebook() {
-		if ( ! is_singular() ) {
-			return false;
+		if (!is_singular()) {
+			return;
 		}
-	
-		$facebook = essb_option_value('opengraph_tags_fbauthor');
-		$onpost_fb_authorship = get_post_meta (get_the_ID(), 'essb_post_og_author', true);
 		
-		if (!empty($onpost_fb_authorship)) {
-			$facebook = $onpost_fb_authorship;
+		$facebook = essb_option_value('opengraph_tags_fbauthor');
+		
+		if (is_singular()) {
+			$onpost_fb_authorship = get_post_meta (get_the_ID(), 'essb_post_og_author', true);
+			
+			if (!empty($onpost_fb_authorship)) {
+				$facebook = $onpost_fb_authorship;
+			}
 		}
 		
 		$facebook = apply_filters( 'essb_opengraph_author_facebook', $facebook );

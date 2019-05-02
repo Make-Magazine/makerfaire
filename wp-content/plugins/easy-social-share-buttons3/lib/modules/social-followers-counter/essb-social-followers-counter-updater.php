@@ -261,7 +261,7 @@ class ESSBSocialFollowersCounterUpdater {
 			
 			@preg_match ( ' <meta property="pinterestapp:followers" name="pinterestapp:followers" content="(\d+)" data-app>', $request, $matches );
 			
-			if (count ( $matches > 0 ) && isset ( $matches [1] )) {
+			if (count ( $matches) > 0 && isset ( $matches [1] )) {
 				return $matches [1];
 			}
 		} catch ( Exception $e ) {
@@ -617,27 +617,33 @@ class ESSBSocialFollowersCounterUpdater {
 			return 0;
 		}
 		
-		if (! class_exists ( 'MCAPI' )) {
-			require_once ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/mailchimp/MCAPI.class.php';
-		}
-		
 		$result = 0;
+
 		try {
-			$api = new MCAPI ( $api_key );
-			$retval = $api->lists ();
-			$result = 0;
-			
-			foreach ( $retval ['data'] as $list ) {
-				if ($list ['id'] == $id) {
-					$result = $list ['stats'] ['member_count'];
-					break;
-				}
-			}
-		} catch ( Exception $e ) {
-			$result = 0;
-		}
 		
-		return $result;
+			$server = explode( '-', $api_key );
+			$server = $server[1];
+			
+			$response = wp_remote_get( "https://$server.api.mailchimp.com/3.0/lists/$id", array(
+					'timeout' => 10,
+					'headers' => array(
+							'Authorization' => 'Basic ' . base64_encode( 'anystring' . ':' . $api_key )
+					),
+			));
+			
+			$response = wp_remote_retrieve_body( $response );
+			$response = json_decode( $response, true );
+			
+			if( ! empty( $response['stats']['member_count'] ) ){
+				$result = $response['stats']['member_count'];
+			}
+		
+		}
+		catch (Exception $e) {
+			$result = 0;
+		}	
+
+		return $result;		
 	}
 	
 	public function update_vk() {

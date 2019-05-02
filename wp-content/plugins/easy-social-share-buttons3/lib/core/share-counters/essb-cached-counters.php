@@ -100,6 +100,26 @@ class ESSBCachedCounters {
 			$is_fresh = true;
 		}
 
+		// additional check if the mixed loading is set to Yes
+		if (essb_option_bool_value('cache_counter_narrow') && !$is_fresh) {
+			$updated_time = get_post_meta ( $post_id, 'essb_cache_updated', true );
+			
+			// if we does not have update time it is useless to do any further checks because
+			// expiration will not be properly set
+			if ($updated_time != '') {
+				$update = essb_option_value('counter_mode');
+				if ($expire_time == '') {
+					$update = 60;
+				}
+				
+				$update = (intval($update) * 2 * 60) + intval($updated_time);
+
+				if ($update > $now) {
+					$is_fresh = true;
+				}
+			}
+		}
+		
 		$user_call_refresh = isset ( $_REQUEST ['essb_counter_update'] ) ? $_REQUEST ['essb_counter_update'] : '';
 		if ($user_call_refresh == 'true') {
 			$is_fresh = false;
@@ -108,6 +128,7 @@ class ESSBCachedCounters {
 		if (essb_internal_cache_get('updatedcounter-'.$post_id) == 'true') {
 			$is_fresh = true;
 		}
+		
 		
 		return $is_fresh;
 	}
@@ -134,6 +155,11 @@ class ESSBCachedCounters {
 			$networks = self::all_socaial_networks();
 		}
 		
+		// @since 6.0 we support importing of AddThis local share counters
+		if (essb_option_bool_value('cache_counter_addthis')) {
+			$networks[] = 'addthis';
+		}
+		
 		if (!ESSBCachedCounters::is_fresh_cache($post_id)) {
 			$cached_counters = ESSBCachedCounters::update_counters($post_id, $share['url'], $share['full_url'], $networks);
 			
@@ -149,23 +175,16 @@ class ESSBCachedCounters {
 				
 				if ($is_applying_for_recovery) {
 					$current_url = $share['full_url'];
-					// get post meta recovery value
-					// essb_activate_sharerecovery - post meta recovery address
 					$post_essb_activate_sharerecovery = get_post_meta($post_id, 'essb_activate_sharerecovery', true);
 					if (!empty($post_essb_activate_sharerecovery)) {
 						$current_url = $post_essb_activate_sharerecovery;
 					}
 					else {
-						//$current_url = essb_recovery_get_alternate_permalink($current_url, $post_id);
-						// function changed inside version 5
 						$current_url = essb_recovery_get_alt_permalink($current_url, $post_id);
 					}					
-					
 
 					// to avoid duplicating same data we will execute update call only if those 2 URLs are different in some form
 					if ($share['full_url'] != $current_url) {
-						
-						
 						$recovery_counters = ESSBCachedCounters::update_counters($post_id, $current_url, $current_url, $networks, true);
 						$cached_counters = essb_recovery_consolidate_results($cached_counters, $recovery_counters, $networks);
 					}
@@ -289,18 +308,29 @@ class ESSBCachedCounters {
 				$post_age = floor( date( 'U' ) - get_post_time( 'U' , false , $post_id ) );
 				$post_age = $post_age / 86400;
 				
-				if (intval($post_age) >= 14 && intval($post_age) < 21) {
+				if (intval($post_age) >= 7 && intval($post_age) < 14) {
 					$expire_time = intval($expire_time) * 2;
 				}
-				if (intval($post_age) >= 21 && intval($post_age) < 30) {
+				
+				if (intval($post_age) >= 14 && intval($post_age) < 21) {
 					$expire_time = intval($expire_time) * 3;
 				}
+				
+				if (intval($post_age) >= 21 && intval($post_age) < 30) {
+					$expire_time = intval($expire_time) * 5;
+				}
+				
 				if (intval($post_age) >= 30) {
-					$expire_time = intval($expire_time) * 4;
+					$expire_time = intval($expire_time) * 7;
 				}
 			}
 			
 			update_post_meta ( $post_id, 'essb_cache_expire', (time () + ($expire_time * 60)) );
+			
+			// keep a track of last share counter update period if we will shuffle the update periods
+			if (essb_option_bool_value('cache_counter_narrow')) {
+				update_post_meta ( $post_id, 'essb_cache_updated', time () );
+			}
 			
 			essb_internal_cache_set('updatedcounter-'.$post_id, 'true');
 		}		

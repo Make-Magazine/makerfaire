@@ -129,6 +129,7 @@ class ESSBOptionsInterface {
 			$description = isset($single['description']) ? $single['description'] : '';
 			
 			$level2 = isset($single['level2']) ? $single['level2'] : '';
+			$related_menu = isset($single['related_menu']) ? $single['related_menu'] : '';
 			
 			if ($icon == 'default') {
 				//$icon = 'gear';
@@ -141,15 +142,15 @@ class ESSBOptionsInterface {
 			
 			if ($icon != '') {
 				if (strpos($icon, 'ti-') !== false ) {
-					$icon = sprintf('<i class="essb-sidebar-icon %1$s"></i>', $icon);
+					$icon = sprintf('<i class="essb-sidebar-icon %1$s"></i>', esc_attr($icon));
 				}
 				else {
-					$icon = sprintf('<i class="essb-sidebar-icon fa fa-%1$s"></i>', $icon);
+					$icon = sprintf('<i class="essb-sidebar-icon fa fa-%1$s"></i>', esc_attr($icon));
 				}
 			}
 			
 			if ($description != '') {
-				$title .= '<span class="description">'.$description.'</span>';
+				$title .= '<span class="description">'.esc_html($description).'</span>';
 			}
 			
 			$css_class = "";
@@ -188,7 +189,7 @@ class ESSBOptionsInterface {
 					break;
 			}
 			
-			printf('<li class="%1$s essb-menuid-%2$s" data-menu="%2$s" data-activate-child="%4$s" id="essb-menu-%2$s"><a href="#">%5$s%3$s</a></li>', $css_class, $field_id, $title, $default_child, $icon);
+			printf('<li class="%1$s essb-menuid-%2$s" data-menu="%2$s" data-activate-child="%4$s" id="essb-menu-%2$s" data-related="%6$s"><a href="#">%5$s%3$s</a></li>', $css_class, $field_id, $title, $default_child, $icon, $related_menu);
 		}
 		
 		echo '</ul>';
@@ -202,18 +203,10 @@ class ESSBOptionsInterface {
 		
 		
 		foreach($options as $section => $fields) {
-			printf('<div id="essb-container-%1$s" class="essb-data-container">',$section);
-
-			
-			/*echo '<table border="0" cellpadding="5" cellspacing="0" width="100%">
-						<col width="25%" />
-						<col width="75%" />';
-			*/
+			printf('<div id="essb-container-%1$s" class="essb-data-container">', esc_attr($section));
 			
 			echo '<div class="essb-flex-grid">';
 			$section_options = $fields;
-			
-			
 			
 			ESSBOptionsFramework::reset_row_status();
 			
@@ -221,20 +214,8 @@ class ESSBOptionsInterface {
 
 				ESSBOptionsFramework::draw_options_field($option, $custom, $user_settings);
 			}
-			
-			//echo '</table>';
+
 			echo '</div>';
-			
-			/*if (count(ESSBOptionsFramework::$heading_navigations) > 1) {
-				echo '<div class="essb-internal-navigation">';
-				echo '<div class="essb-internal-navigation-title">Quick Navigate <a class="essb-internal-navigation-close" href="#"></a></div>';
-				echo '<div class="essb-internal-navigation-inner">';
-				foreach (ESSBOptionsFramework::$heading_navigations as $navigation_item) {
-					echo '<a href="#'.$navigation_item['id'].'" data-goto="'.$navigation_item['id'].'" class="essb-internal-navigation-item">'.$navigation_item['title'].'</a>';
-				}
-				echo '</div></div>';
-			}*/
-			
 			echo '</div>';
 		}
 		

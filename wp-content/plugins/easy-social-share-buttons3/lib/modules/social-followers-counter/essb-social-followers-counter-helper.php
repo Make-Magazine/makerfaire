@@ -49,8 +49,8 @@ class ESSBSocialFollowersCounterHelper {
 		$structure['show_total'] = array('type' => 'checkbox', 'title' => 'Display total followers', 'description' => 'Activate this option if you wish to display total number of followers', 'hide_advanced' => 'true');
 		$structure['total_type'] = array('type' => 'select', 'title' => 'Total followers type', 'description' => 'Choose total followers display type for this widget', 'values' => array('text_before' => 'Display as text before buttons', 'text_after' => 'Display as text after buttons', 'button_single' => 'Button with width of single button'), 'hide_advanced' => 'true');
 		$structure['separator2'] = array('type' => 'separator', 'title' => 'Visual setup');
-		$structure['columns'] = array('type' => 'select', 'title' => 'Columns', 'description' => 'Choose number of columns', 'values' => array('1' => '1 Column', '2' => '2 Columns', '3' => '3 Columns', '4' => '4 Columns', '5' => '5 Columns', '6' => '6 Columns', 'row' => 'Without automatic column split'), 'hide_advanced' => 'true');
-		$structure['template'] = array('type' => 'select', 'title' => 'Template', 'description' => 'Choose template for this widget', 'values' => array('color' => 'Color icons', 'roundcolor' => 'Round Color Icons', 'outlinecolor' => 'Outline Color Icons', 'grey' => 'Grey icons', 'roundgrey' => 'Round Grey Icons', 'outlinegrey' => 'Outline Grey Icons', 'light' => 'Light Icons', 'roundlight' => 'Round Light Icons', 'outlinelight' => 'Outline Light Icons', 'metro' => 'Metro', 'flat' => 'Flat', 'dark' => 'Dark', 'tinycolor' => 'Tiny Color', 'tinygrey' => 'Tiny Grey', 'tinylight' => 'Tiny Light', 'modern' => "Modern", 'modernlight' => "Modern Light", "metro essbfc-template-fancy" => "Metro Fancy", "metro essbfc-template-bold" => "Metro Bold"));
+		$structure['columns'] = array('type' => 'select', 'title' => 'Columns', 'description' => 'Choose number of columns', 'values' => array('1' => '1 Column', '2' => '2 Columns', '3' => '3 Columns', '4' => '4 Columns', '5' => '5 Columns', '6' => '6 Columns', 'row' => 'Without automatic column split'), 'hide_advanced' => 'true', 'default' => '1');
+		$structure['template'] = array('type' => 'select', 'title' => 'Template', 'description' => 'Choose template for this widget', 'values' => array('color' => 'Color icons', 'roundcolor' => 'Round Color Icons', 'outlinecolor' => 'Outline Color Icons', 'grey' => 'Grey icons', 'roundgrey' => 'Round Grey Icons', 'outlinegrey' => 'Outline Grey Icons', 'light' => 'Light Icons', 'roundlight' => 'Round Light Icons', 'outlinelight' => 'Outline Light Icons', 'metro' => 'Metro', 'flat' => 'Flat', 'dark' => 'Dark', 'tinycolor' => 'Tiny Color', 'tinygrey' => 'Tiny Grey', 'tinylight' => 'Tiny Light', 'modern' => "Modern", 'modernlight' => "Modern Light", "metro essbfc-template-fancy" => "Metro Fancy", "metro essbfc-template-bold" => "Metro Bold"), 'default' => 'metro');
 		$structure['animation'] = array('type' => 'select', 'title' => 'Animation', 'description' => 'Animate buttons on hover', 'values' => array('' => 'Without animation', 'pulse' => "Pulse", "down" => "Down", "up" => "Up", "pulse-grow" => "Pulse Grow", "pop" => "Pop", "wobble-horizontal" => "Wobble Horizontal", "wobble-vertical" => "Wobble Vertical", "buzz-out" => "Buzz Out"));
 		$structure['nospace'] = array('type' => 'checkbox', 'title' => 'Without space between buttons', 'description' => 'Activate this option if you wish to remove space between single buttons');
 		$structure['bgcolor'] = array('type' => 'textbox', 'title' => 'Custom background color', 'description' => 'Provide custom background color for followers counter area');
@@ -79,20 +79,7 @@ class ESSBSocialFollowersCounterHelper {
 	 * @return Ambigous <string, unknown>
 	 */
 	public static function get_option($option, $default = '') {
-		global $essb_socialfans_options;
-	
-		$option = 'essb3fans_'.$option;
-	
-		$value = isset($essb_socialfans_options[$option]) ? $essb_socialfans_options[$option] : '';
-		if ($value == "-") {
-			$value = "";
-		}
-
-		if (empty($value)) {
-			$value = $default;
-		}
-	
-		return $value;
+		return essb_followers_option($option, $default);
 	}
 	
 	public static function get_active_networks() {
@@ -305,6 +292,7 @@ class ESSBSocialFollowersCounterHelper {
 		$settings['youtube']['icon_type'] = array('type' => 'select', 'text' => 'Icon Type', 'values' => array('' => 'YouTube Logo', 'play' => 'YouTube Play Icon'));
 		$settings['youtube']['url_type'] = array('type' => 'select', 'text' => 'Channel URL Type', 'values' => array('channel' => 'Full channel url (/channel/)', 'c' => 'Short channel url (/c/)'), "description" => "Choose channel url type according to how you see your address in browser. Default is long format channel which works in more than 90%.");
 		$settings['youtube']['api_key'] = array('type' => 'textbox', 'text' => 'API Key', 'description' => 'If you have set a Google+ API key you can use it same here - all you need is to enable access to YouTube API in Google Console.', 'authfield' => true);
+		$settings['youtube']['url'] = array('type' => 'textbox', 'text' => 'Custom Channel URL', 'description' => 'The visit channel URL is automatically generated based on settings above. If you wish to fill a custom URL for button click (example branded channel URL) you can do this here. The supported URL can also be fully custom (example: landing page)');
 		$settings['youtube']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers');
 		
 		$settings['vk']['id'] = array('type' => 'textbox', 'text' => 'Your VK.com ID number or Community ID/Name');
@@ -398,7 +386,7 @@ class ESSBSocialFollowersCounterHelper {
 		
 		$mailpoet_lists = self::mailpoet_get_lists();
 		$mailpoet_lists = array_merge( array( array( 'list_id' => 'all', 'name' => __(' Total Subscribers from All Lists', ESSB3_TEXT_DOMAIN ))), $mailpoet_lists);
-		$mailpoet_lists = array_merge( array( array( 'list_id' => '', 'name' => __(' ', ESSB3_TEXT_DOMAIN ))), $mailpoet_lists);
+		$mailpoet_lists = array_merge( array( array( 'list_id' => '', 'name' => __(' ', 'essb' ))), $mailpoet_lists);
 		
 		$parsed_lists = array();
 		foreach ($mailpoet_lists as $list) {
@@ -490,7 +478,7 @@ class ESSBSocialFollowersCounterHelper {
 	//Get Mail Lists
 	public static function mailpoet_get_lists(){
 		
-		if (class_exists('MP')) {
+		if (class_exists('MailPoet\API\API')) {
 			$subscription_lists = \MailPoet\API\API::MP('v1')->getLists();
 			return $subscription_lists;
 		}
@@ -551,3 +539,23 @@ if (!function_exists('essb_update_available_follower_networks_in_settings')) {
 		
 	}
 }
+
+if (!function_exists('essb_followers_option')) {
+	function essb_followers_option($option, $default = '') {
+		global $essb_socialfans_options;
+	
+		$option = 'essb3fans_'.$option;
+	
+		$value = isset($essb_socialfans_options[$option]) ? $essb_socialfans_options[$option] : '';
+		if ($value == "-") {
+			$value = "";
+		}
+	
+		if (empty($value) && !empty($default)) {
+			$value = $default;
+		}
+	
+		return $value;
+	}
+}
+

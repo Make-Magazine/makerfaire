@@ -592,7 +592,10 @@ function essb_get_post_share_details($position) {
 		}
 		
 		if ($post_essb_twitter_tweet != '') {
-			$twitter_customtweet = $post_essb_twitter_tweet;
+			$post_essb_twitter_tweet = str_replace('%', '%25', $post_essb_twitter_tweet);
+			$post_essb_twitter_tweet = str_replace('"', '%22', $post_essb_twitter_tweet);
+			$post_essb_twitter_tweet = str_replace("'", '%27', $post_essb_twitter_tweet);
+			$twitter_customtweet = addslashes($post_essb_twitter_tweet);
 		}
 		if ($post_essb_twitter_username != '') {
 			$twitter_user = $post_essb_twitter_username;
@@ -618,9 +621,6 @@ function essb_get_post_share_details($position) {
 	$description= str_replace("'", "\'", $description);
 	$twitter_customtweet= str_replace("'", "\'", $twitter_customtweet);
 	$title_plain= str_replace("'", "\'", $title_plain);
-
-	
-	//print "get share details".timer_stop(0, 5);
 	
 	return array('url' => $url, 'title' => $title, 'image' => $image, 'description' => $description, 'twitter_user' => $twitter_user,
 			'twitter_hashtags' => $twitter_hashtags, 'twitter_tweet' => $twitter_customtweet, 'post_id' => isset($post) ? $post->ID : 0, 'user_image_url' => '', 'title_plain' => $title_plain,

@@ -54,7 +54,7 @@ if (!function_exists('essb_optin_below_content')) {
 		$of_creditlink_user = isset($essb3of_options['of_creditlink_user']) ? $essb3of_options['of_creditlink_user'] : 'appscreo';
 		
 		$output = '';
-		$output .= "<!-- Best social sharing plugin for WordPress has optin module : http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo -->";
+		$output .= "<!-- Best social sharing plugin for WordPress has subscribe forms integrated inside : http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo -->";
 		
 		
 		if ( (is_single() && $of_posts == 'true') || (is_page() && $of_pages == 'true') ) {

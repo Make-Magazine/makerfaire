@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Global class for holding down the pre-compiled data resources
+ * 
+ * @author appscreo
+ *
+ */
 class ESSBPrecompiledResources {
 	public static $cacheFolder = "";
 	public static $cacheURL = "";
@@ -7,12 +12,6 @@ class ESSBPrecompiledResources {
 	public static $isActive = false;
 	
 	public static function activate() {
-	
-		//$upload_dir = wp_upload_dir ();
-	
-		// since version version 5 all details are moved inside content folder of ESSB
-		//$base_path = $upload_dir ['basedir'] . '/essb_compiled/';
-		//$base_url = $upload_dir['baseurl'] . '/essb_compiled/';
 		
 		$base_path = ABSPATH.'wp-content/easysocialsharebuttons-assets/compiled/';
 		$base_url = content_url('easysocialsharebuttons-assets/compiled/');
@@ -223,9 +222,50 @@ class ESSBPrecompiledResources {
 			$name = str_replace( '_transient_', '', $transient );
 			delete_transient( $name );
 	
+		}	
+		
+		$expired  = $wpdb->get_col( "SELECT option_name FROM $wpdb->options where (option_name LIKE '_transient_timeout_essb_precache_unique_key') OR (option_name LIKE '_transient_essb_precache_unique_key')" );
+		if( empty( $expired ) ) {
+			return false;
+		}
+		
+		foreach( $expired as $transient ) {
+		
+			$name = str_replace( '_transient_timeout_', '', $transient );
+			$name = str_replace( '_transient_', '', $transient );
+			delete_transient( $name );
+		
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Generate a radom unique identifier
+	 */
+	public static function get_unique_identifier() { 
+		$stored_key = get_transient( 'essb_precache_unique_key');
+		
+		if (!$stored_key || empty($stored_key)) {
+			$stored_key = self::generate_string(20);
+			set_transient('essb_precache_unique_key', $stored_key, YEAR_IN_SECONDS );
+		}
+		
+		return $stored_key;
+	}
+	
+	
+	
+	public static function generate_string($strength = 16) {
+		$input = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$input_length = strlen($input);
+		$random_string = '';
+		for($i = 0; $i < $strength; $i++) {
+			$random_character = $input[mt_rand(0, $input_length - 1)];
+			$random_string .= $random_character;
 		}
 	
-		return true;
+		return $random_string;
 	}
 }
 

@@ -8,6 +8,8 @@ ESSBOptionsStructureHelper::menu_item('style', 'image', __('On Media Share', 'es
 ESSBOptionsStructureHelper::menu_item('style', 'css', __('Additional CSS', 'essb'), 'default');
 ESSBOptionsStructureHelper::menu_item('style', 'css2', __('Additional Footer CSS', 'essb'), 'default');
 
+ESSBOptionsStructureHelper::menu_item('style', 'my-template', __('Custom Share Buttons Template', 'essb'), 'default');
+
 ESSBOptionsStructureHelper::panel_start('style', 'buttons', __('Activate customization of template', 'essb'), __('Customization allows you to change colors of each button or total counter. Your are also able to activate customizer for specific pages only via on post styles.', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'customizer_is_active', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb'), 'switch_submit' => 'true'));
 
 
@@ -112,3 +114,105 @@ function essb3_draw_fanscounter_customization($tab_id, $menu_id) {
 		ESSBOptionsStructureHelper::field_color($tab_id, $menu_id, 'fanscustomizer_'.$network, $title, '');
 	}
 }
+
+/** Custom Share Buttons Template Code */
+
+ESSBOptionsStructureHelper::field_switch('style', 'my-template', 'mytemplate_activate', __('Use my template', 'essb'), __('Set this option to Yes if you wish to use the custom template you made', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+
+ESSBOptionsStructureHelper::panel_start('style', 'my-template', __('Total counter style', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::field_section_start_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_totalbgcolor', __('Background color', 'essb'), __('Replace total counter background color', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('style', 'my-template', 'mytemplate_totalnobgcolor', __('Remove background color', 'essb'), __('Activate this option to remove the background color', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_totalcolor', __('Text color', 'essb'), __('Replace total counter text color', 'essb'));
+ESSBOptionsStructureHelper::field_section_end_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::field_section_start_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_totalfontsize', __('Total counter big style font-size', 'essb'), __('Enter value in px (ex: 21px) to change the total counter font-size', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_totalfontsize_after', __('Total counter big style shares text font-size', 'essb'), __('Enter value in px (ex: 10px) to change the total counter shares text font-size', 'essb'));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_totalfontsize_after_color', __('Total counter big style shares text color', 'essb'), '');
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_totalfontsize_beforeafter', __('Total counter before/after share buttons text font-size', 'essb'), __('Enter value in px (ex: 14px) to change the total counter text font-size', 'essb'));
+ESSBOptionsStructureHelper::field_section_end_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::panel_end('style', 'my-template');
+
+
+ESSBOptionsStructureHelper::panel_start('style', 'my-template', __('Button Style', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::title('style', 'my-template',  __('Icon Size, Font Size & Button Size', 'essb'), '', 'inner-row');
+ESSBOptionsStructureHelper::field_section_start_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_iconsize', __('Icon Size', 'essb'), __('Provide custom icon size value. Numeric value (example: 24) - default value is: 18', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_iconspace', __('Icon Gutter', 'essb'), __('Default value used here is 9 (9px from each side) and you can change this according to effect you wish to have. This value will also reflect over the size of button.', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_namesize', __('Network name font size', 'essb'), __('Enter custom network name font size (example: 16px, 2em, 5rem)', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_padding', __('Button Padding', 'essb'), __('Set custom padding of button if you wish to get a bigger button. Supporting the CSS standard padding values (10px, 10px 10px).', 'essb'));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_nameweight', __('Network name text style', 'essb'), __('', 'essb'), array("" => "Default", "normal" => "Normal", "bold" => "Bold", "italic" => "Italic"));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_texttrans', __('Network name text transform', 'essb'), __('', 'essb'), array("" => "Default", "uppercase" => "Uppercase", "capitalaize" => "Capitalize"));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_shape', __('Button Shape', 'essb'), __('Customize the shape of button', 'essb'), array("" => "Default", "rounded" => "Round Edges", "round" => "Round", "leaf" => "Leaf"));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_effect', __('Button Effect', 'essb'), __('Add custom button effect', 'essb'), array("" => "No effect", "flat" => "Flat style", "shadow" => "Drop shadow", "glow" => "Glow effect"));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_effect_color', __('Button Effect Color', 'essb'), __('Replace default effect color', 'essb'), '', 'true');
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_effect_strength', __('Button Effect Strength', 'essb'), __('Correct strength of button effect (when activated)', 'essb'), array("" => "Default", "small" => "Small", "medium" => "Medium", "large" => "Large", 'xlarge' => "Extra Large"));
+
+ESSBOptionsStructureHelper::field_section_end_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::panel_end('style', 'my-template');
+
+ESSBOptionsStructureHelper::panel_start('style', 'my-template', __('Default Color Set', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::title('style', 'my-template',  __('Default Color Set', 'essb'), '', 'inner-row');
+ESSBOptionsStructureHelper::field_section_start_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_default_color', __('Background Color', 'essb'), __('Choose the default background color of button', 'essb'), array("" => "Network default/custom color", "white" => "White", "dark" => "Dark", "custom" => "Custom Color"));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_default_color_custom', __('Custom Background Color', 'essb'), __('Custom background color will be used when you select from menu to use custom color. It will be set for all social networks that does not have own custom color', 'essb'));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_default_textcolor', __('Text/Icon Color', 'essb'), __('Choose the default text/icon color of button', 'essb'), array("" => "White", "network" => "Network default/custom color", "dark" => "Dark", "custom" => "Custom Color"));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_default_textcolor_custom', __('Custom Text/Icon Color', 'essb'), __('Custom text/icon color will be used when you select from menu to use custom color. It will be set for all social networks that does not have own custom color', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_default_outlinesize', __('Outline Size', 'essb'), __('Setup outline over the share button. To do this and color setup work enter numeric value for size (1, 2, 3 and etc.)', 'essb'));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_default_outlinecolor', __('Outline Color', 'essb'), __('Choose the default outline color of button', 'essb'), array("" => "Network default/custom color", "white" => "White", "dark" => "Dark", "custom" => "Custom Color"));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_default_outlinecolor_custom', __('Custom Outline Color', 'essb'), __('Custom outline color will be used when you select from menu to use custom color. It will be set for all social networks that does not have own custom color', 'essb'));
+ESSBOptionsStructureHelper::field_section_end_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::panel_end('style', 'my-template');
+
+ESSBOptionsStructureHelper::panel_start('style', 'my-template', __('On Hover Color Set', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::title('style', 'my-template',  __('On Hover Color Set', 'essb'), '', 'inner-row');
+ESSBOptionsStructureHelper::field_section_start_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_hover_color', __('Background Color', 'essb'), __('Choose the default background color of button', 'essb'), array("" => "Generate automatically", "network" => "Network default/custom color", "white" => "White", "dark" => "Dark", "custom" => "Custom Color"));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_hover_color_custom', __('Custom Background Color', 'essb'), __('Custom background color will be used when you select from menu to use custom color. It will be set for all social networks that does not have own custom color', 'essb'));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_hover_textcolor', __('Text/Icon Color', 'essb'), __('Choose the default text/icon color of button', 'essb'), array("" => "White", "network" => "Network default/custom color", "dark" => "Dark", "custom" => "Custom Color"));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_hover_textcolor_custom', __('Custom Text/Icon Color', 'essb'), __('Custom text/icon color will be used when you select from menu to use custom color. It will be set for all social networks that does not have own custom color', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_panel('style', 'my-template', 'mytemplate_hover_outlinesize', __('Outline Size', 'essb'), __('Setup outline over the share button. To do this and color setup work enter numeric value for size (1, 2, 3 and etc.)', 'essb'));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_hover_outlinecolor', __('Outline Color', 'essb'), __('Choose the default outline color of button', 'essb'), array("" => "Network default/custom color", "white" => "White", "dark" => "Dark", "custom" => "Custom Color"));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_hover_outlinecolor_custom', __('Custom Outline Color', 'essb'), __('Custom outline color will be used when you select from menu to use custom color. It will be set for all social networks that does not have own custom color', 'essb'));
+
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_hover_color_effect', __('Button Hover Effect', 'essb'), __('Set eye catching hover animation', 'essb'), array("" => "No hover animation", "shiny" => "Shiny"));
+
+
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_hover_shape', __('Button Shape', 'essb'), __('Customize the shape of button', 'essb'), array("" => "Default", "square" => "Rectangle", "rounded" => "Round Edges", "round" => "Round", "leaf" => "Leaf"));
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_hover_effect', __('Button Effect', 'essb'), __('Add custom button effect', 'essb'), array("" => "Default", "no" => "No effect", "flat" => "Flat style", "shadow" => "Drop shadow", "glow" => "Glow effect"));
+ESSBOptionsStructureHelper::field_color_panel('style', 'my-template', 'mytemplate_hover_effect_color', __('Button Effect Color', 'essb'), __('Replace default effect color', 'essb'), '', 'true');
+ESSBOptionsStructureHelper::field_select_panel('style', 'my-template', 'mytemplate_hover_effect_strength', __('Button Effect Strength', 'essb'), __('Correct strength of button effect (when activated)', 'essb'), array("" => "Default", "small" => "Small", "medium" => "Medium", "large" => "Large", 'xlarge' => "Extra Large"));
+
+ESSBOptionsStructureHelper::field_section_end_full_panels('style', 'my-template');
+ESSBOptionsStructureHelper::panel_end('style', 'my-template');
+
+//ESSBOptionsStructureHelper::panel_start('style', 'my-template', __('Colors by Social Networks', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::panel_start('style', 'my-template', __('Colors by Social Networks', 'essb'), __('Use this option if you wish to personalize social network individual colors.', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'mytemplate_network_is_active', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb'), 'switch_submit' => 'true'));
+
+
+if (essb_option_bool_value('mytemplate_network_is_active')) {
+	$all_networks = essb_available_social_networks();
+		
+	$checkbox_list_networks = array();
+	foreach ($all_networks as $key => $object) {
+		$checkbox_list_networks[$key] = $object['name'];
+	}
+		
+	$tab_id = 'style';
+	$menu_id = 'my-template';
+		
+	foreach ($checkbox_list_networks as $key => $text) {
+		ESSBOptionsStructureHelper::holder_start($tab_id, $menu_id, 'essb-mytemplate-network essb-options-hint-glow', 'essb-mytemplate-network');
+
+		ESSBOptionsStructureHelper::title('style', 'my-template',  $text, '', 'inner-row');
+		ESSBOptionsStructureHelper::field_section_start_full_panels($tab_id, $menu_id);
+		ESSBOptionsStructureHelper::field_color_panel($tab_id, $menu_id, 'mytemplate_'.$key.'_bgcolor', __('Background color', 'essb'), __('Replace all buttons background color', 'essb'));
+		ESSBOptionsStructureHelper::field_color_panel($tab_id, $menu_id, 'mytemplate_'.$key.'_textcolor', __('Text color', 'essb'), __('Replace all buttons text color', 'essb'));
+		ESSBOptionsStructureHelper::field_color_panel($tab_id, $menu_id, 'mytemplate_'.$key.'_hovercolor', __('Hover background color', 'essb'), __('Replace all buttons hover background color', 'essb'));
+		ESSBOptionsStructureHelper::field_color_panel($tab_id, $menu_id, 'mytemplate_'.$key.'_hovertextcolor', __('Hover text color', 'essb'), __('Replace all buttons hover text color', 'essb'));
+		ESSBOptionsStructureHelper::field_section_end_full_panels($tab_id, $menu_id);
+		ESSBOptionsStructureHelper::holder_end($tab_id, $menu_id);
+	}
+}
+
+ESSBOptionsStructureHelper::panel_end('style', 'my-template');

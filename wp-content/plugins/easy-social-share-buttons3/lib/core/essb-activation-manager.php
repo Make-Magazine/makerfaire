@@ -61,6 +61,9 @@ class ESSBActivationManager {
 		else if ($callback == 'api') {
 			return self::$api;
 		}
+		else if ($callback == 'activate_domain') {
+			return self::$activate_url.'?domain='.self::domain();
+		}
 		else {
 			return self::$api;
 		}

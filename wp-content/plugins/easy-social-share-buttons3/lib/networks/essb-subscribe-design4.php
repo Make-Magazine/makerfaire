@@ -63,21 +63,21 @@ if (!function_exists('essb_subscribe_form_design4')) {
 		$secure_nonce = wp_create_nonce('essb3_subscribe_nonce');
 		$current_url = add_query_arg('essb3_subscribe_nonce', $secure_nonce, $current_url);
 		
-		$output = '<div class="essb-subscribe-form-content essb-subscribe-from-design4'.($is_widget ? " essb-subscribe-form-inwidget" :"").($subscribe_mc_imagealign3 == 'right' ? " essb-subscribe-from-left" : " essb-subscribe-form-right").'" data-position="'.$position.'"  data-design="design4">';
+		$output = '<div class="essb-subscribe-form-content essb-subscribe-from-design4'.($is_widget ? " essb-subscribe-form-inwidget" :"").($subscribe_mc_imagealign3 == 'right' ? " essb-subscribe-from-left" : " essb-subscribe-form-right").'" data-position="'.esc_attr($position).'"  data-design="design4">';
 		
 		if ($subscribe_mc_imagealign3 == '' || $subscribe_mc_imagealign3 == 'left') {
 			$output .= '<div class="essb-subscribe-form-content-subscribeholder">';
 			// generating form output
-			$output .= '<form action="'.add_query_arg('essb-malchimp-signup', '1', $current_url).'" method="post" class="essb-subscribe-from-content-form" id="essb-subscribe-from-content-form-mailchimp">';
+			$output .= '<form action="'.esc_url(add_query_arg('essb-malchimp-signup', '1', $current_url)).'" method="post" class="essb-subscribe-from-content-form" id="essb-subscribe-from-content-form-mailchimp">';
 				
 			if ($subscribe_mc_namefield) {
-				$output .= '<input class="essb-subscribe-form-content-name-field" type="text" value="" placeholder="'.$subscribe_mc_name.'" name="mailchimp_name">';
+				$output .= '<input class="essb-subscribe-form-content-name-field" type="text" value="" placeholder="'.esc_attr($subscribe_mc_name).'" name="mailchimp_name">';
 			}
 				
-			$output .= '<input class="essb-subscribe-form-content-email-field" type="text" value="" placeholder="'.$subscribe_mc_email.'" name="mailchimp_email">';
+			$output .= '<input class="essb-subscribe-form-content-email-field" type="text" value="" placeholder="'.esc_attr($subscribe_mc_email).'" name="mailchimp_email">';
 			$output .= ESSBNetworks_Subscribe::generate_if_needed_agree_check();
 			
-			$output .= '<input class="submit" name="submit" type="submit" value="'.$subscribe_mc_button.'" onclick="essb.ajax_subscribe(\''.$salt.'\', event);">';
+			$output .= '<input class="submit" name="submit" type="submit" value="'.esc_attr($subscribe_mc_button).'" onclick="essb.ajax_subscribe(\''.$salt.'\', event);">';
 			$output .= '</form>';
 				
 			$output .= '<div class="essb-subscribe-loader">
