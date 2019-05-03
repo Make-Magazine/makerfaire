@@ -55,10 +55,10 @@ if ($noMakerText == '')
 						<label>Featured Makers</label>
 						<ul class="nav nav-pills">
 							<li class="nav-item">
-								<button  ng-class="{active: makerSearch.flag == 'Featured Maker', 'ng-hide': showFeatured == true}" type="button" ng-click="makerSearch.flag = 'Featured Maker';showFeaturedAll=false;showFeatured=true;" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
+								<button ng-class="{'ng-hide':showFeatured=='Featured Maker'}" type="button" ng-click="makerSearch.flag ='Featured Maker';showFeatured='Featured Maker';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
 							</li>
 							<li class="nav-item">
-								<button ng-init="showFeaturedAll=true" ng-class="{active: makerSearch.flag == ''}" type="button" ng-click="makerSearch.flag = '';showFeatured=false;showFeaturedAll=true;" class="btn btn-default" ng-hide="showFeaturedAll"><i class="fa fa-check"></i></button>
+								<button ng-init="showFeatured=makerSearch.flag" ng-class="{'ng-hide':showFeatured==''}" type="button" ng-click="makerSearch.flag = '';showFeatured='';" class="btn btn-default"><i class="fa fa-check"></i></button>
 							</li>   
 						</ul>   
 					</div>
@@ -66,10 +66,10 @@ if ($noMakerText == '')
 						<label>Hands-On Activities</label>
 						<ul class="nav nav-pills">
 							<li class="nav-item">
-								<button ng-class="{active: makerSearch.handson == 'Featured HandsOn', 'ng-hide': showHandsOn == true}" type="button" ng-click="makerSearch.handson = 'Featured HandsOn';showHandsOnAll=false;showHandsOn=true;"  class="btn btn-default" ng-hide="showHandsOn">&nbsp;</button>
+								<button ng-class="{'ng-hide':showHandsOn=='Featured HandsOn'}" type="button" ng-click="makerSearch.handson='Featured HandsOn';showHandsOn='Featured HandsOn';" class="btn btn-default">&nbsp;</button>
 							</li>
 							<li class="nav-item">
-								<button ng-init="showHandsOnAll=true" ng-class="{active: makerSearch.handson == '', 'ng-hide': showHandsOnAll == true}" type="button" ng-click="makerSearch.handson = '';showHandsOn=false;showHandsOnAll=true;" class="btn btn-default" ng-hide="showHandsOnAll"><i class="fa fa-check"></i></button>
+								<button ng-init="showHandsOn=makerSearch.handson" ng-class="{'ng-hide':showHandsOn==''}" type="button" ng-click="makerSearch.handson='';showHandsOn='';" class="btn btn-default"><i class="fa fa-check"></i></button>
 							</li>   
 						</ul>
 					</div>

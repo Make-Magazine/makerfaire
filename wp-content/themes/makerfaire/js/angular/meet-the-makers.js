@@ -4,6 +4,14 @@ var initialCategory = "";
 if(getUrlParam("category")){
 	initialCategory = getUrlParam("category");
 }
+var handsOn = "";
+if(getUrlParam("handson")){
+	handsOn = getUrlParam("handson");
+}
+var featured = "";
+if(getUrlParam("featured")){
+	featured = getUrlParam("featured");
+}
 
 app.controller('mtmMakers', function ($scope, $http) {
    //infinite scroll
@@ -36,6 +44,12 @@ app.controller('mtmMakers', function ($scope, $http) {
 	if(initialCategory){
       $scope.makerSearch.categories = initialCategory;
    }
+	if(handsOn == "true"){
+		$scope.makerSearch.handson = "Featured HandsOn";
+	}
+	if(featured == "true"){
+		$scope.makerSearch.flag = "Featured Maker";
+	}
       
    //call to MF custom rest API
    $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs+'/'+faireID)
