@@ -2,6 +2,7 @@
 
 ESSBOptionsStructureHelper::menu_item('import', 'backup', __('Export Settings', 'essb'), 'download');
 ESSBOptionsStructureHelper::menu_item('import', 'backupimport', __('Import Settings', 'essb'), 'upload');
+ESSBOptionsStructureHelper::menu_item('import', 'reset', __('Reset Settings & Data', 'essb'), 'upload');
 ESSBOptionsStructureHelper::menu_item('import', 'rollback', __('Rollback Settings', 'essb'), 'upload');
 
 ESSBOptionsStructureHelper::menu_item('import', 'backup2', __('Export Followers Settings', 'essb'), 'database');
@@ -22,6 +23,8 @@ ESSBOptionsStructureHelper::field_func('import', 'backupimport2', 'essb3_text_ba
 
 ESSBOptionsStructureHelper::title('import', 'rollback', __('Rollback previous configuration', 'essb'), __('Easy Social Share Buttons for WordPress stores last 10 saved settin configuration. In case you made a miskate in changing option you can easy return back to previous setup.', 'essb'));
 ESSBOptionsStructureHelper::field_func('import', 'rollback', 'essb3_text_roolback', '', '');
+
+ESSBOptionsStructureHelper::field_component('import', 'reset', 'essb5_reset_settings_actions');
 
 function essb3_text_roolback() {
 	$history_container = get_option(ESSB5_SETTINGS_ROLLBACK);
@@ -165,5 +168,102 @@ function essb3_text_backup1() {
 	?>
 	
 	<a href="<?php echo $download_settings; ?>" class="essb-btn essb-btn-orange">Save Plugin Settings To File</a>&nbsp;
+	<?php 
+}
+
+function essb5_reset_settings_actions() {
+	?>
+<div class="advanced-grid col3" style="padding-right: 15px; padding-bottom: 15px;">
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon" style="padding-top: 30px;">
+		<i class="fa fa-database"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php _e('Plugin Settings', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php _e('The function will remove settings created by plugin and restore the default options.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="resetsettings" data-title="<?php _e('Plugin Settings', 'essb'); ?>"><i class="fa fa-times"></i><?php _e('Reset Settings', 'essb'); ?></a>
+	</div>
+</div>	
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon" style="padding-top: 30px;">
+		<i class="fa fa-heart-o"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php _e('Followers Settings', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php _e('The function will remove followers counter setup you have made.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="resetfollowerssettings" data-title="<?php _e('Followers Settings', 'essb'); ?>"><i class="fa fa-times"></i><?php _e('Reset Settings', 'essb'); ?></a>
+	</div>
+</div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon" style="padding-top: 30px;">
+		<i class="fa fa-bar-chart"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php _e('Analytics Data', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php _e('Remove the internal stored analytics data (if function is active and used).', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="resetanalytics" data-title="<?php _e('Analytics Data', 'essb'); ?>"><i class="fa fa-times"></i><?php _e('Reset Data', 'essb'); ?></a>
+	</div>
+</div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon" style="padding-top: 30px;">
+		<i class="fa fa-refresh"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php _e('Internal Counters', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php _e('The function will remove all stored internal counters and reset values to zero.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="resetinternal" data-title="<?php _e('Internal Counters', 'essb'); ?>"><i class="fa fa-times"></i><?php _e('Reset Data', 'essb'); ?></a>
+	</div>
+</div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon" style="padding-top: 30px;">
+		<i class="fa fa-clock-o"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php _e('Counters Last Update', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php _e('The function will clear the counters update period. This will settle and immediate share counter update for all content of site.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="resetcounter" data-title="<?php _e('Counters Last Update', 'essb'); ?>"><i class="fa fa-times"></i><?php _e('Reset Data', 'essb'); ?></a>
+	</div>
+</div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon" style="padding-top: 30px;">
+		<i class="fa fa-cut"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php _e('Short URL Cache & Image Cache', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php _e('The function will clear the generated cached share images and it will also clear the cached short URLs (if function used).', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="resetimage" data-title="<?php _e('Counters Last Update', 'essb'); ?>"><i class="fa fa-times"></i><?php _e('Reset Data', 'essb'); ?></a>
+	</div>
+</div>
+	
+</div>
 	<?php 
 }

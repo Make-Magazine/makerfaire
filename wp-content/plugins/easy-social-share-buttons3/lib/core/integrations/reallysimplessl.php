@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Restore back the recovery URL after ReallySimpleSSL apply the text replacement
+ * 
+ * @package EasySocialShareButtons
+ * @since 5.0
+ * @param string $code
+ */
+
 function essb_rsssl_fix_output($code) {
 
 	$code = str_replace(

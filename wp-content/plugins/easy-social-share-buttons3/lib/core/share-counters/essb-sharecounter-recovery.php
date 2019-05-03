@@ -66,6 +66,7 @@ function essb_recovery_get_alt_permalink($past_url, $post_id) {
 	}
 	
 	$permalink = apply_filters ( 'pre_post_link', $permalink, $post, $leavename );
+
 	
 	// Check if the user has defined a specific custom URL
 	$custom_url = get_post_meta ( get_the_ID (), 'essb_activate_sharerecovery', true );
@@ -119,6 +120,10 @@ function essb_recovery_get_alt_permalink($past_url, $post_id) {
 		
 		$url = apply_filters ( 'post_link', $permalink, $post, $leavename );
 		
+		
+		if ($structure == 'current') {
+			$url = get_permalink($post_id);
+		}
 
 		if (is_front_page ()) {
 			$url = get_site_url ();

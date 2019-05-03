@@ -19,6 +19,8 @@ class ESSBCoreExtenderShortcodeProfiles {
 		$sc_animation = isset($atts['animation']) ? $atts['animation'] : '';
 		$sc_nospace = isset($atts['nospace']) ? $atts['nospace'] : 'false';
 		$sc_class = isset($atts['class']) ? $atts['class'] : '';
+		$sc_align = isset($atts['align']) ? $atts['align'] : '';
+		$sc_size = isset($atts['size']) ? $atts['size'] : '';
 				
 		$sc_nospace = ESSBOptionValuesHelper::unified_true($sc_nospace);		
 		
@@ -70,7 +72,9 @@ class ESSBCoreExtenderShortcodeProfiles {
 				'animation' => $sc_animation,
 				'nospace' => $sc_nospace,
 				'networks' => $sc_network_address,
-				'class' => $sc_class
+				'class' => $sc_class,
+				'align' => $sc_align,
+				'size' => $sc_size
 		);
 		
 		return ESSBSocialProfiles::draw_social_profiles($options);

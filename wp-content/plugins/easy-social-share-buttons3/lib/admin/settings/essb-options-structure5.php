@@ -19,9 +19,6 @@ global $essb_sidebar_description;
 $essb_options = essb_options();
 
 ESSBOptionsStructureHelper::init();
-//if (essb_show_welcome()) {
-//	ESSBOptionsStructureHelper::tab('welcome', __('Welcome', 'essb'), __('Welcome to Easy Social Share Buttons for WordPress', 'essb'), 'ti-lock', 'right', true, true, false, true);
-//}
 ESSBOptionsStructureHelper::tab('social', __('Social Sharing', 'essb'), __('Social Sharing', 'essb'), 'ti-sharethis');
 ESSBOptionsStructureHelper::tab('where', __('Where to Display', 'essb'), __('Where to Display', 'essb'), 'ti-layout');
 
@@ -54,8 +51,10 @@ if (essb_option_bool_value('stats_active')) {
 }
 
 if (!essb_option_bool_value('deactivate_module_conversions')) {
-	ESSBOptionsStructureHelper::tab('conversions', __('Conversions Lite', 'essb'), __('Conversions Lite', 'essb'), 'ti-dashboard', '');
-	$essb_sidebar_description['conversions'] = __('View and activate conversions', 'essb');
+	if (essb_option_bool_value('conversions_lite_run') || essb_options_bool_value('conversions_subscribe_lite_run')) {
+		ESSBOptionsStructureHelper::tab('conversions', __('Conversions Lite', 'essb'), __('Conversions Lite', 'essb'), 'ti-dashboard', '');
+		$essb_sidebar_description['conversions'] = __('View and activate conversions', 'essb');
+	}
 
 }
 
@@ -70,24 +69,19 @@ ESSBOptionsStructureHelper::tab('import', __('Import / Export', 'essb'), __('Imp
 $essb_sidebar_description['import'] = __('Import, export or rollback settings', 'essb');
 
 
-if (defined('ESSB3_ACTIVATION')) {
-	ESSBOptionsStructureHelper::tab('update', __('Activate', 'essb'), __('Activate Easy Social Share Buttons for WordPress', 'essb'), 'ti-lock', 'right', true, false, false, true);
-	$essb_sidebar_description['update'] = __('Activate premium benefits', 'essb');
+ESSBOptionsStructureHelper::tab('update', __('Activate', 'essb'), __('Activate Easy Social Share Buttons for WordPress', 'essb'), 'ti-lock', 'right', true, false, false, true);
+$essb_sidebar_description['update'] = __('Activate premium benefits', 'essb');
 
-}
-else {
-	ESSBOptionsStructureHelper::tab('update', __('Activate', 'essb'), __('Activate Easy Social Share Buttons for WordPress', 'essb'), 'ti-lock', 'right', false, false, false, true);
-}
 
 ESSBOptionsStructureHelper::tab('quick', __('Quick Setup', 'essb'), __('Quick Setup Wizard', 'essb'), 'fa fa-cog', '', false, true, false, true);
 $essb_sidebar_description['quick'] = __('Fast and easy setup common options', 'essb');
 
 if (essb_option_value('functions_mode') != 'light') {
-	ESSBOptionsStructureHelper::tab('readymade', __('Ready Made Styles', 'essb'), __('Apply Ready Made Styles', 'essb'), 'ti-brush', '', true, false, true);
+	ESSBOptionsStructureHelper::tab('readymade', __('Styles Library', 'essb'), __('Apply Preconfigured Styles', 'essb'), 'ti-brush', '', false, false, false, true);
 	$essb_sidebar_description['readymade'] = __('Apply design to selected position', 'essb');
 }
 
-ESSBOptionsStructureHelper::tab('status', __('System Status', 'essb'), __('System Status', 'essb'), 'ti-receipt', '', true, false, true);
+ESSBOptionsStructureHelper::tab('status', __('System Status', 'essb'), __('System Status', 'essb'), 'ti-receipt', '', true, true, true, true);
 $essb_sidebar_description['status'] = __('System configuration, tests', 'essb');
 
 if (essb_option_value('functions_mode') != 'light') {
@@ -106,16 +100,12 @@ $essb_sidebar_description['about'] = __('Get help, version info', 'essb');
 ESSBOptionsStructureHelper::tab('modes', __('Switch Plugin Modes', 'essb'), __('Switch Plugin Modes', 'essb'), 'ti-info-alt', '', false, true, false, true);
 ESSBOptionsStructureHelper::tab('functions', __('Manage Plugin Functions', 'essb'), __('Manage Plugin Functions', 'essb'), 'ti-info-alt', '', false, true, false, true);
 
-ESSBOptionsStructureHelper::tab('support', __('Need Help?', 'essb'), __('Need Help?', 'essb'), 'ti-info-alt', '', true, true, false, true);
-
 //-- menu
 $user_active_tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : '';
 
 $active_settings_page = isset ( $_REQUEST ['page'] ) ? $_REQUEST ['page'] : '';
 if (strpos ( $active_settings_page, 'essb_redirect_' ) !== false) {
 	$options_page = str_replace ( 'essb_redirect_', '', $active_settings_page );
-	// print $options_page;
-	// print admin_url ( 'admin.php?page=essb_options&tab=' . $options_page );
 	if ($options_page != '') {
 		$user_active_tab = $options_page;
 	}
@@ -128,10 +118,6 @@ if ($user_active_tab == "readymade") {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/admin-options/essb-options-structure-readymade.php');
 }
 
-//include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/admin-options/essb-admin-options-social.php');
-//include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/admin-options/essb-admin-options-follow.php');
-//include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/admin-options/essb-admin-options-legacy.php');
-
 
 // version 5 options structure
 include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-functions.php');
@@ -142,11 +128,10 @@ include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-subscribe.p
 include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-advanced.php');
 include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-style.php');
 include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-import.php');
-include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-activation.php');
 if (essb_option_bool_value('activate_hooks') || essb_option_bool_value('activate_fake') || essb_option_bool_value('activate_minimal')) {
 	include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-developer.php');
 }
 
 if ($user_active_tab == "translate") {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/admin-options/essb-admin-options-wpml.php');
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-admin-options-wpml.php');
 }

@@ -31,6 +31,10 @@ class ESSBSocialShareAnalyticsBackEnd {
 				$r = $data['label'];
 			}
 		}
+		
+		if ($position == 'pinit') {
+			$r = __('Pinable Image', 'essb');
+		}
 
 		return $r;
 	}
@@ -60,6 +64,8 @@ class ESSBSocialShareAnalyticsBackEnd {
 				self::$positions[] = $key;
 			}
 		}
+		
+		self::$positions[] = 'pinit';
 	}
 
 	public static function install() {

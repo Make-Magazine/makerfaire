@@ -80,8 +80,10 @@ class ESSBDisplayMethodHeroShare {
 		$popup_trigger_oncomment = "";
 		$output = "";
 		$output .= sprintf('<div class="essb-heroshare%8$s" data-width="%1$s" data-load-percent="%2$s" data-load-end="%3$s" data-load-manual="%4$s" data-close-hide="%5$s" data-close-hide-all="%6$s" data-postid="%7$s" data-exit-intent="%9$s" data-load-timer="%10$s">',
-				$popup_user_width, $popup_user_percent, $popup_display_end, $popup_user_manual_show, $popup_user_notshow_onclose,
-				$popup_user_notshow_onclose_all, get_the_ID(), $popup_trigger_oncomment, $popup_display_exit, $popup_window_popafter);
+				esc_attr($popup_user_width), esc_attr($popup_user_percent), esc_attr($popup_display_end), 
+				esc_attr($popup_user_manual_show), esc_attr($popup_user_notshow_onclose),
+				esc_attr($popup_user_notshow_onclose_all), esc_attr(get_the_ID()), esc_attr($popup_trigger_oncomment), 
+				esc_attr($popup_display_exit), esc_attr($popup_window_popafter));
 		$output .= '<a href="#" class="essb-heroshare-close" onclick="essb_heroshare_close(); return false;"></a>';
 		$output .= '<div class="essb-heroshare-content">';
 		

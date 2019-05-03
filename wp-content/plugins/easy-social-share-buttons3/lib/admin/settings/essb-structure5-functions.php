@@ -10,7 +10,7 @@ ESSBOptionsStructureHelper::tabs_start('functions', 'functions', 'buttons-tabs',
 ESSBOptionsStructureHelper::tab_start('functions', 'functions', 'buttons-tabs-0', 'true');
 
 ESSBOptionsStructureHelper::panel_start('functions', 'functions', __('Plugin Modules', 'essb'), __('Deactivate usage of specific plugin modules. Switching option to yes will deactivate code used by this module and remove its settings from plugin. At any time when you need you can reactivate it again.', 'essb'), 'fa21 fa fa-cogs', array("mode" => "toggle", 'state' => 'opened'));
-ESSBOptionsStructureHelper::title('functions', 'functions', __('Deactivate share related modules', 'essb'), __('Those modules are related to share functionality of plugin. If you do not use any of them it is recommended to turn them off to get a clear user interface', 'essb'));
+ESSBOptionsStructureHelper::title('functions', 'functions', __('Deactivate share related modules', 'essb'), __('Those modules are related to share functionality of plugin. If you do not use any of them it is recommended to turn them off to get a clear user interface', 'essb'), 'hightlight-title');
 ESSBOptionsStructureHelper::field_section_start_full_panels('functions', 'functions', 'lightgrey-bg');
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_ctt', __('Deactivate Sharable Quotes module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_aftershare', __('Deactivate After Share module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
@@ -23,16 +23,19 @@ ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deacti
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_metrics', __('Deactivate Social Metrics', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_translate', __('Deactivate Translations', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_conversions', __('Deactivate Conversions Lite', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_pinterestpro', __('Deactivate Pinterest Pro', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_section_end_full_panels('functions', 'functions');
 
-ESSBOptionsStructureHelper::title('functions', 'functions', __('Deactivate following and subscribe modules', 'essb'), __('Those modules are related to follow & subscribe functionality of plugin. If you do not use any of them it is recommended to turn them off to get a clear user interface', 'essb'));
+ESSBOptionsStructureHelper::title('functions', 'functions', __('Deactivate following and subscribe modules', 'essb'), __('Those modules are related to follow & subscribe functionality of plugin. If you do not use any of them it is recommended to turn them off to get a clear user interface', 'essb'), 'hightlight-title');
 ESSBOptionsStructureHelper::field_section_start_full_panels('functions', 'functions', 'lightgrey-bg');
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_followers', __('Deactivate Followers Counter module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_profiles', __('Deactivate Profile Links module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_natives', __('Deactivate Native Social Buttons module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_subscribe', __('Deactivate Subscribe Forms module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_facebookchat', __('Deactivate Facebook Messenger Live Chat module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
-ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_skypechat', __('Deactivate Skype Live Chate module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_skypechat', __('Deactivate Skype Live Chat module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
+//
+ESSBOptionsStructureHelper::field_switch_panel('functions', 'functions', 'deactivate_module_clicktochat', __('Deactivate Click to Chat module', 'essb'), '', '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::field_section_end_full_panels('functions', 'functions');
 
 ESSBOptionsStructureHelper::panel_end('functions', 'functions');

@@ -4,6 +4,8 @@ if ( !class_exists( 'ESSBTopSocialPostsWidget' ) ) {
 
   class ESSBTopSocialPostsWidget extends WP_Widget {
 
+  	public $exceprt_lenth = 0;
+  	
     function __construct() {
 
       $widget_options = array( 
@@ -45,7 +47,12 @@ if ( !class_exists( 'ESSBTopSocialPostsWidget' ) ) {
       wp_enqueue_style ( 'essb-font' );
       
     }
+    
+    public function custom_excerpt_length($length = 0) {
+    	return $this->exceprt_lenth;
+    }
 
+    
     function widget( $args, $instance ) {
 
       global $post;
@@ -81,6 +88,10 @@ if ( !class_exists( 'ESSBTopSocialPostsWidget' ) ) {
       $orderby = $instance['orderby'];
       $meta_key = $instance['meta_key'];
       $custom_fields = $instance['custom_fields'];
+      
+      if ( $instance['excerpt_length'] > 0 ) {
+      	$this->exceprt_lenth = $instance['excerpt_length'];
+      }
       
       $meta_key = 'esml_socialcount_TOTAL';
       $order = 'DESC';
@@ -127,12 +138,12 @@ if ( !class_exists( 'ESSBTopSocialPostsWidget' ) ) {
       }
 
       // Excerpt more filter
-      $new_excerpt_more = create_function('$more', 'return "...";');
-      add_filter('excerpt_more', $new_excerpt_more);
+      add_filter('excerpt_more', 'essb_top_posts_more_tag');
 
       // Excerpt length filter
-      $new_excerpt_length = create_function('$length', "return " . $excerpt_length . ";");
-      if ( $instance['excerpt_length'] > 0 ) add_filter('excerpt_length', $new_excerpt_length);
+      if ( $instance['excerpt_length'] > 0 )  {
+      	add_filter('excerpt_length', array($this, 'custom_excerpt_length'));
+      }
 
       if( $class ) {
         $before_widget = str_replace('class="', 'class="'. $class . ' ', $before_widget);
@@ -728,7 +739,11 @@ if ( !class_exists( 'ESSBTopSocialPostsWidget' ) ) {
   function init_wp_widget_essb_top_posts() {
     register_widget( 'ESSBTopSocialPostsWidget' );
   }
-
+  
+  
+  function essb_top_posts_more_tag($more = '') {
+  	return '...';
+  }
   add_action( 'widgets_init', 'init_wp_widget_essb_top_posts' );
 }
 

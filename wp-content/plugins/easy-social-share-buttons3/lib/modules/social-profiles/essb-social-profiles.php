@@ -17,6 +17,7 @@ class ESSBSocialProfiles {
 	
 	function __construct() {
 		$is_active = false;
+		$resources_loaded = false;		
 		
 		if (essb_option_bool_value('profiles_display')) {
 			$profiles_display_position = essb_option_value('profiles_display_position');
@@ -35,6 +36,16 @@ class ESSBSocialProfiles {
 		if ($is_active) {
 			add_action( 'wp_enqueue_scripts' , array ( $this , 'register_front_assets' ), 1);
 			add_action( 'wp_footer', array($this, 'display_profiles'));
+			$resources_loaded = true;
+		}
+		
+		
+		if (essb_options_bool_value('profiles_post_display')) {
+			if (!$resources_loaded) {
+				add_action( 'wp_enqueue_scripts' , array ( $this , 'register_front_assets' ), 1);
+			}
+			
+			add_filter( 'the_content', array($this, 'display_content_profiles') );
 		}
 	}	
 	
@@ -49,6 +60,28 @@ class ESSBSocialProfiles {
 	
 	}
 	
+	/**
+	 * Add profile content buttons below content of posts
+	 * 
+	 * @param unknown_type $content
+	 * @return unknown|string
+	 */
+	function display_content_profiles($content) {
+		// Do not attach buttons if plugin or module is deactivated on that location
+		if (essb_is_plugin_deactivated_on() || essb_is_module_deactivated_on('profiles')) {
+			return $content;
+		}
+		
+		
+		if (!is_singular()) {
+			return $content;
+		}
+		
+		$profile_bar = ESSBSocialProfiles::draw_social_profiles_bar();
+		
+		return $content.$profile_bar;
+	}
+	
 	function display_profiles() {
 		if (essb_is_plugin_deactivated_on() || essb_is_module_deactivated_on('profiles')) {
 			return "";
@@ -59,6 +92,7 @@ class ESSBSocialProfiles {
 		$profiles_template = essb_option_value('profiles_template');
 		$profiles_animation = essb_option_value('profiles_animation');
 		$profiles_nospace = essb_option_bool_value('profiles_nospace');
+		$profiles_size = essb_option_value('profiles_size');
 
 		$profile_networks = ESSBSocialProfilesHelper::get_active_networks();
 		
@@ -89,10 +123,90 @@ class ESSBSocialProfiles {
 				'template' => $profiles_template,
 				'animation' => $profiles_animation,
 				'nospace' => $profiles_nospace,
-				'networks' => $profiles
+				'networks' => $profiles,
+				'size' => $profiles_size
 				);
 		
 		echo $this->draw_social_profiles($options);
+	}
+	
+	/**
+	 * Static function that generates the profile links bar. The function is used
+	 * to generate automatically bar below content or the bar used with shortcode on site
+	 * 
+	 */
+	public static function draw_social_profiles_bar() {
+		$profiles_post_align = essb_option_value('profiles_post_align');
+		$profiles_post_content_pos = essb_option_value('profiles_post_content_pos');
+		$profiles_post_content = essb_option_value('profiles_post_content'); //stripslashes
+		if ($profiles_post_content != '') {
+			$profiles_post_content = stripslashes($profiles_post_content);
+			$profiles_post_content = do_shortcode($profiles_post_content);
+		}
+		
+		if ($profiles_post_align == '') {
+			$profiles_post_align = 'left';
+		}
+		
+		if ($profiles_post_content_pos == '') {
+			$profiles_post_content_pos = 'above';
+		}
+		
+		$profiles_post_width = essb_option_value('profiles_post_width');
+		
+		$profiles_post_template = essb_option_value('profiles_post_template');
+		$profiles_post_animation = essb_option_value('profiles_post_animation');
+		$profiles_post_nospace = essb_option_bool_value('profiles_post_nospace');
+		$profiles_post_size = essb_option_value('profiles_post_size');
+		$profiles_post_show_text = essb_option_bool_value('profiles_post_show_text');
+		
+		$profile_networks = ESSBSocialProfilesHelper::get_active_networks();
+		
+		if (!is_array($profile_networks)) {
+			$profile_networks = array();
+		}
+		
+		$profile_networks_order = ESSBSocialProfilesHelper::get_active_networks_order();
+		
+		if (!is_array($profile_networks_order)) {
+			$profile_networks_order = array();
+		}
+		
+		$profiles = array();
+		foreach ($profile_networks_order as $network) {
+		
+			if (in_array($network, $profile_networks)) {
+				$value_address = essb_option_value('profile_'.$network);
+		
+				if (!empty($value_address)) {
+					$profiles[$network] = $value_address;
+				}
+			}
+		}
+		
+		$options = array(
+				'class' => 'essbfc-profiles-postbar',
+				'size' => $profiles_post_size,
+				'template' => $profiles_post_template,
+				'animation' => $profiles_post_animation,
+				'nospace' => $profiles_post_nospace,
+				'show_text' => $profiles_post_show_text ? 'yes' : 'no',
+				'networks' => $profiles
+		);
+		
+		$profile_bar_buttons = self::draw_social_profiles($options);
+		
+		
+		$profile_bar = '<div class="essbfc-profiles-post essbfc-profile-width-'.esc_attr($profiles_post_width).' essbfc-profiles-post-'.esc_attr($profiles_post_align).' essbfc-content-pos-'.esc_attr($profiles_post_content_pos).'">';
+		if ($profiles_post_content != '') {
+			$profile_bar .= '<div class="user-content">'.$profiles_post_content.'</div>';
+		}
+		
+		$profile_bar .= '<div class="user-buttons">'.$profile_bar_buttons.'</div>';
+		
+		$profile_bar .= '</div>';
+		
+		return $profile_bar;
 	}
 	
 	/**
@@ -101,9 +215,7 @@ class ESSBSocialProfiles {
 	 * @param array $options
 	 * @since 4.0
 	 */
-	public static function draw_social_profiles($options) {
-		
-		
+	public static function draw_social_profiles($options) {		
 		$instance_position = isset ( $options ['position'] ) ? $options ['position'] : '';
 		$instance_new_window = 1;
 		$instance_nofollow = 1;
@@ -115,6 +227,10 @@ class ESSBSocialProfiles {
 		$instance_align = isset($options['align']) ? $options['align'] : '';
 		$instance_size = isset($options['size']) ? $options['size'] : '';
 		$instance_class = isset($options['class']) ? $options['class'] : '';
+		$instance_show_text = isset($options['show_text'])? $options['show_text'] : '';
+		if ($instance_show_text == 'true') {
+			$instance_show_text = 'yes';
+		}
 
 		// compatibility with previous template slugs
 		if (!empty($instance_template)) {
@@ -127,6 +243,10 @@ class ESSBSocialProfiles {
 			if ($instance_template == "color-transparent") {
 				$instance_template = "color";
 			}
+		}
+		
+		if ($instance_show_text == 'yes') {
+			$instance_class .= ' essbfc-profiles-button';
 		}
 		
 		$names = ESSBSocialProfilesHelper::get_text_of_buttons();
@@ -155,7 +275,10 @@ class ESSBSocialProfiles {
 		
 		$code = '';
 		// followers main element
-		$code .= sprintf ( '<div class="essbfc-container essbfc-container-profiles %1$s%2$s%3$s%4$s%5$s%6$s%7$s">', '', $class_columns, $class_template, $class_nospace, $class_position, $class_align, $class_size );
+		$code .= sprintf ( '<div class="essbfc-container essbfc-container-profiles %1$s%2$s%3$s%4$s%5$s%6$s%7$s">', 
+					'', 
+					esc_attr($class_columns), esc_attr($class_template), esc_attr($class_nospace), 
+					esc_attr($class_position), esc_attr($class_align), esc_attr($class_size) );
 		
 		
 		$code .= '<ul>';
@@ -172,9 +295,11 @@ class ESSBSocialProfiles {
 				$social_custom_icon = ' essb_icon_xing';
 			}
 		
-			$code .= sprintf ( '<li class="essbfc-%1$s">', $social_display );
+			$code .= sprintf ( '<li class="essbfc-%1$s">', esc_attr($social_display) );
 			
 			$link_title = isset($names[$social]) ? ' title="'.$names[$social].'"' : '';
+			
+			$network_text = isset($names[$social]) ? $names[$social] : '';
 			
 			$network_nofollow = $link_nofollow;
 			if ($social == 'rss') {
@@ -188,11 +313,14 @@ class ESSBSocialProfiles {
 		
 			$follow_url = $url;
 			if (! empty ( $follow_url )) {
-				$code .= sprintf ( '<a href="%1$s"%2$s%3$s%4$s>', $follow_url, $link_newwindow, $network_nofollow, $link_title );
+				$code .= sprintf ( '<a href="%1$s"%2$s%3$s%4$s>', esc_url($follow_url), $link_newwindow, $network_nofollow, $link_title );
 			}
 		
 			$code .= '<div class="essbfc-network">';
-			$code .= sprintf ( '<i class="essbfc-icon essbfc-icon-%1$s%2$s%3$s"></i>', $social_display, $class_animation, $social_custom_icon );
+			$code .= sprintf ( '<i class="essbfc-icon essbfc-icon-%1$s%2$s%3$s"></i>', esc_attr($social_display), esc_attr($class_animation), esc_attr($social_custom_icon) );
+			if ($instance_show_text == 'yes' && $network_text != '' ) {
+				$code .= '<span class="essbfc-profile-cta">'.$network_text.'</span>';
+			}
 			$code .= '</div>';
 		
 			if (! empty ( $follow_url )) {
@@ -239,8 +367,8 @@ class ESSBSocialProfiles {
  			$single_width = ' style="width:100%"';
  		}
 		
-		$output .= sprintf('<div class="essb-profiles essb-profiles-%1$s essb-profiles-size-%2$s%3$s%4$s">', $button_type, $button_size,
-				$nospace_class, $position_classs);
+		$output .= sprintf('<div class="essb-profiles essb-profiles-%1$s essb-profiles-size-%2$s%3$s%4$s">', esc_attr($button_type), esc_attr($button_size),
+				esc_attr($nospace_class), esc_attr($position_classs));
 		
 		$output .= '<ul class="essb-profile">';
 				

@@ -68,11 +68,11 @@ if (!function_exists('essb_click2chat_register')) {
 			echo '<style type="text/css">';
 			
 			if ($click2chat_bgcolor != '') {
-				echo '.essb-click2chat, .essb-click2chat-window .window-header { background-color: '.$click2chat_bgcolor.';}';
+				echo '.essb-click2chat, .essb-click2chat-window .window-header { background-color: '.esc_attr($click2chat_bgcolor).';}';
 			}
 			
 			if ($click2chat_color != '') {
-				echo '.essb-click2chat, .essb-click2chat-window .window-header { color: '.$click2chat_color.';}';
+				echo '.essb-click2chat, .essb-click2chat-window .window-header { color: '.esc_attr($click2chat_color).';}';
 			}
 			
 			echo '</style>';
@@ -91,11 +91,11 @@ if (!function_exists('essb_click2chat_register')) {
 				echo '<style type="text/css">';
 					
 				if ($button_background != '') {
-					echo '.essb-click2chat-inline { background-color: '.$button_background.';}';
+					echo '.essb-click2chat-inline { background-color: '.esc_attr($button_background).';}';
 				}
 					
 				if ($button_color != '') {
-					echo '.essb-click2chat-inline { color: '.$button_color.';}';
+					echo '.essb-click2chat-inline { color: '.esc_attr($button_color).';}';
 				}
 					
 				echo '</style>';
@@ -129,10 +129,10 @@ if (!function_exists('essb_click2chat_register')) {
 		}
 		
 		if ($shortcode_call) {
-			echo '<div class="essb-click2chat-button position-'.$button_align.'">';
+			echo '<div class="essb-click2chat-button position-'.esc_attr($button_align).'">';
 		}
-		echo '<div class="essb-click2chat essb-click2chat-'.$click2chat_location.($shortcode_call ? ' essb-click2chat-inline': '').'">';
-		echo '<i class="essb_icon_'.$click2chat_icon.'"></i><span>'.$click2chat_text.'</span>';
+		echo '<div class="essb-click2chat essb-click2chat-'.esc_attr($click2chat_location).($shortcode_call ? ' essb-click2chat-inline': '').'">';
+		echo '<i class="essb_icon_'.esc_attr($click2chat_icon).'"></i><span>'.$click2chat_text.'</span>';
 		echo '</div>';
 		
 		if ($shortcode_call) {
@@ -204,12 +204,12 @@ if (!function_exists('essb_click2chat_register')) {
 					$text = str_replace('[url]', $url, $text);
 				}
 				
-				echo '<div class="operator operator-app-'.$app.'" data-app="'.$app.'" data-number="'.$number.'" data-message="'.$text.'">';
+				echo '<div class="operator operator-app-'.esc_attr($app).'" data-app="'.esc_attr($app).'" data-number="'.esc_attr($number).'" data-message="'.esc_attr($text).'">';
 				echo '<div class="image">'.$image.'</div>';
 				echo '<div class="data">';
 				echo '<span class="title">'.$title.'</span>';
 				echo '<span class="name">'.$name.'</span>';
-				echo '<span class="title app"><span>'.($app == 'viber' ? 'Viber' : 'WhatsApp').'</span></span>';
+				echo '<span class="title app"><span>'.($app == 'viber' ? __('Viber', 'essb') : __('WhatsApp', 'essb')).'</span></span>';
 				echo '</div>';
 				echo '</div>';
 			}

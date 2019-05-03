@@ -530,3 +530,38 @@ if (! function_exists ( 'essb_cached_counters_update' )) {
 		return $periods;
 	}
 }
+
+if (! function_exists ( 'essb_optin_designs' )) {
+	function essb_optin_designs() {
+		$periods = array ();
+		$periods ['design1'] = 'Design #1';
+		$periods ['design2'] = 'Design #2';
+		$periods ['design3'] = 'Design #3';
+		$periods ['design4'] = 'Design #4';
+		$periods ['design5'] = 'Design #5';
+		$periods ['design6'] = 'Design #6';
+		$periods ['design7'] = 'Design #7';
+		$periods ['design8'] = 'Design #8';
+		$periods ['design9'] = 'Design #9';
+
+		// load user designs 
+		/**
+		 * Loading the form designer functios that are required to work and deal
+		 * with load save and update. But load only if we have not done than in the past.
+		 */
+		if (! function_exists ( 'essb5_get_form_designs' )) {
+			include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/helpers/formdesigner-helper.php');
+		}
+		
+		$user_designs = essb5_get_form_designs();
+		$count = 0;
+		foreach ($user_designs as $design) {
+			$name = isset($design['name']) ? $design['name'] : 'Untitled Design';
+			
+			$periods['userdesign-'.$count] = $name;
+			$count++;
+		}
+
+		return $periods;
+	}
+}

@@ -8,8 +8,8 @@
  * 
  */
 
-add_shortcode('easy-profiles', 'essb_shortcode_profiles');
-add_shortcode('easy-social-like', 'essb_shortcode_native');
+add_shortcode ('easy-profiles', 'essb_shortcode_profiles');
+add_shortcode ('easy-social-like', 'essb_shortcode_native');
 add_shortcode ('easy-subscribe',  'essb_shortcode_subscribe');
 add_shortcode ('easy-popular-posts', 'essb_shortcode_popular_posts');
 
@@ -17,6 +17,7 @@ add_shortcode ( 'easy-social-share-popup', 'essb_shortcode_share_popup');
 add_shortcode ( 'easy-social-share-flyin', 'essb_shortcode_share_flyin');
 add_shortcode ( 'easy-total-shares', 'essb_shortcode_total_shares');
 add_shortcode ( 'easy-social-share-cta', 'essb_shortcode_share_cta');
+add_shortcode ( 'share-action-button', 'essb_shortcode_share_cta');
 // shortcodes
 add_shortcode ( 'essb', 'essb_shortcode_share');
 add_shortcode ( 'easy-share', 'essb_shortcode_share');
@@ -24,8 +25,45 @@ add_shortcode ( 'easy-social-share-buttons', 'essb_shortcode_share');
 
 add_shortcode ( 'easy-social-share', 'essb_shortcode_share_vk');
 
-add_shortcode( 'essb-click2chat' , 'essb_shortcode_click2chat' );
-add_shortcode( 'easy-click2chat' , 'essb_shortcode_click2chat' );
+add_shortcode ( 'essb-click2chat' , 'essb_shortcode_click2chat' );
+add_shortcode ( 'easy-click2chat' , 'essb_shortcode_click2chat' );
+
+add_shortcode ( 'pinterest-image', 'essb_pinterest_image');
+add_shortcode ( 'pinterest-gallery', 'essb_pinterest_gallery');
+
+add_shortcode ( 'profile-bar', 'essb_inline_profile_bar');
+
+function essb_inline_profile_bar() {
+	// checking if the module is in use. Otherwise we need to load all that is required for work
+	if (!defined('ESSB3_SOCIALPROFILES_ACTIVE')) {
+		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles.php');
+		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles-helper.php');
+		define('ESSB3_SOCIALPROFILES_ACTIVE', 'true');
+		$template_url = ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/essb-followers-counter.min.css';
+		essb_resource_builder()->add_static_footer_css($template_url, 'essb-social-followers-counter');
+	}
+	
+	return ESSBSocialProfiles::draw_social_profiles_bar();
+}
+
+function essb_pinterest_gallery($attrs = array()) {
+	$defaults = array('columns' => '', 'images' => '', 'message' => '', 'classes' => '', 'spacing' => '', 'adjust' => '');
+	$attrs = shortcode_atts( $defaults , $attrs );
+
+	essb_depend_load_function('essb5_generate_pinterest_gallery', 'lib/modules/pinterest-pro/pinterest-pro-shortcodes.php');
+
+	return essb5_generate_pinterest_gallery($attrs);
+}
+
+
+function essb_pinterest_image($attrs = array()) {
+	$defaults = array('type' => '', 'image' => '', 'message' => '', 'custom_image' => '', 'align' => '');
+	$attrs = shortcode_atts( $defaults , $attrs );
+	
+	essb_depend_load_function('essb5_generate_pinterest_image', 'lib/modules/pinterest-pro/pinterest-pro-shortcodes.php');
+	
+	return essb5_generate_pinterest_image($attrs);
+}
 
 function essb_shortcode_share_cta($attrs = array()) {
 	$defaults = array('text' => '', 'icon' => '', 'style' => '', 'background' => '', 'color' => '', 'stretched' => '', 'shortcode' => 'true', 'total' => '');

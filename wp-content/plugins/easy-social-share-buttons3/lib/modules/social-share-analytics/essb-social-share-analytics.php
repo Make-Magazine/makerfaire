@@ -76,9 +76,30 @@ var essb_handle_stats = function(oService, oPostID, oInstance) {
 				
 			}},\'json\');
 		}
+	};	
 	
+var essb_log_stats_only = function(service, postId, position) {
+	var instance_mobile = false;
 
-};	
+	if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent) ) {
+		instance_mobile = true;
+	}
+	if (typeof(essb_settings) != "undefined") {
+		jQuery.post(essb_settings.ajax_url, {
+			\'action\': \'essb_stat_log\',
+			\'post_id\': postId,
+			\'service\': service,
+			\'template\': position,
+			\'mobile\': instance_mobile,
+			\'position\': position,
+			\'button\': position,
+			\'counter\': false,
+			\'nonce\': essb_settings.essb3_nonce
+		}, function (data) { if (data) {
+				
+		}},\'json\');
+	}
+};		
 		';
 		
 		return $script;

@@ -66,8 +66,19 @@ class ESSBDisplayMethodPoint {
 		if ($point_style != '') $point_style = ' style="'.$point_style.'"';
 		if ($total_style != '') $total_style = ' style="'.$total_style.'"';
 		
+		$responsive_class = '';
 		
-		$output .= '<div class="essb-point essb-point-'.$point_position.' essb-point-'.$point_shape.' '.$point_animation.'" id="essb-point" data-trigger-scroll="'.($point_open_end).'" data-point-type="'.$point_display_style.'" data-autoclose="'.$point_autoclose.'">';
+		if (essb_option_bool_value('point_mobile_deactivate')) {
+			$responsive_class .= ' essb_mobile_hidden';
+		}
+		if (essb_option_bool_value('point_tablet_deactivate')) {
+			$responsive_class .= ' essb_tablet_hidden';
+		}
+		if (essb_option_bool_value('point_desktop_deactivate')) {
+			$responsive_class .= ' essb_desktop_hidden';
+		}
+		
+		$output .= '<div class="essb-point essb-point-'.esc_attr($point_position).' essb-point-'.esc_attr($point_shape).' '.esc_attr($point_animation).esc_attr($responsive_class).'" id="essb-point" data-trigger-scroll="'.esc_attr($point_open_end).'" data-point-type="'.esc_attr($point_display_style).'" data-autoclose="'.esc_attr($point_autoclose).'">';
 		$output .= '<i class="essbpb-share essb_icon_share"'.$point_style.'></i>';
 		
 		if ($point_display_total) {
@@ -76,7 +87,7 @@ class ESSBDisplayMethodPoint {
 				
 		$output .= '</div>';
 		
-		$output .= '<div class="essb-point-share-buttons essb-point-share-buttons-'.$point_position.' essb-point-share-buttons-'.$point_display_style.'">';
+		$output .= '<div class="essb-point-share-buttons essb-point-share-buttons-'.esc_attr($point_position).' essb-point-share-buttons-'.esc_attr($point_display_style).'">';
 		
 		$output .= '<div class="essb-point-share-buttons-content">';
 		
@@ -111,7 +122,7 @@ class ESSBDisplayMethodPoint {
 				
 				$output .= '<div class="essb-point-prevnext-post">';
 				$output .= '<div class="essb-point-prevnext-post-title">';
-				$output .= '<a href="'.$post_address.'"><i class="essbpb-prev"></i><span>'.get_the_title( $prev_post->ID).'</span></a>';
+				$output .= '<a href="'.esc_url($post_address).'"><i class="essbpb-prev"></i><span>'.get_the_title( $prev_post->ID).'</span></a>';
 				$output .= '</div>';
 				
 				$output .= '<div class="essb-point-prevnext-post-category">';
@@ -152,7 +163,7 @@ class ESSBDisplayMethodPoint {
 				$post_address = get_permalink( $next_post->ID );
 				$output .= '<div class="essb-point-prevnext-post">';
 				$output .= '<div class="essb-point-prevnext-post-title">';
-				$output .= '<a href="'.$post_address.'"><i class="essbpb-next"></i><span>'.get_the_title( $next_post->ID).'</span></a>';
+				$output .= '<a href="'.esc_url($post_address).'"><i class="essbpb-next"></i><span>'.get_the_title( $next_post->ID).'</span></a>';
 				$output .= '</div>';
 				
 				$output .= '<div class="essb-point-prevnext-post-category">';
@@ -179,7 +190,7 @@ class ESSBDisplayMethodPoint {
 				$working_post_content .= '&hellip;';
 				
 				$output .= '<div class="essb-point-prevnext-post-desc">';
-				$output .= '<a href="'.$post_address.'">'.$working_post_content.'</a>';
+				$output .= '<a href="'.esc_url($post_address).'">'.$working_post_content.'</a>';
 				$output .= '</div>';
 				
 				$output .= '</div>';

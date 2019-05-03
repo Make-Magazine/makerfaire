@@ -192,7 +192,7 @@ class ESSBNativeButtonsHelper {
 		
 		foreach ($active_buttons as $network) {
 			$skinned_class = ($skinned_buttons) ? " essb_native_item_skinned" : "";
-			$output .= sprintf('<li class="essb_item essb_native_item essb_native_item_%1$s%2$s">', $network, $skinned_class);
+			$output .= sprintf('<li class="essb_item essb_native_item essb_native_item_%1$s%2$s">', esc_attr($network), esc_attr($skinned_class));
 			
 			if (self::$essb_spb->is_active($network)) {
 				$button_code = self::single_native_button($network, $settings, $counters, $skinned_buttons);
@@ -393,10 +393,10 @@ class ESSBNativeButtonsHelper {
 		}
 		
 		if ($facebook_type == "like") {
-			$code .= '<div class="fb-like" data-href="'.$facebook_url.'" data-layout="'.$button_size.'" data-action="like" data-show-faces="false" data-share="'.$fb_share_tag.'" data-width="292" style="vertical-align: top; zoom: 1;display: inline;"></div>';
+			$code .= '<div class="fb-like" data-href="'.esc_url($facebook_url).'" data-layout="'.esc_attr($button_size).'" data-action="like" data-show-faces="false" data-share="'.$fb_share_tag.'" data-width="292" style="vertical-align: top; zoom: 1;display: inline;"></div>';
 		}
 		else {
-			$code .= '<div class="fb-follow" data-href="'.$facebook_url.'" data-layout="'.$button_size.'" data-show-faces="false"></div>';
+			$code .= '<div class="fb-follow" data-href="'.esc_url($facebook_url).'" data-layout="'.esc_attr($button_size).'" data-show-faces="false"></div>';
 		}
 
 		$code .= '</div>';
@@ -411,13 +411,11 @@ class ESSBNativeButtonsHelper {
 		$code = "";	
 		
 		if ($google_type == "plus") {
-			$code = '<div class="g-plusone" data-size="'.($size == 'big' ? 'tall' : 'medium').'" data-href="' . $google_url . '" '.($counters ? '' : 'data-annotation="none"').'></div>';
+			$code = '<div class="g-plusone" data-size="'.($size == 'big' ? 'tall' : 'medium').'" data-href="' . esc_url($google_url) . '" '.($counters ? '' : 'data-annotation="none"').'></div>';
 		}
 		else {
-			$code .= '<div class="g-follow" data-size="'.($size == 'big' ? 'tall' : 'medium').'" data-href="' . $google_url . '" '.($counters ? '' : 'data-annotation="none"').' data-rel="publisher"></div>';		
+			$code .= '<div class="g-follow" data-size="'.($size == 'big' ? 'tall' : 'medium').'" data-href="' . esc_url($google_url) . '" '.($counters ? '' : 'data-annotation="none"').' data-rel="publisher"></div>';		
 		}
-		
-		//print 'data-size="'.($size == 'big' ? 'tall' : 'medium').'" data-href="' . $google_url . '" '.($counters ? '' : 'data-annotation="none"');
 		
 		return $code;
 	}
@@ -432,11 +430,10 @@ class ESSBNativeButtonsHelper {
 		$code = '';
 		
 		if ($twitter_type == 'follow') {
-			//$code = '<iframe allowtransparency="true" frameborder="0" scrolling="no" src="//platform.twitter.com/widgets/follow_button.html?screen_name='.$twitter_user.'&show_count='.($counters ? "true" :"false").'&show_screen_name=false&lang=en" style="height:20px;"></iframe>';
-			$code = '<a href="https://twitter.com/'.$twitter_user.'" class="twitter-follow-button" '.($counters ? "" : 'data-show-count="false"').' data-lang="en" data-show-screen-name="false">Follow</a>';
+			$code = '<a href="https://twitter.com/'.esc_attr($twitter_user).'" class="twitter-follow-button" '.($counters ? "" : 'data-show-count="false"').' data-lang="en" data-show-screen-name="false">Follow</a>';
 		}
 		else {
-			$code = '<a href="https://twitter.com/share" class="twitter-share-button" data-via="'.$twitter_user.'" data-lang="'.'en'.'" '.($counters ? "" : 'data-count="none"').' data-text="'.$button_text.'" data-url="'.$button_url.'">Tweeter</a>';
+			$code = '<a href="https://twitter.com/share" class="twitter-share-button" data-via="'.esc_attr($twitter_user).'" data-lang="'.'en'.'" '.($counters ? "" : 'data-count="none"').' data-text="'.esc_attr($button_text).'" data-url="'.esc_url($button_url).'">Tweeter</a>';
 		}
 		
 		return $code;

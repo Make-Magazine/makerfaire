@@ -53,7 +53,7 @@ if (!function_exists('essb_skype_register')) {
 		if ($skype_type == '') { $skype_type = 'bubble'; }
 		$skype_text = essb_option_value('skype_text');
 		
-		echo '<span class="skype-button '.$skype_type.'" data-contact-id="'.$skype_user.'" data-text="'.$skype_text.'"></span>
+		echo '<span class="skype-button '.esc_attr($skype_type).'" data-contact-id="'.esc_attr($skype_user).'" data-text="'.esc_attr($skype_text).'"></span>
 <script src="https://swc.cdn.skype.com/sdk/v1/sdk.min.js"></script>';
 		
 	}

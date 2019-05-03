@@ -218,7 +218,7 @@ class ESSBOptionsStructureHelper {
 		);
 	}
 
-	public static function submenu_item ($tab_id, $id, $title, $icon = 'default', $action = 'menu', $level2 = '') {
+	public static function submenu_item ($tab_id, $id, $title, $icon = 'default', $action = 'menu', $level2 = '', $related_menu = '') {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_sidebar_sections[$tab_id]['fields'][] = array(
 				'field_id' => $id,
@@ -226,7 +226,8 @@ class ESSBOptionsStructureHelper {
 				'icon' => $icon,
 				'type' => 'sub_menu_item',
 				'action' => $action,
-				'level2' => $level2
+				'level2' => $level2,
+				'related_menu' => $related_menu
 		);
 
 		if ($action == 'menu') {
@@ -234,11 +235,12 @@ class ESSBOptionsStructureHelper {
 		}
 	}
 
-	public static function field_heading($tab_id, $menu_id, $level = 'heading1', $title = '') {
+	public static function field_heading($tab_id, $menu_id, $level = 'heading1', $title = '', $desc = '') {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'type' => $level,
-				'title' => $title
+				'title' => $title,
+				'description' => $desc
 		);
 
 	}
@@ -564,6 +566,16 @@ class ESSBOptionsStructureHelper {
 				'element_options' => $element_options
 		);
 	}
+	
+	public static function field_component($tab_id, $menu_id, $id, $row_wrap = 'false', $element_options = array()) {
+		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
+		$essb_section_options[$tab_id][$menu_id][] = array(
+				'id' => $id,
+				'type' => 'component',
+				'row_wrap' => $row_wrap,
+				'element_options' => $element_options
+		);
+	}
 
 	//								array ('type' => 'section_start', 'title' => __('Section Start', 'essb'), 'description' => 'Demo section description'),
 	public static function field_section_start ($tab_id, $menu_id, $title, $description, $recommended = '') {
@@ -816,21 +828,21 @@ class ESSBOptionsStructureHelper {
 		);
 	}
 
-	public static function field_template_select ($tab_id, $menu_id, $id, $position = '') {
+	public static function field_template_select ($tab_id, $menu_id, $id, $position = '', $buttons = '') {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'id' => $id,
 				'type' => 'template-select',
-				'element_options' => array('position' => $position)
+				'element_options' => array('position' => $position, 'buttons' => $buttons)
 		);
 	}
 
-	public static function field_buttonstyle_select ($tab_id, $menu_id, $id, $position = '') {
+	public static function field_buttonstyle_select ($tab_id, $menu_id, $id, $position = '', $pinterest_mode = false) {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'id' => $id,
 				'type' => 'buttonstyle-select',
-				'element_options' => array('position' => $position)
+				'element_options' => array('position' => $position, 'pinterest_mode' => $pinterest_mode)
 		);
 	}
 

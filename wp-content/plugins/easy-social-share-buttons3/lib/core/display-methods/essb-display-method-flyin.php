@@ -31,6 +31,10 @@ class ESSBDisplayMethodFlyin {
 		
 		$flyin_trigger_oncomment = ESSBOptionValuesHelper::options_bool_value($options, 'flyin_display_comment') ? " essb-flyin-oncomment" : "";
 		
+		// if the message is set to appear after comment it will have automatically manual display mode
+		if (ESSBOptionValuesHelper::options_bool_value($options, 'flyin_display_comment')) {
+			$flyin_user_manual_show = true;
+		}
 			
 		if ($is_shortcode) {
 			$shortcode_window_title = isset($shortcode_options['flyin_title']) ? $shortcode_options['flyin_title'] : '';
@@ -53,15 +57,31 @@ class ESSBDisplayMethodFlyin {
 		}
 			
 		if (!empty($flyin_user_message)) {
+			$flyin_user_message = stripslashes($flyin_user_message);
+			$flyin_user_message = do_shortcode($flyin_user_message);
 			$flyin_user_message = essb_post_details_to_content($flyin_user_message);
 		}
 		if (!empty($flyin_window_title)) {
+			$flyin_window_title = stripslashes($flyin_window_title);
 			$flyin_window_title = essb_post_details_to_content($flyin_window_title);
+		}
+		
+		if (essb_option_bool_value('flyin_mobile_deactivate')) {
+			$flyin_position .= ' essb_mobile_hidden';
+		}
+		if (essb_option_bool_value('flyin_tablet_deactivate')) {
+			$flyin_position .= ' essb_tablet_hidden';
+		}
+		if (essb_option_bool_value('flyin_desktop_deactivate')) {
+			$flyin_position .= ' essb_desktop_hidden';
 		}
 			
 		$output .= sprintf('<div class="essb-flyin%10$s essb-flyin-%11$s" data-width="%1$s" data-load-percent="%2$s" data-load-end="%3$s" data-load-manual="%4$s" data-load-time="%5$s" data-close-after="%6$s" data-close-hide="%7$s" data-close-hide-all="%8$s" data-postid="%9$s">',
-				$flyin_user_width, $flyin_user_percent, $flyin_display_end, $flyin_user_manual_show, $flyin_window_popafter,
-				$flyin_window_close_after, $flyin_user_notshow_onclose, $flyin_user_notshow_onclose_all, get_the_ID(), $flyin_trigger_oncomment, $flyin_position);
+				esc_attr($flyin_user_width), esc_attr($flyin_user_percent), esc_attr($flyin_display_end), 
+				esc_attr($flyin_user_manual_show), esc_attr($flyin_window_popafter),
+				esc_attr($flyin_window_close_after), esc_attr($flyin_user_notshow_onclose), 
+				esc_attr($flyin_user_notshow_onclose_all), esc_attr(get_the_ID()), 
+				esc_attr($flyin_trigger_oncomment), esc_attr($flyin_position));
 		$output .= '<a href="#" class="essb-flyin-close" onclick="essb.flyin_close(); return false;"></a>';
 		$output .= '<div class="essb-flyin-content">';
 		

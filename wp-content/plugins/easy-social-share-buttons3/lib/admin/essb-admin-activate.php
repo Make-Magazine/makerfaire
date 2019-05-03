@@ -39,14 +39,13 @@ class ESSBAdminActivate {
 			return;
 		}
 		
-		$options_slug = essb_show_welcome() ? 'essb_redirect_social' : 'essb_options';
+		$options_slug = 'essb_options';
 		
 		$dismiss_url = esc_url_raw(add_query_arg(array('dismissactivate' => 'true'), admin_url ("admin.php?page=".$options_slug)));
-		//$update_url = esc_url_raw(admin_url ("admin.php?page=essb_redirect_update&tab=update"));
 		
 		$dismiss_addons_button = '<a href="'.$dismiss_url.'"  text="' . __ ( 'Close this message', 'essb' ) . '" class="status_button float_right" style="margin-right: 5px;"><i class="fa fa-close"></i>&nbsp;' . __ ( 'Close this message', 'essb' ) . '</a>';
 		echo '<div class="essb-header-status">';		
-		ESSBOptionsFramework::draw_hint(__('Activate Easy Social Share Buttons for WordPress', 'essb'), sprintf('Hello! Would you like to receive automatic updates, access to free extensions library, access to ready made presents and unlock premium support? Please <a href="admin.php?page=essb_redirect_update&tab=update">activate your copy</a> of Easy Social Share Buttons for WordPress %1$s', $dismiss_addons_button), 'fa fa-lock', 'status essb-status-activate');
+		ESSBOptionsFramework::draw_hint(__('Activate Easy Social Share Buttons for WordPress', 'essb'), sprintf('Hello! Would you like to receive automatic updates, access to extensions library, access to demo configurations and unlock premium support? Please <a href="admin.php?page=essb_redirect_update&tab=update">activate your copy</a> of Easy Social Share Buttons for WordPress %1$s', $dismiss_addons_button), 'fa fa-lock', 'status essb-status-activate');
 		echo '</div>';
 		
 	}
@@ -58,33 +57,18 @@ class ESSBAdminActivate {
 		}	
 		
 		$dismiss_subscribe = isset($_REQUEST['dismiss_subscribe']) ? $_REQUEST['dismiss_subscribe'] : '';
-		if ($dismiss_subscribe == 'true') {
-			//self::dismiss_notice_subscribe();
-		}
 		// notice display
 		if (self::should_display_notice_translate()) {
 			self::notice_translate();
-		}
-		if (self::should_display_notice_subscribe()) {
-			//self::notice_subscribe();
 		}
 	}
 	
 	public static function should_display_notice_translate() {
 		return false;
-		
-		/*$notice_dismissed = get_option('essb3-translate-notice');
-		
-		if ($notice_dismissed === false) {
-			return true;
-		}
-		else {
-			return false;
-		}*/
 	}
 	
 	public static function dismiss_notice_translate() {
-		update_option('essb3-translate-notice', 'true');
+		update_option('essb3-translate-notice', 'true', 'no');
 	}
 	
 	public static function notice_translate() {
@@ -98,25 +82,16 @@ class ESSBAdminActivate {
 	
 	public static function should_display_notice_subscribe() {
 		return false;
-		/*$notice_dismissed = get_option('essb3-subscribe-notice');
-	
-		if ($notice_dismissed === false) {
-			return true;
-		}
-		else {
-			return false;
-		}*/
 	}
 	
 	public static function dismiss_notice_subscribe() {
-		update_option('essb3-subscribe-notice', 'true');
+		update_option('essb3-subscribe-notice', 'true', 'no');
 	}
 	
 	public static function notice_subscribe() {
 		$code = '<div class="essb-admin-widget">';
 		$code .= '<form action="//appscreo.us13.list-manage.com/subscribe/post?u=a1d01670c240536f6a70e7778&amp;id=c896311986" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>';
 		$code .= '<div class="" id="title-wrap" style="margin-top: 5px;">';
-		//print '<label class="screen-reader-text prompt" for="mce-EMAIL" id="title-prompt-text">Enter your email</label>';
 		$code .= '<input type="email" name="EMAIL" id="mce-EMAIL" autocomplete="off" placeholder="Enter your email" class="input-element" style="width: 250px; border-radius: 3px; font-size: 12px; padding: 3px;" />';
 		$code .= '<input type="submit" name="subscribe" id="mc-embedded-subscribe" class="essb-btn" value="Subscribe" style="font-size:11px; box-shadow: none;">';
 		$code .= '</div>';
@@ -164,20 +139,14 @@ class ESSBAdminActivate {
 				$display_text = ($cnt > 1) ? $plural_text : $single_text;
 				$display_text = $cnt. ' '.$display_text;
 				
-				if (essb_show_welcome()) {
-					$dismiss_url = esc_url_raw(add_query_arg(array('dismiss' => 'true', 'addon' => $dismiss_keys), admin_url ("admin.php?page=essb_redirect_social&tab=social")));
-				}
-				else {
-					$dismiss_url = esc_url_raw(add_query_arg(array('dismiss' => 'true', 'addon' => $dismiss_keys), admin_url ("admin.php?page=essb_options")));
-				}
+
+				$dismiss_url = esc_url_raw(add_query_arg(array('dismiss' => 'true', 'addon' => $dismiss_keys), admin_url ("admin.php?page=essb_options")));
 				$all_addons_button = '<a href="' . admin_url ( "admin.php?page=essb_redirect_extensions&tab=extensions" ) . '"  text="' . __ ( 'Extensions', 'essb' ) . '" class="status_button" style="margin-right: 10px;"><i class="dashicons dashicons-admin-plugins" style="margin-right: 3px;"></i>&nbsp;' . __ ( 'View list of all extensions', 'essb' ) . '</a>';
 				
 				$dismiss_addons_button = '<a href="'.$dismiss_url.'"  text="' . __ ( 'Hide notice', 'essb' ) . '" class="status_button"><i class="dashicons dashicons-no-alt"></i>&nbsp;'.__('Hide message', 'essb').'</a>';
 				
 				$buttons_container = '<div style="text-align: right; margin-top: 5px;">'.$all_addons_button.$dismiss_addons_button.'</div>';
-				
-				
-				//printf ( '<div class="updated fade"><div><div style="padding-top: 10px; padding-bottom: 10px; display: inline-block; width:%4$s;">%1$s%2$s</div><div style="display: inline-block; width:%5$s; text-align: right; vertical-align: top; margin-top:5px;">%3$s</div></div></div>', $display_text, $new_addons_list, $dismiss_addons_button, '95%', '5%' );
+					
 				echo '<div class="essb-header-status">';
 				
 				ESSBOptionsFramework::draw_hint($display_text, sprintf('%1$s %2$s', $new_addons_list, $buttons_container), 'dashicons dashicons-admin-plugins', 'status essb-status-addon fade essb-status-global-addons');

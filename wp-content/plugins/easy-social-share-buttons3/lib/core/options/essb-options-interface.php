@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Class deprecated. Pending remove from the core package as soon as we are sure that there is no
+ * developer referring to functions inside it
+ * 
+ * @author appscreo
+ *
+ */
+
 class ESSBOptionsInterface {
 	
 	public static function draw_form_start($custom = false, $group = '', $without_menu = false) {
@@ -12,12 +20,7 @@ class ESSBOptionsInterface {
 		$active_subsection = sanitize_text_field($active_subsection);
 		
 		$admin_template = '';
-		/*$admin_template = ESSBOptionValuesHelper::options_value($essb_options, 'admin_template');
-		if (!empty($admin_template)) {
-			$admin_template = "essb-template-".$admin_template;
-		}*/
-		
-		//echo '<div id="essb-scroll-top"></div>';
+
 		echo '<script type="text/javascript">var loadedEditorControls = {};</script>';
 		echo '<form id="essb_options_form" enctype="multipart/form-data" method="post" action="">';
 		if ($custom && !empty($group)) {

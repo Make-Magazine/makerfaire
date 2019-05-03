@@ -247,10 +247,11 @@ function essb_short_url($url, $provider, $post_id = '', $bitly_user = '', $bitly
 
 	$short_url = '';
 	
-	// TODO: test this change
-	//if (is_preview()) {
-	//	return $url;
-	//}
+	if (essb_option_bool_value('deactivate_shorturl_preview')) {
+		if (is_preview()) {
+			return $url;
+		}
+	}
 
 	if ($provider == 'ssu') {
 		if (!defined('ESSB3_SSU_VERSION')) {

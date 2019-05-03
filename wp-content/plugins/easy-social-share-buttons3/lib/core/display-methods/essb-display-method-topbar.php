@@ -43,12 +43,23 @@ class ESSBDisplayMethodTopBar {
 			$topbar_usercontent = essb_post_details_to_content($topbar_usercontent);
 		}
 			
+		$responsive_class = '';
+		
+		if (essb_option_bool_value('topbar_mobile_deactivate')) {
+			$responsive_class .= ' essb_mobile_hidden';
+		}
+		if (essb_option_bool_value('topbar_tablet_deactivate')) {
+			$responsive_class .= ' essb_tablet_hidden';
+		}
+		if (essb_option_bool_value('topbar_desktop_deactivate')) {
+			$responsive_class .= ' essb_desktop_hidden';
+		}
 		
 		$ssbuttons = $share_buttons;
 			
 		$output = '';
 			
-		$output .= '<div class="essb_topbar">';
+		$output .= '<div class="essb_topbar'.esc_attr($responsive_class).'">';
 		$output .= '<div class="essb_topbar_inner">';
 			
 		if (!$topbar_content_area) {
