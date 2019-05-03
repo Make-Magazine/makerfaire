@@ -1,0 +1,28 @@
+img.lazyload{
+    display: block;
+    position:relative;
+    font-size:0px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+img.lazyloading{
+    max-height: 0px;
+    height: 0px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+@supports (--custom:property) {
+    [style*='--aspect-ratio'].lazyload,[style*='--aspect-ratio'].lazyloading{
+        padding-bottom: calc(100% / (var(--aspect-ratio)));
+    }
+}
+.lazyload,
+.lazyloading {
+}
+.lazyload,
+.lazyloaded {
+    opacity: 1;
+}
+.wp-block-gallery.is-cropped .blocks-gallery-item img.lazyload {
+    height:auto;
+}

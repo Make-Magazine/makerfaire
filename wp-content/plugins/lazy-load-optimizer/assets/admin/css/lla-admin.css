@@ -1,0 +1,25 @@
+.range-slider {
+    background-color: rgba(0,0,0,0.1);
+    height: 5px;
+    width: 75%;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    -webkit-transition: background .5s;
+    -moz-transition: background .5s;
+    transition: background .5s;
+    /* -webkit-appearance: none; */
+}
+
+.customize-control input[type=number].range-slider-value {
+    width: 20%;
+    height: 28px;
+    text-align: center;
+    margin-left: 2%;
+    border-radius: 4px;
+    padding: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    -moz-appearance: textfield;
+}
