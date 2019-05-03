@@ -103,7 +103,7 @@ function register_entries_sitemap() {
       $forms = GFAPI::get_forms(true, false);
       
       foreach ($forms as $form) {
-         if (in_array($form['form_type'],$form_types)) {
+         if (isset($form['form_type']) && in_array($form['form_type'],$form_types)) {
             $formId = $form['fields'][0]['formId'];
             $wpseo_sitemaps->register_sitemap("form-$formId-entries", 'generate_entries_sitemap');
          }

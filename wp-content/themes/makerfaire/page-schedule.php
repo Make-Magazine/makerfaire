@@ -23,8 +23,16 @@ if($displayNav){
 			?>
 		</div>
 		<div class="content col-md-9">
-<?php } ?>
-			
+<?php } 
+
+//set faire
+$post_data = get_post($post->post_parent);
+$parent_slug = $post_data->post_name;
+
+$sql = 'select faire from wp_mf_faire where url_path="'.$parent_slug.'";';
+$faire = $wpdb->get_var($sql);
+
+?>			
 <script type="text/javascript">
 printScheduleEvent = function() {
 	 var dataObject = {
@@ -44,12 +52,13 @@ calendarDownloadEvent = function() {
 if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new schedule page
    create_calendar($schedule_ids_trimmed);
    ?>
-   <input type="hidden" id="forms2use" value="<?php echo $schedule_ids_trimmed; ?>" />
-   <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
-   <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
+   
 
    <div id="page-schedule" class="schedule-table <?php if($displayNav){ ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
-		
+		<input type="hidden" id="forms2use" value="<?php echo $schedule_ids_trimmed; ?>" />
+      <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
+      <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
+      <input type="hidden" id="faire" value="<?php echo $faire;?>" />
 		<?php 
 			if (have_posts()) {
 			?>
@@ -110,7 +119,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 										</li>
 
 										<li ng-repeat="schedule in schedules | filter:schedSearch | dateFilter: filterdow |  orderBy: 'type' | unique: 'type'">
-											<a class="pointer-on-hover" ng-click="schedSearch.type = schedule.type">{{ schedule.type}}</a>
+											<a class="pointer-on-hover" ng-click="schedSearch.type = schedule.type;">{{ schedule.type}}</a>
 										</li>
 									</ul>
 								</div>                  
@@ -171,7 +180,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 								<i class="fa fa-circle fa-stack-2x"></i>
 								<i class="fa fa-print fa-stack-1x fa-inverse"></i>
 							</span>
-							Print full schedule
+							Print filtered schedule
 						</a>
 					</div>
             </div>

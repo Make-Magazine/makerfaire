@@ -329,9 +329,10 @@ function getSchedule($formIDs) {
            /* code to hide scheduled items as they occur
              . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " */
            . "order by subarea.sort_order";
-
+   
+   $schedule = $wpdb->get_results($query);
    //retrieve project name, img (22), maker list, topics
-   foreach ($wpdb->get_results($query) as $row) {
+   foreach ($schedule as $row) {
       $form = GFAPI::get_form($row->form_id);
       $form_type = $form['form_type'];
 
