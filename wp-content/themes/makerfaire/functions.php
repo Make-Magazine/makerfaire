@@ -171,7 +171,6 @@ function load_scripts() {
    wp_enqueue_style('font-awesome', get_stylesheet_directory_uri() . '/css/libs/Font-Awesome-4.4.0/css/font-awesome.min.css', false);
 	wp_enqueue_style('linearicons', 'https://cdn.linearicons.com/free/1.0.0/icon-font.min.css', '', 'all' );
    wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css');
-   wp_enqueue_style('ytv', get_stylesheet_directory_uri() . '/css/ytv.css');
 
    wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
    wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css');
@@ -193,7 +192,6 @@ function load_scripts() {
 
    // Other libraries:
    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
-   wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
    wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js');
 	wp_enqueue_script('universal', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/js/min/universal.min.js', array(), $my_version, true);
 
