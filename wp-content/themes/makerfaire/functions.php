@@ -212,10 +212,17 @@ function load_scripts() {
 			   'wp_user_email' => wp_get_current_user()->user_email,
         )
       );
+/* jQuery can't be moved to footer as too many inline js rely on jquery without a on load event
+	remove_action('wp_head', 'wp_print_scripts');
+	remove_action('wp_head', 'wp_print_head_scripts', 9);
+	remove_action('wp_head', 'wp_enqueue_scripts', 1);
+
+	add_action('wp_footer', 'wp_print_scripts', 1);
+	add_action('wp_footer', 'wp_enqueue_scripts', 0);
+	add_action('wp_footer', 'wp_print_head_scripts', 5);
 }
 
-add_action('wp_enqueue_scripts', 'load_scripts');
-
+add_action('wp_enqueue_scripts', 'load_scripts'); */
 
 
 //Load custom gravity forms js for barnes and noble forms
