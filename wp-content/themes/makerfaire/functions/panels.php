@@ -936,7 +936,7 @@ function getSliderPanel(){
 			$return .= '<a href="'. $slide['slide_link'] .'">';
 		}
 		$return .= '     <div class="item slide">
-		                   <div class="slide-image-section lazyload" data-bg="' . $imageObj['url'] . '">';
+		                   <div class="slide-image-section lazyload" data-bg="' . legacy_get_fit_remote_image_url($imageObj['url'],435,400) . '">';
 		if(!empty($slide['slide_title']) && get_sub_field("column_number") > 1 ) {
 			$return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
 		}
