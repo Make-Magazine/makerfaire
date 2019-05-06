@@ -132,7 +132,7 @@ function getFeatMkPanel($row_layout) {
          // loop through the rows of data
          while (have_rows('featured_makers')) {
             the_row();
-            $url = legacy_get_fit_remote_image_url(get_sub_field('maker_image')['url'],374,337;
+            $url = legacy_get_fit_remote_image_url(get_sub_field('maker_image')['url'],374,337);
             $makerArr[] = array('image' => $url,
                'name' => get_sub_field('maker_name'),
                'desc' => get_sub_field('maker_short_description'),
