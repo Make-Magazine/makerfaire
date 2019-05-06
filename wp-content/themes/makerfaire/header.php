@@ -111,27 +111,7 @@
   })(window,document,'script','dataLayer','GTM-PCDDDV');</script>
   <!-- End Google Tag Manager -->
   <script type="text/javascript">document.body.className = document.body.className.replace('no-js','js');</script>
-<!-- ====== Topbar ====== -->
-<!-- TOP BRAND BAR
-<div class="hidden-xs top-header-bar-brand">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-3">
-      </div>
-      <div class="col-sm-6 text-center">
-        <p class="header-make-img"><a href="//makezine.com?utm_source=makerfaire.com&utm_medium=brand+bar&utm_campaign=explore+all+of+make" target="_blank">Explore all of <img src="<?php //echo get_stylesheet_directory_uri(); ?>/img/make_logo.png" alt="Make: Makezine Logo" /></a></p>
-      </div>
-    </div>
-  </div>
-</div> -->
 
-<!-- div id="search-modal"> SEARCH FEATURE TO BE CONTINUED
-  <form role="search" method="get" class="search-form" action="/">
-      <label class="sb-search-label" for="search">Search</label>
-        <input class="sb-search-input search-field" placeholder="What are you searching for?" value="" name="s" id="search" title="" type="text">
-        <input class="sb-search-submit" name="submit" value="Search" type="submit">
-  </form>
-</div> -->
 <a name="topofpage"></a>
 <header id="universal-nav" class="universal-nav">
 
@@ -166,17 +146,7 @@
         ?>
         </div>
     </div>
-  </div><!-- .nav-level-2 -->
-  <!--<div class="container search-container">
-    <ul class="search-button">
-        <li>
-          <div id="sb-search" class="sb-search">
-            <i class="fa fa-search" aria-hidden="true"></i>
-          </div>
-        </li>
-    </ul>
-  </div>-->
-
+  </div>
 
   <div id="nav-flyout">
    <?php
