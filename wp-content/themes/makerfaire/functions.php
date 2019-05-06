@@ -219,10 +219,10 @@ function load_scripts() {
 
 	add_action('wp_footer', 'wp_print_scripts', 1);
 	add_action('wp_footer', 'wp_enqueue_scripts', 0);
-	add_action('wp_footer', 'wp_print_head_scripts', 5);
+	add_action('wp_footer', 'wp_print_head_scripts', 5);*/
 }
 
-add_action('wp_enqueue_scripts', 'load_scripts'); */
+add_action('wp_enqueue_scripts', 'load_scripts'); 
 
 
 //Load custom gravity forms js for barnes and noble forms
