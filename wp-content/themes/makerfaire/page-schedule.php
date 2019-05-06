@@ -191,7 +191,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                      <div class="row sched-row">
                         <div class="sched-col-1">
                            <a href="/maker/entry/{{schedule.id}}">
-                              <div class="sched-img" style="background-image: url({{schedule.thumb_img_url}});"></div>
+                              <div class="sched-img lazyload" data-bg="{{schedule.thumb_img_url}}"></div>
                            </a>
                         </div>
 

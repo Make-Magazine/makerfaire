@@ -151,7 +151,7 @@ function getFeatMkPanel($row_layout) {
    foreach ($makerArr as $maker) {
       // var_dump($maker);
       // echo '<br />';
-      $return .= '<div class="grid-item" style="background-image: url('.$maker['image'].')">';
+      $return .= '<div class="grid-item lazyload" data-bg="' .$maker['image'].'">';
 
       if (!empty($maker['desc'])) {
          $markup = !empty($maker['maker_url']) ? 'a' : 'div';
@@ -307,7 +307,7 @@ function getFeatEvPanel($row_layout) {
       $return .= '<div class="featured-event col-xs-6">' .
          ($event['maker_url'] != '' ? '<a href="' . $event['maker_url'] . '">' : '') .
          '<div class="col-xs-12 col-sm-4 nopad">
-              <div class="event-img" style="background-image: url(' . $event['image'] . ');"></div>
+              <div class="event-img lazyload" data-bg="' . $event['image'] . '"></div>
             </div>
             <div class="col-xs-12 col-sm-8">
               <div class="event-description">
@@ -442,7 +442,7 @@ function get6ColLayout() {
       //$image = '<img height="" width="" alt="'.$imageArr['alt'].'" class="ximg-responsive" src="' . $imageArr['url'] . '" />';
       //echo $imageArr['url'];
 
-      $imgStyle = 'style="background-image: url('.$imageArr['url'].');"';
+      $imgStyle = 'data-bg="'.$imageArr['url'].'"';
 
       $cta_link = $data['image_cta'];
       $ctaText = $data['image_cta_text'];
@@ -451,7 +451,7 @@ function get6ColLayout() {
 
       if (!empty($cta_link)) {
 			if(!empty($imageArr['url'])) {
-         	$columnInfo = '<a class="six-col-img" href="' . $cta_link . '" '.$imgStyle.'></a>';
+         	$columnInfo = '<a class="six-col-img lazyload" href="' . $cta_link . '" '.$imgStyle.'></a>';
 			}
          if (!empty($ctaText)) {
             $columnInfo .= '<p class="text-center sub-caption-bottom ' . $bgColor . '"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
@@ -520,7 +520,7 @@ function get1ColLayout() {
          $hero_image_random = get_sub_field('hero_image_random');
 			$hero_image_url = $hero_image_random["url"];
 
-         $image = '<div class="hero-img" style="background-image: url(\'' . $hero_image_url. '\');"></div>';
+         $image = '<div class="hero-img lazyload" data-bg="' . $hero_image_url. '"></div>';
          $cta_link = get_sub_field('image_cta');
          
          if (!empty($cta_link)) {
@@ -562,7 +562,7 @@ function get1ColLayout() {
    }
 
    // Because of the aggressive caching on prod, it makes more sense to shuffle the array in javascript
-   $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").css("background-image","url("+heroArray[0]+")");bgSize( jQuery( ".hero-img" ), function( width, height ){if( height > 450 ) {jQuery(".hero-img").css( "height", "450px" );} else if( height > 320 ){jQuery( ".hero-img" ).css( "height", height + "px" );}});});</script>'; 
+   $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").attr("data-bg",heroArray[0]);bgSize( jQuery( ".hero-img" ), function( width, height ){if( height > 450 ) {jQuery(".hero-img").css( "height", "450px" );} else if( height > 320 ){jQuery( ".hero-img" ).css( "height", height + "px" );}});});</script>'; 
    return $return;
 }
 
@@ -868,7 +868,7 @@ function getImgCarouselSquare() {
          $text = get_sub_field('text');
          $url = get_sub_field('url');
          $image = get_sub_field('image');
-         $return .= '<div class="mtm-car-image" style="background: url(\'' . $image["url"] . '\') no-repeat center center;background-size: cover;"></div>';
+         $return .= '<div class="mtm-car-image lazyload" data-bg="'. $image["url"] . '" style="background-repeat: no-repeat; background-position: center center;background-size: cover;"></div>';
       }
       $return .= '
     </div>
@@ -936,7 +936,7 @@ function getSliderPanel(){
 			$return .= '<a href="'. $slide['slide_link'] .'">';
 		}
 		$return .= '     <div class="item slide">
-		                   <div class="slide-image-section" style="background-image:url(' . $imageObj['url'] . ');">';
+		                   <div class="slide-image-section lazyload" data-bg="' . $imageObj['url'] . '">';
 		if(!empty($slide['slide_title']) && get_sub_field("column_number") > 1 ) {
 			$return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
 		}

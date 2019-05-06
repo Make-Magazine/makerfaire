@@ -126,7 +126,7 @@ if ($noMakerText == '')
          <div ng-show="layout == 'grid'" class="mtm-results-cont">
             <div ng-repeat="maker in makers| filter : makerSearch | byCategory:category | limitTo: limit">
                <a target="none" href="/maker/entry/{{maker.id}}">
-                  <article class="mtm-maker" style="background-image: url('{{ maker.large_img_url}}')">
+                  <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
                      <h3>{{ maker.name}}</h3>
                   </article>
                </a>
@@ -144,7 +144,7 @@ if ($noMakerText == '')
             </div>
             <div ng-repeat="maker in makers| filter : makerSearch | byCategory:category | orderBy: 'name' | startsWithLetter:letter">
                <a href="/maker/entry/{{maker.id}}">
-                  <article class="mtm-maker" style="background-image: url('{{ maker.large_img_url}}')">
+                  <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
                      <h3>{{ maker.name}}</h3>
                      <h6 style="font-weight: lighter;padding-left: 21px;">{{maker.makerList}}</h6>
                   </article>
