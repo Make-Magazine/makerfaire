@@ -165,18 +165,19 @@ function load_scripts() {
    // Styles
    wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
    wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
-   wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css');
+   wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css', true);
    wp_enqueue_style('wpb-google-fonts', 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Condensed:400', false);
    //wp_enqueue_style('font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', false);
    wp_enqueue_style('font-awesome', get_stylesheet_directory_uri() . '/css/libs/Font-Awesome-4.4.0/css/font-awesome.min.css', false);
-	wp_enqueue_style('linearicons', 'https://cdn.linearicons.com/free/1.0.0/icon-font.min.css', '', 'all' );
+	wp_enqueue_style('linearicons', 'https://cdn.linearicons.com/free/1.0.0/icon-font.min.css', '', 'all', true );
    wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css');
-   wp_enqueue_style('ytv', get_stylesheet_directory_uri() . '/css/ytv.css');
+	// wp_enqueue_style('ytv', get_stylesheet_directory_uri() . '/css/ytv.css');
 
-   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
-   wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css');
-   wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', true);
-	wp_enqueue_style('jquery-ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css');
+
+   wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
+   wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
+   wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', '', '', true);
+	wp_enqueue_style('jquery-ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css', '', '', true);
    wp_enqueue_style('universal.css', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/css/universal.min.css');
 	
    // jquery from Wordpress core (with no-conflict mode flag enabled):
@@ -186,22 +187,20 @@ function load_scripts() {
    $my_theme = wp_get_theme();
    $my_version = $my_theme->get('Version');
    if (strpos($_SERVER['REQUEST_URI'], "authenticate-redirect") !== false) {
-      wp_enqueue_script('billboard', get_stylesheet_directory_uri() . '/js/libs/billboard.js', array('jquery'), $my_version);
+      wp_enqueue_script('billboard', get_stylesheet_directory_uri() . '/js/libs/billboard.js', array('jquery'), $my_version, true);
    }
    // Libraries concatenated by the grunt concat task (in Gruntfile.js):
-   wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'), $my_version);
-
+   wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'), $my_version, true);
    // Other libraries:
-   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js');
-   wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
-   wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js');
+   wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), '', true);
+	// wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
+   wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js', array('jquery'), '', true);
 	wp_enqueue_script('universal', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/js/min/universal.min.js', array(), $my_version, true);
-
-
+	
    wp_enqueue_script('thickbox', null);
 
    // Scripts
-   wp_enqueue_script('built', get_stylesheet_directory_uri() . '/js/built.min.js', array('jquery'), $my_version);
+   wp_enqueue_script('built', get_stylesheet_directory_uri() . '/js/built.min.js', array('jquery'), $my_version, true);
 
    // Localize
    $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
@@ -214,10 +213,16 @@ function load_scripts() {
 			   'wp_user_email' => wp_get_current_user()->user_email,
         )
       );
+/* jQuery can't be moved to footer as too many inline js rely on jquery without a on load event :(
+	remove_action('wp_head', 'wp_print_scripts');
+	remove_action('wp_head', 'wp_print_head_scripts', 9);
+	remove_action('wp_head', 'wp_enqueue_scripts', 1);
+
+	add_action('wp_footer', 'wp_print_scripts', 1);
+	add_action('wp_footer', 'wp_enqueue_scripts', 0);
+	add_action('wp_footer', 'wp_print_head_scripts', 5);*/
 }
-
-add_action('wp_enqueue_scripts', 'load_scripts');
-
+add_action('wp_enqueue_scripts', 'load_scripts'); 
 
 
 //Load custom gravity forms js for barnes and noble forms
@@ -228,7 +233,6 @@ function enqueue_custom_barnesandnoble_script($form, $is_ajax) {
    $my_version = $my_theme->get('Version');
    wp_enqueue_script('make-gravityformsbarnesandnoble', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnoble.js', array('jquery'), $my_version);
 }
-
 add_action('gform_enqueue_scripts_108', 'enqueue_custom_barnesandnoble_script', 10, 2);
 
 //Load custom gravity forms js for all forms
@@ -238,7 +242,6 @@ function enqueue_custom_allforms_script($form, $is_ajax) {
    $my_version = $my_theme->get('Version');
    wp_enqueue_script('make-gravityformsallforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsallforms.js', array('jquery'), $my_version);
 }
-
 add_action('gform_enqueue_scripts', 'enqueue_custom_allforms_script', 10, 2);
 
 function load_admin_scripts() {
@@ -301,9 +304,7 @@ function angular_scripts() {
       }
    }
 }
-
 add_action('wp_enqueue_scripts', 'angular_scripts');
-
 
 /**
  * This function will connect wp_mail to your authenticated
@@ -311,98 +312,73 @@ add_action('wp_enqueue_scripts', 'angular_scripts');
  * avoids many potential problems.
  */
 add_action('phpmailer_init', 'send_smtp_email');
-
 function send_smtp_email($phpmailer) {
-
    // Define that we are sending with SMTP
    $phpmailer->isSMTP();
-
    // The hostname of the mail server
    $phpmailer->Host = "smtp.mandrillapp.com";
-
    // Use SMTP authentication (true|false)
    $phpmailer->SMTPAuth = true;
-
    // SMTP port number - likely to be 25, 465 or 587
    $phpmailer->Port = "2525";
-
    // Username to use for SMTP authentication
    $phpmailer->Username = "webmaster@makermedia.com";
-
    // Password to use for SMTP authentication
    $phpmailer->Password = "VyprCy78ZO0LRNwCTMVn2Q";
-
    // Encryption system to use - ssl or tls
    $phpmailer->SMTPSecure = "";
 }
-
 add_filter('gform_enable_field_label_visibility_settings', '__return_true');
 
 
 // Making error logs for ajax to call
 add_action( 'wp_ajax_make_error_log', 'make_error_log' );
 add_action( 'wp_ajax_nopriv_make_error_log', 'make_error_log' );
-
 // Write to the php error log by request
 function make_error_log(){
   $error = filter_input(INPUT_POST, 'make_error', FILTER_SANITIZE_STRING);
   error_log(print_r($error, TRUE));
 }
 
-
-
 function my_acf_flexible_content_layout_title( $title, $field, $layout, $i ) {
-   
    $newTitle = '';
-
    if( $activeInactive = get_sub_field('activeinactive') ) {
       $style = ($activeInactive === 'Active') ? 'style="color: green"' : 'style="color: red"';
       $newTitle .= ' <span '. $style .'>(' . $activeInactive . ')</span>';
    }
-
    if( $butTixText = get_sub_field('buy_ticket_text') ) {
       $newTitle .= ' ' . $butTixText . ' ';
    }
-
    // 1-col WYSIWYG
    if( $customTitle = get_sub_field('title') ) {
       $newTitle .= ' ' . $customTitle . ' ';
    }
-
    // 3-col
    if( $panelTitle = get_sub_field('panel_title') ) {
       $newTitle .= ' ' . $panelTitle . ' ';
    }
-
    // Star Ribbon
    if( $starRibbonText = get_sub_field('text') ) {
       $newTitle .= ' ' . $starRibbonText . ' ';
    }
-
    // Hero Title
    if( $columnTitle = get_sub_field('column_title') ) {
       $newTitle .= ' ' . strip_tags( $columnTitle ) . ' ';
    }
-
    if( $sponsorsURL = get_sub_field('sponsors_page_url') ) {
       $newTitle .= ' Sponsors: ' . $sponsorsURL . ' ';
    }
-
    if( $featureFairesTitle = get_sub_field('featured_faires_title') ) {
       $newTitle .= ' ' . $featureFairesTitle . ' ';
    }
-	
    $newTitle .= '<div style="font-size: 12px; margin-right: 2em;">' . $title . '</div>';
-	
 	// Header Text - Maker Toolkit
    if( $headerText = get_sub_field('header_text') ) {
       $newTitle = strip_tags( $headerText );
    }
-
 	return $newTitle;
-	
-}
 
+}
 // name
 add_filter('acf/fields/flexible_content/layout_title', 'my_acf_flexible_content_layout_title', 10, 4);
 
@@ -421,7 +397,6 @@ function ACF_flexible_content_collapse() {
 	  <?php
   }
 }
-
 add_action('acf/input/admin_head', 'ACF_flexible_content_collapse');
 
 function custom_acf_repeater_colors() {

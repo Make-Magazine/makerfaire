@@ -182,22 +182,23 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                 </div>
             </div>
 
-            <div ng-show="!schedules.length" class="container loading">
-                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
-            </div>
 
-            <div class="sched-table" sched-scroll="loadMore()">     				
-                <div class="row sched-header">
-                    <div class="sched-col-1"></div>               
-                    <div class="sched-body">
-                        <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start', 'time_end'] | limitTo: limit">                     
-                            <div class="row sched-row">
-                                <div class="sched-col-1">
-                                    <a href="/maker/entry/{{schedule.id}}">
-                                        <div class="sched-img" style="background-image: url({{schedule.thumb_img_url}});"></div>
-                                    </a>
-                                </div>
+				<div ng-show="!schedules.length" class="container loading">
+					<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+					<span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
+				</div>
+			  
+				<div class="sched-table" sched-scroll="loadMore()">     
+					<div class="row sched-header">
+						<div class="sched-col-1"></div>               
+						<div class="sched-body">
+							<div ng-repeat="schedule in schedules | filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start','time_end'] | limitTo: limit">                     
+								<div class="row sched-row">
+									<div class="sched-col-1">
+										<a href="/maker/entry/{{schedule.id}}">
+											<div class="sched-img lazyload" data-bg="{{schedule.thumb_img_url}}"></div>
+										</a>
+									</div>
 
                                 <div class="sched-flex-row">
                                     <div class="sched-col-2">

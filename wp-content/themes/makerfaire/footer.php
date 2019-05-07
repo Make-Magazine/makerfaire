@@ -108,14 +108,7 @@
   fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 </script>
-<script type='text/javascript'>
-  (function (d, t) {
-    var bh = d.createElement(t), s = d.getElementsByTagName(t)[0];
-    bh.type = 'text/javascript';
-    bh.src = '//www.bugherd.com/sidebarv2.js?apikey=3pkvtpykrj9qwq4qt9rmuq';
-    s.parentNode.insertBefore(bh, s);
-    })(document, 'script');
-</script>
+
 <script type="text/javascript">
   jQuery(document).ready(function() {
     jQuery('.wp-navigation a').addClass('btn');
@@ -265,18 +258,6 @@
   })();
 </script>
 
-<!-- Usersnap feedback and bug tracker -->
-<script type="text/javascript">
-window.onload = function(){
-	var s = document.createElement("script"); 
-	s.type = "text/javascript"; 
-	s.async = true; 
-	s.setAttribute('defer', 'true');
-	s.src = '//api.usersnap.com/load/1c756098-d8b1-4791-bd55-e6de2f5b933b.js';
-	var x = document.getElementsByTagName('script')[0]; 
-	x.parentNode.appendChild(s); 
-}
-</script>
 
 <iframe id="auth0Logout" style="display: none;" ></iframe>
 
