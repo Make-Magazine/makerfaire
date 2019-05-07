@@ -177,11 +177,11 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
                     $output .= '<div style="page-break-after: always;"></div>';
                 $dayOfWeek = $row['Day'];
 
-                $output .= '<h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">' . $dayOfWeek . '</h1>
+                $output .= '<div style="clear:both;width:100%;height:32px;"><h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">' . $dayOfWeek . '</h1>
                                 <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
                                 <p></p>
                                 <p></p>
-                                <p></p>';
+                                <p></p></div><br /><br /><br />';
             }
         } else {
             if ($stage != $row['nicename'] || $dayOfWeek != $row['Day']) {
@@ -191,12 +191,12 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
                 $stage = $row['nicename'];
                 $dayOfWeek = $row['Day'];
 
-                $output .= '<h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">' . $stage . ' <small>(' . $row['area'] . ')</small> </h1>
+                $output .= '<div style="clear:both;width:100%;height:32px;"><h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">' . $stage . ' <small>(' . $row['area'] . ')</small> </h1>
                                 <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
                                 <p></p>
                                 <p></p>
                                 <p></p>';
-                $output .= '<div style="clear:both"><h2>' . $dayOfWeek . '</h2></div>';
+                $output .= '<div style="clear:both"><h2>' . $dayOfWeek . '</h2></div></div><br /><br /><br />';
             }
         }
 
