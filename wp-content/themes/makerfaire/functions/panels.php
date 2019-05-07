@@ -151,7 +151,7 @@ function getFeatMkPanel($row_layout) {
    foreach ($makerArr as $maker) {
       // var_dump($maker);
       // echo '<br />';
-      $return .= '<div class="grid-item lazyload" data-bg="' .legacy_get_fit_remote_image_url($maker['image'],374,337).'">';
+      $return .= '<div class="grid-item lazyload" data-bg="' . $maker['image'] .'">';
 
       if (!empty($maker['desc'])) {
          $markup = !empty($maker['maker_url']) ? 'a' : 'div';
@@ -936,7 +936,7 @@ function getSliderPanel(){
 			$return .= '<a href="'. $slide['slide_link'] .'">';
 		}
 		$return .= '     <div class="item slide">
-		                   <div class="slide-image-section lazyload" data-bg="' . legacy_get_fit_remote_image_url($imageObj['url'],435,400) . '">';
+		                   <div class="slide-image-section lazyload" data-bg="' . $imageObj['url'] . '">';
 		if(!empty($slide['slide_title']) && get_sub_field("column_number") > 1 ) {
 			$return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
 		}
