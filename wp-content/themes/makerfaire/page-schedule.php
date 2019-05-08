@@ -62,7 +62,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
         <input type="hidden" id="faire" value="<?php echo $faire; ?>" />
         <?php if (have_posts()) { ?>
             <div class="schedule-header container-fluid">
-                <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on {{schedSearch.nicename}}</span></h1>
+                <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
             </div><?php }
         ?>
         <div class="schedule-wrapper">			
