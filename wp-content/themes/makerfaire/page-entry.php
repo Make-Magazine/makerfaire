@@ -207,7 +207,7 @@ if (!empty($project_video)) {
   }
   $video = '<div class="entry-video">
               <div class="embed-youtube">
-                <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                <iframe class="lazyload" src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
               </div>
             </div>';
 }
