@@ -28,7 +28,7 @@
 
          <!-- Project Image -->
          <p id="proj_img">
-            <img class="img-responsive dispPhoto" src="<?php echo $project_photo; ?>" />
+            <img class="img-responsive dispPhoto lazyload" src="<?php echo $project_photo; ?>" />
          </p>
 
          <!-- Project Short Description -->
@@ -91,7 +91,7 @@
                         </div>
                         <div class="col-xs-6">
                            <div class="entry-page-maker-img">
-                              <img class="img-responsive" src="<?php echo (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto, 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
+                              <img class="img-responsive lazyload" src="<?php echo (!empty($groupphoto) ? legacy_get_resized_remote_image_url($groupphoto, 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
                            </div>
                         </div>
                         <div class="col-xs-6">
@@ -117,7 +117,7 @@
                               </div>
                               <div class="col-xs-6">
                                  <div class="entry-page-maker-img">
-                                    <img class="img-responsive" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
+                                    <img class="img-responsive lazyload" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
                                  </div>
                               </div>
                               <div class="col-xs-6">
