@@ -1294,7 +1294,7 @@ function getFeatFairePanel(){
             if($faire_url !=''){
               $return .= '<a href="' . $faire_url . '">';
             }
-            $return .=   '<img src="' . $faire_photo['url'] . '" alt="Featured Maker Faire Image" class="img-responsive" />';
+            $return .=   '<img src="' . $faire_photo['url'] . '" alt="Featured Maker Faire Image" class="img-responsive lazyload" />';
             //$return .=   '<p class="featured-faire-above-title">Maker Faire</p>';
             $return .=   '<h4 class="featured-faire-date">' . $faire_date . '</h4>';
             $return .=   '<h3 class="featured-faire-title clear">' . $faire_title . '</h3>';
