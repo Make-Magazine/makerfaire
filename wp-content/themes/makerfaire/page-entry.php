@@ -180,14 +180,16 @@ if (is_array($entry) && !empty($entry)) { //is this a valid entry?
 
 //check flags
 $displayMakers = true;
-foreach ($entry as $key => $field) {
-    $pos = strpos($key, '304.');
-    if ($pos !== false) {
-        if ($field == 'no-public-view')
-            $validEntry = false;
-        if ($field == 'no-maker-display')
-            $displayMakers = false;
-    }
+
+
+$displayFormType = true;
+foreach($entry as $key=>$field ) {
+  $pos = strpos($key, '304.');
+  if ($pos !== false ) {
+    if($field=='no-public-view' )    $validEntry    = false;
+    if($field=='no-maker-display' )  $displayMakers = false;
+    if($field=='hide-form-type')     $displayFormType = false;
+  }
 }
 
 
