@@ -58,11 +58,16 @@ function update_entry_resatt() {
   }else{ //update existing record
     $newValue  = $_POST['newValue'];
     $fieldName = $_POST['fieldName'];
+
     $sql = "update ".$table.' set '.$fieldName .'="'.$newValue.'",user= '.$current_user->ID.' where ID='.$ID;
 
     //get data to update change report
     if($table=='wp_rmt_entry_resources'){
-      $infosql = "select wp_rmt_entry_resources.*, wp_rmt_resources.token  from wp_rmt_entry_resources"
+      $infosql = "select wp_rmt_entry_resources.*, wp_rmt_resources.token,
+                    (select category 
+                       from wp_rmt_resource_categories 
+                      where wp_rmt_resource_categories.ID = wp_rmt_resources.resource_category_id) as resource_type  
+                  from wp_rmt_entry_resources"
               . " left outer join wp_rmt_resources on wp_rmt_resources.ID=resource_id"
               . " where wp_rmt_entry_resources.ID=".$ID;
     }elseif($table=='wp_rmt_entry_attributes'){
@@ -94,9 +99,18 @@ function update_entry_resatt() {
         $type    = '';
         break;
     }
-
-    //add to change report array
-    $chgRPTins[] = RMTchangeArray($current_user->ID, $res['entry_id'], 0, $fieldID, $res[$fieldName], $newValue, 'RMT '.$type.': '.$res['token'].' - '.$fieldName);
+    if($fieldName==='resource_id'){
+        //set value before and value after to the resource type name        
+        $newValue     = $wpdb->get_var('SELECT token FROM `wp_rmt_resources` WHERE `ID` = '.$newValue);
+        $field_before = $res['token'];
+        //field label should be the resource item
+        $fieldLabel = 'RMT Resource: '.$res['resource_type'];
+    }else{
+        $fieldLabel = 'RMT '.$type.': '.$res['token'].' - '.$fieldName;
+        $field_before = $res[$fieldName];
+    }
+    //add to change report array  
+    $chgRPTins[] = RMTchangeArray($current_user->ID, $res['entry_id'], 0, $fieldID, $field_before, $newValue, $fieldLabel);
   }
 
   /* Add all changes and additions done thru wp-admin entry detail to the change report */
