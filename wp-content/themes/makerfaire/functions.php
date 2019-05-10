@@ -427,3 +427,15 @@ function custom_acf_repeater_colors() {
          </style>';
 }
 add_action('admin_head', 'custom_acf_repeater_colors');
+
+function shapeSpace_remove_toolbar_node($wp_admin_bar) {
+	// replace 'updraft_admin_node' with your node id
+	$wp_admin_bar->remove_node('wp-logo');
+	$wp_admin_bar->remove_node('customize');
+	$wp_admin_bar->remove_node('updates');
+	$wp_admin_bar->remove_node('comments');
+	$wp_admin_bar->remove_node('essb');
+	$wp_admin_bar->remove_node('autoptimize');
+	$wp_admin_bar->remove_node('stats');
+}
+add_action('admin_bar_menu', 'shapeSpace_remove_toolbar_node', 999);
