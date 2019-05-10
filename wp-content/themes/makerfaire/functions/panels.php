@@ -366,7 +366,7 @@ function get3ColLayout() {
          case 'image':     // Image with optional link
             $alignment = $data['column_list_alignment'];
             $imageArr = $data['column_image_field'];                  
-            $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive" src="' . $imageArr['url'] . '" />';
+            $image = '<img alt="'.$imageArr['alt'].'" class="img-responsive lazyload" src="' . $imageArr['url'] . '" />';
             
             $cta_link = $data['image_cta'];
             $ctaText = $data['image_cta_text'];
@@ -591,7 +591,7 @@ function getVideoPanel() {
 			$return .= '  </div>';
 			$return .= '  <div class="col-sm-8 col-xs-12">
 			                 <div class="embed-youtube">
-									 <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+									 <iframe class="lazyload" src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 								  </div>
 			              </div>';
 			$return .= '</div>';
@@ -599,7 +599,7 @@ function getVideoPanel() {
 			$return .= '<div class="row">';
 			$return .= '  <div class="col-sm-8 col-xs-12">
 								  <div class="embed-youtube">
-									 <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+									 <iframe class="lazyload" src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 								  </div>
 							  </div>';
 			$return .= '  <div class="col-sm-4 col-xs-12">
@@ -648,7 +648,7 @@ function getImagePanel() {
 								  if ($image['image_overlay']['image_overlay_link']) {   
 			$return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
 								  }
-			$return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
+			$return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
 											if ($image['image_overlay']['image_overlay_text']) {          
 											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';;
 											}
@@ -665,7 +665,7 @@ function getImagePanel() {
 								  if ($image['image_overlay']['image_overlay_link']) {   
 			$return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
 								  }
-			$return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
+			$return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] .'" />';
 											if ($image['image_overlay']['image_overlay_text']) {          
 											  $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';;
 											}
@@ -810,7 +810,7 @@ function getImgCarousel() {
                $return .= '<a href="' . $url . '">';
             }
             $return .= '
-            <img src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
+            <img class="lazyload" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
             if (get_sub_field('text')) {
                $return .= '
               <div class="carousel-caption">
@@ -824,7 +824,7 @@ function getImgCarousel() {
         </div>';
          } else {
             $return .= '<div class="item">
-          <img src="' . $image['url'] . '" alt="' . $image['alt'] . '" />
+          <img class="lazyload" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />
           <div class="carousel-caption">
             <h3>' . $text . '</h3>
           </div>
@@ -1061,7 +1061,7 @@ function getNewsletterPanel() {
                   <div class="col-xs-12 col-sm-6 align-middle">
                      <div class="row row-eq-height" style="width:100%">
                         <div class="col-xs-12 col-sm-2 align-middle">
-                   <!--        <img class="img-responsive" src="/wp-content/themes/makerfaire/img/makey_outlined.svg" />-->
+                   <!--        <img class="img-responsive lazyload" src="/wp-content/themes/makerfaire/img/makey_outlined.svg" />-->
                         </div>
                         <div class="col-xs-12 col-sm-10 align-middle">
                            <input id="wc-email" class="form-control nl-panel-input" name="email" placeholder="' . __('Enter your Email', 'MiniMakerFaire') . '" required type="email">
@@ -1198,7 +1198,7 @@ function getSponsorPanel() {
                if (get_sub_field('url')) {
                   $return .= '      <a href="' . $sub_field_2 . '" target="_blank">';
                }
-               $return .= '            <img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" />';
+               $return .= '            <img class="lazyload" src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" />';
                if (get_sub_field('url')) {
                   $return .= '      </a>';
                }
@@ -1294,7 +1294,7 @@ function getFeatFairePanel(){
             if($faire_url !=''){
               $return .= '<a href="' . $faire_url . '">';
             }
-            $return .=   '<img src="' . $faire_photo['url'] . '" alt="Featured Maker Faire Image" class="img-responsive" />';
+            $return .=   '<img src="' . $faire_photo['url'] . '" alt="Featured Maker Faire Image" class="img-responsive lazyload" />';
             //$return .=   '<p class="featured-faire-above-title">Maker Faire</p>';
             $return .=   '<h4 class="featured-faire-date">' . $faire_date . '</h4>';
             $return .=   '<h3 class="featured-faire-title clear">' . $faire_title . '</h3>';
@@ -1437,7 +1437,7 @@ function getMakeyBanner() {
    $content = '<div class="makey-banner ' . get_sub_field('background-color') . '">';
    $content .= '   <div class="container">';
    $content .= '      <div class="picture-holder">';
-   $content .= '         <img alt="Maker Robot" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
+   $content .= '         <img alt="Maker Robot" height="74" class="lazyload" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
    $content .= '      </div>';
    $content .= '      <a href="'.$URL.'">'.$title.' <i class="icon-arrow-right"></i></a>';
    $content .= '   </div>';
