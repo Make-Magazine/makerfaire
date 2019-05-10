@@ -1,9 +1,14 @@
 var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap', 'angular.filter', 'ngSanitize']);
 
-var dayParam = getUrlParam("day");
-var stageParam = getUrlParam("stage");
-var typeParam = getUrlParam("type");
-var topicParam = getUrlParam("topic");
+function ucwords (str) {
+    return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($1) {
+        return $1.toUpperCase();
+    });
+}
+var dayParam = ucwords(getUrlParam("day"));
+var stageParam = ucwords(getUrlParam("stage"));
+var typeParam = ucwords(getUrlParam("type"));
+var topicParam = ucwords(getUrlParam("topic"));
 //alert('let it begin');
 
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
