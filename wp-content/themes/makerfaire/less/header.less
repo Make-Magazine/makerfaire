@@ -125,10 +125,20 @@
 }
 
 // make that last menu item open to the left instead of the right
-#wpadminbar #wp-admin-bar-mf_admin_parent li.hover>.ab-sub-wrapper {
-	 left: auto;
-    right: 100%;
-    margin-left: 0;
-    margin-right: -1px;
- }
+#wpadminbar #wp-admin-bar-mf_admin_parent {
+	li.hover>.ab-sub-wrapper {
+		left: auto;
+		right: 100%;
+		margin-left: 0;
+		margin-right: -1px;
+   }
+	li .ab-item {
+		padding-left: 20px;
+		&:before {
+			left: 4px;
+			right: auto;
+			content: "\f141";
+		}
+	}
+}
 #wp-admin-bar-my-account{display:none !important}
