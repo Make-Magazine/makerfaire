@@ -54,7 +54,7 @@ function urlify($string) {
 			</ul>
 		</div>
 		<?php
-			if(!empty(get_field('top_button'))){
+			if(!empty(get_field('top_button')['top_button_text'])){
 				echo('<a class="btn right-banner" href="' . get_field('top_button')['top_button_link'] . '">' . get_field('top_button')['top_button_text'] . ' </a>');
 			}
 		?>
