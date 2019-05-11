@@ -1,9 +1,11 @@
 var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap', 'angular.filter', 'ngSanitize']);
 
 function ucwords (str) {
+  if(str) {
     return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($1) {
         return $1.toUpperCase();
     });
+  }
 }
 var dayParam = ucwords(getUrlParam("day"));
 var stageParam = ucwords(getUrlParam("stage"));
