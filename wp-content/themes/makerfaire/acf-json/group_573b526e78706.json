@@ -2059,7 +2059,7 @@
                                     "label": "Video Title",
                                     "name": "video_title",
                                     "type": "text",
-                                    "instructions": "",
+                                    "instructions": "Title that appears on the text side",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -2078,7 +2078,7 @@
                                     "label": "Video Text",
                                     "name": "video_text",
                                     "type": "text",
-                                    "instructions": "",
+                                    "instructions": "Text appears under title",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -2097,7 +2097,7 @@
                                     "label": "Video Button Link",
                                     "name": "video_button_link",
                                     "type": "url",
-                                    "instructions": "",
+                                    "instructions": "Link under text",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -2113,7 +2113,7 @@
                                     "label": "Video Button Text",
                                     "name": "video_button_text",
                                     "type": "text",
-                                    "instructions": "",
+                                    "instructions": "The text for the link",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -2132,7 +2132,7 @@
                                     "label": "Video Code",
                                     "name": "video_code",
                                     "type": "text",
-                                    "instructions": "",
+                                    "instructions": "Youtube video code determines what video to show",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -2762,5 +2762,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1556132321
+    "modified": 1557765720
 }
