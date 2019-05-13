@@ -88,7 +88,7 @@ if ($noMakerText == '')
                            <li>
                               <a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All", 'makerfaire') ?></a>
                            </li>                  
-                           <li ng-repeat="location in locations| orderBy: location">                     
+                           <li ng-repeat="location in locations">                     
                               <a class="pointer-on-hover" ng-click="makerSearch.location = location">{{ location}}</a>
                            </li>
                         </ul>                              
