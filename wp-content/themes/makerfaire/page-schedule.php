@@ -29,9 +29,10 @@ if ($displayNav) {
 //set faire
             $post_data = get_post($post->post_parent);
             $parent_slug = $post_data->post_name;
-
-            $sql = 'select faire from wp_mf_faire where url_path="' . $parent_slug . '";';
-            $faire = $wpdb->get_var($sql);
+            
+            $sql = 'select * from wp_mf_faire where url_path="' . $parent_slug . '";';
+            $faireData = $wpdb->get_row($sql);            
+            $faire= $faireData->faire;
             ?>			
             <script type="text/javascript">
                 printScheduleEvent = function () {
@@ -46,12 +47,12 @@ if ($displayNav) {
             <?php
             if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new schedule page
                 ?>   
-
                 <div id="page-schedule" class="schedule-table  ng-cloak <?php if ($displayNav) { ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">                    
                     <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
                     <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
                     <input type="hidden" id="faire"     value="<?php echo $faire; ?>" />
-
+                    <input type="hidden" id="faire_st"  value="<?php echo $faireData->start_dt; ?>" />
+                    <input type="hidden" id="faire_end" value="<?php echo $faireData->end_dt; ?>" />
                     <?php if (have_posts()) { ?>
                         <div class="schedule-header container-fluid">
                             <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
@@ -193,9 +194,12 @@ if ($displayNav) {
                             <div class="row sched-header">
                                 <div class="sched-col-1"></div>               
                                 <div class="sched-body">
-                                    <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start', 'time_end'] | limitTo: limit">                     
+                                    inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}}
+                                    <!-- if we are in the faire time, only display events that haven't occurred yet-->
+                                    <div ng-if="inFaire && todaysDate.getTime()>=new Date(schedule.time_end).getTime()" ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start', 'time_end'] | limitTo: limit">                     
                                         <div class="row sched-row">
                                             <div class="sched-col-1">
+                                                {{schedule.time_end}}
                                                 <a href="/maker/entry/{{schedule.id}}">
                                                     <div class="sched-img lazyload" data-bg="{{schedule.thumb_img_url}}"></div>
                                                 </a>
@@ -300,5 +304,5 @@ if ($displayNav) {
 }
 ?>
 
-<iframe src="/stage-schedule/?faire=BA19&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
+<iframe src="/stage-schedule/?faire=<?php echo $faire;?>&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 <?php get_footer(); ?>
