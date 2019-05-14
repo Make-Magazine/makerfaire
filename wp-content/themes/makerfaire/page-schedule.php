@@ -194,12 +194,10 @@ if ($displayNav) {
                             <div class="row sched-header">
                                 <div class="sched-col-1"></div>               
                                 <div class="sched-body">
-                                    inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}}
-                                    <!-- if we are in the faire time, only display events that haven't occurred yet-->
-                                    <div ng-if="inFaire && todaysDate.getTime()>=new Date(schedule.time_end).getTime()" ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start', 'time_end'] | limitTo: limit">                     
+                                    <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
+                                    <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | inFaireFilter: todaysDate | orderBy: ['time_start', 'time_end'] | limitTo: limit">                     
                                         <div class="row sched-row">
                                             <div class="sched-col-1">
-                                                {{schedule.time_end}}
                                                 <a href="/maker/entry/{{schedule.id}}">
                                                     <div class="sched-img lazyload" data-bg="{{schedule.thumb_img_url}}"></div>
                                                 </a>

@@ -23,6 +23,7 @@ weekday[6] = "Saturday";
 
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
         $scope.inFaire = false; //are we during the faire?
+	     inFaire = false;
         //infinite scroll
         $scope.limit = 5;
         var counter = 0;
@@ -67,13 +68,12 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
         if(todaysDate.getTime() > faire_start.getTime() &&
            todaysDate.getTime() <= faire_end.getTime()){
            $scope.inFaire = true;
+			  inFaire = true;
            todayDOW = weekday[todaysDate.getDay()];
            $scope.filterdow = todayDOW;
            filterdow = todayDOW;
         }
        
-              
-        
         var formIDs = jQuery('#forms2use').val();
         var defType = jQuery('#schedType').val();
         var defDOW  = jQuery('#schedDOW').val();
@@ -181,6 +181,27 @@ scheduleApp.filter('dateFilter', function ($filter) {
         }
         return out;
     }
+});
+
+scheduleApp.filter('inFaireFilter', function ($filter) {
+    // Check if we're in the faire and if the day is filtered to be today, show only the upcoming events for the day
+	 return function (schedules, todaysDate) {
+		  if(inFaire == true && (filterdow != '' || filterdow === todaysDate)) {
+				var out = [];
+				// Loop thru the schedule and return only items that meet the selected date         
+				angular.forEach(schedules, function (schedule) {
+					 var scheduledTime = new Date(schedule.time_start);
+					// console.log("Today = " + todaysDate);
+					// console.log("Scheduled Time = " + scheduledTime);
+					 if (todaysDate < scheduledTime) {
+						  out.push(schedule);
+					 }
+				});
+		  } else {
+				var out = schedules;
+		  }
+		  return out;
+	 }
 });
 
 scheduleApp.directive('schedScroll', ['$window', schedScroll]);
