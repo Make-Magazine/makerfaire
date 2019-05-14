@@ -11,9 +11,18 @@ var dayParam = ucwords(getUrlParam("day"));
 var stageParam = ucwords(getUrlParam("stage"));
 var typeParam = ucwords(getUrlParam("type"));
 var topicParam = ucwords(getUrlParam("topic"));
-//alert('let it begin');
+var weekday = new Array(7);
+weekday[0] =  "Sunday";
+weekday[1] = "Monday";
+weekday[2] = "Tuesday";
+weekday[3] = "Wednesday";
+weekday[4] = "Thursday";
+weekday[5] = "Friday";
+weekday[6] = "Saturday";
+
 
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
+        $scope.inFaire = false; //are we during the faire?
         //infinite scroll
         $scope.limit = 5;
         var counter = 0;
@@ -48,14 +57,32 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
             filterdow = dayParam;
         }
 
+        /* check faire start and end date 
+         * if we are during the faire, default filterdow to current dow */
+        var faire_start = new Date(jQuery('#faire_st').val());
+        var faire_end   = new Date(jQuery('#faire_end').val());
+        var todaysDate  = new Date();       
+        $scope.todaysDate = todaysDate;
+        
+        if(todaysDate.getTime() > faire_start.getTime() &&
+           todaysDate.getTime() <= faire_end.getTime()){
+           $scope.inFaire = true;
+           todayDOW = weekday[todaysDate.getDay()];
+           $scope.filterdow = todayDOW;
+           filterdow = todayDOW;
+        }
+       
+              
+        
         var formIDs = jQuery('#forms2use').val();
         var defType = jQuery('#schedType').val();
-        var defDOW = jQuery('#schedDOW').val();
+        var defDOW  = jQuery('#schedDOW').val();
+        var faire   = jQuery('#faire').val();
 
         if (formIDs == '')
             alert('error!  Please set the form to pull from on the admin page.');
         //alert('before the call');
-        $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs + '?ver=123')
+        $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs + '/'+faire)
                 .then(function successCallback(response) {
                     //alert('success');
                     $scope.schedules = response.data.schedule;
@@ -177,5 +204,4 @@ function schedScroll($window) {
             $window.on('scroll', handler);
         }
     };
-}
-;
+};
