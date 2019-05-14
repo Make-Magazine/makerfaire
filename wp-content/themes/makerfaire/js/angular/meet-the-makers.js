@@ -1,4 +1,4 @@
-var app = angular.module('mtm', []);
+var app = angular.module('mtm', ['ngAnimate', 'ui.bootstrap', 'angular.filter', 'ngSanitize']);
 
 var initialCategory = "";
 if(getUrlParam("category")){
@@ -13,7 +13,7 @@ if(getUrlParam("featured")){
 	featured = getUrlParam("featured");
 }
 
-app.controller('mtmMakers', function ($scope, $http) {
+app.controller('mtmMakers', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
    //infinite scroll
    $scope.limit = 20;
    var counter = 0;
@@ -66,8 +66,9 @@ app.controller('mtmMakers', function ($scope, $http) {
          if(location != null){
             var locArray = location.split(",");
             angular.forEach(locArray, function(loc){
-               if (locList.indexOf(loc) === -1 && loc!=='')
+               if (locList.indexOf(loc) === -1 && loc!=='') {
                   locList.push(loc);
+					}
             });
          }
          var categories = maker.categories;
@@ -82,8 +83,9 @@ app.controller('mtmMakers', function ($scope, $http) {
       
       $scope.tags = catList;
       if(locList.length > 0)
-         $scope.locations = locList;
-   }, 
+			var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+         $scope.locations = locList.sort(collator.compare);
+      }, 
       function errorCallback(error) {
          console.log(error);
          jQuery('.mtm .loading').html(noMakerText);
@@ -93,7 +95,7 @@ app.controller('mtmMakers', function ($scope, $http) {
    });
 
    $scope.setLocFilter = function (location) {
-      $scope.makerSearch.location = location; 
+		$scope.makerSearch.location = location; 
    };   
    
    $scope.setFlagFilter = function (flag) {
@@ -117,7 +119,7 @@ app.controller('mtmMakers', function ($scope, $http) {
    $scope.clearFilter = function () {
       $scope.category = '';
    };
-});
+}]);
 
 app.filter('byCategory', function () {
 	// leaving the param in the url would look awkward once users start selecting different filters so let's get rid of it

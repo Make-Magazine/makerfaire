@@ -149,6 +149,30 @@
 				}
 			}
 		}
+		.filter-section {
+			display: flex;
+			flex-direction: column;
+			padding-left: 0px;
+			.dropdown-toggle { 
+				padding: .5em 1.5em;
+				padding-left: 0px;
+			}
+			@media (min-width:768px) and (max-width:1200px) {
+				margin-top: -10px;
+				text-align: left;
+				padding-left: 10px;
+				.dropdown-toggle {
+					padding: .34em 0em;
+				}
+			}
+			@media (min-width:768px) and (max-width:997px) {
+				margin-left: -20px;
+			}
+			@media (min-width:1200px) {
+				flex-direction: row;
+
+			}
+		}
 		label {
 			color: #555;
 			position: relative;
@@ -186,11 +210,10 @@
 		}
       .dropdown {
          display: inline-block;
-         margin-right: 30%;
+			margin-top: -2px;
          float: right;
          @media (max-width: 768px) {
             float: none;
-				margin-right: auto;
             .dropdown-toggle {
                padding-left: 0;
                margin-top: 10px;
@@ -209,6 +232,9 @@
             overflow-y: scroll;
          }
       }
+		.topic-menu li:nth-of-type(3){ // make the default --select maker category-- invisible
+		  display: none;
+	  }
    }
 
    .mtm-results {      
