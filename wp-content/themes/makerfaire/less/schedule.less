@@ -343,74 +343,76 @@
 
     .sched-body {
 		 text-align: left;
-      .sched-row {
-        margin-left: 0;
-        margin-right: 0;
-        margin-bottom: 10px;
-        padding-bottom: 5px;
-        border-bottom: 1px solid #00A3DA;
-        @media (max-width:991px) {
-          font-size: 14px;
-        }
-        .sched-img {
-          border: 3px solid #9CAFC3;
-          width: 100px;
-          height: 100px;
-          float: left;
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-position: center center;
-        }
-        .sched-flex-row {
-          height: 100px;
-        }
-        h3 {
-          margin-top: -2px;
-          margin-bottom: 2px;
-          font-family: Roboto,"Helvetica Neue",Helvetica,sans-serif;
-          font-size: 20px;
-          line-height: 1.1em;
-          color: #00AEEF;
-          max-height: 46px;
-          overflow: hidden;
-          a {
-            color: inherit;
-          }
-          @media (max-width:767px) {
-            font-size: 18px;
-            max-height: none;
-          }
-        }
-			hr {
-				margin-top: 5px;
-				margin-bottom: 5px;
-			}
-        .sched-description {
-          line-height: 1.3em;
-          max-height: 90px;
-          overflow: hidden;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          @media (max-width:767px) {
-            margin-bottom: 0;
-          }
-          @media (min-width:992px) and (max-width:1199px) {
-            max-height: 41px;
-          }
-          @media (max-width:991px) {
-            max-height: 33px;
-            line-height: 1.2em;
-          }
+		 .no-results { display: block; }
+		 .ng-scope + .no-results { display: none; }
+       .sched-row {
+			  margin-left: 0;
+			  margin-right: 0;
+			  margin-bottom: 10px;
+			  padding-bottom: 5px;
+			  border-bottom: 1px solid #00A3DA;
+			  @media (max-width:991px) {
+				 font-size: 14px;
+			  }
+			  .sched-img {
+				 border: 3px solid #9CAFC3;
+				 width: 100px;
+				 height: 100px;
+				 float: left;
+				 background-size: cover;
+				 background-repeat: no-repeat;
+				 background-position: center center;
+			  }
+			  .sched-flex-row {
+				 height: 100px;
+			  }
+			  h3 {
+				 margin-top: -2px;
+				 margin-bottom: 2px;
+				 font-family: Roboto,"Helvetica Neue",Helvetica,sans-serif;
+				 font-size: 20px;
+				 line-height: 1.1em;
+				 color: #00AEEF;
+				 max-height: 46px;
+				 overflow: hidden;
+				 a {
+					color: inherit;
+				 }
+				 @media (max-width:767px) {
+					font-size: 18px;
+					max-height: none;
+				 }
+			  }
+				hr {
+					margin-top: 5px;
+					margin-bottom: 5px;
+				}
+			  .sched-description {
+				 line-height: 1.3em;
+				 max-height: 90px;
+				 overflow: hidden;
+				 display: -webkit-box;
+				 -webkit-line-clamp: 2;
+				 -webkit-box-orient: vertical;
+				 @media (max-width:767px) {
+					margin-bottom: 0;
+				 }
+				 @media (min-width:992px) and (max-width:1199px) {
+					max-height: 41px;
+				 }
+				 @media (max-width:991px) {
+					max-height: 33px;
+					line-height: 1.2em;
+				 }
 
-        }
-        .sched-type {
-          img {
-            @media (min-width:768px) {
-              max-width: 60px;
-            }
-          }
-        }
+			  }
+			  .sched-type {
+				 img {
+					@media (min-width:768px) {
+					  max-width: 60px;
+					}
+				 }
+			  }
 
         .overflow-ellipsis-text {
           font-size: 14px;
