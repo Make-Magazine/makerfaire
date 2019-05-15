@@ -34,7 +34,7 @@ jQuery(document).ready(function(){
 		});
 
 		// if the lefthand nav is too tall, just don't have it be sticky
-		var windowHeight = jQuery(window).height() - 120;
+		var windowHeight = jQuery(window).height() - 140;
 		if(jQuery(".toolkit-nav").height() > windowHeight) {
 			jQuery(".left-hand-nav").css("position", "relative").css("top", "0px");
 		}
