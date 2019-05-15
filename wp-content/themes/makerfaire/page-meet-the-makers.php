@@ -9,145 +9,146 @@ $faire_forms_trimmed = preg_replace('/\s+/', '', $faire_forms);
 
 $noMakerText = get_field('no_makers_found_text');
 if ($noMakerText == '')
-   $noMakerText = 'No makers found';
+    $noMakerText = 'No makers found';
 ?>
 
 <div class="mtm" ng-app="mtm">
-   <div ng-controller="mtmMakers"  ng-cloak="">
-      <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
-      <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
-      <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
-      <div class="container">
-			<div class="col-md-3 col-sm-12 col-xs-12">
-           <?php
-            echo get_faire_backlink();      
-           ?>
-			</div>
-			<div class="col-md-6 col-sm-12 col-xs-12">
-         	<h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
-			</div>
-			<div class="col-md-3 col-sm-12">
-			</div>
-      </div>
-
-      <div class="flag-banner"></div>
-
-      <div class="mtm-search">
-         <form class="form-inline">
-            <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
-            <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
-         </form>
-      </div>
-
-
-      <div class="mtm-filter container">
-         <div class="row">
-            <div class="col-sm-4">
-               <div class="mtm-filter-view">
-                  <span class="mtm-view-by"><?php _e("View by:", 'makerfaire') ?></span>
-                  <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="fa fa-picture-o" aria-hidden="true"></i> <?php _e("GALLERY", 'makerfaire') ?></a>
-                  <span class="mtm-pipe">|</span>
-                  <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" ><i class="fa fa-th-list" aria-hidden="true"></i> <?php _e("LIST", 'makerfaire') ?></a>
-               </div>
+    <div ng-controller="mtmMakers"  ng-cloak="">
+        <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
+        <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
+        <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
+        <div class="container">
+            <div class="col-md-3 col-sm-12 col-xs-12">
+                <?php
+                echo get_faire_backlink();
+                ?>
             </div>
-            <div class="col-sm-4 mid-section">
-					<div class="faux-checkbox">
-						<label>Featured Makers</label>
-						<ul class="nav nav-pills">
-							<li class="nav-item">
-								<button ng-class="{'ng-hide':showFeatured=='Featured Maker'}" type="button" ng-click="makerSearch.flag ='Featured Maker';showFeatured='Featured Maker';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
-							</li>
-							<li class="nav-item">
-								<button ng-init="showFeatured=makerSearch.flag" ng-class="{'ng-hide':showFeatured==''}" type="button" ng-click="makerSearch.flag = '';showFeatured='';" class="btn btn-default"><i class="fa fa-check"></i></button>
-							</li>   
-						</ul>   
-					</div>
-					<div class="faux-checkbox">
-						<label>Hands-On Activities</label>
-						<ul class="nav nav-pills">
-							<li class="nav-item">
-								<button ng-class="{'ng-hide':showHandsOn=='Featured HandsOn'}" type="button" ng-click="makerSearch.handson='Featured HandsOn';showHandsOn='Featured HandsOn';" class="btn btn-default">&nbsp;</button>
-							</li>
-							<li class="nav-item">
-								<button ng-init="showHandsOn=makerSearch.handson" ng-class="{'ng-hide':showHandsOn==''}" type="button" ng-click="makerSearch.handson='';showHandsOn='';" class="btn btn-default"><i class="fa fa-check"></i></button>
-							</li>   
-						</ul>
-					</div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
             </div>
-            <div class="col-sm-4 filter-section">                 
-					<div class="dropdown" ng-if="locations.length > 0">
-						<button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                       
-							<span ng-show="makerSearch.location != ''">{{makerSearch.location}}</span>
-							<span ng-show="makerSearch.location == ''">All Locations</span>
-							<i class="fa fa-chevron-down" aria-hidden="true"></i>
-						</button>
-						<ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
-							<li>
-								<a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All", 'makerfaire') ?></a>
-							</li>                  
-							<li ng-repeat="location in locations">                     
-								<a class="pointer-on-hover" ng-click="makerSearch.location = location">{{ location}}</a>
-							</li>
-						</ul>                              
-					</div>
-					<div class="dropdown">
-						<button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-							<span ng-show="makerSearch.categories != ''">{{makerSearch.categories}}</span>
-							<span ng-show="makerSearch.categories == ''">All Topics</span>
-							<i class="fa fa-chevron-down" aria-hidden="true"></i>
-						</button>
+            <div class="col-md-3 col-sm-12">
+            </div>
+        </div>
 
-						<ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
-							<li>
-								<a class="pointer-on-hover" ng-click="makerSearch.categories = ''"><?php _e("All", 'makerfaire') ?></a>
-							</li>
-							<li ng-repeat="tag in tags | orderBy: tag">                     
-								<a class="pointer-on-hover" ng-click="makerSearch.categories = tag">{{tag}}</a>
-							</li>
-						</ul>
-					</div>
-            </div>
-         </div>     
-      </div>
+        <div class="flag-banner"></div>
 
-      <div class="mtm-results" mtm-scroll="loadMore()">
-         <div ng-show="!makers.length" class="container loading">
-            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-            <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
-         </div>
-         <!-- Grid View -->
-         <div ng-show="layout == 'grid'" class="mtm-results-cont">
-            <div ng-repeat="maker in makers| filter : makerSearch | byCategory:category | limitTo: limit">
-               <a target="none" href="/maker/entry/{{maker.id}}">
-                  <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
-                     <h3>{{ maker.name}}</h3>
-                  </article>
-               </a>
-            </div>
-            <div class="clearfix"></div>
-         </div>
+        <div class="mtm-search">
+            <form class="form-inline">
+                <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
+                <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
+            </form>
+        </div>
 
-         <!-- List View -->
-         <div ng-show="layout == 'list'" class="mtm-results-cont container">
-            <div class="filter-alpha-wrapper">
-               <span class="filterAlpha" ng-repeat="searchLetter in alphabet.split('') track by $index">
-                  <a href=""  target="none" class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter}}</a>
-               </span>
-               <span class="filterAlpha" ><a href=""  class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
+
+        <div class="mtm-filter container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="mtm-filter-view">
+                        <span class="mtm-view-by"><?php _e("View by:", 'makerfaire') ?></span>
+                        <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="fa fa-picture-o" aria-hidden="true"></i> <?php _e("GALLERY", 'makerfaire') ?></a>
+                        <span class="mtm-pipe">|</span>
+                        <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" ><i class="fa fa-th-list" aria-hidden="true"></i> <?php _e("LIST", 'makerfaire') ?></a>
+                    </div>
+                </div>
+                <div class="col-sm-4 mid-section">
+                    <div class="faux-checkbox">
+                        <label>Featured Makers</label>
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <button ng-class="{'ng-hide':showFeatured == 'Featured Maker'}" type="button" ng-click="makerSearch.flag = 'Featured Maker';showFeatured = 'Featured Maker';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
+                            </li>
+                            <li class="nav-item">
+                                <button ng-init="showFeatured = makerSearch.flag" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="makerSearch.flag = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+                            </li>   
+                        </ul>   
+                    </div>
+                    <div class="faux-checkbox">
+                        <label>Hands-On Activities</label>
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <button ng-class="{'ng-hide':showHandsOn == 'Featured HandsOn'}" type="button" ng-click="makerSearch.handson = 'Featured HandsOn';showHandsOn = 'Featured HandsOn';" class="btn btn-default">&nbsp;</button>
+                            </li>
+                            <li class="nav-item">
+                                <button ng-init="showHandsOn = makerSearch.handson" ng-class="{'ng-hide':showHandsOn == ''}" type="button" ng-click="makerSearch.handson = '';showHandsOn = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+                            </li>   
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4 filter-section">                 
+                    <div class="dropdown" ng-if="locations.length > 0">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                       
+                            <span ng-show="makerSearch.location != ''">{{makerSearch.location}}</span>
+                            <span ng-show="makerSearch.location == ''">All Locations</span>
+                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
+                            <li>
+                                <a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All", 'makerfaire') ?></a>
+                            </li>                  
+
+                            <li ng-repeat="location in locations| orderBy: 'location'">                     
+                                <a class="pointer-on-hover" ng-click="makerSearch.location = location">{{location}}</a>
+                            </li> 
+                        </ul>                              
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span ng-show="makerSearch.categories != ''">{{makerSearch.categories}}</span>
+                            <span ng-show="makerSearch.categories == ''">All Topics</span>
+                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+
+                        <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
+                            <li>
+                                <a class="pointer-on-hover" ng-click="makerSearch.categories = ''"><?php _e("All", 'makerfaire') ?></a>
+                            </li>
+                            <li ng-repeat="tag in tags| orderBy: tag">                     
+                                <a class="pointer-on-hover" ng-click="makerSearch.categories = tag">{{tag}}</a>
+                            </li>                            
+                        </ul>
+                    </div>
+                </div>
+            </div>     
+        </div>
+
+        <div class="mtm-results" mtm-scroll="loadMore()">
+            <div ng-show="!makers.length" class="container loading">
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
             </div>
-            <div ng-repeat="maker in makers| filter : makerSearch | byCategory:category | orderBy: 'name' | startsWithLetter:letter">
-               <a href="/maker/entry/{{maker.id}}">
-                  <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
-                     <h3>{{ maker.name}}</h3>
-                     <h6 style="font-weight: lighter;padding-left: 21px;">{{maker.makerList}}</h6>
-                  </article>
-               </a>
+            <!-- Grid View -->
+            <div ng-show="layout == 'grid'" class="mtm-results-cont">
+                <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
+                    <a target="none" href="/maker/entry/{{maker.id}}">
+                        <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
+                            <h3>{{ maker.name}}</h3>
+                        </article>
+                    </a>
+                </div>
+                <div class="clearfix"></div>
             </div>
-            <div class="clearfix"></div>
-         </div>
-      </div>
-   </div>
-   <div class="load-trigger"></div>
+
+            <!-- List View -->
+            <div ng-show="layout == 'list'" class="mtm-results-cont container">
+                <div class="filter-alpha-wrapper">
+                    <span class="filterAlpha" ng-repeat="searchLetter in alphabet.split('') track by $index">
+                        <a href=""  target="none" class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter}}</a>
+                    </span>
+                    <span class="filterAlpha" ><a href=""  class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
+                </div>
+                <div ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
+                    <a href="/maker/entry/{{maker.id}}">
+                        <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
+                            <h3>{{ maker.name}}</h3>
+                            <h6 style="font-weight: lighter;padding-left: 21px;">{{maker.makerList}}</h6>
+                        </article>
+                    </a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div class="load-trigger"></div>
 </div>
 
 <?php get_footer(); ?>
