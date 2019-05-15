@@ -190,9 +190,9 @@ scheduleApp.filter('inFaireFilter', function ($filter) {
 				var out = [];
 				// Loop thru the schedule and return only items that meet the selected date         
 				angular.forEach(schedules, function (schedule) {
-					 var scheduledTime = new Date(schedule.time_start);
-					// console.log("Today = " + todaysDate);
-					// console.log("Scheduled Time = " + scheduledTime);
+					 var scheduledTime = new Date(schedule.time_end);
+					 //console.log("Today = " + todaysDate);
+					 //console.log("Scheduled Time = " + scheduledTime);
 					 if (todaysDate < scheduledTime) {
 						  out.push(schedule);
 					 }
