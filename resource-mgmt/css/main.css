@@ -58,7 +58,9 @@ body {
 }
 
 
-
+.ui-grid-viewport {
+	height: 70vh !important;
+}
 
 .line {
     font-size: 0;
