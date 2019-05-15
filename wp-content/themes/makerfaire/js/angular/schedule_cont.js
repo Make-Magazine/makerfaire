@@ -50,14 +50,6 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
             $scope.schedSearch.type = typeParam;
         }
 
-        //if day of the week URL parameter is passed, default the day to this
-        $scope.filterdow = "";
-        filterdow = "";
-        if (dayParam != undefined && dayParam != "") {
-            $scope.filterdow = dayParam;
-            filterdow = dayParam;
-        }
-
         /* check faire start and end date 
          * if we are during the faire, default filterdow to current dow */
         var faire_start = new Date(jQuery('#faire_st').val());
@@ -65,6 +57,8 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
         var todaysDate  = new Date();       
         $scope.todaysDate = todaysDate;
         
+	     $scope.filterdow = "";
+        filterdow = "";
         if(todaysDate.getTime() > faire_start.getTime() &&
            todaysDate.getTime() <= faire_end.getTime()){
            $scope.inFaire = true;
@@ -72,6 +66,12 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
            todayDOW = weekday[todaysDate.getDay()];
            $scope.filterdow = todayDOW;
            filterdow = todayDOW;
+        }
+	
+	     //if day of the week URL parameter is passed, default the day to this
+        if (dayParam != undefined && dayParam != "") {
+            $scope.filterdow = dayParam;
+            filterdow = dayParam;
         }
        
         var formIDs = jQuery('#forms2use').val();
@@ -186,7 +186,8 @@ scheduleApp.filter('dateFilter', function ($filter) {
 scheduleApp.filter('inFaireFilter', function ($filter) {
     // Check if we're in the faire and if the day is filtered to be today, show only the upcoming events for the day
 	 return function (schedules, todaysDate) {
-		  if(inFaire == true && (filterdow != '' || filterdow === todaysDate)) {
+		 
+		  if(inFaire == true && (filterdow === weekday[todaysDate.getDay()])) {
 				var out = [];
 				// Loop thru the schedule and return only items that meet the selected date         
 				angular.forEach(schedules, function (schedule) {
