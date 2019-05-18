@@ -109,7 +109,7 @@ if ($displayNav) {
                                                     </li>
 
                                                     <li ng-repeat="schedule in schedules| filter:schedSearch | dateFilter: filterdow |  orderBy: 'type' | unique: 'type'">
-                                                        <a class="pointer-on-hover" ng-click="schedSearch.type = schedule.type;">{{ schedule.type}}</a>
+                                                        <a class="pointer-on-hover" ng-click="schedSearch.type = schedule.type;">{{schedule.type}}</a>
                                                     </li>
                                                 </ul>
                                             </div>                  
@@ -184,18 +184,18 @@ if ($displayNav) {
                             </div>
                         </div>
 
-
                         <div ng-show="!schedules.length" class="container loading">
                             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
                             <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
                         </div>
-
+							  	
                         <div class="sched-table" sched-scroll="loadMore()">     
                             <div class="row sched-header">
                                 <div class="sched-col-1"></div>               
                                 <div class="sched-body">
                                     <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
-                                    <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | inFaireFilter: todaysDate | orderBy: ['time_start', 'time_end'] | limitTo: limit">                     
+                                    <div ng-repeat="schedule in schedules | filter : schedSearch | dateFilter: filterdow | inFaireFilter: todaysDate | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
+		
                                         <div class="row sched-row">
                                             <div class="sched-col-1">
                                                 <a href="/maker/entry/{{schedule.id}}">
@@ -248,10 +248,14 @@ if ($displayNav) {
                                         </div>
 
                                     </div>
+											  	<div class="no-results" ng-show="schedules.length">
+													There is nothing else scheduled for today. Be sure to check back tomorrow!
+												</div>
                                 </div><!-- .sched-body -->
                                 <div class="load-trigger"></div>
                             </div>
                         </div>
+							  
 
                     </div>
                 </div>

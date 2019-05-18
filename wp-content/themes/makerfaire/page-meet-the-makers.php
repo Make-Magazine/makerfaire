@@ -98,6 +98,12 @@ if ($noMakerText == '')
                             <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
 
+                        <ul>
+      <li ng-repeat="maker in makers | filter:{categories: {id}}"> 
+        {{ maker.categories }}
+      </li>
+      
+    </ul>
                         <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
                             <li>
                                 <a class="pointer-on-hover" ng-click="makerSearch.categories = ''"><?php _e("All", 'makerfaire') ?></a>
