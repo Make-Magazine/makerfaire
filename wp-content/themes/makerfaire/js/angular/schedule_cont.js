@@ -59,15 +59,15 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
 
         $scope.filterdow = "";
         filterdow = "";
-        /*
-         if(todaysDate.getTime() > faire_start.getTime() &&
-         todaysDate.getTime() <= faire_end.getTime()){
-         $scope.inFaire = true;
-         inFaire = true;
-         todayDOW = weekday[todaysDate.getDay()];
-         $scope.filterdow = todayDOW;
-         filterdow = todayDOW;
-         }*/
+
+        if (todaysDate.getTime() > faire_start.getTime() &&
+                todaysDate.getTime() <= faire_end.getTime()) {
+            $scope.inFaire = true;
+            inFaire = true;
+            //todayDOW = weekday[todaysDate.getDay()];
+            //$scope.filterdow = todayDOW;
+            //filterdow = todayDOW;
+        }
 
         //if day of the week URL parameter is passed, default the day to this
         if (dayParam != undefined && dayParam != "") {
