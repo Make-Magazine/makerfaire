@@ -1,18 +1,18 @@
 var scheduleApp = angular.module('scheduleApp', ['ngAnimate', 'ui.bootstrap', 'angular.filter', 'ngSanitize']);
 
-function ucwords (str) {
-  if(str) {
-    return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($1) {
-        return $1.toUpperCase();
-    });
-  }
+function ucwords(str) {
+    if (str) {
+        return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($1) {
+            return $1.toUpperCase();
+        });
+    }
 }
 var dayParam = ucwords(getUrlParam("day"));
 var stageParam = ucwords(getUrlParam("stage"));
 var typeParam = ucwords(getUrlParam("type"));
 var topicParam = ucwords(getUrlParam("topic"));
 var weekday = new Array(7);
-weekday[0] =  "Sunday";
+weekday[0] = "Sunday";
 weekday[1] = "Monday";
 weekday[2] = "Tuesday";
 weekday[3] = "Wednesday";
@@ -23,7 +23,7 @@ weekday[6] = "Saturday";
 
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
         $scope.inFaire = false; //are we during the faire?
-	     inFaire = false;
+        inFaire = false;
         //infinite scroll
         $scope.limit = 5;
         var counter = 0;
@@ -53,36 +53,37 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
         /* check faire start and end date 
          * if we are during the faire, default filterdow to current dow */
         var faire_start = new Date(jQuery('#faire_st').val());
-        var faire_end   = new Date(jQuery('#faire_end').val());
-        var todaysDate  = new Date();       
+        var faire_end = new Date(jQuery('#faire_end').val());
+        var todaysDate = new Date();
         $scope.todaysDate = todaysDate;
-        
-	     $scope.filterdow = "";
+
+        $scope.filterdow = "";
         filterdow = "";
-        if(todaysDate.getTime() > faire_start.getTime() &&
-           todaysDate.getTime() <= faire_end.getTime()){
-           $scope.inFaire = true;
-			  inFaire = true;
-           todayDOW = weekday[todaysDate.getDay()];
-           $scope.filterdow = todayDOW;
-           filterdow = todayDOW;
-        }
-	
-	     //if day of the week URL parameter is passed, default the day to this
+        /*
+         if(todaysDate.getTime() > faire_start.getTime() &&
+         todaysDate.getTime() <= faire_end.getTime()){
+         $scope.inFaire = true;
+         inFaire = true;
+         todayDOW = weekday[todaysDate.getDay()];
+         $scope.filterdow = todayDOW;
+         filterdow = todayDOW;
+         }*/
+
+        //if day of the week URL parameter is passed, default the day to this
         if (dayParam != undefined && dayParam != "") {
             $scope.filterdow = dayParam;
             filterdow = dayParam;
         }
-       
+
         var formIDs = jQuery('#forms2use').val();
         var defType = jQuery('#schedType').val();
-        var defDOW  = jQuery('#schedDOW').val();
-        var faire   = jQuery('#faire').val();
+        var defDOW = jQuery('#schedDOW').val();
+        var faire = jQuery('#faire').val();
 
         if (formIDs == '')
             alert('error!  Please set the form to pull from on the admin page.');
         //alert('before the call');
-        $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs + '/'+faire)
+        $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs + '/' + faire)
                 .then(function successCallback(response) {
                     //alert('success');
                     $scope.schedules = response.data.schedule;
@@ -142,12 +143,12 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function (
             if (stage !== '') {
                 builtURL = builtURL + '&stage=' + stage;
             }
-            
+
             var textsearch = jQuery('#mtm-search-input').val();
             if (textsearch !== '') {
                 builtURL = builtURL + '&text=' + textsearch;
             }
-            
+
             jQuery("#printSchedule").attr("src", encodeURI(builtURL));
         }
         $scope.$watch('schedSearch.type', function (newV) {
@@ -185,24 +186,24 @@ scheduleApp.filter('dateFilter', function ($filter) {
 
 scheduleApp.filter('inFaireFilter', function ($filter) {
     // Check if we're in the faire and if the day is filtered to be today, show only the upcoming events for the day
-	 return function (schedules, todaysDate) {
-		 
-		  if(inFaire == true && (filterdow === weekday[todaysDate.getDay()])) {
-				var out = [];
-				// Loop thru the schedule and return only items that meet the selected date         
-				angular.forEach(schedules, function (schedule) {
-					 var scheduledTime = new Date(schedule.time_end);
-					 //console.log("Today = " + todaysDate);
-					 //console.log("Scheduled Time = " + scheduledTime);
-					 if (todaysDate < scheduledTime) {
-						  out.push(schedule);
-					 }
-				});
-		  } else {
-				var out = schedules;
-		  }
-		  return out;
-	 }
+    return function (schedules, todaysDate) {
+
+        if (inFaire == true && (filterdow === weekday[todaysDate.getDay()])) {
+            var out = [];
+            // Loop thru the schedule and return only items that meet the selected date         
+            angular.forEach(schedules, function (schedule) {
+                var scheduledTime = new Date(schedule.time_end);
+                //console.log("Today = " + todaysDate);
+                //console.log("Scheduled Time = " + scheduledTime);
+                if (todaysDate < scheduledTime) {
+                    out.push(schedule);
+                }
+            });
+        } else {
+            var out = schedules;
+        }
+        return out;
+    }
 });
 
 scheduleApp.directive('schedScroll', ['$window', schedScroll]);
@@ -226,4 +227,5 @@ function schedScroll($window) {
             $window.on('scroll', handler);
         }
     };
-};
+}
+;
