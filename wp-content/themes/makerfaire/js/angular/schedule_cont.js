@@ -188,7 +188,7 @@ scheduleApp.filter('inFaireFilter', function ($filter) {
     // Check if we're in the faire and if the day is filtered to be today, show only the upcoming events for the day
     return function (schedules, todaysDate) {
 
-        if (inFaire == true && (filterdow === weekday[todaysDate.getDay()])) {
+        if (inFaire == true) {
             var out = [];
             // Loop thru the schedule and return only items that meet the selected date         
             angular.forEach(schedules, function (schedule) {
