@@ -176,7 +176,7 @@ function load_scripts() {
 
    wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
    wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
-   wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css', '', '', true);
+   wp_enqueue_style('fancybox', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/css/jquery.fancybox.min.css', '', 'all');
 	wp_enqueue_style('jquery-ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css', '', '', true);
    wp_enqueue_style('universal.css', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/css/universal.min.css');
 	
@@ -195,7 +195,6 @@ function load_scripts() {
    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), '', true);
 	// wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
    wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js', array('jquery'), '', true);
-	wp_enqueue_script('fancybox', 'https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/js/jquery.fancybox.min.js', array('jquery'), '', true );
 	wp_enqueue_script('universal', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/js/min/universal.min.js', array(), $my_version, true);
 	
    wp_enqueue_script('thickbox', null);

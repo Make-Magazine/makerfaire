@@ -20,7 +20,7 @@
     </div>
     <div class="col-sm-8 col-xs-12 nl-modal">
       <h3>Awesome!</h3>
-      <p>Thanks for signing up.</p>
+      <p style="color:#333;text-align:center;margin-top:20px;">Thanks for signing up.</p>
     </div>
     <div class="clearfix"></div>
   </div>
@@ -247,6 +247,7 @@
 <!-- End pop up modal for school page -->
 <?php wp_footer(); ?>
 <script type="text/javascript">
+	
   (function() {
     window._pa = window._pa || {};
     // _pa.orderId = ""; // OPTIONAL: attach unique conversion identifier to conversions
