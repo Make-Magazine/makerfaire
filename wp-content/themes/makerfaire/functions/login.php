@@ -112,3 +112,17 @@ function verify_recaptcha_on_login($user, $password) {
         return new WP_Error('Captcha Invalid', __('<strong>ERROR</strong>: You are a bot. If not then enable JavaScript.'));
     }
 }
+
+add_action( 'login_form_lostpassword', 'wpse45134_filter_option' );
+add_action( 'login_form_retrievepassword', 'wpse45134_filter_option' );
+add_action( 'login_form_register', 'wpse45134_filter_option' );
+/**
+ * Simple wrapper around a call to add_filter to make sure we only
+ * filter an option on the login page.
+ */
+function wpse45134_filter_option()
+{
+    // use __return_zero because pre_option_{$opt} checks
+    // against `false`
+    add_filter( 'pre_option_users_can_register', '__return_zero' );
+}
