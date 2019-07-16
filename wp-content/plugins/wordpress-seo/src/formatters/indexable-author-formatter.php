@@ -5,9 +5,7 @@
  * @package Yoast\YoastSEO\Formatters
  */
 
-namespace Yoast\YoastSEO\Formatters;
-
-use Yoast\YoastSEO\Models\Indexable;
+namespace Yoast\WP\Free\Formatters;
 
 /**
  * Formats the term meta to indexable format.
@@ -15,7 +13,7 @@ use Yoast\YoastSEO\Models\Indexable;
 class Indexable_Author_Formatter {
 
 	/**
-	 * The current user id.
+	 * The current user ID.
 	 *
 	 * @var int
 	 */
@@ -35,9 +33,9 @@ class Indexable_Author_Formatter {
 	/**
 	 * Formats the data.
 	 *
-	 * @param Indexable $indexable The indexable to format.
+	 * @param \Yoast\WP\Free\Models\Indexable $indexable The indexable to format.
 	 *
-	 * @return Indexable The extended indexable.
+	 * @return \Yoast\WP\Free\Models\Indexable The extended indexable.
 	 */
 	public function format( $indexable ) {
 		$meta_data = $this->get_meta_data();
@@ -97,12 +95,13 @@ class Indexable_Author_Formatter {
 	 */
 	protected function get_author_meta( $key ) {
 		$value = \get_the_author_meta( $key, $this->user_id );
-		if ( is_string( $value ) && $value === '' ) {
+		if ( \is_string( $value ) && $value === '' ) {
 			return null;
 		}
 
 		return $value;
 	}
+
 	/**
 	 * Retrieves the permalink of a user.
 	 *

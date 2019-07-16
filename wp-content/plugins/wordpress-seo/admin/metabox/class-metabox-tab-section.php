@@ -43,7 +43,8 @@ class WPSEO_Metabox_Tab_Section implements WPSEO_Metabox_Section {
 	/**
 	 * Constructor.
 	 *
-	 * @param string $name         The name of the section, used as an identifier in the html. Can only contain URL safe characters.
+	 * @param string $name         The name of the section, used as an identifier in the html.
+	 *                             Can only contain URL safe characters.
 	 * @param string $link_content The text content of the section link.
 	 * @param array  $tabs         The metabox tabs (`WPSEO_Metabox_Tabs[]`) to be included in the section.
 	 * @param array  $options      Optional link attributes.
@@ -92,7 +93,7 @@ class WPSEO_Metabox_Tab_Section implements WPSEO_Metabox_Section {
 	public function display_link() {
 		if ( $this->has_tabs() ) {
 			printf(
-				'<li><a href="#wpseo-meta-section-%1$s" class="wpseo-meta-section-link %2$s"%3$s%4$s>%5$s</a></li>',
+				'<li role="tab"><a href="#wpseo-meta-section-%1$s" class="wpseo-meta-section-link %2$s"%3$s%4$s>%5$s</a></li>',
 				esc_attr( $this->name ),
 				esc_attr( $this->link_class ),
 				( '' !== $this->link_title ) ? ' title="' . esc_attr( $this->link_title ) . '"' : '',
