@@ -83,7 +83,6 @@
   #menu-secondary_universal_menu {
     height: 100%;
     width: 100%;
-    padding-left: 25px;
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
@@ -92,9 +91,11 @@
       font-size: 16px;
       border-right: 1px solid #999;
     }
-    .tickets-button, li:last-child, li:nth-child(3) {
+	 .subnav-wide span { width: 190px; }
+    .tickets-button, .no-border {
       border-right: none;
     }
+	 .invisible { display: none; }
     a {
       color: #fff;
       font-weight: 300;
