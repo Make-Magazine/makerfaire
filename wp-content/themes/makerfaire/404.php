@@ -36,8 +36,7 @@ p.body404 {
         <p class="headline404">This is not the page you're looking for.</p>
         <p class="body404">
            It must have moved or mysteriously departed.<br><Br>
-           For information on the Bay Area faire, go <a href="https://makerfaire.com/bay-area/">here</a>.<br>
-           For information on the New York faire, go <a href="https://makerfaire.com/new-york/">here</a>.
+           Let's go back to the <a href='https://makrfaire.com'>beginning.</a>
         </p>
       </div>
     </div>
