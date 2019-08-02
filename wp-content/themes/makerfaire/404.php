@@ -36,7 +36,7 @@ p.body404 {
         <p class="headline404">This is not the page you're looking for.</p>
         <p class="body404">
            It must have moved or mysteriously departed.<br><Br>
-           Let's go back to the <a href='https://makrfaire.com'>beginning.</a>
+           Let's go back to the <a href='https://makerfaire.com'>beginning.</a>
         </p>
       </div>
     </div>
