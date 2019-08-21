@@ -1,4 +1,5 @@
 <?php
+
 if ( ! defined( 'WP_ADMIN' ) ) {
 	define( 'WP_ADMIN', false );
 }
@@ -11,11 +12,13 @@ include 'header.php';
 
 /* required to display wp-admin bar */
 /** WordPress Administration Screen API */
+
 require_once(ABSPATH . 'wp-admin/includes/class-wp-screen.php');
 require_once(ABSPATH . 'wp-admin/includes/screen.php');
 
 require_once(ABSPATH . 'wp-admin/includes/template.php');
-do_action( 'admin_init' );
+
+//do_action( 'admin_init' );
 wp_footer();
 /* end section for wp-admin bar */
 ?>

@@ -36,7 +36,7 @@ if (isset($authRes->access_token)) {
             $connection = $result->id;
          }
       }
-      echo '$connection is '.$connection;
+      echo '$connection is '.$connection.'<br/>';
 
       // submit a job to get all auth0 users
       $url = "https://makermedia.auth0.com/api/v2/jobs/users-exports";
@@ -45,21 +45,23 @@ if (isset($authRes->access_token)) {
       $authRes = curlCall($url, $post_data, $token);
 
       $jobID = $authRes->id;
-
-   }
-   
-   echo '<hr>';
-   echo 'Submitted Job ID '.$jobID.'<br/>';
-   
-   //Check the status of the job         
-   $url = "https://makermedia.auth0.com/api/v2/jobs/".$jobID;
-   $post_data = "";
-   $authRes = curlCall($url, $post_data, $token);        
-   if($authRes->status==='completed'){
-      echo 'Get your results <a href="'.$authRes->location.'">Here</a>';
+      echo '<hr>';
+      echo 'Submitted Job ID '.$jobID.'<br/>';
+      echo 'To Pull the results click <a href="https://makerfaire.com/wp-content/themes/makerfaire/devScripts/auth0UserExport.php?jobID='.$jobID.'">here'.'</a>';
    }else{
-      echo 'Job Status = '.$authRes->status;
+       //to get resultsjobID
+       //Check the status of the job         
+        $url = "https://makermedia.auth0.com/api/v2/jobs/".$jobID;
+        $post_data = "";
+        $authRes = curlCall($url, $post_data, $token);        
+        if($authRes->status==='completed'){
+           echo 'Get your results <a href="'.$authRes->location.'">Here</a>';
+        }else{
+           echo 'Job Status = '.$authRes->status.'. Please refresh';
+           
+        }
    }
+   
    //var_dump($authRes);
    die();
    echo '<hr>';
