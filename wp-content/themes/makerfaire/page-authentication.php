@@ -22,7 +22,7 @@
 			</div>
 		</div>
 		<iframe
-         src="https://makermedia.com/third-party-check.html"
+         src="https://makercamp.com/third-party-check.html"
          height="200px"
          width="100%" style="border:none;">
       </iframe>
