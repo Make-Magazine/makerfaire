@@ -178,36 +178,24 @@ function gf_summary_metabox($form, $lead) {
 			<td>
         <label >Email Note To:</label><br />';
 
-    $emailto1 = array("Caleb Kraft" => "caleb@makermedia.com",
-        "Dale Dougherty" => "dale@makermedia.com",
-        "Jay Kravitz" => "jay@thecrucible.org",
-        "Jess Hobbs" => "jess@makermedia.com",
-        "Jonathan Maginn" => "jonathan.maginn@sbcglobal.net",
-        "DC Denison" => "dcdenison@mac.com",
-        "Siana Alcorn" => "siana@makermedia.com",
-        "Tami Jo Benson" => "tj@tamijo.com");
-    $emailto2 = array("Kerry Moore" => "kmoore@makermedia.com",
-        "Kim Dow" => "dow@dowhouse.com",
-        "Matt Stultz" => "mstultz@makermedia.com",
-        "Rob Bullington" => "rbullington@makermedia.com",
-        "Sabrina Merlo" => "smerlo@makermedia.com",
-        "Ralf" => "ralf@muehlen.com",
-        "Tyler Winegarner" => "tyler@makermedia.com",
-        "Keith Hammond" => "khammond@makermedia.com");
-    $emailtoaliases = array("Dev" => "dev@makermedia.com",
+    $emailto1 = array("Caleb Kraft" => "caleb@make.co",
+        "Dale Dougherty" => "dale@make.co",                                
+        "Siana Alcorn" => "siana@make.co",
+        "Gillian Mutti" => "gillian@make.co",
+        "Jennifer Blakeslee" => "gillian@make.co");
+    $emailto2 = array(
+        "Webmaster" => "webmaster@make.co",
         "Editors" => "editor@makezine.com",
+        "Rob Bullington" => "rob@make.co",        
+        "Keith Hammond" => "keith@make.co");
+    $emailtoaliases = array(        
         "Maker Relations" => "makers@makerfaire.com",
         "PR" => "pr@makerfaire.com",
         "Sales" => "sales@makerfaire.com",
         "Sustainability" => "sustainability@makerfaire.com",
-        "Speakers" => "speakers@makerfaire.com",
-        "MakerShare" => "admin@makershare.com",
-        "Sponsor Relations" => "sponsorrelations@makermedia.com"
+        "Speakers" => "speakers@makerfaire.com"
     );
-
-    if (in_array($form['id'], array(64, 65, 67, 68))) {
-        $emailtoaliases["National Team"] = "nationalmakers@makerfaire.com";
-    }
+ 
     $return .= '<div style="float:left">';
     foreach ($emailtoaliases as $name => $email) {
         $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
@@ -229,7 +217,7 @@ function gf_summary_metabox($form, $lead) {
     }
     $return .= '
 				</div>
-            <div class="clear"></div>Enter Email: <input type="email" placeholder="example@makermedia.com" name="otherEmail" size="40" />
+            <div class="clear"></div><br/>Enter Email: <input type="email" placeholder="example@make.co" name="otherEmail" size="40" />
 			</td>
 			<td style="vertical-align: top; padding: 10px;">
         <textarea	name="new_note_sidebar"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>';
