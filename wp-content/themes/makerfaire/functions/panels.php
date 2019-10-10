@@ -24,6 +24,9 @@ function dispLayout($row_layout) {
          case '1_column_wysiwyg': // 1 column wysiwyg
             $return = get1ColWYSIWYG();            
             break;
+			case '2_column_wysiwyg': // 1 column wysiwyg
+            $return = get2ColWYSIWYG();            
+            break;
          case '1_column': // 1 COLUMN LAYOUT
             $return = get1ColLayout();            
             break;
@@ -500,6 +503,31 @@ function get1ColWYSIWYG() {
   $return .=  '  </div>
           
         </section>';
+  return $return;
+}
+
+/* Function to return two column wysiwyg */
+function get2ColWYSIWYG() {
+  $return = '<section class="content-panel double-block">
+          		<div class="container">
+					   <div class="row">';
+  //get requested data for each column
+  $column_rows = get_sub_field('columns');
+  foreach ($column_rows as $column) {
+	  $return .= '<div class="col-md-6 sm-12">';
+	  if($column['title']) {
+		 $return .=  '<h2 class="panel-title yellow-underline text-center">' . $column['title'] . '</h2>';
+	  }
+	  $return .=  '<div class="container-fluid">' . $column['column'] . '</div>';
+	  if($column['cta_button']) {
+		 $return .=  '<a class="btn btn-b-ghost" href="' . $column['cta_button_url'] . '">' . $column['cta_button'] . '</a>';
+	  }
+	  $return .= '</div>';
+  }
+
+  $return .=  '  </div>
+  					</div>
+             </section>';
   return $return;
 }
 
