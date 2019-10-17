@@ -1,0 +1,253 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView - Maps\n"
+"POT-Creation-Date: 2015-04-16 20:33-0700\n"
+"PO-Revision-Date: 2015-04-16 20:33-0700\n"
+"Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
+"Language-Team: Katz Web Services, Inc. <support@katz.co>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: gravityview-maps.php:34
+#, php-format
+msgid ""
+"GravityView Maps requires PHP Version 5.3 or higher. Please contact your web "
+"host and ask them to upgrade your server.\n"
+"\n"
+"\n"
+"For more information, %sread our help article%s."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:43
+msgid "Maps"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:121
+#: includes/class-gravityview-maps-admin.php:158
+msgid "None"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:154
+msgid "Address Field"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:165
+msgid "Map Type"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:169
+msgid "Street"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:170
+msgid "Satellite"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:171
+msgid "Hybrid"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:172
+msgid "Terrain"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:174
+msgid ""
+"Hybrid: This map type displays a transparent layer of major streets on "
+"satellite images. Roadmap: This map type displays a normal street map. "
+"Satellite: This map type displays satellite images. Terrain: This map type "
+"displays maps with physical features such as terrain and vegetation."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:179
+#: includes/parts/admin-meta-box.php:32
+msgid "Pin Icon"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:186
+msgid "Infobox content"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:196
+msgid "Map template layout"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:200
+msgid "Top"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:201
+msgid "Right"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:202
+msgid "Bottom"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:203
+msgid "Left"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:210
+msgid "Keep the map fixed during page scroll"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:211
+msgid "Pinned Map"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:363
+msgid "GravityView Maps Custom Map Icon"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:364
+#: includes/parts/admin-meta-box.php:38
+msgid "Add Icon"
+msgstr ""
+
+#: includes/class-gravityview-maps-available-icons.php:54
+msgid "Default"
+msgstr ""
+
+#: includes/class-gravityview-maps-available-icons.php:59
+msgid "Theme Map Icons"
+msgstr ""
+
+#: includes/class-gravityview-maps-available-icons.php:64
+msgid "GravityView Map Icons"
+msgstr ""
+
+#: includes/class-gravityview-maps-fields.php:40
+msgid "Entry Map"
+msgstr ""
+
+#: includes/class-gravityview-maps-fields.php:42
+msgid "Display a map showing the location of the entry"
+msgstr ""
+
+#: includes/class-gravityview-maps-form-fields.php:51
+msgid "Map Icon Picker"
+msgstr ""
+
+#: includes/class-gravityview-maps-form-fields.php:86
+msgid "Map Icon"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:37
+msgid "Google Maps API Key"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:38
+#, php-format
+msgid ""
+"Read more about %sGoogle Maps JS API v3%s  and learn how to obtain your key."
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:27
+msgid "Map (default)"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:28
+msgid "Display entries on a map."
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:38
+msgid "Link to single entry"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:49
+#: includes/class-gravityview-maps-template-map-default.php:100
+msgid "Image"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:58
+msgid "Listing Title"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:67
+msgid "Details"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:76
+msgid "Footer"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:88
+msgid "Title"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:93
+msgid "Subheading"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:107
+msgid "Other Fields"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:116
+msgid "Footer Left"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:123
+msgid "Footer Right"
+msgstr ""
+
+#: includes/class-gravityview-maps-view-widget.php:14
+msgid "Display the visible entries in a map"
+msgstr ""
+
+#: includes/class-gravityview-maps-view-widget.php:20
+msgid "Multiple Entries Map"
+msgstr ""
+
+#: includes/parts/admin-meta-box.php:37
+#: includes/parts/gf-field-icon-picker.php:18
+msgid "Select Icon"
+msgstr ""
+
+#: includes/parts/admin-meta-box.php:38
+msgid "Upload Custom Icon"
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:154
+#, php-format
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" class="
+"\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:161
+#, php-format
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" class="
+"\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a href=\"%4$s"
+"\">update now</a>."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:301
+msgid "You do not have permission to install plugin updates"
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:301
+msgid "Error"
+msgstr ""
+
+#: lib/class-gravityview-extension.php:173
+#, php-format
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:183
+#, php-format
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr ""

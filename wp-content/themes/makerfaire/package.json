@@ -1,6 +1,6 @@
 {
    "name": "makerfaire",
-   "version": "4.33.124",
+   "version": "4.33.125",
    "description": "Maker Faire",
    "main": "",
    "private": true,
@@ -49,11 +49,18 @@
       "onchange:js:ngreporting": "onchange 'NOT USED' -- npm run js:ngreporting:uglify",
       "onchange:js:admin": "onchange 'js/src-admin-scripts/*.js' -- npm run js:admin:uglify",
       "onchange:js:globalmap": "onchange 'js/angular/global-faires-map-app/faireMapsApp.js' 'js/angular/global-faires-map-app/*.js' -- npm run js:globalmap:uglify",
-      "build": "npm-run-all js:**:uglify less:**:compile",
-      "build:cachebust": "npm-run-all cachebust:update js:**:uglify less:**:compile",
-      "dev": "npm-run-all build -p onchange:js:** onchange:less:**"
+      "js:transpile:map": "babel js/mf-map/mf-map-src.js -d js/mf-map/mf-map-src-es5 --presets=@babel/env",
+      "postjs:transpile:map": "npm run js:map:uglify",
+      "js:map:uglify": "uglifyjs js/mf-map/mf-map-src-es5/mf-map-src.js -o js/mf-map/min/mf-map.min.js -c -m --source-map \"root='../../../', url='mf-map.min.js.map'\"",
+      "onchange:vue:map": "onchange './js/mf-map/mf-map-src.js' -- npm run js:transpile:map",
+      "build": "npm-run-all js:**:uglify js:transpile:map less:**:compile",
+      "build:cachebust": "npm-run-all cachebust:update js:**:uglify js:transpile:map less:**:compile",
+      "dev": "npm-run-all build -p onchange:js:** onchange:vue:map onchange:less:**"
    },
    "devDependencies": {
+      "@babel/cli": "^7.6.4",
+      "@babel/core": "^7.6.4",
+      "@babel/preset-env": "^7.6.3",
       "bootstrap": "3.3.7",
       "bootstrap-dialog": "1.34.6",
       "clean-css-cli": "^4.2.1",

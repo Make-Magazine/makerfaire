@@ -1,0 +1,992 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Gravity Forms Geolocation Add-on\n"
+"POT-Creation-Date: 2017-07-10 05:32-0400\n"
+"PO-Revision-Date: 2018-10-11 13:57+0200\n"
+"Last-Translator: Dariusz Zielonka <info@dariusz-zielonka.pl>\n"
+"Language-Team: Dariusz Zielonka <info@dariusz-zielonka.pl>\n"
+"Language: pl_PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: gravityforms-geolocation.php\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: gravityforms-geolocation.php:36
+msgid ""
+"Please deactivate Gravity Forms Geo Field add-on in order to use Gravity "
+"Forms Geolocation add-on."
+msgstr ""
+"Please deactivate Gravity Forms Geo Field add-on in order to use Gravity "
+"Forms Geolocation add-on."
+
+#: gravityforms-geolocation.php:245
+msgid "Enhance Gravity Forms plugin with geolocation features."
+msgstr "Ulepsz Gravity Forms funkcjami geolokalizacji."
+
+#: gravityforms-geolocation.php:269
+msgid "General Settings"
+msgstr "Ogólne ustawienia"
+
+#: gravityforms-geolocation.php:273
+#, php-format
+msgid ""
+"Enter your Google Map API key. If you don't have an API key, click <a href="
+"\"%s\" target=\"_blank\">Here</a> to create one. You can follow <a href=\"%s"
+"\" target=\"_blank\">this tutorial</a> on how to create the proper Maps API "
+"key."
+msgstr ""
+"Wprowadź swój klucz API Map Google. Jeśli nie posiadasz klucza API, kliknij "
+"<a href=\"%s\" target=\"_blank\">tutaj</a> aby go utworzyć. Prześledź <a "
+"href=\"%s\" target=\"_blank\">ten tutorial</a>, aby dowiedzieć się jak "
+"utworzyć odpowiedni klucz API Map Google."
+
+#: gravityforms-geolocation.php:274
+msgid "Google Maps API Key"
+msgstr "Klucz API Map Google"
+
+#: gravityforms-geolocation.php:281
+msgid ""
+"Enter the country code of the default country to be used with Google Maps "
+"API."
+msgstr "Wprowadź kod domyślnego kraju, który ma być używany z API Map Google."
+
+#: gravityforms-geolocation.php:282
+msgid "Google Maps Country Code"
+msgstr "Kod kraju Map Google"
+
+#: gravityforms-geolocation.php:289
+msgid ""
+"Enter the language code of the default language to be used with Google Maps "
+"API."
+msgstr "Wprowadź kod domyślnego języka stosowanego z API Map Google."
+
+#: gravityforms-geolocation.php:290
+msgid "Google Maps Language"
+msgstr "Język Map Google"
+
+#: gravityforms-geolocation.php:297
+msgid ""
+"Check this checkbox if you'd like to prevent Gravity Geolocation plugin from "
+"registering the Google Maps API. This can be useful when there is another "
+"plugin or theme that registering the Google Maps API on your site. This way "
+"you can prevent the error cause by multiple call to Google Maps API."
+msgstr ""
+"Zaznacz to pole wyboru, jeśli chcesz zapobiec rejestrowaniu API Map Google "
+"przez wtyczkę Gravity Geolocation. Może to być przydatne, gdy istnieje inna "
+"wtyczka lub motyw, który rejestruje API Map Google na swojej stronie. W ten "
+"sposób można zapobiec przyczynie błędu poprzez wielokrotne wywołanie API Map "
+"Google."
+
+#: gravityforms-geolocation.php:298
+msgid "Disable Google Maps API"
+msgstr "Wyłącz API Map Google"
+
+#: gravityforms-geolocation.php:303 gravityforms-geolocation.php:328
+#: includes/class-gfgeo-helper.php:209
+msgid "Disable"
+msgstr "Wyłącz"
+
+#: gravityforms-geolocation.php:310
+msgid ""
+"Check this checkbox to enable high accuracy location mode. By doing so, the "
+"the auto-locator feature ( HTML5 geolocation ) might retrive a more accurate "
+"user current location. That is when using the auto-locator button and auto-"
+"locator on page load. Please note that higher accuracy might results in "
+"slower performance of the geolocator."
+msgstr ""
+"Zaznacz to pole wyboru, aby włączyć tryb lokalizacji o wysokiej dokładności. "
+"W ten sposób funkcja automatycznego lokalizowania (geolokalizacja HTML5) "
+"może przywrócić bardziej dokładną lokalizację użytkownika. Jest tak w "
+"przypadku korzystania z przycisku Automatycznego lokalizowania oraz podczas "
+"ładowania strony. Należy pamiętać, że wyższa dokładność może skutkować "
+"wolniejszą pracą geolokatora."
+
+#: gravityforms-geolocation.php:311
+msgid "High Accuracy Location Mode"
+msgstr "Tryb lokalizacji o wysokiej dokładności"
+
+#: gravityforms-geolocation.php:316
+msgid "Enable"
+msgstr "Włącz"
+
+#: gravityforms-geolocation.php:323
+msgid ""
+"( beta feature ) Use this dropdown menu to enable the IP address locator "
+"services. You can do so by selecting the service that you would like to use. "
+"Once this feature is enabled, you will be able to set it in the locator "
+"button field and the page locator option of the form editor. You can use it "
+"instead of the HTML5 geolocation feature or as a fall-back when the HTML5 "
+"geolocation fails. Note that the location returned by the IP address, in "
+"most cases, is not very accurate."
+msgstr ""
+"( funkcja beta ) Użyj tego rozwijanego menu, aby włączyć usługi lokalizacji "
+"adresów IP. Możesz to zrobić wybierając usługę, z której chcesz skorzystać. "
+"Po włączeniu tej funkcji będzie można ją ustawić w polu przycisku "
+"lokalizatora i opcji lokalizatora strony podczas edycji formularzy. Można go "
+"używać zamiast funkcji geolokalizacji HTML5 lub w wyjątkowych przypadkach, "
+"gdy geolokalizacja HTML5 zawodzi. Należy pamiętać, że lokalizacja zwracana "
+"przez adres IP, w większości przypadków, nie jest zbyt dokładna."
+
+#: gravityforms-geolocation.php:324
+#: includes/admin/class-gfgeo-form-editor.php:253
+msgid "IP Address Locator"
+msgstr "Lokalizator adresów IP"
+
+#: gravityforms-geolocation.php:332
+msgid "ipinfo.io"
+msgstr "ipinfo.io"
+
+#: gravityforms-geolocation.php:336
+msgid "MaxMind"
+msgstr "MaxMind"
+
+#: gravityforms-geolocation.php:354
+msgid "ipinfo.io Token"
+msgstr "Token ipinfo.io"
+
+#: gravityforms-geolocation.php:355
+#, php-format
+msgid ""
+"Enter your ipinfo token, if you have one, in this input box. A token is not "
+"required in order to use the free ipinfo service, which provides you with "
+"1000 queries per day. If you need more than a 1000 queries per day, you "
+"should look into subscribing to one of the ipinfo premium plans which will "
+"provide you with a token. Click <a href=\"%s\" target=\"_blank\">here</a> "
+"for more information."
+msgstr ""
+"Wprowadź jeśli swój token ipinfo w tym polu wprowadzania danych. Token nie "
+"jest wymagany do korzystania z bezpłatnej usługi ipinfo, która zapewnia 1000 "
+"zapytań dziennie. Jeśli potrzebujesz więcej niż 1000 zapytań dziennie, "
+"powinieneś poznać plany subskrypcji premium ipinfo w celu uzyskania tokena. "
+"Kliknij <a href=\"%s\" target=\"_blank\"> >tutaj</a> aby uzyskać więcej "
+"informacji."
+
+#: includes/admin/class-gfgeo-form-editor.php:81
+msgid "Geolocation options"
+msgstr "Opcje geolokalizacji"
+
+#: includes/admin/class-gfgeo-form-editor.php:88
+#: includes/admin/class-gfgeo-form-editor.php:456
+msgid "Default Latitude"
+msgstr "Domyślna szerokość geograficzna"
+
+#: includes/admin/class-gfgeo-form-editor.php:101
+#: includes/admin/class-gfgeo-form-editor.php:469
+msgid "Default Longitude"
+msgstr "Domyślna długość geograficzna"
+
+#: includes/admin/class-gfgeo-form-editor.php:119
+msgid "Enable Page Locator"
+msgstr "Włącz lokalizator strony"
+
+#: includes/admin/class-gfgeo-form-editor.php:132
+msgid "User Meta Field Name"
+msgstr "Nazwa pola meta danych użytkownika"
+
+#: includes/admin/class-gfgeo-form-editor.php:148
+msgid "Meta Fields Setup"
+msgstr "Ustawienie pól meta"
+
+#: includes/admin/class-gfgeo-form-editor.php:154
+msgid "Show Fields"
+msgstr "Pokaż pola"
+
+#: includes/admin/class-gfgeo-form-editor.php:173
+msgid "Save custom field as serialized array"
+msgstr "Zapisz niestandardowe pole jako tablica szeregowa (serialized array)"
+
+#: includes/admin/class-gfgeo-form-editor.php:186
+msgid "Dynamic Location Field"
+msgstr "Pole dynamicznej lokalizacji"
+
+#: includes/admin/class-gfgeo-form-editor.php:205
+msgid "Geocoder ID"
+msgstr "ID geokodera"
+
+#: includes/admin/class-gfgeo-form-editor.php:215
+#: includes/admin/class-gfgeo-form-editor.php:335
+#: includes/admin/class-gfgeo-form-editor.php:353
+#: includes/admin/class-gfgeo-form-editor.php:371
+#: includes/admin/class-gfgeo-form-editor.php:389
+#: includes/class-gfgeo-helper.php:23
+#: includes/fields/gfgeo-field-geocoder.php:238
+msgid "N/A"
+msgstr "Niedostępne"
+
+#: includes/admin/class-gfgeo-form-editor.php:223
+msgid "Button Label"
+msgstr "Etykieta przycisku"
+
+#: includes/admin/class-gfgeo-form-editor.php:244
+msgid "Enable locator button"
+msgstr "Włącz przycisk lokalizatora"
+
+#: includes/admin/class-gfgeo-form-editor.php:264
+msgid "Disabled"
+msgstr "Wyłączone"
+
+#: includes/admin/class-gfgeo-form-editor.php:265
+msgid "Default"
+msgstr "Domyślne"
+
+#: includes/admin/class-gfgeo-form-editor.php:266
+msgid "Fall-back"
+msgstr "Alternatywy"
+
+#: includes/admin/class-gfgeo-form-editor.php:282
+msgid "Location Found Message"
+msgstr "Komunikat o znalezionej lokalizacji"
+
+#: includes/admin/class-gfgeo-form-editor.php:300
+msgid ""
+"This feature requires <a href=\"https://wordpress.org/plugins/geo-my-wp/\" "
+"target=\"_blank\">GEO my WP</a> plugin"
+msgstr ""
+"Ta funkcja wymaga wtyczki <a href=\"https://wordpress.org/plugins/geo-my-wp/"
+"\" target=\"_blank\">GEO my WP</a>"
+
+#: includes/admin/class-gfgeo-form-editor.php:315
+msgid "GEO my WP Post Integration"
+msgstr "Integracja wpisów GEO my WP"
+
+#: includes/admin/class-gfgeo-form-editor.php:325
+msgid "GEO my WP - Phone"
+msgstr "GEO my WP - Telefon"
+
+#: includes/admin/class-gfgeo-form-editor.php:343
+msgid "GEO my WP - Fax"
+msgstr "GEO my WP - Fax"
+
+#: includes/admin/class-gfgeo-form-editor.php:361
+msgid "GEO my WP - Email"
+msgstr "GEO my WP - E-mail"
+
+#: includes/admin/class-gfgeo-form-editor.php:379
+msgid "GEO my WP - Website"
+msgstr "GEO my WP - Strona internetowa"
+
+#: includes/admin/class-gfgeo-form-editor.php:412
+msgid "GEO my WP User Integration"
+msgstr "GEO my WP Integracja użytkowników"
+
+#: includes/admin/class-gfgeo-form-editor.php:424
+msgid "Latitude Placeholder"
+msgstr "Zastępcza szerokość geograficzna"
+
+#: includes/admin/class-gfgeo-form-editor.php:440
+msgid "Longitude Placeholder"
+msgstr "Zastępcza długość geograficzna"
+
+#: includes/admin/class-gfgeo-form-editor.php:482
+msgid "Map Type"
+msgstr "Typ mapy"
+
+#: includes/admin/class-gfgeo-form-editor.php:495
+msgid "Zoom Level"
+msgstr "Powiększanie Mapy"
+
+#: includes/admin/class-gfgeo-form-editor.php:510
+msgid "Map Width"
+msgstr "Szerokość mapy"
+
+#: includes/admin/class-gfgeo-form-editor.php:523
+msgid "Map Height"
+msgstr "Wysokość Mapy"
+
+#: includes/admin/class-gfgeo-form-editor.php:535
+msgid "Map Marker URL"
+msgstr "URL znacznika mapy"
+
+#: includes/admin/class-gfgeo-form-editor.php:552
+msgid "Draggable Map Marker"
+msgstr "Przeciągany znacznik mapy"
+
+#: includes/admin/class-gfgeo-form-editor.php:564
+msgid "Set Map Marker on Click"
+msgstr "Ustaw znacznik mapy po kliknięciu"
+
+#: includes/admin/class-gfgeo-form-editor.php:576
+msgid "Enable Mouse Scroll-Wheel Zoom"
+msgstr "Włącz funkcję powiększania przy przewijaniu myszy"
+
+#: includes/admin/class-gfgeo-form-editor.php:588
+msgid "Disable Address Output ( beta )"
+msgstr "Wyłącz wyjście adresu ( beta )"
+
+#: includes/admin/class-gfgeo-form-editor.php:602
+msgid "Enable Google Address Autocomplete"
+msgstr "Włącz autouzupełnianie adresów Google"
+
+#: includes/admin/class-gfgeo-form-editor.php:609
+msgid "Autocomplete Results Types"
+msgstr "Typy wyników autouzupełniania"
+
+#: includes/admin/class-gfgeo-form-editor.php:630
+msgid "Address Autocomplete Bounds"
+msgstr "Ograniczenia autouzupełniania adresu"
+
+#: includes/admin/class-gfgeo-form-editor.php:649
+msgid "Enable Page Locator Bounds"
+msgstr "Włącz limity lokalizatora strony"
+
+#: includes/admin/class-gfgeo-form-editor.php:656
+msgid "Autocomplete Placeholder"
+msgstr "Tekst zastępczy autouzupełniania"
+
+#: includes/admin/class-gfgeo-form-editor.php:669
+msgid "Field description"
+msgstr "Opis pola"
+
+#: includes/admin/class-gfgeo-form-editor.php:681
+msgid "Restrict Autocomplete Results"
+msgstr "Ogranicz wyniki autouzupełniania"
+
+#: includes/admin/class-gfgeo-form-editor.php:704
+msgid "Enable Google Maps Link"
+msgstr "Włącz łącze Mapy Google"
+
+#: includes/admin/class-gfgeo-form-editor.php:721
+msgid ""
+"The plugin will try to dynamically retrieve the user's current position when "
+"the form first loads. If location was found, it will auto-populate in the "
+"location fields attached to this geocoder. Note that if the page locator is "
+"enabled the default coordinates above will not take place."
+msgstr ""
+"Wtyczka będzie próbowała dynamicznie pobierać aktualną pozycję użytkownika "
+"podczas pierwszego wczytywania formularza. Jeśli znaleziono lokalizację, "
+"będzie ona automatycznie wypełniona w polach lokalizacji dołączonych do tego "
+"geokodera. Zauważ, że jeśli lokalizator strony jest włączony, powyższe "
+"domyślne współrzędne zostaną zignorowane."
+
+#: includes/admin/class-gfgeo-form-editor.php:723
+msgid "."
+msgstr "."
+
+#: includes/admin/class-gfgeo-form-editor.php:726
+msgid ""
+"Enter the latitude of the initial location that will be displayed in the "
+"geolocation fields, attached to this geocoder, when the form first loads. "
+"Otherwise, leave  the field blank."
+msgstr ""
+"Wprowadź szerokość geograficzną początkowej lokalizacji wyświetlanej w "
+"polach geolokalizacji, dołączonych do tego geokodera, podczas gdy formularz "
+"zostanie załadowany po raz pierwszy. W przeciwnym razie pole należy "
+"pozostawić puste."
+
+#: includes/admin/class-gfgeo-form-editor.php:727
+msgid ""
+"Enter the longitude of the initial location that will be displayed in the "
+"geolocation fields, attached to this geocoder, when the form first loads. "
+"Otherwise, leave  the field blank."
+msgstr ""
+"Wprowadź długość geograficzną początkowej lokalizacji, która będzie "
+"wyświetlana w polach geolokalizacji, dołączonych do tego geokodera, gdy "
+"formularz zostanie załadowany po raz pierwszy. W przeciwnym razie pole "
+"należy pozostawić puste."
+
+#: includes/admin/class-gfgeo-form-editor.php:730
+msgid ""
+"Check this checkbox if you'd like to sync this geocoder with GEO my WP Posts "
+"Locator add-on. This location will then be saved in GEO my WP database and "
+"the post attached to it ( if at all created or udpated )will be searchable "
+"via GEO my WP search forms"
+msgstr ""
+"Zaznacz to pole wyboru, jeśli chcesz zsynchronizować ten geokoder z "
+"dodatkiem GEO my WP Posts Locator. Ta lokalizacja zostanie zapisana w bazie "
+"danych GEO my WP, a wpis do niej dołączony (jeśli w ogóle utworzony lub "
+"zaktualizowany) będzie można przeszukiwać za pomocą formularzy wyszukiwania "
+"GEO my WP"
+
+#: includes/admin/class-gfgeo-form-editor.php:732
+msgid "Select the field that will be used for the GEO my WP Phone."
+msgstr "Wybierz pole, które będzie używane dla Telefonu GEO my WP."
+
+#: includes/admin/class-gfgeo-form-editor.php:734
+msgid "Select the field that will be used for the GEO my WP Fax."
+msgstr "Wybierz pole, które będzie używane dla Faxu GEO my WP."
+
+#: includes/admin/class-gfgeo-form-editor.php:736
+msgid "Select the field that will be used for the GEO my WP Email."
+msgstr "Wybierz pole, które będzie używane dla E-mail GEO my WP."
+
+#: includes/admin/class-gfgeo-form-editor.php:738
+msgid "Select the field that will be used for the GEO my WP Website."
+msgstr "Wybierz pole, które będzie używane dla Witryny GEO my WP."
+
+#: includes/admin/class-gfgeo-form-editor.php:741
+msgid ""
+"Check this checkbox if you'd like to sync this geocoder with GEO my WP users "
+"database. This location will then be saved in GEO my WP database and the "
+"user attached to it will be searchable via GEO my WP search forms"
+msgstr ""
+"Zaznacz to pole wyboru, jeśli chcesz zsynchronizować ten geokoder z bazą "
+"danych użytkowników GEO my WP. Ta lokalizacja zostanie zapisana w bazie "
+"danych GEO my WP, a użytkownik powiązany z nią będzie możliwy do wyszukania "
+"za pomocą formularzy wyszukiwania GEO my WP"
+
+#: includes/admin/class-gfgeo-form-editor.php:744
+msgid ""
+"Enter a user meta field where you'd like to save the complete geocoded "
+"information as an array. Otherwise, leave  the field blank."
+msgstr ""
+"Wprowadź pole meta użytkownika, w którym chcesz zapisać pełne informacje "
+"geokodowania w postaci tablicy. W przeciwnym razie pole należy pozostawić "
+"puste."
+
+#: includes/admin/class-gfgeo-form-editor.php:747
+msgid ""
+"Click the \"Show Fields\" link to see the list of the geocoded fields which "
+"you can save each of one of them into post custom field, user meta field and "
+"BuddyPress profile field ( BuddyPress plugin required )."
+msgstr ""
+"Kliknij łącze \"Pokaż pola\", aby zobaczyć listę geokodowanych pól, z "
+"których każde można zapisać w niestandardowym polu wpisu, polu meta "
+"użytkownika i polu profilu BuddyPress (wymagany dodatek BuddyPress)."
+
+#: includes/admin/class-gfgeo-form-editor.php:750
+msgid ""
+"Dynamically populate this field with the selected location field everytime "
+"geocoding takes place."
+msgstr ""
+"Dynamicznie wypełnij to pole wybranym polem lokalizacji za każdym razem, gdy "
+"odbywa się geokodowanie."
+
+#: includes/admin/class-gfgeo-form-editor.php:753
+msgid ""
+"Select the geocoder field ID that you would like to sync this field with."
+msgstr "Wybierz ID pola geokodera, z którym chcesz zsynchronizować to pole."
+
+#: includes/admin/class-gfgeo-form-editor.php:756
+msgid "Enter the locator button label."
+msgstr "Wprowadź etykietę przycisku lokalizatora."
+
+#: includes/admin/class-gfgeo-form-editor.php:757
+msgid ""
+"Display a locator icon, inside the text field, that will retrieve the user's "
+"current position once clicked."
+msgstr ""
+"Wyświetla ikonę lokalizatora wewnątrz pola tekstowego, która po kliknięciu "
+"wyświetli aktualną pozycję użytkownika."
+
+#: includes/admin/class-gfgeo-form-editor.php:758
+msgid "Enable alert message that will show once the user poisiton was found."
+msgstr ""
+"Włączyć powiadomienie JavaSript, które pojawi się po odnalezieniu "
+"lokalizacji użytkownika."
+
+#: includes/admin/class-gfgeo-form-editor.php:759
+msgid ""
+"( Beta feature ) Enable this feature so the plugin will retrive the user's "
+"current location based on the IP address. Choose \"Default\" to use the IP "
+"address instead of the browser's locator ( HTML5 geolocation ) or \"Fallback"
+"\" to use the IP address when the browser fails to retrive the location. "
+"Please note that while the IP address locator does not require the user's "
+"permission to retrive his location, like how the browser does, it is also "
+"not accurate compare to the HTML5 geolocation."
+msgstr ""
+"( funkcja Beta ) Włącz tę funkcję, aby wtyczka pobierała aktualną "
+"lokalizację użytkownika w oparciu o adres IP. Wybierz \"Domyślne\", aby użyć "
+"adresu IP zamiast lokalizatora przeglądarki ( geolokalizacja HTML5 ) lub "
+"\"Wstecz\", aby użyć adresu IP, gdy przeglądarka nie potrafi odzyskać "
+"lokalizacji. Należy pamiętać, że chociaż lokalizator adresu IP nie wymaga "
+"zgody użytkownika na pobieranie jego lokalizacji, tak jak robi to "
+"przeglądarka, nie jest on również ta precyzyjny jak geolokalizacja HTML5."
+
+#: includes/admin/class-gfgeo-form-editor.php:762
+msgid "Enter a placeholder text for the latitude textbox."
+msgstr "Wprowadź tekst zastępczy dla pola tekstowego szerokości geograficznej."
+
+#: includes/admin/class-gfgeo-form-editor.php:763
+msgid "Enter a placeholder text for the longitude textbox."
+msgstr "Wprowadź tekst zastępczy dla pola tekstowego długości geograficznej."
+
+#: includes/admin/class-gfgeo-form-editor.php:764
+msgid ""
+"By default the coordinates value will be saved comma separated: latitude,"
+"longitude ( ex 12345,6789 ). Check this checkbox if you'd like to save the "
+"value as serialized array"
+msgstr ""
+"Domyślnie wartość współrzędnych zostanie zapisana jako oddzielona "
+"przecinkiem: szerokość geograficzna, długość geograficzna ( np. "
+"12345,6789 ). Zaznacz to pole wyboru, jeśli chcesz zapisać wartość jako "
+"tablicę szeregową (serialized array)"
+
+#: includes/admin/class-gfgeo-form-editor.php:767
+msgid ""
+"Enter the latitude of the point that will show on the map when the form "
+"first loads."
+msgstr ""
+"Wprowadź szerokość geograficzną punktu, która zostanie wyświetlona na mapie "
+"przy pierwszym załadowaniu formularza."
+
+#: includes/admin/class-gfgeo-form-editor.php:768
+msgid ""
+"Enter the longitude of the point that will show on the map when the form "
+"first loads."
+msgstr ""
+"Wprowadź długość geograficzną punktu, która zostanie wyświetlona na mapie "
+"przy pierwszym załadowaniu formularza."
+
+#: includes/admin/class-gfgeo-form-editor.php:769
+msgid "Enter the map width in pixels or percentage."
+msgstr "Wprowadź szerokość mapy w pikselach lub w procentach."
+
+#: includes/admin/class-gfgeo-form-editor.php:770
+msgid "Enter the map height in pixels or percentage."
+msgstr "Wprowadź wysokość mapy w pikselach lub w procentach."
+
+#: includes/admin/class-gfgeo-form-editor.php:771
+msgid "Enter the URL of the icon that will be used as the map marker."
+msgstr "Wprowadź adres URL ikony, która będzie używana jako znacznik mapy."
+
+#: includes/admin/class-gfgeo-form-editor.php:772
+msgid "Choose the map type."
+msgstr "Wybierz typ mapy."
+
+#: includes/admin/class-gfgeo-form-editor.php:773
+msgid "Set the zoom level of the map."
+msgstr "Ustaw poziom powiększenia mapy."
+
+#: includes/admin/class-gfgeo-form-editor.php:774
+msgid ""
+"Making marker draggable allows the front-end users to set location by "
+"dragging the map marker to the desired position."
+msgstr ""
+"Dzięki możliwości przeciągania znacznika, użytkownicy mogą w frontendzie "
+"ustawić lokalizację, przeciągając znacznik mapy do żądanej pozycji."
+
+#: includes/admin/class-gfgeo-form-editor.php:775
+msgid "Set marker's location by a click on the map."
+msgstr "Ustaw położenie znacznika klikając na mapie."
+
+#: includes/admin/class-gfgeo-form-editor.php:776
+msgid "Allow map zoom via mouse scroll-wheel."
+msgstr "Umożliwia powiększanie mapy za pomocą kółka przewijania myszy."
+
+#: includes/admin/class-gfgeo-form-editor.php:777
+msgid ""
+"Disable the output of the address fields when updating the marker's "
+"location. This way only the coordinates will be dynamically updated. This "
+"can be useful for a specific scenario where one wants to first find the "
+"location on the map by entering an address. Then, if the address entered is "
+"correct but the marker is not on the exact location on the map or the "
+"coordinates are not the exact desired coordinates, the visitor can drag the "
+"marker to find the exact coordinates without changing the address."
+msgstr ""
+"Wyłącz wypełnianie pól adresowych podczas aktualizacji lokalizacji "
+"znacznika. W ten sposób tylko współrzędne będą dynamicznie aktualizowane. "
+"Może to być przydatne w przypadku konkretnego scenariusza, w którym chce się "
+"najpierw znaleźć lokalizację na mapie, wpisując adres. Następnie, jeśli "
+"wprowadzony adres jest poprawny, ale znacznik nie znajduje się na dokładnym "
+"położeniu na mapie lub współrzędne nie są dokładnymi pożądanymi "
+"współrzędnymi, gość może przeciągnąć znacznik, aby znaleźć dokładne "
+"współrzędne bez zmiany adresu."
+
+#: includes/admin/class-gfgeo-form-editor.php:780
+msgid ""
+"Enable live suggested results, by Google Places API, while the user is "
+"typing an address."
+msgstr ""
+"Włącz sugerowane wyniki na żywo, przez API Google Places, podczas gdy "
+"użytkownik wpisuje adres."
+
+#: includes/admin/class-gfgeo-form-editor.php:781
+msgid ""
+"Select the type of results that will be displayed in the suggested results. "
+"<a href=\"https://developers.google.com/maps/documentation/javascript/places-"
+"autocomplete#add_autocomplete\" target=\"_blank\">Click here</a> to read "
+"more about the autocomplete types."
+msgstr ""
+"Wybierz typ wyników, które będą wyświetlane w sugerowanych wynikach. <a href="
+"\"https://developers.google.com/maps/documentation/javascript/places-"
+"autocomplete#add_autocomplete\" target=\"_blank\">Kliknij tutaj</a> aby "
+"przeczytać więcej o typach autouzupełniania."
+
+#: includes/admin/class-gfgeo-form-editor.php:782
+msgid ""
+"Choose a country from the select drop-down menu to restrict the Google "
+"address autocomplete suggested results to that country."
+msgstr ""
+"Wybierz kraj z menu rozwijanego, aby ograniczyć adres Google do sugerowanych "
+"wyników autouzupełniania do tego kraju."
+
+#: includes/admin/class-gfgeo-form-editor.php:783
+msgid ""
+"Set bounds to display suggested results based on. Enter single or multiple "
+"sets of coordinates ( latitude and longitude comma separated ) when each set "
+"is follow by the | character."
+msgstr ""
+"Ustaw limit wyświetlania sugerowanych wyników na podstawie podanych "
+"warunków. Wprowadź pojedyncze lub wielokrotne zestawy współrzędnych "
+"(oddzielone przecinkami szerokości i długości geograficznej), po każdym "
+"zestawie umieszczając znak | (pipe)."
+
+#: includes/admin/class-gfgeo-form-editor.php:784
+msgid ""
+"Display the address autocomplete suggested results based on the location "
+"returned from the page locator."
+msgstr ""
+"Wyświetl sugerowane wyniki autouzupełniania adresu w oparciu o lokalizację "
+"zwróconą z lokalizatora strony."
+
+#: includes/admin/class-gfgeo-form-editor.php:785
+msgid "Enter the placeholder text for the address autocomplete text field."
+msgstr "Wprowadź tekst zastępczy dla pola autouzupełniania adresu."
+
+#: includes/admin/class-gfgeo-form-editor.php:786
+msgid ""
+"Enter a description that you would like to display below the address "
+"autocomplete text field."
+msgstr ""
+"Wprowadź opis, który chcesz wyświetlić pod polem autouzupełniania adresu."
+
+#: includes/class-gfgeo-helper.php:25
+msgid "Place Name"
+msgstr "Nazwa miejsca"
+
+#: includes/class-gfgeo-helper.php:26
+msgid "Street Number"
+msgstr "Nr Domu/Mieszkania"
+
+#: includes/class-gfgeo-helper.php:27
+msgid "Street Name"
+msgstr "Nazwa ulicy"
+
+#: includes/class-gfgeo-helper.php:28
+msgid "Street ( name + number )"
+msgstr "Ulica ( nazwa + numer )"
+
+#: includes/class-gfgeo-helper.php:29
+msgid "Premise"
+msgstr "Lokal"
+
+#: includes/class-gfgeo-helper.php:30
+msgid "Subpremise"
+msgstr "Lokal podrzędny"
+
+#: includes/class-gfgeo-helper.php:31
+msgid "Neighborhood"
+msgstr "Dzielnica"
+
+#: includes/class-gfgeo-helper.php:32
+msgid "City"
+msgstr "Miasto / Miejscowość"
+
+#: includes/class-gfgeo-helper.php:33
+msgid "County"
+msgstr "Powiat"
+
+#: includes/class-gfgeo-helper.php:34
+msgid "Region Code ( state code )"
+msgstr "Kod regionu ( kod państwa )"
+
+#: includes/class-gfgeo-helper.php:35
+msgid "Region Name ( state name )"
+msgstr "Nazwa regionu (nazwa państwa)"
+
+#: includes/class-gfgeo-helper.php:36
+msgid "Postcode / Zipcode"
+msgstr "Kod pocztowy"
+
+#: includes/class-gfgeo-helper.php:37
+msgid "Country Code"
+msgstr "Kod kraju"
+
+#: includes/class-gfgeo-helper.php:38
+msgid "Country Name"
+msgstr "Nazwa kraju"
+
+#: includes/class-gfgeo-helper.php:39
+#: includes/fields/gfgeo-field-address.php:27
+#: includes/fields/gfgeo-field-address.php:37
+msgid "Address"
+msgstr "Adres"
+
+#: includes/class-gfgeo-helper.php:40
+msgid "Formatted Address"
+msgstr "Format adresu"
+
+#: includes/class-gfgeo-helper.php:41
+#: includes/fields/gfgeo-field-coordinates.php:109
+#: includes/fields/gfgeo-field-coordinates.php:307
+msgid "Latitude"
+msgstr "Szerokość geograficzna"
+
+#: includes/class-gfgeo-helper.php:42
+#: includes/fields/gfgeo-field-coordinates.php:110
+#: includes/fields/gfgeo-field-coordinates.php:308
+msgid "Longitude"
+msgstr "Długość geograficzna"
+
+#: includes/class-gfgeo-helper.php:167 includes/class-gfgeo-helper.php:174
+msgid "View in Google Maps"
+msgstr "Wyświetl w Mapach Google"
+
+#: includes/class-gfgeo-helper.php:202
+msgid "BuddyPress Profile Field"
+msgstr "Pole profilu BuddyPress"
+
+#: includes/class-gfgeo-helper.php:261
+msgid "Post Meta ( custom field )"
+msgstr "Meta wpisu (pole niestandardowe)"
+
+#: includes/class-gfgeo-helper.php:274
+msgid "User Meta"
+msgstr "Meta dane użytkowników"
+
+#: includes/class-gfgeo-helper.php:348
+msgid "All Countries"
+msgstr "Wszystkie kraje"
+
+#: includes/fields/gfgeo-field-coordinates.php:29
+#: includes/fields/gfgeo-field-coordinates.php:38
+msgid "Coordinates"
+msgstr "Współrzędne"
+
+#: includes/fields/gfgeo-field-geocoder.php:29
+#: includes/fields/gfgeo-field-geocoder.php:39
+msgid "Geocoder"
+msgstr "Geokoder"
+
+#: includes/fields/gfgeo-field-geocoder.php:107
+msgid "Note: This field will be hidden in the front-end form."
+msgstr ""
+"Uwaga: To pole zostanie ukryte w formularzu wyświetlanym w frontendzie."
+
+#: includes/fields/gfgeo-field-geocoder.php:354
+msgid "See data in entry page"
+msgstr "Zobacz dane na stronie pozycji wpisu"
+
+#: includes/fields/gfgeo-field-google-map.php:22
+msgid "Map not available"
+msgstr "Mapa niedostępna"
+
+#: includes/fields/gfgeo-field-google-map.php:30
+#: includes/fields/gfgeo-field-google-map.php:41
+msgid "Google Map"
+msgstr "Mapa Google"
+
+#: includes/fields/gfgeo-field-google-map.php:149
+msgid "See map in entry page"
+msgstr "Zobacz mapę na stronie pozycji wpisu"
+
+#: includes/fields/gfgeo-field-locator-button.php:29
+#: includes/fields/gfgeo-field-locator-button.php:39
+msgid "Locator Button"
+msgstr "Przycisk lokalizatora"
+
+#: includes/fields/gfgeo-field-map-icons.php:14
+msgid "GEO my WP Map Icons"
+msgstr "Ikony mapy w GEO my WP"
+
+#: includes/fields/gfgeo-field-map-icons.php:24
+msgid "Map Icons"
+msgstr "Ikony mapy"
+
+#: includes/gfgeo-register-form-fields.php:23
+msgid "Geolocation Fields"
+msgstr "Pola geolokalizacji"
+
+#: updater/geo-my-wp-license-handler.php:81
+msgid "Please deactivate the license key before deactivating the plugin"
+msgstr "Proszę wyłączyć klucz licencyjny przed dezaktywacją wtyczki"
+
+#: updater/geo-my-wp-license-handler.php:204
+#: updater/geo-my-wp-license-handler.php:248
+msgid "License Key:"
+msgstr "Klucz licencyjny:"
+
+#: updater/geo-my-wp-license-handler.php:223
+#: updater/geo-my-wp-license-handler.php:224
+msgid "Deactivate License Key"
+msgstr "Dezaktywacja klucza licencji"
+
+#: updater/geo-my-wp-license-handler.php:256
+msgid "Enter license key"
+msgstr "Wprowadź klucz licencyjny"
+
+#: updater/geo-my-wp-license-handler.php:263
+msgid "Activate License Key"
+msgstr "Aktywuj klucz licencyjny"
+
+#: updater/geo-my-wp-license-handler.php:265
+msgid "Activate License"
+msgstr "Aktywuj licencję"
+
+#: updater/geo-my-wp-license-handler.php:326
+msgid ""
+"Please enter your license key and click \"Activate License\". The license "
+"key is required in order to receive automatic updated for the plugin."
+msgstr ""
+"Wprowadź klucz licencyjny i kliknij \"Aktywuj licencję\". Klucz licencyjny "
+"jest wymagany w celu otrzymania automatycznej aktualizacji wtyczki."
+
+#: updater/geo-my-wp-license-handler.php:327
+#, php-format
+msgid ""
+"Your license for %s plugin successfully activated. Thank you for your "
+"support!"
+msgstr ""
+"Twoja licencja na wtyczkę %s została pomyślnie aktywowana. Dziękujemy za "
+"wsparcie!"
+
+#: updater/geo-my-wp-license-handler.php:328
+#, php-format
+msgid "Your license for %s plugin successfully deactivated."
+msgstr "Twoja licencja na wtyczkę %s została pomyślnie dezaktywowana."
+
+#: updater/geo-my-wp-license-handler.php:329
+msgid "License is activated. Thank you for your support!"
+msgstr "Licencja jest aktywowana. Dziękujemy za wsparcie!"
+
+#: updater/geo-my-wp-license-handler.php:330
+msgid "No license key entered. Please enter the license key and try again."
+msgstr ""
+"Nie wprowadzono klucza licencyjnego. Wprowadź klucz licencyjny i spróbuj "
+"ponownie."
+
+#: updater/geo-my-wp-license-handler.php:331
+msgid ""
+"Your license has expired. Please renew your license in order to keep getting "
+"its updates and support."
+msgstr ""
+"Twoja licencja wygasła. Prosimy o odnowienie licencji w celu ciągłego "
+"otrzymywania aktualizacji i wsparcia technicznego."
+
+#: updater/geo-my-wp-license-handler.php:332
+msgid ""
+"Your license key has been disabled. Please contact support for more "
+"information."
+msgstr ""
+"Twój klucz licencyjny został wyłączony. W celu uzyskania dalszych informacji "
+"prosimy o kontakt z działem obsługi klienta."
+
+#: updater/geo-my-wp-license-handler.php:333
+msgid ""
+"Something is wrong with the key you entered. Please verify the key and try "
+"again."
+msgstr ""
+"Coś jest nie tak z wprowadzonym kluczem. Sprawdź go i spróbuj ponownie."
+
+#: updater/geo-my-wp-license-handler.php:334
+#: updater/geo-my-wp-license-handler.php:335
+#: updater/geo-my-wp-license-handler.php:528
+msgid "Your license is not active for this URL."
+msgstr "Twój klucz licencji nie został aktywowany dla tego adresu URL."
+
+#: updater/geo-my-wp-license-handler.php:336
+msgid "The license key you entered does not belong to this extension."
+msgstr "Wprowadzony klucz licencyjny nie należy do tego rozszerzenia."
+
+#: updater/geo-my-wp-license-handler.php:337
+#, php-format
+msgid ""
+"An error occurred while trying to activate your %s license. ERROR "
+"item_name_mismatch"
+msgstr ""
+"Wystąpił błąd podczas próby aktywacji licencji %s. Błąd item_name_mismatch"
+
+#: updater/geo-my-wp-license-handler.php:338
+#, php-format
+msgid ""
+"Your license has no activations left. Click <a %s>here</a> to manager your "
+"license activations."
+msgstr ""
+"Twoja licencja uzyskała już limit aktywacji. Kliknij <a %s>tutaj</a> aby "
+"zarządzać aktywacjami licencji."
+
+#: updater/geo-my-wp-license-handler.php:340
+#, php-format
+msgid "Lost or forgot your license key? <a %s >Retrieve it here.</a>"
+msgstr ""
+"Zgubiłeś lub zapomniałeś klucz licencyjny? <a %s >Odzyskaj go tutaj.</a>"
+
+#: updater/geo-my-wp-license-handler.php:341
+#, php-format
+msgid ""
+"Your license for %s plugin could not be activated. See error message below!"
+msgstr ""
+"Twoja licencja na wtyczkę %s nie mogła być aktywowana. Zobacz poniżej "
+"komunikat o błędzie!"
+
+#: updater/geo-my-wp-license-handler.php:342
+msgid "An error occurred, please try again or contact support."
+msgstr ""
+"Wystąpił błąd, spróbuj ponownie lub skontaktuj się z pomocą techniczną."
+
+#: updater/geo-my-wp-license-handler.php:495
+#: updater/geo-my-wp-license-handler.php:543
+msgid "An error occurred, please try again."
+msgstr "Wystąpił błąd, spróbuj ponownie."
+
+#: updater/geo-my-wp-license-handler.php:510
+#, php-format
+msgid "Your license key expired on %s."
+msgstr "Klucz licencyjny wygasł %s."
+
+#: updater/geo-my-wp-license-handler.php:517
+msgid "Your license key has been disabled."
+msgstr "Klucz licencji został dezaktywowany."
+
+#: updater/geo-my-wp-license-handler.php:522
+msgid "Invalid license."
+msgstr "Błędna licencja."
+
+#: updater/geo-my-wp-license-handler.php:533
+#, php-format
+msgid "This appears to be an invalid license key for %s."
+msgstr "Wygląda na to, że to jest nieprawidłowy klucz licencyjny dla %s."
+
+#: updater/geo-my-wp-license-handler.php:538
+msgid "Your license key has reached its activation limit."
+msgstr "Twój klucz licencyjny osiągnął limit aktywacji."
+
+#: updater/geo-my-wp-updater.php:208
+#, php-format
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
+msgstr ""
+"Jest dostępna nowa wersja %1$s. %1$s. %2$sZobacz szczegóły wersji%3$s %4$s."
+
+#: updater/geo-my-wp-updater.php:216
+#, php-format
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
+msgstr ""
+"Jest dostępna nowa wersja %1$s. %1$s. %2$sZobacz szczegóły wersji%3$s %4$s "
+"lub %5$saktualizuj teraz%6$s."
+
+#: updater/geo-my-wp-updater.php:405
+msgid "You do not have permission to install plugin updates"
+msgstr "Nie masz uprawnień do instalowania aktualizacji wtyczek"
+
+#: updater/geo-my-wp-updater.php:405
+msgid "Error"
+msgstr "Błąd"
+
+#. Plugin Name of the plugin/theme
+msgid "Gravity Forms Geolocation Add-on"
+msgstr "Dodatek Geolokalizacji do Gravity Forms"
+
+#. Plugin URI of the plugin/theme
+#. Author URI of the plugin/theme
+msgid "http://www.geomywp.com"
+msgstr "http://www.geomywp.com"
+
+#. Description of the plugin/theme
+msgid "Enhance Gravity Forms plugin with geolocation features"
+msgstr "Ulepsz Gravity Forms funkcjami geolokalizacji"
+
+#. Author of the plugin/theme
+msgid "Eyal Fitoussi"
+msgstr "Eyal Fitoussi"

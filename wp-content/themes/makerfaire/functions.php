@@ -150,7 +150,7 @@ function set_universal_asset_constants() {
    }
    // local environments
    else if(strpos($host, ':8888') > -1) {
-      $universal_asset_env = 'makeco:8888'; // this will require that we use `makeco` as our local
+      $universal_asset_env = 'makeco.local'; // this will require that we use `makeco` as our local
       $universal_asset_proto = 'http://';
    }
    // Set the important bits as CONSTANTS that can easily be used elsewhere
@@ -213,6 +213,7 @@ function load_scripts() {
 			   'wp_user_email' => wp_get_current_user()->user_email,
         )
       );
+	
 /* jQuery can't be moved to footer as too many inline js rely on jquery without a on load event :(
 	remove_action('wp_head', 'wp_print_scripts');
 	remove_action('wp_head', 'wp_print_head_scripts', 9);
@@ -275,6 +276,20 @@ add_action('admin_enqueue_scripts', 'load_admin_scripts');
 
 // Remove richedit
 add_filter('user_can_richedit', '__return_false', 50);
+
+//this function is used to enqueue the VUE map
+function mf_map(){
+	// Map page only
+	if (is_page_template('page-makerfaire-map.php')) {
+      wp_enqueue_script('google-map', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDtWsCdftU2vI9bkZcwLxGQwlYmNRnT2VM', false, false, true);
+      wp_enqueue_script('google-markers', 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js', array('google-map'), false, true);
+      wp_enqueue_script('vue', get_stylesheet_directory_uri() . '/js/mf-map/vue.min.js', false, false, true);
+      wp_enqueue_script('axios', get_stylesheet_directory_uri() . '/js/mf-map/axios.min.js', array('vue'), false, true);
+      wp_enqueue_script('vue-table-2', get_stylesheet_directory_uri() . '/js/mf-map/vue-tables-2.min.js', array('vue'), false, true);
+      wp_enqueue_script('vue-map', get_stylesheet_directory_uri() . '/js/mf-map/min/mf-map.min.js', array(), $my_version, true );
+	}
+}
+add_action('wp_enqueue_scripts', 'mf_map');
 
 //This function is used to enqueue the angularJS!!!!
 function angular_scripts() {

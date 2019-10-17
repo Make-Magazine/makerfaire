@@ -1,0 +1,551 @@
+# Copyright (C) 2016 Katz Web Services, Inc.
+# This file is distributed under the same license as the GravityView - Maps package.
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView Maps\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/gravityview-maps\n"
+"POT-Creation-Date: 2015-04-17 03:26:59+00:00\n"
+"PO-Revision-Date: 2016-04-07 08:20+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/katzwebservices/gravityview-maps/language/pt_BR/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: grunt-wp-i18n 0.5.2\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Textdomain-Support: yes\n"
+
+#: gravityview-maps.php:33
+msgid ""
+"%s requires PHP Version 5.3 or higher. Please contact your web host and ask "
+"them to upgrade your server."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:43
+msgid "Maps"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:125
+#: includes/class-gravityview-maps-admin.php:173
+#: includes/class-gravityview-maps-admin.php:202
+msgid "None"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:169
+msgid "Address Field"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:181
+msgid "Map Type"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:185
+msgid "Street"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:186
+msgid "Satellite"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:187
+msgid "Hybrid"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:188
+msgid "Terrain"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:190
+msgid ""
+"Hybrid: This map type displays a transparent layer of major streets on "
+"satellite images. Roadmap: This map type displays a normal street map. "
+"Satellite: This map type displays satellite images. Terrain: This map type "
+"displays maps with physical features such as terrain and vegetation."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:198
+msgid "Map Layers"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:203
+msgid "Traffic"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:204
+msgid "Transit"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:205
+msgid "Bicycle"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:208
+msgid ""
+"The Traffic, Transit and Bicycling layers modify the base map layer to "
+"display current traffic conditions, or local Transit and Bicycling route "
+"information. These layers are available in select regions."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:216
+msgid "Default Zoom"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:217
+msgid "The default zoom for a single-marker map."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:218
+#: includes/class-gravityview-maps-admin.php:250
+#: includes/class-gravityview-maps-admin.php:283
+msgid "Higher numbers are zoomed more."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:218
+msgid "Maps with multiple markers will zoom out to fit all markers."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:248
+msgid "Minimum Zoom"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:249
+msgid "The farthest out a map can zoom."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:250
+#: includes/class-gravityview-maps-admin.php:254
+msgid "No Minimum"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:250
+msgid "minimum"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:281
+msgid "Maximum Zoom"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:282
+msgid "The maximum zoom level which will be displayed on the map."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:283
+msgid "If \"%s\", the %s zoom from the current map type will be used."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:283
+#: includes/class-gravityview-maps-admin.php:285
+msgid "No Maximum"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:283
+msgid "maximum"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:313
+msgid "Allow the map to be dragged"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:315
+msgid "Draggable Map"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:324
+msgid "Allow double-clicking on the map to zoom and center"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:326
+msgid "Double-click Zoom"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:335
+msgid "Allow scrolling to zoom in and out on the map"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:337
+msgid "Scroll to Zoom"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:346
+msgid "Display the \"Pan\" control that allows moving the map by clicking arrows"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:348
+msgid "Pan Control"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:358
+msgid "Zoom Control"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:359
+msgid ""
+"Display the zoom control that allows zooming in and out of the map and "
+"displays the current"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:361
+msgid "None (Don't display)"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:362
+msgid "Small (Small buttons)"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:363
+msgid "Large (Zoom slider with buttons)"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:364
+msgid "Default (Let map decide)"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:366
+msgid "None: Don't display the zoom control."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:367
+msgid "Small: A small control with buttons to zoom in and out."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:368
+msgid ""
+"Large: The larger control, with the zoom slider in addition to +/- buttons."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:369
+msgid ""
+"Default: The default zoom control varies according to map size and other "
+"factors."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:378
+msgid "Display the Street View \"Pegman\" control"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:380
+msgid "Street View"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:389
+msgid "Custom Map Styles"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:390
+msgid ""
+"Set map styles that override the default styling. See SnazzyMaps.com for "
+"styles or use your own."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:397
+#: includes/parts/admin-meta-box.php:24
+msgid "Pin Icon"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:404
+msgid "Map Position"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:408
+#: includes/class-gravityview-maps-admin.php:480
+msgid "Top"
+msgstr "Em cima"
+
+#: includes/class-gravityview-maps-admin.php:409
+#: includes/class-gravityview-maps-admin.php:482
+msgid "Right"
+msgstr "Direita"
+
+#: includes/class-gravityview-maps-admin.php:410
+msgid "Bottom"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:411
+#: includes/class-gravityview-maps-admin.php:481
+msgid "Left"
+msgstr "Esquerda"
+
+#: includes/class-gravityview-maps-admin.php:421
+msgid "Keep the map fixed during page scroll"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:422
+msgid "Pinned Map"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:437
+msgid ""
+"Show a popup box with additional entry details when clicking a map marker"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:439
+msgid "Show Info Boxes"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:445
+#: includes/class-gravityview-maps-template-map-default.php:90
+msgid "Title"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:446
+msgid "This also serves as a link to the single entry page."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:455
+msgid "Content"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:465
+msgid "Image URL"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:466
+msgid ""
+"Insert a Merge Tag for a File Upload field, or a URL to an image. This will "
+"be used as the source of a HTML <img> tag."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:474
+msgid "Image Alignment"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:645
+msgid "GravityView Maps Custom Map Icon"
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:646
+#: includes/parts/admin-meta-box.php:30
+msgid "Add Icon"
+msgstr ""
+
+#: includes/class-gravityview-maps-available-icons.php:103
+msgid "Default"
+msgstr "Padrão"
+
+#: includes/class-gravityview-maps-available-icons.php:108
+msgid "Theme Map Icons"
+msgstr ""
+
+#: includes/class-gravityview-maps-available-icons.php:113
+msgid "GravityView Map Icons"
+msgstr ""
+
+#: includes/class-gravityview-maps-fields.php:60
+msgid "Entry Map"
+msgstr ""
+
+#: includes/class-gravityview-maps-fields.php:62
+msgid "Display a map showing the location of the entry"
+msgstr ""
+
+#: includes/class-gravityview-maps-form-fields.php:58
+#: includes/parts/gf-field-icon-picker-form-editor.php:13
+msgid "Map Icon Picker"
+msgstr ""
+
+#: includes/class-gravityview-maps-gf-field-icon-picker.php:9
+msgid "Map Icon"
+msgstr ""
+
+#: includes/class-gravityview-maps-gf-field-icon-picker.php:51
+msgid "This field is required."
+msgstr ""
+
+#: includes/class-gravityview-maps-gf-field-icon-picker.php:57
+msgid "Please select a valid icon."
+msgstr ""
+
+#: includes/class-gravityview-maps-render-map.php:247
+msgid "View Details"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:37
+#: includes/class-gravityview-maps-settings.php:38
+msgid "Google Maps API Key"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:38
+#: includes/class-gravityview-maps-settings.php:66
+#: includes/class-gravityview-maps-settings.php:75
+msgid "How to get a %s"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:46
+msgid "Google Maps API for Work Client ID"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:47
+#: includes/class-gravityview-maps-settings.php:56
+msgid ""
+"Read more about %sGoogle Maps API for Work%s  and learn how to obtain your "
+"key."
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:55
+msgid "Google Maps API for Work Key"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:64
+#: includes/class-gravityview-maps-settings.php:66
+msgid "Bing Maps Locations API Key"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:74
+#: includes/class-gravityview-maps-settings.php:75
+msgid "MapQuest Geocoding API Key"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:80
+msgid "GravityView Maps Extension Settings"
+msgstr ""
+
+#: includes/class-gravityview-maps-settings.php:81
+msgid ""
+"GravityView will attempt to convert addresses into longitude and latitude "
+"values. This process is called geocoding, and is required to display entries"
+" on a map. To ensure entries are geocoded, sign up for one or more of the "
+"free services below. %sLearn more about GravityView Maps geocoding.%s"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:20
+msgid "Map (default)"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:21
+msgid "Display entries on a map."
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:31
+msgid "Link to single entry"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:42
+#: includes/class-gravityview-maps-template-map-default.php:102
+msgid "Image"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:51
+msgid "Listing Title"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:60
+msgid "Details"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:69
+msgid "Middle row"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:78
+msgid "Footer"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:95
+msgid "Subheading"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:109
+msgid "Other Fields"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:118
+msgid "Footer Left"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-map-default.php:125
+msgid "Footer Right"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-preset-business-map.php:22
+msgid "Business Map Listing"
+msgstr ""
+
+#: includes/class-gravityview-maps-template-preset-business-map.php:23
+msgid "Display business profiles pinned in a map."
+msgstr ""
+
+#: includes/class-gravityview-maps-view-widget.php:14
+msgid "Display the visible entries in a map"
+msgstr ""
+
+#: includes/class-gravityview-maps-view-widget.php:20
+msgid "Multiple Entries Map"
+msgstr ""
+
+#: includes/parts/admin-meta-box.php:29
+#: includes/parts/gf-field-icon-picker-entry-detail.php:29
+#: includes/parts/gf-field-icon-picker-form-public.php:26
+msgid "Select Icon"
+msgstr ""
+
+#: includes/parts/admin-meta-box.php:30
+msgid "Upload Custom Icon"
+msgstr ""
+
+#: includes/parts/admin-meta-box.php:50
+msgid "Info Box Settings"
+msgstr ""
+
+#: includes/parts/admin-meta-box.php:53
+msgid "Example Info Box"
+msgstr ""
+
+#: includes/parts/admin-meta-box.php:74
+msgid "Advanced Settings"
+msgstr ""
+
+#: includes/parts/gf-field-icon-picker-form-editor.php:15
+msgid ""
+"This is a content placeholder. Preview this form to view the Map Icon Picker"
+" field."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:179
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" "
+"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:186
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" "
+"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
+"href=\"%4$s\">update now</a>."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:334
+msgid "You do not have permission to install plugin updates"
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:334
+msgid "Error"
+msgstr ""
+
+#: lib/class-gravityview-extension.php:349
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:353
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:357
+msgid ""
+"The %s Extension requires PHP Version %s or newer. Please ask your host to "
+"upgrade your server's PHP."
+msgstr ""
+
+#: includes/class-gravityview-maps-admin.php:250
+msgctxt ""
+"This is to reduce translation strings. The replacement words are \"No "
+"Minimum/No Maximum\" and \"minimum/maximum\""
+msgid "If \"%s\", the %s zoom from the current map type will be used."
+msgstr ""

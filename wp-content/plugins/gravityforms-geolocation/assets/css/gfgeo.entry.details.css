@@ -1,0 +1,61 @@
+div.gfgeo-coordinates-wrapper {
+
+
+}
+
+div.gfgeo-coordinates-wrapper span {
+	margin: 0;
+	display: inline-block;
+	box-sizing: border-box;	
+}
+
+div.ginput_container_gfgeo_address.gfgeo-address-locator-wrapper input[type="text"] {
+	padding-left: 20px;
+}
+
+div.gfgeo-address-locator-wrapper {
+    position: relative;
+}
+
+.ginput_container_gfgeo_address {
+    position: relative;
+}
+
+.ginput_container .gfgeo-locator-button-wrapper img {
+    width: 12px;
+	padding: 4px 6px;
+	cursor: pointer;
+}
+
+div.gfgeo-locator-button-wrapper.infield {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    position: absolute;
+    height: 100%;
+    //padding: 3px 0px;
+}
+
+div.gfgeo-locator-button-wrapper.infield i.gfgeo-locator-button {
+    font-size: 24px;
+    cursor: pointer;
+    width: 24px;
+    height: auto;
+    vertical-align: middle;
+    margin: 0px 2px;
+    margin-top: 30%;
+}
+
+div.gfgeo-map-wrapper {
+    border: 1px solid #ccc;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+div.gfgeo-map {
+    background: #f1f1f1;
+}
+
+li.gfield.gfgeo-hidden-fields {
+    display: none;
+}

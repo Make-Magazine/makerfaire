@@ -1,0 +1,162 @@
+/****** Backend ******/
+
+.gfgeo-hidden-container {
+    border: 1px solid #E4E4E4;
+    padding: 20px;
+    background-color: #F6F6F6
+}
+
+ul.gfgeo-geocoder-meta-fields-wrapper li {
+    border-bottom: 1px solid #e1e1e1 !important;
+    padding-bottom: 20px !important;
+    margin-bottom: 20px !important;
+}
+
+ul.gfgeo-geocoder-meta-fields-wrapper {
+    padding: 10px;
+    background: #fafafa;
+    border: 1px solid #efefef;
+    display: none;
+}
+
+ul.gfgeo-geocoder-meta-fields-wrapper li label {
+    
+}
+
+ul.gfgeo-geocoder-meta-fields-wrapper li .custom-field-content {
+    padding: 5px;
+    margin-top: 10px;
+}
+
+ul.gfgeo-geocoder-meta-fields-wrapper li .custom-field-content input {
+    margin-bottom: 5px;
+}
+
+.gfield input.gfgeo-address-field[data-locator_enabled="1"],
+.gfield input.advanced-address-autocomplete[data-locator_enabled="1"] {
+    padding-left: 20px !important;
+}
+
+.gfield .ginput_full.address_autocomplete.desc-top {
+    margin-bottom: 20px;
+}
+
+.gfield .gfgeo-advanced-address-autocomplete-inner {
+    position: relative;
+}
+
+.wp-admin .gfield .ginput_container_gfgeo_address .gfgeo-locator-button-wrapper img {
+    width: 12px;
+    padding: 4px 0 5px 2px;
+    margin: 0px;
+    cursor: pointer;
+}
+
+/*
+.gfgeo-settings {
+    background: #fcfcfc;
+    padding: 7px 10px !important;
+    border: 1px solid #e9e9e9 !important;
+    border-top: 0px !important;
+    border-bottom: 0px !important;
+    margin-bottom: 0px;
+}
+
+.gfgeo-settings.gfgeo-geocoder-section-start {
+    border-top: 1px solid #e9e9e9 !important;
+}
+
+.gfgeo-settings.gfgeo-geocoder-section-start h3 {
+    margin: 10px 0px 5px 0px;
+}
+
+.gfgeo-settings.gfgeo-geocoder-section-end {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e9e9e9 !important;
+}
+*/
+/***** Front-end *****/
+
+.gfield div.gfgeo-address-locator-wrapper {
+    position: relative;
+}
+
+.gfield .ginput_container_gfgeo_address {
+    position: relative;
+}
+
+.gfield .ginput_container .gfgeo-locator-button-wrapper img {
+    width: 14px;
+    padding: 0px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.gfield div.gfgeo-locator-button-wrapper.infield {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    position: absolute;
+    height: 100%;
+    //padding: 3px 0px;
+}
+
+.gfield div.gfgeo-locator-button-wrapper.infield i.gfgeo-locator-button {
+    font-size: 24px;
+    cursor: pointer;
+    width: 24px;
+    height: auto;
+    vertical-align: middle;
+    margin: 0px 2px;
+    margin-top: 30%;
+}
+
+.gfield div.gfgeo-coordinates-field-wrapper input {
+    width: 100%;
+}
+
+.gfield div.gfgeo-coordinates-field-wrapper.medium {
+    width: 49%;
+}
+
+.gfield div.gfgeo-latitude-field-wrapper.medium {
+    float: left;
+    margin-right: 1%;
+}
+
+.gfield div.gfgeo-longitude-field-wrapper.medium {
+    float: right;
+    position: relative;
+}
+
+.gfield div.gfgeo-longitude-field-wrapper.large {
+    margin-top: 10px;
+    position: relative;
+}
+
+.gfield div.gfgeo-longitude-field-wrapper .gfgeo-coordinates-update-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.gfield div.gfgeo-longitude-field-wrapper .gfgeo-coordinates-update-btn:hover,
+.gfield div.gfgeo-longitude-field-wrapper .gfgeo-coordinates-update-btn:active {
+    color: #666;
+}
+
+.gfield div.gfgeo-map-wrapper {
+    border: 1px solid #ccc;
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+.gfield div.gfgeo-map {
+    background: #f1f1f1;
+}
+
+li.gfield.gfgeo-hidden-fields {
+    display: none;
+}

@@ -1,0 +1,68 @@
+[
+    {
+        "name": "willdurand/geocoder",
+        "version": "2.8.2",
+        "version_normalized": "2.8.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/geocoder-php/Geocoder.git",
+            "reference": "8a66b8a227328f28ba12f98937a33c6fa0bb90f8"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/geocoder-php/Geocoder/zipball/8a66b8a227328f28ba12f98937a33c6fa0bb90f8",
+            "reference": "8a66b8a227328f28ba12f98937a33c6fa0bb90f8",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "geoip/geoip": "~1.13",
+            "geoip2/geoip2": "~0.6",
+            "guzzle/guzzle": "@stable",
+            "kriswallsmith/buzz": "@stable",
+            "zendframework/zend-http": "~2.1"
+        },
+        "suggest": {
+            "ext-curl": "Enabling the curl extension allows you to use the CurlHttpAdapter.",
+            "ext-geoip": "Enabling the geoip extension allows you to use the MaxMindProvider.",
+            "geoip/geoip": "If you are going to use the MaxMindBinaryProvider (conflict with geoip extension).",
+            "geoip2/geoip2": "If you are going to use the GeoIP2DatabaseProvider.",
+            "guzzle/guzzle": "Enabling Guzzle allows you to use the GuzzleHttpAdapter.",
+            "kriswallsmith/buzz": "Enabling Buzz allows you to use the BuzzHttpAdapter.",
+            "zendframework/zend-http": "Enabling Zend Http allows you to use the ZendHttpAdapter."
+        },
+        "time": "2015-01-07 13:23:35",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.8-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Geocoder": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "William Durand",
+                "email": "william.durand1@gmail.com"
+            }
+        ],
+        "description": "The almost missing Geocoder PHP 5.3 library.",
+        "homepage": "http://geocoder-php.org",
+        "keywords": [
+            "abstraction",
+            "geocoder",
+            "geocoding",
+            "geoip"
+        ]
+    }
+]
