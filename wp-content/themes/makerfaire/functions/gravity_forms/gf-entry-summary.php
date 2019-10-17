@@ -182,18 +182,19 @@ function gf_summary_metabox($form, $lead) {
         "Dale Dougherty" => "dale@make.co",                                
         "Siana Alcorn" => "siana@make.co",
         "Gillian Mutti" => "gillian@make.co",
-        "Jennifer Blakeslee" => "gillian@make.co");
+        "Jennifer Blakeslee" => "jennifer@make.co");
     $emailto2 = array(
         "Webmaster" => "webmaster@make.co",
-        "Editors" => "editor@makezine.com",
+        "Editors" => "editor@make.co",
         "Rob Bullington" => "rob@make.co",        
-        "Keith Hammond" => "keith@make.co");
+        "Keith Hammond" => "keith@make.co",
+        "Katie Kunde"   => "katie@make.co");
     $emailtoaliases = array(        
         "Maker Relations" => "makers@makerfaire.com",
-        "PR" => "pr@makerfaire.com",
-        "Sales" => "sales@makerfaire.com",
-        "Sustainability" => "sustainability@makerfaire.com",
-        "Speakers" => "speakers@makerfaire.com"
+        "PR" => "pr@make.co",
+        //"Sales" => "sales@makerfaire.com",
+        //"Sustainability" => "sustainability@makerfaire.com",
+        //"Speakers" => "speakers@makerfaire.com"
     );
  
     $return .= '<div style="float:left">';
