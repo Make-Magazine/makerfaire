@@ -70,6 +70,8 @@
 	}
 	.btn { white-space: normal; }
 	
+	strong, b { font-family: "Roboto Bold"; }
+	
 	// old busted
    .slideshow-panel {
       position: relative;
@@ -1259,8 +1261,19 @@
       }
 	}
 	
-	.content-panel.single-block {
+	.content-panel.single-block, .content-panel.double-block {
 		padding-top: 30px;
+	}
+	.content-panel.double-block {
+		text-align: center;
+		.container-fluid {
+			text-align: left;
+			ul { margin-top: 15px; }
+			li { font-size: 18px; }
+		}
+		.btn-b-ghost {
+			margin-top: 30px;
+		}
 	}
    
    // Common elements
