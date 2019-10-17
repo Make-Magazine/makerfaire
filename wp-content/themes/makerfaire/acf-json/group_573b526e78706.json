@@ -1907,6 +1907,25 @@
                                             "return_format": "value",
                                             "ajax": 0,
                                             "placeholder": ""
+                                        },
+                                        {
+                                            "key": "field_5da8c7759cb52",
+                                            "label": "Open link in new tab?",
+                                            "name": "open_link_in_new_tab",
+                                            "type": "true_false",
+                                            "instructions": "Check to open link in new tab, uncheck to stay within same tab",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "message": "",
+                                            "default_value": 1,
+                                            "ui": 0,
+                                            "ui_on_text": "",
+                                            "ui_off_text": ""
                                         }
                                     ]
                                 }
@@ -2890,5 +2909,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1570734930
+    "modified": 1571342275
 }
