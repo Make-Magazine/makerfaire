@@ -7,62 +7,73 @@ jQuery(document).ready(function() {
    var vm = new Vue({
       el: "#directory",
       data: {
-         columns: ['mmap_date', 'mmap_eventname', 'physLoc', 'mmap_country', 'mmap_city', 'mmap_state', 'mmap_start_dt', 'mmap_end_dt'],
+         //columns: ['mmap_date', 'mmap_eventname', 'physLoc', 'mmap_country', 'mmap_city', 'mmap_state', 'mmap_start_dt', 'mmap_end_dt'],
+			columns: ['faire_year', 'faire_name', 'venue_address_street', 'venue_address_country', 'venue_address_city', 'venue_address_state', 'event_start_dt', 'event_end_dt'],
          tableData: [],
          options: {
             headings: {
-					mmap_date: 'Date',
-               mmap_eventname: 'Name',
-               physLoc: 'Location', 
-               mmap_country: 'Country',
+					faire_year: 'Date',
+               faire_name: 'Name',
+               venue_address_street: 'Location', 
+               venue_address_country: 'Country',
             },
             templates: {
-               physLoc: function (h, row, index) {
-                  var text = row.mmap_city;
-                  if(row.mmap_state) {
-                     text += ', ' + row.mmap_state;
+               venue_address_street: function (h, row, index) {
+                  var text = row.venue_address_city;
+                  if(row.venue_address_state) {
+                     text += ', ' + row.venue_address_state;
                   }
                   return text;
                },
-					mmap_date: function (h, row, index) {
-						var text = formatDate(row.mmap_start_dt)
-                  if(row.mmap_end_dt != row.mmap_start_dt) {
-                     text += ' - ' + formatDate(row.mmap_end_dt);
+					faire_year: function (h, row, index) {
+						var text = formatDate(row.event_start_dt)
+						// "11\/30\/-0001 12:00:00 am" is a default day or something we need to filter out from these calculations
+                  if(row.event_end_dt != row.event_start_dt && row.event_end_dt != "11\/30\/-0001 12:00:00 am") {
+                     text += ' - ' + formatDate(row.event_end_dt);
                   }
                   return text;
 					}
             },
             columnsDisplay: {
-               mmap_country: 'desktop',
+               venue_address_country: 'desktop',
             },
             columnsClasses: {
-               mmap_eventname: 'col-name',
-               physLoc: 'col-location', 
-               mmap_country: 'col-country',
-					mmap_date: 'col-date',
-					mmap_city: 'col-hidden',
-					mmap_state: 'col-hidden',
-					mmap_start_dt: 'col-hidden',
-					mmap_end_dt: 'col-hidden',
+               faire_name: 'col-name',
+               venue_address_street: 'col-location', 
+               venue_address_country: 'col-country',
+					faire_year: 'col-date',
+					venue_address_city: 'col-hidden',
+					venue_address_state: 'col-hidden',
+					event_start_dt: 'col-hidden',
+					event_end_dt: 'col-hidden',
             },
             pagination: { chunk: 5 } // undocumented :(
          },
          filterVal: '',
          map: null,
          mapDefaultZoom: 2,
+			mapMinZoom: 2, 
+			mapMaxZoom: 20,
          mapDefaultPos: {
          lat: 29.1070772,
-         lng: -24.2299966
+         lng: -4.2299966
          },
           markers: ''
       },
       created: function() {
          var _self = this;
-         axios.get('/wp-json/makemap/v1/mapdata/242')
+			var currentDate = new Date();
+         axios.get('https://stage.makerfaire.com/query/?type=map')
             .then(function (response) {
                _self.$refs.loadingIndicator.classList.add("hidden");
-               _self.tableData = response.data.Locations;
-               _self.$refs.directoryGrid.setOrder('mmap_eventname', true);
+               _self.outputData = response.data.Locations;
+				   _self.tableData = _self.outputData.filter( function(values) {
+						var startDate = new Date(values.event_start_dt);
+						if(startDate > currentDate) {
+							return values;
+						}
+					});
+               _self.$refs.directoryGrid.setOrder('faire_year', 'event_start_dt', true);
                _self.detectBrowser();
                _self.getLocation();
                _self.initMap();
@@ -83,7 +94,7 @@ jQuery(document).ready(function() {
               mapdiv.style.height = '300px';
             } else {
               mapdiv.style.width = '100%';
-              mapdiv.style.height = '400px';
+              mapdiv.style.height = '450px';
             }
          },
          initMap: function() {
@@ -91,121 +102,177 @@ jQuery(document).ready(function() {
 				
 				var styledMapType = new google.maps.StyledMapType(
             [
-              {elementType: 'geometry', stylers: [{color: '#ebe3cd'}]},
-              {elementType: 'labels.text.fill', stylers: [{color: '#523735'}]},
-              {elementType: 'labels.text.stroke', stylers: [{color: '#f5f1e6'}]},
-              {
-                featureType: 'administrative',
-                elementType: 'geometry.stroke',
-                stylers: [{color: '#c9b2a6'}]
-              },
-              {
-                featureType: 'administrative.land_parcel',
-                elementType: 'geometry.stroke',
-                stylers: [{color: '#dcd2be'}]
-              },
-              {
-                featureType: 'administrative.land_parcel',
-                elementType: 'labels.text.fill',
-                stylers: [{color: '#ae9e90'}]
-              },
-              {
-                featureType: 'landscape.natural',
-                elementType: 'geometry',
-                stylers: [{color: '#dfd2ae'}]
-              },
-              {
-                featureType: 'poi',
-                elementType: 'geometry',
-                stylers: [{color: '#dfd2ae'}]
-              },
-              {
-                featureType: 'poi',
-                elementType: 'labels.text.fill',
-                stylers: [{color: '#93817c'}]
-              },
-              {
-                featureType: 'poi.park',
-                elementType: 'geometry.fill',
-                stylers: [{color: '#a5b076'}]
-              },
-              {
-                featureType: 'poi.park',
-                elementType: 'labels.text.fill',
-                stylers: [{color: '#447530'}]
-              },
-              {
-                featureType: 'road',
-                elementType: 'geometry',
-                stylers: [{color: '#f5f1e6'}]
-              },
-              {
-                featureType: 'road.arterial',
-                elementType: 'geometry',
-                stylers: [{color: '#fdfcf8'}]
-              },
-              {
-                featureType: 'road.highway',
-                elementType: 'geometry',
-                stylers: [{color: '#f8c967'}]
-              },
-              {
-                featureType: 'road.highway',
-                elementType: 'geometry.stroke',
-                stylers: [{color: '#e9bc62'}]
-              },
-              {
-                featureType: 'road.highway.controlled_access',
-                elementType: 'geometry',
-                stylers: [{color: '#e98d58'}]
-              },
-              {
-                featureType: 'road.highway.controlled_access',
-                elementType: 'geometry.stroke',
-                stylers: [{color: '#db8555'}]
-              },
-              {
-                featureType: 'road.local',
-                elementType: 'labels.text.fill',
-                stylers: [{color: '#806b63'}]
-              },
-              {
-                featureType: 'transit.line',
-                elementType: 'geometry',
-                stylers: [{color: '#dfd2ae'}]
-              },
-              {
-                featureType: 'transit.line',
-                elementType: 'labels.text.fill',
-                stylers: [{color: '#8f7d77'}]
-              },
-              {
-                featureType: 'transit.line',
-                elementType: 'labels.text.stroke',
-                stylers: [{color: '#ebe3cd'}]
-              },
-              {
-                featureType: 'transit.station',
-                elementType: 'geometry',
-                stylers: [{color: '#dfd2ae'}]
-              },
-              {
-                featureType: 'water',
-                elementType: 'geometry.fill',
-                stylers: [{color: '#b9d3c2'}]
-              },
-              {
-                featureType: 'water',
-                elementType: 'labels.text.fill',
-                stylers: [{color: '#92998d'}]
-              }
-            ],
+					  {
+						 "elementType": "geometry",
+						 "stylers": [
+							{
+							  "color": "#f5f5f5"
+							}
+						 ]
+					  },
+					  {
+						 "elementType": "labels.icon",
+						 "stylers": [
+							{
+							  "visibility": "off"
+							}
+						 ]
+					  },
+					  {
+						 "elementType": "labels.text.fill",
+						 "stylers": [
+							{
+							  "color": "#616161"
+							}
+						 ]
+					  },
+					  {
+						 "elementType": "labels.text.stroke",
+						 "stylers": [
+							{
+							  "color": "#f5f5f5"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "administrative.land_parcel",
+						 "elementType": "labels.text.fill",
+						 "stylers": [
+							{
+							  "color": "#bdbdbd"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "poi",
+						 "elementType": "geometry",
+						 "stylers": [
+							{
+							  "color": "#eeeeee"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "poi",
+						 "elementType": "labels.text.fill",
+						 "stylers": [
+							{
+							  "color": "#757575"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "poi.park",
+						 "elementType": "geometry",
+						 "stylers": [
+							{
+							  "color": "#e5e5e5"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "poi.park",
+						 "elementType": "labels.text.fill",
+						 "stylers": [
+							{
+							  "color": "#9e9e9e"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "road",
+						 "elementType": "geometry",
+						 "stylers": [
+							{
+							  "color": "#ffffff"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "road.arterial",
+						 "elementType": "labels.text.fill",
+						 "stylers": [
+							{
+							  "color": "#757575"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "road.highway",
+						 "elementType": "geometry",
+						 "stylers": [
+							{
+							  "color": "#dadada"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "road.highway",
+						 "elementType": "labels.text.fill",
+						 "stylers": [
+							{
+							  "color": "#616161"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "road.local",
+						 "elementType": "labels.text.fill",
+						 "stylers": [
+							{
+							  "color": "#9e9e9e"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "transit.line",
+						 "elementType": "geometry",
+						 "stylers": [
+							{
+							  "color": "#e5e5e5"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "transit.station",
+						 "elementType": "geometry",
+						 "stylers": [
+							{
+							  "color": "#eeeeee"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "water",
+						 "elementType": "geometry",
+						 "stylers": [
+							{
+							  "color": "#c9c9c9"
+							}
+						 ]
+					  },
+					  {
+						 "featureType": "water",
+						 "elementType": "labels.text.fill",
+						 "stylers": [
+							{
+							  "color": "#9e9e9e"
+							}
+						 ]
+					  }
+					],
             {name: 'Styled Map'});
 
             const element = this.$refs.map;
             const options = {
                center: this.mapDefaultPos,
                zoom: this.mapDefaultZoom,
+					minZoom: this.mapMinZoom,
+					maxZoom: this.mapMaxZoom,
+					restriction: {
+						 latLngBounds: {north: 85, south: -85, west: -180, east: 180},
+						 strictBounds: true
+					  },
 					mapTypeControlOptions: {
             		mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain',
                     'styled_map']
@@ -255,8 +322,8 @@ jQuery(document).ready(function() {
          },
          onRowClick: function(data) {
             var pos = {
-               lat: parseFloat(data.row.mmap_lat),
-               lng: parseFloat(data.row.mmap_lng)
+               lat: parseFloat(data.row.lat),
+               lng: parseFloat(data.row.lng)
             };
             this.map.panTo(pos);
             this.map.setZoom(16);
@@ -270,15 +337,23 @@ jQuery(document).ready(function() {
             // Create an array of alphabetical characters used to label the markers.
             var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             this.markers = this.tableData.map(function(location, i) {
+					var currentDate = new Date();
+					var startDate = new Date(location.event_start_dt);
+					//console.log("current:" + currentDate);
+					//console.log("start d:" + startDate);
+					if(startDate > currentDate) {
+						console.log("hallelujah");
+					}
+					
                //console.log(location);
-               var latLng = {lat: parseFloat(location.mmap_lat), lng: parseFloat(location.mmap_lng)};
+               var latLng = {lat: parseFloat(location.lat), lng: parseFloat(location.lng)};
                var marker =  new google.maps.Marker({
                   position: latLng,
                   label: ''//labels[i % labels.length]
                });
                marker.addListener('click', function() {
                   var myWindow = new google.maps.InfoWindow({
-                     content: '<div style=""><h4>'+location.mmap_eventname+'</h4><p><a href="'+location.mmap_url+'" target="_blank">'+location.mmap_url+'</a></p></div>'
+                     content: '<div style=""><h4>'+location.faire_name+'</h4><p><a href="'+location.faire_url+'" target="_blank">'+location.faire_url+'</a></p></div>'
                   });
                   myWindow.open(this.map, marker);
                });
@@ -305,4 +380,9 @@ function formatDate(date) {
   var year = theDate.getFullYear();
 
   return monthNames[monthIndex] + ', ' + day + ' ' + year;
+}
+
+function beforeDate(date) {
+	var currentDate = new Date();
+	return date > currentDate;
 }

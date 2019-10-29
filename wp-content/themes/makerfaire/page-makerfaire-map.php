@@ -38,8 +38,8 @@ get_header();
                <div class="map-filters-wrp">
                   <form action="" class="" @submit="filterOverride">
                      <div class="">
-                        <label for="filter">Find a Maker Faire</label>
-                        <input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="doFilter" placeholder="Search by Name">
+                        <label for="filter">Explore Faires</label>
+                        <input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="doFilter" placeholder="Search by Name, Date or Location">
                      </div>
                   </form>
                </div>
