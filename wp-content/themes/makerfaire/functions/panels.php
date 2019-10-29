@@ -450,14 +450,19 @@ function get6ColLayout() {
       $cta_link = $data['image_cta'];
       $ctaText = $data['image_cta_text'];
 		
+		$target = "_self";
+		if($data['open_link_in_new_tab'] == "true") {
+			$target = "_blank";
+		}
+		
 		$bgColor = $data['button_color'];
 
       if (!empty($cta_link)) {
 			if(!empty($imageArr['url'])) {
-         	$columnInfo = '<a class="six-col-img lazyload" href="' . $cta_link . '" '.$imgStyle.'></a>';
+         	$columnInfo = '<a class="six-col-img lazyload" href="' . $cta_link . '" '.$imgStyle.' target="'.$target.'"></a>';
 			}
          if (!empty($ctaText)) {
-            $columnInfo .= '<p class="text-center sub-caption-bottom ' . $bgColor . '"><a href="' . $cta_link . '" target="_blank">' . $ctaText . '</a></p>';
+            $columnInfo .= '<p class="text-center sub-caption-bottom ' . $bgColor . '"><a href="' . $cta_link . '" target="'.$target.'">' . $ctaText . '</a></p>';
          }
       } else {
          $columnInfo = $image;
