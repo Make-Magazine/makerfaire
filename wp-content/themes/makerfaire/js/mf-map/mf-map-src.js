@@ -63,7 +63,8 @@ jQuery(document).ready(function() {
       created: function() {
          var _self = this;
 			var currentDate = new Date();
-         axios.get('/query/?type=map')
+			console.log(window.location.hostname + '/query/?type=map');
+         axios.get(window.location.hostname + '/query/?type=map')
             .then(function (response) {
                _self.$refs.loadingIndicator.classList.add("hidden");
                _self.outputData = response.data.Locations;
