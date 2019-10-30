@@ -1,12 +1,12 @@
 "use strict";
 
 jQuery(document).ready(function () {
+  var currentDate = new Date();
   Vue.use(VueTables.ClientTable);
   Vue.use(VueTables.Event);
   var vm = new Vue({
     el: "#directory",
     data: {
-      //columns: ['mmap_date', 'mmap_eventname', 'physLoc', 'mmap_country', 'mmap_city', 'mmap_state', 'mmap_start_dt', 'mmap_end_dt'],
       columns: ['faire_year', 'faire_name', 'venue_address_street', 'venue_address_country', 'venue_address_city', 'venue_address_state', 'event_start_dt', 'event_end_dt'],
       tableData: [],
       options: {
@@ -55,6 +55,7 @@ jQuery(document).ready(function () {
 
       },
       filterVal: '',
+      pastFaires: false,
       map: null,
       mapDefaultZoom: 2,
       mapMinZoom: 2,
@@ -68,18 +69,10 @@ jQuery(document).ready(function () {
     created: function created() {
       var _self = this;
 
-      var currentDate = new Date();
       axios.get('/query/?type=map').then(function (response) {
         _self.$refs.loadingIndicator.classList.add("hidden");
 
         _self.outputData = response.data.Locations;
-        _self.tableData = _self.outputData.filter(function (values) {
-          var startDate = new Date(values.event_start_dt);
-
-          if (startDate > currentDate) {
-            return values;
-          }
-        });
 
         _self.$refs.directoryGrid.setOrder('faire_year', 'event_start_dt', true);
 
@@ -110,7 +103,15 @@ jQuery(document).ready(function () {
         }
       },
       initMap: function initMap() {
-        this.$refs.mapTableWrapper.classList.remove("map-table-hidden");
+        this.$refs.mapTableWrapper.classList.remove("map-table-hidden"); // filter out the past faires
+
+        this.tableData = this.outputData.filter(function (values) {
+          var startDate = new Date(values.event_start_dt);
+
+          if (startDate > currentDate) {
+            return values;
+          }
+        });
         var styledMapType = new google.maps.StyledMapType([{
           "elementType": "geometry",
           "stylers": [{
@@ -272,6 +273,14 @@ jQuery(document).ready(function () {
         // infoWindow.open(this.map);
       },
       doFilter: function doFilter(data) {
+        if (this.pastFaires == true) {
+          this.initMap();
+        } else {
+          this.tableData = this.outputData.filter(function (values) {
+            return values;
+          });
+        }
+
         this.$refs.directoryGrid.setFilter(this.filterVal);
         this.addMarkers();
       },
@@ -295,15 +304,7 @@ jQuery(document).ready(function () {
         // Create an array of alphabetical characters used to label the markers.
         var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         this.markers = this.tableData.map(function (location, i) {
-          var currentDate = new Date();
-          var startDate = new Date(location.event_start_dt); //console.log("current:" + currentDate);
-          //console.log("start d:" + startDate);
-
-          if (startDate > currentDate) {
-            console.log("hallelujah");
-          } //console.log(location);
-
-
+          //console.log(location);
           var latLng = {
             lat: parseFloat(location.lat),
             lng: parseFloat(location.lng)

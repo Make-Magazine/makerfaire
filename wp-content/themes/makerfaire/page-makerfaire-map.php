@@ -13,10 +13,10 @@ get_header();
       <div class="row map-header">
          <div class="col-md-12">
             <h1>Maker Faire Map</h1>
-            <div class="admin-buttons">
+            <!--<div class="admin-buttons">
                <a class="btn btn-blue" href="/register">Add yours <i class="fa fa-plus"></i></a>
 					<a class="btn btn-blue" href="/edit-your-makerfaire">Manage <i class="fa fa-pencil-square-o"></i></a>
-            </div>
+            </div>-->
             <p><?php //echo the_content(); ?></p>
          </div>
       </div>
@@ -40,6 +40,7 @@ get_header();
                      <div class="">
                         <label for="filter">Explore Faires</label>
                         <input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="doFilter" placeholder="Search by Name, Date or Location">
+								<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="doFilter"><span>Show Past Faires</span></label>
                      </div>
                   </form>
                </div>
