@@ -35,6 +35,11 @@ jQuery(document).ready(function () {
 
             return text;
           }
+          /*event_start_dt: function(h, row, index) {
+          	var text = Date.parse(row.event_start_dt);
+          	return text;
+          }	 */
+
         },
         columnsDisplay: {
           venue_address_country: 'desktop'
@@ -46,7 +51,7 @@ jQuery(document).ready(function () {
           faire_year: 'col-date',
           venue_address_city: 'col-hidden',
           venue_address_state: 'col-hidden',
-          event_start_dt: 'col-hidden',
+          event_start_dt: 'col-test',
           event_end_dt: 'col-hidden'
         },
         pagination: {
@@ -56,6 +61,7 @@ jQuery(document).ready(function () {
       },
       filterVal: '',
       pastFaires: false,
+      buttonMessage: "Show Past Faires",
       map: null,
       mapDefaultZoom: 2,
       mapMinZoom: 2,
@@ -73,8 +79,6 @@ jQuery(document).ready(function () {
         _self.$refs.loadingIndicator.classList.add("hidden");
 
         _self.outputData = response.data.Locations;
-
-        _self.$refs.directoryGrid.setOrder('faire_year', 'event_start_dt', true);
 
         _self.detectBrowser();
 
@@ -103,7 +107,10 @@ jQuery(document).ready(function () {
         }
       },
       initMap: function initMap() {
-        this.$refs.mapTableWrapper.classList.remove("map-table-hidden"); // filter out the past faires
+        this.$refs.mapTableWrapper.classList.remove("map-table-hidden"); //console.log(this.$refs.directoryGrid);
+        // this sorts the order by the event start date, unfortunately it's alphabetical
+        //				/this.$refs.directoryGrid.setOrder('event_start_dt', 'asc');
+        // filter out the past faires
 
         this.tableData = this.outputData.filter(function (values) {
           var startDate = new Date(values.event_start_dt);
@@ -272,16 +279,23 @@ jQuery(document).ready(function () {
         // infoWindow.setContent(browserHasGeolocation ? 'Error: The Geolocation service failed.' : 'Error: Your browser doesn\'t support geolocation.');
         // infoWindow.open(this.map);
       },
-      doFilter: function doFilter(data) {
+      // search filter
+      searchFilter: function searchFilter(data) {
+        this.$refs.directoryGrid.setFilter(this.filterVal);
+        this.addMarkers();
+      },
+      // past faires filter
+      psFilter: function psFilter(data) {
         if (this.pastFaires == true) {
+          this.buttonMessage = "Show Past Faires";
           this.initMap();
         } else {
+          this.buttonMessage = "Show Upcoming Faires";
           this.tableData = this.outputData.filter(function (values) {
             return values;
           });
         }
 
-        this.$refs.directoryGrid.setFilter(this.filterVal);
         this.addMarkers();
       },
       filterOverride: function filterOverride(data) {
@@ -295,28 +309,27 @@ jQuery(document).ready(function () {
         this.map.panTo(pos);
         this.map.setZoom(16);
       },
+      // adding the markers to the map
       addMarkers: function addMarkers() {
-        // an attempt to clear the markers first for filtering, but not so good
-        // for (var i = 0; i < this.markers.length; i++) {
-        //    this.markers[i].setMap(null);
-        // }
-        // this.markers = [];
-        // Create an array of alphabetical characters used to label the markers.
-        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         this.markers = this.tableData.map(function (location, i) {
-          //console.log(location);
+          //this math random business keeps faires that were in the same location year after year from being on top of each other and not individually clickable
           var latLng = {
-            lat: parseFloat(location.lat),
-            lng: parseFloat(location.lng)
+            lat: parseFloat(location.lat) + Math.random() / 1000,
+            lng: parseFloat(location.lng) + Math.random() / 1000
           };
           var marker = new google.maps.Marker({
             position: latLng,
-            label: '' //labels[i % labels.length]
-
+            label: ''
           });
           marker.addListener('click', function () {
+            var dateRange = formatDate(location.event_start_dt);
+
+            if (location.event_end_dt != location.event_start_dt && location.event_end_dt != "11\/30\/-0001 12:00:00 am") {
+              dateRange += ' - ' + formatDate(location.event_end_dt);
+            }
+
             var myWindow = new google.maps.InfoWindow({
-              content: '<div style=""><h4>' + location.faire_name + '</h4><p><a href="' + location.faire_url + '" target="_blank">' + location.faire_url + '</a></p></div>'
+              content: '<div style=""><h4>' + location.faire_name + '</h4><p>' + dateRange + '</p><p><a href="' + location.faire_url + '" target="_blank">' + location.faire_url + '</a></p></div>'
             });
             myWindow.open(this.map, marker);
           });
@@ -327,8 +340,24 @@ jQuery(document).ready(function () {
           imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
         });
       }
+    },
+    computed: {
+      // none of this works
+      sortedItems: function sortedItems() {
+        var _self = this;
+
+        console.log("table data: ", _self.tableData);
+
+        _self.tableData.sort(function (a, b) {
+          console.log(a.event_start_dt);
+          return new Date(a.event_start_dt) - new Date(b.event_start_dt);
+        });
+
+        return _self.tableData;
+      }
     }
   });
+  vm.sortedItems; // remove with above
 }); // end doc ready
 
 function formatDate(date) {
@@ -338,9 +367,4 @@ function formatDate(date) {
   var monthIndex = theDate.getMonth();
   var year = theDate.getFullYear();
   return monthNames[monthIndex] + ', ' + day + ' ' + year;
-}
-
-function beforeDate(date) {
-  var currentDate = new Date();
-  return date > currentDate;
 }

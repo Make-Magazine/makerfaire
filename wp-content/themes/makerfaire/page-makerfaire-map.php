@@ -39,8 +39,10 @@ get_header();
                   <form action="" class="" @submit="filterOverride">
                      <div class="">
                         <label for="filter">Explore Faires</label>
-                        <input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="doFilter" placeholder="Search by Name, Date or Location">
-								<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="doFilter"><span>Show Past Faires</span></label>
+                        <input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">
+								<div id="checkbox-btn">
+									<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
+								</div>
                      </div>
                   </form>
                </div>
@@ -50,8 +52,8 @@ get_header();
          <div class="row">
             <div class="col-md-12">
                <v-client-table :data="tableData" :columns="columns" :options="options" @row-click="onRowClick" ref="directoryGrid">
-                  <span slot="mmap_eventname" slot-scope="props">
-                     <a :href="props.row.mmap_url" target="_blank" title="Visit site in new window">{{ props.row.mmap_eventname }}</a>
+                  <span slot="faire_name" slot-scope="props">
+                     <a :href="props.row.faire_url" target="_blank" title="Visit site in new window">{{ props.row.faire_name }}</a>
                   </span>
                </v-client-table>
             </div>
