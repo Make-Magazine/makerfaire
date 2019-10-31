@@ -55,6 +55,9 @@ get_header();
                   <span slot="faire_name" slot-scope="props">
                      <a :href="props.row.faire_url" target="_blank" title="Visit site in new window">{{ props.row.faire_name }}</a>
                   </span>
+						<span slot="event_start_dt" slot-scope="props">
+                     {{ props.row.event_dt }}
+                  </span>
                </v-client-table>
             </div>
          </div>

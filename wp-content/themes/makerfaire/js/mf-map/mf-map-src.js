@@ -7,12 +7,12 @@ jQuery(document).ready(function() {
    var vm = new Vue({
       el: "#directory",
       data: {
-			columns: ['faire_year', 'faire_name', 'venue_address_street', 'venue_address_country', 'venue_address_city', 'venue_address_state', 'event_start_dt', 'event_end_dt'],
+			columns: ['faire_name', 'event_start_dt','venue_address_street', 'venue_address_country', 'venue_address_city', 'venue_address_state', 'event_dt'],
          tableData: [],
          options: {
             headings: {
-					faire_year: 'Date',
                faire_name: 'Name',
+					event_start_dt: 'Date',
                venue_address_street: 'Location', 
                venue_address_country: 'Country',
             },
@@ -24,14 +24,6 @@ jQuery(document).ready(function() {
                   }
                   return text;
                },
-					faire_year: function (h, row, index) {
-						var text = formatDate(row.event_start_dt)
-						// "11\/30\/-0001 12:00:00 am" is a default day or something we need to filter out from these calculations
-                  if(row.event_end_dt != row.event_start_dt && row.event_end_dt != "11\/30\/-0001 12:00:00 am") {
-                     text += ' - ' + formatDate(row.event_end_dt);
-                  }
-                  return text;
-					},
 					/*event_start_dt: function(h, row, index) {
 						var text = Date.parse(row.event_start_dt);
 						return text;
@@ -44,11 +36,10 @@ jQuery(document).ready(function() {
                faire_name: 'col-name',
                venue_address_street: 'col-location', 
                venue_address_country: 'col-country',
-					faire_year: 'col-date',
+					event_start_dt: 'col-date',
 					venue_address_city: 'col-hidden',
 					venue_address_state: 'col-hidden',
-					event_start_dt: 'col-test',
-					event_end_dt: 'col-hidden',
+					event_dt: 'col-hidden',
             },
             pagination: { chunk: 5 } // undocumented :(
          },
@@ -72,6 +63,10 @@ jQuery(document).ready(function() {
             .then(function (response) {
                _self.$refs.loadingIndicator.classList.add("hidden");
                _self.outputData = response.data.Locations;
+				   // convert start dt to numeric string for ease of ordering
+				   Object.keys(_self.outputData).forEach(function(key) {
+					  _self.outputData[key].event_start_dt = Date.parse(_self.outputData[key].event_start_dt);
+					});
                _self.detectBrowser();
                _self.getLocation();
                _self.initMap();
@@ -99,7 +94,7 @@ jQuery(document).ready(function() {
             this.$refs.mapTableWrapper.classList.remove("map-table-hidden");
 				//console.log(this.$refs.directoryGrid);
 				// this sorts the order by the event start date, unfortunately it's alphabetical
-//				/this.$refs.directoryGrid.setOrder('event_start_dt', 'asc');
+				this.$refs.directoryGrid.setOrder('event_start_dt', 'asc');
 				// filter out the past faires
 				this.tableData = this.outputData.filter( function(values) {
 					var startDate = new Date(values.event_start_dt);
@@ -351,42 +346,51 @@ jQuery(document).ready(function() {
          },
 			// adding the markers to the map
          addMarkers: function() {
-            this.markers = this.tableData.map(function(location, i) {			
+				var gMarkerIcon = {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 5,
+                fillOpacity: 1,
+                strokeOpacity: 0
+            };
+            this.markers = this.tableData.map(function(location, i) {		
+					// styling for the various types of faires... some of these will need to be combined
+					switch (location.category) {
+						case 'Flagship':
+							gMarkerIcon.fillColor = '#D42410';
+							gMarkerIcon.scale = 11;
+							break;
+						case 'Featured':
+							gMarkerIcon.fillColor = '#085a7e';
+							gMarkerIcon.scale = 8;
+							break;
+						case 'School':
+							gMarkerIcon.fillColor = '#7ED321';
+							break;
+						default:
+							gMarkerIcon.fillColor = '#67D0F7';
+					}
                //this math random business keeps faires that were in the same location year after year from being on top of each other and not individually clickable
                var latLng = {lat: parseFloat(location.lat) + Math.random()/1000, lng: parseFloat(location.lng) +Math.random()/1000};
                var marker =  new google.maps.Marker({
+						icon: gMarkerIcon,
                   position: latLng,
                   label: ''
                });
                marker.addListener('click', function() {
-						var dateRange = formatDate(location.event_start_dt);
-						if(location.event_end_dt != location.event_start_dt && location.event_end_dt != "11\/30\/-0001 12:00:00 am") {
-							dateRange += ' - ' + formatDate(location.event_end_dt);
-						}
+						// for faires that have a start and end date
                   var myWindow = new google.maps.InfoWindow({
-                     content: '<div style=""><h4>'+location.faire_name+'</h4><p>' + dateRange + '</p><p><a href="'+location.faire_url+'" target="_blank">'+location.faire_url+'</a></p></div>'
+                     content: '<div style=""><h4>'+location.faire_name+'</h4><p>' + location.event_dt + '</p><p><a href="'+location.faire_url+'" target="_blank">'+location.faire_url+'</a></p></div>'
                   });
                   myWindow.open(this.map, marker);
                });
                return marker;
             });
             //Add a marker clusterer to manage the markers.
-            var markerCluster = new MarkerClusterer(this.map, this.markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+            var markerCluster = new MarkerClusterer(this.map, this.markers, {imagePath: '/wp-content/themes/makerfaire/js/mf-map/markers/m'});
          }
       },
-		computed: { // none of this works
-			 sortedItems: function() {
-				  var _self = this;
-				  console.log("table data: ", _self.tableData);
-				  _self.tableData.sort( ( a, b) => {
-					   console.log(a.event_start_dt);
-						return new Date(a.event_start_dt) - new Date(b.event_start_dt);
-				  });
-				  return _self.tableData;
-			 }
-		},
   });
-	vm.sortedItems; // remove with above
+
 }); // end doc ready
 
 
