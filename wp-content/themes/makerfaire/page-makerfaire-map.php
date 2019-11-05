@@ -11,16 +11,21 @@ get_header();
    <div class="container-fluid directory-container" id="directory">
 
       <div class="row map-header">
-         <div class="col-md-12">
+         <div class="col-md-12 map-header-inner">
             <h1>Maker Faire Map</h1>
             <!--<div class="admin-buttons">
                <a class="btn btn-blue" href="/register">Add yours <i class="fa fa-plus"></i></a>
 					<a class="btn btn-blue" href="/edit-your-makerfaire">Manage <i class="fa fa-pencil-square-o"></i></a>
             </div>-->
-            <ul>
-					 <li v-for="type in types">
-					  <input type="checkbox" v-on:click="typeFilter" v-bind:name="type" v-bind:value="type" v-bind:id="type" /><label>{{type}}</label>
-					 </li>
+            <ul id="type-filters">Select by Type:
+					<li v-for="type in types">
+					  <label v-bind:for="type">
+					  <input type="checkbox" v-on:click="typeFilter" v-bind:name="type" v-bind:value="type" v-bind:id="type" />
+						  <i class="fa fa-fw fa-circle-o unchecked"></i>
+    					  <i class="fa fa-fw fa-circle checked"></i>
+						  <span>{{type}}</span>
+					  </label>
+					</li>
 				</ul>
          </div>
       </div>
@@ -44,7 +49,7 @@ get_header();
                      <div class="">
                         <label for="filter">Explore Faires</label>
                         <input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">
-								<div id="checkbox-btn">
+								<div id="past-faires-btn">
 									<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
 								</div>
 								

@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
    var vm = new Vue({
       el: "#directory",
       data: {
-			columns: ['faire_name', 'event_start_dt','venue_address_street', 'venue_address_city', 'venue_address_country', 'venue_address_state', 'event_dt', 'category'],
+			columns: ['faire_name', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category'],
          tableData: [], // this keeps the whole table
 			filteredData: [], // this is the tableData with the filters applied
          options: {
@@ -33,9 +33,9 @@ jQuery(document).ready(function() {
             },
             columnsClasses: {
                faire_name: 'col-name',
+					event_start_dt: 'col-date',
                venue_address_city: 'col-location', 
                venue_address_country: 'col-country',
-					event_start_dt: 'col-date',
 					venue_address_street: 'col-hidden',
 					venue_address_state: 'col-hidden',
 					event_dt: 'col-hidden',
@@ -335,41 +335,41 @@ jQuery(document).ready(function() {
 					this.tableData = this.outputData.filter( function(values) {
 						var startDate = new Date(values.event_start_dt);
 						if(startDate > currentDate) {
-							var type = values.category;
-							if(typeFilters.length < 1) {
-								return values;
-							}else if(typeFilters.includes(type)) {
-								return values;
-							}
+							return values;
 						}
 					});
 				} else {
 					this.buttonMessage = "Show Upcoming Faires";
 					this.tableData = this.outputData.filter( function(values) {
-						var type = values.category;
+						return values;
+					});
+				}
+				// there's gotta be a better way than just filtering by type again like this
+				this.filteredData = this.tableData.filter( function(values) {
+					var type = values.category;
 						if(typeFilters.length < 1) {
 							return values;
 						}else if(typeFilters.includes(type)) {
 							return values;
 						}
-					});
-				}
-				this.filteredData = this.tableData;
+				});
 				this.addMarkers();
 			},
+			// type/category of faire filter
 			typeFilter: function(data) { 
 				// add to type filter array if checked on click, remove if unchecked
-				if(data.explicitOriginalTarget.checked == true) {
-					typeFilters.push(data.explicitOriginalTarget._value);
+				console.log(data);
+				if(data.originalTarget.checked == true) {
+					typeFilters.push(data.originalTarget._value);
 					if(data.explicitOriginalTarget._value == 'Featured') {
 						typeFilters.push('Flagship');
 					}
 				}
-				if(data.explicitOriginalTarget.checked == false) {
-					var index = typeFilters.indexOf(data.explicitOriginalTarget._value);
+				if(data.originalTarget.checked == false) {
+					var index = typeFilters.indexOf(data.originalTarget._value);
 					if (index !== -1) typeFilters.splice(index, 1);
 					if(data.explicitOriginalTarget._value == 'Featured') {
-						typeFilters.splice('Featured', 1);
+						typeFilters.splice('Flagship', 1);
 					}
 				}
 				this.filteredData = this.tableData.filter( function(values) {
@@ -447,7 +447,7 @@ jQuery(document).ready(function() {
          }
       },
   });
-  jQuery("input#Mini").next("label").html("Community");
+  jQuery("label[for=Mini] span").html("Community");
 }); // end doc ready
 
 

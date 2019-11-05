@@ -42,14 +42,11 @@
             font-weight: 100;
          }
       }
-      // p {
-      //    text-align: center;
-      // }
-      h1 {
-         @media all and (max-width: 768px) {
-            margin-top: 0;
-         }
-      }
+		.map-header-inner {
+			@media all and (min-width: 800px) {
+				display: flex;
+			}
+		}
    }
    .map-filters-wrp {
       background-color: #005E9A;
@@ -57,6 +54,7 @@
       z-index: 100;
       width: 100%;
       text-align: center;
+		display: inline-block;
       label {
          display: inline-block;
          font-family: "Roboto Light";
@@ -179,34 +177,79 @@
 	}
 }
 
-#checkbox-btn {
+#type-filters {
+	display: flex;
+	margin-left: auto;
+	order: 2;
+	margin-top: auto;
+	padding: 0px;
+	font-weight: bold;
+	li {
+		list-style: none;
+		margin-left: 5px;
+		@media all and (max-width: 420px) {
+			text-align: center;
+			margin-bottom: -2px;
+		}
+		label {
+			i { 
+				font-size: 24px; 
+				margin-top: -2px;
+			}
+			span { 
+				position: relative;
+				top: -3px;
+			}
+			.checked { display: none; }
+			input[type="checkbox"] {
+				display: none;
+				&:checked {
+					&~ .checked { display: inline-block; }
+					&~ .unchecked { display: none; }
+				}
+			}
+		}
+		&:nth-of-type(1) {
+			margin-left: 10px;
+			label { color: #D42410; }
+		}
+		&:nth-of-type(2) {
+			label { color: #67D0F7; }
+		}
+		&:nth-of-type(3) {
+			label { color: #F5A623; }
+		}
+	}
+}
+
+#past-faires-btn {
 	float: right;
-	background-color:#f51400;
-	color: #fff;
-	border: solid 1px #fff;
-	border-radius:4px;
-	border:1px solid #D0D0D0;
-	overflow:auto;
-}
-
-#checkbox-btn label {
-	float:left;
-	margin:0px;
-}
-
-#checkbox-btn label span {
-	text-align:center;
-	padding: 5px 10px;
-	display:block;
-}
-
-#checkbox-btn label input {
-	position:absolute;
-	top:-2000px;
-}
-
-#checkbox-btn input:checked + span {
-	background-color: #fff;
-	color:#f51400;
-	border-color:#f51400;
+   @media all and (max-width: 767px) {
+		margin-top: 10px;
+		float: none;
+	}
+	label {
+		background-color:#f51400;
+		color: #fff;
+		border: solid 1px #fff;
+		border-radius:4px;
+		border:1px solid #D0D0D0;
+		overflow:auto;
+		margin:0px;
+		   cursor: pointer;
+		span {
+			text-align:center;
+			padding: 5px 10px;
+			display:block;
+		}
+		input {
+			position:absolute;
+			top:-2000px;
+		}
+		input:checked + span {
+			background-color: #fff;
+			color:#f51400;
+			border-color:#f51400;
+		}
+	}
 }
