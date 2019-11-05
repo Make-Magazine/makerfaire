@@ -39,7 +39,7 @@ jQuery(document).ready(function() {
 					venue_address_street: 'col-hidden',
 					venue_address_state: 'col-hidden',
 					event_dt: 'col-hidden',
-					category: 'col-type',
+					category: 'col-hidden',
             },
             pagination: { chunk: 5 } // undocumented :(
          },
