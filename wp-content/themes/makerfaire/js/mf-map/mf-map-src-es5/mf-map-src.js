@@ -53,7 +53,7 @@ jQuery(document).ready(function () {
       },
       filterVal: '',
       pastFaires: false,
-      types: ["Featured", "Community", "School"],
+      types: ["Featured", "Mini", "School"],
       buttonMessage: "Show Past Faires",
       map: null,
       markerCluster: null,
@@ -428,6 +428,7 @@ jQuery(document).ready(function () {
       }
     }
   });
+  jQuery("input#Mini").next("label").html("Community");
 }); // end doc ready
 
 function formatDate(date) {

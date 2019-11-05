@@ -19,7 +19,7 @@ get_header();
             </div>-->
             <ul>
 					 <li v-for="type in types">
-					  <input type="checkbox" v-on:click="typeFilter" v-bind:value="type" v-bind:id="type" />  {{type}}
+					  <input type="checkbox" v-on:click="typeFilter" v-bind:name="type" v-bind:value="type" v-bind:id="type" /><label>{{type}}</label>
 					 </li>
 				</ul>
          </div>
@@ -61,6 +61,7 @@ get_header();
                      <a :href="props.row.faire_url" target="_blank" title="Visit site in new window">{{ props.row.faire_name }}</a>
                   </span>
 						<span slot="event_start_dt" slot-scope="props">
+                     {{ props.row.event_dt }}
                      {{ props.row.event_dt }}
                   </span>
                </v-client-table>
