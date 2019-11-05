@@ -1,45 +1,43 @@
 
 jQuery(document).ready(function() {
    var currentDate = new Date();
+	var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
    Vue.use(VueTables.ClientTable);
    Vue.use(VueTables.Event);
 
    var vm = new Vue({
       el: "#directory",
       data: {
-			columns: ['faire_name', 'event_start_dt','venue_address_street', 'venue_address_country', 'venue_address_city', 'venue_address_state', 'event_dt'],
+			columns: ['faire_name', 'event_start_dt','venue_address_street', 'venue_address_city', 'venue_address_country', 'venue_address_state', 'event_dt', 'category'],
          tableData: [],
          options: {
             headings: {
                faire_name: 'Name',
 					event_start_dt: 'Date',
-               venue_address_street: 'Location', 
+               venue_address_city: 'Location', 
                venue_address_country: 'Country',
             },
             templates: {
-               venue_address_street: function (h, row, index) {
+               venue_address_city: function (h, row, index) {
                   var text = row.venue_address_city;
                   if(row.venue_address_state) {
                      text += ', ' + row.venue_address_state;
                   }
                   return text;
                },
-					/*event_start_dt: function(h, row, index) {
-						var text = Date.parse(row.event_start_dt);
-						return text;
-					}	 */ 
             },
             columnsDisplay: {
                venue_address_country: 'desktop',
             },
             columnsClasses: {
                faire_name: 'col-name',
-               venue_address_street: 'col-location', 
+               venue_address_city: 'col-location', 
                venue_address_country: 'col-country',
 					event_start_dt: 'col-date',
-					venue_address_city: 'col-hidden',
+					venue_address_street: 'col-hidden',
 					venue_address_state: 'col-hidden',
 					event_dt: 'col-hidden',
+					category: 'col-hidden',
             },
             pagination: { chunk: 5 } // undocumented :(
          },
@@ -77,6 +75,9 @@ jQuery(document).ready(function() {
                _self.$refs.errorIndicator.classList.remove("hidden");
             });
       },
+		updated: function() {
+			firstLoaded = false; 
+		},
       methods: {
          detectBrowser: function() {
             var useragent = navigator.userAgent,
@@ -92,9 +93,10 @@ jQuery(document).ready(function() {
          },
          initMap: function() {
             this.$refs.mapTableWrapper.classList.remove("map-table-hidden");
-				//console.log(this.$refs.directoryGrid);
-				// this sorts the order by the event start date, unfortunately it's alphabetical
-				this.$refs.directoryGrid.setOrder('event_start_dt', 'asc');
+				// on the first load, by date, otherwise, remember user choices
+				if(firstLoaded == true) {
+					this.$refs.directoryGrid.setOrder('event_start_dt', 'asc');
+				}
 				// filter out the past faires
 				this.tableData = this.outputData.filter( function(values) {
 					var startDate = new Date(values.event_start_dt);
@@ -333,6 +335,10 @@ jQuery(document).ready(function() {
 				}
 				this.addMarkers();
 			},
+			typeFilter: function(data) { 
+				this.$refs.directoryGrid.setFilter(this.filterVal);
+            this.addMarkers();
+         },
          filterOverride: function(data) {
             data.preventDefault();
          },
@@ -350,21 +356,21 @@ jQuery(document).ready(function() {
                 path: google.maps.SymbolPath.CIRCLE,
                 scale: 5,
                 fillOpacity: 1,
-                strokeOpacity: 0
+                strokeOpacity: 0,
             };
             this.markers = this.tableData.map(function(location, i) {		
-					// styling for the various types of faires... some of these will need to be combined
+					// styling for the various types of faires... flagship and featured are now the same color
 					switch (location.category) {
 						case 'Flagship':
 							gMarkerIcon.fillColor = '#D42410';
-							gMarkerIcon.scale = 11;
+							gMarkerIcon.scale = 10;
 							break;
 						case 'Featured':
-							gMarkerIcon.fillColor = '#085a7e';
+							gMarkerIcon.fillColor = '#D42410';
 							gMarkerIcon.scale = 8;
 							break;
 						case 'School':
-							gMarkerIcon.fillColor = '#7ED321';
+							gMarkerIcon.fillColor = '#F5A623';
 							break;
 						default:
 							gMarkerIcon.fillColor = '#67D0F7';
@@ -374,12 +380,12 @@ jQuery(document).ready(function() {
                var marker =  new google.maps.Marker({
 						icon: gMarkerIcon,
                   position: latLng,
-                  label: ''
+                  label: '',
                });
                marker.addListener('click', function() {
 						// for faires that have a start and end date
                   var myWindow = new google.maps.InfoWindow({
-                     content: '<div style=""><h4>'+location.faire_name+'</h4><p>' + location.event_dt + '</p><p><a href="'+location.faire_url+'" target="_blank">'+location.faire_url+'</a></p></div>'
+                     content: '<div style=""><h4>'+location.faire_name+'</h4><p>' + location.venue_address_street + '</p><p>' + location.event_dt + '</p><p><a href="'+location.faire_url+'" target="_blank">'+location.faire_url+'</a></p></div>'
                   });
                   myWindow.open(this.map, marker);
                });
@@ -390,7 +396,6 @@ jQuery(document).ready(function() {
          }
       },
   });
-
 }); // end doc ready
 
 

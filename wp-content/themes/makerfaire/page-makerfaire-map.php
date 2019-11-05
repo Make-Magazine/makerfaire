@@ -8,7 +8,7 @@ get_header();
 
 ?>
 
-   <div class="container directory-container" id="directory">
+   <div class="container-fluid directory-container" id="directory">
 
       <div class="row map-header">
          <div class="col-md-12">
