@@ -51,6 +51,7 @@ jQuery(document).ready(function () {
       pastFaires: false,
       buttonMessage: "Show Past Faires",
       map: null,
+      markerCluster: null,
       mapDefaultZoom: 2,
       mapMinZoom: 2,
       mapMaxZoom: 20,
@@ -285,7 +286,13 @@ jQuery(document).ready(function () {
       psFilter: function psFilter(data) {
         if (this.pastFaires == true) {
           this.buttonMessage = "Show Past Faires";
-          this.initMap();
+          this.tableData = this.outputData.filter(function (values) {
+            var startDate = new Date(values.event_start_dt);
+
+            if (startDate > currentDate) {
+              return values;
+            }
+          });
         } else {
           this.buttonMessage = "Show Upcoming Faires";
           this.tableData = this.outputData.filter(function (values) {
@@ -312,6 +319,17 @@ jQuery(document).ready(function () {
       },
       // adding the markers to the map
       addMarkers: function addMarkers() {
+        // first clear all existing markers and markerClusters
+        for (var i = 0; i < this.markers.length; i++) {
+          this.markers[i].setMap(null);
+        }
+
+        this.markers = new Array();
+
+        if (this.markerCluster) {
+          this.markerCluster.clearMarkers();
+        }
+
         var gMarkerIcon = {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 5,
@@ -359,7 +377,7 @@ jQuery(document).ready(function () {
           return marker;
         }); //Add a marker clusterer to manage the markers.
 
-        var markerCluster = new MarkerClusterer(this.map, this.markers, {
+        this.markerCluster = new MarkerClusterer(this.map, this.markers, {
           imagePath: '/wp-content/themes/makerfaire/js/mf-map/markers/m'
         });
       }
