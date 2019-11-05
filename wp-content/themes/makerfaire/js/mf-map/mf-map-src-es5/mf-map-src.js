@@ -377,7 +377,7 @@ jQuery(document).ready(function () {
 
         var gMarkerIcon = {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 5,
+          scale: 6,
           fillOpacity: 1,
           strokeOpacity: 0
         };
@@ -386,12 +386,10 @@ jQuery(document).ready(function () {
           switch (location.category) {
             case 'Flagship':
               gMarkerIcon.fillColor = '#D42410';
-              gMarkerIcon.scale = 10;
               break;
 
             case 'Featured':
               gMarkerIcon.fillColor = '#D42410';
-              gMarkerIcon.scale = 8;
               break;
 
             case 'School':
