@@ -2,6 +2,7 @@
 jQuery(document).ready(function() {
    var currentDate = new Date();
 	var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
+	var typeFilters = [];
    Vue.use(VueTables.ClientTable);
    Vue.use(VueTables.Event);
 
@@ -9,7 +10,8 @@ jQuery(document).ready(function() {
       el: "#directory",
       data: {
 			columns: ['faire_name', 'event_start_dt','venue_address_street', 'venue_address_city', 'venue_address_country', 'venue_address_state', 'event_dt', 'category'],
-         tableData: [],
+         tableData: [], // this keeps the whole table
+			filteredData: [], // this is the tableData with the filters applied
          options: {
             headings: {
                faire_name: 'Name',
@@ -37,12 +39,13 @@ jQuery(document).ready(function() {
 					venue_address_street: 'col-hidden',
 					venue_address_state: 'col-hidden',
 					event_dt: 'col-hidden',
-					category: 'col-hidden',
+					category: 'col-type',
             },
             pagination: { chunk: 5 } // undocumented :(
          },
          filterVal: '',
 			pastFaires: false,
+			types: [ "Featured", "Community", "School"],
 			buttonMessage: "Show Past Faires",
          map: null,
 			markerCluster: null,
@@ -67,7 +70,7 @@ jQuery(document).ready(function() {
 					  _self.outputData[key].event_start_dt = Date.parse(_self.outputData[key].event_start_dt);
 					});
                _self.detectBrowser();
-               _self.getLocation();
+               //_self.getLocation(); we don't really need the users location for this map, as it starts zoomed out
                _self.initMap();
             })
             .catch(function (error) {
@@ -105,6 +108,8 @@ jQuery(document).ready(function() {
 						return values;
 					}
 				});
+				this.filteredData = this.tableData; // filtered Data is used to draw the map
+				
 				var styledMapType = new google.maps.StyledMapType(
             [
 					  {
@@ -330,19 +335,51 @@ jQuery(document).ready(function() {
 					this.tableData = this.outputData.filter( function(values) {
 						var startDate = new Date(values.event_start_dt);
 						if(startDate > currentDate) {
-							return values;
+							var type = values.category;
+							if(typeFilters.length < 1) {
+								return values;
+							}else if(typeFilters.includes(type)) {
+								return values;
+							}
 						}
 					});
 				} else {
 					this.buttonMessage = "Show Upcoming Faires";
 					this.tableData = this.outputData.filter( function(values) {
-						return values;
+						var type = values.category;
+						if(typeFilters.length < 1) {
+							return values;
+						}else if(typeFilters.includes(type)) {
+							return values;
+						}
 					});
 				}
+				this.filteredData = this.tableData;
 				this.addMarkers();
 			},
 			typeFilter: function(data) { 
-				this.$refs.directoryGrid.setFilter(this.filterVal);
+				// add to type filter array if checked on click, remove if unchecked
+				if(data.explicitOriginalTarget.checked == true) {
+					typeFilters.push(data.explicitOriginalTarget._value);
+					if(data.explicitOriginalTarget._value == 'Featured') {
+						typeFilters.push('Flagship');
+					}
+				}
+				if(data.explicitOriginalTarget.checked == false) {
+					var index = typeFilters.indexOf(data.explicitOriginalTarget._value);
+					if (index !== -1) typeFilters.splice(index, 1);
+					if(data.explicitOriginalTarget._value == 'Featured') {
+						typeFilters.splice('Featured', 1);
+					}
+				}
+				this.filteredData = this.tableData.filter( function(values) {
+					var type = values.category;
+					if(typeFilters.length < 1) {
+						return values;
+					}else if(typeFilters.includes(type)) {
+						return values;
+					}
+				});
             this.addMarkers();
          },
          filterOverride: function(data) {
@@ -372,7 +409,7 @@ jQuery(document).ready(function() {
                 fillOpacity: 1,
                 strokeOpacity: 0,
             };
-            this.markers = this.tableData.map(function(location, i) {		
+            this.markers = this.filteredData.map(function(location, i) {		
 					// styling for the various types of faires... flagship and featured are now the same color
 					switch (location.category) {
 						case 'Flagship':
@@ -410,6 +447,7 @@ jQuery(document).ready(function() {
          }
       },
   });
+
 }); // end doc ready
 
 

@@ -17,7 +17,11 @@ get_header();
                <a class="btn btn-blue" href="/register">Add yours <i class="fa fa-plus"></i></a>
 					<a class="btn btn-blue" href="/edit-your-makerfaire">Manage <i class="fa fa-pencil-square-o"></i></a>
             </div>-->
-            <p><?php //echo the_content(); ?></p>
+            <ul>
+					 <li v-for="type in types">
+					  <input type="checkbox" v-on:click="typeFilter" v-bind:value="type" v-bind:id="type" />  {{type}}
+					 </li>
+				</ul>
          </div>
       </div>
       <div class="message-container">
@@ -43,6 +47,7 @@ get_header();
 								<div id="checkbox-btn">
 									<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
 								</div>
+								
                      </div>
                   </form>
                </div>
@@ -51,7 +56,7 @@ get_header();
 
          <div class="row">
             <div class="col-md-12">
-               <v-client-table :data="tableData" :columns="columns" :options="options" @row-click="onRowClick" ref="directoryGrid">
+               <v-client-table :data="filteredData" :columns="columns" :options="options" @row-click="onRowClick" ref="directoryGrid">
                   <span slot="faire_name" slot-scope="props">
                      <a :href="props.row.faire_url" target="_blank" title="Visit site in new window">{{ props.row.faire_name }}</a>
                   </span>
