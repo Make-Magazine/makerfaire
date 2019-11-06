@@ -2,15 +2,16 @@
 
 jQuery(document).ready(function () {
   var currentDate = new Date();
+  var oneYearAgo = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
 
-  var typeFilters = [];
+  var typeFilters = ["Featured", "Flagship", "Mini", "School"];
   Vue.use(VueTables.ClientTable);
   Vue.use(VueTables.Event);
   var vm = new Vue({
     el: "#directory",
     data: {
-      columns: ['faire_name', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category'],
+      columns: ['faire_name', 'annual', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category'],
       tableData: [],
       // this keeps the whole table
       filteredData: [],
@@ -18,6 +19,7 @@ jQuery(document).ready(function () {
       options: {
         headings: {
           faire_name: 'Name',
+          annual: 'Number',
           event_start_dt: 'Date',
           venue_address_city: 'Location',
           venue_address_country: 'Country'
@@ -34,10 +36,12 @@ jQuery(document).ready(function () {
           }
         },
         columnsDisplay: {
+          venue_address_city: 'not_tabletP',
           venue_address_country: 'desktop'
         },
         columnsClasses: {
           faire_name: 'col-name',
+          annual: 'col-num',
           event_start_dt: 'col-date',
           venue_address_city: 'col-location',
           venue_address_country: 'col-country',
@@ -53,7 +57,16 @@ jQuery(document).ready(function () {
       },
       filterVal: '',
       pastFaires: false,
-      types: ["Featured", "Mini", "School"],
+      types: [{
+        name: "Featured",
+        description: "Must See Faires"
+      }, {
+        name: "Mini",
+        description: "Global Community Faires"
+      }, {
+        name: "School",
+        description: "Local School Maker Faires"
+      }],
       buttonMessage: "Show Past Faires",
       map: null,
       markerCluster: null,
@@ -302,7 +315,12 @@ jQuery(document).ready(function () {
         } else {
           this.buttonMessage = "Show Upcoming Faires";
           this.tableData = this.outputData.filter(function (values) {
-            return values;
+            var startDate = new Date(values.event_start_dt);
+
+            if (startDate > oneYearAgo) {
+              // this shows 365 days of faires, to show more just return all values
+              return values;
+            }
           });
         } // there's gotta be a better way than just filtering by type again like this
 
@@ -330,20 +348,19 @@ jQuery(document).ready(function () {
         }
 
         if (data.originalTarget.checked == false) {
+          ;
           var index = typeFilters.indexOf(data.originalTarget._value);
           if (index !== -1) typeFilters.splice(index, 1);
 
           if (data.originalTarget._value == 'Featured') {
-            typeFilters.splice('Flagship', 1);
+            typeFilters.splice(typeFilters.indexOf('Flagship'), 1);
           }
         }
 
         this.filteredData = this.tableData.filter(function (values) {
           var type = values.category;
 
-          if (typeFilters.length < 1) {
-            return values;
-          } else if (typeFilters.includes(type)) {
+          if (typeFilters.includes(type)) {
             return values;
           }
         });

@@ -19,11 +19,11 @@ get_header();
             </div>-->
             <ul id="type-filters">Select by Type:
 					<li v-for="type in types">
-					  <label v-bind:for="type">
-					  <input type="checkbox" v-on:click="typeFilter" v-bind:name="type" v-bind:value="type" v-bind:id="type" />
+					  <label v-bind:for="type.name" data-toggle="tooltip" v-bind:title="type.description" data-placement="bottom">
+					  <input type="checkbox" v-on:click="typeFilter" v-bind:name="type.name" v-bind:value="type.name" v-bind:id="type.name" checked  />
 						  <i class="fa fa-fw fa-circle-o unchecked"></i>
     					  <i class="fa fa-fw fa-circle checked"></i>
-						  <span>{{type}}</span>
+						  <span>{{type.name}}</span>
 					  </label>
 					</li>
 				</ul>
@@ -46,14 +46,9 @@ get_header();
 
                <div class="map-filters-wrp">
                   <form action="" class="" @submit="filterOverride">
-                     <div class="">
-                        <label for="filter">Explore Faires</label>
-                        <input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">
-								<div id="past-faires-btn">
-									<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
-								</div>
-								
-                     </div>
+							<label for="filter">Explore Faires</label>
+							<input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">
+							
                   </form>
                </div>
             </div>
@@ -67,12 +62,13 @@ get_header();
                   </span>
 						<span slot="event_start_dt" slot-scope="props">
                      {{ props.row.event_dt }}
-                     {{ props.row.event_dt }}
                   </span>
                </v-client-table>
             </div>
          </div>
-
+<div id="past-faires-btn">
+								<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
+							</div>
       </div>  <!-- end map-table-wrapper -->
 
    </div>

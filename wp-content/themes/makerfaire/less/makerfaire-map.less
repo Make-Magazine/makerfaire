@@ -108,11 +108,12 @@
          cursor: pointer;
       }
       .col-hidden { display: none; }
-      @media screen and (max-width: 768px) {
-         td:nth-child(3), th:nth-child(3) {
-            display: none;
-         }
-      }
+		.col-num {
+			pointer-events: none;
+			.glyphicon-sort {
+				display: none;
+			}
+		}
    }
 
    @media screen and (max-width: 767px) {
@@ -224,9 +225,12 @@
 
 #past-faires-btn {
 	float: right;
+	margin-top: -60px;
    @media all and (max-width: 767px) {
-		margin-top: 10px;
+		text-align: center;
 		float: none;
+		margin-top: -10px;
+		margin-bottom: 15px;
 	}
 	label {
 		background-color:#f51400;
