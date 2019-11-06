@@ -30,8 +30,9 @@ jQuery(document).ready(function() {
                   return text;
                },
             },
-            columnsDisplay: {
-					venue_address_city: 'not_tabletP',
+            columnsDisplay: { // the sizes the columns disappear
+					venue_address_city: 'min_tabletL',
+					annual: 'min_tabletP',
                venue_address_country: 'desktop',
             },
             columnsClasses: {
