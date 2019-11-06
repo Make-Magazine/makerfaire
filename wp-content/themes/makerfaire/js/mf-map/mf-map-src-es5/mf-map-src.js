@@ -61,13 +61,13 @@ jQuery(document).ready(function () {
       pastFaires: false,
       types: [{
         name: "Featured",
-        description: "Must See Faires"
+        description: "Larger-scale regional events"
       }, {
         name: "Mini",
-        description: "Global Community Faires"
+        description: "Community events"
       }, {
         name: "School",
-        description: "Local School Maker Faires"
+        description: "K-12 Faires (closed to general public)"
       }],
       buttonMessage: "Show Past Faires",
       map: null,
@@ -444,6 +444,11 @@ jQuery(document).ready(function () {
     }
   });
   jQuery("label[for=Mini] span").html("Community");
+  jQuery("#pastFaires").on("click", function () {
+    jQuery('html, body').animate({
+      scrollTop: 0
+    }, 'slow');
+  });
 }); // end doc ready
 
 function formatDate(date) {
