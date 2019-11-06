@@ -321,12 +321,10 @@ jQuery(document).ready(function () {
       // type/category of faire filter
       typeFilter: function typeFilter(data) {
         // add to type filter array if checked on click, remove if unchecked
-        console.log(data);
-
         if (data.originalTarget.checked == true) {
           typeFilters.push(data.originalTarget._value);
 
-          if (data.explicitOriginalTarget._value == 'Featured') {
+          if (data.originalTarget._value == 'Featured') {
             typeFilters.push('Flagship');
           }
         }
@@ -335,7 +333,7 @@ jQuery(document).ready(function () {
           var index = typeFilters.indexOf(data.originalTarget._value);
           if (index !== -1) typeFilters.splice(index, 1);
 
-          if (data.explicitOriginalTarget._value == 'Featured') {
+          if (data.originalTarget._value == 'Featured') {
             typeFilters.splice('Flagship', 1);
           }
         }
