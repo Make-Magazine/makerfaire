@@ -54,8 +54,22 @@ jQuery(document).ready(function () {
         },
         pagination: {
           chunk: 5
-        } // undocumented :(
-
+        },
+        // undocumented :(
+        multiSorting: {
+          faire_name: [{
+            column: 'event_start_dt',
+            matchDir: false
+          }],
+          venue_address_country: [{
+            column: 'event_start_dt',
+            matchDir: false
+          }],
+          venue_address_city: [{
+            column: 'event_start_dt',
+            matchDir: false
+          }]
+        }
       },
       filterVal: '',
       pastFaires: false,
