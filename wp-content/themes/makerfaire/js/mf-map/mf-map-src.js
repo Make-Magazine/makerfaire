@@ -16,7 +16,7 @@ jQuery(document).ready(function() {
          options: {
             headings: {
                faire_name: 'Name',
-					annual: 'Number',
+					annual: 'Annual',
 					event_start_dt: 'Date',
                venue_address_city: 'Location', 
                venue_address_country: 'Country',
