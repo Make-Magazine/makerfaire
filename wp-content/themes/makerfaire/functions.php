@@ -286,7 +286,7 @@ function mf_map(){
       wp_enqueue_script('vue', get_stylesheet_directory_uri() . '/js/mf-map/vue.min.js', false, false, true);
       wp_enqueue_script('axios', get_stylesheet_directory_uri() . '/js/mf-map/axios.min.js', array('vue'), false, true);
       wp_enqueue_script('vue-table-2', get_stylesheet_directory_uri() . '/js/mf-map/vue-tables-2.min.js', array('vue'), false, true);
-      wp_enqueue_script('vue-map', get_stylesheet_directory_uri() . '/js/mf-map/min/mf-map.min.js', array(), $my_version, true );
+      wp_enqueue_script('vue-map', get_stylesheet_directory_uri() . '/js/mf-map/min/mf-map.min.js', array('vue'), false, true );
 	}
 }
 add_action('wp_enqueue_scripts', 'mf_map');
