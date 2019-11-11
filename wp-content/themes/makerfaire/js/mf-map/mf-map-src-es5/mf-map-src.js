@@ -11,7 +11,7 @@ jQuery(document).ready(function () {
   var vm = new Vue({
     el: "#directory",
     data: {
-      columns: ['faire_name', 'annual', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category'],
+      columns: ['faire_name', 'annual', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category', 'event_end_dt'],
       tableData: [],
       // this keeps the whole table
       filteredData: [],
@@ -50,7 +50,8 @@ jQuery(document).ready(function () {
           venue_address_street: 'col-hidden',
           venue_address_state: 'col-hidden',
           event_dt: 'col-hidden',
-          category: 'col-hidden'
+          category: 'col-hidden',
+          event_end_dt: 'col-hidden'
         },
         pagination: {
           chunk: 5
@@ -144,9 +145,9 @@ jQuery(document).ready(function () {
 
 
         this.tableData = this.outputData.filter(function (values) {
-          var startDate = new Date(values.event_start_dt);
+          var endDate = new Date(values.event_end_dt);
 
-          if (startDate > currentDate) {
+          if (endDate > currentDate) {
             return values;
           }
         });
@@ -322,18 +323,18 @@ jQuery(document).ready(function () {
         if (this.pastFaires == true) {
           this.buttonMessage = "Show Past Faires";
           this.tableData = this.outputData.filter(function (values) {
-            var startDate = new Date(values.event_start_dt);
+            var endDate = new Date(values.event_end_dt);
 
-            if (startDate > currentDate) {
+            if (endDate > currentDate) {
               return values;
             }
           });
         } else {
           this.buttonMessage = "Show Upcoming Faires";
           this.tableData = this.outputData.filter(function (values) {
-            var startDate = new Date(values.event_start_dt);
+            var endDate = new Date(values.event_end_dt);
 
-            if (startDate > oneYearAgo) {
+            if (endDate > oneYearAgo) {
               // this shows 365 days of faires, to show more just return all values
               return values;
             }
