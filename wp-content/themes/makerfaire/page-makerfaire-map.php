@@ -12,7 +12,7 @@ get_header();
 
       <div class="row map-header">
          <div class="col-md-12 map-header-inner">
-            <h1>Maker Faire Map</h1>
+            <h1>Maker Faires Around the World</h1>
             <!--<div class="admin-buttons">
                <a class="btn btn-blue" href="/register">Add yours <i class="fa fa-plus"></i></a>
 					<a class="btn btn-blue" href="/edit-your-makerfaire">Manage <i class="fa fa-pencil-square-o"></i></a>
@@ -73,7 +73,7 @@ get_header();
 
    </div>
 
-<div class="container-fluid light-blue">
+<!--<div class="container-fluid light-blue">
    <div class="container">
       <div class="row">
          <div class="col-md-6 col-sm-6 col-xs-12 makerfaire-bottom-nav">
@@ -86,7 +86,7 @@ get_header();
          </div>
       </div>
    </div>
-</div>  
+</div>  -->
 
 
 
