@@ -76,7 +76,7 @@ get_header(); ?>
               echo '<a href="' . $sub_field_2 . '">';
             endif;
             echo '<img src="' . $sub_field_3['url'] . '" alt="Featured Maker Faire Image" class="img-responsive lazyload" />';
-            echo '<p class="featured-faire-above-title">Maker Faire</p>';
+            //echo '<p class="featured-faire-above-title">Maker Faire</p>';
             echo '<h4 class="featured-faire-date">' . $sub_field_4 . '</h4>';
             echo '<h3 class="featured-faire-title clear">' . $sub_field_1 . '</h3>';
             echo '<div class="clearfix"></div>';
