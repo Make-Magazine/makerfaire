@@ -51,7 +51,7 @@ jQuery(document).ready(function () {
           venue_address_state: 'col-hidden',
           event_dt: 'col-hidden',
           category: 'col-hidden',
-          event_end_dt: 'col-hidden'
+          event_end_dt: 'col-test'
         },
         pagination: {
           chunk: 5
@@ -145,8 +145,8 @@ jQuery(document).ready(function () {
 
 
         this.tableData = this.outputData.filter(function (values) {
-          var endDate = new Date(values.event_end_dt);
-          endDate.setDate(endDate.getDate() + 3);
+          var startDate = new Date(values.event_end_dt);
+          endDate.setDate(endDate.getDate() + 7);
 
           if (endDate > currentDate) {
             return values;
@@ -325,7 +325,7 @@ jQuery(document).ready(function () {
           this.buttonMessage = "Show Past Faires";
           this.tableData = this.outputData.filter(function (values) {
             var endDate = new Date(values.event_end_dt);
-            endDate.setDate(endDate.getDate() + 3);
+            endDate.setDate(endDate.getDate() + 7);
 
             if (endDate > currentDate) {
               return values;
@@ -335,7 +335,7 @@ jQuery(document).ready(function () {
           this.buttonMessage = "Show Upcoming Faires";
           this.tableData = this.outputData.filter(function (values) {
             var endDate = new Date(values.event_end_dt);
-            endDate.setDate(endDate.getDate() + 3);
+            endDate.setDate(endDate.getDate() + 7);
 
             if (endDate > oneYearAgo) {
               // this shows 365 days of faires, to show more just return all values
