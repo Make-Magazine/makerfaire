@@ -49,7 +49,21 @@ class Settings {
 	 *
 	 * @var string
 	 */
+	public $load_native_loading_plugin;
+
+	/**
+	 * Value of setting for loading the unveilhooks plugin.
+	 *
+	 * @var string
+	 */
 	public $load_unveilhooks_plugin;
+
+	/**
+	 * Value of settings for enabling lazy loading for background images.
+	 *
+	 * @var string
+	 */
+	public $enable_for_background_images;
 
 	/**
 	 * Value of settings for enabling lazy loading for videos.
@@ -108,6 +122,13 @@ class Settings {
 	public $disable_option_object_types = array();
 
 	/**
+	 * String to modify lazysizes config.
+	 * 
+	 * @var string
+	 */
+	public $lazysizes_config = '';
+
+	/**
 	 * Settings constructor.
 	 */
 	public function __construct() {
@@ -134,10 +155,35 @@ class Settings {
 					'sanitize_checkbox',
 				),
 			),
+			'lazy_load_responsive_images_native_loading_plugin'    => array(
+				'value'             => get_option( 'lazy_load_responsive_images_native_loading_plugin', '0' ),
+				'label'             => __( 'Include lazysizes native loading plugin' ),
+				'description'       => __( 'The plugin transforms images and iframes to use native lazyloading in browsers that support it.', 'lazy-loading-responsive-images' ),
+				'field_callback'    => array( $this, 'checkbox_field_cb' ),
+				'sanitize_callback' => array(
+					$this->helpers,
+					'sanitize_checkbox',
+				),
+			),
 			'lazy_load_responsive_images_unveilhooks_plugin'    => array(
 				'value'             => get_option( 'lazy_load_responsive_images_unveilhooks_plugin', '0' ),
 				'label'             => __( 'Include lazysizes unveilhooks plugin' ),
-				'description'       => __( 'The plugin adds support for lazy loading of background images, scripts, styles, and videos. To use it with background images, scripts and styles, you will need to <a href="https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks">manually modify the markup</a>. Size of the additional JavaScript file: 1.43&nbsp;KB.', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'The plugin adds support for lazy loading of background images, scripts, styles, and videos. To use it with background images, scripts and styles, you will need to <a href="https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks">manually modify the markup</a>.', 'lazy-loading-responsive-images' ),
+				'field_callback'    => array( $this, 'checkbox_field_cb' ),
+				'sanitize_callback' => array(
+					$this->helpers,
+					'sanitize_checkbox',
+				),
+			),
+			'lazy_load_responsive_images_enable_for_background_images'     => array(
+				'value'             => get_option( 'lazy_load_responsive_images_enable_for_background_images', '0' ),
+				'label'             => __( 'Enable lazy loading for inline background images', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'This feature needs the unveilhooks plugin and will automatically load it, regardless of the option to load the unveilhooks plugin is enabled or not. 
+				<strong>It is possible that this setting causes issues, because:</strong> To also support multiple background images and to provide a 
+				fallback for disabled JavaScript, the plugin removes the background rules from the element and adds a style element instead.
+				The CSS selector is <code>.unique-class.lazyloaded</code> for the JS case, respective <code>.unique-class.lazyload</code> for the case that JS is disabled.
+				If you have CSS background rules with a higher specifity that match the element, they will overwrite the rules
+				that were extracted by Lazy Loader.', 'lazy-loading-responsive-images' ),
 				'field_callback'    => array( $this, 'checkbox_field_cb' ),
 				'sanitize_callback' => array(
 					$this->helpers,
@@ -167,7 +213,7 @@ class Settings {
 			'lazy_load_responsive_images_aspectratio_plugin'    => array(
 				'value'             => get_option( 'lazy_load_responsive_images_aspectratio_plugin', '0' ),
 				'label'             => __( 'Include lazysizes aspectratio plugin', 'lazy-loading-responsive-images' ),
-				'description'       => __( 'The plugin helps to avoid content jumping when images are loaded and makes lazy loading work with masonry grids. Works only if width and height attribute are set for the img element. <a href="https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/aspectratio">More info on the plugin page</a>. Size of the additional JavaScript file: 2.61&nbsp;KB.', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'The plugin helps to avoid content jumping when images are loaded and makes lazy loading work with masonry grids. Works only if width and height attribute are set for the img element. <a href="https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/aspectratio">More info on the plugin page</a>.', 'lazy-loading-responsive-images' ),
 				'field_callback'    => array( $this, 'checkbox_field_cb' ),
 				'sanitize_callback' => array(
 					$this->helpers,
@@ -197,11 +243,24 @@ class Settings {
 			'lazy_load_responsive_images_granular_disable_option' => array(
 				'value'             => get_option( 'lazy_load_responsive_images_granular_disable_option', '0' ),
 				'label'             => __( 'Enable option to disable plugin per page/post', 'lazy-loading-responsive-images' ),
-				'description'       => __( 'Displays a checkbox in the publish area of all post types (pages/posts/CPTs) that lets you disable the plugin on that specific post.', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'Displays a checkbox in the publish area of all post types (pages/posts/CPTs) that lets you disable the plugin on that specific post. To make it work for CPTs, they must support <code>custom-fields</code>.', 'lazy-loading-responsive-images' ),
 				'field_callback'    => array( $this, 'checkbox_field_cb' ),
 				'sanitize_callback' => array(
 					$this->helpers,
 					'sanitize_checkbox',
+				),
+			),
+			'lazy_load_responsive_images_lazysizes_config' => array(
+				'value'             => get_option( 'lazy_load_responsive_images_lazysizes_config', '' ),
+				'label'             => __( 'Modify the default config', 'lazy-loading-responsive-images' ),
+				'description'       => sprintf( /* translators: s=code example. */
+					__( 'Here you can add custom values for the config settings of the <a href="https://github.com/aFarkas/lazysizes/#js-api---options">lazysizes script</a>. An example could look like this, modifying the value for the expand option:%s', 'lazy-loading-responsive-images' ),
+					'<br><br><code>window.lazySizesConfig = window.lazySizesConfig || {};</code><br><code>lazySizesConfig.expand = 300;</code>'
+				),
+				'field_callback'    => array( $this, 'textarea_field_cb' ),
+				'sanitize_callback' => array(
+					$this->helpers,
+					'sanitize_textarea',
 				),
 			),
 		);
@@ -209,6 +268,7 @@ class Settings {
 		// Fill properties with setting values.
 		$this->disabled_classes        = explode( ',', $this->options['lazy_load_responsive_images_disabled_classes']['value'] );
 		$this->enable_for_iframes      = $this->options['lazy_load_responsive_images_enable_for_iframes']['value'];
+		$this->load_native_loading_plugin = $this->options['lazy_load_responsive_images_native_loading_plugin']['value'];
 		$this->load_unveilhooks_plugin = $this->options['lazy_load_responsive_images_unveilhooks_plugin']['value'];
 		$this->enable_for_videos       = $this->options['lazy_load_responsive_images_enable_for_videos']['value'];
 		$this->enable_for_audios       = $this->options['lazy_load_responsive_images_enable_for_audios']['value'];
@@ -216,6 +276,8 @@ class Settings {
 		$this->loading_spinner         = $this->options['lazy_load_responsive_images_loading_spinner']['value'];
 		$this->loading_spinner_color   = $this->options['lazy_load_responsive_images_loading_spinner_color']['value'];
 		$this->granular_disable_option = $this->options['lazy_load_responsive_images_granular_disable_option']['value'];
+		$this->lazysizes_config = $this->options['lazy_load_responsive_images_lazysizes_config']['value'];
+		$this->enable_for_background_images = $this->options['lazy_load_responsive_images_enable_for_background_images']['value'];
 
 		// Register settings on media options page.
 		add_action( 'admin_init', array( $this, 'settings_init' ), 12 );
@@ -227,10 +289,10 @@ class Settings {
 		) );
 
 		if ( '1' === $this->granular_disable_option ) {
-			add_action( 'init', array( $this, 'disable_option_object_types_filter' ) );
+			add_action( 'init', array( $this, 'disable_option_object_types_filter' ), 11 );
 
 			// Register meta for disabling per page.
-			add_action( 'init', array( $this, 'register_post_meta' ) );
+			add_action( 'init', array( $this, 'register_post_meta' ), 11 );
 
 			// Publish post actions.
 			add_action( 'post_submitbox_misc_actions', array( $this, 'add_checkbox' ), 9 );
@@ -332,6 +394,34 @@ class Settings {
 		$label_for = esc_attr( $args['label_for'] ); ?>
 		<input id="<?php echo $label_for; ?>" name="<?php echo $label_for; ?>"
 		       type="text" value="<?php echo $option_value; ?>">
+		<?php
+		// Check for description.
+		if ( '' !== $args['description'] ) { ?>
+			<p class="description">
+				<?php echo $args['description']; ?>
+			</p>
+			<?php
+		}
+	}
+
+	/**
+	 * Textarea field callback.
+	 *
+	 * @param array $args               {
+	 *                                  Argument array.
+	 *
+	 * @type string $label_for          (Required) The label for the textarea.
+	 * @type string $value              (Required) The value.
+	 * @type string $description        (Required) Description.
+	 * }
+	 */
+	public function textarea_field_cb( $args ) {
+		// Get option value.
+		$option_value = $args['value'];
+
+		// Get label for.
+		$label_for = esc_attr( $args['label_for'] ); ?>
+		<textarea id="<?php echo $label_for; ?>" name="<?php echo $label_for; ?>" style="width: 100%;"><?php echo $option_value; ?></textarea>
 		<?php
 		// Check for description.
 		if ( '' !== $args['description'] ) { ?>
