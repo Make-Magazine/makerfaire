@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.4.24
+
+	- Fixed issue where Drop Down value was set to null when attempting to populate value that did not exist.
+	- Updated plugin author.
+
 ## 1.4.23
 
 	- Added support for copying simple value to their equivalent value in a choice-based Pricing field.
