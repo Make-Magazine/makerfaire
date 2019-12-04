@@ -1,12 +1,12 @@
-=== Members ===
+=== User Role Editor by Members – Best User, Role and Capability Management Plugin for WordPress ===
 
-Contributors: greenshady
-Donate link: https://themehybrid.com/donate
-Tags: capabilities, roles, members, users
+Contributors: supercleanse
+Donate link: https://memberpress.com/plugins/members
+Tags: users, roles, editor, security, access, permission, capabilities, members
 Requires at least: 4.7
-Tested up to: 4.9
+Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,23 +30,18 @@ It puts you in control over permissions on your site by providing a user interfa
 * **Private Site:** You can make your site and its feed completely private if you want.
 * **Plugin Integration:** Members is highly recommended by  other WordPress developers. Many existing plugins integrate their custom roles and caps directly into it.
 
-For more info, vist the [Members plugin home page](https://themehybrid.com/plugins/members).
+For more info, visit the [Members plugin home page](https://memberpress.com/plugins/members).
 
 ### Like this plugin?
 
 The Members plugin is a massive project with 1,000s of lines of code to maintain.  A major update can take weeks or months of work.  I don't make any money directly from this plugin while other, similar plugins charge substantial fees to even download them or get updates.  Please consider helping the cause by:
 
-* [Making a donation](https://themehybrid.com/donate).
-* [Signing up at my site](https://themehybrid.com/club).
+* [Signing up at my site](https://memberpress.com/plugins/members).
 * [Rating the plugin](https://wordpress.org/support/view/plugin-reviews/members?rate=5#postform).
-
-### Professional Support
-
-If you need professional plugin support from me, the plugin author, you can access the support forums at [Theme Hybrid](https://themehybrid.com/board/topics), which is a professional WordPress help/support site where I handle support for all my plugins and themes for a community of 75,000+ users (and growing).
 
 ### Plugin Development
 
-If you're a theme author, plugin author, or just a code hobbyist, you can follow the development of this plugin on it's [GitHub repository](https://github.com/justintadlock/members).
+If you're a theme author, plugin author, or just a code hobbyist, you can follow the development of this plugin on it's [GitHub repository](https://github.com/caseproof/members).
 
 == Installation ==
 
@@ -68,7 +63,7 @@ So, I just built something I actually enjoyed using.
 
 Most things should be fairly straightforward, but I've included an in-depth guide in the plugin download.  It's a file called `readme.md` in the plugin folder.
 
-You can also [view the readme](https://github.com/justintadlock/members/blob/master/readme.md) online.
+You can also [view the readme](https://github.com/caseproof/members/blob/master/readme.md) online.
 
 ### Minimum PHP requirements.
 
@@ -92,7 +87,7 @@ _Note: This change was made in version 2.0.2 and has no effect on existing insta
 
 Please read the documentation for the plugin before actually using it, especially a plugin that controls permissions for your site.  I cannot stress this enough.  This is a powerful plugin that allows you to make direct changes to roles and capabilities in the database.
 
-You'll need to stop by my [support forums](https://themehybrid.com/board/topics) to see if we can get your site fixed if you managed to lock yourself out.  I know that this can be a bit can be a bit scary, but it's not that tough to fix with a little custom code.
+You'll need to stop by my [support forums](https://memberpress.com/plugins/members/support/) to see if we can get your site fixed if you managed to lock yourself out.  I know that this can be a bit can be a bit scary, but it's not that tough to fix with a little custom code.
 
 == Screenshots ==
 
@@ -108,4 +103,4 @@ If upgrading from a version prior to 2.0.0, please note that the plugin now requ
 
 == Changelog ==
 
-The change log is located in the `changelog.md` file in the plugin folder.  You may also [view the change log](https://github.com/justintadlock/members/blob/master/changelog.md) online.
+The change log is located in the `changelog.md` file in the plugin folder.  You may also [view the change log](https://github.com/caseproof/members/blob/master/changelog.md) online.
