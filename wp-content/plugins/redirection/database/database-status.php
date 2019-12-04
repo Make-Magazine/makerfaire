@@ -140,6 +140,10 @@ class Red_Database_Status {
 
 		if ( $wpdb->last_error ) {
 			$this->debug[] = $wpdb->last_error;
+
+			if ( strpos( $wpdb->last_error, 'command denied to user' ) !== false ) {
+				$this->reason .= ' - ' . __( 'Insufficient database permissions detected. Please give your database user appropriate permissions.', 'redirection' );
+			}
 		}
 
 		$latest = Red_Database::get_latest_database();
@@ -215,15 +219,11 @@ class Red_Database_Status {
 
 		// Add on version status
 		if ( $this->status === self::STATUS_NEED_INSTALL || $this->status === self::STATUS_NEED_UPDATING ) {
-			$result = array_merge( $result, $this->get_version_upgrade() );
-		}
-
-		if ( $this->status == self::STATUS_NEED_INSTALL ) {
-			$result['api'] = [
-				REDIRECTION_API_JSON => red_get_rest_api( REDIRECTION_API_JSON ),
-				REDIRECTION_API_JSON_INDEX => red_get_rest_api( REDIRECTION_API_JSON_INDEX ),
-				REDIRECTION_API_JSON_RELATIVE => red_get_rest_api( REDIRECTION_API_JSON_RELATIVE ),
-			];
+			$result = array_merge(
+				$result,
+				$this->get_version_upgrade(),
+				[ 'manual' => $this->get_manual_upgrade() ]
+			);
 		}
 
 		// Add on upgrade status
@@ -310,6 +310,23 @@ class Red_Database_Status {
 		$this->clear_cache();
 	}
 
+	private function get_manual_upgrade() {
+		$queries = [];
+		$database = new Red_Database();
+		$upgraders = $database->get_upgrades_for_version( $this->get_current_version(), false );
+
+		foreach ( $upgraders as $upgrade ) {
+			$upgrade = Red_Database_Upgrader::get( $upgrade );
+
+			$stages = $upgrade->get_stages();
+			foreach ( array_keys( $stages ) as $stage ) {
+				$queries = array_merge( $queries, $upgrade->get_queries_for_stage( $stage ) );
+			}
+		}
+
+		return $queries;
+	}
+
 	private function get_next_stage( $stage ) {
 		$database = new Red_Database();
 		$upgraders = $database->get_upgrades_for_version( $this->get_current_version(), $this->get_current_stage() );
@@ -339,9 +356,10 @@ class Red_Database_Status {
 		return $this->stages[ $pos + 1 ];
 	}
 
-	private function save_db_version( $version ) {
+	public function save_db_version( $version ) {
 		red_set_options( array( 'database' => $version ) );
 		delete_option( self::OLD_DB_VERSION );
+
 		$this->clear_cache();
 	}
 

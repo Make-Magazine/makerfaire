@@ -3,9 +3,7 @@
 define( 'REDIRECTION_OPTION', 'redirection_options' );
 define( 'REDIRECTION_API_JSON', 0 );
 define( 'REDIRECTION_API_JSON_INDEX', 1 );
-define( 'REDIRECTION_API_ADMIN', 2 );
 define( 'REDIRECTION_API_JSON_RELATIVE', 3 );
-define( 'REDIRECTION_API_POST', 4 );
 
 function red_get_plugin_data( $plugin ) {
 	if ( ! function_exists( 'get_plugin_data' ) ) {
@@ -44,18 +42,19 @@ function red_get_default_options() {
 		'support'             => false,
 		'token'               => md5( uniqid() ),
 		'monitor_post'        => 0,   // Dont monitor posts by default
-		'monitor_types'       => array(),
+		'monitor_types'       => [],
 		'associated_redirect' => '',
 		'auto_target'         => '',
 		'expire_redirect'     => 7,   // Expire in 7 days
 		'expire_404'          => 7,   // Expire in 7 days
-		'modules'             => array(),
+		'modules'             => [],
 		'newsletter'          => false,
 		'redirect_cache'      => 1,   // 1 hour
 		'ip_logging'          => 1,   // Full IP logging
 		'last_group_id'       => 0,
-		'rest_api'            => false,
+		'rest_api'            => REDIRECTION_API_JSON,
 		'https'               => false,
+		'headers'             => [],
 		'database'            => '',
 	];
 	$defaults = array_merge( $defaults, $flags->get_json() );
@@ -104,7 +103,10 @@ function red_set_options( array $settings = array() ) {
 
 		if ( ! Red_Group::get( $options['monitor_post'] ) && $options['monitor_post'] !== 0 ) {
 			$groups = Red_Group::get_all();
-			$options['monitor_post'] = $groups[0]['id'];
+
+			if ( count( $groups ) > 0 ) {
+				$options['monitor_post'] = $groups[0]['id'];
+			}
 		}
 	}
 
@@ -161,7 +163,7 @@ function red_set_options( array $settings = array() ) {
 		}
 	}
 
-	if ( isset( $settings['location'] ) ) {
+	if ( isset( $settings['location'] ) && strlen( $settings['location'] ) > 0 ) {
 		$module = Red_Module::get( 2 );
 		$options['modules'][2] = $module->update( $settings );
 	}
@@ -186,16 +188,32 @@ function red_set_options( array $settings = array() ) {
 		$options = array_merge( $options, $flags->get_json() );
 	}
 
+	if ( isset( $settings['headers'] ) ) {
+		$headers = new Red_Http_Headers( $settings['headers'] );
+		$options['headers'] = $headers->get_json();
+	}
+
 	update_option( REDIRECTION_OPTION, apply_filters( 'redirection_save_options', $options ) );
 	return $options;
 }
 
+function red_is_disabled() {
+	return ( defined( 'REDIRECTION_DISABLE' ) && REDIRECTION_DISABLE ) || file_exists( __DIR__ . '/redirection-disable.txt' );
+}
+
 function red_get_options() {
 	$options = get_option( REDIRECTION_OPTION );
+
+	if ( is_array( $options ) && red_is_disabled() ) {
+		$options['https'] = false;
+	}
+
 	if ( $options === false ) {
 		// Default flags for new installs - ignore case and trailing slashes
-		$options['flags_case'] = true;
-		$options['flags_trailing'] = true;
+		$options = [
+			'flags_case' => true,
+			'flags_trailing' => true,
+		];
 	}
 
 	$defaults = red_get_default_options();
@@ -208,7 +226,7 @@ function red_get_options() {
 
 	// Back-compat. If monitor_post is set without types then it's from an older Redirection
 	if ( $options['monitor_post'] > 0 && count( $options['monitor_types'] ) === 0 ) {
-		$options['monitor_types'] = array( 'post' );
+		$options['monitor_types'] = [ 'post' ];
 	}
 
 	// Remove old options not in red_get_default_options()
@@ -216,6 +234,11 @@ function red_get_options() {
 		if ( ! isset( $defaults[ $key ] ) ) {
 			unset( $options[ $key ] );
 		}
+	}
+
+	// Back-compat fix
+	if ( $options['rest_api'] === false || ! in_array( $options['rest_api'], [ REDIRECTION_API_JSON, REDIRECTION_API_JSON_INDEX, REDIRECTION_API_JSON_RELATIVE ], true ) ) {
+		$options['rest_api'] = REDIRECTION_API_JSON;
 	}
 
 	return $options;

@@ -2,9 +2,9 @@
 Contributors: johnny5
 Donate link: https://redirection.me/donation/
 Tags: redirect, htaccess, 301, 404, seo, permalink, apache, nginx, post, admin
-Requires at least: 4.5
-Tested up to: 5.1.1
-Stable tag: 4.1.1
+Requires at least: 4.9
+Tested up to: 5.3
+Stable tag: 4.5.1
 Requires PHP: 5.4
 License: GPLv3
 
@@ -55,6 +55,10 @@ Display geographic information about an IP address, as well as a full user agent
 
 You are able to disable or reduce IP collection to meet the legal requirements of your geographic region.
 
+= Add HTTP headers =
+
+HTTP headers can be adder to redirects or your entire site that help reduce the impact of redirects or help increase security. You can also add your own custom headers.
+
 = Track 404 errors =
 
 Redirection will keep track of all 404 errors that occur on your site, allowing you to track down and fix problems.
@@ -86,6 +90,7 @@ You can also import from the following plugins:
 - Simple 301 Redirects
 - SEO Redirection
 - Safe Redirect Manager
+- Rank Math
 - WordPress old slug redirects
 
 = Wait, it's free? =
@@ -137,12 +142,6 @@ The plugin works in a similar manner to how WordPress handles permalinks and sho
 
 == Upgrade Notice ==
 
-= 2.3.3 =
-* Full WordPress 3.5+ compatibility! Note that this contains database changes so please backup your data.
-
-= 2.4 =
-* Another database change. Please backup your data
-
 = 3.0 =
 * Upgrades the database to support IPv6. Please backup your data and visit the Redirection settings to perform the upgrade
 * Switches to the WordPress REST API
@@ -158,6 +157,82 @@ The plugin works in a similar manner to how WordPress handles permalinks and sho
 * Alters database to support case insensitivity, trailing slashes, and query params. Please backup your data
 
 == Changelog ==
+
+= 4.5.1 - 23rd November 2019 =
+* Fix broken canonical redirects
+
+= 4.5 - 23rd November 2019 =
+* Add HTTP header feature, with x-robots-tag support
+* Move HTTPS setting to new Site page
+* Add filter to disable redirect hits
+* Add 'Disable Redirection' option to stop Redirection, in case you break your site
+* Fill out API documentation
+* Fix style with WordPress 5.4
+* Fix encoding of # in .htaccess
+
+= 4.4.2 - 29th September 2019 =
+* Fix missing options for monitor group
+* Fix check redirect not appearing if position column not shown
+
+= 4.4.1 - 28th September 2019 =
+* Fix search highlighter causing problems with regex characters
+* Fix 'show all' link not working
+* Fix 'Request URI Too Long' error when switching pages after creating redirects
+
+= 4.4 - 22nd September 2019 =
+* Add 'URL and language' match
+* Add page display type for configurable information
+* Add 'search by' to search by different information
+* Add filter dropdown to filter data
+* Add warning about relative absolute URLs
+* Add 451, 500, 501, 502, 503, 504 error codes
+* Fix multiple 'URL and page type' redirects
+* Improve invalid nonce warning
+* Encode replaced values in regular expression targets
+
+= 4.3.3 - 8th August 2019 ==
+* Add back compatibility fix for URL sanitization
+
+= 4.3.2 - 4th August 2019 ==
+* Fix problem with UTF8 characters in a regex URL
+* Fix invalid characters causing an error message
+* Fix regex not disabled when removed
+
+= 4.3.1 - 8th June 2019 =
+* Fix + character being removed from source URL
+
+= 4.3 - 2nd June 2019 =
+* Add support for UTF8 URLs without manual encoding
+* Add manual database install option
+* Add check for pipe character in target URL
+* Add warning when problems saving .htaccess file
+* Switch from 'x-redirect-agent' to 'x-redirect-by', for WP 5+
+* Improve handling of invalid query parameters
+* Fix query param name is a number
+* Fix redirect with blank target and auto target settings
+* Fix monitor trash option applying when deleting a draft
+* Fix case insensitivity not applying to query params
+* Disable IP grouping when IP option is disabled
+* Allow multisite database updates to run when more than 100 sites
+
+= 4.2.3 - 16th Apr 2019 =
+* Fix bug with old API routes breaking test
+
+= 4.2.2 - 13th Apr 2019 =
+* Improve API checking logic
+* Fix '1' being logged for pass-through redirects
+
+= 4.2.1 - 8th Apr 2019 =
+* Fix incorrect CSV download link
+
+= 4.2 - 6th Apr 2019 =
+* Add auto-complete for target URLs
+* Add manual database upgrade
+* Add support for semi-colon separated import files
+* Add user agent to 404 export
+* Add workaround for qTranslate breaking REST API
+* Improve API problem detection
+* Fix JSON import ignoring group status
 
 = 4.1.1 - 23rd Mar 2019 =
 * Remove deprecated PHP
@@ -593,29 +668,16 @@ The plugin works in a similar manner to how WordPress handles permalinks and sho
 * Fix XSS in admin menu
 * Update Russian translation, thanks to Alexey Pazdnikov
 
-= 2.2.8 =
+= 2.2.8 and earlier
 * Add Romanian translation, thanks to Alina
 * Add Greek, thanks to Stefanos Kofopoulos
-
-= 2.2.7 =
 * Better database compatibility
-
-= 2.2.6 =
 * Remove warning from VaultPress
-
-= 2.2.5 =
 * Add Turkish translation, thanks to Fatih Cevik
 * Fix search box
 * Fix 410 error code
 * Fix DB errors when MySQL doesn't auto-convert data types
-
-= 2.2.4 =
-* Add Hungarian translation, thanks to daSSad
-
-= 2.2.3 =
 * Remove debug from htaccess module
-
-= < 2.2.2 =
 * Fix encoding of JS strings
 * Use fgetcsv for CSV importer - better handling
 * Allow http as URL parameter
@@ -650,13 +712,10 @@ The plugin works in a similar manner to how WordPress handles permalinks and sho
 * Fix group edit and log add entry
 * Use WP Ajax
 * WP2.8 compatibility
-* Add icons
 * Disable category monitoring
-* Errors on some sites
 * Fix 'you do not permissions' error on some non-English sites
 * Fix category change 'quick edit'
 * Redirection loops
 * RSS feed token
 * Re-enable import feature
-* Force JS cache
 * Fix log deletion
