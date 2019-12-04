@@ -79,6 +79,21 @@ class C_NextGen_Product_Installer
                 unset($pope_modules_list[$search]);
         }
 
+        // TODO: remove this also. NextGen Plus should also be updated in a separate release
+        $plus_version = FALSE;
+        if (defined('NGG_PLUS_PLUGIN_VERSION'))
+            $plus_version = 'NGG_PLUS_PLUGIN_VERSION';
+        if (FALSE !== $plus_version)
+            $plus_version = constant($plus_version);
+
+        if (FALSE !== $plus_version)
+        {
+            $pope_modules_list = $this->_filter_modules($pope_modules_list, $this->get_modules_to_load_for('photocrati-nextgen-plus'));
+            $search = array_search('photocrati-nextgen-plus|' . $plus_version, $pope_modules_list);
+            if (FALSE !== $search)
+                unset($pope_modules_list[$search]);
+        }
+
         if (empty($pope_modules_list))
             delete_option('pope_module_list');
         else

@@ -197,13 +197,15 @@ class C_Lightbox_Library_Manager
         if (!wp_script_is('ngg_lightbox_context')) {
             wp_enqueue_script('ngg_lightbox_context', $router->get_static_url('photocrati-lightbox#lightbox_context.js'), array('ngg_common', 'photocrati_ajax'), NGG_SCRIPT_VERSION, TRUE);
         }
-        // Make the path to the static resources available for libraries
-        // Shutter-Reloaded in particular depends on this
+        // Make the path to the static resources available for libraries.
+        //
+        // Yes the {placeholder} is a stupid hack but it's necessary for Shutter Reloaded and is much faster
+        // than making get_static_url() function without requesting a filename parameter
         $this->_add_script_data(
             'ngg_common',
             // TODO: Should this be ngg_lightbox_context instead?
             'nextgen_lightbox_settings',
-            array('static_path' => $router->get_static_url('', 'photocrati-lightbox'), 'context' => $thumbEffectContext),
+            array('static_path' => M_Static_Assets::get_static_url('{placeholder}', 'photocrati-lightbox'), 'context' => $thumbEffectContext),
             TRUE,
             TRUE
         );

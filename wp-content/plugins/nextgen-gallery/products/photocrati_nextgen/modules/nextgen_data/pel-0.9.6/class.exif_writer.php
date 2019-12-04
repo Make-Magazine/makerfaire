@@ -130,6 +130,9 @@ class C_Exif_Writer
         catch (PelInvalidArgumentException $exception) {
             return FALSE;
         }
+        catch (PelJpegInvalidMarkerException $exception) {
+            return FALSE;
+        }
     }
 
     /**

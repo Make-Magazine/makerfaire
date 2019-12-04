@@ -141,4 +141,102 @@
         }
     };
 
+    // Polyfill for older browsers
+    Object.setPrototypeOf = Object.setPrototypeOf || function(obj, proto) {
+        obj.__proto__ = proto;
+        return obj;
+    };
+
+    if (typeof window.galleries !== 'undefined') {
+    Object.setPrototypeOf(
+        window.galleries,
+        {
+            get_api_version: function() {
+                return '0.1';
+            },
+
+            get_from_id: function (gallery_id) {
+                var self   = this;
+                var retval = null;
+                var keys   = Object.keys(this);
+
+                for (var i = 1; i <= keys.length; i++) {
+                    var gallery = self[keys[i - 1]];
+                    if (gallery.ID === gallery_id || gallery.ID === 'gallery_' + gallery_id || gallery.ID === parseInt(gallery_id)) {
+                        retval = gallery;
+                        break;
+                    }
+                }
+
+                return retval;
+            },
+
+            get_from_slug: function (slug) {
+                var self   = this;
+                var retval = null;
+                var keys   = Object.keys(this);
+
+                for (var i = 1; i <= keys.length; i++) {
+                    var gallery = self[keys[i - 1]];
+                    if (gallery.slug === slug) {
+                        retval = gallery;
+                        break;
+                    }
+                }
+
+                return retval;
+            },
+
+            get_setting: function(gallery_id, name, def) {
+                var tmp = '';
+                var gallery = this.get_from_id(gallery_id);
+                if (gallery && typeof gallery[name] !== 'undefined') {
+                    tmp = gallery[name];
+                } else {
+                    tmp = def;
+                }
+
+                if (tmp === 1)       tmp = true;
+                if (tmp === 0)       tmp = false;
+                if (tmp === '1')     tmp = true;
+                if (tmp === '0')     tmp = false;
+                if (tmp === 'false') tmp = false;
+                if (tmp === 'true')  tmp = true;
+
+                return tmp;
+            },
+
+            get_display_setting: function(gallery_id, name, def) {
+                var tmp = '';
+                var gallery = this.get_from_id(gallery_id);
+                if (gallery && typeof gallery.display_settings[name] !== 'undefined') {
+                    tmp = gallery.display_settings[name];
+                } else {
+                    tmp = def;
+                }
+
+                if (tmp === 1)       tmp = true;
+                if (tmp === 0)       tmp = false;
+                if (tmp === '1')     tmp = true;
+                if (tmp === '0')     tmp = false;
+                if (tmp === 'false') tmp = false;
+                if (tmp === 'true')  tmp = true;
+
+                return tmp;
+            },
+
+            is_widget: function(gallery_id) {
+                var retval  = false;
+                var gallery = this.get_from_id(gallery_id);
+                var slug    = gallery.slug;
+
+                if (slug) {
+                    return slug.indexOf('widget-ngg-images') !== -1;
+                }
+
+                return retval;
+            }
+        }
+    ); }
+
 })(jQuery);

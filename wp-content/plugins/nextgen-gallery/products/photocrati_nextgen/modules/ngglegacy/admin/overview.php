@@ -211,7 +211,7 @@ function nggallery_admin_overview()
                 </div>
 
                 <div class="headline-feature feature-video">
-                    <iframe width="1050" height="590" src="https://www.youtube.com/embed/mNEnY23i9DE?rel=0" frameborder="0" allowfullscreen></iframe>
+                    <iframe width="1050" height="590" src="https://www.youtube.com/embed/4Phvmm3etnw?rel=0" frameborder="0" allowfullscreen></iframe>
                 </div>
 
             </div>
@@ -222,7 +222,7 @@ function nggallery_admin_overview()
                 </p>
 
                 <div class="headline-feature feature-video">
-                    <iframe width="1280" height="720" src="https://www.youtube.com/embed/c664fvAZ1nI?list=PL9cmsdHslD0vIcJjBggJ-XMjtwvqrRgoM" frameborder="0" allowfullscreen></iframe>
+                    <iframe width="1280" height="720" src="https://www.youtube.com/embed/4Phvmm3etnw?list=PL9cmsdHslD0vIcJjBggJ-XMjtwvqrRgoM" frameborder="0" allowfullscreen></iframe>
                 </div>
 
                 <div class="feature-section two-col">
@@ -262,7 +262,7 @@ function nggallery_admin_overview()
                 <p class="about-text"><span style="font-weight: bold;"><?php _e( 'The most powerful gallery system ever built for WordPress. ', 'nggallery' ); ?></span><br><?php _e( 'Gorgeous new gallery displays, image protection, full screen lightbox, commenting and social sharing for individual images, proofing, ecommerce, digital downloads, and more.', 'nggallery' ); ?></p>
                 <p class="about-text"><a href='https://www.imagely.com/wordpress-gallery-plugin/nextgen-pro/?utm_source=ngg&utm_medium=ngguser&utm_campaign=ngpro' target='_blank' class="button-primary ngg-pro-upgrade"><?php _e( 'Get NextGEN Pro Now', 'nggallery' ); ?></a></p>
                 <div class="feature-section">
-                    <iframe src="https://www.youtube.com/embed/zmA-b_jiXN0" frameborder="0" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/ePnYGQX0Lf8" frameborder="0" allowfullscreen></iframe>
                 </div>
 
             </div>
@@ -370,6 +370,8 @@ function nggallery_admin_overview()
                         <h3><?php _e( 'David Beckstead' ); ?></h3>
                         <p><?php _e( 'Named one of the Top 10 Wedding Photographers in the World by American Photo magazine, David is a celebrated photographer and educator. He is also a mountain man with a enviable lifestyle: from his base in rural Washington, he travels all over the world teaching workshops, while sharing lessons with 16,000 photographers in the Abstract Canvas Facebook group.', 'nggallery' ); ?></p>
                     </div>
+                    <div class="col"></div>
+                    <div class="col"></div>
                 </div>
 
             </div>
@@ -403,7 +405,7 @@ function nggallery_admin_overview()
             
             <div data-id="freedoms-link">
 
-                <p class="about-description"><?php printf( __( 'NextGEN Gallery is Free and open source software, built by a small but dedicated team as well as community code contributions. It comes with awesome rights courtesy of its <a href="%s" target="_blank">license</a>, the GPL.' ), 'https://wordpress.org/about/license/' ); ?></p>
+                <p class="about-text"><?php printf( __( 'NextGEN Gallery is Free and open source software, built by a small but dedicated team as well as community code contributions. It comes with awesome rights courtesy of its <a href="%s" target="_blank">license</a>, the GPL.' ), 'https://wordpress.org/about/license/' ); ?></p>
 
                 <ol start="0">
                     <li><p><?php _e( 'You have the freedom to run the program, for any purpose.' ); ?></p></li>

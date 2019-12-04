@@ -36,9 +36,6 @@ class nggManageGallery {
 		// Should be only called via a edit single gallery page
 		if ( isset($_POST['nggpage']) && $_POST['nggpage'] == 'manage-images' )
 			$this->post_processor_images();
-		// Should be called via a publish dialog
-		if ( isset($_POST['nggpage']) && $_POST['nggpage'] == 'publish-post' )
-			$this->publish_post();
 
 		//Look for other POST process
 		if ( !empty($_POST) || !empty($_GET) )
@@ -262,7 +259,6 @@ class nggManageGallery {
 			'meta'			=>	array(&$this, 'render_meta_action_link'),
 			'custom_thumb'	=>	array(&$this, 'render_custom_thumb_action_link'),
 			'rotate'		=>	array(&$this, 'render_rotate_action_link'),
-			'publish'		=>	array(&$this, 'render_publish_action_link'),
 			'recover'		=>	array(&$this, 'render_recover_action_link'),
 			'delete'		=>	array(&$this, 'render_delete_action_link')
 		));
@@ -328,17 +324,6 @@ class nggManageGallery {
 		$url		= nextgen_esc_url(NGGALLERY_URLPATH.'admin/rotate.php?id='.$picture->pid);
 		$title		= esc_attr__('Rotate', 'nggallery');
 		$label		= esc_html__('Rotate', 'nggallery');
-
-		return "<a href='{$url}' class='ngg-dialog' title='{$title}'>{$label}</a>";
-	}
-
-	function render_publish_action_link($id, $picture)
-	{
-		if (!current_user_can('publish_posts')) return FALSE;
-
-		$url		= nextgen_esc_url(NGGALLERY_URLPATH.'admin/publish.php?h=230&id='.$picture->pid);
-		$title		= esc_attr__('Publish this image', 'nggallery');
-		$label		= esc_html__('Publish', 'nggallery');
 
 		return "<a href='{$url}' class='ngg-dialog' title='{$title}'>{$label}</a>";
 	}
@@ -877,11 +862,12 @@ class nggManageGallery {
 			}
 		}
 
-		if (isset ($_POST['scanfolder']))  {
-		// Rescan folder
+        // Rescan folder
+        if (isset ($_POST['scanfolder']))
+        {
 			check_admin_referer('ngg_updategallery');
 
-			$gallerypath = $wpdb->get_var("SELECT path FROM $wpdb->nggallery WHERE gid = '$this->gid' ");
+			$gallerypath = $wpdb->get_var("SELECT `path` FROM {$wpdb->nggallery} WHERE `gid` = '{$this->gid}'");
 			nggAdmin::import_gallery($gallerypath, $this->gid);
 		}
 
@@ -917,40 +903,6 @@ class nggManageGallery {
 
             do_action('ngg_gallery_addnewpage', $this->gid);
         }
-    }
-
-   	/**
-   	 * Publish a new post with the shortcode from the selected image
-     *
-   	 * @since 1.7.0
-   	 * @return void
-   	 */
-   	function publish_post() {
-
-   	    check_admin_referer('publish-post');
-
-		// Create a WP page
-		global $user_ID, $ngg;
-
-		$ngg->options['publish_width']  = (int) $_POST['width'];
-		$ngg->options['publish_height'] = (int) $_POST['height'];
-		$ngg->options['publish_align'] = $_POST['align'];
-        $align = ( $ngg->options['publish_align'] == 'none') ? '' : 'float='.$ngg->options['publish_align'];
-
-		//save the new values for the next operation
-		update_option('ngg_options', $ngg->options);
-
-		$post['post_type']    = 'post';
-		$post['post_content'] = '[singlepic id=' . intval($_POST['pid']) . ' w=' . $ngg->options['publish_width'] . ' h=' . $ngg->options['publish_height'] . ' ' . $align . ']';
-		$post['post_author']  = $user_ID;
-		$post['post_status']  = isset ( $_POST['publish'] ) ? 'publish' : 'draft';
-		$post['post_title']   = $_POST['post_title'];
-		$post = apply_filters('ngg_add_new_post', $post, $_POST['pid']);
-
-		$post_id = wp_insert_post ($post);
-
-		if ($post_id != 0)
-            nggGallery::show_message( __('Published a new post', 'nggallery') );
     }
 
 	function can_user_manage_gallery()

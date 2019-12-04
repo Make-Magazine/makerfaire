@@ -43,6 +43,12 @@ html#iframely {
     width: 100%;
 }
 
+#iframely #ngg_page_content, 
+#iframely #ngg_page_content .ngg_manage_galleries table th, 
+#iframely #ngg_page_content .ngg_manage_galleries table td {
+    font-size: 13px !important;
+}
+
 #iframely .ngg-admin .notice, 
 #iframely .ngg-admin div.error, 
 #iframely .ngg-admin div.updated {
@@ -50,31 +56,36 @@ html#iframely {
 }
 
 #iframely #ngg_page_content .ngg_page_content_header {
-    display:none;
+    margin: 25px 0 -30px;
+    padding-left: 30px;
+}
+
+#iframely #ngg_page_content .ngg_page_content_header img,
+#iframely #ngg_page_content .ngg_page_content_header p {
+    display: none;
 }
 
 #iframely #ngg_page_content .ngg_page_content_menu {
     background: transparent;
     border: none;
-    padding: 10px 20px 10px 0;
+    padding: 10px 20px 10px 23px;
     float: none;
     height: 25px;
-    margin-top: 0;
+    margin-top: 16px;
     width: auto;
-    border-bottom: 1px solid #ddd;
-    background: #fafafa;
 }
 
 #iframely #ngg_page_content .ngg_page_content_menu a {
     border: none;
-    color: #888;
+    color: black;
     display: inline;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 300;
     text-decoration: none;
     line-height: 25px;
-    padding: 15px 20px;
+    padding: 6px;
     font-size: 12px;
+    margin-right: 10px;
 }
 
 #iframely #ngg_page_content .ngg_page_content_menu a:active {
@@ -82,26 +93,10 @@ html#iframely {
 }
 
 #iframely #ngg_page_content .ngg_page_content_menu .ngg_page_content_menu_active {
-    background: transparent;
-    font-weight: bold;
-    color: #123248;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-bottom: 2px solid #fff;
-    background: #fff;
-}
+    font-weight: 500;
+    border-bottom: 3px solid #9ebc1b;
 
-/*#iframely #ngg_page_content .ngg_page_content_menu .ngg_page_content_menu_active:after {
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 6px solid #cad1d6;
-    border-top: 6px solid #123248;
-    content: " ";
-    position: absolute;
-    left: 45%;
-    display: inline;
-    top: 42px;
-}*/
+}
 
 #iframely #ngg_page_content .ngg_page_content_menu a:before {
 	display: none;
@@ -109,7 +104,7 @@ html#iframely {
 
 #displayed_tab #ngg_page_content .ngg_page_content_menu .ngg_page_content_menu_active:after,
 #displayed_tab #ngg_page_content .ngg_page_content_menu a:active:after {
-    display: none;
+    display: none !important;
 }
 
 #iframely #ngg_page_content .ngg_page_content_main {

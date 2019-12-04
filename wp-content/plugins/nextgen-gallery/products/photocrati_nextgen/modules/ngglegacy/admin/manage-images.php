@@ -525,15 +525,21 @@ jQuery(document).ready( function($) {
 		<input type="hidden" id="entertags_imagelist" name="TB_imagelist" value="" />
 		<input type="hidden" id="entertags_bulkaction" name="TB_bulkaction" value="" />
 		<input type="hidden" name="nggpage" value="manage-images" />
+        <input type="hidden" name="TB_EditTags" value="OK"/>
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 		  	<tr>
 		    	<th><?php _e("Enter the tags",'nggallery'); ?> : <input name="taglist" type="text" style="width:90%" value="" /></th>
 		  	</tr>
 		  	<tr>
 		    	<td class="submit">
-		    		<input class="button-primary" type="submit" name="TB_EditTags" value="<?php _e("OK",'nggallery'); ?>" />
-		    		&nbsp;
-		    		<input class="button-primary dialog-cancel" type="reset" value="&nbsp;<?php _e("Cancel",'nggallery'); ?>&nbsp;" />
+		    		<input class="button-primary"
+                           type="submit"
+                           name="TB_EditTags"
+                           onClick="jQuery(this).attr('disabled', true); submit();"
+                           value="<?php _e("OK",'nggallery'); ?>"/>
+		    		<input class="button-primary dialog-cancel"
+                           type="reset"
+                           value="&nbsp;<?php _e("Cancel",'nggallery'); ?>&nbsp;"/>
 		    	</td>
 			</tr>
 		</table>
@@ -548,6 +554,7 @@ jQuery(document).ready( function($) {
 		<input type="hidden" id="selectgallery_imagelist" name="TB_imagelist" value="" />
 		<input type="hidden" id="selectgallery_bulkaction" name="TB_bulkaction" value="" />
 		<input type="hidden" name="nggpage" value="manage-images" />
+        <input type="hidden" name="TB_SelectGallery" value="OK"/>
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 		  	<tr>
 		    	<th>
@@ -567,9 +574,14 @@ jQuery(document).ready( function($) {
 		  	</tr>
 		  	<tr>
 		    	<td class="submit">
-		    		<input type="submit" class="button-primary" name="TB_SelectGallery" value="<?php _e("OK",'nggallery'); ?>" />
-		    		&nbsp;
-		    		<input class="button-primary dialog-cancel" type="reset" value="<?php _e("Cancel",'nggallery'); ?>" />
+		    		<input type="submit"
+                           class="button-primary"
+                           name="TB_SelectGallery"
+                           onClick="jQuery(this).attr('disabled', true); submit();"
+                           value="<?php _e("OK",'nggallery'); ?>"/>
+		    		<input class="button-primary dialog-cancel"
+                           type="reset"
+                           value="<?php _e("Cancel",'nggallery'); ?>"/>
 		    	</td>
 			</tr>
 		</table>
@@ -584,6 +596,7 @@ jQuery(document).ready( function($) {
 		<input type="hidden" id="resize_images_imagelist" name="TB_imagelist" value="" />
 		<input type="hidden" id="resize_images_bulkaction" name="TB_bulkaction" value="" />
 		<input type="hidden" name="nggpage" value="manage-images" />
+        <input type="hidden" name="TB_ResizeImages" value="OK"/>
 		<table width="100%" border="0" cellspacing="3" cellpadding="3" >
 			<tr valign="top">
 				<td>
@@ -596,9 +609,14 @@ jQuery(document).ready( function($) {
 			</tr>
 		  	<tr>
 		    	<td colspan="2" class="submit">
-		    		<input class="button-primary" type="submit" name="TB_ResizeImages" value="<?php _e('OK', 'nggallery'); ?>" />
-		    		&nbsp;
-		    		<input class="button-primary dialog-cancel" type="reset" value="&nbsp;<?php _e('Cancel', 'nggallery'); ?>&nbsp;" />
+		    		<input class="button-primary"
+                           type="submit"
+                           name="TB_ResizeImages"
+                           onClick="jQuery(this).attr('disabled', true); submit();"
+                           value="<?php _e('OK', 'nggallery'); ?>"/>
+		    		<input class="button-primary dialog-cancel"
+                           type="reset"
+                           value="&nbsp;<?php _e('Cancel', 'nggallery'); ?>&nbsp;"/>
 		    	</td>
 			</tr>
 		</table>
@@ -613,6 +631,7 @@ jQuery(document).ready( function($) {
 		<input type="hidden" id="new_thumbnail_imagelist" name="TB_imagelist" value="" />
 		<input type="hidden" id="new_thumbnail_bulkaction" name="TB_bulkaction" value="" />
 		<input type="hidden" name="nggpage" value="manage-images" />
+        <input type="hidden" name="TB_NewThumbnail" value="OK"/>
     <table width="100%" border="0" cellspacing="3" cellpadding="3" >
 			<tr valign="top">
 				<th align="left"><?php _e('Width x height (in pixel)','nggallery') ?></th>
@@ -627,9 +646,14 @@ jQuery(document).ready( function($) {
 			</tr>
 		  	<tr>
 		    	<td colspan="2" class="submit">
-		    		<input class="button-primary" type="submit" name="TB_NewThumbnail" value="<?php _e('OK', 'nggallery');?>" />
-		    		&nbsp;
-		    		<input class="button-primary dialog-cancel" type="reset" value="&nbsp;<?php _e('Cancel', 'nggallery'); ?>&nbsp;" />
+		    		<input class="button-primary"
+                           type="submit"
+                           name="TB_NewThumbnail"
+                           onClick="jQuery(this).attr('disabled', true); submit();"
+                           value="<?php _e('OK', 'nggallery');?>"/>
+		    		<input class="button-primary dialog-cancel"
+                           type="reset"
+                           value="&nbsp;<?php _e('Cancel', 'nggallery'); ?>&nbsp;"/>
 		    	</td>
 			</tr>
 		</table>

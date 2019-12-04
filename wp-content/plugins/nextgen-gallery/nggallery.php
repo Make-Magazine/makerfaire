@@ -3,8 +3,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You 
 
 /**
  * Plugin Name: NextGEN Gallery
- * Description: The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 25 million downloads.
- * Version: 3.1.14
+ * Description: The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 27 million downloads.
+ * Version: 3.2.23
  * Author: Imagely
  * Plugin URI: https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/
  * Author URI: https://www.imagely.com
@@ -101,7 +101,7 @@ class C_NextGEN_Bootstrap
             }
         }
 		elseif (!($exception instanceof E_Clean_Exit)) {
-			ob_end_clean();
+			if (ob_get_level() > 0) ob_end_clean();
 			self::print_exception($exception);
 		}
 	}
@@ -198,18 +198,6 @@ class C_NextGEN_Bootstrap
 		// Load caching component
 		include_once('non_pope/class.photocrati_transient_manager.php');
 		include_once('non_pope/class.nextgen_serializable.php');
-
-		if (isset($_REQUEST['ngg_flush']))
-		{
-			C_Photocrati_Transient_Manager::flush();
-			die("Flushed all caches");
-		}
-
-        if (isset($_REQUEST['ngg_flush_expired']))
-        {
-            C_Photocrati_Transient_Manager::get_instance()->flush_expired();
-            die("Flushed all expired caches");
-        }
 
 		// Load Settings Manager
 		include_once('non_pope/class.photocrati_settings_manager.php');
@@ -441,6 +429,7 @@ class C_NextGEN_Bootstrap
 		}
 
 		add_filter('ngg_load_frontend_logic', array($this, 'disable_frontend_logic'), -10, 2);
+
 	}
 
 	function disable_frontend_logic($enabled, $module_id)
@@ -633,7 +622,7 @@ class C_NextGEN_Bootstrap
 
 		// Set context to path if subdirectory install
 		$parts     = parse_url($router->get_base_url(FALSE));
-		$siteparts = parse_url(get_option('siteurl'));
+		$siteparts = parse_url(get_option('home'));
 
         if (isset($parts['path']) && isset($siteparts['path']))
         {
@@ -673,9 +662,9 @@ class C_NextGEN_Bootstrap
 		C_Photocrati_Installer::uninstall(NGG_PLUGIN_BASENAME);
 	}
 
-	public static function activate()
-    {
-        // Set the capabilities for the administrator
+	public static function set_role_caps()
+	{
+		// Set the capabilities for the administrator
         $role = get_role('administrator');
 
         // We need this role, no other chance
@@ -701,8 +690,13 @@ class C_NextGEN_Bootstrap
         foreach ($capabilities as $capability) {
             $role->add_cap($capability);
 		}
+	}
+
+	public static function activate()
+    {
+        self::set_role_caps();
 		
-		set_transient('ngg-activated', time());
+		set_transient('ngg-activated', time(), 30);
     }
 
 	/**
@@ -720,7 +714,7 @@ class C_NextGEN_Bootstrap
 		define('NGG_PRODUCT_URL', path_join(str_replace("\\" , '/', NGG_PLUGIN_URL), 'products'));
 		define('NGG_MODULE_URL', path_join(str_replace("\\", '/', NGG_PRODUCT_URL), 'photocrati_nextgen/modules'));
 		define('NGG_PLUGIN_STARTED_AT', microtime());
-		define('NGG_PLUGIN_VERSION', '3.1.14');
+		define('NGG_PLUGIN_VERSION', '3.2.23');
 
 		define(
 			'NGG_SCRIPT_VERSION',
@@ -953,7 +947,7 @@ function ngg_fs_custom_connect_message(
 ) {
 	return sprintf(
 		__( 'Hey %s, ', 'nggallery' ) . '<br>' .
-		__( 'Allow %6$s to collect some usage data with %5$s to make the plugin even more awesome. If you skip this, that\'s okay! %2$s will still work just fine.', 'nggallery' ),
+		__( 'Please help us improve NextGEN Gallery! If you opt-in, some data about your usage of NextGEN Gallery will be sent to freemius.com. If you skip this, that\'s okay! NextGEN Gallery will still work just fine.', 'nggallery' ),
 		$user_first_name,
 		'<b>' . __('NextGEN Gallery', 'nggallery') . '</b>',
 		'<b>' . $user_login . '</b>',
@@ -961,6 +955,15 @@ function ngg_fs_custom_connect_message(
 		$freemius_link,
 		'<b>' . __('Imagely', 'nggallery') . '</b>'
 	);
+}
+
+/**
+ * Add custom NextGEN Gallery icon for Freemius
+ *
+ * @author Erick Danzer
+ */
+function ngg_fs_custom_icon() {
+	return M_Static_Assets::get_static_abspath('photocrati-nextgen_admin#imagely_icon.png');
 }
 
 /**
@@ -1004,17 +1007,7 @@ function ngg_fs( $activate_for_all = false ) {
 
 		if ( false === $ngg_options ) {
 			// New plugin installation.
-
-			if ( defined( 'WP_FS__DEV_MODE' ) && WP_FS__DEV_MODE ) {
-				// Always run Freemius in development mode for new plugin installs.
-				$run_freemius = true;
-			} else {
-				// Run Freemius code on 20% of the new installations.
-				// $random = rand( 1, 10 );
-				// $run_freemius = ( 1 <= $random && $random <= 2 );
-				// Update 2016-08: run on all new instances
-				$run_freemius = true;
-			}
+            $run_freemius = true;
 
 			update_option( 'ngg_run_freemius', $run_freemius );
 
@@ -1068,16 +1061,18 @@ function ngg_fs( $activate_for_all = false ) {
 
 	// Hook to the custom message filter.
 	$ngg_fs->add_action( 'after_uninstall', 'ngg_fs_uninstall' );
+	$ngg_fs->add_filter( 'connect_message', 'ngg_fs_custom_connect_message', 10, 6);
+	$ngg_fs->add_filter( 'plugin_icon' , 'ngg_fs_custom_icon' );
 
 	// Hook to new gallery creation event.
 	add_action( 'ngg_created_new_gallery', 'fs_track_new_gallery' );
-
+	
 	return $ngg_fs;
 }
 
-// // Init Freemius.
-// Update 2019-03-19: don't run on any instances
-// ngg_fs();
+// Init Freemius
+if (!defined('NGG_DISABLE_FREEMIUS') || !NGG_DISABLE_FREEMIUS)
+    ngg_fs();
 
 // #endregion Freemius
 

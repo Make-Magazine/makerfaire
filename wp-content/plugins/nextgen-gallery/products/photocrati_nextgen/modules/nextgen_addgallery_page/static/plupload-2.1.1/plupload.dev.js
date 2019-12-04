@@ -2268,6 +2268,6 @@ plupload.File = (function() {
 	};
 };
 
-window.plupload = plupload;
+window.ngg_plupload = plupload;
 
 }(window, mOxie));

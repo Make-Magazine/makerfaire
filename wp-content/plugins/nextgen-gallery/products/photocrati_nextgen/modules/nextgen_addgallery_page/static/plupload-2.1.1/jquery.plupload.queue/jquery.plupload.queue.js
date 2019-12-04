@@ -35,7 +35,7 @@ used as it is.
 	</script>
 
 @example
-	// Retrieving a reference to plupload.Uploader object
+	// Retrieving a reference to ngg_plupload.Uploader object
 	var uploader = $('#uploader').pluploadQueue();
 
 	uploader.bind('FilesAdded', function() {
@@ -77,7 +77,7 @@ used as it is.
 	var uploaders = {};
 
 	function _(str) {
-		return plupload.translate(str) || str;
+		return ngg_plupload.translate(str) || str;
 	}
 
 	function renderUI(id, target) {
@@ -148,7 +148,7 @@ used as it is.
 				id = target.attr('id');
 
 				if (!id) {
-					id = plupload.guid();
+					id = ngg_plupload.guid();
 					target.attr('id', id);
 				}
 
@@ -166,26 +166,26 @@ used as it is.
 					settings.drop_element = id + '_filelist';
 				}
 
-				uploader = new plupload.Uploader(settings);
+				uploader = new ngg_plupload.Uploader(settings);
 
 				uploaders[id] = uploader;
 
 				function handleStatus(file) {
 					var actionClass;
 
-					if (file.status == plupload.DONE) {
+					if (file.status == ngg_plupload.DONE) {
 						actionClass = 'plupload_done';
 					}
 
-					if (file.status == plupload.FAILED) {
+					if (file.status == ngg_plupload.FAILED) {
 						actionClass = 'plupload_failed';
 					}
 
-					if (file.status == plupload.QUEUED) {
+					if (file.status == ngg_plupload.QUEUED) {
 						actionClass = 'plupload_delete';
 					}
 
-					if (file.status == plupload.UPLOADING) {
+					if (file.status == ngg_plupload.UPLOADING) {
 						actionClass = 'plupload_uploading';
 					}
 
@@ -209,13 +209,13 @@ used as it is.
 					$.each(uploader.files, function(i, file) {
 						inputHTML = '';
 
-						if (file.status == plupload.DONE) {
+						if (file.status == ngg_plupload.DONE) {
 							if (file.target_name) {
-								inputHTML += '<input type="hidden" name="' + id + '_' + inputCount + '_tmpname" value="' + plupload.xmlEncode(file.target_name) + '" />';
+								inputHTML += '<input type="hidden" name="' + id + '_' + inputCount + '_tmpname" value="' + ngg_plupload.xmlEncode(file.target_name) + '" />';
 							}
 
-							inputHTML += '<input type="hidden" name="' + id + '_' + inputCount + '_name" value="' + plupload.xmlEncode(file.name) + '" />';
-							inputHTML += '<input type="hidden" name="' + id + '_' + inputCount + '_status" value="' + (file.status == plupload.DONE ? 'done' : 'failed') + '" />';
+							inputHTML += '<input type="hidden" name="' + id + '_' + inputCount + '_name" value="' + ngg_plupload.xmlEncode(file.name) + '" />';
+							inputHTML += '<input type="hidden" name="' + id + '_' + inputCount + '_status" value="' + (file.status == ngg_plupload.DONE ? 'done' : 'failed') + '" />';
 	
 							inputCount++;
 
@@ -227,7 +227,7 @@ used as it is.
 								'<div class="plupload_file_name"><span>' + file.name + '</span></div>' +
 								'<div class="plupload_file_action"><a href="#"></a></div>' +
 								'<div class="plupload_file_status">' + file.percent + '%</div>' +
-								'<div class="plupload_file_size">' + plupload.formatSize(file.size) + '</div>' +
+								'<div class="plupload_file_size">' + ngg_plupload.formatSize(file.size) + '</div>' +
 								'<div class="plupload_clearer">&nbsp;</div>' +
 								inputHTML +
 							'</li>'
@@ -243,7 +243,7 @@ used as it is.
 						});
 					});
 
-					$('span.plupload_total_file_size', target).html(plupload.formatSize(uploader.total.size));
+					$('span.plupload_total_file_size', target).html(ngg_plupload.formatSize(uploader.total.size));
 
 					if (uploader.total.queued === 0) {
 						$('span.plupload_add_text', target).html(_('Add Files'));
@@ -337,11 +337,11 @@ used as it is.
 							message += " (" + err.details + ")";
 						}
 
-						if (err.code == plupload.FILE_SIZE_ERROR) {
+						if (err.code == ngg_plupload.FILE_SIZE_ERROR) {
 							alert(_("Error: File too large:") + " " + file.name);
 						}
 
-						if (err.code == plupload.FILE_EXTENSION_ERROR) {
+						if (err.code == ngg_plupload.FILE_EXTENSION_ERROR) {
 							alert(_("Error: Invalid file extension:") + " " + file.name);
 						}
 						
@@ -349,7 +349,7 @@ used as it is.
 						$('#' + file.id).attr('class', 'plupload_failed').find('a').css('display', 'block').attr('title', message);
 					}
 
-					if (err.code === plupload.INIT_ERROR) {
+					if (err.code === ngg_plupload.INIT_ERROR) {
 						setTimeout(function() {
 							destroy();
 						}, 1);
@@ -366,7 +366,7 @@ used as it is.
 				uploader.init();
 
 				uploader.bind('StateChanged', function() {
-					if (uploader.state === plupload.STARTED) {
+					if (uploader.state === ngg_plupload.STARTED) {
 						$('li.plupload_delete a,div.plupload_buttons', target).hide();
 						$('span.plupload_upload_status,div.plupload_progress,a.plupload_stop', target).css('display', 'block');
 						$('span.plupload_upload_status', target).html('Uploaded ' + uploader.total.uploaded + '/' + uploader.files.length + ' files');

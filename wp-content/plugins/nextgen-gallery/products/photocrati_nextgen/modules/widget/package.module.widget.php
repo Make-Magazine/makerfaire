@@ -292,7 +292,7 @@ class C_Widget_Slideshow extends WP_Widget
     {
         $router = C_Router::get_instance();
         wp_enqueue_style('nextgen_widgets_style', $router->get_static_url('photocrati-widget#widgets.css'), array(), NGG_SCRIPT_VERSION);
-        wp_enqueue_style('nextgen_basic_slideshow_style', $router->get_static_url('photocrati-nextgen_basic_gallery#slideshow/nextgen_basic_slideshow.css'), array(), NGG_SCRIPT_VERSION);
+        wp_enqueue_style('nextgen_basic_slideshow_style', $router->get_static_url('photocrati-nextgen_basic_gallery#slideshow/ngg_basic_slideshow.css'), array(), NGG_SCRIPT_VERSION);
         // these are handled by extract() but I want to silence my IDE warnings that these vars don't exist
         $before_widget = NULL;
         $before_title = NULL;

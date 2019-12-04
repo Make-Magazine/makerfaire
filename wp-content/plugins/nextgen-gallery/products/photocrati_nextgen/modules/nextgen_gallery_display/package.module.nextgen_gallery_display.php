@@ -317,6 +317,17 @@ class Mixin_Display_Type_Controller extends Mixin
     {
         // This script provides common JavaScript among all display types
         wp_enqueue_script('ngg_common');
+        wp_add_inline_script('ngg_common', '
+            var nggLastTimeoutVal = 1000;
+
+			var nggRetryFailedImage = function(img) {
+				setTimeout(function(){
+					img.src = img.src;
+				}, nggLastTimeoutVal);
+			
+				nggLastTimeoutVal += 500;
+			}
+        ');
         // Enqueue the display type library
         wp_enqueue_script($displayed_gallery->display_type, $this->object->_get_js_lib_url($displayed_gallery), array(), NGG_SCRIPT_VERSION);
         // Add "galleries = {};"
@@ -848,11 +859,20 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
     {
         // TODO: This method is very long, and therefore more difficult to read
         // Find a way to minimalize or segment
+        $settings = C_NextGen_Settings::get_instance();
         $mapper = C_Image_Mapper::get_instance();
         $image_key = $mapper->get_primary_key_column();
         $select = $id_only ? $image_key : $mapper->get_table_name() . '.*';
-        $sort_direction = $this->object->order_direction;
-        $sort_by = $this->object->order_by;
+        if (strtoupper($this->object->order_direction) == 'DSC') {
+            $this->object->order_direction = 'DESC';
+        }
+        $sort_direction = in_array(strtoupper($this->object->order_direction), array('ASC', 'DESC')) ? $this->object->order_direction : $settings->galSortDir;
+        $sort_by = in_array(strtolower($this->object->order_by), array_merge(C_Image_Mapper::get_instance()->get_column_names(), array('rand()'))) ? $this->object->order_by : $settings->galSort;
+        // Quickly sanitize
+        global $wpdb;
+        $this->object->container_ids = $this->object->container_ids ? array_map(array($wpdb, '_escape'), $this->object->container_ids) : array();
+        $this->object->entity_ids = $this->object->entity_ids ? array_map(array($wpdb, '_escape'), $this->object->entity_ids) : array();
+        $this->object->exclusions = $this->object->exclusions ? array_map(array($wpdb, '_escape'), $this->object->exclusions) : array();
         // Here's what this method is doing:
         // 1) Determines what results need returned
         // 2) Determines from what container ids the results should come from
@@ -1681,7 +1701,7 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
         $settings = C_NextGen_Settings::get_instance();
         // Configure the arguments
         $defaults = array('id' => NULL, 'ids' => NULL, 'source' => '', 'src' => '', 'container_ids' => array(), 'gallery_ids' => array(), 'album_ids' => array(), 'tag_ids' => array(), 'display_type' => '', 'display' => '', 'exclusions' => array(), 'order_by' => $settings->galSort, 'order_direction' => $settings->galSortOrder, 'image_ids' => array(), 'entity_ids' => array(), 'tagcloud' => FALSE, 'returns' => 'included', 'slug' => NULL, 'sortorder' => array());
-        $args = shortcode_atts($defaults, $params);
+        $args = shortcode_atts($defaults, $params, 'ngg');
         // Are we loading a specific displayed gallery that's persisted?
         $mapper = C_Displayed_Gallery_Mapper::get_instance();
         if (!is_null($args['id'])) {
@@ -1937,19 +1957,19 @@ class Mixin_Displayed_Gallery_Renderer extends Mixin
             // Try getting the rendered HTML from the cache
             $key = C_Photocrati_Transient_Manager::create_key('displayed_gallery_rendering', $key_params);
             $html = C_Photocrati_Transient_Manager::fetch($key, FALSE);
-            // Output debug messages
-            if ($html) {
-                $retval .= $this->debug_msg("HIT!");
-            } else {
-                $retval .= $this->debug_msg("MISS!");
-            }
-            // TODO: This is hack. We need to figure out a more uniform way of detecting dynamic image urls
-            if (strpos($html, C_Photocrati_Settings_Manager::get_instance()->dynamic_thumbnail_slug . '/') !== FALSE) {
-                $html = FALSE;
-                // forces the cache to be re-generated
-            }
         } else {
             $retval .= $this->debug_msg("Not looking up in cache as per rules");
+        }
+        // TODO: This is hack. We need to figure out a more uniform way of detecting dynamic image urls
+        if (strpos($html, C_Photocrati_Settings_Manager::get_instance()->dynamic_thumbnail_slug . '/') !== FALSE) {
+            $html = FALSE;
+            // forces the cache to be re-generated
+        }
+        // Output debug messages
+        if ($html) {
+            $retval .= $this->debug_msg("HIT!");
+        } else {
+            $retval .= $this->debug_msg("MISS!");
         }
         // If a cached version doesn't exist, then create the cache
         if (!$html) {
@@ -2525,33 +2545,14 @@ class Mixin_Display_Type_Form extends Mixin
     }
     function _render_thumbnail_override_settings_field($display_type)
     {
-        $hidden = !(isset($display_type->settings['override_thumbnail_settings']) ? $display_type->settings['override_thumbnail_settings'] : FALSE);
-        $override_field = $this->_render_radio_field($display_type, 'override_thumbnail_settings', __('Override thumbnail settings', 'nggallery'), isset($display_type->settings['override_thumbnail_settings']) ? $display_type->settings['override_thumbnail_settings'] : FALSE, __("This does not affect existing thumbnails; overriding the thumbnail settings will create an additional set of thumbnails. To change the size of existing thumbnails please visit 'Manage Galleries' and choose 'Create new thumbnails' for all images in the gallery.", 'nggallery'));
-        $dimensions_field = $this->object->render_partial('photocrati-nextgen_gallery_display#thumbnail_settings', array('display_type_name' => $display_type->name, 'name' => 'thumbnail_dimensions', 'label' => __('Thumbnail dimensions', 'nggallery'), 'thumbnail_width' => isset($display_type->settings['thumbnail_width']) ? intval($display_type->settings['thumbnail_width']) : 0, 'thumbnail_height' => isset($display_type->settings['thumbnail_height']) ? intval($display_type->settings['thumbnail_height']) : 0, 'hidden' => $hidden ? 'hidden' : '', 'text' => ''), TRUE);
-        /*
-        $qualities = array();
-        for ($i = 100; $i > 40; $i -= 5) { $qualities[$i] = "{$i}%"; }
-        $quality_field = $this->_render_select_field(
-            $display_type,
-            'thumbnail_quality',
-            __('Thumbnail quality', 'nggallery'),
-            $qualities,
-            isset($display_type->settings['thumbnail_quality']) ? $display_type->settings['thumbnail_quality'] : 100,
-            '',
-            $hidden
-        );
-        */
-        $crop_field = $this->_render_radio_field($display_type, 'thumbnail_crop', __('Thumbnail crop', 'nggallery'), isset($display_type->settings['thumbnail_crop']) ? $display_type->settings['thumbnail_crop'] : FALSE, '', $hidden);
-        /*
-        $watermark_field = $this->_render_radio_field(
-            $display_type,
-            'thumbnail_watermark',
-            __('Thumbnail watermark', 'nggallery'),
-            isset($display_type->settings['thumbnail_watermark']) ? $display_type->settings['thumbnail_watermark'] : FALSE,
-            '',
-            $hidden
-        );
-        */
+        $enabled = isset($display_type->settings['override_thumbnail_settings']) ? $display_type->settings['override_thumbnail_settings'] : FALSE;
+        $hidden = !$enabled;
+        $width = $enabled && isset($display_type->settings['thumbnail_width']) ? intval($display_type->settings['thumbnail_width']) : 0;
+        $height = $enabled && isset($display_type->settings['thumbnail_height']) ? intval($display_type->settings['thumbnail_height']) : 0;
+        $crop = $enabled && isset($display_type->settings['thumbnail_crop']) ? $display_type->settings['thumbnail_crop'] : FALSE;
+        $override_field = $this->_render_radio_field($display_type, 'override_thumbnail_settings', __('Override thumbnail settings', 'nggallery'), $enabled, __("This does not affect existing thumbnails; overriding the thumbnail settings will create an additional set of thumbnails. To change the size of existing thumbnails please visit 'Manage Galleries' and choose 'Create new thumbnails' for all images in the gallery.", 'nggallery'));
+        $dimensions_field = $this->object->render_partial('photocrati-nextgen_gallery_display#thumbnail_settings', array('display_type_name' => $display_type->name, 'name' => 'thumbnail_dimensions', 'label' => __('Thumbnail dimensions', 'nggallery'), 'thumbnail_width' => $width, 'thumbnail_height' => $height, 'hidden' => $hidden ? 'hidden' : '', 'text' => ''), TRUE);
+        $crop_field = $this->_render_radio_field($display_type, 'thumbnail_crop', __('Thumbnail crop', 'nggallery'), $crop, '', $hidden);
         $everything = $override_field . $dimensions_field . $crop_field;
         return $everything;
     }

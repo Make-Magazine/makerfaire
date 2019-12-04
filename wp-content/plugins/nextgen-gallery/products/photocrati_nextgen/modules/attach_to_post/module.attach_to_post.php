@@ -1,7 +1,7 @@
 <?php
 
 define('NGG_ATTACH_TO_POST_SLUG', 'nextgen-attach_to_post');
-define('NGG_ATTACH_TO_POST_VERSION', '3.1.8');
+define('NGG_ATTACH_TO_POST_VERSION', '3.2.21');
 
 class M_Attach_To_Post extends C_Base_Module
 {
@@ -133,9 +133,16 @@ class M_Attach_To_Post extends C_Base_Module
 
 			add_action(
 				'admin_enqueue_scripts',
-				array(&$this, 'enqueue_static_resources'),
-				1
+				array($this, 'enqueue_static_resources'),
+				-100
 			);
+
+            // Elementor's editor.php runs `new \WP_Scripts()` which requires we enqueue scripts on both
+            // admin_enqueue_scripts and this action if we want our resources to be used with the page builder.
+            add_action(
+                'elementor/editor/after_enqueue_scripts',
+                array($this, 'enqueue_static_resources')
+            );
 
 			add_action('admin_init', array(&$this, 'route_insert_gallery_window'));
 

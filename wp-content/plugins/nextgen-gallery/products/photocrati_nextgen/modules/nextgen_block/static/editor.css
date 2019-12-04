@@ -23,18 +23,18 @@ div[data-type="imagely/nextgen-gallery"] .ngg-freeform-toolbar {
 /* Styling for Add NextGEN Gallery button */
 
 div[data-type="imagely/nextgen-gallery"] .add-ngg-gallery-wrap {
-    background-color: #143650;
-    border: none;
-    border-top: 5px solid #b8d330;
-    border-radius: 2px;
-    display: none;
-    min-height: 150px;
-    margin: 0 0 -50px !important;
-    padding: 46px 20px;
+    min-height: 210px;
+    margin: 0 !important;
+    padding: 80px;
     position: relative;
-    top: -40px;
+    top: -32px;
     width: 100%;
     z-index: 1;
+    background: #fff;
+    border: 1px solid #eee;
+    border-top: 4px solid #b8d330;
+    box-shadow: 0 0 4px 2px rgba(0,0,0,.03);
+    background: #fcfcfc;
 }
 
 div[data-type="imagely/nextgen-gallery"] .add-ngg-gallery {
@@ -44,7 +44,7 @@ div[data-type="imagely/nextgen-gallery"] .add-ngg-gallery {
     font-family: Lato,sans-serif;
     font-weight: 900;
     color: #fff;
-    background-color: #9fbb1a;
+    background-color: black;
     border: none;
     box-shadow: none;
     padding: 12px 24px;
@@ -53,6 +53,10 @@ div[data-type="imagely/nextgen-gallery"] .add-ngg-gallery {
     width: 260px;
     text-align: center;
     cursor: pointer;
+}
+
+div[data-type="imagely/nextgen-gallery"] .add-ngg-gallery:hover {
+    background: #383838;
 }
 
 /* Customize the tinymce editor area */
@@ -68,23 +72,21 @@ div[data-type="imagely/nextgen-gallery"] .mce-drag-container {
 /* Customize the NextGEN Gallery placeholder */
 
 div[data-type="imagely/nextgen-gallery"] .nggPlaceholder {
-	background-color: #143650;
+	background-color: #ffffff;
     border-radius: 2px;
-    box-shadow: 0 0 4px 1px rgba(0,0,0,.05);
-	box-sizing: border-box;
+    box-shadow: 0 0 4px 2px rgba(0,0,0,.05);
+    box-sizing: border-box;
     border-top: 5px solid #b8d330;
-	color: #fff;
-    color: #9fbb1a;
-	font-family: sans-serif;
-	font-size: 20px;
-    margin-bottom: -25px !important;
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 20px;
     outline: none !important;
-    padding: 30px 30px 65px 30px;
     position: relative;
     text-align: center;
-    top: -15px;
     width: 100%;
     z-index: 2;
+    min-height: 210px;
+    padding: 60px 60px 70px;
 }
 
 div[data-type="imagely/nextgen-gallery"] .wp-block-freeform.blocks-rich-text__tinymce > .nggPlaceholder {
@@ -99,19 +101,19 @@ div[data-type="imagely/nextgen-gallery"] .wp-block-freeform.blocks-rich-text__ti
 }
 
 div[data-type="imagely/nextgen-gallery"] .nggPlaceholder h3 {
-    color: #fff !important;
-    margin-bottom: 8px;
+    color: black !important;
     text-transform: uppercase;
-    font-size: 20px;
+    font-size: 21px;
     font-family: Lato, sans-serif !important;
-    font-weight: 900 !important;
-    letter-spacing: 1.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 3px !important;
     margin-bottom: 0;
+    margin-top: 0;
 }
 
 div[data-type="imagely/nextgen-gallery"] .nggPlaceholderButton {
-    background: #9ebd00 !important;
-    border-radius: 2px;
+    background: black !important;
+    border-radius: 0;
     border: none !important;
     box-shadow: none !important;
     color: #fff !important;
@@ -122,15 +124,15 @@ div[data-type="imagely/nextgen-gallery"] .nggPlaceholderButton {
     height: 36px !important;
     line-height: 36px !important;
     letter-spacing: 1.2px;
-    margin: 0px 4px 2px;
+    margin: 0px 4px 2px 0;
     padding: 0;
-    width: 105px;
-    text-align: center;   
-    text-transform: uppercase !important; 
+    width: 121px;
+    text-align: center;
+    text-transform: uppercase !important;
     text-shadow: none !important;
     cursor: pointer;
 }
 
 div[data-type="imagely/nextgen-gallery"] .nggPlaceholderButton:hover {
-    background: #a5c31a !important;
+    background: #383838 !important;
 }
