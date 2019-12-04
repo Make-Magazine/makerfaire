@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.4
-Tested up to: 5.0
+Tested up to: 5.2.2
 Requires PHP: 5.3
 Stable tag: trunk
 Contributors: The GravityView Team
@@ -20,6 +20,85 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.4.1.1 on August 27, 2019 =
+
+* Fixed: Inconsistent sorting behavior for Views using Table layouts
+* Fixed: Searching all fields not searching Multi Select fields
+* Fixed: Error activating GravityView when Gravity Forms is disabled
+* Fixed: "Getting Started" and "List of Changes" page layouts in WordPress 5.3
+* Fixed: Don't show error messages twice when editing a View with a missing form
+* Tweak: Don't show "Create a View" on trashed forms action menus
+
+= 2.4 on July 17, 2019 =
+
+**We tightened security by limiting who can edit Views. [Read how to grant Authors and Editors access](https://docs.gravityview.co/article/598-non-administrator-edit-view).**
+
+* Added: A new Result Number field and `{sequence}` Merge Tag [learn all about it!](https://docs.gravityview.co/article/597-the-sequence-merge-tag)
+* Added: `{date_updated}` Merge Tag ([see all GravityView Merge Tags](https://docs.gravityview.co/article/76-merge-tags))
+* Added: Option to output all CSV entries, instead of a single page of results
+* Fixed: Settings compatibility issues on Multisite
+* Fixed: CSV output for address fields contained Google Maps link
+* Fixed: When editing an entry in Gravity Forms, clicking the "Cancel" button would not exit edit mode
+* Fixed: Some fatal errors when Gravity Forms is deactivated while GravityView is active
+* Fixed: Search All Fields functionality with latest Gravity Forms
+
+__Developer Updates:__
+
+* **Breaking Change:** Users without the `unfiltered_html` capability can no longer edit Views.
+* Added: `gravityview/security/allow_unfiltered_html` to not require `unfiltered_html`. Dangerous!
+* Added: `gravityview/template/field/address/csv/delimiter` filter for CSV output of addresses
+
+= 2.3.2 on May 3, 2019 =
+
+* Re-fixed: Conditional Logic breaks in Edit Entry if the condition field is not present
+
+__Developer Updates:__
+
+* Fixed: `strtolower()` warnings in `class-frontend-views.php`
+* Fixed: `gravityview/fields/fileupload/link_atts` filter didn't work on link-wrapped images
+* Fixed: PHP notice triggered when using the Poll widget
+* Updated: Updater script, which should improve license check load time
+
+= 2.3.1 on April 18, 2019 =
+
+* Added: Entry Approval now features a popover that allows you to select from all approval statuses
+* Fixed: Issues accessing Edit Entry for Views using [Multiple Forms](https://gravityview.co/extensions/multiple-forms/)
+* Fixed: Issues with Edit Entry where fields were duplicated. This temporarily reverts the conditional logic fix added in 2.3.
+* Fixed: Maps will now properly use global API key settings on Multisite installations
+
+__Developer Updates:__
+
+* Fixed: Issues searching Address fields that contain custom states
+* Added: `gravityview/approve_entries/popover_placement` filter to modify the placement of the approval popover (default: right)
+
+= 2.3 on April 2, 2019 =
+
+**Gravity Forms 2.3 is required**. Some functionality will not work if you are using Gravity Forms 2.2. If this affects you, please [let us know](mailto:support@gravityview.co?subject=Gravity%20Forms%202.3%20Requirement)
+
+* Added: Multi-Sorting! Example: Sort first by Last Name, then sort those results by First Name [Read more about multi-sorting](https://docs.gravityview.co/article/570-sorting-by-multiple-columns)
+    - Works great with our [DataTables extension](https://gravityview.co/extensions/datatables/), too!
+* Added: `[gvlogic logged_in="true"]` support to easily check user login status - [read how it works](https://docs.gravityview.co/article/252-gvlogic-shortcode#logged-in-parameter)
+* Added: Dropdown, Radio and Link input support for searching product fields
+* Fixed: Conditional Logic breaks in Edit Entry if the condition field is not present
+* Fixed: Sorting numbers with decimals
+* Fixed: CSV output of List and File Upload fields
+* Fixed: "Hide empty fields" setting not working Product and Quantity fields
+* Fixed: Month and day reversed in multi-input date search fields
+* Fixed: Join issues with embedded Views when using [Multiple Forms](https://gravityview.co/extensions/multiple-forms/)
+* Fixed: Other Entries empty text override was not working
+* Updated: 100% translated for Dutch, German, and French
+
+__Developer Updates:__
+
+* Added: `gravityview/search/created_by/text` filter to override dropdown and radio text in "created by" search UI
+* Added: `gravityview/approve_entries/after_submission` filter to prevent `is_approved` meta from being added automatically after entry creation
+* Modified: List and File Upload fields are now output as objects/arrays in REST API JSON
+* Modified: [Business Hours](https://wordpress.org/plugins/gravity-forms-business-hours/) field support in CSV and JSON output
+* Fixed: Fatal error when custom templates are loaded without `\GV\Template_Context`
+* Fixed: Potential PHP warning with PHP 7.2
+* Added notice for users to upgrade to PHP 5.6, since WordPress will be bumping the minimum version soon
+
 
 = 2.2.5 on February 4, 2019 =
 

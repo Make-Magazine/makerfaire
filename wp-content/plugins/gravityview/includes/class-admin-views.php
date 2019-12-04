@@ -164,6 +164,11 @@ class GravityView_Admin_Views {
 	 */
 	public static function gform_toolbar_menu( $menu_items = array(), $id = NULL ) {
 
+		// Don't show on Trashed forms
+		if( 'trash' === rgget( 'filter') ) {
+			return $menu_items;
+		}
+
 		$connected_views = gravityview_get_connected_views( $id, array( 'post_status' => 'any' ) );
 
 		$priority = 0;
@@ -775,6 +780,15 @@ class GravityView_Admin_Views {
 		);
 
 		/**
+		 * @since develop
+		 */
+		$entry_default_fields['sequence'] = array(
+			'label'	=> __('Result Number', 'gravityview'),
+			'type'	=> 'sequence',
+			'desc'	=> __('Display a sequential result number for each entry.', 'gravityview'),
+		);
+
+		/**
 		 * @filter `gravityview_entry_default_fields` Modify the default fields for each zone and context
 		 * @param array $entry_default_fields Array of fields shown by default
 		 * @param  string|array $form form_ID or form object
@@ -889,7 +903,7 @@ class GravityView_Admin_Views {
                     $available_items[ $form->ID ] = $this->get_available_fields( $form->ID, $zone );
                 }
 			} else {
-				$available_items[ $form ] = $this->get_registered_widgets();
+				$available_items[ $form ] = \GV\Widget::registered();
 			}
 		}
 
@@ -972,13 +986,14 @@ class GravityView_Admin_Views {
 
 	/**
 	 * Render the widget active areas
+     * @param  string $template_id The current slug of the selected View template
 	 * @param  string $zone    Either 'header' or 'footer'
 	 * @param  string $post_id Current Post ID (view)
 	 * @return string          html
 	 */
-	function render_widgets_active_areas( $template_id = '', $zone, $post_id = '' ) {
+	function render_widgets_active_areas( $template_id = '', $zone = '', $post_id = '' ) {
 
-		$default_widget_areas = GravityView_Widget::get_default_widget_areas();
+		$default_widget_areas = \GV\Widget::get_default_widget_areas();
 
 		$widgets = array();
 		if( !empty( $post_id ) ) {

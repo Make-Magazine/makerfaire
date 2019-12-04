@@ -1040,40 +1040,61 @@ class GravityView_frontend {
 	 */
 	public static function updateViewSorting( $args, $form_id ) {
 		$sorting = array();
-		$sort_field_id = isset( $_GET['sort'] ) ? $_GET['sort'] : \GV\Utils::get( $args, 'sort_field' );
+
+		$has_values = isset( $_GET['sort'] );
+
+		if ( $has_values && is_array( $_GET['sort'] ) ) {
+			$has_values = array_filter( array_values( $_GET['sort'] ) );
+		}
+
+		$sort_field_id = $has_values ? $_GET['sort'] : \GV\Utils::get( $args, 'sort_field' );
 		$sort_direction = isset( $_GET['dir'] ) ? $_GET['dir'] : \GV\Utils::get( $args, 'sort_direction' );
 
-		$sort_field_id = self::_override_sorting_id_by_field_type( $sort_field_id, $form_id );
+		if ( is_array( $sort_field_id ) ) {
+			$sort_field_id = array_pop( $sort_field_id );
+		}
+
+		if ( is_array( $sort_direction ) ) {
+			$sort_direction = array_pop( $sort_direction );
+		}
 
 		if ( ! empty( $sort_field_id ) ) {
+			if ( is_array( $sort_field_id ) ) {
+				$sort_direction = array_values( $sort_field_id );
+				$sort_field_id = array_keys( $sort_field_id );
+
+				$sort_field_id = reset( $sort_field_id );
+				$sort_direction = reset( $sort_direction );
+			}
+
+			$sort_field_id = self::_override_sorting_id_by_field_type( $sort_field_id, $form_id );
 			$sorting = array(
 				'key' => $sort_field_id,
 				'direction' => strtolower( $sort_direction ),
 				'is_numeric' => GVCommon::is_field_numeric( $form_id, $sort_field_id )
 			);
-		}
 
-		if ( 'RAND' === $sort_direction ) {
+			if ( 'RAND' === $sort_direction ) {
 
-			$form = GFAPI::get_form( $form_id );
+				$form = GFAPI::get_form( $form_id );
 
-			// Get the first GF_Field field ID, set as the key for entry randomization
-			if( ! empty( $form['fields'] ) ) {
+				// Get the first GF_Field field ID, set as the key for entry randomization
+				if ( ! empty( $form['fields'] ) ) {
 
-				/** @var GF_Field $field */
-				foreach ( $form['fields'] as $field ) {
+					/** @var GF_Field $field */
+					foreach ( $form['fields'] as $field ) {
+						if ( ! is_a( $field, 'GF_Field' ) ) {
+							continue;
+						}
 
-					if( ! is_a( $field, 'GF_Field' ) ) {
-						continue;
+						$sorting = array(
+							'key'        => $field->id,
+							'is_numeric' => false,
+							'direction'  => 'RAND',
+						);
+
+						break;
 					}
-
-					$sorting = array(
-						'key'        => $field->id,
-						'is_numeric' => false,
-						'direction'  => 'RAND',
-					);
-
-					break;
 				}
 			}
 		}
@@ -1096,12 +1117,20 @@ class GravityView_frontend {
 	 * @since 1.7.4
 	 * @internal Hi developer! Although this is public, don't call this method; we're going to replace it.
 	 *
-	 * @param int|string $sort_field_id Field used for sorting (`id` or `1.2`)
+	 * @param int|string|array $sort_field_id Field used for sorting (`id` or `1.2`), or an array for multisorts
 	 * @param int $form_id GF Form ID
 	 *
 	 * @return string Possibly modified sorting ID
 	 */
 	public static function _override_sorting_id_by_field_type( $sort_field_id, $form_id ) {
+
+		if ( is_array( $sort_field_id ) ) {
+			$modified_ids = array();
+			foreach ( $sort_field_id as $_sort_field_id ) {
+				$modified_ids []= self::_override_sorting_id_by_field_type( $_sort_field_id, $form_id );
+			}
+			return $modified_ids;
+		}
 
 		$form = gravityview_get_form( $form_id );
 
@@ -1192,9 +1221,19 @@ class GravityView_frontend {
 
 	/**
 	 * Verify if user requested a single entry view
-	 * @return boolean|string false if not, single entry slug if true
+	 * @since 2.3.3 Added return null
+	 * @return boolean|string|null false if not, single entry slug if true, null if \GV\Entry doesn't exist yet
 	 */
 	public static function is_single_entry() {
+
+		// Since this is a public method, it can be called outside of the plugin. Don't assume things have been loaded properly.
+		if ( ! class_exists( '\GV\Entry' ) ) {
+
+			// Not using gravityview()->log->error(), since that may not exist yet either!
+			do_action( 'gravityview_log_error', '\GV\Entry not defined yet. Backtrace: ' . wp_debug_backtrace_summary()  );
+
+			return null;
+		}
 
 		$var_name = \GV\Entry::get_endpoint_name();
 

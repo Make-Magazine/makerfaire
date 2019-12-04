@@ -176,8 +176,8 @@ class GravityView_Welcome {
                 <p style="text-align:center; padding-top: 1em;"><a class="button button-primary button-hero" href="https://docs.gravityview.co/category/24-category">Read more: Setting Up Your First View</a></p>
             </div>
 
-			<div class="feature-section two-col">
-				<div class="col">
+			<div class="feature-section two-col has-2-columns is-fullwidth">
+				<div class="col column">
 					<h3>Create a View</h3>
 
                     <ol class="ol-decimal">
@@ -193,7 +193,7 @@ class GravityView_Welcome {
                         <li>On the View Configuration metabox, click on the "+Add Field" button to add form fields to the active areas of your View. These are the fields that will be displayed in the frontend.</li>
 					</ol>
 				</div>
-                <div class="col">
+                <div class="col column">
                     <h4>What is a View?</h4>
                     <p>When a form is submitted in Gravity Forms, an entry is created. Without GravityView, Gravity Forms entries are visible only in the WordPress dashboard, and only to users with permission.</p>
                     <p>GravityView allows you to display entries on the front of your site. In GravityView, when you arrange the fields you want displayed and save the configuration, it's called a "View".</p>
@@ -202,20 +202,20 @@ class GravityView_Welcome {
 
             <hr />
 
-            <div class="feature-section two-col">
-                <div class="col">
+            <div class="feature-section two-col has-2-columns is-fullwidth">
+                <div class="col column">
                     <h3>Embed Views in Posts &amp; Pages</h3>
                     <p>Views don&rsquo;t need to be embedded in a post or page, but you can if you want. Embed Views using the "Add View" button above your content editor.</p>
                 </div>
-                <div class="col">
+                <div class="col column">
                     <img src="<?php echo plugins_url( 'assets/images/screenshots/add-view-button.png', GRAVITYVIEW_FILE ); ?>" />
                 </div>
             </div>
 
             <hr />
 
-			<div class="feature-section two-col">
-                <div class="col">
+			<div class="feature-section two-col has-2-columns is-fullwidth">
+                <div class="col column">
                     <h3>Configure Multiple Entry, Single Entry, and Edit Entry Layouts</h3>
 
                     <p>You can configure what fields are displayed in <strong>Multiple Entry</strong>, <strong>Single Entry</strong>, and <strong>Edit Entry</strong> modes. These can be configured by clicking on the tabs in "View Configuration."</p>
@@ -227,7 +227,7 @@ class GravityView_Welcome {
                         <li>Click the <a href="#" style="text-decoration:none;"><i class="dashicons dashicons-admin-generic"></i></a> gear icon on each field to configure the <strong>Field Settings</strong></li>
                     </ul>
                 </div>
-                <div class="col">
+                <div class="col column">
                     <img src="<?php echo plugins_url( 'assets/images/screenshots/add-field.png', GRAVITYVIEW_FILE ); ?>" alt="Add a field dialog box" />
                 </div>
 			</div>
@@ -249,19 +249,18 @@ class GravityView_Welcome {
 
 			<?php $this->tabs(); ?>
 
-            <div class="feature-section col two-col" style="margin:0 0 2em 0; padding: 0;">
-
-                <div class="col col-1">
-                    <div class="media-container"><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=gravityview&page=gv-admin-installer' ) ); ?>"><img alt="Admin installer of GravityView plugins &amp; extensions" src="<?php echo plugins_url( 'assets/images/screenshots/installer.png', GRAVITYVIEW_FILE ); ?>" style="border: none"></a></div>
-                    <h4 class="higher">Admin Installer</h4>
-                    <p>Download and manage all your GravityView plugins and extensions from one convenient place&mdash;you no longer need to download plugins from your GravityView Account page!</p>
-                    <p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=gravityview&page=gv-admin-installer' ) ); ?>" class="button button-primary button-large">Check out the Installer</a></p>
+            <div class="feature-section col two-col has-2-columns is-fullwidth" style="padding: 0;">
+                <div class="column col col-1">
+                    <div class="media-container"><iframe width="426" height="240" src="https://www.youtube-nocookie.com/embed/uqWCtSsmHIQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                    <h4 class="higher">{sequence} Merge Tag</h4>
+                    <p>Add a simple counter to show what result number is currently being shown.</p>
+                    <p><a href="https://docs.gravityview.co/article/597-the-sequence-merge-tag" class="button button-primary button-large">Read about the <code>{sequence}</code> Merge Tag</a></p>
                 </div>
-                <div class="col col-2">
-                    <div class="media-container"><img alt="Approval notifications" src="<?php echo plugins_url( 'assets/images/screenshots/approval-notifications.png', GRAVITYVIEW_FILE ); ?>" style="border: none"></div>
-                    <h4 class="higher">Approval Notifications</h4>
-                    <p>Notify users or administrators when entries have been approved or disapproved.</p>
-                    <p><a href="https://docs.gravityview.co/article/488-notification-when-entry-approved" class="button button-primary button-large">Learn How to Set Up</a></p>
+                <div class="column col col-2">
+                    <div class="media-container"><img alt="{date_created}" src="<?php echo plugins_url( 'assets/images/screenshots/date_updated.png', GRAVITYVIEW_FILE ); ?>" style="border: none"></div>
+                    <h4 class="higher">Show the date the entry was last updated with <code>{date_updated}</code></h4>
+                    <p>It is often useful to know when an entry was last changed. That's what the <code>{date_updated}</code> does.</p>
+                    <p><a href="https://docs.gravityview.co/article/76-merge-tags#added-by-gv" class="button button-primary button-large">Learn About <code>{date_updated}</code></a></p>
                 </div>
             </div>
 
@@ -270,6 +269,104 @@ class GravityView_Welcome {
                 <div class="headline-feature" style="max-width: 100%">
                     <h2 style="border-bottom: 1px solid #ccc; padding-bottom: 1em; margin-bottom: 0; margin-top: 0"><?php esc_html_e( 'What&rsquo;s New', 'gravityview' ); ?></h2>
                 </div>
+
+                <h3>2.4.1.1 on August 16, 2019</h3>
+
+                <ul>
+                    <li>Fixed: Inconsistent sorting behavior for Views using Table layouts</li>
+                    <li>Fixed: Searching all fields not searching Multi Select fields</li>
+                    <li>Fixed: Error activating GravityView when Gravity Forms is disabled</li>
+                    <li>Fixed: "Getting Started" and "List of Changes" page layouts in WordPress 5.3</li>
+                    <li>Fixed: Don't show error messages twice when editing a View with a missing form</li>
+                    <li>Tweak: Don't show "Create a View" on trashed forms action menus</li>
+                </ul>
+
+                <h3>2.4 on July 16, 2019</h3>
+
+                <p><strong>We tightened security by limiting who can edit Views. <a href="https://docs.gravityview.co/article/598-non-administrator-edit-view">Read how to grant Authors and Editors access</a>.</strong></p>
+
+                <ul>
+                    <li>Added: A new Result Number field and <code>{sequence}</code> Merge Tag <a href="https://docs.gravityview.co/article/597-the-sequence-merge-tag">learn all about it!</a></li>
+                    <li>Added: <code>{date_updated}</code> Merge Tag (<a href="https://docs.gravityview.co/article/76-merge-tags">see all GravityView Merge Tags</a>)</li>
+                    <li>Added: Option to output all CSV entries, instead of a single page of results</li>
+                    <li>Fixed: Settings compatibility issues on Multisite</li>
+                    <li>Fixed: CSV output for address fields contained Google Maps link</li>
+                    <li>Fixed: When editing an entry in Gravity Forms, clicking the "Cancel" button would not exit edit mode</li>
+                    <li>Fixed: Some fatal errors when Gravity Forms is deactivated while GravityView is active</li>
+                    <li>Fixed: Search All Fields functionality with latest Gravity Forms</li>
+                </ul>
+
+                <p><strong>Developer Updates:</strong></p>
+
+                <ul>
+                    <li>Change: <strong>Breaking</strong> users without the <code>unfiltered_html</code> capability can no longer edit Views.</li>
+                    <li>Added: <code>gravityview/security/allow_unfiltered_html</code> to not require <code>unfiltered_html</code>. Dangerous!</li>
+                    <li>Added: <code>gravityview/template/field/address/csv/delimiter</code> filter for CSV output of addresses</li>
+                </ul>
+
+                <h3>2.3.2 on May 3, 2019</h3>
+
+                <ul>
+                    <li>Re-fixed: Conditional Logic breaks in Edit Entry if the condition field is not present</li>
+                </ul>
+
+                <p><strong>Developer Updates:</strong></p>
+
+                <ul>
+                    <li>Fixed: <code>strtolower()</code> warnings in <code>class-frontend-views.php</code></li>
+                    <li>Fixed: <code>gravityview/fields/fileupload/link_atts</code> filter didn't work on link-wrapped images</li>
+                    <li>Fixed: PHP notice triggered when using the Poll widget</li>
+                    <li>Updated: Updater script, which should improve license check load time</li>
+                </ul>
+
+                <h3>2.3.1 on April 18, 2019</h3>
+
+                <ul>
+                    <li>Added: Entry Approval now features a popover that allows you to select from all approval statuses</li>
+                    <li>Fixed: Issues accessing Edit Entry for Views using <a href="https://gravityview.co/extensions/multiple-forms/">Multiple Forms</a></li>
+                    <li>Fixed: Issues with Edit Entry where fields were duplicated. This temporarily reverts the conditional logic fix added in 2.3.</li>
+                    <li>Fixed: Maps will now properly use global API key settings on Multisite installations</li>
+                </ul>
+
+                <p><strong>Developer Updates:</strong></p>
+
+                <ul>
+                    <li>Fixed: Issues searching Address fields that contain custom states</li>
+                    <li>Added: <code>gravityview/approve_entries/popover_placement</code> filter to modify the placement of the approval popover (default: right)</li>
+                </ul>
+
+                <h3>2.3 on April 2, 2019</h3>
+
+                <p><strong>Gravity Forms 2.3 is required</strong>. Some functionality will not work if you are using Gravity Forms 2.2. If this affects you, please <a href="mailto:support@gravityview.co?subject=Gravity%20Forms%202.3%20Requirement">let us know</a></p>
+
+                <ul>
+                    <li>Added: Multi-Sorting! Example: Sort first by Last Name, then sort those results by First Name <a href="https://docs.gravityview.co/article/570-sorting-by-multiple-columns">Read more about multi-sorting</a>
+                        <ul>
+                            <li>Works great with our <a href="https://gravityview.co/extensions/datatables/">DataTables extension</a>, too!</li>
+                        </ul></li>
+                    <li>Added: <code>[gvlogic logged_in="true"]</code> support to easily check user login status - <a href="https://docs.gravityview.co/article/252-gvlogic-shortcode#logged-in-parameter">read how it works</a></li>
+                    <li>Added: Dropdown, Radio and Link input support for searching product fields</li>
+                    <li>Fixed: Conditional Logic breaks in Edit Entry if the condition field is not present</li>
+                    <li>Fixed: Sorting numbers with decimals</li>
+                    <li>Fixed: CSV output of List and File Upload fields</li>
+                    <li>Fixed: "Hide empty fields" setting not working Product and Quantity fields</li>
+                    <li>Fixed: Month and day reversed in multi-input date search fields</li>
+                    <li>Fixed: Join issues with embedded Views when using <a href="https://gravityview.co/extensions/multiple-forms/">Multiple Forms</a></li>
+                    <li>Fixed: Other Entries empty text override was not working</li>
+                    <li>Updated: 100% translated for Dutch, German, and French</li>
+                </ul>
+
+                <p><strong>Developer Updates:</strong></p>
+
+                <ul>
+                    <li>Added: <code>gravityview/search/created_by/text</code> filter to override dropdown and radio text in "created by" search UI</li>
+                    <li>Added: <code>gravityview/approve_entries/after_submission</code> filter to prevent <code>is_approved</code> meta from being added automatically after entry creation</li>
+                    <li>Modified: List and File Upload fields are now output as objects/arrays in REST API JSON</li>
+                    <li>Modified: <a href="https://wordpress.org/plugins/gravity-forms-business-hours/">Business Hours</a> field support in CSV and JSON output</li>
+                    <li>Fixed: Fatal error when custom templates are loaded without <code>\GV\Template_Context</code></li>
+                    <li>Fixed: Potential PHP warning with PHP 7.2</li>
+                    <li>Added notice for users to upgrade to PHP 5.6, since WordPress will be bumping the minimum version soon</li>
+                </ul>
 
                 <h3>2.2.5 on February 4, 2019</h3>
 
@@ -584,30 +681,36 @@ class GravityView_Welcome {
                     line-height: 1em;
                 }
             </style>
-			<div class="feature-section col three-col">
+			<div class="feature-section three-col">
 
 				<div class="col">
 					<h3>Zack Katz <a href="https://twitter.com/zackkatz"><span class="dashicons dashicons-twitter" title="Follow Zack on Twitter"></span></a> <a href="https://katz.co" title="View Zack&rsquo;s website"><span class="dashicons dashicons-admin-site"></span></a></h3>
 					<h4 style="font-weight:0; margin-top:0">Project Lead &amp; Developer</h4>
-					<p><img style="float:left; margin: 0 15px 10px 0;" src="<?php echo plugins_url( 'assets/images/zack.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Zack has been developing integrations with Gravity Forms since 2009. He runs GravityView and lives with his wife (and cat) in <a href="https://wikipedia.org/wiki/Denver">Denver, Colorado</a>.</p>
+					<p><img alt="Zack Katz" style="float:left; margin: 0 15px 10px 0;" src="<?php echo plugins_url( 'assets/images/zack.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Zack has been developing integrations with Gravity Forms since 2009. He runs GravityView and lives with his wife (and cat) in <a href="https://wikipedia.org/wiki/Denver">Denver, Colorado</a>.</p>
 				</div>
 
                 <div class="col">
 					<h3>Rafael Ehlers <a href="https://twitter.com/rafaehlers" title="Follow Rafael on Twitter"><span class="dashicons dashicons-twitter"></span></a> <a href="https://heropress.com/essays/journey-resilience/" title="View Rafael&rsquo;s WordPress Journey"><span class="dashicons dashicons-admin-site"></span></a></p></h3>
 					<h4 style="font-weight:0; margin-top:0">Project Manager, Support Lead &amp; Customer&nbsp;Advocate</h4>
-					<p><img style="margin: 0 15px 10px 0;"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/rafael.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Rafael helps guide GravityView development priorities and keep us on track. He&rsquo;s the face of our customer support and helps customers get the most out of the product. Rafael hails from <a href="https://wikipedia.org/wiki/Porto_Alegre">Porto Alegre, Brazil</a>.</p>
+					<p><img alt="Rafael Ehlers" style="margin: 0 15px 10px 0;"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/rafael.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Rafael helps guide GravityView development priorities and keep us on track. He&rsquo;s the face of our customer support and helps customers get the most out of the product. Rafael hails from <a href="https://wikipedia.org/wiki/Porto_Alegre">Porto Alegre, Brazil</a>.</p>
 				</div>
 
-                <div class="col last-feature">
+                <div class="col">
                     <h3>Gennady Kovshenin <a href="https://twitter.com/soulseekah" title="Follow Gennady on Twitter"><span class="dashicons dashicons-twitter"></span></a> <a href="https://codeseekah.com" title="View Gennady&rsquo;s Blog"><span class="dashicons dashicons-admin-site"></span></a></h3>
                     <h4 style="font-weight:0; margin-top:0">Core Developer</h4>
-                    <p><img style="margin: 0 15px 10px 0;"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/gennady.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Gennady works on the GravityView core, improving everything behind the scenes. He is an active member of the WordPress community and loves exotic tea. Gennady lives and runs long distances in <a href="https://wikipedia.org/wiki/Saint_Petersburg" rel="external">St. Petersburg, Russia</a>.</p>
+                    <p><img alt="Gennady Kovshenin" style="margin: 0 15px 10px 0;"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/gennady.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Gennady works on the GravityView core, improving everything behind the scenes. He is an active member of the WordPress community and loves exotic tea. Gennady lives and runs long distances in <a href="https://wikipedia.org/wiki/Saint_Petersburg" rel="external">St. Petersburg, Russia</a>.</p>
                 </div>
 
                 <div class="col">
                     <h3>Vlad K.</h3>
                     <h4 style="font-weight:0; margin-top:0">Core Developer</h4>
-                    <p><img style="margin: 0 15px 10px 0;"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/vlad.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Vlad, while being the &ldquo;new kid on the block&rdquo; at GravityView, is not new to WordPress, having previously worked on the top newsletter plugin. He&rsquo;s a full-stack developer who focuses on GravityView's user-facing code in the Dashboard and front end. Vlad comes from Russia and lives in Canada.</p>
+                    <p><img alt="Vlad K." style="margin: 0 15px 10px 0;"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/vlad.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Vlad, while being the &ldquo;new kid on the block&rdquo; at GravityView, is not new to WordPress, having previously worked on the top newsletter plugin. He&rsquo;s a full-stack developer who focuses on GravityView's user-facing code in the Dashboard and front end. Vlad comes from Russia and lives in Canada.</p>
+                </div>
+
+                <div class="col last-feature">
+                    <h3>Jerry Grisham <a href="https://twitter.com/jlgrisham" title="Follow Jerry on Twitter"><span class="dashicons dashicons-twitter"></span></a></h3>
+                    <h4 style="font-weight:0; margin-top:0">Support Specialist</h4>
+                    <img alt="Jerry Grisham" style="margin: 0 15px 10px 0;"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/jerry.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" />Jerry provides great customer experiences at GravityView. With over 15 years of experience in customer support, exceeding customer expectations is one of his passions. Bowling is another one. Jerry is a native <a href="https://wikipedia.org/wiki/New_England">New Englander</a> currently living in <a href="https://wikipedia.org/wiki/Atlanta">Atlanta</a>.</p>
                 </div>
 			</div>
 

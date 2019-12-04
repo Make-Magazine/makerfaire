@@ -187,7 +187,7 @@ class Field {
 			return $field;
 		}
 
-		/** Determine the field implementation to use, and try to use. */
+		/** @var \GV\GF_Field|\GV\Internal_Field $field_class Determine the field implementation to use, and try to use. */
 		$field_class = is_numeric( $configuration['id'] ) ? '\GV\GF_Field' : '\GV\Internal_Field';
 
 		/**
@@ -350,12 +350,14 @@ class Field {
 	 * @return mixed|null The value for the given configuration key, null if doesn't exist.
 	 */
 	public function __get( $key ) {
-		switch( $key ):
+		switch( $key ) {
 			default:
 				if ( isset( $this->configuration[ $key ] ) ) {
 					return $this->configuration[ $key ];
 				}
-		endswitch;
+		}
+
+		return null;
 	}
 
 	/**
@@ -366,9 +368,9 @@ class Field {
 	 * @return boolean Whether this $key is set or not.
 	 */
 	public function __isset( $key ) {
-		switch( $key ):
+		switch( $key ) {
 			default:
 				return isset( $this->configuration[ $key ] );
-		endswitch;
+		}
 	}
 }

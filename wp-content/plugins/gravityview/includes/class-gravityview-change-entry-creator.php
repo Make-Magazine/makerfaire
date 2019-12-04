@@ -136,6 +136,10 @@ class GravityView_Change_Entry_Creator {
      */
     function set_screen_mode() {
 
+    	if( 'view' === \GV\Utils::_POST( 'screen_mode' ) ) {
+    		return;
+	    }
+
     	// If $_GET['screen_mode'] is set to edit, set $_POST value
         if( \GV\Utils::_GET( 'screen_mode' ) === 'edit' ) {
             $_POST["screen_mode"] = 'edit';
@@ -203,9 +207,7 @@ class GravityView_Change_Entry_Creator {
 
         $created_by_id = \GV\Utils::get( $entry, 'created_by' );
 
-        //$users = GVCommon::get_users( 'change_entry_creator' );
-        //MF hard coding to return email instead of entry creator username
-        $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email'), 'number' => 100000));
+        $users = GVCommon::get_users( 'change_entry_creator' );
 
         $is_created_by_in_users = wp_list_filter( $users, array( 'ID' => $created_by_id ) );
 
@@ -231,9 +233,7 @@ class GravityView_Change_Entry_Creator {
 	    $output .= '<select name="created_by" id="change_created_by" class="widefat">';
         $output .= '<option value="' . selected( $entry['created_by'], '0', false ) . '"> &mdash; '.esc_attr_x( 'No User', 'No user assigned to the entry', 'gravityview').' &mdash; </option>';
         foreach($users as $user) {
-           //MF hard coding to return email instead of entry creator username
-            //$output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
-            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_email.')' ).'</option>';
+            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
         }
         $output .= '</select>';
         $output .= '<input name="originally_created_by" value="'.esc_attr( $entry['created_by'] ).'" type="hidden" />';
