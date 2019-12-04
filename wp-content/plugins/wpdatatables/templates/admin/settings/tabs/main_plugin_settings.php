@@ -376,25 +376,4 @@
         </div>
     </div>
     <!-- /.row -->
-    <!-- Purchase code settings -->
-    <div class="row">
-        <div class="col-sm-4 purchase-code">
-            <h4 class="c-black m-b-20">
-                <?php _e('Purchase code', 'wpdatatables'); ?>
-                <i class="zmdi zmdi-help-outline" data-toggle="tooltip" data-placement="right"
-                   title="<?php _e('Please enter your Envato purchase code to enable plugin auto-updates. Leave blank if you do not want the plugin to auto-update.', 'wpdatatables'); ?>"></i>
-            </h4>
-            <div class="form-group">
-                <div class="fg-line">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <input type="text" name="wdt-purchase-code" id="wdt-purchase-code"
-                                   class="form-control input-sm" placeholder="Please enter your code" value=""/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /.row -->
 </div>

@@ -348,16 +348,18 @@ function wdtSaveTableFrontend() {
                         } else {
                             $formData[$column->orig_header] = str_replace(',', '', $formData[$column->orig_header]);
                         }
-                        $formData[$column->orig_header] = WDTTools::wrapQuotes((float)$formData[$column->orig_header], $tableData->connection);
-                        if ($formData[$column->orig_header] == '') {
-                            $formData[$column->orig_header] = NULL;
+                        $value = WDTTools::wrapQuotes((float)$formData[$column->orig_header], $tableData->connection);
+                        if ($formData[$column->orig_header] === '') {
+                            $value = NULL;
                         }
+                        $formData[$column->orig_header] = $value;
                         break;
                     case 'int':
-                        $formData[$column->orig_header] = WDTTools::wrapQuotes((int)$formData[$column->orig_header], $tableData->connection);
-                        if ($formData[$column->orig_header] == '') {
-                            $formData[$column->orig_header] = NULL;
+                        $value = WDTTools::wrapQuotes((int)$formData[$column->orig_header], $tableData->connection);
+                        if ($formData[$column->orig_header] === '') {
+                            $value = NULL;
                         }
+                        $formData[$column->orig_header] = $value;
                         break;
                     case 'email':
                         $formData[$column->orig_header] = WDTTools::prepareStringCell($formData[$column->orig_header], $tableData->connection);

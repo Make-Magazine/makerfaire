@@ -1,24 +1,27 @@
 [
     {
         "name": "analog/analog",
-        "version": "1.0.10-stable",
-        "version_normalized": "1.0.10.0",
+        "version": "1.0.12-stable",
+        "version_normalized": "1.0.12.0",
         "source": {
             "type": "git",
             "url": "https://github.com/jbroadway/analog.git",
-            "reference": "65dce6b5aff8c77307c783e607c04a35df8259d6"
+            "reference": "4ac87ac59555db6eaba734b2b022fcc296e8729d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/jbroadway/analog/zipball/65dce6b5aff8c77307c783e607c04a35df8259d6",
-            "reference": "65dce6b5aff8c77307c783e607c04a35df8259d6",
+            "url": "https://api.github.com/repos/jbroadway/analog/zipball/4ac87ac59555db6eaba734b2b022fcc296e8729d",
+            "reference": "4ac87ac59555db6eaba734b2b022fcc296e8729d",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.2",
             "psr/log": "1.*"
         },
-        "time": "2017-09-17T02:30:30+00:00",
+        "require-dev": {
+            "phpunit/phpunit": "^4.8.36 || ^5.7 || ^6.5"
+        },
+        "time": "2019-03-05T22:41:22+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -52,17 +55,17 @@
     },
     {
         "name": "greenlion/php-sql-parser",
-        "version": "v4.1.2",
-        "version_normalized": "4.1.2.0",
+        "version": "4.2.1",
+        "version_normalized": "4.2.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/greenlion/PHP-SQL-Parser.git",
-            "reference": "b4e8522ebca3e5c8bbd4e2c25edaef155a96db20"
+            "reference": "249e8342c9b29e7444090bc66da5e870a0b28b8c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/greenlion/PHP-SQL-Parser/zipball/b4e8522ebca3e5c8bbd4e2c25edaef155a96db20",
-            "reference": "b4e8522ebca3e5c8bbd4e2c25edaef155a96db20",
+            "url": "https://api.github.com/repos/greenlion/PHP-SQL-Parser/zipball/249e8342c9b29e7444090bc66da5e870a0b28b8c",
+            "reference": "249e8342c9b29e7444090bc66da5e870a0b28b8c",
             "shasum": ""
         },
         "require": {
@@ -73,7 +76,7 @@
             "phpunit/phpunit": "^4.0.14",
             "squizlabs/php_codesniffer": "^1.5.1"
         },
-        "time": "2017-05-16T21:20:45+00:00",
+        "time": "2018-12-23T05:09:55+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -155,17 +158,17 @@
     },
     {
         "name": "markbaker/complex",
-        "version": "1.4.6",
-        "version_normalized": "1.4.6.0",
+        "version": "1.4.7",
+        "version_normalized": "1.4.7.0",
         "source": {
             "type": "git",
             "url": "https://github.com/MarkBaker/PHPComplex.git",
-            "reference": "a78d82ae4e682c3809fc3023d1b0ce654f6ab12b"
+            "reference": "1ea674a8308baf547cbcbd30c5fcd6d301b7c000"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/MarkBaker/PHPComplex/zipball/a78d82ae4e682c3809fc3023d1b0ce654f6ab12b",
-            "reference": "a78d82ae4e682c3809fc3023d1b0ce654f6ab12b",
+            "url": "https://api.github.com/repos/MarkBaker/PHPComplex/zipball/1ea674a8308baf547cbcbd30c5fcd6d301b7c000",
+            "reference": "1ea674a8308baf547cbcbd30c5fcd6d301b7c000",
             "shasum": ""
         },
         "require": {
@@ -181,7 +184,7 @@
             "sebastian/phpcpd": "2.*",
             "squizlabs/php_codesniffer": "^3.3.0"
         },
-        "time": "2018-07-31T08:38:40+00:00",
+        "time": "2018-10-13T23:28:42+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -341,23 +344,23 @@
     },
     {
         "name": "psr/log",
-        "version": "1.0.2",
-        "version_normalized": "1.0.2.0",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-fig/log.git",
-            "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
+            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-            "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2016-10-10T12:19:37+00:00",
+        "time": "2018-11-20T15:27:04+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

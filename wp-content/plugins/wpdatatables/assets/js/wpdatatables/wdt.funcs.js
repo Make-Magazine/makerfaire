@@ -464,3 +464,28 @@ function getMomentWdtDateFormat () {
 function getMomentWdtTimeFormat () {
     return wpdatatables_settings.wdtTimeFormat.replace('H', 'HH').replace('i', 'mm');
 }
+
+function searchQueryString(key) {
+    key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+    var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+    return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+}
+
+function removeURLParameter (url, parameter) {
+    let urlParts = url.split('?')
+    if (urlParts.length >= 2) {
+        let prefix = encodeURIComponent(parameter) + '='
+        let pars = urlParts[1].split(/[&;]/g)
+
+        for (let i = pars.length; i-- > 0;) {
+            if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                pars.splice(i, 1)
+            }
+        }
+
+        url = urlParts[0] + (pars.length > 0 ? '?' + pars.join('&') : '')
+        return url
+    } else {
+        return url
+    }
+}

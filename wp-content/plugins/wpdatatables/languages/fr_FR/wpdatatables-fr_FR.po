@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: wpdatatables\n"
-"POT-Creation-Date: 2019-03-05 14:09+0100\n"
-"PO-Revision-Date: 2019-03-05 14:09+0100\n"
+"POT-Creation-Date: 2019-04-02 16:31+0200\n"
+"PO-Revision-Date: 2019-04-02 16:31+0200\n"
 "Last-Translator: \n"
 "Language-Team: wpdatatables <cjbug@yandex.ru>\n"
 "Language: fr_FR\n"
@@ -91,49 +91,49 @@ msgstr ""
 "probablement pas activé le supplément d'extension requis pour utiliser ce "
 "type de tableau."
 
-#: controllers/wdt_ajax_actions.php:416 controllers/wdt_ajax_actions.php:466
-#: controllers/wdt_ajax_actions.php:676
+#: controllers/wdt_ajax_actions.php:418 controllers/wdt_ajax_actions.php:468
+#: controllers/wdt_ajax_actions.php:678
 msgid "There was an error trying to update the row! Error: "
 msgstr ""
 "Une erreur s'est produite lors de la tentative de mise à jour de la ligne! "
 "Erreur: "
 
-#: controllers/wdt_ajax_actions.php:428 controllers/wdt_ajax_actions.php:491
-#: controllers/wdt_ajax_actions.php:646
+#: controllers/wdt_ajax_actions.php:430 controllers/wdt_ajax_actions.php:493
+#: controllers/wdt_ajax_actions.php:648
 msgid "There was an error trying to insert a new row! Error: "
 msgstr ""
 "Une erreur s'est produite lors de la tentative d'insertion d'une nouvelle "
 "ligne! Erreur: "
 
-#: controllers/wdt_ajax_actions.php:561
+#: controllers/wdt_ajax_actions.php:563
 msgid "Bad column names supplied: "
 msgstr "Mauvais noms de colonnes fournis: "
 
-#: controllers/wdt_ajax_actions.php:563
+#: controllers/wdt_ajax_actions.php:565
 msgid "ID column not supplied"
 msgstr "Colonne d'identification non fournie"
 
-#: controllers/wdt_ajax_actions.php:568
+#: controllers/wdt_ajax_actions.php:570
 msgid "ID column not supplied for a cell"
 msgstr "Colonne d'identification non fournie pour une cellule"
 
-#: controllers/wdt_ajax_actions.php:805 controllers/wdt_ajax_actions.php:819
+#: controllers/wdt_ajax_actions.php:807 controllers/wdt_ajax_actions.php:821
 msgid "Nothing to delete."
 msgstr "Rien à supprimer."
 
-#: controllers/wdt_ajax_actions.php:809 controllers/wdt_ajax_actions.php:823
+#: controllers/wdt_ajax_actions.php:811 controllers/wdt_ajax_actions.php:825
 msgid "Bad request format."
 msgstr "Mauvais format de demande."
 
-#: controllers/wdt_ajax_actions.php:833
+#: controllers/wdt_ajax_actions.php:835
 msgid "You don't have permission to change this table."
 msgstr "Vous n'êtes pas autorisé à modifier ce tableau."
 
-#: controllers/wdt_ajax_actions.php:841
+#: controllers/wdt_ajax_actions.php:843
 msgid "Supplied id column not exist."
 msgstr "La colonne d'identification fournie n'existe pas."
 
-#: controllers/wdt_ajax_actions.php:866 controllers/wdt_ajax_actions.php:882
+#: controllers/wdt_ajax_actions.php:868 controllers/wdt_ajax_actions.php:884
 msgid "There was an error trying to delete row! Error: "
 msgstr ""
 "Une erreur s'est produite lors de la tentative de suppression de la ligne! "
@@ -820,7 +820,7 @@ msgstr "Le shortcode a été copié dans le presse-papier."
 
 #: source/class.wdttools.php:386
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
-msgstr "Afficher _DEBUT_ à _FIN_ des _TOTAL_entrées"
+msgstr "Afficher _START_ à _END_ des _TOTAL_ entrées"
 
 #: source/class.wdttools.php:387
 msgid "Showing 0 to 0 of 0 entries"
@@ -828,7 +828,7 @@ msgstr "Afficher 0 à 0 de 0 entrées"
 
 #: source/class.wdttools.php:388
 msgid "(filtered from _MAX_ total entries)"
-msgstr "(Filtré de _Max_ entrées total)"
+msgstr "(Filtré de _MAX_ entrées total)"
 
 #: source/class.wdttools.php:390
 msgid ","

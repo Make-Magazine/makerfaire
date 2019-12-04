@@ -177,14 +177,56 @@ function wdtActivationCreateTables() {
     if (!get_option('wdtMobileWidth')) {
         update_option('wdtMobileWidth', 480);
     }
-    if (!get_option('wdtPurchaseCode')) {
-        update_option('wdtPurchaseCode', '');
-    }
     if (get_option('wdtIncludeBootstrap') === false) {
         update_option('wdtIncludeBootstrap', true);
     }
     if (get_option('wdtIncludeBootstrapBackEnd')  === false) {
         update_option('wdtIncludeBootstrapBackEnd', true);
+    }
+    if (!get_option('wdtActivated')) {
+        update_option('wdtActivated', 0);
+    }
+    if (!get_option('wdtPurchaseCodeStore')) {
+        update_option('wdtPurchaseCodeStore', '');
+    }
+    if (!get_option('wdtEnvatoTokenEmail')) {
+        update_option('wdtEnvatoTokenEmail', '');
+    }
+    if (!get_option('wdtActivatedPowerful')) {
+        update_option('wdtActivatedPowerful', 0);
+    }
+    if (!get_option('wdtPurchaseCodeStorePowerful')) {
+        update_option('wdtPurchaseCodeStorePowerful', '');
+    }
+    if (!get_option('wdtEnvatoTokenEmailPowerful')) {
+        update_option('wdtEnvatoTokenEmailPowerful', '');
+    }
+    if (!get_option('wdtActivatedReport')) {
+        update_option('wdtActivatedReport', 0);
+    }
+    if (!get_option('wdtPurchaseCodeStoreReport')) {
+        update_option('wdtPurchaseCodeStoreReport', '');
+    }
+    if (!get_option('wdtEnvatoTokenEmailReport')) {
+        update_option('wdtEnvatoTokenEmailReport', '');
+    }
+    if (!get_option('wdtActivatedGravity')) {
+        update_option('wdtActivatedGravity', 0);
+    }
+    if (!get_option('wdtPurchaseCodeStoreGravity')) {
+        update_option('wdtPurchaseCodeStoreGravity', '');
+    }
+    if (!get_option('wdtEnvatoTokenEmailGravity')) {
+        update_option('wdtEnvatoTokenEmailGravity', '');
+    }
+    if (!get_option('wdtActivatedFormidable')) {
+        update_option('wdtActivatedFormidable', 0);
+    }
+    if (!get_option('wdtPurchaseCodeStoreFormidable')) {
+        update_option('wdtPurchaseCodeStoreFormidable', '');
+    }
+    if (!get_option('wdtEnvatoTokenEmailFormidable')) {
+        update_option('wdtEnvatoTokenEmailFormidable', '');
     }
 }
 
@@ -207,7 +249,6 @@ function wdtUninstallDelete() {
     delete_option('wdtSumFunctionsLabel');
     delete_option('wdtRenderFilter');
     delete_option('wdtRenderCharts');
-    delete_option('wdtPurchaseCode');
     delete_option('wdtIncludeBootstrap');
     delete_option('wdtIncludeBootstrapBackEnd');
     delete_option('wdtParseShortcodes');
@@ -682,52 +723,114 @@ if ($wp_version < 4.4) {
     }
 }
 
+global $wdtPluginSlug;
+
+$filePath = plugin_basename(__FILE__);
+$filePathArr = explode('/', $filePath);
+$wdtPluginSlug = $filePathArr[0] . '/wpdatatables.php';
+
 /**
- * Auto update function
+ * @param $transient
+ *
+ * @return mixed
  */
-if ('' !== get_option('wdtPurchaseCode')) {
+function wdtCheckUpdate($transient)
+{
+    global $wdtPluginSlug;
 
-    global $wdt_plugin_slug;
-
-    $filePath = plugin_basename(__FILE__);
-    $filePathArr = explode('/', $filePath);
-    $wdt_plugin_slug = $filePathArr[0] . '/wpdatatables.php';
-
-    function wdtTransientUpdate($transient) {
-        global $wdt_plugin_slug;
-
-        // Remote version
-        $remoteVersion = WDTTools::checkRemoteVersion();
-
-        if (version_compare(WDT_CURRENT_VERSION, $remoteVersion, '<')) {
-            $obj = new stdClass();
-            $obj->slug = $wdt_plugin_slug;
-            $obj->new_version = $remoteVersion;
-            $obj->url = 'http://wpdatatables.com/verified-download.php?purchase_code=' . get_option('wdtPurchaseCode');
-            $obj->package = 'http://wpdatatables.com/verified-download.php?purchase_code=' . get_option('wdtPurchaseCode');
-            $transient->response[$wdt_plugin_slug] = $obj;
-        }
-
+    if (empty($transient->checked)) {
         return $transient;
     }
 
-    add_filter('pre_set_site_transient_update_plugins', 'wdtTransientUpdate');
+    $purchaseCode = get_option('wdtPurchaseCodeStore');
 
-    function wdtPluginsApi($false, $action, $arg) {
-        global $wdt_plugin_slug;
+    $envatoTokenEmail = get_option('wdtEnvatoTokenEmail');
 
-        if (property_exists($arg, 'slug') && ($arg->slug === $wdt_plugin_slug || $arg->slug == 'wpdatatables.php')) {
-            $information = WDTTools::checkRemoteInfo();
+    // Get the remote info
+    $remoteInformation = WDTTools::getRemoteInformation('wpdatatables', $purchaseCode, $envatoTokenEmail);
 
-            return $information;
-        }
-
-        return false;
+    // If a newer version is available, add the update
+    if ($remoteInformation && version_compare(WDT_CURRENT_VERSION, $remoteInformation->new_version, '<')) {
+        $remoteInformation->package = $remoteInformation->download_link;
+        $transient->response[$wdtPluginSlug] = $remoteInformation;
     }
 
-    add_filter('plugins_api', 'wdtPluginsApi', 10, 3);
-
+    return $transient;
 }
+
+add_filter('pre_set_site_transient_update_plugins', 'wdtCheckUpdate');
+
+/**
+ * @param $response
+ * @param $action
+ * @param $args
+ *
+ * @return bool|mixed
+ */
+function wdtCheckInfo($response, $action, $args)
+{
+    global $wdtPluginSlug;
+
+    if ('plugin_information' !== $action) {
+        return $response;
+    }
+
+    if (empty($args->slug)) {
+        return $response;
+    }
+
+    $purchaseCode = get_option('wdtPurchaseCodeStore');
+
+    $envatoTokenEmail = get_option('wdtEnvatoTokenEmail');
+
+    if ($args->slug === $wdtPluginSlug) {
+        return WDTTools::getRemoteInformation('wpdatatables', $purchaseCode, $envatoTokenEmail);
+    }
+
+    return $response;
+}
+
+add_filter('plugins_api', 'wdtCheckInfo', 10, 3);
+
+function wdtAddMessageOnPluginsPage() {
+    /** @var bool $activated */
+    $activated = get_option('wdtActivated');
+
+    /** @var string $url */
+    $url = get_site_url() . '/wp-admin/admin.php?page=wpdatatables-settings&activeTab=activation';
+
+    /** @var string $redirect */
+    $redirect = '<a href="' . $url . '" target="_blank">' . __('settings', 'wpdatatables') . '</a>';
+
+    if (!$activated) {
+        echo sprintf(' ' . __('To receive automatic updates license activation is required. Please visit %s to activate wpDataTables.', 'wpdatatables'), $redirect);
+    }
+}
+
+add_action('in_plugin_update_message-' . $wdtPluginSlug, 'wdtAddMessageOnPluginsPage');
+
+function wdtAddMessageOnUpdate($reply, $package, $updater) {
+    if ($updater->skin->plugin_info['Name'] === 'wpDataTables') {
+        /** @var string $url */
+        $url = get_site_url() . '/wp-admin/admin.php?page=wpdatatables-settings&activeTab=activation';
+
+        /** @var string $redirect */
+        $redirect = '<a href="' . $url . '" target="_blank">' . __('settings', 'wpdatatables') . '</a>';
+
+        if (!$package) {
+            return new WP_Error(
+                'wpdatatables_not_activated',
+                sprintf(' ' . __('To receive automatic updates license activation is required. Please visit %s to activate wpDataTables.', 'wpdatatables'), $redirect)
+            );
+        }
+
+        return $reply;
+    }
+
+    return $reply;
+}
+
+add_filter('upgrader_pre_download', 'wdtAddMessageOnUpdate', 10, 4);
 
 /**
  * Optional Visual Composer integration

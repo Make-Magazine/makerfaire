@@ -13,7 +13,15 @@
 }
 
 .wdt-addons-find-out-more {
-    padding: 10px 15px;
-    position: absolute;
+    padding: 0 15px;
     bottom: 0;
+}
+
+.wdt-addons .wdt-checkout-button {
+    float: right;
+}
+
+.wdt-addons .caption {
+    float: right;
+    min-height: 160px;
 }
