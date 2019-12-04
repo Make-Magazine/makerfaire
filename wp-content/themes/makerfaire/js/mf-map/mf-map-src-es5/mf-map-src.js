@@ -359,21 +359,43 @@ jQuery(document).ready(function () {
       // type/category of faire filter
       typeFilter: function typeFilter(data) {
         // add to type filter array if checked on click, remove if unchecked
-        if (data.originalTarget.checked == true) {
-          typeFilters.push(data.originalTarget._value);
+        if (data.originalTarget) {
+          // for firefox
+          if (data.originalTarget.checked == true) {
+            typeFilters.push(data.originalTarget._value);
 
-          if (data.originalTarget._value == 'Featured') {
-            typeFilters.push('Flagship');
+            if (data.originalTarget._value == 'Featured') {
+              typeFilters.push('Flagship');
+            }
           }
-        }
 
-        if (data.originalTarget.checked == false) {
-          ;
-          var index = typeFilters.indexOf(data.originalTarget._value);
-          if (index !== -1) typeFilters.splice(index, 1);
+          if (data.originalTarget.checked == false) {
+            ;
+            var index = typeFilters.indexOf(data.originalTarget._value);
+            if (index !== -1) typeFilters.splice(index, 1);
 
-          if (data.originalTarget._value == 'Featured') {
-            typeFilters.splice(typeFilters.indexOf('Flagship'), 1);
+            if (data.originalTarget._value == 'Featured') {
+              typeFilters.splice(typeFilters.indexOf('Flagship'), 1);
+            }
+          }
+        } else {
+          // for webkit
+          if (data.srcElement.checked == true) {
+            typeFilters.push(data.srcElement._value);
+
+            if (data.srcElement._value == 'Featured') {
+              typeFilters.push('Flagship');
+            }
+          }
+
+          if (data.srcElement.checked == false) {
+            ;
+            var index = typeFilters.indexOf(data.srcElement._value);
+            if (index !== -1) typeFilters.splice(index, 1);
+
+            if (data.srcElement._value == 'Featured') {
+              typeFilters.splice(typeFilters.indexOf('Flagship'), 1);
+            }
           }
         }
 
