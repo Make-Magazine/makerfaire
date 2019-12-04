@@ -54,7 +54,7 @@ if ( isset( $_GET['exports_and_reports_download'] ) && isset( $_GET['_wpnonce'] 
  *
  * @package Admin UI for Plugins
  *
- * @version 1.11.1
+ * @version 1.11.2
  * @author  Scott Kingsley Clark
  * @link    https://www.scottkclark.com/
  *
@@ -1365,7 +1365,7 @@ class WP_Admin_UI {
 			}
 		} else {
 			if ( in_array( $this->export_type, array( 'csv', 'tsv', 'pipe', 'custom' ), true ) ) {
-				$this->export_sv();
+				$export_file = $this->export_sv();
 			} elseif ( $this->export_type === 'xml' ) {
 				$export_file          = str_replace( '-', '_', sanitize_title( $this->items ) ) . '_' . date_i18n( 'm-d-Y_H-i-s' ) . '_' . wp_generate_password( 5, false ) . '.' . $this->export_type;
 				$export_file          = apply_filters( 'wp_admin_ui_export_file', $export_file, $this->export_type, $this->export_type, $this->items, $this );
@@ -1502,7 +1502,11 @@ class WP_Admin_UI {
 				require_once $this->base_dir . '/includes/tcpdf/tcpdf.php';
 				require_once $this->base_dir . '/includes/export-pdf.php';
 
-				$export_file = WP_Admin_UI_Export_PDF::CreateReport( $this );
+				$export_file = apply_filters( 'wp_admin_ui_export_pdf_report_file', null, $this );
+
+				if ( ! $export_file ) {
+					$export_file = WP_Admin_UI_Export_PDF::CreateReport( $this );
+				}
 
 				$this->message( '<strong>Success:</strong> Your export is ready, the download should begin in a few moments. If it doesn\'t, <a href="' . esc_url( $this->export_url . urlencode( $export_file ) ) . '" target="_blank">click here to access your PDF export file</a>.<br /><br />When you are done with your export, <a href="' . esc_url( $this->var_update( array(
 						'remove_export' => urlencode( $export_file ),
@@ -1598,6 +1602,8 @@ class WP_Admin_UI {
 				'action'        => 'export'
 			) ) ) . '">click here to remove it</a>, otherwise the export will be deleted within 24 hours of generation.' );
 		echo '<script type="text/javascript">window.open("' . $this->export_url . urlencode( $export_file ) . '");</script>';
+
+		return $export_file;
 
 	}
 
