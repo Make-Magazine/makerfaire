@@ -5,7 +5,9 @@
 */
 class GWPreviewConfirmation {
 
+	/** @deprecated */
     private static $entry;
+    private static $entries = array();
 
     public static function init() {
 
@@ -380,9 +382,11 @@ class GWPreviewConfirmation {
 	     * @param object|bool $entry Entry object or null if this if the first time the function has been called.
 	     * @param object      $form  The current form object.
 	     */
-	    self::$entry = gf_apply_filters( array( 'gpps_entry_pre_create', $form['id'] ), self::$entry, $form );
+	    $entry = gf_apply_filters( array( 'gpps_entry_pre_create', $form['id'] ), rgar( self::$entries, $form['id'], null ), $form );
 
-        if( empty( self::$entry ) ) {
+	    // We will need to create an entry if one has not already been created - or - if there are multiple forms on the
+		// same page, we will need to get the entry separately.
+        if( empty( $entry ) ) {
 
             // flush runtime cache so we have a clean slate (fixes issue with WC GF Product Add-ons plugin)
             GFCache::flush();
@@ -396,7 +400,7 @@ class GWPreviewConfirmation {
 		        }
 	        }
 
-            self::$entry = isset( $entry ) ? $entry : GFFormsModel::create_lead( $form );
+            $entry = ! empty( $entry ) ? $entry : GFFormsModel::create_lead( $form );
             self::clear_field_value_cache( $form );
 
             foreach( $form['fields'] as $field ) {
@@ -405,8 +409,8 @@ class GWPreviewConfirmation {
 
                 switch( $input_type ) {
                     case 'signature':
-                        if( empty( self::$entry[$field['id']] ) ) {
-                            self::$entry[$field['id']] = rgpost( "input_{$form['id']}_{$field['id']}_signature_filename" );
+                        if( empty( $entry[$field['id']] ) ) {
+                            $entry[$field['id']] = rgpost( "input_{$form['id']}_{$field['id']}_signature_filename" );
                         }
 	                    break;
 	                // Improves support for GP eCommerce Fields; calculations will be wrong if calculated prior to submission.
@@ -418,8 +422,8 @@ class GWPreviewConfirmation {
 		                }
 		                $is_product = $field['type'] == 'product';
 		                $input_id   = $is_product ? sprintf( '%s.%s', $field->id, 2 ) : $field->id;
-		                if( empty( self::$entry[ $field['id'] ] ) ) {
-			                self::$entry[ $input_id ] = rgpost( sprintf( 'input_%s', str_replace( '.', '_', $input_id ) ) );
+		                if( empty( $entry[ $field['id'] ] ) ) {
+			                $entry[ $input_id ] = rgpost( sprintf( 'input_%s', str_replace( '.', '_', $input_id ) ) );
 		                }
 	                	break;
                 }
@@ -431,14 +435,14 @@ class GWPreviewConfirmation {
 		        $inputs = $field->get_entry_inputs();
 		        if ( is_array( $inputs ) ) {
 			        foreach ( $inputs as $input ) {
-				        self::$entry[ (string) $input['id'] ] = gf_apply_filters( array( 'gform_get_input_value', $form['id'], $field->id, $input['id'] ), rgar( self::$entry, (string) $input['id'] ), self::$entry, $field, $input['id'] );
+				        $entry[ (string) $input['id'] ] = gf_apply_filters( array( 'gform_get_input_value', $form['id'], $field->id, $input['id'] ), rgar( $entry, (string) $input['id'] ), $entry, $field, $input['id'] );
 			        }
 		        } else {
-			        $value = rgar( self::$entry, (string) $field->id );
-			        if ( self::is_encrypted_field( rgar( self::$entry, 'id' ), $field->id ) ) {
+			        $value = rgar( $entry, (string) $field->id );
+			        if ( self::is_encrypted_field( rgar( $entry, 'id' ), $field->id ) ) {
 				        $value = GFCommon::decrypt( $value );
 			        }
-			        self::$entry[ $field->id ] = gf_apply_filters( array( 'gform_get_input_value', $form['id'], $field->id ), $value, self::$entry, $field, '' );
+			        $entry[ $field->id ] = gf_apply_filters( array( 'gform_get_input_value', $form['id'], $field->id ), $value, $entry, $field, '' );
 		        }
 	        }
 
@@ -453,9 +457,11 @@ class GWPreviewConfirmation {
 	     * @param object|bool $entry Entry object or null if this if the first time the function has been called.
 	     * @param object      $form  The current form object.
 	     */
-	    self::$entry = gf_apply_filters( array( 'gpps_entry_post_create', $form['id'] ), self::$entry, $form );
+	    $entry = gf_apply_filters( array( 'gpps_entry_post_create', $form['id'] ), $entry, $form );
+
+	    self::$entries[ $form['id'] ] = $entry;
         
-        return self::$entry;
+        return $entry;
     }
 
     public static function preview_replace_variables( $content, $form, $entry = null ) {
@@ -463,6 +469,8 @@ class GWPreviewConfirmation {
         if ( $entry == null ) {
             $entry = self::create_lead( $form );
         }
+
+        $content = apply_filters( 'gpps_pre_replace_merge_tags', $content, $form, $entry );
           
         // add filter that will handle getting temporary URLs for file uploads and post image fields (removed below)
         // beware, the GFFormsModel::create_lead() function also triggers the gform_merge_tag_filter at some point and will
@@ -473,6 +481,8 @@ class GWPreviewConfirmation {
 
         // remove filter so this function is not applied after preview functionality is complete
         remove_filter('gform_merge_tag_filter', array('GWPreviewConfirmation', 'preview_special_merge_tags'));
+
+		$content = apply_filters( 'gpps_post_replace_merge_tags', $content, $form, $entry );
 
         return $content;
     }

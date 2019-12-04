@@ -1,6 +1,19 @@
 
 # Changelog
 
+## 1.2.15
+
+	- Fixed conflict caused by multiple forms being on the same page with dynamic population enabled.
+
+## 1.2.14
+
+	- Added "gpps_pre_replace_merge_tags" and "gpps_post_replace_merge_tags" filters to allow filtering the content before and after merge tags are replaced.
+	- Updated plugin author.
+
+## 1.2.13
+
+	- Fixed noticed generated in PHP 7.3.
+
 ## 1.2.12
 
 	- Fix major security issue.
