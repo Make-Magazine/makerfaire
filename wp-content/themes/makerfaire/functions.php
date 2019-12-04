@@ -279,6 +279,8 @@ add_filter('user_can_richedit', '__return_false', 50);
 
 //this function is used to enqueue the VUE map
 function mf_map(){
+	$my_theme = wp_get_theme();
+   $my_version = $my_theme->get('Version');
 	// Map page only
 	if (is_page_template('page-makerfaire-map.php')) {
       wp_enqueue_script('google-map', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDtWsCdftU2vI9bkZcwLxGQwlYmNRnT2VM', false, false, true);
