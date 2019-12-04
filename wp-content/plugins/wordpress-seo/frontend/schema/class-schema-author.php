@@ -13,6 +13,7 @@
  * @property WPSEO_Schema_Context $context A value object with context variables.
  */
 class WPSEO_Schema_Author extends WPSEO_Schema_Person implements WPSEO_Graph_Piece {
+
 	/**
 	 * A value object with context variables.
 	 *
@@ -90,13 +91,7 @@ class WPSEO_Schema_Author extends WPSEO_Schema_Person implements WPSEO_Graph_Pie
 	 * @return bool
 	 */
 	protected function is_post_author() {
-		/**
-		 * Filter: 'wpseo_schema_article_post_type' - Allow changing for which post types we output Article schema.
-		 *
-		 * @api array $post_types The post types for which we output Article.
-		 */
-		$post_types = apply_filters( 'wpseo_schema_article_post_type', array( 'post' ) );
-		if ( is_singular( $post_types ) ) {
+		if ( is_singular() && WPSEO_Schema_Article::is_article_post_type() ) {
 			return true;
 		}
 
@@ -125,6 +120,18 @@ class WPSEO_Schema_Author extends WPSEO_Schema_Person implements WPSEO_Graph_Pie
 		 * @api int|bool $user_id The user ID currently determined.
 		 */
 		return apply_filters( 'wpseo_schema_person_user_id', $user_id );
+	}
+
+	/**
+	 * An author should not have an image from options, this only applies to persons.
+	 *
+	 * @param array  $data      The Person schema.
+	 * @param string $schema_id The string used in the `@id` for the schema.
+	 *
+	 * @return array The Person schema.
+	 */
+	private function set_image_from_options( $data, $schema_id ) {
+		return $data;
 	}
 
 	/**

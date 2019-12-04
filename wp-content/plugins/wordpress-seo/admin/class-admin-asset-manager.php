@@ -14,6 +14,8 @@
 class WPSEO_Admin_Asset_Manager {
 
 	/**
+	 * Class that manages the assets' location.
+	 *
 	 * @var WPSEO_Admin_Asset_Location
 	 */
 	protected $asset_location;
@@ -328,10 +330,11 @@ class WPSEO_Admin_Asset_Manager {
 
 		return array(
 			array(
-				'name' => 'commons',
+				'name'      => 'commons',
 				// Load webpack-commons for bundle support.
-				'src'  => 'commons-' . $flat_version,
-				'deps' => array(
+				'src'       => 'commons-' . $flat_version,
+				'in_footer' => false,
+				'deps'      => array(
 					'wp-polyfill',
 				),
 			),
@@ -356,20 +359,10 @@ class WPSEO_Admin_Asset_Manager {
 				),
 			),
 			array(
-				'name' => 'help-center',
-				'src'  => 'wp-seo-help-center-' . $flat_version,
-				'deps' => array(
-					'jquery',
-					'wp-element',
-					'wp-i18n',
-					self::PREFIX . 'components',
-					self::PREFIX . 'commons',
-				),
-			),
-			array(
 				'name' => 'admin-script',
 				'src'  => 'wp-seo-admin-' . $flat_version,
 				'deps' => array(
+					'lodash',
 					'jquery',
 					'jquery-ui-core',
 					'jquery-ui-progressbar',
@@ -648,13 +641,13 @@ class WPSEO_Admin_Asset_Manager {
 				),
 			),
 			array(
-				'name' => 'courses-overview',
-				'src'  => 'wp-seo-courses-overview-' . $flat_version,
-				'deps' => array(
+				'name'      => 'help-scout-beacon',
+				'src'       => 'help-scout-beacon-' . $flat_version,
+				'in_footer' => false,
+				'deps'      => array(
+					self::PREFIX . 'styled-components',
 					'wp-element',
 					'wp-i18n',
-					self::PREFIX . 'styled-components',
-					self::PREFIX . 'components',
 				),
 			),
 		);
@@ -701,6 +694,7 @@ class WPSEO_Admin_Asset_Manager {
 				'src'  => 'metabox-' . $flat_version,
 				'deps' => array(
 					self::PREFIX . 'select2',
+					self::PREFIX . 'admin-css',
 				),
 			),
 			array(
@@ -714,6 +708,9 @@ class WPSEO_Admin_Asset_Manager {
 			array(
 				'name' => 'adminbar',
 				'src'  => 'adminbar-' . $flat_version,
+				'deps' => array(
+					'admin-bar',
+				),
 			),
 			array(
 				'name' => 'primary-category',

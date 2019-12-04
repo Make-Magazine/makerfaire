@@ -11,6 +11,7 @@
  * @since 10.2
  */
 class WPSEO_Schema_Organization implements WPSEO_Graph_Piece {
+
 	/**
 	 * A value object with context variables.
 	 *
@@ -99,6 +100,14 @@ class WPSEO_Schema_Organization implements WPSEO_Graph_Piece {
 		if ( WPSEO_Options::get( 'twitter_site', '' ) !== '' ) {
 			$profiles[] = 'https://twitter.com/' . WPSEO_Options::get( 'twitter_site' );
 		}
+
+		/**
+		 * Filter: 'wpseo_schema_organization_social_profiles' - Allows filtering social profiles for the
+		 * represented organization.
+		 *
+		 * @api string[] $profiles
+		 */
+		$profiles = apply_filters( 'wpseo_schema_organization_social_profiles', $profiles );
 
 		return $profiles;
 	}
