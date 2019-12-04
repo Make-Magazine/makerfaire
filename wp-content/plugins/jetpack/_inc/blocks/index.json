@@ -8,7 +8,10 @@
 		"mailchimp",
 		"map",
 		"markdown",
+		"pinterest",
 		"publicize",
+		"rating-star",
+		"recurring-payments",
 		"related-posts",
 		"repeat-visitor",
 		"sharing",
@@ -20,5 +23,5 @@
 		"videopress",
 		"wordads"
 	],
-	"beta": [ "seo", "membership-button" ]
+	"beta": [ "seo" ]
 }

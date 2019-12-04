@@ -4,8 +4,8 @@ Plugin Name: Sharedaddy
 Description: The most super duper sharing tool on the interwebs.
 Version: 0.3.1
 Author: Automattic, Inc.
-Author URI: http://automattic.com/
-Plugin URI: http://en.blog.wordpress.com/2010/08/24/more-ways-to-share/
+Author URI: https://automattic.com/
+Plugin URI: https://en.blog.wordpress.com/2010/08/24/more-ways-to-share/
 */
 
 require_once plugin_dir_path( __FILE__ ).'sharing.php';
@@ -141,10 +141,9 @@ function sharing_add_meta_box() {
 	 * @param string $var Sharing Meta Box title. Default is "Sharing".
 	 */
 	$title = apply_filters( 'sharing_meta_box_title', __( 'Sharing', 'jetpack' ) );
-	$back_compat = Jetpack_Constants::is_true( 'JETPACK_BETA_BLOCKS' ); // TODO: remove once the Sharing extension is done with it's beta.
 	if ( $post->ID !== get_option( 'page_for_posts' ) ) {
 		foreach( $post_types as $post_type ) {
-			add_meta_box( 'sharing_meta', $title, 'sharing_meta_box_content', $post_type, 'side', 'default', array( '__back_compat_meta_box' => $back_compat ) );
+			add_meta_box( 'sharing_meta', $title, 'sharing_meta_box_content', $post_type, 'side', 'default', array( '__back_compat_meta_box' => true ) );
 		}
 	}
 }
@@ -223,7 +222,7 @@ function sharing_plugin_settings( $links ) {
 function sharing_add_plugin_settings($links, $file) {
 	if ( $file == basename( dirname( __FILE__ ) ).'/'.basename( __FILE__ ) ) {
 		$links[] = '<a href="options-general.php?page=sharing.php">' . __( 'Settings', 'jetpack' ) . '</a>';
-		$links[] = '<a href="http://support.wordpress.com/sharing/" rel="noopener noreferrer" target="_blank">' . __( 'Support', 'jetpack' ) . '</a>';
+		$links[] = '<a href="https://support.wordpress.com/sharing/" rel="noopener noreferrer" target="_blank">' . __( 'Support', 'jetpack' ) . '</a>';
 	}
 
 	return $links;
