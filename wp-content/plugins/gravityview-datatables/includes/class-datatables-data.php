@@ -287,12 +287,18 @@ class GV_Extension_DataTables_Data {
         }
 
 		// check for order/sorting
-		if ( isset( $_POST['order'][0]['column'] ) ) {
-			$order_index = $_POST['order'][0]['column'];
-			if( !empty( $_POST['columns'][ $order_index ]['name'] ) ) {
-				// remove prefix 'gv_'
-				$atts['sort_field'] = substr( $_POST['columns'][ $order_index ]['name'], 3 );
-				$atts['sort_direction'] = !empty( $_POST['order'][0]['dir'] ) ? strtoupper( $_POST['order'][0]['dir'] ) : 'ASC';
+		$atts['sort_field'] = array();
+		$atts['sort_direction'] = array();
+		foreach ( (array)\GV\Utils::_POST( 'order', array() ) as $i => $order ) {
+
+			$order_index = \GV\Utils::get( $order, 'column' );
+
+			if ( null !== $order_index ) {
+				if ( ! empty( $_POST['columns'][ $order_index ]['name'] ) ) {
+					// remove prefix 'gv_'
+					$atts['sort_field'][]     = substr( $_POST['columns'][ $order_index ]['name'], 3 );
+					$atts['sort_direction'][] = strtoupper( \GV\Utils::get( $order, 'dir', 'ASC' ) );
+				}
 			}
 		}
 
@@ -534,24 +540,14 @@ class GV_Extension_DataTables_Data {
 
 				// Loop through each column and set the value of the column to the field value
 				foreach ( $fields as $field ) {
-
-					$form         = $view->form;
-					$single_entry = $entry;
+					$form = $view->form;
 
 					if ( is_callable( array( $entry, 'is_multi' ) ) && $entry->is_multi() ) {
-
-						$single_entry = $entry->from_field( $field );
-
-						if ( ! $single_entry ) {
-							$temp[] = '';
-							continue;
-						}
-
 						$form = \GV\GF_Form::by_id( $field->form_id );
 					}
 
 					$source = is_numeric( $field->ID ) ? $form : $internal_source;
-					$temp[] = $renderer->render( $field, $view, $source, $single_entry, gravityview()->request );
+					$temp[] = $renderer->render( $field, $view, $source, $entry, gravityview()->request );
 				}
 
 				\GV\Mocks\Legacy_Context::pop();
@@ -908,7 +904,7 @@ class GV_Extension_DataTables_Data {
 		);
 
 		// page size, if defined
-		$dt_config['pageLength'] = $view->settings->get( 'page_size', 10 );
+		$dt_config['pageLength'] = intval( $view->settings->get( 'page_size', 10 ) );
 
 		/**
 		 * Set the columns to be displayed
@@ -947,9 +943,11 @@ class GV_Extension_DataTables_Data {
 		// set default order
 		if ( !empty( $sort_field_setting ) ) {
 			foreach ( $columns as $k => $column ) {
-				if ( $column['name'] === 'gv_'. $view->settings->get( 'sort_field' ) ) {
-					$dir = $view->settings->get( 'sort_direction', 'asc' );
-					$dt_config['order'] = array( array( $k, strtolower( $dir ) ) );
+				foreach ( (array)$view->settings->get( 'sort_field' ) as $l => $sort_field ) {
+					if ( $column['name'] === 'gv_'. $sort_field ) {
+						$dir = (array)$view->settings->get( 'sort_direction', 'asc' );
+						$dt_config['order'][] = array( $k, strtolower( \GV\Utils::get( $dir, $l, 'asc' ) ) );
+					}
 				}
 			}
 		}

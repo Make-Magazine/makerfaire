@@ -12,7 +12,8 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 			'csv' => 1,
 			'excel' => 0,
 			'pdf' => 0,
-			'print' => 1
+			'print' => 1,
+			'colvis' => 0,
 		);
 
 		return $settings;
@@ -26,7 +27,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 	function tooltips( $tooltips = array() ) {
 
 		$tooltips['gv_datatables_buttons'] = array(
-			'title' => __('Export Buttons', 'gv-datatables'),
+			'title' => __('Enable Buttons', 'gv-datatables'),
 			'value' => __('Display buttons that allow users to print or export the current results.', 'gv-datatables')
 		);
 
@@ -35,7 +36,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 
 	function settings_row( $ds ) {
 
-		$buttons_labels = self::button_labels();
+		$buttons_labels = self::button_labels('admin');
 
 		?>
 		<table class="form-table">
@@ -54,22 +55,25 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 			</tr>
 			<tr valign="top">
 				<td colspan="2">
-					<label><?php esc_html_e( 'Export Buttons', 'gv-datatables' ); ?></label>
+					<label><?php esc_html_e( 'Buttons', 'gv-datatables' ); ?></label>
 					<ul >
 						<?php
-						foreach( $ds['export_buttons'] as $b_key => $b_value ) {
-							if( empty( $buttons_labels[ $b_key ] )) { continue; }
+
+						$export_button_settings = $ds['export_buttons'];
+
+						foreach( $buttons_labels as $button_key => $button_label ) {
 
 							echo '<li>'.GravityView_Render_Settings::render_field_option(
-								'datatables_settings[export_buttons]['. $b_key .']',
-								array(
-									'label' => $buttons_labels[ $b_key ],
-									'type' => 'checkbox',
-									'value' => 1
-								),
-								$ds['export_buttons'][ $b_key ]
-							).'</li>';
-						}
+									'datatables_settings[export_buttons]['. $button_key .']',
+									array(
+										'label' => $button_label,
+										'type' => 'checkbox',
+										'value' => 1
+									),
+									\GV\Utils::get( $export_button_settings, $button_key, 0 )
+								).'</li>';
+
+                        }
 						?>
 					</ul>
 				</td>
@@ -80,16 +84,39 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 
 	/**
 	 * Returns the Buttons buttons' labels
+     *
+     * @since 2.4 Added $context parameter
+     *
+     * @param string $context Where the labels are being shown. Allows for modifying the label for the View Settings vs frontend (default: "admin")
+     *
 	 * @return array
 	 */
-	public static function button_labels() {
-		return array(
+	public static function button_labels( $context = 'admin' ) {
+
+		if ( 'admin' === $context ) {
+		    $colvis_label = __( 'Column Visibility', 'gv-datatables' );
+		} else {
+			$colvis_label = __( 'Columns', 'gv-datatables' );
+        }
+
+		$button_labels = array(
 			'copy' => __( 'Copy', 'gv-datatables' ),
 			'csv' => 'CSV',
 			'excel' => 'Excel',
 			'pdf' => 'PDF',
-			'print' => __( 'Print', 'gv-datatables' )
+			'print' => __( 'Print', 'gv-datatables' ),
+			'colvis' => $colvis_label,
 		);
+
+		/**
+         * @filter `gravityview_datatables_button_labels` Modify labels buttons
+         * @param array $button_labels Array of button types and their associated labels
+         * @param string $context Where the labels are being shown. Allows for modifying the label for the View Settings vs frontend (default: "admin")
+		 * @since 2.4
+		 */
+		$button_labels = apply_filters( 'gravityview_datatables_button_labels', $button_labels, $context );
+		
+		return $button_labels;
 	}
 
 	/**
@@ -109,7 +136,6 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 		//pdfmake
 		wp_enqueue_script( 'gv-dt-buttons-pdfmake', plugins_url( 'assets/pdfmake/build/pdfmake.min.js', GV_DT_FILE ), array( 'jquery' ), GV_Extension_DataTables::version, true );
 		wp_enqueue_script( 'gv-dt-buttons-vfs-fonts', plugins_url( 'assets/pdfmake/build/vfs_fonts.js', GV_DT_FILE ), array( 'jquery' ), GV_Extension_DataTables::version, true );
-
 
 		/**
 		 * @filter `gravityview_dt_buttons_script_src` Use your own DataTables Buttons core script
@@ -146,7 +172,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 		if( !empty( $buttons ) && is_array( $buttons ) ) {
 
 			//fetch buttons' labels
-			$button_labels = self::button_labels();
+			$button_labels = self::button_labels( 'frontend' );
 
 			//calculate who's in
 			$buttons = array_keys( $buttons, 1 );
@@ -155,11 +181,11 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 				foreach( $buttons as $button ) {
 					$button_config = array(
 						'extend' => $button,
-						'text' => $button_labels[ $button ],
+						'text' => esc_html( $button_labels[ $button ] ),
 					);
 
 					/**
-					 * @filter `gravityview/datatables/button` or `gravityview/datatables/button_{type}` customise the button export options ( `type` is 'pdf', 'csv', 'excel' )
+					 * @filter `gravityview/datatables/button` or `gravityview/datatables/button_{type}` customise the button export options ( `type` is 'pdf', 'csv', 'excel', 'colvis' )
 					 * @since 2.0
 					 * @param array $button_config Associative array of button options (mandatory 'extend' and 'text' (e.g. add pdf orientation with 'orientation' => 'landscape' )
 					 * @param int $view_id View ID

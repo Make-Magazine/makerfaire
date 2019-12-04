@@ -19,21 +19,10 @@
 	.dataTables_wrapper .dataTables_processing {
 		z-index: 100000 !important;
 		height: auto !important;
-		padding-top: 20px !important;
-		padding-bottom: 20px !important;
-		line-height: 1.5em !important;
-		min-width: 300px !important;
-		border: 1px solid #ccc;
-
-		// Backups for browsers that don't support CSS `calc()`
-		width: 100%;
-		margin-left: -50%;
-
-		// In Mac, it's 15px, but otherwise seems to be 17. No harm in 1px more room on each side.
-		$scroll_bar_width: 17px;
-
-		width: calc( 100% - $scroll_bar_width ); // Fix the window overlapping the scroll bar
-		margin-left: calc( -50% + ( $scroll_bar_width / 2 ) ); // Add the calculation in, if it's supported
+		padding-top: 20px;
+		padding-bottom: 20px;
+		line-height: 1.5em;
+		min-width: 300px;
 	}
 
 	// When Scroller is active, hide the page length selector

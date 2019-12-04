@@ -1,7 +1,7 @@
 # GravityView - DataTables Extension #
 **Tags:** gravityview  
 **Requires at least:** 4.4  
-**Tested up to:** 5.0.2  
+**Tested up to:** 5.2.3  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices, luistinygod, soulseekah  
 **License:** GPL 3 or higher  
@@ -15,6 +15,34 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 ## Changelog ##
+
+### 2.4.1 on October 9, 2019 ###
+
+* Fixed: Fields added using [Multiple Forms](https://gravityview.co/extensions/multiple-forms/) don't display on a Single Entry page
+* Updated translations:
+    - Russian (Thanks, Viktor S!)
+    - Polish (Thanks, Dariusz Zielonka!)
+    - French
+
+__Developer Updates:__
+
+* Updated DataTables scripts:
+    - Scroller 2.0 to 2.0.1
+    - FixedHeader 3.1.5 to 3.1.6
+    - FixedColumns 3.2.6 - 3.3.0
+    - Buttons 1.5.6 to 1.6.0
+
+### 2.4 on April 2, 2019 ###
+
+* Added: Support for multi-sorting columns - [learn how!](https://docs.gravityview.co/article/569-multi-sorting-columns-datatables) (_requires GravityView 2.3_)
+* Added: Allow users to show and hide columns with a new button ("Column Visibility")
+* Removed the border around the Scroller "Loading data..." message
+
+__Developer Updates:__
+
+* Added `gravityview_datatables_button_labels` filter to modify the Buttons labels
+* Updated: Scroller to 2.0 ([read about the changes](http://cdn.datatables.net/scroller/2.0.0/))
+* Updated: Buttons to 1.5.6 from 1.5.4 ([read about the changes](http://cdn.datatables.net/buttons/1.5.5/))
 
 ### 2.3.4 on December 20, 2018 ###
 

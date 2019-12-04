@@ -154,25 +154,25 @@ class GV_Extension_DataTables_DataTest extends GV_UnitTestCase {
 		$this->assertContains( '9', $result['data'][1][1] );
 		$this->assertContains( '8', $result['data'][2][1] );
 
-		$params['start'] = 1;
+		$params['start'] = 3;
 		$params = $this->_mock_post( $params );
 
 		$result = json_decode( $data->get_datatables_data(), true );
 		$this->assertEquals( 12, $result['recordsTotal'] );
 		$this->assertEquals( 3, count( $result['data'] ) );
-		$this->assertContains( '9', $result['data'][0][1] );
-		$this->assertContains( '8', $result['data'][1][1] );
-		$this->assertContains( '7', $result['data'][2][1] );
+		$this->assertContains( '7', $result['data'][0][1] );
+		$this->assertContains( '6', $result['data'][1][1] );
+		$this->assertContains( '5', $result['data'][2][1] );
 
-		$params['order'] = array( array( 'column' => 1, 'dir' => 'desc' ) );
+		$params['order'] = array( array( 'column' => 1, 'dir' => 'asc' ) );
 		$params['columns'] = array( null, array( 'name' => 'gv_16' ) );
 		$params = $this->_mock_post( $params );
 		$result = json_decode( $data->get_datatables_data(), true );
 		$this->assertEquals( 12, $result['recordsTotal'] );
 		$this->assertEquals( 3, count( $result['data'] ) );
-		$this->assertContains( 'good', $result['data'][0][1] );
-		$this->assertContains( '9', $result['data'][1][1] );
-		$this->assertContains( '8', $result['data'][2][1] );
+		$this->assertContains( '3', $result['data'][0][1] );
+		$this->assertContains( '4', $result['data'][1][1] );
+		$this->assertContains( '5', $result['data'][2][1] );
 
 		$this->_mock_post();
 	}
