@@ -5,7 +5,7 @@
  * Description: WP Crontrol lets you view and control what's happening in the WP-Cron system.
  * Author:      John Blackbourn & crontributors
  * Author URI:  https://github.com/johnbillion/wp-crontrol/graphs/contributors
- * Version:     1.7.0
+ * Version:     1.7.1
  * Text Domain: wp-crontrol
  * Domain Path: /languages/
  * License:     GPL v2 or later
@@ -927,7 +927,7 @@ class Crontrol {
 										/* translators: 1: Date/time format for an input field, 2: PHP function name. */
 										esc_html__( 'Format: %1$s or anything accepted by %2$s', 'wp-crontrol' ),
 										'<code>YYYY-MM-DD HH:MM:SS</code>',
-										'<a href="https://secure.php.net/manual/en/function.strtotime.html"><code>strtotime()</code></a>'
+										'<a href="https://www.php.net/manual/en/function.strtotime.php"><code>strtotime()</code></a>'
 									);
 								?>
 							</p>
