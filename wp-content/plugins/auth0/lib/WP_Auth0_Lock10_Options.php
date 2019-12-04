@@ -27,11 +27,27 @@ class WP_Auth0_Lock10_Options {
 		return $this->wp_options->get_wp_auth0_url( $this->get_callback_protocol(), true );
 	}
 
+	/**
+	 * @deprecated - 3.10.0, not used.
+	 *
+	 * @return bool
+	 *
+	 * @codeCoverageIgnore - Deprecated.
+	 */
 	public function get_sso() {
+		// phpcs:ignore
+		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
 		return $this->_get_boolean( $this->wp_options->get( 'sso' ) );
 	}
 
+	/**
+	 * @deprecated - 3.10.0, not used.
+	 *
+	 * @codeCoverageIgnore - Deprecated.
+	 */
 	public function get_client_id() {
+		// phpcs:ignore
+		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
 		return $this->wp_options->get( 'client_id' );
 	}
 
@@ -81,6 +97,11 @@ class WP_Auth0_Lock10_Options {
 		if ( isset( $settings['language'] ) && ! empty( $settings['language'] ) ) {
 			$options_obj['language'] = $settings['language'];
 		}
+
+		if ( ! empty( $settings['dict'] ) ) {
+			$settings['language_dictionary'] = $settings['dict'];
+		}
+
 		if ( isset( $settings['language_dictionary'] ) && ! empty( $settings['language_dictionary'] ) ) {
 			$options_obj['languageDictionary'] = json_decode( $settings['language_dictionary'], true );
 		}
@@ -95,12 +116,16 @@ class WP_Auth0_Lock10_Options {
 
 		}
 
-		if ( $this->_is_valid( $settings, 'social_big_buttons' ) ) {
-			$options_obj['socialButtonStyle'] = $settings['social_big_buttons'] ? 'big' : 'small';
-		}
-		if ( isset( $settings['gravatar'] ) && empty( $settings['gravatar'] ) ) {
+		$options_obj['socialButtonStyle'] = 'big';
+
+		if ( isset( $settings['gravatar'] ) && '' !== $settings['gravatar'] && empty( $settings['gravatar'] ) ) {
 			$options_obj['avatar'] = null;
 		}
+
+		if ( ! empty( $settings['gravatar'] ) ) {
+			$options_obj['avatar'] = true;
+		}
+
 		if ( $this->_is_valid( $settings, 'username_style' ) ) {
 			$options_obj['usernameStyle'] = $settings['username_style'];
 		}
@@ -124,11 +149,7 @@ class WP_Auth0_Lock10_Options {
 			$extra_conf_arr = json_decode( $settings['extra_conf'], true );
 			$options_obj    = array_merge_recursive( $extra_conf_arr, $options_obj );
 		}
-		if ( $this->signup_mode ) {
-			$options_obj['allowLogin'] = false;
-		} elseif ( isset( $_GET['action'] ) && $_GET['action'] == 'register' ) {
-			$options_obj['allowLogin'] = true;
-		}
+
 		return $options_obj;
 	}
 
@@ -204,11 +225,11 @@ class WP_Auth0_Lock10_Options {
 			$options_obj['disableSignupAction'] = true;
 		}
 
-		if ( function_exists( 'login_header' ) && isset( $_GET['action'] ) && 'register' === $_GET['action'] ) {
+		if ( wp_auth0_is_current_login_action( array( 'register' ) ) ) {
 			$options_obj['initialScreen'] = 'signUp';
 		}
 
-		return $options_obj;
+		return apply_filters( 'auth0_lock_options', $options_obj );
 	}
 
 	/**
@@ -303,7 +324,7 @@ class WP_Auth0_Lock10_Options {
 	}
 
 	/**
-	 * @deprecated - 3.6.0, not used, use WP_Auth0_Options::Instance->get( 'cdn_url' ) instead.
+	 * @deprecated - 3.6.0, not used, use WP_Auth0_Options::Instance->get_lock_url() instead.
 	 *
 	 * @return string
 	 *

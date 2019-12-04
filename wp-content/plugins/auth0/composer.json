@@ -7,10 +7,10 @@
         "php": "^5.3 || ^7.0"
     },
     "require-dev": {
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.5",
         "wp-coding-standards/wpcs": "^1",
-        "phpunit/phpunit": "^6.5.0",
-        "phpcompatibility/phpcompatibility-wp": "*"
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "phpunit/phpunit": "^5.0 || ^6.0"
     },
     "authors": [
         {
@@ -30,15 +30,20 @@
     },
     "minimum-stability": "stable",
     "scripts": {
-        "compat": "vendor/bin/phpcs --standard=phpcs-compat-ruleset.xml .",
+        "compat": "\"vendor/bin/phpcs\" --standard=phpcs-compat-ruleset.xml .",
         "phpcs": "\"vendor/bin/phpcs\"",
-        "phpcs-tests": "./vendor/bin/phpcs --standard=phpcs-test-ruleset.xml -s ./tests/",
+        "phpcs-i18n": "\"vendor/bin/phpcs\" --sniffs=WordPress.WP.I18n",
+        "phpcs-tests": "\"vendor/bin/phpcs\" --standard=phpcs-test-ruleset.xml -s ./tests/",
         "phpcbf": "\"vendor/bin/phpcbf\"",
-        "phpcbf-tests": "./vendor/bin/phpcbf --standard=phpcs-test-ruleset.xml -s ./tests/",
-        "sniffs": "vendor/bin/phpcs --standard=phpcs-ruleset.xml -e",
+        "phpcbf-tests": "\"vendor/bin/phpcbf\" --standard=phpcs-test-ruleset.xml -s ./tests/",
+        "sniffs": "\"vendor/bin/phpcs\" --standard=phpcs-ruleset.xml -e",
         "test": "\"vendor/bin/phpunit\" --coverage-text",
         "test-group": "\"vendor/bin/phpunit\" --coverage-text --group",
-        "test-ci": "vendor/bin/phpunit --debug --coverage-clover=coverage.xml",
-        "pre-commit": [ "@compat", "@phpcbf", "@phpcbf-tests", "@phpcs-tests", "@test" ]
+        "test-ci": "\"vendor/bin/phpunit\" --coverage-clover=coverage.xml",
+        "pre-commit-no-tests": [ "@phpcbf", "@phpcbf-tests", "@phpcs-tests", "@compat", "@phpcs-i18n" ],
+        "pre-commit": [ "@phpcbf", "@phpcbf-tests", "@phpcs-tests", "@compat", "@phpcs-i18n", "@test" ]
+    },
+    "autoload-dev": {
+        "classmap": ["tests/classes/", "tests/traits/"]
     }
 }

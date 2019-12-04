@@ -1,15 +1,16 @@
 <?php
 /**
  * Plugin Name: Login by Auth0
- * Description: Login by Auth0 provides improved username/password login, Passwordless login, Social login and Single Sign On for all your sites.
- * Version: 3.9.0
+ * Plugin URL: https://auth0.com/docs/cms/wordpress
+ * Description: Login by Auth0 provides improved username/password login, Passwordless login, Social login, MFA, and Single Sign On for all your sites.
+ * Version: 3.11.1
  * Author: Auth0
  * Author URI: https://auth0.com
  * Text Domain: wp-auth0
  */
 
-define( 'WPA0_VERSION', '3.9.0' );
-define( 'AUTH0_DB_VERSION', 20 );
+define( 'WPA0_VERSION', '3.11.1' );
+define( 'AUTH0_DB_VERSION', 22 );
 
 define( 'WPA0_PLUGIN_FILE', __FILE__ );
 define( 'WPA0_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -20,14 +21,16 @@ define( 'WPA0_PLUGIN_IMG_URL', WPA0_PLUGIN_URL . 'assets/img/' );
 define( 'WPA0_PLUGIN_LIB_URL', WPA0_PLUGIN_URL . 'assets/lib/' );
 define( 'WPA0_PLUGIN_BS_URL', WPA0_PLUGIN_URL . 'assets/bootstrap/' );
 
-define( 'WPA0_LOCK_CDN_URL', 'https://cdn.auth0.com/js/lock/11.5/lock.min.js' );
-define( 'WPA0_AUTH0_JS_CDN_URL', 'https://cdn.auth0.com/js/auth0/9.4/auth0.min.js' );
+define( 'WPA0_LOCK_CDN_URL', 'https://cdn.auth0.com/js/lock/11.16/lock.min.js' );
+define( 'WPA0_AUTH0_JS_CDN_URL', 'https://cdn.auth0.com/js/auth0/9.10/auth0.min.js' );
 
 define( 'WPA0_AUTH0_LOGIN_FORM_ID', 'auth0-login-form' );
 define( 'WPA0_CACHE_GROUP', 'wp_auth0' );
 define( 'WPA0_JWKS_CACHE_TRANSIENT_NAME', 'WP_Auth0_JWKS_cache' );
 
 define( 'WPA0_LANG', 'wp-auth0' ); // deprecated; do not use for translations
+
+require_once 'functions.php';
 
 /*
  * Localization
@@ -78,16 +81,17 @@ class WP_Auth0 {
 	public function __construct( $options = null ) {
 		spl_autoload_register( array( $this, 'autoloader' ) );
 		$this->a0_options = $options instanceof WP_Auth0_Options ? $options : WP_Auth0_Options::Instance();
+		$this->basename   = plugin_basename( __FILE__ );
 	}
 
 	/**
-	 * Initialize the plugin and its modules setting all the hooks
+	 * Initialize the plugin and its modules setting all the hooks.
+	 *
+	 * @deprecated - 3.10.0, will move add_action calls out of this class in the next major.
+	 *
+	 * @codeCoverageIgnore - Deprecated.
 	 */
 	public function init() {
-		$this->basename = plugin_basename( __FILE__ );
-
-		$ip_checker = new WP_Auth0_Ip_Check();
-		$ip_checker->init();
 
 		$this->db_manager = new WP_Auth0_DBManager( $this->a0_options );
 		$this->db_manager->init();
@@ -119,10 +123,6 @@ class WP_Auth0 {
 
 		add_filter( 'plugin_action_links_' . $this->basename, array( $this, 'wp_add_plugin_settings_link' ) );
 
-		if ( isset( $_GET['message'] ) ) {
-			add_action( 'wp_footer', array( $this, 'a0_render_message' ) );
-		}
-
 		$initial_setup = new WP_Auth0_InitialSetup( $this->a0_options );
 		$initial_setup->init();
 
@@ -144,7 +144,7 @@ class WP_Auth0 {
 		$configure_jwt_auth = new WP_Auth0_Configure_JWTAUTH( $this->a0_options );
 		$configure_jwt_auth->init();
 
-		$woocommerce_override = new WP_Auth0_WooCommerceOverrides( $this );
+		$woocommerce_override = new WP_Auth0_WooCommerceOverrides( $this, $this->a0_options );
 		$woocommerce_override->init();
 
 		$users_exporter = new WP_Auth0_Export_Users( $this->db_manager );
@@ -171,10 +171,6 @@ class WP_Auth0 {
 
 		$profile_delete_data = new WP_Auth0_Profile_Delete_Data( $users_repo );
 		$profile_delete_data->init();
-
-		$api_delete_mfa     = new WP_Auth0_Api_Delete_User_Mfa( $this->a0_options, $api_client_creds );
-		$profile_delete_mfa = new WP_Auth0_Profile_Delete_Mfa( $this->a0_options, $api_delete_mfa );
-		$profile_delete_mfa->init();
 
 		WP_Auth0_Email_Verification::init();
 	}
@@ -313,19 +309,24 @@ class WP_Auth0 {
 	 */
 	public function wp_add_plugin_settings_link( $links ) {
 
-		$settings_link = '<a href="admin.php?page=wpa0-errors">Error Log</a>';
-		array_unshift( $links, $settings_link );
+		array_unshift(
+			$links,
+			sprintf(
+				'<a href="%s">%s</a>',
+				admin_url( 'admin.php?page=wpa0' ),
+				__( 'Settings', 'wp-auth0' )
+			)
+		);
 
-		$settings_link = '<a href="admin.php?page=wpa0">Settings</a>';
-		array_unshift( $links, $settings_link );
-
-		$client_id     = $this->a0_options->get( 'client_id' );
-		$client_secret = $this->a0_options->get( 'client_secret' );
-		$domain        = $this->a0_options->get( 'domain' );
-
-		if ( ( ! $client_id ) || ( ! $client_secret ) || ( ! $domain ) ) {
-			$settings_link = '<a href="admin.php?page=wpa0-setup">Quick Setup</a>';
-			array_unshift( $links, $settings_link );
+		if ( ! self::ready() ) {
+			array_unshift(
+				$links,
+				sprintf(
+					'<a href="%s">%s</a>',
+					admin_url( 'admin.php?page=wpa0-setup' ),
+					__( 'Setup Wizard', 'wp-auth0' )
+				)
+			);
 		}
 
 		return $links;
@@ -394,22 +395,11 @@ class WP_Auth0 {
 	 * @return string
 	 */
 	public function render_form( $html ) {
-		// Do not show Auth0 form when ...
-		if (
-			// .. processing lost password
-			( isset( $_GET['action'] ) && in_array( $_GET['action'], array( 'lostpassword', 'rp' ) ) )
-			// ... handling an Auth0 callback
-			|| ! empty( $_GET['auth0'] )
-			// ... plugin is not configured
-			|| ! self::ready()
-		) {
-			return $html;
-		}
-
 		ob_start();
 		require_once WPA0_PLUGIN_DIR . 'templates/login-form.php';
 		renderAuth0Form();
-		return ob_get_clean();
+		$auth0_form = ob_get_clean();
+		return $auth0_form ? $auth0_form : $html;
 	}
 
 	public function wp_init() {
@@ -440,11 +430,6 @@ class WP_Auth0 {
 		delete_option( 'widget_wp_auth0_popup_widget' );
 		delete_option( 'widget_wp_auth0_widget' );
 		delete_option( 'widget_wp_auth0_social_amplification_widget' );
-
-		delete_option( 'wp_auth0_client_grant_failed' );
-		delete_option( 'wp_auth0_client_grant_success' );
-		delete_option( 'wp_auth0_grant_types_failed' );
-		delete_option( 'wp_auth0_grant_types_success' );
 
 		delete_transient( WPA0_JWKS_CACHE_TRANSIENT_NAME );
 	}
@@ -583,52 +568,95 @@ class WP_Auth0 {
 $a0_plugin = new WP_Auth0();
 $a0_plugin->init();
 
-if ( ! function_exists( 'get_auth0userinfo' ) ) {
-	function get_auth0userinfo( $user_id ) {
-		$profile = WP_Auth0_UsersRepo::get_meta( $user_id, 'auth0_obj' );
-		return $profile ? WP_Auth0_Serializer::unserialize( $profile ) : false;
+/*
+ * Core WP hooks
+ */
+
+/**
+ * Redirect a successful lost password submission to a login override page.
+ *
+ * @param string $location - Redirect in process.
+ *
+ * @return string
+ */
+function wp_auth0_filter_wp_redirect_lostpassword( $location ) {
+	// Make sure we're going to the check email action on the wp-login page.
+	if ( 'wp-login.php?checkemail=confirm' !== $location ) {
+		return $location;
+	}
+
+	// Make sure we're on the lost password action on the wp-login page.
+	if ( ! wp_auth0_is_current_login_action( array( 'lostpassword' ) ) ) {
+		return $location;
+	}
+
+	// Make sure plugin settings allow core WP login form overrides
+	if ( 'never' === wp_auth0_get_option( 'wordpress_login_enabled' ) ) {
+		return $location;
+	}
+
+	// Make sure we're coming from an override page.
+	$required_referrer = remove_query_arg( 'wle', wp_login_url() );
+	$required_referrer = add_query_arg( 'action', 'lostpassword', $required_referrer );
+	$required_referrer = wp_auth0_login_override_url( $required_referrer );
+	if ( ! isset( $_SERVER['HTTP_REFERER'] ) || $required_referrer !== $_SERVER['HTTP_REFERER'] ) {
+		return $location;
+	}
+
+	return wp_auth0_login_override_url( $location );
+}
+
+add_filter( 'wp_redirect', 'wp_auth0_filter_wp_redirect_lostpassword', 100 );
+
+/**
+ * Add an override code to the lost password URL if authorized.
+ *
+ * @param string $wp_login_url - Existing lost password URL.
+ *
+ * @return string
+ */
+function wp_auth0_filter_login_override_url( $wp_login_url ) {
+	if ( wp_auth0_can_show_wp_login_form() && isset( $_REQUEST['wle'] ) ) {
+		// We are on an override page.
+		$wp_login_url = add_query_arg( 'wle', $_REQUEST['wle'], $wp_login_url );
+	} elseif ( wp_auth0_is_current_login_action( array( 'resetpass' ) ) ) {
+		// We are on the reset password page with a link to login.
+		// This page will not be shown unless we get here via a valid reset password request.
+		$wp_login_url = wp_auth0_login_override_url( $wp_login_url );
+	}
+	return $wp_login_url;
+}
+
+add_filter( 'lostpassword_url', 'wp_auth0_filter_login_override_url', 100 );
+add_filter( 'login_url', 'wp_auth0_filter_login_override_url', 100 );
+
+/**
+ * Add the core WP form override to the lost password and login forms.
+ */
+function wp_auth0_filter_login_override_form() {
+	if ( wp_auth0_can_show_wp_login_form() && isset( $_REQUEST['wle'] ) ) {
+		printf( '<input type="hidden" name="wle" value="%s" />', $_REQUEST['wle'] );
 	}
 }
 
-if ( ! function_exists( 'get_currentauth0userinfo' ) ) {
-	function get_currentauth0userinfo() {
-		global $currentauth0_user;
-		$currentauth0_user = get_auth0userinfo( get_current_user_id() );
-		return $currentauth0_user;
+add_action( 'login_form', 'wp_auth0_filter_login_override_form', 100 );
+add_action( 'lostpassword_form', 'wp_auth0_filter_login_override_form', 100 );
+
+/**
+ * Add new classes to the body element on all front-end and login pages.
+ *
+ * @param array $classes - Array of existing classes.
+ *
+ * @return array
+ */
+function wp_auth0_filter_body_class( array $classes ) {
+	if ( wp_auth0_can_show_wp_login_form() ) {
+		$classes[] = 'a0-show-core-login';
 	}
+	return $classes;
 }
-
-if ( ! function_exists( 'get_currentauth0user' ) ) {
-	function get_currentauth0user() {
-		return (object) array(
-			'auth0_obj'   => get_auth0userinfo( get_current_user_id() ),
-			'last_update' => WP_Auth0_UsersRepo::get_meta( get_current_user_id(), 'last_update' ),
-			'auth0_id'    => WP_Auth0_UsersRepo::get_meta( get_current_user_id(), 'auth0_id' ),
-		);
-	}
-}
-
-if ( ! function_exists( 'get_auth0_curatedBlogName' ) ) {
-	function get_auth0_curatedBlogName() {
-
-		$name = get_bloginfo( 'name' );
-
-		// WordPress can have a blank site title, which will cause initial client creation to fail
-		if ( empty( $name ) ) {
-			$name = wp_parse_url( home_url(), PHP_URL_HOST );
-
-			if ( $port = wp_parse_url( home_url(), PHP_URL_PORT ) ) {
-				$name .= ':' . $port;
-			}
-		}
-
-		$name = preg_replace( '/[^A-Za-z0-9 ]/', '', $name );
-		$name = preg_replace( '/\s+/', ' ', $name );
-		$name = str_replace( ' ', '-', $name );
-
-		return $name;
-	}
-}
+add_filter( 'body_class', 'wp_auth0_filter_body_class' );
+add_filter( 'login_body_class', 'wp_auth0_filter_body_class' );
 
 /*
  * Beta plugin deactivation
