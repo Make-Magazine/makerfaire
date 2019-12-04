@@ -7,16 +7,15 @@
 }
 
 ul.gfgeo-geocoder-meta-fields-wrapper li {
-    border-bottom: 1px solid #e1e1e1 !important;
-    padding-bottom: 20px !important;
-    margin-bottom: 20px !important;
+    padding-bottom: 9px !important;
 }
 
 ul.gfgeo-geocoder-meta-fields-wrapper {
-    padding: 10px;
-    background: #fafafa;
-    border: 1px solid #efefef;
-    display: none;
+    padding: 15px;
+	background: #fdfdfd;
+	border: 1px solid #f1f1f1;
+	display: none;
+	border-radius: 5px;
 }
 
 ul.gfgeo-geocoder-meta-fields-wrapper li label {
@@ -51,6 +50,15 @@ ul.gfgeo-geocoder-meta-fields-wrapper li .custom-field-content input {
     margin: 0px;
     cursor: pointer;
 }
+
+/*#gform_fields li #field_settings li.field_setting.gfgeo-settings-group {
+	display: list-item;
+	padding: 15px 0px;
+	margin: 10px 0 20px;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}*/
+
 
 /*
 .gfgeo-settings {
@@ -157,6 +165,53 @@ ul.gfgeo-geocoder-meta-fields-wrapper li .custom-field-content input {
     background: #f1f1f1;
 }
 
-li.gfield.gfgeo-hidden-fields {
+body .gform_wrapper li.gfield.gfgeo-hidden-fields {
     display: none;
 }
+
+.gfgeo-directions-panel-holder {
+	max-height: 350px;
+	display: inline-block;
+	overflow: scroll;
+}
+
+.gfgeo-directions-panel-holder .adp-directions {
+	border: 0;
+	width: 100%;
+	display: inline-block;
+	table-layout: initial;
+}
+
+.gfgeo-directions-panel-holder .adp-directions .adp-step, 
+.gfgeo-directions-panel-holder .adp-directions .adp-substep {
+	border: 0;
+	border-top: 1px solid #cdcdcd;
+}
+
+.gfgeo-directions-panel-holder .adp-directions td.adp-substep:nth-child(1),
+.gfgeo-directions-panel-holder .adp-directions td.adp-substep:nth-child(2) {
+	width: 3%;
+	max-width: 25px;
+}
+
+.gfgeo-directions-panel-holder .adp-directions td.adp-substep:nth-child(3) {
+	width: 50%;
+}
+
+.gfgeo-directions-panel-holder .adp-directions td.adp-substep:nth-child(4) {
+	width: 5%;
+	max-width: 45px;
+}
+
+.gfgeo-directions-panel-holder table.adp-placemark tr td:nth-child(1) {
+	width: 40px;
+}
+.gfgeo-directions-panel-holder table.adp-placemark td {
+	vertical-align: middle;
+	border: 0;
+}
+
+.gfgeo-directions-panel-holder .adp-placemark img {
+
+}
+

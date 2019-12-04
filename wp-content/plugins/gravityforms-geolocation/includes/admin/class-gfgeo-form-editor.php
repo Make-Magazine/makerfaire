@@ -82,42 +82,50 @@ class GFGEO_Form_Editor {
 		if ( 10 === $position ) {
 			?>
 
-			<!-- default latitude -->
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-section-start">
-				<h3> 
-					<?php esc_html_e( 'Geolocation options', 'gfgeo' ); ?> 
-				</h3>
-			</li>
+			<li class="field_setting gfgeo-geocoder-settings gfgeo-default-coordinates-settings-group gfgeo-settings-group">
 
-			<!-- default latitude -->
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings">
-				<label for="gfgeo-default-latitude"> 
-					<?php esc_html_e( 'Default Latitude', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_default_latitude_tt' ); ?>
-				</label> 
-				<input 
-					type="text" 
-					id="gfgeo-default-latitude" 
-					size="25" 
-					onkeyup="SetFieldProperty( 'gfgeo_default_latitude', this.value );">
-			</li>
+				<label for="gfgeo-default-coordinates" class="section_label">
+					<?php esc_attr_e( 'Default Coordinates', 'gfgeo' ); ?>
+				</label>
 
-			<!-- default longitude -->
+				<ul class="gfgeo-settings-group-inner">
 
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings">
-				<label for="gfgeo-default-longitude"> 
-					<?php esc_html_e( 'Default Longitude', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_default_longitude_tt' ); ?>
-				</label> 
-				<input 
-					type="text" 
-					id="gfgeo-default-longitude" 
-					size="25" 
-					onkeyup="SetFieldProperty( 'gfgeo_default_longitude', this.value );">
+					<!-- default latitude -->
+					<li class="gfgeo-default-latitude gfgeo-settings-section">
+						<label for="gfgeo-default-latitude"> 
+							<?php esc_html_e( 'Default Latitude', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_default_latitude_tt' ); ?>
+						</label> 
+						<input 
+							type="text" 
+							id="gfgeo-default-latitude" 
+							size="25" 
+							onkeyup="SetFieldProperty( 'gfgeo_default_latitude', this.value );">
+					</li>
+
+					<!-- default longitude -->
+
+					<li class="gfgeo-default-longitude gfgeo-settings-section">
+						<label for="gfgeo-default-longitude"> 
+							<?php esc_html_e( 'Default Longitude', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_default_longitude_tt' ); ?>
+						</label> 
+						<input 
+							type="text" 
+							id="gfgeo-default-longitude" 
+							size="25" 
+							onkeyup="SetFieldProperty( 'gfgeo_default_longitude', this.value );">
+					</li>
+				</ul>
 			</li>
 
 			<!-- Page locator -->
 			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings gfgeo-page-locator" >
+
+				<label for="gfgeo-page-locator" class="section_label">
+					<?php esc_attr_e( 'Page Auto-Locator', 'gfgeo' ); ?>
+				</label>
+
 				<input 
 					type="checkbox" 
 					id="gfgeo-page-locator" 
@@ -191,7 +199,7 @@ class GFGEO_Form_Editor {
 
 			<li class="field_setting gfgeo-settings gfgeo-dynamic-location-field">
 
-				<label for="gfgeo-dynamic-location-field">
+				<label for="gfgeo-dynamic-location-field" class="section_label">
 					<?php esc_html_e( 'Dynamic Location Field', 'gfgeo' ); ?>
 					<?php gform_tooltip( 'gfgeo_dynamic_location_field_tt' ); ?>
 				</label> 
@@ -213,7 +221,7 @@ class GFGEO_Form_Editor {
 			<!-- gecoder fields ID -  -->
 
 			<li class="field_setting gfgeo-settings gfgeo-geocoder-id">
-				<label for="gfgeo-geocoder-id"> 
+				<label for="gfgeo-geocoder-id" class="section_label"> 
 					<?php esc_html_e( 'Geocoder ID', 'gfgeo' ); ?> 
 					<?php gform_tooltip( 'gfgeo_geocoder_id_tt' ); ?>
 				</label> 
@@ -227,6 +235,19 @@ class GFGEO_Form_Editor {
 				<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
 				</select>
 			</li>
+
+			<!-- gecoder distance travel mode  -->
+
+
+			<!-- distance field  -->
+
+			<?php /* <li class="field_setting gfgeo-settings gfgeo-distance-field-settings gfgeo-distance-geocoders">
+				<label for="gfgeo-distance-geocoders"> 
+					<?php esc_html_e( 'Geocoders ID', 'gfgeo' ); ?> 
+					<?php gform_tooltip( 'gfgeo_distance_geocoders_tt' ); ?>
+				</label>
+				<ul class="gfgeo-distance-geocoders-items"></ul>
+			</li> */ ?>
 
 			<!-- disable geocoding -->
 
@@ -245,7 +266,8 @@ class GFGEO_Form_Editor {
 			<!-- Locator button label -->
 
 			<li class="field_setting gfgeo-settings gfgeo-locator-button-label">
-				<label for="gfgeo-locator-button-label"> 
+
+				<label for="gfgeo-locator-button-label" class="section_label"> 
 					<?php esc_html_e( 'Button Label', 'gfgeo' ); ?> 
 					<?php gform_tooltip( 'gfgeo_locator_button_label_tt' ); ?>
 				</label> 
@@ -256,11 +278,20 @@ class GFGEO_Form_Editor {
 					class="" 
 					onkeyup="SetFieldProperty( 'gfgeo_locator_button_label', this.value );"
 				/>
+
+				<label for="gfgeo-locator-button-options" class="section_label" style="margin-top: 20px;margin-bottom: 0 ! important;"> 
+					<?php esc_html_e( 'Loctor Options', 'gfgeo' ); ?> 
+				</label> 
 			</li>
 
 			<!-- infield locator button -->
 
 			<li class="field_setting gfgeo-settings gfgeo-infield-locator-button">
+
+				<label for="gfgeo-locator-button" class="section_label">
+					<?php esc_attr_e( 'Locator Button', 'gfgeo' ); ?>
+				</label>
+
 				<input 
 					type="checkbox" 
 					id="gfgeo-infield-locator-button" 
@@ -333,6 +364,116 @@ class GFGEO_Form_Editor {
 				</label> 
 			</li>
 
+			<!-- gecoder distance  -->
+
+			<li class="field_setting gfgeo-geocoder-settings gfgeo-distance-settings-group gfgeo-settings-group">
+
+				<label for="gfgeo-distance" class="section_label">
+					<?php esc_attr_e( 'Driving Distance', 'gfgeo' ); ?>
+				</label>
+
+				<ul class="gfgeo-settings-group-inner">
+
+					<li class="gfgeo-distance-destination-geocoder gfgeo-settings-section">
+
+						<label for="gfgeo-geocoder-id"> 
+							<?php esc_html_e( 'Destination Geocoder', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_distance_destination_geocoder_id_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_distance_destination_geocoder_id" 
+							id="gfgeo-distance-destination-geocoder-id"
+							class="gfgeo-distance-destination-geocoder-id"
+							onchange="SetFieldProperty( 'gfgeo_distance_destination_geocoder_id', jQuery( this ).val() );"
+						>
+						<!-- values for this field generate by jquery function -->
+						<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
+						</select>
+					</li>
+
+					<li class="gfgeo-distance-travel-mode gfgeo-settings-section">
+						<label for="gfgeo-travel-mode"> 
+							<?php esc_html_e( 'Travel Mode', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_distance_travel_mode_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_distance_travel_mode" 
+							id="gfgeo-distance-travel-mode"
+							class="gfgeo-distance-travel-mode"
+							onchange="SetFieldProperty( 'gfgeo_distance_travel_mode', jQuery( this ).val() );"
+						>
+							<option value="DRIVING"><?php esc_html_e( 'Driving', 'gfgeo' ); ?></option>
+							<option value="WALKING"><?php esc_html_e( 'Walking', 'gfgeo' ); ?></option>
+							<option value="BICYCLING"><?php esc_html_e( 'Bicycling', 'gfgeo' ); ?></option>
+							<option value="TRANSIT"><?php esc_html_e( 'Transit', 'gfgeo' ); ?></option>
+						</select>
+					</li>
+
+					<li class="gfgeo-distance-unit-system gfgeo-settings-section">
+						<label for="gfgeo-unit-system"> 
+							<?php esc_html_e( 'Unit System', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_distance_unit_system_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_distance_unit_system" 
+							id="gfgeo-distance-unit-system"
+							class="gfgeo-distance-unit-system"
+							onchange="SetFieldProperty( 'gfgeo_distance_unit_system', jQuery( this ).val() );"
+						>
+							<option value="imperial"><?php esc_html_e( 'Imperial ( Miles )', 'gfgeo' ); ?></option>
+							<option value="metric"><?php esc_html_e( 'Metric ( Kilometers )', 'gfgeo' ); ?></option>
+						</select>
+					</li>
+
+					<!-- distance map ID -  -->
+
+					<?php /* <li class="gfgeo-distance-travel-route-map-id gfgeo-settings-section">
+						<label for="gfgeo-distance-travel-route-map-id"> 
+							<?php esc_html_e( 'Display Driving Route', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_distance_travel_route_map_id_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_distance_travel_route_map_id" 
+							id="gfgeo-distance-travel-route-map-id"
+							class="gfgeo-distance-travel-route-map-id"
+							onchange="SetFieldProperty( 'gfgeo_distance_travel_route_map_id', jQuery( this ).val() );"
+						>
+						<!-- values for this field generate by jquery function -->
+						<option value=""><?php esc_html_e( 'Disabled', 'gfgeo' ); ?></option>
+						</select>
+					</li> */ ?>
+
+					<li class="gfgeo-distance-travel-show-route-on-map gfgeo-settings-section">
+						<input 
+							type="checkbox" 
+							id="gfgeo-distance-travel-show-route-on-map" 
+							onclick="SetFieldProperty( 'gfgeo_distance_travel_show_route_on_map', this.checked );" 
+						/>
+						<label for="gfgeo-distance-travel-show-route-on-map" class="inline"> 
+							<?php esc_html_e( 'Display Route On the Map', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_distance_travel_show_route_on_map_tt' ); ?>
+						</label>
+					</li>
+
+					<li class="gfgeo-distance-directions-panel-id gfgeo-settings-section">
+						<label for="gfgeo-distance-directions-panel-id"> 
+							<?php esc_html_e( 'Display Driving Directions', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_distance_directions_panel_id_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_distance_directions_panel_id" 
+							id="gfgeo-distance-directions-panel-id"
+							class="gfgeo-distance-directions-panel-id"
+							onchange="SetFieldProperty( 'gfgeo_distance_directions_panel_id', jQuery( this ).val() );"
+						>
+						<!-- values for this field generate by jquery function -->
+						<option value=""><?php esc_html_e( 'Disabled', 'gfgeo' ); ?></option>
+						</select>
+					</li>
+				</ul>
+
+			</li>
+
 			<!-- Geocoder GEO my WP  post integrations -->
 			<?php
 			if ( class_exists( 'GEO_my_WP' ) ) {
@@ -343,126 +484,143 @@ class GFGEO_Form_Editor {
 				$message  = __( 'This feature requires <a href="https://wordpress.org/plugins/geo-my-wp/" target="_blank">GEO my WP</a> plugin', 'gfgeo' );
 			}
 			?>
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings gfgeo-gmw-post-integration" >	
-				<?php if ( ! $disabled ) { ?>
-					<input 
-						type="checkbox" 
-						id="gfgeo-gmw-post-integration" 
-						onclick="SetFieldProperty( 'gfgeo_gmw_post_integration', this.checked );"
-					/>
-				<?php } else { ?>
-					<span class="dashicons dashicons-no" style="width:15px;line-height: 1.1;color: red;"></span>
-				<?php } ?>
 
-				<label for="gfgeo-gmw-post-integration" class="inline"> 
-					<?php esc_html_e( 'GEO my WP Post Integration', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_gmw_post_integration_tt' ); ?>
-				</label>
-				<small style="display: block;color: red;margin-top: 2px;"><?php echo $message; // WPCS: XSS ok. ?></small>
-			</li>
+			<li class="field_setting gfgeo-geocoder-settings gfgeo-gmw-integration-settings-group gfgeo-settings-group">
 
-			<!-- GMW Phone  -->
-
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings gfgeo-gmw-post-integration-wrapper gfgeo-gmw-post-integration-phone">
-				<label for="gfgeo-gmw-post-integration-phone"> 
-					<?php esc_html_e( 'GEO my WP - Phone', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_gmw_post_integration_phone_tt' ); ?>
-				</label> 
-				<select 
-					name="gfgeo_gmw_post_integration_phone" 
-					id="gfgeo-gmw-post-integration-phone"
-					class="gfgeo-gmw-post-integration-phone"
-					onchange="SetFieldProperty( 'gfgeo_gmw_post_integration_phone', jQuery( this ).val() );"
-				>
-				<!-- values for this field generate by jquery function -->
-				<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
-				</select>
-			</li>
-
-			<!-- GMW Fax  -->
-
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings gfgeo-gmw-post-integration-wrapper gfgeo-gmw-post-integration-fax">
-				<label for="gfgeo-gmw-post-integration-fax"> 
-					<?php esc_html_e( 'GEO my WP - Fax', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_gmw_post_integration_fax_tt' ); ?>
-				</label> 
-				<select 
-					name="gfgeo_gmw_post_integration_fax" 
-					id="gfgeo-gmw-post-integration-fax"
-					class="gfgeo-gmw-post-integration-fax"
-					onchange="SetFieldProperty( 'gfgeo_gmw_post_integration_fax', jQuery( this ).val() );"
-				>
-				<!-- values for this field generate by jquery function -->
-				<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
-				</select>
-			</li>
-
-			<!-- GMW Email  -->
-
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings gfgeo-gmw-post-integration-wrapper gfgeo-gmw-post-integration-email">
-				<label for="gfgeo-gmw-post-integration-email"> 
-					<?php esc_html_e( 'GEO my WP - Email', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_gmw_post_integration_email_tt' ); ?>
-				</label> 
-				<select 
-					name="gfgeo_gmw_post_integration_email" 
-					id="gfgeo-gmw-post-integration-email"
-					class="gfgeo-gmw-post-integration-email"
-					onchange="SetFieldProperty( 'gfgeo_gmw_post_integration_email', jQuery( this ).val() );"
-				>
-				<!-- values for this field generate by jquery function -->
-				<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
-				</select>
-			</li>
-
-			<!-- GMW website  -->
-
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings gfgeo-gmw-post-integration-wrapper gfgeo-gmw-post-integration-website">
-				<label for="gfgeo-gmw-post-integration-website"> 
-					<?php esc_html_e( 'GEO my WP - Website', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_gmw_post_integration_website_tt' ); ?>
-				</label> 
-				<select 
-					name="gfgeo_gmw_post_integration_website" 
-					id="gfgeo-gmw-post-integration-website"
-					class="gfgeo-gmw-post-integration-website"
-					onchange="SetFieldProperty( 'gfgeo_gmw_post_integration_website', jQuery( this ).val() );"
-				>
-				<!-- values for this field generate by jquery function -->
-				<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
-				</select>
-			</li>
-
-			<!-- GEO my WP User integrations -->
-			<li class="field_setting gfgeo-settings gfgeo-geocoder-settings gfgeo-gmw-user-integration" >	
-
-				<?php if ( ! $disabled ) { ?>
-
-					<input 
-						type="checkbox" 
-						id="gfgeo-gmw-user-integration" 
-						onclick="SetFieldProperty( 'gfgeo_gmw_user_integration', this.checked );" 
-						<?php echo $disabled; // WPCS: XSS ok. ?>
-					/>
-
-				<?php } else { ?>
-
-					<span class="dashicons dashicons-no" style="width:15px;line-height: 1.1;color: red;"></span>
-
-				<?php } ?>
-
-				<label for="gfgeo-gmw-user-integration" class="inline"> 
-					<?php esc_html_e( 'GEO my WP User Integration', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_gmw_user_integration_tt' ); ?>
+				<label for="gfgeo-gmw-integration" class="section_label">
+					<?php esc_attr_e( 'GEO my WP Integration', 'gfgeo' ); ?>
 				</label>
 
-				<small style="display: block;color: red;margin-top: 2px;"><?php echo $message; // WPCS: XSS ok. ?></small>
+				<ul class="gfgeo-settings-group-inner">
+
+					<li class="gfgeo-gmw-post-integration gfgeo-settings-section">	
+						<?php if ( ! $disabled ) { ?>
+							<input 
+								type="checkbox" 
+								id="gfgeo-gmw-post-integration" 
+								onclick="SetFieldProperty( 'gfgeo_gmw_post_integration', this.checked );"
+							/>
+						<?php } else { ?>
+							<span class="dashicons dashicons-no" style="width:15px;line-height: 1.1;color: red;"></span>
+						<?php } ?>
+
+						<label for="gfgeo-gmw-post-integration" class="inline"> 
+							<?php esc_html_e( 'GEO my WP Post Integration', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_gmw_post_integration_tt' ); ?>
+						</label>
+						<small style="display: block;color: red;margin-top: 2px;"><?php echo $message; // WPCS: XSS ok. ?></small>
+					</li>
+
+					<!-- GMW Phone  -->
+
+					<li class="gfgeo-gmw-post-integration-wrapper gfgeo-gmw-post-integration-phone gfgeo-settings-section">
+						<label for="gfgeo-gmw-post-integration-phone"> 
+							<?php esc_html_e( 'GEO my WP - Phone', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_gmw_post_integration_phone_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_gmw_post_integration_phone" 
+							id="gfgeo-gmw-post-integration-phone"
+							class="gfgeo-gmw-post-integration-phone"
+							onchange="SetFieldProperty( 'gfgeo_gmw_post_integration_phone', jQuery( this ).val() );"
+						>
+						<!-- values for this field generate by jquery function -->
+						<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
+						</select>
+					</li>
+
+					<!-- GMW Fax  -->
+
+					<li class="gfgeo-gmw-post-integration-wrapper gfgeo-gmw-post-integration-fax gfgeo-settings-section">
+						<label for="gfgeo-gmw-post-integration-fax"> 
+							<?php esc_html_e( 'GEO my WP - Fax', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_gmw_post_integration_fax_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_gmw_post_integration_fax" 
+							id="gfgeo-gmw-post-integration-fax"
+							class="gfgeo-gmw-post-integration-fax"
+							onchange="SetFieldProperty( 'gfgeo_gmw_post_integration_fax', jQuery( this ).val() );"
+						>
+						<!-- values for this field generate by jquery function -->
+						<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
+						</select>
+					</li>
+
+					<!-- GMW Email  -->
+
+					<li class="gfgeo-gmw-post-integration-wrapper gfgeo-gmw-post-integration-email gfgeo-settings-section">
+						<label for="gfgeo-gmw-post-integration-email"> 
+							<?php esc_html_e( 'GEO my WP - Email', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_gmw_post_integration_email_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_gmw_post_integration_email" 
+							id="gfgeo-gmw-post-integration-email"
+							class="gfgeo-gmw-post-integration-email"
+							onchange="SetFieldProperty( 'gfgeo_gmw_post_integration_email', jQuery( this ).val() );"
+						>
+						<!-- values for this field generate by jquery function -->
+						<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
+						</select>
+					</li>
+
+					<!-- GMW website  -->
+
+					<li class="gfgeo-gmw-post-integration-wrapper gfgeo-gmw-post-integration-website gfgeo-settings-section">
+						<label for="gfgeo-gmw-post-integration-website"> 
+							<?php esc_html_e( 'GEO my WP - Website', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_gmw_post_integration_website_tt' ); ?>
+						</label> 
+						<select 
+							name="gfgeo_gmw_post_integration_website" 
+							id="gfgeo-gmw-post-integration-website"
+							class="gfgeo-gmw-post-integration-website"
+							onchange="SetFieldProperty( 'gfgeo_gmw_post_integration_website', jQuery( this ).val() );"
+						>
+						<!-- values for this field generate by jquery function -->
+						<option value=""><?php esc_html_e( 'N/A', 'gfgeo' ); ?></option>
+						</select>
+					</li>
+
+					<!-- GEO my WP User integrations -->
+					<li class="gfgeo-gmw-user-integration gfgeo-settings-section">	
+
+						<?php if ( ! $disabled ) { ?>
+
+							<input 
+								type="checkbox" 
+								id="gfgeo-gmw-user-integration" 
+								onclick="SetFieldProperty( 'gfgeo_gmw_user_integration', this.checked );" 
+								<?php echo $disabled; // WPCS: XSS ok. ?>
+							/>
+
+						<?php } else { ?>
+
+							<span class="dashicons dashicons-no" style="width:15px;line-height: 1.1;color: red;"></span>
+
+						<?php } ?>
+
+						<label for="gfgeo-gmw-user-integration" class="inline"> 
+							<?php esc_html_e( 'GEO my WP User Integration', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_gmw_user_integration_tt' ); ?>
+						</label>
+
+						<small style="display: block;color: red;margin-top: 2px;"><?php echo $message; // WPCS: XSS ok. ?></small>
+
+					</li>
+				</ul>
 
 			</li>
 
 			<!-- latitude placehoolder --> 
 
 			<li class="field_setting gfgeo-settings gfgeo-latitude-placeholder">
+
+				<label for="gfgeo-coords-placeholder" class="section_label"> 
+					<?php esc_html_e( 'Fields Placeholder', 'gfgeo' ); ?> 
+				</label>
+
 				<label for="gfgeo-latitude-placeholder"> 
 					<?php esc_html_e( 'Latitude Placeholder', 'gfgeo' ); ?> 
 					<?php gform_tooltip( 'gfgeo_latitude_placeholder_tt' ); ?>
@@ -494,33 +652,48 @@ class GFGEO_Form_Editor {
 
 			<!--  Map fields -->
 
-			<li class="field_setting gfgeo-settings gfgeo-map-settings">
-				<label for="gfgeo-map-default-latitude"> 
-					<?php esc_html_e( 'Default Latitude', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_map_default_latitude_tt' ); ?>
-				</label> 
-				<input 
-					type="text" 
-					id="gfgeo-map-default-latitude" 
-					size="15" 
-					onkeyup="SetFieldProperty( 'gfgeo_map_default_latitude', this.value );"
-				/>
+			<li class="field_setting gfgeo-settings gfgeo-map-settings gfgeo-settings-group">
+
+				<label for="gfgeo-map-default-coordinates" class="section_label">
+					<?php esc_attr_e( 'Default Coordinates', 'gfgeo' ); ?>
+				</label>
+
+				<ul class="gfgeo-settings-group-inner">
+
+					<li class="gfgeo-map-default-latitude gfgeo-settings-section">
+						<label for="gfgeo-map-default-latitude"> 
+							<?php esc_html_e( 'Default Latitude', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_map_default_latitude_tt' ); ?>
+						</label> 
+						<input 
+							type="text" 
+							id="gfgeo-map-default-latitude" 
+							size="15" 
+							onkeyup="SetFieldProperty( 'gfgeo_map_default_latitude', this.value );"
+						/>
+					</li>
+
+					<li class="gfgeo-map-default-longitude gfgeo-settings-section">
+						<label for="gfgeo-map-default-longitude"> 
+							<?php esc_html_e( 'Default Longitude', 'gfgeo' ); ?> 
+							<?php gform_tooltip( 'gfgeo_map_default_longitude_tt' ); ?>
+						</label> 
+						<input 
+							type="text" 
+							id="gfgeo-map-default-longitude" 
+							size="15" 
+							onkeyup="SetFieldProperty( 'gfgeo_map_default_longitude', this.value );"
+						/>
+					</li>
+				</ul>
 			</li>
 
 			<li class="field_setting gfgeo-settings gfgeo-map-settings">
-				<label for="gfgeo-map-default-longitude"> 
-					<?php esc_html_e( 'Default Longitude', 'gfgeo' ); ?> 
-					<?php gform_tooltip( 'gfgeo_map_default_longitude_tt' ); ?>
-				</label> 
-				<input 
-					type="text" 
-					id="gfgeo-map-default-longitude" 
-					size="15" 
-					onkeyup="SetFieldProperty( 'gfgeo_map_default_longitude', this.value );"
-				/>
-			</li>
 
-			<li class="field_setting gfgeo-settings gfgeo-map-settings">
+				<label for="gfgeo-map-default-latitude" class="section_label"> 
+					<?php esc_html_e( 'Map Options', 'gfgeo' ); ?>
+				</label> 
+
 				<label for="gfgeo-map-type">
 					<?php esc_html_e( 'Map Type', 'gfgeo' ); ?> 
 					<?php gform_tooltip( 'gfgeo_map_type_tt' ); ?>
@@ -647,6 +820,11 @@ class GFGEO_Form_Editor {
 			<!-- autocomplete options -->
 
 			<li class="field_setting gfgeo-settings gfgeo-address-autocomplete">
+
+				<label for="gfgeo-address-autocomplete" class="section_label">
+					<?php esc_attr_e( 'Address Autocomplete', 'gfgeo' ); ?>
+				</label>
+
 				<input 
 					type="checkbox" 
 					id="gfgeo-address-autocomplete" 
@@ -785,6 +963,13 @@ class GFGEO_Form_Editor {
 		// default coords.
 		$tooltips['gfgeo_default_latitude_tt']  = __( 'Enter the latitude of the initial location that will be displayed in the geolocation fields, attached to this geocoder, when the form first loads. Otherwise, leave  the field blank.', 'gfgeo' );
 		$tooltips['gfgeo_default_longitude_tt'] = __( 'Enter the longitude of the initial location that will be displayed in the geolocation fields, attached to this geocoder, when the form first loads. Otherwise, leave  the field blank.', 'gfgeo' );
+
+		// Distance.
+		$tooltips['gfgeo_distance_destination_geocoder_id_tt']  = __( 'Select the geocoder which you would like to calculate the distance to.', 'gfgeo' );
+		$tooltips['gfgeo_distance_travel_mode_tt']              = __( 'Select the travel mode.', 'gfgeo' );
+		$tooltips['gfgeo_distance_unit_system_tt']              = __( 'Select the unit system that will be used when calculating the distance.', 'gfgeo' );
+		$tooltips['gfgeo_distance_travel_show_route_on_map_tt'] = __( 'Display driving route on a map.', 'gfgeo' );
+		$tooltips['gfgeo_distance_directions_panel_id_tt']      = __( 'Display driving directions.', 'gfgeo' );
 
 		// GEO my WP integration.
 		$tooltips['gfgeo_gmw_post_integration_tt'] = __( 'Check this checkbox if you\'d like to sync this geocoder with GEO my WP Posts Locator add-on. This location will then be saved in GEO my WP database and the post attached to it ( if at all created or udpated )will be searchable via GEO my WP search forms', 'gfgeo' );

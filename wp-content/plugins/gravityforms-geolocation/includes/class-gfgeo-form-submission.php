@@ -27,11 +27,33 @@ class GFGEO_Form_Submission {
 		// If GEO my WP exists.
 		add_action( 'gform_after_submission', array( $this, 'form_submission' ), 10, 5 );
 
+		// When using Post Creation add-on.
+		add_action( 'gform_advancedpostcreation_post_after_creation', array( $this, 'post_creation' ), 10, 4 );
+
 		// Update user location after activation ( manually or automatically ).
 		add_action( 'gform_user_registered', array( $this, 'gmw_pre_update_user_location' ), 10, 3 );
 
 		// Update user location when user updated.
 		add_action( 'gform_user_updated', array( $this, 'gmw_pre_update_user_location' ), 10, 3 );
+	}
+
+	/**
+	 * When using the Post Creation add-on.
+	 *
+	 * @param  int    $post_id Post ID.
+	 * @param  obejct $feed    feed object.
+	 * @param  ojbect $entry   entry.
+	 * @param  object $form    form.
+	 */
+	public function post_creation( $post_id, $feed, $entry, $form ) {
+
+		// Remove this filter. We will trigger the function below.
+		remove_action( 'gform_after_submission', array( $this, 'form_submission' ), 10, 5 );
+
+		$temp_entry            = $entry;
+		$temp_entry['post_id'] = $post_id;
+
+		$this->form_submission( $temp_entry, $form );
 	}
 
 	/**

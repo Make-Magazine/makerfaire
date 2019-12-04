@@ -35,6 +35,17 @@ jQuery( document ).ready( function($) {
 		    GF_Geo_Admin.update_fields_dynamically();
 		},
 
+		/*get_checkboxes_value : function( element ) {
+
+			var checked = [];
+
+			jQuery( element + ' input[type=checkbox]:checked' ).each( function () {
+                checked.push( parseInt( this.value ) );
+            });
+
+            return checked;
+		},*/
+		
 		/**
 		 * Initiate form editor 
 		 * @return {[type]} [description]
@@ -42,30 +53,30 @@ jQuery( document ).ready( function($) {
 		form_editor_init : function() {
 
 			// Apply fields options
-		    fieldSettings['post_custom_field'] += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
+		    fieldSettings.post_custom_field += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
 		    // hidden field
-		    fieldSettings['hidden']	+= ', .css_class_setting, .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
+		    fieldSettings.hidden	+= ', .css_class_setting, .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
 			
 			// addess field
-			fieldSettings['address'] += ', .post_custom_field_setting, .gfgeo-geocoder-id, .gfgeo-disable-field-geocoding, .gfgeo-infield-locator-button';
-			fieldSettings['address'] += ', .gfgeo-address-autocomplete, .gfgeo-address-autocomplete-country';
-			fieldSettings['address'] += ', .gfgeo-address-autocomplete-placeholder, .gfgeo-address-autocomplete-desc';
-			fieldSettings['address'] += ', .gfgeo-address-autocomplete-types';
-			fieldSettings['address'] += ', .gfgeo-address-autocomplete-locator-bounds, .gfgeo-address-autocomplete-bounds';
+			fieldSettings.address += ', .post_custom_field_setting, .gfgeo-geocoder-id, .gfgeo-disable-field-geocoding, .gfgeo-infield-locator-button';
+			fieldSettings.address += ', .gfgeo-address-autocomplete, .gfgeo-address-autocomplete-country';
+			fieldSettings.address += ', .gfgeo-address-autocomplete-placeholder, .gfgeo-address-autocomplete-desc';
+			fieldSettings.address += ', .gfgeo-address-autocomplete-types';
+			fieldSettings.address += ', .gfgeo-address-autocomplete-locator-bounds, .gfgeo-address-autocomplete-bounds';
 			
 			// text field
 			//fieldSettings['text'] += ', .gfgeo-geocoder-section-star, .gfgeo-geocoder-section-en';
-			fieldSettings['text'] += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
+			fieldSettings.text += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
 			//fieldSettings['text'] += ', .gfgeo-address-autocomplete-countr, .gfgeo-address-autocomplete-type, .gfgeo-address-autocomplet';
 
 			// select textbox
-		 	fieldSettings['checkbox'] 	 += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
-		 	fieldSettings['select']   	 += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
-		 	fieldSettings['radio']    	 += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
-		 	fieldSettings['multiselect'] += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
+		 	fieldSettings.checkbox 	  += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
+		 	fieldSettings.select   	  += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
+		 	fieldSettings.radio    	  += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
+		 	fieldSettings.multiselect += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
+		 	fieldSettings.number      += ', .gfgeo-dynamic-location-field, .gfgeo-geocoder-id';
 		 	
 		 	jQuery( document ).bind( 'gform_field_added', function( event, form, field ) {
-
 		    	if ( field.type == 'gfgeo_map' ) {
 		        	GF_Geo_Admin.gfgeo_render_map_admin( jQuery( '#gfgeo-map-' + form.id + '_' + field.id ).data() );
 		    	}
@@ -80,18 +91,38 @@ jQuery( document ).ready( function($) {
 	        	}
 	        } );
 
+        	/*jQuery( document ).on( 'change', '.gfgeo-distance-geocoders-checkbox', function() {
+				
+				var checkedValues = GF_Geo_Admin.get_checkboxes_value( '.gfgeo-distance-geocoders-items' );
+
+				SetFieldProperty( 'gfgeo_distance_geocoders', checkedValues );
+			});
+
+			jQuery( "ul.gfgeo-distance-geocoders-items li" ).sortable({ handle: '.handle' });*/
+
 		    // run some functions when field options shows                                
 			jQuery( document ).bind( 'gform_load_field_settings', function( event, field, form ){
 
+				var formFields;
+
 				// get form fields
 				if ( typeof form.fields != 'undefined' ) {
-					var formFields = form.fields;
+					formFields = form.fields;
 				} else {
-					var formFields = [];
+					formFields = [];
 				}
 
 				// clear select option. We will create it again below
-				jQuery( jQuery( 'select#gfgeo-geocoder-id, select#gfgeo-gmw-post-integration-phone, select#gfgeo-gmw-post-integration-fax, select#gfgeo-gmw-post-integration-email, select#gfgeo-gmw-post-integration-website' ).find( 'option:gt(0)' ).remove() );
+				jQuery( jQuery( 'select#gfgeo-geocoder-id, select#gfgeo-distance-directions-panel-id, select#gfgeo-distance-destination-geocoder-id, select#gfgeo-gmw-post-integration-phone, select#gfgeo-gmw-post-integration-fax, select#gfgeo-gmw-post-integration-email, select#gfgeo-gmw-post-integration-website' ).find( 'option:gt(0)' ).remove() );
+					
+				// with map dropdown for route option.
+				//jQuery( jQuery( 'select#gfgeo-geocoder-id, select#gfgeo-distance-travel-route-map-id, select#gfgeo-distance-directions-panel-id, select#gfgeo-distance-destination-geocoder-id, select#gfgeo-gmw-post-integration-phone, select#gfgeo-gmw-post-integration-fax, select#gfgeo-gmw-post-integration-email, select#gfgeo-gmw-post-integration-website' ).find( 'option:gt(0)' ).remove() );
+				
+				//jQuery( '.gfgeo-distance-geocoders-items' ).children().remove();
+
+				/*if ( field.type == 'gfgeo_distance' ) {
+					var distanceValues = ( typeof field.gfgeo_distance_geocoders != 'undefined' ) ? field.gfgeo_distance_geocoders : [];
+				}*/
 
 				// loop through form fields and look for geocoder fields
 				// collect all of them and appened it to the Geocoder ID select dropdown as options 
@@ -100,15 +131,74 @@ jQuery( document ).ready( function($) {
 					// check if geocoder field
 					if ( this.type == 'gfgeo_geocoder' ) {
 						
-						jQuery( jQuery( 'select#gfgeo-geocoder-id' ).append( jQuery( '<option>' ).attr( 'value', this.id ).text( 'Geocoder ID - ' + this.id ) ) );
-					
-					//else check for different fields taht can serve as GMW Contact info fields
+						jQuery( jQuery( 'select#gfgeo-geocoder-id, select#gfgeo-distance-destination-geocoder-id' ).append( jQuery( '<option>' ).attr( 'value', this.id ).text( 'Geocoder ID - ' + this.id ) ) );
+						
+						/*if ( field.type == 'gfgeo_distance' ) {
+						
+							var checkedDistance = '';
+
+							if ( jQuery.inArray( this.id, distanceValues ) !== -1 ) {
+								checkedDistance = 'checked="checked"';
+							}
+
+							var distanceCheckbox = '<input type="checkbox" name="gfgeo_distance_geocoders[]" class="gfgeo-distance-geocoders-checkbox" value="' + this.id + '"' + checkedDistance + '>';
+							
+							jQuery( 'ul.gfgeo-distance-geocoders-items' ).append( '<li data-item_id="' + this.id + '"><label class="inline">' + distanceCheckbox + ' Geocoder ID ' + this.id + '</label></li>' ).sortable( { stop : function( event, ui ) { 
+
+								var order = [];
+
+								jQuery( 'ul.gfgeo-distance-geocoders-items li' ).each( function () {
+					                order.push( parseInt( jQuery( this ).data( 'item_id' ) ) );
+					            });
+
+					            SetFieldProperty( 'gfgeo_distance_geocoders_order', order );
+
+					            var checkedValues = GF_Geo_Admin.get_checkboxes_value( '.gfgeo-distance-geocoders-items' );
+
+					            console.log( checkedValues)
+								SetFieldProperty( 'gfgeo_distance_geocoders', checkedValues );
+							} });
+						}*/
+			
+					// Otherwise, check for different fields that can serve as GMW Contact info fields
+					} else if ( this.type == 'gfgeo_map' ) {
+
+						// Currently disabled.
+						//jQuery( jQuery( 'select#gfgeo-distance-travel-route-map-id' ).append( jQuery( '<option>' ).attr( 'value', this.id ).text( 'Map ID - ' + this.id ) ) );
+
+					} else if ( this.type == 'gfgeo_directions_panel' ) {
+
+						jQuery( jQuery( 'select#gfgeo-distance-directions-panel-id' ).append( jQuery( '<option>' ).attr( 'value', this.id ).text( 'Directions Panel - ' + this.id ) ) );
+						
 					} else if ( jQuery.inArray( this.type, [ 'post_custom_field', 'phone', 'email', 'website', 'text', 'number', 'hidden', 'checkbox', 'select', 'radio', 'paragraph', 'html' ] ) != -1 ) {
 	
 				 		jQuery( jQuery( 'select#gfgeo-gmw-post-integration-phone, select#gfgeo-gmw-post-integration-fax, select#gfgeo-gmw-post-integration-email, select#gfgeo-gmw-post-integration-website' ).append( jQuery( '<option>' ).attr( 'value', this.id ).text( this.label + ' - ( field ID ' + this.id + ')' ) ) );		
 					}
 				});
 				
+				jQuery( 'select#gfgeo-distance-destination-geocoder-id option[value="' + field.id + '"]' ).remove();
+
+				/*if ( field.type == 'gfgeo_distance' ) {
+
+					if ( typeof field.gfgeo_distance_geocoders_order != 'undefined' ) {
+					
+						var order   = field.gfgeo_distance_geocoders_order;
+						var element = jQuery( 'ul.gfgeo-distance-geocoders-items' );
+						var map     = {};
+
+						jQuery( 'ul.gfgeo-distance-geocoders-items li' ).each( function() { 
+						    var element = $(this);
+						    map[ element.attr( 'data-item_id' ) ] = element;
+						});
+
+						for ( var i = 0, l = order.length; i < l; i ++ ) {
+						    if ( map[ order[i] ] ) {
+						        element.append( map[ order[i] ] );
+						    }
+						}
+					}
+				}*/
+
 				var addressFields = [
 					'status',
 					'place_name',
@@ -131,13 +221,19 @@ jQuery( document ).ready( function($) {
 		        	'longitude' 
 		    	];
 
-		    	// set fields value
-		    	 
+		    	/***** set fields value *****/
+
 		    	// geocoder field
-				jQuery( '#gfgeo-geocoder-id' ).val( field['gfgeo_geocoder_id'] );
-				jQuery( '#gfgeo-default-latitude' ).val( field['gfgeo_default_latitude'] );
-				jQuery( '#gfgeo-default-longitude' ).val(field['gfgeo_default_longitude'] );
-		    	jQuery( '#gfgeo-page-locator' ).attr( 'checked', field['gfgeo_page_locator'] == true );
+				jQuery( '#gfgeo-geocoder-id' ).val( field.gfgeo_geocoder_id );
+				jQuery( '#gfgeo-default-latitude' ).val( field.gfgeo_default_latitude );
+				jQuery( '#gfgeo-default-longitude' ).val( field.gfgeo_default_longitude );
+		    	jQuery( '#gfgeo-page-locator' ).attr( 'checked', field.gfgeo_page_locator == true );
+		    	jQuery( '#gfgeo-distance-destination-geocoder-id' ).val( field.gfgeo_distance_destination_geocoder_id );
+		    	jQuery( '#gfgeo-distance-travel-mode' ).val( field['gfgeo_distance_travel_mode'] );
+		    	jQuery( '#gfgeo-distance-unit-system' ).val( field['gfgeo_distance_unit_system'] );
+		    	//jQuery( '#gfgeo-distance-travel-route-map-id' ).val( field.gfgeo_distance_travel_route_map_id );
+		    	jQuery( '#gfgeo-distance-travel-show-route-on-map' ).attr( 'checked', field.gfgeo_distance_travel_show_route_on_map == true );
+		    	jQuery( '#gfgeo-distance-directions-panel-id' ).val( field.gfgeo_distance_directions_panel_id );
 		    	jQuery( '#gfgeo-google-maps-link' ).attr( 'checked', field['gfgeo_google_maps_link'] == true );
 		    	jQuery( '#gfgeo-gmw-post-integration' ).attr( 'checked', field['gfgeo_gmw_post_integration'] == true );
 		    	jQuery( '#gfgeo-gmw-post-integration-phone' ).val( field['gfgeo_gmw_post_integration_phone'] );
@@ -201,6 +297,7 @@ jQuery( document ).ready( function($) {
 		        jQuery( '#gfgeo-page-locator').attr( 'disabled', false );
 		        jQuery( '#gfgeo-gmw-post-integration').attr( 'disabled', false );
 		        jQuery( '#gfgeo-gmw-user-integration').attr( 'disabled', false );
+		        jQuery( 'select#gfgeo-distance-directions-panel-id option' ).prop( 'disabled', false );
 		        
 		        if ( field.type == 'gfgeo_geocoder' ) {
 
@@ -211,7 +308,7 @@ jQuery( document ).ready( function($) {
 		        	}
 		        }
 		       
-		        jQuery.each( form['fields'], function( key,val ) {
+		        jQuery.each( form.fields, function( key,val ) {
 					
 					if ( val.type == 'gfgeo_geocoder' ) {	
 						
@@ -228,6 +325,11 @@ jQuery( document ).ready( function($) {
 						// gmw user integration
 						if ( val.gfgeo_gmw_user_integration != undefined && val.gfgeo_gmw_user_integration == true && val.id != field.id ) {
 							jQuery( '#gfgeo-gmw-user-integration' ).attr( 'disabled', true );
+						}
+
+						// gmw user integration
+						if ( val.gfgeo_distance_directions_panel_id != undefined && val.gfgeo_distance_directions_panel_id != '' && val.gfgeo_distance_directions_panel_id != field.gfgeo_distance_directions_panel_id ) {
+							jQuery( 'select#gfgeo-distance-directions-panel-id option[value="' + val.gfgeo_distance_directions_panel_id +'"]' ).prop( 'disabled', true );
 						} 
 					}
 				});			

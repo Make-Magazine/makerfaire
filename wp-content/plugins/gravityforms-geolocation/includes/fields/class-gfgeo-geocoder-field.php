@@ -100,6 +100,10 @@ class GFGEO_Geocoder_Field extends GF_Field {
 		'formatted_address',
 		'latitude',
 		'longitude',
+		'distance_text',
+		'distance_value',
+		'duration_text',
+		'duration_value',
 	);
 
 	/**
@@ -149,7 +153,7 @@ class GFGEO_Geocoder_Field extends GF_Field {
 				// check if default coords pass by URL. Possible from another from.
 				if ( ! empty( $this->allowsPrepopulate ) && ! empty( $this->inputName ) && ! empty( $_GET[ $this->inputName ] ) && strpos( $_GET[ $this->inputName ], '|' ) !== false ) { // WPCS: CSRF ok, sanitization ok.
 
-					$input_coords = explode( '|', $_GET[ $this->inputName ] );
+					$input_coords = explode( '|', $_GET[ $this->inputName ] ); // WPCS: CSRF ok, sanitization ok.
 					$default_lat  = ! empty( $input_coords[0] ) ? sanitize_text_field( esc_attr( $input_coords[0] ) ) : '';
 					$default_lng  = ! empty( $input_coords[1] ) ? sanitize_text_field( esc_attr( $input_coords[1] ) ) : '';
 
@@ -176,8 +180,40 @@ class GFGEO_Geocoder_Field extends GF_Field {
 				}
 			}
 
+			$distance_geocoder = ! empty( $this->gfgeo_distance_destination_geocoder_id ) ? esc_attr( $form['id'] . '_' . $this->gfgeo_distance_destination_geocoder_id ) : '';
+			$travel_mode       = ! empty( $this->gfgeo_distance_travel_mode ) ? esc_attr( $this->gfgeo_distance_travel_mode ) : 'DRIVING';
+			$unit_system       = ! empty( $this->gfgeo_distance_unit_system ) ? esc_attr( $this->gfgeo_distance_unit_system ) : 'metric';
+			// $route_map_id      = ! empty( $this->gfgeo_distance_travel_route_map_id ) ? esc_attr( $form['id'] . '_' . $this->gfgeo_distance_travel_route_map_id ) : '';
+			$directions_panel = ! empty( $this->gfgeo_distance_directions_panel_id ) ? esc_attr( $form['id'] . '_' . $this->gfgeo_distance_directions_panel_id ) : '';
+			$route_map_id     = '';
+
+			if ( ! empty( $this->gfgeo_distance_travel_show_route_on_map ) ) {
+
+				foreach ( $form['fields'] as $field ) {
+
+					if ( 'gfgeo_map' === $field->type && ! empty( $field->gfgeo_geocoder_id ) && $field->gfgeo_geocoder_id == $this->id ) {
+
+						$route_map_id = esc_attr( $form['id'] . '_' . $field->id );
+					}
+				}
+			}
+
+			/**
+			foreach ( $form['fields'] as $field ) {
+
+				if ( ! empty( $this->gfgeo_distance_travel_show_route_on_map ) && 'gfgeo_map' === $field->type && ! empty( $field->gfgeo_geocoder_id ) && $field->gfgeo_geocoder_id == $this->id ) {
+
+					$route_map_id = esc_attr( $form['id'] . '_' . $field->id );
+				}
+
+				if ( 'gfgeo_directions_panel' === $field->type && ! empty( $field->gfgeo_geocoder_id ) && $field->gfgeo_geocoder_id == $this->id ) {
+					$directions_panel = esc_attr( $form['id'] . '_' . $field->id );
+				}
+			}*/
+
+			// $route_map_id
 			// generate geocoder hidden fields.
-			$input .= '<div id="gfgeo-geocoded-hidden-fields-wrapper-' . $field_id . '" class="gfgeo-geocoded-hidden-fields-wrapper">';
+			$input .= '<div id="gfgeo-geocoded-hidden-fields-wrapper-' . $field_id . '" class="gfgeo-geocoded-hidden-fields-wrapper" data-geocoder_id="' . $field_id . '" data-distance_destination_geocoder_id="' . $distance_geocoder . '" data-travel_mode="' . $travel_mode . '" data-unit_system="' . $unit_system . '" data-route_map_id="' . $route_map_id . '" data-directions_panel_id="' . $directions_panel . '">';
 
 			// if ( empty( $_POST['is_submit_'.$form['id']] ) && ! empty( $this->postCustomFieldName ) ) {
 			// $value = get_post_meta( GFGEO_Render_Form::$update_post_id, sanitize_key( $this->postCustomFieldName ), true );
@@ -212,9 +248,11 @@ class GFGEO_Geocoder_Field extends GF_Field {
 	 *
 	 * @param  URL    $map_link      map link.
 	 *
+	 * @params array  $entry         the form entry.
+	 *
 	 * @return [type]                [description]
 	 */
-	public function get_geocoded_data_output( $geocoder_data, $map_link = false ) {
+	public function get_geocoded_data_output( $geocoder_data, $map_link = false, $entry = array() ) {
 
 		// unserialize data.
 		$geocoder_data = maybe_unserialize( $geocoder_data );
@@ -230,6 +268,9 @@ class GFGEO_Geocoder_Field extends GF_Field {
 
 			$map_it = GFGEO_Helper::get_map_link( $geocoder_data );
 		}
+
+		$origin_lat = $geocoder_data['latitude'];
+		$origin_lng = $geocoder_data['longitude'];
 
 		$default_geo_fields = GFGEO_Helper::get_location_fields();
 
@@ -257,8 +298,29 @@ class GFGEO_Geocoder_Field extends GF_Field {
 			$output .= '<li><strong>' . esc_attr( $name ) . ':</strong> ' . $value . '</li>';
 		}
 
-		if ( ! empty( $map_it ) ) {
+		$distance_destination = ! empty( $this->gfgeo_distance_destination_geocoder_id ) ? absint( $this->gfgeo_distance_destination_geocoder_id ) : __( 'N/A', 'gfgeo' );
 
+		$output .= '<li><strong>' . __( 'Distance destination', 'gfgeo' ) . ':</strong> Geocoder ID ' . $distance_destination . '</li>';
+
+		// Generate directions link if location data is available.
+		if ( ! empty( $this->gfgeo_distance_destination_geocoder_id ) && ! empty( $entry[ $this->gfgeo_distance_destination_geocoder_id ] ) ) {
+
+			$dest_geocoder = maybe_unserialize( $entry[ $this->gfgeo_distance_destination_geocoder_id ] );
+			$label         = __( 'Directions to destination', 'gfgeo' );
+
+			if ( ! empty( $dest_geocoder['latitude'] ) && ! empty( $dest_geocoder['longitude'] ) ) {
+
+				$link = 'https://www.google.com/maps/dir/?api=1&origin=' . $origin_lat . ',' . $origin_lng . '&destination=' . $dest_geocoder['latitude'] . ',' . $dest_geocoder['longitude'];
+
+				$output .= '<li><strong>' . $label . '</strong>: <a href="' . esc_url( $link ) . '" target="_blank">' . __( 'View in Google Map', ' gfgeo' ) . '</a></li>';
+
+				$map_it = false;
+			} else {
+				$output .= '<li><strong>' . $label . '</strong>: ' . __( 'N/A', ' gfgeo' ) . '</a></li>';
+			}
+		}
+
+		if ( ! empty( $map_it ) ) {
 			$output .= '<li>' . $map_it . '</li>';
 		}
 
@@ -346,7 +408,7 @@ class GFGEO_Geocoder_Field extends GF_Field {
 
 				$map_link = ! empty( $this->gfgeo_google_maps_link ) ? true : false;
 
-				return $this->get_geocoded_data_output( $geocoder_data, $map_link );
+				return $this->get_geocoded_data_output( $geocoder_data, $map_link, $entry );
 			}
 		}
 	}
@@ -480,7 +542,27 @@ class GFGEO_Geocoder_Field extends GF_Field {
 			return $geocoder_data;
 		}
 
-		return $this->get_geocoded_data_output( $geocoder_data, true );
+		// In admin, get the entry using the entry ID.
+		if ( is_admin() ) {
+			$entry = ! empty( $_GET['lid'] ) ? GFAPI::get_entry( absint( $_GET['lid'] ) ) : array(); // WPCS: CSRF ok.
+
+			// Otherwise, use the $_POST global.
+		} else {
+
+			$entry = array();
+
+			if ( ! empty( $_POST ) ) { // WPCS: CSRF ok.
+
+				foreach ( $_POST as $key => $field ) { // WPCS: CSRF ok.
+
+					$new_key = str_replace( 'input_', '', $key );
+
+					$entry[ $new_key ] = $field;
+				}
+			}
+		}
+
+		return $this->get_geocoded_data_output( $geocoder_data, true, $entry );
 	}
 
 	/**
