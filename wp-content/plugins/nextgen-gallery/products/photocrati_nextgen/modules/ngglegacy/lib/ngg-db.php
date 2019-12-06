@@ -523,21 +523,21 @@ class nggdb
     }
 
     /**
-    * Add an image to the database
-    *
-	* @since V1.4.0
-	* @param int $id ID of the gallery
-    * @param string $filename (optional)
-    * @param string $description (optional)
-    * @param string $alttext (optional)
-    * @param array $meta data (optional)
-    * @param int $post_id (required for sync with WP media lib) (optional)
-    * @param string $imagedate (optional)
-    * @param int $exclude (0 or 1) (optional)
-    * @param int $sortorder (optional)
-    * @return int Result of the ID of the inserted image
-    */
-    function add_image( $id = false, $filename = false, $description = '', $alttext = '', $meta_data = false, $post_id = 0, $imagedate = '0000-00-00 00:00:00', $exclude = 0, $sortorder = 0)
+     * Add an image to the database
+     *
+     * @since V1.4.0
+     * @param int|FALSE $id ID of the gallery
+     * @param string|FALSE $filename (optional)
+     * @param string $description (optional)
+     * @param string $alttext (optional)
+     * @param array|false $meta_data (optional)
+     * @param int $post_id (required for sync with WP media lib) (optional)
+     * @param string $imagedate (optional)
+     * @param int $exclude (0 or 1) (optional)
+     * @param int $sortorder (optional)
+     * @return int Result of the ID of the inserted image
+     */
+    function add_image($id = false, $filename = false, $description = '', $alttext = '', $meta_data = false, $post_id = 0, $imagedate = '0000-00-00 00:00:00', $exclude = 0, $sortorder = 0)
     {
         global $wpdb;
 
@@ -545,18 +545,34 @@ class nggdb
 			$meta_data = C_NextGen_Serializable::serialize($meta_data);
 
         // slug must be unique, we use the alttext for that
-        $slug = nggdb::get_unique_slug( sanitize_title( $alttext ), 'image' );
+        $slug = nggdb::get_unique_slug(sanitize_title( $alttext ), 'image');
 
 		// Add the image
-		if ( false === $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->nggpictures (image_slug, galleryid, filename, description, alttext, meta_data, post_id, imagedate, exclude, sortorder)
-													 VALUES (%s, %d, %s, %s, %s, %s, %d, %s, %d, %d)", $slug, $id, $filename, $description, $alttext, $meta_data, $post_id, $imagedate, $exclude, $sortorder ) ) ) {
-			return false;
+		if (FALSE === $wpdb->query(
+		    $wpdb->prepare(
+		        "INSERT INTO {$wpdb->nggpictures} (
+                            `image_slug`,
+                            `galleryid`,
+                            `filename`,
+                            `description`,
+                            `alttext`,
+                            `meta_data`,
+                            `post_id`,
+                            `imagedate`,
+                            `exclude`,
+                            `sortorder`
+                        ) VALUES (%s, %d, %s, %s, %s, %s, %d, %s, %d, %d)",
+                $slug, $id, $filename, $description, $alttext, $meta_data, $post_id, $imagedate, $exclude, $sortorder)))
+		{
+			return FALSE;
 		}
 
-		$imageID = (int) $wpdb->insert_id;
+		$imageID = (int)$wpdb->insert_id;
+
+        C_Gallery_Mapper::get_instance()->set_preview_image($id, $imageID, TRUE);
 
 		// Remove from cache the galley, needs to be rebuild now
-	    wp_cache_delete( $id, 'ngg_gallery');
+	    wp_cache_delete($id, 'ngg_gallery');
 
 		//and give me the new id
 		return $imageID;

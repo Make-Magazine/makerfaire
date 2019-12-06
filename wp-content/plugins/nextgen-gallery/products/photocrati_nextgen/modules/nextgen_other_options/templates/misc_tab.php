@@ -85,4 +85,6 @@
     <?php print $random_widget_cache_ttl_field; ?>
 
     <?php print $alternate_random_method_field; ?>
+
+    <?php print $disable_fontawesome_field; ?>
 </table>

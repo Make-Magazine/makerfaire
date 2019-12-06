@@ -122,9 +122,7 @@ class GFGEO_Google_Map_Field extends GF_Field {
 			$map_width  = '100%';
 		}
 
-		// create the map element.
-		$input = '<div id="gfgeo-map-wrapper-' . $field_id . '" class="gfgeo-map-wrapper">';
-
+		$input  = '<div id="gfgeo-map-wrapper-' . $field_id . '" class="gfgeo-map-wrapper">';
 		$input .= '<div id="gfgeo-map-' . $field_id . '" class="gfgeo-map" data-geocoder_id="' . $input_geocoder_id . '" data-map_id="' . $field_id . '" data-latitude="' . $latitude . '" data-longitude="' . $longitude . '" data-map_type="' . $map_type . '" data-zoom_level="' . $zoom_level . '" data-draggable="' . $draggable . '" data-drag_on_click="' . $drag_on_click . '" data-scrollwheel="' . $scrollwheel . '" data-disable_address_output="' . $disable_address_output . '" data-map_marker="' . $map_marker . '" style="height:' . $map_height . ';width:' . $map_width . '"></div>';
 		$input .= '</div>';
 
@@ -132,9 +130,75 @@ class GFGEO_Google_Map_Field extends GF_Field {
 	}
 
 	/**
+	 * Save the map coords in serialized array.
+	 *
+	 * @param  [type] $value      [description].
+	 * @param  [type] $form       [description].
+	 * @param  [type] $input_name [description].
+	 * @param  [type] $entry_id   [description].
+	 * @param  [type] $entry      [description].
+	 *
+	 * @return [type]             [description]
+	 */
+	public function get_value_save_entry( $value, $form, $input_name, $entry_id, $entry ) {
+
+		$coords = array(
+			'status'                => 0,
+			'directions'            => 0,
+			'latitude'              => '',
+			'longitude'             => '',
+			'destination_latitude'  => '',
+			'destination_longitude' => '',
+		);
+
+		$geocoder_id = absint( $this->gfgeo_geocoder_id );
+
+		if ( empty( $geocoder_id ) || empty( $_POST[ 'input_' . $geocoder_id ] ) ) { // WPCS: CSRF ok.
+			return maybe_serialize( $coords );
+		}
+
+		$geocoder = $_POST[ 'input_' . $geocoder_id ]; // WPCS: CSRF ok, Sanitization ok.
+		$geocoder = maybe_unserialize( $geocoder );
+
+		if ( empty( $geocoder['latitude'] ) || empty( $geocoder['longitude'] ) ) {
+			return maybe_serialize( $coords );
+		}
+
+		$coords['status']    = 1;
+		$coords['latitude']  = $geocoder['latitude'];
+		$coords['longitude'] = $geocoder['longitude'];
+
+		// Look for destination coords.
+		foreach ( $form['fields'] as $field ) {
+
+			if ( 'gfgeo_geocoder' === $field->type && absint( $field->id ) === $geocoder_id ) {
+
+				if ( ! empty( $field->gfgeo_distance_destination_geocoder_id ) && ! empty( $_POST[ 'input_' . $field->gfgeo_distance_destination_geocoder_id ] ) ) { // WPCS: CSRF ok.
+
+					$dest_geocoder = absint( $_POST[ 'input_' . $field->gfgeo_distance_destination_geocoder_id ] ); // WPCS: CSRF ok.
+					$dest_geocoder = maybe_unserialize( $dest_geocoder );
+
+					if ( ! empty( $dest_geocoder['latitude'] ) && ! empty( $dest_geocoder['longitude'] ) ) {
+
+						$coords['directions']            = 1;
+						$coords['destination_latitude']  = $dest_geocoder['latitude'];
+						$coords['destination_longitude'] = $dest_geocoder['longitude'];
+					}
+				}
+			}
+		}
+
+		$coords = maybe_serialize( $coords );
+
+		$_POST[ 'input_' . $this->id ] = $coords;
+
+		return $coords;
+	}
+
+	/**
 	 * Display geocoded in entry list page.
 	 *
-	 * @param  [type] $geocoded_data [description].
+	 * @param  [type] $value         [description].
 	 * @param  [type] $entry         [description].
 	 * @param  [type] $field_id      [description].
 	 * @param  [type] $columns       [description].
@@ -142,10 +206,24 @@ class GFGEO_Google_Map_Field extends GF_Field {
 	 *
 	 * @return [type]                [description]
 	 */
-	public function get_value_entry_list( $geocoded_data, $entry, $field_id, $columns, $form ) {
+	public function get_value_entry_list( $value, $entry, $field_id, $columns, $form ) {
 
 		$map_na = $this->map_na();
+		$value  = maybe_unserialize( $value );
 
+		if ( is_array( $value ) && isset( $value['status'] ) ) {
+
+			if ( ! empty( $value['latitude'] ) && ! empty( $value['longitude'] ) ) {
+
+				// generate the map.
+				return __( 'View map in entry page', 'gfgeo' );
+
+			} else {
+				return $map_na;
+			}
+		}
+
+		// below is code for older versions where the map coords are not saved in map's field.
 		if ( empty( $this->gfgeo_geocoder_id ) ) {
 			return $map_na;
 		}
@@ -160,20 +238,69 @@ class GFGEO_Google_Map_Field extends GF_Field {
 		if ( empty( $geocoded_data['latitude'] ) || empty( $geocoded_data['longitude'] ) ) {
 			return $map_na;
 		} else {
-			return __( 'See map in entry page', 'gfgeo' );
+			return __( 'View map in entry page', 'gfgeo' );
+		}
+	}
+
+	/**
+	 * Get the coordinats values and generate the static map.
+	 *
+	 * @param  [type] $value [description].
+	 * @param  [type] $where [description].
+	 * @return [type]        [description].
+	 */
+	public function get_static_map( $value, $where ) {
+
+		if ( ! empty( $value['latitude'] ) && ! empty( $value['longitude'] ) ) {
+
+			$map_src = self::generate_static_map( $value, $where );
+			$output  = '<div class="gfgeo-static-map-warpper"><img style="width:100%;height:auto;" src="' . $map_src . '" />';
+
+			// Get directions link if available.
+			if ( ! empty( $value['directions'] ) ) {
+
+				$link    = 'https://www.google.com/maps/dir/?api=1&origin=' . $value['latitude'] . ',' . $value['longitude'] . '&destination=' . $value['destination_latitude'] . ',' . $value['destination_longitude'];
+				$output .= '<br /><a href="' . esc_url( $link ) . '" target="_blank" class="gfgeo-directions-link">' . esc_html__( 'View Directions on Google Maps', 'gfgeo' ) . '</a>';
+			}
+
+			$output .= '</div>';
+
+			return $output;
+
+		} else {
+			return $this->map_na();
 		}
 	}
 
 	/**
 	 * Generate Google static map.
 	 *
-	 * @param  [type] $lat   [description].
-	 * @param  [type] $lng   [description].
-	 * @param  [type] $where [description].
+	 * @param  array  $value  map's coords.
+	 * @param  string $where  page in which the map is generated.
 	 *
 	 * @return [type]        [description]
 	 */
-	public static function generate_static_map( $lat, $lng, $where ) {
+	public static function generate_static_map( $value, $where ) {
+
+		$lat      = ! empty( $value['latitude'] ) ? $value['latitude'] : '';
+		$lng      = ! empty( $value['longitude'] ) ? $value['longitude'] : '';
+		$url_args = array(
+			'markers' => 'color:red|' . $lat . ',' . $lng,
+			'size'    => '500x200',
+			'zoom'    => '13',
+			'key'     => GFGEO_GOOGLE_MAPS_API,
+		);
+
+		if ( ! empty( $value['destination_latitude'] ) && ! empty( $value['destination_longitude'] ) ) {
+
+			$dest_lat = $value['destination_latitude'];
+			$dest_lng = $value['destination_longitude'];
+
+			$url_args['path']     = 'color:0x0000ff|weight:5|' . $lat . ',' . $lng . '|' . $dest_lat . ',' . $dest_lng;
+			$url_args['markers'] .= '|' . $dest_lat . ',' . $dest_lng;
+
+			unset( $url_args['zoom'] );
+		}
 
 		// build the map query. Map settings can be modified via the filters below.
 		$map_args = apply_filters(
@@ -185,12 +312,7 @@ class GFGEO_Google_Map_Field extends GF_Field {
 					http_build_query(
 						apply_filters(
 							'gfgeo_google_map_field_map_settings_args',
-							array(
-								'markers' => 'color:red|' . $lat . ',' . $lng,
-								'size'    => '500x200',
-								'zoom'    => '13',
-								'key'     => GFGEO_GOOGLE_MAPS_API,
-							),
+							$url_args,
 							$where
 						),
 						'',
@@ -222,13 +344,19 @@ class GFGEO_Google_Map_Field extends GF_Field {
 	 */
 	public function get_value_merge_tag( $value, $input_id, $entry, $form, $modifier, $raw_value, $url_encode, $esc_html, $format, $nl2br ) {
 
+		$raw_value = maybe_unserialize( $raw_value );
+
+		if ( is_array( $raw_value ) && isset( $raw_value['status'] ) ) {
+			return $this->get_static_map( $raw_value, 'merge_tag' );
+		}
+
+		// below is code for older versions where the map coords are not saved in map's field.
 		$map_na = $this->map_na();
 
 		if ( empty( $this->gfgeo_geocoder_id ) ) {
 			return $map_na;
 		}
 
-		// map geocoder ID.
 		$geocoder_id = $this->gfgeo_geocoder_id;
 
 		if ( ! empty( $_POST[ 'input_' . $geocoder_id ] ) ) { // WPCS: CSRF ok.
@@ -261,7 +389,7 @@ class GFGEO_Google_Map_Field extends GF_Field {
 			return $map_na;
 		}
 
-		$src = self::generate_static_map( $geocoded_data['latitude'], $geocoded_data['longitude'], 'merge_tag' );
+		$src = self::generate_static_map( $geocoded_data, 'merge_tag' );
 
 		// generate the map.
 		$output = '<div><img style="width:100%;height:auto;" src="' . $src . '" /></div>';
@@ -270,9 +398,9 @@ class GFGEO_Google_Map_Field extends GF_Field {
 	}
 
 	/**
-	 * Display geocoded data in entry page.
+	 * Display map in entry page.
 	 *
-	 * @param  [type]  $output   [description].
+	 * @param  array   $value    [description].
 	 * @param  string  $currency [description].
 	 * @param  boolean $use_text [description].
 	 * @param  string  $format   [description].
@@ -280,8 +408,15 @@ class GFGEO_Google_Map_Field extends GF_Field {
 	 *
 	 * @return [type]            [description]
 	 */
-	public function get_value_entry_detail( $output, $currency = '', $use_text = false, $format = 'html', $media = 'screen' ) {
+	public function get_value_entry_detail( $value, $currency = '', $use_text = false, $format = 'html', $media = 'screen' ) {
 
+		$value = maybe_unserialize( $value );
+
+		if ( is_array( $value ) && ! empty( $value['status'] ) ) {
+			return $this->get_static_map( $value, 'entries' );
+		}
+
+		// below is code for older versions where the map coords are not saved in map's field.
 		$map_na = $this->map_na();
 
 		if ( empty( $this->gfgeo_geocoder_id ) ) {
@@ -319,12 +454,12 @@ class GFGEO_Google_Map_Field extends GF_Field {
 			return $map_na;
 		}
 
-		$src = self::generate_static_map( $geocoded_data['latitude'], $geocoded_data['longitude'], 'entries' );
+		$src = self::generate_static_map( $geocoded_data, 'entries' );
 
 		// generate the map.
-		$output = '<div><img style="width:100%;height:auto;" src="' . $src . '" /></div>';
+		$value = '<div><img style="width:100%;height:auto;" src="' . $src . '" /></div>';
 
-		return $output;
+		return $value;
 	}
 
 	/**

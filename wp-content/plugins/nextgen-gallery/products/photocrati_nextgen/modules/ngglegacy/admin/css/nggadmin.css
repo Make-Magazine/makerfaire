@@ -47,16 +47,20 @@
 
 #ngg_page_content .ngg_overview .ngg_page_content_main h2 {
 	text-align: left;
-    font-size: 28px;
-    font-weight: 500;
-    color: #444;
-    margin: 20px 0;
+    font-size: 22px;
+    font-weight: 400;
+    color: black;
+    margin: 20px 0 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 #ngg_page_content .ngg_overview .ngg_page_content_main .about-text {
-	font-size: 18px;
+	font-size: 17px;
 	max-width: none;
 	margin: 20px 0;
+	color: black;
+	font-weight: 400;
 }
 
 #ngg-gallery-wizard {
@@ -69,17 +73,18 @@
     line-height: 80px;
     color: #fff;
     font-size: 14px;
-    background: rgba(93, 134, 167, 0.18);
     margin-right: 0;
-    padding: 0 40px;
-    border-left: 1px solid #566b7c;
-    color: #a7b8c6;
+    color: black;
+    font-weight: 400;
+    letter-spacing: .5px;
 }
 
-#ngg-gallery-wizard a {
-	font-weight: bold;
-	text-decoration: none;
-	margin-left: 20px;
+#ngg_page_content #ngg-gallery-wizard a {
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 20px;
+    height: 50px !important;
+    line-height: 50px;
 }
 
 .warning {
@@ -126,7 +131,14 @@
 }
 
 .toplevel_page_nextgen-gallery .feature-video iframe {
-    box-shadow: 0 0 50px 25px rgba(0,0,0,.03);
+    box-shadow: 0 0 8px 4px rgba(0,0,0,.03);
+    width: 800px;
+    height: 450px;
+    max-width: 100%;
+}
+
+div[data-id="welcome-link"] .about-text {
+	margin: 0 0 40px !important;
 }
 
 div[data-id="pro-link"] .feature-section {
@@ -147,12 +159,9 @@ div[data-id="pro-link"] .feature-section iframe {
 }
 
 #ngg_page_content .button-primary.ngg-pro-upgrade {
-	text-transform: uppercase;
     height: 50px !important;
     padding: 0 40px !important;
     line-height: 50px;
-    font-weight: 600;
-    letter-spacing: .5px;
 }
 
 div[data-id="videos-link"] .feature-section,
@@ -230,7 +239,7 @@ a.switch-expert {
 .ngg-admin.gallery_page_nggallery-manage-gallery #ngg_page_content .notice, 
 .ngg-admin.gallery_page_nggallery-manage-gallery #ngg_page_content div.updated, 
 .ngg-admin.gallery_page_nggallery-manage-gallery #ngg_page_content div.error {
-    margin: -10px 0 40px 0;
+    margin: 10px 0 40px 0;
 }
 
 .ngg_admin_notice ul {
@@ -268,6 +277,9 @@ a.switch-expert {
     float: left;
     margin: 0;
     line-height: 50px;
+    text-transform: uppercase;
+    font-size: 16px;
+    letter-spacing: 1.5px;
 }
 
 #gallerydiv span.toggle-indicator {
@@ -304,6 +316,17 @@ a.switch-expert {
 }
 #ngg_page_content .ngg_manage_galleries .search-box {
     margin-bottom: 10px;
+    float: none;
+    position: relative;
+    left: 470px;
+    top: 47px;
+    margin-top: -40px;
+    width: 360px;
+}
+#ngg_page_content #editgalleries .displaying-num {
+    margin-right: 7px !important;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 #ngg_page_content .ngg_manage_galleries .tablenav.bottom {
     margin: 15px 0 0;
@@ -325,17 +348,38 @@ a.switch-expert {
     width: 50px !important;
 }
 
+#ngg_page_content .ngg_manage_images .tablenav .tablenav-pages {
+    margin-top: 0;
+}
+
+#ngg_page_content .ngg_manage_galleries .tablenav .tablenav-pages {
+    margin-top: 6px;
+}
+
 #ngg_page_content .ngg_manage_galleries .tablenav .tablenav-pages a,
 #ngg_page_content .ngg_manage_images .tablenav .tablenav-pages a {
-    background: #9fbb1a;
+    background: black;
     border: none;
     color: #fff !important;
     margin: 0 2px;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 4px;
+    line-height: 20px;
+    padding: 2px 8px 6px 8px;
 }
 
 #ngg_page_content .ngg_manage_images .tablenav input,
 #ngg_page_content .ngg_manage_images .tablenav select {
     width: auto;
+    margin-top: 0;
+}
+
+#ngg_page_content .ngg_manage_images .tablenav input.current-page,
+#ngg_page_content #ngg-manage-images-items-per-page {
+    padding: 4px !important;
+    text-align-last: center;
+    background-image: none;
 }
 
 
@@ -346,11 +390,7 @@ a.switch-expert {
 
 #ngg_page_content .ngg_manage_galleries table thead,
 #ngg_page_content .ngg_manage_galleries table tfoot {
-	background-color: #38576f;
-}
-
-#ngg_page_content .ngg_manage_galleries table tfoot {
-    background-color: #38576f;
+	background-color: black;
 }
 
 #ngg_page_content .ngg_manage_galleries table thead th, 
@@ -381,7 +421,9 @@ a.switch-expert {
 }
 
 .ngg_manage_galleries td.title {
-    font-weight: bold;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 13px !important;
 }
 
 .ngg_manage_galleries th#author {
@@ -393,7 +435,7 @@ a.switch-expert {
 }
 
 #ngg_page_content .ngg_manage_galleries table tr.alternate  {
-	background-color: rgb(247, 248, 243);
+	background-color: #f7f7f7;
 }
 
 #ngg_page_content .ngg_manage_galleries th a {
@@ -443,13 +485,11 @@ table#ngg-listimages {
 
 #ngg-listimages thead,
 #ngg-listimages tfoot {
-	background: #f5f5f5;
-	background-color: #38576f;
+	background: black;
 }
 
 #ngg-listimages tfoot {
-	background: #f5f5f5;
-	background-color: #38576f;
+	background: black;
 }
 
 
@@ -459,7 +499,7 @@ table#ngg-listimages {
 }
 
 #ngg-listimages tr.alternate {
-	background-color: rgb(247, 248, 243);
+	background-color: #f7f7f7;
 }
 
 #ngg-listimages td {
@@ -552,7 +592,6 @@ table#ngg-listimages {
 
 #ngg-listimages .column-7 select {
 	font-size: 12px;
-	height: 25px !important;
 }
 
 #ngg-listimages .row-actions {
@@ -590,9 +629,9 @@ table#ngg-listimages {
 .gallery_page_nggallery-manage-gallery .ui-dialog {
     border: none;
     padding: 0;
-    width: 80% !important;
+    max-width: 95% !important;
     z-index: 10000 !important;
-    left: 10% !important;
+    margin: 0 auto !important;
 }
 
 .gallery_page_nggallery-manage-album .ui-dialog {
@@ -621,6 +660,8 @@ table#ngg-listimages {
     line-height: 35px;
     width: auto !important;
     margin-right: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .gallery_page_nggallery-manage-gallery #ngg-overlay-dialog-bottom button:hover,
@@ -636,8 +677,14 @@ table#ngg-listimages {
 
 .gallery_page_nggallery-manage-gallery .ui-dialog-titlebar,
 .gallery_page_nggallery-manage-album .ui-dialog-titlebar{
-    background: #143650;
+    background: black;
     padding: 10px;
+}
+
+.gallery_page_nggallery-manage-gallery .ui-dialog-titlebar .ui-dialog-title,
+.gallery_page_nggallery-manage-album .ui-dialog-titlebar .ui-dialog-title {
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
 
 .gallery_page_nggallery-manage-gallery .ui-dialog-titlebar button,
@@ -791,16 +838,6 @@ div .progressbar span {
 
 /* SETTINGS FOR ALBUM PAGE */
 
-/* Quick fix to ensure js-filled album container is tall enough to contain content */
-/*#ngg_page_content .ngg_manage_albums  .ngg_page_content_main {
-	min-height: 2000px;
-}*/
-
-
-.gallery_page_nggallery-manage-album #ngg_page_content .wrap {
-    background: #f1f1f1;
-}
-
 .gallery_page_nggallery-manage-album .wrap>h2:first-child {
 	display:none;
 }
@@ -813,34 +850,32 @@ div .progressbar span {
     margin-bottom: 35px;
 }
 
-.ngg_manage_albums {
-    color: #777;
-}
-
 .ngg_manage_albums .widget {
 	box-sizing: border-box;
     border: 1px solid #eee;
     padding: 10px 10px 20px;
-    background: rgb(247, 248, 243);
     width: 32%;
     margin: 0 1% 0 0;
     float: left;
-}
-
-.ngg_manage_albums .target-album {
-    width: 39%;
-}
-
-.ngg_manage_albums .widget.widget-right {
-	width: 29%;
+    box-shadow: 0 0 4px 2px rgba(0 0 4px 2px rgba(0,0,0,.02));
 }
 
 .container {
 	margin-top: 10px;
 }
 
+.ngg_manage_albums .container {
+	margin-top: 30px;
+}
+
 .ngg_select_album {
 	margin: 0 50px 0 2px;
+	vertical-align: middle;
+}
+
+#newalbum,
+.ngg_new_album {
+    vertical-align: middle;
 }
 
 .albumnav select[name="act_album"] {
@@ -855,7 +890,8 @@ div .progressbar span {
 	box-shadow: none;
 	background: transparent;
 	border: none;
-	margin-bottom: 5px;
+	margin: -10px -10px 20px -10px;
+    background: #f7f7f7;
 }
 
 div .groupItem
@@ -876,14 +912,11 @@ div .innerhandle {
 {
 	background-color:#9fbb1a;
 	color: #FFFFFF;
-	font-weight:bold;
+	font-weight:400;
 	line-height: 28px;
 	height: 28px;
 	padding: 0 5px;
-	-moz-border-radius: 3px;
-	-khtml-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
+	border-radius: 0;
 	height: 40px;
 	padding: 0 10px;
 	line-height: 40px;
@@ -891,7 +924,7 @@ div .innerhandle {
 
 #ngg_page_content .groupItem .album_obj
 {
-	background-color: #38576f;
+	background-color: black;
 }
 
 #ngg_page_content .groupItem .item_top a
@@ -955,6 +988,8 @@ div.widget-top h3 {
 	margin: 0;
 	padding: 5px 12px;
 	font-size: 13px;
+	letter-spacing: .5px;
+	text-transform: uppercase;
 }
 
 div.widget-top {
@@ -1092,17 +1127,17 @@ DIV that shows the image as you drag it
 	}
 }
 
+@media (max-width: 1420px) {
+	#ngg_page_content .ngg_manage_galleries .search-box {
+	    position: static;
+	}
+}
+
 @media (max-width: 1080px) {
 	#ngg-gallery-wizard > span {
         display: none;
     }
-}
-
-@media (max-width: 1024px) {
-	/* Manage Galleries */ 
-	.ngg_manage_galleries .search-form {
-	    display: none;
-	}
+    /* Manage Galleries */ 
 	.ngg_manage_galleries .tablenav.bottom {
 	    display: none;
 	}
@@ -1110,7 +1145,9 @@ DIV that shows the image as you drag it
         margin-bottom: 8px;
     }
     .ngg_manage_images #gallery_fields td:nth-of-type(odd) {
-        background: rgb(247, 248, 243);
+	    background: #f7f7f7;
+	    padding-left: 10px;
+	    font-weight: bold;
     }
     .ngg_manage_images #gallery_fields,
     .ngg_manage_images #gallery_fields tbody,
@@ -1121,9 +1158,6 @@ DIV that shows the image as you drag it
     	box-sizing: border-box;
     }
     .ngg_manage_images #gallery_fields td {
-        /*display: block;
-        width: 100%;*/
-        /*box-sizing: border-box;*/
         padding: 10px 5px;
         border: 1px solid rgb(247, 248, 243);
         margin: 0;
@@ -1217,14 +1251,12 @@ DIV that shows the image as you drag it
 	#ngg-listimages td.column-3 {
 		width: 55%;
 		max-width: 300px;
-		/*height: 150px;*/
 		float: left;
 		box-sizing: border-box;
 		padding-bottom: 10px !important;
 	}
 	#ngg-listimages td.column-4 {
 		width: 40% !important;
-		/*height: 150px;*/
 		float: left;
 		box-sizing: border-box;
 	}
@@ -1258,6 +1290,14 @@ DIV that shows the image as you drag it
 	#ngg-gallery-wizard {
         display: none;
     }
+    #ngg_page_content .ngg_manage_galleries .tablenav.top > div {
+	    display: block;
+	    width: 100%;
+	}
+	#ngg_page_content .ngg_manage_galleries .tablenav .tablenav-pages {
+	    margin-top: 20px;
+	    margin-bottom: 28px !important;
+	}
 }
 
 @media (max-width: 737px) {
@@ -1289,7 +1329,7 @@ DIV that shows the image as you drag it
 	}
 	.ngg_manage_albums .target-album,
 	.ngg_manage_albums .widget.widget-right {
-	    width: 32%;
+	    width: 32% !important;
 	    margin: .5% !important;
 	    padding: 5px 5px 10px;
 	}

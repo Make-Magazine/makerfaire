@@ -3,32 +3,19 @@
  * Contains Class TestLockOptions.
  *
  * @package WP-Auth0
+ *
  * @since 3.7.0
  */
-
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class TestLockOptions.
  * Tests that Lock options output expected values based on given conditions.
  */
-class TestLockOptions extends TestCase {
+class TestLockOptions extends WP_Auth0_Test_Case {
 
-	use setUpTestDb;
-
-	/**
-	 * WP_Auth0_Options instance.
-	 *
-	 * @var WP_Auth0_Options
-	 */
-	protected static $opts;
-
-	/**
-	 * Run before test suite.
-	 */
-	public static function setUpBeforeClass() {
-		parent::setUpBeforeClass();
-		self::$opts = WP_Auth0_Options::Instance();
+	public function tearDown() {
+		remove_filter( 'auth0_lock_options', [ __CLASS__, 'setLockLanguage' ] );
+		parent::tearDown();
 	}
 
 	/**
@@ -82,10 +69,39 @@ class TestLockOptions extends TestCase {
 	}
 
 	/**
-	 * Run after each test.
+	 * Test that the social_big_buttons option is not used.
 	 */
-	public function tearDown() {
-		parent::tearDown();
-		self::$opts->set( 'force_https_callback', null );
+	public function testThatSocialButtonStyleStaysBig() {
+		self::$opts->set( 'social_big_buttons', false );
+		$lock_options = new WP_Auth0_Lock10_Options( [], self::$opts );
+
+		$lock_opts = $lock_options->get_lock_options();
+		$this->assertEquals( 'big', $lock_opts['socialButtonStyle'] );
+	}
+
+	/**
+	 * Test that the social_big_buttons option cannot be overridden.
+	 */
+	public function testThatSocialButtonStyleCannotBeOverridden() {
+		$lock_options = new WP_Auth0_Lock10_Options( [ 'social_big_buttons' => false ], self::$opts );
+
+		$lock_opts = $lock_options->get_lock_options();
+		$this->assertEquals( 'big', $lock_opts['socialButtonStyle'] );
+	}
+
+	public function testThatLockOptionsFilterWorks() {
+		$lock_options = new WP_Auth0_Lock10_Options( [ 'language' => '__test_language__' ], self::$opts );
+
+		$lock_opts = $lock_options->get_lock_options();
+		$this->assertEquals( '__test_language__', $lock_opts['language'] );
+
+		add_filter( 'auth0_lock_options', [ __CLASS__, 'setLockLanguage' ] );
+		$lock_opts = $lock_options->get_lock_options();
+		$this->assertEquals( '__test_filtered_language__', $lock_opts['language'] );
+	}
+
+	public static function setLockLanguage( $options ) {
+		$options['language'] = '__test_filtered_language__';
+		return $options;
 	}
 }

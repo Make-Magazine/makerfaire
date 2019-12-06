@@ -7,41 +7,12 @@
  * @since 3.8.1
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class TestApiOperations.
  */
-class TestApiOperations extends TestCase {
+class TestApiOperations extends WP_Auth0_Test_Case {
 
 	use HttpHelpers;
-
-	use RedirectHelpers;
-
-	use SetUpTestDb;
-
-	/**
-	 * Instance of WP_Auth0_Options.
-	 *
-	 * @var WP_Auth0_Options
-	 */
-	public static $opts;
-
-	/**
-	 * WP_Auth0_ErrorLog instance.
-	 *
-	 * @var WP_Auth0_ErrorLog
-	 */
-	protected static $error_log;
-
-	/**
-	 * Setup for entire test class.
-	 */
-	public static function setUpBeforeClass() {
-		parent::setUpBeforeClass();
-		self::$opts      = WP_Auth0_Options::Instance();
-		self::$error_log = new WP_Auth0_ErrorLog();
-	}
 
 	/**
 	 * Test that a basic create connection command requests properly.
@@ -76,25 +47,27 @@ class TestApiOperations extends TestCase {
 	public function testThatCreateConnectionWithMigrationRequestsCorrectly() {
 		$this->startHttpHalting();
 
-		$api_ops    = new WP_Auth0_Api_Operations( self::$opts );
-		$test_token = implode( '.', [ uniqid(), uniqid(), uniqid() ] );
+		$api_ops = new WP_Auth0_Api_Operations( self::$opts );
 
 		self::$opts->set( 'domain', 'test-wp2.auth0.com' );
-		self::$opts->set( 'client_id', 'TEST_CLIENT_ID_2' );
+		self::$opts->set( 'client_id', '__test_client_id__' );
 
 		$caught_http = [];
 		try {
-			$api_ops->create_wordpress_connection( $test_token, true, 'fair', 'TEST_MIGRATION_TOKEN' );
+			$api_ops->create_wordpress_connection( '__test_api_token__', true, 'fair', 'TEST_MIGRATION_TOKEN' );
 		} catch ( Exception $e ) {
 			$caught_http = unserialize( $e->getMessage() );
 		}
 
 		$this->assertEquals( 'https://test-wp2.auth0.com/api/v2/connections', $caught_http['url'] );
-		$this->assertEquals( 'Bearer ' . $test_token, $caught_http['headers']['Authorization'] );
+		$this->assertEquals( 'Bearer ' . '__test_api_token__', $caught_http['headers']['Authorization'] );
 		$this->assertEquals( 'DB-Test-Blog', $caught_http['body']['name'] );
 		$this->assertEquals( 'auth0', $caught_http['body']['strategy'] );
-		$this->assertContains( 'TEST_CLIENT_ID_2', $caught_http['body']['enabled_clients'] );
+		$this->assertEquals( [ '__test_client_id__' ], $caught_http['body']['enabled_clients'] );
 
+		$this->assertEquals( 'fair', $caught_http['body']['options']['passwordPolicy'] );
+		$this->assertEquals( true, $caught_http['body']['options']['import_mode'] );
+		$this->assertEquals( true, $caught_http['body']['options']['requires_username'] );
 		$this->assertEquals( true, $caught_http['body']['options']['requires_username'] );
 		$this->assertEquals( true, $caught_http['body']['options']['import_mode'] );
 		$this->assertEquals( true, $caught_http['body']['options']['enabledDatabaseCustomization'] );
@@ -106,24 +79,40 @@ class TestApiOperations extends TestCase {
 			$caught_http['body']['options']['validation']['username']
 		);
 
-		$this->assertContains(
-			'http://example.org/index.php?a0_action=migration-ws-login',
-			$caught_http['body']['options']['customScripts']['login']
+		$this->assertArrayHasKey( 'customScripts', $caught_http['body']['options'] );
+		$this->assertArrayHasKey( 'login', $caught_http['body']['options']['customScripts'] );
+		$this->assertArrayHasKey( 'get_user', $caught_http['body']['options']['customScripts'] );
+
+		$login_script = explode( PHP_EOL, $caught_http['body']['options']['customScripts']['login'] );
+		$login_script = array_map( 'trim', $login_script );
+		$this->assertContains( "configuration.endpointUrl + 'migration-ws-login',", $login_script );
+		$this->assertContains( 'access_token: configuration.migrationToken', $login_script );
+		$this->assertContains( "user_id: configuration.userNamespace + '|' + wpUser.data.ID,", $login_script );
+
+		$get_user_script = explode( PHP_EOL, $caught_http['body']['options']['customScripts']['get_user'] );
+		$get_user_script = array_map( 'trim', $get_user_script );
+		$this->assertContains( "configuration.endpointUrl + 'migration-ws-get-user',", $get_user_script );
+		$this->assertContains( 'access_token: configuration.migrationToken', $get_user_script );
+		$this->assertContains( "user_id: configuration.userNamespace + '|' + wpUser.data.ID,", $get_user_script );
+
+		$this->assertArrayHasKey( 'bareConfiguration', $caught_http['body']['options'] );
+		$this->assertArrayHasKey( 'endpointUrl', $caught_http['body']['options']['bareConfiguration'] );
+		$this->assertArrayHasKey( 'migrationToken', $caught_http['body']['options']['bareConfiguration'] );
+		$this->assertArrayHasKey( 'userNamespace', $caught_http['body']['options']['bareConfiguration'] );
+
+		$this->assertEquals(
+			'http://example.org/index.php?a0_action=',
+			$caught_http['body']['options']['bareConfiguration']['endpointUrl']
 		);
 
-		$this->assertContains(
-			"access_token: 'TEST_MIGRATION_TOKEN'",
-			$caught_http['body']['options']['customScripts']['login']
+		$this->assertEquals(
+			'TEST_MIGRATION_TOKEN',
+			$caught_http['body']['options']['bareConfiguration']['migrationToken']
 		);
 
-		$this->assertContains(
-			'http://example.org/index.php?a0_action=migration-ws-get-user',
-			$caught_http['body']['options']['customScripts']['get_user']
-		);
-
-		$this->assertContains(
-			"access_token: 'TEST_MIGRATION_TOKEN'",
-			$caught_http['body']['options']['customScripts']['get_user']
+		$this->assertEquals(
+			'DB-' . get_auth0_curatedBlogName(),
+			$caught_http['body']['options']['bareConfiguration']['userNamespace']
 		);
 	}
 
@@ -151,23 +140,5 @@ class TestApiOperations extends TestCase {
 		$result = $api_ops->create_wordpress_connection( $test_token, false );
 
 		$this->assertFalse( $result );
-	}
-
-	/**
-	 * Runs after each test method.
-	 */
-	public function tearDown() {
-		parent::tearDown();
-
-		self::$opts->set( 'domain', self::$opts->get_default( 'domain' ) );
-		self::$opts->set( 'client_id', self::$opts->get_default( 'client_id' ) );
-		self::$opts->set( 'migration_ips', self::$opts->get_default( 'migration_ips' ) );
-		self::$opts->set( 'migration_ips_filter', self::$opts->get_default( 'migration_ips_filter' ) );
-		self::$opts->set( 'db_connection_name', null );
-
-		$this->stopHttpHalting();
-		$this->stopHttpMocking();
-
-		self::$error_log->clear();
 	}
 }

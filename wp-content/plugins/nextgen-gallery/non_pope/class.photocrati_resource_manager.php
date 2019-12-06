@@ -56,6 +56,7 @@ class C_Photocrati_Resource_Manager
 		if (preg_match("#wp-admin/(network/)?update|wp-login|wp-signup#", $_SERVER['REQUEST_URI'])) $retval = FALSE;
 		else if (isset($_GET['display_gallery_iframe'])) 				  $retval = FALSE;
 		else if (defined('WP_ADMIN') && WP_ADMIN && defined('DOING_AJAX') && DOING_AJAX) $retval = FALSE;
+		else if (strpos($_SERVER['REQUEST_URI'], '/nextgen-image/') !== FALSE) $retval = FALSE;
 		else if (preg_match("/(js|css|xsl|xml|kml)$/", $_SERVER['REQUEST_URI'])) $retval = FALSE;
 		else if (preg_match("#/feed(/?)$#i", $_SERVER['REQUEST_URI']) || !empty($_GET['feed'])) $retval = FALSE;
 		elseif (preg_match("/\\.(\\w{3,4})$/", $_SERVER['REQUEST_URI'], $match)) {
@@ -81,7 +82,13 @@ class C_Photocrati_Resource_Manager
 	 */
 	function start_buffer()
 	{
-		if (defined('NGG_DISABLE_RESOURCE_MANAGER') && NGG_DISABLE_RESOURCE_MANAGER)
+	    // This is admittedly an ugly hack, but much easier than reworking the entire nextgen_admin modules
+        if (!empty($_GET['page']) && $_GET['page'] === 'ngg_addgallery' && isset($_GET['attach_to_post']))
+            $force = TRUE;
+        else
+            $force = FALSE;
+
+		if (defined('NGG_DISABLE_RESOURCE_MANAGER') && NGG_DISABLE_RESOURCE_MANAGER && !$force)
 			return;
 
 		if (apply_filters('run_ngg_resource_manager', $this->valid_request)) {

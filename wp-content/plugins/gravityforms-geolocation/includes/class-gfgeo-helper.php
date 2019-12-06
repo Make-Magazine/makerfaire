@@ -45,6 +45,10 @@ class GFGEO_Helper {
 			'formatted_address' => __( 'Formatted Address', 'gfgeo' ),
 			'latitude'          => __( 'Latitude', 'gfgeo' ),
 			'longitude'         => __( 'Longitude', 'gfgeo' ),
+			'distance_text'     => __( 'Distance ( text )', 'gfgeo' ),
+			'distance_value'    => __( 'Distance ( value )', 'gfgeo' ),
+			'duration_text'     => __( 'Duration ( text )', 'gfgeo' ),
+			'duration_value'    => __( 'Duration ( value in seconds )', 'gfgeo' ),
 		);
 	}
 
@@ -271,9 +275,9 @@ class GFGEO_Helper {
 			$field = esc_attr( $field );
 			?>
 			<li>
-				<strong> 
+				<label for="gmw-<?php echo esc_attr( $name ); ?>" class="section_label">
 					<?php echo esc_html( $name ); ?>
-				</strong> 
+				</label> 
 
 				<div class="custom-field-content">
 

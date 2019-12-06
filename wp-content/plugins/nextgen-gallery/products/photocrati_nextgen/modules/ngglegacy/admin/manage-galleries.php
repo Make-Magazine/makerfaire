@@ -293,8 +293,9 @@ function nggallery_manage_gallery_main() {
 										<?php
 					    			break;
 					    			case 'author' :
+					    			    $author_string = $author_user === FALSE ? __('Deleted user', 'nggallery') : $author_user->display_name;
 					    			    ?>
-										<td <?php echo $attributes ?>><?php echo esc_html( $author_user->display_name ); ?></td>
+										<td <?php echo $attributes ?>><?php echo esc_html($author_string); ?></td>
 										<?php
 					    			break;
 					    			case 'page_id' :
@@ -303,11 +304,10 @@ function nggallery_manage_gallery_main() {
 					        			<?php
 					    			break;
 					    			case 'quantity' :
-										$gallery->counter = count(
-											$image_mapper->select($image_mapper->get_primary_key_column())->
-												where(array("galleryid = %d", $gallery->{$gallery->id_field}))->
-												run_query(FALSE, FALSE, TRUE)
-										);
+                                        global $wpdb;
+                                        $gallery->counter = $wpdb->get_var($wpdb->prepare(
+                                            "SELECT COUNT(*) FROM {$wpdb->nggpictures} WHERE galleryid = %d", $gallery->{$gallery->id_field}
+                                        ));
 
 					    			    ?>
 					        			<td <?php echo $attributes ?>><?php echo $gallery->counter; ?></td>

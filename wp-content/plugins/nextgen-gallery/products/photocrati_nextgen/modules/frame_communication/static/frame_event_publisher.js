@@ -14,8 +14,8 @@ window.Frame_Event_Publisher = {
     window: false,
     ajax_handlers_setup: false,
 
-	is_parent: function(){
-		return self.parent.document === self.document;
+	is_parent: function() {
+		return window.parent.document === window.document;
 	},
 
 	is_child: function(){

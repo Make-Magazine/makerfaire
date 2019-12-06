@@ -17,7 +17,7 @@ if ($action_status['message']!='') : ?>
                 <span><?php esc_html_e($i18n->video); ?></span>
             </p>
             <div class="feature-section">
-                <iframe src="https://www.youtube.com/embed/zmA-b_jiXN0" frameborder="0" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/ePnYGQX0Lf8" frameborder="0" allowfullscreen></iframe>
             </div>
         </div>
 

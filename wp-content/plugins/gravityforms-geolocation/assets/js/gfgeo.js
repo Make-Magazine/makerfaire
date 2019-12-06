@@ -89,10 +89,14 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
         ip_token : gfgeo_options.ip_token,
 
         // hide all failed messages
-        hide_error_messages : false,
+        hide_error_messages : gfgeo_options.hide_error_messages,
 
         // Verify map and coords geocoding?
         verify_geocoding : false,
+
+        directions_display : [],
+
+        destinationMarkers : [],
 
         /**
          * Run on page load
@@ -195,7 +199,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                 } 
 
                 // init maps
-                if ( field_values.type == 'gfgeo_map' && field_values.adminOnly != true ) {
+                if ( field_values.type == 'gfgeo_map' && jQuery( '#gfgeo-map-' + this_field_id ).length && field_values.adminOnly != true ) {
 
                     GF_Geo.map_field_exists = true;
 
@@ -396,8 +400,8 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
 
             // clear advanced address fields
             if ( element != 'advanced_address_geocoder' ) {
-                jQuery( '.gfgeo-advanced-address-geocoder-id-' + GF_Geo.geocoder_id ).find( 'span input' ).val( '' ).trigger( 'change' );;
-                jQuery( '.gfgeo-advanced-address-geocoder-id-' + GF_Geo.geocoder_id ).find( 'span select option[value=""]' ).attr( 'selected', 'selected' ).trigger( 'change' );
+                jQuery( '.gfgeo-advanced-address-geocoder-id-' + GF_Geo.geocoder_id ).find( 'span input' ).val( '' ).trigger( 'change' );
+                jQuery( '.gfgeo-advanced-address-geocoder-id-' + GF_Geo.geocoder_id ).find( 'span select option[value=""]' ).prop( 'selected', true ).trigger( 'change' );
             }
 
             // clear field only if needed
@@ -422,6 +426,46 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
 
                 //jQuery( '.gfield.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span input' ).val('');
             //}
+
+            if ( typeof GF_Geo.directions_display[ geocoder_id ] !== 'undefined' ) {
+
+    			GF_Geo.directions_display[ geocoder_id ].setMap( null );
+
+    			if ( typeof GF_Geo.destinationMarkers[ geocoder_id ] !== 'undefined' ) {
+					GF_Geo.destinationMarkers[ geocoder_id ].setMap( null );
+				}
+
+				jQuery( '#' + GF_Geo.directions_display[ geocoder_id ].panel.id ).closest( 'li' ).slideUp( function() {
+    				jQuery( this ).find( '#' + GF_Geo.directions_display[ geocoder_id ].panel.id ).html('');
+    			});
+    		}
+            	
+            // Clear data of destination geocoder.
+            jQuery( '.gfgeo-geocoded-hidden-fields-wrapper' ).each( function() {
+
+            	if ( jQuery( this ).data( 'distance_destination_geocoder_id' ) == GF_Geo.geocoder_id ) {
+
+            		var geoId     = jQuery( this ).data( 'geocoder_id' );
+            		var baseClass = '.' + GF_Geo.prefix + 'geocoded-field-' + geoId;
+            		var fullClass = baseClass + '.gfgeo-distance_text, ' + baseClass + '.gfgeo-distance_value, ' + baseClass + '.gfgeo-duration_text, ' + baseClass + '.gfgeo-duration_value';
+
+            		jQuery( fullClass ).find( 'input[type="hidden"]' ).val( '' ).trigger( 'change' );
+            		jQuery( fullClass ).find( 'input[type="text"]' ).val( '' ).trigger( 'change' );
+
+            		if ( typeof GF_Geo.destinationMarkers[ geoId ] !== 'undefined' ) {
+						GF_Geo.destinationMarkers[ geoId ].setMap( null );
+					}
+
+            		if ( typeof GF_Geo.directions_display[ geoId ] !== 'undefined' ) {
+
+            			GF_Geo.directions_display[ geoId ].setMap( null );
+
+            			jQuery( '#' + GF_Geo.directions_display[ geoId ].panel.id ).closest( 'li' ).slideUp( function() {
+            				jQuery( this ).find( '#' + GF_Geo.directions_display[ geoId ].panel.id ).html('');
+            			});
+            		}
+            	}
+            });
         },
 
         /**
@@ -430,7 +474,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
          * @return {[type]} [description]
          */
         geocoder_timed_out : function( error_message ) {
-
+        	
             if ( GF_Geo.hide_error_messages || GF_Geo.processing.hide_error_message ) {
                 console.log( error_message );
             } else {
@@ -724,7 +768,6 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
          * @return {[type]}         [description]
          */
         ip_navigator_success : function( results ) {
-
             GF_Geo.save_location_fields( results );
         },
 
@@ -783,6 +826,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                 // Otherwise the geocoding will not proceed.
                 GF_Geo.processing.status = false;
 
+                console.log( position );
                 // if using ipinfo we need to split the coordinates
                 if ( GF_Geo.ip_locator == 'ipinfo' ) { 
 
@@ -864,15 +908,20 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
             address_field.on( 'input', function() {
                 address_changed = true;
             });
-                                
+
             // update address if user click enter in the address field and autocomplete
             // is not showing suggested results. That is a workaround to allow user
             // to geocode custom address which is not from the suggested results
-            address_field.on( 'keydown focusout', function( event ) {
+            address_field.on( gfgeo_options.address_field_event_triggers, function( event ) {
 
                 // check if entered key pressed or left the field
-                if ( address_changed && ( ( event.type == 'keydown' && event.which == 13 ) || event.type == 'focusout' ) ) {
-                    
+                if ( address_changed && ( ( event.type == 'keydown' && event.which == 13 ) || event.type == 'focusout' || event.type == 'mouseleave' ) ) {
+
+                    // Prevent Forms sumission on enter key press.
+                    if ( event.type == 'keydown' && event.which == 13 ) {
+                    	event.preventDefault();
+                    }
+
                     var thisTarget = jQuery( this );
 
                     // adding a short delay the allow the address autocomplete, if enabled, to
@@ -883,7 +932,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                         // if autocomplete was triggered on the field then prevent it from
                         // address geocoding and reset the autocomplete trigger
                         if ( GF_Geo.autocomplete_triggered == true ) {
-                            
+
                             GF_Geo.autocomplete_triggered = false; 
 
                             address_changed = false; 
@@ -894,9 +943,6 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                             // set field status to prevent infinite loop
                             address_changed = false;
 
-                            // prevent form submission on enter press to be able to geocode the address             
-                            event.preventDefault();
-
                             // get geocoder ID
                             GF_Geo.geocoder_id = thisTarget.data( 'geocoder_id' );
 
@@ -904,7 +950,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
 
                             // if address is not empty geocode it
                             if(  jQuery.trim( entered_address ).length != 0 ) {
-                                
+
                                 address_changed = false;
 
                                 // geocode the address
@@ -919,7 +965,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                             }
                         }
                         
-                    }, 200 );      
+                    }, 700 );      
                 }
             });
         },
@@ -1503,6 +1549,381 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
         },
 
         /**
+         * Calculate distance between 2 geocoders.
+         *
+         * @param  {[type]} origin_geocoder_id      [description]
+         * @param  {[type]} destination_geocoder_id [description]
+         * @return {[type]}                         [description]
+         */
+        /*get_driving_distance : function( origin_geocoder_id, destination_geocoder_id ) {
+
+        	setTimeout( function() {
+        	
+	        	if ( jQuery( '#input_' + origin_geocoder_id + '_status' ).val() == '1' && jQuery( '#input_' + destination_geocoder_id + '_status' ).val() == '1' ) {
+
+	        		var lat, lng, origin, orgAddress, destination, destAddress, formID = GF_Geo.form.id;
+
+	        		lat         = jQuery( '#input_' + origin_geocoder_id + '_latitude' ).val();
+					lng         = jQuery( '#input_' + origin_geocoder_id + '_longitude' ).val();
+					origin      = new google.maps.LatLng( lat, lng );
+					orgAddress  = jQuery( '#input_' + origin_geocoder_id + '_address' ).val();
+
+					lat    		= jQuery( '#input_' + destination_geocoder_id + '_latitude' ).val();
+					lng    		= jQuery( '#input_' + destination_geocoder_id + '_longitude' ).val();
+					destination = new google.maps.LatLng( lat, lng );
+					destAddress = jQuery( '#input_' + destination_geocoder_id + '_address' ).val();
+
+					var fieldData = jQuery( '#gfgeo-geocoded-hidden-fields-wrapper-' + origin_geocoder_id ).data();
+					var units     = fieldData.unit_system == 'metric' ? google.maps.UnitSystem.METRIC : google.maps.UnitSystem.IMPERIAL;
+					var options   = {
+					    origins: [origin],
+					    destinations: [destination],
+					    travelMode: fieldData.travel_mode,
+					    unitSystem: units ,
+					    //transitOptions: TransitOptions,
+					    //drivingOptions: DrivingOptions,
+					    //avoidHighways: Boolean,
+					    //avoidTolls: Boolean,
+					};
+
+					if ( typeof gform !== 'undefined' ) {
+						options = gform.applyFilters( 'gfgeo_distance_options', options, origin_geocoder_id, destination_geocoder_id, GF_Geo );
+					}
+
+					var service = new google.maps.DistanceMatrixService();
+
+					// Get distance.
+					service.getDistanceMatrix( options, function( response, status ) {
+
+		                // on success
+		                if ( status == 'OK' ) {
+
+		                	var responseStatus = response.rows[0].elements[0].status;
+
+		                	if ( responseStatus == 'OK' ) {
+
+			                	// do something custom when map updates
+						        jQuery( document ).trigger( 
+						            'gfgeo_distance_calculation_success', 
+						            [ response, GF_Geo, origin_geocoder_id, destination_geocoder_id ] 
+						        );
+
+						        jQuery( document ).trigger( 
+						            'gfgeo_distance_calculation_success', 
+						            [ response, GF_Geo, origin_geocoder_id, destination_geocoder_id ] 
+						        );
+
+								GF_Geo.generate_distance_values( origin_geocoder_id, response.rows[0].elements[0].distance, response.rows[0].elements[0].duration );
+			        		
+			        		} else {
+
+			        			if ( responseStatus == "ZERO_RESULTS" ) {
+			        				alert( 'No route could be found between ' + orgAddress + ' and ' + destAddress + '.' );
+			        			}
+			        		}
+
+		                // on failed      
+		                } else {
+
+		                	// do something custom when map updates
+					        jQuery( document ).trigger( 
+					            'gfgeo_distance_calculation_failed', 
+					            [ GF_Geo ] 
+					        );
+		                }
+		            });
+				}
+			}, 500 );
+        }, */
+
+        /**
+         * Calculate the distance and display routes between 2 geocoders.
+         *
+         * @param  {[type]} origin_geocoder_id      [description]
+         * @param  {[type]} destination_geocoder_id [description]
+         * @return {[type]}                         [description]
+         */
+        get_driving_directions : function( origin_geocoder_id, destination_geocoder_id ) {
+
+        	setTimeout( function() {
+        	
+	        	if ( jQuery( '#input_' + origin_geocoder_id + '_status' ).val() == '1' && jQuery( '#input_' + destination_geocoder_id + '_status' ).val() == '1' ) {
+
+
+	        		var lat, lng, origin, orgAddress, destination, destAddress, formID = GF_Geo.form.id, fieldData, units, mapEnabled, panelEnabled;
+
+	        		// Collect some variables.
+	        		lat        = jQuery( '#input_' + origin_geocoder_id + '_latitude' ).val();
+					lng        = jQuery( '#input_' + origin_geocoder_id + '_longitude' ).val();
+					origin     = new google.maps.LatLng( lat, lng );
+					orgAddress = jQuery( '#input_' + origin_geocoder_id + '_address' ).val();
+
+					lat    		= jQuery( '#input_' + destination_geocoder_id + '_latitude' ).val();
+					lng    		= jQuery( '#input_' + destination_geocoder_id + '_longitude' ).val();
+					destination = new google.maps.LatLng( lat, lng );
+					destAddress = jQuery( '#input_' + destination_geocoder_id + '_address' ).val();
+
+					fieldData        = jQuery( '#gfgeo-geocoded-hidden-fields-wrapper-' + origin_geocoder_id ).data();
+					units            = fieldData.unit_system == 'metric' ? google.maps.UnitSystem.METRIC : google.maps.UnitSystem.IMPERIAL;
+					route_map_id     = fieldData.route_map_id;
+					route_on_map     = fieldData.show_route_on_map;
+					directions_panel = fieldData.directions_panel_id;
+					mapEnabled       = false;
+					PanelEnabbled    = false;
+					
+					//alert(origin_geocoder_id)
+					//alert(destination_geocoder_id)
+					//alert(route_map_id)
+					// Directions options.
+					var options = {
+					    origin: origin,
+					    destination: destination,
+					    travelMode: fieldData.travel_mode,
+					    unitSystem: units ,
+					    //transitOptions: TransitOptions,
+					    //drivingOptions: DrivingOptions,
+					    //avoidHighways: Boolean,
+					    //avoidTolls: Boolean,
+					};
+
+					if ( typeof gform !== 'undefined' ) {
+						options = gform.applyFilters( 'gfgeo_driving_directions_options', options, origin_geocoder_id, destination_geocoder_id, fieldData, GF_Geo );
+					}
+
+					// Init directions services.
+					var directionsService = new google.maps.DirectionsService();
+  					
+  					// Generate route and or directions panel.
+  					if ( route_map_id != '' || directions_panel != '' ) {
+							
+						// Init service.
+						GF_Geo.directions_display[ origin_geocoder_id ] = new google.maps.DirectionsRenderer( { suppressMarkers: true } );
+						
+						// Check that map exists before trying to display route.
+						if ( route_map_id != '' && jQuery( '#gfgeo-map-' + route_map_id ).length ) {
+							
+							mapEnabled = true;
+
+							// Clear map first.
+							GF_Geo.directions_display[ origin_geocoder_id ].setMap( null );
+
+							if ( typeof GF_Geo.destinationMarkers[ origin_geocoder_id ] !== 'undefined' ) {
+								GF_Geo.destinationMarkers[ origin_geocoder_id ].setMap( null );
+							}
+
+							// Generate route.
+							GF_Geo.directions_display[ origin_geocoder_id ].setMap( GF_Geo.maps[ route_map_id ].map );
+						}
+
+						// set direction panel
+						if ( directions_panel != '' ) {
+
+							panelEnabled = true;
+
+							// Panel ID.
+							var dpId = 'gfgeo-directions-panel-holder-' + directions_panel;
+
+							//jQuery( '#' + dpId ).html( '' );
+
+							GF_Geo.directions_display[ origin_geocoder_id ].setPanel( null );
+							GF_Geo.directions_display[ origin_geocoder_id ].setPanel( document.getElementById( dpId ) );
+
+							jQuery( '#' + dpId ).closest( 'li' ).slideDown();
+						}
+					}  					
+
+					// Calculate route.
+					directionsService.route( options, function( response, status ) {
+						
+						if ( status == 'OK' ) {
+							
+							if ( mapEnabled == true || panelEnabled == true ) {
+
+								GF_Geo.directions_display[ origin_geocoder_id ].setDirections( response );
+
+								if ( mapEnabled == true ) {
+
+									// Generate end location marker.
+									GF_Geo.destinationMarkers[ origin_geocoder_id ] = new google.maps.Marker({
+									  	position : response.routes[0].legs[0].end_location,
+									  	icon     : 'data:image/svg+xml,%3Csvg%20version%3D%221.1%22%20width%3D%2227px%22%20height%3D%2243px%22%20viewBox%3D%220%200%2027%2043%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%0A%3Cdefs%3E%0A%3Cpath%20id%3D%22a%22%20d%3D%22m12.5%200c-6.9039%200-12.5%205.5961-12.5%2012.5%200%201.8859%200.54297%203.7461%201.4414%205.4617%203.425%206.6156%2010.216%2013.566%2010.216%2022.195%200%200.46562%200.37734%200.84297%200.84297%200.84297s0.84297-0.37734%200.84297-0.84297c0-8.6289%206.7906-15.58%2010.216-22.195%200.89844-1.7156%201.4414-3.5758%201.4414-5.4617%200-6.9039-5.5961-12.5-12.5-12.5z%22%2F%3E%0A%3C%2Fdefs%3E%0A%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%3Cg%20transform%3D%22translate(1%201)%22%3E%0A%3Cuse%20fill%3D%22%23EA4335%22%20fill-rule%3D%22evenodd%22%20xlink%3Ahref%3D%22%23a%22%2F%3E%0A%3Cpath%20d%3D%22m12.5-0.5c7.18%200%2013%205.82%2013%2013%200%201.8995-0.52398%203.8328-1.4974%205.6916-0.91575%201.7688-1.0177%201.9307-4.169%206.7789-4.2579%206.5508-5.9907%2010.447-5.9907%2015.187%200%200.74177-0.6012%201.343-1.343%201.343s-1.343-0.6012-1.343-1.343c0-4.7396-1.7327-8.6358-5.9907-15.187-3.1512-4.8482-3.2532-5.01-4.1679-6.7768-0.97449-1.8608-1.4985-3.7942-1.4985-5.6937%200-7.18%205.82-13%2013-13z%22%20stroke%3D%22%23fff%22%2F%3E%0A%3C%2Fg%3E%0A%3Ctext%20text-anchor%3D%22middle%22%20dy%3D%220.3em%22%20x%3D%2214%22%20y%3D%2215%22%20font-family%3D%22Roboto%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2216px%22%20fill%3D%22%23FFF%22%3EB%3C%2Ftext%3E%0A%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A'
+									});
+
+									// Workaround. When multiple directions work at the same time
+									// The route map id is incorrect for some reason.
+									fieldData = jQuery( '#gfgeo-geocoded-hidden-fields-wrapper-' + origin_geocoder_id ).data();
+									route_map_id = fieldData.route_map_id;
+			
+									GF_Geo.destinationMarkers[ origin_geocoder_id ].setMap( GF_Geo.maps[ route_map_id ].map );
+								}
+							}
+
+							jQuery( document ).trigger( 
+					            'gfgeo_distance_calculation_success', 
+					            [ response, GF_Geo, origin_geocoder_id, destination_geocoder_id ] 
+					        );
+
+							GF_Geo.generate_distance_values( origin_geocoder_id, response.routes[0].legs[0].distance, response.routes[0].legs[0].duration );
+						
+						} else {
+
+							if ( status == "ZERO_RESULTS" ) {
+		        				alert( 'No route could be found between ' + orgAddress + ' and ' + destAddress + '.' );
+		        			}
+
+		        			jQuery( document ).trigger( 
+					            'gfgeo_distance_calculation_failed', 
+					            [ GF_Geo ] 
+					        );
+						}
+					});
+				}
+			}, 1000 );
+        },
+
+        generate_distance_values : function( geocoder_id, distance, duration ) {
+
+			// update distance in dynamic fields.
+			GF_Geo.generate_location_data( geocoder_id, 'distance_text', distance.text ); 
+			GF_Geo.generate_location_data( geocoder_id, 'distance_value', distance.text.replace( /[^0-9.]/g, '' ) );              
+			GF_Geo.generate_location_data( geocoder_id, 'duration_text', duration.text );
+			GF_Geo.generate_location_data( geocoder_id, 'duration_value', duration.value );
+        },
+
+        /*get_distance : function( coords, geocoders_id ) {
+
+        	if ( geocoders_id.length != 2 ) {
+        		return;
+        	}
+
+        	var lat, lng, origin, destination, formID = GF_Geo.form.id;
+
+        	if ( jQuery( '#input_' + formID + '_' + geocoders_id[0] + '_status' ).val() == '1' && jQuery( '#input_' + formID + '_' + geocoders_id[1] + '_status' ).val() == '1' ) {
+
+				lat    = jQuery( '#input_' + formID + '_' + geocoders_id[0] + '_latitude' ).val();
+				lng    = jQuery( '#input_' + formID + '_' + geocoders_id[0] + '_longitude' ).val();
+				origin = new google.maps.LatLng( lat, lng );
+
+				lat    		= jQuery( '#input_' + formID + '_' + geocoders_id[1] + '_latitude' ).val();
+				lng    		= jQuery( '#input_' + formID + '_' + geocoders_id[1] + '_longitude' ).val();
+				destination = new google.maps.LatLng( lat, lng );
+
+				var service = new google.maps.DistanceMatrixService();
+				
+				service.getDistanceMatrix( {
+				    origins: [origin],
+				    destinations: [destination],
+				    travelMode: 'DRIVING',
+				    unitSystem: google.maps.UnitSystem.METRIC,
+				    //transitOptions: TransitOptions,
+				    //drivingOptions: DrivingOptions,
+				    //avoidHighways: Boolean,
+				    //avoidTolls: Boolean,
+				  }, callback );
+
+				function callback( response, status ) {
+
+					if (status == 'OK') {
+						console.log( response.rows[0].elements );
+						console.log( response );
+					}
+				  // See Parsing the Results for
+				  // the basics of a callback function.
+				}
+			}
+        },*/
+
+        /*get_directions : function( geocoders_id ) {
+
+        	var formID 			  = GF_Geo.form.id;
+			var directionsService = new google.maps.DirectionsService;
+			var directionsDisplay = new google.maps.DirectionsRenderer;
+			var arrayLength       = geocoders_id.length;
+			var waypoints         = [];
+			var origin, destination;
+
+			for ( var i = 0; i < arrayLength; i++ ) {
+				
+				var geoId  = geocoders_id[i];
+				var lat    = jQuery( '#input_' + formID + '_' + geoId + '_latitude' ).val();
+				var lng    = jQuery( '#input_' + formID + '_' + geoId + '_longitude' ).val();
+				var coords = new google.maps.LatLng( lat, lng );
+
+				if ( i == 0 ) {
+
+					console.log( 'first' )
+					console.log( geoId )
+					console.log( lat )
+					console.log( lng )
+
+					origin = coords;
+
+				} else if ( i == arrayLength - 1 ) {
+
+					console.log( 'last' )
+					console.log( geoId )
+					console.log( lat )
+					console.log( lng )
+
+					destination = coords;
+				} else {
+
+					waypoints.push({
+						location: coords,
+						stopover: false
+					});
+
+					console.log( 'way' )
+
+					console.log( geoId )
+					console.log( lat )
+					console.log( lng )
+
+					
+				}
+			}
+
+			console.log( origin )
+			console.log( destination )
+			console.log( waypoints )
+			directionsService.route({
+
+				origin: origin,
+				destination: destination,
+				waypoints: waypoints,
+				optimizeWaypoints: true,
+				travelMode: 'DRIVING',
+
+			}, function( response, status ) {
+
+				if ( status === 'OK' ) {
+
+					console.log( response.routes[0].legs )
+					directionsDisplay.setDirections(response);
+					
+					var route = response.routes[0];
+					var summaryPanel = document.getElementById('directions-panel');
+
+					summaryPanel.innerHTML = '';
+
+					// For each route, display summary information.
+					for (var i = 0; i < route.legs.length; i++) {
+						var routeSegment = i + 1;
+						summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
+						    '</b><br>';
+						summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
+						summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+						summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+					}
+
+				} else {
+
+				  	window.alert('Directions request failed due to ' + status);
+				}
+			});
+        }, */
+
+        /**
          * Dynamically populate address field with geocoded data
          *  
          * @param  {[type]} geocoder_id   [description]
@@ -1533,7 +1954,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
 
             //jQuery( 'select.' + GF_Geo.prefix + 'geocoded-field-' + geocoder_id + '.' + address_field + ' option[value="' + address_value + '"]' ).attr( 'selected','selected' ).trigger( 'change' );
             //jQuery( 'select[data-geocoder_id="' + geocoder_id + '"][data-output_location_field="' + address_field + '"] option[value="' + address_value + '"]' ).attr( 'selected','selected' ).trigger( 'change' );
-            jQuery( '.' + GF_Geo.prefix + 'geocoded-field-' + geocoder_id + '.' + GF_Geo.prefix + address_field ).find( 'select option[value="' + address_value + '"]' ).attr( 'selected','selected' ).trigger( 'change' );
+            jQuery( '.' + GF_Geo.prefix + 'geocoded-field-' + geocoder_id + '.' + GF_Geo.prefix + address_field ).find( 'select option[value="' + address_value + '"]' ).prop( 'selected', true ).trigger( 'change' );
             
             /*** Radio buttons ****/
 
@@ -1561,11 +1982,11 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
 
                 if ( address_field == 'region_name' ) {
                     jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_state input[type="text"]' ).val( address_value ).trigger( 'change' );
-                    jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_state select option[value="' + address_value + '"]' ).attr( 'selected','selected' ).trigger( 'change' );
+                    jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_state select option[value="' + address_value + '"]' ).prop( 'selected', true ).trigger( 'change' );
                 }
 
                 if ( address_field == 'region_code' ) {
-                    jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_state select option[value="' + address_value + '"]' ).attr( 'selected','selected' ).trigger( 'change' );
+                    jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_state select option[value="' + address_value + '"]' ).prop( 'selected', true ).trigger( 'change' );
                 }
 
                 if ( address_field == 'postcode' ) {
@@ -1573,11 +1994,11 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                 }
 
                 if ( address_field == 'country_name' ) {
-                    jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_country select option[value="' + address_value + '"]' ).attr( 'selected','selected' ).trigger( 'change' );
+                    jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_country select option[value="' + address_value + '"]' ).prop( 'selected', true ).trigger( 'change' );
                 }
 
                 if ( address_field == 'country_code' ) {
-                    jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_country select option[value="' + address_value + '"]' ).attr( 'selected','selected' ).trigger( 'change' );
+                    jQuery( '.gfgeo-advanced-address-geocoder-id-' + geocoder_id ).find( 'span.address_country select option[value="' + address_value + '"]' ).prop( 'selected', true ).trigger( 'change' );
                 }
             }
 
@@ -1656,7 +2077,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
          * @return {[type]}         [description]
          */
         save_location_fields : function( results, element ) {
-            
+            	
             // for locator address field with locator button but without geocoder ID.
             // fill the address in the address field
             if ( GF_Geo.processing.locator_id != false && GF_Geo.processing.locator_id != '' ) {
@@ -1670,6 +2091,8 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
 
                 return;
             }
+
+            var formID = GF_Geo.form.id;
 
             jQuery( document ).trigger( 
                 'gfgeo_save_location_data_start', 
@@ -1700,8 +2123,10 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                 'lat'               : '',
                 'lng'               : '',
                 'place_id'			: results.place_id || '',
+                'distance'			: '',
+                'duration'			: '',
             };
-            
+
             // if doing coords geocoder or map keep the original coordinates 
             // was entered or retrived from the map.
             // That's because after geocoding the coordinates might be abit different
@@ -1718,7 +2143,9 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
 
             // if address field geocoded get the original address entered
             if ( element == 'address_geocoder' || element == 'advanced_address_geocoder' ) {
-                 address_fields.address = GF_Geo.processing.location.trim();
+ 				if ( typeof GF_Geo.processing.location == 'string' ) {
+                	address_fields.address = GF_Geo.processing.location.trim();
+                }
             }
 
             // if address autocomplete triggered get the address selected
@@ -1804,7 +2231,8 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
             // the geocoded address fields
             address = results.address_components || [];
 
-            var city_found = false;
+            var city_found                  = false;
+            var administrative_area_level_3 = false;
 
             for ( var x in address ) {
 
@@ -1878,12 +2306,30 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                     city_found = true;
                 }
 
+                // maybe city -to be used after the loop if city was not found.
+                if ( address[x].types == 'administrative_area_level_3,political' && address[x].long_name != undefined ) {
+
+                    administrative_area_level_3 = address[x].long_name;
+                }
+
+                // city, sublocality ( if city was not found )
+                if ( ! city_found && address[x].types == 'political,sublocality,sublocality_level_1' && address[x].long_name != undefined ) {
+
+                    address_fields.city = address[x].long_name;
+       
+                    GF_Geo.generate_location_data( GF_Geo.geocoder_id, 'city', address_fields.city );
+
+                    city_found = true;
+                }
+
                 // town ( if city was not found )
                 if ( ! city_found && address[x].types == 'postal_town' && address[x].long_name != undefined ) {
 
                     address_fields.city = address[x].long_name;
        
                     GF_Geo.generate_location_data( GF_Geo.geocoder_id, 'city', address_fields.city );
+
+                    city_found = true;
                 }
 
                 // county
@@ -1928,8 +2374,29 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
 		        );
             }
 
+            // Check city in administrative_area_level_3 if not found in the loop above.
+            if ( ! city_found && administrative_area_level_3 != false ) {
+            	GF_Geo.generate_location_data( GF_Geo.geocoder_id, 'city', administrative_area_level_3 );
+            }
+
             // update geocoded status
             jQuery( 'input.' + GF_Geo.prefix + 'geocoded-field-'  + GF_Geo.geocoder_id + '.status' ).val( '1' ).trigger( 'change' );
+
+            jQuery( '.gfgeo-geocoded-hidden-fields-wrapper' ).each( function() {
+            	
+            	if ( jQuery( this ).data( 'geocoder_id' ) == GF_Geo.geocoder_id && jQuery( this ).data( 'distance_destination_geocoder_id' ) != '' ) {
+            		
+            		GF_Geo.get_driving_directions( GF_Geo.geocoder_id, jQuery( this ).data( 'distance_destination_geocoder_id' ) );
+
+            		//GF_Geo.get_distance( [ address_fields.lat, address_fields.lng ], jQuery( this ).data( 'distance_geocoder_id' ) );
+            	
+            	} else if ( jQuery( this ).data( 'distance_destination_geocoder_id' ) == GF_Geo.geocoder_id ) {
+
+            		GF_Geo.get_driving_directions( jQuery( this ).data( 'geocoder_id' ), GF_Geo.geocoder_id );
+
+            		//GF_Geo.get_distance( [ address_fields.lat, address_fields.lng ], jQuery( this ).data( 'geocoder_id' ) );
+            	}
+            });
 
             jQuery( document ).trigger( 
                 'gfgeo_save_location_data_end', 

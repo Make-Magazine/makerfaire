@@ -61,6 +61,15 @@ class M_Static_Assets extends C_Base_Module
         );
 
         $module_dir = wp_normalize_path(C_Component_Registry::get_instance()->get_module_dir($module));
+
+        // In case NextGen is in a symlink we make $mod_dir relative to the NGG parent root and then rebuild it
+        // using WP_PLUGIN_DIR; without this NGG-in-symlink creates URL that reference the file abspath
+        if (is_link(path_join(WP_PLUGIN_DIR, basename(NGG_PLUGIN_DIR))))
+        {
+            $module_dir = ltrim(str_replace(dirname(NGG_PLUGIN_DIR), '', $module_dir), DIRECTORY_SEPARATOR);
+            $module_dir = path_join(WP_PLUGIN_DIR, $module_dir);
+        }
+
         $static_dir = self::trim_preceding_slash(C_NextGen_Settings::get_instance()->mvc_static_dir);
 
         $override_dir = wp_normalize_path(self::get_static_override_dir($module));
@@ -92,26 +101,29 @@ class M_Static_Assets extends C_Base_Module
      */
     static function get_static_override_dir($module_id = NULL)
     {
-        $dir = path_join(WP_CONTENT_DIR, 'ngg');
-        if (!@file_exists($dir))
-            wp_mkdir_p($dir);
+        $root = trailingslashit(path_join(WP_CONTENT_DIR, 'ngg'));
+        if (!@file_exists($root) && is_writable(trailingslashit(WP_CONTENT_DIR)))
+            wp_mkdir_p($root);
 
-        $dir = path_join($dir, 'modules');
-        if (!@file_exists($dir))
-            wp_mkdir_p($dir);
+        $modules = trailingslashit(path_join($root, 'modules'));
+
+        if (!@file_exists($modules) && is_writable($root))
+            wp_mkdir_p($modules);
 
         if ($module_id)
         {
-            $dir = path_join($dir, $module_id);
-            if (!@file_exists($dir))
-                wp_mkdir_p($dir);
+            $module_dir = trailingslashit(path_join($modules, $module_id));
+            if (!@file_exists($module_dir) && is_writable($modules))
+                wp_mkdir_p($module_dir);
 
-            $dir = path_join($dir, 'static');
-            if (!@file_exists($dir))
-                wp_mkdir_p($dir);
+            $static_dir = trailingslashit(path_join($module_dir, 'static'));
+            if (!@file_exists($static_dir) && is_writable($module_dir))
+                wp_mkdir_p($static_dir);
+
+            return $static_dir;
         }
 
-        return $dir;
+        return $modules;
     }
 }
 

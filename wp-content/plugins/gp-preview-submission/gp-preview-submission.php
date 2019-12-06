@@ -1,16 +1,16 @@
 <?php
 /**
  * Plugin Name: GP Preview Submission
- * Plugin URI: http://gravitywiz.com/
  * Description: Add a simple submission preview to allow users to confirm their submission is correct before submitting the form.
- * Version: 1.2.13
- * Author: David Smith
+ * Plugin URI: https://gravitywiz.com/documentation/gravity-forms-preview-submission/
+ * Version: 1.2.15
+ * Author: Gravity Wiz
  * Author URI: http://gravitywiz.com
  * License: GPL2
  * Perk: True
  */
 
-define( 'GP_PREVIEW_SUBMISSION_VERSION', '1.2.13' );
+define( 'GP_PREVIEW_SUBMISSION_VERSION', '1.2.15' );
 
 require 'includes/class-gp-bootstrap.php';
 

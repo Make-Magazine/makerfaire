@@ -1,9 +1,9 @@
 === Lazy Loader ===
 Contributors: FlorianBrinkmann, MarcDK
 Tags: lazysizes, lazy loading, performance, images
-Requires at least: 4.5
-Tested up to: 5.1
-Stable tag: 4.0.1
+Requires at least: 4.9.8
+Tested up to: 5.3
+Stable tag: 5.1.2
 Requires PHP: 5.3
 
 == Description ==
@@ -24,12 +24,15 @@ Lazy loads (without the need of any manually modifications):
 
 * Do not lazy load elements with specific CSS classes.
 * Enable lazy loading for iFrames.
+* Include the [lazysizes native loading plugin](https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/native-loading) that modifies images and iFrames to use the native lazy loading feature of browsers that already support it.
 * Include the [lazysizes unveilhooks plugin](https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks) that adds support for more elements, for example, video and audio elements.*
 * Enable lazy loading for the poster frame of video elements.
 * Enable lazy loading for audio elements.
+* Enable lazy loading for inline background images.
 * Include [lazysizes aspectratio plugin](https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/aspectratio). This plugin calculates the needed space for images before they are loaded. That avoids content jumping when the images are loaded and makes the lazy loading work with masonry grids.
 * Display a loading spinner.
 * Disable the plugin on specific posts/pages (this shows a checkbox in the edit view of all public post types (except attachments) to disable lazy loading for an entire post).
+* A textarea to modify the default lazysizes config values.
 
 \* The unveilhooks extension of lazysizes supports more than video and audio elements, but you need to manually modify the markup to use it for:
 
@@ -77,34 +80,89 @@ add_filter( 'lazy_load_responsive_images_inline_styles', function () {
 } );
 `
 
-If you want to modify it, you can overwrite the plugin’s styles like that (remember to include the opening and closing `style` tags):
+If you want to modify it, you can do that like in the following code block (remember to include the opening and closing `style` tags for additions/replacements). The code modifies the duration of the fade-in-effect:
 
 `
 add_filter( 'lazy_load_responsive_images_inline_styles', function ( $default_styles ) {
-	return '<style>.lazyload {
-			display: block;
-		}
-
-		.lazyload,
-		.lazyloading {
-			opacity: 0;
-		}
-
-
-		.lazyloaded {
-			opacity: 1;
-			transition: opacity 300ms;
-		}</style>';
+	$default_styles = sprintf(
+		'%s <style>:root {
+	--lazy-loader-animation-duration: 600ms;
+}</style>',
+		$default_styles
+	);
+	
+	return $default_styles;
 } );
 `
 
 The CSS from the example are the default styles that are used by the plugin (without the loading spinner styles). The `display: block` for `.lazyload` is important for the aspectratio plugin option.
 
-= How can I adjust the lazy load threshold? =
+= How can I adjust the lazy load threshold/other lazysizes settings? =
 
-[I described that in a support forum post](https://wordpress.org/support/topic/lazy-load-css-background-2/#post-10219851).
+There is a textarea in the plugin settings where you can insert custom settings for the lazysizes config.
 
 == Changelog ==
+
+= 5.1.2 – 12.11.2019 =
+
+**Changed**
+
+* Updated background image option text.
+
+= 5.1.1 – 11.11.2019 =
+
+**Changed**
+
+* Updated readme.
+
+= 5.1.0 – 11.11.2019 =
+
+**Added**
+
+* Lazy loading of background images.
+* Lazy loading of videos with autoplay.
+
+**Changed**
+
+* Updated lazysizes and its extensions to 5.1.2.
+* Updated tested up to version to 5.3.
+
+**Fixed**
+
+* Handle rest api requests with edit context as admin requests (thanks @websupporter!).
+* Check if a post type supports `custom-fields` before loading block editor script.
+
+= 5.0.0 – 28.06.2019 =
+
+**Changed**
+
+* Increased priority for the calls of `the_content` and `post_thumbnail_html` filters from `500` to `10001` to fix issues with the ShortPixel Image Optimizer. So if you use those filters and they need to run after the Lazy Loader, you need to increase the priority, too. This is the change that makes it a major version change. 
+
+**Fixed**
+
+* Audio shortcode stripped from frontend with all following content.
+
+= 4.1.0 – 31.05.2019 =
+
+*Tested with WordPress 5.2*
+
+**Added**
+
+* Option for using the native loading extension from lazysizes.
+* Textarea for custom lazysizes config values.
+
+**Changed**
+
+* Updated lazysizes to 5.1.0.
+* Use CSS variable `var(--lazy-loader-animation-duration)` for duration of fade-in-effect after loading.
+
+**Fixed**
+
+* Do not load assets on pages where Lazy Loader is disabled.
+* Preserve HTML and hex entities.
+* Ignore inline scripts.
+* Skip images that already have a `data-src` attribute.
+* Checkbox for disabling Lazy Loader not showing for Custom Post Types added via a plugin.
 
 = 4.0.1 – 20.02.2019 =
 

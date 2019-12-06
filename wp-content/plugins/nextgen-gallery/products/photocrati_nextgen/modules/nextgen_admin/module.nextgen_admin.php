@@ -26,7 +26,7 @@ class M_NextGen_Admin extends C_Base_Module
             'photocrati-nextgen_admin',
             'NextGEN Administration',
             'Provides a framework for adding Administration pages',
-            '3.1.8',
+            '3.2.21',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -149,6 +149,11 @@ class M_NextGen_Admin extends C_Base_Module
     {
         // Register scripts
         add_action('init', array($this, 'register_scripts'), 9);
+        add_action('init', array($this, 'handle_cache_flush_requests'));
+
+        // Elementor's editor.php runs `new \WP_Scripts()` which requires we register scripts on both init and this
+        // action if we want our resources to be used with the page builder.
+        add_action('elementor/editor/before_enqueue_scripts', array($this, 'register_scripts'));
 
         // Wizard-related hooks
         add_action('admin_enqueue_scripts', array($this, 'enqueue_wizard_components'));
@@ -167,11 +172,10 @@ class M_NextGen_Admin extends C_Base_Module
         // Add ngg-admin body class to all admin pages for styling
         add_filter( 'admin_body_class', array($this, 'add_ngg_body_class'));
 
-        // Add ngg-post-type body class to NGG custom post types for styling
+        // Custom post types
         add_filter( 'admin_body_class', array($this, 'add_ngg_post_type_class'));
-
-        // Add filters for custom post type admin page markup
-        add_action( 'all_admin_notices', array($this, 'custom_post_type_markup_top'));
+        add_filter( 'screen_options_show_screen', array($this, 'remove_post_type_screen_options'));
+        add_action( 'all_admin_notices', array($this, 'custom_post_type_markup_top'), 11);
         add_action( 'admin_footer', array($this, 'custom_post_type_markup_bottom'));
 
         // Requirements need to be registered with the notification manager *before* it's serve_ajax_request()
@@ -395,7 +399,7 @@ class M_NextGen_Admin extends C_Base_Module
     }
 
     /**
-     * Adds a common body class to all admin pages
+     * Adds a common body class to all NGG post types pages
      *
      * @param $classes
      *
@@ -403,35 +407,39 @@ class M_NextGen_Admin extends C_Base_Module
      */
     function add_ngg_post_type_class( $classes )
     {
-        $url = $_SERVER['REQUEST_URI'];
-        $is_ngg_post_type = strpos($url, 'post_type=ngg_') || strpos($url, 'post_type=nextgen_');
-        if ( $is_ngg_post_type ) {
-            return "$classes ngg-post-type";
-        } else {
-            return $classes;
-        }
-        
+        return C_NextGen_Admin_Page_Manager::is_requested_post_type() ? "$classes ngg-post-type" : $classes;
+    }
+
+    function remove_post_type_screen_options()
+    {
+        return C_NextGen_Admin_Page_Manager::is_requested_post_type() ? FALSE : TRUE;
     }
 
     /* Add common admin markup to top of custom post type pages */
-    function custom_post_type_markup_top() {
+	function custom_post_type_markup_top()
+	{
         global $title;
-        $url = $_SERVER['REQUEST_URI'];
-        $is_ngg_post_type = strpos($url, 'post_type=ngg_') || strpos($url, 'post_type=nextgen_');
-        $is_single_edit_page = strpos($url, '&ngg_edit');
-        if ( $is_ngg_post_type && !$is_single_edit_page) {
+        if ( C_NextGen_Admin_Page_Manager::is_requested_post_type() && !$this->is_ngg_post_type_with_template() ) {
             echo '<div id="ngg_page_content"><div class="ngg_page_content_header "><img src="' . C_Router::get_instance()->get_static_url('photocrati-nextgen_admin#imagely_icon.png') . '"><h3>'. $title . '</h3></div><div class="ngg_page_content_main">';
         }
     }
 
     /* Add common admin markup to bottom of custom post type pages */
-    function custom_post_type_markup_bottom() {
-        $url = $_SERVER['REQUEST_URI'];
-        $is_ngg_post_type = strpos($url, 'post_type=ngg_') || strpos($url, 'post_type=nextgen_');
-        $is_single_edit_page = strpos($url, '&ngg_edit');
-        if ( $is_ngg_post_type && !$is_single_edit_page) {
+	function custom_post_type_markup_bottom()
+	{
+        if ( C_NextGen_Admin_Page_Manager::is_requested_post_type() && !$this->is_ngg_post_type_with_template() ) {
             echo '</div></div>';
         }
+    }
+
+    /* Conditional returns true if is post type and uses custom template */
+    function is_ngg_post_type_with_template() 
+    {
+        $url = $_SERVER['REQUEST_URI'];
+        if ( C_NextGen_Admin_Page_Manager::is_requested_post_type() && strpos($url, '&ngg_edit') ) {
+            return TRUE;
+        }
+        return FALSE;
     }
 
     /* Add function to determine if block editor is in use */
@@ -613,9 +621,11 @@ class M_NextGen_Admin extends C_Base_Module
         {
             // add notice for gallery creation wizard
             $wizard = $wizards->get_wizard('nextgen.beginner.gallery_creation_igw');
-            
-            if (!$wizard->is_completed() && !$wizard->is_cancelled())
-            {
+
+            // enable gallery wizard / notification under specific conditions
+            $is_ngg_overview_page = isset($_GET['page']) && $_GET['page'] == 'nextgen-gallery';
+            $is_ecom_instructions_page = isset($_GET['page']) && $_GET['page'] == 'ngg-ecommerce-instructions-page';
+            if (!$wizard->is_completed() && !$wizard->is_cancelled() && !$is_ecom_instructions_page) {
                 $mapper = C_Gallery_Mapper::get_instance();
                 if ($mapper->count() == 0)
                 {
@@ -623,10 +633,9 @@ class M_NextGen_Admin extends C_Base_Module
                     // This notification was registered earlier; set_wizard() here makes the is_renderable() return TRUE
                     C_NextGen_First_Run_Notification_Wizard::set_wizard($wizard);
                 }
-                else if (isset($_GET['page']) && $_GET['page'] == 'nextgen-gallery') {
-                    $wizard->set_active(true);
-                }
             }
+            if ($is_ngg_overview_page)
+                $wizard->set_active(true);
         }
     }
     
@@ -693,6 +702,21 @@ class M_NextGen_Admin extends C_Base_Module
     function add_menu_pages()
     {
         C_NextGen_Admin_Page_Manager::get_instance()->setup();
+    }
+
+    public function handle_cache_flush_requests()
+    {
+        if (isset($_REQUEST['ngg_flush']) && current_user_can('administrator'))
+        {
+            C_Photocrati_Transient_Manager::flush();
+            die("Flushed all caches");
+        }
+
+        if (isset($_REQUEST['ngg_flush_expired']) && current_user_can('administrator'))
+        {
+            C_Photocrati_Transient_Manager::get_instance()->flush_expired();
+            die("Flushed all expired caches");
+        }
     }
 
     function get_type_list()

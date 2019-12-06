@@ -523,7 +523,7 @@ function ngg_confirm_delete_album(form) {
 						<?php } ?>
 					<?php } else { ?>
 						<?php if (nggGallery::current_user_can('NextGEN Add/Delete album')) { ?>
-                            <span><?php esc_html_e('Add new album', 'nggallery'); ?>&nbsp;</span>
+                            <span class="ngg_new_album"><?php esc_html_e('Add new album', 'nggallery'); ?>&nbsp;</span>
                             <input class="search-input" id="newalbum" name="newalbum" type="text" value="" />
                             <input class="button-primary action" type="submit" name="add" value="<?php esc_attr_e('Add', 'nggallery'); ?>"/>
 						<?php } ?>
@@ -540,7 +540,7 @@ function ngg_confirm_delete_album(form) {
 			| <a href="#" title="<?php esc_attr_e('Maximize the widget content','nggallery'); ?>" id="all_max"><?php esc_html_e('Maximize', 'nggallery'); ?></a>
 			| <a href="#" title="<?php esc_attr_e('Minimize the widget content','nggallery'); ?>" id="all_min"><?php esc_html_e('Minimize', 'nggallery'); ?></a>
 			</div>
-			<?php esc_html_e('After you create and select an album, you can drag and drop a gallery or another album into your new album below','nggallery'); ?>
+			<?php esc_html_e('After you create and select an album, you can drag and drop a gallery or another album into your new album below.','nggallery'); ?>
 		</div>
 
 		<br class="clear" />

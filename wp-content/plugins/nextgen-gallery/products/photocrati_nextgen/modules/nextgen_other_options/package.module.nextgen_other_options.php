@@ -119,33 +119,26 @@ class A_Image_Options_Form extends Mixin
     }
     /**
      * Tries to create the gallery storage directory if it doesn't exist already
-     * @param null|string $gallerypath (optional)
-     * @return bool|string
+     * @return bool
      */
-    function _create_gallery_storage_dir($gallerypath = NULL)
+    function _create_gallery_storage_dir()
     {
-        $retval = TRUE;
-        if (!$gallerypath) {
-            $gallerypath = $this->object->get_model()->get('gallerypath');
-        }
         $fs = C_Fs::get_instance();
+        $gallerypath = $this->object->get_model()->get('gallerypath');
         $gallerypath = $fs->join_paths($fs->get_document_root('galleries'), $gallerypath);
         if (!@file_exists($gallerypath)) {
             @mkdir($gallerypath);
-            $retval = @file_exists($gallerypath);
+            return @file_exists($gallerypath);
         }
-        return $retval;
+        return TRUE;
     }
     /**
      * Renders the form
      */
     function render()
     {
-        if (!$this->object->_create_gallery_storage_dir()) {
-            $this->object->get_model()->add_error(__('Gallery path does not exist and could not be created', 'nggallery'), 'gallerypath');
-        }
         $settings = $this->object->get_model();
-        return $this->render_partial('photocrati-nextgen_other_options#image_options_tab', array('gallery_path_label' => __('Where would you like galleries stored?', 'nggallery'), 'gallery_path_help' => __('Where galleries and their images are stored', 'nggallery'), 'gallery_path' => $settings->gallerypath, 'delete_image_files_label' => __('Delete Image Files?', 'nggallery'), 'delete_image_files_help' => __('When enabled, image files will be removed after a Gallery has been deleted', 'nggallery'), 'delete_image_files' => $settings->deleteImg, 'show_related_images_label' => __('Show Related Images on Posts?', 'nggallery'), 'show_related_images_help' => __('When enabled, related images will be appended to each post by matching the posts tags/categories to image tags', 'nggallery'), 'show_related_images' => $settings->activateTags, 'related_images_hidden_label' => __('(Show Customization Settings)', 'nggallery'), 'related_images_active_label' => __('(Hide Customization Settings)', 'nggallery'), 'match_related_images_label' => __('How should related images be matched?', 'nggallery'), 'match_related_images' => $settings->appendType, 'match_related_image_options' => $this->object->_get_related_image_match_options(), 'max_related_images_label' => __('Maximum # of related images to display', 'nggallery'), 'max_related_images' => $settings->maxImages, 'related_images_heading_label' => __('Heading for related images', 'nggallery'), 'related_images_heading' => $settings->relatedHeading, 'sorting_order_label' => __("What's the default sorting method?", 'nggallery'), 'sorting_order_options' => $this->object->_get_image_sorting_options(), 'sorting_order' => $settings->galSort, 'sorting_direction_label' => __('Sort in what direction?', 'nggallery'), 'sorting_direction_options' => $this->object->_get_sorting_direction_options(), 'sorting_direction' => $settings->galSortDir, 'automatic_resize_label' => __('Automatically resize images after upload', 'nggallery'), 'automatic_resize_help' => __('It is recommended that your images be resized to be web friendly', 'nggallery'), 'automatic_resize' => $settings->imgAutoResize, 'resize_images_label' => __('What should images be resized to?', 'nggallery'), 'resize_images_help' => __('After images are uploaded, they will be resized to the above dimensions and quality', 'nggallery'), 'resized_image_width_label' => __('Width:', 'nggallery'), 'resized_image_height_label' => __('Height:', 'nggallery'), 'resized_image_quality_label' => __('Quality:', 'nggallery'), 'resized_image_width' => $settings->imgWidth, 'resized_image_height' => $settings->imgHeight, 'resized_image_quality' => $settings->imgQuality, 'backup_images_label' => __('Backup the original images?', 'nggallery'), 'backup_images_yes_label' => __('Yes'), 'backup_images_no_label' => __('No'), 'backup_images' => $settings->imgBackup), TRUE);
+        return $this->render_partial('photocrati-nextgen_other_options#image_options_tab', array('gallery_path_label' => __('Where would you like galleries stored?', 'nggallery'), 'gallery_path_help' => __('Where galleries and their images are stored', 'nggallery'), 'gallery_path' => $settings->gallerypath, 'gallery_path_error_state' => !$this->object->_create_gallery_storage_dir(), 'gallery_path_error_message' => __('Gallery path does not exist and could not be created', 'nggallery'), 'delete_image_files_label' => __('Delete Image Files?', 'nggallery'), 'delete_image_files_help' => __('When enabled, image files will be removed after a Gallery has been deleted', 'nggallery'), 'delete_image_files' => $settings->deleteImg, 'show_related_images_label' => __('Show Related Images on Posts?', 'nggallery'), 'show_related_images_help' => __('When enabled, related images will be appended to each post by matching the posts tags/categories to image tags', 'nggallery'), 'show_related_images' => $settings->activateTags, 'related_images_hidden_label' => __('(Show Customization Settings)', 'nggallery'), 'related_images_active_label' => __('(Hide Customization Settings)', 'nggallery'), 'match_related_images_label' => __('How should related images be matched?', 'nggallery'), 'match_related_images' => $settings->appendType, 'match_related_image_options' => $this->object->_get_related_image_match_options(), 'max_related_images_label' => __('Maximum # of related images to display', 'nggallery'), 'max_related_images' => $settings->maxImages, 'related_images_heading_label' => __('Heading for related images', 'nggallery'), 'related_images_heading' => $settings->relatedHeading, 'sorting_order_label' => __("What's the default sorting method?", 'nggallery'), 'sorting_order_options' => $this->object->_get_image_sorting_options(), 'sorting_order' => $settings->galSort, 'sorting_direction_label' => __('Sort in what direction?', 'nggallery'), 'sorting_direction_options' => $this->object->_get_sorting_direction_options(), 'sorting_direction' => $settings->galSortDir, 'automatic_resize_label' => __('Automatically resize images after upload', 'nggallery'), 'automatic_resize_help' => __('It is recommended that your images be resized to be web friendly', 'nggallery'), 'automatic_resize' => $settings->imgAutoResize, 'resize_images_label' => __('What should images be resized to?', 'nggallery'), 'resize_images_help' => __('After images are uploaded, they will be resized to the above dimensions and quality', 'nggallery'), 'resized_image_width_label' => __('Width:', 'nggallery'), 'resized_image_height_label' => __('Height:', 'nggallery'), 'resized_image_quality_label' => __('Quality:', 'nggallery'), 'resized_image_width' => $settings->imgWidth, 'resized_image_height' => $settings->imgHeight, 'resized_image_quality' => $settings->imgQuality, 'backup_images_label' => __('Backup the original images?', 'nggallery'), 'backup_images_yes_label' => __('Yes'), 'backup_images_no_label' => __('No'), 'backup_images' => $settings->imgBackup), TRUE);
     }
     function save_action($image_options)
     {
@@ -183,8 +176,16 @@ class A_Image_Options_Form extends Mixin
                         $value = intval($value);
                         break;
                     case 'galSort':
+                        $value = esc_html($value);
+                        if (!in_array(strtolower($value), array_values($this->_get_image_sorting_options()))) {
+                            $value = 'sortorder';
+                        }
+                        break;
                     case 'galSortDir':
                         $value = esc_html($value);
+                        if (!in_array(strtoupper($value), array('ASC', 'DESC'))) {
+                            $value = 'ASC';
+                        }
                         break;
                     case 'relatedHeading':
                         $value = M_NextGen_Data::strip_html($value, TRUE);
@@ -282,7 +283,7 @@ class A_Lightbox_Manager_Form extends Mixin
             $selected = 'fancybox';
         }
         // Render container tab
-        return $this->render_partial('photocrati-nextgen_other_options#lightbox_library_tab', array('lightbox_library_label' => __('What effect would you like to use?', 'nggallery'), 'libs' => C_Lightbox_Library_Manager::get_instance()->get_all(), 'selected' => $selected, 'sub_fields' => $sub_fields, 'lightbox_global' => $this->object->get_model()->thumbEffectContext), TRUE);
+        return $this->render_partial('photocrati-nextgen_other_options#lightbox_library_tab', array('lightbox_library_label' => __('What lightbox would you like to use?', 'nggallery'), 'libs' => C_Lightbox_Library_Manager::get_instance()->get_all(), 'selected' => $selected, 'sub_fields' => $sub_fields, 'lightbox_global' => $this->object->get_model()->thumbEffectContext), TRUE);
     }
     function save_action()
     {
@@ -328,7 +329,7 @@ class A_Miscellaneous_Form extends Mixin
     }
     function render()
     {
-        return $this->object->render_partial('photocrati-nextgen_other_options#misc_tab', array('mediarss_activated' => C_NextGen_Settings::get_instance()->useMediaRSS, 'mediarss_activated_label' => __('Add MediaRSS link?', 'nggallery'), 'mediarss_activated_help' => __('When enabled, adds a MediaRSS link to your header. Third-party web services can use this to publish your galleries', 'nggallery'), 'mediarss_activated_no' => __('No'), 'mediarss_activated_yes' => __('Yes'), 'galleries_in_feeds' => C_NextGen_Settings::get_instance()->galleries_in_feeds, 'galleries_in_feeds_label' => __('Display galleries in feeds', 'nggallery'), 'galleries_in_feeds_help' => __('NextGEN hides its gallery displays in feeds other than MediaRSS. This enables image galleries in feeds.', 'nggallery'), 'galleries_in_feeds_no' => __('No'), 'galleries_in_feeds_yes' => __('Yes'), 'cache_label' => __('Clear image cache', 'nggallery'), 'cache_confirmation' => __("Completely clear the NextGEN cache of all image modifications?\n\nChoose [Cancel] to Stop, [OK] to proceed.", 'nggallery'), 'slug_field' => $this->_render_text_field((object) array('name' => 'misc_settings'), 'router_param_slug', __('Permalink slug', 'nggallery'), $this->object->get_model()->router_param_slug), 'maximum_entity_count_field' => $this->_render_number_field((object) array('name' => 'misc_settings'), 'maximum_entity_count', __('Maximum image count', 'nggallery'), $this->object->get_model()->maximum_entity_count, __('This is the maximum limit of images that NextGEN will restrict itself to querying', 'nggallery') . " \n " . __('Note: This limit will not apply to slideshow widgets or random galleries if/when those galleries specify their own image limits', 'nggallery'), FALSE, '', 1), 'random_widget_cache_ttl_field' => $this->_render_number_field((object) array('name' => 'misc_settings'), 'random_widget_cache_ttl', __('Random widget cache duration', 'nggallery'), $this->object->get_model()->random_widget_cache_ttl, __('The duration of time (in minutes) that "random" widget galleries should be cached. A setting of zero will disable caching.', 'nggallery'), FALSE, '', 0), 'alternate_random_method_field' => $this->_render_radio_field((object) array('name' => 'misc_settings'), 'use_alternate_random_method', __('Use alternative method of retrieving random image galleries', 'nggallery'), C_NextGen_Settings::get_instance()->use_alternate_random_method, __("Some web hosts' database servers disable or disrupt queries using 'ORDER BY RAND()' which can cause galleries to lose their randomness. NextGen provides an alternative (but not completely random) method to determine what images are fed into 'random' galleries.", 'nggallery'))), TRUE);
+        return $this->object->render_partial('photocrati-nextgen_other_options#misc_tab', array('mediarss_activated' => C_NextGen_Settings::get_instance()->useMediaRSS, 'mediarss_activated_label' => __('Add MediaRSS link?', 'nggallery'), 'mediarss_activated_help' => __('When enabled, adds a MediaRSS link to your header. Third-party web services can use this to publish your galleries', 'nggallery'), 'mediarss_activated_no' => __('No'), 'mediarss_activated_yes' => __('Yes'), 'galleries_in_feeds' => C_NextGen_Settings::get_instance()->galleries_in_feeds, 'galleries_in_feeds_label' => __('Display galleries in feeds', 'nggallery'), 'galleries_in_feeds_help' => __('NextGEN hides its gallery displays in feeds other than MediaRSS. This enables image galleries in feeds.', 'nggallery'), 'galleries_in_feeds_no' => __('No'), 'galleries_in_feeds_yes' => __('Yes'), 'cache_label' => __('Clear image cache', 'nggallery'), 'cache_confirmation' => __("Completely clear the NextGEN cache of all image modifications?\n\nChoose [Cancel] to Stop, [OK] to proceed.", 'nggallery'), 'slug_field' => $this->_render_text_field((object) array('name' => 'misc_settings'), 'router_param_slug', __('Permalink slug', 'nggallery'), $this->object->get_model()->router_param_slug), 'maximum_entity_count_field' => $this->_render_number_field((object) array('name' => 'misc_settings'), 'maximum_entity_count', __('Maximum image count', 'nggallery'), $this->object->get_model()->maximum_entity_count, __('This is the maximum limit of images that NextGEN will restrict itself to querying', 'nggallery') . " \n " . __('Note: This limit will not apply to slideshow widgets or random galleries if/when those galleries specify their own image limits', 'nggallery'), FALSE, '', 1), 'random_widget_cache_ttl_field' => $this->_render_number_field((object) array('name' => 'misc_settings'), 'random_widget_cache_ttl', __('Random widget cache duration', 'nggallery'), $this->object->get_model()->random_widget_cache_ttl, __('The duration of time (in minutes) that "random" widget galleries should be cached. A setting of zero will disable caching.', 'nggallery'), FALSE, '', 0), 'alternate_random_method_field' => $this->_render_radio_field((object) array('name' => 'misc_settings'), 'use_alternate_random_method', __('Use alternative method of retrieving random image galleries', 'nggallery'), C_NextGen_Settings::get_instance()->use_alternate_random_method, __("Some web hosts' database servers disable or disrupt queries using 'ORDER BY RAND()' which can cause galleries to lose their randomness. NextGen provides an alternative (but not completely random) method to determine what images are fed into 'random' galleries.", 'nggallery')), 'alternate_random_method_field' => $this->_render_radio_field((object) array('name' => 'misc_settings'), 'use_alternate_random_method', __('Use alternative method of retrieving random image galleries', 'nggallery'), C_NextGen_Settings::get_instance()->use_alternate_random_method, __("Some web hosts' database servers disable or disrupt queries using 'ORDER BY RAND()' which can cause galleries to lose their randomness. NextGen provides an alternative (but not completely random) method to determine what images are fed into 'random' galleries.", 'nggallery')), 'disable_fontawesome_field' => $this->_render_radio_field((object) array('name' => 'misc_settings'), 'disable_fontawesome', __('Do not enqueue FontAwesome', 'nggallery'), C_NextGen_Settings::get_instance()->disable_fontawesome, __("Warning: your theme or another plugin must provide FontAwesome or your gallery displays may appear incorrectly", 'nggallery'))), TRUE);
     }
     function cache_action()
     {
@@ -423,21 +424,13 @@ class A_Reset_Form extends Mixin
         if (defined('NGG_PRO_PLUGIN_VERSION') || defined('NEXTGEN_GALLERY_PRO_VERSION')) {
             C_Photocrati_Installer::uninstall('photocrati-nextgen-pro');
         }
+        if (defined('NGG_PLUS_PLUGIN_VERSION')) {
+            C_Photocrati_Installer::uninstall('photocrati-nextgen-plus');
+        }
         C_Photocrati_Installer::uninstall('photocrati-nextgen');
         // removes all ngg_options entry in wp_options
         $settings->reset();
         $settings->destroy();
-        // clear NextGEN's capabilities from the roles system
-        $capabilities = array("NextGEN Gallery overview", "NextGEN Use TinyMCE", "NextGEN Upload images", "NextGEN Manage gallery", "NextGEN Manage others gallery", "NextGEN Manage tags", "NextGEN Edit album", "NextGEN Change style", "NextGEN Change options", "NextGEN Attach Interface");
-        $roles = array("subscriber", "contributor", "author", "editor", "administrator");
-        foreach ($roles as $role) {
-            $role = get_role($role);
-            foreach ($capabilities as $capability) {
-                if (!is_null($role)) {
-                    $role->remove_cap($capability);
-                }
-            }
-        }
         // Some installations of NextGen that upgraded from 1.9x to 2.0x have duplicates installed,
         // so for now (as of 2.0.21) we explicitly remove all display types and lightboxes from the
         // db as a way of fixing this.
@@ -445,8 +438,8 @@ class A_Reset_Form extends Mixin
         $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->posts} WHERE post_type = %s", 'lightbox_library'));
         // the installation will run on the next page load; so make our own request before reloading the browser
         wp_remote_get(admin_url('plugins.php'), array('timeout' => 180, 'blocking' => true, 'sslverify' => false));
-        header('Location: ' . get_admin_url());
-        throw new E_Clean_Exit();
+        wp_redirect(get_admin_url());
+        exit;
     }
 }
 /**

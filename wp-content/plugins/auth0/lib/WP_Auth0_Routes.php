@@ -34,6 +34,11 @@ class WP_Auth0_Routes {
 		$this->ip_check   = $ip_check instanceof WP_Auth0_Ip_Check ? $ip_check : new WP_Auth0_Ip_Check( $a0_options );
 	}
 
+	/**
+	 * @deprecated - 3.10.0, will move add_action calls out of this class in the next major.
+	 *
+	 * @codeCoverageIgnore - Deprecated.
+	 */
 	public function init() {
 		add_action( 'parse_request', array( $this, 'custom_requests' ) );
 	}
@@ -128,7 +133,7 @@ class WP_Auth0_Routes {
 			var auth0 = new auth0.WebAuth({clientID:"%s",domain:"%s",redirectUri:"%s"});
 			auth0.crossOriginAuthenticationCallback();
 			</script></head><body></body></html>',
-			esc_url( $this->a0_options->get( 'auth0js-cdn' ) ),
+			esc_url( apply_filters( 'auth0_coo_auth0js_url', WPA0_AUTH0_JS_CDN_URL ) ),
 			sanitize_text_field( $this->a0_options->get( 'client_id' ) ),
 			sanitize_text_field( $this->a0_options->get_auth_domain() ),
 			esc_url( $this->a0_options->get_wp_auth0_url( $protocol ) )
@@ -176,7 +181,7 @@ class WP_Auth0_Routes {
 			$user = wp_authenticate( $_POST['username'], $_POST['password'] );
 
 			if ( is_wp_error( $user ) ) {
-				throw new Exception( __( 'Invalid Credentials', 'wp-auth0' ), 401 );
+				throw new Exception( __( 'Invalid credentials', 'wp-auth0' ), 401 );
 			}
 
 			unset( $user->data->user_pass );
@@ -193,6 +198,7 @@ class WP_Auth0_Routes {
 
 	/**
 	 * User migration get user route used by custom database Login script.
+	 * This is used for email changes made in Auth0.
 	 *
 	 * @return array
 	 *
@@ -211,12 +217,17 @@ class WP_Auth0_Routes {
 			$username = $_POST['username'];
 
 			$user = get_user_by( 'email', $username );
-			if ( ! $user ) {
-				$user = get_user_by( 'slug', $username );
-			}
 
 			if ( ! $user ) {
-				throw new Exception( __( 'Invalid Credentials', 'wp-auth0' ), 401 );
+				throw new Exception( __( 'User not found', 'wp-auth0' ), 401 );
+			}
+
+			$updated_email = WP_Auth0_UsersRepo::get_meta( $user->ID, WP_Auth0_Profile_Change_Email::UPDATED_EMAIL );
+			if ( $updated_email === $user->data->user_email ) {
+				return array(
+					'status' => 200,
+					'error'  => 'Email update in process',
+				);
 			}
 
 			unset( $user->data->user_pass );

@@ -10,7 +10,7 @@
         <div class="row">
 
             <div class="card plugin-settings">
-                
+
                 <div class="card-header wdt-admin-card-header ch-alt">
                     <img id="wpdt-inline-logo" style="width: 60px;height: 50px;"
                          src="<?php echo WDT_ROOT_URL; ?>assets/img/logo-large.png"/>
@@ -59,6 +59,10 @@
                                 <a href="#info" aria-controls="info" role="tab"
                                    data-toggle="tab"><?php _e('Info', 'wpdatatables'); ?></a>
                             </li>
+                            <li class="wdt-activation-tab">
+                                <a href="#wdt-activation" aria-controls="wdt-activation" role="tab"
+                                   data-toggle="tab"><?php _e('Activation', 'wpdatatables'); ?></a>
+                            </li>
                         </ul>
 
                         <div class="tab-content">
@@ -81,6 +85,10 @@
                             <!-- Info tab-->
                             <?php include 'tabs/info.php' ?>
                             <!-- /Info tab-->
+
+                            <!-- Activation tab-->
+                            <?php include 'tabs/activation.php' ?>
+                            <!-- /Activation tab-->
                         </div>
                     </div>
                     <div class="row m-t-15 m-b-5 p-l-15 p-r-15">

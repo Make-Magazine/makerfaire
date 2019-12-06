@@ -4,7 +4,7 @@
 * Plugin Name: Easy Social Share Buttons for WordPress
 * Description: Easy Social Share Buttons automatically adds beautiful share buttons to all your content with support of Facebook, Twitter, Google+, LinkedIn, Pinterest, Digg, StumbleUpon, VKontakte, Tumblr, Reddit, Print, E-mail and more than 40 other social networks and mobile messengers. Easy show on 27+ automatic display locations or use powerful shortcodes. Compatible with most popular e-commerce plugins, social plugins and affiliate plugins
 * Plugin URI: https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo
-* Version: 6.2.1
+* Version: 6.2.9
 * Author: CreoApps
 * Author URI: https://codecanyon.net/user/appscreo/portfolio?ref=appscreo
 */
@@ -13,7 +13,7 @@
 if (! defined ( 'WPINC' ))
 	die ();
 
-define ( 'ESSB3_VERSION', '6.2.1' );
+define ( 'ESSB3_VERSION', '6.2.9' );
 define ( 'ESSB3_PLUGIN_ROOT', dirname ( __FILE__ ) . '/' );
 define ( 'ESSB3_PLUGIN_URL', plugins_url () . '/' . basename ( dirname ( __FILE__ ) ) );
 define ( 'ESSB3_PLUGIN_BASE_NAME', plugin_basename ( __FILE__ ) );
@@ -269,10 +269,18 @@ class ESSB_Manager {
 			if (ESSBActivationManager::isActivated() && !$this->isInTheme() && !$deactivate_updates) {
 
 				include (ESSB3_PLUGIN_ROOT . 'lib/external/autoupdate/plugin-update-checker.php');
+				$update_url = 'http://update.creoworx.com/essb3/';
+				$user_update_source = essb_option_value('update_source');
+				if ($user_update_source == 'minor') {
+					$update_url = 'http://update.creoworx.com/essb3minor/';
+				}
+				if ($user_update_source == 'beta') {
+					$update_url = 'http://update.creoworx.com/essb3beta/';
+				}
 				// @since 1.3.3
 				// autoupdate
 				// activating autoupdate option
-				$essb_autoupdate = PucFactory::buildUpdateChecker ( 'http://update.creoworx.com/essb3/', __FILE__, 'easy-social-share-buttons3' );
+				$essb_autoupdate = PucFactory::buildUpdateChecker ( $update_url, __FILE__, 'easy-social-share-buttons3' );
 				// @since 1.3.7.2 - update to avoid issues with other plugins that uses same
 				// method
 				function addSecretKeyESSB3($query) {

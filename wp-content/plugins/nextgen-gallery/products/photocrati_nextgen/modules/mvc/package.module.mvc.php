@@ -524,28 +524,28 @@ class Mixin_Mvc_View_Instance_Methods extends Mixin
         }
         return $retval;
     }
-    function get_template_override_dir($module = NULL)
+    function get_template_override_dir($module_id = NULL)
     {
-        $fs = C_Fs::get_instance();
-        $dir = $fs->join_paths(WP_CONTENT_DIR, 'ngg');
-        if (!@file_exists($dir)) {
-            wp_mkdir_p($dir);
+        $root = trailingslashit(path_join(WP_CONTENT_DIR, 'ngg'));
+        if (!@file_exists($root) && is_writable(trailingslashit(WP_CONTENT_DIR))) {
+            wp_mkdir_p($root);
         }
-        $dir = $fs->join_paths($dir, 'modules');
-        if (!@file_exists($dir)) {
-            wp_mkdir_p($dir);
+        $modules = trailingslashit(path_join($root, 'modules'));
+        if (!@file_exists($modules) && is_writable($root)) {
+            wp_mkdir_p($modules);
         }
-        if ($module) {
-            $dir = $fs->join_paths($dir, $module);
-            if (!@file_exists($dir)) {
-                wp_mkdir_p($dir);
+        if ($module_id) {
+            $module_dir = trailingslashit(path_join($modules, $module_id));
+            if (!@file_exists($module_dir) && is_writable($modules)) {
+                wp_mkdir_p($module_dir);
             }
-            $dir = $fs->join_paths($dir, 'templates');
-            if (!@file_exists($dir)) {
-                wp_mkdir_p($dir);
+            $template_dir = trailingslashit(path_join($module_dir, 'templates'));
+            if (!@file_exists($template_dir) && is_writable($module_dir)) {
+                wp_mkdir_p($template_dir);
             }
+            return $template_dir;
         }
-        return $dir;
+        return $modules;
     }
     function get_template_override_abspath($module, $filename)
     {

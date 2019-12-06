@@ -275,9 +275,16 @@ function wdtSettingsEnqueue() {
     wp_enqueue_script('wdt-common');
     wp_enqueue_script('wdt-plugin-config', WDT_ROOT_URL . 'assets/js/wpdatatables/admin/plugin-settings/plugin_config_object.js', array(), WDT_CURRENT_VERSION, true);
     wp_enqueue_script('wdt-settings-main-js', WDT_ROOT_URL . 'assets/js/wpdatatables/admin/plugin-settings/main.js', array(), WDT_CURRENT_VERSION, true);
+    wp_enqueue_script('wdt-settings-psl', WDT_ROOT_URL . 'assets/js/psl/psl.min.js', array(), WDT_CURRENT_VERSION, true);
     wp_enqueue_script('wdt-doc-js');
+    wp_enqueue_script('wdt-funcs-js');
 
     wp_localize_script('wdt-plugin-config', 'wdt_current_config', WDTSettingsController::getCurrentPluginConfig());
+    wp_localize_script('wdt-plugin-config', 'wdtStore', ['url' => WDT_STORE_API_URL, 'redirectUrl' => get_site_url()]);
+
+    wp_localize_script('wdt-settings-main-js', 'wpdatatablesSettingsStrings', WDTTools::getTranslationStrings());
+
+    do_action('wdt_enqueue_on_settings_page');
 }
 
 /**
@@ -290,7 +297,9 @@ function wdtAddOnsEnqueue() {
 
     wp_enqueue_script('wdt-common');
     wp_enqueue_script('wdt-doc-js');
+    wp_enqueue_script('wdt-addons-tms-store-checkout', WDT_JS_PATH . 'wpdatatables/wdt.store.checkout.js', array('jquery'), 1.12, true);
 
+    wp_localize_script('wdt-addons-tms-store-checkout', 'tmsStore', ['url' => WDT_STORE_URL]);
 }
 
 /**

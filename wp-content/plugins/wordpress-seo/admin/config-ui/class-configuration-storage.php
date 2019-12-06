@@ -11,11 +11,15 @@
 class WPSEO_Configuration_Storage {
 
 	/**
+	 * Holds the configuration options adapter.
+	 *
 	 * @var \WPSEO_Configuration_Options_Adapter
 	 */
 	protected $adapter;
 
 	/**
+	 * Holds the configuration fields.
+	 *
 	 * @var \WPSEO_Config_Field[]
 	 */
 	protected $fields = array();
@@ -35,7 +39,6 @@ class WPSEO_Configuration_Storage {
 			new WPSEO_Config_Field_Title_Intro(),
 			new WPSEO_Config_Field_Site_Name(),
 			new WPSEO_Config_Field_Separator(),
-			new WPSEO_Config_Field_Google_Search_Console_Intro(),
 			new WPSEO_Config_Field_Profile_URL_Facebook(),
 			new WPSEO_Config_Field_Profile_URL_Twitter(),
 			new WPSEO_Config_Field_Profile_URL_Instagram(),
@@ -45,6 +48,7 @@ class WPSEO_Configuration_Storage {
 			new WPSEO_Config_Field_Profile_URL_YouTube(),
 			new WPSEO_Config_Field_Profile_URL_Wikipedia(),
 			new WPSEO_Config_Field_Company_Or_Person(),
+			new WPSEO_Config_Field_Company_Info_Missing(),
 			new WPSEO_Config_Field_Company_Name(),
 			new WPSEO_Config_Field_Company_Logo(),
 			new WPSEO_Config_Field_Person(),
@@ -102,7 +106,6 @@ class WPSEO_Configuration_Storage {
 	public function retrieve() {
 		$output = array();
 
-		/** @var WPSEO_Config_Field $field */
 		foreach ( $this->fields as $field ) {
 
 			$build = $field->to_array();
@@ -128,7 +131,6 @@ class WPSEO_Configuration_Storage {
 	public function store( $data_to_store ) {
 		$output = array();
 
-		/** @var WPSEO_Config_Field $field */
 		foreach ( $this->fields as $field ) {
 
 			$field_identifier = $field->get_identifier();

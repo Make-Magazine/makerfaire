@@ -20,9 +20,6 @@
  GNU General Public License for more details.
  */
 
-// Compute path to images
-var imagePath = nextgen_lightbox_settings.static_path + '/shutter_reloaded/images/';
-
 shutterReloaded = {
 
 // ***************************************************************************
@@ -37,7 +34,7 @@ shutterReloaded = {
     textBtns : false,
 
 //    change the path to Shutter's image buttons directory if needed
-    shImgDir : imagePath,
+    shImgDir : nextgen_lightbox_settings.static_path.replace('/{placeholder}', '') + '/shutter_reloaded/images/',
 
 // ***************************************************************************
 

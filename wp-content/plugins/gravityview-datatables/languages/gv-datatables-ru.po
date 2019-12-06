@@ -1,13 +1,13 @@
-# Copyright (C) 2018 GravityView
+# Copyright (C) 2019 GravityView
 # This file is distributed under the GPLv2 or later.
 # Translators:
-# Viktor S <awsswa59@gmail.com>, 2018
+# Viktor S <awsswa59@gmail.com>, 2018-2019
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2018-12-06 14:45+0000\n"
+"PO-Revision-Date: 2019-05-25 16:54+0000\n"
 "Last-Translator: Viktor S <awsswa59@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/katzwebservices/gravityview-datatables/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -28,11 +28,11 @@ msgstr ""
 msgid "DataTables"
 msgstr "Таблицы данных"
 
-#: includes/class-datatables-data.php:689
+#: includes/class-datatables-data.php:771
 msgid "Loading data&hellip;"
 msgstr "Загрузка данных&hellip;"
 
-#: includes/class-datatables-data.php:690
+#: includes/class-datatables-data.php:772
 msgid "No entries match your request."
 msgstr "Нет записей соответствующих запросу."
 
@@ -52,25 +52,33 @@ msgstr "Ссылка на одиночную запись"
 msgid "Visible Table Columns"
 msgstr "Видимые столбцы таблицы"
 
-#: includes/extensions/class-datatables-buttons.php:29
-#: includes/extensions/class-datatables-buttons.php:57
-msgid "Export Buttons"
-msgstr "Экспорт кнопки"
-
 #: includes/extensions/class-datatables-buttons.php:30
+#: includes/extensions/class-datatables-buttons.php:48
+msgid "Enable Buttons"
+msgstr "Включить кнопки"
+
+#: includes/extensions/class-datatables-buttons.php:31
 msgid ""
 "Display buttons that allow users to print or export the current results."
 msgstr "Кнопки  на отображении, которые позволяют пользователям печатать или экспортировать текущие результаты."
 
-#: includes/extensions/class-datatables-buttons.php:47
-msgid "Enable Buttons"
-msgstr "Включить кнопки"
+#: includes/extensions/class-datatables-buttons.php:58
+msgid "Buttons"
+msgstr "Кнопки"
 
-#: includes/extensions/class-datatables-buttons.php:87
+#: includes/extensions/class-datatables-buttons.php:97
+msgid "Column Visibility"
+msgstr "Видимость столбца"
+
+#: includes/extensions/class-datatables-buttons.php:99
+msgid "Columns"
+msgstr "Столбцы"
+
+#: includes/extensions/class-datatables-buttons.php:103
 msgid "Copy"
 msgstr "Копия"
 
-#: includes/extensions/class-datatables-buttons.php:91
+#: includes/extensions/class-datatables-buttons.php:107
 msgid "Print"
 msgstr "Печать"
 
@@ -139,18 +147,6 @@ msgstr "Включить Скроллер"
 msgid "Table Height"
 msgstr "Высота таблицы"
 
-#: includes/extensions/class-datatables-search.php:31
-msgid "Search"
-msgstr "Поиск"
-
-#: includes/extensions/class-datatables-search.php:32
-msgid "Ineffective if a search widget is already present in this View."
-msgstr "Неэффективно, если виджет поиска уже присутствует в этом представлении."
-
-#: includes/extensions/class-datatables-search.php:38
-msgid "Enable Search"
-msgstr "Включить Поиск"
-
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
 "There is a new version of %1$s available. %2$sView version %3$s details%4$s."
@@ -194,7 +190,7 @@ msgstr "Расширение %s несовместимо с этой верси�
 msgid "https://gravityview.co/extensions/datatables/"
 msgstr "https://gravityview.co/extensions/datatables/"
 
-#: includes/class-datatables-data.php:623
+#: includes/class-datatables-data.php:705
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr "Все"

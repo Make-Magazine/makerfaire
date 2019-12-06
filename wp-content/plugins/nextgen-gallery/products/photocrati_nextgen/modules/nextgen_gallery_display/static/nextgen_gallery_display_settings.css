@@ -54,3 +54,9 @@
 .entity_errors ul li {
     list-style-type: disc;
 }
+
+.ngg_field_ecommerce_enabled_ssl_warning {
+    font-size: 13px;
+    line-height: 1.4;
+    color: red;
+}

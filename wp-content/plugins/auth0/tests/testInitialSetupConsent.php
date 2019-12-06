@@ -7,43 +7,16 @@
  * @since 3.8.1
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class TestInitialSetupConsent.
  */
-class TestInitialSetupConsent extends TestCase {
+class TestInitialSetupConsent extends WP_Auth0_Test_Case {
 
-	use httpHelpers {
+	use HttpHelpers {
 		httpMock as protected httpMockDefault;
 	}
 
 	use RedirectHelpers;
-
-	use SetUpTestDb;
-
-	/**
-	 * Instance of WP_Auth0_Options.
-	 *
-	 * @var WP_Auth0_Options
-	 */
-	public static $opts;
-
-	/**
-	 * WP_Auth0_ErrorLog instance.
-	 *
-	 * @var WP_Auth0_ErrorLog
-	 */
-	protected static $error_log;
-
-	/**
-	 * Setup for entire test class.
-	 */
-	public static function setUpBeforeClass() {
-		parent::setUpBeforeClass();
-		self::$opts      = WP_Auth0_Options::Instance();
-		self::$error_log = new WP_Auth0_ErrorLog();
-	}
 
 	/**
 	 * Test that an invalid state is redirected to the right place.
@@ -72,7 +45,7 @@ class TestInitialSetupConsent extends TestCase {
 		$this->assertContains( 'error=invalid_state', $redirect_url['query'] );
 
 		$this->assertEquals( $test_domain, self::$opts->get( 'domain' ) );
-		$this->assertEquals( $test_token, self::$opts->get( 'auth0_app_token' ) );
+		$this->assertNull( self::$opts->get( 'auth0_app_token' ) );
 
 		$this->assertEmpty( self::$error_log->get() );
 	}
@@ -176,7 +149,6 @@ class TestInitialSetupConsent extends TestCase {
 		$this->assertEquals( 'TEST_CLIENT_SECRET', self::$opts->get( 'client_secret' ) );
 		$this->assertEquals( 1, self::$opts->get( 'db_connection_enabled' ) );
 		$this->assertEquals( 'TEST_CONN_ID', self::$opts->get( 'db_connection_id' ) );
-		$this->assertEquals( 'good', self::$opts->get( 'password_policy' ) );
 
 		$this->assertEmpty( self::$error_log->get() );
 	}
@@ -227,37 +199,64 @@ class TestInitialSetupConsent extends TestCase {
 		$this->assertEquals( 'TEST_CLIENT_SECRET', self::$opts->get( 'client_secret' ) );
 		$this->assertEquals( 1, self::$opts->get( 'db_connection_enabled' ) );
 		$this->assertEquals( 'TEST_CREATED_CONN_ID', self::$opts->get( 'db_connection_id' ) );
+		$this->assertGreaterThan( 64, strlen( self::$opts->get( 'migration_token' ) ) );
 		$this->assertEquals( 'DB-' . get_auth0_curatedBlogName(), self::$opts->get( 'db_connection_name' ) );
 
 		$this->assertCount( 1, self::$error_log->get() );
 	}
 
-	/*
-	 * PhpUnit suite methods.
-	 */
-
 	/**
-	 * Runs after each test method.
+	 * Test that an connection is created and the Client Grant fails.
 	 */
-	public function tearDown() {
-		parent::tearDown();
+	public function testThatNewConnectionIsCreatedWithExistingMigrationToken() {
+		$this->startHttpMocking();
+		$this->startRedirectHalting();
 
-		self::$opts->set( 'auth0_app_token', self::$opts->get_default( 'auth0_app_token' ) );
-		self::$opts->set( 'domain', self::$opts->get_default( 'domain' ) );
-		self::$opts->set( 'client_id', self::$opts->get_default( 'client_id' ) );
-		self::$opts->set( 'client_secret', self::$opts->get_default( 'client_secret' ) );
-		self::$opts->set( 'password_policy', self::$opts->get_default( 'password_policy' ) );
-		self::$opts->set( 'account_profile', null );
-		self::$opts->set( 'db_connection_enabled', null );
-		self::$opts->set( 'db_connection_id', null );
-		self::$opts->set( 'db_connection_name', null );
+		$setup_consent = new WP_Auth0_InitialSetup_Consent( self::$opts );
+		$test_token    = implode( '.', [ uniqid(), uniqid(), uniqid() ] );
 
-		$this->stopHttpHalting();
-		$this->stopHttpMocking();
+		self::$opts->set( 'client_signing_algorithm', 'HS256' );
+		self::$opts->set( 'migration_token', 'TEST_MIGRATION_TOKEN' );
 
-		$this->stopRedirectHalting();
+		// Mock consecutive HTTP calls.
+		$this->http_request_type = [
+			// Successful client creation.
+			'success_create_client',
+			// Get en existing connection enabled for this client.
+			'success_get_connections',
+			// Connection updated successfully.
+			'success_update_connection',
+			// Connection created successfully.
+			'success_create_connection',
+			// Client grant created successfully.
+			'success_create_client_grant',
+		];
 
-		self::$error_log->clear();
+		$caught_redirect = [];
+		try {
+			$setup_consent->callback_with_token( 'test-wp.auth0.com', $test_token, 'social' );
+		} catch ( Exception $e ) {
+			$caught_redirect = unserialize( $e->getMessage() );
+		}
+
+		$this->assertNotEmpty( $caught_redirect );
+		$this->assertEquals( 302, $caught_redirect['status'] );
+
+		$redirect_url = parse_url( $caught_redirect['location'] );
+
+		$this->assertEquals( '/wp-admin/admin.php', $redirect_url['path'] );
+		$this->assertContains( 'page=wpa0-setup', $redirect_url['query'] );
+		$this->assertContains( 'step=2', $redirect_url['query'] );
+		$this->assertContains( 'profile=social', $redirect_url['query'] );
+
+		$this->assertEquals( 'TEST_CLIENT_ID', self::$opts->get( 'client_id' ) );
+		$this->assertEquals( 'TEST_CLIENT_SECRET', self::$opts->get( 'client_secret' ) );
+		$this->assertEquals( 1, self::$opts->get( 'db_connection_enabled' ) );
+		$this->assertEquals( 'TEST_CREATED_CONN_ID', self::$opts->get( 'db_connection_id' ) );
+		$this->assertEquals( 'TEST_MIGRATION_TOKEN', self::$opts->get( 'migration_token' ) );
+		$this->assertEquals( 'DB-' . get_auth0_curatedBlogName(), self::$opts->get( 'db_connection_name' ) );
+
+		$this->assertEmpty( self::$error_log->get() );
 	}
 
 	/*
@@ -267,7 +266,9 @@ class TestInitialSetupConsent extends TestCase {
 	/**
 	 * Specific mock API responses for this suite.
 	 *
-	 * @return array|null|WP_Error
+	 * @return array|WP_Error
+	 *
+	 * @throws Exception If asked to do so.
 	 */
 	public function httpMock() {
 		$response_type = $this->getResponseType();
@@ -283,6 +284,14 @@ class TestInitialSetupConsent extends TestCase {
 					'body'     => '[{"id":"TEST_CONN_ID","name":"DB-' . get_auth0_curatedBlogName() .
 						'","enabled_clients":["TEST_CLIENT_ID"],"options":{"passwordPolicy":"good"}}]',
 					'response' => [ 'code' => 200 ],
+				];
+
+			case 'success_create_client_grant':
+				$audience = 'https://' . self::$opts->get( 'domain' ) . '/api/v2/';
+				return [
+					'body'     => '{"id": "TEST_CLIENT_GRANT_ID","client_id": "TEST_CLIENT_ID",
+						"audience": "' . $audience . '","scope": ["read:users","update:users"]}',
+					'response' => [ 'code' => 201 ],
 				];
 		}
 

@@ -45,6 +45,14 @@ class GravityView_Edit_Entry_Render {
 	public $entry;
 
 	/**
+	 * The View.
+	 *
+	 * @var \GV\View.
+	 * @since develop
+	 */
+	public $view;
+
+	/**
 	 * Gravity Forms entry array (it won't get changed during this class lifecycle)
 	 * @since 1.17.2
 	 * @var array
@@ -126,7 +134,7 @@ class GravityView_Edit_Entry_Render {
 
 		add_filter( 'gravityview_is_edit_entry', array( $this, 'is_edit_entry') );
 
-		add_action( 'gravityview_edit_entry', array( $this, 'init' ) );
+		add_action( 'gravityview_edit_entry', array( $this, 'init' ), 10, 4 );
 
 		// Disable conditional logic if needed (since 1.9)
 		add_filter( 'gform_has_conditional_logic', array( $this, 'manage_conditional_logic' ), 10, 2 );
@@ -168,14 +176,14 @@ class GravityView_Edit_Entry_Render {
 	 */
 	public function prevent_maybe_process_form() {
 
-		if( ! empty( $_POST ) ) {
-	        gravityview()->log->debug( 'GravityView_Edit_Entry[prevent_maybe_process_form] $_POSTed data (sanitized): ', array( 'data' => esc_html( print_r( $_POST, true ) ) ) );
+	    if( ! $this->is_edit_entry_submission() ) {
+			return;
 		}
 
-		if( $this->is_edit_entry_submission() ) {
-			remove_action( 'wp',  array( 'RGForms', 'maybe_process_form'), 9 );
-	        remove_action( 'wp',  array( 'GFForms', 'maybe_process_form'), 9 );
-		}
+		gravityview()->log->debug( 'GravityView_Edit_Entry[prevent_maybe_process_form] Removing GFForms::maybe_process_form() action.' );
+
+		remove_action( 'wp',  array( 'RGForms', 'maybe_process_form'), 9 );
+		remove_action( 'wp',  array( 'GFForms', 'maybe_process_form'), 9 );
 	}
 
 	/**
@@ -211,13 +219,9 @@ class GravityView_Edit_Entry_Render {
 	    self::$original_entry = $entries[0];
 	    $this->entry = $entries[0];
 
-		//self::$original_form = $gravityview_view->getForm();
-		//$this->form = $gravityview_view->getForm();
-		//$this->form_id = $this->entry['form_id'];
-      $this->form_id = $this->entry['form_id'];
-      $this->form = GFAPI::get_form($this->form_id);
-      self::$original_form = $this->form;
-
+		self::$original_form = $gravityview_view->getForm();
+		$this->form = $gravityview_view->getForm();
+		$this->form_id = $this->entry['form_id'];
 		$this->view_id = $gravityview_view->getViewId();
 		$this->post_id = \GV\Utils::get( $post, 'ID', null );
 
@@ -231,9 +235,15 @@ class GravityView_Edit_Entry_Render {
 	 * Run when the is_edit_entry returns true.
 	 *
 	 * @param \GravityView_View_Data $gv_data GravityView Data object
+	 * @param \GV\Entry   $entry   The Entry.
+	 * @param \GV\View    $view    The View.
+	 * @param \GV\Request $request The Request.
+	 *
+	 * @since develop Added $entry, $view, $request adhocs.
+	 *
 	 * @return void
 	 */
-	public function init( $gv_data = null ) {
+	public function init( $gv_data = null, $entry = null, $view = null, $request = null ) {
 
 		require_once( GFCommon::get_base_path() . '/form_display.php' );
 		require_once( GFCommon::get_base_path() . '/entry_detail.php' );
@@ -255,6 +265,8 @@ class GravityView_Edit_Entry_Render {
 			gravityview()->log->error( 'User is not allowed to edit this entry; returning', array( 'data' => $this->entry ) );
 			return;
 		}
+
+		$this->view = $view;
 
 		$this->print_scripts();
 
@@ -526,7 +538,7 @@ class GravityView_Edit_Entry_Render {
 	 */
 	private function form_prepare_for_save() {
 
-		$form = $this->form;
+		$form = $this->filter_conditional_logic( $this->form );
 
 	    /** @var GF_Field $field */
 		foreach( $form['fields'] as $k => &$field ) {
@@ -891,6 +903,40 @@ class GravityView_Edit_Entry_Render {
 			}
 		}
 
+		/**
+		 * Maybe process feeds.
+		 *
+		 * @since develop
+		 */
+		if ( $allowed_feeds = $this->view->settings->get( 'edit_feeds', array() ) ) {
+			$feeds = GFAPI::get_feeds( null, $entry['form_id'] );
+			if ( ! is_wp_error( $feeds ) ) {
+				$registered_feeds = array();
+				foreach ( GFAddOn::get_registered_addons() as $registered_feed ) {
+					if ( is_subclass_of( $registered_feed,  'GFFeedAddOn' ) ) {
+						if ( method_exists( $registered_feed, 'get_instance' ) ) {
+							$registered_feed = call_user_func( array( $registered_feed, 'get_instance' ) );
+							$registered_feeds[ $registered_feed->get_slug() ] = $registered_feed;
+						}
+					}
+				}
+				foreach ( $feeds as $feed ) {
+					if ( in_array( $feed['id'], $allowed_feeds ) ) {
+						if ( $feed_object = \GV\Utils::get( $registered_feeds, $feed['addon_slug'] ) ) {
+							$returned_entry = $feed_object->process_feed( $feed, $entry, self::$original_form );
+							if ( is_array( $returned_entry ) && rgar( $returned_entry, 'id' ) ) {
+								$entry = $returned_entry;
+							}
+
+							do_action( 'gform_post_process_feed', $feed, $entry, self::$original_form, $feed_object );
+							$slug = $feed_object->get_slug();
+							do_action( "gform_{$slug}_post_process_feed", $feed, $entry, self::$original_form, $feed_object );
+						}
+					}
+				}
+			}
+		}
+
 		$this->entry = $entry;
 	}
 
@@ -1060,8 +1106,7 @@ class GravityView_Edit_Entry_Render {
 		ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
 		$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
-      //This override is to remove the merge tags that aren’t being set in gravity view
-      $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
+
 		ob_get_clean();
 
 	    remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
@@ -1510,7 +1555,8 @@ class GravityView_Edit_Entry_Render {
 				        }
 
 				        // count uploaded files and existent entry files
-				        $count_files = count( $file_names ) + count( $value );
+				        $count_files = ( is_array( $file_names ) ? count( $file_names ) : 0 ) +
+						               ( is_array( $value ) ? count( $value ) : 0 );
 
 				        if( $count_files > $field->maxFiles ) {
 				            $field->validation_message = __( 'Maximum number of files reached', 'gravityview' );
@@ -1771,14 +1817,14 @@ class GravityView_Edit_Entry_Render {
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
 
-	    //if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
+	    if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
 			foreach( $fields as $k => $field ) {
 				if( $field->adminOnly ) {
 				    unset( $fields[ $k ] );
 				}
 			}
 			return array_values( $fields );
-		//}
+		}
 
 	    foreach( $fields as &$field ) {
 		    $field->adminOnly = false;
@@ -1891,6 +1937,61 @@ class GravityView_Edit_Entry_Render {
 	 * @return array Modified form, if not using Conditional Logic
 	 */
 	private function filter_conditional_logic( $form ) {
+		/**
+		 * Fields that are tied to a conditional logic field that is not present in the view
+		 * have to still be displayed, if the condition is met.
+		 *
+		 * @see https://github.com/gravityview/GravityView/issues/840
+		 * @since develop
+		 */
+		$the_form = GFAPI::get_form( $form['id'] );
+		$editable_ids = array();
+		foreach ( $form['fields'] as $field ) {
+			$editable_ids[] = $field['id']; // wp_list_pluck is destructive in this context
+		}
+		$remove_conditions_rule = array();
+		foreach ( $the_form['fields'] as $field ) {
+			if ( ! empty( $field->conditionalLogic ) && ! empty( $field->conditionalLogic['rules'] ) ) {
+				foreach ( $field->conditionalLogic['rules'] as $i => $rule ) {
+					if ( ! in_array( $rule['fieldId'], $editable_ids ) ) {
+						/**
+						 * This conditional field is not editable in this View.
+						 * We need to remove the rule, but only if it matches.
+						 */
+						if ( $_field = GFAPI::get_field( $the_form, $rule['fieldId'] ) ) {
+							$value = $_field->get_value_export( $this->entry );
+						} elseif ( isset( $this->entry[ $rule['fieldId'] ] ) ) {
+							$value = $this->entry[ $rule['fieldId'] ];
+						} else {
+							$value = gform_get_meta( $this->entry['id'], $rule['fieldId'] );
+						}
+
+						$match = GFFormsModel::matches_operation( $value, $rule['value'], $rule['operator'] );
+						
+						if ( $match ) {
+							$remove_conditions_rule[] = array( $field['id'], $i );
+						}
+					}
+				}
+			}
+		}
+
+		if ( $remove_conditions_rule ) {
+			foreach ( $form['fields'] as &$field ) {
+				foreach ( $remove_conditions_rule as $_remove_conditions_r ) {
+
+				    list( $rule_field_id, $rule_i ) = $_remove_conditions_r;
+
+					if ( $field['id'] == $rule_field_id ) {
+						unset( $field->conditionalLogic['rules'][ $rule_i ] );
+						gravityview()->log->debug( 'Removed conditional rule #{rule} for field {field_id}', array( 'rule' => $rule_i, 'field_id' => $field['id'] ) );
+					}
+				}
+			}
+		}
+
+		/** Normalize the indices... */
+		$form['fields'] = array_values( $form['fields'] );
 
 		/**
 		 * @filter `gravityview/edit_entry/conditional_logic` Should the Edit Entry form use Gravity Forms conditional logic showing/hiding of fields?
@@ -1974,12 +2075,11 @@ class GravityView_Edit_Entry_Render {
 			 * If the Entry is embedded, there may be two entries on the same page.
 			 * If that's the case, and one is being edited, the other should fail gracefully and not display an error.
 			 */
-         /*
 			if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
 				$error = true;
 			} else {
 				$error = __( 'The link to edit this entry is not valid; it may have expired.', 'gravityview');
-			}*/
+			}
 
 		}
 

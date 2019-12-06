@@ -7,27 +7,18 @@
  * @since 3.9.0
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class TestProfileChangeEmail.
  */
-class TestProfileChangeEmail extends TestCase {
+class TestProfileChangeEmail extends WP_Auth0_Test_Case {
 
 	use HookHelpers;
 
+	use HttpHelpers;
+
 	use RedirectHelpers;
 
-	use SetUpTestDb;
-
 	use UsersHelper;
-
-	/**
-	 * WP_Auth0_Options instance.
-	 *
-	 * @var WP_Auth0_Options
-	 */
-	public static $options;
 
 	/**
 	 * WP_Auth0_Api_Client_Credentials instance.
@@ -37,19 +28,12 @@ class TestProfileChangeEmail extends TestCase {
 	public static $api_client_creds;
 
 	/**
-	 * WP_Auth0_UsersRepo instance used by the UsersHelper trait.
-	 *
-	 * @var WP_Auth0_UsersRepo
-	 */
-	protected static $users_repo;
-
-	/**
 	 * Run before the test suite.
 	 */
 	public static function setUpBeforeClass() {
-		self::$options          = WP_Auth0_Options::Instance();
-		self::$api_client_creds = new WP_Auth0_Api_Client_Credentials( self::$options );
-		self::$users_repo       = new WP_Auth0_UsersRepo( self::$options );
+		parent::setUpBeforeClass();
+		self::$api_client_creds = new WP_Auth0_Api_Client_Credentials( self::$opts );
+		self::$users_repo       = new WP_Auth0_UsersRepo( self::$opts );
 	}
 
 	/**
@@ -62,7 +46,7 @@ class TestProfileChangeEmail extends TestCase {
 				'accepted_args' => 2,
 			],
 		];
-		$this->assertHooked( 'profile_update', 'WP_Auth0_Profile_Change_Email', $expect_hooked );
+		$this->assertHookedClass( 'profile_update', 'WP_Auth0_Profile_Change_Email', $expect_hooked );
 	}
 
 	/**
@@ -82,6 +66,7 @@ class TestProfileChangeEmail extends TestCase {
 
 		$this->assertTrue( $change_email->update_email( $user->ID, $old_user ) );
 		$this->assertEquals( $new_email, get_user_by( 'id', $user->ID )->data->user_email );
+		$this->assertEmpty( WP_Auth0_UsersRepo::get_meta( $user->ID, 'auth0_transient_email_update' ) );
 	}
 
 	/**
@@ -155,6 +140,7 @@ class TestProfileChangeEmail extends TestCase {
 		$this->assertFalse( $change_email->update_email( $user->ID, $old_user ) );
 		$this->assertEquals( $old_user->data->user_email, get_user_by( 'id', $user->ID )->data->user_email );
 		$this->assertEmpty( get_user_meta( $user->ID, '_new_email', true ) );
+		$this->assertEmpty( WP_Auth0_UsersRepo::get_meta( $user->ID, 'auth0_transient_email_update' ) );
 	}
 
 	/**
@@ -196,6 +182,30 @@ class TestProfileChangeEmail extends TestCase {
 	}
 
 	/**
+	 * Test that the email update flag is set for a user before the Auth0 API call is made.
+	 */
+	public function testThatEmailUpdateFlagIsSetBeforeApiCall() {
+		$this->startHttpHalting();
+
+		$user                       = $this->createUser( [], false );
+		$new_email                  = $user->data->user_email;
+		$old_user                   = clone $user;
+		$old_user->data->user_email = 'OLD-' . $new_email;
+		$this->storeAuth0Data( $user->ID, 'auth0' );
+
+		$api_change_email = new WP_Auth0_Api_Change_Email( self::$opts, self::$api_client_creds );
+		$change_email     = new WP_Auth0_Profile_Change_Email( $api_change_email );
+
+		try {
+			$change_email->update_email( $user->ID, $old_user );
+		} catch ( Exception $e ) {
+			// Just need to stop the API call.
+		}
+
+		$this->assertEquals( $new_email, WP_Auth0_UsersRepo::get_meta( $user->ID, 'auth0_transient_email_update' ) );
+	}
+
+	/**
 	 * Get an API stub set to pass or fail.
 	 *
 	 * @param boolean $success - True for the API call to succeed, false for it to fail.
@@ -206,7 +216,7 @@ class TestProfileChangeEmail extends TestCase {
 		$mock_api_test_email = $this
 			->getMockBuilder( WP_Auth0_Api_Change_Email::class )
 			->setMethods( [ 'call' ] )
-			->setConstructorArgs( [ self::$options, self::$api_client_creds ] )
+			->setConstructorArgs( [ self::$opts, self::$api_client_creds ] )
 			->getMock();
 		$mock_api_test_email->method( 'call' )->willReturn( $success );
 		return new WP_Auth0_Profile_Change_Email( $mock_api_test_email );

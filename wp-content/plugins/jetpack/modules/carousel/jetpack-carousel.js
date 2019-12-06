@@ -1,4 +1,3 @@
-/* jshint sub: true, onevar: false, multistr: true, devel: true, smarttabs: true */
 /* global jetpackCarouselStrings, DocumentTouch */
 
 jQuery( document ).ready( function( $ ) {
@@ -474,6 +473,9 @@ jQuery( document ).ready( function( $ ) {
 					$( window ).scrollTop( scroll );
 					$( '.jp-carousel-previous-button' ).hide();
 					$( '.jp-carousel-next-button' ).hide();
+					// Set height to original value
+					// Fix some themes where closing carousel brings view back to top
+					$( 'html' ).css( 'height', '' );
 				} )
 				.bind( 'jp_carousel.afterClose', function() {
 					if ( window.location.hash && history.back ) {
@@ -1527,11 +1529,7 @@ jQuery( document ).ready( function( $ ) {
 					// attachment id might no longer match the current attachment id by the time we get the data back or a now
 					// registered infiniscroll event kicks in, so we don't ever display comments for the wrong image by mistake.
 					var current = $( '.jp-carousel div.selected' );
-					if (
-						current &&
-						current.data &&
-						current.data( 'attachment-id' ) != args.attachment_id // jshint ignore:line
-					) {
+					if ( current && current.data && current.data( 'attachment-id' ) != args.attachment_id ) {
 						comments.fadeOut( 'fast' );
 						comments.empty();
 						return;
@@ -1667,7 +1665,7 @@ jQuery( document ).ready( function( $ ) {
 	// register the event listener for starting the gallery
 	$( document.body ).on(
 		'click.jp-carousel',
-		'div.gallery, div.tiled-gallery, ul.wp-block-gallery, div.wp-block-jetpack-tiled-gallery, a.single-image-gallery',
+		'div.gallery, div.tiled-gallery, ul.wp-block-gallery, ul.blocks-gallery-grid, div.wp-block-jetpack-tiled-gallery, a.single-image-gallery',
 		function( e ) {
 			if ( ! $( this ).jp_carousel( 'testForData', e.currentTarget ) ) {
 				return;
@@ -1690,6 +1688,10 @@ jQuery( document ).ready( function( $ ) {
 			) {
 				return;
 			}
+
+			// Set height to auto
+			// Fix some themes where closing carousel brings view back to top
+			$( 'html' ).css( 'height', 'auto' );
 
 			e.preventDefault();
 

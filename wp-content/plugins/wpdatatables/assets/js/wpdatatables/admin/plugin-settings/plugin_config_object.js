@@ -121,13 +121,17 @@ var wpdatatable_plugin_config = {
         }
     },
 
-    setPurchaseCode: function ( purchaseCode ) {
-        if( wdt_current_config.wdtPurchaseCode != purchaseCode ){
-            wdt_current_config.wdtPurchaseCode = purchaseCode;
+    setPurchaseCodeStore: function (purchaseCode) {
+        jQuery('#wdt-purchase-code-store').val(purchaseCode);
+
+        if (purchaseCode) {
+            jQuery('#wdt-purchase-code-store').prop('disabled', 'disabled');
+            jQuery('#wdt-activate-plugin').removeClass('btn-primary').addClass('btn-danger').html('Deactivate');
+        } else {
+            jQuery('#wdt-purchase-code-store').prop('disabled', '');
+            jQuery('#wdt-activate-plugin').removeClass('btn-danger').addClass('btn-primary').html('Activate');
         }
-        if( jQuery('#wdt-purchase-code').val() != purchaseCode ){
-            jQuery('#wdt-purchase-code').val( purchaseCode );
-        }
+
     },
 
     setIncludeBootstrap: function (includeBootstrap) {

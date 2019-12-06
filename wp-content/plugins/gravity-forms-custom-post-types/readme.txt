@@ -3,7 +3,7 @@ Contributors: spivurno,bradvin,wpsmith
 Donate link: http://gravitywiz.com/
 Tags: form,forms,gravity,gravity form,gravity forms,CPT,custom post types,custom post type,taxonomy,taxonomies
 Requires at least: 3.0.1
-Tested up to: 4.9
+Tested up to: 5.1.1
 Stable tag: 3.1.12
 
 Map your Gravity-Forms-generated posts to a custom post type and/or custom taxonomies.
@@ -76,6 +76,16 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 7. Setting: Mapping a Single Line Text field to a taxonomy (and enabling Enhanced UI)
 
 == Changelog ==
+
+= 3.1.15 =
+
+* Fixed issue when exporting taxonomy-and-post-type-populated Checkbox fields.
+* Updated how scripts are enqueued.
+* Tested with 5.5.1.
+
+= 3.1.14 =
+
+* Updated how taxonomy enhanced UI script and data were loaded.
 
 = 3.1.13 =
 

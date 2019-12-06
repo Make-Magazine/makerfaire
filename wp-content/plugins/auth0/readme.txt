@@ -1,12 +1,12 @@
 === Login by Auth0 ===
 Tags: login, oauth, authentication, single sign on, ldap, active directory, saml, windows azure ad, google apps, two factor, two-factor, facebook, google, twitter, baidu, renren, linkedin, github, paypal, yahoo, amazon, vkontakte, salesforce, box, dwolla, yammer, passwordless, sms, magiclink, totp, social
-Tested up to: 5.0.2
+Tested up to: 5.2.2
 Requires at least: 3.8
 Requires PHP: 5.3
 License: GPLv2
 License URI: https://github.com/auth0/wp-auth0/blob/master/LICENSE
 Stable tag: trunk
-Contributors: auth0, glena, rrauch, auth0josh
+Contributors: auth0, auth0josh
 
 Login by Auth0 provides improved username/password login, Passwordless login, Social login and Single Sign On for all your sites.
 
@@ -24,14 +24,13 @@ This plugin replaces standard WordPress login forms with one powered by [Auth0](
     - Password policies
     - Email validation
     - Mitigate brute force attacks
-- **Easy access to your users data**
-    - User stats
-    - Profile data
-    - Login history and locations
 
 == Installation ==
 
-This plugin requires a [free or paid](https://auth0.com/pricing) Auth0 account. [Sign up here](https://auth0.com/signup) then follow the [installation instructions here](https://auth0.com/docs/cms/wordpress/installation).
+This plugin requires a [free or paid](https://auth0.com/pricing) Auth0 account.
+
+1. [Sign up here](https://auth0.com/signup).
+2. Follow the [installation instructions here](https://auth0.com/docs/cms/wordpress/installation).
 
 == Screenshots ==
 
@@ -55,24 +54,9 @@ If the email was not verified and there is an account with that email in WordPre
 
 **Please note:** In order for a user to login using Auth0, they will need to sign up via the Auth0 login form (or have an account created for them in Auth0). Once signup is complete, their Auth0 user will be automatically associated with their WordPress user.
 
-= Enabling dual (Auth0 and WordPress) login =
-
-You can enable the standard WordPress login by turning on the "WordPress login enabled" setting (enabled by default). This will make visible a link on the login page to swap between both. Please note that logins using the standard WordPress form **will not** be tracked in Auth0.
-
-== Usage ==
-
-Once the plugin is configured, the login form on your wp-login.php page will be replaced with an Auth0 login form automatically. You can add additional login forms on the front-end of your site with widgets and/or shortcodes.
-
-**Please note:**
-
-- Only one login form can be displayed on the page at a time.
-- The widget and shortcode login forms will not display if the user is already logged in.
-- After logging in via widget or shortcode, the user will be redirected back to the same page where they logged in instead of the default login URL shown on the settings page.
-- Both widget and shortcode login forms have an option to display a button that triggers the form in a modal.
-
 = Widget =
 
-You can enable the Auth0 as a WordPress widget in order to show it in a sidebar. The widget inherits the main plugin settings but can be overridden with its own settings in the widget form.
+You can enable the Auth0 as a WordPress widget in order to show it in a sidebar. The widget inherits the main plugin settings but can be overridden with its own settings in the widget form. Note: this form will not display for logged-in users.
 
 = Shortcode =
 
@@ -86,7 +70,6 @@ Like widgets, shortcode login forms will use the main plugins settings. It can b
 - `form_title` - Text to appear at top of the login form
 - `gravatar` - Display the user's Gravatar; set to `1` for yes
 - `redirect_to` - A direct URL to use after successful login
-- `social_big_buttons` - Display full-width social login buttons; set to `1` for yes
 - `custom_css` - Valid CSS to alter the login form
 - `custom_js` - Valid JS to alter the login form
 - `dict` - Valid JSON to override form text ([see options here](https://github.com/auth0/lock/blob/master/src/i18n/en.js))
@@ -96,7 +79,9 @@ Like widgets, shortcode login forms will use the main plugins settings. It can b
 
 Example:
 
-    [auth0 show_as_modal="1" social_big_buttons="1" modal_trigger_name="Login button: This text is configurable!"]
+    [auth0 show_as_modal="1" modal_trigger_name="Login button: This text is configurable!"]
+
+Note: this form will not display for logged-in users.
 
 == Frequently Asked Questions ==
 
@@ -135,14 +120,13 @@ All is not lost!
 
 == Changelog ==
 
-**v3.9.0**
+**v3.11.1**
 
-- Added a complete Spanish translation!
-- Email changes for WordPress users now work properly and are rejected clearly if Auth0 rejects the change. This does not affect the email verification process in WordPress; the email is changed only after the verification happens. A current API token is not required but your Application does need to allow for a Client Credentials grant with the Management API (this configured for you by default, [more information here](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-application-for-the-management-api)).
-- Sibling sub-domains are now allowed for the Login Redirect URL. Anything within the same domain name as the site URL can now be saved.
-- Default Auth0 IP addresses are now allowed by default on the user migration endpoints. Adding or changing the IP addresses for the "Migration IPs Whitelist" field will not affect default IPs.
-- User migration endpoints were improved to provide better errors when requests are rejected and more clear custom database scripts that can be used as an example when setting up the migration manually. Switching this setting on or off does not make any changes in the Auth0 dashboard or to the existing token, it only makes the endpoints available or not.
-- The Social Amplificator functionality has been removed.
-- And more!
+- Check state in specific global based on callback type [\#708](https://github.com/auth0/wp-auth0/pull/708) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fix sensitive field handling; add Basic settings tab validations [\#703](https://github.com/auth0/wp-auth0/pull/703) ([joshcanhelp](https://github.com/joshcanhelp))
+- Add new Auth0 IPs; do not save duplicate or whitelisted IPs [\#700](https://github.com/auth0/wp-auth0/pull/700) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fix post passwords getting redirected [\#698](https://github.com/auth0/wp-auth0/pull/698) ([joshcanhelp](https://github.com/joshcanhelp))
 
-[Complete list of changes for this and other releases](https://github.com/auth0/wp-auth0/blob/master/CHANGELOG.md#390-2019-01-11)
+... and more!
+
+[Complete list of changes for this and other releases](https://github.com/auth0/wp-auth0/releases)

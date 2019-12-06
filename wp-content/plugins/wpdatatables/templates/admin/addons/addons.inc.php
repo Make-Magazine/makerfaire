@@ -37,7 +37,8 @@
 
                         <div class="col-sm-3">
                             <div class="thumbnail">
-                                <a href="https://wpdatatables.com/powerful-filtering/?utm_source=wpdt-admin&medium=addons&campaign=addons" target="_blank">
+                                <a href="https://wpdatatables.com/powerful-filtering/?utm_source=wpdt-admin&medium=addons&campaign=addons"
+                                   target="_blank">
                                     <img class="img-responsive"
                                          src="<?php echo WDT_ASSETS_PATH; ?>/img/addons/powerful-filters.png" alt="">
                                 </a>
@@ -46,11 +47,15 @@
                                     <p><?php _e('An add-on for wpDataTables that provides powerful filtering features: cascade filtering, applying filters on button click, show only filter without the table before user defines the search values.', 'wpdatatables'); ?></p>
                                 </div>
                                 <div class="wdt-addons-find-out-more">
-                                    <a href="https://wpdatatables.com/powerful-filtering/?utm_source=wpdt-admin&medium=addons&campaign=addons" target="_blank"
+                                    <a href="https://wpdatatables.com/powerful-filtering/?utm_source=wpdt-admin&medium=addons&campaign=addons"
+                                       target="_blank"
                                        class="btn btn-sm btn-icon-text btn-primary waves-effect"
                                        role="button"><?php _e('Find out more ', 'wpdatatables'); ?>
                                         <i class="zmdi zmdi-search"></i>
                                     </a>
+                                    <button id="wdt-powerful-filters" class="btn btn-sm btn-icon-text btn-primary waves-effect wdt-checkout-button tms-store-checkout">
+                                        Purchase
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -71,13 +76,17 @@
                                        role="button"><?php _e('Find out more ', 'wpdatatables'); ?>
                                         <i class="zmdi zmdi-search"></i>
                                     </a>
+                                    <button id="reportbuilder" class="btn btn-sm btn-icon-text btn-primary waves-effect wdt-checkout-button tms-store-checkout">
+                                        Purchase
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <!-- /.col-sm-3 -->
                         <div class="col-sm-3">
                             <div class="thumbnail">
-                                <a href="https://wpdatatables.com/documentation/addons/gravity-forms-integration/?utm_source=wpdt-admin&medium=addons&campaign=addons" target="_blank">
+                                <a href="https://wpdatatables.com/documentation/addons/gravity-forms-integration/?utm_source=wpdt-admin&medium=addons&campaign=addons"
+                                   target="_blank">
                                     <img class="img-responsive"
                                          src="<?php echo WDT_ASSETS_PATH; ?>/img/addons/gravity.png" alt="">
                                 </a>
@@ -86,18 +95,23 @@
                                     <p><?php _e('Tool that adds "Gravity Form" as a new table type and allows you to create wpDataTables from Gravity Forms entries data.', 'wpdatatables'); ?></p>
                                 </div>
                                 <div class="wdt-addons-find-out-more">
-                                    <a href="https://wpdatatables.com/documentation/addons/gravity-forms-integration/?utm_source=wpdt-admin&medium=addons&campaign=addons" target="_blank"
+                                    <a href="https://wpdatatables.com/documentation/addons/gravity-forms-integration/?utm_source=wpdt-admin&medium=addons&campaign=addons"
+                                       target="_blank"
                                        class="btn btn-sm btn-icon-text btn-primary waves-effect"
                                        role="button"><?php _e('Find out more ', 'wpdatatables'); ?>
                                         <i class="zmdi zmdi-search"></i>
                                     </a>
+                                    <button id="wdt-gravity-integration" class="btn btn-sm btn-icon-text btn-primary waves-effect wdt-checkout-button tms-store-checkout">
+                                        Purchase
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <!-- /.col-sm-3 -->
                         <div class="col-sm-3">
                             <div class="thumbnail">
-                                <a href="https://wpdatatables.com/documentation/addons/formidable-forms-integration/?utm_source=wpdt-admin&medium=addons&campaign=addons" target="_blank">
+                                <a href="https://wpdatatables.com/documentation/addons/formidable-forms-integration/?utm_source=wpdt-admin&medium=addons&campaign=addons"
+                                   target="_blank">
                                     <img class="img-responsive"
                                          src="<?php echo WDT_ASSETS_PATH; ?>/img/addons/formidable.png" alt="">
                                 </a>
@@ -106,11 +120,15 @@
                                     <p><?php _e('Tool that adds "Formidable Form" as a new table type and allows you to create wpDataTables from Formidable Forms entries data.', 'wpdatatables'); ?></p>
                                 </div>
                                 <div class="wdt-addons-find-out-more">
-                                    <a href="https://wpdatatables.com/documentation/addons/formidable-forms-integration/?utm_source=wpdt-admin&medium=addons&campaign=addons" target="_blank"
+                                    <a href="https://wpdatatables.com/documentation/addons/formidable-forms-integration/?utm_source=wpdt-admin&medium=addons&campaign=addons"
+                                       target="_blank"
                                        class="btn btn-sm btn-icon-text btn-primary waves-effect"
                                        role="button"><?php _e('Find out more ', 'wpdatatables'); ?>
                                         <i class="zmdi zmdi-search"></i>
                                     </a>
+                                    <button id="wdt-formidable-integration" class="btn btn-sm btn-icon-text btn-primary waves-effect wdt-checkout-button tms-store-checkout">
+                                        Purchase
+                                    </button>
                                 </div>
                             </div>
                         </div>

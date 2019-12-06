@@ -23,7 +23,7 @@ class M_Gallery_Display extends C_Base_Module
 			'photocrati-nextgen_gallery_display',
 			'Gallery Display',
 			'Provides the ability to display gallery of images',
-			'3.1.14',
+			'3.2.17',
 			'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -194,6 +194,14 @@ class M_Gallery_Display extends C_Base_Module
 
     static function enqueue_fontawesome()
     {
+        // The official plugin is active, we don't need to do anything outside of the wp-admin
+        if (defined('FONT_AWESOME_OFFICIAL_LOADED') && !is_admin())
+            return;
+
+        $settings = C_NextGen_Settings::get_instance();
+        if ($settings->get('disable_fontawesome'))
+            return;
+
         wp_register_script(
             'fontawesome_v4_shim',
             'https://use.fontawesome.com/releases/v5.3.1/js/v4-shims.js',
@@ -203,12 +211,12 @@ class M_Gallery_Display extends C_Base_Module
         if (!wp_script_is('fontawesome', 'registered'))
         {
             add_filter('script_loader_tag', 'M_Gallery_Display::fix_fontawesome_script_tag', 10, 2);
-			wp_enqueue_script(
-				'fontawesome',
+            wp_enqueue_script(
+                'fontawesome',
                 'https://use.fontawesome.com/releases/v5.3.1/js/all.js',
-				array('fontawesome_v4_shim'),
+                array('fontawesome_v4_shim'),
                 '5.3.1'
-			);
+            );
         }
 
         if (!wp_style_is('fontawesome', 'registered'))
@@ -223,9 +231,8 @@ class M_Gallery_Display extends C_Base_Module
             );
         }
 
-	    wp_enqueue_script('fontawesome_v4_shim');
+        wp_enqueue_script('fontawesome_v4_shim');
         wp_enqueue_script('fontawesome');
-
     }
 
     /**
@@ -511,7 +518,20 @@ class C_Display_Type_Installer
 	function get_registry()
 	{
 		return C_Component_Registry::get_instance();
-	}
+    }
+    
+    function delete_duplicates($name)
+    {
+        $mapper				= C_Display_Type_Mapper::get_instance();
+        $results =          $mapper->find_all(array('name = %s', $name));
+        if (count($results) > 0) {
+            $kept = array_pop($results); // the last should be the latest
+            foreach ($results as $display_type) {
+                $mapper->destroy($display_type);
+            }
+        }
+        $mapper->flush_query_cache();
+    }
 
 	/**
 	 * Installs a display type
@@ -520,9 +540,11 @@ class C_Display_Type_Installer
 	 */
 	function install_display_type($name, $properties=array())
 	{
+        $this->delete_duplicates($name);
+
 		// Try to find the existing entity. If it doesn't exist, we'll create
 		$fs					= C_Fs::get_instance();
-		$mapper				= C_Display_Type_Mapper::get_instance();
+        $mapper				= C_Display_Type_Mapper::get_instance();
         $display_type		= $mapper->find_by_name($name);
         $mapper->flush_query_cache();
 		if (!$display_type)	$display_type = new stdClass;

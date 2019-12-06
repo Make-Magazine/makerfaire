@@ -74,8 +74,11 @@ body {
 
 #attach_to_post_tabs h3 {
 	text-transform: uppercase;
-	color: #666;
+    color: black;
     margin-top: 0;
+    letter-spacing: 2px;
+    font-size: 18px;
+    font-weight: 900;
 }
 
 h3#choose_display {
@@ -155,8 +158,6 @@ table {
 /* 2. IGW Sidebar */
 
 #attach_to_post_tabs .ui-tabs-icon {
-	background: #133148;
-	border-right: 1px solid #9cbe1b;;
 	box-sizing: border-box;
     color: #fff;
     font-family: Lato, sans-serif;
@@ -175,8 +176,8 @@ table {
 }
 
 #attach_to_post_tabs img.attach_to_post_logo {
-    height: 45px;
-    padding: 20px 0 10px;
+    height: 80px;
+    padding: 50px 0 30px;
     float: right;
     margin-right: 26px;
 }
@@ -185,7 +186,7 @@ table {
     border: none;
     background: transparent;
     padding: 0;
-    margin-top: 90px;
+    margin-top: 110px;
     list-style: none;
 }
 
@@ -199,13 +200,7 @@ table {
 	width: 100%;
 	border-radius: 0;
     box-sizing: border-box;
-    border-bottom: 1px solid #344a59;
     padding: 24px 30px 24px 20px;
-}
-
-#attach_to_post_tabs .ui-tabs-nav li.ui-tabs-active {
-    background: #2b4d65;
-    background: #9dbd1b;
 }
 
 #attach_to_post_tabs .ui-tabs-nav li.ui-state-focus, 
@@ -219,7 +214,7 @@ table {
 /* TODO: consolidate when plupload is upgraded */
 #attach_to_post_tabs ul.ui-tabs-nav li:nth-of-type(1) {
     list-style: none;
-    border-top: 1px solid #344a59;
+    /*border-top: 1px solid #344a59;*/
 }
 #attach_to_post_tabs:not(.ngg_atp_ios_detected) ul.ui-tabs-nav li:nth-of-type(2) {
     list-style: none;
@@ -232,44 +227,20 @@ table {
     display: list-item;
 }
 
-/* Because the upload-images tab is removed on iOS we must position this divider bar differently */
-/*#attach_to_post_tabs.ngg_atp_ios_detected .ui-tabs-nav li:nth-of-type(1)::after {
-	border-bottom: 1px solid rgba(255,255,255,.2);
-	content: "";
-	display: block;
-	float: right;
-	margin: 24px 4px 20px 0;
-	position: static;
-	width: 90%;
-}*/
-
-/* This rule applies for all non-iOS browsers */
-/*#attach_to_post_tabs:not(.ngg_atp_ios_detected) .ui-tabs-nav li:nth-of-type(2)::after {
-    border-bottom: 1px solid rgba(255,255,255,.2);
-    content: "";
-    display: block;
-    float: right;
-    margin: 24px 4px 20px 0;
-    position: static;
-    width: 90%;
-}*/
-
 #attach_to_post_tabs .ui-tabs-nav li a {
-    color: #fff;
+    color: #555;
     float: right;
-    font-size: 16px;
-    letter-spacing: 0;
-    line-height: 1;
-    padding: 10px 5px 5px 0 !important;
-    text-transform: none;   
-    font-family: lato, sans-serif;
-    text-transform: uppercase;
     font-size: 13px;
-    letter-spacing: 1px;
-    font-weight: 700;
-    padding: 0 !important;
-    font-size: 12px;
-    letter-spacing: 1.2px;
+    font-weight: 400;
+    font-family: lato, sans-serif;
+    letter-spacing: 1.5px;
+    line-height: 1;  
+    text-transform: uppercase;
+    padding: 0 !important;  
+}
+
+#attach_to_post_tabs .ui-tabs-nav li.ui-tabs-active {
+	border-left: 6px solid #9dbd1b;
 }
 
 #attach_to_post_tabs .ui-tabs-nav li.ui-tabs-active a, 
@@ -278,19 +249,9 @@ table {
 	cursor: pointer;
 }
 
-#attach_to_post_tabs .ui-tabs-nav li a.active_tab::before {
-	border-right: solid .75em #fff;
-    border-top: solid 1.2em transparent;
-    border-bottom: solid 1.2em transparent;
-    content: '';
-    position: absolute;
-    top: 16px;
-    right: -3px;
-}
-
 #attach_to_post_tabs .ui-tabs-nav li a.active_tab {
-	color: #fff;
 	font-weight: 800;
+	color: black;
 }
 
 /* 3. Display Tab: General CSS */
@@ -312,62 +273,46 @@ table {
 #displayed_tab #ngg_page_content .ngg_page_content_menu {
     background: transparent;
     border: none;
-    padding: 10px 20px 10px 0;
+    padding: 0 20px 10px 27px;
     float: none;
     height: 25px;
     margin-top: 0;
     width: auto;
-    border-bottom: 1px solid #ddd;
-    background: #fafafa;
+    position: relative;
+    top: 100px;
 }
 
 #displayed_tab #ngg_page_content .ngg_page_content_menu a,
 #displayed_tab #ngg_page_content .ngg_page_content_menu a:active {
     border: none;
-    color: #888;
+    color: black;
     display: inline;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 300;
     text-decoration: none;
     line-height: 25px;
-    padding: 15px 20px;
+    padding: 4px;
     font-size: 12px;
     background: transparent;
-    /*border: none !important;*/
+    margin-right: 10px;
 }
 
 #displayed_tab #ngg_page_content .ngg_page_content_menu .ngg_page_content_menu_active {
-	background: transparent;
-	font-weight: bold;
-	color: #123248;
-	border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-bottom: 2px solid #fff;
-    background: #fff;
+	font-weight: 500;
+	color: black;
+	border-bottom: 3px solid #9ebc1b;
 }
 
 #displayed_tab #ngg_page_content .ngg_page_content_menu a:active:after {
 	display:none;
 }
 
-/*#displayed_tab #ngg_page_content .ngg_page_content_menu .ngg_page_content_menu_active:after {
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 6px solid #cad1d6;
-    border-top: 6px solid #123248;
-    content: " ";
-    position: absolute;
-    left: 45%;
-    display: inline;
-    top: 42px;
-}*/
-
 #displayed_tab #ngg_page_content .ngg_page_content_menu a:before {
 	display: none;
 }
 
 #displayed_tab #ngg_page_content .ngg_page_content_main {
-    padding: 30px;
+    padding: 20px 30px 30px;
     width: 100%;
     box-shadow: none;
 }
@@ -382,9 +327,9 @@ table {
     position: relative;
     top: -187px;
     left: 608px;
-    background: #123248;
+    background: #9ebc1b;
     color: #fff;
-    border-bottom: 5px solid #9ebc1b;
+    /*border-bottom: 5px solid #9ebc1b;*/
     font-family: Lato,sans-serif;
     letter-spacing: .5px;
     box-sizing: border-box;
@@ -393,34 +338,55 @@ table {
     margin-bottom: -170px;
 }
 
+#displayed_tab .ngg_igw_promo p:nth-of-type(1) {
+    margin-top: 10px;
+}
+
+#displayed_tab .ngg_igw_promo p:nth-of-type(2) {
+    margin: 20px 0;
+}
+
 #displayed_tab .ngg_igw_promo a {
     text-decoration: none;
     font-weight: 600;
+    background: black;
+    color: #fff;
+    padding: 10px 16px;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+#displayed_tab .ngg_igw_promo a:after {
+	content: "\f345";
+    font: normal 12px dashicons;
+    color: white !important;
+    display: inline-block;
+    position: relative;
+    top: 2px;
+    left: 6px;
 }
 
 #displayed_tab .ngg_igw_coupon {
     font-size: 12px;
     margin-top: 10px;
-    margin-top: 47px;
-    color: #7298b1;
 }
 
 
 #attach_to_post_tabs #displayed_tab #ngg_page_content .ngg_page_content_main > div.ngg_igw_video {
 	display: block !important;
-	position: absolute;
-	left: 175px;
-    top: 69px;
+    position: absolute;
+    left: 280px;
+    top: 71px;
 }
 
 #displayed_tab .ngg_igw_video_open {	
-	background: #9ebc1b;
-	color: #fff;
-	cursor: pointer;
-	font-family: Lato, sans-serif;
-    font-size: 13px;
+	background: black;
+    cursor: pointer;
     margin: 0;
-    padding: 8px 10px;  
+    font-weight: 400;
+    height: 28px !important;
+    line-height: 28px !important;
+    font-size: 10px;
 }
 
 #displayed_tab .ngg_igw_video_inner {
@@ -430,27 +396,33 @@ table {
 }
 
 #displayed_tab .ngg_igw_video_close {
-    color: #9ebc1b;
     width: 100%;
     height: 50px;
     display: block;
-    background: #123248;
     text-align: center;
     line-height: 50px;
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     font-family: Lato, sans-serif;
     letter-spacing: .5px;
-    background: #9ebc1b;
+    background: black;
     color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
 #displayed_tab .ngg_igw_video iframe {
-    width: 525px;
-    height: 295px !important;
+    width: 630px;
+    height: 350px !important;
     min-height: auto;
     margin-bottom: -3px;
+}
+
+#choose_display_content, 
+#display_settings_tab_content, 
+#preview_tab_content {
+	margin-top: 80px;
 }
 
 /* 3a. Display Tab: "Choose Display" Subtab **/
@@ -493,6 +465,12 @@ table {
 #displayed_tab #ngg_page_content .select2-container {
 	width: 250px !important;
 	line-height: 20px;
+}
+
+#displayed_tab #ngg_page_content .ngg_page_content_main .select2-selection--multiple, 
+#displayed_tab #ngg_page_content .ngg_page_content_main .select2-selection--single {
+    height: auto;
+    line-height: 21px;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {

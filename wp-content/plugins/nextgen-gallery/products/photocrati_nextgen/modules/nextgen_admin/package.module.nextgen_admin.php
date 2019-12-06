@@ -367,7 +367,11 @@ class C_Admin_Notification_Manager
             if ($has_method && $handler->is_renderable() || !$has_method) {
                 $show_dismiss_button = method_exists($handler, 'show_dismiss_button') ? $handler->show_dismiss_button() : method_exists($handler, 'is_dismissable') ? $handler->is_dismissable() : FALSE;
                 $template = method_exists($handler, 'get_mvc_template') ? $handler->get_mvc_template() : 'photocrati-nextgen_admin#admin_notice';
-                $view = new C_MVC_View($template, array('css_class' => method_exists($handler, 'get_css_class') ? $handler->get_css_class() : 'updated', 'is_dismissable' => method_exists($handler, 'is_dismissable') ? $handler->is_dismissable() : FALSE, 'html' => method_exists($handler, 'render') ? $handler->render() : '', 'show_dismiss_button' => $show_dismiss_button, 'notice_name' => $name));
+                // The 'inline' class is necessary to prevent our notices from being moved in the DOM
+                // see https://core.trac.wordpress.org/ticket/34570 for reference
+                $css_class = 'inline ';
+                $css_class .= method_exists($handler, 'get_css_class') ? $handler->get_css_class() : 'updated';
+                $view = new C_MVC_View($template, array('css_class' => $css_class, 'is_dismissable' => method_exists($handler, 'is_dismissable') ? $handler->is_dismissable() : FALSE, 'html' => method_exists($handler, 'render') ? $handler->render() : '', 'show_dismiss_button' => $show_dismiss_button, 'notice_name' => $name));
                 $retval = $view->render(TRUE);
                 $this->_displayed_notice = TRUE;
             }
@@ -993,10 +997,19 @@ class Mixin_NextGen_Admin_Page_Instance_Methods extends Mixin
      */
     function get_header_message()
     {
-        if (defined('NGG_PRO_PLUGIN_VERSION')) {
-            $message = __("Good work. Keep making the web beautiful.", 'nggallery');
+        if (defined('NGG_PRO_PLUGIN_VERSION') || defined('NGG_PLUS_PLUGIN_VERSION')) {
+            $message = '<p>' . __("Good work. Keep making the web beautiful.", 'nggallery') . '</p>';
         } else {
-            $message = __('Create more beautiful galleries. Upgrade to ') . '<a href="https://www.imagely.com/wordpress-gallery-plugin/nextgen-pro/?utm_source=ngg&utm_medium=ngguser&utm_campaign=ngpro" target="_blank">' . __('NextGEN Pro') . '</a>';
+            // Experiment
+            $currentDate = date('Y-m-d');
+            $currentDate = date('Y-m-d', strtotime($currentDate));
+            $bf_sale_start = date('Y-m-d', strtotime("12/02/2019"));
+            $bf_sale_end = date('Y-m-d', strtotime("12/05/2019"));
+            if ($currentDate >= $bf_sale_start && $currentDate <= $bf_sale_end) {
+                $message = '<p class="ngg-header-promo black-friday"><span>' . __('Cyber Monday Sale!') . '</span><br>' . __('40% Off NextGEN Pro!') . '<a href="https://www.imagely.com/wordpress-gallery-plugin/nextgen-pro/?utm_source=ngg&utm_medium=ngguser&utm_campaign=ngpro" class="button-primary" target="_blank">' . __('Upgrade to NextGEN Pro') . '</a></p>';
+            } else {
+                $message = '<p class="ngg-header-promo">' . __('Tip: Want more beautiful galleries, a stunning lightbox, image social sharing, ecommerce, PRO support, and more?') . '<a href="https://www.imagely.com/wordpress-gallery-plugin/nextgen-pro/?utm_source=ngg&utm_medium=ngguser&utm_campaign=ngpro" class="button-primary" target="_blank">' . __('Upgrade to NextGEN Pro') . '</a></p>';
+            }
         }
         return $message;
     }
@@ -1086,6 +1099,7 @@ class Mixin_NextGen_Admin_Page_Instance_Methods extends Mixin
             if ($this->object->is_post_request() && $this->has_method($action)) {
                 $this->object->{$action}($this->object->param($this->context));
             }
+            $index_template = $this->object->index_template();
             foreach ($this->object->get_forms() as $form) {
                 $form->page = $this->object;
                 $form->enqueue_static_resources();
@@ -1094,7 +1108,14 @@ class Mixin_NextGen_Admin_Page_Instance_Methods extends Mixin
                         $form->{$action}($this->object->param($form->context));
                     }
                 }
-                $tabs[] = $this->object->to_accordion_tab($form);
+                // This is a strange but necessary hack: this seemingly extraneous use of to_accordion_tab() normally
+                // just means that we're rendering the admin content twice but NextGen Pro's pricelist and coupons pages
+                // actually depend on echo'ing the $tabs variable here, unlike the 'nextgen_admin_page' template which
+                // doesn't make use of the $tabs parameter at all.
+                // TLDR: The next two lines are necessary for the pricelist and coupons pages.
+                if ($index_template !== 'photocrati-nextgen_admin#nextgen_admin_page') {
+                    $tabs[] = $this->object->to_accordion_tab($form);
+                }
                 $forms[] = $form;
                 if ($form->has_method('get_model') && $form->get_model()) {
                     if ($form->get_model()->is_invalid()) {
@@ -1108,7 +1129,7 @@ class Mixin_NextGen_Admin_Page_Instance_Methods extends Mixin
             // Render the view
             $index_params = array('page_heading' => $this->object->get_page_heading(), 'tabs' => $tabs, 'forms' => $forms, 'errors' => $errors, 'success' => $success, 'form_header' => FALSE, 'header_message' => $this->object->get_header_message(), 'nonce' => M_Security::create_nonce($this->object->get_required_permission()), 'show_save_button' => $this->object->show_save_button(), 'model' => $this->object->has_method('get_model') ? $this->get_model() : NULL, 'logo' => $this->get_router()->get_static_url('photocrati-nextgen_admin#imagely_icon.png'));
             $index_params = array_merge($index_params, $this->object->get_index_params());
-            $this->render_partial($this->object->index_template(), $index_params);
+            $this->render_partial($index_template, $index_params);
         } else {
             $this->render_view('photocrati-nextgen_admin#not_authorized', array('name' => $this->object->name, 'title' => $this->object->get_page_title()));
         }
@@ -1147,16 +1168,30 @@ class C_NextGen_Admin_Page_Manager extends C_Component
         $this->implement('I_Page_Manager');
     }
     /**
-     * Determines if a NextGEN Admin page is being requested
+     * Determines if a NextGEN page or post type is being requested
      * @return bool|string
      */
     static function is_requested()
     {
         $retval = FALSE;
+        if (self::is_requested_page()) {
+            $retval = self::is_requested_page();
+        } elseif (self::is_requested_post_type()) {
+            $retval = self::is_requested_post_type();
+        }
+        return apply_filters('is_ngg_admin_page', $retval);
+    }
+    /**
+     * Determines if a NextGEN Admin page is being requested
+     * @return bool|string
+     */
+    static function is_requested_page()
+    {
+        $retval = FALSE;
         // First, check the screen for the "ngg" property. This is how ngglegacy pages register themselves
         $screen = get_current_screen();
         if (property_exists($screen, 'ngg') && $screen->ngg) {
-            $retval = TRUE;
+            $retval = $screen->id;
         } else {
             foreach (self::get_instance()->get_all() as $slug => $properties) {
                 // Are we rendering a NGG added page?
@@ -1166,13 +1201,27 @@ class C_NextGen_Admin_Page_Manager extends C_Component
                         $retval = $slug;
                         break;
                     }
-                } elseif (isset($properties['post_type']) && $screen->post_type == $properties['post_type']) {
-                    $retval = $slug;
-                    break;
                 }
             }
         }
-        return apply_filters('is_ngg_admin_page', $retval);
+        return $retval;
+    }
+    /**
+     * Determines if a NextGEN post type is being requested
+     * @return bool|string
+     */
+    static function is_requested_post_type()
+    {
+        $retval = FALSE;
+        $screen = get_current_screen();
+        foreach (self::get_instance()->get_all() as $slug => $properties) {
+            // Are we rendering a NGG post type?
+            if (isset($properties['post_type']) && $screen->post_type == $properties['post_type']) {
+                $retval = $slug;
+                break;
+            }
+        }
+        return $retval;
     }
 }
 class Mixin_Page_Manager extends Mixin

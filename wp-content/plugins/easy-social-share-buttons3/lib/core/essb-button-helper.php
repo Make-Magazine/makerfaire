@@ -28,7 +28,7 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 		$content = '';
 		$share['salt'] = $salt;
 		$style['called_position'] = $position;
-		
+
 		// @since 4.2
 		// Developer filters added to allow in draw customization of share buttons and social networks
 		// Example usage: live customizer
@@ -461,7 +461,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 		$share['mail_subject'] = esc_attr(stripslashes($share['mail_subject']));
 	}
 	if (isset($share['mail_body'])) {
-		$share['mail_body'] = esc_attr(stripslashes($share['mail_body']));		
+		$share['mail_body'] = esc_attr(stripslashes($share['mail_body']));
 	}
 
 	$pinterest_description = $share['title'];
@@ -469,7 +469,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 	if (!empty($custom_pinterest_desc)) {
 		$pinterest_description = $custom_pinterest_desc;
 	}
-	
+
 	$pinterest_description = str_replace('#', '%23', $pinterest_description);
 	$pinterest_description = str_replace('|', '%7C', $pinterest_description);
 	$pinterest_description = str_replace('&', '%26', $pinterest_description);
@@ -655,7 +655,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			$share['mail_body'] = str_replace('%26quot;', '%22', $share['mail_body']);
 			$share['mail_body'] = str_replace('%26#039;', '%27', $share['mail_body']);
 			$share['mail_body'] = str_replace('\n', '%0A', $share['mail_body']);
-			$share['mail_body'] = str_replace('\r', '%0D', $share['mail_body']);			
+			$share['mail_body'] = str_replace('\r', '%0D', $share['mail_body']);
 
 			$url = sprintf('mailto:?subject=%1$s&amp;body=%2$s', $share['mail_subject'], $share['mail_body']);
 			$api_command = "essb.tracking_only('', 'mail', '".$salt."', true);";
@@ -795,7 +795,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			break;
 
 		case 'messenger':
-			
+
 			$url = sprintf('fb-messenger://share/?link=%1$s', $share ['url']);
 			$api_command = "essb.fbmessenger('".ESSBGlobalSettings::$fbmessengerapp."', '".$share['url']."', '".$salt."'); return false;";
 			//if (essb_is_mobile()) {
@@ -823,7 +823,8 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			$url = sprintf('https://www.instapaper.com/hello2?url=%1$s&title=%2$s&description=%3$s', $share ['url'], $share['title'], $share['description']);
 			break;
 		case 'mix':
-			$url = sprintf('https://mix.com/extension/add?source=%1$s', $share ['url']);
+			//$url = sprintf('https://mix.com/extension/add?source=%1$s', $share ['url']);
+			$url = sprintf('https://mix.com/add?url=%1$s', $share['url']);
 			break;
 		default:
 			// @since 3.0 - module parsing social buttons or custom social buttons

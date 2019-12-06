@@ -181,6 +181,12 @@ class GFGEO_Render_Form {
 				$form['fields'][ $key ]['cssClass'] .= ' gfgeo-hidden-fields ' . $field['type'];
 			}
 
+			// add class to geocoder fields.
+			if ( 'gfgeo_directions_panel' === $field['type'] ) {
+
+				$form['fields'][ $key ]['cssClass'] .= ' gfgeo-hidden-fields ' . $field['type'];
+			}
+
 			// add class to dynamic fields.
 			if ( ! empty( $field['gfgeo_geocoder_id'] ) && ! empty( $field['gfgeo_dynamic_location_field'] ) ) {
 				$form['fields'][ $key ]['cssClass'] .= ' gfgeo-geocoded-field-' . $geocoder_id . ' gfgeo-' . $field['gfgeo_dynamic_location_field'];
@@ -206,6 +212,20 @@ class GFGEO_Render_Form {
 
 				$form['gfgeo_form_update'] = true;
 
+				// Allow page locator on update forms.
+				$force_enable_locator = apply_filters( 'gfgeo_enable_page_locator_on_update_forms', array() );
+
+				if ( ! empty( $force_enable_locator ) ) {
+
+					if ( in_array( 'user', $force_enable_locator, true ) && $form['gfgeo_user_update'] ) {
+						$form['gfgeo_page_load'] = true;
+					}
+
+					if ( in_array( 'post', $force_enable_locator, true ) && $form['gfgeo_post_update'] ) {
+						$form['gfgeo_page_load'] = true;
+					}
+				}
+
 				// if form is not loaded from saved and continue.
 			} elseif ( empty( $_GET['gf_token'] ) ) { // WPCS: CSRF ok.
 				$form['gfgeo_page_load'] = true;
@@ -215,42 +235,57 @@ class GFGEO_Render_Form {
 		// collect forms data.
 		self::$gforms[ $form['id'] ] = $form;
 
+				// collect forms data.
+		self::$gforms[ $form['id'] ] = $form;
+
 		if ( $geo_fields_enabled ) {
-
-			// enqueue scripts.
-			if ( ! wp_script_is( 'google-maps', 'enqueued' ) ) {
-				wp_enqueue_script( 'google-maps' );
-			}
-
-			if ( ! wp_script_is( 'gfgeo', 'enqueued' ) ) {
-				wp_enqueue_script( 'gfgeo' );
-			}
-
-			if ( ! wp_style_is( 'gfgeo', 'enqueued' ) ) {
-				wp_enqueue_style( 'gfgeo' );
-			}
-
-			if ( 'maxmind' == GFGEO_IP_LOCATOR && ! wp_script_is( 'gfgeo-maxmind', 'enqueued' ) ) {
-				wp_enqueue_script( 'gfgeo-maxmind' );
-			}
-
-			// localize plugin's options.
-			$plugin_options = array(
-				'field_autocomplete' => apply_filters( 'gfgeo_enable_address_field_autocomplete_attr', true, self::$gforms ) ? '1' : '0',
-				'protocol' 			 => is_ssl() ? 'https' : 'http',
-				'country_code'       => GFGEO_GOOGLE_MAPS_COUNTRY,
-				'language_code'      => GFGEO_GOOGLE_MAPS_LANGUAGE,
-				'high_accuracy'      => GFGEO_HIGH_ACCURACY_MODE,
-				'ip_locator'         => GFGEO_IP_LOCATOR,
-				'ip_token'           => GFGEO_IP_TOKEN,
-			);
-
-			// pass data to JavaScript.
-			wp_localize_script( 'gfgeo', 'gfgeo_options', $plugin_options );
-			wp_localize_script( 'gfgeo', 'gfgeo_gforms', self::$gforms );
+			add_action( 'gform_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		}
 
 		return $form;
+	}
+
+	/**
+	 * Enqueue scripts and styles.
+	 */
+	public function enqueue_scripts() {
+
+		// enqueue scripts.
+		if ( ! wp_script_is( 'google-maps', 'enqueued' ) ) {
+			wp_enqueue_script( 'google-maps' );
+		}
+
+		if ( ! wp_script_is( 'gfgeo', 'enqueued' ) ) {
+			wp_enqueue_script( 'gfgeo' );
+		}
+
+		if ( ! wp_style_is( 'gfgeo', 'enqueued' ) ) {
+			wp_enqueue_style( 'gfgeo' );
+		}
+
+		if ( 'maxmind' == GFGEO_IP_LOCATOR && ! wp_script_is( 'gfgeo-maxmind', 'enqueued' ) ) {
+			wp_enqueue_script( 'gfgeo-maxmind' );
+		}
+
+		// localize plugin's options.
+		$plugin_options = apply_filters(
+			'gfgeo_render_form_options',
+			array(
+				'field_autocomplete'           => apply_filters( 'gfgeo_enable_address_field_autocomplete_attr', true, self::$gforms ) ? '1' : '0',
+				'protocol'                     => is_ssl() ? 'https' : 'http',
+				'country_code'                 => GFGEO_GOOGLE_MAPS_COUNTRY,
+				'language_code'                => GFGEO_GOOGLE_MAPS_LANGUAGE,
+				'high_accuracy'                => GFGEO_HIGH_ACCURACY_MODE,
+				'ip_locator'                   => GFGEO_IP_LOCATOR,
+				'ip_token'                     => GFGEO_IP_TOKEN,
+				'address_field_event_triggers' => 'keydown focusout',
+				'hide_error_messages'          => false,
+			)
+		);
+
+		// pass data to JavaScript.
+		wp_localize_script( 'gfgeo', 'gfgeo_options', $plugin_options );
+		wp_localize_script( 'gfgeo', 'gfgeo_gforms', self::$gforms );
 	}
 
 	/**

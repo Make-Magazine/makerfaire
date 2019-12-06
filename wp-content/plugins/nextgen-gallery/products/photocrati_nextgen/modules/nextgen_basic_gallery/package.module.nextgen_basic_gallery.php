@@ -241,8 +241,8 @@ class A_NextGen_Basic_Slideshow_Controller extends Mixin
             $storage = C_Gallery_Storage::get_instance();
             // Create parameter list for the view
             $params = $displayed_gallery->display_settings;
-            $params['storage'] =& $storage;
-            $params['images'] =& $images;
+            $params['storage'] = $storage;
+            $params['images'] = $images;
             $params['displayed_gallery_id'] = $displayed_gallery->id();
             $params['current_page'] = $current_page;
             $params['effect_code'] = $this->object->get_effect_code($displayed_gallery);

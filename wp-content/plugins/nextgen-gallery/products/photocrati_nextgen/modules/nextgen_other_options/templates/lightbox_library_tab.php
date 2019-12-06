@@ -29,7 +29,7 @@
     <?php if ( !defined('NGG_PRO_PLUGIN_VERSION') && !defined('NGG_PLUS_PLUGIN_VERSION') && !is_multisite() ) { ?>
         <tr>
             <td colspan="2" class="ngg_options_promo">
-                <?php esc_html_e('Want a stunning lightbox with color options, image comments, social sharing, full screen, and more? Get the ', 'nggallery'); ?><a href="https://www.imagely.com/wordpress-gallery-plugin/pro-lightbox-demo/?utm_source=ngg&utm_medium=ngguser&utm_campaign=pro_lightbox" target="_blank"><?php esc_html_e('NextGEN Pro Lightbox!', 'nggallery'); ?></a>
+                <?php esc_html_e('Want a stunning, full screen, lightbox with customization options?', 'nggallery'); ?><a href="https://www.imagely.com/wordpress-gallery-plugin/pro-lightbox-demo/?utm_source=ngg&utm_medium=ngguser&utm_campaign=pro_lightbox" target="_blank"><?php esc_html_e('Get the Pro Lightbox!', 'nggallery'); ?></a>
             </td>
         </tr>
     <?php } ?>

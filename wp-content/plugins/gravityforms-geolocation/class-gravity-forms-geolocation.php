@@ -160,6 +160,7 @@ class Gravity_Forms_Geolocation extends GFAddOn {
 			include_once 'includes/fields/class-gfgeo-full-address-field.php';
 			include_once 'includes/fields/class-gfgeo-coordinates-field.php';
 			include_once 'includes/fields/class-gfgeo-google-map-field.php';
+			include_once 'includes/fields/class-gfgeo-directions-panel-field.php';
 			// include( 'fields/class-gfgeo-gmw-map-icons-field.php' );
 		}
 	}
@@ -230,6 +231,13 @@ class Gravity_Forms_Geolocation extends GFAddOn {
 
 			add_action( 'gform_pre_submission', array( $this, 'pre_submission' ) );
 			add_filter( 'gform_entry_created', array( $this, 'after_submission' ), 10, 2 );
+
+			// When updating an entry via Gravity View.
+			if ( ! empty( $_POST['is_gv_edit_entry'] ) ) { // WPCS: CSRF ok, sanitization ok.
+				$this->pre_update_entry();
+			}
+
+			add_filter( 'gform_after_update_entry', array( $this, 'after_entry_updated' ), 10 );
 		}
 
 		// for future update to allow updating location from edit entry page.
@@ -252,10 +260,48 @@ class Gravity_Forms_Geolocation extends GFAddOn {
 
 				$value = $_POST[ $key ]; // WPCS: CSRF ok, sanitization ok.
 
+				// Slashes makes it impossible to save the serialized array in the entry.
+				$value = array_map( 'stripcslashes', $value );
+
 				$_POST[ 'gfgeo_temp_' . $field->id ] = $value; // WPCS: CSRF ok.
 				$_POST[ $key ]                       = maybe_serialize( $value );
 			}
 		}
+	}
+
+	/**
+	 * When updating an entry via Gravity View.
+	 */
+	public function pre_update_entry() {
+
+		foreach ( $_POST as $key => $field ) { // WPCS: CSRF ok, sanitization ok.
+
+			if ( is_array( $field ) ) {
+
+				if ( isset( $field['place_name'] ) || isset( $field['latitude'] ) ) {
+
+					$field_id = str_replace( 'input_', '', $key );
+					$value    = $_POST[ $key ]; // WPCS: CSRF ok, sanitization ok.
+
+					// Slashes makes it impossible to save the serialized array in the entry.
+					$value = array_map( 'stripcslashes', $value );
+
+					$_POST[ 'gfgeo_temp_' . $field_id ] = $value; // WPCS: CSRF ok.
+					$_POST[ $key ]                      = maybe_serialize( $value );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Unserialze the value of coords and geocoder in the $_POST global after the
+	 *
+	 * Entry was generated.
+	 *
+	 * @param  array $form  form being processed.
+	 */
+	public function after_entry_updated( $form ) {
+		$this->modify_post_global_variable( $form );
 	}
 
 	/**
@@ -267,6 +313,17 @@ class Gravity_Forms_Geolocation extends GFAddOn {
 	 * @param  array $form  form being processed.
 	 */
 	public function after_submission( $entry, $form ) {
+		$this->modify_post_global_variable( $form );
+	}
+
+	/**
+	 * Unserialze the value of coords and geocoder in the $_POST global after the
+	 *
+	 * Entry was generated.
+	 *
+	 * @param  array $form  form being processed.
+	 */
+	public function modify_post_global_variable( $form ) {
 
 		foreach ( $form['fields'] as $field ) {
 
@@ -494,7 +551,7 @@ class Gravity_Forms_Geolocation extends GFAddOn {
 
 		wp_register_script( 'gfgeo', GFGEO_URL . '/assets/js/gfgeo.min.js', array( 'jquery', $handles ), $this->_version, true );
 		wp_register_script( 'gfgeo-form-editor', GFGEO_URL . '/assets/js/gfgeo-form-editor.min.js', array( 'jquery' ), $this->_version, true );
-		wp_register_style( 'gfgeo', GFGEO_URL . '/assets/css/gfgeo.frontend.css', array(), $this->_version );
+		wp_register_style( 'gfgeo', GFGEO_URL . '/assets/css/gfgeo.frontend.min.css', array(), $this->_version );
 
 		// load maxmind if needed.
 		if ( 'maxmind' == GFGEO_IP_LOCATOR ) {

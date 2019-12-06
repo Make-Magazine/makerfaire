@@ -61,9 +61,7 @@ class nggSitemaps {
 
         global $wpdb;
 
-        $tmp = shortcode_atts(array(
-            'id' => 0
-        ), $atts);
+        $tmp = shortcode_atts(array('id' => 0), $atts, 'ngg');
         extract($tmp);
 
 	    $gallery_mapper = C_Gallery_Mapper::get_instance();
@@ -98,7 +96,7 @@ class nggSitemaps {
      */
     function add_images( $atts ) {
 
-        $tmp = shortcode_atts(array('id' => 0), $atts );
+        $tmp = shortcode_atts(array('id' => 0), $atts, 'ngg');
         extract($tmp);
 
         // make an array out of the ids (for thumbs shortcode))

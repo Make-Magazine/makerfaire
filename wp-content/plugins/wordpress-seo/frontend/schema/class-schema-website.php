@@ -11,6 +11,7 @@
  * @since 10.2
  */
 class WPSEO_Schema_Website implements WPSEO_Graph_Piece {
+
 	/**
 	 * A value object with context variables.
 	 *
@@ -52,6 +53,10 @@ class WPSEO_Schema_Website implements WPSEO_Graph_Piece {
 			'url'       => $this->context->site_url,
 			'name'      => $this->context->site_name,
 		);
+
+		if ( get_bloginfo( 'description' ) ) {
+			$data['description'] = $this->context->site_description;
+		}
 
 		if ( $this->context->site_represents_reference ) {
 			$data['publisher'] = $this->context->site_represents_reference;

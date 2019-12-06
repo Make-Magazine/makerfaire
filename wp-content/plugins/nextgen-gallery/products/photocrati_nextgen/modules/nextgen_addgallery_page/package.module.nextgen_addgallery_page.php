@@ -410,8 +410,12 @@ class A_Upload_Images_Form extends Mixin
         if (file_exists($dir . $tmp[0] . '.js')) {
             $retval = $tmp[0];
         } else {
-            if (file_exists($dir . $locale . '.js')) {
-                $retval = $locale;
+            if (file_exists($dir . DIRECTORY_SEPARATOR . $tmp[0] . '.js')) {
+                $retval = $tmp[0];
+            } else {
+                if (file_exists($dir . $locale . '.js')) {
+                    $retval = $locale;
+                }
             }
         }
         if ($retval) {

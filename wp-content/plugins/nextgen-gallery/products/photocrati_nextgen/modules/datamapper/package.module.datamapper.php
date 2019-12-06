@@ -1060,6 +1060,10 @@ class C_CustomTable_DataMapper_Driver_Mixin extends Mixin
         $this->object->update_columns_cache();
         return $return;
     }
+    function get_column_names()
+    {
+        return array_keys($this->object->_columns);
+    }
     /**
      * Migrates the schema of the database
      */
@@ -1571,6 +1575,7 @@ class Mixin_DataMapper_Driver_Base extends Mixin
     {
         $retval = FALSE;
         $model = $entity;
+        $this->flush_query_cache();
         // Attempt to use something else, most likely an associative array
         // TODO: Support assocative arrays. The trick is to support references
         // with dynamic calls using __call() and call_user_func_array().
@@ -1587,6 +1592,7 @@ class Mixin_DataMapper_Driver_Base extends Mixin
             unset($saved_entity->_errors);
             $retval = $this->object->_save_entity($saved_entity);
         }
+        $this->flush_query_cache();
         // We always return the same type of entity that we given
         if (get_class($entity) == 'stdClass') {
             $model->get_entity();
@@ -1790,6 +1796,10 @@ class C_DataMapper_Model extends C_Component
             $this->set_defaults();
             $this->_stdObject->__defaults_set = TRUE;
         }
+    }
+    function jsonSerialize()
+    {
+        return $this->get_entity();
     }
     function has_default_values()
     {

@@ -41,12 +41,6 @@ class GP_Preview_Submission extends GWPerk {
 
     }
 
-    function documentation() {
-        return array(
-            'type'  => 'url',
-            'value' => 'http://gravitywiz.com/documentation/gp-preview-submission/'
-        );
-    }
 
     /**
      * Adds field merge tags to the merge tag drop downs.

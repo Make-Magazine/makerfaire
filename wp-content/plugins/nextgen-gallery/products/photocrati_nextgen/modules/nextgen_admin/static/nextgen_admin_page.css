@@ -20,7 +20,8 @@
  *      interfaces will use the same styling, be they basic or pro. Adding it here also acts to 
  *      ensure style consistency for users who update to the NextGEN redesign version, while still 
  *      running an older version of NextGEN Pro.
- *  7) NGG Admin CSS: Media Queries
+ *  7) NGG Admin CSS: Freemius Customizations
+ *  8) NGG Admin CSS: Media Queries
  *
  ***/
 
@@ -117,14 +118,21 @@ table.nextgen_settings_position {
 }
 
 #ngg_page_content {
-    padding-bottom: 0;
-    width: 98%;
+    background: #ffffff;
+    box-shadow: 0 0 12px 6px rgba(0,0,0,.03);
+    box-sizing: border-box;
     font-family: lato,sans-serif;
+    float:left;
     height: auto;
     margin-top: 25px;
-    float:left;
-    box-shadow: 0 0 100px 10px rgba(0,0,0,.05);
+    padding: 20px 40px;
+    width: 98%;
+    color: black;
+    font-size: 15px;
+    letter-spacing: .3px;
+    font-weight: 500;
 }
+
 
 #adminmenu .wp-submenu a[href*=ngg_pro_upgrade] {
     color: #9fbb1a;
@@ -144,7 +152,7 @@ table.nextgen_settings_position {
 .ngg_manage_images,
 .ngg_manage_images,
 .ngg_gallery_sort {
-    background: #fcfcfc;
+    background: #ffffff;
 }
 
 #ngg_page_content .wrap {
@@ -153,9 +161,31 @@ table.nextgen_settings_position {
 
 #ngg_page_content .about-wrap {
     max-width: 100%;
-    background: #fff;
     float: left;
-    background: #fcfcfc;
+}
+
+.about-wrap [class$="-col"] {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.about-wrap [class$="-col"] .col {
+    flex: 1;
+    align-self: flex-start;
+}
+
+.about-wrap [class$="-col"] .col+.col {
+    margin-left: 20px;
+}
+
+.about-wrap .two-col img {
+    margin-bottom: 1.5em;
+}
+
+.about-wrap .headline-feature {
+    max-width: none;
+    margin: 0 0 40px 0;
 }
 
 #ngg_page_content a {
@@ -166,32 +196,41 @@ table.nextgen_settings_position {
 #ngg_page_content .button-primary,
 #ngg_page_content .button-secondary {
     background-color: #9FBB1A;
+    background-color: black;
     color: #fff !important;
     border: none !important;
     box-shadow: none !important;
     text-shadow: none !important;
+    outline: none !important;
     height: 35px !important;
     padding: 0 24px !important;
     line-height: 35px;
     width: auto !important;
-    border-radius: 3px;
+    border-radius: 0px;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 11px;
     font-weight: bold;
     font-family: Lato, sans-serif;
+    vertical-align: middle;
 }
 
 #ngg_page_content button:hover,
 #ngg_page_content .button-primary:hover,
 #ngg_page_content .button-secondary:hover {
-    background-color: #A9C524;
+    background-color: #383838;
 }
 
-#ngg_page_content button:active,
-#ngg_page_content .button-primary:active,
-#ngg_page_content .button-secondary:active {
+#ngg_page_content button:hover,
+#ngg_page_content .button-primary:hover,
+#ngg_page_content .button-secondary:hover {
     vertical-align: middle;
+}
+
+#ngg_page_content button:disabled, 
+#ngg_page_content .button-primary:disabled, 
+#ngg_page_content .button-secondary:disabled {
+    background: #bbb !important;
 }
 
 #ngg_page_content .button-secondary {
@@ -235,10 +274,13 @@ table.nextgen_settings_position {
 }
 
 #ngg_page_content .ngg_save_settings_button {
-    margin: 30px;
-    font-weight: 700;
-    height: 40px !important;
-    padding: 0 40px !important;
+    position: absolute;
+    right: 61px;
+    top: 128px;
+}
+
+.ecommerce_page_ngg-ecommerce-instructions-page #ngg_page_content .ngg_save_settings_button {
+    display: none;
 }
 
 #ngg_page_content ::-webkit-input-placeholder { /* Chrome */
@@ -263,16 +305,14 @@ table.nextgen_settings_position {
 /***** 3) NGG Admin CSS: Header and Menu *****/
 
 #ngg_page_content .ngg_page_content_header {
-    border-bottom: 10px solid #9FBB1A;
     height: 80px;
-    padding: 0 0 0 20px;
-    background: #143650;
     margin-top: -23px;
+    margin-bottom: 24px;
 } 
 
 #ngg_page_content .ngg_page_content_header img {
-    height: 40px;
-    padding-top: 20px;
+    height: 60px;
+    padding-top: 10px;
     padding-right: 20px;
     float: left;
     width: auto;
@@ -281,7 +321,7 @@ table.nextgen_settings_position {
 #ngg_page_content .ngg_page_content_header h2,
 #ngg_page_content .ngg_page_content_header h3 {
     line-height: 80px;
-    color: #fff;
+    color: black;
     font-size: 18px;
     font-family: 'Lato', sans-serif;
     text-transform: uppercase;
@@ -294,26 +334,59 @@ table.nextgen_settings_position {
     float: right;
     margin: -98px 0 0 0;
     font-size: 15px;
-    font-style: italic;
-    font-weight: 400;
-    color: #cdd3d8;
-    background: rgba(93, 134, 167, 0.18);
-    padding: 0 40px;
-    border-left: 1px solid #566b7c;
-    color: #a7b8c6;
+    font-weight: bold;
+    color: black;
     line-height: 80px;
+    letter-spacing: .3px;
 }
 
-#ngg_page_content .ngg_page_content_header p a {
-    text-decoration: none;
-    font-weight: 500;
-    background: #aac43b;
-    color: #fff;
-    padding: 5px 10px;
-    font-style: normal;
-    margin: -1px 0 0 20px;
-    border-radius: 1px;
+#ngg_page_content .ngg_page_content_header p.ngg-header-promo {
+    margin: -113px -40px 0 0;
+    color: black;
+    line-height: 80px;
+    padding: 10px 20px;
+    background: #9ebc1b;
+    color: white;
+    line-height: 20px;
+    padding: 30px 290px 30px 24px;
+    display: inline-block;
+    max-width: 720px;
+    box-sizing: border-box;
+}
+
+#ngg_page_content .ngg_page_content_header .ngg-header-promo a {
+    margin-left: 16px !important;
+    position: absolute;
+    top: 32px;
+    right: 24px;
+    height: 38px !important;
+    line-height: 38px !important;
+}
+
+#ngg_page_content .ngg_page_content_header p.ngg-header-promo.black-friday {
+    padding: 30px 330px 30px 40px;
+    font-size: 16px;
+}
+
+#ngg_page_content .ngg_page_content_header p.ngg-header-promo.black-friday span {
     text-transform: uppercase;
+    padding-bottom: 4px;
+    display: inline-block;
+    font-size: 20px;
+}
+
+#ngg_page_content .ngg_page_content_header .ngg-header-promo.black-friday a {
+    right: 40px;
+}
+
+#ngg_page_content .ngg_page_content_header .ngg-header-promo a:after {
+    content: "\f345";
+    font: normal 16px dashicons;
+    color: white !important;
+    display: inline-block;
+    position: relative;
+    top: 4px;
+    left: 6px;
 }
 
 #ngg_page_content .ngg_page_content_header .ngg_save_settings_button {
@@ -331,17 +404,17 @@ table.nextgen_settings_position {
 
 #ngg_page_content .ngg_page_content_menu a {   
     box-shadow: none !important;
+    border-left: 5px solid #ffffff;
     cursor: pointer;
     display: block;
-    padding: 20px 10px 20px 15px;
+    padding: 10px 0 10px 20px;
     line-height: 22px;
-    margin: 0;
+    margin: 10px 0;
     text-decoration: none;
-    color: #2b5d89;;
+    color: black;
     text-transform: uppercase;
-    font-size: 11px;
-    border-bottom: 1px solid #eee;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 400;
     letter-spacing: 1.2px;
 }
 
@@ -353,7 +426,7 @@ table.nextgen_settings_position {
 }
 
 .responsive-menu-icon::before {
-   color: #fff;
+   color: black;
    content: '\f0c9';
    display: block;
    font: normal 20px/1 'Font Awesome 5 Free';
@@ -367,26 +440,11 @@ table.nextgen_settings_position {
     outline: 0;
     outline-width: 0;
     outline-color: transparent;
-    border-right: 1px solid #fff;
-    background: #9ebc1b;
+    border-left: 5px solid #9dbd1b;
     position: relative;
-    color: #fff;
+    color: black;
     margin-right: -1px;
     font-weight: 800;
-    border-bottom: 1px solid #9dbd1b;
-}
-
-#ngg_page_content .ngg_page_content_menu a:before {
-    float: left;
-    font: normal 16px/1 'Font Awesome 5 Free';
-    height: 16px;
-    right: 0;
-    margin-top: 3px;
-    text-align: right;
-    z-index: 9999;
-    padding-right: 10px;
-    content: "\f1de";
-    font-weight: 900;
 }
 
 #ngg_page_content .ngg_page_content_menu .ngg_page_content_menu_active:after, 
@@ -405,13 +463,16 @@ table.nextgen_settings_position {
 /***** 4) NGG Admin CSS: Main Content *****/
 
 #ngg_page_content .ngg_page_content_main {
-    padding: 10px 20px 20px 30px;
+    padding: 0 20px 20px 30px;
     min-height: 600px;
     float: left;
-    background: #fff;
     box-sizing: border-box;
     width: 100%;
-    box-shadow: 0 -5px 4px 2px rgba(0,0,0,.05);
+}
+
+.gallery_page_nggallery-manage-gallery #ngg_page_content .ngg_page_content_main,
+.gallery_page_nggallery-manage-album #ngg_page_content .ngg_page_content_main {
+    padding: 0 10px 30px;
 }
 
 #ngg_page_content .ngg_overview .ngg_page_content_main, 
@@ -458,11 +519,19 @@ table.nextgen_settings_position {
     padding-left: 10px;
     box-shadow: none;
     width: 200px;
-    box-shadow: inset 0 0 2px 1px rgba(100,100,100,.05);
+    -webkit-border-radius: 0px;
+    border-radius: 0;
 }
 
 #ngg_page_content .ngg_page_content_main select {
-    font-size: 13px;
+    -webkit-appearance: none;
+}
+
+#ngg_page_content .ngg_page_content_main select {
+    background-image: url(dropdown_arrow.png);
+    background-size: 10px 10px;
+    background-repeat: no-repeat;
+    background-position: 95% 55%;
 }
 
 #ngg_page_content .ngg_page_content_main .select2-container {
@@ -473,6 +542,24 @@ table.nextgen_settings_position {
 #ngg_page_content .ngg_page_content_main .select2-selection--multiple,
 #ngg_page_content .ngg_page_content_main .select2-selection--single {
     border: 1px solid #ddd;
+    border-radius: 0;
+    height: 35px;
+    line-height: 35px;
+    padding-top: 1px;
+}
+
+#ngg_page_content .ngg_page_content_main .thumbnail_options .select2-selection--multiple {
+    height: auto;
+    padding-right: 3px;
+}
+
+#ngg_page_content .ngg_page_content_main .thumbnail_options .select2-selection--multiple .select2-search__field {
+    width: 100% !important;
+}
+
+#ngg_page_content .select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 4px;
+    display: none;
 }
 
 #ngg_page_content .ngg_page_content_main .select2-search {
@@ -577,8 +664,6 @@ table.nextgen_settings_position {
     line-height: 1.5 !important;
 }
 
-/*#ngg_page_content.ngg_settings_page .ngg_page_content_main table tr td:first-of-type,
-#ngg_page_content.ngg_settings_page .ngg_page_content_main table tr th:first-of-type,*/
 #attach_to_post_tabs #displayed_tab #ngg_page_content .ngg_page_content_main table tr td:first-of-type {
     width: 300px;
     text-align: left;
@@ -595,7 +680,7 @@ table.nextgen_settings_position {
 
 #ngg_page_content.ngg_settings_page .ngg_page_content_main table tr:nth-of-type(2n),
 #attach_to_post_tabs #displayed_tab #ngg_page_content .ngg_page_content_main table tr:nth-of-type(2n) {
-    background-color: rgb(247, 248, 243);
+    background-color: #f7f7f7;
 }
 
 #ngg_page_content.ngg_settings_page .ngg_page_content_main tr.watermark_field {
@@ -644,7 +729,7 @@ table.nextgen_settings_position {
 }
 
 #ngg_page_content.ngg_settings_page .nextgen_pro_lightbox_admin_header {
-    background: #38576f !important;
+    background: black !important;
     margin-top: 20px;
 }
 
@@ -652,24 +737,51 @@ table.nextgen_settings_position {
     padding-left: 0 !important;
 }
 
+.nextgen_pro_lightbox_admin_header td {
+    padding: 10px 0 !important;
+}
+
 .nextgen_pro_lightbox_admin_header td h3 {
-    text-transform: none !important;
     color: #fff !important;
     margin: 0 0 0 20px !important;
+    font-size: 13px !important;
+    letter-spacing: 1.5px;
 }
 
 .ngg_options_promo {
-    background: #224460;
+    background: black;
     color: #fff;
     font-family: Lato, sans-serif;
     font-size: 14px;
     font-weight: 600;
+    background: #9ebc1b;
+    line-height: 50px !important;
+    display: none;
+}
+
+#attach_to_post_tabs #displayed_tab .ngg_options_promo {
+    display: table-cell;
 }
 
 .ngg_options_promo a {
     text-decoration: none;
     font-weight: 600;
-    margin-left: 6px;
+    margin-left: 10px;
+    background: black;
+    color: #fff !important;
+    padding: 10px 20px;
+    font-size: 12px !important;
+    text-transform: uppercase;
+}
+
+.ngg_options_promo a:after {
+    content: "\f345";
+    font: normal 13px dashicons;
+    color: white !important;
+    display: inline-block;
+    position: relative;
+    top: 2px;
+    left: 6px;
 }
 
 .gallery_page_ngg_other_options #ngg_page_content .ngg_page_content_main tbody tr td.ngg_options_promo {
@@ -685,9 +797,13 @@ table.nextgen_settings_position {
 
 /* First, CSS for post type lists */
 
+.ngg-post-type #screen-meta .metabox-prefs.view-mode {
+    display: none;
+}
+
 .ngg-post-type .ngg_page_content_main .button,
 .ngg-post-type .ngg_page_content_main .page-title-action {
-    background-color: #9FBB1A !important;
+    background-color: black !important;
     color: #fff !important;
     border: none !important;
     box-shadow: none !important;
@@ -696,18 +812,24 @@ table.nextgen_settings_position {
     padding: 0 15px !important;
     line-height: 35px;
     width: auto !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px;
 }
 
 .ngg-post-type .ngg_page_content_main .button:hover,
 .ngg-post-type .ngg_page_content_main .page-title-action:hover {
-    background-color: #A9C524 !important;
+    background-color: #383838 !important;
 }
 
 .ngg-post-type .ngg_page_content_main .page-title-action {
-    padding: 8px 16px !important;
+    padding: 10px 18px !important;
+    margin-left: 10px;
+    top: -4px;
 }
 
-.ngg-post-type .ngg_admin_notice {
+.ngg-post-type .notice,
+.ngg-post-type div#setting-error-tgmpa {
     display: none;
 }
 
@@ -740,12 +862,12 @@ table.nextgen_settings_position {
 
 .ngg-post-type .ngg_page_content_main table thead,
 .ngg-post-type .ngg_page_content_main table tfoot {
-    background-color: #38576f;
+    background-color: black;
     text-transform: uppercase;
 }
 
 .ngg-post-type .ngg_page_content_main table tfoot {
-    background-color: #38576f;
+    background-color: black;
 }
 
 .ngg-post-type .ngg_page_content_main table thead a,
@@ -787,7 +909,7 @@ table.nextgen_settings_position {
 }
 
 .ngg-post-type .ngg_page_content_main .striped>tbody>:nth-child(odd) {
-    background-color: rgb(247, 248, 243);
+    background-color: #f7f7f7;
 } 
 
 .ngg-post-type .ngg_page_content_main a.row-title {
@@ -833,10 +955,18 @@ table.nextgen_settings_position {
 
 /* Second, CSS for individual post type edit pages */
 
+#ngg_page_content #titlediv input#title {
+    font-size: 22px;
+    padding: 24px 12px;
+    color: #383838;
+    letter-spacing: .5px;
+    font-weight: 400;
+}
+
 .ngg-post-type #ngg_page_content h3.accordion_tab,
 .ngg-admin #postbox-container-2 h2.ui-sortable-handle {
     padding: 10px;
-    background: #38576f;
+    background: black;
     margin-bottom: 0;
 }
 
@@ -844,15 +974,20 @@ table.nextgen_settings_position {
 .ngg-admin #postbox-container-2 h2.ui-sortable-handle {
     color: #fff;
     text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 15px;
+    letter-spacing: 2px;
+    margin-left: 6px;
 }
 
 .ngg-post-type .accordion > div,
 .ngg-admin #postbox-container-2 .postbox {
-    border-left: 1px solid rgba(159, 187, 26, 0.05);
-    border-bottom: 1px solid rgba(159, 187, 26, 0.05);
-    border-right: 1px solid rgba(159, 187, 26, 0.05);
+    border-left: 1px solid #eeeeee;
+    border-bottom: 1px solid #eeeeee;
+    border-right: 1px solid #eeeeee;
     margin-bottom: 30px;
-    background-color: rgb(247, 248, 243);
+    background-color: #fcfcfc;
 }
 
 .ngg-post-type .accordion > div {
@@ -886,21 +1021,235 @@ table.nextgen_settings_position {
     margin: 0;
 }
 
-/* 7) NGG Admin CSS: Media Queries */
+/* Third, overrides for some specific post type pages */
 
-@media (max-width: 1030px) {
-    #ngg_page_content .ngg_page_content_header p {
-        padding: 0 20px;
-    }
+.post-type-ngg_order #ngg_page_content .ngg_page_content_main,
+.post-type-nextgen_proof #ngg_page_content .ngg_page_content_main {
+    padding-left: 10px;
 }
 
-@media (max-width: 900px) {
-    #ngg_page_content .ngg_page_content_header p {
-        display: none;
+.post-type-ngg_order.post-php .wp-heading-inline,
+.post-type-ngg_order.post-php #submitdiv,
+.post-type-ngg_order.post-php .toggle-indicator,
+.post-type-nextgen_proof.post-php .wp-heading-inline,
+.post-type-nextgen_proof.post-php #submitdiv,
+.post-type-nextgen_proof #post-body-content .inside,
+.post-type-nextgen_proof.post-php .toggle-indicator {
+    display:none;
+}
+
+.post-type-ngg_order.post-php #poststuff #post-body.columns-2,
+.post-type-nextgen_proof.post-php #poststuff #post-body.columns-2 {
+    margin-right: 300px;
+    margin-right: 100px;
+}
+
+.post-type-ngg_order.post-php #post-body.columns-2 #postbox-container-1,
+.post-type-nextgen_proof.post-php #post-body.columns-2 #postbox-container-1 {
+    width: 80px;
+    margin-right: -100px;
+}
+
+.post-type-ngg_order.post-php #side-sortables,
+.post-type-nextgen_proof.post-php #side-sortables {
+    border:none;
+}
+
+.post-type-ngg_order.post-php #post-body-content {
+    margin-bottom: 0;
+}
+
+.post-type-ngg_order.post-php #post-body.columns-2 #postbox-container-2 {
+    float: none;
+}
+
+.post-type-ngg_order.post-php #postbox-container-2 .postbox,
+.post-type-nextgen_proof.post-php #postbox-container-2 .postbox {
+    background-color: #ffffff;
+}
+
+.post-type-ngg_order.post-php #normal-sortables {
+    min-height: 10px !important;
+}
+
+.post-type-ngg_order.post-php #postbox-container-2 h2.ui-sortable-handle,
+.post-type-nextgen_proof.post-php #postbox-container-2 h2.ui-sortable-handle {
+    margin-left: 0;
+    padding-left: 16px;
+}
+
+.post-type-ngg_order.post-php .inside h4,
+.post-type-nextgen_proof.post-php .inside h4 {
+    padding: 5px 10px;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    font-weight: 400;
+}
+
+.post-type-ngg_order.post-php .inside,
+.post-type-nextgen_proof.post-php .inside {
+    padding: 30px;
+    font-size: 14px;
+}
+
+.post-type-nextgen_proof #normal-sortables .closed .inside {
+    display: block !important;
+}
+
+.post-type-ngg_order.post-php th,
+.post-type-nextgen_proof.post-php th {
+    text-transform: uppercase;
+    font-size: 15px;
+    letter-spacing: 1px;
+    font-weight: 400;
+    padding-bottom: 10px !important;
+    color: black !important;
+}
+
+.post-type-ngg_order.post-php table thead, 
+.post-type-ngg_order.post-php table tfoot,
+.post-type-nextgen_proof.post-php.post-php table thead, 
+.post-type-nextgen_proof.post-php.post-php table tfoot {
+    background-color: transparent !important;
+}
+
+.post-type-ngg_order .ngg_pro_order_info > table {
+    max-width: 1200px;
+    background: #fcfcfc;
+    box-shadow: none;
+    font-size: 14px;
+}
+
+.post-type-nextgen_proof .row-actions .inline {
+    display: none;
+}
+
+/* Extras: Fix for Pro ecom styling when not running updated Pro */
+
+#ngg_page_content .ngg_payment_gateway_enable_row {
+    background: black !important;
+}
+
+/* 7) NGG Admin CSS: Freemius Customizations */
+
+.ngg-admin #fs_connect {
+    box-shadow: none;
+    border: 1px solid #e0e0e0;
+    margin-left: 10px;
+}
+
+.ngg-admin #fs_connect .fs-content p {
+    font-size: 17px;
+    font-family: Lato, sans-serif;
+}
+
+.ngg-admin #fs_connect a {
+    color: #9fbb1a;
+}
+
+.ngg-admin #fs_connect a:hover {
+    color: #b8d433;
+}
+
+.ngg-admin #fs_connect .fs-visual {
+    padding: 30px 20px !important;
+    background: #fff;
+}
+
+.ngg-admin #fs_connect .fs-visual .fs-plugin-icon, 
+.ngg-admin #fs_connect .fs-visual .fs-connect-logo, 
+.ngg-admin #fs_connect .fs-visual .fs-site-icon {
+    border: none;
+    padding: 0;
+    top: 30px;
+}
+
+.ngg-admin #fs_connect .fs-content {
+    padding: 30px 20px;
+}
+
+.ngg-admin #fs_connect .fs-actions,
+.ngg-admin #fs_connect .fs-permissions,
+.ngg-admin #fs_connect .fs-permissions.fs-open,
+.ngg-admin #fs_connect .fs-terms {
+    background: black;
+    color: #fff;
+    padding: 0 !important;
+}
+
+.ngg-admin #fs_connect .fs-actions {
+    padding: 30px 20px !important;
+}
+
+.ngg-admin #fs_connect .fs-permissions ul li i.dashicons {
+    color: #9fbb1a;
+}
+
+.ngg-admin #fs_connect .fs-permissions.fs-open ul {
+    margin-bottom: 0;
+    padding-bottom: 20px;
+}
+
+.ngg-admin #fs_connect .fs-permissions ul li div span {
+    color: #fff;
+}
+
+.ngg-admin #fs_connect .fs-terms {
+    padding-bottom: 15px !important;
+}
+
+.ngg-admin #fs_connect .fs-actions .button.button-primary {
+    background-color: #9fbb1a !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    height: 35px !important;
+    padding: 0 24px !important;
+    line-height: 35px;
+    width: auto !important;
+    border-radius: 0;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: .5px;
+    font-family: Lato, sans-serif;
+}
+
+.ngg-admin #fs_connect .fs-actions .button.button-secondary {
+    border: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    height: 35px !important;
+    padding: 0 24px !important;
+    line-height: 35px;
+    width: auto !important;
+    border-radius: 0;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: .5px;
+    font-family: Lato, sans-serif;
+}
+
+.ngg-admin #fs_connect .fs-permissions a:hover,
+.ngg-admin #fs_connect .fs-terms a:hover {
+    color: #fff;
+}
+
+/* 8) NGG Admin CSS: Media Queries */
+
+@media (max-width: 1240px) {
+    #ngg_page_content .ngg_page_content_header p,
+    .ngg_options_promo {
+        display: none !important;
     }
 }
 
 @media (max-width: 782px) {
+    .about-wrap .three-col .col, .about-wrap .two-col .col {
+        min-width: 100%! important;
+        margin-left: 0;
+        margin-top: 1em;
+    }
     .ngg-post-type #ngg_page_content button.toggle-row {
         width: 40px !important;
         height: 40px !important;
@@ -956,6 +1305,13 @@ table.nextgen_settings_position {
     #ngg_page_content.ngg_settings_page .ngg_page_content_main table.nextgen_settings_position tr td {
         display: table-cell;
     }
+    #ngg_page_content.ngg_settings_page td.ngg_options_promo {
+        line-height: 20px !important;
+        padding: 20px !important;
+    }
+    .ngg_options_promo a {
+        margin-left: 0;
+    }
     #ngg_page_content.ngg_settings_page .ngg_page_content_main h2,
     #ngg_page_content.ngg_settings_page .ngg_page_content_main h3 {
         text-align: center;
@@ -1007,6 +1363,9 @@ table.nextgen_settings_position {
         display: block;
         text-align: center;
     }
+    #ngg_page_content .ngg_save_settings_button {
+        position: static;
+    }
     .ngg-post-type .ngg_page_content_main .button, 
     .ngg-post-type .ngg_page_content_main .page-title-action {
         width: 80%!important;
@@ -1044,12 +1403,10 @@ table.nextgen_settings_position {
     /* Responsive Navigation on Mobile */
     #ngg_page_content .responsive-menu-icon {
         display: block;
-        background: #9fbb1a;
         padding: 10px 0 15px;
     }
     #ngg_page_content .responsive-menu {
         display: none;
-        float: none;
         margin: 0;
     }
     #ngg_page_content .responsive-menu a {

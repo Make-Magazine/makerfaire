@@ -5,7 +5,8 @@ defined('ABSPATH') or die('Access denied.');
 /**
  * Test the Separate connection settings
  */
-function wdtTestSeparateConnectionSettings() {
+function wdtTestSeparateConnectionSettings()
+{
 
     $returnArray = array('success' => array(), 'errors' => array());
 
@@ -59,7 +60,8 @@ add_action('wp_ajax_wpdatatables_test_separate_connection_settings', 'wdtTestSep
 /**
  * Get connection tables settings
  */
-function wdtGetConnectionTables() {
+function wdtGetConnectionTables()
+{
     $connection = $_POST['connection'];
 
     $tables = wpDataTableConstructor::listMySQLTables($connection);
@@ -73,7 +75,8 @@ add_action('wp_ajax_wpdatatables_get_connection_tables', 'wdtGetConnectionTables
 /**
  * Method to save the config for the table and columns
  */
-function wdtSaveTableWithColumns() {
+function wdtSaveTableWithColumns()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtEditNonce')) {
         exit();
     }
@@ -93,7 +96,8 @@ add_action('wp_ajax_wpdatatables_save_table_config', 'wdtSaveTableWithColumns');
 /**
  * Save plugin settings
  */
-function wdtSavePluginSettings() {
+function wdtSavePluginSettings()
+{
     if (!current_user_can('manage_options')) {
         exit();
     }
@@ -107,7 +111,8 @@ add_action('wp_ajax_wpdatatables_save_plugin_settings', 'wdtSavePluginSettings')
 /**
  * Duplicate the table
  */
-function wdtDuplicateTable() {
+function wdtDuplicateTable()
+{
     global $wpdb;
 
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtDuplicateTableNonce')) {
@@ -276,39 +281,40 @@ add_action('wp_ajax_wpdatatables_duplicate_table', 'wdtDuplicateTable');
  * Duplicate the chart
  */
 
-function wdtDuplicateChart () {
-	global $wpdb;
+function wdtDuplicateChart()
+{
+    global $wpdb;
 
-	if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtDuplicateChartNonce')) {
-		exit();
-	}
+    if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtDuplicateChartNonce')) {
+        exit();
+    }
 
-	$chartId = (int)$_POST['chart_id'];
-	if (empty($chartId)) {
-		return false;
-	}
-	$newChartName = sanitize_text_field($_POST['new_chart_name']);
+    $chartId = (int)$_POST['chart_id'];
+    if (empty($chartId)) {
+        return false;
+    }
+    $newChartName = sanitize_text_field($_POST['new_chart_name']);
 
-	$chartQuery = $wpdb->prepare(
-		'SELECT * FROM ' . $wpdb->prefix . 'wpdatacharts WHERE id = %d',
-		$chartId
-	);
+    $chartQuery = $wpdb->prepare(
+        'SELECT * FROM ' . $wpdb->prefix . 'wpdatacharts WHERE id = %d',
+        $chartId
+    );
 
-	$wpDataChart = $wpdb->get_row($chartQuery);
+    $wpDataChart = $wpdb->get_row($chartQuery);
 
-	// Creating new table
-	$wpdb->insert(
-		$wpdb->prefix . "wpdatacharts",
-		array(
-			'wpdatatable_id'    => $wpDataChart->wpdatatable_id,
-			'title'             => $newChartName,
-			'engine'            => $wpDataChart->engine,
-			'type'              => $wpDataChart->type,
-			'json_render_data'  => $wpDataChart->json_render_data
-		)
-	);
+    // Creating new table
+    $wpdb->insert(
+        $wpdb->prefix . "wpdatacharts",
+        array(
+            'wpdatatable_id' => $wpDataChart->wpdatatable_id,
+            'title' => $newChartName,
+            'engine' => $wpDataChart->engine,
+            'type' => $wpDataChart->type,
+            'json_render_data' => $wpDataChart->json_render_data
+        )
+    );
 
-	exit();
+    exit();
 }
 
 add_action('wp_ajax_wpdatatables_duplicate_chart', 'wdtDuplicateChart');
@@ -316,7 +322,8 @@ add_action('wp_ajax_wpdatatables_duplicate_chart', 'wdtDuplicateChart');
 /**
  * Create a manually built table and open in Edit Page
  */
-function wdtCreateManualTable() {
+function wdtCreateManualTable()
+{
 
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtConstructorNonce')) {
         exit();
@@ -342,7 +349,8 @@ add_action('wp_ajax_wpdatatables_create_manual_table', 'wdtCreateManualTable');
 /**
  * Action for generating a WP-based MySQL query
  */
-function wdtGenerateWPBasedQuery() {
+function wdtGenerateWPBasedQuery()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtConstructorNonce')) {
         exit();
     }
@@ -366,7 +374,8 @@ add_action('wp_ajax_wpdatatables_generate_wp_based_query', 'wdtGenerateWPBasedQu
 /**
  * Action for refreshing the WP-based query
  */
-function wdtRefreshWPQueryPreview() {
+function wdtRefreshWPQueryPreview()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtConstructorNonce')) {
         exit();
     }
@@ -385,7 +394,8 @@ add_action('wp_ajax_wpdatatables_refresh_wp_query_preview', 'wdtRefreshWPQueryPr
 /**
  * Action for generating the table from query/constructed table data
  */
-function wdtConstructorGenerateWDT() {
+function wdtConstructorGenerateWDT()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtConstructorNonce')) {
         exit();
     }
@@ -407,7 +417,8 @@ add_action('wp_ajax_wpdatatables_constructor_generate_wdt', 'wdtConstructorGener
 /**
  * Request the column list for the selected tables
  */
-function wdtConstructorGetMySqlTableColumns() {
+function wdtConstructorGetMySqlTableColumns()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtConstructorNonce')) {
         exit();
     }
@@ -424,7 +435,8 @@ add_action('wp_ajax_wpdatatables_constructor_get_mysql_table_columns', 'wdtConst
 /**
  * Action for generating a WP-based MySQL query
  */
-function wdtGenerateMySqlBasedQuery() {
+function wdtGenerateMySqlBasedQuery()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtConstructorNonce')) {
         exit();
     }
@@ -448,7 +460,8 @@ add_action('wp_ajax_wpdatatables_generate_mysql_based_query', 'wdtGenerateMySqlB
 /**
  * Generate a file-based table preview (first 4 rows)
  */
-function wdtConstructorPreviewFileTable() {
+function wdtConstructorPreviewFileTable()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtConstructorNonce')) {
         exit();
     }
@@ -468,7 +481,8 @@ add_action('wp_ajax_wpdatatables_preview_file_table', 'wdtConstructorPreviewFile
 /**
  * Read data from file and generate the table
  */
-function wdtConstructorReadFileData() {
+function wdtConstructorReadFileData()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtConstructorNonce')) {
         exit();
     }
@@ -502,7 +516,8 @@ add_action('wp_ajax_wpdatatables_constructor_read_file_data', 'wdtConstructorRea
 /**
  * Add a column to a manually  created table
  */
-function wdtAddNewManualColumn() {
+function wdtAddNewManualColumn()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtFrontendEditTableNonce')) {
         exit();
     }
@@ -519,7 +534,8 @@ add_action('wp_ajax_wpdatatables_add_new_manual_column', 'wdtAddNewManualColumn'
 /**
  * Delete a column from a manually created table
  */
-function wdtDeleteManualColumn() {
+function wdtDeleteManualColumn()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtFrontendEditTableNonce')) {
         exit();
     }
@@ -536,7 +552,8 @@ add_action('wp_ajax_wpdatatables_delete_manual_column', 'wdtDeleteManualColumn')
 /**
  * Return all columns for a provided table
  */
-function wdtGetColumnsDataByTableId() {
+function wdtGetColumnsDataByTableId()
+{
     if (!current_user_can('manage_options') ||
         !(wp_verify_nonce($_POST['wdtNonce'], 'wdtChartWizardNonce') ||
             wp_verify_nonce($_POST['wdtNonce'], 'wdtEditNonce'))
@@ -555,7 +572,8 @@ add_action('wp_ajax_wpdatatables_get_columns_data_by_table_id', 'wdtGetColumnsDa
 /**
  * Returns the complete table for the range picker
  */
-function wdtGetCompleteTableJSONById() {
+function wdtGetCompleteTableJSONById()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtChartWizardNonce')) {
         exit();
     }
@@ -570,7 +588,8 @@ function wdtGetCompleteTableJSONById() {
 add_action('wp_ajax_wpdatatables_get_complete_table_json_by_id', 'wdtGetCompleteTableJSONById');
 
 
-function wdtShowChartFromData() {
+function wdtShowChartFromData()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtChartWizardNonce')) {
         exit();
     }
@@ -585,7 +604,8 @@ function wdtShowChartFromData() {
 add_action('wp_ajax_wpdatatable_show_chart_from_data', 'wdtShowChartFromData');
 
 
-function wdtSaveChart() {
+function wdtSaveChart()
+{
     if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['wdtNonce'], 'wdtChartWizardNonce')) {
         exit();
     }
@@ -603,7 +623,8 @@ add_action('wp_ajax_wpdatatable_save_chart_get_shortcode', 'wdtSaveChart');
 /**
  * List all tables in JSON
  */
-function wdtListAllTables() {
+function wdtListAllTables()
+{
     if (!current_user_can('manage_options')) {
         exit();
     }
@@ -617,7 +638,8 @@ add_action('wp_ajax_wpdatatable_list_all_tables', 'wdtListAllTables');
 /**
  * List all charts in JSON
  */
-function wdtListAllCharts() {
+function wdtListAllCharts()
+{
     if (!current_user_can('manage_options')) {
         exit();
     }
@@ -636,7 +658,8 @@ add_action('wp_ajax_wpdatatable_list_all_charts', 'wdtListAllCharts');
  * @throws WDTException
  * @throws Exception
  */
-function wdtReadDistinctValuesFromTable() {
+function wdtReadDistinctValuesFromTable()
+{
     $tableId = (int)$_POST['tableId'];
     $columnId = (int)$_POST['columnId'];
 
@@ -647,7 +670,6 @@ function wdtReadDistinctValuesFromTable() {
     $column = $wpDataTable->getColumn($columnData['orig_header']);
 
     $distValues = WDTColumn::getPossibleValuesRead($column, $tableData, false);
-
     echo json_encode($distValues);
     exit();
 }
@@ -659,7 +681,8 @@ add_action('wp_ajax_wpdatatable_get_column_distinct_values', 'wdtReadDistinctVal
  *
  * @throws WDTException
  */
-function wdtPreviewFormulaResult() {
+function wdtPreviewFormulaResult()
+{
     $tableId = (int)$_POST['table_id'];
     $formula = sanitize_text_field($_POST['formula']);
 
@@ -670,3 +693,113 @@ function wdtPreviewFormulaResult() {
 }
 
 add_action('wp_ajax_wpdatatables_preview_formula_result', 'wdtPreviewFormulaResult');
+
+/**
+ * Validate purchase code
+ */
+function wdtActivatePlugin()
+{
+    if (!current_user_can('manage_options')) {
+        exit();
+    }
+
+    /** @var string $slug */
+    $slug = filter_var($_POST['slug'], FILTER_SANITIZE_STRING);
+
+    /** @var string $purchaseCode */
+    $purchaseCode = filter_var($_POST['purchaseCodeStore'], FILTER_SANITIZE_STRING);
+
+    /** @var string $domain */
+    $domain = filter_var($_POST['domain'], FILTER_SANITIZE_STRING);
+
+    /** @var string $subdomain */
+    $subdomain = filter_var($_POST['subdomain'], FILTER_SANITIZE_STRING);
+
+    $request = wp_remote_get(
+        WDT_STORE_API_URL . 'activation/code?slug=' . $slug . '&purchaseCode=' . $purchaseCode . '&domain=' . $domain . '&subdomain=' . $subdomain
+    );
+
+    /** @var bool $valid */
+    $valid = json_decode($request['body'])->valid;
+
+    /** @var bool $valid */
+    $domainRegistered = json_decode($request['body'])->domainRegistered;
+
+    if ($valid && $domainRegistered) {
+        if ($slug === 'wpdatatables') {
+            update_option('wdtPurchaseCodeStore', $purchaseCode);
+            update_option('wdtActivated', true);
+        } else if ($slug === 'wdt-powerful-filters') {
+            update_option('wdtPurchaseCodeStorePowerful', $purchaseCode);
+            update_option('wdtActivatedPowerful', true);
+        } else if ($slug === 'reportbuilder') {
+            update_option('wdtPurchaseCodeStoreReport', $purchaseCode);
+            update_option('wdtActivatedReport', true);
+        } else if ($slug === 'wdt-gravity-integration') {
+            update_option('wdtPurchaseCodeStoreGravity', $purchaseCode);
+            update_option('wdtActivatedGravity', true);
+        } else if ($slug === 'wdt-formidable-integration') {
+            update_option('wdtPurchaseCodeStoreFormidable', $purchaseCode);
+            update_option('wdtActivatedFormidable', true);
+        }
+    }
+
+    if (!is_wp_error($request) || wp_remote_retrieve_response_code($request) === 200) {
+        echo $request['body'];
+    }
+
+    exit();
+}
+
+add_action('wp_ajax_wpdatatables_activate_plugin', 'wdtActivatePlugin');
+
+/**
+ * Deactivate plugin
+ */
+function wdtDeactivatePlugin()
+{
+    if (!current_user_can('manage_options')) {
+        exit();
+    }
+
+    /** @var string $slug */
+    $slug = filter_var($_POST['slug'], FILTER_SANITIZE_STRING);
+
+    /** @var string $purchaseCode */
+    $purchaseCode = filter_var($_POST['purchaseCodeStore'], FILTER_SANITIZE_STRING);
+
+    /** @var string $envatoTokenEmail */
+    $envatoTokenEmail = filter_var($_POST['envatoTokenEmail'], FILTER_SANITIZE_STRING);
+
+    /** @var string $domain */
+    $domain = filter_var($_POST['domain'], FILTER_SANITIZE_STRING);
+
+    /** @var string $subdomain */
+    $subdomain = filter_var($_POST['subdomain'], FILTER_SANITIZE_STRING);
+
+    /** @var string $type */
+    $type = filter_var($_POST['type'], FILTER_SANITIZE_STRING);
+
+    if ($type === 'code') {
+        $request = wp_remote_get(
+            WDT_STORE_API_URL . 'activation/code/deactivate?slug=' . $slug . '&purchaseCode=' . $purchaseCode . '&domain=' . $domain . '&subdomain=' . $subdomain
+        );
+    } else {
+        $request = wp_remote_get(
+            WDT_STORE_API_URL . 'activation/envato/deactivate?slug=' . $slug . '&envatoTokenEmail=' . $envatoTokenEmail . '&domain=' . $domain . '&subdomain=' . $subdomain
+        );
+    }
+
+    /** @var bool $deactivated */
+    $deactivated = json_decode($request['body'])->deactivated;
+
+    if ($deactivated === true) {
+        WDTTools::deactivatePlugin($slug);
+    }
+
+    echo $request['body'];
+
+    exit();
+}
+
+add_action('wp_ajax_wpdatatables_deactivate_plugin', 'wdtDeactivatePlugin');

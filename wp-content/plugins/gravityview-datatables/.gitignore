@@ -44,3 +44,6 @@ assets/pdfmake/bower.json
 
 assets/pdfmake/LICENSE
 package-lock.json
+
+vendor/
+.DS_Store

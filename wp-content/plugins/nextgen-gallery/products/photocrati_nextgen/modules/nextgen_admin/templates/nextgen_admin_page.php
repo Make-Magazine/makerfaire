@@ -14,7 +14,7 @@
     <div class="ngg_page_content_header ">
         <img src='<?php esc_html_e($logo) ?>' class='ngg_admin_icon'>
         <h3><?php esc_html_e($page_heading)?></h3>
-        <p><?php echo $header_message; ?></p>
+        <?php echo $header_message; ?>
     </div>
     
     <form method="POST" action="<?php echo nextgen_esc_url($_SERVER['REQUEST_URI'])?>">

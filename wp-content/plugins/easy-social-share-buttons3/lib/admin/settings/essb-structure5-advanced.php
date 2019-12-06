@@ -172,6 +172,11 @@ ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'de
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'deactivate_helphints', __('Deactivate Internal Help Hints', 'essb'), __('Inside plugin you have a help hint sections that provide useful links to the knowledge base. If you already know the features and that panel bothers you just hit Yes to hide them.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'administrative');
 
+ESSBOptionsStructureHelper::panel_start('advanced', 'administrative', esc_html__('Automatic Updates', 'essb'), '', 'fa21 fa fa-refresh', array("mode" => "toggle", 'state' => 'opened'));
+$listOfOptions = array("" => esc_html__('Official versions only (default)', 'essb'), 'minor' => esc_html__('Include minor internal updates'), 'beta' => esc_html__('Include stable beta versions', 'essb'));
+ESSBOptionsStructureHelper::field_select('advanced', 'administrative', 'update_source', esc_html__('Plugin updates', 'essb'), esc_html__('Select which automatic versions you will be able to install. The official releases will be the same as now. Include minor internal updates that will give access to a stable release that includes features of upcoming major updates. But you will get them as soon as they are added in a stable plugin version before the official update. The beta version will give access to all upcoming stable betas. Those versions may contain unexpected glitches but they are released to provide a real-life test of significant changes or new features.', 'essb'), $listOfOptions, '', '6');
+ESSBOptionsStructureHelper::panel_end('advanced', 'administrative');
+
 
 ESSBOptionsStructureHelper::panel_start('advanced', 'administrative', __('Plugin Settings Access', 'essb'), __('Control access to various plugin settings', 'essb'), 'fa21 fa fa-key', array("mode" => "toggle", 'state' => 'opened'));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'disable_adminbar_menu', __('Disable menu in WordPress admin bar', 'essb'), __('Activation of this option will remove the quick access plugin menu from WordPress top admin bar.', 'essb'), '', __('Yes', 'essb'), __('No', 'essb'));

@@ -1,4 +1,4 @@
-# Copyright (C) 2018 GravityView
+# Copyright (C) 2019 GravityView
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
 "Language-Team: Katz Web Services, Inc. <support@katz.co>\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
@@ -28,11 +28,11 @@ msgstr ""
 msgid "DataTables"
 msgstr ""
 
-#: includes/class-datatables-data.php:765
+#: includes/class-datatables-data.php:761
 msgid "Loading data&hellip;"
 msgstr ""
 
-#: includes/class-datatables-data.php:766
+#: includes/class-datatables-data.php:762
 msgid "No entries match your request."
 msgstr ""
 
@@ -52,24 +52,32 @@ msgstr ""
 msgid "Visible Table Columns"
 msgstr ""
 
-#: includes/extensions/class-datatables-buttons.php:29
-#: includes/extensions/class-datatables-buttons.php:57
-msgid "Export Buttons"
-msgstr ""
-
 #: includes/extensions/class-datatables-buttons.php:30
-msgid "Display buttons that allow users to print or export the current results."
-msgstr ""
-
-#: includes/extensions/class-datatables-buttons.php:47
+#: includes/extensions/class-datatables-buttons.php:48
 msgid "Enable Buttons"
 msgstr ""
 
-#: includes/extensions/class-datatables-buttons.php:87
+#: includes/extensions/class-datatables-buttons.php:31
+msgid "Display buttons that allow users to print or export the current results."
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:58
+msgid "Buttons"
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:97
+msgid "Column Visibility"
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:99
+msgid "Columns"
+msgstr ""
+
+#: includes/extensions/class-datatables-buttons.php:103
 msgid "Copy"
 msgstr ""
 
-#: includes/extensions/class-datatables-buttons.php:91
+#: includes/extensions/class-datatables-buttons.php:107
 msgid "Print"
 msgstr ""
 
@@ -182,7 +190,7 @@ msgstr ""
 msgid "https://gravityview.co/extensions/datatables/"
 msgstr ""
 
-#: includes/class-datatables-data.php:699
+#: includes/class-datatables-data.php:695
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr ""

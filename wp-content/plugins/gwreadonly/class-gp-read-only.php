@@ -8,7 +8,7 @@ class GP_Read_Only extends GWPerk {
 	protected $min_wp_version = '3.0';
 
 	private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
-	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'workflow_user', 'workflow_role', 'workflow_assignee_select' );
+	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'address', 'workflow_user', 'workflow_role', 'workflow_assignee_select' );
 
 	public function init() {
 
@@ -57,7 +57,11 @@ class GP_Read_Only extends GWPerk {
 
 				$(document).bind('gform_load_field_settings', function(event, field, form) {
 					$("#<?php echo $this->key('field_checkbox'); ?>").attr('checked', field["<?php echo $this->key('enable'); ?>"] == true);
-					if( ! isReadOnlyFieldType( GetInputType( field ) ) || isCalcEnabled( field ) ) {
+
+					// If calculation is enabled, we typically don't need this Perk since the input will be read-only
+                    // However, in the case of the product field with a quantity field, the quantity field won't
+                    // be read-only.
+					if( ! isReadOnlyFieldType( GetInputType( field ) ) || (isCalcEnabled( field ) && field.type !== 'product') ) {
 						field["<?php echo $this->key('enable'); ?>"] = false;
 						$('.gwreadonly_field_setting').hide();
 					}
@@ -116,6 +120,7 @@ class GP_Read_Only extends GWPerk {
 				$replace = $search . " disabled='disabled'";
 				break;
 			case 'time':
+			case 'address':
 				$search = array(
 					"<input"  => "<input readonly='readonly'",
 					"<select" => "<select disabled='disabled'",
@@ -151,8 +156,9 @@ class GP_Read_Only extends GWPerk {
 			 */
 			$disable_datepicker = gf_apply_filters( array( 'gpro_disable_datepicker', $form_id, $field->id ), false, $field, $entry_id );
 			if( $disable_datepicker ) {
-				// Find 'datepicker' CSS class and remove it.
-				$search['\'datepicker '] = '';
+				// Find 'datepicker' CSS class and replace it with our custom class indicating that we've disabled it.
+				// This class is used by Conditional Logic Dates to identify read-only Datepicker fields.
+				$search['\'datepicker '] = 'gpro-disabled-datepicker ';
 			}
 		}
 
@@ -171,6 +177,10 @@ class GP_Read_Only extends GWPerk {
 				switch( $input_type ) {
 					case 'time':
 						$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $field->id . '.3', array_pop( $value ) );
+						break;
+					case 'address':
+						$input_id = sprintf( '%d.%d', $field->id, $this->get_address_select_input_id( $field ) );
+						$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $input_id, rgar( $value, $input_id ) );
 						break;
 					default:
 						foreach( $field['inputs'] as $input ) {
@@ -219,6 +229,14 @@ class GP_Read_Only extends GWPerk {
 
 	public function process_hidden_captures( $form ) {
 
+		/**
+		 * In some instances (i.e. parent submission of Nested Forms), the gform_pre_process filter may be applied to a
+		 * form that is not currently being submitted. Let's make sure we're only working with the submitted form.
+		 */
+		if( rgpost( 'gform_submit' ) != $form['id'] ) {
+			return $form;
+		}
+
 		foreach( $_POST as $key => $value ) {
 
 			if( strpos( $key, 'gwro_hidden_capture_' ) !== 0 ) {
@@ -234,6 +252,11 @@ class GP_Read_Only extends GWPerk {
 				case 'time':
 					$full_input_id = $field_id;
 					$full_value    = rgpost( "input_{$full_input_id}" );
+
+					if ( ! is_array ( $full_value ) )  {
+						break;
+					}
+
 					$full_value[]  = $value;
 					$value         = $full_value;
 					break;
@@ -335,11 +358,18 @@ class GP_Read_Only extends GWPerk {
 		return $settings;
 	}
 
-	public function documentation() {
-		return array(
-			'type'  => 'url',
-			'value' => 'http://gravitywiz.com/documentation/gp-read-only/'
-		);
+	public function get_address_select_input_id( $field ) {
+		$input_id = false;
+		switch( $field->addressType ) {
+			case 'us':
+			case 'canadian':
+				$input_id = 4;
+				break;
+			case 'international':
+				$input_id = 6;
+				break;
+		}
+		return $input_id;
 	}
 
 }

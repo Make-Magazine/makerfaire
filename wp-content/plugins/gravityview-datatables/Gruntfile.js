@@ -28,7 +28,8 @@ module.exports = function(grunt) {
 						'assets/datatables-buttons/js/dataTables.buttons.js',
 						'assets/datatables-buttons/js/buttons.flash.js',
 						'assets/datatables-buttons/js/buttons.html5.js',
-						'assets/datatables-buttons/js/buttons.print.js'
+						'assets/datatables-buttons/js/buttons.print.js',
+						'assets/datatables-buttons/js/buttons.colVis.js'
 					]
 				}
 			},
