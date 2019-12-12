@@ -22,16 +22,6 @@ window.addEventListener('load', function() {
 		scope: 'openid profile email user_metadata', //scope of data pulled by auth0
 		leeway: 60
    });
-
-	loginBtn.addEventListener('click', function(e) {
-		e.preventDefault();
-		if(location.href.indexOf('authenticate-redirect') >= 0){
-			localStorage.setItem('redirect_to', templateUrl);
-		}else{
-			localStorage.setItem('redirect_to',location.href);
-		}
-		webAuth.authorize(); //login to auth0
-	});
 	
 	function clearLocalStorage() {
 		 localStorage.removeItem('access_token');
