@@ -11,9 +11,6 @@ window.addEventListener('load', function() {
 		var profileView    = document.getElementById('profile-view');
 	}
 
-	//default profile view to hidden
-	profileView.style.display = 'none';
-
 	var userProfile;
 	
    var webAuth = new auth0.WebAuth({
