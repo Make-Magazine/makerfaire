@@ -90,7 +90,9 @@ window.addEventListener('load', function() {
 				document.querySelector('.dropdown-toggle img').style.display = "block";
 				document.querySelector('#LoginBtn').style.display = "none";
 				document.querySelector('.profile-email').innerHTML = userProfile.email; 
-				document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
+				if(userProfile['http://makershare.com/first_name'] != undefined && userProfile['http://makershare.com/last_name'] != undefined) {
+					document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
+				}
 				// automatically login to wordpress by clicking the login btn after webauth
 				if(document.querySelector(".logged-in") === null) {
 					console.log("Test");
