@@ -92,6 +92,13 @@ window.addEventListener('load', function() {
 				document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
 				// automatically login to wordpress by clicking the login btn after webauth
 				if(document.querySelector(".logged-in") === null) {
+					console.log("Test");
+					location.reload(); 
+					document.querySelector("#LoginBtn")[0].click();
+				}
+				if(!jQuery(".logged-in").length) {
+					console.log("Other Test");
+					location.reload(); 
 					document.querySelector("#LoginBtn")[0].click();
 				}
 			}
