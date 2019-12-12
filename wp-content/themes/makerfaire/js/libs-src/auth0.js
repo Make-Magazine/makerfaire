@@ -90,8 +90,6 @@ window.addEventListener('load', function() {
 				document.querySelector('.dropdown-toggle img').style.display = "block";
 				document.querySelector('.profile-email').innerHTML = userProfile.email; 
 				document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
-				// see if we can login to wordpress at the same time
-				WPlogin();
 			}
 		});
 
@@ -110,8 +108,7 @@ window.addEventListener('load', function() {
 				'auth0_access_token'  : access_token,
 				'auth0_id_token'      : id_token
 			};
-         console.log(data);
-			console.log(ajax_object.ajax_url);
+
 			jQuery.ajax({
 				type: 'POST',
 				url: ajax_object.ajax_url,
