@@ -93,12 +93,10 @@ window.addEventListener('load', function() {
 				// automatically login to wordpress by clicking the login btn after webauth
 				if(document.querySelector(".logged-in") === null) {
 					console.log("Test");
-					location.reload(); 
 					document.querySelector("#LoginBtn")[0].click();
 				}
-				if(!jQuery(".logged-in").length) {
+				if(!jQuery("body").hasClass("logged-in")) {
 					console.log("Other Test");
-					location.reload(); 
 					document.querySelector("#LoginBtn")[0].click();
 				}
 			}
