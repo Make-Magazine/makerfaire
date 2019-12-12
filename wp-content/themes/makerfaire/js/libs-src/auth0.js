@@ -91,14 +91,15 @@ window.addEventListener('load', function() {
 				document.querySelector('.profile-email').innerHTML = userProfile.email; 
 				document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
 				// automatically login to wordpress by clicking the login btn after webauth
-				if(document.querySelector(".logged-in") === null) {
-					console.log("Test");
-					document.querySelector("#LoginBtn")[0].click();
-				}
 				if(!jQuery("body").hasClass("logged-in")) {
 					console.log("Other Test");
-					document.querySelector("#LoginBtn")[0].click();
+					jQuery("#LoginBtn").click();
 				}
+				if(document.querySelector(".logged-in") === null) {
+					console.log("Test");
+					document.querySelector("#LoginBtn").click();
+				}
+
 			}
 		});
 
