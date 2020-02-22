@@ -1,7 +1,25 @@
 window.addEventListener('load', function() {
 
+  // buttons and event listeners
+  /*    If the login button, logout button or profile view elements do not exist
+   *    (such as on the admin and login pages) default to a 'fake' element
+   */
 	if ( jQuery( "#wp-admin-bar-logout" ).length ) {
 		jQuery( "#wp-admin-bar-logout" ).remove();
+	}
+	
+	if ( !jQuery( "#LoginBtn" ).length ) {
+		var loginBtn = document.createElement('div');
+		loginBtn.setAttribute("id", "LoginBtn");
+	}else{
+		var loginBtn    = document.getElementById('LoginBtn');
+	}
+
+	if ( !jQuery( "#LogoutBtn" ).length ) {
+		var logoutBtn = document.createElement('div');
+		logoutBtn.setAttribute("id", "LogoutBtn");
+	}else{
+		var logoutBtn    = document.getElementById('LogoutBtn');
 	}
 
 	if ( !jQuery( "#profile-view" ).length ) {
@@ -11,8 +29,18 @@ window.addEventListener('load', function() {
 		var profileView    = document.getElementById('profile-view');
 	}
 
+	//default profile view to hidden
+	loginBtn.style.display    = 'none';
+	profileView.style.display = 'none';
+
 	var userProfile;
 	
+	var progressBar = jQuery(".progress .progress-bar");
+	function updateProgressBar(percent) {
+		if ( jQuery( '#authenticated-redirect' ).length ) {
+			progressBar.attr("aria-valuenow", percent).css("width", percent).text(percent);
+		}
+	}
    var webAuth = new auth0.WebAuth({
 		domain: AUTH0_DOMAIN,
 		clientID: AUTH0_CLIENT_ID,
@@ -22,6 +50,38 @@ window.addEventListener('load', function() {
 		scope: 'openid profile email user_metadata', //scope of data pulled by auth0
 		leeway: 60
    });
+
+	loginBtn.addEventListener('click', function(e) {
+		e.preventDefault();
+		if(location.href.indexOf('authenticate-redirect') >= 0){
+			localStorage.setItem('redirect_to', templateUrl);
+		}else{
+			localStorage.setItem('redirect_to',location.href);
+		}
+		webAuth.authorize(); //login to auth0
+	});
+
+	logoutBtn.addEventListener('click', function(e) {
+		e.preventDefault();
+		// Remove tokens and expiry time from localStorage
+		clearLocalStorage();
+		//hide logged in button and logout of wp and auth0
+		displayButtons();
+	});
+    
+	function loginRedirect() {
+		if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
+			 if( localStorage.getItem( 'redirect_to' ) ){
+				jQuery( '.redirect-message' ).text( "You will be redirected to the page you were trying to access shortly." );
+				var redirect_url = localStorage.getItem( 'redirect_to' ); //retrieve redirect URL
+				localStorage.removeItem( 'redirect_to' ); //unset after retrieved
+				location.href = redirect_url;
+			 }else{ 
+				// this is what's occurring sometimes when the page redirects to the homepage instead of to the url
+				location.href = templateUrl;
+			 }
+		}
+	}
 	
 	function clearLocalStorage() {
 		 localStorage.removeItem('access_token');
@@ -55,7 +115,10 @@ window.addEventListener('load', function() {
 
 	function displayButtons() {
 		if (isAuthenticated()) {
+			loginBtn.style.display = 'none';
+			//get user profile from auth0
 			profileView.style.display = 'flex';
+			updateProgressBar("25%");
 			getProfile();
 
 			//login to wordpress if not already
@@ -63,10 +126,18 @@ window.addEventListener('load', function() {
 			if ( !jQuery( '.logged-in' ).length ) { // is the user logged in?
 				//wait .5 second for auth0 data to be returned from getProfile
 				setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
+			} else {
+				loginRedirect();
 			}
 		} else {
+			loginBtn.style.display = 'flex';
 			profileView.style.display = 'none';
-			WPlogout();
+			if ( jQuery( '.logged-in' ).length ) { // is the user logged in?
+				//logout of wordpress if not already
+				WPlogout();
+			} else {
+				jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Try your login again</a>");
+			}
 		}
 	}
 
@@ -78,34 +149,27 @@ window.addEventListener('load', function() {
 		}
 
 		webAuth.client.userInfo(accessToken, function(err, profile) {
-			if (profile) {
-				userProfile = profile;
-				// make sure that there isn't a wordpress acount with a different user logged in
-				if(ajax_object.wp_user_email && ajax_object.wp_user_email != userProfile.email) {
-					WPlogout("wp_only");
-				}
-				// display the avatar
-				document.querySelector('.dropdown-toggle img').src = userProfile.picture;
-				document.querySelector('.profile-info img').src = userProfile.picture;
-				document.querySelector('.dropdown-toggle img').style.display = "block";
-				document.querySelector('#LoginBtn').style.display = "none";
-				document.querySelector('.profile-email').innerHTML = userProfile.email; 
-				if(userProfile['http://makershare.com/first_name'] != undefined && userProfile['http://makershare.com/last_name'] != undefined) {
-					document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
-				}
-				// automatically login to wordpress by clicking the login btn after webauth
-				if(document.querySelector(".logged-in") === null) {
-					console.log("Test");
-					document.querySelector("#LoginBtn").click();
-				}
-
+		if (profile) {
+			userProfile = profile;
+			// make sure that there isn't a wordpress acount with a different user logged in
+			if(ajax_object.wp_user_email && ajax_object.wp_user_email != userProfile.email) {
+				WPlogout("wp_only");
 			}
+			// display the avatar
+			document.querySelector('.dropdown-toggle img').src = userProfile.picture;
+			document.querySelector('.profile-info img').src = userProfile.picture;
+			document.querySelector('.dropdown-toggle img').style.display = "block";
+			document.querySelector('.profile-email').innerHTML = userProfile.email; 
+			document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
+			}
+			updateProgressBar("35%");
 		});
 
 	}
 
 	function WPlogin(){
 		if (typeof userProfile !== 'undefined') {
+			updateProgressBar("50%");
 			var user_id      = userProfile.sub;
 			var access_token = localStorage.getItem('access_token');
 			var id_token     = localStorage.getItem('id_token');
@@ -124,6 +188,12 @@ window.addEventListener('load', function() {
 				data: data,
 				timeout: 10000,
 				success: function(data){
+					updateProgressBar("70%");
+					loginRedirect();
+					/* Nobody likes this, but page content is loaded before wp login otherwise */
+					if(jQuery(".logged-in").length == 0 && jQuery( '#authenticated-redirect' ).length == 0 ) {
+						jQuery("#page-content").load(window.location.href + " #page-content");
+					}
 				},
 			}).fail(function(xhr, status, error) {
 				if(status === 'timeout') {
@@ -137,7 +207,11 @@ window.addEventListener('load', function() {
 			});
 
 		}else{
-
+			if ( jQuery( '#authenticated-redirect' ).length ) {
+				alert("We're having trouble logging you in and ran out of time. Refresh the page and we'll try harder.");
+				jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Reload page</a>");
+				errorMsg("Login failed for undefined user. Timeout.");
+			}
 		}
 	}
 
