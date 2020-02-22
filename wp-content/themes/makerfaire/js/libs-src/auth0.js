@@ -229,7 +229,7 @@ window.addEventListener('load', function() {
 			if(wp_only != "wp_only"){
 				// load this in an iframe so page itself doesn't get sent back to homepage, hopefully
 				// auth0 application only allows set urls as the returnto, with the homepage being the only one being set
-				jQuery("#auth0Logout").attr("src", 'https://makermedia.auth0.com/v2/logout?returnTo=' + templateUrl + '&client_id='+AUTH0_CLIENT_ID);
+				//jQuery("#auth0Logout").attr("src", 'https://makermedia.auth0.com/v2/logout?returnTo=' + templateUrl + '&client_id='+AUTH0_CLIENT_ID);
 			}else{
 				WPlogin();
 			}
