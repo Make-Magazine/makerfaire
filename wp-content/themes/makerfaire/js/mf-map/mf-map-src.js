@@ -91,7 +91,7 @@ jQuery(document).ready(function() {
 
       created: function() {
          var _self = this;
-         axios.get('/query/?type=map', config: {headers: {'Access-Control-Allow-Origin': '*',}})
+         axios.get('/query/?type=map')
             .then(function (response) {
                _self.$refs.loadingIndicator.classList.add("hidden");
                _self.outputData = response.data.Locations;
