@@ -285,9 +285,9 @@ function mf_map(){
 	if (is_page_template('page-makerfaire-map.php')) {
       wp_enqueue_script('google-map', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDtWsCdftU2vI9bkZcwLxGQwlYmNRnT2VM', false, false, true);
       wp_enqueue_script('google-markers', 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js', array('google-map'), false, true);
-      wp_enqueue_script('vue', get_stylesheet_directory_uri() . '/js/mf-map/vue.min.js', false, false, true);
-      wp_enqueue_script('axios', get_stylesheet_directory_uri() . '/js/mf-map/axios.min.js', array('vue'), false, true);
-      wp_enqueue_script('vue-table-2', get_stylesheet_directory_uri() . '/js/mf-map/vue-tables-2.min.js', array('vue'), false, true);
+      wp_enqueue_script('vue', get_stylesheet_directory_uri() . '/js/mf-map/vue.min.js', false, $my_version, true);
+      wp_enqueue_script('axios', get_stylesheet_directory_uri() . '/js/mf-map/axios.min.js', array('vue'), $my_version, true);
+      wp_enqueue_script('vue-table-2', get_stylesheet_directory_uri() . '/js/mf-map/vue-tables-2.min.js', array('vue'), $my_version, true);
       wp_enqueue_script('vue-map', get_stylesheet_directory_uri() . '/js/mf-map/min/mf-map.min.js', array('vue'), $my_version, true );
 	}
 }
