@@ -90,7 +90,7 @@ get_header(); ?>
             echo '</div>';
 
             $loop++;
-            if($loop > 40) break;
+            if($loop > 41) break;
 
           }
         }    
