@@ -1,3 +1,5 @@
+<?php 
+
 add_action( 'init', 'clear_large_autoptimize_cache' );
 
 function clear_large_autoptimize_cache () {
@@ -12,4 +14,3 @@ function clear_large_autoptimize_cache () {
 		 }
 	}
 }
-
