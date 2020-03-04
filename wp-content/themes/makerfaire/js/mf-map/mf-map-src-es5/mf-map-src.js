@@ -75,6 +75,9 @@ jQuery(document).ready(function () {
       filterVal: '',
       pastFaires: false,
       types: [{
+        name: "Global",
+        description: "Faires that pull in exhibitors from around the world"
+      }, {
         name: "Featured",
         description: "Larger-scale regional events"
       }, {
@@ -363,39 +366,23 @@ jQuery(document).ready(function () {
           // for webkit
           if (data.srcElement.checked == true) {
             typeFilters.push(data.srcElement._value);
-
-            if (data.srcElement._value == 'Featured') {
-              typeFilters.push('Flagship');
-            }
           }
 
           if (data.srcElement.checked == false) {
             ;
             var index = typeFilters.indexOf(data.srcElement._value);
             if (index !== -1) typeFilters.splice(index, 1);
-
-            if (data.srcElement._value == 'Featured') {
-              typeFilters.splice(typeFilters.indexOf('Flagship'), 1);
-            }
           }
         } else {
           // for firefox
           if (data.originalTarget.checked == true) {
             typeFilters.push(data.originalTarget._value);
-
-            if (data.originalTarget._value == 'Featured') {
-              typeFilters.push('Flagship');
-            }
           }
 
           if (data.originalTarget.checked == false) {
             ;
             var index = typeFilters.indexOf(data.originalTarget._value);
             if (index !== -1) typeFilters.splice(index, 1);
-
-            if (data.originalTarget._value == 'Featured') {
-              typeFilters.splice(typeFilters.indexOf('Flagship'), 1);
-            }
           }
         }
 
@@ -439,10 +426,10 @@ jQuery(document).ready(function () {
           strokeOpacity: 0
         };
         this.markers = this.filteredData.map(function (location, i) {
-          // styling for the various types of faires... flagship and featured are now the same color
+          // styling for the various types of faires... flagship is now: Global
           switch (location.category) {
             case 'Flagship':
-              gMarkerIcon.fillColor = '#D42410';
+              gMarkerIcon.fillColor = '#005e9a';
               break;
 
             case 'Featured':
@@ -484,6 +471,7 @@ jQuery(document).ready(function () {
     }
   });
   jQuery("label[for=Mini] span").html("Community");
+  jQuery("label[for=Flagship] span").html("Global");
   jQuery("#pastFaires").on("click", function () {
     jQuery('html, body').animate({
       scrollTop: 0
