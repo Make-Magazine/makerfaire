@@ -51,8 +51,8 @@ jQuery(document).ready(function () {
           venue_address_state: 'col-hidden',
           event_dt: 'col-hidden',
           category: 'col-hidden',
-          event_end_dt: 'col-hidden' //venue_address_postal_code: 'col-hidden',
-
+          event_end_dt: 'col-hidden',
+          venue_address_postal_code: 'col-hidden'
         },
         pagination: {
           chunk: 5
