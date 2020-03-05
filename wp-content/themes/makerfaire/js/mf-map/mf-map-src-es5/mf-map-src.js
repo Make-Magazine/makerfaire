@@ -319,8 +319,8 @@ jQuery(document).ready(function () {
       },
       // search filter
       searchFilter: function searchFilter(data) {
-        this.$refs.directoryGrid.setFilter(this.filterVal);
-        var searchString = this.filterVal;
+        this.$refs.directoryGrid.setFilter(this.filterVal.toLowerCase());
+        var searchString = this.filterVal.toLowerCase();
         this.filteredData = this.tableData.filter(function (values) {
           // maybe try .startsWith() instead if this is matching too much
           if (values.faire_name.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_city.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_country.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_state.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_postal_code.toLowerCase().indexOf(searchString) !== -1 || values.event_dt.toLowerCase().indexOf(searchString) !== -1) {
