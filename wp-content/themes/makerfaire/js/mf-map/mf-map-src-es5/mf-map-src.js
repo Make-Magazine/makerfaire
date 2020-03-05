@@ -11,7 +11,7 @@ jQuery(document).ready(function () {
   var vm = new Vue({
     el: "#directory",
     data: {
-      columns: ['faire_name', 'annual', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category', 'event_end_dt'],
+      columns: ['faire_name', 'annual', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category', 'event_end_dt', 'venue_address_postal_code'],
       tableData: [],
       // this keeps the whole table
       filteredData: [],
@@ -51,7 +51,8 @@ jQuery(document).ready(function () {
           venue_address_state: 'col-hidden',
           event_dt: 'col-hidden',
           category: 'col-hidden',
-          event_end_dt: 'col-hidden'
+          event_end_dt: 'col-hidden' //venue_address_postal_code: 'col-hidden',
+
         },
         pagination: {
           chunk: 5
@@ -312,7 +313,6 @@ jQuery(document).ready(function () {
         }
       },
       handleLocationError: function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-        // NOTE (ts): handle this event in some other way? putting a popup on the map isn't very helpful
         console.error('User location check failed'); // infoWindow.setPosition(pos);
         // infoWindow.setContent(browserHasGeolocation ? 'Error: The Geolocation service failed.' : 'Error: Your browser doesn\'t support geolocation.');
         // infoWindow.open(this.map);
@@ -320,6 +320,13 @@ jQuery(document).ready(function () {
       // search filter
       searchFilter: function searchFilter(data) {
         this.$refs.directoryGrid.setFilter(this.filterVal);
+        var searchString = this.filterVal;
+        this.filteredData = this.tableData.filter(function (values) {
+          // maybe try .startsWith() instead if this is matching too much
+          if (values.faire_name.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_city.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_country.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_state.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_postal_code.toLowerCase().indexOf(searchString) !== -1 || values.event_dt.toLowerCase().indexOf(searchString) !== -1) {
+            return values;
+          }
+        });
         this.addMarkers();
       },
       // past faires filter
@@ -429,7 +436,7 @@ jQuery(document).ready(function () {
           // styling for the various types of faires... flagship is now: Global
           switch (location.category) {
             case 'Flagship':
-              gMarkerIcon.fillColor = '#005e9a';
+              gMarkerIcon.fillColor = '#F5A623';
               break;
 
             case 'Featured':
@@ -437,7 +444,7 @@ jQuery(document).ready(function () {
               break;
 
             case 'School':
-              gMarkerIcon.fillColor = '#F5A623';
+              gMarkerIcon.fillColor = '#005e9a';
               break;
 
             default:
