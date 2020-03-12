@@ -75,6 +75,7 @@ jQuery(document).ready(function () {
       },
       filterVal: '',
       pastFaires: false,
+      currentLocation: false,
       types: [{
         name: "Global",
         description: "Faires that pull in exhibitors from around the world"
@@ -112,7 +113,7 @@ jQuery(document).ready(function () {
           _self.outputData[key].event_start_dt = Date.parse(_self.outputData[key].event_start_dt);
         });
 
-        _self.detectBrowser(); //_self.getLocation(); we don't really need the users location for this map, as it starts zoomed out
+        _self.detectBrowser(); // _self.getLocation(); 
 
 
         _self.initMap();
@@ -285,14 +286,20 @@ jQuery(document).ready(function () {
           }
         };
         this.map = new google.maps.Map(element, options);
+        this.geocoder = new google.maps.Geocoder(); // this.map.addListener('zoom_changed', function(){ // this is how to add an event listener });
+
         this.map.mapTypes.set('styled_map', styledMapType);
         this.map.setMapTypeId('styled_map');
         this.addMarkers();
       },
       getLocation: function getLocation() {
-        var infoWindow = new google.maps.InfoWindow(),
-            _self = this; // Try HTML5 geolocation.
+        // first, clear all other searches and data
+        this.filterVal = '';
+        this.filteredData = this.tableData;
+        this.addMarkers(); // now get zooming on our location
 
+        var infoWindow = new google.maps.InfoWindow(),
+            _self = this;
 
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function (position) {
@@ -312,6 +319,28 @@ jQuery(document).ready(function () {
           _self.handleLocationError(false, infoWindow, _self.map.getCenter());
         }
       },
+      codeAddress: function codeAddress(code) {
+        // let's get zooming
+        var _self = this;
+
+        this.geocoder.geocode({
+          'address': code
+        }, function (results, status) {
+          if (results.length) {
+            // check's if the zipcode is valid, otherwise there's nothing to do here
+            _self.map.setCenter(results[0].geometry.location);
+
+            _self.map.setZoom(8);
+
+            if (_self.filteredData.length <= 0) {
+              // if there's no results but it's a valid zipcode, show what's around
+              _self.filteredData = _self.tableData;
+
+              _self.addMarkers();
+            }
+          }
+        });
+      },
       handleLocationError: function handleLocationError(browserHasGeolocation, infoWindow, pos) {
         console.error('User location check failed'); // infoWindow.setPosition(pos);
         // infoWindow.setContent(browserHasGeolocation ? 'Error: The Geolocation service failed.' : 'Error: Your browser doesn\'t support geolocation.');
@@ -319,10 +348,14 @@ jQuery(document).ready(function () {
       },
       // search filter
       searchFilter: function searchFilter(data) {
-        this.$refs.directoryGrid.setFilter(this.filterVal.toLowerCase());
         var searchString = this.filterVal.toLowerCase();
+
+        if (validateZipCode(searchString) == true) {
+          this.codeAddress(searchString);
+        }
+
         this.filteredData = this.tableData.filter(function (values) {
-          // maybe try .startsWith() instead if this is matching too much
+          // when search filter is set off, also update the map locations here
           if (values.faire_name.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_city.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_country.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_state.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_postal_code.toLowerCase().indexOf(searchString) !== -1 || values.event_dt.toLowerCase().indexOf(searchString) !== -1) {
             return values;
           }
@@ -493,4 +526,9 @@ function formatDate(date) {
   var monthIndex = theDate.getMonth();
   var year = theDate.getFullYear();
   return monthNames[monthIndex] + ', ' + day + ' ' + year;
+}
+
+function validateZipCode(elementValue) {
+  var zipCodePattern = /^\d{5}$|^\d{5}-\d{4}$/;
+  return zipCodePattern.test(elementValue);
 }
