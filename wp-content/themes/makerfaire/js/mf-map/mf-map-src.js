@@ -3,7 +3,7 @@ jQuery(document).ready(function() {
    var currentDate = new Date();
 	var oneYearAgo = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
 	var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
-	var typeFilters = ["Featured", "Flagship", "Mini", "School"];
+	var typeFilters = ["Featured", "Flagship", "Mini"];
    Vue.use(VueTables.ClientTable);
    Vue.use(VueTables.Event);
 
@@ -139,10 +139,16 @@ jQuery(document).ready(function() {
 					var endDate = new Date(values.event_end_dt);
 					endDate.setDate(endDate.getDate() + 1);
 					if(endDate > currentDate) {
+							return values;
+					}
+				});
+				// Run the type filter at the start
+				this.filteredData = this.tableData.filter( function(values) {
+					var type = values.category;
+					if(typeFilters.includes(type)) {
 						return values;
 					}
 				});
-				this.filteredData = this.tableData; // filtered Data is used to draw the map
 				
 				var styledMapType = new google.maps.StyledMapType(
             [
@@ -432,7 +438,7 @@ jQuery(document).ready(function() {
 					if(data.srcElement.checked == true) {
 						typeFilters.push(data.srcElement._value);
 					}
-					if(data.srcElement.checked == false) {;
+					if(data.srcElement.checked == false) {
 						var index = typeFilters.indexOf(data.srcElement._value);
 						if (index !== -1) typeFilters.splice(index, 1);
 					}
@@ -518,10 +524,15 @@ jQuery(document).ready(function() {
   });
   jQuery("label[for=Mini] span").html("Community");
   jQuery("label[for=Flagship] span").html("Global");
+  jQuery("input#School").click(); // uncheck Schools to start with
   jQuery("#pastFaires").on("click", function(){
 	  jQuery('html, body').animate({ scrollTop: 0 }, 'slow');
   });
 }); // end doc ready
+
+/*jQuery(window).load(function(){
+  jQuery("input#School").click();	
+});*/
 
 
 function formatDate(date) {
