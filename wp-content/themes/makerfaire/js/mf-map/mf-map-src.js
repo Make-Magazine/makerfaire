@@ -532,7 +532,7 @@ jQuery(document).ready(function() {
                return marker;
             });
             //Add a marker clusterer to manage the markers.
-            this.markerCluster = new MarkerClusterer(this.map, this.markers, {imagePath: '/wp-content/themes/makerfaire/js/mf-map/markers/m'});
+            this.markerCluster = new MarkerClusterer(this.map, this.markers, {imagePath: '/wp-content/themes/makerfaire/js/mf-map/markers/m', gridSize: 40});
          }
       },
   });
